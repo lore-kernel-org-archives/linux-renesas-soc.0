@@ -1,115 +1,43 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH] ARM: dts: r7s72100: add clock bit definitions
-Date: Thu, 25 May 2017 09:05:48 -0700
-Message-Id: <20170525160548.103182-1-chris.brandt@renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f65.google.com ([209.85.214.65]:32909 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750745AbdESHmp (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 19 May 2017 03:42:45 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170518211140.12023-2-wsa+renesas@sang-engineering.com>
+References: <20170518211140.12023-1-wsa+renesas@sang-engineering.com> <20170518211140.12023-2-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 19 May 2017 09:42:43 +0200
+Message-ID: <CAMuHMdV5soEj4w-h19sRDrzRHfn-Zj-t0Dfc3Q7LwyD0UZLyzg@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/2] i2c: sh_mobile: remove platform_data
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Linux I2C <linux-i2c@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the remaining bit locations for the module stop clock registers.
+On Thu, May 18, 2017 at 11:11 PM, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> No platform currently upstream makes use of this platform_data anymore.
+> The ones that did are converted to DT meanwhile. So, remove it. The old
+> platforms likely don't have the 'clks_per_cnt' feature, otherwise it
+> would have been implemented by now. And in the unlikely case they need
+> to setup a different bus speed, we should rather go for a generic i2c
+> platform data just for that.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
- include/dt-bindings/clock/r7s72100-clock.h | 40 ++++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/include/dt-bindings/clock/r7s72100-clock.h b/include/dt-bindings/clock/r7s72100-clock.h
-index dcd2072151fc..ff5023ca97ed 100644
---- a/include/dt-bindings/clock/r7s72100-clock.h
-+++ b/include/dt-bindings/clock/r7s72100-clock.h
-@@ -13,7 +13,14 @@
- #define R7S72100_CLK_PLL	0
- 
- /* MSTP3 */
-+#define R7S72100_CLK_IEBUS	7
-+#define R7S72100_CLK_IRDA	6
-+#define R7S72100_CLK_LIN0	5
-+#define R7S72100_CLK_LIN1	4
- #define R7S72100_CLK_MTU2	3
-+#define R7S72100_CLK_CAN	2
-+#define R7S72100_CLK_ADCPWR	1
-+#define R7S72100_CLK_MCPWM	0
- 
- /* MSTP4 */
- #define R7S72100_CLK_SCIF0	7
-@@ -26,25 +33,51 @@
- #define R7S72100_CLK_SCIF7	0
- 
- /* MSTP5 */
-+#define R7S72100_CLK_SCI0	7
-+#define R7S72100_CLK_SCI1	6
-+#define R7S72100_CLK_SNDGEN0	5
-+#define R7S72100_CLK_SNDGEN1	4
-+#define R7S72100_CLK_SNDGEN2	3
-+#define R7S72100_CLK_SNDGEN3	2
- #define R7S72100_CLK_OSTM0	1
- #define R7S72100_CLK_OSTM1	0
- 
- /* MSTP6 */
-+#define R7S72100_CLK_ADC	7
-+#define R7S72100_CLK_CEU	6
-+#define R7S72100_CLK_DOC0	5
-+#define R7S72100_CLK_DOC1	4
-+#define R7S72100_CLK_DRC0	3
-+#define R7S72100_CLK_DRC1	2
-+#define R7S72100_CLK_JCU	1
- #define R7S72100_CLK_RTC	0
- 
- /* MSTP7 */
-+#define R7S72100_CLK_VDEC0	7
-+#define R7S72100_CLK_VDEC1	6
- #define R7S72100_CLK_ETHER	4
-+#define R7S72100_CLK_NAND	3
- #define R7S72100_CLK_USB0	1
- #define R7S72100_CLK_USB1	0
- 
- /* MSTP8 */
-+#define R7S72100_CLK_IMR0	7
-+#define R7S72100_CLK_IMR1	6
-+#define R7S72100_CLK_IMRDISP	5
- #define R7S72100_CLK_MMCIF	4
-+#define R7S72100_CLK_MLB	3
-+#define R7S72100_CLK_ETHABV	2
-+#define R7S72100_CLK_SCUX	1
- 
- /* MSTP9 */
- #define R7S72100_CLK_I2C0	7
- #define R7S72100_CLK_I2C1	6
- #define R7S72100_CLK_I2C2	5
- #define R7S72100_CLK_I2C3	4
-+#define R7S72100_CLK_SPIMBC0	3
-+#define R7S72100_CLK_SPIMBC1	2
-+#define R7S72100_CLK_VDC50	1	/* and LVDS */
-+#define R7S72100_CLK_VDC51	0
- 
- /* MSTP10 */
- #define R7S72100_CLK_SPI0	7
-@@ -52,6 +85,9 @@
- #define R7S72100_CLK_SPI2	5
- #define R7S72100_CLK_SPI3	4
- #define R7S72100_CLK_SPI4	3
-+#define R7S72100_CLK_CDROM	2
-+#define R7S72100_CLK_SPDIF	1
-+#define R7S72100_CLK_RGPVG2	0
- 
- /* MSTP12 */
- #define R7S72100_CLK_SDHI00	3
-@@ -59,4 +95,8 @@
- #define R7S72100_CLK_SDHI10	1
- #define R7S72100_CLK_SDHI11	0
- 
-+/* MSTP13 */
-+#define R7S72100_CLK_PIX1	2
-+#define R7S72100_CLK_PIX0	1
-+
- #endif /* __DT_BINDINGS_CLOCK_R7S72100_H__ */
--- 
-2.13.0
+Gr{oetje,eeting}s,
 
+                        Geert
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
