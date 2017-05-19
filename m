@@ -1,146 +1,114 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:58443 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752684AbdEJNWQ (ORCPT
+Received: from sauhun.de ([88.99.104.3]:46686 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755569AbdESNcC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 10 May 2017 09:22:16 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 03/16] rcar-vin: fix how pads are handled for v4l2 subdevice operations
-Date: Wed, 10 May 2017 16:22:15 +0300
-Message-ID: <3039950.nIPF3cxbPq@avalon>
-In-Reply-To: <20170314185957.25253-4-niklas.soderlund+renesas@ragnatech.se>
-References: <20170314185957.25253-1-niklas.soderlund+renesas@ragnatech.se> <20170314185957.25253-4-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+        Fri, 19 May 2017 09:32:02 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH v2 5/6] mmc: tmio: add CMD23 support
+Date: Fri, 19 May 2017 15:31:54 +0200
+Message-Id: <20170519133155.22945-6-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20170519133155.22945-1-wsa+renesas@sang-engineering.com>
+References: <20170519133155.22945-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Niklas,
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/mmc/host/tmio_mmc_core.c | 41 +++++++++++++++++++++++++++-------------
+ 1 file changed, 28 insertions(+), 13 deletions(-)
 
-Thank you for the patch.
-
-On Tuesday 14 Mar 2017 19:59:44 Niklas S=F6derlund wrote:
-> The rcar-vin driver only uses one pad, pad number 0.
->=20
-> - All v4l2 operations that did not check that the requested operation=
-
->   was for pad 0 have been updated with a check to enforce this.
->=20
-> - All v4l2 operations that stored (and later restore) the requested p=
-ad
->   before substituting it for the subdevice pad number have been updat=
-ed
->   to not store the incoming pad and simply restore it to 0 after the
->   subdevice operation is complete.
->=20
-> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech=
-.se>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
->  drivers/media/platform/rcar-vin/rcar-v4l2.c | 26 ++++++++++++++-----=
--------
-> 1 file changed, 14 insertions(+), 12 deletions(-)
->=20
-> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> b/drivers/media/platform/rcar-vin/rcar-v4l2.c index
-> 7ca27599b9982ffc..610f59e2a9142622 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> @@ -550,14 +550,16 @@ static int rvin_enum_dv_timings(struct file *fi=
-le,
-> void *priv_fh, {
->  =09struct rvin_dev *vin =3D video_drvdata(file);
->  =09struct v4l2_subdev *sd =3D vin_to_source(vin);
-> -=09int pad, ret;
-> +=09int ret;
-> +
-> +=09if (timings->pad)
-> +=09=09return -EINVAL;
->=20
-> -=09pad =3D timings->pad;
->  =09timings->pad =3D vin->sink_pad_idx;
->=20
->  =09ret =3D v4l2_subdev_call(sd, pad, enum_dv_timings, timings);
->=20
-> -=09timings->pad =3D pad;
-> +=09timings->pad =3D 0;
->=20
->  =09return ret;
->  }
-> @@ -600,14 +602,16 @@ static int rvin_dv_timings_cap(struct file *fil=
-e, void
-> *priv_fh, {
->  =09struct rvin_dev *vin =3D video_drvdata(file);
->  =09struct v4l2_subdev *sd =3D vin_to_source(vin);
-> -=09int pad, ret;
-> +=09int ret;
-> +
-> +=09if (cap->pad)
-> +=09=09return -EINVAL;
->=20
-> -=09pad =3D cap->pad;
->  =09cap->pad =3D vin->sink_pad_idx;
->=20
->  =09ret =3D v4l2_subdev_call(sd, pad, dv_timings_cap, cap);
->=20
-> -=09cap->pad =3D pad;
-> +=09cap->pad =3D 0;
->=20
->  =09return ret;
->  }
-> @@ -616,17 +620,16 @@ static int rvin_g_edid(struct file *file, void =
-*fh,
-> struct v4l2_edid *edid) {
->  =09struct rvin_dev *vin =3D video_drvdata(file);
->  =09struct v4l2_subdev *sd =3D vin_to_source(vin);
-> -=09int input, ret;
-> +=09int ret;
->=20
->  =09if (edid->pad)
->  =09=09return -EINVAL;
->=20
-> -=09input =3D edid->pad;
->  =09edid->pad =3D vin->sink_pad_idx;
->=20
->  =09ret =3D v4l2_subdev_call(sd, pad, get_edid, edid);
->=20
-> -=09edid->pad =3D input;
-> +=09edid->pad =3D 0;
->=20
->  =09return ret;
->  }
-> @@ -635,17 +638,16 @@ static int rvin_s_edid(struct file *file, void =
-*fh,
-> struct v4l2_edid *edid) {
->  =09struct rvin_dev *vin =3D video_drvdata(file);
->  =09struct v4l2_subdev *sd =3D vin_to_source(vin);
-> -=09int input, ret;
-> +=09int ret;
->=20
->  =09if (edid->pad)
->  =09=09return -EINVAL;
->=20
-> -=09input =3D edid->pad;
->  =09edid->pad =3D vin->sink_pad_idx;
->=20
->  =09ret =3D v4l2_subdev_call(sd, pad, set_edid, edid);
->=20
-> -=09edid->pad =3D input;
-> +=09edid->pad =3D 0;
->=20
->  =09return ret;
->  }
-
---=20
-Regards,
-
-Laurent Pinchart
+diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+index 79a973273141ed..e1ad461c4b8c8f 100644
+--- a/drivers/mmc/host/tmio_mmc_core.c
++++ b/drivers/mmc/host/tmio_mmc_core.c
+@@ -368,11 +368,11 @@ static int tmio_mmc_start_command(struct tmio_mmc_host *host, struct mmc_command
+ 			c |= TRANSFER_MULTI;
+ 
+ 			/*
+-			 * Disable auto CMD12 at IO_RW_EXTENDED when
+-			 * multiple block transfer
++			 * Disable auto CMD12 at IO_RW_EXTENDED and SET_BLOCK_COUNT
++			 * when doing multiple block transfer
+ 			 */
+ 			if ((host->pdata->flags & TMIO_MMC_HAVE_CMD12_CTRL) &&
+-			    (cmd->opcode == SD_IO_RW_EXTENDED))
++			    (cmd->opcode == SD_IO_RW_EXTENDED || host->mrq->sbc))
+ 				c |= NO_CMD12_ISSUE;
+ 		}
+ 		if (data->flags & MMC_DATA_READ)
+@@ -549,7 +549,7 @@ void tmio_mmc_do_data_irq(struct tmio_mmc_host *host)
+ 			host->mrq);
+ 	}
+ 
+-	if (stop) {
++	if (stop && !host->mrq->sbc) {
+ 		if (stop->opcode != MMC_STOP_TRANSMISSION || stop->arg)
+ 			dev_err(&host->pdev->dev, "unsupported stop: CMD%u,0x%x. We did CMD12,0\n",
+ 				stop->opcode, stop->arg);
+@@ -857,15 +857,21 @@ static int tmio_mmc_execute_tuning(struct mmc_host *mmc, u32 opcode)
+ 
+ static void tmio_process_mrq(struct tmio_mmc_host *host, struct mmc_request *mrq)
+ {
++	struct mmc_command *cmd;
+ 	int ret;
+ 
+-	if (mrq->data) {
+-		ret = tmio_mmc_start_data(host, mrq->data);
+-		if (ret)
+-			goto fail;
++	if (mrq->sbc && host->cmd != mrq->sbc) {
++		cmd = mrq->sbc;
++	} else {
++		cmd = mrq->cmd;
++		if (mrq->data) {
++			ret = tmio_mmc_start_data(host, mrq->data);
++			if (ret)
++				goto fail;
++		}
+ 	}
+ 
+-	ret = tmio_mmc_start_command(host, mrq->cmd);
++	ret = tmio_mmc_start_command(host, cmd);
+ 	if (ret)
+ 		goto fail;
+ 
+@@ -920,13 +926,16 @@ static void tmio_mmc_finish_request(struct tmio_mmc_host *host)
+ 		return;
+ 	}
+ 
+-	host->cmd = NULL;
+-	host->data = NULL;
+-	host->force_pio = false;
++	/* If not SET_BLOCK_COUNT, clear old data */
++	if (host->cmd != mrq->sbc) {
++		host->cmd = NULL;
++		host->data = NULL;
++		host->force_pio = false;
++		host->mrq = NULL;
++	}
+ 
+ 	cancel_delayed_work(&host->delayed_reset_work);
+ 
+-	host->mrq = NULL;
+ 	spin_unlock_irqrestore(&host->lock, flags);
+ 
+ 	if (mrq->cmd->error || (mrq->data && mrq->data->error))
+@@ -935,6 +944,12 @@ static void tmio_mmc_finish_request(struct tmio_mmc_host *host)
+ 	if (host->check_scc_error)
+ 		host->check_scc_error(host);
+ 
++	/* If SET_BLOCK_COUNT, continue with main command */
++	if (host->mrq) {
++		tmio_process_mrq(host, mrq);
++		return;
++	}
++
+ 	mmc_request_done(host->mmc, mrq);
+ }
+ 
+-- 
+2.11.0
