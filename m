@@ -1,414 +1,288 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:44476 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754399AbdEIQkG (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52008 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753974AbdESRhJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 9 May 2017 12:40:06 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: laurent.pinchart@ideasonboard.com
-Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        linux-media@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v3 2/2] v4l: vsp1: Provide a writeback video device
-Date: Tue,  9 May 2017 17:39:52 +0100
-Message-Id: <5debeb08338b520f52577ca6cf9be815a54c07ea.1494347923.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.ebf0f0df2d74f2a209e8b628269e3cac27d4a2ab.1494347923.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.ebf0f0df2d74f2a209e8b628269e3cac27d4a2ab.1494347923.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.ebf0f0df2d74f2a209e8b628269e3cac27d4a2ab.1494347923.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.ebf0f0df2d74f2a209e8b628269e3cac27d4a2ab.1494347923.git-series.kieran.bingham+renesas@ideasonboard.com>
+        Fri, 19 May 2017 13:37:09 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
+In-Reply-To: <87fug3ot48.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1dBlpl-00050B-U1@debutante>
+Date: Fri, 19 May 2017 18:37:01 +0100
+Subject: Applied "ASoC: rsnd: add HDMI output support" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When the VSP1 is used in an active display pipeline, the output of the
-WPF can supply the LIF entity directly and simultaneously write to
-memory.
+The patch
 
-Support this functionality in the VSP1 driver, by extending the WPF
-source pads, and establishing a V4L2 video device node connected to the
-new source.
+   ASoC: rsnd: add HDMI output support
 
-The source will be able to perform pixel format conversion, but not
-rescaling, and as such the output from the memory node will always be
-of the same dimensions as the display output.
+has been applied to the asoc tree at
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 7fa72cca39a042228965a578b9249216082591e0 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Thu, 18 May 2017 01:28:22 +0000
+Subject: [PATCH] ASoC: rsnd: add HDMI output support
+
+Renesas R-Car Gen3 can output HDMI sound if SSIU/SSI are connected to
+R-Car built-in HDMI device (R-Car Gen3 built-in HDMI device will be
+controlled by DRM/KMS driver).
+If SSIx was connected to HDMI0/1 on DT, SSI driver will detect it
+automatically by this patch.
+Note is that now Renesas R-Car sound driver is assuming that it is
+using OF-graph base simple card for HDMI sound.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
-Changes since RFC
- - Fix checkpatch.pl warnings
- - Adapt to use a single source pad for the Writeback and LIF
- - Use WPF properties to determine when to create links instead of VSP
- - Remove incorrect vsp1_video_verify_format() changes
- - Spelling and grammar fixes
+ sound/soc/sh/Kconfig     |  2 +-
+ sound/soc/sh/rcar/core.c |  7 ++++--
+ sound/soc/sh/rcar/gen.c  |  2 ++
+ sound/soc/sh/rcar/rsnd.h |  9 ++++++++
+ sound/soc/sh/rcar/ssi.c  | 58 ++++++++++++++++++++++++++++++++++++++++++++++++
+ sound/soc/sh/rcar/ssiu.c | 37 ++++++++++++++++++++++++++++++
+ 6 files changed, 112 insertions(+), 3 deletions(-)
 
- - Rebased to v4.12-rc1
----
- drivers/media/platform/vsp1/vsp1.h       |   1 +-
- drivers/media/platform/vsp1/vsp1_drm.c   |  18 +++-
- drivers/media/platform/vsp1/vsp1_drv.c   |   5 +-
- drivers/media/platform/vsp1/vsp1_rwpf.h  |   1 +-
- drivers/media/platform/vsp1/vsp1_video.c | 150 +++++++++++++++++++++++-
- drivers/media/platform/vsp1/vsp1_video.h |   5 +-
- drivers/media/platform/vsp1/vsp1_wpf.c   |  19 ++-
- 7 files changed, 192 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/media/platform/vsp1/vsp1.h b/drivers/media/platform/vsp1/vsp1.h
-index 85387a64179a..a2d462264312 100644
---- a/drivers/media/platform/vsp1/vsp1.h
-+++ b/drivers/media/platform/vsp1/vsp1.h
-@@ -54,6 +54,7 @@ struct vsp1_uds;
- #define VSP1_HAS_WPF_HFLIP	(1 << 6)
- #define VSP1_HAS_HGO		(1 << 7)
- #define VSP1_HAS_HGT		(1 << 8)
-+#define VSP1_HAS_WPF_WRITEBACK	(1 << 9)
+diff --git a/sound/soc/sh/Kconfig b/sound/soc/sh/Kconfig
+index 147ebecfed94..1aa5cd77ca24 100644
+--- a/sound/soc/sh/Kconfig
++++ b/sound/soc/sh/Kconfig
+@@ -38,7 +38,7 @@ config SND_SOC_RCAR
+ 	tristate "R-Car series SRU/SCU/SSIU/SSI support"
+ 	depends on COMMON_CLK
+ 	depends on OF || COMPILE_TEST
+-	select SND_SIMPLE_CARD
++	select SND_SIMPLE_CARD_UTILS
+ 	select REGMAP_MMIO
+ 	help
+ 	  This option enables R-Car SRU/SCU/SSIU/SSI sound support
+diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
+index 41b2e782b0bf..080431543141 100644
+--- a/sound/soc/sh/rcar/core.c
++++ b/sound/soc/sh/rcar/core.c
+@@ -909,8 +909,11 @@ static int rsnd_dai_probe(struct rsnd_priv *priv)
+ 	 */
+ 	dai_i = 0;
+ 	if (is_graph) {
+-		for_each_endpoint_of_node(dai_node, dai_np)
+-			__rsnd_dai_probe(priv, dai_np, dai_i++, is_graph);
++		for_each_endpoint_of_node(dai_node, dai_np) {
++			__rsnd_dai_probe(priv, dai_np, dai_i, is_graph);
++			rsnd_ssi_parse_hdmi_connection(priv, dai_np, dai_i);
++			dai_i++;
++		}
+ 	} else {
+ 		for_each_child_of_node(dai_node, dai_np)
+ 			__rsnd_dai_probe(priv, dai_np, dai_i++, is_graph);
+diff --git a/sound/soc/sh/rcar/gen.c b/sound/soc/sh/rcar/gen.c
+index 63b6d3c28021..99f93a17511e 100644
+--- a/sound/soc/sh/rcar/gen.c
++++ b/sound/soc/sh/rcar/gen.c
+@@ -219,6 +219,8 @@ static int rsnd_gen2_probe(struct rsnd_priv *priv)
+ 		RSND_GEN_S_REG(SSI_SYS_STATUS5,	0x884),
+ 		RSND_GEN_S_REG(SSI_SYS_STATUS6,	0x888),
+ 		RSND_GEN_S_REG(SSI_SYS_STATUS7,	0x88c),
++		RSND_GEN_S_REG(HDMI0_SEL,	0x9e0),
++		RSND_GEN_S_REG(HDMI1_SEL,	0x9e4),
  
- struct vsp1_device_info {
- 	u32 version;
-diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
-index 9d235e830f5a..539890b27864 100644
---- a/drivers/media/platform/vsp1/vsp1_drm.c
-+++ b/drivers/media/platform/vsp1/vsp1_drm.c
-@@ -25,6 +25,7 @@
- #include "vsp1_lif.h"
- #include "vsp1_pipe.h"
- #include "vsp1_rwpf.h"
-+#include "vsp1_video.h"
+ 		/* FIXME: it needs SSI_MODE2/3 in the future */
+ 		RSND_GEN_M_REG(SSI_BUSIF_MODE,	0x0,	0x80),
+diff --git a/sound/soc/sh/rcar/rsnd.h b/sound/soc/sh/rcar/rsnd.h
+index 4d8e0584b644..037e33ffa69d 100644
+--- a/sound/soc/sh/rcar/rsnd.h
++++ b/sound/soc/sh/rcar/rsnd.h
+@@ -170,6 +170,8 @@ enum rsnd_reg {
+ 	RSND_REG_SSI_SYS_STATUS5,
+ 	RSND_REG_SSI_SYS_STATUS6,
+ 	RSND_REG_SSI_SYS_STATUS7,
++	RSND_REG_HDMI0_SEL,
++	RSND_REG_HDMI1_SEL,
  
+ 	/* SSI */
+ 	RSND_REG_SSICR,
+@@ -646,6 +648,13 @@ int rsnd_ssi_is_dma_mode(struct rsnd_mod *mod);
+ int rsnd_ssi_use_busif(struct rsnd_dai_stream *io);
+ u32 rsnd_ssi_multi_slaves_runtime(struct rsnd_dai_stream *io);
  
- /* -----------------------------------------------------------------------------
-@@ -483,6 +484,13 @@ void vsp1_du_atomic_flush(struct device *dev)
- 				__func__, rpf->entity.index);
++#define RSND_SSI_HDMI_PORT0	0xf0
++#define RSND_SSI_HDMI_PORT1	0xf1
++int rsnd_ssi_hdmi_port(struct rsnd_dai_stream *io);
++void rsnd_ssi_parse_hdmi_connection(struct rsnd_priv *priv,
++				    struct device_node *endpoint,
++				    int dai_i);
++
+ #define rsnd_ssi_is_pin_sharing(io)	\
+ 	__rsnd_ssi_is_pin_sharing(rsnd_io_to_mod_ssi(io))
+ int __rsnd_ssi_is_pin_sharing(struct rsnd_mod *mod);
+diff --git a/sound/soc/sh/rcar/ssi.c b/sound/soc/sh/rcar/ssi.c
+index 135c5669f796..d0602c189736 100644
+--- a/sound/soc/sh/rcar/ssi.c
++++ b/sound/soc/sh/rcar/ssi.c
+@@ -11,6 +11,7 @@
+  * it under the terms of the GNU General Public License version 2 as
+  * published by the Free Software Foundation.
+  */
++#include <sound/simple_card_utils.h>
+ #include <linux/delay.h>
+ #include "rsnd.h"
+ #define RSND_SSI_NAME_SIZE 16
+@@ -81,6 +82,8 @@ struct rsnd_ssi {
+ /* flags */
+ #define RSND_SSI_CLK_PIN_SHARE		(1 << 0)
+ #define RSND_SSI_NO_BUSIF		(1 << 1) /* SSI+DMA without BUSIF */
++#define RSND_SSI_HDMI0			(1 << 2) /* for HDMI0 */
++#define RSND_SSI_HDMI1			(1 << 3) /* for HDMI1 */
+ 
+ #define for_each_rsnd_ssi(pos, priv, i)					\
+ 	for (i = 0;							\
+@@ -99,6 +102,20 @@ struct rsnd_ssi {
+ #define rsnd_ssi_is_run_mods(mod, io) \
+ 	(rsnd_ssi_run_mods(io) & (1 << rsnd_mod_id(mod)))
+ 
++int rsnd_ssi_hdmi_port(struct rsnd_dai_stream *io)
++{
++	struct rsnd_mod *mod = rsnd_io_to_mod_ssi(io);
++	struct rsnd_ssi *ssi = rsnd_mod_to_ssi(mod);
++
++	if (rsnd_ssi_mode_flags(ssi) & RSND_SSI_HDMI0)
++		return RSND_SSI_HDMI_PORT0;
++
++	if (rsnd_ssi_mode_flags(ssi) & RSND_SSI_HDMI1)
++		return RSND_SSI_HDMI_PORT1;
++
++	return 0;
++}
++
+ int rsnd_ssi_use_busif(struct rsnd_dai_stream *io)
+ {
+ 	struct rsnd_mod *mod = rsnd_io_to_mod_ssi(io);
+@@ -835,6 +852,47 @@ void rsnd_parse_connect_ssi(struct rsnd_dai *rdai,
+ 	of_node_put(node);
+ }
+ 
++static void __rsnd_ssi_parse_hdmi_connection(struct rsnd_priv *priv,
++					     struct rsnd_dai_stream *io,
++					     struct device_node *remote_ep)
++{
++	struct device *dev = rsnd_priv_to_dev(priv);
++	struct rsnd_mod *mod = rsnd_io_to_mod_ssi(io);
++	struct rsnd_ssi *ssi;
++
++	if (!mod)
++		return;
++
++	ssi  = rsnd_mod_to_ssi(mod);
++
++	if (strstr(remote_ep->full_name, "hdmi0")) {
++		ssi->flags |= RSND_SSI_HDMI0;
++		dev_dbg(dev, "%s[%d] connected to HDMI0\n",
++			 rsnd_mod_name(mod), rsnd_mod_id(mod));
++	}
++
++	if (strstr(remote_ep->full_name, "hdmi1")) {
++		ssi->flags |= RSND_SSI_HDMI1;
++		dev_dbg(dev, "%s[%d] connected to HDMI1\n",
++			rsnd_mod_name(mod), rsnd_mod_id(mod));
++	}
++}
++
++void rsnd_ssi_parse_hdmi_connection(struct rsnd_priv *priv,
++				    struct device_node *endpoint,
++				    int dai_i)
++{
++	struct rsnd_dai *rdai = rsnd_rdai_get(priv, dai_i);
++	struct device_node *remote_ep;
++
++	remote_ep = of_graph_get_remote_endpoint(endpoint);
++	if (!remote_ep)
++		return;
++
++	__rsnd_ssi_parse_hdmi_connection(priv, &rdai->playback, remote_ep);
++	__rsnd_ssi_parse_hdmi_connection(priv, &rdai->capture,  remote_ep);
++}
++
+ struct rsnd_mod *rsnd_ssi_mod_get(struct rsnd_priv *priv, int id)
+ {
+ 	if (WARN_ON(id < 0 || id >= rsnd_ssi_nr(priv)))
+diff --git a/sound/soc/sh/rcar/ssiu.c b/sound/soc/sh/rcar/ssiu.c
+index 14fafdaf1395..13d648ef1ed6 100644
+--- a/sound/soc/sh/rcar/ssiu.c
++++ b/sound/soc/sh/rcar/ssiu.c
+@@ -123,6 +123,7 @@ static int rsnd_ssiu_init_gen2(struct rsnd_mod *mod,
+ 			       struct rsnd_dai_stream *io,
+ 			       struct rsnd_priv *priv)
+ {
++	int hdmi = rsnd_ssi_hdmi_port(io);
+ 	int ret;
+ 
+ 	ret = rsnd_ssiu_init(mod, io, priv);
+@@ -149,6 +150,42 @@ static int rsnd_ssiu_init_gen2(struct rsnd_mod *mod,
+ 			       rsnd_get_dalign(mod, io));
  	}
  
-+	/*
-+	 * If we have a writeback node attached, we use this opportunity to
-+	 * update the video buffers.
-+	 */
-+	if (pipe->output->video && pipe->output->video->frame_end)
-+		pipe->output->video->frame_end(pipe);
++	if (hdmi) {
++		enum rsnd_mod_type rsnd_ssi_array[] = {
++			RSND_MOD_SSIM1,
++			RSND_MOD_SSIM2,
++			RSND_MOD_SSIM3,
++		};
++		struct rsnd_mod *ssi_mod = rsnd_io_to_mod_ssi(io);
++		struct rsnd_mod *pos;
++		u32 val;
++		int i, shift;
 +
- 	/* Configure all entities in the pipeline. */
- 	list_for_each_entry(entity, &pipe->entities, list_pipe) {
- 		/* Disconnect unused RPFs from the pipeline. */
-@@ -572,6 +580,16 @@ int vsp1_drm_create_links(struct vsp1_device *vsp1)
- 	if (ret < 0)
- 		return ret;
- 
-+	if (vsp1->wpf[0]->has_writeback) {
-+		/* Connect the video device to the WPF for Writeback support */
-+		ret = media_create_pad_link(&vsp1->wpf[0]->entity.subdev.entity,
-+				    RWPF_PAD_SOURCE,
-+				    &vsp1->wpf[0]->video->video.entity,
-+				    0, flags);
-+		if (ret < 0)
-+			return ret;
++		i = rsnd_mod_id(ssi_mod);
++
++		/* output all same SSI as default */
++		val =	i << 16 |
++			i << 20 |
++			i << 24 |
++			i << 28 |
++			i;
++
++		for_each_rsnd_mod_array(i, pos, io, rsnd_ssi_array) {
++			shift	= (i * 4) + 16;
++			val	= (val & ~(0xF << shift)) |
++				rsnd_mod_id(pos) << shift;
++		}
++
++		switch (hdmi) {
++		case RSND_SSI_HDMI_PORT0:
++			rsnd_mod_write(mod, HDMI0_SEL, val);
++			break;
++		case RSND_SSI_HDMI_PORT1:
++			rsnd_mod_write(mod, HDMI1_SEL, val);
++			break;
++		}
 +	}
 +
  	return 0;
  }
  
-diff --git a/drivers/media/platform/vsp1/vsp1_drv.c b/drivers/media/platform/vsp1/vsp1_drv.c
-index 048446af5ae7..240045e82cc2 100644
---- a/drivers/media/platform/vsp1/vsp1_drv.c
-+++ b/drivers/media/platform/vsp1/vsp1_drv.c
-@@ -411,7 +411,7 @@ static int vsp1_create_entities(struct vsp1_device *vsp1)
- 		vsp1->wpf[i] = wpf;
- 		list_add_tail(&wpf->entity.list_dev, &vsp1->entities);
- 
--		if (vsp1->info->uapi) {
-+		if (vsp1->info->uapi || wpf->has_writeback) {
- 			struct vsp1_video *video = vsp1_video_create(vsp1, wpf);
- 
- 			if (IS_ERR(video)) {
-@@ -709,7 +709,8 @@ static const struct vsp1_device_info vsp1_device_infos[] = {
- 		.version = VI6_IP_VERSION_MODEL_VSPD_GEN3,
- 		.model = "VSP2-D",
- 		.gen = 3,
--		.features = VSP1_HAS_BRU | VSP1_HAS_LIF | VSP1_HAS_WPF_VFLIP,
-+		.features = VSP1_HAS_BRU | VSP1_HAS_LIF | VSP1_HAS_WPF_VFLIP
-+			  | VSP1_HAS_WPF_WRITEBACK,
- 		.rpf_count = 5,
- 		.wpf_count = 2,
- 		.num_bru_inputs = 5,
-diff --git a/drivers/media/platform/vsp1/vsp1_rwpf.h b/drivers/media/platform/vsp1/vsp1_rwpf.h
-index 58215a7ab631..d26a92cd5c7d 100644
---- a/drivers/media/platform/vsp1/vsp1_rwpf.h
-+++ b/drivers/media/platform/vsp1/vsp1_rwpf.h
-@@ -53,6 +53,7 @@ struct vsp1_rwpf {
- 
- 	u32 mult_alpha;
- 	u32 outfmt;
-+	bool has_writeback;
- 
- 	struct {
- 		spinlock_t lock;
-diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
-index 47b5c24043d7..91def2609882 100644
---- a/drivers/media/platform/vsp1/vsp1_video.c
-+++ b/drivers/media/platform/vsp1/vsp1_video.c
-@@ -887,6 +887,7 @@ static void vsp1_video_stop_streaming(struct vb2_queue *vq)
- 	list_for_each_entry(buffer, &video->irqqueue, queue)
- 		vb2_buffer_done(&buffer->buf.vb2_buf, VB2_BUF_STATE_ERROR);
- 	INIT_LIST_HEAD(&video->irqqueue);
-+	INIT_LIST_HEAD(&video->wbqueue);
- 	spin_unlock_irqrestore(&video->irqlock, flags);
- }
- 
-@@ -900,6 +901,147 @@ static const struct vb2_ops vsp1_video_queue_qops = {
- 	.stop_streaming = vsp1_video_stop_streaming,
- };
- 
-+
-+/* -----------------------------------------------------------------------------
-+ * videobuf2 queue operations for writeback nodes
-+ */
-+
-+static void vsp1_video_wb_process_buffer(struct vsp1_video *video)
-+{
-+	struct vsp1_vb2_buffer *buf;
-+	unsigned long flags;
-+
-+	/*
-+	 * Writeback uses a running stream, unlike the M2M interface which
-+	 * controls a pipeline process manually though the use of
-+	 * vsp1_pipeline_run().
-+	 *
-+	 * Instead writeback will commence at the next frame interval, and can
-+	 * be marked complete at the interval following that. To handle this we
-+	 * store the configured buffer as pending until the next callback.
-+	 *
-+	 * |    |    |    |    |
-+	 *  A   |<-->|
-+	 *       B   |<-->|
-+	 *            C   |<-->| : Only at interrupt C can A be marked done
-+	 */
-+
-+	spin_lock_irqsave(&video->irqlock, flags);
-+
-+	/* Move the pending image to the active hw queue */
-+	if (video->pending) {
-+		list_add_tail(&video->pending->queue, &video->irqqueue);
-+		video->pending = NULL;
-+	}
-+
-+	buf = list_first_entry_or_null(&video->wbqueue, struct vsp1_vb2_buffer,
-+					queue);
-+
-+	if (buf) {
-+		video->rwpf->mem = buf->mem;
-+
-+		/*
-+		 * Store this buffer as pending. It will commence at the next
-+		 * frame start interrupt
-+		 */
-+		video->pending = buf;
-+		list_del(&buf->queue);
-+	} else {
-+		/* Disable writeback with no buffer */
-+		video->rwpf->mem = (struct vsp1_rwpf_memory) { 0 };
-+	}
-+
-+	spin_unlock_irqrestore(&video->irqlock, flags);
-+}
-+
-+static void vsp1_video_wb_frame_end(struct vsp1_pipeline *pipe)
-+{
-+	struct vsp1_video *video = pipe->output->video;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&pipe->irqlock, flags);
-+
-+	/* Complete any buffer on the IRQ queue */
-+	vsp1_video_complete_buffer(video);
-+
-+	/* Queue up any buffer from our wb queue, and place on the IRQ queue */
-+	vsp1_video_wb_process_buffer(video);
-+
-+	spin_unlock_irqrestore(&pipe->irqlock, flags);
-+}
-+
-+static void vsp1_video_wb_buffer_queue(struct vb2_buffer *vb)
-+{
-+	struct vb2_v4l2_buffer *vbuf = to_vb2_v4l2_buffer(vb);
-+	struct vsp1_video *video = vb2_get_drv_priv(vb->vb2_queue);
-+	struct vsp1_vb2_buffer *buf = to_vsp1_vb2_buffer(vbuf);
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&video->irqlock, flags);
-+	list_add_tail(&buf->queue, &video->wbqueue);
-+	spin_unlock_irqrestore(&video->irqlock, flags);
-+}
-+
-+static int vsp1_video_wb_start_streaming(struct vb2_queue *vq,
-+		unsigned int count)
-+{
-+	struct vsp1_video *video = vb2_get_drv_priv(vq);
-+	unsigned long flags;
-+
-+	/* Enable the completion interrupts */
-+	spin_lock_irqsave(&video->irqlock, flags);
-+	video->frame_end = vsp1_video_wb_frame_end;
-+	spin_unlock_irqrestore(&video->irqlock, flags);
-+
-+	return 0;
-+}
-+
-+static void vsp1_video_wb_stop_streaming(struct vb2_queue *vq)
-+{
-+	struct vsp1_video *video = vb2_get_drv_priv(vq);
-+	struct vsp1_rwpf *rwpf = video->rwpf;
-+	struct vsp1_pipeline *pipe = rwpf->pipe;
-+	struct vsp1_vb2_buffer *buffer;
-+	unsigned long flags;
-+
-+	/*
-+	 * Disable the completion interrupts, and clear the WPF memory to
-+	 * prevent writing out frames
-+	 */
-+	spin_lock_irqsave(&video->irqlock, flags);
-+	video->frame_end = NULL;
-+	rwpf->mem = (struct vsp1_rwpf_memory) { 0 };
-+
-+	/* Return all queued buffers to userspace */
-+	list_for_each_entry(buffer, &video->wbqueue, queue)
-+		vb2_buffer_done(&buffer->buf.vb2_buf, VB2_BUF_STATE_ERROR);
-+	list_for_each_entry(buffer, &video->irqqueue, queue)
-+		vb2_buffer_done(&buffer->buf.vb2_buf, VB2_BUF_STATE_ERROR);
-+	if (video->pending) {
-+		vb2_buffer_done(&video->pending->buf.vb2_buf,
-+				VB2_BUF_STATE_ERROR);
-+		video->pending = NULL;
-+	}
-+
-+	INIT_LIST_HEAD(&video->wbqueue);
-+	INIT_LIST_HEAD(&video->irqqueue);
-+	spin_unlock_irqrestore(&video->irqlock, flags);
-+
-+	/* Return the reference obtained by vsp1_video_streamon() */
-+	vsp1_video_pipeline_put(pipe);
-+}
-+
-+static const struct vb2_ops vsp1_video_wb_queue_qops = {
-+	.queue_setup = vsp1_video_queue_setup,
-+	.buf_prepare = vsp1_video_buffer_prepare,
-+	.buf_queue = vsp1_video_wb_buffer_queue,
-+	.wait_prepare = vb2_ops_wait_prepare,
-+	.wait_finish = vb2_ops_wait_finish,
-+	.start_streaming = vsp1_video_wb_start_streaming,
-+	.stop_streaming = vsp1_video_wb_stop_streaming,
-+};
-+
-+
- /* -----------------------------------------------------------------------------
-  * V4L2 ioctls
-  */
-@@ -1140,6 +1282,8 @@ struct vsp1_video *vsp1_video_create(struct vsp1_device *vsp1,
- 	video->vsp1 = vsp1;
- 	video->rwpf = rwpf;
- 
-+	video->is_writeback = rwpf->has_writeback;
-+
- 	if (rwpf->entity.type == VSP1_ENTITY_RPF) {
- 		direction = "input";
- 		video->type = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE;
-@@ -1155,6 +1299,7 @@ struct vsp1_video *vsp1_video_create(struct vsp1_device *vsp1,
- 	mutex_init(&video->lock);
- 	spin_lock_init(&video->irqlock);
- 	INIT_LIST_HEAD(&video->irqqueue);
-+	INIT_LIST_HEAD(&video->wbqueue);
- 
- 	/* Initialize the media entity... */
- 	ret = media_entity_pads_init(&video->video.entity, 1, &video->pad);
-@@ -1178,12 +1323,15 @@ struct vsp1_video *vsp1_video_create(struct vsp1_device *vsp1,
- 
- 	video_set_drvdata(&video->video, video);
- 
-+	if (video->is_writeback)
-+		video->queue.ops = &vsp1_video_wb_queue_qops;
-+	else
-+		video->queue.ops = &vsp1_video_queue_qops;
- 	video->queue.type = video->type;
- 	video->queue.io_modes = VB2_MMAP | VB2_USERPTR | VB2_DMABUF;
- 	video->queue.lock = &video->lock;
- 	video->queue.drv_priv = video;
- 	video->queue.buf_struct_size = sizeof(struct vsp1_vb2_buffer);
--	video->queue.ops = &vsp1_video_queue_qops;
- 	video->queue.mem_ops = &vb2_dma_contig_memops;
- 	video->queue.timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_COPY;
- 	video->queue.dev = video->vsp1->dev;
-diff --git a/drivers/media/platform/vsp1/vsp1_video.h b/drivers/media/platform/vsp1/vsp1_video.h
-index 50ea7f02205f..b63e14bbaef0 100644
---- a/drivers/media/platform/vsp1/vsp1_video.h
-+++ b/drivers/media/platform/vsp1/vsp1_video.h
-@@ -48,6 +48,11 @@ struct vsp1_video {
- 	struct vb2_queue queue;
- 	spinlock_t irqlock;
- 	struct list_head irqqueue;
-+
-+	bool is_writeback;
-+	struct list_head wbqueue;
-+	struct vsp1_vb2_buffer *pending;
-+	void (*frame_end)(struct vsp1_pipeline *pipe);
- };
- 
- static inline struct vsp1_video *to_vsp1_video(struct video_device *vdev)
-diff --git a/drivers/media/platform/vsp1/vsp1_wpf.c b/drivers/media/platform/vsp1/vsp1_wpf.c
-index 32df109b119f..9326ca0846f7 100644
---- a/drivers/media/platform/vsp1/vsp1_wpf.c
-+++ b/drivers/media/platform/vsp1/vsp1_wpf.c
-@@ -249,6 +249,8 @@ static void wpf_configure(struct vsp1_entity *entity,
- 	u32 outfmt = 0;
- 	u32 srcrpf = 0;
- 
-+	bool writeback = pipe->lif && wpf->mem.addr[0];
-+
- 	if (params == VSP1_ENTITY_PARAMS_RUNTIME) {
- 		const unsigned int mask = BIT(WPF_CTRL_VFLIP)
- 					| BIT(WPF_CTRL_HFLIP);
-@@ -300,7 +302,14 @@ static void wpf_configure(struct vsp1_entity *entity,
- 			       (0 << VI6_WPF_SZCLIP_OFST_SHIFT) |
- 			       (height << VI6_WPF_SZCLIP_SIZE_SHIFT));
- 
--		if (pipe->lif)
-+		vsp1_dl_list_write(dl, VI6_WPF_WRBCK_CTRL, writeback ?
-+						VI6_WPF_WRBCK_CTRL_WBMD : 0);
-+
-+		/*
-+		 * Display pipelines with no writeback memory do not configure
-+		 * the write out address
-+		 */
-+		if (pipe->lif && !writeback)
- 			return;
- 
- 		/*
-@@ -393,7 +402,7 @@ static void wpf_configure(struct vsp1_entity *entity,
- 	}
- 
- 	/* Format */
--	if (!pipe->lif) {
-+	if (!pipe->lif || writeback) {
- 		const struct v4l2_pix_format_mplane *format = &wpf->format;
- 		const struct vsp1_format_info *fmtinfo = wpf->fmtinfo;
- 
-@@ -433,8 +442,6 @@ static void wpf_configure(struct vsp1_entity *entity,
- 	vsp1_dl_list_write(dl, VI6_DPR_WPF_FPORCH(wpf->entity.index),
- 			   VI6_DPR_WPF_FPORCH_FP_WPFN);
- 
--	vsp1_dl_list_write(dl, VI6_WPF_WRBCK_CTRL, 0);
--
- 	/*
- 	 * Sources. If the pipeline has a single input and BRU is not used,
- 	 * configure it as the master layer. Otherwise configure all
-@@ -503,6 +510,10 @@ struct vsp1_rwpf *vsp1_wpf_create(struct vsp1_device *vsp1, unsigned int index)
- 	wpf->entity.type = VSP1_ENTITY_WPF;
- 	wpf->entity.index = index;
- 
-+	/* WPFs with writeback support can output to the LIF and memory */
-+	wpf->has_writeback = (vsp1->info->features & VSP1_HAS_WPF_WRITEBACK)
-+			   && index == 0;
-+
- 	sprintf(name, "wpf.%u", index);
- 	ret = vsp1_entity_init(vsp1, &wpf->entity, name, 2, &wpf_ops,
- 			       MEDIA_ENT_F_PROC_VIDEO_PIXEL_FORMATTER);
 -- 
-git-series 0.9.1
+2.11.0
