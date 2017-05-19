@@ -1,69 +1,184 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:47576 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752018AbdESQDT (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51616 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753472AbdESREK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 19 May 2017 12:03:19 -0400
-From: Jacopo Mondi <jacopo@jmondi.org>
-To: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [RFC v4 5/8] media: i2c: ov772x: Force use of SCCB protocol
-Date: Fri, 19 May 2017 18:02:57 +0200
-Message-Id: <1495209780-27342-6-git-send-email-jacopo@jmondi.org>
-In-Reply-To: <1495209780-27342-1-git-send-email-jacopo@jmondi.org>
-References: <1495209780-27342-1-git-send-email-jacopo@jmondi.org>
+        Fri, 19 May 2017 13:04:10 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
+In-Reply-To: <874lwjosdg.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1dBlJp-0003fj-7l@debutante>
+Date: Fri, 19 May 2017 18:04:01 +0100
+Subject: Applied "ASoC: simple-scu-card: cleanup documentation" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Commit e78902976150 ("i2c: sh_mobile: don't send a stop condition by
-default inside transfers") makes the i2c_sh_mobile I2C-adapter emit a
-stop/start sequence between messages in a single transfer only when
-explicitly requested with I2C_M_STOP.
+The patch
 
-This breaks the ov772x driver in the SH4 Migo-R board as the Omnivision
-sensor uses the I2C-like SCCB protocol that doesn't support repeated
-starts:
+   ASoC: simple-scu-card: cleanup documentation
 
-i2c-sh_mobile i2c-sh_mobile.0: Transfer request timed out
-ov772x 0-0021: Product ID error 92:92
+has been applied to the asoc tree at
 
-Fix it by marking the client as SCCB, forcing the emission of a
-stop/start sequence between all messages.
-As I2C_M_STOP requires the I2C adapter to support protocol mangling,
-ensure that the I2C_FUNC_PROTOCOL_MANGLING functionality is available.
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-Tested on SH4 Migo-R board, with OV772x now successfully probing
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-soc-camera-pdrv soc-camera-pdrv.0: Probing soc-camera-pdrv.0
-ov772x 0-0021: ov7725 Product ID 77:21 Manufacturer ID 7f:a2
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
-Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 55cfebfede61cedf60289a7bd20e93a1c83a39a9 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Thu, 18 May 2017 01:44:27 +0000
+Subject: [PATCH] ASoC: simple-scu-card: cleanup documentation
+
+simple-scu-card is almost same as simple-card. This is already explained
+in document. But simple-card and simple-scu-card both has same
+explanation for same property. This patch forward explantion to
+simple-card if possible to avoid duplication.
+
+This patch also cleanup DT binding example which is not good matching
+to simple-scu-card.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/media/i2c/soc_camera/ov772x.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ .../devicetree/bindings/sound/simple-scu-card.txt  | 65 ++++++++--------------
+ 1 file changed, 24 insertions(+), 41 deletions(-)
 
-diff --git a/drivers/media/i2c/soc_camera/ov772x.c b/drivers/media/i2c/soc_camera/ov772x.c
-index 985a367..351abec 100644
---- a/drivers/media/i2c/soc_camera/ov772x.c
-+++ b/drivers/media/i2c/soc_camera/ov772x.c
-@@ -1062,11 +1062,13 @@ static int ov772x_probe(struct i2c_client *client,
- 		return -EINVAL;
- 	}
+diff --git a/Documentation/devicetree/bindings/sound/simple-scu-card.txt b/Documentation/devicetree/bindings/sound/simple-scu-card.txt
+index d6fe47ed09af..e894cef1d314 100644
+--- a/Documentation/devicetree/bindings/sound/simple-scu-card.txt
++++ b/Documentation/devicetree/bindings/sound/simple-scu-card.txt
+@@ -1,35 +1,29 @@
+-ASoC simple SCU Sound Card
++ASoC Simple SCU Sound Card
  
--	if (!i2c_check_functionality(adapter, I2C_FUNC_SMBUS_BYTE_DATA)) {
-+	if (!i2c_check_functionality(adapter, I2C_FUNC_SMBUS_BYTE_DATA |
-+					      I2C_FUNC_PROTOCOL_MANGLING)) {
- 		dev_err(&adapter->dev,
--			"I2C-Adapter doesn't support I2C_FUNC_SMBUS_BYTE_DATA\n");
-+			"I2C-Adapter doesn't support SMBUS_BYTE_DATA or PROTOCOL_MANGLING\n");
- 		return -EIO;
- 	}
-+	client->flags |= I2C_CLIENT_SCCB;
+-Simple-Card specifies audio DAI connections of SoC <-> codec.
++Simple SCU Sound Card is "Simple Sound Card" + "ALSA DPCM".
++For example, you can use this driver if you want to exchange sampling rate convert,
++Mixing, etc...
  
- 	priv = devm_kzalloc(&client->dev, sizeof(*priv), GFP_KERNEL);
- 	if (!priv)
+ Required properties:
+ 
+ - compatible				: "simple-scu-audio-card"
+ 					  "renesas,rsrc-card"
+-
+ Optional properties:
+ 
+-- simple-audio-card,name		: User specified audio sound card name, one string
+-					  property.
+-- simple-audio-card,cpu			: CPU   sub-node
+-- simple-audio-card,codec		: CODEC sub-node
++- simple-audio-card,name		: see simple-audio-card.txt
++- simple-audio-card,cpu			: see simple-audio-card.txt
++- simple-audio-card,codec		: see simple-audio-card.txt
+ 
+ Optional subnode properties:
+ 
+-- simple-audio-card,format		: CPU/CODEC common audio format.
+-					  "i2s", "right_j", "left_j" , "dsp_a"
+-					  "dsp_b", "ac97", "pdm", "msb", "lsb"
+-- simple-audio-card,frame-master	: Indicates dai-link frame master.
+-					  phandle to a cpu or codec subnode.
+-- simple-audio-card,bitclock-master	: Indicates dai-link bit clock master.
+-					  phandle to a cpu or codec subnode.
+-- simple-audio-card,bitclock-inversion	: bool property. Add this if the
+-					  dai-link uses bit clock inversion.
+-- simple-audio-card,frame-inversion	: bool property. Add this if the
+-					  dai-link uses frame clock inversion.
++- simple-audio-card,format		: see simple-audio-card.txt
++- simple-audio-card,frame-master	: see simple-audio-card.txt
++- simple-audio-card,bitclock-master	: see simple-audio-card.txt
++- simple-audio-card,bitclock-inversion	: see simple-audio-card.txt
++- simple-audio-card,frame-inversion	: see simple-audio-card.txt
+ - simple-audio-card,convert-rate	: platform specified sampling rate convert
+ - simple-audio-card,convert-channels	: platform specified converted channel size (2 - 8 ch)
+-- simple-audio-card,prefix		: see audio-routing
++- simple-audio-card,prefix		: see routing
+ - simple-audio-card,routing		: A list of the connections between audio components.
+ 					  Each entry is a pair of strings, the first being the connection's sink,
+ 					  the second being the connection's source. Valid names for sources.
+@@ -38,19 +32,11 @@ Optional subnode properties:
+ 
+ Required CPU/CODEC subnodes properties:
+ 
+-- sound-dai				: phandle and port of CPU/CODEC
++- sound-dai				: see simple-audio-card.txt
+ 
+ Optional CPU/CODEC subnodes properties:
+ 
+-- clocks / system-clock-frequency	: specify subnode's clock if needed.
+-					  it can be specified via "clocks" if system has
+-					  clock node (= common clock), or "system-clock-frequency"
+-					  (if system doens't support common clock)
+-					  If a clock is specified, it is
+-					  enabled with clk_prepare_enable()
+-					  in dai startup() and disabled with
+-					  clk_disable_unprepare() in dai
+-					  shutdown().
++- clocks / system-clock-frequency	: see simple-audio-card.txt
+ 
+ Example 1. Sampling Rate Covert
+ 
+@@ -59,11 +45,10 @@ sound {
+ 
+ 	simple-audio-card,name = "rsnd-ak4643";
+ 	simple-audio-card,format = "left_j";
+-	simple-audio-card,format = "left_j";
+ 	simple-audio-card,bitclock-master = <&sndcodec>;
+ 	simple-audio-card,frame-master = <&sndcodec>;
+ 
+-	simple-audio-card,convert-rate = <48000>; /* see audio_clk_a */
++	simple-audio-card,convert-rate = <48000>;
+ 
+ 	simple-audio-card,prefix = "ak4642";
+ 	simple-audio-card,routing = "ak4642 Playback", "DAI0 Playback",
+@@ -79,20 +64,18 @@ sound {
+ 	};
+ };
+ 
+-Example 2. 2 CPU 1 Codec
++Example 2. 2 CPU 1 Codec (Mixing)
+ 
+ sound {
+-	compatible = "renesas,rsrc-card";
+-
+-	card-name = "rsnd-ak4643";
+-	format = "left_j";
+-	bitclock-master = <&dpcmcpu>;
+-	frame-master = <&dpcmcpu>;
++	compatible = "simple-scu-audio-card";
+ 
+-	convert-rate = <48000>;  /* see audio_clk_a */
++	simple-audio-card,name = "rsnd-ak4643";
++	simple-audio-card,format = "left_j";
++	simple-audio-card,bitclock-master = <&dpcmcpu>;
++	simple-audio-card,frame-master = <&dpcmcpu>;
+ 
+-	audio-prefix = "ak4642";
+-	audio-routing = "ak4642 Playback", "DAI0 Playback",
++	simple-audio-card,prefix = "ak4642";
++	simple-audio-card,routing = "ak4642 Playback", "DAI0 Playback",
+ 			"ak4642 Playback", "DAI1 Playback";
+ 
+ 	dpcmcpu: cpu@0 {
 -- 
-2.7.4
+2.11.0
