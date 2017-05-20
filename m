@@ -1,49 +1,74 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:46181 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757043AbdEVMas (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 May 2017 08:30:48 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 05/14] ARM: dts: r8a7779: update PFC node name to pin-controller
-Date: Mon, 22 May 2017 14:30:15 +0200
-Message-Id: <b07b763c5255cf400ddfd4b6a7899adf0538dea9.1495455272.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1495455272.git.horms+renesas@verge.net.au>
-References: <cover.1495455272.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <CAK7LNAQCF1UATHONzLnrUN=uvVw6tsErfbDS9joFo3ya5Vgy4A@mail.gmail.com>
+References: <1495303131-9814-1-git-send-email-yamada.masahiro@socionext.com> <CAK7LNAQCF1UATHONzLnrUN=uvVw6tsErfbDS9joFo3ya5Vgy4A@mail.gmail.com>
+From: Rob Clark <robdclark@gmail.com>
+Date: Sat, 20 May 2017 19:45:59 -0400
+Message-ID: <CAF6AEGuOETKok05PeyLpC95bPBEw5=YoxB83B-cxmAjt6JVBcQ@mail.gmail.com>
+Subject: Re: [PATCH] drm: remove NULL pointer check for clk_disable_unprepare
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Daniel Vetter <daniel.vetter@intel.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        David Airlie <airlied@linux.ie>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Vincent Abriou <vincent.abriou@st.com>,
+        Christian Gmeiner <christian.gmeiner@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        The etnaviv authors <etnaviv@lists.freedesktop.org>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-renesas-soc@vger.kernel.org, Marek Vasut <marex@denx.de>,
+        "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Russell King <linux+etnaviv@armlinux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The device trees for Renesas SoCs use either pfc or pin-controller as the
-node name for the PFC device. This patch is intended to take a step towards
-unifying the node name used as pin-controller which appears to be the more
-generic of the two and thus more in keeping with the DT specs.
+On Sat, May 20, 2017 at 3:04 PM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+> 2017-05-21 2:58 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
+>> After long term efforts of fixing non-common clock implementations,
+>> clk_disable() is a no-op for a NULL pointer input, and this is now
+>> tree-wide consistent.
+>>
+>> All clock consumers can safely call clk_disable(_unprepare) without
+>> NULL pointer check.
+>>
+>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>
+>
+> Sorry, I retract this patch.
+>
+> Krzysztof pointed out
+> cleanups only for clk_disable_unprepare() will lose the code symmetry.
+>
+> NULL pointer checks for clk_prepare_enable() should be
+> removed to keep the code symmetrical.
+>
+> This is possible for common-clock framework because
+> clk_prepare_enable() is also a no-op for a NULL clk input.
+> But it is not necessarily true for non-common clock implementations.
 
-My analysis is that this is a user-visible change to the extent that kernel
-logs, and sysfs entries change from fffc0000.pfc and pfc@fffc0000 to
-fffc0000.pin-controller and pin-controller@fffc0000.
+At least for drm/msm, upstream I think we can assume CCF.. I still
+need to check for possible downstream kernels to which someone might
+want to backport drm/msm.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7779.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+It might be an idea to split this up per-driver, since at least for
+some drivers it might be safe to assume CCF (or non-CCF clk driver
+that behaves the same)
 
-diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
-index ae2d9a9c65af..8ee0b2ca5d39 100644
---- a/arch/arm/boot/dts/r8a7779.dtsi
-+++ b/arch/arm/boot/dts/r8a7779.dtsi
-@@ -286,7 +286,7 @@
- 		status = "disabled";
- 	};
- 
--	pfc: pfc@fffc0000 {
-+	pfc: pin-controller@fffc0000 {
- 		compatible = "renesas,pfc-r8a7779";
- 		reg = <0xfffc0000 0x23c>;
- 	};
--- 
-2.1.4
+BR,
+-R
+
+>
+> --
+> Best Regards
+> Masahiro Yamada
