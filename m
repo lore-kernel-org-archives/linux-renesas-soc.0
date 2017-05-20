@@ -1,51 +1,88 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:39956 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757186AbdEKPsk (ORCPT
+Received: from mail-lf0-f45.google.com ([209.85.215.45]:36811 "EHLO
+        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755581AbdETO36 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 11 May 2017 11:48:40 -0400
-Date: Thu, 11 May 2017 17:48:31 +0200
-From: Simon Horman <horms@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: Re: [PATCH/RFT 0/2] ARM: dts: gose: Enable UHS-I SDR-50 and SDR-104
-Message-ID: <20170511154831.GI21895@verge.net.au>
-References: <1492494939-24568-1-git-send-email-horms+renesas@verge.net.au>
+        Sat, 20 May 2017 10:29:58 -0400
+Received: by mail-lf0-f45.google.com with SMTP id h4so12902142lfj.3
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 20 May 2017 07:29:57 -0700 (PDT)
+From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
+Date: Sat, 20 May 2017 16:29:54 +0200
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 02/16] rcar-vin: use rvin_reset_format() in S_DV_TIMINGS
+Message-ID: <20170520142954.GB1229@bigcity.dyn.berto.se>
+References: <20170314185957.25253-1-niklas.soderlund+renesas@ragnatech.se>
+ <20170314185957.25253-3-niklas.soderlund+renesas@ragnatech.se>
+ <5932754.eWeQtlWCiC@avalon>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <1492494939-24568-1-git-send-email-horms+renesas@verge.net.au>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5932754.eWeQtlWCiC@avalon>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Apr 18, 2017 at 02:55:37PM +0900, Simon Horman wrote:
-> Enable
-> - SDR-50 and SDR-104 for SDHI0 and;
-> - SDR-50 for SDHI1
-> 
-> Verified:
-> - SDR104 for SDHI0
-> - SDR50 for SDHI1
-> - Results comprable to those listed for other Renesas R-Car Gen2 boards on
->   http://elinux.org/Tests:SD-SDHI-SDR104
-> Untested:
-> SDR50 for SDHI3
-> - HS C4 card present in slot on board which I access remotely
+Hi Laurent,
 
-The above should read SDHI2 rather than SDHI3.
-I have now been able to test SDHI2 and have queued up this series
-with Wolfram's Acks.
+Thanks for your feedback.
 
-> Simon Horman (2):
->   ARM: dts: r8a7793: set maximum frequency for SDHI clocks
->   ARM: dts: gose: Enable UHS-I SDR-50 and SDR-104
+On 2017-05-10 16:22:16 +0300, Laurent Pinchart wrote:
+> Hi Niklas,
 > 
->  arch/arm/boot/dts/r8a7793-gose.dts | 34 +++++++++++++++++++++++++++++++---
->  arch/arm/boot/dts/r8a7793.dtsi     |  3 +++
->  2 files changed, 34 insertions(+), 3 deletions(-)
+> Thank you for the patch.
+> 
+> On Tuesday 14 Mar 2017 19:59:43 Niklas S�derlund wrote:
+> > Use rvin_reset_format() in rvin_s_dv_timings() instead of just resetting
+> > a few fields. This fixes an issue where the field format was not
+> > properly set after S_DV_TIMINGS.
+> > 
+> > Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+> > ---
+> >  drivers/media/platform/rcar-vin/rcar-v4l2.c | 8 ++------
+> >  1 file changed, 2 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> > b/drivers/media/platform/rcar-vin/rcar-v4l2.c index
+> > 69bc4cfea6a8aeb5..7ca27599b9982ffc 100644
+> > --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> > +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> > @@ -573,12 +573,8 @@ static int rvin_s_dv_timings(struct file *file, void
+> > *priv_fh, if (ret)
+> >  		return ret;
+> > 
+> > -	vin->source.width = timings->bt.width;
+> > -	vin->source.height = timings->bt.height;
+> > -	vin->format.width = timings->bt.width;
+> > -	vin->format.height = timings->bt.height;
+> > -
+> > -	return 0;
+> > +	/* Changing the timings will change the width/height */
+> > +	return rvin_reset_format(vin);
+> 
+> vin->source won't be updated anymore. Is this intentional ?
+
+Yes this is intentional. vin->source cache the frame width and height 
+from the source subdevice, and this is done in .vidioc_s_fmt_vid_cap().  
+
+This cacheing was due to a misunderstanding on my part in the port from 
+soc_camera and the whole vin->source caching is removed in later patch 
+when cleaning up the scaling code in the Gen3 enablement series.
+
+> 
+> >  }
+> > 
+> >  static int rvin_g_dv_timings(struct file *file, void *priv_fh,
 > 
 > -- 
-> 2.7.0.rc3.207.g0ac5344
+> Regards,
 > 
+> Laurent Pinchart
+> 
+
+-- 
+Regards,
+Niklas S�derlund
