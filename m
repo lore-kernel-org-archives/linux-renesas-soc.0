@@ -1,114 +1,116 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:48112 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1166224AbdEAJD7 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:46181 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752927AbdEVMan (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 1 May 2017 05:03:59 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH 5/6] mmc: tmio: add CMD23 support
-Date: Mon,  1 May 2017 11:03:45 +0200
-Message-Id: <20170501090346.10801-6-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170501090346.10801-1-wsa+renesas@sang-engineering.com>
-References: <20170501090346.10801-1-wsa+renesas@sang-engineering.com>
+        Mon, 22 May 2017 08:30:43 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 13/14] ARM: dts: gose: Enable UHS-I SDR-50 and SDR-104
+Date: Mon, 22 May 2017 14:30:23 +0200
+Message-Id: <6d25a4182d797950aa757d92c30332587f4fa692.1495455272.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1495455272.git.horms+renesas@verge.net.au>
+References: <cover.1495455272.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/mmc/host/tmio_mmc_pio.c | 41 ++++++++++++++++++++++++++++-------------
- 1 file changed, 28 insertions(+), 13 deletions(-)
+Add the "1v8" pinctrl state and sd-uhs-sdr50 property to SDHI{0,1,2}.
+And the sd-uhs-sdr104 property to SDHI0.
 
-diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-index b3ecb2e2e344c3..a81b86ca735845 100644
---- a/drivers/mmc/host/tmio_mmc_pio.c
-+++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@ -332,11 +332,11 @@ static int tmio_mmc_start_command(struct tmio_mmc_host *host, struct mmc_command
- 			c |= TRANSFER_MULTI;
- 
- 			/*
--			 * Disable auto CMD12 at IO_RW_EXTENDED when
--			 * multiple block transfer
-+			 * Disable auto CMD12 at IO_RW_EXTENDED and SET_BLOCK_COUNT
-+			 * when doing multiple block transfer
- 			 */
- 			if ((host->pdata->flags & TMIO_MMC_HAVE_CMD12_CTRL) &&
--			    (cmd->opcode == SD_IO_RW_EXTENDED))
-+			    (cmd->opcode == SD_IO_RW_EXTENDED || host->mrq->sbc))
- 				c |= NO_CMD12_ISSUE;
- 		}
- 		if (data->flags & MMC_DATA_READ)
-@@ -513,7 +513,7 @@ void tmio_mmc_do_data_irq(struct tmio_mmc_host *host)
- 			host->mrq);
- 	}
- 
--	if (stop) {
-+	if (stop && !host->mrq->sbc) {
- 		if (stop->opcode != MMC_STOP_TRANSMISSION || stop->arg)
- 			dev_err(&host->pdev->dev, "unsupported stop: CMD%u,0x%x. We did CMD12,0\n",
- 				stop->opcode, stop->arg);
-@@ -820,15 +820,21 @@ static int tmio_mmc_execute_tuning(struct mmc_host *mmc, u32 opcode)
- 
- static void tmio_process_mrq(struct tmio_mmc_host *host, struct mmc_request *mrq)
- {
-+	struct mmc_command *cmd;
- 	int ret;
- 
--	if (mrq->data) {
--		ret = tmio_mmc_start_data(host, mrq->data);
--		if (ret)
--			goto fail;
-+	if (mrq->sbc && host->cmd != mrq->sbc) {
-+		cmd = mrq->sbc;
-+	} else {
-+		cmd = mrq->cmd;
-+		if (mrq->data) {
-+			ret = tmio_mmc_start_data(host, mrq->data);
-+			if (ret)
-+				goto fail;
-+		}
- 	}
- 
--	ret = tmio_mmc_start_command(host, mrq->cmd);
-+	ret = tmio_mmc_start_command(host, cmd);
- 	if (ret)
- 		goto fail;
- 
-@@ -883,13 +889,16 @@ static void tmio_mmc_finish_request(struct tmio_mmc_host *host)
- 		return;
- 	}
- 
--	host->cmd = NULL;
--	host->data = NULL;
--	host->force_pio = false;
-+	/* If not SET_BLOCK_COUNT, clear old data */
-+	if (host->cmd != mrq->sbc) {
-+		host->cmd = NULL;
-+		host->data = NULL;
-+		host->force_pio = false;
-+		host->mrq = NULL;
-+	}
- 
- 	cancel_delayed_work(&host->delayed_reset_work);
- 
--	host->mrq = NULL;
- 	spin_unlock_irqrestore(&host->lock, flags);
- 
- 	if (mrq->cmd->error || (mrq->data && mrq->data->error))
-@@ -898,6 +907,12 @@ static void tmio_mmc_finish_request(struct tmio_mmc_host *host)
- 	if (host->check_scc_error)
- 		host->check_scc_error(host);
- 
-+	/* If SET_BLOCK_COUNT, continue with main command */
-+	if (host->mrq) {
-+		tmio_process_mrq(host, mrq);
-+		return;
-+	}
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ arch/arm/boot/dts/r8a7793-gose.dts | 34 +++++++++++++++++++++++++++++++---
+ 1 file changed, 31 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
+index 806c93f6ae8b..95e51b79c1d7 100644
+--- a/arch/arm/boot/dts/r8a7793-gose.dts
++++ b/arch/arm/boot/dts/r8a7793-gose.dts
+@@ -348,16 +348,37 @@
+ 	sdhi0_pins: sd0 {
+ 		groups = "sdhi0_data4", "sdhi0_ctrl";
+ 		function = "sdhi0";
++		power-source = <3300>;
++	};
 +
- 	mmc_request_done(host->mmc, mrq);
- }
++	sdhi0_pins_uhs: sd0_uhs {
++		groups = "sdhi0_data4", "sdhi0_ctrl";
++		function = "sdhi0";
++		power-source = <1800>;
+ 	};
+ 
+ 	sdhi1_pins: sd1 {
+ 		groups = "sdhi1_data4", "sdhi1_ctrl";
+ 		function = "sdhi1";
++		power-source = <3300>;
++	};
++
++	sdhi1_pins_uhs: sd1_uhs {
++		groups = "sdhi1_data4", "sdhi1_ctrl";
++		function = "sdhi1";
++		power-source = <1800>;
+ 	};
+ 
+ 	sdhi2_pins: sd2 {
+ 		groups = "sdhi2_data4", "sdhi2_ctrl";
+ 		function = "sdhi2";
++		power-source = <3300>;
++	};
++
++	sdhi2_pins_uhs: sd2_uhs {
++		groups = "sdhi2_data4", "sdhi2_ctrl";
++		function = "sdhi2";
++		power-source = <1800>;
+ 	};
+ 
+ 	qspi_pins: qspi {
+@@ -416,33 +437,40 @@
+ 
+ &sdhi0 {
+ 	pinctrl-0 = <&sdhi0_pins>;
+-	pinctrl-names = "default";
++	pinctrl-1 = <&sdhi0_pins_uhs>;
++	pinctrl-names = "default", "state_uhs";
+ 
+ 	vmmc-supply = <&vcc_sdhi0>;
+ 	vqmmc-supply = <&vccq_sdhi0>;
+ 	cd-gpios = <&gpio6 6 GPIO_ACTIVE_LOW>;
+ 	wp-gpios = <&gpio6 7 GPIO_ACTIVE_HIGH>;
++	sd-uhs-sdr50;
++	sd-uhs-sdr104;
+ 	status = "okay";
+ };
+ 
+ &sdhi1 {
+ 	pinctrl-0 = <&sdhi1_pins>;
+-	pinctrl-names = "default";
++	pinctrl-1 = <&sdhi1_pins_uhs>;
++	pinctrl-names = "default", "state_uhs";
+ 
+ 	vmmc-supply = <&vcc_sdhi1>;
+ 	vqmmc-supply = <&vccq_sdhi1>;
+ 	cd-gpios = <&gpio6 14 GPIO_ACTIVE_LOW>;
+ 	wp-gpios = <&gpio6 15 GPIO_ACTIVE_HIGH>;
++	sd-uhs-sdr50;
+ 	status = "okay";
+ };
+ 
+ &sdhi2 {
+ 	pinctrl-0 = <&sdhi2_pins>;
+-	pinctrl-names = "default";
++	pinctrl-1 = <&sdhi2_pins_uhs>;
++	pinctrl-names = "default", "state_uhs";
+ 
+ 	vmmc-supply = <&vcc_sdhi2>;
+ 	vqmmc-supply = <&vccq_sdhi2>;
+ 	cd-gpios = <&gpio6 22 GPIO_ACTIVE_LOW>;
++	sd-uhs-sdr50;
+ 	status = "okay";
+ };
  
 -- 
-2.11.0
+2.1.4
