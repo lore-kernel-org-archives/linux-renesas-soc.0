@@ -1,194 +1,114 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:36116 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933203AbdEKR1U (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47786 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933910AbdEVOAA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 11 May 2017 13:27:20 -0400
-From: Kieran Bingham <kbingham@kernel.org>
-To: laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se,
-        sakari.ailus@iki.fi
-Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [RFC PATCH v2 3/4] arm64: dts: r8a7796: salvator-x: enable VIN, CSI and ADV7482
-Date: Thu, 11 May 2017 18:21:22 +0100
-Message-Id: <f6f888b797402e75ad542742ddc63d4829622489.1494523203.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.5d2526b759f71c06d51df279c3d5885aca476fb6.1494523203.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.5d2526b759f71c06d51df279c3d5885aca476fb6.1494523203.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.5d2526b759f71c06d51df279c3d5885aca476fb6.1494523203.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.5d2526b759f71c06d51df279c3d5885aca476fb6.1494523203.git-series.kieran.bingham+renesas@ideasonboard.com>
+        Mon, 22 May 2017 10:00:00 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 20/35] arm64: dts: r8a7796: add Sound SSI PIO support
+Date: Mon, 22 May 2017 15:58:53 +0200
+Message-Id: <6f3a5282e068c09de026b5f777b7052e5318e484.1495457812.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1495457812.git.horms+renesas@verge.net.au>
+References: <cover.1495457812.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-Provide bindings between the VIN, CSI and the ADV7482 on the r8a7796.
-
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 147 ++++++++++++++-
- 1 file changed, 147 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 64 +++++++++++++++++++++++++++++++-
+ 1 file changed, 62 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-index c7f40f8f3169..aaebe58b02c8 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-@@ -102,6 +102,22 @@
- 		states = <3300000 1
- 			  1800000 0>;
- 	};
-+
-+	hdmi {
-+		port {
-+			hdmi_in: endpoint {
-+				remote-endpoint = <&adv7482_hdmi>;
-+			};
-+		};
-+	};
-+
-+	cvbs {
-+		port {
-+			cvbs_in: endpoint {
-+				remote-endpoint = <&adv7482_ain8>;
-+			};
-+		};
-+	};
- };
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 0a76a1c53082..5c6e54a1e27a 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -1165,7 +1165,42 @@
+ 		};
  
- &pfc {
-@@ -261,3 +277,134 @@
- 	timeout-sec = <60>;
- 	status = "okay";
- };
+ 		rcar_sound: sound@ec500000 {
+-			/* placeholder */
++			/*
++			 * #sound-dai-cells is required
++			 *
++			 * Single DAI : #sound-dai-cells = <0>;	<&rcar_sound>;
++			 * Multi  DAI : #sound-dai-cells = <1>;	<&rcar_sound N>;
++			 */
++			/*
++			 * #clock-cells is required for audio_clkout0/1/2/3
++			 *
++			 * clkout	: #clock-cells = <0>;	<&rcar_sound>;
++			 * clkout0/1/2/3: #clock-cells = <1>;	<&rcar_sound N>;
++			 */
++			compatible =  "renesas,rcar_sound-r8a7796", "renesas,rcar_sound-gen3";
++			reg =	<0 0xec500000 0 0x1000>, /* SCU */
++				<0 0xec5a0000 0 0x100>,  /* ADG */
++				<0 0xec540000 0 0x1000>, /* SSIU */
++				<0 0xec541000 0 0x280>,  /* SSI */
++				<0 0xec740000 0 0x200>;  /* Audio DMAC peri peri*/
++			reg-names = "scu", "adg", "ssiu", "ssi", "audmapp";
 +
-+&i2c4 {
-+	status = "okay";
-+
-+	clock-frequency = <100000>;
-+
-+	video-receiver@70 {
-+		compatible = "adi,adv7482";
-+		reg = <0x70>;
-+
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			adv7482_hdmi: endpoint@1 {
-+				reg = <1>;
-+				remote-endpoint = <&hdmi_in>;
-+			};
-+		};
-+
-+		port@8 {
-+			reg = <8>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			adv7482_ain8: endpoint@1 {
-+				reg = <1>;
-+				remote-endpoint = <&cvbs_in>;
-+			};
-+		};
-+
-+		port@10 {
-+			reg = <10>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			adv7482_txa: endpoint@1 {
-+				reg = <1>;
-+				clock-lanes = <0>;
-+				data-lanes = <1 2 3 4>;
-+				remote-endpoint = <&csi40_in>;
-+			};
-+		};
-+
-+		port@11 {
-+			reg = <11>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			adv7482_txb: endpoint@1 {
-+				reg = <1>;
-+				clock-lanes = <0>;
-+				data-lanes = <1>;
-+				remote-endpoint = <&csi20_in>;
-+			};
-+		};
-+	};
-+};
-+
-+&vin0 {
-+	status = "okay";
-+};
-+
-+&vin1 {
-+	status = "okay";
-+};
-+
-+&vin2 {
-+	status = "okay";
-+};
-+
-+&vin3 {
-+	status = "okay";
-+};
-+
-+&vin4 {
-+	status = "okay";
-+};
-+
-+&vin5 {
-+	status = "okay";
-+};
-+
-+&vin6 {
-+	status = "okay";
-+};
-+
-+&vin7 {
-+	status = "okay";
-+};
-+
-+&csi20 {
-+	status = "okay";
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+			csi20_in: endpoint@0 {
-+				clock-lanes = <0>;
-+				data-lanes = <1>;
-+				remote-endpoint = <&adv7482_txb>;
-+			};
-+		};
-+	};
-+};
-+
-+&csi40 {
-+	status = "okay";
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+
-+			csi40_in: endpoint@0 {
-+				clock-lanes = <0>;
-+				data-lanes = <1 2 3 4>;
-+				remote-endpoint = <&adv7482_txa>;
-+			};
-+		};
-+	};
-+};
++			clocks = <&cpg CPG_MOD 1005>,
++				 <&cpg CPG_MOD 1006>, <&cpg CPG_MOD 1007>,
++				 <&cpg CPG_MOD 1008>, <&cpg CPG_MOD 1009>,
++				 <&cpg CPG_MOD 1010>, <&cpg CPG_MOD 1011>,
++				 <&cpg CPG_MOD 1012>, <&cpg CPG_MOD 1013>,
++				 <&cpg CPG_MOD 1014>, <&cpg CPG_MOD 1015>,
++				 <&audio_clk_a>, <&audio_clk_b>,
++				 <&audio_clk_c>,
++				 <&cpg CPG_CORE R8A7796_CLK_S0D4>;
++			clock-names = "ssi-all",
++				      "ssi.9", "ssi.8", "ssi.7", "ssi.6",
++				      "ssi.5", "ssi.4", "ssi.3", "ssi.2",
++				      "ssi.1", "ssi.0",
++				      "clk_a", "clk_b", "clk_c", "clk_i";
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			status = "disabled";
+ 
+ 			rcar_sound,dvc {
+ 				dvc0: dvc-0 {
+@@ -1184,9 +1219,34 @@
+ 
+ 			rcar_sound,ssi {
+ 				ssi0: ssi-0 {
++					interrupts = <GIC_SPI 370 IRQ_TYPE_LEVEL_HIGH>;
+ 				};
+-
+ 				ssi1: ssi-1 {
++					interrupts = <GIC_SPI 371 IRQ_TYPE_LEVEL_HIGH>;
++				};
++				ssi2: ssi-2 {
++					interrupts = <GIC_SPI 372 IRQ_TYPE_LEVEL_HIGH>;
++				};
++				ssi3: ssi-3 {
++					interrupts = <GIC_SPI 373 IRQ_TYPE_LEVEL_HIGH>;
++				};
++				ssi4: ssi-4 {
++					interrupts = <GIC_SPI 374 IRQ_TYPE_LEVEL_HIGH>;
++				};
++				ssi5: ssi-5 {
++					interrupts = <GIC_SPI 375 IRQ_TYPE_LEVEL_HIGH>;
++				};
++				ssi6: ssi-6 {
++					interrupts = <GIC_SPI 376 IRQ_TYPE_LEVEL_HIGH>;
++				};
++				ssi7: ssi-7 {
++					interrupts = <GIC_SPI 377 IRQ_TYPE_LEVEL_HIGH>;
++				};
++				ssi8: ssi-8 {
++					interrupts = <GIC_SPI 378 IRQ_TYPE_LEVEL_HIGH>;
++				};
++				ssi9: ssi-9 {
++					interrupts = <GIC_SPI 379 IRQ_TYPE_LEVEL_HIGH>;
+ 				};
+ 			};
+ 		};
 -- 
-git-series 0.9.1
+2.1.4
