@@ -1,116 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:47786 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933918AbdEVOAD (ORCPT
+        with ESMTP id S933850AbdEVN7d (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 May 2017 10:00:03 -0400
+        Mon, 22 May 2017 09:59:33 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 26/35] arm64: dts: r8a7796: Add PWM device nodes
-Date: Mon, 22 May 2017 15:58:59 +0200
-Message-Id: <eaef33106799e3e58984479d85c80ddf94f9159d.1495457812.git.horms+renesas@verge.net.au>
+Subject: [PATCH 14/35] arm64: dts: r8a7796: Add external PCIe bus clock
+Date: Mon, 22 May 2017 15:58:47 +0200
+Message-Id: <c79fe41b177d6fa4cc289370388dab1dc9264dd8.1495457812.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1495457812.git.horms+renesas@verge.net.au>
 References: <cover.1495457812.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This patch adds PWM{0,1,2,3,4,5,6} device nodes for R8A7796 SoC.
+Add the external PCIe bus clock as a zero Hz fixed-frequency clock.
+Boards that provide this clock should override it.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[uli: added resets, shortened reg lengths to 8]
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Based on r8a7795.dtsi.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 70 ++++++++++++++++++++++++++++++++
- 1 file changed, 70 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 8651fc93304d..b418a66f4cec 100644
+index 101cd41d693a..8e2aab8b6b10 100644
 --- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -395,6 +395,76 @@
- 			status = "disabled";
- 		};
+@@ -157,6 +157,13 @@
+ 		clock-frequency = <0>;
+ 	};
  
-+		pwm0: pwm@e6e30000 {
-+			compatible = "renesas,pwm-r8a7796", "renesas,pwm-rcar";
-+			reg = <0 0xe6e30000 0 8>;
-+			#pwm-cells = <2>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			resets = <&cpg 523>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
++	/* External PCIe clock - can be overridden by the board */
++	pcie_bus_clk: pcie_bus {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
 +
-+		pwm1: pwm@e6e31000 {
-+			compatible = "renesas,pwm-r8a7796", "renesas,pwm-rcar";
-+			reg = <0 0xe6e31000 0 8>;
-+			#pwm-cells = <2>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			resets = <&cpg 523>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
-+		pwm2: pwm@e6e32000 {
-+			compatible = "renesas,pwm-r8a7796", "renesas,pwm-rcar";
-+			reg = <0 0xe6e32000 0 8>;
-+			#pwm-cells = <2>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			resets = <&cpg 523>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
-+		pwm3: pwm@e6e33000 {
-+			compatible = "renesas,pwm-r8a7796", "renesas,pwm-rcar";
-+			reg = <0 0xe6e33000 0 8>;
-+			#pwm-cells = <2>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			resets = <&cpg 523>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
-+		pwm4: pwm@e6e34000 {
-+			compatible = "renesas,pwm-r8a7796", "renesas,pwm-rcar";
-+			reg = <0 0xe6e34000 0 8>;
-+			#pwm-cells = <2>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			resets = <&cpg 523>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
-+		pwm5: pwm@e6e35000 {
-+			compatible = "renesas,pwm-r8a7796", "renesas,pwm-rcar";
-+			reg = <0 0xe6e35000 0 8>;
-+			#pwm-cells = <2>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			resets = <&cpg 523>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
-+		pwm6: pwm@e6e36000 {
-+			compatible = "renesas,pwm-r8a7796", "renesas,pwm-rcar";
-+			reg = <0 0xe6e36000 0 8>;
-+			#pwm-cells = <2>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			resets = <&cpg 523>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
- 		i2c0: i2c@e6500000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
+ 	soc {
+ 		compatible = "simple-bus";
+ 		interrupt-parent = <&gic>;
 -- 
 2.1.4
