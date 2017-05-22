@@ -1,67 +1,111 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:47786 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933885AbdEVN7t (ORCPT
+        with ESMTP id S933876AbdEVOAB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 May 2017 09:59:49 -0400
+        Mon, 22 May 2017 10:00:01 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 30/35] arm64: dts: renesas: salvator-x: Add HDMI output connectors
-Date: Mon, 22 May 2017 15:59:03 +0200
-Message-Id: <1cdfc42d0a1b0fc7b826a488d360e33be5b65998.1495457812.git.horms+renesas@verge.net.au>
+Subject: [PATCH 22/35] arm64: dts: r8a7796: add Sound SRC support
+Date: Mon, 22 May 2017 15:58:55 +0200
+Message-Id: <b6fd1b1f6551e1d0b66f9894b929e7793a0ac1d2.1495457812.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1495457812.git.horms+renesas@verge.net.au>
 References: <cover.1495457812.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-The Salvator-X board has two HDMI output connectors. Add them to the
-common salvator-x.dtsi.
-
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/salvator-x.dtsi | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 54 ++++++++++++++++++++++++++++++++
+ 1 file changed, 54 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/salvator-x.dtsi b/arch/arm64/boot/dts/renesas/salvator-x.dtsi
-index 35cd7e367234..5f0d4bdcd3b4 100644
---- a/arch/arm64/boot/dts/renesas/salvator-x.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-x.dtsi
-@@ -161,6 +161,28 @@
- 			  1800000 0>;
- 	};
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index a1d08c89ceed..778275a980d3 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -1191,6 +1191,11 @@
+ 				 <&cpg CPG_MOD 1010>, <&cpg CPG_MOD 1011>,
+ 				 <&cpg CPG_MOD 1012>, <&cpg CPG_MOD 1013>,
+ 				 <&cpg CPG_MOD 1014>, <&cpg CPG_MOD 1015>,
++				 <&cpg CPG_MOD 1022>, <&cpg CPG_MOD 1023>,
++				 <&cpg CPG_MOD 1024>, <&cpg CPG_MOD 1025>,
++				 <&cpg CPG_MOD 1026>, <&cpg CPG_MOD 1027>,
++				 <&cpg CPG_MOD 1028>, <&cpg CPG_MOD 1029>,
++				 <&cpg CPG_MOD 1030>, <&cpg CPG_MOD 1031>,
+ 				 <&audio_clk_a>, <&audio_clk_b>,
+ 				 <&audio_clk_c>,
+ 				 <&cpg CPG_CORE R8A7796_CLK_S0D4>;
+@@ -1198,6 +1203,9 @@
+ 				      "ssi.9", "ssi.8", "ssi.7", "ssi.6",
+ 				      "ssi.5", "ssi.4", "ssi.3", "ssi.2",
+ 				      "ssi.1", "ssi.0",
++				      "src.9", "src.8", "src.7", "src.6",
++				      "src.5", "src.4", "src.3", "src.2",
++				      "src.1", "src.0",
+ 				      "clk_a", "clk_b", "clk_c", "clk_i";
+ 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+ 			status = "disabled";
+@@ -1212,8 +1220,54 @@
  
-+	hdmi0-out {
-+		compatible = "hdmi-connector";
-+		label = "HDMI0 OUT";
-+		type = "a";
-+
-+		port {
-+			hdmi0_con: endpoint {
-+			};
-+		};
-+	};
-+
-+	hdmi1-out {
-+		compatible = "hdmi-connector";
-+		label = "HDMI1 OUT";
-+		type = "a";
-+
-+		port {
-+			hdmi1_con: endpoint {
-+			};
-+		};
-+	};
-+
- 	vga {
- 		compatible = "vga-connector";
+ 			rcar_sound,src {
+ 				src0: src-0 {
++					interrupts = <GIC_SPI 352 IRQ_TYPE_LEVEL_HIGH>;
++					dmas = <&audma0 0x85>, <&audma1 0x9a>;
++					dma-names = "rx", "tx";
+ 				};
+ 				src1: src-1 {
++					interrupts = <GIC_SPI 353 IRQ_TYPE_LEVEL_HIGH>;
++					dmas = <&audma0 0x87>, <&audma1 0x9c>;
++					dma-names = "rx", "tx";
++				};
++				src2: src-2 {
++					interrupts = <GIC_SPI 354 IRQ_TYPE_LEVEL_HIGH>;
++					dmas = <&audma0 0x89>, <&audma1 0x9e>;
++					dma-names = "rx", "tx";
++				};
++				src3: src-3 {
++					interrupts = <GIC_SPI 355 IRQ_TYPE_LEVEL_HIGH>;
++					dmas = <&audma0 0x8b>, <&audma1 0xa0>;
++					dma-names = "rx", "tx";
++				};
++				src4: src-4 {
++					interrupts = <GIC_SPI 356 IRQ_TYPE_LEVEL_HIGH>;
++					dmas = <&audma0 0x8d>, <&audma1 0xb0>;
++					dma-names = "rx", "tx";
++				};
++				src5: src-5 {
++					interrupts = <GIC_SPI 357 IRQ_TYPE_LEVEL_HIGH>;
++					dmas = <&audma0 0x8f>, <&audma1 0xb2>;
++					dma-names = "rx", "tx";
++				};
++				src6: src-6 {
++					interrupts = <GIC_SPI 358 IRQ_TYPE_LEVEL_HIGH>;
++					dmas = <&audma0 0x91>, <&audma1 0xb4>;
++					dma-names = "rx", "tx";
++				};
++				src7: src-7 {
++					interrupts = <GIC_SPI 359 IRQ_TYPE_LEVEL_HIGH>;
++					dmas = <&audma0 0x93>, <&audma1 0xb6>;
++					dma-names = "rx", "tx";
++				};
++				src8: src-8 {
++					interrupts = <GIC_SPI 360 IRQ_TYPE_LEVEL_HIGH>;
++					dmas = <&audma0 0x95>, <&audma1 0xb8>;
++					dma-names = "rx", "tx";
++				};
++				src9: src-9 {
++					interrupts = <GIC_SPI 361 IRQ_TYPE_LEVEL_HIGH>;
++					dmas = <&audma0 0x97>, <&audma1 0xba>;
++					dma-names = "rx", "tx";
+ 				};
+ 			};
  
 -- 
 2.1.4
