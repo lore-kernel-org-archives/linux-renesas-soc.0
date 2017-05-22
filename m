@@ -1,147 +1,63 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: joro@8bytes.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-        robin.murphy@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
-        Magnus Damm <magnus.damm@gmail.com>, sricharan@codeaurora.org,
-        m.szyprowski@samsung.com
-Date: Wed, 17 May 2017 19:06:48 +0900
-Message-Id: <149501560877.21593.10455371761556148369.sendpatchset@little-apple>
-In-Reply-To: <149501557669.21593.1017116915706613060.sendpatchset@little-apple>
-References: <149501557669.21593.1017116915706613060.sendpatchset@little-apple>
-Subject: [PATCH v8 03/08] iommu/ipmmu-vmsa: Break out utlb parsing code
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:47786 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933876AbdEVN7n (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 22 May 2017 09:59:43 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 23/35] arm64: dts: r8a7796: add Sound DVC support
+Date: Mon, 22 May 2017 15:58:56 +0200
+Message-Id: <688d98138bd00e3c8cb0a6044856449449d0d9e7.1495457812.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1495457812.git.horms+renesas@verge.net.au>
+References: <cover.1495457812.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-Break out the utlb parsing code and dev_data allocation into a
-separate function. This is preparation for future code sharing.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Reviewed-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
- Changes since V7:
- - Free archdata and utlbs in case of error
-
- drivers/iommu/ipmmu-vmsa.c |   64 ++++++++++++++++++++++++++++----------------
- 1 file changed, 41 insertions(+), 23 deletions(-)
-
---- 0004/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2017-05-17 16:37:29.080607110 +0900
-@@ -649,22 +649,15 @@ static int ipmmu_find_utlbs(struct ipmmu
- 	return 0;
- }
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 778275a980d3..156c0f8a81ba 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -1196,6 +1196,7 @@
+ 				 <&cpg CPG_MOD 1026>, <&cpg CPG_MOD 1027>,
+ 				 <&cpg CPG_MOD 1028>, <&cpg CPG_MOD 1029>,
+ 				 <&cpg CPG_MOD 1030>, <&cpg CPG_MOD 1031>,
++				 <&cpg CPG_MOD 1019>, <&cpg CPG_MOD 1018>,
+ 				 <&audio_clk_a>, <&audio_clk_b>,
+ 				 <&audio_clk_c>,
+ 				 <&cpg CPG_CORE R8A7796_CLK_S0D4>;
+@@ -1206,15 +1207,19 @@
+ 				      "src.9", "src.8", "src.7", "src.6",
+ 				      "src.5", "src.4", "src.3", "src.2",
+ 				      "src.1", "src.0",
++				      "dvc.0", "dvc.1",
+ 				      "clk_a", "clk_b", "clk_c", "clk_i";
+ 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+ 			status = "disabled";
  
--static int ipmmu_add_device(struct device *dev)
-+static int ipmmu_init_platform_device(struct device *dev)
- {
- 	struct ipmmu_vmsa_archdata *archdata;
- 	struct ipmmu_vmsa_device *mmu;
--	struct iommu_group *group = NULL;
- 	unsigned int *utlbs;
- 	unsigned int i;
- 	int num_utlbs;
- 	int ret = -ENODEV;
- 
--	if (dev->archdata.iommu) {
--		dev_warn(dev, "IOMMU driver already assigned to device %s\n",
--			 dev_name(dev));
--		return -EINVAL;
--	}
+ 			rcar_sound,dvc {
+ 				dvc0: dvc-0 {
++					dmas = <&audma1 0xbc>;
++					dma-names = "tx";
+ 				};
 -
- 	/* Find the master corresponding to the device. */
+ 				dvc1: dvc-1 {
++					dmas = <&audma1 0xbe>;
++					dma-names = "tx";
+ 				};
+ 			};
  
- 	num_utlbs = of_count_phandle_with_args(dev->of_node, "iommus",
-@@ -701,6 +694,36 @@ static int ipmmu_add_device(struct devic
- 		}
- 	}
- 
-+	archdata = kzalloc(sizeof(*archdata), GFP_KERNEL);
-+	if (!archdata) {
-+		ret = -ENOMEM;
-+		goto error;
-+	}
-+
-+	archdata->mmu = mmu;
-+	archdata->utlbs = utlbs;
-+	archdata->num_utlbs = num_utlbs;
-+	dev->archdata.iommu = archdata;
-+	return 0;
-+
-+error:
-+	kfree(utlbs);
-+	return ret;
-+}
-+
-+static int ipmmu_add_device(struct device *dev)
-+{
-+	struct ipmmu_vmsa_archdata *archdata;
-+	struct ipmmu_vmsa_device *mmu = NULL;
-+	struct iommu_group *group;
-+	int ret;
-+
-+	if (dev->archdata.iommu) {
-+		dev_warn(dev, "IOMMU driver already assigned to device %s\n",
-+			 dev_name(dev));
-+		return -EINVAL;
-+	}
-+
- 	/* Create a device group and add the device to it. */
- 	group = iommu_group_alloc();
- 	if (IS_ERR(group)) {
-@@ -718,16 +741,9 @@ static int ipmmu_add_device(struct devic
- 		goto error;
- 	}
- 
--	archdata = kzalloc(sizeof(*archdata), GFP_KERNEL);
--	if (!archdata) {
--		ret = -ENOMEM;
-+	ret = ipmmu_init_platform_device(dev);
-+	if (ret < 0)
- 		goto error;
--	}
--
--	archdata->mmu = mmu;
--	archdata->utlbs = utlbs;
--	archdata->num_utlbs = num_utlbs;
--	dev->archdata.iommu = archdata;
- 
- 	/*
- 	 * Create the ARM mapping, used by the ARM DMA mapping core to allocate
-@@ -738,6 +754,8 @@ static int ipmmu_add_device(struct devic
- 	 * - Make the mapping size configurable ? We currently use a 2GB mapping
- 	 *   at a 1GB offset to ensure that NULL VAs will fault.
- 	 */
-+	archdata = dev->archdata.iommu;
-+	mmu = archdata->mmu;
- 	if (!mmu->mapping) {
- 		struct dma_iommu_mapping *mapping;
- 
-@@ -762,16 +780,16 @@ static int ipmmu_add_device(struct devic
- 	return 0;
- 
- error:
--	arm_iommu_release_mapping(mmu->mapping);
--
--	kfree(dev->archdata.iommu);
--	kfree(utlbs);
--
--	dev->archdata.iommu = NULL;
-+	if (mmu)
-+		arm_iommu_release_mapping(mmu->mapping);
- 
- 	if (!IS_ERR_OR_NULL(group))
- 		iommu_group_remove_device(dev);
- 
-+	kfree(archdata->utlbs);
-+	kfree(archdata);
-+	dev->archdata.iommu = NULL;
-+
- 	return ret;
- }
- 
+-- 
+2.1.4
