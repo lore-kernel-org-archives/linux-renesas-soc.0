@@ -1,122 +1,74 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:48110 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1035596AbdEAJD6 (ORCPT
+Return-Path: <SRS0=YfCx=44=vger.kernel.org=linux-renesas-soc-owner@vergenet.net>
+Received: from ws55.zone31-163-171.zaural.ru ([31.163.171.55]:52572 "HELO
+        zaural.ru" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with SMTP
+        id S1753444AbdEVXxf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 1 May 2017 05:03:58 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH 4/6] mmc: tmio: move finish_request function further down
-Date: Mon,  1 May 2017 11:03:44 +0200
-Message-Id: <20170501090346.10801-5-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170501090346.10801-1-wsa+renesas@sang-engineering.com>
-References: <20170501090346.10801-1-wsa+renesas@sang-engineering.com>
+        Mon, 22 May 2017 19:53:35 -0400
+Content-Type: application/zip; name="6373739327.zip"
+Content-Disposition: attachment
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+To: <linux-renesas-soc@vger.kernel.org>
+From: <lls@dmu.dk>
+Subject: 
+Date: Mon, 22 May 2017 23:53:30 -0000
+Message-ID: <149549721082.6150.1841115723437141235@zaural.ru>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Plain code move with no changes. Needed for refactoring. Also, looks
-nicer if request and finish_request are next to each other.
-
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/mmc/host/tmio_mmc_pio.c | 76 ++++++++++++++++++++---------------------
- 1 file changed, 38 insertions(+), 38 deletions(-)
-
-diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-index 36539950347fbc..b3ecb2e2e344c3 100644
---- a/drivers/mmc/host/tmio_mmc_pio.c
-+++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@ -279,44 +279,6 @@ static void tmio_mmc_reset_work(struct work_struct *work)
- 	mmc_request_done(host->mmc, mrq);
- }
- 
--static void tmio_mmc_finish_request(struct tmio_mmc_host *host)
--{
--	struct mmc_request *mrq;
--	unsigned long flags;
--
--	spin_lock_irqsave(&host->lock, flags);
--
--	mrq = host->mrq;
--	if (IS_ERR_OR_NULL(mrq)) {
--		spin_unlock_irqrestore(&host->lock, flags);
--		return;
--	}
--
--	host->cmd = NULL;
--	host->data = NULL;
--	host->force_pio = false;
--
--	cancel_delayed_work(&host->delayed_reset_work);
--
--	host->mrq = NULL;
--	spin_unlock_irqrestore(&host->lock, flags);
--
--	if (mrq->cmd->error || (mrq->data && mrq->data->error))
--		tmio_mmc_abort_dma(host);
--
--	if (host->check_scc_error)
--		host->check_scc_error(host);
--
--	mmc_request_done(host->mmc, mrq);
--}
--
--static void tmio_mmc_done_work(struct work_struct *work)
--{
--	struct tmio_mmc_host *host = container_of(work, struct tmio_mmc_host,
--						  done);
--	tmio_mmc_finish_request(host);
--}
--
- /* These are the bitmasks the tmio chip requires to implement the MMC response
-  * types. Note that R1 and R6 are the same in this scheme. */
- #define APP_CMD        0x0040
-@@ -908,6 +870,44 @@ static void tmio_mmc_request(struct mmc_host *mmc, struct mmc_request *mrq)
- 	tmio_process_mrq(host, mrq);
- }
- 
-+static void tmio_mmc_finish_request(struct tmio_mmc_host *host)
-+{
-+	struct mmc_request *mrq;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&host->lock, flags);
-+
-+	mrq = host->mrq;
-+	if (IS_ERR_OR_NULL(mrq)) {
-+		spin_unlock_irqrestore(&host->lock, flags);
-+		return;
-+	}
-+
-+	host->cmd = NULL;
-+	host->data = NULL;
-+	host->force_pio = false;
-+
-+	cancel_delayed_work(&host->delayed_reset_work);
-+
-+	host->mrq = NULL;
-+	spin_unlock_irqrestore(&host->lock, flags);
-+
-+	if (mrq->cmd->error || (mrq->data && mrq->data->error))
-+		tmio_mmc_abort_dma(host);
-+
-+	if (host->check_scc_error)
-+		host->check_scc_error(host);
-+
-+	mmc_request_done(host->mmc, mrq);
-+}
-+
-+static void tmio_mmc_done_work(struct work_struct *work)
-+{
-+	struct tmio_mmc_host *host = container_of(work, struct tmio_mmc_host,
-+						  done);
-+	tmio_mmc_finish_request(host);
-+}
-+
- static int tmio_mmc_clk_enable(struct tmio_mmc_host *host)
- {
- 	if (!host->clk_enable)
--- 
-2.11.0
+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
+BgAAAAABAAEATwAAAO0LAAAAAA==
