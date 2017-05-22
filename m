@@ -1,46 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:46092 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:47786 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751007AbdEVMaP (ORCPT
+        with ESMTP id S933850AbdEVN7a (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 May 2017 08:30:15 -0400
+        Mon, 22 May 2017 09:59:30 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 1/3] ARM: dts: r8a7791: add GyroADC clock
-Date: Mon, 22 May 2017 14:30:02 +0200
-Message-Id: <a56a2fe7118a6b568679bb8d90a6772e10ad9098.1495454780.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1495454780.git.horms+renesas@verge.net.au>
-References: <cover.1495454780.git.horms+renesas@verge.net.au>
+Subject: [PATCH 10/35] arm64: dts: r8a7796: salvator-x: Enable NFS root
+Date: Mon, 22 May 2017 15:58:43 +0200
+Message-Id: <483a5eb105ac6ee74485e01de86cab2d3fdf3be4.1495457812.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1495457812.git.horms+renesas@verge.net.au>
+References: <cover.1495457812.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Marek Vasut <marek.vasut@gmail.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Add the GyroADC clock to the R8A7791 device tree.
+Cfr. commit b2407c566ba29215 ("arm64: dts: r8a7795: enable nfs root on
+Salvator-X board").
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- include/dt-bindings/clock/r8a7791-clock.h | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/dt-bindings/clock/r8a7791-clock.h b/include/dt-bindings/clock/r8a7791-clock.h
-index adc50dc31ab3..ef692134146b 100644
---- a/include/dt-bindings/clock/r8a7791-clock.h
-+++ b/include/dt-bindings/clock/r8a7791-clock.h
-@@ -109,6 +109,7 @@
- #define R8A7791_CLK_SATA0		15
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+index 7f0ac6a9d49b..18b478be484c 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+@@ -23,7 +23,7 @@
+ 	};
  
- /* MSTP9 */
-+#define R8A7791_CLK_GYROADC		1
- #define R8A7791_CLK_GPIO7		4
- #define R8A7791_CLK_GPIO6		5
- #define R8A7791_CLK_GPIO5		7
+ 	chosen {
+-		bootargs = "ignore_loglevel";
++		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
 -- 
 2.1.4
