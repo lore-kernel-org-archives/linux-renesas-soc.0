@@ -1,80 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f194.google.com ([209.85.223.194]:36504 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751246AbdEBTVP (ORCPT
+Received: from mail-qt0-f180.google.com ([209.85.216.180]:36453 "EHLO
+        mail-qt0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933372AbdEVMDF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 2 May 2017 15:21:15 -0400
+        Mon, 22 May 2017 08:03:05 -0400
+Received: by mail-qt0-f180.google.com with SMTP id f55so99241562qta.3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 22 May 2017 05:03:05 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1491488454-22468-3-git-send-email-jacopo+renesas@jmondi.org>
-References: <1491488454-22468-1-git-send-email-jacopo+renesas@jmondi.org> <1491488454-22468-3-git-send-email-jacopo+renesas@jmondi.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 2 May 2017 21:21:13 +0200
-Message-ID: <CAMuHMdUVRO3y+BfU1ynWuRddOOB59DgpbnmXMbYopT6RQ5K8BQ@mail.gmail.com>
-Subject: Re: [PATCH v5 2/4] iio: Documentation: Add max9611 sysfs documentation
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald <pmeerw@pmeerw.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-iio@vger.kernel.org,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20170519133155.22945-1-wsa+renesas@sang-engineering.com>
+References: <20170519133155.22945-1-wsa+renesas@sang-engineering.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 22 May 2017 14:03:04 +0200
+Message-ID: <CAPDyKFpHOmQSVVd8mkMjxdGWr=Tn8p4E3+0LWdzk-UGFkbhQGw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/6] tmio/sdhi: add cmd23 support
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Jacopo,
-
-On Thu, Apr 6, 2017 at 4:20 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
-> Add documentation for max9611 driver.
-> Document attributes describing value of shunt resistor installed between
-> RS+ and RS- voltage sense inputs.
+On 19 May 2017 at 15:31, Wolfram Sang <wsa+renesas@sang-engineering.com> wrote:
+> This series adds CMD23 support to SDHI. It was tested on H2 (Gen2, Lager) and
+> M3W (Gen3, Salvator-X). The test procedure can be found here:
 >
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> ---
->  Documentation/ABI/testing/sysfs-bus-iio-adc-max9611 | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
->  create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-adc-max9611
+> http://elinux.org/Tests:SDHI-CMD23
 >
-> diff --git a/Documentation/ABI/testing/sysfs-bus-iio-adc-max9611 b/Documentation/ABI/testing/sysfs-bus-iio-adc-max9611
-> new file mode 100644
-> index 0000000..6d2d2b0
-> --- /dev/null
-> +++ b/Documentation/ABI/testing/sysfs-bus-iio-adc-max9611
-> @@ -0,0 +1,17 @@
-> +What:          /sys/bus/iio/devices/iio:deviceX/in_power_shunt_resistor
-> +Date:          March 2017
-> +KernelVersion: 4.12
-> +Contact:       linux-iio@vger.kernel.org
-> +Description:   The value of the shunt resistor used to compute power drain on
-> +                common input voltage pin (RS+). In Ohms.
-> +
-> +What:          /sys/bus/iio/devices/iio:deviceX/in_current_shunt_resistor
-> +Date:          March 2017
-> +KernelVersion: 4.12
-> +Contact:       linux-iio@vger.kernel.org
-> +Description:   The value of the shunt resistor used to compute current flowing
-> +                between RS+ and RS- voltage sense inputs. In Ohms.
-> +
-> +These attributes describe a single physical component, exposed as two distinct
-> +attributes as it is used to calculate two different values: power load and
-> +current flowing between RS+ and RS- inputs.
+> Patches are based on mmc/next from today. A branch can be found here:
+>
+> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/sdhi-cmd23
+>
+> Changes since RFC:
+>
+> * rebased on top of Simon's DMA rework now in mmc/next
+> * added Geerts tags
+> * cosmetic change in patch 6, put new capability in a separate line
+>
+> Thanks,
+>
+>    Wolfram
+>
+>
+> Wolfram Sang (6):
+>   mmc: tmio: make tmio_mmc_request function more readable
+>   mmc: tmio: refactor handling mrq
+>   mmc: tmio: remove outdated comment
+>   mmc: tmio: move finish_request function further down
+>   mmc: tmio: add CMD23 support
+>   mmc: sdhi: add CMD23 support to R-Car Gen2 & Gen3
+>
+>  drivers/mmc/host/renesas_sdhi_sys_dmac.c |   6 +-
+>  drivers/mmc/host/tmio_mmc_core.c         | 135 ++++++++++++++++++-------------
+>  2 files changed, 82 insertions(+), 59 deletions(-)
 
-On my Salvator-X, the value is "5.000", which matches milli-Ohms?
 
-DT says: "shunt-resistor-micro-ohms = <5000>;"
+Thanks, applied for next!
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Kind regards
+Uffe
