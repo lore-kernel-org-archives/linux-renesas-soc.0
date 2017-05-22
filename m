@@ -1,42 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47786 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:46092 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933867AbdEVN7Y (ORCPT
+        with ESMTP id S1751007AbdEVMaO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 May 2017 09:59:24 -0400
+        Mon, 22 May 2017 08:30:14 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+To: arm@kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 06/35] arm64: dts: r8a7796: salvator-x: enable HS200 for eMMC
-Date: Mon, 22 May 2017 15:58:39 +0200
-Message-Id: <3162ef76a8b6993f2941444cc5498c2660c55d79.1495457812.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1495457812.git.horms+renesas@verge.net.au>
-References: <cover.1495457812.git.horms+renesas@verge.net.au>
+Subject: [GIT PULL] Renesas ARM Based SoC DT Bindings Updates for v4.13
+Date: Mon, 22 May 2017 14:29:58 +0200
+Message-Id: <cover.1495454780.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Hi Olof, Hi Kevin, Hi Arnd,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 1 +
- 1 file changed, 1 insertion(+)
+Please consider these Renesas ARM based SoC DT bindings updates for v4.13.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-index c9f59b6ce33f..7f0ac6a9d49b 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-@@ -216,6 +216,7 @@
- 	vmmc-supply = <&reg_3p3v>;
- 	vqmmc-supply = <&reg_1p8v>;
- 	bus-width = <8>;
-+	mmc-hs200-1_8v;
- 	non-removable;
- 	status = "okay";
- };
--- 
-2.1.4
+
+The following changes since commit 2ea659a9ef488125eb46da6eb571de5eae5c43f6:
+
+  Linux 4.12-rc1 (2017-05-13 13:19:49 -0700)
+
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-dt-bindings-for-v4.13
+
+for you to fetch changes up to 40c9bbea140e64a4257b794969e759c2c481c399:
+
+  ARM: dts: r7s72100: add USB bit definitions (2017-05-15 09:02:37 +0200)
+
+----------------------------------------------------------------
+Renesas ARM Based SoC DT Bindings Updates for v4.13
+
+* Add USB bit definitions and pinctrl header for r7s72100 SoC
+* Add GyroADC clock for r8a7791 SoC
+
+----------------------------------------------------------------
+Chris Brandt (1):
+      ARM: dts: r7s72100: add USB bit definitions
+
+Jacopo Mondi (1):
+      ARM: dts: r7s72100: add Renesas RZ/A1 pinctrl header
+
+Marek Vasut (1):
+      ARM: dts: r8a7791: add GyroADC clock
+
+ include/dt-bindings/clock/r7s72100-clock.h     |  2 ++
+ include/dt-bindings/clock/r8a7791-clock.h      |  1 +
+ include/dt-bindings/pinctrl/r7s72100-pinctrl.h | 16 ++++++++++++++++
+ 3 files changed, 19 insertions(+)
+ create mode 100644 include/dt-bindings/pinctrl/r7s72100-pinctrl.h
