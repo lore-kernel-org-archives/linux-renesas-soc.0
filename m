@@ -1,71 +1,127 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:44095 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754695AbdERVLx (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47751 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933844AbdEVN7M (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 18 May 2017 17:11:53 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH 2/2] i2c: sh_mobile: drop needless check for of_node
-Date: Thu, 18 May 2017 23:11:40 +0200
-Message-Id: <20170518211140.12023-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170518211140.12023-1-wsa+renesas@sang-engineering.com>
-References: <20170518211140.12023-1-wsa+renesas@sang-engineering.com>
+        Mon, 22 May 2017 09:59:12 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: arm@kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [GIT PULL] Renesas ARM64 Based SoC DT Updates for v4.13
+Date: Mon, 22 May 2017 15:58:46 +0200
+Message-Id: <cover.1495457812.git.horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-After removal of platform_data support, we can simplify OF handling.
-of_match_device() evaluates to NULL if !CONFIG_OF or if there is no node
-pointer for that device, so we can remove the check for the node ptr.
+Hi Olof, Hi Kevin, Hi Arnd,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/i2c/busses/i2c-sh_mobile.c | 20 ++++++++------------
- 1 file changed, 8 insertions(+), 12 deletions(-)
+Please consider these Renesas ARM64 based SoC DT updates for v4.13.
 
-diff --git a/drivers/i2c/busses/i2c-sh_mobile.c b/drivers/i2c/busses/i2c-sh_mobile.c
-index d5e39eccae9b97..92c002c5bb0abe 100644
---- a/drivers/i2c/busses/i2c-sh_mobile.c
-+++ b/drivers/i2c/busses/i2c-sh_mobile.c
-@@ -881,6 +881,7 @@ static int sh_mobile_i2c_probe(struct platform_device *dev)
- 	struct sh_mobile_i2c_data *pd;
- 	struct i2c_adapter *adap;
- 	struct resource *res;
-+	const struct of_device_id *match;
- 	int ret;
- 	u32 bus_speed;
- 
-@@ -910,22 +911,17 @@ static int sh_mobile_i2c_probe(struct platform_device *dev)
- 
- 	ret = of_property_read_u32(dev->dev.of_node, "clock-frequency", &bus_speed);
- 	pd->bus_speed = ret ? STANDARD_MODE : bus_speed;
--
- 	pd->clks_per_count = 1;
- 
--	if (dev->dev.of_node) {
--		const struct of_device_id *match;
--
--		match = of_match_device(sh_mobile_i2c_dt_ids, &dev->dev);
--		if (match) {
--			const struct sh_mobile_dt_config *config;
-+	match = of_match_device(sh_mobile_i2c_dt_ids, &dev->dev);
-+	if (match) {
-+		const struct sh_mobile_dt_config *config;
- 
--			config = match->data;
--			pd->clks_per_count = config->clks_per_count;
-+		config = match->data;
-+		pd->clks_per_count = config->clks_per_count;
- 
--			if (config->setup)
--				config->setup(pd);
--		}
-+		if (config->setup)
-+			config->setup(pd);
- 	}
- 
- 	/* The IIC blocks on SH-Mobile ARM processors
--- 
-2.11.0
+
+The following changes since commit 2ea659a9ef488125eb46da6eb571de5eae5c43f6:
+
+  Linux 4.12-rc1 (2017-05-13 13:19:49 -0700)
+
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm64-dt-for-v4.13
+
+for you to fetch changes up to 0b03c32db03d63de695c1e0ab1950eb12b135fa7:
+
+  arm64: dts: r8a7795: salvator-x: Add support for R-Car H3 ES2.0 (2017-05-22 14:54:57 +0200)
+
+----------------------------------------------------------------
+Renesas ARM64 Based SoC DT Updates for v4.13
+
+* Add support for R-Car H3 ES2.0
+* Break out common board support
+* Set drive-strength for ravb pins for r8a7795/h3ulcb and r8a7796/m3ulcb
+* Enable HDMI outputs on r8a7795/salvator-x
+* Add R-Car audio to DT of r8a7796 SoC
+* Add current sense amplifiers to DT of r8a779[56]/salvator-x
+* Enable NFS-root on r8a7796/salvator-x
+* Enable HS200 for eMMC on r8a779[56]/salvator-x,
+  r8a7795/h3ulcb and r8a7796/m3ulcb
+* Enable EthernetAVB, I2C r8a7796/m3ulcb
+* Update memory node to 2 GiB map on r8a7796/m3ulcb
+
+----------------------------------------------------------------
+Geert Uytterhoeven (9):
+      arm64: dts: r8a7796: salvator-x: Enable NFS root
+      arm64: dts: r8a7796: salvator-x: Set drive-strength for ravb pins
+      arm64: dts: r8a7796: Add external audio clocks
+      arm64: dts: r8a7796: Add external PCIe bus clock
+      arm64: dts: r8a7796: Add placeholders for various devices
+      arm64: dts: renesas: Extract common Salvator-X board support
+      arm64: dts: renesas: Extract common ULCB board support
+      arm64: dts: r8a7795: Add support for R-Car H3 ES2.0
+      arm64: dts: r8a7795: salvator-x: Add support for R-Car H3 ES2.0
+
+Jacopo Mondi (1):
+      arm64: dts: salvator-x: Add current sense amplifiers
+
+Koji Matsuoka (1):
+      arm64: dts: renesas: r8a7795-salvator-x: Enable HDMI outputs
+
+Kuninori Morimoto (7):
+      arm64: dts: r8a7796: add AUDIO_DMAC support
+      arm64: dts: r8a7796: add Sound SSI PIO support
+      arm64: dts: r8a7796: add Sound SSI DMA support
+      arm64: dts: r8a7796: add Sound SRC support
+      arm64: dts: r8a7796: add Sound DVC support
+      arm64: dts: r8a7796: add Sound CTU support
+      arm64: dts: r8a7796: add Sound MIX support
+
+Laurent Pinchart (4):
+      arm64: dts: salvator-x: Add panel backlight support
+      arm64: dts: renesas: salvator-x: Add DU external dot clock sources
+      arm64: dts: renesas: salvator-x: Add HDMI output connectors
+      arm64: dts: renesas: r8a7795-salvator-x: Add DU external dot clocks
+
+Simon Horman (3):
+      arm64: dts: m3ulcb: Fix EthernetAVB PHY timing
+      arm64: dts: r8a7795: update PFC node name to pin-controller
+      arm64: dts: ulcb: Set drive-strength for ravb pins
+
+Takeshi Kihara (2):
+      arm64: dts: r8a7795: salvator-x: Update memory node to 4 GiB map
+      arm64: dts: r8a7796: Add PWM device nodes
+
+Ulrich Hecht (1):
+      arm64: dts: renesas: r8a7795: Add HDMI encoder support
+
+Vladimir Barinov (5):
+      arm64: dts: m3ulcb: enable I2C
+      arm64: dts: m3ulcb: Update memory node to 2 GiB map
+      arm64: dts: m3ulcb: enable EthernetAVB
+      arm64: dts: m3ulcb: enable HS200 for eMMC
+      arm64: dts: h3ulcb: enable HS200 for eMMC
+
+Wolfram Sang (2):
+      arm64: dts: r8a7795: salvator-x: enable HS200 for eMMC
+      arm64: dts: r8a7796: salvator-x: enable HS200 for eMMC
+
+ arch/arm64/boot/dts/renesas/Makefile               |   1 +
+ .../boot/dts/renesas/r8a7795-es1-salvator-x.dts    | 115 ++++
+ arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi       |  84 +++
+ arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts     | 344 +----------
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 565 ++----------------
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi           | 121 ++--
+ arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts     | 168 +-----
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 244 +-------
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi           | 409 +++++++++++++
+ arch/arm64/boot/dts/renesas/salvator-x.dtsi        | 644 +++++++++++++++++++++
+ arch/arm64/boot/dts/renesas/ulcb.dtsi              | 367 ++++++++++++
+ 11 files changed, 1734 insertions(+), 1328 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/salvator-x.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/ulcb.dtsi
