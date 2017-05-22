@@ -1,68 +1,91 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:33624 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755128AbdEKIDl (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47786 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933844AbdEVN7R (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 11 May 2017 04:03:41 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-sh@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-gpio@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 1/4] sh: sh7722: Remove nonexistent GPIO_PTQ7 to fix pinctrl registration
-Date: Thu, 11 May 2017 10:03:30 +0200
-Message-Id: <1494489813-27321-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1494489813-27321-1-git-send-email-geert+renesas@glider.be>
-References: <1494489813-27321-1-git-send-email-geert+renesas@glider.be>
+        Mon, 22 May 2017 09:59:17 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 03/35] arm64: dts: m3ulcb: enable EthernetAVB
+Date: Mon, 22 May 2017 15:58:36 +0200
+Message-Id: <883fae315a6af7d2b7dd32e79471c787d9b29baf.1495457812.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1495457812.git.horms+renesas@verge.net.au>
+References: <cover.1495457812.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On sh7722/Migo-R, pinctrl registration fails with:
+From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
 
-    sh-pfc pfc-sh7722: pin 0 already registered
-    sh-pfc pfc-sh7722: error during pin registration
-    sh-pfc pfc-sh7722: could not register: -22
-    sh-pfc: probe of pfc-sh7722 failed with error -22
+This supports Ethernet AVB on M3ULCB board
 
-pinmux_pins[] is initialized through PINMUX_GPIO(), using designated
-array initializers, where the GPIO_* enums serve as indices.
-As GPIO_PTQ7 is defined in the enum, but never used, pinmux_pins[]
-contains a (zero-filled) hole. Hence this entry is treated as pin zero,
-which was registered before, and pinctrl registration fails.
-
-According to the datasheet, port PTQ7 does not exist. Hence remove
-GPIO_PTQ7 from the enum to fix this.
-
-Fixes: 8d7b5b0af7e070b9 ("sh: Add sh7722 pinmux code")
-Reported-by: Magnus Damm <magnus.damm@gmail.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Tested-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+Tested-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-Tested on sh7722/Migo-R.
+ arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts | 32 ++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
-v2:
-  - Add Reviewed-by, Tested-by.
----
- arch/sh/include/cpu-sh4/cpu/sh7722.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/sh/include/cpu-sh4/cpu/sh7722.h b/arch/sh/include/cpu-sh4/cpu/sh7722.h
-index 3bb74e534d0f8ca4..78961ab78a5a9c83 100644
---- a/arch/sh/include/cpu-sh4/cpu/sh7722.h
-+++ b/arch/sh/include/cpu-sh4/cpu/sh7722.h
-@@ -67,7 +67,7 @@ enum {
- 	GPIO_PTN3, GPIO_PTN2, GPIO_PTN1, GPIO_PTN0,
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
+index 02051a3236a5..75974b246dd1 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
+@@ -20,6 +20,7 @@
  
- 	/* PTQ */
--	GPIO_PTQ7, GPIO_PTQ6, GPIO_PTQ5, GPIO_PTQ4,
-+	GPIO_PTQ6, GPIO_PTQ5, GPIO_PTQ4,
- 	GPIO_PTQ3, GPIO_PTQ2, GPIO_PTQ1, GPIO_PTQ0,
+ 	aliases {
+ 		serial0 = &scif2;
++		ethernet0 = &avb;
+ 	};
  
- 	/* PTR */
+ 	chosen {
+@@ -115,6 +116,11 @@
+ 	pinctrl-0 = <&scif_clk_pins>;
+ 	pinctrl-names = "default";
+ 
++	avb_pins: avb {
++		groups = "avb_mdc";
++		function = "avb";
++	};
++
+ 	scif2_pins: scif2 {
+ 		groups = "scif2_data_a";
+ 		function = "scif2";
+@@ -155,6 +161,32 @@
+ 	};
+ };
+ 
++&avb {
++	pinctrl-0 = <&avb_pins>;
++	pinctrl-names = "default";
++	renesas,no-ether-link;
++	phy-handle = <&phy0>;
++	status = "okay";
++
++	phy0: ethernet-phy@0 {
++		rxc-skew-ps = <900>;
++		rxdv-skew-ps = <0>;
++		rxd0-skew-ps = <0>;
++		rxd1-skew-ps = <0>;
++		rxd2-skew-ps = <0>;
++		rxd3-skew-ps = <0>;
++		txc-skew-ps = <900>;
++		txen-skew-ps = <0>;
++		txd0-skew-ps = <0>;
++		txd1-skew-ps = <0>;
++		txd2-skew-ps = <0>;
++		txd3-skew-ps = <0>;
++		reg = <0>;
++		interrupt-parent = <&gpio2>;
++		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
++	};
++};
++
+ &sdhi0 {
+ 	pinctrl-0 = <&sdhi0_pins>;
+ 	pinctrl-1 = <&sdhi0_pins_uhs>;
 -- 
-2.7.4
+2.1.4
