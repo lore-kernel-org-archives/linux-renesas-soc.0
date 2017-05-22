@@ -1,24 +1,17 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:42952 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757939AbdEVMQQ (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 May 2017 08:16:16 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Return-Path: <kieranbingham@gmail.com>
 Subject: Re: [PATCH v2 5/5] drm: rcar-du: Map memory through the VSP device
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+ dri-devel@lists.freedesktop.org
 References: <20170516232007.20980-1-laurent.pinchart+renesas@ideasonboard.com>
  <20170516232007.20980-6-laurent.pinchart+renesas@ideasonboard.com>
-Reply-To: kieran.bingham@ideasonboard.com
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org
 Cc: linux-renesas-soc@vger.kernel.org
-Message-ID: <b21c3600-ae8e-f384-08f7-cb4229064259@ideasonboard.com>
-Date: Mon, 22 May 2017 13:16:11 +0100
+From: Kieran Bingham <kieranbingham@gmail.com>
+Message-ID: <49a21f46-b183-d5a1-b9cd-d79482596395@gmail.com>
+Date: Mon, 22 May 2017 13:15:37 +0100
 MIME-Version: 1.0
 In-Reply-To: <20170516232007.20980-6-laurent.pinchart+renesas@ideasonboard.com>
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hi Laurent,
