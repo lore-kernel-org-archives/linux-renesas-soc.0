@@ -1,83 +1,230 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51690 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753472AbdESREY (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 19 May 2017 13:04:24 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>,
-        Mark Brown <broonie@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <87pof53bx6.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dBlK3-0003is-LC@debutante>
-Date: Fri, 19 May 2017 18:04:15 +0100
-Subject: Applied "ASoC: simple-scu-card: tidyup return method from probe()" to the asoc tree
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Mark Brown <broonie@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
+        Jiada Wang <jiada_wang@mentor.com>,
+        Matt Porter <mporter@konsulko.com>, linux-spi@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v5 0/6] spi: Add slave mode support
+Date: Mon, 22 May 2017 15:11:39 +0200
+Message-Id: <1495458705-11692-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+	Hi Mark,
 
-   ASoC: simple-scu-card: tidyup return method from probe()
+This patch series adds support for SPI slave controllers to the Linux
+SPI subsystem, including:
+  - DT binding updates for SPI slave support,
+  - Core support for SPI slave controllers,
+  - SPI slave support for the Renesas MSIOF device driver (thanks to
+    Nakamura-san for the initial implementation in the R-Car BSP!),
+  - Sample SPI slave handlers.
 
-has been applied to the asoc tree at
+Due to the nature of SPI slave (simultaneous transmit and receive, while
+everything runs at the pace of the master), it has hard real-time
+requirements: once an SPI transfer is started by the SPI master, a
+software SPI slave must have prepared all data to be sent back to the
+SPI master.  Hence without additional hardware support, an SPI slave
+response can never be a reply to a command being simultaneously
+transmitted, and SPI slave replies must be received by the SPI master in
+a subsequent SPI transfer.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+Examples of possible use cases:
+  - Receiving streams of data in fixed-size messages (e.g. from a
+    tuner),
+  - Receiving and transmitting fixed-size messages of data (e.g. network
+    frames),
+  - Sending commands, and querying for responses,
+  - ...
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Binding an SPI slave handler to the SPI slave device represented by an
+SPI slave controller can either be done from DT, or through sysfs.
+The latter, which also allows unregistering, is done through a sysfs
+virtual file named "slave", cfr. Documentation/spi/spi-summary.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Originally I wanted to implement a simple SPI slave handler that could
+interface with an existing Linux SPI slave driver, cfr. Wolfram Sang's
+I2C slave mode EEPROM simulator for the i2c subsystem.
+Unfortunately I couldn't find any existing driver using an SPI slave
+protocol that fulfills the above requirements. The Nordic Semiconductor
+nRF8001 BLE controller seems to use a suitable protocol, but I couldn't
+find a Linux driver for it.  Hence I created two sample SPI slave
+protocols and drivers myself:
+  1. "spi-slave-time" responds with the system uptime at the time of
+     reception of the last SPI message, which can be used by an external
+     microcontroller as a dead man's switch.
+  2. "spi-slave-system-control" allows remote control of system reboot,
+     power off, halt, and suspend.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+For some use cases, using spidev from user space may be a more appropriate
+solution than an in-kernel SPI protocol handler, and this is fully
+supported.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+>From the point of view of an SPI slave protocol handler, an SPI slave
+controller looks almost like an ordinary SPI master controller. The only
+exception is that a transfer request will block on the remote SPI
+master, and may be cancelled using spi_slave_abort().
+Hence "struct spi_master" has become a misnomer.  I'll send an RFC
+follow-up patch to fix that.
 
-Thanks,
-Mark
+For now, the MSIOF SPI slave driver only supports the transmission of
+messages with a size that is known in advance (the hardware can provide
+an interrupt when CS is deasserted before, though).
+I.e. when the SPI master sends a shorter message, the slave won't
+receive it.  When the SPI master sends a longer message, the slave will
+receive the first part, and the rest will remain in the FIFO.
 
->From c73df77d72de28ad72973d3c3103a5361e1440fb Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Fri, 19 May 2017 00:57:44 +0000
-Subject: [PATCH] ASoC: simple-scu-card: tidyup return method from probe()
+Handshaking (5-pin SPI, RDY-signal) is optional, and not yet
+implemented.  An RDY-signal may be used for one or both of:
+  1. The SPI slave asserts RDY when it has data available, and wants to
+     be queried by the SPI master.
+       -> This can be handled on top, in the SPI slave protocol handler,
+	  using a GPIO.
+  2. After the SPI master has asserted CS, the SPI slave asserts RDY
+     when it is ready to accept the transfer.
+       -> This may need hardware support in the SPI slave controller,
+	  or dynamic GPIO vs. CS pinmuxing.
 
-Current return method from probe() is very confusable.
-This patch tidyup it to normal return method
+Changes compared to v4, all to the sample SPI slave handlers:
+  - Add usage documentation to file header,
+  - Replace pr_*() by dev_*(), stop printing __func__,
+  - Rename rem_ns to rem_us, as the remainder is in microseconds,
+  - Remove spi_setup() call to configure 8 bits per word, as that's the
+    default,
+  - Use network byte order for commands, to match the "-p" parameter of
+    spidev_test,
 
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/generic/simple-scu-card.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Changes compared to v3:
+  - Add Reviewed-by, Acked-by,
+  - Add missing kerneldoc for spi_master.slave,
+  - Use slave_aborted flag and complete() instead of messing with
+    internal completion and thread state,
 
-diff --git a/sound/soc/generic/simple-scu-card.c b/sound/soc/generic/simple-scu-card.c
-index dcbcab230d1b..9b9b01e12149 100644
---- a/sound/soc/generic/simple-scu-card.c
-+++ b/sound/soc/generic/simple-scu-card.c
-@@ -298,8 +298,10 @@ static int asoc_simple_card_probe(struct platform_device *pdev)
- 	snd_soc_card_set_drvdata(card, priv);
- 
- 	ret = devm_snd_soc_register_card(dev, card);
--	if (ret >= 0)
--		return ret;
-+	if (ret < 0)
-+		goto err;
-+
-+	return 0;
- err:
- 	asoc_simple_card_clean_reference(card);
- 
+Changes compared to v2 (highlights only, see individual patches for
+more details):
+  - In SPI slave mode, represent the (single) slave device again as a
+    child of the controller node, which is now optional, and must be
+    named "slave" if present,
+  - Introduce a separate spi_alloc_slave() function,
+  - Replace the SPI_CONTROLLER_IS_SLAVE flag in spi_master.flags by a
+    bool in spi_master,
+  - Fix cancellation in the spi-sh-msiof driver,
+  - Drop "spi: core: Extract of_spi_parse_dt()", which was applied,
+
+Changes compared to v1 (highlights only, see individual patches for
+more details):
+  - Do not create a child node in SPI slave mode. Instead, add an
+    "spi-slave" property, and put the mode properties in the controller
+    node.
+  - Attach SPI slave controllers to a new "spi_slave" device class,
+  - Use a "slave" virtual file in sysfs to (un)register the (single)
+    slave device for an SPI slave controller, incl. specifying the slave
+    protocol handler,
+  - Add cancellation support using spi_master.slave_abort() and
+    spi_slave_abort(),
+  - Please see the individual patches for more detailed changelog
+    information.
+
+Dependencies:
+  - Today's spi/for-next,
+
+For your convenience, I've pushed this series and its dependencies to
+the topic/spi-slave-v5 branch of the git repository at
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
+
+Full test information is also available on the eLinux wiki
+(http://elinux.org/Tests:MSIOF-SPI-Slave).
+
+For testing, device tree overlays enabling SPI master and slave
+controllers on an expansion I/O connector on r8a7791/koelsch are
+available in the topic/renesas-overlays branch of my renesas-drivers git
+repository.  Please see http://elinux.org/R-Car/DT-Overlays for more
+information about using these overlays.
+
+Test wiring on r8a7791/koelsch, between MSIOF1 and MSIOF2 on EXIO
+connector A:
+   - Connect pin 48 (MSIOF1 CS#) to pin 63 (MSIOF2 CS#),
+   - Connect pin 46 (MSIOF1 SCK) to pin 61 (MSIOF2 SCK),
+   - Connect pin 54 (MSIOF1 TX/MOSI) to pin 70 (MSIOF2 RX/MOSI),
+   - Connect pin 56 (MSIOF1 RX/MISO) to pin 68 (MSIOF2 TX/MISO).
+
+Preparation for all examples below:
+    # overlay add a-msiof1-spidev # buggy DT: spidev listed directly in DT
+    # overlay add a-msiof2-slave
+
+Example 1:
+
+    # echo spi-slave-time > /sys/class/spi_slave/spi3/slave 
+    # spidev_test -D /dev/spidev2.0 -p dummy-8B
+    spi mode: 0x0
+    bits per word: 8
+    max speed: 500000 Hz (500 KHz)
+    RX | 00 00 04 6D 00 09 5B BB __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __  | ...m..[�
+               ^^^^^    ^^^^^^^^
+	       seconds  microseconds
+
+Example 2:
+
+    # echo spi-slave-system-control > /sys/class/spi_slave/spi3/slave 
+    # reboot='\x7c\x50'
+    # poweroff='\x71\x3f'
+    # halt='\x38\x76'
+    # suspend='\x1b\x1b'
+    # spidev_test -D /dev/spidev2.0 -p $suspend # or $reboot, $poweroff, $halt
+
+Example 3:
+
+    # echo spidev > /sys/class/spi_slave/spi3/slave 
+    # spidev_test -D /dev/spidev3.0 -p slave-hello-to-master &
+    # spidev_test -D /dev/spidev2.0 -p master-hello-to-slave
+
+Thanks for applying!
+
+Geert Uytterhoeven (5):
+  spi: Document DT bindings for SPI controllers in slave mode
+  spi: core: Add support for registering SPI slave controllers
+  spi: Document SPI slave controller support
+  spi: slave: Add SPI slave handler reporting uptime at previous message
+  spi: slave: Add SPI slave handler controlling system state
+
+Hisashi Nakamura (1):
+  spi: sh-msiof: Add slave mode support
+
+ Documentation/devicetree/bindings/spi/sh-msiof.txt |   2 +
+ Documentation/devicetree/bindings/spi/spi-bus.txt  |  76 +++++----
+ Documentation/spi/spi-summary                      |  27 +++-
+ drivers/spi/Kconfig                                |  26 ++-
+ drivers/spi/Makefile                               |   4 +
+ drivers/spi/spi-sh-msiof.c                         | 111 +++++++++----
+ drivers/spi/spi-slave-system-control.c             | 154 ++++++++++++++++++
+ drivers/spi/spi-slave-time.c                       | 129 +++++++++++++++
+ drivers/spi/spi.c                                  | 179 ++++++++++++++++++---
+ include/linux/spi/sh_msiof.h                       |   6 +
+ include/linux/spi/spi.h                            |  35 +++-
+ 11 files changed, 649 insertions(+), 100 deletions(-)
+ create mode 100644 drivers/spi/spi-slave-system-control.c
+ create mode 100644 drivers/spi/spi-slave-time.c
+
 -- 
-2.11.0
+2.7.4
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
