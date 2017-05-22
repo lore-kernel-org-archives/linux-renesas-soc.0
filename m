@@ -1,54 +1,112 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f196.google.com ([209.85.223.196]:33060 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751833AbdEPK6m (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47786 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933920AbdEVOAJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 16 May 2017 06:58:42 -0400
-MIME-Version: 1.0
-In-Reply-To: <20170428175432.051091580@cogentembedded.com>
-References: <20170428175432.051091580@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 16 May 2017 12:58:40 +0200
-Message-ID: <CAMuHMdVddAgMkUhKi2M6Wmu_Syqe8+OwgfiVtooqqLGARnOCFQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: r8a7794: remove reserved bits
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 22 May 2017 10:00:09 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 28/35] arm64: dts: renesas: r8a7795: Add HDMI encoder support
+Date: Mon, 22 May 2017 15:59:01 +0200
+Message-Id: <12daaf78a723ef7cb7ec46bc604844f31111bc7b.1495457812.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1495457812.git.horms+renesas@verge.net.au>
+References: <cover.1495457812.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Apr 28, 2017 at 7:50 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> The R8A7794 PFC driver was apparently based on the preliminary revisions
-> of  the  user's manual which  had some signals and MOD_SEL register fields
-> described which the recent manual changed  to reserved. Of course, these
-> signals haven't ever  been really used, which makes removing them painless.
->
-> While at it, make the large *enum* look better by starting a new line each
-> time  a new  row  in the IPSR and MOD_SEL register field tables is started.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
+Add DT nodes for the two HDMI encoders in disabled state.
+
+Based on work by Koji Matsuoka.
+
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in sh-pfc-for-v4.13.
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 52 ++++++++++++++++++++++++++++++++
+ 1 file changed, 52 insertions(+)
 
->         PINMUX_IPSR_GPSR(IP2_31_30, A20),
->         PINMUX_IPSR_GPSR(IP2_31_30, SPCLK),
-> -       PINMUX_IPSR_GPSR(IP2_29_27, MOUT1),
-
-This patch seems to remove quite some wrong numbered entries, good ;-)
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 7d87dff70ac8..ee0129634cdf 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -1758,6 +1758,56 @@
+ 			renesas,fcp = <&fcpf2>;
+ 		};
+ 
++		hdmi0: hdmi0@fead0000 {
++			compatible = "renesas,r8a7795-hdmi", "renesas,rcar-gen3-hdmi";
++			reg = <0 0xfead0000 0 0x10000>;
++			interrupts = <GIC_SPI 389 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 729>, <&cpg CPG_CORE R8A7795_CLK_HDMI>;
++			clock-names = "iahb", "isfr";
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++			resets = <&cpg 729>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++				port@0 {
++					reg = <0>;
++					dw_hdmi0_in: endpoint {
++						remote-endpoint = <&du_out_hdmi0>;
++					};
++				};
++				port@1 {
++					reg = <1>;
++				};
++			};
++		};
++
++		hdmi1: hdmi1@feae0000 {
++			compatible = "renesas,r8a7795-hdmi", "renesas,rcar-gen3-hdmi";
++			reg = <0 0xfeae0000 0 0x10000>;
++			interrupts = <GIC_SPI 436 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 728>, <&cpg CPG_CORE R8A7795_CLK_HDMI>;
++			clock-names = "iahb", "isfr";
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++			resets = <&cpg 728>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++				port@0 {
++					reg = <0>;
++					dw_hdmi1_in: endpoint {
++						remote-endpoint = <&du_out_hdmi1>;
++					};
++				};
++				port@1 {
++					reg = <1>;
++				};
++			};
++		};
++
+ 		du: display@feb00000 {
+ 			compatible = "renesas,du-r8a7795";
+ 			reg = <0 0xfeb00000 0 0x80000>,
+@@ -1789,11 +1839,13 @@
+ 				port@1 {
+ 					reg = <1>;
+ 					du_out_hdmi0: endpoint {
++						remote-endpoint = <&dw_hdmi0_in>;
+ 					};
+ 				};
+ 				port@2 {
+ 					reg = <2>;
+ 					du_out_hdmi1: endpoint {
++						remote-endpoint = <&dw_hdmi1_in>;
+ 					};
+ 				};
+ 				port@3 {
+-- 
+2.1.4
