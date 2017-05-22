@@ -1,74 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:37700 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753849AbdEQJwi (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:46164 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752591AbdEVMac (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 17 May 2017 05:52:38 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <87vap2j385.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dAvd3-0006rs-Kl@debutante>
-Date: Wed, 17 May 2017 10:52:25 +0100
-Subject: Applied "ASoC: rsnd: remove un-used OUF_SRCO/I macro" to the asoc tree
+        Mon, 22 May 2017 08:30:32 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 04/14] ARM: dts: r8a7778: update PFC node name to pin-controller
+Date: Mon, 22 May 2017 14:30:14 +0200
+Message-Id: <b3ed04985ce6d19a0cb12dccf95d41c1b86693cc.1495455272.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1495455272.git.horms+renesas@verge.net.au>
+References: <cover.1495455272.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+The device trees for Renesas SoCs use either pfc or pin-controller as the
+node name for the PFC device. This patch is intended to take a step towards
+unifying the node name used as pin-controller which appears to be the more
+generic of the two and thus more in keeping with the DT specs.
 
-   ASoC: rsnd: remove un-used OUF_SRCO/I macro
+My analysis is that this is a user-visible change to the extent that kernel
+logs, and sysfs entries change from fffc0000.pfc and pfc@fffc0000 to
+fffc0000.pin-controller and pin-controller@fffc0000.
 
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From a9b10dddd6d86e6004a9f310c68888229f75e041 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 15 May 2017 01:57:27 +0000
-Subject: [PATCH] ASoC: rsnd: remove un-used OUF_SRCO/I macro
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- sound/soc/sh/rcar/src.c | 4 ----
- 1 file changed, 4 deletions(-)
+ arch/arm/boot/dts/r8a7778.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/sh/rcar/src.c b/sound/soc/sh/rcar/src.c
-index 20b5b2ec625e..a8ab26d70a8b 100644
---- a/sound/soc/sh/rcar/src.c
-+++ b/sound/soc/sh/rcar/src.c
-@@ -12,10 +12,6 @@
+diff --git a/arch/arm/boot/dts/r8a7778.dtsi b/arch/arm/boot/dts/r8a7778.dtsi
+index 1e93c94a9eac..8f3156c0e575 100644
+--- a/arch/arm/boot/dts/r8a7778.dtsi
++++ b/arch/arm/boot/dts/r8a7778.dtsi
+@@ -142,7 +142,7 @@
+ 		interrupt-controller;
+ 	};
  
- #define SRC_NAME "src"
- 
--/* SRCx_STATUS */
--#define OUF_SRCO	((1 << 12) | (1 << 13))
--#define OUF_SRCI	((1 <<  9) | (1 <<  8))
--
- /* SCU_SYSTEM_STATUS0/1 */
- #define OUF_SRC(id)	((1 << (id + 16)) | (1 << id))
- 
+-	pfc: pfc@fffc0000 {
++	pfc: pin-controller@fffc0000 {
+ 		compatible = "renesas,pfc-r8a7778";
+ 		reg = <0xfffc0000 0x118>;
+ 	};
 -- 
-2.11.0
+2.1.4
