@@ -1,422 +1,69 @@
-Subject: Re: [PATCH v4 23/27] rcar-vin: parse Gen3 OF and setup media graph
-To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
- <niklas.soderlund+renesas@ragnatech.se>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Hans Verkuil <hverkuil@xs4all.nl>
-References: <20170427224203.14611-1-niklas.soderlund+renesas@ragnatech.se>
- <20170427224203.14611-24-niklas.soderlund+renesas@ragnatech.se>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- tomoharu.fukawa.eb@renesas.com, Sakari Ailus <sakari.ailus@linux.intel.com>,
- Geert Uytterhoeven <geert@linux-m68k.org>,
- Kieran Bingham <kieran.bingham@ideasonboard.com>
-Reply-To: kieran.bingham@ideasonboard.com
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Message-ID: <b487f427-006a-5489-9ddc-324e3a5d031a@ideasonboard.com>
-Date: Tue, 2 May 2017 14:02:54 +0100
-MIME-Version: 1.0
-In-Reply-To: <20170427224203.14611-24-niklas.soderlund+renesas@ragnatech.se>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:46181 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757043AbdEVMar (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 22 May 2017 08:30:47 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 14/14] ARM: dts: renesas: Switch to panel-lvds bindings for Mitsubishi panels
+Date: Mon, 22 May 2017 14:30:24 +0200
+Message-Id: <2ae0fcc57e00c11fae80678e2a9fabbeec82a185.1495455272.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1495455272.git.horms+renesas@verge.net.au>
+References: <cover.1495455272.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Niklas
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Just a quick comment here, as I've come across it while looking at the fw_node
-topic.
+The aa104xd12 and aa121td01 panels are LVDS panels, not DPI panels.
+Use the correct DT bindings.
 
-On 27/04/17 23:41, Niklas Söderlund wrote:
-> Parse the VIN Gen3 OF graph and register all CSI-2 devices in the VIN
-> group common media device. Once a CSI-2 subdevice is added to the common
-> media device list as many links as possible are added.
-> 
-> The parsing and registering CSI-2 subdevices is a collaborative effort
-> shared between all rcar-vin instances which are part of the group.  The
-> rcar-vin instance that first sees a new CSI-2 subdevice adds it to its
-> private v4l2 async notifier and once it's bound it will be
-> available for the whole group.
-> 
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> ---
->  drivers/media/platform/rcar-vin/rcar-core.c | 340 ++++++++++++++++++++++++++--
->  1 file changed, 327 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-> index c10770d5ec37816c..9b9da9a419d0b7e1 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-core.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
-> @@ -158,21 +158,32 @@ static int rvin_parse_v4l2(struct rvin_dev *vin,
->  
->  	mbus_cfg->type = v4l2_ep.bus_type;
->  
-> -	switch (mbus_cfg->type) {
-> -	case V4L2_MBUS_PARALLEL:
-> -		vin_dbg(vin, "Found PARALLEL media bus\n");
-> -		mbus_cfg->flags = v4l2_ep.bus.parallel.flags;
-> -		break;
-> -	case V4L2_MBUS_BT656:
-> -		vin_dbg(vin, "Found BT656 media bus\n");
-> -		mbus_cfg->flags = 0;
-> -		break;
-> -	default:
-> -		vin_err(vin, "Unknown media bus type\n");
-> -		return -EINVAL;
-> +	if (vin->info->chip == RCAR_GEN3) {
-> +		switch (mbus_cfg->type) {
-> +		case V4L2_MBUS_CSI2:
-> +			vin_dbg(vin, "Found CSI-2 media bus\n");
-> +			mbus_cfg->flags = 0;
-> +			return 0;
-> +		default:
-> +			break;
-> +		}
-> +	} else {
-> +		switch (mbus_cfg->type) {
-> +		case V4L2_MBUS_PARALLEL:
-> +			vin_dbg(vin, "Found PARALLEL media bus\n");
-> +			mbus_cfg->flags = v4l2_ep.bus.parallel.flags;
-> +			return 0;
-> +		case V4L2_MBUS_BT656:
-> +			vin_dbg(vin, "Found BT656 media bus\n");
-> +			mbus_cfg->flags = 0;
-> +			return 0;
-> +		default:
-> +			break;
-> +		}
->  	}
->  
-> -	return 0;
-> +	vin_err(vin, "Unknown media bus type\n");
-> +	return -EINVAL;
->  }
->  
->  /* -----------------------------------------------------------------------------
-> @@ -357,6 +368,299 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
->   * Group async notifier
->   */
->  
-> +/* group lock should be held when calling this function */
-> +static int rvin_group_add_link(struct rvin_dev *vin,
-> +			       struct media_entity *source,
-> +			       unsigned int source_idx,
-> +			       struct media_entity *sink,
-> +			       unsigned int sink_idx,
-> +			       u32 flags)
-> +{
-> +	struct media_pad *source_pad, *sink_pad;
-> +	int ret = 0;
-> +
-> +	source_pad = &source->pads[source_idx];
-> +	sink_pad = &sink->pads[sink_idx];
-> +
-> +	if (!media_entity_find_link(source_pad, sink_pad))
-> +		ret = media_create_pad_link(source, source_idx,
-> +					    sink, sink_idx, flags);
-> +
-> +	if (ret)
-> +		vin_err(vin, "Error adding link from %s to %s\n",
-> +			source->name, sink->name);
-> +
-> +	return ret;
-> +}
-> +
-> +static int rvin_group_update_links(struct rvin_dev *vin)
-> +{
-> +	struct media_entity *source, *sink;
-> +	struct rvin_dev *master;
-> +	unsigned int i, n, idx, chsel, csi;
-> +	u32 flags;
-> +	int ret;
-> +
-> +	mutex_lock(&vin->group->lock);
-> +
-> +	for (n = 0; n < RCAR_VIN_NUM; n++) {
-> +
-> +		/* Check that VIN is part of the group */
-> +		if (!vin->group->vin[n])
-> +			continue;
-> +
-> +		/* Check that subgroup master is part of the group */
-> +		master = vin->group->vin[n < 4 ? 0 : 4];
-> +		if (!master)
-> +			continue;
-> +
-> +		chsel = rvin_get_chsel(master);
-> +
-> +		for (i = 0; i < vin->info->num_chsels; i++) {
-> +			csi = vin->info->chsels[n][i].csi;
-> +
-> +			/* If the CSI-2 is out of bounds it's a noop, skip */
-> +			if (csi >= RVIN_CSI_MAX)
-> +				continue;
-> +
-> +			/* Check that CSI-2 are part of the group */
-> +			if (!vin->group->csi[csi].subdev)
-> +				continue;
-> +
-> +			source = &vin->group->csi[csi].subdev->entity;
-> +			sink = &vin->group->vin[n]->vdev->entity;
-> +			idx = vin->info->chsels[n][i].chan + 1;
-> +			flags = i == chsel ? MEDIA_LNK_FL_ENABLED : 0;
-> +
-> +			ret = rvin_group_add_link(vin, source, idx, sink, 0,
-> +						  flags);
-> +			if (ret)
-> +				goto out;
-> +		}
-> +	}
-> +out:
-> +	mutex_unlock(&vin->group->lock);
-> +
-> +	return ret;
-> +}
-> +
-> +static int rvin_group_notify_complete(struct v4l2_async_notifier *notifier)
-> +{
-> +	struct rvin_dev *vin = notifier_to_vin(notifier);
-> +	int ret;
-> +
-> +	ret = v4l2_device_register_subdev_nodes(&vin->v4l2_dev);
-> +	if (ret) {
-> +		vin_err(vin, "Failed to register subdev nodes\n");
-> +		return ret;
-> +	}
-> +
-> +	return rvin_group_update_links(vin);
-> +}
-> +
-> +static void rvin_group_notify_unbind(struct v4l2_async_notifier *notifier,
-> +				     struct v4l2_subdev *subdev,
-> +				     struct v4l2_async_subdev *asd)
-> +{
-> +	struct rvin_dev *vin = notifier_to_vin(notifier);
-> +	struct device_node *del = subdev->of_node;
-> +	unsigned int i;
-> +
-> +	mutex_lock(&vin->group->lock);
-> +	for (i = 0; i < RVIN_CSI_MAX; i++) {
-> +		if (vin->group->csi[i].asd.match.of.node == del) {
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a77xx-aa104xd12-panel.dtsi | 3 ++-
+ arch/arm/boot/dts/r8a77xx-aa121td01-panel.dtsi | 3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-I think here we should either use (or export if necessary) the async match helper.
-
-This would then cope sucessfully with the change to the fw_node matching.
-
-
-
-> +			vin_dbg(vin, "Unbind CSI-2 %s\n", subdev->name);
-> +			vin->group->csi[i].subdev = NULL;
-> +			mutex_unlock(&vin->group->lock);
-> +			return;
-> +		}
-> +	}
-> +	mutex_unlock(&vin->group->lock);
-> +
-> +	vin_err(vin, "No entity for subdev %s to unbind\n", subdev->name);
-> +}
-> +
-> +static int rvin_group_notify_bound(struct v4l2_async_notifier *notifier,
-> +				   struct v4l2_subdev *subdev,
-> +				   struct v4l2_async_subdev *asd)
-> +{
-> +	struct rvin_dev *vin = notifier_to_vin(notifier);
-> +	struct device_node *new = subdev->of_node;
-> +	unsigned int i;
-> +
-> +	v4l2_set_subdev_hostdata(subdev, vin);
-> +
-> +	mutex_lock(&vin->group->lock);
-> +	for (i = 0; i < RVIN_CSI_MAX; i++) {
-> +		if (vin->group->csi[i].asd.match.of.node == new) {
-
-
-Same here of course, as above.
-
-> +			vin_dbg(vin, "Bound CSI-2 %s\n", subdev->name);
-> +			vin->group->csi[i].subdev = subdev;
-> +			mutex_unlock(&vin->group->lock);
-> +			return 0;
-> +		}
-> +	}
-> +	mutex_unlock(&vin->group->lock);
-> +
-> +	vin_err(vin, "No entity for subdev %s to bind\n", subdev->name);
-> +	return -EINVAL;
-> +}
-> +
-> +static struct device_node *rvin_group_get_csi(struct rvin_dev *vin,
-> +					      struct device_node *node)
-> +{
-> +	struct device_node *csi;
-> +
-> +	csi = of_graph_get_remote_port_parent(node);
-> +	if (!csi) {
-> +		vin_err(vin, "No CSI-2 found %s\n", of_node_full_name(node));
-> +		return ERR_PTR(-EINVAL);
-> +	}
-> +
-> +	/* Not all CSI-2 are available, this is OK */
-> +	if (!of_device_is_available(csi)) {
-> +		vin_dbg(vin, "CSI-2 %s not available\n",
-> +			of_node_full_name(csi));
-> +		of_node_put(csi);
-> +		return NULL;
-> +	}
-> +
-> +	return csi;
-> +}
-> +
-> +/* group lock should be held when calling this function */
-> +static int rvin_group_graph_parse(struct rvin_dev *vin, unsigned long *bitmap)
-> +{
-> +	struct device_node *ep, *csi;
-> +	unsigned int i;
-> +	u32 val;
-> +	int ret;
-> +
-> +	*bitmap = 0;
-> +
-> +	/* Figure out which VIN we are */
-> +	ret = of_property_read_u32(vin->dev->of_node, "renesas,id", &val);
-> +	if (ret) {
-> +		vin_err(vin, "No renesas,id property found\n");
-> +		return ret;
-> +	}
-> +
-> +	if (val >= RCAR_VIN_NUM) {
-> +		vin_err(vin, "Invalid renesas,id '%u'\n", val);
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (vin->group->vin[val] != NULL) {
-> +		vin_err(vin, "VIN number %d already occupied\n", val);
-> +		return -EINVAL;
-> +	}
-> +
-> +	vin_dbg(vin, "I'm VIN number %u", val);
-> +	vin->group->vin[val] = vin;
-> +
-> +	/* Parse all CSI-2 nodes */
-> +	for (i = 0; i < RVIN_CSI_MAX; i++) {
-> +
-> +		/* Check if instance is connected to the CSI-2 */
-> +		ep = of_graph_get_endpoint_by_regs(vin->dev->of_node, 1, i);
-> +		if (!ep) {
-> +			vin_dbg(vin, "CSI-2: %d not connected\n", i);
-> +			continue;
-> +		}
-> +
-> +		if (vin->group->csi[i].asd.match.of.node) {
-> +			of_node_put(ep);
-> +			vin_dbg(vin, "CSI-2: %d handled by other device\n", i);
-> +			continue;
-> +		}
-> +
-> +		csi = rvin_group_get_csi(vin, ep);
-> +		of_node_put(ep);
-> +		if (IS_ERR(csi))
-> +			return PTR_ERR(csi);
-> +		if (csi == NULL)
-> +			continue;
-> +
-> +		vin->group->csi[i].asd.match.of.node = csi;
-> +		vin->group->csi[i].asd.match_type = V4L2_ASYNC_MATCH_OF;
-> +
-> +		*bitmap |= BIT(i);
-> +
-> +		vin_dbg(vin, "Handle CSI-2 %s\n", of_node_full_name(csi));
-> +	}
-> +
-> +	/* All our sources are CSI-2 */
-> +	vin->mbus_cfg.type = V4L2_MBUS_CSI2;
-> +	vin->mbus_cfg.flags = 0;
-> +
-> +	return 0;
-> +}
-> +
-> +/* group lock should be held when calling this function */
-> +static void rvin_group_graph_revert(struct rvin_dev *vin, unsigned long bitmap)
-> +{
-> +	int bit;
-> +
-> +	for_each_set_bit(bit, &bitmap, RVIN_CSI_MAX) {
-> +		vin_dbg(vin, "Reverting graph for %s\n",
-> +			of_node_full_name(vin->dev->of_node));
-> +		vin->group->csi[bit].asd.match.of.node = NULL;
-> +		vin->group->csi[bit].asd.match_type = 0;
-> +	}
-> +}
-> +
-> +static int rvin_group_graph_init(struct rvin_dev *vin)
-> +{
-> +	struct v4l2_async_subdev **subdevs = NULL;
-> +	unsigned long bitmap;
-> +	int i, bit, count, ret;
-> +
-> +	mutex_lock(&vin->group->lock);
-> +
-> +	ret = rvin_group_graph_parse(vin, &bitmap);
-> +	if (ret) {
-> +		rvin_group_graph_revert(vin, bitmap);
-> +		mutex_unlock(&vin->group->lock);
-> +		return ret;
-> +	}
-> +
-> +	/* Check if instance need to handle subdevices on behalf of the group */
-> +	count = hweight_long(bitmap);
-> +	if (!count) {
-> +		mutex_unlock(&vin->group->lock);
-> +		return 0;
-> +	}
-> +
-> +	subdevs = devm_kzalloc(vin->dev, sizeof(*subdevs) * count, GFP_KERNEL);
-> +	if (subdevs == NULL) {
-> +		rvin_group_graph_revert(vin, bitmap);
-> +		mutex_unlock(&vin->group->lock);
-> +		return -ENOMEM;
-> +	}
-> +
-> +	i = 0;
-> +	for_each_set_bit(bit, &bitmap, RVIN_CSI_MAX) {
-> +		subdevs[i++] = &vin->group->csi[bit].asd;
-> +	}
-> +
-> +	vin_dbg(vin, "Claimed %d subdevices for group\n", count);
-> +
-> +	vin->notifier.num_subdevs = count;
-> +	vin->notifier.subdevs = subdevs;
-> +	vin->notifier.bound = rvin_group_notify_bound;
-> +	vin->notifier.unbind = rvin_group_notify_unbind;
-> +	vin->notifier.complete = rvin_group_notify_complete;
-> +
-> +	mutex_unlock(&vin->group->lock);
-> +
-> +	ret = v4l2_async_notifier_register(&vin->v4l2_dev, &vin->notifier);
-> +	if (ret < 0) {
-> +		vin_err(vin, "Notifier registration failed\n");
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static int rvin_group_init(struct rvin_dev *vin)
->  {
->  	int ret;
-> @@ -374,7 +678,17 @@ static int rvin_group_init(struct rvin_dev *vin)
->  	if (ret)
->  		goto error_v4l2;
->  
-> +	ret = rvin_group_graph_init(vin);
-> +	if (ret)
-> +		goto error_v4l2;
-> +
-> +	ret = rvin_group_update_links(vin);
-> +	if (ret)
-> +		goto error_async;
-> +
->  	return 0;
-> +error_async:
-> +	v4l2_async_notifier_unregister(&vin->notifier);
->  error_v4l2:
->  	rvin_v4l2_mc_remove(vin);
->  error_group:
-> 
+diff --git a/arch/arm/boot/dts/r8a77xx-aa104xd12-panel.dtsi b/arch/arm/boot/dts/r8a77xx-aa104xd12-panel.dtsi
+index 65cb50f0c29f..238d14bb0ebe 100644
+--- a/arch/arm/boot/dts/r8a77xx-aa104xd12-panel.dtsi
++++ b/arch/arm/boot/dts/r8a77xx-aa104xd12-panel.dtsi
+@@ -10,10 +10,11 @@
+ 
+ / {
+ 	panel {
+-		compatible = "mitsubishi,aa104xd12", "panel-dpi";
++		compatible = "mitsubishi,aa104xd12", "panel-lvds";
+ 
+ 		width-mm = <210>;
+ 		height-mm = <158>;
++		data-mapping = "jeida-18";
+ 
+ 		panel-timing {
+ 			/* 1024x768 @65Hz */
+diff --git a/arch/arm/boot/dts/r8a77xx-aa121td01-panel.dtsi b/arch/arm/boot/dts/r8a77xx-aa121td01-panel.dtsi
+index a07ebf8f6938..04aafd479775 100644
+--- a/arch/arm/boot/dts/r8a77xx-aa121td01-panel.dtsi
++++ b/arch/arm/boot/dts/r8a77xx-aa121td01-panel.dtsi
+@@ -10,10 +10,11 @@
+ 
+ / {
+ 	panel {
+-		compatible = "mitsubishi,aa121td01", "panel-dpi";
++		compatible = "mitsubishi,aa121td01", "panel-lvds";
+ 
+ 		width-mm = <261>;
+ 		height-mm = <163>;
++		data-mapping = "jeida-18";
+ 
+ 		panel-timing {
+ 			/* 1280x800 @60Hz */
+-- 
+2.1.4
