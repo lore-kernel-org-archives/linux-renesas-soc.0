@@ -1,89 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:36358 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1164049AbdEZLmD (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:46092 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751007AbdEVMaN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 26 May 2017 07:42:03 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <8760gos8fq.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dEDcw-0000jt-4W@debutante>
-Date: Fri, 26 May 2017 12:41:54 +0100
-Subject: Applied "ASoC: rsnd: fixup parent_clk_name of AUDIO_CLKOUTx" to the asoc tree
+        Mon, 22 May 2017 08:30:13 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 2/3] ARM: dts: r7s72100: add Renesas RZ/A1 pinctrl header
+Date: Mon, 22 May 2017 14:30:03 +0200
+Message-Id: <62c2f988d73433cf0706ccc74d3d13588623b9fc.1495454780.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1495454780.git.horms+renesas@verge.net.au>
+References: <cover.1495454780.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-   ASoC: rsnd: fixup parent_clk_name of AUDIO_CLKOUTx
+Add dt-bindings for Renesas r7s72100 pin controller header file.
 
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From e8a3ce1130134046e9da132aa4d043566df8237d Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Fri, 26 May 2017 01:44:19 +0000
-Subject: [PATCH] ASoC: rsnd: fixup parent_clk_name of AUDIO_CLKOUTx
-
-commit 25165f79adc7 ("ASoC: rsnd: enable clock-frequency for both
-44.1kHz/48kHz") supported both 44.1kHz/48kHz for AUDIO_CLKOUTx,
-but it didn't care its parent clock name.
-This patch fixes it.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- sound/soc/sh/rcar/adg.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ include/dt-bindings/pinctrl/r7s72100-pinctrl.h | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+ create mode 100644 include/dt-bindings/pinctrl/r7s72100-pinctrl.h
 
-diff --git a/sound/soc/sh/rcar/adg.c b/sound/soc/sh/rcar/adg.c
-index 66203d107a11..d3b0dc145a56 100644
---- a/sound/soc/sh/rcar/adg.c
-+++ b/sound/soc/sh/rcar/adg.c
-@@ -507,7 +507,8 @@ static void rsnd_adg_get_clkout(struct rsnd_priv *priv,
- 				rbga = rbgx;
- 				adg->rbga_rate_for_441khz = rate / div;
- 				ckr |= brg_table[i] << 20;
--				if (req_441kHz_rate)
-+				if (req_441kHz_rate &&
-+				    !(adg_mode_flags(adg) & AUDIO_OUT_48))
- 					parent_clk_name = __clk_get_name(clk);
- 			}
- 		}
-@@ -522,7 +523,8 @@ static void rsnd_adg_get_clkout(struct rsnd_priv *priv,
- 				rbgb = rbgx;
- 				adg->rbgb_rate_for_48khz = rate / div;
- 				ckr |= brg_table[i] << 16;
--				if (req_48kHz_rate)
-+				if (req_48kHz_rate &&
-+				    (adg_mode_flags(adg) & AUDIO_OUT_48))
- 					parent_clk_name = __clk_get_name(clk);
- 			}
- 		}
+diff --git a/include/dt-bindings/pinctrl/r7s72100-pinctrl.h b/include/dt-bindings/pinctrl/r7s72100-pinctrl.h
+new file mode 100644
+index 000000000000..6b609fe10910
+--- /dev/null
++++ b/include/dt-bindings/pinctrl/r7s72100-pinctrl.h
+@@ -0,0 +1,16 @@
++/*
++ * Defines macros and constants for Renesas RZ/A1 pin controller pin
++ * muxing functions.
++ */
++#ifndef __DT_BINDINGS_PINCTRL_RENESAS_RZA1_H
++#define __DT_BINDINGS_PINCTRL_RENESAS_RZA1_H
++
++#define RZA1_PINS_PER_PORT	16
++
++/*
++ * Create the pin index from its bank and position numbers and store in
++ * the upper 16 bits the alternate function identifier
++ */
++#define RZA1_PINMUX(b, p, f)	((b) * RZA1_PINS_PER_PORT + (p) | (f << 16))
++
++#endif /* __DT_BINDINGS_PINCTRL_RENESAS_RZA1_H */
 -- 
-2.11.0
+2.1.4
