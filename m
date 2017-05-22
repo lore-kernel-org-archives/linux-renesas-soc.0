@@ -1,114 +1,80 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:37489 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758685AbdEMXQX (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47786 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933876AbdEVN7p (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 13 May 2017 19:16:23 -0400
-Received: from avalon.bb.dnainternet.fi (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by galahad.ideasonboard.com (Postfix) with ESMTPSA id 1E29420218
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 14 May 2017 01:16:21 +0200 (CEST)
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 22 May 2017 09:59:45 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v5 1/6] arm64: dts: renesas: r8a7795: Add HDMI encoder support
-Date: Sun, 14 May 2017 02:16:13 +0300
-Message-Id: <20170513231618.1715-2-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170513231618.1715-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170513231618.1715-1-laurent.pinchart+renesas@ideasonboard.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 27/35] arm64: dts: salvator-x: Add panel backlight support
+Date: Mon, 22 May 2017 15:59:00 +0200
+Message-Id: <b33be336702175334031f558951374b694bc4cb1.1495457812.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1495457812.git.horms+renesas@verge.net.au>
+References: <cover.1495457812.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Add DT nodes for the two HDMI encoders in disabled state.
+The panel backlight is controlled through a GPIO and a PWM channel.
 
-Based on work by Koji Matsuoka.
-
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+[simon: apply to salvator-x.dtsi instead of r8a7795-salvator-x.dts]
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-Changes since v4:
+ arch/arm64/boot/dts/renesas/salvator-x.dtsi | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-- Added resets property
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 52 ++++++++++++++++++++++++++++++++
- 1 file changed, 52 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 7d87dff70ac8..1aad7433b460 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1758,6 +1758,56 @@
- 			renesas,fcp = <&fcpf2>;
- 		};
+diff --git a/arch/arm64/boot/dts/renesas/salvator-x.dtsi b/arch/arm64/boot/dts/renesas/salvator-x.dtsi
+index d5eb022d247c..7240bcd75918 100644
+--- a/arch/arm64/boot/dts/renesas/salvator-x.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-x.dtsi
+@@ -58,6 +58,16 @@
+ 		clock-frequency = <11289600>;
+ 	};
  
-+		hdmi0: hdmi0@fead0000 {
-+			compatible = "renesas,r8a7795-hdmi", "renesas,rcar-gen3-hdmi";
-+			reg = <0 0xfead0000 0 0x10000>;
-+			interrupts = <0 389 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 729>, <&cpg CPG_CORE R8A7795_CLK_HDMI>;
-+			clock-names = "iahb", "isfr";
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			resets = <&cpg 729>;
-+			status = "disabled";
++	backlight: backlight {
++		compatible = "pwm-backlight";
++		pwms = <&pwm1 0 50000>;
 +
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				port@0 {
-+					reg = <0>;
-+					dw_hdmi0_in: endpoint {
-+						remote-endpoint = <&du_out_hdmi0>;
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+				};
-+			};
-+		};
++		brightness-levels = <256 128 64 16 8 4 0>;
++		default-brightness-level = <6>;
 +
-+		hdmi1: hdmi1@feae0000 {
-+			compatible = "renesas,r8a7795-hdmi", "renesas,rcar-gen3-hdmi";
-+			reg = <0 0xfeae0000 0 0x10000>;
-+			interrupts = <0 436 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 728>, <&cpg CPG_CORE R8A7795_CLK_HDMI>;
-+			clock-names = "iahb", "isfr";
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			resets = <&cpg 728>;
-+			status = "disabled";
++		enable-gpios = <&gpio6 7 GPIO_ACTIVE_HIGH>;
++	};
 +
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				port@0 {
-+					reg = <0>;
-+					dw_hdmi1_in: endpoint {
-+						remote-endpoint = <&du_out_hdmi1>;
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+				};
-+			};
-+		};
+ 	reg_1p8v: regulator0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "fixed-1.8V";
+@@ -358,6 +368,11 @@
+ 		function = "i2c2";
+ 	};
+ 
++	pwm1_pins: pwm {
++		groups = "pwm1_a";
++		function = "pwm1";
++	};
 +
- 		du: display@feb00000 {
- 			compatible = "renesas,du-r8a7795";
- 			reg = <0 0xfeb00000 0 0x80000>,
-@@ -1789,11 +1839,13 @@
- 				port@1 {
- 					reg = <1>;
- 					du_out_hdmi0: endpoint {
-+						remote-endpoint = <&dw_hdmi0_in>;
- 					};
- 				};
- 				port@2 {
- 					reg = <2>;
- 					du_out_hdmi1: endpoint {
-+						remote-endpoint = <&dw_hdmi1_in>;
- 					};
- 				};
- 				port@3 {
+ 	scif1_pins: scif1 {
+ 		groups = "scif1_data_a", "scif1_ctrl";
+ 		function = "scif1";
+@@ -443,6 +458,13 @@
+ 	};
+ };
+ 
++&pwm1 {
++	pinctrl-0 = <&pwm1_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
++
+ &rcar_sound {
+ 	pinctrl-0 = <&sound_pins &sound_clk_pins>;
+ 	pinctrl-names = "default";
 -- 
-Regards,
-
-Laurent Pinchart
+2.1.4
