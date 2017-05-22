@@ -1,59 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f65.google.com ([209.85.214.65]:33869 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750770AbdEBSqL (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47786 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933880AbdEVN7g (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 2 May 2017 14:46:11 -0400
-MIME-Version: 1.0
-In-Reply-To: <20170420091624.GM3760@verge.net.au>
-References: <1491488454-22468-1-git-send-email-jacopo+renesas@jmondi.org>
- <1491488454-22468-5-git-send-email-jacopo+renesas@jmondi.org>
- <CAMuHMdXkixLn9xdnrhEXW9pCg-4WjOuoPdyxXYeBwRfetMSYsA@mail.gmail.com> <20170420091624.GM3760@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 2 May 2017 20:46:09 +0200
-Message-ID: <CAMuHMdXcYrt9U8AGbUoQdHUBBT+PgK5XNRU1+rVwBJ6SOsL4gg@mail.gmail.com>
-Subject: Re: [PATCH v5 4/4] arm64: dts: salvator-x: Add current sense amplifiers
-To: Simon Horman <horms@verge.net.au>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Mon, 22 May 2017 09:59:36 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald <pmeerw@pmeerw.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-iio@vger.kernel.org,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 12/35] arm64: dts: r8a7795: update PFC node name to pin-controller
+Date: Mon, 22 May 2017 15:58:45 +0200
+Message-Id: <3e7a5b3c8d40b5251bdab82df6289493190583cd.1495457812.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1495457812.git.horms+renesas@verge.net.au>
+References: <cover.1495457812.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
+The device trees for Renesas SoCs use either pfc or pin-controller as the
+node name for the PFC device. This patch is intended to take a step towards
+unifying the node name used as pin-controller which appears to be the more
+generic of the two and thus more in keeping with the DT specs.
 
-On Thu, Apr 20, 2017 at 11:16 AM, Simon Horman <horms@verge.net.au> wrote:
-> On Wed, Apr 19, 2017 at 10:40:21AM +0200, Geert Uytterhoeven wrote:
->> Hi Jacopo,
->>
->> On Thu, Apr 6, 2017 at 4:20 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
->> > [PATCH v5 4/4] arm64: dts: salvator-x: Add current sense amplifiers
->>
->> This should be "arm64: dts: r8a7796: salvator-x: Add current sense amplifiers".
->> Perhaps Simon can just fix that himself while applying?
->
-> Done :)
+My analysis is that this is a user-visible change to the extent that kernel
+logs, and sysfs entries change from e6060000.pfc and pfc@e6060000 to
+e6060000.pin-controller and pin-controller@e6060000.
 
-Apparently not...
-Resending for board breakout compensation...
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index e99d6443b3e4..7d87dff70ac8 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -398,7 +398,7 @@
+ 			#power-domain-cells = <1>;
+ 		};
+ 
+-		pfc: pfc@e6060000 {
++		pfc: pin-controller@e6060000 {
+ 			compatible = "renesas,pfc-r8a7795";
+ 			reg = <0 0xe6060000 0 0x50c>;
+ 		};
+-- 
+2.1.4
