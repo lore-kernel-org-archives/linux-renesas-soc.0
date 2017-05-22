@@ -1,147 +1,262 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52050 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753974AbdESRhT (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 19 May 2017 13:37:19 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <87inkzot58.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dBlpv-00052c-Vx@debutante>
-Date: Fri, 19 May 2017 18:37:11 +0100
-Subject: Applied "ASoC: rsnd: add support graph base DT phase 1" to the asoc tree
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <1495458705-11692-7-git-send-email-geert+renesas@glider.be>
+References: <1495458705-11692-1-git-send-email-geert+renesas@glider.be> <1495458705-11692-7-git-send-email-geert+renesas@glider.be>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 22 May 2017 20:59:46 +0300
+Message-ID: <CAHp75VemBR5S9YJPP9YZHyhpGG+CrBDuk19V5vy0qMqfEUJO0w@mail.gmail.com>
+Subject: Re: [PATCH v5 6/6] spi: slave: Add SPI slave handler controlling
+ system state
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
+        Jiada Wang <jiada_wang@mentor.com>,
+        Matt Porter <mporter@konsulko.com>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+On Mon, May 22, 2017 at 4:11 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> Add an example SPI slave handler to allow remote control of system
+> reboot, power off, halt, and suspend.
+>
 
-   ASoC: rsnd: add support graph base DT phase 1
+FWIW:
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-has been applied to the asoc tree at
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v5:
+>   - Add usage documentation to file header,
+>   - Use network byte order for commands, to match the "-p" parameter of
+>     spidev_test,
+>   - Replace pr_*() by dev_*(), stop printing __func__,
+>   - Remove spi_setup() call to configure 8 bits per word, as that's the
+>     default,
+>
+> v3, v4:
+>   - No changes,
+>
+> v2:
+>   - Use spi_async() instead of spi_read(),
+>   - Submit the next transfer from the previous transfer's completion
+>     callback, removing the need for a thread,
+>   - Let .remove() call spi_slave_abort() to cancel the current ongoing
+>     transfer, and wait for the completion to terminate,
+>   - Remove FIXME about hanging kthread_stop(),
+>   - Fix copy-and-pasted module description.
+> ---
+>  drivers/spi/Kconfig                    |   6 ++
+>  drivers/spi/Makefile                   |   1 +
+>  drivers/spi/spi-slave-system-control.c | 154 +++++++++++++++++++++++++++++++++
+>  3 files changed, 161 insertions(+)
+>  create mode 100644 drivers/spi/spi-slave-system-control.c
+>
+> diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+> index 9972ee2a8454a2fc..82cd818aa06293f5 100644
+> --- a/drivers/spi/Kconfig
+> +++ b/drivers/spi/Kconfig
+> @@ -803,6 +803,12 @@ config SPI_SLAVE_TIME
+>           SPI slave handler responding with the time of reception of the last
+>           SPI message.
+>
+> +config SPI_SLAVE_SYSTEM_CONTROL
+> +       tristate "SPI slave handler controlling system state"
+> +       help
+> +         SPI slave handler to allow remote control of system reboot, power
+> +         off, halt, and suspend.
+> +
+>  endif # SPI_SLAVE
+>
+>  endif # SPI
+> diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile
+> index fb078693dbe40da4..1d7923e8c63bc22b 100644
+> --- a/drivers/spi/Makefile
+> +++ b/drivers/spi/Makefile
+> @@ -108,3 +108,4 @@ obj-$(CONFIG_SPI_ZYNQMP_GQSPI)              += spi-zynqmp-gqspi.o
+>
+>  # SPI slave protocol handlers
+>  obj-$(CONFIG_SPI_SLAVE_TIME)           += spi-slave-time.o
+> +obj-$(CONFIG_SPI_SLAVE_SYSTEM_CONTROL) += spi-slave-system-control.o
+> diff --git a/drivers/spi/spi-slave-system-control.c b/drivers/spi/spi-slave-system-control.c
+> new file mode 100644
+> index 0000000000000000..c0257e937995ec53
+> --- /dev/null
+> +++ b/drivers/spi/spi-slave-system-control.c
+> @@ -0,0 +1,154 @@
+> +/*
+> + * SPI slave handler controlling system state
+> + *
+> + * This SPI slave handler allows remote control of system reboot, power off,
+> + * halt, and suspend.
+> + *
+> + * Copyright (C) 2016-2017 Glider bvba
+> + *
+> + * This file is subject to the terms and conditions of the GNU General Public
+> + * License.  See the file "COPYING" in the main directory of this archive
+> + * for more details.
+> + *
+> + * Usage (assuming /dev/spidev2.0 corresponds to the SPI master on the remote
+> + * system):
+> + *
+> + *   # reboot='\x7c\x50'
+> + *   # poweroff='\x71\x3f'
+> + *   # halt='\x38\x76'
+> + *   # suspend='\x1b\x1b'
+> + *   # spidev_test -D /dev/spidev2.0 -p $suspend # or $reboot, $poweroff, $halt
+> + */
+> +
+> +#include <linux/completion.h>
+> +#include <linux/module.h>
+> +#include <linux/reboot.h>
+> +#include <linux/suspend.h>
+> +#include <linux/spi/spi.h>
+> +
+> +/*
+> + * The numbers are chosen to display something human-readable on two 7-segment
+> + * displays connected to two 74HC595 shift registers
+> + */
+> +#define CMD_REBOOT     0x7c50  /* rb */
+> +#define CMD_POWEROFF   0x713f  /* OF */
+> +#define CMD_HALT       0x3876  /* HL */
+> +#define CMD_SUSPEND    0x1b1b  /* ZZ */
+> +
+> +struct spi_slave_system_control_priv {
+> +       struct spi_device *spi;
+> +       struct completion finished;
+> +       struct spi_transfer xfer;
+> +       struct spi_message msg;
+> +       __be16 cmd;
+> +};
+> +
+> +static
+> +int spi_slave_system_control_submit(struct spi_slave_system_control_priv *priv);
+> +
+> +static void spi_slave_system_control_complete(void *arg)
+> +{
+> +       struct spi_slave_system_control_priv *priv = arg;
+> +       u16 cmd;
+> +       int ret;
+> +
+> +       if (priv->msg.status)
+> +               goto terminate;
+> +
+> +       cmd = be16_to_cpu(priv->cmd);
+> +       switch (cmd) {
+> +       case CMD_REBOOT:
+> +               dev_info(&priv->spi->dev, "Rebooting system...\n");
+> +               kernel_restart(NULL);
+> +
+> +       case CMD_POWEROFF:
+> +               dev_info(&priv->spi->dev, "Powering off system...\n");
+> +               kernel_power_off();
+> +               break;
+> +
+> +       case CMD_HALT:
+> +               dev_info(&priv->spi->dev, "Halting system...\n");
+> +               kernel_halt();
+> +               break;
+> +
+> +       case CMD_SUSPEND:
+> +               dev_info(&priv->spi->dev, "Suspending system...\n");
+> +               pm_suspend(PM_SUSPEND_MEM);
+> +               break;
+> +
+> +       default:
+> +               dev_warn(&priv->spi->dev, "Unknown command 0x%x\n", cmd);
+> +               break;
+> +       }
+> +
+> +       ret = spi_slave_system_control_submit(priv);
+> +       if (ret)
+> +               goto terminate;
+> +
+> +       return;
+> +
+> +terminate:
+> +       dev_info(&priv->spi->dev, "Terminating\n");
+> +       complete(&priv->finished);
+> +}
+> +
+> +static
+> +int spi_slave_system_control_submit(struct spi_slave_system_control_priv *priv)
+> +{
+> +       int ret;
+> +
+> +       spi_message_init_with_transfers(&priv->msg, &priv->xfer, 1);
+> +
+> +       priv->msg.complete = spi_slave_system_control_complete;
+> +       priv->msg.context = priv;
+> +
+> +       ret = spi_async(priv->spi, &priv->msg);
+> +       if (ret)
+> +               dev_err(&priv->spi->dev, "spi_async() failed %d\n", ret);
+> +
+> +       return ret;
+> +}
+> +
+> +static int spi_slave_system_control_probe(struct spi_device *spi)
+> +{
+> +       struct spi_slave_system_control_priv *priv;
+> +       int ret;
+> +
+> +       priv = devm_kzalloc(&spi->dev, sizeof(*priv), GFP_KERNEL);
+> +       if (!priv)
+> +               return -ENOMEM;
+> +
+> +       priv->spi = spi;
+> +       init_completion(&priv->finished);
+> +       priv->xfer.rx_buf = &priv->cmd;
+> +       priv->xfer.len = sizeof(priv->cmd);
+> +
+> +       ret = spi_slave_system_control_submit(priv);
+> +       if (ret)
+> +               return ret;
+> +
+> +       spi_set_drvdata(spi, priv);
+> +       return 0;
+> +}
+> +
+> +static int spi_slave_system_control_remove(struct spi_device *spi)
+> +{
+> +       struct spi_slave_system_control_priv *priv = spi_get_drvdata(spi);
+> +
+> +       spi_slave_abort(spi);
+> +       wait_for_completion(&priv->finished);
+> +       return 0;
+> +}
+> +
+> +static struct spi_driver spi_slave_system_control_driver = {
+> +       .driver = {
+> +               .name   = "spi-slave-system-control",
+> +       },
+> +       .probe          = spi_slave_system_control_probe,
+> +       .remove         = spi_slave_system_control_remove,
+> +};
+> +module_spi_driver(spi_slave_system_control_driver);
+> +
+> +MODULE_AUTHOR("Geert Uytterhoeven <geert+renesas@glider.be>");
+> +MODULE_DESCRIPTION("SPI slave handler controlling system state");
+> +MODULE_LICENSE("GPL v2");
+> --
+> 2.7.4
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 11d0f8ed6dc3e553b20329bc85f2a1aefb5f180f Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Thu, 18 May 2017 01:27:48 +0000
-Subject: [PATCH] ASoC: rsnd: add support graph base DT phase 1
-
-To enable OF-graph base DT on rsnd driver, and to keep compatible
-previous normal sound card style, it need to support both
-"rcar_sound,dai" and "ports" (or "port") on DT.
-
-This patch modify rsnd_dai_of_node() to parse
-"rcar_sound,dai" and "ports" (or "port") as phase 1. It can detect
-graph base style, but do nothing at this point.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/sh/rcar/core.c | 39 ++++++++++++++++++++++++++++++++++++++-
- sound/soc/sh/rcar/rsnd.h |  2 +-
- 2 files changed, 39 insertions(+), 2 deletions(-)
-
-diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
-index 3c47af1990cb..72a3139b70c3 100644
---- a/sound/soc/sh/rcar/core.c
-+++ b/sound/soc/sh/rcar/core.c
-@@ -774,6 +774,42 @@ void rsnd_parse_connect_common(struct rsnd_dai *rdai,
- 	of_node_put(node);
- }
- 
-+static struct device_node *rsnd_dai_of_node(struct rsnd_priv *priv,
-+					    int *is_graph)
-+{
-+	struct device *dev = rsnd_priv_to_dev(priv);
-+	struct device_node *np = dev->of_node;
-+	struct device_node *dai_node;
-+	struct device_node *ret;
-+
-+	*is_graph = 0;
-+
-+	/*
-+	 * parse both previous dai (= rcar_sound,dai), and
-+	 * graph dai (= ports/port)
-+	 */
-+	dai_node = of_get_child_by_name(np, RSND_NODE_DAI);
-+	if (dai_node) {
-+		ret = dai_node;
-+		goto of_node_compatible;
-+	}
-+
-+	ret = np;
-+
-+	dai_node = of_graph_get_next_endpoint(np, NULL);
-+	if (dai_node)
-+		goto of_node_graph;
-+
-+	return NULL;
-+
-+of_node_graph:
-+	*is_graph = 1;
-+of_node_compatible:
-+	of_node_put(dai_node);
-+
-+	return ret;
-+}
-+
- static int rsnd_dai_probe(struct rsnd_priv *priv)
- {
- 	struct device_node *dai_node;
-@@ -785,9 +821,10 @@ static int rsnd_dai_probe(struct rsnd_priv *priv)
- 	struct rsnd_dai *rdai;
- 	struct device *dev = rsnd_priv_to_dev(priv);
- 	int nr, dai_i, io_i;
-+	int is_graph;
- 	int ret;
- 
--	dai_node = rsnd_dai_of_node(priv);
-+	dai_node = rsnd_dai_of_node(priv, &is_graph);
- 	nr = of_get_child_count(dai_node);
- 	if (!nr) {
- 		ret = -EINVAL;
-diff --git a/sound/soc/sh/rcar/rsnd.h b/sound/soc/sh/rcar/rsnd.h
-index dbf4163427e8..4d8e0584b644 100644
---- a/sound/soc/sh/rcar/rsnd.h
-+++ b/sound/soc/sh/rcar/rsnd.h
-@@ -18,6 +18,7 @@
- #include <linux/list.h>
- #include <linux/module.h>
- #include <linux/of_device.h>
-+#include <linux/of_graph.h>
- #include <linux/of_irq.h>
- #include <linux/sh_dma.h>
- #include <linux/workqueue.h>
-@@ -475,7 +476,6 @@ int rsnd_dai_pointer_offset(struct rsnd_dai_stream *io, int additional);
- int rsnd_dai_connect(struct rsnd_mod *mod,
- 		     struct rsnd_dai_stream *io,
- 		     enum rsnd_mod_type type);
--#define rsnd_dai_of_node(priv) rsnd_parse_of_node(priv, RSND_NODE_DAI)
- 
- /*
-  *	R-Car Gen1/Gen2
 -- 
-2.11.0
+With Best Regards,
+Andy Shevchenko
