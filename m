@@ -1,93 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:50626 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753348AbdESIqt (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:46181 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752927AbdEVMal (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 19 May 2017 04:46:49 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-clk@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 06/10] clk: renesas: Add r8a7794 CPG Core Clock Definitions
-Date: Fri, 19 May 2017 10:46:01 +0200
-Message-Id: <1495183565-21679-7-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1495183565-21679-1-git-send-email-geert+renesas@glider.be>
-References: <1495183565-21679-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Mon, 22 May 2017 08:30:41 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 10/14] ARM: dts: r7s72100: add usb clocks to device tree
+Date: Mon, 22 May 2017 14:30:20 +0200
+Message-Id: <9907a4a00f6df0796d6e838c9dbf3ecce2ec4600.1495455272.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1495455272.git.horms+renesas@verge.net.au>
+References: <cover.1495455272.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add all R-Car E2 Clock Pulse Generator Core Clock Outputs, as listed in
-Table 7.2d ("List of Clocks [R-Car E2]") of the R-Car Gen2 Hardware
-User's Manual rev. 2.00.
+From: Chris Brandt <chris.brandt@renesas.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
-v2:
-  - Add Reviewed-by.
----
- include/dt-bindings/clock/r8a7794-cpg-mssr.h | 47 ++++++++++++++++++++++++++++
- 1 file changed, 47 insertions(+)
- create mode 100644 include/dt-bindings/clock/r8a7794-cpg-mssr.h
+This adds the USB0 and USB1 clocks to the device tree.
 
-diff --git a/include/dt-bindings/clock/r8a7794-cpg-mssr.h b/include/dt-bindings/clock/r8a7794-cpg-mssr.h
-new file mode 100644
-index 0000000000000000..9d720311ae3a229a
---- /dev/null
-+++ b/include/dt-bindings/clock/r8a7794-cpg-mssr.h
-@@ -0,0 +1,47 @@
-+/*
-+ * Copyright (C) 2015 Renesas Electronics Corp.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ */
-+
-+#ifndef __DT_BINDINGS_CLOCK_R8A7794_CPG_MSSR_H__
-+#define __DT_BINDINGS_CLOCK_R8A7794_CPG_MSSR_H__
-+
-+#include <dt-bindings/clock/renesas-cpg-mssr.h>
-+
-+/* r8a7794 CPG Core Clocks */
-+#define R8A7794_CLK_Z2			0
-+#define R8A7794_CLK_ZG			1
-+#define R8A7794_CLK_ZTR			2
-+#define R8A7794_CLK_ZTRD2		3
-+#define R8A7794_CLK_ZT			4
-+#define R8A7794_CLK_ZX			5
-+#define R8A7794_CLK_ZS			6
-+#define R8A7794_CLK_HP			7
-+#define R8A7794_CLK_I			8
-+#define R8A7794_CLK_B			9
-+#define R8A7794_CLK_LB			10
-+#define R8A7794_CLK_P			11
-+#define R8A7794_CLK_CL			12
-+#define R8A7794_CLK_CP			13
-+#define R8A7794_CLK_M2			14
-+#define R8A7794_CLK_ADSP		15
-+#define R8A7794_CLK_ZB3			16
-+#define R8A7794_CLK_ZB3D2		17
-+#define R8A7794_CLK_DDR			18
-+#define R8A7794_CLK_SDH			19
-+#define R8A7794_CLK_SD0			20
-+#define R8A7794_CLK_SD2			21
-+#define R8A7794_CLK_SD3			22
-+#define R8A7794_CLK_MMC0		23
-+#define R8A7794_CLK_MP			24
-+#define R8A7794_CLK_QSPI		25
-+#define R8A7794_CLK_CPEX		26
-+#define R8A7794_CLK_RCAN		27
-+#define R8A7794_CLK_R			28
-+#define R8A7794_CLK_OSC			29
-+
-+#endif /* __DT_BINDINGS_CLOCK_R8A7794_CPG_MSSR_H__ */
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r7s72100.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+index 0423996e4dcc..5cf53e9943af 100644
+--- a/arch/arm/boot/dts/r7s72100.dtsi
++++ b/arch/arm/boot/dts/r7s72100.dtsi
+@@ -144,9 +144,9 @@
+ 			#clock-cells = <1>;
+ 			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
+ 			reg = <0xfcfe0430 4>;
+-			clocks = <&b_clk>;
+-			clock-indices = <R7S72100_CLK_ETHER>;
+-			clock-output-names = "ether";
++			clocks = <&b_clk>, <&p1_clk>, <&p1_clk>;
++			clock-indices = <R7S72100_CLK_ETHER R7S72100_CLK_USB0 R7S72100_CLK_USB1>;
++			clock-output-names = "ether", "usb0", "usb1";
+ 		};
+ 
+ 		mstp8_clks: mstp8_clks@fcfe0434 {
 -- 
-2.7.4
+2.1.4
