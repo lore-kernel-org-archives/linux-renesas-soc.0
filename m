@@ -1,99 +1,119 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:46673 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755619AbdESNcS (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 19 May 2017 09:32:18 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 2/6] mmc: tmio: refactor handling mrq
-Date: Fri, 19 May 2017 15:31:51 +0200
-Message-Id: <20170519133155.22945-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170519133155.22945-1-wsa+renesas@sang-engineering.com>
-References: <20170519133155.22945-1-wsa+renesas@sang-engineering.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Subject: Re: [PATCH v2 3/5] v4l: vsp1: Map the DL and video buffers through
+ the proper bus master
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+ dri-devel@lists.freedesktop.org
+References: <20170516232007.20980-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20170516232007.20980-4-laurent.pinchart+renesas@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Reply-To: kieran.bingham@ideasonboard.com
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Message-ID: <34c32276-e8e5-2c1d-3cb1-11b36ee27807@ideasonboard.com>
+Date: Mon, 22 May 2017 12:47:20 +0100
+MIME-Version: 1.0
+In-Reply-To: <20170516232007.20980-4-laurent.pinchart+renesas@ideasonboard.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Split handling mrq into a seperate function. We need to call it from
-another place soon.
+Hi Laurent,
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/mmc/host/tmio_mmc_core.c | 46 +++++++++++++++++++++++-----------------
- 1 file changed, 26 insertions(+), 20 deletions(-)
+Thanks for the patch:
 
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 5f5a4a2d81be7c..bfe70b1cf1e1ea 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -894,12 +894,36 @@ static int tmio_mmc_execute_tuning(struct mmc_host *mmc, u32 opcode)
- 	return ret;
- }
- 
-+static void tmio_process_mrq(struct tmio_mmc_host *host, struct mmc_request *mrq)
-+{
-+	int ret;
-+
-+	if (mrq->data) {
-+		ret = tmio_mmc_start_data(host, mrq->data);
-+		if (ret)
-+			goto fail;
-+	}
-+
-+	ret = tmio_mmc_start_command(host, mrq->cmd);
-+	if (ret)
-+		goto fail;
-+
-+	schedule_delayed_work(&host->delayed_reset_work,
-+			      msecs_to_jiffies(CMDREQ_TIMEOUT));
-+	return;
-+
-+fail:
-+	host->force_pio = false;
-+	host->mrq = NULL;
-+	mrq->cmd->error = ret;
-+	mmc_request_done(host->mmc, mrq);
-+}
-+
- /* Process requests from the MMC layer */
- static void tmio_mmc_request(struct mmc_host *mmc, struct mmc_request *mrq)
- {
- 	struct tmio_mmc_host *host = mmc_priv(mmc);
- 	unsigned long flags;
--	int ret;
- 
- 	spin_lock_irqsave(&host->lock, flags);
- 
-@@ -919,25 +943,7 @@ static void tmio_mmc_request(struct mmc_host *mmc, struct mmc_request *mrq)
- 
- 	spin_unlock_irqrestore(&host->lock, flags);
- 
--	if (mrq->data) {
--		ret = tmio_mmc_start_data(host, mrq->data);
--		if (ret)
--			goto fail;
--	}
--
--	ret = tmio_mmc_start_command(host, mrq->cmd);
--	if (ret)
--		goto fail;
--
--	schedule_delayed_work(&host->delayed_reset_work,
--			      msecs_to_jiffies(CMDREQ_TIMEOUT));
--	return;
--
--fail:
--	host->force_pio = false;
--	host->mrq = NULL;
--	mrq->cmd->error = ret;
--	mmc_request_done(mmc, mrq);
-+	tmio_process_mrq(host, mrq);
- }
- 
- static int tmio_mmc_clk_enable(struct tmio_mmc_host *host)
--- 
-2.11.0
+On 17/05/17 00:20, Laurent Pinchart wrote:
+> From: Magnus Damm <magnus.damm@gmail.com>
+> 
+> On Gen2 hardware the VSP1 is a bus master and accesses the display list
+> and video buffers through DMA directly. On Gen3 hardware, however,
+> memory accesses go through a separate IP core called FCP.
+> 
+> The VSP1 driver unconditionally maps DMA buffers through the VSP device.
+> While this doesn't cause any practical issue so far, DMA mappings will
+> be incorrect as soon as we will enable IOMMU support for the FCP on Gen3
+> platforms, resulting in IOMMU faults.
+> 
+> Fix this by mapping all buffers through the FCP device if present, and
+> through the VSP1 device as usual otherwise.
+> 
+> Suggested-by: Magnus Damm <magnus.damm@gmail.com>
+> [Cache the bus master device]
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+
+
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
+
+> ---
+>  drivers/media/platform/vsp1/vsp1.h       | 1 +
+>  drivers/media/platform/vsp1/vsp1_dl.c    | 4 ++--
+>  drivers/media/platform/vsp1/vsp1_drv.c   | 9 +++++++++
+>  drivers/media/platform/vsp1/vsp1_video.c | 2 +-
+>  4 files changed, 13 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/media/platform/vsp1/vsp1.h b/drivers/media/platform/vsp1/vsp1.h
+> index 85387a64179a..847963b6e9eb 100644
+> --- a/drivers/media/platform/vsp1/vsp1.h
+> +++ b/drivers/media/platform/vsp1/vsp1.h
+> @@ -74,6 +74,7 @@ struct vsp1_device {
+>  
+>  	void __iomem *mmio;
+>  	struct rcar_fcp_device *fcp;
+> +	struct device *bus_master;
+>  
+>  	struct vsp1_bru *bru;
+>  	struct vsp1_clu *clu;
+> diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
+> index 7d8f37772b56..445d1c31fff3 100644
+> --- a/drivers/media/platform/vsp1/vsp1_dl.c
+> +++ b/drivers/media/platform/vsp1/vsp1_dl.c
+> @@ -137,7 +137,7 @@ static int vsp1_dl_body_init(struct vsp1_device *vsp1,
+>  	dlb->vsp1 = vsp1;
+>  	dlb->size = size;
+>  
+> -	dlb->entries = dma_alloc_wc(vsp1->dev, dlb->size, &dlb->dma,
+> +	dlb->entries = dma_alloc_wc(vsp1->bus_master, dlb->size, &dlb->dma,
+>  				    GFP_KERNEL);
+>  	if (!dlb->entries)
+>  		return -ENOMEM;
+> @@ -150,7 +150,7 @@ static int vsp1_dl_body_init(struct vsp1_device *vsp1,
+>   */
+>  static void vsp1_dl_body_cleanup(struct vsp1_dl_body *dlb)
+>  {
+> -	dma_free_wc(dlb->vsp1->dev, dlb->size, dlb->entries, dlb->dma);
+> +	dma_free_wc(dlb->vsp1->bus_master, dlb->size, dlb->entries, dlb->dma);
+>  }
+>  
+>  /**
+> diff --git a/drivers/media/platform/vsp1/vsp1_drv.c b/drivers/media/platform/vsp1/vsp1_drv.c
+> index 048446af5ae7..95c26edead85 100644
+> --- a/drivers/media/platform/vsp1/vsp1_drv.c
+> +++ b/drivers/media/platform/vsp1/vsp1_drv.c
+> @@ -764,6 +764,15 @@ static int vsp1_probe(struct platform_device *pdev)
+>  				PTR_ERR(vsp1->fcp));
+>  			return PTR_ERR(vsp1->fcp);
+>  		}
+> +
+> +		/*
+> +		 * When the FCP is present, it handles all bus master accesses
+> +		 * for the VSP and must thus be used in place of the VSP device
+> +		 * to map DMA buffers.
+> +		 */
+> +		vsp1->bus_master = rcar_fcp_get_device(vsp1->fcp);
+> +	} else {
+> +		vsp1->bus_master = vsp1->dev;
+>  	}
+>  
+>  	/* Configure device parameters based on the version register. */
+> diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
+> index eab3c3ea85d7..5af3486afe07 100644
+> --- a/drivers/media/platform/vsp1/vsp1_video.c
+> +++ b/drivers/media/platform/vsp1/vsp1_video.c
+> @@ -1197,7 +1197,7 @@ struct vsp1_video *vsp1_video_create(struct vsp1_device *vsp1,
+>  	video->queue.ops = &vsp1_video_queue_qops;
+>  	video->queue.mem_ops = &vb2_dma_contig_memops;
+>  	video->queue.timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_COPY;
+> -	video->queue.dev = video->vsp1->dev;
+> +	video->queue.dev = video->vsp1->bus_master;
+>  	ret = vb2_queue_init(&video->queue);
+>  	if (ret < 0) {
+>  		dev_err(video->vsp1->dev, "failed to initialize vb2 queue\n");
+> 
