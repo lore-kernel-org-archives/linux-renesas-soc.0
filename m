@@ -1,49 +1,88 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:46181 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752591AbdEVMah (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 May 2017 08:30:37 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Mark Brown <broonie@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 07/14] ARM: dts: r8a7791: update PFC node name to pin-controller
-Date: Mon, 22 May 2017 14:30:17 +0200
-Message-Id: <12cc7145d4dbb7849468fa3c834de4f66e60323a.1495455272.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1495455272.git.horms+renesas@verge.net.au>
-References: <cover.1495455272.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
+        Jiada Wang <jiada_wang@mentor.com>,
+        Matt Porter <mporter@konsulko.com>, linux-spi@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v5 3/6] spi: Document SPI slave controller support
+Date: Mon, 22 May 2017 15:11:42 +0200
+Message-Id: <1495458705-11692-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1495458705-11692-1-git-send-email-geert+renesas@glider.be>
+References: <1495458705-11692-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The device trees for Renesas SoCs use either pfc or pin-controller as the
-node name for the PFC device. This patch is intended to take a step towards
-unifying the node name used as pin-controller which appears to be the more
-generic of the two and thus more in keeping with the DT specs.
-
-My analysis is that this is a user-visible change to the extent that kernel
-logs, and sysfs entries change from e6060000.pfc and pfc@e6060000 to
-e6060000.pin-controller and pin-controller@e6060000.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7791.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v3, v4, v5:
+  - No changes,
 
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index 4d0c2ce59900..540c5b27b842 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -562,7 +562,7 @@
- 		status = "disabled";
- 	};
+v2:
+  - New.
+---
+ Documentation/spi/spi-summary | 27 ++++++++++++++++++++-------
+ 1 file changed, 20 insertions(+), 7 deletions(-)
+
+diff --git a/Documentation/spi/spi-summary b/Documentation/spi/spi-summary
+index d1824b399b2d1d79..1721c1b570c32466 100644
+--- a/Documentation/spi/spi-summary
++++ b/Documentation/spi/spi-summary
+@@ -62,8 +62,8 @@ chips described as using "three wire" signaling: SCK, data, nCSx.
+ (That data line is sometimes called MOMI or SISO.)
  
--	pfc: pfc@e6060000 {
-+	pfc: pin-controller@e6060000 {
- 		compatible = "renesas,pfc-r8a7791";
- 		reg = <0 0xe6060000 0 0x250>;
- 	};
+ Microcontrollers often support both master and slave sides of the SPI
+-protocol.  This document (and Linux) currently only supports the master
+-side of SPI interactions.
++protocol.  This document (and Linux) supports both the master and slave
++sides of SPI interactions.
+ 
+ 
+ Who uses it?  On what kinds of systems?
+@@ -154,9 +154,8 @@ control audio interfaces, present touchscreen sensors as input interfaces,
+ or monitor temperature and voltage levels during industrial processing.
+ And those might all be sharing the same controller driver.
+ 
+-A "struct spi_device" encapsulates the master-side interface between
+-those two types of driver.  At this writing, Linux has no slave side
+-programming interface.
++A "struct spi_device" encapsulates the controller-side interface between
++those two types of drivers.
+ 
+ There is a minimal core of SPI programming interfaces, focussing on
+ using the driver model to connect controller and protocol drivers using
+@@ -177,10 +176,24 @@ shows up in sysfs in several locations:
+    /sys/bus/spi/drivers/D ... driver for one or more spi*.* devices
+ 
+    /sys/class/spi_master/spiB ... symlink (or actual device node) to
+-	a logical node which could hold class related state for the
+-	controller managing bus "B".  All spiB.* devices share one
++	a logical node which could hold class related state for the SPI
++	master controller managing bus "B".  All spiB.* devices share one
+ 	physical SPI bus segment, with SCLK, MOSI, and MISO.
+ 
++   /sys/devices/.../CTLR/slave ... virtual file for (un)registering the
++	slave device for an SPI slave controller.
++	Writing the driver name of an SPI slave handler to this file
++	registers the slave device; writing "(null)" unregisters the slave
++	device.
++	Reading from this file shows the name of the slave device ("(null)"
++	if not registered).
++
++   /sys/class/spi_slave/spiB ... symlink (or actual device node) to
++	a logical node which could hold class related state for the SPI
++	slave controller on bus "B".  When registered, a single spiB.*
++	device is present here, possible sharing the physical SPI bus
++	segment with other SPI slave devices.
++
+ Note that the actual location of the controller's class state depends
+ on whether you enabled CONFIG_SYSFS_DEPRECATED or not.  At this time,
+ the only class-specific state is the bus number ("B" in "spiB"), so
 -- 
-2.1.4
+2.7.4
