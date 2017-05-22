@@ -1,82 +1,116 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:46722 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755289AbdESNjQ (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47786 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933918AbdEVOAD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 19 May 2017 09:39:16 -0400
-Date: Fri, 19 May 2017 15:39:14 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
+        Mon, 22 May 2017 10:00:03 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Wolfram Sang <wsa@the-dreams.de>
-Subject: [PULL REQUEST] renesas/topic/sdhi-cmd23 for renesas drivers
-Message-ID: <20170519133911.dwvwxecpx52wajiu@ninjato>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ytbabqdvvf2dsveb"
-Content-Disposition: inline
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 26/35] arm64: dts: r8a7796: Add PWM device nodes
+Date: Mon, 22 May 2017 15:58:59 +0200
+Message-Id: <eaef33106799e3e58984479d85c80ddf94f9159d.1495457812.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1495457812.git.horms+renesas@verge.net.au>
+References: <cover.1495457812.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
---ytbabqdvvf2dsveb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This patch adds PWM{0,1,2,3,4,5,6} device nodes for R8A7796 SoC.
 
-Hi Geert,
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+[uli: added resets, shortened reg lengths to 8]
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 70 ++++++++++++++++++++++++++++++++
+ 1 file changed, 70 insertions(+)
 
-because Simon's DMA rework is now in mmc/next, I rebased my CMD23 topic
-on top of the rework. So, you should be able to simply keep pulling the
-below branch. Let me know if something goes wrong...
-
-Kind regards,
-
-   Wolfram
-
-
-The following changes since commit 9c11a7cb3d170468bf5d666e3acad4d570e5a677:
-
-  Merge branch 'fixes' into next (2017-05-19 10:27:22 +0200)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/sdhi-cmd23
-
-for you to fetch changes up to b59ffe4f1c18b9c9b0f055838fc9fd926a3741db:
-
-  mmc: sdhi: add CMD23 support to R-Car Gen2 & Gen3 (2017-05-19 15:14:35 +0200)
-
-----------------------------------------------------------------
-Wolfram Sang (6):
-      mmc: tmio: make tmio_mmc_request function more readable
-      mmc: tmio: refactor handling mrq
-      mmc: tmio: remove outdated comment
-      mmc: tmio: move finish_request function further down
-      mmc: tmio: add CMD23 support
-      mmc: sdhi: add CMD23 support to R-Car Gen2 & Gen3
-
- drivers/mmc/host/renesas_sdhi_sys_dmac.c |   6 +-
- drivers/mmc/host/tmio_mmc_core.c         | 135 ++++++++++++++++++-------------
- 2 files changed, 82 insertions(+), 59 deletions(-)
-
---ytbabqdvvf2dsveb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlke9XsACgkQFA3kzBSg
-KbbHjRAAl6LPXOMX1zKWHX7jjt0sDtV7XEM5plrKrZHEpClCiKFcAZunR3Jec9sS
-BLkiXeeLKN3rSauYSOjRxUBeVOSL1xEcyvkIY1w1DiBCDaukl8ABFrWnv2QoJcaE
-Q6gfZJG/r0rB/08GGe83b9+QHPA68qTnRLuBmaqPf+b0pdXBusufCb5EdZECMhyz
-YdG8HKwDq6bPIoq/Px4SJWD4N30AklOYwIM+UBr2bMHQyIl9v3HvSWYXrwqcejmM
-Wh43EGtNJ2g8zYoFNuPOl3CgXkpjTtMLdin45GLkGdee2ZLS4SArKzige0yxrP3z
-r9omW4A/ClsUL30KyrMHFBDHoM8lZj6SfgAeg0FguBk8juv2r9BBk/EbiikxM1c1
-E3/z1fRGsiwyedn1yPnB54m4xHOI+BG9NVbNKnSeAmbE2ljnmhTmDnFi1AwVxNCw
-iBJsGp6jar1hQNi4pu7BO6jTHyQoWt0sIUaHG3AmsKIWAM8le5P23IltaeNZ/sOa
-D4kWHYtkjWbe+Hiq2Z9JxZb2aMamGcDenyXeHMxI66/CVlCUcU0y/UQQDzq2kxxQ
-U03Y5u2MEWd5guA6DB9D200QvgUSvO10qkTDPtv7GbcA3Hua/iTSY/DZ6XROpnkM
-n8KhJ8OxztLcRuTHdYU894hynq29SUAxiD26sO+SqDRc6KC1QLk=
-=qRi6
------END PGP SIGNATURE-----
-
---ytbabqdvvf2dsveb--
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 8651fc93304d..b418a66f4cec 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -395,6 +395,76 @@
+ 			status = "disabled";
+ 		};
+ 
++		pwm0: pwm@e6e30000 {
++			compatible = "renesas,pwm-r8a7796", "renesas,pwm-rcar";
++			reg = <0 0xe6e30000 0 8>;
++			#pwm-cells = <2>;
++			clocks = <&cpg CPG_MOD 523>;
++			resets = <&cpg 523>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		pwm1: pwm@e6e31000 {
++			compatible = "renesas,pwm-r8a7796", "renesas,pwm-rcar";
++			reg = <0 0xe6e31000 0 8>;
++			#pwm-cells = <2>;
++			clocks = <&cpg CPG_MOD 523>;
++			resets = <&cpg 523>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		pwm2: pwm@e6e32000 {
++			compatible = "renesas,pwm-r8a7796", "renesas,pwm-rcar";
++			reg = <0 0xe6e32000 0 8>;
++			#pwm-cells = <2>;
++			clocks = <&cpg CPG_MOD 523>;
++			resets = <&cpg 523>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		pwm3: pwm@e6e33000 {
++			compatible = "renesas,pwm-r8a7796", "renesas,pwm-rcar";
++			reg = <0 0xe6e33000 0 8>;
++			#pwm-cells = <2>;
++			clocks = <&cpg CPG_MOD 523>;
++			resets = <&cpg 523>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		pwm4: pwm@e6e34000 {
++			compatible = "renesas,pwm-r8a7796", "renesas,pwm-rcar";
++			reg = <0 0xe6e34000 0 8>;
++			#pwm-cells = <2>;
++			clocks = <&cpg CPG_MOD 523>;
++			resets = <&cpg 523>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		pwm5: pwm@e6e35000 {
++			compatible = "renesas,pwm-r8a7796", "renesas,pwm-rcar";
++			reg = <0 0xe6e35000 0 8>;
++			#pwm-cells = <2>;
++			clocks = <&cpg CPG_MOD 523>;
++			resets = <&cpg 523>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		pwm6: pwm@e6e36000 {
++			compatible = "renesas,pwm-r8a7796", "renesas,pwm-rcar";
++			reg = <0 0xe6e36000 0 8>;
++			#pwm-cells = <2>;
++			clocks = <&cpg CPG_MOD 523>;
++			resets = <&cpg 523>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
+ 		i2c0: i2c@e6500000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+-- 
+2.1.4
