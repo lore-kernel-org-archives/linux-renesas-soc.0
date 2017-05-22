@@ -1,72 +1,88 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:46773 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1765686AbdEXARE (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47786 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933876AbdEVN7m (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 23 May 2017 20:17:04 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 17/17] rcar-vin: fix bug in pixelformat selection
-Date: Wed, 24 May 2017 02:15:40 +0200
-Message-Id: <20170524001540.13613-18-niklas.soderlund@ragnatech.se>
-In-Reply-To: <20170524001540.13613-1-niklas.soderlund@ragnatech.se>
-References: <20170524001540.13613-1-niklas.soderlund@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Mon, 22 May 2017 09:59:42 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 21/35] arm64: dts: r8a7796: add Sound SSI DMA support
+Date: Mon, 22 May 2017 15:58:54 +0200
+Message-Id: <c93b98e5efb84a06e1227c52e2dd79097a037d80.1495457812.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1495457812.git.horms+renesas@verge.net.au>
+References: <cover.1495457812.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-If the requested pixelformat is not supported fallback to the default
-format, do not revert the entire format.
-
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 17 +++++------------
- 1 file changed, 5 insertions(+), 12 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index de71e5fa8b10cb5e..81ff59c3b4744075 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -206,7 +206,6 @@ static int __rvin_try_format(struct rvin_dev *vin,
- 			     struct v4l2_pix_format *pix,
- 			     struct rvin_source_fmt *source)
- {
--	const struct rvin_video_format *info;
- 	u32 rwidth, rheight, walign;
- 	int ret;
- 
-@@ -218,17 +217,11 @@ static int __rvin_try_format(struct rvin_dev *vin,
- 	if (pix->field == V4L2_FIELD_ANY)
- 		pix->field = vin->format.field;
- 
--	/*
--	 * Retrieve format information and select the current format if the
--	 * requested format isn't supported.
--	 */
--	info = rvin_format_from_pixel(pix->pixelformat);
--	if (!info) {
--		vin_dbg(vin, "Format %x not found, keeping %x\n",
--			pix->pixelformat, vin->format.pixelformat);
--		*pix = vin->format;
--		pix->width = rwidth;
--		pix->height = rheight;
-+	/* If requested format is not supported fallback to the default */
-+	if (!rvin_format_from_pixel(pix->pixelformat)) {
-+		vin_dbg(vin, "Format 0x%x not found, using default 0x%x\n",
-+			pix->pixelformat, RVIN_DEFAULT_FORMAT);
-+		pix->pixelformat = RVIN_DEFAULT_FORMAT;
- 	}
- 
- 	/* Always recalculate */
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 5c6e54a1e27a..a1d08c89ceed 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -1220,33 +1220,53 @@
+ 			rcar_sound,ssi {
+ 				ssi0: ssi-0 {
+ 					interrupts = <GIC_SPI 370 IRQ_TYPE_LEVEL_HIGH>;
++					dmas = <&audma0 0x01>, <&audma1 0x02>, <&audma0 0x15>, <&audma1 0x16>;
++					dma-names = "rx", "tx", "rxu", "txu";
+ 				};
+ 				ssi1: ssi-1 {
+ 					interrupts = <GIC_SPI 371 IRQ_TYPE_LEVEL_HIGH>;
++					dmas = <&audma0 0x03>, <&audma1 0x04>, <&audma0 0x49>, <&audma1 0x4a>;
++					dma-names = "rx", "tx", "rxu", "txu";
+ 				};
+ 				ssi2: ssi-2 {
+ 					interrupts = <GIC_SPI 372 IRQ_TYPE_LEVEL_HIGH>;
++					dmas = <&audma0 0x05>, <&audma1 0x06>, <&audma0 0x63>, <&audma1 0x64>;
++					dma-names = "rx", "tx", "rxu", "txu";
+ 				};
+ 				ssi3: ssi-3 {
+ 					interrupts = <GIC_SPI 373 IRQ_TYPE_LEVEL_HIGH>;
++					dmas = <&audma0 0x07>, <&audma1 0x08>, <&audma0 0x6f>, <&audma1 0x70>;
++					dma-names = "rx", "tx", "rxu", "txu";
+ 				};
+ 				ssi4: ssi-4 {
+ 					interrupts = <GIC_SPI 374 IRQ_TYPE_LEVEL_HIGH>;
++					dmas = <&audma0 0x09>, <&audma1 0x0a>, <&audma0 0x71>, <&audma1 0x72>;
++					dma-names = "rx", "tx", "rxu", "txu";
+ 				};
+ 				ssi5: ssi-5 {
+ 					interrupts = <GIC_SPI 375 IRQ_TYPE_LEVEL_HIGH>;
++					dmas = <&audma0 0x0b>, <&audma1 0x0c>, <&audma0 0x73>, <&audma1 0x74>;
++					dma-names = "rx", "tx", "rxu", "txu";
+ 				};
+ 				ssi6: ssi-6 {
+ 					interrupts = <GIC_SPI 376 IRQ_TYPE_LEVEL_HIGH>;
++					dmas = <&audma0 0x0d>, <&audma1 0x0e>, <&audma0 0x75>, <&audma1 0x76>;
++					dma-names = "rx", "tx", "rxu", "txu";
+ 				};
+ 				ssi7: ssi-7 {
+ 					interrupts = <GIC_SPI 377 IRQ_TYPE_LEVEL_HIGH>;
++					dmas = <&audma0 0x0f>, <&audma1 0x10>, <&audma0 0x79>, <&audma1 0x7a>;
++					dma-names = "rx", "tx", "rxu", "txu";
+ 				};
+ 				ssi8: ssi-8 {
+ 					interrupts = <GIC_SPI 378 IRQ_TYPE_LEVEL_HIGH>;
++					dmas = <&audma0 0x11>, <&audma1 0x12>, <&audma0 0x7b>, <&audma1 0x7c>;
++					dma-names = "rx", "tx", "rxu", "txu";
+ 				};
+ 				ssi9: ssi-9 {
+ 					interrupts = <GIC_SPI 379 IRQ_TYPE_LEVEL_HIGH>;
++					dmas = <&audma0 0x13>, <&audma1 0x14>, <&audma0 0x7d>, <&audma1 0x7e>;
++					dma-names = "rx", "tx", "rxu", "txu";
+ 				};
+ 			};
+ 		};
 -- 
-2.13.0
+2.1.4
