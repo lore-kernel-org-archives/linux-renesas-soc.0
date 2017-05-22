@@ -1,233 +1,109 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:5616 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750869AbdEaI6c (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47786 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933876AbdEVN7k (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 31 May 2017 04:58:32 -0400
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: robh+dt@kernel.org, mark.rutland@arm.com, mchehab@kernel.org,
-        hverkuil@xs4all.nl, sakari.ailus@linux.intel.com, crope@iki.fi
-Cc: chris.paterson2@renesas.com, laurent.pinchart@ideasonboard.com,
-        geert+renesas@glider.be, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH v6 5/7] doc_rst: media: New SDR formats PC16, PC18 & PC20
-Date: Wed, 31 May 2017 09:44:55 +0100
-Message-Id: <20170531084457.4800-6-ramesh.shanmugasundaram@bp.renesas.com>
-In-Reply-To: <20170531084457.4800-1-ramesh.shanmugasundaram@bp.renesas.com>
-References: <20170531084457.4800-1-ramesh.shanmugasundaram@bp.renesas.com>
+        Mon, 22 May 2017 09:59:40 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 19/35] arm64: dts: r8a7796: add AUDIO_DMAC support
+Date: Mon, 22 May 2017 15:58:52 +0200
+Message-Id: <c7176fe76bff31106aaf5cdebac6f7172fff1589.1495457812.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1495457812.git.horms+renesas@verge.net.au>
+References: <cover.1495457812.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds documentation for the three new SDR formats
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-V4L2_SDR_FMT_PCU16BE
-V4L2_SDR_FMT_PCU18BE
-V4L2_SDR_FMT_PCU20BE
-
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- .../media/uapi/v4l/pixfmt-sdr-pcu16be.rst          | 55 ++++++++++++++++++++++
- .../media/uapi/v4l/pixfmt-sdr-pcu18be.rst          | 55 ++++++++++++++++++++++
- .../media/uapi/v4l/pixfmt-sdr-pcu20be.rst          | 54 +++++++++++++++++++++
- Documentation/media/uapi/v4l/sdr-formats.rst       |  3 ++
- 4 files changed, 167 insertions(+)
- create mode 100644 Documentation/media/uapi/v4l/pixfmt-sdr-pcu16be.rst
- create mode 100644 Documentation/media/uapi/v4l/pixfmt-sdr-pcu18be.rst
- create mode 100644 Documentation/media/uapi/v4l/pixfmt-sdr-pcu20be.rst
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 68 ++++++++++++++++++++++++++++++++
+ 1 file changed, 68 insertions(+)
 
-diff --git a/Documentation/media/uapi/v4l/pixfmt-sdr-pcu16be.rst b/Documentation/media/uapi/v4l/pixfmt-sdr-pcu16be.rst
-new file mode 100644
-index 000000000000..2de1b1a0f517
---- /dev/null
-+++ b/Documentation/media/uapi/v4l/pixfmt-sdr-pcu16be.rst
-@@ -0,0 +1,55 @@
-+.. -*- coding: utf-8; mode: rst -*-
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 60a4289d0b14..0a76a1c53082 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -961,6 +961,74 @@
+ 			dma-channels = <16>;
+ 		};
+ 
++		audma0: dma-controller@ec700000 {
++			compatible = "renesas,dmac-r8a7796",
++				     "renesas,rcar-dmac";
++			reg = <0 0xec700000 0 0x10000>;
++			interrupts = <GIC_SPI 350 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 322 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 323 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 324 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 325 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 331 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 333 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 334 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 335 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "error",
++					"ch0", "ch1", "ch2", "ch3",
++					"ch4", "ch5", "ch6", "ch7",
++					"ch8", "ch9", "ch10", "ch11",
++					"ch12", "ch13", "ch14", "ch15";
++			clocks = <&cpg CPG_MOD 502>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			resets = <&cpg 502>;
++			#dma-cells = <1>;
++			dma-channels = <16>;
++		};
 +
-+.. _V4L2-SDR-FMT-PCU16BE:
++		audma1: dma-controller@ec720000 {
++			compatible = "renesas,dmac-r8a7796",
++				     "renesas,rcar-dmac";
++			reg = <0 0xec720000 0 0x10000>;
++			interrupts = <GIC_SPI 351 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 336 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 337 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 338 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 339 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 340 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 341 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 342 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 343 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 344 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 345 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 346 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 347 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 348 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 349 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 382 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 383 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "error",
++					"ch0", "ch1", "ch2", "ch3",
++					"ch4", "ch5", "ch6", "ch7",
++					"ch8", "ch9", "ch10", "ch11",
++					"ch12", "ch13", "ch14", "ch15";
++			clocks = <&cpg CPG_MOD 501>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			resets = <&cpg 501>;
++			#dma-cells = <1>;
++			dma-channels = <16>;
++		};
 +
-+******************************
-+V4L2_SDR_FMT_PCU16BE ('PC16')
-+******************************
-+
-+Planar complex unsigned 16-bit big endian IQ sample
-+
-+Description
-+===========
-+
-+This format contains a sequence of complex number samples. Each complex
-+number consist of two parts called In-phase and Quadrature (IQ). Both I
-+and Q are represented as a 16 bit unsigned big endian number stored in
-+32 bit space. The remaining unused bits within the 32 bit space will be
-+padded with 0. I value starts first and Q value starts at an offset
-+equalling half of the buffer size (i.e.) offset = buffersize/2. Out of
-+the 16 bits, bit 15:2 (14 bit) is data and bit 1:0 (2 bit) can be any
-+value.
-+
-+**Byte Order.**
-+Each cell is one byte.
-+
-+.. flat-table::
-+    :header-rows:  1
-+    :stub-columns: 0
-+
-+    * -  Offset:
-+      -  Byte B0
-+      -  Byte B1
-+      -  Byte B2
-+      -  Byte B3
-+    * -  start + 0:
-+      -  I'\ :sub:`0[13:6]`
-+      -  I'\ :sub:`0[5:0]; B1[1:0]=pad`
-+      -  pad
-+      -  pad
-+    * -  start + 4:
-+      -  I'\ :sub:`1[13:6]`
-+      -  I'\ :sub:`1[5:0]; B1[1:0]=pad`
-+      -  pad
-+      -  pad
-+    * -  ...
-+    * - start + offset:
-+      -  Q'\ :sub:`0[13:6]`
-+      -  Q'\ :sub:`0[5:0]; B1[1:0]=pad`
-+      -  pad
-+      -  pad
-+    * - start + offset + 4:
-+      -  Q'\ :sub:`1[13:6]`
-+      -  Q'\ :sub:`1[5:0]; B1[1:0]=pad`
-+      -  pad
-+      -  pad
-diff --git a/Documentation/media/uapi/v4l/pixfmt-sdr-pcu18be.rst b/Documentation/media/uapi/v4l/pixfmt-sdr-pcu18be.rst
-new file mode 100644
-index 000000000000..da8b26bf6b95
---- /dev/null
-+++ b/Documentation/media/uapi/v4l/pixfmt-sdr-pcu18be.rst
-@@ -0,0 +1,55 @@
-+.. -*- coding: utf-8; mode: rst -*-
-+
-+.. _V4L2-SDR-FMT-PCU18BE:
-+
-+******************************
-+V4L2_SDR_FMT_PCU18BE ('PC18')
-+******************************
-+
-+Planar complex unsigned 18-bit big endian IQ sample
-+
-+Description
-+===========
-+
-+This format contains a sequence of complex number samples. Each complex
-+number consist of two parts called In-phase and Quadrature (IQ). Both I
-+and Q are represented as a 18 bit unsigned big endian number stored in
-+32 bit space. The remaining unused bits within the 32 bit space will be
-+padded with 0. I value starts first and Q value starts at an offset
-+equalling half of the buffer size (i.e.) offset = buffersize/2. Out of
-+the 18 bits, bit 17:2 (16 bit) is data and bit 1:0 (2 bit) can be any
-+value.
-+
-+**Byte Order.**
-+Each cell is one byte.
-+
-+.. flat-table::
-+    :header-rows:  1
-+    :stub-columns: 0
-+
-+    * -  Offset:
-+      -  Byte B0
-+      -  Byte B1
-+      -  Byte B2
-+      -  Byte B3
-+    * -  start + 0:
-+      -  I'\ :sub:`0[17:10]`
-+      -  I'\ :sub:`0[9:2]`
-+      -  I'\ :sub:`0[1:0]; B2[5:0]=pad`
-+      -  pad
-+    * -  start + 4:
-+      -  I'\ :sub:`1[17:10]`
-+      -  I'\ :sub:`1[9:2]`
-+      -  I'\ :sub:`1[1:0]; B2[5:0]=pad`
-+      -  pad
-+    * -  ...
-+    * - start + offset:
-+      -  Q'\ :sub:`0[17:10]`
-+      -  Q'\ :sub:`0[9:2]`
-+      -  Q'\ :sub:`0[1:0]; B2[5:0]=pad`
-+      -  pad
-+    * - start + offset + 4:
-+      -  Q'\ :sub:`1[17:10]`
-+      -  Q'\ :sub:`1[9:2]`
-+      -  Q'\ :sub:`1[1:0]; B2[5:0]=pad`
-+      -  pad
-diff --git a/Documentation/media/uapi/v4l/pixfmt-sdr-pcu20be.rst b/Documentation/media/uapi/v4l/pixfmt-sdr-pcu20be.rst
-new file mode 100644
-index 000000000000..5499eed39477
---- /dev/null
-+++ b/Documentation/media/uapi/v4l/pixfmt-sdr-pcu20be.rst
-@@ -0,0 +1,54 @@
-+.. -*- coding: utf-8; mode: rst -*-
-+.. _V4L2-SDR-FMT-PCU20BE:
-+
-+******************************
-+V4L2_SDR_FMT_PCU20BE ('PC20')
-+******************************
-+
-+Planar complex unsigned 20-bit big endian IQ sample
-+
-+Description
-+===========
-+
-+This format contains a sequence of complex number samples. Each complex
-+number consist of two parts called In-phase and Quadrature (IQ). Both I
-+and Q are represented as a 20 bit unsigned big endian number stored in
-+32 bit space. The remaining unused bits within the 32 bit space will be
-+padded with 0. I value starts first and Q value starts at an offset
-+equalling half of the buffer size (i.e.) offset = buffersize/2. Out of
-+the 20 bits, bit 19:2 (18 bit) is data and bit 1:0 (2 bit) can be any
-+value.
-+
-+**Byte Order.**
-+Each cell is one byte.
-+
-+.. flat-table::
-+    :header-rows:  1
-+    :stub-columns: 0
-+
-+    * -  Offset:
-+      -  Byte B0
-+      -  Byte B1
-+      -  Byte B2
-+      -  Byte B3
-+    * -  start + 0:
-+      -  I'\ :sub:`0[19:12]`
-+      -  I'\ :sub:`0[11:4]`
-+      -  I'\ :sub:`0[3:0]; B2[3:0]=pad`
-+      -  pad
-+    * -  start + 4:
-+      -  I'\ :sub:`1[19:12]`
-+      -  I'\ :sub:`1[11:4]`
-+      -  I'\ :sub:`1[3:0]; B2[3:0]=pad`
-+      -  pad
-+    * -  ...
-+    * - start + offset:
-+      -  Q'\ :sub:`0[19:12]`
-+      -  Q'\ :sub:`0[11:4]`
-+      -  Q'\ :sub:`0[3:0]; B2[3:0]=pad`
-+      -  pad
-+    * - start + offset + 4:
-+      -  Q'\ :sub:`1[19:12]`
-+      -  Q'\ :sub:`1[11:4]`
-+      -  Q'\ :sub:`1[3:0]; B2[3:0]=pad`
-+      -  pad
-diff --git a/Documentation/media/uapi/v4l/sdr-formats.rst b/Documentation/media/uapi/v4l/sdr-formats.rst
-index f863c08f1add..2037f5bad727 100644
---- a/Documentation/media/uapi/v4l/sdr-formats.rst
-+++ b/Documentation/media/uapi/v4l/sdr-formats.rst
-@@ -17,3 +17,6 @@ These formats are used for :ref:`SDR <sdr>` interface only.
-     pixfmt-sdr-cs08
-     pixfmt-sdr-cs14le
-     pixfmt-sdr-ru12le
-+    pixfmt-sdr-pcu16be
-+    pixfmt-sdr-pcu18be
-+    pixfmt-sdr-pcu20be
+ 		hsusb: usb@e6590000 {
+ 			/* placeholder */
+ 		};
 -- 
-2.12.2
+2.1.4
