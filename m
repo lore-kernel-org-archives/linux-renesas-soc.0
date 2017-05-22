@@ -1,129 +1,62 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Jose Abreu <joabreu@synopsys.com>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <878tlvosk9.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dDaLx-0003Rd-Fq@debutante>
-Date: Wed, 24 May 2017 18:45:45 +0100
-Subject: Applied "ASoC: hdmi-codec: add .get_dai_id support" to the asoc tree
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:47786 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933876AbdEVN7o (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 22 May 2017 09:59:44 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 25/35] arm64: dts: r8a7796: add Sound MIX support
+Date: Mon, 22 May 2017 15:58:58 +0200
+Message-Id: <53394b600bda5d4793d37b0010410a379fd09905.1495457812.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1495457812.git.horms+renesas@verge.net.au>
+References: <cover.1495457812.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
-
-   ASoC: hdmi-codec: add .get_dai_id support
-
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 96203fb4237bf70f0fd0fa307ca2975077db3ceb Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Thu, 18 May 2017 01:40:20 +0000
-Subject: [PATCH] ASoC: hdmi-codec: add .get_dai_id support
-
-ALSA SoC needs to know connected DAI ID for probing.
-It is not a big problem if device/driver was only for sound,
-but getting DAI ID will be difficult if device includes both
-Video/Sound, like HDMI.
-To solve this issue, this patch adds new .get_dai_id callback
-on hdmi_codec_ops
 
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- include/sound/hdmi-codec.h    |  9 +++++++++
- sound/soc/codecs/hdmi-codec.c | 13 +++++++++++++
- 2 files changed, 22 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/include/sound/hdmi-codec.h b/include/sound/hdmi-codec.h
-index 915c4357945c..9483c55f871b 100644
---- a/include/sound/hdmi-codec.h
-+++ b/include/sound/hdmi-codec.h
-@@ -18,9 +18,11 @@
- #ifndef __HDMI_CODEC_H__
- #define __HDMI_CODEC_H__
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 7b74da1d1568..8651fc93304d 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -1197,6 +1197,7 @@
+ 				 <&cpg CPG_MOD 1028>, <&cpg CPG_MOD 1029>,
+ 				 <&cpg CPG_MOD 1030>, <&cpg CPG_MOD 1031>,
+ 				 <&cpg CPG_MOD 1020>, <&cpg CPG_MOD 1021>,
++				 <&cpg CPG_MOD 1020>, <&cpg CPG_MOD 1021>,
+ 				 <&cpg CPG_MOD 1019>, <&cpg CPG_MOD 1018>,
+ 				 <&audio_clk_a>, <&audio_clk_b>,
+ 				 <&audio_clk_c>,
+@@ -1208,6 +1209,7 @@
+ 				      "src.9", "src.8", "src.7", "src.6",
+ 				      "src.5", "src.4", "src.3", "src.2",
+ 				      "src.1", "src.0",
++				      "mix.1", "mix.0",
+ 				      "ctu.1", "ctu.0",
+ 				      "dvc.0", "dvc.1",
+ 				      "clk_a", "clk_b", "clk_c", "clk_i";
+@@ -1225,6 +1227,11 @@
+ 				};
+ 			};
  
-+#include <linux/of_graph.h>
- #include <linux/hdmi.h>
- #include <drm/drm_edid.h>
- #include <sound/asoundef.h>
-+#include <sound/soc.h>
- #include <uapi/sound/asound.h>
- 
- /*
-@@ -87,6 +89,13 @@ struct hdmi_codec_ops {
- 	 */
- 	int (*get_eld)(struct device *dev, void *data,
- 		       uint8_t *buf, size_t len);
++			rcar_sound,mix {
++				mix0: mix-0 { };
++				mix1: mix-1 { };
++			};
 +
-+	/*
-+	 * Getting DAI ID
-+	 * Optional
-+	 */
-+	int (*get_dai_id)(struct snd_soc_component *comment,
-+			  struct device_node *endpoint);
- };
- 
- /* HDMI codec initalization data */
-diff --git a/sound/soc/codecs/hdmi-codec.c b/sound/soc/codecs/hdmi-codec.c
-index 8659b76b066a..6d05161b625d 100644
---- a/sound/soc/codecs/hdmi-codec.c
-+++ b/sound/soc/codecs/hdmi-codec.c
-@@ -719,6 +719,18 @@ static const struct snd_soc_dai_driver hdmi_spdif_dai = {
- 	.pcm_new = hdmi_codec_pcm_new,
- };
- 
-+static int hdmi_of_xlate_dai_id(struct snd_soc_component *component,
-+				 struct device_node *endpoint)
-+{
-+	struct hdmi_codec_priv *hcp = snd_soc_component_get_drvdata(component);
-+	int ret = -ENOTSUPP; /* see snd_soc_get_dai_id() */
-+
-+	if (hcp->hcd.ops->get_dai_id)
-+		ret = hcp->hcd.ops->get_dai_id(component, endpoint);
-+
-+	return ret;
-+}
-+
- static struct snd_soc_codec_driver hdmi_codec = {
- 	.component_driver = {
- 		.controls		= hdmi_controls,
-@@ -727,6 +739,7 @@ static struct snd_soc_codec_driver hdmi_codec = {
- 		.num_dapm_widgets	= ARRAY_SIZE(hdmi_widgets),
- 		.dapm_routes		= hdmi_routes,
- 		.num_dapm_routes	= ARRAY_SIZE(hdmi_routes),
-+		.of_xlate_dai_id	= hdmi_of_xlate_dai_id,
- 	},
- };
- 
+ 			rcar_sound,ctu {
+ 				ctu00: ctu-0 { };
+ 				ctu01: ctu-1 { };
 -- 
-2.11.0
+2.1.4
