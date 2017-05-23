@@ -1,21 +1,20 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:6862 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752557AbdEWLGT (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:36123 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1758616AbdEWLHA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 23 May 2017 07:06:19 -0400
+        Tue, 23 May 2017 07:07:00 -0400
 From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Petre Pircalabu <petre.pircalabu@gmail.com>,
-        "linux-renesas-soc@vger.kernel.org"
+To: Petre Pircalabu <petre.pircalabu@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+CC: "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>,
         "horms@verge.net.au" <horms@verge.net.au>,
         "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
-        "mirea_bogdan@mentor.com" <mirea_bogdan@mentor.com>,
         Petre Pircalabu <Petre_Pircalabu@mentor.com>
 Subject: RE: [PATCH] phy: rcar-gen3-usb3: Initial support for xhci phy
-Date: Tue, 23 May 2017 11:06:15 +0000
-Message-ID: <TY1PR06MB0992508FFD6EB25B2CEADEAAD8F90@TY1PR06MB0992.apcprd06.prod.outlook.com>
+Date: Tue, 23 May 2017 11:06:56 +0000
+Message-ID: <TY1PR06MB09925965B865FA8437D807EFD8F90@TY1PR06MB0992.apcprd06.prod.outlook.com>
 References: <1495043888-20934-1-git-send-email-Petre_Pircalabu@mentor.com>
  <TY1PR06MB09928E2327894F8E9E7738D4D8E40@TY1PR06MB0992.apcprd06.prod.outlook.com>
  <CAMuHMdV4z8TBdBAsWCLNZ4r8vE7Qa-6_X711A2RtBwEa_RNrgg@mail.gmail.com>
@@ -23,7 +22,10 @@ References: <1495043888-20934-1-git-send-email-Petre_Pircalabu@mentor.com>
  <CAMuHMdVzk6yqV8nB9OrfnQRHG3X=5o2D4wiu_87p0aBzAqBZkg@mail.gmail.com>
  <TY1PR06MB099210D9B30BA7EB7F276455D8E40@TY1PR06MB0992.apcprd06.prod.outlook.com>
  <CAMuHMdWDkrBDhJZQHs2qHR3CL_oK9vb15hXXdLsCauCBw5o6ew@mail.gmail.com>
-In-Reply-To: <CAMuHMdWDkrBDhJZQHs2qHR3CL_oK9vb15hXXdLsCauCBw5o6ew@mail.gmail.com>
+ <CAKYaQRm+H9Ayp=-jDEO476yW-k_TUzkKunOEZujKhA1X68xHbw@mail.gmail.com>
+ <CAKYaQR=W=+f__a5_aXQZSk8_344T2sNr1jJLZiwhyBd6XNLirg@mail.gmail.com>
+ <CAKYaQR=7ZgMovp38jhNo2xFU0X2u-SecsPxCAZUa8UpyvdrejA@mail.gmail.com>
+In-Reply-To: <CAKYaQR=7ZgMovp38jhNo2xFU0X2u-SecsPxCAZUa8UpyvdrejA@mail.gmail.com>
 Content-Language: ja-JP
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
@@ -31,49 +33,9 @@ MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQtc2FuLA0KDQo+IEZyb206IEdlZXJ0IFV5dHRlcmhvZXZlbg0KPiBTZW50OiBUaHVy
-c2RheSwgTWF5IDE4LCAyMDE3IDk6NDMgUE0NCj4gDQo+IEhpIFNoaW1vZGEtc2FuLA0KPiANCj4g
-T24gVGh1LCBNYXkgMTgsIDIwMTcgYXQgMjoxOSBQTSwgWW9zaGloaXJvIFNoaW1vZGENCj4gPHlv
-c2hpaGlyby5zaGltb2RhLnVoQHJlbmVzYXMuY29tPiB3cm90ZToNCj4gPj4gRnJvbTogR2VlcnQg
-VXl0dGVyaG9ldmVuDQo+ID4+IFNlbnQ6IFRodXJzZGF5LCBNYXkgMTgsIDIwMTcgODo0MSBQTQ0K
-PiA+PiBPbiBUaHUsIE1heSAxOCwgMjAxNyBhdCAxOjEzIFBNLCBZb3NoaWhpcm8gU2hpbW9kYQ0K
-PiA+PiA8eW9zaGloaXJvLnNoaW1vZGEudWhAcmVuZXNhcy5jb20+IHdyb3RlOg0KPiA+PiA+PiA+
-PiArLSByZWc6IG9mZnNldCBhbmQgbGVuZ3RoIG9mIHRoZSBwYXJ0aWFsIFVTQiAzLjAgSG9zdCBQ
-SFkgcmVnaXN0ZXIgYmxvY2suDQo+ID4+ID4+ID4+ICstICNwaHktY2VsbHM6IHNlZSBwaHktYmlu
-ZGluZ3MudHh0IGluIHRoZSBzYW1lIGRpcmVjdG9yeSwgbXVzdCBiZSA8MD4uDQo+ID4+ID4+ID4N
-Cj4gPj4gPj4gPiBJIHRoaW5rIHdlIHNob3VsZCBhZGQgImNsb2NrcyIgcHJvcGVydHkgYXMgcmVx
-dWlyZWQuDQo+ID4+ID4+ID4NCj4gPj4gPj4gPj4gK09wdGlvbmFsIHByb3BlcnRpZXM6DQo+ID4+
-ID4+ID4NCj4gPj4gPj4gPiBZb3Ugc2hvdWxkIGFkZCAicmVuZXNhcyx1c2Utb24tY2hpcC1jbGsi
-IGhlcmUuDQo+ID4+ID4+ID4gQW5kLCB0aGUgbmFtZSBvZiAidXNlLW9uLWNoaXAtY2xrIiBpcyBu
-b3QgZ29vZCB0byBtZS4NCj4gPj4gPj4gPiBGWUksIG15IGRldmVsb3BpbmcgcGF0Y2ggbmFtZXMg
-InJlbmVzYXMsdXNiLWV4dGFsIi4NCj4gPg0KPiA+IEknbSBzb3JyeSBmb3IgdGhpcy4gSSBtaXNz
-ZWQgZGVzY3JpcHRpb24gIm9uLWNoaXAgY2xvY2sgc291cmNlIGlzIHN1cHBsaWVkIHRob3VnaA0K
-PiA+IFVTQl9FWFRBTC9VU0JfWFRBTCIgaW4gdGhlIG1hbnVhbC4gU28sIHRoaXMgInJlbmVzYXMs
-dXNlLW9uLWNoaXAtY2xrIiBpcyByZWFzb25hYmxlLg0KPiA+DQo+ID4+ID4+IENhbiB0aGlzIGJl
-IGRlY2lkZWQgYXQgcnVudGltZSwgZS5nLiBieSBsb29raW5nIGF0IHRoZSByYXRlcyBvZiB0aGUg
-Y2xvY2tzDQo+ID4+ID4+IHRvIHNlZSB3aGljaCBvbmUgaXMgYXZhaWxhYmxlL2Jlc3Qgc3VpdGVk
-Pw0KPiA+PiA+DQo+ID4+ID4gQWNjb3JkaW5nIHRvIHRoZSBIVyBtYW51YWwsIHRoaXMgbW9kdWxl
-IGNhbm5vdCBzZWUgd2hpY2ggb25lIGlzIGF2YWlsYWJsZS9iZXN0IHN1aXRlZC4NCj4gPj4gPiBT
-bywgSSBkb24ndCB0aGluayB0aGlzIGNhbiBiZSBkZWNpZGVkIGF0IHJ1bnRpbWUuDQo+ID4+DQo+
-ID4+IEkgbWVhbiwgY2FuJ3QgTGludXggbG9vayBhdCB0aGUgcmF0ZXMgb2YgdGhlIHR3byBjbG9j
-a3MsIGFuZCBpZiBvbmUgaXMgemVybywNCj4gPj4gdXNlIHRoZSBvdGhlcj8NCj4gPg0KPiA+IEkg
-c3RpbGwgbWlzdW5kZXJzdGFuZCB5b3VyIHF1ZXN0aW9uIHRob3VnaCwgYnV0IHNvZnR3YXJlIGNh
-bm5vdCBsb29rIGF0IHRoZSByYXRlcw0KPiA+IG9mIFVTQjNTMF9DTEtfUC9VU0IzUzBfQ0xLX00g
-YW5kIFVTQl9FWFRBTC9YVEFMIGJlY2F1c2UgdGhlIEhXIGRvZXNuJ3QgaGF2ZSByZWdpc3RlcnMN
-Cj4gPiBmb3IgaW5kaWNhdGluZyB0aGUgcmF0ZXMuDQo+IA0KPiBJZiB3ZSBoYXZlICJjbG9ja3Mi
-IHByb3BlcnRpZXMsIGFzIHlvdSBzdWdnZXN0ZWQsIGJvdGggY2xvY2tzIHdpbGwgaGF2ZSB0bw0K
-PiBiZSBkZXNjcmliZWQgaW4gRFQuICBIZW5jZSBMaW51eCB3aWxsIGNyZWF0ZSBjbG9jayBvYmpl
-Y3RzIGZvciB0aGVtLCBhbmQgdGhlDQo+IFVTQiBQSFkgZHJpdmVyIGNhbiBjYWxsIGNsa19nZXRf
-cmF0ZSgpIG9uIHRob3NlIG9iamVjdHMuDQo+IA0KPiBJZiBubyBjbG9jayBpcyBjb25uZWN0ZWQg
-dG8gVVNCM1MwX0NMS19QL1VTQjNTMF9DTEtfTSwgYSBkdW1teSBjbG9jaw0KPiB3aXRoIHplcm8g
-cmF0ZSBzaG91bGQgYmUgZGVzY3JpYmVkIGluIERULg0KPiANCj4gQ2ZyLiB0aGUgZXhpc3Rpbmcg
-Y2xvY2tzIHdpdGggImNsb2NrLWZyZXF1ZW5jeSA9IDwwPiIgaW4gcjhhNzc5NS5kdHNpLg0KDQpU
-aGFuayB5b3UgZm9yIHRoZSBkZXRhaWxlZCBleHBsYW5hdGlvbiENCkkgdW5kZXJzdG9vZCBpdC4g
-SSB3aWxsIHRyeSB0byB1c2Ugc3VjaCBwcm9wZXJ0aWVzLg0KDQpCZXN0IHJlZ2FyZHMsDQpZb3No
-aWhpcm8gU2hpbW9kYQ0KDQo+IEdye29ldGplLGVldGluZ31zLA0KPiANCj4gICAgICAgICAgICAg
-ICAgICAgICAgICAgR2VlcnQNCj4gDQo+IC0tDQo+IEdlZXJ0IFV5dHRlcmhvZXZlbiAtLSBUaGVy
-ZSdzIGxvdHMgb2YgTGludXggYmV5b25kIGlhMzIgLS0gZ2VlcnRAbGludXgtbTY4ay5vcmcNCj4g
-DQo+IEluIHBlcnNvbmFsIGNvbnZlcnNhdGlvbnMgd2l0aCB0ZWNobmljYWwgcGVvcGxlLCBJIGNh
-bGwgbXlzZWxmIGEgaGFja2VyLiBCdXQNCj4gd2hlbiBJJ20gdGFsa2luZyB0byBqb3VybmFsaXN0
-cyBJIGp1c3Qgc2F5ICJwcm9ncmFtbWVyIiBvciBzb21ldGhpbmcgbGlrZSB0aGF0Lg0KPiAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgIC0tIExpbnVzIFRvcnZhbGRzDQo=
+SGkgUGV0cmUtc2FuLA0KDQo+IEZyb206IFBldHJlIFBpcmNhbGFidQ0KPiBTZW50OiBGcmlkYXks
+IE1heSAxOSwgMjAxNyA4OjU1IEFNDQo+IA0KPiBIaSBTaGltb2RhLXNhbiwNCj4gDQo+IEkganVz
+dCBzYXcgdGhhdCB5b3UgcGF0Y2ggcHJlZGF0ZXMgbWluZS4gSSB3aWxsIGRyb3AgbXkgdmVyc2lv
+biBhbmQNCj4gaW50ZWdyYXRlIHlvdXJzLg0KDQpJIGdvdCBpdCENCg0KQmVzdCByZWdhcmRzLA0K
+WW9zaGloaXJvIFNoaW1vZGENCg0KPiBNYW55IHRoYW5rcyBmb3IgZm9yIHlvdXIgc3VwcG9ydCwN
+Cj4gUGV0cmUNCg0K
