@@ -1,133 +1,67 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47786 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933851AbdEVN7b (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 May 2017 09:59:31 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+To: linux-kernel@vger.kernel.org
+Cc: Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh@kernel.org>,
+        Javier Martinez Canillas <javier@dowhile0.org>,
+        Simon Horman <horms@verge.net.au>, devicetree@vger.kernel.org,
+        Russell King <linux@armlinux.org.uk>,
+        linux-renesas-soc@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 15/35] arm64: dts: r8a7796: Add placeholders for various devices
-Date: Mon, 22 May 2017 15:58:48 +0200
-Message-Id: <8faafa718887a0e83f6bca636c63dbf420b54f3e.1495457812.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1495457812.git.horms+renesas@verge.net.au>
-References: <cover.1495457812.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v5 09/20] ARM: dts: r7s72100: Add generic compatible string for I2C EEPROM
+Date: Tue, 23 May 2017 15:34:37 +0200
+Message-Id: <20170523133448.4794-10-javier@dowhile0.org>
+In-Reply-To: <20170523133448.4794-1-javier@dowhile0.org>
+References: <20170523133448.4794-1-javier@dowhile0.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+The at24 driver allows to register I2C EEPROM chips using different vendor
+and devices, but the I2C subsystem does not take the vendor into account
+when matching using the I2C table since it only has device entries.
 
-Add empty device nodes serving as placeholders for devices that are not
-yet supported and/or tested on R-Car M3-W, but are supported and used on
-Salvator-X or H3ULCB boards equipped with an R-Car H3 SoC.
+But when matching using an OF table, both the vendor and device has to be
+taken into account so the driver defines only a set of compatible strings
+using the "atmel" vendor as a generic fallback for compatible I2C devices.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+So add this generic fallback to the device node compatible string to make
+the device to match the driver using the OF device ID table.
+
+Signed-off-by: Javier Martinez Canillas <javier@dowhile0.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
 ---
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 82 ++++++++++++++++++++++++++++++++
- 1 file changed, 82 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 8e2aab8b6b10..60a4289d0b14 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -961,6 +961,38 @@
- 			dma-channels = <16>;
- 		};
+Changes in v5:
+- Only replace atmel variant but keep other EEPROM vendors (Geert Uytterhoeven).
+
+Changes in v4:
+- Only use the atmel manufacturer in the compatible string instead of
+  keeping the deprecated ones (Rob Herring).
+
+Changes in v3:
+- Add Geert Uytterhoeven reviewed-by tag.
+
+Changes in v2: None
+
+ arch/arm/boot/dts/r7s72100-genmai.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/r7s72100-genmai.dts b/arch/arm/boot/dts/r7s72100-genmai.dts
+index 52a7b586bac7..b0db621ff176 100644
+--- a/arch/arm/boot/dts/r7s72100-genmai.dts
++++ b/arch/arm/boot/dts/r7s72100-genmai.dts
+@@ -57,7 +57,7 @@
+ 	clock-frequency = <400000>;
  
-+		hsusb: usb@e6590000 {
-+			/* placeholder */
-+		};
-+
-+		xhci0: usb@ee000000 {
-+			/* placeholder */
-+		};
-+
-+		ohci0: usb@ee080000 {
-+			/* placeholder */
-+		};
-+
-+		ehci0: usb@ee080100 {
-+			/* placeholder */
-+		};
-+
-+		usb2_phy0: usb-phy@ee080200 {
-+			/* placeholder */
-+		};
-+
-+		ohci1: usb@ee0a0000 {
-+			/* placeholder */
-+		};
-+
-+		ehci1: usb@ee0a0100 {
-+			/* placeholder */
-+		};
-+
-+		usb2_phy1: usb-phy@ee0a0200 {
-+			/* placeholder */
-+		};
-+
- 		sdhi0: sd@ee100000 {
- 			compatible = "renesas,sdhi-r8a7796";
- 			reg = <0 0xee100000 0 0x2000>;
-@@ -1063,5 +1095,55 @@
- 				};
- 			};
- 		};
-+
-+		rcar_sound: sound@ec500000 {
-+			/* placeholder */
-+
-+			rcar_sound,dvc {
-+				dvc0: dvc-0 {
-+				};
-+
-+				dvc1: dvc-1 {
-+				};
-+			};
-+
-+			rcar_sound,src {
-+				src0: src-0 {
-+				};
-+				src1: src-1 {
-+				};
-+			};
-+
-+			rcar_sound,ssi {
-+				ssi0: ssi-0 {
-+				};
-+
-+				ssi1: ssi-1 {
-+				};
-+			};
-+		};
-+
-+		pciec0: pcie@fe000000 {
-+			/* placeholder */
-+		};
-+
-+		pciec1: pcie@ee800000 {
-+			/* placeholder */
-+		};
-+
-+		du: display@feb00000 {
-+			/* placeholder */
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					du_out_rgb: endpoint {
-+					};
-+				};
-+			};
-+		};
+ 	eeprom@50 {
+-		compatible = "renesas,24c128";
++		compatible = "renesas,24c128", "atmel,24c128";
+ 		reg = <0x50>;
+ 		pagesize = <64>;
  	};
- };
 -- 
-2.1.4
+2.9.3
