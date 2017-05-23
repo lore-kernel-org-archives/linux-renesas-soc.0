@@ -1,56 +1,83 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:48328 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751197AbdEBIf5 (ORCPT
+Received: from www.zeus03.de ([194.117.254.33]:55030 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1757596AbdEWMXm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 2 May 2017 04:35:57 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH] soc: renesas: Provide dummy rcar_rst_read_mode_pins() for compile-testing
-Date: Tue,  2 May 2017 10:35:49 +0200
-Message-Id: <7b4ccb3c466f62bbf2f4dd5d6a143d945a6f3051.1493713942.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1493713942.git.horms+renesas@verge.net.au>
-References: <cover.1493713942.git.horms+renesas@verge.net.au>
+        Tue, 23 May 2017 08:23:42 -0400
+Date: Tue, 23 May 2017 14:23:39 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        Yasushi SHOJI <yashi@atmark-techno.com>,
+        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+Subject: Re: [RFT PATCH] mmc: tmio: make sure SDIO gets reinitialized after
+ resume
+Message-ID: <20170523122339.GA3747@katana>
+References: <20170519123052.26565-1-wsa+renesas@sang-engineering.com>
+ <TY1PR06MB0992573FB717D7C90373F1FDD8F90@TY1PR06MB0992.apcprd06.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ikeVEW9yuYc//A+q"
+Content-Disposition: inline
+In-Reply-To: <TY1PR06MB0992573FB717D7C90373F1FDD8F90@TY1PR06MB0992.apcprd06.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-If the R-Car RST driver is not included, compile-testing R-Car clock
-drivers fails with a link error:
+--ikeVEW9yuYc//A+q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-    undefined reference to `rcar_rst_read_mode_pins'
+Shimoda-san,
 
-To fix this, provide a dummy version.  Use the exact same test logic as
-in drivers/soc/renesas/Makefile, as there is no Kconfig symbol (yet) to
-control compilation of the R-Car RST driver.
+> > This patch addresses a report I got from Shimoda-san. I can't really te=
+st it
+> > because the SDIO cards I have all require MMC_PM_KEEP_POWER to suspend =
+and
+> > that we don't support. So, I send this out to ask for testing. At least=
+ it
+> > didn't cause regressions for the setup I used. To make testing easier, =
+this
+> > is *not* put on top of Simon's SDHI DMA rework patches, so it should ap=
+ply
+> > on current upstream and development branches.
+>=20
+> Thank you for the patch!
+> Hayakawa-san tested this patch on both H3/Salvator-X and E2/ALT.
+>=20
+> So,
+> Tested-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
 
-Fixes: 527c02f66d263d2e ("soc: renesas: Add R-Car RST driver")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- include/linux/soc/renesas/rcar-rst.h | 5 +++++
- 1 file changed, 5 insertions(+)
+Very good, thanks, also to Hayakawa-san! I'll rebase this patch and
+resubmit with the tag added!
 
-diff --git a/include/linux/soc/renesas/rcar-rst.h b/include/linux/soc/renesas/rcar-rst.h
-index a18e0783946b..787e7ad53d45 100644
---- a/include/linux/soc/renesas/rcar-rst.h
-+++ b/include/linux/soc/renesas/rcar-rst.h
-@@ -1,6 +1,11 @@
- #ifndef __LINUX_SOC_RENESAS_RCAR_RST_H__
- #define __LINUX_SOC_RENESAS_RCAR_RST_H__
- 
-+#if defined(CONFIG_ARCH_RCAR_GEN1) || defined(CONFIG_ARCH_RCAR_GEN2) || \
-+    defined(CONFIG_ARCH_R8A7795) || defined(CONFIG_ARCH_R8A7796)
- int rcar_rst_read_mode_pins(u32 *mode);
-+#else
-+static inline int rcar_rst_read_mode_pins(u32 *mode) { return -ENODEV; }
-+#endif
- 
- #endif /* __LINUX_SOC_RENESAS_RCAR_RST_H__ */
--- 
-2.1.4
+Regards,
+
+   Wolfram
+
+
+--ikeVEW9yuYc//A+q
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlkkKccACgkQFA3kzBSg
+KbZ20w//dPPhZu2Z99rjnw3pPonUU6smbgD7vCmvFe5/Mop7ZzdxRvIz/KpAd2ju
+U9ZUeC+Hs0MtdzEb+IPp+/6Pb3NF0KRJkEG0SmCAFXYTbvghgcGgwIehL9QSAenV
+p8qMNqHkjcdiAa6pHfQuzDrpvSEfKBx5UDAA9tneCIGHdQrUqSvLw+yAWtih4w13
+VK28ZRZZHfqyHYlTsdQQ0TiKUgZmRnQkjdBBMsTpY96IL6M/Q8aZ2S3eIG9el01V
+5c53FpNTXe7ae8aOveTcNCbzOBktYSOKh+vGCqg3BeeqLeyLGhwc/IyhDlxMLcaw
+sIKUAOrdHPmDdGdTh1hnOoTDLOETz4BP6jnTwnfkpRc5yJBdm7nKQcjbQNKp/88S
+zT+EjuRJsAuhObe0t6E53hg1oTos9oSOfMV8kEggGIqc+zQZdTfIVUdDKPTbVBgi
+QwJzmmExqbdxNAt02kRv77yvAydPihAtBtmBJO0gbepjb97rZHYEo0BOkZPC9qq9
+fSWaHlllPL2vpyrVP+DQcppM0BKNR1Uhog/3VvpLn23LmBqQS5PxOWCPiWVMRkfE
+3Ru47ataUMckfd1TIU2qgcdSgnIJ1U49ZPtmdwshO+yrWSl8I7bT9+QOyhVgQA7p
+sOG1+Wg3SlM4zR7mCGZW8+FY9ZbUMbylRv9y0WO1kv8WOaKrzeg=
+=vpoz
+-----END PGP SIGNATURE-----
+
+--ikeVEW9yuYc//A+q--
