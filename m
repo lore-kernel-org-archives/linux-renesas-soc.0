@@ -1,89 +1,184 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:34603 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750777AbdEPLV2 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 16 May 2017 07:21:28 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: Jean Delvare <jdelvare@suse.de>,
-        Guenter Roeck <linux@roeck-us.net>,
-        linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 2/2] i2c: stub: use pr_fmt
-Date: Tue, 16 May 2017 13:21:05 +0200
-Message-Id: <20170516112105.2793-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170516112105.2793-1-wsa+renesas@sang-engineering.com>
-References: <20170516112105.2793-1-wsa+renesas@sang-engineering.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Tue, 23 May 2017 20:49:09 +0200
+From: jmondi <jacopo@jmondi.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] arm: dts: r7s72100: Add support for GR-Peach
+Message-ID: <20170523184909.GD13664@w540>
+References: <1495532834-25670-1-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdUR0Djqi-7DWAHpN_F6xt-WcYzT4H2+mLCjHE9T+7UuJg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUR0Djqi-7DWAHpN_F6xt-WcYzT4H2+mLCjHE9T+7UuJg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Instead of hard coding "i2c-stub:", let's use the pr_fmt mechanism to
-achieve the same more easily. This makes it easier to stay consistent
-when adding new messages. Also, remove an unneeded OOM message while we
-are here.
+Hi Geert,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/i2c/i2c-stub.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+On Tue, May 23, 2017 at 12:08:30PM +0200, Geert Uytterhoeven wrote:
+> Hi Jacopo,
+>
+> On Tue, May 23, 2017 at 11:47 AM, Jacopo Mondi
+> <jacopo+renesas@jmondi.org> wrote:
+> > Add device tree source for Renesas GR-Peach board.
+> > GR-Peach is an RZ/A1H based board with 10MB of on-chip SRAM and 8MB
+> > QSPI flash storage.
+> > Add support for the board, and create a 2MB partition to use as rootfs.
+> >
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+>
+> Thanks for your patch!
+>
+> > --- a/Documentation/devicetree/bindings/arm/shmobile.txt
+> > +++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+> > @@ -51,6 +51,8 @@ Boards:
+> >      compatible = "renesas,bockw", "renesas,r8a7778"
+> >    - Genmai (RTK772100BC00000BR)
+> >      compatible = "renesas,genmai", "renesas,r7s72100"
+> > +  - GR-Peach (RTK772100BC00000BR)
+>
+> That part number is Genmai?
 
-diff --git a/drivers/i2c/i2c-stub.c b/drivers/i2c/i2c-stub.c
-index 0aa4d646f8fb26..5627b1df391c7e 100644
---- a/drivers/i2c/i2c-stub.c
-+++ b/drivers/i2c/i2c-stub.c
-@@ -15,7 +15,8 @@
-     GNU General Public License for more details.
- */
- 
--#define DEBUG 1
-+#define DEBUG
-+#define pr_fmt(fmt) "i2c-stub: " fmt
- 
- #include <linux/errno.h>
- #include <linux/i2c.h>
-@@ -342,7 +343,7 @@ static int __init i2c_stub_allocate_banks(int i)
- 	if (!chip->bank_words)
- 		return -ENOMEM;
- 
--	pr_debug("i2c-stub: Allocated %u banks of %u words each (registers 0x%02x to 0x%02x)\n",
-+	pr_debug("Allocated %u banks of %u words each (registers 0x%02x to 0x%02x)\n",
- 		 chip->bank_mask, chip->bank_size, chip->bank_start,
- 		 chip->bank_end);
- 
-@@ -363,28 +364,27 @@ static int __init i2c_stub_init(void)
- 	int i, ret;
- 
- 	if (!chip_addr[0]) {
--		pr_err("i2c-stub: Please specify a chip address\n");
-+		pr_err("Please specify a chip address\n");
- 		return -ENODEV;
- 	}
- 
- 	for (i = 0; i < MAX_CHIPS && chip_addr[i]; i++) {
- 		if (chip_addr[i] < 0x03 || chip_addr[i] > 0x77) {
--			pr_err("i2c-stub: Invalid chip address 0x%02x\n",
-+			pr_err("Invalid chip address 0x%02x\n",
- 			       chip_addr[i]);
- 			return -EINVAL;
- 		}
- 
--		pr_info("i2c-stub: Virtual chip at 0x%02x\n", chip_addr[i]);
-+		pr_info("Virtual chip at 0x%02x\n", chip_addr[i]);
- 	}
- 
- 	/* Allocate memory for all chips at once */
- 	stub_chips_nr = i;
- 	stub_chips = kcalloc(stub_chips_nr, sizeof(struct stub_chip),
- 			     GFP_KERNEL);
--	if (!stub_chips) {
--		pr_err("i2c-stub: Out of memory\n");
-+	if (!stub_chips)
- 		return -ENOMEM;
--	}
-+
- 	for (i = 0; i < stub_chips_nr; i++) {
- 		INIT_LIST_HEAD(&stub_chips[i].smbus_blocks);
- 
--- 
-2.11.0
+Oh, I thought that was the SoC part number, and being both based on
+RZ/A1H, I used the same.
+
+Where can I find the correct part number?
+
+>
+> > +    compatible = "renesas,grpeach", "renesas,r7s72100"
+>
+> "renesas,gr-peach"?
+
+Let's use gr-peach in place of grpeach everywhere then.
+
+>
+> > --- a/arch/arm/boot/dts/Makefile
+> > +++ b/arch/arm/boot/dts/Makefile
+> > @@ -716,6 +716,7 @@ dtb-$(CONFIG_ARCH_S5PV210) += \
+> >  dtb-$(CONFIG_ARCH_SHMOBILE_MULTI) += \
+> >         emev2-kzm9d.dtb \
+> >         r7s72100-genmai.dtb \
+> > +       r7s72100-grpeach.dtb \
+>
+> r7s72100-gr-peach.dtb?
+>
+> > --- /dev/null
+> > +++ b/arch/arm/boot/dts/r7s72100-grpeach.dts
+>
+> r7s72100-gr-peach.dts
+>
+> > @@ -0,0 +1,65 @@
+> > +/*
+> > + * Device Tree Source for the GRPEACH board
+>
+> GR-PEACH
+>
+> > +/ {
+> > +       model = "GRPEACH";
+>
+> GR-PEACH
+>
+> > +       compatible = "renesas,grpeach", "renesas,r7s72100";
+>
+> renesas,gr-peach
+>
+> > +
+> > +       aliases {
+> > +               serial2 = &scif2;
+>
+> The first serial port is supposed to be called serial0, unless labeled
+> otherwise.
+
+I assumed it had to match the SCIF number. Will change.
+
+>
+> > +       };
+> > +
+> > +       chosen {
+> > +               bootargs = "console=ttySC2,115200 ignore_loglevel rw root=/dev/mtdblock0";
+>
+> bootargs = "ignore_loglevel rw root=/dev/mtdblock0";
+> stdout-path = "serial0:115200n8";
+>
+> > +       memory {
+>
+> memory@20000000
+>
+> (please run "make dtbs W=1")
+>
+> > +               device_type = "memory";
+> > +               reg = <0x20000000 0x00A00000>;  /* 10Mb @ 0x20000000 */
+>
+> reg = <0x20000000 0x00a00000>;
+>
+> No need for the comment, esp. since it says 10 megabits instead of
+> 10 mebibyte ;-)
+
+Was I the only one that had to go on Wikipedia to find out what a
+mebibyte is :p ?
+
+I'll drop comments here and in the rest of the patch.
+
+>
+> > +       qspi@18000000 {
+>
+> flash@18000000?
+>
+> > +               compatible = "mtd-rom";
+> > +               probe-type = "map_rom";
+> > +               reg = <0x18000000 0x00800000>;   /* 8 MB*/
+>
+> No need for the comment (megabyte vs. mebibyte)
+>
+> > +               bank-width = <4>;
+> > +               device-width = <1>;
+> > +
+> > +               #address-cells = <1>;
+> > +               #size-cells = <1>;
+> > +
+> > +               rootfs@18600000 {
+>
+> rootfs@600000?
+>
+> > +                       label = "rootfs";
+> > +                       reg = <0x00600000 0x00200000>; /* 2MB @ 0x18600000 */
+>
+> Do we need the comment?
+>
+> > +&extal_clk {
+> > +       clock-frequency = <13330000>;
+>
+> My schematics have one more digit of precision: <13333000>
+
+Thanks, I'll change this.
+
+Do we need to change that on Genmai as well while at there?
+Some parts of its documentation report a frequency of 13.33Mhz, but X1
+is listed in the BOM as
+
+X1 XIN oscillator (socket mounted) SG-8002DC-13.3333MHz (Epson)
+
+Thanks
+   j
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
