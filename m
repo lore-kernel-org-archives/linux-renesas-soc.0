@@ -1,95 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f173.google.com ([209.85.216.173]:34197 "EHLO
-        mail-qt0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751126AbdE3JzT (ORCPT
+Received: from sauhun.de ([88.99.104.3]:33968 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751672AbdEWNej (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 30 May 2017 05:55:19 -0400
-Received: by mail-qt0-f173.google.com with SMTP id c13so65912677qtc.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 30 May 2017 02:55:19 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <20170523133408.11651-1-wsa+renesas@sang-engineering.com>
-References: <20170523133408.11651-1-wsa+renesas@sang-engineering.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 30 May 2017 11:55:18 +0200
-Message-ID: <CAPDyKFqR9b9ogbQ2Ln-uscUytihdMCdAHH6+2=cymSFHYg2-mw@mail.gmail.com>
-Subject: Re: [PATCH] mmc: tmio: make sure SDIO gets reinitialized after resume
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Tue, 23 May 2017 09:34:39 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: [PATCH] mmc: tmio: make sure SDIO gets reinitialized after resume
+Date: Tue, 23 May 2017 15:34:08 +0200
+Message-Id: <20170523133408.11651-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 23 May 2017 at 15:34, Wolfram Sang <wsa+renesas@sang-engineering.com> wrote:
-> To achieve that, we set the registers in the generic HW reset routine
-> which gets called at both, init and resume. We also make sure to move
-> SDIO initialization before reset gets called in probe().
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Tested-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+To achieve that, we set the registers in the generic HW reset routine
+which gets called at both, init and resume. We also make sure to move
+SDIO initialization before reset gets called in probe().
 
-Thanks, applied for next!
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Tested-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+---
 
-Kind regards
-Uffe
+Changes since RFT:
+* added tag from Hayakawa-san (thanks!)
+* rebased to mmc/next (on top of the DMA refactor series)
 
-> ---
->
-> Changes since RFT:
-> * added tag from Hayakawa-san (thanks!)
-> * rebased to mmc/next (on top of the DMA refactor series)
->
->  drivers/mmc/host/tmio_mmc_core.c | 17 ++++++++++-------
->  1 file changed, 10 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-> index e1ad461c4b8c8f..ed40681253497a 100644
-> --- a/drivers/mmc/host/tmio_mmc_core.c
-> +++ b/drivers/mmc/host/tmio_mmc_core.c
-> @@ -265,6 +265,12 @@ static void tmio_mmc_reset(struct tmio_mmc_host *host)
->         if (host->pdata->flags & TMIO_MMC_HAVE_HIGH_REG)
->                 sd_ctrl_write16(host, CTL_RESET_SDIO, 0x0001);
->         msleep(10);
-> +
-> +       if (host->pdata->flags & TMIO_MMC_SDIO_IRQ) {
-> +               sd_ctrl_write16(host, CTL_SDIO_IRQ_MASK, host->sdio_irq_mask);
-> +               sd_ctrl_write16(host, CTL_TRANSACTION_CTL, 0x0001);
-> +       }
-> +
->  }
->
->  static void tmio_mmc_reset_work(struct work_struct *work)
-> @@ -1280,6 +1286,10 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
->         if (_host->native_hotplug)
->                 pm_runtime_get_noresume(&pdev->dev);
->
-> +       _host->sdio_irq_enabled = false;
-> +       if (pdata->flags & TMIO_MMC_SDIO_IRQ)
-> +               _host->sdio_irq_mask = TMIO_SDIO_MASK_ALL;
-> +
->         tmio_mmc_clk_stop(_host);
->         tmio_mmc_reset(_host);
->
-> @@ -1296,13 +1306,6 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
->
->         _host->sdcard_irq_mask &= ~irq_mask;
->
-> -       _host->sdio_irq_enabled = false;
-> -       if (pdata->flags & TMIO_MMC_SDIO_IRQ) {
-> -               _host->sdio_irq_mask = TMIO_SDIO_MASK_ALL;
-> -               sd_ctrl_write16(_host, CTL_SDIO_IRQ_MASK, _host->sdio_irq_mask);
-> -               sd_ctrl_write16(_host, CTL_TRANSACTION_CTL, 0x0001);
-> -       }
-> -
->         spin_lock_init(&_host->lock);
->         mutex_init(&_host->ios_lock);
->
-> --
-> 2.11.0
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ drivers/mmc/host/tmio_mmc_core.c | 17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+index e1ad461c4b8c8f..ed40681253497a 100644
+--- a/drivers/mmc/host/tmio_mmc_core.c
++++ b/drivers/mmc/host/tmio_mmc_core.c
+@@ -265,6 +265,12 @@ static void tmio_mmc_reset(struct tmio_mmc_host *host)
+ 	if (host->pdata->flags & TMIO_MMC_HAVE_HIGH_REG)
+ 		sd_ctrl_write16(host, CTL_RESET_SDIO, 0x0001);
+ 	msleep(10);
++
++	if (host->pdata->flags & TMIO_MMC_SDIO_IRQ) {
++		sd_ctrl_write16(host, CTL_SDIO_IRQ_MASK, host->sdio_irq_mask);
++		sd_ctrl_write16(host, CTL_TRANSACTION_CTL, 0x0001);
++	}
++
+ }
+ 
+ static void tmio_mmc_reset_work(struct work_struct *work)
+@@ -1280,6 +1286,10 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
+ 	if (_host->native_hotplug)
+ 		pm_runtime_get_noresume(&pdev->dev);
+ 
++	_host->sdio_irq_enabled = false;
++	if (pdata->flags & TMIO_MMC_SDIO_IRQ)
++		_host->sdio_irq_mask = TMIO_SDIO_MASK_ALL;
++
+ 	tmio_mmc_clk_stop(_host);
+ 	tmio_mmc_reset(_host);
+ 
+@@ -1296,13 +1306,6 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
+ 
+ 	_host->sdcard_irq_mask &= ~irq_mask;
+ 
+-	_host->sdio_irq_enabled = false;
+-	if (pdata->flags & TMIO_MMC_SDIO_IRQ) {
+-		_host->sdio_irq_mask = TMIO_SDIO_MASK_ALL;
+-		sd_ctrl_write16(_host, CTL_SDIO_IRQ_MASK, _host->sdio_irq_mask);
+-		sd_ctrl_write16(_host, CTL_TRANSACTION_CTL, 0x0001);
+-	}
+-
+ 	spin_lock_init(&_host->lock);
+ 	mutex_init(&_host->ios_lock);
+ 
+-- 
+2.11.0
