@@ -1,85 +1,129 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-clk@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 04/10] clk: renesas: Add r8a7792 CPG Core Clock Definitions
-Date: Fri, 19 May 2017 10:45:59 +0200
-Message-Id: <1495183565-21679-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1495183565-21679-1-git-send-email-geert+renesas@glider.be>
-References: <1495183565-21679-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        Jose Abreu <joabreu@synopsys.com>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
+In-Reply-To: <878tlvosk9.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1dDaLx-0003Rd-Fq@debutante>
+Date: Wed, 24 May 2017 18:45:45 +0100
+Subject: Applied "ASoC: hdmi-codec: add .get_dai_id support" to the asoc tree
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add all R-Car V2H Clock Pulse Generator Core Clock Outputs, as listed in
-Table 7.2c ("List of Clocks [R-Car V2H]") of the R-Car Gen2 Hardware
-User's Manual rev. 2.00.
+The patch
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
-v2:
-  - Add Reviewed-by.
----
- include/dt-bindings/clock/r8a7792-cpg-mssr.h | 43 ++++++++++++++++++++++++++++
- 1 file changed, 43 insertions(+)
- create mode 100644 include/dt-bindings/clock/r8a7792-cpg-mssr.h
+   ASoC: hdmi-codec: add .get_dai_id support
 
-diff --git a/include/dt-bindings/clock/r8a7792-cpg-mssr.h b/include/dt-bindings/clock/r8a7792-cpg-mssr.h
-new file mode 100644
-index 0000000000000000..72ce85cb2f94b0ab
---- /dev/null
-+++ b/include/dt-bindings/clock/r8a7792-cpg-mssr.h
-@@ -0,0 +1,43 @@
-+/*
-+ * Copyright (C) 2015 Renesas Electronics Corp.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ */
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 96203fb4237bf70f0fd0fa307ca2975077db3ceb Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Thu, 18 May 2017 01:40:20 +0000
+Subject: [PATCH] ASoC: hdmi-codec: add .get_dai_id support
+
+ALSA SoC needs to know connected DAI ID for probing.
+It is not a big problem if device/driver was only for sound,
+but getting DAI ID will be difficult if device includes both
+Video/Sound, like HDMI.
+To solve this issue, this patch adds new .get_dai_id callback
+on hdmi_codec_ops
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ include/sound/hdmi-codec.h    |  9 +++++++++
+ sound/soc/codecs/hdmi-codec.c | 13 +++++++++++++
+ 2 files changed, 22 insertions(+)
+
+diff --git a/include/sound/hdmi-codec.h b/include/sound/hdmi-codec.h
+index 915c4357945c..9483c55f871b 100644
+--- a/include/sound/hdmi-codec.h
++++ b/include/sound/hdmi-codec.h
+@@ -18,9 +18,11 @@
+ #ifndef __HDMI_CODEC_H__
+ #define __HDMI_CODEC_H__
+ 
++#include <linux/of_graph.h>
+ #include <linux/hdmi.h>
+ #include <drm/drm_edid.h>
+ #include <sound/asoundef.h>
++#include <sound/soc.h>
+ #include <uapi/sound/asound.h>
+ 
+ /*
+@@ -87,6 +89,13 @@ struct hdmi_codec_ops {
+ 	 */
+ 	int (*get_eld)(struct device *dev, void *data,
+ 		       uint8_t *buf, size_t len);
 +
-+#ifndef __DT_BINDINGS_CLOCK_R8A7792_CPG_MSSR_H__
-+#define __DT_BINDINGS_CLOCK_R8A7792_CPG_MSSR_H__
++	/*
++	 * Getting DAI ID
++	 * Optional
++	 */
++	int (*get_dai_id)(struct snd_soc_component *comment,
++			  struct device_node *endpoint);
+ };
+ 
+ /* HDMI codec initalization data */
+diff --git a/sound/soc/codecs/hdmi-codec.c b/sound/soc/codecs/hdmi-codec.c
+index 8659b76b066a..6d05161b625d 100644
+--- a/sound/soc/codecs/hdmi-codec.c
++++ b/sound/soc/codecs/hdmi-codec.c
+@@ -719,6 +719,18 @@ static const struct snd_soc_dai_driver hdmi_spdif_dai = {
+ 	.pcm_new = hdmi_codec_pcm_new,
+ };
+ 
++static int hdmi_of_xlate_dai_id(struct snd_soc_component *component,
++				 struct device_node *endpoint)
++{
++	struct hdmi_codec_priv *hcp = snd_soc_component_get_drvdata(component);
++	int ret = -ENOTSUPP; /* see snd_soc_get_dai_id() */
 +
-+#include <dt-bindings/clock/renesas-cpg-mssr.h>
++	if (hcp->hcd.ops->get_dai_id)
++		ret = hcp->hcd.ops->get_dai_id(component, endpoint);
 +
-+/* r8a7792 CPG Core Clocks */
-+#define R8A7792_CLK_Z			0
-+#define R8A7792_CLK_ZG			1
-+#define R8A7792_CLK_ZTR			2
-+#define R8A7792_CLK_ZTRD2		3
-+#define R8A7792_CLK_ZT			4
-+#define R8A7792_CLK_ZX			5
-+#define R8A7792_CLK_ZS			6
-+#define R8A7792_CLK_HP			7
-+#define R8A7792_CLK_I			8
-+#define R8A7792_CLK_B			9
-+#define R8A7792_CLK_LB			10
-+#define R8A7792_CLK_P			11
-+#define R8A7792_CLK_CL			12
-+#define R8A7792_CLK_M2			13
-+#define R8A7792_CLK_IMP			14
-+#define R8A7792_CLK_ZB3			15
-+#define R8A7792_CLK_ZB3D2		16
-+#define R8A7792_CLK_DDR			17
-+#define R8A7792_CLK_SD			18
-+#define R8A7792_CLK_MP			19
-+#define R8A7792_CLK_QSPI		20
-+#define R8A7792_CLK_CP			21
-+#define R8A7792_CLK_CPEX		22
-+#define R8A7792_CLK_RCAN		23
-+#define R8A7792_CLK_R			24
-+#define R8A7792_CLK_OSC			25
++	return ret;
++}
 +
-+#endif /* __DT_BINDINGS_CLOCK_R8A7792_CPG_MSSR_H__ */
+ static struct snd_soc_codec_driver hdmi_codec = {
+ 	.component_driver = {
+ 		.controls		= hdmi_controls,
+@@ -727,6 +739,7 @@ static struct snd_soc_codec_driver hdmi_codec = {
+ 		.num_dapm_widgets	= ARRAY_SIZE(hdmi_widgets),
+ 		.dapm_routes		= hdmi_routes,
+ 		.num_dapm_routes	= ARRAY_SIZE(hdmi_routes),
++		.of_xlate_dai_id	= hdmi_of_xlate_dai_id,
+ 	},
+ };
+ 
 -- 
-2.7.4
+2.11.0
