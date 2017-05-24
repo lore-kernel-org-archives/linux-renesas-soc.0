@@ -1,46 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:58014 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751398AbdEQPDp (ORCPT
+Received: from mail-lf0-f46.google.com ([209.85.215.46]:35416 "EHLO
+        mail-lf0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S939340AbdEXJBt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 17 May 2017 11:03:45 -0400
-From: Kieran Bingham <kbingham@kernel.org>
-To: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        sakari.ailus@iki.fi, niklas.soderlund@ragnatech.se,
-        laurent.pinchart@ideasonboard.com
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v1 0/3] v4l: async: Match parent devices
-Date: Wed, 17 May 2017 16:03:36 +0100
-Message-Id: <cover.6800d0e1b9b578b82f68dec1b99b3a601d6e54ca.1495032810.git-series.kieran.bingham+renesas@ideasonboard.com>
+        Wed, 24 May 2017 05:01:49 -0400
+Received: by mail-lf0-f46.google.com with SMTP id a5so50003375lfh.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 24 May 2017 02:01:48 -0700 (PDT)
+Subject: Re: [PATCH v2 17/17] rcar-vin: fix bug in pixelformat selection
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+References: <20170524001540.13613-1-niklas.soderlund@ragnatech.se>
+ <20170524001540.13613-18-niklas.soderlund@ragnatech.se>
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <9d780f84-ca1b-dda1-b5ec-36265d52c330@cogentembedded.com>
+Date: Wed, 24 May 2017 12:01:45 +0300
+MIME-Version: 1.0
+In-Reply-To: <20170524001540.13613-18-niklas.soderlund@ragnatech.se>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Hello!
 
-To support using endpoints in the V4L2 Async subdev framework,
-we need to be able to parse a fwnode for the device from the
-endpoint.
+On 5/24/2017 3:15 AM, Niklas Söderlund wrote:
 
-To enable this, provide an alternative of_graph_get_remote_port_parent
-which walks up the port hierarchy without parsing the 'remote-endpoint'
-first.
+> From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+>
+> If the requested pixelformat is not supported fallback to the default
+> format, do not revert the entire format.
+>
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> ---
+>  drivers/media/platform/rcar-vin/rcar-v4l2.c | 17 +++++------------
+>  1 file changed, 5 insertions(+), 12 deletions(-)
+>
+> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> index de71e5fa8b10cb5e..81ff59c3b4744075 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+[...]
+> @@ -218,17 +217,11 @@ static int __rvin_try_format(struct rvin_dev *vin,
+>  	if (pix->field == V4L2_FIELD_ANY)
+>  		pix->field = vin->format.field;
+>
+> -	/*
+> -	 * Retrieve format information and select the current format if the
+> -	 * requested format isn't supported.
+> -	 */
+> -	info = rvin_format_from_pixel(pix->pixelformat);
+> -	if (!info) {
+> -		vin_dbg(vin, "Format %x not found, keeping %x\n",
+> -			pix->pixelformat, vin->format.pixelformat);
+> -		*pix = vin->format;
+> -		pix->width = rwidth;
+> -		pix->height = rheight;
+> +	/* If requested format is not supported fallback to the default */
+> +	if (!rvin_format_from_pixel(pix->pixelformat)) {
+> +		vin_dbg(vin, "Format 0x%x not found, using default 0x%x\n",
 
-Using this new of_graph_get_port_parent() implementation we can then
-add the corresponding fwnode_graph_get_port_parent() call for use
-by the async framework.
+     s/0x%x/%#x/, maybe?
 
-Kieran Bingham (3):
-  of: base: Provide of_graph_get_port_parent()
-  device property: Add fwnode_graph_get_port_parent
-  v4l: async: Match parent devices
+> +			pix->pixelformat, RVIN_DEFAULT_FORMAT);
+> +		pix->pixelformat = RVIN_DEFAULT_FORMAT;
+>  	}
+>
+>  	/* Always recalculate */
 
- drivers/base/property.c              | 25 ++++++++++++++++++++++++-
- drivers/media/v4l2-core/v4l2-async.c | 20 +++++++++++++++----
- drivers/of/base.c                    | 30 +++++++++++++++++++++--------
- include/linux/of_graph.h             |  1 +-
- include/linux/property.h             |  2 ++-
- 5 files changed, 66 insertions(+), 12 deletions(-)
-
-base-commit: ff0b1f922c42a59bbf8ad675df79441790baed86
--- 
-git-series 0.9.1
+MBR, Sergei
