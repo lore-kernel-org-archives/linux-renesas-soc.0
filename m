@@ -1,123 +1,65 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:46759 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937859AbdEXARD (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 23 May 2017 20:17:03 -0400
 From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 2/2] media: entity: Add media_entity_pad_from_fwnode() function
-Date: Wed, 24 May 2017 02:09:07 +0200
-Message-Id: <20170524000907.13061-3-niklas.soderlund@ragnatech.se>
-In-Reply-To: <20170524000907.13061-1-niklas.soderlund@ragnatech.se>
-References: <20170524000907.13061-1-niklas.soderlund@ragnatech.se>
+Subject: [PATCH v2 13/17] rcar-vin: refactor and fold in function after stall handling rework
+Date: Wed, 24 May 2017 02:15:36 +0200
+Message-Id: <20170524001540.13613-14-niklas.soderlund@ragnatech.se>
+In-Reply-To: <20170524001540.13613-1-niklas.soderlund@ragnatech.se>
+References: <20170524001540.13613-1-niklas.soderlund@ragnatech.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-This is a wrapper around the media entity pad_from_fwnode operation.
+With the driver stopping and starting the stream each time the driver is
+stalled rvin_capture_off() can be folded in to the only caller.
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- drivers/media/media-entity.c | 39 +++++++++++++++++++++++++++++++++++++++
- include/media/media-entity.h | 22 ++++++++++++++++++++++
- 2 files changed, 61 insertions(+)
+ drivers/media/platform/rcar-vin/rcar-dma.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
-index bc44193efa4798b4..c124754f739a8b94 100644
---- a/drivers/media/media-entity.c
-+++ b/drivers/media/media-entity.c
-@@ -18,6 +18,7 @@
- 
- #include <linux/bitmap.h>
- #include <linux/module.h>
-+#include <linux/property.h>
- #include <linux/slab.h>
- #include <media/media-entity.h>
- #include <media/media-device.h>
-@@ -386,6 +387,44 @@ struct media_entity *media_graph_walk_next(struct media_graph *graph)
+diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+index ae4febede5f79f28..b136844499f677cf 100644
+--- a/drivers/media/platform/rcar-vin/rcar-dma.c
++++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+@@ -397,12 +397,6 @@ static void rvin_capture_on(struct rvin_dev *vin)
+ 		rvin_write(vin, VNFC_S_FRAME, VNFC_REG);
  }
- EXPORT_SYMBOL_GPL(media_graph_walk_next);
  
-+int media_entity_pad_from_fwnode(struct media_entity *entity,
-+				 struct fwnode_handle *fwnode,
-+				 int direction, unsigned int *pad)
-+{
-+	struct fwnode_endpoint endpoint;
-+	int i, tmp, ret;
-+
-+	if (!entity->ops || !entity->ops->pad_from_fwnode) {
-+		for (i = 0; i < entity->num_pads; i++) {
-+			if (entity->pads[i].flags & direction) {
-+				*pad = i;
-+				return 0;
-+			}
-+		}
-+
-+		return -ENXIO;
-+	}
-+
-+	ret = fwnode_graph_parse_endpoint(fwnode, &endpoint);
-+	if (ret)
-+		return ret;
-+
-+	ret = entity->ops->pad_from_fwnode(&endpoint, &tmp);
-+	if (ret)
-+		return ret;
-+
-+	if (tmp >= entity->num_pads)
-+		return -ENXIO;
-+
-+	if (!(entity->pads[tmp].flags & direction))
-+		return -ENXIO;
-+
-+	*pad = tmp;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(media_entity_pad_from_fwnode);
-+
- /* -----------------------------------------------------------------------------
-  * Pipeline management
-  */
-diff --git a/include/media/media-entity.h b/include/media/media-entity.h
-index 2aea22b0409d1070..7507181609bec43c 100644
---- a/include/media/media-entity.h
-+++ b/include/media/media-entity.h
-@@ -822,6 +822,28 @@ struct media_pad *media_entity_remote_pad(struct media_pad *pad);
- struct media_entity *media_entity_get(struct media_entity *entity);
+-static void rvin_capture_off(struct rvin_dev *vin)
+-{
+-	/* Set continuous & single transfer off */
+-	rvin_write(vin, 0, VNFC_REG);
+-}
+-
+ static int rvin_capture_start(struct rvin_dev *vin)
+ {
+ 	struct rvin_buffer *buf, *node;
+@@ -436,7 +430,8 @@ static int rvin_capture_start(struct rvin_dev *vin)
  
- /**
-+ * media_entity_pad_from_fwnode - Get pad number from fwnode
-+ *
-+ * @entity: The entity
-+ * @fwnode: Pointer to fwnode_handle which should be used to find pad
-+ * @direction: Expected direction of the pad
-+ * @pad: Pointer to pad which will should be filled in
-+ *
-+ * This function can be used to resolve the media pad number from
-+ * a fwnode. This is useful for devices which uses more complex
-+ * mappings of media pads.
-+ *
-+ * If the entity do not implement the pad_from_fwnode() operation
-+ * this function searches the entity for the first pad that matches
-+ * the @direction.
-+ *
-+ * Return: return 0 on success.
-+ */
-+int media_entity_pad_from_fwnode(struct media_entity *entity,
-+				 struct fwnode_handle *fwnode,
-+				 int direction, unsigned int *pad);
-+
-+/**
-  * media_graph_walk_init - Allocate resources used by graph walk.
-  *
-  * @graph: Media graph structure that will be used to walk the graph
+ static void rvin_capture_stop(struct rvin_dev *vin)
+ {
+-	rvin_capture_off(vin);
++	/* Set continuous & single transfer off */
++	rvin_write(vin, 0, VNFC_REG);
+ 
+ 	/* Disable module */
+ 	rvin_write(vin, rvin_read(vin, VNMC_REG) & ~VNMC_ME, VNMC_REG);
 -- 
 2.13.0
