@@ -1,98 +1,56 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Jose Abreu <joabreu@synopsys.com>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <87bmqrosla.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dDaL5-0003Gl-Uq@debutante>
-Date: Wed, 24 May 2017 18:44:51 +0100
-Subject: Applied "ASoC: simple-card-utils: support snd_soc_get_dai_id()" to the asoc tree
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:45435 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1760615AbdEXAHz (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 23 May 2017 20:07:55 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-media@vger.kernel.org
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2 0/2] v4l2-async: add subnotifier registration for subdevices
+Date: Wed, 24 May 2017 02:07:25 +0200
+Message-Id: <20170524000727.12936-1-niklas.soderlund@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-   ASoC: simple-card-utils: support snd_soc_get_dai_id()
+Hi,
 
-has been applied to the asoc tree at
+This series enables incremental async find and bind of subdevices, 
+please se patch 2/2 for a more detailed description.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+This is tested on Renesas H3 and M3-W together with the Renesas CSI-2 
+and VIN Gen3 driver (posted separately). It is based on top of Sakaris 
+pull request '[GIT PULL FOR v4.13] V4L2 fwnode support'. While this 
+series do not require the fwnode support the code that makes us of this 
+feature do.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Changes since v1:
+- Added a pre-patch which adds an error check which was previously in 
+  the new incremental async code but is more useful on its own.
+- Added documentation to Documentation/media/kapi/v4l2-subdev.rst.
+- Fixed data type of bool variable.
+- Added call to lockdep_assert_held(), thanks Sakari.
+- Fixed commit messages typo, thanks Sakari.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Niklas Söderlund (2):
+  v4l: async: check for v4l2_dev in v4l2_async_notifier_register()
+  v4l: async: add subnotifier registration for subdevices
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+ Documentation/media/kapi/v4l2-subdev.rst | 20 +++++++
+ drivers/media/v4l2-core/v4l2-async.c     | 91 +++++++++++++++++++++++++-------
+ include/media/v4l2-async.h               | 22 ++++++++
+ 3 files changed, 115 insertions(+), 18 deletions(-)
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 73b17f1a65c881fcf97109d77056006da2d40152 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Thu, 18 May 2017 01:39:44 +0000
-Subject: [PATCH] ASoC: simple-card-utils: support snd_soc_get_dai_id()
-
-ALSA SoC needs to know connected DAI ID for detecting.
-It is not a big problem if device/driver was only for sound,
-but getting DAI ID will be difficult if device includes both
-Video/Sound, like HDMI.
-To solve this issue, this patch adds new snd_soc_get_dai_id() and
-its related .of_xlate_dai_id callback on component driver.
-In below case, we can handle Sound port (= port@2) as ID = 0
-if .of_xlate_dai_id has its support.
-
-	hdmi {
-		port@0 { /* VIDEO */ };
-		port@1 { /* VIDEO */ };
-		port@2 { /* SOUND */ };
-	};
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/generic/simple-card-utils.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/sound/soc/generic/simple-card-utils.c b/sound/soc/generic/simple-card-utils.c
-index 5a3d51e45938..fe726e83d0bd 100644
---- a/sound/soc/generic/simple-card-utils.c
-+++ b/sound/soc/generic/simple-card-utils.c
-@@ -177,9 +177,18 @@ static int asoc_simple_card_get_dai_id(struct device_node *ep)
- 	struct device_node *node;
- 	struct device_node *endpoint;
- 	int i, id;
-+	int ret;
-+
-+	ret = snd_soc_get_dai_id(ep);
-+	if (ret != -ENOTSUPP)
-+		return ret;
- 
- 	node = of_graph_get_port_parent(ep);
- 
-+	/*
-+	 * Non HDMI sound case, counting port/endpoint on its DT
-+	 * is enough. Let's count it.
-+	 */
- 	i = 0;
- 	id = -1;
- 	for_each_endpoint_of_node(node, endpoint) {
 -- 
-2.11.0
+2.13.0
