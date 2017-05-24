@@ -1,131 +1,134 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert+renesas@glider.be, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] arm: dts: r7s72100: Add support for GR-Peach
-Date: Tue, 23 May 2017 21:20:54 +0200
-Message-Id: <1495567254-10226-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:46763 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1765678AbdEXARC (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 23 May 2017 20:17:02 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2 07/17] rcar-vin: move pad lookup to async bound handler
+Date: Wed, 24 May 2017 02:15:30 +0200
+Message-Id: <20170524001540.13613-8-niklas.soderlund@ragnatech.se>
+In-Reply-To: <20170524001540.13613-1-niklas.soderlund@ragnatech.se>
+References: <20170524001540.13613-1-niklas.soderlund@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add device tree source for Renesas GR-Peach board.
-GR-Peach is an RZ/A1H based board with 10MB of on-chip SRAM and 8MB
-QSPI flash storage.
-Add support for the board, and create a 2MB partition to use as rootfs.
+From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Information about pads will be needed when enumerating the media bus
+codes in the async complete handler which is run before
+rvin_v4l2_probe(). Move the pad lookup to the async bound handler so
+they are available when needed.
+
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
+ drivers/media/platform/rcar-vin/rcar-core.c | 30 ++++++++++++++++++++++++++++-
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 22 ---------------------
+ 2 files changed, 29 insertions(+), 23 deletions(-)
 
-v1->v2
-- s/grpeach/gr-peach/g
-- Use correct part number in bindings documentation (X28A-M01-E/F)
-- Geert's comment on v1 addressed
-
- Documentation/devicetree/bindings/arm/shmobile.txt |  2 +
- arch/arm/boot/dts/Makefile                         |  1 +
- arch/arm/boot/dts/r7s72100-gr-peach.dts            | 66 ++++++++++++++++++++++
- 3 files changed, 69 insertions(+)
- create mode 100644 arch/arm/boot/dts/r7s72100-gr-peach.dts
-
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index c950263..b7ab3bd 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -51,6 +51,8 @@ Boards:
-     compatible = "renesas,bockw", "renesas,r8a7778"
-   - Genmai (RTK772100BC00000BR)
-     compatible = "renesas,genmai", "renesas,r7s72100"
-+  - GR-Peach (X28A-M01-E/F)
-+    compatible = "renesas,gr-peach", "renesas,r7s72100"
-   - Gose (RTP0RC7793SEB00010S)
-     compatible = "renesas,gose", "renesas,r8a7793"
-   - H3ULCB (R-Car Starter Kit Premier, RTP0RC7795SKB00010S)
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 0118084..10cd690 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -716,6 +716,7 @@ dtb-$(CONFIG_ARCH_S5PV210) += \
- dtb-$(CONFIG_ARCH_SHMOBILE_MULTI) += \
- 	emev2-kzm9d.dtb \
- 	r7s72100-genmai.dtb \
-+	r7s72100-gr-peach.dtb \
- 	r7s72100-rskrza1.dtb \
- 	r8a73a4-ape6evm.dtb \
- 	r8a7740-armadillo800eva.dtb \
-diff --git a/arch/arm/boot/dts/r7s72100-gr-peach.dts b/arch/arm/boot/dts/r7s72100-gr-peach.dts
-new file mode 100644
-index 0000000..a1b2aef9
---- /dev/null
-+++ b/arch/arm/boot/dts/r7s72100-gr-peach.dts
-@@ -0,0 +1,66 @@
-+/*
-+ * Device Tree Source for the GR-Peach board
-+ *
-+ * Copyright (C) 2017 Jacopo Mondi <jacopo+renesas@jmondi.org>
-+ * Copyright (C) 2016 Renesas Electronics
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2.  This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 264604a9bcf86110..58fd04a7e9f1151b 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -31,6 +31,20 @@
+ 
+ #define notifier_to_vin(n) container_of(n, struct rvin_dev, notifier)
+ 
++static int rvin_find_pad(struct v4l2_subdev *sd, int direction)
++{
++	unsigned int pad;
 +
-+/dts-v1/;
-+#include "r7s72100.dtsi"
++	if (sd->entity.num_pads <= 1)
++		return 0;
 +
-+/ {
-+	model = "GR-Peach";
-+	compatible = "renesas,gr-peach", "renesas,r7s72100";
++	for (pad = 0; pad < sd->entity.num_pads; pad++)
++		if (sd->entity.pads[pad].flags & direction)
++			return pad;
 +
-+	aliases {
-+		serial0 = &scif2;
-+	};
++	return -EINVAL;
++}
 +
-+	chosen {
-+		bootargs = "ignore_loglevel rw root=/dev/mtdblock0";
-+		stdout-path = "serial0:115200n8";
-+	};
+ static bool rvin_mbus_supported(struct rvin_graph_entity *entity)
+ {
+ 	struct v4l2_subdev *sd = entity->subdev;
+@@ -101,13 +115,27 @@ static int rvin_digital_notify_bound(struct v4l2_async_notifier *notifier,
+ 				     struct v4l2_async_subdev *asd)
+ {
+ 	struct rvin_dev *vin = notifier_to_vin(notifier);
++	int ret;
+ 
+ 	v4l2_set_subdev_hostdata(subdev, vin);
+ 
+ 	if (vin->digital.asd.match.fwnode.fwnode ==
+ 	    of_fwnode_handle(subdev->dev->of_node)) {
+-		vin_dbg(vin, "bound digital subdev %s\n", subdev->name);
++		/* Find surce and sink pad of remote subdevice */
 +
-+	memory@20000000 {
-+		device_type = "memory";
-+		reg = <0x20000000 0x00a00000>;
++		ret = rvin_find_pad(subdev, MEDIA_PAD_FL_SOURCE);
++		if (ret < 0)
++			return ret;
++		vin->digital.source_pad = ret;
 +
-+	};
++		ret = rvin_find_pad(subdev, MEDIA_PAD_FL_SINK);
++		vin->digital.sink_pad = ret < 0 ? 0 : ret;
 +
-+	lbsc {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+	};
+ 		vin->digital.subdev = subdev;
 +
-+	flash@18000000 {
-+		compatible = "mtd-rom";
-+		probe-type = "map_rom";
-+		reg = <0x18000000 0x00800000>;
-+		bank-width = <4>;
-+		device-width = <1>;
-+
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+
-+		rootfs@600000 {
-+			label = "rootfs";
-+			reg = <0x00600000 0x00200000>;
-+		};
-+	};
-+};
-+
-+&extal_clk {
-+	clock-frequency = <13333000>;
-+};
-+
-+&usb_x1_clk {
-+	clock-frequency = <48000000>;
-+};
-+
-+&scif2 {
-+	status = "okay";
-+};
---
-2.7.4
++		vin_dbg(vin, "bound subdev %s source pad: %u sink pad: %u\n",
++			subdev->name, vin->digital.source_pad,
++			vin->digital.sink_pad);
+ 		return 0;
+ 	}
+ 
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 90ea582fb48e3cb5..be6f41bf82ac3bc5 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -870,20 +870,6 @@ static void rvin_notify(struct v4l2_subdev *sd,
+ 	}
+ }
+ 
+-static int rvin_find_pad(struct v4l2_subdev *sd, int direction)
+-{
+-	unsigned int pad;
+-
+-	if (sd->entity.num_pads <= 1)
+-		return 0;
+-
+-	for (pad = 0; pad < sd->entity.num_pads; pad++)
+-		if (sd->entity.pads[pad].flags & direction)
+-			return pad;
+-
+-	return -EINVAL;
+-}
+-
+ int rvin_v4l2_probe(struct rvin_dev *vin)
+ {
+ 	struct video_device *vdev = &vin->vdev;
+@@ -934,14 +920,6 @@ int rvin_v4l2_probe(struct rvin_dev *vin)
+ 	vdev->device_caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING |
+ 		V4L2_CAP_READWRITE;
+ 
+-	ret = rvin_find_pad(sd, MEDIA_PAD_FL_SOURCE);
+-	if (ret < 0)
+-		return ret;
+-	vin->digital.source_pad = ret;
+-
+-	ret = rvin_find_pad(sd, MEDIA_PAD_FL_SINK);
+-	vin->digital.sink_pad = ret < 0 ? 0 : ret;
+-
+ 	vin->format.pixelformat	= RVIN_DEFAULT_FORMAT;
+ 	rvin_reset_format(vin);
+ 
+-- 
+2.13.0
