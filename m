@@ -1,104 +1,132 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Kishon Vijay Abraham I <kishon@ti.com>,
+MIME-Version: 1.0
+In-Reply-To: <1495628244-28406-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1495628244-28406-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 24 May 2017 14:38:38 +0200
+Message-ID: <CAMuHMdUK95J+eJmAgDVnRUWzpLQTpSUv1s7see=TF5bDAgcrgg@mail.gmail.com>
+Subject: Re: [PATCH v2] phy: rcar-gen3-usb3: add support for R-Car Gen3 USB
+ 3.0 PHY
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH v2] phy: rcar-gen3-usb3: add support for R-Car Gen3 USB
- 3.0 PHY
-Date: Thu, 25 May 2017 07:52:11 +0000
-Message-ID: <TY1PR06MB09923C2EEECD6C86EB53A994D8FF0@TY1PR06MB0992.apcprd06.prod.outlook.com>
-References: <1495628244-28406-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <CAMuHMdUK95J+eJmAgDVnRUWzpLQTpSUv1s7see=TF5bDAgcrgg@mail.gmail.com>
-In-Reply-To: <CAMuHMdUK95J+eJmAgDVnRUWzpLQTpSUv1s7see=TF5bDAgcrgg@mail.gmail.com>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQtc2FuLA0KDQo+IEZyb206IEdlZXJ0IFV5dHRlcmhvZXZlbg0KPiBTZW50OiBXZWRu
-ZXNkYXksIE1heSAyNCwgMjAxNyA5OjM5IFBNDQo+IA0KPiBIaSBTaGltb2RhLXNhbiwNCj4gDQo+
-IE9uIFdlZCwgTWF5IDI0LCAyMDE3IGF0IDI6MTcgUE0sIFlvc2hpaGlybyBTaGltb2RhDQo+IDx5
-b3NoaWhpcm8uc2hpbW9kYS51aEByZW5lc2FzLmNvbT4gd3JvdGU6DQo+ID4gVGhlIFVTQiAzLjAg
-UEhZIG1vZHVsZXMgb2YgUi1DYXIgR2VuMyBTb0NzIGhhdmU6DQo+ID4gIC0gU3ByZWFkIHNwZWN0
-cnVtIGNsb2NrIChzc2MpLg0KPiA+ICAtIFVzaW5nIFVTQiAyLjAgRVhUQUwgY2xvY2sgaW5zdGVh
-ZCBvZiBVU0IgMy4wIGNsb2NrLg0KPiA+ICAtIEVuYWJsaW5nIFZCVVMgZGV0ZWN0aW9uIGZvciB1
-c2IzLjAgcGVyaXBoZXJhbC4NCj4gPg0KPiA+IFNvLCB0aGlzIGRyaXZlciBzdXBwb3J0cyB0aGVz
-ZSBmZWF0dXJlcy4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFlvc2hpaGlybyBTaGltb2RhIDx5
-b3NoaWhpcm8uc2hpbW9kYS51aEByZW5lc2FzLmNvbT4NCj4gPiAtLS0NCjxzbmlwPg0KPiA+IGRp
-ZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGh5L3JjYXItZ2Vu
-My1waHktdXNiMy50eHQNCj4gYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGh5
-L3JjYXItZ2VuMy1waHktdXNiMy50eHQNCj4gPiBuZXcgZmlsZSBtb2RlIDEwMDY0NA0KPiA+IGlu
-ZGV4IDAwMDAwMDAuLmU1OGJhNmINCj4gPiAtLS0gL2Rldi9udWxsDQo+ID4gKysrIGIvRG9jdW1l
-bnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3BoeS9yY2FyLWdlbjMtcGh5LXVzYjMudHh0DQo+
-ID4gKyogUmVuZXNhcyBSLUNhciBnZW5lcmF0aW9uIDMgVVNCIDMuMCBQSFkNCj4gPiArDQo+ID4g
-K1RoaXMgZmlsZSBwcm92aWRlcyBpbmZvcm1hdGlvbiBvbiB3aGF0IHRoZSBkZXZpY2Ugbm9kZSBm
-b3IgdGhlIFItQ2FyIGdlbmVyYXRpb24NCj4gPiArMyBVU0IgMy4wIFBIWSBjb250YWlucy4NCj4g
-PiArSWYgeW91IHdhbnQgdG8gZW5hYmxlIHNwcmVhZCBzcGVjdHJ1bSBjbG9jayAoc3NjKSwgeW91
-IHNob3VsZCB1c2UgVVNCX0VYVEFMDQo+ID4gK2luc3RlYWQgb2YgVVNCM19DTEsuIEhvd2V2ZXIs
-IGlmIHlvdSBkb24ndCB3YW50IHRvIHRoZXNlIGZlYXR1cmVzLCB5b3UgZG9uJ3QNCj4gPiArbmVl
-ZCB0aGlzIGRyaXZlci4NCj4gPiArDQo+ID4gK1JlcXVpcmVkIHByb3BlcnRpZXM6DQo+ID4gKy0g
-Y29tcGF0aWJsZTogInJlbmVzYXMscjhhNzc5NS11c2IzLXBoeSIgaWYgdGhlIGRldmljZSBpcyBh
-IHBhcnQgb2YgYW4gUjhBNzc5NQ0KPiA+ICsgICAgICAgICAgICAgU29DLg0KPiA+ICsgICAgICAg
-ICAgICAgInJlbmVzYXMscjhhNzc5Ni11c2IzLXBoeSIgaWYgdGhlIGRldmljZSBpcyBhIHBhcnQg
-b2YgYW4gUjhBNzc5Ng0KPiA+ICsgICAgICAgICAgICAgU29DLg0KPiA+ICsgICAgICAgICAgICAg
-InJlbmVzYXMscmNhci1nZW4zLXVzYjMtcGh5IiBmb3IgYSBnZW5lcmljIFItQ2FyIEdlbjMgY29t
-cGF0aWJsZQ0KPiA+ICsgICAgICAgICAgICAgZGV2aWNlLg0KPiA+ICsNCj4gPiArICAgICAgICAg
-ICAgIFdoZW4gY29tcGF0aWJsZSB3aXRoIHRoZSBnZW5lcmljIHZlcnNpb24sIG5vZGVzIG11c3Qg
-bGlzdCB0aGUNCj4gPiArICAgICAgICAgICAgIFNvQy1zcGVjaWZpYyB2ZXJzaW9uIGNvcnJlc3Bv
-bmRpbmcgdG8gdGhlIHBsYXRmb3JtIGZpcnN0DQo+ID4gKyAgICAgICAgICAgICBmb2xsb3dlZCBi
-eSB0aGUgZ2VuZXJpYyB2ZXJzaW9uLg0KPiA+ICsNCj4gPiArLSByZWc6IG9mZnNldCBhbmQgbGVu
-Z3RoIG9mIHRoZSBVU0IgMy4wIFBIWSByZWdpc3RlciBibG9jay4NCj4gPiArLSBjbG9ja3M6IEEg
-bGlzdCBvZiBwaGFuZGxlcyBhbmQgY2xvY2stc3BlY2lmaWVyIHBhaXJzLg0KPiA+ICstIGNsb2Nr
-LW5hbWVzOiBOYW1lIG9mIHRoZSBjbG9ja3MuDQo+ID4gKyAgLSBUaGUgZnVuY2lvbmFsIGNsb2Nr
-IG11c3QgYmUgInVzYjMtaWYiLg0KPiA+ICsgIC0gVGhlIHVzYjMncyBleHRlcm5hbCBjbG9jayBt
-dXN0IGJlICJ1c2Izc19jbGsiLiBJZiB5b3Ugd2FudCB0byB1c2UgdGhlIHNzYywNCj4gPiArICAg
-IHRoZSBjbG9jay1mcmVxdWVuY3kgbXVzdCBiZSAwLg0KPiANCj4gR2l2ZW4geW91IGhhdmUgInJl
-bmVzYXMsc3NjLXJhbmdlIiB0byBlbmFibGUgc3NjLCBJIHRoaW5rIGl0IGRvZXNuJ3QgbWF0dGVy
-DQo+IGlmIHRoZSBjbG9jayBmcmVxdWVuY3kgaXMgMCBvciBub3QsIHNvIHRoZSAiaWYgeW91Li4u
-IiBwYXJ0IGNhbiBiZSByZW1vdmVkLg0KDQpJIHNlZS4gSWYgYm90aCB1c2Izc19jbGsgYW5kIHVz
-Yl9leHRhbCBhcmUgbm90IDAgYW5kICJzc2MtcmFuZ2UiIGlzIGVuYWJsZWQsDQp0aGUgZHJpdmVy
-IHNob3VsZCBjaG9vc2UgdXNiX2V4dGFsIGFuZCBlbmFibGUgdGhlIHNzYy4NClNvLCBJIHVuZGVy
-c3RhbmQgImlmIHlvdS4uIiBwYXJ0IGNhbiBiZSByZW1vdmVkLiBUaGFua3MhDQoNCj4gPiArICAt
-IFRoZSB1c2IyJ3MgZXh0ZXJuYWwgY2xvY2sgbXVzdCBiZSAidXNiX2V4dGFsIi4gSWYgeW91IHdh
-bnQgdG8gdXNlIHRoZSBzc2MsDQo+ID4gKyAgICB0aGUgY2xvY2stZnJlcXVlbnZ5IG11c3Qgbm90
-IGJlIDAuDQo+IA0KPiBmcmVxdWVuY3kNCg0KT29wcywgSSB3aWxsIGZpeCBpdC4NCg0KPiBIZXJl
-IGl0IGRvZXMgbWF0dGVyLCBhcyB5b3UgbmVlZCB0aGlzIGNsb2NrIGZvciBzc2MuDQo+IEJUVywg
-dGhlIGRyaXZlciBjYW4gZmFsbGJhY2sgdG8gdGhlIG90aGVyIGNsb2NrIGlmIHNzYyBjYW5ub3Qg
-YmUgdXNlZC4NCj4gDQo+ID4gK09wdGlvbmFsIHByb3BlcnRpZXM6DQo+ID4gKy0gcmVuZXNhcyxz
-c2MtcmFuZ2U6IEVuYWJsZS9kaXNhYmxlIHNwcmVhZCBzcGVjdHJ1bSBjbG9jayAoc3NjKSBieSB1
-c2luZw0KPiA+ICsgICAgICAgICAgICAgICAgICAgIHRoZSBmb2xsb3dpbmcgdmFsdWVzIGFzIHUz
-MjoNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAtIDAgKG9yIHRoZSBwcm9wZXJ0eSBkb2Vz
-bid0IGV4aXN0KTogZGlzYWJsZSB0aGUgc3NjDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAg
-LSA0OTgwOiBlbmFibGUgdGhlIHNzYyBhcyAtNDk4MCBwcG0NCj4gPiArICAgICAgICAgICAgICAg
-ICAgICAgICAtIDQ0OTI6IGVuYWJsZSB0aGUgc3NjIGFzIC00NDkyIHBwbQ0KPiA+ICsgICAgICAg
-ICAgICAgICAgICAgICAgIC0gNDAwMzogZW5hYmxlIHRoZSBzc2MgYXMgLTQwMDMgcHBtDQo+IA0K
-PiBVc2luZyBzc2Mgb3Igbm90IHNvdW5kcyBsaWtlIHNvZnR3YXJlIHBvbGljeSwgbm90IGhhcmR3
-YXJlIGRlc2NyaXB0aW9uPw0KPiBDYW4gdGhpcyBiZSBkZWNpZGVkIGF0IHJ1bnRpbWU/DQoNCkkn
-bSB0aGlua2luZyB0aGlzIGlzIGhhcmR3YXJlIGRlc2NyaXB0aW9uIDopDQpUaGlzIHNldHRpbmcg
-bmVlZHMgYmVmb3JlIHVzYjMuMCBjb250cm9sbGVyIHN0YXJ0cy4NClNvLCB0aGlzIGNhbm5vdCBi
-ZSBkZWNpZGVkIGF0IHJ1bnRpbWUuDQoNCkkgZm91bmQgcGh5L2JyY20tc2F0YS1waHkudHh0IGFs
-c28gaGFkIGEgc2ltaWxhciBwcm9wZXJ0eSAiYnJjbSxlbmFibGUtc3NjIi4NCg0KPiA+IC0tLSAv
-ZGV2L251bGwNCj4gPiArKysgYi9kcml2ZXJzL3BoeS9yZW5lc2FzL3BoeS1yY2FyLWdlbjMtdXNi
-My5jDQo+IA0KPiA+ICtzdGF0aWMgY29uc3Qgc3RydWN0IG9mX2RldmljZV9pZCByY2FyX2dlbjNf
-cGh5X3VzYjNfbWF0Y2hfdGFibGVbXSA9IHsNCj4gPiArICAgICAgIHsgLmNvbXBhdGlibGUgPSAi
-cmVuZXNhcyxyOGE3Nzk1LXVzYjMtcGh5IiB9LA0KPiA+ICsgICAgICAgeyAuY29tcGF0aWJsZSA9
-ICJyZW5lc2FzLHI4YTc3OTYtdXNiMy1waHkiIH0sDQo+IA0KPiBBcyB0aGUgZHJpdmVyIG1hdGNo
-ZXMgYWdhaW5zdCB0aGUgZ2VuZXJpYyBjb21wYXRpYmxlIHByb3BlcnR5LCB0aGUgYWJvdmUgdHdv
-DQo+IGxpbmVzIGNhbiBiZSByZW1vdmVkLg0KDQpJIGdvdCBpdC4gSSB3aWxsIHJlbW92ZSBpdC4N
-Cg0KQmVzdCByZWdhcmRzLA0KWW9zaGloaXJvIFNoaW1vZGENCg0KPiA+ICsgICAgICAgeyAuY29t
-cGF0aWJsZSA9ICJyZW5lc2FzLHJjYXItZ2VuMy11c2IzLXBoeSIgfSwNCj4gPiArICAgICAgIHsg
-fQ0KPiA+ICt9Ow0KPiA+ICtNT0RVTEVfREVWSUNFX1RBQkxFKG9mLCByY2FyX2dlbjNfcGh5X3Vz
-YjNfbWF0Y2hfdGFibGUpOw0KPiANCj4gR3J7b2V0amUsZWV0aW5nfXMsDQo+IA0KPiAgICAgICAg
-ICAgICAgICAgICAgICAgICBHZWVydA0KPiANCj4gLS0NCj4gR2VlcnQgVXl0dGVyaG9ldmVuIC0t
-IFRoZXJlJ3MgbG90cyBvZiBMaW51eCBiZXlvbmQgaWEzMiAtLSBnZWVydEBsaW51eC1tNjhrLm9y
-Zw0KPiANCj4gSW4gcGVyc29uYWwgY29udmVyc2F0aW9ucyB3aXRoIHRlY2huaWNhbCBwZW9wbGUs
-IEkgY2FsbCBteXNlbGYgYSBoYWNrZXIuIEJ1dA0KPiB3aGVuIEknbSB0YWxraW5nIHRvIGpvdXJu
-YWxpc3RzIEkganVzdCBzYXkgInByb2dyYW1tZXIiIG9yIHNvbWV0aGluZyBsaWtlIHRoYXQuDQo+
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLS0gTGludXMgVG9ydmFsZHMNCg==
+Hi Shimoda-san,
+
+On Wed, May 24, 2017 at 2:17 PM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> The USB 3.0 PHY modules of R-Car Gen3 SoCs have:
+>  - Spread spectrum clock (ssc).
+>  - Using USB 2.0 EXTAL clock instead of USB 3.0 clock.
+>  - Enabling VBUS detection for usb3.0 peripheral.
+>
+> So, this driver supports these features.
+>
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> ---
+>  This patch is based on the latest linux-phy.git / next branch and
+>  "[PATCH v5 3/3] phy: Group vendor specific phy drivers" patch.
+>
+>  I discussed with Geert-san about this driver on the ML:
+>  https://patchwork.kernel.org/patch/9731759/
+>
+>  Changes from v1:
+>  - Changes from dev_info to dev_vdbg in rcar_gen3_phy_usb3_init().
+>
+>  .../devicetree/bindings/phy/rcar-gen3-phy-usb3.txt |  47 +++++
+>  MAINTAINERS                                        |   4 +-
+>  drivers/phy/renesas/Kconfig                        |   7 +
+>  drivers/phy/renesas/Makefile                       |   1 +
+>  drivers/phy/renesas/phy-rcar-gen3-usb3.c           | 207 +++++++++++++++++++++
+>  5 files changed, 264 insertions(+), 2 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt
+>  create mode 100644 drivers/phy/renesas/phy-rcar-gen3-usb3.c
+>
+> diff --git a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt
+> new file mode 100644
+> index 0000000..e58ba6b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt
+> @@ -0,0 +1,47 @@
+> +* Renesas R-Car generation 3 USB 3.0 PHY
+> +
+> +This file provides information on what the device node for the R-Car generation
+> +3 USB 3.0 PHY contains.
+> +If you want to enable spread spectrum clock (ssc), you should use USB_EXTAL
+> +instead of USB3_CLK. However, if you don't want to these features, you don't
+> +need this driver.
+> +
+> +Required properties:
+> +- compatible: "renesas,r8a7795-usb3-phy" if the device is a part of an R8A7795
+> +             SoC.
+> +             "renesas,r8a7796-usb3-phy" if the device is a part of an R8A7796
+> +             SoC.
+> +             "renesas,rcar-gen3-usb3-phy" for a generic R-Car Gen3 compatible
+> +             device.
+> +
+> +             When compatible with the generic version, nodes must list the
+> +             SoC-specific version corresponding to the platform first
+> +             followed by the generic version.
+> +
+> +- reg: offset and length of the USB 3.0 PHY register block.
+> +- clocks: A list of phandles and clock-specifier pairs.
+> +- clock-names: Name of the clocks.
+> +  - The funcional clock must be "usb3-if".
+> +  - The usb3's external clock must be "usb3s_clk". If you want to use the ssc,
+> +    the clock-frequency must be 0.
+
+Given you have "renesas,ssc-range" to enable ssc, I think it doesn't matter
+if the clock frequency is 0 or not, so the "if you..." part can be removed.
+
+> +  - The usb2's external clock must be "usb_extal". If you want to use the ssc,
+> +    the clock-frequenvy must not be 0.
+
+frequency
+
+Here it does matter, as you need this clock for ssc.
+BTW, the driver can fallback to the other clock if ssc cannot be used.
+
+> +Optional properties:
+> +- renesas,ssc-range: Enable/disable spread spectrum clock (ssc) by using
+> +                    the following values as u32:
+> +                       - 0 (or the property doesn't exist): disable the ssc
+> +                       - 4980: enable the ssc as -4980 ppm
+> +                       - 4492: enable the ssc as -4492 ppm
+> +                       - 4003: enable the ssc as -4003 ppm
+
+Using ssc or not sounds like software policy, not hardware description?
+Can this be decided at runtime?
+
+> --- /dev/null
+> +++ b/drivers/phy/renesas/phy-rcar-gen3-usb3.c
+
+> +static const struct of_device_id rcar_gen3_phy_usb3_match_table[] = {
+> +       { .compatible = "renesas,r8a7795-usb3-phy" },
+> +       { .compatible = "renesas,r8a7796-usb3-phy" },
+
+As the driver matches against the generic compatible property, the above two
+lines can be removed.
+
+> +       { .compatible = "renesas,rcar-gen3-usb3-phy" },
+> +       { }
+> +};
+> +MODULE_DEVICE_TABLE(of, rcar_gen3_phy_usb3_match_table);
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
