@@ -1,129 +1,152 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:59778 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750913AbdE2Ls1 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 May 2017 07:48:27 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [git pull] clk: renesas: Updates for v4.13
-Date: Mon, 29 May 2017 13:47:02 +0200
-Message-Id: <1496058422-12058-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        Jose Abreu <joabreu@synopsys.com>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
+In-Reply-To: <87d1b7oslu.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1dDaHV-0002eM-Q6@debutante>
+Date: Wed, 24 May 2017 18:41:09 +0100
+Subject: Applied "ASoC: add snd_soc_get_dai_id() function" to the asoc tree
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Mike, Stephen,
+The patch
 
-The following changes since commit 2ea659a9ef488125eb46da6eb571de5eae5c43f6:
+   ASoC: add snd_soc_get_dai_id() function
 
-  Linux 4.12-rc1 (2017-05-13 13:19:49 -0700)
+has been applied to the asoc tree at
 
-are available in the git repository at:
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.13-tag1
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-for you to fetch changes up to 2d75588a28c6bbbb7a026087aa61be1492b3d6ac:
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-  clk: renesas: r8a7794: Add new CPG/MSSR driver (2017-05-24 10:20:03 +0200)
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-----------------------------------------------------------------
-clk: renesas: Updates for v4.13
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-  - Add more module clocks for R-Car H3 ES2.0 and M3-W,
-  - Add CPG/MSSR drivers for all supported R-Car Gen2 SoCs, enabling support
-    for module resets, which are not supported by the existing driver,
-  - Rework Kconfig and Makefile logic,
-  - Small fixes and cleanups.
+Thanks,
+Mark
 
-Thanks for pulling!
-----------------------------------------------------------------
-Geert Uytterhoeven (18):
-      clk: renesas: rcar-gen2: Fix PLL0 on R-Car V2H and E2
-      clk: renesas: r8a7745: Remove nonexisting scu-src[0789] clocks
-      clk: renesas: r8a7745: Remove PLL configs for MD19=0
-      clk: renesas: Do not build clk-div6 for R8A7792
-      clk: renesas: Use pm_clk_no_clocks() helper i.s.o. direct access
-      clk: renesas: r8a7795: Correct pwm, gpio, and i2c parent clocks on ES2.0
-      clk: renesas: cpg-mssr: Initialize error pointer using ERR_PTR()
-      clk: renesas: Rework Kconfig and Makefile logic
-      clk: renesas: cpg-mssr: Document R-Car Gen2 support
-      clk: renesas: Add r8a7790 CPG Core Clock Definitions
-      clk: renesas: Add r8a7791 CPG Core Clock Definitions
-      clk: renesas: Add r8a7792 CPG Core Clock Definitions
-      clk: renesas: Add r8a7793 CPG Core Clock Definitions
-      clk: renesas: Add r8a7794 CPG Core Clock Definitions
-      clk: renesas: r8a7790: Add new CPG/MSSR driver
-      clk: renesas: r8a7791/r8a7793: Add new CPG/MSSR driver
-      clk: renesas: r8a7792: Add new CPG/MSSR driver
-      clk: renesas: r8a7794: Add new CPG/MSSR driver
+>From a180e8b988437b3e84a1b501ac4d073467602ca6 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Thu, 18 May 2017 01:39:25 +0000
+Subject: [PATCH] ASoC: add snd_soc_get_dai_id() function
 
-Harunobu Kurokawa (1):
-      clk: renesas: r8a7796: Add PCIe clocks
+ALSA SoC needs to know connected DAI ID for detecting.
+It is not a big problem if device/driver was only for sound,
+but getting DAI ID will be difficult if device includes both
+Video/Sound, like HDMI.
+To solve this issue, this patch adds new snd_soc_get_dai_id() and
+its related .of_xlate_dai_id callback on component driver.
+In below case, we can handle Sound port (= port@2) as ID = 0
+if .of_xlate_dai_id has its support.
 
-Hiromitsu Yamasaki (2):
-      clk: renesas: r8a7796: Add Audio-DMAC clocks
-      clk: renesas: r8a7796: Add USB-DMAC clocks
+	hdmi {
+		port@0 { /* VIDEO */ };
+		port@1 { /* VIDEO */ };
+		port@2 { /* SOUND */ };
+	};
 
-Kazuya Mizuguchi (5):
-      clk: renesas: r8a7796: Add EHCI/OHCI clocks
-      clk: renesas: r8a7796: Add Sound SSI clock
-      clk: renesas: r8a7796: Add Sound SRC clock
-      clk: renesas: r8a7796: Add Sound DVC clocks
-      clk: renesas: r8a7796: Add HS-USB clock
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ include/sound/soc.h  |  3 +++
+ sound/soc/soc-core.c | 37 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 40 insertions(+)
 
-Koji Matsuoka (1):
-      clk: renesas: r8a7796: Add HDMI clock
-
-Ryo Kodama (1):
-      clk: renesas: r8a7796: Add PWM clock
-
-Takeshi Kihara (4):
-      clk: renesas: r8a7795: Add EHCI/OHCI ch3 clock
-      clk: renesas: r8a7795: Add USB-DMAC ch3 clock
-      clk: renesas: r8a7795: Add HS-USB ch3 clock
-      clk: renesas: r8a7796: Add INTC-EX clock
-
- .../devicetree/bindings/clock/renesas,cpg-mssr.txt |  10 +-
- drivers/clk/Makefile                               |   2 +-
- drivers/clk/renesas/Kconfig                        | 139 ++++++++--
- drivers/clk/renesas/Makefile                       |  41 +--
- drivers/clk/renesas/clk-mstp.c                     |   2 +-
- drivers/clk/renesas/clk-rcar-gen2.c                |  23 +-
- drivers/clk/renesas/r8a7745-cpg-mssr.c             |  17 +-
- drivers/clk/renesas/r8a7790-cpg-mssr.c             | 278 ++++++++++++++++++++
- drivers/clk/renesas/r8a7791-cpg-mssr.c             | 286 +++++++++++++++++++++
- drivers/clk/renesas/r8a7792-cpg-mssr.c             | 221 ++++++++++++++++
- drivers/clk/renesas/r8a7794-cpg-mssr.c             | 255 ++++++++++++++++++
- drivers/clk/renesas/r8a7795-cpg-mssr.c             |  43 +++-
- drivers/clk/renesas/r8a7796-cpg-mssr.c             |  39 +++
- drivers/clk/renesas/renesas-cpg-mssr.c             |  41 ++-
- drivers/clk/renesas/renesas-cpg-mssr.h             |   4 +
- include/dt-bindings/clock/r8a7790-cpg-mssr.h       |  52 ++++
- include/dt-bindings/clock/r8a7791-cpg-mssr.h       |  48 ++++
- include/dt-bindings/clock/r8a7792-cpg-mssr.h       |  43 ++++
- include/dt-bindings/clock/r8a7793-cpg-mssr.h       |  48 ++++
- include/dt-bindings/clock/r8a7794-cpg-mssr.h       |  47 ++++
- 20 files changed, 1565 insertions(+), 74 deletions(-)
- create mode 100644 drivers/clk/renesas/r8a7790-cpg-mssr.c
- create mode 100644 drivers/clk/renesas/r8a7791-cpg-mssr.c
- create mode 100644 drivers/clk/renesas/r8a7792-cpg-mssr.c
- create mode 100644 drivers/clk/renesas/r8a7794-cpg-mssr.c
- create mode 100644 include/dt-bindings/clock/r8a7790-cpg-mssr.h
- create mode 100644 include/dt-bindings/clock/r8a7791-cpg-mssr.h
- create mode 100644 include/dt-bindings/clock/r8a7792-cpg-mssr.h
- create mode 100644 include/dt-bindings/clock/r8a7793-cpg-mssr.h
- create mode 100644 include/dt-bindings/clock/r8a7794-cpg-mssr.h
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+diff --git a/include/sound/soc.h b/include/sound/soc.h
+index 5170fd81e1fd..9c94b97c17f8 100644
+--- a/include/sound/soc.h
++++ b/include/sound/soc.h
+@@ -803,6 +803,8 @@ struct snd_soc_component_driver {
+ 	int (*of_xlate_dai_name)(struct snd_soc_component *component,
+ 				 struct of_phandle_args *args,
+ 				 const char **dai_name);
++	int (*of_xlate_dai_id)(struct snd_soc_component *comment,
++			       struct device_node *endpoint);
+ 	void (*seq_notifier)(struct snd_soc_component *, enum snd_soc_dapm_type,
+ 		int subseq);
+ 	int (*stream_event)(struct snd_soc_component *, int event);
+@@ -1676,6 +1678,7 @@ unsigned int snd_soc_of_parse_daifmt(struct device_node *np,
+ 				     const char *prefix,
+ 				     struct device_node **bitclkmaster,
+ 				     struct device_node **framemaster);
++int snd_soc_get_dai_id(struct device_node *ep);
+ int snd_soc_get_dai_name(struct of_phandle_args *args,
+ 			 const char **dai_name);
+ int snd_soc_of_get_dai_name(struct device_node *of_node,
+diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
+index aae099c0e502..b0fb17082691 100644
+--- a/sound/soc/soc-core.c
++++ b/sound/soc/soc-core.c
+@@ -34,6 +34,7 @@
+ #include <linux/ctype.h>
+ #include <linux/slab.h>
+ #include <linux/of.h>
++#include <linux/of_graph.h>
+ #include <linux/dmi.h>
+ #include <sound/core.h>
+ #include <sound/jack.h>
+@@ -4044,6 +4045,42 @@ unsigned int snd_soc_of_parse_daifmt(struct device_node *np,
+ }
+ EXPORT_SYMBOL_GPL(snd_soc_of_parse_daifmt);
+ 
++int snd_soc_get_dai_id(struct device_node *ep)
++{
++	struct snd_soc_component *pos;
++	struct device_node *node;
++	int ret;
++
++	node = of_graph_get_port_parent(ep);
++
++	/*
++	 * For example HDMI case, HDMI has video/sound port,
++	 * but ALSA SoC needs sound port number only.
++	 * Thus counting HDMI DT port/endpoint doesn't work.
++	 * Then, it should have .of_xlate_dai_id
++	 */
++	ret = -ENOTSUPP;
++	mutex_lock(&client_mutex);
++	list_for_each_entry(pos, &component_list, list) {
++		struct device_node *component_of_node = pos->dev->of_node;
++
++		if (!component_of_node && pos->dev->parent)
++			component_of_node = pos->dev->parent->of_node;
++
++		if (component_of_node != node)
++			continue;
++
++		if (pos->driver->of_xlate_dai_id)
++			ret = pos->driver->of_xlate_dai_id(pos, ep);
++
++		break;
++	}
++	mutex_unlock(&client_mutex);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(snd_soc_get_dai_id);
++
+ int snd_soc_get_dai_name(struct of_phandle_args *args,
+ 				const char **dai_name)
+ {
+-- 
+2.11.0
