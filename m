@@ -1,178 +1,94 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:38096 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752558AbdESJOX (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:46789 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937857AbdEXARC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 19 May 2017 05:14:23 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/4] ARM: dts: r8a7791: Stop grouping clocks under a "clocks" subnode
-Date: Fri, 19 May 2017 11:14:14 +0200
-Message-Id: <1495185256-26674-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1495185256-26674-1-git-send-email-geert+renesas@glider.be>
-References: <1495185256-26674-1-git-send-email-geert+renesas@glider.be>
+        Tue, 23 May 2017 20:17:02 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2 11/17] rcar-vin: select capture mode based on free buffers
+Date: Wed, 24 May 2017 02:15:34 +0200
+Message-Id: <20170524001540.13613-12-niklas.soderlund@ragnatech.se>
+In-Reply-To: <20170524001540.13613-1-niklas.soderlund@ragnatech.se>
+References: <20170524001540.13613-1-niklas.soderlund@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The current practice is to not group clocks under a "clocks" subnode,
-but just put them together with the other on-SoC devices.
+From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Instead of selecting single or continuous capture mode based on how many
+buffers userspace intends to give us select capture mode based on number
+of free buffers we can allocate to hardware when the stream is started.
+
+This change is a prerequisite to enable the driver to switch from
+continuous to single capture mode (or the other way around) when the
+driver is stalled by userspace not feeding it buffers as fast as it
+consumes it.
+
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- arch/arm/boot/dts/r8a7791.dtsi | 137 ++++++++++++++++++++---------------------
- 1 file changed, 66 insertions(+), 71 deletions(-)
+ drivers/media/platform/rcar-vin/rcar-dma.c | 31 +++++++++++++++---------------
+ 1 file changed, 15 insertions(+), 16 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index f6314f701d91acd4..74d42c9b77f4a2a3 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -1079,77 +1079,72 @@
- 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
- 	};
+diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+index 11e9799564299fca..47d78f68d715d945 100644
+--- a/drivers/media/platform/rcar-vin/rcar-dma.c
++++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+@@ -405,7 +405,21 @@ static void rvin_capture_off(struct rvin_dev *vin)
  
--	clocks {
--		#address-cells = <2>;
--		#size-cells = <2>;
--		ranges;
--
--		/* External root clock */
--		extal_clk: extal {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			/* This value must be overriden by the board. */
--			clock-frequency = <0>;
--		};
--
--		/*
--		 * The external audio clocks are configured as 0 Hz fixed frequency clocks by
--		 * default. Boards that provide audio clocks should override them.
--		 */
--		audio_clk_a: audio_clk_a {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			clock-frequency = <0>;
--		};
--		audio_clk_b: audio_clk_b {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			clock-frequency = <0>;
--		};
--		audio_clk_c: audio_clk_c {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			clock-frequency = <0>;
--		};
--
--		/* External PCIe clock - can be overridden by the board */
--		pcie_bus_clk: pcie_bus {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			clock-frequency = <0>;
--		};
--
--		/* External SCIF clock */
--		scif_clk: scif {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			/* This value must be overridden by the board. */
--			clock-frequency = <0>;
--		};
--
--		/* External USB clock - can be overridden by the board */
--		usb_extal_clk: usb_extal {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			clock-frequency = <48000000>;
--		};
--
--		/* External CAN clock */
--		can_clk: can {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			/* This value must be overridden by the board. */
--			clock-frequency = <0>;
--		};
--
--		cpg: clock-controller@e6150000 {
--			compatible = "renesas,r8a7791-cpg-mssr";
--			reg = <0 0xe6150000 0 0x1000>;
--			clocks = <&extal_clk>, <&usb_extal_clk>;
--			clock-names = "extal", "usb_extal";
--			#clock-cells = <2>;
--			#power-domain-cells = <0>;
--		};
-+	/* External root clock */
-+	extal_clk: extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
+ static int rvin_capture_start(struct rvin_dev *vin)
+ {
+-	int ret;
++	struct rvin_buffer *buf, *node;
++	int bufs, ret;
 +
-+	/*
-+	 * The external audio clocks are configured as 0 Hz fixed frequency
-+	 * clocks by default.
-+	 * Boards that provide audio clocks should override them.
-+	 */
-+	audio_clk_a: audio_clk_a {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+	audio_clk_b: audio_clk_b {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+	audio_clk_c: audio_clk_c {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
++	/* Count number of free buffers */
++	bufs = 0;
++	list_for_each_entry_safe(buf, node, &vin->buf_list, list)
++		bufs++;
 +
-+	/* External PCIe clock - can be overridden by the board */
-+	pcie_bus_clk: pcie_bus {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
++	/* Continuous capture requires more buffers then there are HW slots */
++	vin->continuous = bufs > HW_BUFFER_NUM;
 +
-+	/* External SCIF clock */
-+	scif_clk: scif {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External USB clock - can be overridden by the board */
-+	usb_extal_clk: usb_extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <48000000>;
-+	};
-+
-+	/* External CAN clock */
-+	can_clk: can {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
-+	cpg: clock-controller@e6150000 {
-+		compatible = "renesas,r8a7791-cpg-mssr";
-+		reg = <0 0xe6150000 0 0x1000>;
-+		clocks = <&extal_clk>, <&usb_extal_clk>;
-+		clock-names = "extal", "usb_extal";
-+		#clock-cells = <2>;
-+		#power-domain-cells = <0>;
- 	};
++	if (!rvin_fill_hw(vin)) {
++		vin_err(vin, "HW not ready to start, not enough buffers available\n");
++		return -EINVAL;
++	}
  
- 	rst: reset-controller@e6160000 {
+ 	rvin_crop_scale_comp(vin);
+ 
+@@ -1062,22 +1076,7 @@ static int rvin_start_streaming(struct vb2_queue *vq, unsigned int count)
+ 	vin->state = RUNNING;
+ 	vin->sequence = 0;
+ 
+-	/* Continuous capture requires more buffers then there are HW slots */
+-	vin->continuous = count > HW_BUFFER_NUM;
+-
+-	/*
+-	 * This should never happen but if we don't have enough
+-	 * buffers for HW bail out
+-	 */
+-	if (!rvin_fill_hw(vin)) {
+-		vin_err(vin, "HW not ready to start, not enough buffers available\n");
+-		ret = -EINVAL;
+-		goto out;
+-	}
+-
+ 	ret = rvin_capture_start(vin);
+-out:
+-	/* Return all buffers if something went wrong */
+ 	if (ret) {
+ 		return_all_buffers(vin, VB2_BUF_STATE_QUEUED);
+ 		v4l2_subdev_call(sd, video, s_stream, 0);
 -- 
-2.7.4
+2.13.0
