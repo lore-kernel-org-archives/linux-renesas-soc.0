@@ -1,80 +1,104 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:35204 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1761140AbdEXLnn (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 24 May 2017 07:43:43 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Linus Walleij <linus.walleij@linaro.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC] ARM: dts: armadillo800eva: Split LCD mux and gpio
-Date: Wed, 24 May 2017 13:43:34 +0200
-Message-Id: <1495626214-15502-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Kishon Vijay Abraham I <kishon@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH v2] phy: rcar-gen3-usb3: add support for R-Car Gen3 USB
+ 3.0 PHY
+Date: Thu, 25 May 2017 07:52:11 +0000
+Message-ID: <TY1PR06MB09923C2EEECD6C86EB53A994D8FF0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+References: <1495628244-28406-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <CAMuHMdUK95J+eJmAgDVnRUWzpLQTpSUv1s7see=TF5bDAgcrgg@mail.gmail.com>
+In-Reply-To: <CAMuHMdUK95J+eJmAgDVnRUWzpLQTpSUv1s7see=TF5bDAgcrgg@mail.gmail.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Configuration of the lcd0 pinmux group and GPIO hog for the external
-GPIO mux are done using a single device node, causing the "output-high"
-property to be applied to both.  This will fail for the pinmux group,
-but doesn't cause any harm, as the failure is ignored silently.
-
-However, after "pinctrl: sh-pfc: propagate errors on group config", the
-failure will become fatal, leading to a broken display:
-
-    sh-pfc e6050000.pin-controller: pin_config_group_set op failed for group 102
-    sh-pfc e6050000.pin-controller: Error applying setting, reverse things back
-    sh-pfc e6050000.pin-controller: failed to select default state
-
-Split the configuration in two subnodes, and replace the GPIO hog by a
-pull-up pin bias to fix this.
-
-Fixes: ffd2f9a5afb730b9 ("ARM: shmobile: armadillo800eva dts: Add pinctrl and gpio-hog for lcdc0")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-This is a hard dependency for "pinctrl: sh-pfc: propagate errors on
-group config" (https://patchwork.kernel.org/patch/9186713/).
-
-Notes:
-  1. Just keeping the GPIO hog doesn't work, as the sh-pfc driver
-     requires each pinctrl (sub)node to have at least one "pins" or
-     "groups" property,
-  2. Keeping "output-high" doesn't work, as the sh-pfc driver does not
-     implement PIN_CONFIG_OUTPUT.
-
-Should I fix 1 and/or 2 instead?
----
- arch/arm/boot/dts/r8a7740-armadillo800eva.dts | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
-
-diff --git a/arch/arm/boot/dts/r8a7740-armadillo800eva.dts b/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
-index 44b335b9f035436d..7feedc86f6915654 100644
---- a/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
-+++ b/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
-@@ -267,13 +267,16 @@
- 	};
- 
- 	lcd0_pins: lcd0 {
--		groups = "lcd0_data24_0", "lcd0_lclk_1", "lcd0_sync";
--		function = "lcd0";
-+		mux {
-+			groups = "lcd0_data24_0", "lcd0_lclk_1", "lcd0_sync";
-+			function = "lcd0";
-+		};
- 
--		/* DBGMD/LCDC0/FSIA MUX */
--		gpio-hog;
--		gpios = <176 0>;
--		output-high;
-+		gpio {
-+			/* DBGMD/LCDC0/FSIA MUX */
-+			pins = "PORT176";
-+			bias-pull-up;
-+		};
- 	};
- };
- 
--- 
-2.7.4
+SGkgR2VlcnQtc2FuLA0KDQo+IEZyb206IEdlZXJ0IFV5dHRlcmhvZXZlbg0KPiBTZW50OiBXZWRu
+ZXNkYXksIE1heSAyNCwgMjAxNyA5OjM5IFBNDQo+IA0KPiBIaSBTaGltb2RhLXNhbiwNCj4gDQo+
+IE9uIFdlZCwgTWF5IDI0LCAyMDE3IGF0IDI6MTcgUE0sIFlvc2hpaGlybyBTaGltb2RhDQo+IDx5
+b3NoaWhpcm8uc2hpbW9kYS51aEByZW5lc2FzLmNvbT4gd3JvdGU6DQo+ID4gVGhlIFVTQiAzLjAg
+UEhZIG1vZHVsZXMgb2YgUi1DYXIgR2VuMyBTb0NzIGhhdmU6DQo+ID4gIC0gU3ByZWFkIHNwZWN0
+cnVtIGNsb2NrIChzc2MpLg0KPiA+ICAtIFVzaW5nIFVTQiAyLjAgRVhUQUwgY2xvY2sgaW5zdGVh
+ZCBvZiBVU0IgMy4wIGNsb2NrLg0KPiA+ICAtIEVuYWJsaW5nIFZCVVMgZGV0ZWN0aW9uIGZvciB1
+c2IzLjAgcGVyaXBoZXJhbC4NCj4gPg0KPiA+IFNvLCB0aGlzIGRyaXZlciBzdXBwb3J0cyB0aGVz
+ZSBmZWF0dXJlcy4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFlvc2hpaGlybyBTaGltb2RhIDx5
+b3NoaWhpcm8uc2hpbW9kYS51aEByZW5lc2FzLmNvbT4NCj4gPiAtLS0NCjxzbmlwPg0KPiA+IGRp
+ZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGh5L3JjYXItZ2Vu
+My1waHktdXNiMy50eHQNCj4gYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGh5
+L3JjYXItZ2VuMy1waHktdXNiMy50eHQNCj4gPiBuZXcgZmlsZSBtb2RlIDEwMDY0NA0KPiA+IGlu
+ZGV4IDAwMDAwMDAuLmU1OGJhNmINCj4gPiAtLS0gL2Rldi9udWxsDQo+ID4gKysrIGIvRG9jdW1l
+bnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3BoeS9yY2FyLWdlbjMtcGh5LXVzYjMudHh0DQo+
+ID4gKyogUmVuZXNhcyBSLUNhciBnZW5lcmF0aW9uIDMgVVNCIDMuMCBQSFkNCj4gPiArDQo+ID4g
+K1RoaXMgZmlsZSBwcm92aWRlcyBpbmZvcm1hdGlvbiBvbiB3aGF0IHRoZSBkZXZpY2Ugbm9kZSBm
+b3IgdGhlIFItQ2FyIGdlbmVyYXRpb24NCj4gPiArMyBVU0IgMy4wIFBIWSBjb250YWlucy4NCj4g
+PiArSWYgeW91IHdhbnQgdG8gZW5hYmxlIHNwcmVhZCBzcGVjdHJ1bSBjbG9jayAoc3NjKSwgeW91
+IHNob3VsZCB1c2UgVVNCX0VYVEFMDQo+ID4gK2luc3RlYWQgb2YgVVNCM19DTEsuIEhvd2V2ZXIs
+IGlmIHlvdSBkb24ndCB3YW50IHRvIHRoZXNlIGZlYXR1cmVzLCB5b3UgZG9uJ3QNCj4gPiArbmVl
+ZCB0aGlzIGRyaXZlci4NCj4gPiArDQo+ID4gK1JlcXVpcmVkIHByb3BlcnRpZXM6DQo+ID4gKy0g
+Y29tcGF0aWJsZTogInJlbmVzYXMscjhhNzc5NS11c2IzLXBoeSIgaWYgdGhlIGRldmljZSBpcyBh
+IHBhcnQgb2YgYW4gUjhBNzc5NQ0KPiA+ICsgICAgICAgICAgICAgU29DLg0KPiA+ICsgICAgICAg
+ICAgICAgInJlbmVzYXMscjhhNzc5Ni11c2IzLXBoeSIgaWYgdGhlIGRldmljZSBpcyBhIHBhcnQg
+b2YgYW4gUjhBNzc5Ng0KPiA+ICsgICAgICAgICAgICAgU29DLg0KPiA+ICsgICAgICAgICAgICAg
+InJlbmVzYXMscmNhci1nZW4zLXVzYjMtcGh5IiBmb3IgYSBnZW5lcmljIFItQ2FyIEdlbjMgY29t
+cGF0aWJsZQ0KPiA+ICsgICAgICAgICAgICAgZGV2aWNlLg0KPiA+ICsNCj4gPiArICAgICAgICAg
+ICAgIFdoZW4gY29tcGF0aWJsZSB3aXRoIHRoZSBnZW5lcmljIHZlcnNpb24sIG5vZGVzIG11c3Qg
+bGlzdCB0aGUNCj4gPiArICAgICAgICAgICAgIFNvQy1zcGVjaWZpYyB2ZXJzaW9uIGNvcnJlc3Bv
+bmRpbmcgdG8gdGhlIHBsYXRmb3JtIGZpcnN0DQo+ID4gKyAgICAgICAgICAgICBmb2xsb3dlZCBi
+eSB0aGUgZ2VuZXJpYyB2ZXJzaW9uLg0KPiA+ICsNCj4gPiArLSByZWc6IG9mZnNldCBhbmQgbGVu
+Z3RoIG9mIHRoZSBVU0IgMy4wIFBIWSByZWdpc3RlciBibG9jay4NCj4gPiArLSBjbG9ja3M6IEEg
+bGlzdCBvZiBwaGFuZGxlcyBhbmQgY2xvY2stc3BlY2lmaWVyIHBhaXJzLg0KPiA+ICstIGNsb2Nr
+LW5hbWVzOiBOYW1lIG9mIHRoZSBjbG9ja3MuDQo+ID4gKyAgLSBUaGUgZnVuY2lvbmFsIGNsb2Nr
+IG11c3QgYmUgInVzYjMtaWYiLg0KPiA+ICsgIC0gVGhlIHVzYjMncyBleHRlcm5hbCBjbG9jayBt
+dXN0IGJlICJ1c2Izc19jbGsiLiBJZiB5b3Ugd2FudCB0byB1c2UgdGhlIHNzYywNCj4gPiArICAg
+IHRoZSBjbG9jay1mcmVxdWVuY3kgbXVzdCBiZSAwLg0KPiANCj4gR2l2ZW4geW91IGhhdmUgInJl
+bmVzYXMsc3NjLXJhbmdlIiB0byBlbmFibGUgc3NjLCBJIHRoaW5rIGl0IGRvZXNuJ3QgbWF0dGVy
+DQo+IGlmIHRoZSBjbG9jayBmcmVxdWVuY3kgaXMgMCBvciBub3QsIHNvIHRoZSAiaWYgeW91Li4u
+IiBwYXJ0IGNhbiBiZSByZW1vdmVkLg0KDQpJIHNlZS4gSWYgYm90aCB1c2Izc19jbGsgYW5kIHVz
+Yl9leHRhbCBhcmUgbm90IDAgYW5kICJzc2MtcmFuZ2UiIGlzIGVuYWJsZWQsDQp0aGUgZHJpdmVy
+IHNob3VsZCBjaG9vc2UgdXNiX2V4dGFsIGFuZCBlbmFibGUgdGhlIHNzYy4NClNvLCBJIHVuZGVy
+c3RhbmQgImlmIHlvdS4uIiBwYXJ0IGNhbiBiZSByZW1vdmVkLiBUaGFua3MhDQoNCj4gPiArICAt
+IFRoZSB1c2IyJ3MgZXh0ZXJuYWwgY2xvY2sgbXVzdCBiZSAidXNiX2V4dGFsIi4gSWYgeW91IHdh
+bnQgdG8gdXNlIHRoZSBzc2MsDQo+ID4gKyAgICB0aGUgY2xvY2stZnJlcXVlbnZ5IG11c3Qgbm90
+IGJlIDAuDQo+IA0KPiBmcmVxdWVuY3kNCg0KT29wcywgSSB3aWxsIGZpeCBpdC4NCg0KPiBIZXJl
+IGl0IGRvZXMgbWF0dGVyLCBhcyB5b3UgbmVlZCB0aGlzIGNsb2NrIGZvciBzc2MuDQo+IEJUVywg
+dGhlIGRyaXZlciBjYW4gZmFsbGJhY2sgdG8gdGhlIG90aGVyIGNsb2NrIGlmIHNzYyBjYW5ub3Qg
+YmUgdXNlZC4NCj4gDQo+ID4gK09wdGlvbmFsIHByb3BlcnRpZXM6DQo+ID4gKy0gcmVuZXNhcyxz
+c2MtcmFuZ2U6IEVuYWJsZS9kaXNhYmxlIHNwcmVhZCBzcGVjdHJ1bSBjbG9jayAoc3NjKSBieSB1
+c2luZw0KPiA+ICsgICAgICAgICAgICAgICAgICAgIHRoZSBmb2xsb3dpbmcgdmFsdWVzIGFzIHUz
+MjoNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAtIDAgKG9yIHRoZSBwcm9wZXJ0eSBkb2Vz
+bid0IGV4aXN0KTogZGlzYWJsZSB0aGUgc3NjDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAg
+LSA0OTgwOiBlbmFibGUgdGhlIHNzYyBhcyAtNDk4MCBwcG0NCj4gPiArICAgICAgICAgICAgICAg
+ICAgICAgICAtIDQ0OTI6IGVuYWJsZSB0aGUgc3NjIGFzIC00NDkyIHBwbQ0KPiA+ICsgICAgICAg
+ICAgICAgICAgICAgICAgIC0gNDAwMzogZW5hYmxlIHRoZSBzc2MgYXMgLTQwMDMgcHBtDQo+IA0K
+PiBVc2luZyBzc2Mgb3Igbm90IHNvdW5kcyBsaWtlIHNvZnR3YXJlIHBvbGljeSwgbm90IGhhcmR3
+YXJlIGRlc2NyaXB0aW9uPw0KPiBDYW4gdGhpcyBiZSBkZWNpZGVkIGF0IHJ1bnRpbWU/DQoNCkkn
+bSB0aGlua2luZyB0aGlzIGlzIGhhcmR3YXJlIGRlc2NyaXB0aW9uIDopDQpUaGlzIHNldHRpbmcg
+bmVlZHMgYmVmb3JlIHVzYjMuMCBjb250cm9sbGVyIHN0YXJ0cy4NClNvLCB0aGlzIGNhbm5vdCBi
+ZSBkZWNpZGVkIGF0IHJ1bnRpbWUuDQoNCkkgZm91bmQgcGh5L2JyY20tc2F0YS1waHkudHh0IGFs
+c28gaGFkIGEgc2ltaWxhciBwcm9wZXJ0eSAiYnJjbSxlbmFibGUtc3NjIi4NCg0KPiA+IC0tLSAv
+ZGV2L251bGwNCj4gPiArKysgYi9kcml2ZXJzL3BoeS9yZW5lc2FzL3BoeS1yY2FyLWdlbjMtdXNi
+My5jDQo+IA0KPiA+ICtzdGF0aWMgY29uc3Qgc3RydWN0IG9mX2RldmljZV9pZCByY2FyX2dlbjNf
+cGh5X3VzYjNfbWF0Y2hfdGFibGVbXSA9IHsNCj4gPiArICAgICAgIHsgLmNvbXBhdGlibGUgPSAi
+cmVuZXNhcyxyOGE3Nzk1LXVzYjMtcGh5IiB9LA0KPiA+ICsgICAgICAgeyAuY29tcGF0aWJsZSA9
+ICJyZW5lc2FzLHI4YTc3OTYtdXNiMy1waHkiIH0sDQo+IA0KPiBBcyB0aGUgZHJpdmVyIG1hdGNo
+ZXMgYWdhaW5zdCB0aGUgZ2VuZXJpYyBjb21wYXRpYmxlIHByb3BlcnR5LCB0aGUgYWJvdmUgdHdv
+DQo+IGxpbmVzIGNhbiBiZSByZW1vdmVkLg0KDQpJIGdvdCBpdC4gSSB3aWxsIHJlbW92ZSBpdC4N
+Cg0KQmVzdCByZWdhcmRzLA0KWW9zaGloaXJvIFNoaW1vZGENCg0KPiA+ICsgICAgICAgeyAuY29t
+cGF0aWJsZSA9ICJyZW5lc2FzLHJjYXItZ2VuMy11c2IzLXBoeSIgfSwNCj4gPiArICAgICAgIHsg
+fQ0KPiA+ICt9Ow0KPiA+ICtNT0RVTEVfREVWSUNFX1RBQkxFKG9mLCByY2FyX2dlbjNfcGh5X3Vz
+YjNfbWF0Y2hfdGFibGUpOw0KPiANCj4gR3J7b2V0amUsZWV0aW5nfXMsDQo+IA0KPiAgICAgICAg
+ICAgICAgICAgICAgICAgICBHZWVydA0KPiANCj4gLS0NCj4gR2VlcnQgVXl0dGVyaG9ldmVuIC0t
+IFRoZXJlJ3MgbG90cyBvZiBMaW51eCBiZXlvbmQgaWEzMiAtLSBnZWVydEBsaW51eC1tNjhrLm9y
+Zw0KPiANCj4gSW4gcGVyc29uYWwgY29udmVyc2F0aW9ucyB3aXRoIHRlY2huaWNhbCBwZW9wbGUs
+IEkgY2FsbCBteXNlbGYgYSBoYWNrZXIuIEJ1dA0KPiB3aGVuIEknbSB0YWxraW5nIHRvIGpvdXJu
+YWxpc3RzIEkganVzdCBzYXkgInByb2dyYW1tZXIiIG9yIHNvbWV0aGluZyBsaWtlIHRoYXQuDQo+
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLS0gTGludXMgVG9ydmFsZHMNCg==
