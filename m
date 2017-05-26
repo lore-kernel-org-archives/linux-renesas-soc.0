@@ -1,8 +1,7 @@
 Return-Path: <linux-media-owner@vger.kernel.org>
-Date: Sat, 27 May 2017 00:05:12 +0300
-From: Sakari Ailus <sakari.ailus@iki.fi>
-To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Cc: "robh+dt@kernel.org" <robh+dt@kernel.org>,
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: Sakari Ailus <sakari.ailus@iki.fi>
+CC: "robh+dt@kernel.org" <robh+dt@kernel.org>,
         "mark.rutland@arm.com" <mark.rutland@arm.com>,
         "mchehab@kernel.org" <mchehab@kernel.org>,
         "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>,
@@ -16,37 +15,60 @@ Cc: "robh+dt@kernel.org" <robh+dt@kernel.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH v5 3/7] media: i2c: max2175: Add MAX2175 support
-Message-ID: <20170526210512.GR29527@valkosipuli.retiisi.org.uk>
+Subject: RE: [PATCH v5 3/7] media: i2c: max2175: Add MAX2175 support
+Date: Fri, 26 May 2017 14:47:32 +0000
+Message-ID: <KL1PR0601MB2038AAC0C02926FE168A7952C3FC0@KL1PR0601MB2038.apcprd06.prod.outlook.com>
 References: <20170509133738.16414-1-ramesh.shanmugasundaram@bp.renesas.com>
  <20170509133738.16414-4-ramesh.shanmugasundaram@bp.renesas.com>
  <20170510081231.GB3227@valkosipuli.retiisi.org.uk>
- <KL1PR0601MB2038AAC0C02926FE168A7952C3FC0@KL1PR0601MB2038.apcprd06.prod.outlook.com>
+In-Reply-To: <20170510081231.GB3227@valkosipuli.retiisi.org.uk>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <KL1PR0601MB2038AAC0C02926FE168A7952C3FC0@KL1PR0601MB2038.apcprd06.prod.outlook.com>
 Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, May 26, 2017 at 02:47:32PM +0000, Ramesh Shanmugasundaram wrote:
-> Hi Sakari,
-> 
-> Thanks for the review comments on the patches. Sorry for the late response
-> as I was caught up with another work.
+Hi Sakari,
 
-No worries.
+Thanks for the review comments on the patches. Sorry for the late response =
+as I was caught up with another work.=20
 
-> 
-> I will incorporate your comments and rebase it on top of your branch. I
-> see it is not there in media-tree master yet. Please let me know if there
-> is a change in plan.
+I will incorporate your comments and rebase it on top of your branch. I see=
+ it is not there in media-tree master yet. Please let me know if there is a=
+ change in plan.
 
-I've sent a pull request to Mauro here and my expectation is it'll reach
-media tree master in not too distant future:
+Thanks,
+Ramesh
 
-<URL:http://www.spinics.net/lists/linux-media/msg115707.html>
-
--- 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
+> Subject: Re: [PATCH v5 3/7] media: i2c: max2175: Add MAX2175 support
+>=20
+> Hi Ramesh,
+>=20
+> On Tue, May 09, 2017 at 02:37:34PM +0100, Ramesh Shanmugasundaram wrote:
+> ...
+> > +#include <media/v4l2-ctrls.h>
+> > +#include <media/v4l2-device.h>
+> > +#include <media/v4l2-of.h>
+>=20
+> Could you rebase this on the V4L2 fwnode patchset here, please?
+>=20
+> <URL:https://git.linuxtv.org/sailus/media_tree.git/log/?h=3Dv4l2-acpi>
+>=20
+> It depends on other patches which will reach media-tree master in next
+> rc1, for now I've merged them here:
+>=20
+> <URL:https://git.linuxtv.org/sailus/media_tree.git/log/?h=3Dv4l2-acpi-mer=
+ge>
+>=20
+> I'll send a pull request for media-tree once we have 4.12rc1 in media-tre=
+e
+> master.
+>=20
+> Thanks.
+>=20
+> --
+> Kind regards,
+>=20
+> Sakari Ailus
+> e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
