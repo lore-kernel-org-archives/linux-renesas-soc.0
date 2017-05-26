@@ -1,30 +1,23 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from lb2-smtp-cloud2.xs4all.net ([194.109.24.25]:47227 "EHLO
-        lb2-smtp-cloud2.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750886AbdE2JIX (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 May 2017 05:08:23 -0400
+Return-Path: <linux-media-owner@vger.kernel.org>
+Date: Fri, 26 May 2017 08:49:07 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        laurent.pinchart@ideasonboard.com, linux-media@vger.kernel.org,
+        geert@linux-m68k.org, magnus.damm@gmail.com,
+        hans.verkuil@cisco.com, niklas.soderlund@ragnatech.se,
+        sergei.shtylyov@cogentembedded.com, devicetree@vger.kernel.org
 Subject: Re: [PATCH v3 0/4] r8a7793 Gose video input support
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        linux-renesas-soc@vger.kernel.org,
-        laurent.pinchart@ideasonboard.com
-Cc: linux-media@vger.kernel.org, geert@linux-m68k.org,
-        magnus.damm@gmail.com, hans.verkuil@cisco.com,
-        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
-        horms@verge.net.au, devicetree@vger.kernel.org
+Message-ID: <20170526064907.GD2628@verge.net.au>
 References: <1495199224-16337-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <ed9be832-21f5-ac8c-56cf-02afd14f5a34@xs4all.nl>
-Date: Mon, 29 May 2017 11:08:12 +0200
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <1495199224-16337-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 05/19/2017 03:07 PM, Ulrich Hecht wrote:
+On Fri, May 19, 2017 at 03:07:00PM +0200, Ulrich Hecht wrote:
 > Hi!
 > 
 > This is a by-the-datasheet implementation of analog and digital video input
@@ -39,14 +32,6 @@ On 05/19/2017 03:07 PM, Ulrich Hecht wrote:
 > The digital input patch has received minor tweaks of the port names for
 > consistency, and the Gose analog input patch has been modified to use the
 > new bindings, and a composite video connector has been added.
-
-Looks good. I assume the dts changes go through linux-renesas-soc@vger.kernel.org?
-I'll pick up the adv7180 changes.
-
-Regards,
-
-	Hans
-
 > 
 > CU
 > Uli
@@ -66,13 +51,22 @@ Regards,
 > 
 > 
 > Ulrich Hecht (4):
->    ARM: dts: gose: add HDMI input
->    media: adv7180: add adv7180cp, adv7180st compatible strings
->    media: adv7180: Add adv7180cp, adv7180st bindings
->    ARM: dts: gose: add composite video input
+>   ARM: dts: gose: add HDMI input
+
+I have queued-up the above patch for v4.13.
+
+>   media: adv7180: add adv7180cp, adv7180st compatible strings
+>   media: adv7180: Add adv7180cp, adv7180st bindings
+>   ARM: dts: gose: add composite video input
+
+I have marked the above dts patch as "deferred" pending acceptance
+of the binding. Please repost or otherwise ping me once that has happened.
+
+>  .../devicetree/bindings/media/i2c/adv7180.txt      |  15 +++
+>  arch/arm/boot/dts/r8a7793-gose.dts                 | 127 ++++++++++++++++++++-
+>  drivers/media/i2c/adv7180.c                        |   2 +
+>  3 files changed, 142 insertions(+), 2 deletions(-)
 > 
->   .../devicetree/bindings/media/i2c/adv7180.txt      |  15 +++
->   arch/arm/boot/dts/r8a7793-gose.dts                 | 127 ++++++++++++++++++++-
->   drivers/media/i2c/adv7180.c                        |   2 +
->   3 files changed, 142 insertions(+), 2 deletions(-)
+> -- 
+> 2.7.4
 > 
