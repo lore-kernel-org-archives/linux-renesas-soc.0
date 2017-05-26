@@ -1,77 +1,45 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:33968 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751672AbdEWNej (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 23 May 2017 09:34:39 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
-Subject: [PATCH] mmc: tmio: make sure SDIO gets reinitialized after resume
-Date: Tue, 23 May 2017 15:34:08 +0200
-Message-Id: <20170523133408.11651-1-wsa+renesas@sang-engineering.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Fri, 26 May 2017 08:56:27 +0200
+From: Simon Horman <horms@verge.net.au>
+To: jmondi <jacopo@jmondi.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] arm: dts: r7s72100: Add support for GR-Peach
+Message-ID: <20170526065627.GE2628@verge.net.au>
+References: <1495567254-10226-1-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdUovD=6YfJYckoftWyJZ3eRjcKFkScj=wLhyTDSFPavgw@mail.gmail.com>
+ <20170524070702.GB4253@w540>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170524070702.GB4253@w540>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-To achieve that, we set the registers in the generic HW reset routine
-which gets called at both, init and resume. We also make sure to move
-SDIO initialization before reset gets called in probe().
+On Wed, May 24, 2017 at 09:07:02AM +0200, jmondi wrote:
+> Hello Simon,
+> 
+> On Tue, May 23, 2017 at 09:25:40PM +0200, Geert Uytterhoeven wrote:
+> > On Tue, May 23, 2017 at 9:20 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> > > Add device tree source for Renesas GR-Peach board.
+> > > GR-Peach is an RZ/A1H based board with 10MB of on-chip SRAM and 8MB
+> > > QSPI flash storage.
+> > > Add support for the board, and create a 2MB partition to use as rootfs.
+> > >
+> > > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> >
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> I forgot to change subject to "PATCH v2".
+> Could you please take this one, or would you like me to resend with
+> Geert's reviewed-by ?
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Tested-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
----
-
-Changes since RFT:
-* added tag from Hayakawa-san (thanks!)
-* rebased to mmc/next (on top of the DMA refactor series)
-
- drivers/mmc/host/tmio_mmc_core.c | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index e1ad461c4b8c8f..ed40681253497a 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -265,6 +265,12 @@ static void tmio_mmc_reset(struct tmio_mmc_host *host)
- 	if (host->pdata->flags & TMIO_MMC_HAVE_HIGH_REG)
- 		sd_ctrl_write16(host, CTL_RESET_SDIO, 0x0001);
- 	msleep(10);
-+
-+	if (host->pdata->flags & TMIO_MMC_SDIO_IRQ) {
-+		sd_ctrl_write16(host, CTL_SDIO_IRQ_MASK, host->sdio_irq_mask);
-+		sd_ctrl_write16(host, CTL_TRANSACTION_CTL, 0x0001);
-+	}
-+
- }
- 
- static void tmio_mmc_reset_work(struct work_struct *work)
-@@ -1280,6 +1286,10 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
- 	if (_host->native_hotplug)
- 		pm_runtime_get_noresume(&pdev->dev);
- 
-+	_host->sdio_irq_enabled = false;
-+	if (pdata->flags & TMIO_MMC_SDIO_IRQ)
-+		_host->sdio_irq_mask = TMIO_SDIO_MASK_ALL;
-+
- 	tmio_mmc_clk_stop(_host);
- 	tmio_mmc_reset(_host);
- 
-@@ -1296,13 +1306,6 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
- 
- 	_host->sdcard_irq_mask &= ~irq_mask;
- 
--	_host->sdio_irq_enabled = false;
--	if (pdata->flags & TMIO_MMC_SDIO_IRQ) {
--		_host->sdio_irq_mask = TMIO_SDIO_MASK_ALL;
--		sd_ctrl_write16(_host, CTL_SDIO_IRQ_MASK, _host->sdio_irq_mask);
--		sd_ctrl_write16(_host, CTL_TRANSACTION_CTL, 0x0001);
--	}
--
- 	spin_lock_init(&_host->lock);
- 	mutex_init(&_host->ios_lock);
- 
--- 
-2.11.0
+No need to repost, I've queued-up this version for v4.13.
