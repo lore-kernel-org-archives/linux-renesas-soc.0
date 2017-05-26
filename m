@@ -1,151 +1,232 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:46802 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1765683AbdEXARE (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 23 May 2017 20:17:04 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 12/17] rcar-vin: allow switch between capturing modes when stalling
-Date: Wed, 24 May 2017 02:15:35 +0200
-Message-Id: <20170524001540.13613-13-niklas.soderlund@ragnatech.se>
-In-Reply-To: <20170524001540.13613-1-niklas.soderlund@ragnatech.se>
-References: <20170524001540.13613-1-niklas.soderlund@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Mark Brown <broonie@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
+        Jiada Wang <jiada_wang@mentor.com>,
+        Matt Porter <mporter@konsulko.com>, linux-spi@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
+In-Reply-To: <1495458705-11692-6-git-send-email-geert+renesas@glider.be>
+Message-Id: <E1dEE6n-0001Oy-2v@debutante>
+Date: Fri, 26 May 2017 13:12:45 +0100
+Subject: Applied "spi: slave: Add SPI slave handler reporting uptime at previous message" to the spi tree
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+The patch
 
-If userspace can't feed the driver with buffers as fast as the driver
-consumes them the driver will stop video capturing and wait for more
-buffers from userspace, the driver is stalled. Once it have been feed
-one or more free buffers it will recover from the stall and resume
-capturing.
+   spi: slave: Add SPI slave handler reporting uptime at previous message
 
-Instead of continue to capture using the same capture mode as before the
-stall allow the driver to choose between single and continuous mode
-based on free buffer availability. Do this by stopping capturing when
-the driver becomes stalled and restart capturing once it continues. By
-doing
-this the capture mode will be evaluated each time the driver is
-recovering from a stall.
+has been applied to the spi tree at
 
-This behavior is needed to fix a bug where continuous capturing mode is
-used, userspace is about to stop the stream and is waiting for the last
-buffers to be returned from the driver and is not queuing any new
-buffers. In this case the driver becomes stalled when there are only 3
-buffers remaining streaming will never resume since the driver is
-waiting for userspace to feed it more buffers before it can continue
-streaming.  With this fix the driver will then switch to single capture
-mode for the last 3 buffers and a deadlock is avoided. The issue can be
-demonstrated using yavta.
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
 
-$ yavta -f RGB565 -s 640x480 -n 4 --capture=10  /dev/video22
-Device /dev/video22 opened.
-Device `R_Car_VIN' on `platform:e6ef1000.video' (driver 'rcar_vin') supports video, capture, without mplanes.
-Video format set: RGB565 (50424752) 640x480 (stride 1280) field interlaced buffer size 614400
-Video format: RGB565 (50424752) 640x480 (stride 1280) field interlaced buffer size 614400
-4 buffers requested.
-length: 614400 offset: 0 timestamp type/source: mono/EoF
-Buffer 0/0 mapped at address 0xb6cc7000.
-length: 614400 offset: 614400 timestamp type/source: mono/EoF
-Buffer 1/0 mapped at address 0xb6c31000.
-length: 614400 offset: 1228800 timestamp type/source: mono/EoF
-Buffer 2/0 mapped at address 0xb6b9b000.
-length: 614400 offset: 1843200 timestamp type/source: mono/EoF
-Buffer 3/0 mapped at address 0xb6b05000.
-0 (0) [-] interlaced 0 614400 B 38.240285 38.240303 12.421 fps ts mono/EoF
-1 (1) [-] interlaced 1 614400 B 38.282329 38.282346 23.785 fps ts mono/EoF
-2 (2) [-] interlaced 2 614400 B 38.322324 38.322338 25.003 fps ts mono/EoF
-3 (3) [-] interlaced 3 614400 B 38.362318 38.362333 25.004 fps ts mono/EoF
-4 (0) [-] interlaced 4 614400 B 38.402313 38.402328 25.003 fps ts mono/EoF
-5 (1) [-] interlaced 5 614400 B 38.442307 38.442321 25.004 fps ts mono/EoF
-6 (2) [-] interlaced 6 614400 B 38.482301 38.482316 25.004 fps ts mono/EoF
-7 (3) [-] interlaced 7 614400 B 38.522295 38.522312 25.004 fps ts mono/EoF
-8 (0) [-] interlaced 8 614400 B 38.562290 38.562306 25.003 fps ts mono/EoF
-<blocks forever, waiting for the last buffer>
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-This fix also allow the driver to switch to single capture mode if
-userspace doesn't feed it buffers fast enough. Or the other way around,
-if userspace suddenly feeds the driver buffers faster it can switch to
-continues capturing mode.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 29f9ffa0e1f9a17c866c04a01acfc9976d78f29a Mon Sep 17 00:00:00 2001
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Date: Mon, 22 May 2017 15:11:44 +0200
+Subject: [PATCH] spi: slave: Add SPI slave handler reporting uptime at
+ previous message
+
+Add an example SPI slave handler responding with the uptime at the time
+of reception of the last SPI message.
+
+This can be used by an external microcontroller as a dead man's switch.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/media/platform/rcar-vin/rcar-dma.c | 22 +++++++++++++++++-----
- 1 file changed, 17 insertions(+), 5 deletions(-)
+ drivers/spi/Kconfig          |   6 ++
+ drivers/spi/Makefile         |   1 +
+ drivers/spi/spi-slave-time.c | 129 +++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 136 insertions(+)
+ create mode 100644 drivers/spi/spi-slave-time.c
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index 47d78f68d715d945..ae4febede5f79f28 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -429,6 +429,8 @@ static int rvin_capture_start(struct rvin_dev *vin)
+diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+index df8ddec24b5d..ade542c5bfd8 100644
+--- a/drivers/spi/Kconfig
++++ b/drivers/spi/Kconfig
+@@ -796,6 +796,12 @@ config SPI_SLAVE
  
- 	rvin_capture_on(vin);
+ if SPI_SLAVE
  
-+	vin->state = RUNNING;
++config SPI_SLAVE_TIME
++	tristate "SPI slave handler reporting boot up time"
++	help
++	  SPI slave handler responding with the time of reception of the last
++	  SPI message.
 +
- 	return 0;
- }
+ endif # SPI_SLAVE
  
-@@ -907,7 +909,7 @@ static irqreturn_t rvin_irq(int irq, void *data)
- 	struct rvin_dev *vin = data;
- 	u32 int_status, vnms;
- 	int slot;
--	unsigned int sequence, handled = 0;
-+	unsigned int i, sequence, handled = 0;
- 	unsigned long flags;
+ endif # SPI
+diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile
+index e50852c6fcb8..fb078693dbe4 100644
+--- a/drivers/spi/Makefile
++++ b/drivers/spi/Makefile
+@@ -107,3 +107,4 @@ obj-$(CONFIG_SPI_XTENSA_XTFPGA)		+= spi-xtensa-xtfpga.o
+ obj-$(CONFIG_SPI_ZYNQMP_GQSPI)		+= spi-zynqmp-gqspi.o
  
- 	spin_lock_irqsave(&vin->qlock, flags);
-@@ -969,8 +971,20 @@ static irqreturn_t rvin_irq(int irq, void *data)
- 		 * the VnMBm registers.
- 		 */
- 		if (vin->continuous) {
--			rvin_capture_off(vin);
-+			rvin_capture_stop(vin);
- 			vin_dbg(vin, "IRQ %02d: hw not ready stop\n", sequence);
+ # SPI slave protocol handlers
++obj-$(CONFIG_SPI_SLAVE_TIME)		+= spi-slave-time.o
+diff --git a/drivers/spi/spi-slave-time.c b/drivers/spi/spi-slave-time.c
+new file mode 100644
+index 000000000000..f2e07a392d68
+--- /dev/null
++++ b/drivers/spi/spi-slave-time.c
+@@ -0,0 +1,129 @@
++/*
++ * SPI slave handler reporting uptime at reception of previous SPI message
++ *
++ * This SPI slave handler sends the time of reception of the last SPI message
++ * as two 32-bit unsigned integers in binary format and in network byte order,
++ * representing the number of seconds and fractional seconds (in microseconds)
++ * since boot up.
++ *
++ * Copyright (C) 2016-2017 Glider bvba
++ *
++ * This file is subject to the terms and conditions of the GNU General Public
++ * License.  See the file "COPYING" in the main directory of this archive
++ * for more details.
++ *
++ * Usage (assuming /dev/spidev2.0 corresponds to the SPI master on the remote
++ * system):
++ *
++ *   # spidev_test -D /dev/spidev2.0 -p dummy-8B
++ *   spi mode: 0x0
++ *   bits per word: 8
++ *   max speed: 500000 Hz (500 KHz)
++ *   RX | 00 00 04 6D 00 09 5B BB ...
++ *		^^^^^    ^^^^^^^^
++ *		seconds  microseconds
++ */
 +
-+			/* Maybe we can continue in single capture mode */
-+			for (i = 0; i < HW_BUFFER_NUM; i++) {
-+				if (vin->queue_buf[i]) {
-+					list_add(to_buf_list(vin->queue_buf[i]),
-+						 &vin->buf_list);
-+					vin->queue_buf[i] = NULL;
-+				}
-+			}
++#include <linux/completion.h>
++#include <linux/module.h>
++#include <linux/sched/clock.h>
++#include <linux/spi/spi.h>
 +
-+			if (!list_empty(&vin->buf_list))
-+				rvin_capture_start(vin);
- 		}
- 	} else {
- 		/*
-@@ -1055,8 +1069,7 @@ static void rvin_buffer_queue(struct vb2_buffer *vb)
- 	 * capturing if HW is ready to continue.
- 	 */
- 	if (vin->state == STALLED)
--		if (rvin_fill_hw(vin))
--			rvin_capture_on(vin);
-+		rvin_capture_start(vin);
- 
- 	spin_unlock_irqrestore(&vin->qlock, flags);
- }
-@@ -1073,7 +1086,6 @@ static int rvin_start_streaming(struct vb2_queue *vq, unsigned int count)
- 
- 	spin_lock_irqsave(&vin->qlock, flags);
- 
--	vin->state = RUNNING;
- 	vin->sequence = 0;
- 
- 	ret = rvin_capture_start(vin);
++
++struct spi_slave_time_priv {
++	struct spi_device *spi;
++	struct completion finished;
++	struct spi_transfer xfer;
++	struct spi_message msg;
++	__be32 buf[2];
++};
++
++static int spi_slave_time_submit(struct spi_slave_time_priv *priv);
++
++static void spi_slave_time_complete(void *arg)
++{
++	struct spi_slave_time_priv *priv = arg;
++	int ret;
++
++	ret = priv->msg.status;
++	if (ret)
++		goto terminate;
++
++	ret = spi_slave_time_submit(priv);
++	if (ret)
++		goto terminate;
++
++	return;
++
++terminate:
++	dev_info(&priv->spi->dev, "Terminating\n");
++	complete(&priv->finished);
++}
++
++static int spi_slave_time_submit(struct spi_slave_time_priv *priv)
++{
++	u32 rem_us;
++	int ret;
++	u64 ts;
++
++	ts = local_clock();
++	rem_us = do_div(ts, 1000000000) / 1000;
++
++	priv->buf[0] = cpu_to_be32(ts);
++	priv->buf[1] = cpu_to_be32(rem_us);
++
++	spi_message_init_with_transfers(&priv->msg, &priv->xfer, 1);
++
++	priv->msg.complete = spi_slave_time_complete;
++	priv->msg.context = priv;
++
++	ret = spi_async(priv->spi, &priv->msg);
++	if (ret)
++		dev_err(&priv->spi->dev, "spi_async() failed %d\n", ret);
++
++	return ret;
++}
++
++static int spi_slave_time_probe(struct spi_device *spi)
++{
++	struct spi_slave_time_priv *priv;
++	int ret;
++
++	priv = devm_kzalloc(&spi->dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	priv->spi = spi;
++	init_completion(&priv->finished);
++	priv->xfer.tx_buf = priv->buf;
++	priv->xfer.len = sizeof(priv->buf);
++
++	ret = spi_slave_time_submit(priv);
++	if (ret)
++		return ret;
++
++	spi_set_drvdata(spi, priv);
++	return 0;
++}
++
++static int spi_slave_time_remove(struct spi_device *spi)
++{
++	struct spi_slave_time_priv *priv = spi_get_drvdata(spi);
++
++	spi_slave_abort(spi);
++	wait_for_completion(&priv->finished);
++	return 0;
++}
++
++static struct spi_driver spi_slave_time_driver = {
++	.driver = {
++		.name	= "spi-slave-time",
++	},
++	.probe		= spi_slave_time_probe,
++	.remove		= spi_slave_time_remove,
++};
++module_spi_driver(spi_slave_time_driver);
++
++MODULE_AUTHOR("Geert Uytterhoeven <geert+renesas@glider.be>");
++MODULE_DESCRIPTION("SPI slave reporting uptime at previous SPI message");
++MODULE_LICENSE("GPL v2");
 -- 
-2.13.0
+2.11.0
