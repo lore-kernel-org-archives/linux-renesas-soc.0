@@ -1,81 +1,89 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:54290 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1760689AbdEVRgq (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:36358 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1164049AbdEZLmD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 May 2017 13:36:46 -0400
-From: Kieran Bingham <kbingham@kernel.org>
-To: sakari.ailus@iki.fi, laurent.pinchart@ideasonboard.com
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        niklas.soderlund@ragnatech.se, kieran.bingham@ideasonboard.com,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v3 1/2] device property: Add fwnode_graph_get_port_parent
-Date: Mon, 22 May 2017 18:36:37 +0100
-Message-Id: <cce043f797174561fe49350a66b56ce07059716c.1495473356.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.33d4457de9c9f4e5285e7b1d18a8a92345c438d3.1495473356.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.33d4457de9c9f4e5285e7b1d18a8a92345c438d3.1495473356.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.33d4457de9c9f4e5285e7b1d18a8a92345c438d3.1495473356.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.33d4457de9c9f4e5285e7b1d18a8a92345c438d3.1495473356.git-series.kieran.bingham+renesas@ideasonboard.com>
+        Fri, 26 May 2017 07:42:03 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
+In-Reply-To: <8760gos8fq.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1dEDcw-0000jt-4W@debutante>
+Date: Fri, 26 May 2017 12:41:54 +0100
+Subject: Applied "ASoC: rsnd: fixup parent_clk_name of AUDIO_CLKOUTx" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+The patch
 
-Provide a helper to obtain the parent device fwnode without first
-parsing the remote-endpoint as per fwnode_graph_get_remote_port_parent.
+   ASoC: rsnd: fixup parent_clk_name of AUDIO_CLKOUTx
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+has been applied to the asoc tree at
 
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From e8a3ce1130134046e9da132aa4d043566df8237d Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Fri, 26 May 2017 01:44:19 +0000
+Subject: [PATCH] ASoC: rsnd: fixup parent_clk_name of AUDIO_CLKOUTx
+
+commit 25165f79adc7 ("ASoC: rsnd: enable clock-frequency for both
+44.1kHz/48kHz") supported both 44.1kHz/48kHz for AUDIO_CLKOUTx,
+but it didn't care its parent clock name.
+This patch fixes it.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
-v2:
- - Rebase on top of Sakari's acpi-graph-clean branch and simplify
+ sound/soc/sh/rcar/adg.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-v3:
- - Fix up kerneldoc
- - Get the 'port' of the endpoint to find the parent of the port
-
- drivers/base/property.c  | 15 +++++++++++++++
- include/linux/property.h |  2 ++
- 2 files changed, 17 insertions(+)
-
-diff --git a/drivers/base/property.c b/drivers/base/property.c
-index b311a6fa7d0c..fdbc644fd743 100644
---- a/drivers/base/property.c
-+++ b/drivers/base/property.c
-@@ -1169,6 +1169,21 @@ fwnode_graph_get_next_endpoint(struct fwnode_handle *fwnode,
- EXPORT_SYMBOL_GPL(fwnode_graph_get_next_endpoint);
- 
- /**
-+ * fwnode_graph_get_port_parent - Return the device fwnode of a port endpoint
-+ * @endpoint: Endpoint firmware node of the port
-+ *
-+ * Return: the firmware node of the device the @endpoint belongs to.
-+ */
-+struct fwnode_handle *
-+fwnode_graph_get_port_parent(struct fwnode_handle *endpoint)
-+{
-+	struct fwnode_handle *port = fwnode_get_next_parent(endpoint);
-+
-+	return fwnode_call_ptr_op(port, graph_get_port_parent);
-+}
-+EXPORT_SYMBOL_GPL(fwnode_graph_get_port_parent);
-+
-+/**
-  * fwnode_graph_get_remote_port_parent - Return fwnode of a remote device
-  * @fwnode: Endpoint firmware node pointing to the remote endpoint
-  *
-diff --git a/include/linux/property.h b/include/linux/property.h
-index b9f4838d9882..af95d5d84192 100644
---- a/include/linux/property.h
-+++ b/include/linux/property.h
-@@ -275,6 +275,8 @@ void *device_get_mac_address(struct device *dev, char *addr, int alen);
- 
- struct fwnode_handle *fwnode_graph_get_next_endpoint(
- 	struct fwnode_handle *fwnode, struct fwnode_handle *prev);
-+struct fwnode_handle *fwnode_graph_get_port_parent(
-+	struct fwnode_handle *fwnode);
- struct fwnode_handle *fwnode_graph_get_remote_port_parent(
- 	struct fwnode_handle *fwnode);
- struct fwnode_handle *fwnode_graph_get_remote_port(
+diff --git a/sound/soc/sh/rcar/adg.c b/sound/soc/sh/rcar/adg.c
+index 66203d107a11..d3b0dc145a56 100644
+--- a/sound/soc/sh/rcar/adg.c
++++ b/sound/soc/sh/rcar/adg.c
+@@ -507,7 +507,8 @@ static void rsnd_adg_get_clkout(struct rsnd_priv *priv,
+ 				rbga = rbgx;
+ 				adg->rbga_rate_for_441khz = rate / div;
+ 				ckr |= brg_table[i] << 20;
+-				if (req_441kHz_rate)
++				if (req_441kHz_rate &&
++				    !(adg_mode_flags(adg) & AUDIO_OUT_48))
+ 					parent_clk_name = __clk_get_name(clk);
+ 			}
+ 		}
+@@ -522,7 +523,8 @@ static void rsnd_adg_get_clkout(struct rsnd_priv *priv,
+ 				rbgb = rbgx;
+ 				adg->rbgb_rate_for_48khz = rate / div;
+ 				ckr |= brg_table[i] << 16;
+-				if (req_48kHz_rate)
++				if (req_48kHz_rate &&
++				    (adg_mode_flags(adg) & AUDIO_OUT_48))
+ 					parent_clk_name = __clk_get_name(clk);
+ 			}
+ 		}
 -- 
-git-series 0.9.1
+2.11.0
