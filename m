@@ -1,348 +1,493 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <kishon@ti.com>, <robh+dt@kernel.org>, <mark.rutland@arm.com>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH] phy: rcar-gen3-usb3: add support for R-Car Gen3 USB 3.0 PHY
-Date: Wed, 24 May 2017 21:04:03 +0900
-Message-ID: <1495627443-28057-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+From: Mark Brown <broonie@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
+        Jiada Wang <jiada_wang@mentor.com>,
+        Matt Porter <mporter@konsulko.com>, linux-spi@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
+In-Reply-To: <1495025272-23930-3-git-send-email-geert+renesas@glider.be>
+Message-Id: <E1dEE6x-0001Sd-BN@debutante>
+Date: Fri, 26 May 2017 13:12:55 +0100
+Subject: Applied "spi: core: Add support for registering SPI slave controllers" to the spi tree
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The USB 3.0 PHY modules of R-Car Gen3 SoCs have:
- - Spread spectrum clock (ssc).
- - Using USB 2.0 EXTAL clock instead of USB 3.0 clock.
- - Enabling VBUS detection for usb3.0 peripheral.
+The patch
 
-So, this driver supports these features.
+   spi: core: Add support for registering SPI slave controllers
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+has been applied to the spi tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 6c364062bfed3c34490e85bea52ff6e2d4f0f281 Mon Sep 17 00:00:00 2001
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Date: Mon, 22 May 2017 15:11:41 +0200
+Subject: [PATCH] spi: core: Add support for registering SPI slave controllers
+
+Add support for registering SPI slave controllers using the existing SPI
+master framework:
+  - SPI slave controllers must use spi_alloc_slave() instead of
+    spi_alloc_master(), and should provide an additional callback
+    "slave_abort" to abort an ongoing SPI transfer request,
+  - SPI slave controllers are added to a new "spi_slave" device class,
+  - SPI slave handlers can be bound to the SPI slave device represented
+    by an SPI slave controller using a DT child node named "slave",
+  - Alternatively, (un)binding an SPI slave handler to the SPI slave
+    device represented by an SPI slave controller can be done by
+    (un)registering the slave device through a sysfs virtual file named
+    "slave".
+
+>From the point of view of an SPI slave protocol handler, an SPI slave
+controller looks almost like an ordinary SPI master controller. The only
+exception is that a transfer request will block on the remote SPI
+master, and may be cancelled using spi_slave_abort().
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- This patch is based on the latest linux-phy.git / next branch and
- "[PATCH v5 3/3] phy: Group vendor specific phy drivers" patch.
+ drivers/spi/Kconfig     |  14 +++-
+ drivers/spi/Makefile    |   2 +
+ drivers/spi/spi.c       | 179 +++++++++++++++++++++++++++++++++++++++++-------
+ include/linux/spi/spi.h |  35 ++++++++--
+ 4 files changed, 201 insertions(+), 29 deletions(-)
 
- I discussed with Geert-san about this driver on the ML:
- https://patchwork.kernel.org/patch/9731759/
-
- .../devicetree/bindings/phy/rcar-gen3-phy-usb3.txt |  47 +++++
- MAINTAINERS                                        |   4 +-
- drivers/phy/renesas/Kconfig                        |   7 +
- drivers/phy/renesas/Makefile                       |   1 +
- drivers/phy/renesas/phy-rcar-gen3-usb3.c           | 207 +++++++++++++++++++++
- 5 files changed, 264 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt
- create mode 100644 drivers/phy/renesas/phy-rcar-gen3-usb3.c
-
-diff --git a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt
-new file mode 100644
-index 0000000..e58ba6b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt
-@@ -0,0 +1,47 @@
-+* Renesas R-Car generation 3 USB 3.0 PHY
-+
-+This file provides information on what the device node for the R-Car generation
-+3 USB 3.0 PHY contains.
-+If you want to enable spread spectrum clock (ssc), you should use USB_EXTAL
-+instead of USB3_CLK. However, if you don't want to these features, you don't
-+need this driver.
-+
-+Required properties:
-+- compatible: "renesas,r8a7795-usb3-phy" if the device is a part of an R8A7795
-+	      SoC.
-+	      "renesas,r8a7796-usb3-phy" if the device is a part of an R8A7796
-+	      SoC.
-+	      "renesas,rcar-gen3-usb3-phy" for a generic R-Car Gen3 compatible
-+	      device.
-+
-+	      When compatible with the generic version, nodes must list the
-+	      SoC-specific version corresponding to the platform first
-+	      followed by the generic version.
-+
-+- reg: offset and length of the USB 3.0 PHY register block.
-+- clocks: A list of phandles and clock-specifier pairs.
-+- clock-names: Name of the clocks.
-+  - The funcional clock must be "usb3-if".
-+  - The usb3's external clock must be "usb3s_clk". If you want to use the ssc,
-+    the clock-frequency must be 0.
-+  - The usb2's external clock must be "usb_extal". If you want to use the ssc,
-+    the clock-frequenvy must not be 0.
-+- #phy-cells: see phy-bindings.txt in the same directory, must be <0>.
-+
-+Optional properties:
-+- renesas,ssc-range: Enable/disable spread spectrum clock (ssc) by using
-+		     the following values as u32:
-+			- 0 (or the property doesn't exist): disable the ssc
-+			- 4980: enable the ssc as -4980 ppm
-+			- 4492: enable the ssc as -4492 ppm
-+			- 4003: enable the ssc as -4003 ppm
-+
-+Example (R-Car H3):
-+
-+	usb-phy@e65ee000 {
-+		compatible = "renesas,r8a7795-usb3-phy",
-+			     "renesas,rcar-gen3-usb3-phy";
-+		reg = <0 0xe65ee000 0 0x90>;
-+		clocks = <&cpg CPG_MOD 328>, <&usb3s0_clk>, <&usb_extal>;
-+		clock-names = "usb3-if", "usb3s_clk", "usb_extal";
-+	};
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a47d3da..d711d53 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10829,11 +10829,11 @@ L:	linux-iio@vger.kernel.org
- S:	Supported
- F:	drivers/iio/adc/rcar_gyro_adc.c
+diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+index 1761c9004fc1..df8ddec24b5d 100644
+--- a/drivers/spi/Kconfig
++++ b/drivers/spi/Kconfig
+@@ -784,6 +784,18 @@ config SPI_TLE62X0
  
--RENESAS USB2 PHY DRIVER
-+RENESAS USB PHY DRIVER
- M:	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
- L:	linux-renesas-soc@vger.kernel.org
- S:	Maintained
--F:	drivers/phy/renesas/phy-rcar-gen3-usb2.c
-+F:	drivers/phy/renesas/phy-rcar-gen3-usb*.c
+ endif # SPI_MASTER
  
- RESET CONTROLLER FRAMEWORK
- M:	Philipp Zabel <p.zabel@pengutronix.de>
-diff --git a/drivers/phy/renesas/Kconfig b/drivers/phy/renesas/Kconfig
-index 432e271..4377064 100644
---- a/drivers/phy/renesas/Kconfig
-+++ b/drivers/phy/renesas/Kconfig
-@@ -15,3 +15,10 @@ config PHY_RCAR_GEN3_USB2
- 	select GENERIC_PHY
- 	help
- 	  Support for USB 2.0 PHY found on Renesas R-Car generation 3 SoCs.
+-# (slave support would go here)
++#
++# SLAVE side ... listening to other SPI masters
++#
 +
-+config PHY_RCAR_GEN3_USB3
-+	tristate "Renesas R-Car generation 3 USB 3.0 PHY driver"
-+	depends on ARCH_RENESAS
-+	select GENERIC_PHY
++config SPI_SLAVE
++	bool "SPI slave protocol handlers"
 +	help
-+	  Support for USB 3.0 PHY found on Renesas R-Car generation 3 SoCs.
-diff --git a/drivers/phy/renesas/Makefile b/drivers/phy/renesas/Makefile
-index 695241a..8b60259 100644
---- a/drivers/phy/renesas/Makefile
-+++ b/drivers/phy/renesas/Makefile
-@@ -1,2 +1,3 @@
- obj-$(CONFIG_PHY_RCAR_GEN2)		+= phy-rcar-gen2.o
- obj-$(CONFIG_PHY_RCAR_GEN3_USB2)	+= phy-rcar-gen3-usb2.o
-+obj-$(CONFIG_PHY_RCAR_GEN3_USB3)	+= phy-rcar-gen3-usb3.o
-diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb3.c b/drivers/phy/renesas/phy-rcar-gen3-usb3.c
-new file mode 100644
-index 0000000..6238417
---- /dev/null
-+++ b/drivers/phy/renesas/phy-rcar-gen3-usb3.c
-@@ -0,0 +1,207 @@
-+/*
-+ * Renesas R-Car Gen3 for USB3.0 PHY driver
-+ *
-+ * Copyright (C) 2017 Renesas Electronics Corporation
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
++	  If your system has a slave-capable SPI controller, you can enable
++	  slave protocol handlers.
++
++if SPI_SLAVE
++
++endif # SPI_SLAVE
+ 
+ endif # SPI
+diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile
+index b375a7a89216..e50852c6fcb8 100644
+--- a/drivers/spi/Makefile
++++ b/drivers/spi/Makefile
+@@ -105,3 +105,5 @@ obj-$(CONFIG_SPI_XILINX)		+= spi-xilinx.o
+ obj-$(CONFIG_SPI_XLP)			+= spi-xlp.o
+ obj-$(CONFIG_SPI_XTENSA_XTFPGA)		+= spi-xtensa-xtfpga.o
+ obj-$(CONFIG_SPI_ZYNQMP_GQSPI)		+= spi-zynqmp-gqspi.o
++
++# SPI slave protocol handlers
+diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+index 89254a55eb2e..6a8280bdc7a8 100644
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -1535,15 +1535,6 @@ static int of_spi_parse_dt(struct spi_master *master, struct spi_device *spi,
+ 	u32 value;
+ 	int rc;
+ 
+-	/* Device address */
+-	rc = of_property_read_u32(nc, "reg", &value);
+-	if (rc) {
+-		dev_err(&master->dev, "%s has no valid 'reg' property (%d)\n",
+-			nc->full_name, rc);
+-		return rc;
+-	}
+-	spi->chip_select = value;
+-
+ 	/* Mode (clock phase/polarity/etc.) */
+ 	if (of_find_property(nc, "spi-cpha", NULL))
+ 		spi->mode |= SPI_CPHA;
+@@ -1593,6 +1584,24 @@ static int of_spi_parse_dt(struct spi_master *master, struct spi_device *spi,
+ 		}
+ 	}
+ 
++	if (spi_controller_is_slave(master)) {
++		if (strcmp(nc->name, "slave")) {
++			dev_err(&master->dev, "%s is not called 'slave'\n",
++				nc->full_name);
++			return -EINVAL;
++		}
++		return 0;
++	}
++
++	/* Device address */
++	rc = of_property_read_u32(nc, "reg", &value);
++	if (rc) {
++		dev_err(&master->dev, "%s has no valid 'reg' property (%d)\n",
++			nc->full_name, rc);
++		return rc;
++	}
++	spi->chip_select = value;
++
+ 	/* Device speed */
+ 	rc = of_property_read_u32(nc, "spi-max-frequency", &value);
+ 	if (rc) {
+@@ -1658,8 +1667,8 @@ of_register_spi_device(struct spi_master *master, struct device_node *nc)
+  * of_register_spi_devices() - Register child devices onto the SPI bus
+  * @master:	Pointer to spi_master device
+  *
+- * Registers an spi_device for each child node of master node which has a 'reg'
+- * property.
++ * Registers an spi_device for each child node of controller node which
++ * represents a valid SPI slave.
+  */
+ static void of_register_spi_devices(struct spi_master *master)
+ {
+@@ -1828,28 +1837,129 @@ static struct class spi_master_class = {
+ 	.dev_groups	= spi_master_groups,
+ };
+ 
++#ifdef CONFIG_SPI_SLAVE
++/**
++ * spi_slave_abort - abort the ongoing transfer request on an SPI slave
++ *		     controller
++ * @spi: device used for the current transfer
 + */
-+
-+#include <linux/clk.h>
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/phy/phy.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
-+
-+#define USB30_CLKSET0	0x034
-+#define USB30_CLKSET1	0x036
-+#define USB30_SSC_SET	0x038
-+#define USB30_VBUS_EN	0x064
-+
-+#define CLKSET0_RESERVED		0x05c0
-+#define CLKSET0_USB_EXTAL		(CLKSET0_RESERVED | 0x0002)
-+
-+#define CLKSET1_PLL_MULTI_SHIFT		6
-+#define CLKSET1_PLL_MULTI_USB_EXTAL	(0x64 << CLKSET1_PLL_MULTI_SHIFT)
-+#define CLKSET1_REF_CLKDIV_USB_EXTAL	BIT(3)
-+#define CLKSET1_RESERVED_1		BIT(1)
-+#define CLKSET1_REF_CLK_SEL_USB_EXTAL	0
-+#define CLKSET1_USB_EXTAL	(CLKSET1_PLL_MULTI_USB_EXTAL | \
-+				 CLKSET1_REF_CLKDIV_USB_EXTAL | \
-+				 CLKSET1_RESERVED_1 | \
-+				 CLKSET1_REF_CLK_SEL_USB_EXTAL)
-+
-+#define SSC_SET_SSC_EN		BIT(12)
-+#define SSC_SET_RANGE_SHIFT	9
-+#define SSC_SET_RANGE_4980	(0x0 << SSC_SET_RANGE_SHIFT)
-+#define SSC_SET_RANGE_4492	(0x1 << SSC_SET_RANGE_SHIFT)
-+#define SSC_SET_RANGE_4003	(0x2 << SSC_SET_RANGE_SHIFT)
-+
-+#define VBUS_EN_VBUS_EN		BIT(1)
-+
-+struct rcar_gen3_usb3 {
-+	void __iomem *base;
-+	struct phy *phy;
-+	u32 ssc_range;
-+	bool usb3s_clk;
-+	bool usb_extal;
-+};
-+
-+static void rcar_gen3_phy_usb3_enable_ssc(struct rcar_gen3_usb3 *r)
++int spi_slave_abort(struct spi_device *spi)
 +{
-+	u16 val = SSC_SET_SSC_EN;
++	struct spi_master *master = spi->master;
 +
-+	switch (r->ssc_range) {
-+	case 4980:
-+		val |= SSC_SET_RANGE_4980;
-+		break;
-+	case 4492:
-+		val |= SSC_SET_RANGE_4492;
-+		break;
-+	case 4003:
-+		val |= SSC_SET_RANGE_4003;
-+		break;
-+	default:
-+		dev_err(&r->phy->dev, "%s: unsupported range (%x)\n", __func__,
-+			r->ssc_range);
-+		return;
-+	}
++	if (spi_controller_is_slave(master) && master->slave_abort)
++		return master->slave_abort(master);
 +
-+	writew(val, r->base + USB30_SSC_SET);
++	return -ENOTSUPP;
++}
++EXPORT_SYMBOL_GPL(spi_slave_abort);
++
++static int match_true(struct device *dev, void *data)
++{
++	return 1;
 +}
 +
-+static void rcar_gen3_phy_usb3_select_usb_extal(struct rcar_gen3_usb3 *r)
++static ssize_t spi_slave_show(struct device *dev,
++			      struct device_attribute *attr, char *buf)
 +{
-+	writew(CLKSET0_USB_EXTAL, r->base + USB30_CLKSET0);
-+	writew(CLKSET1_USB_EXTAL, r->base + USB30_CLKSET1);
++	struct spi_master *ctlr = container_of(dev, struct spi_master, dev);
++	struct device *child;
++
++	child = device_find_child(&ctlr->dev, NULL, match_true);
++	return sprintf(buf, "%s\n",
++		       child ? to_spi_device(child)->modalias : NULL);
 +}
 +
-+static int rcar_gen3_phy_usb3_init(struct phy *p)
++static ssize_t spi_slave_store(struct device *dev,
++			       struct device_attribute *attr, const char *buf,
++			       size_t count)
 +{
-+	struct rcar_gen3_usb3 *r = phy_get_drvdata(p);
++	struct spi_master *ctlr = container_of(dev, struct spi_master, dev);
++	struct spi_device *spi;
++	struct device *child;
++	char name[32];
++	int rc;
 +
-+	dev_info(&r->phy->dev, "%s: enter (%d, %d, %d)\n", __func__,
-+		 r->usb3s_clk, r->usb_extal, r->ssc_range);
-+
-+	if (!r->usb3s_clk && r->usb_extal) {
-+		rcar_gen3_phy_usb3_select_usb_extal(r);
-+		/* SSC can be enabled when usb_extal is used */
-+		if (r->ssc_range)
-+			rcar_gen3_phy_usb3_enable_ssc(r);
-+	}
-+
-+	/* Enables VBUS detection anyway */
-+	writew(VBUS_EN_VBUS_EN, r->base + USB30_VBUS_EN);
-+
-+	return 0;
-+}
-+
-+static const struct phy_ops rcar_gen3_phy_usb3_ops = {
-+	.init		= rcar_gen3_phy_usb3_init,
-+	.owner		= THIS_MODULE,
-+};
-+
-+static const struct of_device_id rcar_gen3_phy_usb3_match_table[] = {
-+	{ .compatible = "renesas,r8a7795-usb3-phy" },
-+	{ .compatible = "renesas,r8a7796-usb3-phy" },
-+	{ .compatible = "renesas,rcar-gen3-usb3-phy" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, rcar_gen3_phy_usb3_match_table);
-+
-+static int rcar_gen3_phy_usb3_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct rcar_gen3_usb3 *r;
-+	struct phy_provider *provider;
-+	struct resource *res;
-+	int ret = 0;
-+	struct clk *clk;
-+
-+	if (!dev->of_node) {
-+		dev_err(dev, "This driver needs device tree\n");
++	rc = sscanf(buf, "%31s", name);
++	if (rc != 1 || !name[0])
 +		return -EINVAL;
++
++	child = device_find_child(&ctlr->dev, NULL, match_true);
++	if (child) {
++		/* Remove registered slave */
++		device_unregister(child);
++		put_device(child);
 +	}
 +
-+	r = devm_kzalloc(dev, sizeof(*r), GFP_KERNEL);
-+	if (!r)
-+		return -ENOMEM;
++	if (strcmp(name, "(null)")) {
++		/* Register new slave */
++		spi = spi_alloc_device(ctlr);
++		if (!spi)
++			return -ENOMEM;
 +
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	r->base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(r->base))
-+		return PTR_ERR(r->base);
++		strlcpy(spi->modalias, name, sizeof(spi->modalias));
 +
-+	clk = devm_clk_get(dev, "usb3s_clk");
-+	if (!IS_ERR(clk) && !clk_prepare_enable(clk)) {
-+		r->usb3s_clk = !!clk_get_rate(clk);
-+		clk_disable_unprepare(clk);
-+	}
-+	clk = devm_clk_get(dev, "usb_extal");
-+	if (!IS_ERR(clk) && !clk_prepare_enable(clk)) {
-+		r->usb_extal = !!clk_get_rate(clk);
-+		clk_disable_unprepare(clk);
++		rc = spi_add_device(spi);
++		if (rc) {
++			spi_dev_put(spi);
++			return rc;
++		}
 +	}
 +
-+	if (!r->usb3s_clk && !r->usb_extal) {
-+		dev_err(dev, "This driver needs usb3s_clk and/or usb_extal\n");
-+		ret = -EINVAL;
-+		goto error;
-+	}
-+
-+	/*
-+	 * devm_phy_create() will call pm_runtime_enable(&phy->dev);
-+	 * And then, phy-core will manage runtime pm for this device.
-+	 */
-+	pm_runtime_enable(dev);
-+
-+	r->phy = devm_phy_create(dev, NULL, &rcar_gen3_phy_usb3_ops);
-+	if (IS_ERR(r->phy)) {
-+		dev_err(dev, "Failed to create USB3 PHY\n");
-+		ret = PTR_ERR(r->phy);
-+		goto error;
-+	}
-+
-+	of_property_read_u32(dev->of_node, "renesas,ssc-range", &r->ssc_range);
-+
-+	platform_set_drvdata(pdev, r);
-+	phy_set_drvdata(r->phy, r);
-+
-+	provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
-+	if (IS_ERR(provider)) {
-+		dev_err(dev, "Failed to register PHY provider\n");
-+		ret = PTR_ERR(provider);
-+		goto error;
-+	}
-+
-+	return 0;
-+
-+error:
-+	pm_runtime_disable(dev);
-+
-+	return ret;
++	return count;
 +}
 +
-+static int rcar_gen3_phy_usb3_remove(struct platform_device *pdev)
++static DEVICE_ATTR(slave, 0644, spi_slave_show, spi_slave_store);
++
++static struct attribute *spi_slave_attrs[] = {
++	&dev_attr_slave.attr,
++	NULL,
++};
++
++static const struct attribute_group spi_slave_group = {
++	.attrs = spi_slave_attrs,
++};
++
++static const struct attribute_group *spi_slave_groups[] = {
++	&spi_master_statistics_group,
++	&spi_slave_group,
++	NULL,
++};
++
++static struct class spi_slave_class = {
++	.name		= "spi_slave",
++	.owner		= THIS_MODULE,
++	.dev_release	= spi_master_release,
++	.dev_groups	= spi_slave_groups,
++};
++#else
++extern struct class spi_slave_class;	/* dummy */
++#endif
+ 
+ /**
+- * spi_alloc_master - allocate SPI master controller
++ * __spi_alloc_controller - allocate an SPI master or slave controller
+  * @dev: the controller, possibly using the platform_bus
+  * @size: how much zeroed driver-private data to allocate; the pointer to this
+  *	memory is in the driver_data field of the returned device,
+  *	accessible with spi_master_get_devdata().
++ * @slave: flag indicating whether to allocate an SPI master (false) or SPI
++ *	slave (true) controller
+  * Context: can sleep
+  *
+- * This call is used only by SPI master controller drivers, which are the
++ * This call is used only by SPI controller drivers, which are the
+  * only ones directly touching chip registers.  It's how they allocate
+  * an spi_master structure, prior to calling spi_register_master().
+  *
+  * This must be called from context that can sleep.
+  *
+- * The caller is responsible for assigning the bus number and initializing
+- * the master's methods before calling spi_register_master(); and (after errors
++ * The caller is responsible for assigning the bus number and initializing the
++ * controller's methods before calling spi_register_master(); and (after errors
+  * adding the device) calling spi_master_put() to prevent a memory leak.
+  *
+- * Return: the SPI master structure on success, else NULL.
++ * Return: the SPI controller structure on success, else NULL.
+  */
+-struct spi_master *spi_alloc_master(struct device *dev, unsigned size)
++struct spi_master *__spi_alloc_controller(struct device *dev,
++					  unsigned int size, bool slave)
+ {
+ 	struct spi_master	*master;
+ 
+@@ -1863,14 +1973,18 @@ struct spi_master *spi_alloc_master(struct device *dev, unsigned size)
+ 	device_initialize(&master->dev);
+ 	master->bus_num = -1;
+ 	master->num_chipselect = 1;
+-	master->dev.class = &spi_master_class;
++	master->slave = slave;
++	if (IS_ENABLED(CONFIG_SPI_SLAVE) && slave)
++		master->dev.class = &spi_slave_class;
++	else
++		master->dev.class = &spi_master_class;
+ 	master->dev.parent = dev;
+ 	pm_suspend_ignore_children(&master->dev, true);
+ 	spi_master_set_devdata(master, &master[1]);
+ 
+ 	return master;
+ }
+-EXPORT_SYMBOL_GPL(spi_alloc_master);
++EXPORT_SYMBOL_GPL(__spi_alloc_controller);
+ 
+ #ifdef CONFIG_OF
+ static int of_spi_register_master(struct spi_master *master)
+@@ -1946,9 +2060,11 @@ int spi_register_master(struct spi_master *master)
+ 	if (!dev)
+ 		return -ENODEV;
+ 
+-	status = of_spi_register_master(master);
+-	if (status)
+-		return status;
++	if (!spi_controller_is_slave(master)) {
++		status = of_spi_register_master(master);
++		if (status)
++			return status;
++	}
+ 
+ 	/* even if it's just one always-selected device, there must
+ 	 * be at least one chipselect
+@@ -1985,8 +2101,9 @@ int spi_register_master(struct spi_master *master)
+ 	status = device_add(&master->dev);
+ 	if (status < 0)
+ 		goto done;
+-	dev_dbg(dev, "registered master %s%s\n", dev_name(&master->dev),
+-			dynamic ? " (dynamic)" : "");
++	dev_dbg(dev, "registered %s %s%s\n",
++			spi_controller_is_slave(master) ? "slave" : "master",
++			dev_name(&master->dev), dynamic ? " (dynamic)" : "");
+ 
+ 	/* If we're using a queued driver, start the queue */
+ 	if (master->transfer)
+@@ -3159,6 +3276,9 @@ static struct spi_master *of_find_spi_master_by_node(struct device_node *node)
+ 
+ 	dev = class_find_device(&spi_master_class, NULL, node,
+ 				__spi_of_master_match);
++	if (!dev && IS_ENABLED(CONFIG_SPI_SLAVE))
++		dev = class_find_device(&spi_slave_class, NULL, node,
++					__spi_of_master_match);
+ 	if (!dev)
+ 		return NULL;
+ 
+@@ -3240,6 +3360,9 @@ static struct spi_master *acpi_spi_find_master_by_adev(struct acpi_device *adev)
+ 
+ 	dev = class_find_device(&spi_master_class, NULL, adev,
+ 				spi_acpi_master_match);
++	if (!dev && IS_ENABLED(CONFIG_SPI_SLAVE))
++		dev = class_find_device(&spi_slave_class, NULL, adev,
++					spi_acpi_master_match);
+ 	if (!dev)
+ 		return NULL;
+ 
+@@ -3312,6 +3435,12 @@ static int __init spi_init(void)
+ 	if (status < 0)
+ 		goto err2;
+ 
++	if (IS_ENABLED(CONFIG_SPI_SLAVE)) {
++		status = class_register(&spi_slave_class);
++		if (status < 0)
++			goto err3;
++	}
++
+ 	if (IS_ENABLED(CONFIG_OF_DYNAMIC))
+ 		WARN_ON(of_reconfig_notifier_register(&spi_of_notifier));
+ 	if (IS_ENABLED(CONFIG_ACPI))
+@@ -3319,6 +3448,8 @@ static int __init spi_init(void)
+ 
+ 	return 0;
+ 
++err3:
++	class_unregister(&spi_master_class);
+ err2:
+ 	bus_unregister(&spi_bus_type);
+ err1:
+diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
+index 935bd2854ff1..0a78745e5766 100644
+--- a/include/linux/spi/spi.h
++++ b/include/linux/spi/spi.h
+@@ -29,8 +29,8 @@ struct spi_transfer;
+ struct spi_flash_read_message;
+ 
+ /*
+- * INTERFACES between SPI master-side drivers and SPI infrastructure.
+- * (There's no SPI slave support for Linux yet...)
++ * INTERFACES between SPI master-side drivers and SPI slave protocol handlers,
++ * and SPI infrastructure.
+  */
+ extern struct bus_type spi_bus_type;
+ 
+@@ -311,6 +311,7 @@ static inline void spi_unregister_driver(struct spi_driver *sdrv)
+  * @min_speed_hz: Lowest supported transfer speed
+  * @max_speed_hz: Highest supported transfer speed
+  * @flags: other constraints relevant to this driver
++ * @slave: indicates that this is an SPI slave controller
+  * @max_transfer_size: function that returns the max transfer size for
+  *	a &spi_device; may be %NULL, so the default %SIZE_MAX will be used.
+  * @max_message_size: function that returns the max message size for
+@@ -374,6 +375,7 @@ static inline void spi_unregister_driver(struct spi_driver *sdrv)
+  * @handle_err: the subsystem calls the driver to handle an error that occurs
+  *		in the generic implementation of transfer_one_message().
+  * @unprepare_message: undo any work done by prepare_message().
++ * @slave_abort: abort the ongoing transfer request on an SPI slave controller
+  * @spi_flash_read: to support spi-controller hardwares that provide
+  *                  accelerated interface to read from flash devices.
+  * @spi_flash_can_dma: analogous to can_dma() interface, but for
+@@ -447,6 +449,9 @@ struct spi_master {
+ #define SPI_MASTER_MUST_TX      BIT(4)		/* requires tx */
+ #define SPI_MASTER_GPIO_SS      BIT(5)		/* GPIO CS must select slave */
+ 
++	/* flag indicating this is an SPI slave controller */
++	bool			slave;
++
+ 	/*
+ 	 * on some hardware transfer / message size may be constrained
+ 	 * the limit may depend on device transfer settings
+@@ -539,6 +544,7 @@ struct spi_master {
+ 			       struct spi_message *message);
+ 	int (*unprepare_message)(struct spi_master *master,
+ 				 struct spi_message *message);
++	int (*slave_abort)(struct spi_master *spi);
+ 	int (*spi_flash_read)(struct  spi_device *spi,
+ 			      struct spi_flash_read_message *msg);
+ 	bool (*spi_flash_can_dma)(struct spi_device *spi,
+@@ -595,6 +601,11 @@ static inline void spi_master_put(struct spi_master *master)
+ 		put_device(&master->dev);
+ }
+ 
++static inline bool spi_controller_is_slave(struct spi_master *ctlr)
 +{
-+	pm_runtime_disable(&pdev->dev);
++	return IS_ENABLED(CONFIG_SPI_SLAVE) && ctlr->slave;
++}
 +
-+	return 0;
-+};
+ /* PM calls that need to be issued by the driver */
+ extern int spi_master_suspend(struct spi_master *master);
+ extern int spi_master_resume(struct spi_master *master);
+@@ -605,8 +616,23 @@ extern void spi_finalize_current_message(struct spi_master *master);
+ extern void spi_finalize_current_transfer(struct spi_master *master);
+ 
+ /* the spi driver core manages memory for the spi_master classdev */
+-extern struct spi_master *
+-spi_alloc_master(struct device *host, unsigned size);
++extern struct spi_master *__spi_alloc_controller(struct device *host,
++						 unsigned int size, bool slave);
 +
-+static struct platform_driver rcar_gen3_phy_usb3_driver = {
-+	.driver = {
-+		.name		= "phy_rcar_gen3_usb3",
-+		.of_match_table	= rcar_gen3_phy_usb3_match_table,
-+	},
-+	.probe	= rcar_gen3_phy_usb3_probe,
-+	.remove = rcar_gen3_phy_usb3_remove,
-+};
-+module_platform_driver(rcar_gen3_phy_usb3_driver);
++static inline struct spi_master *spi_alloc_master(struct device *host,
++						  unsigned int size)
++{
++	return __spi_alloc_controller(host, size, false);
++}
 +
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("Renesas R-Car Gen3 USB 3.0 PHY");
-+MODULE_AUTHOR("Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>");
++static inline struct spi_master *spi_alloc_slave(struct device *host,
++						 unsigned int size)
++{
++	if (!IS_ENABLED(CONFIG_SPI_SLAVE))
++		return NULL;
++
++	return __spi_alloc_controller(host, size, true);
++}
+ 
+ extern int spi_register_master(struct spi_master *master);
+ extern int devm_spi_register_master(struct device *dev,
+@@ -912,6 +938,7 @@ extern int spi_setup(struct spi_device *spi);
+ extern int spi_async(struct spi_device *spi, struct spi_message *message);
+ extern int spi_async_locked(struct spi_device *spi,
+ 			    struct spi_message *message);
++extern int spi_slave_abort(struct spi_device *spi);
+ 
+ static inline size_t
+ spi_max_message_size(struct spi_device *spi)
 -- 
-1.9.1
+2.11.0
