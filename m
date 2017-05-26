@@ -1,86 +1,102 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:36342 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1164049AbdEZLmA (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 26 May 2017 07:42:00 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+Return-Path: <linux-media-owner@vger.kernel.org>
+Date: Sat, 27 May 2017 00:52:09 +0300
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-media@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
         linux-renesas-soc@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <8737bt1zes.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dEDct-0000iw-44@debutante>
-Date: Fri, 26 May 2017 12:41:51 +0100
-Subject: Applied "ASoC: simple-card-utils: remove strict limitation of bit/frame master" to the asoc tree
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH v2 1/2] media: entity: Add pad_from_fwnode entity
+ operation
+Message-ID: <20170526215209.GT29527@valkosipuli.retiisi.org.uk>
+References: <20170524000907.13061-1-niklas.soderlund@ragnatech.se>
+ <20170524000907.13061-2-niklas.soderlund@ragnatech.se>
+ <20170524132137.GK29527@valkosipuli.retiisi.org.uk>
+ <20170524140736.GB7346@bigcity.dyn.berto.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20170524140736.GB7346@bigcity.dyn.berto.se>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+Hejssan,
 
-   ASoC: simple-card-utils: remove strict limitation of bit/frame master
+On Wed, May 24, 2017 at 04:07:36PM +0200, Niklas S�derlund wrote:
+> Hi Sakari,
+> 
+> Thanks for your feedback.
+> 
+> On 2017-05-24 16:21:37 +0300, Sakari Ailus wrote:
+> > Hi Niklas,
+> > 
+> > On Wed, May 24, 2017 at 02:09:06AM +0200, Niklas S�derlund wrote:
+> > > From: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+> > > 
+> > > The optional operation can be used by entities to report how it maps its
+> > > fwnode endpoints to media pad numbers. This is useful for devices which
+> > > require advanced mappings of pads.
+> > > 
+> > > Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+> > > ---
+> > >  include/media/media-entity.h | 6 ++++++
+> > >  1 file changed, 6 insertions(+)
+> > > 
+> > > diff --git a/include/media/media-entity.h b/include/media/media-entity.h
+> > > index c7c254c5bca1761b..2aea22b0409d1070 100644
+> > > --- a/include/media/media-entity.h
+> > > +++ b/include/media/media-entity.h
+> > > @@ -21,6 +21,7 @@
+> > >  
+> > >  #include <linux/bitmap.h>
+> > >  #include <linux/bug.h>
+> > > +#include <linux/fwnode.h>
+> > >  #include <linux/kernel.h>
+> > >  #include <linux/list.h>
+> > >  #include <linux/media.h>
+> > > @@ -171,6 +172,9 @@ struct media_pad {
+> > >  
+> > >  /**
+> > >   * struct media_entity_operations - Media entity operations
+> > > + * @pad_from_fwnode:	Return the pad number based on a fwnode endpoint.
+> > > + *			This operation can be used to map a fwnode to a
+> > > + *			media pad number. Optional.
+> > >   * @link_setup:		Notify the entity of link changes. The operation can
+> > >   *			return an error, in which case link setup will be
+> > >   *			cancelled. Optional.
+> > > @@ -184,6 +188,8 @@ struct media_pad {
+> > >   *    mutex held.
+> > >   */
+> > >  struct media_entity_operations {
+> > > +	int (*pad_from_fwnode)(struct fwnode_endpoint *endpoint,
+> > > +			       unsigned int *pad);
+> > 
+> > Hmm. How about calling this get_fwnode_pad for instance? I wonder what
+> > others think.
+> 
+> I'm OK with this name change, will update for next version.
+> 
+> > 
+> > You could just return the pad number still, and a negative value on error. I
+> > think we won't have more than INT_MAX pads. :-)
+> 
+> I did that at first but then I remembered all the review comments I have 
+> gotten earlier about using int as the type for pads :-) If you and 
+> others agree in this case returning the pad as int or a negative value 
+> as error I have no problem chaining this for the next version.
 
-has been applied to the asoc tree at
+unsigned int was proposed for there was no need for negative values. In this
+case there is.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+I don't really have a strong opinion either way. I wonder what Hans or
+Laurent thinks.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 155b8f3aa633dbce887cded6b6b9399a3c62683e Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Thu, 25 May 2017 01:51:31 +0000
-Subject: [PATCH] ASoC: simple-card-utils: remove strict limitation of
- bit/frame master
-
-Current asoc_simple_card_parse_daifmt is keeping backward compatibility
-for bitmaster/framemaster which didn't use phandle.
-The keep compatibility, it is checking prefix length, but it is
-too strict. let's loosen it. Otherwise, OF-graph base sound card
-which doesn't have prefix can't detect daifmt.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/generic/simple-card-utils.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/sound/soc/generic/simple-card-utils.c b/sound/soc/generic/simple-card-utils.c
-index fe726e83d0bd..9c7f5b91b90a 100644
---- a/sound/soc/generic/simple-card-utils.c
-+++ b/sound/soc/generic/simple-card-utils.c
-@@ -21,14 +21,13 @@ int asoc_simple_card_parse_daifmt(struct device *dev,
- {
- 	struct device_node *bitclkmaster = NULL;
- 	struct device_node *framemaster = NULL;
--	int prefix_len = prefix ? strlen(prefix) : 0;
- 	unsigned int daifmt;
- 
- 	daifmt = snd_soc_of_parse_daifmt(node, prefix,
- 					 &bitclkmaster, &framemaster);
- 	daifmt &= ~SND_SOC_DAIFMT_MASTER_MASK;
- 
--	if (prefix_len && !bitclkmaster && !framemaster) {
-+	if (!bitclkmaster && !framemaster) {
- 		/*
- 		 * No dai-link level and master setting was not found from
- 		 * sound node level, revert back to legacy DT parsing and
 -- 
-2.11.0
+Regards,
+
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
