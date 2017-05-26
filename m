@@ -1,116 +1,115 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:45768 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753536AbdESIqy (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 19 May 2017 04:46:54 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-clk@vger.kernel.org,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Mark Brown <broonie@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Hisashi Nakamura <hisashi.nakamura.ak@renesas.com>,
+        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
+        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 00/10] clk: renesas: rcar-gen2: Add new CPG/MSSR drivers
-Date: Fri, 19 May 2017 10:45:55 +0200
-Message-Id: <1495183565-21679-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        linux-spi@vger.kernel.org
+In-Reply-To: <1473713446-30366-5-git-send-email-geert+renesas@glider.be>
+Message-Id: <E1dEE6u-0001RW-52@debutante>
+Date: Fri, 26 May 2017 13:12:52 +0100
+Subject: Applied "spi: Document SPI slave controller support" to the spi tree
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi all,
+The patch
 
-Currently Renesas R-Car Gen2 SoCs use the common clk-rcar-gen2,
-clk-mstp, and clk-div6 drivers, which depend on most clocks being
-described in DT.  Especially the module (MSTP) clocks are cumbersome and
-error prone, due to 3 arrays (clocks, clock-indices, and
-clock-output-names) to be kept in sync. In addition, the clk-mstp driver
-cannot be extended easily to also support module resets, which are
-provided by the same hardware module.
+   spi: Document SPI slave controller support
 
-Hence when developing support for R-Car Gen3 SoCs, another approach was
-chosen, which led to the CPG/MSSR driver core, and SoC-specific
-subdrivers (initially for R-Car Gen3, but later also for RZ/G1).
+has been applied to the spi tree at
 
-This series introduces new clock drivers for all supported R-Car Gen2
-SoCs, using the CPG/MSSR driver core, and the support for RZ/G1.  They
-provide all clocks supported by the old driver, plus a few more.
-The old driver can still be used through a Kconfig option, to preserve
-backward compatibility with old DTBs.
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
 
-This series does not include the corresponding DTS updates.  These will
-be posted as a separate series later.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Changes compared to v1:
-  - Add Acked-by, Reviewed-by,
-  - Add more rationale to the clock driver patch descriptions.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-This series depends on "[PATCH v2] clk: renesas: Rework Kconfig and
-Makefile logic", which I posted before.
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-For testing, this patch series, incl. all dependencies and the DTS
-updates, are available in the topic/rcar2-cpg-mssr-v2 branch of my
-renesas-drivers git repository at
-git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-This has been tested on r8a7790/lager, r8a7791/koelsch, r8a7792/blanche,
-r8a7793/gose, and r8a7794/alt.  /sys/kernel/debug/clk/clk_summary has
-been compared before and after the conversion.
+Thanks,
+Mark
 
-I plan to queue this up in clk-renesas-for-v4.13, so the DTS updates can
-be queued for v4.14 later.
+>From aa2ea9115bc3f0735aa65b833076cc5fe3da1489 Mon Sep 17 00:00:00 2001
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Date: Mon, 22 May 2017 15:11:42 +0200
+Subject: [PATCH] spi: Document SPI slave controller support
 
-Thanks!
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ Documentation/spi/spi-summary | 27 ++++++++++++++++++++-------
+ 1 file changed, 20 insertions(+), 7 deletions(-)
 
-Geert Uytterhoeven (10):
-  clk: renesas: cpg-mssr: Document R-Car Gen2 support
-  clk: renesas: Add r8a7790 CPG Core Clock Definitions
-  clk: renesas: Add r8a7791 CPG Core Clock Definitions
-  clk: renesas: Add r8a7792 CPG Core Clock Definitions
-  clk: renesas: Add r8a7793 CPG Core Clock Definitions
-  clk: renesas: Add r8a7794 CPG Core Clock Definitions
-  clk: renesas: r8a7790: Add new CPG/MSSR driver
-  clk: renesas: r8a7791/r8a7793: Add new CPG/MSSR driver
-  clk: renesas: r8a7792: Add new CPG/MSSR driver
-  clk: renesas: r8a7794: Add new CPG/MSSR driver
-
- .../devicetree/bindings/clock/renesas,cpg-mssr.txt |  10 +-
- drivers/clk/renesas/Kconfig                        |  22 +-
- drivers/clk/renesas/Makefile                       |   4 +
- drivers/clk/renesas/r8a7790-cpg-mssr.c             | 278 ++++++++++++++++++++
- drivers/clk/renesas/r8a7791-cpg-mssr.c             | 286 +++++++++++++++++++++
- drivers/clk/renesas/r8a7792-cpg-mssr.c             | 221 ++++++++++++++++
- drivers/clk/renesas/r8a7794-cpg-mssr.c             | 255 ++++++++++++++++++
- drivers/clk/renesas/renesas-cpg-mssr.c             |  29 +++
- drivers/clk/renesas/renesas-cpg-mssr.h             |   4 +
- include/dt-bindings/clock/r8a7790-cpg-mssr.h       |  52 ++++
- include/dt-bindings/clock/r8a7791-cpg-mssr.h       |  48 ++++
- include/dt-bindings/clock/r8a7792-cpg-mssr.h       |  43 ++++
- include/dt-bindings/clock/r8a7793-cpg-mssr.h       |  48 ++++
- include/dt-bindings/clock/r8a7794-cpg-mssr.h       |  47 ++++
- 14 files changed, 1341 insertions(+), 6 deletions(-)
- create mode 100644 drivers/clk/renesas/r8a7790-cpg-mssr.c
- create mode 100644 drivers/clk/renesas/r8a7791-cpg-mssr.c
- create mode 100644 drivers/clk/renesas/r8a7792-cpg-mssr.c
- create mode 100644 drivers/clk/renesas/r8a7794-cpg-mssr.c
- create mode 100644 include/dt-bindings/clock/r8a7790-cpg-mssr.h
- create mode 100644 include/dt-bindings/clock/r8a7791-cpg-mssr.h
- create mode 100644 include/dt-bindings/clock/r8a7792-cpg-mssr.h
- create mode 100644 include/dt-bindings/clock/r8a7793-cpg-mssr.h
- create mode 100644 include/dt-bindings/clock/r8a7794-cpg-mssr.h
-
+diff --git a/Documentation/spi/spi-summary b/Documentation/spi/spi-summary
+index d1824b399b2d..1721c1b570c3 100644
+--- a/Documentation/spi/spi-summary
++++ b/Documentation/spi/spi-summary
+@@ -62,8 +62,8 @@ chips described as using "three wire" signaling: SCK, data, nCSx.
+ (That data line is sometimes called MOMI or SISO.)
+ 
+ Microcontrollers often support both master and slave sides of the SPI
+-protocol.  This document (and Linux) currently only supports the master
+-side of SPI interactions.
++protocol.  This document (and Linux) supports both the master and slave
++sides of SPI interactions.
+ 
+ 
+ Who uses it?  On what kinds of systems?
+@@ -154,9 +154,8 @@ control audio interfaces, present touchscreen sensors as input interfaces,
+ or monitor temperature and voltage levels during industrial processing.
+ And those might all be sharing the same controller driver.
+ 
+-A "struct spi_device" encapsulates the master-side interface between
+-those two types of driver.  At this writing, Linux has no slave side
+-programming interface.
++A "struct spi_device" encapsulates the controller-side interface between
++those two types of drivers.
+ 
+ There is a minimal core of SPI programming interfaces, focussing on
+ using the driver model to connect controller and protocol drivers using
+@@ -177,10 +176,24 @@ shows up in sysfs in several locations:
+    /sys/bus/spi/drivers/D ... driver for one or more spi*.* devices
+ 
+    /sys/class/spi_master/spiB ... symlink (or actual device node) to
+-	a logical node which could hold class related state for the
+-	controller managing bus "B".  All spiB.* devices share one
++	a logical node which could hold class related state for the SPI
++	master controller managing bus "B".  All spiB.* devices share one
+ 	physical SPI bus segment, with SCLK, MOSI, and MISO.
+ 
++   /sys/devices/.../CTLR/slave ... virtual file for (un)registering the
++	slave device for an SPI slave controller.
++	Writing the driver name of an SPI slave handler to this file
++	registers the slave device; writing "(null)" unregisters the slave
++	device.
++	Reading from this file shows the name of the slave device ("(null)"
++	if not registered).
++
++   /sys/class/spi_slave/spiB ... symlink (or actual device node) to
++	a logical node which could hold class related state for the SPI
++	slave controller on bus "B".  When registered, a single spiB.*
++	device is present here, possible sharing the physical SPI bus
++	segment with other SPI slave devices.
++
+ Note that the actual location of the controller's class state depends
+ on whether you enabled CONFIG_SYSFS_DEPRECATED or not.  At this time,
+ the only class-specific state is the bus number ("B" in "spiB"), so
 -- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+2.11.0
