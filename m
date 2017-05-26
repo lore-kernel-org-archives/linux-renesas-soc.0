@@ -1,57 +1,52 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:46181 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753556AbdEVMap (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 May 2017 08:30:45 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 12/14] ARM: dts: r8a7793: set maximum frequency for SDHI clocks
-Date: Mon, 22 May 2017 14:30:22 +0200
-Message-Id: <5cb275a9704c135e7d9a886c86796d1df0ed52cd.1495455272.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1495455272.git.horms+renesas@verge.net.au>
-References: <cover.1495455272.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+Date: Sat, 27 May 2017 00:05:12 +0300
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Cc: "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "mchehab@kernel.org" <mchehab@kernel.org>,
+        "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>,
+        "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
+        "crope@iki.fi" <crope@iki.fi>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        "laurent.pinchart@ideasonboard.com"
+        <laurent.pinchart@ideasonboard.com>,
+        "geert+renesas@glider.be" <geert+renesas@glider.be>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v5 3/7] media: i2c: max2175: Add MAX2175 support
+Message-ID: <20170526210512.GR29527@valkosipuli.retiisi.org.uk>
+References: <20170509133738.16414-1-ramesh.shanmugasundaram@bp.renesas.com>
+ <20170509133738.16414-4-ramesh.shanmugasundaram@bp.renesas.com>
+ <20170510081231.GB3227@valkosipuli.retiisi.org.uk>
+ <KL1PR0601MB2038AAC0C02926FE168A7952C3FC0@KL1PR0601MB2038.apcprd06.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <KL1PR0601MB2038AAC0C02926FE168A7952C3FC0@KL1PR0601MB2038.apcprd06.prod.outlook.com>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Define the upper limit otherwise the driver cannot utilize max speeds.
+On Fri, May 26, 2017 at 02:47:32PM +0000, Ramesh Shanmugasundaram wrote:
+> Hi Sakari,
+> 
+> Thanks for the review comments on the patches. Sorry for the late response
+> as I was caught up with another work.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- arch/arm/boot/dts/r8a7793.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
+No worries.
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index 728b5bca5bdb..13b980f27bbc 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -542,6 +542,7 @@
- 		dmas = <&dmac0 0xcd>, <&dmac0 0xce>,
- 		       <&dmac1 0xcd>, <&dmac1 0xce>;
- 		dma-names = "tx", "rx", "tx", "rx";
-+		max-frequency = <195000000>;
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
-@@ -554,6 +555,7 @@
- 		dmas = <&dmac0 0xc1>, <&dmac0 0xc2>,
- 		       <&dmac1 0xc1>, <&dmac1 0xc2>;
- 		dma-names = "tx", "rx", "tx", "rx";
-+		max-frequency = <97500000>;
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
-@@ -566,6 +568,7 @@
- 		dmas = <&dmac0 0xd3>, <&dmac0 0xd4>,
- 		       <&dmac1 0xd3>, <&dmac1 0xd4>;
- 		dma-names = "tx", "rx", "tx", "rx";
-+		max-frequency = <97500000>;
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
+> 
+> I will incorporate your comments and rebase it on top of your branch. I
+> see it is not there in media-tree master yet. Please let me know if there
+> is a change in plan.
+
+I've sent a pull request to Mauro here and my expectation is it'll reach
+media tree master in not too distant future:
+
+<URL:http://www.spinics.net/lists/linux-media/msg115707.html>
+
 -- 
-2.1.4
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
