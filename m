@@ -1,234 +1,254 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: Daniel Vetter <daniel.vetter@intel.com>,
-        dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        freedreno@lists.freedesktop.org,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Vincent Abriou <vincent.abriou@st.com>,
-        Christian Gmeiner <christian.gmeiner@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-arm-msm@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>,
-        etnaviv@lists.freedesktop.org,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Marek Vasut <marex@denx.de>, Rob Clark <robdclark@gmail.com>,
-        nouveau@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Russell King <linux+etnaviv@armlinux.org.uk>
-Subject: [PATCH] drm: remove NULL pointer check for clk_disable_unprepare
-Date: Sun, 21 May 2017 02:58:51 +0900
-Message-Id: <1495303131-9814-1-git-send-email-yamada.masahiro@socionext.com>
+From: Mark Brown <broonie@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
+        Jiada Wang <jiada_wang@mentor.com>,
+        Matt Porter <mporter@konsulko.com>, linux-spi@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
+In-Reply-To: <1495458705-11692-7-git-send-email-geert+renesas@glider.be>
+Message-Id: <E1dEE6k-0001Nd-0c@debutante>
+Date: Fri, 26 May 2017 13:12:42 +0100
+Subject: Applied "spi: slave: Add SPI slave handler controlling system state" to the spi tree
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-After long term efforts of fixing non-common clock implementations,
-clk_disable() is a no-op for a NULL pointer input, and this is now
-tree-wide consistent.
+The patch
 
-All clock consumers can safely call clk_disable(_unprepare) without
-NULL pointer check.
+   spi: slave: Add SPI slave handler controlling system state
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+has been applied to the spi tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From ce70e06c093a9609377e93ee20e7c528e156af14 Mon Sep 17 00:00:00 2001
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Date: Mon, 22 May 2017 15:11:45 +0200
+Subject: [PATCH] spi: slave: Add SPI slave handler controlling system state
+
+Add an example SPI slave handler to allow remote control of system
+reboot, power off, halt, and suspend.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
+ drivers/spi/Kconfig                    |   6 ++
+ drivers/spi/Makefile                   |   1 +
+ drivers/spi/spi-slave-system-control.c | 154 +++++++++++++++++++++++++++++++++
+ 3 files changed, 161 insertions(+)
+ create mode 100644 drivers/spi/spi-slave-system-control.c
 
- drivers/gpu/drm/etnaviv/etnaviv_gpu.c              | 15 +++++----------
- drivers/gpu/drm/msm/mdp/mdp4/mdp4_kms.c            |  6 ++----
- drivers/gpu/drm/msm/mdp/mdp5/mdp5_kms.c            |  3 +--
- drivers/gpu/drm/msm/msm_gpu.c                      |  6 ++----
- drivers/gpu/drm/mxsfb/mxsfb_crtc.c                 |  3 +--
- drivers/gpu/drm/mxsfb/mxsfb_drv.c                  |  3 +--
- drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c |  6 ++----
- drivers/gpu/drm/omapdrm/dss/venc.c                 |  3 +--
- drivers/gpu/drm/shmobile/shmob_drm_crtc.c          |  3 +--
- drivers/gpu/drm/sti/sti_gdp.c                      |  3 +--
- 10 files changed, 17 insertions(+), 34 deletions(-)
-
-diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
-index 9a9c407..70efe04 100644
---- a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
-+++ b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
-@@ -1481,23 +1481,18 @@ static int etnaviv_gpu_clk_enable(struct etnaviv_gpu *gpu)
- 	return 0;
+diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+index ade542c5bfd8..e6d9e329a380 100644
+--- a/drivers/spi/Kconfig
++++ b/drivers/spi/Kconfig
+@@ -802,6 +802,12 @@ config SPI_SLAVE_TIME
+ 	  SPI slave handler responding with the time of reception of the last
+ 	  SPI message.
  
- disable_clk_core:
--	if (gpu->clk_core)
--		clk_disable_unprepare(gpu->clk_core);
-+	clk_disable_unprepare(gpu->clk_core);
- disable_clk_bus:
--	if (gpu->clk_bus)
--		clk_disable_unprepare(gpu->clk_bus);
-+	clk_disable_unprepare(gpu->clk_bus);
++config SPI_SLAVE_SYSTEM_CONTROL
++	tristate "SPI slave handler controlling system state"
++	help
++	  SPI slave handler to allow remote control of system reboot, power
++	  off, halt, and suspend.
++
+ endif # SPI_SLAVE
  
- 	return ret;
- }
+ endif # SPI
+diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile
+index fb078693dbe4..1d7923e8c63b 100644
+--- a/drivers/spi/Makefile
++++ b/drivers/spi/Makefile
+@@ -108,3 +108,4 @@ obj-$(CONFIG_SPI_ZYNQMP_GQSPI)		+= spi-zynqmp-gqspi.o
  
- static int etnaviv_gpu_clk_disable(struct etnaviv_gpu *gpu)
- {
--	if (gpu->clk_shader)
--		clk_disable_unprepare(gpu->clk_shader);
--	if (gpu->clk_core)
--		clk_disable_unprepare(gpu->clk_core);
--	if (gpu->clk_bus)
--		clk_disable_unprepare(gpu->clk_bus);
-+	clk_disable_unprepare(gpu->clk_shader);
-+	clk_disable_unprepare(gpu->clk_core);
-+	clk_disable_unprepare(gpu->clk_bus);
- 
- 	return 0;
- }
-diff --git a/drivers/gpu/drm/msm/mdp/mdp4/mdp4_kms.c b/drivers/gpu/drm/msm/mdp/mdp4/mdp4_kms.c
-index 3d26d77..886d07a 100644
---- a/drivers/gpu/drm/msm/mdp/mdp4/mdp4_kms.c
-+++ b/drivers/gpu/drm/msm/mdp/mdp4/mdp4_kms.c
-@@ -202,11 +202,9 @@ int mdp4_disable(struct mdp4_kms *mdp4_kms)
- 	DBG("");
- 
- 	clk_disable_unprepare(mdp4_kms->clk);
--	if (mdp4_kms->pclk)
--		clk_disable_unprepare(mdp4_kms->pclk);
-+	clk_disable_unprepare(mdp4_kms->pclk);
- 	clk_disable_unprepare(mdp4_kms->lut_clk);
--	if (mdp4_kms->axi_clk)
--		clk_disable_unprepare(mdp4_kms->axi_clk);
-+	clk_disable_unprepare(mdp4_kms->axi_clk);
- 
- 	return 0;
- }
-diff --git a/drivers/gpu/drm/msm/mdp/mdp5/mdp5_kms.c b/drivers/gpu/drm/msm/mdp/mdp5/mdp5_kms.c
-index d3d6b4c..9175064 100644
---- a/drivers/gpu/drm/msm/mdp/mdp5/mdp5_kms.c
-+++ b/drivers/gpu/drm/msm/mdp/mdp5/mdp5_kms.c
-@@ -252,8 +252,7 @@ int mdp5_disable(struct mdp5_kms *mdp5_kms)
- 	clk_disable_unprepare(mdp5_kms->ahb_clk);
- 	clk_disable_unprepare(mdp5_kms->axi_clk);
- 	clk_disable_unprepare(mdp5_kms->core_clk);
--	if (mdp5_kms->lut_clk)
--		clk_disable_unprepare(mdp5_kms->lut_clk);
-+	clk_disable_unprepare(mdp5_kms->lut_clk);
- 
- 	return 0;
- }
-diff --git a/drivers/gpu/drm/msm/msm_gpu.c b/drivers/gpu/drm/msm/msm_gpu.c
-index 97b9c38..c5fb326 100644
---- a/drivers/gpu/drm/msm/msm_gpu.c
-+++ b/drivers/gpu/drm/msm/msm_gpu.c
-@@ -116,8 +116,7 @@ static int disable_clk(struct msm_gpu *gpu)
- 	int i;
- 
- 	for (i = gpu->nr_clocks - 1; i >= 0; i--)
--		if (gpu->grp_clks[i])
--			clk_disable(gpu->grp_clks[i]);
-+		clk_disable(gpu->grp_clks[i]);
- 
- 	for (i = gpu->nr_clocks - 1; i >= 0; i--)
- 		if (gpu->grp_clks[i])
-@@ -148,8 +147,7 @@ static int enable_axi(struct msm_gpu *gpu)
- 
- static int disable_axi(struct msm_gpu *gpu)
- {
--	if (gpu->ebi1_clk)
--		clk_disable_unprepare(gpu->ebi1_clk);
-+	clk_disable_unprepare(gpu->ebi1_clk);
- 	if (gpu->bus_freq)
- 		bs_set(gpu, 0);
- 	return 0;
-diff --git a/drivers/gpu/drm/mxsfb/mxsfb_crtc.c b/drivers/gpu/drm/mxsfb/mxsfb_crtc.c
-index 1144e0c..05acf7a 100644
---- a/drivers/gpu/drm/mxsfb/mxsfb_crtc.c
-+++ b/drivers/gpu/drm/mxsfb/mxsfb_crtc.c
-@@ -155,8 +155,7 @@ static void mxsfb_disable_controller(struct mxsfb_drm_private *mxsfb)
- 	mxsfb_disable_axi_clk(mxsfb);
- 
- 	clk_disable_unprepare(mxsfb->clk);
--	if (mxsfb->clk_disp_axi)
--		clk_disable_unprepare(mxsfb->clk_disp_axi);
-+	clk_disable_unprepare(mxsfb->clk_disp_axi);
- }
- 
- static void mxsfb_crtc_mode_set_nofb(struct mxsfb_drm_private *mxsfb)
-diff --git a/drivers/gpu/drm/mxsfb/mxsfb_drv.c b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-index d1b9c34..b0f33d4 100644
---- a/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-+++ b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-@@ -87,8 +87,7 @@ void mxsfb_enable_axi_clk(struct mxsfb_drm_private *mxsfb)
- 
- void mxsfb_disable_axi_clk(struct mxsfb_drm_private *mxsfb)
- {
--	if (mxsfb->clk_axi)
--		clk_disable_unprepare(mxsfb->clk_axi);
-+	clk_disable_unprepare(mxsfb->clk_axi);
- }
- 
- static const struct drm_mode_config_funcs mxsfb_mode_config_funcs = {
-diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
-index 6474bd2..bde8ab2 100644
---- a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
-@@ -64,8 +64,7 @@ nvkm_device_tegra_power_up(struct nvkm_device_tegra *tdev)
- err_clamp:
- 	clk_disable_unprepare(tdev->clk_pwr);
- err_clk_pwr:
--	if (tdev->clk_ref)
--		clk_disable_unprepare(tdev->clk_ref);
-+	clk_disable_unprepare(tdev->clk_ref);
- err_clk_ref:
- 	clk_disable_unprepare(tdev->clk);
- err_clk:
-@@ -84,8 +83,7 @@ nvkm_device_tegra_power_down(struct nvkm_device_tegra *tdev)
- 	udelay(10);
- 
- 	clk_disable_unprepare(tdev->clk_pwr);
--	if (tdev->clk_ref)
--		clk_disable_unprepare(tdev->clk_ref);
-+	clk_disable_unprepare(tdev->clk_ref);
- 	clk_disable_unprepare(tdev->clk);
- 	udelay(10);
- 
-diff --git a/drivers/gpu/drm/omapdrm/dss/venc.c b/drivers/gpu/drm/omapdrm/dss/venc.c
-index 19d1495..a4f91c4 100644
---- a/drivers/gpu/drm/omapdrm/dss/venc.c
-+++ b/drivers/gpu/drm/omapdrm/dss/venc.c
-@@ -943,8 +943,7 @@ static int venc_remove(struct platform_device *pdev)
- 
- static int venc_runtime_suspend(struct device *dev)
- {
--	if (venc.tv_dac_clk)
--		clk_disable_unprepare(venc.tv_dac_clk);
-+	clk_disable_unprepare(venc.tv_dac_clk);
- 
- 	dispc_runtime_put();
- 
-diff --git a/drivers/gpu/drm/shmobile/shmob_drm_crtc.c b/drivers/gpu/drm/shmobile/shmob_drm_crtc.c
-index e773893..54bc783 100644
---- a/drivers/gpu/drm/shmobile/shmob_drm_crtc.c
-+++ b/drivers/gpu/drm/shmobile/shmob_drm_crtc.c
-@@ -61,8 +61,7 @@ static void shmob_drm_clk_off(struct shmob_drm_device *sdev)
- 	if (sdev->meram_dev && sdev->meram_dev->pdev)
- 		pm_runtime_put_sync(&sdev->meram_dev->pdev->dev);
- #endif
--	if (sdev->clock)
--		clk_disable_unprepare(sdev->clock);
-+	clk_disable_unprepare(sdev->clock);
- }
- 
- /* -----------------------------------------------------------------------------
-diff --git a/drivers/gpu/drm/sti/sti_gdp.c b/drivers/gpu/drm/sti/sti_gdp.c
-index 88f16cd..af3a156 100644
---- a/drivers/gpu/drm/sti/sti_gdp.c
-+++ b/drivers/gpu/drm/sti/sti_gdp.c
-@@ -458,8 +458,7 @@ static void sti_gdp_disable(struct sti_gdp *gdp)
- 	if (sti_vtg_unregister_client(gdp->vtg, &gdp->vtg_field_nb))
- 		DRM_DEBUG_DRIVER("Warning: cannot unregister VTG notifier\n");
- 
--	if (gdp->clk_pix)
--		clk_disable_unprepare(gdp->clk_pix);
-+	clk_disable_unprepare(gdp->clk_pix);
- 
- 	gdp->plane.status = STI_PLANE_DISABLED;
- 	gdp->vtg = NULL;
+ # SPI slave protocol handlers
+ obj-$(CONFIG_SPI_SLAVE_TIME)		+= spi-slave-time.o
++obj-$(CONFIG_SPI_SLAVE_SYSTEM_CONTROL)	+= spi-slave-system-control.o
+diff --git a/drivers/spi/spi-slave-system-control.c b/drivers/spi/spi-slave-system-control.c
+new file mode 100644
+index 000000000000..c0257e937995
+--- /dev/null
++++ b/drivers/spi/spi-slave-system-control.c
+@@ -0,0 +1,154 @@
++/*
++ * SPI slave handler controlling system state
++ *
++ * This SPI slave handler allows remote control of system reboot, power off,
++ * halt, and suspend.
++ *
++ * Copyright (C) 2016-2017 Glider bvba
++ *
++ * This file is subject to the terms and conditions of the GNU General Public
++ * License.  See the file "COPYING" in the main directory of this archive
++ * for more details.
++ *
++ * Usage (assuming /dev/spidev2.0 corresponds to the SPI master on the remote
++ * system):
++ *
++ *   # reboot='\x7c\x50'
++ *   # poweroff='\x71\x3f'
++ *   # halt='\x38\x76'
++ *   # suspend='\x1b\x1b'
++ *   # spidev_test -D /dev/spidev2.0 -p $suspend # or $reboot, $poweroff, $halt
++ */
++
++#include <linux/completion.h>
++#include <linux/module.h>
++#include <linux/reboot.h>
++#include <linux/suspend.h>
++#include <linux/spi/spi.h>
++
++/*
++ * The numbers are chosen to display something human-readable on two 7-segment
++ * displays connected to two 74HC595 shift registers
++ */
++#define CMD_REBOOT	0x7c50	/* rb */
++#define CMD_POWEROFF	0x713f	/* OF */
++#define CMD_HALT	0x3876	/* HL */
++#define CMD_SUSPEND	0x1b1b	/* ZZ */
++
++struct spi_slave_system_control_priv {
++	struct spi_device *spi;
++	struct completion finished;
++	struct spi_transfer xfer;
++	struct spi_message msg;
++	__be16 cmd;
++};
++
++static
++int spi_slave_system_control_submit(struct spi_slave_system_control_priv *priv);
++
++static void spi_slave_system_control_complete(void *arg)
++{
++	struct spi_slave_system_control_priv *priv = arg;
++	u16 cmd;
++	int ret;
++
++	if (priv->msg.status)
++		goto terminate;
++
++	cmd = be16_to_cpu(priv->cmd);
++	switch (cmd) {
++	case CMD_REBOOT:
++		dev_info(&priv->spi->dev, "Rebooting system...\n");
++		kernel_restart(NULL);
++
++	case CMD_POWEROFF:
++		dev_info(&priv->spi->dev, "Powering off system...\n");
++		kernel_power_off();
++		break;
++
++	case CMD_HALT:
++		dev_info(&priv->spi->dev, "Halting system...\n");
++		kernel_halt();
++		break;
++
++	case CMD_SUSPEND:
++		dev_info(&priv->spi->dev, "Suspending system...\n");
++		pm_suspend(PM_SUSPEND_MEM);
++		break;
++
++	default:
++		dev_warn(&priv->spi->dev, "Unknown command 0x%x\n", cmd);
++		break;
++	}
++
++	ret = spi_slave_system_control_submit(priv);
++	if (ret)
++		goto terminate;
++
++	return;
++
++terminate:
++	dev_info(&priv->spi->dev, "Terminating\n");
++	complete(&priv->finished);
++}
++
++static
++int spi_slave_system_control_submit(struct spi_slave_system_control_priv *priv)
++{
++	int ret;
++
++	spi_message_init_with_transfers(&priv->msg, &priv->xfer, 1);
++
++	priv->msg.complete = spi_slave_system_control_complete;
++	priv->msg.context = priv;
++
++	ret = spi_async(priv->spi, &priv->msg);
++	if (ret)
++		dev_err(&priv->spi->dev, "spi_async() failed %d\n", ret);
++
++	return ret;
++}
++
++static int spi_slave_system_control_probe(struct spi_device *spi)
++{
++	struct spi_slave_system_control_priv *priv;
++	int ret;
++
++	priv = devm_kzalloc(&spi->dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	priv->spi = spi;
++	init_completion(&priv->finished);
++	priv->xfer.rx_buf = &priv->cmd;
++	priv->xfer.len = sizeof(priv->cmd);
++
++	ret = spi_slave_system_control_submit(priv);
++	if (ret)
++		return ret;
++
++	spi_set_drvdata(spi, priv);
++	return 0;
++}
++
++static int spi_slave_system_control_remove(struct spi_device *spi)
++{
++	struct spi_slave_system_control_priv *priv = spi_get_drvdata(spi);
++
++	spi_slave_abort(spi);
++	wait_for_completion(&priv->finished);
++	return 0;
++}
++
++static struct spi_driver spi_slave_system_control_driver = {
++	.driver = {
++		.name	= "spi-slave-system-control",
++	},
++	.probe		= spi_slave_system_control_probe,
++	.remove		= spi_slave_system_control_remove,
++};
++module_spi_driver(spi_slave_system_control_driver);
++
++MODULE_AUTHOR("Geert Uytterhoeven <geert+renesas@glider.be>");
++MODULE_DESCRIPTION("SPI slave handler controlling system state");
++MODULE_LICENSE("GPL v2");
 -- 
-2.7.4
+2.11.0
