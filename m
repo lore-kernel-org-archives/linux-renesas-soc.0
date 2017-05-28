@@ -1,29 +1,42 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-Subject: Re: [PATCH 6/7] [media] soc_camera: rcar_vin: use proper name for the
- R-Car SoC
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-References: <20170528093051.11816-1-wsa+renesas@sang-engineering.com>
- <20170528093051.11816-7-wsa+renesas@sang-engineering.com>
-Cc: =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-media@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <a133a7f7-e887-5043-83d3-cccbec581487@cogentembedded.com>
-Date: Mon, 29 May 2017 11:41:53 +0300
-MIME-Version: 1.0
-In-Reply-To: <20170528093051.11816-7-wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Sender: linux-media-owner@vger.kernel.org
+Subject: [PATCH 6/7] [media] soc_camera: rcar_vin: use proper name for the R-Car SoC
+Date: Sun, 28 May 2017 11:30:49 +0200
+Message-Id: <20170528093051.11816-7-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20170528093051.11816-1-wsa+renesas@sang-engineering.com>
+References: <20170528093051.11816-1-wsa+renesas@sang-engineering.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+It is 'R-Car', not 'RCar'. No code or binding changes, only descriptive text.
 
-    Why "soc_camera:" in the subject?
-    The 'soc_camera" driver has been removed (replaced by a "normal" V4L2 driver).
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+I suggest this trivial patch should be picked individually per susbsystem.
 
-MBR, Sergei
+ Documentation/devicetree/bindings/media/rcar_vin.txt | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/rcar_vin.txt
+index 25fc933318483d..4af8760b353339 100644
+--- a/Documentation/devicetree/bindings/media/rcar_vin.txt
++++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
+@@ -1,5 +1,5 @@
+-Renesas RCar Video Input driver (rcar_vin)
+-------------------------------------------
++Renesas R-Car Video Input driver (rcar_vin)
++-------------------------------------------
+ 
+ The rcar_vin device provides video input capabilities for the Renesas R-Car
+ family of devices.
+-- 
+2.11.0
