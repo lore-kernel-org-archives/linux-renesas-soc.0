@@ -1,48 +1,40 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <20170528093051.11816-2-wsa+renesas@sang-engineering.com>
-References: <20170528093051.11816-1-wsa+renesas@sang-engineering.com> <20170528093051.11816-2-wsa+renesas@sang-engineering.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 29 May 2017 11:12:43 +0200
-Message-ID: <CAMuHMdV9iU2vK+ae1vPET83Ck5UVzs-kVQJVgFeEA8aUi8vZ5Q@mail.gmail.com>
-Subject: Re: [PATCH 1/7] dmaengine: use proper name for the R-Car SoC
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Vinod Koul <vinod.koul@intel.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>, dmaengine@vger.kernel.org,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/7] dmaengine: use proper name for the R-Car SoC
+Date: Sun, 28 May 2017 11:30:44 +0200
+Message-Id: <20170528093051.11816-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20170528093051.11816-1-wsa+renesas@sang-engineering.com>
+References: <20170528093051.11816-1-wsa+renesas@sang-engineering.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sun, May 28, 2017 at 11:30 AM, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> It is 'R-Car', not 'r-car'. No code or binding changes, only descriptive text.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+It is 'R-Car', not 'r-car'. No code or binding changes, only descriptive text.
 
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+I suggest this trivial patch should be picked individually per susbsystem.
 
-> --- a/Documentation/devicetree/bindings/dma/shdma.txt
-> +++ b/Documentation/devicetree/bindings/dma/shdma.txt
-> @@ -1,6 +1,6 @@
->  * SHDMA Device Tree bindings
->
-> -Sh-/r-mobile and r-car systems often have multiple identical DMA controller
-> +Sh-/r-mobile and R-Car systems often have multiple identical DMA controller
+ Documentation/devicetree/bindings/dma/shdma.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I'd fix "SH/R-Mobile" too, while at it.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/Documentation/devicetree/bindings/dma/shdma.txt b/Documentation/devicetree/bindings/dma/shdma.txt
+index 2a3f3b8946b998..a91920a49433c2 100644
+--- a/Documentation/devicetree/bindings/dma/shdma.txt
++++ b/Documentation/devicetree/bindings/dma/shdma.txt
+@@ -1,6 +1,6 @@
+ * SHDMA Device Tree bindings
+ 
+-Sh-/r-mobile and r-car systems often have multiple identical DMA controller
++Sh-/r-mobile and R-Car systems often have multiple identical DMA controller
+ instances, capable of serving any of a common set of DMA slave devices, using
+ the same configuration. To describe this topology we require all compatible
+ SHDMA DT nodes to be placed under a DMA multiplexer node. All such compatible
+-- 
+2.11.0
