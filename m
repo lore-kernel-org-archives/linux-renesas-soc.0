@@ -1,64 +1,41 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:57590 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751276AbdE2MCK (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 May 2017 08:02:10 -0400
-Date: Mon, 29 May 2017 14:02:02 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <20170528093051.11816-7-wsa+renesas@sang-engineering.com>
+References: <20170528093051.11816-1-wsa+renesas@sang-engineering.com> <20170528093051.11816-7-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 29 May 2017 11:14:42 +0200
+Message-ID: <CAMuHMdVeuFBjcgQ=NLyPBz7_p=HbzHA+VD6N=ksFDNzAXObp4A@mail.gmail.com>
+Subject: Re: [PATCH 6/7] [media] soc_camera: rcar_vin: use proper name for the
+ R-Car SoC
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/7] [media] soc_camera: rcar_vin: use proper name for
- the R-Car SoC
-Message-ID: <20170529120202.GC4342@katana>
-References: <20170528093051.11816-1-wsa+renesas@sang-engineering.com>
- <20170528093051.11816-7-wsa+renesas@sang-engineering.com>
- <a133a7f7-e887-5043-83d3-cccbec581487@cogentembedded.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Pk6IbRAofICFmK5e"
-Content-Disposition: inline
-In-Reply-To: <a133a7f7-e887-5043-83d3-cccbec581487@cogentembedded.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On Sun, May 28, 2017 at 11:30 AM, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> It is 'R-Car', not 'RCar'. No code or binding changes, only descriptive text.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
---Pk6IbRAofICFmK5e
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
+Gr{oetje,eeting}s,
 
->    Why "soc_camera:" in the subject?
+                        Geert
 
-I used 'git log $file' and copied the most recent entry. Do I need to
-resend?
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-
---Pk6IbRAofICFmK5e
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlksDboACgkQFA3kzBSg
-KbbJsg//Rt0eZgQf7zosP8iChI+47w4RF8TNXvjPt+PYZGXmAREXxy1f1jNgDJjI
-xgOFql4F6a1Z5jfAILAX6WtyUlUlij77uLO9N1rUFg+uZnukWeY/nAn2clkQfqOL
-qSS3E8brsC0k1pdbPpEYOZpfZW5M9stWf6RqjEV9c6fjIDPDEUKcbS2UbeduY4zv
-EXZ+sxenDidxwVa8v0JLmXoP8LQ0oSZo1skR6/46nZgt2Rp9C8KY1aWBnOsfDwUV
-QDj51Odt+8seGPxTi/o9GWpGWdmZ/JUqyrxRUgKibV0+5KQzCzfZis7B5lM9lBqc
-ndYp5dONu9i8+/ksxrcAJExWh1SIFMFB0SmCpIm/4E+WrwVs9zXM7c7p0henlmKR
-2GX5E+eOlhIUXIIioerfS8efCkCDHQ6iuL1/mLxrMyQut5Sf7JjMnKph965LJFDa
-j0hlCvYUKvQtjgOWtF27c91autijAx1CUmU6S7MnT9pEF4D5P4R3lrLlCfaEamYl
-DpJBNYqvb1JvDgZ1VAdO+SIujooddE5SIG2ZV0xmYjjJqi+aOHF93HUnLlDf0ItR
-42WqjNfsCaHqMg9VaDegyeyx3dUyS8NBG/c7oIlNzjJ7hf2tHeExZRtu1N7bshTM
-/ETXJbOo5PJvh1ItRGsQc9sSIUX9Jlp4+47KJfehzyGLWSdJifk=
-=8Vbh
------END PGP SIGNATURE-----
-
---Pk6IbRAofICFmK5e--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
