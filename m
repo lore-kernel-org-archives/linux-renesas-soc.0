@@ -1,37 +1,56 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH 7/7] [media] v4l: rcar_fdp1: use proper name for the R-Car
+ SoC
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+References: <20170528093051.11816-1-wsa+renesas@sang-engineering.com>
+ <20170528093051.11816-8-wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Reply-To: kieran.bingham@ideasonboard.com
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Message-ID: <7ee334ac-0274-ed9c-a903-93defd5900d8@ideasonboard.com>
+Date: Mon, 29 May 2017 09:41:49 +0900
 MIME-Version: 1.0
 In-Reply-To: <20170528093051.11816-8-wsa+renesas@sang-engineering.com>
-References: <20170528093051.11816-1-wsa+renesas@sang-engineering.com> <20170528093051.11816-8-wsa+renesas@sang-engineering.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 29 May 2017 11:15:11 +0200
-Message-ID: <CAMuHMdX7TF+F8nPxC8uzHrb4BCpsZ+ZrHhR8nxMhT2j5EKVvWw@mail.gmail.com>
-Subject: Re: [PATCH 7/7] [media] v4l: rcar_fdp1: use proper name for the R-Car SoC
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Kieran Bingham <kieran@ksquared.org.uk>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sun, May 28, 2017 at 11:30 AM, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
+Hi Wolfram
+
+Thankyou for the fixup
+
+On 28/05/17 18:30, Wolfram Sang wrote:
 > It is 'R-Car', not 'RCar'. No code or binding changes, only descriptive text.
->
+> 
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Gr{oetje,eeting}s,
 
-                        Geert
+Mauro,
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+I'll leave this for you to pick up when you're ready.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks
+
+Kieran
+
+> ---
+> I suggest this trivial patch should be picked individually per susbsystem.
+> 
+>  drivers/media/platform/rcar_fdp1.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/rcar_fdp1.c b/drivers/media/platform/rcar_fdp1.c
+> index 42f25d241edd7c..0da0eba9202cdd 100644
+> --- a/drivers/media/platform/rcar_fdp1.c
+> +++ b/drivers/media/platform/rcar_fdp1.c
+> @@ -1,5 +1,5 @@
+>  /*
+> - * Renesas RCar Fine Display Processor
+> + * Renesas R-Car Fine Display Processor
+>   *
+>   * Video format converter and frame deinterlacer device.
+>   *
+> 
