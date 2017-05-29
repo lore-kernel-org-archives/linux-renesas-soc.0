@@ -1,24 +1,28 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: jmondi <jacopo@jmondi.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-CC: Dong Aisheng <dongas86@gmail.com>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:44159 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750993AbdE2Kms (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 29 May 2017 06:42:48 -0400
+Date: Mon, 29 May 2017 19:42:29 +0900
+From: jmondi <jacopo@jmondi.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Dong Aisheng <dongas86@gmail.com>,
         Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Chris Brandt <Chris.Brandt@renesas.com>,
         Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        "Geert Uytterhoeven" <geert+renesas@glider.be>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Rob Herring <robh+dt@kernel.org>,
-        "Mark Rutland" <mark.rutland@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
         Russell King - ARM Linux <linux@armlinux.org.uk>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
         devicetree <devicetree@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v5 01/10] pinctrl: generic: Add bi-directional and
+Subject: Re: [PATCH v5 01/10] pinctrl: generic: Add bi-directional and
  output-enable
-Date: Tue, 30 May 2017 14:12:25 +0000
-Message-ID: <SG2PR06MB1165939E9F77006316ACECE68AF00@SG2PR06MB1165.apcprd06.prod.outlook.com>
+Message-ID: <20170529104229.GB21347@w540>
 References: <SG2PR06MB11658EC3A3A80C57E6F539AC8A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
  <CAHp75VeLtOuty=iaxuCaH43rnBZDTT03iH7JyjDJBQhTD-EjzA@mail.gmail.com>
  <CACRpkdZkNGSUvTrEdjbGKO1hr799QpJBGSHPVbsBibph7Jx61A@mail.gmail.com>
@@ -29,47 +33,112 @@ References: <SG2PR06MB11658EC3A3A80C57E6F539AC8A130@SG2PR06MB1165.apcprd06.prod.
  <CAA+hA=Q9hwe7_xL440Reoi7z7m8-SScZ5E057419KSA7dQK=tQ@mail.gmail.com>
  <20170523183735.GC13664@w540>
  <CACRpkdYcaGzSvAN2Trqwer+8GbqXyfpE=VqiYcQvCOqhDO9MMw@mail.gmail.com>
- <20170529104229.GB21347@w540>
-In-Reply-To: <20170529104229.GB21347@w540>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CACRpkdYcaGzSvAN2Trqwer+8GbqXyfpE=VqiYcQvCOqhDO9MMw@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGVsbG8gSmFjb3BvIGFuZCBMaW51cywNCg0KT24gTW9uZGF5LCBNYXkgMjksIDIwMTcsIGptb25k
-aSB3cm90ZToNCj4gPiA+IFdlIGNhbiBoYW5kbGUgJ2JpLWRpcmVjdGlvbmFsJyBwaW5zIHdpdGgg
-c3RhdGljIHRhYmxlcyBpbiBvdXIgcGluDQo+ID4gPiBjb250cm9sbGVyIGRyaXZlciBhbmQgbm90
-IGhhdmUgaXQgYW55d2hlcmUgaW4gRFQuDQo+ID4NCj4gPiBUaGlzIHNvdW5kcyBsaWtlIGEgdmlh
-YmxlIGFwcHJvYWNoLg0KPiA+DQo+ID4gSSBqdXN0IHdhbnQgdG8ga25vdyBpZiAib3V0cHV0LWVu
-YWJsZSIgaXMgdGhlIHJpZ2h0IG5hbWU/DQo+ID4gIm91dHB1dC1idWZmZXItZW5hYmxlIj8NCj4g
-DQo+IEdyZWF0ISBUaGFua3MhDQo+IA0KPiBPbiBuYW1pbmc6IGlmIHdlIG5lZWQgIm91dHB1dC1i
-dWZmZXItZW5hYmxlIiBzaG91bGQgd2UgYWRkDQo+ICJpbnB1dC1idWZmZXItZW5hYmxlIiBhcyB3
-ZWxsPw0KPiANCj4gQ3VycmVudGx5IHdlIGFyZSB1c2luZyAiaW5wdXQtZW5hYmxlIiB0byBwYWly
-IHdpdGggIm91dHB1dC1lbmFibGUiLA0KPiBidXQgYXMgeW91IHNhaWQsIGp1c3QgIm91dHB1dC1l
-bmFibGUiIHdoZW4gIm91dHB1dC1oaWdoIiBhbmQNCj4gIm91dHB1dC1sb3ciIGFyZSB0aGVyZSBh
-bHJlYWR5IHNlZW1zIGEgYml0IGNvbmZ1c2luZy4NCj4gQXQgdGhlIHNhbWUgdGltZSAiaW5wdXQt
-YnVmZmVyLWVuYWJsZSIgc2VlbXMgdG8gYWN0dWFsbHkgYmUganVzdA0KPiBlbGVjdHJpY2FsbHkg
-ZXF1aXZhbGVudCB0byAiaW5wdXQtZW5hYmxlIiwgc28gYWRkaW5nIGl0IGlzIGEgYml0IG9mIGEN
-Cj4gd2FzdGUgYXMgd2VsbC4NCg0KSGVyZSBpcyB3aGF0IEkgdGhpbms6DQoNCg0KSW4gdGhlIGNh
-c2Ugb2YgdGhpcyBkcml2ZXIsIGFmdGVyIHdlIHJlbW92ZSB0aGUgJ2JpLWRpcmVjdGlvbmFsJw0K
-cHJvcGVydGllcyBhbmQgaGlkZSB0aGUgb3RoZXIgb2RkLWJhbGwgcGluIGNvbmZpZ3VyYXRpb25z
-IGluIGFuIGludGVybmFsDQp0YWJsZSwgd2UgYXJlIGxlZnQgd2l0aCB0aGUgTVRVMiB0aW1lciBw
-aW5zIHRoYXQgY2FuIGJlIGVpdGhlciBpbnB1dCBvcg0Kb3V0cHV0IGRlcGVuZGluZyBvbiB3aGF0
-IHlvdSB3YW50IHRvIGRvIHdpdGggdGhlbS4NCg0KICogSWYgeW91IHdhbnQgdG8gdXNlIGEgTVRV
-MiBjaGFubmVsIGFzIGEgUFdNLCB5b3Ugc2V0IHRoZSBwaW4gYXMgYW4NCiAgIG91dHB1dC4NCiAq
-IElmIHlvdSB3YW50IHRvIHVzZSBhIE1UVTIgY2hhbm5lbCBhcyBhIGlucHV0IGNhcHR1cmUsIHlv
-dSBzZXQgdGhlDQogICBwaW4gYXMgYW4gaW5wdXQuDQoNClRoZXkgYXJlIHNpbXBseSAiZGlyZWN0
-aW9uLWlucHV0IiBhbmQgImRpcmVjdGlvbi1vdXRwdXQiIHByb3BlcnRpZXMgdGhhdA0KZG9uJ3Qg
-cmVhbGx5IG5lZWQgdG8gdGFsayBhYm91dCAiYnVmZmVycyIuDQoNCg0KQnV0LCBpbnN0ZWFkIG9m
-IG1ha2luZyBhbnkgbmV3IHByb3BlcnRpZXMsIGZvciB0aGUgUmVuZXNhcyBkcml2ZXIsIGxldCdz
-DQpqdXN0IHN0aWNrIHdpdGggd2hhdCBhbHJlYWR5IGV4aXN0cyB0b2RheTogDQogKiBJZiB5b3Ug
-d2FudCBhIE1UVTIgY2hhbm5lbCBhcyBhIFBXTTogc2VsZWN0ICJvdXRwdXQtbG93Ig0KICogSWYg
-eW91IHdhbnQgYSBNVFUyIGNoYW5uZWwgYXMgYSBpbnB1dCBjYXB0dXJlOiBzZWxlY3QgImlucHV0
-LWVuYWJsZSINCg0KDQpTaWRlIE5vdGU6IFlvdSBjYW4gYWxzbyB1c2Ugb3V0cHV0LWhpZ2ggaW4g
-YWRkaXRpb24gdG8gb3V0cHV0LWxvdw0KICBiZWNhdXNlIGl0IGRvZXNuJ3QgbWF0dGVyICh0aGUg
-ZHJpdmVyIGNhbid0IHNldCB0aGUgcGluIGxldmVsIGFueXdheQ0KICBiZWNhdXNlIGFzIHNvb24g
-YXMgeW91IGFzc2lnbiB0aGUgcGluIHRvIE1UVTIsIHRoZSBNVFUyIGNvbnRyb2xzIHRoZQ0KICBw
-aW4sIG5vdCB0aGUgUEZDKS4gU28gdGhlIFJlbmVzYXMgZHJpdmVyIGNhbiBjaGVjayBmb3IgYm90
-aC4NCg0KDQoNCkNocmlzDQo=
+Hi Linus,
+
+On Mon, May 29, 2017 at 10:45:44AM +0200, Linus Walleij wrote:
+> On Tue, May 23, 2017 at 8:37 PM, jmondi <jacopo@jmondi.org> wrote:
+>
+> >> I did not follow too much.
+> >> But it seems IMX7ULP/Vybrid to be also a fan of generic
+> >> output-enable/input-enable
+> >> property.
+> >>
+> >> See:
+> >> Figure 5-2. GPIO PAD in Page 241
+> >> http://www.nxp.com/assets/documents/data/en/reference-manuals/VFXXXRM.pdf
+> >>
+> >> It has separate register bits to control input buffer enable and
+> >> output buffer enable
+> >> and we need set it property for GPIO function.
+> >
+> > As it seems we have another user for 'output-enable' here, what if we just
+> > add that one to the generic bindings properties list, and we keep
+> > 'bi-directional' (which seems to be the most debated property we have
+> > added) out of generic properties?
+> >
+> > We can handle 'bi-directional' pins with static tables in our pin
+> > controller driver and not have it anywhere in DT.
+>
+> This sounds like a viable approach.
+>
+> I just want to know if "output-enable" is the right name?
+> "output-buffer-enable"?
+
+Great! Thanks!
+
+On naming: if we need "output-buffer-enable" should we add
+"input-buffer-enable" as well?
+
+Currently we are using "input-enable" to pair with "output-enable",
+but as you said, just "output-enable" when "output-high" and
+"output-low" are there already seems a bit confusing.
+At the same time "input-buffer-enable" seems to actually be just
+electrically equivalent to "input-enable", so adding it is a bit of a
+waste as well.
+
+I see three options here:
+
+1) Add "output-buffer-enable" and "input-buffer-enable"
+we end up with
+"output-high"
+"output-low"
+"input-enable"
+"output-buffer-enable"
+"input-buffer-enable"
+
+2) Add "output-buffer-enable" only
+we end up with
+"output-high"
+"output-low"
+"input-enable"
+"output-buffer-enable"
+
+Binding may be confusing as in one case we use "output-buffer-enable"
+while in the other "input-enable"
+
+3) Add "output-enable" only
+"output-high"
+"output-low"
+"input-enable"
+"output-enable"
+
+As you, I don't like "output-enable" that much but it pairs better with
+"input-enable".
+
+I'll let you and DT people decide on this, as it's really an ABI definition
+problem and you have better judgment there.
+
+>
+> > I see commit 42d5a11200d0[1] has not been reverted yet as Andy asked
+> > in some previous email.
+>
+> I'm just overloaded. I sent that revert to Torvalds today.
+
+Thank you. Didn't want to put pressure ;)
+>
+> > I can send another version of that patch with
+> > only 'output-enable' if you wish.
+>
+> That's what we want.
+>
+> > Once we reach consesus, I can then send v6 of our pin controller driver
+> > based on that.
+>
+> OK sounds like a plan.
+>
+> Sorry for the mess, I'm just trying to get this right :/
+
+Not a mess, and thanks for your effort in maintaining  all of this
+
+Thanks
+   j
+>
+> Yours,
+> Linus Walleij
