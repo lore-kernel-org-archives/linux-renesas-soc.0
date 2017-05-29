@@ -1,82 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:37586 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753688AbdEQJwI (ORCPT
+Received: from mail-it0-f66.google.com ([209.85.214.66]:35974 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750880AbdE2K7y (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 17 May 2017 05:52:08 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Mark Brown <broonie@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-        alsa-devel@alsa-project.org
-In-Reply-To: <87fug43rs6.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dAvcd-0006kc-Hw@debutante>
-Date: Wed, 17 May 2017 10:51:59 +0100
-Subject: Applied "ASoC: rsnd: check src mod pointer for rsnd_mod_id()" to the asoc tree
+        Mon, 29 May 2017 06:59:54 -0400
+Received: by mail-it0-f66.google.com with SMTP id i206so6818108ita.3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 29 May 2017 03:59:54 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <20170528101430.19371-2-wsa+renesas@sang-engineering.com>
+References: <20170528101430.19371-1-wsa+renesas@sang-engineering.com> <20170528101430.19371-2-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 29 May 2017 12:59:52 +0200
+Message-ID: <CAMuHMdUeMDCanBdSECmkvWkm7=TkfBVrfjJHEaX313-3Z4yMOw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] arm64: dts: r8a7795: add DMA for IIC_DVFS
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+On Sun, May 28, 2017 at 12:14 PM, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> Tested with a Salvator-X.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-   ASoC: rsnd: check src mod pointer for rsnd_mod_id()
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-has been applied to the asoc tree at
+Gr{oetje,eeting}s,
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+                        Geert
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 374503c6109e60f48fa9b11341b14466f07bd3f4 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Wed, 17 May 2017 06:50:32 +0000
-Subject: [PATCH] ASoC: rsnd: check src mod pointer for rsnd_mod_id()
-
-Without this patch, gcc 4.9.x says
-
-    sound/soc/sh/rcar/cmd.c: In function 'rsnd_cmd_init':
-    sound/soc/sh/rcar/cmd.c:85:14: warning: array subscript is below array\
-	bounds [-Warray-bounds]
-	data = path[rsnd_mod_id(src)] |
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/sh/rcar/cmd.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/sound/soc/sh/rcar/cmd.c b/sound/soc/sh/rcar/cmd.c
-index 7d92a24b7cfa..98835e9d1d7d 100644
---- a/sound/soc/sh/rcar/cmd.c
-+++ b/sound/soc/sh/rcar/cmd.c
-@@ -82,6 +82,9 @@ static int rsnd_cmd_init(struct rsnd_mod *mod,
- 			[9] = 0x2,
- 		};
- 
-+		if (unlikely(!src))
-+			return -EIO;
-+
- 		data = path[rsnd_mod_id(src)] |
- 			cmd_case[rsnd_mod_id(src)] << 16;
- 	}
--- 
-2.11.0
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
