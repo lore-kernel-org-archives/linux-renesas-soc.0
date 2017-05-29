@@ -1,109 +1,197 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Kieran Bingham <kbingham@kernel.org>
-To: laurent.pinchart@ideasonboard.com, sakari.ailus@iki.fi,
-        niklas.soderlund@ragnatech.se
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v3 0/2] ADV748x HDMI/Analog video receiver
-Date: Wed, 17 May 2017 15:13:16 +0100
-Message-Id: <cover.29a91b9366a11bb7dbf4118ea12b84f2d48a8989.1495029016.git-series.kieran.bingham+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:44890 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750947AbdE2LRB (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 29 May 2017 07:17:01 -0400
+Date: Mon, 29 May 2017 14:16:25 +0300
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: Re: [PATCH v7 1/2] media: rcar-csi2: add Renesas R-Car MIPI CSI-2
+ receiver documentation
+Message-ID: <20170529111624.GC29527@valkosipuli.retiisi.org.uk>
+References: <20170524001353.13482-1-niklas.soderlund@ragnatech.se>
+ <20170524001353.13482-2-niklas.soderlund@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+In-Reply-To: <20170524001353.13482-2-niklas.soderlund@ragnatech.se>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Hi Niklas,
 
-This is a driver for the Analog Devices ADV748x device, and follows on from a
-previous posting by Niklas Söderlund [0] of an earlier incarnation of this
-driver.
+On Wed, May 24, 2017 at 02:13:52AM +0200, Niklas S�derlund wrote:
+> From: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+> 
+> Documentation for Renesas R-Car MIPI CSI-2 receiver. The CSI-2 receivers
+> are located between the video sources (CSI-2 transmitters) and the video
+> grabbers (VIN) on Gen3 of Renesas R-Car SoC.
+> 
+> Each CSI-2 device is connected to more then one VIN device which
+> simultaneously can receive video from the same CSI-2 device. Each VIN
+> device can also be connected to more then one CSI-2 device. The routing
+> of which link are used are controlled by the VIN devices. There are only
+> a few possible routes which are set by hardware limitations, which are
+> different for each SoC in the Gen3 family.
+> 
+> To work with the limitations of routing possibilities it is necessary
+> for the DT bindings to describe which VIN device is connected to which
+> CSI-2 device. This is why port 1 needs to to assign reg numbers for each
+> VIN device that be connected to it. To setup and to know which links are
+> valid for each SoC is the responsibility of the VIN driver since the
+> register to configure it belongs to the VIN hardware.
+> 
+> Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+> ---
+>  .../devicetree/bindings/media/rcar-csi2.txt        | 116 +++++++++++++++++++++
+>  1 file changed, 116 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/rcar-csi2.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/media/rcar-csi2.txt b/Documentation/devicetree/bindings/media/rcar-csi2.txt
+> new file mode 100644
+> index 0000000000000000..f6e2027ee92b171a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/rcar-csi2.txt
+> @@ -0,0 +1,116 @@
+> +Renesas R-Car MIPI CSI-2
+> +------------------------
+> +
+> +The rcar-csi2 device provides MIPI CSI-2 capabilities for the Renesas R-Car
+> +family of devices. It is to be used in conjunction with the R-Car VIN module,
+> +which provides the video capture capabilities.
+> +
+> + - compatible: Must be one or more of the following
+> +   - "renesas,r8a7795-csi2" for the R8A7795 device.
+> +   - "renesas,r8a7796-csi2" for the R8A7796 device.
+> +   - "renesas,rcar-gen3-csi2" for a generic R-Car Gen3 compatible device.
+> +
+> +   When compatible with a generic version nodes must list the
+> +   SoC-specific version corresponding to the platform first
+> +   followed by the generic version.
+> +
+> + - reg: the register base and size for the device registers
+> + - interrupts: the interrupt for the device
+> + - clocks: Reference to the parent clock
+> +
+> +The device node should contain two 'port' child nodes according to the
+> +bindings defined in Documentation/devicetree/bindings/media/
+> +video-interfaces.txt. Port 0 should connect the node that is the video
+> +source for to the CSI-2. Port 1 should connect all the R-Car VIN
+> +modules, which can make use of the CSI-2 module.
 
-Aside from a few bug fixes, and considerable refactoring this driver:
- - is refactored to multiple object files
- - defines multiple sub devices for the output paths.
- - has independent controls for both HDMI and Analog video paths
+Should or shall?
 
- - Specifies 'endpoint' matching instead of 'device' in async framework
+I guess you could add that it is possible to leave them unconnected, too.
 
-These patches are based up on Niklas' pending RVin work [1] and Sakari's fwnode
-series [2]
+> +
+> +- Port 0 - Video source
+> +	- Reg 0 - sub-node describing the endpoint that is the video source
 
-This version sees lots of review comments addressed from previous reviews, and
-the removal of the async notifiers to register the AFE/HDMI entities (which was
-functional - but overkill)
+Which endpoint properties are mandatory for the receiver? Which ones are
+optional? (I.e. it shouldn't be necessary to read driver code to write board
+description.)
 
-Updates to the core to support matching will be provided in a separate series
+> +
+> +- Port 1 - VIN instances
+> +	- Reg 0 - sub-node describing the endpoint that is VIN0
+> +	- Reg 1 - sub-node describing the endpoint that is VIN1
+> +	- Reg 2 - sub-node describing the endpoint that is VIN2
+> +	- Reg 3 - sub-node describing the endpoint that is VIN3
+> +	- Reg 4 - sub-node describing the endpoint that is VIN4
+> +	- Reg 5 - sub-node describing the endpoint that is VIN5
+> +	- Reg 6 - sub-node describing the endpoint that is VIN6
+> +	- Reg 7 - sub-node describing the endpoint that is VIN7
+> +
+> +Example:
+> +
+> +/* SoC properties */
+> +
+> +	 csi20: csi2@fea80000 {
+> +		 compatible = "renesas,r8a7796-csi2";
+> +		 reg = <0 0xfea80000 0 0x10000>;
+> +		 interrupts = <0 184 IRQ_TYPE_LEVEL_HIGH>;
+> +		 clocks = <&cpg CPG_MOD 714>;
+> +		 power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+> +		 status = "disabled";
+> +
+> +		 ports {
+> +			 #address-cells = <1>;
+> +			 #size-cells = <0>;
+> +
+> +			 port@1 {
+> +				 #address-cells = <1>;
+> +				 #size-cells = <0>;
+> +
+> +				 reg = <1>;
+> +
+> +				 csi20vin0: endpoint@0 {
+> +					 reg = <0>;
+> +					 remote-endpoint = <&vin0csi20>;
+> +				 };
+> +				 csi20vin1: endpoint@1 {
+> +					 reg = <1>;
+> +					 remote-endpoint = <&vin1csi20>;
+> +				 };
+> +				 csi20vin2: endpoint@2 {
+> +					 reg = <2>;
+> +					 remote-endpoint = <&vin2csi20>;
+> +				 };
+> +				 csi20vin3: endpoint@3 {
+> +					 reg = <3>;
+> +					 remote-endpoint = <&vin3csi20>;
+> +				 };
+> +				 csi20vin4: endpoint@4 {
+> +					 reg = <4>;
+> +					 remote-endpoint = <&vin4csi20>;
+> +				 };
+> +				 csi20vin5: endpoint@5 {
+> +					 reg = <5>;
+> +					 remote-endpoint = <&vin5csi20>;
+> +				 };
+> +				 csi20vin6: endpoint@6 {
+> +					 reg = <6>;
+> +					 remote-endpoint = <&vin6csi20>;
+> +				 };
+> +				 csi20vin7: endpoint@7 {
+> +					 reg = <7>;
+> +					 remote-endpoint = <&vin7csi20>;
+> +				 };
+> +			 };
+> +		 };
+> +	 };
+> +
+> +/* Board properties */
+> +
+> +	&csi20 {
+> +		status = "okay";
+> +
+> +		ports {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +
+> +			port@0 {
+> +				reg = <0>;
+> +				csi20_in: endpoint@0 {
+> +					clock-lanes = <0>;
+> +					data-lanes = <1>;
+> +					remote-endpoint = <&adv7482_txb>;
+> +				};
+> +			};
+> +		};
+> +	};
 
-ADV748x
-=======
-The ADV7481 and ADV7482 support two video pipelines which can run independently
-of each other, with each pipeline terminating in a CSI-2 output: TXA (4-Lane)
-and TXB (1-Lane)
-
-The ADV7480 (Not yet included here), ADV7481, and ADV7482 are all derivatives,
-with the following features
-
-            Analog   HDMI  MHL  4-Lane  1-Lane
-              In      In         CSI     CSI
- ADV7480               X    X     X
- ADV7481      X        X    X     X       X
- ADV7482      X        X          X       X
-
-Implementation
-==============
-
-This RFC creates 4 entities. AFE (CVBS/Analog In), HDMI, TXA and TXB.  At probe
-time, the DT is parsed to identify the endpoints for each of these nodes, and
-those are used for async matching of the CSI2 (TXA/TXB) entities in the master
-driver. The HDMI and AFE entities are then registered after a successful
-registration of both the CSI2 entities.
-
-(Known) Future Todo's
-=====================
-
-Further potential development areas include:
- - ADV7480 Support (No AFE)
- - MHL support (Not present on ADV7482)
- - EDID support
- - CEC Support
- - Configurable I2C addressing
- - Interrupt handling for format changes and hotplug detect.
-
-However, this driver and series is functional without the above, though if
-there are mandatory areas which block mainline integration please let me know
-and I will prioritise that in development.
-
-References
-==========
-[0] http://www.mail-archive.com/linux-renesas-soc@vger.kernel.org/msg05196.html
-[1] https://git.ragnatech.se/linux rcar-vin-elinux-v7
-[2] https://www.mail-archive.com/linux-media@vger.kernel.org/msg111332.html
-
-Kieran Bingham (2):
-  v4l: subdev: tolerate null in media_entity_to_v4l2_subdev
-  media: i2c: adv748x: add adv748x driver
-
- Documentation/devicetree/bindings/media/i2c/adv748x.txt |  72 +-
- MAINTAINERS                                             |   6 +-
- drivers/media/i2c/Kconfig                               |  10 +-
- drivers/media/i2c/Makefile                              |   1 +-
- drivers/media/i2c/adv748x/Makefile                      |   7 +-
- drivers/media/i2c/adv748x/adv748x-afe.c                 | 575 +++++++-
- drivers/media/i2c/adv748x/adv748x-core.c                | 711 +++++++++-
- drivers/media/i2c/adv748x/adv748x-csi2.c                | 283 ++++-
- drivers/media/i2c/adv748x/adv748x-hdmi.c                | 647 ++++++++-
- drivers/media/i2c/adv748x/adv748x.h                     | 218 +++-
- include/media/v4l2-subdev.h                             |   2 +-
- 11 files changed, 2531 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/media/i2c/adv748x.txt
- create mode 100644 drivers/media/i2c/adv748x/Makefile
- create mode 100644 drivers/media/i2c/adv748x/adv748x-afe.c
- create mode 100644 drivers/media/i2c/adv748x/adv748x-core.c
- create mode 100644 drivers/media/i2c/adv748x/adv748x-csi2.c
- create mode 100644 drivers/media/i2c/adv748x/adv748x-hdmi.c
- create mode 100644 drivers/media/i2c/adv748x/adv748x.h
-
-base-commit: 4db2a777a71b51a864caae16385b60b4b7e9f992
 -- 
-git-series 0.9.1
+Kind regards,
+
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
