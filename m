@@ -1,31 +1,64 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Wed, 31 May 2017 14:45:33 -0500
-From: Rob Herring <robh@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org,
+Date: Mon, 29 May 2017 14:03:05 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Vinod Koul <vinod.koul@intel.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>, dmaengine@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH 1/7] dmaengine: use proper name for the R-Car SoC
-Message-ID: <20170531194533.bc63tanffxjosuqb@rob-hp-laptop>
+Message-ID: <20170529120305.GD4342@katana>
 References: <20170528093051.11816-1-wsa+renesas@sang-engineering.com>
  <20170528093051.11816-2-wsa+renesas@sang-engineering.com>
+ <CAMuHMdV9iU2vK+ae1vPET83Ck5UVzs-kVQJVgFeEA8aUi8vZ5Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="vni90+aGYgRvsTuO"
 Content-Disposition: inline
-In-Reply-To: <20170528093051.11816-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <CAMuHMdV9iU2vK+ae1vPET83Ck5UVzs-kVQJVgFeEA8aUi8vZ5Q@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sun, May 28, 2017 at 11:30:44AM +0200, Wolfram Sang wrote:
-> It is 'R-Car', not 'r-car'. No code or binding changes, only descriptive text.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
-> I suggest this trivial patch should be picked individually per susbsystem.
-> 
->  Documentation/devicetree/bindings/dma/shdma.txt | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Acked-by: Rob Herring <robh@kernel.org>
+--vni90+aGYgRvsTuO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+Geert,
+
+thanks for the Acks.
+
+> I'd fix "SH/R-Mobile" too, while at it.
+
+That would be a seperate tree-wide series in my book.
+
+Regards,
+
+   Wolfram
+
+
+--vni90+aGYgRvsTuO
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlksDfkACgkQFA3kzBSg
+Kbb0Kw//TFkmKvE1FoUKPRM8Ofk18JhD5tq+aCsIWueKxktAgKWAmacOPjFvVeDj
+AZgsqZOjKYNVYFSi5xSMWaVATPXrDARheJINcmC5vIdCwh6+OCY6/ROxImjNK0xB
+TjS1+PU3SBhRt7C4Er9DGQhticsfb8VmSALg0XTD8El0jtl+LL/S0P4nmj1bldfH
+58xgSNxwpzqBCa0qgKbHnyqdEJybmqByi+QEBmBrEfDZAc/5r5zgJDArbo09aJ+i
+astf6mQoFIaDdrKcuFASgotAP7uVorC7nQAdMGvq82xTeKCAKRQ6C/nYZWdcN16l
+vI4FJbZbwFzGhNtqT5qL+es9Np1swUGih7oC6yonek2YYsvuRdCdMFkSIaKEENwM
+fjSTsKfY4tGYEQgFLsFvbre4pz/9yc9LU8ekRufYWyMOXPKrGQq8jVWWwSgXFMbU
+hqxJ/YIioTZekFF7rPe9aQ2J5SVGPArOzaKUkMAfQiHXRpZbbnBd/9lpraw9KVP4
+u5ioQY6Uq54P9F4qqwS6Ulg+Tr6iZZj6g79nu5SBrbRdSkpgCEF4Bhpx8sYDcsLs
+h+/Lx0y/Nv2F6S0FmsCSIs6xCKEEtTtLXWNexVgATwgGBhS4GhYL5Qusnp4EfNA9
+/XPdlnFSACXfUwPGly7b5sH91jYC2nXOrob1/g/7OTktYeUtI3A=
+=TW8D
+-----END PGP SIGNATURE-----
+
+--vni90+aGYgRvsTuO--
