@@ -1,167 +1,114 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:46751 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756155AbdEXARB (ORCPT
+Received: from mail-io0-f196.google.com ([209.85.223.196]:33767 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750974AbdE2LXk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 23 May 2017 20:17:01 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 05/17] rcar-vin: move subdev source and sink pad index to rvin_graph_entity
-Date: Wed, 24 May 2017 02:15:28 +0200
-Message-Id: <20170524001540.13613-6-niklas.soderlund@ragnatech.se>
-In-Reply-To: <20170524001540.13613-1-niklas.soderlund@ragnatech.se>
-References: <20170524001540.13613-1-niklas.soderlund@ragnatech.se>
+        Mon, 29 May 2017 07:23:40 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdV1z-fNtejciq14ocP3EpPOUe2zrubAEBkZmFNYE7qaDw@mail.gmail.com>
+References: <1495626214-15502-1-git-send-email-geert+renesas@glider.be>
+ <2806448.cAnmeTWMfp@avalon> <CAMuHMdV1z-fNtejciq14ocP3EpPOUe2zrubAEBkZmFNYE7qaDw@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 29 May 2017 13:23:38 +0200
+Message-ID: <CAMuHMdVUihXD2fwMVG=1K2iwfRDS4hKJUCtwbfUqm_ELBkSXsQ@mail.gmail.com>
+Subject: Re: [PATCH/RFC] ARM: dts: armadillo800eva: Split LCD mux and gpio
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+On Wed, May 24, 2017 at 3:36 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Wed, May 24, 2017 at 2:57 PM, Laurent Pinchart
+> <laurent.pinchart@ideasonboard.com> wrote:
+>> On Wednesday 24 May 2017 13:43:34 Geert Uytterhoeven wrote:
+>>> Configuration of the lcd0 pinmux group and GPIO hog for the external
+>>> GPIO mux are done using a single device node, causing the "output-high"
+>>> property to be applied to both.  This will fail for the pinmux group,
+>>> but doesn't cause any harm, as the failure is ignored silently.
+>>>
+>>> However, after "pinctrl: sh-pfc: propagate errors on group config", the
+>>> failure will become fatal, leading to a broken display:
+>>>
+>>>     sh-pfc e6050000.pin-controller: pin_config_group_set op failed for =
+group
+>>> 102 sh-pfc e6050000.pin-controller: Error applying setting, reverse thi=
+ngs
+>>> back sh-pfc e6050000.pin-controller: failed to select default state
+>>>
+>>> Split the configuration in two subnodes, and replace the GPIO hog by a
+>>> pull-up pin bias to fix this.
+>>>
+>>> Fixes: ffd2f9a5afb730b9 ("ARM: shmobile: armadillo800eva dts: Add pinct=
+rl
+>>> and gpio-hog for lcdc0") Signed-off-by: Geert Uytterhoeven
+>>> <geert+renesas@glider.be>
+>>> ---
+>>> This is a hard dependency for "pinctrl: sh-pfc: propagate errors on
+>>> group config" (https://patchwork.kernel.org/patch/9186713/).
+>>>
+>>> Notes:
+>>>   1. Just keeping the GPIO hog doesn't work, as the sh-pfc driver
+>>>      requires each pinctrl (sub)node to have at least one "pins" or
+>>>      "groups" property,
+>>>   2. Keeping "output-high" doesn't work, as the sh-pfc driver does not
+>>>      implement PIN_CONFIG_OUTPUT.
+>>>
+>>> Should I fix 1 and/or 2 instead?
+>>> ---
+>>>  arch/arm/boot/dts/r8a7740-armadillo800eva.dts | 15 +++++++++------
+>>>  1 file changed, 9 insertions(+), 6 deletions(-)
+>>>
+>>> diff --git a/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
+>>> b/arch/arm/boot/dts/r8a7740-armadillo800eva.dts index
+>>> 44b335b9f035436d..7feedc86f6915654 100644
+>>> --- a/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
+>>> +++ b/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
+>>> @@ -267,13 +267,16 @@
+>>>       };
+>>>
+>>>       lcd0_pins: lcd0 {
+>>> -             groups =3D "lcd0_data24_0", "lcd0_lclk_1", "lcd0_sync";
+>>> -             function =3D "lcd0";
+>>> +             mux {
+>>> +                     groups =3D "lcd0_data24_0", "lcd0_lclk_1", "lcd0_=
+sync";
+>>> +                     function =3D "lcd0";
+>>> +             };
+>>>
+>>> -             /* DBGMD/LCDC0/FSIA MUX */
+>>> -             gpio-hog;
+>>> -             gpios =3D <176 0>;
+>>> -             output-high;
+>>> +             gpio {
+>>> +                     /* DBGMD/LCDC0/FSIA MUX */
+>>> +                     pins =3D "PORT176";
+>>> +                     bias-pull-up;
+>>
+>> The signal is pulled low through a 10k=CE=A9 resistor, so a pull-up is a=
+ bit weak.
+>
+> According to the schematics, the resistor is not mounted.
 
-It makes more sense to store the sink and source pads in struct
-rvin_graph_entity since that contains other subdevice related
-information.
+JFTR, R67 (bottom of the PCB, 2 cm from pin 1 of unpopulated CON16)
+is indeed not populated on mine.
 
-The data type to store pad information in is unsigned int and not int,
-change this. While we are at it drop the _idx suffix from the names,
-this never made sense.
+Gr{oetje,eeting}s,
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 20 ++++++++++----------
- drivers/media/platform/rcar-vin/rcar-vin.h  |  9 +++++----
- 2 files changed, 15 insertions(+), 14 deletions(-)
+                        Geert
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 7be52c2036bb35fc..1a75191539b0e7d7 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -111,7 +111,7 @@ static int rvin_reset_format(struct rvin_dev *vin)
- 	struct v4l2_mbus_framefmt *mf = &fmt.format;
- 	int ret;
- 
--	fmt.pad = vin->src_pad_idx;
-+	fmt.pad = vin->digital.source_pad;
- 
- 	ret = v4l2_subdev_call(vin_to_source(vin), pad, get_fmt, NULL, &fmt);
- 	if (ret)
-@@ -178,7 +178,7 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
- 	if (pad_cfg == NULL)
- 		return -ENOMEM;
- 
--	format.pad = vin->src_pad_idx;
-+	format.pad = vin->digital.source_pad;
- 
- 	field = pix->field;
- 
-@@ -559,7 +559,7 @@ static int rvin_enum_dv_timings(struct file *file, void *priv_fh,
- 	if (timings->pad)
- 		return -EINVAL;
- 
--	timings->pad = vin->sink_pad_idx;
-+	timings->pad = vin->digital.sink_pad;
- 
- 	ret = v4l2_subdev_call(sd, pad, enum_dv_timings, timings);
- 
-@@ -611,7 +611,7 @@ static int rvin_dv_timings_cap(struct file *file, void *priv_fh,
- 	if (cap->pad)
- 		return -EINVAL;
- 
--	cap->pad = vin->sink_pad_idx;
-+	cap->pad = vin->digital.sink_pad;
- 
- 	ret = v4l2_subdev_call(sd, pad, dv_timings_cap, cap);
- 
-@@ -629,7 +629,7 @@ static int rvin_g_edid(struct file *file, void *fh, struct v4l2_edid *edid)
- 	if (edid->pad)
- 		return -EINVAL;
- 
--	edid->pad = vin->sink_pad_idx;
-+	edid->pad = vin->digital.sink_pad;
- 
- 	ret = v4l2_subdev_call(sd, pad, get_edid, edid);
- 
-@@ -647,7 +647,7 @@ static int rvin_s_edid(struct file *file, void *fh, struct v4l2_edid *edid)
- 	if (edid->pad)
- 		return -EINVAL;
- 
--	edid->pad = vin->sink_pad_idx;
-+	edid->pad = vin->digital.sink_pad;
- 
- 	ret = v4l2_subdev_call(sd, pad, set_edid, edid);
- 
-@@ -920,19 +920,19 @@ int rvin_v4l2_probe(struct rvin_dev *vin)
- 	vdev->device_caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING |
- 		V4L2_CAP_READWRITE;
- 
--	vin->src_pad_idx = 0;
-+	vin->digital.source_pad = 0;
- 	for (pad_idx = 0; pad_idx < sd->entity.num_pads; pad_idx++)
- 		if (sd->entity.pads[pad_idx].flags == MEDIA_PAD_FL_SOURCE)
- 			break;
- 	if (pad_idx >= sd->entity.num_pads)
- 		return -EINVAL;
- 
--	vin->src_pad_idx = pad_idx;
-+	vin->digital.source_pad = pad_idx;
- 
--	vin->sink_pad_idx = 0;
-+	vin->digital.sink_pad = 0;
- 	for (pad_idx = 0; pad_idx < sd->entity.num_pads; pad_idx++)
- 		if (sd->entity.pads[pad_idx].flags == MEDIA_PAD_FL_SINK) {
--			vin->sink_pad_idx = pad_idx;
-+			vin->digital.sink_pad = pad_idx;
- 			break;
- 		}
- 
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 727e215c08718eb9..9bfb5a7c4dc4f215 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -74,6 +74,8 @@ struct rvin_video_format {
-  * @subdev:	subdevice matched using async framework
-  * @code:	Media bus format from source
-  * @mbus_cfg:	Media bus format from DT
-+ * @source_pad:	source pad of remote subdevice
-+ * @sink_pad:	sink pad of remote subdevice
-  */
- struct rvin_graph_entity {
- 	struct v4l2_async_subdev asd;
-@@ -81,6 +83,9 @@ struct rvin_graph_entity {
- 
- 	u32 code;
- 	struct v4l2_mbus_config mbus_cfg;
-+
-+	unsigned int source_pad;
-+	unsigned int sink_pad;
- };
- 
- /**
-@@ -91,8 +96,6 @@ struct rvin_graph_entity {
-  *
-  * @vdev:		V4L2 video device associated with VIN
-  * @v4l2_dev:		V4L2 device
-- * @src_pad_idx:	source pad index for media controller drivers
-- * @sink_pad_idx:	sink pad index for media controller drivers
-  * @ctrl_handler:	V4L2 control handler
-  * @notifier:		V4L2 asynchronous subdevs notifier
-  * @digital:		entity in the DT for local digital subdevice
-@@ -121,8 +124,6 @@ struct rvin_dev {
- 
- 	struct video_device vdev;
- 	struct v4l2_device v4l2_dev;
--	int src_pad_idx;
--	int sink_pad_idx;
- 	struct v4l2_ctrl_handler ctrl_handler;
- 	struct v4l2_async_notifier notifier;
- 	struct rvin_graph_entity digital;
--- 
-2.13.0
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
