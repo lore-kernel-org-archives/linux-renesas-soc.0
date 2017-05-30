@@ -1,42 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:50770 "EHLO pokefinder.org"
+Received: from sauhun.de ([88.99.104.3]:59809 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751125AbdE1Ja6 (ORCPT
+        id S1750761AbdE3Tbl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 28 May 2017 05:30:58 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
+        Tue, 30 May 2017 15:31:41 -0400
+Date: Tue, 30 May 2017 21:31:38 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Simon Horman <horms+renesas@verge.net.au>
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Kieran Bingham <kieran@ksquared.org.uk>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 7/7] [media] v4l: rcar_fdp1: use proper name for the R-Car SoC
-Date: Sun, 28 May 2017 11:30:50 +0200
-Message-Id: <20170528093051.11816-8-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170528093051.11816-1-wsa+renesas@sang-engineering.com>
-References: <20170528093051.11816-1-wsa+renesas@sang-engineering.com>
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 1/5] MAINTAINERS: Update files for TMIO/SDHI MMC driver
+Message-ID: <20170530193137.qyvwomo3z26zyxyu@ninjato>
+References: <1496148654-20386-1-git-send-email-horms+renesas@verge.net.au>
+ <1496148654-20386-2-git-send-email-horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="eijlquza5iqrpxfp"
+Content-Disposition: inline
+In-Reply-To: <1496148654-20386-2-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-It is 'R-Car', not 'RCar'. No code or binding changes, only descriptive text.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-I suggest this trivial patch should be picked individually per susbsystem.
+--eijlquza5iqrpxfp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- drivers/media/platform/rcar_fdp1.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Tue, May 30, 2017 at 02:50:50PM +0200, Simon Horman wrote:
+> Update files for tmio/sdhi MMC driver to reflect recent filename
+> changes.
+>=20
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-diff --git a/drivers/media/platform/rcar_fdp1.c b/drivers/media/platform/rcar_fdp1.c
-index 42f25d241edd7c..0da0eba9202cdd 100644
---- a/drivers/media/platform/rcar_fdp1.c
-+++ b/drivers/media/platform/rcar_fdp1.c
-@@ -1,5 +1,5 @@
- /*
-- * Renesas RCar Fine Display Processor
-+ * Renesas R-Car Fine Display Processor
-  *
-  * Video format converter and frame deinterlacer device.
-  *
--- 
-2.11.0
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+
+--eijlquza5iqrpxfp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlktyJUACgkQFA3kzBSg
+KbZoJg/7BnQN26cC/sFpfjFX02junXWyF/HUSXiy03ecvpfxtjOm8UufpcctrBqH
+1dbxDqBQeY/i5zky6mPH4RYamghUiKzbD5UM/HS9p/pNTu47TxM7A7bwV5RKCcSX
+PIqkyLM7KXNWB2xy1LyqLgRt8OxCpS8X/CtoScTlgUIGCMuC81rcVOtGowUsyEHH
+KuyS5vjx/AdKtAALMoPRQV7Rkwwe7LE4Acn6os8Pnx58dwusfvTGzLhsGhywv7AR
+yhu5IpdMiiy2Ltj83Px+Nco6eLA8BKzNC0By8SivcaOsYD6uh5++/etRARj/A1a/
+E35gkiUvob4IP7ogHmz87Pgr5tiAduYF8i7TulykcXGf+3qe21eku+hiYcdZQhwl
+N6w4KKBZ0cd2r3TpXx/nzFlLjz4gr40RrsXIFBy1cT3tqA9YCSMpvEXSVAY4i7br
+12lbONLnxcbUkwlBoGKi/6mYQsBk0pnBqZtLINPcVY67Tum5k/PqhCOdKyF48kKF
+KHp9dNwLRVNK+Jv3BmLVbzleZUBrQNgHfGL+/TVwD0EeBz13bj/EstLFF05x6Dbv
+8iyRq9ifX+fy4Athtxeb3TGuch/jAhAlv1321tnskNBIg3a8ByaXooPfRX+Cp22K
+ehkl9nmYjiYUUG8Ics6mGaowiGN8hP5fEnx+ztoO/cMv8QhEroY=
+=3ZRE
+-----END PGP SIGNATURE-----
+
+--eijlquza5iqrpxfp--
