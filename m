@@ -1,73 +1,28 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:57762 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751756AbdEJHFE (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:53123 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750938AbdE3IkQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 10 May 2017 03:05:04 -0400
-Received: from avalon.ideasonboard.com (syi-ogw1-1554.syi.inet.fi [194.89.38.18])
-        by galahad.ideasonboard.com (Postfix) with ESMTPSA id 5A749203A2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 10 May 2017 09:03:56 +0200 (CEST)
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v4 2/7] arm64: dts: r8a7796: Add display placeholders
-Date: Wed, 10 May 2017 10:04:53 +0300
-Message-Id: <20170510070458.21193-3-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170510070458.21193-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170510070458.21193-1-laurent.pinchart+renesas@ideasonboard.com>
+        Tue, 30 May 2017 04:40:16 -0400
+Date: Tue, 30 May 2017 10:40:15 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 0/2] arm64: dts: r8a779[56]: add DMA for IIC_DVFS
+Message-ID: <20170530084015.GA32139@verge.net.au>
+References: <20170528101430.19371-1-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170528101430.19371-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-HDMI output and panel backlight for Salvator-X will be enabled for both
-the H3 and M3-W boards in salvator-x.dtsi. The file will need to
-reference SoC DT nodes that are not available for M3-W yet. Add
-placeholders to avoid breaking compilation.
+On Sun, May 28, 2017 at 12:14:28PM +0200, Wolfram Sang wrote:
+> Based on renesas-drivers/master as of today. Please apply.
+> 
+> Wolfram Sang (2):
+>   arm64: dts: r8a7795: add DMA for IIC_DVFS
+>   arm64: dts: r8a7796: add DMA for IIC_DVFS
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 60a4289d0b14..60d12e418f66 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -510,6 +510,10 @@
- 			status = "disabled";
- 		};
- 
-+		pwm1: pwm@e6e31000 {
-+			/* placeholder */
-+		};
-+
- 		can0: can@e6c30000 {
- 			compatible = "renesas,can-r8a7796",
- 				     "renesas,rcar-gen3-can";
-@@ -1131,6 +1135,24 @@
- 			/* placeholder */
- 		};
- 
-+		hdmi0: hdmi0@fead0000 {
-+			/* placeholder */
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+			};
-+		};
-+
-+		hdmi1: hdmi1@feae0000 {
-+			/* placeholder */
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+			};
-+		};
-+
- 		du: display@feb00000 {
- 			/* placeholder */
- 
--- 
-Regards,
-
-Laurent Pinchart
+Thanks, I have queued these up.
