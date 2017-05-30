@@ -1,81 +1,145 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:55510 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750925AbdE3QXI (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:53161 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750896AbdE3Im3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 30 May 2017 12:23:08 -0400
-From: Chris Brandt <Chris.Brandt@renesas.com>
+        Tue, 30 May 2017 04:42:29 -0400
+Date: Tue, 30 May 2017 10:42:28 +0200
+From: Simon Horman <horms@verge.net.au>
 To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Simon Horman <horms+renesas@verge.net.au>,
+Cc: Chris Brandt <chris.brandt@renesas.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH] ARM: dts: r7s72100: add clock bit definitions
-Date: Tue, 30 May 2017 16:23:02 +0000
-Message-ID: <SG2PR06MB11652CB46B57C6C592F7A2FB8AF00@SG2PR06MB1165.apcprd06.prod.outlook.com>
+Subject: Re: [PATCH] ARM: dts: r7s72100: add clock bit definitions
+Message-ID: <20170530084227.GC32139@verge.net.au>
 References: <20170525160548.103182-1-chris.brandt@renesas.com>
  <CAMuHMdW21gwJZxCMsepX9c3hqpfw_+zc1x_f-6D0oKFVvqY2Kg@mail.gmail.com>
-In-Reply-To: <CAMuHMdW21gwJZxCMsepX9c3hqpfw_+zc1x_f-6D0oKFVvqY2Kg@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdW21gwJZxCMsepX9c3hqpfw_+zc1x_f-6D0oKFVvqY2Kg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCkFzIGFsd2F5cyBUaGFuayB5b3UgZm9yIHlvdXIgcmV2aWV3IQ0KDQoNCk9u
-IE1vbmRheSwgTWF5IDI5LCAyMDE3LCBHZWVydCBVeXR0ZXJob2V2ZW4gd3JvdGU6DQo+ID4gICNk
-ZWZpbmUgUjdTNzIxMDBfQ0xLX1BMTCAgICAgICAwDQo+IA0KPiBObyBDb3JlU2lnaHQgKE1TVFAy
-MCk/DQoNCk9LLCBJJ2xsIGFkZCB0aGF0IGluLg0KDQoNCj4gPiArI2RlZmluZSBSN1M3MjEwMF9D
-TEtfTUNQV00gICAgIDANCj4gDQo+IFBlcmhhcHMganVzdCBSN1M3MjEwMF9DTEtfUFdNPw0KDQpP
-Sy4NClBlb3BsZSBkb24ndCBzZWVtIHRvIGJlIHVzaW5nIGl0IGZvciBtb3RvciBjb250cm9sIGFu
-eXdheSA7KQ0KDQoNCj4gPiArI2RlZmluZSBSN1M3MjEwMF9DTEtfU05ER0VOMCAgIDUNCj4gPiAr
-I2RlZmluZSBSN1M3MjEwMF9DTEtfU05ER0VOMSAgIDQNCj4gPiArI2RlZmluZSBSN1M3MjEwMF9D
-TEtfU05ER0VOMiAgIDMNCj4gPiArI2RlZmluZSBSN1M3MjEwMF9DTEtfU05ER0VOMyAgIDINCj4g
-DQo+IFI3UzcyMTAwX0NMS19TR1swLTNdPw0KDQpJIGRlYmF0ZWQgYWdhaW5zdCAnU0cnIHZzICdT
-TkRHRU4nLg0KU2luY2UgeW91IGFsc28gc3VnZ2VzdGVkIFNHLCBJJ2xsIGNoYW5nZSBpdC4NCg0K
-PiA+ICAvKiBNU1RQNyAqLw0KPiA+ICsjZGVmaW5lIFI3UzcyMTAwX0NMS19WREVDMCAgICAgNw0K
-PiA+ICsjZGVmaW5lIFI3UzcyMTAwX0NMS19WREVDMSAgICAgNg0KPiANCj4gUjdTNzIxMDBfQ0xL
-X1ZJTlswMV0/DQoNClRoZXNlIGFyZSBhbmFsb2cgdmlkZW8gaW5wdXRzIChOVFNDL1BBTCkuDQpG
-b3IgUi1DYXIsICJWSU4iIHNlZW0gdG8gcmVmZXIgdG8gcGFyYWxsZWwgZGlnaXRhbCBpbnB1dHMg
-KGllLCByY2FyLXZpbiANCmRyaXZlcikNCg0KU28gZm9yIHRoZSBSWi9BIHNlcmllcywgSSB3YXMg
-Z29pbmcgdG8ga2VlcCB3aXRoIHRoZSBjb252ZW50aW9uIHRoYXQgd2UgDQp1c2UgZm9yIHRoZSBu
-b24tTGludXggc2FtcGxlIGNvZGUgYW5kIGFwcCBub3RlcyBzdWNoIHRoYXQgdGhlc2UgaW5wdXRz
-IA0KYXJlICdhbmFsb2cgdmlkZW8gZGVjb2RlcnMnIGFuZCBub3QganVzdCB2aWRlbyBpbnB1dC9j
-YXB0dXJlIA0KcGlucy4uLi5oZW5jZSB2ZGVjLg0KDQoNCj4gPiArI2RlZmluZSBSN1M3MjEwMF9D
-TEtfRVRIQUJWICAgIDINCj4gDQo+IFI3UzcyMTAwX0NMS19FVEhBVkINCg0KT3Bwcy4gVGhhbmsg
-eW91IQ0KDQoNCj4gPiArI2RlZmluZSBSN1M3MjEwMF9DTEtfU1BJTUJDMCAgIDMNCj4gPiArI2Rl
-ZmluZSBSN1M3MjEwMF9DTEtfU1BJTUJDMSAgIDINCj4gDQo+IFI3UzcyMTAwX0NMS19TUEJbMC0x
-XT8NCg0KSGVyZSdzIHRoZSBvbmUgdGhhdCBJJ20gc3RydWdnbGluZyB3aXRoIHdoYXQgdG8gY2Fs
-bC4NCg0KSW50ZXJuYWxseSwgdGhlIElQIGJsb2NrIGlzIHJlZmVycmVkIHRvIGFzIHRoZSAiU1BJ
-QlNDIi4gQXMgaW4sIFNQSSBCdXMgDQpTdGF0ZSBDb250cm9sbGVyIChiZWNhdXNlIGJhc2ljYWxs
-eSBhbnl0aGluZyB0aGF0IGhhcyBhIHBhcmFsbGVsIA0KaW50ZXJmYWNlIHRvIHRoZSBpbnRlcm5h
-bCBidXMgdGhlIGRlc2lnbiBndXlzIGNhbGwgaXQgYSBCU0M6IExCU0MsIERCU0MsIA0KZXRjLi4u
-KS4NCg0KSG93ZXZlciwgZm9yIGV2ZXJ5IGRldmljZSB0aGlzIElQIGlzIHVzZWQgaW4gaXQgaXMg
-Y2FsbGVkIHRoZSAiU1BJIA0KTXVsdGkgSS9PIEJ1cyBDb250cm9sbGVyIiBpbiB0aGUgSGFyZHdh
-cmUgTWFudWFsIChTSDc3NjksIFJaL0ExLCBSLUNhciBHZW4zLCANCmV0Yy4uLikuDQoNClNvLCB0
-aGF0IG1pZ2h0IGJlIGNvbmZ1c2luZyB0byB1c2Vycy4NCg0KT3JpZ2luYWxseSwgaXQgd2FzIGNh
-bGxlZCAiU1BJIEJTQyIgYmVjYXVzZSB0aGV5IHdlcmUgb25seSBjb25uZWN0aW5nIGEgDQoiU1BJ
-IiBidXMgaW50ZXJmYWNlIGFzIGEgIkJ1cyBTdGF0ZSBDb250cm9sbGVyIi4gSG93ZXZlciwgbm93
-IHRoZXkndmUgDQphZGRlZCBvbnRvIHRoZSBJUCBhbmQgaXQgZG9lcyBtb3JlIHRoYW4ganVzdCBT
-UEkuDQoNCg0KPiBBbGwgcmVsYXRlZCByZWdpc3RlcnMgYW5kIGNsb2NrcyBhcmUgY2FsbGVkIFNQ
-Qjxzb21ldGhpbmc+Lg0KT25seSB0aGUgcGlucyBhcmUgbGFiZWxlZCBTUEI8c29tZXRoaW5nPiwg
-bm90IHRoZSByZWdpc3RlcnMuIFRoZSANCnJlZ2lzdGVycyBkb2Vzbid0IHJlYWxseSBoYXZlIGEg
-Y29tbW9uIHByZWZpeC4NCg0KDQpTbyBpbiBnZW5lcmFsLCB3aGF0J3MgeW91ciBvcGluaW9uIG9u
-IHdoYXQgdG8gY2FsbCB0aGlzIHRoaW5nIChzaW5jZSANCkknZCBsaWtlIHRvIG5hbWUgdGhlIGRy
-aXZlciBpbiBhIHNpbWlsYXIgbWFubmVyKT8NCg0KKDEpICJTUElCU0MiOiBCZWNhdXNlIHRoYXQn
-cyB3aGF0IGFsbCB0aGUgbm9uLUxpbnV4IHNhbXBsZSBjb2RlIGFuZCBhcHAgDQogICAgIG5vdGUg
-cmVmZXIgdG8gaXQuDQoNCigyKSAiU1BJTUJDIjogVGFrZW4gZnJvbSAiU1BJIE11bHRpIEkvTyBC
-dXMgQ29udHJvbGxlciIgKHVzaW5nIGFsbCAxc3QgDQogICAgbGV0dGVycyBleGNlcHQgdGhlICJJ
-L08iIHBhcnQpDQoNCigzKSAiU1BCIjogQmVjYXVzZSB0aGF0IGlzIGhvdyB0aGV5IG5hbWVkIHRo
-ZSBwaW5zIGZvciBSWi8xIChOT1RFIHRoYXQNCiAgICBpcyBqdXN0IGZvciBSWi9BMSBhbmQgU0g3
-MjY5LCBmb3IgUlovQTIrKyBhbmQgUi1DYXIgdGhleSBhcmUgbGFiZWxlZA0KICAgIFFTUElfeHh4
-Li4uc28geW91IHdpbGwgcHJvYmFibHkgbmV2ZXIgc2VlIFNQQiBhZ2FpbiBpbiBmdXR1cmUgaGFy
-ZHdhcmUNCiAgICBtYW51YWxzKQ0KDQooNCkgIlNCQyI6IEZvciBTZXJpYWwgQnVzIENvbnRyb2xs
-ZXINCg0KDQpJIGFtIGxlYW5pbmcgdG8ganVzdCBzdGF5aW5nIHdpdGggIlNQSUJTQyIgd2hpY2gg
-aXMgd2hhdCBJIHVzZSBub3cgZm9yIA0Kb3VyIGN1cnJlbnQgTGludXggQlNQIGFuZCBub24tTGlu
-dXggc2FtcGxlIGNvZGUsIG9yICJTQkMiIGp1c3QgdG8gDQpzaG9ydGVuIGl0Lg0KDQpBbnkgb3Bp
-bmlvbnM/Pz8NCg0KDQoNCj4gTm8gU1NJIChNU1RQMTFbMC01XSk/DQoNCk9wcHMsIEkgbWlzc2Vk
-IHRoYXQgcmVnaXN0ZXIgc29tZWhvdy4NCkknbGwgYWRkIHRoZW0gaW4uDQoNCg0KVGhhbmsgeW91
-LA0KQ2hyaXMNCg0K
+On Mon, May 29, 2017 at 11:31:37AM +0200, Geert Uytterhoeven wrote:
+> Hi Chris,
+> 
+> On Thu, May 25, 2017 at 6:05 PM, Chris Brandt <chris.brandt@renesas.com> wrote:
+> > Add the remaining bit locations for the module stop clock registers.
+> >
+> > Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Chris, please address Geert's review and repost as appropriate.
+
+> 
+> > --- a/include/dt-bindings/clock/r7s72100-clock.h
+> > +++ b/include/dt-bindings/clock/r7s72100-clock.h
+> > @@ -13,7 +13,14 @@
+> >  #define R7S72100_CLK_PLL       0
+> 
+> No CoreSight (MSTP20)?
+> 
+> >  /* MSTP3 */
+> > +#define R7S72100_CLK_IEBUS     7
+> > +#define R7S72100_CLK_IRDA      6
+> > +#define R7S72100_CLK_LIN0      5
+> > +#define R7S72100_CLK_LIN1      4
+> >  #define R7S72100_CLK_MTU2      3
+> > +#define R7S72100_CLK_CAN       2
+> > +#define R7S72100_CLK_ADCPWR    1
+> > +#define R7S72100_CLK_MCPWM     0
+> 
+> Perhaps just R7S72100_CLK_PWM?
+> 
+> >  /* MSTP4 */
+> >  #define R7S72100_CLK_SCIF0     7
+> > @@ -26,25 +33,51 @@
+> >  #define R7S72100_CLK_SCIF7     0
+> >
+> >  /* MSTP5 */
+> > +#define R7S72100_CLK_SCI0      7
+> > +#define R7S72100_CLK_SCI1      6
+> > +#define R7S72100_CLK_SNDGEN0   5
+> > +#define R7S72100_CLK_SNDGEN1   4
+> > +#define R7S72100_CLK_SNDGEN2   3
+> > +#define R7S72100_CLK_SNDGEN3   2
+> 
+> R7S72100_CLK_SG[0-3]?
+> 
+> >  #define R7S72100_CLK_OSTM0     1
+> >  #define R7S72100_CLK_OSTM1     0
+> >
+> >  /* MSTP6 */
+> > +#define R7S72100_CLK_ADC       7
+> > +#define R7S72100_CLK_CEU       6
+> > +#define R7S72100_CLK_DOC0      5
+> > +#define R7S72100_CLK_DOC1      4
+> > +#define R7S72100_CLK_DRC0      3
+> > +#define R7S72100_CLK_DRC1      2
+> > +#define R7S72100_CLK_JCU       1
+> >  #define R7S72100_CLK_RTC       0
+> >
+> >  /* MSTP7 */
+> > +#define R7S72100_CLK_VDEC0     7
+> > +#define R7S72100_CLK_VDEC1     6
+> 
+> R7S72100_CLK_VIN[01]?
+> 
+> >  #define R7S72100_CLK_ETHER     4
+> > +#define R7S72100_CLK_NAND      3
+> >  #define R7S72100_CLK_USB0      1
+> >  #define R7S72100_CLK_USB1      0
+> >
+> >  /* MSTP8 */
+> > +#define R7S72100_CLK_IMR0      7
+> > +#define R7S72100_CLK_IMR1      6
+> > +#define R7S72100_CLK_IMRDISP   5
+> >  #define R7S72100_CLK_MMCIF     4
+> > +#define R7S72100_CLK_MLB       3
+> > +#define R7S72100_CLK_ETHABV    2
+> 
+> R7S72100_CLK_ETHAVB
+> 
+> > +#define R7S72100_CLK_SCUX      1
+> >
+> >  /* MSTP9 */
+> >  #define R7S72100_CLK_I2C0      7
+> >  #define R7S72100_CLK_I2C1      6
+> >  #define R7S72100_CLK_I2C2      5
+> >  #define R7S72100_CLK_I2C3      4
+> > +#define R7S72100_CLK_SPIMBC0   3
+> > +#define R7S72100_CLK_SPIMBC1   2
+> 
+> R7S72100_CLK_SPB[0-1]?
+> All related registers and clocks are called SPB<something>.
+> 
+> > +#define R7S72100_CLK_VDC50     1       /* and LVDS */
+> > +#define R7S72100_CLK_VDC51     0
+> >
+> >  /* MSTP10 */
+> >  #define R7S72100_CLK_SPI0      7
+> > @@ -52,6 +85,9 @@
+> >  #define R7S72100_CLK_SPI2      5
+> >  #define R7S72100_CLK_SPI3      4
+> >  #define R7S72100_CLK_SPI4      3
+> > +#define R7S72100_CLK_CDROM     2
+> > +#define R7S72100_CLK_SPDIF     1
+> > +#define R7S72100_CLK_RGPVG2    0
+> 
+> No SSI (MSTP11[0-5])?
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+> 
