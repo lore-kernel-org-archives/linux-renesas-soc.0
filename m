@@ -1,88 +1,80 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51510 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750748AbdESRDm (ORCPT
+Received: from mail-lf0-f45.google.com ([209.85.215.45]:35374 "EHLO
+        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751389AbdE3K32 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 19 May 2017 13:03:42 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
-        Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
-        Mark Brown <broonie@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>,
-        Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
-        alsa-devel@alsa-project.org
-In-Reply-To: <87d1b9y3sk.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dBlJN-0003b0-AZ@debutante>
-Date: Fri, 19 May 2017 18:03:33 +0100
-Subject: Applied "ASoC: rsnd: don't call free_irq() on Parent SSI" to the asoc tree
+        Tue, 30 May 2017 06:29:28 -0400
+Received: by mail-lf0-f45.google.com with SMTP id a5so46686727lfh.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 30 May 2017 03:29:27 -0700 (PDT)
+Date: Tue, 30 May 2017 12:29:24 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Subject: Re: ravb WoL interrupt flood
+Message-ID: <20170530102924.GB7484@bigcity.dyn.berto.se>
+References: <CAMuHMdWmt7oB4B4OYkO59+HvEbpVLVeqB_AV2c5OnYJEUJRxRg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdWmt7oB4B4OYkO59+HvEbpVLVeqB_AV2c5OnYJEUJRxRg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+Hi Geert,
 
-   ASoC: rsnd: don't call free_irq() on Parent SSI
+Thanks for the report. I did run a 200+ loop suspend/resume without 
+issues so this error is probably hard to reproduce or something changed 
+since v4.11-rc1 which if IIRC was the base I used to do the tests.
 
-has been applied to the asoc tree at
+All I can think of is that if the interface was down at the time the 
+system was suspend. There is a bug in  the driver which is in 
+renesas-drivers related to that. But given that you woken up by WoL that 
+is probably not the case :-)
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+I will do more tests and see if I can reproduce this once I'm back in 
+Stockholm.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+On 2017-05-30 11:23:23 +0200, Geert Uytterhoeven wrote:
+> Hi Niklas,
+> 
+> I just got a flood of messages after WoL from s2idle on r8a7795/salvator-x:
+> 
+> [  802.341060] ravb e6800000.ethernet eth0: ignoring interrupt, rx
+> status 0x00000001, rx mask 0x00000001,
+> [  802.350369] ravb e6800000.ethernet eth0:                     tx
+> status 0x00000000, tx mask 0x00000001.
+> [  802.359684] ravb e6800000.ethernet eth0: ignoring interrupt, rx
+> status 0x00000001, rx mask 0x00000001,
+> [  802.368993] ravb e6800000.ethernet eth0:                     tx
+> status 0x00000000, tx mask 0x00000001.
+> [  802.378308] ravb e6800000.ethernet eth0: ignoring interrupt, rx
+> status 0x00000001, rx mask 0x00000001,
+> [  802.387616] ravb e6800000.ethernet eth0:                     tx
+> status 0x00000000, tx mask 0x00000001.
+> [  802.396931] ravb e6800000.ethernet eth0: ignoring interrupt, rx
+> status 0x00000001, rx mask 0x00000001,
+> [  802.406240] ravb e6800000.ethernet eth0:                     tx
+> status 0x00000000, tx mask 0x00000001.
+> ...
+> 
+> Unfortunately I cannot reproduce it.
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 1f8754d4daea5f257370a52a30fcb22798c54516 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Tue, 16 May 2017 01:48:24 +0000
-Subject: [PATCH] ASoC: rsnd: don't call free_irq() on Parent SSI
-
-If SSI uses shared pin, some SSI will be used as parent SSI.
-Then, normal SSI's remove and Parent SSI's remove
-(these are same SSI) will be called when unbind or remove timing.
-In this case, free_irq() will be called twice.
-This patch solve this issue.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Tested-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
-Reported-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/sh/rcar/ssi.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/sound/soc/sh/rcar/ssi.c b/sound/soc/sh/rcar/ssi.c
-index e43277a5068c..c224695c1484 100644
---- a/sound/soc/sh/rcar/ssi.c
-+++ b/sound/soc/sh/rcar/ssi.c
-@@ -709,6 +709,11 @@ static int rsnd_ssi_dma_remove(struct rsnd_mod *mod,
- 			       struct rsnd_priv *priv)
- {
- 	struct rsnd_ssi *ssi = rsnd_mod_to_ssi(mod);
-+	struct rsnd_mod *ssi_parent_mod = rsnd_io_to_mod_ssip(io);
-+
-+	/* Do nothing for SSI parent mod */
-+	if (ssi_parent_mod == mod)
-+		return 0;
- 
- 	/* PIO will request IRQ again */
- 	free_irq(ssi->irq, mod);
 -- 
-2.11.0
+Regards,
+Niklas S�derlund
