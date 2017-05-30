@@ -1,96 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:46759 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1765677AbdEXARA (ORCPT
+Received: from sauhun.de ([88.99.104.3]:59829 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750761AbdE3Tfk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 23 May 2017 20:17:00 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 06/17] rcar-vin: refactor pad lookup code
-Date: Wed, 24 May 2017 02:15:29 +0200
-Message-Id: <20170524001540.13613-7-niklas.soderlund@ragnatech.se>
-In-Reply-To: <20170524001540.13613-1-niklas.soderlund@ragnatech.se>
-References: <20170524001540.13613-1-niklas.soderlund@ragnatech.se>
+        Tue, 30 May 2017 15:35:40 -0400
+Date: Tue, 30 May 2017 21:35:37 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 2/5] mmc: tmio: use EXPORT_SYMBOL_GPL
+Message-ID: <20170530193537.bu4n5swlyuaxexop@ninjato>
+References: <1496148654-20386-1-git-send-email-horms+renesas@verge.net.au>
+ <1496148654-20386-3-git-send-email-horms+renesas@verge.net.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="mdyyerzfyzrhz5pu"
+Content-Disposition: inline
+In-Reply-To: <1496148654-20386-3-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-The pad lookup code can be broken out to increase readability and to
-reduce code duplication.
+--mdyyerzfyzrhz5pu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 36 +++++++++++++++++------------
- 1 file changed, 21 insertions(+), 15 deletions(-)
+On Tue, May 30, 2017 at 02:50:51PM +0200, Simon Horman wrote:
+> Use EXPORT_SYMBOL_GPL rather than the non _GPL variant as there seems to =
+be
+> no reason not to.
+>=20
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 1a75191539b0e7d7..90ea582fb48e3cb5 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -870,11 +870,25 @@ static void rvin_notify(struct v4l2_subdev *sd,
- 	}
- }
- 
-+static int rvin_find_pad(struct v4l2_subdev *sd, int direction)
-+{
-+	unsigned int pad;
-+
-+	if (sd->entity.num_pads <= 1)
-+		return 0;
-+
-+	for (pad = 0; pad < sd->entity.num_pads; pad++)
-+		if (sd->entity.pads[pad].flags & direction)
-+			return pad;
-+
-+	return -EINVAL;
-+}
-+
- int rvin_v4l2_probe(struct rvin_dev *vin)
- {
- 	struct video_device *vdev = &vin->vdev;
- 	struct v4l2_subdev *sd = vin_to_source(vin);
--	int pad_idx, ret;
-+	int ret;
- 
- 	v4l2_set_subdev_hostdata(sd, vin);
- 
-@@ -920,21 +934,13 @@ int rvin_v4l2_probe(struct rvin_dev *vin)
- 	vdev->device_caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING |
- 		V4L2_CAP_READWRITE;
- 
--	vin->digital.source_pad = 0;
--	for (pad_idx = 0; pad_idx < sd->entity.num_pads; pad_idx++)
--		if (sd->entity.pads[pad_idx].flags == MEDIA_PAD_FL_SOURCE)
--			break;
--	if (pad_idx >= sd->entity.num_pads)
--		return -EINVAL;
--
--	vin->digital.source_pad = pad_idx;
-+	ret = rvin_find_pad(sd, MEDIA_PAD_FL_SOURCE);
-+	if (ret < 0)
-+		return ret;
-+	vin->digital.source_pad = ret;
- 
--	vin->digital.sink_pad = 0;
--	for (pad_idx = 0; pad_idx < sd->entity.num_pads; pad_idx++)
--		if (sd->entity.pads[pad_idx].flags == MEDIA_PAD_FL_SINK) {
--			vin->digital.sink_pad = pad_idx;
--			break;
--		}
-+	ret = rvin_find_pad(sd, MEDIA_PAD_FL_SINK);
-+	vin->digital.sink_pad = ret < 0 ? 0 : ret;
- 
- 	vin->format.pixelformat	= RVIN_DEFAULT_FORMAT;
- 	rvin_reset_format(vin);
--- 
-2.13.0
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+
+--mdyyerzfyzrhz5pu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlktyYkACgkQFA3kzBSg
+KbYQRhAAml9dxfGFtR+ZvxvqDyYtqrAr9Y01ME4zjZpXYoc6sK58k7Rjx1JNfyWz
+bILS9GobZrH1bMXMYGrzAJ2ohtjGjJDTlsSeBhNEM5mugkVz1D8oRif+ZM3CX50b
+toNR0RC57aJOMV9832zOG+Sqmib6hGXMz382XqT+5SMl3P1XSl9VwFiX6/B6Gs2U
+jbeI/IkIRCtOUZuro2aCAxvvRg90g7dY8laL8J2uvDtkH2V/uvgvChJRV5IfEV01
+W1DKGKLQMtEZfFVgHkaFRUiSp1uCPmD0LjTjYxuxqbCFDuo2RMhFhxayRhVTfO6U
+KBqOCUSMLzGVxKU7MYurWgRKWAFAWukmTU9xoaDQExOTBE5K/JeFZCSgtYzXlhmI
+heELiLu2oLCBmKVyclUP7kA/idgQe+7ZM7yQ1C/JzKGvDeG7WVor2431BJ9YTj8o
+XFUeTGQ3qN5pgILKPYIY8Kmm4DArKQ9oCnYc+oaobp9ll/j0x5hzt7PvaKiL0MWd
+VKRoFUX9Supco51hOOI4U5YdD0zjc2gm5nNbPjUqLY+w0ZeMO2NatH2yzW4DPtVz
+SFu+9CZjZEXng0k8K546gK/kca54fQzLH4Kw1RDGdmgu4GynXhXM4tCamhKn+JGs
+NWv4JeKoa8ssBVEhgYf7Vm1/NtezMG2G9vwkOtJnrtgVoE3T52M=
+=CVuO
+-----END PGP SIGNATURE-----
+
+--mdyyerzfyzrhz5pu--
