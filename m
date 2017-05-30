@@ -1,62 +1,121 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:59829 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750761AbdE3Tfk (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55977 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751535AbdE3MvF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 30 May 2017 15:35:40 -0400
-Date: Tue, 30 May 2017 21:35:37 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 2/5] mmc: tmio: use EXPORT_SYMBOL_GPL
-Message-ID: <20170530193537.bu4n5swlyuaxexop@ninjato>
+        Tue, 30 May 2017 08:51:05 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 2/5] mmc: tmio: use EXPORT_SYMBOL_GPL
+Date: Tue, 30 May 2017 14:50:51 +0200
+Message-Id: <1496148654-20386-3-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1496148654-20386-1-git-send-email-horms+renesas@verge.net.au>
 References: <1496148654-20386-1-git-send-email-horms+renesas@verge.net.au>
- <1496148654-20386-3-git-send-email-horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="mdyyerzfyzrhz5pu"
-Content-Disposition: inline
-In-Reply-To: <1496148654-20386-3-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Use EXPORT_SYMBOL_GPL rather than the non _GPL variant as there seems to be
+no reason not to.
 
---mdyyerzfyzrhz5pu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ drivers/mmc/host/tmio_mmc_core.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-On Tue, May 30, 2017 at 02:50:51PM +0200, Simon Horman wrote:
-> Use EXPORT_SYMBOL_GPL rather than the non _GPL variant as there seems to =
-be
-> no reason not to.
->=20
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---mdyyerzfyzrhz5pu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlktyYkACgkQFA3kzBSg
-KbYQRhAAml9dxfGFtR+ZvxvqDyYtqrAr9Y01ME4zjZpXYoc6sK58k7Rjx1JNfyWz
-bILS9GobZrH1bMXMYGrzAJ2ohtjGjJDTlsSeBhNEM5mugkVz1D8oRif+ZM3CX50b
-toNR0RC57aJOMV9832zOG+Sqmib6hGXMz382XqT+5SMl3P1XSl9VwFiX6/B6Gs2U
-jbeI/IkIRCtOUZuro2aCAxvvRg90g7dY8laL8J2uvDtkH2V/uvgvChJRV5IfEV01
-W1DKGKLQMtEZfFVgHkaFRUiSp1uCPmD0LjTjYxuxqbCFDuo2RMhFhxayRhVTfO6U
-KBqOCUSMLzGVxKU7MYurWgRKWAFAWukmTU9xoaDQExOTBE5K/JeFZCSgtYzXlhmI
-heELiLu2oLCBmKVyclUP7kA/idgQe+7ZM7yQ1C/JzKGvDeG7WVor2431BJ9YTj8o
-XFUeTGQ3qN5pgILKPYIY8Kmm4DArKQ9oCnYc+oaobp9ll/j0x5hzt7PvaKiL0MWd
-VKRoFUX9Supco51hOOI4U5YdD0zjc2gm5nNbPjUqLY+w0ZeMO2NatH2yzW4DPtVz
-SFu+9CZjZEXng0k8K546gK/kca54fQzLH4Kw1RDGdmgu4GynXhXM4tCamhKn+JGs
-NWv4JeKoa8ssBVEhgYf7Vm1/NtezMG2G9vwkOtJnrtgVoE3T52M=
-=CVuO
------END PGP SIGNATURE-----
-
---mdyyerzfyzrhz5pu--
+diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+index e1ad461c4b8c..242d9bcc365a 100644
+--- a/drivers/mmc/host/tmio_mmc_core.c
++++ b/drivers/mmc/host/tmio_mmc_core.c
+@@ -91,14 +91,14 @@ void tmio_mmc_enable_mmc_irqs(struct tmio_mmc_host *host, u32 i)
+ 	host->sdcard_irq_mask &= ~(i & TMIO_MASK_IRQ);
+ 	sd_ctrl_write32_as_16_and_16(host, CTL_IRQ_MASK, host->sdcard_irq_mask);
+ }
+-EXPORT_SYMBOL(tmio_mmc_enable_mmc_irqs);
++EXPORT_SYMBOL_GPL(tmio_mmc_enable_mmc_irqs);
+ 
+ void tmio_mmc_disable_mmc_irqs(struct tmio_mmc_host *host, u32 i)
+ {
+ 	host->sdcard_irq_mask |= (i & TMIO_MASK_IRQ);
+ 	sd_ctrl_write32_as_16_and_16(host, CTL_IRQ_MASK, host->sdcard_irq_mask);
+ }
+-EXPORT_SYMBOL(tmio_mmc_disable_mmc_irqs);
++EXPORT_SYMBOL_GPL(tmio_mmc_disable_mmc_irqs);
+ 
+ static void tmio_mmc_ack_mmc_irqs(struct tmio_mmc_host *host, u32 i)
+ {
+@@ -562,7 +562,7 @@ void tmio_mmc_do_data_irq(struct tmio_mmc_host *host)
+ 
+ 	schedule_work(&host->done);
+ }
+-EXPORT_SYMBOL(tmio_mmc_do_data_irq);
++EXPORT_SYMBOL_GPL(tmio_mmc_do_data_irq);
+ 
+ static void tmio_mmc_data_irq(struct tmio_mmc_host *host, unsigned int stat)
+ {
+@@ -766,7 +766,7 @@ irqreturn_t tmio_mmc_irq(int irq, void *devid)
+ 
+ 	return IRQ_HANDLED;
+ }
+-EXPORT_SYMBOL(tmio_mmc_irq);
++EXPORT_SYMBOL_GPL(tmio_mmc_irq);
+ 
+ static int tmio_mmc_start_data(struct tmio_mmc_host *host,
+ 	struct mmc_data *data)
+@@ -1189,13 +1189,13 @@ tmio_mmc_host_alloc(struct platform_device *pdev)
+ 
+ 	return host;
+ }
+-EXPORT_SYMBOL(tmio_mmc_host_alloc);
++EXPORT_SYMBOL_GPL(tmio_mmc_host_alloc);
+ 
+ void tmio_mmc_host_free(struct tmio_mmc_host *host)
+ {
+ 	mmc_free_host(host->mmc);
+ }
+-EXPORT_SYMBOL(tmio_mmc_host_free);
++EXPORT_SYMBOL_GPL(tmio_mmc_host_free);
+ 
+ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
+ 			struct tmio_mmc_data *pdata,
+@@ -1338,7 +1338,7 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
+ 
+ 	return 0;
+ }
+-EXPORT_SYMBOL(tmio_mmc_host_probe);
++EXPORT_SYMBOL_GPL(tmio_mmc_host_probe);
+ 
+ void tmio_mmc_host_remove(struct tmio_mmc_host *host)
+ {
+@@ -1363,7 +1363,7 @@ void tmio_mmc_host_remove(struct tmio_mmc_host *host)
+ 
+ 	tmio_mmc_clk_disable(host);
+ }
+-EXPORT_SYMBOL(tmio_mmc_host_remove);
++EXPORT_SYMBOL_GPL(tmio_mmc_host_remove);
+ 
+ #ifdef CONFIG_PM
+ int tmio_mmc_host_runtime_suspend(struct device *dev)
+@@ -1380,7 +1380,7 @@ int tmio_mmc_host_runtime_suspend(struct device *dev)
+ 
+ 	return 0;
+ }
+-EXPORT_SYMBOL(tmio_mmc_host_runtime_suspend);
++EXPORT_SYMBOL_GPL(tmio_mmc_host_runtime_suspend);
+ 
+ static bool tmio_mmc_can_retune(struct tmio_mmc_host *host)
+ {
+@@ -1405,7 +1405,7 @@ int tmio_mmc_host_runtime_resume(struct device *dev)
+ 
+ 	return 0;
+ }
+-EXPORT_SYMBOL(tmio_mmc_host_runtime_resume);
++EXPORT_SYMBOL_GPL(tmio_mmc_host_runtime_resume);
+ #endif
+ 
+ MODULE_LICENSE("GPL v2");
+-- 
+2.1.4
