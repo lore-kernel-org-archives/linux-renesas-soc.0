@@ -1,35 +1,75 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-doc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH] Documentation: DMA API: fix a typo in a function name
-Date: Sat, 27 May 2017 20:52:43 +0200
-Message-Id: <20170527185243.13340-1-wsa+renesas@sang-engineering.com>
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: jmondi <jacopo@jmondi.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+CC: Dong Aisheng <dongas86@gmail.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        "Geert Uytterhoeven" <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v5 01/10] pinctrl: generic: Add bi-directional and
+ output-enable
+Date: Tue, 30 May 2017 14:12:25 +0000
+Message-ID: <SG2PR06MB1165939E9F77006316ACECE68AF00@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <SG2PR06MB11658EC3A3A80C57E6F539AC8A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <CAHp75VeLtOuty=iaxuCaH43rnBZDTT03iH7JyjDJBQhTD-EjzA@mail.gmail.com>
+ <CACRpkdZkNGSUvTrEdjbGKO1hr799QpJBGSHPVbsBibph7Jx61A@mail.gmail.com>
+ <20170508160120.GB25206@w540>
+ <CAHp75VfOMKOhpkec+htA6DRQhivpSmNXy1=Ayig1W+ZC84gTLw@mail.gmail.com>
+ <20170508172516.GC25206@w540>
+ <CACRpkdY1h+yfFuk2y9=nZqqvW9=G33_eHCisvuMkJ5b3zizY7Q@mail.gmail.com>
+ <CAA+hA=Q9hwe7_xL440Reoi7z7m8-SScZ5E057419KSA7dQK=tQ@mail.gmail.com>
+ <20170523183735.GC13664@w540>
+ <CACRpkdYcaGzSvAN2Trqwer+8GbqXyfpE=VqiYcQvCOqhDO9MMw@mail.gmail.com>
+ <20170529104229.GB21347@w540>
+In-Reply-To: <20170529104229.GB21347@w540>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Correct the typo, the wrongly typed function does not exist.
-
-Fixes: 6c9c6d6301287e ("dma-debug: New interfaces to debug dma mapping errors")
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- Documentation/DMA-API.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/Documentation/DMA-API.txt b/Documentation/DMA-API.txt
-index 6b20128fab8a2b..71200dfa09228b 100644
---- a/Documentation/DMA-API.txt
-+++ b/Documentation/DMA-API.txt
-@@ -692,7 +692,7 @@ of preallocated entries is defined per architecture. If it is too low for you
- boot with 'dma_debug_entries=<your_desired_number>' to overwrite the
- architectural default.
- 
--void debug_dmap_mapping_error(struct device *dev, dma_addr_t dma_addr);
-+void debug_dma_mapping_error(struct device *dev, dma_addr_t dma_addr);
- 
- dma-debug interface debug_dma_mapping_error() to debug drivers that fail
- to check DMA mapping errors on addresses returned by dma_map_single() and
--- 
-2.11.0
+SGVsbG8gSmFjb3BvIGFuZCBMaW51cywNCg0KT24gTW9uZGF5LCBNYXkgMjksIDIwMTcsIGptb25k
+aSB3cm90ZToNCj4gPiA+IFdlIGNhbiBoYW5kbGUgJ2JpLWRpcmVjdGlvbmFsJyBwaW5zIHdpdGgg
+c3RhdGljIHRhYmxlcyBpbiBvdXIgcGluDQo+ID4gPiBjb250cm9sbGVyIGRyaXZlciBhbmQgbm90
+IGhhdmUgaXQgYW55d2hlcmUgaW4gRFQuDQo+ID4NCj4gPiBUaGlzIHNvdW5kcyBsaWtlIGEgdmlh
+YmxlIGFwcHJvYWNoLg0KPiA+DQo+ID4gSSBqdXN0IHdhbnQgdG8ga25vdyBpZiAib3V0cHV0LWVu
+YWJsZSIgaXMgdGhlIHJpZ2h0IG5hbWU/DQo+ID4gIm91dHB1dC1idWZmZXItZW5hYmxlIj8NCj4g
+DQo+IEdyZWF0ISBUaGFua3MhDQo+IA0KPiBPbiBuYW1pbmc6IGlmIHdlIG5lZWQgIm91dHB1dC1i
+dWZmZXItZW5hYmxlIiBzaG91bGQgd2UgYWRkDQo+ICJpbnB1dC1idWZmZXItZW5hYmxlIiBhcyB3
+ZWxsPw0KPiANCj4gQ3VycmVudGx5IHdlIGFyZSB1c2luZyAiaW5wdXQtZW5hYmxlIiB0byBwYWly
+IHdpdGggIm91dHB1dC1lbmFibGUiLA0KPiBidXQgYXMgeW91IHNhaWQsIGp1c3QgIm91dHB1dC1l
+bmFibGUiIHdoZW4gIm91dHB1dC1oaWdoIiBhbmQNCj4gIm91dHB1dC1sb3ciIGFyZSB0aGVyZSBh
+bHJlYWR5IHNlZW1zIGEgYml0IGNvbmZ1c2luZy4NCj4gQXQgdGhlIHNhbWUgdGltZSAiaW5wdXQt
+YnVmZmVyLWVuYWJsZSIgc2VlbXMgdG8gYWN0dWFsbHkgYmUganVzdA0KPiBlbGVjdHJpY2FsbHkg
+ZXF1aXZhbGVudCB0byAiaW5wdXQtZW5hYmxlIiwgc28gYWRkaW5nIGl0IGlzIGEgYml0IG9mIGEN
+Cj4gd2FzdGUgYXMgd2VsbC4NCg0KSGVyZSBpcyB3aGF0IEkgdGhpbms6DQoNCg0KSW4gdGhlIGNh
+c2Ugb2YgdGhpcyBkcml2ZXIsIGFmdGVyIHdlIHJlbW92ZSB0aGUgJ2JpLWRpcmVjdGlvbmFsJw0K
+cHJvcGVydGllcyBhbmQgaGlkZSB0aGUgb3RoZXIgb2RkLWJhbGwgcGluIGNvbmZpZ3VyYXRpb25z
+IGluIGFuIGludGVybmFsDQp0YWJsZSwgd2UgYXJlIGxlZnQgd2l0aCB0aGUgTVRVMiB0aW1lciBw
+aW5zIHRoYXQgY2FuIGJlIGVpdGhlciBpbnB1dCBvcg0Kb3V0cHV0IGRlcGVuZGluZyBvbiB3aGF0
+IHlvdSB3YW50IHRvIGRvIHdpdGggdGhlbS4NCg0KICogSWYgeW91IHdhbnQgdG8gdXNlIGEgTVRV
+MiBjaGFubmVsIGFzIGEgUFdNLCB5b3Ugc2V0IHRoZSBwaW4gYXMgYW4NCiAgIG91dHB1dC4NCiAq
+IElmIHlvdSB3YW50IHRvIHVzZSBhIE1UVTIgY2hhbm5lbCBhcyBhIGlucHV0IGNhcHR1cmUsIHlv
+dSBzZXQgdGhlDQogICBwaW4gYXMgYW4gaW5wdXQuDQoNClRoZXkgYXJlIHNpbXBseSAiZGlyZWN0
+aW9uLWlucHV0IiBhbmQgImRpcmVjdGlvbi1vdXRwdXQiIHByb3BlcnRpZXMgdGhhdA0KZG9uJ3Qg
+cmVhbGx5IG5lZWQgdG8gdGFsayBhYm91dCAiYnVmZmVycyIuDQoNCg0KQnV0LCBpbnN0ZWFkIG9m
+IG1ha2luZyBhbnkgbmV3IHByb3BlcnRpZXMsIGZvciB0aGUgUmVuZXNhcyBkcml2ZXIsIGxldCdz
+DQpqdXN0IHN0aWNrIHdpdGggd2hhdCBhbHJlYWR5IGV4aXN0cyB0b2RheTogDQogKiBJZiB5b3Ug
+d2FudCBhIE1UVTIgY2hhbm5lbCBhcyBhIFBXTTogc2VsZWN0ICJvdXRwdXQtbG93Ig0KICogSWYg
+eW91IHdhbnQgYSBNVFUyIGNoYW5uZWwgYXMgYSBpbnB1dCBjYXB0dXJlOiBzZWxlY3QgImlucHV0
+LWVuYWJsZSINCg0KDQpTaWRlIE5vdGU6IFlvdSBjYW4gYWxzbyB1c2Ugb3V0cHV0LWhpZ2ggaW4g
+YWRkaXRpb24gdG8gb3V0cHV0LWxvdw0KICBiZWNhdXNlIGl0IGRvZXNuJ3QgbWF0dGVyICh0aGUg
+ZHJpdmVyIGNhbid0IHNldCB0aGUgcGluIGxldmVsIGFueXdheQ0KICBiZWNhdXNlIGFzIHNvb24g
+YXMgeW91IGFzc2lnbiB0aGUgcGluIHRvIE1UVTIsIHRoZSBNVFUyIGNvbnRyb2xzIHRoZQ0KICBw
+aW4sIG5vdCB0aGUgUEZDKS4gU28gdGhlIFJlbmVzYXMgZHJpdmVyIGNhbiBjaGVjayBmb3IgYm90
+aC4NCg0KDQoNCkNocmlzDQo=
