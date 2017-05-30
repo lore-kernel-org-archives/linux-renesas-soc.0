@@ -1,47 +1,35 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Tue, 30 May 2017 16:39:08 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org,
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Tue, 30 May 2017 10:41:24 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Bjorn Helgaas <bhelgaas@google.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH 5/7] pci: use proper name for the R-Car SoC
-Message-ID: <20170530213908.GD14896@bhelgaas-glaptop.roam.corp.google.com>
+Message-ID: <20170530084124.GB32139@verge.net.au>
 References: <20170528093051.11816-1-wsa+renesas@sang-engineering.com>
  <20170528093051.11816-6-wsa+renesas@sang-engineering.com>
+ <CAMuHMdV1AKU-kLj+1OgseqR1q2MOghRfWdyp6OJVe5BoW=FBkQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20170528093051.11816-6-wsa+renesas@sang-engineering.com>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <CAMuHMdV1AKU-kLj+1OgseqR1q2MOghRfWdyp6OJVe5BoW=FBkQ@mail.gmail.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sun, May 28, 2017 at 11:30:48AM +0200, Wolfram Sang wrote:
-> It is 'R-Car', not 'RCar'. No code or binding changes, only descriptive text.
+On Mon, May 29, 2017 at 11:13:48AM +0200, Geert Uytterhoeven wrote:
+> On Sun, May 28, 2017 at 11:30 AM, Wolfram Sang
+> <wsa+renesas@sang-engineering.com> wrote:
+> > It is 'R-Car', not 'RCar'. No code or binding changes, only descriptive text.
+> >
+> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 > 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
-> I suggest this trivial patch should be picked individually per susbsystem.
-> 
->  Documentation/devicetree/bindings/pci/rcar-pci.txt | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Applied with Geert and Simon's acks to pci/host-rcar for v4.13, thanks!
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
 
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/rcar-pci.txt b/Documentation/devicetree/bindings/pci/rcar-pci.txt
-> index 34712d6fd25376..bd27428dda619d 100644
-> --- a/Documentation/devicetree/bindings/pci/rcar-pci.txt
-> +++ b/Documentation/devicetree/bindings/pci/rcar-pci.txt
-> @@ -1,4 +1,4 @@
-> -* Renesas RCar PCIe interface
-> +* Renesas R-Car PCIe interface
->  
->  Required properties:
->  compatible: "renesas,pcie-r8a7779" for the R8A7779 SoC;
-> -- 
-> 2.11.0
-> 
