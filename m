@@ -1,54 +1,83 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v5 0/2] v4l: vsp1: Fix suspend/resume and race on M2M pipelines
-Date: Tue,  9 May 2017 13:37:29 +0100
-Message-Id: <cover.7da7d07a321ae8bff8445a8dd714d9a61a3ee71b.1494328856.git-series.kieran.bingham+renesas@ideasonboard.com>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([88.99.104.3]:59902 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750811AbdE3T52 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 30 May 2017 15:57:28 -0400
+Date: Tue, 30 May 2017 21:57:26 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 5/5] mmc: renesas-sdhi: improve checkpatch cleanness
+Message-ID: <20170530195726.p7zzhjujnetc56dw@ninjato>
+References: <1496148654-20386-1-git-send-email-horms+renesas@verge.net.au>
+ <1496148654-20386-6-git-send-email-horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="hsjbug3576toclth"
+Content-Disposition: inline
+In-Reply-To: <1496148654-20386-6-git-send-email-horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This small patchset helps rework the VSP1 driver to repair an issue on
-suspend/resume operations whereby the pipeline does not get reconfigured after
-it has been re-initialised following a resume operation.
 
-Patch [1/2] is a code move only, with no functional change.
-Patch [2/2] fixes the suspend/resume operations for video pipelines by marking
-            the new pipe configured flag as false, and configuring the pipe
-            during the vsp1_video_pipeline_run() call.
+--hsjbug3576toclth
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-v5:
- - Rebased for v4.12-rc1
- - Dropped two patches from v4 as they are integrated already:
-    - BRU streamon race
-    - DRM scoped pipe->dl removal
+On Tue, May 30, 2017 at 02:50:54PM +0200, Simon Horman wrote:
+> Trivial updates to improve checkpatch cleanness.
+>=20
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-v4:
- - Rework and separate out the BRU race back to v1 style implementation
- - Split BRU race and Suspend Resume fixes into separate commits.
+Two comments here:
 
-v3:
- - Move configured=false from vsp1_device_init to vsp1_reset_wpf()
- - Clean up flag dereferencing with a local struct *
+> -	/* Orginally registers were 16 bit apart, could be 32 or 64 nowadays */
+> -	if (!host->bus_shift && resource_size(res) > 0x100) /* old way to deter=
+mine the shift */
+> +	/*
+> +	 * Originally registers were 16 bit apart, could be 32 or 64 nowadays.
+> +	 * Old way to determine the shift:
+> +	 */
+> +	if (!host->bus_shift && resource_size(res) > 0x100)
+>  		host->bus_shift =3D 1;
 
-v2:
- - Refactor video pipeline configuration implementation to solve both suspend
-   resume and the VSP BRU race in a single change
+I liked the old way much better because it makes clearer which comment
+belongs to the whole block and which comment belongs to just this one
+line.
 
-v1:
- - Original pipeline configuration rework
+>  	/*
+> -	 * All SDHI have CMD12 controll bit
+> +	 * All SDHI have CMD12 control bit
+>  	 */
 
-Kieran Bingham (2):
-  v4l: vsp1: Move vsp1_video_setup_pipeline()
-  v4l: vsp1: Repair suspend resume operations for video pipelines
+Single line comment?
 
- drivers/media/platform/vsp1/vsp1_drv.c   |   4 +-
- drivers/media/platform/vsp1/vsp1_pipe.c  |   1 +-
- drivers/media/platform/vsp1/vsp1_pipe.h  |   4 +-
- drivers/media/platform/vsp1/vsp1_video.c | 123 +++++++++++-------------
- 4 files changed, 64 insertions(+), 68 deletions(-)
+And hooray for finally fixing the controll bit :D
 
-base-commit: 13e0988140374123bead1dd27c287354cb95108e
--- 
-git-series 0.9.1
+
+--hsjbug3576toclth
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlktzqYACgkQFA3kzBSg
+KbYBTQ/+NWMwR3miSppMNHuDjQw77Aa9NySM9r5YOONqEe7JYJHlxYjcPq/jmv8l
+eO5dhqC456SqMz4uI+5g14Q7Ag0+XfW7qk2aCzicYhMMY+z57eaRmZdh2XPgt4gu
+qNBj4kv5Y4Vxx0P78ETx1NozdPa/4DYuUPlA7Xx6tOhNRuVkr+Hzj/Jl2y5mYkKc
+YvC7RKtD3yzm1bRmDgE+SxHM/+4gjS2uYHdePsV1q6eV2Yi37NHKllUwenNlccij
+LygFO47E17wMZwJNK1Fwbi0Vvze7jnZOUuhSKGfHHULMTEDi5lunPSz0cdMJgzv9
+C6AJMlR8qik9zcUs9bHvXIWxFJkukA6cjHr5n8MmMecN8v//Qjxp+gyA4YrgWfVL
+BspFFlBdg2TFwynQ3smA81osjL5fWSCRKJHK/z8iii0iOpH5tNJloopjRc/fFRQ+
+/q12dH+Ag2keEuBfi02T+dc6iZP+qTWXWXn5cQaXw3ahmfdWolXFq64a3H65254D
+d1SilTE7ZEeRa4uBMG/9YfpBa+EhwJ/zUJkXsHxw89bwpqyozjxGZzor9M3yOHFk
+2Rlx0zmBRU/DbwPNtwIfzYiG2FkndtYF8VNBzsiTsB5UYjDrV6YhvSWz/iVdIlQ+
+8MPUQr7AgZmd+W475w1P+dx1v/SgAK1F3YxYjSNspgsiJXBnFw0=
+=trUV
+-----END PGP SIGNATURE-----
+
+--hsjbug3576toclth--
