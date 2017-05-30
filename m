@@ -1,83 +1,47 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51666 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754641AbdESREV (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 19 May 2017 13:04:21 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>,
-        Mark Brown <broonie@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <87o9up3bwn.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dBlJy-0003hl-AH@debutante>
-Date: Fri, 19 May 2017 18:04:10 +0100
-Subject: Applied "ASoC: audio-graph-card: tidyup return method from probe()" to the asoc tree
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Tue, 30 May 2017 16:39:08 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/7] pci: use proper name for the R-Car SoC
+Message-ID: <20170530213908.GD14896@bhelgaas-glaptop.roam.corp.google.com>
+References: <20170528093051.11816-1-wsa+renesas@sang-engineering.com>
+ <20170528093051.11816-6-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170528093051.11816-6-wsa+renesas@sang-engineering.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+On Sun, May 28, 2017 at 11:30:48AM +0200, Wolfram Sang wrote:
+> It is 'R-Car', not 'RCar'. No code or binding changes, only descriptive text.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+> I suggest this trivial patch should be picked individually per susbsystem.
+> 
+>  Documentation/devicetree/bindings/pci/rcar-pci.txt | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-   ASoC: audio-graph-card: tidyup return method from probe()
+Applied with Geert and Simon's acks to pci/host-rcar for v4.13, thanks!
 
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From ecea931350cedae8ee24abe6a65619f46a3a9c14 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Fri, 19 May 2017 00:58:00 +0000
-Subject: [PATCH] ASoC: audio-graph-card: tidyup return method from probe()
-
-Current return method from probe() is very confusable.
-This patch tidyup it to normal return method
-
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/generic/audio-graph-card.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/sound/soc/generic/audio-graph-card.c b/sound/soc/generic/audio-graph-card.c
-index 07e010d38596..f41b0393ffca 100644
---- a/sound/soc/generic/audio-graph-card.c
-+++ b/sound/soc/generic/audio-graph-card.c
-@@ -271,8 +271,10 @@ static int asoc_graph_card_probe(struct platform_device *pdev)
- 	snd_soc_card_set_drvdata(card, priv);
- 
- 	ret = devm_snd_soc_register_card(dev, card);
--	if (ret >= 0)
--		return ret;
-+	if (ret < 0)
-+		goto err;
-+
-+	return 0;
- err:
- 	asoc_simple_card_clean_reference(card);
- 
--- 
-2.11.0
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/rcar-pci.txt b/Documentation/devicetree/bindings/pci/rcar-pci.txt
+> index 34712d6fd25376..bd27428dda619d 100644
+> --- a/Documentation/devicetree/bindings/pci/rcar-pci.txt
+> +++ b/Documentation/devicetree/bindings/pci/rcar-pci.txt
+> @@ -1,4 +1,4 @@
+> -* Renesas RCar PCIe interface
+> +* Renesas R-Car PCIe interface
+>  
+>  Required properties:
+>  compatible: "renesas,pcie-r8a7779" for the R8A7779 SoC;
+> -- 
+> 2.11.0
+> 
