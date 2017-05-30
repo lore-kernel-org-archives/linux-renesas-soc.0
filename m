@@ -1,62 +1,109 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:59842 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751113AbdE3ThV (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55977 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751730AbdE3MvI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 30 May 2017 15:37:21 -0400
-Date: Tue, 30 May 2017 21:37:19 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 3/5] mmc: tmio, renesas-sdhi: update Renesas related
- copyrights
-Message-ID: <20170530193719.5hs2zmh5atazp7pp@ninjato>
+        Tue, 30 May 2017 08:51:08 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 3/5] mmc: tmio, renesas-sdhi: update Renesas related copyrights
+Date: Tue, 30 May 2017 14:50:52 +0200
+Message-Id: <1496148654-20386-4-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1496148654-20386-1-git-send-email-horms+renesas@verge.net.au>
 References: <1496148654-20386-1-git-send-email-horms+renesas@verge.net.au>
- <1496148654-20386-4-git-send-email-horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="i3zf2v6wttud2po3"
-Content-Disposition: inline
-In-Reply-To: <1496148654-20386-4-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Update copyrights to reflect work by Wolfram Sang and myself since last
+year.
 
---i3zf2v6wttud2po3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ drivers/mmc/host/renesas_sdhi_core.c     | 5 +++--
+ drivers/mmc/host/renesas_sdhi_sys_dmac.c | 3 +++
+ drivers/mmc/host/tmio_mmc.c              | 2 ++
+ drivers/mmc/host/tmio_mmc.h              | 5 +++--
+ drivers/mmc/host/tmio_mmc_core.c         | 5 +++--
+ 5 files changed, 14 insertions(+), 6 deletions(-)
 
-On Tue, May 30, 2017 at 02:50:52PM +0200, Simon Horman wrote:
-> Update copyrights to reflect work by Wolfram Sang and myself since last
-> year.
->=20
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---i3zf2v6wttud2po3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlktye8ACgkQFA3kzBSg
-KbZ0rg/+N1gwDIAnYpfG2R6rPgpvPHXS2sg2hIMyvlWWy7nhgHA9IvxwcOQnQnL9
-BO5j9oEPpX4WeYj26Wjt8ecTFdBOFhZRXusJJAFq+0YrgWSenA9kRHnTEFuhmBv9
-HlWk3q5+RsiEJtw9WalrpZWLAj/kJGdOVFQ72nbUZfyE8Lr9E7Ix/OG5UJRv61Ph
-XxAd0zHVZjxT+Yny97pX8bvl8U/SBx02oEOf3uXhBxjuUsbLoYXC16quv4KAQU6c
-pVWYwmp0+Vtr6jo/B++I9kiUjTdD3UtvVlGG0fC+OesSEr9lGgYYhInZ0cQ+g6AE
-DGvii1GS9a7tQJQk8uJV9RTrzsnZlW4b2zka5ZuSRjU1+FOuSUAJXzltVfxoDXst
-ryV87Qs0DFu+RmNMhyjAz2U87a+sn6G42N+3ZZGJnEFz17urvbvc6bclv9sJehrC
-CPy+Y447NH/KsNLF+KP1OD7iaaeKjQ4uAfwvDXImkPsT6KoBxpKRhbZrkcXf3mYk
-8nuQG2JMBxSSoYdiE/a6KSjL5c3QutbAVGjLqJywq749Gz3XTqfYtG/oqti4N+wi
-UPTJG6bQKWiGraiotl7QxIchwQ89rw1Fq/u3OEfCpinDS16bYP+XUXA0BaVNsF77
-ZMKWPabmWjTLiZXtd6uQmPpnXo5Bsn/afu3itSbMjSosPd4MLKI=
-=D65t
------END PGP SIGNATURE-----
-
---i3zf2v6wttud2po3--
+diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+index 82150a966391..f4690cba3443 100644
+--- a/drivers/mmc/host/renesas_sdhi_core.c
++++ b/drivers/mmc/host/renesas_sdhi_core.c
+@@ -1,8 +1,9 @@
+ /*
+  * Renesas SDHI
+  *
+- * Copyright (C) 2016 Sang Engineering, Wolfram Sang
+- * Copyright (C) 2015-16 Renesas Electronics Corporation
++ * Copyright (C) 2015-17 Renesas Electronics Corporation
++ * Copyright (C) 2016-17 Sang Engineering, Wolfram Sang
++ * Copyright (C) 2016-17 Horms Solutions, Simon Horman
+  * Copyright (C) 2009 Magnus Damm
+  *
+  * This program is free software; you can redistribute it and/or modify
+diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+index 7eab55adc5b2..202cf4346fdf 100644
+--- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+@@ -1,6 +1,9 @@
+ /*
+  * DMA function for TMIO MMC implementations
+  *
++ * Copyright (C) 2016-17 Renesas Electronics Corporation
++ * Copyright (C) 2016-17 Sang Engineering, Wolfram Sang
++ * Copyright (C) 2017 Horms Solutions, Simon Horman
+  * Copyright (C) 2010-2011 Guennadi Liakhovetski
+  *
+  * This program is free software; you can redistribute it and/or modify
+diff --git a/drivers/mmc/host/tmio_mmc.c b/drivers/mmc/host/tmio_mmc.c
+index 59880146e7f9..61cf36fb270b 100644
+--- a/drivers/mmc/host/tmio_mmc.c
++++ b/drivers/mmc/host/tmio_mmc.c
+@@ -3,6 +3,8 @@
+  *
+  * TC6393XB TC6391XB TC6387XB T7L66XB ASIC3
+  *
++ * Copyright (C) 2017 Renesas Electronics Corporation
++ * Copyright (C) 2017 Horms Solutions, Simon Horman
+  * Copyright (C) 2007 Ian Molton
+  * Copyright (C) 2004 Ian Molton
+  *
+diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+index 9c94b6eb9b49..768c8abaedda 100644
+--- a/drivers/mmc/host/tmio_mmc.h
++++ b/drivers/mmc/host/tmio_mmc.h
+@@ -3,8 +3,9 @@
+  *
+  * TC6393XB TC6391XB TC6387XB T7L66XB ASIC3
+  *
+- * Copyright (C) 2016 Sang Engineering, Wolfram Sang
+- * Copyright (C) 2015-16 Renesas Electronics Corporation
++ * Copyright (C) 2015-17 Renesas Electronics Corporation
++ * Copyright (C) 2016-17 Sang Engineering, Wolfram Sang
++ * Copyright (C) 2016-17 Horms Solutions, Simon Horman
+  * Copyright (C) 2007 Ian Molton
+  * Copyright (C) 2004 Ian Molton
+  *
+diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+index 242d9bcc365a..70516abd50a1 100644
+--- a/drivers/mmc/host/tmio_mmc_core.c
++++ b/drivers/mmc/host/tmio_mmc_core.c
+@@ -3,8 +3,9 @@
+  *
+  * TC6393XB, TC6391XB, TC6387XB, T7L66XB, ASIC3, SH-Mobile SoCs
+  *
+- * Copyright (C) 2016 Sang Engineering, Wolfram Sang
+- * Copyright (C) 2015-16 Renesas Electronics Corporation
++ * Copyright (C) 2015-17 Renesas Electronics Corporation
++ * Copyright (C) 2016-17 Sang Engineering, Wolfram Sang
++ * Copyright (C) 2017 Horms Solutions, Simon Horman
+  * Copyright (C) 2011 Guennadi Liakhovetski
+  * Copyright (C) 2007 Ian Molton
+  * Copyright (C) 2004 Ian Molton
+-- 
+2.1.4
