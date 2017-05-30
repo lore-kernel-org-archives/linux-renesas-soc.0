@@ -1,62 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:43460 "EHLO
+Received: from relmlor3.renesas.com ([210.160.252.173]:55510 "EHLO
         relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753262AbdEWGAY (ORCPT
+        by vger.kernel.org with ESMTP id S1750925AbdE3QXI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 23 May 2017 02:00:24 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: "balbi@kernel.org" <balbi@kernel.org>
-CC: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH 0/5] usb: gadget: udc: renesas_usb3: add DMAC support
-Date: Tue, 23 May 2017 06:00:19 +0000
-Message-ID: <TY1PR06MB09923F1ACA6B07A4D43ED674D8F90@TY1PR06MB0992.apcprd06.prod.outlook.com>
-References: <1493207411-24416-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1493207411-24416-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 30 May 2017 12:23:08 -0400
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Simon Horman <horms+renesas@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH] ARM: dts: r7s72100: add clock bit definitions
+Date: Tue, 30 May 2017 16:23:02 +0000
+Message-ID: <SG2PR06MB11652CB46B57C6C592F7A2FB8AF00@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20170525160548.103182-1-chris.brandt@renesas.com>
+ <CAMuHMdW21gwJZxCMsepX9c3hqpfw_+zc1x_f-6D0oKFVvqY2Kg@mail.gmail.com>
+In-Reply-To: <CAMuHMdW21gwJZxCMsepX9c3hqpfw_+zc1x_f-6D0oKFVvqY2Kg@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Felipe,
-
-> -----Original Message-----
-> From: Yoshihiro Shimoda
-> Sent: Wednesday, April 26, 2017 8:50 PM
->=20
-> This patch set is based on the latest Feribe's usb.git / testing/next bra=
-nch
-> (the commit id =3D 28ea6be01e2cf244c461a40c8e9593816f894412.)
-
-I'm afraid but, would you review this patch set?
-This patch set can be applied on the today's testing/next branch.
-
-Best regards,
-Yoshihiro Shimoda
-
-> This patch set has 2 things:
->  - Fixes some minor issues.
->  - Add support for dedicated DMAC.
->=20
-> If possible, I want the patches [1/5] to [4/5] to be applied to v4.12-rcN=
-.
-> I think the patch [5/5] will be applied to v4.13 (or later).
-> Should I submit them sepaletely?
->=20
-> Yoshihiro Shimoda (5):
->   usb: gadget: udc: renesas_usb3: fix pm_runtime functions calling
->   usb: gadget: udc: renesas_usb3: fix deadlock by spinlock
->   usb: gadget: udc: renesas_usb3: lock for PN_ registers access
->   usb: gadget: udc: renesas_usb3: Fix PN_INT_ENA disabling timing
->   usb: gadget: udc: renesas_usb3: add support for dedicated DMAC
->=20
->  drivers/usb/gadget/udc/renesas_usb3.c | 438 ++++++++++++++++++++++++++++=
-+++++-
->  1 file changed, 425 insertions(+), 13 deletions(-)
->=20
-> --
-> 1.9.1
+SGkgR2VlcnQsDQoNCkFzIGFsd2F5cyBUaGFuayB5b3UgZm9yIHlvdXIgcmV2aWV3IQ0KDQoNCk9u
+IE1vbmRheSwgTWF5IDI5LCAyMDE3LCBHZWVydCBVeXR0ZXJob2V2ZW4gd3JvdGU6DQo+ID4gICNk
+ZWZpbmUgUjdTNzIxMDBfQ0xLX1BMTCAgICAgICAwDQo+IA0KPiBObyBDb3JlU2lnaHQgKE1TVFAy
+MCk/DQoNCk9LLCBJJ2xsIGFkZCB0aGF0IGluLg0KDQoNCj4gPiArI2RlZmluZSBSN1M3MjEwMF9D
+TEtfTUNQV00gICAgIDANCj4gDQo+IFBlcmhhcHMganVzdCBSN1M3MjEwMF9DTEtfUFdNPw0KDQpP
+Sy4NClBlb3BsZSBkb24ndCBzZWVtIHRvIGJlIHVzaW5nIGl0IGZvciBtb3RvciBjb250cm9sIGFu
+eXdheSA7KQ0KDQoNCj4gPiArI2RlZmluZSBSN1M3MjEwMF9DTEtfU05ER0VOMCAgIDUNCj4gPiAr
+I2RlZmluZSBSN1M3MjEwMF9DTEtfU05ER0VOMSAgIDQNCj4gPiArI2RlZmluZSBSN1M3MjEwMF9D
+TEtfU05ER0VOMiAgIDMNCj4gPiArI2RlZmluZSBSN1M3MjEwMF9DTEtfU05ER0VOMyAgIDINCj4g
+DQo+IFI3UzcyMTAwX0NMS19TR1swLTNdPw0KDQpJIGRlYmF0ZWQgYWdhaW5zdCAnU0cnIHZzICdT
+TkRHRU4nLg0KU2luY2UgeW91IGFsc28gc3VnZ2VzdGVkIFNHLCBJJ2xsIGNoYW5nZSBpdC4NCg0K
+PiA+ICAvKiBNU1RQNyAqLw0KPiA+ICsjZGVmaW5lIFI3UzcyMTAwX0NMS19WREVDMCAgICAgNw0K
+PiA+ICsjZGVmaW5lIFI3UzcyMTAwX0NMS19WREVDMSAgICAgNg0KPiANCj4gUjdTNzIxMDBfQ0xL
+X1ZJTlswMV0/DQoNClRoZXNlIGFyZSBhbmFsb2cgdmlkZW8gaW5wdXRzIChOVFNDL1BBTCkuDQpG
+b3IgUi1DYXIsICJWSU4iIHNlZW0gdG8gcmVmZXIgdG8gcGFyYWxsZWwgZGlnaXRhbCBpbnB1dHMg
+KGllLCByY2FyLXZpbiANCmRyaXZlcikNCg0KU28gZm9yIHRoZSBSWi9BIHNlcmllcywgSSB3YXMg
+Z29pbmcgdG8ga2VlcCB3aXRoIHRoZSBjb252ZW50aW9uIHRoYXQgd2UgDQp1c2UgZm9yIHRoZSBu
+b24tTGludXggc2FtcGxlIGNvZGUgYW5kIGFwcCBub3RlcyBzdWNoIHRoYXQgdGhlc2UgaW5wdXRz
+IA0KYXJlICdhbmFsb2cgdmlkZW8gZGVjb2RlcnMnIGFuZCBub3QganVzdCB2aWRlbyBpbnB1dC9j
+YXB0dXJlIA0KcGlucy4uLi5oZW5jZSB2ZGVjLg0KDQoNCj4gPiArI2RlZmluZSBSN1M3MjEwMF9D
+TEtfRVRIQUJWICAgIDINCj4gDQo+IFI3UzcyMTAwX0NMS19FVEhBVkINCg0KT3Bwcy4gVGhhbmsg
+eW91IQ0KDQoNCj4gPiArI2RlZmluZSBSN1M3MjEwMF9DTEtfU1BJTUJDMCAgIDMNCj4gPiArI2Rl
+ZmluZSBSN1M3MjEwMF9DTEtfU1BJTUJDMSAgIDINCj4gDQo+IFI3UzcyMTAwX0NMS19TUEJbMC0x
+XT8NCg0KSGVyZSdzIHRoZSBvbmUgdGhhdCBJJ20gc3RydWdnbGluZyB3aXRoIHdoYXQgdG8gY2Fs
+bC4NCg0KSW50ZXJuYWxseSwgdGhlIElQIGJsb2NrIGlzIHJlZmVycmVkIHRvIGFzIHRoZSAiU1BJ
+QlNDIi4gQXMgaW4sIFNQSSBCdXMgDQpTdGF0ZSBDb250cm9sbGVyIChiZWNhdXNlIGJhc2ljYWxs
+eSBhbnl0aGluZyB0aGF0IGhhcyBhIHBhcmFsbGVsIA0KaW50ZXJmYWNlIHRvIHRoZSBpbnRlcm5h
+bCBidXMgdGhlIGRlc2lnbiBndXlzIGNhbGwgaXQgYSBCU0M6IExCU0MsIERCU0MsIA0KZXRjLi4u
+KS4NCg0KSG93ZXZlciwgZm9yIGV2ZXJ5IGRldmljZSB0aGlzIElQIGlzIHVzZWQgaW4gaXQgaXMg
+Y2FsbGVkIHRoZSAiU1BJIA0KTXVsdGkgSS9PIEJ1cyBDb250cm9sbGVyIiBpbiB0aGUgSGFyZHdh
+cmUgTWFudWFsIChTSDc3NjksIFJaL0ExLCBSLUNhciBHZW4zLCANCmV0Yy4uLikuDQoNClNvLCB0
+aGF0IG1pZ2h0IGJlIGNvbmZ1c2luZyB0byB1c2Vycy4NCg0KT3JpZ2luYWxseSwgaXQgd2FzIGNh
+bGxlZCAiU1BJIEJTQyIgYmVjYXVzZSB0aGV5IHdlcmUgb25seSBjb25uZWN0aW5nIGEgDQoiU1BJ
+IiBidXMgaW50ZXJmYWNlIGFzIGEgIkJ1cyBTdGF0ZSBDb250cm9sbGVyIi4gSG93ZXZlciwgbm93
+IHRoZXkndmUgDQphZGRlZCBvbnRvIHRoZSBJUCBhbmQgaXQgZG9lcyBtb3JlIHRoYW4ganVzdCBT
+UEkuDQoNCg0KPiBBbGwgcmVsYXRlZCByZWdpc3RlcnMgYW5kIGNsb2NrcyBhcmUgY2FsbGVkIFNQ
+Qjxzb21ldGhpbmc+Lg0KT25seSB0aGUgcGlucyBhcmUgbGFiZWxlZCBTUEI8c29tZXRoaW5nPiwg
+bm90IHRoZSByZWdpc3RlcnMuIFRoZSANCnJlZ2lzdGVycyBkb2Vzbid0IHJlYWxseSBoYXZlIGEg
+Y29tbW9uIHByZWZpeC4NCg0KDQpTbyBpbiBnZW5lcmFsLCB3aGF0J3MgeW91ciBvcGluaW9uIG9u
+IHdoYXQgdG8gY2FsbCB0aGlzIHRoaW5nIChzaW5jZSANCkknZCBsaWtlIHRvIG5hbWUgdGhlIGRy
+aXZlciBpbiBhIHNpbWlsYXIgbWFubmVyKT8NCg0KKDEpICJTUElCU0MiOiBCZWNhdXNlIHRoYXQn
+cyB3aGF0IGFsbCB0aGUgbm9uLUxpbnV4IHNhbXBsZSBjb2RlIGFuZCBhcHAgDQogICAgIG5vdGUg
+cmVmZXIgdG8gaXQuDQoNCigyKSAiU1BJTUJDIjogVGFrZW4gZnJvbSAiU1BJIE11bHRpIEkvTyBC
+dXMgQ29udHJvbGxlciIgKHVzaW5nIGFsbCAxc3QgDQogICAgbGV0dGVycyBleGNlcHQgdGhlICJJ
+L08iIHBhcnQpDQoNCigzKSAiU1BCIjogQmVjYXVzZSB0aGF0IGlzIGhvdyB0aGV5IG5hbWVkIHRo
+ZSBwaW5zIGZvciBSWi8xIChOT1RFIHRoYXQNCiAgICBpcyBqdXN0IGZvciBSWi9BMSBhbmQgU0g3
+MjY5LCBmb3IgUlovQTIrKyBhbmQgUi1DYXIgdGhleSBhcmUgbGFiZWxlZA0KICAgIFFTUElfeHh4
+Li4uc28geW91IHdpbGwgcHJvYmFibHkgbmV2ZXIgc2VlIFNQQiBhZ2FpbiBpbiBmdXR1cmUgaGFy
+ZHdhcmUNCiAgICBtYW51YWxzKQ0KDQooNCkgIlNCQyI6IEZvciBTZXJpYWwgQnVzIENvbnRyb2xs
+ZXINCg0KDQpJIGFtIGxlYW5pbmcgdG8ganVzdCBzdGF5aW5nIHdpdGggIlNQSUJTQyIgd2hpY2gg
+aXMgd2hhdCBJIHVzZSBub3cgZm9yIA0Kb3VyIGN1cnJlbnQgTGludXggQlNQIGFuZCBub24tTGlu
+dXggc2FtcGxlIGNvZGUsIG9yICJTQkMiIGp1c3QgdG8gDQpzaG9ydGVuIGl0Lg0KDQpBbnkgb3Bp
+bmlvbnM/Pz8NCg0KDQoNCj4gTm8gU1NJIChNU1RQMTFbMC01XSk/DQoNCk9wcHMsIEkgbWlzc2Vk
+IHRoYXQgcmVnaXN0ZXIgc29tZWhvdy4NCkknbGwgYWRkIHRoZW0gaW4uDQoNCg0KVGhhbmsgeW91
+LA0KQ2hyaXMNCg0K
