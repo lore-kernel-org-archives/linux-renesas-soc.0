@@ -1,98 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:45454 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750987AbdEPPOc (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:39717 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750996AbdEaI6X (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 16 May 2017 11:14:32 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Sricharan R <sricharan@codeaurora.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Will Deacon <will.deacon@arm.com>,
-        iommu@lists.linux-foundation.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] ARM: dma-mapping: Don't tear third-party mappings
-Date: Tue, 16 May 2017 18:14:34 +0300
-Message-Id: <20170516151434.18830-1-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <6d9fa319-4401-c47a-7985-9a349838bcaf@arm.com>
-References: <6d9fa319-4401-c47a-7985-9a349838bcaf@arm.com>
+        Wed, 31 May 2017 04:58:23 -0400
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: robh+dt@kernel.org, mark.rutland@arm.com, mchehab@kernel.org,
+        hverkuil@xs4all.nl, sakari.ailus@linux.intel.com, crope@iki.fi
+Cc: chris.paterson2@renesas.com, laurent.pinchart@ideasonboard.com,
+        geert+renesas@glider.be, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH v6 4/7] media: Add new SDR formats PC16, PC18 & PC20
+Date: Wed, 31 May 2017 09:44:54 +0100
+Message-Id: <20170531084457.4800-5-ramesh.shanmugasundaram@bp.renesas.com>
+In-Reply-To: <20170531084457.4800-1-ramesh.shanmugasundaram@bp.renesas.com>
+References: <20170531084457.4800-1-ramesh.shanmugasundaram@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-arch_setup_dma_ops() is used in device probe code paths to create an
-IOMMU mapping and attach it to the device. The function assumes that the
-device is attached to a device-specific IOMMU instance (or at least a
-device-specific TLB in a shared IOMMU instance) and thus creates a
-separate mapping for every device.
+This patch adds support for the three new SDR formats. These formats
+were prefixed with "planar" indicating I & Q data are not interleaved
+as in other formats. Here, I & Q data constitutes the top half and bottom
+half of the received buffer respectively.
 
-On several systems (Renesas R-Car Gen2 being one of them), that
-assumption is not true, and IOMMU mappings must be shared between
-multiple devices. In those cases the IOMMU driver knows better than the
-generic ARM dma-mapping layer and attaches mapping to devices manually
-with arm_iommu_attach_device(), which sets the DMA ops for the device.
+V4L2_SDR_FMT_PCU16BE - 14-bit complex (I & Q) unsigned big-endian sample
+inside 16-bit. V4L2 FourCC: PC16
 
-The arch_setup_dma_ops() function takes this into account and bails out
-immediately if the device already has DMA ops assigned. However, the
-corresponding arch_teardown_dma_ops() function, called from driver
-unbind code paths (including probe deferral), will tear the mapping down
-regardless of who created it. When the device is reprobed
-arch_setup_dma_ops() will be called again but won't perform any
-operation as the DMA ops will still be set.
+V4L2_SDR_FMT_PCU18BE - 16-bit complex (I & Q) unsigned big-endian sample
+inside 18-bit. V4L2 FourCC: PC18
 
-We need to reset the DMA ops in arch_teardown_dma_ops() to fix this.
-However, we can't do so unconditionally, as then a new mapping would be
-created by arch_setup_dma_ops() when the device is reprobed, regardless
-of whether the device needs to share a mapping or not. We must thus keep
-track of whether arch_setup_dma_ops() created the mapping, and only in
-that case tear it down in arch_teardown_dma_ops().
+V4L2_SDR_FMT_PCU20BE - 18-bit complex (I & Q) unsigned big-endian sample
+inside 20-bit. V4L2 FourCC: PC20
 
-Keep track of that information in the dev_archdata structure. As the
-structure is embedded in all instances of struct device let's not grow
-it, but turn the existing dma_coherent bool field into a bitfield that
-can be used for other purposes.
-
-Fixes: 7b07cbefb68d ("iommu: of: Handle IOMMU lookup failure with deferred probing or error")
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 ---
- arch/arm/include/asm/device.h | 3 ++-
- arch/arm/mm/dma-mapping.c     | 5 +++++
- 2 files changed, 7 insertions(+), 1 deletion(-)
+ drivers/media/v4l2-core/v4l2-ioctl.c | 3 +++
+ include/uapi/linux/videodev2.h       | 3 +++
+ 2 files changed, 6 insertions(+)
 
-diff --git a/arch/arm/include/asm/device.h b/arch/arm/include/asm/device.h
-index 36ec9c8f6e16..3234fe9bba6e 100644
---- a/arch/arm/include/asm/device.h
-+++ b/arch/arm/include/asm/device.h
-@@ -19,7 +19,8 @@ struct dev_archdata {
- #ifdef CONFIG_XEN
- 	const struct dma_map_ops *dev_dma_ops;
- #endif
--	bool dma_coherent;
-+	unsigned int dma_coherent:1;
-+	unsigned int dma_ops_setup:1;
- };
+diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+index e5a2187381db..ca1e920d3e7c 100644
+--- a/drivers/media/v4l2-core/v4l2-ioctl.c
++++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+@@ -1229,6 +1229,9 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
+ 	case V4L2_SDR_FMT_CS8:		descr = "Complex S8"; break;
+ 	case V4L2_SDR_FMT_CS14LE:	descr = "Complex S14LE"; break;
+ 	case V4L2_SDR_FMT_RU12LE:	descr = "Real U12LE"; break;
++	case V4L2_SDR_FMT_PCU16BE:	descr = "Planar Complex U16BE"; break;
++	case V4L2_SDR_FMT_PCU18BE:	descr = "Planar Complex U18BE"; break;
++	case V4L2_SDR_FMT_PCU20BE:	descr = "Planar Complex U20BE"; break;
+ 	case V4L2_TCH_FMT_DELTA_TD16:	descr = "16-bit signed deltas"; break;
+ 	case V4L2_TCH_FMT_DELTA_TD08:	descr = "8-bit signed deltas"; break;
+ 	case V4L2_TCH_FMT_TU16:		descr = "16-bit unsigned touch data"; break;
+diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+index 2b8feb86d09e..45cf7359822c 100644
+--- a/include/uapi/linux/videodev2.h
++++ b/include/uapi/linux/videodev2.h
+@@ -669,6 +669,9 @@ struct v4l2_pix_format {
+ #define V4L2_SDR_FMT_CS8          v4l2_fourcc('C', 'S', '0', '8') /* complex s8 */
+ #define V4L2_SDR_FMT_CS14LE       v4l2_fourcc('C', 'S', '1', '4') /* complex s14le */
+ #define V4L2_SDR_FMT_RU12LE       v4l2_fourcc('R', 'U', '1', '2') /* real u12le */
++#define V4L2_SDR_FMT_PCU16BE	  v4l2_fourcc('P', 'C', '1', '6') /* planar complex u16be */
++#define V4L2_SDR_FMT_PCU18BE	  v4l2_fourcc('P', 'C', '1', '8') /* planar complex u18be */
++#define V4L2_SDR_FMT_PCU20BE	  v4l2_fourcc('P', 'C', '2', '0') /* planar complex u20be */
  
- struct omap_device;
-diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
-index c742dfd2967b..e0272f9140e2 100644
---- a/arch/arm/mm/dma-mapping.c
-+++ b/arch/arm/mm/dma-mapping.c
-@@ -2430,9 +2430,14 @@ void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
- 		dev->dma_ops = xen_dma_ops;
- 	}
- #endif
-+	dev->archdata.dma_ops_setup = true;
- }
- 
- void arch_teardown_dma_ops(struct device *dev)
- {
-+	if (!dev->archdata.dma_ops_setup)
-+		return;
-+
- 	arm_teardown_iommu_dma_ops(dev);
-+	set_dma_ops(dev, NULL);
- }
+ /* Touch formats - used for Touch devices */
+ #define V4L2_TCH_FMT_DELTA_TD16	v4l2_fourcc('T', 'D', '1', '6') /* 16-bit signed deltas */
 -- 
-Regards,
-
-Laurent Pinchart
+2.12.2
