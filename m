@@ -1,47 +1,117 @@
 Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 1/2] v4l: async: check for v4l2_dev in v4l2_async_notifier_register()
-Date: Wed, 24 May 2017 02:07:26 +0200
-Message-Id: <20170524000727.12936-2-niklas.soderlund@ragnatech.se>
-In-Reply-To: <20170524000727.12936-1-niklas.soderlund@ragnatech.se>
-References: <20170524000727.12936-1-niklas.soderlund@ragnatech.se>
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: robh+dt@kernel.org, mark.rutland@arm.com, mchehab@kernel.org,
+        hverkuil@xs4all.nl, sakari.ailus@linux.intel.com, crope@iki.fi
+Cc: chris.paterson2@renesas.com, laurent.pinchart@ideasonboard.com,
+        geert+renesas@glider.be, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH v6 2/7] dt-bindings: media: Add MAX2175 binding description
+Date: Wed, 31 May 2017 09:44:52 +0100
+Message-Id: <20170531084457.4800-3-ramesh.shanmugasundaram@bp.renesas.com>
+In-Reply-To: <20170531084457.4800-1-ramesh.shanmugasundaram@bp.renesas.com>
+References: <20170531084457.4800-1-ramesh.shanmugasundaram@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Add device tree binding documentation for MAX2175 RF to bits tuner
+device.
 
-Add a check for v4l2_dev to v4l2_async_notifier_register() as to fail as
-early as possible since this will fail later in v4l2_async_test_notify().
-
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- drivers/media/v4l2-core/v4l2-async.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+v6:
+ - clocks property updated.
+ - pico-farads renamed to picofarads (Sakari).
 
-diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
-index cbd919d4edd27e17..c16200c88417b151 100644
---- a/drivers/media/v4l2-core/v4l2-async.c
-+++ b/drivers/media/v4l2-core/v4l2-async.c
-@@ -148,7 +148,8 @@ int v4l2_async_notifier_register(struct v4l2_device *v4l2_dev,
- 	struct v4l2_async_subdev *asd;
- 	int i;
+v5:
+ - pF in property-units.txt is renamed to pico-farads (Geert)
+ - "maxim,refout-load-pF" is renamed to "maxim,refout-load".
+---
+ .../devicetree/bindings/media/i2c/max2175.txt      | 59 ++++++++++++++++++++++
+ .../devicetree/bindings/property-units.txt         |  1 +
+ 2 files changed, 60 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/max2175.txt
+
+diff --git a/Documentation/devicetree/bindings/media/i2c/max2175.txt b/Documentation/devicetree/bindings/media/i2c/max2175.txt
+new file mode 100644
+index 000000000000..02b4e9cd7b1b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/i2c/max2175.txt
+@@ -0,0 +1,59 @@
++Maxim Integrated MAX2175 RF to Bits tuner
++-----------------------------------------
++
++The MAX2175 IC is an advanced analog/digital hybrid-radio receiver with
++RF to Bits® front-end designed for software-defined radio solutions.
++
++Required properties:
++--------------------
++- compatible: "maxim,max2175" for MAX2175 RF-to-bits tuner.
++- clocks: clock specifier.
++- port: child port node corresponding to the I2S output, in accordance with
++	the video interface bindings defined in
++	Documentation/devicetree/bindings/media/video-interfaces.txt. The port
++	node must contain at least one endpoint.
++
++Optional properties:
++--------------------
++- maxim,master	      : phandle to the master tuner if it is a slave. This
++			is used to define two tuners in diversity mode
++			(1 master, 1 slave). By default each tuner is an
++			individual master.
++- maxim,refout-load   : load capacitance value (in picofarads) on reference
++			output drive level. The possible load values are:
++			 0 (default - refout disabled)
++			10
++			20
++			30
++			40
++			60
++			70
++- maxim,am-hiz-filter : empty property indicates the AM Hi-Z filter is used
++			in this hardware for AM antenna input.
++
++Example:
++--------
++
++Board specific DTS file
++
++/* Fixed XTAL clock node */
++maxim_xtal: clock {
++	compatible = "fixed-clock";
++	#clock-cells = <0>;
++	clock-frequency = <36864000>;
++};
++
++/* A tuner device instance under i2c bus */
++max2175_0: tuner@60 {
++	compatible = "maxim,max2175";
++	reg = <0x60>;
++	clocks = <&maxim_xtal>;
++	maxim,refout-load = <10>;
++
++	port {
++		max2175_0_ep: endpoint {
++			remote-endpoint = <&slave_rx_device>;
++		};
++	};
++
++};
+diff --git a/Documentation/devicetree/bindings/property-units.txt b/Documentation/devicetree/bindings/property-units.txt
+index 12278d79f6c0..7c9f6ee918f1 100644
+--- a/Documentation/devicetree/bindings/property-units.txt
++++ b/Documentation/devicetree/bindings/property-units.txt
+@@ -28,6 +28,7 @@ Electricity
+ -ohms		: Ohms
+ -micro-ohms	: micro Ohms
+ -microvolt	: micro volts
++-picofarads	: picofarads
  
--	if (!notifier->num_subdevs || notifier->num_subdevs > V4L2_MAX_SUBDEVS)
-+	if (!v4l2_dev || !notifier->num_subdevs ||
-+	    notifier->num_subdevs > V4L2_MAX_SUBDEVS)
- 		return -EINVAL;
- 
- 	notifier->v4l2_dev = v4l2_dev;
+ Temperature
+ ----------------------------------------
 -- 
-2.13.0
+2.12.2
