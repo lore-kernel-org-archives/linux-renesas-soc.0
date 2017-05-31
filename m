@@ -1,58 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f194.google.com ([209.85.223.194]:35037 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751266AbdEET4V (ORCPT
+Received: from www.zeus03.de ([194.117.254.33]:59166 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751037AbdEaUVa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 5 May 2017 15:56:21 -0400
-Date: Fri, 5 May 2017 14:56:19 -0500
-From: Rob Herring <robh@kernel.org>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v3] pinctrl: sh-pfc: r8a7794: add R8A7745 support
-Message-ID: <20170505195619.he7tpdtrkkb3oafq@rob-hp-laptop>
-References: <20170428185245.428747882@cogentembedded.com>
+        Wed, 31 May 2017 16:21:30 -0400
+Date: Wed, 31 May 2017 22:21:28 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Simon Horman <horms@verge.net.au>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Dirk Behme <dirk.behme@gmail.com>
+Subject: Re: [PATCH] mmc: renesas_sdhi_core: on R-Car 2+, make use of CBSY bit
+Message-ID: <20170531202128.GA3791@katana>
+References: <20170530090346.19088-1-wsa+renesas@sang-engineering.com>
+ <20170530200218.q4s2dlrxusrdgpm2@ninjato>
+ <20170531195611.GE22266@verge.net.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="LZvS9be/3tNcYl/X"
 Content-Disposition: inline
-In-Reply-To: <20170428185245.428747882@cogentembedded.com>
+In-Reply-To: <20170531195611.GE22266@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Apr 28, 2017 at 09:52:35PM +0300, Sergei Shtylyov wrote:
-> Renesas RZ/G1E (R8A7745) is pin compatible with R-Car E2 (R8A7794),
-> however it doesn't have several automotive specific peripherals.
-> Annotate all the items that only exist on the R-Car SoCs...
-> 
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> 
-> ---
-> This patch is  against the 'devel' branch of Linus Walleij's 'linux-pinctrl.git'
-> repo plus 3 R8A7794 PFC driver fixes/cleanups posted today and  the R8A7743 PFC
-> support patch posted last week...
-> 
-> Changes in version 3:
-> - resolved rejects atop of the new R8A7794 driver patches renaming the IIC0/1
->   signals and removing reserved groups/signals;
-> - undid splitting of 'pinmux_{groups|functions}' arrays into the common and
->   R8A7794 specfic parts, updated the patch description accordingly;
-> - kill double spaces in the patch description.
-> 
-> Changes in version 2:
-> - fixed indentation to use tabs instead of spaces;
-> - updated the PFC bindings.
-> 
->  Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt |    1 
 
-Acked-by: Rob Herring <robh@kernel.org>
+--LZvS9be/3tNcYl/X
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
->  drivers/pinctrl/sh-pfc/Kconfig                                    |    5 
->  drivers/pinctrl/sh-pfc/Makefile                                   |    1 
->  drivers/pinctrl/sh-pfc/core.c                                     |    6 
->  drivers/pinctrl/sh-pfc/pfc-r8a7794.c                              |  640 +++++-----
->  drivers/pinctrl/sh-pfc/sh_pfc.h                                   |    1 
->  6 files changed, 369 insertions(+), 285 deletions(-)
+
+> Thanks, sorry for the clash - we seem to often hit the SDHI driver
+> at about the same time.
+
+Yes, but given the amount of refactoring done, the rebase work is
+surprisingly small. So, I am all fine :) Thanks!
+
+
+--LZvS9be/3tNcYl/X
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlkvJcMACgkQFA3kzBSg
+KbZohQ//V1q7btDuqcSWsU7YCbCXsXQWwHZP2BXbRawokEixAgNkNvzvg2IP8+O0
+0hnodRwCh3r1wEGApzMJM6COSSyYE26MuokOBkPoSuvrWELnKVRQOSd8SzQiktTm
+rvV6QPb9Ru3qLT8iJhBKEnyBUH8eP4Si3KPUsaouMVBNrN0IbatWX879Orye7FXc
+Fn0Jkv3XG2p/a4Xx9F9awmgZaGl2HX+fdxR7WqY+dQtAkBULZ0MHSyz4yuvMgMN8
+kWjhqn9PVdGinv1uXfI7HccqNoQWlQNFVMokG9ORfiZNn16HEh7nrJjfJe/pRsMB
+rA7T9FFWwMr4iLrakYKW4nHdHkO8QqHEpwCD5HuDIvh2zATZBeKDXbjFY4sYJeu1
+CqBvm25WnFAbszTIB4H6X1dEK28HhXQZ4JXGop0PlzMFoHTYNQZ4ExpqEdfHHx6V
+YV0Azy+0nievPb/YtFKVtPtfCGdSn6cvK0Z2dkVrsR0T5BfbBxnah6OichNuPcOt
+UsFLlSWMAsalJihWPOfUjco5MIOWVsxViQdHM1SEVkQiG0q17JFnLxRp6ZEIXR31
+f5GBRlmlIHNcdM/Qgz7dnindN/zmYwPHUZRi6lLA6OewEbECbE6IaUmKDQ8eW1QG
+pn4252koJgJSr25jPhJbVR4Ne0/Yf8GTvNI+siG7j96bOFd1b8M=
+=91OX
+-----END PGP SIGNATURE-----
+
+--LZvS9be/3tNcYl/X--
