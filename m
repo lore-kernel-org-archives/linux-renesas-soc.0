@@ -1,40 +1,34 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org,
-        laurent.pinchart@ideasonboard.com
-Cc: linux-media@vger.kernel.org, geert@linux-m68k.org,
-        magnus.damm@gmail.com, hans.verkuil@cisco.com,
-        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
-        horms@verge.net.au, devicetree@vger.kernel.org,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH v3 2/4] media: adv7180: add adv7180cp, adv7180st compatible strings
-Date: Fri, 19 May 2017 15:07:02 +0200
-Message-Id: <1495199224-16337-3-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1495199224-16337-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1495199224-16337-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:43573 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751009AbdEaUEP (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 31 May 2017 16:04:15 -0400
+Date: Wed, 31 May 2017 22:04:10 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5] arm64: dts: r8a7795: h3ulcb: Add support for R-Car H3
+ ES2.0
+Message-ID: <20170531200410.GH22266@verge.net.au>
+References: <1496217580-5628-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1496217580-5628-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Used to differentiate between models with 3 and 6 inputs.
+On Wed, May 31, 2017 at 09:59:40AM +0200, Geert Uytterhoeven wrote:
+> Split off support for H3ULCB boards with the ES1.x revision of the R-Car
+> H3 SoC into a separate file.  The main r8a7795-h3ulcb.dts file now
+> corresponds to H3ULCB with R-Car H3 ES2.0 or later.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v5:
+>   - Now also tested on H3ULCB with H3 ES2.0, so please apply.  Thanks!
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
----
- drivers/media/i2c/adv7180.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/media/i2c/adv7180.c b/drivers/media/i2c/adv7180.c
-index bdbbf8c..78de7dd 100644
---- a/drivers/media/i2c/adv7180.c
-+++ b/drivers/media/i2c/adv7180.c
-@@ -1452,6 +1452,8 @@ static SIMPLE_DEV_PM_OPS(adv7180_pm_ops, adv7180_suspend, adv7180_resume);
- #ifdef CONFIG_OF
- static const struct of_device_id adv7180_of_id[] = {
- 	{ .compatible = "adi,adv7180", },
-+	{ .compatible = "adi,adv7180cp", },
-+	{ .compatible = "adi,adv7180st", },
- 	{ .compatible = "adi,adv7182", },
- 	{ .compatible = "adi,adv7280", },
- 	{ .compatible = "adi,adv7280-m", },
--- 
-2.7.4
-
+Thanks, applied.
