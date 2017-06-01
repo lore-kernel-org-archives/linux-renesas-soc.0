@@ -1,47 +1,154 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55977 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751718AbdE3MvH (ORCPT
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:41278 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751015AbdFACTh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 30 May 2017 08:51:07 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 0/5] mmc: tmio, renesas-sdhi: cleanups
-Date: Tue, 30 May 2017 14:50:49 +0200
-Message-Id: <1496148654-20386-1-git-send-email-horms+renesas@verge.net.au>
+        Wed, 31 May 2017 22:19:37 -0400
+Date: Thu, 1 Jun 2017 11:19:24 +0900
+From: jmondi <jacopo@jmondi.org>
+To: Peter Rosin <peda@axentia.se>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        laurent.pinchart@ideasonboard.com, wsa@the-dreams.de,
+        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2] i2c: i2c-mux: Fix channel parent node assignment
+Message-ID: <20170601021924.GB13970@w540>
+References: <1496134457-19573-1-git-send-email-jacopo+renesas@jmondi.org>
+ <5de6a678-e646-3acb-2346-8a1d76ebbf9d@axentia.se>
+ <20170531075126.GC19019@w540>
+ <ef5b3b0a-52c7-785f-6faf-47d9b40f89cc@axentia.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ef5b3b0a-52c7-785f-6faf-47d9b40f89cc@axentia.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+On Wed, May 31, 2017 at 10:19:07AM +0200, Peter Rosin wrote:
+> On 2017-05-31 09:51, jmondi wrote:
+> > Hi Peter,
+> >
+> > On Tue, May 30, 2017 at 01:04:08PM +0200, Peter Rosin wrote:
+> >> On 2017-05-30 10:54, Jacopo Mondi wrote:
+> >>> I2c-mux channels are created as mux siblings while they should be
+> >>> children of the mux itself. Fix it.
+> >>
+> >> Has this received any testing at all?
+> >>
+> >
+> > Yes, but on our specific use case, that apparently does not makes use of
+> > i2c_parent_is_i2c_adapter()
+>
+> Try e.g. adding a client device with some address to the root i2c
+> adapter, and then add another client device with the same address
+> to one of the mux child adapters. Do that with and without your
+> patch. I suspect it will be allowed with your patch even though it
+> shouldn't.
+>
 
-this short series provides some cleanups to the tmio and renesas-sdhi
-drivers.
+Oh I see what's you're point here.
+I cannot access the test board and try, but yes I see what you mean.
 
-* Update files listed in MAINTAINERS
-* Consistently use EXPORT_SYMBOL_GPL
-* Update Renesas related copyrights
-* Improve checkpatch cleanness
+> >> I think it will break various users of i2c_parent_is_i2c_adapter()
+> >> that expect the current situation that a i2c mux child adapter is
+> >> direct child of the parent i2c adapter. I.e. with no intermediate
+> >> device node.
+> >
+> > Oh, I know see..
+> >
+> > So when walking the devices sitting on an i2c-adapter we should expect to
+> > see mux children adapters as well there. Do you think is there a way to
+> > easily identify them?
+>
+> Well, you can use the method from i2c_parent_is_i2c_adapter() and
+> write a function like so (untested):
+>
+> struct i2c_adapter *i2c_is_i2c_adapter(struct device *dev)
+> {
+> 	if (dev->type != &i2c_adapter_type)
+> 		return NULL;
+>
+> 	return to_i2c_adapter(dev);
+> }
+>
+> But why do you need to identify them? What problem are you trying to solve?
+>
 
-Simon Horman (5):
-  MAINTAINERS: Update files for TMIO/SDHI MMC driver
-  mmc: tmio: use EXPORT_SYMBOL_GPL
-  mmc: tmio, renesas-sdhi: update Renesas related copyrights
-  mmc: tmio: improve checkpatch cleanness
-  mmc: renesas-sdhi: improve checkpatch cleanness
+I want to be able to walk all children devices of an i2c-adapter,
+not including the mux channel i2c-adapters. I'm sure I can work around it.
+While doing that I stumbled upon this and thought it was wrong.
 
- MAINTAINERS                              |   2 +-
- drivers/mmc/host/renesas_sdhi.h          |   4 +-
- drivers/mmc/host/renesas_sdhi_core.c     |  53 +++++++-----
- drivers/mmc/host/renesas_sdhi_sys_dmac.c |  28 ++++---
- drivers/mmc/host/tmio_mmc.c              |  10 ++-
- drivers/mmc/host/tmio_mmc.h              |  22 +++--
- drivers/mmc/host/tmio_mmc_core.c         | 139 ++++++++++++++++++-------------
- include/linux/mfd/tmio.h                 |  33 ++++----
- 8 files changed, 167 insertions(+), 124 deletions(-)
+> Also, I forgot to mention this in my first reply, but note that the
+> device implementing the i2c-mux need not be a child of the i2c adapter.
+> I.e. in your example, the device I'm talking about is gmsl-deserializer@0.
+> This "MUX" device could be e.g. a platform device situated in some other
+> completely random place in the device tree. Oh well, perhaps not random,
+> but I hope you get what I mean...
 
--- 
-2.1.4
+Yes, I guess so :)
+
+Please drop this patch then, and thanks for your explanation
+
+Thanks
+   j
+
+>
+> Cheers,
+> peda
+>
+> > Thanks
+> >    j
+> >>
+> >> Cheers,
+> >> peda
+> >>
+> >>> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> >>> Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> >>> ---
+> >>>
+> >>> Hello,
+> >>>    while inspecting child nodes of an i2c adapter it has been noted that
+> >>> child devices of an i2c-mux are listed as children of the i2c adapter itself,
+> >>> and not of the i2c-mux.
+> >>>
+> >>> The hierarchy of devices looked like
+> >>>
+> >>> -- i2c-04
+> >>> --- eeprom@57
+> >>> --- video_receiver@70
+> >>> --- video_receiver@34
+> >>> --- gmsl-deserializer@0		<-- MUX
+> >>> --- gmsl-deserializer@0/i2c@0	<-- MUX CHANNEL
+> >>>
+> >>> It now looks like
+> >>>
+> >>> -- i2c-04
+> >>> --- eeprom@57
+> >>> --- video_receiver@70
+> >>> --- video_receiver@34
+> >>> --- gmsl-deserializer@0
+> >>> ---- gmsl-deserializer@0/i2c@0
+> >>>
+> >>> v1 -> v2:
+> >>> - change commit message as suggested by Geert
+> >>>
+> >>>  drivers/i2c/i2c-mux.c | 2 +-
+> >>>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>>
+> >>> diff --git a/drivers/i2c/i2c-mux.c b/drivers/i2c/i2c-mux.c
+> >>> index 83768e8..37b7804 100644
+> >>> --- a/drivers/i2c/i2c-mux.c
+> >>> +++ b/drivers/i2c/i2c-mux.c
+> >>> @@ -324,7 +324,7 @@ int i2c_mux_add_adapter(struct i2c_mux_core *muxc,
+> >>>  	priv->adap.owner = THIS_MODULE;
+> >>>  	priv->adap.algo = &priv->algo;
+> >>>  	priv->adap.algo_data = priv;
+> >>> -	priv->adap.dev.parent = &parent->dev;
+> >>> +	priv->adap.dev.parent = muxc->dev;
+> >>>  	priv->adap.retries = parent->retries;
+> >>>  	priv->adap.timeout = parent->timeout;
+> >>>  	priv->adap.quirks = parent->quirks;
+> >>> --
+> >>> 2.7.4
+> >>>
+> >>
+>
