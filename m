@@ -1,66 +1,54 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:47324 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751826AbdFAK1E (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Jun 2017 06:27:04 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2] ARM: dts: armadillo800eva: Split LCD mux and gpio
-Date: Thu,  1 Jun 2017 12:27:00 +0200
-Message-Id: <1496312820-27237-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-i2c-owner@vger.kernel.org>
+Subject: Re: [PATCH v2] i2c: i2c-mux: Fix channel parent node assignment
+To: jmondi <jacopo@jmondi.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        laurent.pinchart@ideasonboard.com, wsa@the-dreams.de,
+        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <1496134457-19573-1-git-send-email-jacopo+renesas@jmondi.org>
+ <5de6a678-e646-3acb-2346-8a1d76ebbf9d@axentia.se>
+ <20170531075126.GC19019@w540>
+ <ef5b3b0a-52c7-785f-6faf-47d9b40f89cc@axentia.se>
+ <20170601021924.GB13970@w540>
+From: Peter Rosin <peda@axentia.se>
+Message-ID: <bd856a68-aa3b-2a51-a6a7-a95e6b3f6c8a@axentia.se>
+Date: Thu, 1 Jun 2017 20:58:20 +0200
+MIME-Version: 1.0
+In-Reply-To: <20170601021924.GB13970@w540>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Configuration of the lcd0 pinmux group and GPIO hog for the external
-GPIO mux are done using a single device node, causing the "output-high"
-property to be applied to both.  This will fail for the pinmux group,
-but doesn't cause any harm, as the failure is ignored silently.
+On 2017-06-01 04:19, jmondi wrote:
+>> But why do you need to identify them? What problem are you trying to solve?
+>>
+> I want to be able to walk all children devices of an i2c-adapter,
+> not including the mux channel i2c-adapters. I'm sure I can work around it.
+> While doing that I stumbled upon this and thought it was wrong.
 
-However, after "pinctrl: sh-pfc: propagate errors on group config", the
-failure will become fatal, leading to a broken display:
+Hey, I'm not saying that the current (ab?)use of dev->parent for the
+i2c hierarchy is "right". But fixing things is simply just more involved
+than what you proposed.
 
-    sh-pfc e6050000.pin-controller: pin_config_group_set op failed for group 102
-    sh-pfc e6050000.pin-controller: Error applying setting, reverse things back
-    sh-pfc e6050000.pin-controller: failed to select default state
+Some random thoughts on this topic:
 
-Move the GPIO hog to its own node to fix this.
+- I'm not sure it is sane to rearrange the device hierarchy the way the
+  i2c mux code does, and the i2c hierarchy is available by other means
+  as parent in struct i2c_mux_core. The trouble is getting to that struct
+  from outside the owner driver. Maybe make i2c_mux_alloc create a
+  separate device? Then all i2c muxes could store their copy of struct
+  i2c_mux_core in a way that could be easily found by generic code.
+- Is it ok to add children to unsuspecting(?) devices? (I.e. the parent
+  adapter of an i2c mux gets extra children.)
+- I think the current scheme prevents the parent adapter from going away
+  before the mux child adapter during tare-down, which is a good thing,
+  but I think that can be solved with these new device links that I read
+  about?
+- The i2c hierarchy also needs to be visible in sysfs, which it is with
+  the current scheme (but not with your patch) so some kind of new
+  i2c-parent attribute is needed for i2c mux child adapters.
+- Changes in this area feel subtle, and needs testing...
 
-Fixes: ffd2f9a5afb730b9 ("ARM: shmobile: armadillo800eva dts: Add pinctrl and gpio-hog for lcdc0")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-This is a hard dependency for "pinctrl: sh-pfc: propagate errors on
-group config" (https://patchwork.kernel.org/patch/9186713/).
-
-v2:
-  - Keep the GPIO hog, but move it to its own node, instead of using
-    another level of subnodes.  As the GPIO hog node is not referenced from
-    a pinctrl-0 property, pinconf doesn't fail with "No pin or group
-    provided in DT node".
----
- arch/arm/boot/dts/r8a7740-armadillo800eva.dts | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7740-armadillo800eva.dts b/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
-index 297b1f10f7346a9f..8c85d3ee5f5e7bfd 100644
---- a/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
-+++ b/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
-@@ -273,7 +273,9 @@
- 	lcd0_pins: lcd0 {
- 		groups = "lcd0_data24_0", "lcd0_lclk_1", "lcd0_sync";
- 		function = "lcd0";
-+	};
- 
-+	lcd0_mux {
- 		/* DBGMD/LCDC0/FSIA MUX */
- 		gpio-hog;
- 		gpios = <176 0>;
--- 
-2.7.4
+Cheers,
+peda
