@@ -1,67 +1,90 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Javier Martinez Canillas <javier@dowhile0.org>
-To: linux-kernel@vger.kernel.org
-Cc: Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh@kernel.org>,
-        Javier Martinez Canillas <javier@dowhile0.org>,
-        Simon Horman <horms@verge.net.au>, devicetree@vger.kernel.org,
-        Russell King <linux@armlinux.org.uk>,
-        linux-renesas-soc@vger.kernel.org,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f41.google.com ([209.85.214.41]:35581 "EHLO
+        mail-it0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751036AbdFAIW7 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 1 Jun 2017 04:22:59 -0400
+MIME-Version: 1.0
+In-Reply-To: <SG2PR06MB11652CB46B57C6C592F7A2FB8AF00@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20170525160548.103182-1-chris.brandt@renesas.com>
+ <CAMuHMdW21gwJZxCMsepX9c3hqpfw_+zc1x_f-6D0oKFVvqY2Kg@mail.gmail.com> <SG2PR06MB11652CB46B57C6C592F7A2FB8AF00@SG2PR06MB1165.apcprd06.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 1 Jun 2017 10:22:56 +0200
+Message-ID: <CAMuHMdVnNod2F37AbHkc8qwWWxOD99vkdXaT9X-v26E6j60udQ@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: r7s72100: add clock bit definitions
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
         Rob Herring <robh+dt@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
         Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [RESEND PATCH v5 06/16] ARM: dts: r7s72100: Add generic compatible string for I2C EEPROM
-Date: Thu, 15 Jun 2017 20:54:08 +0200
-Message-Id: <20170615185418.13980-7-javier@dowhile0.org>
-In-Reply-To: <20170615185418.13980-1-javier@dowhile0.org>
-References: <20170615185418.13980-1-javier@dowhile0.org>
-Sender: linux-kernel-owner@vger.kernel.org
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The at24 driver allows to register I2C EEPROM chips using different vendor
-and devices, but the I2C subsystem does not take the vendor into account
-when matching using the I2C table since it only has device entries.
+Hi Chris,
 
-But when matching using an OF table, both the vendor and device has to be
-taken into account so the driver defines only a set of compatible strings
-using the "atmel" vendor as a generic fallback for compatible I2C devices.
+On Tue, May 30, 2017 at 6:23 PM, Chris Brandt <Chris.Brandt@renesas.com> wrote:
+>> > +#define R7S72100_CLK_SPIMBC0   3
+>> > +#define R7S72100_CLK_SPIMBC1   2
+>>
+>> R7S72100_CLK_SPB[0-1]?
+>
+> Here's the one that I'm struggling with what to call.
+>
+> Internally, the IP block is referred to as the "SPIBSC". As in, SPI Bus
+> State Controller (because basically anything that has a parallel
+> interface to the internal bus the design guys call it a BSC: LBSC, DBSC,
+> etc...).
+>
+> However, for every device this IP is used in it is called the "SPI
+> Multi I/O Bus Controller" in the Hardware Manual (SH7769, RZ/A1, R-Car Gen3,
+> etc...).
+>
+> So, that might be confusing to users.
+>
+> Originally, it was called "SPI BSC" because they were only connecting a
+> "SPI" bus interface as a "Bus State Controller". However, now they've
+> added onto the IP and it does more than just SPI.
+>
+>
+>> All related registers and clocks are called SPB<something>.
+> Only the pins are labeled SPB<something>, not the registers. The
+> registers doesn't really have a common prefix.
+>
+>
+> So in general, what's your opinion on what to call this thing (since
+> I'd like to name the driver in a similar manner)?
+>
+> (1) "SPIBSC": Because that's what all the non-Linux sample code and app
+>      note refer to it.
+>
+> (2) "SPIMBC": Taken from "SPI Multi I/O Bus Controller" (using all 1st
+>     letters except the "I/O" part)
+>
+> (3) "SPB": Because that is how they named the pins for RZ/1 (NOTE that
+>     is just for RZ/A1 and SH7269, for RZ/A2++ and R-Car they are labeled
+>     QSPI_xxx...so you will probably never see SPB again in future hardware
+>     manuals)
+>
+> (4) "SBC": For Serial Bus Controller
+>
+>
+> I am leaning to just staying with "SPIBSC" which is what I use now for
+> our current Linux BSP and non-Linux sample code, or "SBC" just to
+> shorten it.
+>
+> Any opinions???
 
-So add this generic fallback to the device node compatible string to make
-the device to match the driver using the OF device ID table.
+I'm fine with SPIBSC.
 
-Signed-off-by: Javier Martinez Canillas <javier@dowhile0.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Gr{oetje,eeting}s,
 
----
+                        Geert
 
-Changes in v5:
-- Only replace atmel variant but keep other EEPROM vendors (Geert Uytterhoeven).
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Changes in v4:
-- Only use the atmel manufacturer in the compatible string instead of
-  keeping the deprecated ones (Rob Herring).
-
-Changes in v3:
-- Add Geert Uytterhoeven reviewed-by tag.
-
-Changes in v2: None
-
- arch/arm/boot/dts/r7s72100-genmai.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/r7s72100-genmai.dts b/arch/arm/boot/dts/r7s72100-genmai.dts
-index 52a7b586bac7..b0db621ff176 100644
---- a/arch/arm/boot/dts/r7s72100-genmai.dts
-+++ b/arch/arm/boot/dts/r7s72100-genmai.dts
-@@ -57,7 +57,7 @@
- 	clock-frequency = <400000>;
- 
- 	eeprom@50 {
--		compatible = "renesas,24c128";
-+		compatible = "renesas,24c128", "atmel,24c128";
- 		reg = <0x50>;
- 		pagesize = <64>;
- 	};
--- 
-2.9.3
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
