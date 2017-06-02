@@ -1,47 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f52.google.com ([209.85.214.52]:35885 "EHLO
-        mail-it0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750910AbdFBJwa (ORCPT
+Received: from sauhun.de ([88.99.104.3]:42191 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750910AbdFBJhF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Jun 2017 05:52:30 -0400
-MIME-Version: 1.0
-In-Reply-To: <20170602093701.3kn52zfmpgy7kcqo@ninjato>
-References: <CAMuHMdX7_u_3TFK22inUp367LR3R77S72RAtRWPFnKE9-cUtpw@mail.gmail.com>
- <20170602093701.3kn52zfmpgy7kcqo@ninjato>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 2 Jun 2017 11:52:26 +0200
-Message-ID: <CAMuHMdUNF8=HkCt+k1STKofZ00vk0V31OnF1rmupyHrrFZce5Q@mail.gmail.com>
-Subject: Re: SDHI clock imbalance
-To: Wolfram Sang <wsa@the-dreams.de>
+        Fri, 2 Jun 2017 05:37:05 -0400
+Date: Fri, 2 Jun 2017 11:37:01 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         Simon Horman <horms@verge.net.au>,
         Linux MMC List <linux-mmc@vger.kernel.org>,
         Linux PM list <linux-pm@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: SDHI clock imbalance
+Message-ID: <20170602093701.3kn52zfmpgy7kcqo@ninjato>
+References: <CAMuHMdX7_u_3TFK22inUp367LR3R77S72RAtRWPFnKE9-cUtpw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ftgcce6j3vacwgov"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdX7_u_3TFK22inUp367LR3R77S72RAtRWPFnKE9-cUtpw@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Wolfram,
 
-On Fri, Jun 2, 2017 at 11:37 AM, Wolfram Sang <wsa@the-dreams.de> wrote:
->> While investigating suspend/resume for the R-Car Gen3 clock driver, I
->> noticed a clock imbalance for SDHI on Salvator-X.
->
-> Thanks for the heads up! Which branch did you use?
-> renesas-drivers/master? This is important since we had quite some
-> refactoring going on lately.
+--ftgcce6j3vacwgov
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Yes, a tree based on renesas-drivers.
+Hi Geert,
 
-Gr{oetje,eeting}s,
+> While investigating suspend/resume for the R-Car Gen3 clock driver, I
+> noticed a clock imbalance for SDHI on Salvator-X.
 
-                        Geert
+Thanks for the heads up! Which branch did you use?
+renesas-drivers/master? This is important since we had quite some
+refactoring going on lately.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Regards,
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+   Wolfram
+
+
+--ftgcce6j3vacwgov
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlkxMbkACgkQFA3kzBSg
+KbbXvw//WCZoXZBJ5OaurnKgMqwmohTiV86nD918XC3hsAq9Kb3YmG4Cbcx+LHJ4
+H2bZ7xuliICesfZSrPQ3UNfAC32tJLQ8fvp/4GinjymmDkoAQ2TCiEvFAEbK1X9f
+mvP1CcEIY/wiOttuTe3HKuxXw8BoXmKbER3P5+AHCpDV3tJMfLIMsJn+b/3Jwc52
+lysrqWuFi5MOeBTlJcNBF4VPmL9rM1p5bbER3YAlgF421jh0qZ6JwIjWYoVBt1jY
+SVX2WzduJYSRF3ysrS8S9MYmNh1y40tDpw2PLpb44bSRCiLJl/lvcTM4K7vYvtZN
+v1loHaPEp/vFMMA52oBQdHKFfR1621HkEb8KqtGkjdIEQE1y/0BeEGgrxDSrBqJA
+orFU9ZPBzTdfhznV3sWmDxqvp7k8lJSJ/o4Q3x9KyM0giQkj3gqFMWppAz/Z0G0I
+euR5CFZvscvVVzS5x2OYUqJ8n79X1YPbdFmwJMxpWzOTzicLxgBXMdA1ZbdAOB9V
+1fTU3zjskT7e0lRMKVEs1PSl+ncmKx6jCfXtASQOe1kVwfrCKi/saxvR9QyY8moZ
+qZjkCIbONOqrvCPu4pMQT0a4RVwzKP81ZJLw2VeV19KVfxhJKnisnsSsZTtFo3Cl
+GmDKSfORdGhKg4vsu3AGlTvgBXg4evxZ6Sz7YuXs8fgFzL/nAHY=
+=q/bi
+-----END PGP SIGNATURE-----
+
+--ftgcce6j3vacwgov--
