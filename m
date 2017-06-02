@@ -1,20 +1,20 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f182.google.com ([209.85.216.182]:34032 "EHLO
-        mail-qt0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751126AbdFBKhU (ORCPT
+Received: from mail-it0-f52.google.com ([209.85.214.52]:35885 "EHLO
+        mail-it0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750910AbdFBJwa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Jun 2017 06:37:20 -0400
-Received: by mail-qt0-f182.google.com with SMTP id c13so56004891qtc.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 02 Jun 2017 03:37:19 -0700 (PDT)
+        Fri, 2 Jun 2017 05:52:30 -0400
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdX7_u_3TFK22inUp367LR3R77S72RAtRWPFnKE9-cUtpw@mail.gmail.com>
+In-Reply-To: <20170602093701.3kn52zfmpgy7kcqo@ninjato>
 References: <CAMuHMdX7_u_3TFK22inUp367LR3R77S72RAtRWPFnKE9-cUtpw@mail.gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 2 Jun 2017 12:37:18 +0200
-Message-ID: <CAPDyKFpfff0AwbKwJEhH_-Vkn+i+1bXp5P-OWiZ2O=71s+s5vw@mail.gmail.com>
+ <20170602093701.3kn52zfmpgy7kcqo@ninjato>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 2 Jun 2017 11:52:26 +0200
+Message-ID: <CAMuHMdUNF8=HkCt+k1STKofZ00vk0V31OnF1rmupyHrrFZce5Q@mail.gmail.com>
 Subject: Re: SDHI clock imbalance
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Wolfram Sang <wsa@the-dreams.de>
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
         Simon Horman <horms@verge.net.au>,
         Linux MMC List <linux-mmc@vger.kernel.org>,
         Linux PM list <linux-pm@vger.kernel.org>,
@@ -23,145 +23,25 @@ Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 2 June 2017 at 10:47, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> Hi Wolfram, Ulf, Simon,
->
-> While investigating suspend/resume for the R-Car Gen3 clock driver, I
-> noticed a clock imbalance for SDHI on Salvator-X.
->
-> After boot:
->
-> # head -2 /sys/kernel/debug/clk/clk_summary
->    clock         enable_cnt prepare_cnt  rate  accuracy phase
-> -------------------------------------------------------------
-> # grep sd /sys/kernel/debug/clk/clk_summary
->          .sdsrc           3        3 399999984      0 0
->         sd3               1        1     6250000      0 0
->            sdif3          1        2     6250000      0 0
->         sd2               1        1   199999992      0 0
->            sdif2          1        2   199999992      0 0
->         sd1               0        0   199999992      0 0
->            sdif1          0        0   199999992      0 0
->         sd0               1        1     6250000      0 0
->            sdif0          1        2     6250000      0 0
->
-> After s2idle suspend/resume:
->
-> # grep sd /sys/kernel/debug/clk/clk_summary
->          .sdsrc           3        3   399999984      0 0
->         sd3               1        1     6250000      0 0
->            sdif3          2        2     6250000      0 0
->         sd2               1        1   199999992      0 0
->            sdif2          2        2   199999992      0 0
->         sd1               0        0   199999992      0 0
->            sdif1          0        0   199999992      0 0
->         sd0               1        1     6250000      0 0
->            sdif0          2        2     6250000      0 0
->
-> Enable counts are 1 before suspend, and 2 after resume.
->
->
-> Boot: Enabled once (also at hardware level):
->
->     platform_drv_probe
->         renesas_sdhi_sys_dmac_probe
->             renesas_sdhi_probe
->                 tmio_mmc_host_probe
->                     renesas_sdhi_clk_enable
+Hi Wolfram,
 
-The driver calls pm_runtime_set_active() during ->probe(), which means
-genpd's ->runtime_resume() callback isn't invoked during that point.
-In other words, the clocks managed by the clock domain isn't enabled
-during ->probe() as genpd's doesn't get to run pm_clk_resume() from
-its ->runtime_resume() callback. Unless I am missing something. :-)
+On Fri, Jun 2, 2017 at 11:37 AM, Wolfram Sang <wsa@the-dreams.de> wrote:
+>> While investigating suspend/resume for the R-Car Gen3 clock driver, I
+>> noticed a clock imbalance for SDHI on Salvator-X.
+>
+> Thanks for the heads up! Which branch did you use?
+> renesas-drivers/master? This is important since we had quite some
+> refactoring going on lately.
 
-I think this is the reason to the following problems. How to fix it?
+Yes, a tree based on renesas-drivers.
 
-The driver needs to call pm_runtime_get_sync() instead of
-pm_runtime_set_active(), however that may requires some careful
-changes if one wants the driver to be able to enable clocks also when
-CONFIG_PM is unset. If not, it's pretty easy, else I would do
-something like below.
+Gr{oetje,eeting}s,
 
-Add a "init" flag to host struct, and set that flag before calling
-pm_runtime_get_sync() in ->probe(). When the driver's
-->runtime_resume() callbacks get called when the "init" flag is set,
-just do an early return 0, as t means ->probe() is running and has
-already taken care of the enabling the clock. When probe is done, and
-before dropping runtime usage count with pm_runtime_put(), reset the
-"init" flag.
+                        Geert
 
->
->
-> Suspend: Disabled once (also at hardware level):
->
->     suspend_devices_and_enter
->         dpm_suspend_start
->             dpm_suspend
->                 __device_suspend
->                     dpm_run_callback
->                         pm_runtime_force_suspend
->                             genpd_runtime_suspend
->                                 pm_generic_runtime_suspend
->                                     tmio_mmc_host_runtime_suspend
->                                         renesas_sdhi_clk_disable
->
->
-> Resume: Enabled twice (first one enables at hardware level):
->
->     dpm_resume_noirq
->         device_resume_noirq
->             dpm_run_callback
->                 pm_genpd_resume_noirq
->                     pm_runtime_force_resume
->                         genpd_runtime_resume
->                             genpd_start_dev
->                                 pm_clk_resume                   (1)
->                             __genpd_runtime_resume
->                                 pm_generic_runtime_resume
->                                     tmio_mmc_host_runtime_resume
->                                         renesas_sdhi_clk_enable (2)
->
->
-> During subsequent suspends, the clock is disabled twice (last one disables
-> at hardware level), as expected:
->
->     suspend_devices_and_enter
->         dpm_suspend_start
->             dpm_suspend
->                 __device_suspend
->                     dpm_run_callback
->                         pm_runtime_force_suspend
->                             genpd_runtime_suspend
->                                 pm_generic_runtime_suspend
->                                     tmio_mmc_host_runtime_suspend
->                                         renesas_sdhi_clk_disable (1)
->                                 genpd_stop_dev
->                                     pm_clk_suspend               (2)
->
->
-> From now on, the imbalance is gone.
->
-> Note that at boot and initial suspend, genpd does not seem to call into the
-> clock domain operations at all.
-> Presumable some call to pm_runtime_get_sync() is missing?
->
-> Thanks.
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Kind regards
-Uffe
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
