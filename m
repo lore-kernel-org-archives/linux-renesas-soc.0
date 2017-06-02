@@ -1,256 +1,57 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: linus.walleij@linaro.org, geert+renesas@glider.be,
-        laurent.pinchart@ideasonboard.com, chris.brandt@renesas.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk,
-        aisheng.dong@nxp.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v6 2/8] dt-bindings: pinctrl: Add RZ/A1 bindings doc
-Date: Thu, 22 Jun 2017 16:54:30 +0200
-Message-Id: <1498143276-7976-3-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1498143276-7976-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1498143276-7976-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-i2c-owner@vger.kernel.org>
+Date: Fri, 2 Jun 2017 22:53:16 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [RFC PATCH 1/2] i2c: sh_mobile: remove platform_data
+Message-ID: <20170602205316.jlnjp442jcn3s3d3@ninjato>
+References: <20170518211140.12023-1-wsa+renesas@sang-engineering.com>
+ <20170518211140.12023-2-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="kmxeewhzrtjxihet"
+Content-Disposition: inline
+In-Reply-To: <20170518211140.12023-2-wsa+renesas@sang-engineering.com>
+Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add device tree bindings documentation for Renesas RZ/A1 gpio and pin
-controller.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- .../bindings/pinctrl/renesas,rza1-pinctrl.txt      | 221 +++++++++++++++++++++
- 1 file changed, 221 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
+--kmxeewhzrtjxihet
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
-new file mode 100644
-index 0000000..43e21474
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
-@@ -0,0 +1,221 @@
-+Renesas RZ/A1 combined Pin and GPIO controller
-+
-+The Renesas SoCs of the RZ/A1 family feature a combined Pin and GPIO controller,
-+named "Ports" in the hardware reference manual.
-+Pin multiplexing and GPIO configuration is performed on a per-pin basis
-+writing configuration values to per-port register sets.
-+Each "port" features up to 16 pins, each of them configurable for GPIO
-+function (port mode) or in alternate function mode.
-+Up to 8 different alternate function modes exist for each single pin.
-+
-+Pin controller node
-+-------------------
-+
-+Required properties:
-+  - compatible
-+    this shall be "renesas,r7s72100-ports".
-+
-+  - reg
-+    address base and length of the memory area where the pin controller
-+    hardware is mapped to.
-+
-+Example:
-+Pin controller node for RZ/A1H SoC (r7s72100)
-+
-+pinctrl: pin-controller@fcfe3000 {
-+	compatible = "renesas,r7s72100-ports";
-+
-+	reg = <0xfcfe3000 0x4230>;
-+};
-+
-+Sub-nodes
-+---------
-+
-+The child nodes of the pin controller node describe a pin multiplexing
-+function or a GPIO controller alternatively.
-+
-+- Pin multiplexing sub-nodes:
-+  A pin multiplexing sub-node describes how to configure a set of
-+  (or a single) pin in some desired alternate function mode.
-+  A single sub-node may define several pin configurations.
-+  A few alternate function require special pin configuration flags to be
-+  supplied along with the alternate function configuration number.
-+  The hardware reference manual specifies when a pin function requires
-+  "software IO driven" mode to be specified. To do so use the generic
-+  properties from the <include/linux/pinctrl/pinconf_generic.h> header file
-+  to instruct the pin controller to perform the desired pin configuration
-+  operation.
-+  Please refer to pinctrl-bindings.txt to get to know more on generic
-+  pin properties usage.
-+
-+  The allowed generic formats for a pin multiplexing sub-node are the
-+  following ones:
-+
-+  node-1 {
-+      pinmux = <PIN_ID_AND_MUX>, <PIN_ID_AND_MUX>, ... ;
-+      GENERIC_PINCONFIG;
-+  };
-+
-+  node-2 {
-+      sub-node-1 {
-+          pinmux = <PIN_ID_AND_MUX>, <PIN_ID_AND_MUX>, ... ;
-+          GENERIC_PINCONFIG;
-+      };
-+
-+      sub-node-2 {
-+          pinmux = <PIN_ID_AND_MUX>, <PIN_ID_AND_MUX>, ... ;
-+          GENERIC_PINCONFIG;
-+      };
-+
-+      ...
-+
-+      sub-node-n {
-+          pinmux = <PIN_ID_AND_MUX>, <PIN_ID_AND_MUX>, ... ;
-+          GENERIC_PINCONFIG;
-+      };
-+  };
-+
-+  Use the second format when pins part of the same logical group need to have
-+  different generic pin configuration flags applied.
-+
-+  Client sub-nodes shall refer to pin multiplexing sub-nodes using the phandle
-+  of the most external one.
-+
-+  Eg.
-+
-+  client-1 {
-+      ...
-+      pinctrl-0 = <&node-1>;
-+      ...
-+  };
-+
-+  client-2 {
-+      ...
-+      pinctrl-0 = <&node-2>;
-+      ...
-+  };
-+
-+  Required properties:
-+    - pinmux:
-+      integer array representing pin number and pin multiplexing configuration.
-+      When a pin has to be configured in alternate function mode, use this
-+      property to identify the pin by its global index, and provide its
-+      alternate function configuration number along with it.
-+      When multiple pins are required to be configured as part of the same
-+      alternate function they shall be specified as members of the same
-+      argument list of a single "pinmux" property.
-+      Helper macros to ease assembling the pin index from its position
-+      (port where it sits on and pin number) and alternate function identifier
-+      are provided by the pin controller header file at:
-+      <include/dt-bindings/pinctrl/r7s72100-pinctrl.h>
-+      Integers values in "pinmux" argument list are assembled as:
-+      ((PORT * 16 + PIN) | MUX_FUNC << 16)
-+
-+  Optional generic properties:
-+    - input-enable:
-+      enable input bufer for pins requiring software driven IO input
-+      operations.
-+    - output-high:
-+      enable output buffer for pins requiring software driven IO output
-+      operations. output-low can be used alternatively, as line value is
-+      ignored by the driver.
-+
-+  The hardware reference manual specifies when a pin has to be configured to
-+  work in bi-directional mode and when the IO direction has to be specified
-+  by software. Bi-directional pins are managed by the pin controller driver
-+  internally, while software driven IO direction has to be explicitly
-+  selected when multiple options are available.
-+
-+  Example:
-+  A serial communication interface with a TX output pin and an RX input pin.
-+
-+  &pinctrl {
-+	scif2_pins: serial2 {
-+		pinmux = <RZA1_PINMUX(3, 0, 6)>, <RZA1_PINMUX(3, 2, 4)>;
-+	};
-+  };
-+
-+  Pin #0 on port #3 is configured as alternate function #6.
-+  Pin #2 on port #3 is configured as alternate function #4.
-+
-+  Example 2:
-+  I2c master: both SDA and SCL pins need bi-directional operations
-+
-+  &pinctrl {
-+	i2c2_pins: i2c2 {
-+		pinmux = <RZA1_PINMUX(1, 4, 1)>, <RZA1_PINMUX(1, 5, 1)>;
-+	};
-+  };
-+
-+  Pin #4 on port #1 is configured as alternate function #1.
-+  Pin #5 on port #1 is configured as alternate function #1.
-+  Both need to work in bi-directional mode, the driver manages this internally.
-+
-+  Example 3:
-+  Multi-function timer input and output compare pins.
-+  Configure TIOC0A as software driven input and TIOC0B as software driven
-+  output.
-+
-+  &pinctrl {
-+	tioc0_pins: tioc0 {
-+		tioc0_input_pins {
-+			pinumx = <RZA1_PINMUX(4, 0, 2)>;
-+			input-enable;
-+		};
-+
-+		tioc0_output_pins {
-+			pinmux = <RZA1_PINMUX(4, 1, 1)>;
-+			output-enable;
-+		};
-+	};
-+  };
-+
-+  &tioc0 {
-+	...
-+	pinctrl-0 = <&tioc0_pins>;
-+	...
-+  };
-+
-+  Pin #0 on port #4 is configured as alternate function #2 with IO direction
-+  specified by software as input.
-+  Pin #1 on port #4 is configured as alternate function #1 with IO direction
-+  specified by software as output.
-+
-+- GPIO controller sub-nodes:
-+  Each port of the r7s72100 pin controller hardware is itself a GPIO controller.
-+  Different SoCs have different numbers of available pins per port, but
-+  generally speaking, each of them can be configured in GPIO ("port") mode
-+  on this hardware.
-+  Describe GPIO controllers using sub-nodes with the following properties.
-+
-+  Required properties:
-+    - gpio-controller
-+      empty property as defined by the GPIO bindings documentation.
-+    - #gpio-cells
-+      number of cells required to identify and configure a GPIO.
-+      Shall be 2.
-+    - gpio-ranges
-+      Describes a GPIO controller specifying its specific pin base, the pin
-+      base in the global pin numbering space, and the number of controlled
-+      pins, as defined by the GPIO bindings documentation. Refer to
-+      Documentation/devicetree/bindings/gpio/gpio.txt file for a more detailed
-+      description.
-+
-+  Example:
-+  A GPIO controller node, controlling 16 pins indexed from 0.
-+  The GPIO controller base in the global pin indexing space is pin 48, thus
-+  pins [0 - 15] on this controller map to pins [48 - 63] in the global pin
-+  indexing space.
-+
-+  port3: gpio-3 {
-+	gpio-controller;
-+	#gpio-cells = <2>;
-+	gpio-ranges = <&pinctrl 0 48 16>;
-+  };
-+
-+  A device node willing to use pins controlled by this GPIO controller, shall
-+  refer to it as follows:
-+
-+  led1 {
-+	gpios = <&port3 10 GPIO_ACTIVE_LOW>;
-+  };
--- 
-2.7.4
+On Thu, May 18, 2017 at 11:11:39PM +0200, Wolfram Sang wrote:
+> No platform currently upstream makes use of this platform_data anymore.
+> The ones that did are converted to DT meanwhile. So, remove it. The old
+> platforms likely don't have the 'clks_per_cnt' feature, otherwise it
+> would have been implemented by now. And in the unlikely case they need
+> to setup a different bus speed, we should rather go for a generic i2c
+> platform data just for that.
+>=20
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+Applied to for-next, thanks!
+
+
+--kmxeewhzrtjxihet
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlkx0DwACgkQFA3kzBSg
+KbYPuBAAlyw0Bkd2iN7MPxg8xty5G9oSzD26GbfuUU1MV+Kt9Cn9cw/aAqZg9kem
+uWsguTU/3J9ASJM9lRIIOwFuc1q7Dv9HNubpVJbbW3NfZoc/XIU43jQN8HL4A4GB
+mTGgymwvEulhQOtqWfGZmu9SzaTqfZnpm760Qimgyxjm6xkjo2OuZN5Zv2hB7f++
+Zr9AYDwakgpoG7l3Q3F38jcGTRstvm0naYGr1SVppKJUD2mE+bSbi7u4rU3Y0rwa
++QC24gAYEjS/n2iz4VdjOiLLYOMDOV98PQ/pnh50noitpZexaEHHiEj+hTNv7X1g
+zBTialCR+GMvXAGc8AhVeI8kPwZL7kLLbTez/xX1AHX11v/5FzeJqRYypq6FN31K
+e+RWo+DZMDmupbOQSgzOG7t90sb+v1v/BKBLEoNJciLTlJLmME3bfY6epjYf+9sj
+YAVLkm5Q6QnyGP6QScVHNyAqLD95xuFF4z9z9TXf229cZ4JHfunkiAcDq4cGeVh2
+fRfHQ2YPyCy4WLSC6Vs1uzr3lNfmc2Qij6bka0jYRTSFtyN6RLYAtTo9hEFTtLn3
+gDdmCuHC+P5+WMzEIxXRElHyXAjtk69BbVeTYdVR0GlXADk3MEhIAJDinbjIy14Q
+T/w2/jKsviBs4Uedsm12U/m9zP/JIMtOFZB8vehCW7LFfSHnoBw=
+=0mXr
+-----END PGP SIGNATURE-----
+
+--kmxeewhzrtjxihet--
