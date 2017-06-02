@@ -1,71 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:54835 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753598AbdFPNba (ORCPT
+Received: from sauhun.de ([88.99.104.3]:43823 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750966AbdFBUt6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Jun 2017 09:31:30 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 4/6] ARM: dts: iwg20m: Add iWave RZG1M Qseven SOM
-Date: Fri, 16 Jun 2017 15:30:44 +0200
-Message-Id: <aabf13bac0046a1add4a3c39881ffb0abe692542.1497618353.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1497618353.git.horms+renesas@verge.net.au>
-References: <cover.1497618353.git.horms+renesas@verge.net.au>
+        Fri, 2 Jun 2017 16:49:58 -0400
+Date: Fri, 2 Jun 2017 22:49:56 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, Jean Delvare <jdelvare@suse.de>,
+        Guenter Roeck <linux@roeck-us.net>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 2/2] i2c: stub: use pr_fmt
+Message-ID: <20170602204956.n7cdqacq3abtwyyv@ninjato>
+References: <20170516112105.2793-1-wsa+renesas@sang-engineering.com>
+ <20170516112105.2793-2-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="bdac42fytg3u6azf"
+Content-Disposition: inline
+In-Reply-To: <20170516112105.2793-2-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
 
-Add support for iWave RZG1M Qseven System On Module.
-http://www.iwavesystems.com/rz-g1m-qseven-module.html
+--bdac42fytg3u6azf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7743-iwg20m.dtsi | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
- create mode 100644 arch/arm/boot/dts/r8a7743-iwg20m.dtsi
+On Tue, May 16, 2017 at 01:21:05PM +0200, Wolfram Sang wrote:
+> Instead of hard coding "i2c-stub:", let's use the pr_fmt mechanism to
+> achieve the same more easily. This makes it easier to stay consistent
+> when adding new messages. Also, remove an unneeded OOM message while we
+> are here.
+>=20
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-diff --git a/arch/arm/boot/dts/r8a7743-iwg20m.dtsi b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
-new file mode 100644
-index 000000000000..001ca9144f4b
---- /dev/null
-+++ b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
-@@ -0,0 +1,29 @@
-+/*
-+ * Device Tree Source for the iWave-RZG1M-20M Qseven SOM
-+ *
-+ * Copyright (C) 2017 Renesas Electronics Corp.
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2.  This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
-+
-+#include "r8a7743.dtsi"
-+
-+/ {
-+	compatible = "iwave,g20m", "renesas,r8a7743";
-+
-+	memory@40000000 {
-+		device_type = "memory";
-+		reg = <0 0x40000000 0 0x20000000>;
-+	};
-+
-+	memory@200000000 {
-+		device_type = "memory";
-+		reg = <2 0x00000000 0 0x20000000>;
-+	};
-+};
-+
-+&extal_clk {
-+	clock-frequency = <20000000>;
-+};
--- 
-2.1.4
+Applied to for-next, thanks!
+
+
+--bdac42fytg3u6azf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlkxz3AACgkQFA3kzBSg
+Kbb0vxAApzVc3yFCM51L26EvNHq8tA7802YPXxYiXdA5m2ZBsTOXM2gNsoq00Zzy
+ht0GxvbmqowxuqExnfnpyQOURfKFe7Nu67GteBLkjlweh+1Ua6OVrd95mgRxH9hD
+8dviDlyzh07AR8fiKGQY7Q8Ma8w6iDBMX68dGe7I6aIT7O/qhgOnLbzIrjHOOPLd
+6Jb8t4nEx9o21SLLXVUD7p16P6legSuUfBKv5kb0XMphBaxnfYjwoGp5nRh3l9ZD
+ekdzjqb08awzwxoRpIbkuhAIcZPVtt371cDy5vrS75487rNDCXaojbf62ywbVdvS
+BaAttF/M2gp+MdYTZmiUsH1KJpzN1QCRbwv4DNS9eT0u0+K4Ih1xIyRBb3IKxCDA
+2FRuFHIiL/m1jEqkBrrdyroeC6ViwPSeTo7EEw3Wznnl6OjlK4tIEK8j9gWiMJAC
+10vKd8re2kQOp9MwiGGQ/sVtXl21MFJTJP6cr76hMXencAeWm9aAooH8CmYDFQ/3
+/oYEJ4S6DZAe4Twit0wPhYvZVUGFyo/0MPkjhJFbMwYMPtsmGW/URK5DDPR5kvfS
+9Shr9/ulIRg/mY+9ibapNRHsbA6hrqBiaQbdkBvSMnhOoIyAKQKKoQm3XSBYm+Oz
+TkjsME5kjkTRdKmea1ZeRdBD/ftqsoIQvD9pxeojazoBaH1qGig=
+=zeYu
+-----END PGP SIGNATURE-----
+
+--bdac42fytg3u6azf--
