@@ -1,66 +1,132 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:42191 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750910AbdFBJhF (ORCPT
+Received: from mail-it0-f45.google.com ([209.85.214.45]:33194 "EHLO
+        mail-it0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751126AbdFBIrW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Jun 2017 05:37:05 -0400
-Date: Fri, 2 Jun 2017 11:37:01 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Fri, 2 Jun 2017 04:47:22 -0400
+MIME-Version: 1.0
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 2 Jun 2017 10:47:15 +0200
+Message-ID: <CAMuHMdX7_u_3TFK22inUp367LR3R77S72RAtRWPFnKE9-cUtpw@mail.gmail.com>
+Subject: SDHI clock imbalance
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Ulf Hansson <ulf.hansson@linaro.org>,
-        Simon Horman <horms@verge.net.au>,
-        Linux MMC List <linux-mmc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>
+Cc: Linux MMC List <linux-mmc@vger.kernel.org>,
         Linux PM list <linux-pm@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: SDHI clock imbalance
-Message-ID: <20170602093701.3kn52zfmpgy7kcqo@ninjato>
-References: <CAMuHMdX7_u_3TFK22inUp367LR3R77S72RAtRWPFnKE9-cUtpw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ftgcce6j3vacwgov"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdX7_u_3TFK22inUp367LR3R77S72RAtRWPFnKE9-cUtpw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Wolfram, Ulf, Simon,
 
---ftgcce6j3vacwgov
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+While investigating suspend/resume for the R-Car Gen3 clock driver, I
+noticed a clock imbalance for SDHI on Salvator-X.
 
-Hi Geert,
+After boot:
 
-> While investigating suspend/resume for the R-Car Gen3 clock driver, I
-> noticed a clock imbalance for SDHI on Salvator-X.
+# head -2 /sys/kernel/debug/clk/clk_summary
+   clock         enable_cnt prepare_cnt  rate  accuracy phase
+-------------------------------------------------------------
+# grep sd /sys/kernel/debug/clk/clk_summary
+         .sdsrc           3        3   399999984      0 0
+        sd3               1        1     6250000      0 0
+           sdif3          1        2     6250000      0 0
+        sd2               1        1   199999992      0 0
+           sdif2          1        2   199999992      0 0
+        sd1               0        0   199999992      0 0
+           sdif1          0        0   199999992      0 0
+        sd0               1        1     6250000      0 0
+           sdif0          1        2     6250000      0 0
 
-Thanks for the heads up! Which branch did you use?
-renesas-drivers/master? This is important since we had quite some
-refactoring going on lately.
+After s2idle suspend/resume:
 
-Regards,
+# grep sd /sys/kernel/debug/clk/clk_summary
+         .sdsrc           3        3   399999984      0 0
+        sd3               1        1     6250000      0 0
+           sdif3          2        2     6250000      0 0
+        sd2               1        1   199999992      0 0
+           sdif2          2        2   199999992      0 0
+        sd1               0        0   199999992      0 0
+           sdif1          0        0   199999992      0 0
+        sd0               1        1     6250000      0 0
+           sdif0          2        2     6250000      0 0
 
-   Wolfram
+Enable counts are 1 before suspend, and 2 after resume.
 
 
---ftgcce6j3vacwgov
-Content-Type: application/pgp-signature; name="signature.asc"
+Boot: Enabled once (also at hardware level):
 
------BEGIN PGP SIGNATURE-----
+    platform_drv_probe
+        renesas_sdhi_sys_dmac_probe
+            renesas_sdhi_probe
+                tmio_mmc_host_probe
+                    renesas_sdhi_clk_enable
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlkxMbkACgkQFA3kzBSg
-KbbXvw//WCZoXZBJ5OaurnKgMqwmohTiV86nD918XC3hsAq9Kb3YmG4Cbcx+LHJ4
-H2bZ7xuliICesfZSrPQ3UNfAC32tJLQ8fvp/4GinjymmDkoAQ2TCiEvFAEbK1X9f
-mvP1CcEIY/wiOttuTe3HKuxXw8BoXmKbER3P5+AHCpDV3tJMfLIMsJn+b/3Jwc52
-lysrqWuFi5MOeBTlJcNBF4VPmL9rM1p5bbER3YAlgF421jh0qZ6JwIjWYoVBt1jY
-SVX2WzduJYSRF3ysrS8S9MYmNh1y40tDpw2PLpb44bSRCiLJl/lvcTM4K7vYvtZN
-v1loHaPEp/vFMMA52oBQdHKFfR1621HkEb8KqtGkjdIEQE1y/0BeEGgrxDSrBqJA
-orFU9ZPBzTdfhznV3sWmDxqvp7k8lJSJ/o4Q3x9KyM0giQkj3gqFMWppAz/Z0G0I
-euR5CFZvscvVVzS5x2OYUqJ8n79X1YPbdFmwJMxpWzOTzicLxgBXMdA1ZbdAOB9V
-1fTU3zjskT7e0lRMKVEs1PSl+ncmKx6jCfXtASQOe1kVwfrCKi/saxvR9QyY8moZ
-qZjkCIbONOqrvCPu4pMQT0a4RVwzKP81ZJLw2VeV19KVfxhJKnisnsSsZTtFo3Cl
-GmDKSfORdGhKg4vsu3AGlTvgBXg4evxZ6Sz7YuXs8fgFzL/nAHY=
-=q/bi
------END PGP SIGNATURE-----
 
---ftgcce6j3vacwgov--
+Suspend: Disabled once (also at hardware level):
+
+    suspend_devices_and_enter
+        dpm_suspend_start
+            dpm_suspend
+                __device_suspend
+                    dpm_run_callback
+                        pm_runtime_force_suspend
+                            genpd_runtime_suspend
+                                pm_generic_runtime_suspend
+                                    tmio_mmc_host_runtime_suspend
+                                        renesas_sdhi_clk_disable
+
+
+Resume: Enabled twice (first one enables at hardware level):
+
+    dpm_resume_noirq
+        device_resume_noirq
+            dpm_run_callback
+                pm_genpd_resume_noirq
+                    pm_runtime_force_resume
+                        genpd_runtime_resume
+                            genpd_start_dev
+                                pm_clk_resume                   (1)
+                            __genpd_runtime_resume
+                                pm_generic_runtime_resume
+                                    tmio_mmc_host_runtime_resume
+                                        renesas_sdhi_clk_enable (2)
+
+
+During subsequent suspends, the clock is disabled twice (last one disables
+at hardware level), as expected:
+
+    suspend_devices_and_enter
+        dpm_suspend_start
+            dpm_suspend
+                __device_suspend
+                    dpm_run_callback
+                        pm_runtime_force_suspend
+                            genpd_runtime_suspend
+                                pm_generic_runtime_suspend
+                                    tmio_mmc_host_runtime_suspend
+                                        renesas_sdhi_clk_disable (1)
+                                genpd_stop_dev
+                                    pm_clk_suspend               (2)
+
+
+>From now on, the imbalance is gone.
+
+Note that at boot and initial suspend, genpd does not seem to call into the
+clock domain operations at all.
+Presumable some call to pm_runtime_get_sync() is missing?
+
+Thanks.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
