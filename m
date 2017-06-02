@@ -1,99 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f65.google.com ([209.85.214.65]:36225 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750755AbdFFHmC (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:9465 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750955AbdFBQfj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Jun 2017 03:42:02 -0400
-MIME-Version: 1.0
-In-Reply-To: <1496420523-23506-5-git-send-email-biju.das@bp.renesas.com>
-References: <1496420523-23506-1-git-send-email-biju.das@bp.renesas.com> <1496420523-23506-5-git-send-email-biju.das@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 6 Jun 2017 09:42:00 +0200
-Message-ID: <CAMuHMdUWJL-oH7wWzjs5O=WrOshdL_AxijBJe66HrYBx7x8F9w@mail.gmail.com>
-Subject: Re: [PATCH 4/4] ARM: dts: iwg20d-q7: Add support for iWave G20D-Q7
- board based on RZ/G1M
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
+        Fri, 2 Jun 2017 12:35:39 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
         Chris Paterson <chris.paterson2@renesas.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH  4/4] ARM: dts: iwg20d-q7: Add support for iWave G20D-Q7 board based on RZ/G1M
+Date: Fri,  2 Jun 2017 17:22:03 +0100
+Message-Id: <1496420523-23506-5-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1496420523-23506-1-git-send-email-biju.das@bp.renesas.com>
+References: <1496420523-23506-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Biju,
+Add support for iWave RainboW-G20D-Qseven board based on RZ/G1M.
 
-On Fri, Jun 2, 2017 at 6:22 PM, Biju Das <biju.das@bp.renesas.com> wrote:
-> Add support for iWave RainboW-G20D-Qseven board based on RZ/G1M.
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+---
+ arch/arm/boot/dts/Makefile              |  1 +
+ arch/arm/boot/dts/r8a7743-iwg20d-q7.dts | 25 +++++++++++++++++++++++++
+ 2 files changed, 26 insertions(+)
+ create mode 100644 arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
 
-Thanks for your patch!
-
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-> --- a/arch/arm/boot/dts/Makefile
-> +++ b/arch/arm/boot/dts/Makefile
-> @@ -711,6 +711,7 @@ dtb-$(CONFIG_ARCH_RENESAS) += \
->         r8a73a4-ape6evm.dtb \
->         r8a7740-armadillo800eva.dtb \
->         r8a7743-sk-rzg1m.dtb \
-> +       r8a7743-iwg20d-q7.dtb \
-
-Please preserve sort order.
-
->         r8a7745-sk-rzg1e.dtb \
->         r8a7778-bockw.dtb \
->         r8a7779-marzen.dtb \
-
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-> @@ -0,0 +1,25 @@
-> +/*
-> + * Device Tree Source for the iWave-RZG1M Qseven carrier board
-> + *
-> + * Copyright (C) 2017 Renesas Electronics Corp.
-> + *
-> + * This file is licensed under the terms of the GNU General Public License
-> + * version 2.  This program is licensed "as is" without any warranty of any
-> + * kind, whether express or implied.
-> + */
-> +
-> +/dts-v1/;
-> +#include "r8a7743-iwg20m.dtsi"
-> +
-> +/ {
-> +       model = "iWave Systems RainboW-G20D-Qseven board based on RZ/G1M";
-> +       compatible = "iwave,g20d", "renesas,r8a7743";
-
-With my comment on patch [3/4], this should become:
-
-compatible = "iwave,g20d", "iwave,g20m", "renesas,r8a7743";
-
-> +
-> +       aliases {
-> +               serial0 = &scif0;
-> +       };
-> +};
-> +
-> +&scif0 {
-> +       status = "okay";
-> +};
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 3bd29fe..1642fd1 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -711,6 +711,7 @@ dtb-$(CONFIG_ARCH_RENESAS) += \
+ 	r8a73a4-ape6evm.dtb \
+ 	r8a7740-armadillo800eva.dtb \
+ 	r8a7743-sk-rzg1m.dtb \
++	r8a7743-iwg20d-q7.dtb \
+ 	r8a7745-sk-rzg1e.dtb \
+ 	r8a7778-bockw.dtb \
+ 	r8a7779-marzen.dtb \
+diff --git a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
+new file mode 100644
+index 0000000..0f609291
+--- /dev/null
++++ b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
+@@ -0,0 +1,25 @@
++/*
++ * Device Tree Source for the iWave-RZG1M Qseven carrier board
++ *
++ * Copyright (C) 2017 Renesas Electronics Corp.
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++/dts-v1/;
++#include "r8a7743-iwg20m.dtsi"
++
++/ {
++	model = "iWave Systems RainboW-G20D-Qseven board based on RZ/G1M";
++	compatible = "iwave,g20d", "renesas,r8a7743";
++
++	aliases {
++		serial0 = &scif0;
++	};
++};
++
++&scif0 {
++	status = "okay";
++};
+-- 
+1.9.1
