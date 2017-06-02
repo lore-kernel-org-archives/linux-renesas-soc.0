@@ -1,82 +1,55 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH 4/4] i2c: rcar: check for DMA-capable buffers
-Date: Tue,  6 Jun 2017 11:20:34 +0200
-Message-Id: <20170606092034.1516-5-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170606092034.1516-1-wsa+renesas@sang-engineering.com>
-References: <20170606092034.1516-1-wsa+renesas@sang-engineering.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-i2c-owner@vger.kernel.org>
+Date: Fri, 2 Jun 2017 22:53:43 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [RFC PATCH 2/2] i2c: sh_mobile: drop needless check for of_node
+Message-ID: <20170602205343.etemzgwevmzyoibr@ninjato>
+References: <20170518211140.12023-1-wsa+renesas@sang-engineering.com>
+ <20170518211140.12023-3-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="axcmssuclizmni2y"
+Content-Disposition: inline
+In-Reply-To: <20170518211140.12023-3-wsa+renesas@sang-engineering.com>
+Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Handling this is special for this driver. Because the hardware needs to
-initialize the next message in interrupt context, we cannot use the
-i2c_check_msg_for_dma() directly. This helper only works reliably in
-process context. So, we need to check during initial preparation of the
-whole transfer and need to disable DMA completely for the whole transfer
-once a message with a not-DMA-capable buffer is found.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/i2c/busses/i2c-rcar.c | 18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+--axcmssuclizmni2y
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
-index 8be3e6cb8fe686..38985f1b45cd08 100644
---- a/drivers/i2c/busses/i2c-rcar.c
-+++ b/drivers/i2c/busses/i2c-rcar.c
-@@ -111,8 +111,11 @@
- #define ID_ARBLOST	(1 << 3)
- #define ID_NACK		(1 << 4)
- /* persistent flags */
-+#define ID_P_NODMA	(1 << 30)
- #define ID_P_PM_BLOCKED	(1 << 31)
--#define ID_P_MASK	ID_P_PM_BLOCKED
-+#define ID_P_MASK	(ID_P_PM_BLOCKED | ID_P_NODMA)
-+
-+#define RCAR_DMA_THRESHOLD 8
- 
- enum rcar_i2c_type {
- 	I2C_RCAR_GEN1,
-@@ -358,8 +361,7 @@ static void rcar_i2c_dma(struct rcar_i2c_priv *priv)
- 	unsigned char *buf;
- 	int len;
- 
--	/* Do not use DMA if it's not available or for messages < 8 bytes */
--	if (IS_ERR(chan) || msg->len < 8)
-+	if (IS_ERR(chan) || msg->len < RCAR_DMA_THRESHOLD || priv->flags & ID_P_NODMA)
- 		return;
- 
- 	if (read) {
-@@ -657,11 +659,15 @@ static void rcar_i2c_request_dma(struct rcar_i2c_priv *priv,
- 				 struct i2c_msg *msg)
- {
- 	struct device *dev = rcar_i2c_priv_to_dev(priv);
--	bool read;
-+	bool read = msg->flags & I2C_M_RD;
- 	struct dma_chan *chan;
- 	enum dma_transfer_direction dir;
- 
--	read = msg->flags & I2C_M_RD;
-+	/* we need to check here because we need the 'current' context */
-+	if (i2c_check_msg_for_dma(msg, RCAR_DMA_THRESHOLD) == -EFAULT) {
-+		dev_dbg(dev, "skipping DMA for this whole transfer\n");
-+		priv->flags |= ID_P_NODMA;
-+	}
- 
- 	chan = read ? priv->dma_rx : priv->dma_tx;
- 	if (PTR_ERR(chan) != -EPROBE_DEFER)
-@@ -740,6 +746,8 @@ static int rcar_i2c_master_xfer(struct i2c_adapter *adap,
- 	if (ret < 0 && ret != -ENXIO)
- 		dev_err(dev, "error %d : %x\n", ret, priv->flags);
- 
-+	priv->flags &= ~ID_P_NODMA;
-+
- 	return ret;
- }
- 
--- 
-2.11.0
+On Thu, May 18, 2017 at 11:11:40PM +0200, Wolfram Sang wrote:
+> After removal of platform_data support, we can simplify OF handling.
+> of_match_device() evaluates to NULL if !CONFIG_OF or if there is no node
+> pointer for that device, so we can remove the check for the node ptr.
+>=20
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+Fixed the assignment as mentioned by Geert (thanks!) and applied to
+for-next, thanks!
+
+
+--axcmssuclizmni2y
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlkx0FcACgkQFA3kzBSg
+Kbanfg/8Cg+AgqS+7eNtNJev3LFA1GeeoHXuTTVdNSPcChzKhZR26Tu6mo2lRCAH
+e+9u5CXhhUw/SJmU010QwrsW5+KI20C3f4USLYdkHiBeGv6Q02m+Y7vAlXWK8g9e
++6puHVe80yMH4WXrNvR5TwQJQtqMUzUQSZVnAOdQZ1dn110J4E8BiIuSG5ogtYXX
+HQ44P6AkzQxFYfYPLMoJlHWB4aNXIKs2ECJyG1cBAJH7flwBIIjVpw8F6DSBqHS4
+4DoQsO8lgt0+nuektDSk73ukSjqhyODtmliXaeqNTZQsJMB/mgDFGmjyPi3D7o6m
+b5PisIlf5kksct+8cHiMWkMaju/NgmR2HqvbrK7FArKUJZL0bSR6YR9v43tZp81f
+odm49mOePNMeld3K3u4jK/QPDVF0kcnEHfD4+rjU5RaPILg9wznwXon6V05zolt9
+TYPIO3pPhsMOhXiFFkB/sJUM6KKHKX5KrgWJ78Yznzw8qHCaVImDJg7aaZtjmeXf
+Pq0YByAOjftMiSNpjErPGftjKn4kXQ/DcIjQBH5pp1eTtVQF1K1ABRRlrkdqnZnS
+/zZ/s2lLOo/qEq5dkQ9J+rR3o3UMEyeVtHdm7UbkGbyH6wnPocYX1lEYXRWLoO0+
+s7QE554CpXDmkXPzKUsV9F06RLiqddXv/B4Z6Cx9S59yEfcfywQ=
+=axfk
+-----END PGP SIGNATURE-----
+
+--axcmssuclizmni2y--
