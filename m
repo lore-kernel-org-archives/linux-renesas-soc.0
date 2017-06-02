@@ -1,48 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f67.google.com ([209.85.214.67]:34106 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751194AbdFFHks (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:14907 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750955AbdFBQfY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Jun 2017 03:40:48 -0400
-MIME-Version: 1.0
-In-Reply-To: <1496420523-23506-2-git-send-email-biju.das@bp.renesas.com>
-References: <1496420523-23506-1-git-send-email-biju.das@bp.renesas.com> <1496420523-23506-2-git-send-email-biju.das@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 6 Jun 2017 09:40:46 +0200
-Message-ID: <CAMuHMdX0HeT59AC7VQ52ADx7Ua7RHEULLCYNjQwT-dy6Qxj0ng@mail.gmail.com>
-Subject: Re: [PATCH 1/4] of: Add vendor prefix for iWave Systems Technologies
- Pvt. Ltd
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
+        Fri, 2 Jun 2017 12:35:24 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
         Chris Paterson <chris.paterson2@renesas.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH  1/4] of: Add vendor prefix for iWave Systems Technologies Pvt. Ltd
+Date: Fri,  2 Jun 2017 17:22:00 +0100
+Message-Id: <1496420523-23506-2-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1496420523-23506-1-git-send-email-biju.das@bp.renesas.com>
+References: <1496420523-23506-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Jun 2, 2017 at 6:22 PM, Biju Das <biju.das@bp.renesas.com> wrote:
-> This patch adds vendor prefix for iWave Systems Technologies Pvt. Ltd.
-> Website: http://www.iwavesystems.com/
->
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+This patch adds vendor prefix for iWave Systems Technologies Pvt. Ltd.
+Website: http://www.iwavesystems.com/
 
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+---
+ Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+index d808f24..a74400a 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.txt
++++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+@@ -160,6 +160,7 @@ isee	ISEE 2007 S.L.
+ isil	Intersil
+ issi	Integrated Silicon Solutions Inc.
+ itead	ITEAD Intelligent Systems Co.Ltd
++iwave  iWave Systems Technologies Pvt. Ltd.
+ jdi	Japan Display Inc.
+ jedec	JEDEC Solid State Technology Association
+ karo	Ka-Ro electronics GmbH
+-- 
+1.9.1
