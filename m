@@ -1,51 +1,175 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:11169 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750955AbdFBQfb (ORCPT
+Received: from mail-pf0-f180.google.com ([209.85.192.180]:34783 "EHLO
+        mail-pf0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750711AbdFBFG3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Jun 2017 12:35:31 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH  2/4] ARM: shmobile: document iW-RainboW-G20D-Qseven-RZG1M board
-Date: Fri,  2 Jun 2017 17:22:01 +0100
-Message-Id: <1496420523-23506-3-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1496420523-23506-1-git-send-email-biju.das@bp.renesas.com>
-References: <1496420523-23506-1-git-send-email-biju.das@bp.renesas.com>
+        Fri, 2 Jun 2017 01:06:29 -0400
+Received: by mail-pf0-f180.google.com with SMTP id 9so46348152pfj.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 01 Jun 2017 22:06:29 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        "Stephen Boyd" <sboyd@codeaurora.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1496058422-12058-1-git-send-email-geert+renesas@glider.be>
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        "Geert Uytterhoeven" <geert+renesas@glider.be>
+References: <1496058422-12058-1-git-send-email-geert+renesas@glider.be>
+Message-ID: <149637988818.33065.13255372545640819084@resonance>
+Subject: Re: [git pull] clk: renesas: Updates for v4.13
+Date: Fri, 02 Jun 2017 14:04:48 +0900
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document the iW-RainboW-G20D-Qseven-RZG1M device tree bindings,
-listing it as a supported board.
+Quoting Geert Uytterhoeven (2017-05-29 20:47:02)
+>         Hi Mike, Stephen,
+> =
 
-This allows to use checkpatch.pl to validate .dts files referring to the
-iW-RainboW-G20D-Qseven-RZG1M board.
+> The following changes since commit 2ea659a9ef488125eb46da6eb571de5eae5c43=
+f6:
+> =
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
----
- Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
- 1 file changed, 2 insertions(+)
+>   Linux 4.12-rc1 (2017-05-13 13:19:49 -0700)
+> =
 
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index 4b60ce2..13fbfe0 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -69,6 +69,8 @@ Boards:
-     compatible = "renesas,kzm9d", "renesas,emev2"
-   - Kyoto Microcomputer Co. KZM-A9-GT
-     compatible = "renesas,kzm9g", "renesas,sh73a0"
-+  - iWave Systems RZ/G1M Qseven Development Platform (iW-RainboW-G20D-Qseven)
-+    compatible = "iwave,g20d", "renesas,r8a7743"
-   - Lager (RTP0RC7790SEB00010S)
-     compatible = "renesas,lager", "renesas,r8a7790"
-   - M3ULCB (R-Car Starter Kit Pro, RTP0RC7796SKB00010S)
--- 
-1.9.1
+> are available in the git repository at:
+> =
+
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
+ tags/clk-renesas-for-v4.13-tag1
+> =
+
+> for you to fetch changes up to 2d75588a28c6bbbb7a026087aa61be1492b3d6ac:
+> =
+
+>   clk: renesas: r8a7794: Add new CPG/MSSR driver (2017-05-24 10:20:03 +02=
+00)
+
+Pulled.
+
+Thanks,
+Mike
+
+> =
+
+> ----------------------------------------------------------------
+> clk: renesas: Updates for v4.13
+> =
+
+>   - Add more module clocks for R-Car H3 ES2.0 and M3-W,
+>   - Add CPG/MSSR drivers for all supported R-Car Gen2 SoCs, enabling supp=
+ort
+>     for module resets, which are not supported by the existing driver,
+>   - Rework Kconfig and Makefile logic,
+>   - Small fixes and cleanups.
+> =
+
+> Thanks for pulling!
+> ----------------------------------------------------------------
+> Geert Uytterhoeven (18):
+>       clk: renesas: rcar-gen2: Fix PLL0 on R-Car V2H and E2
+>       clk: renesas: r8a7745: Remove nonexisting scu-src[0789] clocks
+>       clk: renesas: r8a7745: Remove PLL configs for MD19=3D0
+>       clk: renesas: Do not build clk-div6 for R8A7792
+>       clk: renesas: Use pm_clk_no_clocks() helper i.s.o. direct access
+>       clk: renesas: r8a7795: Correct pwm, gpio, and i2c parent clocks on =
+ES2.0
+>       clk: renesas: cpg-mssr: Initialize error pointer using ERR_PTR()
+>       clk: renesas: Rework Kconfig and Makefile logic
+>       clk: renesas: cpg-mssr: Document R-Car Gen2 support
+>       clk: renesas: Add r8a7790 CPG Core Clock Definitions
+>       clk: renesas: Add r8a7791 CPG Core Clock Definitions
+>       clk: renesas: Add r8a7792 CPG Core Clock Definitions
+>       clk: renesas: Add r8a7793 CPG Core Clock Definitions
+>       clk: renesas: Add r8a7794 CPG Core Clock Definitions
+>       clk: renesas: r8a7790: Add new CPG/MSSR driver
+>       clk: renesas: r8a7791/r8a7793: Add new CPG/MSSR driver
+>       clk: renesas: r8a7792: Add new CPG/MSSR driver
+>       clk: renesas: r8a7794: Add new CPG/MSSR driver
+> =
+
+> Harunobu Kurokawa (1):
+>       clk: renesas: r8a7796: Add PCIe clocks
+> =
+
+> Hiromitsu Yamasaki (2):
+>       clk: renesas: r8a7796: Add Audio-DMAC clocks
+>       clk: renesas: r8a7796: Add USB-DMAC clocks
+> =
+
+> Kazuya Mizuguchi (5):
+>       clk: renesas: r8a7796: Add EHCI/OHCI clocks
+>       clk: renesas: r8a7796: Add Sound SSI clock
+>       clk: renesas: r8a7796: Add Sound SRC clock
+>       clk: renesas: r8a7796: Add Sound DVC clocks
+>       clk: renesas: r8a7796: Add HS-USB clock
+> =
+
+> Koji Matsuoka (1):
+>       clk: renesas: r8a7796: Add HDMI clock
+> =
+
+> Ryo Kodama (1):
+>       clk: renesas: r8a7796: Add PWM clock
+> =
+
+> Takeshi Kihara (4):
+>       clk: renesas: r8a7795: Add EHCI/OHCI ch3 clock
+>       clk: renesas: r8a7795: Add USB-DMAC ch3 clock
+>       clk: renesas: r8a7795: Add HS-USB ch3 clock
+>       clk: renesas: r8a7796: Add INTC-EX clock
+> =
+
+>  .../devicetree/bindings/clock/renesas,cpg-mssr.txt |  10 +-
+>  drivers/clk/Makefile                               |   2 +-
+>  drivers/clk/renesas/Kconfig                        | 139 ++++++++--
+>  drivers/clk/renesas/Makefile                       |  41 +--
+>  drivers/clk/renesas/clk-mstp.c                     |   2 +-
+>  drivers/clk/renesas/clk-rcar-gen2.c                |  23 +-
+>  drivers/clk/renesas/r8a7745-cpg-mssr.c             |  17 +-
+>  drivers/clk/renesas/r8a7790-cpg-mssr.c             | 278 +++++++++++++++=
++++++
+>  drivers/clk/renesas/r8a7791-cpg-mssr.c             | 286 +++++++++++++++=
+++++++
+>  drivers/clk/renesas/r8a7792-cpg-mssr.c             | 221 ++++++++++++++++
+>  drivers/clk/renesas/r8a7794-cpg-mssr.c             | 255 +++++++++++++++=
++++
+>  drivers/clk/renesas/r8a7795-cpg-mssr.c             |  43 +++-
+>  drivers/clk/renesas/r8a7796-cpg-mssr.c             |  39 +++
+>  drivers/clk/renesas/renesas-cpg-mssr.c             |  41 ++-
+>  drivers/clk/renesas/renesas-cpg-mssr.h             |   4 +
+>  include/dt-bindings/clock/r8a7790-cpg-mssr.h       |  52 ++++
+>  include/dt-bindings/clock/r8a7791-cpg-mssr.h       |  48 ++++
+>  include/dt-bindings/clock/r8a7792-cpg-mssr.h       |  43 ++++
+>  include/dt-bindings/clock/r8a7793-cpg-mssr.h       |  48 ++++
+>  include/dt-bindings/clock/r8a7794-cpg-mssr.h       |  47 ++++
+>  20 files changed, 1565 insertions(+), 74 deletions(-)
+>  create mode 100644 drivers/clk/renesas/r8a7790-cpg-mssr.c
+>  create mode 100644 drivers/clk/renesas/r8a7791-cpg-mssr.c
+>  create mode 100644 drivers/clk/renesas/r8a7792-cpg-mssr.c
+>  create mode 100644 drivers/clk/renesas/r8a7794-cpg-mssr.c
+>  create mode 100644 include/dt-bindings/clock/r8a7790-cpg-mssr.h
+>  create mode 100644 include/dt-bindings/clock/r8a7791-cpg-mssr.h
+>  create mode 100644 include/dt-bindings/clock/r8a7792-cpg-mssr.h
+>  create mode 100644 include/dt-bindings/clock/r8a7793-cpg-mssr.h
+>  create mode 100644 include/dt-bindings/clock/r8a7794-cpg-mssr.h
+> =
+
+> Gr{oetje,eeting}s,
+> =
+
+>                                                 Geert
+> =
+
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
+8k.org
+> =
+
+> In personal conversations with technical people, I call myself a hacker. =
+But
+> when I'm talking to journalists I just say "programmer" or something like=
+ that.
+>                                                             -- Linus Torv=
+alds
