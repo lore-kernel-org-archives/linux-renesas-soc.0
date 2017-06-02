@@ -1,89 +1,167 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:55649 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751388AbdFFKtq (ORCPT
+Received: from mail-qt0-f182.google.com ([209.85.216.182]:34032 "EHLO
+        mail-qt0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751126AbdFBKhU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Jun 2017 06:49:46 -0400
-Date: Tue, 6 Jun 2017 12:49:44 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Fri, 2 Jun 2017 06:37:20 -0400
+Received: by mail-qt0-f182.google.com with SMTP id c13so56004891qtc.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 02 Jun 2017 03:37:19 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdX7_u_3TFK22inUp367LR3R77S72RAtRWPFnKE9-cUtpw@mail.gmail.com>
+References: <CAMuHMdX7_u_3TFK22inUp367LR3R77S72RAtRWPFnKE9-cUtpw@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 2 Jun 2017 12:37:18 +0200
+Message-ID: <CAPDyKFpfff0AwbKwJEhH_-Vkn+i+1bXp5P-OWiZ2O=71s+s5vw@mail.gmail.com>
+Subject: Re: SDHI clock imbalance
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Simon Horman <horms@verge.net.au>,
         Linux MMC List <linux-mmc@vger.kernel.org>,
         Linux PM list <linux-pm@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: SDHI clock imbalance
-Message-ID: <20170606104944.6zewibifk3xfxetk@ninjato>
-References: <CAMuHMdX7_u_3TFK22inUp367LR3R77S72RAtRWPFnKE9-cUtpw@mail.gmail.com>
- <CAPDyKFpfff0AwbKwJEhH_-Vkn+i+1bXp5P-OWiZ2O=71s+s5vw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="pibgxcti7gnrdqqq"
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFpfff0AwbKwJEhH_-Vkn+i+1bXp5P-OWiZ2O=71s+s5vw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On 2 June 2017 at 10:47, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> Hi Wolfram, Ulf, Simon,
+>
+> While investigating suspend/resume for the R-Car Gen3 clock driver, I
+> noticed a clock imbalance for SDHI on Salvator-X.
+>
+> After boot:
+>
+> # head -2 /sys/kernel/debug/clk/clk_summary
+>    clock         enable_cnt prepare_cnt  rate  accuracy phase
+> -------------------------------------------------------------
+> # grep sd /sys/kernel/debug/clk/clk_summary
+>          .sdsrc           3        3 399999984      0 0
+>         sd3               1        1     6250000      0 0
+>            sdif3          1        2     6250000      0 0
+>         sd2               1        1   199999992      0 0
+>            sdif2          1        2   199999992      0 0
+>         sd1               0        0   199999992      0 0
+>            sdif1          0        0   199999992      0 0
+>         sd0               1        1     6250000      0 0
+>            sdif0          1        2     6250000      0 0
+>
+> After s2idle suspend/resume:
+>
+> # grep sd /sys/kernel/debug/clk/clk_summary
+>          .sdsrc           3        3   399999984      0 0
+>         sd3               1        1     6250000      0 0
+>            sdif3          2        2     6250000      0 0
+>         sd2               1        1   199999992      0 0
+>            sdif2          2        2   199999992      0 0
+>         sd1               0        0   199999992      0 0
+>            sdif1          0        0   199999992      0 0
+>         sd0               1        1     6250000      0 0
+>            sdif0          2        2     6250000      0 0
+>
+> Enable counts are 1 before suspend, and 2 after resume.
+>
+>
+> Boot: Enabled once (also at hardware level):
+>
+>     platform_drv_probe
+>         renesas_sdhi_sys_dmac_probe
+>             renesas_sdhi_probe
+>                 tmio_mmc_host_probe
+>                     renesas_sdhi_clk_enable
 
---pibgxcti7gnrdqqq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The driver calls pm_runtime_set_active() during ->probe(), which means
+genpd's ->runtime_resume() callback isn't invoked during that point.
+In other words, the clocks managed by the clock domain isn't enabled
+during ->probe() as genpd's doesn't get to run pm_clk_resume() from
+its ->runtime_resume() callback. Unless I am missing something. :-)
 
+I think this is the reason to the following problems. How to fix it?
 
-> The driver calls pm_runtime_set_active() during ->probe(), which means
-> genpd's ->runtime_resume() callback isn't invoked during that point.
-> In other words, the clocks managed by the clock domain isn't enabled
-> during ->probe() as genpd's doesn't get to run pm_clk_resume() from
-> its ->runtime_resume() callback. Unless I am missing something. :-)
+The driver needs to call pm_runtime_get_sync() instead of
+pm_runtime_set_active(), however that may requires some careful
+changes if one wants the driver to be able to enable clocks also when
+CONFIG_PM is unset. If not, it's pretty easy, else I would do
+something like below.
 
-So, in my words: in that case, the device is not really active since the
-clocks are not enabled?
+Add a "init" flag to host struct, and set that flag before calling
+pm_runtime_get_sync() in ->probe(). When the driver's
+->runtime_resume() callbacks get called when the "init" flag is set,
+just do an early return 0, as t means ->probe() is running and has
+already taken care of the enabling the clock. When probe is done, and
+before dropping runtime usage count with pm_runtime_put(), reset the
+"init" flag.
 
-> I think this is the reason to the following problems. How to fix it?
->=20
-> The driver needs to call pm_runtime_get_sync() instead of
-> pm_runtime_set_active(), however that may requires some careful
-> changes if one wants the driver to be able to enable clocks also when
-> CONFIG_PM is unset.
+>
+>
+> Suspend: Disabled once (also at hardware level):
+>
+>     suspend_devices_and_enter
+>         dpm_suspend_start
+>             dpm_suspend
+>                 __device_suspend
+>                     dpm_run_callback
+>                         pm_runtime_force_suspend
+>                             genpd_runtime_suspend
+>                                 pm_generic_runtime_suspend
+>                                     tmio_mmc_host_runtime_suspend
+>                                         renesas_sdhi_clk_disable
+>
+>
+> Resume: Enabled twice (first one enables at hardware level):
+>
+>     dpm_resume_noirq
+>         device_resume_noirq
+>             dpm_run_callback
+>                 pm_genpd_resume_noirq
+>                     pm_runtime_force_resume
+>                         genpd_runtime_resume
+>                             genpd_start_dev
+>                                 pm_clk_resume                   (1)
+>                             __genpd_runtime_resume
+>                                 pm_generic_runtime_resume
+>                                     tmio_mmc_host_runtime_resume
+>                                         renesas_sdhi_clk_enable (2)
+>
+>
+> During subsequent suspends, the clock is disabled twice (last one disables
+> at hardware level), as expected:
+>
+>     suspend_devices_and_enter
+>         dpm_suspend_start
+>             dpm_suspend
+>                 __device_suspend
+>                     dpm_run_callback
+>                         pm_runtime_force_suspend
+>                             genpd_runtime_suspend
+>                                 pm_generic_runtime_suspend
+>                                     tmio_mmc_host_runtime_suspend
+>                                         renesas_sdhi_clk_disable (1)
+>                                 genpd_stop_dev
+>                                     pm_clk_suspend               (2)
+>
+>
+> From now on, the imbalance is gone.
+>
+> Note that at boot and initial suspend, genpd does not seem to call into the
+> clock domain operations at all.
+> Presumable some call to pm_runtime_get_sync() is missing?
+>
+> Thanks.
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-We have tmio_mmc_clk_enable() already for that, I'd think. Or am I
-misunderstanding?
-
-> Add a "init" flag to host struct, and set that flag before calling
-> pm_runtime_get_sync() in ->probe(). When the driver's
-> ->runtime_resume() callbacks get called when the "init" flag is set,
-> just do an early return 0, as t means ->probe() is running and has
-> already taken care of the enabling the clock. When probe is done, and
-> before dropping runtime usage count with pm_runtime_put(), reset the
-> "init" flag.
-
-Welllll... I hope we can avoid this ;)
-
-Thanks for your thoughts, Ulf. And thanks to Geert for bringing up the
-issue which I can reproduce here. We need to do a bigger PM
-re-evaluation anyhow, I'll add it to the list...
-
-
---pibgxcti7gnrdqqq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlk2iMgACgkQFA3kzBSg
-KbZKsg//Zsq83wzm57qYfVXbkB2ILynMExIDGNJildnJFGyGhiM1IFJ4knKpAIZ8
-8WhFMcd9kY3ORDJbm9/F6e15rI7u9+5DFDrRYxQBlaPFrKB7RgEIQNXR4XcX9/zR
-6zRDnTK+SHT9yjz67KiftJGMxNCwI7h5nqk1qk1VV1AGI2uUwAgvkFp/9jqmXjjw
-cH4Knd8E1Adz/Q8L0ARZwziQmYDYmzgOMgMuVjcZrT+CdcCr7JhjJtbyeKZ4G4pc
-MwPxwLn+YKlvEKpe+cUMTteWzbXtt176vlz+lp9DGCkX/VUp9bcFVwlLMbH9zL/Z
-cyP3A2SmehPilzw/BUmhglFqsQlxWa6+TtBGvoO8t9xjIQvbhlMJMdm5XV88ri0Y
-g2Fclt8i1w2BryXUPks1pO/407gPnjGlkcNlb09POLRyun3+9WPVpT2S0QsjpK2S
-ytE5NVJqeZtKn6OxosEX5wH/4VwfgDfJBs+8uFHWItqzP/duYaoq0RlJ+hJjBQ2h
-KV8PItpvfoXAB8TP9CcFxpXXnzumhj/bv0hIURoBUqE16xoNe4ONMcp5iKFcv9G7
-J7eFt2XcDzWtl7TdtP5pkf82gVY5YepgoiwRH2qZDDnUJYb7YmhcynFgFhOfUWji
-xYa42dXWU2Z9i99MDLZNH92pEZUaK0e/C5CWOyHZ0aYlaCpbzyI=
-=4H7w
------END PGP SIGNATURE-----
-
---pibgxcti7gnrdqqq--
+Kind regards
+Uffe
