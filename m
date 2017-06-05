@@ -1,62 +1,30 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:43823 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750966AbdFBUt6 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52569 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751408AbdFENjh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Jun 2017 16:49:58 -0400
-Date: Fri, 2 Jun 2017 22:49:56 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c@vger.kernel.org, Jean Delvare <jdelvare@suse.de>,
-        Guenter Roeck <linux@roeck-us.net>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 2/2] i2c: stub: use pr_fmt
-Message-ID: <20170602204956.n7cdqacq3abtwyyv@ninjato>
-References: <20170516112105.2793-1-wsa+renesas@sang-engineering.com>
- <20170516112105.2793-2-wsa+renesas@sang-engineering.com>
+        Mon, 5 Jun 2017 09:39:37 -0400
+Date: Mon, 5 Jun 2017 15:39:33 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2] ARM: dts: r7s72100: add clock bit definitions
+Message-ID: <20170605133932.GB14087@verge.net.au>
+References: <20170602160649.3120-1-chris.brandt@renesas.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="bdac42fytg3u6azf"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20170516112105.2793-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20170602160649.3120-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On Fri, Jun 02, 2017 at 09:06:49AM -0700, Chris Brandt wrote:
+> Add the remaining bit locations for the module stop clock registers.
+> 
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
---bdac42fytg3u6azf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, May 16, 2017 at 01:21:05PM +0200, Wolfram Sang wrote:
-> Instead of hard coding "i2c-stub:", let's use the pr_fmt mechanism to
-> achieve the same more easily. This makes it easier to stay consistent
-> when adding new messages. Also, remove an unneeded OOM message while we
-> are here.
->=20
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-Applied to for-next, thanks!
-
-
---bdac42fytg3u6azf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlkxz3AACgkQFA3kzBSg
-Kbb0vxAApzVc3yFCM51L26EvNHq8tA7802YPXxYiXdA5m2ZBsTOXM2gNsoq00Zzy
-ht0GxvbmqowxuqExnfnpyQOURfKFe7Nu67GteBLkjlweh+1Ua6OVrd95mgRxH9hD
-8dviDlyzh07AR8fiKGQY7Q8Ma8w6iDBMX68dGe7I6aIT7O/qhgOnLbzIrjHOOPLd
-6Jb8t4nEx9o21SLLXVUD7p16P6legSuUfBKv5kb0XMphBaxnfYjwoGp5nRh3l9ZD
-ekdzjqb08awzwxoRpIbkuhAIcZPVtt371cDy5vrS75487rNDCXaojbf62ywbVdvS
-BaAttF/M2gp+MdYTZmiUsH1KJpzN1QCRbwv4DNS9eT0u0+K4Ih1xIyRBb3IKxCDA
-2FRuFHIiL/m1jEqkBrrdyroeC6ViwPSeTo7EEw3Wznnl6OjlK4tIEK8j9gWiMJAC
-10vKd8re2kQOp9MwiGGQ/sVtXl21MFJTJP6cr76hMXencAeWm9aAooH8CmYDFQ/3
-/oYEJ4S6DZAe4Twit0wPhYvZVUGFyo/0MPkjhJFbMwYMPtsmGW/URK5DDPR5kvfS
-9Shr9/ulIRg/mY+9ibapNRHsbA6hrqBiaQbdkBvSMnhOoIyAKQKKoQm3XSBYm+Oz
-TkjsME5kjkTRdKmea1ZeRdBD/ftqsoIQvD9pxeojazoBaH1qGig=
-=zeYu
------END PGP SIGNATURE-----
-
---bdac42fytg3u6azf--
+Thanks, I have queued these up for v4.13.
