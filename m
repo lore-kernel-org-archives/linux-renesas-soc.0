@@ -1,99 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:33764 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751688AbdFNOjO (ORCPT
+Received: from mail-it0-f67.google.com ([209.85.214.67]:34106 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751194AbdFFHks (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Jun 2017 10:39:14 -0400
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: robh@kernel.org, linux-serial@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, magnus.damm@gmail.com,
-        laurent.pinchart@ideasonboard.com, wsa@the-dreams.de,
-        linux-i2c@vger.kernel.org,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [RFC 4/4] ARM: dts: blanche: add SCIF1 and MAX9260 deserializer
-Date: Wed, 14 Jun 2017 16:38:50 +0200
-Message-Id: <1497451130-7741-5-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1497451130-7741-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1497451130-7741-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Tue, 6 Jun 2017 03:40:48 -0400
+MIME-Version: 1.0
+In-Reply-To: <1496420523-23506-2-git-send-email-biju.das@bp.renesas.com>
+References: <1496420523-23506-1-git-send-email-biju.das@bp.renesas.com> <1496420523-23506-2-git-send-email-biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 6 Jun 2017 09:40:46 +0200
+Message-ID: <CAMuHMdX0HeT59AC7VQ52ADx7Ua7RHEULLCYNjQwT-dy6Qxj0ng@mail.gmail.com>
+Subject: Re: [PATCH 1/4] of: Add vendor prefix for iWave Systems Technologies
+ Pvt. Ltd
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Adds serial port SCIF1 and the MAX9260 deserializers connected to it.
+On Fri, Jun 2, 2017 at 6:22 PM, Biju Das <biju.das@bp.renesas.com> wrote:
+> This patch adds vendor prefix for iWave Systems Technologies Pvt. Ltd.
+> Website: http://www.iwavesystems.com/
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
----
- arch/arm/boot/dts/r8a7792-blanche.dts | 45 +++++++++++++++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/arch/arm/boot/dts/r8a7792-blanche.dts b/arch/arm/boot/dts/r8a7792-blanche.dts
-index 9b67dca..281484d 100644
---- a/arch/arm/boot/dts/r8a7792-blanche.dts
-+++ b/arch/arm/boot/dts/r8a7792-blanche.dts
-@@ -21,6 +21,7 @@
- 	aliases {
- 		serial0 = &scif0;
- 		serial1 = &scif3;
-+		serial2 = &scif1;
- 	};
- 
- 	chosen {
-@@ -202,6 +203,11 @@
- 		function = "scif0";
- 	};
- 
-+	scif1_pins: scif1 {
-+		groups = "scif1_data";
-+		function = "scif1";
-+	};
-+
- 	scif3_pins: scif3 {
- 		groups = "scif3_data";
- 		function = "scif3";
-@@ -246,6 +252,45 @@
- 	status = "okay";
- };
- 
-+&scif1 {
-+	pinctrl-0 = <&scif1_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+
-+	mux-select-gpios = <&gpio5 12 GPIO_ACTIVE_LOW>,
-+			   <&gpio5 13 GPIO_ACTIVE_LOW>,
-+			   <&gpio5 14 GPIO_ACTIVE_LOW>,
-+			   <&gpio5 15 GPIO_ACTIVE_LOW>;
-+
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	gmsl-deserializer@0 {
-+		compatible = "maxim,max9260";
-+		reg = <0x8>;
-+	};
-+	gmsl-deserializer@1 {
-+		compatible = "maxim,max9260";
-+		reg = <0x9>;
-+	};
-+	gmsl-deserializer@2 {
-+		compatible = "maxim,max9260";
-+		reg = <0xa>;
-+	};
-+	gmsl-deserializer@3 {
-+		compatible = "maxim,max9260";
-+		reg = <0xb>;
-+	};
-+	gmsl-deserializer@4 {
-+		compatible = "maxim,max9260";
-+		reg = <0x4>;
-+	};
-+	gmsl-deserializer@5 {
-+		compatible = "maxim,max9260";
-+		reg = <0x5>;
-+	};
-+};
-+
- &scif3 {
- 	pinctrl-0 = <&scif3_pins>;
- 	pinctrl-names = "default";
--- 
-2.7.4
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
