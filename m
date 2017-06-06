@@ -1,50 +1,100 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 5/6] v4l: vsp1: Fill display list headers without holding dlm spinlock
-Date: Thu, 15 Jun 2017 11:24:08 +0300
-Message-Id: <20170615082409.9523-6-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170615082409.9523-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170615082409.9523-1-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:58810 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751569AbdFFTGG (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 6 Jun 2017 15:06:06 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
+In-Reply-To: <87d1ajdpwb.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1dIJnk-0007Bf-Qu@debutante>
+Date: Tue, 06 Jun 2017 20:06:00 +0100
+Subject: Applied "ASoC: simple-card-utils: share same dev_dbg() for DAI format" to the asoc tree
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The display list headers are filled using information from the display
-list only. Lower the display list manager spinlock contention by filling
-the headers without holding the lock.
+The patch
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+   ASoC: simple-card-utils: share same dev_dbg() for DAI format
+
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From aaad9c131b8fcdb493ed64e56cea8ea52977e091 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Mon, 5 Jun 2017 04:28:12 +0000
+Subject: [PATCH] ASoC: simple-card-utils: share same dev_dbg() for DAI format
+
+Let's share same debug message for DAI format
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/media/platform/vsp1/vsp1_dl.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ sound/soc/generic/audio-graph-card.c  | 1 -
+ sound/soc/generic/simple-card-utils.c | 2 ++
+ sound/soc/generic/simple-card.c       | 1 -
+ 3 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
-index 7d8f37772b56..534100581404 100644
---- a/drivers/media/platform/vsp1/vsp1_dl.c
-+++ b/drivers/media/platform/vsp1/vsp1_dl.c
-@@ -483,8 +483,6 @@ void vsp1_dl_list_commit(struct vsp1_dl_list *dl)
- 	unsigned long flags;
- 	bool update;
+diff --git a/sound/soc/generic/audio-graph-card.c b/sound/soc/generic/audio-graph-card.c
+index 93c167a91d2d..1769a39a22c4 100644
+--- a/sound/soc/generic/audio-graph-card.c
++++ b/sound/soc/generic/audio-graph-card.c
+@@ -170,7 +170,6 @@ static int asoc_graph_card_dai_link_of(struct device_node *cpu_port,
+ 	dai_link->init = asoc_graph_card_dai_init;
  
--	spin_lock_irqsave(&dlm->lock, flags);
--
- 	if (dl->dlm->mode == VSP1_DL_MODE_HEADER) {
- 		struct vsp1_dl_list *dl_child;
+ 	dev_dbg(dev, "\tname : %s\n", dai_link->stream_name);
+-	dev_dbg(dev, "\tformat : %04x\n", dai_link->dai_fmt);
+ 	dev_dbg(dev, "\tcpu : %s / %d\n",
+ 		dai_link->cpu_dai_name,
+ 		cpu_dai->sysclk);
+diff --git a/sound/soc/generic/simple-card-utils.c b/sound/soc/generic/simple-card-utils.c
+index da24ac171aec..59e770125596 100644
+--- a/sound/soc/generic/simple-card-utils.c
++++ b/sound/soc/generic/simple-card-utils.c
+@@ -51,6 +51,8 @@ int asoc_simple_card_parse_daifmt(struct device *dev,
  
-@@ -501,7 +499,11 @@ void vsp1_dl_list_commit(struct vsp1_dl_list *dl)
+ 	*retfmt = daifmt;
  
- 			vsp1_dl_list_fill_header(dl_child, last);
- 		}
-+	}
- 
-+	spin_lock_irqsave(&dlm->lock, flags);
++	dev_dbg(dev, "format : %04x\n", daifmt);
 +
-+	if (dl->dlm->mode == VSP1_DL_MODE_HEADER) {
- 		/*
- 		 * Commit the head display list to hardware. Chained headers
- 		 * will auto-start.
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(asoc_simple_card_parse_daifmt);
+diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
+index 4dacaf78a0de..d364f08a7182 100644
+--- a/sound/soc/generic/simple-card.c
++++ b/sound/soc/generic/simple-card.c
+@@ -302,7 +302,6 @@ static int asoc_simple_card_dai_link_of(struct device_node *node,
+ 	dai_link->init = asoc_simple_card_dai_init;
+ 
+ 	dev_dbg(dev, "\tname : %s\n", dai_link->stream_name);
+-	dev_dbg(dev, "\tformat : %04x\n", dai_link->dai_fmt);
+ 	dev_dbg(dev, "\tcpu : %s / %d\n",
+ 		dai_link->cpu_dai_name,
+ 		dai_props->cpu_dai.sysclk);
 -- 
-Regards,
-
-Laurent Pinchart
+2.11.0
