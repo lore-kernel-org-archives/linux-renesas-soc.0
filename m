@@ -1,121 +1,89 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:58960 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751611AbdFFTG0 (ORCPT
+Received: from sauhun.de ([88.99.104.3]:55649 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751388AbdFFKtq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Jun 2017 15:06:26 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <87h8ztzw10.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dIJo4-0007Is-Dp@debutante>
-Date: Tue, 06 Jun 2017 20:06:20 +0100
-Subject: Applied "ASoC: audio-graph-scu-card: add missing MIX binding example" to the asoc tree
+        Tue, 6 Jun 2017 06:49:46 -0400
+Date: Tue, 6 Jun 2017 12:49:44 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <horms@verge.net.au>,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: SDHI clock imbalance
+Message-ID: <20170606104944.6zewibifk3xfxetk@ninjato>
+References: <CAMuHMdX7_u_3TFK22inUp367LR3R77S72RAtRWPFnKE9-cUtpw@mail.gmail.com>
+ <CAPDyKFpfff0AwbKwJEhH_-Vkn+i+1bXp5P-OWiZ2O=71s+s5vw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="pibgxcti7gnrdqqq"
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFpfff0AwbKwJEhH_-Vkn+i+1bXp5P-OWiZ2O=71s+s5vw@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
 
-   ASoC: audio-graph-scu-card: add missing MIX binding example
+--pibgxcti7gnrdqqq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-has been applied to the asoc tree at
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+> The driver calls pm_runtime_set_active() during ->probe(), which means
+> genpd's ->runtime_resume() callback isn't invoked during that point.
+> In other words, the clocks managed by the clock domain isn't enabled
+> during ->probe() as genpd's doesn't get to run pm_clk_resume() from
+> its ->runtime_resume() callback. Unless I am missing something. :-)
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+So, in my words: in that case, the device is not really active since the
+clocks are not enabled?
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+> I think this is the reason to the following problems. How to fix it?
+>=20
+> The driver needs to call pm_runtime_get_sync() instead of
+> pm_runtime_set_active(), however that may requires some careful
+> changes if one wants the driver to be able to enable clocks also when
+> CONFIG_PM is unset.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+We have tmio_mmc_clk_enable() already for that, I'd think. Or am I
+misunderstanding?
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+> Add a "init" flag to host struct, and set that flag before calling
+> pm_runtime_get_sync() in ->probe(). When the driver's
+> ->runtime_resume() callbacks get called when the "init" flag is set,
+> just do an early return 0, as t means ->probe() is running and has
+> already taken care of the enabling the clock. When probe is done, and
+> before dropping runtime usage count with pm_runtime_put(), reset the
+> "init" flag.
 
-Thanks,
-Mark
+Welllll... I hope we can avoid this ;)
 
->From 08862251476f899c4c4528e922df5854076b8661 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Tue, 6 Jun 2017 02:37:07 +0000
-Subject: [PATCH] ASoC: audio-graph-scu-card: add missing MIX binding example
+Thanks for your thoughts, Ulf. And thanks to Geert for bringing up the
+issue which I can reproduce here. We need to do a bigger PM
+re-evaluation anyhow, I'll add it to the list...
 
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- .../bindings/sound/audio-graph-scu-card.txt        | 47 +++++++++++++++++++++-
- 1 file changed, 46 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/sound/audio-graph-scu-card.txt b/Documentation/devicetree/bindings/sound/audio-graph-scu-card.txt
-index b2dd23fd2135..b63c5594bbb3 100644
---- a/Documentation/devicetree/bindings/sound/audio-graph-scu-card.txt
-+++ b/Documentation/devicetree/bindings/sound/audio-graph-scu-card.txt
-@@ -35,7 +35,7 @@ Required properties:
- - compatible				: "audio-graph-scu-card";
- - dais					: list of CPU DAI port{s}
- 
--Example
-+Example 1. Sampling Rate Conversion
- 
- 	sound_card {
- 		compatible = "audio-graph-scu-card";
-@@ -70,3 +70,48 @@ Example
- 			};
- 		};
- 	};
-+
-+Example 2. 2 CPU 1 Codec (Mixing)
-+
-+	sound_card {
-+		compatible = "audio-graph-scu-card";
-+
-+		label = "sound-card";
-+		prefix = "codec";
-+		routing = "codec Playback", "DAI0 Playback",
-+			"codec Playback", "DAI1 Playback";
-+		convert-rate = <48000>;
-+
-+		dais = <&cpu_port0
-+			&cpu_port1>;
-+	};
-+
-+	audio-codec {
-+		...
-+
-+		port {
-+			codec_endpoint: endpoint {
-+				remote-endpoint = <&cpu_endpoint0>;
-+			};
-+		};
-+	};
-+
-+	dai-controller {
-+		...
-+		ports {
-+			cpu_port0: port {
-+				cpu_endpoint0: endpoint {
-+					remote-endpoint = <&codec_endpoint>;
-+
-+					dai-format = "left_j";
-+					...
-+				};
-+			};
-+			cpu_port1: port {
-+				cpu_endpoint1: endpoint {
-+					dai-format = "left_j";
-+					...
-+				};
-+			};
-+		};
-+	};
--- 
-2.11.0
+--pibgxcti7gnrdqqq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlk2iMgACgkQFA3kzBSg
+KbZKsg//Zsq83wzm57qYfVXbkB2ILynMExIDGNJildnJFGyGhiM1IFJ4knKpAIZ8
+8WhFMcd9kY3ORDJbm9/F6e15rI7u9+5DFDrRYxQBlaPFrKB7RgEIQNXR4XcX9/zR
+6zRDnTK+SHT9yjz67KiftJGMxNCwI7h5nqk1qk1VV1AGI2uUwAgvkFp/9jqmXjjw
+cH4Knd8E1Adz/Q8L0ARZwziQmYDYmzgOMgMuVjcZrT+CdcCr7JhjJtbyeKZ4G4pc
+MwPxwLn+YKlvEKpe+cUMTteWzbXtt176vlz+lp9DGCkX/VUp9bcFVwlLMbH9zL/Z
+cyP3A2SmehPilzw/BUmhglFqsQlxWa6+TtBGvoO8t9xjIQvbhlMJMdm5XV88ri0Y
+g2Fclt8i1w2BryXUPks1pO/407gPnjGlkcNlb09POLRyun3+9WPVpT2S0QsjpK2S
+ytE5NVJqeZtKn6OxosEX5wH/4VwfgDfJBs+8uFHWItqzP/duYaoq0RlJ+hJjBQ2h
+KV8PItpvfoXAB8TP9CcFxpXXnzumhj/bv0hIURoBUqE16xoNe4ONMcp5iKFcv9G7
+J7eFt2XcDzWtl7TdtP5pkf82gVY5YepgoiwRH2qZDDnUJYb7YmhcynFgFhOfUWji
+xYa42dXWU2Z9i99MDLZNH92pEZUaK0e/C5CWOyHZ0aYlaCpbzyI=
+=4H7w
+-----END PGP SIGNATURE-----
+
+--pibgxcti7gnrdqqq--
