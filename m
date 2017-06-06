@@ -1,25 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:46784 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:58960 "EHLO
         mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751704AbdFGTbx (ORCPT
+        with ESMTP id S1751611AbdFFTG0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Jun 2017 15:31:53 -0400
+        Tue, 6 Jun 2017 15:06:26 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
         linux-renesas-soc@vger.kernel.org,
         Linux-ALSA <alsa-devel@alsa-project.org>,
         Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <87wp8o3afb.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dIgg1-0003ay-QY@debutante>
-Date: Wed, 07 Jun 2017 20:31:33 +0100
-Subject: Applied "ASoC: simple-card: remove duplicate parameter from asoc_simple_card_parse_of()" to the asoc tree
+In-Reply-To: <87h8ztzw10.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1dIJo4-0007Is-Dp@debutante>
+Date: Tue, 06 Jun 2017 20:06:20 +0100
+Subject: Applied "ASoC: audio-graph-scu-card: add missing MIX binding example" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The patch
 
-   ASoC: simple-card: remove duplicate parameter from asoc_simple_card_parse_of()
+   ASoC: audio-graph-scu-card: add missing MIX binding example
 
 has been applied to the asoc tree at
 
@@ -44,45 +44,78 @@ to this mail.
 Thanks,
 Mark
 
->From d2fdcc285f8c79ab1a6d20e5196eb173a105b365 Mon Sep 17 00:00:00 2001
+>From 08862251476f899c4c4528e922df5854076b8661 Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Wed, 7 Jun 2017 00:37:05 +0000
-Subject: [PATCH] ASoC: simple-card: remove duplicate parameter from
- asoc_simple_card_parse_of()
+Date: Tue, 6 Jun 2017 02:37:07 +0000
+Subject: [PATCH] ASoC: audio-graph-scu-card: add missing MIX binding example
 
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/generic/simple-card.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ .../bindings/sound/audio-graph-scu-card.txt        | 47 +++++++++++++++++++++-
+ 1 file changed, 46 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
-index 565d057f0d14..33ff487193f9 100644
---- a/sound/soc/generic/simple-card.c
-+++ b/sound/soc/generic/simple-card.c
-@@ -356,12 +356,12 @@ static int asoc_simple_card_parse_aux_devs(struct device_node *node,
- 	return 0;
- }
+diff --git a/Documentation/devicetree/bindings/sound/audio-graph-scu-card.txt b/Documentation/devicetree/bindings/sound/audio-graph-scu-card.txt
+index b2dd23fd2135..b63c5594bbb3 100644
+--- a/Documentation/devicetree/bindings/sound/audio-graph-scu-card.txt
++++ b/Documentation/devicetree/bindings/sound/audio-graph-scu-card.txt
+@@ -35,7 +35,7 @@ Required properties:
+ - compatible				: "audio-graph-scu-card";
+ - dais					: list of CPU DAI port{s}
  
--static int asoc_simple_card_parse_of(struct device_node *node,
--				     struct simple_card_data *priv)
-+static int asoc_simple_card_parse_of(struct simple_card_data *priv)
- {
- 	struct device *dev = simple_priv_to_dev(priv);
- 	struct snd_soc_card *card = simple_priv_to_card(priv);
- 	struct device_node *dai_link;
-+	struct device_node *node = dev->of_node;
- 	int ret;
+-Example
++Example 1. Sampling Rate Conversion
  
- 	if (!node)
-@@ -460,7 +460,7 @@ static int asoc_simple_card_probe(struct platform_device *pdev)
- 
- 	if (np && of_device_is_available(np)) {
- 
--		ret = asoc_simple_card_parse_of(np, priv);
-+		ret = asoc_simple_card_parse_of(priv);
- 		if (ret < 0) {
- 			if (ret != -EPROBE_DEFER)
- 				dev_err(dev, "parse error %d\n", ret);
+ 	sound_card {
+ 		compatible = "audio-graph-scu-card";
+@@ -70,3 +70,48 @@ Example
+ 			};
+ 		};
+ 	};
++
++Example 2. 2 CPU 1 Codec (Mixing)
++
++	sound_card {
++		compatible = "audio-graph-scu-card";
++
++		label = "sound-card";
++		prefix = "codec";
++		routing = "codec Playback", "DAI0 Playback",
++			"codec Playback", "DAI1 Playback";
++		convert-rate = <48000>;
++
++		dais = <&cpu_port0
++			&cpu_port1>;
++	};
++
++	audio-codec {
++		...
++
++		port {
++			codec_endpoint: endpoint {
++				remote-endpoint = <&cpu_endpoint0>;
++			};
++		};
++	};
++
++	dai-controller {
++		...
++		ports {
++			cpu_port0: port {
++				cpu_endpoint0: endpoint {
++					remote-endpoint = <&codec_endpoint>;
++
++					dai-format = "left_j";
++					...
++				};
++			};
++			cpu_port1: port {
++				cpu_endpoint1: endpoint {
++					dai-format = "left_j";
++					...
++				};
++			};
++		};
++	};
 -- 
 2.11.0
