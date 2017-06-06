@@ -1,82 +1,54 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:46212 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750756AbdFNKM3 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Jun 2017 06:12:29 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <877f0f9zrx.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dL5Hh-0007Xw-Qx@debutante>
-Date: Wed, 14 Jun 2017 11:12:21 +0100
-Subject: Applied "ASoC: audio-graph-scu-card: use asoc_simple_card_of_parse_tdm()" to the asoc tree
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-i2c@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Wolfram Sang <wsa@the-dreams.de>
+Subject: [RFC PATCH 0/4] i2c: document DMA handling and add helper
+Date: Tue,  6 Jun 2017 11:20:30 +0200
+Message-Id: <20170606092034.1516-1-wsa+renesas@sang-engineering.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+From: Wolfram Sang <wsa@the-dreams.de>
 
-   ASoC: audio-graph-scu-card: use asoc_simple_card_of_parse_tdm()
+So, after revisiting old mail threads and taking part in a similar discussion
+on the USB list, here is an RFC on what I cooked together regarding DMA and I2C
+in the Linux world.
 
-has been applied to the asoc tree at
+I documented my reasoning with patch 2 which mentions a helper function which
+gets added with patch 1. Patch 3 shows a super simple example with the
+i2c-sh_mobile driver. And patch 4 shows a super complicated example with the
+i2c-rcar driver. But it is nice to have such a corner case already in the
+beginning of development.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+Please let me know what you think. What I surely plan to add until next time is
+to fix two central places in the I2C core where the data buffer for block
+transfers is currently put on the stack.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+A branch can be found here:
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/i2c-core-dma
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+And big kudos to Renesas Electronics for funding this work, thank you very much!
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+Regards,
 
-Thanks,
-Mark
+   Wolfram
 
->From 616c3b15f596e1f1e6c2537a1ad3492052eecba6 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Wed, 14 Jun 2017 00:35:47 +0000
-Subject: [PATCH] ASoC: audio-graph-scu-card: use
- asoc_simple_card_of_parse_tdm()
 
-Current simple card drivers are using asoc_simple_dai's tx_slot_mask,
-rx_slot_mask, slots, slot_width directly to parse TDM.
-Encapsulation is one of simple card util's purpose.
-Let's use asoc_simple_card_of_parse_tdm for it.
+Wolfram Sang (4):
+  i2c: add helper to determine if DMA is favoured
+  i2c: add docs to clarify DMA handling
+  i2c: sh_mobile: use helper to decide if DMA is used
+  i2c: rcar: check for DMA-capable buffers
 
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/generic/audio-graph-scu-card.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ Documentation/i2c/DMA-considerations | 28 ++++++++++++++++++++++++++++
+ drivers/i2c/busses/i2c-rcar.c        | 18 +++++++++++++-----
+ drivers/i2c/busses/i2c-sh_mobile.c   |  2 +-
+ include/linux/i2c.h                  | 29 +++++++++++++++++++++++++++++
+ 4 files changed, 71 insertions(+), 6 deletions(-)
+ create mode 100644 Documentation/i2c/DMA-considerations
 
-diff --git a/sound/soc/generic/audio-graph-scu-card.c b/sound/soc/generic/audio-graph-scu-card.c
-index 27a261ee7302..4d295d07858a 100644
---- a/sound/soc/generic/audio-graph-scu-card.c
-+++ b/sound/soc/generic/audio-graph-scu-card.c
-@@ -167,11 +167,7 @@ static int asoc_graph_card_dai_link_of(struct device_node *ep,
- 					      "prefix");
- 	}
- 
--	ret = snd_soc_of_parse_tdm_slot(ep,
--					&dai_props->tx_slot_mask,
--					&dai_props->rx_slot_mask,
--					&dai_props->slots,
--					&dai_props->slot_width);
-+	ret = asoc_simple_card_of_parse_tdm(ep, dai_props);
- 	if (ret)
- 		return ret;
- 
 -- 
 2.11.0
