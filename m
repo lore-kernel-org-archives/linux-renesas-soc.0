@@ -1,25 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:48676 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:58832 "EHLO
         mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751193AbdFWMDy (ORCPT
+        with ESMTP id S1751503AbdFFTGQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 23 Jun 2017 08:03:54 -0400
+        Tue, 6 Jun 2017 15:06:16 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
         linux-renesas-soc@vger.kernel.org,
         Linux-ALSA <alsa-devel@alsa-project.org>,
         Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <87h8z8czsk.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dONJU-0006Lg-JB@debutante>
-Date: Fri, 23 Jun 2017 13:03:48 +0100
-Subject: Applied "ASoC: audio-graph-scu-card: tidyup asoc_simple_card_canonicalize_cpu() parameter" to the asoc tree
+In-Reply-To: <87efuzdpws.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1dIJnp-0007CX-2F@debutante>
+Date: Tue, 06 Jun 2017 20:06:05 +0100
+Subject: Applied "ASoC: simple-card-utils: share same dev_dbg() for Card Name" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The patch
 
-   ASoC: audio-graph-scu-card: tidyup asoc_simple_card_canonicalize_cpu() parameter
+   ASoC: simple-card-utils: share same dev_dbg() for Card Name
 
 has been applied to the asoc tree at
 
@@ -44,35 +44,59 @@ to this mail.
 Thanks,
 Mark
 
->From 32f2bcce3ed10b93236d747701a9c04d51626cc2 Mon Sep 17 00:00:00 2001
+>From d4dbcb63c8bde48741468cf7c711b76ed3e7fce5 Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Thu, 22 Jun 2017 06:22:14 +0000
-Subject: [PATCH] ASoC: audio-graph-scu-card: tidyup
- asoc_simple_card_canonicalize_cpu() parameter
+Date: Mon, 5 Jun 2017 04:27:56 +0000
+Subject: [PATCH] ASoC: simple-card-utils: share same dev_dbg() for Card Name
 
-asoc_simple_card_canonicalize_cpu() 2nd param is asking CPU component's
-DAI links, not Card links.
-This patch fixup it. Otherwise, audio-graph-card can't handle CPU
-component correctly if CPU has mult-DAIs and Card uses only one of them
+Let's share same debug message for Card Name
 
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/generic/audio-graph-scu-card.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/generic/audio-graph-scu-card.c | 2 --
+ sound/soc/generic/simple-card-utils.c    | 2 ++
+ sound/soc/generic/simple-scu-card.c      | 2 --
+ 3 files changed, 2 insertions(+), 4 deletions(-)
 
 diff --git a/sound/soc/generic/audio-graph-scu-card.c b/sound/soc/generic/audio-graph-scu-card.c
-index 05934b24627b..061c7a60d6b4 100644
+index c5c52d1f500c..1ce727b6bc21 100644
 --- a/sound/soc/generic/audio-graph-scu-card.c
 +++ b/sound/soc/generic/audio-graph-scu-card.c
-@@ -125,7 +125,7 @@ static int asoc_graph_card_dai_link_of(struct device_node *ep,
+@@ -295,8 +295,6 @@ static int asoc_graph_card_parse_of(struct graph_card_data *priv)
+ 	if (ret)
+ 		goto parse_of_err;
  
- 		/* card->num_links includes Codec */
- 		asoc_simple_card_canonicalize_cpu(dai_link,
--					(card->num_links - 1) == 1);
-+			of_graph_get_endpoint_count(dai_link->cpu_of_node) == 1);
- 	} else {
- 		/* FE is dummy */
- 		dai_link->cpu_of_node		= NULL;
+-	dev_dbg(dev, "New card: %s\n",
+-		card->name ? card->name : "");
+ 	dev_dbg(dev, "convert_rate     %d\n", priv->convert_rate);
+ 	dev_dbg(dev, "convert_channels %d\n", priv->convert_channels);
+ 
+diff --git a/sound/soc/generic/simple-card-utils.c b/sound/soc/generic/simple-card-utils.c
+index 9c7f5b91b90a..da24ac171aec 100644
+--- a/sound/soc/generic/simple-card-utils.c
++++ b/sound/soc/generic/simple-card-utils.c
+@@ -100,6 +100,8 @@ int asoc_simple_card_parse_card_name(struct snd_soc_card *card,
+ 	if (!card->name && card->dai_link)
+ 		card->name = card->dai_link->name;
+ 
++	dev_dbg(card->dev, "Card Name: %s\n", card->name ? card->name : "");
++
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(asoc_simple_card_parse_card_name);
+diff --git a/sound/soc/generic/simple-scu-card.c b/sound/soc/generic/simple-scu-card.c
+index 9b9b01e12149..5f4384f322c1 100644
+--- a/sound/soc/generic/simple-scu-card.c
++++ b/sound/soc/generic/simple-scu-card.c
+@@ -246,8 +246,6 @@ static int asoc_simple_card_parse_of(struct device_node *node,
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	dev_dbg(dev, "New card: %s\n",
+-		card->name ? card->name : "");
+ 	dev_dbg(dev, "convert_rate     %d\n", priv->convert_rate);
+ 	dev_dbg(dev, "convert_channels %d\n", priv->convert_channels);
+ 
 -- 
-2.13.1
+2.11.0
