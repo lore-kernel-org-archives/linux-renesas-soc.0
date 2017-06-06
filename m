@@ -1,81 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:58756 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751247AbdFFTGB (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:30418 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751447AbdFFL2C (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Jun 2017 15:06:01 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        alsa-devel@alsa-project.org, alsa-devel@alsa-project.org
-In-Reply-To: <1496313375-27892-1-git-send-email-geert+renesas@glider.be>
-Message-Id: <E1dIJna-000796-Tu@debutante>
-Date: Tue, 06 Jun 2017 20:05:50 +0100
-Subject: Applied "ASoC: rsnd: Document optional reset properties" to the asoc tree
+        Tue, 6 Jun 2017 07:28:02 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Felipe Balbi <balbi@kernel.org>
+CC: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH 0/5] usb: gadget: udc: renesas_usb3: add DMAC support
+Date: Tue, 6 Jun 2017 11:27:58 +0000
+Message-ID: <TY1PR06MB09928883A68D48D16971BDFED8CB0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+References: <1493207411-24416-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <TY1PR06MB09923F1ACA6B07A4D43ED674D8F90@TY1PR06MB0992.apcprd06.prod.outlook.com>
+ <87fufivhx3.fsf@linux.intel.com>
+ <TY1PR06MB0992A258F9BD28CED69B7618D8CB0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+ <87y3t5sbdz.fsf@linux.intel.com>
+In-Reply-To: <87y3t5sbdz.fsf@linux.intel.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+Hi,
 
-   ASoC: rsnd: Document optional reset properties
+> From: Felipe Balbi
+> Sent: Tuesday, June 6, 2017 6:40 PM
+>=20
+> Hi,
+>=20
+> Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com> writes:
+> > Hi,
+> >
+> >> From: Felipe Balbi
+> >> Sent: Friday, June 2, 2017 6:49 PM
+> >>
+> >> Hi,
+> >>
+> >> Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com> writes:
+> >> > Hi Felipe,
+> >> >
+> >> >> -----Original Message-----
+> >> >> From: Yoshihiro Shimoda
+> >> >> Sent: Wednesday, April 26, 2017 8:50 PM
+> >> >>
+> >> >> This patch set is based on the latest Feribe's usb.git / testing/ne=
+xt branch
+> >> >> (the commit id =3D 28ea6be01e2cf244c461a40c8e9593816f894412.)
+> >> >
+> >> > I'm afraid but, would you review this patch set?
+> >> > This patch set can be applied on the today's testing/next branch.
+> >>
+> >> I was thinking that we need the fixes during the -rc cycle. No? In tha=
+t
+> >> case, we need to get rid of the dependencies between 1-4 and patch 5.
+> >
+> > Indeed.
+> >
+> >> patches 1-4 are in my testing/fixes now.
+> >
+> > Thank you!
+> > I will resubmit the patch 5 later.
+>=20
+> Thanks a lot :-) If you can just rebase it on my testing/next, that'll
+> help a lot already. We will have a couple conflicts when merging, but
+> I'll make sure to solve them ;-)
 
-has been applied to the asoc tree at
+I got it! I submitted v2 patch now :)
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+Best regards,
+Yoshihiro Shimoda
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 5f440c48c5d5a11f1892819c409e183b2056e4ba Mon Sep 17 00:00:00 2001
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Date: Thu, 1 Jun 2017 12:36:15 +0200
-Subject: [PATCH] ASoC: rsnd: Document optional reset properties
-
-Document the optional properties for describing module resets, to
-support resetting these modules on R-Car Gen2 and Gen3.
-
-Note that the audio module has resets for the Serial Sound Interfaces
-only.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- Documentation/devicetree/bindings/sound/renesas,rsnd.txt | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
-index 13cb21d53b8b..7246bb268bf9 100644
---- a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
-+++ b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
-@@ -379,6 +379,9 @@ Optional properties:
- - clock-frequency		: for all audio_clkout0/1/2/3
- - clkout-lr-asynchronous	: boolean property. it indicates that audio_clkoutn
- 				  is asynchronizes with lr-clock.
-+- resets			: References to SSI resets.
-+- reset-names			: List of valid reset names.
-+				  "ssi-all", "ssi.X"
- 
- SSI subnode properties:
- - interrupts			: Should contain SSI interrupt for PIO transfer
--- 
-2.11.0
+> --
+> balbi
