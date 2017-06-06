@@ -1,139 +1,72 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:65304 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750955AbdFBQH6 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Jun 2017 12:07:58 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2] ARM: dts: r7s72100: add clock bit definitions
-Date: Fri,  2 Jun 2017 09:06:49 -0700
-Message-Id: <20170602160649.3120-1-chris.brandt@renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-i2c-owner@vger.kernel.org>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-i2c@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [RFC PATCH 1/4] i2c: add helper to determine if DMA is favoured
+Date: Tue,  6 Jun 2017 11:20:31 +0200
+Message-Id: <20170606092034.1516-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20170606092034.1516-1-wsa+renesas@sang-engineering.com>
+References: <20170606092034.1516-1-wsa+renesas@sang-engineering.com>
+Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the remaining bit locations for the module stop clock registers.
+We not only check if the buffer is DMA capable. We also require a
+threshold value to see if it makes sense to setup DMA. Since most
+I2C transactions are small, the cost for DMA might be too high.
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
-v2:
-* Added coresight bit
-* MCPWM -> PWM
-* SNDGEN[0-3] -> SG[0-3]
-* ETHABV -> ETHAVB
-* SPIMBC[0-1] -> SPIBSC[0-1]
-* Added SSI[0-5]
----
- include/dt-bindings/clock/r7s72100-clock.h | 51 ++++++++++++++++++++++++++++++
- 1 file changed, 51 insertions(+)
+ include/linux/i2c.h | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-diff --git a/include/dt-bindings/clock/r7s72100-clock.h b/include/dt-bindings/clock/r7s72100-clock.h
-index dcd2072151fc..7dd8bc0c3cd0 100644
---- a/include/dt-bindings/clock/r7s72100-clock.h
-+++ b/include/dt-bindings/clock/r7s72100-clock.h
-@@ -12,8 +12,18 @@
+diff --git a/include/linux/i2c.h b/include/linux/i2c.h
+index 72d0ece70ed30d..f0b835ba2ecd10 100644
+--- a/include/linux/i2c.h
++++ b/include/linux/i2c.h
+@@ -34,6 +34,8 @@
+ #include <linux/irqdomain.h>		/* for Host Notify IRQ */
+ #include <linux/of.h>		/* for struct device_node */
+ #include <linux/swab.h>		/* for swab16 */
++#include <linux/mm.h>
++#include <linux/sched/task_stack.h>
+ #include <uapi/linux/i2c.h>
  
- #define R7S72100_CLK_PLL	0
+ extern struct bus_type i2c_bus_type;
+@@ -764,6 +766,33 @@ static inline u8 i2c_8bit_addr_from_msg(const struct i2c_msg *msg)
+ 	return (msg->addr << 1) | (msg->flags & I2C_M_RD ? 1 : 0);
+ }
  
-+/* MSTP2 */
-+#define R7S72100_CLK_CORESIGHT	0
++/**
++ * i2c_check_msg_for_dma() - check if a message is suitable for DMA
++ * @msg: the message to be checked
++ * @dma_threshold: the amount of byte from which using DMA makes sense
++ *
++ * Return: -ERANGE if message is smaller than threshold
++ * 	   -EFAULT if message buffer is not DMA capable
++ * 	   0 if message is suitable for DMA
++ *
++ * Note: This function should only be called from process context! It uses
++ * helper functions which work on the 'current' task.
++ */
++static inline int i2c_check_msg_for_dma(struct i2c_msg *msg, unsigned int dma_threshold)
++{
++	if (msg->len < dma_threshold)
++		return -ERANGE;
 +
- /* MSTP3 */
-+#define R7S72100_CLK_IEBUS	7
-+#define R7S72100_CLK_IRDA	6
-+#define R7S72100_CLK_LIN0	5
-+#define R7S72100_CLK_LIN1	4
- #define R7S72100_CLK_MTU2	3
-+#define R7S72100_CLK_CAN	2
-+#define R7S72100_CLK_ADCPWR	1
-+#define R7S72100_CLK_PWM	0
- 
- /* MSTP4 */
- #define R7S72100_CLK_SCIF0	7
-@@ -26,25 +36,51 @@
- #define R7S72100_CLK_SCIF7	0
- 
- /* MSTP5 */
-+#define R7S72100_CLK_SCI0	7
-+#define R7S72100_CLK_SCI1	6
-+#define R7S72100_CLK_SG0	5
-+#define R7S72100_CLK_SG1	4
-+#define R7S72100_CLK_SG2	3
-+#define R7S72100_CLK_SG3	2
- #define R7S72100_CLK_OSTM0	1
- #define R7S72100_CLK_OSTM1	0
- 
- /* MSTP6 */
-+#define R7S72100_CLK_ADC	7
-+#define R7S72100_CLK_CEU	6
-+#define R7S72100_CLK_DOC0	5
-+#define R7S72100_CLK_DOC1	4
-+#define R7S72100_CLK_DRC0	3
-+#define R7S72100_CLK_DRC1	2
-+#define R7S72100_CLK_JCU	1
- #define R7S72100_CLK_RTC	0
- 
- /* MSTP7 */
-+#define R7S72100_CLK_VDEC0	7
-+#define R7S72100_CLK_VDEC1	6
- #define R7S72100_CLK_ETHER	4
-+#define R7S72100_CLK_NAND	3
- #define R7S72100_CLK_USB0	1
- #define R7S72100_CLK_USB1	0
- 
- /* MSTP8 */
-+#define R7S72100_CLK_IMR0	7
-+#define R7S72100_CLK_IMR1	6
-+#define R7S72100_CLK_IMRDISP	5
- #define R7S72100_CLK_MMCIF	4
-+#define R7S72100_CLK_MLB	3
-+#define R7S72100_CLK_ETHAVB	2
-+#define R7S72100_CLK_SCUX	1
- 
- /* MSTP9 */
- #define R7S72100_CLK_I2C0	7
- #define R7S72100_CLK_I2C1	6
- #define R7S72100_CLK_I2C2	5
- #define R7S72100_CLK_I2C3	4
-+#define R7S72100_CLK_SPIBSC0	3
-+#define R7S72100_CLK_SPIBSC1	2
-+#define R7S72100_CLK_VDC50	1	/* and LVDS */
-+#define R7S72100_CLK_VDC51	0
- 
- /* MSTP10 */
- #define R7S72100_CLK_SPI0	7
-@@ -52,6 +88,17 @@
- #define R7S72100_CLK_SPI2	5
- #define R7S72100_CLK_SPI3	4
- #define R7S72100_CLK_SPI4	3
-+#define R7S72100_CLK_CDROM	2
-+#define R7S72100_CLK_SPDIF	1
-+#define R7S72100_CLK_RGPVG2	0
++#if !defined(CONFIG_DMA_API_DEBUG)
++	if (!virt_addr_valid(msg->buf) || object_is_on_stack(msg->buf)) {
++		pr_debug("msg buffer to 0x%04x might not be DMA capable\n",
++			 msg->addr);
++		return -EFAULT;
++	}
++#endif
++	return 0;
++}
 +
-+/* MSTP11 */
-+#define R7S72100_CLK_SSI0	5
-+#define R7S72100_CLK_SSI1	4
-+#define R7S72100_CLK_SSI2	3
-+#define R7S72100_CLK_SSI3	2
-+#define R7S72100_CLK_SSI4	1
-+#define R7S72100_CLK_SSI5	0
- 
- /* MSTP12 */
- #define R7S72100_CLK_SDHI00	3
-@@ -59,4 +106,8 @@
- #define R7S72100_CLK_SDHI10	1
- #define R7S72100_CLK_SDHI11	0
- 
-+/* MSTP13 */
-+#define R7S72100_CLK_PIX1	2
-+#define R7S72100_CLK_PIX0	1
-+
- #endif /* __DT_BINDINGS_CLOCK_R7S72100_H__ */
+ int i2c_handle_smbus_host_notify(struct i2c_adapter *adap, unsigned short addr);
+ /**
+  * module_i2c_driver() - Helper macro for registering a modular I2C driver
 -- 
-2.13.0
+2.11.0
+
