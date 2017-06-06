@@ -1,54 +1,69 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Biju Das <biju.das@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Rob Herring <robh+dt@kernel.org>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f49.google.com ([209.85.214.49]:36643 "EHLO
+        mail-it0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750805AbdFFHlS (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 6 Jun 2017 03:41:18 -0400
+MIME-Version: 1.0
+In-Reply-To: <1496420523-23506-3-git-send-email-biju.das@bp.renesas.com>
+References: <1496420523-23506-1-git-send-email-biju.das@bp.renesas.com> <1496420523-23506-3-git-send-email-biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 6 Jun 2017 09:41:16 +0200
+Message-ID: <CAMuHMdUHetaZMhfxBXF-1y0yv5UdUQrxH7NpkUfymty5hs_7EQ@mail.gmail.com>
+Subject: Re: [PATCH 2/4] ARM: shmobile: document iW-RainboW-G20D-Qseven-RZG1M board
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH 2/4] ARM: shmobile: document iW-RainboW-G20D-Qseven-RZG1M
- board
-Date: Tue, 6 Jun 2017 10:35:38 +0000
-Message-ID: <KL1PR06MB1702F51A1FE7A965C0EC9FEBB8CB0@KL1PR06MB1702.apcprd06.prod.outlook.com>
-References: <1496420523-23506-1-git-send-email-biju.das@bp.renesas.com>
- <1496420523-23506-3-git-send-email-biju.das@bp.renesas.com>
- <CAMuHMdUHetaZMhfxBXF-1y0yv5UdUQrxH7NpkUfymty5hs_7EQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdUHetaZMhfxBXF-1y0yv5UdUQrxH7NpkUfymty5hs_7EQ@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-PiBPbiBGcmksIEp1biAyLCAyMDE3IGF0IDY6MjIgUE0sIEJpanUgRGFzIDxiaWp1LmRhc0BicC5y
-ZW5lc2FzLmNvbT4gd3JvdGU6DQo+ID4gRG9jdW1lbnQgdGhlIGlXLVJhaW5ib1ctRzIwRC1Rc2V2
-ZW4tUlpHMU0gZGV2aWNlIHRyZWUgYmluZGluZ3MsDQo+ID4gbGlzdGluZyBpdCBhcyBhIHN1cHBv
-cnRlZCBib2FyZC4NCj4gPg0KPiA+IFRoaXMgYWxsb3dzIHRvIHVzZSBjaGVja3BhdGNoLnBsIHRv
-IHZhbGlkYXRlIC5kdHMgZmlsZXMgcmVmZXJyaW5nIHRvDQo+ID4gdGhlIGlXLVJhaW5ib1ctRzIw
-RC1Rc2V2ZW4tUlpHMU0gYm9hcmQuDQo+DQo+IFRoYW5rcyBmb3IgeW91ciBwYXRjaCENCj4NCj4g
-PiBTaWduZWQtb2ZmLWJ5OiBCaWp1IERhcyA8YmlqdS5kYXNAYnAucmVuZXNhcy5jb20+DQo+ID4g
-UmV2aWV3ZWQtYnk6IENocmlzIFBhdGVyc29uIDxjaHJpcy5wYXRlcnNvbjJAcmVuZXNhcy5jb20+
-DQo+DQo+IFJldmlld2VkLWJ5OiBHZWVydCBVeXR0ZXJob2V2ZW4gPGdlZXJ0K3JlbmVzYXNAZ2xp
-ZGVyLmJlPg0KPg0KPiA+IC0tLSBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9h
-cm0vc2htb2JpbGUudHh0DQo+ID4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRp
-bmdzL2FybS9zaG1vYmlsZS50eHQNCj4gPiBAQCAtNjksNiArNjksOCBAQCBCb2FyZHM6DQo+ID4g
-ICAgICBjb21wYXRpYmxlID0gInJlbmVzYXMsa3ptOWQiLCAicmVuZXNhcyxlbWV2MiINCj4gPiAg
-ICAtIEt5b3RvIE1pY3JvY29tcHV0ZXIgQ28uIEtaTS1BOS1HVA0KPiA+ICAgICAgY29tcGF0aWJs
-ZSA9ICJyZW5lc2FzLGt6bTlnIiwgInJlbmVzYXMsc2g3M2EwIg0KPiA+ICsgIC0gaVdhdmUgU3lz
-dGVtcyBSWi9HMU0gUXNldmVuIERldmVsb3BtZW50IFBsYXRmb3JtIChpVy1SYWluYm9XLQ0KPiBH
-MjBELVFzZXZlbikNCj4gPiArICAgIGNvbXBhdGlibGUgPSAiaXdhdmUsZzIwZCIsICJyZW5lc2Fz
-LHI4YTc3NDMiDQo+DQo+IFBsZWFzZSBrZWVwIHRoZSBsaXN0IHNvcnRlZCBhbHBoYWJldGljYWxs
-eS4NCg0KVGhhbmtzIGZvciB0aGUgaW5wdXQuIEkgd2lsbCBjb3JyZWN0IGl0Lg0KDQo+ID4gICAg
-LSBMYWdlciAoUlRQMFJDNzc5MFNFQjAwMDEwUykNCj4gPiAgICAgIGNvbXBhdGlibGUgPSAicmVu
-ZXNhcyxsYWdlciIsICJyZW5lc2FzLHI4YTc3OTAiDQo+ID4gICAgLSBNM1VMQ0IgKFItQ2FyIFN0
-YXJ0ZXIgS2l0IFBybywgUlRQMFJDNzc5NlNLQjAwMDEwUykNCg0KUmVnYXJkcywNCkJpanUNCg0K
-DQoNCg0KUmVuZXNhcyBFbGVjdHJvbmljcyBFdXJvcGUgTHRkLCBEdWtlcyBNZWFkb3csIE1pbGxi
-b2FyZCBSb2FkLCBCb3VybmUgRW5kLCBCdWNraW5naGFtc2hpcmUsIFNMOCA1RkgsIFVLLiBSZWdp
-c3RlcmVkIGluIEVuZ2xhbmQgJiBXYWxlcyB1bmRlciBSZWdpc3RlcmVkIE5vLiAwNDU4NjcwOS4N
-Cg==
+Hi Biju,
+
+On Fri, Jun 2, 2017 at 6:22 PM, Biju Das <biju.das@bp.renesas.com> wrote:
+> Document the iW-RainboW-G20D-Qseven-RZG1M device tree bindings,
+> listing it as a supported board.
+>
+> This allows to use checkpatch.pl to validate .dts files referring to the
+> iW-RainboW-G20D-Qseven-RZG1M board.
+
+Thanks for your patch!
+
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+> --- a/Documentation/devicetree/bindings/arm/shmobile.txt
+> +++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+> @@ -69,6 +69,8 @@ Boards:
+>      compatible = "renesas,kzm9d", "renesas,emev2"
+>    - Kyoto Microcomputer Co. KZM-A9-GT
+>      compatible = "renesas,kzm9g", "renesas,sh73a0"
+> +  - iWave Systems RZ/G1M Qseven Development Platform (iW-RainboW-G20D-Qseven)
+> +    compatible = "iwave,g20d", "renesas,r8a7743"
+
+Please keep the list sorted alphabetically.
+
+>    - Lager (RTP0RC7790SEB00010S)
+>      compatible = "renesas,lager", "renesas,r8a7790"
+>    - M3ULCB (R-Car Starter Kit Pro, RTP0RC7796SKB00010S)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
