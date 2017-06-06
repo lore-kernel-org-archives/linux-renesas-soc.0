@@ -1,57 +1,82 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Biju Das <biju.das@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Rob Herring <robh+dt@kernel.org>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f49.google.com ([209.85.214.49]:38442 "EHLO
+        mail-it0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750755AbdFFHli (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 6 Jun 2017 03:41:38 -0400
+MIME-Version: 1.0
+In-Reply-To: <1496420523-23506-4-git-send-email-biju.das@bp.renesas.com>
+References: <1496420523-23506-1-git-send-email-biju.das@bp.renesas.com> <1496420523-23506-4-git-send-email-biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 6 Jun 2017 09:41:37 +0200
+Message-ID: <CAMuHMdV8Ugz_kvHLbV7sii-2v1WdHTSFm3meM8faVtx3jBpC+Q@mail.gmail.com>
+Subject: Re: [PATCH 3/4] ARM: dts: iwg20m: Add iWave RZG1M Qseven SOM
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH 3/4] ARM: dts: iwg20m: Add iWave RZG1M Qseven SOM
-Date: Tue, 6 Jun 2017 10:31:38 +0000
-Message-ID: <KL1PR06MB17024AD50F89CF891E16A367B8CB0@KL1PR06MB1702.apcprd06.prod.outlook.com>
-References: <1496420523-23506-1-git-send-email-biju.das@bp.renesas.com>
- <1496420523-23506-4-git-send-email-biju.das@bp.renesas.com>
- <CAMuHMdV8Ugz_kvHLbV7sii-2v1WdHTSFm3meM8faVtx3jBpC+Q@mail.gmail.com>
-In-Reply-To: <CAMuHMdV8Ugz_kvHLbV7sii-2v1WdHTSFm3meM8faVtx3jBpC+Q@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-DQo+IE9uIEZyaSwgSnVuIDIsIDIwMTcgYXQgNjoyMiBQTSwgQmlqdSBEYXMgPGJpanUuZGFzQGJw
-LnJlbmVzYXMuY29tPiB3cm90ZToNCj4gPiBBZGQgc3VwcG9ydCBmb3IgaVdhdmUgUlpHMU0gUXNl
-dmVuIFN5c3RlbSBPbiBNb2R1bGUuDQo+ID4gaHR0cDovL3d3dy5pd2F2ZXN5c3RlbXMuY29tL3J6
-LWcxbS1xc2V2ZW4tbW9kdWxlLmh0bWwNCj4NCj4gVGhhbmtzIGZvciB5b3VyIHBhdGNoIQ0KPg0K
-PiA+IFNpZ25lZC1vZmYtYnk6IEJpanUgRGFzIDxiaWp1LmRhc0BicC5yZW5lc2FzLmNvbT4NCj4g
-PiBSZXZpZXdlZC1ieTogQ2hyaXMgUGF0ZXJzb24gPGNocmlzLnBhdGVyc29uMkByZW5lc2FzLmNv
-bT4NCj4NCj4gPiAtLS0gL2Rldi9udWxsDQo+ID4gKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvcjhh
-Nzc0My1pd2cyMG0uZHRzaQ0KPiA+IEBAIC0wLDAgKzEsMjcgQEANCj4gPiArLyoNCj4gPiArICog
-RGV2aWNlIFRyZWUgU291cmNlIGZvciB0aGUgaVdhdmUtUlpHMU0tMjBNIFFzZXZlbiBTT00NCj4g
-PiArICoNCj4gPiArICogQ29weXJpZ2h0IChDKSAyMDE3IFJlbmVzYXMgRWxlY3Ryb25pY3MgQ29y
-cC4NCj4gPiArICoNCj4gPiArICogVGhpcyBmaWxlIGlzIGxpY2Vuc2VkIHVuZGVyIHRoZSB0ZXJt
-cyBvZiB0aGUgR05VIEdlbmVyYWwgUHVibGljDQo+ID4gK0xpY2Vuc2UNCj4gPiArICogdmVyc2lv
-biAyLiAgVGhpcyBwcm9ncmFtIGlzIGxpY2Vuc2VkICJhcyBpcyIgd2l0aG91dCBhbnkgd2FycmFu
-dHkNCj4gPiArb2YgYW55DQo+ID4gKyAqIGtpbmQsIHdoZXRoZXIgZXhwcmVzcyBvciBpbXBsaWVk
-Lg0KPiA+ICsgKi8NCj4gPiArDQo+ID4gKyNpbmNsdWRlICJyOGE3NzQzLmR0c2kiDQo+ID4gKw0K
-PiA+ICsvIHsNCj4NCj4gR2l2ZW4gdGhpcyBpcyBhIHN1Yi1ib2FyZCB3aXRoIG1hbnkgb3RoZXIg
-Y29tcG9uZW50cywgSSB0aGluayBpdCBzaG91bGQgaGF2ZQ0KPiBpdHMgb3duIChkb2N1bWVudGVk
-KSBjb21wYXRpYmxlIHZhbHVlLCBlLmcuDQo+DQo+ICAgICBjb21wYXRpYmxlID0gIml3YXZlLGcy
-MG0iLCAicmVuZXNhcyxyOGE3NzQzIjsNCg0KVGhhbmtzIGZvciB0aGUgaW5wdXQuIEkgd2lsbCBk
-b2N1bWVudCB0aGlzIHN5c3RlbSBvbiBtb2R1bGUgYW5kIGFwcGx5IHRoZSBhYm92ZSBjaGFuZ2Uu
-DQoNCj4gPiArICAgICAgIG1lbW9yeUA0MDAwMDAwMCB7DQo+ID4gKyAgICAgICAgICAgICAgIGRl
-dmljZV90eXBlID0gIm1lbW9yeSI7DQo+ID4gKyAgICAgICAgICAgICAgIHJlZyA9IDwwIDB4NDAw
-MDAwMDAgMCAweDIwMDAwMDAwPjsNCj4gPiArICAgICAgIH07DQo+ID4gKw0KPiA+ICsgICAgICAg
-bWVtb3J5QDIwMDAwMDAwMCB7DQo+ID4gKyAgICAgICAgICAgICAgIGRldmljZV90eXBlID0gIm1l
-bW9yeSI7DQo+ID4gKyAgICAgICAgICAgICAgIHJlZyA9IDwyIDB4MDAwMDAwMDAgMCAweDIwMDAw
-MDAwPjsNCj4gPiArICAgICAgIH07DQo+ID4gK307DQo+DQoNCls+XQ0KUmVnYXJkcywNCkJpanUN
-Cg0KDQoNClJlbmVzYXMgRWxlY3Ryb25pY3MgRXVyb3BlIEx0ZCwgRHVrZXMgTWVhZG93LCBNaWxs
-Ym9hcmQgUm9hZCwgQm91cm5lIEVuZCwgQnVja2luZ2hhbXNoaXJlLCBTTDggNUZILCBVSy4gUmVn
-aXN0ZXJlZCBpbiBFbmdsYW5kICYgV2FsZXMgdW5kZXIgUmVnaXN0ZXJlZCBOby4gMDQ1ODY3MDku
-DQo=
+Hi Biju,
+
+On Fri, Jun 2, 2017 at 6:22 PM, Biju Das <biju.das@bp.renesas.com> wrote:
+> Add support for iWave RZG1M Qseven System On Module.
+> http://www.iwavesystems.com/rz-g1m-qseven-module.html
+
+Thanks for your patch!
+
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
+> @@ -0,0 +1,27 @@
+> +/*
+> + * Device Tree Source for the iWave-RZG1M-20M Qseven SOM
+> + *
+> + * Copyright (C) 2017 Renesas Electronics Corp.
+> + *
+> + * This file is licensed under the terms of the GNU General Public License
+> + * version 2.  This program is licensed "as is" without any warranty of any
+> + * kind, whether express or implied.
+> + */
+> +
+> +#include "r8a7743.dtsi"
+> +
+> +/ {
+
+Given this is a sub-board with many other components, I think it should have
+its own (documented) compatible value, e.g.
+
+    compatible = "iwave,g20m", "renesas,r8a7743";
+
+> +       memory@40000000 {
+> +               device_type = "memory";
+> +               reg = <0 0x40000000 0 0x20000000>;
+> +       };
+> +
+> +       memory@200000000 {
+> +               device_type = "memory";
+> +               reg = <2 0x00000000 0 0x20000000>;
+> +       };
+> +};
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
