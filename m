@@ -1,48 +1,64 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f43.google.com ([209.85.214.43]:38729 "EHLO
-        mail-it0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751281AbdFFPdp (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Jun 2017 11:33:45 -0400
-MIME-Version: 1.0
-In-Reply-To: <1496761818-62126-6-git-send-email-biju.das@bp.renesas.com>
-References: <1496420523-23506-4-git-send-email-biju.das@bp.renesas.com>
- <1496761818-62126-1-git-send-email-biju.das@bp.renesas.com> <1496761818-62126-6-git-send-email-biju.das@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 6 Jun 2017 17:33:43 +0200
-Message-ID: <CAMuHMdV8xWBPz=7fAA0c7gpF5QHG6MNudkQRyTEHKDrHLmu2kg@mail.gmail.com>
-Subject: Re: [PATCH v2 5/5] ARM: dts: iwg20d-q7: Add support for iWave G20D-Q7
- board based on RZ/G1M
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
         Chris Paterson <chris.paterson2@renesas.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH v2 5/5] ARM: dts: iwg20d-q7: Add support for iWave G20D-Q7 board based on RZ/G1M
+Date: Tue,  6 Jun 2017 16:10:18 +0100
+Message-Id: <1496761818-62126-6-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1496761818-62126-1-git-send-email-biju.das@bp.renesas.com>
+References: <1496420523-23506-4-git-send-email-biju.das@bp.renesas.com>
+ <1496761818-62126-1-git-send-email-biju.das@bp.renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Jun 6, 2017 at 5:10 PM, Biju Das <biju.das@bp.renesas.com> wrote:
-> Add support for iWave RainboW-G20D-Qseven board based on RZ/G1M.
->
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+Add support for iWave RainboW-G20D-Qseven board based on RZ/G1M.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+---
+ arch/arm/boot/dts/r8a7743-iwg20d-q7.dts | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+ create mode 100644 arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
 
-Gr{oetje,eeting}s,
+diff --git a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
+new file mode 100644
+index 0000000..9b54783
+--- /dev/null
++++ b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
+@@ -0,0 +1,25 @@
++/*
++ * Device Tree Source for the iWave-RZG1M Qseven carrier board
++ *
++ * Copyright (C) 2017 Renesas Electronics Corp.
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++/dts-v1/;
++#include "r8a7743-iwg20m.dtsi"
++
++/ {
++	model = "iWave Systems RainboW-G20D-Qseven board based on RZ/G1M";
++	compatible = "iwave,g20d", "iwave,g20m", "renesas,r8a7743";
++
++	aliases {
++		serial0 = &scif0;
++	};
++};
++
++&scif0 {
++	status = "okay";
++};
+-- 
+1.9.1
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
