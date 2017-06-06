@@ -1,51 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp1.de.adit-jv.com ([62.225.105.245]:34448 "EHLO
-        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751454AbdFFX1n (ORCPT
+Received: from shards.monkeyblade.net ([184.105.139.130]:38038 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751239AbdFFUDv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Jun 2017 19:27:43 -0400
-Date: Wed, 7 Jun 2017 01:27:34 +0200
-From: Eugeniu Rosca <erosca@de.adit-jv.com>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-CC: <davem@davemloft.net>, <horms+renesas@verge.net.au>,
-        <kazuya.mizuguchi.ks@renesas.com>, <netdev@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>
+        Tue, 6 Jun 2017 16:03:51 -0400
+Date: Tue, 06 Jun 2017 16:03:49 -0400 (EDT)
+Message-Id: <20170606.160349.487724164652595332.davem@davemloft.net>
+To: erosca@de.adit-jv.com
+Cc: sergei.shtylyov@cogentembedded.com, horms+renesas@verge.net.au,
+        kazuya.mizuguchi.ks@renesas.com, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH] ravb: Fix use-after-free on `ifconfig eth0 down`
-Message-ID: <20170606232734.GA8581@vmlxhi-014.adit-jv.com>
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20170605220810.3933-1-erosca@de.adit-jv.com>
 References: <20170605220810.3933-1-erosca@de.adit-jv.com>
- <eaf9aa22-9087-977b-b048-3d1906176d1a@cogentembedded.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <eaf9aa22-9087-977b-b048-3d1906176d1a@cogentembedded.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Jun 06, 2017 at 12:35:30PM +0300, Sergei Shtylyov wrote:
-> Hello!
-> 
-> On 6/6/2017 1:08 AM, Eugeniu Rosca wrote:
-> 
-> >Commit a47b70ea86bd ("ravb: unmap descriptors when freeing rings") has
-> >introduced the issue seen in [1] reproduced on H3ULCB board.
-> >
-> >Fix this by relocating the RX skb ringbuffer free operation, so that
-> >swiotlb page unmapping can be done first. Freeing of aligned TX buffers
-> >is not relevant to the issue seen in [1]. Still, reposition TX free
-> >calls as well, to have all kfree() operations performed consistently
-> >_after_ dma_unmap_*()/dma_free_*().
-> 
->    Perhaps it's a material of a separate cleanup patch?
+From: Eugeniu Rosca <erosca@de.adit-jv.com>
+Date: Tue, 6 Jun 2017 00:08:10 +0200
 
-Many thanks for feedback. For the moment, with a number of sanitizers
-and debugging options enabled (UBSAN, KASAN, KMEMLEAK, DMA_API_DEBUG), I
-couldn't find any other obvious ravb driver failures in basic usecases
-(didn't stress-test it though).
+> Commit a47b70ea86bd ("ravb: unmap descriptors when freeing rings") has
+> introduced the issue seen in [1] reproduced on H3ULCB board.
+> 
+> Fix this by relocating the RX skb ringbuffer free operation, so that
+> swiotlb page unmapping can be done first. Freeing of aligned TX buffers
+> is not relevant to the issue seen in [1]. Still, reposition TX free
+> calls as well, to have all kfree() operations performed consistently
+> _after_ dma_unmap_*()/dma_free_*().
+> 
+> [1] Console screenshot with the problem reproduced:
+> 
+> salvator-x login: root
+> root@salvator-x:~# ifconfig eth0 up
+> Micrel KSZ9031 Gigabit PHY e6800000.ethernet-ffffffff:00: \
+>        attached PHY driver [Micrel KSZ9031 Gigabit PHY]   \
+>        (mii_bus:phy_addr=e6800000.ethernet-ffffffff:00, irq=235)
+> IPv6: ADDRCONF(NETDEV_UP): eth0: link is not ready
+> root@salvator-x:~#
+> root@salvator-x:~# ifconfig eth0 down
+> ==================================================================
+> BUG: KASAN: use-after-free in swiotlb_tbl_unmap_single+0xc4/0x35c
+...
+> ==================================================================
+> Disabling lock debugging due to kernel taint
+> root@salvator-x:~#
+> 
+> Fixes: a47b70ea86bd ("ravb: unmap descriptors when freeing rings")
+> Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
 
-Regarding the reordering of kfree vs dma_* API calls, which might be
-needed in other parts of the driver, this possibly will be highlighted
-by special usecases like repetitive suspend/resume or the like. I will
-happily share any other fixes, if such are developed on our side.
-
-Best regards,
-Eugeniu.
+Applied and queued up for -stable, thanks.
