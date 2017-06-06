@@ -1,61 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:45009 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752383AbdFLJrX (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:58992 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751590AbdFFTGg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Jun 2017 05:47:23 -0400
-Date: Mon, 12 Jun 2017 11:47:19 +0200
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Geert Uytterhoeven <geert@glider.be>
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [GIT PULL FOR renesas-drivers] mmc: renesas_sdhi: add support for
- R-Car Gen3 SDHI DMAC
-Message-ID: <20170612094718.GD15434@verge.net.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+        Tue, 6 Jun 2017 15:06:36 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: James Cameron <quozl@laptop.org>, Mark Brown <broonie@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        James Cameron <quozl@laptop.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
+In-Reply-To: <87ink9zw3d.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1dIJo7-0007Jn-Dy@debutante>
+Date: Tue, 06 Jun 2017 20:06:23 +0100
+Subject: Applied "ASoC: simple-scu-card: tidyup "Sampling Rate Conversion"" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+The patch
 
-please consider pulling changes to add support for R-Car Gen3 SDHI DMAC.
+   ASoC: simple-scu-card: tidyup "Sampling Rate Conversion"
 
-This gives a significant performance boost;
-the headline figure is 9.5MB/s -> 39.7MB/s.
+has been applied to the asoc tree at
 
-This pull request is based on mmc/next.
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-The following changes since commit 6e75316c15df8333506377743c75fcd626193849:
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-  mmc: tmio: make sure SDIO gets reinitialized after resume (2017-05-30 11:51:55 +0200)
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-are available in the git repository at:
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/sdhi-gen3-dma-2017
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-for you to fetch changes up to fd9437fc8884f039ba4a510ac99d350fd693b0dc:
+Thanks,
+Mark
 
-  mmc: renesas-sdhi: remove gen3 support from sysc dmac driver (2017-06-08 15:03:03 +0200)
+>From 010f21b2ba0cd546d7489ca536a156b281faa3fb Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Tue, 6 Jun 2017 02:35:43 +0000
+Subject: [PATCH] ASoC: simple-scu-card: tidyup "Sampling Rate Conversion"
 
-----------------------------------------------------------------
-Simon Horman (4):
-      mmc: sh_mobile_sdhi: set max_segs and max_blk_count values R-Car Gen3
-      mmc: tmio: add complete to DMA ops
-      mmc: renesas_sdhi: add support for R-Car Gen3 SDHI DMAC
-      mmc: renesas-sdhi: remove gen3 support from sysc dmac driver
+"Sampling Rate Conversion" is better than "Sampling Rate Convert"
 
-Yoshihiro Shimoda (1):
-      mmc: tmio: add max_segs and max_blk_count in tmio_mmc_data
+Reported-by: James Cameron <quozl@laptop.org>
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ Documentation/devicetree/bindings/sound/simple-scu-card.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/mmc/host/Kconfig                      |  17 ++
- drivers/mmc/host/Makefile                     |   8 +-
- drivers/mmc/host/renesas_sdhi.h               |   2 +
- drivers/mmc/host/renesas_sdhi_core.c          |   2 +
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 275 ++++++++++++++++++++++++++
- drivers/mmc/host/renesas_sdhi_sys_dmac.c      |  23 +--
- drivers/mmc/host/tmio_mmc.h                   |   2 +
- drivers/mmc/host/tmio_mmc_core.c              |  16 +-
- include/linux/mfd/tmio.h                      |   2 +
- 9 files changed, 319 insertions(+), 28 deletions(-)
- create mode 100644 drivers/mmc/host/renesas_sdhi_internal_dmac.c
+diff --git a/Documentation/devicetree/bindings/sound/simple-scu-card.txt b/Documentation/devicetree/bindings/sound/simple-scu-card.txt
+index e894cef1d314..327d229a51b2 100644
+--- a/Documentation/devicetree/bindings/sound/simple-scu-card.txt
++++ b/Documentation/devicetree/bindings/sound/simple-scu-card.txt
+@@ -38,7 +38,7 @@ Optional CPU/CODEC subnodes properties:
+ 
+ - clocks / system-clock-frequency	: see simple-audio-card.txt
+ 
+-Example 1. Sampling Rate Covert
++Example 1. Sampling Rate Conversion
+ 
+ sound {
+ 	compatible = "simple-scu-audio-card";
+-- 
+2.11.0
