@@ -1,52 +1,37 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:60784 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751545AbdFIMtr (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Jun 2017 08:49:47 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: renesas: cpg-mssr: Use of_device_get_match_data() helper
-Date: Fri,  9 Jun 2017 14:49:43 +0200
-Message-Id: <1497012583-24328-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-i2c@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [RFC PATCH 3/4] i2c: sh_mobile: use helper to decide if DMA is used
+Date: Tue,  6 Jun 2017 11:20:33 +0200
+Message-Id: <20170606092034.1516-4-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20170606092034.1516-1-wsa+renesas@sang-engineering.com>
+References: <20170606092034.1516-1-wsa+renesas@sang-engineering.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If CONFIG_OF=n:
+This ensures also that we fall back to PIO if the buffer is not DMA
+capable.
 
-    drivers/clk/renesas/renesas-cpg-mssr.c: In function ‘cpg_mssr_probe’:
-    drivers/clk/renesas/renesas-cpg-mssr.c:702: warning: dereferencing ‘void *’ pointer
-    drivers/clk/renesas/renesas-cpg-mssr.c:702: error: request for member ‘data’ in something not a structure or union
-
-To fix this, use the of_device_get_match_data() helper, for which a
-dummy version is provided if CONFIG_OF=n.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
-Feel free to apply directly, as I currently don't have more material
-for clk-renesas-for-v4.13.
-
- drivers/clk/renesas/renesas-cpg-mssr.c | 2 +-
+ drivers/i2c/busses/i2c-sh_mobile.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index f44a8125615bd75a..1f607c806f9b9ec3 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -699,7 +699,7 @@ static int __init cpg_mssr_probe(struct platform_device *pdev)
- 	struct clk **clks;
- 	int error;
+diff --git a/drivers/i2c/busses/i2c-sh_mobile.c b/drivers/i2c/busses/i2c-sh_mobile.c
+index 3d75593487454c..58e2ae3b4c4751 100644
+--- a/drivers/i2c/busses/i2c-sh_mobile.c
++++ b/drivers/i2c/busses/i2c-sh_mobile.c
+@@ -666,7 +666,7 @@ static int start_ch(struct sh_mobile_i2c_data *pd, struct i2c_msg *usr_msg,
+ 	pd->pos = -1;
+ 	pd->sr = 0;
  
--	info = of_match_node(cpg_mssr_match, np)->data;
-+	info = of_device_get_match_data(dev);
- 	if (info->init) {
- 		error = info->init(dev);
- 		if (error)
+-	if (pd->msg->len > 8)
++	if (i2c_check_msg_for_dma(pd->msg, 8) == 0)
+ 		sh_mobile_i2c_xfer_dma(pd);
+ 
+ 	/* Enable all interrupts to begin with */
 -- 
-2.7.4
+2.11.0
