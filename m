@@ -1,64 +1,68 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor3.renesas.com ([210.160.252.173]:59280 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751384AbdFFKhq (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 6 Jun 2017 06:37:46 -0400
 From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH v2 5/5] ARM: dts: iwg20d-q7: Add support for iWave G20D-Q7 board based on RZ/G1M
-Date: Tue,  6 Jun 2017 16:10:18 +0100
-Message-Id: <1496761818-62126-6-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1496761818-62126-1-git-send-email-biju.das@bp.renesas.com>
-References: <1496420523-23506-4-git-send-email-biju.das@bp.renesas.com>
- <1496761818-62126-1-git-send-email-biju.das@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH 4/4] ARM: dts: iwg20d-q7: Add support for iWave G20D-Q7
+ board based on RZ/G1M
+Date: Tue, 6 Jun 2017 10:37:40 +0000
+Message-ID: <KL1PR06MB1702A62F3ECB628FC9FC1D43B8CB0@KL1PR06MB1702.apcprd06.prod.outlook.com>
+References: <1496420523-23506-1-git-send-email-biju.das@bp.renesas.com>
+ <1496420523-23506-5-git-send-email-biju.das@bp.renesas.com>
+ <CAMuHMdUWJL-oH7wWzjs5O=WrOshdL_AxijBJe66HrYBx7x8F9w@mail.gmail.com>
+In-Reply-To: <CAMuHMdUWJL-oH7wWzjs5O=WrOshdL_AxijBJe66HrYBx7x8F9w@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for iWave RainboW-G20D-Qseven board based on RZ/G1M.
-
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
----
- arch/arm/boot/dts/r8a7743-iwg20d-q7.dts | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
- create mode 100644 arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-
-diff --git a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-new file mode 100644
-index 0000000..9b54783
---- /dev/null
-+++ b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-@@ -0,0 +1,25 @@
-+/*
-+ * Device Tree Source for the iWave-RZG1M Qseven carrier board
-+ *
-+ * Copyright (C) 2017 Renesas Electronics Corp.
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2.  This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
-+
-+/dts-v1/;
-+#include "r8a7743-iwg20m.dtsi"
-+
-+/ {
-+	model = "iWave Systems RainboW-G20D-Qseven board based on RZ/G1M";
-+	compatible = "iwave,g20d", "iwave,g20m", "renesas,r8a7743";
-+
-+	aliases {
-+		serial0 = &scif0;
-+	};
-+};
-+
-+&scif0 {
-+	status = "okay";
-+};
--- 
-1.9.1
-
+PiBPbiBGcmksIEp1biAyLCAyMDE3IGF0IDY6MjIgUE0sIEJpanUgRGFzIDxiaWp1LmRhc0BicC5y
+ZW5lc2FzLmNvbT4gd3JvdGU6DQo+ID4gQWRkIHN1cHBvcnQgZm9yIGlXYXZlIFJhaW5ib1ctRzIw
+RC1Rc2V2ZW4gYm9hcmQgYmFzZWQgb24gUlovRzFNLg0KPg0KPiBUaGFua3MgZm9yIHlvdXIgcGF0
+Y2ghDQo+DQo+ID4gU2lnbmVkLW9mZi1ieTogQmlqdSBEYXMgPGJpanUuZGFzQGJwLnJlbmVzYXMu
+Y29tPg0KPiA+IFJldmlld2VkLWJ5OiBDaHJpcyBQYXRlcnNvbiA8Y2hyaXMucGF0ZXJzb24yQHJl
+bmVzYXMuY29tPg0KPg0KPiBSZXZpZXdlZC1ieTogR2VlcnQgVXl0dGVyaG9ldmVuIDxnZWVydCty
+ZW5lc2FzQGdsaWRlci5iZT4NCj4NCj4gPiAtLS0gYS9hcmNoL2FybS9ib290L2R0cy9NYWtlZmls
+ZQ0KPiA+ICsrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL01ha2VmaWxlDQo+ID4gQEAgLTcxMSw2ICs3
+MTEsNyBAQCBkdGItJChDT05GSUdfQVJDSF9SRU5FU0FTKSArPSBcDQo+ID4gICAgICAgICByOGE3
+M2E0LWFwZTZldm0uZHRiIFwNCj4gPiAgICAgICAgIHI4YTc3NDAtYXJtYWRpbGxvODAwZXZhLmR0
+YiBcDQo+ID4gICAgICAgICByOGE3NzQzLXNrLXJ6ZzFtLmR0YiBcDQo+ID4gKyAgICAgICByOGE3
+NzQzLWl3ZzIwZC1xNy5kdGIgXA0KPg0KPiBQbGVhc2UgcHJlc2VydmUgc29ydCBvcmRlci4NCj4N
+Cj4gPiAgICAgICAgIHI4YTc3NDUtc2stcnpnMWUuZHRiIFwNCj4gPiAgICAgICAgIHI4YTc3Nzgt
+Ym9ja3cuZHRiIFwNCj4gPiAgICAgICAgIHI4YTc3NzktbWFyemVuLmR0YiBcDQo+DQo+ID4gLS0t
+IC9kZXYvbnVsbA0KPiA+ICsrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL3I4YTc3NDMtaXdnMjBkLXE3
+LmR0cw0KPiA+IEBAIC0wLDAgKzEsMjUgQEANCj4gPiArLyoNCj4gPiArICogRGV2aWNlIFRyZWUg
+U291cmNlIGZvciB0aGUgaVdhdmUtUlpHMU0gUXNldmVuIGNhcnJpZXIgYm9hcmQNCj4gPiArICoN
+Cj4gPiArICogQ29weXJpZ2h0IChDKSAyMDE3IFJlbmVzYXMgRWxlY3Ryb25pY3MgQ29ycC4NCj4g
+PiArICoNCj4gPiArICogVGhpcyBmaWxlIGlzIGxpY2Vuc2VkIHVuZGVyIHRoZSB0ZXJtcyBvZiB0
+aGUgR05VIEdlbmVyYWwgUHVibGljDQo+ID4gK0xpY2Vuc2UNCj4gPiArICogdmVyc2lvbiAyLiAg
+VGhpcyBwcm9ncmFtIGlzIGxpY2Vuc2VkICJhcyBpcyIgd2l0aG91dCBhbnkgd2FycmFudHkNCj4g
+PiArb2YgYW55DQo+ID4gKyAqIGtpbmQsIHdoZXRoZXIgZXhwcmVzcyBvciBpbXBsaWVkLg0KPiA+
+ICsgKi8NCj4gPiArDQo+ID4gKy9kdHMtdjEvOw0KPiA+ICsjaW5jbHVkZSAicjhhNzc0My1pd2cy
+MG0uZHRzaSINCj4gPiArDQo+ID4gKy8gew0KPiA+ICsgICAgICAgbW9kZWwgPSAiaVdhdmUgU3lz
+dGVtcyBSYWluYm9XLUcyMEQtUXNldmVuIGJvYXJkIGJhc2VkIG9uDQo+IFJaL0cxTSI7DQo+ID4g
+KyAgICAgICBjb21wYXRpYmxlID0gIml3YXZlLGcyMGQiLCAicmVuZXNhcyxyOGE3NzQzIjsNCj4N
+Cj4gV2l0aCBteSBjb21tZW50IG9uIHBhdGNoIFszLzRdLCB0aGlzIHNob3VsZCBiZWNvbWU6DQo+
+DQo+IGNvbXBhdGlibGUgPSAiaXdhdmUsZzIwZCIsICJpd2F2ZSxnMjBtIiwgInJlbmVzYXMscjhh
+Nzc0MyI7DQo+DQoNCkFncmVlZC4gSSB3aWxsIGRvIHRoaXMgY2hhbmdlLg0KDQo+ID4gKw0KPiA+
+ICsgICAgICAgYWxpYXNlcyB7DQo+ID4gKyAgICAgICAgICAgICAgIHNlcmlhbDAgPSAmc2NpZjA7
+DQo+ID4gKyAgICAgICB9Ow0KPiA+ICt9Ow0KPiA+ICsNCj4gPiArJnNjaWYwIHsNCj4gPiArICAg
+ICAgIHN0YXR1cyA9ICJva2F5IjsNCj4gPiArfTsNCj4NCg0KDQpSZWdhcmRzLA0KQmlqdQ0KDQoN
+Cg0KUmVuZXNhcyBFbGVjdHJvbmljcyBFdXJvcGUgTHRkLCBEdWtlcyBNZWFkb3csIE1pbGxib2Fy
+ZCBSb2FkLCBCb3VybmUgRW5kLCBCdWNraW5naGFtc2hpcmUsIFNMOCA1RkgsIFVLLiBSZWdpc3Rl
+cmVkIGluIEVuZ2xhbmQgJiBXYWxlcyB1bmRlciBSZWdpc3RlcmVkIE5vLiAwNDU4NjcwOS4NCg==
