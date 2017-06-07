@@ -1,50 +1,33 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f46.google.com ([209.85.215.46]:36608 "EHLO
-        mail-lf0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751465AbdFGMCz (ORCPT
+Received: from lb2-smtp-cloud3.xs4all.net ([194.109.24.26]:40684 "EHLO
+        lb2-smtp-cloud3.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751699AbdFGH0J (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Jun 2017 08:02:55 -0400
-Received: by mail-lf0-f46.google.com with SMTP id o83so4746830lff.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 07 Jun 2017 05:02:54 -0700 (PDT)
+        Wed, 7 Jun 2017 03:26:09 -0400
 Subject: Re: [PATCH v5] media: platform: Renesas IMR driver
-To: Hans Verkuil <hverkuil@xs4all.nl>,
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         devicetree@vger.kernel.org, linux-media@vger.kernel.org
 References: <20170309200818.786255823@cogentembedded.com>
- <87be3653-66f0-deda-f862-b52a2de23ecf@xs4all.nl>
 Cc: linux-renesas-soc@vger.kernel.org,
         Konstantin Kozhevnikov
         <Konstantin.Kozhevnikov@cogentembedded.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <061fdbb3-1b97-10e3-4306-874b8e093569@cogentembedded.com>
-Date: Wed, 7 Jun 2017 15:02:51 +0300
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <87be3653-66f0-deda-f862-b52a2de23ecf@xs4all.nl>
+Date: Wed, 7 Jun 2017 09:26:05 +0200
 MIME-Version: 1.0
-In-Reply-To: <87be3653-66f0-deda-f862-b52a2de23ecf@xs4all.nl>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20170309200818.786255823@cogentembedded.com>
+Content-Type: text/plain; charset=iso-8859-15
 Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+Any progress on this?
 
-On 06/07/2017 10:26 AM, Hans Verkuil wrote:
+There where a bunch of comments, but I haven't seen anything since.
 
-> Any progress on this?
+Regards,
 
-    Yes. :-)
-
-> There where a bunch of comments,
-
-    I think I've addresses most of those (except those I didn't quite understand).
-
-> but I haven't seen anything since.
-
-    I'm still busy documenting the driver. :-(
-
-> Regards,
->
-> 	Hans
-
-MBR, Sergei
+	Hans
