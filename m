@@ -1,295 +1,291 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:37180 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750899AbdFOTAv (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:46706 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751722AbdFGTbN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Jun 2017 15:00:51 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        Wed, 7 Jun 2017 15:31:13 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
         linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH mmc/next v2 2/2] mmc: renesas-sdhi: improve checkpatch cleanness
-Date: Thu, 15 Jun 2017 21:00:14 +0200
-Message-Id: <1497553214-12914-3-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1497553214-12914-1-git-send-email-horms+renesas@verge.net.au>
-References: <1497553214-12914-1-git-send-email-horms+renesas@verge.net.au>
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
+In-Reply-To: <877f0o4pqz.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1dIgfZ-0003Xg-W8@debutante>
+Date: Wed, 07 Jun 2017 20:31:05 +0100
+Subject: Applied "ASoC: rsnd: cleanup pointer related code" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Trivial updates to improve checkpatch cleanness.
+The patch
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
-* Correct one-line comment style
-* Leave bus_shift size comments unchanged
----
- drivers/mmc/host/renesas_sdhi.h          |  2 +-
- drivers/mmc/host/renesas_sdhi_core.c     | 43 ++++++++++++++++----------------
- drivers/mmc/host/renesas_sdhi_sys_dmac.c | 25 +++++++++++--------
- 3 files changed, 37 insertions(+), 33 deletions(-)
+   ASoC: rsnd: cleanup pointer related code
 
-diff --git a/drivers/mmc/host/renesas_sdhi.h b/drivers/mmc/host/renesas_sdhi.h
-index 6b4a79508c6b..ca83acc113b8 100644
---- a/drivers/mmc/host/renesas_sdhi.h
-+++ b/drivers/mmc/host/renesas_sdhi.h
-@@ -34,6 +34,6 @@ struct renesas_sdhi_of_data {
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From a97a06c7efc1ee34f500171f1c4e9608295bb79a Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Wed, 7 Jun 2017 00:20:47 +0000
+Subject: [PATCH] ASoC: rsnd: cleanup pointer related code
+
+Current rsnd driver is sharing pointer related code between
+PIO / DMA. But, it is used only PIO mode now, no longer needed.
+This patch cleanup these.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/sh/rcar/core.c | 42 ------------------------------
+ sound/soc/sh/rcar/dma.c  |  6 +----
+ sound/soc/sh/rcar/rsnd.h |  6 -----
+ sound/soc/sh/rcar/ssi.c  | 67 +++++++++++++++++++++++++++++++++++++++++++++---
+ 4 files changed, 65 insertions(+), 56 deletions(-)
+
+diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
+index 7a8c08933503..7c68f9d4a0ed 100644
+--- a/sound/soc/sh/rcar/core.c
++++ b/sound/soc/sh/rcar/core.c
+@@ -551,40 +551,6 @@ static struct rsnd_dai *rsnd_dai_to_rdai(struct snd_soc_dai *dai)
+ /*
+  *	rsnd_soc_dai functions
+  */
+-int rsnd_dai_pointer_offset(struct rsnd_dai_stream *io, int additional)
+-{
+-	struct snd_pcm_substream *substream = io->substream;
+-	struct snd_pcm_runtime *runtime = substream->runtime;
+-	int pos = io->byte_pos + additional;
+-
+-	pos %= (runtime->periods * io->byte_per_period);
+-
+-	return pos;
+-}
+-
+-bool rsnd_dai_pointer_update(struct rsnd_dai_stream *io, int byte)
+-{
+-	io->byte_pos += byte;
+-
+-	if (io->byte_pos >= io->next_period_byte) {
+-		struct snd_pcm_substream *substream = io->substream;
+-		struct snd_pcm_runtime *runtime = substream->runtime;
+-
+-		io->period_pos++;
+-		io->next_period_byte += io->byte_per_period;
+-
+-		if (io->period_pos >= runtime->periods) {
+-			io->byte_pos = 0;
+-			io->period_pos = 0;
+-			io->next_period_byte = io->byte_per_period;
+-		}
+-
+-		return true;
+-	}
+-
+-	return false;
+-}
+-
+ void rsnd_dai_period_elapsed(struct rsnd_dai_stream *io)
+ {
+ 	struct snd_pcm_substream *substream = io->substream;
+@@ -602,15 +568,7 @@ void rsnd_dai_period_elapsed(struct rsnd_dai_stream *io)
+ static void rsnd_dai_stream_init(struct rsnd_dai_stream *io,
+ 				struct snd_pcm_substream *substream)
+ {
+-	struct snd_pcm_runtime *runtime = substream->runtime;
+-
+ 	io->substream		= substream;
+-	io->byte_pos		= 0;
+-	io->period_pos		= 0;
+-	io->byte_per_period	= runtime->period_size *
+-				  runtime->channels *
+-				  samples_to_bytes(runtime, 1);
+-	io->next_period_byte	= io->byte_per_period;
+ }
+ 
+ static void rsnd_dai_stream_quit(struct rsnd_dai_stream *io)
+diff --git a/sound/soc/sh/rcar/dma.c b/sound/soc/sh/rcar/dma.c
+index 05e538f4c8d5..60aa5e96a49f 100644
+--- a/sound/soc/sh/rcar/dma.c
++++ b/sound/soc/sh/rcar/dma.c
+@@ -104,10 +104,6 @@ static void __rsnd_dmaen_complete(struct rsnd_mod *mod,
+ 	 * In Gen2 case, it are Audio-DMAC, and Audio-DMAC-peri-peri.
+ 	 * But, Audio-DMAC-peri-peri doesn't have interrupt,
+ 	 * and this driver is assuming that here.
+-	 *
+-	 * If Audio-DMAC-peri-peri has interrpt,
+-	 * rsnd_dai_pointer_update() will be called twice,
+-	 * ant it will breaks io->byte_pos
+ 	 */
+ 	spin_lock_irqsave(&priv->lock, flags);
+ 
+@@ -122,7 +118,7 @@ static void __rsnd_dmaen_complete(struct rsnd_mod *mod,
+ 		 */
+ 		rsnd_dmaen_sync(dmaen, io, dmaen->dma_cnt + 2);
+ 
+-		elapsed = rsnd_dai_pointer_update(io, io->byte_per_period);
++		elapsed = true;
+ 
+ 		dmaen->dma_cnt++;
+ 	}
+diff --git a/sound/soc/sh/rcar/rsnd.h b/sound/soc/sh/rcar/rsnd.h
+index bd8def0bc212..6de5f7ec6464 100644
+--- a/sound/soc/sh/rcar/rsnd.h
++++ b/sound/soc/sh/rcar/rsnd.h
+@@ -432,10 +432,6 @@ struct rsnd_dai_stream {
+ 	struct rsnd_mod *mod[RSND_MOD_MAX];
+ 	struct rsnd_dai *rdai;
+ 	u32 parent_ssi_status;
+-	int byte_pos;
+-	int period_pos;
+-	int byte_per_period;
+-	int next_period_byte;
+ };
+ #define rsnd_io_to_mod(io, i)	((i) < RSND_MOD_MAX ? (io)->mod[(i)] : NULL)
+ #define rsnd_io_to_mod_ssi(io)	rsnd_io_to_mod((io), RSND_MOD_SSI)
+@@ -480,9 +476,7 @@ struct rsnd_dai {
+ 
+ struct rsnd_dai *rsnd_rdai_get(struct rsnd_priv *priv, int id);
+ 
+-bool rsnd_dai_pointer_update(struct rsnd_dai_stream *io, int cnt);
+ void rsnd_dai_period_elapsed(struct rsnd_dai_stream *io);
+-int rsnd_dai_pointer_offset(struct rsnd_dai_stream *io, int additional);
+ int rsnd_dai_connect(struct rsnd_mod *mod,
+ 		     struct rsnd_dai_stream *io,
+ 		     enum rsnd_mod_type type);
+diff --git a/sound/soc/sh/rcar/ssi.c b/sound/soc/sh/rcar/ssi.c
+index 59ca6e3f46bc..f7df3b5e2985 100644
+--- a/sound/soc/sh/rcar/ssi.c
++++ b/sound/soc/sh/rcar/ssi.c
+@@ -77,6 +77,11 @@ struct rsnd_ssi {
+ 	int rate;
+ 	int irq;
+ 	unsigned int usrcnt;
++
++	int byte_pos;
++	int period_pos;
++	int byte_per_period;
++	int next_period_byte;
  };
  
- int renesas_sdhi_probe(struct platform_device *pdev,
--                       const struct tmio_mmc_dma_ops *dma_ops);
-+		       const struct tmio_mmc_dma_ops *dma_ops);
- int renesas_sdhi_remove(struct platform_device *pdev);
- #endif
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index f4690cba3443..a4fb07d0ea91 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -45,7 +45,8 @@
- #define SDHI_VER_GEN3_SD	0xcc10
- #define SDHI_VER_GEN3_SDMMC	0xcd10
+ /* flags */
+@@ -374,6 +379,59 @@ static void rsnd_ssi_register_setup(struct rsnd_mod *mod)
+ 					ssi->cr_mode); /* without EN */
+ }
  
--#define host_to_priv(host) container_of((host)->pdata, struct renesas_sdhi, mmc_data)
-+#define host_to_priv(host) \
-+	container_of((host)->pdata, struct renesas_sdhi, mmc_data)
- 
- struct renesas_sdhi {
- 	struct clk *clk;
-@@ -94,6 +95,7 @@ static int renesas_sdhi_clk_enable(struct tmio_mmc_host *host)
- 	struct mmc_host *mmc = host->mmc;
- 	struct renesas_sdhi *priv = host_to_priv(host);
- 	int ret = clk_prepare_enable(priv->clk);
++static void rsnd_ssi_pointer_init(struct rsnd_mod *mod,
++				  struct rsnd_dai_stream *io)
++{
++	struct rsnd_ssi *ssi = rsnd_mod_to_ssi(mod);
++	struct snd_pcm_runtime *runtime = rsnd_io_to_runtime(io);
 +
- 	if (ret < 0)
- 		return ret;
++	ssi->byte_pos		= 0;
++	ssi->period_pos		= 0;
++	ssi->byte_per_period	= runtime->period_size *
++				  runtime->channels *
++				  samples_to_bytes(runtime, 1);
++	ssi->next_period_byte	= ssi->byte_per_period;
++}
++
++static int rsnd_ssi_pointer_offset(struct rsnd_mod *mod,
++				   struct rsnd_dai_stream *io,
++				   int additional)
++{
++	struct rsnd_ssi *ssi = rsnd_mod_to_ssi(mod);
++	struct snd_pcm_runtime *runtime = rsnd_io_to_runtime(io);
++	int pos = ssi->byte_pos + additional;
++
++	pos %= (runtime->periods * ssi->byte_per_period);
++
++	return pos;
++}
++
++static bool rsnd_ssi_pointer_update(struct rsnd_mod *mod,
++				    struct rsnd_dai_stream *io,
++				    int byte)
++{
++	struct rsnd_ssi *ssi = rsnd_mod_to_ssi(mod);
++
++	ssi->byte_pos += byte;
++
++	if (ssi->byte_pos >= ssi->next_period_byte) {
++		struct snd_pcm_runtime *runtime = rsnd_io_to_runtime(io);
++
++		ssi->period_pos++;
++		ssi->next_period_byte += ssi->byte_per_period;
++
++		if (ssi->period_pos >= runtime->periods) {
++			ssi->byte_pos = 0;
++			ssi->period_pos = 0;
++			ssi->next_period_byte = ssi->byte_per_period;
++		}
++
++		return true;
++	}
++
++	return false;
++}
++
+ /*
+  *	SSI mod common functions
+  */
+@@ -387,6 +445,8 @@ static int rsnd_ssi_init(struct rsnd_mod *mod,
+ 	if (!rsnd_ssi_is_run_mods(mod, io))
+ 		return 0;
  
-@@ -125,7 +127,7 @@ static int renesas_sdhi_clk_enable(struct tmio_mmc_host *host)
- }
++	rsnd_ssi_pointer_init(mod, io);
++
+ 	ssi->usrcnt++;
  
- static unsigned int renesas_sdhi_clk_update(struct tmio_mmc_host *host,
--					      unsigned int new_clock)
-+					    unsigned int new_clock)
+ 	rsnd_mod_power_on(mod);
+@@ -566,7 +626,7 @@ static void __rsnd_ssi_interrupt(struct rsnd_mod *mod,
+ 	if (!is_dma && (status & DIRQ)) {
+ 		struct snd_pcm_runtime *runtime = rsnd_io_to_runtime(io);
+ 		u32 *buf = (u32 *)(runtime->dma_area +
+-				   rsnd_dai_pointer_offset(io, 0));
++				   rsnd_ssi_pointer_offset(mod, io, 0));
+ 		int shift = 0;
+ 
+ 		switch (runtime->sample_bits) {
+@@ -585,7 +645,7 @@ static void __rsnd_ssi_interrupt(struct rsnd_mod *mod,
+ 		else
+ 			*buf = (rsnd_mod_read(mod, SSIRDR) >> shift);
+ 
+-		elapsed = rsnd_dai_pointer_update(io, sizeof(*buf));
++		elapsed = rsnd_ssi_pointer_update(mod, io, sizeof(*buf));
+ 	}
+ 
+ 	/* DMA only */
+@@ -696,9 +756,10 @@ static int rsnd_ssi_pointer(struct rsnd_mod *mod,
+ 			    struct rsnd_dai_stream *io,
+ 			    snd_pcm_uframes_t *pointer)
  {
- 	struct renesas_sdhi *priv = host_to_priv(host);
- 	unsigned int freq, diff, best_freq = 0, diff_min = ~0;
-@@ -175,11 +177,12 @@ static int renesas_sdhi_card_busy(struct mmc_host *mmc)
- {
- 	struct tmio_mmc_host *host = mmc_priv(mmc);
++	struct rsnd_ssi *ssi = rsnd_mod_to_ssi(mod);
+ 	struct snd_pcm_runtime *runtime = rsnd_io_to_runtime(io);
  
--	return !(sd_ctrl_read16_and_16_as_32(host, CTL_STATUS) & TMIO_STAT_DAT0);
-+	return !(sd_ctrl_read16_and_16_as_32(host, CTL_STATUS) &
-+		 TMIO_STAT_DAT0);
- }
+-	*pointer = bytes_to_frames(runtime, io->byte_pos);
++	*pointer = bytes_to_frames(runtime, ssi->byte_pos);
  
- static int renesas_sdhi_start_signal_voltage_switch(struct mmc_host *mmc,
--						      struct mmc_ios *ios)
-+						    struct mmc_ios *ios)
- {
- 	struct tmio_mmc_host *host = mmc_priv(mmc);
- 	struct renesas_sdhi *priv = host_to_priv(host);
-@@ -285,7 +288,7 @@ static unsigned int renesas_sdhi_init_tuning(struct tmio_mmc_host *host)
- }
- 
- static void renesas_sdhi_prepare_tuning(struct tmio_mmc_host *host,
--					 unsigned long tap)
-+					unsigned long tap)
- {
- 	struct renesas_sdhi *priv = host_to_priv(host);
- 
-@@ -318,9 +321,9 @@ static int renesas_sdhi_select_tuning(struct tmio_mmc_host *host)
- 	tap_start = 0;
- 	tap_end = 0;
- 	for (i = 0; i < host->tap_num * 2; i++) {
--		if (test_bit(i, host->taps))
-+		if (test_bit(i, host->taps)) {
- 			ntap++;
--		else {
-+		} else {
- 			if (ntap > tap_cnt) {
- 				tap_start = i - ntap;
- 				tap_end = i - 1;
-@@ -352,7 +355,6 @@ static int renesas_sdhi_select_tuning(struct tmio_mmc_host *host)
  	return 0;
  }
- 
--
- static bool renesas_sdhi_check_scc_error(struct tmio_mmc_host *host)
- {
- 	struct renesas_sdhi *priv = host_to_priv(host);
-@@ -414,8 +416,7 @@ static int renesas_sdhi_wait_idle(struct tmio_mmc_host *host)
- 
- static int renesas_sdhi_write16_hook(struct tmio_mmc_host *host, int addr)
- {
--	switch (addr)
--	{
-+	switch (addr) {
- 	case CTL_SD_CMD:
- 	case CTL_STOP_INTERNAL_ACTION:
- 	case CTL_XFER_BLK_COUNT:
-@@ -432,7 +433,7 @@ static int renesas_sdhi_write16_hook(struct tmio_mmc_host *host, int addr)
- }
- 
- static int renesas_sdhi_multi_io_quirk(struct mmc_card *card,
--					 unsigned int direction, int blk_size)
-+				       unsigned int direction, int blk_size)
- {
- 	/*
- 	 * In Renesas controllers, when performing a
-@@ -460,20 +461,23 @@ static void renesas_sdhi_enable_dma(struct tmio_mmc_host *host, bool enable)
- int renesas_sdhi_probe(struct platform_device *pdev,
- 		       const struct tmio_mmc_dma_ops *dma_ops)
- {
--	const struct renesas_sdhi_of_data *of_data = of_device_get_match_data( &pdev->dev);
--	struct renesas_sdhi *priv;
--	struct tmio_mmc_data *mmc_data;
- 	struct tmio_mmc_data *mmd = pdev->dev.platform_data;
-+	const struct renesas_sdhi_of_data *of_data;
-+	struct tmio_mmc_data *mmc_data;
-+	struct tmio_mmc_dma *dma_priv;
- 	struct tmio_mmc_host *host;
-+	struct renesas_sdhi *priv;
- 	struct resource *res;
- 	int irq, ret, i;
--	struct tmio_mmc_dma *dma_priv;
-+
-+	of_data = of_device_get_match_data(&pdev->dev);
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	if (!res)
- 		return -EINVAL;
- 
--	priv = devm_kzalloc(&pdev->dev, sizeof(struct renesas_sdhi), GFP_KERNEL);
-+	priv = devm_kzalloc(&pdev->dev, sizeof(struct renesas_sdhi),
-+			    GFP_KERNEL);
- 	if (!priv)
- 		return -ENOMEM;
- 
-@@ -516,7 +520,6 @@ int renesas_sdhi_probe(struct platform_device *pdev,
- 		goto eprobe;
- 	}
- 
--
- 	if (of_data) {
- 		mmc_data->flags |= of_data->tmio_flags;
- 		mmc_data->ocr_mask = of_data->tmio_ocr_mask;
-@@ -566,9 +569,7 @@ int renesas_sdhi_probe(struct platform_device *pdev,
- 	 */
- 	mmc_data->flags |= TMIO_MMC_SDIO_IRQ;
- 
--	/*
--	 * All SDHI have CMD12 controll bit
--	 */
-+	/* All SDHI have CMD12 control bit */
- 	mmc_data->flags |= TMIO_MMC_HAVE_CMD12_CTRL;
- 
- 	/* All SDHI have SDIO status bits which must be 1 */
-@@ -614,7 +615,7 @@ int renesas_sdhi_probe(struct platform_device *pdev,
- 			break;
- 		i++;
- 		ret = devm_request_irq(&pdev->dev, irq, tmio_mmc_irq, 0,
--				  dev_name(&pdev->dev), host);
-+				       dev_name(&pdev->dev), host);
- 		if (ret)
- 			goto eirq;
- 	}
-diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-index 202cf4346fdf..642a0dcc8c5c 100644
---- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-@@ -104,7 +104,6 @@ static const struct of_device_id renesas_sdhi_sys_dmac_of_match[] = {
- };
- MODULE_DEVICE_TABLE(of, renesas_sdhi_sys_dmac_of_match);
- 
--
- static void renesas_sdhi_sys_dmac_enable_dma(struct tmio_mmc_host *host,
- 					     bool enable)
- {
-@@ -196,8 +195,8 @@ static void renesas_sdhi_sys_dmac_start_dma_rx(struct tmio_mmc_host *host)
- 
- 	ret = dma_map_sg(chan->device->dev, sg, host->sg_len, DMA_FROM_DEVICE);
- 	if (ret > 0)
--		desc = dmaengine_prep_slave_sg(chan, sg, ret,
--			DMA_DEV_TO_MEM, DMA_CTRL_ACK);
-+		desc = dmaengine_prep_slave_sg(chan, sg, ret, DMA_DEV_TO_MEM,
-+					       DMA_CTRL_ACK);
- 
- 	if (desc) {
- 		reinit_completion(&host->dma_dataend);
-@@ -265,6 +264,7 @@ static void renesas_sdhi_sys_dmac_start_dma_tx(struct tmio_mmc_host *host)
- 	if (!aligned) {
- 		unsigned long flags;
- 		void *sg_vaddr = tmio_mmc_kmap_atomic(sg, &flags);
-+
- 		sg_init_one(&host->bounce_sg, host->bounce_buf, sg->length);
- 		memcpy(host->bounce_buf, sg_vaddr, host->bounce_sg.length);
- 		tmio_mmc_kunmap_atomic(sg, &flags, sg_vaddr);
-@@ -274,8 +274,8 @@ static void renesas_sdhi_sys_dmac_start_dma_tx(struct tmio_mmc_host *host)
- 
- 	ret = dma_map_sg(chan->device->dev, sg, host->sg_len, DMA_TO_DEVICE);
- 	if (ret > 0)
--		desc = dmaengine_prep_slave_sg(chan, sg, ret,
--			DMA_MEM_TO_DEV, DMA_CTRL_ACK);
-+		desc = dmaengine_prep_slave_sg(chan, sg, ret, DMA_MEM_TO_DEV,
-+					       DMA_CTRL_ACK);
- 
- 	if (desc) {
- 		reinit_completion(&host->dma_dataend);
-@@ -308,7 +308,7 @@ static void renesas_sdhi_sys_dmac_start_dma_tx(struct tmio_mmc_host *host)
- }
- 
- static void renesas_sdhi_sys_dmac_start_dma(struct tmio_mmc_host *host,
--			       struct mmc_data *data)
-+					    struct mmc_data *data)
- {
- 	if (data->flags & MMC_DATA_READ) {
- 		if (host->chan_rx)
-@@ -346,7 +346,7 @@ static void renesas_sdhi_sys_dmac_request_dma(struct tmio_mmc_host *host,
- {
- 	/* We can only either use DMA for both Tx and Rx or not use it at all */
- 	if (!host->dma || (!host->pdev->dev.of_node &&
--		(!pdata->chan_priv_tx || !pdata->chan_priv_rx)))
-+			   (!pdata->chan_priv_tx || !pdata->chan_priv_rx)))
- 		return;
- 
- 	if (!host->chan_tx && !host->chan_rx) {
-@@ -372,7 +372,8 @@ static void renesas_sdhi_sys_dmac_request_dma(struct tmio_mmc_host *host,
- 			return;
- 
- 		cfg.direction = DMA_MEM_TO_DEV;
--		cfg.dst_addr = res->start + (CTL_SD_DATA_PORT << host->bus_shift);
-+		cfg.dst_addr = res->start +
-+			(CTL_SD_DATA_PORT << host->bus_shift);
- 		cfg.dst_addr_width = host->dma->dma_buswidth;
- 		if (!cfg.dst_addr_width)
- 			cfg.dst_addr_width = DMA_SLAVE_BUSWIDTH_2_BYTES;
-@@ -428,11 +429,13 @@ static void renesas_sdhi_sys_dmac_release_dma(struct tmio_mmc_host *host)
- {
- 	if (host->chan_tx) {
- 		struct dma_chan *chan = host->chan_tx;
-+
- 		host->chan_tx = NULL;
- 		dma_release_channel(chan);
- 	}
- 	if (host->chan_rx) {
- 		struct dma_chan *chan = host->chan_rx;
-+
- 		host->chan_rx = NULL;
- 		dma_release_channel(chan);
- 	}
-@@ -457,10 +460,10 @@ static int renesas_sdhi_sys_dmac_probe(struct platform_device *pdev)
- 
- static const struct dev_pm_ops renesas_sdhi_sys_dmac_dev_pm_ops = {
- 	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
--			pm_runtime_force_resume)
-+				pm_runtime_force_resume)
- 	SET_RUNTIME_PM_OPS(tmio_mmc_host_runtime_suspend,
--			tmio_mmc_host_runtime_resume,
--			NULL)
-+			   tmio_mmc_host_runtime_resume,
-+			   NULL)
- };
- 
- static struct platform_driver renesas_sys_dmac_sdhi_driver = {
 -- 
-2.1.4
+2.11.0
