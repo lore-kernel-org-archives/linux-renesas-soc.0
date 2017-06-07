@@ -1,156 +1,89 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:46762 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751717AbdFGTb2 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 7 Jun 2017 15:31:28 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
         linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4/4] arm64: dts: renesas: Add support for Salvator-XS with R-Car H3 ES2.0
-Date: Fri,  9 Jun 2017 13:43:49 +0200
-Message-Id: <1497008629-3974-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1497008629-3974-1-git-send-email-geert+renesas@glider.be>
-References: <1497008629-3974-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
+In-Reply-To: <87vao83aeo.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1dIgfq-0003Zq-Kn@debutante>
+Date: Wed, 07 Jun 2017 20:31:22 +0100
+Subject: Applied "ASoC: simple-scu-card: remove duplicate paramera from asoc_simple_card_parse_of" to the asoc tree
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add initial support for the Renesas Salvator-XS (Salvator-X 2nd version)
-development board equipped with an R-Car H3 ES2.0 SiP.
+The patch
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+   ASoC: simple-scu-card: remove duplicate paramera from asoc_simple_card_parse_of
+
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 0d6b35212b451d4ac0c07c7b2b15b20ea763df5c Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Wed, 7 Jun 2017 00:37:30 +0000
+Subject: [PATCH] ASoC: simple-scu-card: remove duplicate paramera from
+ asoc_simple_card_parse_of
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm64/boot/dts/renesas/Makefile               |   1 +
- .../arm64/boot/dts/renesas/r8a7795-salvator-xs.dts | 109 +++++++++++++++++++++
- 2 files changed, 110 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
+ sound/soc/generic/simple-scu-card.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index d5451015950e3dfc..acc4bb30d485b6bc 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -1,4 +1,5 @@
- dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-x.dtb r8a7795-h3ulcb.dtb
-+dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-xs.dtb
- dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-es1-salvator-x.dtb r8a7795-es1-h3ulcb.dtb
- dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-x.dtb r8a7796-m3ulcb.dtb
+diff --git a/sound/soc/generic/simple-scu-card.c b/sound/soc/generic/simple-scu-card.c
+index 9a251400685e..5faf5d6c48a2 100644
+--- a/sound/soc/generic/simple-scu-card.c
++++ b/sound/soc/generic/simple-scu-card.c
+@@ -192,13 +192,13 @@ static int asoc_simple_card_dai_link_of(struct device_node *np,
+ 	return 0;
+ }
  
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
-new file mode 100644
-index 0000000000000000..de354957144b4822
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
-@@ -0,0 +1,109 @@
-+/*
-+ * Device Tree Source for the Salvator-X 2nd version board
-+ *
-+ * Copyright (C) 2015-2017 Renesas Electronics Corp.
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2.  This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
-+
-+#define CPG_AUDIO_CLK_I		R8A7795_CLK_S0D4
-+
-+/dts-v1/;
-+#include "r8a7795.dtsi"
-+#include "salvator-xs.dtsi"
-+
-+/ {
-+	model = "Renesas Salvator-X 2nd version board based on r8a7795 ES2.0+";
-+	compatible = "renesas,salvator-xs", "renesas,r8a7795";
-+
-+	memory@48000000 {
-+		device_type = "memory";
-+		/* first 128MB is reserved for secure area. */
-+		reg = <0x0 0x48000000 0x0 0x38000000>;
-+	};
-+
-+	memory@500000000 {
-+		device_type = "memory";
-+		reg = <0x5 0x00000000 0x0 0x40000000>;
-+	};
-+
-+	memory@600000000 {
-+		device_type = "memory";
-+		reg = <0x6 0x00000000 0x0 0x40000000>;
-+	};
-+
-+	memory@700000000 {
-+		device_type = "memory";
-+		reg = <0x7 0x00000000 0x0 0x40000000>;
-+	};
-+};
-+
-+&du {
-+	clocks = <&cpg CPG_MOD 724>,
-+		 <&cpg CPG_MOD 723>,
-+		 <&cpg CPG_MOD 722>,
-+		 <&cpg CPG_MOD 721>,
-+		 <&cpg CPG_MOD 727>,
-+		 <&x21_clk>,
-+		 <&x22_clk>;
-+	clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0",
-+		      "dclkin.1", "dclkin.2";
-+};
-+
-+&ehci2 {
-+	status = "okay";
-+};
-+
-+&hdmi0 {
-+	status = "okay";
-+
-+	ports {
-+		port@1 {
-+			reg = <1>;
-+			rcar_dw_hdmi0_out: endpoint {
-+				remote-endpoint = <&hdmi0_con>;
-+			};
-+		};
-+	};
-+};
-+
-+&hdmi0_con {
-+	remote-endpoint = <&rcar_dw_hdmi0_out>;
-+};
-+
-+&hdmi1 {
-+	status = "okay";
-+
-+	ports {
-+		port@1 {
-+			reg = <1>;
-+			rcar_dw_hdmi1_out: endpoint {
-+				remote-endpoint = <&hdmi1_con>;
-+			};
-+		};
-+	};
-+};
-+
-+&hdmi1_con {
-+	remote-endpoint = <&rcar_dw_hdmi1_out>;
-+};
-+
-+&ohci2 {
-+	status = "okay";
-+};
-+
-+&pfc {
-+	usb2_pins: usb2 {
-+		groups = "usb2";
-+		function = "usb2";
-+	};
-+};
-+
-+&usb2_phy2 {
-+	pinctrl-0 = <&usb2_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
+-static int asoc_simple_card_parse_of(struct device_node *node,
+-				     struct simple_card_data *priv)
++static int asoc_simple_card_parse_of(struct simple_card_data *priv)
+ 
+ {
+ 	struct device *dev = simple_priv_to_dev(priv);
+ 	struct device_node *np;
+ 	struct snd_soc_card *card = simple_priv_to_card(priv);
++	struct device_node *node = dev->of_node;
+ 	unsigned int daifmt = 0;
+ 	bool is_fe;
+ 	int ret, i;
+@@ -281,7 +281,7 @@ static int asoc_simple_card_probe(struct platform_device *pdev)
+ 	card->codec_conf	= &priv->codec_conf;
+ 	card->num_configs	= 1;
+ 
+-	ret = asoc_simple_card_parse_of(np, priv);
++	ret = asoc_simple_card_parse_of(priv);
+ 	if (ret < 0) {
+ 		if (ret != -EPROBE_DEFER)
+ 			dev_err(dev, "parse error %d\n", ret);
 -- 
-2.7.4
+2.11.0
