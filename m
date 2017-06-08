@@ -1,48 +1,33 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:54554 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:60890 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753403AbdFPNaX (ORCPT
+        with ESMTP id S1751747AbdFHN3j (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Jun 2017 09:30:23 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH] arm64: defconfig: enable Simple Sound Card support
-Date: Fri, 16 Jun 2017 15:30:01 +0200
-Message-Id: <b27866e91efb69d2ae335f130b5c9762272b918e.1497616974.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1497616974.git.horms+renesas@verge.net.au>
-References: <cover.1497616974.git.horms+renesas@verge.net.au>
+        Thu, 8 Jun 2017 09:29:39 -0400
+Date: Thu, 8 Jun 2017 15:29:26 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Magnus <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] arm64: defconfig: enable Simple Sound Card support
+Message-ID: <20170608132926.GA19821@verge.net.au>
+References: <87mv9lzw6k.wl%kuninori.morimoto.gx@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87mv9lzw6k.wl%kuninori.morimoto.gx@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+On Tue, Jun 06, 2017 at 02:33:47AM +0000, Kuninori Morimoto wrote:
+> 
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> 
+> commit 7fa72cca39a0 ("ASoC: rsnd: add HDMI output support")
+> exchanged Renesas Sound driver's Kconfig selection
+> from SND_SIMPLE_CARD to SND_SIMPLE_CARD_UTILS, because of this,
+> defconfig doesn't select SND_SIMPLE_CARD today.
+> All Renesas platform needs SND_SIMPLE_CARD, Let's select it.
+> 
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-commit 7fa72cca39a0 ("ASoC: rsnd: add HDMI output support")
-exchanged Renesas Sound driver's Kconfig selection
-from SND_SIMPLE_CARD to SND_SIMPLE_CARD_UTILS, because of this,
-defconfig doesn't select SND_SIMPLE_CARD today.
-All Renesas platform needs SND_SIMPLE_CARD, Let's select it.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index ce072859e3b2..1bbac74a0c44 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -369,6 +369,7 @@ CONFIG_SND_BCM2835_SOC_I2S=m
- CONFIG_SND_SOC_RCAR=y
- CONFIG_SND_SOC_SAMSUNG=y
- CONFIG_SND_SOC_AK4613=y
-+CONFIG_SND_SIMPLE_CARD=y
- CONFIG_USB=y
- CONFIG_USB_OTG=y
- CONFIG_USB_XHCI_HCD=y
--- 
-2.1.4
+Thanks Morimoto-san, applied.
