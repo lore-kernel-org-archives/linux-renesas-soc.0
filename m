@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:60503 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:60319 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751428AbdFHNNc (ORCPT
+        with ESMTP id S1751383AbdFHNJk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Jun 2017 09:13:32 -0400
+        Thu, 8 Jun 2017 09:09:40 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Ulf Hansson <ulf.hansson@linaro.org>
@@ -13,10 +13,10 @@ Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
         Ai Kyuse <ai.kyuse.uw@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
 Subject: [PATCH/RFC 1/5] mmc: tmio: add max_segs and max_blk_count in tmio_mmc_data
-Date: Thu,  8 Jun 2017 15:13:11 +0200
-Message-Id: <1496927595-19521-2-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1496927595-19521-1-git-send-email-horms+renesas@verge.net.au>
-References: <1496927595-19521-1-git-send-email-horms+renesas@verge.net.au>
+Date: Thu,  8 Jun 2017 15:09:22 +0200
+Message-Id: <1496927368-18897-2-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1496927368-18897-1-git-send-email-horms+renesas@verge.net.au>
+References: <1496927368-18897-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
