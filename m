@@ -1,60 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f65.google.com ([209.85.214.65]:34239 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751422AbdFHJ0q (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:27448 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751766AbdFHIuI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Jun 2017 05:26:46 -0400
-Received: by mail-it0-f65.google.com with SMTP id 201so1484060itu.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 08 Jun 2017 02:26:46 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <TY1PR06MB07020A244304230FD27FB68FB7C90@TY1PR06MB0702.apcprd06.prod.outlook.com>
-References: <1496908117-19368-1-git-send-email-chris.paterson2@renesas.com>
- <CAMuHMdUg2Ox7ATSBKMiCua=VekEaoPZLpyQXGg=45XWV+12imA@mail.gmail.com> <TY1PR06MB07020A244304230FD27FB68FB7C90@TY1PR06MB0702.apcprd06.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 8 Jun 2017 11:26:39 +0200
-Message-ID: <CAMuHMdXDGpb5Vb8f_cN=O2WNswqQMdxWc4e_X2C1D07mm4ODxQ@mail.gmail.com>
-Subject: Re: [PATCH] ARM: debug-ll: Add support for r8a7743
-To: Chris Paterson <Chris.Paterson2@renesas.com>
-Cc: Russell King <linux@armlinux.org.uk>,
+        Thu, 8 Jun 2017 04:50:08 -0400
+From: Chris Paterson <Chris.Paterson2@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Russell King <linux@armlinux.org.uk>,
         Biju Das <biju.das@bp.renesas.com>,
         "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: RE: [PATCH] ARM: debug-ll: Add support for r8a7743
+Date: Thu, 8 Jun 2017 08:50:01 +0000
+Message-ID: <TY1PR06MB07020A244304230FD27FB68FB7C90@TY1PR06MB0702.apcprd06.prod.outlook.com>
+References: <1496908117-19368-1-git-send-email-chris.paterson2@renesas.com>
+ <CAMuHMdUg2Ox7ATSBKMiCua=VekEaoPZLpyQXGg=45XWV+12imA@mail.gmail.com>
+In-Reply-To: <CAMuHMdUg2Ox7ATSBKMiCua=VekEaoPZLpyQXGg=45XWV+12imA@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Chris,
-
-On Thu, Jun 8, 2017 at 10:50 AM, Chris Paterson
-<Chris.Paterson2@renesas.com> wrote:
->> > --- a/arch/arm/Kconfig.debug
->> > +++ b/arch/arm/Kconfig.debug
->> > @@ -895,12 +895,13 @@ choice
->> >                   via SCIF2 on Renesas R-Car H1 (R8A7779).
->> >
->> >         config DEBUG_RCAR_GEN2_SCIF0
->> > -               bool "Kernel low-level debugging messages via SCIF0 on
->> R8A7790/R8A7791/R8A7792/R8A7793"
->> > -               depends on ARCH_R8A7790 || ARCH_R8A7791 || ARCH_R8A7792
->> || ARCH_R8A7793
->> > +               bool "Kernel low-level debugging messages via SCIF0 on
->> R8A7743/R8A7790/R8A7791/R8A7792/R8A7793"
->>
->> This line is becoming a bit long, and it'll only become worse in the future.
->> What about "Kernel low-level debugging messages via SCIF0 on R-Car Gen2"?
->
-> What about "Kernel low-level debugging messages via SCIF0 on R-Car Gen2 and RZ/G1"?
-
-Oops, of course. That's what I intended to type ;-)
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+SGVsbG8gR2VlcnQsDQoNCj4gRnJvbTogZ2VlcnQudXl0dGVyaG9ldmVuQGdtYWlsLmNvbQ0KPiBb
+bWFpbHRvOmdlZXJ0LnV5dHRlcmhvZXZlbkBnbWFpbC5jb21dIE9uIEJlaGFsZiBPZiBHZWVydCBV
+eXR0ZXJob2V2ZW4NCj4gU2VudDogMDggSnVuZSAyMDE3IDA5OjI3DQo+IA0KPiBIaSBDaHJpcywN
+Cj4gDQo+IE9uIFRodSwgSnVuIDgsIDIwMTcgYXQgOTo0OCBBTSwgQ2hyaXMgUGF0ZXJzb24NCj4g
+PGNocmlzLnBhdGVyc29uMkByZW5lc2FzLmNvbT4gd3JvdGU6DQo+ID4gRW5hYmxlIGxvdy1sZXZl
+bCBkZWJ1Z2dpbmcgc3VwcG9ydCBmb3IgUlovRzFNIChyOGE3NzQzKS4gUlovRzFNIHVzZXMNCj4g
+PiBTQ0lGMCBmb3IgdGhlIGRlYnVnIGNvbnNvbGUsIGxpa2UgbW9zdCBvZiB0aGUgUi1DYXIgR2Vu
+MiBTb0NzLg0KPiANCj4gVGhhbmtzIGZvciB5b3VyIHBhdGNoIQ0KDQpUaGFuayB5b3UgZm9yIHlv
+dXIgcmV2aWV3IQ0KDQo+IA0KPiBXaGlsZSB0aGUgcmVjb21tZW5kZWQgZGVidWcgbWV0aG9kIHRo
+ZXNlIGRheXMgaXMgImVhcmx5Y29uIiwgREVCVUdfTEwNCj4gaXMgaW5kZWVkIHN0aWxsIHVzZWZ1
+bCB0byBkZWJ1ZyBpc3N1ZXMgYmVmb3JlIGVhcmx5Y29uIGlzIGluaXRpYWxpemVkLg0KPiBMZXQn
+cyBob3BlIHlvdSB3aWxsIG5ldmVyIGVuY291bnRlciBzdWNoIGlzc3VlcyBvbiBhcm02NCwgd2hp
+Y2ggZG9lc24ndA0KPiBoYXZlIERFQlVHX0xMIHBlciBwb2xpY3kgZGVjaXNpb24uLi4NCg0KVGhh
+bmsgeW91IGZvciB0aGUgaW5mb3JtYXRpb24uIEl0J3MgaGFyZCB0byBrZWVwIHVwIHdpdGggdGhl
+c2UgZGVjaXNpb25zIQ0KDQo+IA0KPiA+IFNpZ25lZC1vZmYtYnk6IENocmlzIFBhdGVyc29uIDxj
+aHJpcy5wYXRlcnNvbjJAcmVuZXNhcy5jb20+DQo+IA0KPiBSZXZpZXdlZC1ieTogR2VlcnQgVXl0
+dGVyaG9ldmVuIDxnZWVydCtyZW5lc2FzQGdsaWRlci5iZT4NCj4gDQo+ID4gLS0tIGEvYXJjaC9h
+cm0vS2NvbmZpZy5kZWJ1Zw0KPiA+ICsrKyBiL2FyY2gvYXJtL0tjb25maWcuZGVidWcNCj4gPiBA
+QCAtODk1LDEyICs4OTUsMTMgQEAgY2hvaWNlDQo+ID4gICAgICAgICAgICAgICAgICAgdmlhIFND
+SUYyIG9uIFJlbmVzYXMgUi1DYXIgSDEgKFI4QTc3NzkpLg0KPiA+DQo+ID4gICAgICAgICBjb25m
+aWcgREVCVUdfUkNBUl9HRU4yX1NDSUYwDQo+ID4gLSAgICAgICAgICAgICAgIGJvb2wgIktlcm5l
+bCBsb3ctbGV2ZWwgZGVidWdnaW5nIG1lc3NhZ2VzIHZpYSBTQ0lGMCBvbg0KPiBSOEE3NzkwL1I4
+QTc3OTEvUjhBNzc5Mi9SOEE3NzkzIg0KPiA+IC0gICAgICAgICAgICAgICBkZXBlbmRzIG9uIEFS
+Q0hfUjhBNzc5MCB8fCBBUkNIX1I4QTc3OTEgfHwgQVJDSF9SOEE3NzkyDQo+IHx8IEFSQ0hfUjhB
+Nzc5Mw0KPiA+ICsgICAgICAgICAgICAgICBib29sICJLZXJuZWwgbG93LWxldmVsIGRlYnVnZ2lu
+ZyBtZXNzYWdlcyB2aWEgU0NJRjAgb24NCj4gUjhBNzc0My9SOEE3NzkwL1I4QTc3OTEvUjhBNzc5
+Mi9SOEE3NzkzIg0KPiANCj4gVGhpcyBsaW5lIGlzIGJlY29taW5nIGEgYml0IGxvbmcsIGFuZCBp
+dCdsbCBvbmx5IGJlY29tZSB3b3JzZSBpbiB0aGUgZnV0dXJlLg0KPiBXaGF0IGFib3V0ICJLZXJu
+ZWwgbG93LWxldmVsIGRlYnVnZ2luZyBtZXNzYWdlcyB2aWEgU0NJRjAgb24gUi1DYXIgR2VuMiI/
+DQoNCldoYXQgYWJvdXQgIktlcm5lbCBsb3ctbGV2ZWwgZGVidWdnaW5nIG1lc3NhZ2VzIHZpYSBT
+Q0lGMCBvbiBSLUNhciBHZW4yIGFuZCBSWi9HMSI/DQoNCkknZCBsaWtlIHRvIHRyeSBhbmQga2Vl
+cCBzb21lIHNvcnQgb2Ygc3BsaXQgYmV0d2VlbiB0aGUgdHdvIHByb2R1Y3QgbGluZXMgaWYgcG9z
+c2libGUuDQoNCktpbmQgcmVnYXJkcywgQ2hyaXMNCg0KPiBUaGUgZnVsbCBsaXN0IG9mIFNvQ3Mg
+aXMgc3RpbGwgYXZhaWxhYmxlIGluIHRoZSBleHRlbmRlZCBoZWxwIHRleHQuDQo+IA0KPiA+ICsg
+ICAgICAgICAgICAgICBkZXBlbmRzIG9uIEFSQ0hfUjhBNzc0MyB8fCBBUkNIX1I4QTc3OTAgfHwg
+QVJDSF9SOEE3NzkxDQo+IHx8IFwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICBBUkNIX1I4
+QTc3OTIgfHwgQVJDSF9SOEE3NzkzDQo+ID4gICAgICAgICAgICAgICAgIGhlbHANCj4gPiAgICAg
+ICAgICAgICAgICAgICBTYXkgWSBoZXJlIGlmIHlvdSB3YW50IGtlcm5lbCBsb3ctbGV2ZWwgZGVi
+dWdnaW5nIHN1cHBvcnQNCj4gPiAtICAgICAgICAgICAgICAgICB2aWEgU0NJRjAgb24gUmVuZXNh
+cyBSLUNhciBIMiAoUjhBNzc5MCksIE0yLVcgKFI4QTc3OTEpLCBWMkgNCj4gPiAtICAgICAgICAg
+ICAgICAgICAoUjhBNzc5MiksIG9yIE0yLU4gKFI4QTc3OTMpLg0KPiA+ICsgICAgICAgICAgICAg
+ICAgIHZpYSBTQ0lGMCBvbiBSZW5lc2FzIFJaL0cxTSAoUjhBNzc0MyksIFItQ2FyIEgyIChSOEE3
+NzkwKSwNCj4gPiArICAgICAgICAgICAgICAgICBNMi1XIChSOEE3NzkxKSwgVjJIIChSOEE3Nzky
+KSwgb3IgTTItTiAoUjhBNzc5MykuDQo+IA0KPiBHcntvZXRqZSxlZXRpbmd9cywNCj4gDQo+ICAg
+ICAgICAgICAgICAgICAgICAgICAgIEdlZXJ0DQo+IA0KPiAtLQ0KPiBHZWVydCBVeXR0ZXJob2V2
+ZW4gLS0gVGhlcmUncyBsb3RzIG9mIExpbnV4IGJleW9uZCBpYTMyIC0tIGdlZXJ0QGxpbnV4LQ0K
+PiBtNjhrLm9yZw0KPiANCj4gSW4gcGVyc29uYWwgY29udmVyc2F0aW9ucyB3aXRoIHRlY2huaWNh
+bCBwZW9wbGUsIEkgY2FsbCBteXNlbGYgYSBoYWNrZXIuIEJ1dA0KPiB3aGVuIEknbSB0YWxraW5n
+IHRvIGpvdXJuYWxpc3RzIEkganVzdCBzYXkgInByb2dyYW1tZXIiIG9yIHNvbWV0aGluZyBsaWtl
+IHRoYXQuDQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLS0gTGludXMgVG9ydmFs
+ZHMNCg==
