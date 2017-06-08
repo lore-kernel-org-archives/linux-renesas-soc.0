@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:60503 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:60335 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751463AbdFHNNh (ORCPT
+        with ESMTP id S1751466AbdFHNJw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Jun 2017 09:13:37 -0400
+        Thu, 8 Jun 2017 09:09:52 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Ulf Hansson <ulf.hansson@linaro.org>
@@ -11,10 +11,10 @@ Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
         Simon Horman <horms+renesas@verge.net.au>
 Subject: [PATCH/RFC 5/5] mmc: renesas-sdhi: remove gen3 support from sysc dmac driver
-Date: Thu,  8 Jun 2017 15:13:15 +0200
-Message-Id: <1496927595-19521-6-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1496927595-19521-1-git-send-email-horms+renesas@verge.net.au>
-References: <1496927595-19521-1-git-send-email-horms+renesas@verge.net.au>
+Date: Thu,  8 Jun 2017 15:09:28 +0200
+Message-Id: <1496927368-18897-8-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1496927368-18897-1-git-send-email-horms+renesas@verge.net.au>
+References: <1496927368-18897-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
