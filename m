@@ -1,61 +1,63 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:17838 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751410AbdFFPXl (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Jun 2017 11:23:41 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH v2 0/5] ARM: dts: Add iWave RZ/G1M board support
-Date: Tue,  6 Jun 2017 16:10:13 +0100
-Message-Id: <1496761818-62126-1-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1496420523-23506-4-git-send-email-biju.das@bp.renesas.com>
-References: <1496420523-23506-4-git-send-email-biju.das@bp.renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Thu, 8 Jun 2017 15:57:57 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/7] [media] soc_camera: rcar_vin: use proper name for
+ the R-Car SoC
+Message-ID: <20170608135757.GA4205@katana>
+References: <20170528093051.11816-1-wsa+renesas@sang-engineering.com>
+ <20170528093051.11816-7-wsa+renesas@sang-engineering.com>
+ <a133a7f7-e887-5043-83d3-cccbec581487@cogentembedded.com>
+ <20170529120202.GC4342@katana>
+ <20170608082731.7cdf32dd@vento.lan>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="FCuugMFkClbJLl1L"
+Content-Disposition: inline
+In-Reply-To: <20170608082731.7cdf32dd@vento.lan>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
 
-This series aims to add iWave RZ/G1M R8A7743 based Qseven SOM and RainboW-G20D- Qseven board support. 
+--FCuugMFkClbJLl1L
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This series has been tested against linux-next tag next-20170606.
 
-Modifications:
-v1->v2
--Documented iWave iW-RainboW-G20M-Qseven-RZG1M system on module
--Documented iW-RainboW-G20D-Qseven-RZG1M board in alphabatical order
--Added compatible string in iWave RZG1M Qseven SOM
--Modified the compatible string in iWave G20D-Q7 board 
+> Btw, I'm seeing only patches 6 and 7 here at media ML (and patchwork).
+> As those are trivial changes, I'll just apply what I have.
 
-History:
--------
-[v1]: http://www.spinics.net/lists/devicetree/msg179565.html
+Perfect, thanks!
 
-Biju Das (5):
-  of: Add vendor prefix for iWave Systems Technologies Pvt. Ltd
-  ARM: shmobile: document iW-RainboW-G20M-Qseven-RZG1M system on module
-  ARM: shmobile: document iW-RainboW-G20D-Qseven-RZG1M board
-  ARM: dts: iwg20m: Add iWave RZG1M Qseven SOM
-  ARM: dts: iwg20d-q7: Add support for iWave G20D-Q7 board based on
-    RZ/G1M
 
- Documentation/devicetree/bindings/arm/shmobile.txt |  4 +++
- .../devicetree/bindings/vendor-prefixes.txt        |  1 +
- arch/arm/boot/dts/Makefile                         |  1 +
- arch/arm/boot/dts/r8a7743-iwg20d-q7.dts            | 25 +++++++++++++++++++
- arch/arm/boot/dts/r8a7743-iwg20m.dtsi              | 29 ++++++++++++++++++++++
- 5 files changed, 60 insertions(+)
- create mode 100644 arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
- create mode 100644 arch/arm/boot/dts/r8a7743-iwg20m.dtsi
+--FCuugMFkClbJLl1L
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-1.9.1
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlk5V90ACgkQFA3kzBSg
+Kba8ZRAAkB8Oj48j4i/AO9wZvm1lZA/MRk7KCG2CK/00GSWt6PNdCBarRY3elFnO
+yQpLYUWl6bhpA+ps3OdtCUEGaLYmJAboPGGDz00s1aHshh8zn8u8gwK7n3G1CxMv
+rt0V4GqHLnqbjncCjlDoqXAR6/VpxlJNoAbO1Nya3QUXxEoCqcG1HZuZ65Iy9LPB
+I+vprcvu91H6u+i1gg0+YSgInHIK4KWzPImkl9WKP6MTYC3Gdps3PQRM+AC5NNqM
+vg3nfYqb9E4N1uYo1qy1WSV2mHG+iOJgEglhkuuk1HObNVVpd6d9O93fugulUDmI
++5OopUMHiJTrYWRkEjRNZmPSRFI8yc3SBqyPqO3btQUhz8R4FnTpc+t7Zhs55Y6h
+Q1sIRvorxU6NMRfmpvhwN5CRdWKwVi+prcIjPqZ1sojf1m2Tn+hDCrIZY5qiY7On
+V+mrP4LN7KVtStrNGGt84p3jlCCIGi+SKufUcRjlfc3zWA1MOp7S3UwqjPzgZdrf
+0E8i3Bep3qi7sSUv42+TDFvHwUy+KTrCIdfPK3KqOLl33gaElqEN2e0ZkKrHK+6L
++QPvVxcf+0WAGGMI/dKkMb2a3Ggg3uorPpRPqlbDEk5NNvTCvmKxDH70l5lNnt0V
+o9HYj2bgDw5ZVRHpFVeV5uOUrZdMvhqcOM0oJi154cfN9dTplK8=
+=L4YH
+-----END PGP SIGNATURE-----
+
+--FCuugMFkClbJLl1L--
