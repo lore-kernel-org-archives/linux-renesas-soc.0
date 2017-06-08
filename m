@@ -1,50 +1,57 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 01/14] v4l: vsp1: Fill display list headers without holding dlm spinlock
-Date: Mon, 26 Jun 2017 21:12:13 +0300
-Message-Id: <20170626181226.29575-2-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170626181226.29575-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170626181226.29575-1-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor1.renesas.com ([210.160.252.171]:46243 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751538AbdFHKI0 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 8 Jun 2017 06:08:26 -0400
+From: Chris Paterson <chris.paterson2@renesas.com>
+To: Russell King <linux@armlinux.org.uk>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        Chris Paterson <chris.paterson2@renesas.com>
+Subject: [PATCH v2] ARM: debug-ll: Add support for r8a7743
+Date: Thu,  8 Jun 2017 11:08:14 +0100
+Message-Id: <1496916494-19725-1-git-send-email-chris.paterson2@renesas.com>
+In-Reply-To: <1496908117-19368-1-git-send-email-chris.paterson2@renesas.com>
+References: <1496908117-19368-1-git-send-email-chris.paterson2@renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The display list headers are filled using information from the display
-list only. Lower the display list manager spinlock contention by filling
-the headers without holding the lock.
+Enable low-level debugging support for RZ/G1M (r8a7743). RZ/G1M uses
+SCIF0 for the debug console, like most of the R-Car Gen2 SoCs.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/media/platform/vsp1/vsp1_dl.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+v2:
+- Added Geert reviewed-by
+- Shortened config description
 
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
-index aaf17b13fd78..dc47e236c780 100644
---- a/drivers/media/platform/vsp1/vsp1_dl.c
-+++ b/drivers/media/platform/vsp1/vsp1_dl.c
-@@ -483,8 +483,6 @@ void vsp1_dl_list_commit(struct vsp1_dl_list *dl)
- 	unsigned long flags;
- 	bool update;
+ arch/arm/Kconfig.debug | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
+index ba2cb63..1b2c4c4 100644
+--- a/arch/arm/Kconfig.debug
++++ b/arch/arm/Kconfig.debug
+@@ -895,12 +895,13 @@ choice
+ 		  via SCIF2 on Renesas R-Car H1 (R8A7779).
  
--	spin_lock_irqsave(&dlm->lock, flags);
--
- 	if (dl->dlm->mode == VSP1_DL_MODE_HEADER) {
- 		struct vsp1_dl_list *dl_child;
+ 	config DEBUG_RCAR_GEN2_SCIF0
+-		bool "Kernel low-level debugging messages via SCIF0 on R8A7790/R8A7791/R8A7792/R8A7793"
+-		depends on ARCH_R8A7790 || ARCH_R8A7791 || ARCH_R8A7792 || ARCH_R8A7793
++		bool "Kernel low-level debugging messages via SCIF0 on R-Car Gen2 and RZ/G1"
++		depends on ARCH_R8A7743 || ARCH_R8A7790 || ARCH_R8A7791 || \
++			ARCH_R8A7792 || ARCH_R8A7793
+ 		help
+ 		  Say Y here if you want kernel low-level debugging support
+-		  via SCIF0 on Renesas R-Car H2 (R8A7790), M2-W (R8A7791), V2H
+-		  (R8A7792), or M2-N (R8A7793).
++		  via SCIF0 on Renesas RZ/G1M (R8A7743), R-Car H2 (R8A7790),
++		  M2-W (R8A7791), V2H (R8A7792), or M2-N (R8A7793).
  
-@@ -501,7 +499,11 @@ void vsp1_dl_list_commit(struct vsp1_dl_list *dl)
- 
- 			vsp1_dl_list_fill_header(dl_child, last);
- 		}
-+	}
- 
-+	spin_lock_irqsave(&dlm->lock, flags);
-+
-+	if (dl->dlm->mode == VSP1_DL_MODE_HEADER) {
- 		/*
- 		 * Commit the head display list to hardware. Chained headers
- 		 * will auto-start.
+ 	config DEBUG_RCAR_GEN2_SCIF2
+ 		bool "Kernel low-level debugging messages via SCIF2 on R8A7794"
 -- 
-Regards,
-
-Laurent Pinchart
+1.9.1
