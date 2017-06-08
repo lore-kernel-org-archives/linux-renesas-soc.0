@@ -1,18 +1,18 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:60335 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751469AbdFHNJs (ORCPT
+        with ESMTP id S1751383AbdFHNJm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Jun 2017 09:09:48 -0400
+        Thu, 8 Jun 2017 09:09:42 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Ulf Hansson <ulf.hansson@linaro.org>
 Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH/RFC 3/5] mmc: tmio: add complete to DMA ops
-Date: Thu,  8 Jun 2017 15:09:26 +0200
-Message-Id: <1496927368-18897-6-git-send-email-horms+renesas@verge.net.au>
+Subject: [PATCH/RFC 2/5] mmc: tmio: add complete to DMA ops
+Date: Thu,  8 Jun 2017 15:09:24 +0200
+Message-Id: <1496927368-18897-4-git-send-email-horms+renesas@verge.net.au>
 In-Reply-To: <1496927368-18897-1-git-send-email-horms+renesas@verge.net.au>
 References: <1496927368-18897-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
