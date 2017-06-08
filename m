@@ -1,155 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:36431 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752551AbdF2KTj (ORCPT
+Received: from mail-lf0-f45.google.com ([209.85.215.45]:34461 "EHLO
+        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750914AbdFHMx7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Jun 2017 06:19:39 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Alexey Firago <alexey_firago@mentor.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 5/8] clk: vc5: Split clock input mux and predivider
-Date: Thu, 29 Jun 2017 12:18:48 +0200
-Message-Id: <20170629101851.23972-5-marek.vasut@gmail.com>
-In-Reply-To: <20170629101851.23972-1-marek.vasut@gmail.com>
-References: <20170629101851.23972-1-marek.vasut@gmail.com>
+        Thu, 8 Jun 2017 08:53:59 -0400
+Received: by mail-lf0-f45.google.com with SMTP id v20so17652222lfa.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 08 Jun 2017 05:53:58 -0700 (PDT)
+Subject: Re: [PATCH v2 0/3] Add R8A7743/SK-RZG1M PFC support
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+References: <20170420185132.258111787@cogentembedded.com>
+ <20170424061217.GC14843@verge.net.au>
+ <4937ae78-8800-1a11-547b-2269d063d45a@cogentembedded.com>
+ <CAMuHMdUDO-+F_fOf4Z1ZPdZhs_MBn8J6ig-Pn4K0oMvv-EM2gw@mail.gmail.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <fdebbddc-f6d6-c340-b643-e0f6c61a4b8d@cogentembedded.com>
+Date: Thu, 8 Jun 2017 15:53:55 +0300
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdUDO-+F_fOf4Z1ZPdZhs_MBn8J6ig-Pn4K0oMvv-EM2gw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Marek Vasut <marek.vasut+renesas@gmail.com>
+Hello!
 
-Split the VC5 clock input mux and the predivider to more accurately
-model the hardware and fix the previously incorrect assumption that
-both the OUT_SEL_I2CB and the PLL are fed from the predivider.
+On 06/07/2017 08:52 PM, Geert Uytterhoeven wrote:
 
-It is in fact the clock input mux output which is directly feeding
-the clock into the OUT_SEL_I2CB output, while the clock input mux
-output first passes through the predivider before it is fed into
-the PLL.
+>>>>    Here's the set of 3 patches against Simon Horman's 'renesas.git' repo,
+>>>> 'renesas-devel-20170420-v4.11-rc7' tag.  We're adding the R8A7743 PFC
+>>>> node
+>>>> and then describing the pins for SCIF0 and Ether devices declared
+>>>> earlier.
+>>>> These patches depend on the R8A7743 PFC suport in order to work properly.
+>>>
+>>>
+>>> Thanks. I have marked these as deferred pending acceptance of the PFC
+>>> driver changes. Please repost or otherwise let me know when dependency
+>>> is satisfied.
+>>
+>>    FYI, Linus W. has pulled the R8A774x PFC patches for 4.13:
+>>
+>> https://www.spinics.net/lists/linux-renesas-soc/msg14824.html
+>
+> But Simon has to wait for v4.13-rc1 to apply the DTS parts, to avoid
+> regressions in renesas/devel.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Alexey Firago <alexey_firago@mentor.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org
----
- drivers/clk/clk-versaclock5.c | 46 ++++++++++++++++++++++++++++++++-----------
- 1 file changed, 34 insertions(+), 12 deletions(-)
+    Indeed, now that pinctrl_bind_pins() causes really_probe() to fail!
+The 1st patch in the series should be safe to apply still...
 
-diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index a5256f793627..fcde42393997 100644
---- a/drivers/clk/clk-versaclock5.c
-+++ b/drivers/clk/clk-versaclock5.c
-@@ -157,6 +157,7 @@ struct vc5_driver_data {
- 	struct clk		*pin_clkin;
- 	unsigned char		clk_mux_ins;
- 	struct clk_hw		clk_mux;
-+	struct clk_hw		clk_pfd;
- 	struct vc5_hw_data	clk_pll;
- 	struct vc5_hw_data	clk_fod[VC5_MAX_FOD_NUM];
- 	struct vc5_hw_data	clk_out[VC5_MAX_CLK_OUT_NUM];
-@@ -166,6 +167,10 @@ static const char * const vc5_mux_names[] = {
- 	"mux"
- };
- 
-+static const char * const vc5_pfd_names[] = {
-+	"pfd"
-+};
-+
- static const char * const vc5_pll_names[] = {
- 	"pll"
- };
-@@ -254,11 +259,16 @@ static int vc5_mux_set_parent(struct clk_hw *hw, u8 index)
- 	return regmap_update_bits(vc5->regmap, VC5_PRIM_SRC_SHDN, mask, src);
- }
- 
--static unsigned long vc5_mux_recalc_rate(struct clk_hw *hw,
-+static const struct clk_ops vc5_mux_ops = {
-+	.set_parent	= vc5_mux_set_parent,
-+	.get_parent	= vc5_mux_get_parent,
-+};
-+
-+static unsigned long vc5_pfd_recalc_rate(struct clk_hw *hw,
- 					 unsigned long parent_rate)
- {
- 	struct vc5_driver_data *vc5 =
--		container_of(hw, struct vc5_driver_data, clk_mux);
-+		container_of(hw, struct vc5_driver_data, clk_pfd);
- 	unsigned int prediv, div;
- 
- 	regmap_read(vc5->regmap, VC5_VCO_CTRL_AND_PREDIV, &prediv);
-@@ -276,7 +286,7 @@ static unsigned long vc5_mux_recalc_rate(struct clk_hw *hw,
- 		return parent_rate / VC5_REF_DIVIDER_REF_DIV(div);
- }
- 
--static long vc5_mux_round_rate(struct clk_hw *hw, unsigned long rate,
-+static long vc5_pfd_round_rate(struct clk_hw *hw, unsigned long rate,
- 			       unsigned long *parent_rate)
- {
- 	unsigned long idiv;
-@@ -296,11 +306,11 @@ static long vc5_mux_round_rate(struct clk_hw *hw, unsigned long rate,
- 	return *parent_rate / idiv;
- }
- 
--static int vc5_mux_set_rate(struct clk_hw *hw, unsigned long rate,
-+static int vc5_pfd_set_rate(struct clk_hw *hw, unsigned long rate,
- 			    unsigned long parent_rate)
- {
- 	struct vc5_driver_data *vc5 =
--		container_of(hw, struct vc5_driver_data, clk_mux);
-+		container_of(hw, struct vc5_driver_data, clk_pfd);
- 	unsigned long idiv;
- 	u8 div;
- 
-@@ -328,12 +338,10 @@ static int vc5_mux_set_rate(struct clk_hw *hw, unsigned long rate,
- 	return 0;
- }
- 
--static const struct clk_ops vc5_mux_ops = {
--	.set_parent	= vc5_mux_set_parent,
--	.get_parent	= vc5_mux_get_parent,
--	.recalc_rate	= vc5_mux_recalc_rate,
--	.round_rate	= vc5_mux_round_rate,
--	.set_rate	= vc5_mux_set_rate,
-+static const struct clk_ops vc5_pfd_ops = {
-+	.recalc_rate	= vc5_pfd_recalc_rate,
-+	.round_rate	= vc5_pfd_round_rate,
-+	.set_rate	= vc5_pfd_set_rate,
- };
- 
- /*
-@@ -699,12 +707,26 @@ static int vc5_probe(struct i2c_client *client,
- 		goto err_clk;
- 	}
- 
-+	/* Register PFD */
-+	memset(&init, 0, sizeof(init));
-+	init.name = vc5_pfd_names[0];
-+	init.ops = &vc5_pfd_ops;
-+	init.flags = CLK_SET_RATE_PARENT;
-+	init.parent_names = vc5_mux_names;
-+	init.num_parents = 1;
-+	vc5->clk_pfd.init = &init;
-+	ret = devm_clk_hw_register(&client->dev, &vc5->clk_pfd);
-+	if (ret) {
-+		dev_err(&client->dev, "unable to register %s\n", init.name);
-+		goto err_clk;
-+	}
-+
- 	/* Register PLL */
- 	memset(&init, 0, sizeof(init));
- 	init.name = vc5_pll_names[0];
- 	init.ops = &vc5_pll_ops;
- 	init.flags = CLK_SET_RATE_PARENT;
--	init.parent_names = vc5_mux_names;
-+	init.parent_names = vc5_pfd_names;
- 	init.num_parents = 1;
- 	vc5->clk_pll.num = 0;
- 	vc5->clk_pll.vc5 = vc5;
--- 
-2.11.0
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+
+MBR, Sergei
