@@ -1,93 +1,34 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:34762 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753244AbdF2NZY (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:60452 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751132AbdFHNLV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Jun 2017 09:25:24 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC v2 5/5] clk: renesas: rcar-gen3: Restore R clock during resume
-Date: Thu, 29 Jun 2017 15:25:20 +0200
-Message-Id: <1498742720-2713-6-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1498742720-2713-1-git-send-email-geert+renesas@glider.be>
-References: <1498742720-2713-1-git-send-email-geert+renesas@glider.be>
+        Thu, 8 Jun 2017 09:11:21 -0400
+Date: Thu, 8 Jun 2017 15:11:17 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH/RFC 0/5] mmc: renesas_sdhi: add support for R-Car Gen3
+ SDHI DMAC
+Message-ID: <20170608131114.GA18969@verge.net.au>
+References: <1496927368-18897-1-git-send-email-horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1496927368-18897-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On R-Car Gen3 systems, PSCI system suspend powers down the SoC, losing
-clock configuration.  Register a notifier to save/restore the RCKCR
-register during system suspend/resume.
+On Thu, Jun 08, 2017 at 03:09:21PM +0200, Simon Horman wrote:
+> Hi,
+> 
+> this series adds support for the internal DMAC used by r8a779[56] SoCs.
+> This is achieved by adding a new variant of the SDHI driver for this
+> DMA controller with compat strings for the r8a779[56] SoCs.
+> Compat strings for these SoCs are also removed from the existing SYS DMAC
+> variant of the SDHI driver.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - New.
----
- drivers/clk/renesas/clk-div6.c      |  6 +++---
- drivers/clk/renesas/rcar-gen3-cpg.c | 13 +++++++++++--
- 2 files changed, 14 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/clk/renesas/clk-div6.c b/drivers/clk/renesas/clk-div6.c
-index 6bc9469e769d035c..151336d2ba59e689 100644
---- a/drivers/clk/renesas/clk-div6.c
-+++ b/drivers/clk/renesas/clk-div6.c
-@@ -180,8 +180,8 @@ static const struct clk_ops cpg_div6_clock_ops = {
- 	.set_rate = cpg_div6_clock_set_rate,
- };
- 
--static int cpg_div6_clock_resume(struct notifier_block *nb,
--				 unsigned long action, void *data)
-+static int cpg_div6_clock_notifier_call(struct notifier_block *nb,
-+					unsigned long action, void *data)
- {
- 	struct div6_clock *clock = container_of(nb, struct div6_clock, nb);
- 
-@@ -288,7 +288,7 @@ struct clk * __init cpg_div6_register(const char *name,
- 		goto free_parents;
- 
- 	if (notifiers) {
--		clock->nb.notifier_call = cpg_div6_clock_resume;
-+		clock->nb.notifier_call = cpg_div6_clock_notifier_call;
- 		raw_notifier_chain_register(notifiers, &clock->nb);
- 	}
- 
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index 1abbf1d6d0a0c889..949116f4222226f5 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -378,18 +378,27 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
- 
- 	case CLK_TYPE_GEN3_R:
- 		if (cpg_quirks & RCKCR_CKSEL) {
-+			struct cpg_simple_notifier *csn;
-+
-+			csn = kzalloc(sizeof(*csn), GFP_KERNEL);
-+			if (!csn)
-+				return ERR_PTR(-ENOMEM);
-+
-+			csn->reg = base + CPG_RCKCR;
-+
- 			/*
- 			 * RINT is default.
- 			 * Only if EXTALR is populated, we switch to it.
- 			 */
--			value = readl(base + CPG_RCKCR) & 0x3f;
-+			value = readl(csn->reg) & 0x3f;
- 
- 			if (clk_get_rate(clks[cpg_clk_extalr])) {
- 				parent = clks[cpg_clk_extalr];
- 				value |= BIT(15);
- 			}
- 
--			writel(value, base + CPG_RCKCR);
-+			writel(value, csn->reg);
-+			cpg_simple_notifier_register(notifiers, csn);
- 			break;
- 		}
- 
--- 
-2.7.4
+Sorry, I managed to post duplicate patches in this series.
+I will repost.
