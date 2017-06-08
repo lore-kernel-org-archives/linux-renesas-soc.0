@@ -1,72 +1,65 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH 1/4] i2c: add helper to determine if DMA is favoured
-Date: Tue,  6 Jun 2017 11:20:31 +0200
-Message-Id: <20170606092034.1516-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170606092034.1516-1-wsa+renesas@sang-engineering.com>
-References: <20170606092034.1516-1-wsa+renesas@sang-engineering.com>
-Sender: linux-i2c-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:60503 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751454AbdFHNNg (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 8 Jun 2017 09:13:36 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Ai Kyuse <ai.kyuse.uw@renesas.com>
+Subject: [PATCH/RFC 2/5] mmc: sh_mobile_sdhi: set max_segs and max_blk_count values R-Car Gen3
+Date: Thu,  8 Jun 2017 15:13:12 +0200
+Message-Id: <1496927595-19521-3-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1496927595-19521-1-git-send-email-horms+renesas@verge.net.au>
+References: <1496927595-19521-1-git-send-email-horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We not only check if the buffer is DMA capable. We also require a
-threshold value to see if it makes sense to setup DMA. Since most
-I2C transactions are small, the cost for DMA might be too high.
+To avoid complicate code in own dma code for gen3, this patch
+adds set max_segs to 1. Then, the tmio driver will get requests
+as sg_len = 1 only.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+In the performance point of view, the CONFIG_MMC_BLOCK_BOUNCE should
+be set. Otherwise, mmc block layer will set 4-kbyte each as a request.
+
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Ai Kyuse <ai.kyuse.uw@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- include/linux/i2c.h | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+ drivers/mmc/host/renesas_sdhi.h      | 2 ++
+ drivers/mmc/host/renesas_sdhi_core.c | 2 ++
+ 2 files changed, 4 insertions(+)
 
-diff --git a/include/linux/i2c.h b/include/linux/i2c.h
-index 72d0ece70ed30d..f0b835ba2ecd10 100644
---- a/include/linux/i2c.h
-+++ b/include/linux/i2c.h
-@@ -34,6 +34,8 @@
- #include <linux/irqdomain.h>		/* for Host Notify IRQ */
- #include <linux/of.h>		/* for struct device_node */
- #include <linux/swab.h>		/* for swab16 */
-+#include <linux/mm.h>
-+#include <linux/sched/task_stack.h>
- #include <uapi/linux/i2c.h>
+diff --git a/drivers/mmc/host/renesas_sdhi.h b/drivers/mmc/host/renesas_sdhi.h
+index eb3ea15ff92d..6f7233fe32a2 100644
+--- a/drivers/mmc/host/renesas_sdhi.h
++++ b/drivers/mmc/host/renesas_sdhi.h
+@@ -31,6 +31,8 @@ struct renesas_sdhi_of_data {
+ 	int scc_offset;
+ 	struct renesas_sdhi_scc *taps;
+ 	int taps_num;
++	unsigned int max_blk_count;
++	unsigned short max_segs;
+ };
  
- extern struct bus_type i2c_bus_type;
-@@ -764,6 +766,33 @@ static inline u8 i2c_8bit_addr_from_msg(const struct i2c_msg *msg)
- 	return (msg->addr << 1) | (msg->flags & I2C_M_RD ? 1 : 0);
- }
- 
-+/**
-+ * i2c_check_msg_for_dma() - check if a message is suitable for DMA
-+ * @msg: the message to be checked
-+ * @dma_threshold: the amount of byte from which using DMA makes sense
-+ *
-+ * Return: -ERANGE if message is smaller than threshold
-+ * 	   -EFAULT if message buffer is not DMA capable
-+ * 	   0 if message is suitable for DMA
-+ *
-+ * Note: This function should only be called from process context! It uses
-+ * helper functions which work on the 'current' task.
-+ */
-+static inline int i2c_check_msg_for_dma(struct i2c_msg *msg, unsigned int dma_threshold)
-+{
-+	if (msg->len < dma_threshold)
-+		return -ERANGE;
-+
-+#if !defined(CONFIG_DMA_API_DEBUG)
-+	if (!virt_addr_valid(msg->buf) || object_is_on_stack(msg->buf)) {
-+		pr_debug("msg buffer to 0x%04x might not be DMA capable\n",
-+			 msg->addr);
-+		return -EFAULT;
-+	}
-+#endif
-+	return 0;
-+}
-+
- int i2c_handle_smbus_host_notify(struct i2c_adapter *adap, unsigned short addr);
- /**
-  * module_i2c_driver() - Helper macro for registering a modular I2C driver
+ int renesas_sdhi_probe(struct platform_device *pdev,
+diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+index 82150a966391..294bc9705c5f 100644
+--- a/drivers/mmc/host/renesas_sdhi_core.c
++++ b/drivers/mmc/host/renesas_sdhi_core.c
+@@ -522,6 +522,8 @@ int renesas_sdhi_probe(struct platform_device *pdev,
+ 		mmc_data->capabilities |= of_data->capabilities;
+ 		mmc_data->capabilities2 |= of_data->capabilities2;
+ 		mmc_data->dma_rx_offset = of_data->dma_rx_offset;
++		mmc_data->max_blk_count = of_data->max_blk_count;
++		mmc_data->max_segs = of_data->max_segs;
+ 		dma_priv->dma_buswidth = of_data->dma_buswidth;
+ 		host->bus_shift = of_data->bus_shift;
+ 	}
 -- 
-2.11.0
-
+2.1.4
