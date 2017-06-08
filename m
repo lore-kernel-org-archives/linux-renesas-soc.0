@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:60503 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:60335 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751454AbdFHNNg (ORCPT
+        with ESMTP id S1751469AbdFHNJq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Jun 2017 09:13:36 -0400
+        Thu, 8 Jun 2017 09:09:46 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Ulf Hansson <ulf.hansson@linaro.org>
@@ -13,10 +13,10 @@ Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Ai Kyuse <ai.kyuse.uw@renesas.com>
 Subject: [PATCH/RFC 2/5] mmc: sh_mobile_sdhi: set max_segs and max_blk_count values R-Car Gen3
-Date: Thu,  8 Jun 2017 15:13:12 +0200
-Message-Id: <1496927595-19521-3-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1496927595-19521-1-git-send-email-horms+renesas@verge.net.au>
-References: <1496927595-19521-1-git-send-email-horms+renesas@verge.net.au>
+Date: Thu,  8 Jun 2017 15:09:23 +0200
+Message-Id: <1496927368-18897-3-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1496927368-18897-1-git-send-email-horms+renesas@verge.net.au>
+References: <1496927368-18897-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
