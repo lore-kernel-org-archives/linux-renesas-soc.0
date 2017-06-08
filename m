@@ -1,45 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f178.google.com ([209.85.223.178]:35927 "EHLO
-        mail-io0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751515AbdFIHks (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:60503 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751463AbdFHNNh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Jun 2017 03:40:48 -0400
-MIME-Version: 1.0
-In-Reply-To: <1496927368-18897-8-git-send-email-horms+renesas@verge.net.au>
-References: <1496927368-18897-1-git-send-email-horms+renesas@verge.net.au> <1496927368-18897-8-git-send-email-horms+renesas@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 9 Jun 2017 09:40:46 +0200
-Message-ID: <CAMuHMdUUXnpXgoO7O8XtQcusTcHPffkKESVbWO54Yo54179u6A@mail.gmail.com>
-Subject: Re: [PATCH/RFC 5/5] mmc: renesas-sdhi: remove gen3 support from sysc
- dmac driver
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux MMC List <linux-mmc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 8 Jun 2017 09:13:37 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH/RFC 5/5] mmc: renesas-sdhi: remove gen3 support from sysc dmac driver
+Date: Thu,  8 Jun 2017 15:13:15 +0200
+Message-Id: <1496927595-19521-6-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1496927595-19521-1-git-send-email-horms+renesas@verge.net.au>
+References: <1496927595-19521-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
+Gen3 SoCs are now supported by the internal dmac variant of the SDHI driver.
+Remove them from the sys dmac variant where only PIO mode is supported.
 
-On Thu, Jun 8, 2017 at 3:09 PM, Simon Horman <horms+renesas@verge.net.au> wrote:
-> Gen3 SoCs are now supported by the internal dmac variant of the SDHI driver.
-> Remove them from the sys dmac variant where only PIO mode is supported.
->
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ drivers/mmc/host/renesas_sdhi_sys_dmac.c | 21 ---------------------
+ 1 file changed, 21 deletions(-)
 
-Is it possible to fall back to PIO with the new DMAC driver?
-If not, is this desirable?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+index cc3e0f94b276..1f8863e725aa 100644
+--- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+@@ -63,25 +63,6 @@ static const struct renesas_sdhi_of_data of_rcar_gen2_compatible = {
+ 	.taps_num	= ARRAY_SIZE(rcar_gen2_scc_taps),
+ };
+ 
+-/* Definitions for sampling clocks */
+-static struct renesas_sdhi_scc rcar_gen3_scc_taps[] = {
+-	{
+-		.clk_rate = 0,
+-		.tap = 0x00000300,
+-	},
+-};
+-
+-static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
+-	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_WRPROTECT_DISABLE |
+-			  TMIO_MMC_CLK_ACTUAL | TMIO_MMC_MIN_RCAR2,
+-	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
+-			  MMC_CAP_CMD23,
+-	.bus_shift	= 2,
+-	.scc_offset	= 0x1000,
+-	.taps		= rcar_gen3_scc_taps,
+-	.taps_num	= ARRAY_SIZE(rcar_gen3_scc_taps),
+-};
+-
+ static const struct of_device_id renesas_sdhi_sys_dmac_of_match[] = {
+ 	{ .compatible = "renesas,sdhi-shmobile" },
+ 	{ .compatible = "renesas,sdhi-sh73a0", .data = &of_default_cfg, },
+@@ -95,8 +76,6 @@ static const struct of_device_id renesas_sdhi_sys_dmac_of_match[] = {
+ 	{ .compatible = "renesas,sdhi-r8a7792", .data = &of_rcar_gen2_compatible, },
+ 	{ .compatible = "renesas,sdhi-r8a7793", .data = &of_rcar_gen2_compatible, },
+ 	{ .compatible = "renesas,sdhi-r8a7794", .data = &of_rcar_gen2_compatible, },
+-	{ .compatible = "renesas,sdhi-r8a7795", .data = &of_rcar_gen3_compatible, },
+-	{ .compatible = "renesas,sdhi-r8a7796", .data = &of_rcar_gen3_compatible, },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, renesas_sdhi_sys_dmac_of_match);
+-- 
+2.1.4
