@@ -1,60 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f178.google.com ([209.85.216.178]:35642 "EHLO
-        mail-qt0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752271AbdFHNwc (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33677 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751624AbdFHNp1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Jun 2017 09:52:32 -0400
-Received: by mail-qt0-f178.google.com with SMTP id w1so41780335qtg.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 08 Jun 2017 06:52:22 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1496148654-20386-1-git-send-email-horms+renesas@verge.net.au>
-References: <1496148654-20386-1-git-send-email-horms+renesas@verge.net.au>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 8 Jun 2017 15:52:21 +0200
-Message-ID: <CAPDyKFpkSzfKDmWoeWtiJN77MdFtcQkyzK3-hqKesK1kdzX_yQ@mail.gmail.com>
-Subject: Re: [PATCH 0/5] mmc: tmio, renesas-sdhi: cleanups
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Thu, 8 Jun 2017 09:45:27 -0400
+Date: Thu, 8 Jun 2017 15:45:21 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Linus Walleij <linus.walleij@linaro.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2] ARM: dts: armadillo800eva: Split LCD mux and gpio
+Message-ID: <20170608134516.GC19821@verge.net.au>
+References: <1496312820-27237-1-git-send-email-geert+renesas@glider.be>
+ <38369176.p2s9nCEmhA@avalon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <38369176.p2s9nCEmhA@avalon>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 30 May 2017 at 14:50, Simon Horman <horms+renesas@verge.net.au> wrote:
-> Hi,
->
-> this short series provides some cleanups to the tmio and renesas-sdhi
-> drivers.
->
-> * Update files listed in MAINTAINERS
-> * Consistently use EXPORT_SYMBOL_GPL
-> * Update Renesas related copyrights
-> * Improve checkpatch cleanness
->
-> Simon Horman (5):
->   MAINTAINERS: Update files for TMIO/SDHI MMC driver
->   mmc: tmio: use EXPORT_SYMBOL_GPL
->   mmc: tmio, renesas-sdhi: update Renesas related copyrights
->   mmc: tmio: improve checkpatch cleanness
->   mmc: renesas-sdhi: improve checkpatch cleanness
->
->  MAINTAINERS                              |   2 +-
->  drivers/mmc/host/renesas_sdhi.h          |   4 +-
->  drivers/mmc/host/renesas_sdhi_core.c     |  53 +++++++-----
->  drivers/mmc/host/renesas_sdhi_sys_dmac.c |  28 ++++---
->  drivers/mmc/host/tmio_mmc.c              |  10 ++-
->  drivers/mmc/host/tmio_mmc.h              |  22 +++--
->  drivers/mmc/host/tmio_mmc_core.c         | 139 ++++++++++++++++++-------------
->  include/linux/mfd/tmio.h                 |  33 ++++----
->  8 files changed, 167 insertions(+), 124 deletions(-)
->
-> --
-> 2.1.4
->
+On Fri, Jun 02, 2017 at 08:53:26AM +0300, Laurent Pinchart wrote:
+> Hi Geert,
+> 
+> Thank you for the patch.
+> 
+> On Thursday 01 Jun 2017 12:27:00 Geert Uytterhoeven wrote:
+> > Configuration of the lcd0 pinmux group and GPIO hog for the external
+> > GPIO mux are done using a single device node, causing the "output-high"
+> > property to be applied to both.  This will fail for the pinmux group,
+> > but doesn't cause any harm, as the failure is ignored silently.
+> > 
+> > However, after "pinctrl: sh-pfc: propagate errors on group config", the
+> > failure will become fatal, leading to a broken display:
+> > 
+> >     sh-pfc e6050000.pin-controller: pin_config_group_set op failed for group
+> > 102 sh-pfc e6050000.pin-controller: Error applying setting, reverse things
+> > back sh-pfc e6050000.pin-controller: failed to select default state
+> > 
+> > Move the GPIO hog to its own node to fix this.
+> > 
+> > Fixes: ffd2f9a5afb730b9 ("ARM: shmobile: armadillo800eva dts: Add pinctrl
+> > and gpio-hog for lcdc0") Signed-off-by: Geert Uytterhoeven
+> > <geert+renesas@glider.be>
+> > ---
+> > This is a hard dependency for "pinctrl: sh-pfc: propagate errors on
+> > group config" (https://patchwork.kernel.org/patch/9186713/).
+> > 
+> > v2:
+> >   - Keep the GPIO hog, but move it to its own node, instead of using
+> >     another level of subnodes.  As the GPIO hog node is not referenced from
+> >     a pinctrl-0 property, pinconf doesn't fail with "No pin or group
+> >     provided in DT node".
+> 
+> I like this approach better, it allows us to drive the output instead of 
+> pulling it up, without requiring a full implementation of output drive control 
+> in the pfc driver.
+> 
+> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Thanks, applied patch 1->3 for next!
-
-Kind regards
-Uffe
+Thanks, I have queued this up as a fix for v4.12.
