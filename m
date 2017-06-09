@@ -1,94 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f50.google.com ([209.85.215.50]:34541 "EHLO
-        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751548AbdFIU1v (ORCPT
+Received: from mail-lf0-f45.google.com ([209.85.215.45]:35996 "EHLO
+        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751679AbdFIQbM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Jun 2017 16:27:51 -0400
-Received: by mail-lf0-f50.google.com with SMTP id v20so33867981lfa.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 09 Jun 2017 13:27:51 -0700 (PDT)
-From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
-Date: Fri, 9 Jun 2017 22:27:48 +0200
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+        Fri, 9 Jun 2017 12:31:12 -0400
+Received: by mail-lf0-f45.google.com with SMTP id o83so31843401lff.3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 09 Jun 2017 09:31:12 -0700 (PDT)
 Subject: Re: [PATCH] sh_eth: add support to change MTU
-Message-ID: <20170609202748.GA17461@bigcity.dyn.berto.se>
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
 References: <20170609153034.8777-1-niklas.soderlund+renesas@ragnatech.se>
- <15374026-bf82-5b4c-7d1a-53b21dff3451@cogentembedded.com>
+Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <15374026-bf82-5b4c-7d1a-53b21dff3451@cogentembedded.com>
+Date: Fri, 9 Jun 2017 19:31:09 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <20170609153034.8777-1-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <15374026-bf82-5b4c-7d1a-53b21dff3451@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sergei,
+Hello!
 
-Thanks for your feedback.
+On 06/09/2017 06:30 PM, Niklas Söderlund wrote:
 
-On 2017-06-09 19:31:09 +0300, Sergei Shtylyov wrote:
-> Hello!
-> 
-> On 06/09/2017 06:30 PM, Niklas S�derlund wrote:
-> 
-> > The hardware supports the MTU to be changed and the driver it self is
-> > somewhat prepared to support this. This patch hooks up the callbacks to
-> > be able to change the MTU from user-space.
-> > 
-> > Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
-> [...]
-> 
->    One more thing off my back, thanks! :-)
->    I'm OK with this patch in principle (but have several nits):
+> The hardware supports the MTU to be changed and the driver it self is
+> somewhat prepared to support this. This patch hooks up the callbacks to
+> be able to change the MTU from user-space.
+>
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+[...]
 
-Will update nits and send v2 containing your Acked-by.
+    One more thing off my back, thanks! :-)
+    I'm OK with this patch in principle (but have several nits):
 
-> 
-> Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Thanks :-)
+> diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
+> index f68c4db656eda846..da41eda7bfada6b9 100644
+> --- a/drivers/net/ethernet/renesas/sh_eth.c
+> +++ b/drivers/net/ethernet/renesas/sh_eth.c
+[...]
+> @@ -3171,6 +3184,13 @@ static int sh_eth_drv_probe(struct platform_device *pdev)
+>  	}
+>  	sh_eth_set_default_cpu_data(mdp->cd);
+>
+> +	/* Datasheet states max MTU should be 2048 but due to the
 
-> 
-> > diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
-> > index f68c4db656eda846..da41eda7bfada6b9 100644
-> > --- a/drivers/net/ethernet/renesas/sh_eth.c
-> > +++ b/drivers/net/ethernet/renesas/sh_eth.c
-> [...]
-> > @@ -3171,6 +3184,13 @@ static int sh_eth_drv_probe(struct platform_device *pdev)
-> >  	}
-> >  	sh_eth_set_default_cpu_data(mdp->cd);
-> > 
-> > +	/* Datasheet states max MTU should be 2048 but due to the
-> 
->    User's manual. :-)
+    User's manual. :-)
+    Somehow I thought it supports jumbo frames but the manual doesn't confirm 
+that... ah, that's EtherAVB! :-)
 
-Will update in v2.
+> +	 * aliment calculations in sh_eth_ring_init() the practical
 
->    Somehow I thought it supports jumbo frames but the manual doesn't confirm
-> that... ah, that's EtherAVB! :-)
+   Alignment.
 
-Yes I did look for that but could not find that for sh_eth :-)
+> +	 * MTU is a bit less. Maybe this can be optimized some more.
 
-> 
-> > +	 * aliment calculations in sh_eth_ring_init() the practical
-> 
->   Alignment.
+    Undoubtedly... :-)
 
-Will fix in v2.
+[...]
 
-> 
-> > +	 * MTU is a bit less. Maybe this can be optimized some more.
-> 
->    Undoubtedly... :-)
-
-:-)
-
-> 
-> [...]
-> 
-> MBR, Sergei
-> 
-
--- 
-Regards,
-Niklas S�derlund
+MBR, Sergei
