@@ -1,222 +1,233 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:46740 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751704AbdFGTbV (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:64534 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751700AbdFIPVR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Jun 2017 15:31:21 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <878tl44ps8.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dIgfi-0003Yf-TD@debutante>
-Date: Wed, 07 Jun 2017 20:31:14 +0100
-Subject: Applied "ASoC: rsnd: update pointer more accurate" to the asoc tree
+        Fri, 9 Jun 2017 11:21:17 -0400
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: robh+dt@kernel.org, mark.rutland@arm.com, mchehab@kernel.org,
+        hverkuil@xs4all.nl, sakari.ailus@linux.intel.com, crope@iki.fi
+Cc: chris.paterson2@renesas.com, laurent.pinchart@ideasonboard.com,
+        geert+renesas@glider.be, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH v7 5/7] doc_rst: media: New SDR formats PC16, PC18 & PC20
+Date: Fri,  9 Jun 2017 16:07:36 +0100
+Message-Id: <20170609150738.56294-6-ramesh.shanmugasundaram@bp.renesas.com>
+In-Reply-To: <20170609150738.56294-1-ramesh.shanmugasundaram@bp.renesas.com>
+References: <20170609150738.56294-1-ramesh.shanmugasundaram@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+This patch adds documentation for the three new SDR formats
 
-   ASoC: rsnd: update pointer more accurate
+V4L2_SDR_FMT_PCU16BE
+V4L2_SDR_FMT_PCU18BE
+V4L2_SDR_FMT_PCU20BE
 
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 07b7acb51d283d8469696c906b91f1882696a4d4 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Wed, 7 Jun 2017 00:20:01 +0000
-Subject: [PATCH] ASoC: rsnd: update pointer more accurate
-
-Current rsnd driver updates pointer when DMA transfer was finished
-in DMA transfer mode. But PulseAudio requests more accurate
-pointer update when timer mode.
-This patch consider about DMA transfer residue and update more
-accurate pointer.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 ---
- sound/soc/sh/rcar/core.c |  6 ++++--
- sound/soc/sh/rcar/dma.c  | 26 +++++++++++++++++++++++++-
- sound/soc/sh/rcar/rsnd.h |  7 +++++++
- sound/soc/sh/rcar/ssi.c  | 12 ++++++++++++
- 4 files changed, 48 insertions(+), 3 deletions(-)
+ .../media/uapi/v4l/pixfmt-sdr-pcu16be.rst          | 55 ++++++++++++++++++++++
+ .../media/uapi/v4l/pixfmt-sdr-pcu18be.rst          | 55 ++++++++++++++++++++++
+ .../media/uapi/v4l/pixfmt-sdr-pcu20be.rst          | 54 +++++++++++++++++++++
+ Documentation/media/uapi/v4l/sdr-formats.rst       |  3 ++
+ 4 files changed, 167 insertions(+)
+ create mode 100644 Documentation/media/uapi/v4l/pixfmt-sdr-pcu16be.rst
+ create mode 100644 Documentation/media/uapi/v4l/pixfmt-sdr-pcu18be.rst
+ create mode 100644 Documentation/media/uapi/v4l/pixfmt-sdr-pcu20be.rst
 
-diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
-index 080431543141..bc12c449857a 100644
---- a/sound/soc/sh/rcar/core.c
-+++ b/sound/soc/sh/rcar/core.c
-@@ -968,12 +968,14 @@ static int rsnd_hw_params(struct snd_pcm_substream *substream,
- 
- static snd_pcm_uframes_t rsnd_pointer(struct snd_pcm_substream *substream)
- {
--	struct snd_pcm_runtime *runtime = substream->runtime;
- 	struct snd_soc_dai *dai = rsnd_substream_to_dai(substream);
- 	struct rsnd_dai *rdai = rsnd_dai_to_rdai(dai);
- 	struct rsnd_dai_stream *io = rsnd_rdai_to_io(rdai, substream);
-+	snd_pcm_uframes_t pointer = 0;
+diff --git a/Documentation/media/uapi/v4l/pixfmt-sdr-pcu16be.rst b/Documentation/media/uapi/v4l/pixfmt-sdr-pcu16be.rst
+new file mode 100644
+index 000000000000..2de1b1a0f517
+--- /dev/null
++++ b/Documentation/media/uapi/v4l/pixfmt-sdr-pcu16be.rst
+@@ -0,0 +1,55 @@
++.. -*- coding: utf-8; mode: rst -*-
 +
-+	rsnd_dai_call(pointer, io, &pointer);
- 
--	return bytes_to_frames(runtime, io->byte_pos);
-+	return pointer;
- }
- 
- static struct snd_pcm_ops rsnd_pcm_ops = {
-diff --git a/sound/soc/sh/rcar/dma.c b/sound/soc/sh/rcar/dma.c
-index 241cb3b08a07..05e538f4c8d5 100644
---- a/sound/soc/sh/rcar/dma.c
-+++ b/sound/soc/sh/rcar/dma.c
-@@ -25,6 +25,7 @@
- 
- struct rsnd_dmaen {
- 	struct dma_chan		*chan;
-+	dma_cookie_t		cookie;
- 	dma_addr_t		dma_buf;
- 	unsigned int		dma_len;
- 	unsigned int		dma_period;
-@@ -292,7 +293,8 @@ static int rsnd_dmaen_start(struct rsnd_mod *mod,
- 	for (i = 0; i < 2; i++)
- 		rsnd_dmaen_sync(dmaen, io, i);
- 
--	if (dmaengine_submit(desc) < 0) {
-+	dmaen->cookie = dmaengine_submit(desc);
-+	if (dmaen->cookie < 0) {
- 		dev_err(dev, "dmaengine_submit() fail\n");
- 		return -EIO;
- 	}
-@@ -348,12 +350,34 @@ static int rsnd_dmaen_attach(struct rsnd_dai_stream *io,
- 	return 0;
- }
- 
-+static int rsnd_dmaen_pointer(struct rsnd_mod *mod,
-+			      struct rsnd_dai_stream *io,
-+			      snd_pcm_uframes_t *pointer)
-+{
-+	struct snd_pcm_runtime *runtime = rsnd_io_to_runtime(io);
-+	struct rsnd_dma *dma = rsnd_mod_to_dma(mod);
-+	struct rsnd_dmaen *dmaen = rsnd_dma_to_dmaen(dma);
-+	struct dma_tx_state state;
-+	enum dma_status status;
-+	unsigned int pos = 0;
++.. _V4L2-SDR-FMT-PCU16BE:
 +
-+	status = dmaengine_tx_status(dmaen->chan, dmaen->cookie, &state);
-+	if (status == DMA_IN_PROGRESS || status == DMA_PAUSED) {
-+		if (state.residue > 0 && state.residue <= dmaen->dma_len)
-+			pos = dmaen->dma_len - state.residue;
-+	}
-+	*pointer = bytes_to_frames(runtime, pos);
++******************************
++V4L2_SDR_FMT_PCU16BE ('PC16')
++******************************
 +
-+	return 0;
-+}
++Planar complex unsigned 16-bit big endian IQ sample
 +
- static struct rsnd_mod_ops rsnd_dmaen_ops = {
- 	.name	= "audmac",
- 	.nolock_start = rsnd_dmaen_nolock_start,
- 	.nolock_stop  = rsnd_dmaen_nolock_stop,
- 	.start	= rsnd_dmaen_start,
- 	.stop	= rsnd_dmaen_stop,
-+	.pointer= rsnd_dmaen_pointer,
- };
- 
- /*
-diff --git a/sound/soc/sh/rcar/rsnd.h b/sound/soc/sh/rcar/rsnd.h
-index 96a567de5f14..d4f89d5e6994 100644
---- a/sound/soc/sh/rcar/rsnd.h
-+++ b/sound/soc/sh/rcar/rsnd.h
-@@ -269,6 +269,9 @@ struct rsnd_mod_ops {
- 			 struct rsnd_dai_stream *io,
- 			 struct snd_pcm_substream *substream,
- 			 struct snd_pcm_hw_params *hw_params);
-+	int (*pointer)(struct rsnd_mod *mod,
-+		       struct rsnd_dai_stream *io,
-+		       snd_pcm_uframes_t *pointer);
- 	int (*fallback)(struct rsnd_mod *mod,
- 			struct rsnd_dai_stream *io,
- 			struct rsnd_priv *priv);
-@@ -306,6 +309,7 @@ struct rsnd_mod {
-  * H	0: pcm_new
-  * H	0: fallback
-  * H	0: hw_params
-+ * H	0: pointer
-  */
- #define __rsnd_mod_shift_nolock_start	0
- #define __rsnd_mod_shift_nolock_stop	0
-@@ -319,6 +323,7 @@ struct rsnd_mod {
- #define __rsnd_mod_shift_pcm_new	28 /* always called */
- #define __rsnd_mod_shift_fallback	28 /* always called */
- #define __rsnd_mod_shift_hw_params	28 /* always called */
-+#define __rsnd_mod_shift_pointer	28 /* always called */
- 
- #define __rsnd_mod_add_probe		0
- #define __rsnd_mod_add_remove		0
-@@ -332,6 +337,7 @@ struct rsnd_mod {
- #define __rsnd_mod_add_pcm_new		0
- #define __rsnd_mod_add_fallback		0
- #define __rsnd_mod_add_hw_params	0
-+#define __rsnd_mod_add_pointer		0
- 
- #define __rsnd_mod_call_probe		0
- #define __rsnd_mod_call_remove		0
-@@ -343,6 +349,7 @@ struct rsnd_mod {
- #define __rsnd_mod_call_pcm_new		0
- #define __rsnd_mod_call_fallback	0
- #define __rsnd_mod_call_hw_params	0
-+#define __rsnd_mod_call_pointer		0
- #define __rsnd_mod_call_nolock_start	0
- #define __rsnd_mod_call_nolock_stop	1
- 
-diff --git a/sound/soc/sh/rcar/ssi.c b/sound/soc/sh/rcar/ssi.c
-index eddd8afa0825..2363d0beeafd 100644
---- a/sound/soc/sh/rcar/ssi.c
-+++ b/sound/soc/sh/rcar/ssi.c
-@@ -685,6 +685,17 @@ static int rsnd_ssi_common_probe(struct rsnd_mod *mod,
- 	return ret;
- }
- 
-+static int rsnd_ssi_pointer(struct rsnd_mod *mod,
-+			    struct rsnd_dai_stream *io,
-+			    snd_pcm_uframes_t *pointer)
-+{
-+	struct snd_pcm_runtime *runtime = rsnd_io_to_runtime(io);
++Description
++===========
 +
-+	*pointer = bytes_to_frames(runtime, io->byte_pos);
++This format contains a sequence of complex number samples. Each complex
++number consist of two parts called In-phase and Quadrature (IQ). Both I
++and Q are represented as a 16 bit unsigned big endian number stored in
++32 bit space. The remaining unused bits within the 32 bit space will be
++padded with 0. I value starts first and Q value starts at an offset
++equalling half of the buffer size (i.e.) offset = buffersize/2. Out of
++the 16 bits, bit 15:2 (14 bit) is data and bit 1:0 (2 bit) can be any
++value.
 +
-+	return 0;
-+}
++**Byte Order.**
++Each cell is one byte.
 +
- static struct rsnd_mod_ops rsnd_ssi_pio_ops = {
- 	.name	= SSI_NAME,
- 	.probe	= rsnd_ssi_common_probe,
-@@ -693,6 +704,7 @@ static struct rsnd_mod_ops rsnd_ssi_pio_ops = {
- 	.start	= rsnd_ssi_start,
- 	.stop	= rsnd_ssi_stop,
- 	.irq	= rsnd_ssi_irq,
-+	.pointer= rsnd_ssi_pointer,
- 	.pcm_new = rsnd_ssi_pcm_new,
- 	.hw_params = rsnd_ssi_hw_params,
- };
++.. flat-table::
++    :header-rows:  1
++    :stub-columns: 0
++
++    * -  Offset:
++      -  Byte B0
++      -  Byte B1
++      -  Byte B2
++      -  Byte B3
++    * -  start + 0:
++      -  I'\ :sub:`0[13:6]`
++      -  I'\ :sub:`0[5:0]; B1[1:0]=pad`
++      -  pad
++      -  pad
++    * -  start + 4:
++      -  I'\ :sub:`1[13:6]`
++      -  I'\ :sub:`1[5:0]; B1[1:0]=pad`
++      -  pad
++      -  pad
++    * -  ...
++    * - start + offset:
++      -  Q'\ :sub:`0[13:6]`
++      -  Q'\ :sub:`0[5:0]; B1[1:0]=pad`
++      -  pad
++      -  pad
++    * - start + offset + 4:
++      -  Q'\ :sub:`1[13:6]`
++      -  Q'\ :sub:`1[5:0]; B1[1:0]=pad`
++      -  pad
++      -  pad
+diff --git a/Documentation/media/uapi/v4l/pixfmt-sdr-pcu18be.rst b/Documentation/media/uapi/v4l/pixfmt-sdr-pcu18be.rst
+new file mode 100644
+index 000000000000..da8b26bf6b95
+--- /dev/null
++++ b/Documentation/media/uapi/v4l/pixfmt-sdr-pcu18be.rst
+@@ -0,0 +1,55 @@
++.. -*- coding: utf-8; mode: rst -*-
++
++.. _V4L2-SDR-FMT-PCU18BE:
++
++******************************
++V4L2_SDR_FMT_PCU18BE ('PC18')
++******************************
++
++Planar complex unsigned 18-bit big endian IQ sample
++
++Description
++===========
++
++This format contains a sequence of complex number samples. Each complex
++number consist of two parts called In-phase and Quadrature (IQ). Both I
++and Q are represented as a 18 bit unsigned big endian number stored in
++32 bit space. The remaining unused bits within the 32 bit space will be
++padded with 0. I value starts first and Q value starts at an offset
++equalling half of the buffer size (i.e.) offset = buffersize/2. Out of
++the 18 bits, bit 17:2 (16 bit) is data and bit 1:0 (2 bit) can be any
++value.
++
++**Byte Order.**
++Each cell is one byte.
++
++.. flat-table::
++    :header-rows:  1
++    :stub-columns: 0
++
++    * -  Offset:
++      -  Byte B0
++      -  Byte B1
++      -  Byte B2
++      -  Byte B3
++    * -  start + 0:
++      -  I'\ :sub:`0[17:10]`
++      -  I'\ :sub:`0[9:2]`
++      -  I'\ :sub:`0[1:0]; B2[5:0]=pad`
++      -  pad
++    * -  start + 4:
++      -  I'\ :sub:`1[17:10]`
++      -  I'\ :sub:`1[9:2]`
++      -  I'\ :sub:`1[1:0]; B2[5:0]=pad`
++      -  pad
++    * -  ...
++    * - start + offset:
++      -  Q'\ :sub:`0[17:10]`
++      -  Q'\ :sub:`0[9:2]`
++      -  Q'\ :sub:`0[1:0]; B2[5:0]=pad`
++      -  pad
++    * - start + offset + 4:
++      -  Q'\ :sub:`1[17:10]`
++      -  Q'\ :sub:`1[9:2]`
++      -  Q'\ :sub:`1[1:0]; B2[5:0]=pad`
++      -  pad
+diff --git a/Documentation/media/uapi/v4l/pixfmt-sdr-pcu20be.rst b/Documentation/media/uapi/v4l/pixfmt-sdr-pcu20be.rst
+new file mode 100644
+index 000000000000..5499eed39477
+--- /dev/null
++++ b/Documentation/media/uapi/v4l/pixfmt-sdr-pcu20be.rst
+@@ -0,0 +1,54 @@
++.. -*- coding: utf-8; mode: rst -*-
++.. _V4L2-SDR-FMT-PCU20BE:
++
++******************************
++V4L2_SDR_FMT_PCU20BE ('PC20')
++******************************
++
++Planar complex unsigned 20-bit big endian IQ sample
++
++Description
++===========
++
++This format contains a sequence of complex number samples. Each complex
++number consist of two parts called In-phase and Quadrature (IQ). Both I
++and Q are represented as a 20 bit unsigned big endian number stored in
++32 bit space. The remaining unused bits within the 32 bit space will be
++padded with 0. I value starts first and Q value starts at an offset
++equalling half of the buffer size (i.e.) offset = buffersize/2. Out of
++the 20 bits, bit 19:2 (18 bit) is data and bit 1:0 (2 bit) can be any
++value.
++
++**Byte Order.**
++Each cell is one byte.
++
++.. flat-table::
++    :header-rows:  1
++    :stub-columns: 0
++
++    * -  Offset:
++      -  Byte B0
++      -  Byte B1
++      -  Byte B2
++      -  Byte B3
++    * -  start + 0:
++      -  I'\ :sub:`0[19:12]`
++      -  I'\ :sub:`0[11:4]`
++      -  I'\ :sub:`0[3:0]; B2[3:0]=pad`
++      -  pad
++    * -  start + 4:
++      -  I'\ :sub:`1[19:12]`
++      -  I'\ :sub:`1[11:4]`
++      -  I'\ :sub:`1[3:0]; B2[3:0]=pad`
++      -  pad
++    * -  ...
++    * - start + offset:
++      -  Q'\ :sub:`0[19:12]`
++      -  Q'\ :sub:`0[11:4]`
++      -  Q'\ :sub:`0[3:0]; B2[3:0]=pad`
++      -  pad
++    * - start + offset + 4:
++      -  Q'\ :sub:`1[19:12]`
++      -  Q'\ :sub:`1[11:4]`
++      -  Q'\ :sub:`1[3:0]; B2[3:0]=pad`
++      -  pad
+diff --git a/Documentation/media/uapi/v4l/sdr-formats.rst b/Documentation/media/uapi/v4l/sdr-formats.rst
+index f863c08f1add..2037f5bad727 100644
+--- a/Documentation/media/uapi/v4l/sdr-formats.rst
++++ b/Documentation/media/uapi/v4l/sdr-formats.rst
+@@ -17,3 +17,6 @@ These formats are used for :ref:`SDR <sdr>` interface only.
+     pixfmt-sdr-cs08
+     pixfmt-sdr-cs14le
+     pixfmt-sdr-ru12le
++    pixfmt-sdr-pcu16be
++    pixfmt-sdr-pcu18be
++    pixfmt-sdr-pcu20be
 -- 
-2.11.0
+2.12.2
