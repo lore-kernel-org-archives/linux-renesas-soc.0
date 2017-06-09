@@ -1,47 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f182.google.com ([209.85.128.182]:33123 "EHLO
-        mail-wr0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751412AbdFIIkR (ORCPT
+Received: from mail-io0-f178.google.com ([209.85.223.178]:35927 "EHLO
+        mail-io0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751515AbdFIHks (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Jun 2017 04:40:17 -0400
+        Fri, 9 Jun 2017 03:40:48 -0400
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdUUXnpXgoO7O8XtQcusTcHPffkKESVbWO54Yo54179u6A@mail.gmail.com>
-References: <1496927368-18897-1-git-send-email-horms+renesas@verge.net.au>
- <1496927368-18897-8-git-send-email-horms+renesas@verge.net.au> <CAMuHMdUUXnpXgoO7O8XtQcusTcHPffkKESVbWO54Yo54179u6A@mail.gmail.com>
-From: Magnus Damm <magnus.damm@gmail.com>
-Date: Fri, 9 Jun 2017 17:40:15 +0900
-Message-ID: <CANqRtoTF-xev1F9nC9a_0oLQSE5-M4SnozTyzrndDrbW8fhurw@mail.gmail.com>
+In-Reply-To: <1496927368-18897-8-git-send-email-horms+renesas@verge.net.au>
+References: <1496927368-18897-1-git-send-email-horms+renesas@verge.net.au> <1496927368-18897-8-git-send-email-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 9 Jun 2017 09:40:46 +0200
+Message-ID: <CAMuHMdUUXnpXgoO7O8XtQcusTcHPffkKESVbWO54Yo54179u6A@mail.gmail.com>
 Subject: Re: [PATCH/RFC 5/5] mmc: renesas-sdhi: remove gen3 support from sysc
  dmac driver
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Ulf Hansson <ulf.hansson@linaro.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
         Linux MMC List <linux-mmc@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert and Simon,
+Hi Simon,
 
-On Fri, Jun 9, 2017 at 4:40 PM, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> Hi Simon,
+On Thu, Jun 8, 2017 at 3:09 PM, Simon Horman <horms+renesas@verge.net.au> wrote:
+> Gen3 SoCs are now supported by the internal dmac variant of the SDHI driver.
+> Remove them from the sys dmac variant where only PIO mode is supported.
 >
-> On Thu, Jun 8, 2017 at 3:09 PM, Simon Horman <horms+renesas@verge.net.au> wrote:
->> Gen3 SoCs are now supported by the internal dmac variant of the SDHI driver.
->> Remove them from the sys dmac variant where only PIO mode is supported.
->>
->> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
->
-> Is it possible to fall back to PIO with the new DMAC driver?
-> If not, is this desirable?
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-I believe R-Car Gen3 SDHI may depending on SoC use either on-chip bus
-mastering DMA or SYS-DMAC via DMA Engine. In both cases fall back to
-PIO is most likely valid. For any given SoC which is better of on-chip
-DMA or SYS-DMAC needs to be investigated together with IPMMU.
+Is it possible to fall back to PIO with the new DMAC driver?
+If not, is this desirable?
 
-Cheers,
+Gr{oetje,eeting}s,
 
-/ magnus
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
