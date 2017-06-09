@@ -1,55 +1,156 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-Date: Fri, 2 Jun 2017 22:53:43 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [RFC PATCH 2/2] i2c: sh_mobile: drop needless check for of_node
-Message-ID: <20170602205343.etemzgwevmzyoibr@ninjato>
-References: <20170518211140.12023-1-wsa+renesas@sang-engineering.com>
- <20170518211140.12023-3-wsa+renesas@sang-engineering.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="axcmssuclizmni2y"
-Content-Disposition: inline
-In-Reply-To: <20170518211140.12023-3-wsa+renesas@sang-engineering.com>
-Sender: linux-i2c-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 4/4] arm64: dts: renesas: Add support for Salvator-XS with R-Car H3 ES2.0
+Date: Fri,  9 Jun 2017 13:43:49 +0200
+Message-Id: <1497008629-3974-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1497008629-3974-1-git-send-email-geert+renesas@glider.be>
+References: <1497008629-3974-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Add initial support for the Renesas Salvator-XS (Salvator-X 2nd version)
+development board equipped with an R-Car H3 ES2.0 SiP.
 
---axcmssuclizmni2y
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm64/boot/dts/renesas/Makefile               |   1 +
+ .../arm64/boot/dts/renesas/r8a7795-salvator-xs.dts | 109 +++++++++++++++++++++
+ 2 files changed, 110 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
 
-On Thu, May 18, 2017 at 11:11:40PM +0200, Wolfram Sang wrote:
-> After removal of platform_data support, we can simplify OF handling.
-> of_match_device() evaluates to NULL if !CONFIG_OF or if there is no node
-> pointer for that device, so we can remove the check for the node ptr.
->=20
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-Fixed the assignment as mentioned by Geert (thanks!) and applied to
-for-next, thanks!
-
-
---axcmssuclizmni2y
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlkx0FcACgkQFA3kzBSg
-Kbanfg/8Cg+AgqS+7eNtNJev3LFA1GeeoHXuTTVdNSPcChzKhZR26Tu6mo2lRCAH
-e+9u5CXhhUw/SJmU010QwrsW5+KI20C3f4USLYdkHiBeGv6Q02m+Y7vAlXWK8g9e
-+6puHVe80yMH4WXrNvR5TwQJQtqMUzUQSZVnAOdQZ1dn110J4E8BiIuSG5ogtYXX
-HQ44P6AkzQxFYfYPLMoJlHWB4aNXIKs2ECJyG1cBAJH7flwBIIjVpw8F6DSBqHS4
-4DoQsO8lgt0+nuektDSk73ukSjqhyODtmliXaeqNTZQsJMB/mgDFGmjyPi3D7o6m
-b5PisIlf5kksct+8cHiMWkMaju/NgmR2HqvbrK7FArKUJZL0bSR6YR9v43tZp81f
-odm49mOePNMeld3K3u4jK/QPDVF0kcnEHfD4+rjU5RaPILg9wznwXon6V05zolt9
-TYPIO3pPhsMOhXiFFkB/sJUM6KKHKX5KrgWJ78Yznzw8qHCaVImDJg7aaZtjmeXf
-Pq0YByAOjftMiSNpjErPGftjKn4kXQ/DcIjQBH5pp1eTtVQF1K1ABRRlrkdqnZnS
-/zZ/s2lLOo/qEq5dkQ9J+rR3o3UMEyeVtHdm7UbkGbyH6wnPocYX1lEYXRWLoO0+
-s7QE554CpXDmkXPzKUsV9F06RLiqddXv/B4Z6Cx9S59yEfcfywQ=
-=axfk
------END PGP SIGNATURE-----
-
---axcmssuclizmni2y--
+diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
+index d5451015950e3dfc..acc4bb30d485b6bc 100644
+--- a/arch/arm64/boot/dts/renesas/Makefile
++++ b/arch/arm64/boot/dts/renesas/Makefile
+@@ -1,4 +1,5 @@
+ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-x.dtb r8a7795-h3ulcb.dtb
++dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-xs.dtb
+ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-es1-salvator-x.dtb r8a7795-es1-h3ulcb.dtb
+ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-x.dtb r8a7796-m3ulcb.dtb
+ 
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
+new file mode 100644
+index 0000000000000000..de354957144b4822
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
+@@ -0,0 +1,109 @@
++/*
++ * Device Tree Source for the Salvator-X 2nd version board
++ *
++ * Copyright (C) 2015-2017 Renesas Electronics Corp.
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++#define CPG_AUDIO_CLK_I		R8A7795_CLK_S0D4
++
++/dts-v1/;
++#include "r8a7795.dtsi"
++#include "salvator-xs.dtsi"
++
++/ {
++	model = "Renesas Salvator-X 2nd version board based on r8a7795 ES2.0+";
++	compatible = "renesas,salvator-xs", "renesas,r8a7795";
++
++	memory@48000000 {
++		device_type = "memory";
++		/* first 128MB is reserved for secure area. */
++		reg = <0x0 0x48000000 0x0 0x38000000>;
++	};
++
++	memory@500000000 {
++		device_type = "memory";
++		reg = <0x5 0x00000000 0x0 0x40000000>;
++	};
++
++	memory@600000000 {
++		device_type = "memory";
++		reg = <0x6 0x00000000 0x0 0x40000000>;
++	};
++
++	memory@700000000 {
++		device_type = "memory";
++		reg = <0x7 0x00000000 0x0 0x40000000>;
++	};
++};
++
++&du {
++	clocks = <&cpg CPG_MOD 724>,
++		 <&cpg CPG_MOD 723>,
++		 <&cpg CPG_MOD 722>,
++		 <&cpg CPG_MOD 721>,
++		 <&cpg CPG_MOD 727>,
++		 <&x21_clk>,
++		 <&x22_clk>;
++	clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0",
++		      "dclkin.1", "dclkin.2";
++};
++
++&ehci2 {
++	status = "okay";
++};
++
++&hdmi0 {
++	status = "okay";
++
++	ports {
++		port@1 {
++			reg = <1>;
++			rcar_dw_hdmi0_out: endpoint {
++				remote-endpoint = <&hdmi0_con>;
++			};
++		};
++	};
++};
++
++&hdmi0_con {
++	remote-endpoint = <&rcar_dw_hdmi0_out>;
++};
++
++&hdmi1 {
++	status = "okay";
++
++	ports {
++		port@1 {
++			reg = <1>;
++			rcar_dw_hdmi1_out: endpoint {
++				remote-endpoint = <&hdmi1_con>;
++			};
++		};
++	};
++};
++
++&hdmi1_con {
++	remote-endpoint = <&rcar_dw_hdmi1_out>;
++};
++
++&ohci2 {
++	status = "okay";
++};
++
++&pfc {
++	usb2_pins: usb2 {
++		groups = "usb2";
++		function = "usb2";
++	};
++};
++
++&usb2_phy2 {
++	pinctrl-0 = <&usb2_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
+-- 
+2.7.4
