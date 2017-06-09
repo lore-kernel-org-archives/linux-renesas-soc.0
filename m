@@ -1,56 +1,211 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH 2/4] i2c: add docs to clarify DMA handling
-Date: Tue,  6 Jun 2017 11:20:32 +0200
-Message-Id: <20170606092034.1516-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170606092034.1516-1-wsa+renesas@sang-engineering.com>
-References: <20170606092034.1516-1-wsa+renesas@sang-engineering.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: robh+dt@kernel.org, mark.rutland@arm.com, mchehab@kernel.org,
+        hverkuil@xs4all.nl, sakari.ailus@linux.intel.com, crope@iki.fi
+Cc: chris.paterson2@renesas.com, laurent.pinchart@ideasonboard.com,
+        geert+renesas@glider.be, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH v7 6/7] dt-bindings: media: Add Renesas R-Car DRIF binding
+Date: Fri,  9 Jun 2017 16:07:37 +0100
+Message-Id: <20170609150738.56294-7-ramesh.shanmugasundaram@bp.renesas.com>
+In-Reply-To: <20170609150738.56294-1-ramesh.shanmugasundaram@bp.renesas.com>
+References: <20170609150738.56294-1-ramesh.shanmugasundaram@bp.renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- Documentation/i2c/DMA-considerations | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
- create mode 100644 Documentation/i2c/DMA-considerations
+Add binding documentation for Renesas R-Car Digital Radio Interface
+(DRIF) controller.
 
-diff --git a/Documentation/i2c/DMA-considerations b/Documentation/i2c/DMA-considerations
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/media/renesas,drif.txt     | 176 +++++++++++++++++++++
+ 1 file changed, 176 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/renesas,drif.txt
+
+diff --git a/Documentation/devicetree/bindings/media/renesas,drif.txt b/Documentation/devicetree/bindings/media/renesas,drif.txt
 new file mode 100644
-index 00000000000000..945ac5cfe55c12
+index 000000000000..39516b94c28f
 --- /dev/null
-+++ b/Documentation/i2c/DMA-considerations
-@@ -0,0 +1,28 @@
-+Linux I2C and DMA
-+-----------------
++++ b/Documentation/devicetree/bindings/media/renesas,drif.txt
+@@ -0,0 +1,176 @@
++Renesas R-Car Gen3 Digital Radio Interface controller (DRIF)
++------------------------------------------------------------
 +
-+Given that I2C is a low-speed bus where largely small messages are transferred,
-+it is not considered a prime user of DMA access. At this time of writing, only
-+10% of I2C bus master drivers have DMA support implemented. And the vast
-+majority of transactions are so small that setting up DMA for it will likely
-+add more overhead than a plain PIO transfer.
++R-Car Gen3 DRIF is a SPI like receive only slave device. A general
++representation of DRIF interfacing with a master device is shown below.
 +
-+Therefore, it is *not* mandatory that the buffer of an i2c message is DMA safe.
-+It does not seem reasonable to apply additional burdens when the feature is so
-+rarely used. However, it is recommended to use a DMA-safe buffer, if your
-+message size is likely applicable for DMA (FIXME: > 8 byte?).
+++---------------------+                +---------------------+
++|                     |-----SCK------->|CLK                  |
++|       Master        |-----SS-------->|SYNC  DRIFn (slave)  |
++|                     |-----SD0------->|D0                   |
++|                     |-----SD1------->|D1                   |
+++---------------------+                +---------------------+
 +
-+To support this, drivers wishing to implement DMA can use a helper function
-+checking if the size is suitable for DMA or if the buffer is DMA capable:
++As per datasheet, each DRIF channel (drifn) is made up of two internal
++channels (drifn0 & drifn1). These two internal channels share the common
++CLK & SYNC. Each internal channel has its own dedicated resources like
++irq, dma channels, address space & clock. This internal split is not
++visible to the external master device.
 +
-+	int i2c_check_msg_for_dma(msg, dma_threshold);
++The device tree model represents each internal channel as a separate node.
++The internal channels sharing the CLK & SYNC are tied together by their
++phandles using a property called "renesas,bonding". For the rest of
++the documentation, unless explicitly stated, the word channel implies an
++internal channel.
 +
-+Please check its in kernel documentation for details.
++When both internal channels are enabled they need to be managed together
++as one (i.e.) they cannot operate alone as independent devices. Out of the
++two, one of them needs to act as a primary device that accepts common
++properties of both the internal channels. This channel is identified by a
++property called "renesas,primary-bond".
 +
-+It should be further noted that bounce buffer handling is left to be handled on
-+driver level because details like alignment requirements are best known on that
-+level.
++To summarize,
++   - When both the internal channels that are bonded together are enabled,
++     the zeroth channel is selected as primary-bond. This channels accepts
++     properties common to all the members of the bond.
++   - When only one of the bonded channels need to be enabled, the property
++     "renesas,bonding" or "renesas,primary-bond" will have no effect. That
++     enabled channel can act alone as any other independent device.
 +
-+If you plan to use DMA with I2C (or with any other bus, actually) make sure you
-+have CONFIG_DMA_API_DEBUG enabled during development. It can help you find
-+various issues which can be complex to debug otherwise.
++Required properties of an internal channel:
++-------------------------------------------
++- compatible:	"renesas,r8a7795-drif" if DRIF controller is a part of R8A7795 SoC.
++		"renesas,rcar-gen3-drif" for a generic R-Car Gen3 compatible device.
++
++		When compatible with the generic version, nodes must list the
++		SoC-specific version corresponding to the platform first
++		followed by the generic version.
++
++- reg: offset and length of that channel.
++- interrupts: associated with that channel.
++- clocks: phandle and clock specifier of that channel.
++- clock-names: clock input name string: "fck".
++- dmas: phandles to the DMA channels.
++- dma-names: names of the DMA channel: "rx".
++- renesas,bonding: phandle to the other channel.
++
++Optional properties of an internal channel:
++-------------------------------------------
++- power-domains: phandle to the respective power domain.
++
++Required properties of an internal channel when:
++	- It is the only enabled channel of the bond (or)
++	- If it acts as primary among enabled bonds
++--------------------------------------------------------
++- pinctrl-0: pin control group to be used for this channel.
++- pinctrl-names: must be "default".
++- renesas,primary-bond: empty property indicating the channel acts as primary
++			among the bonded channels.
++- port: child port node corresponding to the data input, in accordance with
++	the video interface bindings defined in
++	Documentation/devicetree/bindings/media/video-interfaces.txt. The port
++	node must contain at least one endpoint.
++
++Optional endpoint property:
++---------------------------
++- sync-active: Indicates sync signal polarity, 0/1 for low/high respectively.
++	       This property maps to SYNCAC bit in the hardware manual. The
++	       default is 1 (active high).
++
++Example:
++--------
++
++(1) Both internal channels enabled:
++-----------------------------------
++
++When interfacing with a third party tuner device with two data pins as shown
++below.
++
+++---------------------+                +---------------------+
++|                     |-----SCK------->|CLK                  |
++|       Master        |-----SS-------->|SYNC  DRIFn (slave)  |
++|                     |-----SD0------->|D0                   |
++|                     |-----SD1------->|D1                   |
+++---------------------+                +---------------------+
++
++	drif00: rif@e6f40000 {
++		compatible = "renesas,r8a7795-drif",
++			     "renesas,rcar-gen3-drif";
++		reg = <0 0xe6f40000 0 0x64>;
++		interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cpg CPG_MOD 515>;
++		clock-names = "fck";
++		dmas = <&dmac1 0x20>, <&dmac2 0x20>;
++		dma-names = "rx", "rx";
++		power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++		renesas,bonding = <&drif01>;
++		renesas,primary-bond;
++		pinctrl-0 = <&drif0_pins>;
++		pinctrl-names = "default";
++		port {
++			drif0_ep: endpoint {
++			     remote-endpoint = <&tuner_ep>;
++			};
++		};
++	};
++
++	drif01: rif@e6f50000 {
++		compatible = "renesas,r8a7795-drif",
++			     "renesas,rcar-gen3-drif";
++		reg = <0 0xe6f50000 0 0x64>;
++		interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cpg CPG_MOD 514>;
++		clock-names = "fck";
++		dmas = <&dmac1 0x22>, <&dmac2 0x22>;
++		dma-names = "rx", "rx";
++		power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++		renesas,bonding = <&drif00>;
++	};
++
++
++(2) Internal channel 1 alone is enabled:
++----------------------------------------
++
++When interfacing with a third party tuner device with one data pin as shown
++below.
++
+++---------------------+                +---------------------+
++|                     |-----SCK------->|CLK                  |
++|       Master        |-----SS-------->|SYNC  DRIFn (slave)  |
++|                     |                |D0 (unused)          |
++|                     |-----SD-------->|D1                   |
+++---------------------+                +---------------------+
++
++	drif00: rif@e6f40000 {
++		compatible = "renesas,r8a7795-drif",
++			     "renesas,rcar-gen3-drif";
++		reg = <0 0xe6f40000 0 0x64>;
++		interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cpg CPG_MOD 515>;
++		clock-names = "fck";
++		dmas = <&dmac1 0x20>, <&dmac2 0x20>;
++		dma-names = "rx", "rx";
++		power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++		renesas,bonding = <&drif01>;
++	};
++
++	drif01: rif@e6f50000 {
++		compatible = "renesas,r8a7795-drif",
++			     "renesas,rcar-gen3-drif";
++		reg = <0 0xe6f50000 0 0x64>;
++		interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cpg CPG_MOD 514>;
++		clock-names = "fck";
++		dmas = <&dmac1 0x22>, <&dmac2 0x22>;
++		dma-names = "rx", "rx";
++		power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++		renesas,bonding = <&drif00>;
++		pinctrl-0 = <&drif0_pins>;
++		pinctrl-names = "default";
++		port {
++			drif0_ep: endpoint {
++			     remote-endpoint = <&tuner_ep>;
++			     sync-active = <0>;
++			};
++		};
++	};
 -- 
-2.11.0
+2.12.2
+
