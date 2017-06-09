@@ -1,170 +1,94 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:34674 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751512AbdFIH07 (ORCPT
+Received: from mail-lf0-f50.google.com ([209.85.215.50]:34541 "EHLO
+        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751548AbdFIU1v (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Jun 2017 03:26:59 -0400
+        Fri, 9 Jun 2017 16:27:51 -0400
+Received: by mail-lf0-f50.google.com with SMTP id v20so33867981lfa.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 09 Jun 2017 13:27:51 -0700 (PDT)
+From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
+Date: Fri, 9 Jun 2017 22:27:48 +0200
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] sh_eth: add support to change MTU
+Message-ID: <20170609202748.GA17461@bigcity.dyn.berto.se>
+References: <20170609153034.8777-1-niklas.soderlund+renesas@ragnatech.se>
+ <15374026-bf82-5b4c-7d1a-53b21dff3451@cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <20170529104229.GB21347@w540>
-References: <SG2PR06MB11658EC3A3A80C57E6F539AC8A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CAHp75VeLtOuty=iaxuCaH43rnBZDTT03iH7JyjDJBQhTD-EjzA@mail.gmail.com>
- <CACRpkdZkNGSUvTrEdjbGKO1hr799QpJBGSHPVbsBibph7Jx61A@mail.gmail.com>
- <20170508160120.GB25206@w540> <CAHp75VfOMKOhpkec+htA6DRQhivpSmNXy1=Ayig1W+ZC84gTLw@mail.gmail.com>
- <20170508172516.GC25206@w540> <CACRpkdY1h+yfFuk2y9=nZqqvW9=G33_eHCisvuMkJ5b3zizY7Q@mail.gmail.com>
- <CAA+hA=Q9hwe7_xL440Reoi7z7m8-SScZ5E057419KSA7dQK=tQ@mail.gmail.com>
- <20170523183735.GC13664@w540> <CACRpkdYcaGzSvAN2Trqwer+8GbqXyfpE=VqiYcQvCOqhDO9MMw@mail.gmail.com>
- <20170529104229.GB21347@w540>
-From: Dong Aisheng <dongas86@gmail.com>
-Date: Fri, 9 Jun 2017 15:26:57 +0800
-Message-ID: <CAA+hA=T56WHugmA+5V5ZC6TTxeSUVt1hr0v53YuDsUYgBcvKTw@mail.gmail.com>
-Subject: Re: [PATCH v5 01/10] pinctrl: generic: Add bi-directional and output-enable
-To: jmondi <jacopo@jmondi.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Chris Brandt <Chris.Brandt@renesas.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <15374026-bf82-5b4c-7d1a-53b21dff3451@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Linus & j,
+Hi Sergei,
 
-On Mon, May 29, 2017 at 6:42 PM, jmondi <jacopo@jmondi.org> wrote:
-> Hi Linus,
->
-> On Mon, May 29, 2017 at 10:45:44AM +0200, Linus Walleij wrote:
->> On Tue, May 23, 2017 at 8:37 PM, jmondi <jacopo@jmondi.org> wrote:
->>
->> >> I did not follow too much.
->> >> But it seems IMX7ULP/Vybrid to be also a fan of generic
->> >> output-enable/input-enable
->> >> property.
->> >>
->> >> See:
->> >> Figure 5-2. GPIO PAD in Page 241
->> >> http://www.nxp.com/assets/documents/data/en/reference-manuals/VFXXXRM.pdf
->> >>
->> >> It has separate register bits to control input buffer enable and
->> >> output buffer enable
->> >> and we need set it property for GPIO function.
->> >
->> > As it seems we have another user for 'output-enable' here, what if we just
->> > add that one to the generic bindings properties list, and we keep
->> > 'bi-directional' (which seems to be the most debated property we have
->> > added) out of generic properties?
->> >
->> > We can handle 'bi-directional' pins with static tables in our pin
->> > controller driver and not have it anywhere in DT.
->>
->> This sounds like a viable approach.
->>
->> I just want to know if "output-enable" is the right name?
->> "output-buffer-enable"?
->
-> Great! Thanks!
->
-> On naming: if we need "output-buffer-enable" should we add
-> "input-buffer-enable" as well?
->
-> Currently we are using "input-enable" to pair with "output-enable",
-> but as you said, just "output-enable" when "output-high" and
-> "output-low" are there already seems a bit confusing.
-> At the same time "input-buffer-enable" seems to actually be just
-> electrically equivalent to "input-enable", so adding it is a bit of a
-> waste as well.
->
-> I see three options here:
->
-> 1) Add "output-buffer-enable" and "input-buffer-enable"
-> we end up with
-> "output-high"
-> "output-low"
-> "input-enable"
-> "output-buffer-enable"
-> "input-buffer-enable"
->
-> 2) Add "output-buffer-enable" only
-> we end up with
-> "output-high"
-> "output-low"
-> "input-enable"
-> "output-buffer-enable"
->
-> Binding may be confusing as in one case we use "output-buffer-enable"
-> while in the other "input-enable"
->
-> 3) Add "output-enable" only
-> "output-high"
-> "output-low"
-> "input-enable"
-> "output-enable"
->
-> As you, I don't like "output-enable" that much but it pairs better with
-> "input-enable".
->
-> I'll let you and DT people decide on this, as it's really an ABI definition
-> problem and you have better judgment there.
->
+Thanks for your feedback.
 
-What's the final decision of this?
+On 2017-06-09 19:31:09 +0300, Sergei Shtylyov wrote:
+> Hello!
+> 
+> On 06/09/2017 06:30 PM, Niklas S�derlund wrote:
+> 
+> > The hardware supports the MTU to be changed and the driver it self is
+> > somewhat prepared to support this. This patch hooks up the callbacks to
+> > be able to change the MTU from user-space.
+> > 
+> > Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+> [...]
+> 
+>    One more thing off my back, thanks! :-)
+>    I'm OK with this patch in principle (but have several nits):
 
-I saw the following revert patch in pinctrl-next but did not see a successive
-patch to add output-enable back?
+Will update nits and send v2 containing your Acked-by.
 
-IMX7ULP pinctrl driver is pending on this because it needs use both
-input-enable and output-enable if we want to make them generic property.
+> 
+> Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-commit b4d2ea2af95cb77e2f320e24da526280d4aa2f6b
-Author: Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon May 8 10:48:21 2017 +0200
+Thanks :-)
 
-    Revert "pinctrl: generic: Add bi-directional and output-enable"
+> 
+> > diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
+> > index f68c4db656eda846..da41eda7bfada6b9 100644
+> > --- a/drivers/net/ethernet/renesas/sh_eth.c
+> > +++ b/drivers/net/ethernet/renesas/sh_eth.c
+> [...]
+> > @@ -3171,6 +3184,13 @@ static int sh_eth_drv_probe(struct platform_device *pdev)
+> >  	}
+> >  	sh_eth_set_default_cpu_data(mdp->cd);
+> > 
+> > +	/* Datasheet states max MTU should be 2048 but due to the
+> 
+>    User's manual. :-)
 
-    This reverts commit 8c58f1a7a4b6d1d723bf25fef9d842d5a11200d0.
+Will update in v2.
 
-    It turns out that applying these generic properties was
-    premature: the properties used in the driver using this
-    are of unclear electrical nature and the subject need to
-    be discussed.
+>    Somehow I thought it supports jumbo frames but the manual doesn't confirm
+> that... ah, that's EtherAVB! :-)
 
-    Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Yes I did look for that but could not find that for sh_eth :-)
 
-Regards
-Dong Aisheng
+> 
+> > +	 * aliment calculations in sh_eth_ring_init() the practical
+> 
+>   Alignment.
 
->>
->> > I see commit 42d5a11200d0[1] has not been reverted yet as Andy asked
->> > in some previous email.
->>
->> I'm just overloaded. I sent that revert to Torvalds today.
->
-> Thank you. Didn't want to put pressure ;)
->>
->> > I can send another version of that patch with
->> > only 'output-enable' if you wish.
->>
->> That's what we want.
->>
->> > Once we reach consesus, I can then send v6 of our pin controller driver
->> > based on that.
->>
->> OK sounds like a plan.
->>
->> Sorry for the mess, I'm just trying to get this right :/
->
-> Not a mess, and thanks for your effort in maintaining  all of this
->
-> Thanks
->    j
->>
->> Yours,
->> Linus Walleij
+Will fix in v2.
+
+> 
+> > +	 * MTU is a bit less. Maybe this can be optimized some more.
+> 
+>    Undoubtedly... :-)
+
+:-)
+
+> 
+> [...]
+> 
+> MBR, Sergei
+> 
+
+-- 
+Regards,
+Niklas S�derlund
