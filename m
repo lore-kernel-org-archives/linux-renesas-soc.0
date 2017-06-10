@@ -1,114 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:6577 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751955AbdFLNjs (ORCPT
+Received: from mail-lf0-f53.google.com ([209.85.215.53]:33199 "EHLO
+        mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751563AbdFJT0R (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Jun 2017 09:39:48 -0400
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: robh+dt@kernel.org, mark.rutland@arm.com, mchehab@kernel.org,
-        hverkuil@xs4all.nl, sakari.ailus@linux.intel.com, crope@iki.fi
-Cc: chris.paterson2@renesas.com, laurent.pinchart@ideasonboard.com,
-        geert+renesas@glider.be, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH v8 2/8] dt-bindings: media: Add MAX2175 binding description
-Date: Mon, 12 Jun 2017 14:26:14 +0100
-Message-Id: <20170612132620.1024-3-ramesh.shanmugasundaram@bp.renesas.com>
-In-Reply-To: <20170612132620.1024-1-ramesh.shanmugasundaram@bp.renesas.com>
-References: <20170612132620.1024-1-ramesh.shanmugasundaram@bp.renesas.com>
+        Sat, 10 Jun 2017 15:26:17 -0400
+Received: by mail-lf0-f53.google.com with SMTP id m77so14761137lfe.0
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 10 Jun 2017 12:26:16 -0700 (PDT)
+Subject: Re: [PATCH v2] sh_eth: add support to change MTU
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>
+References: <20170609203215.1206-1-niklas.soderlund+renesas@ragnatech.se>
+ <20170609203658.GB17461@bigcity.dyn.berto.se>
+Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <239c39ff-cf0e-d332-7b52-098ba8029798@cogentembedded.com>
+Date: Sat, 10 Jun 2017 22:26:13 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20170609203658.GB17461@bigcity.dyn.berto.se>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add device tree binding documentation for MAX2175 RF to bits tuner
-device.
+Hello!
 
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Acked-by: Rob Herring <robh@kernel.org>
----
- .../devicetree/bindings/media/i2c/max2175.txt      | 59 ++++++++++++++++++++++
- .../devicetree/bindings/property-units.txt         |  1 +
- 2 files changed, 60 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/i2c/max2175.txt
+On 06/09/2017 11:36 PM, Niklas Söderlund wrote:
 
-diff --git a/Documentation/devicetree/bindings/media/i2c/max2175.txt b/Documentation/devicetree/bindings/media/i2c/max2175.txt
-new file mode 100644
-index 000000000000..02b4e9cd7b1b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/i2c/max2175.txt
-@@ -0,0 +1,59 @@
-+Maxim Integrated MAX2175 RF to Bits tuner
-+-----------------------------------------
-+
-+The MAX2175 IC is an advanced analog/digital hybrid-radio receiver with
-+RF to Bits® front-end designed for software-defined radio solutions.
-+
-+Required properties:
-+--------------------
-+- compatible: "maxim,max2175" for MAX2175 RF-to-bits tuner.
-+- clocks: clock specifier.
-+- port: child port node corresponding to the I2S output, in accordance with
-+	the video interface bindings defined in
-+	Documentation/devicetree/bindings/media/video-interfaces.txt. The port
-+	node must contain at least one endpoint.
-+
-+Optional properties:
-+--------------------
-+- maxim,master	      : phandle to the master tuner if it is a slave. This
-+			is used to define two tuners in diversity mode
-+			(1 master, 1 slave). By default each tuner is an
-+			individual master.
-+- maxim,refout-load   : load capacitance value (in picofarads) on reference
-+			output drive level. The possible load values are:
-+			 0 (default - refout disabled)
-+			10
-+			20
-+			30
-+			40
-+			60
-+			70
-+- maxim,am-hiz-filter : empty property indicates the AM Hi-Z filter is used
-+			in this hardware for AM antenna input.
-+
-+Example:
-+--------
-+
-+Board specific DTS file
-+
-+/* Fixed XTAL clock node */
-+maxim_xtal: clock {
-+	compatible = "fixed-clock";
-+	#clock-cells = <0>;
-+	clock-frequency = <36864000>;
-+};
-+
-+/* A tuner device instance under i2c bus */
-+max2175_0: tuner@60 {
-+	compatible = "maxim,max2175";
-+	reg = <0x60>;
-+	clocks = <&maxim_xtal>;
-+	maxim,refout-load = <10>;
-+
-+	port {
-+		max2175_0_ep: endpoint {
-+			remote-endpoint = <&slave_rx_device>;
-+		};
-+	};
-+
-+};
-diff --git a/Documentation/devicetree/bindings/property-units.txt b/Documentation/devicetree/bindings/property-units.txt
-index 12278d79f6c0..7c9f6ee918f1 100644
---- a/Documentation/devicetree/bindings/property-units.txt
-+++ b/Documentation/devicetree/bindings/property-units.txt
-@@ -28,6 +28,7 @@ Electricity
- -ohms		: Ohms
- -micro-ohms	: micro Ohms
- -microvolt	: micro volts
-+-picofarads	: picofarads
- 
- Temperature
- ----------------------------------------
--- 
-2.12.2
+>> The hardware supports the MTU to be changed and the driver it self is
+>> somewhat prepared to support this. This patch hooks up the callbacks to
+>> be able to change the MTU from user-space.
+>>
+>> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+>> Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>> ---
+[...]
+>> @@ -3171,6 +3184,13 @@ static int sh_eth_drv_probe(struct platform_device *pdev)
+>>  	}
+>>  	sh_eth_set_default_cpu_data(mdp->cd);
+>>
+>> +	/* User's manua states max MTU should be 2048 but due to the
+>
+> s/manua/manual/
+
+    Looking at it for another time, I'd also reword the subject -- something 
+like "sh_eth: add support for changing MTU" or "sh_eth: add MTU change support".
+
+MBR, Sergei
