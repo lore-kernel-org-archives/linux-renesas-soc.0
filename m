@@ -1,32 +1,121 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([184.105.139.130]:60640 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751954AbdFLN6P (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:39542 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751969AbdFLIjO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Jun 2017 09:58:15 -0400
-Date: Mon, 12 Jun 2017 09:58:13 -0400 (EDT)
-Message-Id: <20170612.095813.58100051008915326.davem@davemloft.net>
-To: niklas.soderlund+renesas@ragnatech.se
-Cc: sergei.shtylyov@cogentembedded.com, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3] sh_eth: add support for changing MTU
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20170612083903.1584-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170612083903.1584-1-niklas.soderlund+renesas@ragnatech.se>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8BIT
+        Mon, 12 Jun 2017 04:39:14 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v3] sh_eth: add support for changing MTU
+Date: Mon, 12 Jun 2017 10:39:03 +0200
+Message-Id: <20170612083903.1584-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
-Date: Mon, 12 Jun 2017 10:39:03 +0200
+The hardware supports the MTU to be changed and the driver it self is
+somewhat prepared to support this. This patch hooks up the callbacks to
+be able to change the MTU from user-space.
 
-> The hardware supports the MTU to be changed and the driver it self is
-> somewhat prepared to support this. This patch hooks up the callbacks to
-> be able to change the MTU from user-space.
-> 
-> Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
-> Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+---
 
-Applied to net-next, thanks.
+Based on v4.12-rc1 and tested on Renesas R-Car Koelsch M2.
+
+Test procedure:
+
+1. On host set MTU to something large (9000) was used for this test.
+
+2. On target set MTU to something other then 1500, in this test the max
+   MTU of 1978 is used.
+
+3. Send ping with large payload and observe that it works.
+
+   ping -M do -s 1954 <target>
+
+   The reason for 1954 instead of 1982 is two fold:
+
+   1. On Linux (different on Mac IIRC) the ICMP/ping implementation
+      do not encapsulate the 28 byte ICMP (8) + IP (20).
+   2. The driver internally reserve 4 bytes of transmission buffer for
+      an optional VLAN header (4). And since no VLAN is used in this
+      setup the additional 4 bytes can carry data.
+
+4. For extra verification the packet flow is inspected using tcpdump to
+   verify that there is no packet fragmentation.
+
+* Changes since v2
+- Changed subject from 'sh_eth: add support to change MTU' to 'sh_eth: add 
+  support for changing MTU' as suggested by Sergei.
+- Changed variable name of struct net_device from dev to ndev, thanks Sergei!
+- Fixed typo.
+
+* Changes since v1
+- Fix spelling mistake in comment, thanks Sergei!
+- Add Acked-by from Sergei.
+
+
+ drivers/net/ethernet/renesas/sh_eth.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
+index f68c4db656eda846..2be46e4a32913972 100644
+--- a/drivers/net/ethernet/renesas/sh_eth.c
++++ b/drivers/net/ethernet/renesas/sh_eth.c
+@@ -2558,6 +2558,17 @@ static int sh_eth_do_ioctl(struct net_device *ndev, struct ifreq *rq, int cmd)
+ 	return phy_mii_ioctl(phydev, rq, cmd);
+ }
+ 
++static int sh_eth_change_mtu(struct net_device *ndev, int new_mtu)
++{
++	if (netif_running(ndev))
++		return -EBUSY;
++
++	ndev->mtu = new_mtu;
++	netdev_update_features(ndev);
++
++	return 0;
++}
++
+ /* For TSU_POSTn. Please refer to the manual about this (strange) bitfields */
+ static void *sh_eth_tsu_get_post_reg_offset(struct sh_eth_private *mdp,
+ 					    int entry)
+@@ -3029,6 +3040,7 @@ static const struct net_device_ops sh_eth_netdev_ops = {
+ 	.ndo_set_rx_mode	= sh_eth_set_rx_mode,
+ 	.ndo_tx_timeout		= sh_eth_tx_timeout,
+ 	.ndo_do_ioctl		= sh_eth_do_ioctl,
++	.ndo_change_mtu		= sh_eth_change_mtu,
+ 	.ndo_validate_addr	= eth_validate_addr,
+ 	.ndo_set_mac_address	= eth_mac_addr,
+ };
+@@ -3043,6 +3055,7 @@ static const struct net_device_ops sh_eth_netdev_ops_tsu = {
+ 	.ndo_vlan_rx_kill_vid	= sh_eth_vlan_rx_kill_vid,
+ 	.ndo_tx_timeout		= sh_eth_tx_timeout,
+ 	.ndo_do_ioctl		= sh_eth_do_ioctl,
++	.ndo_change_mtu		= sh_eth_change_mtu,
+ 	.ndo_validate_addr	= eth_validate_addr,
+ 	.ndo_set_mac_address	= eth_mac_addr,
+ };
+@@ -3171,6 +3184,13 @@ static int sh_eth_drv_probe(struct platform_device *pdev)
+ 	}
+ 	sh_eth_set_default_cpu_data(mdp->cd);
+ 
++	/* User's manual states max MTU should be 2048 but due to the
++	 * alignment calculations in sh_eth_ring_init() the practical
++	 * MTU is a bit less. Maybe this can be optimized some more.
++	 */
++	ndev->max_mtu = 2000 - (ETH_HLEN + VLAN_HLEN + ETH_FCS_LEN);
++	ndev->min_mtu = ETH_MIN_MTU;
++
+ 	/* set function */
+ 	if (mdp->cd->tsu)
+ 		ndev->netdev_ops = &sh_eth_netdev_ops_tsu;
+-- 
+2.13.1
