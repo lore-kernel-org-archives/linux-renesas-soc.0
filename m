@@ -1,254 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:54739 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753598AbdFPNbL (ORCPT
+Received: from www.zeus03.de ([194.117.254.33]:57004 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752120AbdFLL3F (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Jun 2017 09:31:11 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH] soc: renesas: Rework Kconfig and Makefile logic
-Date: Fri, 16 Jun 2017 15:30:31 +0200
-Message-Id: <8be381a131c29c4737aed44e7e5f90cb77bb4a7e.1497617480.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1497617480.git.horms+renesas@verge.net.au>
-References: <cover.1497617480.git.horms+renesas@verge.net.au>
+        Mon, 12 Jun 2017 07:29:05 -0400
+Date: Mon, 12 Jun 2017 13:29:02 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: Re: [RFC PATCH v2 0/2] mmc: core: process ECC errors raised in stop
+ cmds
+Message-ID: <20170612112902.GA1504@katana>
+References: <20170408202006.27276-1-wsa+renesas@sang-engineering.com>
+ <CAPDyKFqSr+3B5wq7+3+fDhB5etwEGhBadA0X7L9Tu6FUmKJgcQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="rwEMma7ioTxnRzrJ"
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFqSr+3B5wq7+3+fDhB5etwEGhBadA0X7L9Tu6FUmKJgcQ@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-The goals are to:
-  - Allow precise control over and automatic selection of which
-    (sub)drivers are used for which SoC,
-  - Allow adding support for new SoCs easily,
-  - Allow compile-testing of all (sub)drivers,
-  - Keep driver selection logic in the subsystem-specific Kconfig,
-    independent from the architecture-specific Kconfig (i.e. no "select"
-    from arch/arm64/Kconfig.platforms), to avoid dependencies.
+--rwEMma7ioTxnRzrJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This is implemented by:
-  - Introducing Kconfig symbols for all drivers and sub-drivers,
-  - Introducing the Kconfig symbol SOC_RENESAS, which is enabled
-    automatically when building for a Renesas ARM platform, and which
-    enables all required drivers without interaction of the user, based
-    on SoC-specific ARCH_* symbols,
-  - Allowing the user to enable any Kconfig symbol manually if
-    COMPILE_TEST is enabled,
-  - Using the new Kconfig symbols instead of the ARCH_* symbols to
-    control compilation in the Makefile,
-  - Always entering drivers/soc/renesas/ during the build.
+On Mon, Jun 12, 2017 at 10:30:27AM +0200, Ulf Hansson wrote:
+> On 8 April 2017 at 22:20, Wolfram Sang <wsa+renesas@sang-engineering.com>=
+ wrote:
+> > Here is the second RFC for handling ECC errors flagged in the stop comm=
+and
+> > after a multiblock transfer. It is still RFC because I could only test =
+it by
+> > inducing ECC errors in software (see patch for TMIO below). Shimoda-san=
+, can
+> > you try this series with the SD tester again? That would be very kind.
+> >
+> > Other than that, I hope the patch descriptions and comments explain the=
+ single
+> > steps. Looking forward for thoughts.
+>=20
+> Apologize for the delay!
+>=20
+> I looked into these and the changes seems reasonable. I have applied
+> them for next to allow them to get some test coverage.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- drivers/soc/Kconfig                  |  1 +
- drivers/soc/Makefile                 |  2 +-
- drivers/soc/renesas/Kconfig          | 63 ++++++++++++++++++++++++++++++++++++
- drivers/soc/renesas/Makefile         | 31 +++++++++---------
- drivers/soc/renesas/rcar-sysc.c      | 24 +++++++-------
- include/linux/soc/renesas/rcar-rst.h |  3 +-
- 6 files changed, 92 insertions(+), 32 deletions(-)
- create mode 100644 drivers/soc/renesas/Kconfig
+Awesome, thanks Ulf!
 
-diff --git a/drivers/soc/Kconfig b/drivers/soc/Kconfig
-index f09023f7ab11..de4fcdbae2a8 100644
---- a/drivers/soc/Kconfig
-+++ b/drivers/soc/Kconfig
-@@ -4,6 +4,7 @@ source "drivers/soc/bcm/Kconfig"
- source "drivers/soc/fsl/Kconfig"
- source "drivers/soc/mediatek/Kconfig"
- source "drivers/soc/qcom/Kconfig"
-+source "drivers/soc/renesas/Kconfig"
- source "drivers/soc/rockchip/Kconfig"
- source "drivers/soc/samsung/Kconfig"
- source "drivers/soc/sunxi/Kconfig"
-diff --git a/drivers/soc/Makefile b/drivers/soc/Makefile
-index 05eae52a30b4..59d8c937f4a8 100644
---- a/drivers/soc/Makefile
-+++ b/drivers/soc/Makefile
-@@ -8,7 +8,7 @@ obj-$(CONFIG_MACH_DOVE)		+= dove/
- obj-y				+= fsl/
- obj-$(CONFIG_ARCH_MEDIATEK)	+= mediatek/
- obj-$(CONFIG_ARCH_QCOM)		+= qcom/
--obj-$(CONFIG_ARCH_RENESAS)	+= renesas/
-+obj-y				+= renesas/
- obj-$(CONFIG_ARCH_ROCKCHIP)	+= rockchip/
- obj-$(CONFIG_SOC_SAMSUNG)	+= samsung/
- obj-$(CONFIG_ARCH_SUNXI)	+= sunxi/
-diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
-new file mode 100644
-index 000000000000..87a4be46bd98
---- /dev/null
-+++ b/drivers/soc/renesas/Kconfig
-@@ -0,0 +1,63 @@
-+config SOC_RENESAS
-+	bool "Renesas SoC driver support" if COMPILE_TEST && !ARCH_RENESAS
-+	default y if ARCH_RENESAS
-+	select SOC_BUS
-+	select RST_RCAR if ARCH_RCAR_GEN1 || ARCH_RCAR_GEN2 || \
-+			   ARCH_R8A7795 || ARCH_R8A7796
-+	select SYSC_R8A7743 if ARCH_R8A7743
-+	select SYSC_R8A7745 if ARCH_R8A7745
-+	select SYSC_R8A7779 if ARCH_R8A7779
-+	select SYSC_R8A7790 if ARCH_R8A7790
-+	select SYSC_R8A7791 if ARCH_R8A7791 || ARCH_R8A7793
-+	select SYSC_R8A7792 if ARCH_R8A7792
-+	select SYSC_R8A7794 if ARCH_R8A7794
-+	select SYSC_R8A7795 if ARCH_R8A7795
-+	select SYSC_R8A7796 if ARCH_R8A7796
-+
-+if SOC_RENESAS
-+
-+# SoC
-+config SYSC_R8A7743
-+	bool "RZ/G1M System Controller support" if COMPILE_TEST
-+	select SYSC_RCAR
-+
-+config SYSC_R8A7745
-+	bool "RZ/G1E System Controller support" if COMPILE_TEST
-+	select SYSC_RCAR
-+
-+config SYSC_R8A7779
-+	bool "R-Car H1 System Controller support" if COMPILE_TEST
-+	select SYSC_RCAR
-+
-+config SYSC_R8A7790
-+	bool "R-Car H2 System Controller support" if COMPILE_TEST
-+	select SYSC_RCAR
-+
-+config SYSC_R8A7791
-+	bool "R-Car M2-W/N System Controller support" if COMPILE_TEST
-+	select SYSC_RCAR
-+
-+config SYSC_R8A7792
-+	bool "R-Car V2H System Controller support" if COMPILE_TEST
-+	select SYSC_RCAR
-+
-+config SYSC_R8A7794
-+	bool "R-Car E2 System Controller support" if COMPILE_TEST
-+	select SYSC_RCAR
-+
-+config SYSC_R8A7795
-+	bool "R-Car H3 System Controller support" if COMPILE_TEST
-+	select SYSC_RCAR
-+
-+config SYSC_R8A7796
-+	bool "R-Car M3-W System Controller support" if COMPILE_TEST
-+	select SYSC_RCAR
-+
-+# Family
-+config RST_RCAR
-+	bool "R-Car Reset Controller support" if COMPILE_TEST
-+
-+config SYSC_RCAR
-+	bool "R-Car System Controller support" if COMPILE_TEST
-+
-+endif # SOC_RENESAS
-diff --git a/drivers/soc/renesas/Makefile b/drivers/soc/renesas/Makefile
-index d9115cb5ed9d..1a1a297b26a7 100644
---- a/drivers/soc/renesas/Makefile
-+++ b/drivers/soc/renesas/Makefile
-@@ -1,18 +1,17 @@
--obj-$(CONFIG_SOC_BUS)		+= renesas-soc.o
-+# Generic, must be first because of soc_device_register()
-+obj-$(CONFIG_SOC_RENESAS)	+= renesas-soc.o
- 
--obj-$(CONFIG_ARCH_RCAR_GEN1)	+= rcar-rst.o
--obj-$(CONFIG_ARCH_RCAR_GEN2)	+= rcar-rst.o
--obj-$(CONFIG_ARCH_R8A7795)	+= rcar-rst.o
--obj-$(CONFIG_ARCH_R8A7796)	+= rcar-rst.o
-+# SoC
-+obj-$(CONFIG_SYSC_R8A7743)	+= r8a7743-sysc.o
-+obj-$(CONFIG_SYSC_R8A7745)	+= r8a7745-sysc.o
-+obj-$(CONFIG_SYSC_R8A7779)	+= r8a7779-sysc.o
-+obj-$(CONFIG_SYSC_R8A7790)	+= r8a7790-sysc.o
-+obj-$(CONFIG_SYSC_R8A7791)	+= r8a7791-sysc.o
-+obj-$(CONFIG_SYSC_R8A7792)	+= r8a7792-sysc.o
-+obj-$(CONFIG_SYSC_R8A7794)	+= r8a7794-sysc.o
-+obj-$(CONFIG_SYSC_R8A7795)	+= r8a7795-sysc.o
-+obj-$(CONFIG_SYSC_R8A7796)	+= r8a7796-sysc.o
- 
--obj-$(CONFIG_ARCH_R8A7743)	+= rcar-sysc.o r8a7743-sysc.o
--obj-$(CONFIG_ARCH_R8A7745)	+= rcar-sysc.o r8a7745-sysc.o
--obj-$(CONFIG_ARCH_R8A7779)	+= rcar-sysc.o r8a7779-sysc.o
--obj-$(CONFIG_ARCH_R8A7790)	+= rcar-sysc.o r8a7790-sysc.o
--obj-$(CONFIG_ARCH_R8A7791)	+= rcar-sysc.o r8a7791-sysc.o
--obj-$(CONFIG_ARCH_R8A7792)	+= rcar-sysc.o r8a7792-sysc.o
--# R-Car M2-N is identical to R-Car M2-W w.r.t. power domains.
--obj-$(CONFIG_ARCH_R8A7793)	+= rcar-sysc.o r8a7791-sysc.o
--obj-$(CONFIG_ARCH_R8A7794)	+= rcar-sysc.o r8a7794-sysc.o
--obj-$(CONFIG_ARCH_R8A7795)	+= rcar-sysc.o r8a7795-sysc.o
--obj-$(CONFIG_ARCH_R8A7796)	+= rcar-sysc.o r8a7796-sysc.o
-+# Family
-+obj-$(CONFIG_RST_RCAR)		+= rcar-rst.o
-+obj-$(CONFIG_SYSC_RCAR)		+= rcar-sysc.o
-diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
-index 225c35c79d9a..4d0125dff787 100644
---- a/drivers/soc/renesas/rcar-sysc.c
-+++ b/drivers/soc/renesas/rcar-sysc.c
-@@ -275,35 +275,33 @@ static void __init rcar_sysc_pd_setup(struct rcar_sysc_pd *pd)
- }
- 
- static const struct of_device_id rcar_sysc_matches[] = {
--#ifdef CONFIG_ARCH_R8A7743
-+#ifdef CONFIG_SYSC_R8A7743
- 	{ .compatible = "renesas,r8a7743-sysc", .data = &r8a7743_sysc_info },
- #endif
--#ifdef CONFIG_ARCH_R8A7745
-+#ifdef CONFIG_SYSC_R8A7745
- 	{ .compatible = "renesas,r8a7745-sysc", .data = &r8a7745_sysc_info },
- #endif
--#ifdef CONFIG_ARCH_R8A7779
-+#ifdef CONFIG_SYSC_R8A7779
- 	{ .compatible = "renesas,r8a7779-sysc", .data = &r8a7779_sysc_info },
- #endif
--#ifdef CONFIG_ARCH_R8A7790
-+#ifdef CONFIG_SYSC_R8A7790
- 	{ .compatible = "renesas,r8a7790-sysc", .data = &r8a7790_sysc_info },
- #endif
--#ifdef CONFIG_ARCH_R8A7791
-+#ifdef CONFIG_SYSC_R8A7791
- 	{ .compatible = "renesas,r8a7791-sysc", .data = &r8a7791_sysc_info },
--#endif
--#ifdef CONFIG_ARCH_R8A7792
--	{ .compatible = "renesas,r8a7792-sysc", .data = &r8a7792_sysc_info },
--#endif
--#ifdef CONFIG_ARCH_R8A7793
- 	/* R-Car M2-N is identical to R-Car M2-W w.r.t. power domains. */
- 	{ .compatible = "renesas,r8a7793-sysc", .data = &r8a7791_sysc_info },
- #endif
--#ifdef CONFIG_ARCH_R8A7794
-+#ifdef CONFIG_SYSC_R8A7792
-+	{ .compatible = "renesas,r8a7792-sysc", .data = &r8a7792_sysc_info },
-+#endif
-+#ifdef CONFIG_SYSC_R8A7794
- 	{ .compatible = "renesas,r8a7794-sysc", .data = &r8a7794_sysc_info },
- #endif
--#ifdef CONFIG_ARCH_R8A7795
-+#ifdef CONFIG_SYSC_R8A7795
- 	{ .compatible = "renesas,r8a7795-sysc", .data = &r8a7795_sysc_info },
- #endif
--#ifdef CONFIG_ARCH_R8A7796
-+#ifdef CONFIG_SYSC_R8A7796
- 	{ .compatible = "renesas,r8a7796-sysc", .data = &r8a7796_sysc_info },
- #endif
- 	{ /* sentinel */ }
-diff --git a/include/linux/soc/renesas/rcar-rst.h b/include/linux/soc/renesas/rcar-rst.h
-index 787e7ad53d45..2c231f2280a6 100644
---- a/include/linux/soc/renesas/rcar-rst.h
-+++ b/include/linux/soc/renesas/rcar-rst.h
-@@ -1,8 +1,7 @@
- #ifndef __LINUX_SOC_RENESAS_RCAR_RST_H__
- #define __LINUX_SOC_RENESAS_RCAR_RST_H__
- 
--#if defined(CONFIG_ARCH_RCAR_GEN1) || defined(CONFIG_ARCH_RCAR_GEN2) || \
--    defined(CONFIG_ARCH_R8A7795) || defined(CONFIG_ARCH_R8A7796)
-+#ifdef CONFIG_RST_RCAR
- int rcar_rst_read_mode_pins(u32 *mode);
- #else
- static inline int rcar_rst_read_mode_pins(u32 *mode) { return -ENODEV; }
--- 
-2.1.4
+
+--rwEMma7ioTxnRzrJ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlk+evoACgkQFA3kzBSg
+KbYswA/7Byf+SoINZTmCufD91Fy4sCMqciDyLEaZzoKk6LPynP26CG6rCItioCNW
+Zfd7nrEF9EPuDsm8FQ+kXK44hMh2weBVhCV2Ue7sDUNXq2M5EaQrqgrM7RiZH4tL
+cxQHWuN4sals+gLkwOtvxgfgqxdhAPkOuoQZr/sOYCOrT1P5ybdRT3TBIGLhO9Q7
+IZwWV/lNrghBSgyW9uk0LfsEgsnLZCsBS8+3r5j86a1ZhkuY3piElo9Yn+PzgtgW
+RsarcLz3N7fewxnpGg6i84h0FygVU/0uLd3s/vmfmifnroNdJDnV1vA579oq+Dib
+2C9A8UvKy9+w4dz/NuchB52ugvCgAt7QkuzMJ0PGdm1Mpr3t9ITXL+b0ts3mAH3C
+8FojcV+SJhPlJoUdzUZYyqL7IsoSrKkCH+xQlEH4BYBXkLmttGo/u5G9OUsv7XOH
+V/rAuFrSIY0pDRtKZCy7cYMDIRE1RgdEcRKEzxHOCTFeTFLltdRo0Fv7Ex9TycrS
+Rhh4F2ZkL0/7aLurFQ4za7s9xhqldCKpmpqFZfAqt7UTOXTa3lZxgqFIw/Kwc4aZ
+0XlV1Lcf4DGtnRNi97TMpL4w4pvF5mQ5HSpPtAcIiRWuV6OZLzF7EAmWnIfbW9zo
+2qV766I1kWzCKKxybFPtaXvsKW9m4TzxtGsaBMzAeO7VwdXhH14=
+=FO3J
+-----END PGP SIGNATURE-----
+
+--rwEMma7ioTxnRzrJ--
