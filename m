@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:58135 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752074AbdFLNkP (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:59236 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751992AbdFLKI1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Jun 2017 09:40:15 -0400
+        Mon, 12 Jun 2017 06:08:27 -0400
 From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 To: robh+dt@kernel.org, mark.rutland@arm.com, mchehab@kernel.org,
         hverkuil@xs4all.nl, sakari.ailus@linux.intel.com, crope@iki.fi
@@ -11,17 +11,26 @@ Cc: chris.paterson2@renesas.com, laurent.pinchart@ideasonboard.com,
         geert+renesas@glider.be, linux-media@vger.kernel.org,
         devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH v8 8/8] MAINTAINERS: Add entry for R-Car DRIF & MAX2175 drivers
-Date: Mon, 12 Jun 2017 14:26:20 +0100
-Message-Id: <20170612132620.1024-9-ramesh.shanmugasundaram@bp.renesas.com>
-In-Reply-To: <20170612132620.1024-1-ramesh.shanmugasundaram@bp.renesas.com>
-References: <20170612132620.1024-1-ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH] MAINTAINERS: Add entry for R-Car DRIF & MAX2175 drivers
+Date: Mon, 12 Jun 2017 10:54:56 +0100
+Message-Id: <20170612095456.4239-1-ramesh.shanmugasundaram@bp.renesas.com>
+In-Reply-To: <20170609150738.56294-1-ramesh.shanmugasundaram@bp.renesas.com>
+References: <20170609150738.56294-1-ramesh.shanmugasundaram@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Add maintainter entry for the R-Car DRIF and MAX2175 drivers.
 
 Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+---
+Hi Hans,
+
+   Added the missing MAINTAINTERS entry on top of this
+   (https://www.mail-archive.com/linux-renesas-soc@vger.kernel.org/msg15081.html)
+   series as requested.
+
+Thanks,
+Ramesh.
 ---
  MAINTAINERS | 19 +++++++++++++++++++
  1 file changed, 19 insertions(+)
