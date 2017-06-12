@@ -1,38 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:51610 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751970AbdFLJcV (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:53968 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752150AbdFLJYD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Jun 2017 05:32:21 -0400
+        Mon, 12 Jun 2017 05:24:03 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/2] arm64: dts: renesas: Add reset control properties for audio
-Date: Mon, 12 Jun 2017 11:32:15 +0200
-Message-Id: <1497259937-9387-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH 0/2] renesas: sysc: Use GENPD_FLAG_ALWAYS_ON
+Date: Mon, 12 Jun 2017 11:23:44 +0200
+Message-Id: <1497259427-8299-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Simon, Magnus, Morimoto-san,
+	Hi Simon, Magnus,
 
-This patch series describes all resets wired to the audio modules on
-R-Car Gen3 SoCs, following the DT binding update in commit
-5f440c48c5d5a11f ("ASoC: rsnd: Document optional reset properties") in
-sound-asoc/for-next.
+Commit ffaa42e8a40b7f10 ("PM / Domains: Enable users of genpd to specify
+always on PM domains") introduced a new flag GENPD_FLAG_ALWAYS_ON, which
+allows to remove some code for drivers handling always-on PM domains.
+
+This series does that for the Renesas R-Car SYSC driver (used on R-Car
+Gen2 and Gen3, and RZ/G1) and the R-Mobile SYSC driver (used on R-Mobile
+APE6 and A1, and SH-Mobile AG5).
+
+Note that on R/SH-Mobile, the PM domain containing the serial console is
+still handled locally.
+
+Tested on:
+  - r8a7790/koelsch and r8a7795/salvator-x,
+  - r8a73a4/ape6evm, r8a7740/armadillo, sh73a0/kzm9g.
 
 Thanks!
 
 Geert Uytterhoeven (2):
-  arm64: dts: r8a7795: Add reset control properties for audio
-  arm64: dts: r8a7796: Add reset control properties for audio
+  soc: renesas: rcar-sysc: Use GENPD_FLAG_ALWAYS_ON
+  ARM: shmobile: pm-rmobile: Use GENPD_FLAG_ALWAYS_ON
 
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 10 ++++++++++
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 10 ++++++++++
- 2 files changed, 20 insertions(+)
+ arch/arm/mach-shmobile/pm-rmobile.c | 19 ++++---------------
+ drivers/soc/renesas/rcar-sysc.c     | 28 ++++------------------------
+ drivers/soc/renesas/rcar-sysc.h     |  2 --
+ 3 files changed, 8 insertions(+), 41 deletions(-)
 
 -- 
 2.7.4
