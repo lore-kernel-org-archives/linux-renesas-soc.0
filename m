@@ -1,37 +1,33 @@
 Return-Path: <linux-media-owner@vger.kernel.org>
-Date: Thu, 15 Jun 2017 10:48:20 +0200
+Date: Mon, 12 Jun 2017 16:48:50 +0200
 From: Niklas =?iso-8859-1?Q?S=F6derlund?=
         <niklas.soderlund@ragnatech.se>
-To: Sakari Ailus <sakari.ailus@iki.fi>
+To: Hans Verkuil <hverkuil@xs4all.nl>
 Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com,
         Kieran Bingham <kieran.bingham@ideasonboard.com>,
         Sakari Ailus <sakari.ailus@linux.intel.com>
 Subject: Re: [PATCH v7 2/2] media: rcar-csi2: add Renesas R-Car MIPI CSI-2
  receiver driver
-Message-ID: <20170615084820.GF10888@bigcity.dyn.berto.se>
+Message-ID: <20170612144850.GK17461@bigcity.dyn.berto.se>
 References: <20170524001353.13482-1-niklas.soderlund@ragnatech.se>
  <20170524001353.13482-3-niklas.soderlund@ragnatech.se>
- <20170529113516.GD29527@valkosipuli.retiisi.org.uk>
+ <c81499b3-b875-af4a-6e0a-8e66412d3cf4@xs4all.nl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20170529113516.GD29527@valkosipuli.retiisi.org.uk>
+In-Reply-To: <c81499b3-b875-af4a-6e0a-8e66412d3cf4@xs4all.nl>
 Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sakari,
+Hi Hans,
 
 Thanks for your comments.
 
-On 2017-05-29 14:35:16 +0300, Sakari Ailus wrote:
-> Hi Niklas,
-> 
-> A few comments below.
-> 
-> On Wed, May 24, 2017 at 02:13:53AM +0200, Niklas S�derlund wrote:
+On 2017-05-29 13:16:23 +0200, Hans Verkuil wrote:
+> On 05/24/2017 02:13 AM, Niklas S�derlund wrote:
 > > From: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
 > > 
 > > A V4L2 driver for Renesas R-Car MIPI CSI-2 receiver. The driver
@@ -43,11 +39,11 @@ On 2017-05-29 14:35:16 +0300, Sakari Ailus wrote:
 > > 
 > > Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
 > > ---
-> >  drivers/media/platform/rcar-vin/Kconfig     |  12 +
-> >  drivers/media/platform/rcar-vin/Makefile    |   1 +
-> >  drivers/media/platform/rcar-vin/rcar-csi2.c | 867 ++++++++++++++++++++++++++++
-> >  3 files changed, 880 insertions(+)
-> >  create mode 100644 drivers/media/platform/rcar-vin/rcar-csi2.c
+> >   drivers/media/platform/rcar-vin/Kconfig     |  12 +
+> >   drivers/media/platform/rcar-vin/Makefile    |   1 +
+> >   drivers/media/platform/rcar-vin/rcar-csi2.c | 867 ++++++++++++++++++++++++++++
+> >   3 files changed, 880 insertions(+)
+> >   create mode 100644 drivers/media/platform/rcar-vin/rcar-csi2.c
 > > 
 > > diff --git a/drivers/media/platform/rcar-vin/Kconfig b/drivers/media/platform/rcar-vin/Kconfig
 > > index af4c98b44d2e22cb..6875f30c1ae42631 100644
@@ -66,18 +62,17 @@ On 2017-05-29 14:35:16 +0300, Sakari Ailus wrote:
 > > +	  To compile this driver as a module, choose M here: the
 > > +	  module will be called rcar-csi2.
 > > +
-> >  config VIDEO_RCAR_VIN
-> >  	tristate "R-Car Video Input (VIN) Driver"
-> >  	depends on VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API && OF && HAS_DMA && MEDIA_CONTROLLER
+> >   config VIDEO_RCAR_VIN
+> >   	tristate "R-Car Video Input (VIN) Driver"
+> >   	depends on VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API && OF && HAS_DMA && MEDIA_CONTROLLER
 > > diff --git a/drivers/media/platform/rcar-vin/Makefile b/drivers/media/platform/rcar-vin/Makefile
 > > index 48c5632c21dc060b..5ab803d3e7c1aa57 100644
 > > --- a/drivers/media/platform/rcar-vin/Makefile
 > > +++ b/drivers/media/platform/rcar-vin/Makefile
 > > @@ -1,3 +1,4 @@
-> >  rcar-vin-objs = rcar-core.o rcar-dma.o rcar-v4l2.o
-> >  
+> >   rcar-vin-objs = rcar-core.o rcar-dma.o rcar-v4l2.o
 > > +obj-$(CONFIG_VIDEO_RCAR_CSI2) += rcar-csi2.o
-> >  obj-$(CONFIG_VIDEO_RCAR_VIN) += rcar-vin.o
+> >   obj-$(CONFIG_VIDEO_RCAR_VIN) += rcar-vin.o
 > > diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
 > > new file mode 100644
 > > index 0000000000000000..1175f1fe4b139a13
@@ -387,17 +382,18 @@ On 2017-05-29 14:35:16 +0300, Sakari Ailus wrote:
 > > +	ctrls.controls = &ctrl;
 > > +
 > > +	ret = v4l2_g_ext_ctrls(source->ctrl_handler, &ctrls);
-> 
-> v4l2_ctrl_g_ctrl_int64(), please. Or do I miss something?
-
-Thanks will fix.
-
-> 
 > > +	if (ret < 0) {
 > > +		dev_err(priv->dev, "no link freq control in subdev %s\n",
 > > +			source->name);
 > > +		return ret;
 > > +	}
+> 
+> Please use v4l2_ctrl_g_ctrl_int64 instead. v4l2_g_ext_ctrls is not intended to
+> be used by drivers.
+
+Thanks will do this for the next version.
+
+> 
 > > +
 > > +	format = rcar_csi2_code_to_fmt(mf->code);
 > > +	if (!format) {
@@ -439,12 +435,6 @@ Thanks will fix.
 > > +
 > > +	source_pad =
 > > +		media_entity_remote_pad(&priv->subdev.entity.pads[RCAR_CSI2_SINK]);
-> 
-> Over 80 characters per line. I think you could split this up differently.
-
-Will fix.
-
-> 
 > > +	if (!source_pad) {
 > > +		dev_err(priv->dev, "Could not find remote source pad\n");
 > > +		return -ENODEV;
@@ -473,16 +463,16 @@ Will fix.
 > > +	 *
 > > +	 * NOTE: I'ts not possible to get individual format for each
 > 
-> "It's"
-
-Ops.. will fix :-)
-
+> I'ts -> It's
 > 
 > > +	 *       source virtual channel. Once this is possible in V4L2
 > > +	 *       it should be used here.
 > > +	 */
 > > +	for (i = 0; i < 4; i++) {
 > > +
+> 
+> Remove empty line.
+> 
 > > +		format = rcar_csi2_code_to_fmt(mf->code);
 > > +		if (!format) {
 > > +			dev_err(priv->dev, "Unsupported media bus format: %d\n",
@@ -535,18 +525,6 @@ Ops.. will fix :-)
 > > +			LSWAP_L1SEL(priv->lane_swap[1] - 1) |
 > > +			LSWAP_L2SEL(priv->lane_swap[2] - 1) |
 > > +			LSWAP_L3SEL(priv->lane_swap[3] - 1));
-> 
-> How are the lanes numbered?
-
-In the datasheet they are numbered CSIn_DATA{0,1,2,3}.
-
-> 
-> Do you have a fixed number of lanes per receiver?
-
-Two different configurations exists a 4-lane CSI-2 receiver and a 2-lane 
-CSI-2 receiver.
-
-> 
 > > +
 > > +	/* Start */
 > > +	rcar_csi2_write(priv, PHYPLL_REG, phypll);
@@ -636,14 +614,6 @@ CSI-2 receiver.
 > > +
 > > +	if (format->which == V4L2_SUBDEV_FORMAT_ACTIVE)
 > > +		priv->mf = format->format;
-> 
-> How about the try formats? E.g.
-> 
-> *v4l2_subdev_get_try_format() = format->fmt;
-
-Thanks will fix.
-
-> 
 > > +
 > > +	return 0;
 > > +}
@@ -655,12 +625,6 @@ Thanks will fix.
 > > +	struct rcar_csi2 *priv = container_of(sd, struct rcar_csi2, subdev);
 > > +
 > > +	format->format = priv->mf;
-> 
-> Ditto.
-
-Ditto :-)
-
-> 
 > > +
 > > +	return 0;
 > > +}
@@ -706,6 +670,16 @@ Ditto :-)
 > > +				     &priv->subdev.entity, 0,
 > > +				     MEDIA_LNK_FL_ENABLED |
 > > +				     MEDIA_LNK_FL_IMMUTABLE);
+> 
+> Shouldn't the link be created before the register subdev nodes are registered?
+> 
+> Usually that's done at the very end after everything else has been configured
+> correctly.
+
+I think you are correct here as well, will look into it for next 
+version.
+
+> 
 > > +}
 > > +
 > > +static int rcar_csi2_notify_bound(struct v4l2_async_notifier *notifier,
@@ -733,12 +707,6 @@ Ditto :-)
 > > +
 > > +	return 0;
 > > +}
-> 
-> A newline would be nice here.
-
-Yes.
-
-> 
 > > +static void rcar_csi2_notify_unbind(struct v4l2_async_notifier *notifier,
 > > +				     struct v4l2_subdev *subdev,
 > > +				     struct v4l2_async_subdev *asd)
@@ -775,6 +743,59 @@ Yes.
 > > +
 > > +	return 0;
 > > +}
+> 
+> Hmm, I'm trying to understand this, and I got one question. There are at least
+> two complete callbacks: rcar_csi2_notify_complete and the bridge driver's
+> complete callback. Am I right that the bridge driver's complete callback is
+> called as soon as this function exists (assuming this is the only subdev)?
+
+Yes (at least for the async case).
+
+In v4l2_async_test_notify() calls v4l2_device_register_subdev() which in 
+turns calls this registered callback. v4l2_async_test_notify() then go 
+on and calls the notifiers complete callback.
+
+In my case I have (in the simplified case) AD7482 -> CSI-2 -> VIN. Where 
+VIN is the video device and CSI-2 is the subdevice of VIN while the 
+ADV7482 is a subdevice to the CSI-2. In that case the call graph would 
+be:
+
+v4l2_async_test_notify()                (From VIN on the CSI-2 subdev)
+  v4l2_device_register_subdev()
+    sd->internal_ops->registered(sd);   (sd == CSI-2 subdev)
+      v4l2_async_subnotifier_register() (CSI-2 notifier for the ADV7482 subdev)
+        v4l2_async_test_notify()        (From CSI-2 on the ADV7482) [1]
+  notifier->complete(notifier);         (on the notifier from VIN)
+
+> 
+> So the bridge driver thinks it is complete when in reality this subdev may
+> be waiting on newly registered subdevs?
+
+Yes if the ADV7482 subdevice are not already registered in [1] above the 
+VIN complete callback would be called before the complete callback have 
+been called on the notifier register from the CSI-2 registered callback.  
+Instead that would be called once the ADV7482 calls 
+v4l2_async_register_subdev().
+
+> 
+> If I am right, then my question is if that is what we want. If I am wrong,
+> then what did I miss?
+
+I think that is what we want?
+
+>From the VIN point of view all the subdevices it registered in it's 
+notifier have been found and bound right so I think it's correct to call 
+the complete callback for that notifier at this point?  If it really 
+cared about that all devices be present before it calls it complete 
+callback should it not also add all devices to its own notifier list? 
+
+But I do see your point that the VIN really have no way of telling if 
+all devices are present and we are ready to start to stream. This 
+however will be found out with a -EPIPE error if a stream is tried to be 
+started since the CSI-2 driver will fail to verify the pipeline since it 
+have no subdevice attached to its source pad. What do you think?
+
+> 
 > > +
 > > +static void rcar_csi2_unregistered(struct v4l2_subdev *sd)
 > > +{
@@ -884,15 +905,6 @@ Yes.
 > > +
 > > +		/* Check for valid lane number */
 > > +		if (priv->lane_swap[i] < 1 || priv->lane_swap[i] > 4) {
-> 
-> Do you also support for three lanes? Based on the code elsewhere, it doesn't
-> seem like that.
-
-Yes 3-lanes should be supported but I have no way of testing this. But I 
-do belive the code is prepared to handle it, see for example in the 
-driver all logic around priv->lanes variable, am I missing something?
-
-> 
 > > +			dev_err(priv->dev, "data-lanes must be in 1-4 range\n");
 > > +			return -EINVAL;
 > > +		}
@@ -1010,12 +1022,11 @@ driver all logic around priv->lanes variable, am I missing something?
 > > +MODULE_AUTHOR("Niklas S�derlund <niklas.soderlund@ragnatech.se>");
 > > +MODULE_DESCRIPTION("Renesas R-Car MIPI CSI-2 receiver");
 > > +MODULE_LICENSE("GPL v2");
+> > 
 > 
-> -- 
 > Regards,
 > 
-> Sakari Ailus
-> e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
+> 	Hans
 
 -- 
 Regards,
