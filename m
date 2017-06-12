@@ -1,107 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41927 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751156AbdFUOAy (ORCPT
+Received: from mail-io0-f196.google.com ([209.85.223.196]:35452 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752120AbdFLKKa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 21 Jun 2017 10:00:54 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH mmc/next v3 2/4] mmc: tmio, renesas-sdhi: add dataend to DMA ops
-Date: Wed, 21 Jun 2017 16:00:28 +0200
-Message-Id: <1498053630-7780-3-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1498053630-7780-1-git-send-email-horms+renesas@verge.net.au>
-References: <1498053630-7780-1-git-send-email-horms+renesas@verge.net.au>
+        Mon, 12 Jun 2017 06:10:30 -0400
+MIME-Version: 1.0
+In-Reply-To: <2460969.iCu4XJLJFm@avalon>
+References: <1497028548-24443-1-git-send-email-kbingham@kernel.org> <2460969.iCu4XJLJFm@avalon>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 12 Jun 2017 12:10:18 +0200
+Message-ID: <CAMuHMdVXnZpsoXw+NWuMSO8-2C8-h-nVkfAdyf0x5jus7cMX=w@mail.gmail.com>
+Subject: Re: [PATCH] media: fdp1: Support ES2 platforms
+To: Kieran Bingham <kbingham@kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add dataend to DMA ops to allow DMAC implementation dependent
-handling of DMA data end.
+Hi Kieran, Laurent,
 
-Also implement the operation for SDHI.
+On Sat, Jun 10, 2017 at 9:54 AM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Friday 09 Jun 2017 18:15:48 Kieran Bingham wrote:
+>> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+>>
+>> The new Renesas R-Car H3 ES2.0 platforms have an updated hw version
+>> register. Update the driver accordingly.
+>>
+>> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
-v3
-* s/complete/dataend/
+Thanks, seems to work fine (as in: no more complaints from the driver).
 
-v2
-* Implement operation for SDHI to avoid regression
----
- drivers/mmc/host/renesas_sdhi_sys_dmac.c |  6 ++++++
- drivers/mmc/host/tmio_mmc.h              |  1 +
- drivers/mmc/host/tmio_mmc_core.c         | 10 ++++++++--
- 3 files changed, 15 insertions(+), 2 deletions(-)
+>> --- a/drivers/media/platform/rcar_fdp1.c
+>> +++ b/drivers/media/platform/rcar_fdp1.c
+>> @@ -260,6 +260,7 @@ MODULE_PARM_DESC(debug, "activate debug info");
+>>  #define FD1_IP_INTDATA                       0x0800
+>>  #define FD1_IP_H3                    0x02010101
+>>  #define FD1_IP_M3W                   0x02010202
+>> +#define FD1_IP_H3_ES2                        0x02010203
+>
+> Following our global policy of treating ES2 as the default, how about renaming
+> FDP1_IP_H3 to FDP1_IP_H3_ES1 and adding a new FD1_IP_H3 for ES2 ? The messages
+> below should be updated as well.
 
-diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-index 642a0dcc8c5c..a125378417bf 100644
---- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-@@ -126,6 +126,11 @@ static void renesas_sdhi_sys_dmac_abort_dma(struct tmio_mmc_host *host)
- 	renesas_sdhi_sys_dmac_enable_dma(host, true);
- }
- 
-+static void renesas_sdhi_sys_dmac_dataend_dma(struct tmio_mmc_host *host)
-+{
-+	complete(&host->dma_dataend);
-+}
-+
- static void renesas_sdhi_sys_dmac_dma_callback(void *arg)
- {
- 	struct tmio_mmc_host *host = arg;
-@@ -451,6 +456,7 @@ static const struct tmio_mmc_dma_ops renesas_sdhi_sys_dmac_dma_ops = {
- 	.request = renesas_sdhi_sys_dmac_request_dma,
- 	.release = renesas_sdhi_sys_dmac_release_dma,
- 	.abort = renesas_sdhi_sys_dmac_abort_dma,
-+	.dataend = renesas_sdhi_sys_dmac_dataend_dma,
- };
- 
- static int renesas_sdhi_sys_dmac_probe(struct platform_device *pdev)
-diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-index 6ad6704175dc..f2d747b036c7 100644
---- a/drivers/mmc/host/tmio_mmc.h
-+++ b/drivers/mmc/host/tmio_mmc.h
-@@ -122,6 +122,7 @@ struct tmio_mmc_dma_ops {
- 			struct tmio_mmc_data *pdata);
- 	void (*release)(struct tmio_mmc_host *host);
- 	void (*abort)(struct tmio_mmc_host *host);
-+	void (*dataend)(struct tmio_mmc_host *host);
- };
- 
- struct tmio_mmc_host {
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 95c93c227c65..77e7b56a9099 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -87,6 +87,12 @@ static inline void tmio_mmc_abort_dma(struct tmio_mmc_host *host)
- 		host->dma_ops->abort(host);
- }
- 
-+static inline void tmio_mmc_dataend_dma(struct tmio_mmc_host *host)
-+{
-+	if (host->dma_ops)
-+		host->dma_ops->dataend(host);
-+}
-+
- void tmio_mmc_enable_mmc_irqs(struct tmio_mmc_host *host, u32 i)
- {
- 	host->sdcard_irq_mask &= ~(i & TMIO_MASK_IRQ);
-@@ -606,11 +612,11 @@ static void tmio_mmc_data_irq(struct tmio_mmc_host *host, unsigned int stat)
- 
- 		if (done) {
- 			tmio_mmc_disable_mmc_irqs(host, TMIO_STAT_DATAEND);
--			complete(&host->dma_dataend);
-+			tmio_mmc_dataend_dma(host);
- 		}
- 	} else if (host->chan_rx && (data->flags & MMC_DATA_READ) && !host->force_pio) {
- 		tmio_mmc_disable_mmc_irqs(host, TMIO_STAT_DATAEND);
--		complete(&host->dma_dataend);
-+		tmio_mmc_dataend_dma(host);
- 	} else {
- 		tmio_mmc_do_data_irq(host);
- 		tmio_mmc_disable_mmc_irqs(host, TMIO_MASK_READOP | TMIO_MASK_WRITEOP);
--- 
-2.1.4
+Yes, that sounds good.
+
+>>  /* LUTs */
+>>  #define FD1_LUT_DIF_ADJ                      0x1000
+>> @@ -2365,6 +2366,9 @@ static int fdp1_probe(struct platform_device *pdev)
+>>       case FD1_IP_M3W:
+>>               dprintk(fdp1, "FDP1 Version R-Car M3-W\n");
+>>               break;
+>> +     case FD1_IP_H3_ES2:
+>> +             dprintk(fdp1, "FDP1 Version R-Car H3-ES2\n");
+
+Please drop dashes between SoC names and revisions.
+
+>> +             break;
+>>       default:
+>>               dev_err(fdp1->dev, "FDP1 Unidentifiable (0x%08x)\n",
+>>                               hw_version);
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
