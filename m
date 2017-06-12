@@ -1,156 +1,215 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f44.google.com ([209.85.215.44]:35731 "EHLO
-        mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751526AbdF1T7O (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:29294 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752116AbdFLNkB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 28 Jun 2017 15:59:14 -0400
-Received: by mail-lf0-f44.google.com with SMTP id b207so41163759lfg.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 28 Jun 2017 12:59:13 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20170628195909.167061456@cogentembedded.com>
-Date: Wed, 28 Jun 2017 22:58:44 +0300
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        devicetree@vger.kernel.org, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH v2] media: platform: rcar_imr: add IMR-LX3 support
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=media-platform-rcar_imr-add-IMR-LX3-support-v2.patch
+        Mon, 12 Jun 2017 09:40:01 -0400
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: robh+dt@kernel.org, mark.rutland@arm.com, mchehab@kernel.org,
+        hverkuil@xs4all.nl, sakari.ailus@linux.intel.com, crope@iki.fi
+Cc: chris.paterson2@renesas.com, laurent.pinchart@ideasonboard.com,
+        geert+renesas@glider.be, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH v8 6/8] dt-bindings: media: Add Renesas R-Car DRIF binding
+Date: Mon, 12 Jun 2017 14:26:18 +0100
+Message-Id: <20170612132620.1024-7-ramesh.shanmugasundaram@bp.renesas.com>
+In-Reply-To: <20170612132620.1024-1-ramesh.shanmugasundaram@bp.renesas.com>
+References: <20170612132620.1024-1-ramesh.shanmugasundaram@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for the image renderer light extended 3 (IMR-LX3) found only in
-the R-Car V2H (R8A7792) SoC. It's mostly the same as IMR-LSX3 but doesn't
-support video capture data as a source of 2D textures.
+Add binding documentation for Renesas R-Car Digital Radio Interface
+(DRIF) controller.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
-This patch  is against the 'media_tree.git' repo's 'master' branch plus the
-latest version of  the Renesas IMR driver and the patch adding IMR-LSX3 support.
+ .../devicetree/bindings/media/renesas,drif.txt     | 176 +++++++++++++++++++++
+ 1 file changed, 176 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/renesas,drif.txt
 
-Changes in version 2:
-- refreshed the patch atop of the IMR driver patch (version 6) and IMR-LSX3
-  patch (version 3).
-
- Documentation/devicetree/bindings/media/rcar_imr.txt |    4 ++
- drivers/media/platform/rcar_imr.c                    |   27 ++++++++++++-------
- 2 files changed, 22 insertions(+), 9 deletions(-)
-
-Index: media_tree/Documentation/devicetree/bindings/media/rcar_imr.txt
-===================================================================
---- media_tree.orig/Documentation/devicetree/bindings/media/rcar_imr.txt
-+++ media_tree/Documentation/devicetree/bindings/media/rcar_imr.txt
-@@ -9,6 +9,10 @@ and drawing with respect to any shape th
- Required properties:
- 
- - compatible:
-+  "renesas,<soctype>-imr-lx3", "renesas,imr-lx3" as a fallback for the image
-+  renderer light extended 3 (IMR-LX3) found in the R-Car gen2 SoCs, where the
-+  examples with <soctype> are:
-+  - "renesas,r8a7792-imr-lx3" for R-Car V2H;
-   "renesas,<soctype>-imr-lsx3", "renesas,imr-lsx3" as a fallback for the image
-   renderer light SRAM extended 3 (IMR-LSX3) found in the R-Car gen2 SoCs, where
-   the examples with <soctype> are:
-Index: media_tree/drivers/media/platform/rcar_imr.c
-===================================================================
---- media_tree.orig/drivers/media/platform/rcar_imr.c
-+++ media_tree/drivers/media/platform/rcar_imr.c
-@@ -1,5 +1,5 @@
- /*
-- * rcar_imr.c -- R-Car IMR-LSX3/LX4 Driver
-+ * rcar_imr.c -- R-Car IMR-LX3/LSX3/LX4 Driver
-  *
-  * Copyright (C) 2015-2017 Cogent Embedded, Inc. <source@cogentembedded.com>
-  *
-@@ -82,6 +82,7 @@ struct imr_format_info {
- };
- 
- enum imr_type {
-+	IMR_LX3,
- 	IMR_LSX3,
- 	IMR_LX4,
- };
-@@ -163,7 +164,7 @@ struct imr_ctx {
- #define IMR_SSAR		0x38
- #define IMR_DSTR		0x3C
- #define IMR_SSTR		0x40
--#define IMR_DSOR		0x50
-+#define IMR_DSOR		0x50		/* IMR-LSX3/LX4 only */
- #define IMR_CMRCR		0x54
- #define IMR_CMRCSR		0x58
- #define IMR_CMRCCR		0x5C
-@@ -210,7 +211,7 @@ struct imr_ctx {
- #define IMR_CMRCR_DUV		GENMASK(4, 3)
- #define IMR_CMRCR_SUV_SHIFT	5
- #define IMR_CMRCR_SUV		GENMASK(6, 5)
--#define IMR_CMRCR_YISM		BIT(7)
-+#define IMR_CMRCR_YISM		BIT(7)		/* IMR-LSX3/LX4 only */
- #define IMR_CMRCR_Y10		BIT(8)
- #define IMR_CMRCR_Y12		BIT(9)
- #define IMR_CMRCR_SY10		BIT(11)
-@@ -224,7 +225,7 @@ struct imr_ctx {
- #define IMR_TRIMR_AUTOSG	BIT(3)
- #define IMR_TRIMR_TCM		BIT(6)
- 
--#define IMR_TRICR_YCFORM	BIT(31)
-+#define IMR_TRICR_YCFORM	BIT(31)		/* IMR-LSX3/LX4 only */
- 
- #define IMR_UVDPOR_UVDPO_SHIFT	0
- #define IMR_UVDPOR_UVDPO	GENMASK(2, 0)
-@@ -306,7 +307,7 @@ static u32 __imr_flags_common(u32 iflags
- 	return iflags & oflags & IMR_F_PLANES_MASK;
- }
- 
--static const struct imr_format_info imr_lsx3_formats[] = {
-+static const struct imr_format_info imr_lx3_formats[] = {
- 	{
- 		.fourcc	= V4L2_PIX_FMT_NV16,
- 		.flags	= IMR_F_Y8 | IMR_F_UV8 | IMR_F_PLANAR,
-@@ -372,10 +373,16 @@ static const struct imr_format_info imr_
- 	},
- };
- 
-+static const struct imr_info imr_lx3 = {
-+	.type		= IMR_LX3,
-+	.formats	= imr_lx3_formats,
-+	.num_formats	= ARRAY_SIZE(imr_lx3_formats),
-+};
+diff --git a/Documentation/devicetree/bindings/media/renesas,drif.txt b/Documentation/devicetree/bindings/media/renesas,drif.txt
+new file mode 100644
+index 000000000000..39516b94c28f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/renesas,drif.txt
+@@ -0,0 +1,176 @@
++Renesas R-Car Gen3 Digital Radio Interface controller (DRIF)
++------------------------------------------------------------
 +
- static const struct imr_info imr_lsx3 = {
- 	.type		= IMR_LSX3,
--	.formats	= imr_lsx3_formats,
--	.num_formats	= ARRAY_SIZE(imr_lsx3_formats),
-+	.formats	= imr_lx3_formats,
-+	.num_formats	= ARRAY_SIZE(imr_lx3_formats),
- };
- 
- static const struct imr_info imr_lx4 = {
-@@ -798,7 +805,8 @@ static void imr_dl_program_setup(struct
- 	*dl++ = IMR_OP_WTS(IMR_CPDPOR, __imr_cpdp(type));
- 
- 	/* reset rendering mode registers */
--	*dl++ = IMR_OP_WTS(IMR_CMRCCR,  0xDBFE);
-+	*dl++ = IMR_OP_WTS(IMR_CMRCCR, ctx->imr->info->type >= IMR_LSX3 ?
-+			   0xDBFE : 0xDB7E);
- 	*dl++ = IMR_OP_WTS(IMR_CMRCCR2, ctx->imr->info->type == IMR_LX4 ?
- 			   0x9065 : IMR_CMRCR2_LUTE);
- 
-@@ -1919,6 +1927,7 @@ static const struct dev_pm_ops imr_pm_op
- 
- /* device table */
- static const struct of_device_id imr_of_match[] = {
-+	{ .compatible = "renesas,imr-lx3",  .data = &imr_lx3, },
- 	{ .compatible = "renesas,imr-lsx3", .data = &imr_lsx3, },
- 	{ .compatible = "renesas,imr-lx4",  .data = &imr_lx4,  },
- 	{ },
-@@ -1940,5 +1949,5 @@ module_platform_driver(imr_platform_driv
- 
- MODULE_ALIAS("imr");
- MODULE_AUTHOR("Cogent Embedded Inc. <sources@cogentembedded.com>");
--MODULE_DESCRIPTION("Renesas IMR-LSX3/LX4 Driver");
-+MODULE_DESCRIPTION("Renesas IMR-LX3/LSX3/LX4 Driver");
- MODULE_LICENSE("GPL");
++R-Car Gen3 DRIF is a SPI like receive only slave device. A general
++representation of DRIF interfacing with a master device is shown below.
++
+++---------------------+                +---------------------+
++|                     |-----SCK------->|CLK                  |
++|       Master        |-----SS-------->|SYNC  DRIFn (slave)  |
++|                     |-----SD0------->|D0                   |
++|                     |-----SD1------->|D1                   |
+++---------------------+                +---------------------+
++
++As per datasheet, each DRIF channel (drifn) is made up of two internal
++channels (drifn0 & drifn1). These two internal channels share the common
++CLK & SYNC. Each internal channel has its own dedicated resources like
++irq, dma channels, address space & clock. This internal split is not
++visible to the external master device.
++
++The device tree model represents each internal channel as a separate node.
++The internal channels sharing the CLK & SYNC are tied together by their
++phandles using a property called "renesas,bonding". For the rest of
++the documentation, unless explicitly stated, the word channel implies an
++internal channel.
++
++When both internal channels are enabled they need to be managed together
++as one (i.e.) they cannot operate alone as independent devices. Out of the
++two, one of them needs to act as a primary device that accepts common
++properties of both the internal channels. This channel is identified by a
++property called "renesas,primary-bond".
++
++To summarize,
++   - When both the internal channels that are bonded together are enabled,
++     the zeroth channel is selected as primary-bond. This channels accepts
++     properties common to all the members of the bond.
++   - When only one of the bonded channels need to be enabled, the property
++     "renesas,bonding" or "renesas,primary-bond" will have no effect. That
++     enabled channel can act alone as any other independent device.
++
++Required properties of an internal channel:
++-------------------------------------------
++- compatible:	"renesas,r8a7795-drif" if DRIF controller is a part of R8A7795 SoC.
++		"renesas,rcar-gen3-drif" for a generic R-Car Gen3 compatible device.
++
++		When compatible with the generic version, nodes must list the
++		SoC-specific version corresponding to the platform first
++		followed by the generic version.
++
++- reg: offset and length of that channel.
++- interrupts: associated with that channel.
++- clocks: phandle and clock specifier of that channel.
++- clock-names: clock input name string: "fck".
++- dmas: phandles to the DMA channels.
++- dma-names: names of the DMA channel: "rx".
++- renesas,bonding: phandle to the other channel.
++
++Optional properties of an internal channel:
++-------------------------------------------
++- power-domains: phandle to the respective power domain.
++
++Required properties of an internal channel when:
++	- It is the only enabled channel of the bond (or)
++	- If it acts as primary among enabled bonds
++--------------------------------------------------------
++- pinctrl-0: pin control group to be used for this channel.
++- pinctrl-names: must be "default".
++- renesas,primary-bond: empty property indicating the channel acts as primary
++			among the bonded channels.
++- port: child port node corresponding to the data input, in accordance with
++	the video interface bindings defined in
++	Documentation/devicetree/bindings/media/video-interfaces.txt. The port
++	node must contain at least one endpoint.
++
++Optional endpoint property:
++---------------------------
++- sync-active: Indicates sync signal polarity, 0/1 for low/high respectively.
++	       This property maps to SYNCAC bit in the hardware manual. The
++	       default is 1 (active high).
++
++Example:
++--------
++
++(1) Both internal channels enabled:
++-----------------------------------
++
++When interfacing with a third party tuner device with two data pins as shown
++below.
++
+++---------------------+                +---------------------+
++|                     |-----SCK------->|CLK                  |
++|       Master        |-----SS-------->|SYNC  DRIFn (slave)  |
++|                     |-----SD0------->|D0                   |
++|                     |-----SD1------->|D1                   |
+++---------------------+                +---------------------+
++
++	drif00: rif@e6f40000 {
++		compatible = "renesas,r8a7795-drif",
++			     "renesas,rcar-gen3-drif";
++		reg = <0 0xe6f40000 0 0x64>;
++		interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cpg CPG_MOD 515>;
++		clock-names = "fck";
++		dmas = <&dmac1 0x20>, <&dmac2 0x20>;
++		dma-names = "rx", "rx";
++		power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++		renesas,bonding = <&drif01>;
++		renesas,primary-bond;
++		pinctrl-0 = <&drif0_pins>;
++		pinctrl-names = "default";
++		port {
++			drif0_ep: endpoint {
++			     remote-endpoint = <&tuner_ep>;
++			};
++		};
++	};
++
++	drif01: rif@e6f50000 {
++		compatible = "renesas,r8a7795-drif",
++			     "renesas,rcar-gen3-drif";
++		reg = <0 0xe6f50000 0 0x64>;
++		interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cpg CPG_MOD 514>;
++		clock-names = "fck";
++		dmas = <&dmac1 0x22>, <&dmac2 0x22>;
++		dma-names = "rx", "rx";
++		power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++		renesas,bonding = <&drif00>;
++	};
++
++
++(2) Internal channel 1 alone is enabled:
++----------------------------------------
++
++When interfacing with a third party tuner device with one data pin as shown
++below.
++
+++---------------------+                +---------------------+
++|                     |-----SCK------->|CLK                  |
++|       Master        |-----SS-------->|SYNC  DRIFn (slave)  |
++|                     |                |D0 (unused)          |
++|                     |-----SD-------->|D1                   |
+++---------------------+                +---------------------+
++
++	drif00: rif@e6f40000 {
++		compatible = "renesas,r8a7795-drif",
++			     "renesas,rcar-gen3-drif";
++		reg = <0 0xe6f40000 0 0x64>;
++		interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cpg CPG_MOD 515>;
++		clock-names = "fck";
++		dmas = <&dmac1 0x20>, <&dmac2 0x20>;
++		dma-names = "rx", "rx";
++		power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++		renesas,bonding = <&drif01>;
++	};
++
++	drif01: rif@e6f50000 {
++		compatible = "renesas,r8a7795-drif",
++			     "renesas,rcar-gen3-drif";
++		reg = <0 0xe6f50000 0 0x64>;
++		interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cpg CPG_MOD 514>;
++		clock-names = "fck";
++		dmas = <&dmac1 0x22>, <&dmac2 0x22>;
++		dma-names = "rx", "rx";
++		power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++		renesas,bonding = <&drif00>;
++		pinctrl-0 = <&drif0_pins>;
++		pinctrl-names = "default";
++		port {
++			drif0_ep: endpoint {
++			     remote-endpoint = <&tuner_ep>;
++			     sync-active = <0>;
++			};
++		};
++	};
+-- 
+2.12.2
