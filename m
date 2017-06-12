@@ -1,60 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:46118 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751977AbdFLOUg (ORCPT
+Received: from mail-it0-f47.google.com ([209.85.214.47]:37825 "EHLO
+        mail-it0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752010AbdFLKGC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Jun 2017 10:20:36 -0400
-Date: Mon, 12 Jun 2017 16:20:33 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [GIT PULL FOR renesas-drivers] mmc: renesas_sdhi: add support
- for R-Car Gen3 SDHI DMAC
-Message-ID: <20170612142032.GB2528@katana>
-References: <20170612094718.GD15434@verge.net.au>
- <CAMuHMdVn2oPBbF0xpWjKdRmLwGdA9OJcrt+o4BLOTLypS8=6dw@mail.gmail.com>
+        Mon, 12 Jun 2017 06:06:02 -0400
+Received: by mail-it0-f47.google.com with SMTP id m47so18315882iti.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Jun 2017 03:06:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="dTy3Mrz/UPE2dbVg"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdVn2oPBbF0xpWjKdRmLwGdA9OJcrt+o4BLOTLypS8=6dw@mail.gmail.com>
+In-Reply-To: <20170612094718.GD15434@verge.net.au>
+References: <20170612094718.GD15434@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 12 Jun 2017 12:06:00 +0200
+Message-ID: <CAMuHMdVn2oPBbF0xpWjKdRmLwGdA9OJcrt+o4BLOTLypS8=6dw@mail.gmail.com>
+Subject: Re: [GIT PULL FOR renesas-drivers] mmc: renesas_sdhi: add support for
+ R-Car Gen3 SDHI DMAC
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Simon,
 
---dTy3Mrz/UPE2dbVg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, Jun 12, 2017 at 11:47 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> please consider pulling changes to add support for R-Car Gen3 SDHI DMAC.
+>
+> This gives a significant performance boost;
+> the headline figure is 9.5MB/s -> 39.7MB/s.
+>
+> This pull request is based on mmc/next.
 
+Unfortunately Ulf rebases mmc/next regularly, causing lots of conflicts.
 
-> > This pull request is based on mmc/next.
->=20
-> Unfortunately Ulf rebases mmc/next regularly, causing lots of conflicts.
+> The following changes since commit 6e75316c15df8333506377743c75fcd626193849:
+>
+>   mmc: tmio: make sure SDIO gets reinitialized after resume (2017-05-30 11:51:55 +0200)
+>
+> are available in the git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/sdhi-gen3-dma-2017
+>
+> for you to fetch changes up to fd9437fc8884f039ba4a510ac99d350fd693b0dc:
+>
+>   mmc: renesas-sdhi: remove gen3 support from sysc dmac driver (2017-06-08 15:03:03 +0200)
 
-Maybe we could ask him to stop doing that? I was taught "never rebase
-anything going into linux-next" back then for exactly those reasons.
+So feel free to rebase the top 5 commits on top of today's mmc/next (and
+risk new conflicts if/when Ulf rebases his tree again tonight), or let me handle
+that tomorrow myself ;-)
 
+Gr{oetje,eeting}s,
 
---dTy3Mrz/UPE2dbVg
-Content-Type: application/pgp-signature; name="signature.asc"
+                        Geert
 
------BEGIN PGP SIGNATURE-----
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-iQIzBAEBCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlk+ozAACgkQFA3kzBSg
-KbbXVQ//RXjGeQlB58WM537iZf6/uamrxLgnpsqeuZ/LTVI8zn549mLvYamN9jM5
-c7KpuqC6N+LMixtHzoawyvu9X7ETTHbDQO0BfZgfmX9Ga7HmhJOgtTCYd9ezw8HL
-VPJQIZk47tna+pYHDtVrHldKj7VcVrwg3mV2Sci5sffl0MGeJM4zqbaD5bfVVjOf
-/jsGxhjGyoqsZOkVUlnPB+4XST1B0nwazCwEsfvwpcettTz+LAsEWMxeD6zSCXj5
-0BlZRmd8uX9xRdQvq81dDhR/ehjA8YnJ5W8MBQDbv9dox+XdcIlNjy6BNm4paGyG
-q18CKNoO9eFI6IqraNyedJMGD8tGJEnUfh2swrpBvu+NONouYznPAKBBQAPRiHDt
-tDwi06fCC3Y2/ctZMYp6lwDfu14wphb6ThWVRWUYzELwpTUYevkIMpJuFs/t9krw
-lBFlXw2RPsxaN9T6YRhWnbMc6tQjXsso8UeigQGAZkimgiNYCW2qLqts3BrkuM7l
-QxCU535R6VHajM99OLIlfnQGploNjS1uxcSysMocalRRM253BKAhd0/OZldc3PCQ
-hHTst8Lbz33wynaIAixQoj7rcQ/QLfBX27SawoGzuC5YRaNjLVszV7jdLwZ3sxyK
-M48KE8pfZVTnDDEh4b498rT5rym4IozRupSh9za57Byn1eXKhB4=
-=WSvI
------END PGP SIGNATURE-----
-
---dTy3Mrz/UPE2dbVg--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
