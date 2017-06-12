@@ -1,47 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:54614 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753598AbdFPNam (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:29294 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752086AbdFLNkA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Jun 2017 09:30:42 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 01/11] arm64: dts: salvator-x: add 12288000 for sound ADG
-Date: Fri, 16 Jun 2017 15:30:09 +0200
-Message-Id: <d37d2b3c0ec2708abd64222a04deb1bebab8213f.1497617276.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1497617276.git.horms+renesas@verge.net.au>
-References: <cover.1497617276.git.horms+renesas@verge.net.au>
+        Mon, 12 Jun 2017 09:40:00 -0400
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: robh+dt@kernel.org, mark.rutland@arm.com, mchehab@kernel.org,
+        hverkuil@xs4all.nl, sakari.ailus@linux.intel.com, crope@iki.fi
+Cc: chris.paterson2@renesas.com, laurent.pinchart@ideasonboard.com,
+        geert+renesas@glider.be, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH v8 4/8] media: Add new SDR formats PC16, PC18 & PC20
+Date: Mon, 12 Jun 2017 14:26:16 +0100
+Message-Id: <20170612132620.1024-5-ramesh.shanmugasundaram@bp.renesas.com>
+In-Reply-To: <20170612132620.1024-1-ramesh.shanmugasundaram@bp.renesas.com>
+References: <20170612132620.1024-1-ramesh.shanmugasundaram@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+This patch adds support for the three new SDR formats. These formats
+were prefixed with "planar" indicating I & Q data are not interleaved
+as in other formats. Here, I & Q data constitutes the top half and bottom
+half of the received buffer respectively.
 
-Current rcar_sound only has 11289600 (= for 44.1kHz) clock-frequency,
-but it needs 12288000 for 48kHz too.
-Otherwise, 48kHz based sound can't handle correctly.
+V4L2_SDR_FMT_PCU16BE - 14-bit complex (I & Q) unsigned big-endian sample
+inside 16-bit. V4L2 FourCC: PC16
 
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+V4L2_SDR_FMT_PCU18BE - 16-bit complex (I & Q) unsigned big-endian sample
+inside 18-bit. V4L2 FourCC: PC18
+
+V4L2_SDR_FMT_PCU20BE - 18-bit complex (I & Q) unsigned big-endian sample
+inside 20-bit. V4L2 FourCC: PC20
+
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/salvator-x.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/v4l2-core/v4l2-ioctl.c | 3 +++
+ include/uapi/linux/videodev2.h       | 3 +++
+ 2 files changed, 6 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/salvator-x.dtsi b/arch/arm64/boot/dts/renesas/salvator-x.dtsi
-index 5f0d4bdcd3b4..937bdf8842f2 100644
---- a/arch/arm64/boot/dts/renesas/salvator-x.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-x.dtsi
-@@ -523,7 +523,7 @@
+diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+index 4f27cfa134a1..ce40183d9daa 100644
+--- a/drivers/media/v4l2-core/v4l2-ioctl.c
++++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+@@ -1229,6 +1229,9 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
+ 	case V4L2_SDR_FMT_CS8:		descr = "Complex S8"; break;
+ 	case V4L2_SDR_FMT_CS14LE:	descr = "Complex S14LE"; break;
+ 	case V4L2_SDR_FMT_RU12LE:	descr = "Real U12LE"; break;
++	case V4L2_SDR_FMT_PCU16BE:	descr = "Planar Complex U16BE"; break;
++	case V4L2_SDR_FMT_PCU18BE:	descr = "Planar Complex U18BE"; break;
++	case V4L2_SDR_FMT_PCU20BE:	descr = "Planar Complex U20BE"; break;
+ 	case V4L2_TCH_FMT_DELTA_TD16:	descr = "16-bit signed deltas"; break;
+ 	case V4L2_TCH_FMT_DELTA_TD08:	descr = "8-bit signed deltas"; break;
+ 	case V4L2_TCH_FMT_TU16:		descr = "16-bit unsigned touch data"; break;
+diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+index 2b8feb86d09e..45cf7359822c 100644
+--- a/include/uapi/linux/videodev2.h
++++ b/include/uapi/linux/videodev2.h
+@@ -669,6 +669,9 @@ struct v4l2_pix_format {
+ #define V4L2_SDR_FMT_CS8          v4l2_fourcc('C', 'S', '0', '8') /* complex s8 */
+ #define V4L2_SDR_FMT_CS14LE       v4l2_fourcc('C', 'S', '1', '4') /* complex s14le */
+ #define V4L2_SDR_FMT_RU12LE       v4l2_fourcc('R', 'U', '1', '2') /* real u12le */
++#define V4L2_SDR_FMT_PCU16BE	  v4l2_fourcc('P', 'C', '1', '6') /* planar complex u16be */
++#define V4L2_SDR_FMT_PCU18BE	  v4l2_fourcc('P', 'C', '1', '8') /* planar complex u18be */
++#define V4L2_SDR_FMT_PCU20BE	  v4l2_fourcc('P', 'C', '2', '0') /* planar complex u20be */
  
- 	/* audio_clkout0/1/2/3 */
- 	#clock-cells = <1>;
--	clock-frequency = <11289600>;
-+	clock-frequency = <11289600 12288000>;
- 
- 	status = "okay";
- 
+ /* Touch formats - used for Touch devices */
+ #define V4L2_TCH_FMT_DELTA_TD16	v4l2_fourcc('T', 'D', '1', '6') /* 16-bit signed deltas */
 -- 
-2.1.4
+2.12.2
