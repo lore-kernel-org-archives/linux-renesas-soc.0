@@ -1,69 +1,114 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:40165 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750988AbdFSRFk (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:6577 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751955AbdFLNjs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Jun 2017 13:05:40 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v1 08/12] media: rcar: vin: Parse digital input after CSI on Gen3
-Date: Mon, 19 Jun 2017 19:04:45 +0200
-Message-Id: <1497891889-8038-9-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1497891889-8038-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1497891889-8038-1-git-send-email-jacopo+renesas@jmondi.org>
+        Mon, 12 Jun 2017 09:39:48 -0400
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: robh+dt@kernel.org, mark.rutland@arm.com, mchehab@kernel.org,
+        hverkuil@xs4all.nl, sakari.ailus@linux.intel.com, crope@iki.fi
+Cc: chris.paterson2@renesas.com, laurent.pinchart@ideasonboard.com,
+        geert+renesas@glider.be, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH v8 2/8] dt-bindings: media: Add MAX2175 binding description
+Date: Mon, 12 Jun 2017 14:26:14 +0100
+Message-Id: <20170612132620.1024-3-ramesh.shanmugasundaram@bp.renesas.com>
+In-Reply-To: <20170612132620.1024-1-ramesh.shanmugasundaram@bp.renesas.com>
+References: <20170612132620.1024-1-ramesh.shanmugasundaram@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When parsing available inputs on Gen3 boards, add parsing of digital
-input enpoints to the already in-place CSI-2 node parsing.
+Add device tree binding documentation for MAX2175 RF to bits tuner
+device.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- drivers/media/platform/rcar-vin/rcar-core.c | 18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+ .../devicetree/bindings/media/i2c/max2175.txt      | 59 ++++++++++++++++++++++
+ .../devicetree/bindings/property-units.txt         |  1 +
+ 2 files changed, 60 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/max2175.txt
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 6738825..78ca232 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -777,7 +777,9 @@ static int rvin_group_graph_parse(struct rvin_dev *vin, unsigned long *bitmap)
- 	vin_dbg(vin, "I'm VIN number %u", val);
- 	vin->group->vin[val] = vin;
- 
--	/* Parse all CSI-2 nodes */
-+	/* Parse all endpoints on Port@1 (CSI-2) and eventually on Port@2 */
-+	vin->mbus_cfg.type = 0;
-+	vin->mbus_cfg.flags = 0;
- 	for (i = 0; i < RVIN_CSI_MAX; i++) {
- 
- 		/* Check if instance is connected to the CSI-2 */
-@@ -804,15 +806,21 @@ static int rvin_group_graph_parse(struct rvin_dev *vin, unsigned long *bitmap)
- 		vin->group->csi[i].asd.match_type = V4L2_ASYNC_MATCH_FWNODE;
- 
- 		*bitmap |= BIT(i);
-+		vin->mbus_cfg.type = V4L2_MBUS_CSI2;
- 
- 		vin_dbg(vin, "Handle CSI-2 %s\n", of_node_full_name(csi));
- 	}
- 
--	/* All our sources are CSI-2 */
--	vin->mbus_cfg.type = V4L2_MBUS_CSI2;
--	vin->mbus_cfg.flags = 0;
-+	/* Done with at least one CSI-2 port registered */
-+	if (vin->mbus_cfg.type)
-+		return 0;
- 
--	return 0;
-+	/* Check if any digital input is connected to this instance's Port@2 */
-+	ret = rvin_digital_graph_parse(vin, 2, -1);
-+	if (!ret)
-+		*bitmap |=  BIT(RVIN_PARALLEL_IN);
+diff --git a/Documentation/devicetree/bindings/media/i2c/max2175.txt b/Documentation/devicetree/bindings/media/i2c/max2175.txt
+new file mode 100644
+index 000000000000..02b4e9cd7b1b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/i2c/max2175.txt
+@@ -0,0 +1,59 @@
++Maxim Integrated MAX2175 RF to Bits tuner
++-----------------------------------------
 +
-+	return (!ret || (ret == -ENOENT)) ? 0 : ret;
- }
++The MAX2175 IC is an advanced analog/digital hybrid-radio receiver with
++RF to Bits® front-end designed for software-defined radio solutions.
++
++Required properties:
++--------------------
++- compatible: "maxim,max2175" for MAX2175 RF-to-bits tuner.
++- clocks: clock specifier.
++- port: child port node corresponding to the I2S output, in accordance with
++	the video interface bindings defined in
++	Documentation/devicetree/bindings/media/video-interfaces.txt. The port
++	node must contain at least one endpoint.
++
++Optional properties:
++--------------------
++- maxim,master	      : phandle to the master tuner if it is a slave. This
++			is used to define two tuners in diversity mode
++			(1 master, 1 slave). By default each tuner is an
++			individual master.
++- maxim,refout-load   : load capacitance value (in picofarads) on reference
++			output drive level. The possible load values are:
++			 0 (default - refout disabled)
++			10
++			20
++			30
++			40
++			60
++			70
++- maxim,am-hiz-filter : empty property indicates the AM Hi-Z filter is used
++			in this hardware for AM antenna input.
++
++Example:
++--------
++
++Board specific DTS file
++
++/* Fixed XTAL clock node */
++maxim_xtal: clock {
++	compatible = "fixed-clock";
++	#clock-cells = <0>;
++	clock-frequency = <36864000>;
++};
++
++/* A tuner device instance under i2c bus */
++max2175_0: tuner@60 {
++	compatible = "maxim,max2175";
++	reg = <0x60>;
++	clocks = <&maxim_xtal>;
++	maxim,refout-load = <10>;
++
++	port {
++		max2175_0_ep: endpoint {
++			remote-endpoint = <&slave_rx_device>;
++		};
++	};
++
++};
+diff --git a/Documentation/devicetree/bindings/property-units.txt b/Documentation/devicetree/bindings/property-units.txt
+index 12278d79f6c0..7c9f6ee918f1 100644
+--- a/Documentation/devicetree/bindings/property-units.txt
++++ b/Documentation/devicetree/bindings/property-units.txt
+@@ -28,6 +28,7 @@ Electricity
+ -ohms		: Ohms
+ -micro-ohms	: micro Ohms
+ -microvolt	: micro volts
++-picofarads	: picofarads
  
- /* group lock should be held when calling this function */
+ Temperature
+ ----------------------------------------
 -- 
-2.7.4
+2.12.2
