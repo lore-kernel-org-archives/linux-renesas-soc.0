@@ -1,104 +1,60 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: linus.walleij@linaro.org, andy.shevchenko@gmail.com,
-        dongas86@gmail.com, geert+renesas@glider.be,
-        Chris.Brandt@renesas.com, laurent.pinchart@ideasonboard.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1] pinctrl: generic: Add output-enable property
-Date: Fri, 16 Jun 2017 10:59:41 +0200
-Message-Id: <1497603581-9632-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:44775 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752373AbdFLJ1d (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 12 Jun 2017 05:27:33 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH] ARM: dts: armadillo800eva: Split LCD mux and gpio
+Date: Mon, 12 Jun 2017 11:27:24 +0200
+Message-Id: <13132b3f44d3600983aceb7e9920b8ebb55a7cf8.1497259417.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1497259417.git.horms+renesas@verge.net.au>
+References: <cover.1497259417.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add output-enable generic pin configuration property.
-This properties allows enabling/disabling pin's output capabilities
-without actually driving any value on the line.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Configuration of the lcd0 pinmux group and GPIO hog for the external
+GPIO mux are done using a single device node, causing the "output-high"
+property to be applied to both.  This will fail for the pinmux group,
+but doesn't cause any harm, as the failure is ignored silently.
+
+However, after "pinctrl: sh-pfc: propagate errors on group config", the
+failure will become fatal, leading to a broken display:
+
+    sh-pfc e6050000.pin-controller: pin_config_group_set op failed for group 102
+    sh-pfc e6050000.pin-controller: Error applying setting, reverse things back
+    sh-pfc e6050000.pin-controller: failed to select default state
+
+Move the GPIO hog to its own node to fix this.
+
+Fixes: ffd2f9a5afb730b9 ("ARM: shmobile: armadillo800eva dts: Add pinctrl and gpio-hog for lcdc0")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
+ arch/arm/boot/dts/r8a7740-armadillo800eva.dts | 2 ++
+ 1 file changed, 2 insertions(+)
 
-So, after that many discussions I'm now sending this, that only adds a new
-flag used to enable or disable a pin's output capabilities.
-I intentionally avoided naming the output buffer explicitly because if and how
-it has to be enabled/disabled is a platform specific details each driver
-has to take care of.
-
-Dong: this is similar to what you recently proposed, without mentioning the
-output buffer directly. Can I have your Reviewed-by or your Acked-by here?
-
-Linus, Andy: I initially proposed to add "output-buffer-enable" in place of this
-one, so not to confuse the property's semantic with its real world effect.
-While I'm still partially convinced output-enable is not the most accurate choice
-possible, it certainly is the best balance with bindings clearness, and the one
-where more consensus has been collected on. Hope this flies for you too and we
-can have this merged so me and Dong can send our updated series on top of this.
-
-Thanks
-   j
-
- Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt | 2 ++
- drivers/pinctrl/pinconf-generic.c                              | 3 +++
- include/linux/pinctrl/pinconf-generic.h                        | 3 +++
- 3 files changed, 8 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-index f01d154..f8af190 100644
---- a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-@@ -259,6 +259,8 @@ input-debounce		- debounce mode with debound time X
- power-source		- select between different power supplies
- low-power-enable	- enable low power mode
- low-power-disable	- disable low power mode
-+output-disable		- disable output on a pin
-+output-enable		- enable output on a pin
- output-low		- set the pin to output mode with low level
- output-high		- set the pin to output mode with high level
- slew-rate		- set the slew rate
-diff --git a/drivers/pinctrl/pinconf-generic.c b/drivers/pinctrl/pinconf-generic.c
-index 720a19f..fc0c230 100644
---- a/drivers/pinctrl/pinconf-generic.c
-+++ b/drivers/pinctrl/pinconf-generic.c
-@@ -44,6 +44,7 @@ static const struct pin_config_item conf_items[] = {
- 	PCONFDUMP(PIN_CONFIG_INPUT_SCHMITT, "input schmitt trigger", NULL, false),
- 	PCONFDUMP(PIN_CONFIG_INPUT_SCHMITT_ENABLE, "input schmitt enabled", NULL, false),
- 	PCONFDUMP(PIN_CONFIG_LOW_POWER_MODE, "pin low power", "mode", true),
-+	PCONFDUMP(PIN_CONFIG_OUTPUT_ENABLE, "output enabled", NULL, false),
- 	PCONFDUMP(PIN_CONFIG_OUTPUT, "pin output", "level", true),
- 	PCONFDUMP(PIN_CONFIG_POWER_SOURCE, "pin power source", "selector", true),
- 	PCONFDUMP(PIN_CONFIG_SLEW_RATE, "slew rate", NULL, true),
-@@ -172,6 +173,8 @@ static const struct pinconf_generic_params dt_params[] = {
- 	{ "input-schmitt-enable", PIN_CONFIG_INPUT_SCHMITT_ENABLE, 1 },
- 	{ "low-power-disable", PIN_CONFIG_LOW_POWER_MODE, 0 },
- 	{ "low-power-enable", PIN_CONFIG_LOW_POWER_MODE, 1 },
-+	{ "output-disable", PIN_CONFIG_OUTPUT_ENABLE, 0 },
-+	{ "output-enable", PIN_CONFIG_OUTPUT_ENABLE, 1 },
- 	{ "output-high", PIN_CONFIG_OUTPUT, 1, },
- 	{ "output-low", PIN_CONFIG_OUTPUT, 0, },
- 	{ "power-source", PIN_CONFIG_POWER_SOURCE, 0 },
-diff --git a/include/linux/pinctrl/pinconf-generic.h b/include/linux/pinctrl/pinconf-generic.h
-index 7620eb1..5761958 100644
---- a/include/linux/pinctrl/pinconf-generic.h
-+++ b/include/linux/pinctrl/pinconf-generic.h
-@@ -73,6 +73,8 @@
-  *	operation, if several modes of operation are supported these can be
-  *	passed in the argument on a custom form, else just use argument 1
-  *	to indicate low power mode, argument 0 turns low power mode off.
-+ * @PIN_CONFIG_OUTPUT_ENABLE: this will enable the pin's output mode
-+ * 	without driving a value there. 1 enables output mode, 0 disables it.
-  * @PIN_CONFIG_OUTPUT: this will configure the pin as an output. Use argument
-  *	1 to indicate high level, argument 0 to indicate low level. (Please
-  *	see Documentation/pinctrl.txt, section "GPIO mode pitfalls" for a
-@@ -105,6 +107,7 @@ enum pin_config_param {
- 	PIN_CONFIG_INPUT_SCHMITT,
- 	PIN_CONFIG_INPUT_SCHMITT_ENABLE,
- 	PIN_CONFIG_LOW_POWER_MODE,
-+	PIN_CONFIG_OUTPUT_ENABLE,
- 	PIN_CONFIG_OUTPUT,
- 	PIN_CONFIG_POWER_SOURCE,
- 	PIN_CONFIG_SLEW_RATE,
---
-2.7.4
+diff --git a/arch/arm/boot/dts/r8a7740-armadillo800eva.dts b/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
+index 7885075428bb..1788e186a512 100644
+--- a/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
++++ b/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
+@@ -266,7 +266,9 @@
+ 	lcd0_pins: lcd0 {
+ 		groups = "lcd0_data24_0", "lcd0_lclk_1", "lcd0_sync";
+ 		function = "lcd0";
++	};
+ 
++	lcd0_mux {
+ 		/* DBGMD/LCDC0/FSIA MUX */
+ 		gpio-hog;
+ 		gpios = <176 0>;
+-- 
+2.1.4
