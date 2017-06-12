@@ -1,278 +1,177 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54296 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751835AbdFORUg (ORCPT
+Received: from mail-lf0-f54.google.com ([209.85.215.54]:34657 "EHLO
+        mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752108AbdFLLX6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Jun 2017 13:20:36 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
-        Mark Brown <broonie@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <87lgoum65n.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dLYRa-0001dX-4w@debutante>
-Date: Thu, 15 Jun 2017 18:20:30 +0100
-Subject: Applied "ASoC: rsnd: rename "slots" related variable" to the asoc tree
+        Mon, 12 Jun 2017 07:23:58 -0400
+Received: by mail-lf0-f54.google.com with SMTP id v20so49608402lfa.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Jun 2017 04:23:57 -0700 (PDT)
+Date: Mon, 12 Jun 2017 13:23:54 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH/RFC] clk: renesas: cpg-mssr: Restore module clock
+ registers during resume
+Message-ID: <20170612112354.GF17461@bigcity.dyn.berto.se>
+References: <1496836718-10762-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1496836718-10762-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+Hi Geert,
 
-   ASoC: rsnd: rename "slots" related variable
+Thanks for your patch.
 
-has been applied to the asoc tree at
+On 2017-06-07 13:58:38 +0200, Geert Uytterhoeven wrote:
+> During PSCI system suspend, R-Car Gen3 SoCs are powered down, and their
+> clock register state is lost.  Note that as the boot loader skips most
+> initialization after resume, clock register state differs from the state
+> encountered during normal system boot, too.
+> 
+> Hence after s2ram, some operations may fail because module clocks are
+> disabled, while drivers expect them to be still enabled.  E.g. EtherAVB
+> fails when Wake-on-LAN has been enabled using "ethtool -s eth0 wol g":
+> 
+>     ravb e6800000.ethernet eth0: failed to switch device to config mode
+>     ravb e6800000.ethernet eth0: device will be stopped after h/w processes are done.
+>     ravb e6800000.ethernet eth0: failed to switch device to config
+>     PM: Device e6800000.ethernet failed to resume: error -110
+> 
+> To fix this, restore all bits of the SMSTPCR registers that have ever
+> been written to by Linux.
+> 
+> Note that while this fixes EtherAVB operation after resume from s2ram,
+> EtherAVB cannot be used as an actual wake-up source from s2ram, only
+> from s2idle, due to PSCI limitations.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+I tested this on H3 ES1.0 for EtherAVB and it now works as you describe 
+above after s2ram \o/.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Tested-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+> 
+> TODO: Restore other clock registers, which requires clock-specific code.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+Reviewed-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+> ---
+> Tested on Salvator-X (R-Car H3 and M3-W), and Koelsch (R-Car M2-W).
+> 
+>  drivers/clk/renesas/renesas-cpg-mssr.c | 56 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 56 insertions(+)
+> 
+> diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+> index 7bf164ad64ebd8ef..0f23ad17fba979ac 100644
+> --- a/drivers/clk/renesas/renesas-cpg-mssr.c
+> +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+> @@ -106,6 +106,8 @@ static const u16 srcr[] = {
+>   * @num_core_clks: Number of Core Clocks in clks[]
+>   * @num_mod_clks: Number of Module Clocks in clks[]
+>   * @last_dt_core_clk: ID of the last Core Clock exported to DT
+> + * @smstpcr_shadow[].mask: Mask of SMSTPCR[] bits ever written to
+> + * @smstpcr_shadow[].val: Last bit values written to SMSTPCR[]
+>   */
+>  struct cpg_mssr_priv {
+>  #ifdef CONFIG_RESET_CONTROLLER
+> @@ -119,6 +121,11 @@ struct cpg_mssr_priv {
+>  	unsigned int num_core_clks;
+>  	unsigned int num_mod_clks;
+>  	unsigned int last_dt_core_clk;
+> +
+> +	struct {
+> +		u32 mask;
+> +		u32 val;
+> +	} smstpcr_shadow[ARRAY_SIZE(smstpcr)];
+>  };
+>  
+>  
+> @@ -161,6 +168,12 @@ static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
+>  
+>  	spin_unlock_irqrestore(&priv->rmw_lock, flags);
+>  
+> +	priv->smstpcr_shadow[reg].mask |= bitmask;
+> +	if (enable)
+> +		priv->smstpcr_shadow[reg].val &= ~bitmask;
+> +	else
+> +		priv->smstpcr_shadow[reg].val |= bitmask;
+> +
+>  	if (!enable)
+>  		return 0;
+>  
+> @@ -727,6 +740,7 @@ static int __init cpg_mssr_probe(struct platform_device *pdev)
+>  	if (!clks)
+>  		return -ENOMEM;
+>  
+> +	dev_set_drvdata(dev, priv);
+>  	priv->clks = clks;
+>  	priv->num_core_clks = info->num_total_core_clks;
+>  	priv->num_mod_clks = info->num_hw_mod_clks;
+> @@ -763,10 +777,52 @@ static int __init cpg_mssr_probe(struct platform_device *pdev)
+>  	return 0;
+>  }
+>  
+> +static int cpg_mssr_resume_noirq(struct device *dev)
+> +{
+> +	struct cpg_mssr_priv *priv = dev_get_drvdata(dev);
+> +	unsigned int reg, i;
+> +	u32 value, mask;
+> +
+> +	for (reg = 0; reg < ARRAY_SIZE(priv->smstpcr_shadow); reg++) {
+> +		/* Restore bits ever written to */
+> +		mask = priv->smstpcr_shadow[reg].mask;
+> +		if (!mask)
+> +			continue;
+> +
+> +		value = readl(priv->base + SMSTPCR(reg));
+> +		value &= ~mask;
+> +		value |= priv->smstpcr_shadow[reg].val;
+> +		writel(value, priv->base + SMSTPCR(reg));
+> +
+> +		/* Wait until enabled clocks are really enabled */
+> +		mask &= ~priv->smstpcr_shadow[reg].val;
+> +		if (!mask)
+> +			continue;
+> +
+> +		for (i = 1000; i > 0; --i) {
+> +			value = readl(priv->base + MSTPSR(reg));
+> +			if (!(value & mask))
+> +				break;
+> +			cpu_relax();
+> +		}
+> +
+> +		if (!i)
+> +			dev_warn(dev, "Failed to enable SMSTP %p[0x%x]\n",
+> +				 priv->base + SMSTPCR(reg), value & mask);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct dev_pm_ops cpg_mssr_pm = {
+> +	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(NULL, cpg_mssr_resume_noirq)
+> +};
+> +
+>  static struct platform_driver cpg_mssr_driver = {
+>  	.driver		= {
+>  		.name	= "renesas-cpg-mssr",
+>  		.of_match_table = cpg_mssr_match,
+> +		.pm = &cpg_mssr_pm,
+>  	},
+>  };
+>  
+> -- 
+> 2.7.4
+> 
 
-Thanks,
-Mark
-
->From 1ff9593d2f27a48fbeeccd7fc253eed2a7102d16 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Thu, 15 Jun 2017 00:49:27 +0000
-Subject: [PATCH] ASoC: rsnd: rename "slots" related variable
-
-Current Renesas sound driver has slots and slots_num in
-struct rsnd_dai, but these are very un-understandable naming
-(It had named from TDM slots).
-In this driver, the "slots" means total usable channels, and
-"stot_num" means SSI lane number if Multi SSI was used.
-To more understandable code, this patch renames "slots" to
-"max_channels", and "slots_num" to "ssi_lane", and replaces related
-functions name.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Tested-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/sh/rcar/core.c | 53 ++++++++++++++++++++++++------------------------
- sound/soc/sh/rcar/dvc.c  |  7 ++++---
- sound/soc/sh/rcar/rsnd.h | 23 ++++++++++++++-------
- sound/soc/sh/rcar/ssi.c  |  3 ++-
- 4 files changed, 49 insertions(+), 37 deletions(-)
-
-diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
-index 1b536d140e49..9b9e898d0df3 100644
---- a/sound/soc/sh/rcar/core.c
-+++ b/sound/soc/sh/rcar/core.c
-@@ -203,27 +203,6 @@ int rsnd_io_is_working(struct rsnd_dai_stream *io)
- 	return !!io->substream;
- }
- 
--void rsnd_set_slot(struct rsnd_dai *rdai,
--		   int slots, int num)
--{
--	rdai->slots	= slots;
--	rdai->slots_num	= num;
--}
--
--int rsnd_get_slot(struct rsnd_dai_stream *io)
--{
--	struct rsnd_dai *rdai = rsnd_io_to_rdai(io);
--
--	return rdai->slots;
--}
--
--int rsnd_get_slot_num(struct rsnd_dai_stream *io)
--{
--	struct rsnd_dai *rdai = rsnd_io_to_rdai(io);
--
--	return rdai->slots_num;
--}
--
- int rsnd_runtime_channel_original(struct rsnd_dai_stream *io)
- {
- 	struct snd_pcm_runtime *runtime = rsnd_io_to_runtime(io);
-@@ -248,13 +227,14 @@ int rsnd_runtime_channel_after_ctu(struct rsnd_dai_stream *io)
- 
- int rsnd_runtime_channel_for_ssi(struct rsnd_dai_stream *io)
- {
-+	struct rsnd_dai *rdai = rsnd_io_to_rdai(io);
- 	int chan = rsnd_io_is_play(io) ?
- 		rsnd_runtime_channel_after_ctu(io) :
- 		rsnd_runtime_channel_original(io);
- 
- 	/* Use Multi SSI */
- 	if (rsnd_runtime_is_ssi_multi(io))
--		chan /= rsnd_get_slot_num(io);
-+		chan /= rsnd_rdai_ssi_lane_get(rdai);
- 
- 	/* TDM Extend Mode needs 8ch */
- 	if (chan == 6)
-@@ -265,12 +245,13 @@ int rsnd_runtime_channel_for_ssi(struct rsnd_dai_stream *io)
- 
- int rsnd_runtime_is_ssi_multi(struct rsnd_dai_stream *io)
- {
--	int slots = rsnd_get_slot_num(io);
-+	struct rsnd_dai *rdai = rsnd_io_to_rdai(io);
-+	int lane = rsnd_rdai_ssi_lane_get(rdai);
- 	int chan = rsnd_io_is_play(io) ?
- 		rsnd_runtime_channel_after_ctu(io) :
- 		rsnd_runtime_channel_original(io);
- 
--	return (chan >= 6) && (slots > 1);
-+	return (chan > 2) && (lane > 1);
- }
- 
- int rsnd_runtime_is_ssi_tdm(struct rsnd_dai_stream *io)
-@@ -549,6 +530,24 @@ static void rsnd_dai_disconnect(struct rsnd_mod *mod,
- 	io->mod[type] = NULL;
- }
- 
-+int rsnd_rdai_channels_ctrl(struct rsnd_dai *rdai,
-+			    int max_channels)
-+{
-+	if (max_channels > 0)
-+		rdai->max_channels = max_channels;
-+
-+	return rdai->max_channels;
-+}
-+
-+int rsnd_rdai_ssi_lane_ctrl(struct rsnd_dai *rdai,
-+			    int ssi_lane)
-+{
-+	if (ssi_lane > 0)
-+		rdai->ssi_lane = ssi_lane;
-+
-+	return rdai->ssi_lane;
-+}
-+
- struct rsnd_dai *rsnd_rdai_get(struct rsnd_priv *priv, int id)
- {
- 	if ((id < 0) || (id >= rsnd_rdai_nr(priv)))
-@@ -726,7 +725,8 @@ static int rsnd_soc_set_dai_tdm_slot(struct snd_soc_dai *dai,
- 	switch (slots) {
- 	case 6:
- 		/* TDM Extend Mode */
--		rsnd_set_slot(rdai, slots, 1);
-+		rsnd_rdai_channels_set(rdai, slots);
-+		rsnd_rdai_ssi_lane_set(rdai, 1);
- 		break;
- 	default:
- 		dev_err(dev, "unsupported TDM slots (%d)\n", slots);
-@@ -879,7 +879,8 @@ static void __rsnd_dai_probe(struct rsnd_priv *priv,
- 
- 	rdai->playback.rdai		= rdai;
- 	rdai->capture.rdai		= rdai;
--	rsnd_set_slot(rdai, 2, 1); /* default */
-+	rsnd_rdai_channels_set(rdai, 2); /* default 2ch */
-+	rsnd_rdai_ssi_lane_set(rdai, 1); /* default 1lane */
- 
- 	for (io_i = 0;; io_i++) {
- 		playback = of_parse_phandle(dai_np, "playback", io_i);
-diff --git a/sound/soc/sh/rcar/dvc.c b/sound/soc/sh/rcar/dvc.c
-index 75af6e742328..99d2d9459e75 100644
---- a/sound/soc/sh/rcar/dvc.c
-+++ b/sound/soc/sh/rcar/dvc.c
-@@ -249,8 +249,9 @@ static int rsnd_dvc_pcm_new(struct rsnd_mod *mod,
- 			    struct snd_soc_pcm_runtime *rtd)
- {
- 	struct rsnd_dvc *dvc = rsnd_mod_to_dvc(mod);
-+	struct rsnd_dai *rdai = rsnd_io_to_rdai(io);
- 	int is_play = rsnd_io_is_play(io);
--	int slots = rsnd_get_slot(io);
-+	int channels = rsnd_rdai_channels_get(rdai);
- 	int ret;
- 
- 	/* Volume */
-@@ -259,7 +260,7 @@ static int rsnd_dvc_pcm_new(struct rsnd_mod *mod,
- 			"DVC Out Playback Volume" : "DVC In Capture Volume",
- 			rsnd_kctrl_accept_anytime,
- 			rsnd_dvc_volume_update,
--			&dvc->volume, slots,
-+			&dvc->volume, channels,
- 			0x00800000 - 1);
- 	if (ret < 0)
- 		return ret;
-@@ -270,7 +271,7 @@ static int rsnd_dvc_pcm_new(struct rsnd_mod *mod,
- 			"DVC Out Mute Switch" : "DVC In Mute Switch",
- 			rsnd_kctrl_accept_anytime,
- 			rsnd_dvc_volume_update,
--			&dvc->mute,  slots,
-+			&dvc->mute, channels,
- 			1);
- 	if (ret < 0)
- 		return ret;
-diff --git a/sound/soc/sh/rcar/rsnd.h b/sound/soc/sh/rcar/rsnd.h
-index ac4d50d118d1..47162bdf1abc 100644
---- a/sound/soc/sh/rcar/rsnd.h
-+++ b/sound/soc/sh/rcar/rsnd.h
-@@ -399,11 +399,6 @@ void rsnd_parse_connect_common(struct rsnd_dai *rdai,
- 		struct device_node *playback,
- 		struct device_node *capture);
- 
--void rsnd_set_slot(struct rsnd_dai *rdai,
--		   int slots, int slots_total);
--int rsnd_get_slot(struct rsnd_dai_stream *io);
--int rsnd_get_slot_num(struct rsnd_dai_stream *io);
--
- int rsnd_runtime_channel_original(struct rsnd_dai_stream *io);
- int rsnd_runtime_channel_after_ctu(struct rsnd_dai_stream *io);
- int rsnd_runtime_channel_for_ssi(struct rsnd_dai_stream *io);
-@@ -455,8 +450,8 @@ struct rsnd_dai {
- 	struct rsnd_dai_stream capture;
- 	struct rsnd_priv *priv;
- 
--	int slots;
--	int slots_num;
-+	int max_channels;	/* 2ch - 16ch */
-+	int ssi_lane;		/* 1lane - 4lane */
- 
- 	unsigned int clk_master:1;
- 	unsigned int bit_clk_inv:1;
-@@ -476,6 +471,20 @@ struct rsnd_dai {
- 
- struct rsnd_dai *rsnd_rdai_get(struct rsnd_priv *priv, int id);
- 
-+#define rsnd_rdai_channels_set(rdai, max_channels) \
-+	rsnd_rdai_channels_ctrl(rdai, max_channels)
-+#define rsnd_rdai_channels_get(rdai) \
-+	rsnd_rdai_channels_ctrl(rdai, 0)
-+int rsnd_rdai_channels_ctrl(struct rsnd_dai *rdai,
-+			    int max_channels);
-+
-+#define rsnd_rdai_ssi_lane_set(rdai, ssi_lane) \
-+	rsnd_rdai_ssi_lane_ctrl(rdai, ssi_lane)
-+#define rsnd_rdai_ssi_lane_get(rdai) \
-+	rsnd_rdai_ssi_lane_ctrl(rdai, 0)
-+int rsnd_rdai_ssi_lane_ctrl(struct rsnd_dai *rdai,
-+			    int ssi_lane);
-+
- void rsnd_dai_period_elapsed(struct rsnd_dai_stream *io);
- int rsnd_dai_connect(struct rsnd_mod *mod,
- 		     struct rsnd_dai_stream *io,
-diff --git a/sound/soc/sh/rcar/ssi.c b/sound/soc/sh/rcar/ssi.c
-index f7df3b5e2985..6450095eb547 100644
---- a/sound/soc/sh/rcar/ssi.c
-+++ b/sound/soc/sh/rcar/ssi.c
-@@ -897,7 +897,8 @@ static void rsnd_ssi_connect(struct rsnd_mod *mod,
- 		type = types[i];
- 		if (!rsnd_io_to_mod(io, type)) {
- 			rsnd_dai_connect(mod, io, type);
--			rsnd_set_slot(rdai, 2 * (i + 1), (i + 1));
-+			rsnd_rdai_channels_set(rdai, (i + 1) * 2);
-+			rsnd_rdai_ssi_lane_set(rdai, (i + 1));
- 			return;
- 		}
- 	}
 -- 
-2.11.0
+Regards,
+Niklas S�derlund
