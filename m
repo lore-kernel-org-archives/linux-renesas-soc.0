@@ -1,104 +1,233 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f44.google.com ([209.85.215.44]:36599 "EHLO
-        mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752120AbdFLL3y (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:58785 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752086AbdFLNkD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Jun 2017 07:29:54 -0400
-Received: by mail-lf0-f44.google.com with SMTP id o83so49564274lff.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Jun 2017 04:29:53 -0700 (PDT)
-Date: Mon, 12 Jun 2017 13:29:51 +0200
-From: Niklas =?iso-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund@ragnatech.se>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: Re: ravb WoL interrupt flood
-Message-ID: <20170612112951.GG17461@bigcity.dyn.berto.se>
-References: <CAMuHMdWmt7oB4B4OYkO59+HvEbpVLVeqB_AV2c5OnYJEUJRxRg@mail.gmail.com>
- <20170530102924.GB7484@bigcity.dyn.berto.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20170530102924.GB7484@bigcity.dyn.berto.se>
+        Mon, 12 Jun 2017 09:40:03 -0400
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: robh+dt@kernel.org, mark.rutland@arm.com, mchehab@kernel.org,
+        hverkuil@xs4all.nl, sakari.ailus@linux.intel.com, crope@iki.fi
+Cc: chris.paterson2@renesas.com, laurent.pinchart@ideasonboard.com,
+        geert+renesas@glider.be, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH v8 5/8] doc_rst: media: New SDR formats PC16, PC18 & PC20
+Date: Mon, 12 Jun 2017 14:26:17 +0100
+Message-Id: <20170612132620.1024-6-ramesh.shanmugasundaram@bp.renesas.com>
+In-Reply-To: <20170612132620.1024-1-ramesh.shanmugasundaram@bp.renesas.com>
+References: <20170612132620.1024-1-ramesh.shanmugasundaram@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+This patch adds documentation for the three new SDR formats
 
-On 2017-05-30 12:29:24 +0200, Niklas S�derlund wrote:
-> Hi Geert,
-> 
-> Thanks for the report. I did run a 200+ loop suspend/resume without 
-> issues so this error is probably hard to reproduce or something changed 
-> since v4.11-rc1 which if IIRC was the base I used to do the tests.
-> 
-> All I can think of is that if the interface was down at the time the 
-> system was suspend. There is a bug in  the driver which is in 
-> renesas-drivers related to that. But given that you woken up by WoL that 
-> is probably not the case :-)
-> 
-> I will do more tests and see if I can reproduce this once I'm back in 
-> Stockholm.
+V4L2_SDR_FMT_PCU16BE
+V4L2_SDR_FMT_PCU18BE
+V4L2_SDR_FMT_PCU20BE
 
-I have now done over a 500 suspend/resume loops and not been able to see 
-this :-(
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+---
+ .../media/uapi/v4l/pixfmt-sdr-pcu16be.rst          | 55 ++++++++++++++++++++++
+ .../media/uapi/v4l/pixfmt-sdr-pcu18be.rst          | 55 ++++++++++++++++++++++
+ .../media/uapi/v4l/pixfmt-sdr-pcu20be.rst          | 54 +++++++++++++++++++++
+ Documentation/media/uapi/v4l/sdr-formats.rst       |  3 ++
+ 4 files changed, 167 insertions(+)
+ create mode 100644 Documentation/media/uapi/v4l/pixfmt-sdr-pcu16be.rst
+ create mode 100644 Documentation/media/uapi/v4l/pixfmt-sdr-pcu18be.rst
+ create mode 100644 Documentation/media/uapi/v4l/pixfmt-sdr-pcu20be.rst
 
-I have run it with and without your '[PATCH/RFC] clk: renesas: cpg-mssr: 
-Restore module clock registers during resume' patch but no noticeable 
-difference.
-
-I had a small cleanup in my patch which would differ from the one you 
-use. The diff is only in effect when resuming from s2ram so it should 
-have no effect here but still it is a change. My plan is to submit the 
-version with this fix for tomorrows renesas-drivers and then rerun my 
-tests using that. If I still can't reproduce it then I think I will 
-submit a v2 of my WoL patch to the ML, do this sounds like an OK plan to 
-you?
-
-> 
-> 
-> On 2017-05-30 11:23:23 +0200, Geert Uytterhoeven wrote:
-> > Hi Niklas,
-> > 
-> > I just got a flood of messages after WoL from s2idle on r8a7795/salvator-x:
-> > 
-> > [  802.341060] ravb e6800000.ethernet eth0: ignoring interrupt, rx
-> > status 0x00000001, rx mask 0x00000001,
-> > [  802.350369] ravb e6800000.ethernet eth0:                     tx
-> > status 0x00000000, tx mask 0x00000001.
-> > [  802.359684] ravb e6800000.ethernet eth0: ignoring interrupt, rx
-> > status 0x00000001, rx mask 0x00000001,
-> > [  802.368993] ravb e6800000.ethernet eth0:                     tx
-> > status 0x00000000, tx mask 0x00000001.
-> > [  802.378308] ravb e6800000.ethernet eth0: ignoring interrupt, rx
-> > status 0x00000001, rx mask 0x00000001,
-> > [  802.387616] ravb e6800000.ethernet eth0:                     tx
-> > status 0x00000000, tx mask 0x00000001.
-> > [  802.396931] ravb e6800000.ethernet eth0: ignoring interrupt, rx
-> > status 0x00000001, rx mask 0x00000001,
-> > [  802.406240] ravb e6800000.ethernet eth0:                     tx
-> > status 0x00000000, tx mask 0x00000001.
-> > ...
-> > 
-> > Unfortunately I cannot reproduce it.
-> > 
-> > Gr{oetje,eeting}s,
-> > 
-> >                         Geert
-> > 
-> > --
-> > Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> > 
-> > In personal conversations with technical people, I call myself a hacker. But
-> > when I'm talking to journalists I just say "programmer" or something like that.
-> >                                 -- Linus Torvalds
-> 
-> -- 
-> Regards,
-> Niklas S�derlund
-
+diff --git a/Documentation/media/uapi/v4l/pixfmt-sdr-pcu16be.rst b/Documentation/media/uapi/v4l/pixfmt-sdr-pcu16be.rst
+new file mode 100644
+index 000000000000..2de1b1a0f517
+--- /dev/null
++++ b/Documentation/media/uapi/v4l/pixfmt-sdr-pcu16be.rst
+@@ -0,0 +1,55 @@
++.. -*- coding: utf-8; mode: rst -*-
++
++.. _V4L2-SDR-FMT-PCU16BE:
++
++******************************
++V4L2_SDR_FMT_PCU16BE ('PC16')
++******************************
++
++Planar complex unsigned 16-bit big endian IQ sample
++
++Description
++===========
++
++This format contains a sequence of complex number samples. Each complex
++number consist of two parts called In-phase and Quadrature (IQ). Both I
++and Q are represented as a 16 bit unsigned big endian number stored in
++32 bit space. The remaining unused bits within the 32 bit space will be
++padded with 0. I value starts first and Q value starts at an offset
++equalling half of the buffer size (i.e.) offset = buffersize/2. Out of
++the 16 bits, bit 15:2 (14 bit) is data and bit 1:0 (2 bit) can be any
++value.
++
++**Byte Order.**
++Each cell is one byte.
++
++.. flat-table::
++    :header-rows:  1
++    :stub-columns: 0
++
++    * -  Offset:
++      -  Byte B0
++      -  Byte B1
++      -  Byte B2
++      -  Byte B3
++    * -  start + 0:
++      -  I'\ :sub:`0[13:6]`
++      -  I'\ :sub:`0[5:0]; B1[1:0]=pad`
++      -  pad
++      -  pad
++    * -  start + 4:
++      -  I'\ :sub:`1[13:6]`
++      -  I'\ :sub:`1[5:0]; B1[1:0]=pad`
++      -  pad
++      -  pad
++    * -  ...
++    * - start + offset:
++      -  Q'\ :sub:`0[13:6]`
++      -  Q'\ :sub:`0[5:0]; B1[1:0]=pad`
++      -  pad
++      -  pad
++    * - start + offset + 4:
++      -  Q'\ :sub:`1[13:6]`
++      -  Q'\ :sub:`1[5:0]; B1[1:0]=pad`
++      -  pad
++      -  pad
+diff --git a/Documentation/media/uapi/v4l/pixfmt-sdr-pcu18be.rst b/Documentation/media/uapi/v4l/pixfmt-sdr-pcu18be.rst
+new file mode 100644
+index 000000000000..da8b26bf6b95
+--- /dev/null
++++ b/Documentation/media/uapi/v4l/pixfmt-sdr-pcu18be.rst
+@@ -0,0 +1,55 @@
++.. -*- coding: utf-8; mode: rst -*-
++
++.. _V4L2-SDR-FMT-PCU18BE:
++
++******************************
++V4L2_SDR_FMT_PCU18BE ('PC18')
++******************************
++
++Planar complex unsigned 18-bit big endian IQ sample
++
++Description
++===========
++
++This format contains a sequence of complex number samples. Each complex
++number consist of two parts called In-phase and Quadrature (IQ). Both I
++and Q are represented as a 18 bit unsigned big endian number stored in
++32 bit space. The remaining unused bits within the 32 bit space will be
++padded with 0. I value starts first and Q value starts at an offset
++equalling half of the buffer size (i.e.) offset = buffersize/2. Out of
++the 18 bits, bit 17:2 (16 bit) is data and bit 1:0 (2 bit) can be any
++value.
++
++**Byte Order.**
++Each cell is one byte.
++
++.. flat-table::
++    :header-rows:  1
++    :stub-columns: 0
++
++    * -  Offset:
++      -  Byte B0
++      -  Byte B1
++      -  Byte B2
++      -  Byte B3
++    * -  start + 0:
++      -  I'\ :sub:`0[17:10]`
++      -  I'\ :sub:`0[9:2]`
++      -  I'\ :sub:`0[1:0]; B2[5:0]=pad`
++      -  pad
++    * -  start + 4:
++      -  I'\ :sub:`1[17:10]`
++      -  I'\ :sub:`1[9:2]`
++      -  I'\ :sub:`1[1:0]; B2[5:0]=pad`
++      -  pad
++    * -  ...
++    * - start + offset:
++      -  Q'\ :sub:`0[17:10]`
++      -  Q'\ :sub:`0[9:2]`
++      -  Q'\ :sub:`0[1:0]; B2[5:0]=pad`
++      -  pad
++    * - start + offset + 4:
++      -  Q'\ :sub:`1[17:10]`
++      -  Q'\ :sub:`1[9:2]`
++      -  Q'\ :sub:`1[1:0]; B2[5:0]=pad`
++      -  pad
+diff --git a/Documentation/media/uapi/v4l/pixfmt-sdr-pcu20be.rst b/Documentation/media/uapi/v4l/pixfmt-sdr-pcu20be.rst
+new file mode 100644
+index 000000000000..5499eed39477
+--- /dev/null
++++ b/Documentation/media/uapi/v4l/pixfmt-sdr-pcu20be.rst
+@@ -0,0 +1,54 @@
++.. -*- coding: utf-8; mode: rst -*-
++.. _V4L2-SDR-FMT-PCU20BE:
++
++******************************
++V4L2_SDR_FMT_PCU20BE ('PC20')
++******************************
++
++Planar complex unsigned 20-bit big endian IQ sample
++
++Description
++===========
++
++This format contains a sequence of complex number samples. Each complex
++number consist of two parts called In-phase and Quadrature (IQ). Both I
++and Q are represented as a 20 bit unsigned big endian number stored in
++32 bit space. The remaining unused bits within the 32 bit space will be
++padded with 0. I value starts first and Q value starts at an offset
++equalling half of the buffer size (i.e.) offset = buffersize/2. Out of
++the 20 bits, bit 19:2 (18 bit) is data and bit 1:0 (2 bit) can be any
++value.
++
++**Byte Order.**
++Each cell is one byte.
++
++.. flat-table::
++    :header-rows:  1
++    :stub-columns: 0
++
++    * -  Offset:
++      -  Byte B0
++      -  Byte B1
++      -  Byte B2
++      -  Byte B3
++    * -  start + 0:
++      -  I'\ :sub:`0[19:12]`
++      -  I'\ :sub:`0[11:4]`
++      -  I'\ :sub:`0[3:0]; B2[3:0]=pad`
++      -  pad
++    * -  start + 4:
++      -  I'\ :sub:`1[19:12]`
++      -  I'\ :sub:`1[11:4]`
++      -  I'\ :sub:`1[3:0]; B2[3:0]=pad`
++      -  pad
++    * -  ...
++    * - start + offset:
++      -  Q'\ :sub:`0[19:12]`
++      -  Q'\ :sub:`0[11:4]`
++      -  Q'\ :sub:`0[3:0]; B2[3:0]=pad`
++      -  pad
++    * - start + offset + 4:
++      -  Q'\ :sub:`1[19:12]`
++      -  Q'\ :sub:`1[11:4]`
++      -  Q'\ :sub:`1[3:0]; B2[3:0]=pad`
++      -  pad
+diff --git a/Documentation/media/uapi/v4l/sdr-formats.rst b/Documentation/media/uapi/v4l/sdr-formats.rst
+index f863c08f1add..2037f5bad727 100644
+--- a/Documentation/media/uapi/v4l/sdr-formats.rst
++++ b/Documentation/media/uapi/v4l/sdr-formats.rst
+@@ -17,3 +17,6 @@ These formats are used for :ref:`SDR <sdr>` interface only.
+     pixfmt-sdr-cs08
+     pixfmt-sdr-cs14le
+     pixfmt-sdr-ru12le
++    pixfmt-sdr-pcu16be
++    pixfmt-sdr-pcu18be
++    pixfmt-sdr-pcu20be
 -- 
-Regards,
-Niklas S�derlund
+2.12.2
