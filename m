@@ -1,356 +1,231 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: robh@kernel.org, linux-serial@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, magnus.damm@gmail.com,
-        laurent.pinchart@ideasonboard.com, wsa@the-dreams.de,
-        linux-i2c@vger.kernel.org,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [RFC 3/4] max9260: add driver for i2c over GMSL passthrough
-Date: Wed, 14 Jun 2017 16:38:49 +0200
-Message-Id: <1497451130-7741-4-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1497451130-7741-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1497451130-7741-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-Sender: linux-i2c-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+Subject: Re: [PATCH v7 0/7] Add V4L2 SDR (DRIF & MAX2175) driver
+To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+        robh+dt@kernel.org, mark.rutland@arm.com, mchehab@kernel.org,
+        sakari.ailus@linux.intel.com, crope@iki.fi
+Cc: chris.paterson2@renesas.com, laurent.pinchart@ideasonboard.com,
+        geert+renesas@glider.be, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <20170609150738.56294-1-ramesh.shanmugasundaram@bp.renesas.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <2c4eec05-dcb2-3898-1278-b996927856b2@xs4all.nl>
+Date: Mon, 12 Jun 2017 10:25:40 +0200
+MIME-Version: 1.0
+In-Reply-To: <20170609150738.56294-1-ramesh.shanmugasundaram@bp.renesas.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This driver implements tunnelling of i2c requests over GMSL via a
-MAX9260 deserializer. It provides an i2c adapter that can be used
-to reach devices on the far side of the link.
+Hi Ramesh,
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
----
- drivers/media/i2c/Kconfig   |   6 +
- drivers/media/i2c/Makefile  |   1 +
- drivers/media/i2c/max9260.c | 294 ++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 301 insertions(+)
- create mode 100644 drivers/media/i2c/max9260.c
+Can you post a patch on top of this series adding entries for these two
+drivers to the MAINTAINERS file?
 
-diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-index 7c23b7a..743f8ee 100644
---- a/drivers/media/i2c/Kconfig
-+++ b/drivers/media/i2c/Kconfig
-@@ -400,6 +400,12 @@ config VIDEO_VPX3220
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called vpx3220.
- 
-+config VIDEO_MAX9260
-+	tristate "Maxim MAX9260 GMSL deserializer support"
-+	depends on I2C
-+	---help---
-+	  This driver supports the Maxim MAX9260 GMSL deserializer.
-+
- comment "Video and audio decoders"
- 
- config VIDEO_SAA717X
-diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
-index 62323ec..9b2fd13 100644
---- a/drivers/media/i2c/Makefile
-+++ b/drivers/media/i2c/Makefile
-@@ -86,3 +86,4 @@ obj-$(CONFIG_VIDEO_IR_I2C)  += ir-kbd-i2c.o
- obj-$(CONFIG_VIDEO_ML86V7667)	+= ml86v7667.o
- obj-$(CONFIG_VIDEO_OV2659)	+= ov2659.o
- obj-$(CONFIG_VIDEO_TC358743)	+= tc358743.o
-+obj-$(CONFIG_VIDEO_MAX9260)	+= max9260.o
-diff --git a/drivers/media/i2c/max9260.c b/drivers/media/i2c/max9260.c
-new file mode 100644
-index 0000000..2030eb0
---- /dev/null
-+++ b/drivers/media/i2c/max9260.c
-@@ -0,0 +1,294 @@
-+/*
-+ * Maxim MAX9260 GMSL Deserializer Driver
-+ *
-+ * Copyright (C) 2017 Ulrich Hecht
-+ *
-+ * This program is free software; you can redistribute  it and/or modify it
-+ * under  the terms of  the GNU General  Public License as published by the
-+ * Free Software Foundation;  either version 2 of the  License, or (at your
-+ * option) any later version.
-+ */
-+
-+#include <linux/device.h>
-+#include <linux/i2c.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_gpio.h>
-+#include <linux/serdev.h>
-+#include <linux/slab.h>
-+#include <linux/tty.h>
-+
-+#define SYNC	0x79
-+#define ACK	0xc3
-+
-+#define RX_FINISHED		0
-+#define RX_FRAME_ERROR		1
-+#define RX_EXPECT_ACK		2
-+#define RX_EXPECT_ACK_DATA	3
-+#define RX_EXPECT_DATA		4
-+
-+struct max9260_device {
-+	struct serdev_device *serdev;
-+	u8 *rx_buf;
-+	int rx_len;
-+	int rx_state;
-+	wait_queue_head_t rx_wq;
-+	struct i2c_adapter adap;
-+};
-+
-+static void wait_for_transaction(struct max9260_device *dev)
-+{
-+	wait_event_interruptible_timeout(dev->rx_wq,
-+		dev->rx_state <= RX_FRAME_ERROR,
-+		HZ/2);
-+}
-+
-+static void transact(struct max9260_device *dev,
-+			     int expect,
-+			     u8 *request, int len)
-+{
-+	serdev_device_mux_select(dev->serdev);
-+
-+	serdev_device_set_baudrate(dev->serdev, 115200);
-+	serdev_device_set_parity(dev->serdev, 1, 0);
-+
-+	dev->rx_state = expect;
-+	serdev_device_write_buf(dev->serdev, request, len);
-+
-+	wait_for_transaction(dev);
-+
-+	serdev_device_mux_deselect(dev->serdev);
-+}
-+
-+static int max9260_read_reg(struct max9260_device *dev, int reg)
-+{
-+	u8 request[] = { 0x79, 0x91, reg, 1 };
-+	u8 rx;
-+
-+	dev->rx_len = 1;
-+	dev->rx_buf = &rx;
-+
-+	transact(dev, RX_EXPECT_ACK_DATA, request, 4);
-+
-+	if (dev->rx_state == RX_FINISHED)
-+		return rx;
-+
-+	return -1;
-+}
-+
-+static int max9260_setup(struct max9260_device *dev)
-+{
-+	int ret;
-+
-+	ret = max9260_read_reg(dev, 0x1e);
-+
-+	if (ret != 0x02) {
-+		dev_err(&dev->serdev->dev,
-+			"device does not identify as MAX9260\n");
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static void max9260_uart_write_wakeup(struct serdev_device *serdev)
-+{
-+}
-+
-+static int max9260_uart_receive_buf(struct serdev_device *serdev,
-+				    const u8 *data, size_t count)
-+{
-+	struct max9260_device *dev = serdev_device_get_drvdata(serdev);
-+	int accepted;
-+
-+	switch (dev->rx_state) {
-+	case RX_FINISHED:
-+		dev_dbg(&dev->serdev->dev, "excess data ignored\n");
-+		return count;
-+
-+	case RX_EXPECT_ACK:
-+	case RX_EXPECT_ACK_DATA:
-+		if (data[0] != ACK) {
-+			dev_dbg(&dev->serdev->dev, "frame error");
-+			dev->rx_state = RX_FRAME_ERROR;
-+			wake_up_interruptible(&dev->rx_wq);
-+			return 1;
-+		}
-+		switch (dev->rx_state) {
-+		case RX_EXPECT_ACK_DATA:
-+			dev->rx_state = RX_EXPECT_DATA;
-+			break;
-+		case RX_EXPECT_ACK:
-+			dev->rx_state = RX_FINISHED;
-+			wake_up_interruptible(&dev->rx_wq);
-+			break;
-+		}
-+		return 1;
-+
-+	case RX_EXPECT_DATA:
-+		accepted = dev->rx_len < count ? dev->rx_len : count;
-+
-+		memcpy(dev->rx_buf, data, accepted);
-+
-+		dev->rx_len -= accepted;
-+		dev->rx_buf += accepted;
-+
-+		if (!dev->rx_len) {
-+			dev->rx_state = RX_FINISHED;
-+			wake_up_interruptible(&dev->rx_wq);
-+		}
-+
-+		return accepted;
-+
-+	case RX_FRAME_ERROR:
-+		dev_dbg(&dev->serdev->dev, "%d bytes ignored\n", count);
-+		return count;
-+
-+	}
-+	return 0;
-+}
-+
-+struct serdev_device_ops max9260_serdev_client_ops = {
-+	.receive_buf = max9260_uart_receive_buf,
-+	.write_wakeup = max9260_uart_write_wakeup,
-+};
-+
-+static u32 max9260_i2c_func(struct i2c_adapter *adapter)
-+{
-+	return I2C_FUNC_SMBUS_EMUL;
-+}
-+
-+static s32 max9260_smbus_xfer(struct i2c_adapter *adap, u16 addr,
-+	unsigned short flags, char read_write, u8 command, int size,
-+	union i2c_smbus_data *data)
-+{
-+	u8 request[] = { SYNC,
-+			 (addr << 1) + (read_write == I2C_SMBUS_READ),
-+			 command, 0, 0 };
-+	struct max9260_device *dev = i2c_get_adapdata(adap);
-+
-+	switch (size) {
-+	case I2C_SMBUS_BYTE:
-+		if (read_write == I2C_SMBUS_WRITE) {
-+			transact(dev, RX_EXPECT_ACK, request, 4);
-+			dev_dbg(&adap->dev,
-+				"smbus byte - addr 0x%02x, wrote 0x%02x.\n",
-+				addr, command);
-+		} else {
-+			/* TBD */
-+			return -EOPNOTSUPP;
-+		}
-+		break;
-+
-+	case I2C_SMBUS_BYTE_DATA:
-+		request[3] = 1;
-+		if (read_write == I2C_SMBUS_WRITE) {
-+			request[4] = data->byte;
-+			transact(dev, RX_EXPECT_ACK, request, 5);
-+			dev_dbg(&adap->dev,
-+				"smbus byte data - addr 0x%02x, wrote 0x%02x at 0x%02x.\n",
-+				addr, data->byte, command);
-+		} else {
-+			dev->rx_len = 1;
-+			dev->rx_buf = &data->byte;
-+			transact(dev, RX_EXPECT_ACK_DATA, request, 4);
-+			dev_dbg(&adap->dev,
-+				"smbus byte data - addr 0x%02x, read  0x%02x at 0x%02x.\n",
-+				addr, data->byte, command);
-+		}
-+		break;
-+	default:
-+		dev_dbg(&adap->dev,
-+			"Unsupported I2C/SMBus command %d\n", size);
-+		return -EOPNOTSUPP;
-+	}
-+
-+	if (dev->rx_state != RX_FINISHED) {
-+		dev_dbg(&adap->dev, "xfer timed out\n");
-+		return -EIO;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct i2c_algorithm max9260_i2c_algorithm = {
-+	.functionality	= max9260_i2c_func,
-+	.smbus_xfer	= max9260_smbus_xfer,
-+};
-+
-+static int max9260_probe(struct serdev_device *serdev)
-+{
-+	struct max9260_device *dev;
-+	struct i2c_adapter *adap;
-+	int ret;
-+
-+	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
-+	if (!dev)
-+		return -ENOMEM;
-+
-+	init_waitqueue_head(&dev->rx_wq);
-+
-+	dev->serdev = serdev;
-+	serdev_device_open(serdev);
-+	serdev_device_set_drvdata(serdev, dev);
-+
-+	serdev_device_set_client_ops(serdev, &max9260_serdev_client_ops);
-+
-+	ret = max9260_setup(dev);
-+
-+	if (ret < 0)
-+		goto err_free;
-+
-+	adap = &dev->adap;
-+	i2c_set_adapdata(adap, dev);
-+
-+	adap->owner = THIS_MODULE;
-+	adap->algo = &max9260_i2c_algorithm;
-+	adap->dev.parent = &serdev->dev;
-+	adap->retries = 5;
-+	adap->nr = -1;
-+	strlcpy(adap->name, dev_name(&serdev->dev), sizeof(adap->name));
-+
-+	ret = i2c_add_numbered_adapter(adap);
-+	if (ret < 0) {
-+		dev_err(&serdev->dev, "failed to register i2c adapter\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+
-+err_free:
-+	kfree(dev);
-+	return ret;
-+}
-+
-+static void max9260_remove(struct serdev_device *serdev)
-+{
-+	struct max9260_device *dev = serdev_device_get_drvdata(serdev);
-+
-+	serdev_device_close(dev->serdev);
-+
-+	kfree(dev);
-+}
-+
-+static const struct of_device_id max9260_dt_ids[] = {
-+	{ .compatible = "maxim,max9260" },
-+	{},
-+};
-+
-+MODULE_DEVICE_TABLE(of, max9260_dt_ids);
-+
-+static struct serdev_device_driver max9260_driver = {
-+	.probe = max9260_probe,
-+	.remove = max9260_remove,
-+	.driver = {
-+		.name = "max9260",
-+		.of_match_table = of_match_ptr(max9260_dt_ids),
-+	},
-+};
-+
-+module_serdev_device_driver(max9260_driver);
-+
-+MODULE_DESCRIPTION("Maxim MAX9260 GMSL Deserializer Driver");
-+MODULE_AUTHOR("Ulrich Hecht");
-+MODULE_LICENSE("GPL");
--- 
-2.7.4
+That's missing in this series.
 
+Thanks!
+
+	Hans
+
+On 06/09/2017 05:07 PM, Ramesh Shanmugasundaram wrote:
+> Hi Mauro, Hans,
+> 
+> This patch set contains two drivers
+>   - Renesas R-Car Digital Radio Interface (DRIF) driver
+>   - Maxim's MAX2175 RF to Bits tuner driver
+> 
+> These patches were based on top of media_tree.
+> commit: 47f910f0e0deb880c2114811f7ea1ec115a19ee4
+> 
+> These two drivers combined together expose a V4L2 SDR device that is compliant
+> with the V4L2 framework [1]. Agreed review comments are incorporated in this
+> series.
+> 
+> The rcar_drif device is modelled using "renesas,bonding" property. The
+> discussion on this property is available here [2].
+> 
+> Change history:
+> 
+> v6 -> v7:
+>   - MAX2175 I2S enable/disable control is made private (Mauro #v4l)
+>   - Added COMPILE_TEST to rcar_drif in Kconfig (Hans)
+> 
+> v5 -> v6:
+>   - Addressed Sakari's comments & rebased to his branch.
+>   - Used fwnode_ instead of of_ apis whereever applicable.
+> 
+> v4 -> v5:
+>   - Minor documentation changes. Refer individual patches.
+> 
+> v3 -> v4:
+>   - Added ACKs
+> rcar_drif:
+>   - Incorporated a number of review comments from Laurent on DRIF driver.
+>   - Addressed comments from Rob and Laurent on bindings.
+> max2175:
+>   - Minor changes addressing Hans and Laurent's comments
+> 
+> v2 -> v3:
+> rcar_drif:
+>   - Reduced DRIF DT properties to expose tested I2S mode only (Hans - discussion on #v4l)
+>   - Fixed error path clean up of ctrl_hdl on rcar_drif
+> 
+> v1 -> v2:
+>   - SDR formats renamed as "planar" instead of sliced (Hans)
+>   - Documentation formatting correction (Laurent)
+> 
+>   rcar_drif:
+>   - DT model using "bonding" property
+>   - Addressed Laurent's coments on bindings - DT optional parameters rename & rework
+>   - Addressed Han's comments on driver
+>   - Addressed Geert's comments on DT
+> 
+>   max2175:
+>   - Avoided scaling using method proposed by Antti. Thanks
+>   - Bindings is a separate patch (Rob)
+>   - Addressed Rob's comment on bindings
+>   - Added Custom controls documentation (Laurent)
+> 
+> [1] v4l2-compliance report:
+> root@salvator-x:~# v4l2-compliance -S /dev/swradio0
+> v4l2-compliance SHA   : d57bb8af0c71d82b702e35a7362aa077189dd593
+> 
+> Driver Info:
+>          Driver name   : rcar_drif
+>          Card type     : R-Car DRIF
+>          Bus info      : platform:R-Car DRIF
+>          Driver version: 4.12.0
+>          Capabilities  : 0x85310000
+>                  SDR Capture
+>                  Tuner
+>                  Read/Write
+>                  Streaming
+>                  Extended Pix Format
+>                  Device Capabilities
+>          Device Caps   : 0x05310000
+>                  SDR Capture
+>                  Tuner
+>                  Read/Write
+>                  Streaming
+>                  Extended Pix Format
+> 
+> Compliance test for device /dev/swradio0 (not using libv4l2):
+> 
+> Required ioctls:
+>          test VIDIOC_QUERYCAP: OK
+> 
+> Allow for multiple opens:
+>          test second sdr open: OK
+>          test VIDIOC_QUERYCAP: OK
+>          test VIDIOC_G/S_PRIORITY: OK
+>          test for unlimited opens: OK
+> 
+> Debug ioctls:
+>          test VIDIOC_DBG_G/S_REGISTER: OK
+>          test VIDIOC_LOG_STATUS: OK
+> 
+> Input ioctls:
+>          test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK
+>          test VIDIOC_G/S_FREQUENCY: OK
+>          test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+>          test VIDIOC_ENUMAUDIO: OK (Not Supported)
+>          test VIDIOC_G/S/ENUMINPUT: OK (Not Supported)
+>          test VIDIOC_G/S_AUDIO: OK (Not Supported)
+>          Inputs: 0 Audio Inputs: 0 Tuners: 1
+> 
+> Output ioctls:
+>          test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+>          test VIDIOC_G/S_FREQUENCY: OK
+>          test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+>          test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+>          test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+>          Outputs: 0 Audio Outputs: 0 Modulators: 0
+> 
+> Input/Output configuration ioctls:
+>          test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+>          test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+>          test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+>          test VIDIOC_G/S_EDID: OK (Not Supported)
+> 
+>          Control ioctls:
+>                  test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+>                  test VIDIOC_QUERYCTRL: OK
+>                  test VIDIOC_G/S_CTRL: OK
+>                  test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+>                  test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
+>                  test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+>                  Standard Controls: 5 Private Controls: 2
+> 
+>          Format ioctls:
+>                  test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+>                  test VIDIOC_G/S_PARM: OK (Not Supported)
+>                  test VIDIOC_G_FBUF: OK (Not Supported)
+>                  test VIDIOC_G_FMT: OK
+>                  test VIDIOC_TRY_FMT: OK
+>                  test VIDIOC_S_FMT: OK
+>                  test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+>                  test Cropping: OK (Not Supported)
+>                  test Composing: OK (Not Supported)
+>                  test Scaling: OK (Not Supported)
+> 
+>          Codec ioctls:
+>                  test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+>                  test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+>                  test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+> 
+>          Buffer ioctls:
+>                  test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+>                  test VIDIOC_EXPBUF: OK (Not Supported)
+> 
+> Test input 0:
+> 
+> 
+> Total: 43, Succeeded: 43, Failed: 0, Warnings: 0
+> root@salvator-x:~#
+> 
+> [2] "bonding" DT property discussion (https://www.mail-archive.com/linux-renesas-soc@vger.kernel.org/msg09415.html)
+> 
+> 
+> Ramesh Shanmugasundaram (7):
+>    media: v4l2-ctrls: Reserve controls for MAX217X
+>    dt-bindings: media: Add MAX2175 binding description
+>    media: i2c: max2175: Add MAX2175 support
+>    media: Add new SDR formats PC16, PC18 & PC20
+>    doc_rst: media: New SDR formats PC16, PC18 & PC20
+>    dt-bindings: media: Add Renesas R-Car DRIF binding
+>    media: platform: rcar_drif: Add DRIF support
+> 
+>   .../devicetree/bindings/media/i2c/max2175.txt      |   59 +
+>   .../devicetree/bindings/media/renesas,drif.txt     |  176 +++
+>   .../devicetree/bindings/property-units.txt         |    1 +
+>   .../media/uapi/v4l/pixfmt-sdr-pcu16be.rst          |   55 +
+>   .../media/uapi/v4l/pixfmt-sdr-pcu18be.rst          |   55 +
+>   .../media/uapi/v4l/pixfmt-sdr-pcu20be.rst          |   54 +
+>   Documentation/media/uapi/v4l/sdr-formats.rst       |    3 +
+>   Documentation/media/v4l-drivers/index.rst          |    1 +
+>   Documentation/media/v4l-drivers/max2175.rst        |   62 +
+>   drivers/media/i2c/Kconfig                          |   12 +
+>   drivers/media/i2c/Makefile                         |    2 +
+>   drivers/media/i2c/max2175.c                        | 1453 +++++++++++++++++++
+>   drivers/media/i2c/max2175.h                        |  109 ++
+>   drivers/media/platform/Kconfig                     |   25 +
+>   drivers/media/platform/Makefile                    |    1 +
+>   drivers/media/platform/rcar_drif.c                 | 1500 ++++++++++++++++++++
+>   drivers/media/v4l2-core/v4l2-ioctl.c               |    3 +
+>   include/uapi/linux/max2175.h                       |   28 +
+>   include/uapi/linux/v4l2-controls.h                 |    5 +
+>   include/uapi/linux/videodev2.h                     |    3 +
+>   20 files changed, 3607 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/media/i2c/max2175.txt
+>   create mode 100644 Documentation/devicetree/bindings/media/renesas,drif.txt
+>   create mode 100644 Documentation/media/uapi/v4l/pixfmt-sdr-pcu16be.rst
+>   create mode 100644 Documentation/media/uapi/v4l/pixfmt-sdr-pcu18be.rst
+>   create mode 100644 Documentation/media/uapi/v4l/pixfmt-sdr-pcu20be.rst
+>   create mode 100644 Documentation/media/v4l-drivers/max2175.rst
+>   create mode 100644 drivers/media/i2c/max2175.c
+>   create mode 100644 drivers/media/i2c/max2175.h
+>   create mode 100644 drivers/media/platform/rcar_drif.c
+>   create mode 100644 include/uapi/linux/max2175.h
+> 
