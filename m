@@ -1,86 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:48866 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751193AbdFWMEA (ORCPT
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:40280 "EHLO
+        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753103AbdFMObq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 23 Jun 2017 08:04:00 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Tue, 13 Jun 2017 10:31:46 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
         linux-renesas-soc@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <87injoczta.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dONJa-0006MX-AO@debutante>
-Date: Fri, 23 Jun 2017 13:03:54 +0100
-Subject: Applied "ASoC: audio-graph-card: tidyup asoc_simple_card_canonicalize_cpu() parameter" to the asoc tree
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v3 0/2] media: entity: add operation to help map DT node to media pad
+Date: Tue, 13 Jun 2017 16:31:24 +0200
+Message-Id: <20170613143126.755-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+Hi,
 
-   ASoC: audio-graph-card: tidyup asoc_simple_card_canonicalize_cpu() parameter
+This series add a new entity operation which will aid capture
+drivers to map a port/endpoint in DT to a media graph pad.
 
-has been applied to the asoc tree at
+This series is implemented support for the ongoing ADV748x work by
+Kieran Bingham. In his work he have a driver which registers more then
+one subdevice. So when a driver finds this subdevice it must be able to
+ask the subdevice itself which pad number correspond to the DT endpoint
+the driver used to bind subdevice in the first place.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+This is tested on Renesas H3 and M3-W together with the Renesas CSI-2
+and VIN Gen3 driver (posted separately). It is based on top media-tree.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+* Changes since v2
+- Renamed pad_from_fwnode to get_fwnode_pad as suggested by Sakari.
+- Return pad number instead of passing it as a pointer to both 
+  get_fwnode_pad() and media_entity_pad_from_fwnode().
+- Document possible flags of the direction argument to 
+  media_entity_pad_from_fwnode().
+- Use unsigned int instead of int for bitmask.
+- Fix numerous spelling mistakes, thanks Hans!
+- Rebased to latest media-tree.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+* Changes since v1
+- Rebased work ontop of Sakaris fwnode branch and make use of the fwnode 
+  instead of the raw DT port/reg numbers.
+- Do not assume DT port is equal to pad number if the driver do not 
+  implement the lookup function. Instead search for the first pad with
+  the correct direction and use that. Thanks Sakari for the suggestion!
+- Use ENXIO instead of EINVAL to signal lookup error.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+Niklas Söderlund (2):
+  media: entity: Add get_fwnode_pad entity operation
+  media: entity: Add media_entity_get_fwnode_pad() function
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+ drivers/media/media-entity.c | 35 +++++++++++++++++++++++++++++++++++
+ include/media/media-entity.h | 28 ++++++++++++++++++++++++++++
+ 2 files changed, 63 insertions(+)
 
-Thanks,
-Mark
-
->From 47ca9593decee772a48d630af815aabedf99e694 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Thu, 22 Jun 2017 06:21:49 +0000
-Subject: [PATCH] ASoC: audio-graph-card: tidyup
- asoc_simple_card_canonicalize_cpu() parameter
-
-asoc_simple_card_canonicalize_cpu() 2nd param is asking CPU component's
-DAI links, not Card links.
-This patch fixup it. Otherwise, audio-graph-card can't handle CPU
-component correctly if CPU has mult-DAIs and Card uses only one of them
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/generic/audio-graph-card.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/sound/soc/generic/audio-graph-card.c b/sound/soc/generic/audio-graph-card.c
-index 885b405d7844..ee752f62d89d 100644
---- a/sound/soc/generic/audio-graph-card.c
-+++ b/sound/soc/generic/audio-graph-card.c
-@@ -100,7 +100,6 @@ static int asoc_graph_card_dai_link_of(struct device_node *cpu_port,
- 	struct graph_dai_props *dai_props = graph_priv_to_props(priv, idx);
- 	struct asoc_simple_dai *cpu_dai = &dai_props->cpu_dai;
- 	struct asoc_simple_dai *codec_dai = &dai_props->codec_dai;
--	struct snd_soc_card *card = graph_priv_to_card(priv);
- 	struct device_node *cpu_ep    = of_get_next_child(cpu_port, NULL);
- 	struct device_node *codec_ep = of_graph_get_remote_endpoint(cpu_ep);
- 	struct device_node *rcpu_ep = of_graph_get_remote_endpoint(codec_ep);
-@@ -162,7 +161,7 @@ static int asoc_graph_card_dai_link_of(struct device_node *cpu_port,
- 	dai_link->init = asoc_graph_card_dai_init;
- 
- 	asoc_simple_card_canonicalize_cpu(dai_link,
--					  card->num_links == 1);
-+		of_graph_get_endpoint_count(dai_link->cpu_of_node) == 1);
- 
- dai_link_of_err:
- 	of_node_put(cpu_ep);
 -- 
 2.13.1
