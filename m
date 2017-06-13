@@ -1,148 +1,88 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:45096 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751639AbdF2Jwo (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:41326 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753624AbdFMVHo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Jun 2017 05:52:44 -0400
-From: Kieran Bingham <kbingham@kernel.org>
-To: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se,
-        hans.verkuil@cisco.com, kieran.bingham@ideasonboard.com,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS)
-Subject: [PATCH v6.1 1/3] media: adv748x: Add adv7481, adv7482 bindings
-Date: Thu, 29 Jun 2017 10:52:35 +0100
-Message-Id: <c6a12ced1c2f3b03aede51a1902de8c523ec097e.1498729493.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.13d48bb2ba66a5e11c962c62b1a7b5832b0a2344.1498575029.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.13d48bb2ba66a5e11c962c62b1a7b5832b0a2344.1498575029.git-series.kieran.bingham+renesas@ideasonboard.com>
+        Tue, 13 Jun 2017 17:07:44 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
+In-Reply-To: <871sqw4pc6.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1dKt2K-0000Em-63@debutante>
+Date: Tue, 13 Jun 2017 22:07:40 +0100
+Subject: Applied "ASoC: simple-scu-card: use asoc_simple_card_clk_xxx()" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+The patch
 
-Create device tree bindings documentation for the ADV748x.
-The ADV748x supports both the ADV7481 and ADV7482 chips which
-provide analogue decoding and HDMI receiving capabilities
+   ASoC: simple-scu-card: use asoc_simple_card_clk_xxx()
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From bb24a3ba3f52942b5f3eb6c10288da830ec9ef70 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Fri, 9 Jun 2017 00:44:40 +0000
+Subject: [PATCH] ASoC: simple-scu-card: use asoc_simple_card_clk_xxx()
+
+Current simple-card-utils sets asoc_simple_dai::clk via
+asoc_simple_card_parse_clk().
+Current simple card drivers are using it directly for
+clk_enable/disable.
+Encapsulation is one of simple card util's purpose.
+Let's use asoc_simple_card_clk_enable/disable.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
-v6:
- - Clean up description and remove redundant text regarding optional
-   nodes
+ sound/soc/generic/simple-scu-card.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-v6.1:
- - Fix commit title
-
- Documentation/devicetree/bindings/media/i2c/adv748x.txt | 95 ++++++++++-
- 1 file changed, 95 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/i2c/adv748x.txt
-
-diff --git a/Documentation/devicetree/bindings/media/i2c/adv748x.txt b/Documentation/devicetree/bindings/media/i2c/adv748x.txt
-new file mode 100644
-index 000000000000..21ffb5ed8183
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/i2c/adv748x.txt
-@@ -0,0 +1,95 @@
-+* Analog Devices ADV748X video decoder with HDMI receiver
-+
-+The ADV7481 and ADV7482 are multi format video decoders with an integrated
-+HDMI receiver. They can output CSI-2 on two independent outputs TXA and TXB
-+from three input sources HDMI, analog and TTL.
-+
-+Required Properties:
-+
-+  - compatible: Must contain one of the following
-+    - "adi,adv7481" for the ADV7481
-+    - "adi,adv7482" for the ADV7482
-+
-+  - reg: I2C slave address
-+
-+Optional Properties:
-+
-+  - interrupt-names: Should specify the interrupts as "intrq1", "intrq2" and/or
-+		     "intrq3". All interrupts are optional. The "intrq3" interrupt
-+		     is only available on the adv7481
-+  - interrupts: Specify the interrupt lines for the ADV748x
-+
-+The device node must contain one 'port' child node per device input and output
-+port, in accordance with the video interface bindings defined in
-+Documentation/devicetree/bindings/media/video-interfaces.txt. The port nodes
-+are numbered as follows.
-+
-+	  Name		Type		Port
-+	---------------------------------------
-+	  AIN0		sink		0
-+	  AIN1		sink		1
-+	  AIN2		sink		2
-+	  AIN3		sink		3
-+	  AIN4		sink		4
-+	  AIN5		sink		5
-+	  AIN6		sink		6
-+	  AIN7		sink		7
-+	  HDMI		sink		8
-+	  TTL		sink		9
-+	  TXA		source		10
-+	  TXB		source		11
-+
-+The digital output port nodes must contain at least one endpoint.
-+
-+Ports are optional if they are not connected to anything at the hardware level.
-+
-+Example:
-+
-+	video-receiver@70 {
-+		compatible = "adi,adv7482";
-+		reg = <0x70>;
-+
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		interrupt-parent = <&gpio6>;
-+		interrupt-names = "intrq1", "intrq2";
-+		interrupts = <30 IRQ_TYPE_LEVEL_LOW>,
-+			     <31 IRQ_TYPE_LEVEL_LOW>;
-+
-+		port@7 {
-+			reg = <7>;
-+
-+			adv7482_ain7: endpoint {
-+				remote-endpoint = <&cvbs_in>;
-+			};
-+		};
-+
-+		port@8 {
-+			reg = <8>;
-+
-+			adv7482_hdmi: endpoint {
-+				remote-endpoint = <&hdmi_in>;
-+			};
-+		};
-+
-+		port@10 {
-+			reg = <10>;
-+
-+			adv7482_txa: endpoint {
-+				clock-lanes = <0>;
-+				data-lanes = <1 2 3 4>;
-+				remote-endpoint = <&csi40_in>;
-+			};
-+		};
-+
-+		port@11 {
-+			reg = <11>;
-+
-+			adv7482_txb: endpoint {
-+				clock-lanes = <0>;
-+				data-lanes = <1>;
-+				remote-endpoint = <&csi20_in>;
-+			};
-+		};
-+	};
+diff --git a/sound/soc/generic/simple-scu-card.c b/sound/soc/generic/simple-scu-card.c
+index 5faf5d6c48a2..f203783b2fad 100644
+--- a/sound/soc/generic/simple-scu-card.c
++++ b/sound/soc/generic/simple-scu-card.c
+@@ -47,7 +47,7 @@ static int asoc_simple_card_startup(struct snd_pcm_substream *substream)
+ 	struct asoc_simple_dai *dai_props =
+ 		simple_priv_to_props(priv, rtd->num);
+ 
+-	return clk_prepare_enable(dai_props->clk);
++	return asoc_simple_card_clk_enable(dai_props);
+ }
+ 
+ static void asoc_simple_card_shutdown(struct snd_pcm_substream *substream)
+@@ -57,7 +57,7 @@ static void asoc_simple_card_shutdown(struct snd_pcm_substream *substream)
+ 	struct asoc_simple_dai *dai_props =
+ 		simple_priv_to_props(priv, rtd->num);
+ 
+-	clk_disable_unprepare(dai_props->clk);
++	asoc_simple_card_clk_disable(dai_props);
+ }
+ 
+ static const struct snd_soc_ops asoc_simple_card_ops = {
 -- 
-git-series 0.9.1
+2.11.0
