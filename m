@@ -1,49 +1,117 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:44337 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751675AbdF3JQc (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:41518 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752326AbdFMVHu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 30 Jun 2017 05:16:32 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH] arm64: renesas: salvator-common: sound clock-frequency needs descending order
-Date: Fri, 30 Jun 2017 11:16:26 +0200
-Message-Id: <5e2feac330953fe75197aecb20c781400e2bf606.1498814088.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1498814088.git.horms+renesas@verge.net.au>
-References: <cover.1498814088.git.horms+renesas@verge.net.au>
+        Tue, 13 Jun 2017 17:07:50 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
+In-Reply-To: <87a85iov10.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1dKt2Q-0000Gw-7k@debutante>
+Date: Tue, 13 Jun 2017 22:07:46 +0100
+Subject: Applied "ASoC: simple_card_utils: add asoc_simple_card_clk_xxx()" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+The patch
+
+   ASoC: simple_card_utils: add asoc_simple_card_clk_xxx()
+
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 891caea417469b4efdf506b6be1ef461b759c999 Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Fri, 9 Jun 2017 00:43:18 +0000
+Subject: [PATCH] ASoC: simple_card_utils: add asoc_simple_card_clk_xxx()
 
-It will be used ADG clock initial settings, and will be
-sound codec's initial system clock which needs maximum clock frequency.
-Thus, descending order is required
+Current simple-card-utils sets asoc_simple_dai::clk via
+asoc_simple_card_parse_clk().
+Current simple card drivers are using it directly for
+clk_enable/disable.
+Encapsulation is one of simple card util's purpose.
+Let's encapsulate it.
 
-Fixes: d37d2b3c0ec2708a ("arm64: dts: salvator-x: add 12288000 for sound ADG")
-Fixes: 0b03c32db03d63de ("arm64: dts: r8a7795: salvator-x: Add support for R-Car H3 ES2.0")
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm64/boot/dts/renesas/salvator-common.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/sound/simple_card_utils.h     |  2 ++
+ sound/soc/generic/simple-card-utils.c | 19 ++++++++++++++++++-
+ 2 files changed, 20 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-index aef35e0b685a..a451996f590a 100644
---- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-@@ -508,7 +508,7 @@
+diff --git a/include/sound/simple_card_utils.h b/include/sound/simple_card_utils.h
+index 108cae459ed0..840d624148df 100644
+--- a/include/sound/simple_card_utils.h
++++ b/include/sound/simple_card_utils.h
+@@ -45,6 +45,8 @@ int asoc_simple_card_parse_clk(struct device *dev,
+ 			       struct device_node *dai_of_node,
+ 			       struct asoc_simple_dai *simple_dai,
+ 			       const char *name);
++int asoc_simple_card_clk_enable(struct asoc_simple_dai *dai);
++void asoc_simple_card_clk_disable(struct asoc_simple_dai *dai);
  
- 	/* audio_clkout0/1/2/3 */
- 	#clock-cells = <1>;
--	clock-frequency = <11289600 12288000>;
-+	clock-frequency = <12288000 11289600>;
+ #define asoc_simple_card_parse_cpu(node, dai_link,				\
+ 				   list_name, cells_name, is_single_link)	\
+diff --git a/sound/soc/generic/simple-card-utils.c b/sound/soc/generic/simple-card-utils.c
+index d9d8b8a58348..beb4e3817d22 100644
+--- a/sound/soc/generic/simple-card-utils.c
++++ b/sound/soc/generic/simple-card-utils.c
+@@ -110,6 +110,22 @@ int asoc_simple_card_parse_card_name(struct snd_soc_card *card,
+ }
+ EXPORT_SYMBOL_GPL(asoc_simple_card_parse_card_name);
  
- 	status = "okay";
- 
++static void asoc_simple_card_clk_register(struct asoc_simple_dai *dai,
++					  struct clk *clk)
++{
++	dai->clk = clk;
++}
++
++int asoc_simple_card_clk_enable(struct asoc_simple_dai *dai)
++{
++	return clk_prepare_enable(dai->clk);
++}
++
++void asoc_simple_card_clk_disable(struct asoc_simple_dai *dai)
++{
++	clk_disable_unprepare(dai->clk);
++}
++
+ int asoc_simple_card_parse_clk(struct device *dev,
+ 			       struct device_node *node,
+ 			       struct device_node *dai_of_node,
+@@ -128,7 +144,8 @@ int asoc_simple_card_parse_clk(struct device *dev,
+ 	clk = devm_get_clk_from_child(dev, node, NULL);
+ 	if (!IS_ERR(clk)) {
+ 		simple_dai->sysclk = clk_get_rate(clk);
+-		simple_dai->clk = clk;
++
++		asoc_simple_card_clk_register(simple_dai, clk);
+ 	} else if (!of_property_read_u32(node, "system-clock-frequency", &val)) {
+ 		simple_dai->sysclk = val;
+ 	} else {
 -- 
-2.1.4
+2.11.0
