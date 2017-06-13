@@ -1,48 +1,64 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/2] arm64: dts: r8a7795: Add reset control properties for audio
-Date: Mon, 12 Jun 2017 11:32:16 +0200
-Message-Id: <1497259937-9387-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1497259937-9387-1-git-send-email-geert+renesas@glider.be>
-References: <1497259937-9387-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: broonie@kernel.org, hverkuil@xs4all.nl, mattw@codeaurora.org,
+        mitchelh@codeaurora.org, akpm@linux-foundation.org,
+        yamada.masahiro@socionext.com
+Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, chris.paterson2@renesas.com,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH v2 2/2] regmap: Avoid namespace collision within macro & tidyup
+Date: Tue, 13 Jun 2017 14:33:48 +0100
+Message-Id: <20170613133348.48044-3-ramesh.shanmugasundaram@bp.renesas.com>
+In-Reply-To: <20170613133348.48044-1-ramesh.shanmugasundaram@bp.renesas.com>
+References: <20170613133348.48044-1-ramesh.shanmugasundaram@bp.renesas.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Note that the audio module has resets for the Serial Sound Interfaces
-only.
+Renamed variable "timeout" to "__timeout" & "pollret" to "__ret" to
+avoid namespace collision. Tidy up macro arguments with paranthesis.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ include/linux/regmap.h | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 65c914bba08235a5..18651d39a89a8b54 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1119,6 +1119,16 @@
- 				      "dvc.0", "dvc.1",
- 				      "clk_a", "clk_b", "clk_c", "clk_i";
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			resets = <&cpg 1005>,
-+				 <&cpg 1006>, <&cpg 1007>,
-+				 <&cpg 1008>, <&cpg 1009>,
-+				 <&cpg 1010>, <&cpg 1011>,
-+				 <&cpg 1012>, <&cpg 1013>,
-+				 <&cpg 1014>, <&cpg 1015>;
-+			reset-names = "ssi-all",
-+				      "ssi.9", "ssi.8", "ssi.7", "ssi.6",
-+				      "ssi.5", "ssi.4", "ssi.3", "ssi.2",
-+				      "ssi.1", "ssi.0";
- 			status = "disabled";
+diff --git a/include/linux/regmap.h b/include/linux/regmap.h
+index 86eeacc1425a..ebc7282abc80 100644
+--- a/include/linux/regmap.h
++++ b/include/linux/regmap.h
+@@ -120,23 +120,24 @@ struct reg_sequence {
+  */
+ #define regmap_read_poll_timeout(map, addr, val, cond, sleep_us, timeout_us) \
+ ({ \
+-	ktime_t timeout = ktime_add_us(ktime_get(), timeout_us); \
+-	int pollret; \
++	ktime_t __timeout = ktime_add_us(ktime_get(), timeout_us); \
++	int __ret; \
+ 	might_sleep_if(sleep_us); \
+ 	for (;;) { \
+-		pollret = regmap_read((map), (addr), &(val)); \
+-		if (pollret) \
++		__ret = regmap_read((map), (addr), &(val)); \
++		if (__ret) \
+ 			break; \
+ 		if (cond) \
+ 			break; \
+-		if (timeout_us && ktime_compare(ktime_get(), timeout) > 0) { \
+-			pollret = regmap_read((map), (addr), &(val)); \
++		if ((timeout_us) && \
++		    ktime_compare(ktime_get(), __timeout) > 0) { \
++			__ret = regmap_read((map), (addr), &(val)); \
+ 			break; \
+ 		} \
+ 		if (sleep_us) \
+-			usleep_range((sleep_us >> 2) + 1, sleep_us); \
++			usleep_range(((sleep_us) >> 2) + 1, sleep_us); \
+ 	} \
+-	pollret ?: ((cond) ? 0 : -ETIMEDOUT); \
++	__ret ?: ((cond) ? 0 : -ETIMEDOUT); \
+ })
  
- 			rcar_sound,dvc {
+ #ifdef CONFIG_REGMAP
 -- 
-2.7.4
-
+2.12.2
