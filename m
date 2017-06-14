@@ -1,51 +1,37 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:33388 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751545AbdFIRPx (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Jun 2017 13:15:53 -0400
-From: Kieran Bingham <kbingham@kernel.org>
-To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Cc: geert@glider.be, laurent.pinchart@ideasonboard.com,
-        kieran.bingham@ideasonboard.com,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH] media: fdp1: Support ES2 platforms
-Date: Fri,  9 Jun 2017 18:15:48 +0100
-Message-Id: <1497028548-24443-1-git-send-email-kbingham@kernel.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+Date: Wed, 14 Jun 2017 12:54:53 +0300
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH v3 1/2] media: entity: Add get_fwnode_pad entity operation
+Message-ID: <20170614095453.GH12407@valkosipuli.retiisi.org.uk>
+References: <20170613143126.755-1-niklas.soderlund+renesas@ragnatech.se>
+ <20170613143126.755-2-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20170613143126.755-2-niklas.soderlund+renesas@ragnatech.se>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+On Tue, Jun 13, 2017 at 04:31:25PM +0200, Niklas S�derlund wrote:
+> The optional operation can be used by entities to report how it maps its
+> fwnode endpoints to media pad numbers. This is useful for devices which
+> require advanced mappings of pads.
+> 
+> Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
 
-The new Renesas R-Car H3 ES2.0 platforms have an updated hw version register.
-Update the driver accordingly.
+Thanks!
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- drivers/media/platform/rcar_fdp1.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-diff --git a/drivers/media/platform/rcar_fdp1.c b/drivers/media/platform/rcar_fdp1.c
-index 42f25d241edd..50b59995b817 100644
---- a/drivers/media/platform/rcar_fdp1.c
-+++ b/drivers/media/platform/rcar_fdp1.c
-@@ -260,6 +260,7 @@ MODULE_PARM_DESC(debug, "activate debug info");
- #define FD1_IP_INTDATA			0x0800
- #define FD1_IP_H3			0x02010101
- #define FD1_IP_M3W			0x02010202
-+#define FD1_IP_H3_ES2			0x02010203
- 
- /* LUTs */
- #define FD1_LUT_DIF_ADJ			0x1000
-@@ -2365,6 +2366,9 @@ static int fdp1_probe(struct platform_device *pdev)
- 	case FD1_IP_M3W:
- 		dprintk(fdp1, "FDP1 Version R-Car M3-W\n");
- 		break;
-+	case FD1_IP_H3_ES2:
-+		dprintk(fdp1, "FDP1 Version R-Car H3-ES2\n");
-+		break;
- 	default:
- 		dev_err(fdp1->dev, "FDP1 Unidentifiable (0x%08x)\n",
- 				hw_version);
 -- 
-2.7.4
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
