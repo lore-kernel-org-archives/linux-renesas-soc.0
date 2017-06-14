@@ -1,92 +1,88 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:59004 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752158AbdFLJX7 (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:46408 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751730AbdFNKMf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Jun 2017 05:23:59 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/2] ARM: shmobile: pm-rmobile: Use GENPD_FLAG_ALWAYS_ON
-Date: Mon, 12 Jun 2017 11:23:46 +0200
-Message-Id: <1497259427-8299-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1497259427-8299-1-git-send-email-geert+renesas@glider.be>
-References: <1497259427-8299-1-git-send-email-geert+renesas@glider.be>
+        Wed, 14 Jun 2017 06:12:35 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
+In-Reply-To: <87bmpr9ztg.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1dL5Hq-0007bK-UH@debutante>
+Date: Wed, 14 Jun 2017 11:12:30 +0100
+Subject: Applied "ASoC: simple-card: use asoc_simple_card_of_parse_tdm()" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Improve handling of always-on PM domains by using the
-GENPD_FLAG_ALWAYS_ON flag introduced in commit ffaa42e8a40b7f10 ("PM /
-Domains: Enable users of genpd to specify always on PM domains").
+The patch
 
-Note that the PM domain containing the serial console is still handled
-locally.
+   ASoC: simple-card: use asoc_simple_card_of_parse_tdm()
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From b93d2cf8c0facb593d6f008af30ae0fcd1d49ede Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Wed, 14 Jun 2017 00:34:53 +0000
+Subject: [PATCH] ASoC: simple-card: use asoc_simple_card_of_parse_tdm()
+
+Current simple card drivers are using asoc_simple_dai's tx_slot_mask,
+rx_slot_mask, slots, slot_width directly to parse TDM.
+Encapsulation is one of simple card util's purpose.
+Let's use asoc_simple_card_of_parse_tdm for it.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm/mach-shmobile/pm-rmobile.c | 19 ++++---------------
- 1 file changed, 4 insertions(+), 15 deletions(-)
+ sound/soc/generic/simple-card.c | 10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm/mach-shmobile/pm-rmobile.c b/arch/arm/mach-shmobile/pm-rmobile.c
-index 175bd3d91ebcbcb4..e5fa6a3cf1ddf159 100644
---- a/arch/arm/mach-shmobile/pm-rmobile.c
-+++ b/arch/arm/mach-shmobile/pm-rmobile.c
-@@ -130,7 +130,7 @@ static void rmobile_init_pm_domain(struct rmobile_pm_domain *rmobile_pd)
- 	struct generic_pm_domain *genpd = &rmobile_pd->genpd;
- 	struct dev_power_governor *gov = rmobile_pd->gov;
+diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
+index 8828b91867b8..8b414af966ee 100644
+--- a/sound/soc/generic/simple-card.c
++++ b/sound/soc/generic/simple-card.c
+@@ -271,17 +271,11 @@ static int asoc_simple_card_dai_link_of(struct device_node *node,
+ 	if (ret < 0)
+ 		goto dai_link_of_err;
  
--	genpd->flags = GENPD_FLAG_PM_CLK;
-+	genpd->flags |= GENPD_FLAG_PM_CLK;
- 	genpd->dev_ops.active_wakeup	= rmobile_pd_active_wakeup;
- 	genpd->power_off		= rmobile_pd_power_down;
- 	genpd->power_on			= rmobile_pd_power_up;
-@@ -140,14 +140,6 @@ static void rmobile_init_pm_domain(struct rmobile_pm_domain *rmobile_pd)
- 	pm_genpd_init(genpd, gov ? : &simple_qos_governor, false);
- }
+-	ret = snd_soc_of_parse_tdm_slot(cpu,	&cpu_dai->tx_slot_mask,
+-						&cpu_dai->rx_slot_mask,
+-						&cpu_dai->slots,
+-						&cpu_dai->slot_width);
++	ret = asoc_simple_card_of_parse_tdm(cpu, cpu_dai);
+ 	if (ret < 0)
+ 		goto dai_link_of_err;
  
--static int rmobile_pd_suspend_busy(void)
--{
--	/*
--	 * This domain should not be turned off.
--	 */
--	return -EBUSY;
--}
--
- static int rmobile_pd_suspend_console(void)
- {
- 	/*
-@@ -260,8 +252,7 @@ static void __init rmobile_setup_pm_domain(struct device_node *np,
- 		 * only be turned off if the CPU is not in use.
- 		 */
- 		pr_debug("PM domain %s contains CPU\n", name);
--		pd->gov = &pm_domain_always_on_gov;
--		pd->suspend = rmobile_pd_suspend_busy;
-+		pd->genpd.flags |= GENPD_FLAG_ALWAYS_ON;
- 		break;
+-	ret = snd_soc_of_parse_tdm_slot(codec,	&codec_dai->tx_slot_mask,
+-						&codec_dai->rx_slot_mask,
+-						&codec_dai->slots,
+-						&codec_dai->slot_width);
++	ret = asoc_simple_card_of_parse_tdm(codec, codec_dai);
+ 	if (ret < 0)
+ 		goto dai_link_of_err;
  
- 	case PD_CONSOLE:
-@@ -277,8 +268,7 @@ static void __init rmobile_setup_pm_domain(struct device_node *np,
- 		 * is not in use.
- 		 */
- 		pr_debug("PM domain %s contains Coresight-ETM\n", name);
--		pd->gov = &pm_domain_always_on_gov;
--		pd->suspend = rmobile_pd_suspend_busy;
-+		pd->genpd.flags |= GENPD_FLAG_ALWAYS_ON;
- 		break;
- 
- 	case PD_MEMCTL:
-@@ -287,8 +277,7 @@ static void __init rmobile_setup_pm_domain(struct device_node *np,
- 		 * should only be turned off if memory is not in use.
- 		 */
- 		pr_debug("PM domain %s contains MEMCTL\n", name);
--		pd->gov = &pm_domain_always_on_gov;
--		pd->suspend = rmobile_pd_suspend_busy;
-+		pd->genpd.flags |= GENPD_FLAG_ALWAYS_ON;
- 		break;
- 
- 	case PD_NORMAL:
 -- 
-2.7.4
+2.11.0
