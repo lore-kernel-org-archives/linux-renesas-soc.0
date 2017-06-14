@@ -1,73 +1,101 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:42781 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750757AbdFSRFi (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:47004 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751730AbdFNKMy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Jun 2017 13:05:38 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v1 10/12] media: rcar: vin: Add digital input mask to vin_dev
-Date: Mon, 19 Jun 2017 19:04:47 +0200
-Message-Id: <1497891889-8038-11-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1497891889-8038-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1497891889-8038-1-git-send-email-jacopo+renesas@jmondi.org>
+        Wed, 14 Jun 2017 06:12:54 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
+        Mark Brown <broonie@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
+In-Reply-To: <87h8zj81hl.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1dL5IA-0007ec-IW@debutante>
+Date: Wed, 14 Jun 2017 11:12:50 +0100
+Subject: Applied "ASoC: rsnd: reduce confusable macro parameter magic" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add bitmask to enumerate VIN channel identifiers that support digital
-video inputs.
+The patch
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+   ASoC: rsnd: reduce confusable macro parameter magic
+
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From f30b4ca4447095f6923b59ffaa25ca6a54daffac Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Wed, 14 Jun 2017 07:41:43 +0000
+Subject: [PATCH] ASoC: rsnd: reduce confusable macro parameter magic
+
+rsnd_dai_call() macro is using "priv" inside.
+Thus, if caller function doesn't have "priv" related operation, strange
+phenomenon occur which code is using "priv", but compiler indicates
+"unused variable 'priv'".
+
+>>From code point of view, it is not problem, but it is very confusable.
+This patch removes "priv" from rsnd_dai_call() macro, and adds "priv"
+on caller function.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Tested-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/media/platform/rcar-vin/rcar-core.c | 4 ++++
- drivers/media/platform/rcar-vin/rcar-vin.h  | 4 ++++
- 2 files changed, 8 insertions(+)
+ sound/soc/sh/rcar/core.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 6e5d84a..1d0b492 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -1028,6 +1028,8 @@ static const struct rvin_info rcar_info_r8a7795 = {
- 			{ .csi = RVIN_CSI21, .chan = 3 },
- 		},
- 	},
-+
-+	.din_mask = BIT(4) | BIT(5),
- };
+diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
+index 0bb99aa70e29..1b536d140e49 100644
+--- a/sound/soc/sh/rcar/core.c
++++ b/sound/soc/sh/rcar/core.c
+@@ -488,8 +488,7 @@ static int rsnd_status_update(u32 *status,
  
- static const struct rvin_info rcar_info_r8a7796 = {
-@@ -1088,6 +1090,8 @@ static const struct rvin_info rcar_info_r8a7796 = {
- 			{ .csi = RVIN_CSI20, .chan = 3 },
- 		},
- 	},
-+
-+	.din_mask = BIT(4) | BIT(5),
- };
+ #define rsnd_dai_call(fn, io, param...)					\
+ ({									\
+-	struct rsnd_priv *priv = rsnd_io_to_priv(io);			\
+-	struct device *dev = rsnd_priv_to_dev(priv);			\
++	struct device *dev = rsnd_priv_to_dev(rsnd_io_to_priv(io));	\
+ 	struct rsnd_mod *mod;						\
+ 	int is_play = rsnd_io_is_play(io);				\
+ 	int ret = 0, i;							\
+@@ -741,6 +740,7 @@ static int rsnd_soc_dai_startup(struct snd_pcm_substream *substream,
+ 				struct snd_soc_dai *dai)
+ {
+ 	struct rsnd_dai *rdai = rsnd_dai_to_rdai(dai);
++	struct rsnd_priv *priv = rsnd_rdai_to_priv(rdai);
+ 	struct rsnd_dai_stream *io = rsnd_rdai_to_io(rdai, substream);
+ 	int ret;
  
- static const struct of_device_id rvin_of_id_table[] = {
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 4361de9..333ef3b 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -119,6 +119,8 @@ struct rvin_group_chsel {
-  *
-  * num_chsels:		number of possible chsel values for this VIN
-  * chsels:		routing table VIN <-> CSI-2 for the chsel values
-+ *
-+ * din_mask:		mask of VIN channels IDs supporting digital input
-  */
- struct rvin_info {
- 	enum chip_id chip;
-@@ -129,6 +131,8 @@ struct rvin_info {
+@@ -758,6 +758,7 @@ static void rsnd_soc_dai_shutdown(struct snd_pcm_substream *substream,
+ 				  struct snd_soc_dai *dai)
+ {
+ 	struct rsnd_dai *rdai = rsnd_dai_to_rdai(dai);
++	struct rsnd_priv *priv = rsnd_rdai_to_priv(rdai);
+ 	struct rsnd_dai_stream *io = rsnd_rdai_to_io(rdai, substream);
  
- 	unsigned int num_chsels;
- 	struct rvin_group_chsel chsels[RCAR_VIN_NUM][RCAR_CHSEL_MAX];
-+
-+	unsigned int din_mask;
- };
- 
- /**
+ 	/*
 -- 
-2.7.4
+2.11.0
