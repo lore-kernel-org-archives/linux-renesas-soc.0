@@ -1,233 +1,92 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:58785 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752086AbdFLNkD (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:47280 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751730AbdFNKNE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Jun 2017 09:40:03 -0400
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: robh+dt@kernel.org, mark.rutland@arm.com, mchehab@kernel.org,
-        hverkuil@xs4all.nl, sakari.ailus@linux.intel.com, crope@iki.fi
-Cc: chris.paterson2@renesas.com, laurent.pinchart@ideasonboard.com,
-        geert+renesas@glider.be, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH v8 5/8] doc_rst: media: New SDR formats PC16, PC18 & PC20
-Date: Mon, 12 Jun 2017 14:26:17 +0100
-Message-Id: <20170612132620.1024-6-ramesh.shanmugasundaram@bp.renesas.com>
-In-Reply-To: <20170612132620.1024-1-ramesh.shanmugasundaram@bp.renesas.com>
-References: <20170612132620.1024-1-ramesh.shanmugasundaram@bp.renesas.com>
+        Wed, 14 Jun 2017 06:13:04 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
+In-Reply-To: <8737b39ygm.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1dL5IJ-0007hL-Ux@debutante>
+Date: Wed, 14 Jun 2017 11:12:59 +0100
+Subject: Applied "ASoC: simple_card_utils: add EXPORT_SYMBOL_GPL() for asoc_simple_card_clk_xxx()" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds documentation for the three new SDR formats
+The patch
 
-V4L2_SDR_FMT_PCU16BE
-V4L2_SDR_FMT_PCU18BE
-V4L2_SDR_FMT_PCU20BE
+   ASoC: simple_card_utils: add EXPORT_SYMBOL_GPL() for asoc_simple_card_clk_xxx()
 
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 63a5f59208bce7110596b09950f48bf07b8baeb9 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Wed, 14 Jun 2017 01:04:11 +0000
+Subject: [PATCH] ASoC: simple_card_utils: add EXPORT_SYMBOL_GPL() for
+ asoc_simple_card_clk_xxx()
+
+commit 891caea41746 ("ASoC: simple_card_utils:
+add asoc_simple_card_clk_xxx()") added new asoc_simple_card_clk_xxx(),
+but, it didn't have EXPORT_SYMBOL_GPL().
+This patch adds it. Otherwise, we will get below error
+
+ERROR: "asoc_simple_card_clk_enable" [sound/soc/generic/snd-soc-simple-scu-card.ko] undefined!
+ERROR: "asoc_simple_card_clk_disable" [sound/soc/generic/snd-soc-simple-scu-card.ko] undefined!
+ERROR: "asoc_simple_card_clk_enable" [sound/soc/generic/snd-soc-simple-card.ko] undefined!
+ERROR: "asoc_simple_card_clk_disable" [sound/soc/generic/snd-soc-simple-card.ko] undefined!
+ERROR: "asoc_simple_card_clk_enable" [sound/soc/generic/snd-soc-audio-graph-scu-card.ko] undefined!
+ERROR: "asoc_simple_card_clk_disable" [sound/soc/generic/snd-soc-audio-graph-scu-card.ko] undefined!
+ERROR: "asoc_simple_card_clk_enable" [sound/soc/generic/snd-soc-audio-graph-card.ko] undefined!
+ERROR: "asoc_simple_card_clk_disable" [sound/soc/generic/snd-soc-audio-graph-card.ko] undefined!
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- .../media/uapi/v4l/pixfmt-sdr-pcu16be.rst          | 55 ++++++++++++++++++++++
- .../media/uapi/v4l/pixfmt-sdr-pcu18be.rst          | 55 ++++++++++++++++++++++
- .../media/uapi/v4l/pixfmt-sdr-pcu20be.rst          | 54 +++++++++++++++++++++
- Documentation/media/uapi/v4l/sdr-formats.rst       |  3 ++
- 4 files changed, 167 insertions(+)
- create mode 100644 Documentation/media/uapi/v4l/pixfmt-sdr-pcu16be.rst
- create mode 100644 Documentation/media/uapi/v4l/pixfmt-sdr-pcu18be.rst
- create mode 100644 Documentation/media/uapi/v4l/pixfmt-sdr-pcu20be.rst
+ sound/soc/generic/simple-card-utils.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/media/uapi/v4l/pixfmt-sdr-pcu16be.rst b/Documentation/media/uapi/v4l/pixfmt-sdr-pcu16be.rst
-new file mode 100644
-index 000000000000..2de1b1a0f517
---- /dev/null
-+++ b/Documentation/media/uapi/v4l/pixfmt-sdr-pcu16be.rst
-@@ -0,0 +1,55 @@
-+.. -*- coding: utf-8; mode: rst -*-
-+
-+.. _V4L2-SDR-FMT-PCU16BE:
-+
-+******************************
-+V4L2_SDR_FMT_PCU16BE ('PC16')
-+******************************
-+
-+Planar complex unsigned 16-bit big endian IQ sample
-+
-+Description
-+===========
-+
-+This format contains a sequence of complex number samples. Each complex
-+number consist of two parts called In-phase and Quadrature (IQ). Both I
-+and Q are represented as a 16 bit unsigned big endian number stored in
-+32 bit space. The remaining unused bits within the 32 bit space will be
-+padded with 0. I value starts first and Q value starts at an offset
-+equalling half of the buffer size (i.e.) offset = buffersize/2. Out of
-+the 16 bits, bit 15:2 (14 bit) is data and bit 1:0 (2 bit) can be any
-+value.
-+
-+**Byte Order.**
-+Each cell is one byte.
-+
-+.. flat-table::
-+    :header-rows:  1
-+    :stub-columns: 0
-+
-+    * -  Offset:
-+      -  Byte B0
-+      -  Byte B1
-+      -  Byte B2
-+      -  Byte B3
-+    * -  start + 0:
-+      -  I'\ :sub:`0[13:6]`
-+      -  I'\ :sub:`0[5:0]; B1[1:0]=pad`
-+      -  pad
-+      -  pad
-+    * -  start + 4:
-+      -  I'\ :sub:`1[13:6]`
-+      -  I'\ :sub:`1[5:0]; B1[1:0]=pad`
-+      -  pad
-+      -  pad
-+    * -  ...
-+    * - start + offset:
-+      -  Q'\ :sub:`0[13:6]`
-+      -  Q'\ :sub:`0[5:0]; B1[1:0]=pad`
-+      -  pad
-+      -  pad
-+    * - start + offset + 4:
-+      -  Q'\ :sub:`1[13:6]`
-+      -  Q'\ :sub:`1[5:0]; B1[1:0]=pad`
-+      -  pad
-+      -  pad
-diff --git a/Documentation/media/uapi/v4l/pixfmt-sdr-pcu18be.rst b/Documentation/media/uapi/v4l/pixfmt-sdr-pcu18be.rst
-new file mode 100644
-index 000000000000..da8b26bf6b95
---- /dev/null
-+++ b/Documentation/media/uapi/v4l/pixfmt-sdr-pcu18be.rst
-@@ -0,0 +1,55 @@
-+.. -*- coding: utf-8; mode: rst -*-
-+
-+.. _V4L2-SDR-FMT-PCU18BE:
-+
-+******************************
-+V4L2_SDR_FMT_PCU18BE ('PC18')
-+******************************
-+
-+Planar complex unsigned 18-bit big endian IQ sample
-+
-+Description
-+===========
-+
-+This format contains a sequence of complex number samples. Each complex
-+number consist of two parts called In-phase and Quadrature (IQ). Both I
-+and Q are represented as a 18 bit unsigned big endian number stored in
-+32 bit space. The remaining unused bits within the 32 bit space will be
-+padded with 0. I value starts first and Q value starts at an offset
-+equalling half of the buffer size (i.e.) offset = buffersize/2. Out of
-+the 18 bits, bit 17:2 (16 bit) is data and bit 1:0 (2 bit) can be any
-+value.
-+
-+**Byte Order.**
-+Each cell is one byte.
-+
-+.. flat-table::
-+    :header-rows:  1
-+    :stub-columns: 0
-+
-+    * -  Offset:
-+      -  Byte B0
-+      -  Byte B1
-+      -  Byte B2
-+      -  Byte B3
-+    * -  start + 0:
-+      -  I'\ :sub:`0[17:10]`
-+      -  I'\ :sub:`0[9:2]`
-+      -  I'\ :sub:`0[1:0]; B2[5:0]=pad`
-+      -  pad
-+    * -  start + 4:
-+      -  I'\ :sub:`1[17:10]`
-+      -  I'\ :sub:`1[9:2]`
-+      -  I'\ :sub:`1[1:0]; B2[5:0]=pad`
-+      -  pad
-+    * -  ...
-+    * - start + offset:
-+      -  Q'\ :sub:`0[17:10]`
-+      -  Q'\ :sub:`0[9:2]`
-+      -  Q'\ :sub:`0[1:0]; B2[5:0]=pad`
-+      -  pad
-+    * - start + offset + 4:
-+      -  Q'\ :sub:`1[17:10]`
-+      -  Q'\ :sub:`1[9:2]`
-+      -  Q'\ :sub:`1[1:0]; B2[5:0]=pad`
-+      -  pad
-diff --git a/Documentation/media/uapi/v4l/pixfmt-sdr-pcu20be.rst b/Documentation/media/uapi/v4l/pixfmt-sdr-pcu20be.rst
-new file mode 100644
-index 000000000000..5499eed39477
---- /dev/null
-+++ b/Documentation/media/uapi/v4l/pixfmt-sdr-pcu20be.rst
-@@ -0,0 +1,54 @@
-+.. -*- coding: utf-8; mode: rst -*-
-+.. _V4L2-SDR-FMT-PCU20BE:
-+
-+******************************
-+V4L2_SDR_FMT_PCU20BE ('PC20')
-+******************************
-+
-+Planar complex unsigned 20-bit big endian IQ sample
-+
-+Description
-+===========
-+
-+This format contains a sequence of complex number samples. Each complex
-+number consist of two parts called In-phase and Quadrature (IQ). Both I
-+and Q are represented as a 20 bit unsigned big endian number stored in
-+32 bit space. The remaining unused bits within the 32 bit space will be
-+padded with 0. I value starts first and Q value starts at an offset
-+equalling half of the buffer size (i.e.) offset = buffersize/2. Out of
-+the 20 bits, bit 19:2 (18 bit) is data and bit 1:0 (2 bit) can be any
-+value.
-+
-+**Byte Order.**
-+Each cell is one byte.
-+
-+.. flat-table::
-+    :header-rows:  1
-+    :stub-columns: 0
-+
-+    * -  Offset:
-+      -  Byte B0
-+      -  Byte B1
-+      -  Byte B2
-+      -  Byte B3
-+    * -  start + 0:
-+      -  I'\ :sub:`0[19:12]`
-+      -  I'\ :sub:`0[11:4]`
-+      -  I'\ :sub:`0[3:0]; B2[3:0]=pad`
-+      -  pad
-+    * -  start + 4:
-+      -  I'\ :sub:`1[19:12]`
-+      -  I'\ :sub:`1[11:4]`
-+      -  I'\ :sub:`1[3:0]; B2[3:0]=pad`
-+      -  pad
-+    * -  ...
-+    * - start + offset:
-+      -  Q'\ :sub:`0[19:12]`
-+      -  Q'\ :sub:`0[11:4]`
-+      -  Q'\ :sub:`0[3:0]; B2[3:0]=pad`
-+      -  pad
-+    * - start + offset + 4:
-+      -  Q'\ :sub:`1[19:12]`
-+      -  Q'\ :sub:`1[11:4]`
-+      -  Q'\ :sub:`1[3:0]; B2[3:0]=pad`
-+      -  pad
-diff --git a/Documentation/media/uapi/v4l/sdr-formats.rst b/Documentation/media/uapi/v4l/sdr-formats.rst
-index f863c08f1add..2037f5bad727 100644
---- a/Documentation/media/uapi/v4l/sdr-formats.rst
-+++ b/Documentation/media/uapi/v4l/sdr-formats.rst
-@@ -17,3 +17,6 @@ These formats are used for :ref:`SDR <sdr>` interface only.
-     pixfmt-sdr-cs08
-     pixfmt-sdr-cs14le
-     pixfmt-sdr-ru12le
-+    pixfmt-sdr-pcu16be
-+    pixfmt-sdr-pcu18be
-+    pixfmt-sdr-pcu20be
+diff --git a/sound/soc/generic/simple-card-utils.c b/sound/soc/generic/simple-card-utils.c
+index beb4e3817d22..2ad7633292bf 100644
+--- a/sound/soc/generic/simple-card-utils.c
++++ b/sound/soc/generic/simple-card-utils.c
+@@ -120,11 +120,13 @@ int asoc_simple_card_clk_enable(struct asoc_simple_dai *dai)
+ {
+ 	return clk_prepare_enable(dai->clk);
+ }
++EXPORT_SYMBOL_GPL(asoc_simple_card_clk_enable);
+ 
+ void asoc_simple_card_clk_disable(struct asoc_simple_dai *dai)
+ {
+ 	clk_disable_unprepare(dai->clk);
+ }
++EXPORT_SYMBOL_GPL(asoc_simple_card_clk_disable);
+ 
+ int asoc_simple_card_parse_clk(struct device *dev,
+ 			       struct device_node *node,
 -- 
-2.12.2
+2.11.0
