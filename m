@@ -1,71 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:46908 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751730AbdFNKMw (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:44303 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932087AbdFNJAy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Jun 2017 06:12:52 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Wed, 14 Jun 2017 05:00:54 -0400
+Date: Wed, 14 Jun 2017 11:00:48 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         linux-renesas-soc@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <87fuf39zzs.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dL5I7-0007dd-Ib@debutante>
-Date: Wed, 14 Jun 2017 11:12:47 +0100
-Subject: Applied "ASoC: ak4613: add missing 64000 in ak4613_dai_hw_params()" to the asoc tree
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 0/2] arm64: dts: renesas: Add reset control properties
+ for audio
+Message-ID: <20170614090047.GE26958@verge.net.au>
+References: <1497259937-9387-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1497259937-9387-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+On Mon, Jun 12, 2017 at 11:32:15AM +0200, Geert Uytterhoeven wrote:
+> 	Hi Simon, Magnus, Morimoto-san,
+> 
+> This patch series describes all resets wired to the audio modules on
+> R-Car Gen3 SoCs, following the DT binding update in commit
+> 5f440c48c5d5a11f ("ASoC: rsnd: Document optional reset properties") in
+> sound-asoc/for-next.
+> 
+> Thanks!
+> 
+> Geert Uytterhoeven (2):
+>   arm64: dts: r8a7795: Add reset control properties for audio
+>   arm64: dts: r8a7796: Add reset control properties for audio
 
-   ASoC: ak4613: add missing 64000 in ak4613_dai_hw_params()
-
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From a83ac4860925e1d0a7e38e7bea331fd2f2e0460d Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Wed, 14 Jun 2017 00:31:06 +0000
-Subject: [PATCH] ASoC: ak4613: add missing 64000 in ak4613_dai_hw_params()
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/ak4613.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/sound/soc/codecs/ak4613.c b/sound/soc/codecs/ak4613.c
-index e3121ca3d1a2..d5beca008dea 100644
---- a/sound/soc/codecs/ak4613.c
-+++ b/sound/soc/codecs/ak4613.c
-@@ -321,6 +321,7 @@ static int ak4613_dai_hw_params(struct snd_pcm_substream *substream,
- 	case 48000:
- 		ctrl2 = DFS_NORMAL_SPEED;
- 		break;
-+	case 64000:
- 	case 88200:
- 	case 96000:
- 		ctrl2 = DFS_DOUBLE_SPEED;
--- 
-2.11.0
+Thanks, I have queued these up for v4.13.
