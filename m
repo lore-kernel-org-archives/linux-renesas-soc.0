@@ -1,107 +1,82 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: robh@kernel.org, linux-serial@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, magnus.damm@gmail.com,
-        laurent.pinchart@ideasonboard.com, wsa@the-dreams.de,
-        linux-i2c@vger.kernel.org,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [RFC 1/4] serdev: add method to set parity
-Date: Wed, 14 Jun 2017 16:38:47 +0200
-Message-Id: <1497451130-7741-2-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1497451130-7741-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1497451130-7741-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-Sender: linux-i2c-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:46212 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750756AbdFNKM3 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 14 Jun 2017 06:12:29 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
+In-Reply-To: <877f0f9zrx.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1dL5Hh-0007Xw-Qx@debutante>
+Date: Wed, 14 Jun 2017 11:12:21 +0100
+Subject: Applied "ASoC: audio-graph-scu-card: use asoc_simple_card_of_parse_tdm()" to the asoc tree
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Adds serdev_device_set_parity() and an implementation for ttyport.
+The patch
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+   ASoC: audio-graph-scu-card: use asoc_simple_card_of_parse_tdm()
+
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 616c3b15f596e1f1e6c2537a1ad3492052eecba6 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Wed, 14 Jun 2017 00:35:47 +0000
+Subject: [PATCH] ASoC: audio-graph-scu-card: use
+ asoc_simple_card_of_parse_tdm()
+
+Current simple card drivers are using asoc_simple_dai's tx_slot_mask,
+rx_slot_mask, slots, slot_width directly to parse TDM.
+Encapsulation is one of simple card util's purpose.
+Let's use asoc_simple_card_of_parse_tdm for it.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/tty/serdev/core.c           | 12 ++++++++++++
- drivers/tty/serdev/serdev-ttyport.c | 17 +++++++++++++++++
- include/linux/serdev.h              |  4 ++++
- 3 files changed, 33 insertions(+)
+ sound/soc/generic/audio-graph-scu-card.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/drivers/tty/serdev/core.c b/drivers/tty/serdev/core.c
-index f71b473..1fbaa4c 100644
---- a/drivers/tty/serdev/core.c
-+++ b/drivers/tty/serdev/core.c
-@@ -242,6 +242,18 @@ int serdev_device_set_tiocm(struct serdev_device *serdev, int set, int clear)
- }
- EXPORT_SYMBOL_GPL(serdev_device_set_tiocm);
+diff --git a/sound/soc/generic/audio-graph-scu-card.c b/sound/soc/generic/audio-graph-scu-card.c
+index 27a261ee7302..4d295d07858a 100644
+--- a/sound/soc/generic/audio-graph-scu-card.c
++++ b/sound/soc/generic/audio-graph-scu-card.c
+@@ -167,11 +167,7 @@ static int asoc_graph_card_dai_link_of(struct device_node *ep,
+ 					      "prefix");
+ 	}
  
-+int serdev_device_set_parity(struct serdev_device *serdev,
-+			     bool enable, bool odd)
-+{
-+	struct serdev_controller *ctrl = serdev->ctrl;
-+
-+	if (!ctrl || !ctrl->ops->set_parity)
-+		return -ENOTSUPP;
-+
-+	return ctrl->ops->set_parity(ctrl, enable, odd);
-+}
-+EXPORT_SYMBOL_GPL(serdev_device_set_parity);
-+
- static int serdev_drv_probe(struct device *dev)
- {
- 	const struct serdev_device_driver *sdrv = to_serdev_device_driver(dev->driver);
-diff --git a/drivers/tty/serdev/serdev-ttyport.c b/drivers/tty/serdev/serdev-ttyport.c
-index 302018d..9114956 100644
---- a/drivers/tty/serdev/serdev-ttyport.c
-+++ b/drivers/tty/serdev/serdev-ttyport.c
-@@ -195,6 +195,22 @@ static int ttyport_set_tiocm(struct serdev_controller *ctrl, unsigned int set, u
- 	return tty->driver->ops->tiocmset(tty, set, clear);
- }
+-	ret = snd_soc_of_parse_tdm_slot(ep,
+-					&dai_props->tx_slot_mask,
+-					&dai_props->rx_slot_mask,
+-					&dai_props->slots,
+-					&dai_props->slot_width);
++	ret = asoc_simple_card_of_parse_tdm(ep, dai_props);
+ 	if (ret)
+ 		return ret;
  
-+static int ttyport_set_parity(struct serdev_controller *ctrl,
-+			      bool enable, bool odd)
-+{
-+	struct serport *serport = serdev_controller_get_drvdata(ctrl);
-+	struct tty_struct *tty = serport->tty;
-+	struct ktermios ktermios = tty->termios;
-+
-+	ktermios.c_cflag &= ~(PARENB | PARODD);
-+	if (enable)
-+		ktermios.c_cflag |= PARENB;
-+	if (odd)
-+		ktermios.c_cflag |= PARODD;
-+
-+	return tty_set_termios(tty, &ktermios);
-+}
-+
- static const struct serdev_controller_ops ctrl_ops = {
- 	.write_buf = ttyport_write_buf,
- 	.write_flush = ttyport_write_flush,
-@@ -206,6 +222,7 @@ static const struct serdev_controller_ops ctrl_ops = {
- 	.wait_until_sent = ttyport_wait_until_sent,
- 	.get_tiocm = ttyport_get_tiocm,
- 	.set_tiocm = ttyport_set_tiocm,
-+	.set_parity = ttyport_set_parity,
- };
- 
- struct device *serdev_tty_port_register(struct tty_port *port,
-diff --git a/include/linux/serdev.h b/include/linux/serdev.h
-index e69402d..8b67fcd 100644
---- a/include/linux/serdev.h
-+++ b/include/linux/serdev.h
-@@ -90,6 +90,7 @@ struct serdev_controller_ops {
- 	void (*wait_until_sent)(struct serdev_controller *, long);
- 	int (*get_tiocm)(struct serdev_controller *);
- 	int (*set_tiocm)(struct serdev_controller *, unsigned int, unsigned int);
-+	int (*set_parity)(struct serdev_controller *, bool, bool);
- };
- 
- /**
-@@ -298,6 +299,9 @@ static inline int serdev_device_set_rts(struct serdev_device *serdev, bool enabl
- 		return serdev_device_set_tiocm(serdev, 0, TIOCM_RTS);
- }
- 
-+int serdev_device_set_parity(struct serdev_device *serdev,
-+			     bool enable, bool odd);
-+
- /*
-  * serdev hooks into TTY core
-  */
 -- 
-2.7.4
-
+2.11.0
