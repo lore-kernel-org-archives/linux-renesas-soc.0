@@ -1,65 +1,107 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:60335 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751469AbdFHNJq (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Jun 2017 09:09:46 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Ai Kyuse <ai.kyuse.uw@renesas.com>
-Subject: [PATCH/RFC 2/5] mmc: sh_mobile_sdhi: set max_segs and max_blk_count values R-Car Gen3
-Date: Thu,  8 Jun 2017 15:09:23 +0200
-Message-Id: <1496927368-18897-3-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1496927368-18897-1-git-send-email-horms+renesas@verge.net.au>
-References: <1496927368-18897-1-git-send-email-horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-i2c-owner@vger.kernel.org>
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: robh@kernel.org, linux-serial@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, magnus.damm@gmail.com,
+        laurent.pinchart@ideasonboard.com, wsa@the-dreams.de,
+        linux-i2c@vger.kernel.org,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [RFC 1/4] serdev: add method to set parity
+Date: Wed, 14 Jun 2017 16:38:47 +0200
+Message-Id: <1497451130-7741-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <1497451130-7741-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1497451130-7741-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-To avoid complicate code in own dma code for gen3, this patch
-adds set max_segs to 1. Then, the tmio driver will get requests
-as sg_len = 1 only.
+Adds serdev_device_set_parity() and an implementation for ttyport.
 
-In the performance point of view, the CONFIG_MMC_BLOCK_BOUNCE should
-be set. Otherwise, mmc block layer will set 4-kbyte each as a request.
-
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Ai Kyuse <ai.kyuse.uw@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 ---
- drivers/mmc/host/renesas_sdhi.h      | 2 ++
- drivers/mmc/host/renesas_sdhi_core.c | 2 ++
- 2 files changed, 4 insertions(+)
+ drivers/tty/serdev/core.c           | 12 ++++++++++++
+ drivers/tty/serdev/serdev-ttyport.c | 17 +++++++++++++++++
+ include/linux/serdev.h              |  4 ++++
+ 3 files changed, 33 insertions(+)
 
-diff --git a/drivers/mmc/host/renesas_sdhi.h b/drivers/mmc/host/renesas_sdhi.h
-index eb3ea15ff92d..6f7233fe32a2 100644
---- a/drivers/mmc/host/renesas_sdhi.h
-+++ b/drivers/mmc/host/renesas_sdhi.h
-@@ -31,6 +31,8 @@ struct renesas_sdhi_of_data {
- 	int scc_offset;
- 	struct renesas_sdhi_scc *taps;
- 	int taps_num;
-+	unsigned int max_blk_count;
-+	unsigned short max_segs;
+diff --git a/drivers/tty/serdev/core.c b/drivers/tty/serdev/core.c
+index f71b473..1fbaa4c 100644
+--- a/drivers/tty/serdev/core.c
++++ b/drivers/tty/serdev/core.c
+@@ -242,6 +242,18 @@ int serdev_device_set_tiocm(struct serdev_device *serdev, int set, int clear)
+ }
+ EXPORT_SYMBOL_GPL(serdev_device_set_tiocm);
+ 
++int serdev_device_set_parity(struct serdev_device *serdev,
++			     bool enable, bool odd)
++{
++	struct serdev_controller *ctrl = serdev->ctrl;
++
++	if (!ctrl || !ctrl->ops->set_parity)
++		return -ENOTSUPP;
++
++	return ctrl->ops->set_parity(ctrl, enable, odd);
++}
++EXPORT_SYMBOL_GPL(serdev_device_set_parity);
++
+ static int serdev_drv_probe(struct device *dev)
+ {
+ 	const struct serdev_device_driver *sdrv = to_serdev_device_driver(dev->driver);
+diff --git a/drivers/tty/serdev/serdev-ttyport.c b/drivers/tty/serdev/serdev-ttyport.c
+index 302018d..9114956 100644
+--- a/drivers/tty/serdev/serdev-ttyport.c
++++ b/drivers/tty/serdev/serdev-ttyport.c
+@@ -195,6 +195,22 @@ static int ttyport_set_tiocm(struct serdev_controller *ctrl, unsigned int set, u
+ 	return tty->driver->ops->tiocmset(tty, set, clear);
+ }
+ 
++static int ttyport_set_parity(struct serdev_controller *ctrl,
++			      bool enable, bool odd)
++{
++	struct serport *serport = serdev_controller_get_drvdata(ctrl);
++	struct tty_struct *tty = serport->tty;
++	struct ktermios ktermios = tty->termios;
++
++	ktermios.c_cflag &= ~(PARENB | PARODD);
++	if (enable)
++		ktermios.c_cflag |= PARENB;
++	if (odd)
++		ktermios.c_cflag |= PARODD;
++
++	return tty_set_termios(tty, &ktermios);
++}
++
+ static const struct serdev_controller_ops ctrl_ops = {
+ 	.write_buf = ttyport_write_buf,
+ 	.write_flush = ttyport_write_flush,
+@@ -206,6 +222,7 @@ static const struct serdev_controller_ops ctrl_ops = {
+ 	.wait_until_sent = ttyport_wait_until_sent,
+ 	.get_tiocm = ttyport_get_tiocm,
+ 	.set_tiocm = ttyport_set_tiocm,
++	.set_parity = ttyport_set_parity,
  };
  
- int renesas_sdhi_probe(struct platform_device *pdev,
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index 82150a966391..294bc9705c5f 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -522,6 +522,8 @@ int renesas_sdhi_probe(struct platform_device *pdev,
- 		mmc_data->capabilities |= of_data->capabilities;
- 		mmc_data->capabilities2 |= of_data->capabilities2;
- 		mmc_data->dma_rx_offset = of_data->dma_rx_offset;
-+		mmc_data->max_blk_count = of_data->max_blk_count;
-+		mmc_data->max_segs = of_data->max_segs;
- 		dma_priv->dma_buswidth = of_data->dma_buswidth;
- 		host->bus_shift = of_data->bus_shift;
- 	}
+ struct device *serdev_tty_port_register(struct tty_port *port,
+diff --git a/include/linux/serdev.h b/include/linux/serdev.h
+index e69402d..8b67fcd 100644
+--- a/include/linux/serdev.h
++++ b/include/linux/serdev.h
+@@ -90,6 +90,7 @@ struct serdev_controller_ops {
+ 	void (*wait_until_sent)(struct serdev_controller *, long);
+ 	int (*get_tiocm)(struct serdev_controller *);
+ 	int (*set_tiocm)(struct serdev_controller *, unsigned int, unsigned int);
++	int (*set_parity)(struct serdev_controller *, bool, bool);
+ };
+ 
+ /**
+@@ -298,6 +299,9 @@ static inline int serdev_device_set_rts(struct serdev_device *serdev, bool enabl
+ 		return serdev_device_set_tiocm(serdev, 0, TIOCM_RTS);
+ }
+ 
++int serdev_device_set_parity(struct serdev_device *serdev,
++			     bool enable, bool odd);
++
+ /*
+  * serdev hooks into TTY core
+  */
 -- 
-2.1.4
+2.7.4
+
