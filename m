@@ -1,25 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:47100 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:46210 "EHLO
         mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751108AbdFULQu (ORCPT
+        with ESMTP id S1751730AbdFNKM3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 21 Jun 2017 07:16:50 -0400
+        Wed, 14 Jun 2017 06:12:29 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
         linux-renesas-soc@vger.kernel.org,
         Linux-ALSA <alsa-devel@alsa-project.org>,
         Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <87mv926jv8.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dNdcq-0004Fs-5G@debutante>
-Date: Wed, 21 Jun 2017 12:16:44 +0100
-Subject: Applied "ASoC: pxa: add COMPILE_TEST on SND_PXA2XX_SOC" to the asoc tree
+In-Reply-To: <878tkv9zsf.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1dL5Hk-0007Yz-Sx@debutante>
+Date: Wed, 14 Jun 2017 11:12:24 +0100
+Subject: Applied "ASoC: audio-graph-card: use asoc_simple_card_of_parse_tdm()" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The patch
 
-   ASoC: pxa: add COMPILE_TEST on SND_PXA2XX_SOC
+   ASoC: audio-graph-card: use asoc_simple_card_of_parse_tdm()
 
 has been applied to the asoc tree at
 
@@ -44,30 +44,47 @@ to this mail.
 Thanks,
 Mark
 
->From 73d7ee2e831f106ca5c745b2cf4fdbac5a4e9e4e Mon Sep 17 00:00:00 2001
+>From c98907d59594827535b492309a145ac9c758fb4c Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Wed, 21 Jun 2017 04:38:13 +0000
-Subject: [PATCH] ASoC: pxa: add COMPILE_TEST on SND_PXA2XX_SOC
+Date: Wed, 14 Jun 2017 00:35:30 +0000
+Subject: [PATCH] ASoC: audio-graph-card: use asoc_simple_card_of_parse_tdm()
 
-It doesn't use asm header. We can add COMPILE_TEST
+Current simple card drivers are using asoc_simple_dai's tx_slot_mask,
+rx_slot_mask, slots, slot_width directly to parse TDM.
+Encapsulation is one of simple card util's purpose.
+Let's use asoc_simple_card_of_parse_tdm for it.
 
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/pxa/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/generic/audio-graph-card.c | 12 ++----------
+ 1 file changed, 2 insertions(+), 10 deletions(-)
 
-diff --git a/sound/soc/pxa/Kconfig b/sound/soc/pxa/Kconfig
-index 823b5a236d8d..960744e46edc 100644
---- a/sound/soc/pxa/Kconfig
-+++ b/sound/soc/pxa/Kconfig
-@@ -1,6 +1,6 @@
- config SND_PXA2XX_SOC
- 	tristate "SoC Audio for the Intel PXA2xx chip"
--	depends on ARCH_PXA
-+	depends on ARCH_PXA || COMPILE_TEST
- 	select SND_PXA2XX_LIB
- 	help
- 	  Say Y or M if you want to add support for codecs attached to
+diff --git a/sound/soc/generic/audio-graph-card.c b/sound/soc/generic/audio-graph-card.c
+index b5bb791a6e61..885b405d7844 100644
+--- a/sound/soc/generic/audio-graph-card.c
++++ b/sound/soc/generic/audio-graph-card.c
+@@ -131,19 +131,11 @@ static int asoc_graph_card_dai_link_of(struct device_node *cpu_port,
+ 	if (ret < 0)
+ 		goto dai_link_of_err;
+ 
+-	ret = snd_soc_of_parse_tdm_slot(cpu_ep,
+-					&cpu_dai->tx_slot_mask,
+-					&cpu_dai->rx_slot_mask,
+-					&cpu_dai->slots,
+-					&cpu_dai->slot_width);
++	ret = asoc_simple_card_of_parse_tdm(cpu_ep, cpu_dai);
+ 	if (ret < 0)
+ 		goto dai_link_of_err;
+ 
+-	ret = snd_soc_of_parse_tdm_slot(codec_ep,
+-					&codec_dai->tx_slot_mask,
+-					&codec_dai->rx_slot_mask,
+-					&codec_dai->slots,
+-					&codec_dai->slot_width);
++	ret = asoc_simple_card_of_parse_tdm(codec_ep, codec_dai);
+ 	if (ret < 0)
+ 		goto dai_link_of_err;
+ 
 -- 
 2.11.0
