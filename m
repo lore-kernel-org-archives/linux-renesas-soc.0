@@ -1,77 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:38264 "EHLO pokefinder.org"
+Received: from sauhun.de ([88.99.104.3]:38199 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750899AbdFOSmJ (ORCPT
+        id S1752992AbdFOSat (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Jun 2017 14:42:09 -0400
-Date: Thu, 15 Jun 2017 20:42:06 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] i2c: document DMA handling and add helpers for it
-Message-ID: <20170615184206.vwa3eg4upat6ioae@ninjato>
-References: <20170615183039.22925-1-wsa+renesas@sang-engineering.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="jmka4wf3er3zxwew"
-Content-Disposition: inline
-In-Reply-To: <20170615183039.22925-1-wsa+renesas@sang-engineering.com>
+        Thu, 15 Jun 2017 14:30:49 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-i2c@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 0/4] i2c: document DMA handling and add helpers for it
+Date: Thu, 15 Jun 2017 20:30:35 +0200
+Message-Id: <20170615183039.22925-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+So, after revisiting old mail threads and taking part in a similar discussion
+on the USB list, here is what I cooked up to document and ease DMA handling for
+I2C within Linux. Please have a look at the documentation introduced in patch 2
+for further details.
 
---jmka4wf3er3zxwew
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The branch can be found here:
 
-On Thu, Jun 15, 2017 at 08:30:35PM +0200, Wolfram Sang wrote:
-> So, after revisiting old mail threads and taking part in a similar discus=
-sion
-> on the USB list, here is what I cooked up to document and ease DMA handli=
-ng for
-> I2C within Linux. Please have a look at the documentation introduced in p=
-atch 2
-> for further details.
->=20
-> The branch can be found here:
->=20
-> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic=
-/i2c-core-dma
->=20
-> And big kudos to Renesas Electronics for funding this work, thank you ver=
-y much!
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/i2c-core-dma
 
-I forgot to write that those patches have been tested with a Renesas Salvat=
-or-X
-board (r8a7796/M3-W) and a Renesas Lager board (r8a7790/H2). A more
-detailed test description can be found here:
+And big kudos to Renesas Electronics for funding this work, thank you very much!
 
-http://elinux.org/Tests:I2C-core-DMA
+Regards,
 
-And sorry for the doubled Signed-offs below the patches. My mistake
-here, there should be only the ones from sang-engineering.com.
+   Wolfram
+
+Changes since RFC:
+
+* the helper i2c_check_msg_for_dma() can optionally take a pointer and then it
+  will attach a bounce buffer to it in case the message buffer is not DMA safe
+* a second helper was added. i2c_release_bounce_buf() will copy data back to
+  the message buffer and release the bounce buffer
+* the documentation has been extended to match the above
+* no ifdeffery around CONFIG_DMA_API_DEBUG anymore. The I2C core behaviour
+  should not depend on such symbols.
+* the i2c-sh_mobile driver has been updated to use bounce buffers
 
 
---jmka4wf3er3zxwew
-Content-Type: application/pgp-signature; name="signature.asc"
+Wolfram Sang (4):
+  i2c: add helpers to ease DMA handling
+  i2c: add docs to clarify DMA handling
+  i2c: sh_mobile: use helper to decide if DMA is useful
+  i2c: rcar: check for DMA-capable buffers
 
------BEGIN PGP SIGNATURE-----
+ Documentation/i2c/DMA-considerations | 37 ++++++++++++++++++++
+ drivers/i2c/busses/i2c-rcar.c        | 18 +++++++---
+ drivers/i2c/busses/i2c-sh_mobile.c   |  8 +++--
+ include/linux/i2c.h                  | 65 ++++++++++++++++++++++++++++++++++++
+ 4 files changed, 121 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/i2c/DMA-considerations
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAllC1PoACgkQFA3kzBSg
-KbaPERAAnPNmu0Av+h1EGeZVDT6xo+r1+6Wn1H66fA1faAGcwu5BYt2SmyVCaOV7
-oG6fGswl/AjhPeVDbTLYpDGrGlOPrrUS6JYGbMT0osVJ/aPxL8S4i//ZBbD4/Zr1
-wL0eYYdOY4Yg31QMA5gAeClPEQjNy5QKnZL35/wWTc54VoJbqmTTeCuxhseBarOi
-PErhM32f7lm3iQgDb/6ngF+/SS6q627qWfGFH/wtitUV9NC6s6xkGqh9U5wsHE0Q
-EIY2/zHPZilXbnKAY3F8obIrzzwxbYhyuF+/PM+8WLJB+L//dn95jMlRco/VTx1K
-siAtBfJgenUQl4qO1EpC6jTFVEQtZGOTQ/AdtU/8b7GrjcSelPzQLiXJClylsRxK
-IiXgoq0noOcSiVgtZDkMviPAjAOmtn0yEcYnbd5tzUuHuBseAWaHdVIM0tyuwGmn
-G8u1Tx1bdPUyfqeCYP9Ge+0nxJDbtyTE2ERogXnMt3CP+bec35b3Nj38d/BGQ9oJ
-7YgWljB8InxDKcVxKgte4wfHBv0DeVmpFSz/9SsJzCtBQU6vDy45hO5ZLn+jc3lL
-YZHVYxZaxT1OfAn1DHkyOrsR9vlHd/OQMbOS+Mzh2C91UsD5RoNE5z6hQpi5n5kp
-ojCqCk2pDGOWWZV+VFM9vx77FhUl5fDQf9RXFUkTb1V6O2nJ3rQ=
-=Z/1G
------END PGP SIGNATURE-----
-
---jmka4wf3er3zxwew--
+-- 
+2.11.0
