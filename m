@@ -1,50 +1,88 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:33090 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752672AbdF0Swo (ORCPT
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:36633 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752425AbdFOKdk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Jun 2017 14:52:44 -0400
-Received: by mail-io0-f195.google.com with SMTP id j200so3381666ioe.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 27 Jun 2017 11:52:44 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1494335128-30563-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
-References: <1494335128-30563-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 27 Jun 2017 20:52:42 +0200
-Message-ID: <CAMuHMdUynJn381HHh4Hi2M-ToxoFpaOrPYGUFv6R9YnRTzT5qg@mail.gmail.com>
-Subject: Re: [GIT PULL FOR renesas-drivers] v4l: vsp1: Suspend/resume on M2M pipelines
-To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 15 Jun 2017 06:33:40 -0400
+From: Magnus Damm <magnus.damm@gmail.com>
+To: joro@8bytes.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+        robin.murphy@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
+        Magnus Damm <magnus.damm@gmail.com>, sricharan@codeaurora.org,
+        m.szyprowski@samsung.com
+Date: Thu, 15 Jun 2017 19:29:38 +0900
+Message-Id: <149752257829.21887.15003130821809174947.sendpatchset@little-apple>
+In-Reply-To: <149752254550.21887.15183665699230243235.sendpatchset@little-apple>
+References: <149752254550.21887.15183665699230243235.sendpatchset@little-apple>
+Subject: [PATCH 03/04] iommu/ipmmu-vmsa: Use fwspec on both 32 and 64-bit ARM
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Kieran,
+From: Robin Murphy <robin.murphy@arm.com>
 
-On Tue, May 9, 2017 at 3:05 PM, Kieran Bingham
-<kieran.bingham+renesas@ideasonboard.com> wrote:
-> The following changes since commit 13e0988140374123bead1dd27c287354cb95108e:
->
->   docs: complete bumping minimal GNU Make version to 3.81 (2017-05-06 18:49:09 -0700)
->
-> are available in the git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git tags/submissions/vsp1/suspend-resume/v5
->
-> for you to fetch changes up to 24697ebba024a6375ff2e793203296c70112537e:
->
->   v4l: vsp1: Repair suspend resume operations for video pipelines (2017-05-08 15:20:58 +0100)
+Consolidate the 32-bit and 64-bit code to make use of fwspec instead
+of archdata for the 32-bit ARM case.
 
-Dropped, too many conflicts.
+This is a simplified version of the fwspec handling code from Robin
+posted as [PATCH] iommu/ipmmu-vmsa: Convert to iommu_fwspec
 
-Gr{oetje,eeting}s,
+Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+---
 
-                        Geert
+ drivers/iommu/ipmmu-vmsa.c |   21 +++------------------
+ 1 file changed, 3 insertions(+), 18 deletions(-)
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--- 0010/drivers/iommu/ipmmu-vmsa.c
++++ work/drivers/iommu/ipmmu-vmsa.c	2017-06-15 17:29:00.290607110 +0900
+@@ -73,22 +73,9 @@ static struct ipmmu_vmsa_domain *to_vmsa
+ 	return container_of(dom, struct ipmmu_vmsa_domain, io_domain);
+ }
+ 
+-
+ static struct ipmmu_vmsa_iommu_priv *to_priv(struct device *dev)
+ {
+-#if defined(CONFIG_ARM)
+-	return dev->archdata.iommu;
+-#else
+-	return dev->iommu_fwspec->iommu_priv;
+-#endif
+-}
+-static void set_priv(struct device *dev, struct ipmmu_vmsa_iommu_priv *p)
+-{
+-#if defined(CONFIG_ARM)
+-	dev->archdata.iommu = p;
+-#else
+-	dev->iommu_fwspec->iommu_priv = p;
+-#endif
++	return dev->iommu_fwspec ? dev->iommu_fwspec->iommu_priv : NULL;
+ }
+ 
+ #define TLB_LOOP_TIMEOUT		100	/* 100us */
+@@ -730,7 +717,7 @@ static int ipmmu_init_platform_device(st
+ 	priv->utlbs = utlbs;
+ 	priv->num_utlbs = num_utlbs;
+ 	priv->dev = dev;
+-	set_priv(dev, priv);
++	dev->iommu_fwspec->iommu_priv = priv;
+ 	return 0;
+ 
+ error:
+@@ -887,14 +874,12 @@ static void ipmmu_domain_free_dma(struct
+ 
+ static int ipmmu_add_device_dma(struct device *dev)
+ {
+-	struct iommu_fwspec *fwspec = dev->iommu_fwspec;
+ 	struct iommu_group *group;
+ 
+ 	/*
+ 	 * Only let through devices that have been verified in xlate()
+-	 * We may get called with dev->iommu_fwspec set to NULL.
+ 	 */
+-	if (!fwspec || !fwspec->iommu_priv)
++	if (!to_priv(dev))
+ 		return -ENODEV;
+ 
+ 	group = iommu_group_get_for_dev(dev);
