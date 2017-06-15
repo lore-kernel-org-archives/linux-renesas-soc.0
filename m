@@ -1,68 +1,152 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:60319 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751383AbdFHNJk (ORCPT
+Received: from mail-lf0-f53.google.com ([209.85.215.53]:34326 "EHLO
+        mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750801AbdFOIwV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Jun 2017 09:09:40 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Ai Kyuse <ai.kyuse.uw@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH/RFC 1/5] mmc: tmio: add max_segs and max_blk_count in tmio_mmc_data
-Date: Thu,  8 Jun 2017 15:09:22 +0200
-Message-Id: <1496927368-18897-2-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1496927368-18897-1-git-send-email-horms+renesas@verge.net.au>
-References: <1496927368-18897-1-git-send-email-horms+renesas@verge.net.au>
+        Thu, 15 Jun 2017 04:52:21 -0400
+Received: by mail-lf0-f53.google.com with SMTP id v20so4636863lfa.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Jun 2017 01:52:20 -0700 (PDT)
+Date: Thu, 15 Jun 2017 10:52:17 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Sakari Ailus <sakari.ailus@iki.fi>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+Subject: Re: [PATCH v7 1/2] media: rcar-csi2: add Renesas R-Car MIPI CSI-2
+ receiver documentation
+Message-ID: <20170615085217.GG10888@bigcity.dyn.berto.se>
+References: <20170524001353.13482-1-niklas.soderlund@ragnatech.se>
+ <20170524001353.13482-2-niklas.soderlund@ragnatech.se>
+ <20170529111624.GC29527@valkosipuli.retiisi.org.uk>
+ <20170613165014.GA10888@bigcity.dyn.berto.se>
+ <20170614104558.GL12407@valkosipuli.retiisi.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20170614104558.GL12407@valkosipuli.retiisi.org.uk>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Hi Sakari,
 
-To change each value from related driver (e.g. sh_mobile_sdhi driver),
-this patch adds these member in the struct tmio_mmc_data.
+On 2017-06-14 13:45:58 +0300, Sakari Ailus wrote:
+> Hi Niklas,
+> 
+> On Tue, Jun 13, 2017 at 06:50:14PM +0200, Niklas S�derlund wrote:
+> > Hi Sakari,
+> > 
+> > Thanks for your feedback.
+> > 
+> > On 2017-05-29 14:16:25 +0300, Sakari Ailus wrote:
+> > > Hi Niklas,
+> > > 
+> > > On Wed, May 24, 2017 at 02:13:52AM +0200, Niklas S�derlund wrote:
+> > > > From: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+> > > > 
+> > > > Documentation for Renesas R-Car MIPI CSI-2 receiver. The CSI-2 receivers
+> > > > are located between the video sources (CSI-2 transmitters) and the video
+> > > > grabbers (VIN) on Gen3 of Renesas R-Car SoC.
+> > > > 
+> > > > Each CSI-2 device is connected to more then one VIN device which
+> > > > simultaneously can receive video from the same CSI-2 device. Each VIN
+> > > > device can also be connected to more then one CSI-2 device. The routing
+> > > > of which link are used are controlled by the VIN devices. There are only
+> > > > a few possible routes which are set by hardware limitations, which are
+> > > > different for each SoC in the Gen3 family.
+> > > > 
+> > > > To work with the limitations of routing possibilities it is necessary
+> > > > for the DT bindings to describe which VIN device is connected to which
+> > > > CSI-2 device. This is why port 1 needs to to assign reg numbers for each
+> > > > VIN device that be connected to it. To setup and to know which links are
+> > > > valid for each SoC is the responsibility of the VIN driver since the
+> > > > register to configure it belongs to the VIN hardware.
+> > > > 
+> > > > Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+> > > > ---
+> > > >  .../devicetree/bindings/media/rcar-csi2.txt        | 116 +++++++++++++++++++++
+> > > >  1 file changed, 116 insertions(+)
+> > > >  create mode 100644 Documentation/devicetree/bindings/media/rcar-csi2.txt
+> > > > 
+> > > > diff --git a/Documentation/devicetree/bindings/media/rcar-csi2.txt b/Documentation/devicetree/bindings/media/rcar-csi2.txt
+> > > > new file mode 100644
+> > > > index 0000000000000000..f6e2027ee92b171a
+> > > > --- /dev/null
+> > > > +++ b/Documentation/devicetree/bindings/media/rcar-csi2.txt
+> > > > @@ -0,0 +1,116 @@
+> > > > +Renesas R-Car MIPI CSI-2
+> > > > +------------------------
+> > > > +
+> > > > +The rcar-csi2 device provides MIPI CSI-2 capabilities for the Renesas R-Car
+> > > > +family of devices. It is to be used in conjunction with the R-Car VIN module,
+> > > > +which provides the video capture capabilities.
+> > > > +
+> > > > + - compatible: Must be one or more of the following
+> > > > +   - "renesas,r8a7795-csi2" for the R8A7795 device.
+> > > > +   - "renesas,r8a7796-csi2" for the R8A7796 device.
+> > > > +   - "renesas,rcar-gen3-csi2" for a generic R-Car Gen3 compatible device.
+> > > > +
+> > > > +   When compatible with a generic version nodes must list the
+> > > > +   SoC-specific version corresponding to the platform first
+> > > > +   followed by the generic version.
+> > > > +
+> > > > + - reg: the register base and size for the device registers
+> > > > + - interrupts: the interrupt for the device
+> > > > + - clocks: Reference to the parent clock
+> > > > +
+> > > > +The device node should contain two 'port' child nodes according to the
+> > > > +bindings defined in Documentation/devicetree/bindings/media/
+> > > > +video-interfaces.txt. Port 0 should connect the node that is the video
+> > > > +source for to the CSI-2. Port 1 should connect all the R-Car VIN
+> > > > +modules, which can make use of the CSI-2 module.
+> > > 
+> > > Should or shall?
+> > > 
+> > > I guess you could add that it is possible to leave them unconnected, too.
+> > 
+> > Which ports/endpoints are you talking about? In my mind it's not allowed 
+> > to leave them unconnected.
+> > 
+> > If there ever is a system with only 4 VIN instances (I'm not aware of 
+> > any such system) then yes the endpoints for those VIN not present in the 
+> > system in port 1 should be left unconnected but other then that they 
+> > should all be mandatory right? Or am I missing something?
+> 
+> I think so, yes. Then "shall" is right, isn't it?
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Ai Kyuse <ai.kyuse.uw@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- drivers/mmc/host/tmio_mmc_core.c | 6 +++---
- include/linux/mfd/tmio.h         | 2 ++
- 2 files changed, 5 insertions(+), 3 deletions(-)
+Yes shall is then the correct term, will update for next version.
 
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index ed4068125349..0e76e099dc7f 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -1247,10 +1247,10 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
- 
- 	mmc->caps |= MMC_CAP_4_BIT_DATA | pdata->capabilities;
- 	mmc->caps2 |= pdata->capabilities2;
--	mmc->max_segs = 32;
-+	mmc->max_segs = pdata->max_segs ? : 32;
- 	mmc->max_blk_size = 512;
--	mmc->max_blk_count = (PAGE_SIZE / mmc->max_blk_size) *
--		mmc->max_segs;
-+	mmc->max_blk_count = pdata->max_blk_count ? :
-+		(PAGE_SIZE / mmc->max_blk_size) * mmc->max_segs;
- 	mmc->max_req_size = mmc->max_blk_size * mmc->max_blk_count;
- 	mmc->max_seg_size = mmc->max_req_size;
- 
-diff --git a/include/linux/mfd/tmio.h b/include/linux/mfd/tmio.h
-index c83c16b931a8..4e261ea94d6a 100644
---- a/include/linux/mfd/tmio.h
-+++ b/include/linux/mfd/tmio.h
-@@ -128,6 +128,8 @@ struct tmio_mmc_data {
- 	unsigned int			cd_gpio;
- 	int				alignment_shift;
- 	dma_addr_t			dma_rx_offset;
-+	unsigned int			max_blk_count;
-+	unsigned short			max_segs;
- 	void (*set_pwr)(struct platform_device *host, int state);
- 	void (*set_clk_div)(struct platform_device *host, int state);
- };
+> 
+> > 
+> > > 
+> > > > +
+> > > > +- Port 0 - Video source
+> > > > +	- Reg 0 - sub-node describing the endpoint that is the video source
+> > > 
+> > > Which endpoint properties are mandatory for the receiver? Which ones are
+> > > optional? (I.e. it shouldn't be necessary to read driver code to write board
+> > > description.)
+> > 
+> > I will add a note that all endpoints in port 0 are mandatory and that 
+> > all endpoints that represents a connection to a VIN instance in the 
+> > system is mandatory for next version. Thanks I did not think about this 
+> > possibility.
+> 
+> Please list the mandatory and optional properties, too. Not just the
+> endpoints.
+
+Good point, will do so.
+
+> 
+> -- 
+> H�lsningar,
+> 
+> Sakari Ailus
+> e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
+
 -- 
-2.1.4
+Regards,
+Niklas S�derlund
