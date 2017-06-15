@@ -1,57 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:40238 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752913AbdFPI1p (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:37137 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751667AbdFOTAZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Jun 2017 04:27:45 -0400
-Date: Fri, 16 Jun 2017 10:27:42 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH mmc/next v2 0/2] mmc: tmio, renesas-sdhi: cleanups
-Message-ID: <20170616082742.pj5crlavihkewlfd@ninjato>
-References: <1497553214-12914-1-git-send-email-horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="wlpgfccp4f4phq5w"
-Content-Disposition: inline
-In-Reply-To: <1497553214-12914-1-git-send-email-horms+renesas@verge.net.au>
+        Thu, 15 Jun 2017 15:00:25 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH mmc/next v2 0/2] mmc: tmio, renesas-sdhi: cleanups
+Date: Thu, 15 Jun 2017 21:00:12 +0200
+Message-Id: <1497553214-12914-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi,
 
---wlpgfccp4f4phq5w
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+this short series provides some cleanups to the tmio and renesas-sdhi
+drivers to improve their checkpatch cleanness.
 
+Changes since v1:
+* Drop patches now present in mmc/next
+* Address review - details noted in changelogs of each patch
 
-> this short series provides some cleanups to the tmio and renesas-sdhi
-> drivers to improve their checkpatch cleanness.
+Simon Horman (2):
+  mmc: tmio: improve checkpatch cleanness
+  mmc: renesas-sdhi: improve checkpatch cleanness
 
-Is there a dependency on your Gen3 DMA series?
+ drivers/mmc/host/renesas_sdhi.h          |  4 +-
+ drivers/mmc/host/renesas_sdhi_core.c     | 43 +++++++--------
+ drivers/mmc/host/renesas_sdhi_sys_dmac.c | 25 +++++----
+ drivers/mmc/host/tmio_mmc.c              |  8 +--
+ drivers/mmc/host/tmio_mmc.h              | 17 +++---
+ drivers/mmc/host/tmio_mmc_core.c         | 90 ++++++++++++++++++--------------
+ include/linux/mfd/tmio.h                 | 33 ++++++------
+ 7 files changed, 120 insertions(+), 100 deletions(-)
 
-
---wlpgfccp4f4phq5w
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAllDln4ACgkQFA3kzBSg
-KbbVWg//acnKKwRIgigm6rfzsVuYOFJoX+Za20U4xia7KoUiAj0zx0WnaFrJ1UKL
-RTaLXMMW1taG+y87oRkXHKoNt1+p4OP632/J5+yBGZX51b0bDFgcTcyCnzSTEwbg
-wJQjrkwXMMGhwKcva+mK+HW7IaDBd7WtsTdHM0AF8cl/DQrKyJNRRzhU1QmumNbf
-t1WF+MmGp4eUYhD9xfypTSszNx97gaC1XHBFG7nEaSVoTbLiFWAJLkaRWL4d0nCA
-v/qBoThyEwNw5kLO3F/nnioaEG6EzajQtaItVNlgTaveEXquEZEg6VieoennbSfn
-0/WSrK2CSjMelA9GsA5eykqNCzxwLPqD6UV3f3tLWNwPmb4j7cKoFaYgYyvp1i3v
-nJ3nRsmjs04SYBJJPIpChJeKY0zYwT420nBFtGaiOTA5Pg41RiWRMBB5lNNn3Rvh
-gp8E7xERKgKRYvEPfG02IpDqM477wxq601qlhmwh7J96eNcavEzhb+UlQjrgNOka
-F95aEEJzwUSoDQV3RBTrjpfBYyO9BLF0+htd2eMy01oVscYmfXVJll1GtoS94Qck
-JlI6IYMM9UIgF6ZReEsfj8brKT6vOyyCdjGg8Mg9VvgVz+QR3Od33SXQ14j331eg
-F6K1nccAChuYHFfRyaz5//Qp4Z6VtzHUSStpTqJlgBXSJZm0IH4=
-=xOf4
------END PGP SIGNATURE-----
-
---wlpgfccp4f4phq5w--
+-- 
+2.1.4
