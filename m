@@ -1,27 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:37486 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54932 "EHLO
         mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752316AbdFPRvF (ORCPT
+        with ESMTP id S1751016AbdFORUy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Jun 2017 13:51:05 -0400
+        Thu, 15 Jun 2017 13:20:54 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
-        Mark Brown <broonie@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
         linux-renesas-soc@vger.kernel.org,
         Linux-ALSA <alsa-devel@alsa-project.org>,
         Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <87efukiu8d.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dLvO8-0005kp-GP@debutante>
-Date: Fri, 16 Jun 2017 18:50:28 +0100
-Subject: Applied "ASoC: ak4613: add hw_constraint rule for Sampling Rate" to the asoc tree
+In-Reply-To: <87zidam7bb.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1dLYRs-0001j6-Dl@debutante>
+Date: Thu, 15 Jun 2017 18:20:48 +0100
+Subject: Applied "ASoC: simple-scu-card: use asoc_simple_card_convert_fixup()" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The patch
 
-   ASoC: ak4613: add hw_constraint rule for Sampling Rate
+   ASoC: simple-scu-card: use asoc_simple_card_convert_fixup()
 
 has been applied to the asoc tree at
 
@@ -46,120 +44,79 @@ to this mail.
 Thanks,
 Mark
 
->From 907cd8809eebccc57a6a3ee9fa87b7602e72df38 Mon Sep 17 00:00:00 2001
+>From cd8957f588397498c12b258da9044b52598c9527 Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Fri, 16 Jun 2017 01:47:34 +0000
-Subject: [PATCH] ASoC: ak4613: add hw_constraint rule for Sampling Rate
+Date: Thu, 15 Jun 2017 00:24:28 +0000
+Subject: [PATCH] ASoC: simple-scu-card: use asoc_simple_card_convert_fixup()
 
-Current ak4613 accepts all range of Sampling Rate, but it depends on
-inputed master clock. This patch adds hw constraint rule for it.
+Current simple/audio scu card drivers are supporting same
+convert-rate/convert-channels on DT, but, doesn't use same function
+for it.
+Encapsulation is one of simple card util's purpose.
+Let's use asoc_simple_card_parse_convert/asoc_simple_card_convert_fixup
 
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Tested-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/ak4613.c | 61 +++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 61 insertions(+)
+ sound/soc/generic/simple-scu-card.c | 24 +++---------------------
+ 1 file changed, 3 insertions(+), 21 deletions(-)
 
-diff --git a/sound/soc/codecs/ak4613.c b/sound/soc/codecs/ak4613.c
-index d5beca008dea..a4520a1f849d 100644
---- a/sound/soc/codecs/ak4613.c
-+++ b/sound/soc/codecs/ak4613.c
-@@ -94,6 +94,8 @@ struct ak4613_interface {
- struct ak4613_priv {
- 	struct mutex lock;
- 	const struct ak4613_interface *iface;
-+	struct snd_pcm_hw_constraint_list constraint;
-+	unsigned int sysclk;
+diff --git a/sound/soc/generic/simple-scu-card.c b/sound/soc/generic/simple-scu-card.c
+index 938f3f30eef1..44da69101097 100644
+--- a/sound/soc/generic/simple-scu-card.c
++++ b/sound/soc/generic/simple-scu-card.c
+@@ -27,8 +27,7 @@ struct simple_card_data {
+ 	struct snd_soc_codec_conf codec_conf;
+ 	struct asoc_simple_dai *dai_props;
+ 	struct snd_soc_dai_link *dai_link;
+-	u32 convert_rate;
+-	u32 convert_channels;
++	struct asoc_simple_card_data adata;
+ };
  
- 	unsigned int fmt;
- 	u8 oc;
-@@ -252,6 +254,50 @@ static void ak4613_dai_shutdown(struct snd_pcm_substream *substream,
- 	mutex_unlock(&priv->lock);
- }
- 
-+static void ak4613_hw_constraints(struct ak4613_priv *priv,
-+				  struct snd_pcm_runtime *runtime)
-+{
-+	static const unsigned int ak4613_rates[] = {
-+		 32000,
-+		 44100,
-+		 48000,
-+		 64000,
-+		 88200,
-+		 96000,
-+		176400,
-+		192000,
-+	};
-+	struct snd_pcm_hw_constraint_list *constraint = &priv->constraint;
-+	unsigned int fs;
-+	int i;
-+
-+	constraint->list	= ak4613_rates;
-+	constraint->mask	= 0;
-+	constraint->count	= 0;
-+
-+	/*
-+	 * Slave Mode
-+	 *	Normal: [32kHz, 48kHz] : 256fs,384fs or 512fs
-+	 *	Double: [64kHz, 96kHz] : 256fs
-+	 *	Quad  : [128kHz,192kHz]: 128fs
-+	 *
-+	 * Master mode
-+	 *	Normal: [32kHz, 48kHz] : 256fs or 512fs
-+	 *	Double: [64kHz, 96kHz] : 256fs
-+	 *	Quad  : [128kHz,192kHz]: 128fs
-+	*/
-+	for (i = 0; i < ARRAY_SIZE(ak4613_rates); i++) {
-+		/* minimum fs on each range */
-+		fs = (ak4613_rates[i] <= 96000) ? 256 : 128;
-+
-+		if (priv->sysclk >= ak4613_rates[i] * fs)
-+			constraint->count = i + 1;
-+	}
-+
-+	snd_pcm_hw_constraint_list(runtime, 0,
-+				SNDRV_PCM_HW_PARAM_RATE, constraint);
-+}
-+
- static int ak4613_dai_startup(struct snd_pcm_substream *substream,
- 			      struct snd_soc_dai *dai)
+ #define simple_priv_to_card(priv) (&(priv)->snd_card)
+@@ -86,18 +85,8 @@ static int asoc_simple_card_be_hw_params_fixup(struct snd_soc_pcm_runtime *rtd,
+ 					struct snd_pcm_hw_params *params)
  {
-@@ -260,6 +306,19 @@ static int ak4613_dai_startup(struct snd_pcm_substream *substream,
+ 	struct simple_card_data *priv = snd_soc_card_get_drvdata(rtd->card);
+-	struct snd_interval *rate = hw_param_interval(params,
+-						      SNDRV_PCM_HW_PARAM_RATE);
+-	struct snd_interval *channels = hw_param_interval(params,
+-						SNDRV_PCM_HW_PARAM_CHANNELS);
  
- 	priv->cnt++;
+-	if (priv->convert_rate)
+-		rate->min =
+-		rate->max = priv->convert_rate;
+-
+-	if (priv->convert_channels)
+-		channels->min =
+-		channels->max = priv->convert_channels;
++	asoc_simple_card_convert_fixup(&priv->adata, params);
  
-+	ak4613_hw_constraints(priv, substream->runtime);
-+
-+	return 0;
-+}
-+
-+static int ak4613_dai_set_sysclk(struct snd_soc_dai *codec_dai,
-+				 int clk_id, unsigned int freq, int dir)
-+{
-+	struct snd_soc_codec *codec = codec_dai->codec;
-+	struct ak4613_priv *priv = snd_soc_codec_get_drvdata(codec);
-+
-+	priv->sysclk = freq;
-+
  	return 0;
  }
+@@ -206,11 +195,7 @@ static int asoc_simple_card_parse_of(struct simple_card_data *priv)
+ 	if (ret < 0)
+ 		return ret;
  
-@@ -411,6 +470,7 @@ static int ak4613_set_bias_level(struct snd_soc_codec *codec,
- static const struct snd_soc_dai_ops ak4613_dai_ops = {
- 	.startup	= ak4613_dai_startup,
- 	.shutdown	= ak4613_dai_shutdown,
-+	.set_sysclk	= ak4613_dai_set_sysclk,
- 	.set_fmt	= ak4613_dai_set_fmt,
- 	.hw_params	= ak4613_dai_hw_params,
- };
-@@ -529,6 +589,7 @@ static int ak4613_i2c_probe(struct i2c_client *i2c,
+-	/* sampling rate convert */
+-	of_property_read_u32(node, PREFIX "convert-rate", &priv->convert_rate);
+-
+-	/* channels transfer */
+-	of_property_read_u32(node, PREFIX "convert-channels", &priv->convert_channels);
++	asoc_simple_card_parse_convert(dev, PREFIX, &priv->adata);
  
- 	priv->iface		= NULL;
- 	priv->cnt		= 0;
-+	priv->sysclk		= 0;
+ 	/* find 1st codec */
+ 	np = of_get_child_by_name(node, PREFIX "codec");
+@@ -237,9 +222,6 @@ static int asoc_simple_card_parse_of(struct simple_card_data *priv)
+ 	if (ret < 0)
+ 		return ret;
  
- 	mutex_init(&priv->lock);
+-	dev_dbg(dev, "convert_rate     %d\n", priv->convert_rate);
+-	dev_dbg(dev, "convert_channels %d\n", priv->convert_channels);
+-
+ 	return 0;
+ }
  
 -- 
 2.11.0
