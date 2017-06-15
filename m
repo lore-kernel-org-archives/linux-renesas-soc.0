@@ -1,52 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:37122 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751991AbdFLJcW (ORCPT
+Received: from sauhun.de ([88.99.104.3]:37385 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751016AbdFONwx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Jun 2017 05:32:22 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/2] arm64: dts: r8a7796: Add reset control properties for audio
-Date: Mon, 12 Jun 2017 11:32:17 +0200
-Message-Id: <1497259937-9387-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1497259937-9387-1-git-send-email-geert+renesas@glider.be>
-References: <1497259937-9387-1-git-send-email-geert+renesas@glider.be>
+        Thu, 15 Jun 2017 09:52:53 -0400
+Date: Thu, 15 Jun 2017 15:52:50 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Subject: Re: [PATCH] i2c: rcar: use correct length when unmapping DMA
+Message-ID: <20170615135250.jhfbxhcefp66aprp@ninjato>
+References: <20170528075217.1214-1-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="efnxbmcngpeyhwj5"
+Content-Disposition: inline
+In-Reply-To: <20170528075217.1214-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Note that the audio module has resets for the Serial Sound Interfaces
-only.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+--efnxbmcngpeyhwj5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 3c749fd7b61f7b7f..766dd71a188a1202 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -1285,6 +1285,16 @@
- 				      "dvc.0", "dvc.1",
- 				      "clk_a", "clk_b", "clk_c", "clk_i";
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 1005>,
-+				 <&cpg 1006>, <&cpg 1007>,
-+				 <&cpg 1008>, <&cpg 1009>,
-+				 <&cpg 1010>, <&cpg 1011>,
-+				 <&cpg 1012>, <&cpg 1013>,
-+				 <&cpg 1014>, <&cpg 1015>;
-+			reset-names = "ssi-all",
-+				      "ssi.9", "ssi.8", "ssi.7", "ssi.6",
-+				      "ssi.5", "ssi.4", "ssi.3", "ssi.2",
-+				      "ssi.1", "ssi.0";
- 			status = "disabled";
- 
- 			rcar_sound,dvc {
--- 
-2.7.4
+On Sun, May 28, 2017 at 09:52:17AM +0200, Wolfram Sang wrote:
+> Because we need to transfer some bytes with PIO, the msg length is not
+> the length of the DMA buffer. Use the correct value which we used when
+> doing the mapping.
+>=20
+> Fixes: 73e8b0528346e8 ("i2c: rcar: add DMA support")
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+Applied to for-current, thanks!
+
+
+--efnxbmcngpeyhwj5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAllCkS4ACgkQFA3kzBSg
+KbZ/1w/9GCDXusf4wnjBEkQEqmdizG2fRNuI1kLnSySMWQBY28ChTDAgx99WS+Uu
+nHg6g0uDBl9Jg+B8XLzf/t8pi2KKoPBcUX+IYrKDN5JuVPfMhP4ab5GBs33Df9Wp
+UlGmRfXwrUznkB08CYQOvBjSx4A0/UxO0aPlfKBl1Pg1OuwjcQaoyUOE1OKW6zhp
+XHNv+JCYGQJnjE8NDsO/UFlNEove31mzLj1PorkDcY5+2MF3JEKwSfc8q29BTvd6
+fHv/UlUqDB3QnMlBz/9PETFeu9CP5/o44BeTyJWF/Ns9L700TEzmlnjsnQWUw/OT
+IRxr1VZ7QELDTt6jGGlIbJW496VY4TICTmvSV5E3L5lvaz6+DT1D/1x1339EUgLO
+1qJU7/SXWAwyiNeaqhP4V2y0PnnItcvJ9YFSlB5KxDP9xRU9IvzqiONhMD091vOA
+9V80Na8TTMT4jv+l5MhGVY3JxxQm1bz5ccqbPkIfiim51MaaKLqYgkeMpLEr2l4Y
+wb9pi13t9Imn/z5bjL6PkUTxQq4JCbHboALmEZmd2JCi9SoxDBepP5ded63nM+j2
+SddvvXcbsE8Y9lJfgJDqezvW0aXjwcdr80HRgo0paMuIciIg4yXiTy//fEefy0/F
+nELfkagWlNlqWsfZ8aHdTSnp+SgeyLjrOJkKF94LXQhE6nZxXv4=
+=89JM
+-----END PGP SIGNATURE-----
+
+--efnxbmcngpeyhwj5--
