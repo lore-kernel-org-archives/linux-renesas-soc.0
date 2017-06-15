@@ -1,220 +1,211 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:43153 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751577AbdFIPUz (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53826 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752030AbdFORUW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Jun 2017 11:20:55 -0400
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: robh+dt@kernel.org, mark.rutland@arm.com, mchehab@kernel.org,
-        hverkuil@xs4all.nl, sakari.ailus@linux.intel.com, crope@iki.fi
-Cc: chris.paterson2@renesas.com, laurent.pinchart@ideasonboard.com,
-        geert+renesas@glider.be, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH v7 0/7] Add V4L2 SDR (DRIF & MAX2175) driver
-Date: Fri,  9 Jun 2017 16:07:31 +0100
-Message-Id: <20170609150738.56294-1-ramesh.shanmugasundaram@bp.renesas.com>
+        Thu, 15 Jun 2017 13:20:22 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
+        Mark Brown <broonie@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
+In-Reply-To: <87injym64o.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1dLYRL-0001bP-Cq@debutante>
+Date: Thu, 15 Jun 2017 18:20:15 +0100
+Subject: Applied "ASoC: rsnd: add rsnd_ssi_clk_query()" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Mauro, Hans,
+The patch
 
-This patch set contains two drivers
- - Renesas R-Car Digital Radio Interface (DRIF) driver
- - Maxim's MAX2175 RF to Bits tuner driver
+   ASoC: rsnd: add rsnd_ssi_clk_query()
 
-These patches were based on top of media_tree.
-commit: 47f910f0e0deb880c2114811f7ea1ec115a19ee4
+has been applied to the asoc tree at
 
-These two drivers combined together expose a V4L2 SDR device that is compliant
-with the V4L2 framework [1]. Agreed review comments are incorporated in this
-series.
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-The rcar_drif device is modelled using "renesas,bonding" property. The
-discussion on this property is available here [2].
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Change history:
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-v6 -> v7:
- - MAX2175 I2S enable/disable control is made private (Mauro #v4l)
- - Added COMPILE_TEST to rcar_drif in Kconfig (Hans)
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-v5 -> v6:
- - Addressed Sakari's comments & rebased to his branch.
- - Used fwnode_ instead of of_ apis whereever applicable.
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-v4 -> v5:
- - Minor documentation changes. Refer individual patches.
+Thanks,
+Mark
 
-v3 -> v4:
- - Added ACKs
-rcar_drif:
- - Incorporated a number of review comments from Laurent on DRIF driver.
- - Addressed comments from Rob and Laurent on bindings.
-max2175:
- - Minor changes addressing Hans and Laurent's comments
+>From ef4cf5d6a143e04e149ad81fc491fe10855544fe Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Thu, 15 Jun 2017 00:50:02 +0000
+Subject: [PATCH] ASoC: rsnd: add rsnd_ssi_clk_query()
 
-v2 -> v3:
-rcar_drif:
- - Reduced DRIF DT properties to expose tested I2S mode only (Hans - discussion on #v4l)
- - Fixed error path clean up of ctrl_hdl on rcar_drif
+Current Renesas sound driver is assuming that all Sampling rate and
+channles are possible to use, but these are depends on inputed clock
+and SSI connection situation.
+For example, if it is using 1 SSI, enabled TDM mode and has 12288000
+input clock, 2ch output can support until 192000Hz, but 6ch output can
+support until 64000Hz, 8ch can support 48000Hz.
+To control these situation correctly, it needs to support
+hw_constraints / refine feature.
 
-v1 -> v2:
- - SDR formats renamed as "planar" instead of sliced (Hans)
- - Documentation formatting correction (Laurent)
+To support such feature, this patch adds new rsnd_ssi_clk_query().
 
- rcar_drif:
- - DT model using "bonding" property
- - Addressed Laurent's coments on bindings - DT optional parameters rename & rework
- - Addressed Han's comments on driver
- - Addressed Geert's comments on DT
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Tested-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/sh/rcar/rsnd.h |  2 +
+ sound/soc/sh/rcar/ssi.c  | 95 ++++++++++++++++++++++++++++--------------------
+ 2 files changed, 58 insertions(+), 39 deletions(-)
 
- max2175:
- - Avoided scaling using method proposed by Antti. Thanks
- - Bindings is a separate patch (Rob)
- - Addressed Rob's comment on bindings
- - Added Custom controls documentation (Laurent)
-
-[1] v4l2-compliance report:
-root@salvator-x:~# v4l2-compliance -S /dev/swradio0
-v4l2-compliance SHA   : d57bb8af0c71d82b702e35a7362aa077189dd593
-
-Driver Info:
-        Driver name   : rcar_drif
-        Card type     : R-Car DRIF
-        Bus info      : platform:R-Car DRIF
-        Driver version: 4.12.0
-        Capabilities  : 0x85310000
-                SDR Capture
-                Tuner
-                Read/Write
-                Streaming
-                Extended Pix Format
-                Device Capabilities
-        Device Caps   : 0x05310000
-                SDR Capture
-                Tuner
-                Read/Write
-                Streaming
-                Extended Pix Format
-
-Compliance test for device /dev/swradio0 (not using libv4l2):
-
-Required ioctls:
-        test VIDIOC_QUERYCAP: OK
-
-Allow for multiple opens:
-        test second sdr open: OK
-        test VIDIOC_QUERYCAP: OK
-        test VIDIOC_G/S_PRIORITY: OK
-        test for unlimited opens: OK
-
-Debug ioctls:
-        test VIDIOC_DBG_G/S_REGISTER: OK
-        test VIDIOC_LOG_STATUS: OK
-
-Input ioctls:
-        test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK
-        test VIDIOC_G/S_FREQUENCY: OK
-        test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
-        test VIDIOC_ENUMAUDIO: OK (Not Supported)
-        test VIDIOC_G/S/ENUMINPUT: OK (Not Supported)
-        test VIDIOC_G/S_AUDIO: OK (Not Supported)
-        Inputs: 0 Audio Inputs: 0 Tuners: 1
-
-Output ioctls:
-        test VIDIOC_G/S_MODULATOR: OK (Not Supported)
-        test VIDIOC_G/S_FREQUENCY: OK
-        test VIDIOC_ENUMAUDOUT: OK (Not Supported)
-        test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
-        test VIDIOC_G/S_AUDOUT: OK (Not Supported)
-        Outputs: 0 Audio Outputs: 0 Modulators: 0
-
-Input/Output configuration ioctls:
-        test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
-        test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
-        test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
-        test VIDIOC_G/S_EDID: OK (Not Supported)
-
-        Control ioctls:
-                test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
-                test VIDIOC_QUERYCTRL: OK
-                test VIDIOC_G/S_CTRL: OK
-                test VIDIOC_G/S/TRY_EXT_CTRLS: OK
-                test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
-                test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
-                Standard Controls: 5 Private Controls: 2
-
-        Format ioctls:
-                test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
-                test VIDIOC_G/S_PARM: OK (Not Supported)
-                test VIDIOC_G_FBUF: OK (Not Supported)
-                test VIDIOC_G_FMT: OK
-                test VIDIOC_TRY_FMT: OK
-                test VIDIOC_S_FMT: OK
-                test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
-                test Cropping: OK (Not Supported)
-                test Composing: OK (Not Supported)
-                test Scaling: OK (Not Supported)
-
-        Codec ioctls:
-                test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
-                test VIDIOC_G_ENC_INDEX: OK (Not Supported)
-                test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
-
-        Buffer ioctls:
-                test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
-                test VIDIOC_EXPBUF: OK (Not Supported)
-
-Test input 0:
-
-
-Total: 43, Succeeded: 43, Failed: 0, Warnings: 0
-root@salvator-x:~#
-
-[2] "bonding" DT property discussion (https://www.mail-archive.com/linux-renesas-soc@vger.kernel.org/msg09415.html)
-
-
-Ramesh Shanmugasundaram (7):
-  media: v4l2-ctrls: Reserve controls for MAX217X
-  dt-bindings: media: Add MAX2175 binding description
-  media: i2c: max2175: Add MAX2175 support
-  media: Add new SDR formats PC16, PC18 & PC20
-  doc_rst: media: New SDR formats PC16, PC18 & PC20
-  dt-bindings: media: Add Renesas R-Car DRIF binding
-  media: platform: rcar_drif: Add DRIF support
-
- .../devicetree/bindings/media/i2c/max2175.txt      |   59 +
- .../devicetree/bindings/media/renesas,drif.txt     |  176 +++
- .../devicetree/bindings/property-units.txt         |    1 +
- .../media/uapi/v4l/pixfmt-sdr-pcu16be.rst          |   55 +
- .../media/uapi/v4l/pixfmt-sdr-pcu18be.rst          |   55 +
- .../media/uapi/v4l/pixfmt-sdr-pcu20be.rst          |   54 +
- Documentation/media/uapi/v4l/sdr-formats.rst       |    3 +
- Documentation/media/v4l-drivers/index.rst          |    1 +
- Documentation/media/v4l-drivers/max2175.rst        |   62 +
- drivers/media/i2c/Kconfig                          |   12 +
- drivers/media/i2c/Makefile                         |    2 +
- drivers/media/i2c/max2175.c                        | 1453 +++++++++++++++++++
- drivers/media/i2c/max2175.h                        |  109 ++
- drivers/media/platform/Kconfig                     |   25 +
- drivers/media/platform/Makefile                    |    1 +
- drivers/media/platform/rcar_drif.c                 | 1500 ++++++++++++++++++++
- drivers/media/v4l2-core/v4l2-ioctl.c               |    3 +
- include/uapi/linux/max2175.h                       |   28 +
- include/uapi/linux/v4l2-controls.h                 |    5 +
- include/uapi/linux/videodev2.h                     |    3 +
- 20 files changed, 3607 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/i2c/max2175.txt
- create mode 100644 Documentation/devicetree/bindings/media/renesas,drif.txt
- create mode 100644 Documentation/media/uapi/v4l/pixfmt-sdr-pcu16be.rst
- create mode 100644 Documentation/media/uapi/v4l/pixfmt-sdr-pcu18be.rst
- create mode 100644 Documentation/media/uapi/v4l/pixfmt-sdr-pcu20be.rst
- create mode 100644 Documentation/media/v4l-drivers/max2175.rst
- create mode 100644 drivers/media/i2c/max2175.c
- create mode 100644 drivers/media/i2c/max2175.h
- create mode 100644 drivers/media/platform/rcar_drif.c
- create mode 100644 include/uapi/linux/max2175.h
-
+diff --git a/sound/soc/sh/rcar/rsnd.h b/sound/soc/sh/rcar/rsnd.h
+index 7b76f3998fd7..3aa07a07bbcb 100644
+--- a/sound/soc/sh/rcar/rsnd.h
++++ b/sound/soc/sh/rcar/rsnd.h
+@@ -679,6 +679,8 @@ int __rsnd_ssi_is_pin_sharing(struct rsnd_mod *mod);
+ void rsnd_parse_connect_ssi(struct rsnd_dai *rdai,
+ 			    struct device_node *playback,
+ 			    struct device_node *capture);
++int rsnd_ssi_clk_query(struct rsnd_priv *priv,
++		       int param1, int param2, int *idx);
+ 
+ /*
+  *	R-Car SSIU
+diff --git a/sound/soc/sh/rcar/ssi.c b/sound/soc/sh/rcar/ssi.c
+index 6450095eb547..c8956c3484dd 100644
+--- a/sound/soc/sh/rcar/ssi.c
++++ b/sound/soc/sh/rcar/ssi.c
+@@ -208,6 +208,46 @@ u32 rsnd_ssi_multi_slaves_runtime(struct rsnd_dai_stream *io)
+ 	return 0;
+ }
+ 
++int rsnd_ssi_clk_query(struct rsnd_priv *priv,
++		       int param1, int param2, int *idx)
++{
++	int ssi_clk_mul_table[] = {
++		1, 2, 4, 8, 16, 6, 12,
++	};
++	int j, ret;
++	int main_rate;
++
++	for (j = 0; j < ARRAY_SIZE(ssi_clk_mul_table); j++) {
++
++		/*
++		 * It will set SSIWSR.CONT here, but SSICR.CKDV = 000
++		 * with it is not allowed. (SSIWSR.WS_MODE with
++		 * SSICR.CKDV = 000 is not allowed either).
++		 * Skip it. See SSICR.CKDV
++		 */
++		if (j == 0)
++			continue;
++
++		/*
++		 * this driver is assuming that
++		 * system word is 32bit x chan
++		 * see rsnd_ssi_init()
++		 */
++		main_rate = 32 * param1 * param2 * ssi_clk_mul_table[j];
++
++		ret = rsnd_adg_clk_query(priv, main_rate);
++		if (ret < 0)
++			continue;
++
++		if (idx)
++			*idx = j;
++
++		return main_rate;
++	}
++
++	return -EINVAL;
++}
++
+ static int rsnd_ssi_master_clk_start(struct rsnd_mod *mod,
+ 				     struct rsnd_dai_stream *io)
+ {
+@@ -217,10 +257,7 @@ static int rsnd_ssi_master_clk_start(struct rsnd_mod *mod,
+ 	struct rsnd_ssi *ssi = rsnd_mod_to_ssi(mod);
+ 	struct rsnd_mod *ssi_parent_mod = rsnd_io_to_mod_ssip(io);
+ 	int chan = rsnd_runtime_channel_for_ssi(io);
+-	int j, ret;
+-	int ssi_clk_mul_table[] = {
+-		1, 2, 4, 8, 16, 6, 12,
+-	};
++	int idx, ret;
+ 	unsigned int main_rate;
+ 	unsigned int rate = rsnd_io_is_play(io) ?
+ 		rsnd_src_get_out_rate(priv, io) :
+@@ -244,45 +281,25 @@ static int rsnd_ssi_master_clk_start(struct rsnd_mod *mod,
+ 		return 0;
+ 	}
+ 
+-	/*
+-	 * Find best clock, and try to start ADG
+-	 */
+-	for (j = 0; j < ARRAY_SIZE(ssi_clk_mul_table); j++) {
+-
+-		/*
+-		 * It will set SSIWSR.CONT here, but SSICR.CKDV = 000
+-		 * with it is not allowed. (SSIWSR.WS_MODE with
+-		 * SSICR.CKDV = 000 is not allowed either).
+-		 * Skip it. See SSICR.CKDV
+-		 */
+-		if (j == 0)
+-			continue;
+-
+-		/*
+-		 * this driver is assuming that
+-		 * system word is 32bit x chan
+-		 * see rsnd_ssi_init()
+-		 */
+-		main_rate = rate * 32 * chan * ssi_clk_mul_table[j];
+-
+-		ret = rsnd_adg_ssi_clk_try_start(mod, main_rate);
+-		if (0 == ret) {
+-			ssi->cr_clk	= FORCE | SWL_32 |
+-				SCKD | SWSD | CKDV(j);
+-			ssi->wsr = CONT;
++	main_rate = rsnd_ssi_clk_query(priv, rate, chan, &idx);
++	if (main_rate < 0) {
++		dev_err(dev, "unsupported clock rate\n");
++		return -EIO;
++	}
+ 
+-			ssi->rate = rate;
++	ret = rsnd_adg_ssi_clk_try_start(mod, main_rate);
++	if (ret < 0)
++		return ret;
+ 
+-			dev_dbg(dev, "%s[%d] outputs %u Hz\n",
+-				rsnd_mod_name(mod),
+-				rsnd_mod_id(mod), rate);
++	ssi->cr_clk = FORCE | SWL_32 | SCKD | SWSD | CKDV(idx);
++	ssi->wsr = CONT;
++	ssi->rate = rate;
+ 
+-			return 0;
+-		}
+-	}
++	dev_dbg(dev, "%s[%d] outputs %u Hz\n",
++		rsnd_mod_name(mod),
++		rsnd_mod_id(mod), rate);
+ 
+-	dev_err(dev, "unsupported clock rate\n");
+-	return -EIO;
++	return 0;
+ }
+ 
+ static void rsnd_ssi_master_clk_stop(struct rsnd_mod *mod,
 -- 
-2.12.2
+2.11.0
