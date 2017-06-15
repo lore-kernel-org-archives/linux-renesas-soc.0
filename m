@@ -1,81 +1,76 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:54392 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753395AbdF0VQN (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Jun 2017 17:16:13 -0400
-Date: Tue, 27 Jun 2017 23:16:10 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/4] i2c: add helpers to ease DMA handling
-Message-ID: <20170627211610.53oeludkm3sooo64@ninjato>
-References: <20170615183039.22925-1-wsa+renesas@sang-engineering.com>
- <20170615183039.22925-2-wsa+renesas@sang-engineering.com>
- <CAMuHMdVe1tBMZO9weMsf2Tj7pQ_AUeVu_X=uKbs+JbziLFQHvQ@mail.gmail.com>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ym4qsbbkg5hla56o"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdVe1tBMZO9weMsf2Tj7pQ_AUeVu_X=uKbs+JbziLFQHvQ@mail.gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <20170615183039.22925-2-wsa+renesas@sang-engineering.com>
+References: <20170615183039.22925-1-wsa+renesas@sang-engineering.com> <20170615183039.22925-2-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 15 Jun 2017 22:31:51 +0200
+Message-ID: <CAMuHMdVe1tBMZO9weMsf2Tj7pQ_AUeVu_X=uKbs+JbziLFQHvQ@mail.gmail.com>
+Subject: Re: [PATCH 1/4] i2c: add helpers to ease DMA handling
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Linux I2C <linux-i2c@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Wolfram,
 
---ym4qsbbkg5hla56o
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, Jun 15, 2017 at 8:30 PM, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> One helper checks if DMA is suitable and optionally creates a bounce
+> buffer, if not. The other function returns the bounce buffer and makes
+> sure the data is properly copied back to the message.
 
-Hi Geert,
+> --- a/include/linux/i2c.h
+> +++ b/include/linux/i2c.h
+> @@ -764,6 +767,68 @@ static inline u8 i2c_8bit_addr_from_msg(const struct i2c_msg *msg)
+>         return (msg->addr << 1) | (msg->flags & I2C_M_RD ? 1 : 0);
+>  }
+>
+> +/**
+> + * i2c_check_msg_for_dma - check if a message is suitable for DMA
+> + * @msg: the message to be checked
+> + * @threshold: the amount of byte from which using DMA makes sense
+> + * @ptr_for_bounce_buf: if not NULL, a bounce buffer will be attached to this
+> + *                     ptr, if needed. The bounce buffer must be freed by the
+> + *                     caller using i2c_release_bounce_buf().
+> + *
+> + * Return: -ERANGE if message is smaller than threshold
+> + *        -EFAULT if message buffer is not DMA capable and no bounce buffer
+> + *                was requested
+> + *        -ENOMEM if a bounce buffer could not be created
+> + *        0 if message is suitable for DMA
+> + *
+> + * Note: This function should only be called from process context! It uses
+> + * helper functions which work on the 'current' task.
+> + */
+> +static inline int i2c_check_msg_for_dma(struct i2c_msg *msg, unsigned int threshold,
+> +                                       u8 **ptr_for_bounce_buf)
 
-> > +static inline int i2c_check_msg_for_dma(struct i2c_msg *msg, unsigned =
-int threshold,
-> > +                                       u8 **ptr_for_bounce_buf)
->=20
-> __must_check?
+__must_check?
 
-Yes, why not.
+Isn't this function a bit large to be inlined?
 
-> Isn't this function a bit large to be inlined?
+> +/**
+> + * i2c_release_bounce_buf - copy data back from bounce buffer and release it
+> + * @msg: the message to be copied back to
+> + * @bounce_buf: the bounce buffer obtained from i2c_check_msg_for_dma().
+> + *             May be NULL.
+> + */
+> +static inline void i2c_release_bounce_buf(struct i2c_msg *msg, u8 *bounce_buf)
 
-That can be argued, yes. But I am unsure to bloat the core if the
-function is so rarely needed...
+This one is smaller.
 
-> > +static inline void i2c_release_bounce_buf(struct i2c_msg *msg, u8 *bou=
-nce_buf)
->=20
-> This one is smaller.
+Gr{oetje,eeting}s,
 
-Yup, but of course, they should be put in the same place, whereever that ma=
-y be.
+                        Geert
 
-Thanks,
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-   Wolfram
-
-
---ym4qsbbkg5hla56o
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAllSyxYACgkQFA3kzBSg
-KbaI/RAAhYMryJ5CJlQe5g7lZOqiAqyQS7AE22HMQpW/J5g/rmIUy8GxwjWJa9lQ
-BMm2R30/6fzQrNp7ic4jNKP5Ny2ELwpDau0INNJ0RBbcHEbgfBIL4SD3rjGL6dn4
-BzX6CgvG1K7RW2XhX57RT0LFaXxHKIcjzzYut6HSSGnyUIM69jjFDxxJ5RliwKbv
-gF28dcvHeeyGI5hV2xl5FmqXOAzu5Yc25/b/dA6j6baQcT+AsqCCg91Zw/73nv2y
-EfEMcwwLqc2IdQVWdO717nO4mNtX4hU4I7dmRLUq8PhblyvV1R96b3HKcXE52iT+
-0nnUZUzvP7n4q4Qc/yEIGkM2bCZcl07IDwn/bQ8kszjoaMnbGdEVxQzyoKIj+mdw
-uEz9Vl7dn30vUL+IrNdwQ3lg1UWEFUYrM0GYMHjJ7qh+tG0VuPJvNriOtfIA0zGo
-GTSuoQPSm/DvTkvwWUV2sva7hutkh6vTd6iwN2t7QW7dpxA91AlZq4hTzoesOk+b
-uVVEnpgGoQX16qAHNwKAgb6S1+ls0u9kkPr53Opq4hXwYXjPlGrOPH+NurmYaujk
-fW11Lx5sKTlardzCVf1zA3vwnux+f/cggHUae7QpVaTm7SFUkL14TKAQzwaqJB1/
-A0nftuHPSNFdSCx3VSAR8s9Ag5J1FmbM53ZK+sbEPlzZtztxn9I=
-=r09Y
------END PGP SIGNATURE-----
-
---ym4qsbbkg5hla56o--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
