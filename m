@@ -1,160 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:54694 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753771AbdFPNbB (ORCPT
+Received: from mail-it0-f45.google.com ([209.85.214.45]:38075 "EHLO
+        mail-it0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751141AbdFOUaG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Jun 2017 09:31:01 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 09/11] arm64: dts: renesas: Add support for Salvator-XS with R-Car H3 ES2.0
-Date: Fri, 16 Jun 2017 15:30:17 +0200
-Message-Id: <79e3b5cf035e4734529ac136a7d09abe27f7ebba.1497617276.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1497617276.git.horms+renesas@verge.net.au>
-References: <cover.1497617276.git.horms+renesas@verge.net.au>
+        Thu, 15 Jun 2017 16:30:06 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170615183039.22925-3-wsa+renesas@sang-engineering.com>
+References: <20170615183039.22925-1-wsa+renesas@sang-engineering.com> <20170615183039.22925-3-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 15 Jun 2017 22:30:04 +0200
+Message-ID: <CAMuHMdVww1X6YDKxsCFtGG5W8qhvd3mP4GZbiCavqnVP09RQ1Q@mail.gmail.com>
+Subject: Re: [PATCH 2/4] i2c: add docs to clarify DMA handling
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Linux I2C <linux-i2c@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi Wolfram,
 
-Add initial support for the Renesas Salvator-XS (Salvator-X 2nd version)
-development board equipped with an R-Car H3 ES2.0 SiP.
+On Thu, Jun 15, 2017 at 8:30 PM, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> --- /dev/null
+> +++ b/Documentation/i2c/DMA-considerations
+> @@ -0,0 +1,37 @@
+> +Linux I2C and DMA
+> +-----------------
+> +
+> +Given that I2C is a low-speed bus where largely small messages are transferred,
+> +it is not considered a prime user of DMA access. At this time of writing, only
+> +10% of I2C bus master drivers have DMA support implemented. And the vast
+> +majority of transactions are so small that setting up DMA for it will likely
+> +add more overhead than a plain PIO transfer.
+> +
+> +Therefore, it is *not* mandatory that the buffer of an I2C message is DMA safe.
+> +It does not seem reasonable to apply additional burdens when the feature is so
+> +rarely used. However, it is recommended to use a DMA-safe buffer if your
+> +message size is likely applicable for DMA. Most drivers have this threshold
+> +around 8 bytes. As of today, this is mostly an educated guess, however.
+> +
+> +To support this scenario, drivers wishing to implement DMA can use helper
+> +functions from the I2C core. One checks if a message is DMA capable in terms of
+> +size and memory type. It can optionally also create a bounce buffer:
+> +
+> +       i2c_check_msg_for_dma(msg, threshold, &bounce_buf);
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/Makefile               |   1 +
- .../arm64/boot/dts/renesas/r8a7795-salvator-xs.dts | 109 +++++++++++++++++++++
- 2 files changed, 110 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
+Obviously the return value must be checked before proceeding.
 
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index d5451015950e..acc4bb30d485 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -1,4 +1,5 @@
- dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-x.dtb r8a7795-h3ulcb.dtb
-+dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-xs.dtb
- dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-es1-salvator-x.dtb r8a7795-es1-h3ulcb.dtb
- dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-x.dtb r8a7796-m3ulcb.dtb
- 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
-new file mode 100644
-index 000000000000..de354957144b
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
-@@ -0,0 +1,109 @@
-+/*
-+ * Device Tree Source for the Salvator-X 2nd version board
-+ *
-+ * Copyright (C) 2015-2017 Renesas Electronics Corp.
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2.  This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
-+
-+#define CPG_AUDIO_CLK_I		R8A7795_CLK_S0D4
-+
-+/dts-v1/;
-+#include "r8a7795.dtsi"
-+#include "salvator-xs.dtsi"
-+
-+/ {
-+	model = "Renesas Salvator-X 2nd version board based on r8a7795 ES2.0+";
-+	compatible = "renesas,salvator-xs", "renesas,r8a7795";
-+
-+	memory@48000000 {
-+		device_type = "memory";
-+		/* first 128MB is reserved for secure area. */
-+		reg = <0x0 0x48000000 0x0 0x38000000>;
-+	};
-+
-+	memory@500000000 {
-+		device_type = "memory";
-+		reg = <0x5 0x00000000 0x0 0x40000000>;
-+	};
-+
-+	memory@600000000 {
-+		device_type = "memory";
-+		reg = <0x6 0x00000000 0x0 0x40000000>;
-+	};
-+
-+	memory@700000000 {
-+		device_type = "memory";
-+		reg = <0x7 0x00000000 0x0 0x40000000>;
-+	};
-+};
-+
-+&du {
-+	clocks = <&cpg CPG_MOD 724>,
-+		 <&cpg CPG_MOD 723>,
-+		 <&cpg CPG_MOD 722>,
-+		 <&cpg CPG_MOD 721>,
-+		 <&cpg CPG_MOD 727>,
-+		 <&x21_clk>,
-+		 <&x22_clk>;
-+	clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0",
-+		      "dclkin.1", "dclkin.2";
-+};
-+
-+&ehci2 {
-+	status = "okay";
-+};
-+
-+&hdmi0 {
-+	status = "okay";
-+
-+	ports {
-+		port@1 {
-+			reg = <1>;
-+			rcar_dw_hdmi0_out: endpoint {
-+				remote-endpoint = <&hdmi0_con>;
-+			};
-+		};
-+	};
-+};
-+
-+&hdmi0_con {
-+	remote-endpoint = <&rcar_dw_hdmi0_out>;
-+};
-+
-+&hdmi1 {
-+	status = "okay";
-+
-+	ports {
-+		port@1 {
-+			reg = <1>;
-+			rcar_dw_hdmi1_out: endpoint {
-+				remote-endpoint = <&hdmi1_con>;
-+			};
-+		};
-+	};
-+};
-+
-+&hdmi1_con {
-+	remote-endpoint = <&rcar_dw_hdmi1_out>;
-+};
-+
-+&ohci2 {
-+	status = "okay";
-+};
-+
-+&pfc {
-+	usb2_pins: usb2 {
-+		groups = "usb2";
-+		function = "usb2";
-+	};
-+};
-+
-+&usb2_phy2 {
-+	pinctrl-0 = <&usb2_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
--- 
-2.1.4
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
