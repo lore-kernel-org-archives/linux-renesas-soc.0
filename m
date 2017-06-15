@@ -1,60 +1,178 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:37385 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751016AbdFONwx (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54190 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751835AbdFORUd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Jun 2017 09:52:53 -0400
-Date: Thu, 15 Jun 2017 15:52:50 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-Subject: Re: [PATCH] i2c: rcar: use correct length when unmapping DMA
-Message-ID: <20170615135250.jhfbxhcefp66aprp@ninjato>
-References: <20170528075217.1214-1-wsa+renesas@sang-engineering.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="efnxbmcngpeyhwj5"
-Content-Disposition: inline
-In-Reply-To: <20170528075217.1214-1-wsa+renesas@sang-engineering.com>
+        Thu, 15 Jun 2017 13:20:33 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
+        Mark Brown <broonie@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
+In-Reply-To: <87k24em656.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1dLYRX-0001ce-3E@debutante>
+Date: Thu, 15 Jun 2017 18:20:27 +0100
+Subject: Applied "ASoC: rsnd: add rsnd_adg_clk_query()" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+The patch
 
---efnxbmcngpeyhwj5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+   ASoC: rsnd: add rsnd_adg_clk_query()
 
-On Sun, May 28, 2017 at 09:52:17AM +0200, Wolfram Sang wrote:
-> Because we need to transfer some bytes with PIO, the msg length is not
-> the length of the DMA buffer. Use the correct value which we used when
-> doing the mapping.
->=20
-> Fixes: 73e8b0528346e8 ("i2c: rcar: add DMA support")
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+has been applied to the asoc tree at
 
-Applied to for-current, thanks!
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
---efnxbmcngpeyhwj5
-Content-Type: application/pgp-signature; name="signature.asc"
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
------BEGIN PGP SIGNATURE-----
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAllCkS4ACgkQFA3kzBSg
-KbZ/1w/9GCDXusf4wnjBEkQEqmdizG2fRNuI1kLnSySMWQBY28ChTDAgx99WS+Uu
-nHg6g0uDBl9Jg+B8XLzf/t8pi2KKoPBcUX+IYrKDN5JuVPfMhP4ab5GBs33Df9Wp
-UlGmRfXwrUznkB08CYQOvBjSx4A0/UxO0aPlfKBl1Pg1OuwjcQaoyUOE1OKW6zhp
-XHNv+JCYGQJnjE8NDsO/UFlNEove31mzLj1PorkDcY5+2MF3JEKwSfc8q29BTvd6
-fHv/UlUqDB3QnMlBz/9PETFeu9CP5/o44BeTyJWF/Ns9L700TEzmlnjsnQWUw/OT
-IRxr1VZ7QELDTt6jGGlIbJW496VY4TICTmvSV5E3L5lvaz6+DT1D/1x1339EUgLO
-1qJU7/SXWAwyiNeaqhP4V2y0PnnItcvJ9YFSlB5KxDP9xRU9IvzqiONhMD091vOA
-9V80Na8TTMT4jv+l5MhGVY3JxxQm1bz5ccqbPkIfiim51MaaKLqYgkeMpLEr2l4Y
-wb9pi13t9Imn/z5bjL6PkUTxQq4JCbHboALmEZmd2JCi9SoxDBepP5ded63nM+j2
-SddvvXcbsE8Y9lJfgJDqezvW0aXjwcdr80HRgo0paMuIciIg4yXiTy//fEefy0/F
-nELfkagWlNlqWsfZ8aHdTSnp+SgeyLjrOJkKF94LXQhE6nZxXv4=
-=89JM
------END PGP SIGNATURE-----
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
---efnxbmcngpeyhwj5--
+Thanks,
+Mark
+
+>From 1dfdc6501a4a140cfbfc6be8dbb1da3a6f726c15 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Thu, 15 Jun 2017 00:49:43 +0000
+Subject: [PATCH] ASoC: rsnd: add rsnd_adg_clk_query()
+
+Current Renesas sound driver is assuming that all Sampling rate and
+channles are possible to use, but these are depends on inputed clock
+and SSI connection situation.
+For example, if it is using 1 SSI, enabled TDM mode and has 12288000
+input clock, 2ch output can support until 192000Hz, but 6ch output can
+support until 64000Hz, 8ch can support 48000Hz.
+To control these situation correctly, it needs to support
+hw_constraints / refine feature.
+
+To support such feature, it needs SSI clock query feature, and it needs
+ADG clock query feature. Current ADG has rsnd_adg_ssi_clk_try_start()
+and it is doing similar things, but it try to setup ADG register in
+same time. This is not needed.
+
+This patch adds new rsnd_adg_clk_query() and separates query feature
+and register setting feature in adg.c
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Tested-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/sh/rcar/adg.c  | 53 ++++++++++++++++++++++++------------------------
+ sound/soc/sh/rcar/rsnd.h |  1 +
+ 2 files changed, 28 insertions(+), 26 deletions(-)
+
+diff --git a/sound/soc/sh/rcar/adg.c b/sound/soc/sh/rcar/adg.c
+index 4a72fd74ddc2..197cb3ec075f 100644
+--- a/sound/soc/sh/rcar/adg.c
++++ b/sound/soc/sh/rcar/adg.c
+@@ -308,23 +308,12 @@ static void rsnd_adg_set_ssi_clk(struct rsnd_mod *ssi_mod, u32 val)
+ 	}
+ }
+ 
+-int rsnd_adg_ssi_clk_stop(struct rsnd_mod *ssi_mod)
+-{
+-	rsnd_adg_set_ssi_clk(ssi_mod, 0);
+-
+-	return 0;
+-}
+-
+-int rsnd_adg_ssi_clk_try_start(struct rsnd_mod *ssi_mod, unsigned int rate)
++int rsnd_adg_clk_query(struct rsnd_priv *priv, unsigned int rate)
+ {
+-	struct rsnd_priv *priv = rsnd_mod_to_priv(ssi_mod);
+ 	struct rsnd_adg *adg = rsnd_priv_to_adg(priv);
+ 	struct device *dev = rsnd_priv_to_dev(priv);
+-	struct rsnd_mod *adg_mod = rsnd_mod_get(adg);
+ 	struct clk *clk;
+ 	int i;
+-	u32 data;
+-	u32 ckr = 0;
+ 	int sel_table[] = {
+ 		[CLKA] = 0x1,
+ 		[CLKB] = 0x2,
+@@ -338,30 +327,42 @@ int rsnd_adg_ssi_clk_try_start(struct rsnd_mod *ssi_mod, unsigned int rate)
+ 	 * find suitable clock from
+ 	 * AUDIO_CLKA/AUDIO_CLKB/AUDIO_CLKC/AUDIO_CLKI.
+ 	 */
+-	data = 0;
+ 	for_each_rsnd_clk(clk, adg, i) {
+-		if (rate == clk_get_rate(clk)) {
+-			data = sel_table[i];
+-			goto found_clock;
+-		}
++		if (rate == clk_get_rate(clk))
++			return sel_table[i];
+ 	}
+ 
+ 	/*
+ 	 * find divided clock from BRGA/BRGB
+ 	 */
+-	if (rate  == adg->rbga_rate_for_441khz) {
+-		data = 0x10;
+-		goto found_clock;
+-	}
++	if (rate == adg->rbga_rate_for_441khz)
++		return 0x10;
+ 
+-	if (rate == adg->rbgb_rate_for_48khz) {
+-		data = 0x20;
+-		goto found_clock;
+-	}
++	if (rate == adg->rbgb_rate_for_48khz)
++		return 0x20;
+ 
+ 	return -EIO;
++}
++
++int rsnd_adg_ssi_clk_stop(struct rsnd_mod *ssi_mod)
++{
++	rsnd_adg_set_ssi_clk(ssi_mod, 0);
++
++	return 0;
++}
++
++int rsnd_adg_ssi_clk_try_start(struct rsnd_mod *ssi_mod, unsigned int rate)
++{
++	struct rsnd_priv *priv = rsnd_mod_to_priv(ssi_mod);
++	struct rsnd_adg *adg = rsnd_priv_to_adg(priv);
++	struct device *dev = rsnd_priv_to_dev(priv);
++	struct rsnd_mod *adg_mod = rsnd_mod_get(adg);
++	int data;
++	u32 ckr = 0;
+ 
+-found_clock:
++	data = rsnd_adg_clk_query(priv, rate);
++	if (data < 0)
++		return data;
+ 
+ 	rsnd_adg_set_ssi_clk(ssi_mod, data);
+ 
+diff --git a/sound/soc/sh/rcar/rsnd.h b/sound/soc/sh/rcar/rsnd.h
+index 47162bdf1abc..7b76f3998fd7 100644
+--- a/sound/soc/sh/rcar/rsnd.h
++++ b/sound/soc/sh/rcar/rsnd.h
+@@ -502,6 +502,7 @@ phys_addr_t rsnd_gen_get_phy_addr(struct rsnd_priv *priv, int reg_id);
+ /*
+  *	R-Car ADG
+  */
++int rsnd_adg_clk_query(struct rsnd_priv *priv, unsigned int rate);
+ int rsnd_adg_ssi_clk_stop(struct rsnd_mod *mod);
+ int rsnd_adg_ssi_clk_try_start(struct rsnd_mod *mod, unsigned int rate);
+ int rsnd_adg_probe(struct rsnd_priv *priv);
+-- 
+2.11.0
