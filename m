@@ -1,52 +1,85 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:52373 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752819AbdFUJbP (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54614 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751016AbdFORUp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 21 Jun 2017 05:31:15 -0400
-Received: from avalon.bb.dnainternet.fi (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by galahad.ideasonboard.com (Postfix) with ESMTPSA id 5E1D6213B7
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 21 Jun 2017 11:30:33 +0200 (CEST)
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 6/7] arm64: dts: renesas: r8a7796-salvator-x: Add DU external dot clocks
-Date: Wed, 21 Jun 2017 12:31:32 +0300
-Message-Id: <20170621093133.5677-7-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170621093133.5677-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170621093133.5677-1-laurent.pinchart+renesas@ideasonboard.com>
+        Thu, 15 Jun 2017 13:20:45 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
+In-Reply-To: <87vanym79w.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1dLYRj-0001gW-Au@debutante>
+Date: Thu, 15 Jun 2017 18:20:39 +0100
+Subject: Applied "ASoC: simple-card: use asoc_simple_card_of_parse_routing()" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The DU1 external dot clock is provided by the fixed frequency clock
-generator X21, while the DU0 and DU2 clocks are provided by the
-programmable Versaclock5 clock generator.
+The patch
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+   ASoC: simple-card: use asoc_simple_card_of_parse_routing()
+
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 1fdb5d258e28de85263a34aab57f0a70b1715342 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Thu, 15 Jun 2017 00:25:17 +0000
+Subject: [PATCH] ASoC: simple-card: use asoc_simple_card_of_parse_routing()
+
+Current simple/audio scu card drivers are supporting same
+routing on DT, but, doesn't use same function for it.
+Encapsulation is one of simple card util's purpose.
+Let's use asoc_simple_card_of_parse_routing
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ sound/soc/generic/simple-card.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-index db4f162d6bdd..1b8d1314763f 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-@@ -29,3 +29,15 @@
- 		reg = <0x6 0x00000000 0x0 0x80000000>;
- 	};
- };
-+
-+&du {
-+	clocks = <&cpg CPG_MOD 724>,
-+		 <&cpg CPG_MOD 723>,
-+		 <&cpg CPG_MOD 722>,
-+		 <&cpg CPG_MOD 727>,
-+		 <&versaclock5 1>,
-+		 <&x21_clk>,
-+		 <&versaclock5 2>;
-+	clock-names = "du.0", "du.1", "du.2", "lvds.0",
-+		      "dclkin.0", "dclkin.1", "dclkin.2";
-+};
+diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
+index 8b414af966ee..7b2533c7f82e 100644
+--- a/sound/soc/generic/simple-card.c
++++ b/sound/soc/generic/simple-card.c
+@@ -362,13 +362,9 @@ static int asoc_simple_card_parse_of(struct simple_card_data *priv)
+ 			goto card_parse_end;
+ 	}
+ 
+-	/* DAPM routes */
+-	if (of_property_read_bool(node, PREFIX "routing")) {
+-		ret = snd_soc_of_parse_audio_routing(card,
+-					PREFIX "routing");
+-		if (ret)
+-			goto card_parse_end;
+-	}
++	ret = asoc_simple_card_of_parse_routing(card, PREFIX, 1);
++	if (ret < 0)
++		goto card_parse_end;
+ 
+ 	/* Factor to mclk, used in hw_params() */
+ 	of_property_read_u32(node, PREFIX "mclk-fs", &priv->mclk_fs);
 -- 
-Regards,
-
-Laurent Pinchart
+2.11.0
