@@ -1,67 +1,278 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:40280 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753103AbdFMObq (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54296 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751835AbdFORUg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Jun 2017 10:31:46 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Thu, 15 Jun 2017 13:20:36 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
+        Mark Brown <broonie@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
         linux-renesas-soc@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v3 0/2] media: entity: add operation to help map DT node to media pad
-Date: Tue, 13 Jun 2017 16:31:24 +0200
-Message-Id: <20170613143126.755-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
+In-Reply-To: <87lgoum65n.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1dLYRa-0001dX-4w@debutante>
+Date: Thu, 15 Jun 2017 18:20:30 +0100
+Subject: Applied "ASoC: rsnd: rename "slots" related variable" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+The patch
 
-This series add a new entity operation which will aid capture
-drivers to map a port/endpoint in DT to a media graph pad.
+   ASoC: rsnd: rename "slots" related variable
 
-This series is implemented support for the ongoing ADV748x work by
-Kieran Bingham. In his work he have a driver which registers more then
-one subdevice. So when a driver finds this subdevice it must be able to
-ask the subdevice itself which pad number correspond to the DT endpoint
-the driver used to bind subdevice in the first place.
+has been applied to the asoc tree at
 
-This is tested on Renesas H3 and M3-W together with the Renesas CSI-2
-and VIN Gen3 driver (posted separately). It is based on top media-tree.
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-* Changes since v2
-- Renamed pad_from_fwnode to get_fwnode_pad as suggested by Sakari.
-- Return pad number instead of passing it as a pointer to both 
-  get_fwnode_pad() and media_entity_pad_from_fwnode().
-- Document possible flags of the direction argument to 
-  media_entity_pad_from_fwnode().
-- Use unsigned int instead of int for bitmask.
-- Fix numerous spelling mistakes, thanks Hans!
-- Rebased to latest media-tree.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-* Changes since v1
-- Rebased work ontop of Sakaris fwnode branch and make use of the fwnode 
-  instead of the raw DT port/reg numbers.
-- Do not assume DT port is equal to pad number if the driver do not 
-  implement the lookup function. Instead search for the first pad with
-  the correct direction and use that. Thanks Sakari for the suggestion!
-- Use ENXIO instead of EINVAL to signal lookup error.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-Niklas Söderlund (2):
-  media: entity: Add get_fwnode_pad entity operation
-  media: entity: Add media_entity_get_fwnode_pad() function
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
- drivers/media/media-entity.c | 35 +++++++++++++++++++++++++++++++++++
- include/media/media-entity.h | 28 ++++++++++++++++++++++++++++
- 2 files changed, 63 insertions(+)
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
+Thanks,
+Mark
+
+>From 1ff9593d2f27a48fbeeccd7fc253eed2a7102d16 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Thu, 15 Jun 2017 00:49:27 +0000
+Subject: [PATCH] ASoC: rsnd: rename "slots" related variable
+
+Current Renesas sound driver has slots and slots_num in
+struct rsnd_dai, but these are very un-understandable naming
+(It had named from TDM slots).
+In this driver, the "slots" means total usable channels, and
+"stot_num" means SSI lane number if Multi SSI was used.
+To more understandable code, this patch renames "slots" to
+"max_channels", and "slots_num" to "ssi_lane", and replaces related
+functions name.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Tested-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/sh/rcar/core.c | 53 ++++++++++++++++++++++++------------------------
+ sound/soc/sh/rcar/dvc.c  |  7 ++++---
+ sound/soc/sh/rcar/rsnd.h | 23 ++++++++++++++-------
+ sound/soc/sh/rcar/ssi.c  |  3 ++-
+ 4 files changed, 49 insertions(+), 37 deletions(-)
+
+diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
+index 1b536d140e49..9b9e898d0df3 100644
+--- a/sound/soc/sh/rcar/core.c
++++ b/sound/soc/sh/rcar/core.c
+@@ -203,27 +203,6 @@ int rsnd_io_is_working(struct rsnd_dai_stream *io)
+ 	return !!io->substream;
+ }
+ 
+-void rsnd_set_slot(struct rsnd_dai *rdai,
+-		   int slots, int num)
+-{
+-	rdai->slots	= slots;
+-	rdai->slots_num	= num;
+-}
+-
+-int rsnd_get_slot(struct rsnd_dai_stream *io)
+-{
+-	struct rsnd_dai *rdai = rsnd_io_to_rdai(io);
+-
+-	return rdai->slots;
+-}
+-
+-int rsnd_get_slot_num(struct rsnd_dai_stream *io)
+-{
+-	struct rsnd_dai *rdai = rsnd_io_to_rdai(io);
+-
+-	return rdai->slots_num;
+-}
+-
+ int rsnd_runtime_channel_original(struct rsnd_dai_stream *io)
+ {
+ 	struct snd_pcm_runtime *runtime = rsnd_io_to_runtime(io);
+@@ -248,13 +227,14 @@ int rsnd_runtime_channel_after_ctu(struct rsnd_dai_stream *io)
+ 
+ int rsnd_runtime_channel_for_ssi(struct rsnd_dai_stream *io)
+ {
++	struct rsnd_dai *rdai = rsnd_io_to_rdai(io);
+ 	int chan = rsnd_io_is_play(io) ?
+ 		rsnd_runtime_channel_after_ctu(io) :
+ 		rsnd_runtime_channel_original(io);
+ 
+ 	/* Use Multi SSI */
+ 	if (rsnd_runtime_is_ssi_multi(io))
+-		chan /= rsnd_get_slot_num(io);
++		chan /= rsnd_rdai_ssi_lane_get(rdai);
+ 
+ 	/* TDM Extend Mode needs 8ch */
+ 	if (chan == 6)
+@@ -265,12 +245,13 @@ int rsnd_runtime_channel_for_ssi(struct rsnd_dai_stream *io)
+ 
+ int rsnd_runtime_is_ssi_multi(struct rsnd_dai_stream *io)
+ {
+-	int slots = rsnd_get_slot_num(io);
++	struct rsnd_dai *rdai = rsnd_io_to_rdai(io);
++	int lane = rsnd_rdai_ssi_lane_get(rdai);
+ 	int chan = rsnd_io_is_play(io) ?
+ 		rsnd_runtime_channel_after_ctu(io) :
+ 		rsnd_runtime_channel_original(io);
+ 
+-	return (chan >= 6) && (slots > 1);
++	return (chan > 2) && (lane > 1);
+ }
+ 
+ int rsnd_runtime_is_ssi_tdm(struct rsnd_dai_stream *io)
+@@ -549,6 +530,24 @@ static void rsnd_dai_disconnect(struct rsnd_mod *mod,
+ 	io->mod[type] = NULL;
+ }
+ 
++int rsnd_rdai_channels_ctrl(struct rsnd_dai *rdai,
++			    int max_channels)
++{
++	if (max_channels > 0)
++		rdai->max_channels = max_channels;
++
++	return rdai->max_channels;
++}
++
++int rsnd_rdai_ssi_lane_ctrl(struct rsnd_dai *rdai,
++			    int ssi_lane)
++{
++	if (ssi_lane > 0)
++		rdai->ssi_lane = ssi_lane;
++
++	return rdai->ssi_lane;
++}
++
+ struct rsnd_dai *rsnd_rdai_get(struct rsnd_priv *priv, int id)
+ {
+ 	if ((id < 0) || (id >= rsnd_rdai_nr(priv)))
+@@ -726,7 +725,8 @@ static int rsnd_soc_set_dai_tdm_slot(struct snd_soc_dai *dai,
+ 	switch (slots) {
+ 	case 6:
+ 		/* TDM Extend Mode */
+-		rsnd_set_slot(rdai, slots, 1);
++		rsnd_rdai_channels_set(rdai, slots);
++		rsnd_rdai_ssi_lane_set(rdai, 1);
+ 		break;
+ 	default:
+ 		dev_err(dev, "unsupported TDM slots (%d)\n", slots);
+@@ -879,7 +879,8 @@ static void __rsnd_dai_probe(struct rsnd_priv *priv,
+ 
+ 	rdai->playback.rdai		= rdai;
+ 	rdai->capture.rdai		= rdai;
+-	rsnd_set_slot(rdai, 2, 1); /* default */
++	rsnd_rdai_channels_set(rdai, 2); /* default 2ch */
++	rsnd_rdai_ssi_lane_set(rdai, 1); /* default 1lane */
+ 
+ 	for (io_i = 0;; io_i++) {
+ 		playback = of_parse_phandle(dai_np, "playback", io_i);
+diff --git a/sound/soc/sh/rcar/dvc.c b/sound/soc/sh/rcar/dvc.c
+index 75af6e742328..99d2d9459e75 100644
+--- a/sound/soc/sh/rcar/dvc.c
++++ b/sound/soc/sh/rcar/dvc.c
+@@ -249,8 +249,9 @@ static int rsnd_dvc_pcm_new(struct rsnd_mod *mod,
+ 			    struct snd_soc_pcm_runtime *rtd)
+ {
+ 	struct rsnd_dvc *dvc = rsnd_mod_to_dvc(mod);
++	struct rsnd_dai *rdai = rsnd_io_to_rdai(io);
+ 	int is_play = rsnd_io_is_play(io);
+-	int slots = rsnd_get_slot(io);
++	int channels = rsnd_rdai_channels_get(rdai);
+ 	int ret;
+ 
+ 	/* Volume */
+@@ -259,7 +260,7 @@ static int rsnd_dvc_pcm_new(struct rsnd_mod *mod,
+ 			"DVC Out Playback Volume" : "DVC In Capture Volume",
+ 			rsnd_kctrl_accept_anytime,
+ 			rsnd_dvc_volume_update,
+-			&dvc->volume, slots,
++			&dvc->volume, channels,
+ 			0x00800000 - 1);
+ 	if (ret < 0)
+ 		return ret;
+@@ -270,7 +271,7 @@ static int rsnd_dvc_pcm_new(struct rsnd_mod *mod,
+ 			"DVC Out Mute Switch" : "DVC In Mute Switch",
+ 			rsnd_kctrl_accept_anytime,
+ 			rsnd_dvc_volume_update,
+-			&dvc->mute,  slots,
++			&dvc->mute, channels,
+ 			1);
+ 	if (ret < 0)
+ 		return ret;
+diff --git a/sound/soc/sh/rcar/rsnd.h b/sound/soc/sh/rcar/rsnd.h
+index ac4d50d118d1..47162bdf1abc 100644
+--- a/sound/soc/sh/rcar/rsnd.h
++++ b/sound/soc/sh/rcar/rsnd.h
+@@ -399,11 +399,6 @@ void rsnd_parse_connect_common(struct rsnd_dai *rdai,
+ 		struct device_node *playback,
+ 		struct device_node *capture);
+ 
+-void rsnd_set_slot(struct rsnd_dai *rdai,
+-		   int slots, int slots_total);
+-int rsnd_get_slot(struct rsnd_dai_stream *io);
+-int rsnd_get_slot_num(struct rsnd_dai_stream *io);
+-
+ int rsnd_runtime_channel_original(struct rsnd_dai_stream *io);
+ int rsnd_runtime_channel_after_ctu(struct rsnd_dai_stream *io);
+ int rsnd_runtime_channel_for_ssi(struct rsnd_dai_stream *io);
+@@ -455,8 +450,8 @@ struct rsnd_dai {
+ 	struct rsnd_dai_stream capture;
+ 	struct rsnd_priv *priv;
+ 
+-	int slots;
+-	int slots_num;
++	int max_channels;	/* 2ch - 16ch */
++	int ssi_lane;		/* 1lane - 4lane */
+ 
+ 	unsigned int clk_master:1;
+ 	unsigned int bit_clk_inv:1;
+@@ -476,6 +471,20 @@ struct rsnd_dai {
+ 
+ struct rsnd_dai *rsnd_rdai_get(struct rsnd_priv *priv, int id);
+ 
++#define rsnd_rdai_channels_set(rdai, max_channels) \
++	rsnd_rdai_channels_ctrl(rdai, max_channels)
++#define rsnd_rdai_channels_get(rdai) \
++	rsnd_rdai_channels_ctrl(rdai, 0)
++int rsnd_rdai_channels_ctrl(struct rsnd_dai *rdai,
++			    int max_channels);
++
++#define rsnd_rdai_ssi_lane_set(rdai, ssi_lane) \
++	rsnd_rdai_ssi_lane_ctrl(rdai, ssi_lane)
++#define rsnd_rdai_ssi_lane_get(rdai) \
++	rsnd_rdai_ssi_lane_ctrl(rdai, 0)
++int rsnd_rdai_ssi_lane_ctrl(struct rsnd_dai *rdai,
++			    int ssi_lane);
++
+ void rsnd_dai_period_elapsed(struct rsnd_dai_stream *io);
+ int rsnd_dai_connect(struct rsnd_mod *mod,
+ 		     struct rsnd_dai_stream *io,
+diff --git a/sound/soc/sh/rcar/ssi.c b/sound/soc/sh/rcar/ssi.c
+index f7df3b5e2985..6450095eb547 100644
+--- a/sound/soc/sh/rcar/ssi.c
++++ b/sound/soc/sh/rcar/ssi.c
+@@ -897,7 +897,8 @@ static void rsnd_ssi_connect(struct rsnd_mod *mod,
+ 		type = types[i];
+ 		if (!rsnd_io_to_mod(io, type)) {
+ 			rsnd_dai_connect(mod, io, type);
+-			rsnd_set_slot(rdai, 2 * (i + 1), (i + 1));
++			rsnd_rdai_channels_set(rdai, (i + 1) * 2);
++			rsnd_rdai_ssi_lane_set(rdai, (i + 1));
+ 			return;
+ 		}
+ 	}
 -- 
-2.13.1
+2.11.0
