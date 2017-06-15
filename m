@@ -1,63 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:35685 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750791AbdFOIXs (ORCPT
+Received: from sauhun.de ([88.99.104.3]:38214 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752997AbdFOSau (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Jun 2017 04:23:48 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 0/6] Renesas R-Car VSP: Add H3 ES2.0 support
-Date: Thu, 15 Jun 2017 11:24:03 +0300
-Message-Id: <20170615082409.9523-1-laurent.pinchart+renesas@ideasonboard.com>
+        Thu, 15 Jun 2017 14:30:50 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-i2c@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Wolfram Sang <wsa@the-dreams.de>
+Subject: [PATCH 3/4] i2c: sh_mobile: use helper to decide if DMA is useful
+Date: Thu, 15 Jun 2017 20:30:38 +0200
+Message-Id: <20170615183039.22925-4-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20170615183039.22925-1-wsa+renesas@sang-engineering.com>
+References: <20170615183039.22925-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+This ensures that we fall back to PIO if the buffer is too small for DMA
+being useful. Otherwise, we use DMA. A bounce buffer might be applied if
+the original message buffer is not DMA safe
 
-This patch series implements support for the R-Car H3 ES2.0 SoC in the VSP
-driver.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+---
+ drivers/i2c/busses/i2c-sh_mobile.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-Compared to the H3 ES1.1, the H3 ES2.0 has a new VSP2-DL instance that
-includes two blending units, a BRU and a BRS. The BRS is similar to the BRU
-but has two inputs only, and is used to service a second DU channel from the
-same VSP through a second LIF instances connected to WPF.1.
-
-The patch series starts with a small bug fix in patch 1/6. Patch 2/6 then
-implements support for the BRS, and patch 3/6 for the new VSP instances found
-in the H3 ES2.0 SoC. Patch 4/6 prepares the VSP driver for multiple DU
-channels support by extending the DU-VSP API with an additional argument.
-
-So far the VSP driver always used headerless display lists when operating in
-connection with the DU. This mode of operation is only available on WPF.0, so
-support for regular display lists with headers when operating with the DU is
-added in patches 5/6 and 6/6.
-
-Laurent Pinchart (6):
-  v4l: vsp1: Remove WPF vertical flip support on VSP2-B[CD] and VSP2-D
-  v4l: vsp1: Add support for the BRS entity
-  v4l: vsp1: Add support for new VSP2-BS, VSP2-DL and VSP2-D instances
-  v4l: vsp1: Add pipe index argument to the VSP-DU API
-  v4l: vsp1: Fill display list headers without holding dlm spinlock
-  v4l: vsp1: Add support for header display lists in continuous mode
-
- drivers/gpu/drm/rcar-du/rcar_du_vsp.c     |   9 +-
- drivers/media/platform/vsp1/vsp1.h        |   2 +
- drivers/media/platform/vsp1/vsp1_bru.c    |  45 ++++---
- drivers/media/platform/vsp1/vsp1_bru.h    |   4 +-
- drivers/media/platform/vsp1/vsp1_dl.c     | 202 ++++++++++++++++++++----------
- drivers/media/platform/vsp1/vsp1_drm.c    |  28 +++--
- drivers/media/platform/vsp1/vsp1_drv.c    |  49 +++++++-
- drivers/media/platform/vsp1/vsp1_entity.c |  13 +-
- drivers/media/platform/vsp1/vsp1_entity.h |   1 +
- drivers/media/platform/vsp1/vsp1_pipe.c   |   7 +-
- drivers/media/platform/vsp1/vsp1_regs.h   |  41 ++++--
- drivers/media/platform/vsp1/vsp1_video.c  |  63 ++++++----
- drivers/media/platform/vsp1/vsp1_wpf.c    |   4 +-
- include/media/vsp1.h                      |   8 +-
- 14 files changed, 334 insertions(+), 142 deletions(-)
-
+diff --git a/drivers/i2c/busses/i2c-sh_mobile.c b/drivers/i2c/busses/i2c-sh_mobile.c
+index 2e097d97d258bc..4b874e508111e7 100644
+--- a/drivers/i2c/busses/i2c-sh_mobile.c
++++ b/drivers/i2c/busses/i2c-sh_mobile.c
+@@ -145,6 +145,7 @@ struct sh_mobile_i2c_data {
+ 	struct dma_chan *dma_rx;
+ 	struct scatterlist sg;
+ 	enum dma_data_direction dma_direction;
++	u8 *bounce_buf;
+ };
+ 
+ struct sh_mobile_dt_config {
+@@ -548,6 +549,8 @@ static void sh_mobile_i2c_dma_callback(void *data)
+ 	pd->pos = pd->msg->len;
+ 	pd->stop_after_dma = true;
+ 
++	i2c_release_bounce_buf(pd->msg, pd->bounce_buf);
++
+ 	iic_set_clr(pd, ICIC, 0, ICIC_TDMAE | ICIC_RDMAE);
+ }
+ 
+@@ -595,6 +598,7 @@ static void sh_mobile_i2c_xfer_dma(struct sh_mobile_i2c_data *pd)
+ 	struct dma_async_tx_descriptor *txdesc;
+ 	dma_addr_t dma_addr;
+ 	dma_cookie_t cookie;
++	u8 *dma_buf = pd->bounce_buf ?: pd->msg->buf;
+ 
+ 	if (PTR_ERR(chan) == -EPROBE_DEFER) {
+ 		if (read)
+@@ -608,7 +612,7 @@ static void sh_mobile_i2c_xfer_dma(struct sh_mobile_i2c_data *pd)
+ 	if (IS_ERR(chan))
+ 		return;
+ 
+-	dma_addr = dma_map_single(chan->device->dev, pd->msg->buf, pd->msg->len, dir);
++	dma_addr = dma_map_single(chan->device->dev, dma_buf, pd->msg->len, dir);
+ 	if (dma_mapping_error(chan->device->dev, dma_addr)) {
+ 		dev_dbg(pd->dev, "dma map failed, using PIO\n");
+ 		return;
+@@ -665,7 +669,7 @@ static int start_ch(struct sh_mobile_i2c_data *pd, struct i2c_msg *usr_msg,
+ 	pd->pos = -1;
+ 	pd->sr = 0;
+ 
+-	if (pd->msg->len > 8)
++	if (i2c_check_msg_for_dma(pd->msg, 8, &pd->bounce_buf) == 0)
+ 		sh_mobile_i2c_xfer_dma(pd);
+ 
+ 	/* Enable all interrupts to begin with */
 -- 
-Regards,
-
-Laurent Pinchart
+2.11.0
