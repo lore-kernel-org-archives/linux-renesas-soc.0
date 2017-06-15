@@ -1,346 +1,347 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41927 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751041AbdFUOAz (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:35692 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751755AbdFOIYA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 21 Jun 2017 10:00:55 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH mmc/next v3 0/4] mmc: renesas_sdhi: add support for R-Car Gen3 SDHI DMAC
-Date: Wed, 21 Jun 2017 16:00:26 +0200
-Message-Id: <1498053630-7780-1-git-send-email-horms+renesas@verge.net.au>
+        Thu, 15 Jun 2017 04:24:00 -0400
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 6/6] v4l: vsp1: Add support for header display lists in continuous mode
+Date: Thu, 15 Jun 2017 11:24:09 +0300
+Message-Id: <20170615082409.9523-7-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170615082409.9523-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170615082409.9523-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+The VSP supports both header and headerless display lists. The latter is
+easier to use when the VSP feeds data directly to the DU in continuous
+mode, and the driver thus uses headerless display lists for DU operation
+and header display lists otherwise.
 
-this series adds support for the internal DMAC used by r8a779[56] SoCs.
-This is achieved by adding a new variant of the SDHI driver for this
-DMA controller with compat strings for the r8a779[56] SoCs.
-Compat strings for these SoCs are also removed from the existing SYS DMAC
-variant of the SDHI driver.
+Headerless display lists are only available on WPF.0. This has never
+been an issue so far, as only WPF.0 is connected to the DU. However, on
+H3 ES2.0, the VSP-DL instance has both WPF.0 and WPF.1 connected to the
+DU. We thus can't use headerless display lists unconditionally for DU
+operation.
 
-Based on mmc/next
+Implement support for continuous mode with header display lists, and use
+it for DU operation on WPF outputs that don't support headerless mode.
 
-Headline performance boost: 9.5MB/s -> 39.7MB/s
-Details below.
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ drivers/media/platform/vsp1/vsp1_dl.c | 206 ++++++++++++++++++++++------------
+ 1 file changed, 136 insertions(+), 70 deletions(-)
 
-Simon Horman (3):
-  mmc: tmio, renesas-sdhi: add dataend to DMA ops
-  mmc: renesas-sdhi: add support for R-Car Gen3 SDHI DMAC
-  mmc: renesas-sdhi: remove gen3 support from SYS-DMAC driver
-
-Yoshihiro Shimoda (1):
-  mmc: tmio, renesas-sdhi: add max_{segs,blk_count} to tmio_mmc_data
-
- drivers/mmc/host/Kconfig                      |  19 ++
- drivers/mmc/host/Makefile                     |   8 +-
- drivers/mmc/host/renesas_sdhi.h               |   2 +
- drivers/mmc/host/renesas_sdhi_core.c          |   2 +
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 271 ++++++++++++++++++++++++++
- drivers/mmc/host/renesas_sdhi_sys_dmac.c      |  29 +--
- drivers/mmc/host/tmio_mmc.h                   |   2 +
- drivers/mmc/host/tmio_mmc_core.c              |  16 +-
- include/linux/mfd/tmio.h                      |   2 +
- 9 files changed, 323 insertions(+), 28 deletions(-)
- create mode 100644 drivers/mmc/host/renesas_sdhi_internal_dmac.c
-
+diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
+index 534100581404..dea38de180e6 100644
+--- a/drivers/media/platform/vsp1/vsp1_dl.c
++++ b/drivers/media/platform/vsp1/vsp1_dl.c
+@@ -95,6 +95,7 @@ enum vsp1_dl_mode {
+  * struct vsp1_dl_manager - Display List manager
+  * @index: index of the related WPF
+  * @mode: display list operation mode (header or headerless)
++ * @singleshot: execute the display list in single-shot mode
+  * @vsp1: the VSP1 device
+  * @lock: protects the free, active, queued, pending and gc_fragments lists
+  * @free: array of all free display lists
+@@ -107,6 +108,7 @@ enum vsp1_dl_mode {
+ struct vsp1_dl_manager {
+ 	unsigned int index;
+ 	enum vsp1_dl_mode mode;
++	bool singleshot;
+ 	struct vsp1_device *vsp1;
+ 
+ 	spinlock_t lock;
+@@ -437,6 +439,7 @@ int vsp1_dl_list_add_chain(struct vsp1_dl_list *head,
+ 
+ static void vsp1_dl_list_fill_header(struct vsp1_dl_list *dl, bool is_last)
+ {
++	struct vsp1_dl_manager *dlm = dl->dlm;
+ 	struct vsp1_dl_header_list *hdr = dl->header->lists;
+ 	struct vsp1_dl_body *dlb;
+ 	unsigned int num_lists = 0;
+@@ -461,85 +464,154 @@ static void vsp1_dl_list_fill_header(struct vsp1_dl_list *dl, bool is_last)
+ 
+ 	dl->header->num_lists = num_lists;
+ 
+-	/*
+-	 * If this display list's chain is not empty, we are on a list, where
+-	 * the next item in the list is the display list entity which should be
+-	 * automatically queued by the hardware.
+-	 */
+ 	if (!list_empty(&dl->chain) && !is_last) {
++		/*
++		 * If this display list's chain is not empty, we are on a list,
++		 * and the next item is the display list that we must queue for
++		 * automatic processing by the hardware.
++		 */
+ 		struct vsp1_dl_list *next = list_next_entry(dl, chain);
+ 
+ 		dl->header->next_header = next->dma;
+ 		dl->header->flags = VSP1_DLH_AUTO_START;
++	} else if (!dlm->singleshot) {
++		/*
++		 * if the display list manager works in continuous mode, the VSP
++		 * should loop over the display list continuously until
++		 * instructed to do otherwise.
++		 */
++		dl->header->next_header = dl->dma;
++		dl->header->flags = VSP1_DLH_INT_ENABLE | VSP1_DLH_AUTO_START;
+ 	} else {
++		/*
++		 * Otherwise, in mem-to-mem mode, we work in single-shot mode
++		 * and the next display list must not be started automatically.
++		 */
+ 		dl->header->flags = VSP1_DLH_INT_ENABLE;
+ 	}
+ }
+ 
+-void vsp1_dl_list_commit(struct vsp1_dl_list *dl)
++static bool vsp1_dl_list_hw_update_pending(struct vsp1_dl_manager *dlm)
+ {
+-	struct vsp1_dl_manager *dlm = dl->dlm;
+ 	struct vsp1_device *vsp1 = dlm->vsp1;
+-	unsigned long flags;
+-	bool update;
+-
+-	if (dl->dlm->mode == VSP1_DL_MODE_HEADER) {
+-		struct vsp1_dl_list *dl_child;
+ 
+-		/*
+-		 * In header mode the caller guarantees that the hardware is
+-		 * idle at this point.
+-		 */
++	if (!dlm->queued)
++		return false;
+ 
+-		/* Fill the header for the head and chained display lists. */
+-		vsp1_dl_list_fill_header(dl, list_empty(&dl->chain));
+-
+-		list_for_each_entry(dl_child, &dl->chain, chain) {
+-			bool last = list_is_last(&dl_child->chain, &dl->chain);
+-
+-			vsp1_dl_list_fill_header(dl_child, last);
+-		}
+-	}
++	/*
++	 * Check whether the VSP1 has taken the update. In headerless mode the
++	 * hardware indicates this by clearing the UPD bit in the DL_BODY_SIZE
++	 * register. In header mode it indicates this by programming the display
++	 * list address in the DL_HDR_ADDR register.
++	 */
++	if (dlm->mode == VSP1_DL_MODE_HEADERLESS)
++		return !!(vsp1_read(vsp1, VI6_DL_BODY_SIZE)
++			  & VI6_DL_BODY_SIZE_UPD);
++	else
++		return vsp1_read(vsp1, VI6_DL_HDR_ADDR(dlm->index))
++			== dlm->queued->dma;
++}
+ 
+-	spin_lock_irqsave(&dlm->lock, flags);
++static void vsp1_dl_list_hw_enqueue(struct vsp1_dl_list *dl)
++{
++	struct vsp1_dl_manager *dlm = dl->dlm;
++	struct vsp1_dl_list *active = dlm->active;
++	struct vsp1_device *vsp1 = dlm->vsp1;
+ 
+-	if (dl->dlm->mode == VSP1_DL_MODE_HEADER) {
++	if (dlm->mode == VSP1_DL_MODE_HEADERLESS) {
+ 		/*
+-		 * Commit the head display list to hardware. Chained headers
+-		 * will auto-start.
++		 * In headerless mode, program the hardware directly with the
++		 * display list body address and size and set the UPD bit. The
++		 * bit will be cleared by the hardware when the display list
++		 * processing starts.
++		 */
++		vsp1_write(vsp1, VI6_DL_HDR_ADDR(0), dl->body0.dma);
++		vsp1_write(vsp1, VI6_DL_BODY_SIZE, VI6_DL_BODY_SIZE_UPD |
++			   (dl->body0.num_entries * sizeof(*dl->header->lists)));
++	} else if (!dlm->singleshot && active) {
++		/*
++		 * In header continuous mode, update the next_header pointer in
++		 * the active list. We need a memory barrier to ensure that the
++		 * new display list headers reach memory before setting the
++		 * next_header pointer.
++		 */
++		wmb();
++		active->header->next_header = dl->dma;
++	} else {
++		/*
++		 * In single-shot mode, or if there's no active list, the
++		 * hardware is idle. Just set the display list address, the
++		 * hardware will be started independently.
+ 		 */
+ 		vsp1_write(vsp1, VI6_DL_HDR_ADDR(dlm->index), dl->dma);
+-
+-		dlm->active = dl;
+-		goto done;
+ 	}
++}
++
++static void vsp1_dl_list_commit_continuous(struct vsp1_dl_list *dl)
++{
++	struct vsp1_dl_manager *dlm = dl->dlm;
+ 
+ 	/*
+-	 * Once the UPD bit has been set the hardware can start processing the
+-	 * display list at any time and we can't touch the address and size
+-	 * registers. In that case mark the update as pending, it will be
+-	 * queued up to the hardware by the frame end interrupt handler.
++	 * If a previous display list has been queued to the hardware but not
++	 * processed yet, the VSP can start processing it at any time. In that
++	 * case we can't replace the queued list by the new one, as we could
++	 * race with the hardware. We thus mark the update as pending, it will
++	 * be queued up to the hardware by the frame end interrupt handler.
+ 	 */
+-	update = !!(vsp1_read(vsp1, VI6_DL_BODY_SIZE) & VI6_DL_BODY_SIZE_UPD);
+-	if (update) {
++	if (vsp1_dl_list_hw_update_pending(dlm)) {
+ 		__vsp1_dl_list_put(dlm->pending);
+ 		dlm->pending = dl;
+-		goto done;
++		return;
+ 	}
+ 
+ 	/*
+-	 * Program the hardware with the display list body address and size.
+-	 * The UPD bit will be cleared by the device when the display list is
+-	 * processed.
++	 * Pass the new display list to the hardware and mark it as queued. It
++	 * will become active when the hardware starts processing it.
+ 	 */
+-	vsp1_write(vsp1, VI6_DL_HDR_ADDR(0), dl->body0.dma);
+-	vsp1_write(vsp1, VI6_DL_BODY_SIZE, VI6_DL_BODY_SIZE_UPD |
+-		   (dl->body0.num_entries * sizeof(*dl->header->lists)));
++	vsp1_dl_list_hw_enqueue(dl);
+ 
+ 	__vsp1_dl_list_put(dlm->queued);
+ 	dlm->queued = dl;
++}
++
++static void vsp1_dl_list_commit_singleshot(struct vsp1_dl_list *dl)
++{
++	struct vsp1_dl_manager *dlm = dl->dlm;
++
++	/*
++	 * When working in single-shot mode, the caller guarantees that the
++	 * hardware is idle at this point. Just commit the head display list
++	 * to hardware. Chained lists will be started automatically.
++	 */
++	vsp1_dl_list_hw_enqueue(dl);
++
++	dlm->active = dl;
++}
++
++void vsp1_dl_list_commit(struct vsp1_dl_list *dl)
++{
++	struct vsp1_dl_manager *dlm = dl->dlm;
++	struct vsp1_dl_list *dl_child;
++	unsigned long flags;
++
++	if (dlm->mode == VSP1_DL_MODE_HEADER) {
++		/* Fill the header for the head and chained display lists. */
++		vsp1_dl_list_fill_header(dl, list_empty(&dl->chain));
++
++		list_for_each_entry(dl_child, &dl->chain, chain) {
++			bool last = list_is_last(&dl_child->chain, &dl->chain);
++
++			vsp1_dl_list_fill_header(dl_child, last);
++		}
++	}
++
++	spin_lock_irqsave(&dlm->lock, flags);
++
++	if (dlm->singleshot)
++		vsp1_dl_list_commit_singleshot(dl);
++	else
++		vsp1_dl_list_commit_continuous(dl);
+ 
+-done:
+ 	spin_unlock_irqrestore(&dlm->lock, flags);
+ }
+ 
+@@ -565,28 +637,25 @@ void vsp1_dlm_irq_display_start(struct vsp1_dl_manager *dlm)
+ 
+ void vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm)
+ {
+-	struct vsp1_device *vsp1 = dlm->vsp1;
+-
+ 	spin_lock(&dlm->lock);
+ 
+-	__vsp1_dl_list_put(dlm->active);
+-	dlm->active = NULL;
+-
+ 	/*
+-	 * Header mode is used for mem-to-mem pipelines only. We don't need to
+-	 * perform any operation as there can't be any new display list queued
+-	 * in that case.
++	 * The mem-to-mem pipelines work in single-shot mode. No new display
++	 * list can be queued, we don't have to do anything.
+ 	 */
+-	if (dlm->mode == VSP1_DL_MODE_HEADER)
++	if (dlm->singleshot) {
++		__vsp1_dl_list_put(dlm->active);
++		dlm->active = NULL;
+ 		goto done;
++	}
+ 
+ 	/*
+-	 * The UPD bit set indicates that the commit operation raced with the
+-	 * interrupt and occurred after the frame end event and UPD clear but
+-	 * before interrupt processing. The hardware hasn't taken the update
+-	 * into account yet, we'll thus skip one frame and retry.
++	 * If the commit operation raced with the interrupt and occurred after
++	 * the frame end event but before interrupt processing, the hardware
++	 * hasn't taken the update into account yet. We have to skip one frame
++	 * and retry.
+ 	 */
+-	if (vsp1_read(vsp1, VI6_DL_BODY_SIZE) & VI6_DL_BODY_SIZE_UPD)
++	if (vsp1_dl_list_hw_update_pending(dlm))
+ 		goto done;
+ 
+ 	/*
+@@ -594,23 +663,19 @@ void vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm)
+ 	 * frame end interrupt. The display list thus becomes active.
+ 	 */
+ 	if (dlm->queued) {
++		__vsp1_dl_list_put(dlm->active);
+ 		dlm->active = dlm->queued;
+ 		dlm->queued = NULL;
+ 	}
+ 
+ 	/*
+-	 * Now that the UPD bit has been cleared we can queue the next display
+-	 * list to the hardware if one has been prepared.
++	 * Now that the VSP has started processing the queued display list, we
++	 * can queue the pending display list to the hardware if one has been
++	 * prepared.
+ 	 */
+ 	if (dlm->pending) {
+-		struct vsp1_dl_list *dl = dlm->pending;
+-
+-		vsp1_write(vsp1, VI6_DL_HDR_ADDR(0), dl->body0.dma);
+-		vsp1_write(vsp1, VI6_DL_BODY_SIZE, VI6_DL_BODY_SIZE_UPD |
+-			   (dl->body0.num_entries *
+-			    sizeof(*dl->header->lists)));
+-
+-		dlm->queued = dl;
++		vsp1_dl_list_hw_enqueue(dlm->pending);
++		dlm->queued = dlm->pending;
+ 		dlm->pending = NULL;
+ 	}
+ 
+@@ -701,6 +766,7 @@ struct vsp1_dl_manager *vsp1_dlm_create(struct vsp1_device *vsp1,
+ 	dlm->index = index;
+ 	dlm->mode = index == 0 && !vsp1->info->uapi
+ 		  ? VSP1_DL_MODE_HEADERLESS : VSP1_DL_MODE_HEADER;
++	dlm->singleshot = vsp1->info->uapi;
+ 	dlm->vsp1 = vsp1;
+ 
+ 	spin_lock_init(&dlm->lock);
 -- 
-2.1.4
+Regards,
 
-
-Salvator-X/M3-W ES1.0
-=====================
-
-With Gen3 DMA Patches
----------------------
-
-97ac7011f8d3 (topic/sdhi-gen3-dma-2017-v3) mmc: renesas-sdhi: remove gen3 support from SYS-DMAC driver
-
-# dmesg | egrep '(sd|mmc)'
-[    1.419150] sdhci: Secure Digital Host Controller Interface driver
-[    1.425367] sdhci: Copyright(c) Pierre Ossman
-[    1.430237] renesas_sdhi_internal_dmac ee100000.sd: Got CD GPIO
-[    1.436224] renesas_sdhi_internal_dmac ee100000.sd: Got WP GPIO
-[    1.564915] renesas_sdhi_internal_dmac ee140000.sd: mmc0 base at 0xee140000 max clock rate 200 MHz
-[    1.574277] renesas_sdhi_internal_dmac ee160000.sd: Got CD GPIO
-[    1.580250] renesas_sdhi_internal_dmac ee160000.sd: Got WP GPIO
-[    1.595002] sdhci-pltfm: SDHCI platform and OF driver helper
-[    1.643641] renesas_sdhi_internal_dmac ee100000.sd: Got CD GPIO
-[    1.649678] renesas_sdhi_internal_dmac ee100000.sd: Got WP GPIO
-[    1.780987] renesas_sdhi_internal_dmac ee100000.sd: mmc1 base at 0xee100000 max clock rate 200 MHz
-[    1.791301] renesas_sdhi_internal_dmac ee160000.sd: Got CD GPIO
-[    1.797269] renesas_sdhi_internal_dmac ee160000.sd: Got WP GPIO
-[    1.830209] mmc0: new high speed MMC card at address 0001
-[    1.836044] mmcblk0: mmc0:0001 eMMC   28.8 GiB 
-[    1.844818] mmcblk0boot0: mmc0:0001 eMMC   partition 1 4.00 MiB
-[    1.854940] mmcblk0boot1: mmc0:0001 eMMC   partition 2 4.00 MiB
-[    1.866738] mmcblk0rpmb: mmc0:0001 eMMC   partition 3 4.00 MiB
-[    1.877064]  mmcblk0: p1
-[    1.933007] renesas_sdhi_internal_dmac ee160000.sd: mmc2 base at 0xee160000 max clock rate 200 MHz
-[    2.080957] mmc1: new ultra high speed SDR50 SDHC card at address e624
-[    2.087962] mmcblk1: mmc1:e624 SU08G 7.40 GiB 
-[    2.103240]  mmcblk1: p1
-[    2.188956] mmc2: new ultra high speed SDR50 SDHC card at address 0001
-[    2.195833] mmcblk2: mmc2:0001 00000 29.8 GiB 
-[    2.209999]  mmcblk2: p1
-
-# grep sd /proc/interrupts
-100:        396          0     GIC-0 197 Level     ee100000.sd
-101:        676          0     GIC-0 199 Level     ee140000.sd
-102:        394          0     GIC-0 200 Level     ee160000.sd
-178:          0          0  e6053000.gpio  12 Edge      ee100000.sd cd
-197:          0          0  e6054000.gpio  15 Edge      ee160000.sd cd
-
-# cat /sys/devices/platform/soc/ee100000.sd/mmc_host/mmc1/mmc1:*/cid
-035344535530384780b1b8a11200d300
-# dd if=/dev/mmcblk1 of=/dev/null bs=1M count=512 iflag=direct
-512+0 records in
-512+0 records out
-536870912 bytes (537 MB) copied, 13.4726 s, 39.8 MB/s
-# dd if=/dev/urandom of=/dev/mmcblk1 bs=1M count=512 oflag=direct
-512+0 records in
-512+0 records out
-536870912 bytes (537 MB) copied, 25.1835 s, 21.3 MB/s
-# dd if=/dev/zero of=/dev/mmcblk1 bs=1M count=512 oflag=direct
-512+0 records in
-512+0 records out
-536870912 bytes (537 MB) copied, 20.9813 s, 25.6 MB/s
-
-# cat /sys/devices/platform/soc/ee160000.sd/mmc_host/mmc2/mmc2:*/cid
-1b534d3030303030103916141700f600
-# dd if=/dev/mmcblk2 of=/dev/null bs=1M count=512 iflag=direct
-512+0 records in
-512+0 records out
-536870912 bytes (537 MB) copied, 17.4752 s, 30.7 MB/s
-# dd if=/dev/urandom of=/dev/mmcblk2 bs=1M count=512 oflag=direct
-512+0 records in
-512+0 records out
-536870912 bytes (537 MB) copied, 25.9727 s, 20.7 MB/s
-# dd if=/dev/zero of=/dev/mmcblk2 bs=1M count=512 oflag=direct
-512+0 records in
-512+0 records out
-536870912 bytes (537 MB) copied, 21.4667 s, 25.0 MB/s
-
-# grep sd /proc/interrupts
-100:      90886          0     GIC-0 197 Level     ee100000.sd
-101:        676          0     GIC-0 199 Level     ee140000.sd
-102:      90884          0     GIC-0 200 Level     ee160000.sd
-178:          0          0  e6053000.gpio  12 Edge      ee100000.sd cd
-197:          0          0  e6054000.gpio  15 Edge      ee160000.sd cd
-
-Without Gen3 DMA Patches
-------------------------
-
-2fe35968fecc (mmc/next) mmc: renesas-sdhi: improve checkpatch cleanness
-
-# dmesg | egrep '(sd|mmc)'
-[    1.415665] sdhci: Secure Digital Host Controller Interface driver
-[    1.421875] sdhci: Copyright(c) Pierre Ossman
-[    1.426803] sh_mobile_sdhi ee100000.sd: Got CD GPIO
-[    1.431720] sh_mobile_sdhi ee100000.sd: Got WP GPIO
-[    1.560977] sh_mobile_sdhi ee140000.sd: mmc0 base at 0xee140000 max clock rate 200 MHz
-[    1.569334] sh_mobile_sdhi ee160000.sd: Got CD GPIO
-[    1.574274] sh_mobile_sdhi ee160000.sd: Got WP GPIO
-[    1.588023] sdhci-pltfm: SDHCI platform and OF driver helper
-[    1.637177] sh_mobile_sdhi ee100000.sd: Got CD GPIO
-[    1.642138] sh_mobile_sdhi ee100000.sd: Got WP GPIO
-[    1.769034] sh_mobile_sdhi ee100000.sd: mmc1 base at 0xee100000 max clock rate 200 MHz
-[    1.778299] sh_mobile_sdhi ee160000.sd: Got CD GPIO
-[    1.783226] sh_mobile_sdhi ee160000.sd: Got WP GPIO
-[    1.838282] mmc0: new high speed MMC card at address 0001
-[    1.848093] mmcblk0: mmc0:0001 eMMC   28.8 GiB 
-[    1.856812] mmcblk0boot0: mmc0:0001 eMMC   partition 1 4.00 MiB
-[    1.866898] mmcblk0boot1: mmc0:0001 eMMC   partition 2 4.00 MiB
-[    1.876978] mmcblk0rpmb: mmc0:0001 eMMC   partition 3 4.00 MiB
-[    1.886453]  mmcblk0: p1
-[    1.909059] sh_mobile_sdhi ee160000.sd: mmc2 base at 0xee160000 max clock rate 200 MHz
-[    2.085013] mmc1: new ultra high speed SDR50 SDHC card at address e624
-[    2.096042] mmcblk1: mmc1:e624 SU08G 7.40 GiB 
-[    2.225010] mmc2: new ultra high speed SDR50 SDHC card at address 0001
-[    2.231895] mmcblk2: mmc2:0001 00000 29.8 GiB 
-
-# grep sd /proc/interrupts
-100:       1156          0     GIC-0 197 Level     ee100000.sd
-101:       2980          0     GIC-0 199 Level     ee140000.sd
-102:       1158          0     GIC-0 200 Level     ee160000.sd
-178:          0          0  e6053000.gpio  12 Edge      ee100000.sd cd
-197:          0          0  e6054000.gpio  15 Edge      ee160000.sd cd
-
-# cat /sys/devices/platform/soc/ee100000.sd/mmc_host/mmc1/mmc1:*/cid
-035344535530384780b1b8a11200d300
-# dd if=/dev/mmcblk1 of=/dev/null bs=1M count=512 iflag=direct
-512+0 records in
-512+0 records out
-536870912 bytes (537 MB) copied, 56.9853 s, 9.4 MB/s
-# dd if=/dev/urandom of=/dev/mmcblk1 bs=1M count=512 oflag=direct
-512+0 records in
-512+0 records out
-536870912 bytes (537 MB) copied, 33.6495 s, 16.0 MB/s
-(run twice)
-# dd if=/dev/zero of=/dev/mmcblk1 bs=1M count=512 oflag=direct
-512+0 records in
-512+0 records out
-536870912 bytes (537 MB) copied, 28.9672 s, 18.5 MB/s
-
-# cat /sys/devices/platform/soc/ee160000.sd/mmc_host/mmc2/mmc2:*/cid
-1b534d3030303030103916141700f600
-# dd if=/dev/mmcblk2 of=/dev/null bs=1M count=512 iflag=direct
-512+0 records in
-512+0 records out
-536870912 bytes (537 MB) copied, 56.6979 s, 9.5 MB/s
-# dd if=/dev/urandom of=/dev/mmcblk2 bs=1M count=512 oflag=direct
-512+0 records in
-512+0 records out
-536870912 bytes (537 MB) copied, 32.6627 s, 16.4 MB/s
-# dd if=/dev/zero of=/dev/mmcblk2 bs=1M count=512 oflag=direct
-512+0 records in
-512+0 records out
-536870912 bytes (537 MB) copied, 28.0254 s, 19.2 MB/s
-
-# grep sd /proc/interrupts
-100:    4260209          0     GIC-0 197 Level     ee100000.sd
-101:       2980          0     GIC-0 199 Level     ee140000.sd
-102:    3194148          0     GIC-0 200 Level     ee160000.sd
-178:          0          0  e6053000.gpio  12 Edge      ee100000.sd cd
-197:          0          0  e6054000.gpio  15 Edge      ee160000.sd cd
-
-
-Lager/H2 ES2.0
-==============
-
-With Gen3 DMA Patches
----------------------
-
-97ac7011f8d3 (topic/sdhi-gen3-dma-2017-v3) mmc: renesas-sdhi: remove gen3 support from SYS-DMAC driver
-
-# dmesg | egrep '(sd|mmc)'
-[    2.310666] sh_mobile_sdhi ee100000.sd: Got CD GPIO
-[    2.316097] sh_mobile_sdhi ee140000.sd: Got CD GPIO
-[    2.375103] sh_mmcif ee220000.mmc: Chip version 0x0003, clock rate 12MHz
-[    2.481791] sh_mobile_sdhi ee100000.sd: Got CD GPIO
-[    2.695235] sh_mobile_sdhi ee100000.sd: mmc1 base at 0xee100000 max clock rate 195 MHz
-[    2.703702] sh_mobile_sdhi ee140000.sd: Got CD GPIO
-[    2.783372] mmc0: new high speed MMC card at address 0001
-[    2.789193] mmcblk0: mmc0:0001 MMC08G 7.33 GiB 
-[    2.793912] mmcblk0boot0: mmc0:0001 MMC08G partition 1 2.00 MiB
-[    2.800052] mmcblk0boot1: mmc0:0001 MMC08G partition 2 2.00 MiB
-[    2.807724]  mmcblk0: p1
-[    2.915243] sh_mobile_sdhi ee140000.sd: mmc2 base at 0xee140000 max clock rate 97 MHz
-[    3.152305] mmc1: new ultra high speed SDR104 SDHC card at address 0001
-[    3.159305] mmcblk1: mmc1:0001 00000 29.8 GiB 
-[    3.395217] mmc2: new ultra high speed SDR50 SDHC card at address 0001
-[    3.402084] mmcblk2: mmc2:0001 00000 29.8 GiB 
-
-# grep sd /proc/interrupts
- 99:        325          0          0          0     GIC-0 197 Level     ee100000.sd
-100:        295          0          0          0     GIC-0 199 Level     ee140000.sd
-220:          0          0          0          0  e6053000.gpio   6 Edge      ee100000.sd cd
-236:          0          0          0          0  e6053000.gpio  22 Edge      ee140000.sd cd
-
-# cat /sys/devices/platform/ee100000.sd/mmc_host/mmc1/mmc1:*/cid
-1b534d303030303010ed85537600fc00
-# dd if=/dev/mmcblk1 of=/dev/null bs=1M count=512 iflag=direct
-512+0 records in
-512+0 records out
-536870912 bytes (537 MB) copied, 10.7666 s, 49.9 MB/s
-# dd if=/dev/urandom of=/dev/mmcblk1 bs=1M count=512 oflag=direct
-512+0 records in
-512+0 records out
-536870912 bytes (537 MB) copied, 25.6582 s, 20.9 MB/s
-# dd if=/dev/zero of=/dev/mmcblk1 bs=1M count=512 oflag=direct
-512+0 records in
-512+0 records out
-536870912 bytes (537 MB) copied, 16.8331 s, 31.9 MB/s
-
-# cat /sys/devices/platform/ee140000.sd/mmc_host/mmc2/mmc2:*/cid
-1b534d303030303010f0c957f500fc00
-# dd if=/dev/mmcblk2 of=/dev/null bs=1M count=512 iflag=direct
-512+0 records in
-512+0 records out
-536870912 bytes (537 MB) copied, 15.2234 s, 35.3 MB/s
-# dd if=/dev/urandom of=/dev/mmcblk2 bs=1M count=512 oflag=direct
-512+0 records in
-512+0 records out
-536870912 bytes (537 MB) copied, 30.2048 s, 17.8 MB/s
-# dd if=/dev/zero of=/dev/mmcblk2 bs=1M count=512 oflag=direct
-536870912 bytes (537 MB) copied, 21.3844 s, 25.1 MB/s
-
-# grep sd /proc/interrupts
- 99:      45879          0          0          0     GIC-0 197 Level     ee100000.sd
-100:      45849          0          0          0     GIC-0 199 Level     ee140000.sd
-220:          0          0          0          0  e6053000.gpio   6 Edge      ee100000.sd cd
-236:          0          0          0          0  e6053000.gpio  22 Edge      ee140000.sd cd
- 99:      46126          0          0          0     GIC-0 197 Level     ee100000.sd
-100:      52421          0          0          0     GIC-0 199 Level     ee140000.sd
-220:          0          0          0          0  e6053000.gpio   6 Edge      ee100000.sd cd
-236:          0          0          0          0  e6053000.gpio  22 Edge      ee140000.sd cd
-
-Without Gen3 DMA Patches
-------------------------
-
-2fe35968fecc (mmc/next) mmc: renesas-sdhi: improve checkpatch cleanness
-
-# dmesg | egrep '(sd|mmc)'
-[    2.311173] sh_mobile_sdhi ee100000.sd: Got CD GPIO
-[    2.316724] sh_mobile_sdhi ee140000.sd: Got CD GPIO
-[    2.375572] sh_mmcif ee220000.mmc: Chip version 0x0003, clock rate 12MHz
-[    2.482393] sh_mobile_sdhi ee100000.sd: Got CD GPIO
-[    2.695672] sh_mobile_sdhi ee100000.sd: mmc1 base at 0xee100000 max clock rate 195 MHz
-[    2.704159] sh_mobile_sdhi ee140000.sd: Got CD GPIO
-[    2.773784] mmc0: new high speed MMC card at address 0001
-[    2.779592] mmcblk0: mmc0:0001 MMC08G 7.33 GiB 
-[    2.784311] mmcblk0boot0: mmc0:0001 MMC08G partition 1 2.00 MiB
-[    2.790422] mmcblk0boot1: mmc0:0001 MMC08G partition 2 2.00 MiB
-[    2.798127]  mmcblk0: p1
-[    2.915668] sh_mobile_sdhi ee140000.sd: mmc2 base at 0xee140000 max clock rate 97 MHz
-[    3.172995] mmc1: new ultra high speed SDR104 SDHC card at address 0001
-[    3.179996] mmcblk1: mmc1:0001 00000 29.8 GiB 
-[    3.305653] mmc2: new ultra high speed SDR50 SDHC card at address 0001
-[    3.314303] mmcblk2: mmc2:0001 00000 29.8 GiB 
-
-# grep sd /proc/interrupts
- 99:        327          0          0          0     GIC-0 197 Level     ee100000.sd
-100:        289          0          0          0     GIC-0 199 Level     ee140000.sd
-220:          0          0          0          0  e6053000.gpio   6 Edge      ee100000.sd cd
-236:          0          0          0          0  e6053000.gpio  22 Edge      ee140000.sd cd
-
-# cat /sys/devices/platform/ee100000.sd/mmc_host/mmc1/mmc1:*/cid
-1b534d303030303010ed85537600fc00
-# dd if=/dev/mmcblk1 of=/dev/null bs=1M count=512 iflag=direct
-512+0 records in
-512+0 records out
-536870912 bytes (537 MB) copied, 10.8066 s, 49.7 MB/s
-# dd if=/dev/urandom of=/dev/mmcblk1 bs=1M count=512 oflag=direct
-512+0 records in
-512+0 records out
-536870912 bytes (537 MB) copied, 25.8626 s, 20.8 MB/s
-# dd if=/dev/zero of=/dev/mmcblk1 bs=1M count=512 oflag=direct
-512+0 records in
-512+0 records out
-536870912 bytes (537 MB) copied, 16.8923 s, 31.8 MB/s
-
-# cat /sys/devices/platform/ee140000.sd/mmc_host/mmc2/mmc2:*/cid
-1b534d303030303010f0c957f500fc00
-# dd if=/dev/mmcblk2 of=/dev/null bs=1M count=512 iflag=direct
-512+0 records in
-512+0 records out
-536870912 bytes (537 MB) copied, 15.2994 s, 35.1 MB/s
-# dd if=/dev/urandom of=/dev/mmcblk2 bs=1M count=512 oflag=direct
-512+0 records in
-512+0 records out
-536870912 bytes (537 MB) copied, 30.2488 s, 17.7 MB/s
-# dd if=/dev/zero of=/dev/mmcblk2 bs=1M count=512 oflag=direct
-512+0 records in
-512+0 records out
-536870912 bytes (537 MB) copied, 21.3787 s, 25.1 MB/s
-
-# grep sd /proc/interrupts
- 99:      45881          0          0          0     GIC-0 197 Level     ee100000.sd
-100:      45843          0          0          0     GIC-0 199 Level     ee140000.sd
-220:          0          0          0          0  e6053000.gpio   6 Edge      ee100000.sd cd
-236:          0          0          0          0  e6053000.gpio  22 Edge      ee140000.sd cd
+Laurent Pinchart
