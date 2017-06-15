@@ -1,96 +1,61 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:54877 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753291AbdFPNbl (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Jun 2017 09:31:41 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH] ARM: shmobile: pm-rmobile: Use GENPD_FLAG_ALWAYS_ON
-Date: Fri, 16 Jun 2017 15:31:17 +0200
-Message-Id: <fd8cf827d8a635df3dad46773ad828ce4c93d95b.1497619609.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1497619609.git.horms+renesas@verge.net.au>
-References: <cover.1497619609.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Reply-To: shuah@kernel.org
+Subject: Re: [PATCH 4/4] i2c: rcar: check for DMA-capable buffers
+To: Wolfram Sang <wsa@the-dreams.de>, Shuah Khan <shuahkhan@gmail.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Shuah Khan <shuah@kernel.org>
+References: <20170615183039.22925-1-wsa+renesas@sang-engineering.com>
+ <20170615183039.22925-5-wsa+renesas@sang-engineering.com>
+ <CAKocOONjafedew70jMnV9HfNru6mhQV6FXAkoHTL3wzght7+Ww@mail.gmail.com>
+ <20170615191743.xdrvigy4h2gqk2kk@ninjato>
+From: Shuah Khan <shuah@kernel.org>
+Message-ID: <fd55bfd6-b927-fc3f-a50d-9610329d0346@kernel.org>
+Date: Thu, 15 Jun 2017 13:48:17 -0600
+MIME-Version: 1.0
+In-Reply-To: <20170615191743.xdrvigy4h2gqk2kk@ninjato>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+On 06/15/2017 01:17 PM, Wolfram Sang wrote:
+> Hi,
+> 
+>>> -       /* Do not use DMA if it's not available or for messages < 8 bytes */
+>>> -       if (IS_ERR(chan) || msg->len < 8)
+>>> +       if (IS_ERR(chan) || msg->len < RCAR_DMA_THRESHOLD || priv->flags & ID_P_NODMA)
+>>
+>> Might be more efficient to check for ID_P_NODMA first instead of msg->len.
+> 
+> I think most of the I2C transfers are smaller (like reading/writing one
+> register) than the threshold, so this "should" be more efficient. Plus,
+> honestly, I also think this is a micro-optimization which is largely
+> depending on the use-case. Can we agree on that?
 
-Improve handling of always-on PM domains by using the
-GENPD_FLAG_ALWAYS_ON flag introduced in commit ffaa42e8a40b7f10 ("PM /
-Domains: Enable users of genpd to specify always on PM domains").
+Makes sense.
 
-Note that the PM domain containing the serial console is still handled
-locally.
+> 
+>>> -       read = msg->flags & I2C_M_RD;
+>>> +       /* we need to check here because we need the 'current' context */
+>>> +       if (i2c_check_msg_for_dma(msg, RCAR_DMA_THRESHOLD, NULL) == -EFAULT) {
+>>> +               dev_dbg(dev, "skipping DMA for this whole transfer\n");
+>>
+>> Adding reason for skipping will be helpful.
+> 
+> The I2C core helper will immediately print before that the buffer is not
+> DMA capable. Do you think this together will do?
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/mach-shmobile/pm-rmobile.c | 19 ++++---------------
- 1 file changed, 4 insertions(+), 15 deletions(-)
+That is sufficient.
 
-diff --git a/arch/arm/mach-shmobile/pm-rmobile.c b/arch/arm/mach-shmobile/pm-rmobile.c
-index 45a195501b78..699429f28b73 100644
---- a/arch/arm/mach-shmobile/pm-rmobile.c
-+++ b/arch/arm/mach-shmobile/pm-rmobile.c
-@@ -130,7 +130,7 @@ static void rmobile_init_pm_domain(struct rmobile_pm_domain *rmobile_pd)
- 	struct generic_pm_domain *genpd = &rmobile_pd->genpd;
- 	struct dev_power_governor *gov = rmobile_pd->gov;
- 
--	genpd->flags = GENPD_FLAG_PM_CLK;
-+	genpd->flags |= GENPD_FLAG_PM_CLK;
- 	genpd->dev_ops.active_wakeup	= rmobile_pd_active_wakeup;
- 	genpd->power_off		= rmobile_pd_power_down;
- 	genpd->power_on			= rmobile_pd_power_up;
-@@ -140,14 +140,6 @@ static void rmobile_init_pm_domain(struct rmobile_pm_domain *rmobile_pd)
- 	pm_genpd_init(genpd, gov ? : &simple_qos_governor, false);
- }
- 
--static int rmobile_pd_suspend_busy(void)
--{
--	/*
--	 * This domain should not be turned off.
--	 */
--	return -EBUSY;
--}
--
- static int rmobile_pd_suspend_console(void)
- {
- 	/*
-@@ -260,8 +252,7 @@ static void __init rmobile_setup_pm_domain(struct device_node *np,
- 		 * only be turned off if the CPU is not in use.
- 		 */
- 		pr_debug("PM domain %s contains CPU\n", name);
--		pd->gov = &pm_domain_always_on_gov;
--		pd->suspend = rmobile_pd_suspend_busy;
-+		pd->genpd.flags |= GENPD_FLAG_ALWAYS_ON;
- 		break;
- 
- 	case PD_CONSOLE:
-@@ -277,8 +268,7 @@ static void __init rmobile_setup_pm_domain(struct device_node *np,
- 		 * is not in use.
- 		 */
- 		pr_debug("PM domain %s contains Coresight-ETM\n", name);
--		pd->gov = &pm_domain_always_on_gov;
--		pd->suspend = rmobile_pd_suspend_busy;
-+		pd->genpd.flags |= GENPD_FLAG_ALWAYS_ON;
- 		break;
- 
- 	case PD_MEMCTL:
-@@ -287,8 +277,7 @@ static void __init rmobile_setup_pm_domain(struct device_node *np,
- 		 * should only be turned off if memory is not in use.
- 		 */
- 		pr_debug("PM domain %s contains MEMCTL\n", name);
--		pd->gov = &pm_domain_always_on_gov;
--		pd->suspend = rmobile_pd_suspend_busy;
-+		pd->genpd.flags |= GENPD_FLAG_ALWAYS_ON;
- 		break;
- 
- 	case PD_NORMAL:
--- 
-2.1.4
+thanks,
+-- Shuah
+
+> 
+> Thanks for your input,
+> 
+>    Wolfram
+> 
