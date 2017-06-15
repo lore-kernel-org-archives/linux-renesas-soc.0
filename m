@@ -1,77 +1,123 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:40165 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752648AbdFSRFd (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54826 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750980AbdFORUv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Jun 2017 13:05:33 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v1 06/12] media: rcar: vin: Accept parallel input on Gen3
-Date: Mon, 19 Jun 2017 19:04:43 +0200
-Message-Id: <1497891889-8038-7-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1497891889-8038-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1497891889-8038-1-git-send-email-jacopo+renesas@jmondi.org>
+        Thu, 15 Jun 2017 13:20:51 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
+In-Reply-To: <87y3sum7au.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1dLYRp-0001iF-CS@debutante>
+Date: Thu, 15 Jun 2017 18:20:45 +0100
+Subject: Applied "ASoC: audio-graph-scu-card: use asoc_simple_card_convert_fixup()" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Accept parallel/BT.565 bus types when parsing OF on Gen3.
+The patch
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+   ASoC: audio-graph-scu-card: use asoc_simple_card_convert_fixup()
+
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From c564a5b18710f76da222ad9f14a4c0ebc2c4c74c Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Thu, 15 Jun 2017 00:24:43 +0000
+Subject: [PATCH] ASoC: audio-graph-scu-card: use
+ asoc_simple_card_convert_fixup()
+
+Current simple/audio scu card drivers are supporting same
+convert-rate/convert-channels on DT, but, doesn't use same function
+for it.
+Encapsulation is one of simple card util's purpose.
+Let's use asoc_simple_card_parse_convert/asoc_simple_card_convert_fixup
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/media/platform/rcar-vin/rcar-core.c | 37 +++++++++++++----------------
- 1 file changed, 16 insertions(+), 21 deletions(-)
+ sound/soc/generic/audio-graph-scu-card.c | 24 +++---------------------
+ 1 file changed, 3 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index ef61bcc..6738825 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -360,29 +360,24 @@ static int rvin_parse_v4l2(struct rvin_dev *vin,
- 	}
+diff --git a/sound/soc/generic/audio-graph-scu-card.c b/sound/soc/generic/audio-graph-scu-card.c
+index 4d295d07858a..9502f6ed14b8 100644
+--- a/sound/soc/generic/audio-graph-scu-card.c
++++ b/sound/soc/generic/audio-graph-scu-card.c
+@@ -30,8 +30,7 @@ struct graph_card_data {
+ 	struct snd_soc_codec_conf codec_conf;
+ 	struct asoc_simple_dai *dai_props;
+ 	struct snd_soc_dai_link *dai_link;
+-	u32 convert_rate;
+-	u32 convert_channels;
++	struct asoc_simple_card_data adata;
+ };
  
- 	mbus_cfg->type = v4l2_ep.bus_type;
-+	mbus_cfg->flags = 0;
+ #define graph_priv_to_card(priv) (&(priv)->snd_card)
+@@ -83,18 +82,8 @@ static int asoc_graph_card_be_hw_params_fixup(struct snd_soc_pcm_runtime *rtd,
+ 					       struct snd_pcm_hw_params *params)
+ {
+ 	struct graph_card_data *priv = snd_soc_card_get_drvdata(rtd->card);
+-	struct snd_interval *rate = hw_param_interval(params,
+-						      SNDRV_PCM_HW_PARAM_RATE);
+-	struct snd_interval *channels = hw_param_interval(params,
+-							  SNDRV_PCM_HW_PARAM_CHANNELS);
  
--	if (vin->info->chip == RCAR_GEN3) {
--		switch (mbus_cfg->type) {
--		case V4L2_MBUS_CSI2:
--			vin_dbg(vin, "Found CSI-2 media bus\n");
--			mbus_cfg->flags = 0;
--			return 0;
--		default:
--			break;
--		}
--	} else {
--		switch (mbus_cfg->type) {
--		case V4L2_MBUS_PARALLEL:
--			vin_dbg(vin, "Found PARALLEL media bus\n");
--			mbus_cfg->flags = v4l2_ep.bus.parallel.flags;
--			return 0;
--		case V4L2_MBUS_BT656:
--			vin_dbg(vin, "Found BT656 media bus\n");
--			mbus_cfg->flags = 0;
--			return 0;
--		default:
-+	switch (mbus_cfg->type) {
-+	case V4L2_MBUS_CSI2:
-+		if (vin->info->chip < RCAR_GEN3)
- 			break;
--		}
-+
-+		vin_dbg(vin, "Found CSI-2 media bus\n");
-+		return 0;
-+	case V4L2_MBUS_PARALLEL:
-+		vin_dbg(vin, "Found PARALLEL media bus\n");
-+		mbus_cfg->flags = v4l2_ep.bus.parallel.flags;
-+		return 0;
-+	case V4L2_MBUS_BT656:
-+		vin_dbg(vin, "Found BT656 media bus\n");
-+		return 0;
-+	default:
-+		break;
- 	}
+-	if (priv->convert_rate)
+-		rate->min =
+-		rate->max = priv->convert_rate;
+-
+-	if (priv->convert_channels)
+-		channels->min =
+-		channels->max = priv->convert_channels;
++	asoc_simple_card_convert_fixup(&priv->adata, params);
  
- 	vin_err(vin, "Unknown media bus type\n");
+ 	return 0;
+ }
+@@ -210,11 +199,7 @@ static int asoc_graph_card_parse_of(struct graph_card_data *priv)
+ 	if (ret)
+ 		return ret;
+ 
+-	/* sampling rate convert */
+-	of_property_read_u32(node, "convert-rate", &priv->convert_rate);
+-
+-	/* channels transfer */
+-	of_property_read_u32(node, "convert-channels", &priv->convert_channels);
++	asoc_simple_card_parse_convert(dev, NULL, &priv->adata);
+ 
+ 	/*
+ 	 * it supports multi CPU, single CODEC only here
+@@ -286,9 +271,6 @@ static int asoc_graph_card_parse_of(struct graph_card_data *priv)
+ 	if (ret)
+ 		goto parse_of_err;
+ 
+-	dev_dbg(dev, "convert_rate     %d\n", priv->convert_rate);
+-	dev_dbg(dev, "convert_channels %d\n", priv->convert_channels);
+-
+ 	ret = 0;
+ 
+ parse_of_err:
 -- 
-2.7.4
+2.11.0
