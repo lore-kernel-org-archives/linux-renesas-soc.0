@@ -1,175 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:54739 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753706AbdFPNbT (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54508 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751835AbdFORUm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Jun 2017 09:31:19 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 6/6] ARM: dts: r8a779x: Fix PCI bus dtc warnings
-Date: Fri, 16 Jun 2017 15:30:46 +0200
-Message-Id: <f7d569c1e6a6fa731fc34083a9f0191b7360eeb1.1497618353.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1497618353.git.horms+renesas@verge.net.au>
-References: <cover.1497618353.git.horms+renesas@verge.net.au>
+        Thu, 15 Jun 2017 13:20:42 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
+In-Reply-To: <87tw3im79g.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1dLYRg-0001fZ-8x@debutante>
+Date: Thu, 15 Jun 2017 18:20:36 +0100
+Subject: Applied "ASoC: simple-scu-card: use asoc_simple_card_of_parse_routing()" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Rob Herring <robh@kernel.org>
+The patch
 
-The bogus 'device_type = "pci"' confuses dtc, causing lots of totally
-unrelated warnings.  After fixing that, real warnings like
+   ASoC: simple-scu-card: use asoc_simple_card_of_parse_routing()
 
-    arch/arm/boot/dts/r8a7790-lager.dtb: Warning (pci_device_reg): Node /pci@ee090000/usb@0,1 PCI unit address format error, expected "1,0"
+has been applied to the asoc tree at
 
-are left.  Correct the unit-addresses and reg properties of the subnodes
-to fix these.
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-Signed-off-by: Rob Herring <robh@kernel.org>
-[geert: Improve description]
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From bfe6b5898269b92571e502b4d706c815dd6bf53b Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Thu, 15 Jun 2017 00:25:33 +0000
+Subject: [PATCH] ASoC: simple-scu-card: use
+ asoc_simple_card_of_parse_routing()
+
+Current simple/audio scu card drivers are supporting same
+routing on DT, but, doesn't use same function for it.
+Encapsulation is one of simple card util's purpose.
+Let's use asoc_simple_card_of_parse_routing
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm/boot/dts/r8a7790.dtsi | 16 ++++++----------
- arch/arm/boot/dts/r8a7791.dtsi | 16 ++++++----------
- arch/arm/boot/dts/r8a7794.dtsi | 16 ++++++----------
- 3 files changed, 18 insertions(+), 30 deletions(-)
+ sound/soc/generic/simple-scu-card.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 416956a42c93..2805a8608d4b 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -1602,16 +1602,14 @@
- 				 0x0800 0 0 1 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH
- 				 0x1000 0 0 2 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
+diff --git a/sound/soc/generic/simple-scu-card.c b/sound/soc/generic/simple-scu-card.c
+index 44da69101097..a75b385455c4 100644
+--- a/sound/soc/generic/simple-scu-card.c
++++ b/sound/soc/generic/simple-scu-card.c
+@@ -191,7 +191,7 @@ static int asoc_simple_card_parse_of(struct simple_card_data *priv)
+ 	if (!node)
+ 		return -EINVAL;
  
--		usb@0,1 {
-+		usb@1,0 {
- 			reg = <0x800 0 0 0 0>;
--			device_type = "pci";
- 			phys = <&usb0 0>;
- 			phy-names = "usb";
- 		};
+-	ret = snd_soc_of_parse_audio_routing(card, PREFIX "routing");
++	ret = asoc_simple_card_of_parse_routing(card, PREFIX, 0);
+ 	if (ret < 0)
+ 		return ret;
  
--		usb@0,2 {
-+		usb@2,0 {
- 			reg = <0x1000 0 0 0 0>;
--			device_type = "pci";
- 			phys = <&usb0 0>;
- 			phy-names = "usb";
- 		};
-@@ -1658,16 +1656,14 @@
- 				 0x0800 0 0 1 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH
- 				 0x1000 0 0 2 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
- 
--		usb@0,1 {
--			reg = <0x800 0 0 0 0>;
--			device_type = "pci";
-+		usb@1,0 {
-+			reg = <0x20800 0 0 0 0>;
- 			phys = <&usb2 0>;
- 			phy-names = "usb";
- 		};
- 
--		usb@0,2 {
--			reg = <0x1000 0 0 0 0>;
--			device_type = "pci";
-+		usb@2,0 {
-+			reg = <0x21000 0 0 0 0>;
- 			phys = <&usb2 0>;
- 			phy-names = "usb";
- 		};
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index b730c889a404..bd93f699ad84 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -1613,16 +1613,14 @@
- 				 0x0800 0 0 1 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH
- 				 0x1000 0 0 2 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
- 
--		usb@0,1 {
-+		usb@1,0 {
- 			reg = <0x800 0 0 0 0>;
--			device_type = "pci";
- 			phys = <&usb0 0>;
- 			phy-names = "usb";
- 		};
- 
--		usb@0,2 {
-+		usb@2,0 {
- 			reg = <0x1000 0 0 0 0>;
--			device_type = "pci";
- 			phys = <&usb0 0>;
- 			phy-names = "usb";
- 		};
-@@ -1648,16 +1646,14 @@
- 				 0x0800 0 0 1 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH
- 				 0x1000 0 0 2 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
- 
--		usb@0,1 {
--			reg = <0x800 0 0 0 0>;
--			device_type = "pci";
-+		usb@1,0 {
-+			reg = <0x10800 0 0 0 0>;
- 			phys = <&usb2 0>;
- 			phy-names = "usb";
- 		};
- 
--		usb@0,2 {
--			reg = <0x1000 0 0 0 0>;
--			device_type = "pci";
-+		usb@2,0 {
-+			reg = <0x11000 0 0 0 0>;
- 			phys = <&usb2 0>;
- 			phy-names = "usb";
- 		};
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index a19b884fb258..7d9a81d970d8 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -820,16 +820,14 @@
- 				 0x0800 0 0 1 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH
- 				 0x1000 0 0 2 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
- 
--		usb@0,1 {
-+		usb@1,0 {
- 			reg = <0x800 0 0 0 0>;
--			device_type = "pci";
- 			phys = <&usb0 0>;
- 			phy-names = "usb";
- 		};
- 
--		usb@0,2 {
-+		usb@2,0 {
- 			reg = <0x1000 0 0 0 0>;
--			device_type = "pci";
- 			phys = <&usb0 0>;
- 			phy-names = "usb";
- 		};
-@@ -855,16 +853,14 @@
- 				 0x0800 0 0 1 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH
- 				 0x1000 0 0 2 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
- 
--		usb@0,1 {
--			reg = <0x800 0 0 0 0>;
--			device_type = "pci";
-+		usb@1,0 {
-+			reg = <0x10800 0 0 0 0>;
- 			phys = <&usb2 0>;
- 			phy-names = "usb";
- 		};
- 
--		usb@0,2 {
--			reg = <0x1000 0 0 0 0>;
--			device_type = "pci";
-+		usb@2,0 {
-+			reg = <0x11000 0 0 0 0>;
- 			phys = <&usb2 0>;
- 			phy-names = "usb";
- 		};
 -- 
-2.1.4
+2.11.0
