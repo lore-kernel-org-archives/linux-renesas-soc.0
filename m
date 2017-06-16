@@ -1,283 +1,136 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53828 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751829AbdFORUW (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:54719 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753771AbdFPNbH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Jun 2017 13:20:22 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
-        Mark Brown <broonie@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <87h8zim647.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dLYRI-0001aV-CF@debutante>
-Date: Thu, 15 Jun 2017 18:20:12 +0100
-Subject: Applied "ASoC: rsnd: add rsnd_soc_hw_rule/constraint()" to the asoc tree
+        Fri, 16 Jun 2017 09:31:07 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 2/6] ARM: dts: r7s72100: Add support for GR-Peach
+Date: Fri, 16 Jun 2017 15:30:42 +0200
+Message-Id: <b879d674e03fccb42b0e79f21b2105ad6a824229.1497618353.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1497618353.git.horms+renesas@verge.net.au>
+References: <cover.1497618353.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-   ASoC: rsnd: add rsnd_soc_hw_rule/constraint()
+Add device tree source for Renesas GR-Peach board.
+GR-Peach is an RZ/A1H based board with 10MB of on-chip SRAM and 8MB
+QSPI flash storage.
+Add support for the board, and create a 2MB partition to use as rootfs.
 
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 8cc03722403a5153054993388857e4e565dcdfb1 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Thu, 15 Jun 2017 00:50:19 +0000
-Subject: [PATCH] ASoC: rsnd: add rsnd_soc_hw_rule/constraint()
-
-Current Renesas sound driver is assuming that all Sampling rate and
-channles are possible to use, but these are depends on inputed clock
-and SSI connection situation.
-For example, if it is using 1 SSI, enabled TDM mode and has 12288000
-input clock, 2ch output can support until 192000Hz, but 6ch output can
-support until 64000Hz, 8ch can support 48000Hz.
-To control these situation correctly, it needs to support
-hw_constraints / refine feature.
-
-To support such feature, this patch adds new
-rsnd_soc_hw_rule/constraint() which adds hw rule of Channel and
-Sampling Rate.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Tested-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- sound/soc/sh/rcar/core.c | 155 ++++++++++++++++++++++++++++++++++++++++++++++-
- sound/soc/sh/rcar/rsnd.h |   1 +
- 2 files changed, 154 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/arm/shmobile.txt |  2 +
+ arch/arm/boot/dts/Makefile                         |  1 +
+ arch/arm/boot/dts/r7s72100-gr-peach.dts            | 66 ++++++++++++++++++++++
+ 3 files changed, 69 insertions(+)
+ create mode 100644 arch/arm/boot/dts/r7s72100-gr-peach.dts
 
-diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
-index 9b9e898d0df3..4892c0a4b613 100644
---- a/sound/soc/sh/rcar/core.c
-+++ b/sound/soc/sh/rcar/core.c
-@@ -723,7 +723,10 @@ static int rsnd_soc_set_dai_tdm_slot(struct snd_soc_dai *dai,
- 	struct device *dev = rsnd_priv_to_dev(priv);
- 
- 	switch (slots) {
-+	case 2:
- 	case 6:
-+	case 8:
-+	case 16:
- 		/* TDM Extend Mode */
- 		rsnd_rdai_channels_set(rdai, slots);
- 		rsnd_rdai_ssi_lane_set(rdai, 1);
-@@ -736,6 +739,151 @@ static int rsnd_soc_set_dai_tdm_slot(struct snd_soc_dai *dai,
- 	return 0;
- }
- 
-+static unsigned int rsnd_soc_hw_channels_list[] = {
-+	2, 6, 8, 16,
+diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+index 170fe0562c63..4b60ce21f4f3 100644
+--- a/Documentation/devicetree/bindings/arm/shmobile.txt
++++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -55,6 +55,8 @@ Boards:
+     compatible = "renesas,bockw", "renesas,r8a7778"
+   - Genmai (RTK772100BC00000BR)
+     compatible = "renesas,genmai", "renesas,r7s72100"
++  - GR-Peach (X28A-M01-E/F)
++    compatible = "renesas,gr-peach", "renesas,r7s72100"
+   - Gose (RTP0RC7793SEB00010S)
+     compatible = "renesas,gose", "renesas,r8a7793"
+   - H3ULCB (R-Car Starter Kit Premier, RTP0RC7795SKB00010S)
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 9c5e1d944d1c..9d64197f3e91 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -701,6 +701,7 @@ dtb-$(CONFIG_ARCH_REALVIEW) += \
+ dtb-$(CONFIG_ARCH_RENESAS) += \
+ 	emev2-kzm9d.dtb \
+ 	r7s72100-genmai.dtb \
++	r7s72100-gr-peach.dtb \
+ 	r7s72100-rskrza1.dtb \
+ 	r8a73a4-ape6evm.dtb \
+ 	r8a7740-armadillo800eva.dtb \
+diff --git a/arch/arm/boot/dts/r7s72100-gr-peach.dts b/arch/arm/boot/dts/r7s72100-gr-peach.dts
+new file mode 100644
+index 000000000000..a1b2aef984f6
+--- /dev/null
++++ b/arch/arm/boot/dts/r7s72100-gr-peach.dts
+@@ -0,0 +1,66 @@
++/*
++ * Device Tree Source for the GR-Peach board
++ *
++ * Copyright (C) 2017 Jacopo Mondi <jacopo+renesas@jmondi.org>
++ * Copyright (C) 2016 Renesas Electronics
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++/dts-v1/;
++#include "r7s72100.dtsi"
++
++/ {
++	model = "GR-Peach";
++	compatible = "renesas,gr-peach", "renesas,r7s72100";
++
++	aliases {
++		serial0 = &scif2;
++	};
++
++	chosen {
++		bootargs = "ignore_loglevel rw root=/dev/mtdblock0";
++		stdout-path = "serial0:115200n8";
++	};
++
++	memory@20000000 {
++		device_type = "memory";
++		reg = <0x20000000 0x00a00000>;
++
++	};
++
++	lbsc {
++		#address-cells = <1>;
++		#size-cells = <1>;
++	};
++
++	flash@18000000 {
++		compatible = "mtd-rom";
++		probe-type = "map_rom";
++		reg = <0x18000000 0x00800000>;
++		bank-width = <4>;
++		device-width = <1>;
++
++		#address-cells = <1>;
++		#size-cells = <1>;
++
++		rootfs@600000 {
++			label = "rootfs";
++			reg = <0x00600000 0x00200000>;
++		};
++	};
 +};
 +
-+static unsigned int rsnd_soc_hw_rate_list[] = {
-+	  8000,
-+	 11025,
-+	 16000,
-+	 22050,
-+	 32000,
-+	 44100,
-+	 48000,
-+	 64000,
-+	 88200,
-+	 96000,
-+	176400,
-+	192000,
++&extal_clk {
++	clock-frequency = <13333000>;
 +};
 +
-+static int rsnd_soc_hw_rule(struct rsnd_priv *priv,
-+			    unsigned int *list, int list_num,
-+			    struct snd_interval *baseline, struct snd_interval *iv)
-+{
-+	struct snd_interval p;
-+	int rate;
-+	int i;
++&usb_x1_clk {
++	clock-frequency = <48000000>;
++};
 +
-+	snd_interval_any(&p);
-+	p.min = UINT_MAX;
-+	p.max = 0;
-+
-+	for (i = 0; i < list_num; i++) {
-+
-+		if (!snd_interval_test(iv, list[i]))
-+			continue;
-+
-+		rate = rsnd_ssi_clk_query(priv,
-+					  baseline->min, list[i], NULL);
-+		if (rate > 0) {
-+			p.min = min(p.min, list[i]);
-+			p.max = max(p.max, list[i]);
-+		}
-+
-+		rate = rsnd_ssi_clk_query(priv,
-+					  baseline->max, list[i], NULL);
-+		if (rate > 0) {
-+			p.min = min(p.min, list[i]);
-+			p.max = max(p.max, list[i]);
-+		}
-+	}
-+
-+	return snd_interval_refine(iv, &p);
-+}
-+
-+static int rsnd_soc_hw_rule_rate(struct snd_pcm_hw_params *params,
-+				 struct snd_pcm_hw_rule *rule)
-+{
-+	struct snd_interval *ic_ = hw_param_interval(params, SNDRV_PCM_HW_PARAM_CHANNELS);
-+	struct snd_interval *ir = hw_param_interval(params, SNDRV_PCM_HW_PARAM_RATE);
-+	struct snd_interval ic;
-+	struct snd_soc_dai *dai = rule->private;
-+	struct rsnd_dai *rdai = rsnd_dai_to_rdai(dai);
-+	struct rsnd_priv *priv = rsnd_rdai_to_priv(rdai);
-+
-+	/*
-+	 * possible sampling rate limitation is same as
-+	 * 2ch if it supports multi ssi
-+	 */
-+	ic = *ic_;
-+	if (1 < rsnd_rdai_ssi_lane_get(rdai)) {
-+		ic.min = 2;
-+		ic.max = 2;
-+	}
-+
-+	return rsnd_soc_hw_rule(priv, rsnd_soc_hw_rate_list,
-+				ARRAY_SIZE(rsnd_soc_hw_rate_list),
-+				&ic, ir);
-+}
-+
-+
-+static int rsnd_soc_hw_rule_channels(struct snd_pcm_hw_params *params,
-+				     struct snd_pcm_hw_rule *rule)
-+{
-+	struct snd_interval *ic_ = hw_param_interval(params, SNDRV_PCM_HW_PARAM_CHANNELS);
-+	struct snd_interval *ir = hw_param_interval(params, SNDRV_PCM_HW_PARAM_RATE);
-+	struct snd_interval ic;
-+	struct snd_soc_dai *dai = rule->private;
-+	struct rsnd_dai *rdai = rsnd_dai_to_rdai(dai);
-+	struct rsnd_priv *priv = rsnd_rdai_to_priv(rdai);
-+
-+	/*
-+	 * possible sampling rate limitation is same as
-+	 * 2ch if it supports multi ssi
-+	 */
-+	ic = *ic_;
-+	if (1 < rsnd_rdai_ssi_lane_get(rdai)) {
-+		ic.min = 2;
-+		ic.max = 2;
-+	}
-+
-+	return rsnd_soc_hw_rule(priv, rsnd_soc_hw_channels_list,
-+				ARRAY_SIZE(rsnd_soc_hw_channels_list),
-+				ir, &ic);
-+}
-+
-+static void rsnd_soc_hw_constraint(struct snd_pcm_runtime *runtime,
-+				   struct snd_soc_dai *dai)
-+{
-+	struct rsnd_dai *rdai = rsnd_dai_to_rdai(dai);
-+	struct snd_pcm_hw_constraint_list *constraint = &rdai->constraint;
-+	unsigned int max_channels = rsnd_rdai_channels_get(rdai);
-+	int i;
-+
-+	/*
-+	 * Channel Limitation
-+	 * It depends on Platform design
-+	 */
-+	constraint->list	= rsnd_soc_hw_channels_list;
-+	constraint->count	= 0;
-+	constraint->mask	= 0;
-+
-+	for (i = 0; i < ARRAY_SIZE(rsnd_soc_hw_channels_list); i++) {
-+		if (rsnd_soc_hw_channels_list[i] > max_channels)
-+			break;
-+		constraint->count = i + 1;
-+	}
-+
-+	snd_pcm_hw_constraint_list(runtime, 0,
-+				   SNDRV_PCM_HW_PARAM_CHANNELS, constraint);
-+
-+	/*
-+	 * Sampling Rate / Channel Limitation
-+	 * It depends on Clock Master Mode
-+	 */
-+	if (!rsnd_rdai_is_clk_master(rdai))
-+		return;
-+
-+	snd_pcm_hw_rule_add(runtime, 0, SNDRV_PCM_HW_PARAM_RATE,
-+			    rsnd_soc_hw_rule_rate, dai,
-+			    SNDRV_PCM_HW_PARAM_CHANNELS, -1);
-+	snd_pcm_hw_rule_add(runtime, 0, SNDRV_PCM_HW_PARAM_CHANNELS,
-+			    rsnd_soc_hw_rule_channels, dai,
-+			    SNDRV_PCM_HW_PARAM_RATE, -1);
-+}
-+
- static int rsnd_soc_dai_startup(struct snd_pcm_substream *substream,
- 				struct snd_soc_dai *dai)
- {
-@@ -744,6 +892,9 @@ static int rsnd_soc_dai_startup(struct snd_pcm_substream *substream,
- 	struct rsnd_dai_stream *io = rsnd_rdai_to_io(rdai, substream);
- 	int ret;
- 
-+	/* rsnd_io_to_runtime() is not yet enabled here */
-+	rsnd_soc_hw_constraint(substream->runtime, dai);
-+
- 	/*
- 	 * call rsnd_dai_call without spinlock
- 	 */
-@@ -866,7 +1017,7 @@ static void __rsnd_dai_probe(struct rsnd_priv *priv,
- 	drv->playback.rates		= RSND_RATES;
- 	drv->playback.formats		= RSND_FMTS;
- 	drv->playback.channels_min	= 2;
--	drv->playback.channels_max	= 6;
-+	drv->playback.channels_max	= 16;
- 	drv->playback.stream_name	= rdai->playback.name;
- 
- 	snprintf(rdai->capture.name, RSND_DAI_NAME_SIZE,
-@@ -874,7 +1025,7 @@ static void __rsnd_dai_probe(struct rsnd_priv *priv,
- 	drv->capture.rates		= RSND_RATES;
- 	drv->capture.formats		= RSND_FMTS;
- 	drv->capture.channels_min	= 2;
--	drv->capture.channels_max	= 6;
-+	drv->capture.channels_max	= 16;
- 	drv->capture.stream_name	= rdai->capture.name;
- 
- 	rdai->playback.rdai		= rdai;
-diff --git a/sound/soc/sh/rcar/rsnd.h b/sound/soc/sh/rcar/rsnd.h
-index 3aa07a07bbcb..9428d4e288dd 100644
---- a/sound/soc/sh/rcar/rsnd.h
-+++ b/sound/soc/sh/rcar/rsnd.h
-@@ -449,6 +449,7 @@ struct rsnd_dai {
- 	struct rsnd_dai_stream playback;
- 	struct rsnd_dai_stream capture;
- 	struct rsnd_priv *priv;
-+	struct snd_pcm_hw_constraint_list constraint;
- 
- 	int max_channels;	/* 2ch - 16ch */
- 	int ssi_lane;		/* 1lane - 4lane */
++&scif2 {
++	status = "okay";
++};
 -- 
-2.11.0
+2.1.4
