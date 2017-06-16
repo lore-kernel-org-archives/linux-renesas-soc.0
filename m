@@ -1,85 +1,160 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:37474 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751012AbdFPRvF (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:54694 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753771AbdFPNbB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Jun 2017 13:51:05 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <87h8zgiumc.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dLvNt-0005j2-8V@debutante>
-Date: Fri, 16 Jun 2017 18:50:13 +0100
-Subject: Applied "ASoC: simple-card: use asoc_simple_card_of_parse_widgets()" to the asoc tree
+        Fri, 16 Jun 2017 09:31:01 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 09/11] arm64: dts: renesas: Add support for Salvator-XS with R-Car H3 ES2.0
+Date: Fri, 16 Jun 2017 15:30:17 +0200
+Message-Id: <79e3b5cf035e4734529ac136a7d09abe27f7ebba.1497617276.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1497617276.git.horms+renesas@verge.net.au>
+References: <cover.1497617276.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-   ASoC: simple-card: use asoc_simple_card_of_parse_widgets()
+Add initial support for the Renesas Salvator-XS (Salvator-X 2nd version)
+development board equipped with an R-Car H3 ES2.0 SiP.
 
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From fa2760dd366c735637504d1d7efab7688391c6b4 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Fri, 16 Jun 2017 01:39:11 +0000
-Subject: [PATCH] ASoC: simple-card: use asoc_simple_card_of_parse_widgets()
-
-Current simple card driver is supporting widgets on DT,
-other simple/audio card drivers will support it.
-Encapsulation is one of simple card util's purpose.
-Let's use asoc_simple_card_of_parse_widgets
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- sound/soc/generic/simple-card.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ arch/arm64/boot/dts/renesas/Makefile               |   1 +
+ .../arm64/boot/dts/renesas/r8a7795-salvator-xs.dts | 109 +++++++++++++++++++++
+ 2 files changed, 110 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
 
-diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
-index 7b2533c7f82e..8b7b47251fe1 100644
---- a/sound/soc/generic/simple-card.c
-+++ b/sound/soc/generic/simple-card.c
-@@ -354,13 +354,9 @@ static int asoc_simple_card_parse_of(struct simple_card_data *priv)
+diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
+index d5451015950e..acc4bb30d485 100644
+--- a/arch/arm64/boot/dts/renesas/Makefile
++++ b/arch/arm64/boot/dts/renesas/Makefile
+@@ -1,4 +1,5 @@
+ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-x.dtb r8a7795-h3ulcb.dtb
++dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-xs.dtb
+ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-es1-salvator-x.dtb r8a7795-es1-h3ulcb.dtb
+ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-x.dtb r8a7796-m3ulcb.dtb
  
- 	dai_link = of_get_child_by_name(node, PREFIX "dai-link");
- 
--	/* The off-codec widgets */
--	if (of_property_read_bool(node, PREFIX "widgets")) {
--		ret = snd_soc_of_parse_audio_simple_widgets(card,
--					PREFIX "widgets");
--		if (ret)
--			goto card_parse_end;
--	}
-+	ret = asoc_simple_card_of_parse_widgets(card, PREFIX);
-+	if (ret < 0)
-+		goto card_parse_end;
- 
- 	ret = asoc_simple_card_of_parse_routing(card, PREFIX, 1);
- 	if (ret < 0)
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
+new file mode 100644
+index 000000000000..de354957144b
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
+@@ -0,0 +1,109 @@
++/*
++ * Device Tree Source for the Salvator-X 2nd version board
++ *
++ * Copyright (C) 2015-2017 Renesas Electronics Corp.
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++#define CPG_AUDIO_CLK_I		R8A7795_CLK_S0D4
++
++/dts-v1/;
++#include "r8a7795.dtsi"
++#include "salvator-xs.dtsi"
++
++/ {
++	model = "Renesas Salvator-X 2nd version board based on r8a7795 ES2.0+";
++	compatible = "renesas,salvator-xs", "renesas,r8a7795";
++
++	memory@48000000 {
++		device_type = "memory";
++		/* first 128MB is reserved for secure area. */
++		reg = <0x0 0x48000000 0x0 0x38000000>;
++	};
++
++	memory@500000000 {
++		device_type = "memory";
++		reg = <0x5 0x00000000 0x0 0x40000000>;
++	};
++
++	memory@600000000 {
++		device_type = "memory";
++		reg = <0x6 0x00000000 0x0 0x40000000>;
++	};
++
++	memory@700000000 {
++		device_type = "memory";
++		reg = <0x7 0x00000000 0x0 0x40000000>;
++	};
++};
++
++&du {
++	clocks = <&cpg CPG_MOD 724>,
++		 <&cpg CPG_MOD 723>,
++		 <&cpg CPG_MOD 722>,
++		 <&cpg CPG_MOD 721>,
++		 <&cpg CPG_MOD 727>,
++		 <&x21_clk>,
++		 <&x22_clk>;
++	clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0",
++		      "dclkin.1", "dclkin.2";
++};
++
++&ehci2 {
++	status = "okay";
++};
++
++&hdmi0 {
++	status = "okay";
++
++	ports {
++		port@1 {
++			reg = <1>;
++			rcar_dw_hdmi0_out: endpoint {
++				remote-endpoint = <&hdmi0_con>;
++			};
++		};
++	};
++};
++
++&hdmi0_con {
++	remote-endpoint = <&rcar_dw_hdmi0_out>;
++};
++
++&hdmi1 {
++	status = "okay";
++
++	ports {
++		port@1 {
++			reg = <1>;
++			rcar_dw_hdmi1_out: endpoint {
++				remote-endpoint = <&hdmi1_con>;
++			};
++		};
++	};
++};
++
++&hdmi1_con {
++	remote-endpoint = <&rcar_dw_hdmi1_out>;
++};
++
++&ohci2 {
++	status = "okay";
++};
++
++&pfc {
++	usb2_pins: usb2 {
++		groups = "usb2";
++		function = "usb2";
++	};
++};
++
++&usb2_phy2 {
++	pinctrl-0 = <&usb2_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
 -- 
-2.11.0
+2.1.4
