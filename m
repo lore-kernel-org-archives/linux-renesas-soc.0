@@ -1,60 +1,89 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:35686 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750791AbdFOIXu (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:43690 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752134AbdFPHck (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Jun 2017 04:23:50 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 1/6] v4l: vsp1: Remove WPF vertical flip support on VSP2-B[CD] and VSP2-D
-Date: Thu, 15 Jun 2017 11:24:04 +0300
-Message-Id: <20170615082409.9523-2-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170615082409.9523-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170615082409.9523-1-laurent.pinchart+renesas@ideasonboard.com>
+        Fri, 16 Jun 2017 03:32:40 -0400
+Date: Fri, 16 Jun 2017 09:32:15 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Dirk Behme <dirk.behme@de.bosch.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Ai Kyuse <ai.kyuse.uw@renesas.com>
+Subject: Re: [PATCH/RFC 4/5] mmc: renesas_sdhi: add support for R-Car Gen3
+ SDHI DMAC
+Message-ID: <20170616073213.GF22158@verge.net.au>
+References: <1496927595-19521-1-git-send-email-horms+renesas@verge.net.au>
+ <1496927595-19521-5-git-send-email-horms+renesas@verge.net.au>
+ <CAMuHMdU8fqoi-zh4OKC_40xH3pZy+w_qDjtxm2pRLUsJieFmgw@mail.gmail.com>
+ <20170616071201.GD16534@verge.net.au>
+ <CAMuHMdWE6pq3XUKq3U2sTDMsjqkk7gYsjyuEskQ_+e+J3vvKWg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWE6pq3XUKq3U2sTDMsjqkk7gYsjyuEskQ_+e+J3vvKWg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The WPF vertical flip is only supported on Gen3 SoCs on the VSP2-I.
-Don't enable it on other VSP2 instances.
+On Fri, Jun 16, 2017 at 09:21:04AM +0200, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Fri, Jun 16, 2017 at 9:12 AM, Simon Horman <horms@verge.net.au> wrote:
+> > On Fri, Jun 09, 2017 at 09:39:49AM +0200, Geert Uytterhoeven wrote:
+> >> On Thu, Jun 8, 2017 at 3:13 PM, Simon Horman <horms+renesas@verge.net.au> wrote:
+> >> > R-Car Gen3 has a dedicated DMA controller for SDHI module. Since
+> >> > the DMAC is in a part of SDHI module and is not suitable as dmaengine,
+> 
+> >> > --- a/drivers/mmc/host/Kconfig
+> >> > +++ b/drivers/mmc/host/Kconfig
+> 
+> >> > +config MMC_SDHI_SYS_DMAC
+> >> > +       tristate "DMA support use of SYS DMAC with SDHI SD/SDIO controller"
+> >>
+> >> DMA support for SYS_DMAC?
+> >
+> > How about this?
+> >
+> > config MMC_SDHI_SYS_DMAC
+> >         tristate "DMA for SDHI SD/SDIO controllers using SYS-DMAC"
+> 
+> Better!
+> 
+> >         ...
+> >         help
+> >            This provides DMA support for the SDHI SD/SDIO controllers
+> >            using SYS-DMAC via DMA Engine. This supports the controllers
+> 
+> I would drop "the".
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/media/platform/vsp1/vsp1_drv.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Will do, thanks.
 
-diff --git a/drivers/media/platform/vsp1/vsp1_drv.c b/drivers/media/platform/vsp1/vsp1_drv.c
-index 048446af5ae7..239996cf882e 100644
---- a/drivers/media/platform/vsp1/vsp1_drv.c
-+++ b/drivers/media/platform/vsp1/vsp1_drv.c
-@@ -690,7 +690,7 @@ static const struct vsp1_device_info vsp1_device_infos[] = {
- 		.version = VI6_IP_VERSION_MODEL_VSPBD_GEN3,
- 		.model = "VSP2-BD",
- 		.gen = 3,
--		.features = VSP1_HAS_BRU | VSP1_HAS_WPF_VFLIP,
-+		.features = VSP1_HAS_BRU,
- 		.rpf_count = 5,
- 		.wpf_count = 1,
- 		.num_bru_inputs = 5,
-@@ -700,7 +700,7 @@ static const struct vsp1_device_info vsp1_device_infos[] = {
- 		.model = "VSP2-BC",
- 		.gen = 3,
- 		.features = VSP1_HAS_BRU | VSP1_HAS_CLU | VSP1_HAS_HGO
--			  | VSP1_HAS_LUT | VSP1_HAS_WPF_VFLIP,
-+			  | VSP1_HAS_LUT,
- 		.rpf_count = 5,
- 		.wpf_count = 1,
- 		.num_bru_inputs = 5,
-@@ -709,7 +709,7 @@ static const struct vsp1_device_info vsp1_device_infos[] = {
- 		.version = VI6_IP_VERSION_MODEL_VSPD_GEN3,
- 		.model = "VSP2-D",
- 		.gen = 3,
--		.features = VSP1_HAS_BRU | VSP1_HAS_LIF | VSP1_HAS_WPF_VFLIP,
-+		.features = VSP1_HAS_BRU | VSP1_HAS_LIF,
- 		.rpf_count = 5,
- 		.wpf_count = 2,
- 		.num_bru_inputs = 5,
--- 
-Regards,
-
-Laurent Pinchart
+> >            found in SuperH and Renesas ARM based SoCs.
+> >
+> > config MMC_SDHI_INTERNAL_DMAC
+> >         tristate "DMA for SDHI SD/SDIO controllers using on-chip bus mastering"
+> >         ...
+> >         help
+> >            This provides DMA support for the SDHI SD/SDIO controllers
+> >            using on-chip bus mastering. This supports the controllers
+> 
+> Likewise.
+> 
+> >            found in arm64 based SoCs.
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+> 
