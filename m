@@ -1,51 +1,108 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Kieran Bingham <kbingham@kernel.org>
-To: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se,
-        hans.verkuil@cisco.com,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH v6 3/3] MAINTAINERS: Add ADV748x driver
-Date: Tue, 27 Jun 2017 16:03:34 +0100
-Message-Id: <4e4f41206b52946056f1d9700878ceb97a87241d.1498575029.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.13d48bb2ba66a5e11c962c62b1a7b5832b0a2344.1498575029.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.13d48bb2ba66a5e11c962c62b1a7b5832b0a2344.1498575029.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.13d48bb2ba66a5e11c962c62b1a7b5832b0a2344.1498575029.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.13d48bb2ba66a5e11c962c62b1a7b5832b0a2344.1498575029.git-series.kieran.bingham+renesas@ideasonboard.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:37476 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752143AbdFPRvF (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 16 Jun 2017 13:51:05 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
+In-Reply-To: <87injwiumx.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1dLvNw-0005jt-8A@debutante>
+Date: Fri, 16 Jun 2017 18:50:16 +0100
+Subject: Applied "ASoC: simple-card-utils: add asoc_simple_card_of_parse_widgets()" to the asoc tree
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+The patch
 
-The ADV7481 is an integrated video decoder and combined HDMI/MHL
-receiver.
+   ASoC: simple-card-utils: add asoc_simple_card_of_parse_widgets()
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From b31f11d036e689ba9e60d581ffe8e032a6305da9 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Fri, 16 Jun 2017 01:38:50 +0000
+Subject: [PATCH] ASoC: simple-card-utils: add
+ asoc_simple_card_of_parse_widgets()
+
+Current simple card drivers are parsing widgets on each own driver
+(only simple-card at this point, but will be supported on all drivers)
+Encapsulation is one of simple card util's purpose.
+Let's add asoc_simple_card_of_parse_widgets for it.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- MAINTAINERS | 6 ++++++
- 1 file changed, 6 insertions(+)
+ include/sound/simple_card_utils.h     |  2 ++
+ sound/soc/generic/simple-card-utils.c | 19 +++++++++++++++++++
+ 2 files changed, 21 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c4be6d4af7d2..741da59b133a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -770,6 +770,12 @@ W:	http://ez.analog.com/community/linux-device-drivers
- S:	Supported
- F:	drivers/media/i2c/adv7180.c
+diff --git a/include/sound/simple_card_utils.h b/include/sound/simple_card_utils.h
+index 889c8ff86369..42c6a6ac3ce6 100644
+--- a/include/sound/simple_card_utils.h
++++ b/include/sound/simple_card_utils.h
+@@ -103,5 +103,7 @@ void asoc_simple_card_parse_convert(struct device *dev, char *prefix,
+ int asoc_simple_card_of_parse_routing(struct snd_soc_card *card,
+ 				      char *prefix,
+ 				      int optional);
++int asoc_simple_card_of_parse_widgets(struct snd_soc_card *card,
++				      char *prefix);
  
-+ANALOG DEVICES INC ADV748X DRIVER
-+M:	Kieran Bingham <kieran.bingham@ideasonboard.com>
-+L:	linux-media@vger.kernel.org
-+S:	Maintained
-+F:	drivers/media/i2c/adv748x/*
+ #endif /* __SIMPLE_CARD_UTILS_H */
+diff --git a/sound/soc/generic/simple-card-utils.c b/sound/soc/generic/simple-card-utils.c
+index a2b6d95bc2f9..26d64fa40c9c 100644
+--- a/sound/soc/generic/simple-card-utils.c
++++ b/sound/soc/generic/simple-card-utils.c
+@@ -397,6 +397,25 @@ int asoc_simple_card_of_parse_routing(struct snd_soc_card *card,
+ }
+ EXPORT_SYMBOL_GPL(asoc_simple_card_of_parse_routing);
+ 
++int asoc_simple_card_of_parse_widgets(struct snd_soc_card *card,
++				      char *prefix)
++{
++	struct device_node *node = card->dev->of_node;
++	char prop[128];
 +
- ANALOG DEVICES INC ADV7511 DRIVER
- M:	Hans Verkuil <hans.verkuil@cisco.com>
- L:	linux-media@vger.kernel.org
++	if (!prefix)
++		prefix = "";
++
++	snprintf(prop, sizeof(prop), "%s%s", prefix, "widgets");
++
++	if (of_property_read_bool(node, prop))
++		return snd_soc_of_parse_audio_simple_widgets(card, prop);
++
++	/* no widgets is not error */
++	return 0;
++}
++EXPORT_SYMBOL_GPL(asoc_simple_card_of_parse_widgets);
++
+ /* Module information */
+ MODULE_AUTHOR("Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>");
+ MODULE_DESCRIPTION("ALSA SoC Simple Card Utils");
 -- 
-git-series 0.9.1
+2.11.0
