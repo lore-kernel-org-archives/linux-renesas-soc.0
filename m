@@ -1,64 +1,48 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: broonie@kernel.org, hverkuil@xs4all.nl, mattw@codeaurora.org,
-        mitchelh@codeaurora.org, akpm@linux-foundation.org,
-        yamada.masahiro@socionext.com
-Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, chris.paterson2@renesas.com,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH v2 2/2] regmap: Avoid namespace collision within macro & tidyup
-Date: Tue, 13 Jun 2017 14:33:48 +0100
-Message-Id: <20170613133348.48044-3-ramesh.shanmugasundaram@bp.renesas.com>
-In-Reply-To: <20170613133348.48044-1-ramesh.shanmugasundaram@bp.renesas.com>
-References: <20170613133348.48044-1-ramesh.shanmugasundaram@bp.renesas.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:54739 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753771AbdFPNbV (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 16 Jun 2017 09:31:21 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 3/5] ARM: shmobile: document iW-RainboW-G20D-Qseven-RZG1M board
+Date: Fri, 16 Jun 2017 15:30:56 +0200
+Message-Id: <9086120f8b883034940e5228c83824ed21999537.1497617896.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1497617896.git.horms+renesas@verge.net.au>
+References: <cover.1497617896.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Renamed variable "timeout" to "__timeout" & "pollret" to "__ret" to
-avoid namespace collision. Tidy up macro arguments with paranthesis.
+From: Biju Das <biju.das@bp.renesas.com>
 
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Document the iW-RainboW-G20D-Qseven-RZG1M device tree bindings,
+listing it as a supported board.
+
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- include/linux/regmap.h | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+ Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/include/linux/regmap.h b/include/linux/regmap.h
-index 86eeacc1425a..ebc7282abc80 100644
---- a/include/linux/regmap.h
-+++ b/include/linux/regmap.h
-@@ -120,23 +120,24 @@ struct reg_sequence {
-  */
- #define regmap_read_poll_timeout(map, addr, val, cond, sleep_us, timeout_us) \
- ({ \
--	ktime_t timeout = ktime_add_us(ktime_get(), timeout_us); \
--	int pollret; \
-+	ktime_t __timeout = ktime_add_us(ktime_get(), timeout_us); \
-+	int __ret; \
- 	might_sleep_if(sleep_us); \
- 	for (;;) { \
--		pollret = regmap_read((map), (addr), &(val)); \
--		if (pollret) \
-+		__ret = regmap_read((map), (addr), &(val)); \
-+		if (__ret) \
- 			break; \
- 		if (cond) \
- 			break; \
--		if (timeout_us && ktime_compare(ktime_get(), timeout) > 0) { \
--			pollret = regmap_read((map), (addr), &(val)); \
-+		if ((timeout_us) && \
-+		    ktime_compare(ktime_get(), __timeout) > 0) { \
-+			__ret = regmap_read((map), (addr), &(val)); \
- 			break; \
- 		} \
- 		if (sleep_us) \
--			usleep_range((sleep_us >> 2) + 1, sleep_us); \
-+			usleep_range(((sleep_us) >> 2) + 1, sleep_us); \
- 	} \
--	pollret ?: ((cond) ? 0 : -ETIMEDOUT); \
-+	__ret ?: ((cond) ? 0 : -ETIMEDOUT); \
- })
- 
- #ifdef CONFIG_REGMAP
+diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+index fe850ef98dd8..c9c8e40c2ce5 100644
+--- a/Documentation/devicetree/bindings/arm/shmobile.txt
++++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -61,6 +61,8 @@ Boards:
+     compatible = "renesas,h3ulcb", "renesas,r8a7795";
+   - Henninger
+     compatible = "renesas,henninger", "renesas,r8a7791"
++  - iWave Systems RZ/G1M Qseven Development Platform (iW-RainboW-G20D-Qseven)
++    compatible = "iwave,g20d", "iwave,g20m", "renesas,r8a7743"
+   - iWave Systems RZ/G1M Qseven System On Module (iW-RainboW-G20M-Qseven)
+     compatible = "iwave,g20m", "renesas,r8a7743"
+   - Koelsch (RTP0RC7791SEB00010S)
 -- 
-2.12.2
+2.1.4
