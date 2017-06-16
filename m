@@ -1,169 +1,117 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:36334 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752563AbdF2KTl (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:54877 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753555AbdFPNbn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Jun 2017 06:19:41 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Alexey Firago <alexey_firago@mentor.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 6/8] clk: vc5: Add support for the input frequency doubler
-Date: Thu, 29 Jun 2017 12:18:49 +0200
-Message-Id: <20170629101851.23972-6-marek.vasut@gmail.com>
-In-Reply-To: <20170629101851.23972-1-marek.vasut@gmail.com>
-References: <20170629101851.23972-1-marek.vasut@gmail.com>
+        Fri, 16 Jun 2017 09:31:43 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH] soc: renesas: rcar-sysc: Use GENPD_FLAG_ALWAYS_ON
+Date: Fri, 16 Jun 2017 15:31:09 +0200
+Message-Id: <980532a5dda319eeafadc5c590376626ad178f4f.1497619041.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1497619041.git.horms+renesas@verge.net.au>
+References: <cover.1497619041.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Marek Vasut <marek.vasut+renesas@gmail.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-The VersaClock 6 has an input frequency doubler between the input
-clock mux and the predivider. Add new capability flag and support
-for this frequency doubler block into the driver.
+Improve handling of always-on PM domains by using the
+GENPD_FLAG_ALWAYS_ON flag introduced in commit ffaa42e8a40b7f10 ("PM /
+Domains: Enable users of genpd to specify always on PM domains").
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Alexey Firago <alexey_firago@mentor.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/clk/clk-versaclock5.c | 78 ++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 77 insertions(+), 1 deletion(-)
+ drivers/soc/renesas/rcar-sysc.c | 28 ++++------------------------
+ drivers/soc/renesas/rcar-sysc.h |  2 --
+ 2 files changed, 4 insertions(+), 26 deletions(-)
 
-diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index fcde42393997..6db84358520a 100644
---- a/drivers/clk/clk-versaclock5.c
-+++ b/drivers/clk/clk-versaclock5.c
-@@ -57,6 +57,7 @@
- #define VC5_PRIM_SRC_SHDN			0x10
- #define VC5_PRIM_SRC_SHDN_EN_XTAL		BIT(7)
- #define VC5_PRIM_SRC_SHDN_EN_CLKIN		BIT(6)
-+#define VC5_PRIM_SRC_SHDN_EN_DOUBLE_XTAL_FREQ	BIT(3)
- #define VC5_PRIM_SRC_SHDN_SP			BIT(1)
- #define VC5_PRIM_SRC_SHDN_EN_GBL_SHDN		BIT(0)
+diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
+index 528a13742aeb..d86bc6c84ea4 100644
+--- a/drivers/soc/renesas/rcar-sysc.c
++++ b/drivers/soc/renesas/rcar-sysc.c
+@@ -181,17 +181,6 @@ static int rcar_sysc_pd_power_off(struct generic_pm_domain *genpd)
+ 	struct rcar_sysc_pd *pd = to_rcar_pd(genpd);
  
-@@ -122,6 +123,8 @@
- /* flags to describe chip features */
- /* chip has built-in oscilator */
- #define VC5_HAS_INTERNAL_XTAL	BIT(0)
-+/* chip has PFD requency doubler */
-+#define VC5_HAS_PFD_FREQ_DBL	BIT(1)
+ 	pr_debug("%s: %s\n", __func__, genpd->name);
+-
+-	if (pd->flags & PD_NO_CR) {
+-		pr_debug("%s: Cannot control %s\n", __func__, genpd->name);
+-		return -EBUSY;
+-	}
+-
+-	if (pd->flags & PD_BUSY) {
+-		pr_debug("%s: %s busy\n", __func__, genpd->name);
+-		return -EBUSY;
+-	}
+-
+ 	return rcar_sysc_power_down(&pd->ch);
+ }
  
- /* Supported IDT VC5 models. */
- enum vc5_model {
-@@ -157,6 +160,7 @@ struct vc5_driver_data {
- 	struct clk		*pin_clkin;
- 	unsigned char		clk_mux_ins;
- 	struct clk_hw		clk_mux;
-+	struct clk_hw		clk_mul;
- 	struct clk_hw		clk_pfd;
- 	struct vc5_hw_data	clk_pll;
- 	struct vc5_hw_data	clk_fod[VC5_MAX_FOD_NUM];
-@@ -167,6 +171,10 @@ static const char * const vc5_mux_names[] = {
- 	"mux"
- };
+@@ -200,12 +189,6 @@ static int rcar_sysc_pd_power_on(struct generic_pm_domain *genpd)
+ 	struct rcar_sysc_pd *pd = to_rcar_pd(genpd);
  
-+static const char * const vc5_dbl_names[] = {
-+	"dbl"
-+};
-+
- static const char * const vc5_pfd_names[] = {
- 	"pfd"
- };
-@@ -264,6 +272,54 @@ static const struct clk_ops vc5_mux_ops = {
- 	.get_parent	= vc5_mux_get_parent,
- };
+ 	pr_debug("%s: %s\n", __func__, genpd->name);
+-
+-	if (pd->flags & PD_NO_CR) {
+-		pr_debug("%s: Cannot control %s\n", __func__, genpd->name);
+-		return 0;
+-	}
+-
+ 	return rcar_sysc_power_up(&pd->ch);
+ }
  
-+static unsigned long vc5_dbl_recalc_rate(struct clk_hw *hw,
-+					 unsigned long parent_rate)
-+{
-+	struct vc5_driver_data *vc5 =
-+		container_of(hw, struct vc5_driver_data, clk_mul);
-+	unsigned int premul;
-+
-+	regmap_read(vc5->regmap, VC5_PRIM_SRC_SHDN, &premul);
-+	if (premul & VC5_PRIM_SRC_SHDN_EN_DOUBLE_XTAL_FREQ)
-+		parent_rate *= 2;
-+
-+	return parent_rate;
-+}
-+
-+static long vc5_dbl_round_rate(struct clk_hw *hw, unsigned long rate,
-+			       unsigned long *parent_rate)
-+{
-+	if ((*parent_rate == rate) || ((*parent_rate * 2) == rate))
-+		return rate;
-+	else
-+		return -EINVAL;
-+}
-+
-+static int vc5_dbl_set_rate(struct clk_hw *hw, unsigned long rate,
-+			    unsigned long parent_rate)
-+{
-+	struct vc5_driver_data *vc5 =
-+		container_of(hw, struct vc5_driver_data, clk_mul);
-+	u32 mask;
-+
-+	if ((parent_rate * 2) == rate)
-+		mask = VC5_PRIM_SRC_SHDN_EN_DOUBLE_XTAL_FREQ;
-+	else
-+		mask = 0;
-+
-+	regmap_update_bits(vc5->regmap, VC5_PRIM_SRC_SHDN,
-+			   VC5_PRIM_SRC_SHDN_EN_DOUBLE_XTAL_FREQ,
-+			   mask);
-+
-+	return 0;
-+}
-+
-+static const struct clk_ops vc5_dbl_ops = {
-+	.recalc_rate	= vc5_dbl_recalc_rate,
-+	.round_rate	= vc5_dbl_round_rate,
-+	.set_rate	= vc5_dbl_set_rate,
-+};
-+
- static unsigned long vc5_pfd_recalc_rate(struct clk_hw *hw,
- 					 unsigned long parent_rate)
- {
-@@ -707,12 +763,32 @@ static int vc5_probe(struct i2c_client *client,
- 		goto err_clk;
+@@ -223,8 +206,7 @@ static void __init rcar_sysc_pd_setup(struct rcar_sysc_pd *pd)
+ 		 * only be turned off if the CPU is not in use.
+ 		 */
+ 		pr_debug("PM domain %s contains %s\n", name, "CPU");
+-		pd->flags |= PD_BUSY;
+-		gov = &pm_domain_always_on_gov;
++		genpd->flags |= GENPD_FLAG_ALWAYS_ON;
+ 	} else if (pd->flags & PD_SCU) {
+ 		/*
+ 		 * This domain contains an SCU and cache-controller, and
+@@ -232,19 +214,17 @@ static void __init rcar_sysc_pd_setup(struct rcar_sysc_pd *pd)
+ 		 * not in use.
+ 		 */
+ 		pr_debug("PM domain %s contains %s\n", name, "SCU");
+-		pd->flags |= PD_BUSY;
+-		gov = &pm_domain_always_on_gov;
++		genpd->flags |= GENPD_FLAG_ALWAYS_ON;
+ 	} else if (pd->flags & PD_NO_CR) {
+ 		/*
+ 		 * This domain cannot be turned off.
+ 		 */
+-		pd->flags |= PD_BUSY;
+-		gov = &pm_domain_always_on_gov;
++		genpd->flags |= GENPD_FLAG_ALWAYS_ON;
  	}
  
-+	if (vc5->chip_info->flags & VC5_HAS_PFD_FREQ_DBL) {
-+		/* Register frequency doubler */
-+		memset(&init, 0, sizeof(init));
-+		init.name = vc5_dbl_names[0];
-+		init.ops = &vc5_dbl_ops;
-+		init.flags = CLK_SET_RATE_PARENT;
-+		init.parent_names = vc5_mux_names;
-+		init.num_parents = 1;
-+		vc5->clk_mul.init = &init;
-+		ret = devm_clk_hw_register(&client->dev, &vc5->clk_mul);
-+		if (ret) {
-+			dev_err(&client->dev, "unable to register %s\n",
-+				init.name);
-+			goto err_clk;
-+		}
-+	}
-+
- 	/* Register PFD */
- 	memset(&init, 0, sizeof(init));
- 	init.name = vc5_pfd_names[0];
- 	init.ops = &vc5_pfd_ops;
- 	init.flags = CLK_SET_RATE_PARENT;
--	init.parent_names = vc5_mux_names;
-+	if (vc5->chip_info->flags & VC5_HAS_PFD_FREQ_DBL)
-+		init.parent_names = vc5_dbl_names;
-+	else
-+		init.parent_names = vc5_mux_names;
- 	init.num_parents = 1;
- 	vc5->clk_pfd.init = &init;
- 	ret = devm_clk_hw_register(&client->dev, &vc5->clk_pfd);
+ 	if (!(pd->flags & (PD_CPU | PD_SCU))) {
+ 		/* Enable Clock Domain for I/O devices */
+-		genpd->flags = GENPD_FLAG_PM_CLK;
++		genpd->flags |= GENPD_FLAG_PM_CLK;
+ 		if (has_cpg_mstp) {
+ 			genpd->attach_dev = cpg_mstp_attach_dev;
+ 			genpd->detach_dev = cpg_mstp_detach_dev;
+diff --git a/drivers/soc/renesas/rcar-sysc.h b/drivers/soc/renesas/rcar-sysc.h
+index 07edb049a401..1a5bebaf54ba 100644
+--- a/drivers/soc/renesas/rcar-sysc.h
++++ b/drivers/soc/renesas/rcar-sysc.h
+@@ -20,8 +20,6 @@
+ #define PD_SCU		BIT(1)	/* Area contains SCU and L2 cache */
+ #define PD_NO_CR	BIT(2)	/* Area lacks PWR{ON,OFF}CR registers */
+ 
+-#define PD_BUSY		BIT(3)	/* Busy, for internal use only */
+-
+ #define PD_CPU_CR	PD_CPU		  /* CPU area has CR (R-Car H1) */
+ #define PD_CPU_NOCR	PD_CPU | PD_NO_CR /* CPU area lacks CR (R-Car Gen2/3) */
+ #define PD_ALWAYS_ON	PD_NO_CR	  /* Always-on area */
 -- 
-2.11.0
+2.1.4
