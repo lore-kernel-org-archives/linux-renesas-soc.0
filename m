@@ -1,136 +1,65 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:54719 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753771AbdFPNbH (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Jun 2017 09:31:07 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/6] ARM: dts: r7s72100: Add support for GR-Peach
-Date: Fri, 16 Jun 2017 15:30:42 +0200
-Message-Id: <b879d674e03fccb42b0e79f21b2105ad6a824229.1497618353.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1497618353.git.horms+renesas@verge.net.au>
-References: <cover.1497618353.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdXu=0L9GOB+4DWvSTnXZEeyw551JiJ0uro9eECDx4fX-Q@mail.gmail.com>
+References: <149752254550.21887.15183665699230243235.sendpatchset@little-apple>
+ <149752258917.21887.4347773581840409774.sendpatchset@little-apple> <CAMuHMdXu=0L9GOB+4DWvSTnXZEeyw551JiJ0uro9eECDx4fX-Q@mail.gmail.com>
+From: Magnus Damm <magnus.damm@gmail.com>
+Date: Fri, 16 Jun 2017 19:10:09 +0900
+Message-ID: <CANqRtoRCewNxhf+BbBDQ1Skp_81xQ48p6ckTgFf+jnckyD6+Cw@mail.gmail.com>
+Subject: Re: [PATCH 04/04] iommu/ipmmu-vmsa: Replace local utlb code with
+ fwspec ids
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Joerg Roedel <joro@8bytes.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sricharan R <sricharan@codeaurora.org>,
+        Will Deacon <will.deacon@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        iommu@lists.linux-foundation.org,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Hi Geert,
 
-Add device tree source for Renesas GR-Peach board.
-GR-Peach is an RZ/A1H based board with 10MB of on-chip SRAM and 8MB
-QSPI flash storage.
-Add support for the board, and create a 2MB partition to use as rootfs.
+On Fri, Jun 16, 2017 at 4:18 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> Hi Magnus,
+>
+> On Thu, Jun 15, 2017 at 12:29 PM, Magnus Damm <magnus.damm@gmail.com> wrote:
+>> Now when both 32-bit and 64-bit code inside the driver is using
+>> fwspec it is possible to replace the utlb handling with fwspec ids
+>> that get populated from ->of_xlate().
+>
+> Thanks for your patch!
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- Documentation/devicetree/bindings/arm/shmobile.txt |  2 +
- arch/arm/boot/dts/Makefile                         |  1 +
- arch/arm/boot/dts/r7s72100-gr-peach.dts            | 66 ++++++++++++++++++++++
- 3 files changed, 69 insertions(+)
- create mode 100644 arch/arm/boot/dts/r7s72100-gr-peach.dts
+Thanks for the feedback!
 
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index 170fe0562c63..4b60ce21f4f3 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -55,6 +55,8 @@ Boards:
-     compatible = "renesas,bockw", "renesas,r8a7778"
-   - Genmai (RTK772100BC00000BR)
-     compatible = "renesas,genmai", "renesas,r7s72100"
-+  - GR-Peach (X28A-M01-E/F)
-+    compatible = "renesas,gr-peach", "renesas,r7s72100"
-   - Gose (RTP0RC7793SEB00010S)
-     compatible = "renesas,gose", "renesas,r8a7793"
-   - H3ULCB (R-Car Starter Kit Premier, RTP0RC7795SKB00010S)
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 9c5e1d944d1c..9d64197f3e91 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -701,6 +701,7 @@ dtb-$(CONFIG_ARCH_REALVIEW) += \
- dtb-$(CONFIG_ARCH_RENESAS) += \
- 	emev2-kzm9d.dtb \
- 	r7s72100-genmai.dtb \
-+	r7s72100-gr-peach.dtb \
- 	r7s72100-rskrza1.dtb \
- 	r8a73a4-ape6evm.dtb \
- 	r8a7740-armadillo800eva.dtb \
-diff --git a/arch/arm/boot/dts/r7s72100-gr-peach.dts b/arch/arm/boot/dts/r7s72100-gr-peach.dts
-new file mode 100644
-index 000000000000..a1b2aef984f6
---- /dev/null
-+++ b/arch/arm/boot/dts/r7s72100-gr-peach.dts
-@@ -0,0 +1,66 @@
-+/*
-+ * Device Tree Source for the GR-Peach board
-+ *
-+ * Copyright (C) 2017 Jacopo Mondi <jacopo+renesas@jmondi.org>
-+ * Copyright (C) 2016 Renesas Electronics
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2.  This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
-+
-+/dts-v1/;
-+#include "r7s72100.dtsi"
-+
-+/ {
-+	model = "GR-Peach";
-+	compatible = "renesas,gr-peach", "renesas,r7s72100";
-+
-+	aliases {
-+		serial0 = &scif2;
-+	};
-+
-+	chosen {
-+		bootargs = "ignore_loglevel rw root=/dev/mtdblock0";
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	memory@20000000 {
-+		device_type = "memory";
-+		reg = <0x20000000 0x00a00000>;
-+
-+	};
-+
-+	lbsc {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+	};
-+
-+	flash@18000000 {
-+		compatible = "mtd-rom";
-+		probe-type = "map_rom";
-+		reg = <0x18000000 0x00800000>;
-+		bank-width = <4>;
-+		device-width = <1>;
-+
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+
-+		rootfs@600000 {
-+			label = "rootfs";
-+			reg = <0x00600000 0x00200000>;
-+		};
-+	};
-+};
-+
-+&extal_clk {
-+	clock-frequency = <13333000>;
-+};
-+
-+&usb_x1_clk {
-+	clock-frequency = <48000000>;
-+};
-+
-+&scif2 {
-+	status = "okay";
-+};
--- 
-2.1.4
+>> --- 0013/drivers/iommu/ipmmu-vmsa.c
+>> +++ work/drivers/iommu/ipmmu-vmsa.c     2017-06-15 18:32:27.580607110 +0900
+>
+>>  static int ipmmu_of_xlate(struct device *dev,
+>>                           struct of_phandle_args *spec)
+>>  {
+>> -       return ipmmu_init_platform_device(dev);
+>> +       iommu_fwspec_add_ids(dev, spec->args, 1);
+>
+> Does it hurt if iommu_fwspec_add_ids() is called multiple times, as this is
+> done before the "Initialize once - xlate() will call multiple times" check?
+
+The function needs to be called several times to populate the ids, so
+that the "initialize once" check happens later is intentional and
+correct. Perhaps a bit unclear though...
+
+>> +
+>> +       return ipmmu_init_platform_device(dev, spec);
+>>  }
+
+Cheers,
+
+/ magnus
