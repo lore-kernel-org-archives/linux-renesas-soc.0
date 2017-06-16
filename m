@@ -1,81 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:46532 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751730AbdFNKMj (ORCPT
+Received: from sauhun.de ([88.99.104.3]:40229 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752882AbdFPI0r (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Jun 2017 06:12:39 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <87d1a79ztz.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dL5Hv-0007cD-8b@debutante>
-Date: Wed, 14 Jun 2017 11:12:35 +0100
-Subject: Applied "ASoC: simple-card-utils: add asoc_simple_card_of_parse_tdm()" to the asoc tree
+        Fri, 16 Jun 2017 04:26:47 -0400
+Date: Fri, 16 Jun 2017 10:26:46 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH mmc/next v2 2/2] mmc: renesas-sdhi: improve checkpatch
+ cleanness
+Message-ID: <20170616082645.nkur6st3dn3veg2l@ninjato>
+References: <1497553214-12914-1-git-send-email-horms+renesas@verge.net.au>
+ <1497553214-12914-3-git-send-email-horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="4adr6fpgvldqbsnx"
+Content-Disposition: inline
+In-Reply-To: <1497553214-12914-3-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
 
-   ASoC: simple-card-utils: add asoc_simple_card_of_parse_tdm()
+--4adr6fpgvldqbsnx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-has been applied to the asoc tree at
+On Thu, Jun 15, 2017 at 09:00:14PM +0200, Simon Horman wrote:
+> Trivial updates to improve checkpatch cleanness.
+>=20
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+I could move around large files across cards without problems:
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+--4adr6fpgvldqbsnx
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+-----BEGIN PGP SIGNATURE-----
 
-Thanks,
-Mark
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAllDlkUACgkQFA3kzBSg
+KbZdIw/7By/snCHeXNdjpBXwFCLNqnaEy8vGBgueNLm4jJesEzR/j/U8OL7R5bc/
+0daIEAqR7SJ6tCyF04/mGQOHHkn6OisvJ4usuTUSoAHn+YozCL66SpGQdZ1HH2tY
+0faVEOGORbZrQVV1fn3aFhxmkex7wDlllYiL6CahpD/dwbNiNVbaDfASqETQ1eAJ
+Km8kcQbmTVuuK2A0q8M5D7QVJXIwyQXSg6QwDK8qXM88IGxPaak8v3Bk4cMwLE+Q
+KjdfcwfOkpz1AQG734jAipGxTZdhkAZ9w2HV/vrpHS0ffx0j5h3llPQXVf0cyv0Z
+BgjBnsvD9l1ycjeEyvB88prg15dOQUjnO9vcfZKZmnTNRpFPjIt2LmkGSMyMBgWI
+fWiOakAhXJKKQEg/7+h5iqJghcAoik5bALJdAKqRS5JxNuHTdzTMsWeuK6b4KUnQ
+ZrBD+7PuQHEvAVt63xoEaV/pPEb9d5NBCbUozsktGmAkoZyuQ4VzPcVyX9kyxo3D
+5MrJ9b7VbJ18vp697ZvoIAEVzNlWh+3MotjHSyIt+SdSCl2xzYBrsDkT6QwQFPrt
+h+iufGHhNYLn+0yqYLthU85vka8m+DJyvZaM99hfWfszbDbuvxbdP/BRgHlHRyW4
++kOj5faPlWkJLig6U1Lf7OhQnlYClB49KBqCJZDl0YAOOe3rgjA=
+=UQUc
+-----END PGP SIGNATURE-----
 
->From e68ba207444354ddf295de2e7fbcc97c06cccc8b Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Wed, 14 Jun 2017 00:34:35 +0000
-Subject: [PATCH] ASoC: simple-card-utils: add asoc_simple_card_of_parse_tdm()
-
-Current simple card drivers are using asoc_simple_dai's tx_slot_mask,
-rx_slot_mask, slots, slot_width directly to parse TDM.
-Encapsulation is one of simple card util's purpose.
-Let's add asoc_simple_card_of_parse_tdm for it.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- include/sound/simple_card_utils.h | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/include/sound/simple_card_utils.h b/include/sound/simple_card_utils.h
-index 840d624148df..2679312228b3 100644
---- a/include/sound/simple_card_utils.h
-+++ b/include/sound/simple_card_utils.h
-@@ -75,6 +75,12 @@ int asoc_simple_card_parse_graph_dai(struct device_node *ep,
- 				     struct device_node **endpoint_np,
- 				     const char **dai_name);
- 
-+#define asoc_simple_card_of_parse_tdm(np, dai)			\
-+	snd_soc_of_parse_tdm_slot(np,	&(dai)->tx_slot_mask,	\
-+					&(dai)->rx_slot_mask,	\
-+					&(dai)->slots,		\
-+					&(dai)->slot_width);
-+
- int asoc_simple_card_init_dai(struct snd_soc_dai *dai,
- 			      struct asoc_simple_dai *simple_dai);
- 
--- 
-2.11.0
+--4adr6fpgvldqbsnx--
