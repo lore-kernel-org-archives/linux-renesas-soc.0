@@ -1,132 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f45.google.com ([209.85.214.45]:33194 "EHLO
-        mail-it0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751126AbdFBIrW (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:54739 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753555AbdFPNbZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Jun 2017 04:47:22 -0400
-MIME-Version: 1.0
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 2 Jun 2017 10:47:15 +0200
-Message-ID: <CAMuHMdX7_u_3TFK22inUp367LR3R77S72RAtRWPFnKE9-cUtpw@mail.gmail.com>
-Subject: SDHI clock imbalance
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Simon Horman <horms@verge.net.au>
-Cc: Linux MMC List <linux-mmc@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 16 Jun 2017 09:31:25 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 5/5] ARM: shmobile: Document Renesas H3-based Salvator-XS board DT bindings
+Date: Fri, 16 Jun 2017 15:30:58 +0200
+Message-Id: <521ec12e2f56b16e6a0b4e7ef97a666bd3de4ff5.1497617896.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1497617896.git.horms+renesas@verge.net.au>
+References: <cover.1497617896.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Wolfram, Ulf, Simon,
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-While investigating suspend/resume for the R-Car Gen3 clock driver, I
-noticed a clock imbalance for SDHI on Salvator-X.
+The Renesas Salvator-XS (Salvator-X 2nd version) development board can
+be equipped with either an R-Car H3 ES2.0 or M3-W ES1.x SiP, which are
+pin-compatible.
 
-After boot:
+Document board part number and compatible values for the version with
+R-Car H3.
 
-# head -2 /sys/kernel/debug/clk/clk_summary
-   clock         enable_cnt prepare_cnt  rate  accuracy phase
--------------------------------------------------------------
-# grep sd /sys/kernel/debug/clk/clk_summary
-         .sdsrc           3        3   399999984      0 0
-        sd3               1        1     6250000      0 0
-           sdif3          1        2     6250000      0 0
-        sd2               1        1   199999992      0 0
-           sdif2          1        2   199999992      0 0
-        sd1               0        0   199999992      0 0
-           sdif1          0        0   199999992      0 0
-        sd0               1        1     6250000      0 0
-           sdif0          1        2     6250000      0 0
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-After s2idle suspend/resume:
-
-# grep sd /sys/kernel/debug/clk/clk_summary
-         .sdsrc           3        3   399999984      0 0
-        sd3               1        1     6250000      0 0
-           sdif3          2        2     6250000      0 0
-        sd2               1        1   199999992      0 0
-           sdif2          2        2   199999992      0 0
-        sd1               0        0   199999992      0 0
-           sdif1          0        0   199999992      0 0
-        sd0               1        1     6250000      0 0
-           sdif0          2        2     6250000      0 0
-
-Enable counts are 1 before suspend, and 2 after resume.
-
-
-Boot: Enabled once (also at hardware level):
-
-    platform_drv_probe
-        renesas_sdhi_sys_dmac_probe
-            renesas_sdhi_probe
-                tmio_mmc_host_probe
-                    renesas_sdhi_clk_enable
-
-
-Suspend: Disabled once (also at hardware level):
-
-    suspend_devices_and_enter
-        dpm_suspend_start
-            dpm_suspend
-                __device_suspend
-                    dpm_run_callback
-                        pm_runtime_force_suspend
-                            genpd_runtime_suspend
-                                pm_generic_runtime_suspend
-                                    tmio_mmc_host_runtime_suspend
-                                        renesas_sdhi_clk_disable
-
-
-Resume: Enabled twice (first one enables at hardware level):
-
-    dpm_resume_noirq
-        device_resume_noirq
-            dpm_run_callback
-                pm_genpd_resume_noirq
-                    pm_runtime_force_resume
-                        genpd_runtime_resume
-                            genpd_start_dev
-                                pm_clk_resume                   (1)
-                            __genpd_runtime_resume
-                                pm_generic_runtime_resume
-                                    tmio_mmc_host_runtime_resume
-                                        renesas_sdhi_clk_enable (2)
-
-
-During subsequent suspends, the clock is disabled twice (last one disables
-at hardware level), as expected:
-
-    suspend_devices_and_enter
-        dpm_suspend_start
-            dpm_suspend
-                __device_suspend
-                    dpm_run_callback
-                        pm_runtime_force_suspend
-                            genpd_runtime_suspend
-                                pm_generic_runtime_suspend
-                                    tmio_mmc_host_runtime_suspend
-                                        renesas_sdhi_clk_disable (1)
-                                genpd_stop_dev
-                                    pm_clk_suspend               (2)
-
-
->From now on, the imbalance is gone.
-
-Note that at boot and initial suspend, genpd does not seem to call into the
-clock domain operations at all.
-Presumable some call to pm_runtime_get_sync() is missing?
-
-Thanks.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+index 433f25afe288..d95324a88ee6 100644
+--- a/Documentation/devicetree/bindings/arm/shmobile.txt
++++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -86,6 +86,8 @@ Boards:
+     compatible = "renesas,salvator-x", "renesas,r8a7795";
+   - Salvator-X (RTP0RC7796SIPB0011S)
+     compatible = "renesas,salvator-x", "renesas,r8a7796";
++  - Salvator-XS (Salvator-X 2nd version, RTP0RC7795SIPB0012S)
++    compatible = "renesas,salvator-xs", "renesas,r8a7795";
+   - SILK (RTP0RC7794LCB00011S)
+     compatible = "renesas,silk", "renesas,r8a7794"
+   - SK-RZG1E (YR8A77450S000BE)
+-- 
+2.1.4
