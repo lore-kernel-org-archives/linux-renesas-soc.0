@@ -1,58 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:38199 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752992AbdFOSat (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:54739 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753555AbdFPNb0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Jun 2017 14:30:49 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 0/4] i2c: document DMA handling and add helpers for it
-Date: Thu, 15 Jun 2017 20:30:35 +0200
-Message-Id: <20170615183039.22925-1-wsa+renesas@sang-engineering.com>
+        Fri, 16 Jun 2017 09:31:26 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 4/5] ARM: shmobile: Update R-Car Gen3 ULCB board part numbers
+Date: Fri, 16 Jun 2017 15:30:57 +0200
+Message-Id: <fa5b2e749c99e6dbcca9c067a59b2ce17b3ac82e.1497617896.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1497617896.git.horms+renesas@verge.net.au>
+References: <cover.1497617896.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-So, after revisiting old mail threads and taking part in a similar discussion
-on the USB list, here is what I cooked up to document and ease DMA handling for
-I2C within Linux. Please have a look at the documentation introduced in patch 2
-for further details.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-The branch can be found here:
+The board part numbers for the R-Car H3 and M3 ULCB boards corresponded
+to versions predating mass production.  Update them for mass production.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/i2c-core-dma
+Note that the H3 ULCB board can be equipped with either revision ES1.1
+or ES2.0 of the R-Car H3 SoC.  While these have different board part
+numbers, no new compatible values are needed, as the revision can be
+detected at runtime using the PRR register.
 
-And big kudos to Renesas Electronics for funding this work, thank you very much!
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ Documentation/devicetree/bindings/arm/shmobile.txt | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Regards,
-
-   Wolfram
-
-Changes since RFC:
-
-* the helper i2c_check_msg_for_dma() can optionally take a pointer and then it
-  will attach a bounce buffer to it in case the message buffer is not DMA safe
-* a second helper was added. i2c_release_bounce_buf() will copy data back to
-  the message buffer and release the bounce buffer
-* the documentation has been extended to match the above
-* no ifdeffery around CONFIG_DMA_API_DEBUG anymore. The I2C core behaviour
-  should not depend on such symbols.
-* the i2c-sh_mobile driver has been updated to use bounce buffers
-
-
-Wolfram Sang (4):
-  i2c: add helpers to ease DMA handling
-  i2c: add docs to clarify DMA handling
-  i2c: sh_mobile: use helper to decide if DMA is useful
-  i2c: rcar: check for DMA-capable buffers
-
- Documentation/i2c/DMA-considerations | 37 ++++++++++++++++++++
- drivers/i2c/busses/i2c-rcar.c        | 18 +++++++---
- drivers/i2c/busses/i2c-sh_mobile.c   |  8 +++--
- include/linux/i2c.h                  | 65 ++++++++++++++++++++++++++++++++++++
- 4 files changed, 121 insertions(+), 7 deletions(-)
- create mode 100644 Documentation/i2c/DMA-considerations
-
+diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+index c9c8e40c2ce5..433f25afe288 100644
+--- a/Documentation/devicetree/bindings/arm/shmobile.txt
++++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -57,7 +57,8 @@ Boards:
+     compatible = "renesas,genmai", "renesas,r7s72100"
+   - Gose (RTP0RC7793SEB00010S)
+     compatible = "renesas,gose", "renesas,r8a7793"
+-  - H3ULCB (R-Car Starter Kit Premier, RTP0RC7795SKB00010S)
++  - H3ULCB (R-Car Starter Kit Premier, RTP0RC7795SKBX0010SA00 (H3 ES1.1))
++    H3ULCB (R-Car Starter Kit Premier, RTP0RC77951SKBX010SA00 (H3 ES2.0))
+     compatible = "renesas,h3ulcb", "renesas,r8a7795";
+   - Henninger
+     compatible = "renesas,henninger", "renesas,r8a7791"
+@@ -73,7 +74,7 @@ Boards:
+     compatible = "renesas,kzm9g", "renesas,sh73a0"
+   - Lager (RTP0RC7790SEB00010S)
+     compatible = "renesas,lager", "renesas,r8a7790"
+-  - M3ULCB (R-Car Starter Kit Pro, RTP0RC7796SKB00010S)
++  - M3ULCB (R-Car Starter Kit Pro, RTP0RC7796SKBX0010SA09 (M3 ES1.0))
+     compatible = "renesas,m3ulcb", "renesas,r8a7796";
+   - Marzen (R0P7779A00010S)
+     compatible = "renesas,marzen", "renesas,r8a7779"
 -- 
-2.11.0
+2.1.4
