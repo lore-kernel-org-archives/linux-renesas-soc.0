@@ -1,135 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:54739 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:54614 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753663AbdFPNbR (ORCPT
+        with ESMTP id S1753606AbdFPNan (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Jun 2017 09:31:17 -0400
+        Fri, 16 Jun 2017 09:30:43 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Chris Brandt <chris.brandt@renesas.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 1/5] ARM: dts: r7s72100: add clock bit definitions
-Date: Fri, 16 Jun 2017 15:30:54 +0200
-Message-Id: <fe811e1de389c373ddf0671888e32f9ad973c969.1497617896.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1497617896.git.horms+renesas@verge.net.au>
-References: <cover.1497617896.git.horms+renesas@verge.net.au>
+Subject: [PATCH 02/11] arm64: dts: ulcb: add 12288000 for sound ADG
+Date: Fri, 16 Jun 2017 15:30:10 +0200
+Message-Id: <9f22774c214ada7b951e312ca39a00e3878c560a.1497617276.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1497617276.git.horms+renesas@verge.net.au>
+References: <cover.1497617276.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Chris Brandt <chris.brandt@renesas.com>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-Add the remaining bit locations for the module stop clock registers.
+Current rcar_sound only has 11289600 (= for 44.1kHz) clock-frequency,
+but it needs 12288000 for 48kHz too.
+Otherwise, 48kHz based sound can't handle correctly.
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- include/dt-bindings/clock/r7s72100-clock.h | 51 ++++++++++++++++++++++++++++++
- 1 file changed, 51 insertions(+)
+ arch/arm64/boot/dts/renesas/ulcb.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/dt-bindings/clock/r7s72100-clock.h b/include/dt-bindings/clock/r7s72100-clock.h
-index dcd2072151fc..7dd8bc0c3cd0 100644
---- a/include/dt-bindings/clock/r7s72100-clock.h
-+++ b/include/dt-bindings/clock/r7s72100-clock.h
-@@ -12,8 +12,18 @@
+diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+index 41e83c8530f7..b5c6ee07d7f9 100644
+--- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
++++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+@@ -281,7 +281,7 @@
  
- #define R7S72100_CLK_PLL	0
+ 	/* audio_clkout0/1/2/3 */
+ 	#clock-cells = <1>;
+-	clock-frequency = <11289600>;
++	clock-frequency = <11289600 12288000>;
  
-+/* MSTP2 */
-+#define R7S72100_CLK_CORESIGHT	0
-+
- /* MSTP3 */
-+#define R7S72100_CLK_IEBUS	7
-+#define R7S72100_CLK_IRDA	6
-+#define R7S72100_CLK_LIN0	5
-+#define R7S72100_CLK_LIN1	4
- #define R7S72100_CLK_MTU2	3
-+#define R7S72100_CLK_CAN	2
-+#define R7S72100_CLK_ADCPWR	1
-+#define R7S72100_CLK_PWM	0
+ 	status = "okay";
  
- /* MSTP4 */
- #define R7S72100_CLK_SCIF0	7
-@@ -26,25 +36,51 @@
- #define R7S72100_CLK_SCIF7	0
- 
- /* MSTP5 */
-+#define R7S72100_CLK_SCI0	7
-+#define R7S72100_CLK_SCI1	6
-+#define R7S72100_CLK_SG0	5
-+#define R7S72100_CLK_SG1	4
-+#define R7S72100_CLK_SG2	3
-+#define R7S72100_CLK_SG3	2
- #define R7S72100_CLK_OSTM0	1
- #define R7S72100_CLK_OSTM1	0
- 
- /* MSTP6 */
-+#define R7S72100_CLK_ADC	7
-+#define R7S72100_CLK_CEU	6
-+#define R7S72100_CLK_DOC0	5
-+#define R7S72100_CLK_DOC1	4
-+#define R7S72100_CLK_DRC0	3
-+#define R7S72100_CLK_DRC1	2
-+#define R7S72100_CLK_JCU	1
- #define R7S72100_CLK_RTC	0
- 
- /* MSTP7 */
-+#define R7S72100_CLK_VDEC0	7
-+#define R7S72100_CLK_VDEC1	6
- #define R7S72100_CLK_ETHER	4
-+#define R7S72100_CLK_NAND	3
- #define R7S72100_CLK_USB0	1
- #define R7S72100_CLK_USB1	0
- 
- /* MSTP8 */
-+#define R7S72100_CLK_IMR0	7
-+#define R7S72100_CLK_IMR1	6
-+#define R7S72100_CLK_IMRDISP	5
- #define R7S72100_CLK_MMCIF	4
-+#define R7S72100_CLK_MLB	3
-+#define R7S72100_CLK_ETHAVB	2
-+#define R7S72100_CLK_SCUX	1
- 
- /* MSTP9 */
- #define R7S72100_CLK_I2C0	7
- #define R7S72100_CLK_I2C1	6
- #define R7S72100_CLK_I2C2	5
- #define R7S72100_CLK_I2C3	4
-+#define R7S72100_CLK_SPIBSC0	3
-+#define R7S72100_CLK_SPIBSC1	2
-+#define R7S72100_CLK_VDC50	1	/* and LVDS */
-+#define R7S72100_CLK_VDC51	0
- 
- /* MSTP10 */
- #define R7S72100_CLK_SPI0	7
-@@ -52,6 +88,17 @@
- #define R7S72100_CLK_SPI2	5
- #define R7S72100_CLK_SPI3	4
- #define R7S72100_CLK_SPI4	3
-+#define R7S72100_CLK_CDROM	2
-+#define R7S72100_CLK_SPDIF	1
-+#define R7S72100_CLK_RGPVG2	0
-+
-+/* MSTP11 */
-+#define R7S72100_CLK_SSI0	5
-+#define R7S72100_CLK_SSI1	4
-+#define R7S72100_CLK_SSI2	3
-+#define R7S72100_CLK_SSI3	2
-+#define R7S72100_CLK_SSI4	1
-+#define R7S72100_CLK_SSI5	0
- 
- /* MSTP12 */
- #define R7S72100_CLK_SDHI00	3
-@@ -59,4 +106,8 @@
- #define R7S72100_CLK_SDHI10	1
- #define R7S72100_CLK_SDHI11	0
- 
-+/* MSTP13 */
-+#define R7S72100_CLK_PIX1	2
-+#define R7S72100_CLK_PIX0	1
-+
- #endif /* __DT_BINDINGS_CLOCK_R7S72100_H__ */
 -- 
 2.1.4
