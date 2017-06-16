@@ -1,64 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45938 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752317AbdFQPBM (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:45932 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753084AbdFPJ7D (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 17 Jun 2017 11:01:12 -0400
-Date: Sat, 17 Jun 2017 17:01:09 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH mmc/next v2 4/4] mmc: renesas-sdhi: remove gen3 support
- from SYS-DMAC driver
-Message-ID: <20170617150109.cnmjbsk6cmemw7my@ninjato>
+        Fri, 16 Jun 2017 05:59:03 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH mmc/next v2 4/4] mmc: renesas-sdhi: remove gen3 support from SYS-DMAC driver
+Date: Fri, 16 Jun 2017 11:58:54 +0200
+Message-Id: <1497607134-10241-5-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1497607134-10241-1-git-send-email-horms+renesas@verge.net.au>
 References: <1497607134-10241-1-git-send-email-horms+renesas@verge.net.au>
- <1497607134-10241-5-git-send-email-horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="gletfm6imhstwdra"
-Content-Disposition: inline
-In-Reply-To: <1497607134-10241-5-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Gen3 SoCs are now supported by the internal DMAC variant of the SDHI driver.
+Remove them from the SYS-DMAC variant where only PIO mode is supported
+for those SoCs.
 
---gletfm6imhstwdra
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+v2
+* Revised changelog
+---
+ drivers/mmc/host/renesas_sdhi_sys_dmac.c | 21 ---------------------
+ 1 file changed, 21 deletions(-)
 
-On Fri, Jun 16, 2017 at 11:58:54AM +0200, Simon Horman wrote:
-> Gen3 SoCs are now supported by the internal DMAC variant of the SDHI driv=
-er.
-> Remove them from the SYS-DMAC variant where only PIO mode is supported
-> for those SoCs.
->=20
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---gletfm6imhstwdra
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAllFRDUACgkQFA3kzBSg
-KbaejQ//VLPXyQwgt2XpY7RI+SyK367OtgjZ/FbbC/RFLgiKLtQCBIrTmR418CBz
-dqrffyGNmdwAXQ0IotWtjmyoP8y166SrSKYsko2Qeo62ASLuyu4xVKs25Cnjcx4J
-yOpi3Uc9hBfuiTd67YPik+MF9s48sxgt4sLp/n0TNPa4YRf7YtKTdWvolrutGndg
-L7Meq9lSf8c/Ea+tMsjdxAnlWWPd247zLBSDUyNTuGW7u9SBlkvEoSePlrrvd/93
-RLFzHoAzzDC5kV1JPzQL8dVsWTzlJAQnt3Freb2dGyeFFm5dGft7pi7N0gPIwqf8
-svcd2f/i5+G3mwFDxaxLvooerx1+UM8Hw5PP/D6WA/wtSLirV5H66qK6W3mb05ld
-JxtSzvwVW+BzIWHnR23JKv9Eh23ZBFEI07UEl1yKe7pQIsoME8d325MEDtQM9+fZ
-AaYhWQnLb1PCjS1iQz2l8PW4DewrNh8YfvSrZUheD7lZLcJRpccWfOehu+K1K5wa
-RiuVRfef/KTshphkHMTbOkRG8NQMkmVKnvsqwoefHlfhh0iCGbWRLm5pxVRrrQkg
-QL66JmcMdPHob9lDQTQ2lXq5eUGn0aUy1ZXS4/upcOTfmUsCdK5hyWrSA7lNXMNL
-DsTGLK1Q7GfN2tcGwStVY955uXQxa4kyScRe1NlIR7fP1Vpiez8=
-=S3Ql
------END PGP SIGNATURE-----
-
---gletfm6imhstwdra--
+diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+index d1cfc2370915..2897ee0b444a 100644
+--- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+@@ -66,25 +66,6 @@ static const struct renesas_sdhi_of_data of_rcar_gen2_compatible = {
+ 	.taps_num	= ARRAY_SIZE(rcar_gen2_scc_taps),
+ };
+ 
+-/* Definitions for sampling clocks */
+-static struct renesas_sdhi_scc rcar_gen3_scc_taps[] = {
+-	{
+-		.clk_rate = 0,
+-		.tap = 0x00000300,
+-	},
+-};
+-
+-static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
+-	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_WRPROTECT_DISABLE |
+-			  TMIO_MMC_CLK_ACTUAL | TMIO_MMC_MIN_RCAR2,
+-	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
+-			  MMC_CAP_CMD23,
+-	.bus_shift	= 2,
+-	.scc_offset	= 0x1000,
+-	.taps		= rcar_gen3_scc_taps,
+-	.taps_num	= ARRAY_SIZE(rcar_gen3_scc_taps),
+-};
+-
+ static const struct of_device_id renesas_sdhi_sys_dmac_of_match[] = {
+ 	{ .compatible = "renesas,sdhi-shmobile" },
+ 	{ .compatible = "renesas,sdhi-sh73a0", .data = &of_default_cfg, },
+@@ -98,8 +79,6 @@ static const struct of_device_id renesas_sdhi_sys_dmac_of_match[] = {
+ 	{ .compatible = "renesas,sdhi-r8a7792", .data = &of_rcar_gen2_compatible, },
+ 	{ .compatible = "renesas,sdhi-r8a7793", .data = &of_rcar_gen2_compatible, },
+ 	{ .compatible = "renesas,sdhi-r8a7794", .data = &of_rcar_gen2_compatible, },
+-	{ .compatible = "renesas,sdhi-r8a7795", .data = &of_rcar_gen3_compatible, },
+-	{ .compatible = "renesas,sdhi-r8a7796", .data = &of_rcar_gen3_compatible, },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, renesas_sdhi_sys_dmac_of_match);
+-- 
+2.1.4
