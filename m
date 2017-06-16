@@ -1,242 +1,254 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f193.google.com ([209.85.223.193]:36402 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751639AbdF2J1a (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:54739 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753598AbdFPNbL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Jun 2017 05:27:30 -0400
-MIME-Version: 1.0
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 29 Jun 2017 11:27:28 +0200
-Message-ID: <CAMuHMdW9+CNTTOVO4SRRUxuz3ajLbY2j1uG8b_RpHX52NPwXrQ@mail.gmail.com>
-Subject: Clocks used by another OS/CPU (was: Re: [RFC PATCH] clk: renesas:
- cpg-mssr: Add interface for critical core clocks)
-To: Dirk Behme <dirk.behme@de.bosch.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 16 Jun 2017 09:31:11 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH] soc: renesas: Rework Kconfig and Makefile logic
+Date: Fri, 16 Jun 2017 15:30:31 +0200
+Message-Id: <8be381a131c29c4737aed44e7e5f90cb77bb4a7e.1497617480.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1497617480.git.horms+renesas@verge.net.au>
+References: <cover.1497617480.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Dirk,
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-CC clock, ARM, DT, PM people
+The goals are to:
+  - Allow precise control over and automatic selection of which
+    (sub)drivers are used for which SoC,
+  - Allow adding support for new SoCs easily,
+  - Allow compile-testing of all (sub)drivers,
+  - Keep driver selection logic in the subsystem-specific Kconfig,
+    independent from the architecture-specific Kconfig (i.e. no "select"
+    from arch/arm64/Kconfig.platforms), to avoid dependencies.
 
-TL;DR: Clocks may be in use by another CPU not running Linux, while Linux
-disables them as being unused.
+This is implemented by:
+  - Introducing Kconfig symbols for all drivers and sub-drivers,
+  - Introducing the Kconfig symbol SOC_RENESAS, which is enabled
+    automatically when building for a Renesas ARM platform, and which
+    enables all required drivers without interaction of the user, based
+    on SoC-specific ARCH_* symbols,
+  - Allowing the user to enable any Kconfig symbol manually if
+    COMPILE_TEST is enabled,
+  - Using the new Kconfig symbols instead of the ARCH_* symbols to
+    control compilation in the Makefile,
+  - Always entering drivers/soc/renesas/ during the build.
 
-On Mon, Jun 26, 2017 at 1:30 PM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
-> With commit 72f5df2c2bbb6 ("clk: renesas: cpg-mssr: Migrate to
-> CLK_IS_CRITICAL") we are able to handle critical module clocks.
-> Introduce the same logic for critical core clocks.
->
-> Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
-> ---
-> Commit
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/clk/renesas?id=72f5df2c2bbb66d4a555cb51eb9f412abf1af77f
->
-> is quite nice to avoid *module* clocks being disabled. Unfortunately,
-> there are *core* clocks, too. E.g. using an other OS on the Cortex R7
-> core of the r8a7795, the 'canfd' is a quite popular core clock which
-> shouldn't be disabled by Linux.
->
-> Therefore, this patch is a proposal to use the same 'mark clocks as
-> critical' logic implemented for the module clocks for the core
-> clocks, too.
->
-> Opinions?
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ drivers/soc/Kconfig                  |  1 +
+ drivers/soc/Makefile                 |  2 +-
+ drivers/soc/renesas/Kconfig          | 63 ++++++++++++++++++++++++++++++++++++
+ drivers/soc/renesas/Makefile         | 31 +++++++++---------
+ drivers/soc/renesas/rcar-sysc.c      | 24 +++++++-------
+ include/linux/soc/renesas/rcar-rst.h |  3 +-
+ 6 files changed, 92 insertions(+), 32 deletions(-)
+ create mode 100644 drivers/soc/renesas/Kconfig
 
-On r8a7795, there are several Cortex A cores running Linux, and a Cortex R7
-core which may run another OS.
-This is an interesting issue, and relevant to other SoCs, too.
-
-In this particular case, the "canfd" clock is a core clock used as an
-auxiliary clock for the CAN0, CAN1, and CANFD interfaces.  This can lead
-to three scenarios:
-  1. Linux controls all CAN interfaces
-     => no issue,
-  2. The OS on the RT CPU controls all CAN interfaces
-     => issue, Linux disables the clock
-  3. Mix of 1 and 2
-     => More issues.
-Of course this is not limited to clocks, but also to e.g. PM domains.
-
-How can this be handled?
-I believe just marking the "canfd" clock critical is not the right solution,
-as about any clock could be used by the RT CPU.
-
-Still, Linux needs to be made aware that devices (clocks and PM domains) are
-controlled by another CPU/OS.
-
-Should this be described in DT? It feels like software policy to me.
-
-Note that we (mainline) currently don't describe the Cortex R7 core in DT.
-Dirk: do you describe it?
-
-Summary:
-  1. Core/module clocks are described in the clock driver (not in DT),
-  2. Unused clocks are disabled by CCF,
-  3. Clocks may be in use by the Real-Time CPU core, running another OS,
-  4. How to communicate to Linux which clocks are under control of the RT CPU?
-
-Thanks for your comments!
-
->  drivers/clk/renesas/clk-div6.c         | 17 +++++++++++++++--
->  drivers/clk/renesas/clk-div6.h         |  4 +++-
->  drivers/clk/renesas/r8a7795-cpg-mssr.c |  7 +++++++
->  drivers/clk/renesas/renesas-cpg-mssr.c |  3 ++-
->  drivers/clk/renesas/renesas-cpg-mssr.h |  8 ++++++++
->  5 files changed, 35 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/clk/renesas/clk-div6.c b/drivers/clk/renesas/clk-div6.c
-> index 0627860..5917e05 100644
-> --- a/drivers/clk/renesas/clk-div6.c
-> +++ b/drivers/clk/renesas/clk-div6.c
-> @@ -18,6 +18,7 @@
->  #include <linux/of_address.h>
->  #include <linux/slab.h>
->
-> +#include "renesas-cpg-mssr.h"
->  #include "clk-div6.h"
->
->  #define CPG_DIV6_CKSTP         BIT(8)
-> @@ -184,7 +185,9 @@ static const struct clk_ops cpg_div6_clock_ops = {
->  struct clk * __init cpg_div6_register(const char *name,
->                                       unsigned int num_parents,
->                                       const char **parent_names,
-> -                                     void __iomem *reg)
-> +                                     void __iomem *reg,
-> +                                     const struct cpg_mssr_info *info,
-> +                                     unsigned int id)
->  {
->         unsigned int valid_parents;
->         struct clk_init_data init;
-> @@ -246,6 +249,15 @@ struct clk * __init cpg_div6_register(const char *name,
->         init.name = name;
->         init.ops = &cpg_div6_clock_ops;
->         init.flags = CLK_IS_BASIC;
-> +       if (info) {
-> +               for (i = 0; i < info->num_crit_core_clks; i++)
-> +                       if (id == info->crit_core_clks[i]) {
-> +                               pr_devel("DIV6 %s setting CLK_IS_CRITICAL\n",
-> +                                        name);
-> +                               init.flags |= CLK_IS_CRITICAL;
-> +                               break;
-> +                       }
-> +       }
->         init.parent_names = parent_names;
->         init.num_parents = valid_parents;
->
-> @@ -298,7 +310,8 @@ static void __init cpg_div6_clock_init(struct device_node *np)
->         for (i = 0; i < num_parents; i++)
->                 parent_names[i] = of_clk_get_parent_name(np, i);
->
-> -       clk = cpg_div6_register(clk_name, num_parents, parent_names, reg);
-> +       clk = cpg_div6_register(clk_name, num_parents, parent_names, reg,
-> +                               NULL, 0);
->         if (IS_ERR(clk)) {
->                 pr_err("%s: failed to register %s DIV6 clock (%ld)\n",
->                        __func__, np->name, PTR_ERR(clk));
-> diff --git a/drivers/clk/renesas/clk-div6.h b/drivers/clk/renesas/clk-div6.h
-> index 567b31d..b619d6b4 100644
-> --- a/drivers/clk/renesas/clk-div6.h
-> +++ b/drivers/clk/renesas/clk-div6.h
-> @@ -2,6 +2,8 @@
->  #define __RENESAS_CLK_DIV6_H__
->
->  struct clk *cpg_div6_register(const char *name, unsigned int num_parents,
-> -                             const char **parent_names, void __iomem *reg);
-> +                             const char **parent_names, void __iomem *reg,
-> +                             const struct cpg_mssr_info *info,
-> +                             unsigned int id);
->
->  #endif
-> diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-> index eaa98b4..a54fed6 100644
-> --- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-> +++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-> @@ -114,6 +114,9 @@ static struct cpg_core_clk r8a7795_core_clks[] __initdata = {
->         DEF_BASE("r",           R8A7795_CLK_R,     CLK_TYPE_GEN3_R, CLK_RINT),
->  };
->
-> +static const unsigned int r8a7795_crit_core_clks[] __initconst = {
-> +};
-> +
->  static struct mssr_mod_clk r8a7795_mod_clks[] __initdata = {
->         DEF_MOD("fdp1-2",                117,   R8A7795_CLK_S2D1), /* ES1.x */
->         DEF_MOD("fdp1-1",                118,   R8A7795_CLK_S0D1),
-> @@ -441,6 +444,10 @@ const struct cpg_mssr_info r8a7795_cpg_mssr_info __initconst = {
->         .last_dt_core_clk = LAST_DT_CORE_CLK,
->         .num_total_core_clks = MOD_CLK_BASE,
->
-> +       /* Critical Core Clocks */
-> +       .crit_core_clks = r8a7795_crit_core_clks,
-> +       .num_crit_core_clks = ARRAY_SIZE(r8a7795_crit_core_clks),
-> +
->         /* Module Clocks */
->         .mod_clks = r8a7795_mod_clks,
->         .num_mod_clks = ARRAY_SIZE(r8a7795_mod_clks),
-> diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-> index 99eeec6..80be019 100644
-> --- a/drivers/clk/renesas/renesas-cpg-mssr.c
-> +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-> @@ -293,7 +293,8 @@ static void __init cpg_mssr_register_core_clk(const struct cpg_core_clk *core,
->
->                 if (core->type == CLK_TYPE_DIV6P1) {
->                         clk = cpg_div6_register(core->name, 1, &parent_name,
-> -                                               priv->base + core->offset);
-> +                                               priv->base + core->offset, info,
-> +                                               core->id);
->                 } else {
->                         clk = clk_register_fixed_factor(NULL, core->name,
->                                                         parent_name, 0,
-> diff --git a/drivers/clk/renesas/renesas-cpg-mssr.h b/drivers/clk/renesas/renesas-cpg-mssr.h
-> index 148f4f0a..a723fdd 100644
-> --- a/drivers/clk/renesas/renesas-cpg-mssr.h
-> +++ b/drivers/clk/renesas/renesas-cpg-mssr.h
-> @@ -86,6 +86,10 @@ struct device_node;
->       * @last_dt_core_clk: ID of the last Core Clock exported to DT
->       * @num_total_core_clks: Total number of Core Clocks (exported + internal)
->       *
-> +     * @crit_core_clks: Array with Core Clock IDs of critical clocks that
-> +     *                  should not be disabled without a knowledgeable driver
-> +     * @num_core_mod_clks: Number of entries in crit_core_clks[]
-> +     *
->       * @mod_clks: Array of Module Clock definitions
->       * @num_mod_clks: Number of entries in mod_clks[]
->       * @num_hw_mod_clks: Number of Module Clocks supported by the hardware
-> @@ -109,6 +113,10 @@ struct cpg_mssr_info {
->         unsigned int last_dt_core_clk;
->         unsigned int num_total_core_clks;
->
-> +       /* Critical Core Clocks that should not be disabled */
-> +       const unsigned int *crit_core_clks;
-> +       unsigned int num_crit_core_clks;
-> +
->         /* Module Clocks */
->         const struct mssr_mod_clk *mod_clks;
->         unsigned int num_mod_clks;
-> --
-> 2.8.0
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/soc/Kconfig b/drivers/soc/Kconfig
+index f09023f7ab11..de4fcdbae2a8 100644
+--- a/drivers/soc/Kconfig
++++ b/drivers/soc/Kconfig
+@@ -4,6 +4,7 @@ source "drivers/soc/bcm/Kconfig"
+ source "drivers/soc/fsl/Kconfig"
+ source "drivers/soc/mediatek/Kconfig"
+ source "drivers/soc/qcom/Kconfig"
++source "drivers/soc/renesas/Kconfig"
+ source "drivers/soc/rockchip/Kconfig"
+ source "drivers/soc/samsung/Kconfig"
+ source "drivers/soc/sunxi/Kconfig"
+diff --git a/drivers/soc/Makefile b/drivers/soc/Makefile
+index 05eae52a30b4..59d8c937f4a8 100644
+--- a/drivers/soc/Makefile
++++ b/drivers/soc/Makefile
+@@ -8,7 +8,7 @@ obj-$(CONFIG_MACH_DOVE)		+= dove/
+ obj-y				+= fsl/
+ obj-$(CONFIG_ARCH_MEDIATEK)	+= mediatek/
+ obj-$(CONFIG_ARCH_QCOM)		+= qcom/
+-obj-$(CONFIG_ARCH_RENESAS)	+= renesas/
++obj-y				+= renesas/
+ obj-$(CONFIG_ARCH_ROCKCHIP)	+= rockchip/
+ obj-$(CONFIG_SOC_SAMSUNG)	+= samsung/
+ obj-$(CONFIG_ARCH_SUNXI)	+= sunxi/
+diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
+new file mode 100644
+index 000000000000..87a4be46bd98
+--- /dev/null
++++ b/drivers/soc/renesas/Kconfig
+@@ -0,0 +1,63 @@
++config SOC_RENESAS
++	bool "Renesas SoC driver support" if COMPILE_TEST && !ARCH_RENESAS
++	default y if ARCH_RENESAS
++	select SOC_BUS
++	select RST_RCAR if ARCH_RCAR_GEN1 || ARCH_RCAR_GEN2 || \
++			   ARCH_R8A7795 || ARCH_R8A7796
++	select SYSC_R8A7743 if ARCH_R8A7743
++	select SYSC_R8A7745 if ARCH_R8A7745
++	select SYSC_R8A7779 if ARCH_R8A7779
++	select SYSC_R8A7790 if ARCH_R8A7790
++	select SYSC_R8A7791 if ARCH_R8A7791 || ARCH_R8A7793
++	select SYSC_R8A7792 if ARCH_R8A7792
++	select SYSC_R8A7794 if ARCH_R8A7794
++	select SYSC_R8A7795 if ARCH_R8A7795
++	select SYSC_R8A7796 if ARCH_R8A7796
++
++if SOC_RENESAS
++
++# SoC
++config SYSC_R8A7743
++	bool "RZ/G1M System Controller support" if COMPILE_TEST
++	select SYSC_RCAR
++
++config SYSC_R8A7745
++	bool "RZ/G1E System Controller support" if COMPILE_TEST
++	select SYSC_RCAR
++
++config SYSC_R8A7779
++	bool "R-Car H1 System Controller support" if COMPILE_TEST
++	select SYSC_RCAR
++
++config SYSC_R8A7790
++	bool "R-Car H2 System Controller support" if COMPILE_TEST
++	select SYSC_RCAR
++
++config SYSC_R8A7791
++	bool "R-Car M2-W/N System Controller support" if COMPILE_TEST
++	select SYSC_RCAR
++
++config SYSC_R8A7792
++	bool "R-Car V2H System Controller support" if COMPILE_TEST
++	select SYSC_RCAR
++
++config SYSC_R8A7794
++	bool "R-Car E2 System Controller support" if COMPILE_TEST
++	select SYSC_RCAR
++
++config SYSC_R8A7795
++	bool "R-Car H3 System Controller support" if COMPILE_TEST
++	select SYSC_RCAR
++
++config SYSC_R8A7796
++	bool "R-Car M3-W System Controller support" if COMPILE_TEST
++	select SYSC_RCAR
++
++# Family
++config RST_RCAR
++	bool "R-Car Reset Controller support" if COMPILE_TEST
++
++config SYSC_RCAR
++	bool "R-Car System Controller support" if COMPILE_TEST
++
++endif # SOC_RENESAS
+diff --git a/drivers/soc/renesas/Makefile b/drivers/soc/renesas/Makefile
+index d9115cb5ed9d..1a1a297b26a7 100644
+--- a/drivers/soc/renesas/Makefile
++++ b/drivers/soc/renesas/Makefile
+@@ -1,18 +1,17 @@
+-obj-$(CONFIG_SOC_BUS)		+= renesas-soc.o
++# Generic, must be first because of soc_device_register()
++obj-$(CONFIG_SOC_RENESAS)	+= renesas-soc.o
+ 
+-obj-$(CONFIG_ARCH_RCAR_GEN1)	+= rcar-rst.o
+-obj-$(CONFIG_ARCH_RCAR_GEN2)	+= rcar-rst.o
+-obj-$(CONFIG_ARCH_R8A7795)	+= rcar-rst.o
+-obj-$(CONFIG_ARCH_R8A7796)	+= rcar-rst.o
++# SoC
++obj-$(CONFIG_SYSC_R8A7743)	+= r8a7743-sysc.o
++obj-$(CONFIG_SYSC_R8A7745)	+= r8a7745-sysc.o
++obj-$(CONFIG_SYSC_R8A7779)	+= r8a7779-sysc.o
++obj-$(CONFIG_SYSC_R8A7790)	+= r8a7790-sysc.o
++obj-$(CONFIG_SYSC_R8A7791)	+= r8a7791-sysc.o
++obj-$(CONFIG_SYSC_R8A7792)	+= r8a7792-sysc.o
++obj-$(CONFIG_SYSC_R8A7794)	+= r8a7794-sysc.o
++obj-$(CONFIG_SYSC_R8A7795)	+= r8a7795-sysc.o
++obj-$(CONFIG_SYSC_R8A7796)	+= r8a7796-sysc.o
+ 
+-obj-$(CONFIG_ARCH_R8A7743)	+= rcar-sysc.o r8a7743-sysc.o
+-obj-$(CONFIG_ARCH_R8A7745)	+= rcar-sysc.o r8a7745-sysc.o
+-obj-$(CONFIG_ARCH_R8A7779)	+= rcar-sysc.o r8a7779-sysc.o
+-obj-$(CONFIG_ARCH_R8A7790)	+= rcar-sysc.o r8a7790-sysc.o
+-obj-$(CONFIG_ARCH_R8A7791)	+= rcar-sysc.o r8a7791-sysc.o
+-obj-$(CONFIG_ARCH_R8A7792)	+= rcar-sysc.o r8a7792-sysc.o
+-# R-Car M2-N is identical to R-Car M2-W w.r.t. power domains.
+-obj-$(CONFIG_ARCH_R8A7793)	+= rcar-sysc.o r8a7791-sysc.o
+-obj-$(CONFIG_ARCH_R8A7794)	+= rcar-sysc.o r8a7794-sysc.o
+-obj-$(CONFIG_ARCH_R8A7795)	+= rcar-sysc.o r8a7795-sysc.o
+-obj-$(CONFIG_ARCH_R8A7796)	+= rcar-sysc.o r8a7796-sysc.o
++# Family
++obj-$(CONFIG_RST_RCAR)		+= rcar-rst.o
++obj-$(CONFIG_SYSC_RCAR)		+= rcar-sysc.o
+diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
+index 225c35c79d9a..4d0125dff787 100644
+--- a/drivers/soc/renesas/rcar-sysc.c
++++ b/drivers/soc/renesas/rcar-sysc.c
+@@ -275,35 +275,33 @@ static void __init rcar_sysc_pd_setup(struct rcar_sysc_pd *pd)
+ }
+ 
+ static const struct of_device_id rcar_sysc_matches[] = {
+-#ifdef CONFIG_ARCH_R8A7743
++#ifdef CONFIG_SYSC_R8A7743
+ 	{ .compatible = "renesas,r8a7743-sysc", .data = &r8a7743_sysc_info },
+ #endif
+-#ifdef CONFIG_ARCH_R8A7745
++#ifdef CONFIG_SYSC_R8A7745
+ 	{ .compatible = "renesas,r8a7745-sysc", .data = &r8a7745_sysc_info },
+ #endif
+-#ifdef CONFIG_ARCH_R8A7779
++#ifdef CONFIG_SYSC_R8A7779
+ 	{ .compatible = "renesas,r8a7779-sysc", .data = &r8a7779_sysc_info },
+ #endif
+-#ifdef CONFIG_ARCH_R8A7790
++#ifdef CONFIG_SYSC_R8A7790
+ 	{ .compatible = "renesas,r8a7790-sysc", .data = &r8a7790_sysc_info },
+ #endif
+-#ifdef CONFIG_ARCH_R8A7791
++#ifdef CONFIG_SYSC_R8A7791
+ 	{ .compatible = "renesas,r8a7791-sysc", .data = &r8a7791_sysc_info },
+-#endif
+-#ifdef CONFIG_ARCH_R8A7792
+-	{ .compatible = "renesas,r8a7792-sysc", .data = &r8a7792_sysc_info },
+-#endif
+-#ifdef CONFIG_ARCH_R8A7793
+ 	/* R-Car M2-N is identical to R-Car M2-W w.r.t. power domains. */
+ 	{ .compatible = "renesas,r8a7793-sysc", .data = &r8a7791_sysc_info },
+ #endif
+-#ifdef CONFIG_ARCH_R8A7794
++#ifdef CONFIG_SYSC_R8A7792
++	{ .compatible = "renesas,r8a7792-sysc", .data = &r8a7792_sysc_info },
++#endif
++#ifdef CONFIG_SYSC_R8A7794
+ 	{ .compatible = "renesas,r8a7794-sysc", .data = &r8a7794_sysc_info },
+ #endif
+-#ifdef CONFIG_ARCH_R8A7795
++#ifdef CONFIG_SYSC_R8A7795
+ 	{ .compatible = "renesas,r8a7795-sysc", .data = &r8a7795_sysc_info },
+ #endif
+-#ifdef CONFIG_ARCH_R8A7796
++#ifdef CONFIG_SYSC_R8A7796
+ 	{ .compatible = "renesas,r8a7796-sysc", .data = &r8a7796_sysc_info },
+ #endif
+ 	{ /* sentinel */ }
+diff --git a/include/linux/soc/renesas/rcar-rst.h b/include/linux/soc/renesas/rcar-rst.h
+index 787e7ad53d45..2c231f2280a6 100644
+--- a/include/linux/soc/renesas/rcar-rst.h
++++ b/include/linux/soc/renesas/rcar-rst.h
+@@ -1,8 +1,7 @@
+ #ifndef __LINUX_SOC_RENESAS_RCAR_RST_H__
+ #define __LINUX_SOC_RENESAS_RCAR_RST_H__
+ 
+-#if defined(CONFIG_ARCH_RCAR_GEN1) || defined(CONFIG_ARCH_RCAR_GEN2) || \
+-    defined(CONFIG_ARCH_R8A7795) || defined(CONFIG_ARCH_R8A7796)
++#ifdef CONFIG_RST_RCAR
+ int rcar_rst_read_mode_pins(u32 *mode);
+ #else
+ static inline int rcar_rst_read_mode_pins(u32 *mode) { return -ENODEV; }
+-- 
+2.1.4
