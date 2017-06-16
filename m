@@ -1,60 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:40415 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752431AbdFPJ3Z (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:45428 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753084AbdFPJYz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Jun 2017 05:29:25 -0400
-Date: Fri, 16 Jun 2017 11:29:22 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Simon Horman <horms@verge.net.au>
+        Fri, 16 Jun 2017 05:24:55 -0400
+Date: Fri, 16 Jun 2017 11:24:35 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Wolfram Sang <wsa@the-dreams.de>
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH mmc/next v2 0/2] mmc: tmio, renesas-sdhi: cleanups
-Message-ID: <20170616092922.52r6m4qjslrbycz7@ninjato>
+Message-ID: <20170616092435.GC6032@verge.net.au>
 References: <1497553214-12914-1-git-send-email-horms+renesas@verge.net.au>
  <20170616082742.pj5crlavihkewlfd@ninjato>
  <20170616091911.GA6032@verge.net.au>
- <20170616092435.GC6032@verge.net.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="vhof2curgwo4cd4m"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20170616092435.GC6032@verge.net.au>
+In-Reply-To: <20170616091911.GA6032@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On Fri, Jun 16, 2017 at 11:19:12AM +0200, Simon Horman wrote:
+> On Fri, Jun 16, 2017 at 10:27:42AM +0200, Wolfram Sang wrote:
+> > 
+> > > this short series provides some cleanups to the tmio and renesas-sdhi
+> > > drivers to improve their checkpatch cleanness.
+> > 
+> > Is there a dependency on your Gen3 DMA series?
+> 
+> No
 
---vhof2curgwo4cd4m
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Sorry, that response was a bit short.
 
-
-> The Gen3 DMA series and this series apply independently of each other.
-> So I don't see any dependencies between them.
-
-So, this shall go in first, I assume?
-
-
---vhof2curgwo4cd4m
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAllDpO4ACgkQFA3kzBSg
-KbbcTA//ettMZI/ekmnhFIUj1TXzUpcQ3a+ktselexXfuQwhKPv1PN83B6jJWjm5
-RzQ32hlbRt1B3C/iC3swrxWIXojJuN7VbxEUl4ssr4A89sWPbknW1Cz0AwDeYnmk
-cZLU1CA1NrAvsn/IWLdUt935FI7RXWTYZ3VFVfpmBozyEEJM9CEYxO8HCFtaZiQ4
-px3hpT5ucNAWQDO2zB+LvPNiFNxhMj4JNQ6FdZc0VL94dP3m4/N9cMpnsrdI7bwa
-CHi2N/6+O9v7ZwouliCevW+P+UDgR3/F2qKV11SNX3dJPPT7FidGk/1C4Tm3DTCL
-fiH1nOW4YKuPF3WO1wT2kFTAzxZeI7Dd5hBmcGR0Kx7Arbn1MSPf3wFMRAVVlxYX
-sGIhDELJHUf6QYjnmW+ZI3/g7j8fkaw3qY7AieCFL7CXPqD4hw6vSv07bZsjpZjV
-UeDsVJRsmrutEQZMeeJXvpD+ifZj6LwtrTTMTGg304Twh41dIqy8Sa+v7N65ktVM
-XJrM5aPaGuHckHigscSYDHrQE4F0L/g8YDF+s6MFfjPA9rA1x2dMksmZOL3LmBn8
-aocZWhnXPtee4/yefUnI+CcVRxkn+9ayX1tu/gizmq+Bq9IxgdE716xaqeVX/H4k
-i8jKqJYMic7nqy8+EvNS7I4EwID6W+VVneRLQ/YsTeCiZG+Gktg=
-=CnST
------END PGP SIGNATURE-----
-
---vhof2curgwo4cd4m--
+The Gen3 DMA series and this series apply independently of each other.
+So I don't see any dependencies between them.
