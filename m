@@ -1,63 +1,120 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:54739 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753555AbdFPNb0 (ORCPT
+        with ESMTP id S1753598AbdFPNbO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Jun 2017 09:31:26 -0400
+        Fri, 16 Jun 2017 09:31:14 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 4/5] ARM: shmobile: Update R-Car Gen3 ULCB board part numbers
-Date: Fri, 16 Jun 2017 15:30:57 +0200
-Message-Id: <fa5b2e749c99e6dbcca9c067a59b2ce17b3ac82e.1497617896.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1497617896.git.horms+renesas@verge.net.au>
-References: <cover.1497617896.git.horms+renesas@verge.net.au>
+Subject: [PATCH 3/6] ARM: dts: gose: add composite video input
+Date: Fri, 16 Jun 2017 15:30:43 +0200
+Message-Id: <8cae359049a88b75217b1c93774cfe3c3e610304.1497618353.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1497618353.git.horms+renesas@verge.net.au>
+References: <cover.1497618353.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-The board part numbers for the R-Car H3 and M3 ULCB boards corresponded
-to versions predating mass production.  Update them for mass production.
+Adds VIN, decoder and connector.
 
-Note that the H3 ULCB board can be equipped with either revision ES1.1
-or ES2.0 of the R-Car H3 SoC.  While these have different board part
-numbers, no new compatible values are needed, as the revision can be
-detected at runtime using the PRR register.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- Documentation/devicetree/bindings/arm/shmobile.txt | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/r8a7793-gose.dts | 59 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 59 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index c9c8e40c2ce5..433f25afe288 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -57,7 +57,8 @@ Boards:
-     compatible = "renesas,genmai", "renesas,r7s72100"
-   - Gose (RTP0RC7793SEB00010S)
-     compatible = "renesas,gose", "renesas,r8a7793"
--  - H3ULCB (R-Car Starter Kit Premier, RTP0RC7795SKB00010S)
-+  - H3ULCB (R-Car Starter Kit Premier, RTP0RC7795SKBX0010SA00 (H3 ES1.1))
-+    H3ULCB (R-Car Starter Kit Premier, RTP0RC77951SKBX010SA00 (H3 ES2.0))
-     compatible = "renesas,h3ulcb", "renesas,r8a7795";
-   - Henninger
-     compatible = "renesas,henninger", "renesas,r8a7791"
-@@ -73,7 +74,7 @@ Boards:
-     compatible = "renesas,kzm9g", "renesas,sh73a0"
-   - Lager (RTP0RC7790SEB00010S)
-     compatible = "renesas,lager", "renesas,r8a7790"
--  - M3ULCB (R-Car Starter Kit Pro, RTP0RC7796SKB00010S)
-+  - M3ULCB (R-Car Starter Kit Pro, RTP0RC7796SKBX0010SA09 (M3 ES1.0))
-     compatible = "renesas,m3ulcb", "renesas,r8a7796";
-   - Marzen (R0P7779A00010S)
-     compatible = "renesas,marzen", "renesas,r8a7779"
+diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
+index 30f083528468..76e3aca2029e 100644
+--- a/arch/arm/boot/dts/r8a7793-gose.dts
++++ b/arch/arm/boot/dts/r8a7793-gose.dts
+@@ -275,6 +275,16 @@
+ 		};
+ 	};
+ 
++	composite-in {
++		compatible = "composite-video-connector";
++
++		port {
++			composite_con_in: endpoint {
++				remote-endpoint = <&adv7180_in>;
++			};
++		};
++	};
++
+ 	x2_clk: x2-clock {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+@@ -411,6 +421,11 @@
+ 		groups = "vin0_data24", "vin0_sync", "vin0_clkenb", "vin0_clk";
+ 		function = "vin0";
+ 	};
++
++	vin1_pins: vin1 {
++		groups = "vin1_data8", "vin1_clk";
++		function = "vin1";
++	};
+ };
+ 
+ &ether {
+@@ -542,6 +557,32 @@
+ 		reg = <0x12>;
+ 	};
+ 
++	composite-in@20 {
++		compatible = "adi,adv7180cp";
++		reg = <0x20>;
++		remote = <&vin1>;
++
++		port {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				adv7180_in: endpoint {
++					remote-endpoint = <&composite_con_in>;
++				};
++			};
++
++			port@3 {
++				reg = <3>;
++				adv7180_out: endpoint {
++					bus-width = <8>;
++					remote-endpoint = <&vin1ep>;
++				};
++			};
++		};
++	};
++
+ 	hdmi@39 {
+ 		compatible = "adi,adv7511w";
+ 		reg = <0x39>;
+@@ -670,3 +711,21 @@
+ 		};
+ 	};
+ };
++
++/* composite video input */
++&vin1 {
++	pinctrl-0 = <&vin1_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++
++	port {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		vin1ep: endpoint {
++			remote-endpoint = <&adv7180_out>;
++			bus-width = <8>;
++		};
++	};
++};
 -- 
 2.1.4
