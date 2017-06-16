@@ -1,33 +1,85 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from lb2-smtp-cloud3.xs4all.net ([194.109.24.26]:40684 "EHLO
-        lb2-smtp-cloud3.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751699AbdFGH0J (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:37474 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751012AbdFPRvF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Jun 2017 03:26:09 -0400
-Subject: Re: [PATCH v5] media: platform: Renesas IMR driver
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        devicetree@vger.kernel.org, linux-media@vger.kernel.org
-References: <20170309200818.786255823@cogentembedded.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Konstantin Kozhevnikov
-        <Konstantin.Kozhevnikov@cogentembedded.com>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <87be3653-66f0-deda-f862-b52a2de23ecf@xs4all.nl>
-Date: Wed, 7 Jun 2017 09:26:05 +0200
-MIME-Version: 1.0
-In-Reply-To: <20170309200818.786255823@cogentembedded.com>
-Content-Type: text/plain; charset=iso-8859-15
-Content-Transfer-Encoding: 7bit
+        Fri, 16 Jun 2017 13:51:05 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
+In-Reply-To: <87h8zgiumc.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1dLvNt-0005j2-8V@debutante>
+Date: Fri, 16 Jun 2017 18:50:13 +0100
+Subject: Applied "ASoC: simple-card: use asoc_simple_card_of_parse_widgets()" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Any progress on this?
+The patch
 
-There where a bunch of comments, but I haven't seen anything since.
+   ASoC: simple-card: use asoc_simple_card_of_parse_widgets()
 
-Regards,
+has been applied to the asoc tree at
 
-	Hans
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From fa2760dd366c735637504d1d7efab7688391c6b4 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Fri, 16 Jun 2017 01:39:11 +0000
+Subject: [PATCH] ASoC: simple-card: use asoc_simple_card_of_parse_widgets()
+
+Current simple card driver is supporting widgets on DT,
+other simple/audio card drivers will support it.
+Encapsulation is one of simple card util's purpose.
+Let's use asoc_simple_card_of_parse_widgets
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/generic/simple-card.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
+
+diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
+index 7b2533c7f82e..8b7b47251fe1 100644
+--- a/sound/soc/generic/simple-card.c
++++ b/sound/soc/generic/simple-card.c
+@@ -354,13 +354,9 @@ static int asoc_simple_card_parse_of(struct simple_card_data *priv)
+ 
+ 	dai_link = of_get_child_by_name(node, PREFIX "dai-link");
+ 
+-	/* The off-codec widgets */
+-	if (of_property_read_bool(node, PREFIX "widgets")) {
+-		ret = snd_soc_of_parse_audio_simple_widgets(card,
+-					PREFIX "widgets");
+-		if (ret)
+-			goto card_parse_end;
+-	}
++	ret = asoc_simple_card_of_parse_widgets(card, PREFIX);
++	if (ret < 0)
++		goto card_parse_end;
+ 
+ 	ret = asoc_simple_card_of_parse_routing(card, PREFIX, 1);
+ 	if (ret < 0)
+-- 
+2.11.0
