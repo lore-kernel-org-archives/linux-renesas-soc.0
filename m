@@ -1,53 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:33157 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753643AbdFSIm0 (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:23092 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752718AbdFPPLa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Jun 2017 04:42:26 -0400
-MIME-Version: 1.0
-In-Reply-To: <1497625049-46802-1-git-send-email-biju.das@bp.renesas.com>
-References: <1497625049-46802-1-git-send-email-biju.das@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 19 Jun 2017 10:42:18 +0200
-Message-ID: <CAMuHMdVe7sRcGohSPvSUrryNMetddomoMbN7ffOtq9Y3DBt=zQ@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: iwg20d-q7: Add pinctl support for scif0
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
+        Fri, 16 Jun 2017 11:11:30 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
         Chris Paterson <chris.paterson2@renesas.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH] ARM: dts: iwg20d-q7: Add pinctl support for scif0
+Date: Fri, 16 Jun 2017 15:57:29 +0100
+Message-Id: <1497625049-46802-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Biju,
+Adding pinctrl support for scif0 interface.
 
-On Fri, Jun 16, 2017 at 4:57 PM, Biju Das <biju.das@bp.renesas.com> wrote:
-> Adding pinctrl support for scif0 interface.
->
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+---
+This patch is been tested against linux-next tag next-20170616.
+It depends upon the patch "[PATCH v2 1/3] ARM: dts: r8a7743: add PFC support"
+https://www.spinics.net/lists/arm-kernel/msg577301.html
 
-The patch looks good to me, but without schematics, we cannot verify the
-actual pins used.
+ arch/arm/boot/dts/r8a7743-iwg20d-q7.dts | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Are the schematics somewhere available? Having access to them would allow us
-doing a better job reviewing your DTS patches.
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
+index 9b54783..497aec0 100644
+--- a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
++++ b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
+@@ -20,6 +20,16 @@
+ 	};
+ };
+ 
++&pfc {
++	scif0_pins: scif0 {
++		groups = "scif0_data_d";
++		function = "scif0";
++	};
++};
++
+ &scif0 {
++	pinctrl-0 = <&scif0_pins>;
++	pinctrl-names = "default";
++
+ 	status = "okay";
+ };
+-- 
+1.9.1
