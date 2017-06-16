@@ -1,113 +1,135 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: linus.walleij@linaro.org, andy.shevchenko@gmail.com,
-        dongas86@gmail.com, geert+renesas@glider.be,
-        Chris.Brandt@renesas.com, laurent.pinchart@ideasonboard.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] pinctrl: generic: Add output-enable property
-Date: Thu, 22 Jun 2017 12:00:58 +0200
-Message-Id: <1498125658-14554-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:54739 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753752AbdFPNbU (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 16 Jun 2017 09:31:20 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 1/6] ARM: dts: gose: add HDMI input
+Date: Fri, 16 Jun 2017 15:30:41 +0200
+Message-Id: <bc63cd87f3ce924f02e575ffb12f8c10cd7d3780.1497618353.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1497618353.git.horms+renesas@verge.net.au>
+References: <cover.1497618353.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add output-enable generic pin configuration property.
-This properties allows enabling/disabling pin's output capabilities
-without actually driving any value on the line.
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
+Identical to the setup on Koelsch.
+
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-v1->v2:
- - Expand the property description as suggested by Laurent. I ended up
-   mentioning the in-famous output buffer :)
+ arch/arm/boot/dts/r8a7793-gose.dts | 68 ++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 66 insertions(+), 2 deletions(-)
 
-One (more) question to GPIO people on:
-+	PCONFDUMP(PIN_CONFIG_OUTPUT_ENABLE, "output enabled", NULL, false),
-
-I copied this from INPUT_ENABLE where arguments 2 and 3 passed to PCONFDUMP are
-NULL and false even if the property has an argument, used to enable/disable
-the input mode. Is this intended? Should that be turned instead to
--	PCONFDUMP(PIN_CONFIG_INPUT_ENABLE, "input enabled", NULL, false),
-+	PCONFDUMP(PIN_CONFIG_INPUT_ENABLE, "input enabled", "enabled", true),
-
-Note that the same applies to most of the properties that have an
-"enable"/"disable" argument. Just to make sure this is done on purpose.
-
-Thanks
-   j
- .../devicetree/bindings/pinctrl/pinctrl-bindings.txt      |  2 ++
- drivers/pinctrl/pinconf-generic.c                         |  3 +++
- include/linux/pinctrl/pinconf-generic.h                   | 15 +++++++++++----
- 3 files changed, 16 insertions(+), 4 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-index f01d154..f8af190 100644
---- a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-@@ -259,6 +259,8 @@ input-debounce		- debounce mode with debound time X
- power-source		- select between different power supplies
- low-power-enable	- enable low power mode
- low-power-disable	- disable low power mode
-+output-disable		- disable output on a pin
-+output-enable		- enable output on a pin
- output-low		- set the pin to output mode with low level
- output-high		- set the pin to output mode with high level
- slew-rate		- set the slew rate
-diff --git a/drivers/pinctrl/pinconf-generic.c b/drivers/pinctrl/pinconf-generic.c
-index 720a19f..fc0c230 100644
---- a/drivers/pinctrl/pinconf-generic.c
-+++ b/drivers/pinctrl/pinconf-generic.c
-@@ -44,6 +44,7 @@ static const struct pin_config_item conf_items[] = {
- 	PCONFDUMP(PIN_CONFIG_INPUT_SCHMITT, "input schmitt trigger", NULL, false),
- 	PCONFDUMP(PIN_CONFIG_INPUT_SCHMITT_ENABLE, "input schmitt enabled", NULL, false),
- 	PCONFDUMP(PIN_CONFIG_LOW_POWER_MODE, "pin low power", "mode", true),
-+	PCONFDUMP(PIN_CONFIG_OUTPUT_ENABLE, "output enabled", NULL, false),
- 	PCONFDUMP(PIN_CONFIG_OUTPUT, "pin output", "level", true),
- 	PCONFDUMP(PIN_CONFIG_POWER_SOURCE, "pin power source", "selector", true),
- 	PCONFDUMP(PIN_CONFIG_SLEW_RATE, "slew rate", NULL, true),
-@@ -172,6 +173,8 @@ static const struct pinconf_generic_params dt_params[] = {
- 	{ "input-schmitt-enable", PIN_CONFIG_INPUT_SCHMITT_ENABLE, 1 },
- 	{ "low-power-disable", PIN_CONFIG_LOW_POWER_MODE, 0 },
- 	{ "low-power-enable", PIN_CONFIG_LOW_POWER_MODE, 1 },
-+	{ "output-disable", PIN_CONFIG_OUTPUT_ENABLE, 0 },
-+	{ "output-enable", PIN_CONFIG_OUTPUT_ENABLE, 1 },
- 	{ "output-high", PIN_CONFIG_OUTPUT, 1, },
- 	{ "output-low", PIN_CONFIG_OUTPUT, 0, },
- 	{ "power-source", PIN_CONFIG_POWER_SOURCE, 0 },
-diff --git a/include/linux/pinctrl/pinconf-generic.h b/include/linux/pinctrl/pinconf-generic.h
-index 7620eb1..231d307 100644
---- a/include/linux/pinctrl/pinconf-generic.h
-+++ b/include/linux/pinctrl/pinconf-generic.h
-@@ -73,10 +73,16 @@
-  *	operation, if several modes of operation are supported these can be
-  *	passed in the argument on a custom form, else just use argument 1
-  *	to indicate low power mode, argument 0 turns low power mode off.
-- * @PIN_CONFIG_OUTPUT: this will configure the pin as an output. Use argument
-- *	1 to indicate high level, argument 0 to indicate low level. (Please
-- *	see Documentation/pinctrl.txt, section "GPIO mode pitfalls" for a
-- *	discussion around this parameter.)
-+ * @PIN_CONFIG_OUTPUT_ENABLE: this will enable the pin's output mode
-+ * 	without driving a value there. For most platforms this reduces to
-+ * 	enable the output buffers and then let the pin controller current
-+ * 	configuration (eg. the currently selected mux function) drive values on
-+ * 	the line. Use argument 1 to enable output mode, argument 0 to disable
-+ * 	it.
-+ * @PIN_CONFIG_OUTPUT: this will configure the pin as an output and drive a
-+ * 	value on the line. Use argument 1 to indicate high level, argument 0 to
-+ * 	indicate low level. (Please see Documentation/pinctrl.txt, section
-+ * 	"GPIO mode pitfalls" for a discussion around this parameter.)
-  * @PIN_CONFIG_POWER_SOURCE: if the pin can select between different power
-  *	supplies, the argument to this parameter (on a custom format) tells
-  *	the driver which alternative power source to use.
-@@ -105,6 +111,7 @@ enum pin_config_param {
- 	PIN_CONFIG_INPUT_SCHMITT,
- 	PIN_CONFIG_INPUT_SCHMITT_ENABLE,
- 	PIN_CONFIG_LOW_POWER_MODE,
-+	PIN_CONFIG_OUTPUT_ENABLE,
- 	PIN_CONFIG_OUTPUT,
- 	PIN_CONFIG_POWER_SOURCE,
- 	PIN_CONFIG_SLEW_RATE,
---
-2.7.4
+diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
+index 95e51b79c1d7..30f083528468 100644
+--- a/arch/arm/boot/dts/r8a7793-gose.dts
++++ b/arch/arm/boot/dts/r8a7793-gose.dts
+@@ -253,12 +253,23 @@
+ 		};
+ 	};
+ 
++	hdmi-in {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&adv7612_in>;
++			};
++		};
++	};
++
+ 	hdmi-out {
+ 		compatible = "hdmi-connector";
+ 		type = "a";
+ 
+ 		port {
+-			hdmi_con: endpoint {
++			hdmi_con_out: endpoint {
+ 				remote-endpoint = <&adv7511_out>;
+ 			};
+ 		};
+@@ -395,6 +406,11 @@
+ 		groups = "audio_clk_a";
+ 		function = "audio_clk";
+ 	};
++
++	vin0_pins: vin0 {
++		groups = "vin0_data24", "vin0_sync", "vin0_clkenb", "vin0_clk";
++		function = "vin0";
++	};
+ };
+ 
+ &ether {
+@@ -552,7 +568,34 @@
+ 			port@1 {
+ 				reg = <1>;
+ 				adv7511_out: endpoint {
+-					remote-endpoint = <&hdmi_con>;
++					remote-endpoint = <&hdmi_con_out>;
++				};
++			};
++		};
++	};
++
++	hdmi-in@4c {
++		compatible = "adi,adv7612";
++		reg = <0x4c>;
++		interrupt-parent = <&gpio4>;
++		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
++		default-input = <0>;
++
++		port {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				adv7612_in: endpoint {
++					remote-endpoint = <&hdmi_con_in>;
++				};
++			};
++
++			port@2 {
++				reg = <2>;
++				adv7612_out: endpoint {
++					remote-endpoint = <&vin0ep2>;
+ 				};
+ 			};
+ 		};
+@@ -606,3 +649,24 @@
+ &ssi1 {
+ 	shared-pin;
+ };
++
++/* HDMI video input */
++&vin0 {
++	status = "okay";
++	pinctrl-0 = <&vin0_pins>;
++	pinctrl-names = "default";
++
++	port {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		vin0ep2: endpoint {
++			remote-endpoint = <&adv7612_out>;
++			bus-width = <24>;
++			hsync-active = <0>;
++			vsync-active = <0>;
++			pclk-sample = <1>;
++			data-active = <1>;
++		};
++	};
++};
+-- 
+2.1.4
