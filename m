@@ -1,108 +1,114 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:35637 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751673AbdFOHhA (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:57761 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750846AbdFPPxY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Jun 2017 03:37:00 -0400
-Received: from avalon.ideasonboard.com (unknown [IPv6:2001:268:c037:db14:f920:322a:1f4a:5bdb])
-        by galahad.ideasonboard.com (Postfix) with ESMTPSA id D97AD201F5
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Jun 2017 09:36:35 +0200 (CEST)
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 2/2] arm64: dts: r8a7795: salvator-x: Unify DU node between ES1.x and ES2.0
-Date: Thu, 15 Jun 2017 10:37:16 +0300
-Message-Id: <20170615073716.12395-3-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170615073716.12395-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170615073716.12395-1-laurent.pinchart+renesas@ideasonboard.com>
+        Fri, 16 Jun 2017 11:53:24 -0400
+Date: Fri, 16 Jun 2017 17:53:13 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH mmc/next v2 1/2] mmc: tmio: improve checkpatch cleanness
+Message-ID: <20170616155313.GA5137@verge.net.au>
+References: <1497553214-12914-1-git-send-email-horms+renesas@verge.net.au>
+ <1497553214-12914-2-git-send-email-horms+renesas@verge.net.au>
+ <20170616081445.tqlhod5znrqnxtc3@ninjato>
+ <20170616092010.GB6032@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170616092010.GB6032@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The external clocks used by the DU are identical on the H3 ES1.x and
-ES2.0 SoCs. There is thus no need to duplicate DU clocks in both
-r8a7795-salvator-x.dts and r8a7795-es1-salvator-x.dts, move them all to
-salvator-x.dtsi.
+On Fri, Jun 16, 2017 at 11:20:10AM +0200, Simon Horman wrote:
+> On Fri, Jun 16, 2017 at 10:14:45AM +0200, Wolfram Sang wrote:
+> > Hi Simon,
+> > 
+> > > * Don't add bogus ',' after KERN_DEBUG
+> > 
+> > Well...
+> > 
+> > > @@ -127,16 +127,17 @@ static int tmio_mmc_next_sg(struct tmio_mmc_host *host)
+> > >  
+> > >  #define STATUS_TO_TEXT(a, status, i) \
+> > >  	do { \
+> > > -		if (status & TMIO_STAT_##a) { \
+> > > -			if (i++) \
+> > > -				printk(" | "); \
+> > > -			printk(#a); \
+> > > +		if ((status) & TMIO_STAT_##a) { \
+> > > +			if ((i)++) \
+> > > +				printk(KERN_DEBUG " | "); \
+> > > +			printk(KERN_DEBUG, #a); \
+> > 
+> > ...still there.
+> 
+> Oops.
+> 
+> > > @@ -349,13 +350,22 @@ static int tmio_mmc_start_command(struct tmio_mmc_host *host, struct mmc_command
+> > >  	}
+> > >  
+> > >  	switch (mmc_resp_type(cmd)) {
+> > > -	case MMC_RSP_NONE: c |= RESP_NONE; break;
+> > > +	case MMC_RSP_NONE:
+> > > +		c |= RESP_NONE;
+> > > +		break;
+> > >  	case MMC_RSP_R1:
+> > >  	case MMC_RSP_R1_NO_CRC:
+> > > -			   c |= RESP_R1;   break;
+> > > -	case MMC_RSP_R1B:  c |= RESP_R1B;  break;
+> > > -	case MMC_RSP_R2:   c |= RESP_R2;   break;
+> > > -	case MMC_RSP_R3:   c |= RESP_R3;   break;
+> > > +		c |= RESP_R1;
+> > > +		break;
+> > > +	case MMC_RSP_R1B:
+> > > +		c |= RESP_R1B;
+> > > +		break;
+> > > +	case MMC_RSP_R2:
+> > > +		c |= RESP_R2;
+> > > +		break;
+> > > +	case MMC_RSP_R3:
+> > > +		c |= RESP_R3;
+> > > +		break;
+> > 
+> > Very personal, I'd prefer the old way but I don't insist.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts | 14 --------------
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts     | 14 --------------
- arch/arm64/boot/dts/renesas/salvator-x.dtsi            | 12 ++++++++++++
- 3 files changed, 12 insertions(+), 28 deletions(-)
+Sure, I'll leave that as-is.
+I don't mind either way.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts
-index 1bb1dd61ba1c..755c5c6845b9 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts
-@@ -40,20 +40,6 @@
- 	};
- };
- 
--&du {
--	clocks = <&cpg CPG_MOD 724>,
--		 <&cpg CPG_MOD 723>,
--		 <&cpg CPG_MOD 722>,
--		 <&cpg CPG_MOD 721>,
--		 <&cpg CPG_MOD 727>,
--		 <&versaclock5 1>,
--		 <&x21_clk>,
--		 <&x22_clk>,
--		 <&versaclock5 2>;
--	clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0",
--		      "dclkin.0", "dclkin.1", "dclkin.2", "dclkin.3";
--};
--
- &ehci2 {
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index 8bcf4c0d6c4a..0322e23b0a18 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -40,20 +40,6 @@
- 	};
- };
- 
--&du {
--	clocks = <&cpg CPG_MOD 724>,
--		 <&cpg CPG_MOD 723>,
--		 <&cpg CPG_MOD 722>,
--		 <&cpg CPG_MOD 721>,
--		 <&cpg CPG_MOD 727>,
--		 <&versaclock5 1>,
--		 <&x21_clk>,
--		 <&x22_clk>,
--		 <&versaclock5 2>;
--	clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0",
--		      "dclkin.0", "dclkin.1", "dclkin.2", "dclkin.3";
--};
--
- &ehci2 {
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/renesas/salvator-x.dtsi b/arch/arm64/boot/dts/renesas/salvator-x.dtsi
-index 1f6b9fbb13af..d51d4f60a822 100644
---- a/arch/arm64/boot/dts/renesas/salvator-x.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-x.dtsi
-@@ -265,6 +265,18 @@
- 	pinctrl-names = "default";
- 	status = "okay";
- 
-+	clocks = <&cpg CPG_MOD 724>,
-+		 <&cpg CPG_MOD 723>,
-+		 <&cpg CPG_MOD 722>,
-+		 <&cpg CPG_MOD 721>,
-+		 <&cpg CPG_MOD 727>,
-+		 <&versaclock5 1>,
-+		 <&x21_clk>,
-+		 <&x22_clk>,
-+		 <&versaclock5 2>;
-+	clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0",
-+		      "dclkin.0", "dclkin.1", "dclkin.2", "dclkin.3";
-+
- 	ports {
- 		port@0 {
- 			endpoint {
--- 
-Regards,
+> > 
+> > > -			 * Disable auto CMD12 at IO_RW_EXTENDED and SET_BLOCK_COUNT
+> > > -			 * when doing multiple block transfer
+> > > +			 * Disable auto CMD12 at IO_RW_EXTENDED and
+> > > +			 * SET_BLOCK_COUNT when doing multiple block
+> > > +			 * transfer
+> > 
+> > I'd think 'transfer' can go to the previous line?
 
-Laurent Pinchart
+Moved.
+
+> > >  			if ((host->pdata->flags & TMIO_MMC_HAVE_CMD12_CTRL) &&
+> > > -			    (cmd->opcode == SD_IO_RW_EXTENDED || host->mrq->sbc))
+> > > +			    (cmd->opcode == SD_IO_RW_EXTENDED ||
+> > > +			     host->mrq->sbc))
+> > 
+> > Another subjective taste thingie ;)
+
+Undone.
+
+> > > -		dev_warn_once(&host->pdev->dev,
+> > > -		      "Too many taps, skipping tuning. Please consider updating size of taps field of tmio_mmc_host\n");
+> > > +		dev_warn_once(&host->pdev->dev, "Too many taps, skipping tuning. Please consider updating size of taps field of tmio_mmc_host\n");
+> > 
+> > Dito.
+
+Also undone.
+
+> > What kind of tests did you run with these?
+> 
+> I checked that Lager boots and that I/O speeds are as expected using dd.
+> 
