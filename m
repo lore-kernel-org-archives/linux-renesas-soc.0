@@ -1,37 +1,175 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH 3/4] i2c: sh_mobile: use helper to decide if DMA is used
-Date: Tue,  6 Jun 2017 11:20:33 +0200
-Message-Id: <20170606092034.1516-4-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170606092034.1516-1-wsa+renesas@sang-engineering.com>
-References: <20170606092034.1516-1-wsa+renesas@sang-engineering.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:54739 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753706AbdFPNbT (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 16 Jun 2017 09:31:19 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 6/6] ARM: dts: r8a779x: Fix PCI bus dtc warnings
+Date: Fri, 16 Jun 2017 15:30:46 +0200
+Message-Id: <f7d569c1e6a6fa731fc34083a9f0191b7360eeb1.1497618353.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1497618353.git.horms+renesas@verge.net.au>
+References: <cover.1497618353.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This ensures also that we fall back to PIO if the buffer is not DMA
-capable.
+From: Rob Herring <robh@kernel.org>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+The bogus 'device_type = "pci"' confuses dtc, causing lots of totally
+unrelated warnings.  After fixing that, real warnings like
+
+    arch/arm/boot/dts/r8a7790-lager.dtb: Warning (pci_device_reg): Node /pci@ee090000/usb@0,1 PCI unit address format error, expected "1,0"
+
+are left.  Correct the unit-addresses and reg properties of the subnodes
+to fix these.
+
+Signed-off-by: Rob Herring <robh@kernel.org>
+[geert: Improve description]
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/i2c/busses/i2c-sh_mobile.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a7790.dtsi | 16 ++++++----------
+ arch/arm/boot/dts/r8a7791.dtsi | 16 ++++++----------
+ arch/arm/boot/dts/r8a7794.dtsi | 16 ++++++----------
+ 3 files changed, 18 insertions(+), 30 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-sh_mobile.c b/drivers/i2c/busses/i2c-sh_mobile.c
-index 3d75593487454c..58e2ae3b4c4751 100644
---- a/drivers/i2c/busses/i2c-sh_mobile.c
-+++ b/drivers/i2c/busses/i2c-sh_mobile.c
-@@ -666,7 +666,7 @@ static int start_ch(struct sh_mobile_i2c_data *pd, struct i2c_msg *usr_msg,
- 	pd->pos = -1;
- 	pd->sr = 0;
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 416956a42c93..2805a8608d4b 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -1602,16 +1602,14 @@
+ 				 0x0800 0 0 1 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH
+ 				 0x1000 0 0 2 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
  
--	if (pd->msg->len > 8)
-+	if (i2c_check_msg_for_dma(pd->msg, 8) == 0)
- 		sh_mobile_i2c_xfer_dma(pd);
+-		usb@0,1 {
++		usb@1,0 {
+ 			reg = <0x800 0 0 0 0>;
+-			device_type = "pci";
+ 			phys = <&usb0 0>;
+ 			phy-names = "usb";
+ 		};
  
- 	/* Enable all interrupts to begin with */
+-		usb@0,2 {
++		usb@2,0 {
+ 			reg = <0x1000 0 0 0 0>;
+-			device_type = "pci";
+ 			phys = <&usb0 0>;
+ 			phy-names = "usb";
+ 		};
+@@ -1658,16 +1656,14 @@
+ 				 0x0800 0 0 1 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH
+ 				 0x1000 0 0 2 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
+ 
+-		usb@0,1 {
+-			reg = <0x800 0 0 0 0>;
+-			device_type = "pci";
++		usb@1,0 {
++			reg = <0x20800 0 0 0 0>;
+ 			phys = <&usb2 0>;
+ 			phy-names = "usb";
+ 		};
+ 
+-		usb@0,2 {
+-			reg = <0x1000 0 0 0 0>;
+-			device_type = "pci";
++		usb@2,0 {
++			reg = <0x21000 0 0 0 0>;
+ 			phys = <&usb2 0>;
+ 			phy-names = "usb";
+ 		};
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index b730c889a404..bd93f699ad84 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -1613,16 +1613,14 @@
+ 				 0x0800 0 0 1 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH
+ 				 0x1000 0 0 2 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
+ 
+-		usb@0,1 {
++		usb@1,0 {
+ 			reg = <0x800 0 0 0 0>;
+-			device_type = "pci";
+ 			phys = <&usb0 0>;
+ 			phy-names = "usb";
+ 		};
+ 
+-		usb@0,2 {
++		usb@2,0 {
+ 			reg = <0x1000 0 0 0 0>;
+-			device_type = "pci";
+ 			phys = <&usb0 0>;
+ 			phy-names = "usb";
+ 		};
+@@ -1648,16 +1646,14 @@
+ 				 0x0800 0 0 1 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH
+ 				 0x1000 0 0 2 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
+ 
+-		usb@0,1 {
+-			reg = <0x800 0 0 0 0>;
+-			device_type = "pci";
++		usb@1,0 {
++			reg = <0x10800 0 0 0 0>;
+ 			phys = <&usb2 0>;
+ 			phy-names = "usb";
+ 		};
+ 
+-		usb@0,2 {
+-			reg = <0x1000 0 0 0 0>;
+-			device_type = "pci";
++		usb@2,0 {
++			reg = <0x11000 0 0 0 0>;
+ 			phys = <&usb2 0>;
+ 			phy-names = "usb";
+ 		};
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index a19b884fb258..7d9a81d970d8 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -820,16 +820,14 @@
+ 				 0x0800 0 0 1 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH
+ 				 0x1000 0 0 2 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
+ 
+-		usb@0,1 {
++		usb@1,0 {
+ 			reg = <0x800 0 0 0 0>;
+-			device_type = "pci";
+ 			phys = <&usb0 0>;
+ 			phy-names = "usb";
+ 		};
+ 
+-		usb@0,2 {
++		usb@2,0 {
+ 			reg = <0x1000 0 0 0 0>;
+-			device_type = "pci";
+ 			phys = <&usb0 0>;
+ 			phy-names = "usb";
+ 		};
+@@ -855,16 +853,14 @@
+ 				 0x0800 0 0 1 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH
+ 				 0x1000 0 0 2 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
+ 
+-		usb@0,1 {
+-			reg = <0x800 0 0 0 0>;
+-			device_type = "pci";
++		usb@1,0 {
++			reg = <0x10800 0 0 0 0>;
+ 			phys = <&usb2 0>;
+ 			phy-names = "usb";
+ 		};
+ 
+-		usb@0,2 {
+-			reg = <0x1000 0 0 0 0>;
+-			device_type = "pci";
++		usb@2,0 {
++			reg = <0x11000 0 0 0 0>;
+ 			phys = <&usb2 0>;
+ 			phy-names = "usb";
+ 		};
 -- 
-2.11.0
+2.1.4
