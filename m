@@ -1,10 +1,10 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57761 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:45345 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750846AbdFPPxY (ORCPT
+        with ESMTP id S1750830AbdFPJUP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Jun 2017 11:53:24 -0400
-Date: Fri, 16 Jun 2017 17:53:13 +0200
+        Fri, 16 Jun 2017 05:20:15 -0400
+Date: Fri, 16 Jun 2017 11:20:10 +0200
 From: Simon Horman <horms@verge.net.au>
 To: Wolfram Sang <wsa@the-dreams.de>
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
@@ -12,103 +12,90 @@ Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH mmc/next v2 1/2] mmc: tmio: improve checkpatch cleanness
-Message-ID: <20170616155313.GA5137@verge.net.au>
+Message-ID: <20170616092010.GB6032@verge.net.au>
 References: <1497553214-12914-1-git-send-email-horms+renesas@verge.net.au>
  <1497553214-12914-2-git-send-email-horms+renesas@verge.net.au>
  <20170616081445.tqlhod5znrqnxtc3@ninjato>
- <20170616092010.GB6032@verge.net.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20170616092010.GB6032@verge.net.au>
+In-Reply-To: <20170616081445.tqlhod5znrqnxtc3@ninjato>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Jun 16, 2017 at 11:20:10AM +0200, Simon Horman wrote:
-> On Fri, Jun 16, 2017 at 10:14:45AM +0200, Wolfram Sang wrote:
-> > Hi Simon,
-> > 
-> > > * Don't add bogus ',' after KERN_DEBUG
-> > 
-> > Well...
-> > 
-> > > @@ -127,16 +127,17 @@ static int tmio_mmc_next_sg(struct tmio_mmc_host *host)
-> > >  
-> > >  #define STATUS_TO_TEXT(a, status, i) \
-> > >  	do { \
-> > > -		if (status & TMIO_STAT_##a) { \
-> > > -			if (i++) \
-> > > -				printk(" | "); \
-> > > -			printk(#a); \
-> > > +		if ((status) & TMIO_STAT_##a) { \
-> > > +			if ((i)++) \
-> > > +				printk(KERN_DEBUG " | "); \
-> > > +			printk(KERN_DEBUG, #a); \
-> > 
-> > ...still there.
+On Fri, Jun 16, 2017 at 10:14:45AM +0200, Wolfram Sang wrote:
+> Hi Simon,
 > 
-> Oops.
+> > * Don't add bogus ',' after KERN_DEBUG
 > 
-> > > @@ -349,13 +350,22 @@ static int tmio_mmc_start_command(struct tmio_mmc_host *host, struct mmc_command
-> > >  	}
-> > >  
-> > >  	switch (mmc_resp_type(cmd)) {
-> > > -	case MMC_RSP_NONE: c |= RESP_NONE; break;
-> > > +	case MMC_RSP_NONE:
-> > > +		c |= RESP_NONE;
-> > > +		break;
-> > >  	case MMC_RSP_R1:
-> > >  	case MMC_RSP_R1_NO_CRC:
-> > > -			   c |= RESP_R1;   break;
-> > > -	case MMC_RSP_R1B:  c |= RESP_R1B;  break;
-> > > -	case MMC_RSP_R2:   c |= RESP_R2;   break;
-> > > -	case MMC_RSP_R3:   c |= RESP_R3;   break;
-> > > +		c |= RESP_R1;
-> > > +		break;
-> > > +	case MMC_RSP_R1B:
-> > > +		c |= RESP_R1B;
-> > > +		break;
-> > > +	case MMC_RSP_R2:
-> > > +		c |= RESP_R2;
-> > > +		break;
-> > > +	case MMC_RSP_R3:
-> > > +		c |= RESP_R3;
-> > > +		break;
-> > 
-> > Very personal, I'd prefer the old way but I don't insist.
-
-Sure, I'll leave that as-is.
-I don't mind either way.
-
-> > 
-> > > -			 * Disable auto CMD12 at IO_RW_EXTENDED and SET_BLOCK_COUNT
-> > > -			 * when doing multiple block transfer
-> > > +			 * Disable auto CMD12 at IO_RW_EXTENDED and
-> > > +			 * SET_BLOCK_COUNT when doing multiple block
-> > > +			 * transfer
-> > 
-> > I'd think 'transfer' can go to the previous line?
-
-Moved.
-
-> > >  			if ((host->pdata->flags & TMIO_MMC_HAVE_CMD12_CTRL) &&
-> > > -			    (cmd->opcode == SD_IO_RW_EXTENDED || host->mrq->sbc))
-> > > +			    (cmd->opcode == SD_IO_RW_EXTENDED ||
-> > > +			     host->mrq->sbc))
-> > 
-> > Another subjective taste thingie ;)
-
-Undone.
-
-> > > -		dev_warn_once(&host->pdev->dev,
-> > > -		      "Too many taps, skipping tuning. Please consider updating size of taps field of tmio_mmc_host\n");
-> > > +		dev_warn_once(&host->pdev->dev, "Too many taps, skipping tuning. Please consider updating size of taps field of tmio_mmc_host\n");
-> > 
-> > Dito.
-
-Also undone.
-
-> > What kind of tests did you run with these?
+> Well...
 > 
-> I checked that Lager boots and that I/O speeds are as expected using dd.
+> > @@ -127,16 +127,17 @@ static int tmio_mmc_next_sg(struct tmio_mmc_host *host)
+> >  
+> >  #define STATUS_TO_TEXT(a, status, i) \
+> >  	do { \
+> > -		if (status & TMIO_STAT_##a) { \
+> > -			if (i++) \
+> > -				printk(" | "); \
+> > -			printk(#a); \
+> > +		if ((status) & TMIO_STAT_##a) { \
+> > +			if ((i)++) \
+> > +				printk(KERN_DEBUG " | "); \
+> > +			printk(KERN_DEBUG, #a); \
 > 
+> ...still there.
+
+Oops.
+
+> > @@ -349,13 +350,22 @@ static int tmio_mmc_start_command(struct tmio_mmc_host *host, struct mmc_command
+> >  	}
+> >  
+> >  	switch (mmc_resp_type(cmd)) {
+> > -	case MMC_RSP_NONE: c |= RESP_NONE; break;
+> > +	case MMC_RSP_NONE:
+> > +		c |= RESP_NONE;
+> > +		break;
+> >  	case MMC_RSP_R1:
+> >  	case MMC_RSP_R1_NO_CRC:
+> > -			   c |= RESP_R1;   break;
+> > -	case MMC_RSP_R1B:  c |= RESP_R1B;  break;
+> > -	case MMC_RSP_R2:   c |= RESP_R2;   break;
+> > -	case MMC_RSP_R3:   c |= RESP_R3;   break;
+> > +		c |= RESP_R1;
+> > +		break;
+> > +	case MMC_RSP_R1B:
+> > +		c |= RESP_R1B;
+> > +		break;
+> > +	case MMC_RSP_R2:
+> > +		c |= RESP_R2;
+> > +		break;
+> > +	case MMC_RSP_R3:
+> > +		c |= RESP_R3;
+> > +		break;
+> 
+> Very personal, I'd prefer the old way but I don't insist.
+> 
+> > -			 * Disable auto CMD12 at IO_RW_EXTENDED and SET_BLOCK_COUNT
+> > -			 * when doing multiple block transfer
+> > +			 * Disable auto CMD12 at IO_RW_EXTENDED and
+> > +			 * SET_BLOCK_COUNT when doing multiple block
+> > +			 * transfer
+> 
+> I'd think 'transfer' can go to the previous line?
+> 
+> >  			if ((host->pdata->flags & TMIO_MMC_HAVE_CMD12_CTRL) &&
+> > -			    (cmd->opcode == SD_IO_RW_EXTENDED || host->mrq->sbc))
+> > +			    (cmd->opcode == SD_IO_RW_EXTENDED ||
+> > +			     host->mrq->sbc))
+> 
+> Another subjective taste thingie ;)
+> 
+> > -		dev_warn_once(&host->pdev->dev,
+> > -		      "Too many taps, skipping tuning. Please consider updating size of taps field of tmio_mmc_host\n");
+> > +		dev_warn_once(&host->pdev->dev, "Too many taps, skipping tuning. Please consider updating size of taps field of tmio_mmc_host\n");
+> 
+> Dito.
+> 
+> What kind of tests did you run with these?
+
+I checked that Lager boots and that I/O speeds are as expected using dd.
