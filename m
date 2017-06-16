@@ -1,65 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:60335 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:50117 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751472AbdFHNJr (ORCPT
+        with ESMTP id S1752610AbdFPLvd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Jun 2017 09:09:47 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Ai Kyuse <ai.kyuse.uw@renesas.com>
-Subject: [PATCH/RFC 3/5] mmc: sh_mobile_sdhi: add some SoC specific data for R-Car Gen3
-Date: Thu,  8 Jun 2017 15:09:25 +0200
-Message-Id: <1496927368-18897-5-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1496927368-18897-1-git-send-email-horms+renesas@verge.net.au>
-References: <1496927368-18897-1-git-send-email-horms+renesas@verge.net.au>
+        Fri, 16 Jun 2017 07:51:33 -0400
+Date: Fri, 16 Jun 2017 13:51:13 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Magnus <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] arch/arm64: defconfig: Compile Renesas Sound related
+ drivers as Module
+Message-ID: <20170616115113.GA13576@verge.net.au>
+References: <87d1a77yll.wl%kuninori.morimoto.gx@renesas.com>
+ <20170615135606.GB22158@verge.net.au>
+ <87lgosixo3.wl%kuninori.morimoto.gx@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87lgosixo3.wl%kuninori.morimoto.gx@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-To avoid complicate code in own dma code for gen3, this patch
-adds set max_segs to 1. Then, the tmio driver will get requests
-as sg_len = 1 only.
+On Fri, Jun 16, 2017 at 12:33:18AM +0000, Kuninori Morimoto wrote:
+> 
+> Hi Simon
+> 
+> > > Current Renesas Sound related drivers are compiled as built-in.
+> > > Let's compile it as Module to reduce ARM64 Kernel size.
+> > > 
+> > > Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> > > ---
+> > >  arch/arm64/configs/defconfig | 6 +++---
+> > >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > 
+> > This does not seem to apply to renesas-next-20170614-v4.12-rc1
+> > This and the above I can fix but...
 
-In the performance point of view, the CONFIG_MMC_BLOCK_BOUNCE should
-be set. Otherwise, mmc block layer will set 4-kbyte each as a request.
+No problem. I would have fixed it up if it wasn't for the other question
+below.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Ai Kyuse <ai.kyuse.uw@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- drivers/mmc/host/renesas_sdhi.h      | 2 ++
- drivers/mmc/host/renesas_sdhi_core.c | 2 ++
- 2 files changed, 4 insertions(+)
+> 
+> Oops sorry about that.
+> I can post v2 patch
+> 
+> > > -CONFIG_SND_SOC_RCAR=y
+> > > -CONFIG_SND_SOC_AK4613=y
+> > > -CONFIG_SND_SIMPLE_CARD=y
+> > > +CONFIG_SND_SOC_RCAR=m
+> > > +CONFIG_SND_SOC_AK4613=m
+> > > +CONFIG_SND_SIMPLE_CARD=m
+> > 
+> > Do other drivers depend on any pf the above?
+> > If so what are the implications here?
+> 
+> SOC_RCAR is Renesas specific, no other driver is depends on it.
+> SOC_AK4613 is Codec and maybe Renesas only is using it, but I don't know.
+> no other driver is depends on it I think.
+> SIMPLE_CARD might be used from some other ARM64 platform.
+> 
+> This patch should focus only for RCAR and AK4613 ?
 
-diff --git a/drivers/mmc/host/renesas_sdhi.h b/drivers/mmc/host/renesas_sdhi.h
-index eb3ea15ff92d..6f7233fe32a2 100644
---- a/drivers/mmc/host/renesas_sdhi.h
-+++ b/drivers/mmc/host/renesas_sdhi.h
-@@ -31,6 +31,8 @@ struct renesas_sdhi_of_data {
- 	int scc_offset;
- 	struct renesas_sdhi_scc *taps;
- 	int taps_num;
-+	unsigned int max_blk_count;
-+	unsigned short max_segs;
- };
- 
- int renesas_sdhi_probe(struct platform_device *pdev,
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index 82150a966391..294bc9705c5f 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -522,6 +522,8 @@ int renesas_sdhi_probe(struct platform_device *pdev,
- 		mmc_data->capabilities |= of_data->capabilities;
- 		mmc_data->capabilities2 |= of_data->capabilities2;
- 		mmc_data->dma_rx_offset = of_data->dma_rx_offset;
-+		mmc_data->max_blk_count = of_data->max_blk_count;
-+		mmc_data->max_segs = of_data->max_segs;
- 		dma_priv->dma_buswidth = of_data->dma_buswidth;
- 		host->bus_shift = of_data->bus_shift;
- 	}
--- 
-2.1.4
+I think that should be a safe approach.
