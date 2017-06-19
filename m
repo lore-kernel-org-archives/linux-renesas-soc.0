@@ -1,207 +1,57 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: joro@8bytes.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-        sricharan@codeaurora.org, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
-        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
-        m.szyprowski@samsung.com
-Date: Thu, 15 Jun 2017 19:29:49 +0900
-Message-Id: <149752258917.21887.4347773581840409774.sendpatchset@little-apple>
-In-Reply-To: <149752254550.21887.15183665699230243235.sendpatchset@little-apple>
-References: <149752254550.21887.15183665699230243235.sendpatchset@little-apple>
-Subject: [PATCH 04/04] iommu/ipmmu-vmsa: Replace local utlb code with fwspec ids
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:36332 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753490AbdFSGOl (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 19 Jun 2017 02:14:41 -0400
+Received: by mail-lf0-f68.google.com with SMTP id x81so9011681lfb.3
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 18 Jun 2017 23:14:35 -0700 (PDT)
+Date: Sun, 18 Jun 2017 22:52:28 -0700
+From: Olof Johansson <olof@lixom.net>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: arm@kernel.org, linux-renesas-soc@vger.kernel.org,
+        Kevin Hilman <khilman@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [GIT PULL] Renesas ARM Based SoC Updates for v4.13
+Message-ID: <20170619055228.GM7703@localhost>
+References: <cover.1497619609.git.horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1497619609.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On Fri, Jun 16, 2017 at 03:31:16PM +0200, Simon Horman wrote:
+> Hi Olof, Hi Kevin, Hi Arnd,
+> 
+> Please consider these Renesas ARM based SoC updates for v4.13.
+> 
+> 
+> The following changes since commit 2ea659a9ef488125eb46da6eb571de5eae5c43f6:
+> 
+>   Linux 4.12-rc1 (2017-05-13 13:19:49 -0700)
+> 
+> are available in the git repository at:
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-soc-for-v4.13
+> 
+> for you to fetch changes up to fd8cf827d8a635df3dad46773ad828ce4c93d95b:
+> 
+>   ARM: shmobile: pm-rmobile: Use GENPD_FLAG_ALWAYS_ON (2017-06-14 10:58:48 +0200)
+> 
+> ----------------------------------------------------------------
+> Renesas ARM Based SoC Updates for v4.13
+> 
+> * Use GENPD_FLAG_ALWAYS_ON in pm-rmobile
+> 
+> ----------------------------------------------------------------
+> Geert Uytterhoeven (1):
+>       ARM: shmobile: pm-rmobile: Use GENPD_FLAG_ALWAYS_ON
 
-Now when both 32-bit and 64-bit code inside the driver is using
-fwspec it is possible to replace the utlb handling with fwspec ids
-that get populated from ->of_xlate().
+Merged, thanks.
 
-Suggested-by: Robin Murphy <robin.murphy@arm.com>
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
 
- drivers/iommu/ipmmu-vmsa.c |  104 ++++++++------------------------------------
- 1 file changed, 19 insertions(+), 85 deletions(-)
-
---- 0013/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2017-06-15 18:32:27.580607110 +0900
-@@ -19,6 +19,7 @@
- #include <linux/iommu.h>
- #include <linux/module.h>
- #include <linux/of.h>
-+#include <linux/of_platform.h>
- #include <linux/platform_device.h>
- #include <linux/sizes.h>
- #include <linux/slab.h>
-@@ -59,8 +60,6 @@ struct ipmmu_vmsa_domain {
- 
- struct ipmmu_vmsa_iommu_priv {
- 	struct ipmmu_vmsa_device *mmu;
--	unsigned int *utlbs;
--	unsigned int num_utlbs;
- 	struct device *dev;
- 	struct list_head list;
- };
-@@ -550,13 +549,14 @@ static int ipmmu_attach_device(struct io
- 			       struct device *dev)
- {
- 	struct ipmmu_vmsa_iommu_priv *priv = to_priv(dev);
-+	struct iommu_fwspec *fwspec = dev->iommu_fwspec;
- 	struct ipmmu_vmsa_device *mmu = priv->mmu;
- 	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
- 	unsigned long flags;
- 	unsigned int i;
- 	int ret = 0;
- 
--	if (!mmu) {
-+	if (!priv || !priv->mmu) {
- 		dev_err(dev, "Cannot attach to IPMMU\n");
- 		return -ENXIO;
- 	}
-@@ -583,8 +583,8 @@ static int ipmmu_attach_device(struct io
- 	if (ret < 0)
- 		return ret;
- 
--	for (i = 0; i < priv->num_utlbs; ++i)
--		ipmmu_utlb_enable(domain, priv->utlbs[i]);
-+	for (i = 0; i < fwspec->num_ids; ++i)
-+		ipmmu_utlb_enable(domain, fwspec->ids[i]);
- 
- 	return 0;
- }
-@@ -592,12 +592,12 @@ static int ipmmu_attach_device(struct io
- static void ipmmu_detach_device(struct iommu_domain *io_domain,
- 				struct device *dev)
- {
--	struct ipmmu_vmsa_iommu_priv *priv = to_priv(dev);
-+	struct iommu_fwspec *fwspec = dev->iommu_fwspec;
- 	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
- 	unsigned int i;
- 
--	for (i = 0; i < priv->num_utlbs; ++i)
--		ipmmu_utlb_disable(domain, priv->utlbs[i]);
-+	for (i = 0; i < fwspec->num_ids; ++i)
-+		ipmmu_utlb_disable(domain, fwspec->ids[i]);
- 
- 	/*
- 	 * TODO: Optimize by disabling the context when no device is attached.
-@@ -633,102 +633,36 @@ static phys_addr_t ipmmu_iova_to_phys(st
- 	return domain->iop->iova_to_phys(domain->iop, iova);
- }
- 
--static int ipmmu_find_utlbs(struct ipmmu_vmsa_device *mmu, struct device *dev,
--			    unsigned int *utlbs, unsigned int num_utlbs)
--{
--	unsigned int i;
--
--	for (i = 0; i < num_utlbs; ++i) {
--		struct of_phandle_args args;
--		int ret;
--
--		ret = of_parse_phandle_with_args(dev->of_node, "iommus",
--						 "#iommu-cells", i, &args);
--		if (ret < 0)
--			return ret;
--
--		of_node_put(args.np);
--
--		if (args.np != mmu->dev->of_node || args.args_count != 1)
--			return -EINVAL;
--
--		utlbs[i] = args.args[0];
--	}
--
--	return 0;
--}
--
--static int ipmmu_init_platform_device(struct device *dev)
-+static int ipmmu_init_platform_device(struct device *dev,
-+				      struct of_phandle_args *args)
- {
-+	struct platform_device *ipmmu_pdev;
- 	struct ipmmu_vmsa_iommu_priv *priv;
--	struct ipmmu_vmsa_device *mmu;
--	unsigned int *utlbs;
--	unsigned int i;
--	int num_utlbs;
--	int ret = -ENODEV;
- 
- 	/* Initialize once - xlate() will call multiple times */
- 	if (to_priv(dev))
- 		return 0;
- 
--	/* Find the master corresponding to the device. */
--
--	num_utlbs = of_count_phandle_with_args(dev->of_node, "iommus",
--					       "#iommu-cells");
--	if (num_utlbs < 0)
-+	ipmmu_pdev = of_find_device_by_node(args->np);
-+	if (!ipmmu_pdev)
- 		return -ENODEV;
- 
--	utlbs = kcalloc(num_utlbs, sizeof(*utlbs), GFP_KERNEL);
--	if (!utlbs)
--		return -ENOMEM;
--
--	spin_lock(&ipmmu_devices_lock);
--
--	list_for_each_entry(mmu, &ipmmu_devices, list) {
--		ret = ipmmu_find_utlbs(mmu, dev, utlbs, num_utlbs);
--		if (!ret) {
--			/*
--			 * TODO Take a reference to the MMU to protect
--			 * against device removal.
--			 */
--			break;
--		}
--	}
--
--	spin_unlock(&ipmmu_devices_lock);
--
--	if (ret < 0)
--		goto error;
--
--	for (i = 0; i < num_utlbs; ++i) {
--		if (utlbs[i] >= mmu->num_utlbs) {
--			ret = -EINVAL;
--			goto error;
--		}
--	}
--
- 	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
--	if (!priv) {
--		ret = -ENOMEM;
--		goto error;
--	}
-+	if (!priv)
-+		return -ENOMEM;
- 
--	priv->mmu = mmu;
--	priv->utlbs = utlbs;
--	priv->num_utlbs = num_utlbs;
-+	priv->mmu = platform_get_drvdata(ipmmu_pdev);
- 	priv->dev = dev;
- 	dev->iommu_fwspec->iommu_priv = priv;
- 	return 0;
--
--error:
--	kfree(utlbs);
--	return ret;
- }
- 
- static int ipmmu_of_xlate(struct device *dev,
- 			  struct of_phandle_args *spec)
- {
--	return ipmmu_init_platform_device(dev);
-+	iommu_fwspec_add_ids(dev, spec->args, 1);
-+
-+	return ipmmu_init_platform_device(dev, spec);
- }
- 
- #if defined(CONFIG_ARM) && !defined(CONFIG_IOMMU_DMA)
+-Olof
