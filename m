@@ -1,88 +1,126 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:36633 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752425AbdFOKdk (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Jun 2017 06:33:40 -0400
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 From: Magnus Damm <magnus.damm@gmail.com>
 To: joro@8bytes.org
 Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-        robin.murphy@arm.com, will.deacon@arm.com,
         linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
-        Magnus Damm <magnus.damm@gmail.com>, sricharan@codeaurora.org,
+        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
         m.szyprowski@samsung.com
-Date: Thu, 15 Jun 2017 19:29:38 +0900
-Message-Id: <149752257829.21887.15003130821809174947.sendpatchset@little-apple>
-In-Reply-To: <149752254550.21887.15183665699230243235.sendpatchset@little-apple>
-References: <149752254550.21887.15183665699230243235.sendpatchset@little-apple>
-Subject: [PATCH 03/04] iommu/ipmmu-vmsa: Use fwspec on both 32 and 64-bit ARM
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Date: Mon, 19 Jun 2017 18:14:27 +0900
+Message-Id: <149786366719.14868.17066498531340464311.sendpatchset@little-apple>
+In-Reply-To: <149786362527.14868.2143461703972595839.sendpatchset@little-apple>
+References: <149786362527.14868.2143461703972595839.sendpatchset@little-apple>
+Subject: [PATCH v4 04/09] iommu/ipmmu-vmsa: Make use of IOMMU_OF_DECLARE()
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Robin Murphy <robin.murphy@arm.com>
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Consolidate the 32-bit and 64-bit code to make use of fwspec instead
-of archdata for the 32-bit ARM case.
+Hook up IOMMU_OF_DECLARE() support in case CONFIG_IOMMU_DMA
+is enabled. The only current supported case for 32-bit ARM
+is disabled, however for 64-bit ARM usage of OF is required.
 
-This is a simplified version of the fwspec handling code from Robin
-posted as [PATCH] iommu/ipmmu-vmsa: Convert to iommu_fwspec
-
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
 Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
 
- drivers/iommu/ipmmu-vmsa.c |   21 +++------------------
- 1 file changed, 3 insertions(+), 18 deletions(-)
+ Changes since V3:
+ - Reworked to fit on top of
+   [PATCH 00/04] iommu/ipmmu-vmsa: 32-bit ARM update
 
---- 0010/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2017-06-15 17:29:00.290607110 +0900
-@@ -73,22 +73,9 @@ static struct ipmmu_vmsa_domain *to_vmsa
- 	return container_of(dom, struct ipmmu_vmsa_domain, io_domain);
- }
+ Changes since V2:
+ - Reworked registration code to make use of recently introduced:
+     iommu_device_register()
+     iommu_device_set_ops()
+     iommu_device_set_fwnode()
+
+ Changes since V1:
+ - Reworked slightly to fit updated patch order and
+   [PATCH v3 00/06] iommu/ipmmu-vmsa: IPMMU multi-arch update V3
+
+ drivers/iommu/ipmmu-vmsa.c |   43 +++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 37 insertions(+), 6 deletions(-)
+
+--- 0019/drivers/iommu/ipmmu-vmsa.c
++++ work/drivers/iommu/ipmmu-vmsa.c	2017-06-19 14:03:53.140607110 +0900
+@@ -20,6 +20,7 @@
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
++#include <linux/of_iommu.h>
+ #include <linux/of_platform.h>
+ #include <linux/platform_device.h>
+ #include <linux/sizes.h>
+@@ -1055,13 +1056,25 @@ static int ipmmu_probe(struct platform_d
+ 		ipmmu_device_reset(mmu);
+ 	}
  
+-	ret = iommu_device_register(&mmu->iommu);
+-	if (ret)
+-		return ret;
 -
- static struct ipmmu_vmsa_iommu_priv *to_priv(struct device *dev)
+-	iommu_device_set_ops(&mmu->iommu, &ipmmu_ops);
+-	iommu_device_set_fwnode(&mmu->iommu, &pdev->dev.of_node->fwnode);
++	/*
++	 * Register the IPMMU to the IOMMU subsystem in the following cases:
++	 * - R-Car Gen2 IPMMU (all devices registered)
++	 * - R-Car Gen3 IPMMU (leaf devices only - skip root IPMMU-MM device)
++	 */
++	if (!mmu->features->has_cache_leaf_nodes || mmu->is_leaf) {
++		ret = iommu_device_register(&mmu->iommu);
++		if (ret)
++			return ret;
+ 
++		iommu_device_set_ops(&mmu->iommu, &ipmmu_ops);
++		iommu_device_set_fwnode(&mmu->iommu,
++					&pdev->dev.of_node->fwnode);
++
++#if defined(CONFIG_IOMMU_DMA)
++		if (!iommu_present(&platform_bus_type))
++			bus_set_iommu(&platform_bus_type, &ipmmu_ops);
++#endif
++	}
+ 	/*
+ 	 * We can't create the ARM mapping here as it requires the bus to have
+ 	 * an IOMMU, which only happens when bus_set_iommu() is called in
+@@ -1107,15 +1120,22 @@ static struct platform_driver ipmmu_driv
+ 
+ static int __init ipmmu_init(void)
  {
--#if defined(CONFIG_ARM)
--	return dev->archdata.iommu;
--#else
--	return dev->iommu_fwspec->iommu_priv;
--#endif
--}
--static void set_priv(struct device *dev, struct ipmmu_vmsa_iommu_priv *p)
--{
--#if defined(CONFIG_ARM)
--	dev->archdata.iommu = p;
--#else
--	dev->iommu_fwspec->iommu_priv = p;
--#endif
-+	return dev->iommu_fwspec ? dev->iommu_fwspec->iommu_priv : NULL;
++	static bool setup_done;
+ 	int ret;
+ 
++	if (setup_done)
++		return 0;
++
+ 	ret = platform_driver_register(&ipmmu_driver);
+ 	if (ret < 0)
+ 		return ret;
+ 
++#if defined(CONFIG_ARM) && !defined(CONFIG_IOMMU_DMA)
+ 	if (!iommu_present(&platform_bus_type))
+ 		bus_set_iommu(&platform_bus_type, &ipmmu_ops);
++#endif
+ 
++	setup_done = true;
+ 	return 0;
  }
  
- #define TLB_LOOP_TIMEOUT		100	/* 100us */
-@@ -730,7 +717,7 @@ static int ipmmu_init_platform_device(st
- 	priv->utlbs = utlbs;
- 	priv->num_utlbs = num_utlbs;
- 	priv->dev = dev;
--	set_priv(dev, priv);
-+	dev->iommu_fwspec->iommu_priv = priv;
- 	return 0;
+@@ -1127,6 +1147,17 @@ static void __exit ipmmu_exit(void)
+ subsys_initcall(ipmmu_init);
+ module_exit(ipmmu_exit);
  
- error:
-@@ -887,14 +874,12 @@ static void ipmmu_domain_free_dma(struct
- 
- static int ipmmu_add_device_dma(struct device *dev)
- {
--	struct iommu_fwspec *fwspec = dev->iommu_fwspec;
- 	struct iommu_group *group;
- 
- 	/*
- 	 * Only let through devices that have been verified in xlate()
--	 * We may get called with dev->iommu_fwspec set to NULL.
- 	 */
--	if (!fwspec || !fwspec->iommu_priv)
-+	if (!to_priv(dev))
- 		return -ENODEV;
- 
- 	group = iommu_group_get_for_dev(dev);
++#ifdef CONFIG_IOMMU_DMA
++static int __init ipmmu_vmsa_iommu_of_setup(struct device_node *np)
++{
++	ipmmu_init();
++	return 0;
++}
++
++IOMMU_OF_DECLARE(ipmmu_vmsa_iommu_of, "renesas,ipmmu-vmsa",
++		 ipmmu_vmsa_iommu_of_setup);
++#endif
++
+ MODULE_DESCRIPTION("IOMMU API for Renesas VMSA-compatible IPMMU");
+ MODULE_AUTHOR("Laurent Pinchart <laurent.pinchart@ideasonboard.com>");
+ MODULE_LICENSE("GPL v2");
