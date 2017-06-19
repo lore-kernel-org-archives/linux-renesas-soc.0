@@ -1,103 +1,64 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:36316 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753490AbdFSGOf (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 19 Jun 2017 02:14:35 -0400
+Received: by mail-lf0-f68.google.com with SMTP id x81so9011557lfb.3
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 18 Jun 2017 23:14:30 -0700 (PDT)
+Date: Sun, 18 Jun 2017 22:50:08 -0700
+From: Olof Johansson <olof@lixom.net>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: arm@kernel.org, linux-renesas-soc@vger.kernel.org,
+        Kevin Hilman <khilman@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [GIT PULL] Second Round of Renesas ARM Based SoC DT Updates for
+ v4.13
+Message-ID: <20170619055008.GJ7703@localhost>
+References: <cover.1497618353.git.horms+renesas@verge.net.au>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdWWfaP8=H7H+UzrmOYpydi2mGLFGzuk9FQWJtEOug6u5g@mail.gmail.com>
-References: <1495112345-24795-1-git-send-email-geert+renesas@glider.be>
- <f0ed61c3-062b-cec6-fe19-7412231e8ef1@gmail.com> <CAMuHMdWYeSzofU57LmT_M3KkcHhvjfJy7nkHvcXkKzOYmvhqqA@mail.gmail.com>
- <20170518193453.GB13759@lunn.ch> <CAMuHMdV+jfh=EGt3SvjtrtVfWQ6P8ofp_JxeQZjRrSEfDWs5hA@mail.gmail.com>
- <08a89dd5-b707-8b8f-b8e1-e20b9ed630b7@gmail.com> <CAMuHMdWWfaP8=H7H+UzrmOYpydi2mGLFGzuk9FQWJtEOug6u5g@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 6 Jun 2017 11:43:22 +0200
-Message-ID: <CAMuHMdUt6yOQ9=02z_7WG58YGxFYD=_zn7SeLEqGmfTrNBFJXw@mail.gmail.com>
-Subject: Re: [PATCH] of_mdio: Fix broken PHY IRQ in case of probe deferral
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1497618353.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Florian,
+On Fri, Jun 16, 2017 at 03:30:45PM +0200, Simon Horman wrote:
+> Hi Olof, Hi Kevin, Hi Arnd,
+> 
+> Please consider these second round of Renesas ARM based SoC DT updates for v4.13.
+> 
+> This pull request is based on the previous round of
+> such requests, tagged as renesas-dt-for-v4.13,
+> which you have already merged.
+> 
+> 
+> The following changes since commit 2ae0fcc57e00c11fae80678e2a9fabbeec82a185:
+> 
+>   ARM: dts: renesas: Switch to panel-lvds bindings for Mitsubishi panels (2017-05-15 11:14:39 +0200)
+> 
+> are available in the git repository at:
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-dt2-for-v4.13
+> 
+> for you to fetch changes up to f7d569c1e6a6fa731fc34083a9f0191b7360eeb1:
+> 
+>   ARM: dts: r8a779x: Fix PCI bus dtc warnings (2017-06-12 11:18:30 +0200)
+> 
+> ----------------------------------------------------------------
+> Second Round of Renesas ARM Based SoC DT Updates for v4.13
+> 
+> Cleanup:
+> * Correct PCI bus dtc warnings for r8a779x SoCs
+> 
+> Enhancements:
+> * Add support for iWave G20D-Q7 board based on RZ/G1M SoC
+> * Add support for GR-Peach board based on r7s72100 SoC
+> * Add composite video and HDMI input to gose board
 
-On Tue, May 23, 2017 at 11:36 AM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Fri, May 19, 2017 at 12:21 AM, Florian Fainelli <f.fainelli@gmail.com> wrote:
->> On 05/18/2017 01:36 PM, Geert Uytterhoeven wrote:
->>> On Thu, May 18, 2017 at 9:34 PM, Andrew Lunn <andrew@lunn.ch> wrote:
->>>>>> This most certainly works fine in the simple case where you have one PHY
->>>>>> hanging off the MDIO bus, now what happens if you have several?
->>>>>>
->>>>>> Presumably, the first PHY that returns EPROBE_DEFER will make the entire
->>>>>> bus registration return EPROB_DEFER as well, and so on, and so forth,
->>>>>> but I am not sure if we will be properly unwinding the successful
->>>>>> registration of PHYs that either don't have an interrupt, or did not
->>>>>> return EPROBE_DEFER.
->>>>>>
->>>>>> It should be possible to mimic this behavior by using the fixed PHY, and
->>>>>> possibly the dsa_loop.c driver which would create 4 ports, expecting 4
->>>>>> fixed PHYs to be present.
->>>>>
->>>>> mdiobus_unregister(), called from of_mdiobus_register() on failure,
->>>>> should do the unwinding, right?
->>>>>
->>>>> And when the driver is reprobed, all PHYs are reprobed, until they all
->>>>> succeed.
->>>>
->>>> That is the theory. I looked at that while reviewing the patch. But
->>>> this has probably not been tested in anger. It would be good to test
->>>> this properly, with not just the first PHY returning -EPROBE_DEFER, to
->>>> really test the unwind.
->>>
->>> Unfortunately I don't have a board with multiple PHYs, so I cannot test
->>> that case.
->
-> I tried adding a few dummy PHYs in DT, but that didn't work.
->
-> So how can we proceed?
->
-> I think the only way my patch can cause issues is because some systems
-> may rely on EPROBE_DEFER errors being ignored.
->
->>> Does unbinding/rebinding a network driver with multiple PHYs currently
->>> work? Or module unload/reload?
->>
->> Usually there is a strict 1:1 mapping between a network device (not
->> driver) and a PHY device, switch drivers however, would have multiple
->> PHYs (one per port, aka net_deice).
->>
->> NB: binding and unbinding of PHYs is pretty broken at the moment though,
->> because there is a complete disconnect between what the Ethernet MAC
->> expects, and the state in which the PHY is. I had some patches to fix
->> that, but this turned out to be playing whack-a-mole which I typically
->> suck at.
->
-> I didn't mean unbinding the PHY, but the network device.
-> Don't you have the same issue with the state of PHYs as left by the bootloader?
+Merged, thanks!
 
-Anyone who can test the behavior on an Ethernet device with multiple PHYs,
-e.g. by faking an -EPROBE_DEFER somewhere in the middle?
 
-I'd like to get this issue fixed in v4.13, to avoid a regression when migrating
-several systems to a new and better clock driver in v4.14, which will trigger
-EPROBE_DEFER.
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-Olof
