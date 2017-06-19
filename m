@@ -1,100 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:58780 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751517AbdFFTGD (ORCPT
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:34769 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753531AbdFSJRd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Jun 2017 15:06:03 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <87bmq3dpvt.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dIJnh-0007Ao-1c@debutante>
-Date: Tue, 06 Jun 2017 20:05:57 +0100
-Subject: Applied "ASoC: simple-card-utils: share same dev_dbg() for Dai Name" to the asoc tree
+        Mon, 19 Jun 2017 05:17:33 -0400
+From: Magnus Damm <magnus.damm@gmail.com>
+To: joro@8bytes.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
+        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
+        m.szyprowski@samsung.com
+Date: Mon, 19 Jun 2017 18:13:45 +0900
+Message-Id: <149786362527.14868.2143461703972595839.sendpatchset@little-apple>
+Subject: [PATCH v4 00/09] iommu/ipmmu-vmsa: r8a7795 support V4
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+iommu/ipmmu-vmsa: r8a7795 support V4
 
-   ASoC: simple-card-utils: share same dev_dbg() for Dai Name
+[PATCH v4 01/09] iommu/ipmmu-vmsa: Introduce features, break out alias
+[PATCH v4 02/09] iommu/ipmmu-vmsa: Add optional root device feature
+[PATCH v4 03/09] iommu/ipmmu-vmsa: Enable multi context support
+[PATCH v4 04/09] iommu/ipmmu-vmsa: Make use of IOMMU_OF_DECLARE()
+[PATCH v4 05/09] iommu/ipmmu-vmsa: IPMMU device is 40-bit bus master
+[PATCH v4 06/09] iommu/ipmmu-vmsa: Write IMCTR twice
+[PATCH v4 07/09] iommu/ipmmu-vmsa: Make IMBUSCTR setup optional
+[PATCH v4 08/09] iommu/ipmmu-vmsa: Allow two bit SL0
+[PATCH v4 09/09] iommu/ipmmu-vmsa: Hook up r8a7795 DT matching code
 
-has been applied to the asoc tree at
+Here's an updated series for r8a7795 IPMMU support. The patches adjust
+the code based on feedback from Geert and Robin together with a rebase
+to include changes from the recently posted series:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+[PATCH 00/04] iommu/ipmmu-vmsa: 32-bit ARM update
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+The DT binding for r8a7795 has been accepted for upstream merge
+and this series implements support following such format:
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+d4e42e7 iommu/ipmmu-vmsa: Add r8a7795 DT binding
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+The r8a7795 IPMMU is almost register compatible with earlier devices
+like r8a7790-r8a7794, however some bitfields have been shifted
+slightly. On a grander scale topology has been added and interrupts
+have been reworked. So now there are several "cache" IPMMU units
+without interrupt that somehow communicate with IPMMU-MM that
+is the only instance that supports interrupts. The code refers to
+IPMMU-MM as a "root" device and the other ones as "leaf" nodes.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+Changes since V3:
+ - Rebased on top of [PATCH 00/04] iommu/ipmmu-vmsa: 32-bit ARM update
+ - Patch 1/9 has been updated to use of_device_get_match_data(), thanks Robin!
+ - Patch 2/9 has been reworked to make it easier to follow, thanks Geert!
+ - Patch 3/9 now uses unsigned int for context counts - thanks Robin!
+ - Patch 6/9 now includes function name changes - thanks Robin! 
+ - Patch 9/9 now uses dev_err() instead of dev_info() - thanks Geert!
 
-Thanks,
-Mark
+Changes since V2:
+ - Patch 2/9 has been updated with a bug fix and to supply __ipmmu_find_root()
+ - Patch 4/9 now makes use of iommu_device_* functions
+ - Patch 5/9 sets the mask to 40 bits instead of 64 bits
+ - Patch 9/9 implements white list handling via ->xlate() and fixes a bug
 
->From 4579771ebb78aa26831ee3d9617690da5198072c Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 5 Jun 2017 04:28:29 +0000
-Subject: [PATCH] ASoC: simple-card-utils: share same dev_dbg() for Dai Name
-
-Let's share same debug message for DAI Name
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
- sound/soc/generic/audio-graph-card.c  | 1 -
- sound/soc/generic/simple-card-utils.c | 2 ++
- sound/soc/generic/simple-card.c       | 1 -
- 3 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/generic/audio-graph-card.c b/sound/soc/generic/audio-graph-card.c
-index 1769a39a22c4..2c3a1cc01442 100644
---- a/sound/soc/generic/audio-graph-card.c
-+++ b/sound/soc/generic/audio-graph-card.c
-@@ -169,7 +169,6 @@ static int asoc_graph_card_dai_link_of(struct device_node *cpu_port,
- 	dai_link->ops = &asoc_graph_card_ops;
- 	dai_link->init = asoc_graph_card_dai_init;
- 
--	dev_dbg(dev, "\tname : %s\n", dai_link->stream_name);
- 	dev_dbg(dev, "\tcpu : %s / %d\n",
- 		dai_link->cpu_dai_name,
- 		cpu_dai->sysclk);
-diff --git a/sound/soc/generic/simple-card-utils.c b/sound/soc/generic/simple-card-utils.c
-index 59e770125596..1f08064f65b1 100644
---- a/sound/soc/generic/simple-card-utils.c
-+++ b/sound/soc/generic/simple-card-utils.c
-@@ -74,6 +74,8 @@ int asoc_simple_card_set_dailink_name(struct device *dev,
- 
- 		dai_link->name		= name;
- 		dai_link->stream_name	= name;
-+
-+		dev_dbg(dev, "name : %s\n", name);
- 	}
- 
- 	return ret;
-diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
-index d364f08a7182..1da0e2b068c3 100644
---- a/sound/soc/generic/simple-card.c
-+++ b/sound/soc/generic/simple-card.c
-@@ -301,7 +301,6 @@ static int asoc_simple_card_dai_link_of(struct device_node *node,
- 	dai_link->ops = &asoc_simple_card_ops;
- 	dai_link->init = asoc_simple_card_dai_init;
- 
--	dev_dbg(dev, "\tname : %s\n", dai_link->stream_name);
- 	dev_dbg(dev, "\tcpu : %s / %d\n",
- 		dai_link->cpu_dai_name,
- 		dai_props->cpu_dai.sysclk);
--- 
-2.11.0
+ Developed on top of next-20170614 with the following series applied
+ [PATCH 00/04] iommu/ipmmu-vmsa: 32-bit ARM update
+
+ drivers/iommu/ipmmu-vmsa.c |  327 ++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 260 insertions(+), 67 deletions(-)
