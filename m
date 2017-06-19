@@ -1,118 +1,73 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:42781 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750757AbdFSRFi (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 19 Jun 2017 13:05:38 -0400
 From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: linus.walleij@linaro.org, geert+renesas@glider.be,
-        laurent.pinchart@ideasonboard.com, chris.brandt@renesas.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk,
-        aisheng.dong@nxp.com
+To: laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se
 Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v6 4/8] arm: dts: r7s72100: Add pin controller node
-Date: Thu, 22 Jun 2017 16:54:32 +0200
-Message-Id: <1498143276-7976-5-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1498143276-7976-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1498143276-7976-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-kernel-owner@vger.kernel.org
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v1 10/12] media: rcar: vin: Add digital input mask to vin_dev
+Date: Mon, 19 Jun 2017 19:04:47 +0200
+Message-Id: <1497891889-8038-11-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1497891889-8038-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1497891889-8038-1-git-send-email-jacopo+renesas@jmondi.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add pin controller node with 12 gpio controller sub-nodes to
-r7s72100 dtsi.
+Add bitmask to enumerate VIN channel identifiers that support digital
+video inputs.
 
 Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r7s72100.dtsi | 78 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 78 insertions(+)
+ drivers/media/platform/rcar-vin/rcar-core.c | 4 ++++
+ drivers/media/platform/rcar-vin/rcar-vin.h  | 4 ++++
+ 2 files changed, 8 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
-index 0423996..fb54cb5 100644
---- a/arch/arm/boot/dts/r7s72100.dtsi
-+++ b/arch/arm/boot/dts/r7s72100.dtsi
-@@ -207,6 +207,84 @@
- 		};
- 	};
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 6e5d84a..1d0b492 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -1028,6 +1028,8 @@ static const struct rvin_info rcar_info_r8a7795 = {
+ 			{ .csi = RVIN_CSI21, .chan = 3 },
+ 		},
+ 	},
++
++	.din_mask = BIT(4) | BIT(5),
+ };
  
-+	pinctrl: pin-controller@fcfe3000 {
-+		compatible = "renesas,r7s72100-ports";
+ static const struct rvin_info rcar_info_r8a7796 = {
+@@ -1088,6 +1090,8 @@ static const struct rvin_info rcar_info_r8a7796 = {
+ 			{ .csi = RVIN_CSI20, .chan = 3 },
+ 		},
+ 	},
 +
-+		reg = <0xfcfe3000 0x4230>;
++	.din_mask = BIT(4) | BIT(5),
+ };
+ 
+ static const struct of_device_id rvin_of_id_table[] = {
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index 4361de9..333ef3b 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -119,6 +119,8 @@ struct rvin_group_chsel {
+  *
+  * num_chsels:		number of possible chsel values for this VIN
+  * chsels:		routing table VIN <-> CSI-2 for the chsel values
++ *
++ * din_mask:		mask of VIN channels IDs supporting digital input
+  */
+ struct rvin_info {
+ 	enum chip_id chip;
+@@ -129,6 +131,8 @@ struct rvin_info {
+ 
+ 	unsigned int num_chsels;
+ 	struct rvin_group_chsel chsels[RCAR_VIN_NUM][RCAR_CHSEL_MAX];
 +
-+		port0: gpio-0 {
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			gpio-ranges = <&pinctrl 0 0 6>;
-+		};
-+
-+		port1: gpio-1 {
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			gpio-ranges = <&pinctrl 0 16 16>;
-+		};
-+
-+		port2: gpio-2 {
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			gpio-ranges = <&pinctrl 0 32 16>;
-+		};
-+
-+		port3: gpio-3 {
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			gpio-ranges = <&pinctrl 0 48 16>;
-+		};
-+
-+		port4: gpio-4 {
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			gpio-ranges = <&pinctrl 0 64 16>;
-+		};
-+
-+		port5: gpio-5 {
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			gpio-ranges = <&pinctrl 0 80 11>;
-+		};
-+
-+		port6: gpio-6 {
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			gpio-ranges = <&pinctrl 0 96 16>;
-+		};
-+
-+		port7: gpio-7 {
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			gpio-ranges = <&pinctrl 0 112 16>;
-+		};
-+
-+		port8: gpio-8 {
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			gpio-ranges = <&pinctrl 0 128 16>;
-+		};
-+
-+		port9: gpio-9 {
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			gpio-ranges = <&pinctrl 0 144 8>;
-+		};
-+
-+		port10: gpio-10 {
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			gpio-ranges = <&pinctrl 0 160 16>;
-+		};
-+
-+		port11: gpio-11 {
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			gpio-ranges = <&pinctrl 0 176 16>;
-+		};
-+	};
-+
- 	scif0: serial@e8007000 {
- 		compatible = "renesas,scif-r7s72100", "renesas,scif";
- 		reg = <0xe8007000 64>;
++	unsigned int din_mask;
+ };
+ 
+ /**
 -- 
 2.7.4
