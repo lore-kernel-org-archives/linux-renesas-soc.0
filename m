@@ -1,48 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:54866 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753291AbdFPNbj (ORCPT
+Received: from mail-lf0-f44.google.com ([209.85.215.44]:36790 "EHLO
+        mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751025AbdFSTqz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Jun 2017 09:31:39 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Renesas ARM Based SoC Updates for v4.13
-Date: Fri, 16 Jun 2017 15:31:16 +0200
-Message-Id: <cover.1497619609.git.horms+renesas@verge.net.au>
+        Mon, 19 Jun 2017 15:46:55 -0400
+Received: by mail-lf0-f44.google.com with SMTP id o83so61985351lff.3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Jun 2017 12:46:55 -0700 (PDT)
+Date: Mon, 19 Jun 2017 21:46:52 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: laurent.pinchart@ideasonboard.com,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v1 07/12] media: rcar: vin: Add ID for parallel input on
+ Gen3
+Message-ID: <20170619194652.GG11365@bigcity.dyn.berto.se>
+References: <1497891889-8038-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1497891889-8038-8-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1497891889-8038-8-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+Hi Jacopo,
 
-Please consider these Renesas ARM based SoC updates for v4.13.
+Thanks for your patch.
 
+On 2017-06-19 19:04:44 +0200, Jacopo Mondi wrote:
+> Add an identifier for parallel input on Gen3.
+> Also define the maximum number of available inputs on Gen3 boards.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+>  drivers/media/platform/rcar-vin/rcar-vin.h | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+> index e7e600f..4361de9 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-vin.h
+> +++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+> @@ -51,6 +51,8 @@ enum rvin_csi_id {
+>  	RVIN_CSI40,
+>  	RVIN_CSI41,
+>  	RVIN_CSI_MAX,
+> +	RVIN_PARALLEL_IN,
+> +	RVIN_INPUT_MAX,
 
-The following changes since commit 2ea659a9ef488125eb46da6eb571de5eae5c43f6:
+It feels a bit odd to add the parallel enum to the CSI-2 enums. If this 
+is needed maybe the whole enum needs to be renamed?
 
-  Linux 4.12-rc1 (2017-05-13 13:19:49 -0700)
+>  	RVIN_NC, /* Not Connected */
+>  };
+>  
+> -- 
+> 2.7.4
+> 
 
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-soc-for-v4.13
-
-for you to fetch changes up to fd8cf827d8a635df3dad46773ad828ce4c93d95b:
-
-  ARM: shmobile: pm-rmobile: Use GENPD_FLAG_ALWAYS_ON (2017-06-14 10:58:48 +0200)
-
-----------------------------------------------------------------
-Renesas ARM Based SoC Updates for v4.13
-
-* Use GENPD_FLAG_ALWAYS_ON in pm-rmobile
-
-----------------------------------------------------------------
-Geert Uytterhoeven (1):
-      ARM: shmobile: pm-rmobile: Use GENPD_FLAG_ALWAYS_ON
-
- arch/arm/mach-shmobile/pm-rmobile.c | 19 ++++---------------
- 1 file changed, 4 insertions(+), 15 deletions(-)
+-- 
+Regards,
+Niklas S�derlund
