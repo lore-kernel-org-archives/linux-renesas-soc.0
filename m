@@ -1,82 +1,51 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:42781 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752464AbdFSRFg (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Jun 2017 13:05:36 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v1 04/12] media: i2c: mt9m111: Add source pad
-Date: Mon, 19 Jun 2017 19:04:41 +0200
-Message-Id: <1497891889-8038-5-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1497891889-8038-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1497891889-8038-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: joro@8bytes.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
+        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
+        m.szyprowski@samsung.com
+Date: Mon, 19 Jun 2017 20:04:27 +0900
+Message-Id: <149787026702.32495.3796530652829112860.sendpatchset@little-apple>
+In-Reply-To: <149787025647.32495.1584960416060100962.sendpatchset@little-apple>
+References: <149787025647.32495.1584960416060100962.sendpatchset@little-apple>
+Subject: [PATCH v4 1/3] iommu/ipmmu-vmsa: Add r8a7796 DT binding
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a single source pad to mt9m111 media entity.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Update the IPMMU DT binding documentation to include the r8a7796 compat
+string for R-Car M3-W.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/media/i2c/mt9m111.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/i2c/mt9m111.c b/drivers/media/i2c/mt9m111.c
-index 8e86d51..7e70969 100644
---- a/drivers/media/i2c/mt9m111.c
-+++ b/drivers/media/i2c/mt9m111.c
-@@ -141,6 +141,8 @@
- #define MT9M111_MAX_HEIGHT	1024
- #define MT9M111_MAX_WIDTH	1280
+ Changes since V3:
+ - None
+
+ Changes since V2:
+ - None
+
+ Changes since V1:
+ - Included in series, added Acked-by from Geert - thanks!
+
+ Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- 0001/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
++++ work/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt	2017-06-19 19:51:13.990607110 +0900
+@@ -16,6 +16,7 @@ Required Properties:
+     - "renesas,ipmmu-r8a7793" for the R8A7793 (R-Car M2-N) IPMMU.
+     - "renesas,ipmmu-r8a7794" for the R8A7794 (R-Car E2) IPMMU.
+     - "renesas,ipmmu-r8a7795" for the R8A7795 (R-Car H3) IPMMU.
++    - "renesas,ipmmu-r8a7796" for the R8A7796 (R-Car M3-W) IPMMU.
+     - "renesas,ipmmu-vmsa" for generic R-Car Gen2 VMSA-compatible IPMMU.
  
-+#define MT9M111_MEDIA_PAD	1
-+
- struct mt9m111_context {
- 	u16 read_mode;
- 	u16 blanking_h;
-@@ -215,6 +217,8 @@ struct mt9m111 {
- 	int power_count;
- 	const struct mt9m111_datafmt *fmt;
- 	int lastpage;	/* PageMap cache value */
-+
-+	struct media_pad pad;
- };
- 
- /* Find a data format by a pixel code */
-@@ -963,13 +967,23 @@ static int mt9m111_probe(struct i2c_client *client,
- 	if (ret < 0)
- 		goto out_hdlfree;
- 
-+	mt9m111->pad.flags = MEDIA_PAD_FL_SOURCE;
-+	ret = media_entity_pads_init(&mt9m111->subdev.entity, MT9M111_MEDIA_PAD,
-+				     &mt9m111->pad);
-+	if (ret)
-+		goto out_hdlfree;
-+
- 	mt9m111->subdev.dev = &client->dev;
-+	mt9m111->subdev.flags = V4L2_SUBDEV_FL_HAS_DEVNODE;
-+	mt9m111->subdev.entity.function = MEDIA_ENT_F_CAM_SENSOR;
- 	ret = v4l2_async_register_subdev(&mt9m111->subdev);
- 	if (ret < 0)
--		goto out_hdlfree;
-+		goto out_mediafree;
- 
- 	return 0;
- 
-+out_mediafree:
-+	media_entity_cleanup(&mt9m111->subdev.entity);
- out_hdlfree:
- 	v4l2_ctrl_handler_free(&mt9m111->hdl);
- out_clkput:
-@@ -982,6 +996,7 @@ static int mt9m111_remove(struct i2c_client *client)
- {
- 	struct mt9m111 *mt9m111 = to_mt9m111(client);
- 
-+	media_entity_cleanup(&mt9m111->subdev.entity);
- 	v4l2_async_unregister_subdev(&mt9m111->subdev);
- 	v4l2_clk_put(mt9m111->clk);
- 	v4l2_ctrl_handler_free(&mt9m111->hdl);
--- 
-2.7.4
+   - reg: Base address and size of the IPMMU registers.
