@@ -1,275 +1,181 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57996 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750820AbdFPQLM (ORCPT
+Received: from foss.arm.com ([217.140.101.70]:53566 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750757AbdFSQXY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Jun 2017 12:11:12 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH mmc/next v3 0/2] mmc: tmio, renesas-sdhi: cleanups
-Date: Fri, 16 Jun 2017 18:11:02 +0200
-Message-Id: <1497629464-14459-1-git-send-email-horms+renesas@verge.net.au>
+        Mon, 19 Jun 2017 12:23:24 -0400
+Subject: Re: [PATCH 00/04] iommu/ipmmu-vmsa: 32-bit ARM update
+To: Magnus Damm <magnus.damm@gmail.com>, joro@8bytes.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+        sricharan@codeaurora.org, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
+        m.szyprowski@samsung.com
+References: <149752254550.21887.15183665699230243235.sendpatchset@little-apple>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <96ccaaf2-0fca-fb15-7f1b-86e69ba995fb@arm.com>
+Date: Mon, 19 Jun 2017 17:23:20 +0100
+MIME-Version: 1.0
+In-Reply-To: <149752254550.21887.15183665699230243235.sendpatchset@little-apple>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+Hi Magnus,
 
-this short series provides some cleanups to the tmio and renesas-sdhi
-drivers to improve their checkpatch cleanness.
+On 15/06/17 11:29, Magnus Damm wrote:
+> iommu/ipmmu-vmsa: 32-bit ARM update
+> 
+> [PATCH 01/04] iommu/ipmmu-vmsa: Use iommu_device_register()/unregister()
+> [PATCH 02/04] iommu/ipmmu-vmsa: Consistent ->of_xlate() handling
+> [PATCH 03/04] iommu/ipmmu-vmsa: Use fwspec on both 32 and 64-bit ARM
+> [PATCH 04/04] iommu/ipmmu-vmsa: Replace local utlb code with fwspec ids
+> 
+> This series updates the IPMMU driver to make use of recent IOMMU framework
+> changes and also improves code sharing in the driver between the 32-bit and
+> 64-bit dma-mapping architecture glue code.
 
-Changes since v2:
-* Address review - details noted in changelogs of each patch
+Nice! I did try rebasing my original patch myself but it quickly got
+very messy. I also had the below beforehand as preliminary cleanup for
+getting rid of the ipmmu_vmsa_iommu_priv structure altogether (i.e. so
+fwspec->priv can just hold the ipmmu_vmsa_device pointer directly) - if
+it does actually work as intended, feel free to take it ;)
 
-Lightly tested on H2/Lager and M3-W/Salvator-X as per the log below.
+Thanks,
+Robin.
 
-Simon Horman (2):
-  mmc: tmio: improve checkpatch cleanness
-  mmc: renesas-sdhi: improve checkpatch cleanness
+> Suggested-by: Robin Murphy <robin.murphy@arm.com> (Patch 2 and 4)
+> Signed-off-by: Robin Murphy <robin.murphy@arm.com> (Patch 3)
+> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+> ---
+> 
+>  Developed on renesas-drivers-2017-06-13-v4.12-rc5 and rebased to next-20170614
+> 
+>  drivers/iommu/ipmmu-vmsa.c |  186 +++++++++++---------------------------------
+>  1 file changed, 49 insertions(+), 137 deletions(-)
+> 
 
- drivers/mmc/host/renesas_sdhi.h          |  4 +-
- drivers/mmc/host/renesas_sdhi_core.c     | 43 +++++++++++----------
- drivers/mmc/host/renesas_sdhi_sys_dmac.c | 25 ++++++------
- drivers/mmc/host/tmio_mmc.c              |  8 ++--
- drivers/mmc/host/tmio_mmc.h              | 17 ++++----
- drivers/mmc/host/tmio_mmc_core.c         | 66 +++++++++++++++++---------------
- include/linux/mfd/tmio.h                 | 33 ++++++++--------
- 7 files changed, 103 insertions(+), 93 deletions(-)
+---->8-----
+From: Robin Murphy <robin.murphy@arm.com>
+Subject: [PATCH] iommu/ipmmu-vmsa: Clean up group allocation
 
--- 
-2.1.4
+With the new IOMMU group support, we go through quite the merry dance
+in order to find masters behind the same IPMMU instance, so that we can
+ensure they are grouped together. None of which is really necessary,
+since the master's private data already points to the particular IPMMU
+it is associated with, and that IPMMU instance data is the perfect place
+to keep track of a per-instance group.
 
-Salvator-X/M3-W ES1.0
-=====================
+Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+---
+ drivers/iommu/ipmmu-vmsa.c | 53
++++++++---------------------------------------
+ 1 file changed, 8 insertions(+), 45 deletions(-)
 
-With Cleanup
-------------
+diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
+index 2a38aa15be17..9d75d7553e20 100644
+--- a/drivers/iommu/ipmmu-vmsa.c
++++ b/drivers/iommu/ipmmu-vmsa.c
+@@ -43,6 +43,7 @@ struct ipmmu_vmsa_device {
+ 	struct ipmmu_vmsa_domain *domains[IPMMU_CTX_MAX];
 
-5a0e681d4c56 ("mmc: renesas-sdhi: improve checkpatch cleanness")
+ 	struct dma_iommu_mapping *mapping;
++	struct iommu_group *group;
+ };
 
-# dmesg | egrep '(sd|mmc)'
-[    1.410058] sdhci: Secure Digital Host Controller Interface driver
-[    1.416271] sdhci: Copyright(c) Pierre Ossman
-[    1.421257] sh_mobile_sdhi ee100000.sd: Got CD GPIO
-[    1.426171] sh_mobile_sdhi ee100000.sd: Got WP GPIO
-[    1.557515] sh_mobile_sdhi ee140000.sd: mmc0 base at 0xee140000 max clock rate 200 MHz
-[    1.565873] sh_mobile_sdhi ee160000.sd: Got CD GPIO
-[    1.570806] sh_mobile_sdhi ee160000.sd: Got WP GPIO
-[    1.584531] sdhci-pltfm: SDHCI platform and OF driver helper
-[    1.633928] sh_mobile_sdhi ee100000.sd: Got CD GPIO
-[    1.638941] sh_mobile_sdhi ee100000.sd: Got WP GPIO
-[    1.765569] sh_mobile_sdhi ee100000.sd: mmc1 base at 0xee100000 max clock rate 200 MHz
-[    1.774965] sh_mobile_sdhi ee160000.sd: Got CD GPIO
-[    1.779903] sh_mobile_sdhi ee160000.sd: Got WP GPIO
-[    1.811972] mmc0: new high speed MMC card at address 0001
-[    1.817790] mmcblk0: mmc0:0001 eMMC   28.8 GiB
-[    1.826541] mmcblk0boot0: mmc0:0001 eMMC   partition 1 4.00 MiB
-[    1.836647] mmcblk0boot1: mmc0:0001 eMMC   partition 2 4.00 MiB
-[    1.848444] mmcblk0rpmb: mmc0:0001 eMMC   partition 3 4.00 MiB
-[    1.858737]  mmcblk0: p1
-[    1.917609] sh_mobile_sdhi ee160000.sd: mmc2 base at 0xee160000 max clock rate 200 MHz
-[    2.065539] mmc1: new ultra high speed SDR50 SDHC card at address e624
-[    2.072548] mmcblk1: mmc1:e624 SU08G 7.40 GiB
-[    2.088110]  mmcblk1: p1
-[    2.189536] mmc2: new ultra high speed SDR50 SDHC card at address 0001
-[    2.196412] mmcblk2: mmc2:0001 00000 29.8 GiB
-[    2.210919]  mmcblk2: p1
-root@Debian:~# cat /sys/devi
+ struct ipmmu_vmsa_domain {
+@@ -60,8 +61,6 @@ struct ipmmu_vmsa_iommu_priv {
+ 	struct ipmmu_vmsa_device *mmu;
+ 	unsigned int *utlbs;
+ 	unsigned int num_utlbs;
+-	struct device *dev;
+-	struct list_head list;
+ };
 
-# grep sd /proc/interrupts
-100:    1063140          0     GIC-0 197 Level     ee100000.sd
-101:       3012          0     GIC-0 199 Level     ee140000.sd
-102:       2276          0     GIC-0 200 Level     ee160000.sd
-178:          0          0  e6053000.gpio  12 Edge      ee100000.sd cd
-197:          0          0  e6054000.gpio  15 Edge      ee160000.sd cd
+ static DEFINE_SPINLOCK(ipmmu_devices_lock);
+@@ -724,7 +723,6 @@ static int ipmmu_init_platform_device(struct device
+*dev)
+ 	priv->mmu = mmu;
+ 	priv->utlbs = utlbs;
+ 	priv->num_utlbs = num_utlbs;
+-	priv->dev = dev;
+ 	set_priv(dev, priv);
+ 	return 0;
 
-# cat /sys/devices/platform/soc/ee100000.sd/mmc_host/mmc1/mmc1:*/cid
-035344535530384780b1b8a11200d300
-# dd if=/dev/mmcblk1 of=/dev/null bs=1M count=512 iflag=direct
-512+0 records in
-512+0 records out
-536870912 bytes (537 MB) copied, 56.3221 s, 9.5 MB/s
+@@ -854,9 +852,6 @@ static const struct iommu_ops ipmmu_ops = {
 
-# cat /sys/devices/platform/soc/ee160000.sd/mmc_host/mmc2/mmc2:*/cid
-1b534d3030303030103916141700f600
-# dd if=/dev/mmcblk2 of=/dev/null bs=1M count=512 iflag=direct
-512+0 records in
-512+0 records out
-536870912 bytes (537 MB) copied, 56.7888 s, 9.5 MB/s
+ #ifdef CONFIG_IOMMU_DMA
 
-# grep sd /proc/interrupts
-100:    2124004          0     GIC-0 197 Level     ee100000.sd
-101:       3012          0     GIC-0 199 Level     ee140000.sd
-102:    1063140          0     GIC-0 200 Level     ee160000.sd
-178:          0          0  e6053000.gpio  12 Edge      ee100000.sd cd
-197:          0          0  e6054000.gpio  15 Edge      ee160000.sd cd
+-static DEFINE_SPINLOCK(ipmmu_slave_devices_lock);
+-static LIST_HEAD(ipmmu_slave_devices);
+-
+ static struct iommu_domain *ipmmu_domain_alloc_dma(unsigned type)
+ {
+ 	struct iommu_domain *io_domain = NULL;
+@@ -904,57 +899,25 @@ static int ipmmu_add_device_dma(struct device *dev)
+ 	if (IS_ERR(group))
+ 		return PTR_ERR(group);
 
-Without Cleanup
----------------
+-	spin_lock(&ipmmu_slave_devices_lock);
+-	list_add(&to_priv(dev)->list, &ipmmu_slave_devices);
+-	spin_unlock(&ipmmu_slave_devices_lock);
+ 	return 0;
+ }
 
-f2cd281b9f7d (mmc/next) mmc: sdhci-pci: Enable card detect wake for Intel BYT-related SD controllers
+ static void ipmmu_remove_device_dma(struct device *dev)
+ {
+-	struct ipmmu_vmsa_iommu_priv *priv = to_priv(dev);
+-
+-	spin_lock(&ipmmu_slave_devices_lock);
+-	list_del(&priv->list);
+-	spin_unlock(&ipmmu_slave_devices_lock);
+-
+ 	iommu_group_remove_device(dev);
+ }
 
-# dmesg | egrep '(sd|mmc)'
-[    1.413160] sdhci: Secure Digital Host Controller Interface driver
-[    1.419368] sdhci: Copyright(c) Pierre Ossman
-[    1.424317] sh_mobile_sdhi ee100000.sd: Got CD GPIO
-[    1.429254] sh_mobile_sdhi ee100000.sd: Got WP GPIO
-[    1.556994] sh_mobile_sdhi ee140000.sd: mmc0 base at 0xee140000 max clock rate 200 MHz
-[    1.565359] sh_mobile_sdhi ee160000.sd: Got CD GPIO
-[    1.570313] sh_mobile_sdhi ee160000.sd: Got WP GPIO
-[    1.584078] sdhci-pltfm: SDHCI platform and OF driver helper
-[    1.633385] sh_mobile_sdhi ee100000.sd: Got CD GPIO
-[    1.638319] sh_mobile_sdhi ee100000.sd: Got WP GPIO
-[    1.765061] sh_mobile_sdhi ee100000.sd: mmc1 base at 0xee100000 max clock rate 200 MHz
-[    1.774258] sh_mobile_sdhi ee160000.sd: Got CD GPIO
-[    1.779185] sh_mobile_sdhi ee160000.sd: Got WP GPIO
-[    1.834292] mmc0: new high speed MMC card at address 0001
-[    1.840594] mmcblk0: mmc0:0001 eMMC   28.8 GiB 
-[    1.850501] mmcblk0boot0: mmc0:0001 eMMC   partition 1 4.00 MiB
-[    1.860750] mmcblk0boot1: mmc0:0001 eMMC   partition 2 4.00 MiB
-[    1.870834] mmcblk0rpmb: mmc0:0001 eMMC   partition 3 4.00 MiB
-[    1.880344]  mmcblk0: p1
-[    1.909078] sh_mobile_sdhi ee160000.sd: mmc2 base at 0xee160000 max clock rate 200 MHz
-[    2.049028] mmc1: new ultra high speed SDR50 SDHC card at address e624
-[    2.060070] mmcblk1: mmc1:e624 SU08G 7.40 GiB 
-[    2.075628]  mmcblk1: p1
-[    2.165019] mmc2: new ultra high speed SDR50 SDHC card at address 0001
-[    2.175911] mmcblk2: mmc2:0001 00000 29.8 GiB 
-[    2.190409]  mmcblk2: p1
+-static struct device *ipmmu_find_sibling_device(struct device *dev)
+-{
+-	struct ipmmu_vmsa_iommu_priv *priv = to_priv(dev);
+-	struct ipmmu_vmsa_iommu_priv *sibling_priv = NULL;
+-	bool found = false;
+-
+-	spin_lock(&ipmmu_slave_devices_lock);
+-
+-	list_for_each_entry(sibling_priv, &ipmmu_slave_devices, list) {
+-		if (priv == sibling_priv)
+-			continue;
+-		if (sibling_priv->mmu == priv->mmu) {
+-			found = true;
+-			break;
+-		}
+-	}
+-
+-	spin_unlock(&ipmmu_slave_devices_lock);
+-
+-	return found ? sibling_priv->dev : NULL;
+-}
+-
+ static struct iommu_group *ipmmu_find_group_dma(struct device *dev)
+ {
+-	struct iommu_group *group;
+-	struct device *sibling;
++	struct ipmmu_vmsa_iommu_priv *priv = to_priv(dev);
++	struct ipmmu_vmsa_device *mmu = priv->mmu;
 
-# grep sd /proc/interrupts
-100:       2276          0     GIC-0 197 Level     ee100000.sd
-101:       2986          0     GIC-0 199 Level     ee140000.sd
-102:       2276          0     GIC-0 200 Level     ee160000.sd
-178:          0          0  e6053000.gpio  12 Edge      ee100000.sd cd
-197:          0          0  e6054000.gpio  15 Edge      ee160000.sd cd
+-	sibling = ipmmu_find_sibling_device(dev);
+-	if (sibling)
+-		group = iommu_group_get(sibling);
+-	if (!sibling || IS_ERR(group))
+-		group = generic_device_group(dev);
++	if (mmu->group)
++		return iommu_group_ref_get(mmu->group);
 
-# cat /sys/devices/platform/soc/ee100000.sd/mmc_host/mmc1/mmc1:*/cid
-035344535530384780b1b8a11200d300
-# dd if=/dev/mmcblk2 of=/dev/null bs=1M count=512 iflag=direct
-512+0 records in
-512+0 records out
-536870912 bytes (537 MB) copied, 56.7595 s, 9.5 MB/s
+-	return group;
++	mmu->group = generic_device_group(dev);
++
++	return mmu->group;
+ }
 
-# cat /sys/devices/platform/soc/ee160000.sd/mmc_host/mmc2/mmc2:*/cid
-1b534d3030303030103916141700f600
-# dd if=/dev/mmcblk2 of=/dev/null bs=1M count=512 iflag=direct
-512+0 records in
-512+0 records out
-536870912 bytes (537 MB) copied, 56.7595 s, 9.5 MB/s
-
-# grep sd /proc/interrupts
-100:       2276          0     GIC-0 197 Level     ee100000.sd
-101:       2986          0     GIC-0 199 Level     ee140000.sd
-102:    2124004          0     GIC-0 200 Level     ee160000.sd
-178:          0          0  e6053000.gpio  12 Edge      ee100000.sd cd
-197:          0          0  e6054000.gpio  15 Edge      ee160000.sd cd
-
-
-Lager/H2 ES2.0
-==============
-
-With Cleanup
-------------
-
-5a0e681d4c56 ("mmc: renesas-sdhi: improve checkpatch cleanness")
-
-# dmesg | egrep '(sd|mmc)'
-[    2.309775] sh_mobile_sdhi ee100000.sd: Got CD GPIO
-[    2.315203] sh_mobile_sdhi ee140000.sd: Got CD GPIO
-[    2.375149] sh_mmcif ee220000.mmc: Chip version 0x0003, clock rate 12MHz
-[    2.481838] sh_mobile_sdhi ee100000.sd: Got CD GPIO
-[    2.695297] sh_mobile_sdhi ee100000.sd: mmc1 base at 0xee100000 max clock rate 195 MHz
-[    2.703764] sh_mobile_sdhi ee140000.sd: Got CD GPIO
-[    2.784274] mmc0: new high speed MMC card at address 0001
-[    2.790078] mmcblk0: mmc0:0001 MMC08G 7.33 GiB 
-[    2.794796] mmcblk0boot0: mmc0:0001 MMC08G partition 1 2.00 MiB
-[    2.800926] mmcblk0boot1: mmc0:0001 MMC08G partition 2 2.00 MiB
-[    2.808580]  mmcblk0: p1
-[    2.915292] sh_mobile_sdhi ee140000.sd: mmc2 base at 0xee140000 max clock rate 97 MHz
-[    3.122381] mmc1: new ultra high speed SDR104 SDHC card at address 0001
-[    3.129381] mmcblk1: mmc1:0001 00000 29.8 GiB 
-[    3.143191]  mmcblk1: p1
-[    3.335268] mmc2: new ultra high speed SDR50 SDHC card at address 0001
-[    3.342131] mmcblk2: mmc2:0001 00000 29.8 GiB 
-[    3.356094]  mmcblk2: p1
-
-# grep sd /proc/interrupts
- 99:        572          0          0          0     GIC-0 197 Level     ee100000.sd
-100:        540          0          0          0     GIC-0 199 Level     ee140000.sd
-220:          0          0          0          0  e6053000.gpio   6 Edge      ee100000.sd cd
-236:          0          0          0          0  e6053000.gpio  22 Edge      ee140000.sd cd
-
-# cat /sys/devices/platform/ee100000.sd/mmc_host/mmc1/mmc1:*/cid
-1b534d303030303010ed85537600fc00
-# dd if=/dev/mmcblk1 of=/dev/null bs=1M count=512 iflag=direct
-512+0 records in
-512+0 records out
-536870912 bytes (537 MB) copied, 14.5894 s, 36.8 MB/
-
-# cat /sys/devices/platform/ee140000.sd/mmc_host/mmc2/mmc2:*/cid
-1b534d303030303010f0c957f500fc00
-# dd if=/dev/mmcblk2 of=/dev/null bs=1M count=512 iflag=direct
-512+0 records in
-512+0 records out
-536870912 bytes (537 MB) copied, 18.8921 s, 28.4 MB/s
-
-# grep sd /proc/interrupts
- 99:      12860          0          0          0     GIC-0 197 Level     ee100000.sd
-100:      12828          0          0          0     GIC-0 199 Level     ee140000.sd
-220:          0          0          0          0  e6053000.gpio   6 Edge      ee100000.sd cd
-236:          0          0          0          0  e6053000.gpio  22 Edge      ee140000.sd cd
-
-Without Cleanup
----------------
-
-f2cd281b9f7d (mmc/next) mmc: sdhci-pci: Enable card detect wake for Intel BYT-related SD controllers
-
-# dmesg | egrep '(sd|mmc)'
-[    2.310760] sh_mobile_sdhi ee100000.sd: Got CD GPIO
-[    2.316185] sh_mobile_sdhi ee140000.sd: Got CD GPIO
-[    2.375581] sh_mmcif ee220000.mmc: Chip version 0x0003, clock rate 12MHz
-[    2.482371] sh_mobile_sdhi ee100000.sd: Got CD GPIO
-[    2.695738] sh_mobile_sdhi ee100000.sd: mmc1 base at 0xee100000 max clock rate 195 MHz
-[    2.704210] sh_mobile_sdhi ee140000.sd: Got CD GPIO
-[    2.784707] mmc0: new high speed MMC card at address 0001
-[    2.790501] mmcblk0: mmc0:0001 MMC08G 7.33 GiB
-[    2.795219] mmcblk0boot0: mmc0:0001 MMC08G partition 1 2.00 MiB
-[    2.804059] mmcblk0boot1: mmc0:0001 MMC08G partition 2 2.00 MiB
-[    2.811731]  mmcblk0: p1
-[    2.915727] sh_mobile_sdhi ee140000.sd: mmc2 base at 0xee140000 max clock rate 97 MHz
-[    3.122796] mmc1: new ultra high speed SDR104 SDHC card at address 0001
-[    3.129798] mmcblk1: mmc1:0001 00000 29.8 GiB
-[    3.143603]  mmcblk1: p1
-[    3.335704] mmc2: new ultra high speed SDR50 SDHC card at address 0001
-[    3.342565] mmcblk2: mmc2:0001 00000 29.8 GiB
-[    3.356510]  mmcblk2: p1
-
-# grep sd /proc/interrupts
- 99:        572          0          0          0     GIC-0 197 Level     ee100000.sd
-100:        538          0          0          0     GIC-0 199 Level     ee140000.sd
-220:          0          0          0          0  e6053000.gpio   6 Edge      ee100000.sd cd
-236:          0          0          0          0  e6053000.gpio  22 Edge      ee140000.sd cd
-
-# cat /sys/devices/platform/ee100000.sd/mmc_host/mmc1/mmc1:*/cid
-1b534d303030303010ed85537600fc00
-# dd if=/dev/mmcblk1 of=/dev/null bs=1M count=512 iflag=direct
-512+0 records in
-512+0 records out
-536870912 bytes (537 MB) copied, 14.6023 s, 36.8 MB/s
-
-# cat /sys/devices/platform/ee140000.sd/mmc_host/mmc2/mmc2:*/cid
-1b534d303030303010f0c957f500fc00
-# dd if=/dev/mmcblk2 of=/dev/null bs=1M count=512 iflag=direct
-512+0 records in
-512+0 records out
-536870912 bytes (537 MB) copied, 18.8882 s, 28.4 MB/s
-
-# grep sd /proc/interrupts
- 99:      12860          0          0          0     GIC-0 197 Level     ee100000.sd
-100:      12826          0          0          0     GIC-0 199 Level     ee140000.sd
-220:          0          0          0          0  e6053000.gpio   6 Edge      ee100000.sd cd
-236:          0          0          0          0  e6053000.gpio  22 Edge      ee140000.sd cd
+ static int ipmmu_of_xlate_dma(struct device *dev,
