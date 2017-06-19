@@ -1,100 +1,106 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:35688 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750777AbdFOIXy (ORCPT
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:37832 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752095AbdFSRFQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Jun 2017 04:23:54 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 3/6] v4l: vsp1: Add support for new VSP2-BS, VSP2-DL and VSP2-D instances
-Date: Thu, 15 Jun 2017 11:24:06 +0300
-Message-Id: <20170615082409.9523-4-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170615082409.9523-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170615082409.9523-1-laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 19 Jun 2017 13:05:16 -0400
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v1 00/12] rcar: vin: Add digital input to Gen3
+Date: Mon, 19 Jun 2017 19:04:37 +0200
+Message-Id: <1497891889-8038-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-New Gen3 SoCs come with two new VSP2 variants names VSP2-BS and VSP2-DL,
-as well as a new VSP2-D variant on V3M and V3H SoCs. Add new entries for
-them in the VSP device info table.
+Hello,
+   this patch series implements support for parsing OF nodes describing
+digital video inputs such as parallel camera sensor connected to a Gen3 VIN
+instance. It also supports linking the camera sub-device to media controller
+graph.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/media/platform/vsp1/vsp1_drv.c  | 24 ++++++++++++++++++++++++
- drivers/media/platform/vsp1/vsp1_regs.h | 15 +++++++++++++--
- 2 files changed, 37 insertions(+), 2 deletions(-)
+Sending as RFC because work is far from being complete, but before everything
+I would like to validate some implementation choices I made.
 
-diff --git a/drivers/media/platform/vsp1/vsp1_drv.c b/drivers/media/platform/vsp1/vsp1_drv.c
-index 2f2a7455e9fd..649b2fc63dd3 100644
---- a/drivers/media/platform/vsp1/vsp1_drv.c
-+++ b/drivers/media/platform/vsp1/vsp1_drv.c
-@@ -723,6 +723,14 @@ static const struct vsp1_device_info vsp1_device_infos[] = {
- 		.num_bru_inputs = 5,
- 		.uapi = true,
- 	}, {
-+		.version = VI6_IP_VERSION_MODEL_VSPBS_GEN3,
-+		.model = "VSP2-BS",
-+		.gen = 3,
-+		.features = VSP1_HAS_BRS,
-+		.rpf_count = 2,
-+		.wpf_count = 1,
-+		.uapi = true,
-+	}, {
- 		.version = VI6_IP_VERSION_MODEL_VSPD_GEN3,
- 		.model = "VSP2-D",
- 		.gen = 3,
-@@ -730,6 +738,22 @@ static const struct vsp1_device_info vsp1_device_infos[] = {
- 		.rpf_count = 5,
- 		.wpf_count = 2,
- 		.num_bru_inputs = 5,
-+	}, {
-+		.version = VI6_IP_VERSION_MODEL_VSPD_V3,
-+		.model = "VSP2-D",
-+		.gen = 3,
-+		.features = VSP1_HAS_BRS | VSP1_HAS_BRU | VSP1_HAS_LIF,
-+		.rpf_count = 5,
-+		.wpf_count = 1,
-+		.num_bru_inputs = 5,
-+	}, {
-+		.version = VI6_IP_VERSION_MODEL_VSPDL_GEN3,
-+		.model = "VSP2-DL",
-+		.gen = 3,
-+		.features = VSP1_HAS_BRS | VSP1_HAS_BRU | VSP1_HAS_LIF,
-+		.rpf_count = 5,
-+		.wpf_count = 2,
-+		.num_bru_inputs = 5,
- 	},
- };
- 
-diff --git a/drivers/media/platform/vsp1/vsp1_regs.h b/drivers/media/platform/vsp1/vsp1_regs.h
-index 744217e020b9..ab439a60a100 100644
---- a/drivers/media/platform/vsp1/vsp1_regs.h
-+++ b/drivers/media/platform/vsp1/vsp1_regs.h
-@@ -699,9 +699,20 @@
- #define VI6_IP_VERSION_MODEL_VSPBD_GEN3	(0x15 << 8)
- #define VI6_IP_VERSION_MODEL_VSPBC_GEN3	(0x16 << 8)
- #define VI6_IP_VERSION_MODEL_VSPD_GEN3	(0x17 << 8)
-+#define VI6_IP_VERSION_MODEL_VSPD_V3	(0x18 << 8)
-+#define VI6_IP_VERSION_MODEL_VSPDL_GEN3	(0x19 << 8)
-+#define VI6_IP_VERSION_MODEL_VSPBS_GEN3	(0x1a << 8)
- #define VI6_IP_VERSION_SOC_MASK		(0xff << 0)
--#define VI6_IP_VERSION_SOC_H		(0x01 << 0)
--#define VI6_IP_VERSION_SOC_M		(0x02 << 0)
-+#define VI6_IP_VERSION_SOC_H2		(0x01 << 0)
-+#define VI6_IP_VERSION_SOC_V2H		(0x01 << 0)
-+#define VI6_IP_VERSION_SOC_V3M		(0x01 << 0)
-+#define VI6_IP_VERSION_SOC_M2		(0x02 << 0)
-+#define VI6_IP_VERSION_SOC_M3W		(0x02 << 0)
-+#define VI6_IP_VERSION_SOC_V3H		(0x02 << 0)
-+#define VI6_IP_VERSION_SOC_H3		(0x03 << 0)
-+#define VI6_IP_VERSION_SOC_D3		(0x04 << 0)
-+#define VI6_IP_VERSION_SOC_M3N		(0x04 << 0)
-+#define VI6_IP_VERSION_SOC_E3		(0x04 << 0)
- 
- /* -----------------------------------------------------------------------------
-  * RPF CLUT Registers
--- 
-Regards,
+First of all, the DT layout proposed in patches 01 and 02.
+I am now registering digital input pins inside port@2 node, while all CSI input
+are currently enumerated in port@1. While I found no mention of this being a bad
+practice in device tree binding documentation, I would like to validate if having
+input of different nature (serial CSI-2 and parallel) in 2 different subnodes is
+acceptable.
 
-Laurent Pinchart
+Patches from 05 to 12 assume this device tree layout and parse the additional
+parallel input making use of digital_graph_* routines, used for Gen2 input.
+(In future, the distinction between Gen2 and Gen3 use cases can probably be
+reduced in the driver, unifying most of those functions, but that's for later).
+The digital input subdevice media entity is then linked to the VIN instance it
+is connected to.
+
+Patches 03 and 04 are specific to the camera module I am using for testing,
+and are required to have the device probe and having it linked in the media
+controller graph.
+
+A few words on HW setup: I have an mt9m111 camera sensor module connected to
+Salvator-X M3-W EXIO-D connector, through a camera shield designed for another
+board (grpeach-audiocamera shield). The camera board provides pull up resistors
+for I2c lines and routes 3v3 VCC and GND to its camera connector. The camera
+sensor module (designed to fit that connector) has an on-board 27Mhz oscillator
+to generate clock fed to the camera sensor, and provides to the camera sensor
+the required digital and analog input voltages generated from a single 3v3 input.
+The 8 video digital output pins from camera module to the digital input port are
+connected to VIN4[15:8] pins, exposed on EXIO-D connector pins.
+
+After the device has probed and has been asynchronously registered by the VIN
+driver, it appears in media controller graph, linked to VIN4 instance.
+
+$ ./media-ctl -p -d /dev/media0
+
+...
+
+- entity 95: rcar_vin e6ef4000.video (1 pad, 3 links)
+             type Node subtype V4L flags 0
+             device node name /dev/video4
+        pad0: Sink
+                <- "rcar_csi2 feaa0000.csi2":1 [ENABLED]
+                <- "rcar_csi2 fea80000.csi2":1 []
+                <- "mt9m111 8-0048":0 [ENABLED]
+...
+
+- entity 139: mt9m111 8-0048 (1 pad, 1 link)
+              type V4L2 subdev subtype Sensor flags 0
+              device node name /dev/v4l-subdev4
+        pad0: Source
+                [fmt:YUYV8_2X8/0x0 field:none
+                 crop.bounds:(26,8)/1280x1024
+                 crop:(26,8)/1280x1024]
+                -> "rcar_vin e6ef4000.video":0 [ENABLED]
+
+Sending to linux-renesas-soc only, as before expanding to other lists/people
+at least basic streaming needs to be validated.
+
+Thanks
+   j
+
+Jacopo Mondi (12):
+  arm64: boot: dts: salvator-x: Add camera module
+  arm64: boot: dts: Salvator-X: Add VIN parallel input
+  media: i2c: mt9m111: Skip chid identification
+  media: i2c: mt9m111: Add source pad
+  media: rcar: vin: Prepare to parse Gen3 digital input
+  media: rcar: vin: Accept parallel input on Gen3
+  media: rcar: vin: Add ID for parallel input on Gen3
+  media: rcar: vin: Parse digital input after CSI on Gen3
+  media: rcar: vin: Install notifier for digital input
+  media: rcar: vin: Add digital input mask to vin_dev
+  media: rcar: vin: Store VIN instance id
+  media: rcar: vin: Link digital subdev to VIN instance
+
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |  58 ++++++++++
+ drivers/media/i2c/mt9m111.c                        |  36 +++---
+ drivers/media/platform/rcar-vin/rcar-core.c        | 127 ++++++++++++++-------
+ drivers/media/platform/rcar-vin/rcar-vin.h         |   8 ++
+ 4 files changed, 166 insertions(+), 63 deletions(-)
+
+--
+2.7.4
