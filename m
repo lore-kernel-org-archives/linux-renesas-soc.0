@@ -1,50 +1,38 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: linus.walleij@linaro.org, geert+renesas@glider.be,
-        laurent.pinchart@ideasonboard.com, chris.brandt@renesas.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk,
-        aisheng.dong@nxp.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v6 3/8] arm: dts: dt-bindings: Add Renesas RZ/A1 pinctrl header
-Date: Thu, 22 Jun 2017 16:54:31 +0200
-Message-Id: <1498143276-7976-4-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1498143276-7976-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1498143276-7976-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:55223 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753141AbdFSMAC (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 19 Jun 2017 08:00:02 -0400
+Date: Mon, 19 Jun 2017 13:59:59 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH mmc/next v2 0/4] mmc: renesas_sdhi: add support for R-Car
+ Gen3 SDHI DMAC
+Message-ID: <20170619115959.GD20088@verge.net.au>
+References: <1497607134-10241-1-git-send-email-horms+renesas@verge.net.au>
+ <20170617150341.q2pcilgi2fdpfaz2@ninjato>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170617150341.q2pcilgi2fdpfaz2@ninjato>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add dt-bindings for Renesas r7s72100 pin controller header file.
+On Sat, Jun 17, 2017 at 05:03:42PM +0200, Wolfram Sang wrote:
+> > Based on mmc/next
+> > 
+> > Headline performance boost: 9.5MB/s -> 39.7MB/s
+> 
+> Did you test writing as well? For me, this fails on M3-W with CMD12
+> timeouts. We had some changes in CMD12 handling recently, so it might be
+> because of that. I'll check on Monday.
+> 
+> Visual code review follows...
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- include/dt-bindings/pinctrl/r7s72100-pinctrl.h | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
- create mode 100644 include/dt-bindings/pinctrl/r7s72100-pinctrl.h
-
-diff --git a/include/dt-bindings/pinctrl/r7s72100-pinctrl.h b/include/dt-bindings/pinctrl/r7s72100-pinctrl.h
-new file mode 100644
-index 0000000..6b609fe
---- /dev/null
-+++ b/include/dt-bindings/pinctrl/r7s72100-pinctrl.h
-@@ -0,0 +1,16 @@
-+/*
-+ * Defines macros and constants for Renesas RZ/A1 pin controller pin
-+ * muxing functions.
-+ */
-+#ifndef __DT_BINDINGS_PINCTRL_RENESAS_RZA1_H
-+#define __DT_BINDINGS_PINCTRL_RENESAS_RZA1_H
-+
-+#define RZA1_PINS_PER_PORT	16
-+
-+/*
-+ * Create the pin index from its bank and position numbers and store in
-+ * the upper 16 bits the alternate function identifier
-+ */
-+#define RZA1_PINMUX(b, p, f)	((b) * RZA1_PINS_PER_PORT + (p) | (f << 16))
-+
-+#endif /* __DT_BINDINGS_PINCTRL_RENESAS_RZA1_H */
--- 
-2.7.4
+No, for not particularly good reasons I only checked read.
+I'll check write too.
