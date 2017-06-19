@@ -1,131 +1,130 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:58714 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751758AbdFTR2O (ORCPT
+Received: from mx2.suse.de ([195.135.220.15]:45657 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752386AbdFSIaG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Jun 2017 13:28:14 -0400
-Date: Tue, 20 Jun 2017 19:28:10 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Jean Delvare <jdelvare@suse.de>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+        Mon, 19 Jun 2017 04:30:06 -0400
+Date: Mon, 19 Jun 2017 10:30:02 +0200
+From: Jean Delvare <jdelvare@suse.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH] i2c: algo-bit: add support for I2C_M_STOP
-Message-ID: <20170620172810.h2anac45n5u3oova@ninjato>
+Message-ID: <20170619103002.5d502c92@endymion>
+In-Reply-To: <20170617171238.19638-1-wsa+renesas@sang-engineering.com>
 References: <20170617171238.19638-1-wsa+renesas@sang-engineering.com>
- <20170619103002.5d502c92@endymion>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="br77qta5po6srfth"
-Content-Disposition: inline
-In-Reply-To: <20170619103002.5d502c92@endymion>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Wolfram,
 
---br77qta5po6srfth
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Sat, 17 Jun 2017 19:12:38 +0200, Wolfram Sang wrote:
+> Support for enforced STOPs will allow us to use SCCB compatible devices.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+> 
+> Notes: I don't actually have any SCCB compatible sensor but verified with a
+> logic analyzer that repeated starts got replaced with a stop + start sequence.
+> However, we have members in our team who might need this feature soon. I'll
+> likely wait for their Tested-by unless something unforseen happens.
+> 
+>  drivers/i2c/algos/i2c-algo-bit.c | 17 ++++++++++++++---
+>  1 file changed, 14 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/i2c/algos/i2c-algo-bit.c b/drivers/i2c/algos/i2c-algo-bit.c
+> index a8e89df665b904..4758058352959d 100644
+> --- a/drivers/i2c/algos/i2c-algo-bit.c
+> +++ b/drivers/i2c/algos/i2c-algo-bit.c
+> @@ -549,12 +549,17 @@ static int bit_xfer(struct i2c_adapter *i2c_adap,
+>  	bit_dbg(3, &i2c_adap->dev, "emitting start condition\n");
+>  	i2c_start(adap);
+>  	for (i = 0; i < num; i++) {
+> +		bool did_stop = false;
 
-Hi Jean,
-
-> > +		bool did_stop =3D false;
->=20
-> I'm pretty certain you want to declare and initialize this variable
-> outside the loop.
-
-Why? Well, it doesn't matter anymore but what is wrong with limiting the
-variable like this?
-
-> > +		if (pmsg->flags & I2C_M_STOP && i !=3D num - 1) {
->=20
-> I recommend adding parentheses around the bit matching when combined
-> with &&. I know it is not strictly needed and the compiler doesn't
-> care, but I find it easier to read, and there seems to be a consensus
-> (90 %) on that in the kernel tree.
-
-Either both in parens, or none ;) But doesn't matter as well anymore.
-
-> 1* Repeated start happens between messages of a same transaction, and
-> you handle that case above. However in the case of 10-bit address
-> clients, there is also a repeated start happening during the address
-> phase of the transaction, if the first message is a read. Did you check
-> what the SCCB protocol expects in that case?
-
-SCCB defines addresses to be 7 bit.
-
-> 2* I'm not sure why you add the enforced stop at the end of one
-> iteration and the start at the beginning of the next iteration. It
-> would be more simple and efficient to do both at the beginning of the
-> next iteration. The only case where it would make a difference is if
-> both I2C_M_NOSTART and I2C_M_STOP are specified. In this case you
-> currently emit a stop condition but no start, which I don't think can
-> work at all.
-
-Ehrm, probably I was just too tied to the ordering of "first start -
-then data - then stop - then next loop" :)
-
-> What about something like that instead? Or I am missing something?
-
-No, I did miss it.
-
-> --- linux-4.11.orig/drivers/i2c/algos/i2c-algo-bit.c	2017-06-19 09:57:17.=
-949074198 +0200
-> +++ linux-4.11/drivers/i2c/algos/i2c-algo-bit.c	2017-06-19 10:23:26.71108=
-8536 +0200
-> @@ -553,8 +553,17 @@ static int bit_xfer(struct i2c_adapter *
->  		nak_ok =3D pmsg->flags & I2C_M_IGNORE_NAK;
->  		if (!(pmsg->flags & I2C_M_NOSTART)) {
->  			if (i) {
-> -				bit_dbg(3, &i2c_adap->dev, "emitting "
-> -					"repeated start condition\n");
-> +				if (msgs[i - 1].flags & I2C_M_STOP) {
-> +					bit_dbg(3, &i2c_adap->dev,
-> +						"emitting enforced stop condition\n");
-> +					i2c_stop(adap);
-> +					bit_dbg(3, &i2c_adap->dev,
-> +						"emitting start condition\n");
-> +					i2c_start(adap);
-> +				}
-
-else
+I'm pretty certain you want to declare and initialize this variable
+outside the loop.
 
 > +
-> +				bit_dbg(3, &i2c_adap->dev,
-> +					"emitting repeated start condition\n");
+>  		pmsg = &msgs[i];
+>  		nak_ok = pmsg->flags & I2C_M_IGNORE_NAK;
+>  		if (!(pmsg->flags & I2C_M_NOSTART)) {
+> -			if (i) {
+> -				bit_dbg(3, &i2c_adap->dev, "emitting "
+> -					"repeated start condition\n");
+> +			if (did_stop) {
+> +				bit_dbg(3, &i2c_adap->dev, "emitting start condition\n");
+> +				i2c_start(adap);
+> +				did_stop = false;
+> +			} else if (i) {
+> +				bit_dbg(3, &i2c_adap->dev, "emitting repeated start condition\n");
 >  				i2c_repstart(adap);
 >  			}
->  			ret =3D bit_doAddress(i2c_adap, pmsg);
+>  			ret = bit_doAddress(i2c_adap, pmsg);
+> @@ -588,6 +593,12 @@ static int bit_xfer(struct i2c_adapter *i2c_adap,
+>  				goto bailout;
+>  			}
+>  		}
+> +
+> +		if (pmsg->flags & I2C_M_STOP && i != num - 1) {
 
-A lot better! I like it very much. And also
+I recommend adding parentheses around the bit matching when combined
+with &&. I know it is not strictly needed and the compiler doesn't
+care, but I find it easier to read, and there seems to be a consensus
+(90 %) on that in the kernel tree.
 
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> +			bit_dbg(3, &i2c_adap->dev, "emitting enforced stop condition\n");
+> +			i2c_stop(adap);
+> +			did_stop = true;
+> +		}
+>  	}
+>  	ret = i;
+>  
 
-Do you want to cook up a patch or shall I? I'd just need a SoB then.
+I have 2 questions:
 
-Thanks for the improvement!
+1* Repeated start happens between messages of a same transaction, and
+you handle that case above. However in the case of 10-bit address
+clients, there is also a repeated start happening during the address
+phase of the transaction, if the first message is a read. Did you check
+what the SCCB protocol expects in that case?
 
-   Wolfram
+2* I'm not sure why you add the enforced stop at the end of one
+iteration and the start at the beginning of the next iteration. It
+would be more simple and efficient to do both at the beginning of the
+next iteration. The only case where it would make a difference is if
+both I2C_M_NOSTART and I2C_M_STOP are specified. In this case you
+currently emit a stop condition but no start, which I don't think can
+work at all.
+
+What about something like that instead? Or I am missing something?
+
+--- linux-4.11.orig/drivers/i2c/algos/i2c-algo-bit.c	2017-06-19 09:57:17.949074198 +0200
++++ linux-4.11/drivers/i2c/algos/i2c-algo-bit.c	2017-06-19 10:23:26.711088536 +0200
+@@ -553,8 +553,17 @@ static int bit_xfer(struct i2c_adapter *
+ 		nak_ok = pmsg->flags & I2C_M_IGNORE_NAK;
+ 		if (!(pmsg->flags & I2C_M_NOSTART)) {
+ 			if (i) {
+-				bit_dbg(3, &i2c_adap->dev, "emitting "
+-					"repeated start condition\n");
++				if (msgs[i - 1].flags & I2C_M_STOP) {
++					bit_dbg(3, &i2c_adap->dev,
++						"emitting enforced stop condition\n");
++					i2c_stop(adap);
++					bit_dbg(3, &i2c_adap->dev,
++						"emitting start condition\n");
++					i2c_start(adap);
++				}
++
++				bit_dbg(3, &i2c_adap->dev,
++					"emitting repeated start condition\n");
+ 				i2c_repstart(adap);
+ 			}
+ 			ret = bit_doAddress(i2c_adap, pmsg);
 
 
---br77qta5po6srfth
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAllJWyYACgkQFA3kzBSg
-KbZjixAAnvO/UoYAe+YjqB9KzZmPUOwQeC9/s6AcVcBHMLan8D4II+f5Q8r2wiZr
-eY3ED11GJZU/8XUZxQORxS4hfUwlHisDRZuGeAhxxJqbX5OBwQXsHM0H4wtXWtA3
-EuJExwhdntmEcVgfplkaHnwfA9tDTj0tygl/SvMgXbY5c3duLtepTFiDl8aRUMGT
-GmnmPNLOr+rBvuQxn3l9YDA5kUOfwThqjo2FiC8nKCEMhfx1ydRIuHoaB9gCec4X
-w5nU7j++NyekTDrrM6tHLGBhIqcD/UVtJx3LSgC/b6Me7Jjm/C2bEmoOeEPf87y8
-Z7rIIyv/nCaVmIFS5HWIEKhk7k31VCYYOzAX4w604bX8LOZcvULAwFDVcdijciqB
-USK6u3ZRiGygvf4Jbd3jjW6hIJ0NmSfTpZIi50LdeQa77hE5c+5IiIPbp6vB0XUt
-ioVB1IfqSFNBmH9WPpWt93DX28B51VI7gGM+DV9QqahhCgKi/yvTh/RhVajVdSCc
-tOzNrUQx4Hibtl/hgQC1NxR4vDoGzmTHgqTt/F81V/dIULLkqFHLzKaAkSuGdMhp
-FTB0OScMWmnupAFoqYH2bhJGU2R3q379rCwReIghbYRdvDXmJW480fGguLfbTqF2
-rNnyuKkbglpA9wnSRrua5Vc25VCTJEnEp1d6p7cc6ppin72owm4=
-=60wx
------END PGP SIGNATURE-----
-
---br77qta5po6srfth--
+-- 
+Jean Delvare
+SUSE L3 Support
