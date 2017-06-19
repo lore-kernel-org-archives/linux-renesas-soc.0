@@ -1,48 +1,183 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:54739 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753771AbdFPNbV (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Jun 2017 09:31:21 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 3/5] ARM: shmobile: document iW-RainboW-G20D-Qseven-RZG1M board
-Date: Fri, 16 Jun 2017 15:30:56 +0200
-Message-Id: <9086120f8b883034940e5228c83824ed21999537.1497617896.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1497617896.git.horms+renesas@verge.net.au>
-References: <cover.1497617896.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: joro@8bytes.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
+        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
+        m.szyprowski@samsung.com
+Date: Mon, 19 Jun 2017 18:14:48 +0900
+Message-Id: <149786368825.14868.10471030796615221922.sendpatchset@little-apple>
+In-Reply-To: <149786362527.14868.2143461703972595839.sendpatchset@little-apple>
+References: <149786362527.14868.2143461703972595839.sendpatchset@little-apple>
+Subject: [PATCH v4 06/09] iommu/ipmmu-vmsa: Write IMCTR twice
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Document the iW-RainboW-G20D-Qseven-RZG1M device tree bindings,
-listing it as a supported board.
+Write IMCTR both in the root device and the leaf node.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+To allow access of IMCTR introduce the following function:
+ - ipmmu_ctx_write_all()
+
+While at it also rename context functions:
+ - ipmmu_ctx_read() -> ipmmu_ctx_read_root()
+ - ipmmu_ctx_write() -> ipmmu_ctx_write_root()
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
- Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index fe850ef98dd8..c9c8e40c2ce5 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -61,6 +61,8 @@ Boards:
-     compatible = "renesas,h3ulcb", "renesas,r8a7795";
-   - Henninger
-     compatible = "renesas,henninger", "renesas,r8a7791"
-+  - iWave Systems RZ/G1M Qseven Development Platform (iW-RainboW-G20D-Qseven)
-+    compatible = "iwave,g20d", "iwave,g20m", "renesas,r8a7743"
-   - iWave Systems RZ/G1M Qseven System On Module (iW-RainboW-G20M-Qseven)
-     compatible = "iwave,g20m", "renesas,r8a7743"
-   - Koelsch (RTP0RC7791SEB00010S)
--- 
-2.1.4
+ Changes since V3:
+ - Changed function names to improve code readability - Thanks Robin!
+
+ Changes since V2:
+ - None
+
+ Changes since V1:
+ - None
+
+ drivers/iommu/ipmmu-vmsa.c |   55 +++++++++++++++++++++++++++-----------------
+ 1 file changed, 34 insertions(+), 21 deletions(-)
+
+--- 0023/drivers/iommu/ipmmu-vmsa.c
++++ work/drivers/iommu/ipmmu-vmsa.c	2017-06-19 14:06:16.770607110 +0900
+@@ -261,17 +261,28 @@ static void ipmmu_write(struct ipmmu_vms
+ 	iowrite32(data, mmu->base + offset);
+ }
+ 
+-static u32 ipmmu_ctx_read(struct ipmmu_vmsa_domain *domain, unsigned int reg)
++static u32 ipmmu_ctx_read_root(struct ipmmu_vmsa_domain *domain,
++			       unsigned int reg)
+ {
+ 	return ipmmu_read(domain->root, domain->context_id * IM_CTX_SIZE + reg);
+ }
+ 
+-static void ipmmu_ctx_write(struct ipmmu_vmsa_domain *domain, unsigned int reg,
+-			    u32 data)
++static void ipmmu_ctx_write_root(struct ipmmu_vmsa_domain *domain,
++				 unsigned int reg, u32 data)
+ {
+ 	ipmmu_write(domain->root, domain->context_id * IM_CTX_SIZE + reg, data);
+ }
+ 
++static void ipmmu_ctx_write_all(struct ipmmu_vmsa_domain *domain,
++				unsigned int reg, u32 data)
++{
++	if (domain->mmu != domain->root)
++		ipmmu_write(domain->mmu,
++			    domain->context_id * IM_CTX_SIZE + reg, data);
++
++	ipmmu_write(domain->root, domain->context_id * IM_CTX_SIZE + reg, data);
++}
++
+ /* -----------------------------------------------------------------------------
+  * TLB and microTLB Management
+  */
+@@ -281,7 +292,7 @@ static void ipmmu_tlb_sync(struct ipmmu_
+ {
+ 	unsigned int count = 0;
+ 
+-	while (ipmmu_ctx_read(domain, IMCTR) & IMCTR_FLUSH) {
++	while (ipmmu_ctx_read_root(domain, IMCTR) & IMCTR_FLUSH) {
+ 		cpu_relax();
+ 		if (++count == TLB_LOOP_TIMEOUT) {
+ 			dev_err_ratelimited(domain->mmu->dev,
+@@ -296,9 +307,9 @@ static void ipmmu_tlb_invalidate(struct
+ {
+ 	u32 reg;
+ 
+-	reg = ipmmu_ctx_read(domain, IMCTR);
++	reg = ipmmu_ctx_read_root(domain, IMCTR);
+ 	reg |= IMCTR_FLUSH;
+-	ipmmu_ctx_write(domain, IMCTR, reg);
++	ipmmu_ctx_write_all(domain, IMCTR, reg);
+ 
+ 	ipmmu_tlb_sync(domain);
+ }
+@@ -425,31 +436,32 @@ static int ipmmu_domain_init_context(str
+ 
+ 	/* TTBR0 */
+ 	ttbr = domain->cfg.arm_lpae_s1_cfg.ttbr[0];
+-	ipmmu_ctx_write(domain, IMTTLBR0, ttbr);
+-	ipmmu_ctx_write(domain, IMTTUBR0, ttbr >> 32);
++	ipmmu_ctx_write_root(domain, IMTTLBR0, ttbr);
++	ipmmu_ctx_write_root(domain, IMTTUBR0, ttbr >> 32);
+ 
+ 	/*
+ 	 * TTBCR
+ 	 * We use long descriptors with inner-shareable WBWA tables and allocate
+ 	 * the whole 32-bit VA space to TTBR0.
+ 	 */
+-	ipmmu_ctx_write(domain, IMTTBCR, IMTTBCR_EAE |
+-			IMTTBCR_SH0_INNER_SHAREABLE | IMTTBCR_ORGN0_WB_WA |
+-			IMTTBCR_IRGN0_WB_WA | IMTTBCR_SL0_LVL_1);
++	ipmmu_ctx_write_root(domain, IMTTBCR, IMTTBCR_EAE |
++			     IMTTBCR_SH0_INNER_SHAREABLE | IMTTBCR_ORGN0_WB_WA |
++			     IMTTBCR_IRGN0_WB_WA | IMTTBCR_SL0_LVL_1);
+ 
+ 	/* MAIR0 */
+-	ipmmu_ctx_write(domain, IMMAIR0, domain->cfg.arm_lpae_s1_cfg.mair[0]);
++	ipmmu_ctx_write_root(domain, IMMAIR0,
++			     domain->cfg.arm_lpae_s1_cfg.mair[0]);
+ 
+ 	/* IMBUSCR */
+-	ipmmu_ctx_write(domain, IMBUSCR,
+-			ipmmu_ctx_read(domain, IMBUSCR) &
+-			~(IMBUSCR_DVM | IMBUSCR_BUSSEL_MASK));
++	ipmmu_ctx_write_root(domain, IMBUSCR,
++			     ipmmu_ctx_read_root(domain, IMBUSCR) &
++			     ~(IMBUSCR_DVM | IMBUSCR_BUSSEL_MASK));
+ 
+ 	/*
+ 	 * IMSTR
+ 	 * Clear all interrupt flags.
+ 	 */
+-	ipmmu_ctx_write(domain, IMSTR, ipmmu_ctx_read(domain, IMSTR));
++	ipmmu_ctx_write_root(domain, IMSTR, ipmmu_ctx_read_root(domain, IMSTR));
+ 
+ 	/*
+ 	 * IMCTR
+@@ -458,7 +470,8 @@ static int ipmmu_domain_init_context(str
+ 	 * software management as we have no use for it. Flush the TLB as
+ 	 * required when modifying the context registers.
+ 	 */
+-	ipmmu_ctx_write(domain, IMCTR, IMCTR_INTEN | IMCTR_FLUSH | IMCTR_MMUEN);
++	ipmmu_ctx_write_all(domain, IMCTR,
++			    IMCTR_INTEN | IMCTR_FLUSH | IMCTR_MMUEN);
+ 
+ 	return 0;
+ }
+@@ -484,7 +497,7 @@ static void ipmmu_domain_destroy_context
+ 	 *
+ 	 * TODO: Is TLB flush really needed ?
+ 	 */
+-	ipmmu_ctx_write(domain, IMCTR, IMCTR_FLUSH);
++	ipmmu_ctx_write_all(domain, IMCTR, IMCTR_FLUSH);
+ 	ipmmu_tlb_sync(domain);
+ 	ipmmu_domain_free_context(domain->root, domain->context_id);
+ }
+@@ -500,11 +513,11 @@ static irqreturn_t ipmmu_domain_irq(stru
+ 	u32 status;
+ 	u32 iova;
+ 
+-	status = ipmmu_ctx_read(domain, IMSTR);
++	status = ipmmu_ctx_read_root(domain, IMSTR);
+ 	if (!(status & err_mask))
+ 		return IRQ_NONE;
+ 
+-	iova = ipmmu_ctx_read(domain, IMEAR);
++	iova = ipmmu_ctx_read_root(domain, IMEAR);
+ 
+ 	/*
+ 	 * Clear the error status flags. Unlike traditional interrupt flag
+@@ -512,7 +525,7 @@ static irqreturn_t ipmmu_domain_irq(stru
+ 	 * seems to require 0. The error address register must be read before,
+ 	 * otherwise its value will be 0.
+ 	 */
+-	ipmmu_ctx_write(domain, IMSTR, 0);
++	ipmmu_ctx_write_root(domain, IMSTR, 0);
+ 
+ 	/* Log fatal errors. */
+ 	if (status & IMSTR_MHIT)
