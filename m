@@ -1,124 +1,78 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:52262 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750927AbdFUJDe (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 21 Jun 2017 05:03:34 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 1/2] drm: rcar-du: Restrict DPLL duty cycle workaround to H3 ES1.x
-Date: Wed, 21 Jun 2017 12:04:06 +0300
-Message-Id: <20170621090407.4093-1-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH 01/04] iommu/ipmmu-vmsa: Use
+ iommu_device_register()/unregister()
+To: Magnus Damm <magnus.damm@gmail.com>, joro@8bytes.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
+        sricharan@codeaurora.org, m.szyprowski@samsung.com
+References: <149752254550.21887.15183665699230243235.sendpatchset@little-apple>
+ <149752255681.21887.9984138893493295897.sendpatchset@little-apple>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <365cb763-e94e-b7d1-9616-52c24ed02465@arm.com>
+Date: Mon, 19 Jun 2017 17:27:26 +0100
+MIME-Version: 1.0
+In-Reply-To: <149752255681.21887.9984138893493295897.sendpatchset@little-apple>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The H3 ES1.x exhibits dot clock duty cycle stability issues. We can work
-around them by configuring the DPLL to twice the desired frequency,
-coupled with a /2 post-divider. This isn't needed on other SoCs and
-breaks HDMI output on M3-W for a currently unknown reason, so restrict
-the workaround to H3 ES1.x.
+On 15/06/17 11:29, Magnus Damm wrote:
+> From: Magnus Damm <damm+renesas@opensource.se>
+> 
+> Extend the driver to make use of iommu_device_register()/unregister()
+> functions together with iommu_device_set_ops() and iommu_set_fwnode().
+> 
+> These used to be part of the earlier posted 64-bit ARM (r8a7795) series but
+> it turns out that these days they are required on 32-bit ARM as well.
+> 
+> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+> ---
+> 
+>  drivers/iommu/ipmmu-vmsa.c |   10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> --- 0001/drivers/iommu/ipmmu-vmsa.c
+> +++ work/drivers/iommu/ipmmu-vmsa.c	2017-06-15 16:57:21.890607110 +0900
+> @@ -35,6 +35,7 @@
+>  struct ipmmu_vmsa_device {
+>  	struct device *dev;
+>  	void __iomem *base;
+> +	struct iommu_device iommu;
+>  	struct list_head list;
+>  
+>  	unsigned int num_utlbs;
+> @@ -1054,6 +1055,13 @@ static int ipmmu_probe(struct platform_d
+>  
+>  	ipmmu_device_reset(mmu);
+>  
+> +	ret = iommu_device_register(&mmu->iommu);
+> +	if (ret)
+> +		return ret;
+> +
+> +	iommu_device_set_ops(&mmu->iommu, &ipmmu_ops);
+> +	iommu_device_set_fwnode(&mmu->iommu, &pdev->dev.of_node->fwnode);
 
->From an implementation point of view, move work around handling outside
-of the rcar_du_dpll_divider() function by requesting a x2 DPLL output
-frequency explicitly. The existing post-divider calculation mechanism
-will then take care of dividing the clock by two automatically.
+Nit: I guess it works out OK in practice, but it does look rather weird
+to be initialising the iommu_device's members *after* registering it.
 
-While at it, print a more useful debugging message to ease debugging
-clock rate issues.
+Robin.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 37 +++++++++++++++++++++++++---------
- 1 file changed, 27 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index 4ed6f2340af0..9ae0d7b5fb69 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -13,6 +13,7 @@
- 
- #include <linux/clk.h>
- #include <linux/mutex.h>
-+#include <linux/sys_soc.h>
- 
- #include <drm/drmP.h>
- #include <drm/drm_atomic.h>
-@@ -129,10 +130,8 @@ static void rcar_du_dpll_divider(struct rcar_du_crtc *rcrtc,
- 			for (fdpll = 1; fdpll < 32; fdpll++) {
- 				unsigned long output;
- 
--				/* 1/2 (FRQSEL=1) for duty rate 50% */
- 				output = input * (n + 1) / (m + 1)
--				       / (fdpll + 1) / 2;
--
-+				       / (fdpll + 1);
- 				if (output >= 400000000)
- 					continue;
- 
-@@ -158,6 +157,11 @@ static void rcar_du_dpll_divider(struct rcar_du_crtc *rcrtc,
- 		 best_diff);
- }
- 
-+static const struct soc_device_attribute rcar_du_r8a7795_es1[] = {
-+	{ .soc_id = "r8a7795", .revision = "ES1.*" },
-+	{ /* sentinel */ }
-+};
-+
- static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
- {
- 	const struct drm_display_mode *mode = &rcrtc->crtc.state->adjusted_mode;
-@@ -185,7 +189,20 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
- 
- 		extclk = clk_get_rate(rcrtc->extclock);
- 		if (rcdu->info->dpll_ch & (1 << rcrtc->index)) {
--			rcar_du_dpll_divider(rcrtc, &dpll, extclk, mode_clock);
-+			unsigned long target = mode_clock;
-+
-+			/*
-+			 * The H3 ES1.x exhibits dot clock duty cycle stability
-+			 * issues. We can work around them by configuring the
-+			 * DPLL to twice the desired frequency, coupled with a
-+			 * /2 post-divider. This isn't needed on other SoCs and
-+			 * breaks HDMI output on M3-W for a currently unknown
-+			 * reason, so restrict the workaround to H3 ES1.x.
-+			 */
-+			if (soc_device_match(rcar_du_r8a7795_es1))
-+				target *= 2;
-+
-+			rcar_du_dpll_divider(rcrtc, &dpll, extclk, target);
- 			extclk = dpll.output;
- 		}
- 
-@@ -197,8 +214,6 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
- 
- 		if (abs((long)extrate - (long)mode_clock) <
- 		    abs((long)rate - (long)mode_clock)) {
--			dev_dbg(rcrtc->group->dev->dev,
--				"crtc%u: using external clock\n", rcrtc->index);
- 
- 			if (rcdu->info->dpll_ch & (1 << rcrtc->index)) {
- 				u32 dpllcr = DPLLCR_CODE | DPLLCR_CLKE
-@@ -215,12 +230,14 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
- 
- 				rcar_du_group_write(rcrtc->group, DPLLCR,
- 						    dpllcr);
--
--				escr = ESCR_DCLKSEL_DCLKIN | 1;
--			} else {
--				escr = ESCR_DCLKSEL_DCLKIN | extdiv;
- 			}
-+
-+			escr = ESCR_DCLKSEL_DCLKIN | extdiv;
- 		}
-+
-+		dev_dbg(rcrtc->group->dev->dev,
-+			"mode clock %lu extrate %lu rate %lu ESCR 0x%08x\n",
-+			mode_clock, extrate, rate, escr);
- 	}
- 
- 	rcar_du_group_write(rcrtc->group, rcrtc->index % 2 ? ESCR2 : ESCR,
--- 
-Regards,
-
-Laurent Pinchart
+> +
+>  	/*
+>  	 * We can't create the ARM mapping here as it requires the bus to have
+>  	 * an IOMMU, which only happens when bus_set_iommu() is called in
+> @@ -1077,6 +1085,8 @@ static int ipmmu_remove(struct platform_
+>  	list_del(&mmu->list);
+>  	spin_unlock(&ipmmu_devices_lock);
+>  
+> +	iommu_device_unregister(&mmu->iommu);
+> +
+>  #if defined(CONFIG_ARM) && !defined(CONFIG_IOMMU_DMA)
+>  	arm_iommu_release_mapping(mmu->mapping);
+>  #endif
+> 
