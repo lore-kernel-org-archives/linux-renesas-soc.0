@@ -1,16 +1,16 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:37832 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752095AbdFSRFQ (ORCPT
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:35701 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750811AbdFSQmp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Jun 2017 13:05:16 -0400
+        Mon, 19 Jun 2017 12:42:45 -0400
 From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 To: laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se
 Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
         linux-renesas-soc@vger.kernel.org
 Subject: [PATCH v1 00/12] rcar: vin: Add digital input to Gen3
-Date: Mon, 19 Jun 2017 19:04:37 +0200
-Message-Id: <1497891889-8038-1-git-send-email-jacopo+renesas@jmondi.org>
+Date: Mon, 19 Jun 2017 18:42:12 +0200
+Message-Id: <1497890544-6050-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
