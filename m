@@ -1,55 +1,86 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:44763 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752302AbdFLJ13 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Jun 2017 05:27:29 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Second Round of Renesas ARM Based SoC Fixes for v4.12
-Date: Mon, 12 Jun 2017 11:27:22 +0200
-Message-Id: <cover.1497259417.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: joro@8bytes.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
+        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
+        m.szyprowski@samsung.com
+Date: Mon, 19 Jun 2017 20:04:37 +0900
+Message-Id: <149787027730.32495.785135660592328553.sendpatchset@little-apple>
+In-Reply-To: <149787025647.32495.1584960416060100962.sendpatchset@little-apple>
+References: <149787025647.32495.1584960416060100962.sendpatchset@little-apple>
+Subject: [PATCH v4 2/3] iommu/ipmmu-vmsa: Increase maximum micro-TLBS to 48
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Please consider these second round of Renesas ARM based SoC fixes for v4.12.
+Bump up the maximum numbers of micro-TLBS to 48.
 
-It splits LCD mux and gpio into separate nodes as different values
-for the output-high property are required.
+Each IPMMU device instance get micro-TLB assignment via
+the "iommus" property in DT. Older SoCs tend to use a
+maximum number of 32 micro-TLBs per IPMMU instance however
+newer SoCs such as r8a7796 make use of up to 48 micro-TLBs.
 
-This pull request is based on the previous round of
-such requests, tagged as renesas-fixes-for-v4.12,
-which I have already sent a pull-request for.
+At this point no SoC specific handling is done to validate
+the maximum number of micro-TLBs, and because of that the
+DT information is assumed to be within correct range for
+each particular SoC.
 
+If needed in the future SoC specific feature flags can be
+added to handle the maximum number of micro-TLBs without
+requiring DT changes, however at this point this does not
+seem necessary.
 
-The following changes since commit 7b4ccb3c466f62bbf2f4dd5d6a143d945a6f3051:
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
 
-  soc: renesas: Provide dummy rcar_rst_read_mode_pins() for compile-testing (2017-04-28 10:07:36 +0200)
+ Changes since V3:
+ - None
 
-are available in the git repository at:
+ Changes since V2:
+ - Added outer set of () to IMUASID() and IMUCTR() - thanks Ramesh!
+ - Added Reviewed-by from Geert - thanks!
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-fixes2-for-v4.12
+ Changes since V1:
+ - Added support for the second I/O range at 0x600.
 
-for you to fetch changes up to 13132b3f44d3600983aceb7e9920b8ebb55a7cf8:
+ drivers/iommu/ipmmu-vmsa.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-  ARM: dts: armadillo800eva: Split LCD mux and gpio (2017-06-08 15:44:55 +0200)
-
-----------------------------------------------------------------
-Second Round of Renesas ARM Based SoC Fixes for v4.12
-
-* Split LCD mux and gpio on armadillo800eva board
-
-----------------------------------------------------------------
-Geert Uytterhoeven (1):
-      ARM: dts: armadillo800eva: Split LCD mux and gpio
-
- arch/arm/boot/dts/r8a7740-armadillo800eva.dts | 2 ++
- 1 file changed, 2 insertions(+)
+--- 0015/drivers/iommu/ipmmu-vmsa.c
++++ work/drivers/iommu/ipmmu-vmsa.c	2017-06-19 19:47:28.950607110 +0900
+@@ -199,7 +199,9 @@ static struct ipmmu_vmsa_iommu_priv *to_
+ #define IMPMBA(n)			(0x0280 + ((n) * 4))
+ #define IMPMBD(n)			(0x02c0 + ((n) * 4))
+ 
+-#define IMUCTR(n)			(0x0300 + ((n) * 16))
++#define IMUCTR(n)			((n) < 32 ? IMUCTR0(n) : IMUCTR32(n))
++#define IMUCTR0(n)			(0x0300 + ((n) * 16))
++#define IMUCTR32(n)			(0x0600 + (((n) - 32) * 16))
+ #define IMUCTR_FIXADDEN			(1 << 31)
+ #define IMUCTR_FIXADD_MASK		(0xff << 16)
+ #define IMUCTR_FIXADD_SHIFT		16
+@@ -209,7 +211,9 @@ static struct ipmmu_vmsa_iommu_priv *to_
+ #define IMUCTR_FLUSH			(1 << 1)
+ #define IMUCTR_MMUEN			(1 << 0)
+ 
+-#define IMUASID(n)			(0x0308 + ((n) * 16))
++#define IMUASID(n)			((n) < 32 ? IMUASID0(n) : IMUASID32(n))
++#define IMUASID0(n)			(0x0308 + ((n) * 16))
++#define IMUASID32(n)			(0x0608 + (((n) - 32) * 16))
+ #define IMUASID_ASID8_MASK		(0xff << 8)
+ #define IMUASID_ASID8_SHIFT		8
+ #define IMUASID_ASID0_MASK		(0xff << 0)
+@@ -1066,7 +1070,7 @@ static int ipmmu_probe(struct platform_d
+ 	}
+ 
+ 	mmu->dev = &pdev->dev;
+-	mmu->num_utlbs = 32;
++	mmu->num_utlbs = 48;
+ 	spin_lock_init(&mmu->lock);
+ 	bitmap_zero(mmu->ctx, IPMMU_CTX_MAX);
+ 	mmu->features = of_device_get_match_data(&pdev->dev);
