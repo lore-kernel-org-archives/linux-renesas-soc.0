@@ -1,67 +1,44 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Wolfram Sang <wsa@the-dreams.de>
-Subject: [PATCH 2/4] i2c: add docs to clarify DMA handling
-Date: Thu, 15 Jun 2017 20:30:37 +0200
-Message-Id: <20170615183039.22925-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170615183039.22925-1-wsa+renesas@sang-engineering.com>
-References: <20170615183039.22925-1-wsa+renesas@sang-engineering.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:44653 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753428AbdFSIWz (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 19 Jun 2017 04:22:55 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 2/2] arm64: dts: r8a7795: salvator-x: Unify DU node between ES1.x and ES2.0
+Date: Mon, 19 Jun 2017 11:23:28 +0300
+Message-ID: <1727004.zEMc0cijA9@avalon>
+In-Reply-To: <CAMuHMdW9t0kXZr_sEYtjSCNJTZN8jSg9p7i386Qh2DMpSFBG-Q@mail.gmail.com>
+References: <20170615073716.12395-1-laurent.pinchart+renesas@ideasonboard.com> <20170615073716.12395-3-laurent.pinchart+renesas@ideasonboard.com> <CAMuHMdW9t0kXZr_sEYtjSCNJTZN8jSg9p7i386Qh2DMpSFBG-Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
----
- Documentation/i2c/DMA-considerations | 37 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
- create mode 100644 Documentation/i2c/DMA-considerations
+Hi Geert,
 
-diff --git a/Documentation/i2c/DMA-considerations b/Documentation/i2c/DMA-considerations
-new file mode 100644
-index 00000000000000..92cdb6835ccf95
---- /dev/null
-+++ b/Documentation/i2c/DMA-considerations
-@@ -0,0 +1,37 @@
-+Linux I2C and DMA
-+-----------------
-+
-+Given that I2C is a low-speed bus where largely small messages are transferred,
-+it is not considered a prime user of DMA access. At this time of writing, only
-+10% of I2C bus master drivers have DMA support implemented. And the vast
-+majority of transactions are so small that setting up DMA for it will likely
-+add more overhead than a plain PIO transfer.
-+
-+Therefore, it is *not* mandatory that the buffer of an I2C message is DMA safe.
-+It does not seem reasonable to apply additional burdens when the feature is so
-+rarely used. However, it is recommended to use a DMA-safe buffer if your
-+message size is likely applicable for DMA. Most drivers have this threshold
-+around 8 bytes. As of today, this is mostly an educated guess, however.
-+
-+To support this scenario, drivers wishing to implement DMA can use helper
-+functions from the I2C core. One checks if a message is DMA capable in terms of
-+size and memory type. It can optionally also create a bounce buffer:
-+
-+	i2c_check_msg_for_dma(msg, threshold, &bounce_buf);
-+
-+The other one releases the bounce buffer ensuring data is copied back to the
-+message:
-+
-+	i2c_release_bounce_buf(msg, bounce_buf);
-+
-+Please check the in-kernel documentation for details. The i2c-sh_mobile driver
-+can be used as a reference example.
-+
-+The bounce buffer handling from the core is generic and simple. It will always
-+allocate a new buffer. If you want a more sophisticated buffer handling (e.g.
-+reusing pre-allocated buffers), you can skip the generic handling from the core
-+and implement your own.
-+
-+If you plan to use DMA with I2C (or with any other bus, actually) make sure you
-+have CONFIG_DMA_API_DEBUG enabled during development. It can help you find
-+various issues which can be complex to debug otherwise.
+On Friday 16 Jun 2017 09:37:12 Geert Uytterhoeven wrote:
+> On Thu, Jun 15, 2017 at 9:37 AM, Laurent Pinchart wrote:
+> > The external clocks used by the DU are identical on the H3 ES1.x and
+> > ES2.0 SoCs. There is thus no need to duplicate DU clocks in both
+> > r8a7795-salvator-x.dts and r8a7795-es1-salvator-x.dts, move them all to
+> > salvator-x.dtsi.
+> 
+> Unfortunately the external clock wiring is different on R-Car M3-W.
+> As salvator-x.dtsi/salvator-common.dtsi is also used for M3-W-based boards,
+> I'm afraid the external clock description has to be duplicated for R-Car H3
+> ES1.x and ES2.0.
+> 
+> Unless we introduce e.g. r8a7795-salvator-x-common.dtsi, but that may be
+> overkill?
+
+You're right, my bad. I'll drop this patch.
+
 -- 
-2.11.0
+Regards,
+
+Laurent Pinchart
