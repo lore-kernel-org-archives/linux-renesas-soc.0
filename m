@@ -1,88 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:41326 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753624AbdFMVHo (ORCPT
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:41499 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752464AbdFSRFj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Jun 2017 17:07:44 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <871sqw4pc6.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dKt2K-0000Em-63@debutante>
-Date: Tue, 13 Jun 2017 22:07:40 +0100
-Subject: Applied "ASoC: simple-scu-card: use asoc_simple_card_clk_xxx()" to the asoc tree
+        Mon, 19 Jun 2017 13:05:39 -0400
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v1 11/12] media: rcar: vin: Store VIN instance id
+Date: Mon, 19 Jun 2017 19:04:48 +0200
+Message-Id: <1497891889-8038-12-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1497891889-8038-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1497891889-8038-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+Store VIN instance id in rvin_dev.
+The instance id is reported by "renesas,id" OF property.
 
-   ASoC: simple-scu-card: use asoc_simple_card_clk_xxx()
-
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From bb24a3ba3f52942b5f3eb6c10288da830ec9ef70 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Fri, 9 Jun 2017 00:44:40 +0000
-Subject: [PATCH] ASoC: simple-scu-card: use asoc_simple_card_clk_xxx()
-
-Current simple-card-utils sets asoc_simple_dai::clk via
-asoc_simple_card_parse_clk().
-Current simple card drivers are using it directly for
-clk_enable/disable.
-Encapsulation is one of simple card util's purpose.
-Let's use asoc_simple_card_clk_enable/disable.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
- sound/soc/generic/simple-scu-card.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/platform/rcar-vin/rcar-core.c | 1 +
+ drivers/media/platform/rcar-vin/rcar-vin.h  | 2 ++
+ 2 files changed, 3 insertions(+)
 
-diff --git a/sound/soc/generic/simple-scu-card.c b/sound/soc/generic/simple-scu-card.c
-index 5faf5d6c48a2..f203783b2fad 100644
---- a/sound/soc/generic/simple-scu-card.c
-+++ b/sound/soc/generic/simple-scu-card.c
-@@ -47,7 +47,7 @@ static int asoc_simple_card_startup(struct snd_pcm_substream *substream)
- 	struct asoc_simple_dai *dai_props =
- 		simple_priv_to_props(priv, rtd->num);
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 1d0b492..67494ee 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -776,6 +776,7 @@ static int rvin_group_graph_parse(struct rvin_dev *vin, unsigned long *bitmap)
  
--	return clk_prepare_enable(dai_props->clk);
-+	return asoc_simple_card_clk_enable(dai_props);
- }
+ 	vin_dbg(vin, "I'm VIN number %u", val);
+ 	vin->group->vin[val] = vin;
++	vin->id = val;
  
- static void asoc_simple_card_shutdown(struct snd_pcm_substream *substream)
-@@ -57,7 +57,7 @@ static void asoc_simple_card_shutdown(struct snd_pcm_substream *substream)
- 	struct asoc_simple_dai *dai_props =
- 		simple_priv_to_props(priv, rtd->num);
+ 	/* Parse all endpoints on Port@1 (CSI-2) and eventually on Port@2 */
+ 	vin->mbus_cfg.type = 0;
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index 333ef3b..eaae927 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -139,6 +139,7 @@ struct rvin_info {
+  * struct rvin_dev - Renesas VIN device structure
+  * @dev:		(OF) device
+  * @base:		device I/O register space remapped to virtual memory
++ * @id:			VIN instance number
+  * @info:		info about VIN instance
+  *
+  * @vdev:		V4L2 video device associated with VIN
+@@ -171,6 +172,7 @@ struct rvin_info {
+ struct rvin_dev {
+ 	struct device *dev;
+ 	void __iomem *base;
++	unsigned int id;
+ 	const struct rvin_info *info;
  
--	clk_disable_unprepare(dai_props->clk);
-+	asoc_simple_card_clk_disable(dai_props);
- }
- 
- static const struct snd_soc_ops asoc_simple_card_ops = {
+ 	struct video_device vdev;
 -- 
-2.11.0
+2.7.4
