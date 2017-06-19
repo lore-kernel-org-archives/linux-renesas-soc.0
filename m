@@ -1,53 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:35636 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751673AbdFOHg7 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55089 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753991AbdFSLvV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Jun 2017 03:36:59 -0400
-Received: from avalon.ideasonboard.com (unknown [IPv6:2001:268:c037:db14:f920:322a:1f4a:5bdb])
-        by galahad.ideasonboard.com (Postfix) with ESMTPSA id 1D82B2034A
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Jun 2017 09:36:33 +0200 (CEST)
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 1/2] arm64: dts: r8a7795: Add support for the DU
-Date: Thu, 15 Jun 2017 10:37:15 +0300
-Message-Id: <20170615073716.12395-2-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170615073716.12395-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170615073716.12395-1-laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 19 Jun 2017 07:51:21 -0400
+Date: Mon, 19 Jun 2017 13:51:18 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Magnus <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH] arm64: renesas: salvator-common: sound clock-frequency
+ needs descending order
+Message-ID: <20170619115118.GB20088@verge.net.au>
+References: <87fuf0iuiq.wl%kuninori.morimoto.gx@renesas.com>
+ <20170616133813.GC26834@verge.net.au>
+ <87k24825wi.wl%kuninori.morimoto.gx@renesas.com>
+ <CAMuHMdWFK5XRJ8-GBxvDAHqEyTUo_2vamBttoEjDgvnEFdFu9Q@mail.gmail.com>
+ <874lvc1ogz.wl%kuninori.morimoto.gx@renesas.com>
+ <20170619091429.GC19284@verge.net.au>
+ <871sqg1fj8.wl%kuninori.morimoto.gx@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <871sqg1fj8.wl%kuninori.morimoto.gx@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a compatible string and VSP links to the DU node. The H3 ES1.x and
-H3 ES2.0 are compatible save for the links to the VSPs that are
-described explicitly in DT, so there's no need for a new ES2-specific
-compatible string.
+On Mon, Jun 19, 2017 at 09:46:12AM +0000, Kuninori Morimoto wrote:
+> 
+> Hi Simon
+> 
+> > > > I guess you forgot to add these tags, that would have hinted Simon they are
+> > > > fixes for commits he was about to send a pull request for to arm-soc?
+> > > > 
+> > > > Fixes: d37d2b3c0ec2708a ("arm64: dts: salvator-x: add 12288000 for sound ADG")
+> > > > Fixes: 0b03c32db03d63de ("arm64: dts: r8a7795: salvator-x: Add support
+> > > > for R-Car H3 ES2.0")
+> > > > 
+> > > > In the mean time Olof has pulled them...
+> > > 
+> > > Yes, it was my fault, and (maybe) I posted this patch *after* simon's closing announce.
+> > > If it is OK, I can post it with above Fixes tag
+> > 
+> > Its fine to post fixes after my tree closes (or at any other time) but it
+> > helps me a lot if they come with "Fixes" tags if the resolve issues in
+> > patches for which I have already sent pull requests. I'll re-apply this
+> > patch as a fix for v4.13 with the tags above. No need to repost at this
+> > stage.
+> 
+> Thanks.
+> Above Geert's "Fixes" tags are correct.
+> So, can you pickup it into v4.13 fixup please ?
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 87df66b56f59..68c99842b3dd 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1743,6 +1743,7 @@
- 		};
- 
- 		du: display@feb00000 {
-+			compatible = "renesas,du-r8a7795";
- 			reg = <0 0xfeb00000 0 0x80000>,
- 			      <0 0xfeb90000 0 0x14>;
- 			reg-names = "du", "lvds.0";
-@@ -1756,6 +1757,7 @@
- 				 <&cpg CPG_MOD 721>,
- 				 <&cpg CPG_MOD 727>;
- 			clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0";
-+			vsps = <&vspd0 &vspd1 &vspd2 &vspd0>;
- 			status = "disabled";
- 
- 			ports {
--- 
-Regards,
-
-Laurent Pinchart
+Sure, done.
