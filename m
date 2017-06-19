@@ -1,111 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54720 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751016AbdFORUs (ORCPT
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:42781 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750863AbdFSRFk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Jun 2017 13:20:48 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <87wp8em7ae.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dLYRm-0001hN-C0@debutante>
-Date: Thu, 15 Jun 2017 18:20:42 +0100
-Subject: Applied "ASoC: simple-card-utils: add asoc_simple_card_of_parse_routing()" to the asoc tree
+        Mon, 19 Jun 2017 13:05:40 -0400
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v1 12/12] media: rcar: vin: Link digital subdev to VIN instance
+Date: Mon, 19 Jun 2017 19:04:49 +0200
+Message-Id: <1497891889-8038-13-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1497891889-8038-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1497891889-8038-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+Link digital subdevice to the current VIN instance if the instance
+support it and we are currently using media controller API.
 
-   ASoC: simple-card-utils: add asoc_simple_card_of_parse_routing()
-
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 3296d07826ebc698113832acb426f037e9b3b253 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Thu, 15 Jun 2017 00:25:02 +0000
-Subject: [PATCH] ASoC: simple-card-utils: add
- asoc_simple_card_of_parse_routing()
-
-Current simple card drivers are parsing routing on each own driver.
-Encapsulation is one of simple card util's purpose.
-Let's add asoc_simple_card_of_parse_routing for it.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
- include/sound/simple_card_utils.h     |  4 ++++
- sound/soc/generic/simple-card-utils.c | 22 ++++++++++++++++++++++
- 2 files changed, 26 insertions(+)
+ drivers/media/platform/rcar-vin/rcar-core.c | 22 +++++++++++++++++++++-
+ 1 file changed, 21 insertions(+), 1 deletion(-)
 
-diff --git a/include/sound/simple_card_utils.h b/include/sound/simple_card_utils.h
-index cc318ccd6a2d..889c8ff86369 100644
---- a/include/sound/simple_card_utils.h
-+++ b/include/sound/simple_card_utils.h
-@@ -100,4 +100,8 @@ void asoc_simple_card_convert_fixup(struct asoc_simple_card_data *data,
- void asoc_simple_card_parse_convert(struct device *dev, char *prefix,
- 				    struct asoc_simple_card_data *data);
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 67494ee..503c905 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -26,6 +26,12 @@
  
-+int asoc_simple_card_of_parse_routing(struct snd_soc_card *card,
-+				      char *prefix,
-+				      int optional);
-+
- #endif /* __SIMPLE_CARD_UTILS_H */
-diff --git a/sound/soc/generic/simple-card-utils.c b/sound/soc/generic/simple-card-utils.c
-index 948a18842e64..a2b6d95bc2f9 100644
---- a/sound/soc/generic/simple-card-utils.c
-+++ b/sound/soc/generic/simple-card-utils.c
-@@ -375,6 +375,28 @@ int asoc_simple_card_clean_reference(struct snd_soc_card *card)
- }
- EXPORT_SYMBOL_GPL(asoc_simple_card_clean_reference);
+ #include "rcar-vin.h"
  
-+int asoc_simple_card_of_parse_routing(struct snd_soc_card *card,
-+				      char *prefix,
-+				      int optional)
-+{
-+	struct device_node *node = card->dev->of_node;
-+	char prop[128];
++static int rvin_group_add_link(struct rvin_dev *vin,
++			       struct media_entity *source,
++			       unsigned int source_idx,
++			       struct media_entity *sink,
++			       unsigned int sink_idx,
++			       u32 flags);
+ /* -----------------------------------------------------------------------------
+  * Media Controller link notification
+  */
+@@ -418,6 +424,7 @@ static int rvin_digital_notify_complete(struct v4l2_async_notifier *notifier)
+ {
+ 	struct rvin_dev *vin = notifier_to_vin(notifier);
+ 	struct v4l2_subdev *sd = vin_to_source(vin);
++	struct media_entity *source, *sink;
+ 	int ret;
+ 
+ 	/* Verify subdevices mbus format */
+@@ -464,7 +471,20 @@ static int rvin_digital_notify_complete(struct v4l2_async_notifier *notifier)
+ 		v4l2_disable_ioctl(&vin->vdev, VIDIOC_ENUMSTD);
+ 	}
+ 
+-	return rvin_reset_format(vin);
++	ret = rvin_reset_format(vin);
++	if (ret)
++		return ret;
 +
-+	if (!prefix)
-+		prefix = "";
++	/* Link the digital subdev with the VIN instance, if supported */
++	if (vin->info->use_mc && (vin->info->din_mask & BIT(vin->id))) {
++		source = &vin->digital.subdev->entity;
++		sink = &vin->group->vin[vin->id]->vdev.entity;
 +
-+	snprintf(prop, sizeof(prop), "%s%s", prefix, "routing");
-+
-+	if (!of_property_read_bool(node, prop)) {
-+		if (optional)
-+			return 0;
-+		return -EINVAL;
++		ret = rvin_group_add_link(vin, source, 0, sink, 0,
++					  MEDIA_LNK_FL_ENABLED);
 +	}
 +
-+	return snd_soc_of_parse_audio_routing(card, prop);
-+}
-+EXPORT_SYMBOL_GPL(asoc_simple_card_of_parse_routing);
-+
- /* Module information */
- MODULE_AUTHOR("Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>");
- MODULE_DESCRIPTION("ALSA SoC Simple Card Utils");
++	return ret;
+ }
+ 
+ static void rvin_digital_notify_unbind(struct v4l2_async_notifier *notifier,
 -- 
-2.11.0
+2.7.4
