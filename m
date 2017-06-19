@@ -1,90 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:46210 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751730AbdFNKM3 (ORCPT
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:36322 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753532AbdFSGOm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Jun 2017 06:12:29 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <878tkv9zsf.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dL5Hk-0007Yz-Sx@debutante>
-Date: Wed, 14 Jun 2017 11:12:24 +0100
-Subject: Applied "ASoC: audio-graph-card: use asoc_simple_card_of_parse_tdm()" to the asoc tree
+        Mon, 19 Jun 2017 02:14:42 -0400
+Received: by mail-lf0-f65.google.com with SMTP id x81so9011598lfb.3
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 18 Jun 2017 23:14:41 -0700 (PDT)
+Date: Sun, 18 Jun 2017 22:51:07 -0700
+From: Olof Johansson <olof@lixom.net>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: arm@kernel.org, linux-renesas-soc@vger.kernel.org,
+        Kevin Hilman <khilman@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [GIT PULL] Second Round of Renesas ARM Based SoC DT Bindings
+ Updates for v4.13
+Message-ID: <20170619055107.GK7703@localhost>
+References: <cover.1497617896.git.horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1497617896.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+On Fri, Jun 16, 2017 at 03:30:57PM +0200, Simon Horman wrote:
+> Hi Olof, Hi Kevin, Hi Arnd,
+> 
+> Please consider these second round of Renesas ARM based SoC DT bindings
+> updates for v4.13.
+> 
+> This pull request is based on the previous round of
+> such requests, tagged as renesas-dt-bindings-for-v4.13,
+> which I you have already pulled.
+> 
+> 
+> The following changes since commit 40c9bbea140e64a4257b794969e759c2c481c399:
+> 
+>   ARM: dts: r7s72100: add USB bit definitions (2017-05-15 09:02:37 +0200)
+> 
+> are available in the git repository at:
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-dt-bindings2-for-v4.13
+> 
+> for you to fetch changes up to 521ec12e2f56b16e6a0b4e7ef97a666bd3de4ff5:
+> 
+>   ARM: shmobile: Document Renesas H3-based Salvator-XS board DT bindings (2017-06-12 11:59:07 +0200)
+> 
+> ----------------------------------------------------------------
+> Second Round of Renesas ARM Based SoC DT Bindings Updates for v4.13
+> 
+> * Document:
+>   - Add Renesas H3-based Salvator-XS board DT bindings
+>   - Add iW-RainboW-G20D-Qseven-RZG1M board
+>   - Add iW-RainboW-G20M-Qseven-RZG1M system on module
+>   - Update R-Car Gen3 ULCB board part numbers
+> * Add clock bit definitions for r7s72100 SoC
+> 
+> ----------------------------------------------------------------
+> Biju Das (2):
+>       ARM: shmobile: document iW-RainboW-G20M-Qseven-RZG1M system on module
+>       ARM: shmobile: document iW-RainboW-G20D-Qseven-RZG1M board
+> 
+> Chris Brandt (1):
+>       ARM: dts: r7s72100: add clock bit definitions
+> 
+> Geert Uytterhoeven (2):
+>       ARM: shmobile: Update R-Car Gen3 ULCB board part numbers
+>       ARM: shmobile: Document Renesas H3-based Salvator-XS board DT bindings
 
-   ASoC: audio-graph-card: use asoc_simple_card_of_parse_tdm()
+Merged, thanks.
 
-has been applied to the asoc tree at
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From c98907d59594827535b492309a145ac9c758fb4c Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Wed, 14 Jun 2017 00:35:30 +0000
-Subject: [PATCH] ASoC: audio-graph-card: use asoc_simple_card_of_parse_tdm()
-
-Current simple card drivers are using asoc_simple_dai's tx_slot_mask,
-rx_slot_mask, slots, slot_width directly to parse TDM.
-Encapsulation is one of simple card util's purpose.
-Let's use asoc_simple_card_of_parse_tdm for it.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/generic/audio-graph-card.c | 12 ++----------
- 1 file changed, 2 insertions(+), 10 deletions(-)
-
-diff --git a/sound/soc/generic/audio-graph-card.c b/sound/soc/generic/audio-graph-card.c
-index b5bb791a6e61..885b405d7844 100644
---- a/sound/soc/generic/audio-graph-card.c
-+++ b/sound/soc/generic/audio-graph-card.c
-@@ -131,19 +131,11 @@ static int asoc_graph_card_dai_link_of(struct device_node *cpu_port,
- 	if (ret < 0)
- 		goto dai_link_of_err;
- 
--	ret = snd_soc_of_parse_tdm_slot(cpu_ep,
--					&cpu_dai->tx_slot_mask,
--					&cpu_dai->rx_slot_mask,
--					&cpu_dai->slots,
--					&cpu_dai->slot_width);
-+	ret = asoc_simple_card_of_parse_tdm(cpu_ep, cpu_dai);
- 	if (ret < 0)
- 		goto dai_link_of_err;
- 
--	ret = snd_soc_of_parse_tdm_slot(codec_ep,
--					&codec_dai->tx_slot_mask,
--					&codec_dai->rx_slot_mask,
--					&codec_dai->slots,
--					&codec_dai->slot_width);
-+	ret = asoc_simple_card_of_parse_tdm(codec_ep, codec_dai);
- 	if (ret < 0)
- 		goto dai_link_of_err;
- 
--- 
-2.11.0
+-Olof
