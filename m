@@ -1,200 +1,121 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:39270 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752097AbdFNT6m (ORCPT
+Received: from mail-io0-f178.google.com ([209.85.223.178]:36160 "EHLO
+        mail-io0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752037AbdFTJGR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Jun 2017 15:58:42 -0400
-From: Kieran Bingham <kbingham@kernel.org>
-To: laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se,
-        linux-renesas-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS),
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM64 PORT
-        (AARCH64 ARCHITECTURE))
-Subject: [PATCH v5 2/2] arm64: dts: renesas: salvator-x: Add ADV7482 support
-Date: Wed, 14 Jun 2017 20:58:13 +0100
-Message-Id: <ce388da93b793abc1b54df3e59ab287aedb9797f.1497469745.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.90fc3153078e79a3f74af832de923ac675eb29ad.1497469745.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.90fc3153078e79a3f74af832de923ac675eb29ad.1497469745.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.90fc3153078e79a3f74af832de923ac675eb29ad.1497469745.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.90fc3153078e79a3f74af832de923ac675eb29ad.1497469745.git-series.kieran.bingham+renesas@ideasonboard.com>
+        Tue, 20 Jun 2017 05:06:17 -0400
+MIME-Version: 1.0
+In-Reply-To: <CAPDyKFpuBJCArAHUL2i=zDL=-Bq908eDJ2_mRy7O=_4bJj2_dw@mail.gmail.com>
+References: <CAMuHMdW=aasYmZz-z+BgT0Qoco6DTyQxN3G1wiWVPETsbkRZTQ@mail.gmail.com>
+ <CAPDyKFpuBJCArAHUL2i=zDL=-Bq908eDJ2_mRy7O=_4bJj2_dw@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 20 Jun 2017 11:06:15 +0200
+Message-ID: <CAMuHMdWikrGTaEVWDdpgAN9+DEHXOYUZdtZgssRLDTWsyxa-fw@mail.gmail.com>
+Subject: Re: Rebasing mmc/next
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Linux MMC List <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Hi Ulf,
 
-The Salvator boards use an ADV7482 receiver for HDMI and CVBS inputs.
+On Tue, Jun 20, 2017 at 10:07 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> On 20 June 2017 at 09:17, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>> It looks like you rebase mmc/next almost daily. Is there any specific reason
+>> for that?
+>
+> I don't do it daily, but often, yes. :-)
 
-Provide ADV7482 node on the i2c4 bus, along with connectors for the
-hdmi and cvbs inputs, and link to the csi20 and csi40 nodes as outputs.
+A few years ago, I got bashed by Linus for rebasing the m68k "for-linus"
+branch on every -rc.
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+>> I'm asking because I create a "renesas-drivers" tree on a regular basis
+>> (cfr. e.g. https://www.spinics.net/lists/linux-renesas-soc/msg15111.html).
+>> This tree is meant to ease development of platform support and drivers
+>> for Renesas ARM SoCs. It is created by merging (a) the for-next branches
+>> of various subsystem trees and (b) branches with driver code submitted
+>> or planned for submission to maintainers into the development branch of
+>> Simon Horman's renesas.git tree.
+>
+> If you are asking me to keep my next branch immutable, then please no,
+> I don't like to do that. Reason explained below.
 
-v4:
- - dt: Rebase to dts/renesas/salvator-x.dtsi
- - dt: Use AIN0-7 rather than AIN1-8
+100% immutable is not needed.
 
-v5:
- - dt: Move to salvator-common.dtsi
----
- arch/arm64/boot/dts/renesas/salvator-common.dtsi | 123 ++++++++++++++++-
- 1 file changed, 123 insertions(+)
+> I don't have a problem to share specific renesas mmc branches with
+> you, if that helps?
 
-diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-index aef35e0b685a..d74fb55c38bc 100644
---- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-@@ -65,6 +65,27 @@
- 		enable-gpios = <&gpio6 7 GPIO_ACTIVE_HIGH>;
- 	};
- 
-+	cvbs-in {
-+		compatible = "composite-video-connector";
-+		label = "CVBS IN";
-+
-+		port {
-+			cvbs_con: endpoint {
-+			};
-+		};
-+	};
-+
-+	hdmi-in {
-+		compatible = "hdmi-connector";
-+		label = "HDMI IN";
-+		type = "a";
-+
-+		port {
-+			hdmi_in_con: endpoint {
-+			};
-+		};
-+	};
-+
- 	reg_1p8v: regulator0 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "fixed-1.8V";
-@@ -257,6 +278,59 @@
- 	};
- };
- 
-+&csi20 {
-+	status = "okay";
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+			csi20_in: endpoint {
-+				clock-lanes = <0>;
-+				data-lanes = <1>;
-+				remote-endpoint = <&adv7482_txb>;
-+			};
-+		};
-+	};
-+};
-+
-+&csi40 {
-+	status = "okay";
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+
-+			csi40_in: endpoint {
-+				clock-lanes = <0>;
-+				data-lanes = <1 2 3 4>;
-+				remote-endpoint = <&adv7482_txa>;
-+			};
-+		};
-+	};
-+};
-+
-+&cvbs_con {
-+	port {
-+		cvbs_in: endpoint {
-+			remote-endpoint = <&adv7482_ain7>;
-+		};
-+	};
-+};
-+
-+&hdmi_in_con {
-+	port {
-+		hdmi_in: endpoint {
-+			remote-endpoint = <&adv7482_hdmi>;
-+		};
-+	};
-+};
-+
- &du {
- 	pinctrl-0 = <&du_pins>;
- 	pinctrl-names = "default";
-@@ -343,6 +417,55 @@
- 
- 		shunt-resistor-micro-ohms = <5000>;
- 	};
-+
-+	video-receiver@70 {
-+		compatible = "adi,adv7482";
-+		reg = <0x70>;
-+
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		interrupt-parent = <&gpio6>;
-+		interrupt-names = "intrq1", "intrq2";
-+		interrupts = <30 IRQ_TYPE_LEVEL_LOW>,
-+			     <31 IRQ_TYPE_LEVEL_LOW>;
-+
-+		port@7 {
-+			reg = <7>;
-+
-+			adv7482_ain7: endpoint {
-+				remote-endpoint = <&cvbs_in>;
-+			};
-+		};
-+
-+		port@8 {
-+			reg = <8>;
-+
-+			adv7482_hdmi: endpoint {
-+				remote-endpoint = <&hdmi_in>;
-+			};
-+		};
-+
-+		port@10 {
-+			reg = <10>;
-+
-+			adv7482_txa: endpoint {
-+				clock-lanes = <0>;
-+				data-lanes = <1 2 3 4>;
-+				remote-endpoint = <&csi40_in>;
-+			};
-+		};
-+
-+		port@11 {
-+			reg = <11>;
-+
-+			adv7482_txb: endpoint {
-+				clock-lanes = <0>;
-+				data-lanes = <1>;
-+				remote-endpoint = <&csi20_in>;
-+			};
-+		};
-+	};
- };
- 
- &i2c_dvfs {
--- 
-git-series 0.9.1
+Hmm, that would be more work on your side. Plus communication overhead.
+
+>> If for (b), people submit driver code based on mmc/next, it may start
+>> to conflict
+>> with subsequent mmc/next releases soon, requiring the submitter or me to
+>> rebase the code before including it in renesas-drivers.
+>>
+>> Most subsystem maintainers don't rebase their for-next branch, unless there's
+>> a very good reason for it (e.g. a serious breakage hindering bisection).
+>
+> I do it for a couple of reasons.
+>
+> First, sometimes I apply changes before people have provided enough
+> tested by tags, to instead allow the changes to be tested in
+> linux-next. This may lead to some situations when I need to re-base my
+> next branch.
+> *) Something breaks, then I need to drop the changes. Revert doesn't
+> play well here, especially if it's a series of changes.
+> **) Avoid breaking bisect.
+
+OK.
+
+> ***) I want to give people cred, adding peoples tested-by, reviewed-by
+> tags, after the changes have been queued on my next branch.
+
+I think you're about the only one who does that ;-)
+
+> Second, even if the changes queued on next has been thoroughly tested,
+> sometimes error reports still show up. I most cases I prefer to avoid
+> breaking bisect, which then leaves me in no other option, but
+> re-basing my branch (to either drop changes or amend them).
+>
+> I guess what I can do, is to host a pre-next branch, which serves as
+> my pre-integration branch, before I moves things to next. However,
+> this does put some more administrative work on me, so I would like to
+> avoid that.
+
+OK.
+
+> I am trying to understand the purpose of your renesas integration
+> tree, and why it's a problem for you to pick up my re-based branch?
+> Could you perhaps elaborate on this?
+
+The purpose is to make it easier for the upstream Renesas kernel team and
+associated testers to consume our work-in-progress.
+
+Hence I merge the for-next branches of selected subsystems, followed by
+topic branches with work-in-progress driver code.
+
+E.g. Simon had asked me to include
+git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git
+topic/sdhi-gen3-dma-2017
+That branch was based on your mmc/next.
+
+But by the time I created the renesas-drivers release, mmc/next had been
+rebased.  Hence after merging the new mmc/next, I had to rebase his work:
+https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/log/?h=topic/sdhi-gen3-dma-2017-rebased1
+
+I hope this explains our problem.
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
