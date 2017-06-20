@@ -1,82 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f172.google.com ([209.85.220.172]:36396 "EHLO
-        mail-qk0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752449AbdFTIH4 (ORCPT
+Received: from mail-io0-f170.google.com ([209.85.223.170]:36715 "EHLO
+        mail-io0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751007AbdFTHRw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Jun 2017 04:07:56 -0400
-Received: by mail-qk0-f172.google.com with SMTP id g83so51471158qkb.3
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 20 Jun 2017 01:07:55 -0700 (PDT)
+        Tue, 20 Jun 2017 03:17:52 -0400
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdW=aasYmZz-z+BgT0Qoco6DTyQxN3G1wiWVPETsbkRZTQ@mail.gmail.com>
-References: <CAMuHMdW=aasYmZz-z+BgT0Qoco6DTyQxN3G1wiWVPETsbkRZTQ@mail.gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 20 Jun 2017 10:07:44 +0200
-Message-ID: <CAPDyKFpuBJCArAHUL2i=zDL=-Bq908eDJ2_mRy7O=_4bJj2_dw@mail.gmail.com>
-Subject: Re: Rebasing mmc/next
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 20 Jun 2017 09:17:51 +0200
+Message-ID: <CAMuHMdW=aasYmZz-z+BgT0Qoco6DTyQxN3G1wiWVPETsbkRZTQ@mail.gmail.com>
+Subject: Rebasing mmc/next
+To: Ulf Hansson <ulf.hansson@linaro.org>
 Cc: Linux MMC List <linux-mmc@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 20 June 2017 at 09:17, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> Hi Ulf,
->
-> It looks like you rebase mmc/next almost daily. Is there any specific reason
-> for that?
+Hi Ulf,
 
-I don't do it daily, but often, yes. :-)
+It looks like you rebase mmc/next almost daily. Is there any specific reason
+for that?
 
->
-> I'm asking because I create a "renesas-drivers" tree on a regular basis
-> (cfr. e.g. https://www.spinics.net/lists/linux-renesas-soc/msg15111.html).
-> This tree is meant to ease development of platform support and drivers
-> for Renesas ARM SoCs. It is created by merging (a) the for-next branches
-> of various subsystem trees and (b) branches with driver code submitted
-> or planned for submission to maintainers into the development branch of
-> Simon Horman's renesas.git tree.
+I'm asking because I create a "renesas-drivers" tree on a regular basis
+(cfr. e.g. https://www.spinics.net/lists/linux-renesas-soc/msg15111.html).
+This tree is meant to ease development of platform support and drivers
+for Renesas ARM SoCs. It is created by merging (a) the for-next branches
+of various subsystem trees and (b) branches with driver code submitted
+or planned for submission to maintainers into the development branch of
+Simon Horman's renesas.git tree.
 
-If you are asking me to keep my next branch immutable, then please no,
-I don't like to do that. Reason explained below.
+If for (b), people submit driver code based on mmc/next, it may start
+to conflict
+with subsequent mmc/next releases soon, requiring the submitter or me to
+rebase the code before including it in renesas-drivers.
 
-I don't have a problem to share specific renesas mmc branches with
-you, if that helps?
+Most subsystem maintainers don't rebase their for-next branch, unless there's
+a very good reason for it (e.g. a serious breakage hindering bisection).
 
->
-> If for (b), people submit driver code based on mmc/next, it may start
-> to conflict
-> with subsequent mmc/next releases soon, requiring the submitter or me to
-> rebase the code before including it in renesas-drivers.
->
-> Most subsystem maintainers don't rebase their for-next branch, unless there's
-> a very good reason for it (e.g. a serious breakage hindering bisection).
+Thanks!
 
-I do it for a couple of reasons.
+Gr{oetje,eeting}s,
 
-First, sometimes I apply changes before people have provided enough
-tested by tags, to instead allow the changes to be tested in
-linux-next. This may lead to some situations when I need to re-base my
-next branch.
-*) Something breaks, then I need to drop the changes. Revert doesn't
-play well here, especially if it's a series of changes.
-**) Avoid breaking bisect.
-***) I want to give people cred, adding peoples tested-by, reviewed-by
-tags, after the changes have been queued on my next branch.
+                        Geert
 
-Second, even if the changes queued on next has been thoroughly tested,
-sometimes error reports still show up. I most cases I prefer to avoid
-breaking bisect, which then leaves me in no other option, but
-re-basing my branch (to either drop changes or amend them).
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-I guess what I can do, is to host a pre-next branch, which serves as
-my pre-integration branch, before I moves things to next. However,
-this does put some more administrative work on me, so I would like to
-avoid that.
-
-I am trying to understand the purpose of your renesas integration
-tree, and why it's a problem for you to pick up my re-based branch?
-Could you perhaps elaborate on this?
-
-Kind regards
-Uffe
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
