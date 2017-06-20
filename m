@@ -1,86 +1,101 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: joro@8bytes.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
-        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
-        m.szyprowski@samsung.com
-Date: Mon, 19 Jun 2017 20:04:37 +0900
-Message-Id: <149787027730.32495.785135660592328553.sendpatchset@little-apple>
-In-Reply-To: <149787025647.32495.1584960416060100962.sendpatchset@little-apple>
-References: <149787025647.32495.1584960416060100962.sendpatchset@little-apple>
-Subject: [PATCH v4 2/3] iommu/ipmmu-vmsa: Increase maximum micro-TLBS to 48
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:49348 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751732AbdFTHuP (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 20 Jun 2017 03:50:15 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: niklas.soderlund@ragnatech.se, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v1 04/12] media: i2c: mt9m111: Add source pad
+Date: Tue, 20 Jun 2017 10:50:49 +0300
+Message-ID: <2850479.zc574Vm8BG@avalon>
+In-Reply-To: <1497891889-8038-5-git-send-email-jacopo+renesas@jmondi.org>
+References: <1497891889-8038-1-git-send-email-jacopo+renesas@jmondi.org> <1497891889-8038-5-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Hi Jacopo,
 
-Bump up the maximum numbers of micro-TLBS to 48.
+Thank you for the patch.
 
-Each IPMMU device instance get micro-TLB assignment via
-the "iommus" property in DT. Older SoCs tend to use a
-maximum number of 32 micro-TLBs per IPMMU instance however
-newer SoCs such as r8a7796 make use of up to 48 micro-TLBs.
+On Monday 19 Jun 2017 19:04:41 Jacopo Mondi wrote:
+> Add a single source pad to mt9m111 media entity.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+>  drivers/media/i2c/mt9m111.c | 17 ++++++++++++++++-
+>  1 file changed, 16 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/i2c/mt9m111.c b/drivers/media/i2c/mt9m111.c
+> index 8e86d51..7e70969 100644
+> --- a/drivers/media/i2c/mt9m111.c
+> +++ b/drivers/media/i2c/mt9m111.c
+> @@ -141,6 +141,8 @@
+>  #define MT9M111_MAX_HEIGHT	1024
+>  #define MT9M111_MAX_WIDTH	1280
+> 
+> +#define MT9M111_MEDIA_PAD	1
+> +
+>  struct mt9m111_context {
+>  	u16 read_mode;
+>  	u16 blanking_h;
+> @@ -215,6 +217,8 @@ struct mt9m111 {
+>  	int power_count;
+>  	const struct mt9m111_datafmt *fmt;
+>  	int lastpage;	/* PageMap cache value */
+> +
+> +	struct media_pad pad;
+>  };
+> 
+>  /* Find a data format by a pixel code */
+> @@ -963,13 +967,23 @@ static int mt9m111_probe(struct i2c_client *client,
+>  	if (ret < 0)
+>  		goto out_hdlfree;
+> 
+> +	mt9m111->pad.flags = MEDIA_PAD_FL_SOURCE;
+> +	ret = media_entity_pads_init(&mt9m111->subdev.entity, 
+MT9M111_MEDIA_PAD,
 
-At this point no SoC specific handling is done to validate
-the maximum number of micro-TLBs, and because of that the
-DT information is assumed to be within correct range for
-each particular SoC.
+The second argument is the number of pads, not a pad number. The macro name is 
+quite confusing. Given that you use it once only, you can drop it and hardcode 
+the value.
 
-If needed in the future SoC specific feature flags can be
-added to handle the maximum number of micro-TLBs without
-requiring DT changes, however at this point this does not
-seem necessary.
+> +				     &mt9m111->pad);
+> +	if (ret)
+> +		goto out_hdlfree;
+> +
+>  	mt9m111->subdev.dev = &client->dev;
+> +	mt9m111->subdev.flags = V4L2_SUBDEV_FL_HAS_DEVNODE;
+> +	mt9m111->subdev.entity.function = MEDIA_ENT_F_CAM_SENSOR;
+>  	ret = v4l2_async_register_subdev(&mt9m111->subdev);
+>  	if (ret < 0)
+> -		goto out_hdlfree;
+> +		goto out_mediafree;
+> 
+>  	return 0;
+> 
+> +out_mediafree:
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
+Maybe out_media_cleanup ?
 
- Changes since V3:
- - None
+> +	media_entity_cleanup(&mt9m111->subdev.entity);
+>  out_hdlfree:
+>  	v4l2_ctrl_handler_free(&mt9m111->hdl);
+>  out_clkput:
+> @@ -982,6 +996,7 @@ static int mt9m111_remove(struct i2c_client *client)
+>  {
+>  	struct mt9m111 *mt9m111 = to_mt9m111(client);
+> 
+> +	media_entity_cleanup(&mt9m111->subdev.entity);
+>  	v4l2_async_unregister_subdev(&mt9m111->subdev);
+>  	v4l2_clk_put(mt9m111->clk);
+>  	v4l2_ctrl_handler_free(&mt9m111->hdl);
 
- Changes since V2:
- - Added outer set of () to IMUASID() and IMUCTR() - thanks Ramesh!
- - Added Reviewed-by from Geert - thanks!
+-- 
+Regards,
 
- Changes since V1:
- - Added support for the second I/O range at 0x600.
-
- drivers/iommu/ipmmu-vmsa.c |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
-
---- 0015/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2017-06-19 19:47:28.950607110 +0900
-@@ -199,7 +199,9 @@ static struct ipmmu_vmsa_iommu_priv *to_
- #define IMPMBA(n)			(0x0280 + ((n) * 4))
- #define IMPMBD(n)			(0x02c0 + ((n) * 4))
- 
--#define IMUCTR(n)			(0x0300 + ((n) * 16))
-+#define IMUCTR(n)			((n) < 32 ? IMUCTR0(n) : IMUCTR32(n))
-+#define IMUCTR0(n)			(0x0300 + ((n) * 16))
-+#define IMUCTR32(n)			(0x0600 + (((n) - 32) * 16))
- #define IMUCTR_FIXADDEN			(1 << 31)
- #define IMUCTR_FIXADD_MASK		(0xff << 16)
- #define IMUCTR_FIXADD_SHIFT		16
-@@ -209,7 +211,9 @@ static struct ipmmu_vmsa_iommu_priv *to_
- #define IMUCTR_FLUSH			(1 << 1)
- #define IMUCTR_MMUEN			(1 << 0)
- 
--#define IMUASID(n)			(0x0308 + ((n) * 16))
-+#define IMUASID(n)			((n) < 32 ? IMUASID0(n) : IMUASID32(n))
-+#define IMUASID0(n)			(0x0308 + ((n) * 16))
-+#define IMUASID32(n)			(0x0608 + (((n) - 32) * 16))
- #define IMUASID_ASID8_MASK		(0xff << 8)
- #define IMUASID_ASID8_SHIFT		8
- #define IMUASID_ASID0_MASK		(0xff << 0)
-@@ -1066,7 +1070,7 @@ static int ipmmu_probe(struct platform_d
- 	}
- 
- 	mmu->dev = &pdev->dev;
--	mmu->num_utlbs = 32;
-+	mmu->num_utlbs = 48;
- 	spin_lock_init(&mmu->lock);
- 	bitmap_zero(mmu->ctx, IPMMU_CTX_MAX);
- 	mmu->features = of_device_get_match_data(&pdev->dev);
+Laurent Pinchart
