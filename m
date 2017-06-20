@@ -1,48 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:39308 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750955AbdFBQfT (ORCPT
+Received: from smtp.codeaurora.org ([198.145.29.96]:46322 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752665AbdFTBGd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Jun 2017 12:35:19 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH  0/4] ARM: dts: Add iWave RZ/G1M board support
-Date: Fri,  2 Jun 2017 17:21:59 +0100
-Message-Id: <1496420523-23506-1-git-send-email-biju.das@bp.renesas.com>
+        Mon, 19 Jun 2017 21:06:33 -0400
+Date: Mon, 19 Jun 2017 18:06:31 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: renesas: cpg-mssr: Use of_device_get_match_data()
+ helper
+Message-ID: <20170620010631.GA4493@codeaurora.org>
+References: <1497012583-24328-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1497012583-24328-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+On 06/09, Geert Uytterhoeven wrote:
+> If CONFIG_OF=n:
+> 
+>     drivers/clk/renesas/renesas-cpg-mssr.c: In function ‘cpg_mssr_probe’:
+>     drivers/clk/renesas/renesas-cpg-mssr.c:702: warning: dereferencing ‘void *’ pointer
+>     drivers/clk/renesas/renesas-cpg-mssr.c:702: error: request for member ‘data’ in something not a structure or union
+> 
+> To fix this, use the of_device_get_match_data() helper, for which a
+> dummy version is provided if CONFIG_OF=n.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
 
-This series aims to add iWave RZ/G1M R8A7743 based Qseven SOM and RainboW-G20D- Qseven board support. 
-
-This series has been tested against linux-next tag next-20170602.
-
-Regards,
-
-Biju Das (4):
-  of: Add vendor prefix for iWave Systems Technologies Pvt. Ltd
-  ARM: shmobile: document iW-RainboW-G20D-Qseven-RZG1M board
-  ARM: dts: iwg20m: Add iWave RZG1M Qseven SOM
-  ARM: dts: iwg20d-q7: Add support for iWave G20D-Q7 board based on
-    RZ/G1M
-
- Documentation/devicetree/bindings/arm/shmobile.txt |  2 ++
- .../devicetree/bindings/vendor-prefixes.txt        |  1 +
- arch/arm/boot/dts/Makefile                         |  1 +
- arch/arm/boot/dts/r8a7743-iwg20d-q7.dts            | 25 ++++++++++++++++++++
- arch/arm/boot/dts/r8a7743-iwg20m.dtsi              | 27 ++++++++++++++++++++++
- 5 files changed, 56 insertions(+)
- create mode 100644 arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
- create mode 100644 arch/arm/boot/dts/r8a7743-iwg20m.dtsi
+Applied to clk-next
 
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
