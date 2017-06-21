@@ -1,50 +1,57 @@
 Return-Path: <linux-i2c-owner@vger.kernel.org>
-Date: Thu, 22 Jun 2017 11:06:06 +0200
-From: Jean Delvare <jdelvare@suse.de>
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] i2c: algo-bit: add support for I2C_M_STOP
-Message-ID: <20170622110606.6ae3aabc@endymion>
-In-Reply-To: <20170621143018.GA1571@katana>
-References: <20170617171238.19638-1-wsa+renesas@sang-engineering.com>
-        <20170619103002.5d502c92@endymion>
-        <20170620172810.h2anac45n5u3oova@ninjato>
-        <20170621091843.657de813@endymion>
-        <20170621143018.GA1571@katana>
+Date: Wed, 21 Jun 2017 16:54:26 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Jean Delvare <jdelvare@suse.de>
+Cc: Linux I2C <linux-i2c@vger.kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2] i2c: algo-bit: add support for I2C_M_STOP
+Message-ID: <20170621145426.yeourbp3coddjwmu@ninjato>
+References: <20170621092402.773a4b14@endymion>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="yw7t3pdcriq3crdc"
+Content-Disposition: inline
+In-Reply-To: <20170621092402.773a4b14@endymion>
 Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, 21 Jun 2017 16:30:18 +0200, Wolfram Sang wrote:
-> Which reminds me: Have you ever seen a 10-bit client device in the wild?
-> I wanted to buy one for testing reasons but was not able to locate one.
-> I only know a Renesas IP core which has 10-bit slave capability (but no
-> driver support for that yet).
 
-I remember wishing I could drop support, asking around, and a few
-people replying to me that 10-bit slaves actually exist. But of course
-I can't find the discussion thread again.
+--yw7t3pdcriq3crdc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I can see one driver for a 10-bit address I2C device:
-drivers/media/i2c/tw2804.c (device instantiated from
-drivers/media/usb/go7007/go7007-usb.c.)
+> +				if (msgs[i - 1].flags & I2C_M_STOP) {
+> +					bit_dbg(3, &i2c_adap->dev,
+> +						"emitting enforced stop condition\n");
+> +					i2c_stop(adap);
+> +					bit_dbg(3, &i2c_adap->dev,
+> +						"emitting start condition\n");
 
-However it seems that in many cases I2C_M_TEN is used directly (instead
-of the more correct I2C_CLIENT_TEN.) See for example
-drivers/input/touchscreen/atmel_mxt_ts.c,
-drivers/input/touchscreen/elants_i2c.c,
-drivers/input/touchscreen/mms114.c,
-drivers/media/pci/cx23885/cx23885-i2c.c,
-drivers/media/pci/cx25821/cx25821-i2c.c, which are clearly talking to
-10-bit I2C devices, but without instantiating an i2c_client for them.
+Do you mind if I combine the two debug outputs into one?
 
-I see also commits explicitly adding or fixing 10-bit address support
-in various I2C bus drivers, I don't think developers would be doing
-that if they didn't need it.
+> +					bit_dbg(3, &i2c_adap->dev,
+> +						"emitting enforced stop/start condition\n");
 
--- 
-Jean Delvare
-SUSE L3 Support
+
+--yw7t3pdcriq3crdc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAllKiJ4ACgkQFA3kzBSg
+KbYIVRAAjiZB73snN8/PlY4m/D9b+AFfYG0xUlh+GMMvDPT3ozTgQvD8G3g6yOQL
+8XKl/NPieN1rAJ5KHdNJp6Sj4Ow5uSrdufL5E2RDXg0b9Wzkle+djg2YLyzQyESm
+XypLRJza4sKzxz6tUlVSNedmZiSNueo52UZRzHUYlg5FDNZbhFPgfhuZL4xN119T
+4g9tP+lQ/NlFiqLdRaihMfa0pl5+TVMkmcrK4hiRJF5VQXPsFcXfhT9Uamx3kmcd
+SUOjNGbAtau/ZbwZjuzbZbLrmbTc10D3Ghlv0KdFM8Zqwi8J+6+2crAZi8xXIqTu
+44TlGbKQxTKUAM2bLKI6rSdrQq5X80KsVOhom50jpirPjZeicT4FxKOuO7NPkdSN
+pv/DUyoVLjGCo6yyPU8FlCd6KI9OQPeF1bhlux0yKWeZjZz0QH8v1V8dd2Wq8Qog
+fmnGuA47UIXbKFe125AeEKg6cykT5C6TN8+snh4NMVc0N3kXiflMdiXpk3UUMMG0
+YTaN7q4HtDIizA+6scp2HrIv81HL4qixxL2w3bSjFPSmsMIDxQsRGFGaLTMOE2nw
+3XUrNMqi/M6sqz0sZnGwKZCL85EFdFI5DILGPs3tghaAzHU0gZixmuTQem1Jykbp
+ufHgQvkOT4GbhIeCQRczTGxl7Zb9aVINqli0y0FREMxSNUCpTnw=
+=zMfU
+-----END PGP SIGNATURE-----
+
+--yw7t3pdcriq3crdc--
