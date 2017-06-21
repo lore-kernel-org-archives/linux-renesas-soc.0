@@ -1,67 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:36404 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751936AbdF2KTe (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:52365 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752320AbdFUJbA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Jun 2017 06:19:34 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Alexey Firago <alexey_firago@mentor.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 3/8] clk: vc5: Do not warn about disabled output buffer input muxes
-Date: Thu, 29 Jun 2017 12:18:46 +0200
-Message-Id: <20170629101851.23972-3-marek.vasut@gmail.com>
-In-Reply-To: <20170629101851.23972-1-marek.vasut@gmail.com>
-References: <20170629101851.23972-1-marek.vasut@gmail.com>
+        Wed, 21 Jun 2017 05:31:00 -0400
+Received: from avalon.bb.dnainternet.fi (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by galahad.ideasonboard.com (Postfix) with ESMTPSA id B134120218
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 21 Jun 2017 11:30:30 +0200 (CEST)
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 0/7] R-Car Salvator-X M3-W: Enable DU support
+Date: Wed, 21 Jun 2017 12:31:26 +0300
+Message-Id: <20170621093133.5677-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Marek Vasut <marek.vasut+renesas@gmail.com>
+Hello,
 
-The output buffer input mux can be configured in either of three
-states -- disabled, input from FOD, input from previous output.
-If the output buffer input mux is set to disabled, the code in
-vc5_clk_out_get_parent() would consider this an invalid setting
-and warn about it, which is not necessarily the case.
+This patch series enables DU support for the M3-W-based Salvator-X board.
 
-In case the output buffer input mux is disabled, default to input
-from FOD to have some parent and don't print the warning.
+Display support has no out-of-tree compile or runtime dependencies. HDMI
+output support has a runtime dependency on
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Alexey Firago <alexey_firago@mentor.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org
----
- drivers/clk/clk-versaclock5.c | 4 ++++
- 1 file changed, 4 insertions(+)
+- [PATCH] clk: renesas: r8a7796: Add HDMI clock
+- [PATCH 1/2] drm: rcar-du: Restrict DPLL duty cycle workaround to H3 ES1.x
+- [PATCH 2/2] drm: rcar-du: Add HDMI outputs to R8A7796 device description
 
-diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index d835d48cf14d..766fcc5cc0b3 100644
---- a/drivers/clk/clk-versaclock5.c
-+++ b/drivers/clk/clk-versaclock5.c
-@@ -541,6 +541,9 @@ static unsigned char vc5_clk_out_get_parent(struct clk_hw *hw)
- 	regmap_read(vc5->regmap, VC5_OUT_DIV_CONTROL(hwdata->num), &src);
- 	src &= mask;
- 
-+	if (src == 0)	/* Input mux set to DISABLED */
-+		return 0;
-+
- 	if ((src & fodclkmask) == VC5_OUT_DIV_CONTROL_EN_FOD)
- 		return 0;
- 
-@@ -549,6 +552,7 @@ static unsigned char vc5_clk_out_get_parent(struct clk_hw *hw)
- 
- 	dev_warn(&vc5->client->dev,
- 		 "Invalid clock output configuration (%02x)\n", src);
-+
- 	return 0;
- }
- 
+The first patch is queued for v4.13, the last two patches will be sent
+upstream for v4.14. As the HDMI output will be automatically skipped by the DU
+driver until the dependencies are available, this series can be queued for
+v4.14 already without requiring any synchronization with the DRM/KMS tree.
+
+Laurent Pinchart (7):
+  dt-bindings: display: renesas: Add R-Car M3-W HDMI TX DT bindings
+  arm64: dts: renesas: r8a7796: Add FCPF and FCPV instances
+  arm64: dts: renesas: r8a7796: Add VSP instances
+  arm64: dts: renesas: r8a7796: Add HDMI encoder instance
+  arm64: dts: renesas: r8a7796: Add DU device to DT
+  arm64: dts: renesas: r8a7796-salvator-x: Add DU external dot clocks
+  arm64: dts: renesas: r8a7796-salvator-x: Enable HDMI output
+
+ .../bindings/display/bridge/renesas,dw-hdmi.txt    |   1 +
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |  29 +++++
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi           | 144 ++++++++++++++++++++-
+ 3 files changed, 173 insertions(+), 1 deletion(-)
+
 -- 
-2.11.0
+Regards,
+
+Laurent Pinchart
