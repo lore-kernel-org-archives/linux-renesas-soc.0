@@ -1,57 +1,76 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-Date: Wed, 21 Jun 2017 16:54:26 +0200
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from www.zeus03.de ([194.117.254.33]:51040 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751754AbdFUOaU (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 21 Jun 2017 10:30:20 -0400
+Date: Wed, 21 Jun 2017 16:30:18 +0200
 From: Wolfram Sang <wsa@the-dreams.de>
 To: Jean Delvare <jdelvare@suse.de>
-Cc: Linux I2C <linux-i2c@vger.kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2] i2c: algo-bit: add support for I2C_M_STOP
-Message-ID: <20170621145426.yeourbp3coddjwmu@ninjato>
-References: <20170621092402.773a4b14@endymion>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] i2c: algo-bit: add support for I2C_M_STOP
+Message-ID: <20170621143018.GA1571@katana>
+References: <20170617171238.19638-1-wsa+renesas@sang-engineering.com>
+ <20170619103002.5d502c92@endymion>
+ <20170620172810.h2anac45n5u3oova@ninjato>
+ <20170621091843.657de813@endymion>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="yw7t3pdcriq3crdc"
+        protocol="application/pgp-signature"; boundary="5vNYLRcllDrimb99"
 Content-Disposition: inline
-In-Reply-To: <20170621092402.773a4b14@endymion>
-Sender: linux-i2c-owner@vger.kernel.org
+In-Reply-To: <20170621091843.657de813@endymion>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 
---yw7t3pdcriq3crdc
+--5vNYLRcllDrimb99
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-> +				if (msgs[i - 1].flags & I2C_M_STOP) {
-> +					bit_dbg(3, &i2c_adap->dev,
-> +						"emitting enforced stop condition\n");
-> +					i2c_stop(adap);
-> +					bit_dbg(3, &i2c_adap->dev,
-> +						"emitting start condition\n");
+Hi Jean,
 
-Do you mind if I combine the two debug outputs into one?
+> There's no problem with the scope. The problem is with the
+> initialization. The way you did, did_stop gets reset to false with
+> every iteration, which isn't what you want.
 
-> +					bit_dbg(3, &i2c_adap->dev,
-> +						"emitting enforced stop/start condition\n");
+Ouch, where is my brown paper bag...
+
+> I looked at how 10-bit addressing works again and in fact it is simply
+> impossible to not use repeated start when reading from a 10-bit address
+> slave. Only the first 2 bits of the 10-bit address are repeated in the
+> read part of the transaction. If there was a stop between the two parts
+> then there would be no way to know which 10-bit slave should send the
+> data.
+
+Which reminds me: Have you ever seen a 10-bit client device in the wild?
+I wanted to buy one for testing reasons but was not able to locate one.
+I only know a Renesas IP core which has 10-bit slave capability (but no
+driver support for that yet).
+
+Regards,
+
+   Wolfram
 
 
---yw7t3pdcriq3crdc
+--5vNYLRcllDrimb99
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAllKiJ4ACgkQFA3kzBSg
-KbYIVRAAjiZB73snN8/PlY4m/D9b+AFfYG0xUlh+GMMvDPT3ozTgQvD8G3g6yOQL
-8XKl/NPieN1rAJ5KHdNJp6Sj4Ow5uSrdufL5E2RDXg0b9Wzkle+djg2YLyzQyESm
-XypLRJza4sKzxz6tUlVSNedmZiSNueo52UZRzHUYlg5FDNZbhFPgfhuZL4xN119T
-4g9tP+lQ/NlFiqLdRaihMfa0pl5+TVMkmcrK4hiRJF5VQXPsFcXfhT9Uamx3kmcd
-SUOjNGbAtau/ZbwZjuzbZbLrmbTc10D3Ghlv0KdFM8Zqwi8J+6+2crAZi8xXIqTu
-44TlGbKQxTKUAM2bLKI6rSdrQq5X80KsVOhom50jpirPjZeicT4FxKOuO7NPkdSN
-pv/DUyoVLjGCo6yyPU8FlCd6KI9OQPeF1bhlux0yKWeZjZz0QH8v1V8dd2Wq8Qog
-fmnGuA47UIXbKFe125AeEKg6cykT5C6TN8+snh4NMVc0N3kXiflMdiXpk3UUMMG0
-YTaN7q4HtDIizA+6scp2HrIv81HL4qixxL2w3bSjFPSmsMIDxQsRGFGaLTMOE2nw
-3XUrNMqi/M6sqz0sZnGwKZCL85EFdFI5DILGPs3tghaAzHU0gZixmuTQem1Jykbp
-ufHgQvkOT4GbhIeCQRczTGxl7Zb9aVINqli0y0FREMxSNUCpTnw=
-=zMfU
+iQIzBAEBCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAllKgvUACgkQFA3kzBSg
+KbYmzQ//VBvyEJ1TNiyT93XFwKcEPa19lN+I3CxTGSP7QIFjmK04wDKlUs/TaKxG
+2382m/y8lnLx7rC6p58hB507bqD9leQFke72nY/bwu+soFPAlka0LWbzIdmgfD20
+g0cQ4n3w3Keq0lOQ+GO7H94qbTkozcz+06csSDrXPL8PiVeB0siClt6n/A8qR8VN
+thtZDP1nIwISEAbiwgxHFqmHTdbuWWmQ9DZUi6+zxMB/OHj5ckmV487EG0hKFRks
+085I9fY/9KDN/gs0eMWoY6PXHjQoVoS8qNLb1MbB7E1O+njY7+Nx+pgJyBy7JnMA
+Y/rAo1MrPJB2LrzJxCqpbjiT5cdxOswuJIOsbztgtAePZxJjMtEv+dsE9d2j53Vc
+zgRrrUI9caiTajyLJ/AZt1QaDeBwm+oL51RDm4rHY6VPCgFpkVq1nXq+klVZiyBw
+bvVCykmsp4CdtqZPzdbF2fc5M4/bTidbbmbeOYej3ieUO1XEQvjM0ydW29j6Ln86
+vpuww/bnmaCiMYMDKGgiR1PN153YMv9inqk9ocABMi/Y/s6/yqcMsmwuPCfAXBbI
+8heN2HSCIiO+nK5BpObBo7VNkacUTe+IdqK/lQGLWHy1CIbWgjANdT3yZs3maUpA
+JeG9RvpqGTi2XDsm0vQ1tTWNEC82T98nukO3nWafWhb9noqz/VE=
+=bKjt
 -----END PGP SIGNATURE-----
 
---yw7t3pdcriq3crdc--
+--5vNYLRcllDrimb99--
