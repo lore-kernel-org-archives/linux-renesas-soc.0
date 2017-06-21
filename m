@@ -1,78 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:38214 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752997AbdFOSau (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:47100 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751108AbdFULQu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Jun 2017 14:30:50 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Wolfram Sang <wsa@the-dreams.de>
-Subject: [PATCH 3/4] i2c: sh_mobile: use helper to decide if DMA is useful
-Date: Thu, 15 Jun 2017 20:30:38 +0200
-Message-Id: <20170615183039.22925-4-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170615183039.22925-1-wsa+renesas@sang-engineering.com>
-References: <20170615183039.22925-1-wsa+renesas@sang-engineering.com>
+        Wed, 21 Jun 2017 07:16:50 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
+In-Reply-To: <87mv926jv8.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1dNdcq-0004Fs-5G@debutante>
+Date: Wed, 21 Jun 2017 12:16:44 +0100
+Subject: Applied "ASoC: pxa: add COMPILE_TEST on SND_PXA2XX_SOC" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This ensures that we fall back to PIO if the buffer is too small for DMA
-being useful. Otherwise, we use DMA. A bounce buffer might be applied if
-the original message buffer is not DMA safe
+The patch
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+   ASoC: pxa: add COMPILE_TEST on SND_PXA2XX_SOC
+
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 73d7ee2e831f106ca5c745b2cf4fdbac5a4e9e4e Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Wed, 21 Jun 2017 04:38:13 +0000
+Subject: [PATCH] ASoC: pxa: add COMPILE_TEST on SND_PXA2XX_SOC
+
+It doesn't use asm header. We can add COMPILE_TEST
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/i2c/busses/i2c-sh_mobile.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ sound/soc/pxa/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/i2c/busses/i2c-sh_mobile.c b/drivers/i2c/busses/i2c-sh_mobile.c
-index 2e097d97d258bc..4b874e508111e7 100644
---- a/drivers/i2c/busses/i2c-sh_mobile.c
-+++ b/drivers/i2c/busses/i2c-sh_mobile.c
-@@ -145,6 +145,7 @@ struct sh_mobile_i2c_data {
- 	struct dma_chan *dma_rx;
- 	struct scatterlist sg;
- 	enum dma_data_direction dma_direction;
-+	u8 *bounce_buf;
- };
- 
- struct sh_mobile_dt_config {
-@@ -548,6 +549,8 @@ static void sh_mobile_i2c_dma_callback(void *data)
- 	pd->pos = pd->msg->len;
- 	pd->stop_after_dma = true;
- 
-+	i2c_release_bounce_buf(pd->msg, pd->bounce_buf);
-+
- 	iic_set_clr(pd, ICIC, 0, ICIC_TDMAE | ICIC_RDMAE);
- }
- 
-@@ -595,6 +598,7 @@ static void sh_mobile_i2c_xfer_dma(struct sh_mobile_i2c_data *pd)
- 	struct dma_async_tx_descriptor *txdesc;
- 	dma_addr_t dma_addr;
- 	dma_cookie_t cookie;
-+	u8 *dma_buf = pd->bounce_buf ?: pd->msg->buf;
- 
- 	if (PTR_ERR(chan) == -EPROBE_DEFER) {
- 		if (read)
-@@ -608,7 +612,7 @@ static void sh_mobile_i2c_xfer_dma(struct sh_mobile_i2c_data *pd)
- 	if (IS_ERR(chan))
- 		return;
- 
--	dma_addr = dma_map_single(chan->device->dev, pd->msg->buf, pd->msg->len, dir);
-+	dma_addr = dma_map_single(chan->device->dev, dma_buf, pd->msg->len, dir);
- 	if (dma_mapping_error(chan->device->dev, dma_addr)) {
- 		dev_dbg(pd->dev, "dma map failed, using PIO\n");
- 		return;
-@@ -665,7 +669,7 @@ static int start_ch(struct sh_mobile_i2c_data *pd, struct i2c_msg *usr_msg,
- 	pd->pos = -1;
- 	pd->sr = 0;
- 
--	if (pd->msg->len > 8)
-+	if (i2c_check_msg_for_dma(pd->msg, 8, &pd->bounce_buf) == 0)
- 		sh_mobile_i2c_xfer_dma(pd);
- 
- 	/* Enable all interrupts to begin with */
+diff --git a/sound/soc/pxa/Kconfig b/sound/soc/pxa/Kconfig
+index 823b5a236d8d..960744e46edc 100644
+--- a/sound/soc/pxa/Kconfig
++++ b/sound/soc/pxa/Kconfig
+@@ -1,6 +1,6 @@
+ config SND_PXA2XX_SOC
+ 	tristate "SoC Audio for the Intel PXA2xx chip"
+-	depends on ARCH_PXA
++	depends on ARCH_PXA || COMPILE_TEST
+ 	select SND_PXA2XX_LIB
+ 	help
+ 	  Say Y or M if you want to add support for codecs attached to
 -- 
 2.11.0
