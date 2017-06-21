@@ -1,69 +1,120 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:36526 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751016AbdFOKdI (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:52368 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751154AbdFUJbF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Jun 2017 06:33:08 -0400
-From: Magnus Damm <magnus.damm@gmail.com>
-To: joro@8bytes.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-        robin.murphy@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
-        Magnus Damm <magnus.damm@gmail.com>, sricharan@codeaurora.org,
-        m.szyprowski@samsung.com
-Date: Thu, 15 Jun 2017 19:29:16 +0900
-Message-Id: <149752255681.21887.9984138893493295897.sendpatchset@little-apple>
-In-Reply-To: <149752254550.21887.15183665699230243235.sendpatchset@little-apple>
-References: <149752254550.21887.15183665699230243235.sendpatchset@little-apple>
-Subject: [PATCH 01/04] iommu/ipmmu-vmsa: Use iommu_device_register()/unregister()
+        Wed, 21 Jun 2017 05:31:05 -0400
+Received: from avalon.bb.dnainternet.fi (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by galahad.ideasonboard.com (Postfix) with ESMTPSA id 42ADC209BD
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 21 Jun 2017 11:30:32 +0200 (CEST)
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 3/7] arm64: dts: renesas: r8a7796: Add VSP instances
+Date: Wed, 21 Jun 2017 12:31:29 +0300
+Message-Id: <20170621093133.5677-4-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170621093133.5677-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170621093133.5677-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+The r8a7796 has 5 VSP instances.
 
-Extend the driver to make use of iommu_device_register()/unregister()
-functions together with iommu_device_set_ops() and iommu_set_fwnode().
-
-These used to be part of the earlier posted 64-bit ARM (r8a7795) series but
-it turns out that these days they are required on 32-bit ARM as well.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 50 ++++++++++++++++++++++++++++++++
+ 1 file changed, 50 insertions(+)
 
- drivers/iommu/ipmmu-vmsa.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 28b0e2127021..ad9cd1c3199f 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -1447,6 +1447,16 @@
+ 			power-domains = <&sysc R8A7796_PD_A3VC>;
+ 		};
+ 
++		vspb: vsp@fe960000 {
++			compatible = "renesas,vsp2";
++			reg = <0 0xfe960000 0 0x8000>;
++			interrupts = <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 626>;
++			power-domains = <&sysc R8A7796_PD_A3VC>;
++
++			renesas,fcp = <&fcpvb0>;
++		};
++
+ 		fcpvb0: fcp@fe96f000 {
+ 			compatible = "renesas,fcpv";
+ 			reg = <0 0xfe96f000 0 0x200>;
+@@ -1454,6 +1464,16 @@
+ 			power-domains = <&sysc R8A7796_PD_A3VC>;
+ 		};
+ 
++		vspi0: vsp@fe9a0000 {
++			compatible = "renesas,vsp2";
++			reg = <0 0xfe9a0000 0 0x8000>;
++			interrupts = <GIC_SPI 444 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 631>;
++			power-domains = <&sysc R8A7796_PD_A3VC>;
++
++			renesas,fcp = <&fcpvi0>;
++		};
++
+ 		fcpvi0: fcp@fe9af000 {
+ 			compatible = "renesas,fcpv";
+ 			reg = <0 0xfe9af000 0 0x200>;
+@@ -1461,6 +1481,16 @@
+ 			power-domains = <&sysc R8A7796_PD_A3VC>;
+ 		};
+ 
++		vspd0: vsp@fea20000 {
++			compatible = "renesas,vsp2";
++			reg = <0 0xfea20000 0 0x4000>;
++			interrupts = <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 623>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++
++			renesas,fcp = <&fcpvd0>;
++		};
++
+ 		fcpvd0: fcp@fea27000 {
+ 			compatible = "renesas,fcpv";
+ 			reg = <0 0xfea27000 0 0x200>;
+@@ -1468,6 +1498,16 @@
+ 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+ 		};
+ 
++		vspd1: vsp@fea28000 {
++			compatible = "renesas,vsp2";
++			reg = <0 0xfea28000 0 0x4000>;
++			interrupts = <GIC_SPI 467 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 622>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++
++			renesas,fcp = <&fcpvd1>;
++		};
++
+ 		fcpvd1: fcp@fea2f000 {
+ 			compatible = "renesas,fcpv";
+ 			reg = <0 0xfea2f000 0 0x200>;
+@@ -1475,6 +1515,16 @@
+ 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+ 		};
+ 
++		vspd2: vsp@fea30000 {
++			compatible = "renesas,vsp2";
++			reg = <0 0xfea30000 0 0x4000>;
++			interrupts = <GIC_SPI 468 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 621>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++
++			renesas,fcp = <&fcpvd2>;
++		};
++
+ 		fcpvd2: fcp@fea37000 {
+ 			compatible = "renesas,fcpv";
+ 			reg = <0 0xfea37000 0 0x200>;
+-- 
+Regards,
 
---- 0001/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2017-06-15 16:57:21.890607110 +0900
-@@ -35,6 +35,7 @@
- struct ipmmu_vmsa_device {
- 	struct device *dev;
- 	void __iomem *base;
-+	struct iommu_device iommu;
- 	struct list_head list;
- 
- 	unsigned int num_utlbs;
-@@ -1054,6 +1055,13 @@ static int ipmmu_probe(struct platform_d
- 
- 	ipmmu_device_reset(mmu);
- 
-+	ret = iommu_device_register(&mmu->iommu);
-+	if (ret)
-+		return ret;
-+
-+	iommu_device_set_ops(&mmu->iommu, &ipmmu_ops);
-+	iommu_device_set_fwnode(&mmu->iommu, &pdev->dev.of_node->fwnode);
-+
- 	/*
- 	 * We can't create the ARM mapping here as it requires the bus to have
- 	 * an IOMMU, which only happens when bus_set_iommu() is called in
-@@ -1077,6 +1085,8 @@ static int ipmmu_remove(struct platform_
- 	list_del(&mmu->list);
- 	spin_unlock(&ipmmu_devices_lock);
- 
-+	iommu_device_unregister(&mmu->iommu);
-+
- #if defined(CONFIG_ARM) && !defined(CONFIG_IOMMU_DMA)
- 	arm_iommu_release_mapping(mmu->mapping);
- #endif
+Laurent Pinchart
