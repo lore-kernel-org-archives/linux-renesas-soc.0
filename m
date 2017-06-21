@@ -1,65 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:45752 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750757AbdFSRF3 (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:52373 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752819AbdFUJbJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Jun 2017 13:05:29 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v1 03/12] media: i2c: mt9m111: Skip chid identification
-Date: Mon, 19 Jun 2017 19:04:40 +0200
-Message-Id: <1497891889-8038-4-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1497891889-8038-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1497891889-8038-1-git-send-email-jacopo+renesas@jmondi.org>
+        Wed, 21 Jun 2017 05:31:09 -0400
+Received: from avalon.bb.dnainternet.fi (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by galahad.ideasonboard.com (Postfix) with ESMTPSA id EFA9B213B6
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 21 Jun 2017 11:30:32 +0200 (CEST)
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 5/7] arm64: dts: renesas: r8a7796: Add DU device to DT
+Date: Wed, 21 Jun 2017 12:31:31 +0300
+Message-Id: <20170621093133.5677-6-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170621093133.5677-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170621093133.5677-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Reads of chip identification code (both on registers 0x00 and 0xff)
-always return 0x00.
-Skip chip identification to have the device complete probing.
+Add the DU device to r8a7796.dtsi in a disabled state.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/media/i2c/mt9m111.c | 19 -------------------
- 1 file changed, 19 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 27 ++++++++++++++++++++++++++-
+ 1 file changed, 26 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/i2c/mt9m111.c b/drivers/media/i2c/mt9m111.c
-index 72e71b7..8e86d51 100644
---- a/drivers/media/i2c/mt9m111.c
-+++ b/drivers/media/i2c/mt9m111.c
-@@ -890,31 +890,12 @@ static struct v4l2_subdev_ops mt9m111_subdev_ops = {
- static int mt9m111_video_probe(struct i2c_client *client)
- {
- 	struct mt9m111 *mt9m111 = to_mt9m111(client);
--	s32 data;
- 	int ret;
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 25e51d20b7ef..2522e9301cc0 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -1558,7 +1558,21 @@
+ 		};
  
- 	ret = mt9m111_s_power(&mt9m111->subdev, 1);
- 	if (ret < 0)
- 		return ret;
+ 		du: display@feb00000 {
+-			/* placeholder */
++			compatible = "renesas,du-r8a7796";
++			reg = <0 0xfeb00000 0 0x70000>,
++			      <0 0xfeb90000 0 0x14>;
++			reg-names = "du", "lvds.0";
++			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 724>,
++				 <&cpg CPG_MOD 723>,
++				 <&cpg CPG_MOD 722>,
++				 <&cpg CPG_MOD 727>;
++			clock-names = "du.0", "du.1", "du.2", "lvds.0";
++			status = "disabled";
++
++			vsps = <&vspd0 &vspd1 &vspd2>;
  
--	data = reg_read(CHIP_VERSION);
--
--	switch (data) {
--	case 0x143a: /* MT9M111 or MT9M131 */
--		dev_info(&client->dev,
--			"Detected a MT9M111/MT9M131 chip ID %x\n", data);
--		break;
--	case 0x148c: /* MT9M112 */
--		dev_info(&client->dev, "Detected a MT9M112 chip ID %x\n", data);
--		break;
--	default:
--		dev_err(&client->dev,
--			"No MT9M111/MT9M112/MT9M131 chip detected register read %x\n",
--			data);
--		ret = -ENODEV;
--		goto done;
--	}
--
- 	ret = mt9m111_init(mt9m111);
- 	if (ret)
- 		goto done;
+ 			ports {
+ 				#address-cells = <1>;
+@@ -1569,6 +1583,17 @@
+ 					du_out_rgb: endpoint {
+ 					};
+ 				};
++				port@1 {
++					reg = <1>;
++					du_out_hdmi0: endpoint {
++						remote-endpoint = <&dw_hdmi0_in>;
++					};
++				};
++				port@2 {
++					reg = <2>;
++					du_out_lvds0: endpoint {
++					};
++				};
+ 			};
+ 		};
+ 	};
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
