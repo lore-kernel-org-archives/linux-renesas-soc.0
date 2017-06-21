@@ -1,54 +1,85 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:54694 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753771AbdFPNbA (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:52368 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752392AbdFUJbC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Jun 2017 09:31:00 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
+        Wed, 21 Jun 2017 05:31:02 -0400
+Received: from avalon.bb.dnainternet.fi (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by galahad.ideasonboard.com (Postfix) with ESMTPSA id E8640209BC
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 21 Jun 2017 11:30:31 +0200 (CEST)
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 10/11] arm64: dts: r8a7795: Add reset control properties for audio
-Date: Fri, 16 Jun 2017 15:30:18 +0200
-Message-Id: <161a19106f4a7d089de05c93bbf2e493fec25f2c.1497617276.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1497617276.git.horms+renesas@verge.net.au>
-References: <cover.1497617276.git.horms+renesas@verge.net.au>
+Subject: [PATCH v2 2/7] arm64: dts: renesas: r8a7796: Add FCPF and FCPV instances
+Date: Wed, 21 Jun 2017 12:31:28 +0300
+Message-Id: <20170621093133.5677-3-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170621093133.5677-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170621093133.5677-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+The FCPs handle the interface between various IP cores and memory. Add
+the instances related to the FDPs and VSP2s.
 
-Note that the audio module has resets for the Serial Sound Interfaces
-only.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 42 ++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index a4ca0f5bb762..e31c1b660b3f 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1120,6 +1120,16 @@
- 				      "dvc.0", "dvc.1",
- 				      "clk_a", "clk_b", "clk_c", "clk_i";
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			resets = <&cpg 1005>,
-+				 <&cpg 1006>, <&cpg 1007>,
-+				 <&cpg 1008>, <&cpg 1009>,
-+				 <&cpg 1010>, <&cpg 1011>,
-+				 <&cpg 1012>, <&cpg 1013>,
-+				 <&cpg 1014>, <&cpg 1015>;
-+			reset-names = "ssi-all",
-+				      "ssi.9", "ssi.8", "ssi.7", "ssi.6",
-+				      "ssi.5", "ssi.4", "ssi.3", "ssi.2",
-+				      "ssi.1", "ssi.0";
- 			status = "disabled";
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 1f6710912045..28b0e2127021 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -1440,6 +1440,48 @@
+ 			/* placeholder */
+ 		};
  
- 			rcar_sound,dvc {
++		fcpf0: fcp@fe950000 {
++			compatible = "renesas,fcpf";
++			reg = <0 0xfe950000 0 0x200>;
++			clocks = <&cpg CPG_MOD 615>;
++			power-domains = <&sysc R8A7796_PD_A3VC>;
++		};
++
++		fcpvb0: fcp@fe96f000 {
++			compatible = "renesas,fcpv";
++			reg = <0 0xfe96f000 0 0x200>;
++			clocks = <&cpg CPG_MOD 607>;
++			power-domains = <&sysc R8A7796_PD_A3VC>;
++		};
++
++		fcpvi0: fcp@fe9af000 {
++			compatible = "renesas,fcpv";
++			reg = <0 0xfe9af000 0 0x200>;
++			clocks = <&cpg CPG_MOD 611>;
++			power-domains = <&sysc R8A7796_PD_A3VC>;
++		};
++
++		fcpvd0: fcp@fea27000 {
++			compatible = "renesas,fcpv";
++			reg = <0 0xfea27000 0 0x200>;
++			clocks = <&cpg CPG_MOD 603>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++		};
++
++		fcpvd1: fcp@fea2f000 {
++			compatible = "renesas,fcpv";
++			reg = <0 0xfea2f000 0 0x200>;
++			clocks = <&cpg CPG_MOD 602>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++		};
++
++		fcpvd2: fcp@fea37000 {
++			compatible = "renesas,fcpv";
++			reg = <0 0xfea37000 0 0x200>;
++			clocks = <&cpg CPG_MOD 601>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++		};
++
+ 		du: display@feb00000 {
+ 			/* placeholder */
+ 
 -- 
-2.1.4
+Regards,
+
+Laurent Pinchart
