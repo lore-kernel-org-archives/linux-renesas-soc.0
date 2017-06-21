@@ -1,99 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:41422 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753624AbdFMVHr (ORCPT
+Received: from mail-io0-f193.google.com ([209.85.223.193]:34699 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751742AbdFUJQ2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Jun 2017 17:07:47 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <8737bc4pco.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dKt2N-0000Ff-6i@debutante>
-Date: Tue, 13 Jun 2017 22:07:43 +0100
-Subject: Applied "ASoC: simple-card: use asoc_simple_card_clk_xxx()" to the asoc tree
+        Wed, 21 Jun 2017 05:16:28 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170621090150.3868-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170621090150.3868-1-laurent.pinchart+renesas@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 21 Jun 2017 11:16:26 +0200
+Message-ID: <CAMuHMdWScq8wOunFjPgDL7-qPUuteEdPkcR_JeOXes9xyWHCiQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a7796: Add HDMI clocks
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+Hi Laurent,
 
-   ASoC: simple-card: use asoc_simple_card_clk_xxx()
+On Wed, Jun 21, 2017 at 11:01 AM, Laurent Pinchart
+<laurent.pinchart+renesas@ideasonboard.com> wrote:
+> Add the HDMI and HDMI0 clocks to the R8A7796 CPG/MSSR driver.
+>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> ---
+>  drivers/clk/renesas/r8a7796-cpg-mssr.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> Hi Geert,
+>
+> I'd like to upstream HDMI output support on M3-W in v4.14. To ease dependency
+> handling, it would be great if this patch could already make it to v4.13.
 
-has been applied to the asoc tree at
+I believe a similar patch is already in clk-next, destined for v4.13?
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+Gr{oetje,eeting}s,
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+                        Geert
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 3ab50c4f98434080c1f73fc56d8d8b38364c6cd8 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Fri, 9 Jun 2017 00:44:16 +0000
-Subject: [PATCH] ASoC: simple-card: use asoc_simple_card_clk_xxx()
-
-Current simple-card-utils sets asoc_simple_dai::clk via
-asoc_simple_card_parse_clk().
-Current simple card drivers are using it directly for
-clk_enable/disable.
-Encapsulation is one of simple card util's purpose.
-Let's use asoc_simple_card_clk_enable/disable.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/generic/simple-card.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
-index e26bd14ba70f..8828b91867b8 100644
---- a/sound/soc/generic/simple-card.c
-+++ b/sound/soc/generic/simple-card.c
-@@ -118,13 +118,13 @@ static int asoc_simple_card_startup(struct snd_pcm_substream *substream)
- 		simple_priv_to_props(priv, rtd->num);
- 	int ret;
- 
--	ret = clk_prepare_enable(dai_props->cpu_dai.clk);
-+	ret = asoc_simple_card_clk_enable(&dai_props->cpu_dai);
- 	if (ret)
- 		return ret;
- 
--	ret = clk_prepare_enable(dai_props->codec_dai.clk);
-+	ret = asoc_simple_card_clk_enable(&dai_props->codec_dai);
- 	if (ret)
--		clk_disable_unprepare(dai_props->cpu_dai.clk);
-+		asoc_simple_card_clk_disable(&dai_props->cpu_dai);
- 
- 	return ret;
- }
-@@ -136,9 +136,9 @@ static void asoc_simple_card_shutdown(struct snd_pcm_substream *substream)
- 	struct simple_dai_props *dai_props =
- 		simple_priv_to_props(priv, rtd->num);
- 
--	clk_disable_unprepare(dai_props->cpu_dai.clk);
-+	asoc_simple_card_clk_disable(&dai_props->cpu_dai);
- 
--	clk_disable_unprepare(dai_props->codec_dai.clk);
-+	asoc_simple_card_clk_disable(&dai_props->codec_dai);
- }
- 
- static int asoc_simple_card_hw_params(struct snd_pcm_substream *substream,
--- 
-2.11.0
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
