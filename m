@@ -1,36 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:44979 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:41927 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751858AbdF3J7O (ORCPT
+        with ESMTP id S1751458AbdFUOA5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 30 Jun 2017 05:59:14 -0400
-Date: Fri, 30 Jun 2017 11:59:09 +0200
-From: Simon Horman <horms@verge.net.au>
+        Wed, 21 Jun 2017 10:00:57 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
 To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Ulf Hansson <ulf.hansson@linaro.org>
 Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH mmc/next v3 4/4] mmc: renesas-sdhi: remove gen3 support
- from SYS-DMAC driver
-Message-ID: <20170630095909.GF26710@verge.net.au>
+        linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH mmc/next v3 4/4] mmc: renesas-sdhi: remove gen3 support from SYS-DMAC driver
+Date: Wed, 21 Jun 2017 16:00:30 +0200
+Message-Id: <1498053630-7780-5-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1498053630-7780-1-git-send-email-horms+renesas@verge.net.au>
 References: <1498053630-7780-1-git-send-email-horms+renesas@verge.net.au>
- <1498053630-7780-5-git-send-email-horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1498053630-7780-5-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Jun 21, 2017 at 04:00:30PM +0200, Simon Horman wrote:
-> Gen3 SoCs are now supported by the internal DMAC variant of the SDHI driver.
-> Remove them from the SYS-DMAC variant where only PIO mode is supported
-> for those SoCs.
-> 
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Gen3 SoCs are now supported by the internal DMAC variant of the SDHI driver.
+Remove them from the SYS-DMAC variant where only PIO mode is supported
+for those SoCs.
 
-Hi,
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+v2
+* Revised changelog
+---
+ drivers/mmc/host/renesas_sdhi_sys_dmac.c | 21 ---------------------
+ 1 file changed, 21 deletions(-)
 
-I have become aware of some potential issues in this patch.
-Please hold while I get a better view of things.
+diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+index b6789f5197b3..62feaacbf996 100644
+--- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+@@ -66,25 +66,6 @@ static const struct renesas_sdhi_of_data of_rcar_gen2_compatible = {
+ 	.taps_num	= ARRAY_SIZE(rcar_gen2_scc_taps),
+ };
+ 
+-/* Definitions for sampling clocks */
+-static struct renesas_sdhi_scc rcar_gen3_scc_taps[] = {
+-	{
+-		.clk_rate = 0,
+-		.tap = 0x00000300,
+-	},
+-};
+-
+-static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
+-	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_WRPROTECT_DISABLE |
+-			  TMIO_MMC_CLK_ACTUAL | TMIO_MMC_MIN_RCAR2,
+-	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
+-			  MMC_CAP_CMD23,
+-	.bus_shift	= 2,
+-	.scc_offset	= 0x1000,
+-	.taps		= rcar_gen3_scc_taps,
+-	.taps_num	= ARRAY_SIZE(rcar_gen3_scc_taps),
+-};
+-
+ static const struct of_device_id renesas_sdhi_sys_dmac_of_match[] = {
+ 	{ .compatible = "renesas,sdhi-shmobile" },
+ 	{ .compatible = "renesas,sdhi-sh73a0", .data = &of_default_cfg, },
+@@ -98,8 +79,6 @@ static const struct of_device_id renesas_sdhi_sys_dmac_of_match[] = {
+ 	{ .compatible = "renesas,sdhi-r8a7792", .data = &of_rcar_gen2_compatible, },
+ 	{ .compatible = "renesas,sdhi-r8a7793", .data = &of_rcar_gen2_compatible, },
+ 	{ .compatible = "renesas,sdhi-r8a7794", .data = &of_rcar_gen2_compatible, },
+-	{ .compatible = "renesas,sdhi-r8a7795", .data = &of_rcar_gen3_compatible, },
+-	{ .compatible = "renesas,sdhi-r8a7796", .data = &of_rcar_gen3_compatible, },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, renesas_sdhi_sys_dmac_of_match);
+-- 
+2.1.4
