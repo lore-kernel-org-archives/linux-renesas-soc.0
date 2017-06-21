@@ -1,76 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:51040 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751754AbdFUOaU (ORCPT
+Received: from mx2.suse.de ([195.135.220.15]:38169 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751093AbdFUHYF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 21 Jun 2017 10:30:20 -0400
-Date: Wed, 21 Jun 2017 16:30:18 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Jean Delvare <jdelvare@suse.de>
+        Wed, 21 Jun 2017 03:24:05 -0400
+Date: Wed, 21 Jun 2017 09:24:02 +0200
+From: Jean Delvare <jdelvare@suse.de>
+To: Linux I2C <linux-i2c@vger.kernel.org>
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] i2c: algo-bit: add support for I2C_M_STOP
-Message-ID: <20170621143018.GA1571@katana>
-References: <20170617171238.19638-1-wsa+renesas@sang-engineering.com>
- <20170619103002.5d502c92@endymion>
- <20170620172810.h2anac45n5u3oova@ninjato>
- <20170621091843.657de813@endymion>
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2] i2c: algo-bit: add support for I2C_M_STOP
+Message-ID: <20170621092402.773a4b14@endymion>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="5vNYLRcllDrimb99"
-Content-Disposition: inline
-In-Reply-To: <20170621091843.657de813@endymion>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Support for enforced STOPs will allow us to use SCCB compatible devices.
 
---5vNYLRcllDrimb99
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Based on a preliminary patch by Wolfram Sang.
 
-Hi Jean,
+Signed-off-by: Jean Delvare <jdelvare@suse.de>
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+Changes since v1:
+ * Simplify logic
 
-> There's no problem with the scope. The problem is with the
-> initialization. The way you did, did_stop gets reset to false with
-> every iteration, which isn't what you want.
+ drivers/i2c/algos/i2c-algo-bit.c |   15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-Ouch, where is my brown paper bag...
+--- linux-4.11.orig/drivers/i2c/algos/i2c-algo-bit.c	2017-06-19 09:57:17.949074198 +0200
++++ linux-4.11/drivers/i2c/algos/i2c-algo-bit.c	2017-06-21 09:07:07.910049960 +0200
+@@ -553,9 +553,18 @@ static int bit_xfer(struct i2c_adapter *
+ 		nak_ok = pmsg->flags & I2C_M_IGNORE_NAK;
+ 		if (!(pmsg->flags & I2C_M_NOSTART)) {
+ 			if (i) {
+-				bit_dbg(3, &i2c_adap->dev, "emitting "
+-					"repeated start condition\n");
+-				i2c_repstart(adap);
++				if (msgs[i - 1].flags & I2C_M_STOP) {
++					bit_dbg(3, &i2c_adap->dev,
++						"emitting enforced stop condition\n");
++					i2c_stop(adap);
++					bit_dbg(3, &i2c_adap->dev,
++						"emitting start condition\n");
++					i2c_start(adap);
++				} else {
++					bit_dbg(3, &i2c_adap->dev,
++						"emitting repeated start condition\n");
++					i2c_repstart(adap);
++				}
+ 			}
+ 			ret = bit_doAddress(i2c_adap, pmsg);
+ 			if ((ret != 0) && !nak_ok) {
 
-> I looked at how 10-bit addressing works again and in fact it is simply
-> impossible to not use repeated start when reading from a 10-bit address
-> slave. Only the first 2 bits of the 10-bit address are repeated in the
-> read part of the transaction. If there was a stop between the two parts
-> then there would be no way to know which 10-bit slave should send the
-> data.
 
-Which reminds me: Have you ever seen a 10-bit client device in the wild?
-I wanted to buy one for testing reasons but was not able to locate one.
-I only know a Renesas IP core which has 10-bit slave capability (but no
-driver support for that yet).
-
-Regards,
-
-   Wolfram
-
-
---5vNYLRcllDrimb99
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAllKgvUACgkQFA3kzBSg
-KbYmzQ//VBvyEJ1TNiyT93XFwKcEPa19lN+I3CxTGSP7QIFjmK04wDKlUs/TaKxG
-2382m/y8lnLx7rC6p58hB507bqD9leQFke72nY/bwu+soFPAlka0LWbzIdmgfD20
-g0cQ4n3w3Keq0lOQ+GO7H94qbTkozcz+06csSDrXPL8PiVeB0siClt6n/A8qR8VN
-thtZDP1nIwISEAbiwgxHFqmHTdbuWWmQ9DZUi6+zxMB/OHj5ckmV487EG0hKFRks
-085I9fY/9KDN/gs0eMWoY6PXHjQoVoS8qNLb1MbB7E1O+njY7+Nx+pgJyBy7JnMA
-Y/rAo1MrPJB2LrzJxCqpbjiT5cdxOswuJIOsbztgtAePZxJjMtEv+dsE9d2j53Vc
-zgRrrUI9caiTajyLJ/AZt1QaDeBwm+oL51RDm4rHY6VPCgFpkVq1nXq+klVZiyBw
-bvVCykmsp4CdtqZPzdbF2fc5M4/bTidbbmbeOYej3ieUO1XEQvjM0ydW29j6Ln86
-vpuww/bnmaCiMYMDKGgiR1PN153YMv9inqk9ocABMi/Y/s6/yqcMsmwuPCfAXBbI
-8heN2HSCIiO+nK5BpObBo7VNkacUTe+IdqK/lQGLWHy1CIbWgjANdT3yZs3maUpA
-JeG9RvpqGTi2XDsm0vQ1tTWNEC82T98nukO3nWafWhb9noqz/VE=
-=bKjt
------END PGP SIGNATURE-----
-
---5vNYLRcllDrimb99--
+-- 
+Jean Delvare
+SUSE L3 Support
