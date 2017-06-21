@@ -1,75 +1,75 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1495199224-16337-3-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1495199224-16337-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1495199224-16337-3-git-send-email-ulrich.hecht+renesas@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 30 Jun 2017 11:19:01 +0200
-Message-ID: <CAMuHMdU-LcB_Te_SeqkZbji81v82n-NP0VKAAdDQ=DhqE5wBwg@mail.gmail.com>
-Subject: Re: [PATCH v3 2/4] media: adv7180: add adv7180cp, adv7180st
- compatible strings
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms@verge.net.au>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, Simon <horms@verge.net.au>,
+        alsa-devel@alsa-project.org
+In-Reply-To: <87o9ti6jws.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1dNdct-0004Gq-6Z@debutante>
+Date: Wed, 21 Jun 2017 12:16:47 +0100
+Subject: Applied "ASoC: fsl: mpc5200_dma: remove unused psc_dma" to the asoc tree
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Ulrich,
+The patch
 
-On Fri, May 19, 2017 at 3:07 PM, Ulrich Hecht
-<ulrich.hecht+renesas@gmail.com> wrote:
-> Used to differentiate between models with 3 and 6 inputs.
->
-> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-> ---
->  drivers/media/i2c/adv7180.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/media/i2c/adv7180.c b/drivers/media/i2c/adv7180.c
-> index bdbbf8c..78de7dd 100644
-> --- a/drivers/media/i2c/adv7180.c
-> +++ b/drivers/media/i2c/adv7180.c
-> @@ -1452,6 +1452,8 @@ static SIMPLE_DEV_PM_OPS(adv7180_pm_ops, adv7180_suspend, adv7180_resume);
->  #ifdef CONFIG_OF
->  static const struct of_device_id adv7180_of_id[] = {
->         { .compatible = "adi,adv7180", },
-> +       { .compatible = "adi,adv7180cp", },
-> +       { .compatible = "adi,adv7180st", },
->         { .compatible = "adi,adv7182", },
->         { .compatible = "adi,adv7280", },
->         { .compatible = "adi,adv7280-m", },
+   ASoC: fsl: mpc5200_dma: remove unused psc_dma
 
-Adding compatible entries here is not sufficient, and causes a crash on
-r8a7793/gose with renesas-drivers-2017-06-27-v4.12-rc7:
+has been applied to the asoc tree at
 
-    adv7180 2-0020: chip found @ 0x20 (e6530000.i2c)
-    Unable to handle kernel NULL pointer dereference at virtual address 00000014
-    pgd = c0003000
-    [00000014] *pgd=80000040004003, *pmd=00000000
-    Internal error: Oops: 207 [#1] SMP ARM
-    Modules linked in:
-    CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.12.0-rc7-rcar2-initrd #37
-    Hardware name: Generic R-Car Gen2 (Flattened Device Tree)
-    task: df427040 task.stack: df436000
-    PC is at adv7180_probe+0x84/0x3cc
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-In the absence of an entry in adv7180_id[], the passed i2c_device_id
-pointer is NULL, and thus dereferencing it crashes the system.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Gr{oetje,eeting}s,
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-                        Geert
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks,
+Mark
+
+>From 372f69a01be178b896ebb8ef7021e0b165084b25 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Wed, 21 Jun 2017 04:37:18 +0000
+Subject: [PATCH] ASoC: fsl: mpc5200_dma: remove unused psc_dma
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+linux/sound/soc/fsl/mpc5200_dma.c:305:18: warning: unused variable \
+	psc_dma’ [-Wunused-variable]
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/fsl/mpc5200_dma.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/sound/soc/fsl/mpc5200_dma.c b/sound/soc/fsl/mpc5200_dma.c
+index 0b82e209b6e3..1f7e70bfbd55 100644
+--- a/sound/soc/fsl/mpc5200_dma.c
++++ b/sound/soc/fsl/mpc5200_dma.c
+@@ -302,7 +302,6 @@ static int psc_dma_new(struct snd_soc_pcm_runtime *rtd)
+ 	struct snd_card *card = rtd->card->snd_card;
+ 	struct snd_soc_dai *dai = rtd->cpu_dai;
+ 	struct snd_pcm *pcm = rtd->pcm;
+-	struct psc_dma *psc_dma = snd_soc_dai_get_drvdata(rtd->cpu_dai);
+ 	size_t size = psc_dma_hardware.buffer_bytes_max;
+ 	int rc;
+ 
+-- 
+2.11.0
