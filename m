@@ -1,64 +1,107 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:56665 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751489AbdF1Oek (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:41927 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751156AbdFUOAy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 28 Jun 2017 10:34:40 -0400
-Date: Wed, 28 Jun 2017 16:34:37 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH mmc/next v3 2/4] mmc: tmio, renesas-sdhi: add dataend to
- DMA ops
-Message-ID: <20170628143437.kjfk7rpaen6im6wa@ninjato>
+        Wed, 21 Jun 2017 10:00:54 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH mmc/next v3 2/4] mmc: tmio, renesas-sdhi: add dataend to DMA ops
+Date: Wed, 21 Jun 2017 16:00:28 +0200
+Message-Id: <1498053630-7780-3-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1498053630-7780-1-git-send-email-horms+renesas@verge.net.au>
 References: <1498053630-7780-1-git-send-email-horms+renesas@verge.net.au>
- <1498053630-7780-3-git-send-email-horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="lfjejbl2bg756nk6"
-Content-Disposition: inline
-In-Reply-To: <1498053630-7780-3-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Add dataend to DMA ops to allow DMAC implementation dependent
+handling of DMA data end.
 
---lfjejbl2bg756nk6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Also implement the operation for SDHI.
 
-On Wed, Jun 21, 2017 at 04:00:28PM +0200, Simon Horman wrote:
-> Add dataend to DMA ops to allow DMAC implementation dependent
-> handling of DMA data end.
->=20
-> Also implement the operation for SDHI.
->=20
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+v3
+* s/complete/dataend/
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+v2
+* Implement operation for SDHI to avoid regression
+---
+ drivers/mmc/host/renesas_sdhi_sys_dmac.c |  6 ++++++
+ drivers/mmc/host/tmio_mmc.h              |  1 +
+ drivers/mmc/host/tmio_mmc_core.c         | 10 ++++++++--
+ 3 files changed, 15 insertions(+), 2 deletions(-)
 
-
---lfjejbl2bg756nk6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAllTvnkACgkQFA3kzBSg
-KbbY9xAAoNADJ1FmxZ63i4rmpimnaDhqMVfG0lHDrCQGLr39k2FTp1bDwQD4OOGO
-RaRSFj7eN0/DbLYR9N51IzcAISQla5Z+s7yUkBC+021RS5JGacUvSkzjW24RNmm8
-sewMpYF+yYo/N+XsHn8n0vb2CZ2/z96Zf727YYhSW12dDjwSeakZzEc/tmfi2LgF
-la8eoMWQ/p19PDFlUqjuHnFd+ArfF4v2nfppnWiQ3DbcoZTjnV3Bp4/ZjoS2WSu9
-zDk/Tm4AfSQAf8mbupmZoGaazV4Anf0E8Qndhy2EHk94UZnSpFDl3ZDBStnAM8AV
-uSjQVIaCC0tMH1PMGtGkvGjFKD9MbPxg4IA0SgxFYvgZs8aIU9PG98xcdBrK+K2O
-veKXJicc0HefIq5Uj+oXVwAQJ1lO2EHl7hKSCZIk98CumlWUbiYQjHNFeWKOuPP2
-NNv3nvGRuWifoDpJWYw/w5F6T+NnrHKMb2ZriptBn+iLsodyth1nncDjhkFtHqDJ
-yTtxBSDQ6xKn5grvBXFAGtV7mOG3c2wGnyvaBUdCo2TLEtlNu8sI94gVyXOD7aEh
-C8iEDuYHOu44uJF8bsZd/NdhXlOWJd1xmJDp4bQTmFarjBfhvEcj54/JEU8WITHK
-XZMLrXjP3ISK/pix2GD4u4fRnYhbnMZpyEBiEtpLgR9J66LmUg4=
-=FTQt
------END PGP SIGNATURE-----
-
---lfjejbl2bg756nk6--
+diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+index 642a0dcc8c5c..a125378417bf 100644
+--- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+@@ -126,6 +126,11 @@ static void renesas_sdhi_sys_dmac_abort_dma(struct tmio_mmc_host *host)
+ 	renesas_sdhi_sys_dmac_enable_dma(host, true);
+ }
+ 
++static void renesas_sdhi_sys_dmac_dataend_dma(struct tmio_mmc_host *host)
++{
++	complete(&host->dma_dataend);
++}
++
+ static void renesas_sdhi_sys_dmac_dma_callback(void *arg)
+ {
+ 	struct tmio_mmc_host *host = arg;
+@@ -451,6 +456,7 @@ static const struct tmio_mmc_dma_ops renesas_sdhi_sys_dmac_dma_ops = {
+ 	.request = renesas_sdhi_sys_dmac_request_dma,
+ 	.release = renesas_sdhi_sys_dmac_release_dma,
+ 	.abort = renesas_sdhi_sys_dmac_abort_dma,
++	.dataend = renesas_sdhi_sys_dmac_dataend_dma,
+ };
+ 
+ static int renesas_sdhi_sys_dmac_probe(struct platform_device *pdev)
+diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+index 6ad6704175dc..f2d747b036c7 100644
+--- a/drivers/mmc/host/tmio_mmc.h
++++ b/drivers/mmc/host/tmio_mmc.h
+@@ -122,6 +122,7 @@ struct tmio_mmc_dma_ops {
+ 			struct tmio_mmc_data *pdata);
+ 	void (*release)(struct tmio_mmc_host *host);
+ 	void (*abort)(struct tmio_mmc_host *host);
++	void (*dataend)(struct tmio_mmc_host *host);
+ };
+ 
+ struct tmio_mmc_host {
+diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+index 95c93c227c65..77e7b56a9099 100644
+--- a/drivers/mmc/host/tmio_mmc_core.c
++++ b/drivers/mmc/host/tmio_mmc_core.c
+@@ -87,6 +87,12 @@ static inline void tmio_mmc_abort_dma(struct tmio_mmc_host *host)
+ 		host->dma_ops->abort(host);
+ }
+ 
++static inline void tmio_mmc_dataend_dma(struct tmio_mmc_host *host)
++{
++	if (host->dma_ops)
++		host->dma_ops->dataend(host);
++}
++
+ void tmio_mmc_enable_mmc_irqs(struct tmio_mmc_host *host, u32 i)
+ {
+ 	host->sdcard_irq_mask &= ~(i & TMIO_MASK_IRQ);
+@@ -606,11 +612,11 @@ static void tmio_mmc_data_irq(struct tmio_mmc_host *host, unsigned int stat)
+ 
+ 		if (done) {
+ 			tmio_mmc_disable_mmc_irqs(host, TMIO_STAT_DATAEND);
+-			complete(&host->dma_dataend);
++			tmio_mmc_dataend_dma(host);
+ 		}
+ 	} else if (host->chan_rx && (data->flags & MMC_DATA_READ) && !host->force_pio) {
+ 		tmio_mmc_disable_mmc_irqs(host, TMIO_STAT_DATAEND);
+-		complete(&host->dma_dataend);
++		tmio_mmc_dataend_dma(host);
+ 	} else {
+ 		tmio_mmc_do_data_irq(host);
+ 		tmio_mmc_disable_mmc_irqs(host, TMIO_MASK_READOP | TMIO_MASK_WRITEOP);
+-- 
+2.1.4
