@@ -1,42 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:33306 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751434AbdFULSA (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:52373 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752819AbdFUJbP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 21 Jun 2017 07:18:00 -0400
-Received: by mail-io0-f195.google.com with SMTP id j200so286321ioe.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 21 Jun 2017 04:18:00 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <20170621093133.5677-7-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170621093133.5677-1-laurent.pinchart+renesas@ideasonboard.com> <20170621093133.5677-7-laurent.pinchart+renesas@ideasonboard.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 21 Jun 2017 13:17:58 +0200
-Message-ID: <CAMuHMdU1zj1qxq7_udTjOEBGm3v0CmAtnEmCVEth1BSkYn4xmg@mail.gmail.com>
-Subject: Re: [PATCH v2 6/7] arm64: dts: renesas: r8a7796-salvator-x: Add DU
- external dot clocks
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 21 Jun 2017 05:31:15 -0400
+Received: from avalon.bb.dnainternet.fi (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by galahad.ideasonboard.com (Postfix) with ESMTPSA id 5E1D6213B7
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 21 Jun 2017 11:30:33 +0200 (CEST)
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 6/7] arm64: dts: renesas: r8a7796-salvator-x: Add DU external dot clocks
+Date: Wed, 21 Jun 2017 12:31:32 +0300
+Message-Id: <20170621093133.5677-7-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170621093133.5677-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170621093133.5677-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Jun 21, 2017 at 11:31 AM, Laurent Pinchart
-<laurent.pinchart+renesas@ideasonboard.com> wrote:
-> The DU1 external dot clock is provided by the fixed frequency clock
-> generator X21, while the DU0 and DU2 clocks are provided by the
-> programmable Versaclock5 clock generator.
->
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+The DU1 external dot clock is provided by the fixed frequency clock
+generator X21, while the DU0 and DU2 clocks are provided by the
+programmable Versaclock5 clock generator.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-Gr{oetje,eeting}s,
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+index db4f162d6bdd..1b8d1314763f 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+@@ -29,3 +29,15 @@
+ 		reg = <0x6 0x00000000 0x0 0x80000000>;
+ 	};
+ };
++
++&du {
++	clocks = <&cpg CPG_MOD 724>,
++		 <&cpg CPG_MOD 723>,
++		 <&cpg CPG_MOD 722>,
++		 <&cpg CPG_MOD 727>,
++		 <&versaclock5 1>,
++		 <&x21_clk>,
++		 <&versaclock5 2>;
++	clock-names = "du.0", "du.1", "du.2", "lvds.0",
++		      "dclkin.0", "dclkin.1", "dclkin.2";
++};
+-- 
+Regards,
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Laurent Pinchart
