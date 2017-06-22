@@ -1,122 +1,50 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54932 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751016AbdFORUy (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Jun 2017 13:20:54 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <87zidam7bb.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dLYRs-0001j6-Dl@debutante>
-Date: Thu, 15 Jun 2017 18:20:48 +0100
-Subject: Applied "ASoC: simple-scu-card: use asoc_simple_card_convert_fixup()" to the asoc tree
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: linus.walleij@linaro.org, geert+renesas@glider.be,
+        laurent.pinchart@ideasonboard.com, chris.brandt@renesas.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk,
+        aisheng.dong@nxp.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v6 3/8] arm: dts: dt-bindings: Add Renesas RZ/A1 pinctrl header
+Date: Thu, 22 Jun 2017 16:54:31 +0200
+Message-Id: <1498143276-7976-4-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1498143276-7976-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1498143276-7976-1-git-send-email-jacopo+renesas@jmondi.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+Add dt-bindings for Renesas r7s72100 pin controller header file.
 
-   ASoC: simple-scu-card: use asoc_simple_card_convert_fixup()
-
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From cd8957f588397498c12b258da9044b52598c9527 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Thu, 15 Jun 2017 00:24:28 +0000
-Subject: [PATCH] ASoC: simple-scu-card: use asoc_simple_card_convert_fixup()
-
-Current simple/audio scu card drivers are supporting same
-convert-rate/convert-channels on DT, but, doesn't use same function
-for it.
-Encapsulation is one of simple card util's purpose.
-Let's use asoc_simple_card_parse_convert/asoc_simple_card_convert_fixup
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
- sound/soc/generic/simple-scu-card.c | 24 +++---------------------
- 1 file changed, 3 insertions(+), 21 deletions(-)
+ include/dt-bindings/pinctrl/r7s72100-pinctrl.h | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+ create mode 100644 include/dt-bindings/pinctrl/r7s72100-pinctrl.h
 
-diff --git a/sound/soc/generic/simple-scu-card.c b/sound/soc/generic/simple-scu-card.c
-index 938f3f30eef1..44da69101097 100644
---- a/sound/soc/generic/simple-scu-card.c
-+++ b/sound/soc/generic/simple-scu-card.c
-@@ -27,8 +27,7 @@ struct simple_card_data {
- 	struct snd_soc_codec_conf codec_conf;
- 	struct asoc_simple_dai *dai_props;
- 	struct snd_soc_dai_link *dai_link;
--	u32 convert_rate;
--	u32 convert_channels;
-+	struct asoc_simple_card_data adata;
- };
- 
- #define simple_priv_to_card(priv) (&(priv)->snd_card)
-@@ -86,18 +85,8 @@ static int asoc_simple_card_be_hw_params_fixup(struct snd_soc_pcm_runtime *rtd,
- 					struct snd_pcm_hw_params *params)
- {
- 	struct simple_card_data *priv = snd_soc_card_get_drvdata(rtd->card);
--	struct snd_interval *rate = hw_param_interval(params,
--						      SNDRV_PCM_HW_PARAM_RATE);
--	struct snd_interval *channels = hw_param_interval(params,
--						SNDRV_PCM_HW_PARAM_CHANNELS);
- 
--	if (priv->convert_rate)
--		rate->min =
--		rate->max = priv->convert_rate;
--
--	if (priv->convert_channels)
--		channels->min =
--		channels->max = priv->convert_channels;
-+	asoc_simple_card_convert_fixup(&priv->adata, params);
- 
- 	return 0;
- }
-@@ -206,11 +195,7 @@ static int asoc_simple_card_parse_of(struct simple_card_data *priv)
- 	if (ret < 0)
- 		return ret;
- 
--	/* sampling rate convert */
--	of_property_read_u32(node, PREFIX "convert-rate", &priv->convert_rate);
--
--	/* channels transfer */
--	of_property_read_u32(node, PREFIX "convert-channels", &priv->convert_channels);
-+	asoc_simple_card_parse_convert(dev, PREFIX, &priv->adata);
- 
- 	/* find 1st codec */
- 	np = of_get_child_by_name(node, PREFIX "codec");
-@@ -237,9 +222,6 @@ static int asoc_simple_card_parse_of(struct simple_card_data *priv)
- 	if (ret < 0)
- 		return ret;
- 
--	dev_dbg(dev, "convert_rate     %d\n", priv->convert_rate);
--	dev_dbg(dev, "convert_channels %d\n", priv->convert_channels);
--
- 	return 0;
- }
- 
+diff --git a/include/dt-bindings/pinctrl/r7s72100-pinctrl.h b/include/dt-bindings/pinctrl/r7s72100-pinctrl.h
+new file mode 100644
+index 0000000..6b609fe
+--- /dev/null
++++ b/include/dt-bindings/pinctrl/r7s72100-pinctrl.h
+@@ -0,0 +1,16 @@
++/*
++ * Defines macros and constants for Renesas RZ/A1 pin controller pin
++ * muxing functions.
++ */
++#ifndef __DT_BINDINGS_PINCTRL_RENESAS_RZA1_H
++#define __DT_BINDINGS_PINCTRL_RENESAS_RZA1_H
++
++#define RZA1_PINS_PER_PORT	16
++
++/*
++ * Create the pin index from its bank and position numbers and store in
++ * the upper 16 bits the alternate function identifier
++ */
++#define RZA1_PINMUX(b, p, f)	((b) * RZA1_PINS_PER_PORT + (p) | (f << 16))
++
++#endif /* __DT_BINDINGS_PINCTRL_RENESAS_RZA1_H */
 -- 
-2.11.0
+2.7.4
