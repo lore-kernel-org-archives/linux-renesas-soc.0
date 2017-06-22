@@ -1,62 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:41204 "EHLO pokefinder.org"
+Received: from sauhun.de ([88.99.104.3]:36720 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754673AbdFWSrn (ORCPT
+        id S1752621AbdFVKPW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 23 Jun 2017 14:47:43 -0400
-Date: Fri, 23 Jun 2017 20:47:41 +0200
+        Thu, 22 Jun 2017 06:15:22 -0400
+Date: Thu, 22 Jun 2017 12:15:20 +0200
 From: Wolfram Sang <wsa@the-dreams.de>
 To: Jean Delvare <jdelvare@suse.de>
-Cc: Linux I2C <linux-i2c@vger.kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2] i2c: algo-bit: add support for I2C_M_STOP
-Message-ID: <20170623184740.figeulice6bw7523@ninjato>
-References: <20170621092402.773a4b14@endymion>
- <20170621145426.yeourbp3coddjwmu@ninjato>
- <20170622110630.42eae574@endymion>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] i2c: algo-bit: add support for I2C_M_STOP
+Message-ID: <20170622101520.hwbzunqg5xxehttp@ninjato>
+References: <20170617171238.19638-1-wsa+renesas@sang-engineering.com>
+ <20170619103002.5d502c92@endymion>
+ <20170620172810.h2anac45n5u3oova@ninjato>
+ <20170621091843.657de813@endymion>
+ <20170621143018.GA1571@katana>
+ <20170622110606.6ae3aabc@endymion>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="4yzme5aqj46kii2n"
+        protocol="application/pgp-signature"; boundary="b7fm5gn6xkytka4r"
 Content-Disposition: inline
-In-Reply-To: <20170622110630.42eae574@endymion>
+In-Reply-To: <20170622110606.6ae3aabc@endymion>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 
---4yzme5aqj46kii2n
+--b7fm5gn6xkytka4r
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
 
-> > > +					bit_dbg(3, &i2c_adap->dev,
-> > > +						"emitting enforced stop/start condition\n"); =20
-> >=20
->=20
-> Go ahead, fine with me.
+> I remember wishing I could drop support, asking around, and a few
+> people replying to me that 10-bit slaves actually exist. But of course
+> I can't find the discussion thread again.
 
-Did so and applied to for-next, thanks!
+Dropping 10-bit support would be super nice from a maintenance point of
+view, but I didn't have hopes for that to happen ;) This is why I wanted
+to buy a device to be able to test.
+
+> However it seems that in many cases I2C_M_TEN is used directly (instead
+> of the more correct I2C_CLIENT_TEN.) See for example
+
+Yeah, good idea to scan for I2C_CLIENT_TEN directly. From a glimpse, I
+didn't see a device which I could easily buy, connect, and sniff the
+wires. But it is not urgent anyhow.
+
+> I see also commits explicitly adding or fixing 10-bit address support
+> in various I2C bus drivers, I don't think developers would be doing
+> that if they didn't need it.
+
+Agreed. It will stay, I had no intention of removing it.
+
+Thanks for the help!
 
 
---4yzme5aqj46kii2n
+--b7fm5gn6xkytka4r
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAllNYkwACgkQFA3kzBSg
-KbanjxAAopyvKqO+QTic9sK97Ubbz4cvmKSs4xtcsMmWh2MWo76fCDnmOwM1iTuI
-dOPNjOGhR2DkKvr2QrChYsYFg6OW3L5XEZ+ITubc2TDTm5W3/ljs6krbgIxAJVEx
-3HKGzmgzdAMLqG9gE3A1hfIG4ePrGJGvWWKT+4236hiNFfykl9mnp9fsLWpcUblt
-fBJ3IVEqSng+0im+ziKNG6g3e5Xob7C3PdhjZgQ8ryd9yN6E8mvw1015SBlxi92Z
-v3ffA/cfn3XbujL2blQPYSKm4GKvV7lFg++ZORvxz9kDj4tHyLOLoDZicnRZmcM0
-UV7cGe66ADpUmAIR+XyC21pj4dNdfGYVivKVyldV5gZdfDZpH64s0owJBBDmgr+C
-Xihsib/SuAVWLfIFQbizTtxC0AZ1YOFZaSQii6gHXAr34N6Q/tQ41H3sCld7vzZ3
-WRSNNbB+p5wZLKJZnxrE5F8WZdOZw1EPm1BQqYOR4jA1raGuOrGX8cUbHXG37leG
-VOLG5bMRcABJETG0tl3g8DFtctLS/wA2Whs+ReoWYCcRkddnlAWxAKp5PLmwFYDc
-n/BSc52vk6dkKszcF8BKqEzvO/+oX3sJSCwfgl31Ht+7AXuZCQT7O5Tx0vSiMGFU
-RhC11clLPEg6CLaR/z6VQbYtfn5kpCgNwj84jFauuZKhz5Wt4Y4=
-=KQWV
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAllLmLgACgkQFA3kzBSg
+KbZO3w//e5SQXFo4NC1KUGs/F8TSbhtwAMbsJOi9zP3NPEpNO4NXXCCv72/Ersoe
+hAzIx+pVLu5y4r1evqa6D4sbXE0eqwbsFJziJx+ZoZ4470lMzfi4is6HSGvgkhzL
+GAlNJn3A8mkZ3T1FWxVUGtUcupE587uytsSdWfXQFP22G2ECzLKdKPx4d8DmZRtr
+cbP1raKgF2LKy4BLJ97L708yI27F910fNyhYEL9ttS9UpVhjz8jPA4hMe34S/sS+
+1OQU8fC+Kmm2JCI6RAYL37am+Ee0DImvu43RurFnOXmJnkGxcKBKo9ZccZm+7xrq
+ecylNWuhJPs7bwBRejSPdaXbCUzhZSEr1tn17Bq4dsJn2X2IawU5DjBJwoNoU9Pd
+nOh1C3pH4sEEEbFpAed1KJfHTp9S/2a7KDEJ02tosC/SjFDEeZWv586gBa24ebiq
+iinBEPcES/B4V1wajYSVs2ebH8zyHLOSUyD7Cff4l1M2sM7rXfBI9E7VnaCs/u41
+B1L97wPYmOrD0QOoZ6QGmw1ptEbXefuCUWWTufH9MjT5GMBDWUXOHVvxPqE3hLqO
+AAeeLoQOMHuF9/D37MhSzVvR+yhU/qxiQyCXmHkZXFr0jhM0ld3WqRngmBVAykAJ
+5Irgen01DmBztpJX0U1JEvajlYT2A+F6qB+711vcIJiz55BjiNU=
+=pE38
 -----END PGP SIGNATURE-----
 
---4yzme5aqj46kii2n--
+--b7fm5gn6xkytka4r--
