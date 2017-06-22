@@ -1,123 +1,118 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54826 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750980AbdFORUv (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Jun 2017 13:20:51 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <87y3sum7au.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dLYRp-0001iF-CS@debutante>
-Date: Thu, 15 Jun 2017 18:20:45 +0100
-Subject: Applied "ASoC: audio-graph-scu-card: use asoc_simple_card_convert_fixup()" to the asoc tree
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: linus.walleij@linaro.org, geert+renesas@glider.be,
+        laurent.pinchart@ideasonboard.com, chris.brandt@renesas.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk,
+        aisheng.dong@nxp.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v6 4/8] arm: dts: r7s72100: Add pin controller node
+Date: Thu, 22 Jun 2017 16:54:32 +0200
+Message-Id: <1498143276-7976-5-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1498143276-7976-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1498143276-7976-1-git-send-email-jacopo+renesas@jmondi.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+Add pin controller node with 12 gpio controller sub-nodes to
+r7s72100 dtsi.
 
-   ASoC: audio-graph-scu-card: use asoc_simple_card_convert_fixup()
-
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From c564a5b18710f76da222ad9f14a4c0ebc2c4c74c Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Thu, 15 Jun 2017 00:24:43 +0000
-Subject: [PATCH] ASoC: audio-graph-scu-card: use
- asoc_simple_card_convert_fixup()
-
-Current simple/audio scu card drivers are supporting same
-convert-rate/convert-channels on DT, but, doesn't use same function
-for it.
-Encapsulation is one of simple card util's purpose.
-Let's use asoc_simple_card_parse_convert/asoc_simple_card_convert_fixup
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- sound/soc/generic/audio-graph-scu-card.c | 24 +++---------------------
- 1 file changed, 3 insertions(+), 21 deletions(-)
+ arch/arm/boot/dts/r7s72100.dtsi | 78 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 78 insertions(+)
 
-diff --git a/sound/soc/generic/audio-graph-scu-card.c b/sound/soc/generic/audio-graph-scu-card.c
-index 4d295d07858a..9502f6ed14b8 100644
---- a/sound/soc/generic/audio-graph-scu-card.c
-+++ b/sound/soc/generic/audio-graph-scu-card.c
-@@ -30,8 +30,7 @@ struct graph_card_data {
- 	struct snd_soc_codec_conf codec_conf;
- 	struct asoc_simple_dai *dai_props;
- 	struct snd_soc_dai_link *dai_link;
--	u32 convert_rate;
--	u32 convert_channels;
-+	struct asoc_simple_card_data adata;
- };
+diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+index 0423996..fb54cb5 100644
+--- a/arch/arm/boot/dts/r7s72100.dtsi
++++ b/arch/arm/boot/dts/r7s72100.dtsi
+@@ -207,6 +207,84 @@
+ 		};
+ 	};
  
- #define graph_priv_to_card(priv) (&(priv)->snd_card)
-@@ -83,18 +82,8 @@ static int asoc_graph_card_be_hw_params_fixup(struct snd_soc_pcm_runtime *rtd,
- 					       struct snd_pcm_hw_params *params)
- {
- 	struct graph_card_data *priv = snd_soc_card_get_drvdata(rtd->card);
--	struct snd_interval *rate = hw_param_interval(params,
--						      SNDRV_PCM_HW_PARAM_RATE);
--	struct snd_interval *channels = hw_param_interval(params,
--							  SNDRV_PCM_HW_PARAM_CHANNELS);
- 
--	if (priv->convert_rate)
--		rate->min =
--		rate->max = priv->convert_rate;
--
--	if (priv->convert_channels)
--		channels->min =
--		channels->max = priv->convert_channels;
-+	asoc_simple_card_convert_fixup(&priv->adata, params);
- 
- 	return 0;
- }
-@@ -210,11 +199,7 @@ static int asoc_graph_card_parse_of(struct graph_card_data *priv)
- 	if (ret)
- 		return ret;
- 
--	/* sampling rate convert */
--	of_property_read_u32(node, "convert-rate", &priv->convert_rate);
--
--	/* channels transfer */
--	of_property_read_u32(node, "convert-channels", &priv->convert_channels);
-+	asoc_simple_card_parse_convert(dev, NULL, &priv->adata);
- 
- 	/*
- 	 * it supports multi CPU, single CODEC only here
-@@ -286,9 +271,6 @@ static int asoc_graph_card_parse_of(struct graph_card_data *priv)
- 	if (ret)
- 		goto parse_of_err;
- 
--	dev_dbg(dev, "convert_rate     %d\n", priv->convert_rate);
--	dev_dbg(dev, "convert_channels %d\n", priv->convert_channels);
--
- 	ret = 0;
- 
- parse_of_err:
++	pinctrl: pin-controller@fcfe3000 {
++		compatible = "renesas,r7s72100-ports";
++
++		reg = <0xfcfe3000 0x4230>;
++
++		port0: gpio-0 {
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pinctrl 0 0 6>;
++		};
++
++		port1: gpio-1 {
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pinctrl 0 16 16>;
++		};
++
++		port2: gpio-2 {
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pinctrl 0 32 16>;
++		};
++
++		port3: gpio-3 {
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pinctrl 0 48 16>;
++		};
++
++		port4: gpio-4 {
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pinctrl 0 64 16>;
++		};
++
++		port5: gpio-5 {
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pinctrl 0 80 11>;
++		};
++
++		port6: gpio-6 {
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pinctrl 0 96 16>;
++		};
++
++		port7: gpio-7 {
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pinctrl 0 112 16>;
++		};
++
++		port8: gpio-8 {
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pinctrl 0 128 16>;
++		};
++
++		port9: gpio-9 {
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pinctrl 0 144 8>;
++		};
++
++		port10: gpio-10 {
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pinctrl 0 160 16>;
++		};
++
++		port11: gpio-11 {
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pinctrl 0 176 16>;
++		};
++	};
++
+ 	scif0: serial@e8007000 {
+ 		compatible = "renesas,scif-r7s72100", "renesas,scif";
+ 		reg = <0xe8007000 64>;
 -- 
-2.11.0
+2.7.4
