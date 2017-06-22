@@ -1,51 +1,80 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f170.google.com ([209.85.223.170]:36715 "EHLO
-        mail-io0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751007AbdFTHRw (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Jun 2017 03:17:52 -0400
-MIME-Version: 1.0
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 20 Jun 2017 09:17:51 +0200
-Message-ID: <CAMuHMdW=aasYmZz-z+BgT0Qoco6DTyQxN3G1wiWVPETsbkRZTQ@mail.gmail.com>
-Subject: Rebasing mmc/next
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Linux MMC List <linux-mmc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: linus.walleij@linaro.org, geert+renesas@glider.be,
+        laurent.pinchart@ideasonboard.com, chris.brandt@renesas.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk,
+        aisheng.dong@nxp.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v6 8/8] arm: dts: genmai: Add ethernet pin group
+Date: Thu, 22 Jun 2017 16:54:36 +0200
+Message-Id: <1498143276-7976-9-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1498143276-7976-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1498143276-7976-1-git-send-email-jacopo+renesas@jmondi.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Ulf,
+Add pin configuration subnode for ETHER ethernet controller.
 
-It looks like you rebase mmc/next almost daily. Is there any specific reason
-for that?
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+---
+ arch/arm/boot/dts/r7s72100-genmai.dts | 35 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
-I'm asking because I create a "renesas-drivers" tree on a regular basis
-(cfr. e.g. https://www.spinics.net/lists/linux-renesas-soc/msg15111.html).
-This tree is meant to ease development of platform support and drivers
-for Renesas ARM SoCs. It is created by merging (a) the for-next branches
-of various subsystem trees and (b) branches with driver code submitted
-or planned for submission to maintainers into the development branch of
-Simon Horman's renesas.git tree.
-
-If for (b), people submit driver code based on mmc/next, it may start
-to conflict
-with subsequent mmc/next releases soon, requiring the submitter or me to
-rebase the code before including it in renesas-drivers.
-
-Most subsystem maintainers don't rebase their for-next branch, unless there's
-a very good reason for it (e.g. a serious breakage hindering bisection).
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/r7s72100-genmai.dts b/arch/arm/boot/dts/r7s72100-genmai.dts
+index 8e6157b..4d0b68c 100644
+--- a/arch/arm/boot/dts/r7s72100-genmai.dts
++++ b/arch/arm/boot/dts/r7s72100-genmai.dts
+@@ -62,6 +62,28 @@
+ 		/* RIIC2: P1_4 as SCL, P1_5 as SDA */
+ 		pinmux = <RZA1_PINMUX(1, 4, 1)>, <RZA1_PINMUX(1, 5, 1)>;
+ 	};
++
++	ether_pins: ether {
++		/* Ethernet on Ports 1,2,3,5 */
++		pinmux = <RZA1_PINMUX(1, 14, 4)>,/* P1_14 = ET_COL  */
++			 <RZA1_PINMUX(5, 9, 2)>, /* P5_9 = ET_MDC   */
++			 <RZA1_PINMUX(3, 3, 2)>, /* P3_3 = ET_MDIO */
++			 <RZA1_PINMUX(3, 4, 2)>, /* P3_4 = ET_RXCLK */
++			 <RZA1_PINMUX(3, 5, 2)>, /* P3_5 = ET_RXER  */
++			 <RZA1_PINMUX(3, 6, 2)>, /* P3_6 = ET_RXDV  */
++			 <RZA1_PINMUX(2, 0, 2)>, /* P2_0 = ET_TXCLK */
++			 <RZA1_PINMUX(2, 1, 2)>, /* P2_1 = ET_TXER  */
++			 <RZA1_PINMUX(2, 2, 2)>, /* P2_2 = ET_TXEN  */
++			 <RZA1_PINMUX(2, 3, 2)>, /* P2_3 = ET_CRS   */
++			 <RZA1_PINMUX(2, 4, 2)>, /* P2_4 = ET_TXD0  */
++			 <RZA1_PINMUX(2, 5, 2)>, /* P2_5 = ET_TXD1  */
++			 <RZA1_PINMUX(2, 6, 2)>, /* P2_6 = ET_TXD2  */
++			 <RZA1_PINMUX(2, 7, 2)>, /* P2_7 = ET_TXD3  */
++			 <RZA1_PINMUX(2, 8, 2)>, /* P2_8 = ET_RXD0  */
++			 <RZA1_PINMUX(2, 9, 2)>, /* P2_9 = ET_RXD1  */
++			 <RZA1_PINMUX(2, 10, 2)>,/* P2_10 = ET_RXD2 */
++			 <RZA1_PINMUX(2, 11, 2)>;/* P2_11 = ET_RXD3 */
++	};
+ };
+ 
+ &extal_clk {
+@@ -80,6 +102,19 @@
+ 	status = "okay";
+ };
+ 
++&ether {
++	pinctrl-names = "default";
++	pinctrl-0 = <&ether_pins>;
++
++	status = "okay";
++
++	renesas,no-ether-link;
++	phy-handle = <&phy0>;
++	phy0: ethernet-phy@0 {
++		reg = <0>;
++	};
++};
++
+ &i2c2 {
+ 	status = "okay";
+ 	clock-frequency = <400000>;
+-- 
+2.7.4
