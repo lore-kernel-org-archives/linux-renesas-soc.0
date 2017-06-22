@@ -1,69 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:46253 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751957AbdFQRMr (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:43424 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751116AbdFVJRv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 17 Jun 2017 13:12:47 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: Jean Delvare <jdelvare@suse.de>, linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH] i2c: algo-bit: add support for I2C_M_STOP
-Date: Sat, 17 Jun 2017 19:12:38 +0200
-Message-Id: <20170617171238.19638-1-wsa+renesas@sang-engineering.com>
+        Thu, 22 Jun 2017 05:17:51 -0400
+Date: Thu, 22 Jun 2017 10:17:43 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>
+Message-ID: <20170622091743.x3userwryot4fhdx@sirena.org.uk>
+References: <87lgom6jun.wl%kuninori.morimoto.gx@renesas.com>
+ <E1dNdcn-0004Ex-6P@debutante>
+ <87o9tgdgyf.wl%kuninori.morimoto.gx@renesas.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="qinwrwrl2u7honqh"
+Content-Disposition: inline
+In-Reply-To: <87o9tgdgyf.wl%kuninori.morimoto.gx@renesas.com>
+Subject: Re: Applied "ASoC: pxa: add COMPILE_TEST on SND_MMP_SOC" to the asoc
+ tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Support for enforced STOPs will allow us to use SCCB compatible devices.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+--qinwrwrl2u7honqh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Notes: I don't actually have any SCCB compatible sensor but verified with a
-logic analyzer that repeated starts got replaced with a stop + start sequence.
-However, we have members in our team who might need this feature soon. I'll
-likely wait for their Tested-by unless something unforseen happens.
+On Thu, Jun 22, 2017 at 12:11:31AM +0000, Kuninori Morimoto wrote:
 
- drivers/i2c/algos/i2c-algo-bit.c | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+> Oops.
+> It seems this patch breaks ia64's compile.
 
-diff --git a/drivers/i2c/algos/i2c-algo-bit.c b/drivers/i2c/algos/i2c-algo-bit.c
-index a8e89df665b904..4758058352959d 100644
---- a/drivers/i2c/algos/i2c-algo-bit.c
-+++ b/drivers/i2c/algos/i2c-algo-bit.c
-@@ -549,12 +549,17 @@ static int bit_xfer(struct i2c_adapter *i2c_adap,
- 	bit_dbg(3, &i2c_adap->dev, "emitting start condition\n");
- 	i2c_start(adap);
- 	for (i = 0; i < num; i++) {
-+		bool did_stop = false;
-+
- 		pmsg = &msgs[i];
- 		nak_ok = pmsg->flags & I2C_M_IGNORE_NAK;
- 		if (!(pmsg->flags & I2C_M_NOSTART)) {
--			if (i) {
--				bit_dbg(3, &i2c_adap->dev, "emitting "
--					"repeated start condition\n");
-+			if (did_stop) {
-+				bit_dbg(3, &i2c_adap->dev, "emitting start condition\n");
-+				i2c_start(adap);
-+				did_stop = false;
-+			} else if (i) {
-+				bit_dbg(3, &i2c_adap->dev, "emitting repeated start condition\n");
- 				i2c_repstart(adap);
- 			}
- 			ret = bit_doAddress(i2c_adap, pmsg);
-@@ -588,6 +593,12 @@ static int bit_xfer(struct i2c_adapter *i2c_adap,
- 				goto bailout;
- 			}
- 		}
-+
-+		if (pmsg->flags & I2C_M_STOP && i != num - 1) {
-+			bit_dbg(3, &i2c_adap->dev, "emitting enforced stop condition\n");
-+			i2c_stop(adap);
-+			did_stop = true;
-+		}
- 	}
- 	ret = i;
- 
--- 
-2.11.0
+> I'm sorry, but can you remove/revert this ?
+
+I did that yesterday - it breaks everything except plain ARM.
+
+--qinwrwrl2u7honqh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAllLizYACgkQJNaLcl1U
+h9BNMQf/Yw+/VQTDX/Ys2BLRgKTViG3KbEeAP14uANTYdrh3bMx2vrC/SkEa/UL3
+1h8aUPorXnmJlw+K7U/AhhDqoU1SrD1FkDe3sspGP+oZTC29tA43zgR66qr03mus
+duZda9OpncUsUH/KeGCqsSEKEpkGmIbFhuj9NX/l4pSejpEyipBa+zTOZa/tgWNZ
+2QPDkKJKfuvb+urlpoRDqwLmUq292yAXg/VFXS1fUxAIJNQIPcQCUyHlKhF+UFea
+sx4LRWY9N/2zRnAJF0KGfzOfEsdZT9nDzBRL/rBVv+34lUUIri7hOAIW/qyK+myy
+DNyCHMjllOL4k4KBpEFL4mXFaXoKeA==
+=8jzq
+-----END PGP SIGNATURE-----
+
+--qinwrwrl2u7honqh--
