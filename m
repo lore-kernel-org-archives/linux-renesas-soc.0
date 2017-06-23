@@ -1,69 +1,65 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:19624 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750955AbdFBQff (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Jun 2017 12:35:35 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH  3/4] ARM: dts: iwg20m: Add iWave RZG1M Qseven SOM
-Date: Fri,  2 Jun 2017 17:22:02 +0100
-Message-Id: <1496420523-23506-4-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1496420523-23506-1-git-send-email-biju.das@bp.renesas.com>
-References: <1496420523-23506-1-git-send-email-biju.das@bp.renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Fri, 23 Jun 2017 10:05:31 +0200
+From: jmondi <jacopo@jmondi.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, linus.walleij@linaro.org,
+        geert+renesas@glider.be, laurent.pinchart@ideasonboard.com,
+        chris.brandt@renesas.com, mark.rutland@arm.com,
+        linux@armlinux.org.uk, aisheng.dong@nxp.com,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 2/8] dt-bindings: pinctrl: Add RZ/A1 bindings doc
+Message-ID: <20170623080531.GA14273@w540>
+References: <1498143276-7976-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1498143276-7976-3-git-send-email-jacopo+renesas@jmondi.org>
+ <20170622210917.ljbxkpaalckhegmq@rob-hp-laptop>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20170622210917.ljbxkpaalckhegmq@rob-hp-laptop>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for iWave RZG1M Qseven System On Module.
-http://www.iwavesystems.com/rz-g1m-qseven-module.html
+Hi Rob,
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
----
- arch/arm/boot/dts/r8a7743-iwg20m.dtsi | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
- create mode 100644 arch/arm/boot/dts/r8a7743-iwg20m.dtsi
+On Thu, Jun 22, 2017 at 04:09:17PM -0500, Rob Herring wrote:
+> On Thu, Jun 22, 2017 at 04:54:30PM +0200, Jacopo Mondi wrote:
+> > Add device tree bindings documentation for Renesas RZ/A1 gpio and pin
+> > controller.
+> >
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > ---
+> >  .../bindings/pinctrl/renesas,rza1-pinctrl.txt      | 221 +++++++++++++++++++++
+> >  1 file changed, 221 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
+>
+> Please add acks when posting new versions. It seems there are 2 more
+> lines here, but I have no idea what changed. I'm assuming it was minor
+> enough to retain my ack.
 
-diff --git a/arch/arm/boot/dts/r8a7743-iwg20m.dtsi b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
-new file mode 100644
-index 0000000..d7bdf5d
---- /dev/null
-+++ b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
-@@ -0,0 +1,27 @@
-+/*
-+ * Device Tree Source for the iWave-RZG1M-20M Qseven SOM
-+ *
-+ * Copyright (C) 2017 Renesas Electronics Corp.
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2.  This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
-+
-+#include "r8a7743.dtsi"
-+
-+/ {
-+	memory@40000000 {
-+		device_type = "memory";
-+		reg = <0 0x40000000 0 0x20000000>;
-+	};
-+
-+	memory@200000000 {
-+		device_type = "memory";
-+		reg = <2 0x00000000 0 0x20000000>;
-+	};
-+};
-+
-+&extal_clk {
-+	clock-frequency = <20000000>;
-+};
--- 
-1.9.1
+I have dropped your Acked-by in v4, as compared to the previous
+versions bindings changed "significantly".
+Quoting the v4 cover letter:
+
+"The device tree bindings changed significantly, and as anticipated I
+have not incorporated Rob's ack as I would like him to have a look there again."
+
+Now that I look at bindings again, I guess I could have kept it
+because all of the changes are related to pin controller subsystem
+specificities and are not that "significant" in the end..
+
+I'll list them here for your reference
+
+- use "pinmux" in place of "renesas,pins" property
+- use generic properties in place of pin mux flags
+- a bit of shuffling on generic properties in v4->v6 transition
+
+If none of these is relevant to you, we can add you Acked-by back when
+sending pull-request (right Geert?)
+
+Thanks
+   j
+
+>
+> Rob
