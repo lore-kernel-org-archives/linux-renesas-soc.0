@@ -1,39 +1,51 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <99e5ddc3b23962b22740dc93113d178f6f98df2f.1498210098.git.arvind.yadav.cs@gmail.com>
-References: <99e5ddc3b23962b22740dc93113d178f6f98df2f.1498210098.git.arvind.yadav.cs@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 26 Jun 2017 10:11:10 +0200
-Message-ID: <CAMuHMdX2di4HBN0BzPQiaXJ6XVu8Poyxd3ULeKxfU3qbd_a92w@mail.gmail.com>
-Subject: Re: [PATCH] PCI: rcar-gen2: make of_device_ids const
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:39572 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754497AbdFWJmN (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 23 Jun 2017 05:42:13 -0400
+Date: Fri, 23 Jun 2017 11:41:41 +0200
+From: Simon Horman <horms@verge.net.au>
 To: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-kernel-owner@vger.kernel.org
+Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] PCI: rcar-gen2: make of_device_ids const
+Message-ID: <20170623094141.GB24191@verge.net.au>
+References: <99e5ddc3b23962b22740dc93113d178f6f98df2f.1498210098.git.arvind.yadav.cs@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <99e5ddc3b23962b22740dc93113d178f6f98df2f.1498210098.git.arvind.yadav.cs@gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Jun 23, 2017 at 11:29 AM, Arvind Yadav
-<arvind.yadav.cs@gmail.com> wrote:
+On Fri, Jun 23, 2017 at 02:59:52PM +0530, Arvind Yadav wrote:
 > of_device_ids are not supposed to change at runtime. All functions
 > working with of_device_ids provided by <linux/of.h> work with const
 > of_device_ids. So mark the non-const structs as const.
->
+> 
 > Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
 
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
 
-Gr{oetje,eeting}s,
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> ---
+>  drivers/pci/host/pci-rcar-gen2.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/host/pci-rcar-gen2.c b/drivers/pci/host/pci-rcar-gen2.c
+> index 8534859..6f87968 100644
+> --- a/drivers/pci/host/pci-rcar-gen2.c
+> +++ b/drivers/pci/host/pci-rcar-gen2.c
+> @@ -429,7 +429,7 @@ static int rcar_pci_probe(struct platform_device *pdev)
+>  	return 0;
+>  }
+>  
+> -static struct of_device_id rcar_pci_of_match[] = {
+> +static const struct of_device_id rcar_pci_of_match[] = {
+>  	{ .compatible = "renesas,pci-r8a7790", },
+>  	{ .compatible = "renesas,pci-r8a7791", },
+>  	{ .compatible = "renesas,pci-r8a7794", },
+> -- 
+> 1.9.1
+> 
