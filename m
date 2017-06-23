@@ -1,51 +1,86 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: broonie@kernel.org, hverkuil@xs4all.nl, mattw@codeaurora.org,
-        mitchelh@codeaurora.org, akpm@linux-foundation.org,
-        yamada.masahiro@socionext.com
-Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, chris.paterson2@renesas.com,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH v2 0/2] Avoid namespace collision within macros & tidyup
-Date: Tue, 13 Jun 2017 14:33:46 +0100
-Message-Id: <20170613133348.48044-1-ramesh.shanmugasundaram@bp.renesas.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:48866 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751193AbdFWMEA (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 23 Jun 2017 08:04:00 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
+In-Reply-To: <87injoczta.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1dONJa-0006MX-AO@debutante>
+Date: Fri, 23 Jun 2017 13:03:54 +0100
+Subject: Applied "ASoC: audio-graph-card: tidyup asoc_simple_card_canonicalize_cpu() parameter" to the asoc tree
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi All,
+The patch
 
-The readx_poll_timeout & similar macros defines local variable that can
-cause name space collision with the caller. Fixed this issue by prefixing
-them with underscores. Also tidied couple of instances where the macro
-arguments are used in expressions without paranthesis.
+   ASoC: audio-graph-card: tidyup asoc_simple_card_canonicalize_cpu() parameter
 
-This patchset is based on top of today's linux-next repo.
-commit bc4c75f41a1c ("Add linux-next specific files for 20170613")
+has been applied to the asoc tree at
 
-Change history:
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-v2:
- - iopoll.h:
-	- Enclosed timeout_us & sleep_us arguments with paranthesis
- - regmap.h:
-	- Enclosed timeout_us & sleep_us arguments with paranthesis
-	- Renamed pollret to __ret
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Note: timeout_us cause spare check warning as identified here [1].
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-[1] https://www.mail-archive.com/linux-renesas-soc@vger.kernel.org/msg15138.html
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
 Thanks,
-Ramesh
+Mark
 
-Ramesh Shanmugasundaram (2):
-  iopoll: Avoid namespace collision within macros & tidyup
-  regmap: Avoid namespace collision within macro & tidyup
+>From 47ca9593decee772a48d630af815aabedf99e694 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Thu, 22 Jun 2017 06:21:49 +0000
+Subject: [PATCH] ASoC: audio-graph-card: tidyup
+ asoc_simple_card_canonicalize_cpu() parameter
 
- include/linux/iopoll.h | 12 +++++++-----
- include/linux/regmap.h | 17 +++++++++--------
- 2 files changed, 16 insertions(+), 13 deletions(-)
+asoc_simple_card_canonicalize_cpu() 2nd param is asking CPU component's
+DAI links, not Card links.
+This patch fixup it. Otherwise, audio-graph-card can't handle CPU
+component correctly if CPU has mult-DAIs and Card uses only one of them
 
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/generic/audio-graph-card.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/sound/soc/generic/audio-graph-card.c b/sound/soc/generic/audio-graph-card.c
+index 885b405d7844..ee752f62d89d 100644
+--- a/sound/soc/generic/audio-graph-card.c
++++ b/sound/soc/generic/audio-graph-card.c
+@@ -100,7 +100,6 @@ static int asoc_graph_card_dai_link_of(struct device_node *cpu_port,
+ 	struct graph_dai_props *dai_props = graph_priv_to_props(priv, idx);
+ 	struct asoc_simple_dai *cpu_dai = &dai_props->cpu_dai;
+ 	struct asoc_simple_dai *codec_dai = &dai_props->codec_dai;
+-	struct snd_soc_card *card = graph_priv_to_card(priv);
+ 	struct device_node *cpu_ep    = of_get_next_child(cpu_port, NULL);
+ 	struct device_node *codec_ep = of_graph_get_remote_endpoint(cpu_ep);
+ 	struct device_node *rcpu_ep = of_graph_get_remote_endpoint(codec_ep);
+@@ -162,7 +161,7 @@ static int asoc_graph_card_dai_link_of(struct device_node *cpu_port,
+ 	dai_link->init = asoc_graph_card_dai_init;
+ 
+ 	asoc_simple_card_canonicalize_cpu(dai_link,
+-					  card->num_links == 1);
++		of_graph_get_endpoint_count(dai_link->cpu_of_node) == 1);
+ 
+ dai_link_of_err:
+ 	of_node_put(cpu_ep);
 -- 
-2.12.2
+2.13.1
