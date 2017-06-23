@@ -1,84 +1,54 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Wolfram Sang <wsa@the-dreams.de>
-Subject: [PATCH 4/4] i2c: rcar: check for DMA-capable buffers
-Date: Thu, 15 Jun 2017 20:30:39 +0200
-Message-Id: <20170615183039.22925-5-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170615183039.22925-1-wsa+renesas@sang-engineering.com>
-References: <20170615183039.22925-1-wsa+renesas@sang-engineering.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:35412 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754510AbdFWK3i (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 23 Jun 2017 06:29:38 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 1/6] v4l: vsp1: Remove WPF vertical flip support on VSP2-B[CD] and VSP2-D
+Date: Fri, 23 Jun 2017 13:30:17 +0300
+Message-ID: <2834844.GxJxlkDrrf@avalon>
+In-Reply-To: <e499dfd0-50fd-a45b-6807-a87224d0ddf5@xs4all.nl>
+References: <20170615082409.9523-1-laurent.pinchart+renesas@ideasonboard.com> <3fc0137d-02ce-c9e4-0c82-5fff803b440d@xs4all.nl> <e499dfd0-50fd-a45b-6807-a87224d0ddf5@xs4all.nl>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Handling this is special for this driver. Because the hardware needs to
-initialize the next message in interrupt context, we cannot use the
-i2c_check_msg_for_dma() directly. This helper only works reliably in
-process context. So, we need to check during initial preparation of the
-whole transfer and need to disable DMA completely for the whole transfer
-once a message with a not-DMA-capable buffer is found.
+Hi Hans,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
----
- drivers/i2c/busses/i2c-rcar.c | 18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+On Friday 23 Jun 2017 11:10:45 Hans Verkuil wrote:
+> On 06/19/17 13:18, Hans Verkuil wrote:
+> > On 06/19/2017 01:16 PM, Laurent Pinchart wrote:
+> >> On Thursday 15 Jun 2017 10:53:33 Hans Verkuil wrote:
+> >>> On 06/15/17 10:24, Laurent Pinchart wrote:
+> >>>> The WPF vertical flip is only supported on Gen3 SoCs on the VSP2-I.
+> >>>> Don't enable it on other VSP2 instances.
+> >>>> 
+> >>>> Signed-off-by: Laurent Pinchart
+> >>>> <laurent.pinchart+renesas@ideasonboard.com>
+> >>> 
+> >>> Should this go to older kernels as well? Or is that not needed?
+> >> 
+> >> Now that I have access to the hardware again, after further testing, it
+> >> looks like vertical flip is implemented in the VSP2-B[CD] and VSP2-D
+> >> even though the datasheet states otherwise. Let's ignore this patch for
+> >> now, I'll try to double-check with Renesas.
+> > 
+> > Patches 2-6 are OK, though? If they are, then I'll pick them up.
+> 
+> Ping! Please let me know if patches 2-6 are OK for me to pick up. I'll make
+> a final pull request today, after that they'll be postponed until 4.14.
 
-diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
-index 8be3e6cb8fe686..2b679ba4b75066 100644
---- a/drivers/i2c/busses/i2c-rcar.c
-+++ b/drivers/i2c/busses/i2c-rcar.c
-@@ -111,8 +111,11 @@
- #define ID_ARBLOST	(1 << 3)
- #define ID_NACK		(1 << 4)
- /* persistent flags */
-+#define ID_P_NODMA	(1 << 30)
- #define ID_P_PM_BLOCKED	(1 << 31)
--#define ID_P_MASK	ID_P_PM_BLOCKED
-+#define ID_P_MASK	(ID_P_PM_BLOCKED | ID_P_NODMA)
-+
-+#define RCAR_DMA_THRESHOLD 8
- 
- enum rcar_i2c_type {
- 	I2C_RCAR_GEN1,
-@@ -358,8 +361,7 @@ static void rcar_i2c_dma(struct rcar_i2c_priv *priv)
- 	unsigned char *buf;
- 	int len;
- 
--	/* Do not use DMA if it's not available or for messages < 8 bytes */
--	if (IS_ERR(chan) || msg->len < 8)
-+	if (IS_ERR(chan) || msg->len < RCAR_DMA_THRESHOLD || priv->flags & ID_P_NODMA)
- 		return;
- 
- 	if (read) {
-@@ -657,11 +659,15 @@ static void rcar_i2c_request_dma(struct rcar_i2c_priv *priv,
- 				 struct i2c_msg *msg)
- {
- 	struct device *dev = rcar_i2c_priv_to_dev(priv);
--	bool read;
-+	bool read = msg->flags & I2C_M_RD;
- 	struct dma_chan *chan;
- 	enum dma_transfer_direction dir;
- 
--	read = msg->flags & I2C_M_RD;
-+	/* we need to check here because we need the 'current' context */
-+	if (i2c_check_msg_for_dma(msg, RCAR_DMA_THRESHOLD, NULL) == -EFAULT) {
-+		dev_dbg(dev, "skipping DMA for this whole transfer\n");
-+		priv->flags |= ID_P_NODMA;
-+	}
- 
- 	chan = read ? priv->dma_rx : priv->dma_tx;
- 	if (PTR_ERR(chan) != -EPROBE_DEFER)
-@@ -740,6 +746,8 @@ static int rcar_i2c_master_xfer(struct i2c_adapter *adap,
- 	if (ret < 0 && ret != -ENXIO)
- 		dev_err(dev, "error %d : %x\n", ret, priv->flags);
- 
-+	priv->flags &= ~ID_P_NODMA;
-+
- 	return ret;
- }
- 
+I've received confirmation that the feature is actually implemented. The bug 
+was in the datasheet, not in the driver. I've thus marked the patch as 
+rejected in patchwork.
+
 -- 
-2.11.0
+Regards,
+
+Laurent Pinchart
