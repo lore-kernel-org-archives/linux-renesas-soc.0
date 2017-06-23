@@ -1,60 +1,62 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: linus.walleij@linaro.org, geert+renesas@glider.be,
-        laurent.pinchart@ideasonboard.com, chris.brandt@renesas.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk,
-        aisheng.dong@nxp.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v6 7/8] arm: dts: genmai: Add user led device nodes
-Date: Thu, 22 Jun 2017 16:54:35 +0200
-Message-Id: <1498143276-7976-8-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1498143276-7976-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1498143276-7976-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([88.99.104.3]:41204 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754673AbdFWSrn (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 23 Jun 2017 14:47:43 -0400
+Date: Fri, 23 Jun 2017 20:47:41 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Jean Delvare <jdelvare@suse.de>
+Cc: Linux I2C <linux-i2c@vger.kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2] i2c: algo-bit: add support for I2C_M_STOP
+Message-ID: <20170623184740.figeulice6bw7523@ninjato>
+References: <20170621092402.773a4b14@endymion>
+ <20170621145426.yeourbp3coddjwmu@ninjato>
+ <20170622110630.42eae574@endymion>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="4yzme5aqj46kii2n"
+Content-Disposition: inline
+In-Reply-To: <20170622110630.42eae574@endymion>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add device nodes for user leds on Genmai board.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r7s72100-genmai.dts | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+--4yzme5aqj46kii2n
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm/boot/dts/r7s72100-genmai.dts b/arch/arm/boot/dts/r7s72100-genmai.dts
-index 8b41d83..8e6157b 100644
---- a/arch/arm/boot/dts/r7s72100-genmai.dts
-+++ b/arch/arm/boot/dts/r7s72100-genmai.dts
-@@ -11,6 +11,7 @@
- 
- /dts-v1/;
- #include "r7s72100.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/pinctrl/r7s72100-pinctrl.h>
- 
- / {
-@@ -35,6 +36,19 @@
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 	};
-+
-+	leds {
-+		status = "okay";
-+		compatible = "gpio-leds";
-+
-+		led1 {
-+			gpios = <&port4 10 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		led2 {
-+			gpios = <&port4 11 GPIO_ACTIVE_LOW>;
-+		};
-+	};
- };
- 
- &pinctrl {
--- 
-2.7.4
+
+> > > +					bit_dbg(3, &i2c_adap->dev,
+> > > +						"emitting enforced stop/start condition\n"); =20
+> >=20
+>=20
+> Go ahead, fine with me.
+
+Did so and applied to for-next, thanks!
+
+
+--4yzme5aqj46kii2n
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAllNYkwACgkQFA3kzBSg
+KbanjxAAopyvKqO+QTic9sK97Ubbz4cvmKSs4xtcsMmWh2MWo76fCDnmOwM1iTuI
+dOPNjOGhR2DkKvr2QrChYsYFg6OW3L5XEZ+ITubc2TDTm5W3/ljs6krbgIxAJVEx
+3HKGzmgzdAMLqG9gE3A1hfIG4ePrGJGvWWKT+4236hiNFfykl9mnp9fsLWpcUblt
+fBJ3IVEqSng+0im+ziKNG6g3e5Xob7C3PdhjZgQ8ryd9yN6E8mvw1015SBlxi92Z
+v3ffA/cfn3XbujL2blQPYSKm4GKvV7lFg++ZORvxz9kDj4tHyLOLoDZicnRZmcM0
+UV7cGe66ADpUmAIR+XyC21pj4dNdfGYVivKVyldV5gZdfDZpH64s0owJBBDmgr+C
+Xihsib/SuAVWLfIFQbizTtxC0AZ1YOFZaSQii6gHXAr34N6Q/tQ41H3sCld7vzZ3
+WRSNNbB+p5wZLKJZnxrE5F8WZdOZw1EPm1BQqYOR4jA1raGuOrGX8cUbHXG37leG
+VOLG5bMRcABJETG0tl3g8DFtctLS/wA2Whs+ReoWYCcRkddnlAWxAKp5PLmwFYDc
+n/BSc52vk6dkKszcF8BKqEzvO/+oX3sJSCwfgl31Ht+7AXuZCQT7O5Tx0vSiMGFU
+RhC11clLPEg6CLaR/z6VQbYtfn5kpCgNwj84jFauuZKhz5Wt4Y4=
+=KQWV
+-----END PGP SIGNATURE-----
+
+--4yzme5aqj46kii2n--
