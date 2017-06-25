@@ -1,55 +1,65 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Mon, 19 Jun 2017 16:25:47 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/7] i2c: use proper name for the R-Car SoC
-Message-ID: <20170619142546.aad4w2sx5worijlf@ninjato>
-References: <20170528093051.11816-1-wsa+renesas@sang-engineering.com>
- <20170528093051.11816-3-wsa+renesas@sang-engineering.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:34502 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751359AbdFYVW6 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sun, 25 Jun 2017 17:22:58 -0400
+Subject: Re: [PATCH v3 2/2] v4l: async: add subnotifier registration for
+ subdevices
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        linux-media@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+References: <20170613143036.533-1-niklas.soderlund+renesas@ragnatech.se>
+ <20170613143036.533-3-niklas.soderlund+renesas@ragnatech.se>
+From: Sylwester Nawrocki <snawrocki@kernel.org>
+Message-ID: <78b6c3f2-7b4c-b2ff-aca9-6057b9d60056@kernel.org>
+Date: Sun, 25 Jun 2017 23:22:53 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="mr5z5yhiieyw54wo"
-Content-Disposition: inline
-In-Reply-To: <20170528093051.11816-3-wsa+renesas@sang-engineering.com>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20170613143036.533-3-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On 06/13/2017 04:30 PM, Niklas Söderlund wrote:
+> When the registered() callback of v4l2_subdev_internal_ops is called the
+> subdevice has access to the master devices v4l2_dev and it's called with
+> the async frameworks list_lock held. In this context the subdevice can
+> register its own notifiers to allow for incremental discovery of
+> subdevices.
+> 
+> The master device registers the subdevices closest to itself in its
+> notifier while the subdevice(s) register notifiers for their closest
+> neighboring devices when they are registered. Using this incremental
+> approach two problems can be solved:
+> 
+> 1. The master device no longer has to care how many devices exist in
+>     the pipeline. It only needs to care about its closest subdevice and
+>     arbitrary long pipelines can be created without having to adapt the
+>     master device for each case.
+> 
+> 2. Subdevices which are represented as a single DT node but register
+>     more than one subdevice can use this to improve the pipeline
+>     discovery, since the subdevice driver is the only one who knows which
+>     of its subdevices is linked with which subdevice of a neighboring DT
+>     node.
+> 
+> To enable subdevices to register/unregister notifiers from the
+> registered()/unregistered() callback v4l2_async_subnotifier_register()
+> and v4l2_async_subnotifier_unregister() are added. These new notifier
+> register functions are similar to the master device equivalent functions
+> but run without taking the v4l2-async list_lock which already is held
+> when the registered()/unregistered() callbacks are called.
+> 
+> Signed-off-by: Niklas Söderlund<niklas.soderlund+renesas@ragnatech.se>
+> Acked-by: Hans Verkuil<hans.verkuil@cisco.com>
+> Acked-by: Sakari Ailus<sakari.ailus@linux.intel.com>
 
---mr5z5yhiieyw54wo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sun, May 28, 2017 at 11:30:45AM +0200, Wolfram Sang wrote:
-> It is 'R-Car', not 'RCar'. No code or binding changes, only descriptive t=
-ext.
->=20
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-Applied to for-next, thanks!
-
-
---mr5z5yhiieyw54wo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAllH3uoACgkQFA3kzBSg
-KbZC6BAAoaieZ3MV0L1K0hR1GIXhvRh7wRYQ7hVnTSASkanNT2YcNGsaVDI32jDP
-nONFzZ0s9tix0fF9167E48y24k3b7BEooUIyL4xmHXRU77bV52PTNTlISazy05HO
-/4jVIRolyurZ78q2CZTkFj2eGyYH1Hd+DxdJ4G34PFU3jFyZDtN9oRWfDSwaBRJY
-UozIPAuhs7e0UeKlR9AKnkV+eyFX2squNjzF5yIOXud4Z13YBN8cqN0z/4u/UA+/
-Mp9cDxOEFdFLHj6TqI5fLHkv0EIafegEkE9r2qm3gy/jSXWHe7cVQ0cuEefC/wKT
-d7v/ORG/X4+ZcOcwic66iHko15nYMTNOlInVQSRUskfjMi4ZJxY5kNuicrwsMwQl
-MmNzY2bk3AiXmA1U+2CgyRQyEGAsraJBrM94lkLu6AGGupjcxNdCXhbMZSxT2Db/
-COsWI0C2oYoWzMTErPnNedIl7VsPYyY+wyjuoTqL+5DSaLabvW0KSO7O3ChCev27
-DdRZhkny+/YIzUBBN3oif4Tr4n2zrwbkGcLR/WlZf/pvy/qwvpmAR5Dy2Z1Rr5bg
-F7fLrT31ZZM/8SLDEOsGJsV6G2z4TahbYnd0Gv0KQFQDNC0LJs8gdQUnVa76c1KK
-zwngpcC6Qyrlm3zML0sqsLWmeWF2EfTPzuypRZI8lLGeICjDync=
-=tCGi
------END PGP SIGNATURE-----
-
---mr5z5yhiieyw54wo--
+Acked-by: Sylwester Nawrocki <snawrocki@kernel.org>
