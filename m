@@ -1,66 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:52368 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752819AbdFUJbM (ORCPT
+Received: from mail.kernel.org ([198.145.29.99]:34320 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751390AbdFYVTg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 21 Jun 2017 05:31:12 -0400
-Received: from avalon.bb.dnainternet.fi (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by galahad.ideasonboard.com (Postfix) with ESMTPSA id 8A78B213B5
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 21 Jun 2017 11:30:32 +0200 (CEST)
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 4/7] arm64: dts: renesas: r8a7796: Add HDMI encoder instance
-Date: Wed, 21 Jun 2017 12:31:30 +0300
-Message-Id: <20170621093133.5677-5-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170621093133.5677-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170621093133.5677-1-laurent.pinchart+renesas@ideasonboard.com>
+        Sun, 25 Jun 2017 17:19:36 -0400
+Subject: Re: [PATCH v3 1/2] v4l: async: check for v4l2_dev in
+ v4l2_async_notifier_register()
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        linux-media@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+References: <20170613143036.533-1-niklas.soderlund+renesas@ragnatech.se>
+ <20170613143036.533-2-niklas.soderlund+renesas@ragnatech.se>
+From: Sylwester Nawrocki <snawrocki@kernel.org>
+Message-ID: <13e31393-fabb-4691-64ec-1b5789855884@kernel.org>
+Date: Sun, 25 Jun 2017 23:19:32 +0200
+MIME-Version: 1.0
+In-Reply-To: <20170613143036.533-2-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the HDMI encoder to the R8A7796 DT in disabled state.
+On 06/13/2017 04:30 PM, Niklas Söderlund wrote:
+> Add a check for v4l2_dev to v4l2_async_notifier_register() as to fail as
+> early as possible since this will fail later in v4l2_async_test_notify().
+> 
+> Signed-off-by: Niklas Söderlund<niklas.soderlund+renesas@ragnatech.se>
+> Acked-by: Sakari Ailus<sakari.ailus@linux.intel.com>
+> Acked-by: Hans Verkuil<hans.verkuil@cisco.com>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index ad9cd1c3199f..25e51d20b7ef 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -1532,6 +1532,31 @@
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
- 		};
- 
-+		hdmi0: hdmi0@fead0000 {
-+			compatible = "renesas,r8a7796-hdmi", "renesas,rcar-gen3-hdmi";
-+			reg = <0 0xfead0000 0 0x10000>;
-+			interrupts = <GIC_SPI 389 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 729>, <&cpg CPG_CORE R8A7796_CLK_HDMI>;
-+			clock-names = "iahb", "isfr";
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 729>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				port@0 {
-+					reg = <0>;
-+					dw_hdmi0_in: endpoint {
-+						remote-endpoint = <&du_out_hdmi0>;
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+				};
-+			};
-+		};
-+
- 		du: display@feb00000 {
- 			/* placeholder */
- 
--- 
-Regards,
-
-Laurent Pinchart
+Acked-by: Sylwester Nawrocki <snawrocki@kernel.org>
