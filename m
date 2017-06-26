@@ -1,126 +1,95 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: joro@8bytes.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
-        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
-        m.szyprowski@samsung.com
-Date: Mon, 19 Jun 2017 18:14:27 +0900
-Message-Id: <149786366719.14868.17066498531340464311.sendpatchset@little-apple>
-In-Reply-To: <149786362527.14868.2143461703972595839.sendpatchset@little-apple>
-References: <149786362527.14868.2143461703972595839.sendpatchset@little-apple>
-Subject: [PATCH v4 04/09] iommu/ipmmu-vmsa: Make use of IOMMU_OF_DECLARE()
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 08/14] v4l: vsp1: Add support for new VSP2-BS, VSP2-DL and VSP2-D instances
+Date: Mon, 26 Jun 2017 21:12:20 +0300
+Message-Id: <20170626181226.29575-9-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170626181226.29575-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170626181226.29575-1-laurent.pinchart+renesas@ideasonboard.com>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+New Gen3 SoCs come with two new VSP2 variants names VSP2-BS and VSP2-DL,
+as well as a new VSP2-D variant on V3M and V3H SoCs. Add new entries for
+them in the VSP device info table.
 
-Hook up IOMMU_OF_DECLARE() support in case CONFIG_IOMMU_DMA
-is enabled. The only current supported case for 32-bit ARM
-is disabled, however for 64-bit ARM usage of OF is required.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
+ drivers/media/platform/vsp1/vsp1_drv.c  | 24 ++++++++++++++++++++++++
+ drivers/media/platform/vsp1/vsp1_regs.h | 15 +++++++++++++--
+ 2 files changed, 37 insertions(+), 2 deletions(-)
 
- Changes since V3:
- - Reworked to fit on top of
-   [PATCH 00/04] iommu/ipmmu-vmsa: 32-bit ARM update
+diff --git a/drivers/media/platform/vsp1/vsp1_drv.c b/drivers/media/platform/vsp1/vsp1_drv.c
+index 6a9aeb71aedf..c4f2ac61f7d2 100644
+--- a/drivers/media/platform/vsp1/vsp1_drv.c
++++ b/drivers/media/platform/vsp1/vsp1_drv.c
+@@ -710,6 +710,14 @@ static const struct vsp1_device_info vsp1_device_infos[] = {
+ 		.num_bru_inputs = 5,
+ 		.uapi = true,
+ 	}, {
++		.version = VI6_IP_VERSION_MODEL_VSPBS_GEN3,
++		.model = "VSP2-BS",
++		.gen = 3,
++		.features = VSP1_HAS_BRS,
++		.rpf_count = 2,
++		.wpf_count = 1,
++		.uapi = true,
++	}, {
+ 		.version = VI6_IP_VERSION_MODEL_VSPD_GEN3,
+ 		.model = "VSP2-D",
+ 		.gen = 3,
+@@ -717,6 +725,22 @@ static const struct vsp1_device_info vsp1_device_infos[] = {
+ 		.rpf_count = 5,
+ 		.wpf_count = 2,
+ 		.num_bru_inputs = 5,
++	}, {
++		.version = VI6_IP_VERSION_MODEL_VSPD_V3,
++		.model = "VSP2-D",
++		.gen = 3,
++		.features = VSP1_HAS_BRS | VSP1_HAS_BRU | VSP1_HAS_LIF,
++		.rpf_count = 5,
++		.wpf_count = 1,
++		.num_bru_inputs = 5,
++	}, {
++		.version = VI6_IP_VERSION_MODEL_VSPDL_GEN3,
++		.model = "VSP2-DL",
++		.gen = 3,
++		.features = VSP1_HAS_BRS | VSP1_HAS_BRU | VSP1_HAS_LIF,
++		.rpf_count = 5,
++		.wpf_count = 2,
++		.num_bru_inputs = 5,
+ 	},
+ };
+ 
+diff --git a/drivers/media/platform/vsp1/vsp1_regs.h b/drivers/media/platform/vsp1/vsp1_regs.h
+index 744217e020b9..ab439a60a100 100644
+--- a/drivers/media/platform/vsp1/vsp1_regs.h
++++ b/drivers/media/platform/vsp1/vsp1_regs.h
+@@ -699,9 +699,20 @@
+ #define VI6_IP_VERSION_MODEL_VSPBD_GEN3	(0x15 << 8)
+ #define VI6_IP_VERSION_MODEL_VSPBC_GEN3	(0x16 << 8)
+ #define VI6_IP_VERSION_MODEL_VSPD_GEN3	(0x17 << 8)
++#define VI6_IP_VERSION_MODEL_VSPD_V3	(0x18 << 8)
++#define VI6_IP_VERSION_MODEL_VSPDL_GEN3	(0x19 << 8)
++#define VI6_IP_VERSION_MODEL_VSPBS_GEN3	(0x1a << 8)
+ #define VI6_IP_VERSION_SOC_MASK		(0xff << 0)
+-#define VI6_IP_VERSION_SOC_H		(0x01 << 0)
+-#define VI6_IP_VERSION_SOC_M		(0x02 << 0)
++#define VI6_IP_VERSION_SOC_H2		(0x01 << 0)
++#define VI6_IP_VERSION_SOC_V2H		(0x01 << 0)
++#define VI6_IP_VERSION_SOC_V3M		(0x01 << 0)
++#define VI6_IP_VERSION_SOC_M2		(0x02 << 0)
++#define VI6_IP_VERSION_SOC_M3W		(0x02 << 0)
++#define VI6_IP_VERSION_SOC_V3H		(0x02 << 0)
++#define VI6_IP_VERSION_SOC_H3		(0x03 << 0)
++#define VI6_IP_VERSION_SOC_D3		(0x04 << 0)
++#define VI6_IP_VERSION_SOC_M3N		(0x04 << 0)
++#define VI6_IP_VERSION_SOC_E3		(0x04 << 0)
+ 
+ /* -----------------------------------------------------------------------------
+  * RPF CLUT Registers
+-- 
+Regards,
 
- Changes since V2:
- - Reworked registration code to make use of recently introduced:
-     iommu_device_register()
-     iommu_device_set_ops()
-     iommu_device_set_fwnode()
-
- Changes since V1:
- - Reworked slightly to fit updated patch order and
-   [PATCH v3 00/06] iommu/ipmmu-vmsa: IPMMU multi-arch update V3
-
- drivers/iommu/ipmmu-vmsa.c |   43 +++++++++++++++++++++++++++++++++++++------
- 1 file changed, 37 insertions(+), 6 deletions(-)
-
---- 0019/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2017-06-19 14:03:53.140607110 +0900
-@@ -20,6 +20,7 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
-+#include <linux/of_iommu.h>
- #include <linux/of_platform.h>
- #include <linux/platform_device.h>
- #include <linux/sizes.h>
-@@ -1055,13 +1056,25 @@ static int ipmmu_probe(struct platform_d
- 		ipmmu_device_reset(mmu);
- 	}
- 
--	ret = iommu_device_register(&mmu->iommu);
--	if (ret)
--		return ret;
--
--	iommu_device_set_ops(&mmu->iommu, &ipmmu_ops);
--	iommu_device_set_fwnode(&mmu->iommu, &pdev->dev.of_node->fwnode);
-+	/*
-+	 * Register the IPMMU to the IOMMU subsystem in the following cases:
-+	 * - R-Car Gen2 IPMMU (all devices registered)
-+	 * - R-Car Gen3 IPMMU (leaf devices only - skip root IPMMU-MM device)
-+	 */
-+	if (!mmu->features->has_cache_leaf_nodes || mmu->is_leaf) {
-+		ret = iommu_device_register(&mmu->iommu);
-+		if (ret)
-+			return ret;
- 
-+		iommu_device_set_ops(&mmu->iommu, &ipmmu_ops);
-+		iommu_device_set_fwnode(&mmu->iommu,
-+					&pdev->dev.of_node->fwnode);
-+
-+#if defined(CONFIG_IOMMU_DMA)
-+		if (!iommu_present(&platform_bus_type))
-+			bus_set_iommu(&platform_bus_type, &ipmmu_ops);
-+#endif
-+	}
- 	/*
- 	 * We can't create the ARM mapping here as it requires the bus to have
- 	 * an IOMMU, which only happens when bus_set_iommu() is called in
-@@ -1107,15 +1120,22 @@ static struct platform_driver ipmmu_driv
- 
- static int __init ipmmu_init(void)
- {
-+	static bool setup_done;
- 	int ret;
- 
-+	if (setup_done)
-+		return 0;
-+
- 	ret = platform_driver_register(&ipmmu_driver);
- 	if (ret < 0)
- 		return ret;
- 
-+#if defined(CONFIG_ARM) && !defined(CONFIG_IOMMU_DMA)
- 	if (!iommu_present(&platform_bus_type))
- 		bus_set_iommu(&platform_bus_type, &ipmmu_ops);
-+#endif
- 
-+	setup_done = true;
- 	return 0;
- }
- 
-@@ -1127,6 +1147,17 @@ static void __exit ipmmu_exit(void)
- subsys_initcall(ipmmu_init);
- module_exit(ipmmu_exit);
- 
-+#ifdef CONFIG_IOMMU_DMA
-+static int __init ipmmu_vmsa_iommu_of_setup(struct device_node *np)
-+{
-+	ipmmu_init();
-+	return 0;
-+}
-+
-+IOMMU_OF_DECLARE(ipmmu_vmsa_iommu_of, "renesas,ipmmu-vmsa",
-+		 ipmmu_vmsa_iommu_of_setup);
-+#endif
-+
- MODULE_DESCRIPTION("IOMMU API for Renesas VMSA-compatible IPMMU");
- MODULE_AUTHOR("Laurent Pinchart <laurent.pinchart@ideasonboard.com>");
- MODULE_LICENSE("GPL v2");
+Laurent Pinchart
