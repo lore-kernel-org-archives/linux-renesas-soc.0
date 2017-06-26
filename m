@@ -1,147 +1,81 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: joro@8bytes.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-        sricharan@codeaurora.org, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
-        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
-        m.szyprowski@samsung.com
-Date: Thu, 15 Jun 2017 19:29:27 +0900
-Message-Id: <149752256764.21887.17904093211691192196.sendpatchset@little-apple>
-In-Reply-To: <149752254550.21887.15183665699230243235.sendpatchset@little-apple>
-References: <149752254550.21887.15183665699230243235.sendpatchset@little-apple>
-Subject: [PATCH 02/04] iommu/ipmmu-vmsa: Consistent ->of_xlate() handling
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f68.google.com ([209.85.214.68]:36049 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752392AbdFZTgD (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 26 Jun 2017 15:36:03 -0400
+Received: by mail-it0-f68.google.com with SMTP id 185so986073itv.3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 26 Jun 2017 12:36:03 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <20170621090407.4093-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170621090407.4093-1-laurent.pinchart+renesas@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 26 Jun 2017 21:36:01 +0200
+Message-ID: <CAMuHMdVjHJP7OoN6h2T5-UgReyqb9E2uwgxaAT3zLTBQor0vHw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] drm: rcar-du: Restrict DPLL duty cycle workaround to
+ H3 ES1.x
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Hi Laurent,
 
-The 32-bit ARM code gets updated to make use of ->of_xlate() and the
-code is shared between 64-bit and 32-bit ARM. The of_device_is_available()
-check gets dropped since it is included in of_iommu_xlate().
+On Wed, Jun 21, 2017 at 11:04 AM, Laurent Pinchart
+<laurent.pinchart+renesas@ideasonboard.com> wrote:
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> @@ -158,6 +157,11 @@ static void rcar_du_dpll_divider(struct rcar_du_crtc *rcrtc,
+>                  best_diff);
+>  }
+>
+> +static const struct soc_device_attribute rcar_du_r8a7795_es1[] = {
+> +       { .soc_id = "r8a7795", .revision = "ES1.*" },
+> +       { /* sentinel */ }
+> +};
+> +
+>  static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
+>  {
+>         const struct drm_display_mode *mode = &rcrtc->crtc.state->adjusted_mode;
+> @@ -185,7 +189,20 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
+>
+>                 extclk = clk_get_rate(rcrtc->extclock);
+>                 if (rcdu->info->dpll_ch & (1 << rcrtc->index)) {
+> -                       rcar_du_dpll_divider(rcrtc, &dpll, extclk, mode_clock);
+> +                       unsigned long target = mode_clock;
+> +
+> +                       /*
+> +                        * The H3 ES1.x exhibits dot clock duty cycle stability
+> +                        * issues. We can work around them by configuring the
+> +                        * DPLL to twice the desired frequency, coupled with a
+> +                        * /2 post-divider. This isn't needed on other SoCs and
+> +                        * breaks HDMI output on M3-W for a currently unknown
+> +                        * reason, so restrict the workaround to H3 ES1.x.
+> +                        */
+> +                       if (soc_device_match(rcar_du_r8a7795_es1))
 
-Suggested-by: Robin Murphy <robin.murphy@arm.com>
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
+Matching is done over and over again, on every display enable/resume.
+Can it be done at probe time?
+Or in rcar_du_crtc_create(), which has access to rcrtc?
 
- drivers/iommu/ipmmu-vmsa.c |   51 ++++++++++++++------------------------------
- 1 file changed, 17 insertions(+), 34 deletions(-)
+> +                               target *= 2;
 
---- 0009/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2017-06-15 17:22:27.460607110 +0900
-@@ -680,6 +680,10 @@ static int ipmmu_init_platform_device(st
- 	int num_utlbs;
- 	int ret = -ENODEV;
- 
-+	/* Initialize once - xlate() will call multiple times */
-+	if (to_priv(dev))
-+		return 0;
-+
- 	/* Find the master corresponding to the device. */
- 
- 	num_utlbs = of_count_phandle_with_args(dev->of_node, "iommus",
-@@ -734,6 +738,12 @@ error:
- 	return ret;
- }
- 
-+static int ipmmu_of_xlate(struct device *dev,
-+			  struct of_phandle_args *spec)
-+{
-+	return ipmmu_init_platform_device(dev);
-+}
-+
- #if defined(CONFIG_ARM) && !defined(CONFIG_IOMMU_DMA)
- 
- static struct iommu_domain *ipmmu_domain_alloc(unsigned type)
-@@ -750,11 +760,11 @@ static int ipmmu_add_device(struct devic
- 	struct iommu_group *group;
- 	int ret;
- 
--	if (to_priv(dev)) {
--		dev_warn(dev, "IOMMU driver already assigned to device %s\n",
--			 dev_name(dev));
--		return -EINVAL;
--	}
-+	/*
-+	 * Only let through devices that have been verified in xlate()
-+	 */
-+	if (!to_priv(dev))
-+		return -ENODEV;
- 
- 	/* Create a device group and add the device to it. */
- 	group = iommu_group_alloc();
-@@ -773,10 +783,6 @@ static int ipmmu_add_device(struct devic
- 		goto error;
- 	}
- 
--	ret = ipmmu_init_platform_device(dev);
--	if (ret < 0)
--		goto error;
--
- 	/*
- 	 * Create the ARM mapping, used by the ARM DMA mapping core to allocate
- 	 * VAs. This will allocate a corresponding IOMMU domain.
-@@ -817,24 +823,13 @@ error:
- 	if (!IS_ERR_OR_NULL(group))
- 		iommu_group_remove_device(dev);
- 
--	kfree(to_priv(dev)->utlbs);
--	kfree(to_priv(dev));
--	set_priv(dev, NULL);
--
- 	return ret;
- }
- 
- static void ipmmu_remove_device(struct device *dev)
- {
--	struct ipmmu_vmsa_iommu_priv *priv = to_priv(dev);
--
- 	arm_iommu_detach_device(dev);
- 	iommu_group_remove_device(dev);
--
--	kfree(priv->utlbs);
--	kfree(priv);
--
--	set_priv(dev, NULL);
- }
- 
- static const struct iommu_ops ipmmu_ops = {
-@@ -849,6 +844,7 @@ static const struct iommu_ops ipmmu_ops
- 	.add_device = ipmmu_add_device,
- 	.remove_device = ipmmu_remove_device,
- 	.pgsize_bitmap = SZ_1G | SZ_2M | SZ_4K,
-+	.of_xlate = ipmmu_of_xlate,
- };
- 
- #endif /* !CONFIG_ARM && CONFIG_IOMMU_DMA */
-@@ -958,19 +954,6 @@ static struct iommu_group *ipmmu_find_gr
- 	return group;
- }
- 
--static int ipmmu_of_xlate_dma(struct device *dev,
--			      struct of_phandle_args *spec)
--{
--	/* If the IPMMU device is disabled in DT then return error
--	 * to make sure the of_iommu code does not install ops
--	 * even though the iommu device is disabled
--	 */
--	if (!of_device_is_available(spec->np))
--		return -ENODEV;
--
--	return ipmmu_init_platform_device(dev);
--}
--
- static const struct iommu_ops ipmmu_ops = {
- 	.domain_alloc = ipmmu_domain_alloc_dma,
- 	.domain_free = ipmmu_domain_free_dma,
-@@ -984,7 +967,7 @@ static const struct iommu_ops ipmmu_ops
- 	.remove_device = ipmmu_remove_device_dma,
- 	.device_group = ipmmu_find_group_dma,
- 	.pgsize_bitmap = SZ_1G | SZ_2M | SZ_4K,
--	.of_xlate = ipmmu_of_xlate_dma,
-+	.of_xlate = ipmmu_of_xlate,
- };
- 
- #endif /* CONFIG_IOMMU_DMA */
+You can also store the multiplier in rcar_du_r8a7795_es1.data
+(store 1 in .data of the sentinel), removing the need for an if clause.
+
+> +
+> +                       rcar_du_dpll_divider(rcrtc, &dpll, extclk, target);
+>                         extclk = dpll.output;
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
