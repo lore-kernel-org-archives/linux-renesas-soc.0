@@ -1,120 +1,40 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Kieran Bingham <kbingham@kernel.org>
-To: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se,
-        hans.verkuil@cisco.com,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v6 0/3] ADV748x HDMI/Analog video receiver
-Date: Tue, 27 Jun 2017 16:03:31 +0100
-Message-Id: <cover.13d48bb2ba66a5e11c962c62b1a7b5832b0a2344.1498575029.git-series.kieran.bingham+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f68.google.com ([209.85.214.68]:33356 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751389AbdFZIZ3 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 26 Jun 2017 04:25:29 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20170624101854.27655-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170624101854.27655-1-laurent.pinchart+renesas@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 26 Jun 2017 10:25:27 +0200
+Message-ID: <CAMuHMdWXnYMMatb5Uhz=i8n6yA3W=jNBqrbiez=CgDOstbCTBg@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7795: Add PWM support
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+On Sat, Jun 24, 2017 at 12:18 PM, Laurent Pinchart
+<laurent.pinchart+renesas@ideasonboard.com> wrote:
+> Add pinctrl support for the PWM[0-6] pins.
+>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-This is a driver for the Analog Devices ADV748x device, and follows on from a
-previous posting by Niklas Söderlund [0] of an earlier incarnation of this
-driver, and earlier versions posted by myself.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. queuing in sh-pfc-for-v4.13.
 
-ADV748x
-=======
-The ADV7481 and ADV7482 support two video pipelines which can run independently
-of each other, with each pipeline terminating in a CSI-2 output: TXA (4-Lane)
-and TXB (1-Lane)
+Gr{oetje,eeting}s,
 
-The ADV7480 (Not included here), ADV7481, and ADV7482 are all derivatives,
-with the following features
+                        Geert
 
-            Analog   HDMI  MHL  4-Lane  1-Lane
-              In      In         CSI     CSI
- ADV7480               X    X     X
- ADV7481      X        X    X     X       X
- ADV7482      X        X          X       X
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Implementation
-==============
-
-This driver creates 4 entities. AFE (CVBS/Analog In), HDMI, TXA and TXB.  At
-probe time, the DT is parsed to identify the endpoints for each of these nodes,
-and those are used for async matching of the CSI2 (TXA/TXB) entities in the
-master driver. The HDMI and AFE entities are then registered after a successful
-registration of both the CSI2 entities.
-
-HDMI is statically linked to the TXA entity, while the AFE is statically linked
-to the TXB entity. Routing the AFE through TXA is not supported.
-
-Support for setting the EDID on HDMI is provided
-
-(Known) Future Todo's
-=====================
-
-Further potential development areas include:
- - ADV7480 Support (No AFE)
- - MHL support (Not present on ADV7482)
- - CEC Support
- - Configurable I2C addressing
- - Interrupt handling for format changes and hotplug detect.
-
-However, this driver is functional without the above, and these developments
-can be written when required.
-
-References
-==========
-[0] http://www.mail-archive.com/linux-renesas-soc@vger.kernel.org/msg05196.html
-[1] https://git.ragnatech.se/linux rcar-vin-elinux-v9
-[2] https://www.mail-archive.com/linux-media@vger.kernel.org/msg111332.html
-
-v1/RFC:
- - Initial posting
-
-v2:
- - Reworked DT parsing and entities
-
-v3:
- - Refreshed with lots of fixups from Sakari's review comments
-
-v4:
- - Many changes all round, following Laurent's review and extensive development
- - Now uses regmap
- - AFE port numbering has been changed to match the entity pads
-
-v5:
- - DT is now based on the latest salvator-common.dtsi
- - Entities are linked with immutable connections
-
-v6:
- - EDID support added to HDMI
- - AFE no longer autodetects input format by default.
-
-Kieran Bingham (3):
-  media: adv748x: Add adv7181, adv7182 bindings
-  media: i2c: adv748x: add adv748x driver
-  MAINTAINERS: Add ADV748x driver
-
- Documentation/devicetree/bindings/media/i2c/adv748x.txt |  95 +-
- MAINTAINERS                                             |   6 +-
- drivers/media/i2c/Kconfig                               |  11 +-
- drivers/media/i2c/Makefile                              |   1 +-
- drivers/media/i2c/adv748x/Makefile                      |   7 +-
- drivers/media/i2c/adv748x/adv748x-afe.c                 | 545 ++++++-
- drivers/media/i2c/adv748x/adv748x-core.c                | 831 +++++++++-
- drivers/media/i2c/adv748x/adv748x-csi2.c                | 327 ++++-
- drivers/media/i2c/adv748x/adv748x-hdmi.c                | 769 ++++++++-
- drivers/media/i2c/adv748x/adv748x.h                     | 425 +++++-
- 10 files changed, 3017 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/i2c/adv748x.txt
- create mode 100644 drivers/media/i2c/adv748x/Makefile
- create mode 100644 drivers/media/i2c/adv748x/adv748x-afe.c
- create mode 100644 drivers/media/i2c/adv748x/adv748x-core.c
- create mode 100644 drivers/media/i2c/adv748x/adv748x-csi2.c
- create mode 100644 drivers/media/i2c/adv748x/adv748x-hdmi.c
- create mode 100644 drivers/media/i2c/adv748x/adv748x.h
-
-base-commit: 2748e76ddb2967c4030171342ebdd3faa6a5e8e8
--- 
-git-series 0.9.1
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
