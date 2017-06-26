@@ -1,474 +1,515 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:33233 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752753AbdF0KTl (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Jun 2017 06:19:41 -0400
-Subject: Re: [PATCH V3 2/2] mfd: Add ROHM BD9571MWV-M MFD PMIC driver
-To: linux-renesas-soc@vger.kernel.org
-References: <20170502121816.10572-1-marek.vasut+renesas@gmail.com>
- <20170502121816.10572-2-marek.vasut+renesas@gmail.com>
-Cc: lee.jones@linaro.org, Marek Vasut <marek.vasut+renesas@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-From: Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <d3a9005c-aa31-24d3-7cec-eb8ac97e2ad9@gmail.com>
-Date: Tue, 27 Jun 2017 11:54:52 +0200
-MIME-Version: 1.0
-In-Reply-To: <20170502121816.10572-2-marek.vasut+renesas@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 10/14] v4l: vsp1: Add support for multiple DRM pipelines
+Date: Mon, 26 Jun 2017 21:12:22 +0300
+Message-Id: <20170626181226.29575-11-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170626181226.29575-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170626181226.29575-1-laurent.pinchart+renesas@ideasonboard.com>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 05/02/2017 02:18 PM, Marek Vasut wrote:
-> Add the MFD part of the ROHM BD9571MWV-M PMIC driver and MAINTAINERS
-> entry. The MFD part only specifies the regmap bits for the PMIC and
-> binds the subdevs together.
-> 
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: linux-kernel@vger.kernel.org
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Lee Jones <lee.jones@linaro.org>
+The R-Car H3 ES2.0 VSP-DL instance has two LIF entities and can drive
+two display pipelines at the same time. Refactor the VSP DRM code to
+support that by introducing a vsp_drm_pipeline object that models one
+display pipeline.
 
-Lee, bump, do you plan to apply these patches anytime soon ?
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ drivers/media/platform/vsp1/vsp1_drm.c | 200 ++++++++++++++++++++-------------
+ drivers/media/platform/vsp1/vsp1_drm.h |  35 +++---
+ 2 files changed, 141 insertions(+), 94 deletions(-)
 
-> ---
-> V2: - Change BD9571MWV_AVS_VD09_VID0,1,2,3 to BD9571MWV_AVS_VD09_VID(n)
->     - Change BD9571MWV_AVS_DVFS_VID0,1,2,3 to BD9571MWV_AVS_DVFS_VID(n)
->     - Make the AVS_VD09 range RW, so it can be used by the regulator
->       driver for the VD09 regulator
->     - Report the regmap read return values when attempting to read ID
->       registers fails
-> V3: No change
-> ---
->  MAINTAINERS                   |  11 ++
->  drivers/mfd/Kconfig           |  13 +++
->  drivers/mfd/Makefile          |   1 +
->  drivers/mfd/bd9571mwv.c       | 230 ++++++++++++++++++++++++++++++++++++++++++
->  include/linux/mfd/bd9571mwv.h | 115 +++++++++++++++++++++
->  5 files changed, 370 insertions(+)
->  create mode 100644 drivers/mfd/bd9571mwv.c
->  create mode 100644 include/linux/mfd/bd9571mwv.h
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 2a9aa4be5846..9c30e6b00358 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -10942,6 +10942,17 @@ L:	linux-serial@vger.kernel.org
->  S:	Odd Fixes
->  F:	drivers/tty/serial/rp2.*
->  
-> +ROHM MULTIFUNCTION BD9571MWV-M PMIC DEVICE DRIVERS
-> +M:	Marek Vasut <marek.vasut+renesas@gmail.com>
-> +L:	linux-kernel@vger.kernel.org
-> +L:	linux-renesas-soc@vger.kernel.org
-> +S:	Supported
-> +F:	drivers/mfd/bd9571mwv.c
-> +F:	drivers/regulator/bd9571mwv-regulator.c
-> +F:	drivers/gpio/gpio-bd9571mwv.c
-> +F:	include/linux/mfd/bd9571mwv.h
-> +F:	Documentation/devicetree/bindings/mfd/bd9571mwv.txt
-> +
->  ROSE NETWORK LAYER
->  M:	Ralf Baechle <ralf@linux-mips.org>
->  L:	linux-hams@vger.kernel.org
-> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> index 3eb5c93595f6..6f4668ae28cc 100644
-> --- a/drivers/mfd/Kconfig
-> +++ b/drivers/mfd/Kconfig
-> @@ -133,6 +133,19 @@ config MFD_BCM590XX
->  	help
->  	  Support for the BCM590xx PMUs from Broadcom
->  
-> +config MFD_BD9571MWV
-> +	tristate "ROHM BD9571MWV PMIC"
-> +	select MFD_CORE
-> +	select REGMAP_I2C
-> +	depends on I2C
-> +	help
-> +	  Support for the ROHM BD9571MWV PMIC, which contains single
-> +	  voltage regulator, voltage sampling units, GPIO block and
-> +	  watchdog block.
-> +
-> +	  This driver can also be built as a module. If so, the module
-> +	  will be called bd9571mwv.
-> +
->  config MFD_AC100
->  	tristate "X-Powers AC100"
->  	select MFD_CORE
-> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-> index c16bf1ea0ea9..3cacc9748e13 100644
-> --- a/drivers/mfd/Makefile
-> +++ b/drivers/mfd/Makefile
-> @@ -10,6 +10,7 @@ obj-$(CONFIG_MFD_ACT8945A)	+= act8945a.o
->  obj-$(CONFIG_MFD_SM501)		+= sm501.o
->  obj-$(CONFIG_MFD_ASIC3)		+= asic3.o tmio_core.o
->  obj-$(CONFIG_MFD_BCM590XX)	+= bcm590xx.o
-> +obj-$(CONFIG_MFD_BD9571MWV)	+= bd9571mwv.o
->  cros_ec_core-objs		:= cros_ec.o
->  cros_ec_core-$(CONFIG_ACPI)	+= cros_ec_acpi_gpe.o
->  obj-$(CONFIG_MFD_CROS_EC)	+= cros_ec_core.o
-> diff --git a/drivers/mfd/bd9571mwv.c b/drivers/mfd/bd9571mwv.c
-> new file mode 100644
-> index 000000000000..64e088dfe7b0
-> --- /dev/null
-> +++ b/drivers/mfd/bd9571mwv.c
-> @@ -0,0 +1,230 @@
-> +/*
-> + * ROHM BD9571MWV-M MFD driver
-> + *
-> + * Copyright (C) 2017 Marek Vasut <marek.vasut+renesas@gmail.com>
-> + *
-> + * This program is free software; you can redistribute it and/or
-> + * modify it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + *
-> + * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-> + * kind, whether expressed or implied; without even the implied warranty
-> + * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License version 2 for more details.
-> + *
-> + * Based on the TPS65086 driver
-> + */
-> +
-> +#include <linux/i2c.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/mfd/core.h>
-> +#include <linux/module.h>
-> +
-> +#include <linux/mfd/bd9571mwv.h>
-> +
-> +static const struct mfd_cell bd9571mwv_cells[] = {
-> +	{ .name = "bd9571mwv-regulator", },
-> +	{ .name = "bd9571mwv-gpio", },
-> +};
-> +
-> +static const struct regmap_range bd9571mwv_readable_yes_ranges[] = {
-> +	regmap_reg_range(BD9571MWV_VENDOR_CODE, BD9571MWV_PRODUCT_REVISION),
-> +	regmap_reg_range(BD9571MWV_AVS_SET_MONI, BD9571MWV_AVS_DVFS_VID(3)),
-> +	regmap_reg_range(BD9571MWV_VD18_VID, BD9571MWV_VD33_VID),
-> +	regmap_reg_range(BD9571MWV_DVFS_VINIT, BD9571MWV_DVFS_VINIT),
-> +	regmap_reg_range(BD9571MWV_DVFS_SETVMAX, BD9571MWV_DVFS_MONIVDAC),
-> +	regmap_reg_range(BD9571MWV_GPIO_IN, BD9571MWV_GPIO_IN),
-> +	regmap_reg_range(BD9571MWV_GPIO_INT, BD9571MWV_GPIO_INTMASK),
-> +	regmap_reg_range(BD9571MWV_INT_INTREQ, BD9571MWV_INT_INTMASK),
-> +};
-> +
-> +static const struct regmap_access_table bd9571mwv_readable_table = {
-> +	.yes_ranges	= bd9571mwv_readable_yes_ranges,
-> +	.n_yes_ranges	= ARRAY_SIZE(bd9571mwv_readable_yes_ranges),
-> +};
-> +
-> +static const struct regmap_range bd9571mwv_writable_yes_ranges[] = {
-> +	regmap_reg_range(BD9571MWV_AVS_VD09_VID(0), BD9571MWV_AVS_VD09_VID(3)),
-> +	regmap_reg_range(BD9571MWV_DVFS_SETVID, BD9571MWV_DVFS_SETVID),
-> +	regmap_reg_range(BD9571MWV_GPIO_DIR, BD9571MWV_GPIO_OUT),
-> +	regmap_reg_range(BD9571MWV_GPIO_INT_SET, BD9571MWV_GPIO_INTMASK),
-> +	regmap_reg_range(BD9571MWV_INT_INTREQ, BD9571MWV_INT_INTMASK),
-> +};
-> +
-> +static const struct regmap_access_table bd9571mwv_writable_table = {
-> +	.yes_ranges	= bd9571mwv_writable_yes_ranges,
-> +	.n_yes_ranges	= ARRAY_SIZE(bd9571mwv_writable_yes_ranges),
-> +};
-> +
-> +static const struct regmap_range bd9571mwv_volatile_yes_ranges[] = {
-> +	regmap_reg_range(BD9571MWV_GPIO_IN, BD9571MWV_GPIO_IN),
-> +	regmap_reg_range(BD9571MWV_GPIO_INT, BD9571MWV_GPIO_INT),
-> +	regmap_reg_range(BD9571MWV_INT_INTREQ, BD9571MWV_INT_INTREQ),
-> +};
-> +
-> +static const struct regmap_access_table bd9571mwv_volatile_table = {
-> +	.yes_ranges	= bd9571mwv_volatile_yes_ranges,
-> +	.n_yes_ranges	= ARRAY_SIZE(bd9571mwv_volatile_yes_ranges),
-> +};
-> +
-> +static const struct regmap_config bd9571mwv_regmap_config = {
-> +	.reg_bits	= 8,
-> +	.val_bits	= 8,
-> +	.cache_type	= REGCACHE_RBTREE,
-> +	.rd_table	= &bd9571mwv_readable_table,
-> +	.wr_table	= &bd9571mwv_writable_table,
-> +	.volatile_table	= &bd9571mwv_volatile_table,
-> +	.max_register	= 0xff,
-> +};
-> +
-> +static const struct regmap_irq bd9571mwv_irqs[] = {
-> +	REGMAP_IRQ_REG(BD9571MWV_IRQ_MD1, 0,
-> +		       BD9571MWV_INT_INTREQ_MD1_INT),
-> +	REGMAP_IRQ_REG(BD9571MWV_IRQ_MD2_E1, 0,
-> +		       BD9571MWV_INT_INTREQ_MD2_E1_INT),
-> +	REGMAP_IRQ_REG(BD9571MWV_IRQ_MD2_E2, 0,
-> +		       BD9571MWV_INT_INTREQ_MD2_E2_INT),
-> +	REGMAP_IRQ_REG(BD9571MWV_IRQ_PROT_ERR, 0,
-> +		       BD9571MWV_INT_INTREQ_PROT_ERR_INT),
-> +	REGMAP_IRQ_REG(BD9571MWV_IRQ_GP, 0,
-> +		       BD9571MWV_INT_INTREQ_GP_INT),
-> +	REGMAP_IRQ_REG(BD9571MWV_IRQ_128H_OF, 0,
-> +		       BD9571MWV_INT_INTREQ_128H_OF_INT),
-> +	REGMAP_IRQ_REG(BD9571MWV_IRQ_WDT_OF, 0,
-> +		       BD9571MWV_INT_INTREQ_WDT_OF_INT),
-> +	REGMAP_IRQ_REG(BD9571MWV_IRQ_BKUP_TRG, 0,
-> +		       BD9571MWV_INT_INTREQ_BKUP_TRG_INT),
-> +};
-> +
-> +static struct regmap_irq_chip bd9571mwv_irq_chip = {
-> +	.name		= "bd9571mwv",
-> +	.status_base	= BD9571MWV_INT_INTREQ,
-> +	.mask_base	= BD9571MWV_INT_INTMASK,
-> +	.ack_base	= BD9571MWV_INT_INTREQ,
-> +	.init_ack_masked = true,
-> +	.num_regs	= 1,
-> +	.irqs		= bd9571mwv_irqs,
-> +	.num_irqs	= ARRAY_SIZE(bd9571mwv_irqs),
-> +};
-> +
-> +static int bd9571mwv_identify(struct bd9571mwv *bd)
-> +{
-> +	struct device *dev = bd->dev;
-> +	unsigned int value;
-> +	int ret;
-> +
-> +	ret = regmap_read(bd->regmap, BD9571MWV_VENDOR_CODE, &value);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to read vendor code register (ret=%i)\n",
-> +			ret);
-> +		return ret;
-> +	}
-> +
-> +	if (value != BD9571MWV_VENDOR_CODE_VAL) {
-> +		dev_err(dev, "Invalid vendor code ID %02x (expected %02x)\n",
-> +			value, BD9571MWV_VENDOR_CODE_VAL);
-> +		return -EINVAL;
-> +	}
-> +
-> +	ret = regmap_read(bd->regmap, BD9571MWV_PRODUCT_CODE, &value);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to read product code register (ret=%i)\n",
-> +			ret);
-> +		return ret;
-> +	}
-> +
-> +	if (value != BD9571MWV_PRODUCT_CODE_VAL) {
-> +		dev_err(dev, "Invalid product code ID %02x (expected %02x)\n",
-> +			value, BD9571MWV_PRODUCT_CODE_VAL);
-> +		return -EINVAL;
-> +	}
-> +
-> +	ret = regmap_read(bd->regmap, BD9571MWV_PRODUCT_REVISION, &value);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to read revision register (ret=%i)\n",
-> +			ret);
-> +		return ret;
-> +	}
-> +
-> +	dev_info(dev, "Device: BD9571MWV rev. %d\n", value & 0xff);
-> +
-> +	return 0;
-> +}
-> +
-> +static int bd9571mwv_probe(struct i2c_client *client,
-> +			  const struct i2c_device_id *ids)
-> +{
-> +	struct bd9571mwv *bd;
-> +	int ret;
-> +
-> +	bd = devm_kzalloc(&client->dev, sizeof(*bd), GFP_KERNEL);
-> +	if (!bd)
-> +		return -ENOMEM;
-> +
-> +	i2c_set_clientdata(client, bd);
-> +	bd->dev = &client->dev;
-> +	bd->irq = client->irq;
-> +
-> +	bd->regmap = devm_regmap_init_i2c(client, &bd9571mwv_regmap_config);
-> +	if (IS_ERR(bd->regmap)) {
-> +		dev_err(bd->dev, "Failed to initialize register map\n");
-> +		return PTR_ERR(bd->regmap);
-> +	}
-> +
-> +	ret = bd9571mwv_identify(bd);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_add_irq_chip(bd->regmap, bd->irq, IRQF_ONESHOT, 0,
-> +				  &bd9571mwv_irq_chip, &bd->irq_data);
-> +	if (ret) {
-> +		dev_err(bd->dev, "Failed to register IRQ chip\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = mfd_add_devices(bd->dev, PLATFORM_DEVID_AUTO, bd9571mwv_cells,
-> +			      ARRAY_SIZE(bd9571mwv_cells), NULL, 0,
-> +			      regmap_irq_get_domain(bd->irq_data));
-> +	if (ret) {
-> +		regmap_del_irq_chip(bd->irq, bd->irq_data);
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int bd9571mwv_remove(struct i2c_client *client)
-> +{
-> +	struct bd9571mwv *bd = i2c_get_clientdata(client);
-> +
-> +	regmap_del_irq_chip(bd->irq, bd->irq_data);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct of_device_id bd9571mwv_of_match_table[] = {
-> +	{ .compatible = "rohm,bd9571mwv", },
-> +	{ /* sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(of, bd9571mwv_of_match_table);
-> +
-> +static const struct i2c_device_id bd9571mwv_id_table[] = {
-> +	{ "bd9571mwv", 0 },
-> +	{ /* sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(i2c, bd9571mwv_id_table);
-> +
-> +static struct i2c_driver bd9571mwv_driver = {
-> +	.driver		= {
-> +		.name	= "bd9571mwv",
-> +		.of_match_table = bd9571mwv_of_match_table,
-> +	},
-> +	.probe		= bd9571mwv_probe,
-> +	.remove		= bd9571mwv_remove,
-> +	.id_table       = bd9571mwv_id_table,
-> +};
-> +module_i2c_driver(bd9571mwv_driver);
-> +
-> +MODULE_AUTHOR("Marek Vasut <marek.vasut+renesas@gmail.com>");
-> +MODULE_DESCRIPTION("BD9571MWV PMIC Driver");
-> +MODULE_LICENSE("GPL v2");
-> diff --git a/include/linux/mfd/bd9571mwv.h b/include/linux/mfd/bd9571mwv.h
-> new file mode 100644
-> index 000000000000..f0708ba4cbba
-> --- /dev/null
-> +++ b/include/linux/mfd/bd9571mwv.h
-> @@ -0,0 +1,115 @@
-> +/*
-> + * ROHM BD9571MWV-M driver
-> + *
-> + * Copyright (C) 2017 Marek Vasut <marek.vasut+renesas@gmail.com>
-> + *
-> + * This program is free software; you can redistribute it and/or
-> + * modify it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + *
-> + * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-> + * kind, whether expressed or implied; without even the implied warranty
-> + * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License version 2 for more details.
-> + *
-> + * Based on the TPS65086 driver
-> + */
-> +
-> +#ifndef __LINUX_MFD_BD9571MWV_H
-> +#define __LINUX_MFD_BD9571MWV_H
-> +
-> +#include <linux/device.h>
-> +#include <linux/regmap.h>
-> +
-> +/* List of registers for BD9571MWV */
-> +#define BD9571MWV_VENDOR_CODE			0x00
-> +#define BD9571MWV_VENDOR_CODE_VAL		0xdb
-> +#define BD9571MWV_PRODUCT_CODE			0x01
-> +#define BD9571MWV_PRODUCT_CODE_VAL		0x60
-> +#define BD9571MWV_PRODUCT_REVISION		0x02
-> +
-> +#define BD9571MWV_I2C_FUSA_MODE			0x10
-> +#define BD9571MWV_I2C_MD2_E1_BIT_1		0x11
-> +#define BD9571MWV_I2C_MD2_E1_BIT_2		0x12
-> +
-> +#define BD9571MWV_BKUP_MODE_CNT			0x20
-> +#define BD9571MWV_BKUP_MODE_STATUS		0x21
-> +#define BD9571MWV_BKUP_RECOVERY_CNT		0x22
-> +#define BD9571MWV_BKUP_CTRL_TIM_CNT		0x23
-> +#define BD9571MWV_WAITBKUP_WDT_CNT		0x24
-> +#define BD9571MWV_128H_TIM_CNT			0x26
-> +#define BD9571MWV_QLLM_CNT			0x27
-> +
-> +#define BD9571MWV_AVS_SET_MONI			0x31
-> +#define BD9571MWV_AVS_SET_MONI_MASK		0x3
-> +#define BD9571MWV_AVS_VD09_VID(n)		(0x32 + (n))
-> +#define BD9571MWV_AVS_DVFS_VID(n)		(0x36 + (n))
-> +
-> +#define BD9571MWV_VD18_VID			0x42
-> +#define BD9571MWV_VD25_VID			0x43
-> +#define BD9571MWV_VD33_VID			0x44
-> +
-> +#define BD9571MWV_DVFS_VINIT			0x50
-> +#define BD9571MWV_DVFS_SETVMAX			0x52
-> +#define BD9571MWV_DVFS_BOOSTVID			0x53
-> +#define BD9571MWV_DVFS_SETVID			0x54
-> +#define BD9571MWV_DVFS_MONIVDAC			0x55
-> +#define BD9571MWV_DVFS_PGD_CNT			0x56
-> +
-> +#define BD9571MWV_GPIO_DIR			0x60
-> +#define BD9571MWV_GPIO_OUT			0x61
-> +#define BD9571MWV_GPIO_IN			0x62
-> +#define BD9571MWV_GPIO_DEB			0x63
-> +#define BD9571MWV_GPIO_INT_SET			0x64
-> +#define BD9571MWV_GPIO_INT			0x65
-> +#define BD9571MWV_GPIO_INTMASK			0x66
-> +
-> +#define BD9571MWV_REG_KEEP(n)			(0x70 + (n))
-> +
-> +#define BD9571MWV_PMIC_INTERNAL_STATUS		0x80
-> +#define BD9571MWV_PROT_ERROR_STATUS0		0x81
-> +#define BD9571MWV_PROT_ERROR_STATUS1		0x82
-> +#define BD9571MWV_PROT_ERROR_STATUS2		0x83
-> +#define BD9571MWV_PROT_ERROR_STATUS3		0x84
-> +#define BD9571MWV_PROT_ERROR_STATUS4		0x85
-> +
-> +#define BD9571MWV_INT_INTREQ			0x90
-> +#define BD9571MWV_INT_INTREQ_MD1_INT		BIT(0)
-> +#define BD9571MWV_INT_INTREQ_MD2_E1_INT		BIT(1)
-> +#define BD9571MWV_INT_INTREQ_MD2_E2_INT		BIT(2)
-> +#define BD9571MWV_INT_INTREQ_PROT_ERR_INT	BIT(3)
-> +#define BD9571MWV_INT_INTREQ_GP_INT		BIT(4)
-> +#define BD9571MWV_INT_INTREQ_128H_OF_INT	BIT(5)
-> +#define BD9571MWV_INT_INTREQ_WDT_OF_INT		BIT(6)
-> +#define BD9571MWV_INT_INTREQ_BKUP_TRG_INT	BIT(7)
-> +#define BD9571MWV_INT_INTMASK			0x91
-> +
-> +#define BD9571MWV_ACCESS_KEY			0xff
-> +
-> +/* Define the BD9571MWV IRQ numbers */
-> +enum bd9571mwv_irqs {
-> +	BD9571MWV_IRQ_MD1,
-> +	BD9571MWV_IRQ_MD2_E1,
-> +	BD9571MWV_IRQ_MD2_E2,
-> +	BD9571MWV_IRQ_PROT_ERR,
-> +	BD9571MWV_IRQ_GP,
-> +	BD9571MWV_IRQ_128H_OF,
-> +	BD9571MWV_IRQ_WDT_OF,
-> +	BD9571MWV_IRQ_BKUP_TRG,
-> +};
-> +
-> +/**
-> + * struct bd9571mwv - state holder for the bd9571mwv driver
-> + *
-> + * Device data may be used to access the BD9571MWV chip
-> + */
-> +struct bd9571mwv {
-> +	struct device *dev;
-> +	struct regmap *regmap;
-> +
-> +	/* IRQ Data */
-> +	int irq;
-> +	struct regmap_irq_chip_data *irq_data;
-> +};
-> +
-> +#endif /* __LINUX_MFD_BD9571MWV_H */
-> 
-
-
+diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
+index 4e1b893e8f51..7791d7b5a743 100644
+--- a/drivers/media/platform/vsp1/vsp1_drm.c
++++ b/drivers/media/platform/vsp1/vsp1_drm.c
+@@ -34,10 +34,10 @@
+ 
+ static void vsp1_du_pipeline_frame_end(struct vsp1_pipeline *pipe)
+ {
+-	struct vsp1_drm *drm = to_vsp1_drm(pipe);
++	struct vsp1_drm_pipeline *drm_pipe = to_vsp1_drm_pipeline(pipe);
+ 
+-	if (drm->du_complete)
+-		drm->du_complete(drm->du_private);
++	if (drm_pipe->du_complete)
++		drm_pipe->du_complete(drm_pipe->du_private);
+ }
+ 
+ /* -----------------------------------------------------------------------------
+@@ -80,15 +80,22 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
+ 		      const struct vsp1_du_lif_config *cfg)
+ {
+ 	struct vsp1_device *vsp1 = dev_get_drvdata(dev);
+-	struct vsp1_pipeline *pipe = &vsp1->drm->pipe;
+-	struct vsp1_bru *bru = vsp1->bru;
++	struct vsp1_drm_pipeline *drm_pipe;
++	struct vsp1_pipeline *pipe;
++	struct vsp1_bru *bru;
+ 	struct v4l2_subdev_format format;
++	const char *bru_name;
+ 	unsigned int i;
+ 	int ret;
+ 
+-	if (pipe_index > 0)
++	if (pipe_index >= vsp1->info->lif_count)
+ 		return -EINVAL;
+ 
++	drm_pipe = &vsp1->drm->pipe[pipe_index];
++	pipe = &drm_pipe->pipe;
++	bru = to_bru(&pipe->bru->subdev);
++	bru_name = pipe->bru->type == VSP1_ENTITY_BRU ? "BRU" : "BRS";
++
+ 	if (!cfg) {
+ 		/*
+ 		 * NULL configuration means the CRTC is being disabled, stop
+@@ -100,14 +107,25 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
+ 
+ 		media_pipeline_stop(&pipe->output->entity.subdev.entity);
+ 
+-		for (i = 0; i < bru->entity.source_pad; ++i) {
+-			vsp1->drm->inputs[i].enabled = false;
+-			bru->inputs[i].rpf = NULL;
++		for (i = 0; i < ARRAY_SIZE(pipe->inputs); ++i) {
++			struct vsp1_rwpf *rpf = pipe->inputs[i];
++
++			if (!rpf)
++				continue;
++
++			/*
++			 * Remove the RPF from the pipe and the list of BRU
++			 * inputs.
++			 */
++			WARN_ON(list_empty(&rpf->entity.list_pipe));
++			list_del_init(&rpf->entity.list_pipe);
+ 			pipe->inputs[i] = NULL;
++
++			bru->inputs[rpf->bru_input].rpf = NULL;
+ 		}
+ 
++		drm_pipe->du_complete = NULL;
+ 		pipe->num_inputs = 0;
+-		vsp1->drm->du_complete = NULL;
+ 
+ 		vsp1_dlm_reset(pipe->output->dlm);
+ 		vsp1_device_put(vsp1);
+@@ -117,8 +135,8 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
+ 		return 0;
+ 	}
+ 
+-	dev_dbg(vsp1->dev, "%s: configuring LIF with format %ux%u\n",
+-		__func__, cfg->width, cfg->height);
++	dev_dbg(vsp1->dev, "%s: configuring LIF%u with format %ux%u\n",
++		__func__, pipe_index, cfg->width, cfg->height);
+ 
+ 	/*
+ 	 * Configure the format at the BRU sinks and propagate it through the
+@@ -127,7 +145,7 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
+ 	memset(&format, 0, sizeof(format));
+ 	format.which = V4L2_SUBDEV_FORMAT_ACTIVE;
+ 
+-	for (i = 0; i < bru->entity.source_pad; ++i) {
++	for (i = 0; i < pipe->bru->source_pad; ++i) {
+ 		format.pad = i;
+ 
+ 		format.format.width = cfg->width;
+@@ -135,60 +153,60 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
+ 		format.format.code = MEDIA_BUS_FMT_ARGB8888_1X32;
+ 		format.format.field = V4L2_FIELD_NONE;
+ 
+-		ret = v4l2_subdev_call(&bru->entity.subdev, pad,
++		ret = v4l2_subdev_call(&pipe->bru->subdev, pad,
+ 				       set_fmt, NULL, &format);
+ 		if (ret < 0)
+ 			return ret;
+ 
+-		dev_dbg(vsp1->dev, "%s: set format %ux%u (%x) on BRU pad %u\n",
++		dev_dbg(vsp1->dev, "%s: set format %ux%u (%x) on %s pad %u\n",
+ 			__func__, format.format.width, format.format.height,
+-			format.format.code, i);
++			format.format.code, bru_name, i);
+ 	}
+ 
+-	format.pad = bru->entity.source_pad;
++	format.pad = pipe->bru->source_pad;
+ 	format.format.width = cfg->width;
+ 	format.format.height = cfg->height;
+ 	format.format.code = MEDIA_BUS_FMT_ARGB8888_1X32;
+ 	format.format.field = V4L2_FIELD_NONE;
+ 
+-	ret = v4l2_subdev_call(&bru->entity.subdev, pad, set_fmt, NULL,
++	ret = v4l2_subdev_call(&pipe->bru->subdev, pad, set_fmt, NULL,
+ 			       &format);
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	dev_dbg(vsp1->dev, "%s: set format %ux%u (%x) on BRU pad %u\n",
++	dev_dbg(vsp1->dev, "%s: set format %ux%u (%x) on %s pad %u\n",
+ 		__func__, format.format.width, format.format.height,
+-		format.format.code, i);
++		format.format.code, bru_name, i);
+ 
+ 	format.pad = RWPF_PAD_SINK;
+-	ret = v4l2_subdev_call(&vsp1->wpf[0]->entity.subdev, pad, set_fmt, NULL,
++	ret = v4l2_subdev_call(&pipe->output->entity.subdev, pad, set_fmt, NULL,
+ 			       &format);
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	dev_dbg(vsp1->dev, "%s: set format %ux%u (%x) on WPF0 sink\n",
++	dev_dbg(vsp1->dev, "%s: set format %ux%u (%x) on WPF%u sink\n",
+ 		__func__, format.format.width, format.format.height,
+-		format.format.code);
++		format.format.code, pipe->output->entity.index);
+ 
+ 	format.pad = RWPF_PAD_SOURCE;
+-	ret = v4l2_subdev_call(&vsp1->wpf[0]->entity.subdev, pad, get_fmt, NULL,
++	ret = v4l2_subdev_call(&pipe->output->entity.subdev, pad, get_fmt, NULL,
+ 			       &format);
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	dev_dbg(vsp1->dev, "%s: got format %ux%u (%x) on WPF0 source\n",
++	dev_dbg(vsp1->dev, "%s: got format %ux%u (%x) on WPF%u source\n",
+ 		__func__, format.format.width, format.format.height,
+-		format.format.code);
++		format.format.code, pipe->output->entity.index);
+ 
+ 	format.pad = LIF_PAD_SINK;
+-	ret = v4l2_subdev_call(&vsp1->lif[0]->entity.subdev, pad, set_fmt, NULL,
++	ret = v4l2_subdev_call(&pipe->lif->subdev, pad, set_fmt, NULL,
+ 			       &format);
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	dev_dbg(vsp1->dev, "%s: set format %ux%u (%x) on LIF sink\n",
++	dev_dbg(vsp1->dev, "%s: set format %ux%u (%x) on LIF%u sink\n",
+ 		__func__, format.format.width, format.format.height,
+-		format.format.code);
++		format.format.code, pipe_index);
+ 
+ 	/*
+ 	 * Verify that the format at the output of the pipeline matches the
+@@ -216,8 +234,8 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
+ 	 * Register a callback to allow us to notify the DRM driver of frame
+ 	 * completion events.
+ 	 */
+-	vsp1->drm->du_complete = cfg->callback;
+-	vsp1->drm->du_private = cfg->callback_data;
++	drm_pipe->du_complete = cfg->callback;
++	drm_pipe->du_private = cfg->callback_data;
+ 
+ 	ret = media_pipeline_start(&pipe->output->entity.subdev.entity,
+ 					  &pipe->pipe);
+@@ -245,9 +263,9 @@ EXPORT_SYMBOL_GPL(vsp1_du_setup_lif);
+ void vsp1_du_atomic_begin(struct device *dev, unsigned int pipe_index)
+ {
+ 	struct vsp1_device *vsp1 = dev_get_drvdata(dev);
+-	struct vsp1_pipeline *pipe = &vsp1->drm->pipe;
++	struct vsp1_drm_pipeline *drm_pipe = &vsp1->drm->pipe[pipe_index];
+ 
+-	vsp1->drm->num_inputs = pipe->num_inputs;
++	drm_pipe->enabled = drm_pipe->pipe.num_inputs != 0;
+ }
+ EXPORT_SYMBOL_GPL(vsp1_du_atomic_begin);
+ 
+@@ -286,6 +304,7 @@ int vsp1_du_atomic_update(struct device *dev, unsigned int pipe_index,
+ 			  const struct vsp1_du_atomic_config *cfg)
+ {
+ 	struct vsp1_device *vsp1 = dev_get_drvdata(dev);
++	struct vsp1_drm_pipeline *drm_pipe = &vsp1->drm->pipe[pipe_index];
+ 	const struct vsp1_format_info *fmtinfo;
+ 	struct vsp1_rwpf *rpf;
+ 
+@@ -298,7 +317,12 @@ int vsp1_du_atomic_update(struct device *dev, unsigned int pipe_index,
+ 		dev_dbg(vsp1->dev, "%s: RPF%u: disable requested\n", __func__,
+ 			rpf_index);
+ 
+-		vsp1->drm->inputs[rpf_index].enabled = false;
++		/*
++		 * Remove the RPF from the pipe's inputs. The atomic flush
++		 * handler will disable the input and remove the entity from the
++		 * pipe's entities list.
++		 */
++		drm_pipe->pipe.inputs[rpf_index] = NULL;
+ 		return 0;
+ 	}
+ 
+@@ -334,13 +358,15 @@ int vsp1_du_atomic_update(struct device *dev, unsigned int pipe_index,
+ 	vsp1->drm->inputs[rpf_index].crop = cfg->src;
+ 	vsp1->drm->inputs[rpf_index].compose = cfg->dst;
+ 	vsp1->drm->inputs[rpf_index].zpos = cfg->zpos;
+-	vsp1->drm->inputs[rpf_index].enabled = true;
++
++	drm_pipe->pipe.inputs[rpf_index] = rpf;
+ 
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(vsp1_du_atomic_update);
+ 
+ static int vsp1_du_setup_rpf_pipe(struct vsp1_device *vsp1,
++				  struct vsp1_pipeline *pipe,
+ 				  struct vsp1_rwpf *rpf, unsigned int bru_input)
+ {
+ 	struct v4l2_subdev_selection sel;
+@@ -414,7 +440,7 @@ static int vsp1_du_setup_rpf_pipe(struct vsp1_device *vsp1,
+ 	/* BRU sink, propagate the format from the RPF source. */
+ 	format.pad = bru_input;
+ 
+-	ret = v4l2_subdev_call(&vsp1->bru->entity.subdev, pad, set_fmt, NULL,
++	ret = v4l2_subdev_call(&pipe->bru->subdev, pad, set_fmt, NULL,
+ 			       &format);
+ 	if (ret < 0)
+ 		return ret;
+@@ -427,8 +453,8 @@ static int vsp1_du_setup_rpf_pipe(struct vsp1_device *vsp1,
+ 	sel.target = V4L2_SEL_TGT_COMPOSE;
+ 	sel.r = vsp1->drm->inputs[rpf->entity.index].compose;
+ 
+-	ret = v4l2_subdev_call(&vsp1->bru->entity.subdev, pad, set_selection,
+-			       NULL, &sel);
++	ret = v4l2_subdev_call(&pipe->bru->subdev, pad, set_selection, NULL,
++			       &sel);
+ 	if (ret < 0)
+ 		return ret;
+ 
+@@ -453,14 +479,20 @@ static unsigned int rpf_zpos(struct vsp1_device *vsp1, struct vsp1_rwpf *rpf)
+ void vsp1_du_atomic_flush(struct device *dev, unsigned int pipe_index)
+ {
+ 	struct vsp1_device *vsp1 = dev_get_drvdata(dev);
+-	struct vsp1_pipeline *pipe = &vsp1->drm->pipe;
++	struct vsp1_drm_pipeline *drm_pipe = &vsp1->drm->pipe[pipe_index];
++	struct vsp1_pipeline *pipe = &drm_pipe->pipe;
+ 	struct vsp1_rwpf *inputs[VSP1_MAX_RPF] = { NULL, };
++	struct vsp1_bru *bru = to_bru(&pipe->bru->subdev);
+ 	struct vsp1_entity *entity;
++	struct vsp1_entity *next;
+ 	struct vsp1_dl_list *dl;
++	const char *bru_name;
+ 	unsigned long flags;
+ 	unsigned int i;
+ 	int ret;
+ 
++	bru_name = pipe->bru->type == VSP1_ENTITY_BRU ? "BRU" : "BRS";
++
+ 	/* Prepare the display list. */
+ 	dl = vsp1_dl_list_get(pipe->output->dlm);
+ 
+@@ -471,12 +503,8 @@ void vsp1_du_atomic_flush(struct device *dev, unsigned int pipe_index)
+ 		struct vsp1_rwpf *rpf = vsp1->rpf[i];
+ 		unsigned int j;
+ 
+-		if (!vsp1->drm->inputs[i].enabled) {
+-			pipe->inputs[i] = NULL;
++		if (!pipe->inputs[i])
+ 			continue;
+-		}
+-
+-		pipe->inputs[i] = rpf;
+ 
+ 		/* Insert the RPF in the sorted RPFs array. */
+ 		for (j = pipe->num_inputs++; j > 0; --j) {
+@@ -489,23 +517,26 @@ void vsp1_du_atomic_flush(struct device *dev, unsigned int pipe_index)
+ 	}
+ 
+ 	/* Setup the RPF input pipeline for every enabled input. */
+-	for (i = 0; i < vsp1->info->num_bru_inputs; ++i) {
++	for (i = 0; i < pipe->bru->source_pad; ++i) {
+ 		struct vsp1_rwpf *rpf = inputs[i];
+ 
+ 		if (!rpf) {
+-			vsp1->bru->inputs[i].rpf = NULL;
++			bru->inputs[i].rpf = NULL;
+ 			continue;
+ 		}
+ 
+-		vsp1->bru->inputs[i].rpf = rpf;
++		if (list_empty(&rpf->entity.list_pipe))
++			list_add_tail(&rpf->entity.list_pipe, &pipe->entities);
++
++		bru->inputs[i].rpf = rpf;
+ 		rpf->bru_input = i;
+-		rpf->entity.sink = &vsp1->bru->entity;
++		rpf->entity.sink = pipe->bru;
+ 		rpf->entity.sink_pad = i;
+ 
+-		dev_dbg(vsp1->dev, "%s: connecting RPF.%u to BRU:%u\n",
+-			__func__, rpf->entity.index, i);
++		dev_dbg(vsp1->dev, "%s: connecting RPF.%u to %s:%u\n",
++			__func__, rpf->entity.index, bru_name, i);
+ 
+-		ret = vsp1_du_setup_rpf_pipe(vsp1, rpf, i);
++		ret = vsp1_du_setup_rpf_pipe(vsp1, pipe, rpf, i);
+ 		if (ret < 0)
+ 			dev_err(vsp1->dev,
+ 				"%s: failed to setup RPF.%u\n",
+@@ -513,16 +544,16 @@ void vsp1_du_atomic_flush(struct device *dev, unsigned int pipe_index)
+ 	}
+ 
+ 	/* Configure all entities in the pipeline. */
+-	list_for_each_entry(entity, &pipe->entities, list_pipe) {
++	list_for_each_entry_safe(entity, next, &pipe->entities, list_pipe) {
+ 		/* Disconnect unused RPFs from the pipeline. */
+-		if (entity->type == VSP1_ENTITY_RPF) {
+-			struct vsp1_rwpf *rpf = to_rwpf(&entity->subdev);
++		if (entity->type == VSP1_ENTITY_RPF &&
++		    !pipe->inputs[entity->index]) {
++			vsp1_dl_list_write(dl, entity->route->reg,
++					   VI6_DPR_NODE_UNUSED);
+ 
+-			if (!pipe->inputs[rpf->entity.index]) {
+-				vsp1_dl_list_write(dl, entity->route->reg,
+-						   VI6_DPR_NODE_UNUSED);
+-				continue;
+-			}
++			list_del_init(&entity->list_pipe);
++
++			continue;
+ 		}
+ 
+ 		vsp1_entity_route_setup(entity, pipe, dl);
+@@ -540,11 +571,11 @@ void vsp1_du_atomic_flush(struct device *dev, unsigned int pipe_index)
+ 	vsp1_dl_list_commit(dl);
+ 
+ 	/* Start or stop the pipeline if needed. */
+-	if (!vsp1->drm->num_inputs && pipe->num_inputs) {
++	if (!drm_pipe->enabled && pipe->num_inputs) {
+ 		spin_lock_irqsave(&pipe->irqlock, flags);
+ 		vsp1_pipeline_run(pipe);
+ 		spin_unlock_irqrestore(&pipe->irqlock, flags);
+-	} else if (vsp1->drm->num_inputs && !pipe->num_inputs) {
++	} else if (drm_pipe->enabled && !pipe->num_inputs) {
+ 		vsp1_pipeline_stop(pipe);
+ 	}
+ }
+@@ -579,39 +610,46 @@ EXPORT_SYMBOL_GPL(vsp1_du_unmap_sg);
+ 
+ int vsp1_drm_init(struct vsp1_device *vsp1)
+ {
+-	struct vsp1_pipeline *pipe;
+ 	unsigned int i;
+ 
+ 	vsp1->drm = devm_kzalloc(vsp1->dev, sizeof(*vsp1->drm), GFP_KERNEL);
+ 	if (!vsp1->drm)
+ 		return -ENOMEM;
+ 
+-	pipe = &vsp1->drm->pipe;
++	/* Create one DRM pipeline per LIF. */
++	for (i = 0; i < vsp1->info->lif_count; ++i) {
++		struct vsp1_drm_pipeline *drm_pipe = &vsp1->drm->pipe[i];
++		struct vsp1_pipeline *pipe = &drm_pipe->pipe;
+ 
+-	vsp1_pipeline_init(pipe);
++		vsp1_pipeline_init(pipe);
+ 
+-	/* The DRM pipeline is static, add entities manually. */
++		/*
++		 * The DRM pipeline is static, add entities manually. The first
++		 * pipeline uses the BRU and the second pipeline the BRS.
++		 */
++		pipe->bru = i == 0 ? &vsp1->bru->entity : &vsp1->brs->entity;
++		pipe->lif = &vsp1->lif[i]->entity;
++		pipe->output = vsp1->wpf[i];
++		pipe->output->pipe = pipe;
++		pipe->frame_end = vsp1_du_pipeline_frame_end;
++
++		pipe->bru->sink = &pipe->output->entity;
++		pipe->bru->sink_pad = 0;
++		pipe->output->entity.sink = pipe->lif;
++		pipe->output->entity.sink_pad = 0;
++
++		list_add_tail(&pipe->bru->list_pipe, &pipe->entities);
++		list_add_tail(&pipe->lif->list_pipe, &pipe->entities);
++		list_add_tail(&pipe->output->entity.list_pipe, &pipe->entities);
++	}
++
++	/* Disable all RPFs initially. */
+ 	for (i = 0; i < vsp1->info->rpf_count; ++i) {
+ 		struct vsp1_rwpf *input = vsp1->rpf[i];
+ 
+-		list_add_tail(&input->entity.list_pipe, &pipe->entities);
++		INIT_LIST_HEAD(&input->entity.list_pipe);
+ 	}
+ 
+-	vsp1->bru->entity.sink = &vsp1->wpf[0]->entity;
+-	vsp1->bru->entity.sink_pad = 0;
+-	vsp1->wpf[0]->entity.sink = &vsp1->lif[0]->entity;
+-	vsp1->wpf[0]->entity.sink_pad = 0;
+-
+-	list_add_tail(&vsp1->bru->entity.list_pipe, &pipe->entities);
+-	list_add_tail(&vsp1->wpf[0]->entity.list_pipe, &pipe->entities);
+-	list_add_tail(&vsp1->lif[0]->entity.list_pipe, &pipe->entities);
+-
+-	pipe->bru = &vsp1->bru->entity;
+-	pipe->lif = &vsp1->lif[0]->entity;
+-	pipe->output = vsp1->wpf[0];
+-	pipe->output->pipe = pipe;
+-	pipe->frame_end = vsp1_du_pipeline_frame_end;
+-
+ 	return 0;
+ }
+ 
+diff --git a/drivers/media/platform/vsp1/vsp1_drm.h b/drivers/media/platform/vsp1/vsp1_drm.h
+index 67d6549edfad..fca553ddd184 100644
+--- a/drivers/media/platform/vsp1/vsp1_drm.h
++++ b/drivers/media/platform/vsp1/vsp1_drm.h
+@@ -18,32 +18,41 @@
+ #include "vsp1_pipe.h"
+ 
+ /**
+- * vsp1_drm - State for the API exposed to the DRM driver
++ * vsp1_drm_pipeline - State for the API exposed to the DRM driver
+  * @pipe: the VSP1 pipeline used for display
+- * @num_inputs: number of active pipeline inputs at the beginning of an update
+- * @inputs: source crop rectangle, destination compose rectangle and z-order
+- *	position for every input
++ * @enabled: pipeline state at the beginning of an update
+  * @du_complete: frame completion callback for the DU driver (optional)
+  * @du_private: data to be passed to the du_complete callback
+  */
+-struct vsp1_drm {
++struct vsp1_drm_pipeline {
+ 	struct vsp1_pipeline pipe;
+-	unsigned int num_inputs;
++	bool enabled;
++
++	/* Frame synchronisation */
++	void (*du_complete)(void *);
++	void *du_private;
++};
++
++/**
++ * vsp1_drm - State for the API exposed to the DRM driver
++ * @pipe: the VSP1 DRM pipeline used for display
++ * @inputs: source crop rectangle, destination compose rectangle and z-order
++ *	position for every input (indexed by RPF index)
++ */
++struct vsp1_drm {
++	struct vsp1_drm_pipeline pipe[VSP1_MAX_LIF];
++
+ 	struct {
+-		bool enabled;
+ 		struct v4l2_rect crop;
+ 		struct v4l2_rect compose;
+ 		unsigned int zpos;
+ 	} inputs[VSP1_MAX_RPF];
+-
+-	/* Frame synchronisation */
+-	void (*du_complete)(void *);
+-	void *du_private;
+ };
+ 
+-static inline struct vsp1_drm *to_vsp1_drm(struct vsp1_pipeline *pipe)
++static inline struct vsp1_drm_pipeline *
++to_vsp1_drm_pipeline(struct vsp1_pipeline *pipe)
+ {
+-	return container_of(pipe, struct vsp1_drm, pipe);
++	return container_of(pipe, struct vsp1_drm_pipeline, pipe);
+ }
+ 
+ int vsp1_drm_init(struct vsp1_device *vsp1);
 -- 
-Best regards,
-Marek Vasut
+Regards,
+
+Laurent Pinchart
