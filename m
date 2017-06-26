@@ -1,217 +1,99 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:38884 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751271AbdFXKST (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 24 Jun 2017 06:18:19 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] pinctrl: sh-pfc: r8a7795: Add PWM support
-Date: Sat, 24 Jun 2017 13:18:54 +0300
-Message-Id: <20170624101854.27655-1-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Rob Herring <robh@kernel.org>
+CC: "kishon@ti.com" <kishon@ti.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH/RFC] phy: renesas: rcar-gen3-usb2-clksel: Add R-Car Gen3
+ USB 2.0 clock selector PHY
+Date: Mon, 26 Jun 2017 07:52:52 +0000
+Message-ID: <TY1PR06MB0992FFA30DDC813F345B1B29D8DF0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+References: <1497526462-9179-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <20170623182051.eznaqqyr6dcrdjdg@rob-hp-laptop>
+In-Reply-To: <20170623182051.eznaqqyr6dcrdjdg@rob-hp-laptop>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add pinctrl support for the PWM[0-6] pins.
+Hi,
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 153 +++++++++++++++++++++++++++++++++++
- 1 file changed, 153 insertions(+)
+> -----Original Message-----
+> From: Rob Herring
+> Sent: Saturday, June 24, 2017 3:21 AM
+>=20
+> On Thu, Jun 15, 2017 at 08:34:22PM +0900, Yoshihiro Shimoda wrote:
+> > USB 2.0 PHY of R-Car Gen3 can change the clock source from an oscillato=
+r
+> > to an external clock via a register. So, this patch adds support
+> > the clock source selector as a generic PHY driver.
+> >
+> > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> > ---
+> >  This patch is based on the latest linux-phy.git / next branch
+> >  (commit id =3D 787f24543c4a599e5d9d311a3fce839ce87bbff0)
+> >
+> >  I'm not sure this driver ss OK or not as a generic phy driver.
+> >  So, I send this patch as RFC.
+> >
+> >  .../bindings/phy/rcar-gen3-phy-usb2-clksel.txt     |  58 +++++++++
+> >  drivers/phy/renesas/Kconfig                        |   8 ++
+> >  drivers/phy/renesas/Makefile                       |   1 +
+> >  drivers/phy/renesas/phy-rcar-gen3-usb2-clksel.c    | 129 +++++++++++++=
+++++++++
+> >  4 files changed, 196 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/phy/rcar-gen3-phy=
+-usb2-clksel.txt
+> >  create mode 100644 drivers/phy/renesas/phy-rcar-gen3-usb2-clksel.c
+> >
+> > diff --git a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2-c=
+lksel.txt
+> b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2-clksel.txt
+> > new file mode 100644
+> > index 0000000..71b2f1b
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2-clksel.t=
+xt
+> > @@ -0,0 +1,58 @@
+> > +* Renesas R-Car generation 3 USB 2.0 clock selector PHY
+> > +
+> > +This file provides information on what the device node for the R-Car g=
+eneration
+> > +3 USB 2.0 clock selector PHY contains.
+>=20
+> Is this a phy or just a clock selector and nothing else? It sounds more
+> like the latter and you should use the clock binding. Whether this is a
+> phy driver in the kernel is a separate question really.
 
-Hi Geert,
+Thank you for the comment. This is just a clock selector.
+So, I will try to make a clock driver for this.
 
-I've successfully tested the PWM1 channel with backlight on the Salvator-XS
-board. The other channels remain untested, I have only verified that the pin
-numbers match the datasheet.
+Best regards,
+Yoshihiro Shimoda
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index 75222a9b46b3..1656295af2b0 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -1744,6 +1744,105 @@ static const unsigned int du_disp_mux[] = {
- 	DU_DISP_MARK,
- };
- 
-+/* - PWM0 --------------------------------------------------------------------*/
-+static const unsigned int pwm0_pins[] = {
-+	/* PWM */
-+	RCAR_GP_PIN(2, 6),
-+};
-+static const unsigned int pwm0_mux[] = {
-+	PWM0_MARK,
-+};
-+/* - PWM1 --------------------------------------------------------------------*/
-+static const unsigned int pwm1_a_pins[] = {
-+	/* PWM */
-+	RCAR_GP_PIN(2, 7),
-+};
-+static const unsigned int pwm1_a_mux[] = {
-+	PWM1_A_MARK,
-+};
-+static const unsigned int pwm1_b_pins[] = {
-+	/* PWM */
-+	RCAR_GP_PIN(1, 8),
-+};
-+static const unsigned int pwm1_b_mux[] = {
-+	PWM1_B_MARK,
-+};
-+/* - PWM2 --------------------------------------------------------------------*/
-+static const unsigned int pwm2_a_pins[] = {
-+	/* PWM */
-+	RCAR_GP_PIN(2, 8),
-+};
-+static const unsigned int pwm2_a_mux[] = {
-+	PWM2_A_MARK,
-+};
-+static const unsigned int pwm2_b_pins[] = {
-+	/* PWM */
-+	RCAR_GP_PIN(1, 11),
-+};
-+static const unsigned int pwm2_b_mux[] = {
-+	PWM2_B_MARK,
-+};
-+/* - PWM3 --------------------------------------------------------------------*/
-+static const unsigned int pwm3_a_pins[] = {
-+	/* PWM */
-+	RCAR_GP_PIN(1, 0),
-+};
-+static const unsigned int pwm3_a_mux[] = {
-+	PWM3_A_MARK,
-+};
-+static const unsigned int pwm3_b_pins[] = {
-+	/* PWM */
-+	RCAR_GP_PIN(2, 2),
-+};
-+static const unsigned int pwm3_b_mux[] = {
-+	PWM3_B_MARK,
-+};
-+/* - PWM4 --------------------------------------------------------------------*/
-+static const unsigned int pwm4_a_pins[] = {
-+	/* PWM */
-+	RCAR_GP_PIN(1, 1),
-+};
-+static const unsigned int pwm4_a_mux[] = {
-+	PWM4_A_MARK,
-+};
-+static const unsigned int pwm4_b_pins[] = {
-+	/* PWM */
-+	RCAR_GP_PIN(2, 3),
-+};
-+static const unsigned int pwm4_b_mux[] = {
-+	PWM4_B_MARK,
-+};
-+/* - PWM5 --------------------------------------------------------------------*/
-+static const unsigned int pwm5_a_pins[] = {
-+	/* PWM */
-+	RCAR_GP_PIN(1, 2),
-+};
-+static const unsigned int pwm5_a_mux[] = {
-+	PWM5_A_MARK,
-+};
-+static const unsigned int pwm5_b_pins[] = {
-+	/* PWM */
-+	RCAR_GP_PIN(2, 4),
-+};
-+static const unsigned int pwm5_b_mux[] = {
-+	PWM5_B_MARK,
-+};
-+/* - PWM6 --------------------------------------------------------------------*/
-+static const unsigned int pwm6_a_pins[] = {
-+	/* PWM */
-+	RCAR_GP_PIN(1, 3),
-+};
-+static const unsigned int pwm6_a_mux[] = {
-+	PWM6_A_MARK,
-+};
-+static const unsigned int pwm6_b_pins[] = {
-+	/* PWM */
-+	RCAR_GP_PIN(2, 5),
-+};
-+static const unsigned int pwm6_b_mux[] = {
-+	PWM6_B_MARK,
-+};
-+
- /* - SCIF0 ------------------------------------------------------------------ */
- static const unsigned int scif0_data_pins[] = {
- 	/* RX, TX */
-@@ -1976,6 +2075,19 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(du_oddf),
- 	SH_PFC_PIN_GROUP(du_cde),
- 	SH_PFC_PIN_GROUP(du_disp),
-+	SH_PFC_PIN_GROUP(pwm0),
-+	SH_PFC_PIN_GROUP(pwm1_a),
-+	SH_PFC_PIN_GROUP(pwm1_b),
-+	SH_PFC_PIN_GROUP(pwm2_a),
-+	SH_PFC_PIN_GROUP(pwm2_b),
-+	SH_PFC_PIN_GROUP(pwm3_a),
-+	SH_PFC_PIN_GROUP(pwm3_b),
-+	SH_PFC_PIN_GROUP(pwm4_a),
-+	SH_PFC_PIN_GROUP(pwm4_b),
-+	SH_PFC_PIN_GROUP(pwm5_a),
-+	SH_PFC_PIN_GROUP(pwm5_b),
-+	SH_PFC_PIN_GROUP(pwm6_a),
-+	SH_PFC_PIN_GROUP(pwm6_b),
- 	SH_PFC_PIN_GROUP(scif0_data),
- 	SH_PFC_PIN_GROUP(scif0_clk),
- 	SH_PFC_PIN_GROUP(scif0_ctrl),
-@@ -2031,6 +2143,40 @@ static const char * const du_groups[] = {
- 	"du_disp",
- };
- 
-+static const char * const pwm0_groups[] = {
-+	"pwm0",
-+};
-+
-+static const char * const pwm1_groups[] = {
-+	"pwm1_a",
-+	"pwm1_b",
-+};
-+
-+static const char * const pwm2_groups[] = {
-+	"pwm2_a",
-+	"pwm2_b",
-+};
-+
-+static const char * const pwm3_groups[] = {
-+	"pwm3_a",
-+	"pwm3_b",
-+};
-+
-+static const char * const pwm4_groups[] = {
-+	"pwm4_a",
-+	"pwm4_b",
-+};
-+
-+static const char * const pwm5_groups[] = {
-+	"pwm5_a",
-+	"pwm5_b",
-+};
-+
-+static const char * const pwm6_groups[] = {
-+	"pwm6_a",
-+	"pwm6_b",
-+};
-+
- static const char * const scif0_groups[] = {
- 	"scif0_data",
- 	"scif0_clk",
-@@ -2084,6 +2230,13 @@ static const char * const scif_clk_groups[] = {
- static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(avb),
- 	SH_PFC_FUNCTION(du),
-+	SH_PFC_FUNCTION(pwm0),
-+	SH_PFC_FUNCTION(pwm1),
-+	SH_PFC_FUNCTION(pwm2),
-+	SH_PFC_FUNCTION(pwm3),
-+	SH_PFC_FUNCTION(pwm4),
-+	SH_PFC_FUNCTION(pwm5),
-+	SH_PFC_FUNCTION(pwm6),
- 	SH_PFC_FUNCTION(scif0),
- 	SH_PFC_FUNCTION(scif1),
- 	SH_PFC_FUNCTION(scif2),
--- 
-Regards,
-
-Laurent Pinchart
+> > +
+> > +If you connect an external clock to the USB_EXTAL pin, you can use the
+> > +"renesas,usb_extal_only" property for it.
+> > +If you connect an oscillator to both the USB_XTAL and USB_EXTAL, this =
+module
+> > +is not needed because this is default setting.
+> > +
+> > +Case 1: An external clock connects to R-Car SoC
+> > +	+----------+   +--- R-Car ---------------------+
+> > +	|External  |---|USB_EXTAL ---> all usb channels|
+> > +	|clock     |   |USB_XTAL                       |
+> > +	+----------+   +-------------------------------+
+> > +In this case, we need this driver with "usb-extal-only" property.
+> > +
+> > +Case 2: An oscillator connects to R-Car SoC
+> > +	+----------+   +--- R-Car ---------------------+
+> > +	|Oscillator|---|USB_EXTAL -+-> all usb channels|
+> > +	|          |---|USB_XTAL --+                   |
+> > +	+----------+   +-------------------------------+
+> > +In this case, we don't need this selector.
