@@ -1,46 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f194.google.com ([209.85.223.194]:35729 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751386AbdFZSFH (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:53935 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751101AbdFZRkf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Jun 2017 14:05:07 -0400
-Date: Mon, 26 Jun 2017 13:04:59 -0500
-From: Rob Herring <robh@kernel.org>
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Mon, 26 Jun 2017 13:40:35 -0400
+Date: Mon, 26 Jun 2017 19:40:26 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Alexandre Courbot <gnurou@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
         Chris Paterson <chris.paterson2@renesas.com>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
 Subject: Re: [PATCH v2] gpio: rcar: Add R8A7743 (RZ/G1M) support
-Message-ID: <20170626180459.hhfms6wfezxgxwns@rob-hp-laptop>
+Message-ID: <20170626174025.GE26156@verge.net.au>
 References: <1497619944-61410-1-git-send-email-biju.das@bp.renesas.com>
  <1498055229-42052-1-git-send-email-biju.das@bp.renesas.com>
+ <CAMuHMdVW6gU8GTf5v6xq0sYMgYqCaOaHcu1Ap1FDw14bUJih+A@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1498055229-42052-1-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <CAMuHMdVW6gU8GTf5v6xq0sYMgYqCaOaHcu1Ap1FDw14bUJih+A@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Jun 21, 2017 at 03:27:09PM +0100, Biju Das wrote:
-> Renesas RZ/G1M (R8A7743) SoC GPIO blocks are identical to the R-Car Gen2
-> family. Add support for its GPIO controllers.
+On Mon, Jun 26, 2017 at 10:13:00AM +0200, Geert Uytterhoeven wrote:
+> On Wed, Jun 21, 2017 at 4:27 PM, Biju Das <biju.das@bp.renesas.com> wrote:
+> > Renesas RZ/G1M (R8A7743) SoC GPIO blocks are identical to the R-Car Gen2
+> > family. Add support for its GPIO controllers.
+> >
+> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
 > 
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
-> ---
-> v1->v2
-> * Modified the text "RZ-G1M" to "RZ/G1M"
+> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > 
->  Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt | 1 +
->  drivers/gpio/gpio-rcar.c                                     | 4 ++++
->  2 files changed, 5 insertions(+)
+> Although I think the time has come for family-specific compatible values
+> for R-Car Gen2 and Gen3.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Yes, agreed.
