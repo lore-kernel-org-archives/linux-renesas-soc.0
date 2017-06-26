@@ -1,60 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:52264 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751038AbdFUJDe (ORCPT
+Received: from mail-it0-f67.google.com ([209.85.214.67]:33054 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750819AbdFZUDA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 21 Jun 2017 05:03:34 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 2/2] drm: rcar-du: Add HDMI outputs to R8A7796 device description
-Date: Wed, 21 Jun 2017 12:04:07 +0300
-Message-Id: <20170621090407.4093-2-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170621090407.4093-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170621090407.4093-1-laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 26 Jun 2017 16:03:00 -0400
+MIME-Version: 1.0
+In-Reply-To: <2c173ca0-533c-babc-dcc7-f265bc3fda5d@cogentembedded.com>
+References: <20170623203456.503714406@cogentembedded.com> <20170626194905.zjvdzcdlnv74mnr5@rob-hp-laptop>
+ <2c173ca0-533c-babc-dcc7-f265bc3fda5d@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 26 Jun 2017 22:02:58 +0200
+Message-ID: <CAMuHMdX_RWn_p5U2K8E+zHy8Pmm8azbA4uySyfDxpNKvD6acAw@mail.gmail.com>
+Subject: Re: [PATCH v6] media: platform: Renesas IMR driver
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Konstantin Kozhevnikov
+        <Konstantin.Kozhevnikov@cogentembedded.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Update the device description with the HDMI output.
+Hi Sergei,
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/gpu/drm/rcar-du/rcar_du_drv.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+On Mon, Jun 26, 2017 at 9:56 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> On 06/26/2017 10:49 PM, Rob Herring wrote:
+>>> From: Konstantin Kozhevnikov <Konstantin.Kozhevnikov@cogentembedded.com>
+>>>
+>>> The image renderer, or the distortion correction engine, is a drawing
+>>> processor with a simple instruction system capable of referencing video
+>>> capture data or data in an external memory as the 2D texture data and
+>>> performing texture mapping and drawing with respect to any shape that is
+>>> split into triangular objects.
+>>>
+>>> This V4L2 memory-to-memory device driver only supports image renderer
+>>> light
+>>> extended 4 (IMR-LX4) found in the R-Car gen3 SoCs; the R-Car gen2 support
+>>> can be added later...
+>>>
+>>> [Sergei: merged 2 original patches, added  the patch description, removed
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-index d6a0255181cc..fc0ae0947b8f 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-@@ -180,19 +180,25 @@ static const struct rcar_du_device_info rcar_du_r8a7796_info = {
- 		  | RCAR_DU_FEATURE_VSP1_SOURCE,
- 	.num_crtcs = 3,
- 	.routes = {
--		/* R8A7796 has one RGB output, one LVDS output and one
--		 * (currently unsupported) HDMI output.
-+		/*
-+		 * R8A7796 has one RGB output, one LVDS output and one HDMI
-+		 * output.
- 		 */
- 		[RCAR_DU_OUTPUT_DPAD0] = {
- 			.possible_crtcs = BIT(2),
- 			.port = 0,
- 		},
-+		[RCAR_DU_OUTPUT_HDMI0] = {
-+			.possible_crtcs = BIT(1),
-+			.port = 1,
-+		},
- 		[RCAR_DU_OUTPUT_LVDS0] = {
- 			.possible_crtcs = BIT(0),
- 			.port = 2,
- 		},
- 	},
- 	.num_lvds = 1,
-+	.dpll_ch =  BIT(1),
- };
- 
- static const struct of_device_id rcar_du_of_table[] = {
--- 
-Regards,
+[...]
 
-Laurent Pinchart
+>>> macros.]
+>>
+>>
+>> TL;DR needed here IMO.
+>
+>    Not sure I understand... stands for "too long; didn't read", right?
+>
+>> Not sure anyone really cares every detail you
+>> changed in re-writing this. If they did, it should all be separate
+>> commits.
+>
+>    AFAIK this is a way that's things are dealt with when you submit somebody
+> else's work with your changes. Sorry if the list is too long...
+
+Based on a patch by Konstantin Kozhevnikov
+<Konstantin.Kozhevnikov@cogentembedded.com>?
+
+Of course, that's bad for your coworker's patch statistics...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
