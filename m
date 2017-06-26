@@ -1,142 +1,113 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: joro@8bytes.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
-        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
-        m.szyprowski@samsung.com
-Date: Mon, 19 Jun 2017 18:15:20 +0900
-Message-Id: <149786372027.14868.17337099469033750355.sendpatchset@little-apple>
-In-Reply-To: <149786362527.14868.2143461703972595839.sendpatchset@little-apple>
-References: <149786362527.14868.2143461703972595839.sendpatchset@little-apple>
-Subject: [PATCH v4 09/09] iommu/ipmmu-vmsa: Hook up r8a7795 DT matching code
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:57154 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752187AbdFZS6Q (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 26 Jun 2017 14:58:16 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [GIT PULL FOR renesas-drivers] R-Car H3 ES2.0 display support, v2
+Date: Mon, 26 Jun 2017 21:58:16 +0300
+Message-ID: <2356788.ZAuqMOLJcJ@avalon>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Hi Geert,
 
-Tie in r8a7795 features and update the IOMMU_OF_DECLARE
-compat string to include the updated compat string.
+The following changes implement display support for the R-Car H3 ES2.0. They 
+have been split in two distinct branches:
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
+- tags/drm-h3-es2-dt-20170626 contains the DT changes and is based on top of 
+arm64-dt-for-v4.14
 
- Changes since V3:
- - Rebased code on top of
-   [PATCH 00/04] iommu/ipmmu-vmsa: 32-bit ARM update
-   This includes support for iommu_fwspec_add_ids()
- - Use dev_err() instead of dev_info() - Thanks Geert!
- - Moved single-invokation check into of_xlate() - Thanks Geert!
- - Dropped TODO list
- 
- Changes since V2:
- - Check for lack of root device in ->xlate()
-   This fixed a bug when IPMMU-MM is disabled in DT the system hangs on boot
- - Added code to ipmmu_init_platform_device() to handle multiple ->xlate() calls
- - Include empty white list by default
- - Updated TODO list
+The following changes since commit cee30e674b8e54d3bf27eab26907e706f3304757:
 
- Changes since V1:
- - Enable multi context feature
- - Update TODO list
+  arm64: renesas: salvator-common: sound clock-frequency needs descending 
+order (2017-06-16 15:37:51 +0200)
 
- drivers/iommu/ipmmu-vmsa.c |   48 ++++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 44 insertions(+), 4 deletions(-)
+are available in the git repository at:
 
---- 0029/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2017-06-19 14:10:58.930607110 +0900
-@@ -25,6 +25,7 @@
- #include <linux/platform_device.h>
- #include <linux/sizes.h>
- #include <linux/slab.h>
-+#include <linux/sys_soc.h>
- 
- #if defined(CONFIG_ARM) && !defined(CONFIG_IOMMU_DMA)
- #include <asm/dma-iommu.h>
-@@ -730,10 +731,6 @@ static int ipmmu_init_platform_device(st
- 	struct platform_device *ipmmu_pdev;
- 	struct ipmmu_vmsa_iommu_priv *priv;
- 
--	/* Initialize once - xlate() will call multiple times */
--	if (to_priv(dev))
--		return 0;
--
- 	ipmmu_pdev = of_find_device_by_node(args->np);
- 	if (!ipmmu_pdev)
- 		return -ENODEV;
-@@ -748,11 +745,41 @@ static int ipmmu_init_platform_device(st
- 	return 0;
- }
- 
-+static bool ipmmu_slave_whitelist(struct device *dev)
-+{
-+	/* By default, do not allow use of IPMMU */
-+	return false;
-+}
-+
-+static const struct soc_device_attribute soc_r8a7795[] = {
-+	{ .soc_id = "r8a7795", },
-+	{ /* sentinel */ }
-+};
-+
- static int ipmmu_of_xlate(struct device *dev,
- 			  struct of_phandle_args *spec)
- {
-+	/* Failing in ->attach_device() results in a hang, so make
-+	 * sure the root device is installed before going there
-+	 */
-+	if (!__ipmmu_find_root()) {
-+		dev_err(dev, "Unable to locate IPMMU root device\n");
-+		return -ENODEV;
-+	}
-+
-+	/* For R-Car Gen3 use a white list to opt-in slave devices */
-+	if (soc_device_match(soc_r8a7795) && !ipmmu_slave_whitelist(dev))
-+		return -ENODEV;
-+
- 	iommu_fwspec_add_ids(dev, spec->args, 1);
- 
-+	/*
-+	 * Execute ipmmu_init_platform_device() once per device.
-+	 * This xlate() callback will be invoked multiple times.
-+	 */
-+	if (to_priv(dev))
-+		return 0;
-+
- 	return ipmmu_init_platform_device(dev, spec);
- }
- 
-@@ -1003,11 +1030,22 @@ static const struct ipmmu_features ipmmu
- 	.twobit_imttbcr_sl0 = false,
- };
- 
-+static const struct ipmmu_features ipmmu_features_r8a7795 = {
-+	.use_ns_alias_offset = false,
-+	.has_cache_leaf_nodes = true,
-+	.number_of_contexts = 8,
-+	.setup_imbuscr = false,
-+	.twobit_imttbcr_sl0 = true,
-+};
-+
- static const struct of_device_id ipmmu_of_ids[] = {
- 	{
- 		.compatible = "renesas,ipmmu-vmsa",
- 		.data = &ipmmu_features_default,
- 	}, {
-+		.compatible = "renesas,ipmmu-r8a7795",
-+		.data = &ipmmu_features_r8a7795,
-+	}, {
- 		/* Terminator */
- 	},
- };
-@@ -1185,6 +1223,8 @@ static int __init ipmmu_vmsa_iommu_of_se
- 
- IOMMU_OF_DECLARE(ipmmu_vmsa_iommu_of, "renesas,ipmmu-vmsa",
- 		 ipmmu_vmsa_iommu_of_setup);
-+IOMMU_OF_DECLARE(ipmmu_r8a7795_iommu_of, "renesas,ipmmu-r8a7795",
-+		 ipmmu_vmsa_iommu_of_setup);
- #endif
- 
- MODULE_DESCRIPTION("IOMMU API for Renesas VMSA-compatible IPMMU");
+  git://linuxtv.org/pinchartl/media.git tags/drm-h3-es2-dt-20170626
+
+for you to fetch changes up to bcde4206f75575e825446dcd3a271741b997a483:
+
+  arm64: dts: r8a7795: Add support for the DU (2017-06-26 14:17:32 +0300)
+
+----------------------------------------------------------------
+Laurent Pinchart (2):
+      drm: rcar-du: Add a VSP channel index to the vsps DT property
+      arm64: dts: r8a7795: Add support for the DU
+
+ .../devicetree/bindings/display/renesas,du.txt          | 51 +++++++++-------
+ arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi            |  1 -
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi                |  2 +
+ 3 files changed, 32 insertions(+), 22 deletions(-)
+
+- tags/drm-h3-es2-vsp-du-20170626 contains the VSP changes and is based on top 
+of the latest DRM -next branch
+
+The following changes since commit 047b8e21e3bfa9faa4ed9a0c337fe0c687710251:
+
+  Merge tag 'drm-misc-next-2017-06-19_0' of 
+git://anongit.freedesktop.org/git/drm-misc into drm-next (2017-06-21 08:57:34 
++1000)
+
+are available in the git repository at:
+
+  git://linuxtv.org/pinchartl/media.git tags/drm-h3-es2-vsp-du-20170626
+
+for you to fetch changes up to 8d09cbf4a12a4c79619c0edf23f9e219e29f5749:
+
+  drm: rcar-du: Configure DPAD0 routing through last group on Gen3 (2017-06-26 
+19:08:54 +0300)
+
+----------------------------------------------------------------
+Laurent Pinchart (14):
+      v4l: vsp1: Fill display list headers without holding dlm spinlock
+      v4l: vsp1: Don't recycle active list at display start
+      v4l: vsp1: Don't set WPF sink pointer
+      v4l: vsp1: Store source and sink pointers as vsp1_entity
+      v4l: vsp1: Don't create links for DRM pipeline
+      v4l: vsp1: Add pipe index argument to the VSP-DU API
+      v4l: vsp1: Add support for the BRS entity
+      v4l: vsp1: Add support for new VSP2-BS, VSP2-DL and VSP2-D instances
+      v4l: vsp1: Add support for multiple LIF instances
+      v4l: vsp1: Add support for multiple DRM pipelines
+      v4l: vsp1: Add support for header display lists in continuous mode
+      drm: rcar-du: Support multiple sources from the same VSP
+      drm: rcar-du: Restrict DPLL duty cycle workaround to H3 ES1.x
+      drm: rcar-du: Configure DPAD0 routing through last group on Gen3
+
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c    |  39 ++++--
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.h    |   3 +
+ drivers/gpu/drm/rcar-du/rcar_du_group.c   |  21 ++-
+ drivers/gpu/drm/rcar-du/rcar_du_kms.c     |  91 ++++++++++--
+ drivers/gpu/drm/rcar-du/rcar_du_vsp.c     |  37 +++--
+ drivers/gpu/drm/rcar-du/rcar_du_vsp.h     |  10 +-
+ drivers/media/platform/vsp1/vsp1.h        |   7 +-
+ drivers/media/platform/vsp1/vsp1_bru.c    |  45 ++++--
+ drivers/media/platform/vsp1/vsp1_bru.h    |   4 +-
+ drivers/media/platform/vsp1/vsp1_dl.c     | 205 ++++++++++++++++-----------
+ drivers/media/platform/vsp1/vsp1_dl.h     |   1 -
+ drivers/media/platform/vsp1/vsp1_drm.c    | 283 ++++++++++++++---------------
+ drivers/media/platform/vsp1/vsp1_drm.h    |  38 ++---
+ drivers/media/platform/vsp1/vsp1_drv.c    | 115 +++++++++++-----
+ drivers/media/platform/vsp1/vsp1_entity.c |  40 ++++--
+ drivers/media/platform/vsp1/vsp1_entity.h |   5 +-
+ drivers/media/platform/vsp1/vsp1_lif.c    |   5 +-
+ drivers/media/platform/vsp1/vsp1_lif.h    |   2 +-
+ drivers/media/platform/vsp1/vsp1_pipe.c   |   7 +-
+ drivers/media/platform/vsp1/vsp1_regs.h   |  46 +++++--
+ drivers/media/platform/vsp1/vsp1_video.c  |  63 +++++----
+ drivers/media/platform/vsp1/vsp1_wpf.c    |   4 +-
+ include/media/vsp1.h                      |  10 +-
+ 23 files changed, 676 insertions(+), 405 deletions(-)
+
+-- 
+Regards,
+
+Laurent Pinchart
