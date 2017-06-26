@@ -1,133 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:46688 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750823AbdFULQh (ORCPT
+Received: from mail-io0-f196.google.com ([209.85.223.196]:33575 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751582AbdFZLpg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 21 Jun 2017 07:16:37 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        linux-renesas-soc@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <87o9toiz2p.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dNdcY-0004BP-GK@debutante>
-Date: Wed, 21 Jun 2017 12:16:26 +0100
-Subject: Applied "ASoC: rsnd: fixup unsigned expression compared with zero: main_rate" to the asoc tree
+        Mon, 26 Jun 2017 07:45:36 -0400
+Received: by mail-io0-f196.google.com with SMTP id j200so12548067ioe.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 26 Jun 2017 04:45:36 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <20170621121730.22025-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170621093133.5677-5-laurent.pinchart+renesas@ideasonboard.com> <20170621121730.22025-1-laurent.pinchart+renesas@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 26 Jun 2017 13:45:34 +0200
+Message-ID: <CAMuHMdUTn=dtDBs1_NJ+FEPG3oXJzeNzMm9f80Ymn4fe6u3LFQ@mail.gmail.com>
+Subject: Re: [PATCH v2.1 4/7] arm64: dts: renesas: r8a7796: Add HDMI encoder instance
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+On Wed, Jun 21, 2017 at 2:17 PM, Laurent Pinchart
+<laurent.pinchart+renesas@ideasonboard.com> wrote:
+> Add the HDMI encoder to the R8A7796 DT in disabled state.
+>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-   ASoC: rsnd: fixup unsigned expression compared with zero: main_rate
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-has been applied to the asoc tree at
+(disclaimer: I'm no ports/endpoint expert).
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+Gr{oetje,eeting}s,
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+                        Geert
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 947f4eb58d2054b10a1d8146d0ab90b0e7fd3494 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Fri, 16 Jun 2017 00:02:59 +0000
-Subject: [PATCH] ASoC: rsnd: fixup unsigned expression compared with zero:
- main_rate
-
-This patch fixes this WARNING
-
-sound/soc/sh/rcar/ssi.c:285:5-14: WARNING: Unsigned expression\
-	compared with zero: main_rate < 0
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/sh/rcar/core.c | 2 +-
- sound/soc/sh/rcar/rsnd.h | 2 +-
- sound/soc/sh/rcar/ssi.c  | 8 ++++----
- 3 files changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
-index 4892c0a4b613..409bac331d27 100644
---- a/sound/soc/sh/rcar/core.c
-+++ b/sound/soc/sh/rcar/core.c
-@@ -763,7 +763,7 @@ static int rsnd_soc_hw_rule(struct rsnd_priv *priv,
- 			    struct snd_interval *baseline, struct snd_interval *iv)
- {
- 	struct snd_interval p;
--	int rate;
-+	unsigned int rate;
- 	int i;
- 
- 	snd_interval_any(&p);
-diff --git a/sound/soc/sh/rcar/rsnd.h b/sound/soc/sh/rcar/rsnd.h
-index 9428d4e288dd..99c57611df88 100644
---- a/sound/soc/sh/rcar/rsnd.h
-+++ b/sound/soc/sh/rcar/rsnd.h
-@@ -680,7 +680,7 @@ int __rsnd_ssi_is_pin_sharing(struct rsnd_mod *mod);
- void rsnd_parse_connect_ssi(struct rsnd_dai *rdai,
- 			    struct device_node *playback,
- 			    struct device_node *capture);
--int rsnd_ssi_clk_query(struct rsnd_priv *priv,
-+unsigned int rsnd_ssi_clk_query(struct rsnd_priv *priv,
- 		       int param1, int param2, int *idx);
- 
- /*
-diff --git a/sound/soc/sh/rcar/ssi.c b/sound/soc/sh/rcar/ssi.c
-index c8956c3484dd..46feddd78ee2 100644
---- a/sound/soc/sh/rcar/ssi.c
-+++ b/sound/soc/sh/rcar/ssi.c
-@@ -208,14 +208,14 @@ u32 rsnd_ssi_multi_slaves_runtime(struct rsnd_dai_stream *io)
- 	return 0;
- }
- 
--int rsnd_ssi_clk_query(struct rsnd_priv *priv,
-+unsigned int rsnd_ssi_clk_query(struct rsnd_priv *priv,
- 		       int param1, int param2, int *idx)
- {
- 	int ssi_clk_mul_table[] = {
- 		1, 2, 4, 8, 16, 6, 12,
- 	};
- 	int j, ret;
--	int main_rate;
-+	unsigned int main_rate;
- 
- 	for (j = 0; j < ARRAY_SIZE(ssi_clk_mul_table); j++) {
- 
-@@ -245,7 +245,7 @@ int rsnd_ssi_clk_query(struct rsnd_priv *priv,
- 		return main_rate;
- 	}
- 
--	return -EINVAL;
-+	return 0;
- }
- 
- static int rsnd_ssi_master_clk_start(struct rsnd_mod *mod,
-@@ -282,7 +282,7 @@ static int rsnd_ssi_master_clk_start(struct rsnd_mod *mod,
- 	}
- 
- 	main_rate = rsnd_ssi_clk_query(priv, rate, chan, &idx);
--	if (main_rate < 0) {
-+	if (!main_rate) {
- 		dev_err(dev, "unsupported clock rate\n");
- 		return -EIO;
- 	}
--- 
-2.11.0
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
