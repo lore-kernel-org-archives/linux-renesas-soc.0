@@ -1,46 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:57083 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751308AbdFZS0O (ORCPT
+Received: from mail-it0-f52.google.com ([209.85.214.52]:35911 "EHLO
+        mail-it0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751406AbdFZRjA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Jun 2017 14:26:14 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH] clk: renesas: r8a7796: Add PWM clock
-Date: Mon, 26 Jun 2017 21:26:14 +0300
-Message-ID: <1669418.PM0r6WOmIk@avalon>
-In-Reply-To: <CAMuHMdWkgeuMGhpMrYJhh9XDSEzPv48tkTeGOW9FQvukU+oaXg@mail.gmail.com>
-References: <20170626172652.28018-1-laurent.pinchart+renesas@ideasonboard.com> <CAMuHMdWkgeuMGhpMrYJhh9XDSEzPv48tkTeGOW9FQvukU+oaXg@mail.gmail.com>
+        Mon, 26 Jun 2017 13:39:00 -0400
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20170626172652.28018-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170626172652.28018-1-laurent.pinchart+renesas@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 26 Jun 2017 19:38:58 +0200
+Message-ID: <CAMuHMdWkgeuMGhpMrYJhh9XDSEzPv48tkTeGOW9FQvukU+oaXg@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a7796: Add PWM clock
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+On Mon, Jun 26, 2017 at 7:26 PM, Laurent Pinchart
+<laurent.pinchart+renesas@ideasonboard.com> wrote:
+> --- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+> @@ -152,6 +152,7 @@ static const struct mssr_mod_clk r8a7796_mod_clks[] __initconst = {
+>         DEF_MOD("hscif1",                519,   R8A7796_CLK_S3D1),
+>         DEF_MOD("hscif0",                520,   R8A7796_CLK_S3D1),
+>         DEF_MOD("thermal",               522,   R8A7796_CLK_CP),
+> +       DEF_MOD("pwm",                   523,   R8A7796_CLK_S0D12),
 
-On Monday 26 Jun 2017 19:38:58 Geert Uytterhoeven wrote:
-> On Mon, Jun 26, 2017 at 7:26 PM, Laurent Pinchart wrote:
-> > --- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-> > +++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-> > @@ -152,6 +152,7 @@ static const struct mssr_mod_clk r8a7796_mod_clks[]
-> > __initconst = {> 
-> >         DEF_MOD("hscif1",                519,   R8A7796_CLK_S3D1),
-> >         DEF_MOD("hscif0",                520,   R8A7796_CLK_S3D1),
-> >         DEF_MOD("thermal",               522,   R8A7796_CLK_CP),
-> > 
-> > +       DEF_MOD("pwm",                   523,   R8A7796_CLK_S0D12),
-> 
-> Cfr. commit a0b381fafffaf07c ("clk: renesas: r8a7796: Add PWM clock")
-> in clk-next.
+Cfr. commit a0b381fafffaf07c ("clk: renesas: r8a7796: Add PWM clock")
+in clk-next.
 
-Same mistake twice... I wonder why I failed to find that one :-/ Sorry about 
-the noise.
+Gr{oetje,eeting}s,
 
--- 
-Regards,
+                        Geert
 
-Laurent Pinchart
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
