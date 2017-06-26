@@ -1,102 +1,155 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:58832 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751503AbdFFTGQ (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:56949 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751500AbdFZSMd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Jun 2017 15:06:16 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <87efuzdpws.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dIJnp-0007CX-2F@debutante>
-Date: Tue, 06 Jun 2017 20:06:05 +0100
-Subject: Applied "ASoC: simple-card-utils: share same dev_dbg() for Card Name" to the asoc tree
+        Mon, 26 Jun 2017 14:12:33 -0400
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 05/14] v4l: vsp1: Don't create links for DRM pipeline
+Date: Mon, 26 Jun 2017 21:12:17 +0300
+Message-Id: <20170626181226.29575-6-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170626181226.29575-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170626181226.29575-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+When the VSP1 is used in a DRM pipeline the driver doesn't register the
+media device. Links between entities are not exposed to userspace, but
+are still used internally for the sole purpose of setting up internal
+source to sink pointers through the link setup handler.
 
-   ASoC: simple-card-utils: share same dev_dbg() for Card Name
+Instead of going through this complex procedure, remove link creation
+and set the sink pointers directly.
 
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From d4dbcb63c8bde48741468cf7c711b76ed3e7fce5 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 5 Jun 2017 04:27:56 +0000
-Subject: [PATCH] ASoC: simple-card-utils: share same dev_dbg() for Card Name
-
-Let's share same debug message for Card Name
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- sound/soc/generic/audio-graph-scu-card.c | 2 --
- sound/soc/generic/simple-card-utils.c    | 2 ++
- sound/soc/generic/simple-scu-card.c      | 2 --
- 3 files changed, 2 insertions(+), 4 deletions(-)
+ drivers/media/platform/vsp1/vsp1_drm.c | 53 ++++------------------------------
+ drivers/media/platform/vsp1/vsp1_drm.h |  1 -
+ drivers/media/platform/vsp1/vsp1_drv.c | 16 ++++------
+ 3 files changed, 12 insertions(+), 58 deletions(-)
 
-diff --git a/sound/soc/generic/audio-graph-scu-card.c b/sound/soc/generic/audio-graph-scu-card.c
-index c5c52d1f500c..1ce727b6bc21 100644
---- a/sound/soc/generic/audio-graph-scu-card.c
-+++ b/sound/soc/generic/audio-graph-scu-card.c
-@@ -295,8 +295,6 @@ static int asoc_graph_card_parse_of(struct graph_card_data *priv)
- 	if (ret)
- 		goto parse_of_err;
+diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
+index 2d5a74e95e09..c72d021ff820 100644
+--- a/drivers/media/platform/vsp1/vsp1_drm.c
++++ b/drivers/media/platform/vsp1/vsp1_drm.c
+@@ -487,6 +487,7 @@ void vsp1_du_atomic_flush(struct device *dev)
  
--	dev_dbg(dev, "New card: %s\n",
--		card->name ? card->name : "");
- 	dev_dbg(dev, "convert_rate     %d\n", priv->convert_rate);
- 	dev_dbg(dev, "convert_channels %d\n", priv->convert_channels);
+ 		vsp1->bru->inputs[i].rpf = rpf;
+ 		rpf->bru_input = i;
++		rpf->entity.sink = &vsp1->bru->entity;
+ 		rpf->entity.sink_pad = i;
  
-diff --git a/sound/soc/generic/simple-card-utils.c b/sound/soc/generic/simple-card-utils.c
-index 9c7f5b91b90a..da24ac171aec 100644
---- a/sound/soc/generic/simple-card-utils.c
-+++ b/sound/soc/generic/simple-card-utils.c
-@@ -100,6 +100,8 @@ int asoc_simple_card_parse_card_name(struct snd_soc_card *card,
- 	if (!card->name && card->dai_link)
- 		card->name = card->dai_link->name;
+ 		dev_dbg(vsp1->dev, "%s: connecting RPF.%u to BRU:%u\n",
+@@ -564,53 +565,6 @@ EXPORT_SYMBOL_GPL(vsp1_du_unmap_sg);
+  * Initialization
+  */
  
-+	dev_dbg(card->dev, "Card Name: %s\n", card->name ? card->name : "");
+-int vsp1_drm_create_links(struct vsp1_device *vsp1)
+-{
+-	const u32 flags = MEDIA_LNK_FL_ENABLED | MEDIA_LNK_FL_IMMUTABLE;
+-	unsigned int i;
+-	int ret;
+-
+-	/*
+-	 * VSPD instances require a BRU to perform composition and a LIF to
+-	 * output to the DU.
+-	 */
+-	if (!vsp1->bru || !vsp1->lif)
+-		return -ENXIO;
+-
+-	for (i = 0; i < vsp1->info->rpf_count; ++i) {
+-		struct vsp1_rwpf *rpf = vsp1->rpf[i];
+-
+-		ret = media_create_pad_link(&rpf->entity.subdev.entity,
+-					    RWPF_PAD_SOURCE,
+-					    &vsp1->bru->entity.subdev.entity,
+-					    i, flags);
+-		if (ret < 0)
+-			return ret;
+-
+-		rpf->entity.sink = &vsp1->bru->entity;
+-		rpf->entity.sink_pad = i;
+-	}
+-
+-	ret = media_create_pad_link(&vsp1->bru->entity.subdev.entity,
+-				    vsp1->bru->entity.source_pad,
+-				    &vsp1->wpf[0]->entity.subdev.entity,
+-				    RWPF_PAD_SINK, flags);
+-	if (ret < 0)
+-		return ret;
+-
+-	vsp1->bru->entity.sink = &vsp1->wpf[0]->entity;
+-	vsp1->bru->entity.sink_pad = RWPF_PAD_SINK;
+-
+-	ret = media_create_pad_link(&vsp1->wpf[0]->entity.subdev.entity,
+-				    RWPF_PAD_SOURCE,
+-				    &vsp1->lif->entity.subdev.entity,
+-				    LIF_PAD_SINK, flags);
+-	if (ret < 0)
+-		return ret;
+-
+-	return 0;
+-}
+-
+ int vsp1_drm_init(struct vsp1_device *vsp1)
+ {
+ 	struct vsp1_pipeline *pipe;
+@@ -631,6 +585,11 @@ int vsp1_drm_init(struct vsp1_device *vsp1)
+ 		list_add_tail(&input->entity.list_pipe, &pipe->entities);
+ 	}
+ 
++	vsp1->bru->entity.sink = &vsp1->wpf[0]->entity;
++	vsp1->bru->entity.sink_pad = 0;
++	vsp1->wpf[0]->entity.sink = &vsp1->lif->entity;
++	vsp1->wpf[0]->entity.sink_pad = 0;
 +
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(asoc_simple_card_parse_card_name);
-diff --git a/sound/soc/generic/simple-scu-card.c b/sound/soc/generic/simple-scu-card.c
-index 9b9b01e12149..5f4384f322c1 100644
---- a/sound/soc/generic/simple-scu-card.c
-+++ b/sound/soc/generic/simple-scu-card.c
-@@ -246,8 +246,6 @@ static int asoc_simple_card_parse_of(struct device_node *node,
- 	if (ret < 0)
- 		return ret;
+ 	list_add_tail(&vsp1->bru->entity.list_pipe, &pipe->entities);
+ 	list_add_tail(&vsp1->wpf[0]->entity.list_pipe, &pipe->entities);
+ 	list_add_tail(&vsp1->lif->entity.list_pipe, &pipe->entities);
+diff --git a/drivers/media/platform/vsp1/vsp1_drm.h b/drivers/media/platform/vsp1/vsp1_drm.h
+index cbdbb8a39883..67d6549edfad 100644
+--- a/drivers/media/platform/vsp1/vsp1_drm.h
++++ b/drivers/media/platform/vsp1/vsp1_drm.h
+@@ -48,6 +48,5 @@ static inline struct vsp1_drm *to_vsp1_drm(struct vsp1_pipeline *pipe)
  
--	dev_dbg(dev, "New card: %s\n",
--		card->name ? card->name : "");
- 	dev_dbg(dev, "convert_rate     %d\n", priv->convert_rate);
- 	dev_dbg(dev, "convert_channels %d\n", priv->convert_channels);
+ int vsp1_drm_init(struct vsp1_device *vsp1);
+ void vsp1_drm_cleanup(struct vsp1_device *vsp1);
+-int vsp1_drm_create_links(struct vsp1_device *vsp1);
  
+ #endif /* __VSP1_DRM_H__ */
+diff --git a/drivers/media/platform/vsp1/vsp1_drv.c b/drivers/media/platform/vsp1/vsp1_drv.c
+index 9b3a0790f92a..5a467b118a1c 100644
+--- a/drivers/media/platform/vsp1/vsp1_drv.c
++++ b/drivers/media/platform/vsp1/vsp1_drv.c
+@@ -423,19 +423,15 @@ static int vsp1_create_entities(struct vsp1_device *vsp1)
+ 			goto done;
+ 	}
+ 
+-	/* Create links. */
+-	if (vsp1->info->uapi)
+-		ret = vsp1_uapi_create_links(vsp1);
+-	else
+-		ret = vsp1_drm_create_links(vsp1);
+-	if (ret < 0)
+-		goto done;
+-
+ 	/*
+-	 * Register subdev nodes if the userspace API is enabled or initialize
+-	 * the DRM pipeline otherwise.
++	 * Create links and register subdev nodes if the userspace API is
++	 * enabled or initialize the DRM pipeline otherwise.
+ 	 */
+ 	if (vsp1->info->uapi) {
++		ret = vsp1_uapi_create_links(vsp1);
++		if (ret < 0)
++			goto done;
++
+ 		ret = v4l2_device_register_subdev_nodes(&vsp1->v4l2_dev);
+ 		if (ret < 0)
+ 			goto done;
 -- 
-2.11.0
+Regards,
+
+Laurent Pinchart
