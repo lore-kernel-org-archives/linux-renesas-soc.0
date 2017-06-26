@@ -1,80 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54402 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751835AbdFORUj (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:57083 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751308AbdFZS0O (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Jun 2017 13:20:39 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <87shj2m78z.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dLYRd-0001eP-6e@debutante>
-Date: Thu, 15 Jun 2017 18:20:33 +0100
-Subject: Applied "ASoC: audio-graph-scu-card: use asoc_simple_card_of_parse_routing()" to the asoc tree
+        Mon, 26 Jun 2017 14:26:14 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH] clk: renesas: r8a7796: Add PWM clock
+Date: Mon, 26 Jun 2017 21:26:14 +0300
+Message-ID: <1669418.PM0r6WOmIk@avalon>
+In-Reply-To: <CAMuHMdWkgeuMGhpMrYJhh9XDSEzPv48tkTeGOW9FQvukU+oaXg@mail.gmail.com>
+References: <20170626172652.28018-1-laurent.pinchart+renesas@ideasonboard.com> <CAMuHMdWkgeuMGhpMrYJhh9XDSEzPv48tkTeGOW9FQvukU+oaXg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+Hi Geert,
 
-   ASoC: audio-graph-scu-card: use asoc_simple_card_of_parse_routing()
+On Monday 26 Jun 2017 19:38:58 Geert Uytterhoeven wrote:
+> On Mon, Jun 26, 2017 at 7:26 PM, Laurent Pinchart wrote:
+> > --- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
+> > +++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+> > @@ -152,6 +152,7 @@ static const struct mssr_mod_clk r8a7796_mod_clks[]
+> > __initconst = {> 
+> >         DEF_MOD("hscif1",                519,   R8A7796_CLK_S3D1),
+> >         DEF_MOD("hscif0",                520,   R8A7796_CLK_S3D1),
+> >         DEF_MOD("thermal",               522,   R8A7796_CLK_CP),
+> > 
+> > +       DEF_MOD("pwm",                   523,   R8A7796_CLK_S0D12),
+> 
+> Cfr. commit a0b381fafffaf07c ("clk: renesas: r8a7796: Add PWM clock")
+> in clk-next.
 
-has been applied to the asoc tree at
+Same mistake twice... I wonder why I failed to find that one :-/ Sorry about 
+the noise.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 9fb9b2f236f05168a6138e62c82124a2f5eaf320 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Thu, 15 Jun 2017 00:25:51 +0000
-Subject: [PATCH] ASoC: audio-graph-scu-card: use
- asoc_simple_card_of_parse_routing()
-
-Current simple/audio scu card drivers are supporting same
-routing on DT, but, doesn't use same function for it.
-Encapsulation is one of simple card util's purpose.
-Let's use asoc_simple_card_of_parse_routing
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/generic/audio-graph-scu-card.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/sound/soc/generic/audio-graph-scu-card.c b/sound/soc/generic/audio-graph-scu-card.c
-index 9502f6ed14b8..05934b24627b 100644
---- a/sound/soc/generic/audio-graph-scu-card.c
-+++ b/sound/soc/generic/audio-graph-scu-card.c
-@@ -195,8 +195,8 @@ static int asoc_graph_card_parse_of(struct graph_card_data *priv)
- 	 * see simple-card
- 	 */
- 
--	ret = snd_soc_of_parse_audio_routing(card, "routing");
--	if (ret)
-+	ret = asoc_simple_card_of_parse_routing(card, NULL, 0);
-+	if (ret < 0)
- 		return ret;
- 
- 	asoc_simple_card_parse_convert(dev, NULL, &priv->adata);
 -- 
-2.11.0
+Regards,
+
+Laurent Pinchart
