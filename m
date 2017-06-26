@@ -1,119 +1,172 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:44278 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750812AbdFVOzA (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 22 Jun 2017 10:55:00 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: linus.walleij@linaro.org, geert+renesas@glider.be,
-        laurent.pinchart@ideasonboard.com, chris.brandt@renesas.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk,
-        aisheng.dong@nxp.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v6 00/8] Renesas RZ/A1 pin and gpio controller
-Date: Thu, 22 Jun 2017 16:54:28 +0200
-Message-Id: <1498143276-7976-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 04/14] v4l: vsp1: Store source and sink pointers as vsp1_entity
+Date: Mon, 26 Jun 2017 21:12:16 +0300
+Message-Id: <20170626181226.29575-5-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170626181226.29575-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170626181226.29575-1-laurent.pinchart+renesas@ideasonboard.com>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
-   this is 6th round of RZ/A1 pin controller patch series.
+The internal VSP entity source and sink pointers are stored as
+media_entity pointers, which are then cast to a vsp1_entity. As all
+sources and sinks are vsp1_entity instances, we can store the
+vsp1_entity pointers directly.
 
-Where did we stop: discussion from pin controller driver shifted toward two
-new generic pin configuration properties I added to the previous series
-(bi-directional and output-enable).
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ drivers/media/platform/vsp1/vsp1_drm.c    |  4 ++--
+ drivers/media/platform/vsp1/vsp1_drv.c    |  2 +-
+ drivers/media/platform/vsp1/vsp1_entity.c | 26 +++++++++++++-------------
+ drivers/media/platform/vsp1/vsp1_entity.h |  4 ++--
+ 4 files changed, 18 insertions(+), 18 deletions(-)
 
-After a really long discussion, we decided to go for handling internally all
-bi-directional use cases, making the generic property not a requirement for the
-series. Interestingly, we recently found out the number of pins actually
-requiring this flag is less (~half) than what reported by the processor manual,
-so we could have handled these internally from day one :(
+diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
+index bc3fd9bc7126..2d5a74e95e09 100644
+--- a/drivers/media/platform/vsp1/vsp1_drm.c
++++ b/drivers/media/platform/vsp1/vsp1_drm.c
+@@ -587,7 +587,7 @@ int vsp1_drm_create_links(struct vsp1_device *vsp1)
+ 		if (ret < 0)
+ 			return ret;
+ 
+-		rpf->entity.sink = &vsp1->bru->entity.subdev.entity;
++		rpf->entity.sink = &vsp1->bru->entity;
+ 		rpf->entity.sink_pad = i;
+ 	}
+ 
+@@ -598,7 +598,7 @@ int vsp1_drm_create_links(struct vsp1_device *vsp1)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	vsp1->bru->entity.sink = &vsp1->wpf[0]->entity.subdev.entity;
++	vsp1->bru->entity.sink = &vsp1->wpf[0]->entity;
+ 	vsp1->bru->entity.sink_pad = RWPF_PAD_SINK;
+ 
+ 	ret = media_create_pad_link(&vsp1->wpf[0]->entity.subdev.entity,
+diff --git a/drivers/media/platform/vsp1/vsp1_drv.c b/drivers/media/platform/vsp1/vsp1_drv.c
+index 35087d5573ce..9b3a0790f92a 100644
+--- a/drivers/media/platform/vsp1/vsp1_drv.c
++++ b/drivers/media/platform/vsp1/vsp1_drv.c
+@@ -121,7 +121,7 @@ static int vsp1_create_sink_links(struct vsp1_device *vsp1,
+ 				return ret;
+ 
+ 			if (flags & MEDIA_LNK_FL_ENABLED)
+-				source->sink = entity;
++				source->sink = sink;
+ 		}
+ 	}
+ 
+diff --git a/drivers/media/platform/vsp1/vsp1_entity.c b/drivers/media/platform/vsp1/vsp1_entity.c
+index 4bdb3b141611..71dd903263ad 100644
+--- a/drivers/media/platform/vsp1/vsp1_entity.c
++++ b/drivers/media/platform/vsp1/vsp1_entity.c
+@@ -24,18 +24,11 @@
+ #include "vsp1_pipe.h"
+ #include "vsp1_rwpf.h"
+ 
+-static inline struct vsp1_entity *
+-media_entity_to_vsp1_entity(struct media_entity *entity)
+-{
+-	return container_of(entity, struct vsp1_entity, subdev.entity);
+-}
+-
+ void vsp1_entity_route_setup(struct vsp1_entity *entity,
+ 			     struct vsp1_pipeline *pipe,
+ 			     struct vsp1_dl_list *dl)
+ {
+ 	struct vsp1_entity *source;
+-	struct vsp1_entity *sink;
+ 
+ 	if (entity->type == VSP1_ENTITY_HGO) {
+ 		u32 smppt;
+@@ -44,7 +37,7 @@ void vsp1_entity_route_setup(struct vsp1_entity *entity,
+ 		 * The HGO is a special case, its routing is configured on the
+ 		 * sink pad.
+ 		 */
+-		source = media_entity_to_vsp1_entity(entity->sources[0]);
++		source = entity->sources[0];
+ 		smppt = (pipe->output->entity.index << VI6_DPR_SMPPT_TGW_SHIFT)
+ 		      | (source->route->output << VI6_DPR_SMPPT_PT_SHIFT);
+ 
+@@ -57,7 +50,7 @@ void vsp1_entity_route_setup(struct vsp1_entity *entity,
+ 		 * The HGT is a special case, its routing is configured on the
+ 		 * sink pad.
+ 		 */
+-		source = media_entity_to_vsp1_entity(entity->sources[0]);
++		source = entity->sources[0];
+ 		smppt = (pipe->output->entity.index << VI6_DPR_SMPPT_TGW_SHIFT)
+ 		      | (source->route->output << VI6_DPR_SMPPT_PT_SHIFT);
+ 
+@@ -69,9 +62,8 @@ void vsp1_entity_route_setup(struct vsp1_entity *entity,
+ 	if (source->route->reg == 0)
+ 		return;
+ 
+-	sink = media_entity_to_vsp1_entity(source->sink);
+ 	vsp1_dl_list_write(dl, source->route->reg,
+-			   sink->route->inputs[source->sink_pad]);
++			   source->sink->route->inputs[source->sink_pad]);
+ }
+ 
+ /* -----------------------------------------------------------------------------
+@@ -316,6 +308,12 @@ int vsp1_subdev_enum_frame_size(struct v4l2_subdev *subdev,
+  * Media Operations
+  */
+ 
++static inline struct vsp1_entity *
++media_entity_to_vsp1_entity(struct media_entity *entity)
++{
++	return container_of(entity, struct vsp1_entity, subdev.entity);
++}
++
+ static int vsp1_entity_link_setup_source(const struct media_pad *source_pad,
+ 					 const struct media_pad *sink_pad,
+ 					 u32 flags)
+@@ -339,7 +337,7 @@ static int vsp1_entity_link_setup_source(const struct media_pad *source_pad,
+ 		    sink->type != VSP1_ENTITY_HGT) {
+ 			if (source->sink)
+ 				return -EBUSY;
+-			source->sink = sink_pad->entity;
++			source->sink = sink;
+ 			source->sink_pad = sink_pad->index;
+ 		}
+ 	} else {
+@@ -355,15 +353,17 @@ static int vsp1_entity_link_setup_sink(const struct media_pad *source_pad,
+ 				       u32 flags)
+ {
+ 	struct vsp1_entity *sink;
++	struct vsp1_entity *source;
+ 
+ 	sink = media_entity_to_vsp1_entity(sink_pad->entity);
++	source = media_entity_to_vsp1_entity(source_pad->entity);
+ 
+ 	if (flags & MEDIA_LNK_FL_ENABLED) {
+ 		/* Fan-in is limited to one. */
+ 		if (sink->sources[sink_pad->index])
+ 			return -EBUSY;
+ 
+-		sink->sources[sink_pad->index] = source_pad->entity;
++		sink->sources[sink_pad->index] = source;
+ 	} else {
+ 		sink->sources[sink_pad->index] = NULL;
+ 	}
+diff --git a/drivers/media/platform/vsp1/vsp1_entity.h b/drivers/media/platform/vsp1/vsp1_entity.h
+index c169a060b6d2..4362cd4e90ba 100644
+--- a/drivers/media/platform/vsp1/vsp1_entity.h
++++ b/drivers/media/platform/vsp1/vsp1_entity.h
+@@ -104,8 +104,8 @@ struct vsp1_entity {
+ 	struct media_pad *pads;
+ 	unsigned int source_pad;
+ 
+-	struct media_entity **sources;
+-	struct media_entity *sink;
++	struct vsp1_entity **sources;
++	struct vsp1_entity *sink;
+ 	unsigned int sink_pad;
+ 
+ 	struct v4l2_subdev subdev;
+-- 
+Regards,
 
-We also now manage internally pins requiring IO direction specified in software
-even when configured in alternate function mode (SWIO mode). Most of them are
-handled by the driver, some of them have to come from DTS as the user can freely
-select if they have to be inputs or outputs. For those pins, and after another
-discussion involving NXP developers, we decided to use input-enable and
-output-enable properties. I have just sent a patch to add output-enable to the
-generic pin configuration properties, but it is currently under discussion.
-
-However, none of the pins currently configured by mainline DTS require those
-properties to be specified, so I have dropped in this driver any dependency on
-output-enable property, and I'm using instead the already in place
-PIN_CONFIG_OUTPUT one. Once output-enable will eventually be accepted, we can
-update the driver to make use of it, but since there are no use cases for that
-at the moment, it makes not too much sense holding this series back for that.
-
-The total memory occupation we were so worried about of bi-directional and swio
-pin tables is now around 100 bytes, because of how the number of pins actually
-needing those flags has  reduced and because of how we have arranged the
-tables using bitfield structures (credits to Geert here).
-
-Having cleared out dependencies on new pin configuration properties and having
-made configuration flags a driver specific issue, I hope this version can be
-accepted and land in forthcoming pull request for Renesas PFC updates from
-Geert, pending some feedback from the linux-gpio community.
-
-Thanks
-   j
-
-v1 -> v2:
-- change pin configuration flags as suggested by Chris
-- gpio set direction function fixed as suggested by Chris
-- add some more example on pin configuration flag usage to dt-binding doc
-- fix gpio-controller names to remove unit address as suggested by Geert
-- some comments chopped here and there to make the driver less verbose
-
-v2 -> v3:
-- fix grammar and syntax in comment and documentation
-- fix code style (reverse xmas tree ordering in variable declaration)
-- use irqsave/irqrestore in spinlock lock/unlock
-- use devm_ version of kasprintf (memory returned was not properly free)
-- use bitops.h operation ffs and fls to make sure a single bit is set in pmx
-  mask
-- Add Geert's reviewed-by to DTS patches
-
-v3 -> v4:
-- use "pinmux" property in pmx sub-nodes in place of "renesas,pins"
-- use pinconf standard properties to set pin mux additional flags
-- add "bi-directional" and "output-enable" to pinconf generic properties
-- perform pmx function parsing at dt_node_to_map() time
-- change DT bindings to use GENERIC_PINCONF
-- change DT bindings to allow sub-nodes to have "pinmux" property specified
-- several renames (register names, DT parse functions, set_mux() function)
-
-v4 -> v5:
-- use pinctrl_enable() function in pin controller registration function
-- update bindings documentation to incorporate Geert's comments
-- add generic properties unpack macros
-
-v5 -> v6:
-- add tables in driver to manage bi-directional and swio flags
-- drop dependecies on new generic pin configuration properties
-
-Jacopo Mondi (8):
-  pinctrl: Renesas RZ/A1 pin and gpio controller
-  dt-bindings: pinctrl: Add RZ/A1 bindings doc
-  arm: dts: dt-bindings: Add Renesas RZ/A1 pinctrl header
-  arm: dts: r7s72100: Add pin controller node
-  arm: dts: genmai: Add SCIF2 pin group
-  arm: dts: genmai: Add RIIC2 pin group
-  arm: dts: genmai: Add user led device nodes
-  arm: dts: genmai: Add ethernet pin group
-
- .../bindings/pinctrl/renesas,rza1-pinctrl.txt      |  218 ++++
- arch/arm/boot/dts/r7s72100-genmai.dts              |   69 ++
- arch/arm/boot/dts/r7s72100.dtsi                    |   78 ++
- drivers/pinctrl/Kconfig                            |   11 +
- drivers/pinctrl/Makefile                           |    1 +
- drivers/pinctrl/pinctrl-rza1.c                     | 1309 ++++++++++++++++++++
- include/dt-bindings/pinctrl/r7s72100-pinctrl.h     |   16 +
- 7 files changed, 1702 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
- create mode 100644 drivers/pinctrl/pinctrl-rza1.c
- create mode 100644 include/dt-bindings/pinctrl/r7s72100-pinctrl.h
-
---
-2.7.4
+Laurent Pinchart
