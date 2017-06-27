@@ -1,18 +1,21 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f46.google.com ([209.85.214.46]:35671 "EHLO
-        mail-it0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752311AbdF0S6f (ORCPT
+Received: from mail-wm0-f54.google.com ([74.125.82.54]:34916 "EHLO
+        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752637AbdF0SvM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Jun 2017 14:58:35 -0400
-Received: by mail-it0-f46.google.com with SMTP id v202so18626120itb.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 27 Jun 2017 11:58:35 -0700 (PDT)
-MIME-Version: 1.0
+        Tue, 27 Jun 2017 14:51:12 -0400
+Received: by mail-wm0-f54.google.com with SMTP id w126so32876074wme.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 27 Jun 2017 11:51:11 -0700 (PDT)
+Received: from localhost.localdomain ([188.188.48.42])
+        by smtp.gmail.com with ESMTPSA id t17sm1735650edd.69.2017.06.27.11.51.06
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 27 Jun 2017 11:51:09 -0700 (PDT)
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 27 Jun 2017 20:58:33 +0200
-Message-ID: <CAMuHMdVpH7JorTEPzZbjBkN70qbihX11108g9_UV4JegD02v8A@mail.gmail.com>
+To: linux-renesas-soc@vger.kernel.org
 Subject: renesas-drivers-2017-06-27-v4.12-rc7
-To: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Date: Tue, 27 Jun 2017 20:50:56 +0200
+Message-Id: <1498589456-12462-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -84,11 +87,11 @@ Included subsystem trees:
 
 Gr{oetje,eeting}s,
 
-                        Geert
+						Geert
 
 --
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
 when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+							    -- Linus Torvalds
