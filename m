@@ -1,176 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:46928 "EHLO mail.kernel.org"
+Received: from sauhun.de ([88.99.104.3]:54392 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753116AbdF0PPq (ORCPT
+        id S1753395AbdF0VQN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Jun 2017 11:15:46 -0400
-From: Kieran Bingham <kbingham@kernel.org>
-To: niklas.soderlund@ragnatech.se
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCHv6] arm64: dts: renesas: salvator-x: Add ADV7482 support
-Date: Tue, 27 Jun 2017 16:15:41 +0100
-Message-Id: <1498576541-15384-1-git-send-email-kbingham@kernel.org>
+        Tue, 27 Jun 2017 17:16:13 -0400
+Date: Tue, 27 Jun 2017 23:16:10 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/4] i2c: add helpers to ease DMA handling
+Message-ID: <20170627211610.53oeludkm3sooo64@ninjato>
+References: <20170615183039.22925-1-wsa+renesas@sang-engineering.com>
+ <20170615183039.22925-2-wsa+renesas@sang-engineering.com>
+ <CAMuHMdVe1tBMZO9weMsf2Tj7pQ_AUeVu_X=uKbs+JbziLFQHvQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ym4qsbbkg5hla56o"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVe1tBMZO9weMsf2Tj7pQ_AUeVu_X=uKbs+JbziLFQHvQ@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-The Salvator boards use an ADV7482 receiver for HDMI and CVBS inputs.
+--ym4qsbbkg5hla56o
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Provide ADV7482 node on the i2c4 bus, along with connectors for the
-hdmi and cvbs inputs, and link to the csi20 and csi40 nodes as outputs.
+Hi Geert,
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > +static inline int i2c_check_msg_for_dma(struct i2c_msg *msg, unsigned =
+int threshold,
+> > +                                       u8 **ptr_for_bounce_buf)
+>=20
+> __must_check?
 
----
+Yes, why not.
 
-Submitting this directly to Niklas, as these changes depend on his VIN
-DT patches, and has agreed to 'take' this patch on to that series.
+> Isn't this function a bit large to be inlined?
+
+That can be argued, yes. But I am unsure to bloat the core if the
+function is so rarely needed...
+
+> > +static inline void i2c_release_bounce_buf(struct i2c_msg *msg, u8 *bou=
+nce_buf)
+>=20
+> This one is smaller.
+
+Yup, but of course, they should be put in the same place, whereever that ma=
+y be.
+
+Thanks,
+
+   Wolfram
 
 
-v4:
- - dt: Rebase to dts/renesas/salvator-x.dtsi
- - dt: Use AIN0-7 rather than AIN1-8
+--ym4qsbbkg5hla56o
+Content-Type: application/pgp-signature; name="signature.asc"
 
-v5:
- - dt: Move to salvator-common.dtsi
+-----BEGIN PGP SIGNATURE-----
 
-v6:
- - remove unnecessary address-cells and size-cells configuration
- - merge connectors into their respective nodes.
----
- arch/arm64/boot/dts/renesas/salvator-common.dtsi | 103 +++++++++++++++++++++++
- 1 file changed, 103 insertions(+)
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAllSyxYACgkQFA3kzBSg
+KbaI/RAAhYMryJ5CJlQe5g7lZOqiAqyQS7AE22HMQpW/J5g/rmIUy8GxwjWJa9lQ
+BMm2R30/6fzQrNp7ic4jNKP5Ny2ELwpDau0INNJ0RBbcHEbgfBIL4SD3rjGL6dn4
+BzX6CgvG1K7RW2XhX57RT0LFaXxHKIcjzzYut6HSSGnyUIM69jjFDxxJ5RliwKbv
+gF28dcvHeeyGI5hV2xl5FmqXOAzu5Yc25/b/dA6j6baQcT+AsqCCg91Zw/73nv2y
+EfEMcwwLqc2IdQVWdO717nO4mNtX4hU4I7dmRLUq8PhblyvV1R96b3HKcXE52iT+
+0nnUZUzvP7n4q4Qc/yEIGkM2bCZcl07IDwn/bQ8kszjoaMnbGdEVxQzyoKIj+mdw
+uEz9Vl7dn30vUL+IrNdwQ3lg1UWEFUYrM0GYMHjJ7qh+tG0VuPJvNriOtfIA0zGo
+GTSuoQPSm/DvTkvwWUV2sva7hutkh6vTd6iwN2t7QW7dpxA91AlZq4hTzoesOk+b
+uVVEnpgGoQX16qAHNwKAgb6S1+ls0u9kkPr53Opq4hXwYXjPlGrOPH+NurmYaujk
+fW11Lx5sKTlardzCVf1zA3vwnux+f/cggHUae7QpVaTm7SFUkL14TKAQzwaqJB1/
+A0nftuHPSNFdSCx3VSAR8s9Ag5J1FmbM53ZK+sbEPlzZtztxn9I=
+=r09Y
+-----END PGP SIGNATURE-----
 
-diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-index aef35e0b685a..4b7eb0c2ec6b 100644
---- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-@@ -65,6 +65,29 @@
- 		enable-gpios = <&gpio6 7 GPIO_ACTIVE_HIGH>;
- 	};
- 
-+	cvbs-in {
-+		compatible = "composite-video-connector";
-+		label = "CVBS IN";
-+
-+		port {
-+			cvbs_con: endpoint {
-+				remote-endpoint = <&adv7482_ain7>;
-+			};
-+		};
-+	};
-+
-+	hdmi-in {
-+		compatible = "hdmi-connector";
-+		label = "HDMI IN";
-+		type = "a";
-+
-+		port {
-+			hdmi_in_con: endpoint {
-+				remote-endpoint = <&adv7482_hdmi>;
-+			};
-+		};
-+	};
-+
- 	reg_1p8v: regulator0 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "fixed-1.8V";
-@@ -257,6 +280,37 @@
- 	};
- };
- 
-+&csi20 {
-+	status = "okay";
-+
-+	ports {
-+		port@0 {
-+			reg = <0>;
-+			csi20_in: endpoint {
-+				clock-lanes = <0>;
-+				data-lanes = <1>;
-+				remote-endpoint = <&adv7482_txb>;
-+			};
-+		};
-+	};
-+};
-+
-+&csi40 {
-+	status = "okay";
-+
-+	ports {
-+		port@0 {
-+			reg = <0>;
-+
-+			csi40_in: endpoint {
-+				clock-lanes = <0>;
-+				data-lanes = <1 2 3 4>;
-+				remote-endpoint = <&adv7482_txa>;
-+			};
-+		};
-+	};
-+};
-+
- &du {
- 	pinctrl-0 = <&du_pins>;
- 	pinctrl-names = "default";
-@@ -343,6 +397,55 @@
- 
- 		shunt-resistor-micro-ohms = <5000>;
- 	};
-+
-+	video-receiver@70 {
-+		compatible = "adi,adv7482";
-+		reg = <0x70>;
-+
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		interrupt-parent = <&gpio6>;
-+		interrupt-names = "intrq1", "intrq2";
-+		interrupts = <30 IRQ_TYPE_LEVEL_LOW>,
-+			     <31 IRQ_TYPE_LEVEL_LOW>;
-+
-+		port@7 {
-+			reg = <7>;
-+
-+			adv7482_ain7: endpoint {
-+				remote-endpoint = <&cvbs_con>;
-+			};
-+		};
-+
-+		port@8 {
-+			reg = <8>;
-+
-+			adv7482_hdmi: endpoint {
-+				remote-endpoint = <&hdmi_in_con>;
-+			};
-+		};
-+
-+		port@10 {
-+			reg = <10>;
-+
-+			adv7482_txa: endpoint {
-+				clock-lanes = <0>;
-+				data-lanes = <1 2 3 4>;
-+				remote-endpoint = <&csi40_in>;
-+			};
-+		};
-+
-+		port@11 {
-+			reg = <11>;
-+
-+			adv7482_txb: endpoint {
-+				clock-lanes = <0>;
-+				data-lanes = <1>;
-+				remote-endpoint = <&csi20_in>;
-+			};
-+		};
-+	};
- };
- 
- &i2c_dvfs {
--- 
-2.7.4
+--ym4qsbbkg5hla56o--
