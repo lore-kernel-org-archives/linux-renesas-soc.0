@@ -1,74 +1,176 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:46986 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751028AbdFULQr (ORCPT
+Received: from mail.kernel.org ([198.145.29.99]:46928 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753116AbdF0PPq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 21 Jun 2017 07:16:47 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <87lgom6jun.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dNdcn-0004Ex-6P@debutante>
-Date: Wed, 21 Jun 2017 12:16:41 +0100
-Subject: Applied "ASoC: pxa: add COMPILE_TEST on SND_MMP_SOC" to the asoc tree
+        Tue, 27 Jun 2017 11:15:46 -0400
+From: Kieran Bingham <kbingham@kernel.org>
+To: niklas.soderlund@ragnatech.se
+Cc: linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCHv6] arm64: dts: renesas: salvator-x: Add ADV7482 support
+Date: Tue, 27 Jun 2017 16:15:41 +0100
+Message-Id: <1498576541-15384-1-git-send-email-kbingham@kernel.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-   ASoC: pxa: add COMPILE_TEST on SND_MMP_SOC
+The Salvator boards use an ADV7482 receiver for HDMI and CVBS inputs.
 
-has been applied to the asoc tree at
+Provide ADV7482 node on the i2c4 bus, along with connectors for the
+hdmi and cvbs inputs, and link to the csi20 and csi40 nodes as outputs.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From d89e69c0f985392e708b54c92b322163da820cb9 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Wed, 21 Jun 2017 04:38:34 +0000
-Subject: [PATCH] ASoC: pxa: add COMPILE_TEST on SND_MMP_SOC
-
-It doesn't use asm header. We can add COMPILE_TEST
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/pxa/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/pxa/Kconfig b/sound/soc/pxa/Kconfig
-index 960744e46edc..6feb34b8aa49 100644
---- a/sound/soc/pxa/Kconfig
-+++ b/sound/soc/pxa/Kconfig
-@@ -9,7 +9,7 @@ config SND_PXA2XX_SOC
+Submitting this directly to Niklas, as these changes depend on his VIN
+DT patches, and has agreed to 'take' this patch on to that series.
+
+
+v4:
+ - dt: Rebase to dts/renesas/salvator-x.dtsi
+ - dt: Use AIN0-7 rather than AIN1-8
+
+v5:
+ - dt: Move to salvator-common.dtsi
+
+v6:
+ - remove unnecessary address-cells and size-cells configuration
+ - merge connectors into their respective nodes.
+---
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi | 103 +++++++++++++++++++++++
+ 1 file changed, 103 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+index aef35e0b685a..4b7eb0c2ec6b 100644
+--- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+@@ -65,6 +65,29 @@
+ 		enable-gpios = <&gpio6 7 GPIO_ACTIVE_HIGH>;
+ 	};
  
- config SND_MMP_SOC
- 	bool "Soc Audio for Marvell MMP chips"
--	depends on ARCH_MMP
-+	depends on ARCH_MMP || COMPILE_TEST
- 	select MMP_SRAM
- 	select SND_SOC_GENERIC_DMAENGINE_PCM
- 	select SND_ARM
++	cvbs-in {
++		compatible = "composite-video-connector";
++		label = "CVBS IN";
++
++		port {
++			cvbs_con: endpoint {
++				remote-endpoint = <&adv7482_ain7>;
++			};
++		};
++	};
++
++	hdmi-in {
++		compatible = "hdmi-connector";
++		label = "HDMI IN";
++		type = "a";
++
++		port {
++			hdmi_in_con: endpoint {
++				remote-endpoint = <&adv7482_hdmi>;
++			};
++		};
++	};
++
+ 	reg_1p8v: regulator0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "fixed-1.8V";
+@@ -257,6 +280,37 @@
+ 	};
+ };
+ 
++&csi20 {
++	status = "okay";
++
++	ports {
++		port@0 {
++			reg = <0>;
++			csi20_in: endpoint {
++				clock-lanes = <0>;
++				data-lanes = <1>;
++				remote-endpoint = <&adv7482_txb>;
++			};
++		};
++	};
++};
++
++&csi40 {
++	status = "okay";
++
++	ports {
++		port@0 {
++			reg = <0>;
++
++			csi40_in: endpoint {
++				clock-lanes = <0>;
++				data-lanes = <1 2 3 4>;
++				remote-endpoint = <&adv7482_txa>;
++			};
++		};
++	};
++};
++
+ &du {
+ 	pinctrl-0 = <&du_pins>;
+ 	pinctrl-names = "default";
+@@ -343,6 +397,55 @@
+ 
+ 		shunt-resistor-micro-ohms = <5000>;
+ 	};
++
++	video-receiver@70 {
++		compatible = "adi,adv7482";
++		reg = <0x70>;
++
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		interrupt-parent = <&gpio6>;
++		interrupt-names = "intrq1", "intrq2";
++		interrupts = <30 IRQ_TYPE_LEVEL_LOW>,
++			     <31 IRQ_TYPE_LEVEL_LOW>;
++
++		port@7 {
++			reg = <7>;
++
++			adv7482_ain7: endpoint {
++				remote-endpoint = <&cvbs_con>;
++			};
++		};
++
++		port@8 {
++			reg = <8>;
++
++			adv7482_hdmi: endpoint {
++				remote-endpoint = <&hdmi_in_con>;
++			};
++		};
++
++		port@10 {
++			reg = <10>;
++
++			adv7482_txa: endpoint {
++				clock-lanes = <0>;
++				data-lanes = <1 2 3 4>;
++				remote-endpoint = <&csi40_in>;
++			};
++		};
++
++		port@11 {
++			reg = <11>;
++
++			adv7482_txb: endpoint {
++				clock-lanes = <0>;
++				data-lanes = <1>;
++				remote-endpoint = <&csi20_in>;
++			};
++		};
++	};
+ };
+ 
+ &i2c_dvfs {
 -- 
-2.11.0
+2.7.4
