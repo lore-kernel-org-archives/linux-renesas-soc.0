@@ -1,45 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:35496 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752787AbdF2ODK (ORCPT
+Received: from mail-it0-f65.google.com ([209.85.214.65]:33823 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751489AbdF1RBo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Jun 2017 10:03:10 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, laurent.pinchart@ideasonboard.com
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v1 0/2] drm: rcar-du: Repair vblank event handling
-Date: Thu, 29 Jun 2017 15:02:54 +0100
-Message-Id: <cover.22236bc88adc598797b31ea82329ec99304fe34d.1498744799.git-series.kieran.bingham+renesas@ideasonboard.com>
+        Wed, 28 Jun 2017 13:01:44 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170628152156.18881-1-wsa+renesas@sang-engineering.com>
+References: <20170628152156.18881-1-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 28 Jun 2017 19:01:42 +0200
+Message-ID: <CAMuHMdXb2a30NjE9td8mNcDdsSpBdSX0_xup3NUWJs4_Q4msxg@mail.gmail.com>
+Subject: Re: [PATCH V2] mmc: renesas_sdhi_core: on R-Car 2+, make use of CBSY bit
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Linux MMC List <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Dirk Behme <dirk.behme@de.bosch.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The recent changes to the rcar-du driver to fix a race condition inadvertently
-change the order of which vblanks are reported.
+Hi Wolfram,
 
-Correct this by handling vblank events in the same completion handler. This
-removes the need for the IRQ handler on DU instances which are sourced by a
-VSP1.
+On Wed, Jun 28, 2017 at 5:21 PM, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> Most registers need to wait until the command is completed, not
+> necessarily until the bus is free. At least, R-Car 2+ SoCs can signal
+> that via the CBSY bit, so let's use it there instead of SCLKDIVEN to
+> save a little bit of delay.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>
+> Tested on H2 and M3-W.
+>
+> Change since V1:
+>
+> Rebased on top of mmc/next with Simon's Gen3 DMA patches.
+>
+>  drivers/mmc/host/renesas_sdhi_core.c | 17 ++++++++++++-----
+>  1 file changed, 12 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+> index 569bcdd5e6537a..be806d3e9afeec 100644
+> --- a/drivers/mmc/host/renesas_sdhi_core.c
+> +++ b/drivers/mmc/host/renesas_sdhi_core.c
+> @@ -398,12 +398,14 @@ static void renesas_sdhi_hw_reset(struct tmio_mmc_host *host)
+>                        sd_scc_read32(host, priv, SH_MOBILE_SDHI_SCC_RVSCNTL));
+>  }
+>
+> -static int renesas_sdhi_wait_idle(struct tmio_mmc_host *host)
+> +static int renesas_sdhi_wait_idle(struct tmio_mmc_host *host, u32 bit)
+>  {
+>         int timeout = 1000;
+> +       /* CBSY is set when busy, SCLKDIVEN is cleared when busy */
+> +       u32 wait_state = (bit == TMIO_STAT_CMD_BUSY ? TMIO_STAT_CMD_BUSY : 0);
+>
+> -       while (--timeout && !(sd_ctrl_read16_and_16_as_32(host, CTL_STATUS)
+> -                             & TMIO_STAT_SCLKDIVEN))
+> +       while (--timeout && (sd_ctrl_read16_and_16_as_32(host, CTL_STATUS)
+> +                             & bit) == wait_state)
 
-For other platforms (Gen2) the vblank handler was enabling the VBK interrupt,
-but parsing on the FRM interrupt. Fix this by enabling the FRM interrupt using
-the FRE bit in the DIER register
+Do you have any figures on the number of loops saved?
 
-Kieran Bingham (2):
-  drm: rcar-du: Enable the FRM interrupt for vblank
-  drm: rcar-du: Repair vblank for DRM page flips using the VSP1
+Gr{oetje,eeting}s,
 
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c   | 25 ++++++++++++++++++++-----
- drivers/gpu/drm/rcar-du/rcar_du_crtc.h   |  2 ++-
- drivers/gpu/drm/rcar-du/rcar_du_vsp.c    |  8 ++++++--
- drivers/media/platform/vsp1/vsp1_drm.c   |  5 +++--
- drivers/media/platform/vsp1/vsp1_drm.h   |  2 +-
- drivers/media/platform/vsp1/vsp1_pipe.c  | 20 ++++++++++----------
- drivers/media/platform/vsp1/vsp1_pipe.h  |  2 +-
- drivers/media/platform/vsp1/vsp1_video.c |  6 +++++-
- include/media/vsp1.h                     |  2 +-
- 9 files changed, 49 insertions(+), 23 deletions(-)
+                        Geert
 
-base-commit: fa5b4114202de0c1a7a64fd407af0b81ca529419
--- 
-git-series 0.9.1
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
