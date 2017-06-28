@@ -1,174 +1,156 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:58063 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752721AbdF0NIY (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:60600 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751505AbdF1TtJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Jun 2017 09:08:24 -0400
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com,
-        will.deacon@arm.com, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        chris.paterson2@renesas.com, geert+renesas@glider.be,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH] arm64: dts: r8a7796: Add DRIF support
-Date: Tue, 27 Jun 2017 13:54:38 +0100
-Message-Id: <20170627125438.44491-1-ramesh.shanmugasundaram@bp.renesas.com>
+        Wed, 28 Jun 2017 15:49:09 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Archit Taneja <architt@codeaurora.org>,
+        Mark Brown <broonie@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        Jose Abreu <joabreu@synopsys.com>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
+In-Reply-To: <877f1fosji.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1dQIxG-0005oq-0a@finisterre>
+Date: Wed, 28 Jun 2017 20:48:50 +0100
+Subject: Applied "drm: dw-hdmi-i2s: add .get_dai_id callback for ALSA SoC" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Adds the DRIF controller nodes for r8a7796.
+The patch
 
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
-Hi Simon,
+   drm: dw-hdmi-i2s: add .get_dai_id callback for ALSA SoC
 
-   This patch is based on renesas-devel-20170626-v4.12-rc7 tag.
-   It is verified on M3 ES1.0. I also verified there are no regression issues
-   with this addition.
+has been applied to the asoc tree at
 
-   The driver[1] is pushed into the media_tree. The bindings[2] are ACK'ed
-   by Geert & Rob and in the media_tree queue.
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-   [1] https://git.linuxtv.org/media_tree.git/commit/?id=7625ee981af166ddb569e2e6c0006e2af471326f
-   [2] https://www.mail-archive.com/linux-renesas-soc@vger.kernel.org/msg15602.html
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
 Thanks,
-Ramesh.
+Mark
 
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 120 +++++++++++++++++++++++++++++++
- 1 file changed, 120 insertions(+)
+>From e3839bd6f56a291f00a4c3737eb15ca0344a82a9 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Mon, 19 Jun 2017 00:39:29 +0000
+Subject: [PATCH] drm: dw-hdmi-i2s: add .get_dai_id callback for ALSA SoC
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 1f6710912045..df04d132a127 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -639,6 +639,126 @@
- 			};
- 		};
+ALSA SoC needs to know connected DAI ID for probing.
+It is not a big problem if device/driver was only for sound,
+but getting DAI ID will be difficult if device includes both
+Video/Sound, like HDMI.
+To solve this issue, this patch adds new .get_dai_id callback
+on hdmi_codec_ops.
+dw-hdmi-i2s will assume that HDMI sound will be connected
+to reg = <2>. Then, ALSA SoC side will recognized it as DAI 0
+
+	ports {
+		#address-cells = <1>;
+		#size-cells = <0>;
+		port@0 {
+			reg = <0>;
+			/* HDMI Video IN */
+		};
+		port@1 {
+			reg = <1>;
+			/* HDMI OUT */
+		};
+		port@2 {
+			reg = <2>;
+			/* HDMI Sound IN */
+		};
+	};
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Acked-by: Archit Taneja <architt@codeaurora.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ .../bindings/display/bridge/renesas,dw-hdmi.txt     |  9 ++++++++-
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c | 21 +++++++++++++++++++++
+ 2 files changed, 29 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt b/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
+index f6b3f36d422b..81b68580e199 100644
+--- a/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
++++ b/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
+@@ -25,7 +25,8 @@ Required properties:
+ - clock-names: Shall contain "iahb" and "isfr" as defined in dw_hdmi.txt.
+ - ports: See dw_hdmi.txt. The DWC HDMI shall have one port numbered 0
+   corresponding to the video input of the controller and one port numbered 1
+-  corresponding to its HDMI output. Each port shall have a single endpoint.
++  corresponding to its HDMI output, and one port numbered 2 corresponding to
++  sound input of the controller. Each port shall have a single endpoint.
  
-+		drif00: rif@e6f40000 {
-+			compatible = "renesas,r8a7796-drif",
-+				     "renesas,rcar-gen3-drif";
-+			reg = <0 0xe6f40000 0 0x64>;
-+			interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 515>;
-+			clock-names = "fck";
-+			dmas = <&dmac1 0x20>, <&dmac2 0x20>;
-+			dma-names = "rx", "rx";
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 515>;
-+			renesas,bonding = <&drif01>;
-+			status = "disabled";
-+		};
+ Optional properties:
+ 
+@@ -59,6 +60,12 @@ Example:
+ 					remote-endpoint = <&hdmi0_con>;
+ 				};
+ 			};
++			port@2 {
++				reg = <2>;
++				rcar_dw_hdmi0_sound_in: endpoint {
++					remote-endpoint = <&hdmi_sound_out>;
++				};
++			};
+ 		};
+ 	};
+ 
+diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c
+index aaf287d2e91d..b2cf59f54c88 100644
+--- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c
++++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c
+@@ -82,9 +82,30 @@ static void dw_hdmi_i2s_audio_shutdown(struct device *dev, void *data)
+ 	hdmi_write(audio, HDMI_AUD_CONF0_SW_RESET, HDMI_AUD_CONF0);
+ }
+ 
++static int dw_hdmi_i2s_get_dai_id(struct snd_soc_component *component,
++				  struct device_node *endpoint)
++{
++	struct of_endpoint of_ep;
++	int ret;
 +
-+		drif01: rif@e6f50000 {
-+			compatible = "renesas,r8a7796-drif",
-+				     "renesas,rcar-gen3-drif";
-+			reg = <0 0xe6f50000 0 0x64>;
-+			interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 514>;
-+			clock-names = "fck";
-+			dmas = <&dmac1 0x22>, <&dmac2 0x22>;
-+			dma-names = "rx", "rx";
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 514>;
-+			renesas,bonding = <&drif00>;
-+			status = "disabled";
-+		};
++	ret = of_graph_parse_endpoint(endpoint, &of_ep);
++	if (ret < 0)
++		return ret;
 +
-+		drif10: rif@e6f60000 {
-+			compatible = "renesas,r8a7796-drif",
-+				     "renesas,rcar-gen3-drif";
-+			reg = <0 0xe6f60000 0 0x64>;
-+			interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 513>;
-+			clock-names = "fck";
-+			dmas = <&dmac1 0x24>, <&dmac2 0x24>;
-+			dma-names = "rx", "rx";
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 513>;
-+			renesas,bonding = <&drif11>;
-+			status = "disabled";
-+		};
++	/*
++	 * HDMI sound should be located as reg = <2>
++	 * Then, it is sound port 0
++	 */
++	if (of_ep.port == 2)
++		return 0;
 +
-+		drif11: rif@e6f70000 {
-+			compatible = "renesas,r8a7796-drif",
-+				     "renesas,rcar-gen3-drif";
-+			reg = <0 0xe6f70000 0 0x64>;
-+			interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 512>;
-+			clock-names = "fck";
-+			dmas = <&dmac1 0x26>, <&dmac2 0x26>;
-+			dma-names = "rx", "rx";
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 512>;
-+			renesas,bonding = <&drif10>;
-+			status = "disabled";
-+		};
++	return -EINVAL;
++}
 +
-+		drif20: rif@e6f80000 {
-+			compatible = "renesas,r8a7796-drif",
-+				     "renesas,rcar-gen3-drif";
-+			reg = <0 0xe6f80000 0 0x64>;
-+			interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 511>;
-+			clock-names = "fck";
-+			dmas = <&dmac1 0x28>, <&dmac2 0x28>;
-+			dma-names = "rx", "rx";
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 511>;
-+			renesas,bonding = <&drif21>;
-+			status = "disabled";
-+		};
-+
-+		drif21: rif@e6f90000 {
-+			compatible = "renesas,r8a7796-drif",
-+				     "renesas,rcar-gen3-drif";
-+			reg = <0 0xe6f90000 0 0x64>;
-+			interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 510>;
-+			clock-names = "fck";
-+			dmas = <&dmac1 0x2a>, <&dmac2 0x2a>;
-+			dma-names = "rx", "rx";
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 510>;
-+			renesas,bonding = <&drif20>;
-+			status = "disabled";
-+		};
-+
-+		drif30: rif@e6fa0000 {
-+			compatible = "renesas,r8a7796-drif",
-+				     "renesas,rcar-gen3-drif";
-+			reg = <0 0xe6fa0000 0 0x64>;
-+			interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 509>;
-+			clock-names = "fck";
-+			dmas = <&dmac1 0x2c>, <&dmac2 0x2c>;
-+			dma-names = "rx", "rx";
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 509>;
-+			renesas,bonding = <&drif31>;
-+			status = "disabled";
-+		};
-+
-+		drif31: rif@e6fb0000 {
-+			compatible = "renesas,r8a7796-drif",
-+				     "renesas,rcar-gen3-drif";
-+			reg = <0 0xe6fb0000 0 0x64>;
-+			interrupts = <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 508>;
-+			clock-names = "fck";
-+			dmas = <&dmac1 0x2e>, <&dmac2 0x2e>;
-+			dma-names = "rx", "rx";
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 508>;
-+			renesas,bonding = <&drif30>;
-+			status = "disabled";
-+		};
-+
- 		avb: ethernet@e6800000 {
- 			compatible = "renesas,etheravb-r8a7796",
- 				     "renesas,etheravb-rcar-gen3";
+ static struct hdmi_codec_ops dw_hdmi_i2s_ops = {
+ 	.hw_params	= dw_hdmi_i2s_hw_params,
+ 	.audio_shutdown	= dw_hdmi_i2s_audio_shutdown,
++	.get_dai_id	= dw_hdmi_i2s_get_dai_id,
+ };
+ 
+ static int snd_dw_hdmi_probe(struct platform_device *pdev)
 -- 
-2.12.2
+2.13.2
