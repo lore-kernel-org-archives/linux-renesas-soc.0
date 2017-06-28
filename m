@@ -1,67 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:41499 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752648AbdFSRFh (ORCPT
+Received: from sauhun.de ([88.99.104.3]:56682 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751469AbdF1Ofz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Jun 2017 13:05:37 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v1 09/12] media: rcar: vin: Install notifier for digital input
-Date: Mon, 19 Jun 2017 19:04:46 +0200
-Message-Id: <1497891889-8038-10-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1497891889-8038-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1497891889-8038-1-git-send-email-jacopo+renesas@jmondi.org>
+        Wed, 28 Jun 2017 10:35:55 -0400
+Date: Wed, 28 Jun 2017 16:35:52 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Dirk Behme <dirk.behme@de.bosch.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Ai Kyuse <ai.kyuse.uw@renesas.com>
+Subject: Re: [PATCH mmc/next v3 3/4] mmc: renesas-sdhi: add support for R-Car
+ Gen3 SDHI DMAC
+Message-ID: <20170628143552.frzeob5fcwye2pwd@ninjato>
+References: <1498053630-7780-1-git-send-email-horms+renesas@verge.net.au>
+ <1498053630-7780-4-git-send-email-horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="3ratlid4iixgu6wu"
+Content-Disposition: inline
+In-Reply-To: <1498053630-7780-4-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Install async notifier for digital input on Gen3 when no other CSI-2
-input has been found connected.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- drivers/media/platform/rcar-vin/rcar-core.c | 23 +++++++++++++++++------
- 1 file changed, 17 insertions(+), 6 deletions(-)
+--3ratlid4iixgu6wu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 78ca232..6e5d84a 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -866,17 +866,28 @@ static int rvin_group_graph_init(struct rvin_dev *vin)
- 	}
- 
- 	i = 0;
--	for_each_set_bit(bit, &bitmap, RVIN_CSI_MAX) {
--		subdevs[i++] = &vin->group->csi[bit].asd;
-+	for_each_set_bit(bit, &bitmap, RVIN_INPUT_MAX) {
-+		if (bit < RVIN_CSI_MAX)
-+			subdevs[i++] = &vin->group->csi[bit].asd;
-+		else if (bit == RVIN_PARALLEL_IN) {
-+			subdevs[0] = &vin->digital.asd;
-+			vin->notifier.num_subdevs = 1;
-+		}
- 	}
- 
- 	vin_dbg(vin, "Claimed %d subdevices for group\n", count);
- 
--	vin->notifier.num_subdevs = count;
- 	vin->notifier.subdevs = subdevs;
--	vin->notifier.bound = rvin_group_notify_bound;
--	vin->notifier.unbind = rvin_group_notify_unbind;
--	vin->notifier.complete = rvin_group_notify_complete;
-+	if (!vin->notifier.num_subdevs) {
-+		vin->notifier.num_subdevs = count;
-+		vin->notifier.bound = rvin_group_notify_bound;
-+		vin->notifier.unbind = rvin_group_notify_unbind;
-+		vin->notifier.complete = rvin_group_notify_complete;
-+	} else {
-+		vin->notifier.bound = rvin_digital_notify_bound;
-+		vin->notifier.unbind = rvin_digital_notify_unbind;
-+		vin->notifier.complete = rvin_digital_notify_complete;
-+	}
- 
- 	mutex_unlock(&vin->group->lock);
- 
--- 
-2.7.4
+On Wed, Jun 21, 2017 at 04:00:29PM +0200, Simon Horman wrote:
+> Add a new variant of the SDHI driver to support R-Car Gen3 with DMA via
+> on-chip bus mastering.  Since the DMAC is in a part of the SDHI module it
+> is not suitable to be used via DMA Engine.
+>=20
+> Clearing of DM_CM_INFO1 after DMA thanks to Dirk Behme
+>=20
+> Cc: Dirk Behme <dirk.behme@de.bosch.com>
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Signed-off-by: Ai Kyuse <ai.kyuse.uw@renesas.com>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+
+--3ratlid4iixgu6wu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAllTvsgACgkQFA3kzBSg
+Kbb18g/+IV6mo3Nk+ef+irmmasWFR7+Cr3pTsV+ZKXSCFNmlk8yMwmipmmJpLbNn
+wTYzZCIO9U6ZBVMZPe2nioWeyRklUzWdi4e01YGu6NDHU4U25lAqLS32HULuc9rb
+24f/h5D5QIWdHOeBISccWvxzyP2rILkiFIUggDIvW1IqmxSua8/zkZcLv7sVZYZd
+oqHnYLuOalmw8MCiexIAUfMEy3BTklh3HJxh+//ZvhuYcT112GeZAAspkgBuDyz3
+204SOsrJd/WUAtnWhny0psnD0abBDurKbbPj/aiysfr6cngJSSCE5+s0t0APjafi
+BmKGJNLbbWjvqfdCvSKNra5FqH1NaXwhK3wBFIfItp0VANEB1RCEohiMsqCepNFW
+IXS/hbA9crKP+OEpyA3b6S68B+XIoRhaY4du7tvaijc7hzzVuOz53JRK2Eg3NJJ+
+dzXDy7I3d6bEvjJqpAQ5hWq4mrGy46pQ/OvABubtW2IFWBATTUEPTWQc+rjYitxY
+ErU/OXs4M5b+pn/ZeHvkdDPlI/hDzAwWf+xODy+1TBXmzwoCiJLgxBRaXEZrf747
+NkoVAS29kmDvqJv7lsLBm/Pk8QVpf+uJVtmEXlqT+yp81vLrYTpnArr8u8JAQpMM
+RR9QfHOyuSAYsMwZSOrVcahhTZKHd+2rkzUnVYAbO7SfS1UL6Pw=
+=9cf2
+-----END PGP SIGNATURE-----
+
+--3ratlid4iixgu6wu--
