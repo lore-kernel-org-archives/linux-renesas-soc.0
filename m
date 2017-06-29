@@ -1,73 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f47.google.com ([209.85.215.47]:32797 "EHLO
-        mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753199AbdF0ReG (ORCPT
+Received: from mail-it0-f66.google.com ([209.85.214.66]:32788 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753075AbdF2NW6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Jun 2017 13:34:06 -0400
-Received: by mail-lf0-f47.google.com with SMTP id m77so21352991lfe.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 27 Jun 2017 10:34:05 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20170627173400.581660959@cogentembedded.com>
-Date: Tue, 27 Jun 2017 20:33:44 +0300
-To: Simon Horman <horms@verge.net.au>,
+        Thu, 29 Jun 2017 09:22:58 -0400
+MIME-Version: 1.0
+In-Reply-To: <b42a6818-4bc1-6556-5adf-c74a205b745b@de.bosch.com>
+References: <CAMuHMdW9+CNTTOVO4SRRUxuz3ajLbY2j1uG8b_RpHX52NPwXrQ@mail.gmail.com>
+ <b2328038-64ac-f7e0-d8a9-434f2f0b0300@de.bosch.com> <CAMuHMdVD3i0YhGCf-HSS+y+4SHvXi9sW3V4-ScQX=7R+DX=kEQ@mail.gmail.com>
+ <b42a6818-4bc1-6556-5adf-c74a205b745b@de.bosch.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 29 Jun 2017 15:22:51 +0200
+Message-ID: <CAMuHMdV7onyF3o0POVh0v0O-Zp_bmGK3zyadg1SHa4r6k-P_2g@mail.gmail.com>
+Subject: Re: Clocks used by another OS/CPU
+To: Dirk Behme <dirk.behme@de.bosch.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH v2] arm64: dts: r8a7796: add IMR-LX4 support
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=arm64-dts-r8a7796-add-IMR-LX4-support-v2.patch
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe the IMR-LX4 devices in the R8A7796 device tree.
+Hi Dirk,
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On Thu, Jun 29, 2017 at 3:18 PM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
+> On 29.06.2017 13:18, Geert Uytterhoeven wrote:
+>> On Thu, Jun 29, 2017 at 12:28 PM, Dirk Behme <dirk.behme@de.bosch.com>
+>> wrote:
+>>> On 29.06.2017 11:27, Geert Uytterhoeven wrote:
+>>>> TL;DR: Clocks may be in use by another CPU not running Linux, while
+>>>> Linux
+>>>> disables them as being unused.
 
----
-This patch is against the 'renesas-devel-20170626-v4.12-rc7' tag of Simon
-Horman's 'renesas.git' repo.
+>>>> On r8a7795, there are several Cortex A cores running Linux, and a Cortex
+>>>> R7
+>>>> core which may run another OS.
+>>>> This is an interesting issue, and relevant to other SoCs, too.
 
-The IMR-LX4 bindings were documented in the IMR driver patch and ACK'ed by Rob
-Herring, so I don't expect them to change...
+> First of all, just the clocks we know (*) are used by the R7 side *and* are
+> disabled by the kernel (for a practical demo this are e.g. ~7 clocks).
+>
+> (*) Yes, this is board (and R7 software) related. And yes, this might result
+> in board specific r8a7795_crit_mod_clks/r8a7795_crit_core_clks[] tables. So
+> yes, most probably device tree would be an option. While there is
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/clk/clk.c#n3402
+>
+> unfortunately
+>
+> a) its marked as "Do not use this function"
+>
+> and
+>
+> b) even if we would ignore (a) we couldn't figure how to use this for the
+> RCar3 clocks (being no clock expert)
 
-Changes in version 2:
-- added SoC specific "compatible" prop values;
-- refreshed the patch.
+You cannot, as it only supports the legacy one-clock-per-node style.
+You can use it on e.g. sd2_clk in arch/arm/boot/dts/r8a7791.dtsi, until R-Car
+Gen2 is switched to the new CPG/MSSR driver.
 
- arch/arm64/boot/dts/renesas/r8a7796.dtsi |   18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+Gr{oetje,eeting}s,
 
-Index: renesas/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ renesas/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -1454,5 +1454,23 @@
- 				};
- 			};
- 		};
-+
-+		imr-lx4@fe860000 {
-+			compatible = "renesas,r8a7796-imr-lx4",
-+				     "renesas,imr-lx4";
-+			reg = <0 0xfe860000 0 0x2000>;
-+			interrupts = <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 823>;
-+			power-domains = <&sysc R8A7796_PD_A3VC>;
-+		};
-+
-+		imr-lx4@fe870000 {
-+			compatible = "renesas,r8a7796-imr-lx4",
-+				     "renesas,imr-lx4";
-+			reg = <0 0xfe870000 0 0x2000>;
-+			interrupts = <GIC_SPI 193 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 822>;
-+			power-domains = <&sysc R8A7796_PD_A3VC>;
-+		};
- 	};
- };
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
