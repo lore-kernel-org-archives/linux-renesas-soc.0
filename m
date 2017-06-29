@@ -1,74 +1,169 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:46828 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751704AbdFGTbp (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:36334 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752563AbdF2KTl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Jun 2017 15:31:45 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <87k24o4sr3.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dIgg7-0003cz-PM@debutante>
-Date: Wed, 07 Jun 2017 20:31:39 +0100
-Subject: Applied "ASoC: hdmi-codec: remove unused ratec" to the asoc tree
+        Thu, 29 Jun 2017 06:19:41 -0400
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Alexey Firago <alexey_firago@mentor.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 6/8] clk: vc5: Add support for the input frequency doubler
+Date: Thu, 29 Jun 2017 12:18:49 +0200
+Message-Id: <20170629101851.23972-6-marek.vasut@gmail.com>
+In-Reply-To: <20170629101851.23972-1-marek.vasut@gmail.com>
+References: <20170629101851.23972-1-marek.vasut@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+From: Marek Vasut <marek.vasut+renesas@gmail.com>
 
-   ASoC: hdmi-codec: remove unused ratec
+The VersaClock 6 has an input frequency doubler between the input
+clock mux and the predivider. Add new capability flag and support
+for this frequency doubler block into the driver.
 
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From ca3b5ad30c0b32f8d12ddb307b698ff56d56c2aa Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Tue, 6 Jun 2017 23:16:01 +0000
-Subject: [PATCH] ASoC: hdmi-codec: remove unused ratec
-
-struct snd_pcm_hw_constraint_list ratec is not used.
-Let's remove it
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Alexey Firago <alexey_firago@mentor.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org
 ---
- sound/soc/codecs/hdmi-codec.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/clk/clk-versaclock5.c | 78 ++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 77 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/hdmi-codec.c b/sound/soc/codecs/hdmi-codec.c
-index 6d05161b625d..22ed0dc88f0a 100644
---- a/sound/soc/codecs/hdmi-codec.c
-+++ b/sound/soc/codecs/hdmi-codec.c
-@@ -282,7 +282,6 @@ struct hdmi_codec_priv {
- 	struct hdmi_codec_daifmt daifmt[2];
- 	struct mutex current_stream_lock;
- 	struct snd_pcm_substream *current_stream;
--	struct snd_pcm_hw_constraint_list ratec;
- 	uint8_t eld[MAX_ELD_BYTES];
- 	struct snd_pcm_chmap *chmap_info;
- 	unsigned int chmap_idx;
+diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+index fcde42393997..6db84358520a 100644
+--- a/drivers/clk/clk-versaclock5.c
++++ b/drivers/clk/clk-versaclock5.c
+@@ -57,6 +57,7 @@
+ #define VC5_PRIM_SRC_SHDN			0x10
+ #define VC5_PRIM_SRC_SHDN_EN_XTAL		BIT(7)
+ #define VC5_PRIM_SRC_SHDN_EN_CLKIN		BIT(6)
++#define VC5_PRIM_SRC_SHDN_EN_DOUBLE_XTAL_FREQ	BIT(3)
+ #define VC5_PRIM_SRC_SHDN_SP			BIT(1)
+ #define VC5_PRIM_SRC_SHDN_EN_GBL_SHDN		BIT(0)
+ 
+@@ -122,6 +123,8 @@
+ /* flags to describe chip features */
+ /* chip has built-in oscilator */
+ #define VC5_HAS_INTERNAL_XTAL	BIT(0)
++/* chip has PFD requency doubler */
++#define VC5_HAS_PFD_FREQ_DBL	BIT(1)
+ 
+ /* Supported IDT VC5 models. */
+ enum vc5_model {
+@@ -157,6 +160,7 @@ struct vc5_driver_data {
+ 	struct clk		*pin_clkin;
+ 	unsigned char		clk_mux_ins;
+ 	struct clk_hw		clk_mux;
++	struct clk_hw		clk_mul;
+ 	struct clk_hw		clk_pfd;
+ 	struct vc5_hw_data	clk_pll;
+ 	struct vc5_hw_data	clk_fod[VC5_MAX_FOD_NUM];
+@@ -167,6 +171,10 @@ static const char * const vc5_mux_names[] = {
+ 	"mux"
+ };
+ 
++static const char * const vc5_dbl_names[] = {
++	"dbl"
++};
++
+ static const char * const vc5_pfd_names[] = {
+ 	"pfd"
+ };
+@@ -264,6 +272,54 @@ static const struct clk_ops vc5_mux_ops = {
+ 	.get_parent	= vc5_mux_get_parent,
+ };
+ 
++static unsigned long vc5_dbl_recalc_rate(struct clk_hw *hw,
++					 unsigned long parent_rate)
++{
++	struct vc5_driver_data *vc5 =
++		container_of(hw, struct vc5_driver_data, clk_mul);
++	unsigned int premul;
++
++	regmap_read(vc5->regmap, VC5_PRIM_SRC_SHDN, &premul);
++	if (premul & VC5_PRIM_SRC_SHDN_EN_DOUBLE_XTAL_FREQ)
++		parent_rate *= 2;
++
++	return parent_rate;
++}
++
++static long vc5_dbl_round_rate(struct clk_hw *hw, unsigned long rate,
++			       unsigned long *parent_rate)
++{
++	if ((*parent_rate == rate) || ((*parent_rate * 2) == rate))
++		return rate;
++	else
++		return -EINVAL;
++}
++
++static int vc5_dbl_set_rate(struct clk_hw *hw, unsigned long rate,
++			    unsigned long parent_rate)
++{
++	struct vc5_driver_data *vc5 =
++		container_of(hw, struct vc5_driver_data, clk_mul);
++	u32 mask;
++
++	if ((parent_rate * 2) == rate)
++		mask = VC5_PRIM_SRC_SHDN_EN_DOUBLE_XTAL_FREQ;
++	else
++		mask = 0;
++
++	regmap_update_bits(vc5->regmap, VC5_PRIM_SRC_SHDN,
++			   VC5_PRIM_SRC_SHDN_EN_DOUBLE_XTAL_FREQ,
++			   mask);
++
++	return 0;
++}
++
++static const struct clk_ops vc5_dbl_ops = {
++	.recalc_rate	= vc5_dbl_recalc_rate,
++	.round_rate	= vc5_dbl_round_rate,
++	.set_rate	= vc5_dbl_set_rate,
++};
++
+ static unsigned long vc5_pfd_recalc_rate(struct clk_hw *hw,
+ 					 unsigned long parent_rate)
+ {
+@@ -707,12 +763,32 @@ static int vc5_probe(struct i2c_client *client,
+ 		goto err_clk;
+ 	}
+ 
++	if (vc5->chip_info->flags & VC5_HAS_PFD_FREQ_DBL) {
++		/* Register frequency doubler */
++		memset(&init, 0, sizeof(init));
++		init.name = vc5_dbl_names[0];
++		init.ops = &vc5_dbl_ops;
++		init.flags = CLK_SET_RATE_PARENT;
++		init.parent_names = vc5_mux_names;
++		init.num_parents = 1;
++		vc5->clk_mul.init = &init;
++		ret = devm_clk_hw_register(&client->dev, &vc5->clk_mul);
++		if (ret) {
++			dev_err(&client->dev, "unable to register %s\n",
++				init.name);
++			goto err_clk;
++		}
++	}
++
+ 	/* Register PFD */
+ 	memset(&init, 0, sizeof(init));
+ 	init.name = vc5_pfd_names[0];
+ 	init.ops = &vc5_pfd_ops;
+ 	init.flags = CLK_SET_RATE_PARENT;
+-	init.parent_names = vc5_mux_names;
++	if (vc5->chip_info->flags & VC5_HAS_PFD_FREQ_DBL)
++		init.parent_names = vc5_dbl_names;
++	else
++		init.parent_names = vc5_mux_names;
+ 	init.num_parents = 1;
+ 	vc5->clk_pfd.init = &init;
+ 	ret = devm_clk_hw_register(&client->dev, &vc5->clk_pfd);
 -- 
 2.11.0
