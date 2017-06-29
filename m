@@ -1,71 +1,85 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:33841 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752467AbdF2LjD (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:34946 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752563AbdF2KTn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Jun 2017 07:39:03 -0400
-MIME-Version: 1.0
-In-Reply-To: <20170629101851.23972-7-marek.vasut@gmail.com>
-References: <20170629101851.23972-1-marek.vasut@gmail.com> <20170629101851.23972-7-marek.vasut@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 29 Jun 2017 13:38:56 +0200
-Message-ID: <CAMuHMdXaEDtKwZYDaZ0qUvUk_0WuZwf6ky+nfeahQuU7q4qiyQ@mail.gmail.com>
-Subject: Re: [PATCH 7/8] clk: vc5: Add bindings for IDT VersaClock 5P49V6901
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Thu, 29 Jun 2017 06:19:43 -0400
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
         Alexey Firago <alexey_firago@mentor.com>,
         Rob Herring <robh@kernel.org>,
         Stephen Boyd <sboyd@codeaurora.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH 7/8] clk: vc5: Add bindings for IDT VersaClock 5P49V6901
+Date: Thu, 29 Jun 2017 12:18:50 +0200
+Message-Id: <20170629101851.23972-7-marek.vasut@gmail.com>
+In-Reply-To: <20170629101851.23972-1-marek.vasut@gmail.com>
+References: <20170629101851.23972-1-marek.vasut@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Marek,
+From: Marek Vasut <marek.vasut+renesas@gmail.com>
 
-On Thu, Jun 29, 2017 at 12:18 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
-> From: Marek Vasut <marek.vasut+renesas@gmail.com>
->
-> IDT VersaClock 6 5P49V6901 has 4 clock outputs, 4 fractional dividers.
-> Input clock source can be taken from either external crystal or from
-> external reference clock.
->
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Alexey Firago <alexey_firago@mentor.com>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Cc: linux-renesas-soc@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
-> ---
->  .../devicetree/bindings/clock/idt,versaclock5.txt         | 15 ++++++++++++---
->  1 file changed, 12 insertions(+), 3 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-> index 53d7e50ed875..a3d4260039a8 100644
-> --- a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-> +++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+IDT VersaClock 6 5P49V6901 has 4 clock outputs, 4 fractional dividers.
+Input clock source can be taken from either external crystal or from
+external reference clock.
 
-Probably you want to sprinkle the first few lines of the document with
-a few "VersaClock 6" references?
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Alexey Firago <alexey_firago@mentor.com>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+---
+ .../devicetree/bindings/clock/idt,versaclock5.txt         | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-> @@ -7,18 +7,20 @@ from 3 to 12 output clocks.
-
-The rest looks OK to me, so
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+index 53d7e50ed875..a3d4260039a8 100644
+--- a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
++++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+@@ -7,18 +7,20 @@ from 3 to 12 output clocks.
+ 
+ Required properties:
+ - compatible:	shall be one of "idt,5p49v5923" , "idt,5p49v5933" ,
+-		"idt,5p49v5935".
++		"idt,5p49v5935" , "idt,5p49v6901".
+ - reg:		i2c device address, shall be 0x68 or 0x6a.
+ - #clock-cells:	from common clock binding; shall be set to 1.
+ - clocks:	from common clock binding; list of parent clock handles,
+-		- 5p49v5923: (required) either or both of XTAL or CLKIN
++		- 5p49v5923 and
++		  5p49v6901: (required) either or both of XTAL or CLKIN
+ 					reference clock.
+ 		- 5p49v5933 and
+ 		- 5p49v5935: (optional) property not present (internal
+ 					Xtal used) or CLKIN reference
+ 					clock.
+ - clock-names:	from common clock binding; clock input names, can be
+-		- 5p49v5923: (required) either or both of "xin", "clkin".
++		- 5p49v5923 and
++		  5p49v6901: (required) either or both of "xin", "clkin".
+ 		- 5p49v5933 and
+ 		- 5p49v5935: (optional) property not present or "clkin".
+ 
+@@ -44,6 +46,13 @@ clock specifier, the following mapping applies:
+ 	3 -- OUT3
+ 	4 -- OUT4
+ 
++5P49V6901:
++	0 -- OUT0_SEL_I2CB
++	1 -- OUT1
++	2 -- OUT2
++	3 -- OUT3
++	4 -- OUT4
++
+ ==Example==
+ 
+ /* 25MHz reference crystal */
+-- 
+2.11.0
