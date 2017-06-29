@@ -1,84 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:56830 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751511AbdF1PWF (ORCPT
+Received: from mail-io0-f193.google.com ([209.85.223.193]:33560 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751725AbdF2LcI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 28 Jun 2017 11:22:05 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Dirk Behme <dirk.behme@de.bosch.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH V2] mmc: renesas_sdhi_core: on R-Car 2+, make use of CBSY bit
-Date: Wed, 28 Jun 2017 17:21:56 +0200
-Message-Id: <20170628152156.18881-1-wsa+renesas@sang-engineering.com>
+        Thu, 29 Jun 2017 07:32:08 -0400
+MIME-Version: 1.0
+In-Reply-To: <2319141.h6UJ5H9hiK@avalon>
+References: <87mv8tez69.wl%kuninori.morimoto.gx@renesas.com>
+ <2246315.6ZutvAkGUK@avalon> <CAMuHMdUF-y38M3R4=fhb547aiF=+qwOpjipAXaThkQiTMQz7fg@mail.gmail.com>
+ <2319141.h6UJ5H9hiK@avalon>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 29 Jun 2017 13:32:06 +0200
+Message-ID: <CAMuHMdV7VHZ4S14y+W5POpJQQOFEPP7TMzu=io=rZnvP1U32Zg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] drm: rcar-du: use of_graph_get_remote_endpoint()
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Most registers need to wait until the command is completed, not
-necessarily until the bus is free. At least, R-Car 2+ SoCs can signal
-that via the CBSY bit, so let's use it there instead of SCLKDIVEN to
-save a little bit of delay.
+Hi Laurent,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+On Thu, Jun 29, 2017 at 1:26 PM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Thursday 29 Jun 2017 13:22:14 Geert Uytterhoeven wrote:
+>> On Thu, Jun 29, 2017 at 12:44 PM, Laurent Pinchart wrote:
+>> > On Wednesday 28 Jun 2017 00:32:17 Kuninori Morimoto wrote:
+>> >> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>> >>
+>> >> Now, we can use of_graph_get_remote_endpoint(). Let's use it.
+>> >>
+>> >> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>> >
+>> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>> >
+>> >> ---
+>> >> based on 4c9c3d595f1bad021cc126d20879df4016801736
+>> >> ("of_graph: add of_graph_get_remote_endpoint()")
+>> >
+>> > This commit isn't upstream yet. I've taken the patch in my tree and will
+>>
+>> FTR, it is in linux-next, but the function has been moved from
+>> drivers/of/base.c to drivers/of/property.c.
+>
+> Yes, I've seen the patch in linux-next.
+>
+>> > rebase it on top of v4.13-rc1 before submitting it for v4.14.
+>>
+>> Note that a simple rebase won't make it disappear, due to the move.
+>> So you'll have to drop it explicitly.
+>
+> I'm not sure to follow you. This is a driver patch, depending on a function
+> that will make it to v4.13-rc1. At this time it thus doesn't compile against
+> mainline. I'll rebase it on top of v4.13-rc1, the dependency will be there,
+> and I'll submit it for v4.14.
 
-Tested on H2 and M3-W.
+Sorry, I misunderstood you were going to take "of_graph: add
+of_graph_get_remote_endpoint()" in your tree as a dependency.
 
-Change since V1:
+Gr{oetje,eeting}s,
 
-Rebased on top of mmc/next with Simon's Gen3 DMA patches.
+                        Geert
 
- drivers/mmc/host/renesas_sdhi_core.c | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index 569bcdd5e6537a..be806d3e9afeec 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -398,12 +398,14 @@ static void renesas_sdhi_hw_reset(struct tmio_mmc_host *host)
- 		       sd_scc_read32(host, priv, SH_MOBILE_SDHI_SCC_RVSCNTL));
- }
- 
--static int renesas_sdhi_wait_idle(struct tmio_mmc_host *host)
-+static int renesas_sdhi_wait_idle(struct tmio_mmc_host *host, u32 bit)
- {
- 	int timeout = 1000;
-+	/* CBSY is set when busy, SCLKDIVEN is cleared when busy */
-+	u32 wait_state = (bit == TMIO_STAT_CMD_BUSY ? TMIO_STAT_CMD_BUSY : 0);
- 
--	while (--timeout && !(sd_ctrl_read16_and_16_as_32(host, CTL_STATUS)
--			      & TMIO_STAT_SCLKDIVEN))
-+	while (--timeout && (sd_ctrl_read16_and_16_as_32(host, CTL_STATUS)
-+			      & bit) == wait_state)
- 		udelay(1);
- 
- 	if (!timeout) {
-@@ -416,17 +418,22 @@ static int renesas_sdhi_wait_idle(struct tmio_mmc_host *host)
- 
- static int renesas_sdhi_write16_hook(struct tmio_mmc_host *host, int addr)
- {
-+	u32 bit = TMIO_STAT_SCLKDIVEN;
-+
- 	switch (addr) {
- 	case CTL_SD_CMD:
- 	case CTL_STOP_INTERNAL_ACTION:
- 	case CTL_XFER_BLK_COUNT:
--	case CTL_SD_CARD_CLK_CTL:
- 	case CTL_SD_XFER_LEN:
- 	case CTL_SD_MEM_CARD_OPT:
- 	case CTL_TRANSACTION_CTL:
- 	case CTL_DMA_ENABLE:
- 	case EXT_ACC:
--		return renesas_sdhi_wait_idle(host);
-+		if (host->pdata->flags & TMIO_MMC_MIN_RCAR2)
-+			bit = TMIO_STAT_CMD_BUSY;
-+		/* fallthrough */
-+	case CTL_SD_CARD_CLK_CTL:
-+		return renesas_sdhi_wait_idle(host, bit);
- 	}
- 
- 	return 0;
--- 
-2.11.0
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
