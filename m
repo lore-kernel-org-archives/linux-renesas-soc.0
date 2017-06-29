@@ -1,105 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f179.google.com ([209.85.223.179]:33987 "EHLO
-        mail-io0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751565AbdF3I4u (ORCPT
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:32869 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752995AbdF2Pyz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 30 Jun 2017 04:56:50 -0400
+        Thu, 29 Jun 2017 11:54:55 -0400
+Subject: Re: [PATCH 8/8] clk: vc5: Add support for IDT VersaClock 5P49V6901
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+References: <20170629101851.23972-1-marek.vasut@gmail.com>
+ <20170629101851.23972-8-marek.vasut@gmail.com>
+ <CAMuHMdVRVURPWXb=pXDsxMgmiB6QvMsXHWTYM6UMW7sufUzf3w@mail.gmail.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Alexey Firago <alexey_firago@mentor.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <9e1af105-2738-833f-2714-7aac3b66cdf9@gmail.com>
+Date: Thu, 29 Jun 2017 17:54:22 +0200
 MIME-Version: 1.0
-In-Reply-To: <20170313111249.cslock3xcupvxmu7@ninjato>
-References: <CAMuHMdWHJvKv_Kva0LWL_hekGgkZdR=FHcOdoShpMtzQuXhD2g@mail.gmail.com>
- <20170313111249.cslock3xcupvxmu7@ninjato>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 30 Jun 2017 10:56:48 +0200
-Message-ID: <CAMuHMdU_8h1U1RSotxHJbjU1QWX+J=RTA59qSZ_fV0CA12eLpQ@mail.gmail.com>
-Subject: Re: timeout waiting for hardware interrupt CMD19
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Simon Horman <horms@verge.net.au>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux MMC List <linux-mmc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAMuHMdVRVURPWXb=pXDsxMgmiB6QvMsXHWTYM6UMW7sufUzf3w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Wolfram,
+On 06/29/2017 01:41 PM, Geert Uytterhoeven wrote:
+> Hi Marek,
+> 
+> On Thu, Jun 29, 2017 at 12:18 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+>> From: Marek Vasut <marek.vasut+renesas@gmail.com>
+>>
+>> Update IDT VersaClock 6 driver to support 5P49V6901. This chip has
+> 
+> Update the IDT VersaClock5 driver to support the VersaClock6 5P49V6901?
+> 
+>> two clock inputs (external XTAL or external CLKIN), four fractional
+>> dividers (FODs) and five clock outputs (four universal clock outputs
+>> and one reference clock output at OUT0_SELB_I2C).
+>>
+>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+>> Cc: Alexey Firago <alexey_firago@mentor.com>
+>> Cc: Stephen Boyd <sboyd@codeaurora.org>
+>> Cc: Michael Turquette <mturquette@baylibre.com>
+>> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>> Cc: linux-renesas-soc@vger.kernel.org
+>> ---
+>>  drivers/clk/clk-versaclock5.c | 11 +++++++++++
+> 
+> and
+> 
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -210,14 +210,14 @@ config COMMON_CLK_OXNAS
+>           Support for the OXNAS SoC Family clocks.
+> 
+>  config COMMON_CLK_VC5
+> -       tristate "Clock driver for IDT VersaClock5 devices"
+> +       tristate "Clock driver for IDT VersaClock5/6 devices"
+>         depends on I2C
+>         depends on OF
+>         select REGMAP_I2C
+>         help
+>         ---help---
+> -         This driver supports the IDT VersaClock5 programmable clock
+> -         generator.
+> +         This driver supports the IDT VersaClock5 and VersaClock6
+> +         programmable clock generator.
 
-On Mon, Mar 13, 2017 at 12:12 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
->> +sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19)
->> +sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19)
->> +sh_mobile_sdhi ee100000.sd: Tuning procedure failed
->> +mmc1: tuning execution failed: -110
->> +mmc1: error -110 whilst initialising SD card
->
-> Thanks! We have some tuning fixes in the queue. Let's see if they help
-> here...
+Tweaked a bit more, but yes, good point.
 
-With renesas-drivers-2017-06-27-v4.12-rc7 on ALT:
-
-sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19)
-sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19)
-sh_mobile_sdhi ee100000.sd: Tuning procedure failed
-mmc1: tuning execution failed: -110
-mmc1: error -110 whilst initialising SD card
-random: fast init done
-sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19)
-sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19)
-sh_mobile_sdhi ee100000.sd: Tuning procedure failed
-mmc1: tuning execution failed: -110
-mmc1: error -110 whilst initialising SD card
-sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19)
-sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19)
-sh_mobile_sdhi ee100000.sd: Tuning procedure failed
-mmc1: tuning execution failed: -110
-mmc1: error -110 whilst initialising SD card
-sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19)
-sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19)
-sh_mobile_sdhi ee100000.sd: Tuning procedure failed
-mmc1: tuning execution failed: -110
-mmc1: error -110 whilst initialising SD card
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 19 at lib/dma-debug.c:519 add_dma_entry+0xfc/0x148
-DMA-API: exceeded 7 overlapping mappings of cacheline 0x0000000001b97cca
-Modules linked in:
-CPU: 0 PID: 19 Comm: kworker/0:1 Not tainted 4.12.0-rc7-rcar2-initrd #37
-Hardware name: Generic R-Car Gen2 (Flattened Device Tree)
-Workqueue: events_freezable mmc_rescan
-[<c020e4ac>] (unwind_backtrace) from [<c0209fa8>] (show_stack+0x10/0x14)
-[<c0209fa8>] (show_stack) from [<c03ebab8>] (dump_stack+0x7c/0x9c)
-[<c03ebab8>] (dump_stack) from [<c021ff74>] (__warn+0xcc/0xfc)
-[<c021ff74>] (__warn) from [<c021ffd8>] (warn_slowpath_fmt+0x34/0x44)
-[<c021ffd8>] (warn_slowpath_fmt) from [<c0409798>] (add_dma_entry+0xfc/0x148)
-[<c0409798>] (add_dma_entry) from [<c0409a44>] (debug_dma_map_sg+0x140/0x168)
-[<c0409a44>] (debug_dma_map_sg) from [<c0592704>]
-(renesas_sdhi_sys_dmac_start_dma+0x194/0x550)
-[<c0592704>] (renesas_sdhi_sys_dmac_start_dma) from [<c05909dc>]
-(tmio_process_mrq+0x15c/0x3b8)
-[<c05909dc>] (tmio_process_mrq) from [<c057ecb4>]
-(mmc_start_request+0x11c/0x128)
-[<c057ecb4>] (mmc_start_request) from [<c057ed38>] (mmc_wait_for_req+0x78/0xdc)
-[<c057ed38>] (mmc_wait_for_req) from [<c0584a70>] (mmc_send_tuning+0xe0/0x148)
-[<c0584a70>] (mmc_send_tuning) from [<c058fd30>]
-(tmio_mmc_execute_tuning+0xcc/0x160)
-[<c058fd30>] (tmio_mmc_execute_tuning) from [<c057fcec>]
-(mmc_execute_tuning+0x30/0x68)
-[<c057fcec>] (mmc_execute_tuning) from [<c0586b00>]
-(mmc_sd_init_card+0x5c4/0x62c)
-[<c0586b00>] (mmc_sd_init_card) from [<c0586cbc>] (mmc_attach_sd+0xa4/0x130)
-[<c0586cbc>] (mmc_attach_sd) from [<c0580bf4>] (mmc_rescan+0x2fc/0x340)
-[<c0580bf4>] (mmc_rescan) from [<c0234658>] (process_one_work+0x1cc/0x30c)
-[<c0234658>] (process_one_work) from [<c02347c0>]
-(process_scheduled_works+0x28/0x30)
-[<c02347c0>] (process_scheduled_works) from [<c0234d9c>]
-(worker_thread+0x2e0/0x3e0)
-[<c0234d9c>] (worker_thread) from [<c0239088>] (kthread+0x134/0x150)
-[<c0239088>] (kthread) from [<c0206ba8>] (ret_from_fork+0x14/0x2c)
----[ end trace e899ede79c440525 ]---
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Best regards,
+Marek Vasut
