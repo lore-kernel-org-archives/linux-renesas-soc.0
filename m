@@ -1,61 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:34414 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750770AbdFNOjG (ORCPT
+Received: from mail-io0-f196.google.com ([209.85.223.196]:34530 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752917AbdF2Q1c (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Jun 2017 10:39:06 -0400
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: robh@kernel.org, linux-serial@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, magnus.damm@gmail.com,
-        laurent.pinchart@ideasonboard.com, wsa@the-dreams.de,
-        linux-i2c@vger.kernel.org,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [RFC 0/4] serdev GPIO-based multiplexing support
-Date: Wed, 14 Jun 2017 16:38:46 +0200
-Message-Id: <1497451130-7741-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Thu, 29 Jun 2017 12:27:32 -0400
+MIME-Version: 1.0
+In-Reply-To: <1a65c823-d39f-1824-886d-d32fddcee4f0@gmail.com>
+References: <20170629101851.23972-1-marek.vasut@gmail.com> <20170629101851.23972-7-marek.vasut@gmail.com>
+ <CAMuHMdXaEDtKwZYDaZ0qUvUk_0WuZwf6ky+nfeahQuU7q4qiyQ@mail.gmail.com> <1a65c823-d39f-1824-886d-d32fddcee4f0@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 29 Jun 2017 18:27:30 +0200
+Message-ID: <CAMuHMdVB_XXSy7gynkfjBrPKa0EqAg=aCQD_U72AG7NQ+pw9hQ@mail.gmail.com>
+Subject: Re: [PATCH 7/8] clk: vc5: Add bindings for IDT VersaClock 5P49V6901
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Alexey Firago <alexey_firago@mentor.com>,
+        Rob Herring <robh@kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi!
+Hi Marek,
 
-This is an attempt to add multiplexer support to serdev, specifically
-GPIO-based multiplexing.
+On Thu, Jun 29, 2017 at 5:49 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+> On 06/29/2017 01:38 PM, Geert Uytterhoeven wrote:
+>> On Thu, Jun 29, 2017 at 12:18 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+>>> From: Marek Vasut <marek.vasut+renesas@gmail.com>
+>>>
+>>> IDT VersaClock 6 5P49V6901 has 4 clock outputs, 4 fractional dividers.
+>>> Input clock source can be taken from either external crystal or from
+>>> external reference clock.
+>>>
+>>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
 
-Our use case is the Renesas Blanche V2H board with several MAX9260 GMSL
-deserializers attached to one serial port. A sample driver that implements
-i2c passthrough over the GMSL link is part of this series. This device
-wants to be talked to with even parity, so a patch implementing parity
-control in serdev is included as well.
+>>> --- a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+>>> +++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+>>
+>> Probably you want to sprinkle the first few lines of the document with
+>> a few "VersaClock 6" references?
+>
+> Something like this?
+>
+> --- a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+> +++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+> @@ -1,7 +1,7 @@
+> -Binding for IDT VersaClock5 programmable i2c clock generator.
+> +Binding for IDT VersaClock 5,6 programmable i2c clock generators.
+>
+> -The IDT VersaClock5 are programmable i2c clock generators providing
+> -from 3 to 12 output clocks.
+> +The IDT VersaClock 5 and VersaClock 6 are programmable i2c clock
+> +generators providing from 3 to 12 output clocks.
+>
+>  ==I2C device node==
 
-The board-specific part of this series depends on the "pinctrl: sh-pfc:
-r8a7792: Add SCIF1 pin groups" patch.
+Exactly. Thanks!
 
-Please tell me if this is a suitable way to implement this functionality
-in serdev, or how to improve it. Thank you.
+Gr{oetje,eeting}s,
 
-CU
-Uli
+                        Geert
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Ulrich Hecht (4):
-  serdev: add method to set parity
-  serdev: add GPIO-based multiplexer support
-  max9260: add driver for i2c over GMSL passthrough
-  ARM: dts: blanche: add SCIF1 and MAX9260 deserializer
-
- arch/arm/boot/dts/r8a7792-blanche.dts |  45 ++++++
- drivers/media/i2c/Kconfig             |   6 +
- drivers/media/i2c/Makefile            |   1 +
- drivers/media/i2c/max9260.c           | 294 ++++++++++++++++++++++++++++++++++
- drivers/tty/serdev/Kconfig            |   3 +
- drivers/tty/serdev/Makefile           |   1 +
- drivers/tty/serdev/core.c             |  55 ++++++-
- drivers/tty/serdev/mux-gpio.c         |  80 +++++++++
- drivers/tty/serdev/serdev-ttyport.c   |  17 ++
- include/linux/serdev.h                |  30 +++-
- 10 files changed, 528 insertions(+), 4 deletions(-)
- create mode 100644 drivers/media/i2c/max9260.c
- create mode 100644 drivers/tty/serdev/mux-gpio.c
-
--- 
-2.7.4
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
