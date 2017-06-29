@@ -1,76 +1,93 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:59236 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751992AbdFLKI1 (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:34762 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753244AbdF2NZY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Jun 2017 06:08:27 -0400
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: robh+dt@kernel.org, mark.rutland@arm.com, mchehab@kernel.org,
-        hverkuil@xs4all.nl, sakari.ailus@linux.intel.com, crope@iki.fi
-Cc: chris.paterson2@renesas.com, laurent.pinchart@ideasonboard.com,
-        geert+renesas@glider.be, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH] MAINTAINERS: Add entry for R-Car DRIF & MAX2175 drivers
-Date: Mon, 12 Jun 2017 10:54:56 +0100
-Message-Id: <20170612095456.4239-1-ramesh.shanmugasundaram@bp.renesas.com>
-In-Reply-To: <20170609150738.56294-1-ramesh.shanmugasundaram@bp.renesas.com>
-References: <20170609150738.56294-1-ramesh.shanmugasundaram@bp.renesas.com>
+        Thu, 29 Jun 2017 09:25:24 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC v2 5/5] clk: renesas: rcar-gen3: Restore R clock during resume
+Date: Thu, 29 Jun 2017 15:25:20 +0200
+Message-Id: <1498742720-2713-6-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1498742720-2713-1-git-send-email-geert+renesas@glider.be>
+References: <1498742720-2713-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add maintainter entry for the R-Car DRIF and MAX2175 drivers.
+On R-Car Gen3 systems, PSCI system suspend powers down the SoC, losing
+clock configuration.  Register a notifier to save/restore the RCKCR
+register during system suspend/resume.
 
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Hi Hans,
-
-   Added the missing MAINTAINTERS entry on top of this
-   (https://www.mail-archive.com/linux-renesas-soc@vger.kernel.org/msg15081.html)
-   series as requested.
-
-Thanks,
-Ramesh.
+v2:
+  - New.
 ---
- MAINTAINERS | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ drivers/clk/renesas/clk-div6.c      |  6 +++---
+ drivers/clk/renesas/rcar-gen3-cpg.c | 13 +++++++++++--
+ 2 files changed, 14 insertions(+), 5 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 053c3bdd1fe5..cfa78fe5142a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8031,6 +8031,16 @@ S:	Maintained
- F:	Documentation/hwmon/max20751
- F:	drivers/hwmon/max20751.c
+diff --git a/drivers/clk/renesas/clk-div6.c b/drivers/clk/renesas/clk-div6.c
+index 6bc9469e769d035c..151336d2ba59e689 100644
+--- a/drivers/clk/renesas/clk-div6.c
++++ b/drivers/clk/renesas/clk-div6.c
+@@ -180,8 +180,8 @@ static const struct clk_ops cpg_div6_clock_ops = {
+ 	.set_rate = cpg_div6_clock_set_rate,
+ };
  
-+MAX2175 SDR TUNER DRIVER
-+M:	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-+L:	linux-media@vger.kernel.org
-+T:	git git://linuxtv.org/media_tree.git
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/media/i2c/max2175.txt
-+F:	Documentation/media/v4l-drivers/max2175.rst
-+F:	drivers/media/i2c/max2175*
-+F:	include/uapi/linux/max2175.h
-+
- MAX6650 HARDWARE MONITOR AND FAN CONTROLLER DRIVER
- L:	linux-hwmon@vger.kernel.org
- S:	Orphan
-@@ -8111,6 +8121,15 @@ L:	linux-iio@vger.kernel.org
- S:	Maintained
- F:	drivers/iio/dac/cio-dac.c
+-static int cpg_div6_clock_resume(struct notifier_block *nb,
+-				 unsigned long action, void *data)
++static int cpg_div6_clock_notifier_call(struct notifier_block *nb,
++					unsigned long action, void *data)
+ {
+ 	struct div6_clock *clock = container_of(nb, struct div6_clock, nb);
  
-+MEDIA DRIVERS FOR RENESAS - DRIF
-+M:	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-+L:	linux-media@vger.kernel.org
-+L:	linux-renesas-soc@vger.kernel.org
-+T:	git git://linuxtv.org/media_tree.git
-+S:	Supported
-+F:	Documentation/devicetree/bindings/media/renesas,drif.txt
-+F:	drivers/media/platform/rcar_drif.c
+@@ -288,7 +288,7 @@ struct clk * __init cpg_div6_register(const char *name,
+ 		goto free_parents;
+ 
+ 	if (notifiers) {
+-		clock->nb.notifier_call = cpg_div6_clock_resume;
++		clock->nb.notifier_call = cpg_div6_clock_notifier_call;
+ 		raw_notifier_chain_register(notifiers, &clock->nb);
+ 	}
+ 
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
+index 1abbf1d6d0a0c889..949116f4222226f5 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.c
++++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+@@ -378,18 +378,27 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+ 
+ 	case CLK_TYPE_GEN3_R:
+ 		if (cpg_quirks & RCKCR_CKSEL) {
++			struct cpg_simple_notifier *csn;
 +
- MEDIA DRIVERS FOR RENESAS - FCP
- M:	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
- L:	linux-media@vger.kernel.org
++			csn = kzalloc(sizeof(*csn), GFP_KERNEL);
++			if (!csn)
++				return ERR_PTR(-ENOMEM);
++
++			csn->reg = base + CPG_RCKCR;
++
+ 			/*
+ 			 * RINT is default.
+ 			 * Only if EXTALR is populated, we switch to it.
+ 			 */
+-			value = readl(base + CPG_RCKCR) & 0x3f;
++			value = readl(csn->reg) & 0x3f;
+ 
+ 			if (clk_get_rate(clks[cpg_clk_extalr])) {
+ 				parent = clks[cpg_clk_extalr];
+ 				value |= BIT(15);
+ 			}
+ 
+-			writel(value, base + CPG_RCKCR);
++			writel(value, csn->reg);
++			cpg_simple_notifier_register(notifiers, csn);
+ 			break;
+ 		}
+ 
 -- 
-2.12.2
+2.7.4
