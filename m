@@ -1,160 +1,63 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:21548 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751685AbdF2QCQ (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Jun 2017 12:02:16 -0400
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-CC: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [bug report] mmc: tmio-mmc: add support for 32bit data port
-Date: Thu, 29 Jun 2017 16:02:11 +0000
-Message-ID: <SG2PR06MB1165CBAC1354D2E62C3B3FBE8AD20@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <20170629125446.2b5ruac5fev7lqp4@mwanda>
-In-Reply-To: <20170629125446.2b5ruac5fev7lqp4@mwanda>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kbingham@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, niklas.soderlund@ragnatech.se,
+        hans.verkuil@cisco.com,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: Re: [PATCH v6 3/3] MAINTAINERS: Add ADV748x driver
+Date: Thu, 29 Jun 2017 12:48:42 +0300
+Message-ID: <93673310.iz0F4Rnvth@avalon>
+In-Reply-To: <4e4f41206b52946056f1d9700878ceb97a87241d.1498575029.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.13d48bb2ba66a5e11c962c62b1a7b5832b0a2344.1498575029.git-series.kieran.bingham+renesas@ideasonboard.com> <4e4f41206b52946056f1d9700878ceb97a87241d.1498575029.git-series.kieran.bingham+renesas@ideasonboard.com>
 MIME-Version: 1.0
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello Dan,
+Hi Kieran,
 
+Thank you for the patch.
 
-On Thursday, June 29, 2017, Dan Carpenter wrote:
->=20
-> Hello Chris Brandt,
->=20
-> The patch 8185e51f358a: "mmc: tmio-mmc: add support for 32bit data
-> port" from Sep 12, 2016, leads to the following static checker
-> warning:
->=20
-> 	drivers/mmc/host/tmio_mmc_core.c:415 tmio_mmc_transfer_data()
-> 	warn: passing casted pointer 'buf' to 'sd_ctrl_read32_rep()' 16 vs
-> 32.
->=20
-> drivers/mmc/host/tmio_mmc_core.c
->    401  static void tmio_mmc_transfer_data(struct tmio_mmc_host *host,
->    402                                     unsigned short *buf,
->    403                                     unsigned int count)
->    404  {
->    405          int is_read =3D host->data->flags & MMC_DATA_READ;
->    406          u8  *buf8;
->    407
->    408          /*
->    409           * Transfer the data
->    410           */
->    411          if (host->pdata->flags & TMIO_MMC_32BIT_DATA_PORT) {
->    412                  u8 data[4] =3D { };
->    413
->    414                  if (is_read)
->    415                          sd_ctrl_read32_rep(host, CTL_SD_DATA_PORT=
-,
-> (u32 *)buf,
->=20
-> ^^^^^^^^^^
->    416                                             count >> 2);
->=20
-> Of course, it's not invalid to cast pointer parameters, but it's often
-> a sign that something is buggy.  In the caller function we take a
-> buffer of bytes, and we cast it to u16, and then here we cast it to u32.
-> count is in terms of bytes still.
+On Tuesday 27 Jun 2017 16:03:34 Kieran Bingham wrote:
+> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> 
+> The ADV7481 is an integrated video decoder and combined HDMI/MHL
+> receiver.
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Personally, I think a buffer of raw data should be a 'u8 *', not a=20
-'unsigned short *'.
-And, the parameter name "count" should really be something like "size"=20
-or "length" (but that is still confusing because the passed array 'buf'=20
-was designated as an array of "unsigned short *", so what would 'size'=20
-really mean??)
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Anyway, that is the API that's in place today, so that's what I needed=20
-to work with.
+> ---
+>  MAINTAINERS | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index c4be6d4af7d2..741da59b133a 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -770,6 +770,12 @@ W:	http://ez.analog.com/community/linux-device-drivers
+>  S:	Supported
+>  F:	drivers/media/i2c/adv7180.c
+> 
+> +ANALOG DEVICES INC ADV748X DRIVER
+> +M:	Kieran Bingham <kieran.bingham@ideasonboard.com>
+> +L:	linux-media@vger.kernel.org
+> +S:	Maintained
+> +F:	drivers/media/i2c/adv748x/*
+> +
+>  ANALOG DEVICES INC ADV7511 DRIVER
+>  M:	Hans Verkuil <hans.verkuil@cisco.com>
+>  L:	linux-media@vger.kernel.org
 
+-- 
+Regards,
 
->=20
->    417                  else
->    418                          sd_ctrl_write32_rep(host, CTL_SD_DATA_POR=
-T,
-> (u32 *)buf,
->    419                                              count >> 2);
->    420
->    421                  /* if count was multiple of 4 */
->    422                  if (!(count & 0x3))
->    423                          return;
->    424
->    425                  buf8 =3D (u8 *)(buf + (count >> 2));
->=20
->=20
-> And this looks like the bug...  buf is a u16 pointer but we're adding
-> "count / sizeof(u32)" when we should be adding "count / (sizeof(*buf))".
-
-I agree this math does not work out to what I wanted because of the=20
-differences in data types.
-
-Since I simply wanted to get a pointer to where I left off in the=20
-buffer, maybe the most clear thing to do is just cast buf and do simple mat=
-h:
-
-   buf8 =3D (u8 *)buf + (count & ~3);
-
-
-Do you agree?
-
-
-
->    426                  count %=3D 4;
->    427
->    428                  if (is_read) {
->    429                          sd_ctrl_read32_rep(host, CTL_SD_DATA_PORT=
-,
->    430                                             (u32 *)data, 1);
->    431                          memcpy(buf8, data, count);
->    432                  } else {
->    433                          memcpy(data, buf8, count);
->    434                          sd_ctrl_write32_rep(host, CTL_SD_DATA_POR=
-T,
->    435                                              (u32 *)data, 1);
->    436                  }
->    437
->    438                  return;
->    439          }
->    440
->    441          if (is_read)
->    442                  sd_ctrl_read16_rep(host, CTL_SD_DATA_PORT, buf,
-> count >> 1);
->    443          else
->    444                  sd_ctrl_write16_rep(host, CTL_SD_DATA_PORT, buf,
-> count >> 1);
->    445
->    446          /* if count was even number */
->    447          if (!(count & 0x1))
->    448                  return;
->    449
->    450          /* if count was odd number */
->    451          buf8 =3D (u8 *)(buf + (count >> 1));
->    452
->    453          /*
->    454           * FIXME
->    455           *
->    456           * driver and this function are assuming that
->    457           * it is used as little endian
->=20
-> Indeed.
->=20
->    458           */
->    459          if (is_read)
->    460                  *buf8 =3D sd_ctrl_read16(host, CTL_SD_DATA_PORT) =
-&
-> 0xff;
->    461          else
->    462                  sd_ctrl_write16(host, CTL_SD_DATA_PORT, *buf8);
->    463  }
->=20
-> regards,
-> dan carpenter
-
-
-Chris
+Laurent Pinchart
