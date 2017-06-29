@@ -1,74 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41927 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751458AbdFUOA5 (ORCPT
+Received: from mail-it0-f68.google.com ([209.85.214.68]:35940 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752698AbdF2NRk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 21 Jun 2017 10:00:57 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH mmc/next v3 4/4] mmc: renesas-sdhi: remove gen3 support from SYS-DMAC driver
-Date: Wed, 21 Jun 2017 16:00:30 +0200
-Message-Id: <1498053630-7780-5-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1498053630-7780-1-git-send-email-horms+renesas@verge.net.au>
-References: <1498053630-7780-1-git-send-email-horms+renesas@verge.net.au>
+        Thu, 29 Jun 2017 09:17:40 -0400
+MIME-Version: 1.0
+In-Reply-To: <CACRpkdaQ6-hRZxnvyV4hg0_yQQHS3c+apc66qUUDm58nxOxBig@mail.gmail.com>
+References: <1498669816-25410-1-git-send-email-geert+renesas@glider.be> <CACRpkdaQ6-hRZxnvyV4hg0_yQQHS3c+apc66qUUDm58nxOxBig@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 29 Jun 2017 15:17:38 +0200
+Message-ID: <CAMuHMdXOZanCR7vujbwA2dHHa0H5DH4rXDWcG=gsNMY5xzAm1Q@mail.gmail.com>
+Subject: Re: [git pull] pinctrl: sh-pfc: Updates for v4.13 (take two)
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Gen3 SoCs are now supported by the internal DMAC variant of the SDHI driver.
-Remove them from the SYS-DMAC variant where only PIO mode is supported
-for those SoCs.
+Hi Linus,
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-v2
-* Revised changelog
----
- drivers/mmc/host/renesas_sdhi_sys_dmac.c | 21 ---------------------
- 1 file changed, 21 deletions(-)
+On Thu, Jun 29, 2017 at 3:07 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Wed, Jun 28, 2017 at 7:10 PM, Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
+>> The following changes since commit c8bac70f079bb3ecaf9a716f141f3d85cef27231:
+>>
+>>   pinctrl: sh-pfc: r8a7794: Add R8A7745 support (2017-05-16 13:53:15 +0200)
+>>
+>> are available in the git repository at:
+>>
+>>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.13-tag2
+>>
+>> for you to fetch changes up to c03a133bba8662daecd7db09819fa369663d0ea7:
+>>
+>>   pinctrl: sh-pfc: r8a7795: Add PWM support (2017-06-26 10:21:38 +0200)
+>
+> Pulled in for devel.
+>
+> It's late, but you all worked hard to make this happen so we should
+> be liberal, also it is a new driver.
 
-diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-index b6789f5197b3..62feaacbf996 100644
---- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-@@ -66,25 +66,6 @@ static const struct renesas_sdhi_of_data of_rcar_gen2_compatible = {
- 	.taps_num	= ARRAY_SIZE(rcar_gen2_scc_taps),
- };
- 
--/* Definitions for sampling clocks */
--static struct renesas_sdhi_scc rcar_gen3_scc_taps[] = {
--	{
--		.clk_rate = 0,
--		.tap = 0x00000300,
--	},
--};
--
--static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
--	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_WRPROTECT_DISABLE |
--			  TMIO_MMC_CLK_ACTUAL | TMIO_MMC_MIN_RCAR2,
--	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
--			  MMC_CAP_CMD23,
--	.bus_shift	= 2,
--	.scc_offset	= 0x1000,
--	.taps		= rcar_gen3_scc_taps,
--	.taps_num	= ARRAY_SIZE(rcar_gen3_scc_taps),
--};
--
- static const struct of_device_id renesas_sdhi_sys_dmac_of_match[] = {
- 	{ .compatible = "renesas,sdhi-shmobile" },
- 	{ .compatible = "renesas,sdhi-sh73a0", .data = &of_default_cfg, },
-@@ -98,8 +79,6 @@ static const struct of_device_id renesas_sdhi_sys_dmac_of_match[] = {
- 	{ .compatible = "renesas,sdhi-r8a7792", .data = &of_rcar_gen2_compatible, },
- 	{ .compatible = "renesas,sdhi-r8a7793", .data = &of_rcar_gen2_compatible, },
- 	{ .compatible = "renesas,sdhi-r8a7794", .data = &of_rcar_gen2_compatible, },
--	{ .compatible = "renesas,sdhi-r8a7795", .data = &of_rcar_gen3_compatible, },
--	{ .compatible = "renesas,sdhi-r8a7796", .data = &of_rcar_gen3_compatible, },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, renesas_sdhi_sys_dmac_of_match);
--- 
-2.1.4
+Thanks a lot!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
