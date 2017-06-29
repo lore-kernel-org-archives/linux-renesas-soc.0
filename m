@@ -1,88 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:46408 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751730AbdFNKMf (ORCPT
+Received: from mail-io0-f176.google.com ([209.85.223.176]:33397 "EHLO
+        mail-io0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752536AbdF2MXk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Jun 2017 06:12:35 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <87bmpr9ztg.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dL5Hq-0007bK-UH@debutante>
-Date: Wed, 14 Jun 2017 11:12:30 +0100
-Subject: Applied "ASoC: simple-card: use asoc_simple_card_of_parse_tdm()" to the asoc tree
+        Thu, 29 Jun 2017 08:23:40 -0400
+Received: by mail-io0-f176.google.com with SMTP id h64so5854997iod.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 29 Jun 2017 05:23:40 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1498055229-42052-1-git-send-email-biju.das@bp.renesas.com>
+References: <1497619944-61410-1-git-send-email-biju.das@bp.renesas.com> <1498055229-42052-1-git-send-email-biju.das@bp.renesas.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 29 Jun 2017 14:23:38 +0200
+Message-ID: <CACRpkdaHb8GnwTc0D0B9TtYC=LUa0ZdDK90xKwydg=s4z-VxMQ@mail.gmail.com>
+Subject: Re: [PATCH v2] gpio: rcar: Add R8A7743 (RZ/G1M) support
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+On Wed, Jun 21, 2017 at 4:27 PM, Biju Das <biju.das@bp.renesas.com> wrote:
 
-   ASoC: simple-card: use asoc_simple_card_of_parse_tdm()
+> Renesas RZ/G1M (R8A7743) SoC GPIO blocks are identical to the R-Car Gen2
+> family. Add support for its GPIO controllers.
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+> ---
+> v1->v2
+> * Modified the text "RZ-G1M" to "RZ/G1M"
 
-has been applied to the asoc tree at
+Patch applied with the ACKs.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From b93d2cf8c0facb593d6f008af30ae0fcd1d49ede Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Wed, 14 Jun 2017 00:34:53 +0000
-Subject: [PATCH] ASoC: simple-card: use asoc_simple_card_of_parse_tdm()
-
-Current simple card drivers are using asoc_simple_dai's tx_slot_mask,
-rx_slot_mask, slots, slot_width directly to parse TDM.
-Encapsulation is one of simple card util's purpose.
-Let's use asoc_simple_card_of_parse_tdm for it.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/generic/simple-card.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
-
-diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
-index 8828b91867b8..8b414af966ee 100644
---- a/sound/soc/generic/simple-card.c
-+++ b/sound/soc/generic/simple-card.c
-@@ -271,17 +271,11 @@ static int asoc_simple_card_dai_link_of(struct device_node *node,
- 	if (ret < 0)
- 		goto dai_link_of_err;
- 
--	ret = snd_soc_of_parse_tdm_slot(cpu,	&cpu_dai->tx_slot_mask,
--						&cpu_dai->rx_slot_mask,
--						&cpu_dai->slots,
--						&cpu_dai->slot_width);
-+	ret = asoc_simple_card_of_parse_tdm(cpu, cpu_dai);
- 	if (ret < 0)
- 		goto dai_link_of_err;
- 
--	ret = snd_soc_of_parse_tdm_slot(codec,	&codec_dai->tx_slot_mask,
--						&codec_dai->rx_slot_mask,
--						&codec_dai->slots,
--						&codec_dai->slot_width);
-+	ret = asoc_simple_card_of_parse_tdm(codec, codec_dai);
- 	if (ret < 0)
- 		goto dai_link_of_err;
- 
--- 
-2.11.0
+Yours,
+Linus Walleij
