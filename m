@@ -1,18 +1,13 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f175.google.com ([209.85.220.175]:33027 "EHLO
-        mail-qk0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751974AbdF2O0f (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Jun 2017 10:26:35 -0400
+Return-Path: <devicetree-owner@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CACRpkdYViCZG0PmboxVq7S9ggFOrsTuvk6ZjdzoBgS9aio0ygg@mail.gmail.com>
-References: <1498125658-14554-1-git-send-email-jacopo+renesas@jmondi.org> <CACRpkdYViCZG0PmboxVq7S9ggFOrsTuvk6ZjdzoBgS9aio0ygg@mail.gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 29 Jun 2017 17:26:33 +0300
-Message-ID: <CAHp75VdAM2EWXtZfaBZ4U2eXL0oj82ipWQZier18jX93xhdUYQ@mail.gmail.com>
+In-Reply-To: <1498125658-14554-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1498125658-14554-1-git-send-email-jacopo+renesas@jmondi.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 29 Jun 2017 14:33:17 +0200
+Message-ID: <CACRpkdYViCZG0PmboxVq7S9ggFOrsTuvk6ZjdzoBgS9aio0ygg@mail.gmail.com>
 Subject: Re: [PATCH v2] pinctrl: generic: Add output-enable property
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
         Dong Aisheng <dongas86@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Brandt <Chris.Brandt@renesas.com>,
@@ -24,31 +19,31 @@ Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Jun 29, 2017 at 3:33 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Thu, Jun 22, 2017 at 12:00 PM, Jacopo Mondi
-> <jacopo+renesas@jmondi.org> wrote:
->
->> Add output-enable generic pin configuration property.
->> This properties allows enabling/disabling pin's output capabilities
->> without actually driving any value on the line.
+On Thu, Jun 22, 2017 at 12:00 PM, Jacopo Mondi
+<jacopo+renesas@jmondi.org> wrote:
 
-> I have applied the patch adding a few elaborations in the binding that
-> the situation where you may use this is typically when enabling/disabling
-> input or output buffers irrespective of the mode of the line as a whole.
+> Add output-enable generic pin configuration property.
+> This properties allows enabling/disabling pin's output capabilities
+> without actually driving any value on the line.
 >
-> We might need even more documentation because this is really
-> confusing.
->
-> But for now it lets drivers work, which is nice.
->
-> Rough consensus and running code should be our guide.
+> ---
+> v1->v2:
+>  - Expand the property description as suggested by Laurent. I ended up
+>    mentioning the in-famous output buffer :)
 
-At least this looks much better than odd bi-directional thingy.
-Thanks!
+I have applied the patch adding a few elaborations in the binding that
+the situation where you may use this is typically when enabling/disabling
+input or output buffers irrespective of the mode of the line as a whole.
 
--- 
-With Best Regards,
-Andy Shevchenko
+We might need even more documentation because this is really
+confusing.
+
+But for now it lets drivers work, which is nice.
+
+Rough consensus and running code should be our guide.
+
+Yours,
+Linus Walleij
