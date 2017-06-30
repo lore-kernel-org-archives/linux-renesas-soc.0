@@ -1,264 +1,135 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v3 2/2] v4l: async: add subnotifier registration for subdevices
-Date: Tue, 13 Jun 2017 16:30:36 +0200
-Message-Id: <20170613143036.533-3-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170613143036.533-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170613143036.533-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f42.google.com ([209.85.215.42]:35681 "EHLO
+        mail-lf0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751494AbdF3G2l (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 30 Jun 2017 02:28:41 -0400
+Received: by mail-lf0-f42.google.com with SMTP id b207so64469559lfg.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 29 Jun 2017 23:28:40 -0700 (PDT)
+Date: Fri, 30 Jun 2017 08:28:36 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH/RFC v2 0/5] clk: renesas: rcar-gen3: Restore clocks
+ during resume
+Message-ID: <20170630062836.GB18905@bigcity.dyn.berto.se>
+References: <1498742720-2713-1-git-send-email-geert+renesas@glider.be>
+ <20170629151826.GA18905@bigcity.dyn.berto.se>
+ <CAMuHMdWhiBftHJ_qxGW67BYkEaBcC7CBC7ZBEi9nozRvKcW1EA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+In-Reply-To: <CAMuHMdWhiBftHJ_qxGW67BYkEaBcC7CBC7ZBEi9nozRvKcW1EA@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When the registered() callback of v4l2_subdev_internal_ops is called the
-subdevice has access to the master devices v4l2_dev and it's called with
-the async frameworks list_lock held. In this context the subdevice can
-register its own notifiers to allow for incremental discovery of
-subdevices.
+Hi Geert,
 
-The master device registers the subdevices closest to itself in its
-notifier while the subdevice(s) register notifiers for their closest
-neighboring devices when they are registered. Using this incremental
-approach two problems can be solved:
+On 2017-06-29 18:26:38 +0200, Geert Uytterhoeven wrote:
+> Hi Niklas,
+> 
+> On Thu, Jun 29, 2017 at 5:18 PM, Niklas S�derlund
+> <niklas.soderlund@ragnatech.se> wrote:
+> > On 2017-06-29 15:25:15 +0200, Geert Uytterhoeven wrote:
+> >> During PSCI system suspend, R-Car Gen3 SoCs are powered down, and their
+> >> clock register state is lost.  Note that as the boot loader skips most
+> >> initialization after resume, clock register state differs from the state
+> >> encountered during normal system boot, too.
+> >>
+> >> Hence after s2ram, some operations may fail because module clocks are
+> >> disabled, while drivers expect them to be still enabled.  E.g. EtherAVB
+> >> fails when Wake-on-LAN has been enabled using "ethtool -s eth0 wol g":
+> >>
+> >>     ravb e6800000.ethernet eth0: failed to switch device to config mode
+> >>     ravb e6800000.ethernet eth0: device will be stopped after h/w processes are done.
+> >>     ravb e6800000.ethernet eth0: failed to switch device to config
+> >>     PM: Device e6800000.ethernet failed to resume: error -110
+> >>
+> >> In addition, some clocks that were disabled by clk_disable_unused() may
+> >> have been re-enabled, wasting power.
+> >>
+> >> This RFC is a second attempt to fix this issue by restoring clock registers
+> >> during system resume.
+> 
+> >> This has been tested on Salvator-X with R-Car H3 ES1.0 and M3-W ES1.0.
+> >> On Salvator-XS with R-Car H3 ES2.0, EtherAVB restarts after system resume,
+> >> but NFS fails with "server not responding", probably not due to a clock
+> >> issue.
+> >
+> > I tested this series using this setup:
+> >
+> > - Base latest renesas-drivers, 710def1a48c7bc9d ("of_mdio: Fix broken
+> >   PHY IRQ in case of probe deferral"). This branch also includes the
+> >   RAVB WoL patches.
+> >
+> > - Salvator-X H3 ES1.0
+> >
+> > - The arm64 defconfig.
+> >
+> > The test procedure I used:
+> >
+> >     arm64 ~/shared/deep-sleep # cat sleep.sh
+> >     #!/bin/bash
+> >
+> >     ethtool -s eth0 wol g
+> >
+> >     echo disabled > /sys/devices/platform/soc/e6800000.ethernet/power/wakeup
+> >
+> >     echo 0 > /sys/module/printk/parameters/console_suspend
+> >
+> >     i2cset -f -y 7 0x30 0x20 0x0F
+> >
+> >     echo "Flip Switch"
+> >     read -n 1
+> >
+> >     echo mem > /sys/power/state
+> 
+> Looks good.
+> 
+> > And for me the NFS root came up OK after flipping switch back. I wonder
+> > what is different in our test procedures. I would like to provide my
+> > tested-by tag but I first want to figure out why NFS (or maybe the whole
+> > net interface?) don't work for you after resume.
+> 
+> Sorry for the confusion: NFS fails only on Salvator-XS H3 ES2.0.
+> It works fine on Salvator-X H3 ES1.0 and M3-W ES1.0.
 
-1. The master device no longer has to care how many devices exist in
-   the pipeline. It only needs to care about its closest subdevice and
-   arbitrary long pipelines can be created without having to adapt the
-   master device for each case.
+Dooh, I should read the error descriptions more carefully before directly 
+jumping to the conclusion that WoL is broken :-) For the entire series:
 
-2. Subdevices which are represented as a single DT node but register
-   more than one subdevice can use this to improve the pipeline
-   discovery, since the subdevice driver is the only one who knows which
-   of its subdevices is linked with which subdevice of a neighboring DT
-   node.
+Tested-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
 
-To enable subdevices to register/unregister notifiers from the
-registered()/unregistered() callback v4l2_async_subnotifier_register()
-and v4l2_async_subnotifier_unregister() are added. These new notifier
-register functions are similar to the master device equivalent functions
-but run without taking the v4l2-async list_lock which already is held
-when the registered()/unregistered() callbacks are called.
+Lets hope I soon can get my hands on a Salvator-XS to try and figure out 
+the RAVB issue!
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
----
- Documentation/media/kapi/v4l2-subdev.rst | 20 ++++++++++
- drivers/media/v4l2-core/v4l2-async.c     | 65 +++++++++++++++++++++++++++-----
- include/media/v4l2-async.h               | 22 +++++++++++
- 3 files changed, 98 insertions(+), 9 deletions(-)
+> 
+> > I also know you reported an IRQ storm when resuming using WoL which I in
+> > over 1000 suspend/resume cycles never have been able to reproduce. Maybe
+> > my test environment or procedure is to kind and/or something is falling
+> > thru the cracks :-( Do you notice any difference in test procedure or
+> > console printouts?
+> 
+> I saw the IRQ storm only once.
+> 
+> Thanks for testing!
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
 
-diff --git a/Documentation/media/kapi/v4l2-subdev.rst b/Documentation/media/kapi/v4l2-subdev.rst
-index e1f0b726e438f963..e308f30887a8f1b5 100644
---- a/Documentation/media/kapi/v4l2-subdev.rst
-+++ b/Documentation/media/kapi/v4l2-subdev.rst
-@@ -262,6 +262,26 @@ is called. After all subdevices have been located the .complete() callback is
- called. When a subdevice is removed from the system the .unbind() method is
- called. All three callbacks are optional.
- 
-+Subdevice drivers might in turn register subnotifier objects with an
-+array of other subdevice descriptors that the subdevice needs for its
-+own operation. Subnotifiers are an extension of the bridge drivers
-+notifier to allow for a incremental registering and matching of
-+subdevices. This is useful when a driver only has information about
-+which subdevice is closest to itself and would require knowledge from the
-+driver of that subdevice to know which other subdevice(s) lie beyond.
-+By registering subnotifiers drivers can incrementally move the subdevice
-+matching down the chain of drivers. This is performed using the
-+:c:func:`v4l2_async_subnotifier_register` call. To unregister the
-+subnotifier the driver has to call
-+:c:func:`v4l2_async_subnotifier_unregister`. These functions and their
-+arguments behave almost the same as the bridge driver notifiers
-+described above and are treated equally by the V4L2 core when matching
-+asynchronously registered subdevices. The differences are that the
-+subnotifier functions act on :c:type:`v4l2_subdev` instead of
-+:c:type:`v4l2_device` and that they should be called from the subdevice's
-+``.registered()`` and ``.unregistered()``
-+:c:type:`v4l2_subdev_internal_ops` callbacks instead of at probe time.
-+
- V4L2 sub-device userspace API
- -----------------------------
- 
-diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
-index c16200c88417b151..0b8135bf55af6b09 100644
---- a/drivers/media/v4l2-core/v4l2-async.c
-+++ b/drivers/media/v4l2-core/v4l2-async.c
-@@ -141,8 +141,9 @@ static void v4l2_async_cleanup(struct v4l2_subdev *sd)
- 	sd->dev = NULL;
- }
- 
--int v4l2_async_notifier_register(struct v4l2_device *v4l2_dev,
--				 struct v4l2_async_notifier *notifier)
-+static int v4l2_async_do_notifier_register(struct v4l2_device *v4l2_dev,
-+					   struct v4l2_async_notifier *notifier,
-+					   bool subnotifier)
- {
- 	struct v4l2_subdev *sd, *tmp;
- 	struct v4l2_async_subdev *asd;
-@@ -174,8 +175,17 @@ int v4l2_async_notifier_register(struct v4l2_device *v4l2_dev,
- 		list_add_tail(&asd->list, &notifier->waiting);
- 	}
- 
--	mutex_lock(&list_lock);
-+	if (subnotifier)
-+		lockdep_assert_held(&list_lock);
-+	else
-+		mutex_lock(&list_lock);
- 
-+	/*
-+	 * This function can be called recursively so the list
-+	 * might be modified in a recursive call. Start from the
-+	 * top of the list each iteration.
-+	 */
-+again:
- 	list_for_each_entry_safe(sd, tmp, &subdev_list, async_list) {
- 		int ret;
- 
-@@ -185,21 +195,39 @@ int v4l2_async_notifier_register(struct v4l2_device *v4l2_dev,
- 
- 		ret = v4l2_async_test_notify(notifier, sd, asd);
- 		if (ret < 0) {
--			mutex_unlock(&list_lock);
-+			if (!subnotifier)
-+				mutex_unlock(&list_lock);
- 			return ret;
- 		}
-+		goto again;
- 	}
- 
- 	/* Keep also completed notifiers on the list */
- 	list_add(&notifier->list, &notifier_list);
- 
--	mutex_unlock(&list_lock);
-+	if (!subnotifier)
-+		mutex_unlock(&list_lock);
- 
- 	return 0;
- }
-+
-+int v4l2_async_subnotifier_register(struct v4l2_subdev *sd,
-+				    struct v4l2_async_notifier *notifier)
-+{
-+	return v4l2_async_do_notifier_register(sd->v4l2_dev, notifier, true);
-+}
-+EXPORT_SYMBOL(v4l2_async_subnotifier_register);
-+
-+int v4l2_async_notifier_register(struct v4l2_device *v4l2_dev,
-+				 struct v4l2_async_notifier *notifier)
-+{
-+	return v4l2_async_do_notifier_register(v4l2_dev, notifier, false);
-+}
- EXPORT_SYMBOL(v4l2_async_notifier_register);
- 
--void v4l2_async_notifier_unregister(struct v4l2_async_notifier *notifier)
-+static void
-+v4l2_async_do_notifier_unregister(struct v4l2_async_notifier *notifier,
-+				  bool subnotifier)
- {
- 	struct v4l2_subdev *sd, *tmp;
- 	unsigned int notif_n_subdev = notifier->num_subdevs;
-@@ -216,7 +244,10 @@ void v4l2_async_notifier_unregister(struct v4l2_async_notifier *notifier)
- 			"Failed to allocate device cache!\n");
- 	}
- 
--	mutex_lock(&list_lock);
-+	if (subnotifier)
-+		lockdep_assert_held(&list_lock);
-+	else
-+		mutex_lock(&list_lock);
- 
- 	list_del(&notifier->list);
- 
-@@ -243,15 +274,20 @@ void v4l2_async_notifier_unregister(struct v4l2_async_notifier *notifier)
- 			put_device(d);
- 	}
- 
--	mutex_unlock(&list_lock);
-+	if (!subnotifier)
-+		mutex_unlock(&list_lock);
- 
- 	/*
- 	 * Call device_attach() to reprobe devices
- 	 *
- 	 * NOTE: If dev allocation fails, i is 0, and the whole loop won't be
- 	 * executed.
-+	 * TODO: If we are unregistering a subdevice notifier we can't reprobe
-+	 * since the lock_list is held by the master device and attaching that
-+	 * device would call v4l2_async_register_subdev() and end in a deadlock
-+	 * on list_lock.
- 	 */
--	while (i--) {
-+	while (i-- && !subnotifier) {
- 		struct device *d = dev[i];
- 
- 		if (d && device_attach(d) < 0) {
-@@ -275,6 +311,17 @@ void v4l2_async_notifier_unregister(struct v4l2_async_notifier *notifier)
- 	 * upon notifier registration.
- 	 */
- }
-+
-+void v4l2_async_subnotifier_unregister(struct v4l2_async_notifier *notifier)
-+{
-+	v4l2_async_do_notifier_unregister(notifier, true);
-+}
-+EXPORT_SYMBOL(v4l2_async_subnotifier_unregister);
-+
-+void v4l2_async_notifier_unregister(struct v4l2_async_notifier *notifier)
-+{
-+	v4l2_async_do_notifier_unregister(notifier, false);
-+}
- EXPORT_SYMBOL(v4l2_async_notifier_unregister);
- 
- int v4l2_async_register_subdev(struct v4l2_subdev *sd)
-diff --git a/include/media/v4l2-async.h b/include/media/v4l2-async.h
-index c69d8c8a66d0093a..f7e2a1a8ead55de2 100644
---- a/include/media/v4l2-async.h
-+++ b/include/media/v4l2-async.h
-@@ -105,6 +105,18 @@ struct v4l2_async_notifier {
- };
- 
- /**
-+ * v4l2_async_notifier_register - registers a subdevice asynchronous subnotifier
-+ *
-+ * @sd: pointer to &struct v4l2_subdev
-+ * @notifier: pointer to &struct v4l2_async_notifier
-+ *
-+ * This function assumes the async list_lock is already locked, allowing it to
-+ * be used from the struct v4l2_subdev_internal_ops registered() callback.
-+ */
-+int v4l2_async_subnotifier_register(struct v4l2_subdev *sd,
-+				    struct v4l2_async_notifier *notifier);
-+
-+/**
-  * v4l2_async_notifier_register - registers a subdevice asynchronous notifier
-  *
-  * @v4l2_dev: pointer to &struct v4l2_device
-@@ -114,6 +126,16 @@ int v4l2_async_notifier_register(struct v4l2_device *v4l2_dev,
- 				 struct v4l2_async_notifier *notifier);
- 
- /**
-+ * v4l2_async_subnotifier_unregister - unregisters a asynchronous subnotifier
-+ *
-+ * @notifier: pointer to &struct v4l2_async_notifier
-+ *
-+ * This function assumes the async list_lock is already locked, allowing it to
-+ * be used from the struct v4l2_subdev_internal_ops unregistered() callback.
-+ */
-+void v4l2_async_subnotifier_unregister(struct v4l2_async_notifier *notifier);
-+
-+/**
-  * v4l2_async_notifier_unregister - unregisters a subdevice asynchronous notifier
-  *
-  * @notifier: pointer to &struct v4l2_async_notifier
 -- 
-2.13.1
+Regards,
+Niklas S�derlund
