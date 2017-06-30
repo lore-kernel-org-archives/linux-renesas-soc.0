@@ -1,122 +1,75 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Kieran Bingham <kbingham@kernel.org>
-To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: laurent.pinchart@ideasonboard.com, sakari.ailus@iki.fi,
-        niklas.soderlund@ragnatech.se,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v4 0/2] ADV748x HDMI/Analog video receiver
-Date: Tue, 13 Jun 2017 01:35:06 +0100
-Message-Id: <cover.d0545e32d322ca1b939fa2918694173629e680eb.1497313626.git-series.kieran.bingham+renesas@ideasonboard.com>
+Return-Path: <linux-media-owner@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <1495199224-16337-3-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1495199224-16337-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1495199224-16337-3-git-send-email-ulrich.hecht+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 30 Jun 2017 11:19:01 +0200
+Message-ID: <CAMuHMdU-LcB_Te_SeqkZbji81v82n-NP0VKAAdDQ=DhqE5wBwg@mail.gmail.com>
+Subject: Re: [PATCH v3 2/4] media: adv7180: add adv7180cp, adv7180st
+ compatible strings
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms@verge.net.au>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Hi Ulrich,
 
-This is a driver for the Analog Devices ADV748x device, and follows on from a
-previous posting by Niklas Söderlund [0] of an earlier incarnation of this
-driver.
+On Fri, May 19, 2017 at 3:07 PM, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
+> Used to differentiate between models with 3 and 6 inputs.
+>
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> ---
+>  drivers/media/i2c/adv7180.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/media/i2c/adv7180.c b/drivers/media/i2c/adv7180.c
+> index bdbbf8c..78de7dd 100644
+> --- a/drivers/media/i2c/adv7180.c
+> +++ b/drivers/media/i2c/adv7180.c
+> @@ -1452,6 +1452,8 @@ static SIMPLE_DEV_PM_OPS(adv7180_pm_ops, adv7180_suspend, adv7180_resume);
+>  #ifdef CONFIG_OF
+>  static const struct of_device_id adv7180_of_id[] = {
+>         { .compatible = "adi,adv7180", },
+> +       { .compatible = "adi,adv7180cp", },
+> +       { .compatible = "adi,adv7180st", },
+>         { .compatible = "adi,adv7182", },
+>         { .compatible = "adi,adv7280", },
+>         { .compatible = "adi,adv7280-m", },
 
-Aside from a few bug fixes, and considerable refactoring this driver:
- - is refactored to multiple object files
- - defines multiple sub devices for the output paths.
- - has independent controls for both HDMI and Analog video paths
+Adding compatible entries here is not sufficient, and causes a crash on
+r8a7793/gose with renesas-drivers-2017-06-27-v4.12-rc7:
 
- - Specifies 'endpoint' matching instead of 'device' in async framework
+    adv7180 2-0020: chip found @ 0x20 (e6530000.i2c)
+    Unable to handle kernel NULL pointer dereference at virtual address 00000014
+    pgd = c0003000
+    [00000014] *pgd=80000040004003, *pmd=00000000
+    Internal error: Oops: 207 [#1] SMP ARM
+    Modules linked in:
+    CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.12.0-rc7-rcar2-initrd #37
+    Hardware name: Generic R-Car Gen2 (Flattened Device Tree)
+    task: df427040 task.stack: df436000
+    PC is at adv7180_probe+0x84/0x3cc
 
-These patches are based up on Niklas' pending RVin work [1] and Sakari's fwnode
-series [2]
+In the absence of an entry in adv7180_id[], the passed i2c_device_id
+pointer is NULL, and thus dereferencing it crashes the system.
 
-This version is the culmination of large refactoring and development, and I
-believe is ready (or near) for mainline integration.
+Gr{oetje,eeting}s,
 
-ADV748x
-=======
-The ADV7481 and ADV7482 support two video pipelines which can run independently
-of each other, with each pipeline terminating in a CSI-2 output: TXA (4-Lane)
-and TXB (1-Lane)
+                        Geert
 
-The ADV7480 (Not yet included here), ADV7481, and ADV7482 are all derivatives,
-with the following features
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-            Analog   HDMI  MHL  4-Lane  1-Lane
-              In      In         CSI     CSI
- ADV7480               X    X     X
- ADV7481      X        X    X     X       X
- ADV7482      X        X          X       X
-
-Implementation
-==============
-
-This RFC creates 4 entities. AFE (CVBS/Analog In), HDMI, TXA and TXB.  At probe
-time, the DT is parsed to identify the endpoints for each of these nodes, and
-those are used for async matching of the CSI2 (TXA/TXB) entities in the master
-driver. The HDMI and AFE entities are then registered after a successful
-registration of both the CSI2 entities.
-
-(Known) Future Todo's
-=====================
-
-Further potential development areas include:
- - ADV7480 Support (No AFE)
- - MHL support (Not present on ADV7482)
- - EDID support
- - CEC Support
- - Configurable I2C addressing
- - Interrupt handling for format changes and hotplug detect.
-
-However, this driver is functional without the above, and these developments
-can be written when required.
-
-References
-==========
-[0] http://www.mail-archive.com/linux-renesas-soc@vger.kernel.org/msg05196.html
-[1] https://git.ragnatech.se/linux rcar-vin-elinux-v7
-[2] https://www.mail-archive.com/linux-media@vger.kernel.org/msg111332.html
-
-v1/RFC:
- - Initial posting
-
-v2:
- - Reworked DT parsing and entities
-
-v3:
- - Refreshed with lots of fixups from Sakari's review comments
-
-v4:
- - Many changes all round, following Laurent's review and extensive development
- - Now uses regmap
- - AFE port numbering has been changed to match the entity pads
- -
-
-Kieran Bingham (2):
-  media: i2c: adv748x: add adv748x driver
-  arm64: dts: renesas: salvator-x: Add ADV7482 support
-
- Documentation/devicetree/bindings/media/i2c/adv748x.txt |  96 +-
- MAINTAINERS                                             |   6 +-
- arch/arm64/boot/dts/renesas/salvator-x.dtsi             | 123 +-
- drivers/media/i2c/Kconfig                               |  11 +-
- drivers/media/i2c/Makefile                              |   1 +-
- drivers/media/i2c/adv748x/Makefile                      |   7 +-
- drivers/media/i2c/adv748x/adv748x-afe.c                 | 571 ++++++-
- drivers/media/i2c/adv748x/adv748x-core.c                | 907 +++++++++-
- drivers/media/i2c/adv748x/adv748x-csi2.c                | 323 +++-
- drivers/media/i2c/adv748x/adv748x-hdmi.c                | 652 ++++++-
- drivers/media/i2c/adv748x/adv748x.h                     | 415 ++++-
- 11 files changed, 3112 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/i2c/adv748x.txt
- create mode 100644 drivers/media/i2c/adv748x/Makefile
- create mode 100644 drivers/media/i2c/adv748x/adv748x-afe.c
- create mode 100644 drivers/media/i2c/adv748x/adv748x-core.c
- create mode 100644 drivers/media/i2c/adv748x/adv748x-csi2.c
- create mode 100644 drivers/media/i2c/adv748x/adv748x-hdmi.c
- create mode 100644 drivers/media/i2c/adv748x/adv748x.h
-
-base-commit: 287d20fda775908006c5d64a15cd65244578ed01
--- 
-git-series 0.9.1
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
