@@ -1,117 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:56943 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751386AbdFZSM3 (ORCPT
+Received: from sauhun.de ([88.99.104.3]:34630 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751850AbdF3K5O (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Jun 2017 14:12:29 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 00/14] Renesas R-Car VSP: Add H3 ES2.0 support
-Date: Mon, 26 Jun 2017 21:12:12 +0300
-Message-Id: <20170626181226.29575-1-laurent.pinchart+renesas@ideasonboard.com>
+        Fri, 30 Jun 2017 06:57:14 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wolfram Sang <wsa@the-dreams.de>
+Subject: [PATCH 0/4] tmio/sdhi: use max sd_buf size & clean header file before
+Date: Fri, 30 Jun 2017 12:56:45 +0200
+Message-Id: <20170630105649.16137-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+From: Wolfram Sang <wsa@the-dreams.de>
 
-This patch series implements support for the R-Car H3 ES2.0 SoC in the VSP
-and DU drivers.
- 
-Compared to the H3 ES1.1, the H3 ES2.0 has a new VSP2-DL instance that
-includes two blending units, a BRU and a BRS. The BRS is similar to the BRU
-but has two inputs only, and is used to service a second DU channel from the
-same VSP through a second LIF instances connected to WPF.1.
+The main patch is patch 4 which uses the maximum sd_buf size, i.e. 32 bit on
+Gen2 and 64 bit on Gen3. Instead of a new flag, we use the bus_shift
+information we already have. See the patch description for details.
 
-The patch series starts with a small fixes and cleanups in patches 01/14 to
-05/14. Patch 06/14 prepares the VSP driver for multiple DU channels support by
-extending the DU-VSP API with an additional argument. Patches 07/14 to 10/14
-gradually build H3 ES2.0 support on top of that by implementing all needed
-features in the VSP driver.
+Before fixing this, I wanted to remove a magic value in that function which is
+done in patch 3.
 
-So far the VSP driver always used headerless display lists when operating in
-connection with the DU. This mode of operation is only available on WPF.0, so
-support for regular display lists with headers when operating with the DU is
-added in patch 11/14.
+When adding the new define, I noticed that some description is missing in the
+header which is fixed with patch 2.
 
-The remaining patches finally implement H3 ES2.0 support in the DU driver,
-with support for VSP sharing implemented in patch 12/14, for H3 ES2.0 PLL in
-patch 13/14 (by restricting the ES1.x workaround to ES1.x SoCs) and for RGB
-output routing in patch 14/14.
+When adding the description, I noticed this meanwhile obsolete define which
+gets removed in patch 1.
 
-Compared to v1, the series has gone under considerable changes. Testing
-locally on H3 ES2.0 uncovered multiple issues in the previous partially tested
-version, which have been fixed in additional patches. The following changes
-can be noted in particular.
+That's the way it went :)
 
-- New small cleanups in patches 02/14 to 05/14
-- Pass the pipe index to vsp1_du_atomic_update() explicitly
-- Rebase on top of the VSP-DU flicker fixes, resulting in a major rework of
-  "v4l: vsp1: Add support for header display lists in continuous mode"
-- New patches 09/14, 10/14 and 12/14 to support the previously untested VGA
-  output
+Tested on Salvator-X/M3-W and Lager/H2.
 
-The series is based on top of Dave's latest drm-next branch as it depends on
-patches merged by Dave for v4.13. It depends, for testing, on
-
-- the sh-pfc-for-v4.13 branch from Geert's renesas-drivers tree
-- the "[PATCH v2 0/2] R-Car H3 ES2.0 Salvator-X: Enable DU support in DT"
-  patch series
-
-For convenience, a branch merging this series with all dependencies is
-available from
-
-	git://linuxtv.org/pinchartl/media.git drm/next/h3-es2/merged
-
-with the DT and driver series split in two branches respectively tagged
-drm-h3-es2-dt-20170626 and drm-h3-es2-vsp-du-20170626.
-
-The patches have been tested on the Lager, Salvator-X H3 ES1.x, Salvator-X
-M3-W and Salvator-XS boards. All outputs have been tested using modetest
-without any noticeable regression.
-
-Laurent Pinchart (14):
-  v4l: vsp1: Fill display list headers without holding dlm spinlock
-  v4l: vsp1: Don't recycle active list at display start
-  v4l: vsp1: Don't set WPF sink pointer
-  v4l: vsp1: Store source and sink pointers as vsp1_entity
-  v4l: vsp1: Don't create links for DRM pipeline
-  v4l: vsp1: Add pipe index argument to the VSP-DU API
-  v4l: vsp1: Add support for the BRS entity
-  v4l: vsp1: Add support for new VSP2-BS, VSP2-DL and VSP2-D instances
-  v4l: vsp1: Add support for multiple LIF instances
-  v4l: vsp1: Add support for multiple DRM pipelines
-  v4l: vsp1: Add support for header display lists in continuous mode
-  drm: rcar-du: Support multiple sources from the same VSP
-  drm: rcar-du: Restrict DPLL duty cycle workaround to H3 ES1.x
-  drm: rcar-du: Configure DPAD0 routing through last group on Gen3
-
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c    |  39 ++--
- drivers/gpu/drm/rcar-du/rcar_du_crtc.h    |   3 +
- drivers/gpu/drm/rcar-du/rcar_du_group.c   |  21 ++-
- drivers/gpu/drm/rcar-du/rcar_du_kms.c     |  91 ++++++++--
- drivers/gpu/drm/rcar-du/rcar_du_vsp.c     |  37 ++--
- drivers/gpu/drm/rcar-du/rcar_du_vsp.h     |  10 +-
- drivers/media/platform/vsp1/vsp1.h        |   7 +-
- drivers/media/platform/vsp1/vsp1_bru.c    |  45 +++--
- drivers/media/platform/vsp1/vsp1_bru.h    |   4 +-
- drivers/media/platform/vsp1/vsp1_dl.c     | 205 +++++++++++++---------
- drivers/media/platform/vsp1/vsp1_dl.h     |   1 -
- drivers/media/platform/vsp1/vsp1_drm.c    | 283 +++++++++++++++---------------
- drivers/media/platform/vsp1/vsp1_drm.h    |  38 ++--
- drivers/media/platform/vsp1/vsp1_drv.c    | 115 ++++++++----
- drivers/media/platform/vsp1/vsp1_entity.c |  40 +++--
- drivers/media/platform/vsp1/vsp1_entity.h |   5 +-
- drivers/media/platform/vsp1/vsp1_lif.c    |   5 +-
- drivers/media/platform/vsp1/vsp1_lif.h    |   2 +-
- drivers/media/platform/vsp1/vsp1_pipe.c   |   7 +-
- drivers/media/platform/vsp1/vsp1_regs.h   |  46 +++--
- drivers/media/platform/vsp1/vsp1_video.c  |  63 ++++---
- drivers/media/platform/vsp1/vsp1_wpf.c    |   4 +-
- include/media/vsp1.h                      |  10 +-
- 23 files changed, 676 insertions(+), 405 deletions(-)
-
--- 
 Regards,
 
-Laurent Pinchart
+   Wolfram
+
+Wolfram Sang (4):
+  mmc: tmio: remove obsolete TMIO_BBS
+  mmc: tmio: add references to bit defines in the header
+  mmc: tmio: no magic values when enabling DMA
+  mmc: sdhi: use maximum width for the sdbuf register
+
+ drivers/mmc/host/renesas_sdhi_core.c | 5 ++---
+ drivers/mmc/host/tmio_mmc.h          | 7 +++++--
+ 2 files changed, 7 insertions(+), 5 deletions(-)
+
+-- 
+2.11.0
