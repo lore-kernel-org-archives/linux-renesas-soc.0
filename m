@@ -1,5 +1,10 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Fri, 30 Jun 2017 12:01:14 +0200
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:44820 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751858AbdF3JsC (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 30 Jun 2017 05:48:02 -0400
+Date: Fri, 30 Jun 2017 11:47:57 +0200
 From: Simon Horman <horms@verge.net.au>
 To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Cc: Rob Herring <robh+dt@kernel.org>,
@@ -9,80 +14,35 @@ Cc: Rob Herring <robh+dt@kernel.org>,
         Russell King <linux@armlinux.org.uk>,
         linux-arm-kernel@lists.infradead.org
 Subject: Re: [PATCH 1/2] ARM: dts: r8a7792: add IMR-L[S]X3 clocks
-Message-ID: <20170630100114.GG26710@verge.net.au>
-References: <20170321194820.477663240@cogentembedded.com>
+Message-ID: <20170630094757.GC26710@verge.net.au>
+References: <20170321200443.078095898@cogentembedded.com>
+ <34050114-752a-08b6-700e-697e78102af7@cogentembedded.com>
+ <a802018c-9943-22e5-0f78-28b8ab9689d9@cogentembedded.com>
+ <20170329080417.GD6512@verge.net.au>
+ <fbd0e4c2-746c-8f74-a8e5-ab971a087aed@cogentembedded.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20170321194820.477663240@cogentembedded.com>
-Sender: devicetree-owner@vger.kernel.org
+In-Reply-To: <fbd0e4c2-746c-8f74-a8e5-ab971a087aed@cogentembedded.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Jan 01, 1970 at 03:00:01AM +0300, Sergei Shtylyov wrote:
-> Add the IMR-L[S]X3 clocks to the R8A7792 device tree.
+On Wed, Jun 28, 2017 at 11:49:01PM +0300, Sergei Shtylyov wrote:
+> Hello!
 > 
-> Based on the original patch by Roman Meshkevich
-> <roman.meshkevich@cogentembedded.com>.
+> On 03/29/2017 11:04 AM, Simon Horman wrote:
 > 
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> >>>Still not cover letter but I think it's better now, so I won't retry...
+> >>>The patches are against Simon Horman's 'renesas.git' repo,
+> >>>'renesas-devel-20170321-v4.11-rc3' tag.
+> >>
+> >>   The patches depend on the IMR driver patches adding the IMR-L[S]X3
+> >>support for the "compatible" values.
+> >
+> >I have marked these patches as deferred accordingly.
 > 
-> ---
->  arch/arm/boot/dts/r8a7792.dtsi            |   15 ++++++++++++---
->  include/dt-bindings/clock/r8a7792-clock.h |    7 +++++++
->  2 files changed, 19 insertions(+), 3 deletions(-)
-> 
-> Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
-> ===================================================================
-> --- renesas.orig/arch/arm/boot/dts/r8a7792.dtsi
-> +++ renesas/arch/arm/boot/dts/r8a7792.dtsi
-> @@ -927,16 +927,25 @@
->  				     "renesas,cpg-mstp-clocks";
->  			reg = <0 0xe6150990 0 4>, <0 0xe61509a0 0 4>;
->  			clocks = <&zg_clk>, <&zg_clk>, <&zg_clk>, <&zg_clk>,
-> -			         <&zg_clk>, <&zg_clk>, <&hp_clk>;
-> +				 <&zg_clk>, <&zg_clk>, <&hp_clk>, <&zg_clk>,
-> +				 <&zg_clk>, <&zg_clk>, <&zg_clk>, <&zg_clk>,
-> +				 <&zg_clk>, <&zg_clk>;
->  			#clock-cells = <1>;
->  			clock-indices = <
->  				R8A7792_CLK_VIN5 R8A7792_CLK_VIN4
->  				R8A7792_CLK_VIN3 R8A7792_CLK_VIN2
->  				R8A7792_CLK_VIN1 R8A7792_CLK_VIN0
-> -				R8A7792_CLK_ETHERAVB
-> +				R8A7792_CLK_ETHERAVB R8A7792_CLK_IMR_LX3
-> +				R8A7792_CLK_IMR_LSX3_1 R8A7792_CLK_IMR_LSX3_0
-> +				R8A7792_CLK_IMR_LSX3_5 R8A7792_CLK_IMR_LSX3_4
-> +				R8A7792_CLK_IMR_LSX3_3 R8A7792_CLK_IMR_LSX3_2
->  			>;
->  			clock-output-names = "vin5", "vin4", "vin3", "vin2",
-> -					     "vin1", "vin0", "etheravb";
-> +					     "vin1", "vin0",
-> +					     "etheravb", "imr-lx3",
-> +					     "imr-lsx3-1", "imr-lsx3-0",
-> +					     "imr-lsx3-5", "imr-lsx3-4",
-> +					     "imr-lsx3-3", "imr-lsx3-2";
->  		};
->  		mstp9_clks: mstp9_clks@e6150994 {
->  			compatible = "renesas,r8a7792-mstp-clocks",
-> Index: renesas/include/dt-bindings/clock/r8a7792-clock.h
-> ===================================================================
-> --- renesas.orig/include/dt-bindings/clock/r8a7792-clock.h
-> +++ renesas/include/dt-bindings/clock/r8a7792-clock.h
-> @@ -70,6 +70,13 @@
->  #define R8A7792_CLK_VIN1		10
->  #define R8A7792_CLK_VIN0		11
->  #define R8A7792_CLK_ETHERAVB		12
-> +#define R8A7792_CLK_IMR_LX3		21
-> +#define R8A7792_CLK_IMR_LSX3_1		22
-> +#define R8A7792_CLK_IMR_LSX3_0		23
-> +#define R8A7792_CLK_IMR_LSX3_5		25
-> +#define R8A7792_CLK_IMR_LSX3_4		26
-> +#define R8A7792_CLK_IMR_LSX3_3		27
-> +#define R8A7792_CLK_IMR_LSX3_2		28
->  
->  /* MSTP9 */
->  #define R8A7792_CLK_GPIO7		4
-> 
+>    Actually, the 1st patch in htis series doesn't depend on anything and
+> should still apply (with offsets).
 
-I think this patch needs to be split in two, one for each file,
-to allow queuing bindings and DT changes in different branches.
+I'd prefer to take both patches at the same time unless there is a strong
+motivation to just take the first one.
