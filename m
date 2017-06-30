@@ -1,40 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from userp1040.oracle.com ([156.151.31.81]:35661 "EHLO
-        userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751668AbdF3IAe (ORCPT
+Received: from mail-lf0-f41.google.com ([209.85.215.41]:33444 "EHLO
+        mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751974AbdF3NPZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 30 Jun 2017 04:00:34 -0400
-Date: Fri, 30 Jun 2017 11:00:12 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-Cc: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] drm: rcar-du: remove an unneeded NULL check
-Message-ID: <20170630080011.o5s7tbrcd7gob3et@mwanda>
+        Fri, 30 Jun 2017 09:15:25 -0400
+Received: by mail-lf0-f41.google.com with SMTP id z78so28471913lff.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 30 Jun 2017 06:15:25 -0700 (PDT)
+Subject: Re: [PATCH v3] media: platform: rcar_imr: add IMR-LSX3 support
+To: Rob Herring <robh@kernel.org>
+References: <20170628195719.333514117@cogentembedded.com>
+ <20170629214212.6r4e5xqmuul7g4o2@rob-hp-laptop>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        devicetree@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <ea3cceb5-5fa4-a3d8-01c8-8a768553869a@cogentembedded.com>
+Date: Fri, 30 Jun 2017 16:15:21 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+In-Reply-To: <20170629214212.6r4e5xqmuul7g4o2@rob-hp-laptop>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-"params" can't be NULL here.  The next lines assume that we either
-hit the break statement of "params->mpixelclock == ~0UL".  The
-inconsistent NULL checking makes static checkers complain.  I've just
-removed the test.
+On 06/30/2017 12:42 AM, Rob Herring wrote:
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>> Add support for the image renderer light SRAM extended 3 (IMR-LSX3) found
+>> only in the R-Car V2H (R8A7792) SoC.  It differs  from IMR-LX4 in that it
+>> supports only planar video formats but can use the video capture data for
+>> the textures.
+>>
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>>
+>> ---
+>> This patch  is against the 'media_tree.git' repo's 'master' branch plus the
+>> latest version of the Renesas IMR driver...
+>>
+>> Changes in version 3:
+>> - fixed compilation errors, resolved rejects, refreshed the patch atop of the
+>>   IMR driver patch (version 6).
+>>
+>> Changes in version 2:
+>> - renamed *enum* 'imr_gen' to 'imr_type' and the *struct* field of this type
+>>   from 'gen' to 'type';
+>> - rename *struct* 'imr_type' to 'imr_info' and the fields/variables of this type
+>>   from 'type' to 'info';
+>> - added comments to IMR-LX4 only CMRCR2 bits;
+>> - added IMR type check to the WTS instruction writing to CMRCCR2.
+>>
+>>  Documentation/devicetree/bindings/media/rcar_imr.txt |   11 +-
+>
+> You missed my ack on v2.
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c b/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
-index 7539626b8ebd..dc85b53d58ef 100644
---- a/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
-@@ -45,7 +45,7 @@ static int rcar_hdmi_phy_configure(struct dw_hdmi *hdmi,
- {
- 	const struct rcar_hdmi_phy_params *params = rcar_hdmi_phy_params;
- 
--	for (; params && params->mpixelclock != ~0UL; ++params) {
-+	for (; params->mpixelclock != ~0UL; ++params) {
- 		if (mpixelclock <= params->mpixelclock)
- 			break;
- 	}
+    Sorry again, realized that just after posting v3.
+
+>>  drivers/media/platform/rcar_imr.c                    |  101 +++++++++++++++----
+>>  2 files changed, 92 insertions(+), 20 deletions(-)
+
+MBR, Sergei
