@@ -1,81 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:36412 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752551AbdF2KTh (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:46544 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751545AbdF3JMe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Jun 2017 06:19:37 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Alexey Firago <alexey_firago@mentor.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 4/8] clk: vc5: Configure the output buffer input mux on prepare
-Date: Thu, 29 Jun 2017 12:18:47 +0200
-Message-Id: <20170629101851.23972-4-marek.vasut@gmail.com>
-In-Reply-To: <20170629101851.23972-1-marek.vasut@gmail.com>
-References: <20170629101851.23972-1-marek.vasut@gmail.com>
+        Fri, 30 Jun 2017 05:12:34 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Koji Matsuoka <koji.matsuoka.xm@renesas.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] drm: rcar-du: remove an unneeded NULL check
+Date: Fri, 30 Jun 2017 12:12:38 +0300
+Message-ID: <2896140.RGSNmoZdkf@avalon>
+In-Reply-To: <20170630080011.o5s7tbrcd7gob3et@mwanda>
+References: <20170630080011.o5s7tbrcd7gob3et@mwanda>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Marek Vasut <marek.vasut+renesas@gmail.com>
+Hi Dan,
 
-The output buffer input mux can be configured in either of three
-states -- disabled, input from FOD, input from previous output.
-Once the .prepare() callback of the output buffer is called, the
-output buffer input mux must be set to either input from FOD or
-input from previous output, it cannot be set to Disabled anymore
-or the output won't work.
+Thank you for the patch.
 
-Default to the input from FOD if the output buffer input mux was
-Disabled and the .prepare() was called on it.
+On Friday 30 Jun 2017 11:00:12 Dan Carpenter wrote:
+> "params" can't be NULL here.  The next lines assume that we either
+> hit the break statement of "params->mpixelclock == ~0UL".  The
+> inconsistent NULL checking makes static checkers complain.  I've just
+> removed the test.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Note that we do not set the output buffer input mux back to Disabled
-in the .unprepare() callback as there is no obvious benefit of doing
-so. We disable the entire output buffer in the .unprepare() callback
-already.
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Alexey Firago <alexey_firago@mentor.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org
----
- drivers/clk/clk-versaclock5.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+and taken in my tree for v4.14.
 
-diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index 766fcc5cc0b3..a5256f793627 100644
---- a/drivers/clk/clk-versaclock5.c
-+++ b/drivers/clk/clk-versaclock5.c
-@@ -507,6 +507,25 @@ static int vc5_clk_out_prepare(struct clk_hw *hw)
- {
- 	struct vc5_hw_data *hwdata = container_of(hw, struct vc5_hw_data, hw);
- 	struct vc5_driver_data *vc5 = hwdata->vc5;
-+	const u8 mask = VC5_OUT_DIV_CONTROL_SELB_NORM |
-+			VC5_OUT_DIV_CONTROL_SEL_EXT |
-+			VC5_OUT_DIV_CONTROL_EN_FOD;
-+	unsigned int src;
-+	int ret;
-+
-+	/*
-+	 * If the input mux is disabled, enable it first and
-+	 * select source from matching FOD.
-+	 */
-+	regmap_read(vc5->regmap, VC5_OUT_DIV_CONTROL(hwdata->num), &src);
-+	if ((src & mask) == 0) {
-+		src = VC5_OUT_DIV_CONTROL_RESET | VC5_OUT_DIV_CONTROL_EN_FOD;
-+		ret = regmap_update_bits(vc5->regmap,
-+					 VC5_OUT_DIV_CONTROL(hwdata->num),
-+					 mask | VC5_OUT_DIV_CONTROL_RESET, src);
-+		if (ret)
-+			return ret;
-+	}
- 
- 	/* Enable the clock buffer */
- 	regmap_update_bits(vc5->regmap, VC5_CLK_OUTPUT_CFG(hwdata->num, 1),
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
+> b/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c index 7539626b8ebd..dc85b53d58ef
+> 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
+> @@ -45,7 +45,7 @@ static int rcar_hdmi_phy_configure(struct dw_hdmi *hdmi,
+>  {
+>  	const struct rcar_hdmi_phy_params *params = rcar_hdmi_phy_params;
+> 
+> -	for (; params && params->mpixelclock != ~0UL; ++params) {
+> +	for (; params->mpixelclock != ~0UL; ++params) {
+>  		if (mpixelclock <= params->mpixelclock)
+>  			break;
+>  	}
+
 -- 
-2.11.0
+Regards,
+
+Laurent Pinchart
