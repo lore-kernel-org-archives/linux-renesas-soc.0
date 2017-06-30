@@ -1,68 +1,44 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 14/14] drm: rcar-du: Configure DPAD0 routing through last group on Gen3
-Date: Mon, 26 Jun 2017 21:12:26 +0300
-Message-Id: <20170626181226.29575-15-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170626181226.29575-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170626181226.29575-1-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([88.99.104.3]:34654 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752374AbdF3K5P (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 30 Jun 2017 06:57:15 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 4/4] mmc: sdhi: use maximum width for the sdbuf register
+Date: Fri, 30 Jun 2017 12:56:49 +0200
+Message-Id: <20170630105649.16137-5-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20170630105649.16137-1-wsa+renesas@sang-engineering.com>
+References: <20170630105649.16137-1-wsa+renesas@sang-engineering.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Gen3 SoCs DPAD0 routing is configured through the last CRTC group,
-unlike on Gen2 where it is configured through the first CRTC group. Fix
-the driver accordingly.
+We can derive the sd_buf width from the bus_shift parameter which tells
+us how far registers are apart. Remove the obvious comment, too.
 
-Fixes: 2427b3037710 ("drm: rcar-du: Add R8A7795 device support")
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_group.c | 21 ++++++++++++++-------
- 1 file changed, 14 insertions(+), 7 deletions(-)
+ drivers/mmc/host/renesas_sdhi_core.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_group.c b/drivers/gpu/drm/rcar-du/rcar_du_group.c
-index 64738fca96d0..2abb2fdd143e 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_group.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_group.c
-@@ -208,23 +208,30 @@ void rcar_du_group_restart(struct rcar_du_group *rgrp)
- 
- int rcar_du_set_dpad0_vsp1_routing(struct rcar_du_device *rcdu)
+diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+index dd215723fa4312..48da28dfef6465 100644
+--- a/drivers/mmc/host/renesas_sdhi_core.c
++++ b/drivers/mmc/host/renesas_sdhi_core.c
+@@ -461,8 +461,7 @@ static void renesas_sdhi_enable_dma(struct tmio_mmc_host *host, bool enable)
  {
-+	struct rcar_du_group *rgrp;
-+	struct rcar_du_crtc *crtc;
- 	int ret;
+ 	sd_ctrl_write16(host, CTL_DMA_ENABLE, enable ? DMA_ENABLE_DMASDRW : 0);
  
- 	if (!rcar_du_has(rcdu, RCAR_DU_FEATURE_EXT_CTRL_REGS))
- 		return 0;
- 
--	/* RGB output routing to DPAD0 and VSP1D routing to DU0/1/2 are
--	 * configured in the DEFR8 register of the first group. As this function
--	 * can be called with the DU0 and DU1 CRTCs disabled, we need to enable
--	 * the first group clock before accessing the register.
-+	/*
-+	 * RGB output routing to DPAD0 and VSP1D routing to DU0/1/2 are
-+	 * configured in the DEFR8 register of the first group on Gen2 and the
-+	 * last group on Gen3. As this function can be called with the DU
-+	 * channels of the corresponding CRTCs disabled, we need to enable the
-+	 * group clock before accessing the register.
- 	 */
--	ret = clk_prepare_enable(rcdu->crtcs[0].clock);
-+	rgrp = &rcdu->groups[DIV_ROUND_UP(rcdu->num_crtcs, 2) - 1];
-+	crtc = &rcdu->crtcs[rgrp->index * 2];
-+
-+	ret = clk_prepare_enable(crtc->clock);
- 	if (ret < 0)
- 		return ret;
- 
--	rcar_du_group_setup_defr8(&rcdu->groups[0]);
-+	rcar_du_group_setup_defr8(rgrp);
- 
--	clk_disable_unprepare(rcdu->crtcs[0].clock);
-+	clk_disable_unprepare(crtc->clock);
- 
- 	return 0;
+-	/* enable 32bit access if DMA mode if possibile */
+-	renesas_sdhi_sdbuf_width(host, enable ? 32 : 16);
++	renesas_sdhi_sdbuf_width(host, enable ? (16 << host->bus_shift) : 16);
  }
+ 
+ int renesas_sdhi_probe(struct platform_device *pdev,
 -- 
-Regards,
-
-Laurent Pinchart
+2.11.0
