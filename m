@@ -1,199 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:34786 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753221AbdF2NZY (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:44946 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751695AbdF3J47 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Jun 2017 09:25:24 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC v2 4/5] clk: renesas: rcar-gen3: Restore SDHI clocks during resume
-Date: Thu, 29 Jun 2017 15:25:19 +0200
-Message-Id: <1498742720-2713-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1498742720-2713-1-git-send-email-geert+renesas@glider.be>
-References: <1498742720-2713-1-git-send-email-geert+renesas@glider.be>
+        Fri, 30 Jun 2017 05:56:59 -0400
+Date: Fri, 30 Jun 2017 11:56:55 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2] arm64: dts: r8a7796: add IMR-LX4 support
+Message-ID: <20170630095655.GE26710@verge.net.au>
+References: <20170627173400.581660959@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170627173400.581660959@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On R-Car Gen3 systems, PSCI system suspend powers down the SoC, losing
-clock configuration.  Register a notifier to save/restore SDHI clock
-registers during system suspend/resume.
+On Tue, Jun 27, 2017 at 08:33:44PM +0300, Sergei Shtylyov wrote:
+> Describe the IMR-LX4 devices in the R8A7796 device tree.
+> 
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> ---
+> This patch is against the 'renesas-devel-20170626-v4.12-rc7' tag of Simon
+> Horman's 'renesas.git' repo.
+> 
+> The IMR-LX4 bindings were documented in the IMR driver patch and ACK'ed by Rob
+> Herring, so I don't expect them to change...
 
-This is implemented using the cpg_simple_notifier abstraction, which can
-be reused for others clocks that just need to save/restore a single
-register.
+Thanks Sergei,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - New.
----
- drivers/clk/renesas/rcar-gen3-cpg.c | 63 +++++++++++++++++++++++++++++--------
- 1 file changed, 50 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index 5367944c4ab8491d..1abbf1d6d0a0c889 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -19,6 +19,7 @@
- #include <linux/err.h>
- #include <linux/init.h>
- #include <linux/io.h>
-+#include <linux/pm.h>
- #include <linux/slab.h>
- #include <linux/sys_soc.h>
- 
-@@ -29,6 +30,36 @@
- #define CPG_PLL2CR		0x002c
- #define CPG_PLL4CR		0x01f4
- 
-+struct cpg_simple_notifier {
-+	struct notifier_block nb;
-+	void __iomem *reg;
-+	u32 saved;
-+};
-+
-+static int cpg_simple_notifier_call(struct notifier_block *nb,
-+				    unsigned long action, void *data)
-+{
-+	struct cpg_simple_notifier *csn =
-+		container_of(nb, struct cpg_simple_notifier, nb);
-+
-+	switch (action) {
-+	case PM_EVENT_SUSPEND:
-+		csn->saved = readl(csn->reg);
-+		return NOTIFY_OK;
-+
-+	case PM_EVENT_RESUME:
-+		writel(csn->saved, csn->reg);
-+		return NOTIFY_OK;
-+	}
-+	return NOTIFY_DONE;
-+}
-+
-+static void cpg_simple_notifier_register(struct raw_notifier_head *notifiers,
-+					 struct cpg_simple_notifier *csn)
-+{
-+	csn->nb.notifier_call = cpg_simple_notifier_call;
-+	raw_notifier_chain_register(notifiers, &csn->nb);
-+}
- 
- /*
-  * SDn Clock
-@@ -55,8 +86,8 @@ struct sd_div_table {
- 
- struct sd_clock {
- 	struct clk_hw hw;
--	void __iomem *reg;
- 	const struct sd_div_table *div_table;
-+	struct cpg_simple_notifier csn;
- 	unsigned int div_num;
- 	unsigned int div_min;
- 	unsigned int div_max;
-@@ -99,7 +130,7 @@ static int cpg_sd_clock_enable(struct clk_hw *hw)
- 	u32 val, sd_fc;
- 	unsigned int i;
- 
--	val = readl(clock->reg);
-+	val = readl(clock->csn.reg);
- 
- 	sd_fc = val & CPG_SD_FC_MASK;
- 	for (i = 0; i < clock->div_num; i++)
-@@ -112,7 +143,7 @@ static int cpg_sd_clock_enable(struct clk_hw *hw)
- 	val &= ~(CPG_SD_STP_MASK);
- 	val |= clock->div_table[i].val & CPG_SD_STP_MASK;
- 
--	writel(val, clock->reg);
-+	writel(val, clock->csn.reg);
- 
- 	return 0;
- }
-@@ -121,14 +152,14 @@ static void cpg_sd_clock_disable(struct clk_hw *hw)
- {
- 	struct sd_clock *clock = to_sd_clock(hw);
- 
--	writel(readl(clock->reg) | CPG_SD_STP_MASK, clock->reg);
-+	writel(readl(clock->csn.reg) | CPG_SD_STP_MASK, clock->csn.reg);
- }
- 
- static int cpg_sd_clock_is_enabled(struct clk_hw *hw)
- {
- 	struct sd_clock *clock = to_sd_clock(hw);
- 
--	return !(readl(clock->reg) & CPG_SD_STP_MASK);
-+	return !(readl(clock->csn.reg) & CPG_SD_STP_MASK);
- }
- 
- static unsigned long cpg_sd_clock_recalc_rate(struct clk_hw *hw,
-@@ -139,7 +170,7 @@ static unsigned long cpg_sd_clock_recalc_rate(struct clk_hw *hw,
- 	u32 val, sd_fc;
- 	unsigned int i;
- 
--	val = readl(clock->reg);
-+	val = readl(clock->csn.reg);
- 
- 	sd_fc = val & CPG_SD_FC_MASK;
- 	for (i = 0; i < clock->div_num; i++)
-@@ -190,10 +221,10 @@ static int cpg_sd_clock_set_rate(struct clk_hw *hw, unsigned long rate,
- 	if (i >= clock->div_num)
- 		return -EINVAL;
- 
--	val = readl(clock->reg);
-+	val = readl(clock->csn.reg);
- 	val &= ~(CPG_SD_STP_MASK | CPG_SD_FC_MASK);
- 	val |= clock->div_table[i].val & (CPG_SD_STP_MASK | CPG_SD_FC_MASK);
--	writel(val, clock->reg);
-+	writel(val, clock->csn.reg);
- 
- 	return 0;
- }
-@@ -208,8 +239,8 @@ static const struct clk_ops cpg_sd_clock_ops = {
- };
- 
- static struct clk * __init cpg_sd_clk_register(const struct cpg_core_clk *core,
--					       void __iomem *base,
--					       const char *parent_name)
-+	void __iomem *base, const char *parent_name,
-+	struct raw_notifier_head *notifiers)
- {
- 	struct clk_init_data init;
- 	struct sd_clock *clock;
-@@ -226,7 +257,7 @@ static struct clk * __init cpg_sd_clk_register(const struct cpg_core_clk *core,
- 	init.parent_names = &parent_name;
- 	init.num_parents = 1;
- 
--	clock->reg = base + core->offset;
-+	clock->csn.reg = base + core->offset;
- 	clock->hw.init = &init;
- 	clock->div_table = cpg_sd_div_table;
- 	clock->div_num = ARRAY_SIZE(cpg_sd_div_table);
-@@ -240,8 +271,13 @@ static struct clk * __init cpg_sd_clk_register(const struct cpg_core_clk *core,
- 
- 	clk = clk_register(NULL, &clock->hw);
- 	if (IS_ERR(clk))
--		kfree(clock);
-+		goto free_clock;
-+
-+	cpg_simple_notifier_register(notifiers, &clock->csn);
-+	return clk;
- 
-+free_clock:
-+	kfree(clock);
- 	return clk;
- }
- 
-@@ -337,7 +373,8 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
- 		break;
- 
- 	case CLK_TYPE_GEN3_SD:
--		return cpg_sd_clk_register(core, base, __clk_get_name(parent));
-+		return cpg_sd_clk_register(core, base, __clk_get_name(parent),
-+					   notifiers);
- 
- 	case CLK_TYPE_GEN3_R:
- 		if (cpg_quirks & RCKCR_CKSEL) {
--- 
-2.7.4
+applied for v4.14.
