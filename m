@@ -1,50 +1,105 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:59018 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751506AbdFHHsq (ORCPT
+Received: from mail-io0-f179.google.com ([209.85.223.179]:33987 "EHLO
+        mail-io0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751565AbdF3I4u (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Jun 2017 03:48:46 -0400
-From: Chris Paterson <chris.paterson2@renesas.com>
-To: Russell King <linux@armlinux.org.uk>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        Chris Paterson <chris.paterson2@renesas.com>
-Subject: [PATCH] ARM: debug-ll: Add support for r8a7743
-Date: Thu,  8 Jun 2017 08:48:37 +0100
-Message-Id: <1496908117-19368-1-git-send-email-chris.paterson2@renesas.com>
+        Fri, 30 Jun 2017 04:56:50 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170313111249.cslock3xcupvxmu7@ninjato>
+References: <CAMuHMdWHJvKv_Kva0LWL_hekGgkZdR=FHcOdoShpMtzQuXhD2g@mail.gmail.com>
+ <20170313111249.cslock3xcupvxmu7@ninjato>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 30 Jun 2017 10:56:48 +0200
+Message-ID: <CAMuHMdU_8h1U1RSotxHJbjU1QWX+J=RTA59qSZ_fV0CA12eLpQ@mail.gmail.com>
+Subject: Re: timeout waiting for hardware interrupt CMD19
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Simon Horman <horms@verge.net.au>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux MMC List <linux-mmc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable low-level debugging support for RZ/G1M (r8a7743). RZ/G1M uses
-SCIF0 for the debug console, like most of the R-Car Gen2 SoCs.
+Hi Wolfram,
 
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
----
- arch/arm/Kconfig.debug | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+On Mon, Mar 13, 2017 at 12:12 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
+>> +sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19)
+>> +sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19)
+>> +sh_mobile_sdhi ee100000.sd: Tuning procedure failed
+>> +mmc1: tuning execution failed: -110
+>> +mmc1: error -110 whilst initialising SD card
+>
+> Thanks! We have some tuning fixes in the queue. Let's see if they help
+> here...
 
-diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
-index ba2cb63..fd5164c 100644
---- a/arch/arm/Kconfig.debug
-+++ b/arch/arm/Kconfig.debug
-@@ -895,12 +895,13 @@ choice
- 		  via SCIF2 on Renesas R-Car H1 (R8A7779).
- 
- 	config DEBUG_RCAR_GEN2_SCIF0
--		bool "Kernel low-level debugging messages via SCIF0 on R8A7790/R8A7791/R8A7792/R8A7793"
--		depends on ARCH_R8A7790 || ARCH_R8A7791 || ARCH_R8A7792 || ARCH_R8A7793
-+		bool "Kernel low-level debugging messages via SCIF0 on R8A7743/R8A7790/R8A7791/R8A7792/R8A7793"
-+		depends on ARCH_R8A7743 || ARCH_R8A7790 || ARCH_R8A7791 || \
-+			ARCH_R8A7792 || ARCH_R8A7793
- 		help
- 		  Say Y here if you want kernel low-level debugging support
--		  via SCIF0 on Renesas R-Car H2 (R8A7790), M2-W (R8A7791), V2H
--		  (R8A7792), or M2-N (R8A7793).
-+		  via SCIF0 on Renesas RZ/G1M (R8A7743), R-Car H2 (R8A7790),
-+		  M2-W (R8A7791), V2H (R8A7792), or M2-N (R8A7793).
- 
- 	config DEBUG_RCAR_GEN2_SCIF2
- 		bool "Kernel low-level debugging messages via SCIF2 on R8A7794"
--- 
-1.9.1
+With renesas-drivers-2017-06-27-v4.12-rc7 on ALT:
+
+sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19)
+sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19)
+sh_mobile_sdhi ee100000.sd: Tuning procedure failed
+mmc1: tuning execution failed: -110
+mmc1: error -110 whilst initialising SD card
+random: fast init done
+sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19)
+sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19)
+sh_mobile_sdhi ee100000.sd: Tuning procedure failed
+mmc1: tuning execution failed: -110
+mmc1: error -110 whilst initialising SD card
+sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19)
+sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19)
+sh_mobile_sdhi ee100000.sd: Tuning procedure failed
+mmc1: tuning execution failed: -110
+mmc1: error -110 whilst initialising SD card
+sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19)
+sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19)
+sh_mobile_sdhi ee100000.sd: Tuning procedure failed
+mmc1: tuning execution failed: -110
+mmc1: error -110 whilst initialising SD card
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 19 at lib/dma-debug.c:519 add_dma_entry+0xfc/0x148
+DMA-API: exceeded 7 overlapping mappings of cacheline 0x0000000001b97cca
+Modules linked in:
+CPU: 0 PID: 19 Comm: kworker/0:1 Not tainted 4.12.0-rc7-rcar2-initrd #37
+Hardware name: Generic R-Car Gen2 (Flattened Device Tree)
+Workqueue: events_freezable mmc_rescan
+[<c020e4ac>] (unwind_backtrace) from [<c0209fa8>] (show_stack+0x10/0x14)
+[<c0209fa8>] (show_stack) from [<c03ebab8>] (dump_stack+0x7c/0x9c)
+[<c03ebab8>] (dump_stack) from [<c021ff74>] (__warn+0xcc/0xfc)
+[<c021ff74>] (__warn) from [<c021ffd8>] (warn_slowpath_fmt+0x34/0x44)
+[<c021ffd8>] (warn_slowpath_fmt) from [<c0409798>] (add_dma_entry+0xfc/0x148)
+[<c0409798>] (add_dma_entry) from [<c0409a44>] (debug_dma_map_sg+0x140/0x168)
+[<c0409a44>] (debug_dma_map_sg) from [<c0592704>]
+(renesas_sdhi_sys_dmac_start_dma+0x194/0x550)
+[<c0592704>] (renesas_sdhi_sys_dmac_start_dma) from [<c05909dc>]
+(tmio_process_mrq+0x15c/0x3b8)
+[<c05909dc>] (tmio_process_mrq) from [<c057ecb4>]
+(mmc_start_request+0x11c/0x128)
+[<c057ecb4>] (mmc_start_request) from [<c057ed38>] (mmc_wait_for_req+0x78/0xdc)
+[<c057ed38>] (mmc_wait_for_req) from [<c0584a70>] (mmc_send_tuning+0xe0/0x148)
+[<c0584a70>] (mmc_send_tuning) from [<c058fd30>]
+(tmio_mmc_execute_tuning+0xcc/0x160)
+[<c058fd30>] (tmio_mmc_execute_tuning) from [<c057fcec>]
+(mmc_execute_tuning+0x30/0x68)
+[<c057fcec>] (mmc_execute_tuning) from [<c0586b00>]
+(mmc_sd_init_card+0x5c4/0x62c)
+[<c0586b00>] (mmc_sd_init_card) from [<c0586cbc>] (mmc_attach_sd+0xa4/0x130)
+[<c0586cbc>] (mmc_attach_sd) from [<c0580bf4>] (mmc_rescan+0x2fc/0x340)
+[<c0580bf4>] (mmc_rescan) from [<c0234658>] (process_one_work+0x1cc/0x30c)
+[<c0234658>] (process_one_work) from [<c02347c0>]
+(process_scheduled_works+0x28/0x30)
+[<c02347c0>] (process_scheduled_works) from [<c0234d9c>]
+(worker_thread+0x2e0/0x3e0)
+[<c0234d9c>] (worker_thread) from [<c0239088>] (kthread+0x134/0x150)
+[<c0239088>] (kthread) from [<c0206ba8>] (ret_from_fork+0x14/0x2c)
+---[ end trace e899ede79c440525 ]---
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
