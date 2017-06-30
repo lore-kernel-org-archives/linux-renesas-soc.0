@@ -1,61 +1,93 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:33015 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753580AbdFSLIE (ORCPT
+Received: from mail-it0-f41.google.com ([209.85.214.41]:38080 "EHLO
+        mail-it0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751973AbdF3IK2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Jun 2017 07:08:04 -0400
-From: Magnus Damm <magnus.damm@gmail.com>
-To: joro@8bytes.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
-        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
-        m.szyprowski@samsung.com
-Date: Mon, 19 Jun 2017 20:04:16 +0900
-Message-Id: <149787025647.32495.1584960416060100962.sendpatchset@little-apple>
-Subject: [PATCH v4 0/3] iommu/ipmmu-vmsa: r8a7796 support V4
+        Fri, 30 Jun 2017 04:10:28 -0400
+MIME-Version: 1.0
+In-Reply-To: <1494489813-27321-1-git-send-email-geert+renesas@glider.be>
+References: <1494489813-27321-1-git-send-email-geert+renesas@glider.be>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 30 Jun 2017 10:10:15 +0200
+Message-ID: <CAMuHMdXMA7Ux2yiYUrPMGKKJ2AxTLwHOYbnKQHYRwjaSY5+Z7w@mail.gmail.com>
+Subject: Re: [PATCH v2 0/4] sh: sh7722/sh7757i/sh7264/sh7269: Fix pinctrl registration
+To: Rich Felker <dalias@libc.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-iommu/ipmmu-vmsa: r8a7796 support V4
+Hi Rich, Sato-san,
 
-[PATCH v4 1/3] iommu/ipmmu-vmsa: Add r8a7796 DT binding
-[PATCH v4 2/3] iommu/ipmmu-vmsa: Increase maximum micro-TLBS to 48
-[PATCH v4 3/3] iommu/ipmmu-vmsa: Hook up r8a7796 DT matching code
+On Thu, May 11, 2017 at 10:03 AM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> Magnus reported that on sh7722/Migo-R, pinctrl registration fails with:
+>
+>     sh-pfc pfc-sh7722: pin 0 already registered
+>     sh-pfc pfc-sh7722: error during pin registration
+>     sh-pfc pfc-sh7722: could not register: -22
+>     sh-pfc: probe of pfc-sh7722 failed with error -22
+>
+> pinmux_pins[] is initialized through PINMUX_GPIO(), using designated
+> array initializers, where the GPIO_* enums serve as indices.
+> Apparently GPIO_PTQ7 was defined in the enum, but never used.
+> If enum values are defined, but never used, pinmux_pins[] contains
+> (zero-filled) holes.  Hence such entries are treated as pin zero, which
+> was registered before, and pinctrl registration fails.
+>
+> I can't see how this ever worked, as at the time of commit f5e25ae52feff2dc
+> ("sh-pfc: Add sh7722 pinmux support"), pinmux_gpios[] in
+> drivers/pinctrl/sh-pfc/pfc-sh7722.c already had the hole, and
+> drivers/pinctrl/core.c already had the check.
+>
+> Some scripting revealed a few more broken drivers:
+>   - sh7757 has four holes, due to nonexistent GPIO_PT[JLNQ]7_RESV.
+>   - sh7264 and sh7269 define GPIO_PH[0-7], but don't use it with
+>     PINMUX_GPIO().
+>
+> Patch 1 fixes the issue on sh7722, and was tested.
+> Patches 3-4 should fix the issue on the other 3 SoCs, but was untested due
+> to lack of hardware.
+>
+> Changes compared to v1:
+>   - Replace fake error messages by references to sh7722,
+>   - Add Reviewed-by, Tested-by.
+>
+> Thanks for applying!
+>
+> Geert Uytterhoeven (4):
+>   sh: sh7722: Remove nonexistent GPIO_PTQ7 to fix pinctrl registration
+>   sh: sh7757: Remove nonexistent GPIO_PT[JLNQ]7_RESV to fix pinctrl
+>     registration
+>   sh: sh7264: Remove nonexistent GPIO_PH[0-7] to fix pinctrl
+>     registration
+>   sh: sh7269: Remove nonexistent GPIO_PH[0-7] to fix pinctrl
+>     registration
+>
+>  arch/sh/include/cpu-sh2a/cpu/sh7264.h | 4 +---
+>  arch/sh/include/cpu-sh2a/cpu/sh7269.h | 4 +---
+>  arch/sh/include/cpu-sh4/cpu/sh7722.h  | 2 +-
+>  arch/sh/include/cpu-sh4/cpu/sh7757.h  | 8 ++++----
+>  4 files changed, 7 insertions(+), 11 deletions(-)
 
-This series adds r8a7796 support to the IPMMU driver. The DT binding
-gets updated, maximum number of micro-TLBs are increased and the
-driver is adjusted to match on the new DT binding.
+Are these patches planned for inclusion in v4.13?
+I don't see them in next-2016.
 
-Changes since V3:
- - Rebased on top of [PATCH v4 00/09] iommu/ipmmu-vmsa: r8a7795 support V4
- - Patch 3/3 updated with Reviewed-by - thanks Geert!
+Thanks!
 
-Changes since V2:
- - Patch 2/3 updated with an outer set of () - thanks Ramesh!
- - Patch 2/3 updated with Reviewed-by - thanks Geert!
- - Patch 3/3 updated to include white list support
+Gr{oetje,eeting}s,
 
-Changes since V1:
- - Patch 1/3 updated with more Acked-by tags
- - Patch 2/3 updated with high I/O register range support
+                        Geert
 
-Patch 1/3 is ready for upstream merge and includes the following tags:
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Acked-by: Simon Horman <horms+renesas@verge.net.au>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Patch 2/3 and 3/3 are quite trivial but have no acked-by so far.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
-
- Developed on top of next-20170614 with the following series applied
- [PATCH 00/04] iommu/ipmmu-vmsa: 32-bit ARM update
- [PATCH v4 00/09] iommu/ipmmu-vmsa: r8a7795 support V4
-
- Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt |    1 
- drivers/iommu/ipmmu-vmsa.c                                     |   24 +++++++---
- 2 files changed, 18 insertions(+), 7 deletions(-)
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
