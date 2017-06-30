@@ -1,120 +1,53 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: joro@8bytes.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
-        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
-        m.szyprowski@samsung.com
-Date: Mon, 19 Jun 2017 18:13:56 +0900
-Message-Id: <149786363603.14868.4644894466721476408.sendpatchset@little-apple>
-In-Reply-To: <149786362527.14868.2143461703972595839.sendpatchset@little-apple>
-References: <149786362527.14868.2143461703972595839.sendpatchset@little-apple>
-Subject: [PATCH v4 01/09] iommu/ipmmu-vmsa: Introduce features, break out alias
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:46205 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751659AbdF3LvO (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 30 Jun 2017 07:51:14 -0400
+Date: Fri, 30 Jun 2017 13:51:08 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] arm64: dts: renesas: Move CPG_AUDIO_CLK_I from board to
+ soc files
+Message-ID: <20170630115107.GJ26710@verge.net.au>
+References: <1498810948-17910-1-git-send-email-geert+renesas@glider.be>
+ <1587046.f3YfXb5MdT@avalon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1587046.f3YfXb5MdT@avalon>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On Fri, Jun 30, 2017 at 12:10:52PM +0300, Laurent Pinchart wrote:
+> Hi Geert,
+> 
+> Thank you for the patch.
+> 
+> On Friday 30 Jun 2017 10:22:28 Geert Uytterhoeven wrote:
+> > The definition of CPG_AUDIO_CLK_I is SoC-specific, not board-specific.
+> > Hence move it from the board-specific .dts files to the SoC-specific
+> > .dtsi files.
+> > 
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> 
+> > ---
+> > I don't think it's worth adding Fixes tags.
+> > 
+> > If you disagree, feel free to add:
+> > 
+> > Fixes: 79e3b5cf035e4734 ("arm64: dts: renesas: Add support for Salvator-XS
+> > with R-Car H3 ES2.0") Fixes: fb5202dbebfd8fbf ("arm64: dts: r8a7795:
+> > h3ulcb: Add support for R-Car H3 ES2.0") Fixes: 0b03c32db03d63de ("arm64:
+> > dts: r8a7795: salvator-x: Add support for R-Car H3 ES2.0") Fixes:
+> > 253ed045a34d16d9 ("arm64: dts: renesas: Extract common ULCB board support")
+> > Fixes: d25e8ff0d5aaf8b1 ("arm64: dts: renesas: Extract common Salvator-X
+> > board support") ---
 
-Introduce struct ipmmu_features to track various hardware
-and software implementation changes inside the driver for
-different kinds of IPMMU hardware. Add use_ns_alias_offset
-as a first example of a feature to control if the secure
-register bank offset should be used or not.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
-
- Changes since V3:
- - Use of_device_get_match_data(), thanks Robin!
-
- Changes since V2:
- - None
-
- Changes since V1:
- - Moved patch to front of the series
-
- drivers/iommu/ipmmu-vmsa.c |   31 ++++++++++++++++++++++++-------
- 1 file changed, 24 insertions(+), 7 deletions(-)
-
---- 0014/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2017-06-19 13:57:36.300607110 +0900
-@@ -19,6 +19,7 @@
- #include <linux/iommu.h>
- #include <linux/module.h>
- #include <linux/of.h>
-+#include <linux/of_device.h>
- #include <linux/of_platform.h>
- #include <linux/platform_device.h>
- #include <linux/sizes.h>
-@@ -33,12 +34,16 @@
- 
- #define IPMMU_CTX_MAX 1
- 
-+struct ipmmu_features {
-+	bool use_ns_alias_offset;
-+};
-+
- struct ipmmu_vmsa_device {
- 	struct device *dev;
- 	void __iomem *base;
- 	struct iommu_device iommu;
- 	struct list_head list;
--
-+	const struct ipmmu_features *features;
- 	unsigned int num_utlbs;
- 	spinlock_t lock;			/* Protects ctx and domains[] */
- 	DECLARE_BITMAP(ctx, IPMMU_CTX_MAX);
-@@ -904,6 +909,21 @@ static void ipmmu_device_reset(struct ip
- 		ipmmu_write(mmu, i * IM_CTX_SIZE + IMCTR, 0);
- }
- 
-+static const struct ipmmu_features ipmmu_features_default = {
-+	.use_ns_alias_offset = true,
-+};
-+
-+static const struct of_device_id ipmmu_of_ids[] = {
-+	{
-+		.compatible = "renesas,ipmmu-vmsa",
-+		.data = &ipmmu_features_default,
-+	}, {
-+		/* Terminator */
-+	},
-+};
-+
-+MODULE_DEVICE_TABLE(of, ipmmu_of_ids);
-+
- static int ipmmu_probe(struct platform_device *pdev)
- {
- 	struct ipmmu_vmsa_device *mmu;
-@@ -921,6 +941,7 @@ static int ipmmu_probe(struct platform_d
- 	mmu->num_utlbs = 32;
- 	spin_lock_init(&mmu->lock);
- 	bitmap_zero(mmu->ctx, IPMMU_CTX_MAX);
-+	mmu->features = of_device_get_match_data(&pdev->dev);
- 
- 	/* Map I/O memory and request IRQ. */
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-@@ -940,7 +961,8 @@ static int ipmmu_probe(struct platform_d
- 	 * Offset the registers base unconditionally to point to the non-secure
- 	 * alias space for now.
- 	 */
--	mmu->base += IM_NS_ALIAS_OFFSET;
-+	if (mmu->features->use_ns_alias_offset)
-+		mmu->base += IM_NS_ALIAS_OFFSET;
- 
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq < 0) {
-@@ -998,11 +1020,6 @@ static int ipmmu_remove(struct platform_
- 	return 0;
- }
- 
--static const struct of_device_id ipmmu_of_ids[] = {
--	{ .compatible = "renesas,ipmmu-vmsa", },
--	{ }
--};
--
- static struct platform_driver ipmmu_driver = {
- 	.driver = {
- 		.name = "ipmmu-vmsa",
+I agree. I've applied this for v4.14 without the fixes tags.
