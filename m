@@ -1,49 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:50316 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751347AbdGLKYM (ORCPT
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:35371 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752012AbdGAUFk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 12 Jul 2017 06:24:12 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2] spi: sh-msiof: Add support for R-Car H3
-Date: Wed, 12 Jul 2017 12:24:07 +0200
-Message-Id: <1499855047-20177-1-git-send-email-geert+renesas@glider.be>
+        Sat, 1 Jul 2017 16:05:40 -0400
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Alexey Firago <alexey_firago@mentor.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH V2 3/8] clk: vc5: Do not warn about disabled output buffer input muxes
+Date: Sat,  1 Jul 2017 22:04:53 +0200
+Message-Id: <20170701200459.11505-3-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20170701200459.11505-1-marek.vasut+renesas@gmail.com>
+References: <20170701200459.11505-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for MSIOF in r8a7795 (R-Car H3).
-Due to a hardware erratum on R-Car H3 ES1.x, this is only supported on
-ES2.0 and later.
+The output buffer input mux can be configured in either of three
+states -- disabled, input from FOD, input from previous output.
+If the output buffer input mux is set to disabled, the code in
+vc5_clk_out_get_parent() would consider this an invalid setting
+and warn about it, which is not necessarily the case.
 
-No driver update is needed.
+In case the output buffer input mux is disabled, default to input
+from FOD to have some parent and don't print the warning.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Alexey Firago <alexey_firago@mentor.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+on Salvator-XS with the display LVDS output.
 ---
-v2:
-  - Drop RFC status,
-  - Rebased,
-  - Drop matching on "renesas,msiof-r8a7795", as the driver started
-    matching against "renesas,rcar-gen3-msiof" in the mean time.
+V2: Drop chunk adding useless newline
 ---
- Documentation/devicetree/bindings/spi/sh-msiof.txt | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/clk-versaclock5.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/spi/sh-msiof.txt b/Documentation/devicetree/bindings/spi/sh-msiof.txt
-index 64ee489571c42f88..39e5ef7c5e71694e 100644
---- a/Documentation/devicetree/bindings/spi/sh-msiof.txt
-+++ b/Documentation/devicetree/bindings/spi/sh-msiof.txt
-@@ -6,6 +6,7 @@ Required properties:
- 			 "renesas,msiof-r8a7792" (R-Car V2H)
- 			 "renesas,msiof-r8a7793" (R-Car M2-N)
- 			 "renesas,msiof-r8a7794" (R-Car E2)
-+			 "renesas,msiof-r8a7795" (R-Car H3)
- 			 "renesas,msiof-r8a7796" (R-Car M3-W)
- 			 "renesas,msiof-sh73a0" (SH-Mobile AG5)
- 			 "renesas,sh-mobile-msiof" (generic SH-Mobile compatibile device)
+diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+index d835d48cf14d..248689d89632 100644
+--- a/drivers/clk/clk-versaclock5.c
++++ b/drivers/clk/clk-versaclock5.c
+@@ -541,6 +541,9 @@ static unsigned char vc5_clk_out_get_parent(struct clk_hw *hw)
+ 	regmap_read(vc5->regmap, VC5_OUT_DIV_CONTROL(hwdata->num), &src);
+ 	src &= mask;
+ 
++	if (src == 0)	/* Input mux set to DISABLED */
++		return 0;
++
+ 	if ((src & fodclkmask) == VC5_OUT_DIV_CONTROL_EN_FOD)
+ 		return 0;
+ 
 -- 
-2.7.4
+2.11.0
