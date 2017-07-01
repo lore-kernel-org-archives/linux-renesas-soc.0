@@ -1,94 +1,115 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-yb0-f171.google.com ([209.85.213.171]:33120 "EHLO
-        mail-yb0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752526AbdGIRkA (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:35800 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752041AbdGAUFl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 9 Jul 2017 13:40:00 -0400
-Received: by mail-yb0-f171.google.com with SMTP id 84so22305858ybe.0
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 09 Jul 2017 10:39:59 -0700 (PDT)
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-To: Marek Vasut <marek.vasut@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+        Sat, 1 Jul 2017 16:05:41 -0400
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Alexey Firago <alexey_firago@mentor.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH v2 1/2] clk: vc5: Add support for IDT VersaClock 5P49V5925
-Date: Sun,  9 Jul 2017 20:39:57 +0300
-Message-Id: <1499621997-12965-1-git-send-email-vladimir.barinov@cogentembedded.com>
-In-Reply-To: <1499621970-12925-1-git-send-email-vladimir.barinov@cogentembedded.com>
-References: <1499621970-12925-1-git-send-email-vladimir.barinov@cogentembedded.com>
+        Michael Turquette <mturquette@baylibre.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH V2 8/8] clk: vc5: Add support for IDT VersaClock 5P49V6901
+Date: Sat,  1 Jul 2017 22:04:58 +0200
+Message-Id: <20170701200459.11505-8-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20170701200459.11505-1-marek.vasut+renesas@gmail.com>
+References: <20170701200459.11505-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+Update IDT VersaClock 5 driver to support IDT VersaClock 6 5P49V6901.
+This chip has two clock inputs (external XTAL or external CLKIN), four
+fractional dividers (FODs) and five clock outputs (four universal clock
+outputs and one reference clock output at OUT0_SELB_I2C).
 
-Update IDT VersaClock 5 driver to support 5P49V5925. This chip has only
-external clock input, four fractional dividers (FODs) and five clock
-outputs (four universal clock outputs and one reference clock output at
-OUT0_SELB_I2C).
-
-Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
-Reviewed-by: Marek Vasut <marek.vasut@gmail.com>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Alexey Firago <alexey_firago@mentor.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+on Salvator-XS with the display LVDS output.
 ---
-Changes in version 2:
-- rebased against patch:
-  [V3,8/8] clk: vc5: Add support for IDT VersaClock 5P49V6901
-
+V2: - Reword the commit message to explicitly mention the VC5 driver
+      and the added support for VC6.
+    - Mention VC6 in Kconfig
+---
+ drivers/clk/Kconfig           |  6 +++---
  drivers/clk/clk-versaclock5.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ 2 files changed, 14 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index d406b087553f..99adcb0d799c 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -210,14 +210,14 @@ config COMMON_CLK_OXNAS
+ 	  Support for the OXNAS SoC Family clocks.
+ 
+ config COMMON_CLK_VC5
+-	tristate "Clock driver for IDT VersaClock5 devices"
++	tristate "Clock driver for IDT VersaClock 5,6 devices"
+ 	depends on I2C
+ 	depends on OF
+ 	select REGMAP_I2C
+ 	help
+ 	---help---
+-	  This driver supports the IDT VersaClock5 programmable clock
+-	  generator.
++	  This driver supports the IDT VersaClock 5 and VersaClock 6
++	  programmable clock generators.
+ 
+ source "drivers/clk/bcm/Kconfig"
+ source "drivers/clk/hisilicon/Kconfig"
 diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index c894db2..1808a55 100644
+index d0406b62133a..c894db298cbd 100644
 --- a/drivers/clk/clk-versaclock5.c
 +++ b/drivers/clk/clk-versaclock5.c
-@@ -129,6 +129,7 @@
- /* Supported IDT VC5 models. */
- enum vc5_model {
+@@ -131,6 +131,7 @@ enum vc5_model {
  	IDT_VC5_5P49V5923,
-+	IDT_VC5_5P49V5925,
  	IDT_VC5_5P49V5933,
  	IDT_VC5_5P49V5935,
- 	IDT_VC6_5P49V6901,
-@@ -686,6 +687,7 @@ static int vc5_map_index_to_output(const enum vc5_model model,
- 	case IDT_VC5_5P49V5933:
- 		return (n == 0) ? 0 : 3;
- 	case IDT_VC5_5P49V5923:
-+	case IDT_VC5_5P49V5925:
- 	case IDT_VC5_5P49V5935:
- 	case IDT_VC6_5P49V6901:
- 	default:
-@@ -911,6 +913,13 @@ static int vc5_remove(struct i2c_client *client)
- 	.flags = 0,
++	IDT_VC6_5P49V6901,
  };
  
-+static const struct vc5_chip_info idt_5p49v5925_info = {
-+	.model = IDT_VC5_5P49V5925,
+ /* Structure to describe features of a particular VC5 model */
+@@ -686,6 +687,7 @@ static int vc5_map_index_to_output(const enum vc5_model model,
+ 		return (n == 0) ? 0 : 3;
+ 	case IDT_VC5_5P49V5923:
+ 	case IDT_VC5_5P49V5935:
++	case IDT_VC6_5P49V6901:
+ 	default:
+ 		return n;
+ 	}
+@@ -923,10 +925,18 @@ static const struct vc5_chip_info idt_5p49v5935_info = {
+ 	.flags = VC5_HAS_INTERNAL_XTAL,
+ };
+ 
++static const struct vc5_chip_info idt_5p49v6901_info = {
++	.model = IDT_VC6_5P49V6901,
 +	.clk_fod_cnt = 4,
 +	.clk_out_cnt = 5,
-+	.flags = 0,
++	.flags = VC5_HAS_PFD_FREQ_DBL,
 +};
 +
- static const struct vc5_chip_info idt_5p49v5933_info = {
- 	.model = IDT_VC5_5P49V5933,
- 	.clk_fod_cnt = 2,
-@@ -934,6 +943,7 @@ static int vc5_remove(struct i2c_client *client)
- 
  static const struct i2c_device_id vc5_id[] = {
  	{ "5p49v5923", .driver_data = IDT_VC5_5P49V5923 },
-+	{ "5p49v5925", .driver_data = IDT_VC5_5P49V5925 },
  	{ "5p49v5933", .driver_data = IDT_VC5_5P49V5933 },
  	{ "5p49v5935", .driver_data = IDT_VC5_5P49V5935 },
- 	{ "5p49v6901", .driver_data = IDT_VC6_5P49V6901 },
-@@ -943,6 +953,7 @@ static int vc5_remove(struct i2c_client *client)
- 
- static const struct of_device_id clk_vc5_of_match[] = {
++	{ "5p49v6901", .driver_data = IDT_VC6_5P49V6901 },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(i2c, vc5_id);
+@@ -935,6 +945,7 @@ static const struct of_device_id clk_vc5_of_match[] = {
  	{ .compatible = "idt,5p49v5923", .data = &idt_5p49v5923_info },
-+	{ .compatible = "idt,5p49v5925", .data = &idt_5p49v5925_info },
  	{ .compatible = "idt,5p49v5933", .data = &idt_5p49v5933_info },
  	{ .compatible = "idt,5p49v5935", .data = &idt_5p49v5935_info },
- 	{ .compatible = "idt,5p49v6901", .data = &idt_5p49v6901_info },
++	{ .compatible = "idt,5p49v6901", .data = &idt_5p49v6901_info },
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, clk_vc5_of_match);
 -- 
-1.9.1
+2.11.0
