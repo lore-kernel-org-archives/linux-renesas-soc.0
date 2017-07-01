@@ -1,67 +1,155 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:34848 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751427AbdGZVy7 (ORCPT
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:36737 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751919AbdGAUFh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 26 Jul 2017 17:54:59 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-watchdog@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH 2/3] watchdog: renesas_wdt: make 'clk' a variable local to probe()
-Date: Wed, 26 Jul 2017 23:54:38 +0200
-Message-Id: <20170726215439.9623-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170726215439.9623-1-wsa+renesas@sang-engineering.com>
-References: <20170726215439.9623-1-wsa+renesas@sang-engineering.com>
+        Sat, 1 Jul 2017 16:05:37 -0400
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Alexey Firago <alexey_firago@mentor.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 5/8] clk: vc5: Split clock input mux and predivider
+Date: Sat,  1 Jul 2017 22:04:55 +0200
+Message-Id: <20170701200459.11505-5-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20170701200459.11505-1-marek.vasut+renesas@gmail.com>
+References: <20170701200459.11505-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-It is not needed outside probe() anymore.
+Split the VC5 clock input mux and the predivider to more accurately
+model the hardware and fix the previously incorrect assumption that
+both the OUT_SEL_I2CB and the PLL are fed from the predivider.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+It is in fact the clock input mux output which is directly feeding
+the clock into the OUT_SEL_I2CB output, while the clock input mux
+output first passes through the predivider before it is fed into
+the PLL.
+
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Alexey Firago <alexey_firago@mentor.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+on Salvator-XS with the display LVDS output.
 ---
- drivers/watchdog/renesas_wdt.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/clk/clk-versaclock5.c | 46 ++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 34 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
-index a03997b418ba9c..2927b5086e156e 100644
---- a/drivers/watchdog/renesas_wdt.c
-+++ b/drivers/watchdog/renesas_wdt.c
-@@ -48,7 +48,6 @@ MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started (default="
- struct rwdt_priv {
- 	void __iomem *base;
- 	struct watchdog_device wdev;
--	struct clk *clk;
- 	unsigned long clk_rate;
- 	u8 cks;
+diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+index 7bdfd34e8280..453c9f721b78 100644
+--- a/drivers/clk/clk-versaclock5.c
++++ b/drivers/clk/clk-versaclock5.c
+@@ -157,6 +157,7 @@ struct vc5_driver_data {
+ 	struct clk		*pin_clkin;
+ 	unsigned char		clk_mux_ins;
+ 	struct clk_hw		clk_mux;
++	struct clk_hw		clk_pfd;
+ 	struct vc5_hw_data	clk_pll;
+ 	struct vc5_hw_data	clk_fod[VC5_MAX_FOD_NUM];
+ 	struct vc5_hw_data	clk_out[VC5_MAX_CLK_OUT_NUM];
+@@ -166,6 +167,10 @@ static const char * const vc5_mux_names[] = {
+ 	"mux"
  };
-@@ -125,6 +124,7 @@ static int rwdt_probe(struct platform_device *pdev)
+ 
++static const char * const vc5_pfd_names[] = {
++	"pfd"
++};
++
+ static const char * const vc5_pll_names[] = {
+ 	"pll"
+ };
+@@ -254,11 +259,16 @@ static int vc5_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	return regmap_update_bits(vc5->regmap, VC5_PRIM_SRC_SHDN, mask, src);
+ }
+ 
+-static unsigned long vc5_mux_recalc_rate(struct clk_hw *hw,
++static const struct clk_ops vc5_mux_ops = {
++	.set_parent	= vc5_mux_set_parent,
++	.get_parent	= vc5_mux_get_parent,
++};
++
++static unsigned long vc5_pfd_recalc_rate(struct clk_hw *hw,
+ 					 unsigned long parent_rate)
  {
- 	struct rwdt_priv *priv;
- 	struct resource *res;
-+	struct clk *clk;
- 	unsigned long clks_per_sec;
- 	int ret, i;
+ 	struct vc5_driver_data *vc5 =
+-		container_of(hw, struct vc5_driver_data, clk_mux);
++		container_of(hw, struct vc5_driver_data, clk_pfd);
+ 	unsigned int prediv, div;
  
-@@ -137,14 +137,14 @@ static int rwdt_probe(struct platform_device *pdev)
- 	if (IS_ERR(priv->base))
- 		return PTR_ERR(priv->base);
+ 	regmap_read(vc5->regmap, VC5_VCO_CTRL_AND_PREDIV, &prediv);
+@@ -276,7 +286,7 @@ static unsigned long vc5_mux_recalc_rate(struct clk_hw *hw,
+ 		return parent_rate / VC5_REF_DIVIDER_REF_DIV(div);
+ }
  
--	priv->clk = devm_clk_get(&pdev->dev, NULL);
--	if (IS_ERR(priv->clk))
--		return PTR_ERR(priv->clk);
-+	clk = devm_clk_get(&pdev->dev, NULL);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
+-static long vc5_mux_round_rate(struct clk_hw *hw, unsigned long rate,
++static long vc5_pfd_round_rate(struct clk_hw *hw, unsigned long rate,
+ 			       unsigned long *parent_rate)
+ {
+ 	unsigned long idiv;
+@@ -296,11 +306,11 @@ static long vc5_mux_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	return *parent_rate / idiv;
+ }
  
- 	pm_runtime_enable(&pdev->dev);
+-static int vc5_mux_set_rate(struct clk_hw *hw, unsigned long rate,
++static int vc5_pfd_set_rate(struct clk_hw *hw, unsigned long rate,
+ 			    unsigned long parent_rate)
+ {
+ 	struct vc5_driver_data *vc5 =
+-		container_of(hw, struct vc5_driver_data, clk_mux);
++		container_of(hw, struct vc5_driver_data, clk_pfd);
+ 	unsigned long idiv;
+ 	u8 div;
  
- 	pm_runtime_get_sync(&pdev->dev);
--	priv->clk_rate = clk_get_rate(priv->clk);
-+	priv->clk_rate = clk_get_rate(clk);
- 	pm_runtime_put(&pdev->dev);
+@@ -328,12 +338,10 @@ static int vc5_mux_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	return 0;
+ }
  
- 	if (!priv->clk_rate) {
+-static const struct clk_ops vc5_mux_ops = {
+-	.set_parent	= vc5_mux_set_parent,
+-	.get_parent	= vc5_mux_get_parent,
+-	.recalc_rate	= vc5_mux_recalc_rate,
+-	.round_rate	= vc5_mux_round_rate,
+-	.set_rate	= vc5_mux_set_rate,
++static const struct clk_ops vc5_pfd_ops = {
++	.recalc_rate	= vc5_pfd_recalc_rate,
++	.round_rate	= vc5_pfd_round_rate,
++	.set_rate	= vc5_pfd_set_rate,
+ };
+ 
+ /*
+@@ -698,12 +706,26 @@ static int vc5_probe(struct i2c_client *client,
+ 		goto err_clk;
+ 	}
+ 
++	/* Register PFD */
++	memset(&init, 0, sizeof(init));
++	init.name = vc5_pfd_names[0];
++	init.ops = &vc5_pfd_ops;
++	init.flags = CLK_SET_RATE_PARENT;
++	init.parent_names = vc5_mux_names;
++	init.num_parents = 1;
++	vc5->clk_pfd.init = &init;
++	ret = devm_clk_hw_register(&client->dev, &vc5->clk_pfd);
++	if (ret) {
++		dev_err(&client->dev, "unable to register %s\n", init.name);
++		goto err_clk;
++	}
++
+ 	/* Register PLL */
+ 	memset(&init, 0, sizeof(init));
+ 	init.name = vc5_pll_names[0];
+ 	init.ops = &vc5_pll_ops;
+ 	init.flags = CLK_SET_RATE_PARENT;
+-	init.parent_names = vc5_mux_names;
++	init.parent_names = vc5_pfd_names;
+ 	init.num_parents = 1;
+ 	vc5->clk_pll.num = 0;
+ 	vc5->clk_pll.vc5 = vc5;
 -- 
 2.11.0
