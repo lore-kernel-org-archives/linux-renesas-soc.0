@@ -1,81 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:59677 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751608AbdGBITq (ORCPT
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:35766 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751911AbdGAUFd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 2 Jul 2017 04:19:46 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: linux-clk@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Sat, 1 Jul 2017 16:05:33 -0400
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
         Alexey Firago <alexey_firago@mentor.com>,
         Michael Turquette <mturquette@baylibre.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 1/8] clk: vc5: Prevent division by zero on unconfigured outputs
-Date: Sun, 02 Jul 2017 11:19:50 +0300
-Message-ID: <2363282.tNHzvZyBNU@avalon>
-In-Reply-To: <20170701200459.11505-1-marek.vasut+renesas@gmail.com>
-References: <20170701200459.11505-1-marek.vasut+renesas@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Subject: [PATCH 1/8] clk: vc5: Prevent division by zero on unconfigured outputs
+Date: Sat,  1 Jul 2017 22:04:51 +0200
+Message-Id: <20170701200459.11505-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Marek,
+In case the initial values of the FOD registers are not configured in
+the OTP or by the bootloader, it is possible that the FOD registers
+will contain zeroes. The code in vc5_fod_recalc_rate() immediately
+feeds the FOD divider value obtained from the FOD registers into the
+div64_u64() and if the FOD divider value is zero, triggers division
+by zero exception.
 
-Thank you for the patch.
+Check if the FOD divider value is zero and return the frequency of
+the FOD output as 0 Hz if it is so. This prevents the division by
+zero exception.
 
-On Saturday 01 Jul 2017 22:04:51 Marek Vasut wrote:
-> In case the initial values of the FOD registers are not configured in
-> the OTP or by the bootloader, it is possible that the FOD registers
-> will contain zeroes. The code in vc5_fod_recalc_rate() immediately
-> feeds the FOD divider value obtained from the FOD registers into the
-> div64_u64() and if the FOD divider value is zero, triggers division
-> by zero exception.
-> 
-> Check if the FOD divider value is zero and return the frequency of
-> the FOD output as 0 Hz if it is so. This prevents the division by
-> zero exception.
-> 
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Alexey Firago <alexey_firago@mentor.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Cc: linux-renesas-soc@vger.kernel.org
-> Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> on Salvator-XS with the display LVDS output.
-> ---
->  drivers/clk/clk-versaclock5.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-> index ea7d552a2f2b..60bf4afb51bd 100644
-> --- a/drivers/clk/clk-versaclock5.c
-> +++ b/drivers/clk/clk-versaclock5.c
-> @@ -426,6 +426,10 @@ static unsigned long vc5_fod_recalc_rate(struct clk_hw
-> *hw, div_frc = (od_frc[0] << 22) | (od_frc[1] << 14) |
->  		  (od_frc[2] << 6) | (od_frc[3] >> 2);
-> 
-> +	/* Avoid division by zero if the output is not configured. */
-> +	if ((div_int == 0) && (div_frc == 0))
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Alexey Firago <alexey_firago@mentor.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+on Salvator-XS with the display LVDS output.
+---
+ drivers/clk/clk-versaclock5.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Inner parentheses are not needed.
-
-Apart from that,
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> +		return 0;
-> +
->  	/* The PLL divider has 12 integer bits and 30 fractional bits */
->  	return div64_u64((u64)f_in << 24ULL, ((u64)div_int << 24ULL) + 
-div_frc);
->  }
-
+diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+index ea7d552a2f2b..60bf4afb51bd 100644
+--- a/drivers/clk/clk-versaclock5.c
++++ b/drivers/clk/clk-versaclock5.c
+@@ -426,6 +426,10 @@ static unsigned long vc5_fod_recalc_rate(struct clk_hw *hw,
+ 	div_frc = (od_frc[0] << 22) | (od_frc[1] << 14) |
+ 		  (od_frc[2] << 6) | (od_frc[3] >> 2);
+ 
++	/* Avoid division by zero if the output is not configured. */
++	if ((div_int == 0) && (div_frc == 0))
++		return 0;
++
+ 	/* The PLL divider has 12 integer bits and 30 fractional bits */
+ 	return div64_u64((u64)f_in << 24ULL, ((u64)div_int << 24ULL) + div_frc);
+ }
 -- 
-Regards,
-
-Laurent Pinchart
+2.11.0
