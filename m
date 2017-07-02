@@ -1,37 +1,63 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-To: Marek Vasut <marek.vasut@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH v2 0/2] clk: vc5: Add IDT VersaClock 5P49V5925
-Date: Sun,  9 Jul 2017 20:39:30 +0300
-Message-Id: <1499621970-12925-1-git-send-email-vladimir.barinov@cogentembedded.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1.1 2/2] drm: rcar-du: Repair vblank for DRM page flips using the VSP1
+Date: Sun, 02 Jul 2017 17:23:24 +0300
+Message-ID: <1681295.5XGp1sIbmj@avalon>
+In-Reply-To: <87mv8pj2z2.wl%kuninori.morimoto.gx@renesas.com>
+References: <cover.22236bc88adc598797b31ea82329ec99304fe34d.1498744799.git-series.kieran.bingham+renesas@ideasonboard.com> <6d71aa0796dd8892510d6911a280eba235398ed4.1498751638.git-series.kieran.bingham+renesas@ideasonboard.com> <87mv8pj2z2.wl%kuninori.morimoto.gx@renesas.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+Hi Morimoto-san,
 
-This adds the folowing:
-- Update IDT VersaClock 5 driver to support 5P49V5925
-- Add bindings for IDT VersaClock 5P49V5925
+On Friday 30 Jun 2017 08:32:04 Kuninori Morimoto wrote:
+> Hi Kieran
+> 
+> > -static void rcar_du_vsp_complete(void *private)
+> > +static void rcar_du_vsp_complete(void *private, bool completed)
+> >  {
+> >  	struct rcar_du_crtc *crtc = private;
+> > 
+> > -	rcar_du_crtc_finish_page_flip(crtc);
+> > +	if (crtc->vblank_enable)
+> > +		drm_crtc_handle_vblank(&crtc->crtc);
+> > +
+> > +	if (completed)
+> > +		rcar_du_crtc_finish_page_flip(crtc);
+> >  }
+> 
+> Here, this "vblank_enable" flag, timestamp will be update on
+> drm_crtc_handle_vblank().
+> 
+> For example modetest Flip test, if we stop it by Ctrl+C, then, vblank_enable
+> will be false, Then, vblank timestamp isn't updated on waiting method on
+> drm_atomic_helper_wait_for_vblanks(). Thus we will have timeout error.
 
-This has the following dependency:
-- [V3,7/8] clk: vc5: Add bindings for IDT VersaClock 5P49V6901
-- [V3,8/8] clk: vc5: Add support for IDT VersaClock 5P49V6901
+I've noticed this issue as well when testing Kieran's patch, and I will fix 
+it.
 
-Vladimir Barinov (2):
-[1/2] clk: vc5: Add support for IDT VersaClock 5P49V5925
-[2/2] dt: Add bindings for IDT VersaClock 5P49V5925
+> And, print complete is now indicated on VSP Frame End,
+> in interlace input case, print complete will be indicated to user
+> on each ODD, EVEN timing.
+> 
+> Before this patch, for example 1080i@60Hz, print complete indication
+> happen in 30Hz.
+> After this patch, in interlace case, indication coming 60Hz
 
----
-This patchset is against the 'kernel/git/torvalds/linux.git' repo.
+Isn't this to be expected ? In 1080i@60Hz the frame rate is 60 frames per 
+second, so shouldn't vertical blanking be reported at 60Hz ?
 
- Documentation/devicetree/bindings/clock/idt,versaclock5.txt |   11 +++++++----
- drivers/clk/clk-versaclock5.c                               |   11 +++++++++++
- 2 files changed, 18 insertions(+), 4 deletions(-)
+-- 
+Regards,
+
+Laurent Pinchart
