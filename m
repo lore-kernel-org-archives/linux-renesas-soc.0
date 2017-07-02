@@ -1,57 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:13861 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751755AbdGELL0 (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:59694 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751608AbdGBIUm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Jul 2017 07:11:26 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH][RESEND] ARM: dts: iwg20d-q7: Add pinctl support for scif0
-Date: Wed,  5 Jul 2017 11:57:35 +0100
-Message-Id: <1499252255-35283-1-git-send-email-biju.das@bp.renesas.com>
+        Sun, 2 Jul 2017 04:20:42 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-clk@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Alexey Firago <alexey_firago@mentor.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 2/8] clk: vc5: Fix trivial typo
+Date: Sun, 02 Jul 2017 11:20:46 +0300
+Message-ID: <8820228.n1n3Vzy2c2@avalon>
+In-Reply-To: <20170701200459.11505-2-marek.vasut+renesas@gmail.com>
+References: <20170701200459.11505-1-marek.vasut+renesas@gmail.com> <20170701200459.11505-2-marek.vasut+renesas@gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Adding pinctrl support for scif0 interface.
+Hi Marek,
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
----
-v1-->v1-resend
-This patch is been tested against linux-next tag next-20170704.
-It is reposting,since the PFC depedencies now has been accepted.
-https://www.spinics.net/lists/arm-kernel/msg592332.html
+Thank you for the patch.
 
- arch/arm/boot/dts/r8a7743-iwg20d-q7.dts | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+On Saturday 01 Jul 2017 22:04:52 Marek Vasut wrote:
+> Fix trivial typo in vc5_clk_out_unprepare() , s/Enable/Disable/ .
+> 
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Alexey Firago <alexey_firago@mentor.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: linux-renesas-soc@vger.kernel.org
+> Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> on Salvator-XS with the display LVDS output.
 
-diff --git a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-index 9b54783..497aec0 100644
---- a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-+++ b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-@@ -20,6 +20,16 @@
- 	};
- };
- 
-+&pfc {
-+	scif0_pins: scif0 {
-+		groups = "scif0_data_d";
-+		function = "scif0";
-+	};
-+};
-+
- &scif0 {
-+	pinctrl-0 = <&scif0_pins>;
-+	pinctrl-names = "default";
-+
- 	status = "okay";
- };
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  drivers/clk/clk-versaclock5.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+> index 60bf4afb51bd..d835d48cf14d 100644
+> --- a/drivers/clk/clk-versaclock5.c
+> +++ b/drivers/clk/clk-versaclock5.c
+> @@ -520,7 +520,7 @@ static void vc5_clk_out_unprepare(struct clk_hw *hw)
+>  	struct vc5_hw_data *hwdata = container_of(hw, struct vc5_hw_data, hw);
+>  	struct vc5_driver_data *vc5 = hwdata->vc5;
+> 
+> -	/* Enable the clock buffer */
+> +	/* Disable the clock buffer */
+>  	regmap_update_bits(vc5->regmap, VC5_CLK_OUTPUT_CFG(hwdata->num, 1),
+>  			   VC5_CLK_OUTPUT_CFG1_EN_CLKBUF, 0);
+>  }
+
 -- 
-1.9.1
+Regards,
+
+Laurent Pinchart
