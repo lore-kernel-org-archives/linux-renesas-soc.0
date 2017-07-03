@@ -1,112 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:35170 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751876AbdGBUhr (ORCPT
+Received: from aserp1040.oracle.com ([141.146.126.69]:41229 "EHLO
+        aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753447AbdGCNbo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 2 Jul 2017 16:37:47 -0400
+        Mon, 3 Jul 2017 09:31:44 -0400
+Date: Mon, 3 Jul 2017 16:31:32 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [bug report] mmc: tmio-mmc: add support for 32bit data port
+Message-ID: <20170703133132.rrwn6kmnyvjhxeo3@mwanda>
+References: <20170629125446.2b5ruac5fev7lqp4@mwanda>
+ <SG2PR06MB1165CBAC1354D2E62C3B3FBE8AD20@SG2PR06MB1165.apcprd06.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdUt6yOQ9=02z_7WG58YGxFYD=_zn7SeLEqGmfTrNBFJXw@mail.gmail.com>
-References: <1495112345-24795-1-git-send-email-geert+renesas@glider.be>
- <f0ed61c3-062b-cec6-fe19-7412231e8ef1@gmail.com> <CAMuHMdWYeSzofU57LmT_M3KkcHhvjfJy7nkHvcXkKzOYmvhqqA@mail.gmail.com>
- <20170518193453.GB13759@lunn.ch> <CAMuHMdV+jfh=EGt3SvjtrtVfWQ6P8ofp_JxeQZjRrSEfDWs5hA@mail.gmail.com>
- <08a89dd5-b707-8b8f-b8e1-e20b9ed630b7@gmail.com> <CAMuHMdWWfaP8=H7H+UzrmOYpydi2mGLFGzuk9FQWJtEOug6u5g@mail.gmail.com>
- <CAMuHMdUt6yOQ9=02z_7WG58YGxFYD=_zn7SeLEqGmfTrNBFJXw@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Sun, 2 Jul 2017 22:37:45 +0200
-Message-ID: <CAMuHMdW8yzREzTE4GiW_8HU9h-T-fdDmLtZAXYkJrjuypN8BDg@mail.gmail.com>
-Subject: Re: [PATCH] of_mdio: Fix broken PHY IRQ in case of probe deferral
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SG2PR06MB1165CBAC1354D2E62C3B3FBE8AD20@SG2PR06MB1165.apcprd06.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Jun 6, 2017 at 11:43 AM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Tue, May 23, 2017 at 11:36 AM, Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
->> On Fri, May 19, 2017 at 12:21 AM, Florian Fainelli <f.fainelli@gmail.com> wrote:
->>> On 05/18/2017 01:36 PM, Geert Uytterhoeven wrote:
->>>> On Thu, May 18, 2017 at 9:34 PM, Andrew Lunn <andrew@lunn.ch> wrote:
->>>>>>> This most certainly works fine in the simple case where you have one PHY
->>>>>>> hanging off the MDIO bus, now what happens if you have several?
->>>>>>>
->>>>>>> Presumably, the first PHY that returns EPROBE_DEFER will make the entire
->>>>>>> bus registration return EPROB_DEFER as well, and so on, and so forth,
->>>>>>> but I am not sure if we will be properly unwinding the successful
->>>>>>> registration of PHYs that either don't have an interrupt, or did not
->>>>>>> return EPROBE_DEFER.
->>>>>>>
->>>>>>> It should be possible to mimic this behavior by using the fixed PHY, and
->>>>>>> possibly the dsa_loop.c driver which would create 4 ports, expecting 4
->>>>>>> fixed PHYs to be present.
->>>>>>
->>>>>> mdiobus_unregister(), called from of_mdiobus_register() on failure,
->>>>>> should do the unwinding, right?
->>>>>>
->>>>>> And when the driver is reprobed, all PHYs are reprobed, until they all
->>>>>> succeed.
->>>>>
->>>>> That is the theory. I looked at that while reviewing the patch. But
->>>>> this has probably not been tested in anger. It would be good to test
->>>>> this properly, with not just the first PHY returning -EPROBE_DEFER, to
->>>>> really test the unwind.
->>>>
->>>> Unfortunately I don't have a board with multiple PHYs, so I cannot test
->>>> that case.
->>
->> I tried adding a few dummy PHYs in DT, but that didn't work.
->>
->> So how can we proceed?
->>
->> I think the only way my patch can cause issues is because some systems
->> may rely on EPROBE_DEFER errors being ignored.
->>
->>>> Does unbinding/rebinding a network driver with multiple PHYs currently
->>>> work? Or module unload/reload?
->>>
->>> Usually there is a strict 1:1 mapping between a network device (not
->>> driver) and a PHY device, switch drivers however, would have multiple
->>> PHYs (one per port, aka net_deice).
->>>
->>> NB: binding and unbinding of PHYs is pretty broken at the moment though,
->>> because there is a complete disconnect between what the Ethernet MAC
->>> expects, and the state in which the PHY is. I had some patches to fix
->>> that, but this turned out to be playing whack-a-mole which I typically
->>> suck at.
->>
->> I didn't mean unbinding the PHY, but the network device.
->> Don't you have the same issue with the state of PHYs as left by the bootloader?
->
-> Anyone who can test the behavior on an Ethernet device with multiple PHYs,
-> e.g. by faking an -EPROBE_DEFER somewhere in the middle?
->
-> I'd like to get this issue fixed in v4.13, to avoid a regression when migrating
-> several systems to a new and better clock driver in v4.14, which will trigger
-> EPROBE_DEFER.
+On Thu, Jun 29, 2017 at 04:02:11PM +0000, Chris Brandt wrote:
+> Personally, I think a buffer of raw data should be a 'u8 *', not a 
+> 'unsigned short *'.
 
-Ping?
+That works, or you could make it a void pointer.  (void *)foo + x and
+(u8 *)foo + x are equivalent in kernel code.
 
-This patch fixes a real issue.
+> And, the parameter name "count" should really be something like "size" 
+> or "length" (but that is still confusing because the passed array 'buf' 
+> was designated as an array of "unsigned short *", so what would 'size' 
+> really mean??)
+> 
+> Anyway, that is the API that's in place today, so that's what I needed 
+> to work with.
 
-Thanks!
+You can change it.  This is the kernel so you can change anything if it
+makes sense.
 
-Gr{oetje,eeting}s,
+> 
+> 
+> > 
+> >    417                  else
+> >    418                          sd_ctrl_write32_rep(host, CTL_SD_DATA_PORT,
+> > (u32 *)buf,
+> >    419                                              count >> 2);
+> >    420
+> >    421                  /* if count was multiple of 4 */
+> >    422                  if (!(count & 0x3))
+> >    423                          return;
+> >    424
+> >    425                  buf8 = (u8 *)(buf + (count >> 2));
+> > 
+> > 
+> > And this looks like the bug...  buf is a u16 pointer but we're adding
+> > "count / sizeof(u32)" when we should be adding "count / (sizeof(*buf))".
+> 
+> I agree this math does not work out to what I wanted because of the 
+> differences in data types.
+> 
+> Since I simply wanted to get a pointer to where I left off in the 
+> buffer, maybe the most clear thing to do is just cast buf and do simple math:
+> 
+>    buf8 = (u8 *)buf + (count & ~3);
+> 
+> 
+> Do you agree?
 
-                        Geert
+Sure.  Unless you want to round up?
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+regards,
+dan carpenter
