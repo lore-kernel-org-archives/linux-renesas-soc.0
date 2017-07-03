@@ -1,70 +1,60 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: broonie@kernel.org
-Cc: hverkuil@xs4all.nl, akpm@linux-foundation.org,
-        yamada.masahiro@socionext.com, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        chris.paterson2@renesas.com,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH v3 1/2] iopoll: Avoid namespace collision within macros & tidy up
-Date: Mon,  3 Jul 2017 12:04:20 +0100
-Message-Id: <20170703110421.3082-2-ramesh.shanmugasundaram@bp.renesas.com>
-In-Reply-To: <20170703110421.3082-1-ramesh.shanmugasundaram@bp.renesas.com>
-References: <20170703110421.3082-1-ramesh.shanmugasundaram@bp.renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Mark Brown <broonie@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>,
+        "mattw@codeaurora.org" <mattw@codeaurora.org>,
+        Mitchel Humpherys <mitchelh@codeaurora.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>
+Subject: RE: [PATCH v2 1/2] iopoll: Avoid namespace collision within macros &
+ tidyup
+Date: Mon, 3 Jul 2017 09:55:55 +0000
+Message-ID: <KL1PR0601MB203830EA67621CA20520B03FC3D60@KL1PR0601MB2038.apcprd06.prod.outlook.com>
+References: <20170613133348.48044-1-ramesh.shanmugasundaram@bp.renesas.com>
+ <20170613133348.48044-2-ramesh.shanmugasundaram@bp.renesas.com>
+ <CAMuHMdVSBstPK55-36vJySKc-NAUyWKRMDYGgF4vBce07Pn0Ug@mail.gmail.com>
+In-Reply-To: <CAMuHMdVSBstPK55-36vJySKc-NAUyWKRMDYGgF4vBce07Pn0Ug@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Renamed variable "timeout" to "__timeout" to avoid namespace collision.
-Tidy up macro arguments with parentheses.
-
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
- include/linux/iopoll.h | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
-
-diff --git a/include/linux/iopoll.h b/include/linux/iopoll.h
-index d29e1e21bf3f..e000172bee54 100644
---- a/include/linux/iopoll.h
-+++ b/include/linux/iopoll.h
-@@ -42,18 +42,19 @@
-  */
- #define readx_poll_timeout(op, addr, val, cond, sleep_us, timeout_us)	\
- ({ \
--	ktime_t timeout = ktime_add_us(ktime_get(), timeout_us); \
-+	ktime_t __timeout = ktime_add_us(ktime_get(), timeout_us); \
- 	might_sleep_if(sleep_us); \
- 	for (;;) { \
- 		(val) = op(addr); \
- 		if (cond) \
- 			break; \
--		if (timeout_us && ktime_compare(ktime_get(), timeout) > 0) { \
-+		if ((timeout_us) && \
-+		    ktime_compare(ktime_get(), __timeout) > 0) { \
- 			(val) = op(addr); \
- 			break; \
- 		} \
- 		if (sleep_us) \
--			usleep_range((sleep_us >> 2) + 1, sleep_us); \
-+			usleep_range(((sleep_us) >> 2) + 1, sleep_us); \
- 	} \
- 	(cond) ? 0 : -ETIMEDOUT; \
- })
-@@ -77,12 +78,13 @@
-  */
- #define readx_poll_timeout_atomic(op, addr, val, cond, delay_us, timeout_us) \
- ({ \
--	ktime_t timeout = ktime_add_us(ktime_get(), timeout_us); \
-+	ktime_t __timeout = ktime_add_us(ktime_get(), timeout_us); \
- 	for (;;) { \
- 		(val) = op(addr); \
- 		if (cond) \
- 			break; \
--		if (timeout_us && ktime_compare(ktime_get(), timeout) > 0) { \
-+		if ((timeout_us) && \
-+		    ktime_compare(ktime_get(), __timeout) > 0) { \
- 			(val) = op(addr); \
- 			break; \
- 		} \
--- 
-2.12.2
+SGkgR2VlcnQsDQoNClRoYW5rcyBmb3IgdGhlIHJldmlldy4gUmVwbHlpbmcgdG8gdGhlIHRocmVh
+ZCB0byB1cGRhdGUgd2hhdCB3ZSBkaXNjdXNzZWQgaW4gSVJDIHNvbWV0aW1lIGJhY2suDQoNCj4g
+T24gVHVlLCBKdW4gMTMsIDIwMTcgYXQgMzozMyBQTSwgUmFtZXNoIFNoYW5tdWdhc3VuZGFyYW0N
+Cj4gPHJhbWVzaC5zaGFubXVnYXN1bmRhcmFtQGJwLnJlbmVzYXMuY29tPiB3cm90ZToNCj4gPiBS
+ZW5hbWVkIHZhcmlhYmxlICJ0aW1lb3V0IiB0byAiX190aW1lb3V0IiB0byBhdm9pZCBuYW1lc3Bh
+Y2UgY29sbGlzaW9uLg0KPiA+IFRpZHkgdXAgbWFjcm8gYXJndW1lbnRzIHdpdGggcGFyYW50aGVz
+aXMuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBSYW1lc2ggU2hhbm11Z2FzdW5kYXJhbQ0KPiA+
+IDxyYW1lc2guc2hhbm11Z2FzdW5kYXJhbUBicC5yZW5lc2FzLmNvbT4NCj4gDQo+IFRoYW5rcyBm
+b3IgeW91ciBwYXRjaGVzIQ0KPiANCj4gPiAtLS0gYS9pbmNsdWRlL2xpbnV4L2lvcG9sbC5oDQo+
+ID4gKysrIGIvaW5jbHVkZS9saW51eC9pb3BvbGwuaA0KPiA+IEBAIC00MiwxOCArNDIsMTkgQEAN
+Cj4gPiAgICovDQo+ID4gICNkZWZpbmUgcmVhZHhfcG9sbF90aW1lb3V0KG9wLCBhZGRyLCB2YWws
+IGNvbmQsIHNsZWVwX3VzLCB0aW1lb3V0X3VzKQ0KPiA+IFwgICh7IFwNCj4gPiAtICAgICAgIGt0
+aW1lX3QgdGltZW91dCA9IGt0aW1lX2FkZF91cyhrdGltZV9nZXQoKSwgdGltZW91dF91cyk7IFwN
+Cj4gPiArICAgICAgIGt0aW1lX3QgX190aW1lb3V0ID0ga3RpbWVfYWRkX3VzKGt0aW1lX2dldCgp
+LCB0aW1lb3V0X3VzKTsgXA0KPiANCj4gSSB0aGluayB0aW1lb3V0X3VzIHNob3VsZCBiZSB3aXRo
+aW4gcGFyZW50aGVzZXMsIHRvby4NCg0KSXQgaXMgbm90IHJlcXVpcmVkIGFzIGl0IGlzIHBhc3Nl
+ZCBhcyBhbiBmdW5jdGlvbiAoa3RpbWVfYWRkX3VzKSBhcmd1bWVudC4NCg0KPiANCj4gPiAgICAg
+ICAgIG1pZ2h0X3NsZWVwX2lmKHNsZWVwX3VzKTsgXA0KPiA+ICAgICAgICAgZm9yICg7OykgeyBc
+DQo+ID4gICAgICAgICAgICAgICAgICh2YWwpID0gb3AoYWRkcik7IFwNCj4gPiAgICAgICAgICAg
+ICAgICAgaWYgKGNvbmQpIFwNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICBicmVhazsgXA0K
+PiA+IC0gICAgICAgICAgICAgICBpZiAodGltZW91dF91cyAmJiBrdGltZV9jb21wYXJlKGt0aW1l
+X2dldCgpLCB0aW1lb3V0KSA+DQo+IDApIHsgXA0KPiA+ICsgICAgICAgICAgICAgICBpZiAoKHRp
+bWVvdXRfdXMpICYmIFwNCj4gPiArICAgICAgICAgICAgICAgICAgIGt0aW1lX2NvbXBhcmUoa3Rp
+bWVfZ2V0KCksIF9fdGltZW91dCkgPiAwKSB7IFwNCj4gPiAgICAgICAgICAgICAgICAgICAgICAg
+ICAodmFsKSA9IG9wKGFkZHIpOyBcDQo+ID4gICAgICAgICAgICAgICAgICAgICAgICAgYnJlYWs7
+IFwNCj4gPiAgICAgICAgICAgICAgICAgfSBcDQo+ID4gICAgICAgICAgICAgICAgIGlmIChzbGVl
+cF91cykgXA0KPiA+IC0gICAgICAgICAgICAgICAgICAgICAgIHVzbGVlcF9yYW5nZSgoc2xlZXBf
+dXMgPj4gMikgKyAxLCBzbGVlcF91cyk7IFwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICB1
+c2xlZXBfcmFuZ2UoKChzbGVlcF91cykgPj4gMikgKyAxLCBzbGVlcF91cyk7DQo+ID4gKyBcDQo+
+IA0KPiBTYW1lIGZvciBzbGVlcF91cy4NCj4gDQo+IEFsc28gaW4gcmVhZHhfcG9sbF90aW1lb3V0
+X2F0b21pYygpLCBhbmQgaW4geW91ciBzZWNvbmQgcGF0Y2guDQoNClNhbWUgYXMgdGhlIGFib3Zl
+IGNvbW1lbnQuDQoNClRoYW5rcywNClJhbWVzaA0K
