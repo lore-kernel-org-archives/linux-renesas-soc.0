@@ -1,51 +1,64 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:44354 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752398AbdGaPUl (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 31 Jul 2017 11:20:41 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 19/38] ARM: dts: r8a7790: Reserve SRAM for the SMP jump stub
-Date: Mon, 31 Jul 2017 17:19:31 +0200
-Message-Id: <e66938697e2931aa01fef35a096a1c0efa85622e.1501514100.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1501514100.git.horms+renesas@verge.net.au>
-References: <cover.1501514100.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: broonie@kernel.org
+Cc: hverkuil@xs4all.nl, akpm@linux-foundation.org,
+        yamada.masahiro@socionext.com, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        chris.paterson2@renesas.com,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH v3 2/2] regmap: Avoid namespace collision within macro & tidy up
+Date: Mon,  3 Jul 2017 12:04:21 +0100
+Message-Id: <20170703110421.3082-3-ramesh.shanmugasundaram@bp.renesas.com>
+In-Reply-To: <20170703110421.3082-1-ramesh.shanmugasundaram@bp.renesas.com>
+References: <20170703110421.3082-1-ramesh.shanmugasundaram@bp.renesas.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Renamed variable "timeout" to "__timeout" & "pollret" to "__ret" to
+avoid namespace collision. Tidy up macro arguments with parentheses.
 
-Reserve SRAM for the jump stub for CPU core bringup.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 ---
- arch/arm/boot/dts/r8a7790.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ include/linux/regmap.h | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 4ee34995573c..ff986df23b62 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -838,6 +838,14 @@
- 	icram1:	sram@e63c0000 {
- 		compatible = "mmio-sram";
- 		reg = <0 0xe63c0000 0 0x1000>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 0 0xe63c0000 0x1000>;
-+
-+		smp-sram@0 {
-+			compatible = "renesas,smp-sram";
-+			reg = <0 0x10>;
-+		};
- 	};
+diff --git a/include/linux/regmap.h b/include/linux/regmap.h
+index 978abfbac617..1474ab0a3922 100644
+--- a/include/linux/regmap.h
++++ b/include/linux/regmap.h
+@@ -120,23 +120,24 @@ struct reg_sequence {
+  */
+ #define regmap_read_poll_timeout(map, addr, val, cond, sleep_us, timeout_us) \
+ ({ \
+-	ktime_t timeout = ktime_add_us(ktime_get(), timeout_us); \
+-	int pollret; \
++	ktime_t __timeout = ktime_add_us(ktime_get(), timeout_us); \
++	int __ret; \
+ 	might_sleep_if(sleep_us); \
+ 	for (;;) { \
+-		pollret = regmap_read((map), (addr), &(val)); \
+-		if (pollret) \
++		__ret = regmap_read((map), (addr), &(val)); \
++		if (__ret) \
+ 			break; \
+ 		if (cond) \
+ 			break; \
+-		if (timeout_us && ktime_compare(ktime_get(), timeout) > 0) { \
+-			pollret = regmap_read((map), (addr), &(val)); \
++		if ((timeout_us) && \
++		    ktime_compare(ktime_get(), __timeout) > 0) { \
++			__ret = regmap_read((map), (addr), &(val)); \
+ 			break; \
+ 		} \
+ 		if (sleep_us) \
+-			usleep_range((sleep_us >> 2) + 1, sleep_us); \
++			usleep_range(((sleep_us) >> 2) + 1, sleep_us); \
+ 	} \
+-	pollret ?: ((cond) ? 0 : -ETIMEDOUT); \
++	__ret ?: ((cond) ? 0 : -ETIMEDOUT); \
+ })
  
- 	ether: ethernet@ee700000 {
+ #ifdef CONFIG_REGMAP
 -- 
-2.1.4
+2.12.2
