@@ -1,123 +1,70 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Kieran Bingham <kbingham@kernel.org>
-To: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com,
-        niklas.soderlund@ragnatech.se, hans.verkuil@cisco.com,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v7 0/3] ADV748x HDMI/Analog video receiver
-Date: Thu,  6 Jul 2017 12:01:14 +0100
-Message-Id: <cover.f44897c9f4c2d4555dfa156cc24a755477e409bf.1499336175.git-series.kieran.bingham+renesas@ideasonboard.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: broonie@kernel.org
+Cc: hverkuil@xs4all.nl, akpm@linux-foundation.org,
+        yamada.masahiro@socionext.com, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        chris.paterson2@renesas.com,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH v3 1/2] iopoll: Avoid namespace collision within macros & tidy up
+Date: Mon,  3 Jul 2017 12:04:20 +0100
+Message-Id: <20170703110421.3082-2-ramesh.shanmugasundaram@bp.renesas.com>
+In-Reply-To: <20170703110421.3082-1-ramesh.shanmugasundaram@bp.renesas.com>
+References: <20170703110421.3082-1-ramesh.shanmugasundaram@bp.renesas.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Renamed variable "timeout" to "__timeout" to avoid namespace collision.
+Tidy up macro arguments with parentheses.
 
-This is a driver for the Analog Devices ADV748x device, and follows on from a
-previous posting by Niklas Söderlund [0] of an earlier incarnation of this
-driver, and earlier versions posted by myself.
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+---
+ include/linux/iopoll.h | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-ADV748x
-=======
-The ADV7481 and ADV7482 support two video pipelines which can run independently
-of each other, with each pipeline terminating in a CSI-2 output: TXA (4-Lane)
-and TXB (1-Lane)
-
-The ADV7480 (Not included here), ADV7481, and ADV7482 are all derivatives,
-with the following features
-
-            Analog   HDMI  MHL  4-Lane  1-Lane
-              In      In         CSI     CSI
- ADV7480               X    X     X
- ADV7481      X        X    X     X       X
- ADV7482      X        X          X       X
-
-Implementation
-==============
-
-This driver creates 4 entities. AFE (CVBS/Analog In), HDMI, TXA and TXB.  At
-probe time, the DT is parsed to identify the endpoints for each of these nodes,
-and those are used for async matching of the CSI2 (TXA/TXB) entities in the
-master driver. The HDMI and AFE entities are then registered after a successful
-registration of both the CSI2 entities.
-
-HDMI is statically linked to the TXA entity, while the AFE is statically linked
-to the TXB entity. Routing the AFE through TXA is not supported.
-
-Support for setting the EDID on HDMI is provided
-
-(Known) Future Todo's
-=====================
-
-Further potential development areas include:
- - ADV7480 Support (No AFE)
- - MHL support (Not present on ADV7482)
- - CEC Support
- - Configurable I2C addressing
- - Interrupt handling for format changes and hotplug detect.
-
-However, this driver is functional without the above, and these developments
-can be written when required.
-
-References
-==========
-[0] http://www.mail-archive.com/linux-renesas-soc@vger.kernel.org/msg05196.html
-
-v1/RFC:
- - Initial posting
-
-v2:
- - Reworked DT parsing and entities
-
-v3:
- - Refreshed with lots of fixups from Sakari's review comments
-
-v4:
- - Many changes all round, following Laurent's review and extensive development
- - Now uses regmap
- - AFE port numbering has been changed to match the entity pads
-
-v5:
- - DT is now based on the latest salvator-common.dtsi
- - Entities are linked with immutable connections
-
-v6:
- - EDID support added to HDMI
- - AFE no longer autodetects input format by default.
-
-v7:
- - Comments from Hans addressed
- - AFE now uses FIELD_ALTERNATE
- - HDMI interlaced support removed (it's untested)
-
-Kieran Bingham (3):
-  media: adv748x: Add adv7481, adv7482 bindings
-  media: i2c: adv748x: add adv748x driver
-  MAINTAINERS: Add ADV748x driver
-
- Documentation/devicetree/bindings/media/i2c/adv748x.txt |  95 +-
- MAINTAINERS                                             |   6 +-
- drivers/media/i2c/Kconfig                               |  12 +-
- drivers/media/i2c/Makefile                              |   1 +-
- drivers/media/i2c/adv748x/Makefile                      |   7 +-
- drivers/media/i2c/adv748x/adv748x-afe.c                 | 552 ++++++-
- drivers/media/i2c/adv748x/adv748x-core.c                | 832 +++++++++-
- drivers/media/i2c/adv748x/adv748x-csi2.c                | 327 ++++-
- drivers/media/i2c/adv748x/adv748x-hdmi.c                | 768 ++++++++-
- drivers/media/i2c/adv748x/adv748x.h                     | 425 +++++-
- 10 files changed, 3025 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/i2c/adv748x.txt
- create mode 100644 drivers/media/i2c/adv748x/Makefile
- create mode 100644 drivers/media/i2c/adv748x/adv748x-afe.c
- create mode 100644 drivers/media/i2c/adv748x/adv748x-core.c
- create mode 100644 drivers/media/i2c/adv748x/adv748x-csi2.c
- create mode 100644 drivers/media/i2c/adv748x/adv748x-hdmi.c
- create mode 100644 drivers/media/i2c/adv748x/adv748x.h
-
-base-commit: 2748e76ddb2967c4030171342ebdd3faa6a5e8e8
+diff --git a/include/linux/iopoll.h b/include/linux/iopoll.h
+index d29e1e21bf3f..e000172bee54 100644
+--- a/include/linux/iopoll.h
++++ b/include/linux/iopoll.h
+@@ -42,18 +42,19 @@
+  */
+ #define readx_poll_timeout(op, addr, val, cond, sleep_us, timeout_us)	\
+ ({ \
+-	ktime_t timeout = ktime_add_us(ktime_get(), timeout_us); \
++	ktime_t __timeout = ktime_add_us(ktime_get(), timeout_us); \
+ 	might_sleep_if(sleep_us); \
+ 	for (;;) { \
+ 		(val) = op(addr); \
+ 		if (cond) \
+ 			break; \
+-		if (timeout_us && ktime_compare(ktime_get(), timeout) > 0) { \
++		if ((timeout_us) && \
++		    ktime_compare(ktime_get(), __timeout) > 0) { \
+ 			(val) = op(addr); \
+ 			break; \
+ 		} \
+ 		if (sleep_us) \
+-			usleep_range((sleep_us >> 2) + 1, sleep_us); \
++			usleep_range(((sleep_us) >> 2) + 1, sleep_us); \
+ 	} \
+ 	(cond) ? 0 : -ETIMEDOUT; \
+ })
+@@ -77,12 +78,13 @@
+  */
+ #define readx_poll_timeout_atomic(op, addr, val, cond, delay_us, timeout_us) \
+ ({ \
+-	ktime_t timeout = ktime_add_us(ktime_get(), timeout_us); \
++	ktime_t __timeout = ktime_add_us(ktime_get(), timeout_us); \
+ 	for (;;) { \
+ 		(val) = op(addr); \
+ 		if (cond) \
+ 			break; \
+-		if (timeout_us && ktime_compare(ktime_get(), timeout) > 0) { \
++		if ((timeout_us) && \
++		    ktime_compare(ktime_get(), __timeout) > 0) { \
+ 			(val) = op(addr); \
+ 			break; \
+ 		} \
 -- 
-git-series 0.9.1
+2.12.2
