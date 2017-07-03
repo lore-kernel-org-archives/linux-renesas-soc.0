@@ -1,10 +1,24 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:59526 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753587AbdGCJR2 (ORCPT
+Received: from mail-it0-f48.google.com ([209.85.214.48]:33256 "EHLO
+        mail-it0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752186AbdGCHkX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 3 Jul 2017 05:17:28 -0400
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
+        Mon, 3 Jul 2017 03:40:23 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170702092336.uxwl23kyd4koxclj@pengutronix.de>
+References: <CAMuHMdW9+CNTTOVO4SRRUxuz3ajLbY2j1uG8b_RpHX52NPwXrQ@mail.gmail.com>
+ <CAL_JsqKGrZeR7z80beY_XEjqd5fEQQwPxusJ1FADoALgNE3fEg@mail.gmail.com>
+ <20170630202453.eh6vaehkap3as4np@pengutronix.de> <8d86a9aa-1928-6b52-1487-d5fb9dae17f4@gmail.com>
+ <20170701181408.yuocymwtj5dgt74d@pengutronix.de> <6098d579-f206-5a23-bbfc-ac13e0448479@gmail.com>
+ <20170702092336.uxwl23kyd4koxclj@pengutronix.de>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 3 Jul 2017 09:40:21 +0200
+Message-ID: <CAMuHMdVgDNEf8Pe2HsqFpgFiTupVBa-7dvmSR6fJ4eS1LnzRxg@mail.gmail.com>
+Subject: Re: Clocks used by another OS/CPU (was: Re: [RFC PATCH] clk: renesas:
+ cpg-mssr: Add interface for critical core clocks)
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?=
+        <u.kleine-koenig@pengutronix.de>
+Cc: Dirk Behme <dirk.behme@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
@@ -15,80 +29,89 @@ Cc: Sudeep Holla <sudeep.holla@arm.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
         Kevin Hilman <khilman@baylibre.com>,
         linux-clk <linux-clk@vger.kernel.org>,
         "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: Clocks used by another OS/CPU (was: Re: [RFC PATCH] clk: renesas:
- cpg-mssr: Add interface for critical core clocks)
-To: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Dirk Behme <dirk.behme@gmail.com>
-References: <CAMuHMdW9+CNTTOVO4SRRUxuz3ajLbY2j1uG8b_RpHX52NPwXrQ@mail.gmail.com>
- <CAL_JsqKGrZeR7z80beY_XEjqd5fEQQwPxusJ1FADoALgNE3fEg@mail.gmail.com>
- <20170630202453.eh6vaehkap3as4np@pengutronix.de>
- <8d86a9aa-1928-6b52-1487-d5fb9dae17f4@gmail.com>
- <20170701181408.yuocymwtj5dgt74d@pengutronix.de>
-From: Sudeep Holla <sudeep.holla@arm.com>
-Message-ID: <8d255a76-babe-312d-15b3-3474969f2410@arm.com>
-Date: Mon, 3 Jul 2017 10:17:22 +0100
-MIME-Version: 1.0
-In-Reply-To: <20170701181408.yuocymwtj5dgt74d@pengutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        <linux-arm-kernel@lists.infradead.org>,
+        Sascha Hauer <kernel@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Uwe,
 
-
-On 01/07/17 19:14, Uwe Kleine-König wrote:
-> Hello,
-> 
-> On Sat, Jul 01, 2017 at 07:02:48AM +0200, Dirk Behme wrote:
-
-[...]
-
+On Sun, Jul 2, 2017 at 11:23 AM, Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@pengutronix.de> wrote:
+> On Sun, Jul 02, 2017 at 07:48:41AM +0200, Dirk Behme wrote:
+>> > On my machine (Udoo Neo, A9 + M4) the A9 is the primary CPU that is
+>> > started by the bootrom. If I want the M4 being the primary device I'd
+>> > need support in the bootloader to wait long enough (i.e. until the M4 =
+is
+>> > up) before letting the A9 jump into Linux. Managable I'd say. This way
+>> > would even make sense if the M4 runs a rt critical OS that shouldn't b=
+e
+>> > forced to wait on the non-rt A9 to enable a clk.
 >>
->>
->> The other problem is security related. If, at all, you have to do it the
->> other way around, then:
->>
->> Make Linux a consumer of the other CPU's (trusted/trustzone/whatever
->> secured) OS clock driver.
+>> Overall, assuming that the issue we are discussing here can be solved qu=
+ite
+>> easily in hardware (a set of clock registers for each CPU/OS domain,
+>> connected cleverly to effectively control each clock, with access protec=
+tion
+>> for each set of registers) I tend to think that for a SoC supposed to ru=
+n
+>> different OS on different cores this is a missing hardware feature (bug?=
+).
+>
+> So you want to enable bits for your CAN clock, one in each cpu's domain.
+>
+> I'd say that is a nice idea that a hardware engineer might be proud to
+> pick up but that results in more headache than fun for the software
+> colleague.
+>
+> There are several problems that come immediately to mind:
+>
+>  - You can switch of a clk because you don't need it on, or because you
+>    need it off. I guess you want to have the clock on if at least one
+>    cpu wants it on. So you take away the freedom from the other cpu to
+>    force the clock off. (Yeah, the currently available clk framework
+>    doesn't allow that either.)
+>  - What if cpu 0 sets the parent of the can clk to pll2 but cpu 1 wants
+>    it set to pll1? How does cpu 1 notice the change?
+>  - On off might be relatively easy, what about clk dividers? cpu 0 sets
+>    2 which cpu 1 sets 6.
+>
+> That convinces me that the disadvantages of having two views on the clk
+> core have more weight and you really want a single view and share that
+> by software.
 
-Yes, that's better and is getting common on newer platforms. They have
-separate M-class(or even low A-class e.g. A5/A7) processors to handle
-all the system management.
+Renesas ARM SoCs already implement (parts of) that.
 
-The new ARM SCMI specification[0][1] is designed to standardize the
-interface. It covers the clocks in clock protocol.
+There are separate sets of the Module SToP register bits for each set of
+CPUs. Only if all sets agree the clock supply to a module will be stopped,
+which can be monitored using the status Registers.
+So for the CAN modules itself there is no issue, as the clock supply to the
+modules will not be stopped as long as the RT CPU keeps it enabled.
+There must be more to it (secure mode?), as some R-Car Gen3 module clocks
+cannot seem to be disabled by disabling them for all documented CPU sets.
 
-> 
-> That doesn't matter much. Either way the first CPU has to provide the
-> master side of this device (as it needs clks for booting up) and the 2nd
-> gets this virtual clk device that forwards clk requests to the first
-> CPU.
-> 
-> On my machine (Udoo Neo, A9 + M4) the A9 is the primary CPU that is
-> started by the bootrom. If I want the M4 being the primary device I'd
-> need support in the bootloader to wait long enough (i.e. until the M4 is
-> up) before letting the A9 jump into Linux.
+There's also a global bit to prevent modifying any clock register.
+This could be used to prevent changing the CAN parent clock (changing
+its divider and/or stopping it). However, as this is a global bit, it would
+affect the full Linux clock driver.
 
-I think that is platform specific. On few platforms I have seen
-recently, it's M4 or whatever core that handles system power management
-boots first and is responsible to even boot secondaries.
+Again, probably there's more to it when using secure mode...
 
-> Managable I'd say. This way would even make sense if the M4 runs a
-> rt critical OS that shouldn't be forced to wait on the non-rt A9 to> enable a clk.
-> 
+Gr{oetje,eeting}s,
 
-Exactly.
+                        Geert
 
--- 
-Regards,
-Sudeep
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-
-[0] http://infocenter.arm.com/help/topic/com.arm.doc.den0056a/index.html
-[1] https://marc.info/?l=devicetree&m=149849482623492&w=2
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
