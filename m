@@ -1,32 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35045 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751696AbdGEKYf (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:42416 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752349AbdGDPXZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Jul 2017 06:24:35 -0400
-Date: Wed, 5 Jul 2017 11:24:32 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Chris Paterson <chris.paterson2@renesas.com>
-Cc: Russell King <linux@armlinux.org.uk>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2] ARM: debug-ll: Add support for r8a7743
-Message-ID: <20170705102432.GB24043@verge.net.au>
-References: <1496908117-19368-1-git-send-email-chris.paterson2@renesas.com>
- <1496916494-19725-1-git-send-email-chris.paterson2@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1496916494-19725-1-git-send-email-chris.paterson2@renesas.com>
+        Tue, 4 Jul 2017 11:23:25 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/7] ARM: dts: r8a7745: Add Inter Connect RAM
+Date: Tue,  4 Jul 2017 17:23:13 +0200
+Message-Id: <1499181798-28859-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1499181798-28859-1-git-send-email-geert+renesas@glider.be>
+References: <1499181798-28859-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Jun 08, 2017 at 11:08:14AM +0100, Chris Paterson wrote:
-> Enable low-level debugging support for RZ/G1M (r8a7743). RZ/G1M uses
-> SCIF0 for the debug console, like most of the R-Car Gen2 SoCs.
-> 
-> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+RZ/G1E has 3 regions of Inter Connect RAM (72 + 4 + 256 KiB).
 
-Thanks, applied for v4.14.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/boot/dts/r8a7745.dtsi | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+index 2feb0084bb3b1b51..88cf92bcd2f9b4fc 100644
+--- a/arch/arm/boot/dts/r8a7745.dtsi
++++ b/arch/arm/boot/dts/r8a7745.dtsi
+@@ -468,6 +468,21 @@
+ 			status = "disabled";
+ 		};
+ 
++		icram2:	sram@e6300000 {
++			compatible = "mmio-sram";
++			reg = <0 0xe6300000 0 0x40000>;
++		};
++
++		icram0:	sram@e63a0000 {
++			compatible = "mmio-sram";
++			reg = <0 0xe63a0000 0 0x12000>;
++		};
++
++		icram1:	sram@e63c0000 {
++			compatible = "mmio-sram";
++			reg = <0 0xe63c0000 0 0x1000>;
++		};
++
+ 		ether: ethernet@ee700000 {
+ 			compatible = "renesas,ether-r8a7745";
+ 			reg = <0 0xee700000 0 0x400>;
+-- 
+2.7.4
