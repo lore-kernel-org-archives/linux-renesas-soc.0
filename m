@@ -1,60 +1,50 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from xavier.telenet-ops.be ([195.130.132.52]:43668 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752249AbdGDPlv (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 4 Jul 2017 11:41:51 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Magnus Damm <magnus.damm@gmail.com>,
         Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH v 1/2] ravb: Add support for r8a7743 SoC
-Date: Wed,  5 Jul 2017 14:01:50 +0100
-Message-Id: <1499259711-56175-2-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1499259711-56175-1-git-send-email-biju.das@bp.renesas.com>
-References: <1499259711-56175-1-git-send-email-biju.das@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+        Rob Herring <robh+dt@kernel.org>,
+        Simon Horman <horms@verge.net.au>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 3/9] ARM: dts: r8a7743: Reserve SRAM for the SMP jump stub
+Date: Tue,  4 Jul 2017 17:41:37 +0200
+Message-Id: <1499182903-31339-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1499182903-31339-1-git-send-email-geert+renesas@glider.be>
+References: <1499182903-31339-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for Gigabit Ethernet E-MAC on r8a7743 (RZ/G1M) SoC.
-Renesas RZ/G1M (R8A7743) SoC Ethernet AVB IP is identical to the R-Car Gen2
-family.
+Reserve SRAM for the jump stub for CPU core bringup.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- Documentation/devicetree/bindings/net/renesas,ravb.txt | 3 ++-
- drivers/net/ethernet/renesas/ravb_main.c               | 1 +
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a7743.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/net/renesas,ravb.txt b/Documentation/devicetree/bindings/net/renesas,ravb.txt
-index b519503..bc692ab 100644
---- a/Documentation/devicetree/bindings/net/renesas,ravb.txt
-+++ b/Documentation/devicetree/bindings/net/renesas,ravb.txt
-@@ -4,7 +4,8 @@ This file provides information on what the device node for the Ethernet AVB
- interface contains.
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index b8ce935f6fb196fe..4d59e498fb45fe15 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -481,6 +481,14 @@
+ 		icram1:	sram@e63c0000 {
+ 			compatible = "mmio-sram";
+ 			reg = <0 0xe63c0000 0 0x1000>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			ranges = <0 0 0xe63c0000 0x1000>;
++
++			smp-sram@0 {
++				compatible = "renesas,smp-sram";
++				reg = <0 0x10>;
++			};
+ 		};
  
- Required properties:
--- compatible: "renesas,etheravb-r8a7790" if the device is a part of R8A7790 SoC.
-+- compatible: "renesas,etheravb-r8a7743" if the device is a part of R8A7743 SoC.
-+	      "renesas,etheravb-r8a7790" if the device is a part of R8A7790 SoC.
- 	      "renesas,etheravb-r8a7791" if the device is a part of R8A7791 SoC.
- 	      "renesas,etheravb-r8a7792" if the device is a part of R8A7792 SoC.
- 	      "renesas,etheravb-r8a7793" if the device is a part of R8A7793 SoC.
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 5931e85..e35b30f 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -1869,6 +1869,7 @@ static int ravb_mdio_release(struct ravb_private *priv)
- }
- 
- static const struct of_device_id ravb_match_table[] = {
-+	{ .compatible = "renesas,etheravb-r8a7743", .data = (void *)RCAR_GEN2 },
- 	{ .compatible = "renesas,etheravb-r8a7790", .data = (void *)RCAR_GEN2 },
- 	{ .compatible = "renesas,etheravb-r8a7794", .data = (void *)RCAR_GEN2 },
- 	{ .compatible = "renesas,etheravb-rcar-gen2", .data = (void *)RCAR_GEN2 },
+ 		ether: ethernet@ee700000 {
 -- 
-1.9.1
-
+2.7.4
