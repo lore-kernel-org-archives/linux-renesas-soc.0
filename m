@@ -1,65 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:49536 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751630AbdG2VIt (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:58172 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752507AbdGDPX0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 29 Jul 2017 17:08:49 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v3 0/4] drm: rcar-du: Repair vblank event handling
-Date: Sun, 30 Jul 2017 00:08:51 +0300
-Message-Id: <20170729210855.9187-1-laurent.pinchart+renesas@ideasonboard.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Tue, 4 Jul 2017 11:23:26 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 3/7] ARM: dts: r8a7790: Add Inter Connect RAM
+Date: Tue,  4 Jul 2017 17:23:14 +0200
+Message-Id: <1499181798-28859-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1499181798-28859-1-git-send-email-geert+renesas@glider.be>
+References: <1499181798-28859-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+R-Car H2 has 2 regions of Inter Connect RAM (72 + 4 KiB).
 
-The recent changes to the rcar-du driver to fix a page flip handling race
-condition changed the order of which vblanks and page flips are handled,
-resulting in incorrect timestamps being reported in the vblan events. Correct
-this by handling vblank events in the same completion handler as page flips.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/boot/dts/r8a7790.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Compared to v2 patch 3/4 is completely rewritten with a new approach, as the
-previous one caused flip timeouts for a currently unknown reason. This version
-now uses the vertical blanking interrupt to handle the CRTC stop race
-regardless of the generation of the SoC.
-
-As a result drm_atomic_helper_wait_for_vblanks() can't be used anymore to wait
-for completion of a page flip or CRTC disable. I've thus included the
-previously posted patch "drm: rcar-du: Wait for flip completion instead of
-vblank in commit tail" in this series.
-
-I still plan to investigate why the original version caused issues, as I
-believe it went in the right direction. For now this series should do, as it
-doesn't introduce any hack and passes all tests properly.
-
-Kieran Bingham (1):
-  drm: rcar-du: Repair vblank for DRM page flips using the VSP
-
-Laurent Pinchart (3):
-  drm: rcar-du: Use the VBK interrupt for vblank events
-  drm: rcar-du: Wait for flip completion instead of vblank in commit
-    tail
-  drm: rcar-du: Fix race condition when disabling planes at CRTC stop
-
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c   | 66 +++++++++++++++++++++++++++-----
- drivers/gpu/drm/rcar-du/rcar_du_crtc.h   | 10 +++++
- drivers/gpu/drm/rcar-du/rcar_du_kms.c    |  2 +-
- drivers/gpu/drm/rcar-du/rcar_du_vsp.c    |  8 +++-
- drivers/media/platform/vsp1/vsp1_drm.c   |  5 ++-
- drivers/media/platform/vsp1/vsp1_drm.h   |  2 +-
- drivers/media/platform/vsp1/vsp1_pipe.c  | 20 +++++-----
- drivers/media/platform/vsp1/vsp1_pipe.h  |  2 +-
- drivers/media/platform/vsp1/vsp1_video.c |  6 ++-
- include/media/vsp1.h                     |  2 +-
- 10 files changed, 95 insertions(+), 28 deletions(-)
-
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 2805a8608d4ba007..4ee34995573cf505 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -830,6 +830,16 @@
+ 		status = "disabled";
+ 	};
+ 
++	icram0:	sram@e63a0000 {
++		compatible = "mmio-sram";
++		reg = <0 0xe63a0000 0 0x12000>;
++	};
++
++	icram1:	sram@e63c0000 {
++		compatible = "mmio-sram";
++		reg = <0 0xe63c0000 0 0x1000>;
++	};
++
+ 	ether: ethernet@ee700000 {
+ 		compatible = "renesas,ether-r8a7790";
+ 		reg = <0 0xee700000 0 0x400>;
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.4
