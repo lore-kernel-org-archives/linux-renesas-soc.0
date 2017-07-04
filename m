@@ -1,36 +1,62 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f66.google.com ([209.85.214.66]:34050 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752276AbdGJBI3 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 9 Jul 2017 21:08:29 -0400
-Date: Sun, 9 Jul 2017 20:08:27 -0500
-From: Rob Herring <robh@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Magnus Damm <magnus.damm@gmail.com>,
         Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/9] dt-bindings: sram: Document renesas,smp-sram
-Message-ID: <20170710010827.qj2vw3fqalbzspfj@rob-hp-laptop>
+        Rob Herring <robh+dt@kernel.org>,
+        Simon Horman <horms@verge.net.au>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/9] dt-bindings: sram: Document renesas,smp-sram
+Date: Tue,  4 Jul 2017 17:41:35 +0200
+Message-Id: <1499182903-31339-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1499182903-31339-1-git-send-email-geert+renesas@glider.be>
 References: <1499182903-31339-1-git-send-email-geert+renesas@glider.be>
- <1499182903-31339-2-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1499182903-31339-2-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Jul 04, 2017 at 05:41:35PM +0200, Geert Uytterhoeven wrote:
-> Document reserved SRAM for the SMP jump stub on Renesas R-Car Gen2 and
-> RZ/G1 SoCs.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  .../devicetree/bindings/sram/renesas,smp-sram.txt  | 27 ++++++++++++++++++++++
->  1 file changed, 27 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/sram/renesas,smp-sram.txt
+Document reserved SRAM for the SMP jump stub on Renesas R-Car Gen2 and
+RZ/G1 SoCs.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ .../devicetree/bindings/sram/renesas,smp-sram.txt  | 27 ++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sram/renesas,smp-sram.txt
+
+diff --git a/Documentation/devicetree/bindings/sram/renesas,smp-sram.txt b/Documentation/devicetree/bindings/sram/renesas,smp-sram.txt
+new file mode 100644
+index 0000000000000000..712d05e3e15eeb65
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sram/renesas,smp-sram.txt
+@@ -0,0 +1,27 @@
++* Renesas SMP SRAM
++
++Renesas R-Car Gen2 and RZ/G1 SoCs need a small piece of SRAM for the jump stub
++for secondary CPU bringup and CPU hotplug.
++This memory is reserved by adding a child node to a "mmio-sram" node, cfr.
++Documentation/devicetree/bindings/sram/sram.txt.
++
++Required child node properties:
++  - compatible: Must be "renesas,smp-sram",
++  - reg: Address and length of the reserved SRAM.
++    The full physical (bus) address must be aligned to a 256 KiB boundary.
++
++
++Example:
++
++	icram1:	sram@e63c0000 {
++		compatible = "mmio-sram";
++		reg = <0 0xe63c0000 0 0x1000>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0 0 0xe63c0000 0x1000>;
++
++		smp-sram@0 {
++			compatible = "renesas,smp-sram";
++			reg = <0 0x10>;
++		};
++	};
+-- 
+2.7.4
+
