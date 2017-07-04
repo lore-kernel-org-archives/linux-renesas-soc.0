@@ -1,116 +1,158 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f45.google.com ([209.85.214.45]:32974 "EHLO
-        mail-it0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752052AbdGDSUr (ORCPT
+Received: from foss.arm.com ([217.140.101.70]:48050 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751645AbdGDRci (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Jul 2017 14:20:47 -0400
-MIME-Version: 1.0
-In-Reply-To: <2f7ef764-c511-9598-c136-13966f810c95@arm.com>
-References: <1499187733-1430-1-git-send-email-geert+renesas@glider.be>
- <1499187733-1430-2-git-send-email-geert+renesas@glider.be> <2f7ef764-c511-9598-c136-13966f810c95@arm.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 4 Jul 2017 20:20:45 +0200
-Message-ID: <CAMuHMdXFAZ2Gvgk7oJhkQo7ygCKE_MPqtypccwqj9NTW30q57A@mail.gmail.com>
+        Tue, 4 Jul 2017 13:32:38 -0400
 Subject: Re: [PATCH 1/2] ARM: shmobile: Add CA7 arch_timer initialization for
  secondary CPUs
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
         Mark Rutland <mark.rutland@arm.com>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms@verge.net.au>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Simon Horman <horms@verge.net.au>
+References: <1499187733-1430-1-git-send-email-geert+renesas@glider.be>
+ <1499187733-1430-2-git-send-email-geert+renesas@glider.be>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+From: Marc Zyngier <marc.zyngier@arm.com>
+Message-ID: <2f7ef764-c511-9598-c136-13966f810c95@arm.com>
+Date: Tue, 4 Jul 2017 18:32:35 +0100
+MIME-Version: 1.0
+In-Reply-To: <1499187733-1430-2-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Marc,
+Hi Geert,
 
-On Tue, Jul 4, 2017 at 7:32 PM, Marc Zyngier <marc.zyngier@arm.com> wrote:
-> On 04/07/17 18:02, Geert Uytterhoeven wrote:
->> On Cortex-A7, the arch timer CNTVOFF register is uninitialized.
->> Hence when enabling SMP on r8a7794, the kernel log is spammed with:
->>
->>     WARNING: Underflow in clocksource 'arch_sys_counter' observed, time update ignored.
->>            Please report this, consider using a different clocksource, if possible.
->>            Your kernel is probably still fine.
->>
->> To fix this, wrap the standard secondary_startup routine inside a
->> routine which initializes CNTVOFF when running on a Cortex-A7.
->> As the only possibilities are Cortex-A7 or Cortex-A15, checking the low
->> nibble of the Primary Part Number is sufficient.
->>
->> The initialization is identical to what is already done for the boot CPU
->> since commit 9ce3fa6816c2fb59 ("ARM: shmobile: rcar-gen2: Add CA7
->> arch_timer initialization for r8a7794").
->
-> Humfff... Pretty horrible. Comments below.
+On 04/07/17 18:02, Geert Uytterhoeven wrote:
+> On Cortex-A7, the arch timer CNTVOFF register is uninitialized.
+> Hence when enabling SMP on r8a7794, the kernel log is spammed with:
+> 
+>     WARNING: Underflow in clocksource 'arch_sys_counter' observed, time update ignored.
+> 	     Please report this, consider using a different clocksource, if possible.
+> 	     Your kernel is probably still fine.
+> 
+> To fix this, wrap the standard secondary_startup routine inside a
+> routine which initializes CNTVOFF when running on a Cortex-A7.
+> As the only possibilities are Cortex-A7 or Cortex-A15, checking the low
+> nibble of the Primary Part Number is sufficient.
+> 
+> The initialization is identical to what is already done for the boot CPU
+> since commit 9ce3fa6816c2fb59 ("ARM: shmobile: rcar-gen2: Add CA7
+> arch_timer initialization for r8a7794").
 
-I know.  I suppose this should be done by the firmware/boot loader?
-But we have to live with firmware/boot loaders in the wild...
+Humfff... Pretty horrible. Comments below.
 
->> --- /dev/null
->> +++ b/arch/arm/mach-shmobile/headsmp-apmu.S
->> @@ -0,0 +1,38 @@
->> +/*
->> + * SMP support for APMU based systems
->> + *
->> + * Copyright (C) 2014  Renesas Electronics Corporation
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
->> + */
->> +
->> +#include <linux/linkage.h>
->> +
->> +ENTRY(shmobile_boot_apmu)
->> +     mrc     p15, 0, r0, c0, c0, 0           /* Get Main ID */
->> +     ubfx    r1, r0, #4, #4                  /* r1=Lo 4bit of Primary Part */
->> +     cmp     r1, #0x7                        /* 0x7 = CA7, 0xf = CA15 */
->> +     bne     1f
->
-> Why don't you deal with the A15 parts as well? And TBH, you'd be better
-> off checking ID_PFR1 for both Generic Timers and Virtualization Extensions.
+> 
+> Based on patches by Hisashi Nakamura in the BSP.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  arch/arm/mach-shmobile/Makefile       |  1 +
+>  arch/arm/mach-shmobile/common.h       |  1 +
+>  arch/arm/mach-shmobile/headsmp-apmu.S | 38 +++++++++++++++++++++++++++++++++++
+>  arch/arm/mach-shmobile/platsmp-apmu.c |  2 +-
+>  4 files changed, 41 insertions(+), 1 deletion(-)
+>  create mode 100644 arch/arm/mach-shmobile/headsmp-apmu.S
+> 
+> diff --git a/arch/arm/mach-shmobile/Makefile b/arch/arm/mach-shmobile/Makefile
+> index 64611a1b4276517b..de735444e9f715fd 100644
+> --- a/arch/arm/mach-shmobile/Makefile
+> +++ b/arch/arm/mach-shmobile/Makefile
+> @@ -28,6 +28,7 @@ obj-$(CONFIG_ARCH_R8A7793)	+= regulator-quirk-rcar-gen2.o
+>  
+>  # SMP objects
+>  smp-y				:= $(cpu-y)
+> +smp-$(CONFIG_ARCH_RCAR_GEN2)	+= headsmp-apmu.o
+>  smp-$(CONFIG_ARCH_SH73A0)	+= smp-sh73a0.o headsmp-scu.o platsmp-scu.o
+>  smp-$(CONFIG_ARCH_R8A7779)	+= smp-r8a7779.o headsmp-scu.o platsmp-scu.o
+>  smp-$(CONFIG_ARCH_R8A7790)	+= smp-r8a7790.o
+> diff --git a/arch/arm/mach-shmobile/common.h b/arch/arm/mach-shmobile/common.h
+> index 1a8f7b3ab449db56..6792a07bce761aab 100644
+> --- a/arch/arm/mach-shmobile/common.h
+> +++ b/arch/arm/mach-shmobile/common.h
+> @@ -11,6 +11,7 @@ extern void shmobile_smp_hook(unsigned int cpu, unsigned long fn,
+>  			      unsigned long arg);
+>  extern bool shmobile_smp_cpu_can_disable(unsigned int cpu);
+>  extern bool shmobile_smp_init_fallback_ops(void);
+> +extern void shmobile_boot_apmu(void);
+>  extern void shmobile_boot_scu(void);
+>  extern void shmobile_smp_scu_prepare_cpus(phys_addr_t scu_base_phys,
+>  					  unsigned int max_cpus);
+> diff --git a/arch/arm/mach-shmobile/headsmp-apmu.S b/arch/arm/mach-shmobile/headsmp-apmu.S
+> new file mode 100644
+> index 0000000000000000..52516d81ce98384c
+> --- /dev/null
+> +++ b/arch/arm/mach-shmobile/headsmp-apmu.S
+> @@ -0,0 +1,38 @@
+> +/*
+> + * SMP support for APMU based systems
+> + *
+> + * Copyright (C) 2014  Renesas Electronics Corporation
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#include <linux/linkage.h>
+> +
+> +ENTRY(shmobile_boot_apmu)
+> +	mrc	p15, 0, r0, c0, c0, 0		/* Get Main ID */
+> +	ubfx	r1, r0, #4, #4			/* r1=Lo 4bit of Primary Part */
+> +	cmp	r1, #0x7			/* 0x7 = CA7, 0xf = CA15 */
+> +	bne	1f
 
-Do we have to deal with the A15 parts here?
-We're not having issues with the A15 parts, so that's why I left it out.
+Why don't you deal with the A15 parts as well? And TBH, you'd be better
+off checking ID_PFR1 for both Generic Timers and Virtualization Extensions.
 
-I'm trying to understand what's different between A15 and A7, and why A7
-needs this code, while A15 apparently doesn't.
-I'm not seeing any obvious differences in the U-Boot sources handling
-e.g. r8a7791/koelsch (dual A15) vs. r8a7794/alt (dual A7).
+> +	/*
+> +	 * CA7 setup
+> +	 * CNTVOFF has to be initialized either from non-secure Hypervisor
+> +	 * mode or secure Monitor mode with SCR.NS==1. If TrustZone is enabled
+> +	 * then it should be handled by the secure code
+> +	 */
+> +	cps	0x16
 
-> off checking ID_PFR1 for both Generic Timers and Virtualization Extensions.
+It'd be worth adding a MONITOR_MODE macro instead of this raw value.
 
-Thank, I'll have a look at that...
+> +	mrc	p15, 0, r1, c1, c1, 0		/* get Secure Config */
+> +	orr	r0, r1, #1
+> +	mcr	p15, 0, r0, c1, c1, 0		/* Set Non Secure bit */
+> +	isb
+> +	mov	r0, #0
+> +	mcrr	p15, 4, r0, r0, c14		/* CNTVOFF = 0 */
+> +	isb
+> +	mcr	p15, 0, r1, c1, c1, 0		/* Set Secure bit */
+> +	isb
+> +	cps	0x13
 
->> +     /*
->> +      * CA7 setup
->> +      * CNTVOFF has to be initialized either from non-secure Hypervisor
->> +      * mode or secure Monitor mode with SCR.NS==1. If TrustZone is enabled
->> +      * then it should be handled by the secure code
->> +      */
->> +     cps     0x16
->
-> It'd be worth adding a MONITOR_MODE macro instead of this raw value.
+and use SVC_MODE here.
 
->> +     cps     0x13
->
-> and use SVC_MODE here.
+> +1:
+> +
+> +	b	secondary_startup
+> +ENDPROC(shmobile_boot_apmu)
+> diff --git a/arch/arm/mach-shmobile/platsmp-apmu.c b/arch/arm/mach-shmobile/platsmp-apmu.c
+> index 3ca2c13346f0cbc3..4422b615a6ee6045 100644
+> --- a/arch/arm/mach-shmobile/platsmp-apmu.c
+> +++ b/arch/arm/mach-shmobile/platsmp-apmu.c
+> @@ -204,7 +204,7 @@ void __init shmobile_smp_apmu_prepare_cpus(unsigned int max_cpus,
+>  int shmobile_smp_apmu_boot_secondary(unsigned int cpu, struct task_struct *idle)
+>  {
+>  	/* For this particular CPU register boot vector */
+> -	shmobile_smp_hook(cpu, __pa_symbol(secondary_startup), 0);
+> +	shmobile_smp_hook(cpu, __pa_symbol(shmobile_boot_apmu), 0);
+>  
+>  	return apmu_wrap(cpu, apmu_power_on);
+>  }
+> 
 
-Thanks, I'll have a look at those, too.
+Thanks,
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+	M.
+-- 
+Jazz is not dead. It just smells funny...
