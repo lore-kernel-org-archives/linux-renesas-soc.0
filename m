@@ -1,38 +1,32 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:41098 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751931AbdGELTe (ORCPT
+Received: from mail-io0-f196.google.com ([209.85.223.196]:34833 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751641AbdGDNV2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Jul 2017 07:19:34 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
-CC: "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        =?iso-8859-1?Q?Jan_Kl=F6tzke?= <jan.kloetzke@technisat.de>,
-        "Geert Uytterhoeven" <geert@linux-m68k.org>,
-        Simon Horman <horms@verge.net.au>,
-        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>,
-        KOUEI ABE <kouei.abe.cp@renesas.com>,
-        DUNG NGUYEN <dung.nguyen.aj@renesas.com>
-Subject: RE: [RFT] mmc: tmio: fix CMD12 (STOP) handling
-Date: Wed, 5 Jul 2017 11:19:29 +0000
-Message-ID: <TY1PR06MB0992844258B8EE4C70C403D2D8D40@TY1PR06MB0992.apcprd06.prod.outlook.com>
-References: <20170703192823.8116-1-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170703192823.8116-1-wsa+renesas@sang-engineering.com>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 4 Jul 2017 09:21:28 -0400
 MIME-Version: 1.0
+In-Reply-To: <20170703192823.8116-1-wsa+renesas@sang-engineering.com>
+References: <20170703192823.8116-1-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 4 Jul 2017 15:21:26 +0200
+Message-ID: <CAMuHMdU10uTRAeO3bJkG+7de+mP3okG3uPi4e3+hxmkq5Q9eYA@mail.gmail.com>
+Subject: Re: [RFT] mmc: tmio: fix CMD12 (STOP) handling
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Linux MMC List <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        =?UTF-8?B?SmFuIEtsw7Z0emtl?= <jan.kloetzke@technisat.de>,
+        Simon Horman <horms@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>,
+        Kouei Abe <kouei.abe.cp@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Wolfram-san,
+Hi Wolfram,
 
-> -----Original Message-----
-> From: Wolfram Sang
-> Sent: Tuesday, July 4, 2017 4:28 AM
->=20
+On Mon, Jul 3, 2017 at 9:28 PM, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
 > I always anticipated this code to be not correct, but now I had a test
 > case to prove it. According to all documentation I have, setting the
 > TMIO_STOP_STP bit ever only worked during block transfers. This bit is
@@ -47,74 +41,32 @@ Hi Wolfram-san,
 > recognized this issue as well yet had a more cautious solution to the
 > problem [1]. Which is understandable but makes CMD12 handling even more
 > complicated.
->=20
+>
 > Checked with a Renesas Salvator-X/M3-W which needed to send CMD12 when
 > retuning one of my SD cards.
->=20
-> [1]
-> https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas-bsp.git/com=
-mit/?id=3D2838a2ff8ca776f6d18b7fbbe75f3df8dd6
-> 4183a
->=20
+>
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas-bsp.git/commit/?id=2838a2ff8ca776f6d18b7fbbe75f3df8dd64183a
+>
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 > ---
->=20
-> So, this is a friendly call for further testing to make sure no regressio=
-ns
-> happen. I also put the authors of the BSP patch to CC to check if this pa=
-tch
+>
+> So, this is a friendly call for further testing to make sure no regressions
+> happen. I also put the authors of the BSP patch to CC to check if this patch
 > also matches their use case. I hope this is fine for these people, please
-> accept my apologies if not. I just really like to have your opinion on th=
-is
+> accept my apologies if not. I just really like to have your opinion on this
 > patch.
->=20
+>
 > Geert, Simon: any chance you can run this patch on your board farms?
->=20
-> In any case: as far as my understanding goes, if I am wrong with my
-> assumptions, the worst case is that for older SoCs CMD12 handling might b=
-ecome
-> a tad more inefficient because we now do in software what was expected to=
- be
-> done in hardware. However, I am quite sure that the HW feature was always
-> over-estimated and CMD12 support is simply broken. For my test case and t=
-he BSP
-> patch above, it definately was.
->=20
-> Thanks for any assistance,
->=20
->    Wolfram
->=20
->=20
->  drivers/mmc/host/tmio_mmc_core.c | 6 ------
->  1 file changed, 6 deletions(-)
->=20
-> diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc=
-_core.c
-> index 1851c883bfc82a..fbcd56c58bce24 100644
-> --- a/drivers/mmc/host/tmio_mmc_core.c
-> +++ b/drivers/mmc/host/tmio_mmc_core.c
-> @@ -355,12 +355,6 @@ static int tmio_mmc_start_command(struct tmio_mmc_ho=
-st *host,
->  	int c =3D cmd->opcode;
->  	u32 irq_mask =3D TMIO_MASK_CMD;
->=20
-> -	/* CMD12 is handled by hardware */
-> -	if (cmd->opcode =3D=3D MMC_STOP_TRANSMISSION && !cmd->arg) {
-> -		sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, TMIO_STOP_STP);
-> -		return 0;
-> -	}
-> -
 
-I and Dung-san are testing this patch.
-However, this original code doesn't run by our test cases.
-Do you know how this original code runs?
-Anyway, we will try to make a test case somehow now.
+I've booted all my boards with your patch applied, no visible differences.
 
-Best regards,
-Yoshihiro Shimoda
+Gr{oetje,eeting}s,
 
->  	switch (mmc_resp_type(cmd)) {
->  	case MMC_RSP_NONE: c |=3D RESP_NONE; break;
->  	case MMC_RSP_R1:
-> --
-> 2.11.0
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
