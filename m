@@ -1,44 +1,46 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:39784 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752865AbdGSI2G (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Jul 2017 04:28:06 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-watchdog@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
 Cc: linux-renesas-soc@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH v2 3/5] watchdog: renesas_wdt: don't round closest with get_timeleft
-Date: Wed, 19 Jul 2017 10:27:53 +0200
-Message-Id: <20170719082755.21733-4-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170719082755.21733-1-wsa+renesas@sang-engineering.com>
-References: <20170719082755.21733-1-wsa+renesas@sang-engineering.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 6/7] ARM: dts: r8a7793: Add Inter Connect RAM
+Date: Tue,  4 Jul 2017 17:23:17 +0200
+Message-Id: <1499181798-28859-7-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1499181798-28859-1-git-send-email-geert+renesas@glider.be>
+References: <1499181798-28859-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should never return more time left than there actually is. So, switch
-to a plain divider instead of DIV_ROUND_CLOSEST.
+R-Car M2-N has 2 regions of Inter Connect RAM (72 + 4 KiB).
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/watchdog/renesas_wdt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a7793.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
-index 8437dd52153208..3763437cd0b015 100644
---- a/drivers/watchdog/renesas_wdt.c
-+++ b/drivers/watchdog/renesas_wdt.c
-@@ -92,7 +92,7 @@ static unsigned int rwdt_get_timeleft(struct watchdog_device *wdev)
- 	struct rwdt_priv *priv = watchdog_get_drvdata(wdev);
- 	u16 val = readw_relaxed(priv->base + RWTCNT);
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index 13b980f27bbc885f..bc6a44272f555215 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -848,6 +848,16 @@
+ 		status = "disabled";
+ 	};
  
--	return DIV_ROUND_CLOSEST(65536 - val, priv->clks_per_sec);
-+	return (65536 - val) / priv->clks_per_sec;
- }
- 
- static const struct watchdog_info rwdt_ident = {
++	icram0:	sram@e63a0000 {
++		compatible = "mmio-sram";
++		reg = <0 0xe63a0000 0 0x12000>;
++	};
++
++	icram1:	sram@e63c0000 {
++		compatible = "mmio-sram";
++		reg = <0 0xe63c0000 0 0x1000>;
++	};
++
+ 	ether: ethernet@ee700000 {
+ 		compatible = "renesas,ether-r8a7793";
+ 		reg = <0 0xee700000 0 0x400>;
 -- 
-2.11.0
+2.7.4
+
