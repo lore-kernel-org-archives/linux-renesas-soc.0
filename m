@@ -1,51 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f67.google.com ([209.85.214.67]:34437 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752480AbdGEJnr (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:58178 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752357AbdGDPX0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Jul 2017 05:43:47 -0400
-Received: by mail-it0-f67.google.com with SMTP id o202so13559783itc.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 05 Jul 2017 02:43:46 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1498576541-15384-1-git-send-email-kbingham@kernel.org>
-References: <1498576541-15384-1-git-send-email-kbingham@kernel.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 5 Jul 2017 11:43:45 +0200
-Message-ID: <CAMuHMdWbxsj_=quOaZfEBfhN3geBhcYaOkBXUAeBazCM601uNA@mail.gmail.com>
-Subject: Re: [PATCHv6] arm64: dts: renesas: salvator-x: Add ADV7482 support
-To: Kieran Bingham <kbingham@kernel.org>
-Cc: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 4 Jul 2017 11:23:26 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 5/7] ARM: dts: r8a7792: Add Inter Connect RAM
+Date: Tue,  4 Jul 2017 17:23:16 +0200
+Message-Id: <1499181798-28859-6-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1499181798-28859-1-git-send-email-geert+renesas@glider.be>
+References: <1499181798-28859-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Jun 27, 2017 at 5:15 PM, Kieran Bingham <kbingham@kernel.org> wrote:
-> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
->
-> The Salvator boards use an ADV7482 receiver for HDMI and CVBS inputs.
->
-> Provide ADV7482 node on the i2c4 bus, along with connectors for the
-> hdmi and cvbs inputs, and link to the csi20 and csi40 nodes as outputs.
->
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->
-> ---
->
-> Submitting this directly to Niklas, as these changes depend on his VIN
-> DT patches, and has agreed to 'take' this patch on to that series.
+R-Car V2H has 2 regions of Inter Connect RAM (72 + 4 KiB).
 
-Yeah, haven't seen any patches yet adding "csi20" and "csi40" nodes ;-)
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/boot/dts/r8a7792.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
+index 0efecb232ee52ce0..136a86ac64974adb 100644
+--- a/arch/arm/boot/dts/r8a7792.dtsi
++++ b/arch/arm/boot/dts/r8a7792.dtsi
+@@ -465,6 +465,16 @@
+ 			status = "disabled";
+ 		};
+ 
++		icram0:	sram@e63a0000 {
++			compatible = "mmio-sram";
++			reg = <0 0xe63a0000 0 0x12000>;
++		};
++
++		icram1:	sram@e63c0000 {
++			compatible = "mmio-sram";
++			reg = <0 0xe63c0000 0 0x1000>;
++		};
++
+ 		sdhi0: sd@ee100000 {
+ 			compatible = "renesas,sdhi-r8a7792";
+ 			reg = <0 0xee100000 0 0x328>;
+-- 
+2.7.4
