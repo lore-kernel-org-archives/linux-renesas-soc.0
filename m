@@ -1,50 +1,101 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:54000 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751894AbdGBVqD (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:39654 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752247AbdGDPlv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 2 Jul 2017 17:46:03 -0400
-Date: Sun, 2 Jul 2017 16:46:00 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Cc: horms@verge.net.au, bhelgaas@google.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] PCI: rcar-gen2: make of_device_ids const
-Message-ID: <20170702214600.GH18324@bhelgaas-glaptop.roam.corp.google.com>
-References: <99e5ddc3b23962b22740dc93113d178f6f98df2f.1498210098.git.arvind.yadav.cs@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <99e5ddc3b23962b22740dc93113d178f6f98df2f.1498210098.git.arvind.yadav.cs@gmail.com>
+        Tue, 4 Jul 2017 11:41:51 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Simon Horman <horms@verge.net.au>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/9] ARM: shmobile: rcar-gen2: Obtain jump stub region from DT
+Date: Tue,  4 Jul 2017 17:41:36 +0200
+Message-Id: <1499182903-31339-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1499182903-31339-1-git-send-email-geert+renesas@glider.be>
+References: <1499182903-31339-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Jun 23, 2017 at 02:59:52PM +0530, Arvind Yadav wrote:
-> of_device_ids are not supposed to change at runtime. All functions
-> working with of_device_ids provided by <linux/of.h> work with const
-> of_device_ids. So mark the non-const structs as const.
-> 
-> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+Add support for obtaining from DT the SRAM region to store the jump stub
+for CPU core bringup, according to the renesas,smp-sram DT bindings.
 
-Applied with acks from Simon & Geert to pci/host-rcar for v4.13, thanks!
+If no region is specified in DT, the code falls back to hardcoded ICRAM1
+as before, to maintain backwards compatibility.
 
-> ---
->  drivers/pci/host/pci-rcar-gen2.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/host/pci-rcar-gen2.c b/drivers/pci/host/pci-rcar-gen2.c
-> index 8534859..6f87968 100644
-> --- a/drivers/pci/host/pci-rcar-gen2.c
-> +++ b/drivers/pci/host/pci-rcar-gen2.c
-> @@ -429,7 +429,7 @@ static int rcar_pci_probe(struct platform_device *pdev)
->  	return 0;
->  }
->  
-> -static struct of_device_id rcar_pci_of_match[] = {
-> +static const struct of_device_id rcar_pci_of_match[] = {
->  	{ .compatible = "renesas,pci-r8a7790", },
->  	{ .compatible = "renesas,pci-r8a7791", },
->  	{ .compatible = "renesas,pci-r8a7794", },
-> -- 
-> 1.9.1
-> 
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/mach-shmobile/pm-rcar-gen2.c | 33 ++++++++++++++++++++++++++++++---
+ 1 file changed, 30 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/mach-shmobile/pm-rcar-gen2.c b/arch/arm/mach-shmobile/pm-rcar-gen2.c
+index 0178da7ace82dcbd..e5f215c8b218100a 100644
+--- a/arch/arm/mach-shmobile/pm-rcar-gen2.c
++++ b/arch/arm/mach-shmobile/pm-rcar-gen2.c
+@@ -11,7 +11,9 @@
+  */
+ 
+ #include <linux/kernel.h>
++#include <linux/ioport.h>
+ #include <linux/of.h>
++#include <linux/of_address.h>
+ #include <linux/smp.h>
+ #include <linux/soc/renesas/rcar-sysc.h>
+ #include <asm/io.h>
+@@ -69,8 +71,9 @@ void __init rcar_gen2_pm_init(void)
+ 	struct device_node *np, *cpus;
+ 	bool has_a7 = false;
+ 	bool has_a15 = false;
+-	phys_addr_t boot_vector_addr = ICRAM1;
++	struct resource res;
+ 	u32 syscier = 0;
++	int error;
+ 
+ 	if (once++)
+ 		return;
+@@ -91,14 +94,38 @@ void __init rcar_gen2_pm_init(void)
+ 	else if (of_machine_is_compatible("renesas,r8a7791"))
+ 		syscier = 0x00111003;
+ 
++	np = of_find_compatible_node(NULL, NULL, "renesas,smp-sram");
++	if (!np) {
++		/* No smp-sram in DT, fall back to hardcoded address */
++		res = (struct resource)DEFINE_RES_MEM(ICRAM1,
++						      shmobile_boot_size);
++		goto map;
++	}
++
++	error = of_address_to_resource(np, 0, &res);
++	if (error) {
++		pr_err("Failed to get smp-sram address: %d\n", error);
++		return;
++	}
++
++map:
+ 	/* RAM for jump stub, because BAR requires 256KB aligned address */
+-	p = ioremap_nocache(boot_vector_addr, shmobile_boot_size);
++	if (res.start & (256 * 1024 - 1) ||
++	    resource_size(&res) < shmobile_boot_size) {
++		pr_err("Invalid smp-sram region\n");
++		return;
++	}
++
++	p = ioremap(res.start, resource_size(&res));
++	if (!p)
++		return;
++
+ 	memcpy_toio(p, shmobile_boot_vector, shmobile_boot_size);
+ 	iounmap(p);
+ 
+ 	/* setup reset vectors */
+ 	p = ioremap_nocache(RST, 0x63);
+-	bar = phys_to_sbar(boot_vector_addr);
++	bar = phys_to_sbar(res.start);
+ 	if (has_a15) {
+ 		writel_relaxed(bar, p + CA15BAR);
+ 		writel_relaxed(bar | SBAR_BAREN, p + CA15BAR);
+-- 
+2.7.4
