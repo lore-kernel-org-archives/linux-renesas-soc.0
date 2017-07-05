@@ -1,12 +1,19 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:9808 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751637AbdGEL5W (ORCPT
+Received: from mail-it0-f65.google.com ([209.85.214.65]:34833 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752069AbdGEKJC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Jul 2017 07:57:22 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
+        Wed, 5 Jul 2017 06:09:02 -0400
+MIME-Version: 1.0
+In-Reply-To: <1498631315-15730-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1498631315-15730-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 5 Jul 2017 12:09:00 +0200
+Message-ID: <CAMuHMdV1QvFAD3h7u0rL3-hx6OMRmxdvcj_jUo-ewdCHmcU0fQ@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: renesas: rcar-usb2-clock-sel: Add R-Car USB 2.0
+ clock selector PHY
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -14,115 +21,149 @@ CC: Michael Turquette <mturquette@baylibre.com>,
         linux-clk <linux-clk@vger.kernel.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH v2] clk: renesas: rcar-usb2-clock-sel: Add R-Car USB 2.0
- clock selector PHY
-Date: Wed, 5 Jul 2017 11:57:17 +0000
-Message-ID: <TY1PR06MB09928B28AAA01C47471B6969D8D40@TY1PR06MB0992.apcprd06.prod.outlook.com>
-References: <1498631315-15730-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <CAMuHMdV1QvFAD3h7u0rL3-hx6OMRmxdvcj_jUo-ewdCHmcU0fQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdV1QvFAD3h7u0rL3-hx6OMRmxdvcj_jUo-ewdCHmcU0fQ@mail.gmail.com>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQtc2FuLA0KDQo+IEZyb206IEdlZXJ0IFV5dHRlcmhvZXZlbg0KPiBTZW50OiBXZWRu
-ZXNkYXksIEp1bHkgNSwgMjAxNyA3OjA5IFBNDQo+IA0KPiBIaSBTaW1vZGEtc2FuLA0KPiANCj4g
-T24gV2VkLCBKdW4gMjgsIDIwMTcgYXQgODoyOCBBTSwgWW9zaGloaXJvIFNoaW1vZGENCj4gPHlv
-c2hpaGlyby5zaGltb2RhLnVoQHJlbmVzYXMuY29tPiB3cm90ZToNCj4gPiBSLUNhciBVU0IgMi4w
-IGNvbnRyb2xsZXIgY2FuIGNoYW5nZSB0aGUgY2xvY2sgc291cmNlIGZyb20gYW4gb3NjaWxsYXRv
-cg0KPiA+IHRvIGFuIGV4dGVybmFsIGNsb2NrIHZpYSBhIHJlZ2lzdGVyLiBTbywgdGhpcyBwYXRj
-aCBhZGRzIHN1cHBvcnQNCj4gPiB0aGUgY2xvY2sgc291cmNlIHNlbGVjdG9yIGFzIGEgY2xvY2sg
-ZHJpdmVyLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogWW9zaGloaXJvIFNoaW1vZGEgPHlvc2hp
-aGlyby5zaGltb2RhLnVoQHJlbmVzYXMuY29tPg0KPiANCj4gVGhhbmtzIGZvciB5b3VyIHBhdGNo
-IQ0KDQpUaGFuayB5b3UgdmVyeSBtdWNoIGZvciB0aGUgY29tbWVudHMhDQoNCj4gPiAtLS0gL2Rl
-di9udWxsDQo+ID4gKysrIGIvZHJpdmVycy9jbGsvcmVuZXNhcy9yY2FyLXVzYjItY2xvY2stc2Vs
-LmMNCj4gDQo+ID4gK3N0YXRpYyB2b2lkIHVzYjJfY2xvY2tfc2VsX2VuYWJsZV9leHRhbF9vbmx5
-KHN0cnVjdCB1c2IyX2Nsb2NrX3NlbF9wcml2ICpwcml2KQ0KPiA+ICt7DQo+ID4gKyAgICAgICB1
-MTYgdmFsID0gcmVhZHcocHJpdi0+YmFzZSArIFVTQjIwX0NMS1NFVDApOw0KPiA+ICsNCj4gPiAr
-ICAgICAgIHByX2RlYnVnKCIlczogZW50ZXIgJWQgJWQgJXhcbiIsIF9fZnVuY19fLA0KPiA+ICsg
-ICAgICAgICAgICAgICAgcHJpdi0+ZXh0YWwsIHByaXYtPnh0YWwsIHZhbCk7DQo+ID4gKw0KPiA+
-ICsgICAgICAgaWYgKHByaXYtPmV4dGFsICYmICFwcml2LT54dGFsICYmIHZhbCAhPSBDTEtTRVQw
-X0VYVEFMX09OTFkpDQo+ID4gKyAgICAgICAgICAgICAgIHdyaXRldyhDTEtTRVQwX0VYVEFMX09O
-TFksIHByaXYtPmJhc2UgKyBVU0IyMF9DTEtTRVQwKTsNCj4gPiArfQ0KPiA+ICsNCj4gPiArc3Rh
-dGljIHZvaWQgdXNiMl9jbG9ja19zZWxfZGlzYWJsZV9leHRhbF9vbmx5KHN0cnVjdCB1c2IyX2Ns
-b2NrX3NlbF9wcml2ICpwcml2KQ0KPiA+ICt7DQo+ID4gKyAgICAgICBpZiAocHJpdi0+ZXh0YWwg
-JiYgIXByaXYtPnh0YWwpDQo+ID4gKyAgICAgICAgICAgICAgIHdyaXRldyhDTEtTRVQwX1BSSVZB
-VEUsIHByaXYtPmJhc2UgKyBVU0IyMF9DTEtTRVQwKTsNCj4gPiArfQ0KPiA+ICsNCj4gPiArc3Rh
-dGljIGludCB1c2IyX2Nsb2NrX3NlbF9lbmFibGUoc3RydWN0IGNsa19odyAqaHcpDQo+ID4gK3sN
-Cj4gPiArICAgICAgIHVzYjJfY2xvY2tfc2VsX2VuYWJsZV9leHRhbF9vbmx5KHRvX3ByaXYoaHcp
-KTsNCj4gPiArDQo+ID4gKyAgICAgICByZXR1cm4gMDsNCj4gPiArfQ0KPiA+ICsNCj4gPiArc3Rh
-dGljIHZvaWQgdXNiMl9jbG9ja19zZWxfZGlzYWJsZShzdHJ1Y3QgY2xrX2h3ICpodykNCj4gPiAr
-ew0KPiA+ICsgICAgICAgdXNiMl9jbG9ja19zZWxfZGlzYWJsZV9leHRhbF9vbmx5KHRvX3ByaXYo
-aHcpKTsNCj4gPiArfQ0KPiA+ICsNCj4gPiArLyoNCj4gPiArICogVGhpcyBtb2R1bGUgc2VlbXMg
-YSBtdXgsIGJ1dCB0aGlzIGRyaXZlciBhc3N1bWVzIGEgZ2F0ZSBiZWNhdXNlDQo+ID4gKyAqIGVo
-Y2kvb2hjaSBwbGF0Zm9ybSBkcml2ZXJzIGRvbid0IHN1cHBvcnQgY2xrX3NldF9wYXJlbnQoKSBm
-b3Igbm93Lg0KPiA+ICsgKiBJZiB0aGlzIGRyaXZlciBhY3RzIGFzIGEgZ2F0ZSwgZWhjaS9vaGNp
-LXBsYXRmb3JtIGRyaXZlcnMgZG9uJ3QgbmVlZA0KPiA+ICsgKiBhbnkgbW9kaWZpY2F0aW9uLg0K
-PiA+ICsgKi8NCj4gPiArc3RhdGljIGNvbnN0IHN0cnVjdCBjbGtfb3BzIHVzYjJfY2xvY2tfc2Vs
-X2Nsb2NrX29wcyA9IHsNCj4gPiArICAgICAgIC5lbmFibGUgPSB1c2IyX2Nsb2NrX3NlbF9lbmFi
-bGUsDQo+ID4gKyAgICAgICAuZGlzYWJsZSA9IHVzYjJfY2xvY2tfc2VsX2Rpc2FibGUsDQo+ID4g
-K307DQo+IA0KPiBTbyB5b3UgZG8gInNtYXJ0IG11eGluZyIgaW4gdGhlIGVuYWJsZSByb3V0aW5l
-IGFib3ZlPw0KDQpZZXMuDQoNCj4gPiArc3RhdGljIGludCBfX2luaXQgcmNhcl91c2IyX2Nsb2Nr
-X3NlbF9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQ0KPiA+ICt7DQo+ID4gKyAg
-ICAgICBzdHJ1Y3QgZGV2aWNlICpkZXYgPSAmcGRldi0+ZGV2Ow0KPiA+ICsgICAgICAgc3RydWN0
-IGRldmljZV9ub2RlICpucCA9IGRldi0+b2Zfbm9kZTsNCj4gPiArICAgICAgIHN0cnVjdCB1c2Iy
-X2Nsb2NrX3NlbF9wcml2ICpwcml2Ow0KPiA+ICsgICAgICAgc3RydWN0IHJlc291cmNlICpyZXM7
-DQo+ID4gKyAgICAgICBzdHJ1Y3QgY2xrICpjbGs7DQo+ID4gKyAgICAgICBzdHJ1Y3QgY2xrX2lu
-aXRfZGF0YSBpbml0Ow0KPiA+ICsgICAgICAgaW50IGVycm9yOw0KPiA+ICsNCj4gPiArICAgICAg
-IHByaXYgPSBkZXZtX2t6YWxsb2MoZGV2LCBzaXplb2YoKnByaXYpLCBHRlBfS0VSTkVMKTsNCj4g
-PiArICAgICAgIGlmICghcHJpdikNCj4gPiArICAgICAgICAgICAgICAgcmV0dXJuIC1FTk9NRU07
-DQo+ID4gKw0KPiA+ICsgICAgICAgcmVzID0gcGxhdGZvcm1fZ2V0X3Jlc291cmNlKHBkZXYsIElP
-UkVTT1VSQ0VfTUVNLCAwKTsNCj4gPiArICAgICAgIHByaXYtPmJhc2UgPSBkZXZtX2lvcmVtYXBf
-cmVzb3VyY2UoZGV2LCByZXMpOw0KPiA+ICsgICAgICAgaWYgKElTX0VSUihwcml2LT5iYXNlKSkN
-Cj4gPiArICAgICAgICAgICAgICAgcmV0dXJuIFBUUl9FUlIocHJpdi0+YmFzZSk7DQo+ID4gKw0K
-PiA+ICsgICAgICAgcHJpdi0+ZWhjaV9jbGsgPSBkZXZtX2Nsa19nZXQoZGV2LCAiZWhjaV9vaGNp
-Iik7DQo+ID4gKyAgICAgICBpZiAoIUlTX0VSUihwcml2LT5laGNpX2NsaykpIHsNCj4gPiArICAg
-ICAgICAgICAgICAgZXJyb3IgPSBjbGtfcHJlcGFyZV9lbmFibGUocHJpdi0+ZWhjaV9jbGspOw0K
-PiA+ICsgICAgICAgICAgICAgICBpZiAoZXJyb3IpDQo+ID4gKyAgICAgICAgICAgICAgICAgICAg
-ICAgcmV0dXJuIGVycm9yOw0KPiA+ICsgICAgICAgfQ0KPiA+ICsNCj4gPiArICAgICAgIGNsayA9
-IGRldm1fY2xrX2dldChkZXYsICJ1c2JfZXh0YWwiKTsNCj4gPiArICAgICAgIGlmICghSVNfRVJS
-KGNsaykgJiYgIWNsa19wcmVwYXJlX2VuYWJsZShjbGspKSB7DQo+ID4gKyAgICAgICAgICAgICAg
-IHByaXYtPmV4dGFsID0gISFjbGtfZ2V0X3JhdGUoY2xrKTsNCj4gPiArICAgICAgICAgICAgICAg
-Y2xrX2Rpc2FibGVfdW5wcmVwYXJlKGNsayk7DQo+ID4gKyAgICAgICB9DQo+ID4gKyAgICAgICBj
-bGsgPSBkZXZtX2Nsa19nZXQoZGV2LCAidXNiX3h0YWwiKTsNCj4gPiArICAgICAgIGlmICghSVNf
-RVJSKGNsaykgJiYgIWNsa19wcmVwYXJlX2VuYWJsZShjbGspKSB7DQo+ID4gKyAgICAgICAgICAg
-ICAgIHByaXYtPnh0YWwgPSAhIWNsa19nZXRfcmF0ZShjbGspOw0KPiA+ICsgICAgICAgICAgICAg
-ICBjbGtfZGlzYWJsZV91bnByZXBhcmUoY2xrKTsNCj4gPiArICAgICAgIH0NCj4gPiArDQo+ID4g
-KyAgICAgICBpZiAoIXByaXYtPmV4dGFsICYmICFwcml2LT5leHRhbCkgew0KPiA+ICsgICAgICAg
-ICAgICAgICBkZXZfZXJyKGRldiwgIlRoaXMgZHJpdmVyIG5lZWRzIHVzYl9leHRhbCBvciB1c2Jf
-eHRhbFxuIik7DQo+ID4gKyAgICAgICAgICAgICAgIHJldHVybiAtRU5PRU5UOw0KPiANCj4gUGVy
-aGFwcyBlbmFibGVkIGNsb2NrcyBzaG91bGQgYmUgZGlzYWJsZWQgb24gZXJyb3I/DQoNCk9vcHMh
-IEkgc2hvdWxkIGNhbGwgY2xrX2Rpc2FibGVfdW5wcmVwYXJlKHByaXYtPmVoY2lfY2xrKSBoZXJl
-Lg0KSSB3aWxsIGZpeCBpdC4NCg0KPiA+ICsgICAgICAgfQ0KPiA+ICsNCj4gPiArICAgICAgIHBs
-YXRmb3JtX3NldF9kcnZkYXRhKHBkZXYsIHByaXYpOw0KPiA+ICsgICAgICAgZGV2X3NldF9kcnZk
-YXRhKGRldiwgcHJpdik7DQo+ID4gKw0KPiA+ICsgICAgICAgaW5pdC5uYW1lID0gInJjYXJfdXNi
-Ml9jbG9ja19zZWwiOw0KPiA+ICsgICAgICAgaW5pdC5vcHMgPSAmdXNiMl9jbG9ja19zZWxfY2xv
-Y2tfb3BzOw0KPiA+ICsgICAgICAgaW5pdC5mbGFncyA9IENMS19JU19CQVNJQzsNCj4gPiArICAg
-ICAgIGluaXQucGFyZW50X25hbWVzID0gTlVMTDsNCj4gPiArICAgICAgIGluaXQubnVtX3BhcmVu
-dHMgPSAwOw0KPiA+ICsgICAgICAgcHJpdi0+aHcuaW5pdCA9ICZpbml0Ow0KPiA+ICsNCj4gPiAr
-ICAgICAgIGNsayA9IGNsa19yZWdpc3RlcihOVUxMLCAmcHJpdi0+aHcpOw0KPiA+ICsgICAgICAg
-aWYgKElTX0VSUihjbGspKQ0KPiA+ICsgICAgICAgICAgICAgICByZXR1cm4gUFRSX0VSUihjbGsp
-Ow0KPiANCj4gTGlrZXdpc2UuDQoNClNhbWUgaGVyZS4gU28sIEkgd2lsbCB1c2UgImdvdG8iIGZv
-ciBpdC4NCg0KPiA+ICsgICAgICAgZXJyb3IgPSBvZl9jbGtfYWRkX3Byb3ZpZGVyKG5wLCBvZl9j
-bGtfc3JjX3NpbXBsZV9nZXQsIGNsayk7DQo+ID4gKyAgICAgICBpZiAoZXJyb3IpDQo+ID4gKyAg
-ICAgICAgICAgICAgIHJldHVybiBlcnJvcjsNCj4gPiArDQo+ID4gKyAgICAgICByZXR1cm4gMDsN
-Cj4gDQo+IHJldHVybiBvZl9jbGtfYWRkX3Byb3ZpZGVyKG5wLCBvZl9jbGtfc3JjX3NpbXBsZV9n
-ZXQsIGNsayk7DQoNClRoYW5rcy4gSSB3aWxsIGZpeCBpdC4NCg0KPiA+ICsvKiBTaW5jZSB0aGlz
-IGRyaXZlciBuZWVkcyBvdGhlciBjY2YgZHJpdmVycywgdGhpcyB1c2VzIHN1YnN5c19pbml0Y2Fs
-bF9zeW5jICovDQo+ID4gK3N1YnN5c19pbml0Y2FsbF9zeW5jKHJjYXJfdXNiMl9jbG9ja19zZWxf
-aW5pdCk7DQo+IA0KPiBJIHN1cHBvc2UgdGhpcyBpcyBhIHdvcmthcm91bmQgZm9yIHRoZSBsYWNr
-IG9mIHByb2JlIGRlZmVycmFsIHN1cHBvcnQgaW4gdGhlDQo+IFVTQiBzdWJzeXN0ZW0/DQoNClRo
-aXMgaXMgbXkgZmF1bHQuIEkgYWRkZWQgInBvd2VyLWRvbWFpbnMiIHByb3BlcnR5IGludG8gdGhp
-cyBkZXZpY2UncyBub2RlLg0KQWZ0ZXIgSSByZW1vdmUgdGhlIHBvd2VyLWRvbWFpbnMgbGlrZSB0
-aGUgY3BnIG5vZGUsIHRoaXMgZHJpdmVyIGNhbiB1c2Ugc3Vic3lzX2luaXRjYWxsKCkNCmluc3Rl
-YWQgb2Ygc3Vic3lzX2luaXRjYWxsX3N5bmMoKS4NCg0KQmVzdCByZWdhcmRzLA0KWW9zaGloaXJv
-IFNoaW1vZGENCg0KPiBHcntvZXRqZSxlZXRpbmd9cywNCj4gDQo+ICAgICAgICAgICAgICAgICAg
-ICAgICAgIEdlZXJ0DQo+IA0KPiAtLQ0KPiBHZWVydCBVeXR0ZXJob2V2ZW4gLS0gVGhlcmUncyBs
-b3RzIG9mIExpbnV4IGJleW9uZCBpYTMyIC0tIGdlZXJ0QGxpbnV4LW02OGsub3JnDQo+IA0KPiBJ
-biBwZXJzb25hbCBjb252ZXJzYXRpb25zIHdpdGggdGVjaG5pY2FsIHBlb3BsZSwgSSBjYWxsIG15
-c2VsZiBhIGhhY2tlci4gQnV0DQo+IHdoZW4gSSdtIHRhbGtpbmcgdG8gam91cm5hbGlzdHMgSSBq
-dXN0IHNheSAicHJvZ3JhbW1lciIgb3Igc29tZXRoaW5nIGxpa2UgdGhhdC4NCj4gICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAtLSBMaW51cyBUb3J2YWxkcw0K
+Hi Simoda-san,
+
+On Wed, Jun 28, 2017 at 8:28 AM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> R-Car USB 2.0 controller can change the clock source from an oscillator
+> to an external clock via a register. So, this patch adds support
+> the clock source selector as a clock driver.
+>
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+
+Thanks for your patch!
+
+> --- /dev/null
+> +++ b/drivers/clk/renesas/rcar-usb2-clock-sel.c
+
+> +static void usb2_clock_sel_enable_extal_only(struct usb2_clock_sel_priv *priv)
+> +{
+> +       u16 val = readw(priv->base + USB20_CLKSET0);
+> +
+> +       pr_debug("%s: enter %d %d %x\n", __func__,
+> +                priv->extal, priv->xtal, val);
+> +
+> +       if (priv->extal && !priv->xtal && val != CLKSET0_EXTAL_ONLY)
+> +               writew(CLKSET0_EXTAL_ONLY, priv->base + USB20_CLKSET0);
+> +}
+> +
+> +static void usb2_clock_sel_disable_extal_only(struct usb2_clock_sel_priv *priv)
+> +{
+> +       if (priv->extal && !priv->xtal)
+> +               writew(CLKSET0_PRIVATE, priv->base + USB20_CLKSET0);
+> +}
+> +
+> +static int usb2_clock_sel_enable(struct clk_hw *hw)
+> +{
+> +       usb2_clock_sel_enable_extal_only(to_priv(hw));
+> +
+> +       return 0;
+> +}
+> +
+> +static void usb2_clock_sel_disable(struct clk_hw *hw)
+> +{
+> +       usb2_clock_sel_disable_extal_only(to_priv(hw));
+> +}
+> +
+> +/*
+> + * This module seems a mux, but this driver assumes a gate because
+> + * ehci/ohci platform drivers don't support clk_set_parent() for now.
+> + * If this driver acts as a gate, ehci/ohci-platform drivers don't need
+> + * any modification.
+> + */
+> +static const struct clk_ops usb2_clock_sel_clock_ops = {
+> +       .enable = usb2_clock_sel_enable,
+> +       .disable = usb2_clock_sel_disable,
+> +};
+
+So you do "smart muxing" in the enable routine above?
+
+> +static int __init rcar_usb2_clock_sel_probe(struct platform_device *pdev)
+> +{
+> +       struct device *dev = &pdev->dev;
+> +       struct device_node *np = dev->of_node;
+> +       struct usb2_clock_sel_priv *priv;
+> +       struct resource *res;
+> +       struct clk *clk;
+> +       struct clk_init_data init;
+> +       int error;
+> +
+> +       priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> +       if (!priv)
+> +               return -ENOMEM;
+> +
+> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +       priv->base = devm_ioremap_resource(dev, res);
+> +       if (IS_ERR(priv->base))
+> +               return PTR_ERR(priv->base);
+> +
+> +       priv->ehci_clk = devm_clk_get(dev, "ehci_ohci");
+> +       if (!IS_ERR(priv->ehci_clk)) {
+> +               error = clk_prepare_enable(priv->ehci_clk);
+> +               if (error)
+> +                       return error;
+> +       }
+> +
+> +       clk = devm_clk_get(dev, "usb_extal");
+> +       if (!IS_ERR(clk) && !clk_prepare_enable(clk)) {
+> +               priv->extal = !!clk_get_rate(clk);
+> +               clk_disable_unprepare(clk);
+> +       }
+> +       clk = devm_clk_get(dev, "usb_xtal");
+> +       if (!IS_ERR(clk) && !clk_prepare_enable(clk)) {
+> +               priv->xtal = !!clk_get_rate(clk);
+> +               clk_disable_unprepare(clk);
+> +       }
+> +
+> +       if (!priv->extal && !priv->extal) {
+> +               dev_err(dev, "This driver needs usb_extal or usb_xtal\n");
+> +               return -ENOENT;
+
+Perhaps enabled clocks should be disabled on error?
+
+> +       }
+> +
+> +       platform_set_drvdata(pdev, priv);
+> +       dev_set_drvdata(dev, priv);
+> +
+> +       init.name = "rcar_usb2_clock_sel";
+> +       init.ops = &usb2_clock_sel_clock_ops;
+> +       init.flags = CLK_IS_BASIC;
+> +       init.parent_names = NULL;
+> +       init.num_parents = 0;
+> +       priv->hw.init = &init;
+> +
+> +       clk = clk_register(NULL, &priv->hw);
+> +       if (IS_ERR(clk))
+> +               return PTR_ERR(clk);
+
+Likewise.
+
+> +       error = of_clk_add_provider(np, of_clk_src_simple_get, clk);
+> +       if (error)
+> +               return error;
+> +
+> +       return 0;
+
+return of_clk_add_provider(np, of_clk_src_simple_get, clk);
+
+> +/* Since this driver needs other ccf drivers, this uses subsys_initcall_sync */
+> +subsys_initcall_sync(rcar_usb2_clock_sel_init);
+
+I suppose this is a workaround for the lack of probe deferral support in the
+USB subsystem?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
