@@ -1,51 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f52.google.com ([209.85.214.52]:37899 "EHLO
-        mail-it0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750871AbdGENpp (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:62624 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752546AbdGENPv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Jul 2017 09:45:45 -0400
-MIME-Version: 1.0
-In-Reply-To: <1499259711-56175-3-git-send-email-biju.das@bp.renesas.com>
-References: <1499259711-56175-1-git-send-email-biju.das@bp.renesas.com> <1499259711-56175-3-git-send-email-biju.das@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 5 Jul 2017 15:45:43 +0200
-Message-ID: <CAMuHMdUAWXzdsp0NujnhKpajmv11aGZNeAA0PURUA1fP9NCrAw@mail.gmail.com>
-Subject: Re: [PATCH v 2/2] ARM: shmobile: defconfig: Enable Ethernet AVB
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
+        Wed, 5 Jul 2017 09:15:51 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Russell King <linux@armlinux.org.uk>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Chris Paterson <chris.paterson2@renesas.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH v 2/2] ARM: shmobile: defconfig: Enable Ethernet AVB
+Date: Wed,  5 Jul 2017 14:01:51 +0100
+Message-Id: <1499259711-56175-3-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1499259711-56175-1-git-send-email-biju.das@bp.renesas.com>
+References: <1499259711-56175-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Jul 5, 2017 at 3:01 PM, Biju Das <biju.das@bp.renesas.com> wrote:
-> The iWave RZ/G1M Q7 SOM supports Gigabit Ethernet Phy (Micrel KSZ9031MNX).
-> Gigabit Ethernet support is available in Renesas AVB driver.
-> To increase hardware support enable the driver in the shmobile_defconfig
-> multiplatform configuration.
->
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+The iWave RZ/G1M Q7 SOM supports Gigabit Ethernet Phy (Micrel KSZ9031MNX).
+Gigabit Ethernet support is available in Renesas AVB driver.
+To increase hardware support enable the driver in the shmobile_defconfig
+multiplatform configuration.
 
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+---
+ arch/arm/configs/shmobile_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
+index 3c66a42..d992911 100644
+--- a/arch/arm/configs/shmobile_defconfig
++++ b/arch/arm/configs/shmobile_defconfig
+@@ -83,6 +83,7 @@ CONFIG_NETDEVICES=y
+ # CONFIG_NET_VENDOR_MICREL is not set
+ # CONFIG_NET_VENDOR_NATSEMI is not set
+ CONFIG_SH_ETH=y
++CONFIG_RAVB=y
+ # CONFIG_NET_VENDOR_SEEQ is not set
+ CONFIG_SMSC911X=y
+ # CONFIG_NET_VENDOR_STMICRO is not set
+-- 
+1.9.1
