@@ -1,48 +1,50 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f65.google.com ([209.85.214.65]:35358 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751626AbdGEJl4 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Jul 2017 05:41:56 -0400
-MIME-Version: 1.0
-In-Reply-To: <20170627125438.44491-1-ramesh.shanmugasundaram@bp.renesas.com>
-References: <20170627125438.44491-1-ramesh.shanmugasundaram@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 5 Jul 2017 11:41:54 +0200
-Message-ID: <CAMuHMdX4T8p0rNzN8_tuobJ3AkQyrbJ9jh3uLr6Bx4wA=01tSg@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: r8a7796: Add DRIF support
-To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Russell King <linux@armlinux.org.uk>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
         Chris Paterson <chris.paterson2@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH v2 0/2] Add RZ/G1M (R8A7743) Ethernet AVB support
+Date: Wed,  5 Jul 2017 16:56:27 +0100
+Message-Id: <1499270189-29945-1-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <afcd181c-c805-8f3c-955f-652d001a03d4@cogentembedded.com>
+References: <afcd181c-c805-8f3c-955f-652d001a03d4@cogentembedded.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Jun 27, 2017 at 2:54 PM, Ramesh Shanmugasundaram
-<ramesh.shanmugasundaram@bp.renesas.com> wrote:
-> Adds the DRIF controller nodes for r8a7796.
->
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Hi All,
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This series aims to upstream the Ethernet AVB driver support for RZ/G1M (r8a7743) SoC . 
 
-Gr{oetje,eeting}s,
+The iWave RZ/G1M Qseven SOM supports Gigabit Ethernet Phy from Micrel(KSZ9031MNX).
+Gigabit Ethernet support is available in Renesas AVB driver.
 
-                        Geert
+This series has been tested against linux-next tag next-20170704.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Modifications:
+v1->v2
+-Dropped the driver update,as is it not needed due to the presence of family-specific compatible values.
+-Added Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be> for the DT binding patch
+-Added Acked-by: Geert Uytterhoeven <geert+renesas@glider.be> for the defconfig: Enable Ethernet AVB patch
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+History:
+-------
+[v1]: https://www.spinics.net/lists/arm-kernel/msg592366.html
+
+Biju Das (2):
+  ravb: Document binding for r8a7743 SoC
+  ARM: shmobile: defconfig: Enable Ethernet AVB
+
+ Documentation/devicetree/bindings/net/renesas,ravb.txt | 3 ++-
+ arch/arm/configs/shmobile_defconfig                    | 1 +
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+-- 
+1.9.1
+
