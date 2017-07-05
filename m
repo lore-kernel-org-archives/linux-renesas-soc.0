@@ -1,53 +1,47 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:42559 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751827AbdGaPCm (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 31 Jul 2017 11:02:42 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Renesas ARM64 Based SoC Defconfig Updates for v4.14
-Date: Mon, 31 Jul 2017 17:02:28 +0200
-Message-Id: <cover.1501509815.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Chris Paterson <chris.paterson2@renesas.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH v2 1/2] ravb: Document binding for r8a7743 SoC
+Date: Wed,  5 Jul 2017 16:56:28 +0100
+Message-Id: <1499270189-29945-2-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1499270189-29945-1-git-send-email-biju.das@bp.renesas.com>
+References: <afcd181c-c805-8f3c-955f-652d001a03d4@cogentembedded.com>
+ <1499270189-29945-1-git-send-email-biju.das@bp.renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+Add a new compatible string for the RZ/G1M (R8A7743) SoC.
 
-Please consider these Renesas ARM64 based SoC defconfig updates for v4.14.
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ Documentation/devicetree/bindings/net/renesas,ravb.txt | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/Documentation/devicetree/bindings/net/renesas,ravb.txt b/Documentation/devicetree/bindings/net/renesas,ravb.txt
+index b519503..bc692ab 100644
+--- a/Documentation/devicetree/bindings/net/renesas,ravb.txt
++++ b/Documentation/devicetree/bindings/net/renesas,ravb.txt
+@@ -4,7 +4,8 @@ This file provides information on what the device node for the Ethernet AVB
+ interface contains.
+ 
+ Required properties:
+-- compatible: "renesas,etheravb-r8a7790" if the device is a part of R8A7790 SoC.
++- compatible: "renesas,etheravb-r8a7743" if the device is a part of R8A7743 SoC.
++	      "renesas,etheravb-r8a7790" if the device is a part of R8A7790 SoC.
+ 	      "renesas,etheravb-r8a7791" if the device is a part of R8A7791 SoC.
+ 	      "renesas,etheravb-r8a7792" if the device is a part of R8A7792 SoC.
+ 	      "renesas,etheravb-r8a7793" if the device is a part of R8A7793 SoC.
+-- 
+1.9.1
 
-The following changes since commit 5771a8c08880cdca3bfb4a3fc6d309d6bba20877:
-
-  Linux v4.13-rc1 (2017-07-15 15:22:10 -0700)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm64-defconfig-for-v4.14
-
-for you to fetch changes up to 140cb4111a51381f51f6cdcc97113f2d04e5939b:
-
-  arm64: defconfig: compile ak4613 and renesas sound as modules (2017-07-27 15:51:58 +0200)
-
-----------------------------------------------------------------
-Renesas ARM64 Based SoC Defconfig Updates for v4.14
-
-* compile ak4613 and renesas sound as modules
-
-  This is intended to reduce the size of a kernel image compiled
-  using the defconfig. This is timely as it brings the kernel image
-  back below the size that can be booted in my environment, a limit
-  it crept over in v4.13-rc1.
-
-----------------------------------------------------------------
-Kuninori Morimoto (1):
-      arm64: defconfig: compile ak4613 and renesas sound as modules
-
- arch/arm64/configs/defconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
