@@ -1,57 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:42651 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751827AbdGaPDs (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:48850 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751637AbdGELye (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 31 Jul 2017 11:03:48 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 21/31] arm64: dts: r8a7796: Add missing second pair of DMA names to MSIOF nodes
-Date: Mon, 31 Jul 2017 17:03:13 +0200
-Message-Id: <71adc330aa7d88e7c64c66d28ff7b71ddab25465.1501509526.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1501509525.git.horms+renesas@verge.net.au>
-References: <cover.1501509525.git.horms+renesas@verge.net.au>
+        Wed, 5 Jul 2017 07:54:34 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: r8a7792: Add IMR-LX3/LSX3 clocks
+Date: Wed,  5 Jul 2017 13:54:30 +0200
+Message-Id: <1499255670-26721-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Add the module clocks for the Image Renderer Light (SRAM) Extended 3
+(IMR-LX3/LSX3) Distortion Correction Engines on R-Car V2H.
 
-MSIOF0 and MSIOF1 are tied to two DMA controllers through two pairs of
-DMA specifiers.  However, the second pair of corresponding DMA names was
-missing.
-
-Fixes: 80fab06e258da762 ("arm64: dts: r8a7796: Add all MSIOF nodes")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+To be queued in clk-renesas-for-v4.14.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 016cdd0bf289..ef1120f4e561 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -999,7 +999,7 @@
- 			clocks = <&cpg CPG_MOD 211>;
- 			dmas = <&dmac1 0x41>, <&dmac1 0x40>,
- 			       <&dmac2 0x41>, <&dmac2 0x40>;
--			dma-names = "tx", "rx";
-+			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
- 			resets = <&cpg 211>;
- 			#address-cells = <1>;
-@@ -1015,7 +1015,7 @@
- 			clocks = <&cpg CPG_MOD 210>;
- 			dmas = <&dmac1 0x43>, <&dmac1 0x42>,
- 			       <&dmac2 0x43>, <&dmac2 0x42>;
--			dma-names = "tx", "rx";
-+			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
- 			resets = <&cpg 210>;
- 			#address-cells = <1>;
+ drivers/clk/renesas/r8a7792-cpg-mssr.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/clk/renesas/r8a7792-cpg-mssr.c b/drivers/clk/renesas/r8a7792-cpg-mssr.c
+index a832b9b6f7b0dde8..7f85bbf20bf782b7 100644
+--- a/drivers/clk/renesas/r8a7792-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7792-cpg-mssr.c
+@@ -118,6 +118,13 @@ static const struct mssr_mod_clk r8a7792_mod_clks[] __initconst = {
+ 	DEF_MOD("vin1",			 810,	R8A7792_CLK_ZG),
+ 	DEF_MOD("vin0",			 811,	R8A7792_CLK_ZG),
+ 	DEF_MOD("etheravb",		 812,	R8A7792_CLK_HP),
++	DEF_MOD("imr-lx3",		 821,	R8A7792_CLK_ZG),
++	DEF_MOD("imr-lsx3-1",		 822,	R8A7792_CLK_ZG),
++	DEF_MOD("imr-lsx3-0",		 823,	R8A7792_CLK_ZG),
++	DEF_MOD("imr-lsx3-5",		 825,	R8A7792_CLK_ZG),
++	DEF_MOD("imr-lsx3-4",		 826,	R8A7792_CLK_ZG),
++	DEF_MOD("imr-lsx3-3",		 827,	R8A7792_CLK_ZG),
++	DEF_MOD("imr-lsx3-2",		 828,	R8A7792_CLK_ZG),
+ 	DEF_MOD("gyro-adc",		 901,	R8A7792_CLK_P),
+ 	DEF_MOD("gpio7",		 904,	R8A7792_CLK_CP),
+ 	DEF_MOD("gpio6",		 905,	R8A7792_CLK_CP),
 -- 
-2.1.4
+2.7.4
