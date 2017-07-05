@@ -1,18 +1,19 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:40382 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751929AbdGEVRz (ORCPT
+Received: from mail-io0-f196.google.com ([209.85.223.196]:35106 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751626AbdGEOPg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Jul 2017 17:17:55 -0400
-Date: Wed, 5 Jul 2017 14:17:53 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
+        Wed, 5 Jul 2017 10:15:36 -0400
+Date: Wed, 5 Jul 2017 09:15:32 -0500
+From: Rob Herring <robh@kernel.org>
 To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        geert+renesas@glider.be, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
+        mark.rutland@arm.com, geert+renesas@glider.be,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH v2] clk: renesas: rcar-usb2-clock-sel: Add R-Car USB 2.0
  clock selector PHY
-Message-ID: <20170705211753.GV22780@codeaurora.org>
+Message-ID: <20170705141532.slvvbxh33sgwotje@rob-hp-laptop>
 References: <1498631315-15730-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -21,41 +22,93 @@ In-Reply-To: <1498631315-15730-1-git-send-email-yoshihiro.shimoda.uh@renesas.com
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 06/28, Yoshihiro Shimoda wrote:
+On Wed, Jun 28, 2017 at 03:28:35PM +0900, Yoshihiro Shimoda wrote:
+> R-Car USB 2.0 controller can change the clock source from an oscillator
+> to an external clock via a register. So, this patch adds support
+> the clock source selector as a clock driver.
+> 
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> ---
+>  This patch is based on the renesas-drivers.git /
+> renesas-drivers-2017-06-27-v4.12-rc7 tag.
+> 
+>  Changes from v1:
+>   - Change this driver as a clock driver from a generic phy driver.
+>     https://patchwork.kernel.org/patch/9788697/
+>   - Remove "RFC" tag.
+> 
+>  .../bindings/clock/renesas,rcar-usb2-clock-sel.txt |  54 ++++++
+>  drivers/clk/renesas/Kconfig                        |   5 +
+>  drivers/clk/renesas/Makefile                       |   1 +
+>  drivers/clk/renesas/rcar-usb2-clock-sel.c          | 205 +++++++++++++++++++++
+>  4 files changed, 265 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.txt
+>  create mode 100644 drivers/clk/renesas/rcar-usb2-clock-sel.c
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.txt b/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.txt
+> new file mode 100644
+> index 0000000..75ccafc
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.txt
+> @@ -0,0 +1,54 @@
+> +* Renesas R-Car USB 2.0 clock selector
 > +
+> +This file provides information on what the device node for the R-Car USB 2.0
+> +clock selector.
 > +
-> +	platform_set_drvdata(pdev, priv);
-> +	dev_set_drvdata(dev, priv);
+> +If you connect an external clock to the USB_EXTAL pin only, you should set
+> +the clock rate to "usb_extal" node only.
+> +If you connect an oscillator to both the USB_XTAL and USB_EXTAL, this module
+> +is not needed because this is default setting. (Of course, you can set the
+> +clock rates to both "usb_extal" and "usb_xtal" nodes.
 > +
-> +	init.name = "rcar_usb2_clock_sel";
-> +	init.ops = &usb2_clock_sel_clock_ops;
-> +	init.flags = CLK_IS_BASIC;
+> +Case 1: An external clock connects to R-Car SoC
+> +        +----------+   +--- R-Car ---------------------+
+> +        |External  |---|USB_EXTAL ---> all usb channels|
+> +        |clock     |   |USB_XTAL                       |
+> +        +----------+   +-------------------------------+
+> +In this case, we need this driver with "usb_extal" clock.
+> +
+> +Case 2: An oscillator connects to R-Car SoC
+> +        +----------+   +--- R-Car ---------------------+
+> +        |Oscillator|---|USB_EXTAL -+-> all usb channels|
+> +        |          |---|USB_XTAL --+                   |
+> +        +----------+   +-------------------------------+
+> +In this case, we don't need this selector.
+> +
+> +Required properties:
+> +- compatible: "renesas,r8a7795-rcar-usb2-clock-sel" if the device is a part of
+> +	      an R8A7795 SoC.
+> +              "renesas,r8a7796-rcar-usb2-clock-sel" if the device if a part of
+> +	      an R8A7796 SoC.
+> +              "renesas,rcar-gen3-usb2-clock-sel" for a generic R-Car Gen3
+> +              compatible device.
+> +
+> +              When compatible with the generic version, nodes must list the
+> +              SoC-specific version corresponding to the platform first
+> +              followed by the generic version.
+> +
+> +- reg: offset and length of the USB 2.0 clock selector register block.
+> +- clocks: A list of phandles and specifier pairs.
+> +- clock-names: Name of the clocks.
+> + - The functional clock must be "ehci_ohci"
+> + - The USB_EXTAL clock pin must be "usb_extal"
+> + - The USB_XTAL clock pin must be "usb_xtal"
+> +- #clock-cells: Must be 0
+> +
+> +Exxample (R-Car H3):
+> +
+> +        usb2_clksel: clock-controller@e6590630 {
+> +                compatible = "renesas,r8a77950-rcar-usb2-clock-sel",
+> +                             "renesas,rcar-gen3-usb2-clock-sel";
+> +                reg = <0 0xe6590630 0 0x02>;
+> +                clocks = <&cpg CPG_MOD 703>, <&usb_extal>, <&usb_xtal>;
+> +                clock-names = "ehci_ohci", "usb_extal", "usb_xtal";
 
-Please drop CLK_IS_BASIC unless you need it.
+Missing #clock-cells
 
-> +	init.parent_names = NULL;
-> +	init.num_parents = 0;
-> +	priv->hw.init = &init;
-> +
-> +	clk = clk_register(NULL, &priv->hw);
-> +	if (IS_ERR(clk))
-> +		return PTR_ERR(clk);
-> +
-> +	error = of_clk_add_provider(np, of_clk_src_simple_get, clk);
+With that, for the binding:
 
-Can you use clk_hw_register() and of_clk_add_hw_provider()
-please?
+Acked-by: Rob Herring <robh@kernel.org>
 
-> +	if (error)
-> +		return error;
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct dev_pm_ops rcar_usb2_clock_sel_pm_ops = {
-> +	.suspend	= rcar_usb2_clock_sel_suspend,
-> +	.resume		= rcar_usb2_clock_sel_resume,
-> +};
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Rob
