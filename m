@@ -1,72 +1,120 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:48506 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752951AbdGFGiq (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:41098 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751931AbdGELTe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Jul 2017 02:38:46 -0400
-Date: Thu, 6 Jul 2017 08:38:43 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
+        Wed, 5 Jul 2017 07:19:34 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
+CC: "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>,
-        Jan =?utf-8?Q?Kl=C3=B6tzke?= <jan.kloetzke@technisat.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
+        =?iso-8859-1?Q?Jan_Kl=F6tzke?= <jan.kloetzke@technisat.de>,
+        "Geert Uytterhoeven" <geert@linux-m68k.org>,
         Simon Horman <horms@verge.net.au>,
         Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>,
         KOUEI ABE <kouei.abe.cp@renesas.com>,
         DUNG NGUYEN <dung.nguyen.aj@renesas.com>
-Subject: Re: [RFT] mmc: tmio: fix CMD12 (STOP) handling
-Message-ID: <20170706063843.GC1418@katana>
+Subject: RE: [RFT] mmc: tmio: fix CMD12 (STOP) handling
+Date: Wed, 5 Jul 2017 11:19:29 +0000
+Message-ID: <TY1PR06MB0992844258B8EE4C70C403D2D8D40@TY1PR06MB0992.apcprd06.prod.outlook.com>
 References: <20170703192823.8116-1-wsa+renesas@sang-engineering.com>
- <TY1PR06MB0992844258B8EE4C70C403D2D8D40@TY1PR06MB0992.apcprd06.prod.outlook.com>
+In-Reply-To: <20170703192823.8116-1-wsa+renesas@sang-engineering.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="t0UkRYy7tHLRMCai"
-Content-Disposition: inline
-In-Reply-To: <TY1PR06MB0992844258B8EE4C70C403D2D8D40@TY1PR06MB0992.apcprd06.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Wolfram-san,
 
---t0UkRYy7tHLRMCai
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> -----Original Message-----
+> From: Wolfram Sang
+> Sent: Tuesday, July 4, 2017 4:28 AM
+>=20
+> I always anticipated this code to be not correct, but now I had a test
+> case to prove it. According to all documentation I have, setting the
+> TMIO_STOP_STP bit ever only worked during block transfers. This bit is
+> like manually enforcing an autocmd12 during a so far seamless transfer.
+> It does NOT work when the block transfer had errors. It also does NOT
+> work with any other cmd except block commands. For all those, CMD12 has
+> to be treated like any other command. So, basically, we could use this
+> bit only for mrq->data->stop cmds. But for these, we happily use the
+> autocmd12 feature using the TMIO_STOP_SEC bit. As a result, the above
+> bit is not useful for us and we need to treat CMD12 as a regular cmd
+> always. Just remove the special handling code. Note that the BSP
+> recognized this issue as well yet had a more cautious solution to the
+> problem [1]. Which is understandable but makes CMD12 handling even more
+> complicated.
+>=20
+> Checked with a Renesas Salvator-X/M3-W which needed to send CMD12 when
+> retuning one of my SD cards.
+>=20
+> [1]
+> https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas-bsp.git/com=
+mit/?id=3D2838a2ff8ca776f6d18b7fbbe75f3df8dd6
+> 4183a
+>=20
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>=20
+> So, this is a friendly call for further testing to make sure no regressio=
+ns
+> happen. I also put the authors of the BSP patch to CC to check if this pa=
+tch
+> also matches their use case. I hope this is fine for these people, please
+> accept my apologies if not. I just really like to have your opinion on th=
+is
+> patch.
+>=20
+> Geert, Simon: any chance you can run this patch on your board farms?
+>=20
+> In any case: as far as my understanding goes, if I am wrong with my
+> assumptions, the worst case is that for older SoCs CMD12 handling might b=
+ecome
+> a tad more inefficient because we now do in software what was expected to=
+ be
+> done in hardware. However, I am quite sure that the HW feature was always
+> over-estimated and CMD12 support is simply broken. For my test case and t=
+he BSP
+> patch above, it definately was.
+>=20
+> Thanks for any assistance,
+>=20
+>    Wolfram
+>=20
+>=20
+>  drivers/mmc/host/tmio_mmc_core.c | 6 ------
+>  1 file changed, 6 deletions(-)
+>=20
+> diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc=
+_core.c
+> index 1851c883bfc82a..fbcd56c58bce24 100644
+> --- a/drivers/mmc/host/tmio_mmc_core.c
+> +++ b/drivers/mmc/host/tmio_mmc_core.c
+> @@ -355,12 +355,6 @@ static int tmio_mmc_start_command(struct tmio_mmc_ho=
+st *host,
+>  	int c =3D cmd->opcode;
+>  	u32 irq_mask =3D TMIO_MASK_CMD;
+>=20
+> -	/* CMD12 is handled by hardware */
+> -	if (cmd->opcode =3D=3D MMC_STOP_TRANSMISSION && !cmd->arg) {
+> -		sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, TMIO_STOP_STP);
+> -		return 0;
+> -	}
+> -
 
+I and Dung-san are testing this patch.
+However, this original code doesn't run by our test cases.
+Do you know how this original code runs?
+Anyway, we will try to make a test case somehow now.
 
-> I and Dung-san are testing this patch.
-> However, this original code doesn't run by our test cases.
-> Do you know how this original code runs?
-> Anyway, we will try to make a test case somehow now.
+Best regards,
+Yoshihiro Shimoda
 
-Thank you very much, Shimoda-san. I got it tested because a card needed
-re-tuning during a transfer.
-
-It might work if you manually induce an error bit in the driver
-somewhere. I'll try to find a good sport later, too. However, I am away
-=66rom my boards today and tomorrow.
-
-
---t0UkRYy7tHLRMCai
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlld2vMACgkQFA3kzBSg
-KbYDmw//XZjuQzyK0ZzGIApzQsZsRpwv7Yg7bJDFOXTTLzxDhhBbMZkyNCTF7+6p
-3+JklzKhBUxWEMtFq/O/vkx1vEuZrOv1ZWxwqIguvZMyfgFBRZy4wh3Il5U6KmCp
-tF4p08sb8UY5hlnH52eUUyzf82OZjfFpFDRxXU/KNpUfFs8/QhiIAHA4ZNRLQbon
-OM501uGHiKbJmRwY7LSTII6uK+I6ereoZKbtYjTyV26BrZ9rzW1HK2/rJVQ9DPWY
-ZWK8r3rFLKaOYOKOvri+wC7qpRxUxHodPivwOWHhmH9fwaYBTbbJOCX4E/XetTaL
-K60rqp1fZ10mrR503iHmXYA22yTw9rjncK+zcw1LkPj5qtpUvb1svPQg4JyyTRwK
-RnVHP7O3NMMBktEwhOSzs/o4hU48m5gAtuSpHyvtTVK5H2fcJfBAst6IDzwUoI3U
-7R6MscjdDHubiwRkzpa1OYR7P9kvqhi9Ml1Bg3h9WshDypGH1YcndzYS9PoiVz79
-EINpxII0aXKZEbINrwkmIt1AWFluhGjMo1ZKxlQsUVBCD68N7INu7uIcKHWyK8fQ
-1W6DiIDnc4YpKC9NAMKOyc1f1Ze/aqCwMAXgrnAco4/1tw62U5/QGN/InmEYV7c6
-hkKnKCFiIP6AdMg3NKhkxyHN+7XP/kcBs0I6e2a8XvfMIz0j5e0=
-=YNFx
------END PGP SIGNATURE-----
-
---t0UkRYy7tHLRMCai--
+>  	switch (mmc_resp_type(cmd)) {
+>  	case MMC_RSP_NONE: c |=3D RESP_NONE; break;
+>  	case MMC_RSP_R1:
+> --
+> 2.11.0
