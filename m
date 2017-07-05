@@ -1,34 +1,116 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:36919 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751322AbdGRM3v (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 18 Jul 2017 08:29:51 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <balbi@kernel.org>
-CC: <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 0/3] usb: gadget: udc: renesas_usb3: fixes for v4.13-rc1
-Date: Tue, 18 Jul 2017 21:26:39 +0900
-Message-ID: <1500380802-26930-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Return-Path: <devicetree-owner@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <af12382f-4953-44fd-8f61-0aad2c309476@arm.com>
+References: <1499187733-1430-1-git-send-email-geert+renesas@glider.be>
+ <1499187733-1430-2-git-send-email-geert+renesas@glider.be>
+ <2f7ef764-c511-9598-c136-13966f810c95@arm.com> <CAMuHMdXFAZ2Gvgk7oJhkQo7ygCKE_MPqtypccwqj9NTW30q57A@mail.gmail.com>
+ <af12382f-4953-44fd-8f61-0aad2c309476@arm.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 5 Jul 2017 12:12:30 +0200
+Message-ID: <CAMuHMdU7RCd=xK4ttTem0Ev-TfaN=ynDdt6dNikSb4dvW=UTDA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] ARM: shmobile: Add CA7 arch_timer initialization for
+ secondary CPUs
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms@verge.net.au>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch is based on the latest Felipe's usb.git / testing/fixes branch
-(The commit id = 4a71fcb8ac5f94c07bf47a43b13258a52e4fe3ad).
+Hi Marc,
 
-Yoshihiro Shimoda (3):
-  usb: gadget: udc: renesas_usb3: fix free size in
-    renesas_usb3_dma_free_prd()
-  usb: gadget: udc: renesas_usb3: fix zlp transfer by the dmac
-  usb: gadget: udc: renesas_usb3: protect usb3_ep->started in
-    usb3_start_pipen()
+On Wed, Jul 5, 2017 at 12:07 PM, Marc Zyngier <marc.zyngier@arm.com> wrote:
+> On 04/07/17 19:20, Geert Uytterhoeven wrote:
+>> On Tue, Jul 4, 2017 at 7:32 PM, Marc Zyngier <marc.zyngier@arm.com> wrote:
+>>> On 04/07/17 18:02, Geert Uytterhoeven wrote:
+>>>> On Cortex-A7, the arch timer CNTVOFF register is uninitialized.
+>>>> Hence when enabling SMP on r8a7794, the kernel log is spammed with:
+>>>>
+>>>>     WARNING: Underflow in clocksource 'arch_sys_counter' observed, time update ignored.
+>>>>            Please report this, consider using a different clocksource, if possible.
+>>>>            Your kernel is probably still fine.
+>>>>
+>>>> To fix this, wrap the standard secondary_startup routine inside a
+>>>> routine which initializes CNTVOFF when running on a Cortex-A7.
+>>>> As the only possibilities are Cortex-A7 or Cortex-A15, checking the low
+>>>> nibble of the Primary Part Number is sufficient.
+>>>>
+>>>> The initialization is identical to what is already done for the boot CPU
+>>>> since commit 9ce3fa6816c2fb59 ("ARM: shmobile: rcar-gen2: Add CA7
+>>>> arch_timer initialization for r8a7794").
+>>>
+>>> Humfff... Pretty horrible. Comments below.
+>>
+>> I know.  I suppose this should be done by the firmware/boot loader?
+>
+> That's what is normally expected.
+>
+>> But we have to live with firmware/boot loaders in the wild...
+>
+> Yeah, I can tell. It is a shame that firmware people didn't realize that
+> just because the old firmware seems to work on a new revision of the
+> architecture, it doesn't mean it does everything right for that
+> particular revision... Oh well.
+>
+>>>> --- /dev/null
+>>>> +++ b/arch/arm/mach-shmobile/headsmp-apmu.S
+>>>> @@ -0,0 +1,38 @@
+>>>> +/*
+>>>> + * SMP support for APMU based systems
+>>>> + *
+>>>> + * Copyright (C) 2014  Renesas Electronics Corporation
+>>>> + *
+>>>> + * This program is free software; you can redistribute it and/or modify
+>>>> + * it under the terms of the GNU General Public License version 2 as
+>>>> + * published by the Free Software Foundation.
+>>>> + */
+>>>> +
+>>>> +#include <linux/linkage.h>
+>>>> +
+>>>> +ENTRY(shmobile_boot_apmu)
+>>>> +     mrc     p15, 0, r0, c0, c0, 0           /* Get Main ID */
+>>>> +     ubfx    r1, r0, #4, #4                  /* r1=Lo 4bit of Primary Part */
+>>>> +     cmp     r1, #0x7                        /* 0x7 = CA7, 0xf = CA15 */
+>>>> +     bne     1f
+>>>
+>>> Why don't you deal with the A15 parts as well? And TBH, you'd be better
+>>> off checking ID_PFR1 for both Generic Timers and Virtualization Extensions.
+>>
+>> Do we have to deal with the A15 parts here?
+>> We're not having issues with the A15 parts, so that's why I left it out.
+>
+> Well, A15 has the exact same features as A7 when it comes to the timer,
+> and CNTVOFF definitely resets as UNKNOWN.
 
- drivers/usb/gadget/udc/renesas_usb3.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+IC.
 
--- 
-1.9.1
+>> I'm trying to understand what's different between A15 and A7, and why A7
+>> needs this code, while A15 apparently doesn't.
+>> I'm not seeing any obvious differences in the U-Boot sources handling
+>> e.g. r8a7791/koelsch (dual A15) vs. r8a7794/alt (dual A7).
+>
+> The UNKNOWN above might well be 0 on A15, but I wouldn't bet on it. If
+> nothing sets CNTVOFF on these systems, consider yourself lucky!
+
+OK.  That means I can just drop the Primary Part check, as this code path
+is exercised only on systems with Cortex-A15 and/or A7 CPU cores.
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
