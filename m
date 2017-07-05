@@ -1,60 +1,88 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Mark Brown <broonie@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>,
-        "mattw@codeaurora.org" <mattw@codeaurora.org>,
-        Mitchel Humpherys <mitchelh@codeaurora.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:7738 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750867AbdGEHZu (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 5 Jul 2017 03:25:50 -0400
+Date: Wed, 5 Jul 2017 10:25:44 +0300
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Sudeep Holla <sudeep.holla@arm.com>
+CC: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+        <u.kleine-koenig@pengutronix.de>,
+        "Dirk Behme" <dirk.behme@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        "Dirk Behme" <dirk.behme@de.bosch.com>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>
-Subject: RE: [PATCH v2 1/2] iopoll: Avoid namespace collision within macros &
- tidyup
-Date: Mon, 3 Jul 2017 09:55:55 +0000
-Message-ID: <KL1PR0601MB203830EA67621CA20520B03FC3D60@KL1PR0601MB2038.apcprd06.prod.outlook.com>
-References: <20170613133348.48044-1-ramesh.shanmugasundaram@bp.renesas.com>
- <20170613133348.48044-2-ramesh.shanmugasundaram@bp.renesas.com>
- <CAMuHMdVSBstPK55-36vJySKc-NAUyWKRMDYGgF4vBce07Pn0Ug@mail.gmail.com>
-In-Reply-To: <CAMuHMdVSBstPK55-36vJySKc-NAUyWKRMDYGgF4vBce07Pn0Ug@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: Clocks used by another OS/CPU (was: Re: [RFC PATCH] clk:
+ renesas: cpg-mssr: Add interface for critical core clocks)
+Message-ID: <20170705072544.GN14819@tbergstrom-lnx.Nvidia.com>
+References: <CAMuHMdW9+CNTTOVO4SRRUxuz3ajLbY2j1uG8b_RpHX52NPwXrQ@mail.gmail.com>
+ <CAL_JsqKGrZeR7z80beY_XEjqd5fEQQwPxusJ1FADoALgNE3fEg@mail.gmail.com>
+ <20170630202453.eh6vaehkap3as4np@pengutronix.de>
+ <8d86a9aa-1928-6b52-1487-d5fb9dae17f4@gmail.com>
+ <20170701181408.yuocymwtj5dgt74d@pengutronix.de>
+ <8d255a76-babe-312d-15b3-3474969f2410@arm.com>
+ <20170704073137.GG14819@tbergstrom-lnx.Nvidia.com>
+ <c1a323ee-a4ca-4f8d-b57a-398b7318694d@arm.com>
 MIME-Version: 1.0
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <c1a323ee-a4ca-4f8d-b57a-398b7318694d@arm.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNClRoYW5rcyBmb3IgdGhlIHJldmlldy4gUmVwbHlpbmcgdG8gdGhlIHRocmVh
-ZCB0byB1cGRhdGUgd2hhdCB3ZSBkaXNjdXNzZWQgaW4gSVJDIHNvbWV0aW1lIGJhY2suDQoNCj4g
-T24gVHVlLCBKdW4gMTMsIDIwMTcgYXQgMzozMyBQTSwgUmFtZXNoIFNoYW5tdWdhc3VuZGFyYW0N
-Cj4gPHJhbWVzaC5zaGFubXVnYXN1bmRhcmFtQGJwLnJlbmVzYXMuY29tPiB3cm90ZToNCj4gPiBS
-ZW5hbWVkIHZhcmlhYmxlICJ0aW1lb3V0IiB0byAiX190aW1lb3V0IiB0byBhdm9pZCBuYW1lc3Bh
-Y2UgY29sbGlzaW9uLg0KPiA+IFRpZHkgdXAgbWFjcm8gYXJndW1lbnRzIHdpdGggcGFyYW50aGVz
-aXMuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBSYW1lc2ggU2hhbm11Z2FzdW5kYXJhbQ0KPiA+
-IDxyYW1lc2guc2hhbm11Z2FzdW5kYXJhbUBicC5yZW5lc2FzLmNvbT4NCj4gDQo+IFRoYW5rcyBm
-b3IgeW91ciBwYXRjaGVzIQ0KPiANCj4gPiAtLS0gYS9pbmNsdWRlL2xpbnV4L2lvcG9sbC5oDQo+
-ID4gKysrIGIvaW5jbHVkZS9saW51eC9pb3BvbGwuaA0KPiA+IEBAIC00MiwxOCArNDIsMTkgQEAN
-Cj4gPiAgICovDQo+ID4gICNkZWZpbmUgcmVhZHhfcG9sbF90aW1lb3V0KG9wLCBhZGRyLCB2YWws
-IGNvbmQsIHNsZWVwX3VzLCB0aW1lb3V0X3VzKQ0KPiA+IFwgICh7IFwNCj4gPiAtICAgICAgIGt0
-aW1lX3QgdGltZW91dCA9IGt0aW1lX2FkZF91cyhrdGltZV9nZXQoKSwgdGltZW91dF91cyk7IFwN
-Cj4gPiArICAgICAgIGt0aW1lX3QgX190aW1lb3V0ID0ga3RpbWVfYWRkX3VzKGt0aW1lX2dldCgp
-LCB0aW1lb3V0X3VzKTsgXA0KPiANCj4gSSB0aGluayB0aW1lb3V0X3VzIHNob3VsZCBiZSB3aXRo
-aW4gcGFyZW50aGVzZXMsIHRvby4NCg0KSXQgaXMgbm90IHJlcXVpcmVkIGFzIGl0IGlzIHBhc3Nl
-ZCBhcyBhbiBmdW5jdGlvbiAoa3RpbWVfYWRkX3VzKSBhcmd1bWVudC4NCg0KPiANCj4gPiAgICAg
-ICAgIG1pZ2h0X3NsZWVwX2lmKHNsZWVwX3VzKTsgXA0KPiA+ICAgICAgICAgZm9yICg7OykgeyBc
-DQo+ID4gICAgICAgICAgICAgICAgICh2YWwpID0gb3AoYWRkcik7IFwNCj4gPiAgICAgICAgICAg
-ICAgICAgaWYgKGNvbmQpIFwNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICBicmVhazsgXA0K
-PiA+IC0gICAgICAgICAgICAgICBpZiAodGltZW91dF91cyAmJiBrdGltZV9jb21wYXJlKGt0aW1l
-X2dldCgpLCB0aW1lb3V0KSA+DQo+IDApIHsgXA0KPiA+ICsgICAgICAgICAgICAgICBpZiAoKHRp
-bWVvdXRfdXMpICYmIFwNCj4gPiArICAgICAgICAgICAgICAgICAgIGt0aW1lX2NvbXBhcmUoa3Rp
-bWVfZ2V0KCksIF9fdGltZW91dCkgPiAwKSB7IFwNCj4gPiAgICAgICAgICAgICAgICAgICAgICAg
-ICAodmFsKSA9IG9wKGFkZHIpOyBcDQo+ID4gICAgICAgICAgICAgICAgICAgICAgICAgYnJlYWs7
-IFwNCj4gPiAgICAgICAgICAgICAgICAgfSBcDQo+ID4gICAgICAgICAgICAgICAgIGlmIChzbGVl
-cF91cykgXA0KPiA+IC0gICAgICAgICAgICAgICAgICAgICAgIHVzbGVlcF9yYW5nZSgoc2xlZXBf
-dXMgPj4gMikgKyAxLCBzbGVlcF91cyk7IFwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICB1
-c2xlZXBfcmFuZ2UoKChzbGVlcF91cykgPj4gMikgKyAxLCBzbGVlcF91cyk7DQo+ID4gKyBcDQo+
-IA0KPiBTYW1lIGZvciBzbGVlcF91cy4NCj4gDQo+IEFsc28gaW4gcmVhZHhfcG9sbF90aW1lb3V0
-X2F0b21pYygpLCBhbmQgaW4geW91ciBzZWNvbmQgcGF0Y2guDQoNClNhbWUgYXMgdGhlIGFib3Zl
-IGNvbW1lbnQuDQoNClRoYW5rcywNClJhbWVzaA0K
+On Tue, Jul 04, 2017 at 09:49:25AM +0100, Sudeep Holla wrote:
+> 
+> 
+> On 04/07/17 08:31, Peter De Schrijver wrote:
+> > On Mon, Jul 03, 2017 at 10:17:22AM +0100, Sudeep Holla wrote:
+> >>
+> >>
+> >> On 01/07/17 19:14, Uwe Kleine-K�nig wrote:
+> >>> Hello,
+> >>>
+> >>> On Sat, Jul 01, 2017 at 07:02:48AM +0200, Dirk Behme wrote:
+> >>
+> >> [...]
+> >>
+> >>>>
+> >>>>
+> >>>> The other problem is security related. If, at all, you have to do it the
+> >>>> other way around, then:
+> >>>>
+> >>>> Make Linux a consumer of the other CPU's (trusted/trustzone/whatever
+> >>>> secured) OS clock driver.
+> >>
+> >> Yes, that's better and is getting common on newer platforms. They have
+> >> separate M-class(or even low A-class e.g. A5/A7) processors to handle
+> >> all the system management.
+> >>
+> >> The new ARM SCMI specification[0][1] is designed to standardize the
+> >> interface. It covers the clocks in clock protocol.
+> >>
+> > 
+> > Yes, however this doesn't exist on older SoCs which still have multiple CPU's
+> > 
+> 
+> Agreed. But if someone is fixing/adding support in Linux as well as in
+> the other OS running on those cores, why not consider this interface
+> instead of trying to generalize something which will invariably SoC
+> specific.
+
+Because the firmware of the other CPUs might not be able to support this
+or is frozen and cannot be changed.
+
+Peter.
