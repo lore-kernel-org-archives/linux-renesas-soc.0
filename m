@@ -1,114 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f196.google.com ([209.85.223.196]:35106 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751626AbdGEOPg (ORCPT
+Received: from mail-it0-f65.google.com ([209.85.214.65]:36138 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750909AbdGEMWO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Jul 2017 10:15:36 -0400
-Date: Wed, 5 Jul 2017 09:15:32 -0500
-From: Rob Herring <robh@kernel.org>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
-        mark.rutland@arm.com, geert+renesas@glider.be,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
+        Wed, 5 Jul 2017 08:22:14 -0400
+MIME-Version: 1.0
+In-Reply-To: <TY1PR06MB09928B28AAA01C47471B6969D8D40@TY1PR06MB0992.apcprd06.prod.outlook.com>
+References: <1498631315-15730-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <CAMuHMdV1QvFAD3h7u0rL3-hx6OMRmxdvcj_jUo-ewdCHmcU0fQ@mail.gmail.com> <TY1PR06MB09928B28AAA01C47471B6969D8D40@TY1PR06MB0992.apcprd06.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 5 Jul 2017 14:22:12 +0200
+Message-ID: <CAMuHMdWkSqNdzDNTyvHvGaG-Tw2md_aGHSWh7jXVyoBYMJ8m7w@mail.gmail.com>
 Subject: Re: [PATCH v2] clk: renesas: rcar-usb2-clock-sel: Add R-Car USB 2.0
  clock selector PHY
-Message-ID: <20170705141532.slvvbxh33sgwotje@rob-hp-laptop>
-References: <1498631315-15730-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1498631315-15730-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Jun 28, 2017 at 03:28:35PM +0900, Yoshihiro Shimoda wrote:
-> R-Car USB 2.0 controller can change the clock source from an oscillator
-> to an external clock via a register. So, this patch adds support
-> the clock source selector as a clock driver.
-> 
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> ---
->  This patch is based on the renesas-drivers.git /
-> renesas-drivers-2017-06-27-v4.12-rc7 tag.
-> 
->  Changes from v1:
->   - Change this driver as a clock driver from a generic phy driver.
->     https://patchwork.kernel.org/patch/9788697/
->   - Remove "RFC" tag.
-> 
->  .../bindings/clock/renesas,rcar-usb2-clock-sel.txt |  54 ++++++
->  drivers/clk/renesas/Kconfig                        |   5 +
->  drivers/clk/renesas/Makefile                       |   1 +
->  drivers/clk/renesas/rcar-usb2-clock-sel.c          | 205 +++++++++++++++++++++
->  4 files changed, 265 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.txt
->  create mode 100644 drivers/clk/renesas/rcar-usb2-clock-sel.c
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.txt b/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.txt
-> new file mode 100644
-> index 0000000..75ccafc
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.txt
-> @@ -0,0 +1,54 @@
-> +* Renesas R-Car USB 2.0 clock selector
-> +
-> +This file provides information on what the device node for the R-Car USB 2.0
-> +clock selector.
-> +
-> +If you connect an external clock to the USB_EXTAL pin only, you should set
-> +the clock rate to "usb_extal" node only.
-> +If you connect an oscillator to both the USB_XTAL and USB_EXTAL, this module
-> +is not needed because this is default setting. (Of course, you can set the
-> +clock rates to both "usb_extal" and "usb_xtal" nodes.
-> +
-> +Case 1: An external clock connects to R-Car SoC
-> +        +----------+   +--- R-Car ---------------------+
-> +        |External  |---|USB_EXTAL ---> all usb channels|
-> +        |clock     |   |USB_XTAL                       |
-> +        +----------+   +-------------------------------+
-> +In this case, we need this driver with "usb_extal" clock.
-> +
-> +Case 2: An oscillator connects to R-Car SoC
-> +        +----------+   +--- R-Car ---------------------+
-> +        |Oscillator|---|USB_EXTAL -+-> all usb channels|
-> +        |          |---|USB_XTAL --+                   |
-> +        +----------+   +-------------------------------+
-> +In this case, we don't need this selector.
-> +
-> +Required properties:
-> +- compatible: "renesas,r8a7795-rcar-usb2-clock-sel" if the device is a part of
-> +	      an R8A7795 SoC.
-> +              "renesas,r8a7796-rcar-usb2-clock-sel" if the device if a part of
-> +	      an R8A7796 SoC.
-> +              "renesas,rcar-gen3-usb2-clock-sel" for a generic R-Car Gen3
-> +              compatible device.
-> +
-> +              When compatible with the generic version, nodes must list the
-> +              SoC-specific version corresponding to the platform first
-> +              followed by the generic version.
-> +
-> +- reg: offset and length of the USB 2.0 clock selector register block.
-> +- clocks: A list of phandles and specifier pairs.
-> +- clock-names: Name of the clocks.
-> + - The functional clock must be "ehci_ohci"
-> + - The USB_EXTAL clock pin must be "usb_extal"
-> + - The USB_XTAL clock pin must be "usb_xtal"
-> +- #clock-cells: Must be 0
-> +
-> +Exxample (R-Car H3):
-> +
-> +        usb2_clksel: clock-controller@e6590630 {
-> +                compatible = "renesas,r8a77950-rcar-usb2-clock-sel",
-> +                             "renesas,rcar-gen3-usb2-clock-sel";
-> +                reg = <0 0xe6590630 0 0x02>;
-> +                clocks = <&cpg CPG_MOD 703>, <&usb_extal>, <&usb_xtal>;
-> +                clock-names = "ehci_ohci", "usb_extal", "usb_xtal";
+Hi Shimoda-san,
 
-Missing #clock-cells
+On Wed, Jul 5, 2017 at 1:57 PM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+>> From: Geert Uytterhoeven
+>> Sent: Wednesday, July 5, 2017 7:09 PM
+>> On Wed, Jun 28, 2017 at 8:28 AM, Yoshihiro Shimoda
+>> <yoshihiro.shimoda.uh@renesas.com> wrote:
+>> > R-Car USB 2.0 controller can change the clock source from an oscillator
+>> > to an external clock via a register. So, this patch adds support
+>> > the clock source selector as a clock driver.
 
-With that, for the binding:
+>> > --- /dev/null
+>> > +++ b/drivers/clk/renesas/rcar-usb2-clock-sel.c
 
-Acked-by: Rob Herring <robh@kernel.org>
+>> > +/* Since this driver needs other ccf drivers, this uses subsys_initcall_sync */
+>> > +subsys_initcall_sync(rcar_usb2_clock_sel_init);
+>>
+>> I suppose this is a workaround for the lack of probe deferral support in the
+>> USB subsystem?
+>
+> This is my fault. I added "power-domains" property into this device's node.
+> After I remove the power-domains like the cpg node, this driver can use subsys_initcall()
+> instead of subsys_initcall_sync().
 
-Rob
+Does the clock sel module requires the functional clock "ehci_ohci" to be
+running before you can access its registers?
+If yes, I think there should be a "power-domains" property.
+
+Then, you can simplify the code by calling
+
+        pm_runtime_enable(dev);
+        pm_runtime_get_sync(dev);
+
+and remove the explicit handling of the functional clock.
+
+That does not solve probe deferral handling in the USB subsystem, though.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
