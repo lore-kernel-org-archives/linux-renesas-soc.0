@@ -1,43 +1,123 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:33830 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751280AbdGQPNq (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Jul 2017 11:13:46 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-watchdog@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 1/5] watchdog: renesas_wdt: avoid (theoretical) type overflow
-Date: Mon, 17 Jul 2017 17:12:26 +0200
-Message-Id: <20170717151230.12680-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170717151230.12680-1-wsa+renesas@sang-engineering.com>
-References: <20170717151230.12680-1-wsa+renesas@sang-engineering.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Kieran Bingham <kbingham@kernel.org>
+To: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com,
+        niklas.soderlund@ragnatech.se, hans.verkuil@cisco.com,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v7 0/3] ADV748x HDMI/Analog video receiver
+Date: Thu,  6 Jul 2017 12:01:14 +0100
+Message-Id: <cover.f44897c9f4c2d4555dfa156cc24a755477e409bf.1499336175.git-series.kieran.bingham+renesas@ideasonboard.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Because the smallest clock divider we can select is 1, 'clks_per_sec'
-must be the same type as 'rate'.
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/watchdog/renesas_wdt.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+This is a driver for the Analog Devices ADV748x device, and follows on from a
+previous posting by Niklas Söderlund [0] of an earlier incarnation of this
+driver, and earlier versions posted by myself.
 
-diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
-index cf61c92f7ecd63..4f8a3563b6aa53 100644
---- a/drivers/watchdog/renesas_wdt.c
-+++ b/drivers/watchdog/renesas_wdt.c
-@@ -112,8 +112,7 @@ static int rwdt_probe(struct platform_device *pdev)
- {
- 	struct rwdt_priv *priv;
- 	struct resource *res;
--	unsigned long rate;
--	unsigned int clks_per_sec;
-+	unsigned long rate, clks_per_sec;
- 	int ret, i;
- 
- 	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+ADV748x
+=======
+The ADV7481 and ADV7482 support two video pipelines which can run independently
+of each other, with each pipeline terminating in a CSI-2 output: TXA (4-Lane)
+and TXB (1-Lane)
+
+The ADV7480 (Not included here), ADV7481, and ADV7482 are all derivatives,
+with the following features
+
+            Analog   HDMI  MHL  4-Lane  1-Lane
+              In      In         CSI     CSI
+ ADV7480               X    X     X
+ ADV7481      X        X    X     X       X
+ ADV7482      X        X          X       X
+
+Implementation
+==============
+
+This driver creates 4 entities. AFE (CVBS/Analog In), HDMI, TXA and TXB.  At
+probe time, the DT is parsed to identify the endpoints for each of these nodes,
+and those are used for async matching of the CSI2 (TXA/TXB) entities in the
+master driver. The HDMI and AFE entities are then registered after a successful
+registration of both the CSI2 entities.
+
+HDMI is statically linked to the TXA entity, while the AFE is statically linked
+to the TXB entity. Routing the AFE through TXA is not supported.
+
+Support for setting the EDID on HDMI is provided
+
+(Known) Future Todo's
+=====================
+
+Further potential development areas include:
+ - ADV7480 Support (No AFE)
+ - MHL support (Not present on ADV7482)
+ - CEC Support
+ - Configurable I2C addressing
+ - Interrupt handling for format changes and hotplug detect.
+
+However, this driver is functional without the above, and these developments
+can be written when required.
+
+References
+==========
+[0] http://www.mail-archive.com/linux-renesas-soc@vger.kernel.org/msg05196.html
+
+v1/RFC:
+ - Initial posting
+
+v2:
+ - Reworked DT parsing and entities
+
+v3:
+ - Refreshed with lots of fixups from Sakari's review comments
+
+v4:
+ - Many changes all round, following Laurent's review and extensive development
+ - Now uses regmap
+ - AFE port numbering has been changed to match the entity pads
+
+v5:
+ - DT is now based on the latest salvator-common.dtsi
+ - Entities are linked with immutable connections
+
+v6:
+ - EDID support added to HDMI
+ - AFE no longer autodetects input format by default.
+
+v7:
+ - Comments from Hans addressed
+ - AFE now uses FIELD_ALTERNATE
+ - HDMI interlaced support removed (it's untested)
+
+Kieran Bingham (3):
+  media: adv748x: Add adv7481, adv7482 bindings
+  media: i2c: adv748x: add adv748x driver
+  MAINTAINERS: Add ADV748x driver
+
+ Documentation/devicetree/bindings/media/i2c/adv748x.txt |  95 +-
+ MAINTAINERS                                             |   6 +-
+ drivers/media/i2c/Kconfig                               |  12 +-
+ drivers/media/i2c/Makefile                              |   1 +-
+ drivers/media/i2c/adv748x/Makefile                      |   7 +-
+ drivers/media/i2c/adv748x/adv748x-afe.c                 | 552 ++++++-
+ drivers/media/i2c/adv748x/adv748x-core.c                | 832 +++++++++-
+ drivers/media/i2c/adv748x/adv748x-csi2.c                | 327 ++++-
+ drivers/media/i2c/adv748x/adv748x-hdmi.c                | 768 ++++++++-
+ drivers/media/i2c/adv748x/adv748x.h                     | 425 +++++-
+ 10 files changed, 3025 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/adv748x.txt
+ create mode 100644 drivers/media/i2c/adv748x/Makefile
+ create mode 100644 drivers/media/i2c/adv748x/adv748x-afe.c
+ create mode 100644 drivers/media/i2c/adv748x/adv748x-core.c
+ create mode 100644 drivers/media/i2c/adv748x/adv748x-csi2.c
+ create mode 100644 drivers/media/i2c/adv748x/adv748x-hdmi.c
+ create mode 100644 drivers/media/i2c/adv748x/adv748x.h
+
+base-commit: 2748e76ddb2967c4030171342ebdd3faa6a5e8e8
 -- 
-2.11.0
+git-series 0.9.1
