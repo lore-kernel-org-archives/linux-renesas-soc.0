@@ -1,92 +1,89 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mark Yao <mark.yao@rock-chips.com>,
-        Heiko Stuebner <heiko@sntech.de>, Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org
-Subject: [PATCH 3/4] drm/sun4i: engine: Add commit_poll function
-Date: Thu, 13 Jul 2017 16:41:15 +0200
-Message-Id: <b483c2c05704615957dc6d96bbd06f2e3b117bf5.1499956639.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.75b0c7f741ed33015a7ad44941bed1f6152a48a9.1499956639.git-series.maxime.ripard@free-electrons.com>
-References: <cover.75b0c7f741ed33015a7ad44941bed1f6152a48a9.1499956639.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.75b0c7f741ed33015a7ad44941bed1f6152a48a9.1499956639.git-series.maxime.ripard@free-electrons.com>
-References: <cover.75b0c7f741ed33015a7ad44941bed1f6152a48a9.1499956639.git-series.maxime.ripard@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+Date: Fri, 07 Jul 2017 14:42:56 -0500
+Message-ID: <20170707144256.Horde.L3eU_6Gq-zYR6kgxCBaZG8D@gator4166.hostgator.com>
+From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+To: kieran.bingham@ideasonboard.com
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rcar_fdp1: constify vb2_ops structure
+References: <20170706202532.GA12160@embeddedgus>
+ <76532629-9ab3-117a-d849-46c7ade8688c@ideasonboard.com>
+In-Reply-To: <76532629-9ab3-117a-d849-46c7ade8688c@ideasonboard.com>
+Content-Type: text/plain; charset=utf-8; format=flowed; DelSp=Yes
+MIME-Version: 1.0
+Content-Disposition: inline
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On the earlier Allwinner chips, with the first iteration of the display
-engine, the backend commit bit needs to be polled before making any
-register access to the backend.
+Hi Kieran,
 
-Add an operation for that, that will be called in atomic_begin in order to
-be sure to have that bit cleared before we do any modifications.
+Quoting Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>:
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/gpu/drm/sun4i/sun4i_crtc.c   |  2 ++
- drivers/gpu/drm/sun4i/sunxi_engine.h | 14 ++++++++++++++
- 2 files changed, 16 insertions(+)
+> Hi Gustavo,
+>
+> Thank you for the patch.
+>
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_crtc.c b/drivers/gpu/drm/sun4i/sun4i_crtc.c
-index f8c70439d1e2..2eba1d8639d8 100644
---- a/drivers/gpu/drm/sun4i/sun4i_crtc.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_crtc.c
-@@ -45,6 +45,8 @@ static void sun4i_crtc_atomic_begin(struct drm_crtc *crtc,
- 		spin_unlock_irqrestore(&dev->event_lock, flags);
- 		crtc->state->event = NULL;
- 	 }
-+
-+	WARN_ON(sunxi_engine_commit_poll(engine));
- }
- 
- static void sun4i_crtc_atomic_flush(struct drm_crtc *crtc,
-diff --git a/drivers/gpu/drm/sun4i/sunxi_engine.h b/drivers/gpu/drm/sun4i/sunxi_engine.h
-index 4cb70ae65c79..6618e182613c 100644
---- a/drivers/gpu/drm/sun4i/sunxi_engine.h
-+++ b/drivers/gpu/drm/sun4i/sunxi_engine.h
-@@ -17,6 +17,7 @@ struct sunxi_engine;
- 
- struct sunxi_engine_ops {
- 	void (*commit)(struct sunxi_engine *engine);
-+	int (*commit_poll)(struct sunxi_engine *engine);
- 	struct drm_plane **(*layers_init)(struct drm_device *drm,
- 					  struct sunxi_engine *engine);
- 
-@@ -55,6 +56,19 @@ sunxi_engine_commit(struct sunxi_engine *engine)
- }
- 
- /**
-+ * sunxi_engine_commit_poll() - wait for all changes to be committed
-+ * @engine:	pointer to the engine
-+ */
-+static inline int
-+sunxi_engine_commit_poll(struct sunxi_engine *engine)
-+{
-+	if (engine->ops && engine->ops->commit_poll)
-+		return engine->ops->commit_poll(engine);
-+
-+	return 0;
-+}
-+
-+/**
-  * sunxi_engine_layers_init() - Create planes (layers) for the engine
-  * @drm:	pointer to the drm_device for which planes will be created
-  * @engine:	pointer to the engine
--- 
-git-series 0.9.1
+Absolutely, glad to help. :)
+
+> On 06/07/17 21:25, Gustavo A. R. Silva wrote:
+>> Check for vb2_ops structures that are only stored in the ops field of a
+>> vb2_queue structure. That field is declared const, so vb2_ops structures
+>> that have this property can be declared as const also.
+>>
+>> This issue was detected using Coccinelle and the following semantic patch:
+>>
+>> @r disable optional_qualifier@
+>> identifier i;
+>> position p;
+>> @@
+>> static struct vb2_ops i@p = { ... };
+>>
+>> @ok@
+>> identifier r.i;
+>> struct vb2_queue e;
+>> position p;
+>> @@
+>> e.ops = &i@p;
+>>
+>> @bad@
+>> position p != {r.p,ok.p};
+>> identifier r.i;
+>> struct vb2_ops e;
+>> @@
+>> e@i@p
+>>
+>> @depends on !bad disable optional_qualifier@
+>> identifier r.i;
+>> @@
+>> static
+>> +const
+>> struct vb2_ops i = { ... };
+>>
+>> Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
+>
+> Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+>
+>> ---
+>>  drivers/media/platform/rcar_fdp1.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/media/platform/rcar_fdp1.c  
+>> b/drivers/media/platform/rcar_fdp1.c
+>> index 3ee51fc..3245bc4 100644
+>> --- a/drivers/media/platform/rcar_fdp1.c
+>> +++ b/drivers/media/platform/rcar_fdp1.c
+>> @@ -2032,7 +2032,7 @@ static void fdp1_stop_streaming(struct vb2_queue *q)
+>>  	}
+>>  }
+>>
+>> -static struct vb2_ops fdp1_qops = {
+>> +static const struct vb2_ops fdp1_qops = {
+>>  	.queue_setup	 = fdp1_queue_setup,
+>>  	.buf_prepare	 = fdp1_buf_prepare,
+>>  	.buf_queue	 = fdp1_buf_queue,
+>>
+
+--
+Gustavo A. R. Silva
