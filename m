@@ -1,67 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-yw0-f171.google.com ([209.85.161.171]:35776 "EHLO
-        mail-yw0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753290AbdGGChx (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:43641 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750726AbdGGN0i (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Jul 2017 22:37:53 -0400
-Received: by mail-yw0-f171.google.com with SMTP id v193so8439367ywg.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 06 Jul 2017 19:37:53 -0700 (PDT)
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
+        Fri, 7 Jul 2017 09:26:38 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH 5/5] arm64: dts: renesas: ulcb: Enable HDMI output
-Date: Fri,  7 Jul 2017 05:37:48 +0300
-Message-Id: <1499395068-14412-1-git-send-email-vladimir.barinov@cogentembedded.com>
-In-Reply-To: <1499394976-14201-1-git-send-email-vladimir.barinov@cogentembedded.com>
-References: <1499394976-14201-1-git-send-email-vladimir.barinov@cogentembedded.com>
+        Russell King <linux@armlinux.org.uk>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH v 0/2] Add R8A7743/iwg20d-q7 Ethernet AVB support
+Date: Fri,  7 Jul 2017 14:12:43 +0100
+Message-Id: <1499433165-62475-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+Hello,
 
-Enable the HDMI encoder for ULCB board and hook it up to the HDMI connector.
+This series aims to add device tree support for Ethernet AVB on R8A7743 SoC/iwg20d-q7 platform
 
-The HDMI encoder and connector are available on both the H3 and M3-W ULCB boards.
-Add them to the ulcb.dtsi file.
+This series has been tested against linux-next tag next-20170704.
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
----
- arch/arm64/boot/dts/renesas/ulcb.dtsi | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+It depends upon the patch 
+https://www.mail-archive.com/netdev@vger.kernel.org/msg176852.html
 
-diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-index fc5408d..89a8cb2 100644
---- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
-+++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-@@ -170,6 +170,23 @@
- 	clock-frequency = <32768>;
- };
- 
-+&hdmi0 {
-+	status = "okay";
-+
-+	ports {
-+		port@1 {
-+			reg = <1>;
-+			rcar_dw_hdmi0_out: endpoint {
-+				remote-endpoint = <&hdmi0_con>;
-+			};
-+		};
-+	};
-+};
-+
-+&hdmi0_con {
-+	remote-endpoint = <&rcar_dw_hdmi0_out>;
-+};
-+
- &i2c2 {
- 	pinctrl-0 = <&i2c2_pins>;
- 	pinctrl-names = "default";
+Biju Das (2):
+  ARM: dts: r8a7743: Add Ethernet AVB support
+  ARM: dts: iwg20d-q7: Add Ethernet AVB support
+
+ arch/arm/boot/dts/r8a7743-iwg20d-q7.dts | 21 +++++++++++++++++++++
+ arch/arm/boot/dts/r8a7743.dtsi          | 13 +++++++++++++
+ 2 files changed, 34 insertions(+)
+
 -- 
 1.9.1
