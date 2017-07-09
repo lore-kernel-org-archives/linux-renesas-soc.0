@@ -1,50 +1,61 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:50694 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752349AbdGDPlw (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Jul 2017 11:41:52 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Simon Horman <horms@verge.net.au>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 8/9] ARM: dts: r8a7793: Reserve SRAM for the SMP jump stub
-Date: Tue,  4 Jul 2017 17:41:42 +0200
-Message-Id: <1499182903-31339-9-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1499182903-31339-1-git-send-email-geert+renesas@glider.be>
-References: <1499182903-31339-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <20170709172815.GA28183@lunn.ch>
+References: <1495112345-24795-1-git-send-email-geert+renesas@glider.be>
+ <f0ed61c3-062b-cec6-fe19-7412231e8ef1@gmail.com> <CAMuHMdWYeSzofU57LmT_M3KkcHhvjfJy7nkHvcXkKzOYmvhqqA@mail.gmail.com>
+ <20170518193453.GB13759@lunn.ch> <CAMuHMdV+jfh=EGt3SvjtrtVfWQ6P8ofp_JxeQZjRrSEfDWs5hA@mail.gmail.com>
+ <08a89dd5-b707-8b8f-b8e1-e20b9ed630b7@gmail.com> <CAMuHMdWWfaP8=H7H+UzrmOYpydi2mGLFGzuk9FQWJtEOug6u5g@mail.gmail.com>
+ <CAMuHMdUt6yOQ9=02z_7WG58YGxFYD=_zn7SeLEqGmfTrNBFJXw@mail.gmail.com>
+ <CAMuHMdW8yzREzTE4GiW_8HU9h-T-fdDmLtZAXYkJrjuypN8BDg@mail.gmail.com>
+ <38cc7c65-e4ca-cb8a-f43b-ca53e87724cf@gmail.com> <20170709172815.GA28183@lunn.ch>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Sun, 9 Jul 2017 21:38:11 +0200
+Message-ID: <CAMuHMdX13Dx=xMwWUpyhFZ25HT9h4R5GW314iYBZgy6VCuxmng@mail.gmail.com>
+Subject: Re: [PATCH] of_mdio: Fix broken PHY IRQ in case of probe deferral
+To: Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Reserve SRAM for the jump stub for CPU core bringup.
+Hi Florian, Andrew,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7793.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+On Sun, Jul 9, 2017 at 7:28 PM, Andrew Lunn <andrew@lunn.ch> wrote:
+>> It sure does fix a real issue, but I am really concerned about the
+>> inability to test this patch in a configuration where we have multiple
+>> PHY(s) or MDIO device(s) hanging off the same MDIO bus and one of those
+>> requesting an EPROBE_DEFER.
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index bc6a44272f555215..497716b6fbe24164 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -856,6 +856,14 @@
- 	icram1:	sram@e63c0000 {
- 		compatible = "mmio-sram";
- 		reg = <0 0xe63c0000 0 0x1000>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 0 0xe63c0000 0x1000>;
-+
-+		smp-sram@0 {
-+			compatible = "renesas,smp-sram";
-+			reg = <0 0x10>;
-+		};
- 	};
- 
- 	ether: ethernet@ee700000 {
--- 
-2.7.4
+If that case happens now, it silently falls back to polling, hiding the
+problem.
+
+Actually it means there may be users that rely on this broken behavior,
+that start to fail when their interrupts are suddenly handled :-(
+
+>> I currently don't have a setup where I could exercise this, Andrew, do you?
+>
+> What i do have, is a switch with some built in copper Marvell PHYs and
+> external SFF modules which use fixed link. I can probably hack the
+> fixed-link driver to return EPROBE_DEFER a few times.
+
+That would be great, thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
