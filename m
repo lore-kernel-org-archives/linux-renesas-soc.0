@@ -1,44 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:33116 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750734AbdGLXKT (ORCPT
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:34190 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751817AbdGIN2i (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 12 Jul 2017 19:10:19 -0400
-Date: Wed, 12 Jul 2017 16:10:17 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: linux-clk@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Sun, 9 Jul 2017 09:28:38 -0400
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
         Alexey Firago <alexey_firago@mentor.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH V3 2/8] clk: vc5: Fix trivial typo
-Message-ID: <20170712231017.GH22780@codeaurora.org>
+Subject: [PATCH V3 2/8] clk: vc5: Fix trivial typo
+Date: Sun,  9 Jul 2017 15:28:08 +0200
+Message-Id: <20170709132814.2339-2-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20170709132814.2339-1-marek.vasut+renesas@gmail.com>
 References: <20170709132814.2339-1-marek.vasut+renesas@gmail.com>
- <20170709132814.2339-2-marek.vasut+renesas@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20170709132814.2339-2-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 07/09, Marek Vasut wrote:
-> Fix trivial typo in vc5_clk_out_unprepare() , s/Enable/Disable/ .
-> 
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Alexey Firago <alexey_firago@mentor.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Cc: linux-renesas-soc@vger.kernel.org
-> Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> on Salvator-XS with the display LVDS output.
-> ---
+Fix trivial typo in vc5_clk_out_unprepare() , s/Enable/Disable/ .
 
-Applied to clk-next
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Alexey Firago <alexey_firago@mentor.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+on Salvator-XS with the display LVDS output.
+---
+V2: None
+V3: None
+---
+ drivers/clk/clk-versaclock5.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+index 60bf4afb51bd..d835d48cf14d 100644
+--- a/drivers/clk/clk-versaclock5.c
++++ b/drivers/clk/clk-versaclock5.c
+@@ -520,7 +520,7 @@ static void vc5_clk_out_unprepare(struct clk_hw *hw)
+ 	struct vc5_hw_data *hwdata = container_of(hw, struct vc5_hw_data, hw);
+ 	struct vc5_driver_data *vc5 = hwdata->vc5;
+ 
+-	/* Enable the clock buffer */
++	/* Disable the clock buffer */
+ 	regmap_update_bits(vc5->regmap, VC5_CLK_OUTPUT_CFG(hwdata->num, 1),
+ 			   VC5_CLK_OUTPUT_CFG1_EN_CLKBUF, 0);
+ }
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.11.0
