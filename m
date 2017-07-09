@@ -1,50 +1,94 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:50712 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752346AbdGDPlw (ORCPT
+Received: from mail-yb0-f171.google.com ([209.85.213.171]:33120 "EHLO
+        mail-yb0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752526AbdGIRkA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Jul 2017 11:41:52 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
+        Sun, 9 Jul 2017 13:40:00 -0400
+Received: by mail-yb0-f171.google.com with SMTP id 84so22305858ybe.0
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 09 Jul 2017 10:39:59 -0700 (PDT)
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+To: Marek Vasut <marek.vasut@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Simon Horman <horms@verge.net.au>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4/9] ARM: dts: r8a7745: Reserve SRAM for the SMP jump stub
-Date: Tue,  4 Jul 2017 17:41:38 +0200
-Message-Id: <1499182903-31339-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1499182903-31339-1-git-send-email-geert+renesas@glider.be>
-References: <1499182903-31339-1-git-send-email-geert+renesas@glider.be>
+        Mark Rutland <mark.rutland@arm.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Subject: [PATCH v2 1/2] clk: vc5: Add support for IDT VersaClock 5P49V5925
+Date: Sun,  9 Jul 2017 20:39:57 +0300
+Message-Id: <1499621997-12965-1-git-send-email-vladimir.barinov@cogentembedded.com>
+In-Reply-To: <1499621970-12925-1-git-send-email-vladimir.barinov@cogentembedded.com>
+References: <1499621970-12925-1-git-send-email-vladimir.barinov@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Reserve SRAM for the jump stub for CPU core bringup.
+From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Update IDT VersaClock 5 driver to support 5P49V5925. This chip has only
+external clock input, four fractional dividers (FODs) and five clock
+outputs (four universal clock outputs and one reference clock output at
+OUT0_SELB_I2C).
+
+Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+Reviewed-by: Marek Vasut <marek.vasut@gmail.com>
 ---
- arch/arm/boot/dts/r8a7745.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Changes in version 2:
+- rebased against patch:
+  [V3,8/8] clk: vc5: Add support for IDT VersaClock 5P49V6901
 
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index 88cf92bcd2f9b4fc..354534cdc5889cbc 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -481,6 +481,14 @@
- 		icram1:	sram@e63c0000 {
- 			compatible = "mmio-sram";
- 			reg = <0 0xe63c0000 0 0x1000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges = <0 0 0xe63c0000 0x1000>;
-+
-+			smp-sram@0 {
-+				compatible = "renesas,smp-sram";
-+				reg = <0 0x10>;
-+			};
- 		};
+ drivers/clk/clk-versaclock5.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+index c894db2..1808a55 100644
+--- a/drivers/clk/clk-versaclock5.c
++++ b/drivers/clk/clk-versaclock5.c
+@@ -129,6 +129,7 @@
+ /* Supported IDT VC5 models. */
+ enum vc5_model {
+ 	IDT_VC5_5P49V5923,
++	IDT_VC5_5P49V5925,
+ 	IDT_VC5_5P49V5933,
+ 	IDT_VC5_5P49V5935,
+ 	IDT_VC6_5P49V6901,
+@@ -686,6 +687,7 @@ static int vc5_map_index_to_output(const enum vc5_model model,
+ 	case IDT_VC5_5P49V5933:
+ 		return (n == 0) ? 0 : 3;
+ 	case IDT_VC5_5P49V5923:
++	case IDT_VC5_5P49V5925:
+ 	case IDT_VC5_5P49V5935:
+ 	case IDT_VC6_5P49V6901:
+ 	default:
+@@ -911,6 +913,13 @@ static int vc5_remove(struct i2c_client *client)
+ 	.flags = 0,
+ };
  
- 		ether: ethernet@ee700000 {
++static const struct vc5_chip_info idt_5p49v5925_info = {
++	.model = IDT_VC5_5P49V5925,
++	.clk_fod_cnt = 4,
++	.clk_out_cnt = 5,
++	.flags = 0,
++};
++
+ static const struct vc5_chip_info idt_5p49v5933_info = {
+ 	.model = IDT_VC5_5P49V5933,
+ 	.clk_fod_cnt = 2,
+@@ -934,6 +943,7 @@ static int vc5_remove(struct i2c_client *client)
+ 
+ static const struct i2c_device_id vc5_id[] = {
+ 	{ "5p49v5923", .driver_data = IDT_VC5_5P49V5923 },
++	{ "5p49v5925", .driver_data = IDT_VC5_5P49V5925 },
+ 	{ "5p49v5933", .driver_data = IDT_VC5_5P49V5933 },
+ 	{ "5p49v5935", .driver_data = IDT_VC5_5P49V5935 },
+ 	{ "5p49v6901", .driver_data = IDT_VC6_5P49V6901 },
+@@ -943,6 +953,7 @@ static int vc5_remove(struct i2c_client *client)
+ 
+ static const struct of_device_id clk_vc5_of_match[] = {
+ 	{ .compatible = "idt,5p49v5923", .data = &idt_5p49v5923_info },
++	{ .compatible = "idt,5p49v5925", .data = &idt_5p49v5925_info },
+ 	{ .compatible = "idt,5p49v5933", .data = &idt_5p49v5933_info },
+ 	{ .compatible = "idt,5p49v5935", .data = &idt_5p49v5935_info },
+ 	{ .compatible = "idt,5p49v6901", .data = &idt_5p49v6901_info },
 -- 
-2.7.4
+1.9.1
