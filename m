@@ -1,78 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:59874 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:59574 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752531AbdGJIgt (ORCPT
+        with ESMTP id S1752451AbdGJIX4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 10 Jul 2017 04:36:49 -0400
-Date: Mon, 10 Jul 2017 10:36:44 +0200
+        Mon, 10 Jul 2017 04:23:56 -0400
+Date: Mon, 10 Jul 2017 10:23:51 +0200
 From: Simon Horman <horms@verge.net.au>
 To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Chris Paterson <chris.paterson2@renesas.com>,
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Biju Das <biju.das@bp.renesas.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
         "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>
 Subject: Re: [PATCH v 1/2] ARM: dts: r8a7743: Add Ethernet AVB support
-Message-ID: <20170710083643.GG13680@verge.net.au>
+Message-ID: <20170710082350.GB13680@verge.net.au>
 References: <1499433165-62475-1-git-send-email-biju.das@bp.renesas.com>
  <1499433165-62475-2-git-send-email-biju.das@bp.renesas.com>
  <CAMuHMdWsM_FBJ46=U69XptqpyC2cJYx_cqczaHBNq2nxZr68GQ@mail.gmail.com>
- <20170710082350.GB13680@verge.net.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20170710082350.GB13680@verge.net.au>
+In-Reply-To: <CAMuHMdWsM_FBJ46=U69XptqpyC2cJYx_cqczaHBNq2nxZr68GQ@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Jul 10, 2017 at 10:23:51AM +0200, Simon Horman wrote:
-> On Mon, Jul 10, 2017 at 09:54:40AM +0200, Geert Uytterhoeven wrote:
-> > Hi Biju,
-> > 
-> > On Fri, Jul 7, 2017 at 3:12 PM, Biju Das <biju.das@bp.renesas.com> wrote:
-> > > Add Ethernet AVB support for r8a7743 SoC.
-> > >
-> > > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> > > Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
-> > 
-> > With the minor nit below fixed:
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > 
-> > > --- a/arch/arm/boot/dts/r8a7743.dtsi
-> > > +++ b/arch/arm/boot/dts/r8a7743.dtsi
-> > > @@ -605,6 +605,19 @@
-> > >                         #size-cells = <0>;
-> > >                         status = "disabled";
-> > >                 };
-> > > +
-> > > +               avb: ethernet@e6800000 {
-> > > +                       compatible = "renesas,etheravb-r8a7743",
+On Mon, Jul 10, 2017 at 09:54:40AM +0200, Geert Uytterhoeven wrote:
+> Hi Biju,
 > 
-> I do not see a patch to add "renesas,etheravb-r8a7743" to
-> Documentation/devicetree/bindings/net/renesas,ravb.txt
+> On Fri, Jul 7, 2017 at 3:12 PM, Biju Das <biju.das@bp.renesas.com> wrote:
+> > Add Ethernet AVB support for r8a7743 SoC.
+> >
+> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
 > 
-> If you haven't already done so please post a patch to add this
-> once net-next re-opens.
+> With the minor nit below fixed:
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> > --- a/arch/arm/boot/dts/r8a7743.dtsi
+> > +++ b/arch/arm/boot/dts/r8a7743.dtsi
+> > @@ -605,6 +605,19 @@
+> >                         #size-cells = <0>;
+> >                         status = "disabled";
+> >                 };
+> > +
+> > +               avb: ethernet@e6800000 {
+> > +                       compatible = "renesas,etheravb-r8a7743",
 
-I now see "ravb: Document binding for r8a7743 SoC"
+I do not see a patch to add "renesas,etheravb-r8a7743" to
+Documentation/devicetree/bindings/net/renesas,ravb.txt
 
+If you haven't already done so please post a patch to add this
+once net-next re-opens.
+
+> > +                                    "renesas,etheravb-rcar-gen2";
+> > +                       reg = <0 0xe6800000 0 0x800>, <0 0xee0e8000 0 0x4000>;
+> > +                       interrupts = <0 163 IRQ_TYPE_LEVEL_HIGH>;
 > 
-> > > +                                    "renesas,etheravb-rcar-gen2";
-> > > +                       reg = <0 0xe6800000 0 0x800>, <0 0xee0e8000 0 0x4000>;
-> > > +                       interrupts = <0 163 IRQ_TYPE_LEVEL_HIGH>;
-> > 
-> > s/0/GIC_SPI/
-> 
-> Thanks, I have applied this patch with the minor update above.
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> 
+> s/0/GIC_SPI/
+
+Thanks, I have applied this patch with the minor update above.
