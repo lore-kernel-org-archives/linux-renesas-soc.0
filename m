@@ -1,65 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:34148 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755171AbdGKDiI (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:38480 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754181AbdGJN20 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 10 Jul 2017 23:38:08 -0400
-Received: by mail-wr0-f194.google.com with SMTP id k67so29064159wrc.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 10 Jul 2017 20:38:07 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1499693302-25120-10-git-send-email-geert+renesas@glider.be>
-References: <1499693302-25120-1-git-send-email-geert+renesas@glider.be> <1499693302-25120-10-git-send-email-geert+renesas@glider.be>
-From: Magnus Damm <magnus.damm@gmail.com>
-Date: Tue, 11 Jul 2017 12:38:06 +0900
-Message-ID: <CANqRtoSi8x7zqwV3Gp_n0dBe4Uw6LDRvC1Lheu+GrLZNYuxAHw@mail.gmail.com>
-Subject: Re: [PATCH 9/9] ARM: multi_v7_defconfig: Enable DMA for Renesas
- serial ports
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>,
+        Mon, 10 Jul 2017 09:28:26 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
         Olof Johansson <olof@lixom.net>,
-        Simon Horman <horms@verge.net.au>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Simon Horman <horms@verge.net.au>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 9/9] ARM: multi_v7_defconfig: Enable DMA for Renesas serial ports
+Date: Mon, 10 Jul 2017 15:28:22 +0200
+Message-Id: <1499693302-25120-10-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1499693302-25120-1-git-send-email-geert+renesas@glider.be>
+References: <1499693302-25120-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+DMA for (H)SCIF(A|B) serial ports on Renesas R-Car Gen2 and RZ/G1 SoCs
+is considered stable, hence enable it by default.
 
-On Mon, Jul 10, 2017 at 10:28 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> DMA for (H)SCIF(A|B) serial ports on Renesas R-Car Gen2 and RZ/G1 SoCs
-> is considered stable, hence enable it by default.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  arch/arm/configs/multi_v7_defconfig | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-> index ea2075d8e185f7aa..072a455008df9751 100644
-> --- a/arch/arm/configs/multi_v7_defconfig
-> +++ b/arch/arm/configs/multi_v7_defconfig
-> @@ -330,6 +330,7 @@ CONFIG_SERIAL_IMX_CONSOLE=y
->  CONFIG_SERIAL_SH_SCI=y
->  CONFIG_SERIAL_SH_SCI_NR_UARTS=20
->  CONFIG_SERIAL_SH_SCI_CONSOLE=y
-> +CONFIG_SERIAL_SH_SCI_DMA=y
->  CONFIG_SERIAL_MSM=y
->  CONFIG_SERIAL_MSM_CONSOLE=y
->  CONFIG_SERIAL_VT8500=y
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/configs/multi_v7_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks, FWIW I'm very happy to see DMA enabled for the SCIF driver in mainline.
-
-Since enabling DMA Engine still keeps PIO support around I wonder why
-we need this Kconfig at all - other drivers seem to get by without
-this kind of thing?
-So in my opinion it would also be nice to get rid of SERIAL_SH_SCI_DMA
-completely and reducing the number of special per-driver Kconfig
-entries.
-
-Cheers,
-
-/ magnus
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index ea2075d8e185f7aa..072a455008df9751 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -330,6 +330,7 @@ CONFIG_SERIAL_IMX_CONSOLE=y
+ CONFIG_SERIAL_SH_SCI=y
+ CONFIG_SERIAL_SH_SCI_NR_UARTS=20
+ CONFIG_SERIAL_SH_SCI_CONSOLE=y
++CONFIG_SERIAL_SH_SCI_DMA=y
+ CONFIG_SERIAL_MSM=y
+ CONFIG_SERIAL_MSM_CONSOLE=y
+ CONFIG_SERIAL_VT8500=y
+-- 
+2.7.4
