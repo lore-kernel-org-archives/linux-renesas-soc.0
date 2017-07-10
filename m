@@ -1,85 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:44354 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752316AbdGaPUz (ORCPT
+Received: from mail-it0-f68.google.com ([209.85.214.68]:33901 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752531AbdGJIh7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 31 Jul 2017 11:20:55 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Mon, 10 Jul 2017 04:37:59 -0400
+MIME-Version: 1.0
+In-Reply-To: <1499395034-14301-1-git-send-email-vladimir.barinov@cogentembedded.com>
+References: <1499394976-14201-1-git-send-email-vladimir.barinov@cogentembedded.com>
+ <1499395034-14301-1-git-send-email-vladimir.barinov@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 10 Jul 2017 10:30:51 +0200
+Message-ID: <CAMuHMdVxTQrjnXPm+iR8KUvjX8_EJt5PAGJy-Rscc1yW5A4L7w@mail.gmail.com>
+Subject: Re: [PATCH 2/5] arm64: dts: renesas: r8a7795-h3ulcb: Add DU external
+ dot clocks
+To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 33/38] ARM: dts: genmai: Add ethernet pin group
-Date: Mon, 31 Jul 2017 17:19:45 +0200
-Message-Id: <6f9a9720b0e6cf4760e0965bea74270d0b467ad2.1501514100.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1501514100.git.horms+renesas@verge.net.au>
-References: <cover.1501514100.git.horms+renesas@verge.net.au>
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+On Fri, Jul 7, 2017 at 4:37 AM, Vladimir Barinov
+<vladimir.barinov@cogentembedded.com> wrote:
+> From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+>
+> The DU0/DU1/DU2/DU3 external dot clocks are provided by the programmable
+> Versaclock5 clock generator.
+>
+> Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
 
-Add pin configuration subnode for ETHER ethernet controller.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r7s72100-genmai.dts | 35 +++++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+Gr{oetje,eeting}s,
 
-diff --git a/arch/arm/boot/dts/r7s72100-genmai.dts b/arch/arm/boot/dts/r7s72100-genmai.dts
-index e7824f0857c6..cd4d5ff7749e 100644
---- a/arch/arm/boot/dts/r7s72100-genmai.dts
-+++ b/arch/arm/boot/dts/r7s72100-genmai.dts
-@@ -62,6 +62,28 @@
- 		/* RIIC2: P1_4 as SCL, P1_5 as SDA */
- 		pinmux = <RZA1_PINMUX(1, 4, 1)>, <RZA1_PINMUX(1, 5, 1)>;
- 	};
-+
-+	ether_pins: ether {
-+		/* Ethernet on Ports 1,2,3,5 */
-+		pinmux = <RZA1_PINMUX(1, 14, 4)>,/* P1_14 = ET_COL  */
-+			 <RZA1_PINMUX(5, 9, 2)>, /* P5_9 = ET_MDC   */
-+			 <RZA1_PINMUX(3, 3, 2)>, /* P3_3 = ET_MDIO */
-+			 <RZA1_PINMUX(3, 4, 2)>, /* P3_4 = ET_RXCLK */
-+			 <RZA1_PINMUX(3, 5, 2)>, /* P3_5 = ET_RXER  */
-+			 <RZA1_PINMUX(3, 6, 2)>, /* P3_6 = ET_RXDV  */
-+			 <RZA1_PINMUX(2, 0, 2)>, /* P2_0 = ET_TXCLK */
-+			 <RZA1_PINMUX(2, 1, 2)>, /* P2_1 = ET_TXER  */
-+			 <RZA1_PINMUX(2, 2, 2)>, /* P2_2 = ET_TXEN  */
-+			 <RZA1_PINMUX(2, 3, 2)>, /* P2_3 = ET_CRS   */
-+			 <RZA1_PINMUX(2, 4, 2)>, /* P2_4 = ET_TXD0  */
-+			 <RZA1_PINMUX(2, 5, 2)>, /* P2_5 = ET_TXD1  */
-+			 <RZA1_PINMUX(2, 6, 2)>, /* P2_6 = ET_TXD2  */
-+			 <RZA1_PINMUX(2, 7, 2)>, /* P2_7 = ET_TXD3  */
-+			 <RZA1_PINMUX(2, 8, 2)>, /* P2_8 = ET_RXD0  */
-+			 <RZA1_PINMUX(2, 9, 2)>, /* P2_9 = ET_RXD1  */
-+			 <RZA1_PINMUX(2, 10, 2)>,/* P2_10 = ET_RXD2 */
-+			 <RZA1_PINMUX(2, 11, 2)>;/* P2_11 = ET_RXD3 */
-+	};
- };
- 
- &extal_clk {
-@@ -80,6 +102,19 @@
- 	status = "okay";
- };
- 
-+&ether {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&ether_pins>;
-+
-+	status = "okay";
-+
-+	renesas,no-ether-link;
-+	phy-handle = <&phy0>;
-+	phy0: ethernet-phy@0 {
-+		reg = <0>;
-+	};
-+};
-+
- &i2c2 {
- 	status = "okay";
- 	clock-frequency = <400000>;
--- 
-2.1.4
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
