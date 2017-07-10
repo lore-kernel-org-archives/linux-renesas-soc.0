@@ -1,117 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f174.google.com ([209.85.223.174]:36236 "EHLO
-        mail-io0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752038AbdGDS3k (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:35746 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754177AbdGJN20 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Jul 2017 14:29:40 -0400
-Received: by mail-io0-f174.google.com with SMTP id z62so75028985ioi.3
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 04 Jul 2017 11:29:40 -0700 (PDT)
-MIME-Version: 1.0
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 4 Jul 2017 20:29:38 +0200
-Message-ID: <CAMuHMdWaQLDoOLYjPNkwXNcam-UCCngyaY3D2yZctJrfGg27Xw@mail.gmail.com>
-Subject: Architecture Timer on R-Car Gen2
-To: Magnus Damm <magnus.damm@gmail.com>,
-        Marc Zyngier <Marc.Zyngier@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
+        Mon, 10 Jul 2017 09:28:26 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Olof Johansson <olof@lixom.net>,
         Simon Horman <horms@verge.net.au>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 6/9] ARM: shmobile: defconfig: Refresh
+Date: Mon, 10 Jul 2017 15:28:19 +0200
+Message-Id: <1499693302-25120-7-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1499693302-25120-1-git-send-email-geert+renesas@glider.be>
+References: <1499693302-25120-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-        Hi Magnus, Mar[ck], Simon,
+  - Several options were moved,
+  - INPUT_MOUSEDEV_PSAUX is no longer enabled by default since commit
+    73d8ef76006b649f ("Input: mousedev - stop offering PS/2 to userspace
+    by default").
 
-We're (finally) getting close to the point where Renesas R-Car Gen2
-platform code no longer relies on hardcoded addresses.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/configs/shmobile_defconfig | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-The remaining parts are related to the ARM Architecture Timer / Generic
-Timer / Generic Counter.  More specifically the code in
-rcar_gen2_timer_init() in arch/arm/mach-shmobile/setup-rcar-gen2.c,
-quoted below.  According to historical information, the issues being
-solved here are (1) non-running timers, and (2) wrong frequencies,
-leading to (m)sleep() not sleeping for the expected period.
-But it's far from clear to me what's really going on...
-
->   void __iomem *base;
->   u32 freq;
->
->   /*
->    * Determine frequency.  Depending on SoC-type, it's either
->    *   - Crystal / 2 => (usually) 10 MHz (calculated from extal in DT)
->    *   - ZS clock / 8 => (always) 32.5 MHz (hardcoded)
->    */
->   freq = ...
->
->   /* Remap "armgcnt address map" space */
->   base = ioremap(0xe6080000, PAGE_SIZE);
-
-I believe this region corresponds to the Generic Counter, which is not
-the same, but related to the Architecture timer?
-It seems no DT bindings exist for the Generic Counter?
-
-(for a moment I thought this might correspond to "arm,armv7-timer-mem", but
- I no longer believe that's true)
-
->   /*
->    * Update the timer if it is either not running, or is not at the
->    * right frequency. The timer is only configurable in secure mode
->    * so this avoids an abort if the loader started the timer and
->    * entered the kernel in non-secure mode.
->    */
->
->   if ((ioread32(base + CNTCR) & 1) == 0 ||
->       ioread32(base + CNTFID0) != freq) {
-
-On all SoC/board combos I checked (r8a7790/lager, r8a7791/koelsch,
-r8a7791/porter, r8a7792/blanche, r8a7793/gose, r8a7794/alt), both
-conditions are true, i.e.
-  - The timer (counter?) is not running,
-  - The configured frequency is 13 MHz, which is wrong.
-
->           /* Update registers with correct frequency */
->           iowrite32(freq, base + CNTFID0);
-
-This doesn't seem to be needed?
-With or without, both msleep() (kernel) and sleep() (userspace) sleep
-for the expected amount of time.
-
->           asm volatile("mcr p15, 0, %0, c14, c0, 0" : : "r" (freq));
-
-This is an open-coded implementation of arch_timer_set_cntfrq(), which
-is not provided by arch/arm/include/asm/arch_timer.h (should it?).
-Without this, the arch_timer driver complains:
-
-    arch_timer: frequency not available
-
-leading to failures (e.g. division by zero) later.
-
-However, adding the proper "clock-frequency" property to the
-"arm,armv7-timer" device node in DT fixes that.
-Probably adding this property is a better way to work around broken(?)
-firmware not setting CNTFRQ, than checking the SoC type and using
-hardcoded values in platform code?
-
->           /* make sure arch timer is started by setting bit 0 of CNTCR */
->           iowrite32(1, base + CNTCR);
-
-This is definitely needed.  Else the timer doesn't run.
-
->   }
->
->   iounmap(base);
-
-Thanks for your time!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
+index dd9d1f9ede6e7f34..1cad253c030f4b25 100644
+--- a/arch/arm/configs/shmobile_defconfig
++++ b/arch/arm/configs/shmobile_defconfig
+@@ -89,9 +89,8 @@ CONFIG_SMSC911X=y
+ # CONFIG_NET_VENDOR_STMICRO is not set
+ # CONFIG_NET_VENDOR_VIA is not set
+ # CONFIG_NET_VENDOR_WIZNET is not set
+-CONFIG_SMSC_PHY=y
+ CONFIG_MICREL_PHY=y
+-# CONFIG_INPUT_MOUSEDEV_PSAUX is not set
++CONFIG_SMSC_PHY=y
+ CONFIG_INPUT_EVDEV=y
+ CONFIG_KEYBOARD_GPIO=y
+ # CONFIG_INPUT_MOUSE is not set
+@@ -123,9 +122,9 @@ CONFIG_SPI_SH_HSPI=y
+ CONFIG_GPIO_EM=y
+ CONFIG_GPIO_RCAR=y
+ CONFIG_GPIO_PCF857X=y
+-CONFIG_POWER_SUPPLY=y
+ CONFIG_POWER_RESET=y
+ CONFIG_POWER_RESET_RMOBILE=y
++CONFIG_POWER_SUPPLY=y
+ # CONFIG_HWMON is not set
+ CONFIG_THERMAL=y
+ CONFIG_CPU_THERMAL=y
+-- 
+2.7.4
