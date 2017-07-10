@@ -1,94 +1,36 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:36201 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751919AbdGAUFk (ORCPT
+Received: from mail-it0-f66.google.com ([209.85.214.66]:34050 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752276AbdGJBI3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 1 Jul 2017 16:05:40 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Alexey Firago <alexey_firago@mentor.com>,
-        Rob Herring <robh@kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH V2 7/8] clk: vc5: Add bindings for IDT VersaClock 5P49V6901
-Date: Sat,  1 Jul 2017 22:04:57 +0200
-Message-Id: <20170701200459.11505-7-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20170701200459.11505-1-marek.vasut+renesas@gmail.com>
-References: <20170701200459.11505-1-marek.vasut+renesas@gmail.com>
+        Sun, 9 Jul 2017 21:08:29 -0400
+Date: Sun, 9 Jul 2017 20:08:27 -0500
+From: Rob Herring <robh@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/9] dt-bindings: sram: Document renesas,smp-sram
+Message-ID: <20170710010827.qj2vw3fqalbzspfj@rob-hp-laptop>
+References: <1499182903-31339-1-git-send-email-geert+renesas@glider.be>
+ <1499182903-31339-2-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1499182903-31339-2-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-IDT VersaClock 6 5P49V6901 has 4 clock outputs, 4 fractional dividers.
-Input clock source can be taken from either external crystal or from
-external reference clock.
+On Tue, Jul 04, 2017 at 05:41:35PM +0200, Geert Uytterhoeven wrote:
+> Document reserved SRAM for the SMP jump stub on Renesas R-Car Gen2 and
+> RZ/G1 SoCs.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  .../devicetree/bindings/sram/renesas,smp-sram.txt  | 27 ++++++++++++++++++++++
+>  1 file changed, 27 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/sram/renesas,smp-sram.txt
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Alexey Firago <alexey_firago@mentor.com>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: devicetree@vger.kernel.org
----
-V2: Edit the top of the DT binding document to mention VersaClock 6
----
- .../devicetree/bindings/clock/idt,versaclock5.txt   | 21 +++++++++++++++------
- 1 file changed, 15 insertions(+), 6 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-index 53d7e50ed875..115ab5f75c5d 100644
---- a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-+++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-@@ -1,24 +1,26 @@
--Binding for IDT VersaClock5 programmable i2c clock generator.
-+Binding for IDT VersaClock 5,6 programmable i2c clock generators.
- 
--The IDT VersaClock5 are programmable i2c clock generators providing
--from 3 to 12 output clocks.
-+The IDT VersaClock 5 and VersaClock 6 are programmable i2c clock
-+generators providing from 3 to 12 output clocks.
- 
- ==I2C device node==
- 
- Required properties:
- - compatible:	shall be one of "idt,5p49v5923" , "idt,5p49v5933" ,
--		"idt,5p49v5935".
-+		"idt,5p49v5935" , "idt,5p49v6901".
- - reg:		i2c device address, shall be 0x68 or 0x6a.
- - #clock-cells:	from common clock binding; shall be set to 1.
- - clocks:	from common clock binding; list of parent clock handles,
--		- 5p49v5923: (required) either or both of XTAL or CLKIN
-+		- 5p49v5923 and
-+		  5p49v6901: (required) either or both of XTAL or CLKIN
- 					reference clock.
- 		- 5p49v5933 and
- 		- 5p49v5935: (optional) property not present (internal
- 					Xtal used) or CLKIN reference
- 					clock.
- - clock-names:	from common clock binding; clock input names, can be
--		- 5p49v5923: (required) either or both of "xin", "clkin".
-+		- 5p49v5923 and
-+		  5p49v6901: (required) either or both of "xin", "clkin".
- 		- 5p49v5933 and
- 		- 5p49v5935: (optional) property not present or "clkin".
- 
-@@ -44,6 +46,13 @@ clock specifier, the following mapping applies:
- 	3 -- OUT3
- 	4 -- OUT4
- 
-+5P49V6901:
-+	0 -- OUT0_SEL_I2CB
-+	1 -- OUT1
-+	2 -- OUT2
-+	3 -- OUT3
-+	4 -- OUT4
-+
- ==Example==
- 
- /* 25MHz reference crystal */
--- 
-2.11.0
+Acked-by: Rob Herring <robh@kernel.org>
