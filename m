@@ -1,55 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:44302 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752433AbdGaPUQ (ORCPT
+Received: from mail-ua0-f181.google.com ([209.85.217.181]:33146 "EHLO
+        mail-ua0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754492AbdGJQEJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 31 Jul 2017 11:20:16 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Mon, 10 Jul 2017 12:04:09 -0400
+Received: by mail-ua0-f181.google.com with SMTP id w19so57664068uac.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 10 Jul 2017 09:04:09 -0700 (PDT)
+Subject: Re: [PATCH 1/6] arm64: dts: renesas: ulcb: Enable I2C4
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+References: <1499393396-11594-1-git-send-email-vladimir.barinov@cogentembedded.com>
+ <CAMuHMdVPNoCZz3fiqXOQ6Rx_jzAa4-rDAE9XD3jZH-mkZJmUhg@mail.gmail.com>
+Cc: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Javier Martinez Canillas <javier@dowhile0.org>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 01/38] ARM: dts: r7s72100: Add generic compatible string for I2C EEPROM
-Date: Mon, 31 Jul 2017 17:19:13 +0200
-Message-Id: <61e137ce2cfe2c7bba9e24686dfe495cd6ce6ed8.1501514100.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1501514100.git.horms+renesas@verge.net.au>
-References: <cover.1501514100.git.horms+renesas@verge.net.au>
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Message-ID: <df0aacd3-7778-998e-f63c-3667553c3fe0@cogentembedded.com>
+Date: Mon, 10 Jul 2017 19:04:04 +0300
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdVPNoCZz3fiqXOQ6Rx_jzAa4-rDAE9XD3jZH-mkZJmUhg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Javier Martinez Canillas <javier@dowhile0.org>
+Hi Geert,
 
-The at24 driver allows to register I2C EEPROM chips using different vendor
-and devices, but the I2C subsystem does not take the vendor into account
-when matching using the I2C table since it only has device entries.
+Thank you for review!
 
-But when matching using an OF table, both the vendor and device has to be
-taken into account so the driver defines only a set of compatible strings
-using the "atmel" vendor as a generic fallback for compatible I2C devices.
+On 10.07.2017 11:20, Geert Uytterhoeven wrote:
+> On Fri, Jul 7, 2017 at 4:09 AM, Vladimir Barinov
+> <vladimir.barinov@cogentembedded.com> wrote:
+>> From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+>>
+>> This enables I2C4 for ULCB board
+>>
+>> Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+>> --- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
+>> +++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+>> @@ -189,6 +189,12 @@
+>>          };
+>>   };
+>>
+>> +&i2c4 {
+>> +       status = "okay";
+>> +
+>> +       clock-frequency = <400000>;
+> Is this a bus limitation, or a limitation for the VC6 that's added in a later
+> patch?
+Yes, IDT VC5 clock generator supports up to 400kHz.
 
-So add this generic fallback to the device node compatible string to make
-the device to match the driver using the OF device ID table.
+I've explicitly set 400kHz as default since the documentation says that 
+the default value is 100kHz if 'clock-frequency' not set:
+Documentation/devicetree/bindings/i2c/i2c-rcar.txt
 
-Signed-off-by: Javier Martinez Canillas <javier@dowhile0.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r7s72100-genmai.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/r7s72100-genmai.dts b/arch/arm/boot/dts/r7s72100-genmai.dts
-index 52a7b586bac7..b0db621ff176 100644
---- a/arch/arm/boot/dts/r7s72100-genmai.dts
-+++ b/arch/arm/boot/dts/r7s72100-genmai.dts
-@@ -57,7 +57,7 @@
- 	clock-frequency = <400000>;
- 
- 	eeprom@50 {
--		compatible = "renesas,24c128";
-+		compatible = "renesas,24c128", "atmel,24c128";
- 		reg = <0x50>;
- 		pagesize = <64>;
- 	};
--- 
-2.1.4
+Regards,
+Vladimir
