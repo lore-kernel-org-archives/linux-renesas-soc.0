@@ -1,31 +1,27 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:39120 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:38719 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754182AbdGJN1F (ORCPT
+        with ESMTP id S1753563AbdGJNSo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 10 Jul 2017 09:27:05 -0400
-Date: Mon, 10 Jul 2017 15:26:58 +0200
+        Mon, 10 Jul 2017 09:18:44 -0400
+Date: Mon, 10 Jul 2017 15:18:35 +0200
 From: Simon Horman <horms@verge.net.au>
 To: ltsi-dev@lists.linuxfoundation.org
 Cc: Hisao Munakata <hisao.munakata.vt@renesas.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: Re: [GIT PULL LTSI-4.9 repost] Renesas SoCs and Drivers to v4.10
-Message-ID: <20170710132658.GA984@verge.net.au>
-References: <20170710131835.GA27613@verge.net.au>
+Subject: [GIT PULL LTSI-4.9] Renesas SoCs and Drivers to v4.10
+Message-ID: <20170710131835.GA27613@verge.net.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20170710131835.GA27613@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-[Reposting with correct tag to pull, an old revision was posted by mistake]
-
 Hi,
 
-This is a submission to LTSI-v4.9.
+This is a submision to LTSI-v4.9.
 
 This series is comprised of backports to v4.9 of the following
 components to their standard as of v4.10:
@@ -82,7 +78,7 @@ Limited backport of the following to provide dependencies for the above:
 * soc-device-match
 
 It is a follow up to early preparatory work the main difference being
-a rebase onto v4.9.36. I plan to follow-up with similar submissions
+a reabse onto v4.9.36. I plan to follow-up with similar submissions
 backporting Renesas SoCs and Drivers to v4.11 and v4.12.
 
 I have tested for build regressions on a wide range of defconfigs
@@ -94,29 +90,28 @@ This is based on of v4.9.36.
 Earlier revisions of this work was based on v4.9.21 and v4.9.31.
 
 
-The following changes since commit 9f86f302ec0e37e84617481c587e11c47a397e3f:
+The following changes since commit f1aa865ae5d4608cbfbb02f42baa1ef5ed95fce2:
 
-  Linux 4.9.36 (2017-07-05 14:40:44 +0200)
+  Linux 4.9.31 (2017-06-07 12:08:04 +0200)
 
 are available in the git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas-backport.git tags/backport/v4.9.36/snapshot-to-v4.10-flattened
+  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas-backport.git tags/backport/v4.9.31/snapshot-to-v4.10-flattened
 
-for you to fetch changes up to e629b8e80ed3dc7817ba8a92d4d8098bc5fdbe65:
+for you to fetch changes up to c98811ab4a13b793d187104586251b62076ced5b:
 
-  drm: bridge: add DesignWare HDMI I2S audio support (2017-07-10 14:18:08 +0200)
+  arm64: dts: h3ulcb: Provide sd0_uhs node (2017-06-12 07:51:20 +0200)
 
 ----------------------------------------------------------------
 LTSI-v4.9 Preparation for Renesas SoCs (to v4.10)
 
 Base:
-* v4.9.36
+* v4.9.31
 
 Backports of the following components to their standard as of v4.10:
 
 * adv7511
 * cpg
-* dw-hdmi
 * em-sti
 * gen3
 * gpio-keys
@@ -174,8 +169,8 @@ Ai Kyuse (3):
 
 Arnd Bergmann (3):
       base: soc: Introduce soc_device_match() interface
-      spi: rspi: avoid uninitialized variable access
       [media] v4l: rcar_fdp1: mark PM functions as __maybe_unused
+      spi: rspi: avoid uninitialized variable access
 
 Catalin Marinas (1):
       arm64: Enable HIBERNATION in defconfig
@@ -213,20 +208,13 @@ Felipe Balbi (4):
       usb: host: xhci: handle COMP_STOP from SETUP phase too
 
 Geert Uytterhoeven (59):
-      arm64: dts: r8a7796: salvator-x: Populate EXTALR
       base: soc: Early register bus when needed
       base: soc: Check for NULL SoC device attributes
       base: soc: Provide a dummy implementation of soc_device_match()
       ARM: shmobile: Document DT bindings for Product Register
       soc: renesas: Identify SoC and register with the SoC bus
-      can: rcar_canfd: Correct order of interrupt specifiers
       reset: Add renesas,rst DT bindings
       soc: renesas: Add R-Car RST driver
-      spi: sh-msiof: Add support for R-Car M3-W
-      pinctrl: sh-pfc: r8a7796: Fix GPSR definitions for SDHI2/3
-      arm64: dts: r8a7795: Add device node for PRR
-      arm64: dts: r8a7796: Add device node for PRR
-      arm64: defconfig: Do not lower CONFIG_LOG_BUF_SHIFT
       clk: renesas: cpg-mssr: Always use readl()/writel()
       clk: renesas: rcar-gen3-cpg: Always use readl()/writel()
       clk: renesas: cpg-mssr: Remove bogus commas from error messages
@@ -251,6 +239,9 @@ Geert Uytterhoeven (59):
       clk: renesas: r8a7778: Remove obsolete r8a7778_clocks_init()
       clk: renesas: r8a7779: Remove obsolete r8a7779_clocks_init()
       clk: renesas: rcar-gen2: Remove obsolete rcar_gen2_clocks_init()
+      can: rcar_canfd: Correct order of interrupt specifiers
+      spi: sh-msiof: Add support for R-Car M3-W
+      pinctrl: sh-pfc: r8a7796: Fix GPSR definitions for SDHI2/3
       ARM: shmobile: Sort Kconfig selections
       ARM: shmobile: r8a7794/alt: Add board part number to DT bindings
       ARM: shmobile: r8a7793/gose: Add board part number to DT bindings
@@ -272,6 +263,10 @@ Geert Uytterhoeven (59):
       ARM: dts: r8a7792: Add device node for PRR
       ARM: dts: r8a7793: Add device node for PRR
       ARM: dts: r8a7794: Add device node for PRR
+      arm64: dts: r8a7796: salvator-x: Populate EXTALR
+      arm64: dts: r8a7795: Add device node for PRR
+      arm64: dts: r8a7796: Add device node for PRR
+      arm64: defconfig: Do not lower CONFIG_LOG_BUF_SHIFT
 
 Hans Verkuil (2):
       [media] cec: pass parent device in register(), not allocate()
@@ -299,8 +294,9 @@ John Stultz (1):
 Julia Lawall (1):
       ASoC: constify snd_soc_ops structures
 
-Kazuya Mizuguchi (1):
+Kazuya Mizuguchi (2):
       ravb: Remove Rx overflow log messages
+      ravb: unmap descriptors when freeing rings
 
 Kieran Bingham (2):
       [media] dt-bindings: Add Renesas R-Car FDP1 bindings
@@ -311,7 +307,7 @@ Koji Matsuoka (3):
       drm: rcar-du: Fix H/V sync signal polarity configuration
       drm: rcar-du: Fix LVDS start sequence on Gen3
 
-Kuninori Morimoto (29):
+Kuninori Morimoto (28):
       ASoC: rsnd: depends on OF
       ASoC: rsnd: enable COMPILE_TEST
       ASoC: rsnd: remove duplicate define of rsnd_dvc_of_node()
@@ -340,11 +336,11 @@ Kuninori Morimoto (29):
       ASoC: simple-scu-card: code sync: follow to simple family style
       ASoC: simple-scu-card: code sync: rename asoc_simple_card_priv
       ASoC: simple-scu-card: code sync: tidyup props/link naming
-      drm: bridge: add DesignWare HDMI I2S audio support
 
 Laurent Pinchart (20):
-      arm64: dts: r8a7795: salvator-x: Add DU LVDS output endpoint
-      arm64: dts: r8a7795: Remove FCP SoC-specific compatible strings
+      clk: renesas: r8a7796: Add FCP clocks
+      clk: renesas: r8a7796: Add VSP clocks
+      clk: renesas: r8a7796: Add DU and LVDS clocks
       drm: Make the connector .detect() callback optional
       drm: rcar-du: Constify node argument to rcar_du_lvds_connector_init()
       drm: rcar-du: Bring HDMI encoder comments in line with the driver
@@ -355,14 +351,13 @@ Laurent Pinchart (20):
       drm: rcar-du: Add R8A7796 support
       drm: rcar-du: Fix dot clock routing configuration
       dt-bindings: media: renesas-fcp: Remove SoC-specific compatible strings
+      [media] v4l: ctrls: Add deinterlacing mode control
       [media] v4l: vsp1: Add support for capture and output in HSV formats
-      clk: renesas: r8a7796: Add FCP clocks
-      clk: renesas: r8a7796: Add VSP clocks
-      clk: renesas: r8a7796: Add DU and LVDS clocks
       ARM: shmobile: Consolidate R8A7743 and R8A779[234] machine definitions
       ARM: dts: r8a7779: Fix DU reg property
       ARM: dts: r8a7779: marzen: Configure pinmuxing for the DU0 input clock
-      [media] v4l: ctrls: Add deinterlacing mode control
+      arm64: dts: r8a7795: salvator-x: Add DU LVDS output endpoint
+      arm64: dts: r8a7795: Remove FCP SoC-specific compatible strings
 
 Linus Walleij (1):
       arm64: defconfig: drop GPIO_SYSFS on multiplatforms
@@ -401,6 +396,8 @@ Maxime Ripard (1):
       ASoC: wm8978: Adjust clock indices so that simple card works
 
 Niklas Söderlund (10):
+      clk: renesas: r8a7796: Add CSI2 clocks
+      clk: renesas: r8a7796: Add VIN clocks
       pinctrl: sh-pfc: r8a7796: Add DU support
       pinctrl: sh-pfc: r8a7795: Simplify get bias logic
       pinctrl: sh-pfc: r8a7778: Use lookup function for bias data
@@ -408,22 +405,21 @@ Niklas Söderlund (10):
       pinctrl: sh-pfc: r8a7795: Support none GPIO pins with configurable drive-strength
       pinctrl: sh-pfc: r8a7795: Add group for AVB MDIO and MII pins
       pinctrl: sh-pfc: r8a7795: Add group for QSPI0 and QSPI1 pins
-      clk: renesas: r8a7796: Add CSI2 clocks
-      clk: renesas: r8a7796: Add VIN clocks
       ARM: shmobile: defconfig: Enable CONFIG_CGROUPS
 
 OGAWA Hirofumi (1):
       xhci: Fix race related to abort operation
 
 Ramesh Shanmugasundaram (2):
-      pinctrl: sh-pfc: r8a7796: Add DRIF support
       clk: renesas: r8a7796: Add DRIF clock
+      pinctrl: sh-pfc: r8a7796: Add DRIF support
 
 Ricardo Ribalda Delgado (2):
       [media] videodev2.h Add HSV formats
       [media] videodev2.h Add HSV encoding
 
-Sean Nyekjaer (1):
+Sean Nyekjaer (2):
+      net: phy: micrel: add support for KSZ8795
       net: phy: micrel: KSZ8795 do not set SUPPORTED_[Asym_]Pause
 
 Sergei Shtylyov (35):
@@ -431,16 +427,16 @@ Sergei Shtylyov (35):
       soc: renesas: rcar-sysc: add R8A7743 support
       ARM: shmobile: r8a7745: add power domain index macros
       soc: renesas: rcar-sysc: add R8A7745 support
-      drm: rcar-du: Add R8A7792 support
-      sh_eth: fix branch prediction in sh_eth_interrupt()
-      sh_eth: enable RX descriptor word 0 shift on SH7734
-      sh_eth: fix EESIPR values for SH77{34|63}
-      sh_eth: R8A7740 supports packet shecksumming
       clk: renesas: Add r8a7743 CPG Core Clock Definitions
       clk: renesas: Add r8a7745 CPG Core Clock Definitions
       clk: renesas: cpg-mssr: Add common R-Car Gen2 support
       clk: renesas: cpg-mssr: Add R8A7743 support
       clk: renesas: cpg-mssr: Add R8A7745 support
+      drm: rcar-du: Add R8A7792 support
+      sh_eth: fix branch prediction in sh_eth_interrupt()
+      sh_eth: enable RX descriptor word 0 shift on SH7734
+      sh_eth: fix EESIPR values for SH77{34|63}
+      sh_eth: R8A7740 supports packet shecksumming
       ARM: shmobile: r8a7743: basic SoC support
       ARM: shmobile: document SK-RZG1M board
       ARM: dts: wheat: add DU support
@@ -464,22 +460,18 @@ Sergei Shtylyov (35):
       ARM: dts: sk-rzg1e: add Ether support
 
 Simon Horman (29):
-      arm64: dts: r8a7796: add SDHI nodes
       i2c: rcar: Add per-Generation fallback bindings
       i2c: sh_mobile: Add per-Generation fallback bindings
       PCI: rcar-gen2: Use gen2 fallback compatibility last
       PCI: rcar: Use gen2 fallback compatibility last
       PCI: rcar: Add gen3 fallback compatibility string for pcie-rcar
       mmc: sh_mmcif: Document r8a73a4, r8a7778 and sh73a0 DT bindings
-      spi: sh-msiof: Add R-Car Gen 2 and 3 fallback bindings
-      spi: sh-msiof: Do not use C++ style comment
-      arm64: dts: r8a7796: salvator-x: enable SDHI0 & 3
-      arm64: dts: r8a7796: salvator-x: enable UHS for SDHI 0 & 3
-      arm64: dts: h3ulcb: Provide sd0_uhs node
       mmc: core: Add helper to see if a host can be retuned
       mmc: tmio: document mandatory and optional callbacks
       mmc: sh_mobile_sdhi: Add tuning support
       mmc: sh_mobile_sdhi: remove support for sh7372
+      spi: sh-msiof: Add R-Car Gen 2 and 3 fallback bindings
+      spi: sh-msiof: Do not use C++ style comment
       ARM: dts: r8a7791: set maximum frequency for SDHI clocks
       ARM: shmobile: select errata 798181 for SoCs with CA15 cores
       ARM: dts: koelsch: enable UHS for SDHI 0, 1 & 3
@@ -493,6 +485,10 @@ Simon Horman (29):
       ARM: dts: lager: Enable UHS-I SDR-104
       ARM: dts: koelsch: Enable UHS-I SDR-104
       ARM: dts: alt: Enable UHS-I SDR-104
+      arm64: dts: r8a7796: add SDHI nodes
+      arm64: dts: r8a7796: salvator-x: enable SDHI0 & 3
+      arm64: dts: r8a7796: salvator-x: enable UHS for SDHI 0 & 3
+      arm64: dts: h3ulcb: Provide sd0_uhs node
 
 Srinivas Kandagatla (1):
       drm/bridge: adv7511: Enable the audio data and clock pads on adv7533
@@ -504,8 +500,8 @@ Takatoshi Akiyama (1):
       serial: sh-sci: Fix deadlock caused by serial output request
 
 Takeshi Kihara (2):
-      pinctrl: sh-pfc: r8a7796: Add EtherAVB pins, groups and functions
       clk: renesas: r8a7795: Fix HDMI parent clock
+      pinctrl: sh-pfc: r8a7796: Add EtherAVB pins, groups and functions
 
 Timur Tabi (1):
       net: phy: phy drivers should not set SUPPORTED_[Asym_]Pause
@@ -514,17 +510,17 @@ Ulf Hansson (1):
       net: smsc911x: Synchronize the runtime PM status during system suspend
 
 Ulrich Hecht (11):
-      dmaengine: rcar-dmac: Document R-Car M3-W bindings
-      pinctrl: sh-pfc: r8a7796: Add I2C pin support
-      arm64: renesas: r8a7796: add SYS-DMAC controller nodes
-      arm64: dts: r8a7796: add I2C support
-      arm64: dts: r8a7796: Enable I2C DMA
-      arm64: dts: r8a7796: salvator-x: enable I2C
       clk: renesas: r8a7796: Add SYS-DMAC clocks
       clk: renesas: r8a7796: Add SCIF clocks
       clk: renesas: r8a7796: Add HSCIF clocks
       clk: renesas: r8a7796: Add I2C clocks
+      dmaengine: rcar-dmac: Document R-Car M3-W bindings
+      pinctrl: sh-pfc: r8a7796: Add I2C pin support
       ARM: dts: r8a7793: Enable VIN0-VIN2
+      arm64: renesas: r8a7796: add SYS-DMAC controller nodes
+      arm64: dts: r8a7796: add I2C support
+      arm64: dts: r8a7796: Enable I2C DMA
+      arm64: dts: r8a7796: salvator-x: enable I2C
 
 Vladimir Barinov (13):
       arm64: dts: h3ulcb: update documentation with official board name
@@ -541,10 +537,6 @@ Vladimir Barinov (13):
       arm64: dts: h3ulcb: enable SDHI2
       arm64: dts: h3ulcb: rename SDHI0 pins
 
-Vladimir Zapolskiy (2):
-      drm: dw_hdmi: use of_get_i2c_adapter_by_node interface
-      drm: bridge/dw_hdmi: add dw hdmi i2c bus adapter support
-
 Wei Yongjun (1):
       xhci: fix non static symbol warning
 
@@ -552,11 +544,11 @@ William Towle (1):
       ARM: dts: lager: Add entries for VIN HDMI input support
 
 Wolfram Sang (5):
+      mmc: tmio: fix wrong bitmask for SDIO irqs
+      mmc: tmio: remove SDIO from TODO list
       arm64: dts: r8a7795: salvator-x: enable UHS for SDHI 0 & 3
       arm64: dts: r8a7795: salvator: enable on-board eMMC
       arm64: dts: r8a7796: salvator: enable on board eMMC
-      mmc: tmio: fix wrong bitmask for SDIO irqs
-      mmc: tmio: remove SDIO from TODO list
 
 Yoshihiro Shimoda (4):
       phy: rcar-gen3-usb2: add sysfs for usb role swap
@@ -564,10 +556,13 @@ Yoshihiro Shimoda (4):
       usb: host: xhci: plat: add support for Renesas r8a7796 SoC
       arm64: dts: r8a7795: salvator-x: add bias setting for usb1_pins
 
+jbrunet (2):
+      net: phy: add an option to disable EEE advertisement
+      net: phy: use boolean dt properties for eee broken modes
+
  .../ABI/testing/sysfs-platform-phy-rcar-gen3-usb2  |   15 +
  Documentation/devicetree/bindings/arm/shmobile.txt |   36 +-
  .../devicetree/bindings/clock/renesas,cpg-mssr.txt |    5 +-
- .../devicetree/bindings/display/bridge/dw_hdmi.txt |    4 +-
  .../devicetree/bindings/display/renesas,du.txt     |   12 +-
  .../devicetree/bindings/dma/renesas,rcar-dmac.txt  |    1 +
  Documentation/devicetree/bindings/i2c/i2c-rcar.txt |   32 +-
@@ -656,18 +651,12 @@ Yoshihiro Shimoda (4):
  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c       |    5 +-
  drivers/gpu/drm/bochs/bochs_drv.c                  |    2 -
  drivers/gpu/drm/bochs/bochs_kms.c                  |    7 -
- drivers/gpu/drm/bridge/Kconfig                     |    8 +
- drivers/gpu/drm/bridge/Makefile                    |    1 +
  drivers/gpu/drm/bridge/adv7511/Kconfig             |    8 +
  drivers/gpu/drm/bridge/adv7511/Makefile            |    1 +
  drivers/gpu/drm/bridge/adv7511/adv7511.h           |   16 +
  drivers/gpu/drm/bridge/adv7511/adv7511_audio.c     |  213 ++
  drivers/gpu/drm/bridge/adv7511/adv7511_drv.c       |    4 +
  drivers/gpu/drm/bridge/adv7511/adv7533.c           |    1 +
- drivers/gpu/drm/bridge/dw-hdmi-audio.h             |    7 +
- drivers/gpu/drm/bridge/dw-hdmi-i2s-audio.c         |  141 ++
- drivers/gpu/drm/bridge/dw-hdmi.c                   |  301 ++-
- drivers/gpu/drm/bridge/dw-hdmi.h                   |   39 +
  drivers/gpu/drm/bridge/nxp-ptn3460.c               |    7 -
  drivers/gpu/drm/bridge/parade-ps8622.c             |    7 -
  drivers/gpu/drm/bridge/tc358767.c                  |    7 -
@@ -755,7 +744,7 @@ Yoshihiro Shimoda (4):
  drivers/mmc/host/sh_mobile_sdhi.c                  |  274 ++-
  drivers/mmc/host/tmio_mmc.h                        |   32 +-
  drivers/mmc/host/tmio_mmc_pio.c                    |  119 +-
- drivers/net/ethernet/renesas/ravb_main.c           |    8 +-
+ drivers/net/ethernet/renesas/ravb_main.c           |  120 +-
  drivers/net/ethernet/renesas/sh_eth.c              |    8 +-
  drivers/net/ethernet/smsc/smsc911x.c               |    6 +
  drivers/net/phy/bcm-cygnus.c                       |    3 +-
@@ -763,10 +752,11 @@ Yoshihiro Shimoda (4):
  drivers/net/phy/broadcom.c                         |   36 +-
  drivers/net/phy/icplus.c                           |    6 +-
  drivers/net/phy/intel-xway.c                       |   24 +-
- drivers/net/phy/micrel.c                           |   32 +-
+ drivers/net/phy/micrel.c                           |   44 +-
  drivers/net/phy/microchip.c                        |    3 +-
  drivers/net/phy/national.c                         |    2 +-
- drivers/net/phy/phy_device.c                       |   19 +
+ drivers/net/phy/phy.c                              |    3 +
+ drivers/net/phy/phy_device.c                       |  111 +-
  drivers/net/phy/smsc.c                             |   18 +-
  drivers/pci/host/pci-rcar-gen2.c                   |    2 +-
  drivers/pci/host/pcie-rcar.c                       |    5 +-
@@ -812,7 +802,9 @@ Yoshihiro Shimoda (4):
  include/linux/clk/renesas.h                        |    4 -
  include/linux/gpio_keys.h                          |    5 +-
  include/linux/mfd/tmio.h                           |    5 +
+ include/linux/micrel_phy.h                         |    2 +
  include/linux/mmc/host.h                           |    5 +
+ include/linux/phy.h                                |    3 +
  include/linux/soc/renesas/rcar-rst.h               |    6 +
  include/linux/sys_soc.h                            |    9 +
  include/media/cec.h                                |   10 +-
@@ -846,7 +838,7 @@ Yoshihiro Shimoda (4):
  sound/soc/sh/rcar/src.c                            |   13 +-
  sound/soc/sh/rcar/ssi.c                            |   28 +-
  sound/soc/sh/rcar/ssiu.c                           |   20 +
- 282 files changed, 10914 insertions(+), 2142 deletions(-)
+ 278 files changed, 10595 insertions(+), 2184 deletions(-)
  create mode 100644 Documentation/ABI/testing/sysfs-platform-phy-rcar-gen3-usb2
  create mode 100644 Documentation/devicetree/bindings/media/renesas,fdp1.txt
  create mode 100644 Documentation/devicetree/bindings/reset/renesas,rst.txt
@@ -864,7 +856,6 @@ Yoshihiro Shimoda (4):
  create mode 100644 drivers/clk/renesas/rcar-gen2-cpg.c
  create mode 100644 drivers/clk/renesas/rcar-gen2-cpg.h
  create mode 100644 drivers/gpu/drm/bridge/adv7511/adv7511_audio.c
- create mode 100644 drivers/gpu/drm/bridge/dw-hdmi-i2s-audio.c
  create mode 100644 drivers/media/platform/rcar_fdp1.c
  create mode 100644 drivers/soc/renesas/r8a7743-sysc.c
  create mode 100644 drivers/soc/renesas/r8a7745-sysc.c
