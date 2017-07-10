@@ -1,50 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:46461 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751034AbdGGLne (ORCPT
+Received: from mail-it0-f66.google.com ([209.85.214.66]:34565 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932221AbdGJOF7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Jul 2017 07:43:34 -0400
-Date: Fri, 7 Jul 2017 13:43:30 +0200
-From: Jean Delvare <jdelvare@suse.de>
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH i2c-tools-3.1] i2c-tools: add new tool 'i2ctransfer'
-Message-ID: <20170707134330.47bd5cbc@endymion>
-In-Reply-To: <20170419181257.bgzi2o4ygwdpquvs@ninjato>
-References: <20170407124403.1880-1-wsa+renesas@sang-engineering.com>
-        <20170419181257.bgzi2o4ygwdpquvs@ninjato>
+        Mon, 10 Jul 2017 10:05:59 -0400
+Received: by mail-it0-f66.google.com with SMTP id o202so13409389itc.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 10 Jul 2017 07:05:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <2320662.jifSpTNEif@avalon>
+References: <1499693302-25120-1-git-send-email-geert+renesas@glider.be>
+ <1499693302-25120-9-git-send-email-geert+renesas@glider.be> <2320662.jifSpTNEif@avalon>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 10 Jul 2017 16:05:56 +0200
+Message-ID: <CAMuHMdWVQtE61BAdYaGRXenWYiW28xKd5oFXTOebXOJZ7sh_GQ@mail.gmail.com>
+Subject: Re: [PATCH 8/9] ARM: multi_v7_defconfig: Replace DRM_RCAR_HDMI by
+ generic bridge options
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Kevin Hilman <khilman@kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Olof Johansson <olof@lixom.net>,
+        Simon Horman <horms@verge.net.au>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, 19 Apr 2017 20:12:57 +0200, Wolfram Sang wrote:
-> On Fri, Apr 07, 2017 at 02:44:03PM +0200, Wolfram Sang wrote:
-> > This tool allows to construct and concat multiple I2C messages into one
-> > single transfer. Its aim is to test I2C master controllers, and so there
-> > is no SMBus fallback.
-> > 
-> > I've been missing such a tool a number of times now, so I finally got
-> > around to writing it myself. As with all I2C tools, it can be dangerous,
-> > but it can also be very useful when developing.
-> > 
-> > It has been tested with various Renesas I2C IP cores as well as Tegra,
-> > i.MX and AT91.
-> > 
-> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> > ---  
-> 
-> Pushed to i2c-tools-3.1.
+Hi Laurent,
 
-As usual I'm late to the party... I don't think this should have gone
-to branch 3.1 which is a bug-fix only branch. If people want the newest
-shiny stuff they should use the master branch. And if it bothers them
-that there is no released version of it... well they may be right, and
-it suggests it's about time to push a first version of i2c-tools 4 out
-the door.
+On Mon, Jul 10, 2017 at 3:41 PM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Monday 10 Jul 2017 15:28:21 Geert Uytterhoeven wrote:
+>> The manual bridge implementation was removed in favor of the generic
+>> one, so now we need to enable standard bridge drivers like
+>> DRM_DUMB_VGA_DAC and DRM_I2C_ADV7511.
+>> Both were already enabled, but the (newer) ADV7511 audio part wasn't.
+>>
+>> Fixes: 5c602531feb3db39 ("drm: rcar-du: Replace manual bridge implementation
+>> with DRM bridge")
+>
+> I wonder if this patch really needs a Fixes tag. All it does is removing a now
+> deleted kernel option, and adding a new unrelated one. The former is related
+> to 5c602531feb3db39, but I'm not sure it should be considered as a bug.
 
--- 
-Jean Delvare
-SUSE L3 Support
+I added a Fixes tag because it aids backporting: if 5c602531feb3db39
+is backported, the defconfig update should be backported, too.
+
+> The content of this patch looks good to me though.
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
