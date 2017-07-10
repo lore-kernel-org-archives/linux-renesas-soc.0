@@ -1,79 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:60590 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:60982 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750812AbdGJJIJ (ORCPT
+        with ESMTP id S1750812AbdGJJcb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 10 Jul 2017 05:08:09 -0400
-Date: Mon, 10 Jul 2017 11:07:50 +0200
+        Mon, 10 Jul 2017 05:32:31 -0400
+Date: Mon, 10 Jul 2017 11:31:32 +0200
 From: Simon Horman <horms@verge.net.au>
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2.1 4/7] arm64: dts: renesas: r8a7796: Add HDMI encoder
- instance
-Message-ID: <20170710090749.GM13680@verge.net.au>
-References: <20170621093133.5677-5-laurent.pinchart+renesas@ideasonboard.com>
- <20170621121730.22025-1-laurent.pinchart+renesas@ideasonboard.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH 0/9] ARM: renesas: Use SMP jump stub SRAM region from DT
+Message-ID: <20170710093132.GQ13680@verge.net.au>
+References: <1499182903-31339-1-git-send-email-geert+renesas@glider.be>
+ <CAMuHMdUFkaxoJCX5F3FH3vy=Sh50y02a3hF9HR3tkw-XwtiG2g@mail.gmail.com>
+ <20170710083926.GI13680@verge.net.au>
+ <CAMuHMdVi4YhvpEZqbdhVe3AT=8_2Yp8zvaB7sxAPMdMGrvKa9Q@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20170621121730.22025-1-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <CAMuHMdVi4YhvpEZqbdhVe3AT=8_2Yp8zvaB7sxAPMdMGrvKa9Q@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Jun 21, 2017 at 03:17:30PM +0300, Laurent Pinchart wrote:
-> Add the HDMI encoder to the R8A7796 DT in disabled state.
+On Mon, Jul 10, 2017 at 10:44:47AM +0200, Geert Uytterhoeven wrote:
+> Hi Simon,
 > 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> ---
->  arch/arm64/boot/dts/renesas/r8a7796.dtsi | 25 +++++++++++++++++++++++++
->  1 file changed, 25 insertions(+)
+> On Mon, Jul 10, 2017 at 10:39 AM, Simon Horman <horms@verge.net.au> wrote:
+> > On Tue, Jul 04, 2017 at 06:44:48PM +0200, Geert Uytterhoeven wrote:
+> >> On Tue, Jul 4, 2017 at 5:41 PM, Geert Uytterhoeven
+> >> <geert+renesas@glider.be> wrote:
+> >> > The R-Car Gen2 platform code for CPU core bringup needs to copy a jump
+> >> > stub to on-SoC SRAM.  Currently it uses a hardcoded address pointing to
+> >> > ICRAM1.
+> >> >
+> >> > This patch series adds support to specify this region from DT.  It
+> >> > consists of 3 parts:
+> >> >   - DT binding documentation for reserving SRAM for the jump stub,
+> >> >   - A platform code update to retrieve the information from DT, if
+> >> >     present (of course backwards-compatibility with old DTBs is
+> >> >     preserved),
+> >> >   - DT updates to reserve an SRAM region in DT on all R-Car Gen2 and
+> >> >     RZ/G1 SoCs.
+> >> >
+> >> > The DT patches in this series depend on "[PATCH 0/7] ARM: dts: renesas:
+> >> > Add Inter Connect RAM".
+> >> >
+> >> > Note that the current jump stub in Linux is 12 bytes long.  The patches
+> >> > reserve 16 bytes of SRAM.  Should this be increased?  The mapping
+> >> > granularity is PAGE_SIZE anyway.
+> >> >
+> >> > Thanks for your comments!
+> >> >
+> >> > Geert Uytterhoeven (9):
+> >> >   dt-bindings: sram: Document renesas,smp-sram
+> >> >   ARM: shmobile: rcar-gen2: Obtain jump stub region from DT
+> >> >   ARM: dts: r8a7743: Reserve SRAM for the SMP jump stub
+> >> >   ARM: dts: r8a7745: Reserve SRAM for the SMP jump stub
+> >> >   ARM: dts: r8a7790: Reserve SRAM for the SMP jump stub
+> >> >   ARM: dts: r8a7791: Reserve SRAM for the SMP jump stub
+> >> >   ARM: dts: r8a7792: Reserve SRAM for the SMP jump stub
+> >> >   ARM: dts: r8a7793: Reserve SRAM for the SMP jump stub
+> >> >   ARM: dts: r8a7794: Reserve SRAM for the SMP jump stub
+> >>
+> >> Forgot to mention: this has been tested on r8a7790/lager, r8a7791/koelsch,
+> >> r8a7792/blanche, r8a7793/gose, and r8a7794/alt (r8a7794 needs an
+> >> unrelated fix to enable SMP).
+> >
+> > Geert, these seem nice and clean to me.
+> > Are they ready to be applied?
 > 
-> Changes since v2:
-> 
-> - Rename node to hdmi@fead0000
-> 
-> diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-> index ad9cd1c3199f..8c1a770c41cd 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-> @@ -1532,6 +1532,31 @@
->  			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
->  		};
->  
-> +		hdmi0: hdmi@fead0000 {
-> +			compatible = "renesas,r8a7796-hdmi", "renesas,rcar-gen3-hdmi";
-> +			reg = <0 0xfead0000 0 0x10000>;
-> +			interrupts = <GIC_SPI 389 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&cpg CPG_MOD 729>, <&cpg CPG_CORE R8A7796_CLK_HDMI>;
-> +			clock-names = "iahb", "isfr";
-> +			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-> +			resets = <&cpg 729>;
-> +			status = "disabled";
-> +
-> +			ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +				port@0 {
-> +					reg = <0>;
-> +					dw_hdmi0_in: endpoint {
-> +						remote-endpoint = <&du_out_hdmi0>;
+> Now the binding has been Acked by Rob, I think they are.
+> Thanks!
 
-du_out_hdmi0 is used here but does not exist until the following patch is
-applied. What to do?
-
-> +					};
-> +				};
-> +				port@1 {
-> +					reg = <1>;
-> +				};
-> +			};
-> +		};
-> +
->  		du: display@feb00000 {
->  			/* placeholder */
->  
-> -- 
-> Regards,
-> 
-> Laurent Pinchart
-> 
+Thanks, all patches accepted for v4.14.
