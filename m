@@ -1,85 +1,105 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:56226 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751474AbdGZLcx (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:63643 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752711AbdGJJSW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 26 Jul 2017 07:32:53 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 4/5] arm64: dts: renesas: r8a7795: add usb-dmac ch2 and ch3 device nodes
-Date: Wed, 26 Jul 2017 20:29:39 +0900
-Message-Id: <1501068580-3981-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1501068580-3981-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1501068580-3981-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Mon, 10 Jul 2017 05:18:22 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH v 1/2] ARM: dts: r8a7743: Add Ethernet AVB support
+Date: Mon, 10 Jul 2017 09:17:57 +0000
+Message-ID: <KL1PR06MB1702D5E5580D12BCA41D9B3AB8A90@KL1PR06MB1702.apcprd06.prod.outlook.com>
+References: <1499433165-62475-1-git-send-email-biju.das@bp.renesas.com>
+ <1499433165-62475-2-git-send-email-biju.das@bp.renesas.com>
+ <CAMuHMdWsM_FBJ46=U69XptqpyC2cJYx_cqczaHBNq2nxZr68GQ@mail.gmail.com>
+ <20170710082350.GB13680@verge.net.au> <20170710083643.GG13680@verge.net.au>
+In-Reply-To: <20170710083643.GG13680@verge.net.au>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds support for usb-dmac ch2 and ch3 device nodes for
-R-Car H3 ES2.0.
+Hi Simon,
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi |  3 +++
- arch/arm64/boot/dts/renesas/r8a7795.dtsi     | 28 ++++++++++++++++++++++++++++
- 2 files changed, 31 insertions(+)
+Thanks for the review.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-index 1eccc7c..9743aca 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-@@ -25,6 +25,9 @@
- 	/delete-node/ usb@ee0e0100;
- 	/delete-node/ usb@ee0e0000;
- 
-+	/delete-node/ dma-controller@e6460000;
-+	/delete-node/ dma-controller@e6470000;
-+
- 	fcpf2: fcp@fe952000 {
- 		compatible = "renesas,fcpf";
- 		reg = <0 0xfe952000 0 0x200>;
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index c3b1285..d1381d9 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1499,6 +1499,34 @@
- 			dma-channels = <2>;
- 		};
- 
-+		usb_dmac2: dma-controller@e6460000 {
-+			compatible = "renesas,r8a7795-usb-dmac",
-+				     "renesas,usb-dmac";
-+			reg = <0 0xe6460000 0 0x100>;
-+			interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "ch0", "ch1";
-+			clocks = <&cpg CPG_MOD 326>;
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			resets = <&cpg 326>;
-+			#dma-cells = <1>;
-+			dma-channels = <2>;
-+		};
-+
-+		usb_dmac3: dma-controller@e6470000 {
-+			compatible = "renesas,r8a7795-usb-dmac",
-+				     "renesas,usb-dmac";
-+			reg = <0 0xe6470000 0 0x100>;
-+			interrupts = <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "ch0", "ch1";
-+			clocks = <&cpg CPG_MOD 329>;
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			resets = <&cpg 329>;
-+			#dma-cells = <1>;
-+			dma-channels = <2>;
-+		};
-+
- 		sdhi0: sd@ee100000 {
- 			compatible = "renesas,sdhi-r8a7795";
- 			reg = <0 0xee100000 0 0x2000>;
--- 
-1.9.1
+Regards,
+Biju
+
+> -----Original Message-----
+> From: Simon Horman [mailto:horms@verge.net.au]
+> Sent: 10 July 2017 09:37
+> To: Geert Uytterhoeven <geert@linux-m68k.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>; devicetree@vger.kernel.org;
+> Chris Paterson <Chris.Paterson2@renesas.com>; Sergei Shtylyov
+> <sergei.shtylyov@cogentembedded.com>; Magnus Damm
+> <magnus.damm@gmail.com>; Russell King <linux@armlinux.org.uk>; Biju Das
+> <biju.das@bp.renesas.com>; Linux-Renesas <linux-renesas-
+> soc@vger.kernel.org>; Rob Herring <robh+dt@kernel.org>; linux-arm-
+> kernel@lists.infradead.org
+> Subject: Re: [PATCH v 1/2] ARM: dts: r8a7743: Add Ethernet AVB support
+>
+> On Mon, Jul 10, 2017 at 10:23:51AM +0200, Simon Horman wrote:
+> > On Mon, Jul 10, 2017 at 09:54:40AM +0200, Geert Uytterhoeven wrote:
+> > > Hi Biju,
+> > >
+> > > On Fri, Jul 7, 2017 at 3:12 PM, Biju Das <biju.das@bp.renesas.com> wr=
+ote:
+> > > > Add Ethernet AVB support for r8a7743 SoC.
+> > > >
+> > > > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > > > Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+> > >
+> > > With the minor nit below fixed:
+> > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > >
+> > > > --- a/arch/arm/boot/dts/r8a7743.dtsi
+> > > > +++ b/arch/arm/boot/dts/r8a7743.dtsi
+> > > > @@ -605,6 +605,19 @@
+> > > >                         #size-cells =3D <0>;
+> > > >                         status =3D "disabled";
+> > > >                 };
+> > > > +
+> > > > +               avb: ethernet@e6800000 {
+> > > > +                       compatible =3D "renesas,etheravb-r8a7743",
+> >
+> > I do not see a patch to add "renesas,etheravb-r8a7743" to
+> > Documentation/devicetree/bindings/net/renesas,ravb.txt
+> >
+> > If you haven't already done so please post a patch to add this once
+> > net-next re-opens.
+>
+> I now see "ravb: Document binding for r8a7743 SoC"
+
+I will send the patch with Rob's comments.
+> >
+> > > > +                                    "renesas,etheravb-rcar-gen2";
+> > > > +                       reg =3D <0 0xe6800000 0 0x800>, <0 0xee0e80=
+00 0 0x4000>;
+> > > > +                       interrupts =3D <0 163 IRQ_TYPE_LEVEL_HIGH>;
+> > >
+> > > s/0/GIC_SPI/
+> >
+> > Thanks, I have applied this patch with the minor update above.
+
+Thanks Simon.
+
+
+
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
