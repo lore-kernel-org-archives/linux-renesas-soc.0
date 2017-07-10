@@ -1,55 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:47310 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751374AbdGQNX6 (ORCPT
+Received: from mail-lf0-f43.google.com ([209.85.215.43]:34763 "EHLO
+        mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752655AbdGJJbh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Jul 2017 09:23:58 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] ARM: shmobile: Remove ARCH_SHMOBILE_MULTI
-Date: Mon, 17 Jul 2017 15:23:54 +0200
-Message-Id: <1500297834-7387-1-git-send-email-geert+renesas@glider.be>
+        Mon, 10 Jul 2017 05:31:37 -0400
+Received: by mail-lf0-f43.google.com with SMTP id t72so55329312lff.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 10 Jul 2017 02:31:36 -0700 (PDT)
+Subject: Re: [PATCH v 1/2] ravb: Add support for r8a7743 SoC
+To: Rob Herring <robh@kernel.org>, Biju Das <biju.das@bp.renesas.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org
+References: <1499259711-56175-1-git-send-email-biju.das@bp.renesas.com>
+ <1499259711-56175-2-git-send-email-biju.das@bp.renesas.com>
+ <20170710012024.j4cso2jyi6canws2@rob-hp-laptop>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <7a631876-900e-66fb-c389-a33b9a146a8e@cogentembedded.com>
+Date: Mon, 10 Jul 2017 12:31:19 +0300
+MIME-Version: 1.0
+In-Reply-To: <20170710012024.j4cso2jyi6canws2@rob-hp-laptop>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The migration from ARCH_SHMOBILE_MULTI to ARCH_RENESAS has been
-completed in v4.12 by commit 9ed2d4bc5c0c244d ("ARM: dts: renesas:
-Switch from ARCH_SHMOBILE_MULTI to ARCH_RENESAS"), so the
-ARCH_SHMOBILE_MULTI symbol can be removed.
+Hello!
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - Reference final commit.
----
- arch/arm/mach-shmobile/Kconfig | 4 ----
- 1 file changed, 4 deletions(-)
+On 7/10/2017 4:20 AM, Rob Herring wrote:
 
-diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
-index ad7d604ff0013268..280e7312a9e1b300 100644
---- a/arch/arm/mach-shmobile/Kconfig
-+++ b/arch/arm/mach-shmobile/Kconfig
-@@ -1,9 +1,6 @@
- config ARCH_SHMOBILE
- 	bool
- 
--config ARCH_SHMOBILE_MULTI
--	bool
--
- config PM_RMOBILE
- 	bool
- 	select PM
-@@ -34,7 +31,6 @@ menuconfig ARCH_RENESAS
- 	depends on ARCH_MULTI_V7 && MMU
- 	select ARCH_DMA_ADDR_T_64BIT if ARM_LPAE
- 	select ARCH_SHMOBILE
--	select ARCH_SHMOBILE_MULTI
- 	select ARM_GIC
- 	select GPIOLIB
- 	select HAVE_ARM_SCU if SMP
--- 
-2.7.4
+>> Add support for Gigabit Ethernet E-MAC on r8a7743 (RZ/G1M) SoC.
+>> Renesas RZ/G1M (R8A7743) SoC Ethernet AVB IP is identical to the R-Car Gen2
+>> family.
+> 
+> For the subject: "dt-bindings: net: ..."
+> 
+>>
+>> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+>> Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+>> ---
+>>   Documentation/devicetree/bindings/net/renesas,ravb.txt | 3 ++-
+>>   drivers/net/ethernet/renesas/ravb_main.c               | 1 +
+>>   2 files changed, 3 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/net/renesas,ravb.txt b/Documentation/devicetree/bindings/net/renesas,ravb.txt
+>> index b519503..bc692ab 100644
+>> --- a/Documentation/devicetree/bindings/net/renesas,ravb.txt
+>> +++ b/Documentation/devicetree/bindings/net/renesas,ravb.txt
+>> @@ -4,7 +4,8 @@ This file provides information on what the device node for the Ethernet AVB
+>>   interface contains.
+>>   
+>>   Required properties:
+>> -- compatible: "renesas,etheravb-r8a7790" if the device is a part of R8A7790 SoC.
+>> +- compatible: "renesas,etheravb-r8a7743" if the device is a part of R8A7743 SoC.
+>> +	      "renesas,etheravb-r8a7790" if the device is a part of R8A7790 SoC.
+> 
+> Please re-format like this:
+> 
+> - compatible: Must be one of:
+> ...
+> 
+> So it's a one line change to add new compatibles.
+
+    Note that the common gen2/3 values are at end of this list, so they'll 
+need different treating if you add these words.
+
+MBR, Sergei
