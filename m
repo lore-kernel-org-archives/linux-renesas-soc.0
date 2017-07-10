@@ -1,54 +1,80 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:53327 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750819AbdGNIEy (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:53801 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751994AbdGJTiT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Jul 2017 04:04:54 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Mon, 10 Jul 2017 15:38:19 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH] arm64: dts: renesas: ulcb: sound clock-frequency needs descending order
-Date: Fri, 14 Jul 2017 10:04:47 +0200
-Message-Id: <2752660a37aed65b1e00fd4563d9f152eefb8200.1500019167.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1500019167.git.horms+renesas@verge.net.au>
-References: <cover.1500019167.git.horms+renesas@verge.net.au>
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 4/5] arm64: dts: renesas: ulcb: Add HDMI output connector
+Date: Mon, 10 Jul 2017 22:38:21 +0300
+Message-ID: <1965721.tJYYb53Zhd@avalon>
+In-Reply-To: <fbc99ea5-cfbb-5fcf-9162-7358fe4d667c@cogentembedded.com>
+References: <1499394976-14201-1-git-send-email-vladimir.barinov@cogentembedded.com> <2531734.5WngiEmILA@avalon> <fbc99ea5-cfbb-5fcf-9162-7358fe4d667c@cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+Hi Vladimir,
 
-Correct order of sound clock frequencies for ULCB boards
-used with r8a7795 and r8a7796 SoCs.
+On Monday 10 Jul 2017 19:28:57 Vladimir Barinov wrote:
+> On 10.07.2017 16:09, Laurent Pinchart wrote:
+> > On Friday 07 Jul 2017 05:37:36 Vladimir Barinov wrote:
+> >> From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+> >> 
+> >> The ULCB board has one HDMI output connector.
+> >> 
+> >> This connector is available on both the H3 and M3-W ULCB boards.
+> >> Add this to the ulcb.dtsi file.
+> >> 
+> >> Signed-off-by: Vladimir Barinov
+> >> <vladimir.barinov+renesas@cogentembedded.com> ---
+> >> 
+> >>   arch/arm64/boot/dts/renesas/ulcb.dtsi | 11 +++++++++++
+> >>   1 file changed, 11 insertions(+)
+> >> 
+> >> diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi
+> >> b/arch/arm64/boot/dts/renesas/ulcb.dtsi index 6f0a7ca..fc5408d 100644
+> >> --- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
+> >> +++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+> >> @@ -34,6 +34,17 @@
+> >> 
+> >>   		clock-frequency = <11289600>;
+> >>   	
+> >>   	};
+> >> 
+> >> +	hdmi0-out {
+> >> +		compatible = "hdmi-connector";
+> >> +		label = "HDMI0 OUT";
+> > 
+> > As far as I know there is no "HDMI0 OUT" label on the board or casing. You
+> > can remove the label property. Apart from that,
+> 
+> I was thinking that this is a label on schematic.
+> 
+> ULCB has similar schematic label as first HDMI connector on Salvator-X
+> "HDMI output(HDMI0)", hence I've just copied label name from Salvator-X
+> file.
+> 
+> Right, there is no such name on ULCB pcb or plastic cover.
 
-These sounds clock frequencies are used as the ADG clock (output clocks
-for audio module) initial setting and sound codec's initial system clock
-which needs the maximum clock frequency. Thus, descending order is
-required.
+Yes, that's the difference with the Salvator-X, where the plastic cover has a 
+label.
 
-Fixes: 9f22774c214ada7b ("arm64: dts: ulcb: add 12288000 for sound ADG")
-Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[simon: rewrote changelog]
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/ulcb.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Is it okay If I resend only one patch with label field removed?
 
-diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-index b5c6ee07d7f9..d1a3f3b7a0ab 100644
---- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
-+++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-@@ -281,7 +281,7 @@
- 
- 	/* audio_clkout0/1/2/3 */
- 	#clock-cells = <1>;
--	clock-frequency = <11289600 12288000>;
-+	clock-frequency = <12288000 11289600>;
- 
- 	status = "okay";
- 
+Sure.
+
 -- 
-2.1.4
+Regards,
+
+Laurent Pinchart
