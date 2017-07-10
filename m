@@ -1,236 +1,83 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mark Yao <mark.yao@rock-chips.com>,
-        Heiko Stuebner <heiko@sntech.de>, Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org
-Subject: [PATCH 1/4] drm/atomic: implement drm_atomic_helper_commit_tail for runtime_pm users
-Date: Thu, 13 Jul 2017 16:41:13 +0200
-Message-Id: <aeeb8f778dae8f170294b6da92819973b742feb2.1499956639.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.75b0c7f741ed33015a7ad44941bed1f6152a48a9.1499956639.git-series.maxime.ripard@free-electrons.com>
-References: <cover.75b0c7f741ed33015a7ad44941bed1f6152a48a9.1499956639.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.75b0c7f741ed33015a7ad44941bed1f6152a48a9.1499956639.git-series.maxime.ripard@free-electrons.com>
-References: <cover.75b0c7f741ed33015a7ad44941bed1f6152a48a9.1499956639.git-series.maxime.ripard@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:59955 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752531AbdGJIiw (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 10 Jul 2017 04:38:52 -0400
+Date: Mon, 10 Jul 2017 10:38:47 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Chris Paterson <Chris.Paterson2@renesas.com>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Subject: Re: [PATCH v2 2/2] ARM: shmobile: defconfig: Enable Ethernet AVB
+Message-ID: <20170710083847.GH13680@verge.net.au>
+References: <afcd181c-c805-8f3c-955f-652d001a03d4@cogentembedded.com>
+ <1499270189-29945-1-git-send-email-biju.das@bp.renesas.com>
+ <1499270189-29945-3-git-send-email-biju.das@bp.renesas.com>
+ <12c32eee-8e4d-457e-97d7-625a5c63ad59@cogentembedded.com>
+ <TY1PR06MB07020F58F15C964FC1AA1D22B7D50@TY1PR06MB0702.apcprd06.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <TY1PR06MB07020F58F15C964FC1AA1D22B7D50@TY1PR06MB0702.apcprd06.prod.outlook.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The current drm_atomic_helper_commit_tail helper works only if the CRTC is
-accessible, and documents an alternative implementation that is supposed to
-be used if that happens.
+On Thu, Jul 06, 2017 at 08:05:43AM +0000, Chris Paterson wrote:
+> Hello Sergei, 
+> 
+> Thank you for your comments.
+> 
+> > From: Sergei Shtylyov [mailto:sergei.shtylyov@cogentembedded.com]
+> > Sent: 05 July 2017 17:14
+> > 
+> > Hello!
+> > 
+> > On 07/05/2017 06:56 PM, Biju Das wrote:
+> > 
+> > > The iWave RZ/G1M Q7 SOM supports Gigabit Ethernet Phy (Micrel
+> > KSZ9031MNX).
+> > > Gigabit Ethernet support is available in Renesas AVB driver.
+> > > To increase hardware support enable the driver in the
+> > > shmobile_defconfig multiplatform configuration.
+> > >
+> > > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > > Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+> > > Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > ---
+> > >  arch/arm/configs/shmobile_defconfig | 1 +
+> > >  1 file changed, 1 insertion(+)
+> > >
+> > > diff --git a/arch/arm/configs/shmobile_defconfig
+> > > b/arch/arm/configs/shmobile_defconfig
+> > > index 3c66a42..d992911 100644
+> > > --- a/arch/arm/configs/shmobile_defconfig
+> > > +++ b/arch/arm/configs/shmobile_defconfig
+> > > @@ -83,6 +83,7 @@ CONFIG_NETDEVICES=y
+> > >  # CONFIG_NET_VENDOR_MICREL is not set  #
+> > CONFIG_NET_VENDOR_NATSEMI is
+> > > not set  CONFIG_SH_ETH=y
+> > > +CONFIG_RAVB=y
+> > 
+> >     Hm, I would enable it only as a module, given it's not easy to make use of
+> > AVB on the 32-bit boards.
+> 
+> On the iWave-M platforms the only available Ethernet interface is AVB.
+> Without including the RAVB driver in the Kernel we won't be able to use
+> NFS.
+> 
+> I know adding CONFIG_RAVB for all shmobile devices may increase the
+> Kernel size for everyone, especially when most cannot use AVB without an
+> add-on board, but I don't think the increase will be big.
 
-That implementation is then duplicated by some drivers. Instead of
-documenting it, let's implement an helper that all the relevant users can
-use directly.
-
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/gpu/drm/drm_atomic_helper.c        | 47 +++++++++++++++--------
- drivers/gpu/drm/exynos/exynos_drm_fb.c     | 27 +-------------
- drivers/gpu/drm/rcar-du/rcar_du_kms.c      | 18 +---------
- drivers/gpu/drm/rockchip/rockchip_drm_fb.c | 21 +----------
- include/drm/drm_atomic_helper.h            |  1 +-
- 5 files changed, 36 insertions(+), 78 deletions(-)
-
-diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-index 86d3093c6c9b..a288805078f9 100644
---- a/drivers/gpu/drm/drm_atomic_helper.c
-+++ b/drivers/gpu/drm/drm_atomic_helper.c
-@@ -1245,23 +1245,11 @@ EXPORT_SYMBOL(drm_atomic_helper_wait_for_vblanks);
-  * @old_state: atomic state object with old state structures
-  *
-  * This is the default implementation for the
-- * &drm_mode_config_helper_funcs.atomic_commit_tail hook.
-+ * &drm_mode_config_helper_funcs.atomic_commit_tail hook, for drivers
-+ * that do not support runtime_pm.
-  *
-  * Note that the default ordering of how the various stages are called is to
-- * match the legacy modeset helper library closest. One peculiarity of that is
-- * that it doesn't mesh well with runtime PM at all.
-- *
-- * For drivers supporting runtime PM the recommended sequence is instead ::
-- *
-- *     drm_atomic_helper_commit_modeset_disables(dev, old_state);
-- *
-- *     drm_atomic_helper_commit_modeset_enables(dev, old_state);
-- *
-- *     drm_atomic_helper_commit_planes(dev, old_state,
-- *                                     DRM_PLANE_COMMIT_ACTIVE_ONLY);
-- *
-- * for committing the atomic update to hardware.  See the kerneldoc entries for
-- * these three functions for more details.
-+ * match the legacy modeset helper library closest.
-  */
- void drm_atomic_helper_commit_tail(struct drm_atomic_state *old_state)
- {
-@@ -1281,6 +1269,35 @@ void drm_atomic_helper_commit_tail(struct drm_atomic_state *old_state)
- }
- EXPORT_SYMBOL(drm_atomic_helper_commit_tail);
- 
-+/**
-+ * drm_atomic_helper_commit_tail_runtime_pm - commit atomic update to hardware
-+ * @old_state: new modeset state to be committed
-+ *
-+ * This is a variant of drm_atomic_helper_commit_tail suited for
-+ * drivers that implement runtime_pm.
-+ *
-+ * Note that the default ordering of how the various stages are called is to
-+ * match the legacy modeset helper library closest.
-+ */
-+void drm_atomic_helper_commit_tail_runtime_pm(struct drm_atomic_state *old_state)
-+{
-+	struct drm_device *dev = old_state->dev;
-+
-+	drm_atomic_helper_commit_modeset_disables(dev, old_state);
-+
-+	drm_atomic_helper_commit_modeset_enables(dev, old_state);
-+
-+	drm_atomic_helper_commit_planes(dev, old_state,
-+					DRM_PLANE_COMMIT_ACTIVE_ONLY);
-+
-+	drm_atomic_helper_commit_hw_done(old_state);
-+
-+	drm_atomic_helper_wait_for_vblanks(dev, old_state);
-+
-+	drm_atomic_helper_cleanup_planes(dev, old_state);
-+}
-+EXPORT_SYMBOL(drm_atomic_helper_commit_tail_runtime_pm);
-+
- static void commit_tail(struct drm_atomic_state *old_state)
- {
- 	struct drm_device *dev = old_state->dev;
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fb.c b/drivers/gpu/drm/exynos/exynos_drm_fb.c
-index d48fd7c918f8..71f6873255f1 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fb.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fb.c
-@@ -187,33 +187,8 @@ dma_addr_t exynos_drm_fb_dma_addr(struct drm_framebuffer *fb, int index)
- 	return exynos_fb->dma_addr[index];
- }
- 
--static void exynos_drm_atomic_commit_tail(struct drm_atomic_state *state)
--{
--	struct drm_device *dev = state->dev;
--
--	drm_atomic_helper_commit_modeset_disables(dev, state);
--
--	drm_atomic_helper_commit_modeset_enables(dev, state);
--
--	/*
--	 * Exynos can't update planes with CRTCs and encoders disabled,
--	 * its updates routines, specially for FIMD, requires the clocks
--	 * to be enabled. So it is necessary to handle the modeset operations
--	 * *before* the commit_planes() step, this way it will always
--	 * have the relevant clocks enabled to perform the update.
--	 */
--	drm_atomic_helper_commit_planes(dev, state,
--					DRM_PLANE_COMMIT_ACTIVE_ONLY);
--
--	drm_atomic_helper_commit_hw_done(state);
--
--	drm_atomic_helper_wait_for_vblanks(dev, state);
--
--	drm_atomic_helper_cleanup_planes(dev, state);
--}
--
- static struct drm_mode_config_helper_funcs exynos_drm_mode_config_helpers = {
--	.atomic_commit_tail = exynos_drm_atomic_commit_tail,
-+	.atomic_commit_tail = drm_atomic_helper_commit_tail_runtime_pm,
- };
- 
- static const struct drm_mode_config_funcs exynos_drm_mode_config_funcs = {
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-index f4125c8ca902..cb0f6266fbae 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-@@ -249,28 +249,12 @@ static int rcar_du_atomic_check(struct drm_device *dev,
- 	return rcar_du_atomic_check_planes(dev, state);
- }
- 
--static void rcar_du_atomic_commit_tail(struct drm_atomic_state *old_state)
--{
--	struct drm_device *dev = old_state->dev;
--
--	/* Apply the atomic update. */
--	drm_atomic_helper_commit_modeset_disables(dev, old_state);
--	drm_atomic_helper_commit_modeset_enables(dev, old_state);
--	drm_atomic_helper_commit_planes(dev, old_state,
--					DRM_PLANE_COMMIT_ACTIVE_ONLY);
--
--	drm_atomic_helper_commit_hw_done(old_state);
--	drm_atomic_helper_wait_for_vblanks(dev, old_state);
--
--	drm_atomic_helper_cleanup_planes(dev, old_state);
--}
--
- /* -----------------------------------------------------------------------------
-  * Initialization
-  */
- 
- static const struct drm_mode_config_helper_funcs rcar_du_mode_config_helper = {
--	.atomic_commit_tail = rcar_du_atomic_commit_tail,
-+	.atomic_commit_tail = drm_atomic_helper_commit_tail_runtime_pm,
- };
- 
- static const struct drm_mode_config_funcs rcar_du_mode_config_funcs = {
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-index 81f9548672b0..647745479c39 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-@@ -174,27 +174,8 @@ static void rockchip_drm_output_poll_changed(struct drm_device *dev)
- 		drm_fb_helper_hotplug_event(fb_helper);
- }
- 
--static void
--rockchip_atomic_commit_tail(struct drm_atomic_state *state)
--{
--	struct drm_device *dev = state->dev;
--
--	drm_atomic_helper_commit_modeset_disables(dev, state);
--
--	drm_atomic_helper_commit_modeset_enables(dev, state);
--
--	drm_atomic_helper_commit_planes(dev, state,
--					DRM_PLANE_COMMIT_ACTIVE_ONLY);
--
--	drm_atomic_helper_commit_hw_done(state);
--
--	drm_atomic_helper_wait_for_vblanks(dev, state);
--
--	drm_atomic_helper_cleanup_planes(dev, state);
--}
--
- static const struct drm_mode_config_helper_funcs rockchip_mode_config_helpers = {
--	.atomic_commit_tail = rockchip_atomic_commit_tail,
-+	.atomic_commit_tail = drm_atomic_helper_commit_tail_runtime_pm,
- };
- 
- static const struct drm_mode_config_funcs rockchip_drm_mode_config_funcs = {
-diff --git a/include/drm/drm_atomic_helper.h b/include/drm/drm_atomic_helper.h
-index f0a8678ae98e..9ff64c6d3043 100644
---- a/include/drm/drm_atomic_helper.h
-+++ b/include/drm/drm_atomic_helper.h
-@@ -41,6 +41,7 @@ int drm_atomic_helper_check_planes(struct drm_device *dev,
- int drm_atomic_helper_check(struct drm_device *dev,
- 			    struct drm_atomic_state *state);
- void drm_atomic_helper_commit_tail(struct drm_atomic_state *state);
-+void drm_atomic_helper_commit_tail_runtime_pm(struct drm_atomic_state *state);
- int drm_atomic_helper_commit(struct drm_device *dev,
- 			     struct drm_atomic_state *state,
- 			     bool nonblock);
--- 
-git-series 0.9.1
+Thanks for the explanation, applied for v4.14.
