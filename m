@@ -1,169 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f65.google.com ([209.85.214.65]:34833 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752069AbdGEKJC (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:59777 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753661AbdGJIcn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Jul 2017 06:09:02 -0400
-MIME-Version: 1.0
-In-Reply-To: <1498631315-15730-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1498631315-15730-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 5 Jul 2017 12:09:00 +0200
-Message-ID: <CAMuHMdV1QvFAD3h7u0rL3-hx6OMRmxdvcj_jUo-ewdCHmcU0fQ@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: renesas: rcar-usb2-clock-sel: Add R-Car USB 2.0
- clock selector PHY
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
+        Mon, 10 Jul 2017 04:32:43 -0400
+Date: Mon, 10 Jul 2017 10:32:38 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-clk <linux-clk@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH] arm64: dts: renesas: ulcb: Enable I2C for DVFS device
+Message-ID: <20170710083238.GE13680@verge.net.au>
+References: <1499393386-11554-1-git-send-email-vladimir.barinov@cogentembedded.com>
+ <CAMuHMdWEh2uqAu-TRq6zofW+B+Ec5hZwXKdVGE=j5Gf63B+Bdw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWEh2uqAu-TRq6zofW+B+Ec5hZwXKdVGE=j5Gf63B+Bdw@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simoda-san,
+On Mon, Jul 10, 2017 at 10:25:50AM +0200, Geert Uytterhoeven wrote:
+> On Fri, Jul 7, 2017 at 4:09 AM, Vladimir Barinov
+> <vladimir.barinov@cogentembedded.com> wrote:
+> > From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+> >
+> > This enables I2C for DVFS device for ULCB board
+> >
+> > Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Wed, Jun 28, 2017 at 8:28 AM, Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> R-Car USB 2.0 controller can change the clock source from an oscillator
-> to an external clock via a register. So, this patch adds support
-> the clock source selector as a clock driver.
->
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-
-Thanks for your patch!
-
-> --- /dev/null
-> +++ b/drivers/clk/renesas/rcar-usb2-clock-sel.c
-
-> +static void usb2_clock_sel_enable_extal_only(struct usb2_clock_sel_priv *priv)
-> +{
-> +       u16 val = readw(priv->base + USB20_CLKSET0);
-> +
-> +       pr_debug("%s: enter %d %d %x\n", __func__,
-> +                priv->extal, priv->xtal, val);
-> +
-> +       if (priv->extal && !priv->xtal && val != CLKSET0_EXTAL_ONLY)
-> +               writew(CLKSET0_EXTAL_ONLY, priv->base + USB20_CLKSET0);
-> +}
-> +
-> +static void usb2_clock_sel_disable_extal_only(struct usb2_clock_sel_priv *priv)
-> +{
-> +       if (priv->extal && !priv->xtal)
-> +               writew(CLKSET0_PRIVATE, priv->base + USB20_CLKSET0);
-> +}
-> +
-> +static int usb2_clock_sel_enable(struct clk_hw *hw)
-> +{
-> +       usb2_clock_sel_enable_extal_only(to_priv(hw));
-> +
-> +       return 0;
-> +}
-> +
-> +static void usb2_clock_sel_disable(struct clk_hw *hw)
-> +{
-> +       usb2_clock_sel_disable_extal_only(to_priv(hw));
-> +}
-> +
-> +/*
-> + * This module seems a mux, but this driver assumes a gate because
-> + * ehci/ohci platform drivers don't support clk_set_parent() for now.
-> + * If this driver acts as a gate, ehci/ohci-platform drivers don't need
-> + * any modification.
-> + */
-> +static const struct clk_ops usb2_clock_sel_clock_ops = {
-> +       .enable = usb2_clock_sel_enable,
-> +       .disable = usb2_clock_sel_disable,
-> +};
-
-So you do "smart muxing" in the enable routine above?
-
-> +static int __init rcar_usb2_clock_sel_probe(struct platform_device *pdev)
-> +{
-> +       struct device *dev = &pdev->dev;
-> +       struct device_node *np = dev->of_node;
-> +       struct usb2_clock_sel_priv *priv;
-> +       struct resource *res;
-> +       struct clk *clk;
-> +       struct clk_init_data init;
-> +       int error;
-> +
-> +       priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +       if (!priv)
-> +               return -ENOMEM;
-> +
-> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +       priv->base = devm_ioremap_resource(dev, res);
-> +       if (IS_ERR(priv->base))
-> +               return PTR_ERR(priv->base);
-> +
-> +       priv->ehci_clk = devm_clk_get(dev, "ehci_ohci");
-> +       if (!IS_ERR(priv->ehci_clk)) {
-> +               error = clk_prepare_enable(priv->ehci_clk);
-> +               if (error)
-> +                       return error;
-> +       }
-> +
-> +       clk = devm_clk_get(dev, "usb_extal");
-> +       if (!IS_ERR(clk) && !clk_prepare_enable(clk)) {
-> +               priv->extal = !!clk_get_rate(clk);
-> +               clk_disable_unprepare(clk);
-> +       }
-> +       clk = devm_clk_get(dev, "usb_xtal");
-> +       if (!IS_ERR(clk) && !clk_prepare_enable(clk)) {
-> +               priv->xtal = !!clk_get_rate(clk);
-> +               clk_disable_unprepare(clk);
-> +       }
-> +
-> +       if (!priv->extal && !priv->extal) {
-> +               dev_err(dev, "This driver needs usb_extal or usb_xtal\n");
-> +               return -ENOENT;
-
-Perhaps enabled clocks should be disabled on error?
-
-> +       }
-> +
-> +       platform_set_drvdata(pdev, priv);
-> +       dev_set_drvdata(dev, priv);
-> +
-> +       init.name = "rcar_usb2_clock_sel";
-> +       init.ops = &usb2_clock_sel_clock_ops;
-> +       init.flags = CLK_IS_BASIC;
-> +       init.parent_names = NULL;
-> +       init.num_parents = 0;
-> +       priv->hw.init = &init;
-> +
-> +       clk = clk_register(NULL, &priv->hw);
-> +       if (IS_ERR(clk))
-> +               return PTR_ERR(clk);
-
-Likewise.
-
-> +       error = of_clk_add_provider(np, of_clk_src_simple_get, clk);
-> +       if (error)
-> +               return error;
-> +
-> +       return 0;
-
-return of_clk_add_provider(np, of_clk_src_simple_get, clk);
-
-> +/* Since this driver needs other ccf drivers, this uses subsys_initcall_sync */
-> +subsys_initcall_sync(rcar_usb2_clock_sel_init);
-
-I suppose this is a workaround for the lack of probe deferral support in the
-USB subsystem?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks, applied.
