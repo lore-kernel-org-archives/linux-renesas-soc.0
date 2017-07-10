@@ -1,73 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:63705 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S935552AbdGTSWR (ORCPT
+Received: from mail-yw0-f196.google.com ([209.85.161.196]:33357 "EHLO
+        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753128AbdGJDw6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 20 Jul 2017 14:22:17 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH 2/4] arm: dts: rskrza1: Add Ethernet pin group
-Date: Thu, 20 Jul 2017 13:20:17 -0500
-Message-Id: <20170720182019.85075-3-chris.brandt@renesas.com>
-In-Reply-To: <20170720182019.85075-1-chris.brandt@renesas.com>
-References: <20170720182019.85075-1-chris.brandt@renesas.com>
+        Sun, 9 Jul 2017 23:52:58 -0400
+Date: Sun, 9 Jul 2017 22:52:55 -0500
+From: Rob Herring <robh@kernel.org>
+To: Kieran Bingham <kbingham@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, laurent.pinchart@ideasonboard.com,
+        kieran.bingham@ideasonboard.com, niklas.soderlund@ragnatech.se,
+        hans.verkuil@cisco.com,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v7 1/3] media: adv748x: Add adv7481, adv7482 bindings
+Message-ID: <20170710035255.rxivzur6zggcnx5s@rob-hp-laptop>
+References: <cover.f44897c9f4c2d4555dfa156cc24a755477e409bf.1499336175.git-series.kieran.bingham+renesas@ideasonboard.com>
+ <0f27988a8f89e54c9e89eaeadf03396e6e98118a.1499336175.git-series.kieran.bingham+renesas@ideasonboard.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0f27988a8f89e54c9e89eaeadf03396e6e98118a.1499336175.git-series.kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add pin configuration for Ethernet.
+On Thu, Jul 06, 2017 at 12:01:15PM +0100, Kieran Bingham wrote:
+> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> 
+> Create device tree bindings documentation for the ADV748x.
+> The ADV748x supports both the ADV7481 and ADV7482 chips which
+> provide analogue decoding and HDMI receiving capabilities
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> 
+> ---
+> v6:
+>  - Clean up description and remove redundant text regarding optional
+>    nodes
+> 
+> v6.1:
+>  - Fix commit title
+> 
+>  Documentation/devicetree/bindings/media/i2c/adv748x.txt | 95 ++++++++++-
+>  1 file changed, 95 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/i2c/adv748x.txt
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
- arch/arm/boot/dts/r7s72100-rskrza1.dts | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r7s72100-rskrza1.dts b/arch/arm/boot/dts/r7s72100-rskrza1.dts
-index 5fac0f82d742..cedf887e809a 100644
---- a/arch/arm/boot/dts/r7s72100-rskrza1.dts
-+++ b/arch/arm/boot/dts/r7s72100-rskrza1.dts
-@@ -55,6 +55,29 @@
- 		pinmux = <RZA1_PINMUX(3, 0, 6)>,	/* TxD2 */
- 			 <RZA1_PINMUX(3, 2, 4)>;	/* RxD2 */
- 	};
-+
-+	/* Ethernet */
-+	ether_pins: ether {
-+		/* Ethernet on Ports 1,2,3,5 */
-+		pinmux = <RZA1_PINMUX(1, 14, 4)>,	/* ET_COL   */
-+			 <RZA1_PINMUX(5, 9, 2)>,	/* ET_MDC   */
-+			 <RZA1_PINMUX(3, 3, 2)>,	/* ET_MDIO  */
-+			 <RZA1_PINMUX(3, 4, 2)>,	/* ET_RXCLK */
-+			 <RZA1_PINMUX(3, 5, 2)>,	/* ET_RXER  */
-+			 <RZA1_PINMUX(3, 6, 2)>,	/* ET_RXDV  */
-+			 <RZA1_PINMUX(2, 0, 2)>,	/* ET_TXCLK */
-+			 <RZA1_PINMUX(2, 1, 2)>,	/* ET_TXER  */
-+			 <RZA1_PINMUX(2, 2, 2)>,	/* ET_TXEN  */
-+			 <RZA1_PINMUX(2, 3, 2)>,	/* ET_CRS   */
-+			 <RZA1_PINMUX(2, 4, 2)>,	/* ET_TXD0  */
-+			 <RZA1_PINMUX(2, 5, 2)>,	/* ET_TXD1  */
-+			 <RZA1_PINMUX(2, 6, 2)>,	/* ET_TXD2  */
-+			 <RZA1_PINMUX(2, 7, 2)>,	/* ET_TXD3  */
-+			 <RZA1_PINMUX(2, 8, 2)>,	/* ET_RXD0  */
-+			 <RZA1_PINMUX(2, 9, 2)>,	/* ET_RXD1  */
-+			 <RZA1_PINMUX(2, 10, 2)>,	/* ET_RXD2  */
-+			 <RZA1_PINMUX(2, 11, 2)>;	/* ET_RXD3  */
-+	};
- };
- 
- &mtu2 {
-@@ -62,6 +85,8 @@
- };
- 
- &ether {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&ether_pins>;
- 	status = "okay";
- 	renesas,no-ether-link;
- 	phy-handle = <&phy0>;
--- 
-2.13.0
+Acked-by: Rob Herring <robh@kernel.org>
