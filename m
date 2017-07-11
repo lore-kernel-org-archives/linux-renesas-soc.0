@@ -1,87 +1,78 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: joro@8bytes.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-        robin.murphy@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
-        Magnus Damm <magnus.damm@gmail.com>, sricharan@codeaurora.org,
-        m.szyprowski@samsung.com
-Date: Mon, 17 Jul 2017 22:05:31 +0900
-Message-Id: <150029673120.22030.6013637834677159530.sendpatchset@little-apple>
-In-Reply-To: <150029669967.22030.8059216113725566341.sendpatchset@little-apple>
-References: <150029669967.22030.8059216113725566341.sendpatchset@little-apple>
-Subject: [PATCH v2 03/05] iommu/ipmmu-vmsa: Use fwspec on both 32 and 64-bit ARM
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-qk0-f177.google.com ([209.85.220.177]:34252 "EHLO
+        mail-qk0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932977AbdGKOn5 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 11 Jul 2017 10:43:57 -0400
+Received: by mail-qk0-f177.google.com with SMTP id d78so2713053qkb.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 11 Jul 2017 07:43:52 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <20170628152311.18935-1-wsa+renesas@sang-engineering.com>
+References: <20170628152311.18935-1-wsa+renesas@sang-engineering.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 11 Jul 2017 16:43:41 +0200
+Message-ID: <CAPDyKFpKPcC_tq5=rrArL20+-Z6faquE4RjB4Ap=TTfe1d3YBA@mail.gmail.com>
+Subject: Re: [PATCH] mmc: tmio: don't wait on R-Car2+ when handling the clock
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Dirk Behme <dirk.behme@de.bosch.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Robin Murphy <robin.murphy@arm.com>
+On 28 June 2017 at 17:23, Wolfram Sang <wsa+renesas@sang-engineering.com> wrote:
+> Our hardware engineers confirmed that it is unnecessary to wait when
+> turning the clock on/off. The documentation was a tad vague, so we
+> used to play safe.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Consolidate the 32-bit and 64-bit code to make use of fwspec instead
-of archdata for the 32-bit ARM case.
+Thanks, applied for next!
 
-This is a simplified version of the fwspec handling code from Robin
-posted as [PATCH] iommu/ipmmu-vmsa: Convert to iommu_fwspec
+Kind regards
+Uffe
 
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
-
- Changes since V1:
- - Rebased to apply on top of earlier changes in series
-
- drivers/iommu/ipmmu-vmsa.c |   21 +++------------------
- 1 file changed, 3 insertions(+), 18 deletions(-)
-
---- 0004/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2017-07-17 21:04:54.850607110 +0900
-@@ -73,22 +73,9 @@ static struct ipmmu_vmsa_domain *to_vmsa
- 	return container_of(dom, struct ipmmu_vmsa_domain, io_domain);
- }
- 
--
- static struct ipmmu_vmsa_iommu_priv *to_priv(struct device *dev)
- {
--#if defined(CONFIG_ARM)
--	return dev->archdata.iommu;
--#else
--	return dev->iommu_fwspec->iommu_priv;
--#endif
--}
--static void set_priv(struct device *dev, struct ipmmu_vmsa_iommu_priv *p)
--{
--#if defined(CONFIG_ARM)
--	dev->archdata.iommu = p;
--#else
--	dev->iommu_fwspec->iommu_priv = p;
--#endif
-+	return dev->iommu_fwspec ? dev->iommu_fwspec->iommu_priv : NULL;
- }
- 
- #define TLB_LOOP_TIMEOUT		100	/* 100us */
-@@ -726,7 +713,7 @@ static int ipmmu_init_platform_device(st
- 	priv->utlbs = utlbs;
- 	priv->num_utlbs = num_utlbs;
- 	priv->dev = dev;
--	set_priv(dev, priv);
-+	dev->iommu_fwspec->iommu_priv = priv;
- 	return 0;
- 
- error:
-@@ -887,14 +874,12 @@ static void ipmmu_domain_free_dma(struct
- 
- static int ipmmu_add_device_dma(struct device *dev)
- {
--	struct iommu_fwspec *fwspec = dev->iommu_fwspec;
- 	struct iommu_group *group;
- 
- 	/*
- 	 * Only let through devices that have been verified in xlate()
--	 * We may get called with dev->iommu_fwspec set to NULL.
- 	 */
--	if (!fwspec || !fwspec->iommu_priv)
-+	if (!to_priv(dev))
- 		return -ENODEV;
- 
- 	group = iommu_group_get_for_dev(dev);
+> ---
+>
+> Tested on H2 and M3-W. Based on top of mmc/next with Simon's Gen3 DMA patches.
+>
+>  drivers/mmc/host/tmio_mmc_core.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+> index 77e7b56a909933..1851c883bfc82a 100644
+> --- a/drivers/mmc/host/tmio_mmc_core.c
+> +++ b/drivers/mmc/host/tmio_mmc_core.c
+> @@ -207,7 +207,10 @@ static void tmio_mmc_clk_start(struct tmio_mmc_host *host)
+>  {
+>         sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, CLK_CTL_SCLKEN |
+>                 sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
+> -       msleep(host->pdata->flags & TMIO_MMC_MIN_RCAR2 ? 1 : 10);
+> +
+> +       /* HW engineers overrode docs: no sleep needed on R-Car2+ */
+> +       if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
+> +               msleep(10);
+>
+>         if (host->pdata->flags & TMIO_MMC_HAVE_HIGH_REG) {
+>                 sd_ctrl_write16(host, CTL_CLK_AND_WAIT_CTL, 0x0100);
+> @@ -224,7 +227,10 @@ static void tmio_mmc_clk_stop(struct tmio_mmc_host *host)
+>
+>         sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
+>                 sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
+> -       msleep(host->pdata->flags & TMIO_MMC_MIN_RCAR2 ? 5 : 10);
+> +
+> +       /* HW engineers overrode docs: no sleep needed on R-Car2+ */
+> +       if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
+> +               msleep(10);
+>  }
+>
+>  static void tmio_mmc_set_clock(struct tmio_mmc_host *host,
+> --
+> 2.11.0
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
