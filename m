@@ -1,18 +1,15 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:58382 "EHLO
+Received: from galahad.ideasonboard.com ([185.26.127.97]:58153 "EHLO
         galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932655AbdGKW3w (ORCPT
+        with ESMTP id S932686AbdGKU7N (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 11 Jul 2017 18:29:52 -0400
+        Tue, 11 Jul 2017 16:59:13 -0400
 From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v2 1/3] drm: rcar-du: Use the VBK interrupt for vblank events
-Date: Wed, 12 Jul 2017 01:29:40 +0300
-Message-Id: <20170711222942.27735-2-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170711222942.27735-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170711222942.27735-1-laurent.pinchart+renesas@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] drm: rcar-du: Use the VBK interrupt for vblank events
+Date: Tue, 11 Jul 2017 23:59:11 +0300
+Message-Id: <20170711205911.21571-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
