@@ -1,56 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:42651 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:33483 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751827AbdGaPDp (ORCPT
+        with ESMTP id S932266AbdGKJEd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 31 Jul 2017 11:03:45 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 15/31] arm64: dts: r8a7795: h3ulcb: Add DU external dot clocks
-Date: Mon, 31 Jul 2017 17:03:07 +0200
-Message-Id: <6d81daf306e3f6e95a1125d2c981071b90b423ad.1501509525.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1501509525.git.horms+renesas@verge.net.au>
-References: <cover.1501509525.git.horms+renesas@verge.net.au>
+        Tue, 11 Jul 2017 05:04:33 -0400
+Date: Tue, 11 Jul 2017 11:04:23 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 0/5] arm64: dts: renesas: ulcb: Enable HDMI
+Message-ID: <20170711090423.GG4517@verge.net.au>
+References: <1499394976-14201-1-git-send-email-vladimir.barinov@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1499394976-14201-1-git-send-email-vladimir.barinov@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+On Fri, Jul 07, 2017 at 05:36:16AM +0300, Vladimir Barinov wrote:
+> Hello,
+> 
+> This patch series enables HDMI support for the H3 and M3-W based ULCB boards
+> 
+> This has the following dependency:
+> - [PATCH v2 series] R-Car Salvator-X M3-W: Enable DU support
+> - [PATCH] arm64: dts: renesas: ulcb: Enable I2C4
+> - [PATCH] clk: vc5: Add support for IDT VersaClock 5P49V5925
+> 
+> Vladimir Barinov (5):
+> [1/5] arm64: dts: renesas: ulcb: Add DU external dot clock sources
+> [2/5] arm64: dts: renesas: r8a7795-h3ulcb: Add DU external dot clocks
+> [3/5] arm64: dts: renesas: r8a7796-m3ulcb: Add DU external dot clocks
+> [4/5] arm64: dts: renesas: ulcb: Add HDMI output connector
+> [5/5] arm64: dts: renesas: ulcb: Enable HDMI output
 
-The DU0/DU1/DU2/DU3 external dot clocks are provided by the programmable
-Versaclock5 clock generator.
-
-Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-index 27d4b1a4c475..0afe777973de 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-@@ -38,3 +38,17 @@
- 		reg = <0x7 0x00000000 0x0 0x40000000>;
- 	};
- };
-+
-+&du {
-+	clocks = <&cpg CPG_MOD 724>,
-+		 <&cpg CPG_MOD 723>,
-+		 <&cpg CPG_MOD 722>,
-+		 <&cpg CPG_MOD 721>,
-+		 <&cpg CPG_MOD 727>,
-+		 <&versaclock5 1>,
-+		 <&versaclock5 3>,
-+		 <&versaclock5 4>,
-+		 <&versaclock5 2>;
-+	clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0",
-+		      "dclkin.0", "dclkin.1", "dclkin.2", "dclkin.3";
-+};
--- 
-2.1.4
+Thanks, I have applied v2 or 4/5 along with the remaining patches above for
+v4.14.
