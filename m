@@ -1,42 +1,91 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v3 1/4] drm: rcar-du: Use the VBK interrupt for vblank events
-Date: Sun, 30 Jul 2017 00:08:52 +0300
-Message-Id: <20170729210855.9187-2-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170729210855.9187-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170729210855.9187-1-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from www.zeus03.de ([194.117.254.33]:41568 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755994AbdGKPAQ (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 11 Jul 2017 11:00:16 -0400
+Date: Tue, 11 Jul 2017 17:00:13 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Jan =?utf-8?Q?Kl=C3=B6tzke?= <jan.kloetzke@technisat.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>,
+        Kouei Abe <kouei.abe.cp@renesas.com>
+Subject: Re: [RFT] mmc: tmio: fix CMD12 (STOP) handling
+Message-ID: <20170711150013.GB6264@katana>
+References: <20170703192823.8116-1-wsa+renesas@sang-engineering.com>
+ <CAPDyKFqkGj-ywGciKqxxg6PnPDP3N1G+H-snnimhQPhVDJAFQA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="/NkBOFFp2J2Af1nK"
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFqkGj-ywGciKqxxg6PnPDP3N1G+H-snnimhQPhVDJAFQA@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When implementing support for interlaced modes, the driver switched from
-reporting vblank events on the vertical blanking (VBK) interrupt to the
-frame end interrupt (FRM). This incorrectly divided the reported refresh
-rate by two. Fix it by moving back to the VBK interrupt.
 
-Fixes: 906eff7fcada ("drm: rcar-du: Implement support for interlaced modes")
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--/NkBOFFp2J2Af1nK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index 98cf446391dc..17fd1cd5212c 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -698,7 +698,7 @@ static irqreturn_t rcar_du_crtc_irq(int irq, void *arg)
- 	status = rcar_du_crtc_read(rcrtc, DSSR);
- 	rcar_du_crtc_write(rcrtc, DSRCR, status & DSRCR_MASK);
- 
--	if (status & DSSR_FRM) {
-+	if (status & DSSR_VBK) {
- 		drm_crtc_handle_vblank(&rcrtc->crtc);
- 
- 		if (rcdu->info->gen < 3)
--- 
-Regards,
+On Tue, Jul 11, 2017 at 04:43:28PM +0200, Ulf Hansson wrote:
+> On 3 July 2017 at 21:28, Wolfram Sang <wsa+renesas@sang-engineering.com> =
+wrote:
+> > I always anticipated this code to be not correct, but now I had a test
+> > case to prove it. According to all documentation I have, setting the
+> > TMIO_STOP_STP bit ever only worked during block transfers. This bit is
+> > like manually enforcing an autocmd12 during a so far seamless transfer.
+> > It does NOT work when the block transfer had errors. It also does NOT
+> > work with any other cmd except block commands. For all those, CMD12 has
+> > to be treated like any other command. So, basically, we could use this
+> > bit only for mrq->data->stop cmds. But for these, we happily use the
+> > autocmd12 feature using the TMIO_STOP_SEC bit. As a result, the above
+> > bit is not useful for us and we need to treat CMD12 as a regular cmd
+> > always. Just remove the special handling code. Note that the BSP
+> > recognized this issue as well yet had a more cautious solution to the
+> > problem [1]. Which is understandable but makes CMD12 handling even more
+> > complicated.
+> >
+> > Checked with a Renesas Salvator-X/M3-W which needed to send CMD12 when
+> > retuning one of my SD cards.
+> >
+> > [1] https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas-bsp.g=
+it/commit/?id=3D2838a2ff8ca776f6d18b7fbbe75f3df8dd64183a
+> >
+> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>=20
+> Thanks, applied for next!
+>=20
+> Should we add a stable tag?
 
-Laurent Pinchart
+Thanks! I'd like to wait until it gets further testing when it becomes
+upstream.
+
+
+--/NkBOFFp2J2Af1nK
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAllk5/kACgkQFA3kzBSg
+KbZmzA//WO00KIVqlDp5tvSzy4iGFK22EPnCgVx/gO1L//gy2f4YHZHI+ZQjn1pd
+c0/iI+8+aau9r/QUs2UsynZyZmD+j/criJYfTojLPJm3Q89krt0a1u+I5pM3q6Bo
+mULoG6KQMsSjBioezw0kyb9SbpD/C/ft1x8ZlEMPl29Mjteoh51pxvHbQvr9hAnR
+59mQ541v3HcAN/t+AAKthLOgZVEJBmw4bDibwBRzD3/+rGzHs8j39knV5n5wg/g6
+MohMG4TyROAKfcseJNbymW8IT01/3kxXUliH9naGHABlZlQBdjzt8tbpexfwt/J9
+8PeO70GlRLebh1Yg3V3UJR68J/QZuMSC2WOd7EQqSj8FAWuEx3rLP+b8hdvXpha4
+Pukuemz3yu1Gc/hYTdMyXQjtuQbcrBqJfyI50AL/xya4WglFV3htr5yzjALZafAU
+rXRnkxWJGwchRWi4JH+2fCLC7/XKE7FxbpGA6lQz8D1PjbE18L/BMyIjSR241Fjr
+glNemro6vfLFMAVf5X5gakwgsuzZUW6LRgYXRb1XQ3mKieJNHnvCXt952dI0+qq7
+9J8O66/aV4vGHP2hsB82SPYkV5l/UKaynkB23hA44Jm+0sMFRLBPyoiqSRq3iv5p
+3Xft/SWWbqQykFy9SCYCSVE8ElYdnuLuNstIDNAI1yr8evx08ug=
+=I7iG
+-----END PGP SIGNATURE-----
+
+--/NkBOFFp2J2Af1nK--
