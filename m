@@ -1,58 +1,62 @@
-Subject: Re: [PATCH v2 01/14] v4l: vsp1: Fill display list headers without
- holding dlm spinlock
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- dri-devel@lists.freedesktop.org
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <20170626181226.29575-1-laurent.pinchart+renesas@ideasonboard.com>
- <20170626181226.29575-2-laurent.pinchart+renesas@ideasonboard.com>
-From: Kieran Bingham <kieranbingham@gmail.com>
-Message-ID: <cc738320-6183-3fff-eade-b920ee44fba7@gmail.com>
-Date: Thu, 13 Jul 2017 12:26:43 +0100
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:58379 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932658AbdGKW3w (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 11 Jul 2017 18:29:52 -0400
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v2 0/2] drm: rcar-du: Repair vblank event handling
+Date: Wed, 12 Jul 2017 01:29:39 +0300
+Message-Id: <20170711222942.27735-1-laurent.pinchart+renesas@ideasonboard.com>
 MIME-Version: 1.0
-In-Reply-To: <20170626181226.29575-2-laurent.pinchart+renesas@ideasonboard.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Laurent,
+Hello,
 
-On 26/06/17 19:12, Laurent Pinchart wrote:
-> The display list headers are filled using information from the display
-> list only. Lower the display list manager spinlock contention by filling
-> the headers without holding the lock.
-> 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+The recent changes to the rcar-du driver to fix a page flip handling race
+condition changed the order of which vblanks and page flips are handled,
+resulting in incorrect timestamps being reported in the vblan events.
 
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Correct this by handling vblank events in the same completion handler as page
+flips. This removes the need for the IRQ handler on DU instances which are
+sourced by a VSP.
 
-> ---
->  drivers/media/platform/vsp1/vsp1_dl.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
-> index aaf17b13fd78..dc47e236c780 100644
-> --- a/drivers/media/platform/vsp1/vsp1_dl.c
-> +++ b/drivers/media/platform/vsp1/vsp1_dl.c
-> @@ -483,8 +483,6 @@ void vsp1_dl_list_commit(struct vsp1_dl_list *dl)
->  	unsigned long flags;
->  	bool update;
->  
-> -	spin_lock_irqsave(&dlm->lock, flags);
-> -
->  	if (dl->dlm->mode == VSP1_DL_MODE_HEADER) {
->  		struct vsp1_dl_list *dl_child;
->  
-> @@ -501,7 +499,11 @@ void vsp1_dl_list_commit(struct vsp1_dl_list *dl)
->  
->  			vsp1_dl_list_fill_header(dl_child, last);
->  		}
-> +	}
->  
-> +	spin_lock_irqsave(&dlm->lock, flags);
-> +
-> +	if (dl->dlm->mode == VSP1_DL_MODE_HEADER) {
->  		/*
->  		 * Commit the head display list to hardware. Chained headers
->  		 * will auto-start.
-> 
+Compared to v1,
+
+- Patch 1/3 replaces patch 1/2 to use the VBK interrupt instead of the FRM
+  interrupt when not using the VSP
+- The new patch 2/3 simplifies plane to CRTC assignment when using the VSP to
+  prepare for patch 3/3
+- Patch 3/3 doesn't enable the VBK interrupt when using the VSP
+
+Kieran Bingham (1):
+  drm: rcar-du: Repair vblank for DRM page flips using the VSP
+
+Laurent Pinchart (2):
+  drm: rcar-du: Use the VBK interrupt for vblank events
+  drm: rcar-du: Fix planes to CRTC assignment when using the VSP
+
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c   | 58 +++++++++++++++++++-------------
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.h   |  2 ++
+ drivers/gpu/drm/rcar-du/rcar_du_group.c  | 12 +++++++
+ drivers/gpu/drm/rcar-du/rcar_du_kms.c    | 28 +++++++++------
+ drivers/gpu/drm/rcar-du/rcar_du_plane.c  | 10 +-----
+ drivers/gpu/drm/rcar-du/rcar_du_vsp.c    | 17 ++++------
+ drivers/media/platform/vsp1/vsp1_drm.c   |  5 +--
+ drivers/media/platform/vsp1/vsp1_drm.h   |  2 +-
+ drivers/media/platform/vsp1/vsp1_pipe.c  | 20 +++++------
+ drivers/media/platform/vsp1/vsp1_pipe.h  |  2 +-
+ drivers/media/platform/vsp1/vsp1_video.c |  6 +++-
+ include/media/vsp1.h                     |  2 +-
+ 12 files changed, 94 insertions(+), 70 deletions(-)
+
+-- 
+Regards,
+
+Laurent Pinchart
