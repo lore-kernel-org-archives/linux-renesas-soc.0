@@ -1,75 +1,95 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:30688 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755413AbdGKMUN (ORCPT
+Received: from mail-lf0-f48.google.com ([209.85.215.48]:35058 "EHLO
+        mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755525AbdGKMMT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 11 Jul 2017 08:20:13 -0400
-From: Chris Paterson <Chris.Paterson2@renesas.com>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Biju Das <biju.das@bp.renesas.com>,
+        Tue, 11 Jul 2017 08:12:19 -0400
+Received: by mail-lf0-f48.google.com with SMTP id b207so82922259lfg.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 11 Jul 2017 05:12:18 -0700 (PDT)
+Subject: Re: [PATCH v2] dt-bindings: net: ravb : Add support for r8a7743 SoC
+To: Biju Das <biju.das@bp.renesas.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Russell King <linux@armlinux.org.uk>
-CC: "David S. Miller" <davem@davemloft.net>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: RE: [PATCH v2] dt-bindings: net: ravb : Add support for r8a7743 SoC
-Date: Tue, 11 Jul 2017 12:20:06 +0000
-Message-ID: <TY1PR06MB07023342440946F384B7C80EB7AE0@TY1PR06MB0702.apcprd06.prod.outlook.com>
 References: <20170710012024.j4cso2jyi6canws2@rob-hp-laptop>
  <1499700776-54504-1-git-send-email-biju.das@bp.renesas.com>
- <52eb0b92-5d25-e1f4-df54-e4fcf648c90e@cogentembedded.com>
-In-Reply-To: <52eb0b92-5d25-e1f4-df54-e4fcf648c90e@cogentembedded.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Cc: "David S. Miller" <davem@davemloft.net>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <52eb0b92-5d25-e1f4-df54-e4fcf648c90e@cogentembedded.com>
+Date: Tue, 11 Jul 2017 15:12:14 +0300
 MIME-Version: 1.0
+In-Reply-To: <1499700776-54504-1-git-send-email-biju.das@bp.renesas.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGVsbG8gU2VyZ2VpLA0KDQo+IEZyb206IFNlcmdlaSBTaHR5bHlvdiBbbWFpbHRvOnNlcmdlaS5z
-aHR5bHlvdkBjb2dlbnRlbWJlZGRlZC5jb21dDQo+IFNlbnQ6IDExIEp1bHkgMjAxNyAxMzoxMg0K
-PiANCj4gSGVsbG8hDQo+IA0KPiBPbiAwNy8xMC8yMDE3IDA2OjMyIFBNLCBCaWp1IERhcyB3cm90
-ZToNCj4gDQo+ID4gQWRkIGEgbmV3IGNvbXBhdGlibGUgc3RyaW5nIGZvciB0aGUgUlovRzFNIChS
-OEE3NzQzKSBTb0MuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBCaWp1IERhcyA8YmlqdS5kYXNA
-YnAucmVuZXNhcy5jb20+DQo+ID4gLS0tDQo+ID4gdjEtPnYyDQo+ID4gKiBDaGFuZ2VkIHRoZSBz
-dWJqZWN0DQo+ID4gKiByZS1mb3JtYXR0ZWQgdGhlIHJlcXVpcmVkIHByb3BlcnRpZXMNCj4gPg0K
-PiA+ICAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy9uZXQvcmVuZXNhcyxyYXZiLnR4dCAgICAgICB8
-IDI5ICsrKysrKysrKysrKystLS0tLS0NCj4gLS0tDQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAxNyBp
-bnNlcnRpb25zKCspLCAxMiBkZWxldGlvbnMoLSkNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9Eb2N1
-bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbmV0L3JlbmVzYXMscmF2Yi50eHQNCj4gPiBi
-L0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9uZXQvcmVuZXNhcyxyYXZiLnR4dA0K
-PiA+IGluZGV4IGI1MTk1MDMuLjQ3MTdiYzIgMTAwNjQ0DQo+ID4gLS0tIGEvRG9jdW1lbnRhdGlv
-bi9kZXZpY2V0cmVlL2JpbmRpbmdzL25ldC9yZW5lc2FzLHJhdmIudHh0DQo+ID4gKysrIGIvRG9j
-dW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL25ldC9yZW5lc2FzLHJhdmIudHh0DQo+ID4g
-QEAgLTQsMTkgKzQsMjQgQEAgVGhpcyBmaWxlIHByb3ZpZGVzIGluZm9ybWF0aW9uIG9uIHdoYXQg
-dGhlIGRldmljZQ0KPiA+IG5vZGUgZm9yIHRoZSBFdGhlcm5ldCBBVkIgIGludGVyZmFjZSBjb250
-YWlucy4NCj4gPg0KPiA+ICBSZXF1aXJlZCBwcm9wZXJ0aWVzOg0KPiA+IC0tIGNvbXBhdGlibGU6
-ICJyZW5lc2FzLGV0aGVyYXZiLXI4YTc3OTAiIGlmIHRoZSBkZXZpY2UgaXMgYSBwYXJ0IG9mIFI4
-QTc3OTANCj4gU29DLg0KPiA+IC0JICAgICAgInJlbmVzYXMsZXRoZXJhdmItcjhhNzc5MSIgaWYg
-dGhlIGRldmljZSBpcyBhIHBhcnQgb2YgUjhBNzc5MSBTb0MuDQo+ID4gLQkgICAgICAicmVuZXNh
-cyxldGhlcmF2Yi1yOGE3NzkyIiBpZiB0aGUgZGV2aWNlIGlzIGEgcGFydCBvZiBSOEE3NzkyIFNv
-Qy4NCj4gPiAtCSAgICAgICJyZW5lc2FzLGV0aGVyYXZiLXI4YTc3OTMiIGlmIHRoZSBkZXZpY2Ug
-aXMgYSBwYXJ0IG9mIFI4QTc3OTMgU29DLg0KPiA+IC0JICAgICAgInJlbmVzYXMsZXRoZXJhdmIt
-cjhhNzc5NCIgaWYgdGhlIGRldmljZSBpcyBhIHBhcnQgb2YgUjhBNzc5NCBTb0MuDQo+ID4gLQkg
-ICAgICAicmVuZXNhcyxldGhlcmF2Yi1yOGE3Nzk1IiBpZiB0aGUgZGV2aWNlIGlzIGEgcGFydCBv
-ZiBSOEE3Nzk1IFNvQy4NCj4gPiAtCSAgICAgICJyZW5lc2FzLGV0aGVyYXZiLXI4YTc3OTYiIGlm
-IHRoZSBkZXZpY2UgaXMgYSBwYXJ0IG9mIFI4QTc3OTYgU29DLg0KPiA+IC0JICAgICAgInJlbmVz
-YXMsZXRoZXJhdmItcmNhci1nZW4yIiBmb3IgZ2VuZXJpYyBSLUNhciBHZW4gMiBjb21wYXRpYmxl
-DQo+IGludGVyZmFjZS4NCj4gPiAtCSAgICAgICJyZW5lc2FzLGV0aGVyYXZiLXJjYXItZ2VuMyIg
-Zm9yIGdlbmVyaWMgUi1DYXIgR2VuIDMgY29tcGF0aWJsZQ0KPiBpbnRlcmZhY2UuDQo+ID4gKy0g
-Y29tcGF0aWJsZTogTXVzdCBjb250YWluIG9uZSBvciBtb3JlIG9mIHRoZSBmb2xsb3dpbmc6DQo+
-IA0KPiAgICAgTm8sIGl0IGNhbid0IGNvbnRhaW4gbW9yZSB0aGFuIG9uZSBTb0Mgc3BlY2lmaWMg
-dmFsdWUuDQoNClN1cmVseSBpdCBjYW4gY29udGFpbiBib3RoICJyZW5lc2FzLGV0aGVyYXZiLXI4
-YTc3NDMiIGFuZCAicmVuZXNhcyxldGhlcmF2Yi1yY2FyLWdlbjIiIGZvciBleGFtcGxlPw0KDQpB
-cyBpbmRlZWQgZGljdGF0ZWQgYnkgdGhlIGluc3RydWN0aW9uIGZ1cnRoZXIgZG93bjoNCg0KPiA+
-ICsJV2hlbiBjb21wYXRpYmxlIHdpdGggdGhlIGdlbmVyaWMgdmVyc2lvbiwgbm9kZXMgbXVzdCBs
-aXN0IHRoZQ0KPiA+ICsJU29DLXNwZWNpZmljIHZlcnNpb24gY29ycmVzcG9uZGluZyB0byB0aGUg
-cGxhdGZvcm0gZmlyc3QgZm9sbG93ZWQgYnkNCj4gPiArCXRoZSBnZW5lcmljIHZlcnNpb24uDQoN
-CktpbmQgcmVnYXJkcywgQ2hyaXMNCg==
+Hello!
+
+On 07/10/2017 06:32 PM, Biju Das wrote:
+
+> Add a new compatible string for the RZ/G1M (R8A7743) SoC.
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> ---
+> v1->v2
+> * Changed the subject
+> * re-formatted the required properties
+>
+>  .../devicetree/bindings/net/renesas,ravb.txt       | 29 +++++++++++++---------
+>  1 file changed, 17 insertions(+), 12 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/net/renesas,ravb.txt b/Documentation/devicetree/bindings/net/renesas,ravb.txt
+> index b519503..4717bc2 100644
+> --- a/Documentation/devicetree/bindings/net/renesas,ravb.txt
+> +++ b/Documentation/devicetree/bindings/net/renesas,ravb.txt
+> @@ -4,19 +4,24 @@ This file provides information on what the device node for the Ethernet AVB
+>  interface contains.
+>
+>  Required properties:
+> -- compatible: "renesas,etheravb-r8a7790" if the device is a part of R8A7790 SoC.
+> -	      "renesas,etheravb-r8a7791" if the device is a part of R8A7791 SoC.
+> -	      "renesas,etheravb-r8a7792" if the device is a part of R8A7792 SoC.
+> -	      "renesas,etheravb-r8a7793" if the device is a part of R8A7793 SoC.
+> -	      "renesas,etheravb-r8a7794" if the device is a part of R8A7794 SoC.
+> -	      "renesas,etheravb-r8a7795" if the device is a part of R8A7795 SoC.
+> -	      "renesas,etheravb-r8a7796" if the device is a part of R8A7796 SoC.
+> -	      "renesas,etheravb-rcar-gen2" for generic R-Car Gen 2 compatible interface.
+> -	      "renesas,etheravb-rcar-gen3" for generic R-Car Gen 3 compatible interface.
+> +- compatible: Must contain one or more of the following:
+
+    No, it can't contain more than one SoC specific value.
+
+> +      - "renesas,etheravb-r8a7743" for the R8A7743 SoC.
+> +      - "renesas,etheravb-r8a7790" for the R8A7790 SoC.
+> +      - "renesas,etheravb-r8a7791" for the R8A7791 SoC.
+> +      - "renesas,etheravb-r8a7792" for the R8A7792 SoC.
+> +      - "renesas,etheravb-r8a7793" for the R8A7793 SoC.
+> +      - "renesas,etheravb-r8a7794" for the R8A7794 SoC.
+> +      - "renesas,etheravb-rcar-gen2" as a fallback for the above
+> +		R-Car Gen2 and RZ/G1 devices.
+>
+> -	      When compatible with the generic version, nodes must list the
+> -	      SoC-specific version corresponding to the platform first
+> -	      followed by the generic version.
+> +      - "renesas,etheravb-r8a7795" for the R8A7795 SoC.
+> +      - "renesas,etheravb-r8a7796" for the R8A7796 SoC.
+
+    Neither here.
+
+> +      - "renesas,etheravb-rcar-gen3" as a fallback for the above
+> +		R-Car Gen3 devices.
+> +
+> +	When compatible with the generic version, nodes must list the
+> +	SoC-specific version corresponding to the platform first followed by
+> +	the generic version.
+>
+>  - reg: offset and length of (1) the register block and (2) the stream buffer.
+>  - interrupts: A list of interrupt-specifiers, one for each entry in
+
+WBR, Sergei
