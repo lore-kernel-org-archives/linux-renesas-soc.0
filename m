@@ -1,30 +1,32 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:35949 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932462AbdGKRrK (ORCPT
+Received: from mail-lf0-f46.google.com ([209.85.215.46]:33503 "EHLO
+        mail-lf0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933863AbdGKQXo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 11 Jul 2017 13:47:10 -0400
+        Tue, 11 Jul 2017 12:23:44 -0400
+Received: by mail-lf0-f46.google.com with SMTP id z78so4903948lff.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 11 Jul 2017 09:23:43 -0700 (PDT)
+Subject: Re: [PATCH] ata: sata_rcar: add gen[23] fallback compatibility
+ strings
+To: Simon Horman <horms+renesas@verge.net.au>,
+        Tejun Heo <tj@kernel.org>
+References: <1499773460-8930-1-git-send-email-horms+renesas@verge.net.au>
+Cc: linux-ide@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <85f13b7a-0bf4-e2fa-b57c-08d002caf892@cogentembedded.com>
+Date: Tue, 11 Jul 2017 19:23:40 +0300
 MIME-Version: 1.0
 In-Reply-To: <1499773460-8930-1-git-send-email-horms+renesas@verge.net.au>
-References: <1499773460-8930-1-git-send-email-horms+renesas@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 11 Jul 2017 19:47:08 +0200
-Message-ID: <CAMuHMdWO15UCe8HgFL2wsfKTwM1M=850C3FiCJfO9_rDo18YJA@mail.gmail.com>
-Subject: Re: [PATCH] ata: sata_rcar: add gen[23] fallback compatibility strings
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Tejun Heo <tj@kernel.org>,
-        "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Jul 11, 2017 at 1:44 PM, Simon Horman
-<horms+renesas@verge.net.au> wrote:
+On 07/11/2017 02:44 PM, Simon Horman wrote:
+
 > Add fallback compatibility string for R-Car Gen 2 and 3.
 >
 > In the case of Renesas R-Car hardware we know that there are generations of
@@ -42,16 +44,8 @@ On Tue, Jul 11, 2017 at 1:44 PM, Simon Horman
 > drivers for Renesas SoCs.
 >
 > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+[...]
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+MBR, Sergei
