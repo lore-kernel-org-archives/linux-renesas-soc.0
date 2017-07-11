@@ -1,105 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f45.google.com ([209.85.214.45]:35155 "EHLO
-        mail-it0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756611AbdGLGuW (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:16214 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932736AbdGKThI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 12 Jul 2017 02:50:22 -0400
-MIME-Version: 1.0
-In-Reply-To: <SG2PR06MB11651FF11350240AA95EDCD28AAE0@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <20170711162911.39114-1-chris.brandt@renesas.com>
- <CAMuHMdX=Y5cpNiSd1wwXV_SOCpBs64+VpHnE_Svgd2E6P8Gm6w@mail.gmail.com> <SG2PR06MB11651FF11350240AA95EDCD28AAE0@SG2PR06MB1165.apcprd06.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 12 Jul 2017 08:50:20 +0200
-Message-ID: <CAMuHMdW6Sz59JNVEp_b6qw0VD_0_JAeetMrN9K2GUcPL++uipA@mail.gmail.com>
-Subject: Re: [PATCH] mmc: tmio-mmc: fix bad pointer math
-To: Chris Brandt <Chris.Brandt@renesas.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+        Tue, 11 Jul 2017 15:37:08 -0400
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Ulf Hansson <ulf.hansson@linaro.org>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Dan Carpenter <dan.carpenter@oracle.com>,
         Simon Horman <horms+renesas@verge.net.au>,
         Linux MMC List <linux-mmc@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: RE: [PATCH] mmc: tmio-mmc: fix bad pointer math
+Date: Tue, 11 Jul 2017 19:37:03 +0000
+Message-ID: <SG2PR06MB11651FF11350240AA95EDCD28AAE0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20170711162911.39114-1-chris.brandt@renesas.com>
+ <CAMuHMdX=Y5cpNiSd1wwXV_SOCpBs64+VpHnE_Svgd2E6P8Gm6w@mail.gmail.com>
+In-Reply-To: <CAMuHMdX=Y5cpNiSd1wwXV_SOCpBs64+VpHnE_Svgd2E6P8Gm6w@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Chris,
-
-On Tue, Jul 11, 2017 at 9:37 PM, Chris Brandt <Chris.Brandt@renesas.com> wrote:
-> On Tuesday, July 11, 2017, Geert Uytterhoeven wrote:
->> > zeroing out the bottom 2 bits of count for out math.
->>
->> s/out/our/
->
-> Thank you!
->
->> > -               buf8 = (u8 *)(buf + (count >> 2));
->> > +               buf8 = (u8 *)buf + (count & ~3);
->> >                 count %= 4;
->>
->> While correct, this is IMHO still difficult to understand for the casual
->> reader.
->>
->> Given the code before casts to "u32 *", and uses "count >>2", and the code
->> after also casts to "u32 *", what about getting rid of all casts like:
->>
->>         u32 data = 0;
->>         u32 *buf32 = buf;
->>
->>         if (is_read)
->>                 sd_ctrl_read32_rep(host, CTL_SD_DATA_PORT, buf32,
->>                                    count >> 2);
->>         else
->>                 sd_ctrl_write32_rep(host, CTL_SD_DATA_PORT, buf32,
->>                                     count >> 2);
->>
->>         /* if count was multiple of 4 */
->>         if (!(count & 0x3))
->>                 return;
->>
->>         buf32 += count >> 2;
->>         count %= 4;
->>
->>         if (is_read) {
->>                 sd_ctrl_read32_rep(host, CTL_SD_DATA_PORT, &data, 1);
->>                 memcpy(buf32, &data, count);
->>         } else {
->>                 memcpy(&data, buf32, count);
->>                 sd_ctrl_write32_rep(host, CTL_SD_DATA_PORT, &data, 1);
->>         }
->>
->>                 return;
->>         }
->>
->
-> Good idea. I just tried it and it seems to work. I'll resend a patch.
->
->
->>         u32 *buf32 = buf;
->
-> GCC didn't like this line without casting buf to a u32 *. It threw an
-> error, not just a warning. Go figure.
-
-Sorry, the cast is indeed missing, as buf is not a void *.
-
-> Question:
->>         u32 data = 0;
->
-> Any special reason why you are initializing this to 0????
-
-I think the original code did that, too. Hmm, I got mislead by the curly braces,
-there's no "0" in between them.
-
-It's also a bit safer to not write uninitialized data to the CTL_SD_DATA_PORT
-register.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+SGkgR2VlcnQsDQoNCg0KT24gVHVlc2RheSwgSnVseSAxMSwgMjAxNywgR2VlcnQgVXl0dGVyaG9l
+dmVuIHdyb3RlOg0KPiA+IHplcm9pbmcgb3V0IHRoZSBib3R0b20gMiBiaXRzIG9mIGNvdW50IGZv
+ciBvdXQgbWF0aC4NCj4gDQo+IHMvb3V0L291ci8NCg0KVGhhbmsgeW91IQ0KDQo+ID4gLSAgICAg
+ICAgICAgICAgIGJ1ZjggPSAodTggKikoYnVmICsgKGNvdW50ID4+IDIpKTsNCj4gPiArICAgICAg
+ICAgICAgICAgYnVmOCA9ICh1OCAqKWJ1ZiArIChjb3VudCAmIH4zKTsNCj4gPiAgICAgICAgICAg
+ICAgICAgY291bnQgJT0gNDsNCj4gDQo+IFdoaWxlIGNvcnJlY3QsIHRoaXMgaXMgSU1ITyBzdGls
+bCBkaWZmaWN1bHQgdG8gdW5kZXJzdGFuZCBmb3IgdGhlIGNhc3VhbA0KPiByZWFkZXIuDQo+IA0K
+PiBHaXZlbiB0aGUgY29kZSBiZWZvcmUgY2FzdHMgdG8gInUzMiAqIiwgYW5kIHVzZXMgImNvdW50
+ID4+MiIsIGFuZCB0aGUgY29kZQ0KPiBhZnRlciBhbHNvIGNhc3RzIHRvICJ1MzIgKiIsIHdoYXQg
+YWJvdXQgZ2V0dGluZyByaWQgb2YgYWxsIGNhc3RzIGxpa2U6DQo+IA0KPiAgICAgICAgIHUzMiBk
+YXRhID0gMDsNCj4gICAgICAgICB1MzIgKmJ1ZjMyID0gYnVmOw0KPiANCj4gICAgICAgICBpZiAo
+aXNfcmVhZCkNCj4gICAgICAgICAgICAgICAgIHNkX2N0cmxfcmVhZDMyX3JlcChob3N0LCBDVExf
+U0RfREFUQV9QT1JULCBidWYzMiwNCj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICBjb3VudCA+PiAyKTsNCj4gICAgICAgICBlbHNlDQo+ICAgICAgICAgICAgICAgICBzZF9jdHJs
+X3dyaXRlMzJfcmVwKGhvc3QsIENUTF9TRF9EQVRBX1BPUlQsIGJ1ZjMyLA0KPiAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICBjb3VudCA+PiAyKTsNCj4gDQo+ICAgICAgICAgLyog
+aWYgY291bnQgd2FzIG11bHRpcGxlIG9mIDQgKi8NCj4gICAgICAgICBpZiAoIShjb3VudCAmIDB4
+MykpDQo+ICAgICAgICAgICAgICAgICByZXR1cm47DQo+IA0KPiAgICAgICAgIGJ1ZjMyICs9IGNv
+dW50ID4+IDI7DQo+ICAgICAgICAgY291bnQgJT0gNDsNCj4gDQo+ICAgICAgICAgaWYgKGlzX3Jl
+YWQpIHsNCj4gICAgICAgICAgICAgICAgIHNkX2N0cmxfcmVhZDMyX3JlcChob3N0LCBDVExfU0Rf
+REFUQV9QT1JULCAmZGF0YSwgMSk7DQo+ICAgICAgICAgICAgICAgICBtZW1jcHkoYnVmMzIsICZk
+YXRhLCBjb3VudCk7DQo+ICAgICAgICAgfSBlbHNlIHsNCj4gICAgICAgICAgICAgICAgIG1lbWNw
+eSgmZGF0YSwgYnVmMzIsIGNvdW50KTsNCj4gICAgICAgICAgICAgICAgIHNkX2N0cmxfd3JpdGUz
+Ml9yZXAoaG9zdCwgQ1RMX1NEX0RBVEFfUE9SVCwgJmRhdGEsIDEpOw0KPiAgICAgICAgIH0NCj4g
+DQo+ICAgICAgICAgICAgICAgICByZXR1cm47DQo+ICAgICAgICAgfQ0KPiANCg0KR29vZCBpZGVh
+LiBJIGp1c3QgdHJpZWQgaXQgYW5kIGl0IHNlZW1zIHRvIHdvcmsuIEknbGwgcmVzZW5kIGEgcGF0
+Y2guDQoNCg0KPiAgICAgICAgIHUzMiAqYnVmMzIgPSBidWY7DQoNCkdDQyBkaWRuJ3QgbGlrZSB0
+aGlzIGxpbmUgd2l0aG91dCBjYXN0aW5nIGJ1ZiB0byBhIHUzMiAqLiBJdCB0aHJldyBhbiANCmVy
+cm9yLCBub3QganVzdCBhIHdhcm5pbmcuIEdvIGZpZ3VyZS4NCg0KDQpRdWVzdGlvbjoNCj4gICAg
+ICAgICB1MzIgZGF0YSA9IDA7DQoNCkFueSBzcGVjaWFsIHJlYXNvbiB3aHkgeW91IGFyZSBpbml0
+aWFsaXppbmcgdGhpcyB0byAwPz8/Pw0KDQoNClRoYW5rIHlvdSwNCkNocmlzDQoNCg==
