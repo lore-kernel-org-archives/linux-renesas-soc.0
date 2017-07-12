@@ -1,46 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:33329 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751996AbdGAUFr (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:33708 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751215AbdGLKfB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 1 Jul 2017 16:05:47 -0400
-Subject: Re: [PATCH 3/8] clk: vc5: Do not warn about disabled output buffer
- input muxes
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <20170629101851.23972-1-marek.vasut@gmail.com>
- <20170629101851.23972-3-marek.vasut@gmail.com>
- <20170630192647.GQ22780@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Alexey Firago <alexey_firago@mentor.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org
-From: Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <203e6712-bcf1-8b4f-46d4-33cb3108c21b@gmail.com>
-Date: Sat, 1 Jul 2017 22:00:12 +0200
+        Wed, 12 Jul 2017 06:35:01 -0400
+Reply-To: kieran.bingham@ideasonboard.com
+Subject: Re: [PATCH v2 1/3] drm: rcar-du: Use the VBK interrupt for vblank
+ events
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
+References: <20170711222942.27735-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20170711222942.27735-2-laurent.pinchart+renesas@ideasonboard.com>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Message-ID: <6e787da2-e438-5cfb-b623-992289410d90@ideasonboard.com>
+Date: Wed, 12 Jul 2017 11:34:56 +0100
 MIME-Version: 1.0
-In-Reply-To: <20170630192647.GQ22780@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <20170711222942.27735-2-laurent.pinchart+renesas@ideasonboard.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 06/30/2017 09:26 PM, Stephen Boyd wrote:
-> On 06/29, Marek Vasut wrote:
->> @@ -549,6 +552,7 @@ static unsigned char vc5_clk_out_get_parent(struct clk_hw *hw)
->>  
->>  	dev_warn(&vc5->client->dev,
->>  		 "Invalid clock output configuration (%02x)\n", src);
->> +
->>  	return 0;
->>  }
->>  
-> 
-> Please drop this hunk as it isn't relevant to the patch.
-> 
-Done in V2, thanks.
+Hi Laurent,
 
--- 
-Best regards,
-Marek Vasut
+On 11/07/17 23:29, Laurent Pinchart wrote:
+> When implementing support for interlaced modes, the driver switched from
+> reporting vblank events on the vertical blanking (VBK) interrupt to the
+> frame end interrupt (FRM). This incorrectly divided the reported refresh
+> rate by two. Fix it by moving back to the VBK interrupt.
+> 
+> Fixes: 906eff7fcada ("drm: rcar-du: Implement support for interlaced modes")
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+
+Of course, this looks much more correct than the patch I submitted :-)
+
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
+> ---
+>  drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> index 98cf446391dc..17fd1cd5212c 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> @@ -698,7 +698,7 @@ static irqreturn_t rcar_du_crtc_irq(int irq, void *arg)
+>  	status = rcar_du_crtc_read(rcrtc, DSSR);
+>  	rcar_du_crtc_write(rcrtc, DSRCR, status & DSRCR_MASK);
+>  
+> -	if (status & DSSR_FRM) {
+> +	if (status & DSSR_VBK) {
+>  		drm_crtc_handle_vblank(&rcrtc->crtc);
+>  
+>  		if (rcdu->info->gen < 3)
+> 
