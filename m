@@ -1,126 +1,108 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:36960 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753124AbdGNQIr (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:59080 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754528AbdGLK0J (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Jul 2017 12:08:47 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v2 1/6] v4l: vsp1: Move vsp1_video_pipeline_setup_partitions() function
-Date: Fri, 14 Jul 2017 17:08:32 +0100
-Message-Id: <61f81081718e2e50d45e6fff3d448547589178a1.1500048373.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.525a94c41c3857a3f4bb8b8bbbccf78cf0c1dc78.1500048373.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.525a94c41c3857a3f4bb8b8bbbccf78cf0c1dc78.1500048373.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.525a94c41c3857a3f4bb8b8bbbccf78cf0c1dc78.1500048373.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.525a94c41c3857a3f4bb8b8bbbccf78cf0c1dc78.1500048373.git-series.kieran.bingham+renesas@ideasonboard.com>
+        Wed, 12 Jul 2017 06:26:09 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] spi: sh-msiof: Limit minimum divider on R-Car Gen3
+Date: Wed, 12 Jul 2017 12:26:01 +0200
+Message-Id: <1499855161-20518-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Separate the code change from the function move so that code changes can
-be clearly identified. This commit has no functional change.
+On R-Car Gen3 SoCs (excluding R-Car H3 ES1.x, which cannot be used for
+SPI due to a hardware erratum), BRPS x BRDV = 1/1 is an invalid divider
+setting.
+Implement this limitation using an SoC/family-specific minimum divider.
 
-The partition algorithm functions will be changed, and
-vsp1_video_pipeline_setup_partitions() will call vsp1_video_partition().
-To prepare for that, move the function without any code change.
-
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/media/platform/vsp1/vsp1_video.c | 73 ++++++++++++-------------
- 1 file changed, 36 insertions(+), 37 deletions(-)
+ drivers/spi/spi-sh-msiof.c | 32 +++++++++++++++++++++++---------
+ 1 file changed, 23 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
-index e9f5dcb8fae5..03e139f40dcf 100644
---- a/drivers/media/platform/vsp1/vsp1_video.c
-+++ b/drivers/media/platform/vsp1/vsp1_video.c
-@@ -182,43 +182,6 @@ static int __vsp1_video_try_format(struct vsp1_video *video,
-  * VSP1 Partition Algorithm support
-  */
+diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
+index c304c7167866d2db..0eb1e95834854fb6 100644
+--- a/drivers/spi/spi-sh-msiof.c
++++ b/drivers/spi/spi-sh-msiof.c
+@@ -38,6 +38,7 @@ struct sh_msiof_chipdata {
+ 	u16 tx_fifo_size;
+ 	u16 rx_fifo_size;
+ 	u16 master_flags;
++	u16 min_div;
+ };
  
--static void vsp1_video_pipeline_setup_partitions(struct vsp1_pipeline *pipe)
--{
--	struct vsp1_device *vsp1 = pipe->output->entity.vsp1;
--	const struct v4l2_mbus_framefmt *format;
--	struct vsp1_entity *entity;
--	unsigned int div_size;
--
--	/*
--	 * Partitions are computed on the size before rotation, use the format
--	 * at the WPF sink.
--	 */
--	format = vsp1_entity_get_pad_format(&pipe->output->entity,
--					    pipe->output->entity.config,
--					    RWPF_PAD_SINK);
--	div_size = format->width;
--
--	/* Gen2 hardware doesn't require image partitioning. */
--	if (vsp1->info->gen == 2) {
--		pipe->div_size = div_size;
--		pipe->partitions = 1;
--		return;
--	}
--
--	list_for_each_entry(entity, &pipe->entities, list_pipe) {
--		unsigned int entity_max = VSP1_VIDEO_MAX_WIDTH;
--
--		if (entity->ops->max_width) {
--			entity_max = entity->ops->max_width(entity, pipe);
--			if (entity_max)
--				div_size = min(div_size, entity_max);
--		}
--	}
--
--	pipe->div_size = div_size;
--	pipe->partitions = DIV_ROUND_UP(format->width, div_size);
--}
--
- /**
-  * vsp1_video_partition - Calculate the active partition output window
-  *
-@@ -293,6 +256,42 @@ static struct v4l2_rect vsp1_video_partition(struct vsp1_pipeline *pipe,
- 	return partition;
- }
+ struct sh_msiof_spi_priv {
+@@ -49,6 +50,7 @@ struct sh_msiof_spi_priv {
+ 	struct completion done;
+ 	unsigned int tx_fifo_size;
+ 	unsigned int rx_fifo_size;
++	unsigned int min_div;
+ 	void *tx_dma_page;
+ 	void *rx_dma_page;
+ 	dma_addr_t tx_dma_addr;
+@@ -261,6 +263,8 @@ static void sh_msiof_spi_set_clk_regs(struct sh_msiof_spi_priv *p,
+ 	if (!WARN_ON(!spi_hz || !parent_rate))
+ 		div = DIV_ROUND_UP(parent_rate, spi_hz);
  
-+static void vsp1_video_pipeline_setup_partitions(struct vsp1_pipeline *pipe)
-+{
-+	struct vsp1_device *vsp1 = pipe->output->entity.vsp1;
-+	const struct v4l2_mbus_framefmt *format;
-+	struct vsp1_entity *entity;
-+	unsigned int div_size;
++	div = max_t(unsigned long, div, p->min_div);
 +
-+	/*
-+	 * Partitions are computed on the size before rotation, use the format
-+	 * at the WPF sink.
-+	 */
-+	format = vsp1_entity_get_pad_format(&pipe->output->entity,
-+					    pipe->output->entity.config,
-+					    RWPF_PAD_SINK);
-+	div_size = format->width;
+ 	for (k = 0; k < ARRAY_SIZE(sh_msiof_spi_div_table); k++) {
+ 		brps = DIV_ROUND_UP(div, sh_msiof_spi_div_table[k].div);
+ 		/* SCR_BRDV_DIV_1 is valid only if BRPS is x 1/1 or x 1/2 */
+@@ -998,24 +1002,33 @@ static const struct sh_msiof_chipdata sh_data = {
+ 	.tx_fifo_size = 64,
+ 	.rx_fifo_size = 64,
+ 	.master_flags = 0,
++	.min_div = 1,
++};
 +
-+	/* Gen2 hardware doesn't require image partitioning. */
-+	if (vsp1->info->gen == 2) {
-+		pipe->div_size = div_size;
-+		pipe->partitions = 1;
-+		return;
-+	}
-+
-+	list_for_each_entry(entity, &pipe->entities, list_pipe) {
-+		unsigned int entity_max = VSP1_VIDEO_MAX_WIDTH;
-+
-+		if (entity->ops->max_width) {
-+			entity_max = entity->ops->max_width(entity, pipe);
-+			if (entity_max)
-+				div_size = min(div_size, entity_max);
-+		}
-+	}
-+
-+	pipe->div_size = div_size;
-+	pipe->partitions = DIV_ROUND_UP(format->width, div_size);
-+}
- /* -----------------------------------------------------------------------------
-  * Pipeline Management
-  */
++static const struct sh_msiof_chipdata rcar_gen2_data = {
++	.tx_fifo_size = 64,
++	.rx_fifo_size = 64,
++	.master_flags = SPI_MASTER_MUST_TX,
++	.min_div = 1,
+ };
+ 
+-static const struct sh_msiof_chipdata r8a779x_data = {
++static const struct sh_msiof_chipdata rcar_gen3_data = {
+ 	.tx_fifo_size = 64,
+ 	.rx_fifo_size = 64,
+ 	.master_flags = SPI_MASTER_MUST_TX,
++	.min_div = 2,
+ };
+ 
+ static const struct of_device_id sh_msiof_match[] = {
+ 	{ .compatible = "renesas,sh-mobile-msiof", .data = &sh_data },
+-	{ .compatible = "renesas,msiof-r8a7790",   .data = &r8a779x_data },
+-	{ .compatible = "renesas,msiof-r8a7791",   .data = &r8a779x_data },
+-	{ .compatible = "renesas,msiof-r8a7792",   .data = &r8a779x_data },
+-	{ .compatible = "renesas,msiof-r8a7793",   .data = &r8a779x_data },
+-	{ .compatible = "renesas,msiof-r8a7794",   .data = &r8a779x_data },
+-	{ .compatible = "renesas,rcar-gen2-msiof", .data = &r8a779x_data },
+-	{ .compatible = "renesas,msiof-r8a7796",   .data = &r8a779x_data },
+-	{ .compatible = "renesas,rcar-gen3-msiof", .data = &r8a779x_data },
++	{ .compatible = "renesas,msiof-r8a7790",   .data = &rcar_gen2_data },
++	{ .compatible = "renesas,msiof-r8a7791",   .data = &rcar_gen2_data },
++	{ .compatible = "renesas,msiof-r8a7792",   .data = &rcar_gen2_data },
++	{ .compatible = "renesas,msiof-r8a7793",   .data = &rcar_gen2_data },
++	{ .compatible = "renesas,msiof-r8a7794",   .data = &rcar_gen2_data },
++	{ .compatible = "renesas,rcar-gen2-msiof", .data = &rcar_gen2_data },
++	{ .compatible = "renesas,msiof-r8a7796",   .data = &rcar_gen3_data },
++	{ .compatible = "renesas,rcar-gen3-msiof", .data = &rcar_gen3_data },
+ 	{ .compatible = "renesas,sh-msiof",        .data = &sh_data }, /* Deprecated */
+ 	{},
+ };
+@@ -1230,6 +1243,7 @@ static int sh_msiof_spi_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, p);
+ 	p->master = master;
+ 	p->info = info;
++	p->min_div = chipdata->min_div;
+ 
+ 	init_completion(&p->done);
+ 
 -- 
-git-series 0.9.1
+2.7.4
