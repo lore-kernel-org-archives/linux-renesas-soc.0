@@ -1,62 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:36448 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754180AbdGJN20 (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:54430 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756100AbdGLKbW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 10 Jul 2017 09:28:26 -0400
+        Wed, 12 Jul 2017 06:31:22 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Olof Johansson <olof@lixom.net>,
-        Simon Horman <horms@verge.net.au>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
+To: Linus Walleij <linus.walleij@linaro.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 8/9] ARM: multi_v7_defconfig: Replace DRM_RCAR_HDMI by generic bridge options
-Date: Mon, 10 Jul 2017 15:28:21 +0200
-Message-Id: <1499693302-25120-9-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1499693302-25120-1-git-send-email-geert+renesas@glider.be>
-References: <1499693302-25120-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH 4/5] pinctrl: sh-pfc: r8a7796: Fix IPSR setting for MSIOF3_SS1_E pin
+Date: Wed, 12 Jul 2017 12:31:16 +0200
+Message-Id: <1499855477-20818-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1499855477-20818-1-git-send-email-geert+renesas@glider.be>
+References: <1499855477-20818-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The manual bridge implementation was removed in favor of the generic
-one, so now we need to enable standard bridge drivers like
-DRM_DUMB_VGA_DAC and DRM_I2C_ADV7511.
-Both were already enabled, but the (newer) ADV7511 audio part wasn't.
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Fixes: 5c602531feb3db39 ("drm: rcar-du: Replace manual bridge implementation with DRM bridge")
+This patch fixes the IPSR register setting when the MSIOF3_SS1_E pin
+function is selected.
+
+This is a correction to the incorrect implementation of IPSR register
+pin assignment for R8A7796 SoC specification of R-Car Gen3 Hardware
+User's Manual Rev.0.51E or later.
+
+Fixes: f9aece7344bd81ce ("pinctrl: sh-pfc: Initial R8A7796 PFC support")
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+[geert: Reword]
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-multi_v7_defconfig is in desperate need of a refresh.
-
-To reduce conflicts, I went for the simple option of adding
-CONFIG_DRM_I2C_ADV7511_AUDIO below CONFIG_DRM_I2C_ADV7511, instead of
-moving CONFIG_DRM_I2C_ADV7511 and CONFIG_DRM_DUMB_VGA_DAC around.
----
- arch/arm/configs/multi_v7_defconfig | 2 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 7fa1746970ecc531..ea2075d8e185f7aa 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -584,6 +584,7 @@ CONFIG_VIDEO_ADV7180=m
- CONFIG_VIDEO_ML86V7667=m
- CONFIG_DRM=y
- CONFIG_DRM_I2C_ADV7511=m
-+CONFIG_DRM_I2C_ADV7511_AUDIO=y
- # CONFIG_DRM_I2C_CH7006 is not set
- # CONFIG_DRM_I2C_SIL164 is not set
- CONFIG_DRM_DUMB_VGA_DAC=m
-@@ -603,7 +604,6 @@ CONFIG_ROCKCHIP_DW_MIPI_DSI=y
- CONFIG_ROCKCHIP_INNO_HDMI=y
- CONFIG_DRM_ATMEL_HLCDC=m
- CONFIG_DRM_RCAR_DU=m
--CONFIG_DRM_RCAR_HDMI=y
- CONFIG_DRM_RCAR_LVDS=y
- CONFIG_DRM_SUN4I=m
- CONFIG_DRM_TEGRA=y
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+index 6fa1729d784e6df2..0fd96f198b4dfae2 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+@@ -645,7 +645,7 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_IPSR_MSEL(IP0_31_28,	VI4_DATA1_B,		SEL_VIN4_1),
+ 	PINMUX_IPSR_MSEL(IP0_31_28,	CAN0_RX_B,		SEL_RCAN0_1),
+ 	PINMUX_IPSR_MSEL(IP0_31_28,	CANFD0_RX_B,		SEL_CANFD0_1),
+-	PINMUX_IPSR_MSEL(IP0_27_24,	MSIOF3_SS1_E,		SEL_MSIOF3_4),
++	PINMUX_IPSR_MSEL(IP0_31_28,	MSIOF3_SS1_E,		SEL_MSIOF3_4),
+ 
+ 	/* IPSR1 */
+ 	PINMUX_IPSR_GPSR(IP1_3_0,	IRQ2),
 -- 
 2.7.4
