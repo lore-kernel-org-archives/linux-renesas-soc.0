@@ -1,54 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:40958 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755962AbdGLKbW (ORCPT
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:34970 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753659AbdGLQz4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 12 Jul 2017 06:31:22 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Linus Walleij <linus.walleij@linaro.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/5] pinctrl: sh-pfc: r8a7795/r8a7796: MSIOF updates
-Date: Wed, 12 Jul 2017 12:31:12 +0200
-Message-Id: <1499855477-20818-1-git-send-email-geert+renesas@glider.be>
+        Wed, 12 Jul 2017 12:55:56 -0400
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+To: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 00/14] pinctrl: sh-pfc: r8a7796: Fix pin assignment definitions
+Date: Thu, 13 Jul 2017 01:55:33 +0900
+Message-Id: <1499878547-3452-1-git-send-email-ykaneko0929@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Linus, Laurent,
+This series fixes pin assignment definitions for R8A7796 SoC.
+This series is based on the for-next branch of linux-pinctrl tree.
 
-This patch series fixes MSIOF-related bugs in the R-Car H3 ES2.0 and M3-W
-pin control drivers, and enables support for MSIOF on R-Car H3 ES2.0.
-
-I plan to queue these up in sh-pfc-for-v4.14.
-
-Thanks!
-
-Geert Uytterhoeven (2):
-  pinctrl: sh-pfc: r8a7795: Add MSIOF pins, groups and functions
-  pinctrl: sh-pfc: r8a7796: Fix MSIOF3 SS2_E mux
-
-Takeshi Kihara (3):
-  pinctrl: sh-pfc: r8a7795: Fix MSIOF3_{SS1,SS2}_E pin function
+Takeshi Kihara (14):
+  pinctrl: sh-pfc: r8a7796: Fix MOD_SEL1 bit[25:24] to 0x3 when using
+    STP_ISEN_1_D
+  pinctrl: sh-pfc: r8a7796: Fix IPSR register setting when MSIOF3_SS1_E
+    pin was selected
+  pinctrl: sh-pfc: r8a7796: Fix MOD_SEL2 bit26 to 0x0 when using SCK5_A
+  pinctrl: sh-pfc: r8a7796: Fix MOD_SEL register pin assignment for SSI
+    pins group
+  pinctrl: sh-pfc: r8a7796: Fix SCIF_CLK_{A,B} pin's MOD_SEL assignment
+    to MOD_SEL1 bit10
+  pinctrl: sh-pfc: r8a7796: Fix FMCLK{_C,_D} and FMIN{_C,_D} pin
+    function definitions
+  pinctrl: sh-pfc: r8a7796: Fix NFDATA{0..13} and NF{ALE,CLE,WE_N,RE_N}
+    pin function definitions
+  pinctrl: sh-pfc: r8a7796: Fix MSIOF3_{SS1,SS2}_E pins function
     definitions
-  pinctrl: sh-pfc: r8a7796: Fix MSIOF3_{SS1,SS2}_E pin function
+  pinctrl: sh-pfc: r8a7796: Fix MOD_SEL register pin assignment for
+    TCLK{1,2}_{A,B} pins group
+  pinctrl: sh-pfc: r8a7796: Fix to delete FSCLKST pin and IPSR7
+    bit[15:12] register definitions
+  pinctrl: sh-pfc: r8a7796: Fix to delete SATA_DEVSLP_B pins function
     definitions
-  pinctrl: sh-pfc: r8a7796: Fix IPSR setting for MSIOF3_SS1_E pin
+  pinctrl: sh-pfc: r8a7796: Fix to delete MOD_SEL0 bit2 register
+    definitions
+  pinctrl: sh-pfc: r8a7796: Fix IPSR and MOD_SEL register pin assignment
+    for FSO pins group
+  pinctrl: sh-pfc: r8a7796: Rename CS1# pin function definitions
 
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 916 ++++++++++++++++++++++++++++++++++-
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c |   8 +-
- 2 files changed, 918 insertions(+), 6 deletions(-)
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 138 +++++++++++++++++------------------
+ 1 file changed, 65 insertions(+), 73 deletions(-)
 
 -- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+1.9.1
