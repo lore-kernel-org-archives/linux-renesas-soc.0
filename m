@@ -1,46 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f193.google.com ([209.85.223.193]:35715 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755234AbdGLLUJ (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:51892 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1755271AbdGLKD6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 12 Jul 2017 07:20:09 -0400
-MIME-Version: 1.0
-In-Reply-To: <1499853805-5915-2-git-send-email-chris.paterson2@renesas.com>
-References: <1499853805-5915-1-git-send-email-chris.paterson2@renesas.com> <1499853805-5915-2-git-send-email-chris.paterson2@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 12 Jul 2017 13:20:07 +0200
-Message-ID: <CAMuHMdX0TZ7KKzGDq8t2jMwMciEf30KKW2tE5fieqJ2D7+feqw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] dt-bindings: mmc: sh_mmcif: Document r8a7743 DT bindings
-To: Chris Paterson <chris.paterson2@renesas.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+        Wed, 12 Jul 2017 06:03:58 -0400
+From: Chris Paterson <chris.paterson2@renesas.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Linux MMC List <linux-mmc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        Russell King <linux@armlinux.org.uk>
+Cc: Biju Das <biju.das@bp.renesas.com>, linux-mmc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Chris Paterson <chris.paterson2@renesas.com>
+Subject: [PATCH 1/3] dt-bindings: mmc: sh_mmcif: Document r8a7743 DT bindings
+Date: Wed, 12 Jul 2017 11:03:23 +0100
+Message-Id: <1499853805-5915-2-git-send-email-chris.paterson2@renesas.com>
+In-Reply-To: <1499853805-5915-1-git-send-email-chris.paterson2@renesas.com>
+References: <1499853805-5915-1-git-send-email-chris.paterson2@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Jul 12, 2017 at 12:03 PM, Chris Paterson
-<chris.paterson2@renesas.com> wrote:
-> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt b/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt
+index c32dc5a..703e18c 100644
+--- a/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt
++++ b/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt
+@@ -11,6 +11,7 @@ Required properties:
+ 	- "renesas,mmcif-r7s72100" for the MMCIF found in r7s72100 SoCs
+ 	- "renesas,mmcif-r8a73a4" for the MMCIF found in r8a73a4 SoCs
+ 	- "renesas,mmcif-r8a7740" for the MMCIF found in r8a7740 SoCs
++	- "renesas,mmcif-r8a7743" for the MMCIF found in r8a7743 SoCs
+ 	- "renesas,mmcif-r8a7778" for the MMCIF found in r8a7778 SoCs
+ 	- "renesas,mmcif-r8a7790" for the MMCIF found in r8a7790 SoCs
+ 	- "renesas,mmcif-r8a7791" for the MMCIF found in r8a7791 SoCs
+@@ -21,7 +22,7 @@ Required properties:
+ - interrupts: Some SoCs have only 1 shared interrupt, while others have either
+   2 or 3 individual interrupts (error, int, card detect). Below is the number
+   of interrupts for each SoC:
+-    1: r8a73a4, r8a7778, r8a7790, r8a7791, r8a7793, r8a7794
++    1: r8a73a4, r8a7743, r8a7778, r8a7790, r8a7791, r8a7793, r8a7794
+     2: r8a7740, sh73a0
+     3: r7s72100
+ 
+-- 
+1.9.1
