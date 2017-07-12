@@ -1,80 +1,353 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:60720 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752026AbdGMOlU (ORCPT
+Received: from mga06.intel.com ([134.134.136.31]:56167 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751246AbdGLKno (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Jul 2017 10:41:20 -0400
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mark Yao <mark.yao@rock-chips.com>,
-        Heiko Stuebner <heiko@sntech.de>, Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org
-Subject: [PATCH 0/4] drm/sun4i: Fix a register access bug
-Date: Thu, 13 Jul 2017 16:41:12 +0200
-Message-Id: <cover.75b0c7f741ed33015a7ad44941bed1f6152a48a9.1499956639.git-series.maxime.ripard@free-electrons.com>
+        Wed, 12 Jul 2017 06:43:44 -0400
+Subject: [PATCH v2 07/16] drm/rcar-du: Use new iterator macros, v2.
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+References: <20170712081344.25495-1-maarten.lankhorst@linux.intel.com>
+ <20170712081344.25495-8-maarten.lankhorst@linux.intel.com>
+ <20170712091540.rnjldq4bbdiqrcur@phenom.ffwll.local>
+From: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Message-ID: <485c9b80-43da-a8d0-6379-3620fddd8334@linux.intel.com>
+Date: Wed, 12 Jul 2017 12:43:40 +0200
+MIME-Version: 1.0
+In-Reply-To: <20170712091540.rnjldq4bbdiqrcur@phenom.ffwll.local>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Allwinner backend has a commit bit in order to push the new
-configuration to the actual hardware. We've always been using that bit.
+Op 12-07-17 om 11:15 schreef Daniel Vetter:
+> On Wed, Jul 12, 2017 at 10:13:35AM +0200, Maarten Lankhorst wrote:
+>> for_each_obj_in_state is about to be removed, so use the correct new
+>> iterator macros.
+>>
+>> Signed-off-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+>> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>> Cc: linux-renesas-soc@vger.kernel.org
+> Looks correct, but I think Laurent has a patch to rework/remove this.
+> Found something below anyway.
+>
+>> ---
+>>  drivers/gpu/drm/rcar-du/rcar_du_plane.c | 41 ++++++++++++++++-----------------
+>>  1 file changed, 20 insertions(+), 21 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.c b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
+>> index dcde6288da6c..dfd84e3c8c25 100644
+>> --- a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
+>> +++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
+>> @@ -51,12 +51,9 @@
+>>   */
+>>  
+>>  static bool rcar_du_plane_needs_realloc(struct rcar_du_plane *plane,
+>> +					const struct rcar_du_plane_state *cur_state,
+>>  					struct rcar_du_plane_state *new_state)
+>>  {
+>> -	struct rcar_du_plane_state *cur_state;
+>> -
+>> -	cur_state = to_rcar_plane_state(plane->plane.state);
+>> -
+>>  	/* Lowering the number of planes doesn't strictly require reallocation
+>>  	 * as the extra hardware plane will be freed when committing, but doing
+>>  	 * so could lead to more fragmentation.
+>> @@ -141,16 +138,17 @@ int rcar_du_atomic_check_planes(struct drm_device *dev,
+>>  	unsigned int groups = 0;
+>>  	unsigned int i;
+>>  	struct drm_plane *drm_plane;
+>> -	struct drm_plane_state *drm_plane_state;
+>> +	struct drm_plane_state *old_drm_plane_state, *new_drm_plane_state;
+>>  
+>>  	/* Check if hardware planes need to be reallocated. */
+>> -	for_each_plane_in_state(state, drm_plane, drm_plane_state, i) {
+>> -		struct rcar_du_plane_state *plane_state;
+>> +	for_each_oldnew_plane_in_state(state, drm_plane, old_drm_plane_state, new_drm_plane_state, i) {
+>> +		struct rcar_du_plane_state *old_plane_state, *new_plane_state;
+>>  		struct rcar_du_plane *plane;
+>>  		unsigned int index;
+>>  
+>>  		plane = to_rcar_plane(drm_plane);
+>> -		plane_state = to_rcar_plane_state(drm_plane_state);
+>> +		old_plane_state = to_rcar_plane_state(old_drm_plane_state);
+>> +		new_plane_state = to_rcar_plane_state(new_drm_plane_state);
+>>  
+>>  		dev_dbg(rcdu->dev, "%s: checking plane (%u,%tu)\n", __func__,
+>>  			plane->group->index, plane - plane->group->planes);
+>> @@ -159,19 +157,19 @@ int rcar_du_atomic_check_planes(struct drm_device *dev,
+>>  		 * the full reallocation procedure. Just mark the hardware
+>>  		 * plane(s) as freed.
+>>  		 */
+>> -		if (!plane_state->format) {
+>> +		if (!new_plane_state->format) {
+>>  			dev_dbg(rcdu->dev, "%s: plane is being disabled\n",
+>>  				__func__);
+>>  			index = plane - plane->group->planes;
+>>  			group_freed_planes[plane->group->index] |= 1 << index;
+>> -			plane_state->hwindex = -1;
+>> +			new_plane_state->hwindex = -1;
+>>  			continue;
+>>  		}
+>>  
+>>  		/* If the plane needs to be reallocated mark it as such, and
+>>  		 * mark the hardware plane(s) as free.
+>>  		 */
+>> -		if (rcar_du_plane_needs_realloc(plane, plane_state)) {
+>> +		if (rcar_du_plane_needs_realloc(plane, old_plane_state, new_plane_state)) {
+>>  			dev_dbg(rcdu->dev, "%s: plane needs reallocation\n",
+>>  				__func__);
+>>  			groups |= 1 << plane->group->index;
+>> @@ -179,7 +177,7 @@ int rcar_du_atomic_check_planes(struct drm_device *dev,
+>>  
+>>  			index = plane - plane->group->planes;
+>>  			group_freed_planes[plane->group->index] |= 1 << index;
+>> -			plane_state->hwindex = -1;
+>> +			new_plane_state->hwindex = -1;
+>>  		}
+>>  	}
+>>  
+>> @@ -226,16 +224,16 @@ int rcar_du_atomic_check_planes(struct drm_device *dev,
+>>  				continue;
+>>  			}
+>>  
+>> -			plane_state = to_rcar_plane_state(plane->plane.state);
+>> +			new_plane_state = to_rcar_plane_state(plane->plane.state);
+>>  			used_planes |= rcar_du_plane_hwmask(plane_state);
+>>  
+>>  			dev_dbg(rcdu->dev,
+>>  				"%s: plane (%u,%tu) uses %u hwplanes (index %d)\n",
+>>  				__func__, plane->group->index,
+>>  				plane - plane->group->planes,
+>> -				plane_state->format ?
+>> -				plane_state->format->planes : 0,
+>> -				plane_state->hwindex);
+>> +				new_plane_state->format ?
+>> +				new_plane_state->format->planes : 0,
+>> +				new_plane_state->hwindex);
+>>  		}
+>>  
+>>  		group_free_planes[index] = 0xff & ~used_planes;
+>> @@ -246,15 +244,16 @@ int rcar_du_atomic_check_planes(struct drm_device *dev,
+>>  	}
+>>  
+>>  	/* Reallocate hardware planes for each plane that needs it. */
+>> -	for_each_plane_in_state(state, drm_plane, drm_plane_state, i) {
+>> -		struct rcar_du_plane_state *plane_state;
+>> +	for_each_oldnew_plane_in_state(state, drm_plane, old_drm_plane_state, new_drm_plane_state, i) {
+>> +		struct rcar_du_plane_state *old_plane_state, *new_plane_state;
+>>  		struct rcar_du_plane *plane;
+>>  		unsigned int crtc_planes;
+>>  		unsigned int free;
+>>  		int idx;
+>>  
+>>  		plane = to_rcar_plane(drm_plane);
+>> -		plane_state = to_rcar_plane_state(drm_plane_state);
+>> +		old_plane_state = to_rcar_plane_state(old_drm_plane_state);
+>> +		new_plane_state = to_rcar_plane_state(new_drm_plane_state);
+>>  
+>>  		dev_dbg(rcdu->dev, "%s: allocating plane (%u,%tu)\n", __func__,
+>>  			plane->group->index, plane - plane->group->planes);
+>> @@ -263,7 +262,7 @@ int rcar_du_atomic_check_planes(struct drm_device *dev,
+>>  		 * reallocated.
+>>  		 */
+>>  		if (!plane_state->format ||
+> I think you missed a few cases of replacing plane_state here. Does this
+> compile?
+I fear not..
 
-However, we also should poll for that bit to clear, which we don't.
-Accessing any register while a commit is pending is forbidden, and will for
-example show a symptom of reading another, random, register.
+Have a working patch below. :)
 
-If you get this during a read/modify/write cycle, this will result in
-random register corruption, which are pretty bad.
+----8<------
+for_each_obj_in_state is about to be removed, so use the correct new
+iterator macros.
 
-This can be shown using the following program (while the backend is
-active):
-http://code.bulix.org/gdl44p-161437?raw
+Also look at new_plane_state instead of plane->state when looking up
+the hw planes in use. They should be the same except when reallocating,
+(in which case this code is skipped) and we should really stop looking
+at obj->state whenever possible.
 
-Fortunately for us, this is not really likely to happen. The window where
-it can happen is quite thin, and it only happens during a modeset, since
-it's the only time we commit some new configuration.
+Changes since v1:
+- Actually compile correctly.
 
-Unfortunately for us, QT does a ridiculous amount of modeset, and will just
-hit that window after a while, creating a distorded (since the register we
-read/modify/write also has scaling attributes) or with weird colors (since
-it also has a invertion of red and blue components). And might fix itself
-later on by reading another random register with proper values for these
-fields.
+Signed-off-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org
+---
+ drivers/gpu/drm/rcar-du/rcar_du_plane.c | 57 ++++++++++++++++-----------------
+ 1 file changed, 28 insertions(+), 29 deletions(-)
 
-Let me know what you think,
-Maxime
-
-Maxime Ripard (4):
-  drm/atomic: implement drm_atomic_helper_commit_tail for runtime_pm users
-  drm/sun4i: Use the runtime_pm commit_tail variant
-  drm/sun4i: engine: Add commit_poll function
-  drm/sun4i: make sure we don't have a commit pending
-
- drivers/gpu/drm/drm_atomic_helper.c        | 47 +++++++++++++++--------
- drivers/gpu/drm/exynos/exynos_drm_fb.c     | 27 +-------------
- drivers/gpu/drm/rcar-du/rcar_du_kms.c      | 18 +---------
- drivers/gpu/drm/rockchip/rockchip_drm_fb.c | 21 +----------
- drivers/gpu/drm/sun4i/sun4i_backend.c      | 14 +++++++-
- drivers/gpu/drm/sun4i/sun4i_crtc.c         |  3 +-
- drivers/gpu/drm/sun4i/sun4i_framebuffer.c  |  6 +++-
- drivers/gpu/drm/sun4i/sunxi_engine.h       | 14 +++++++-
- include/drm/drm_atomic_helper.h            |  1 +-
- 9 files changed, 73 insertions(+), 78 deletions(-)
-
-base-commit: a70e9c77d0f09e7d00b62a8d618a61b2dfc5d889
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.c b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
+index dcde6288da6c..50fd793c38d1 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
+@@ -51,12 +51,9 @@
+  */
+ 
+ static bool rcar_du_plane_needs_realloc(struct rcar_du_plane *plane,
++					const struct rcar_du_plane_state *cur_state,
+ 					struct rcar_du_plane_state *new_state)
+ {
+-	struct rcar_du_plane_state *cur_state;
+-
+-	cur_state = to_rcar_plane_state(plane->plane.state);
+-
+ 	/* Lowering the number of planes doesn't strictly require reallocation
+ 	 * as the extra hardware plane will be freed when committing, but doing
+ 	 * so could lead to more fragmentation.
+@@ -141,16 +138,17 @@ int rcar_du_atomic_check_planes(struct drm_device *dev,
+ 	unsigned int groups = 0;
+ 	unsigned int i;
+ 	struct drm_plane *drm_plane;
+-	struct drm_plane_state *drm_plane_state;
++	struct drm_plane_state *old_drm_plane_state, *new_drm_plane_state;
+ 
+ 	/* Check if hardware planes need to be reallocated. */
+-	for_each_plane_in_state(state, drm_plane, drm_plane_state, i) {
+-		struct rcar_du_plane_state *plane_state;
++	for_each_oldnew_plane_in_state(state, drm_plane, old_drm_plane_state, new_drm_plane_state, i) {
++		struct rcar_du_plane_state *old_plane_state, *new_plane_state;
+ 		struct rcar_du_plane *plane;
+ 		unsigned int index;
+ 
+ 		plane = to_rcar_plane(drm_plane);
+-		plane_state = to_rcar_plane_state(drm_plane_state);
++		old_plane_state = to_rcar_plane_state(old_drm_plane_state);
++		new_plane_state = to_rcar_plane_state(new_drm_plane_state);
+ 
+ 		dev_dbg(rcdu->dev, "%s: checking plane (%u,%tu)\n", __func__,
+ 			plane->group->index, plane - plane->group->planes);
+@@ -159,19 +157,19 @@ int rcar_du_atomic_check_planes(struct drm_device *dev,
+ 		 * the full reallocation procedure. Just mark the hardware
+ 		 * plane(s) as freed.
+ 		 */
+-		if (!plane_state->format) {
++		if (!new_plane_state->format) {
+ 			dev_dbg(rcdu->dev, "%s: plane is being disabled\n",
+ 				__func__);
+ 			index = plane - plane->group->planes;
+ 			group_freed_planes[plane->group->index] |= 1 << index;
+-			plane_state->hwindex = -1;
++			new_plane_state->hwindex = -1;
+ 			continue;
+ 		}
+ 
+ 		/* If the plane needs to be reallocated mark it as such, and
+ 		 * mark the hardware plane(s) as free.
+ 		 */
+-		if (rcar_du_plane_needs_realloc(plane, plane_state)) {
++		if (rcar_du_plane_needs_realloc(plane, old_plane_state, new_plane_state)) {
+ 			dev_dbg(rcdu->dev, "%s: plane needs reallocation\n",
+ 				__func__);
+ 			groups |= 1 << plane->group->index;
+@@ -179,7 +177,7 @@ int rcar_du_atomic_check_planes(struct drm_device *dev,
+ 
+ 			index = plane - plane->group->planes;
+ 			group_freed_planes[plane->group->index] |= 1 << index;
+-			plane_state->hwindex = -1;
++			new_plane_state->hwindex = -1;
+ 		}
+ 	}
+ 
+@@ -204,7 +202,7 @@ int rcar_du_atomic_check_planes(struct drm_device *dev,
+ 
+ 		for (i = 0; i < group->num_planes; ++i) {
+ 			struct rcar_du_plane *plane = &group->planes[i];
+-			struct rcar_du_plane_state *plane_state;
++			struct rcar_du_plane_state *new_plane_state;
+ 			struct drm_plane_state *s;
+ 
+ 			s = drm_atomic_get_plane_state(state, &plane->plane);
+@@ -226,16 +224,16 @@ int rcar_du_atomic_check_planes(struct drm_device *dev,
+ 				continue;
+ 			}
+ 
+-			plane_state = to_rcar_plane_state(plane->plane.state);
+-			used_planes |= rcar_du_plane_hwmask(plane_state);
++			new_plane_state = to_rcar_plane_state(s);
++			used_planes |= rcar_du_plane_hwmask(new_plane_state);
+ 
+ 			dev_dbg(rcdu->dev,
+ 				"%s: plane (%u,%tu) uses %u hwplanes (index %d)\n",
+ 				__func__, plane->group->index,
+ 				plane - plane->group->planes,
+-				plane_state->format ?
+-				plane_state->format->planes : 0,
+-				plane_state->hwindex);
++				new_plane_state->format ?
++				new_plane_state->format->planes : 0,
++				new_plane_state->hwindex);
+ 		}
+ 
+ 		group_free_planes[index] = 0xff & ~used_planes;
+@@ -246,15 +244,16 @@ int rcar_du_atomic_check_planes(struct drm_device *dev,
+ 	}
+ 
+ 	/* Reallocate hardware planes for each plane that needs it. */
+-	for_each_plane_in_state(state, drm_plane, drm_plane_state, i) {
+-		struct rcar_du_plane_state *plane_state;
++	for_each_oldnew_plane_in_state(state, drm_plane, old_drm_plane_state, new_drm_plane_state, i) {
++		struct rcar_du_plane_state *old_plane_state, *new_plane_state;
+ 		struct rcar_du_plane *plane;
+ 		unsigned int crtc_planes;
+ 		unsigned int free;
+ 		int idx;
+ 
+ 		plane = to_rcar_plane(drm_plane);
+-		plane_state = to_rcar_plane_state(drm_plane_state);
++		old_plane_state = to_rcar_plane_state(old_drm_plane_state);
++		new_plane_state = to_rcar_plane_state(new_drm_plane_state);
+ 
+ 		dev_dbg(rcdu->dev, "%s: allocating plane (%u,%tu)\n", __func__,
+ 			plane->group->index, plane - plane->group->planes);
+@@ -262,8 +261,8 @@ int rcar_du_atomic_check_planes(struct drm_device *dev,
+ 		/* Skip planes that are being disabled or don't need to be
+ 		 * reallocated.
+ 		 */
+-		if (!plane_state->format ||
+-		    !rcar_du_plane_needs_realloc(plane, plane_state))
++		if (!new_plane_state->format ||
++		    !rcar_du_plane_needs_realloc(plane, old_plane_state, new_plane_state))
+ 			continue;
+ 
+ 		/* Try to allocate the plane from the free planes currently
+@@ -271,15 +270,15 @@ int rcar_du_atomic_check_planes(struct drm_device *dev,
+ 		 * group and thus minimize flicker. If it fails fall back to
+ 		 * allocating from all free planes.
+ 		 */
+-		crtc_planes = to_rcar_crtc(plane_state->state.crtc)->index % 2
++		crtc_planes = to_rcar_crtc(new_plane_state->state.crtc)->index % 2
+ 			    ? plane->group->dptsr_planes
+ 			    : ~plane->group->dptsr_planes;
+ 		free = group_free_planes[plane->group->index];
+ 
+-		idx = rcar_du_plane_hwalloc(plane, plane_state,
++		idx = rcar_du_plane_hwalloc(plane, new_plane_state,
+ 					    free & crtc_planes);
+ 		if (idx < 0)
+-			idx = rcar_du_plane_hwalloc(plane, plane_state,
++			idx = rcar_du_plane_hwalloc(plane, new_plane_state,
+ 						    free);
+ 		if (idx < 0) {
+ 			dev_dbg(rcdu->dev, "%s: no available hardware plane\n",
+@@ -288,12 +287,12 @@ int rcar_du_atomic_check_planes(struct drm_device *dev,
+ 		}
+ 
+ 		dev_dbg(rcdu->dev, "%s: allocated %u hwplanes (index %u)\n",
+-			__func__, plane_state->format->planes, idx);
++			__func__, new_plane_state->format->planes, idx);
+ 
+-		plane_state->hwindex = idx;
++		new_plane_state->hwindex = idx;
+ 
+ 		group_free_planes[plane->group->index] &=
+-			~rcar_du_plane_hwmask(plane_state);
++			~rcar_du_plane_hwmask(new_plane_state);
+ 
+ 		dev_dbg(rcdu->dev, "%s: group %u free planes mask 0x%02x\n",
+ 			__func__, plane->group->index,
 -- 
-git-series 0.9.1
+2.11.0
