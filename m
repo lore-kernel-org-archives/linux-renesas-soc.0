@@ -1,69 +1,104 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:42651 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:57560 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752391AbdGaPEA (ORCPT
+        with ESMTP id S1750731AbdGLFxK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 31 Jul 2017 11:04:00 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Wed, 12 Jul 2017 01:53:10 -0400
+Date: Wed, 12 Jul 2017 07:52:58 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "David S. Miller" <davem@davemloft.net>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 28/31] arm64: dts: renesas: r8a7795: add usb2_phy ch3 device node
-Date: Mon, 31 Jul 2017 17:03:20 +0200
-Message-Id: <ac29cc445c72e688b913dd4b8b0bec982dcf6e95.1501509526.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1501509525.git.horms+renesas@verge.net.au>
-References: <cover.1501509525.git.horms+renesas@verge.net.au>
+        Chris Paterson <chris.paterson2@renesas.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org
+Subject: Re: [PATCH v2] dt-bindings: net: ravb : Add support for r8a7743 SoC
+Message-ID: <20170712055258.GB18990@verge.net.au>
+References: <20170710012024.j4cso2jyi6canws2@rob-hp-laptop>
+ <1499700776-54504-1-git-send-email-biju.das@bp.renesas.com>
+ <52eb0b92-5d25-e1f4-df54-e4fcf648c90e@cogentembedded.com>
+ <20170711122100.GM4517@verge.net.au>
+ <87b6b38a-ca6b-a0d7-b777-0a4809eaf6fc@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87b6b38a-ca6b-a0d7-b777-0a4809eaf6fc@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+On Tue, Jul 11, 2017 at 03:51:40PM +0300, Sergei Shtylyov wrote:
+> On 07/11/2017 03:21 PM, Simon Horman wrote:
+> 
+> >>>Add a new compatible string for the RZ/G1M (R8A7743) SoC.
+> >>>
+> >>>Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> >>>---
+> >>>v1->v2
+> >>>* Changed the subject
+> >>>* re-formatted the required properties
+> >>>
+> >>>.../devicetree/bindings/net/renesas,ravb.txt       | 29 +++++++++++++---------
+> >>>1 file changed, 17 insertions(+), 12 deletions(-)
+> >>>
+> >>>diff --git a/Documentation/devicetree/bindings/net/renesas,ravb.txt b/Documentation/devicetree/bindings/net/renesas,ravb.txt
+> >>>index b519503..4717bc2 100644
+> >>>--- a/Documentation/devicetree/bindings/net/renesas,ravb.txt
+> >>>+++ b/Documentation/devicetree/bindings/net/renesas,ravb.txt
+> >>>@@ -4,19 +4,24 @@ This file provides information on what the device node for the Ethernet AVB
+> >>>interface contains.
+> >>>
+> >>>Required properties:
+> >>>-- compatible: "renesas,etheravb-r8a7790" if the device is a part of R8A7790 SoC.
+> >>>-	      "renesas,etheravb-r8a7791" if the device is a part of R8A7791 SoC.
+> >>>-	      "renesas,etheravb-r8a7792" if the device is a part of R8A7792 SoC.
+> >>>-	      "renesas,etheravb-r8a7793" if the device is a part of R8A7793 SoC.
+> >>>-	      "renesas,etheravb-r8a7794" if the device is a part of R8A7794 SoC.
+> >>>-	      "renesas,etheravb-r8a7795" if the device is a part of R8A7795 SoC.
+> >>>-	      "renesas,etheravb-r8a7796" if the device is a part of R8A7796 SoC.
+> >>>-	      "renesas,etheravb-rcar-gen2" for generic R-Car Gen 2 compatible interface.
+> >>>-	      "renesas,etheravb-rcar-gen3" for generic R-Car Gen 3 compatible interface.
+> >>>+- compatible: Must contain one or more of the following:
+> >>
+> >>   No, it can't contain more than one SoC specific value.
+> >
+> >The text above does not say it can unless one is under the delusion
+> >that, f.e. an r8a7790 SoC is also an r8a7791 SoC.
+> 
+>    Hm, you're right. Sorry about my misunderstanding...
+> 
+>    The only problem I'm still seeing with the current wording is that gen2/3
+> fallback
+> values are declared optional, while you can't get the driver to bind without
+> them on
+> the newer SoCs. But this is probably not a new problem...
+> 
+> >If you would prefer an alternate wording please provide a suggestion.
+> 
+>    Perhaps we should emphasize that the gen2/3 fallback values are mandatory?
 
-This patch adds support for usb3_phy ch3 device node for R-Car H3 ES2.0.
+It's only mandatory for SoCs covered by those values - admittedly all SoCs
+supported by the driver at this time. But that is an artifact of the
+implementation rather than a property of the binding.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi |  2 ++
- arch/arm64/boot/dts/renesas/r8a7795.dtsi     | 12 ++++++++++++
- 2 files changed, 14 insertions(+)
+In any case I think is already described sufficiently in:
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-index f1646334899f..2c249430e1a4 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-@@ -21,6 +21,8 @@
- 		status = "disabled";
- 	};
- 
-+	/delete-node/ usb-phy@ee0e0200;
-+
- 	fcpf2: fcp@fe952000 {
- 		compatible = "renesas,fcpf";
- 		reg = <0 0xfe952000 0 0x200>;
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 7246e689b619..0d9f311d15d1 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1576,6 +1576,18 @@
- 			status = "disabled";
- 		};
- 
-+		usb2_phy3: usb-phy@ee0e0200 {
-+			compatible = "renesas,usb2-phy-r8a7795",
-+				     "renesas,rcar-gen3-usb2-phy";
-+			reg = <0 0xee0e0200 0 0x700>;
-+			interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 700>;
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			resets = <&cpg 700>;
-+			#phy-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		ehci0: usb@ee080100 {
- 			compatible = "generic-ehci";
- 			reg = <0 0xee080100 0 0x100>;
--- 
-2.1.4
+	When compatible with the generic version, nodes must list the
+	SoC-specific version corresponding to the platform first followed by
+	the generic version.
+
+> >>>+      - "renesas,etheravb-r8a7743" for the R8A7743 SoC.
+> >>>+      - "renesas,etheravb-r8a7790" for the R8A7790 SoC.
+> >>>+      - "renesas,etheravb-r8a7791" for the R8A7791 SoC.
+> >>>+      - "renesas,etheravb-r8a7792" for the R8A7792 SoC.
+> >>>+      - "renesas,etheravb-r8a7793" for the R8A7793 SoC.
+> >>>+      - "renesas,etheravb-r8a7794" for the R8A7794 SoC.
+> >>>+      - "renesas,etheravb-rcar-gen2" as a fallback for the above
+> >>>+		R-Car Gen2 and RZ/G1 devices.
+> [...]
+> 
+> WBR, Sergei
+> 
