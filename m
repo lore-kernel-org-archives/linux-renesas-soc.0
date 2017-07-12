@@ -1,51 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:34180 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751291AbdGQRMe (ORCPT
+Received: from smtp.codeaurora.org ([198.145.29.96]:33306 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750734AbdGLXKY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Jul 2017 13:12:34 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-watchdog@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Oleksij Rempel <linux@rempel-privat.de>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH] watchdog: asm9260_wdt: don't round closest with get_timeleft
-Date: Mon, 17 Jul 2017 19:12:24 +0200
-Message-Id: <20170717171224.13444-1-wsa+renesas@sang-engineering.com>
+        Wed, 12 Jul 2017 19:10:24 -0400
+Date: Wed, 12 Jul 2017 16:10:22 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-clk@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Alexey Firago <alexey_firago@mentor.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH V3 4/8] clk: vc5: Configure the output buffer input mux
+ on prepare
+Message-ID: <20170712231022.GJ22780@codeaurora.org>
+References: <20170709132814.2339-1-marek.vasut+renesas@gmail.com>
+ <20170709132814.2339-4-marek.vasut+renesas@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170709132814.2339-4-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should never return more time left than there actually is. So, switch
-to a plain divider instead of DIV_ROUND_CLOSEST.
+On 07/09, Marek Vasut wrote:
+> The output buffer input mux can be configured in either of three
+> states -- disabled, input from FOD, input from previous output.
+> Once the .prepare() callback of the output buffer is called, the
+> output buffer input mux must be set to either input from FOD or
+> input from previous output, it cannot be set to Disabled anymore
+> or the output won't work.
+> 
+> Default to the input from FOD if the output buffer input mux was
+> Disabled and the .prepare() was called on it.
+> 
+> Note that we do not set the output buffer input mux back to Disabled
+> in the .unprepare() callback as there is no obvious benefit of doing
+> so. We disable the entire output buffer in the .unprepare() callback
+> already.
+> 
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Alexey Firago <alexey_firago@mentor.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: linux-renesas-soc@vger.kernel.org
+> Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> on Salvator-XS with the display LVDS output.
+> ---
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+Applied to clk-next
 
-This is similar to a patch for the renesas-rwdt[1]. I think it makes sense to
-remove this pattern from the whole subsystem, if we can agree on the behaviour
-stated in the patch description. So, this is the other driver using
-DIV_ROUND_CLOSEST.
-
-Note: This driver and the lpc18xx_wdt.c extremly likely drive the same IP core.
-They would ideally be merged.
-
-[1] https://patchwork.kernel.org/patch/9845459/
-
- drivers/watchdog/asm9260_wdt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/watchdog/asm9260_wdt.c b/drivers/watchdog/asm9260_wdt.c
-index 53da001f0838ee..f40dd71c904bef 100644
---- a/drivers/watchdog/asm9260_wdt.c
-+++ b/drivers/watchdog/asm9260_wdt.c
-@@ -82,7 +82,7 @@ static unsigned int asm9260_wdt_gettimeleft(struct watchdog_device *wdd)
- 
- 	counter = ioread32(priv->iobase + HW_WDTV);
- 
--	return DIV_ROUND_CLOSEST(counter, priv->wdt_freq);
-+	return counter / priv->wdt_freq;
- }
- 
- static int asm9260_wdt_updatetimeout(struct watchdog_device *wdd)
 -- 
-2.11.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
