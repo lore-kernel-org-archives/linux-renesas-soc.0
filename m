@@ -1,55 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f66.google.com ([209.85.214.66]:34749 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750920AbdGMJmq (ORCPT
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:33628 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932146AbdGLQ43 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Jul 2017 05:42:46 -0400
-MIME-Version: 1.0
-In-Reply-To: <1499878547-3452-10-git-send-email-ykaneko0929@gmail.com>
-References: <1499878547-3452-1-git-send-email-ykaneko0929@gmail.com> <1499878547-3452-10-git-send-email-ykaneko0929@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 13 Jul 2017 11:42:43 +0200
-Message-ID: <CAMuHMdWm+o6DD6hiwMy+OcfoXoP27YGZaHhiK9Po2SLR1gEgHw@mail.gmail.com>
-Subject: Re: [PATCH 09/14] pinctrl: sh-pfc: r8a7796: Fix MOD_SEL register pin
- assignment for TCLK{1,2}_{A,B} pins group
-To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        Wed, 12 Jul 2017 12:56:29 -0400
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+To: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 09/14] pinctrl: sh-pfc: r8a7796: Fix MOD_SEL register pin assignment for TCLK{1,2}_{A,B} pins group
+Date: Thu, 13 Jul 2017 01:55:42 +0900
+Message-Id: <1499878547-3452-10-git-send-email-ykaneko0929@gmail.com>
+In-Reply-To: <1499878547-3452-1-git-send-email-ykaneko0929@gmail.com>
+References: <1499878547-3452-1-git-send-email-ykaneko0929@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Jul 12, 2017 at 6:55 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->
-> This patch fixes to set MOD_SEL2 bit19 when using TCLK2_A pin function is
-> selected for IPSR16 bit[23:20] or using TCLK2_B pin function is selected
-> for IPSR17 bit[27:24].
->
-> This is a correction to the incorrect implementation of MOD_SEL register
-> pin assignment for R8A7796 SoC specification of R-Car Gen3 Hardware
-> User's Manual Rev.0.51E or later.
->
-> Fixes: f9aece7344bd ("pinctrl: sh-pfc: Initial R8A7796 PFC support")
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This patch fixes to set MOD_SEL2 bit19 when using TCLK2_A pin function is
+selected for IPSR16 bit[23:20] or using TCLK2_B pin function is selected
+for IPSR17 bit[27:24].
 
-i.e. will queue in sh-pfc-for-v4.14.
+This is a correction to the incorrect implementation of MOD_SEL register
+pin assignment for R8A7796 SoC specification of R-Car Gen3 Hardware
+User's Manual Rev.0.51E or later.
 
-Gr{oetje,eeting}s,
+Fixes: f9aece7344bd ("pinctrl: sh-pfc: Initial R8A7796 PFC support")
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+---
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+index 866cbe4..84f8f78 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+@@ -1393,7 +1393,7 @@ enum {
+ 	PINMUX_IPSR_MSEL(IP16_23_20,	STP_ISEN_1_A,		SEL_SSP1_1_0),
+ 	PINMUX_IPSR_MSEL(IP16_23_20,	RIF1_D0_A,		SEL_DRIF1_0),
+ 	PINMUX_IPSR_MSEL(IP16_23_20,	RIF3_D0_A,		SEL_DRIF3_0),
+-	PINMUX_IPSR_MSEL(IP16_23_20,	TCLK2_A,		SEL_TIMER_TMU_0),
++	PINMUX_IPSR_MSEL(IP16_23_20,	TCLK2_A,		SEL_TIMER_TMU2_0),
+ 
+ 	PINMUX_IPSR_GPSR(IP16_27_24,	SSI_SDATA8),
+ 	PINMUX_IPSR_MSEL(IP16_27_24,	HRTS2_N_B,		SEL_HSCIF2_1),
+@@ -1464,7 +1464,7 @@ enum {
+ 	PINMUX_IPSR_MSEL(IP17_27_24,	STP_ISEN_1_D,		SEL_SSP1_1_3),
+ 	PINMUX_IPSR_MSEL(IP17_27_24,	STP_OPWM_0_E,		SEL_SSP1_0_4),
+ 	PINMUX_IPSR_MSEL(IP17_27_24,	RIF3_D0_B,		SEL_DRIF3_1),
+-	PINMUX_IPSR_MSEL(IP17_27_24,	TCLK2_B,		SEL_TIMER_TMU_1),
++	PINMUX_IPSR_MSEL(IP17_27_24,	TCLK2_B,		SEL_TIMER_TMU2_1),
+ 	PINMUX_IPSR_GPSR(IP17_27_24,	TPU0TO0),
+ 	PINMUX_IPSR_MSEL(IP17_27_24,	BPFCLK_C,		SEL_FM_2),
+ 	PINMUX_IPSR_MSEL(IP17_27_24,	HRTS2_N_C,		SEL_HSCIF2_2),
+-- 
+1.9.1
