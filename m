@@ -1,44 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:33838 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751638AbdGEOWs (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:20206 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1755271AbdGLKDv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Jul 2017 10:22:48 -0400
-Date: Wed, 5 Jul 2017 09:22:38 -0500
-From: Rob Herring <robh@kernel.org>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        devicetree@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2] media: platform: rcar_imr: add IMR-LX3 support
-Message-ID: <20170705142238.dopk2gsd7nt7jek4@rob-hp-laptop>
-References: <20170628195909.167061456@cogentembedded.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20170628195909.167061456@cogentembedded.com>
+        Wed, 12 Jul 2017 06:03:51 -0400
+From: Chris Paterson <chris.paterson2@renesas.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>
+Cc: Biju Das <biju.das@bp.renesas.com>, linux-mmc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Chris Paterson <chris.paterson2@renesas.com>
+Subject: [PATCH 0/3] Add MMCIF0 support for r8a7743/iwg20m
+Date: Wed, 12 Jul 2017 11:03:22 +0100
+Message-Id: <1499853805-5915-1-git-send-email-chris.paterson2@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Jun 28, 2017 at 10:58:44PM +0300, Sergei Shtylyov wrote:
-> Add support for the image renderer light extended 3 (IMR-LX3) found only in
-> the R-Car V2H (R8A7792) SoC. It's mostly the same as IMR-LSX3 but doesn't
-> support video capture data as a source of 2D textures.
-> 
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> 
-> ---
-> This patch  is against the 'media_tree.git' repo's 'master' branch plus the
-> latest version of  the Renesas IMR driver and the patch adding IMR-LSX3 support.
-> 
-> Changes in version 2:
-> - refreshed the patch atop of the IMR driver patch (version 6) and IMR-LSX3
->   patch (version 3).
-> 
->  Documentation/devicetree/bindings/media/rcar_imr.txt |    4 ++
+This series adds MMCIF0 support for the r8a7743 SoC and the iWave-RZG1M-20M
+Qseven SOM.
 
-Acked-by: Rob Herring <robh@kernel.org>
+This series is based on renesas-devel-20170711-v4.12.
 
->  drivers/media/platform/rcar_imr.c                    |   27 ++++++++++++-------
->  2 files changed, 22 insertions(+), 9 deletions(-)
+Chris Paterson (3):
+  dt-bindings: mmc: sh_mmcif: Document r8a7743 DT bindings
+  ARM: dts: r8a7743: Add MMCIF0 support
+  ARM: dts: iwg20m: Add MMCIF0 support
+
+ .../devicetree/bindings/mmc/renesas,mmcif.txt      |  3 ++-
+ arch/arm/boot/dts/r8a7743-iwg20m.dtsi              | 26 ++++++++++++++++++++++
+ arch/arm/boot/dts/r8a7743.dtsi                     | 16 +++++++++++++
+ 3 files changed, 44 insertions(+), 1 deletion(-)
+
+-- 
+1.9.1
