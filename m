@@ -1,58 +1,105 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:44354 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752418AbdGaPUX (ORCPT
+Received: from mail-it0-f45.google.com ([209.85.214.45]:35155 "EHLO
+        mail-it0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756611AbdGLGuW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 31 Jul 2017 11:20:23 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 03/38] ARM: dts: r8a7743: add PFC support
-Date: Mon, 31 Jul 2017 17:19:15 +0200
-Message-Id: <328968b60231e522ea7e81ae0c83f59f13626a85.1501514100.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1501514100.git.horms+renesas@verge.net.au>
-References: <cover.1501514100.git.horms+renesas@verge.net.au>
+        Wed, 12 Jul 2017 02:50:22 -0400
+MIME-Version: 1.0
+In-Reply-To: <SG2PR06MB11651FF11350240AA95EDCD28AAE0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20170711162911.39114-1-chris.brandt@renesas.com>
+ <CAMuHMdX=Y5cpNiSd1wwXV_SOCpBs64+VpHnE_Svgd2E6P8Gm6w@mail.gmail.com> <SG2PR06MB11651FF11350240AA95EDCD28AAE0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 12 Jul 2017 08:50:20 +0200
+Message-ID: <CAMuHMdW6Sz59JNVEp_b6qw0VD_0_JAeetMrN9K2GUcPL++uipA@mail.gmail.com>
+Subject: Re: [PATCH] mmc: tmio-mmc: fix bad pointer math
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Hi Chris,
 
-Define the generic R8A7743 part of the PFC device node.
+On Tue, Jul 11, 2017 at 9:37 PM, Chris Brandt <Chris.Brandt@renesas.com> wrote:
+> On Tuesday, July 11, 2017, Geert Uytterhoeven wrote:
+>> > zeroing out the bottom 2 bits of count for out math.
+>>
+>> s/out/our/
+>
+> Thank you!
+>
+>> > -               buf8 = (u8 *)(buf + (count >> 2));
+>> > +               buf8 = (u8 *)buf + (count & ~3);
+>> >                 count %= 4;
+>>
+>> While correct, this is IMHO still difficult to understand for the casual
+>> reader.
+>>
+>> Given the code before casts to "u32 *", and uses "count >>2", and the code
+>> after also casts to "u32 *", what about getting rid of all casts like:
+>>
+>>         u32 data = 0;
+>>         u32 *buf32 = buf;
+>>
+>>         if (is_read)
+>>                 sd_ctrl_read32_rep(host, CTL_SD_DATA_PORT, buf32,
+>>                                    count >> 2);
+>>         else
+>>                 sd_ctrl_write32_rep(host, CTL_SD_DATA_PORT, buf32,
+>>                                     count >> 2);
+>>
+>>         /* if count was multiple of 4 */
+>>         if (!(count & 0x3))
+>>                 return;
+>>
+>>         buf32 += count >> 2;
+>>         count %= 4;
+>>
+>>         if (is_read) {
+>>                 sd_ctrl_read32_rep(host, CTL_SD_DATA_PORT, &data, 1);
+>>                 memcpy(buf32, &data, count);
+>>         } else {
+>>                 memcpy(&data, buf32, count);
+>>                 sd_ctrl_write32_rep(host, CTL_SD_DATA_PORT, &data, 1);
+>>         }
+>>
+>>                 return;
+>>         }
+>>
+>
+> Good idea. I just tried it and it seems to work. I'll resend a patch.
+>
+>
+>>         u32 *buf32 = buf;
+>
+> GCC didn't like this line without casting buf to a u32 *. It threw an
+> error, not just a warning. Go figure.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7743.dtsi | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+Sorry, the cast is indeed missing, as buf is not a void *.
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 0ddac81742e4..8d6b14075865 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -1,7 +1,7 @@
- /*
-  * Device Tree Source for the r8a7743 SoC
-  *
-- * Copyright (C) 2016 Cogent Embedded Inc.
-+ * Copyright (C) 2016-2017 Cogent Embedded Inc.
-  *
-  * This file is licensed under the terms of the GNU General Public License
-  * version 2. This program is licensed "as is" without any warranty of any
-@@ -123,6 +123,11 @@
- 			#power-domain-cells = <1>;
- 		};
- 
-+		pfc: pin-controller@e6060000 {
-+			compatible = "renesas,pfc-r8a7743";
-+			reg = <0 0xe6060000 0 0x250>;
-+		};
-+
- 		dmac0: dma-controller@e6700000 {
- 			compatible = "renesas,dmac-r8a7743",
- 				     "renesas,rcar-dmac";
--- 
-2.1.4
+> Question:
+>>         u32 data = 0;
+>
+> Any special reason why you are initializing this to 0????
+
+I think the original code did that, too. Hmm, I got mislead by the curly braces,
+there's no "0" in between them.
+
+It's also a bit safer to not write uninitialized data to the CTL_SD_DATA_PORT
+register.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
