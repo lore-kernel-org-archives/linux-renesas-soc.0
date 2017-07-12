@@ -1,43 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:58153 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932686AbdGKU7N (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:40964 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755953AbdGLKbW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 11 Jul 2017 16:59:13 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] drm: rcar-du: Use the VBK interrupt for vblank events
-Date: Tue, 11 Jul 2017 23:59:11 +0300
-Message-Id: <20170711205911.21571-1-laurent.pinchart+renesas@ideasonboard.com>
+        Wed, 12 Jul 2017 06:31:22 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Linus Walleij <linus.walleij@linaro.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 5/5] pinctrl: sh-pfc: r8a7796: Fix MSIOF3 SS2_E mux
+Date: Wed, 12 Jul 2017 12:31:17 +0200
+Message-Id: <1499855477-20818-6-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1499855477-20818-1-git-send-email-geert+renesas@glider.be>
+References: <1499855477-20818-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When implementing support for interlaced modes, the driver switched from
-reporting vblank events on the vertical blanking (VBK) interrupt to the
-frame end interrupt (FRM). This incorrectly divided the reported refresh
-rate by two. Fix it by moving back to the VBK interrupt.
+Fix a copy-and-paste bug in the MSIOF3 SS2_E mux array.
 
-Fixes: 906eff7fcada ("drm: rcar-du: Implement support for interlaced modes")
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Fixes: 4753231cc9468390 ("pinctrl: sh-pfc: r8a7796: Add MSIOF pins, groups and functions")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 2 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index 98cf446391dc..17fd1cd5212c 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -698,7 +698,7 @@ static irqreturn_t rcar_du_crtc_irq(int irq, void *arg)
- 	status = rcar_du_crtc_read(rcrtc, DSSR);
- 	rcar_du_crtc_write(rcrtc, DSRCR, status & DSRCR_MASK);
- 
--	if (status & DSSR_FRM) {
-+	if (status & DSSR_VBK) {
- 		drm_crtc_handle_vblank(&rcrtc->crtc);
- 
- 		if (rcdu->info->gen < 3)
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+index 0fd96f198b4dfae2..1ef8d90e48cef317 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+@@ -3082,7 +3082,7 @@ static const unsigned int msiof3_ss2_e_pins[] = {
+ 	RCAR_GP_PIN(2, 0),
+ };
+ static const unsigned int msiof3_ss2_e_mux[] = {
+-	MSIOF3_SS1_E_MARK,
++	MSIOF3_SS2_E_MARK,
+ };
+ static const unsigned int msiof3_txd_e_pins[] = {
+ 	/* TXD */
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.4
