@@ -1,38 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:49278 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751108AbdGMISR (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:56910 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755279AbdGLKf6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Jul 2017 04:18:17 -0400
-Date: Thu, 13 Jul 2017 10:18:12 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] arm64: dts: r8a7796: Add missing second pair of DMA
- names to MSIOF nodes
-Message-ID: <20170713081811.GN5580@verge.net.au>
-References: <1499855753-21630-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1499855753-21630-1-git-send-email-geert+renesas@glider.be>
+        Wed, 12 Jul 2017 06:35:58 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] arm64: dts: r8a7796: Add missing second pair of DMA names to MSIOF nodes
+Date: Wed, 12 Jul 2017 12:35:53 +0200
+Message-Id: <1499855753-21630-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Jul 12, 2017 at 12:35:53PM +0200, Geert Uytterhoeven wrote:
-> MSIOF0 and MSIOF1 are tied to two DMA controllers through two pairs of
-> DMA specifiers.  However, the second pair of corresponding DMA names was
-> missing.
-> 
-> Fixes: 80fab06e258da762 ("arm64: dts: r8a7796: Add all MSIOF nodes")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  arch/arm64/boot/dts/renesas/r8a7796.dtsi | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+MSIOF0 and MSIOF1 are tied to two DMA controllers through two pairs of
+DMA specifiers.  However, the second pair of corresponding DMA names was
+missing.
 
-Thanks, applied for v4.14.
+Fixes: 80fab06e258da762 ("arm64: dts: r8a7796: Add all MSIOF nodes")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Let me know if you would prefer it handled as a fix for v4.13.
-I see the commit it fixes was part of v4.11.
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index c7bbb501ebe06826..f63f9107f453b5b7 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -1000,7 +1000,7 @@
+ 			clocks = <&cpg CPG_MOD 211>;
+ 			dmas = <&dmac1 0x41>, <&dmac1 0x40>,
+ 			       <&dmac2 0x41>, <&dmac2 0x40>;
+-			dma-names = "tx", "rx";
++			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+ 			resets = <&cpg 211>;
+ 			#address-cells = <1>;
+@@ -1016,7 +1016,7 @@
+ 			clocks = <&cpg CPG_MOD 210>;
+ 			dmas = <&dmac1 0x43>, <&dmac1 0x42>,
+ 			       <&dmac2 0x43>, <&dmac2 0x42>;
+-			dma-names = "tx", "rx";
++			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+ 			resets = <&cpg 210>;
+ 			#address-cells = <1>;
+-- 
+2.7.4
