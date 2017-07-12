@@ -1,50 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:51892 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755271AbdGLKD6 (ORCPT
+Received: from smtp.codeaurora.org ([198.145.29.96]:33416 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751075AbdGLXK1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 12 Jul 2017 06:03:58 -0400
-From: Chris Paterson <chris.paterson2@renesas.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc: Biju Das <biju.das@bp.renesas.com>, linux-mmc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Chris Paterson <chris.paterson2@renesas.com>
-Subject: [PATCH 1/3] dt-bindings: mmc: sh_mmcif: Document r8a7743 DT bindings
-Date: Wed, 12 Jul 2017 11:03:23 +0100
-Message-Id: <1499853805-5915-2-git-send-email-chris.paterson2@renesas.com>
-In-Reply-To: <1499853805-5915-1-git-send-email-chris.paterson2@renesas.com>
-References: <1499853805-5915-1-git-send-email-chris.paterson2@renesas.com>
+        Wed, 12 Jul 2017 19:10:27 -0400
+Date: Wed, 12 Jul 2017 16:10:25 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-clk@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Alexey Firago <alexey_firago@mentor.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH V3 5/8] clk: vc5: Split clock input mux and predivider
+Message-ID: <20170712231025.GK22780@codeaurora.org>
+References: <20170709132814.2339-1-marek.vasut+renesas@gmail.com>
+ <20170709132814.2339-5-marek.vasut+renesas@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170709132814.2339-5-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+On 07/09, Marek Vasut wrote:
+> Split the VC5 clock input mux and the predivider to more accurately
+> model the hardware and fix the previously incorrect assumption that
+> both the OUT_SEL_I2CB and the PLL are fed from the predivider.
+> 
+> It is in fact the clock input mux output which is directly feeding
+> the clock into the OUT_SEL_I2CB output, while the clock input mux
+> output first passes through the predivider before it is fed into
+> the PLL.
+> 
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Alexey Firago <alexey_firago@mentor.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: linux-renesas-soc@vger.kernel.org
+> Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> on Salvator-XS with the display LVDS output.
+> ---
 
-diff --git a/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt b/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt
-index c32dc5a..703e18c 100644
---- a/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt
-+++ b/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt
-@@ -11,6 +11,7 @@ Required properties:
- 	- "renesas,mmcif-r7s72100" for the MMCIF found in r7s72100 SoCs
- 	- "renesas,mmcif-r8a73a4" for the MMCIF found in r8a73a4 SoCs
- 	- "renesas,mmcif-r8a7740" for the MMCIF found in r8a7740 SoCs
-+	- "renesas,mmcif-r8a7743" for the MMCIF found in r8a7743 SoCs
- 	- "renesas,mmcif-r8a7778" for the MMCIF found in r8a7778 SoCs
- 	- "renesas,mmcif-r8a7790" for the MMCIF found in r8a7790 SoCs
- 	- "renesas,mmcif-r8a7791" for the MMCIF found in r8a7791 SoCs
-@@ -21,7 +22,7 @@ Required properties:
- - interrupts: Some SoCs have only 1 shared interrupt, while others have either
-   2 or 3 individual interrupts (error, int, card detect). Below is the number
-   of interrupts for each SoC:
--    1: r8a73a4, r8a7778, r8a7790, r8a7791, r8a7793, r8a7794
-+    1: r8a73a4, r8a7743, r8a7778, r8a7790, r8a7791, r8a7793, r8a7794
-     2: r8a7740, sh73a0
-     3: r7s72100
- 
+Applied to clk-next
+
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
