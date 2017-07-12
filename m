@@ -1,50 +1,98 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:58178 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752357AbdGDPX0 (ORCPT
+Received: from mail-qt0-f182.google.com ([209.85.216.182]:35268 "EHLO
+        mail-qt0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752879AbdGLP0P (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Jul 2017 11:23:26 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 5/7] ARM: dts: r8a7792: Add Inter Connect RAM
-Date: Tue,  4 Jul 2017 17:23:16 +0200
-Message-Id: <1499181798-28859-6-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1499181798-28859-1-git-send-email-geert+renesas@glider.be>
-References: <1499181798-28859-1-git-send-email-geert+renesas@glider.be>
+        Wed, 12 Jul 2017 11:26:15 -0400
+Received: by mail-qt0-f182.google.com with SMTP id b40so15311221qtb.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 12 Jul 2017 08:26:14 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdWikrGTaEVWDdpgAN9+DEHXOYUZdtZgssRLDTWsyxa-fw@mail.gmail.com>
+References: <CAMuHMdW=aasYmZz-z+BgT0Qoco6DTyQxN3G1wiWVPETsbkRZTQ@mail.gmail.com>
+ <CAPDyKFpuBJCArAHUL2i=zDL=-Bq908eDJ2_mRy7O=_4bJj2_dw@mail.gmail.com> <CAMuHMdWikrGTaEVWDdpgAN9+DEHXOYUZdtZgssRLDTWsyxa-fw@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 12 Jul 2017 17:26:13 +0200
+Message-ID: <CAPDyKFq-dku-WRbMJq0eUo0ESRH33fUCGGHMs=Ohej82su1x3Q@mail.gmail.com>
+Subject: Re: Rebasing mmc/next
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux MMC List <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car V2H has 2 regions of Inter Connect RAM (72 + 4 KiB).
+On 20 June 2017 at 11:06, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> Hi Ulf,
+>
+> On Tue, Jun 20, 2017 at 10:07 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>> On 20 June 2017 at 09:17, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>>> It looks like you rebase mmc/next almost daily. Is there any specific reason
+>>> for that?
+>>
+>> I don't do it daily, but often, yes. :-)
+>
+> A few years ago, I got bashed by Linus for rebasing the m68k "for-linus"
+> branch on every -rc.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7792.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Perhaps something to be discussed a kernel/mainainer-summit, cause at
+the moment I don't think there is given policy.
 
-diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
-index 0efecb232ee52ce0..136a86ac64974adb 100644
---- a/arch/arm/boot/dts/r8a7792.dtsi
-+++ b/arch/arm/boot/dts/r8a7792.dtsi
-@@ -465,6 +465,16 @@
- 			status = "disabled";
- 		};
- 
-+		icram0:	sram@e63a0000 {
-+			compatible = "mmio-sram";
-+			reg = <0 0xe63a0000 0 0x12000>;
-+		};
-+
-+		icram1:	sram@e63c0000 {
-+			compatible = "mmio-sram";
-+			reg = <0 0xe63c0000 0 0x1000>;
-+		};
-+
- 		sdhi0: sd@ee100000 {
- 			compatible = "renesas,sdhi-r8a7792";
- 			reg = <0 0xee100000 0 0x328>;
--- 
-2.7.4
+>
+>>> I'm asking because I create a "renesas-drivers" tree on a regular basis
+>>> (cfr. e.g. https://www.spinics.net/lists/linux-renesas-soc/msg15111.html).
+>>> This tree is meant to ease development of platform support and drivers
+>>> for Renesas ARM SoCs. It is created by merging (a) the for-next branches
+>>> of various subsystem trees and (b) branches with driver code submitted
+>>> or planned for submission to maintainers into the development branch of
+>>> Simon Horman's renesas.git tree.
+>>
+>> If you are asking me to keep my next branch immutable, then please no,
+>> I don't like to do that. Reason explained below.
+>
+> 100% immutable is not needed.
+>
+>> I don't have a problem to share specific renesas mmc branches with
+>> you, if that helps?
+>
+> Hmm, that would be more work on your side. Plus communication overhead.
+
+OK.
+
+[...]
+
+>
+>> I am trying to understand the purpose of your renesas integration
+>> tree, and why it's a problem for you to pick up my re-based branch?
+>> Could you perhaps elaborate on this?
+>
+> The purpose is to make it easier for the upstream Renesas kernel team and
+> associated testers to consume our work-in-progress.
+>
+> Hence I merge the for-next branches of selected subsystems, followed by
+> topic branches with work-in-progress driver code.
+>
+> E.g. Simon had asked me to include
+> git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git
+> topic/sdhi-gen3-dma-2017
+> That branch was based on your mmc/next.
+
+I guess there are two other options to deal with this.
+
+1) Don't merge my next branch, in case there is another branch based
+on it. Instead, in this case, it will be Simon's responsibility of
+re-basing his branch on top of mmc next, as to get the latest changes.
+2) Base your WIP branches on top of some commit from Linus tree. Then
+you can keep merging my next branch and any other "for-next" branch
+that is often being re-based.
+
+>
+> But by the time I created the renesas-drivers release, mmc/next had been
+> rebased.  Hence after merging the new mmc/next, I had to rebase his work:
+> https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/log/?h=topic/sdhi-gen3-dma-2017-rebased1
+>
+> I hope this explains our problem.
+
+Yeah, thanks for the explanation - and apologize for the delay.
+
+Kind regards
+Uffe
