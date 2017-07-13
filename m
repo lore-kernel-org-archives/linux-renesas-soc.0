@@ -1,4 +1,3 @@
-Return-Path: <kieranbingham@gmail.com>
 Subject: Re: [PATCH v2 01/14] v4l: vsp1: Fill display list headers without
  holding dlm spinlock
 To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
@@ -7,8 +6,8 @@ Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 References: <20170626181226.29575-1-laurent.pinchart+renesas@ideasonboard.com>
  <20170626181226.29575-2-laurent.pinchart+renesas@ideasonboard.com>
 From: Kieran Bingham <kieranbingham@gmail.com>
-Message-ID: <a45e660b-b931-ba16-d861-901c307afb1c@gmail.com>
-Date: Thu, 13 Jul 2017 13:48:40 +0100
+Message-ID: <4be3eb66-4104-f25c-0411-fc312567b6fd@gmail.com>
+Date: Thu, 13 Jul 2017 12:36:43 +0100
 MIME-Version: 1.0
 In-Reply-To: <20170626181226.29575-2-laurent.pinchart+renesas@ideasonboard.com>
 Content-Type: text/plain; charset=utf-8
@@ -17,8 +16,6 @@ Content-Transfer-Encoding: 7bit
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hi Laurent,
-
-Starts easy ... (I haven't gone through these in numerical order of course :D)
 
 On 26/06/17 19:12, Laurent Pinchart wrote:
 > The display list headers are filled using information from the display
