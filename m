@@ -6,8 +6,8 @@ Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 References: <20170626181226.29575-1-laurent.pinchart+renesas@ideasonboard.com>
  <20170626181226.29575-2-laurent.pinchart+renesas@ideasonboard.com>
 From: Kieran Bingham <kieranbingham@gmail.com>
-Message-ID: <4be3eb66-4104-f25c-0411-fc312567b6fd@gmail.com>
-Date: Thu, 13 Jul 2017 12:36:43 +0100
+Message-ID: <cc738320-6183-3fff-eade-b920ee44fba7@gmail.com>
+Date: Thu, 13 Jul 2017 12:26:43 +0100
 MIME-Version: 1.0
 In-Reply-To: <20170626181226.29575-2-laurent.pinchart+renesas@ideasonboard.com>
 Content-Type: text/plain; charset=utf-8
