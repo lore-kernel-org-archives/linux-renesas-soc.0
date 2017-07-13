@@ -1,71 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:35009 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751716AbdG1Llh (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:48796 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750846AbdGMHrB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Jul 2017 07:41:37 -0400
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 3/9] pinctrl: sh-pfc: r8a7795: Fix SCIF_CLK_{A,B} pin's MOD_SEL assignment to MOD_SEL1 bit10
-Date: Fri, 28 Jul 2017 20:41:15 +0900
-Message-Id: <1501242081-3805-4-git-send-email-ykaneko0929@gmail.com>
-In-Reply-To: <1501242081-3805-1-git-send-email-ykaneko0929@gmail.com>
-References: <1501242081-3805-1-git-send-email-ykaneko0929@gmail.com>
+        Thu, 13 Jul 2017 03:47:01 -0400
+Date: Thu, 13 Jul 2017 09:46:46 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [RESEND] [PATCH v2.1 1/2] dt-bindings: display: rcar-du: Add a
+ VSP channel index to the vsps DT property
+Message-ID: <20170713074645.GA9304@verge.net.au>
+References: <20170626162930.30240-2-laurent.pinchart+renesas@ideasonboard.com>
+ <1596663.83UpNEdgHK@avalon>
+ <20170713074618.GC5580@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170713074618.GC5580@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+On Thu, Jul 13, 2017 at 09:46:19AM +0200, Simon Horman wrote:
+> On Wed, Jul 12, 2017 at 11:43:36AM +0300, Laurent Pinchart wrote:
+> > On some R-Car SoCs a single VSP can serve multiple DU channels through
+> > multiple LIF instances in the VSP. The current DT bindings don't support
+> > specifying that kind of SoC integration scheme. Extend them with a VSP
+> > channel index.
+> > 
+> > Backward compatibility can be ensured in drivers by checking the length
+> > of the vsps property and setting the channel to 0 when the property
+> > doesn't contain channel indices.
+> > 
+> > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > Acked-by: Rob Herring <robh@kernel.org>
+> 
+> Thanks, applied for v2.1.
 
-This patch fixes SCIF_CLK_{A,B} pin's MOD_SEL assignment from MOD_SEL1
-bit11 to MOD_SEL1 bit10.
-
-This is a correction to the incorrect implementation of IPSR register
-pin assignment for R8A7795 ES2.0 SoC specification of R-Car Gen3 Hardware
-User's Manual Rev.0.53E or later.
-
-Fixes: 12f5d9a1dc7f ("pinctrl: sh-pfc: r8a7795: Replace for Renesas R8A7795 ES2.0 SoC")
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index cd433fb..37b96b9 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -480,7 +480,7 @@
- #define MOD_SEL1_13		FM(SEL_SCIF3_0)		FM(SEL_SCIF3_1)
- #define MOD_SEL1_12		FM(SEL_SCIF2_0)		FM(SEL_SCIF2_1)
- #define MOD_SEL1_11		FM(SEL_SCIF1_0)		FM(SEL_SCIF1_1)
--#define MOD_SEL1_10		FM(SEL_SATA_0)		FM(SEL_SATA_1)
-+#define MOD_SEL1_10		FM(SEL_SCIF_0)		FM(SEL_SCIF_1)
- #define MOD_SEL1_9		FM(SEL_REMOCON_0)	FM(SEL_REMOCON_1)
- #define MOD_SEL1_6		FM(SEL_RCAN0_0)		FM(SEL_RCAN0_1)
- #define MOD_SEL1_5		FM(SEL_PWM6_0)		FM(SEL_PWM6_1)
-@@ -1201,7 +1201,7 @@ enum {
- 	PINMUX_IPSR_GPSR(IP12_27_24,	ADICHS0),
- 
- 	PINMUX_IPSR_GPSR(IP12_31_28,	SCK2),
--	PINMUX_IPSR_MSEL(IP12_31_28,	SCIF_CLK_B,		SEL_SCIF1_1),
-+	PINMUX_IPSR_MSEL(IP12_31_28,	SCIF_CLK_B,		SEL_SCIF_1),
- 	PINMUX_IPSR_MSEL(IP12_31_28,	MSIOF1_SCK_B,		SEL_MSIOF1_1),
- 	PINMUX_IPSR_MSEL(IP12_31_28,	TS_SCK1_C,		SEL_TSIF1_2),
- 	PINMUX_IPSR_MSEL(IP12_31_28,	STP_ISCLK_1_C,		SEL_SSP1_1_2),
-@@ -1416,7 +1416,7 @@ enum {
- 	PINMUX_IPSR_GPSR(IP17_3_0,	CC5_OSCOUT),
- 
- 	PINMUX_IPSR_MSEL(IP17_7_4,	AUDIO_CLKB_B,		SEL_ADG_B_1),
--	PINMUX_IPSR_MSEL(IP17_7_4,	SCIF_CLK_A,		SEL_SCIF1_0),
-+	PINMUX_IPSR_MSEL(IP17_7_4,	SCIF_CLK_A,		SEL_SCIF_0),
- 	PINMUX_IPSR_MSEL(IP17_7_4,	STP_IVCXO27_1_D,	SEL_SSP1_1_3),
- 	PINMUX_IPSR_MSEL(IP17_7_4,	REMOCON_A,		SEL_REMOCON_0),
- 	PINMUX_IPSR_MSEL(IP17_7_4,	TCLK1_A,		SEL_TIMER_TMU_0),
--- 
-1.9.1
+s/v2.1/v4.14/
