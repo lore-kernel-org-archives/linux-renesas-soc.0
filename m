@@ -1,45 +1,54 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f66.google.com ([209.85.214.66]:33710 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750954AbdGMJgN (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 13 Jul 2017 05:36:13 -0400
+MIME-Version: 1.0
+In-Reply-To: <1499878547-3452-8-git-send-email-ykaneko0929@gmail.com>
+References: <1499878547-3452-1-git-send-email-ykaneko0929@gmail.com> <1499878547-3452-8-git-send-email-ykaneko0929@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 13 Jul 2017 11:36:11 +0200
+Message-ID: <CAMuHMdWSt4WNeQWGOrHUPnJLYfCoyJtuLCW03rum2SJEo=4auw@mail.gmail.com>
+Subject: Re: [PATCH 07/14] pinctrl: sh-pfc: r8a7796: Fix NFDATA{0..13} and
+ NF{ALE,CLE,WE_N,RE_N} pin function definitions
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH 1/6] arm64: dts: renesas: ulcb: Enable I2C4
-Date: Fri,  7 Jul 2017 05:09:56 +0300
-Message-Id: <1499393396-11594-1-git-send-email-vladimir.barinov@cogentembedded.com>
-Sender: devicetree-owner@vger.kernel.org
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+On Wed, Jul 12, 2017 at 6:55 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch fixes the implementation incorrect of IPSR register value
+> definitions for NFDATA{0..13} and NF{ALE,CLE,WE_N,RE_N} pins function.
+>
+> This is a correction to the incorrect implementation of IPSR register
+> pin assignment for R8A7796 SoC specification of R-Car Gen3 Hardware
+> User's Manual Rev.0.51E or later.
+>
+> Fixes: f9aece7344bd ("pinctrl: sh-pfc: Initial R8A7796 PFC support")
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 
-This enables I2C4 for ULCB board
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
----
- arch/arm64/boot/dts/renesas/ulcb.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+i.e. will queue in sh-pfc-for-v4.14.
 
-diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-index 6e5ffc8..e402f16f 100644
---- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
-+++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-@@ -189,6 +189,12 @@
- 	};
- };
- 
-+&i2c4 {
-+	status = "okay";
-+
-+	clock-frequency = <400000>;
-+};
-+
- &i2c_dvfs {
- 	status = "okay";
- };
--- 
-1.9.1
+Gr{oetje,eeting}s,
 
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
