@@ -1,46 +1,92 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-yw0-f171.google.com ([209.85.161.171]:35573 "EHLO
-        mail-yw0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753234AbdGGCgV (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Jul 2017 22:36:21 -0400
-Received: by mail-yw0-f171.google.com with SMTP id v193so8430695ywg.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 06 Jul 2017 19:36:20 -0700 (PDT)
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH 0/5] arm64: dts: renesas: ulcb: Enable HDMI
-Date: Fri,  7 Jul 2017 05:36:16 +0300
-Message-Id: <1499394976-14201-1-git-send-email-vladimir.barinov@cogentembedded.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mark Yao <mark.yao@rock-chips.com>,
+        Heiko Stuebner <heiko@sntech.de>, Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org
+Subject: [PATCH 3/4] drm/sun4i: engine: Add commit_poll function
+Date: Thu, 13 Jul 2017 16:41:15 +0200
+Message-Id: <b483c2c05704615957dc6d96bbd06f2e3b117bf5.1499956639.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.75b0c7f741ed33015a7ad44941bed1f6152a48a9.1499956639.git-series.maxime.ripard@free-electrons.com>
+References: <cover.75b0c7f741ed33015a7ad44941bed1f6152a48a9.1499956639.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.75b0c7f741ed33015a7ad44941bed1f6152a48a9.1499956639.git-series.maxime.ripard@free-electrons.com>
+References: <cover.75b0c7f741ed33015a7ad44941bed1f6152a48a9.1499956639.git-series.maxime.ripard@free-electrons.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+On the earlier Allwinner chips, with the first iteration of the display
+engine, the backend commit bit needs to be polled before making any
+register access to the backend.
 
-This patch series enables HDMI support for the H3 and M3-W based ULCB boards
+Add an operation for that, that will be called in atomic_begin in order to
+be sure to have that bit cleared before we do any modifications.
 
-This has the following dependency:
-- [PATCH v2 series] R-Car Salvator-X M3-W: Enable DU support
-- [PATCH] arm64: dts: renesas: ulcb: Enable I2C4
-- [PATCH] clk: vc5: Add support for IDT VersaClock 5P49V5925
-
-Vladimir Barinov (5):
-[1/5] arm64: dts: renesas: ulcb: Add DU external dot clock sources
-[2/5] arm64: dts: renesas: r8a7795-h3ulcb: Add DU external dot clocks
-[3/5] arm64: dts: renesas: r8a7796-m3ulcb: Add DU external dot clocks
-[4/5] arm64: dts: renesas: ulcb: Add HDMI output connector
-[5/5] arm64: dts: renesas: ulcb: Enable HDMI output
-
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
-This patchset is against the 'kernel/git/horms/renesas.git' repo.
+ drivers/gpu/drm/sun4i/sun4i_crtc.c   |  2 ++
+ drivers/gpu/drm/sun4i/sunxi_engine.h | 14 ++++++++++++++
+ 2 files changed, 16 insertions(+)
 
- r8a7795-h3ulcb.dts |   14 ++++++++++++++
- r8a7796-m3ulcb.dts |   12 ++++++++++++
- ulcb.dtsi          |   42 ++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 68 insertions(+)
+diff --git a/drivers/gpu/drm/sun4i/sun4i_crtc.c b/drivers/gpu/drm/sun4i/sun4i_crtc.c
+index f8c70439d1e2..2eba1d8639d8 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_crtc.c
++++ b/drivers/gpu/drm/sun4i/sun4i_crtc.c
+@@ -45,6 +45,8 @@ static void sun4i_crtc_atomic_begin(struct drm_crtc *crtc,
+ 		spin_unlock_irqrestore(&dev->event_lock, flags);
+ 		crtc->state->event = NULL;
+ 	 }
++
++	WARN_ON(sunxi_engine_commit_poll(engine));
+ }
+ 
+ static void sun4i_crtc_atomic_flush(struct drm_crtc *crtc,
+diff --git a/drivers/gpu/drm/sun4i/sunxi_engine.h b/drivers/gpu/drm/sun4i/sunxi_engine.h
+index 4cb70ae65c79..6618e182613c 100644
+--- a/drivers/gpu/drm/sun4i/sunxi_engine.h
++++ b/drivers/gpu/drm/sun4i/sunxi_engine.h
+@@ -17,6 +17,7 @@ struct sunxi_engine;
+ 
+ struct sunxi_engine_ops {
+ 	void (*commit)(struct sunxi_engine *engine);
++	int (*commit_poll)(struct sunxi_engine *engine);
+ 	struct drm_plane **(*layers_init)(struct drm_device *drm,
+ 					  struct sunxi_engine *engine);
+ 
+@@ -55,6 +56,19 @@ sunxi_engine_commit(struct sunxi_engine *engine)
+ }
+ 
+ /**
++ * sunxi_engine_commit_poll() - wait for all changes to be committed
++ * @engine:	pointer to the engine
++ */
++static inline int
++sunxi_engine_commit_poll(struct sunxi_engine *engine)
++{
++	if (engine->ops && engine->ops->commit_poll)
++		return engine->ops->commit_poll(engine);
++
++	return 0;
++}
++
++/**
+  * sunxi_engine_layers_init() - Create planes (layers) for the engine
+  * @drm:	pointer to the drm_device for which planes will be created
+  * @engine:	pointer to the engine
+-- 
+git-series 0.9.1
