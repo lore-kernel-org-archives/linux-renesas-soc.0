@@ -1,82 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:47546 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750957AbdGLN2Y (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:49179 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751018AbdGMIJB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 12 Jul 2017 09:28:24 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2] mmc: tmio-mmc: fix bad pointer math
-Date: Wed, 12 Jul 2017 06:27:01 -0700
-Message-Id: <20170712132701.69983-1-chris.brandt@renesas.com>
+        Thu, 13 Jul 2017 04:09:01 -0400
+Date: Thu, 13 Jul 2017 10:08:55 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH 0/3] ARM: dts: r8a779[014]: Use R-Car Gen 2 fallback
+ binding for vin nodes
+Message-ID: <20170713080855.GK5580@verge.net.au>
+References: <1499777809-27492-1-git-send-email-horms+renesas@verge.net.au>
+ <20170713050744.GA23854@bigcity.dyn.berto.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20170713050744.GA23854@bigcity.dyn.berto.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The existing code gives an incorrect pointer value.
-The buffer pointer 'buf' was of type unsigned short *, and 'count' was a
-number in bytes. A cast of buf should have been used.
+On Thu, Jul 13, 2017 at 07:07:44AM +0200, Niklas Söderlund wrote:
+> Hi Simon,
+> 
+> Thanks for your work.
+> 
+> On 2017-07-11 14:56:46 +0200, Simon Horman wrote:
+> > Use R-Car Gen 2 fallback binding for vind nodes in DT for r8a779[014] SoCs.
+> > 
+> > This has no run-time effect for the current driver as the initialisation
+> > sequence is the same for the SoC-specific binding for r8a779[014] and the
+> > fallback binding for R-Car Gen 2
+> > 
+> > This is consistent with existing compat string usage in vin nodes for the
+> > r8a779[23] SoCs.
+> 
+> For whole serries:
+> 
+> Acked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-However,instead of casting, just change the code to use u32 pointers.
-
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Fixes: 8185e51f358a: ("mmc: tmio-mmc: add support for 32bit data port")
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
-v2:
- * Use u32 pointers instead of casting
----
- drivers/mmc/host/tmio_mmc_core.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 77e7b56a9099..e4e35b6e2db5 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -415,30 +415,31 @@ static void tmio_mmc_transfer_data(struct tmio_mmc_host *host,
- 	 * Transfer the data
- 	 */
- 	if (host->pdata->flags & TMIO_MMC_32BIT_DATA_PORT) {
--		u8 data[4] = { };
-+		u32 data = 0;
-+		u32 *buf32 = (u32 *)buf;
- 
- 		if (is_read)
--			sd_ctrl_read32_rep(host, CTL_SD_DATA_PORT, (u32 *)buf,
-+			sd_ctrl_read32_rep(host, CTL_SD_DATA_PORT, buf32,
- 					   count >> 2);
- 		else
--			sd_ctrl_write32_rep(host, CTL_SD_DATA_PORT, (u32 *)buf,
-+			sd_ctrl_write32_rep(host, CTL_SD_DATA_PORT, buf32,
- 					    count >> 2);
- 
- 		/* if count was multiple of 4 */
- 		if (!(count & 0x3))
- 			return;
- 
--		buf8 = (u8 *)(buf + (count >> 2));
-+		buf32 += count >> 2;
- 		count %= 4;
- 
- 		if (is_read) {
- 			sd_ctrl_read32_rep(host, CTL_SD_DATA_PORT,
--					   (u32 *)data, 1);
--			memcpy(buf8, data, count);
-+					   &data, 1);
-+			memcpy(buf32, &data, count);
- 		} else {
--			memcpy(data, buf8, count);
-+			memcpy(&data, buf32, count);
- 			sd_ctrl_write32_rep(host, CTL_SD_DATA_PORT,
--					    (u32 *)data, 1);
-+					    &data, 1);
- 		}
- 
- 		return;
--- 
-2.13.0
+Thanks, applied for v4.14.
