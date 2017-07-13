@@ -4,8 +4,8 @@ To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
 Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 References: <20170626181226.29575-1-laurent.pinchart+renesas@ideasonboard.com>
 From: Kieran Bingham <kieranbingham@gmail.com>
-Message-ID: <19cbb3c6-aa0a-3f0a-e2d5-0beaa61453f1@gmail.com>
-Date: Thu, 13 Jul 2017 13:11:16 +0100
+Message-ID: <d409ec58-4064-eaae-34db-261899566bc2@gmail.com>
+Date: Thu, 13 Jul 2017 12:56:16 +0100
 MIME-Version: 1.0
 In-Reply-To: <20170626181226.29575-1-laurent.pinchart+renesas@ideasonboard.com>
 Content-Type: text/plain; charset=utf-8
@@ -30,7 +30,8 @@ VGA output connected and ran
 
 This was soon followed by a kernel error trace [0] shown below.
 
-Interestingly, I haven't been able to make this happen on the
+Could you try this and see if you get any issues? --flip --sync on both outputs
+might be considered a corner case of course - but
 
 This series conflicts with my current developments, therefore I will rebase my
 work on top of this series. I don't need an immutable branch, but please do let
