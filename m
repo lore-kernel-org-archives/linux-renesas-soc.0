@@ -3,10 +3,9 @@ To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
  dri-devel@lists.freedesktop.org
 Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 References: <20170626181226.29575-1-laurent.pinchart+renesas@ideasonboard.com>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reply-To: kieran.bingham@ideasonboard.com
-Message-ID: <83249582-3ad4-91f1-7afa-e951af15cfc9@ideasonboard.com>
-Date: Thu, 13 Jul 2017 13:25:55 +0100
+From: Kieran Bingham <kieranbingham@gmail.com>
+Message-ID: <d41a54c9-6980-a806-8024-16bae55812ae@gmail.com>
+Date: Thu, 13 Jul 2017 13:16:16 +0100
 MIME-Version: 1.0
 In-Reply-To: <20170626181226.29575-1-laurent.pinchart+renesas@ideasonboard.com>
 Content-Type: text/plain; charset=utf-8
@@ -25,8 +24,8 @@ Feel free to add a Tested-by: Kieran Bingham
 <kieran.bingham+renesas@ideasonboard.com> to all of the patches if you desire,
 and I'm working through the individual reviews.
 
-Oh - except now I've just said that - I did some extra testing with both HDMI
-and VGA output connected and ran
+Oh - and now I've just said that - I did some extra testing with both HDMI and
+VGA output connected and ran
    kmstest --flip --sync
 
 This was soon followed by a kernel error trace [0] shown below.
@@ -35,22 +34,8 @@ However replicating this is possibly more complicated than just running kmstest
 --flip --sync ... I've had to do various iterations of running with/without
 {flip, sync} but I have reproduced 'issues' about 3 times now.
 
-I think the key thing is in the VGA connection or regarding trying to output to
-both.
-
 Interestingly, I haven't been able to make this happen on the ES1.0 platform as
-yet... though --flip --sync is quicker to fail with 'Flip Commit failed: -16"
-there...
-
-For reference this was tested on your pinchartl-media/drm/next/h3-es2/merged,
-branch which I don't believe has the recent work on not needing to wait for a
-final vblank on shutdown. So it is quite possible that the issue I am seeing is
-simply a symptom of that separately repaired issue.
-
-On that basis I've left my comment regarding my Tested-by: tag above as I
-suspect that this issue I've hit could likely be separate and already resolved.
-
-I'll try to add those patches to this tree to see if the issue resolves itself...
+yet...
 
 Regardless of that, this series conflicts with my current developments,
 therefore I will likely rebase my work on top of this series. I don't need an
@@ -60,10 +45,6 @@ immutable branch, but please do let me know if this series changes :-)
 Regards
 
 Kieran.
-
-
-
-
 
 
 [0] : Kernel log snippet posted below:
