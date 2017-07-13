@@ -4,8 +4,8 @@ To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
 Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 References: <20170626181226.29575-1-laurent.pinchart+renesas@ideasonboard.com>
 From: Kieran Bingham <kieranbingham@gmail.com>
-Message-ID: <ea2dbec6-e691-310a-6f4c-623174f72a90@gmail.com>
-Date: Thu, 13 Jul 2017 12:51:16 +0100
+Message-ID: <09a49f67-506a-13b7-57c8-d236edf2bebf@gmail.com>
+Date: Thu, 13 Jul 2017 12:46:16 +0100
 MIME-Version: 1.0
 In-Reply-To: <20170626181226.29575-1-laurent.pinchart+renesas@ideasonboard.com>
 Content-Type: text/plain; charset=utf-8
@@ -28,9 +28,9 @@ Oh - and now I've just said that - I did some extra testing with both HDMI and
 VGA output connected and ran
    kmstest --flip --sync
 
-This was soon followed by a kernel error trace [0] shown below.
-
 Could you try this and see if you get any issues?
+
+I'll run
 
 This series conflicts with my current developments, therefore I will rebase my
 work on top of this series. I don't need an immutable branch, but please do let
@@ -40,140 +40,6 @@ me know if this series changes :-)
 Regards
 
 Kieran.
-
-
-[0] : Kernel log snippet posted below:
-
-[  597.471369] [drm:drm_atomic_helper_commit_cleanup_done] *ERROR*
-[CRTC:57:crtc-3] flip_done timed out
-[  607.711346] [drm:drm_atomic_helper_wait_for_dependencies] *ERROR*
-[CRTC:57:crtc-3] flip_done timed out
-[  607.711354] [drm:drm_atomic_helper_commit_cleanup_done] *ERROR*
-[CRTC:57:crtc-3] flip_done timed out
-[  607.749585] vsp1 fea20000.vsp: failed to reset wpf.1
-[  617.951311] [drm:drm_atomic_helper_commit_cleanup_done] *ERROR*
-[CRTC:57:crtc-3] flip_done timed out
-[  618.055358] vsp1 fea20000.vsp: failed to reset wpf.1
-[  618.060498] vsp1 fea20000.vsp: DRM pipeline stop timeout
-[  628.831762] vsp1 fea20000.vsp: failed to reset wpf.1
-[  638.943315] [drm:drm_atomic_helper_commit_cleanup_done] *ERROR*
-[CRTC:57:crtc-3] flip_done timed out
-[  649.183313] [drm:drm_atomic_helper_commit_cleanup_done] *ERROR*
-[CRTC:57:crtc-3] flip_done timed out
-[  677.753465] vsp1 fea20000.vsp: failed to reset wpf.1
-[  687.839322] [drm:drm_atomic_helper_commit_cleanup_done] *ERROR*
-[CRTC:57:crtc-3] flip_done timed out
-[  687.935288] vsp1 fea20000.vsp: failed to reset wpf.1
-[  687.940360] vsp1 fea20000.vsp: DRM pipeline stop timeout
-[  687.945939] Unable to handle kernel NULL pointer dereference at virtual
-address 00000000
-[  687.954206] pgd = ffffff8009a0a000
-[  687.957680] [00000000] *pgd=000000073fffe003, *pud=000000073fffe003,
-*pmd=0000000000000000
-[  687.966068] Internal error: Oops: 96000006 [#1] PREEMPT SMP
-[  687.971690] Modules linked in:
-[  687.974777] CPU: 0 PID: 10426 Comm: kmstest Not tainted
-4.12.0-rc5-01343-g1bc824acf27c #5
-[  687.983019] Hardware name: Renesas Salvator-X 2nd version board based on
-r8a7795 ES2.0+ (DT)
-[  687.991525] task: ffffffc6f97b4080 task.stack: ffffffc6f51dc000
-[  687.997502] PC is at __media_pipeline_stop+0x24/0xd0
-[  688.002507] LR is at media_pipeline_stop+0x34/0x48
-[  688.007336] pc : [<ffffff8008583b44>] lr : [<ffffff8008583c24>] pstate: 60000145
-[  688.014790] sp : ffffffc6f51df780
-[  688.018129] x29: ffffffc6f51df780 x28: 0000000000000000
-[  688.023490] x27: 0000000000000038 x26: ffffff8008960088
-[  688.028850] x25: ffffffc6f98bcb10 x24: ffffffc6f98b8818
-[  688.034210] x23: 0000000000000001 x22: ffffffc6f9ff1998
-[  688.039570] x21: ffffffc6f98bc080 x20: 0000000000000000
-[  688.044929] x19: 0000000000000008 x18: 0000000000000010
-[  688.050288] x17: 0000007f9bc9e1c8 x16: ffffff8008165bb8
-[  688.055648] x15: ffffff80899bb63f x14: 0000000000000006
-[  688.061007] x13: ffffffc6faac6750 x12: ffffff80087bd078
-[  688.066366] x11: 0000000000000000 x10: ffffff80097bb000
-[  688.071725] x9 : ffffff8008afd000 x8 : 0000000000000000
-[  688.077085] x7 : ffffff8008583c1c x6 : ffffff8008da75c8
-[  688.082443] x5 : ffffff8009585d00 x4 : 000000002d28ca88
-[  688.087803] x3 : 0000000089277f76 x2 : 0000000000000000
-[  688.093162] x1 : ffffffc6f97b4080 x0 : ffffff8008583c24
-[  688.098523] Process kmstest (pid: 10426, stack limit = 0xffffffc6f51dc000)
-[  688.105453] Stack: (0xffffffc6f51df780 to 0xffffffc6f51e0000)
-[  688.111245] f780: ffffffc6f51df7b0 ffffff8008583c24 ffffffc6f98b8ae8
-ffffffc6f98bc080
-[  688.119138] f7a0: ffffffc6f98bc818 ffffff8009d18000 ffffffc6f51df7e0
-ffffff80085aa688
-[  688.127031] f7c0: ffffffc6f9878c18 0000000000000001 ffffffc6f9ff0018
-0000000000001f31
-[  688.134923] f7e0: ffffffc6f51df8b0 ffffff800851a4b4 ffffffc6f9ff1390
-ffffffc6f9ff1390
-[  688.142815] f800: 0000000000000000 ffffffc6f9ff1998 ffffffc6f9ff0018
-ffffff800894a478
-[  688.150708] f820: ffffffc6f9557400 ffffffc6f9553400 0000000000000038
-ffffff80087cf878
-
-<huge stack trimmed>
-
-
-[  688.721560] Call trace:
-[  688.725502] Exception stack(0xffffffc6f51df5b0 to 0xffffffc6f51df6e0)
-[  688.733473] f5a0:                                   0000000000000008
-0000008000000000
-[  688.742857] f5c0: ffffffc6f51df780 ffffff8008583b44 0000000000000038
-ffffff800814e980
-[  688.752244] f5e0: ffffff8008afd000 ffffff80097bb000 ffffffc6f51df6f0
-00000000ffffffd8
-[  688.761636] f600: 4554535953425553 6f6674616c703d4d 4349564544006d72
-6674616c702b3d45
-[  688.771035] f620: 326165663a6d726f 7073762e30303030 ffffffc6f51df650
-ffffff8008124834
-[  688.780447] f640: ffffffc600000000 ffffffc600000000 ffffff8008583c24
-ffffffc6f97b4080
-[  688.789865] f660: 0000000000000000 0000000089277f76 000000002d28ca88
-ffffff8009585d00
-[  688.799290] f680: ffffff8008da75c8 ffffff8008583c1c 0000000000000000
-ffffff8008afd000
-[  688.808727] f6a0: ffffff80097bb000 0000000000000000 ffffff80087bd078
-ffffffc6faac6750
-[  688.818165] f6c0: 0000000000000006 ffffff80899bb63f ffffff8008165bb8
-0000007f9bc9e1c8
-[  688.827617] [<ffffff8008583b44>] __media_pipeline_stop+0x24/0xd0
-[  688.835247] [<ffffff8008583c24>] media_pipeline_stop+0x34/0x48
-[  688.842712] [<ffffff80085aa688>] vsp1_du_setup_lif+0x5a8/0x700
-[  688.850177] [<ffffff800851a4b4>] rcar_du_vsp_disable+0x2c/0x38
-[  688.857632] [<ffffff80085162e0>] rcar_du_crtc_stop+0x198/0x1e8
-[  688.865067] [<ffffff8008516350>] rcar_du_crtc_disable+0x20/0x70
-[  688.872595] [<ffffff80084e34b4>]
-drm_atomic_helper_commit_modeset_disables+0x1ac/0x3d0
-[  688.882154] [<ffffff8008517718>] rcar_du_atomic_commit_tail+0x28/0x70
-[  688.890233] [<ffffff80084e3a5c>] commit_tail+0x4c/0x80
-[  688.897006] [<ffffff80084e3b9c>] drm_atomic_helper_commit+0xdc/0x148
-[  688.905000] [<ffffff800850294c>] drm_atomic_commit+0x5c/0x68
-[  688.912288] [<ffffff80084e63bc>] restore_fbdev_mode+0x15c/0x2e0
-[  688.919837] [<ffffff80084e926c>]
-drm_fb_helper_restore_fbdev_mode_unlocked+0x3c/0x98
-[  688.929231] [<ffffff80084e9f64>] drm_fbdev_cma_restore_mode+0x24/0x30
-[  688.937321] [<ffffff800851695c>] rcar_du_lastclose+0x24/0x30
-[  688.944633] [<ffffff80084ee300>] drm_lastclose+0x48/0xe8
-[  688.951595] [<ffffff80084ee6c0>] drm_release+0x320/0x358
-[  688.958554] [<ffffff8008268ccc>] __fput+0x94/0x1d8
-[  688.964977] [<ffffff8008268e88>] ____fput+0x20/0x30
-[  688.971482] [<ffffff80080f4c70>] task_work_run+0xc8/0xe8
-[  688.978417] [<ffffff80080d5820>] do_exit+0x310/0xb80
-[  688.984997] [<ffffff80080d611c>] do_group_exit+0x3c/0xa0
-[  688.991919] [<ffffff80080e3d00>] get_signal+0x558/0x8a8
-[  688.998764] [<ffffff80080897f8>] do_signal+0xd0/0x560
-[  689.005427] [<ffffff8008089ee0>] do_notify_resume+0xb0/0xd8
-[  689.012610] [<ffffff8008083668>] work_pending+0x8/0x14
-[  689.019359] Code: aa1e03e0 d503201f f9403ab4 91002293 (b9400280)
-[  689.027391] ---[ end trace c94d490e101a5ed3 ]---
-[  689.033758] Fixing recursive fault but reboot is needed!
-
-
-
-
-
-
-
 
 On 26/06/17 19:12, Laurent Pinchart wrote:
 > Hello,
