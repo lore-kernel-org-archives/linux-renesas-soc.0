@@ -1,40 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:34536 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751157AbdGMMiU (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:37575 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751050AbdGMLTl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Jul 2017 08:38:20 -0400
-Received: by mail-wm0-f67.google.com with SMTP id p204so4841722wmg.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 13 Jul 2017 05:38:19 -0700 (PDT)
-Date: Thu, 13 Jul 2017 14:38:15 +0200
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
+        Thu, 13 Jul 2017 07:19:41 -0400
 Subject: Re: [PATCH] drm: rcar-du: Fix comments to comply with the kernel
  coding style
-Message-ID: <20170713123815.5bdayu2kkzp7tnl5@phenom.ffwll.local>
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org
 References: <20170712170042.14084-1-laurent.pinchart+renesas@ideasonboard.com>
+Reply-To: kieran.bingham@ideasonboard.com
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Message-ID: <20d1823c-289a-fa84-de0b-683ab6344572@ideasonboard.com>
+Date: Thu, 13 Jul 2017 12:19:36 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <20170712170042.14084-1-laurent.pinchart+renesas@ideasonboard.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Jul 12, 2017 at 08:00:42PM +0300, Laurent Pinchart wrote:
+Hi Laurent,
+
+Thanks for this - I think that's a better way forward in this instance now that
+a few of the locations have been touched, rather than leaving the driver in a
+mixed state.
+
+On 12/07/17 18:00, Laurent Pinchart wrote:
 > To avoid mixing comment styles when new comments complying with the
 > kernel coding style are introduced, fix all multiline comments in one
 > go.
 > 
 > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Acked-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Afaik the entirety of davem's -net is commented like this, this is
-checkpatch being a bit over the top. And drm is often commented like this
-too.
-
-Just fyi.
--Daniel
 > ---
 >  drivers/gpu/drm/rcar-du/rcar_du_crtc.c    | 24 ++++++++++++------
 >  drivers/gpu/drm/rcar-du/rcar_du_drv.c     | 21 ++++++++++------
@@ -553,17 +554,4 @@ Just fyi.
 >  	  * 4 RPFs.
 >  	  */
 >  	vsp->num_planes = rcdu->info->gen >= 3 ? 5 : 4;
-> -- 
-> Regards,
 > 
-> Laurent Pinchart
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
