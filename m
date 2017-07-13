@@ -1,48 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:37547 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751106AbdGMLKA (ORCPT
+Received: from mail-it0-f66.google.com ([209.85.214.66]:32829 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750953AbdGMIHt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Jul 2017 07:10:00 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Marek Vasut <marek.vasut@gmail.com>
-Subject: [PATCH 2/2] arm64: dts: r8a7795: salvator-xs: Connect DU dot clocks 0 and 3
-Date: Thu, 13 Jul 2017 14:09:53 +0300
-Message-Id: <20170713110953.8511-1-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170713110653.7606-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170713110653.7606-1-laurent.pinchart+renesas@ideasonboard.com>
+        Thu, 13 Jul 2017 04:07:49 -0400
+MIME-Version: 1.0
+In-Reply-To: <1499878547-3452-2-git-send-email-ykaneko0929@gmail.com>
+References: <1499878547-3452-1-git-send-email-ykaneko0929@gmail.com> <1499878547-3452-2-git-send-email-ykaneko0929@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 13 Jul 2017 10:07:47 +0200
+Message-ID: <CAMuHMdVCC7WyTBgCG4XU3NTNMdacQsJvT4jeaStXZpTcTVUQuQ@mail.gmail.com>
+Subject: Re: [PATCH 01/14] pinctrl: sh-pfc: r8a7796: Fix MOD_SEL1 bit[25:24]
+ to 0x3 when using STP_ISEN_1_D
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The DU dot clocks 0 and 3 are provided by the programmable VC6 clock
-generator. Connect them to the clock source node.
+On Wed, Jul 12, 2017 at 6:55 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch fixes the implementation incorrect of MOD_SEL1 bit[25:24]
+> value when STP_ISEN_1_D pin function is selected for IPSR17 bit[27:24].
+>
+> This is a correction to the incorrect implementation of MOD_SEL register
+> pin assignment for R8A7796 SoC specification of R-Car Gen3 Hardware
+> User's Manual Rev.0.51E or later.
+>
+> Fixes: f9aece7344bd ("pinctrl: sh-pfc: Initial R8A7796 PFC support")
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
-index 6a7d1b22d0fe..7675de5d4f2c 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
-@@ -44,10 +44,12 @@
- 		 <&cpg CPG_MOD 722>,
- 		 <&cpg CPG_MOD 721>,
- 		 <&cpg CPG_MOD 727>,
-+		 <&versaclock6 1>,
- 		 <&x21_clk>,
--		 <&x22_clk>;
-+		 <&x22_clk>,
-+		 <&versaclock6 2>;
- 	clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0",
--		      "dclkin.1", "dclkin.2";
-+		      "dclkin.0", "dclkin.1", "dclkin.2", "dclkin.3";
- };
- 
- &ehci2 {
--- 
-Regards,
+i.e. will queue in sh-pfc-for-v4.14.
 
-Laurent Pinchart
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
