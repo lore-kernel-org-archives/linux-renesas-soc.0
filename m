@@ -1,19 +1,12 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f66.google.com ([209.85.214.66]:35596 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750877AbdGMIAO (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:48938 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750877AbdGMHzJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Jul 2017 04:00:14 -0400
-MIME-Version: 1.0
-In-Reply-To: <20170713075459.GG5580@verge.net.au>
-References: <1499853805-5915-1-git-send-email-chris.paterson2@renesas.com>
- <1499853805-5915-2-git-send-email-chris.paterson2@renesas.com>
- <CAMuHMdX0TZ7KKzGDq8t2jMwMciEf30KKW2tE5fieqJ2D7+feqw@mail.gmail.com> <20170713075459.GG5580@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 13 Jul 2017 10:00:11 +0200
-Message-ID: <CAMuHMdXdkA-F74pYOMi=K2DMZJdkSCpJtzfHfSMTAQgAfzPUkw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] dt-bindings: mmc: sh_mmcif: Document r8a7743 DT bindings
-To: Simon Horman <horms@verge.net.au>
+        Thu, 13 Jul 2017 03:55:09 -0400
+Date: Thu, 13 Jul 2017 09:54:59 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Chris Paterson <chris.paterson2@renesas.com>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -26,31 +19,24 @@ Cc: Chris Paterson <chris.paterson2@renesas.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH 1/3] dt-bindings: mmc: sh_mmcif: Document r8a7743 DT
+ bindings
+Message-ID: <20170713075459.GG5580@verge.net.au>
+References: <1499853805-5915-1-git-send-email-chris.paterson2@renesas.com>
+ <1499853805-5915-2-git-send-email-chris.paterson2@renesas.com>
+ <CAMuHMdX0TZ7KKzGDq8t2jMwMciEf30KKW2tE5fieqJ2D7+feqw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdX0TZ7KKzGDq8t2jMwMciEf30KKW2tE5fieqJ2D7+feqw@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
+On Wed, Jul 12, 2017 at 01:20:07PM +0200, Geert Uytterhoeven wrote:
+> On Wed, Jul 12, 2017 at 12:03 PM, Chris Paterson
+> <chris.paterson2@renesas.com> wrote:
+> > Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Thu, Jul 13, 2017 at 9:54 AM, Simon Horman <horms@verge.net.au> wrote:
-> On Wed, Jul 12, 2017 at 01:20:07PM +0200, Geert Uytterhoeven wrote:
->> On Wed, Jul 12, 2017 at 12:03 PM, Chris Paterson
->> <chris.paterson2@renesas.com> wrote:
->> > Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
->>
->> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> Thanks, applied for v4.14.
-
-Shouldn't this be applied by Ulf to the MMC tree?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks, applied for v4.14.
