@@ -1,99 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:41406 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935274AbdGTMzK (ORCPT
+Received: from mail-it0-f65.google.com ([209.85.214.65]:36562 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751046AbdGMIkr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 20 Jul 2017 08:55:10 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/4] arm64: dts: renesas: Add Renesas Draak board support
-Date: Thu, 20 Jul 2017 14:54:35 +0200
-Message-Id: <1500555277-22921-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1500555277-22921-1-git-send-email-geert+renesas@glider.be>
-References: <1500555277-22921-1-git-send-email-geert+renesas@glider.be>
+        Thu, 13 Jul 2017 04:40:47 -0400
+MIME-Version: 1.0
+In-Reply-To: <1499878547-3452-4-git-send-email-ykaneko0929@gmail.com>
+References: <1499878547-3452-1-git-send-email-ykaneko0929@gmail.com> <1499878547-3452-4-git-send-email-ykaneko0929@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 13 Jul 2017 10:40:45 +0200
+Message-ID: <CAMuHMdU2oeruWct_gjhbjmmMPAVK+puTzfp7pLvEkzcmjjDMjg@mail.gmail.com>
+Subject: Re: [PATCH 03/14] pinctrl: sh-pfc: r8a7796: Fix MOD_SEL2 bit26 to 0x0
+ when using SCK5_A
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Basic support for the Renesas Draak board based on R-Car D3:
-  - Memory,
-  - Main crystal,
-  - Serial console,
-  - Watchdog.
+On Wed, Jul 12, 2017 at 6:55 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch fixes the implementation incorrect of MOD_SEL2 bit26 value
+> when SCK5_A pin function is selected for IPSR16 bit[31:28].
+>
+> This is a correction to the incorrect implementation of MOD_SEL register
+> pin assignment for R8A7796 SoC specification of R-Car Gen3 Hardware
+> User's Manual Rev.0.51E or later.
+>
+> Fixes: f9aece7344bd ("pinctrl: sh-pfc: Initial R8A7796 PFC support")
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/boot/dts/renesas/Makefile           |  1 +
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 46 ++++++++++++++++++++++++++
- 2 files changed, 47 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index acc4bb30d485b6bc..381928bc1358fd9c 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -2,6 +2,7 @@ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-x.dtb r8a7795-h3ulcb.dtb
- dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-xs.dtb
- dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-es1-salvator-x.dtb r8a7795-es1-h3ulcb.dtb
- dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-x.dtb r8a7796-m3ulcb.dtb
-+dtb-$(CONFIG_ARCH_R8A77995) += r8a77995-draak.dtb
- 
- always		:= $(dtb-y)
- clean-files	:= *.dtb
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-new file mode 100644
-index 0000000000000000..d144370051d559fc
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-@@ -0,0 +1,46 @@
-+/*
-+ * Device Tree Source for the Draak board
-+ *
-+ * Copyright (C) 2016 Renesas Electronics Corp.
-+ * Copyright (C) 2017 Glider bvba
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2.  This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
-+
-+/dts-v1/;
-+#include "r8a77995.dtsi"
-+
-+/ {
-+	model = "Renesas Draak board based on r8a77995";
-+	compatible = "renesas,draak", "renesas,r8a77995";
-+
-+	aliases {
-+		serial0 = &scif2;
-+	};
-+
-+	chosen {
-+		bootargs = "ignore_loglevel";
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	memory@48000000 {
-+		device_type = "memory";
-+		/* first 128MB is reserved for secure area. */
-+		reg = <0x0 0x48000000 0x0 0x18000000>;
-+	};
-+};
-+
-+&extal_clk {
-+	clock-frequency = <48000000>;
-+};
-+
-+&scif2 {
-+	status = "okay";
-+};
-+
-+&rwdt {
-+	timeout-sec = <60>;
-+	status = "okay";
-+};
--- 
-2.7.4
+i.e. will queue in sh-pfc-for-v4.14.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
