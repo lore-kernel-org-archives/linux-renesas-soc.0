@@ -4,8 +4,8 @@ To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
 Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 References: <20170626181226.29575-1-laurent.pinchart+renesas@ideasonboard.com>
 From: Kieran Bingham <kieranbingham@gmail.com>
-Message-ID: <09a49f67-506a-13b7-57c8-d236edf2bebf@gmail.com>
-Date: Thu, 13 Jul 2017 12:46:16 +0100
+Message-ID: <329840c4-79ee-12e6-e70f-4d96da260d04@gmail.com>
+Date: Thu, 13 Jul 2017 12:41:16 +0100
 MIME-Version: 1.0
 In-Reply-To: <20170626181226.29575-1-laurent.pinchart+renesas@ideasonboard.com>
 Content-Type: text/plain; charset=utf-8
@@ -23,14 +23,6 @@ kmscube utilities.
 Feel free to add a Tested-by: Kieran Bingham
 <kieran.bingham+renesas@ideasonboard.com> to all of the patches if you desire,
 and I'm working through the individual reviews.
-
-Oh - and now I've just said that - I did some extra testing with both HDMI and
-VGA output connected and ran
-   kmstest --flip --sync
-
-Could you try this and see if you get any issues?
-
-I'll run
 
 This series conflicts with my current developments, therefore I will rebase my
 work on top of this series. I don't need an immutable branch, but please do let
