@@ -1,90 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:54285 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751681AbdG3WcW (ORCPT
+Received: from mail-it0-f65.google.com ([209.85.214.65]:35721 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750949AbdGMJqN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 30 Jul 2017 18:32:22 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 3/4] v4l: async: do not hold list_lock when re-probing devices
-Date: Mon, 31 Jul 2017 00:31:57 +0200
-Message-Id: <20170730223158.14405-4-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170730223158.14405-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170730223158.14405-1-niklas.soderlund+renesas@ragnatech.se>
+        Thu, 13 Jul 2017 05:46:13 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1499878547-3452-12-git-send-email-ykaneko0929@gmail.com>
+References: <1499878547-3452-1-git-send-email-ykaneko0929@gmail.com> <1499878547-3452-12-git-send-email-ykaneko0929@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 13 Jul 2017 11:46:11 +0200
+Message-ID: <CAMuHMdW5xSMAD+sMRqAChWgTz=Fu374Zs=v0nTXL1TE8BK+QUQ@mail.gmail.com>
+Subject: Re: [PATCH 11/14] pinctrl: sh-pfc: r8a7796: Fix to delete
+ SATA_DEVSLP_B pins function definitions
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-There is no good reason to hold the list_lock when re-probing the
-devices and it prevents a clean implementation of subdevice notifiers.
-Move the actual release of the devices outside of the loop which
-requires the lock to be held.
+On Wed, Jul 12, 2017 at 6:55 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch fixes the macro definitions of SATA_DEVSLP_B pins function
+> deleted.
+>
+> This is a correction to the incorrect implementation of IPSR register
+> pin assignment for R8A7796 SoC specification of R-Car Gen3 Hardware
+> User's Manual Rev.0.51E or later.
+>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/v4l2-core/v4l2-async.c | 19 +++++++++----------
- 1 file changed, 9 insertions(+), 10 deletions(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
-index 67852f0f2d3000c9..d91ff0a33fd3eaff 100644
---- a/drivers/media/v4l2-core/v4l2-async.c
-+++ b/drivers/media/v4l2-core/v4l2-async.c
-@@ -206,7 +206,7 @@ void v4l2_async_notifier_unregister(struct v4l2_async_notifier *notifier)
- 	unsigned int notif_n_subdev = notifier->num_subdevs;
- 	unsigned int n_subdev = min(notif_n_subdev, V4L2_MAX_SUBDEVS);
- 	struct device **dev;
--	int i = 0;
-+	int i, count = 0;
- 
- 	if (!notifier->v4l2_dev)
- 		return;
-@@ -223,27 +223,26 @@ void v4l2_async_notifier_unregister(struct v4l2_async_notifier *notifier)
- 	list_del(&notifier->list);
- 
- 	list_for_each_entry_safe(sd, tmp, &notifier->done, async_list) {
--		struct device *d;
--
--		d = get_device(sd->dev);
-+		dev[count] = get_device(sd->dev);
-+		count++;
- 
- 		if (notifier->unbind)
- 			notifier->unbind(notifier, sd, sd->asd);
- 
- 		v4l2_async_cleanup(sd);
--
--		/* If we handled USB devices, we'd have to lock the parent too */
--		device_release_driver(d);
--
--		dev[i++] = d;
- 	}
- 
- 	mutex_unlock(&list_lock);
- 
-+	for (i = 0; i < count; i++) {
-+		/* If we handled USB devices, we'd have to lock the parent too */
-+		device_release_driver(dev[i]);
-+	}
-+
- 	/*
- 	 * Call device_attach() to reprobe devices
- 	 */
--	while (i--) {
-+	for (i = 0; i < count; i++) {
- 		struct device *d = dev[i];
- 
- 		if (d && device_attach(d) < 0) {
--- 
-2.13.3
+i.e. will queue in sh-pfc-for-v4.14.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
