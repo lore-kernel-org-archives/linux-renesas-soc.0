@@ -1,34 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52831 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750786AbdGNHaG (ORCPT
+Received: from mail-it0-f65.google.com ([209.85.214.65]:34265 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750854AbdGMLTO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Jul 2017 03:30:06 -0400
-Date: Fri, 14 Jul 2017 09:29:59 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>
-Subject: Re: [PATCH] arm64: dts: renesas: salvator-xs: Add VC6 clock generator
-Message-ID: <20170714072959.GG12105@verge.net.au>
-References: <20170713110653.7606-1-laurent.pinchart+renesas@ideasonboard.com>
- <CAMuHMdWP_BN5PefaM0xqN8kPP6Q2+-UCPqZ8XxQ=OVkJJoXoRg@mail.gmail.com>
+        Thu, 13 Jul 2017 07:19:14 -0400
+Received: by mail-it0-f65.google.com with SMTP id o202so6674373itc.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 13 Jul 2017 04:19:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdWP_BN5PefaM0xqN8kPP6Q2+-UCPqZ8XxQ=OVkJJoXoRg@mail.gmail.com>
+In-Reply-To: <20170713110653.7606-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170713110653.7606-1-laurent.pinchart+renesas@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 13 Jul 2017 13:19:12 +0200
+Message-ID: <CAMuHMdWP_BN5PefaM0xqN8kPP6Q2+-UCPqZ8XxQ=OVkJJoXoRg@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: renesas: salvator-xs: Add VC6 clock generator
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Jul 13, 2017 at 01:19:12PM +0200, Geert Uytterhoeven wrote:
-> On Thu, Jul 13, 2017 at 1:06 PM, Laurent Pinchart
-> <laurent.pinchart+renesas@ideasonboard.com> wrote:
-> > The VC6 is an I2C-controlled programmable clock generator, used on the
-> > board to provide a display dot clock. Add it to DT.
-> >
-> > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Thu, Jul 13, 2017 at 1:06 PM, Laurent Pinchart
+<laurent.pinchart+renesas@ideasonboard.com> wrote:
+> The VC6 is an I2C-controlled programmable clock generator, used on the
+> board to provide a display dot clock. Add it to DT.
+>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Thanks, applied for v4.14.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
