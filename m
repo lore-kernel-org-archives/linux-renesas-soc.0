@@ -1,115 +1,52 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Cc: laurent.pinchart@ideasonboard.com,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH 5/6] v4l: vsp1: Convert LUT to use a fragment pool
-Date: Fri, 14 Jul 2017 17:14:14 +0100
-Message-Id: <dee8db9c5ade2b4c47ec0d31f80352c5b1d8633f.1500047489.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.6756808fb978882ae2db0cde7745c7e12b177713.1500047489.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.6756808fb978882ae2db0cde7745c7e12b177713.1500047489.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.6756808fb978882ae2db0cde7745c7e12b177713.1500047489.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.6756808fb978882ae2db0cde7745c7e12b177713.1500047489.git-series.kieran.bingham+renesas@ideasonboard.com>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f67.google.com ([209.85.214.67]:32913 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751018AbdGMKCZ (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 13 Jul 2017 06:02:25 -0400
+MIME-Version: 1.0
+In-Reply-To: <1499878547-3452-15-git-send-email-ykaneko0929@gmail.com>
+References: <1499878547-3452-1-git-send-email-ykaneko0929@gmail.com> <1499878547-3452-15-git-send-email-ykaneko0929@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 13 Jul 2017 12:02:23 +0200
+Message-ID: <CAMuHMdV15EZC+GRgVOUsXkbwF7GwmDQTdzGCasA0ctJ==1BMGw@mail.gmail.com>
+Subject: Re: [PATCH 14/14] pinctrl: sh-pfc: r8a7796: Rename CS1# pin function definitions
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Adapt the LUT to allocate a fragment pool for passing the table updates
-to hardware.
+On Wed, Jul 12, 2017 at 6:55 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch renames the pin function macro definitions of the GPSR1 and
+> IPSR4 registers value for the CS1# pin.
+>
+> This is a correction because GPSR and IPSR register specification for
+> R8A7796 SoC was changed in R-Car Gen3 Hardware User's Manual Rev.0.54E.
+>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 
-Two bodies are pre-allocated in the pool to manage a userspace update
-before the hardware has taken a previous set of tables.
+Fixes: f9aece7344bd81ce ("pinctrl: sh-pfc: Initial R8A7796 PFC support")
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- drivers/media/platform/vsp1/vsp1_lut.c | 23 +++++++++++++++++++----
- drivers/media/platform/vsp1/vsp1_lut.h |  1 +
- 2 files changed, 20 insertions(+), 4 deletions(-)
+i.e. will queue in sh-pfc-for-v4.14.
 
-diff --git a/drivers/media/platform/vsp1/vsp1_lut.c b/drivers/media/platform/vsp1/vsp1_lut.c
-index c67cc60db0db..57482e057e54 100644
---- a/drivers/media/platform/vsp1/vsp1_lut.c
-+++ b/drivers/media/platform/vsp1/vsp1_lut.c
-@@ -23,6 +23,8 @@
- #define LUT_MIN_SIZE				4U
- #define LUT_MAX_SIZE				8190U
- 
-+#define LUT_SIZE				256
-+
- /* -----------------------------------------------------------------------------
-  * Device Access
-  */
-@@ -44,11 +46,11 @@ static int lut_set_table(struct vsp1_lut *lut, struct v4l2_ctrl *ctrl)
- 	struct vsp1_dl_body *dlb;
- 	unsigned int i;
- 
--	dlb = vsp1_dl_fragment_alloc(lut->entity.vsp1, 256);
-+	dlb = vsp1_dl_fragment_get(lut->pool);
- 	if (!dlb)
- 		return -ENOMEM;
- 
--	for (i = 0; i < 256; ++i)
-+	for (i = 0; i < LUT_SIZE; ++i)
- 		vsp1_dl_fragment_write(dlb, VI6_LUT_TABLE + 4 * i,
- 				       ctrl->p_new.p_u32[i]);
- 
-@@ -56,7 +58,7 @@ static int lut_set_table(struct vsp1_lut *lut, struct v4l2_ctrl *ctrl)
- 	swap(lut->lut, dlb);
- 	spin_unlock_irq(&lut->lock);
- 
--	vsp1_dl_fragment_free(dlb);
-+	vsp1_dl_fragment_put(dlb);
- 	return 0;
- }
- 
-@@ -87,7 +89,7 @@ static const struct v4l2_ctrl_config lut_table_control = {
- 	.max = 0x00ffffff,
- 	.step = 1,
- 	.def = 0,
--	.dims = { 256},
-+	.dims = { LUT_SIZE },
- };
- 
- /* -----------------------------------------------------------------------------
-@@ -217,8 +219,16 @@ static void lut_configure(struct vsp1_entity *entity,
- 	}
- }
- 
-+static void lut_destroy(struct vsp1_entity *entity)
-+{
-+	struct vsp1_lut *lut = to_lut(&entity->subdev);
-+
-+	vsp1_dl_fragment_pool_free(lut->pool);
-+}
-+
- static const struct vsp1_entity_operations lut_entity_ops = {
- 	.configure = lut_configure,
-+	.destroy = lut_destroy,
- };
- 
- /* -----------------------------------------------------------------------------
-@@ -244,6 +254,11 @@ struct vsp1_lut *vsp1_lut_create(struct vsp1_device *vsp1)
- 	if (ret < 0)
- 		return ERR_PTR(ret);
- 
-+	/* Allocate a fragment pool */
-+	lut->pool = vsp1_dl_fragment_pool_alloc(vsp1, 2, LUT_SIZE, 0);
-+	if (!lut->pool)
-+		return ERR_PTR(-ENOMEM);
-+
- 	/* Initialize the control handler. */
- 	v4l2_ctrl_handler_init(&lut->ctrls, 1);
- 	v4l2_ctrl_new_custom(&lut->ctrls, &lut_table_control, NULL);
-diff --git a/drivers/media/platform/vsp1/vsp1_lut.h b/drivers/media/platform/vsp1/vsp1_lut.h
-index f8c4e8f0a79d..538563d57454 100644
---- a/drivers/media/platform/vsp1/vsp1_lut.h
-+++ b/drivers/media/platform/vsp1/vsp1_lut.h
-@@ -33,6 +33,7 @@ struct vsp1_lut {
- 
- 	spinlock_t lock;
- 	struct vsp1_dl_body *lut;
-+	struct vsp1_dl_fragment_pool *pool;
- };
- 
- static inline struct vsp1_lut *to_lut(struct v4l2_subdev *subdev)
--- 
-git-series 0.9.1
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
