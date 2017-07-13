@@ -1,59 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:15449 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751893AbdGGN0r (ORCPT
+Received: from mail-it0-f67.google.com ([209.85.214.67]:36607 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750949AbdGMJsn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Jul 2017 09:26:47 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Thu, 13 Jul 2017 05:48:43 -0400
+MIME-Version: 1.0
+In-Reply-To: <1499878547-3452-13-git-send-email-ykaneko0929@gmail.com>
+References: <1499878547-3452-1-git-send-email-ykaneko0929@gmail.com> <1499878547-3452-13-git-send-email-ykaneko0929@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 13 Jul 2017 11:48:41 +0200
+Message-ID: <CAMuHMdXc68gT7BtJcBkao7GvFm6YKhwhXQykwmgaAVjEh252sw@mail.gmail.com>
+Subject: Re: [PATCH 12/14] pinctrl: sh-pfc: r8a7796: Fix to delete MOD_SEL0
+ bit2 register definitions
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH v 1/2] ARM: dts: r8a7743: Add Ethernet AVB support
-Date: Fri,  7 Jul 2017 14:12:44 +0100
-Message-Id: <1499433165-62475-2-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1499433165-62475-1-git-send-email-biju.das@bp.renesas.com>
-References: <1499433165-62475-1-git-send-email-biju.das@bp.renesas.com>
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add Ethernet AVB support for r8a7743 SoC.
+On Wed, Jul 12, 2017 at 6:55 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch fixes the macro definitions of MOD_SEL0 bit2 register deleted.
+>
+> This is a correction because MOD_SEL register specification for R8A7796
+> SoC was changed in R-Car Gen3 Hardware User's Manual Rev.0.53E.
+>
+> Fixes: f9aece7344bd ("pinctrl: sh-pfc: Initial R8A7796 PFC support")
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
----
- arch/arm/boot/dts/r8a7743.dtsi | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 8380859..ec8657f 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -605,6 +605,19 @@
- 			#size-cells = <0>;
- 			status = "disabled";
- 		};
-+
-+		avb: ethernet@e6800000 {
-+			compatible = "renesas,etheravb-r8a7743",
-+				     "renesas,etheravb-rcar-gen2";
-+			reg = <0 0xe6800000 0 0x800>, <0 0xee0e8000 0 0x4000>;
-+			interrupts = <0 163 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 812>;
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 812>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
- 	};
- 
- 	/* External root clock */
--- 
-1.9.1
+i.e. will queue in sh-pfc-for-v4.14.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
