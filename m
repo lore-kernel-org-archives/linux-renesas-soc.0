@@ -1,84 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:34208 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751817AbdGIN2k (ORCPT
+Received: from mail-it0-f68.google.com ([209.85.214.68]:32996 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751079AbdGMJ5M (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 9 Jul 2017 09:28:40 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Alexey Firago <alexey_firago@mentor.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+        Thu, 13 Jul 2017 05:57:12 -0400
+MIME-Version: 1.0
+In-Reply-To: <1499878547-3452-14-git-send-email-ykaneko0929@gmail.com>
+References: <1499878547-3452-1-git-send-email-ykaneko0929@gmail.com> <1499878547-3452-14-git-send-email-ykaneko0929@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 13 Jul 2017 11:57:10 +0200
+Message-ID: <CAMuHMdWCJphoQrEW=C1s8Eq+Qu7PjvK0iM-uxYVnsyo=Ueobdg@mail.gmail.com>
+Subject: Re: [PATCH 13/14] pinctrl: sh-pfc: r8a7796: Fix IPSR and MOD_SEL
+ register pin assignment for FSO pins group
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH V3 4/8] clk: vc5: Configure the output buffer input mux on prepare
-Date: Sun,  9 Jul 2017 15:28:10 +0200
-Message-Id: <20170709132814.2339-4-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20170709132814.2339-1-marek.vasut+renesas@gmail.com>
-References: <20170709132814.2339-1-marek.vasut+renesas@gmail.com>
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The output buffer input mux can be configured in either of three
-states -- disabled, input from FOD, input from previous output.
-Once the .prepare() callback of the output buffer is called, the
-output buffer input mux must be set to either input from FOD or
-input from previous output, it cannot be set to Disabled anymore
-or the output won't work.
+On Wed, Jul 12, 2017 at 6:55 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch fixes IPSR{12,17,18} and MOD_SEL0 pin assignment for FSO pins
+> group.
+>
+> This is a correction because GPSR and IPSR register specification for
+> R8A7796 SoC was changed in R-Car Gen3 Hardware User's Manual Rev.0.54E.
+>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 
-Default to the input from FOD if the output buffer input mux was
-Disabled and the .prepare() was called on it.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Note that we do not set the output buffer input mux back to Disabled
-in the .unprepare() callback as there is no obvious benefit of doing
-so. We disable the entire output buffer in the .unprepare() callback
-already.
+i.e. will queue in sh-pfc-for-v4.14.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Alexey Firago <alexey_firago@mentor.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-on Salvator-XS with the display LVDS output.
----
-V2: None
-V3: None
----
- drivers/clk/clk-versaclock5.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index 248689d89632..7bdfd34e8280 100644
---- a/drivers/clk/clk-versaclock5.c
-+++ b/drivers/clk/clk-versaclock5.c
-@@ -507,6 +507,25 @@ static int vc5_clk_out_prepare(struct clk_hw *hw)
- {
- 	struct vc5_hw_data *hwdata = container_of(hw, struct vc5_hw_data, hw);
- 	struct vc5_driver_data *vc5 = hwdata->vc5;
-+	const u8 mask = VC5_OUT_DIV_CONTROL_SELB_NORM |
-+			VC5_OUT_DIV_CONTROL_SEL_EXT |
-+			VC5_OUT_DIV_CONTROL_EN_FOD;
-+	unsigned int src;
-+	int ret;
-+
-+	/*
-+	 * If the input mux is disabled, enable it first and
-+	 * select source from matching FOD.
-+	 */
-+	regmap_read(vc5->regmap, VC5_OUT_DIV_CONTROL(hwdata->num), &src);
-+	if ((src & mask) == 0) {
-+		src = VC5_OUT_DIV_CONTROL_RESET | VC5_OUT_DIV_CONTROL_EN_FOD;
-+		ret = regmap_update_bits(vc5->regmap,
-+					 VC5_OUT_DIV_CONTROL(hwdata->num),
-+					 mask | VC5_OUT_DIV_CONTROL_RESET, src);
-+		if (ret)
-+			return ret;
-+	}
- 
- 	/* Enable the clock buffer */
- 	regmap_update_bits(vc5->regmap, VC5_CLK_OUTPUT_CFG(hwdata->num, 1),
--- 
-2.11.0
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
