@@ -1,4 +1,3 @@
-Return-Path: <kieranbingham@gmail.com>
 Subject: Re: [PATCH v2 06/14] v4l: vsp1: Add pipe index argument to the VSP-DU
  API
 To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
@@ -7,8 +6,8 @@ Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 References: <20170626181226.29575-1-laurent.pinchart+renesas@ideasonboard.com>
  <20170626181226.29575-7-laurent.pinchart+renesas@ideasonboard.com>
 From: Kieran Bingham <kieranbingham@gmail.com>
-Message-ID: <915884a5-e69d-b821-4a53-afa73a03c233@gmail.com>
-Date: Thu, 13 Jul 2017 14:16:03 +0100
+Message-ID: <6853f11d-c51b-f302-689e-4c953b74d7cd@gmail.com>
+Date: Thu, 13 Jul 2017 14:14:16 +0100
 MIME-Version: 1.0
 In-Reply-To: <20170626181226.29575-7-laurent.pinchart+renesas@ideasonboard.com>
 Content-Type: text/plain; charset=utf-8
@@ -25,7 +24,7 @@ On 26/06/17 19:12, Laurent Pinchart wrote:
 > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
 A bit of comment merge between this and the next patch but it's minor and not
-worth the effort to change that ... so I'll happily ignore it if you do :)
+worth the effort to change that ... so I'll ignore it if you do :)
 
 Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
