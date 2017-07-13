@@ -1,52 +1,76 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:42651 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751827AbdGaPDu (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 31 Jul 2017 11:03:50 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 22/31] arm64: dts: salvator-xs: Add VC6 clock generator
-Date: Mon, 31 Jul 2017 17:03:14 +0200
-Message-Id: <b127daecc70896fce7a2b2ada2f43b9ba7868b92.1501509526.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1501509525.git.horms+renesas@verge.net.au>
-References: <cover.1501509525.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mark Yao <mark.yao@rock-chips.com>,
+        Heiko Stuebner <heiko@sntech.de>, Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org
+Subject: [PATCH 2/4] drm/sun4i: Use the runtime_pm commit_tail variant
+Date: Thu, 13 Jul 2017 16:41:14 +0200
+Message-Id: <672c009f30c3121d75eb367743f89b0c69d16f5f.1499956639.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.75b0c7f741ed33015a7ad44941bed1f6152a48a9.1499956639.git-series.maxime.ripard@free-electrons.com>
+References: <cover.75b0c7f741ed33015a7ad44941bed1f6152a48a9.1499956639.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.75b0c7f741ed33015a7ad44941bed1f6152a48a9.1499956639.git-series.maxime.ripard@free-electrons.com>
+References: <cover.75b0c7f741ed33015a7ad44941bed1f6152a48a9.1499956639.git-series.maxime.ripard@free-electrons.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+The backend (planes) commit can only happen when the TCON (CRTC) is
+enabled, which is not guaranteed with the default commit_tail helper.
 
-The VC6 is an I2C-controlled programmable clock generator, used on the
-board to provide a display dot clock. Add it to DT.
+Let's use the runtime_pm version that is designed specifically to deal with
+that case.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
- arch/arm64/boot/dts/renesas/salvator-xs.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/gpu/drm/sun4i/sun4i_framebuffer.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/salvator-xs.dtsi b/arch/arm64/boot/dts/renesas/salvator-xs.dtsi
-index 81227e3c2c6f..bf4d200fb546 100644
---- a/arch/arm64/boot/dts/renesas/salvator-xs.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-xs.dtsi
-@@ -18,3 +18,13 @@
- &extal_clk {
- 	clock-frequency = <16640000>;
+diff --git a/drivers/gpu/drm/sun4i/sun4i_framebuffer.c b/drivers/gpu/drm/sun4i/sun4i_framebuffer.c
+index 9872e0fc03b0..189048d33a1d 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_framebuffer.c
++++ b/drivers/gpu/drm/sun4i/sun4i_framebuffer.c
+@@ -10,6 +10,7 @@
+  * the License, or (at your option) any later version.
+  */
+ 
++#include <drm/drm_atomic.h>
+ #include <drm/drm_atomic_helper.h>
+ #include <drm/drm_fb_cma_helper.h>
+ #include <drm/drmP.h>
+@@ -31,6 +32,10 @@ static const struct drm_mode_config_funcs sun4i_de_mode_config_funcs = {
+ 	.fb_create		= drm_fb_cma_create,
  };
-+
-+&i2c4 {
-+	versaclock6: clock-generator@6a {
-+		compatible = "idt,5p49v6901";
-+		reg = <0x6a>;
-+		#clock-cells = <1>;
-+		clocks = <&x23_clk>;
-+		clock-names = "xin";
-+	};
+ 
++static struct drm_mode_config_helper_funcs sun4i_de_mode_config_helpers = {
++	.atomic_commit_tail	= drm_atomic_helper_commit_tail_runtime_pm,
 +};
++
+ struct drm_fbdev_cma *sun4i_framebuffer_init(struct drm_device *drm)
+ {
+ 	drm_mode_config_reset(drm);
+@@ -39,6 +44,7 @@ struct drm_fbdev_cma *sun4i_framebuffer_init(struct drm_device *drm)
+ 	drm->mode_config.max_height = 8192;
+ 
+ 	drm->mode_config.funcs = &sun4i_de_mode_config_funcs;
++	drm->mode_config.helper_private = &sun4i_de_mode_config_helpers;
+ 
+ 	return drm_fbdev_cma_init(drm, 32, drm->mode_config.num_connector);
+ }
 -- 
-2.1.4
+git-series 0.9.1
