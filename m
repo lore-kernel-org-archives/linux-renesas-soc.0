@@ -1,67 +1,80 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:33842 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751278AbdGQPNs (ORCPT
+Received: from mail.free-electrons.com ([62.4.15.54]:60720 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752026AbdGMOlU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Jul 2017 11:13:48 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-watchdog@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 5/5] watchdog: renesas_wdt: add another divider option
-Date: Mon, 17 Jul 2017 17:12:30 +0200
-Message-Id: <20170717151230.12680-6-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170717151230.12680-1-wsa+renesas@sang-engineering.com>
-References: <20170717151230.12680-1-wsa+renesas@sang-engineering.com>
+        Thu, 13 Jul 2017 10:41:20 -0400
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mark Yao <mark.yao@rock-chips.com>,
+        Heiko Stuebner <heiko@sntech.de>, Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org
+Subject: [PATCH 0/4] drm/sun4i: Fix a register access bug
+Date: Thu, 13 Jul 2017 16:41:12 +0200
+Message-Id: <cover.75b0c7f741ed33015a7ad44941bed1f6152a48a9.1499956639.git-series.maxime.ripard@free-electrons.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If we set RWTCSRB to 0, we can gain 4096 as another divider value. This
-is supported by all R-Car Gen2 and Gen3 devices which we aim to support.
+The Allwinner backend has a commit bit in order to push the new
+configuration to the actual hardware. We've always been using that bit.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/watchdog/renesas_wdt.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+However, we also should poll for that bit to clear, which we don't.
+Accessing any register while a commit is pending is forbidden, and will for
+example show a symptom of reading another, random, register.
 
-diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
-index 599ba5aaa0536f..e3f204bb8802aa 100644
---- a/drivers/watchdog/renesas_wdt.c
-+++ b/drivers/watchdog/renesas_wdt.c
-@@ -23,21 +23,22 @@
- #define RWTCSRA_WOVF	BIT(4)
- #define RWTCSRA_WRFLG	BIT(5)
- #define RWTCSRA_TME	BIT(7)
-+#define RWTCSRB		8
- 
- #define RWDT_DEFAULT_TIMEOUT 60U
- 
- /*
-  * In probe, clk_rate is checked to be not more than 16 bit * biggest clock
-- * divider (10 bits). d is only a factor to fully utilize the WDT counter and
-+ * divider (12 bits). d is only a factor to fully utilize the WDT counter and
-  * will not exceed its 16 bits. Thus, no overflow, we stay below 32 bits.
-  */
- #define MUL_BY_CLKS_PER_SEC(p, d) \
- 	DIV_ROUND_UP((d) * (p)->clk_rate, clk_divs[(p)->cks])
- 
--/* d is 16 bit, clk_divs 10 bit -> no 32 bit overflow */
-+/* d is 16 bit, clk_divs 12 bit -> no 32 bit overflow */
- #define DIV_BY_CLKS_PER_SEC(p, d) ((d) * clk_divs[(p)->cks] / (p)->clk_rate)
- 
--static const unsigned int clk_divs[] = { 1, 4, 16, 32, 64, 128, 1024 };
-+static const unsigned int clk_divs[] = { 1, 4, 16, 32, 64, 128, 1024, 4096 };
- 
- static bool nowayout = WATCHDOG_NOWAYOUT;
- module_param(nowayout, bool, 0);
-@@ -77,6 +78,7 @@ static int rwdt_start(struct watchdog_device *wdev)
- 
- 	clk_prepare_enable(priv->clk);
- 
-+	rwdt_write(priv, 0, RWTCSRB);
- 	rwdt_write(priv, priv->cks, RWTCSRA);
- 	rwdt_init_timeout(wdev);
- 
+If you get this during a read/modify/write cycle, this will result in
+random register corruption, which are pretty bad.
+
+This can be shown using the following program (while the backend is
+active):
+http://code.bulix.org/gdl44p-161437?raw
+
+Fortunately for us, this is not really likely to happen. The window where
+it can happen is quite thin, and it only happens during a modeset, since
+it's the only time we commit some new configuration.
+
+Unfortunately for us, QT does a ridiculous amount of modeset, and will just
+hit that window after a while, creating a distorded (since the register we
+read/modify/write also has scaling attributes) or with weird colors (since
+it also has a invertion of red and blue components). And might fix itself
+later on by reading another random register with proper values for these
+fields.
+
+Let me know what you think,
+Maxime
+
+Maxime Ripard (4):
+  drm/atomic: implement drm_atomic_helper_commit_tail for runtime_pm users
+  drm/sun4i: Use the runtime_pm commit_tail variant
+  drm/sun4i: engine: Add commit_poll function
+  drm/sun4i: make sure we don't have a commit pending
+
+ drivers/gpu/drm/drm_atomic_helper.c        | 47 +++++++++++++++--------
+ drivers/gpu/drm/exynos/exynos_drm_fb.c     | 27 +-------------
+ drivers/gpu/drm/rcar-du/rcar_du_kms.c      | 18 +---------
+ drivers/gpu/drm/rockchip/rockchip_drm_fb.c | 21 +----------
+ drivers/gpu/drm/sun4i/sun4i_backend.c      | 14 +++++++-
+ drivers/gpu/drm/sun4i/sun4i_crtc.c         |  3 +-
+ drivers/gpu/drm/sun4i/sun4i_framebuffer.c  |  6 +++-
+ drivers/gpu/drm/sun4i/sunxi_engine.h       | 14 +++++++-
+ include/drm/drm_atomic_helper.h            |  1 +-
+ 9 files changed, 73 insertions(+), 78 deletions(-)
+
+base-commit: a70e9c77d0f09e7d00b62a8d618a61b2dfc5d889
 -- 
-2.11.0
+git-series 0.9.1
