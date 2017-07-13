@@ -1,69 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:3530 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751037AbdGMIqi (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:49215 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751029AbdGMIMS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Jul 2017 04:46:38 -0400
-Date: Thu, 13 Jul 2017 16:46:00 +0800
-From: Ye Xiaolong <xiaolong.ye@intel.com>
-To: Simon Horman <horms@verge.net.au>
-Cc: kbuild test robot <lkp@intel.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        linux-mmc@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>,
+        Thu, 13 Jul 2017 04:12:18 -0400
+Date: Thu, 13 Jul 2017 10:12:14 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Chris Paterson <chris.paterson2@renesas.com>,
         Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
-        linux-renesas-soc@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, kbuild-all@01.org,
         Biju Das <biju.das@bp.renesas.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [kbuild-all] [PATCH 3/3] ARM: dts: iwg20m: Add MMCIF0 support
-Message-ID: <20170713084600.GA1787@yexl-desktop>
-References: <1499853805-5915-4-git-send-email-chris.paterson2@renesas.com>
- <201707130850.0py1QazG%fengguang.wu@intel.com>
- <20170713075414.GF5580@verge.net.au>
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 3/3] ARM: dts: iwg20m: Add MMCIF0 support
+Message-ID: <20170713081213.GL5580@verge.net.au>
+References: <1499853805-5915-1-git-send-email-chris.paterson2@renesas.com>
+ <1499853805-5915-4-git-send-email-chris.paterson2@renesas.com>
+ <CAMuHMdXMFkXopGiLOVf0jDDQTKig-wFrgMOKrf14341h85kPNw@mail.gmail.com>
+ <20170713080228.GI5580@verge.net.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20170713075414.GF5580@verge.net.au>
+In-Reply-To: <20170713080228.GI5580@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 07/13, Simon Horman wrote:
->On Thu, Jul 13, 2017 at 08:25:56AM +0800, kbuild test robot wrote:
->> Hi Chris,
->> 
->> [auto build test ERROR on renesas/next]
->> [also build test ERROR on next-20170712]
->> [cannot apply to v4.12]
->> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
->> 
->> url:    https://github.com/0day-ci/linux/commits/Chris-Paterson/Add-MMCIF0-support-for-r8a7743-iwg20m/20170713-042814
->> base:   https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git next
->> config: arm-at91_dt_defconfig (attached as .config)
->> compiler: arm-linux-gnueabi-gcc (Debian 6.1.1-9) 6.1.1 20160705
->> reproduce:
->>         wget https://raw.githubusercontent.com/01org/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->>         chmod +x ~/bin/make.cross
->>         # save the attached .config to linux build tree
->>         make.cross ARCH=arm 
->> 
->> All errors (new ones prefixed by >>):
->> 
->> >> Error: arch/arm/boot/dts/r8a7743-iwg20m.dtsi:40.1-5 Label or path pfc not found
->>    FATAL ERROR: Syntax error parsing input tree
->
->This seems to be a false positive. The node in question is present in
->the devel branch which is the base of these changes.
+On Thu, Jul 13, 2017 at 10:02:29AM +0200, Simon Horman wrote:
+> On Wed, Jul 12, 2017 at 01:52:49PM +0200, Geert Uytterhoeven wrote:
+> > Hi Chris,
+> > 
+> > On Wed, Jul 12, 2017 at 12:03 PM, Chris Paterson
+> > <chris.paterson2@renesas.com> wrote:
+> > > Define the iwg20m board dependent part of the MMCIF0 device node.
+> > >
+> > > Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+> > >
+> > > diff --git a/arch/arm/boot/dts/r8a7743-iwg20m.dtsi b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
+> > > index 001ca91..ffce1b6 100644
+> > > --- a/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
+> > > +++ b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
+> > 
+> > > +&pfc {
+> > > +       mmcif0_pins: mmc {
+> > > +               groups = "mmc_data8", "mmc_ctrl";
+> > 
+> > "mmc_data8" is not correct, as D6/D7 of the eMMC are not connected to GP6_28
+> > resp. GP6_29, but to GP6_6 resp. GP6_7.
+> > So it should be "mmc_data8_b".
+> > 
+> > Unfortunately the latter pin group isn't supported by the PFC driver yet.
+> > Cooking a patch...
+> 
+> The above notwithstanding I have applied this patch for v4.14.
 
-Thanks for the feedback, we'll update 0day's configuration accordingly.
+...
 
-Thanks,
-Xiaolong
->
->
->_______________________________________________
->kbuild-all mailing list
->kbuild-all@lists.01.org
->https://lists.01.org/mailman/listinfo/kbuild-all
+Sorry, I think I need more coffee.
+
+I misread Geert's comment above. I have dropped this patch.
+Please post a corrected v2 of this patch.
