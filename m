@@ -1,79 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:15449 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751915AbdGGN0r (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:56045 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752082AbdGMPvJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Jul 2017 09:26:47 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH v 2/2] ARM: dts: iwg20d-q7: Add Ethernet AVB support
-Date: Fri,  7 Jul 2017 14:12:45 +0100
-Message-Id: <1499433165-62475-3-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1499433165-62475-1-git-send-email-biju.das@bp.renesas.com>
-References: <1499433165-62475-1-git-send-email-biju.das@bp.renesas.com>
+        Thu, 13 Jul 2017 11:51:09 -0400
+From: Chris Paterson <Chris.Paterson2@renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+CC: "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Subject: RE: [PATCH] pinctrl: sh-pfc: r8a7791: Add missing mmc_data8_b pin
+ group
+Date: Thu, 13 Jul 2017 15:50:56 +0000
+Message-ID: <TY1PR06MB0702C7C16CE4766948CDC37DB7AC0@TY1PR06MB0702.apcprd06.prod.outlook.com>
+References: <1499860713-27650-1-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1499860713-27650-1-git-send-email-geert+renesas@glider.be>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Define the iWave RainboW-G20D-Qseven board dependent part of the Ethernet
-AVB device node.
+Hello Geert,
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> From: linux-gpio-owner@vger.kernel.org [mailto:linux-gpio-
+> owner@vger.kernel.org] On Behalf Of Geert Uytterhoeven
+> Sent: 12 July 2017 12:59
+>=20
+> Pins D6 and D7 of the MMC interface can be muxed to two different sets of
+> pins, but currently only one set is supported.
+> Add a pin group for the alternative set to fix this.
+>=20
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
----
- arch/arm/boot/dts/r8a7743-iwg20d-q7.dts | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-index 497aec0..081af01 100644
---- a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-+++ b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-@@ -17,6 +17,7 @@
- 
- 	aliases {
- 		serial0 = &scif0;
-+		ethernet0 = &avb;
- 	};
- };
- 
-@@ -25,6 +26,11 @@
- 		groups = "scif0_data_d";
- 		function = "scif0";
- 	};
-+
-+	avb_pins: avb {
-+		groups = "avb_mdio", "avb_gmii";
-+		function = "avb";
-+	};
- };
- 
- &scif0 {
-@@ -33,3 +39,18 @@
- 
- 	status = "okay";
- };
-+
-+&avb {
-+	pinctrl-0 = <&avb_pins>;
-+	pinctrl-names = "default";
-+
-+	phy-handle = <&phy3>;
-+	phy-mode = "gmii";
-+	renesas,no-ether-link;
-+	status = "okay";
-+
-+	phy3: ethernet-phy@3 {
-+		reg = <3>;
-+		micrel,led-mode = <1>;
-+	};
-+};
--- 
-1.9.1
+I've also tested this on the iwg20m board which uses these pins. All looks =
+okay.
+Tested-by: Chris Paterson <chris.paterson2@renesas.com>
+
+Kind regards, Chris
