@@ -1,19 +1,7 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:49972 "EHLO
-        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751340AbdGNI40 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Jul 2017 04:56:26 -0400
-MIME-Version: 1.0
-In-Reply-To: <a6dfec7ea3598c64f6653e9b8b5febac79172341.1499956639.git-series.maxime.ripard@free-electrons.com>
-References: <cover.75b0c7f741ed33015a7ad44941bed1f6152a48a9.1499956639.git-series.maxime.ripard@free-electrons.com>
- <a6dfec7ea3598c64f6653e9b8b5febac79172341.1499956639.git-series.maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Fri, 14 Jul 2017 16:56:01 +0800
-Message-ID: <CAGb2v64KnB_zU0yk7MsGr9WRK1wpWq1xOj_cNuQ4mSQJeAGarw@mail.gmail.com>
-Subject: Re: [PATCH 4/4] drm/sun4i: make sure we don't have a commit pending
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Daniel Vetter <daniel.vetter@intel.com>,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Daniel Vetter <daniel.vetter@intel.com>,
         David Airlie <airlied@linux.ie>,
         Jani Nikula <jani.nikula@linux.intel.com>,
         Sean Paul <seanpaul@chromium.org>,
@@ -26,86 +14,78 @@ Cc: Daniel Vetter <daniel.vetter@intel.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Mark Yao <mark.yao@rock-chips.com>,
         Heiko Stuebner <heiko@sntech.de>, Chen-Yu Tsai <wens@csie.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/SAMSUNG EXYNO..."
-        <linux-samsung-soc@vger.kernel.org>,
-        "open list:ARM/SHMOBILE ARM..." <linux-renesas-soc@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org
+Subject: [PATCH 4/4] drm/sun4i: make sure we don't have a commit pending
+Date: Thu, 13 Jul 2017 16:41:16 +0200
+Message-Id: <a6dfec7ea3598c64f6653e9b8b5febac79172341.1499956639.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.75b0c7f741ed33015a7ad44941bed1f6152a48a9.1499956639.git-series.maxime.ripard@free-electrons.com>
+References: <cover.75b0c7f741ed33015a7ad44941bed1f6152a48a9.1499956639.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.75b0c7f741ed33015a7ad44941bed1f6152a48a9.1499956639.git-series.maxime.ripard@free-electrons.com>
+References: <cover.75b0c7f741ed33015a7ad44941bed1f6152a48a9.1499956639.git-series.maxime.ripard@free-electrons.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+In the earlier display engine designs, any register access while a commit
+is pending is forbidden.
 
-On Thu, Jul 13, 2017 at 10:41 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> In the earlier display engine designs, any register access while a commit
-> is pending is forbidden.
->
-> One of the symptoms is that reading a register will return another, random,
-> register value which can lead to register corruptions if we ever do a
-> read/modify/write cycle.
+One of the symptoms is that reading a register will return another, random,
+register value which can lead to register corruptions if we ever do a
+read/modify/write cycle.
 
-Alternatively, if changes to the backend (layers) are guaranteed to happen
-while the CRTC is disabled (which seems to be the case after looking at
-drm_atomic_helper_commit_planes and drm_atomic_helper_commit_tail), we
-could just turn on register auto-commit all the time and not deal with
-this.
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/gpu/drm/sun4i/sun4i_backend.c | 14 ++++++++++++++
+ drivers/gpu/drm/sun4i/sun4i_crtc.c    |  1 +
+ 2 files changed, 15 insertions(+)
 
-ChenYu
-
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
->  drivers/gpu/drm/sun4i/sun4i_backend.c | 14 ++++++++++++++
->  drivers/gpu/drm/sun4i/sun4i_crtc.c    |  1 +
->  2 files changed, 15 insertions(+)
->
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.c b/drivers/gpu/drm/sun4i/sun4i_backend.c
-> index cf480218daa5..ce1f40f7511e 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_backend.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_backend.c
-> @@ -67,6 +67,19 @@ static void sun4i_backend_commit(struct sunxi_engine *engine)
->                      SUN4I_BACKEND_REGBUFFCTL_LOADCTL);
->  }
->
-> +static int sun4i_backend_commit_poll(struct sunxi_engine *engine)
-> +{
-> +       u32 val;
-> +
-> +       DRM_DEBUG_DRIVER("Polling for the commit to end\n");
-> +
-> +       return regmap_read_poll_timeout(engine->regs,
-> +                                       SUN4I_BACKEND_REGBUFFCTL_REG,
-> +                                       val,
-> +                                       !(val & SUN4I_BACKEND_REGBUFFCTL_LOADCTL),
-> +                                       100, 50000);
-> +}
-> +
->  void sun4i_backend_layer_enable(struct sun4i_backend *backend,
->                                 int layer, bool enable)
->  {
-> @@ -330,6 +343,7 @@ static int sun4i_backend_of_get_id(struct device_node *node)
->
->  static const struct sunxi_engine_ops sun4i_backend_engine_ops = {
->         .commit                         = sun4i_backend_commit,
-> +       .commit_poll                    = sun4i_backend_commit_poll,
->         .layers_init                    = sun4i_layers_init,
->         .apply_color_correction         = sun4i_backend_apply_color_correction,
->         .disable_color_correction       = sun4i_backend_disable_color_correction,
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_crtc.c b/drivers/gpu/drm/sun4i/sun4i_crtc.c
-> index 2eba1d8639d8..31550493fa1d 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_crtc.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_crtc.c
-> @@ -34,6 +34,7 @@ static void sun4i_crtc_atomic_begin(struct drm_crtc *crtc,
->                                     struct drm_crtc_state *old_state)
->  {
->         struct sun4i_crtc *scrtc = drm_crtc_to_sun4i_crtc(crtc);
-> +       struct sunxi_engine *engine = scrtc->engine;
->         struct drm_device *dev = crtc->dev;
->         unsigned long flags;
->
-> --
-> git-series 0.9.1
+diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.c b/drivers/gpu/drm/sun4i/sun4i_backend.c
+index cf480218daa5..ce1f40f7511e 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_backend.c
++++ b/drivers/gpu/drm/sun4i/sun4i_backend.c
+@@ -67,6 +67,19 @@ static void sun4i_backend_commit(struct sunxi_engine *engine)
+ 		     SUN4I_BACKEND_REGBUFFCTL_LOADCTL);
+ }
+ 
++static int sun4i_backend_commit_poll(struct sunxi_engine *engine)
++{
++	u32 val;
++
++	DRM_DEBUG_DRIVER("Polling for the commit to end\n");
++
++	return regmap_read_poll_timeout(engine->regs,
++					SUN4I_BACKEND_REGBUFFCTL_REG,
++					val,
++					!(val & SUN4I_BACKEND_REGBUFFCTL_LOADCTL),
++					100, 50000);
++}
++
+ void sun4i_backend_layer_enable(struct sun4i_backend *backend,
+ 				int layer, bool enable)
+ {
+@@ -330,6 +343,7 @@ static int sun4i_backend_of_get_id(struct device_node *node)
+ 
+ static const struct sunxi_engine_ops sun4i_backend_engine_ops = {
+ 	.commit				= sun4i_backend_commit,
++	.commit_poll			= sun4i_backend_commit_poll,
+ 	.layers_init			= sun4i_layers_init,
+ 	.apply_color_correction		= sun4i_backend_apply_color_correction,
+ 	.disable_color_correction	= sun4i_backend_disable_color_correction,
+diff --git a/drivers/gpu/drm/sun4i/sun4i_crtc.c b/drivers/gpu/drm/sun4i/sun4i_crtc.c
+index 2eba1d8639d8..31550493fa1d 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_crtc.c
++++ b/drivers/gpu/drm/sun4i/sun4i_crtc.c
+@@ -34,6 +34,7 @@ static void sun4i_crtc_atomic_begin(struct drm_crtc *crtc,
+ 				    struct drm_crtc_state *old_state)
+ {
+ 	struct sun4i_crtc *scrtc = drm_crtc_to_sun4i_crtc(crtc);
++	struct sunxi_engine *engine = scrtc->engine;
+ 	struct drm_device *dev = crtc->dev;
+ 	unsigned long flags;
+ 
+-- 
+git-series 0.9.1
