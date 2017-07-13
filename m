@@ -1,72 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f169.google.com ([209.85.220.169]:36269 "EHLO
-        mail-qk0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933157AbdGKOnq (ORCPT
+Received: from mail-it0-f65.google.com ([209.85.214.65]:36591 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750969AbdGMI3I (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 11 Jul 2017 10:43:46 -0400
-Received: by mail-qk0-f169.google.com with SMTP id p21so2602279qke.3
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 11 Jul 2017 07:43:41 -0700 (PDT)
+        Thu, 13 Jul 2017 04:29:08 -0400
 MIME-Version: 1.0
-In-Reply-To: <20170630105649.16137-1-wsa+renesas@sang-engineering.com>
-References: <20170630105649.16137-1-wsa+renesas@sang-engineering.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 11 Jul 2017 16:43:35 +0200
-Message-ID: <CAPDyKFrjLfWmz=zoUe3P_SdMcmeAqOeprzW1TZ2KeQUEhQtSRg@mail.gmail.com>
-Subject: Re: [PATCH 0/4] tmio/sdhi: use max sd_buf size & clean header file before
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+In-Reply-To: <1499878547-3452-3-git-send-email-ykaneko0929@gmail.com>
+References: <1499878547-3452-1-git-send-email-ykaneko0929@gmail.com> <1499878547-3452-3-git-send-email-ykaneko0929@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 13 Jul 2017 10:29:06 +0200
+Message-ID: <CAMuHMdXcOjTDS09K1Q16G6OoZxDW0-8_63Uhy1a2J_rQMWkbmQ@mail.gmail.com>
+Subject: Re: [PATCH 02/14] pinctrl: sh-pfc: r8a7796: Fix IPSR register setting
+ when MSIOF3_SS1_E pin was selected
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa@the-dreams.de>
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 30 June 2017 at 12:56, Wolfram Sang <wsa+renesas@sang-engineering.com> wrote:
-> From: Wolfram Sang <wsa@the-dreams.de>
->
-> The main patch is patch 4 which uses the maximum sd_buf size, i.e. 32 bit on
-> Gen2 and 64 bit on Gen3. Instead of a new flag, we use the bus_shift
-> information we already have. See the patch description for details.
->
-> Before fixing this, I wanted to remove a magic value in that function which is
-> done in patch 3.
->
-> When adding the new define, I noticed that some description is missing in the
-> header which is fixed with patch 2.
->
-> When adding the description, I noticed this meanwhile obsolete define which
-> gets removed in patch 1.
->
-> That's the way it went :)
->
-> Tested on Salvator-X/M3-W and Lager/H2.
+Hi Kaneko-san,
 
-Thanks, applied for next!
+On Wed, Jul 12, 2017 at 6:55 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch fixes to set IPSR register when using MSIOF3_SS1_E pin function
+> is selected.
+>
+> This is a correction to the incorrect implementation of IPSR register
+> pin assignment for R8A7796 SoC specification of R-Car Gen3 Hardware
+> User's Manual Rev.0.51E or later.
+>
+> Fixes: f9aece7344bd ("pinctrl: sh-pfc: Initial R8A7796 PFC support")
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 
-Kind regards
-Uffe
+Identical to "[PATCH 4/5] pinctrl: sh-pfc: r8a7796: Fix IPSR setting for
+MSIOF3_SS1_E pin" I sent yesterday.
 
->
-> Regards,
->
->    Wolfram
->
-> Wolfram Sang (4):
->   mmc: tmio: remove obsolete TMIO_BBS
->   mmc: tmio: add references to bit defines in the header
->   mmc: tmio: no magic values when enabling DMA
->   mmc: sdhi: use maximum width for the sdbuf register
->
->  drivers/mmc/host/renesas_sdhi_core.c | 5 ++---
->  drivers/mmc/host/tmio_mmc.h          | 7 +++++--
->  2 files changed, 7 insertions(+), 5 deletions(-)
->
-> --
-> 2.11.0
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
