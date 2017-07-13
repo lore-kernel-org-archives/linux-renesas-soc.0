@@ -1,72 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:49073 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:48913 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750846AbdGMICd (ORCPT
+        with ESMTP id S1750846AbdGMHyT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Jul 2017 04:02:33 -0400
-Date: Thu, 13 Jul 2017 10:02:29 +0200
+        Thu, 13 Jul 2017 03:54:19 -0400
+Date: Thu, 13 Jul 2017 09:54:14 +0200
 From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Chris Paterson <chris.paterson2@renesas.com>,
+To: kbuild test robot <lkp@intel.com>
+Cc: Chris Paterson <chris.paterson2@renesas.com>, kbuild-all@01.org,
         Ulf Hansson <ulf.hansson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Linux MMC List <linux-mmc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
+        Biju Das <biju.das@bp.renesas.com>, linux-mmc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
 Subject: Re: [PATCH 3/3] ARM: dts: iwg20m: Add MMCIF0 support
-Message-ID: <20170713080228.GI5580@verge.net.au>
-References: <1499853805-5915-1-git-send-email-chris.paterson2@renesas.com>
- <1499853805-5915-4-git-send-email-chris.paterson2@renesas.com>
- <CAMuHMdXMFkXopGiLOVf0jDDQTKig-wFrgMOKrf14341h85kPNw@mail.gmail.com>
+Message-ID: <20170713075414.GF5580@verge.net.au>
+References: <1499853805-5915-4-git-send-email-chris.paterson2@renesas.com>
+ <201707130850.0py1QazG%fengguang.wu@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdXMFkXopGiLOVf0jDDQTKig-wFrgMOKrf14341h85kPNw@mail.gmail.com>
+In-Reply-To: <201707130850.0py1QazG%fengguang.wu@intel.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Jul 12, 2017 at 01:52:49PM +0200, Geert Uytterhoeven wrote:
+On Thu, Jul 13, 2017 at 08:25:56AM +0800, kbuild test robot wrote:
 > Hi Chris,
 > 
-> On Wed, Jul 12, 2017 at 12:03 PM, Chris Paterson
-> <chris.paterson2@renesas.com> wrote:
-> > Define the iwg20m board dependent part of the MMCIF0 device node.
-> >
-> > Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-> >
-> > diff --git a/arch/arm/boot/dts/r8a7743-iwg20m.dtsi b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
-> > index 001ca91..ffce1b6 100644
-> > --- a/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
-> > +++ b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
+> [auto build test ERROR on renesas/next]
+> [also build test ERROR on next-20170712]
+> [cannot apply to v4.12]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 > 
-> > +&pfc {
-> > +       mmcif0_pins: mmc {
-> > +               groups = "mmc_data8", "mmc_ctrl";
+> url:    https://github.com/0day-ci/linux/commits/Chris-Paterson/Add-MMCIF0-support-for-r8a7743-iwg20m/20170713-042814
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git next
+> config: arm-at91_dt_defconfig (attached as .config)
+> compiler: arm-linux-gnueabi-gcc (Debian 6.1.1-9) 6.1.1 20160705
+> reproduce:
+>         wget https://raw.githubusercontent.com/01org/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         # save the attached .config to linux build tree
+>         make.cross ARCH=arm 
 > 
-> "mmc_data8" is not correct, as D6/D7 of the eMMC are not connected to GP6_28
-> resp. GP6_29, but to GP6_6 resp. GP6_7.
-> So it should be "mmc_data8_b".
+> All errors (new ones prefixed by >>):
 > 
-> Unfortunately the latter pin group isn't supported by the PFC driver yet.
-> Cooking a patch...
+> >> Error: arch/arm/boot/dts/r8a7743-iwg20m.dtsi:40.1-5 Label or path pfc not found
+>    FATAL ERROR: Syntax error parsing input tree
 
-The above notwithstanding I have applied this patch for v4.14.
-
-This is under the assumption that:
-a) the relevant (pfc) driver changes will appear in v4.14 and;
-b) there is no regression introduced in having this change present
-   without the driver changes
-
-An implication of the above is that the new feature will not work
-until both the driver and DTS changes are in the same tree. But that the
-trees with each of those changes continue to work at least as well as they
-did before.
-
-Please test the devel branch that I push later today to make sure there
-are no regressions.
+This seems to be a false positive. The node in question is present in
+the devel branch which is the base of these changes.
