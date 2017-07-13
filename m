@@ -1,35 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52694 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750786AbdGNHUg (ORCPT
+Received: from mail-it0-f66.google.com ([209.85.214.66]:36122 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750854AbdGMLRM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Jul 2017 03:20:36 -0400
-Date: Fri, 14 Jul 2017 09:20:31 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+        Thu, 13 Jul 2017 07:17:12 -0400
+Received: by mail-it0-f66.google.com with SMTP id k3so6667294ita.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 13 Jul 2017 04:17:12 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <20170713105822.5327-2-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170713105822.5327-1-laurent.pinchart+renesas@ideasonboard.com> <20170713105822.5327-2-laurent.pinchart+renesas@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 13 Jul 2017 13:17:10 +0200
+Message-ID: <CAMuHMdUPrefMOEELnY8v_Apn8DmBQ+=KHK0P7k4CyhbaXE2SnQ@mail.gmail.com>
 Subject: Re: [PATCH 2/2] arm64: dts: renesas: r8a7796: Add resets property to
  VSP devices
-Message-ID: <20170714072030.GD12105@verge.net.au>
-References: <20170713105822.5327-1-laurent.pinchart+renesas@ideasonboard.com>
- <20170713105822.5327-2-laurent.pinchart+renesas@ideasonboard.com>
- <CAMuHMdUPrefMOEELnY8v_Apn8DmBQ+=KHK0P7k4CyhbaXE2SnQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdUPrefMOEELnY8v_Apn8DmBQ+=KHK0P7k4CyhbaXE2SnQ@mail.gmail.com>
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Jul 13, 2017 at 01:17:10PM +0200, Geert Uytterhoeven wrote:
-> On Thu, Jul 13, 2017 at 12:58 PM, Laurent Pinchart
-> <laurent.pinchart+renesas@ideasonboard.com> wrote:
-> > The VSP nodes are missing the resets property. Add it.
-> >
-> > Fixes: 5a89c826745f ("arm64: dts: renesas: r8a7796: Add VSP instances")
-> > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Thu, Jul 13, 2017 at 12:58 PM, Laurent Pinchart
+<laurent.pinchart+renesas@ideasonboard.com> wrote:
+> The VSP nodes are missing the resets property. Add it.
+>
+> Fixes: 5a89c826745f ("arm64: dts: renesas: r8a7796: Add VSP instances")
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Thanks, I have squashed this into the commit referenced above.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
