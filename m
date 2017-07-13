@@ -1,59 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:36958 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753124AbdGNQIq (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:48831 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750807AbdGMHtY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Jul 2017 12:08:46 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v2 0/6] vsp1 partition algorithm improvements
-Date: Fri, 14 Jul 2017 17:08:31 +0100
-Message-Id: <cover.525a94c41c3857a3f4bb8b8bbbccf78cf0c1dc78.1500048373.git-series.kieran.bingham+renesas@ideasonboard.com>
+        Thu, 13 Jul 2017 03:49:24 -0400
+Date: Thu, 13 Jul 2017 09:49:21 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v2 3/7] arm64: dts: renesas: r8a7796: Add VSP instances
+Message-ID: <20170713074920.GE5580@verge.net.au>
+References: <20170621093133.5677-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20170621093133.5677-4-laurent.pinchart+renesas@ideasonboard.com>
+ <CAMuHMdV93D9GVEEuOnHp08NyFKy=BZqHC_FXWNMf6hHcGXCMGg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdV93D9GVEEuOnHp08NyFKy=BZqHC_FXWNMf6hHcGXCMGg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Some updates and initial improvements for the VSP1 partition algorithm that
-remove redundant processing and variables, reducing the processing done in
-interrupt context slightly.
+On Wed, Jul 12, 2017 at 09:24:22AM +0200, Geert Uytterhoeven wrote:
+> Hi Laurent, Simon,
+> 
+> On Wed, Jun 21, 2017 at 11:31 AM, Laurent Pinchart
+> <laurent.pinchart+renesas@ideasonboard.com> wrote:
+> > The r8a7796 has 5 VSP instances.
+> >
+> > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> Ah, the pitfalls of reposting patches 8 months later...
+> 
+> > ---
+> >  arch/arm64/boot/dts/renesas/r8a7796.dtsi | 50 ++++++++++++++++++++++++++++++++
+> >  1 file changed, 50 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> > index 28b0e2127021..ad9cd1c3199f 100644
+> > --- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> > +++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> > @@ -1447,6 +1447,16 @@
+> >                         power-domains = <&sysc R8A7796_PD_A3VC>;
+> >                 };
+> >
+> > +               vspb: vsp@fe960000 {
+> > +                       compatible = "renesas,vsp2";
+> > +                       reg = <0 0xfe960000 0 0x8000>;
+> > +                       interrupts = <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>;
+> > +                       clocks = <&cpg CPG_MOD 626>;
+> > +                       power-domains = <&sysc R8A7796_PD_A3VC>;
+> 
+> ... missing resets properties.
 
-Patches 1, 2 and 3 clean up the calculation of the partition windows such that
-they are only calculated once at streamon.
-
-Patch 4 improves the allocations with a new vsp1_partition object to track each
-window state.
-
-Patches 5, and 6 then go on to enhance the partition algorithm by allowing each
-entity to calculate the requirements for it's pipeline predecessor to
-successfully generate the requested output window. This system allows the
-entity objects to specify what they need to fulfil the output for the next
-entity in the pipeline.
-
-v2:
- - Rebased to v4.12-rc1
- - Partition tables dynamically allocated
- - review fixups
-
-Kieran Bingham (6):
-  v4l: vsp1: Move vsp1_video_pipeline_setup_partitions() function
-  v4l: vsp1: Calculate partition sizes at stream start.
-  v4l: vsp1: Remove redundant context variables
-  v4l: vsp1: Move partition rectangles to struct and operate directly
-  v4l: vsp1: Provide UDS register updates
-  v4l: vsp1: Allow entities to participate in the partition algorithm
-
- drivers/media/platform/vsp1/vsp1_entity.h |   8 +-
- drivers/media/platform/vsp1/vsp1_pipe.c   |  22 +++-
- drivers/media/platform/vsp1/vsp1_pipe.h   |  48 ++++++-
- drivers/media/platform/vsp1/vsp1_regs.h   |  14 ++-
- drivers/media/platform/vsp1/vsp1_rpf.c    |  31 ++--
- drivers/media/platform/vsp1/vsp1_sru.c    |  30 ++++-
- drivers/media/platform/vsp1/vsp1_uds.c    |  43 +++++-
- drivers/media/platform/vsp1/vsp1_video.c  | 163 ++++++++++++-----------
- drivers/media/platform/vsp1/vsp1_wpf.c    |  33 +++--
- 9 files changed, 289 insertions(+), 103 deletions(-)
-
-base-commit: 70e60837e669f6fbc8bba30db9a2244d347643bc
--- 
-git-series 0.9.1
+Sorry for letting that slip through.
+Laurent, please send an incremental patch.
