@@ -4,8 +4,8 @@ To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
 Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 References: <20170626181226.29575-1-laurent.pinchart+renesas@ideasonboard.com>
 From: Kieran Bingham <kieranbingham@gmail.com>
-Message-ID: <d41a54c9-6980-a806-8024-16bae55812ae@gmail.com>
-Date: Thu, 13 Jul 2017 13:16:16 +0100
+Message-ID: <19cbb3c6-aa0a-3f0a-e2d5-0beaa61453f1@gmail.com>
+Date: Thu, 13 Jul 2017 13:11:16 +0100
 MIME-Version: 1.0
 In-Reply-To: <20170626181226.29575-1-laurent.pinchart+renesas@ideasonboard.com>
 Content-Type: text/plain; charset=utf-8
@@ -30,16 +30,11 @@ VGA output connected and ran
 
 This was soon followed by a kernel error trace [0] shown below.
 
-However replicating this is possibly more complicated than just running kmstest
---flip --sync ... I've had to do various iterations of running with/without
-{flip, sync} but I have reproduced 'issues' about 3 times now.
+Interestingly, I haven't been able to make this happen on the
 
-Interestingly, I haven't been able to make this happen on the ES1.0 platform as
-yet...
-
-Regardless of that, this series conflicts with my current developments,
-therefore I will likely rebase my work on top of this series. I don't need an
-immutable branch, but please do let me know if this series changes :-)
+This series conflicts with my current developments, therefore I will rebase my
+work on top of this series. I don't need an immutable branch, but please do let
+me know if this series changes :-)
 
 --
 Regards
