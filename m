@@ -1,82 +1,69 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Fri, 14 Jul 2017 15:41:32 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-kernel@vger.kernel.org,
+MIME-Version: 1.0
+In-Reply-To: <20170714120512.ioe67nnloqivtbr7@mwanda>
+References: <20170714092540.1217397-1-arnd@arndb.de> <20170714093938.1469319-1-arnd@arndb.de>
+ <20170714120512.ioe67nnloqivtbr7@mwanda>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Fri, 14 Jul 2017 14:27:19 +0200
+Message-ID: <CAK8P3a0f84OPcCK1r3P9inGYDJC2KaAO4mjE2vn+vCws-oo_bw@mail.gmail.com>
+Subject: Re: [PATCH 14/14] [media] fix warning on v4l2_subdev_call() result
+ interpreted as bool
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         Hans Verkuil <hverkuil@xs4all.nl>, devel@driverdev.osuosl.org,
-        Niklas =?iso-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund@ragnatech.se>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Robert Jarzmik <robert.jarzmik@free.fr>,
         adi-buildroot-devel@lists.sourceforge.net,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        linux-ide@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Tejun Heo <tj@kernel.org>, akpm@linux-foundation.org,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        IDE-ML <linux-ide@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Tejun Heo <tj@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Alan Cox <alan@linux.intel.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Daeseok Youn <daeseok.youn@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>, linux-media@vger.kernel.org
-Subject: Re: [PATCH 14/14] [media] fix warning on v4l2_subdev_call() result
- interpreted as bool
-Message-ID: <20170714124132.u3fzpetbh3b7gj7f@mwanda>
-References: <20170714092540.1217397-1-arnd@arndb.de>
- <20170714093938.1469319-1-arnd@arndb.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20170714093938.1469319-1-arnd@arndb.de>
+        Guenter Roeck <linux@roeck-us.net>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Jul 14, 2017 at 11:36:56AM +0200, Arnd Bergmann wrote:
-> @@ -1158,7 +1158,8 @@ static void ccdc_configure(struct isp_ccdc_device *ccdc)
->  	 */
->  	fmt_src.pad = pad->index;
->  	fmt_src.which = V4L2_SUBDEV_FORMAT_ACTIVE;
-> -	if (!v4l2_subdev_call(sensor, pad, get_fmt, NULL, &fmt_src)) {
-> +	ret = v4l2_subdev_call(sensor, pad, get_fmt, NULL, &fmt_src);
-> +	if (!ret) {
->  		fmt_info = omap3isp_video_format_info(fmt_src.format.code);
->  		depth_in = fmt_info->width;
->  	}
+On Fri, Jul 14, 2017 at 2:05 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> Changing:
+>
+> - if (!frob()) {
+> + if (frob() == 0) {
+>
+> is a totally pointless change.  They're both bad, because they're doing
+> success testing instead of failure testing, but probably the second one
+> is slightly worse.
+>
+> This warning seems dumb.  I can't imagine it has even a 10% success rate
+> at finding real bugs.  Just disable it.
+>
+> Changing the code to propagate error codes, is the right thing of course
+> so long as it doesn't introduce bugs.
 
-Is the original code buggy?
+It found a two of bugs that I fixed earlier:
 
-media/platform/omap3isp/ispccdc.c
-  1156          /* Compute the lane shifter shift value and enable the bridge when the
-  1157           * input format is a non-BT.656 YUV variant.
-  1158           */
-  1159          fmt_src.pad = pad->index;
-  1160          fmt_src.which = V4L2_SUBDEV_FORMAT_ACTIVE;
-  1161          if (!v4l2_subdev_call(sensor, pad, get_fmt, NULL, &fmt_src)) {
-  1162                  fmt_info = omap3isp_video_format_info(fmt_src.format.code);
-  1163                  depth_in = fmt_info->width;
-  1164          }
+f0e8faa7a5e8 ("ARM: ux500: fix prcmu_is_cpu_in_wfi() calculation")
+af15769ffab1 ("scsi: mvsas: fix command_active typo")
 
-If v4l2_subdev_call() then depth_in is zero.
+plus three patches from this series:
 
-  1165  
-  1166          fmt_info = omap3isp_video_format_info(format->code);
-  1167          depth_out = fmt_info->width;
-  1168          shift = depth_in - depth_out;
-                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1. staging:iio:resolver:ad2s1210 fix negative IIO_ANGL_VEL read
+2. isdn: isdnloop: suppress a gcc-7 warning (my patch is wrong,
+   as Joe pointed out there is a real bug)
+3. drm/vmwgfx: avoid gcc-7 parentheses (here, Linus had a better
+   analysis of the problem, so we should consider that a bug as well)
 
-How do we know that this subtraction doesn't set "shift" to a very high
-positive?
+I would estimate around 25% success rate here, which isn't that
+bad for a new warning.
 
-  1169  
-  1170          if (ccdc->bt656)
-  1171                  bridge = ISPCTRL_PAR_BRIDGE_DISABLE;
-  1172          else if (fmt_info->code == MEDIA_BUS_FMT_YUYV8_2X8)
-  1173                  bridge = ISPCTRL_PAR_BRIDGE_LENDIAN;
-  1174          else if (fmt_info->code == MEDIA_BUS_FMT_UYVY8_2X8)
-  1175                  bridge = ISPCTRL_PAR_BRIDGE_BENDIAN;
-  1176          else
-  1177                  bridge = ISPCTRL_PAR_BRIDGE_DISABLE;
-  1178  
-  1179          omap3isp_configure_bridge(isp, ccdc->input, parcfg, shift, bridge);
+I agree that most of the false positives are really dumb though.
 
-regards,
-dan carpenter
+       Arnd
