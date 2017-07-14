@@ -1,78 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:56420 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751647AbdGQQHJ (ORCPT
+Received: from sauhun.de ([88.99.104.3]:52078 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753968AbdGNOXK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Jul 2017 12:07:09 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-spi@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-spi@vger.kernel.org
-In-Reply-To: <1499855047-20177-1-git-send-email-geert+renesas@glider.be>
-Message-Id: <E1dX8Xz-0005HE-F3@debutante>
-Date: Mon, 17 Jul 2017 17:06:59 +0100
-Subject: Applied "spi: sh-msiof: Add support for R-Car H3" to the spi tree
+        Fri, 14 Jul 2017 10:23:10 -0400
+Date: Fri, 14 Jul 2017 16:23:07 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Subject: Re: [PATCH] clk: renesas: rcar-gen3: Fix error return code in
+ cpg_sd_clock_recalc_rate
+Message-ID: <20170714142307.5iyfvje7pkm3b6w5@ninjato>
+References: <20170713210656.31911-1-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="devwsyjdoctrvvw5"
+Content-Disposition: inline
+In-Reply-To: <20170713210656.31911-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
 
-   spi: sh-msiof: Add support for R-Car H3
+--devwsyjdoctrvvw5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-has been applied to the spi tree at
+On Thu, Jul 13, 2017 at 11:06:56PM +0200, Wolfram Sang wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>=20
+> In .recalc_rate of struct clk_ops, it is desirable to return 0 if an
+> error occurs, but -EINVAL is returned. This patch fixes it.
+>=20
+> Fixes: 5b1defde7054 ("clk: renesas: cpg-mssr: Extract common R-Car Gen3 s=
+upport code")
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+I just saw that Kaneko-san posted this patch as well:
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+https://patchwork.kernel.org/patch/9688509/
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Please pick his patch, I'll add my Rev-by there.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+--devwsyjdoctrvvw5
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks,
-Mark
+-----BEGIN PGP SIGNATURE-----
 
->From 3d108f1e2d4c21026750cd4107e03b3e7a3e98a0 Mon Sep 17 00:00:00 2001
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Date: Wed, 12 Jul 2017 12:24:07 +0200
-Subject: [PATCH] spi: sh-msiof: Add support for R-Car H3
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAllo08cACgkQFA3kzBSg
+KbZ6bw//ZV/byUt4Z7ASswdrcVUDNu1WP6x/eBECCAoDPoVlkKRPLqhMjozkyx+a
+kIrT+mKjUqyCh1UcMwZ18UfAS0IacvmbXJcyD10bK31UQjJAe4y2OWsr3P4jqyJm
+ucHXAEHxlkLGAMD+T07NxeTld38lblO1esGE0DcOgXMBbFzLhmdixH4kbYhC4WWC
+dQF6KT2ZErdPA9eoVaUIyHEDECWMa9l+SwCQsKFKtLBGMUm/hi7MtA9XLgp2YRXa
+j02GtCiSK5CwDopJjl0higLhMx1vGKxby+TIrk3jzP/zKys4Zj7qRXwR5dYuhZUZ
+oNqXtWyTkUo4vqXBuNQgspMOlmMNUr8PxrF+F8TlFMIReC0MNDGQ3yzphKVgv831
+1JHG+4vkKZP5grR7CEUYFXRz4Qu2bpDekz1YfNsiESknKE6oeNFIg0naHrQPzcBZ
+bm6/AS0QAU1sM88gkwKStQALwxf4ijBLDKbQoCL/v4ClR2h60jPlmyUL9px9DTOq
+QYiDAe8PvSpDCi9Lu+i8cZKWdBvwImWIvyh/jQ9/1AjiRP9VOmQlU4Ylr5mR2jJZ
+m08gJhsr9Xo53ckHELKjgOx0ZfOYE8/N/f0xJ/s7KmYgGIhT/yiRrB977jpE6oBM
+GSisYZXiIfXsMNKdXNkfKNf23FgLD08YgECCwud2nQwMQmvtczY=
+=6fMn
+-----END PGP SIGNATURE-----
 
-Add support for MSIOF in r8a7795 (R-Car H3).
-Due to a hardware erratum on R-Car H3 ES1.x, this is only supported on
-ES2.0 and later.
-
-No driver update is needed.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- Documentation/devicetree/bindings/spi/sh-msiof.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/spi/sh-msiof.txt b/Documentation/devicetree/bindings/spi/sh-msiof.txt
-index 64ee489571c4..39e5ef7c5e71 100644
---- a/Documentation/devicetree/bindings/spi/sh-msiof.txt
-+++ b/Documentation/devicetree/bindings/spi/sh-msiof.txt
-@@ -6,6 +6,7 @@ Required properties:
- 			 "renesas,msiof-r8a7792" (R-Car V2H)
- 			 "renesas,msiof-r8a7793" (R-Car M2-N)
- 			 "renesas,msiof-r8a7794" (R-Car E2)
-+			 "renesas,msiof-r8a7795" (R-Car H3)
- 			 "renesas,msiof-r8a7796" (R-Car M3-W)
- 			 "renesas,msiof-sh73a0" (SH-Mobile AG5)
- 			 "renesas,sh-mobile-msiof" (generic SH-Mobile compatibile device)
--- 
-2.13.2
+--devwsyjdoctrvvw5--
