@@ -1,57 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f181.google.com ([209.85.223.181]:33067 "EHLO
-        mail-io0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751306AbdGQIAZ (ORCPT
+Received: from sauhun.de ([88.99.104.3]:52100 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753968AbdGNO0N (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Jul 2017 04:00:25 -0400
-MIME-Version: 1.0
-In-Reply-To: <20170714142559.p6xp6dp4whlqcr5n@ninjato>
-References: <1492624001-3758-13-git-send-email-ykaneko0929@gmail.com> <20170714142559.p6xp6dp4whlqcr5n@ninjato>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 17 Jul 2017 10:00:22 +0200
-Message-ID: <CAMuHMdV0fLG6m5hdyMpeKxb1nz_L+xEmyjvZV0iotXMSK517zw@mail.gmail.com>
-Subject: Re: clk: renesas: rcar-gen3: Fix error return code in cpg_sd_clock_recalc_rate
-To: Wolfram Sang <wsa@the-dreams.de>,
-        Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
+        Fri, 14 Jul 2017 10:26:13 -0400
+Date: Fri, 14 Jul 2017 16:25:59 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: linux-clk@vger.kernel.org,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: clk: renesas: rcar-gen3: Fix error return code in
+ cpg_sd_clock_recalc_rate
+Message-ID: <20170714142559.p6xp6dp4whlqcr5n@ninjato>
+References: <1492624001-3758-13-git-send-email-ykaneko0929@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="dxvska6c26goqwhg"
+Content-Disposition: inline
+In-Reply-To: <1492624001-3758-13-git-send-email-ykaneko0929@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Wolfram, Kaneko-san,
 
-On Fri, Jul 14, 2017 at 4:25 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
-> On Thu, Apr 20, 2017 at 02:46:33AM +0900, Yoshihiro Kaneko wrote:
->> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->>
->> In .recalc_rate of struct clk_ops, it is desirable to return 0 if an
->> error occurs, but -EINVAL is returned. This patch fixes it.
->>
->> Fixes: 5b1defde7054 ("clk: renesas: cpg-mssr: Extract common R-Car Gen3 support code")
->> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
->
-> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+--dxvska6c26goqwhg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Why is it desirable to return 0 if an error occurs? Because the return type is
-unsigned long?
+On Thu, Apr 20, 2017 at 02:46:33AM +0900, Yoshihiro Kaneko wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>=20
+> In .recalc_rate of struct clk_ops, it is desirable to return 0 if an
+> error occurs, but -EINVAL is returned. This patch fixes it.
+>=20
+> Fixes: 5b1defde7054 ("clk: renesas: cpg-mssr: Extract common R-Car Gen3 s=
+upport code")
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 
-Is this routine allowed to fail? I don't see any handling of zero by
-its callers.
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Gr{oetje,eeting}s,
 
-                        Geert
+--dxvska6c26goqwhg
+Content-Type: application/pgp-signature; name="signature.asc"
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+-----BEGIN PGP SIGNATURE-----
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAllo1HcACgkQFA3kzBSg
+KbbCbQ/9GVsmsx99cpPZGaQhm1PHL9MXDjXxSI3VdyijhL4bjqAGbFVzXGjzS+LF
+Bjdsqn9WfC18YbTeXKPdGdgtQFbuRiHnUTsBsB5g9zu1CJjQDJMEN0aGHJjkXKxx
+gZl6VkYMlbA3Nal6I53Ls0rElrYjWocsnV/RuUmDBYswSfLPXPJAkh3S0EG3pNw7
+3OWD0oDsozOQUvHupqRmtJZ+Mh6hTPplV1TpcYBKtHFTWn9yLIKEPq35GGD8pZX0
+Hl1t/zh/D12FnoOo6eqwTtord7RbmTLik9qa9iN2dpIXD7lfubglNqYqc64NQaMn
+PBgGZ4J/hODUDs7MNjeZ9VT/3q/kViy6JuCLu/c5R3nHjcYsZq+By3x98A0876+L
+lgtQ9x5MACCMGFciB/KyMLohN8lrtRZfb1Z3WlyBaGW5FvahpPBp5BiA7/Sg+g2D
+wkNPCcLDOAsl2+XUtzjMPSeZf1G+s9HRI3Wm16/jv48TGPMP8mBtCsJ3ZqzXZJ2i
+NF/U1ChRVYgWl1e1FjCZDf0h0bmfFtVfuXlyOtYII3TymxEZYIENhhThBy7Vbguo
+lm3xxaSK49+UACCNQSKda71DYKVTChb1XdLCxgxsnmNraVQi5YtKf9AOTJR0w6hd
+l/chmC4h5WCwtvGgKCZpJ3XmLHrYB6bp7I3i3tu52WqamB7Gt0o=
+=aXxB
+-----END PGP SIGNATURE-----
+
+--dxvska6c26goqwhg--
