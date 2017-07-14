@@ -1,89 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:43172 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752132AbdGaPFo (ORCPT
+Received: from mail.kernel.org ([198.145.29.99]:36958 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753124AbdGNQIq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 31 Jul 2017 11:05:44 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Renesas ARM Based SoC Updates for v4.14
-Date: Mon, 31 Jul 2017 17:05:38 +0200
-Message-Id: <cover.1501512320.git.horms+renesas@verge.net.au>
+        Fri, 14 Jul 2017 12:08:46 -0400
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: laurent.pinchart@ideasonboard.com
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v2 0/6] vsp1 partition algorithm improvements
+Date: Fri, 14 Jul 2017 17:08:31 +0100
+Message-Id: <cover.525a94c41c3857a3f4bb8b8bbbccf78cf0c1dc78.1500048373.git-series.kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+Some updates and initial improvements for the VSP1 partition algorithm that
+remove redundant processing and variables, reducing the processing done in
+interrupt context slightly.
 
-Please consider these Renesas ARM based SoC updates for v4.14.
+Patches 1, 2 and 3 clean up the calculation of the partition windows such that
+they are only calculated once at streamon.
 
+Patch 4 improves the allocations with a new vsp1_partition object to track each
+window state.
 
-The following changes since commit 5771a8c08880cdca3bfb4a3fc6d309d6bba20877:
+Patches 5, and 6 then go on to enhance the partition algorithm by allowing each
+entity to calculate the requirements for it's pipeline predecessor to
+successfully generate the requested output window. This system allows the
+entity objects to specify what they need to fulfil the output for the next
+entity in the pipeline.
 
-  Linux v4.13-rc1 (2017-07-15 15:22:10 -0700)
+v2:
+ - Rebased to v4.12-rc1
+ - Partition tables dynamically allocated
+ - review fixups
 
-are available in the git repository at:
+Kieran Bingham (6):
+  v4l: vsp1: Move vsp1_video_pipeline_setup_partitions() function
+  v4l: vsp1: Calculate partition sizes at stream start.
+  v4l: vsp1: Remove redundant context variables
+  v4l: vsp1: Move partition rectangles to struct and operate directly
+  v4l: vsp1: Provide UDS register updates
+  v4l: vsp1: Allow entities to participate in the partition algorithm
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-soc-for-v4.14
+ drivers/media/platform/vsp1/vsp1_entity.h |   8 +-
+ drivers/media/platform/vsp1/vsp1_pipe.c   |  22 +++-
+ drivers/media/platform/vsp1/vsp1_pipe.h   |  48 ++++++-
+ drivers/media/platform/vsp1/vsp1_regs.h   |  14 ++-
+ drivers/media/platform/vsp1/vsp1_rpf.c    |  31 ++--
+ drivers/media/platform/vsp1/vsp1_sru.c    |  30 ++++-
+ drivers/media/platform/vsp1/vsp1_uds.c    |  43 +++++-
+ drivers/media/platform/vsp1/vsp1_video.c  | 163 ++++++++++++-----------
+ drivers/media/platform/vsp1/vsp1_wpf.c    |  33 +++--
+ 9 files changed, 289 insertions(+), 103 deletions(-)
 
-for you to fetch changes up to 84a1e84b95bb7b2596821578c3acc38d4e6e7a59:
-
-  ARM: shmobile: Remove ARCH_SHMOBILE_MULTI (2017-07-27 17:31:12 +0200)
-
-----------------------------------------------------------------
-Renesas ARM Based SoC Updates for v4.14
-
-* Add debug-ll support to RZ/G1M (r8a7743) SoC
-
-  Chris Paterson says, "RZ/G1M uses SCIF0 for the debug console, like most
-  of the R-Car Gen2 SoCs."
-
-* Remove ARCH_SHMOBILE_MULTI
-
-  Geert Uytterhoeven says, "The migration from ARCH_SHMOBILE_MULTI to
-  ARCH_RENESAS has been completed in v4.12..."
-
-* Correct arch timer frequency on RZ/G1M (r8a7743) SoC
-
-  Geert Uytterhoeven says, "According to the datasheet, the frequency of
-  the ARM architecture timer on RZ/G1E depends on the frequency of the ZS
-  clock..."
-
-* Add support for CPG/MSSR bindings
-
-  Geert Uytterhoeven says, "When using the new CPG/MSSR bindings, there is
-  no longer a "renesas,rcar-gen2-cpg-clocks" node, and the code to obtain
-  the external clock crystal frequency falls back to a default of 20 MHz.
-  While this is correct for all upstream R-Car Gen2 and RZ/G1 boards, this
-  is not necessarily the case for out-of-tree third party boards.
-
-  Add support for finding the external clock crystal oscillator on RZ/G1M,
-  and on R-Car H2, M2-W, and M2-N using the new CPG/MSSR bindings, through
-  the corresponding "renesas,r8a77xx-cpg-mssr" nodes."
-
-* Obtain jump stub region from DT
-
-  Geert Uytterhoeven says, "Add support for obtaining from DT the SRAM
-  region to store the jump stub for CPU core bringup, according to the
-  renesas,smp-sram DT bindings."
-
-----------------------------------------------------------------
-Chris Paterson (1):
-      ARM: debug-ll: Add support for r8a7743
-
-Geert Uytterhoeven (4):
-      ARM: shmobile: rcar-gen2: Obtain jump stub region from DT
-      ARM: shmobile: rcar-gen2: Add support for CPG/MSSR bindings
-      ARM: shmobile: rcar-gen2: Correct arch timer frequency on RZ/G1E
-      ARM: shmobile: Remove ARCH_SHMOBILE_MULTI
-
- arch/arm/Kconfig.debug                   |  9 +++++----
- arch/arm/mach-shmobile/Kconfig           |  4 ----
- arch/arm/mach-shmobile/pm-rcar-gen2.c    | 33 +++++++++++++++++++++++++++++---
- arch/arm/mach-shmobile/setup-rcar-gen2.c | 21 ++++++++++++++++----
- 4 files changed, 52 insertions(+), 15 deletions(-)
+base-commit: 70e60837e669f6fbc8bba30db9a2244d347643bc
+-- 
+git-series 0.9.1
