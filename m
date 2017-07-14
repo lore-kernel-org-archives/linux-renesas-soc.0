@@ -1,69 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:51122 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754173AbdGJN20 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52898 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750786AbdGNHdG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 10 Jul 2017 09:28:26 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>,
+        Fri, 14 Jul 2017 03:33:06 -0400
+Date: Fri, 14 Jul 2017 09:33:00 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Chris Paterson <chris.paterson2@renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Olof Johansson <olof@lixom.net>,
-        Simon Horman <horms@verge.net.au>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/9] ARM: renesas: shmobile and multi_v7 defconfig updates
-Date: Mon, 10 Jul 2017 15:28:13 +0200
-Message-Id: <1499693302-25120-1-git-send-email-geert+renesas@glider.be>
+        Russell King <linux@armlinux.org.uk>,
+        Biju Das <biju.das@bp.renesas.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2] ARM: dts: iwg20m: Add MMCIF0 support
+Message-ID: <20170714073259.GI12105@verge.net.au>
+References: <1499853805-5915-4-git-send-email-chris.paterson2@renesas.com>
+ <1499960340-25310-1-git-send-email-chris.paterson2@renesas.com>
+ <CAMuHMdV2f1oyi9dNGdGmqx7x7RNk10jomKQ4jHJ9wXNSEBKtNA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdV2f1oyi9dNGdGmqx7x7RNk10jomKQ4jHJ9wXNSEBKtNA@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Arnd, Kevin, Magnus, Olof, Simon,
+On Thu, Jul 13, 2017 at 06:31:33PM +0200, Geert Uytterhoeven wrote:
+> On Thu, Jul 13, 2017 at 5:39 PM, Chris Paterson
+> <chris.paterson2@renesas.com> wrote:
+> > Define the iwg20m board dependent part of the MMCIF0 device node.
+> >
+> > Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This patch series updates shmobile_defconfig and multi_v7_defconfig to
-(re-)enable some features:
-  - Re-enable R-Car PCIe (shmobile_defconfig),
-  - Re-enable R-Car XHCI (shmobile_defconfig),
-  - Re-enable R-Car sound (both),
-  - Update DRM bridge (both),
-  - Enable serial port DMA (both).
-
-There also a patch included to refresh shmobile_defconfig.
-To avoid conflicts, I didn't refresh multi_v7_defconfig (although it could
-definitely use a refresh), and only made "simple" changes to it.
-
-Thanks!
-
-Geert Uytterhoeven (9):
-  ARM: shmobile: defconfig: Enable missing PCIE_RCAR dependency
-  ARM: shmobile: defconfig: Replace USB_XHCI_RCAR by USB_XHCI_PLATFORM
-  ARM: shmobile: defconfig: Replace SND_SOC_RSRC_CARD by
-    SND_SIMPLE_SCU_CARD
-  ARM: shmobile: defconfig: Replace DRM_RCAR_HDMI by generic bridge
-    options
-  ARM: shmobile: defconfig: Enable DMA for serial ports
-  ARM: shmobile: defconfig: Refresh
-  ARM: multi_v7_defconfig: Replace SND_SOC_RSRC_CARD by
-    SND_SIMPLE_SCU_CARD
-  ARM: multi_v7_defconfig: Replace DRM_RCAR_HDMI by generic bridge
-    options
-  ARM: multi_v7_defconfig: Enable DMA for Renesas serial ports
-
- arch/arm/configs/multi_v7_defconfig |  5 +++--
- arch/arm/configs/shmobile_defconfig | 16 +++++++++-------
- 2 files changed, 12 insertions(+), 9 deletions(-)
-
--- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Thanks, applied for v4.14.
