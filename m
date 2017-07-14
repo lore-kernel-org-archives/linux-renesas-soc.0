@@ -1,172 +1,68 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v8 1/2] media: rcar-csi2: add Renesas R-Car MIPI CSI-2 receiver documentation
-Date: Mon, 17 Jul 2017 19:03:55 +0200
-Message-Id: <20170717170356.25568-2-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170717170356.25568-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170717170356.25568-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:37402 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753510AbdGNQOV (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 14 Jul 2017 12:14:21 -0400
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Cc: laurent.pinchart@ideasonboard.com,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH 1/6] v4l: vsp1: Protect fragments against overflow
+Date: Fri, 14 Jul 2017 17:14:10 +0100
+Message-Id: <950a1680506ee05bbe0b974d10c938a4e5e2acd0.1500047489.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.6756808fb978882ae2db0cde7745c7e12b177713.1500047489.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.6756808fb978882ae2db0cde7745c7e12b177713.1500047489.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.6756808fb978882ae2db0cde7745c7e12b177713.1500047489.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.6756808fb978882ae2db0cde7745c7e12b177713.1500047489.git-series.kieran.bingham+renesas@ideasonboard.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Documentation for Renesas R-Car MIPI CSI-2 receiver. The CSI-2 receivers
-are located between the video sources (CSI-2 transmitters) and the video
-grabbers (VIN) on Gen3 of Renesas R-Car SoC.
+The fragment write function relies on the code never asking it to
+write more than the entries available in the list.
 
-Each CSI-2 device is connected to more then one VIN device which
-simultaneously can receive video from the same CSI-2 device. Each VIN
-device can also be connected to more then one CSI-2 device. The routing
-of which link are used are controlled by the VIN devices. There are only
-a few possible routes which are set by hardware limitations, which are
-different for each SoC in the Gen3 family.
+Currently with each list body containing 256 entries, this is fine,
+but we can reduce this number greatly saving memory.
 
-To work with the limitations of routing possibilities it is necessary
-for the DT bindings to describe which VIN device is connected to which
-CSI-2 device. This is why port 1 needs to to assign reg numbers for each
-VIN device that be connected to it. To setup and to know which links are
-valid for each SoC is the responsibility of the VIN driver since the
-register to configure it belongs to the VIN hardware.
+In preparation of this - add a level of protection to catch any
+buffer overflows
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
- .../devicetree/bindings/media/rcar-csi2.txt        | 118 +++++++++++++++++++++
- 1 file changed, 118 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/rcar-csi2.txt
+ drivers/media/platform/vsp1/vsp1_dl.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/media/rcar-csi2.txt b/Documentation/devicetree/bindings/media/rcar-csi2.txt
-new file mode 100644
-index 0000000000000000..c298a7d821153219
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/rcar-csi2.txt
-@@ -0,0 +1,118 @@
-+Renesas R-Car MIPI CSI-2
-+------------------------
+diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
+index 8b5cbb6b7a70..1311e7cf2733 100644
+--- a/drivers/media/platform/vsp1/vsp1_dl.c
++++ b/drivers/media/platform/vsp1/vsp1_dl.c
+@@ -60,6 +60,7 @@ struct vsp1_dl_body {
+ 	size_t size;
+ 
+ 	unsigned int num_entries;
++	unsigned int max_entries;
+ };
+ 
+ /**
+@@ -138,6 +139,7 @@ static int vsp1_dl_body_init(struct vsp1_device *vsp1,
+ 
+ 	dlb->vsp1 = vsp1;
+ 	dlb->size = size;
++	dlb->max_entries = num_entries;
+ 
+ 	dlb->entries = dma_alloc_wc(vsp1->bus_master, dlb->size, &dlb->dma,
+ 				    GFP_KERNEL);
+@@ -220,6 +222,11 @@ void vsp1_dl_fragment_free(struct vsp1_dl_body *dlb)
+  */
+ void vsp1_dl_fragment_write(struct vsp1_dl_body *dlb, u32 reg, u32 data)
+ {
++	if (unlikely(dlb->num_entries >= dlb->max_entries)) {
++		WARN_ONCE(true, "DLB size exceeded");
++		return;
++	}
 +
-+The rcar-csi2 device provides MIPI CSI-2 capabilities for the Renesas R-Car
-+family of devices. It is to be used in conjunction with the R-Car VIN module,
-+which provides the video capture capabilities.
-+
-+Mandatory properties
-+--------------------
-+ - compatible: Must be one or more of the following
-+   - "renesas,r8a7795-csi2" for the R8A7795 device.
-+   - "renesas,r8a7796-csi2" for the R8A7796 device.
-+   - "renesas,rcar-gen3-csi2" for a generic R-Car Gen3 compatible device.
-+
-+   When compatible with a generic version nodes must list the
-+   SoC-specific version corresponding to the platform first
-+   followed by the generic version.
-+
-+ - reg: the register base and size for the device registers
-+ - interrupts: the interrupt for the device
-+ - clocks: Reference to the parent clock
-+
-+The device node shall contain two 'port' child nodes according to the
-+bindings defined in Documentation/devicetree/bindings/media/
-+video-interfaces.txt. Port 0 shall connect the node that is the video
-+source for to the CSI-2. Port 1 shall connect all the R-Car VIN
-+modules, which can make use of the CSI-2 module.
-+
-+- Port 0 - Video source (Mandatory)
-+	- Reg 0 - sub-node describing the endpoint that is the video source
-+
-+- Port 1 - VIN instances (Mandatory for all VIN present in the SoC)
-+	- Reg 0 - sub-node describing the endpoint that is VIN0
-+	- Reg 1 - sub-node describing the endpoint that is VIN1
-+	- Reg 2 - sub-node describing the endpoint that is VIN2
-+	- Reg 3 - sub-node describing the endpoint that is VIN3
-+	- Reg 4 - sub-node describing the endpoint that is VIN4
-+	- Reg 5 - sub-node describing the endpoint that is VIN5
-+	- Reg 6 - sub-node describing the endpoint that is VIN6
-+	- Reg 7 - sub-node describing the endpoint that is VIN7
-+
-+Example:
-+
-+/* SoC properties */
-+
-+	 csi20: csi2@fea80000 {
-+		 compatible = "renesas,r8a7796-csi2";
-+		 reg = <0 0xfea80000 0 0x10000>;
-+		 interrupts = <0 184 IRQ_TYPE_LEVEL_HIGH>;
-+		 clocks = <&cpg CPG_MOD 714>;
-+		 power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+		 status = "disabled";
-+
-+		 ports {
-+			 #address-cells = <1>;
-+			 #size-cells = <0>;
-+
-+			 port@1 {
-+				 #address-cells = <1>;
-+				 #size-cells = <0>;
-+
-+				 reg = <1>;
-+
-+				 csi20vin0: endpoint@0 {
-+					 reg = <0>;
-+					 remote-endpoint = <&vin0csi20>;
-+				 };
-+				 csi20vin1: endpoint@1 {
-+					 reg = <1>;
-+					 remote-endpoint = <&vin1csi20>;
-+				 };
-+				 csi20vin2: endpoint@2 {
-+					 reg = <2>;
-+					 remote-endpoint = <&vin2csi20>;
-+				 };
-+				 csi20vin3: endpoint@3 {
-+					 reg = <3>;
-+					 remote-endpoint = <&vin3csi20>;
-+				 };
-+				 csi20vin4: endpoint@4 {
-+					 reg = <4>;
-+					 remote-endpoint = <&vin4csi20>;
-+				 };
-+				 csi20vin5: endpoint@5 {
-+					 reg = <5>;
-+					 remote-endpoint = <&vin5csi20>;
-+				 };
-+				 csi20vin6: endpoint@6 {
-+					 reg = <6>;
-+					 remote-endpoint = <&vin6csi20>;
-+				 };
-+				 csi20vin7: endpoint@7 {
-+					 reg = <7>;
-+					 remote-endpoint = <&vin7csi20>;
-+				 };
-+			 };
-+		 };
-+	 };
-+
-+/* Board properties */
-+
-+	&csi20 {
-+		status = "okay";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				csi20_in: endpoint@0 {
-+					clock-lanes = <0>;
-+					data-lanes = <1>;
-+					remote-endpoint = <&adv7482_txb>;
-+				};
-+			};
-+		};
-+	};
+ 	dlb->entries[dlb->num_entries].addr = reg;
+ 	dlb->entries[dlb->num_entries].data = data;
+ 	dlb->num_entries++;
 -- 
-2.13.1
+git-series 0.9.1
