@@ -1,81 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:36733 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751996AbdGAUFl (ORCPT
+Received: from mail.kernel.org ([198.145.29.99]:37052 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753860AbdGNQIw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 1 Jul 2017 16:05:41 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Alexey Firago <alexey_firago@mentor.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 4/8] clk: vc5: Configure the output buffer input mux on prepare
-Date: Sat,  1 Jul 2017 22:04:54 +0200
-Message-Id: <20170701200459.11505-4-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20170701200459.11505-1-marek.vasut+renesas@gmail.com>
-References: <20170701200459.11505-1-marek.vasut+renesas@gmail.com>
+        Fri, 14 Jul 2017 12:08:52 -0400
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: laurent.pinchart@ideasonboard.com
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v2 5/6] v4l: vsp1: Provide UDS register updates
+Date: Fri, 14 Jul 2017 17:08:36 +0100
+Message-Id: <a0572ff7d0640824247002540ae7109793d1425b.1500048373.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.525a94c41c3857a3f4bb8b8bbbccf78cf0c1dc78.1500048373.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.525a94c41c3857a3f4bb8b8bbbccf78cf0c1dc78.1500048373.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.525a94c41c3857a3f4bb8b8bbbccf78cf0c1dc78.1500048373.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.525a94c41c3857a3f4bb8b8bbbccf78cf0c1dc78.1500048373.git-series.kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The output buffer input mux can be configured in either of three
-states -- disabled, input from FOD, input from previous output.
-Once the .prepare() callback of the output buffer is called, the
-output buffer input mux must be set to either input from FOD or
-input from previous output, it cannot be set to Disabled anymore
-or the output won't work.
+Provide register definitions required for UDS phase and partition
+algorithm support.
 
-Default to the input from FOD if the output buffer input mux was
-Disabled and the .prepare() was called on it.
+These registers are applicable to Gen3 hardware only.
 
-Note that we do not set the output buffer input mux back to Disabled
-in the .unprepare() callback as there is no obvious benefit of doing
-so. We disable the entire output buffer in the .unprepare() callback
-already.
-
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Alexey Firago <alexey_firago@mentor.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-on Salvator-XS with the display LVDS output.
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- drivers/clk/clk-versaclock5.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ drivers/media/platform/vsp1/vsp1_regs.h | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index 248689d89632..7bdfd34e8280 100644
---- a/drivers/clk/clk-versaclock5.c
-+++ b/drivers/clk/clk-versaclock5.c
-@@ -507,6 +507,25 @@ static int vc5_clk_out_prepare(struct clk_hw *hw)
- {
- 	struct vc5_hw_data *hwdata = container_of(hw, struct vc5_hw_data, hw);
- 	struct vc5_driver_data *vc5 = hwdata->vc5;
-+	const u8 mask = VC5_OUT_DIV_CONTROL_SELB_NORM |
-+			VC5_OUT_DIV_CONTROL_SEL_EXT |
-+			VC5_OUT_DIV_CONTROL_EN_FOD;
-+	unsigned int src;
-+	int ret;
-+
-+	/*
-+	 * If the input mux is disabled, enable it first and
-+	 * select source from matching FOD.
-+	 */
-+	regmap_read(vc5->regmap, VC5_OUT_DIV_CONTROL(hwdata->num), &src);
-+	if ((src & mask) == 0) {
-+		src = VC5_OUT_DIV_CONTROL_RESET | VC5_OUT_DIV_CONTROL_EN_FOD;
-+		ret = regmap_update_bits(vc5->regmap,
-+					 VC5_OUT_DIV_CONTROL(hwdata->num),
-+					 mask | VC5_OUT_DIV_CONTROL_RESET, src);
-+		if (ret)
-+			return ret;
-+	}
+diff --git a/drivers/media/platform/vsp1/vsp1_regs.h b/drivers/media/platform/vsp1/vsp1_regs.h
+index 58d0bea963a6..26c4ffad2f46 100644
+--- a/drivers/media/platform/vsp1/vsp1_regs.h
++++ b/drivers/media/platform/vsp1/vsp1_regs.h
+@@ -396,6 +396,7 @@
+ #define VI6_UDS_CTRL_NE_RCR		(1 << 18)
+ #define VI6_UDS_CTRL_NE_GY		(1 << 17)
+ #define VI6_UDS_CTRL_NE_BCB		(1 << 16)
++#define VI6_UDS_CTRL_AMDSLH		(1 << 2)
+ #define VI6_UDS_CTRL_TDIPC		(1 << 1)
  
- 	/* Enable the clock buffer */
- 	regmap_update_bits(vc5->regmap, VC5_CLK_OUTPUT_CFG(hwdata->num, 1),
+ #define VI6_UDS_SCALE			0x2304
+@@ -428,11 +429,24 @@
+ #define VI6_UDS_PASS_BWIDTH_V_MASK	(0x7f << 0)
+ #define VI6_UDS_PASS_BWIDTH_V_SHIFT	0
+ 
++#define VI6_UDS_HPHASE			0x2314
++#define VI6_UDS_HPHASE_HSTP_MASK	(0xfff << 16)
++#define VI6_UDS_HPHASE_HSTP_SHIFT	16
++#define VI6_UDS_HPHASE_HEDP_MASK	(0xfff << 0)
++#define VI6_UDS_HPHASE_HEDP_SHIFT	0
++
+ #define VI6_UDS_IPC			0x2318
+ #define VI6_UDS_IPC_FIELD		(1 << 27)
+ #define VI6_UDS_IPC_VEDP_MASK		(0xfff << 0)
+ #define VI6_UDS_IPC_VEDP_SHIFT		0
+ 
++#define VI6_UDS_HSZCLIP			0x231c
++#define VI6_UDS_HSZCLIP_HCEN		(1 << 28)
++#define VI6_UDS_HSZCLIP_HCL_OFST_MASK	(0xff << 16)
++#define VI6_UDS_HSZCLIP_HCL_OFST_SHIFT	16
++#define VI6_UDS_HSZCLIP_HCL_SIZE_MASK	(0x1fff << 0)
++#define VI6_UDS_HSZCLIP_HCL_SIZE_SHIFT	0
++
+ #define VI6_UDS_CLIP_SIZE		0x2324
+ #define VI6_UDS_CLIP_SIZE_HSIZE_MASK	(0x1fff << 16)
+ #define VI6_UDS_CLIP_SIZE_HSIZE_SHIFT	16
 -- 
-2.11.0
+git-series 0.9.1
