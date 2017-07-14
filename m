@@ -1,19 +1,20 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:33062 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751161AbdGOLJO (ORCPT
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:36818 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753124AbdGNQLy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 15 Jul 2017 07:09:14 -0400
-Date: Sat, 15 Jul 2017 07:09:10 -0400
-From: Tejun Heo <tj@kernel.org>
+        Fri, 14 Jul 2017 12:11:54 -0400
+Date: Fri, 14 Jul 2017 11:11:52 -0500
+From: Rob Herring <robh@kernel.org>
 To: Simon Horman <horms+renesas@verge.net.au>
-Cc: linux-ide@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+Cc: Tejun Heo <tj@kernel.org>, linux-ide@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
 Subject: Re: [PATCH] ata: sata_rcar: add gen[23] fallback compatibility
  strings
-Message-ID: <20170715110909.GF2969123@devbig577.frc2.facebook.com>
+Message-ID: <20170714161152.665tg2xj2wmjycrl@rob-hp-laptop>
 References: <1499773460-8930-1-git-send-email-horms+renesas@verge.net.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -40,10 +41,11 @@ On Tue, Jul 11, 2017 at 01:44:20PM +0200, Simon Horman wrote:
 > drivers for Renesas SoCs.
 > 
 > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> ---
+> Based on libata/for-next
+> ---
+>  Documentation/devicetree/bindings/ata/sata_rcar.txt | 14 +++++++++++---
+>  drivers/ata/sata_rcar.c                             |  8 ++++++++
+>  2 files changed, 19 insertions(+), 3 deletions(-)
 
-Applied to libata/for-4.13-fixes.
-
-Thanks.
-
--- 
-tejun
+Acked-by: Rob Herring <robh@kernel.org>
