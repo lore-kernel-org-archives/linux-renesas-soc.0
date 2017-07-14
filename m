@@ -1,73 +1,93 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:34341 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754611AbdG3U5n (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 30 Jul 2017 16:57:43 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [RFC 4/5] arm64: dts: renesas: salvator: enable VIN
-Date: Sun, 30 Jul 2017 22:56:50 +0200
-Message-Id: <20170730205651.6478-5-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170730205651.6478-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170730205651.6478-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Cc: laurent.pinchart@ideasonboard.com,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH 4/6] v4l: vsp1: Convert CLU to use a fragment pool
+Date: Fri, 14 Jul 2017 17:14:13 +0100
+Message-Id: <efd134fda974a976acf47c220984243eaf4b1317.1500047489.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.6756808fb978882ae2db0cde7745c7e12b177713.1500047489.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.6756808fb978882ae2db0cde7745c7e12b177713.1500047489.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.6756808fb978882ae2db0cde7745c7e12b177713.1500047489.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.6756808fb978882ae2db0cde7745c7e12b177713.1500047489.git-series.kieran.bingham+renesas@ideasonboard.com>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- arch/arm64/boot/dts/renesas/salvator-common.dtsi | 32 ++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+Adapt the CLU to allocate a fragment pool for passing the table updates
+to hardware.
 
-diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-index aef35e0b685a3a85..bba4976bee619d42 100644
---- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-@@ -619,6 +619,38 @@
- 	status = "okay";
+Two bodies are pre-allocated in the pool to manage a userspace update
+before the hardware has taken a previous set of tables.
+
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+---
+ drivers/media/platform/vsp1/vsp1_clu.c | 18 ++++++++++++++++--
+ drivers/media/platform/vsp1/vsp1_clu.h |  1 +
+ 2 files changed, 17 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/platform/vsp1/vsp1_clu.c b/drivers/media/platform/vsp1/vsp1_clu.c
+index f2fb26e5ab4e..6079c6465435 100644
+--- a/drivers/media/platform/vsp1/vsp1_clu.c
++++ b/drivers/media/platform/vsp1/vsp1_clu.c
+@@ -47,7 +47,7 @@ static int clu_set_table(struct vsp1_clu *clu, struct v4l2_ctrl *ctrl)
+ 	struct vsp1_dl_body *dlb;
+ 	unsigned int i;
+ 
+-	dlb = vsp1_dl_fragment_alloc(clu->entity.vsp1, 1 + 17 * 17 * 17);
++	dlb = vsp1_dl_fragment_get(clu->pool);
+ 	if (!dlb)
+ 		return -ENOMEM;
+ 
+@@ -59,7 +59,7 @@ static int clu_set_table(struct vsp1_clu *clu, struct v4l2_ctrl *ctrl)
+ 	swap(clu->clu, dlb);
+ 	spin_unlock_irq(&clu->lock);
+ 
+-	vsp1_dl_fragment_free(dlb);
++	vsp1_dl_fragment_put(dlb);
+ 	return 0;
+ }
+ 
+@@ -261,8 +261,16 @@ static void clu_configure(struct vsp1_entity *entity,
+ 	}
+ }
+ 
++static void clu_destroy(struct vsp1_entity *entity)
++{
++	struct vsp1_clu *clu = to_clu(&entity->subdev);
++
++	vsp1_dl_fragment_pool_free(clu->pool);
++}
++
+ static const struct vsp1_entity_operations clu_entity_ops = {
+ 	.configure = clu_configure,
++	.destroy = clu_destroy,
  };
  
-+&vin0 {
-+	status = "okay";
-+};
+ /* -----------------------------------------------------------------------------
+@@ -288,6 +296,12 @@ struct vsp1_clu *vsp1_clu_create(struct vsp1_device *vsp1)
+ 	if (ret < 0)
+ 		return ERR_PTR(ret);
+ 
++	/* Allocate a fragment pool */
++	clu->pool = vsp1_dl_fragment_pool_alloc(clu->entity.vsp1, 2,
++			1 + 17 * 17 * 17, 0);
++	if (!clu->pool)
++		return ERR_PTR(-ENOMEM);
 +
-+&vin1 {
-+	status = "okay";
-+};
-+
-+&vin2 {
-+	status = "okay";
-+};
-+
-+&vin3 {
-+	status = "okay";
-+};
-+
-+&vin4 {
-+	status = "okay";
-+};
-+
-+&vin5 {
-+	status = "okay";
-+};
-+
-+&vin6 {
-+	status = "okay";
-+};
-+
-+&vin7 {
-+	status = "okay";
-+};
-+
- &wdt0 {
- 	timeout-sec = <60>;
- 	status = "okay";
+ 	/* Initialize the control handler. */
+ 	v4l2_ctrl_handler_init(&clu->ctrls, 2);
+ 	v4l2_ctrl_new_custom(&clu->ctrls, &clu_table_control, NULL);
+diff --git a/drivers/media/platform/vsp1/vsp1_clu.h b/drivers/media/platform/vsp1/vsp1_clu.h
+index 036e0a2f1a42..601ffb558e30 100644
+--- a/drivers/media/platform/vsp1/vsp1_clu.h
++++ b/drivers/media/platform/vsp1/vsp1_clu.h
+@@ -36,6 +36,7 @@ struct vsp1_clu {
+ 	spinlock_t lock;
+ 	unsigned int mode;
+ 	struct vsp1_dl_body *clu;
++	struct vsp1_dl_fragment_pool *pool;
+ };
+ 
+ static inline struct vsp1_clu *to_clu(struct v4l2_subdev *subdev)
 -- 
-2.13.3
+git-series 0.9.1
