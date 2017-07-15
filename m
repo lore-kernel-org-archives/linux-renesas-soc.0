@@ -1,48 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:43196 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752391AbdGaPFt (ORCPT
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:33062 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751161AbdGOLJO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 31 Jul 2017 11:05:49 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Sat, 15 Jul 2017 07:09:14 -0400
+Date: Sat, 15 Jul 2017 07:09:10 -0400
+From: Tejun Heo <tj@kernel.org>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: linux-ide@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 4/5] ARM: shmobile: rcar-gen2: Correct arch timer frequency on RZ/G1E
-Date: Mon, 31 Jul 2017 17:05:39 +0200
-Message-Id: <cd66fa4e0203fed9d8af6e1596ff8a68ede7fb1d.1501512320.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1501512320.git.horms+renesas@verge.net.au>
-References: <cover.1501512320.git.horms+renesas@verge.net.au>
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [PATCH] ata: sata_rcar: add gen[23] fallback compatibility
+ strings
+Message-ID: <20170715110909.GF2969123@devbig577.frc2.facebook.com>
+References: <1499773460-8930-1-git-send-email-horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1499773460-8930-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+On Tue, Jul 11, 2017 at 01:44:20PM +0200, Simon Horman wrote:
+> Add fallback compatibility string for R-Car Gen 2 and 3.
+> 
+> In the case of Renesas R-Car hardware we know that there are generations of
+> SoCs, e.g. Gen 1 and 2. But beyond that its not clear what the relationship
+> between IP blocks might be. For example, I believe that r8a7790 is older
+> than r8a7791 but that doesn't imply that the latter is a descendant of the
+> former or vice versa.
+> 
+> We can, however, by examining the documentation and behaviour of the
+> hardware at run-time observe that the current driver implementation appears
+> to be compatible with the IP blocks on SoCs within a given generation.
+> 
+> For the above reasons and convenience when enabling new SoCs a
+> per-generation fallback compatibility string scheme being adopted for
+> drivers for Renesas SoCs.
+> 
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-According to the datasheet, the frequency of the ARM architecture timer
-on RZ/G1E depends on the frequency of the ZS clock, just like on R-Car
-E2 and V2H.
+Applied to libata/for-4.13-fixes.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/mach-shmobile/setup-rcar-gen2.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Thanks.
 
-diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-index 3bd505da3172..7ab1690fab82 100644
---- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
-+++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-@@ -70,7 +70,8 @@ void __init rcar_gen2_timer_init(void)
- 	void __iomem *base;
- 	u32 freq;
- 
--	if (of_machine_is_compatible("renesas,r8a7792") ||
-+	if (of_machine_is_compatible("renesas,r8a7745") ||
-+	    of_machine_is_compatible("renesas,r8a7792") ||
- 	    of_machine_is_compatible("renesas,r8a7794")) {
- 		freq = 260000000 / 8;	/* ZS / 8 */
- 		/* CNTVOFF has to be initialized either from non-secure
 -- 
-2.1.4
+tejun
