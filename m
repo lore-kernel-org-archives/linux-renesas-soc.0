@@ -1,64 +1,42 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:44354 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752316AbdGaPUv (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 31 Jul 2017 11:20:51 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 36/38] ARM: dts: rskrza1: Add SDHI1 pin group
-Date: Mon, 31 Jul 2017 17:19:48 +0200
-Message-Id: <35ff4c0edf7779c455cb41e727f59ed10e478416.1501514100.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1501514100.git.horms+renesas@verge.net.au>
-References: <cover.1501514100.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 6/6] ARM: qcom_defconfig: Cleanup from non-existing options
+Date: Mon, 17 Jul 2017 07:49:56 +0200
+Message-Id: <1500270596-22384-6-git-send-email-krzk@kernel.org>
+In-Reply-To: <1500270596-22384-1-git-send-email-krzk@kernel.org>
+References: <1500270596-22384-1-git-send-email-krzk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Chris Brandt <chris.brandt@renesas.com>
+QCOM_SMD is gone since commit 395a48053af6 ("soc: qcom: smd: Remove
+standalone driver").
 
-Add pin configuration for SDHI ch1.
-
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/boot/dts/r7s72100-rskrza1.dts | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ arch/arm/configs/qcom_defconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r7s72100-rskrza1.dts b/arch/arm/boot/dts/r7s72100-rskrza1.dts
-index cedf887e809a..f8285b951140 100644
---- a/arch/arm/boot/dts/r7s72100-rskrza1.dts
-+++ b/arch/arm/boot/dts/r7s72100-rskrza1.dts
-@@ -78,6 +78,18 @@
- 			 <RZA1_PINMUX(2, 10, 2)>,	/* ET_RXD2  */
- 			 <RZA1_PINMUX(2, 11, 2)>;	/* ET_RXD3  */
- 	};
-+
-+	/* SDHI ch1 on CN1 */
-+	sdhi1_pins: sdhi1 {
-+		pinmux = <RZA1_PINMUX(3, 8, 7)>,	/* SD_CD_1 */
-+			 <RZA1_PINMUX(3, 9, 7)>,	/* SD_WP_1 */
-+			 <RZA1_PINMUX(3, 10, 7)>,	/* SD_D1_1 */
-+			 <RZA1_PINMUX(3, 11, 7)>,	/* SD_D0_1 */
-+			 <RZA1_PINMUX(3, 12, 7)>,	/* SD_CLK_1 */
-+			 <RZA1_PINMUX(3, 13, 7)>,	/* SD_CMD_1 */
-+			 <RZA1_PINMUX(3, 14, 7)>,	/* SD_D3_1 */
-+			 <RZA1_PINMUX(3, 15, 7)>;	/* SD_D2_1 */
-+	};
- };
- 
- &mtu2 {
-@@ -96,6 +108,8 @@
- };
- 
- &sdhi1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sdhi1_pins>;
- 	bus-width = <4>;
- 	status = "okay";
- };
+diff --git a/arch/arm/configs/qcom_defconfig b/arch/arm/configs/qcom_defconfig
+index b02039c712c3..879159e4ab58 100644
+--- a/arch/arm/configs/qcom_defconfig
++++ b/arch/arm/configs/qcom_defconfig
+@@ -199,7 +199,6 @@ CONFIG_QCOM_WCNSS_PIL=y
+ CONFIG_QCOM_GSBI=y
+ CONFIG_QCOM_PM=y
+ CONFIG_QCOM_SMEM=y
+-CONFIG_QCOM_SMD=y
+ CONFIG_QCOM_SMD_RPM=y
+ CONFIG_QCOM_SMP2P=y
+ CONFIG_QCOM_SMSM=y
 -- 
-2.1.4
+2.7.4
