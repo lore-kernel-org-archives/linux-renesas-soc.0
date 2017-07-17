@@ -1,194 +1,92 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:52056 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751603AbdGRO0k (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 18 Jul 2017 10:26:40 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 2/3] ARM: shmobile: rcar-gen2: Make sure CNTVOFF is initialized on CA7/15
-Date: Tue, 18 Jul 2017 16:26:26 +0200
-Message-Id: <1500387987-9240-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1500387987-9240-1-git-send-email-geert+renesas@glider.be>
-References: <1500387987-9240-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v4 0/3] v4l2-async: add subnotifier registration for subdevices
+Date: Mon, 17 Jul 2017 18:59:14 +0200
+Message-Id: <20170717165917.24851-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Cortex-A7, the arch timer CNTVOFF register is uninitialized.
-Ideally it should be initialized by the boot loader, but it isn't.
+Hi,
 
-For the boot CPU, CNTVOFF is initialized by Linux since commit
-9ce3fa6816c2fb59 ("ARM: shmobile: rcar-gen2: Add CA7 arch_timer
-initialization for r8a7794").
-For secondary CPU cores, no such initialization is done.
+This is a rewrite of the feature since v3, maybe it should have been 
+posted as a new series?
 
-Hence when enabling SMP on r8a7794, the kernel log is spammed with:
+This series enables incremental async find and bind of subdevices,
+please se patch 3/3 for a more detailed description of the new behavior, 
+changelog in this cover letter for the differences to v3. The two 
+primary reasons for a new implementation where:
 
-    WARNING: Underflow in clocksource 'arch_sys_counter' observed, time update ignored.
-	     Please report this, consider using a different clocksource, if possible.
-	     Your kernel is probably still fine.
+1. Hans expressed an interest having the async complete() callbacks to 
+   happen only once all notifiers in the pipeline where complete. To do 
+   this a stronger connection between the notifiers where needed, hence 
+   the subnotifier is now embedded in struct v4l2_subdev.
 
-As Marc Zyngier pointed out that Cortex-A15 and Cortex-A7 are similar with
-respect to CNTVOFF, we have been very lucky this just worked on R-Car
-Gen2 SoCs with Cortex-A15 cores.
+   Whit this change it is possible to check all notifiers in a pipeline 
+   is complete before calling any of them.
 
-To fix this:
-  - Move the existing inline asm code to initialize CNTVOFF to an
-    assembler source file (adding comments and replacing hardcoded
-    constants by definitions in the process), so it can be reused,
-  - Perform the initialization of CNTVOFF on the boot CPU (Cortex-A15 or
-    Cortex-A7) on all R-Car Gen2 and RZ/G1 parts,
-  - Wrap the standard secondary_startup() routine inside a routine which
-    initializes CNTVOFF.
+2. There where concerns that the v3 solution was a bit to complex and 
+   hard to refactor in the future if other issues in the v4l2-async 
+   framework where to be addressed. By hiding the notifier in the struct 
+   v4l2_subdev and adding a new function to set that structure the 
+   interface towards drivers are minimized while everything else happens 
+   in the v4l2-async framework. This leaves the interface in a good 
+   position for possible changes in v4l2-async.
 
-Based on patches by Hisashi Nakamura in the BSP.
+This is tested on Renesas H3 and M3-W together with the Renesas CSI-2
+and VIN Gen3 driver (posted separately). It is based on top of the media-tree.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - Initialize CNTVOFF on Cortex-A15, too,
-  - Use *_MODE definitions instead of hardcoded values,
-  - Reduce duplication by calling the asm version from C,
-  - Always build headsmp-apmu.o on R-Car Gen2.
----
- arch/arm/mach-shmobile/Makefile          |  1 +
- arch/arm/mach-shmobile/common.h          |  2 ++
- arch/arm/mach-shmobile/headsmp-apmu.S    | 37 ++++++++++++++++++++++++++++++++
- arch/arm/mach-shmobile/platsmp-apmu.c    |  2 +-
- arch/arm/mach-shmobile/setup-rcar-gen2.c | 20 ++---------------
- 5 files changed, 43 insertions(+), 19 deletions(-)
- create mode 100644 arch/arm/mach-shmobile/headsmp-apmu.S
+* Changes since v3
+- Almost a complete rewrite, so drop all Ack-ed by tags.
+- Do not add new functions to register/unregister subnotifiers from 
+  callbacks. Instead have have the subdevice drivers populate the 
+  subnotifer list at probe time and have the v4l2-async framework handle 
+  the (un)registration of the notifiers.
+- Synchronize the call off the complete() callbacks. They will now all 
+  happens once all notifiers in a pipeline are all complete and from the 
+  edge towards the root device.
+- Add a new function v4l2_async_subdev_register_notifier() to hide the 
+  setup of the subnotifier internals to ease improvements later.
 
-diff --git a/arch/arm/mach-shmobile/Makefile b/arch/arm/mach-shmobile/Makefile
-index 64611a1b4276517b..32176a00c664ba16 100644
---- a/arch/arm/mach-shmobile/Makefile
-+++ b/arch/arm/mach-shmobile/Makefile
-@@ -22,6 +22,7 @@ cpu-y				:= platsmp.o headsmp.o
- # Shared SoC family objects
- obj-$(CONFIG_ARCH_RCAR_GEN2)	+= setup-rcar-gen2.o platsmp-apmu.o $(cpu-y)
- CFLAGS_setup-rcar-gen2.o	+= -march=armv7-a
-+obj-$(CONFIG_ARCH_RCAR_GEN2)	+= headsmp-apmu.o
- obj-$(CONFIG_ARCH_R8A7790)	+= regulator-quirk-rcar-gen2.o
- obj-$(CONFIG_ARCH_R8A7791)	+= regulator-quirk-rcar-gen2.o
- obj-$(CONFIG_ARCH_R8A7793)	+= regulator-quirk-rcar-gen2.o
-diff --git a/arch/arm/mach-shmobile/common.h b/arch/arm/mach-shmobile/common.h
-index 1a8f7b3ab449db56..ea6e9e2be3f7f4da 100644
---- a/arch/arm/mach-shmobile/common.h
-+++ b/arch/arm/mach-shmobile/common.h
-@@ -1,6 +1,7 @@
- #ifndef __ARCH_MACH_COMMON_H
- #define __ARCH_MACH_COMMON_H
- 
-+extern void shmobile_init_cntvoff(void);
- extern void shmobile_init_delay(void);
- extern void shmobile_boot_vector(void);
- extern unsigned long shmobile_boot_fn;
-@@ -11,6 +12,7 @@ extern void shmobile_smp_hook(unsigned int cpu, unsigned long fn,
- 			      unsigned long arg);
- extern bool shmobile_smp_cpu_can_disable(unsigned int cpu);
- extern bool shmobile_smp_init_fallback_ops(void);
-+extern void shmobile_boot_apmu(void);
- extern void shmobile_boot_scu(void);
- extern void shmobile_smp_scu_prepare_cpus(phys_addr_t scu_base_phys,
- 					  unsigned int max_cpus);
-diff --git a/arch/arm/mach-shmobile/headsmp-apmu.S b/arch/arm/mach-shmobile/headsmp-apmu.S
-new file mode 100644
-index 0000000000000000..933d3190ffc02066
---- /dev/null
-+++ b/arch/arm/mach-shmobile/headsmp-apmu.S
-@@ -0,0 +1,37 @@
-+/*
-+ * SMP support for APMU based systems with Cortex A7/A15
-+ *
-+ * Copyright (C) 2014  Renesas Electronics Corporation
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/linkage.h>
-+#include <asm/assembler.h>
-+
-+ENTRY(shmobile_init_cntvoff)
-+	/*
-+	 * CNTVOFF has to be initialized either from non-secure Hypervisor
-+	 * mode or secure Monitor mode with SCR.NS==1. If TrustZone is enabled
-+	 * then it should be handled by the secure code
-+	 */
-+	cps	#MON_MODE
-+	mrc	p15, 0, r1, c1, c1, 0		/* Get Secure Config */
-+	orr	r0, r1, #1
-+	mcr	p15, 0, r0, c1, c1, 0		/* Set Non Secure bit */
-+	isb
-+	mov	r0, #0
-+	mcrr	p15, 4, r0, r0, c14		/* CNTVOFF = 0 */
-+	isb
-+	mcr	p15, 0, r1, c1, c1, 0		/* Set Secure bit */
-+	isb
-+	cps	#SVC_MODE
-+	ret	lr
-+ENDPROC(shmobile_init_cntvoff)
-+
-+ENTRY(shmobile_boot_apmu)
-+	bl	shmobile_init_cntvoff
-+	b	secondary_startup
-+ENDPROC(shmobile_boot_apmu)
-diff --git a/arch/arm/mach-shmobile/platsmp-apmu.c b/arch/arm/mach-shmobile/platsmp-apmu.c
-index 3ca2c13346f0cbc3..4422b615a6ee6045 100644
---- a/arch/arm/mach-shmobile/platsmp-apmu.c
-+++ b/arch/arm/mach-shmobile/platsmp-apmu.c
-@@ -204,7 +204,7 @@ void __init shmobile_smp_apmu_prepare_cpus(unsigned int max_cpus,
- int shmobile_smp_apmu_boot_secondary(unsigned int cpu, struct task_struct *idle)
- {
- 	/* For this particular CPU register boot vector */
--	shmobile_smp_hook(cpu, __pa_symbol(secondary_startup), 0);
-+	shmobile_smp_hook(cpu, __pa_symbol(shmobile_boot_apmu), 0);
- 
- 	return apmu_wrap(cpu, apmu_power_on);
- }
-diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-index 7ab1690fab8299eb..5561dbed7a332a58 100644
---- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
-+++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-@@ -70,28 +70,12 @@ void __init rcar_gen2_timer_init(void)
- 	void __iomem *base;
- 	u32 freq;
- 
-+	shmobile_init_cntvoff();
-+
- 	if (of_machine_is_compatible("renesas,r8a7745") ||
- 	    of_machine_is_compatible("renesas,r8a7792") ||
- 	    of_machine_is_compatible("renesas,r8a7794")) {
- 		freq = 260000000 / 8;	/* ZS / 8 */
--		/* CNTVOFF has to be initialized either from non-secure
--		 * Hypervisor mode or secure Monitor mode with SCR.NS==1.
--		 * If TrustZone is enabled then it should be handled by the
--		 * secure code.
--		 */
--		asm volatile(
--		"	cps	0x16\n"
--		"	mrc	p15, 0, r1, c1, c1, 0\n"
--		"	orr	r0, r1, #1\n"
--		"	mcr	p15, 0, r0, c1, c1, 0\n"
--		"	isb\n"
--		"	mov	r0, #0\n"
--		"	mcrr	p15, 4, r0, r0, c14\n"
--		"	isb\n"
--		"	mcr	p15, 0, r1, c1, c1, 0\n"
--		"	isb\n"
--		"	cps	0x13\n"
--			: : : "r0", "r1");
- 	} else {
- 		/* At Linux boot time the r8a7790 arch timer comes up
- 		 * with the counter disabled. Moreover, it may also report
+* Changes since v2
+- Fixed lots of spelling mistakes, thanks Hans!
+- Used a goto instead if state variable when restarting iteration over
+  subdev list as suggested by Sakari. Thank you it's much easier read
+  now.
+- Added Acked-by from Sakari and Hans, thanks!
+- Rebased to latest media-tree.
+
+* Changes since v1:
+- Added a pre-patch which adds an error check which was previously in
+  the new incremental async code but is more useful on its own.
+- Added documentation to Documentation/media/kapi/v4l2-subdev.rst.
+- Fixed data type of bool variable.
+- Added call to lockdep_assert_held(), thanks Sakari.
+- Fixed commit messages typo, thanks Sakari.
+
+Niklas Söderlund (3):
+  v4l: async: fix unbind error in v4l2_async_notifier_unregister()
+  v4l: async: do not hold list_lock when reprobing devices
+  v4l: async: add subnotifier to subdevices
+
+ Documentation/media/kapi/v4l2-subdev.rst |  12 +++
+ drivers/media/v4l2-core/v4l2-async.c     | 165 +++++++++++++++++++++++++------
+ include/media/v4l2-async.h               |  25 +++++
+ include/media/v4l2-subdev.h              |   5 +
+ 4 files changed, 179 insertions(+), 28 deletions(-)
+
 -- 
-2.7.4
+2.13.1
