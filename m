@@ -1,144 +1,143 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:37032 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753860AbdGNQIu (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:56250 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751324AbdGQQHF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Jul 2017 12:08:50 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v2 3/6] v4l: vsp1: Remove redundant context variables
-Date: Fri, 14 Jul 2017 17:08:34 +0100
-Message-Id: <766b91eeca0df013cc31637a60227ab959ec0068.1500048373.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.525a94c41c3857a3f4bb8b8bbbccf78cf0c1dc78.1500048373.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.525a94c41c3857a3f4bb8b8bbbccf78cf0c1dc78.1500048373.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.525a94c41c3857a3f4bb8b8bbbccf78cf0c1dc78.1500048373.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.525a94c41c3857a3f4bb8b8bbbccf78cf0c1dc78.1500048373.git-series.kieran.bingham+renesas@ideasonboard.com>
+        Mon, 17 Jul 2017 12:07:05 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-spi@vger.kernel.org
+In-Reply-To: <1499855161-20518-1-git-send-email-geert+renesas@glider.be>
+Message-Id: <E1dX8Xw-0005GJ-FP@debutante>
+Date: Mon, 17 Jul 2017 17:06:56 +0100
+Subject: Applied "spi: sh-msiof: Limit minimum divider on R-Car Gen3" to the spi tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The vsp1_pipe object context variables for div_size and
-current_partition allowed state to be maintained through processing the
-partitions during processing.
+The patch
 
-Now that the partition tables are calculated during stream on, there is
-no requirement to store these variables in the pipe object.
+   spi: sh-msiof: Limit minimum divider on R-Car Gen3
 
-Utilise local variables for the processing as required.
+has been applied to the spi tree at
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
 
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 61a8dec502b873879fa240ec7614601523b46a43 Mon Sep 17 00:00:00 2001
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Date: Wed, 12 Jul 2017 12:26:01 +0200
+Subject: [PATCH] spi: sh-msiof: Limit minimum divider on R-Car Gen3
+
+On R-Car Gen3 SoCs (excluding R-Car H3 ES1.x, which cannot be used for
+SPI due to a hardware erratum), BRPS x BRDV = 1/1 is an invalid divider
+setting.
+Implement this limitation using an SoC/family-specific minimum divider.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
-v2:
- - s/current_partition/partition/
- - s/partition_number/partition/
----
- drivers/media/platform/vsp1/vsp1_pipe.h  |  4 ----
- drivers/media/platform/vsp1/vsp1_video.c | 22 +++++++---------------
- 2 files changed, 7 insertions(+), 19 deletions(-)
+ drivers/spi/spi-sh-msiof.c | 32 +++++++++++++++++++++++---------
+ 1 file changed, 23 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/media/platform/vsp1/vsp1_pipe.h b/drivers/media/platform/vsp1/vsp1_pipe.h
-index d345cc6d0d69..f440d0891bea 100644
---- a/drivers/media/platform/vsp1/vsp1_pipe.h
-+++ b/drivers/media/platform/vsp1/vsp1_pipe.h
-@@ -80,10 +80,8 @@ enum vsp1_pipeline_state {
-  * @uds_input: entity at the input of the UDS, if the UDS is present
-  * @entities: list of entities in the pipeline
-  * @dl: display list associated with the pipeline
-- * @div_size: The maximum allowed partition size for the pipeline
-  * @partitions: The number of partitions used to process one frame
-  * @partition: The current partition for configuration to process
-- * @current_partition: The partition number currently being configured
-  * @part_table: The pre-calculated partitions used by the pipeline
-  */
- struct vsp1_pipeline {
-@@ -115,10 +113,8 @@ struct vsp1_pipeline {
- 
- 	struct vsp1_dl_list *dl;
- 
--	unsigned int div_size;
- 	unsigned int partitions;
- 	struct v4l2_rect partition;
--	unsigned int current_partition;
- 	struct v4l2_rect *part_table;
+diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
+index c304c7167866..0eb1e9583485 100644
+--- a/drivers/spi/spi-sh-msiof.c
++++ b/drivers/spi/spi-sh-msiof.c
+@@ -38,6 +38,7 @@ struct sh_msiof_chipdata {
+ 	u16 tx_fifo_size;
+ 	u16 rx_fifo_size;
+ 	u16 master_flags;
++	u16 min_div;
  };
  
-diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
-index 4155c06e9b42..dd94968d0044 100644
---- a/drivers/media/platform/vsp1/vsp1_video.c
-+++ b/drivers/media/platform/vsp1/vsp1_video.c
-@@ -280,7 +280,6 @@ static int vsp1_video_pipeline_setup_partitions(struct vsp1_pipeline *pipe)
- 		if (pipe->part_table == NULL)
- 			return -ENOMEM;
+ struct sh_msiof_spi_priv {
+@@ -49,6 +50,7 @@ struct sh_msiof_spi_priv {
+ 	struct completion done;
+ 	unsigned int tx_fifo_size;
+ 	unsigned int rx_fifo_size;
++	unsigned int min_div;
+ 	void *tx_dma_page;
+ 	void *rx_dma_page;
+ 	dma_addr_t tx_dma_addr;
+@@ -261,6 +263,8 @@ static void sh_msiof_spi_set_clk_regs(struct sh_msiof_spi_priv *p,
+ 	if (!WARN_ON(!spi_hz || !parent_rate))
+ 		div = DIV_ROUND_UP(parent_rate, spi_hz);
  
--		pipe->div_size = div_size;
- 		pipe->partitions = 1;
- 		pipe->part_table[0] = vsp1_video_partition(pipe, div_size, 0);
- 		return 0;
-@@ -296,7 +295,6 @@ static int vsp1_video_pipeline_setup_partitions(struct vsp1_pipeline *pipe)
- 		}
- 	}
++	div = max_t(unsigned long, div, p->min_div);
++
+ 	for (k = 0; k < ARRAY_SIZE(sh_msiof_spi_div_table); k++) {
+ 		brps = DIV_ROUND_UP(div, sh_msiof_spi_div_table[k].div);
+ 		/* SCR_BRDV_DIV_1 is valid only if BRPS is x 1/1 or x 1/2 */
+@@ -998,24 +1002,33 @@ static const struct sh_msiof_chipdata sh_data = {
+ 	.tx_fifo_size = 64,
+ 	.rx_fifo_size = 64,
+ 	.master_flags = 0,
++	.min_div = 1,
++};
++
++static const struct sh_msiof_chipdata rcar_gen2_data = {
++	.tx_fifo_size = 64,
++	.rx_fifo_size = 64,
++	.master_flags = SPI_MASTER_MUST_TX,
++	.min_div = 1,
+ };
  
--	pipe->div_size = div_size;
- 	pipe->partitions = DIV_ROUND_UP(format->width, div_size);
+-static const struct sh_msiof_chipdata r8a779x_data = {
++static const struct sh_msiof_chipdata rcar_gen3_data = {
+ 	.tx_fifo_size = 64,
+ 	.rx_fifo_size = 64,
+ 	.master_flags = SPI_MASTER_MUST_TX,
++	.min_div = 2,
+ };
  
- 	pipe->part_table = kcalloc(pipe->partitions, sizeof(*pipe->part_table),
-@@ -385,11 +383,12 @@ static void vsp1_video_frame_end(struct vsp1_pipeline *pipe,
- }
+ static const struct of_device_id sh_msiof_match[] = {
+ 	{ .compatible = "renesas,sh-mobile-msiof", .data = &sh_data },
+-	{ .compatible = "renesas,msiof-r8a7790",   .data = &r8a779x_data },
+-	{ .compatible = "renesas,msiof-r8a7791",   .data = &r8a779x_data },
+-	{ .compatible = "renesas,msiof-r8a7792",   .data = &r8a779x_data },
+-	{ .compatible = "renesas,msiof-r8a7793",   .data = &r8a779x_data },
+-	{ .compatible = "renesas,msiof-r8a7794",   .data = &r8a779x_data },
+-	{ .compatible = "renesas,rcar-gen2-msiof", .data = &r8a779x_data },
+-	{ .compatible = "renesas,msiof-r8a7796",   .data = &r8a779x_data },
+-	{ .compatible = "renesas,rcar-gen3-msiof", .data = &r8a779x_data },
++	{ .compatible = "renesas,msiof-r8a7790",   .data = &rcar_gen2_data },
++	{ .compatible = "renesas,msiof-r8a7791",   .data = &rcar_gen2_data },
++	{ .compatible = "renesas,msiof-r8a7792",   .data = &rcar_gen2_data },
++	{ .compatible = "renesas,msiof-r8a7793",   .data = &rcar_gen2_data },
++	{ .compatible = "renesas,msiof-r8a7794",   .data = &rcar_gen2_data },
++	{ .compatible = "renesas,rcar-gen2-msiof", .data = &rcar_gen2_data },
++	{ .compatible = "renesas,msiof-r8a7796",   .data = &rcar_gen3_data },
++	{ .compatible = "renesas,rcar-gen3-msiof", .data = &rcar_gen3_data },
+ 	{ .compatible = "renesas,sh-msiof",        .data = &sh_data }, /* Deprecated */
+ 	{},
+ };
+@@ -1230,6 +1243,7 @@ static int sh_msiof_spi_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, p);
+ 	p->master = master;
+ 	p->info = info;
++	p->min_div = chipdata->min_div;
  
- static void vsp1_video_pipeline_run_partition(struct vsp1_pipeline *pipe,
--					      struct vsp1_dl_list *dl)
-+					      struct vsp1_dl_list *dl,
-+					      unsigned int partition)
- {
- 	struct vsp1_entity *entity;
- 
--	pipe->partition = pipe->part_table[pipe->current_partition];
-+	pipe->partition = pipe->part_table[partition];
- 
- 	list_for_each_entry(entity, &pipe->entities, list_pipe) {
- 		if (entity->ops->configure)
-@@ -402,6 +401,7 @@ static void vsp1_video_pipeline_run(struct vsp1_pipeline *pipe)
- {
- 	struct vsp1_device *vsp1 = pipe->output->entity.vsp1;
- 	struct vsp1_entity *entity;
-+	unsigned int partition;
- 
- 	if (!pipe->dl)
- 		pipe->dl = vsp1_dl_list_get(pipe->output->dlm);
-@@ -418,20 +418,12 @@ static void vsp1_video_pipeline_run(struct vsp1_pipeline *pipe)
- 	}
- 
- 	/* Run the first partition */
--	pipe->current_partition = 0;
--	vsp1_video_pipeline_run_partition(pipe, pipe->dl);
-+	vsp1_video_pipeline_run_partition(pipe, pipe->dl, 0);
- 
- 	/* Process consecutive partitions as necessary */
--	for (pipe->current_partition = 1;
--	     pipe->current_partition < pipe->partitions;
--	     pipe->current_partition++) {
-+	for (partition = 1; partition < pipe->partitions; partition++) {
- 		struct vsp1_dl_list *dl;
- 
--		/*
--		 * Partition configuration operations will utilise
--		 * the pipe->current_partition variable to determine
--		 * the work they should complete.
--		 */
- 		dl = vsp1_dl_list_get(pipe->output->dlm);
- 
- 		/*
-@@ -444,7 +436,7 @@ static void vsp1_video_pipeline_run(struct vsp1_pipeline *pipe)
- 			break;
- 		}
- 
--		vsp1_video_pipeline_run_partition(pipe, dl);
-+		vsp1_video_pipeline_run_partition(pipe, dl, partition);
- 		vsp1_dl_list_add_chain(pipe->dl, dl);
- 	}
+ 	init_completion(&p->done);
  
 -- 
-git-series 0.9.1
+2.13.2
