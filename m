@@ -1,56 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:34970 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753659AbdGLQz4 (ORCPT
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:34782 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751291AbdGQQec (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 12 Jul 2017 12:55:56 -0400
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
+        Mon, 17 Jul 2017 12:34:32 -0400
+Date: Mon, 17 Jul 2017 18:34:28 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 00/14] pinctrl: sh-pfc: r8a7796: Fix pin assignment definitions
-Date: Thu, 13 Jul 2017 01:55:33 +0900
-Message-Id: <1499878547-3452-1-git-send-email-ykaneko0929@gmail.com>
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 2/6] ARM: shmobile_defconfig: Cleanup from non-existing
+ options
+Message-ID: <20170717163428.GA2346@kozik-book>
+References: <1500270596-22384-1-git-send-email-krzk@kernel.org>
+ <1500270596-22384-2-git-send-email-krzk@kernel.org>
+ <CAMuHMdXWjw_k+-Fsv6gv8jH4hKvyZ_ygfVJqJ8QB4B8=LEfiGQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXWjw_k+-Fsv6gv8jH4hKvyZ_ygfVJqJ8QB4B8=LEfiGQ@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This series fixes pin assignment definitions for R8A7796 SoC.
-This series is based on the for-next branch of linux-pinctrl tree.
+On Mon, Jul 17, 2017 at 09:29:24AM +0200, Geert Uytterhoeven wrote:
+> Hi Krzysztof,
+> 
+> On Mon, Jul 17, 2017 at 7:49 AM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> > Remove options which do not exist anymore:
+> >  - DRM_RCAR_HDMI was merged to generic DRM bridge and is obsolete since
+> >    commit 5c602531feb3 ("drm: rcar-du: Replace manual bridge
+> >    implementation with DRM bridge");
+> >
+> >  - SND_SOC_RSRC_CARD was replaced by SND_SIMPLE_SCU_CARD in commit
+> >    d12c6216c4a5 ("ASoC: rsrc-card: rename rsrc-card to simple-scu-card
+> >    phase3");
+> >
+> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> 
+> These have already be fixed in the defconfig-for-v4.14 branch Simon Horman's
+> tree (git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git).
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git/log/?h=defconfig-for-v4.14
+> 
+> They're not yet in -next as v4.13-rc1 wasn't released at that time, and
+> Simon is now on holidays.
 
-Takeshi Kihara (14):
-  pinctrl: sh-pfc: r8a7796: Fix MOD_SEL1 bit[25:24] to 0x3 when using
-    STP_ISEN_1_D
-  pinctrl: sh-pfc: r8a7796: Fix IPSR register setting when MSIOF3_SS1_E
-    pin was selected
-  pinctrl: sh-pfc: r8a7796: Fix MOD_SEL2 bit26 to 0x0 when using SCK5_A
-  pinctrl: sh-pfc: r8a7796: Fix MOD_SEL register pin assignment for SSI
-    pins group
-  pinctrl: sh-pfc: r8a7796: Fix SCIF_CLK_{A,B} pin's MOD_SEL assignment
-    to MOD_SEL1 bit10
-  pinctrl: sh-pfc: r8a7796: Fix FMCLK{_C,_D} and FMIN{_C,_D} pin
-    function definitions
-  pinctrl: sh-pfc: r8a7796: Fix NFDATA{0..13} and NF{ALE,CLE,WE_N,RE_N}
-    pin function definitions
-  pinctrl: sh-pfc: r8a7796: Fix MSIOF3_{SS1,SS2}_E pins function
-    definitions
-  pinctrl: sh-pfc: r8a7796: Fix MOD_SEL register pin assignment for
-    TCLK{1,2}_{A,B} pins group
-  pinctrl: sh-pfc: r8a7796: Fix to delete FSCLKST pin and IPSR7
-    bit[15:12] register definitions
-  pinctrl: sh-pfc: r8a7796: Fix to delete SATA_DEVSLP_B pins function
-    definitions
-  pinctrl: sh-pfc: r8a7796: Fix to delete MOD_SEL0 bit2 register
-    definitions
-  pinctrl: sh-pfc: r8a7796: Fix IPSR and MOD_SEL register pin assignment
-    for FSO pins group
-  pinctrl: sh-pfc: r8a7796: Rename CS1# pin function definitions
+Ahhh, thanks for noticing this!
 
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 138 +++++++++++++++++------------------
- 1 file changed, 65 insertions(+), 73 deletions(-)
-
--- 
-1.9.1
+Best regards,
+Krzysztof
