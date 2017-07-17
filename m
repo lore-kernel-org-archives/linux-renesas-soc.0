@@ -1,60 +1,59 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:35233 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751257AbdGQH30 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Jul 2017 03:29:26 -0400
-MIME-Version: 1.0
-In-Reply-To: <1500270596-22384-2-git-send-email-krzk@kernel.org>
-References: <1500270596-22384-1-git-send-email-krzk@kernel.org> <1500270596-22384-2-git-send-email-krzk@kernel.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 17 Jul 2017 09:29:24 +0200
-Message-ID: <CAMuHMdXWjw_k+-Fsv6gv8jH4hKvyZ_ygfVJqJ8QB4B8=LEfiGQ@mail.gmail.com>
-Subject: Re: [PATCH 2/6] ARM: shmobile_defconfig: Cleanup from non-existing options
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Simon Horman <horms@verge.net.au>,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Liviu Dudau <liviu.dudau@arm.com>,
         Sudeep Holla <sudeep.holla@arm.com>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
         Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 2/6] ARM: shmobile_defconfig: Cleanup from non-existing options
+Date: Mon, 17 Jul 2017 07:49:52 +0200
+Message-Id: <1500270596-22384-2-git-send-email-krzk@kernel.org>
+In-Reply-To: <1500270596-22384-1-git-send-email-krzk@kernel.org>
+References: <1500270596-22384-1-git-send-email-krzk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Krzysztof,
+Remove options which do not exist anymore:
+ - DRM_RCAR_HDMI was merged to generic DRM bridge and is obsolete since
+   commit 5c602531feb3 ("drm: rcar-du: Replace manual bridge
+   implementation with DRM bridge");
 
-On Mon, Jul 17, 2017 at 7:49 AM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> Remove options which do not exist anymore:
->  - DRM_RCAR_HDMI was merged to generic DRM bridge and is obsolete since
->    commit 5c602531feb3 ("drm: rcar-du: Replace manual bridge
->    implementation with DRM bridge");
->
->  - SND_SOC_RSRC_CARD was replaced by SND_SIMPLE_SCU_CARD in commit
->    d12c6216c4a5 ("ASoC: rsrc-card: rename rsrc-card to simple-scu-card
->    phase3");
->
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+ - SND_SOC_RSRC_CARD was replaced by SND_SIMPLE_SCU_CARD in commit
+   d12c6216c4a5 ("ASoC: rsrc-card: rename rsrc-card to simple-scu-card
+   phase3");
 
-These have already be fixed in the defconfig-for-v4.14 branch Simon Horman's
-tree (git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git).
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ arch/arm/configs/shmobile_defconfig | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git/log/?h=defconfig-for-v4.14
-
-They're not yet in -next as v4.13-rc1 wasn't released at that time, and
-Simon is now on holidays.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
+index 3c66a422fb4d..123a1debe3d7 100644
+--- a/arch/arm/configs/shmobile_defconfig
++++ b/arch/arm/configs/shmobile_defconfig
+@@ -155,7 +155,6 @@ CONFIG_VIDEO_ML86V7667=y
+ CONFIG_DRM=y
+ CONFIG_DRM_I2C_ADV7511=y
+ CONFIG_DRM_RCAR_DU=y
+-CONFIG_DRM_RCAR_HDMI=y
+ CONFIG_DRM_RCAR_LVDS=y
+ CONFIG_FB_SH_MOBILE_LCDC=y
+ CONFIG_FB_SH_MOBILE_MERAM=y
+@@ -169,9 +168,9 @@ CONFIG_SND=y
+ CONFIG_SND_SOC=y
+ CONFIG_SND_SOC_SH4_FSI=y
+ CONFIG_SND_SOC_RCAR=y
+-CONFIG_SND_SOC_RSRC_CARD=y
+ CONFIG_SND_SOC_AK4642=y
+ CONFIG_SND_SOC_WM8978=y
++CONFIG_SND_SIMPLE_SCU_CARD=y
+ CONFIG_USB=y
+ CONFIG_USB_XHCI_HCD=y
+ CONFIG_USB_XHCI_RCAR=y
+-- 
+2.7.4
