@@ -1,52 +1,97 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-To: linux-media@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        Archit Taneja <architt@codeaurora.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Hans Verkuil <hans.verkuil@cisco.com>
-Subject: [PATCH 3/4] arm: dts: renesas: add cec clock for Koelsch board
-Date: Sun, 30 Jul 2017 15:07:42 +0200
-Message-Id: <20170730130743.19681-4-hverkuil@xs4all.nl>
-In-Reply-To: <20170730130743.19681-1-hverkuil@xs4all.nl>
-References: <20170730130743.19681-1-hverkuil@xs4all.nl>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:35283 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751317AbdGQUpg (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 17 Jul 2017 16:45:36 -0400
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH V4 1/2] mfd: Add ROHM BD9571MWV-M PMIC DT bindings
+Date: Mon, 17 Jul 2017 22:45:11 +0200
+Message-Id: <20170717204512.7075-1-marek.vasut+renesas@gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Hans Verkuil <hans.verkuil@cisco.com>
+Add DT bindings for the ROHM BD9571MWV-M PMIC. This PMIC has
+the following features:
+- multiple voltage monitors for 1V8, 2V5, 3V3 voltage rail
+- one voltage regulator for DVFS
+- two GPIOs
 
-The adv7511 on the Koelsch board has a 12 MHz fixed clock
-for the CEC block. Specify this in the dts to enable CEC support.
-
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: devicetree@vger.kernel.org
+Cc: Rob Herring <robh@kernel.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-renesas-soc@vger.kernel.org
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- arch/arm/boot/dts/r8a7791-koelsch.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
+V2: - Drop the compatible = "regulator-fixed" from the binding example,
+      it should not be there.
+    - List the VD09 regulator
+V3: Replace bd9571@30 with pmic@30
+V4: No changes
+---
+ .../devicetree/bindings/mfd/bd9571mwv.txt          | 49 ++++++++++++++++++++++
+ 1 file changed, 49 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/bd9571mwv.txt
 
-diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
-index 001e6116c47c..88c8957b075b 100644
---- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-@@ -642,11 +642,19 @@
- 		};
- 	};
- 
-+	cec_clock: cec-clock {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <12000000>;
-+	};
+diff --git a/Documentation/devicetree/bindings/mfd/bd9571mwv.txt b/Documentation/devicetree/bindings/mfd/bd9571mwv.txt
+new file mode 100644
+index 000000000000..9ab216a851d5
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mfd/bd9571mwv.txt
+@@ -0,0 +1,49 @@
++* ROHM BD9571MWV Power Management Integrated Circuit (PMIC) bindings
 +
- 	hdmi@39 {
- 		compatible = "adi,adv7511w";
- 		reg = <0x39>;
- 		interrupt-parent = <&gpio3>;
- 		interrupts = <29 IRQ_TYPE_LEVEL_LOW>;
-+		clocks = <&cec_clock>;
-+		clock-names = "cec";
- 
- 		adi,input-depth = <8>;
- 		adi,input-colorspace = "rgb";
++Required properties:
++ - compatible		: Should be "rohm,bd9571mwv".
++ - reg			: I2C slave address.
++ - interrupt-parent	: Phandle to the parent interrupt controller.
++ - interrupts		: The interrupt line the device is connected to.
++ - interrupt-controller	: Marks the device node as an interrupt controller.
++ - #interrupt-cells	: The number of cells to describe an IRQ, should be 2.
++			    The first cell is the IRQ number.
++			    The second cell is the flags, encoded as trigger
++			    masks from ../interrupt-controller/interrupts.txt.
++ - gpio-controller      : Marks the device node as a GPIO Controller.
++ - #gpio-cells          : Should be two.  The first cell is the pin number and
++                            the second cell is used to specify flags.
++                            See ../gpio/gpio.txt for more information.
++ - regulators:          : List of child nodes that specify the regulator
++                            initialization data. Child nodes must be named
++                            after their hardware counterparts:
++			     - vd09
++			     - vd18
++			     - vd25
++			     - vd33
++			     - dvfs
++			    Each child node is defined using the standard
++			    binding for regulators.
++
++Example:
++
++	pmic: pmic@30 {
++		compatible = "rohm,bd9571mwv";
++		reg = <0x30>;
++		interrupt-parent = <&gpio2>;
++		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++		gpio-controller;
++		#gpio-cells = <2>;
++
++		regulators {
++			dvfs: dvfs {
++				regulator-name = "dvfs";
++				regulator-min-microvolt = <750000>;
++				regulator-max-microvolt = <1030000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++		};
++	};
 -- 
-2.13.1
+2.11.0
