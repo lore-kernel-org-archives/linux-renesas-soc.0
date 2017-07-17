@@ -1,12 +1,17 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:34782 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751291AbdGQQec (ORCPT
+Received: from mail-io0-f195.google.com ([209.85.223.195]:35233 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751257AbdGQH30 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Jul 2017 12:34:32 -0400
-Date: Mon, 17 Jul 2017 18:34:28 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+        Mon, 17 Jul 2017 03:29:26 -0400
+MIME-Version: 1.0
+In-Reply-To: <1500270596-22384-2-git-send-email-krzk@kernel.org>
+References: <1500270596-22384-1-git-send-email-krzk@kernel.org> <1500270596-22384-2-git-send-email-krzk@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 17 Jul 2017 09:29:24 +0200
+Message-ID: <CAMuHMdXWjw_k+-Fsv6gv8jH4hKvyZ_ygfVJqJ8QB4B8=LEfiGQ@mail.gmail.com>
+Subject: Re: [PATCH 2/6] ARM: shmobile_defconfig: Cleanup from non-existing options
+To: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Liviu Dudau <liviu.dudau@arm.com>,
@@ -17,43 +22,39 @@ Cc: Simon Horman <horms@verge.net.au>,
         <linux-arm-kernel@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH 2/6] ARM: shmobile_defconfig: Cleanup from non-existing
- options
-Message-ID: <20170717163428.GA2346@kozik-book>
-References: <1500270596-22384-1-git-send-email-krzk@kernel.org>
- <1500270596-22384-2-git-send-email-krzk@kernel.org>
- <CAMuHMdXWjw_k+-Fsv6gv8jH4hKvyZ_ygfVJqJ8QB4B8=LEfiGQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdXWjw_k+-Fsv6gv8jH4hKvyZ_ygfVJqJ8QB4B8=LEfiGQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Jul 17, 2017 at 09:29:24AM +0200, Geert Uytterhoeven wrote:
-> Hi Krzysztof,
-> 
-> On Mon, Jul 17, 2017 at 7:49 AM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > Remove options which do not exist anymore:
-> >  - DRM_RCAR_HDMI was merged to generic DRM bridge and is obsolete since
-> >    commit 5c602531feb3 ("drm: rcar-du: Replace manual bridge
-> >    implementation with DRM bridge");
-> >
-> >  - SND_SOC_RSRC_CARD was replaced by SND_SIMPLE_SCU_CARD in commit
-> >    d12c6216c4a5 ("ASoC: rsrc-card: rename rsrc-card to simple-scu-card
-> >    phase3");
-> >
-> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> 
-> These have already be fixed in the defconfig-for-v4.14 branch Simon Horman's
-> tree (git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git).
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git/log/?h=defconfig-for-v4.14
-> 
-> They're not yet in -next as v4.13-rc1 wasn't released at that time, and
-> Simon is now on holidays.
+Hi Krzysztof,
 
-Ahhh, thanks for noticing this!
+On Mon, Jul 17, 2017 at 7:49 AM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> Remove options which do not exist anymore:
+>  - DRM_RCAR_HDMI was merged to generic DRM bridge and is obsolete since
+>    commit 5c602531feb3 ("drm: rcar-du: Replace manual bridge
+>    implementation with DRM bridge");
+>
+>  - SND_SOC_RSRC_CARD was replaced by SND_SIMPLE_SCU_CARD in commit
+>    d12c6216c4a5 ("ASoC: rsrc-card: rename rsrc-card to simple-scu-card
+>    phase3");
+>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Best regards,
-Krzysztof
+These have already be fixed in the defconfig-for-v4.14 branch Simon Horman's
+tree (git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git).
+
+https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git/log/?h=defconfig-for-v4.14
+
+They're not yet in -next as v4.13-rc1 wasn't released at that time, and
+Simon is now on holidays.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
