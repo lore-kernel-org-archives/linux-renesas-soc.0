@@ -1,68 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:33208 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751280AbdGQPYm (ORCPT
+Received: from mail-io0-f195.google.com ([209.85.223.195]:35963 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751257AbdGQIJ3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Jul 2017 11:24:42 -0400
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-serial@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, magnus.damm@gmail.com,
-        laurent.pinchart@ideasonboard.com, wsa@the-dreams.de,
-        robh@kernel.org, peda@axentia.se, geert@linux-m68k.org,
-        linux-i2c@vger.kernel.org,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [RFC v2 0/6] serdev multiplexing support
-Date: Mon, 17 Jul 2017 17:24:30 +0200
-Message-Id: <1500305076-15570-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Mon, 17 Jul 2017 04:09:29 -0400
+Received: by mail-io0-f195.google.com with SMTP id h134so6944622iof.3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Jul 2017 01:09:29 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1499777809-27492-3-git-send-email-horms+renesas@verge.net.au>
+References: <1499777809-27492-1-git-send-email-horms+renesas@verge.net.au> <1499777809-27492-3-git-send-email-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 17 Jul 2017 10:09:28 +0200
+Message-ID: <CAMuHMdVrjsU8=1UmK-SNG316sDDpMehwFu+zJFBDjMFUptjjYA@mail.gmail.com>
+Subject: Re: [PATCH 2/3] ARM: dts: r8a7791: Use R-Car Gen 2 fallback binding
+ for vin nodes
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi!
+On Tue, Jul 11, 2017 at 2:56 PM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> Use R-Car Gen 2 fallback binding for vind nodes in DT for r8a7791 SoC.
+>
+> This has no run-time effect for the current driver as the initialisation
+> sequence is the same for the SoC-specific binding for r8a7791 and the
+> fallback binding for R-Car Gen 2
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-This is a new attempt to add multiplexer support to serdev. It is now based
-on the mux subsystem, making it more generic than the previous iteration
-("[RFC 0/4] serdev GPIO-based multiplexing support").
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Thanks to reviewers for their comments. This revision incorporates the
-changes suggested as far as they are still applicable, which mostly applies
-to those concerning the MAX9260 i2c adapter driver.
+Gr{oetje,eeting}s,
 
-New patches have been added that fix a small issue in the mux include files
-("mux: include compiler.h from mux/consumer.h"), and implement deferred
-probing of serdev controllers ("serial: core: support deferring serdev
-controller registration"), hopefully correctly.
+                        Geert
 
-This series depends on the "pinctrl: sh-pfc: r8a7792: Add SCIF1 pin groups"
-patch as well as v15 of the mux subsystem series ("[PATCH v15 00/13] mux
-controller abstraction and iio/i2c muxes").
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-CU
-Uli
-
-
-Ulrich Hecht (6):
-  mux: include compiler.h from mux/consumer.h
-  serdev: add method to set parity
-  serdev: add multiplexer support
-  serial: core: support deferring serdev controller registration
-  max9260: add driver for i2c over GMSL passthrough
-  ARM: dts: blanche: add SCIF1 and MAX9260 deserializer
-
- arch/arm/boot/dts/r8a7792-blanche.dts |  52 ++++++
- drivers/media/i2c/Kconfig             |   6 +
- drivers/media/i2c/Makefile            |   1 +
- drivers/media/i2c/max9260.c           | 288 ++++++++++++++++++++++++++++++++++
- drivers/tty/serdev/Kconfig            |   3 +
- drivers/tty/serdev/Makefile           |   1 +
- drivers/tty/serdev/core.c             |  26 ++-
- drivers/tty/serdev/mux.c              |  66 ++++++++
- drivers/tty/serdev/serdev-ttyport.c   |  17 ++
- drivers/tty/serial/serial_core.c      |   4 +
- include/linux/mux/consumer.h          |   2 +
- include/linux/serdev.h                |  20 ++-
- 12 files changed, 482 insertions(+), 4 deletions(-)
- create mode 100644 drivers/media/i2c/max9260.c
- create mode 100644 drivers/tty/serdev/mux.c
-
--- 
-2.7.4
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
