@@ -1,6 +1,5 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Hans Verkuil <hverkuil@xs4all.nl>
 Subject: Re: [PATCH 14/14] [media] fix warning on v4l2_subdev_call() result
  interpreted as bool
 To: Arnd Bergmann <arnd@arndb.de>
@@ -25,8 +24,9 @@ Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
         devel@driverdev.osuosl.org
-Message-ID: <3a927e60-332a-f01d-f1af-98649e9f51b5@xs4all.nl>
-Date: Mon, 17 Jul 2017 16:35:27 +0200
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <9624c37a-1118-7d4f-888e-f0de196e4c15@xs4all.nl>
+Date: Mon, 17 Jul 2017 16:32:18 +0200
 MIME-Version: 1.0
 In-Reply-To: <CAK8P3a1zBW_QuPtRFNwuVyE_ziySoV9_ebz4sD7Bya3eRoo8SA@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
