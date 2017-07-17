@@ -1,50 +1,67 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:38326 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751399AbdGRN3Z (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 18 Jul 2017 09:29:25 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] ARM: shmobile: rcar-gen2: Correct arch timer frequency on RZ/G1E
-Date: Tue, 18 Jul 2017 15:29:17 +0200
-Message-Id: <1500384557-22123-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Mon, 17 Jul 2017 12:47:10 +0100
+From: Liviu Dudau <liviu.dudau@arm.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 4/6] ARM: vexpress_defconfig: Cleanup from non-existing
+ options
+Message-ID: <20170717114710.GR3532@e110455-lin.cambridge.arm.com>
+References: <1500270596-22384-1-git-send-email-krzk@kernel.org>
+ <1500270596-22384-4-git-send-email-krzk@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1500270596-22384-4-git-send-email-krzk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-According to the datasheet, the frequency of the ARM architecture timer
-on RZ/G1E depends on the frequency of the ZS clock, just like on R-Car
-E2 and V2H.
+On Mon, Jul 17, 2017 at 07:49:54AM +0200, Krzysztof Kozlowski wrote:
+> ARCH_VEXPRESS_CA9X4 is gone since commit 81cc3f868d30 ("ARM: vexpress:
+> Remove non-DT code").
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Untested due to lack of hardware.
+Acked-by: Liviu Dudau <Liviu.Dudau@arm.com>
 
-v2:
-  - Rebased to avoid dependencies.
----
- arch/arm/mach-shmobile/setup-rcar-gen2.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Thanks for the cleanup!
 
-diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-index 3bd505da31726869..7ab1690fab8299eb 100644
---- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
-+++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-@@ -70,7 +70,8 @@ void __init rcar_gen2_timer_init(void)
- 	void __iomem *base;
- 	u32 freq;
- 
--	if (of_machine_is_compatible("renesas,r8a7792") ||
-+	if (of_machine_is_compatible("renesas,r8a7745") ||
-+	    of_machine_is_compatible("renesas,r8a7792") ||
- 	    of_machine_is_compatible("renesas,r8a7794")) {
- 		freq = 260000000 / 8;	/* ZS / 8 */
- 		/* CNTVOFF has to be initialized either from non-secure
+Best regards,
+Liviu
+
+> ---
+>  arch/arm/configs/vexpress_defconfig | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/arch/arm/configs/vexpress_defconfig b/arch/arm/configs/vexpress_defconfig
+> index 0fa0ed577b15..edae1c58fe80 100644
+> --- a/arch/arm/configs/vexpress_defconfig
+> +++ b/arch/arm/configs/vexpress_defconfig
+> @@ -19,7 +19,6 @@ CONFIG_MODULE_UNLOAD=y
+>  # CONFIG_IOSCHED_DEADLINE is not set
+>  # CONFIG_IOSCHED_CFQ is not set
+>  CONFIG_ARCH_VEXPRESS=y
+> -CONFIG_ARCH_VEXPRESS_CA9X4=y
+>  CONFIG_ARCH_VEXPRESS_DCSCB=y
+>  CONFIG_ARCH_VEXPRESS_TC2_PM=y
+>  # CONFIG_SWP_EMULATE is not set
+> -- 
+> 2.7.4
+> 
+
 -- 
-2.7.4
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
