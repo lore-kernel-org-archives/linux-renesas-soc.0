@@ -1,12 +1,19 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:33060 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751279AbdGQKZ1 (ORCPT
+Received: from mail-io0-f179.google.com ([209.85.223.179]:36386 "EHLO
+        mail-io0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751272AbdGQKSl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Jul 2017 06:25:27 -0400
-Date: Mon, 17 Jul 2017 12:25:24 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+        Mon, 17 Jul 2017 06:18:41 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170717091801.GA2129@katana>
+References: <1492624001-3758-13-git-send-email-ykaneko0929@gmail.com>
+ <20170714142559.p6xp6dp4whlqcr5n@ninjato> <CAMuHMdV0fLG6m5hdyMpeKxb1nz_L+xEmyjvZV0iotXMSK517zw@mail.gmail.com>
+ <20170717091801.GA2129@katana>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 17 Jul 2017 12:18:39 +0200
+Message-ID: <CAMuHMdVhuN1ozEmtDJnn63rvktE7Aj4FACzweaJzCMzP1q8BKw@mail.gmail.com>
+Subject: Re: clk: renesas: rcar-gen3: Fix error return code in cpg_sd_clock_recalc_rate
+To: Wolfram Sang <wsa@the-dreams.de>
 Cc: Yoshihiro Kaneko <ykaneko0929@gmail.com>,
         linux-clk <linux-clk@vger.kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -15,52 +22,70 @@ Cc: Yoshihiro Kaneko <ykaneko0929@gmail.com>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: clk: renesas: rcar-gen3: Fix error return code in
- cpg_sd_clock_recalc_rate
-Message-ID: <20170717102524.vk2qdpjmzmyplknx@ninjato>
-References: <1492624001-3758-13-git-send-email-ykaneko0929@gmail.com>
- <20170714142559.p6xp6dp4whlqcr5n@ninjato>
- <CAMuHMdV0fLG6m5hdyMpeKxb1nz_L+xEmyjvZV0iotXMSK517zw@mail.gmail.com>
- <20170717091801.GA2129@katana>
- <CAMuHMdVhuN1ozEmtDJnn63rvktE7Aj4FACzweaJzCMzP1q8BKw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="s7rxevo65pchyjnj"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdVhuN1ozEmtDJnn63rvktE7Aj4FACzweaJzCMzP1q8BKw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Wolfram,
 
---s7rxevo65pchyjnj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Mon, Jul 17, 2017 at 11:18 AM, Wolfram Sang <wsa@the-dreams.de> wrote:
+>> >> In .recalc_rate of struct clk_ops, it is desirable to return 0 if an
+>> >> error occurs, but -EINVAL is returned. This patch fixes it.
+>> >>
+>> >> Fixes: 5b1defde7054 ("clk: renesas: cpg-mssr: Extract common R-Car Gen3 support code")
+>> >> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>> >> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+>> >
+>> > Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>>
+>> Why is it desirable to return 0 if an error occurs? Because the return type is
+>> unsigned long?
+>
+> Yes, I'd think so. Instead of an arbitrary high, kind-of-random, number, just
+> return 0 which also indicates that something unexpected happened? Also, all
+> other drivers return zero in an error case (did some quick coccinelle
+> grepping before).
 
+OK.
 
-> I do not mean that -EINVAL is correct. Obviously it isn't. But blindly
-> replacing -EINVAL by zero may not be the right solution neither.
+>> Is this routine allowed to fail? I don't see any handling of zero by
+>> its callers.
+>
+> From clk-provider.h:
+>
+>  * @recalc_rate Recalculate the rate of this clock, by querying hardware. The
+>  *              parent rate is an input parameter.  It is up to the caller to
+>  *              ensure that the prepare_mutex is held across this call.
+>  *              Returns the calculated rate.  Optional, but recommended - if
+>  *              this op is not set then clock rate will be initialized to 0.
+>
+> What would be the benefit of keeping -EINVAL in an unsigned long?
 
-Okay, it may not be perfect but it is definately better :)
+I do not mean that -EINVAL is correct. Obviously it isn't. But blindly
+replacing -EINVAL by zero may not be the right solution neither.
 
+If recalc_rate cannot return an error value, perhaps there is a good reason
+for that?
 
---s7rxevo65pchyjnj
-Content-Type: application/pgp-signature; name="signature.asc"
+I see there's a similar check in cpg_sd_clock_enable(), so the clock also
+cannot be enabled if this condition is met?
 
------BEGIN PGP SIGNATURE-----
+When does this happen? If the firmware leaves a invalid/unsupported setting
+in the register? If we can't recover from that, perhaps the clock's probe
+should just fail instead?
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAllskJAACgkQFA3kzBSg
-KbaG3xAAr2dRfq93nv17LfqR5MCDeQiqk7JpQXFWIGPk+cWt6vkT3DUCbV3Q1Ack
-pA6M+AF7wNH94w7XSJ2R2wtZW5FDk1KSwNXnPO1NiqFp1yrsIC8b8iZ1HHNZfiVc
-VQjdrb89qykUEuF9YHLSUrH2CpIUuceHrbFzXycwIHMRNhcOicwHXGjscKVA99OD
-r4sd7VVf3mDcVcYKi8peFStRNLe2ZYAKpRres/fJDjSC+iDbg0aquv/qpjmZms0T
-+2u/t5NrgZT35s/5zVoKQIZKXKruARrdzVuRwzZRXd16oT2eCTdwn/lJtYUJNCLt
-Ugqwr3k1cklJFxCYtDjhv9ZmIIcbK0dn/kI8qQVOvk1GLWNsIemZAs3RNqYWhxmc
-pWdCgG7Bh3n7XV4gRGXq3m/EGIbGjaloelchtNMuZmVUUqoOgUGgfuNOSAANS4xX
-VYtX3GFWJNANQ3l9PCR98C9SHCpG7lEbndBLlcDYNVhv7n3TtqBnMhYXuqZeRQ9T
-/Ut/Akf4TD7snIhMmWigDIosoKICvkDqO7jSrS2bZzmfeTU8nb2iwK957KG3+IcX
-5I9qiPAxRjCGZdDZFN7bPxT2q17+DbG7vTWWUZGHt+g8VokP3EGPRiamKXRXDcdo
-OXagy9X5YUY6EO/TUjJl5xeMN7n+wzb/3pA8WCLAkL690+f/MKc=
-=QEoA
------END PGP SIGNATURE-----
+It looks like the only writer of that field is cpg_sd_clock_set_rate(),
+which always writes a valid/supported value. Is it guaranteed that this
+function is always called first?
+If yes, the checks can just be removed instead?
 
---s7rxevo65pchyjnj--
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
