@@ -1,48 +1,42 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:65316 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751348AbdGRM3w (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 18 Jul 2017 08:29:52 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <balbi@kernel.org>
-CC: <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 1/3] usb: gadget: udc: renesas_usb3: fix free size in renesas_usb3_dma_free_prd()
-Date: Tue, 18 Jul 2017 21:26:40 +0900
-Message-ID: <1500380802-26930-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1500380802-26930-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1500380802-26930-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 5/6] ARM: ezx_defconfig: Cleanup from non-existing options
+Date: Mon, 17 Jul 2017 07:49:55 +0200
+Message-Id: <1500270596-22384-5-git-send-email-krzk@kernel.org>
+In-Reply-To: <1500270596-22384-1-git-send-email-krzk@kernel.org>
+References: <1500270596-22384-1-git-send-email-krzk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The commit 2d4aa21a73ba ("usb: gadget: udc: renesas_usb3: add support
-for dedicated DMAC") has a bug in the renesas_usb3_dma_free_prd().
-The size of dma_free_coherent() should be the same with dma_alloc_coherent()
-Otherwise, this code causes a WARNING by mm/page_alloc.c when
-renesas_usb3_dma_free_prd() is called. So, this patch fixes it.
+CPU_FREQ_DEBUG is gone since commit 2d06d8c49afd  ("[CPUFREQ] use
+dynamic debug instead of custom infrastructure").
 
-Fixes: 2d4aa21a73ba ("usb: gadget: udc: renesas_usb3: add support for dedicated DMAC")
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/usb/gadget/udc/renesas_usb3.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/configs/ezx_defconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
-index d827832..923ad5a 100644
---- a/drivers/usb/gadget/udc/renesas_usb3.c
-+++ b/drivers/usb/gadget/udc/renesas_usb3.c
-@@ -1369,7 +1369,7 @@ static int renesas_usb3_dma_free_prd(struct renesas_usb3 *usb3,
- 
- 	usb3_for_each_dma(usb3, dma, i) {
- 		if (dma->prd) {
--			dma_free_coherent(dev, USB3_DMA_MAX_XFER_SIZE,
-+			dma_free_coherent(dev, USB3_DMA_PRD_SIZE,
- 					  dma->prd, dma->prd_dma);
- 			dma->prd = NULL;
- 		}
+diff --git a/arch/arm/configs/ezx_defconfig b/arch/arm/configs/ezx_defconfig
+index 23660f3d0f7f..484e51fbd4a6 100644
+--- a/arch/arm/configs/ezx_defconfig
++++ b/arch/arm/configs/ezx_defconfig
+@@ -27,7 +27,6 @@ CONFIG_ZBOOT_ROM_BSS=0x0
+ CONFIG_CMDLINE="console=tty1 root=/dev/mmcblk0p2 rootfstype=ext2 rootdelay=3 ip=192.168.0.202:192.168.0.200:192.168.0.200:255.255.255.0 debug"
+ CONFIG_KEXEC=y
+ CONFIG_CPU_FREQ=y
+-CONFIG_CPU_FREQ_DEBUG=y
+ CONFIG_CPU_FREQ_GOV_POWERSAVE=m
+ CONFIG_CPU_FREQ_GOV_USERSPACE=m
+ CONFIG_CPU_FREQ_GOV_ONDEMAND=m
 -- 
-1.9.1
+2.7.4
