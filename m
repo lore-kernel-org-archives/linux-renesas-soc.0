@@ -1,43 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:35161 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751286AbdGQPYu (ORCPT
+Received: from mail-io0-f194.google.com ([209.85.223.194]:35350 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751260AbdGQIIy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Jul 2017 11:24:50 -0400
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-serial@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, magnus.damm@gmail.com,
-        laurent.pinchart@ideasonboard.com, wsa@the-dreams.de,
-        robh@kernel.org, peda@axentia.se, geert@linux-m68k.org,
-        linux-i2c@vger.kernel.org,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [RFC v2 1/6] mux: include compiler.h from mux/consumer.h
-Date: Mon, 17 Jul 2017 17:24:31 +0200
-Message-Id: <1500305076-15570-2-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1500305076-15570-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1500305076-15570-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Mon, 17 Jul 2017 04:08:54 -0400
+Received: by mail-io0-f194.google.com with SMTP id 84so6943672iop.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Jul 2017 01:08:54 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1499777809-27492-2-git-send-email-horms+renesas@verge.net.au>
+References: <1499777809-27492-1-git-send-email-horms+renesas@verge.net.au> <1499777809-27492-2-git-send-email-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 17 Jul 2017 10:08:53 +0200
+Message-ID: <CAMuHMdVw4oKqj1c+OX8JosP5wmFFz0UoQDkazd7JkgnJs0yiEQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] ARM: dts: r8a7790: Use R-Car Gen 2 fallback binding
+ for vin nodes
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Required for __must_check.
+On Tue, Jul 11, 2017 at 2:56 PM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> Use R-Car Gen 2 fallback binding for vind nodes in DT for r8a7790 SoC.
+>
+> This has no run-time effect for the current driver as the initialisation
+> sequence is the same for the SoC-specific binding for r8a7790 and the
+> fallback binding for R-Car Gen 2
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
----
- include/linux/mux/consumer.h | 2 ++
- 1 file changed, 2 insertions(+)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/include/linux/mux/consumer.h b/include/linux/mux/consumer.h
-index 5577e1b..ea96d4c 100644
---- a/include/linux/mux/consumer.h
-+++ b/include/linux/mux/consumer.h
-@@ -13,6 +13,8 @@
- #ifndef _LINUX_MUX_CONSUMER_H
- #define _LINUX_MUX_CONSUMER_H
- 
-+#include <linux/compiler.h>
-+
- struct device;
- struct mux_control;
- 
--- 
-2.7.4
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
