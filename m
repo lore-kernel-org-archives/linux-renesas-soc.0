@@ -1,58 +1,150 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:37310 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S935512AbdGTSWT (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:42546 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751280AbdGQMEG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 20 Jul 2017 14:22:19 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH 4/4] arm: dts: rskrza1: Add LED0 pin support
-Date: Thu, 20 Jul 2017 13:20:19 -0500
-Message-Id: <20170720182019.85075-5-chris.brandt@renesas.com>
-In-Reply-To: <20170720182019.85075-1-chris.brandt@renesas.com>
-References: <20170720182019.85075-1-chris.brandt@renesas.com>
+        Mon, 17 Jul 2017 08:04:06 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: Allow compile-testing of all (sub)drivers
+Date: Mon, 17 Jul 2017 14:04:03 +0200
+Message-Id: <1500293043-14654-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add pin configuration for LED0 which is connected to a GPIO.
+Enable compile-testing of the remaining clock drivers and subdrivers,
+now dummies are available for of_clk_get_from_provider(),
+of_device_compatible_match(), and rcar_rst_read_mode_pins(), and the
+CPG/MSSR driver core has been converted from of_match_node() to
+of_device_get_match_data().
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r7s72100-rskrza1.dts | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+To be queued in clk-renesas-for-v4.14.
 
-diff --git a/arch/arm/boot/dts/r7s72100-rskrza1.dts b/arch/arm/boot/dts/r7s72100-rskrza1.dts
-index f8285b951140..5dcaaf131d27 100644
---- a/arch/arm/boot/dts/r7s72100-rskrza1.dts
-+++ b/arch/arm/boot/dts/r7s72100-rskrza1.dts
-@@ -10,6 +10,7 @@
+ drivers/clk/renesas/Kconfig | 38 +++++++++++++++++++-------------------
+ 1 file changed, 19 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
+index 78d1df9112ba3932..85526ca3920229c8 100644
+--- a/drivers/clk/renesas/Kconfig
++++ b/drivers/clk/renesas/Kconfig
+@@ -34,94 +34,94 @@ config CLK_EMEV2
+ 	bool "Emma Mobile EV2 clock support" if COMPILE_TEST
  
- /dts-v1/;
- #include "r7s72100.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/pinctrl/r7s72100-pinctrl.h>
+ config CLK_RZA1
+-	bool
++	bool "RZ/A1H clock support" if COMPILE_TEST
+ 	select CLK_RENESAS_CPG_MSTP
  
- / {
-@@ -34,6 +35,15 @@
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 	};
-+
-+	leds {
-+		status = "okay";
-+		compatible = "gpio-leds";
-+
-+		led0 {
-+			gpios = <&port7 1 GPIO_ACTIVE_LOW>;
-+		};
-+	};
- };
+ config CLK_R8A73A4
+-	bool
++	bool "R-Mobile APE6 clock support" if COMPILE_TEST
+ 	select CLK_RENESAS_CPG_MSTP
+ 	select CLK_RENESAS_DIV6
  
- &extal_clk {
+ config CLK_R8A7740
+-	bool
++	bool "R-Mobile A1 clock support" if COMPILE_TEST
+ 	select CLK_RENESAS_CPG_MSTP
+ 	select CLK_RENESAS_DIV6
+ 
+ config CLK_R8A7743
+-	bool
++	bool "RZ/G1M clock support" if COMPILE_TEST
+ 	select CLK_RCAR_GEN2_CPG
+ 
+ config CLK_R8A7745
+-	bool
++	bool "RZ/G1E clock support" if COMPILE_TEST
+ 	select CLK_RCAR_GEN2_CPG
+ 
+ config CLK_R8A7778
+-	bool
++	bool "R-Car M1A clock support" if COMPILE_TEST
+ 	select CLK_RENESAS_CPG_MSTP
+ 
+ config CLK_R8A7779
+-	bool
++	bool "R-Car H1 clock support" if COMPILE_TEST
+ 	select CLK_RENESAS_CPG_MSTP
+ 
+ config CLK_R8A7790
+-	bool
++	bool "R-Car H2 clock support" if COMPILE_TEST
+ 	select CLK_RCAR_GEN2 if CLK_RENESAS_LEGACY
+ 	select CLK_RCAR_GEN2_CPG
+ 	select CLK_RENESAS_DIV6
+ 
+ config CLK_R8A7791
+-	bool
++	bool "R-Car M2-W/N clock support" if COMPILE_TEST
+ 	select CLK_RCAR_GEN2 if CLK_RENESAS_LEGACY
+ 	select CLK_RCAR_GEN2_CPG
+ 	select CLK_RENESAS_DIV6
+ 
+ config CLK_R8A7792
+-	bool
++	bool "R-Car V2H clock support" if COMPILE_TEST
+ 	select CLK_RCAR_GEN2 if CLK_RENESAS_LEGACY
+ 	select CLK_RCAR_GEN2_CPG
+ 
+ config CLK_R8A7794
+-	bool
++	bool "R-Car E2 clock support" if COMPILE_TEST
+ 	select CLK_RCAR_GEN2 if CLK_RENESAS_LEGACY
+ 	select CLK_RCAR_GEN2_CPG
+ 	select CLK_RENESAS_DIV6
+ 
+ config CLK_R8A7795
+-	bool
++	bool "R-Car H3 clock support" if COMPILE_TEST
+ 	select CLK_RCAR_GEN3_CPG
+ 
+ config CLK_R8A7796
+-	bool
++	bool "R-Car M3-W clock support" if COMPILE_TEST
+ 	select CLK_RCAR_GEN3_CPG
+ 
+ config CLK_SH73A0
+-	bool
++	bool "SH-Mobile AG5 clock support" if COMPILE_TEST
+ 	select CLK_RENESAS_CPG_MSTP
+ 	select CLK_RENESAS_DIV6
+ 
+ 
+ # Family
+ config CLK_RCAR_GEN2
+-	bool
++	bool "R-Car Gen2 legacy clock support" if COMPILE_TEST
+ 	select CLK_RENESAS_CPG_MSTP
+ 	select CLK_RENESAS_DIV6
+ 
+ config CLK_RCAR_GEN2_CPG
+-	bool
++	bool "R-Car Gen2 CPG clock support" if COMPILE_TEST
+ 	select CLK_RENESAS_CPG_MSSR
+ 
+ config CLK_RCAR_GEN3_CPG
+-	bool
++	bool "R-Car Gen3 CPG clock support" if COMPILE_TEST
+ 	select CLK_RENESAS_CPG_MSSR
+ 
+ 
+ # Generic
+ config CLK_RENESAS_CPG_MSSR
+-	bool
++	bool "CPG/MSSR clock support" if COMPILE_TEST
+ 	select CLK_RENESAS_DIV6
+ 
+ config CLK_RENESAS_CPG_MSTP
+-	bool
++	bool "MSTP clock support" if COMPILE_TEST
+ 
+ config CLK_RENESAS_DIV6
+ 	bool "DIV6 clock support" if COMPILE_TEST
 -- 
-2.13.0
+2.7.4
