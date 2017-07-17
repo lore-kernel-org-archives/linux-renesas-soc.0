@@ -1,45 +1,55 @@
-Subject: Re: [PATCH v2 03/14] v4l: vsp1: Don't set WPF sink pointer
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- dri-devel@lists.freedesktop.org
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <20170626181226.29575-1-laurent.pinchart+renesas@ideasonboard.com>
- <20170626181226.29575-4-laurent.pinchart+renesas@ideasonboard.com>
-Reply-To: kieran.bingham@ideasonboard.com
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Message-ID: <61e7fb65-9f7a-7f36-12dd-02fd709cec52@ideasonboard.com>
-Date: Thu, 13 Jul 2017 13:50:20 +0100
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH V3 2/2] mfd: Add ROHM BD9571MWV-M MFD PMIC driver
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+References: <20170502121816.10572-1-marek.vasut+renesas@gmail.com>
+ <20170502121816.10572-2-marek.vasut+renesas@gmail.com>
+ <CAMuHMdXmPPRA00yCOiwh1mvaGAy=g_QP=9qrupnzW+f=22Wosw@mail.gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <4d4afb13-25af-afa5-2eb1-43fe9c7aa813@gmail.com>
+Date: Mon, 17 Jul 2017 22:46:02 +0200
 MIME-Version: 1.0
-In-Reply-To: <20170626181226.29575-4-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <CAMuHMdXmPPRA00yCOiwh1mvaGAy=g_QP=9qrupnzW+f=22Wosw@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 26/06/17 19:12, Laurent Pinchart wrote:
-> The sink pointer is used to configure routing inside the VSP, and as
-> such must point to the next VSP entity in the pipeline. The WPF being a
-> pipeline terminal sink, its output route can't be configured. The
-> routing configuration code already handles this correctly without
-> referring to the sink pointer, which thus doesn't need to be set.
+On 07/10/2017 05:33 PM, Geert Uytterhoeven wrote:
+> Hi Marek,
 > 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> On Tue, May 2, 2017 at 2:18 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+>> Add the MFD part of the ROHM BD9571MWV-M PMIC driver and MAINTAINERS
+>> entry. The MFD part only specifies the regmap bits for the PMIC and
+>> binds the subdevs together.
+>>
+>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+>> Cc: linux-kernel@vger.kernel.org
+>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+>> Cc: Lee Jones <lee.jones@linaro.org>
+> 
+>> --- a/drivers/mfd/Kconfig
+>> +++ b/drivers/mfd/Kconfig
+>> @@ -133,6 +133,19 @@ config MFD_BCM590XX
+>>         help
+>>           Support for the BCM590xx PMUs from Broadcom
+>>
+>> +config MFD_BD9571MWV
+>> +       tristate "ROHM BD9571MWV PMIC"
+>> +       select MFD_CORE
+>> +       select REGMAP_I2C
+> 
+> Missing "select REGMAP_IRQ".
+> 
+> Else it fails with:
 
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Added
 
-> ---
->  drivers/media/platform/vsp1/vsp1_drv.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/vsp1/vsp1_drv.c b/drivers/media/platform/vsp1/vsp1_drv.c
-> index 6b35e043b554..35087d5573ce 100644
-> --- a/drivers/media/platform/vsp1/vsp1_drv.c
-> +++ b/drivers/media/platform/vsp1/vsp1_drv.c
-> @@ -412,7 +412,6 @@ static int vsp1_create_entities(struct vsp1_device *vsp1)
->  			}
->  
->  			list_add_tail(&video->list, &vsp1->videos);
-> -			wpf->entity.sink = &video->video.entity;
->  		}
->  	}
->  
-> 
+-- 
+Best regards,
+Marek Vasut
