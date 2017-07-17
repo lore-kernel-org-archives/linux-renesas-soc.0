@@ -1,53 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:34674 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753959AbdGLQ4N (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:53238 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751257AbdGQH7o (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 12 Jul 2017 12:56:13 -0400
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 02/14] pinctrl: sh-pfc: r8a7796: Fix IPSR register setting when MSIOF3_SS1_E pin was selected
-Date: Thu, 13 Jul 2017 01:55:35 +0900
-Message-Id: <1499878547-3452-3-git-send-email-ykaneko0929@gmail.com>
-In-Reply-To: <1499878547-3452-1-git-send-email-ykaneko0929@gmail.com>
-References: <1499878547-3452-1-git-send-email-ykaneko0929@gmail.com>
+        Mon, 17 Jul 2017 03:59:44 -0400
+Subject: Re: [PATCH] drm: rcar-du: Setup planes before enabling CRTC to avoid
+ flicker
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+References: <20170628185055.16379-1-laurent.pinchart+renesas@ideasonboard.com>
+ <9120be80-cefe-e52a-e512-15145ded1e82@ideasonboard.com>
+ <92490bac-1731-41b0-ac1c-93699963959c@ideasonboard.com>
+ <4f6ab180-efbb-432d-a765-82f766da32c9@ideasonboard.com>
+ <20170717063237.cozr3wednozvprxn@flea>
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Message-ID: <b3e96478-6c0e-fd75-3cac-fd4bde74da25@ideasonboard.com>
+Date: Mon, 17 Jul 2017 08:59:41 +0100
+MIME-Version: 1.0
+In-Reply-To: <20170717063237.cozr3wednozvprxn@flea>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Hi Maxime,
 
-This patch fixes to set IPSR register when using MSIOF3_SS1_E pin function
-is selected.
+On 17/07/17 07:32, Maxime Ripard wrote:
+> On Thu, Jul 13, 2017 at 05:25:08PM +0100, Kieran Bingham wrote:
+>>>>> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+>>>>> index 82b978a5dae6..c2f382feca07 100644
+>>>>> --- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+>>>>> +++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+>>>>> @@ -255,9 +255,9 @@ static void rcar_du_atomic_commit_tail(struct drm_atomic_state *old_state)
+>>>>>  
+>>>>>  	/* Apply the atomic update. */
+>>>>>  	drm_atomic_helper_commit_modeset_disables(dev, old_state);
+>>>>> -	drm_atomic_helper_commit_modeset_enables(dev, old_state);
+>>>>>  	drm_atomic_helper_commit_planes(dev, old_state,
+>>>>>  					DRM_PLANE_COMMIT_ACTIVE_ONLY);
+>>>>
+>>>> Except for DRM_PLANE_COMMIT_ACTIVE_ONLY, this function now looks very much like
+>>>> the default drm_atomic_helper_commit_tail() code.
+>>>>
+>>>> Reading around other uses /variants of commit_tail() style functions in other
+>>>> drivers has left me confused as to how the ordering affects things here.
+>>>>
+>>>> Could be worth adding a comment at least to describe why we can't use the
+>>>> default helper...
+>>>
+>>> Or better still ... Use Maxime's new :
+>>>
+>>> [PATCH 1/4] drm/atomic: implement drm_atomic_helper_commit_tail for runtime_pm users
+>>
+>> Never mind - I've just looked again, and seen that this new helper function is
+>> the ordering previous to *this* patch, and therefore isn't the same.
+>>
+>> However - it's worth noting that Maxime's patch converts this function to the
+>> new helper - which contradicts this patch's motivations.
+> 
+> So I guess I should drop the renesas modifications in my serie then?
 
-This is a correction to the incorrect implementation of IPSR register
-pin assignment for R8A7796 SoC specification of R-Car Gen3 Hardware
-User's Manual Rev.0.51E or later.
+Yes, Please.
 
-Fixes: f9aece7344bd ("pinctrl: sh-pfc: Initial R8A7796 PFC support")
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I think we have a few extra modifications in this function as well which will
+take it further away from a default implementation.
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-index b2fb66f..87f21d7b 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-@@ -645,7 +645,7 @@ enum {
- 	PINMUX_IPSR_MSEL(IP0_31_28,	VI4_DATA1_B,		SEL_VIN4_1),
- 	PINMUX_IPSR_MSEL(IP0_31_28,	CAN0_RX_B,		SEL_RCAN0_1),
- 	PINMUX_IPSR_MSEL(IP0_31_28,	CANFD0_RX_B,		SEL_CANFD0_1),
--	PINMUX_IPSR_MSEL(IP0_27_24,	MSIOF3_SS1_E,		SEL_MSIOF3_4),
-+	PINMUX_IPSR_MSEL(IP0_31_28,	MSIOF3_SS1_E,		SEL_MSIOF3_4),
- 
- 	/* IPSR1 */
- 	PINMUX_IPSR_GPSR(IP1_3_0,	IRQ2),
--- 
-1.9.1
+Regards
+
+Kieran
+
+> 
+> Maxime
+> 
