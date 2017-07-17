@@ -1,69 +1,109 @@
 Return-Path: <linux-i2c-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1500305076-15570-7-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1500305076-15570-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1500305076-15570-7-git-send-email-ulrich.hecht+renesas@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 18 Jul 2017 08:52:33 +0200
-Message-ID: <CAMuHMdWBqRNKLmzfx_ynPbCyrce5aceH5E7nHgTu-36igOxZow@mail.gmail.com>
-Subject: Re: [RFC v2 6/6] ARM: dts: blanche: add SCIF1 and MAX9260 deserializer
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Rob Herring <robh@kernel.org>, Peter Rosin <peda@axentia.se>,
-        Linux I2C <linux-i2c@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-serial@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, magnus.damm@gmail.com,
+        laurent.pinchart@ideasonboard.com, wsa@the-dreams.de,
+        robh@kernel.org, peda@axentia.se, geert@linux-m68k.org,
+        linux-i2c@vger.kernel.org,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [RFC v2 6/6] ARM: dts: blanche: add SCIF1 and MAX9260 deserializer
+Date: Mon, 17 Jul 2017 17:24:36 +0200
+Message-Id: <1500305076-15570-7-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <1500305076-15570-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1500305076-15570-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Uli,
+Adds serial port SCIF1 and the MAX9260 deserializers connected to it.
 
-On Mon, Jul 17, 2017 at 5:24 PM, Ulrich Hecht
-<ulrich.hecht+renesas@gmail.com> wrote:
-> Adds serial port SCIF1 and the MAX9260 deserializers connected to it.
->
-> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+---
+ arch/arm/boot/dts/r8a7792-blanche.dts | 52 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 52 insertions(+)
 
-Thanks for your patch!
-
->  arch/arm/boot/dts/r8a7792-blanche.dts | 52 +++++++++++++++++++++++++++++++++++
->  1 file changed, 52 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/r8a7792-blanche.dts b/arch/arm/boot/dts/r8a7792-blanche.dts
-> index 9b67dca..2ae9a87 100644
-> --- a/arch/arm/boot/dts/r8a7792-blanche.dts
-> +++ b/arch/arm/boot/dts/r8a7792-blanche.dts
-
->         status = "okay";
->  };
->
-> +&scif1 {
-> +       pinctrl-0 = <&scif1_pins>;
-> +       pinctrl-names = "default";
-> +
-> +       status = "okay";
-> +
-> +       mux-controls = <&mux>;
-> +
-> +       #address-cells = <1>;
-> +       #size-cells = <0>;
-> +       gmsl-deserializer@0 {
-> +               compatible = "maxim,max9260";
-> +               reg = <0x8>;
-
-unit address and reg property don't match.
-
-(try "make dtbs W=1")
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/r8a7792-blanche.dts b/arch/arm/boot/dts/r8a7792-blanche.dts
+index 9b67dca..2ae9a87 100644
+--- a/arch/arm/boot/dts/r8a7792-blanche.dts
++++ b/arch/arm/boot/dts/r8a7792-blanche.dts
+@@ -21,6 +21,7 @@
+ 	aliases {
+ 		serial0 = &scif0;
+ 		serial1 = &scif3;
++		serial2 = &scif1;
+ 	};
+ 
+ 	chosen {
+@@ -186,6 +187,16 @@
+ 		gpio = <&gpio11 12 GPIO_ACTIVE_HIGH>;
+ 		enable-active-high;
+ 	};
++
++	mux: mux-controller {
++		compatible = "gpio-mux";
++		#mux-control-cells = <0>;
++
++		mux-gpios = <&gpio5 12 GPIO_ACTIVE_HIGH>,
++			    <&gpio5 13 GPIO_ACTIVE_HIGH>,
++			    <&gpio5 14 GPIO_ACTIVE_HIGH>,
++			    <&gpio5 15 GPIO_ACTIVE_HIGH>;
++	};
+ };
+ 
+ &extal_clk {
+@@ -202,6 +213,11 @@
+ 		function = "scif0";
+ 	};
+ 
++	scif1_pins: scif1 {
++		groups = "scif1_data";
++		function = "scif1";
++	};
++
+ 	scif3_pins: scif3 {
+ 		groups = "scif3_data";
+ 		function = "scif3";
+@@ -246,6 +262,42 @@
+ 	status = "okay";
+ };
+ 
++&scif1 {
++	pinctrl-0 = <&scif1_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++
++	mux-controls = <&mux>;
++
++	#address-cells = <1>;
++	#size-cells = <0>;
++	gmsl-deserializer@0 {
++		compatible = "maxim,max9260";
++		reg = <0x8>;
++	};
++	gmsl-deserializer@1 {
++		compatible = "maxim,max9260";
++		reg = <0x9>;
++	};
++	gmsl-deserializer@2 {
++		compatible = "maxim,max9260";
++		reg = <0xa>;
++	};
++	gmsl-deserializer@3 {
++		compatible = "maxim,max9260";
++		reg = <0xb>;
++	};
++	gmsl-deserializer@4 {
++		compatible = "maxim,max9260";
++		reg = <0x4>;
++	};
++	gmsl-deserializer@5 {
++		compatible = "maxim,max9260";
++		reg = <0x5>;
++	};
++};
++
+ &scif3 {
+ 	pinctrl-0 = <&scif3_pins>;
+ 	pinctrl-names = "default";
+-- 
+2.7.4
