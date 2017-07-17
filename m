@@ -1,58 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:39770 "EHLO pokefinder.org"
+Received: from sauhun.de ([88.99.104.3]:33842 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752847AbdGSI2F (ORCPT
+        id S1751278AbdGQPNs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Jul 2017 04:28:05 -0400
+        Mon, 17 Jul 2017 11:13:48 -0400
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-watchdog@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org,
         Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH v2 1/5] watchdog: renesas_wdt: avoid (theoretical) type overflow
-Date: Wed, 19 Jul 2017 10:27:51 +0200
-Message-Id: <20170719082755.21733-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170719082755.21733-1-wsa+renesas@sang-engineering.com>
-References: <20170719082755.21733-1-wsa+renesas@sang-engineering.com>
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 5/5] watchdog: renesas_wdt: add another divider option
+Date: Mon, 17 Jul 2017 17:12:30 +0200
+Message-Id: <20170717151230.12680-6-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20170717151230.12680-1-wsa+renesas@sang-engineering.com>
+References: <20170717151230.12680-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Because the smallest clock divider we can select is 1, 'clks_per_sec'
-must be the same type as 'rate'.
+If we set RWTCSRB to 0, we can gain 4096 as another divider value. This
+is supported by all R-Car Gen2 and Gen3 devices which we aim to support.
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
-Changes since V1:
-
-* use proper type also in the private struct
-
- drivers/watchdog/renesas_wdt.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/watchdog/renesas_wdt.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
-index cf61c92f7ecd63..22b0348826deb1 100644
+index 599ba5aaa0536f..e3f204bb8802aa 100644
 --- a/drivers/watchdog/renesas_wdt.c
 +++ b/drivers/watchdog/renesas_wdt.c
-@@ -37,7 +37,7 @@ struct rwdt_priv {
- 	void __iomem *base;
- 	struct watchdog_device wdev;
- 	struct clk *clk;
--	unsigned int clks_per_sec;
-+	unsigned long clks_per_sec;
- 	u8 cks;
- };
+@@ -23,21 +23,22 @@
+ #define RWTCSRA_WOVF	BIT(4)
+ #define RWTCSRA_WRFLG	BIT(5)
+ #define RWTCSRA_TME	BIT(7)
++#define RWTCSRB		8
  
-@@ -112,8 +112,7 @@ static int rwdt_probe(struct platform_device *pdev)
- {
- 	struct rwdt_priv *priv;
- 	struct resource *res;
--	unsigned long rate;
--	unsigned int clks_per_sec;
-+	unsigned long rate, clks_per_sec;
- 	int ret, i;
+ #define RWDT_DEFAULT_TIMEOUT 60U
  
- 	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+ /*
+  * In probe, clk_rate is checked to be not more than 16 bit * biggest clock
+- * divider (10 bits). d is only a factor to fully utilize the WDT counter and
++ * divider (12 bits). d is only a factor to fully utilize the WDT counter and
+  * will not exceed its 16 bits. Thus, no overflow, we stay below 32 bits.
+  */
+ #define MUL_BY_CLKS_PER_SEC(p, d) \
+ 	DIV_ROUND_UP((d) * (p)->clk_rate, clk_divs[(p)->cks])
+ 
+-/* d is 16 bit, clk_divs 10 bit -> no 32 bit overflow */
++/* d is 16 bit, clk_divs 12 bit -> no 32 bit overflow */
+ #define DIV_BY_CLKS_PER_SEC(p, d) ((d) * clk_divs[(p)->cks] / (p)->clk_rate)
+ 
+-static const unsigned int clk_divs[] = { 1, 4, 16, 32, 64, 128, 1024 };
++static const unsigned int clk_divs[] = { 1, 4, 16, 32, 64, 128, 1024, 4096 };
+ 
+ static bool nowayout = WATCHDOG_NOWAYOUT;
+ module_param(nowayout, bool, 0);
+@@ -77,6 +78,7 @@ static int rwdt_start(struct watchdog_device *wdev)
+ 
+ 	clk_prepare_enable(priv->clk);
+ 
++	rwdt_write(priv, 0, RWTCSRB);
+ 	rwdt_write(priv, priv->cks, RWTCSRA);
+ 	rwdt_init_timeout(wdev);
+ 
 -- 
 2.11.0
