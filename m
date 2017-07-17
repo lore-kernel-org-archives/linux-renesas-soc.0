@@ -1,18 +1,18 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from michel.telenet-ops.be ([195.130.137.88]:47310 "EHLO
         michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751374AbdGQNYa (ORCPT
+        with ESMTP id S1751374AbdGQNX6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Jul 2017 09:24:30 -0400
+        Mon, 17 Jul 2017 09:23:58 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>
 Cc: linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2] ARM: shmobile: Remove ARCH_SHMOBILE_MULTI
-Date: Mon, 17 Jul 2017 15:24:28 +0200
-Message-Id: <1500297868-7479-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH] ARM: shmobile: Remove ARCH_SHMOBILE_MULTI
+Date: Mon, 17 Jul 2017 15:23:54 +0200
+Message-Id: <1500297834-7387-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
