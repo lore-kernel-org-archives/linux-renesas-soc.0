@@ -1,50 +1,82 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:5827 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932526AbdGKQaz (ORCPT
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:34914 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751309AbdGQNJO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 11 Jul 2017 12:30:55 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH] mmc: tmio-mmc: fix bad pointer math
-Date: Tue, 11 Jul 2017 09:29:11 -0700
-Message-Id: <20170711162911.39114-1-chris.brandt@renesas.com>
+        Mon, 17 Jul 2017 09:09:14 -0400
+From: Magnus Damm <magnus.damm@gmail.com>
+To: joro@8bytes.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+        robin.murphy@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
+        Magnus Damm <magnus.damm@gmail.com>, sricharan@codeaurora.org,
+        m.szyprowski@samsung.com
+Date: Mon, 17 Jul 2017 22:05:51 +0900
+Message-Id: <150029675199.22030.3050963235267091212.sendpatchset@little-apple>
+In-Reply-To: <150029669967.22030.8059216113725566341.sendpatchset@little-apple>
+References: <150029669967.22030.8059216113725566341.sendpatchset@little-apple>
+Subject: [PATCH v2 05/05] iommu/ipmmu-vmsa: Clean up device tracking
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The existing code gives an incorrect value.
-The buffer pointer 'buf' was of type unsigned short *, and 'count' was a
-number in bytes, so the pointer should have been cast before doing any
-pointer arithmetic.
+From: Robin Murphy <robin.murphy@arm.com>
 
-Since we know the code before it is doing as many 4-byte transfers as
-possible, we just need a pointer to where it left off in the buffer, hence
-zeroing out the bottom 2 bits of count for out math.
+Get rid of now unused device tracking code. Future code should instead
+be able to use driver_for_each_device() for this purpose.
 
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Fixes: 8185e51f358a: ("mmc: tmio-mmc: add support for 32bit data port")
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+This is a simplified version of the following patch from Robin
+[PATCH] iommu/ipmmu-vmsa: Clean up group allocation
+
+Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
- drivers/mmc/host/tmio_mmc_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 77e7b56a9099..5dfc556ccedf 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -428,7 +428,7 @@ static void tmio_mmc_transfer_data(struct tmio_mmc_host *host,
- 		if (!(count & 0x3))
- 			return;
+ Change since V1:
+ - New patch
+
+ drivers/iommu/ipmmu-vmsa.c |   12 ------------
+ 1 file changed, 12 deletions(-)
+
+--- 0008/drivers/iommu/ipmmu-vmsa.c
++++ work/drivers/iommu/ipmmu-vmsa.c	2017-07-17 21:35:26.690607110 +0900
+@@ -37,7 +37,6 @@ struct ipmmu_vmsa_device {
+ 	struct device *dev;
+ 	void __iomem *base;
+ 	struct iommu_device iommu;
+-	struct list_head list;
  
--		buf8 = (u8 *)(buf + (count >> 2));
-+		buf8 = (u8 *)buf + (count & ~3);
- 		count %= 4;
+ 	unsigned int num_utlbs;
+ 	spinlock_t lock;			/* Protects ctx and domains[] */
+@@ -64,9 +63,6 @@ struct ipmmu_vmsa_iommu_priv {
+ 	struct list_head list;
+ };
  
- 		if (is_read) {
--- 
-2.13.0
+-static DEFINE_SPINLOCK(ipmmu_devices_lock);
+-static LIST_HEAD(ipmmu_devices);
+-
+ static struct ipmmu_vmsa_domain *to_vmsa_domain(struct iommu_domain *dom)
+ {
+ 	return container_of(dom, struct ipmmu_vmsa_domain, io_domain);
+@@ -970,10 +966,6 @@ static int ipmmu_probe(struct platform_d
+ 	 * ipmmu_init() after the probe function returns.
+ 	 */
+ 
+-	spin_lock(&ipmmu_devices_lock);
+-	list_add(&mmu->list, &ipmmu_devices);
+-	spin_unlock(&ipmmu_devices_lock);
+-
+ 	platform_set_drvdata(pdev, mmu);
+ 
+ 	return 0;
+@@ -983,10 +975,6 @@ static int ipmmu_remove(struct platform_
+ {
+ 	struct ipmmu_vmsa_device *mmu = platform_get_drvdata(pdev);
+ 
+-	spin_lock(&ipmmu_devices_lock);
+-	list_del(&mmu->list);
+-	spin_unlock(&ipmmu_devices_lock);
+-
+ 	iommu_device_unregister(&mmu->iommu);
+ 
+ #if defined(CONFIG_ARM) && !defined(CONFIG_IOMMU_DMA)
