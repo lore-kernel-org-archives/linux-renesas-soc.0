@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:44528 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751396AbdGRNaT (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:38326 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751399AbdGRN3Z (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 18 Jul 2017 09:30:19 -0400
+        Tue, 18 Jul 2017 09:29:25 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>
@@ -12,9 +12,9 @@ Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2] ARM: shmobile: rcar-gen2: Correct arch timer frequency on RZ/G1E
-Date: Tue, 18 Jul 2017 15:30:15 +0200
-Message-Id: <1500384615-22195-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH] ARM: shmobile: rcar-gen2: Correct arch timer frequency on RZ/G1E
+Date: Tue, 18 Jul 2017 15:29:17 +0200
+Message-Id: <1500384557-22123-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
