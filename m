@@ -1,42 +1,48 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 6/6] ARM: qcom_defconfig: Cleanup from non-existing options
-Date: Mon, 17 Jul 2017 07:49:56 +0200
-Message-Id: <1500270596-22384-6-git-send-email-krzk@kernel.org>
-In-Reply-To: <1500270596-22384-1-git-send-email-krzk@kernel.org>
-References: <1500270596-22384-1-git-send-email-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f67.google.com ([209.85.214.67]:33408 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751434AbdGRNKE (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 18 Jul 2017 09:10:04 -0400
+MIME-Version: 1.0
+In-Reply-To: <1500380802-26930-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1500380802-26930-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1500380802-26930-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 18 Jul 2017 15:10:02 +0200
+Message-ID: <CAMuHMdXGEFxzDSWnQyS9_0SauwwVB-anT_EVwsrn4H0TULazSw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] usb: gadget: udc: renesas_usb3: fix free size in renesas_usb3_dma_free_prd()
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Felipe Balbi <balbi@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-QCOM_SMD is gone since commit 395a48053af6 ("soc: qcom: smd: Remove
-standalone driver").
+Hi Shimoda-san,
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/arm/configs/qcom_defconfig | 1 -
- 1 file changed, 1 deletion(-)
+On Tue, Jul 18, 2017 at 2:26 PM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> The commit 2d4aa21a73ba ("usb: gadget: udc: renesas_usb3: add support
+> for dedicated DMAC") has a bug in the renesas_usb3_dma_free_prd().
+> The size of dma_free_coherent() should be the same with dma_alloc_coherent()
+> Otherwise, this code causes a WARNING by mm/page_alloc.c when
+> renesas_usb3_dma_free_prd() is called. So, this patch fixes it.
+>
+> Fixes: 2d4aa21a73ba ("usb: gadget: udc: renesas_usb3: add support for dedicated DMAC")
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-diff --git a/arch/arm/configs/qcom_defconfig b/arch/arm/configs/qcom_defconfig
-index b02039c712c3..879159e4ab58 100644
---- a/arch/arm/configs/qcom_defconfig
-+++ b/arch/arm/configs/qcom_defconfig
-@@ -199,7 +199,6 @@ CONFIG_QCOM_WCNSS_PIL=y
- CONFIG_QCOM_GSBI=y
- CONFIG_QCOM_PM=y
- CONFIG_QCOM_SMEM=y
--CONFIG_QCOM_SMD=y
- CONFIG_QCOM_SMD_RPM=y
- CONFIG_QCOM_SMP2P=y
- CONFIG_QCOM_SMSM=y
--- 
-2.7.4
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
