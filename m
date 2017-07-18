@@ -1,52 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:39777 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752858AbdGSI2G (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:48116 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751617AbdGRO0k (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Jul 2017 04:28:06 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-watchdog@vger.kernel.org
+        Tue, 18 Jul 2017 10:26:40 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>
 Cc: linux-renesas-soc@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH v2 2/5] watchdog: renesas_wdt: check rate also for upper limit
-Date: Wed, 19 Jul 2017 10:27:52 +0200
-Message-Id: <20170719082755.21733-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170719082755.21733-1-wsa+renesas@sang-engineering.com>
-References: <20170719082755.21733-1-wsa+renesas@sang-engineering.com>
+        linux-arm-kernel@lists.infradead.org,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 3/3] ARM: dts: r8a7794: Add SMP support
+Date: Tue, 18 Jul 2017 16:26:27 +0200
+Message-Id: <1500387987-9240-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1500387987-9240-1-git-send-email-geert+renesas@glider.be>
+References: <1500387987-9240-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When checking the clock rate, ensure also that counting all 16 bits
-takes at least one second to match the granularity of the framework.
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Add the device tree node for the Advanced Power Management Unit (APMU).
+Use the "enable-method" prop to  point out that the APMU should be used
+for the SMP support.
+
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/watchdog/renesas_wdt.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+v2:
+  - No changes.
+---
+ arch/arm/boot/dts/r8a7794.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
-index 22b0348826deb1..8437dd52153208 100644
---- a/drivers/watchdog/renesas_wdt.c
-+++ b/drivers/watchdog/renesas_wdt.c
-@@ -134,14 +134,14 @@ static int rwdt_probe(struct platform_device *pdev)
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index a4c35d29f77c16dc..8d70e860468c5603 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -37,6 +37,7 @@
+ 	cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
++		enable-method = "renesas,apmu";
  
- 	for (i = ARRAY_SIZE(clk_divs) - 1; i >= 0; i--) {
- 		clks_per_sec = DIV_ROUND_UP(rate, clk_divs[i]);
--		if (clks_per_sec) {
-+		if (clks_per_sec && clks_per_sec < 65536) {
- 			priv->clks_per_sec = clks_per_sec;
- 			priv->cks = i;
- 			break;
- 		}
- 	}
+ 		cpu0: cpu@0 {
+ 			device_type = "cpu";
+@@ -65,6 +66,12 @@
+ 		};
+ 	};
  
--	if (!clks_per_sec) {
-+	if (i < 0) {
- 		dev_err(&pdev->dev, "Can't find suitable clock divider\n");
- 		return -ERANGE;
- 	}
++	apmu@e6151000 {
++		compatible = "renesas,r8a7794-apmu", "renesas,apmu";
++		reg = <0 0xe6151000 0 0x188>;
++		cpus = <&cpu0 &cpu1>;
++	};
++
+ 	gic: interrupt-controller@f1001000 {
+ 		compatible = "arm,gic-400";
+ 		#interrupt-cells = <3>;
 -- 
-2.11.0
+2.7.4
