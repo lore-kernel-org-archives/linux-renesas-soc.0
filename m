@@ -1,48 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:50506 "EHLO
-        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752070AbdGSC5l (ORCPT
+Received: from www.zeus03.de ([194.117.254.33]:56942 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751026AbdGRHV3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 18 Jul 2017 22:57:41 -0400
-Subject: Re: [PATCH 1/5] watchdog: renesas_wdt: avoid (theoretical) type
- overflow
-To: Wolfram Sang <wsa@the-dreams.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
+        Tue, 18 Jul 2017 03:21:29 -0400
+Date: Tue, 18 Jul 2017 09:21:27 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Subject: Re: [PATCH 1/5] watchdog: renesas_wdt: avoid (theoretical) type
+ overflow
+Message-ID: <20170718072127.GA1627@katana>
 References: <20170717151230.12680-1-wsa+renesas@sang-engineering.com>
  <20170717151230.12680-2-wsa+renesas@sang-engineering.com>
  <CAMuHMdV+yAy+QmDWFn8a7U8F1F5NcoV5C-1e8LeCV-jKcQHnMA@mail.gmail.com>
- <20170718072127.GA1627@katana>
-From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <4f512244-aeb7-2cde-d66c-79e1035e361e@roeck-us.net>
-Date: Tue, 18 Jul 2017 19:57:38 -0700
 MIME-Version: 1.0
-In-Reply-To: <20170718072127.GA1627@katana>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="0F1p//8PRICkK4MW"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdV+yAy+QmDWFn8a7U8F1F5NcoV5C-1e8LeCV-jKcQHnMA@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 07/18/2017 12:21 AM, Wolfram Sang wrote:
->>> -       unsigned long rate;
->>> -       unsigned int clks_per_sec;
->>> +       unsigned long rate, clks_per_sec;
->>
->> If you make this change, you should also update rwdt_priv.clks_per_sec
->> (yes I know it's removed in a later patch in this series).
-> 
-> Right. I will change but also wait a bit for more comments.
-> 
 
-I for my part don't have any. Feel free to add
+--0F1p//8PRICkK4MW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+> > -       unsigned long rate;
+> > -       unsigned int clks_per_sec;
+> > +       unsigned long rate, clks_per_sec;
+>=20
+> If you make this change, you should also update rwdt_priv.clks_per_sec
+> (yes I know it's removed in a later patch in this series).
 
-to the series when you resend.
+Right. I will change but also wait a bit for more comments.
 
-Thanks,
-Guenter
+Thanks!
+
+
+--0F1p//8PRICkK4MW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAllttvIACgkQFA3kzBSg
+KbZ7mA/+N5/wCYwSaM5l0ZrVpv5DSgQkZm8rra0G+y18u83JfJgzKx0WarCKqNuc
+OgHEwO/Uxm/jaPUAnzVYVCP38KH6bD/A+oxn7RBjFFzoUgG3b6Cyb3TowuatCKR1
+3zm+xx79AfcKiWnX/s0YQ0qd1mn2E8+3gHto1P7dCb5/PCkXZ6u7Xrm/bShY/HEf
+sZE/qZaY06mmlSd6B8rryMfKHmsyJveBBErPxvAVXi389FYF6aA4b/pbsokPzIjc
+vXry6/Nq7intT/pkKbRrpYyaMrAsQcimmgCCECOJBd9Z1Sgwtfk0HfpEsaOez5ey
+BDOkTtvTQzH0IrElyuaqAkMaYzPMwJwU7rBuXB/tDPI8ckqS3rLNOUSn1//rSeSV
+imm7RPfu8HFvHqrPoN3swZI2PNWziJ6Yvmj87W+DV7sznWcwtJFjNN392MOyUMS8
+uHm3HA2IQFpaIK/Wd6xndZ+KylW0qQd3Kg7Jc7vp73RhqNMw8Vdf3CDVT0csnp0l
+8ewm/zZ9eCcSDKkS44OeeMeThZwc3qbBV0sELgyCZj8HBIJGp4q9u37TInp4bnnd
+cmoPGvEUgUdXfrPAkT6y5HfPNVbeKIDWIL5k5RymETdqUBPZbgcoClxL1Wi2w5y4
+HuDeR/LqYZ4fAydc4FhlHeGhoo8RnXxjbG4oE+Ydspq6mjqTHjU=
+=nxvn
+-----END PGP SIGNATURE-----
+
+--0F1p//8PRICkK4MW--
