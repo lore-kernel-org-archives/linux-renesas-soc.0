@@ -1,54 +1,61 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:39175 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755621AbdGKM5G (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 11 Jul 2017 08:57:06 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 3/3] ARM: dts: r8a7794: Use R-Car Gen 2 fallback binding for vin nodes
-Date: Tue, 11 Jul 2017 14:56:49 +0200
-Message-Id: <1499777809-27492-4-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1499777809-27492-1-git-send-email-horms+renesas@verge.net.au>
-References: <1499777809-27492-1-git-send-email-horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-i2c@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-input@vger.kernel.org, linux-iio@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH v3 0/4] i2c: document DMA handling and add helpers for it
+Date: Tue, 18 Jul 2017 12:23:35 +0200
+Message-Id: <20170718102339.28726-1-wsa+renesas@sang-engineering.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use R-Car Gen 2 fallback binding for vind nodes in DT for r8a7794 SoC.
+So, after revisiting old mail threads and taking part in a similar discussion
+on the USB list, here is what I cooked up to document and ease DMA handling for
+I2C within Linux. Please have a look at the documentation introduced in patch 2
+for further details.
 
-This has no run-time effect for the current driver as the initialisation
-sequence is the same for the SoC-specific binding for r8a7794 and the
-fallback binding for R-Car Gen 2
+All patches have been tested with a Renesas Salvator-X board (r8a7796/M3-W) and
+a Renesas Lager board (r8a7790/H2). A more detailed test description can be
+found here: http://elinux.org/Tests:I2C-core-DMA
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7794.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+The branch can be found here:
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index f32b458e9328..26535414203a 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -801,7 +801,7 @@
- 	};
- 
- 	vin0: video@e6ef0000 {
--		compatible = "renesas,vin-r8a7794";
-+		compatible = "renesas,vin-r8a7794", "renesas,rcar-gen2-vin";
- 		reg = <0 0xe6ef0000 0 0x1000>;
- 		interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp8_clks R8A7794_CLK_VIN0>;
-@@ -810,7 +810,7 @@
- 	};
- 
- 	vin1: video@e6ef1000 {
--		compatible = "renesas,vin-r8a7794";
-+		compatible = "renesas,vin-r8a7794", "renesas,rcar-gen2-vin";
- 		reg = <0 0xe6ef1000 0 0x1000>;
- 		interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp8_clks R8A7794_CLK_VIN1>;
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/i2c-core-dma-v3
+
+And big kudos to Renesas Electronics for funding this work, thank you very much!
+
+Regards,
+
+   Wolfram
+
+
+Changes since v2:
+
+* rebased to v4.13-rc1
+* helper functions are not inlined anymore but moved to i2c core
+* __must_check has been added to the buffer check helper
+* the release function has been renamed to contain 'dma' as well
+* documentation updates. Hopefully better wording now
+* removed the doubled Signed-offs
+* adding more potentially interested parties to CC
+
+
+Wolfram Sang (4):
+  i2c: add helpers to ease DMA handling
+  i2c: add docs to clarify DMA handling
+  i2c: sh_mobile: use helper to decide if DMA is useful
+  i2c: rcar: check for DMA-capable buffers
+
+ Documentation/i2c/DMA-considerations | 38 ++++++++++++++++++++
+ drivers/i2c/busses/i2c-rcar.c        | 18 +++++++---
+ drivers/i2c/busses/i2c-sh_mobile.c   |  8 +++--
+ drivers/i2c/i2c-core-base.c          | 68 ++++++++++++++++++++++++++++++++++++
+ include/linux/i2c.h                  |  5 +++
+ 5 files changed, 130 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/i2c/DMA-considerations
+
 -- 
-2.1.4
+2.11.0
