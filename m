@@ -1,118 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f48.google.com ([74.125.82.48]:34408 "EHLO
-        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753245AbdGUIEJ (ORCPT
+Received: from ant.hostandfound.com ([194.213.4.102]:51349 "EHLO
+        ant.hostandfound.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751656AbdGRIL0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Jul 2017 04:04:09 -0400
-Received: by mail-wm0-f48.google.com with SMTP id l81so1817873wmg.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 21 Jul 2017 01:04:08 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1500365480070.8623@osrenterprises.com>
-References: <1500365480070.8623@osrenterprises.com>
-From: Magnus Damm <magnus.damm@gmail.com>
-Date: Fri, 21 Jul 2017 17:04:07 +0900
-Message-ID: <CANqRtoS1YGxKP2bFJyBN0LZQpXi7McGPDk1Qs_CSvohaXLQF=Q@mail.gmail.com>
-Subject: Re: [R-CAR H3] Can't Modify U-Boot Environment Variables on Updated Firmware
-To: Eli Sherman <eli.sherman@osrenterprises.com>
-Cc: "linux-renesas-soc@vger.kernel.org"
+        Tue, 18 Jul 2017 04:11:26 -0400
+Received: from exchange.osrenterprises.com ([31.168.148.141] helo=osrsrv.osrdom.local)
+        by ant.hostandfound.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
+        (Exim 4.86)
+        (envelope-from <eli.sherman@osrenterprises.com>)
+        id 1dXNbF-0006cc-Ov
+        for linux-renesas-soc@vger.kernel.org; Tue, 18 Jul 2017 11:11:24 +0300
+From: Eli Sherman <eli.sherman@osrenterprises.com>
+To: "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: [R-CAR H3] Can't Modify U-Boot Environment Variables on Updated
+ Firmware
+Date: Tue, 18 Jul 2017 08:12:35 +0000
+Message-ID: <1500365480070.8623@osrenterprises.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Eli,
-
-Thanks for your email. I just checked this topic and through a back
-channel I learned that some support is going on with this matter.
-
-In case you are unable to solve your issue please contact the mailing
-list again and keep me on CC. I have physical and remote access to
-several R-Car Gen3 boards including h3ulcb in ES1 and ES2 versions.
-For Salvator-X I also wrote some scripts to automate update of the
-firmware stack from Linux, so I have experience using the SCIF D/L
-mode on R-Car Gen3 SoCs.
-
-If you are stuck with the firmware updating process feel free to ping
-me and I can point you in the right direction.
-
-Best,
-
-/ magnus
-
-On Tue, Jul 18, 2017 at 5:12 PM, Eli Sherman
-<eli.sherman@osrenterprises.com> wrote:
-> Hello,
-> I understand that this is the mailing list for support for the R-Car line=
- of boards. If this information is incorrect, please direct me, if possible=
-, to the correct resource.
-> I have posted my issue to various rcar-related repos on github as well as=
- the e-linux talk page. Issue is as follows:
->
-> I am trying to get up and running with the R-Car H3 Starter Kit Premier B=
-oard (h3ulcb). I first followed the instructions at http://elinux.org/R-Car=
-/Boards/Yocto-Gen3 to build Yocto 2.19 for the board. When I attempted to r=
-un the built Yocto image on the board (both via tftp and via microSD), I re=
-ceived a kernel panic message. The limited resources on the internet (i.e.,=
- the other posts on this wiki) indicated this could likely be resolved by u=
-pdating the firmware. I then followed the instructions at http://elinux.org=
-/R-Car/Boards/H3SK#Flashing_firmware to update the firmware on the board. N=
-ow when I turn the board on, I cannot get to the stage where the option of =
-cancelling autoboot (as shown in examples in the links given). I am therefo=
-re not able to change U-Boot's environment variables to specify the Image f=
-ile to boot. It seems that U-Boot is perhaps not loading at all. Any help w=
-ould be greatly appreciated!
-> Output of boot sequence is below:
->
->
->
-> user@user-linux:~$ sudo picocom -b 115200 --send-cmd "ascii-xfr -vvs" /de=
-v/ttyUSB0
-> [sudo] password for user:
-> picocom v1.7
-> port is : /dev/ttyUSB0
-> flowcontrol : none
-> baudrate is : 115200
-> parity is : none
-> databits are : 8
-> escape is : C-a
-> local echo is : no
-> noinit is : no
-> noreset is : no
-> nolock is : no
-> send_cmd is : ascii-xfr -vvs
-> receive_cmd is : rz -vv
-> imap is :
-> omap is :
-> emap is : crcrlf,delbs,
-> Terminal ready
-> [ 0.000194] NOTICE: BL2: R-Car Gen3 Initial Program Loader(CA57) Rev.1.0.=
-14
-> [ 0.005761] NOTICE: BL2: PRR is R-Car H3 Ver2.0
-> [ 0.010335] NOTICE: BL2: Board is unknown Rev0.0
-> [ 0.015006] NOTICE: BL2: Boot device is HyperFlash(80MHz)
-> [ 0.020445] NOTICE: BL2: LCM state is CM
-> [ 0.024423] NOTICE: BL2: AVS setting succeeded. DVFS_SetVID=3D0x52
-> [ 0.030611] NOTICE: BL2: DDR3200(rev.0.22)NOTICE: [COLD_BOOT]NOTICE: ..0
-> [ 0.091270] NOTICE: BL2: DRAM Split is 4ch
-> [ 0.095155] NOTICE: BL2: QoS is default setting(rev.0.14)
-> [ 0.100655] NOTICE: BL2: Lossy Decomp areas
-> [ 0.104832] NOTICE: Entry 0: DCMPAREACRAx:0x80000540 DCMPAREACRBx:0x570
-> [ 0.111917] NOTICE: Entry 1: DCMPAREACRAx:0x40000000 DCMPAREACRBx:0x0
-> [ 0.118829] NOTICE: Entry 2: DCMPAREACRAx:0x20000000 DCMPAREACRBx:0x0
-> [ 0.125743] NOTICE: BL2: v1.3(release):4eef9a2
-> [ 0.130233] NOTICE: BL2: Built : 17:35:56, Jul 13 2017
-> [ 0.135420] NOTICE: BL2: Normal boot
-> [ 0.139062] NOTICE: BL2: dst=3D0xe6320190 src=3D0x8180000 len=3D512(0x200=
-)
-> [ 0.145608] NOTICE: BL2: dst=3D0x43f00000 src=3D0x8180400 len=3D6144(0x18=
-00)
-> [ 0.152070] NOTICE: BL2: dst=3D0x44000000 src=3D0x81c0000 len=3D65536(0x1=
-0000)
-> [ 0.159295] NOTICE: BL2: dst=3D0x44100000 src=3D0x8200000 len=3D524288(0x=
-80000)
-> [ 0.169775] NOTICE: BL2: dst=3D0x50000000 src=3D0x8640000 len=3D1048576(0=
-x100000)
->
-> Thank you in advance for your help.
->
+SGVsbG8sCkkgdW5kZXJzdGFuZCB0aGF0IHRoaXMgaXMgdGhlIG1haWxpbmcgbGlzdCBmb3Igc3Vw
+cG9ydCBmb3IgdGhlIFItQ2FyIGxpbmUgb2YgYm9hcmRzLiBJZiB0aGlzIGluZm9ybWF0aW9uIGlz
+IGluY29ycmVjdCwgcGxlYXNlIGRpcmVjdCBtZSwgaWYgcG9zc2libGUsIHRvIHRoZSBjb3JyZWN0
+IHJlc291cmNlLgpJIGhhdmUgcG9zdGVkIG15IGlzc3VlIHRvIHZhcmlvdXMgcmNhci1yZWxhdGVk
+IHJlcG9zIG9uIGdpdGh1YiBhcyB3ZWxsIGFzIHRoZSBlLWxpbnV4IHRhbGsgcGFnZS4gSXNzdWUg
+aXMgYXMgZm9sbG93czoKCkkgYW0gdHJ5aW5nIHRvIGdldCB1cCBhbmQgcnVubmluZyB3aXRoIHRo
+ZSBSLUNhciBIMyBTdGFydGVyIEtpdCBQcmVtaWVyIEJvYXJkIChoM3VsY2IpLiBJIGZpcnN0IGZv
+bGxvd2VkIHRoZSBpbnN0cnVjdGlvbnMgYXTCoGh0dHA6Ly9lbGludXgub3JnL1ItQ2FyL0JvYXJk
+cy9Zb2N0by1HZW4zwqB0byBidWlsZCBZb2N0byAyLjE5IGZvciB0aGUgYm9hcmQuIFdoZW4gSSBh
+dHRlbXB0ZWQgdG8gcnVuIHRoZSBidWlsdCBZb2N0byBpbWFnZSBvbiB0aGUgYm9hcmQgKGJvdGgg
+dmlhIHRmdHAgYW5kIHZpYSBtaWNyb1NEKSwgSSByZWNlaXZlZCBhIGtlcm5lbCBwYW5pYyBtZXNz
+YWdlLiBUaGUgbGltaXRlZCByZXNvdXJjZXMgb24gdGhlIGludGVybmV0IChpLmUuLCB0aGUgb3Ro
+ZXIgcG9zdHMgb24gdGhpcyB3aWtpKSBpbmRpY2F0ZWQgdGhpcyBjb3VsZCBsaWtlbHkgYmUgcmVz
+b2x2ZWQgYnkgdXBkYXRpbmcgdGhlIGZpcm13YXJlLiBJIHRoZW4gZm9sbG93ZWQgdGhlIGluc3Ry
+dWN0aW9ucyBhdMKgaHR0cDovL2VsaW51eC5vcmcvUi1DYXIvQm9hcmRzL0gzU0sjRmxhc2hpbmdf
+ZmlybXdhcmXigIvCoHRvIHVwZGF0ZSB0aGUgZmlybXdhcmUgb24gdGhlIGJvYXJkLiBOb3cgd2hl
+biBJIHR1cm4gdGhlIGJvYXJkIG9uLCBJIGNhbm5vdCBnZXQgdG8gdGhlIHN0YWdlIHdoZXJlIHRo
+ZSBvcHRpb24gb2YgY2FuY2VsbGluZyBhdXRvYm9vdCAoYXMgc2hvd24gaW4gZXhhbXBsZXMgaW4g
+dGhlIGxpbmtzIGdpdmVuKS4gSSBhbSB0aGVyZWZvcmUgbm90IGFibGUgdG8gY2hhbmdlIFUtQm9v
+dCdzIGVudmlyb25tZW50IHZhcmlhYmxlcyB0byBzcGVjaWZ5IHRoZSBJbWFnZSBmaWxlIHRvIGJv
+b3QuIEl0IHNlZW1zIHRoYXQgVS1Cb290IGlzIHBlcmhhcHMgbm90IGxvYWRpbmcgYXQgYWxsLiBB
+bnkgaGVscCB3b3VsZCBiZSBncmVhdGx5IGFwcHJlY2lhdGVkIQpPdXRwdXQgb2YgYm9vdCBzZXF1
+ZW5jZSBpcyBiZWxvdzoKCgoKdXNlckB1c2VyLWxpbnV4On4kIHN1ZG8gcGljb2NvbSAtYiAxMTUy
+MDAgLS1zZW5kLWNtZCAiYXNjaWkteGZyIC12dnMiIC9kZXYvdHR5VVNCMApbc3Vkb10gcGFzc3dv
+cmQgZm9yIHVzZXI6CnBpY29jb20gdjEuNwpwb3J0IGlzwqA6IC9kZXYvdHR5VVNCMApmbG93Y29u
+dHJvbMKgOiBub25lCmJhdWRyYXRlIGlzwqA6IDExNTIwMApwYXJpdHkgaXPCoDogbm9uZQpkYXRh
+Yml0cyBhcmXCoDogOAplc2NhcGUgaXPCoDogQy1hCmxvY2FsIGVjaG8gaXPCoDogbm8Kbm9pbml0
+IGlzwqA6IG5vCm5vcmVzZXQgaXPCoDogbm8Kbm9sb2NrIGlzwqA6IG5vCnNlbmRfY21kIGlzwqA6
+IGFzY2lpLXhmciAtdnZzCnJlY2VpdmVfY21kIGlzwqA6IHJ6IC12dgppbWFwIGlzwqA6Cm9tYXAg
+aXPCoDoKZW1hcCBpc8KgOiBjcmNybGYsZGVsYnMsClRlcm1pbmFsIHJlYWR5ClsgMC4wMDAxOTRd
+IE5PVElDRTogQkwyOiBSLUNhciBHZW4zIEluaXRpYWwgUHJvZ3JhbSBMb2FkZXIoQ0E1NykgUmV2
+LjEuMC4xNApbIDAuMDA1NzYxXSBOT1RJQ0U6IEJMMjogUFJSIGlzIFItQ2FyIEgzIFZlcjIuMApb
+IDAuMDEwMzM1XSBOT1RJQ0U6IEJMMjogQm9hcmQgaXMgdW5rbm93biBSZXYwLjAKWyAwLjAxNTAw
+Nl0gTk9USUNFOiBCTDI6IEJvb3QgZGV2aWNlIGlzIEh5cGVyRmxhc2goODBNSHopClsgMC4wMjA0
+NDVdIE5PVElDRTogQkwyOiBMQ00gc3RhdGUgaXMgQ00KWyAwLjAyNDQyM10gTk9USUNFOiBCTDI6
+IEFWUyBzZXR0aW5nIHN1Y2NlZWRlZC4gRFZGU19TZXRWSUQ9MHg1MgpbIDAuMDMwNjExXSBOT1RJ
+Q0U6IEJMMjogRERSMzIwMChyZXYuMC4yMilOT1RJQ0U6IFtDT0xEX0JPT1RdTk9USUNFOiAuLjAK
+WyAwLjA5MTI3MF0gTk9USUNFOiBCTDI6IERSQU0gU3BsaXQgaXMgNGNoClsgMC4wOTUxNTVdIE5P
+VElDRTogQkwyOiBRb1MgaXMgZGVmYXVsdCBzZXR0aW5nKHJldi4wLjE0KQpbIDAuMTAwNjU1XSBO
+T1RJQ0U6IEJMMjogTG9zc3kgRGVjb21wIGFyZWFzClsgMC4xMDQ4MzJdIE5PVElDRTogRW50cnkg
+MDogRENNUEFSRUFDUkF4OjB4ODAwMDA1NDAgRENNUEFSRUFDUkJ4OjB4NTcwClsgMC4xMTE5MTdd
+IE5PVElDRTogRW50cnkgMTogRENNUEFSRUFDUkF4OjB4NDAwMDAwMDAgRENNUEFSRUFDUkJ4OjB4
+MApbIDAuMTE4ODI5XSBOT1RJQ0U6IEVudHJ5IDI6IERDTVBBUkVBQ1JBeDoweDIwMDAwMDAwIERD
+TVBBUkVBQ1JCeDoweDAKWyAwLjEyNTc0M10gTk9USUNFOiBCTDI6IHYxLjMocmVsZWFzZSk6NGVl
+ZjlhMgpbIDAuMTMwMjMzXSBOT1RJQ0U6IEJMMjogQnVpbHTCoDogMTc6MzU6NTYsIEp1bCAxMyAy
+MDE3ClsgMC4xMzU0MjBdIE5PVElDRTogQkwyOiBOb3JtYWwgYm9vdApbIDAuMTM5MDYyXSBOT1RJ
+Q0U6IEJMMjogZHN0PTB4ZTYzMjAxOTAgc3JjPTB4ODE4MDAwMCBsZW49NTEyKDB4MjAwKQpbIDAu
+MTQ1NjA4XSBOT1RJQ0U6IEJMMjogZHN0PTB4NDNmMDAwMDAgc3JjPTB4ODE4MDQwMCBsZW49NjE0
+NCgweDE4MDApClsgMC4xNTIwNzBdIE5PVElDRTogQkwyOiBkc3Q9MHg0NDAwMDAwMCBzcmM9MHg4
+MWMwMDAwIGxlbj02NTUzNigweDEwMDAwKQpbIDAuMTU5Mjk1XSBOT1RJQ0U6IEJMMjogZHN0PTB4
+NDQxMDAwMDAgc3JjPTB4ODIwMDAwMCBsZW49NTI0Mjg4KDB4ODAwMDApClsgMC4xNjk3NzVdIE5P
+VElDRTogQkwyOiBkc3Q9MHg1MDAwMDAwMCBzcmM9MHg4NjQwMDAwIGxlbj0xMDQ4NTc2KDB4MTAw
+MDAwKQoKVGhhbmsgeW91IGluIGFkdmFuY2UgZm9yIHlvdXIgaGVscC4K4oCLCg==
