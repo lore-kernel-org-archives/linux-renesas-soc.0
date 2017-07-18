@@ -1,113 +1,63 @@
 Return-Path: <linux-i2c-owner@vger.kernel.org>
-Date: Wed, 19 Jul 2017 17:00:38 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
-        robh@kernel.org, peda@axentia.se, geert@linux-m68k.org,
-        linux-i2c@vger.kernel.org
-Subject: Re: [RFC v2 5/6] max9260: add driver for i2c over GMSL passthrough
-Message-ID: <20170719150038.GA6172@katana>
-References: <1500305076-15570-1-git-send-email-ulrich.hecht+renesas@gmail.com>
- <1500305076-15570-6-git-send-email-ulrich.hecht+renesas@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="nFreZHaLTZJo0R7j"
-Content-Disposition: inline
 In-Reply-To: <1500305076-15570-6-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1500305076-15570-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1500305076-15570-6-git-send-email-ulrich.hecht+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 18 Jul 2017 08:51:06 +0200
+Message-ID: <CAMuHMdWybpNd0=iVaiJbO=31jBMFi+Zq+jQ0tcEsXEdxLrh-Nw@mail.gmail.com>
+Subject: Re: [RFC v2 5/6] max9260: add driver for i2c over GMSL passthrough
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Rob Herring <robh@kernel.org>, Peter Rosin <peda@axentia.se>,
+        Linux I2C <linux-i2c@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Ulrich,
 
---nFreZHaLTZJo0R7j
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Mon, Jul 17, 2017 at 5:24 PM, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
+> This driver implements tunnelling of i2c requests over GMSL via a
+> MAX9260 deserializer. It provides an i2c adapter that can be used
+> to reach devices on the far side of the link.
+>
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-Hi Uli,
+Thanks for your patch!
 
-> +struct max9260_device {
-> +	struct serdev_device *serdev;
-> +	u8 *rx_buf;
-> +	int rx_len;
-> +	int rx_state;
-> +	wait_queue_head_t rx_wq;
-> +	struct i2c_adapter adap;
-> +};
-> +
-> +static void wait_for_transaction(struct max9260_device *dev)
+> --- /dev/null
+> +++ b/drivers/media/i2c/max9260.c
+> @@ -0,0 +1,288 @@
 
-max9260_ prefix as well?
+> +static void max9260_transact(struct max9260_device *dev,
+> +                            int expect,
+> +                            u8 *request, int len)
 
+const u8 *request (or const void *?)
+
+> +static int max9260_read_reg(struct max9260_device *dev, int reg)
 > +{
-> +	wait_event_interruptible_timeout(dev->rx_wq,
-> +		dev->rx_state <= RX_FRAME_ERROR,
-> +		HZ/2);
+> +       u8 request[] = { 0x79, 0x91, reg, 1 };
 
-I'd suggest to drop the interruptible. It can be done but it is usually
-not trivial to abort the operation gracefully when a signal comes in.
+static const
 
-Also, timeout is superfluous since you don't get the return value?
+I don't know if this buffer is ever copied. If not, perhaps it should not be
+on the stack anyway because some serial drivers may not support DMA
+from stack buffers?
+This applies to all buffers below.
 
-> +static int max9260_setup(struct max9260_device *dev)
-> +{
-> +	int ret;
-> +
-> +	ret = max9260_read_reg(dev, 0x1e);
-> +
-> +	if (ret != 0x02) {
-> +		dev_err(&dev->serdev->dev,
-> +			"device does not identify as MAX9260\n");
-> +		return -EINVAL;
+Gr{oetje,eeting}s,
 
-I think -ENODEV is the proper errno for a not-found device. Also, the
-error message could probably go.
+                        Geert
 
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static void max9260_uart_write_wakeup(struct serdev_device *serdev)
-> +{
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Maybe a FIXME comment for this empty function?
-
-> +static u32 max9260_i2c_func(struct i2c_adapter *adapter)
-> +{
-> +	return I2C_FUNC_SMBUS_BYTE|I2C_FUNC_SMBUS_BYTE_DATA;
-
-Spaces around operators.
-
-> +	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
-> +	if (!dev)
-> +		return -ENOMEM;
-
-You don't like devm_* it seems ;)
-
-Rest looks good to me!
-
-Regards,
-
-   Wolfram
-
---nFreZHaLTZJo0R7j
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAllvdBIACgkQFA3kzBSg
-KbYBoQ//akita3cWm5fWkW4a71QO+xL3PmdN+HCclSaIObuGi3GBy45xfd4RcYZ5
-VnNdET0QMGi+7Ft4G3ortAUry9NVqg7mYl1VD83JDCKRaZWjv/oK6mU/NzAk1GNa
-HUWYXeED/eiHuTkgwLVLQ9Zo+2yJt9OYQ1W/LpLJpYwqhEaqhrhVMG32ZrfGYgBo
-KyJdp2kllZ+O5eBUpueZitqX3A1FWa45AWft99iQw5ff6LMYD3Npdk92Dl1qxupk
-Vp8A2CG3NeHkyk6PuVo2Tjz9BDBpUhIUYJ7HmegevlNwCs3vigeBlYtJ72KUdmgL
-9BcSgs/NRclehtLfsWGlmet2kTOVFGxo8ZaDibUDPv2sLz6N0giBLwJBvQSHY2RE
-6I7b850hJfJoGRrUb+xClsLnEIFEbmNr5JBFbGsvPUpO9sMh2C5oJ+cwJlHVHsQv
-Q3q9MyP+W3Qzls1KJs5NdDKI91UmGHzmcbjoms9bMhl2M8kQ/oUYyi2/WMoJcSDK
-KPhPMY7IKe6e6qBwF8zeV88ffp/KoSvh+1jVcHSaqH+x4+CYhSkCBrauPaNe5QM2
-P1215zZZlt5X+iTnez5Sm7DMrjUL3Upg3XDA5DLgsMMclNsNtEdQMxGm7uay7UkZ
-+im3EIh5hMDXmAddXATHZyYE0ugikk+8s4js5iuyrd3Z+a/+oIc=
-=f3ek
------END PGP SIGNATURE-----
-
---nFreZHaLTZJo0R7j--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
