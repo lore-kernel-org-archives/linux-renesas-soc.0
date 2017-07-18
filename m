@@ -1,54 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:52429 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932072AbdGJNbg (ORCPT
+Received: from mail-it0-f66.google.com ([209.85.214.66]:36447 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751396AbdGRNMU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 10 Jul 2017 09:31:36 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] R-Car H3 ES2.0 Salvator-X: Enable DU support in DT
-Date: Mon, 10 Jul 2017 16:31:38 +0300
-Message-ID: <1672780.uyvZoTTfMK@avalon>
-In-Reply-To: <20170626162930.30240-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170626162930.30240-1-laurent.pinchart+renesas@ideasonboard.com>
+        Tue, 18 Jul 2017 09:12:20 -0400
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1500380802-26930-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1500380802-26930-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1500380802-26930-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 18 Jul 2017 15:12:18 +0200
+Message-ID: <CAMuHMdXwqVcAEq+r5BOSrHhOQZiLpTkUQtgCThdMDTQhiovZjQ@mail.gmail.com>
+Subject: Re: [PATCH 3/3] usb: gadget: udc: renesas_usb3: protect
+ usb3_ep->started in usb3_start_pipen()
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Felipe Balbi <balbi@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
+On Tue, Jul 18, 2017 at 2:26 PM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> This patch fixes an issue that unexpected behavior happens when
+> both the interrupt handler and renesas_usb3_ep_enable() are called.
+> In this case, since usb3_start_pipen() checked the usb3_ep->started,
+> but the flags was not protected. So, this patch protects the flag
+> by usb3->lock. Since renesas_usb3_ep_enable() for EP0 will be not called,
+> this patch doesn't take care of usb3_start_pipe0().
+>
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-Could you please pick this series for v4.14 ? I believe it has received the 
-necessary acks.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Monday 26 Jun 2017 19:29:28 Laurent Pinchart wrote:
-> Hello,
-> 
-> This patch series enable DU support in DT for the R-Car H3 ES2.0 Salvator-X
-> board. Patch 1/2 extends the DT bindings as needed, and patch 2/2 then
-> enables DU in the SoC DT.
-> 
-> The patches are based on top of Simon's arm64-dt-for-v4.14 branch.
-> 
-> Compared to v1
-> 
-> - the VSP DT bindings have been extended in patch 1/2
-> - patch 2/2 has been updated accordingly
-> - patch "arm64: dts: r8a7795: salvator-x: Unify DU node between ES1.x and
->   ES2.0" has been dropped
-> 
-> Laurent Pinchart (2):
->   drm: rcar-du: Add a VSP channel index to the vsps DT property
->   arm64: dts: r8a7795: Add support for the DU
-> 
->  .../devicetree/bindings/display/renesas,du.txt     | 51 ++++++++++---------
->  arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi       |  1 -
->  arch/arm64/boot/dts/renesas/r8a7795.dtsi           |  2 +
->  3 files changed, 32 insertions(+), 22 deletions(-)
+Gr{oetje,eeting}s,
 
--- 
-Regards,
+                        Geert
 
-Laurent Pinchart
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
