@@ -1,71 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:41404 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935843AbdGTMzK (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:48100 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751702AbdGRO0k (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 20 Jul 2017 08:55:10 -0400
+        Tue, 18 Jul 2017 10:26:40 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/4] arm64: dts: renesas: Add Support for R-Car D3 and Draak
-Date: Thu, 20 Jul 2017 14:54:33 +0200
-Message-Id: <1500555277-22921-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v2 1/3] ARM: Add definition for monitor mode
+Date: Tue, 18 Jul 2017 16:26:25 +0200
+Message-Id: <1500387987-9240-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1500387987-9240-1-git-send-email-geert+renesas@glider.be>
+References: <1500387987-9240-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Simon, Magnus,
+<asm/ptrace.h> provides *_MODE definitions for the various processor
+modes, but monitor mode was missing.
 
-This patch series adds minimal support for the R-Car D3 SoC and the
-Draak development board, allowing to boot from a ramdisk using a serial
-console.
+Add MON_MODE to avoid code using the hardcoded value.
 
-  - The first two patches add DT sources for R-Car D3 and Draak.
-    Due to the use of hardcoded constants, they have no further (build)
-    dependencies (obviously there is a runtime dependency).
-  - The last two patches replace the hardcoded constants by symbols from
-    DT binding headers, and thus depend on those headers.  Hence it
-    should be postponed to v4.15.
+Suggested-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ARM maintainers: Please provide your ack, as this is a dependency for a
+mach-shmobile patch.
 
-For proper operation, this depends on the 3 series I have just sent:
-  - [PATCH 0/3] arm64: renesas: Base R-Car D3 support,
-  - [PATCH 0/4] soc: renesas: Add R-Car D3 support,
-  - [PATCH 0/4] clk: renesas: Add R-Car D3 support.
+v2:
+  - New.
+---
+ arch/arm/include/uapi/asm/ptrace.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-For testing, an integration branch containing all dependencies (and a
-few DT binding updates I do not want to send before "ARM: shmobile:
-Document R-Car D3 SoC DT bindings" has been accepted) is available in
-the topic/r8a77995-integration branch of the git repository at
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git.
-
-Thanks for your comments!
-
-Geert Uytterhoeven (4):
-  arm64: dts: renesas: Add Renesas R8A77995 SoC support
-  arm64: dts: renesas: Add Renesas Draak board support
-  arm64: dts: renesas: r8a77995: Use r8a7795-sysc binding definitions
-  arm64: dts: renesas: r8a77995: Use r8a7795-cpg-mssr binding
-    definitions
-
- arch/arm64/boot/dts/renesas/Makefile           |   1 +
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts |  46 ++++++++
- arch/arm64/boot/dts/renesas/r8a77995.dtsi      | 151 +++++++++++++++++++++++++
- 3 files changed, 198 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a77995-draak.dts
- create mode 100644 arch/arm64/boot/dts/renesas/r8a77995.dtsi
-
+diff --git a/arch/arm/include/uapi/asm/ptrace.h b/arch/arm/include/uapi/asm/ptrace.h
+index 5af0ed1b825a2aa9..70ff6bf489f31193 100644
+--- a/arch/arm/include/uapi/asm/ptrace.h
++++ b/arch/arm/include/uapi/asm/ptrace.h
+@@ -53,6 +53,7 @@
+ #endif
+ #define FIQ_MODE	0x00000011
+ #define IRQ_MODE	0x00000012
++#define MON_MODE	0x00000016
+ #define ABT_MODE	0x00000017
+ #define HYP_MODE	0x0000001a
+ #define UND_MODE	0x0000001b
 -- 
 2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
