@@ -1,56 +1,88 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:39765 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752760AbdGSI2F (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:48102 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751642AbdGRO0k (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Jul 2017 04:28:05 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-watchdog@vger.kernel.org
+        Tue, 18 Jul 2017 10:26:40 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>
 Cc: linux-renesas-soc@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2 0/5] watchdog: renesas_wdt: improve precision
-Date: Wed, 19 Jul 2017 10:27:50 +0200
-Message-Id: <20170719082755.21733-1-wsa+renesas@sang-engineering.com>
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 0/3] ARM: renesas: Enable SMP on R-Car E2
+Date: Tue, 18 Jul 2017 16:26:24 +0200
+Message-Id: <1500387987-9240-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Currently, the renesas-rwdt driver is not precise with input clocks which have
-a remainder after the clock divisors are applied. This series should fix the
-situation and also pays attention to ensure variables have proper types and are
-divided properly. As a cherry on top, we also get a new divider value to allow
-for higher max_timeout :)
+	Hi all,
 
-Originally brought to attention by this BSP patch:
-https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas-bsp.git/commit/?id=7d56256a4d189a83e278ec2013eb1f3648bc7411
+This patch series enables SMP on R-Car E2 (r8a7794).
+The main hurdle here is that R-Car Gen2 boot loaders do not initialize the
+arch_timer CNTVOFF register, which thus needs workarounds on Linux.
 
-Tested with a Salvator-X (R-Car M3-W) and the clock driver hacked to supply the
-internal clock of 32552 Hz instead of the externally supplied 32768 Hz.
+  - The first patch adds a definition for MON_MODE, as suggested by Marc
+    Zyngier,
+  - The second patch makes sure CNTVOFF is initialized for boot and
+    secondary Cortex-A15 and Cortex-A7 CPU cores, like is already done
+    for the boot Cortex-A7 CPU core.  Without this, the ARM arch timer
+    does not work on secondary CPU cores.
+    This patch depends on "[PATCH v2] ARM: shmobile: rcar-gen2: Correct
+    arch timer frequency on RZ/G1E".
+  - The third patch adds the required infrastructure (APMU device node
+    and corresponding enable-method) to DT.
+    Obviously this must not be applied on a branch that does not contain
+    the first two patches!
 
-A branch can be found here:
+Due to dependencies, I think it is easiest if the ARM maintainers provide
+their Acked-by for patch 1, so the whole series can go in through Simon's
+Renesas tree.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/watchdog-fixes
+Changes compared to v1:
+  - New patch "[PATCH v2 1/3] ARM: Add definition for monitor mode",
+  - Initialize CNTVOFF on Cortex-A15, too,
+  - Use *_MODE definitions instead of hardcoded values,
+  - Reduce duplication by calling the asm version from C,
+  - Always build headsmp-apmu.o on R-Car Gen2.
 
-Please comment or apply...
+This has been tested on r8a7794/alt (dual Cortex-A7), and regression-tested
+on r8a7790/lager (quad Cortex-A15), and r8a7791/koelsch, r8a7791/porter,
+r8a7792/blanche, and r8a7793/gose (dual Cortex-A15).
 
-Thanks,
+Thanks!
 
-   Wolfram
+Geert Uytterhoeven (2):
+  ARM: Add definition for monitor mode
+  ARM: shmobile: rcar-gen2: Make sure CNTVOFF is initialized on CA7/15
 
-Changes since V1:
+Sergei Shtylyov (1):
+  ARM: dts: r8a7794: Add SMP support
 
-* add Guenter's Reviewed-by
-* in patch 1, use proper type also in the private struct
-
-Wolfram Sang (5):
-  watchdog: renesas_wdt: avoid (theoretical) type overflow
-  watchdog: renesas_wdt: check rate also for upper limit
-  watchdog: renesas_wdt: don't round closest with get_timeleft
-  watchdog: renesas_wdt: apply better precision
-  watchdog: renesas_wdt: add another divider option
-
- drivers/watchdog/renesas_wdt.c | 37 ++++++++++++++++++++++++-------------
- 1 file changed, 24 insertions(+), 13 deletions(-)
+ arch/arm/boot/dts/r8a7794.dtsi           |  7 ++++++
+ arch/arm/include/uapi/asm/ptrace.h       |  1 +
+ arch/arm/mach-shmobile/Makefile          |  1 +
+ arch/arm/mach-shmobile/common.h          |  2 ++
+ arch/arm/mach-shmobile/headsmp-apmu.S    | 37 ++++++++++++++++++++++++++++++++
+ arch/arm/mach-shmobile/platsmp-apmu.c    |  2 +-
+ arch/arm/mach-shmobile/setup-rcar-gen2.c | 20 ++---------------
+ 7 files changed, 51 insertions(+), 19 deletions(-)
+ create mode 100644 arch/arm/mach-shmobile/headsmp-apmu.S
 
 -- 
-2.11.0
+2.7.4
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
