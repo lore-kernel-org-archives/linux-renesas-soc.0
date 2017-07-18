@@ -1,50 +1,133 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:42240 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752513AbdGDPXZ (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Jul 2017 11:23:25 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 7/7] ARM: dts: r8a7794: Add Inter Connect RAM
-Date: Tue,  4 Jul 2017 17:23:18 +0200
-Message-Id: <1499181798-28859-8-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1499181798-28859-1-git-send-email-geert+renesas@glider.be>
-References: <1499181798-28859-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] media: entity: Add media_entity_get_fwnode_pad()
+ function
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+ <niklas.soderlund+renesas@ragnatech.se>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org,
+ Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+ linux-renesas-soc@vger.kernel.org,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+References: <20170615091726.22370-1-niklas.soderlund+renesas@ragnatech.se>
+ <20170615091726.22370-3-niklas.soderlund+renesas@ragnatech.se>
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Message-ID: <ae0bebb9-63f2-8ed8-88b0-a23fe42a1b72@ideasonboard.com>
+Date: Tue, 18 Jul 2017 15:38:31 +0100
+MIME-Version: 1.0
+In-Reply-To: <20170615091726.22370-3-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car E2 has 2 regions of Inter Connect RAM (72 + 4 KiB).
+Hi Niklas,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7794.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Small spelling error discovered in here:
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 7d9a81d970d87c6b..78973cee7185ffe6 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -588,6 +588,16 @@
- 		status = "disabled";
- 	};
- 
-+	icram0:	sram@e63a0000 {
-+		compatible = "mmio-sram";
-+		reg = <0 0xe63a0000 0 0x12000>;
-+	};
-+
-+	icram1:	sram@e63c0000 {
-+		compatible = "mmio-sram";
-+		reg = <0 0xe63c0000 0 0x1000>;
-+	};
-+
- 	ether: ethernet@ee700000 {
- 		compatible = "renesas,ether-r8a7794";
- 		reg = <0 0xee700000 0 0x400>;
--- 
-2.7.4
+On 15/06/17 10:17, Niklas Söderlund wrote:
+> This is a wrapper around the media entity get_fwnode_pad operation.
+> 
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> ---
+>  drivers/media/media-entity.c | 36 ++++++++++++++++++++++++++++++++++++
+>  include/media/media-entity.h | 23 +++++++++++++++++++++++
+>  2 files changed, 59 insertions(+)
+> 
+> diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
+> index bc44193efa4798b4..82d6755bd5d0d5f0 100644
+> --- a/drivers/media/media-entity.c
+> +++ b/drivers/media/media-entity.c
+> @@ -18,6 +18,7 @@
+>  
+>  #include <linux/bitmap.h>
+>  #include <linux/module.h>
+> +#include <linux/property.h>
+>  #include <linux/slab.h>
+>  #include <media/media-entity.h>
+>  #include <media/media-device.h>
+> @@ -386,6 +387,41 @@ struct media_entity *media_graph_walk_next(struct media_graph *graph)
+>  }
+>  EXPORT_SYMBOL_GPL(media_graph_walk_next);
+>  
+> +int media_entity_get_fwnode_pad(struct media_entity *entity,
+> +				struct fwnode_handle *fwnode,
+
+Could fwnode be 'ep' or such to show that we want the pad of the remote endpoint?
+
+fwnode is confusing ...
+
+> +				unsigned long direction_flags)
+> +{
+> +	struct fwnode_endpoint endpoint;
+> +	unsigned int i;
+> +	int ret;
+> +
+> +	if (!entity->ops || !entity->ops->get_fwnode_pad) {
+> +		for (i = 0; i < entity->num_pads; i++) {
+> +			if (entity->pads[i].flags & direction_flags)
+> +				return i;
+> +		}
+> +
+> +		return -ENXIO;
+> +	}
+> +
+> +	ret = fwnode_graph_parse_endpoint(fwnode, &endpoint);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = entity->ops->get_fwnode_pad(&endpoint);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	if (ret >= entity->num_pads)
+> +		return -ENXIO;
+> +
+> +	if (!(entity->pads[ret].flags & direction_flags))
+> +		return -ENXIO;
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(media_entity_get_fwnode_pad);
+> +
+>  /* -----------------------------------------------------------------------------
+>   * Pipeline management
+>   */
+> diff --git a/include/media/media-entity.h b/include/media/media-entity.h
+> index 46eeb036aa330534..754182d296689675 100644
+> --- a/include/media/media-entity.h
+> +++ b/include/media/media-entity.h
+> @@ -821,6 +821,29 @@ struct media_pad *media_entity_remote_pad(struct media_pad *pad);
+>  struct media_entity *media_entity_get(struct media_entity *entity);
+>  
+>  /**
+> + * media_entity_get_fwnode_pad - Get pad number from fwnode
+> + *
+> + * @entity: The entity
+> + * @fwnode: Pointer to the fwnode_handle which should be used to find the pad
+> + * @direction_flags: Expected direction of the pad, as defined in
+> + *		     :ref:`include/uapi/linux/media.h <media_header>`
+> + *		     (seek for ``MEDIA_PAD_FL_*``)
+> + *
+> + * This function can be used to resolve the media pad number from
+> + * a fwnode. This is useful for devices which use more complex
+> + * mappings of media pads.
+> + *
+> + * If the entity dose not implement the get_fwnode_pad() operation
+
+s/dose/does/
+
+> + * then this function searches the entity for the first pad that
+> + * matches the @direction_flags.
+> + *
+> + * Return: returns the pad number on success or a negative error code.
+> + */
+> +int media_entity_get_fwnode_pad(struct media_entity *entity,
+> +				struct fwnode_handle *fwnode,
+> +				unsigned long direction_flags);
+> +
+> +/**
+>   * media_graph_walk_init - Allocate resources used by graph walk.
+>   *
+>   * @graph: Media graph structure that will be used to walk the graph
+> 
