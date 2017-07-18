@@ -1,52 +1,34 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:54430 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756100AbdGLKbW (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:36919 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751322AbdGRM3v (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 12 Jul 2017 06:31:22 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Linus Walleij <linus.walleij@linaro.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4/5] pinctrl: sh-pfc: r8a7796: Fix IPSR setting for MSIOF3_SS1_E pin
-Date: Wed, 12 Jul 2017 12:31:16 +0200
-Message-Id: <1499855477-20818-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1499855477-20818-1-git-send-email-geert+renesas@glider.be>
-References: <1499855477-20818-1-git-send-email-geert+renesas@glider.be>
+        Tue, 18 Jul 2017 08:29:51 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <balbi@kernel.org>
+CC: <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 0/3] usb: gadget: udc: renesas_usb3: fixes for v4.13-rc1
+Date: Tue, 18 Jul 2017 21:26:39 +0900
+Message-ID: <1500380802-26930-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+This patch is based on the latest Felipe's usb.git / testing/fixes branch
+(The commit id = 4a71fcb8ac5f94c07bf47a43b13258a52e4fe3ad).
 
-This patch fixes the IPSR register setting when the MSIOF3_SS1_E pin
-function is selected.
+Yoshihiro Shimoda (3):
+  usb: gadget: udc: renesas_usb3: fix free size in
+    renesas_usb3_dma_free_prd()
+  usb: gadget: udc: renesas_usb3: fix zlp transfer by the dmac
+  usb: gadget: udc: renesas_usb3: protect usb3_ep->started in
+    usb3_start_pipen()
 
-This is a correction to the incorrect implementation of IPSR register
-pin assignment for R8A7796 SoC specification of R-Car Gen3 Hardware
-User's Manual Rev.0.51E or later.
+ drivers/usb/gadget/udc/renesas_usb3.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-Fixes: f9aece7344bd81ce ("pinctrl: sh-pfc: Initial R8A7796 PFC support")
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[geert: Reword]
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-index 6fa1729d784e6df2..0fd96f198b4dfae2 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-@@ -645,7 +645,7 @@ static const u16 pinmux_data[] = {
- 	PINMUX_IPSR_MSEL(IP0_31_28,	VI4_DATA1_B,		SEL_VIN4_1),
- 	PINMUX_IPSR_MSEL(IP0_31_28,	CAN0_RX_B,		SEL_RCAN0_1),
- 	PINMUX_IPSR_MSEL(IP0_31_28,	CANFD0_RX_B,		SEL_CANFD0_1),
--	PINMUX_IPSR_MSEL(IP0_27_24,	MSIOF3_SS1_E,		SEL_MSIOF3_4),
-+	PINMUX_IPSR_MSEL(IP0_31_28,	MSIOF3_SS1_E,		SEL_MSIOF3_4),
- 
- 	/* IPSR1 */
- 	PINMUX_IPSR_GPSR(IP1_3_0,	IRQ2),
 -- 
-2.7.4
+1.9.1
