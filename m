@@ -1,119 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:40239 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751420AbdGZLbP (ORCPT
+Received: from mail.kernel.org ([198.145.29.99]:52176 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752617AbdGRXPM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 26 Jul 2017 07:31:15 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
-        linus.walleij@linaro.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 2/2] pinctrl: sh-pfc: r8a7795: Add USB 2.0 pins, groups and functions
-Date: Wed, 26 Jul 2017 20:28:11 +0900
-Message-Id: <1501068491-3926-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1501068491-3926-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1501068491-3926-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Tue, 18 Jul 2017 19:15:12 -0400
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1500305076-15570-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1500305076-15570-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 18 Jul 2017 18:14:50 -0500
+Message-ID: <CAL_JsqKpQk+gNvUegNvSAXwwSt6xNRWzS_tpwZFgfDxSJSwz_Q@mail.gmail.com>
+Subject: Re: [RFC v2 0/6] serdev multiplexing support
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        "open list:MEDIA DRIVERS FOR RENESAS - FCP"
+        <linux-renesas-soc@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        "wsa@the-dreams.de" <wsa@the-dreams.de>,
+        Peter Rosin <peda@axentia.se>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add pins, groups, and functions for USB 2.0 on R-Car H3 ES2.0.
+On Mon, Jul 17, 2017 at 10:24 AM, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
+> Hi!
+>
+> This is a new attempt to add multiplexer support to serdev. It is now based
+> on the mux subsystem, making it more generic than the previous iteration
+> ("[RFC 0/4] serdev GPIO-based multiplexing support").
+>
+> Thanks to reviewers for their comments. This revision incorporates the
+> changes suggested as far as they are still applicable, which mostly applies
+> to those concerning the MAX9260 i2c adapter driver.
+>
+> New patches have been added that fix a small issue in the mux include files
+> ("mux: include compiler.h from mux/consumer.h"), and implement deferred
+> probing of serdev controllers ("serial: core: support deferring serdev
+> controller registration"), hopefully correctly.
+>
+> This series depends on the "pinctrl: sh-pfc: r8a7792: Add SCIF1 pin groups"
+> patch as well as v15 of the mux subsystem series ("[PATCH v15 00/13] mux
+> controller abstraction and iio/i2c muxes").
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 57 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 57 insertions(+)
+Please also document how muxed devices are represented in DT in
+serial/slave-device.txt.
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index 947abbd9..d5eddcc 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -2754,6 +2754,39 @@ enum {
- 	SCIF_CLK_B_MARK,
- };
- 
-+/* - USB0 ------------------------------------------------------------------- */
-+static const unsigned int usb0_pins[] = {
-+	/* PWEN, OVC */
-+	RCAR_GP_PIN(6, 24), RCAR_GP_PIN(6, 25),
-+};
-+static const unsigned int usb0_mux[] = {
-+	USB0_PWEN_MARK, USB0_OVC_MARK,
-+};
-+/* - USB1 ------------------------------------------------------------------- */
-+static const unsigned int usb1_pins[] = {
-+	/* PWEN, OVC */
-+	RCAR_GP_PIN(6, 26), RCAR_GP_PIN(6, 27),
-+};
-+static const unsigned int usb1_mux[] = {
-+	USB1_PWEN_MARK, USB1_OVC_MARK,
-+};
-+/* - USB2 ------------------------------------------------------------------- */
-+static const unsigned int usb2_pins[] = {
-+	/* PWEN, OVC */
-+	RCAR_GP_PIN(6, 14), RCAR_GP_PIN(6, 15),
-+};
-+static const unsigned int usb2_mux[] = {
-+	USB2_PWEN_MARK, USB2_OVC_MARK,
-+};
-+/* - USB2_CH3 --------------------------------------------------------------- */
-+static const unsigned int usb2_ch3_pins[] = {
-+	/* PWEN, OVC */
-+	RCAR_GP_PIN(6, 30), RCAR_GP_PIN(6, 31),
-+};
-+static const unsigned int usb2_ch3_mux[] = {
-+	USB2_CH3_PWEN_MARK, USB2_CH3_OVC_MARK,
-+};
-+
- static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(avb_link),
- 	SH_PFC_PIN_GROUP(avb_magic),
-@@ -2914,6 +2947,10 @@ enum {
- 	SH_PFC_PIN_GROUP(scif5_clk_b),
- 	SH_PFC_PIN_GROUP(scif_clk_a),
- 	SH_PFC_PIN_GROUP(scif_clk_b),
-+	SH_PFC_PIN_GROUP(usb0),
-+	SH_PFC_PIN_GROUP(usb1),
-+	SH_PFC_PIN_GROUP(usb2),
-+	SH_PFC_PIN_GROUP(usb2_ch3),
- };
- 
- static const char * const avb_groups[] = {
-@@ -3135,6 +3172,22 @@ enum {
- 	"scif_clk_b",
- };
- 
-+static const char * const usb0_groups[] = {
-+	"usb0",
-+};
-+
-+static const char * const usb1_groups[] = {
-+	"usb1",
-+};
-+
-+static const char * const usb2_groups[] = {
-+	"usb2",
-+};
-+
-+static const char * const usb2_ch3_groups[] = {
-+	"usb2_ch3",
-+};
-+
- static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(avb),
- 	SH_PFC_FUNCTION(du),
-@@ -3156,6 +3209,10 @@ enum {
- 	SH_PFC_FUNCTION(scif4),
- 	SH_PFC_FUNCTION(scif5),
- 	SH_PFC_FUNCTION(scif_clk),
-+	SH_PFC_FUNCTION(usb0),
-+	SH_PFC_FUNCTION(usb1),
-+	SH_PFC_FUNCTION(usb2),
-+	SH_PFC_FUNCTION(usb2_ch3),
- };
- 
- static const struct pinmux_cfg_reg pinmux_config_regs[] = {
--- 
-1.9.1
+Rob
