@@ -1,37 +1,38 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from saturn.retrosnub.co.uk ([178.18.118.26]:53156 "EHLO
-        saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751367AbdGWL0p (ORCPT
+Received: from mail-lf0-f50.google.com ([209.85.215.50]:34043 "EHLO
+        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753468AbdGSJ2e (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 23 Jul 2017 07:26:45 -0400
-Date: Sun, 23 Jul 2017 12:26:42 +0100
-From: Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
+        Wed, 19 Jul 2017 05:28:34 -0400
+Received: by mail-lf0-f50.google.com with SMTP id t72so30318583lff.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Jul 2017 02:28:33 -0700 (PDT)
+Date: Wed, 19 Jul 2017 11:28:31 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
 To: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-media@vger.kernel.org, linux-input@vger.kernel.org,
         linux-iio@vger.kernel.org, alsa-devel@alsa-project.org,
         linux-kernel@vger.kernel.org
 Subject: Re: [PATCH v3 2/4] i2c: add docs to clarify DMA handling
-Message-ID: <20170723122642.0e8ceb37@jic23.retrosnub.co.uk>
-In-Reply-To: <20170718102339.28726-3-wsa+renesas@sang-engineering.com>
+Message-ID: <20170719092831.GM28538@bigcity.dyn.berto.se>
 References: <20170718102339.28726-1-wsa+renesas@sang-engineering.com>
-        <20170718102339.28726-3-wsa+renesas@sang-engineering.com>
+ <20170718102339.28726-3-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20170718102339.28726-3-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, 18 Jul 2017 12:23:37 +0200
-Wolfram Sang <wsa+renesas@sang-engineering.com> wrote:
+Hi Wolfram,
 
+On 2017-07-18 12:23:37 +0200, Wolfram Sang wrote:
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Is this material not perhaps better placed in the sphinx docs?
-Up to you of course as your subsystem ;)
 
-Text is good though.
+Reviewed-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
 
-Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 > ---
 > Changes since v2:
 > 
@@ -85,3 +86,10 @@ Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 > +If you plan to use DMA with I2C (or with any other bus, actually) make sure you
 > +have CONFIG_DMA_API_DEBUG enabled during development. It can help you find
 > +various issues which can be complex to debug otherwise.
+> -- 
+> 2.11.0
+> 
+
+-- 
+Regards,
+Niklas S�derlund
