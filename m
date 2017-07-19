@@ -1,63 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:52654 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753073AbdGSKuS (ORCPT
+Received: from sauhun.de ([88.99.104.3]:39765 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752760AbdGSI2F (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Jul 2017 06:50:18 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v5 1/4] v4l: async: fix unbind error in v4l2_async_notifier_unregister()
-Date: Wed, 19 Jul 2017 12:49:43 +0200
-Message-Id: <20170719104946.7322-2-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170719104946.7322-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170719104946.7322-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Wed, 19 Jul 2017 04:28:05 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-watchdog@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH v2 0/5] watchdog: renesas_wdt: improve precision
+Date: Wed, 19 Jul 2017 10:27:50 +0200
+Message-Id: <20170719082755.21733-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The call to v4l2_async_cleanup() will set sd->asd to NULL so passing it
-to notifier->unbind() have no effect and leaves the notifier confused.
-Call the unbind() callback prior to cleaning up the subdevice to avoid
-this.
+Currently, the renesas-rwdt driver is not precise with input clocks which have
+a remainder after the clock divisors are applied. This series should fix the
+situation and also pays attention to ensure variables have proper types and are
+divided properly. As a cherry on top, we also get a new divider value to allow
+for higher max_timeout :)
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/v4l2-core/v4l2-async.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Originally brought to attention by this BSP patch:
+https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas-bsp.git/commit/?id=7d56256a4d189a83e278ec2013eb1f3648bc7411
 
-diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
-index 851f128eba2219ad..0acf288d7227ba97 100644
---- a/drivers/media/v4l2-core/v4l2-async.c
-+++ b/drivers/media/v4l2-core/v4l2-async.c
-@@ -226,14 +226,14 @@ void v4l2_async_notifier_unregister(struct v4l2_async_notifier *notifier)
- 
- 		d = get_device(sd->dev);
- 
-+		if (notifier->unbind)
-+			notifier->unbind(notifier, sd, sd->asd);
-+
- 		v4l2_async_cleanup(sd);
- 
- 		/* If we handled USB devices, we'd have to lock the parent too */
- 		device_release_driver(d);
- 
--		if (notifier->unbind)
--			notifier->unbind(notifier, sd, sd->asd);
--
- 		/*
- 		 * Store device at the device cache, in order to call
- 		 * put_device() on the final step
+Tested with a Salvator-X (R-Car M3-W) and the clock driver hacked to supply the
+internal clock of 32552 Hz instead of the externally supplied 32768 Hz.
+
+A branch can be found here:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/watchdog-fixes
+
+Please comment or apply...
+
+Thanks,
+
+   Wolfram
+
+Changes since V1:
+
+* add Guenter's Reviewed-by
+* in patch 1, use proper type also in the private struct
+
+Wolfram Sang (5):
+  watchdog: renesas_wdt: avoid (theoretical) type overflow
+  watchdog: renesas_wdt: check rate also for upper limit
+  watchdog: renesas_wdt: don't round closest with get_timeleft
+  watchdog: renesas_wdt: apply better precision
+  watchdog: renesas_wdt: add another divider option
+
+ drivers/watchdog/renesas_wdt.c | 37 ++++++++++++++++++++++++-------------
+ 1 file changed, 24 insertions(+), 13 deletions(-)
+
 -- 
-2.13.1
+2.11.0
