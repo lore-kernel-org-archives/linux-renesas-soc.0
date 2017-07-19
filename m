@@ -1,36 +1,35 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Wed, 19 Jul 2017 08:22:20 +0200
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-        <u.kleine-koenig@pengutronix.de>
+Date: Wed, 19 Jul 2017 07:51:39 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Rob Herring <robh@kernel.org>
-Cc: arm@kernel.org, Andrew Lunn <andrew@lunn.ch>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Tony Lindgren <tony@atomide.com>,
-        linux-samsung-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Javier Martinez Canillas <javier@osg.samsung.com>,
+Cc: arm@kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
         Kukjin Kim <kgene@kernel.org>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        devicetree@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
-        Simon Horman <horms@verge.net.au>,
-        Gregory Clement <gregory.clement@free-electrons.com>,
-        linux-omap@vger.kernel.org, Sascha Hauer <kernel@pengutronix.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Paul Walmsley <paul@pwsan.com>, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        =?iso-8859-1?Q?Beno=EEt?= Cousson <bcousson@baylibre.com>,
+        Javier Martinez Canillas <javier@osg.samsung.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
         Fabio Estevam <fabio.estevam@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@free-electrons.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
+        Paul Walmsley <paul@pwsan.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH] ARM: Convert to using %pOF instead of full_name
-Message-ID: <20170719062220.wefnkqhd7javbcee@pengutronix.de>
+Message-ID: <20170719055139.GA6246@kozik-book>
 References: <20170718214339.7774-1-robh@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 8BIT
 In-Reply-To: <20170718214339.7774-1-robh@kernel.org>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
@@ -38,10 +37,6 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 On Tue, Jul 18, 2017 at 04:42:41PM -0500, Rob Herring wrote:
 > Now that we have a custom printf format specifier, convert users of
 > full_name to use %pOF instead. This is preparation to remove storing
-
-Oh nice. If the commit adding %pOF is already set in stone, i'd suggest
-to mention the commit id here in the commit log.
-
 > of the full path string for each node.
 > 
 > Signed-off-by: Rob Herring <robh@kernel.org>
@@ -57,7 +52,7 @@ to mention the commit id here in the commit log.
 > Cc: Gregory Clement <gregory.clement@free-electrons.com>
 > Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 > Cc: Tony Lindgren <tony@atomide.com>
-> Cc: "Beno�t Cousson" <bcousson@baylibre.com>
+> Cc: "Benoît Cousson" <bcousson@baylibre.com>
 > Cc: Paul Walmsley <paul@pwsan.com>
 > Cc: Heiko Stuebner <heiko@sntech.de>
 > Cc: Simon Horman <horms@verge.net.au>
@@ -116,10 +111,6 @@ to mention the commit id here in the commit log.
 > -				     cpu->full_name);
 > +			pr_debug(" * %pOF missing reg property\n",
 > +				     cpu);
-
-You could join lines here and in the next hunk. And there are two more
-further down.
-
 >  			of_node_put(cpu);
 >  			return;
 >  		}
@@ -138,10 +129,39 @@ further down.
 >  			continue;
 >  		}
 > 
+> diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
+> index 748cfb8d5212..3c7b66c22697 100644
+> --- a/arch/arm/mach-exynos/suspend.c
+> +++ b/arch/arm/mach-exynos/suspend.c
+> @@ -187,21 +187,21 @@ static int __init exynos_pmu_irq_init(struct device_node *node,
+>  	struct irq_domain *parent_domain, *domain;
+> 
+>  	if (!parent) {
+> -		pr_err("%s: no parent, giving up\n", node->full_name);
+> +		pr_err("%pOF: no parent, giving up\n", node);
+>  		return -ENODEV;
+>  	}
+> 
+>  	parent_domain = irq_find_host(parent);
+>  	if (!parent_domain) {
+> -		pr_err("%s: unable to obtain parent domain\n", node->full_name);
+> +		pr_err("%pOF: unable to obtain parent domain\n", node);
+>  		return -ENXIO;
+>  	}
+> 
+>  	pmu_base_addr = of_iomap(node, 0);
+> 
+>  	if (!pmu_base_addr) {
+> -		pr_err("%s: failed to find exynos pmu register\n",
+> -		       node->full_name);
+> +		pr_err("%pOF: failed to find exynos pmu register\n",
+> +		       node);
 
-Best regards
-Uwe
+This could be one line now. Can you merge it?
 
--- 
-Pengutronix e.K.                           | Uwe Kleine-K�nig            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Beside that, for Exynos:
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+Best regards,
+Krzysztof
+
