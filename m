@@ -1,22 +1,17 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:39820 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753853AbdGUWuS (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Jul 2017 18:50:18 -0400
-Date: Fri, 21 Jul 2017 15:49:59 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH] clk: Convert to using %pOF instead of full_name
+To: Rob Herring <robh@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         Alexandre Torgue <alexandre.torgue@st.com>,
         Russell King <linux@armlinux.org.uk>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Maxime Ripard <maxime.ripard@free-electrons.com>,
         Chen-Yu Tsai <wens@csie.org>,
-        Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
+        =?UTF-8?Q?Emilio_L=c3=b3pez?= <emilio@elopez.com.ar>,
         Peter De Schrijver <pdeschrijver@nvidia.com>,
         Prashant Gaikwad <pgaikwad@nvidia.com>,
         Thierry Reding <thierry.reding@gmail.com>,
@@ -26,18 +21,21 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
         linux-mediatek@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-omap@vger.kernel.org
-Subject: Re: [PATCH] clk: Convert to using %pOF instead of full_name
-Message-ID: <20170721224959.GA2146@codeaurora.org>
 References: <20170718214339.7774-12-robh@kernel.org>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <2fd832a5-ec78-7563-8349-4321db745767@gmail.com>
+Date: Wed, 19 Jul 2017 12:24:58 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
 In-Reply-To: <20170718214339.7774-12-robh@kernel.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 07/18, Rob Herring wrote:
+
+
+On 07/18/2017 11:42 PM, Rob Herring wrote:
 > Now that we have a custom printf format specifier, convert users of
 > full_name to use %pOF instead. This is preparation to remove storing
 > of the full path string for each node.
@@ -52,7 +50,7 @@ On 07/18, Rob Herring wrote:
 > Cc: Geert Uytterhoeven <geert+renesas@glider.be>
 > Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
 > Cc: Chen-Yu Tsai <wens@csie.org>
-> Cc: "Emilio L�pez" <emilio@elopez.com.ar>
+> Cc: "Emilio López" <emilio@elopez.com.ar>
 > Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
 > Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
 > Cc: Thierry Reding <thierry.reding@gmail.com>
@@ -65,9 +63,23 @@ On 07/18, Rob Herring wrote:
 > Cc: linux-tegra@vger.kernel.org
 > Cc: linux-omap@vger.kernel.org
 > ---
+>   drivers/clk/berlin/bg2.c             |  3 +--
+>   drivers/clk/berlin/bg2q.c            |  7 +++----
+>   drivers/clk/clk-asm9260.c            |  4 ++--
+>   drivers/clk/clk-conf.c               | 16 ++++++++--------
+>   drivers/clk/clk-moxart.c             | 12 ++++++------
+>   drivers/clk/clk-qoriq.c              |  7 +++----
+>   drivers/clk/clk-stm32f4.c            |  4 ++--
+>   drivers/clk/clk-xgene.c              | 15 ++++++---------
+>   drivers/clk/clk.c                    |  4 ++--
+>   drivers/clk/clkdev.c                 |  4 ++--
+>   drivers/clk/mediatek/clk-cpumux.c    |  2 +-
+>   drivers/clk/mediatek/clk-mtk.c       |  2 +-
+>   drivers/clk/mediatek/reset.c         |  2 +-
 
-Applied to clk-next
+Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+For the mediatek parts.
+
+Thanks,
+Matthias
