@@ -1,50 +1,85 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:58172 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752507AbdGDPX0 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Jul 2017 11:23:26 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/7] ARM: dts: r8a7790: Add Inter Connect RAM
-Date: Tue,  4 Jul 2017 17:23:14 +0200
-Message-Id: <1499181798-28859-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1499181798-28859-1-git-send-email-geert+renesas@glider.be>
-References: <1499181798-28859-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v5 3/4] v4l: async: do not hold list_lock when re-probing devices
+Date: Wed, 19 Jul 2017 12:49:45 +0200
+Message-Id: <20170719104946.7322-4-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170719104946.7322-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170719104946.7322-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car H2 has 2 regions of Inter Connect RAM (72 + 4 KiB).
+There is no good reason to hold the list_lock when re-probing the
+devices and it prevents a clean implementation of subdevice notifiers.
+Move the actual release of the devices outside of the loop which
+requires the lock to be held.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- arch/arm/boot/dts/r8a7790.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/media/v4l2-core/v4l2-async.c | 19 +++++++++----------
+ 1 file changed, 9 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 2805a8608d4ba007..4ee34995573cf505 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -830,6 +830,16 @@
- 		status = "disabled";
- 	};
+diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
+index 67852f0f2d3000c9..d91ff0a33fd3eaff 100644
+--- a/drivers/media/v4l2-core/v4l2-async.c
++++ b/drivers/media/v4l2-core/v4l2-async.c
+@@ -206,7 +206,7 @@ void v4l2_async_notifier_unregister(struct v4l2_async_notifier *notifier)
+ 	unsigned int notif_n_subdev = notifier->num_subdevs;
+ 	unsigned int n_subdev = min(notif_n_subdev, V4L2_MAX_SUBDEVS);
+ 	struct device **dev;
+-	int i = 0;
++	int i, count = 0;
  
-+	icram0:	sram@e63a0000 {
-+		compatible = "mmio-sram";
-+		reg = <0 0xe63a0000 0 0x12000>;
-+	};
+ 	if (!notifier->v4l2_dev)
+ 		return;
+@@ -223,27 +223,26 @@ void v4l2_async_notifier_unregister(struct v4l2_async_notifier *notifier)
+ 	list_del(&notifier->list);
+ 
+ 	list_for_each_entry_safe(sd, tmp, &notifier->done, async_list) {
+-		struct device *d;
+-
+-		d = get_device(sd->dev);
++		dev[count] = get_device(sd->dev);
++		count++;
+ 
+ 		if (notifier->unbind)
+ 			notifier->unbind(notifier, sd, sd->asd);
+ 
+ 		v4l2_async_cleanup(sd);
+-
+-		/* If we handled USB devices, we'd have to lock the parent too */
+-		device_release_driver(d);
+-
+-		dev[i++] = d;
+ 	}
+ 
+ 	mutex_unlock(&list_lock);
+ 
++	for (i = 0; i < count; i++) {
++		/* If we handled USB devices, we'd have to lock the parent too */
++		device_release_driver(dev[i]);
++	}
 +
-+	icram1:	sram@e63c0000 {
-+		compatible = "mmio-sram";
-+		reg = <0 0xe63c0000 0 0x1000>;
-+	};
-+
- 	ether: ethernet@ee700000 {
- 		compatible = "renesas,ether-r8a7790";
- 		reg = <0 0xee700000 0 0x400>;
+ 	/*
+ 	 * Call device_attach() to reprobe devices
+ 	 */
+-	while (i--) {
++	for (i = 0; i < count; i++) {
+ 		struct device *d = dev[i];
+ 
+ 		if (d && device_attach(d) < 0) {
 -- 
-2.7.4
+2.13.1
