@@ -1,273 +1,358 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:13393 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751364AbdGSHIK (ORCPT
+Received: from esa5.microchip.iphmx.com ([216.71.150.166]:4421 "EHLO
+        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752070AbdGSF63 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Jul 2017 03:08:10 -0400
-From: Patrice CHOTARD <patrice.chotard@st.com>
-To: Rob Herring <robh@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Wed, 19 Jul 2017 01:58:29 -0400
+Date: Wed, 19 Jul 2017 07:57:43 +0200
+From: Ludovic Desroches <ludovic.desroches@microchip.com>
+To: Rob Herring <robh@kernel.org>
+CC: Linus Walleij <linus.walleij@linaro.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>,
         Stefan Wahren <stefan.wahren@i2se.com>,
         Florian Fainelli <f.fainelli@gmail.com>,
         Ray Jui <rjui@broadcom.com>,
         Scott Branden <sbranden@broadcom.com>,
-        "bcm-kernel-feedback-list@broadcom.com"
         <bcm-kernel-feedback-list@broadcom.com>,
         Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Patrice Chotard <patrice.chotard@st.com>,
         Tomasz Figa <tomasz.figa@gmail.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Barry Song <baohua@kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-rpi-kernel@lists.infradead.org"
+        Barry Song <baohua@kernel.org>, <linux-gpio@vger.kernel.org>,
         <linux-rpi-kernel@lists.infradead.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "kernel@stlinux.com" <kernel@stlinux.com>,
-        "linux-samsung-soc@vger.kernel.org"
+        <linux-arm-kernel@lists.infradead.org>, <kernel@stlinux.com>,
         <linux-samsung-soc@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>
 Subject: Re: [PATCH] pinctrl: Convert to using %pOF instead of full_name
-Date: Wed, 19 Jul 2017 07:05:18 +0000
-Message-ID: <a9fa7f8b-49f8-1e76-8504-5a63dd65d3b1@st.com>
+Message-ID: <20170719055743.biy7ulaxdwmr3zud@rfolt0960.corp.atmel.com>
 References: <20170718214339.7774-43-robh@kernel.org>
-In-Reply-To: <20170718214339.7774-43-robh@kernel.org>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <74F7B08071635E4D9639E8B563CB2535@st.com>
-Content-Transfer-Encoding: base64
 MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20170718214339.7774-43-robh@kernel.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-DQoNCk9uIDA3LzE4LzIwMTcgMTE6NDMgUE0sIFJvYiBIZXJyaW5nIHdyb3RlOg0KPiBOb3cgdGhh
-dCB3ZSBoYXZlIGEgY3VzdG9tIHByaW50ZiBmb3JtYXQgc3BlY2lmaWVyLCBjb252ZXJ0IHVzZXJz
-IG9mDQo+IGZ1bGxfbmFtZSB0byB1c2UgJXBPRiBpbnN0ZWFkLiBUaGlzIGlzIHByZXBhcmF0aW9u
-IHRvIHJlbW92ZSBzdG9yaW5nDQo+IG9mIHRoZSBmdWxsIHBhdGggc3RyaW5nIGZvciBlYWNoIG5v
-ZGUuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBSb2IgSGVycmluZyA8cm9iaEBrZXJuZWwub3JnPg0K
-PiBDYzogTGludXMgV2FsbGVpaiA8bGludXMud2FsbGVpakBsaW5hcm8ub3JnPg0KPiBDYzogTGVl
-IEpvbmVzIDxsZWVAa2VybmVsLm9yZz4NCj4gQ2M6IEVyaWMgQW5ob2x0IDxlcmljQGFuaG9sdC5u
-ZXQ+DQo+IENjOiBTdGVmYW4gV2FocmVuIDxzdGVmYW4ud2FocmVuQGkyc2UuY29tPg0KPiBDYzog
-RmxvcmlhbiBGYWluZWxsaSA8Zi5mYWluZWxsaUBnbWFpbC5jb20+DQo+IENjOiBSYXkgSnVpIDxy
-anVpQGJyb2FkY29tLmNvbT4NCj4gQ2M6IFNjb3R0IEJyYW5kZW4gPHNicmFuZGVuQGJyb2FkY29t
-LmNvbT4NCj4gQ2M6IGJjbS1rZXJuZWwtZmVlZGJhY2stbGlzdEBicm9hZGNvbS5jb20NCj4gQ2M6
-IEx1ZG92aWMgRGVzcm9jaGVzIDxsdWRvdmljLmRlc3JvY2hlc0BtaWNyb2NoaXAuY29tPg0KPiBD
-YzogUGF0cmljZSBDaG90YXJkIDxwYXRyaWNlLmNob3RhcmRAc3QuY29tPg0KPiBDYzogVG9tYXN6
-IEZpZ2EgPHRvbWFzei5maWdhQGdtYWlsLmNvbT4NCj4gQ2M6IEtyenlzenRvZiBLb3psb3dza2kg
-PGtyemtAa2VybmVsLm9yZz4NCj4gQ2M6IFN5bHdlc3RlciBOYXdyb2NraSA8cy5uYXdyb2NraUBz
-YW1zdW5nLmNvbT4NCj4gQ2M6IExhdXJlbnQgUGluY2hhcnQgPGxhdXJlbnQucGluY2hhcnRAaWRl
-YXNvbmJvYXJkLmNvbT4NCj4gQ2M6IEdlZXJ0IFV5dHRlcmhvZXZlbiA8Z2VlcnQrcmVuZXNhc0Bn
-bGlkZXIuYmU+DQo+IENjOiBCYXJyeSBTb25nIDxiYW9odWFAa2VybmVsLm9yZz4NCj4gQ2M6IGxp
-bnV4LWdwaW9Admdlci5rZXJuZWwub3JnDQo+IENjOiBsaW51eC1ycGkta2VybmVsQGxpc3RzLmlu
-ZnJhZGVhZC5vcmcNCj4gQ2M6IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZw0K
-PiBDYzoga2VybmVsQHN0bGludXguY29tDQo+IENjOiBsaW51eC1zYW1zdW5nLXNvY0B2Z2VyLmtl
-cm5lbC5vcmcNCj4gQ2M6IGxpbnV4LXJlbmVzYXMtc29jQHZnZXIua2VybmVsLm9yZw0KPiAtLS0N
-Cj4gICBkcml2ZXJzL3BpbmN0cmwvYmNtL3BpbmN0cmwtYmNtMjgzNS5jICAgICB8IDI1ICsrKysr
-KysrKysrLS0tLS0tLS0tLS0tLS0NCj4gICBkcml2ZXJzL3BpbmN0cmwvZGV2aWNldHJlZS5jICAg
-ICAgICAgICAgICB8ICA0ICsrLS0NCj4gICBkcml2ZXJzL3BpbmN0cmwvZnJlZXNjYWxlL3BpbmN0
-cmwtaW14LmMgICB8ICA4ICsrKy0tLS0tDQo+ICAgZHJpdmVycy9waW5jdHJsL3BpbmNvbmYtZ2Vu
-ZXJpYy5jICAgICAgICAgfCAgNyArKystLS0tDQo+ICAgZHJpdmVycy9waW5jdHJsL3BpbmN0cmwt
-YXQ5MS1waW80LmMgICAgICAgfCAxMSArKysrKy0tLS0tLQ0KPiAgIGRyaXZlcnMvcGluY3RybC9w
-aW5jdHJsLXN0LmMgICAgICAgICAgICAgIHwgIDIgKy0NCj4gICBkcml2ZXJzL3BpbmN0cmwvcGlu
-Y3RybC10YjEweC5jICAgICAgICAgICB8ICA0ICsrLS0NCj4gICBkcml2ZXJzL3BpbmN0cmwvc2Ft
-c3VuZy9waW5jdHJsLXNhbXN1bmcuYyB8ICA2ICsrKy0tLQ0KPiAgIGRyaXZlcnMvcGluY3RybC9z
-aC1wZmMvcGluY3RybC5jICAgICAgICAgIHwgIDIgKy0NCj4gICBkcml2ZXJzL3BpbmN0cmwvc2ly
-Zi9waW5jdHJsLXNpcmYuYyAgICAgICB8ICA2ICsrKy0tLQ0KPiAgIDEwIGZpbGVzIGNoYW5nZWQs
-IDM0IGluc2VydGlvbnMoKyksIDQxIGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2Ry
-aXZlcnMvcGluY3RybC9iY20vcGluY3RybC1iY20yODM1LmMgYi9kcml2ZXJzL3BpbmN0cmwvYmNt
-L3BpbmN0cmwtYmNtMjgzNS5jDQo+IGluZGV4IDIzMDg4MzE2OGU5OS4uM2U3MWU1ZDc4MmVlIDEw
-MDY0NA0KPiAtLS0gYS9kcml2ZXJzL3BpbmN0cmwvYmNtL3BpbmN0cmwtYmNtMjgzNS5jDQo+ICsr
-KyBiL2RyaXZlcnMvcGluY3RybC9iY20vcGluY3RybC1iY20yODM1LmMNCj4gQEAgLTY5Miw4ICs2
-OTIsNyBAQCBzdGF0aWMgaW50IGJjbTI4MzVfcGN0bF9kdF9ub2RlX3RvX21hcF9mdW5jKHN0cnVj
-dCBiY20yODM1X3BpbmN0cmwgKnBjLA0KPiAgIAlzdHJ1Y3QgcGluY3RybF9tYXAgKm1hcCA9ICpt
-YXBzOw0KPiANCj4gICAJaWYgKGZudW0gPj0gQVJSQVlfU0laRShiY20yODM1X2Z1bmN0aW9ucykp
-IHsNCj4gLQkJZGV2X2VycihwYy0+ZGV2LCAiJXM6IGludmFsaWQgYnJjbSxmdW5jdGlvbiAlZFxu
-IiwNCj4gLQkJCW9mX25vZGVfZnVsbF9uYW1lKG5wKSwgZm51bSk7DQo+ICsJCWRldl9lcnIocGMt
-PmRldiwgIiVwT0Y6IGludmFsaWQgYnJjbSxmdW5jdGlvbiAlZFxuIiwgbnAsIGZudW0pOw0KPiAg
-IAkJcmV0dXJuIC1FSU5WQUw7DQo+ICAgCX0NCj4gDQo+IEBAIC03MTMsOCArNzEyLDcgQEAgc3Rh
-dGljIGludCBiY20yODM1X3BjdGxfZHRfbm9kZV90b19tYXBfcHVsbChzdHJ1Y3QgYmNtMjgzNV9w
-aW5jdHJsICpwYywNCj4gICAJdW5zaWduZWQgbG9uZyAqY29uZmlnczsNCj4gDQo+ICAgCWlmIChw
-dWxsID4gMikgew0KPiAtCQlkZXZfZXJyKHBjLT5kZXYsICIlczogaW52YWxpZCBicmNtLHB1bGwg
-JWRcbiIsDQo+IC0JCQlvZl9ub2RlX2Z1bGxfbmFtZShucCksIHB1bGwpOw0KPiArCQlkZXZfZXJy
-KHBjLT5kZXYsICIlcE9GOiBpbnZhbGlkIGJyY20scHVsbCAlZFxuIiwgbnAsIHB1bGwpOw0KPiAg
-IAkJcmV0dXJuIC1FSU5WQUw7DQo+ICAgCX0NCj4gDQo+IEBAIC03NDUsOCArNzQzLDcgQEAgc3Rh
-dGljIGludCBiY20yODM1X3BjdGxfZHRfbm9kZV90b19tYXAoc3RydWN0IHBpbmN0cmxfZGV2ICpw
-Y3RsZGV2LA0KPiANCj4gICAJcGlucyA9IG9mX2ZpbmRfcHJvcGVydHkobnAsICJicmNtLHBpbnMi
-LCBOVUxMKTsNCj4gICAJaWYgKCFwaW5zKSB7DQo+IC0JCWRldl9lcnIocGMtPmRldiwgIiVzOiBt
-aXNzaW5nIGJyY20scGlucyBwcm9wZXJ0eVxuIiwNCj4gLQkJCQlvZl9ub2RlX2Z1bGxfbmFtZShu
-cCkpOw0KPiArCQlkZXZfZXJyKHBjLT5kZXYsICIlcE9GOiBtaXNzaW5nIGJyY20scGlucyBwcm9w
-ZXJ0eVxuIiwgbnApOw0KPiAgIAkJcmV0dXJuIC1FSU5WQUw7DQo+ICAgCX0NCj4gDQo+IEBAIC03
-NTUsOCArNzUyLDggQEAgc3RhdGljIGludCBiY20yODM1X3BjdGxfZHRfbm9kZV90b19tYXAoc3Ry
-dWN0IHBpbmN0cmxfZGV2ICpwY3RsZGV2LA0KPiANCj4gICAJaWYgKCFmdW5jcyAmJiAhcHVsbHMp
-IHsNCj4gICAJCWRldl9lcnIocGMtPmRldiwNCj4gLQkJCSIlczogbmVpdGhlciBicmNtLGZ1bmN0
-aW9uIG5vciBicmNtLHB1bGwgc3BlY2lmaWVkXG4iLA0KPiAtCQkJb2Zfbm9kZV9mdWxsX25hbWUo
-bnApKTsNCj4gKwkJCSIlcE9GOiBuZWl0aGVyIGJyY20sZnVuY3Rpb24gbm9yIGJyY20scHVsbCBz
-cGVjaWZpZWRcbiIsDQo+ICsJCQlucCk7DQo+ICAgCQlyZXR1cm4gLUVJTlZBTDsNCj4gICAJfQ0K
-PiANCj4gQEAgLTc2NiwxNSArNzYzLDE1IEBAIHN0YXRpYyBpbnQgYmNtMjgzNV9wY3RsX2R0X25v
-ZGVfdG9fbWFwKHN0cnVjdCBwaW5jdHJsX2RldiAqcGN0bGRldiwNCj4gDQo+ICAgCWlmIChudW1f
-ZnVuY3MgPiAxICYmIG51bV9mdW5jcyAhPSBudW1fcGlucykgew0KPiAgIAkJZGV2X2VycihwYy0+
-ZGV2LA0KPiAtCQkJIiVzOiBicmNtLGZ1bmN0aW9uIG11c3QgaGF2ZSAxIG9yICVkIGVudHJpZXNc
-biIsDQo+IC0JCQlvZl9ub2RlX2Z1bGxfbmFtZShucCksIG51bV9waW5zKTsNCj4gKwkJCSIlcE9G
-OiBicmNtLGZ1bmN0aW9uIG11c3QgaGF2ZSAxIG9yICVkIGVudHJpZXNcbiIsDQo+ICsJCQlucCwg
-bnVtX3BpbnMpOw0KPiAgIAkJcmV0dXJuIC1FSU5WQUw7DQo+ICAgCX0NCj4gDQo+ICAgCWlmIChu
-dW1fcHVsbHMgPiAxICYmIG51bV9wdWxscyAhPSBudW1fcGlucykgew0KPiAgIAkJZGV2X2Vycihw
-Yy0+ZGV2LA0KPiAtCQkJIiVzOiBicmNtLHB1bGwgbXVzdCBoYXZlIDEgb3IgJWQgZW50cmllc1xu
-IiwNCj4gLQkJCW9mX25vZGVfZnVsbF9uYW1lKG5wKSwgbnVtX3BpbnMpOw0KPiArCQkJIiVwT0Y6
-IGJyY20scHVsbCBtdXN0IGhhdmUgMSBvciAlZCBlbnRyaWVzXG4iLA0KPiArCQkJbnAsIG51bV9w
-aW5zKTsNCj4gICAJCXJldHVybiAtRUlOVkFMOw0KPiAgIAl9DQo+IA0KPiBAQCAtNzkzLDggKzc5
-MCw4IEBAIHN0YXRpYyBpbnQgYmNtMjgzNV9wY3RsX2R0X25vZGVfdG9fbWFwKHN0cnVjdCBwaW5j
-dHJsX2RldiAqcGN0bGRldiwNCj4gICAJCWlmIChlcnIpDQo+ICAgCQkJZ290byBvdXQ7DQo+ICAg
-CQlpZiAocGluID49IEFSUkFZX1NJWkUoYmNtMjgzNV9ncGlvX3BpbnMpKSB7DQo+IC0JCQlkZXZf
-ZXJyKHBjLT5kZXYsICIlczogaW52YWxpZCBicmNtLHBpbnMgdmFsdWUgJWRcbiIsDQo+IC0JCQkJ
-b2Zfbm9kZV9mdWxsX25hbWUobnApLCBwaW4pOw0KPiArCQkJZGV2X2VycihwYy0+ZGV2LCAiJXBP
-RjogaW52YWxpZCBicmNtLHBpbnMgdmFsdWUgJWRcbiIsDQo+ICsJCQkJbnAsIHBpbik7DQo+ICAg
-CQkJZXJyID0gLUVJTlZBTDsNCj4gICAJCQlnb3RvIG91dDsNCj4gICAJCX0NCj4gZGlmZiAtLWdp
-dCBhL2RyaXZlcnMvcGluY3RybC9kZXZpY2V0cmVlLmMgYi9kcml2ZXJzL3BpbmN0cmwvZGV2aWNl
-dHJlZS5jDQo+IGluZGV4IDBlNWM5ZjE0YTcwNi4uMGEyMGFmYzIyMTBjIDEwMDY0NA0KPiAtLS0g
-YS9kcml2ZXJzL3BpbmN0cmwvZGV2aWNldHJlZS5jDQo+ICsrKyBiL2RyaXZlcnMvcGluY3RybC9k
-ZXZpY2V0cmVlLmMNCj4gQEAgLTExNyw4ICsxMTcsOCBAQCBzdGF0aWMgaW50IGR0X3RvX21hcF9v
-bmVfY29uZmlnKHN0cnVjdCBwaW5jdHJsICpwLA0KPiAgIAlmb3IgKDs7KSB7DQo+ICAgCQlucF9w
-Y3RsZGV2ID0gb2ZfZ2V0X25leHRfcGFyZW50KG5wX3BjdGxkZXYpOw0KPiAgIAkJaWYgKCFucF9w
-Y3RsZGV2IHx8IG9mX25vZGVfaXNfcm9vdChucF9wY3RsZGV2KSkgew0KPiAtCQkJZGV2X2luZm8o
-cC0+ZGV2LCAiY291bGQgbm90IGZpbmQgcGN0bGRldiBmb3Igbm9kZSAlcywgZGVmZXJyaW5nIHBy
-b2JlXG4iLA0KPiAtCQkJCW5wX2NvbmZpZy0+ZnVsbF9uYW1lKTsNCj4gKwkJCWRldl9pbmZvKHAt
-PmRldiwgImNvdWxkIG5vdCBmaW5kIHBjdGxkZXYgZm9yIG5vZGUgJXBPRiwgZGVmZXJyaW5nIHBy
-b2JlXG4iLA0KPiArCQkJCW5wX2NvbmZpZyk7DQo+ICAgCQkJb2Zfbm9kZV9wdXQobnBfcGN0bGRl
-dik7DQo+ICAgCQkJLyogT0sgbGV0J3MganVzdCBhc3N1bWUgdGhpcyB3aWxsIGFwcGVhciBsYXRl
-ciB0aGVuICovDQo+ICAgCQkJcmV0dXJuIC1FUFJPQkVfREVGRVI7DQo+IGRpZmYgLS1naXQgYS9k
-cml2ZXJzL3BpbmN0cmwvZnJlZXNjYWxlL3BpbmN0cmwtaW14LmMgYi9kcml2ZXJzL3BpbmN0cmwv
-ZnJlZXNjYWxlL3BpbmN0cmwtaW14LmMNCj4gaW5kZXggNzJhY2E3NThmNGM2Li4xZjAwOTVhNjk0
-MDcgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvcGluY3RybC9mcmVlc2NhbGUvcGluY3RybC1pbXgu
-Yw0KPiArKysgYi9kcml2ZXJzL3BpbmN0cmwvZnJlZXNjYWxlL3BpbmN0cmwtaW14LmMNCj4gQEAg
-LTU3MywxNiArNTczLDE0IEBAIHN0YXRpYyBpbnQgaW14X3BpbmN0cmxfcGFyc2VfZ3JvdXBzKHN0
-cnVjdCBkZXZpY2Vfbm9kZSAqbnAsDQo+ICAgCQlsaXN0ID0gb2ZfZ2V0X3Byb3BlcnR5KG5wLCAi
-cGlucyIsICZzaXplKTsNCj4gICAJCWlmICghbGlzdCkgew0KPiAgIAkJCWRldl9lcnIoaW5mby0+
-ZGV2LA0KPiAtCQkJCSJubyBmc2wscGlucyBhbmQgcGlucyBwcm9wZXJ0eSBpbiBub2RlICVzXG4i
-LA0KPiAtCQkJCW5wLT5mdWxsX25hbWUpOw0KPiArCQkJCSJubyBmc2wscGlucyBhbmQgcGlucyBw
-cm9wZXJ0eSBpbiBub2RlICVwT0ZcbiIsIG5wKTsNCj4gICAJCQlyZXR1cm4gLUVJTlZBTDsNCj4g
-ICAJCX0NCj4gICAJfQ0KPiANCj4gICAJLyogd2UgZG8gbm90IGNoZWNrIHJldHVybiBzaW5jZSBp
-dCdzIHNhZmUgbm9kZSBwYXNzZWQgZG93biAqLw0KPiAgIAlpZiAoIXNpemUgfHwgc2l6ZSAlIHBp
-bl9zaXplKSB7DQo+IC0JCWRldl9lcnIoaW5mby0+ZGV2LCAiSW52YWxpZCBmc2wscGlucyBvciBw
-aW5zIHByb3BlcnR5IGluIG5vZGUgJXNcbiIsDQo+IC0JCQlucC0+ZnVsbF9uYW1lKTsNCj4gKwkJ
-ZGV2X2VycihpbmZvLT5kZXYsICJJbnZhbGlkIGZzbCxwaW5zIG9yIHBpbnMgcHJvcGVydHkgaW4g
-bm9kZSAlcE9GXG4iLCBucCk7DQo+ICAgCQlyZXR1cm4gLUVJTlZBTDsNCj4gICAJfQ0KPiANCj4g
-QEAgLTY2Niw3ICs2NjQsNyBAQCBzdGF0aWMgaW50IGlteF9waW5jdHJsX3BhcnNlX2Z1bmN0aW9u
-cyhzdHJ1Y3QgZGV2aWNlX25vZGUgKm5wLA0KPiAgIAlmdW5jLT5uYW1lID0gbnAtPm5hbWU7DQo+
-ICAgCWZ1bmMtPm51bV9ncm91cF9uYW1lcyA9IG9mX2dldF9jaGlsZF9jb3VudChucCk7DQo+ICAg
-CWlmIChmdW5jLT5udW1fZ3JvdXBfbmFtZXMgPT0gMCkgew0KPiAtCQlkZXZfZXJyKGluZm8tPmRl
-diwgIm5vIGdyb3VwcyBkZWZpbmVkIGluICVzXG4iLCBucC0+ZnVsbF9uYW1lKTsNCj4gKwkJZGV2
-X2VycihpbmZvLT5kZXYsICJubyBncm91cHMgZGVmaW5lZCBpbiAlcE9GXG4iLCBucCk7DQo+ICAg
-CQlyZXR1cm4gLUVJTlZBTDsNCj4gICAJfQ0KPiAgIAlmdW5jLT5ncm91cF9uYW1lcyA9IGRldm1f
-a2NhbGxvYyhpbmZvLT5kZXYsIGZ1bmMtPm51bV9ncm91cF9uYW1lcywNCj4gZGlmZiAtLWdpdCBh
-L2RyaXZlcnMvcGluY3RybC9waW5jb25mLWdlbmVyaWMuYyBiL2RyaXZlcnMvcGluY3RybC9waW5j
-b25mLWdlbmVyaWMuYw0KPiBpbmRleCBmYzBjMjMwYWExMWYuLjRjZjkwMWM3ODEzMCAxMDA2NDQN
-Cj4gLS0tIGEvZHJpdmVycy9waW5jdHJsL3BpbmNvbmYtZ2VuZXJpYy5jDQo+ICsrKyBiL2RyaXZl
-cnMvcGluY3RybC9waW5jb25mLWdlbmVyaWMuYw0KPiBAQCAtMzE2LDE2ICszMTYsMTUgQEAgaW50
-IHBpbmNvbmZfZ2VuZXJpY19kdF9zdWJub2RlX3RvX21hcChzdHJ1Y3QgcGluY3RybF9kZXYgKnBj
-dGxkZXYsDQo+ICAgCWlmIChyZXQgPCAwKSB7DQo+ICAgCQkvKiBFSU5WQUw9bWlzc2luZywgd2hp
-Y2ggaXMgZmluZSBzaW5jZSBpdCdzIG9wdGlvbmFsICovDQo+ICAgCQlpZiAocmV0ICE9IC1FSU5W
-QUwpDQo+IC0JCQlkZXZfZXJyKGRldiwgIiVzOiBjb3VsZCBub3QgcGFyc2UgcHJvcGVydHkgZnVu
-Y3Rpb25cbiIsDQo+IC0JCQkJb2Zfbm9kZV9mdWxsX25hbWUobnApKTsNCj4gKwkJCWRldl9lcnIo
-ZGV2LCAiJXBPRjogY291bGQgbm90IHBhcnNlIHByb3BlcnR5IGZ1bmN0aW9uXG4iLA0KPiArCQkJ
-CW5wKTsNCj4gICAJCWZ1bmN0aW9uID0gTlVMTDsNCj4gICAJfQ0KPiANCj4gICAJcmV0ID0gcGlu
-Y29uZl9nZW5lcmljX3BhcnNlX2R0X2NvbmZpZyhucCwgcGN0bGRldiwgJmNvbmZpZ3MsDQo+ICAg
-CQkJCQkgICAgICAmbnVtX2NvbmZpZ3MpOw0KPiAgIAlpZiAocmV0IDwgMCkgew0KPiAtCQlkZXZf
-ZXJyKGRldiwgIiVzOiBjb3VsZCBub3QgcGFyc2Ugbm9kZSBwcm9wZXJ0eVxuIiwNCj4gLQkJCW9m
-X25vZGVfZnVsbF9uYW1lKG5wKSk7DQo+ICsJCWRldl9lcnIoZGV2LCAiJXBPRjogY291bGQgbm90
-IHBhcnNlIG5vZGUgcHJvcGVydHlcbiIsIG5wKTsNCj4gICAJCXJldHVybiByZXQ7DQo+ICAgCX0N
-Cj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3BpbmN0cmwvcGluY3RybC1hdDkxLXBpbzQuYyBi
-L2RyaXZlcnMvcGluY3RybC9waW5jdHJsLWF0OTEtcGlvNC5jDQo+IGluZGV4IGRjODU5MTU0M2Rl
-ZS4uYjFjYTgzOGRkODBhIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL3BpbmN0cmwvcGluY3RybC1h
-dDkxLXBpbzQuYw0KPiArKysgYi9kcml2ZXJzL3BpbmN0cmwvcGluY3RybC1hdDkxLXBpbzQuYw0K
-PiBAQCAtNDk0LDggKzQ5NCw4IEBAIHN0YXRpYyBpbnQgYXRtZWxfcGN0bF9kdF9zdWJub2RlX3Rv
-X21hcChzdHJ1Y3QgcGluY3RybF9kZXYgKnBjdGxkZXYsDQo+ICAgCXJldCA9IHBpbmNvbmZfZ2Vu
-ZXJpY19wYXJzZV9kdF9jb25maWcobnAsIHBjdGxkZXYsICZjb25maWdzLA0KPiAgIAkJCQkJICAg
-ICAgJm51bV9jb25maWdzKTsNCj4gICAJaWYgKHJldCA8IDApIHsNCj4gLQkJZGV2X2VycihwY3Rs
-ZGV2LT5kZXYsICIlczogY291bGQgbm90IHBhcnNlIG5vZGUgcHJvcGVydHlcbiIsDQo+IC0JCQlv
-Zl9ub2RlX2Z1bGxfbmFtZShucCkpOw0KPiArCQlkZXZfZXJyKHBjdGxkZXYtPmRldiwgIiVwT0Y6
-IGNvdWxkIG5vdCBwYXJzZSBub2RlIHByb3BlcnR5XG4iLA0KPiArCQkJbnApOw0KPiAgIAkJcmV0
-dXJuIHJldDsNCj4gICAJfQ0KPiANCj4gQEAgLTUwNCw4ICs1MDQsNyBAQCBzdGF0aWMgaW50IGF0
-bWVsX3BjdGxfZHRfc3Vibm9kZV90b19tYXAoc3RydWN0IHBpbmN0cmxfZGV2ICpwY3RsZGV2LA0K
-PiANCj4gICAJbnVtX3BpbnMgPSBwaW5zLT5sZW5ndGggLyBzaXplb2YodTMyKTsNCj4gICAJaWYg
-KCFudW1fcGlucykgew0KPiAtCQlkZXZfZXJyKHBjdGxkZXYtPmRldiwgIm5vIHBpbnMgZm91bmQg
-aW4gbm9kZSAlc1xuIiwNCj4gLQkJCW9mX25vZGVfZnVsbF9uYW1lKG5wKSk7DQo+ICsJCWRldl9l
-cnIocGN0bGRldi0+ZGV2LCAibm8gcGlucyBmb3VuZCBpbiBub2RlICVwT0ZcbiIsIG5wKTsNCj4g
-ICAJCXJldCA9IC1FSU5WQUw7DQo+ICAgCQlnb3RvIGV4aXQ7DQo+ICAgCX0NCj4gQEAgLTU4NCw4
-ICs1ODMsOCBAQCBzdGF0aWMgaW50IGF0bWVsX3BjdGxfZHRfbm9kZV90b19tYXAoc3RydWN0IHBp
-bmN0cmxfZGV2ICpwY3RsZGV2LA0KPiANCj4gICAJaWYgKHJldCA8IDApIHsNCj4gICAJCXBpbmN0
-cmxfdXRpbHNfZnJlZV9tYXAocGN0bGRldiwgKm1hcCwgKm51bV9tYXBzKTsNCj4gLQkJZGV2X2Vy
-cihwY3RsZGV2LT5kZXYsICJjYW4ndCBjcmVhdGUgbWFwcyBmb3Igbm9kZSAlc1xuIiwNCj4gLQkJ
-CW5wX2NvbmZpZy0+ZnVsbF9uYW1lKTsNCj4gKwkJZGV2X2VycihwY3RsZGV2LT5kZXYsICJjYW4n
-dCBjcmVhdGUgbWFwcyBmb3Igbm9kZSAlcE9GXG4iLA0KPiArCQkJbnBfY29uZmlnKTsNCj4gICAJ
-fQ0KPiANCj4gICAJcmV0dXJuIHJldDsNCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvcGluY3RybC9w
-aW5jdHJsLXN0LmMgYi9kcml2ZXJzL3BpbmN0cmwvcGluY3RybC1zdC5jDQo+IGluZGV4IDNhZTgw
-NjZiYzEyNy4uMTcwMzk3N2RlN2NmIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL3BpbmN0cmwvcGlu
-Y3RybC1zdC5jDQo+ICsrKyBiL2RyaXZlcnMvcGluY3RybC9waW5jdHJsLXN0LmMNCj4gQEAgLTE1
-MzcsNyArMTUzNyw3IEBAIHN0YXRpYyBpbnQgc3RfZ3Bpb2xpYl9yZWdpc3Rlcl9iYW5rKHN0cnVj
-dCBzdF9waW5jdHJsICppbmZvLA0KPiAgIAkJCXJldHVybiBlcnI7DQo+ICAgCQl9DQo+ICAgCX0g
-ZWxzZSB7DQo+IC0JCWRldl9pbmZvKGRldiwgIk5vIElSUSBzdXBwb3J0IGZvciAlcyBiYW5rXG4i
-LCBucC0+ZnVsbF9uYW1lKTsNCj4gKwkJZGV2X2luZm8oZGV2LCAiTm8gSVJRIHN1cHBvcnQgZm9y
-ICVwT0YgYmFua1xuIiwgbnApOw0KPiAgIAl9DQo+IA0KPiAgIAlyZXR1cm4gMDsNCj4gZGlmZiAt
-LWdpdCBhL2RyaXZlcnMvcGluY3RybC9waW5jdHJsLXRiMTB4LmMgYi9kcml2ZXJzL3BpbmN0cmwv
-cGluY3RybC10YjEweC5jDQo+IGluZGV4IGVkZmJhNTA2ZTk1OC4uMDlkMzUwMDZhY2IyIDEwMDY0
-NA0KPiAtLS0gYS9kcml2ZXJzL3BpbmN0cmwvcGluY3RybC10YjEweC5jDQo+ICsrKyBiL2RyaXZl
-cnMvcGluY3RybC9waW5jdHJsLXRiMTB4LmMNCj4gQEAgLTU1Nyw4ICs1NTcsOCBAQCBzdGF0aWMg
-aW50IHRiMTB4X2R0X25vZGVfdG9fbWFwKHN0cnVjdCBwaW5jdHJsX2RldiAqcGN0bCwNCj4gICAJ
-aW50IHJldCA9IDA7DQo+IA0KPiAgIAlpZiAob2ZfcHJvcGVydHlfcmVhZF9zdHJpbmcobnBfY29u
-ZmlnLCAiYWJpbGlzLGZ1bmN0aW9uIiwgJnN0cmluZykpIHsNCj4gLQkJcHJfZXJyKCIlczogTm8g
-YWJpbGlzLGZ1bmN0aW9uIHByb3BlcnR5IGluIGRldmljZSB0cmVlLlxuIiwNCj4gLQkJCW5wX2Nv
-bmZpZy0+ZnVsbF9uYW1lKTsNCj4gKwkJcHJfZXJyKCIlcE9GOiBObyBhYmlsaXMsZnVuY3Rpb24g
-cHJvcGVydHkgaW4gZGV2aWNlIHRyZWUuXG4iLA0KPiArCQkJbnBfY29uZmlnKTsNCj4gICAJCXJl
-dHVybiAtRUlOVkFMOw0KPiAgIAl9DQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9waW5jdHJs
-L3NhbXN1bmcvcGluY3RybC1zYW1zdW5nLmMgYi9kcml2ZXJzL3BpbmN0cmwvc2Ftc3VuZy9waW5j
-dHJsLXNhbXN1bmcuYw0KPiBpbmRleCBmNTQyNjQyZWVkOGQuLjIwYjU5YmIwMjE5NiAxMDA2NDQN
-Cj4gLS0tIGEvZHJpdmVycy9waW5jdHJsL3NhbXN1bmcvcGluY3RybC1zYW1zdW5nLmMNCj4gKysr
-IGIvZHJpdmVycy9waW5jdHJsL3NhbXN1bmcvcGluY3RybC1zYW1zdW5nLmMNCj4gQEAgLTY3OSw3
-ICs2NzksNyBAQCBzdGF0aWMgaW50IHNhbXN1bmdfcGluY3RybF9jcmVhdGVfZnVuY3Rpb24oc3Ry
-dWN0IGRldmljZSAqZGV2LA0KPiANCj4gICAJbnBpbnMgPSBvZl9wcm9wZXJ0eV9jb3VudF9zdHJp
-bmdzKGZ1bmNfbnAsICJzYW1zdW5nLHBpbnMiKTsNCj4gICAJaWYgKG5waW5zIDwgMSkgew0KPiAt
-CQlkZXZfZXJyKGRldiwgImludmFsaWQgcGluIGxpc3QgaW4gJXMgbm9kZSIsIGZ1bmNfbnAtPm5h
-bWUpOw0KPiArCQlkZXZfZXJyKGRldiwgImludmFsaWQgcGluIGxpc3QgaW4gJXBPRm4gbm9kZSIs
-IGZ1bmNfbnApOw0KPiAgIAkJcmV0dXJuIC1FSU5WQUw7DQo+ICAgCX0NCj4gDQo+IEBAIC02OTYs
-OCArNjk2LDggQEAgc3RhdGljIGludCBzYW1zdW5nX3BpbmN0cmxfY3JlYXRlX2Z1bmN0aW9uKHN0
-cnVjdCBkZXZpY2UgKmRldiwNCj4gICAJCQkJCQkJaSwgJmduYW1lKTsNCj4gICAJCWlmIChyZXQp
-IHsNCj4gICAJCQlkZXZfZXJyKGRldiwNCj4gLQkJCQkiZmFpbGVkIHRvIHJlYWQgcGluIG5hbWUg
-JWQgZnJvbSAlcyBub2RlXG4iLA0KPiAtCQkJCWksIGZ1bmNfbnAtPm5hbWUpOw0KPiArCQkJCSJm
-YWlsZWQgdG8gcmVhZCBwaW4gbmFtZSAlZCBmcm9tICVwT0ZuIG5vZGVcbiIsDQo+ICsJCQkJaSwg
-ZnVuY19ucCk7DQo+ICAgCQkJcmV0dXJuIHJldDsNCj4gICAJCX0NCj4gDQo+IGRpZmYgLS1naXQg
-YS9kcml2ZXJzL3BpbmN0cmwvc2gtcGZjL3BpbmN0cmwuYyBiL2RyaXZlcnMvcGluY3RybC9zaC1w
-ZmMvcGluY3RybC5jDQo+IGluZGV4IGE3MDE1N2YwYWNmNC4uZTdhOTJlZWMwNmMyIDEwMDY0NA0K
-PiAtLS0gYS9kcml2ZXJzL3BpbmN0cmwvc2gtcGZjL3BpbmN0cmwuYw0KPiArKysgYi9kcml2ZXJz
-L3BpbmN0cmwvc2gtcGZjL3BpbmN0cmwuYw0KPiBAQCAtMjkwLDcgKzI5MCw3IEBAIHN0YXRpYyBp
-bnQgc2hfcGZjX2R0X25vZGVfdG9fbWFwKHN0cnVjdCBwaW5jdHJsX2RldiAqcGN0bGRldiwNCj4g
-ICAJaWYgKCpudW1fbWFwcykNCj4gICAJCXJldHVybiAwOw0KPiANCj4gLQlkZXZfZXJyKGRldiwg
-Im5vIG1hcHBpbmcgZm91bmQgaW4gbm9kZSAlc1xuIiwgbnAtPmZ1bGxfbmFtZSk7DQo+ICsJZGV2
-X2VycihkZXYsICJubyBtYXBwaW5nIGZvdW5kIGluIG5vZGUgJXBPRlxuIiwgbnApOw0KPiAgIAly
-ZXQgPSAtRUlOVkFMOw0KPiANCj4gICBkb25lOg0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9waW5j
-dHJsL3NpcmYvcGluY3RybC1zaXJmLmMgYi9kcml2ZXJzL3BpbmN0cmwvc2lyZi9waW5jdHJsLXNp
-cmYuYw0KPiBpbmRleCAwZGY3MmJlNjA3MDQuLjgwYmZkNDcxOTE5OSAxMDA2NDQNCj4gLS0tIGEv
-ZHJpdmVycy9waW5jdHJsL3NpcmYvcGluY3RybC1zaXJmLmMNCj4gKysrIGIvZHJpdmVycy9waW5j
-dHJsL3NpcmYvcGluY3RybC1zaXJmLmMNCj4gQEAgLTgxMCw3ICs4MTAsNyBAQCBzdGF0aWMgaW50
-IHNpcmZzb2NfZ3Bpb19wcm9iZShzdHJ1Y3QgZGV2aWNlX25vZGUgKm5wKQ0KPiAgIAlzZ3Bpby0+
-Y2hpcC5nYy5zZXQgPSBzaXJmc29jX2dwaW9fc2V0X3ZhbHVlOw0KPiAgIAlzZ3Bpby0+Y2hpcC5n
-Yy5iYXNlID0gMDsNCj4gICAJc2dwaW8tPmNoaXAuZ2MubmdwaW8gPSBTSVJGU09DX0dQSU9fQkFO
-S19TSVpFICogU0lSRlNPQ19HUElPX05PX09GX0JBTktTOw0KPiAtCXNncGlvLT5jaGlwLmdjLmxh
-YmVsID0ga3N0cmR1cChucC0+ZnVsbF9uYW1lLCBHRlBfS0VSTkVMKTsNCj4gKwlzZ3Bpby0+Y2hp
-cC5nYy5sYWJlbCA9IGthc3ByaW50ZihHRlBfS0VSTkVMLCAiJXBPRiIsIG5wKTsNCj4gICAJc2dw
-aW8tPmNoaXAuZ2Mub2Zfbm9kZSA9IG5wOw0KPiAgIAlzZ3Bpby0+Y2hpcC5nYy5vZl94bGF0ZSA9
-IHNpcmZzb2NfZ3Bpb19vZl94bGF0ZTsNCj4gICAJc2dwaW8tPmNoaXAuZ2Mub2ZfZ3Bpb19uX2Nl
-bGxzID0gMjsNCj4gQEAgLTgxOSw4ICs4MTksOCBAQCBzdGF0aWMgaW50IHNpcmZzb2NfZ3Bpb19w
-cm9iZShzdHJ1Y3QgZGV2aWNlX25vZGUgKm5wKQ0KPiANCj4gICAJZXJyID0gZ3Bpb2NoaXBfYWRk
-X2RhdGEoJnNncGlvLT5jaGlwLmdjLCBzZ3Bpbyk7DQo+ICAgCWlmIChlcnIpIHsNCj4gLQkJZGV2
-X2VycigmcGRldi0+ZGV2LCAiJXM6IGVycm9yIGluIHByb2JlIGZ1bmN0aW9uIHdpdGggc3RhdHVz
-ICVkXG4iLA0KPiAtCQkJbnAtPmZ1bGxfbmFtZSwgZXJyKTsNCj4gKwkJZGV2X2VycigmcGRldi0+
-ZGV2LCAiJXBPRjogZXJyb3IgaW4gcHJvYmUgZnVuY3Rpb24gd2l0aCBzdGF0dXMgJWRcbiIsDQo+
-ICsJCQlucCwgZXJyKTsNCj4gICAJCWdvdG8gb3V0Ow0KPiAgIAl9DQo+IA0KPiAtLQ0KPiAyLjEx
-LjANCj4gDQpGb3IgU1QgcGluY3RybDoNCg0KQWNrZWQtYnk6IFBhdHJpY2UgQ2hvdGFyZCA8cGF0
-cmljZS5jaG90YXJkQHN0LmNvbT4NCg0KVGhhbmtz
+On Tue, Jul 18, 2017 at 04:43:23PM -0500, Rob Herring wrote:
+> Now that we have a custom printf format specifier, convert users of
+> full_name to use %pOF instead. This is preparation to remove storing
+> of the full path string for each node.
+> 
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Lee Jones <lee@kernel.org>
+> Cc: Eric Anholt <eric@anholt.net>
+> Cc: Stefan Wahren <stefan.wahren@i2se.com>
+> Cc: Florian Fainelli <f.fainelli@gmail.com>
+> Cc: Ray Jui <rjui@broadcom.com>
+> Cc: Scott Branden <sbranden@broadcom.com>
+> Cc: bcm-kernel-feedback-list@broadcom.com
+> Cc: Ludovic Desroches <ludovic.desroches@microchip.com>
+> Cc: Patrice Chotard <patrice.chotard@st.com>
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Barry Song <baohua@kernel.org>
+> Cc: linux-gpio@vger.kernel.org
+> Cc: linux-rpi-kernel@lists.infradead.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: kernel@stlinux.com
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-renesas-soc@vger.kernel.org
+> ---
+>  drivers/pinctrl/bcm/pinctrl-bcm2835.c     | 25 +++++++++++--------------
+>  drivers/pinctrl/devicetree.c              |  4 ++--
+>  drivers/pinctrl/freescale/pinctrl-imx.c   |  8 +++-----
+>  drivers/pinctrl/pinconf-generic.c         |  7 +++----
+>  drivers/pinctrl/pinctrl-at91-pio4.c       | 11 +++++------
+
+Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+
+>  drivers/pinctrl/pinctrl-st.c              |  2 +-
+>  drivers/pinctrl/pinctrl-tb10x.c           |  4 ++--
+>  drivers/pinctrl/samsung/pinctrl-samsung.c |  6 +++---
+>  drivers/pinctrl/sh-pfc/pinctrl.c          |  2 +-
+>  drivers/pinctrl/sirf/pinctrl-sirf.c       |  6 +++---
+>  10 files changed, 34 insertions(+), 41 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+> index 230883168e99..3e71e5d782ee 100644
+> --- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+> +++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+> @@ -692,8 +692,7 @@ static int bcm2835_pctl_dt_node_to_map_func(struct bcm2835_pinctrl *pc,
+>  	struct pinctrl_map *map = *maps;
+> 
+>  	if (fnum >= ARRAY_SIZE(bcm2835_functions)) {
+> -		dev_err(pc->dev, "%s: invalid brcm,function %d\n",
+> -			of_node_full_name(np), fnum);
+> +		dev_err(pc->dev, "%pOF: invalid brcm,function %d\n", np, fnum);
+>  		return -EINVAL;
+>  	}
+> 
+> @@ -713,8 +712,7 @@ static int bcm2835_pctl_dt_node_to_map_pull(struct bcm2835_pinctrl *pc,
+>  	unsigned long *configs;
+> 
+>  	if (pull > 2) {
+> -		dev_err(pc->dev, "%s: invalid brcm,pull %d\n",
+> -			of_node_full_name(np), pull);
+> +		dev_err(pc->dev, "%pOF: invalid brcm,pull %d\n", np, pull);
+>  		return -EINVAL;
+>  	}
+> 
+> @@ -745,8 +743,7 @@ static int bcm2835_pctl_dt_node_to_map(struct pinctrl_dev *pctldev,
+> 
+>  	pins = of_find_property(np, "brcm,pins", NULL);
+>  	if (!pins) {
+> -		dev_err(pc->dev, "%s: missing brcm,pins property\n",
+> -				of_node_full_name(np));
+> +		dev_err(pc->dev, "%pOF: missing brcm,pins property\n", np);
+>  		return -EINVAL;
+>  	}
+> 
+> @@ -755,8 +752,8 @@ static int bcm2835_pctl_dt_node_to_map(struct pinctrl_dev *pctldev,
+> 
+>  	if (!funcs && !pulls) {
+>  		dev_err(pc->dev,
+> -			"%s: neither brcm,function nor brcm,pull specified\n",
+> -			of_node_full_name(np));
+> +			"%pOF: neither brcm,function nor brcm,pull specified\n",
+> +			np);
+>  		return -EINVAL;
+>  	}
+> 
+> @@ -766,15 +763,15 @@ static int bcm2835_pctl_dt_node_to_map(struct pinctrl_dev *pctldev,
+> 
+>  	if (num_funcs > 1 && num_funcs != num_pins) {
+>  		dev_err(pc->dev,
+> -			"%s: brcm,function must have 1 or %d entries\n",
+> -			of_node_full_name(np), num_pins);
+> +			"%pOF: brcm,function must have 1 or %d entries\n",
+> +			np, num_pins);
+>  		return -EINVAL;
+>  	}
+> 
+>  	if (num_pulls > 1 && num_pulls != num_pins) {
+>  		dev_err(pc->dev,
+> -			"%s: brcm,pull must have 1 or %d entries\n",
+> -			of_node_full_name(np), num_pins);
+> +			"%pOF: brcm,pull must have 1 or %d entries\n",
+> +			np, num_pins);
+>  		return -EINVAL;
+>  	}
+> 
+> @@ -793,8 +790,8 @@ static int bcm2835_pctl_dt_node_to_map(struct pinctrl_dev *pctldev,
+>  		if (err)
+>  			goto out;
+>  		if (pin >= ARRAY_SIZE(bcm2835_gpio_pins)) {
+> -			dev_err(pc->dev, "%s: invalid brcm,pins value %d\n",
+> -				of_node_full_name(np), pin);
+> +			dev_err(pc->dev, "%pOF: invalid brcm,pins value %d\n",
+> +				np, pin);
+>  			err = -EINVAL;
+>  			goto out;
+>  		}
+> diff --git a/drivers/pinctrl/devicetree.c b/drivers/pinctrl/devicetree.c
+> index 0e5c9f14a706..0a20afc2210c 100644
+> --- a/drivers/pinctrl/devicetree.c
+> +++ b/drivers/pinctrl/devicetree.c
+> @@ -117,8 +117,8 @@ static int dt_to_map_one_config(struct pinctrl *p,
+>  	for (;;) {
+>  		np_pctldev = of_get_next_parent(np_pctldev);
+>  		if (!np_pctldev || of_node_is_root(np_pctldev)) {
+> -			dev_info(p->dev, "could not find pctldev for node %s, deferring probe\n",
+> -				np_config->full_name);
+> +			dev_info(p->dev, "could not find pctldev for node %pOF, deferring probe\n",
+> +				np_config);
+>  			of_node_put(np_pctldev);
+>  			/* OK let's just assume this will appear later then */
+>  			return -EPROBE_DEFER;
+> diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
+> index 72aca758f4c6..1f0095a69407 100644
+> --- a/drivers/pinctrl/freescale/pinctrl-imx.c
+> +++ b/drivers/pinctrl/freescale/pinctrl-imx.c
+> @@ -573,16 +573,14 @@ static int imx_pinctrl_parse_groups(struct device_node *np,
+>  		list = of_get_property(np, "pins", &size);
+>  		if (!list) {
+>  			dev_err(info->dev,
+> -				"no fsl,pins and pins property in node %s\n",
+> -				np->full_name);
+> +				"no fsl,pins and pins property in node %pOF\n", np);
+>  			return -EINVAL;
+>  		}
+>  	}
+> 
+>  	/* we do not check return since it's safe node passed down */
+>  	if (!size || size % pin_size) {
+> -		dev_err(info->dev, "Invalid fsl,pins or pins property in node %s\n",
+> -			np->full_name);
+> +		dev_err(info->dev, "Invalid fsl,pins or pins property in node %pOF\n", np);
+>  		return -EINVAL;
+>  	}
+> 
+> @@ -666,7 +664,7 @@ static int imx_pinctrl_parse_functions(struct device_node *np,
+>  	func->name = np->name;
+>  	func->num_group_names = of_get_child_count(np);
+>  	if (func->num_group_names == 0) {
+> -		dev_err(info->dev, "no groups defined in %s\n", np->full_name);
+> +		dev_err(info->dev, "no groups defined in %pOF\n", np);
+>  		return -EINVAL;
+>  	}
+>  	func->group_names = devm_kcalloc(info->dev, func->num_group_names,
+> diff --git a/drivers/pinctrl/pinconf-generic.c b/drivers/pinctrl/pinconf-generic.c
+> index fc0c230aa11f..4cf901c78130 100644
+> --- a/drivers/pinctrl/pinconf-generic.c
+> +++ b/drivers/pinctrl/pinconf-generic.c
+> @@ -316,16 +316,15 @@ int pinconf_generic_dt_subnode_to_map(struct pinctrl_dev *pctldev,
+>  	if (ret < 0) {
+>  		/* EINVAL=missing, which is fine since it's optional */
+>  		if (ret != -EINVAL)
+> -			dev_err(dev, "%s: could not parse property function\n",
+> -				of_node_full_name(np));
+> +			dev_err(dev, "%pOF: could not parse property function\n",
+> +				np);
+>  		function = NULL;
+>  	}
+> 
+>  	ret = pinconf_generic_parse_dt_config(np, pctldev, &configs,
+>  					      &num_configs);
+>  	if (ret < 0) {
+> -		dev_err(dev, "%s: could not parse node property\n",
+> -			of_node_full_name(np));
+> +		dev_err(dev, "%pOF: could not parse node property\n", np);
+>  		return ret;
+>  	}
+> 
+> diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
+> index dc8591543dee..b1ca838dd80a 100644
+> --- a/drivers/pinctrl/pinctrl-at91-pio4.c
+> +++ b/drivers/pinctrl/pinctrl-at91-pio4.c
+> @@ -494,8 +494,8 @@ static int atmel_pctl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
+>  	ret = pinconf_generic_parse_dt_config(np, pctldev, &configs,
+>  					      &num_configs);
+>  	if (ret < 0) {
+> -		dev_err(pctldev->dev, "%s: could not parse node property\n",
+> -			of_node_full_name(np));
+> +		dev_err(pctldev->dev, "%pOF: could not parse node property\n",
+> +			np);
+>  		return ret;
+>  	}
+> 
+> @@ -504,8 +504,7 @@ static int atmel_pctl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
+> 
+>  	num_pins = pins->length / sizeof(u32);
+>  	if (!num_pins) {
+> -		dev_err(pctldev->dev, "no pins found in node %s\n",
+> -			of_node_full_name(np));
+> +		dev_err(pctldev->dev, "no pins found in node %pOF\n", np);
+>  		ret = -EINVAL;
+>  		goto exit;
+>  	}
+> @@ -584,8 +583,8 @@ static int atmel_pctl_dt_node_to_map(struct pinctrl_dev *pctldev,
+> 
+>  	if (ret < 0) {
+>  		pinctrl_utils_free_map(pctldev, *map, *num_maps);
+> -		dev_err(pctldev->dev, "can't create maps for node %s\n",
+> -			np_config->full_name);
+> +		dev_err(pctldev->dev, "can't create maps for node %pOF\n",
+> +			np_config);
+>  	}
+> 
+>  	return ret;
+> diff --git a/drivers/pinctrl/pinctrl-st.c b/drivers/pinctrl/pinctrl-st.c
+> index 3ae8066bc127..1703977de7cf 100644
+> --- a/drivers/pinctrl/pinctrl-st.c
+> +++ b/drivers/pinctrl/pinctrl-st.c
+> @@ -1537,7 +1537,7 @@ static int st_gpiolib_register_bank(struct st_pinctrl *info,
+>  			return err;
+>  		}
+>  	} else {
+> -		dev_info(dev, "No IRQ support for %s bank\n", np->full_name);
+> +		dev_info(dev, "No IRQ support for %pOF bank\n", np);
+>  	}
+> 
+>  	return 0;
+> diff --git a/drivers/pinctrl/pinctrl-tb10x.c b/drivers/pinctrl/pinctrl-tb10x.c
+> index edfba506e958..09d35006acb2 100644
+> --- a/drivers/pinctrl/pinctrl-tb10x.c
+> +++ b/drivers/pinctrl/pinctrl-tb10x.c
+> @@ -557,8 +557,8 @@ static int tb10x_dt_node_to_map(struct pinctrl_dev *pctl,
+>  	int ret = 0;
+> 
+>  	if (of_property_read_string(np_config, "abilis,function", &string)) {
+> -		pr_err("%s: No abilis,function property in device tree.\n",
+> -			np_config->full_name);
+> +		pr_err("%pOF: No abilis,function property in device tree.\n",
+> +			np_config);
+>  		return -EINVAL;
+>  	}
+> 
+> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+> index f542642eed8d..20b59bb02196 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
+> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+> @@ -679,7 +679,7 @@ static int samsung_pinctrl_create_function(struct device *dev,
+> 
+>  	npins = of_property_count_strings(func_np, "samsung,pins");
+>  	if (npins < 1) {
+> -		dev_err(dev, "invalid pin list in %s node", func_np->name);
+> +		dev_err(dev, "invalid pin list in %pOFn node", func_np);
+>  		return -EINVAL;
+>  	}
+> 
+> @@ -696,8 +696,8 @@ static int samsung_pinctrl_create_function(struct device *dev,
+>  							i, &gname);
+>  		if (ret) {
+>  			dev_err(dev,
+> -				"failed to read pin name %d from %s node\n",
+> -				i, func_np->name);
+> +				"failed to read pin name %d from %pOFn node\n",
+> +				i, func_np);
+>  			return ret;
+>  		}
+> 
+> diff --git a/drivers/pinctrl/sh-pfc/pinctrl.c b/drivers/pinctrl/sh-pfc/pinctrl.c
+> index a70157f0acf4..e7a92eec06c2 100644
+> --- a/drivers/pinctrl/sh-pfc/pinctrl.c
+> +++ b/drivers/pinctrl/sh-pfc/pinctrl.c
+> @@ -290,7 +290,7 @@ static int sh_pfc_dt_node_to_map(struct pinctrl_dev *pctldev,
+>  	if (*num_maps)
+>  		return 0;
+> 
+> -	dev_err(dev, "no mapping found in node %s\n", np->full_name);
+> +	dev_err(dev, "no mapping found in node %pOF\n", np);
+>  	ret = -EINVAL;
+> 
+>  done:
+> diff --git a/drivers/pinctrl/sirf/pinctrl-sirf.c b/drivers/pinctrl/sirf/pinctrl-sirf.c
+> index 0df72be60704..80bfd4719199 100644
+> --- a/drivers/pinctrl/sirf/pinctrl-sirf.c
+> +++ b/drivers/pinctrl/sirf/pinctrl-sirf.c
+> @@ -810,7 +810,7 @@ static int sirfsoc_gpio_probe(struct device_node *np)
+>  	sgpio->chip.gc.set = sirfsoc_gpio_set_value;
+>  	sgpio->chip.gc.base = 0;
+>  	sgpio->chip.gc.ngpio = SIRFSOC_GPIO_BANK_SIZE * SIRFSOC_GPIO_NO_OF_BANKS;
+> -	sgpio->chip.gc.label = kstrdup(np->full_name, GFP_KERNEL);
+> +	sgpio->chip.gc.label = kasprintf(GFP_KERNEL, "%pOF", np);
+>  	sgpio->chip.gc.of_node = np;
+>  	sgpio->chip.gc.of_xlate = sirfsoc_gpio_of_xlate;
+>  	sgpio->chip.gc.of_gpio_n_cells = 2;
+> @@ -819,8 +819,8 @@ static int sirfsoc_gpio_probe(struct device_node *np)
+> 
+>  	err = gpiochip_add_data(&sgpio->chip.gc, sgpio);
+>  	if (err) {
+> -		dev_err(&pdev->dev, "%s: error in probe function with status %d\n",
+> -			np->full_name, err);
+> +		dev_err(&pdev->dev, "%pOF: error in probe function with status %d\n",
+> +			np, err);
+>  		goto out;
+>  	}
+> 
+> --
+> 2.11.0
+> 
