@@ -1,57 +1,44 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([88.99.104.3]:39784 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752865AbdGSI2G (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 19 Jul 2017 04:28:06 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-watchdog@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/7] ARM: dts: renesas: Add Inter Connect RAM
-Date: Tue,  4 Jul 2017 17:23:11 +0200
-Message-Id: <1499181798-28859-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH v2 3/5] watchdog: renesas_wdt: don't round closest with get_timeleft
+Date: Wed, 19 Jul 2017 10:27:53 +0200
+Message-Id: <20170719082755.21733-4-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20170719082755.21733-1-wsa+renesas@sang-engineering.com>
+References: <20170719082755.21733-1-wsa+renesas@sang-engineering.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Simon, Magnus,
+We should never return more time left than there actually is. So, switch
+to a plain divider instead of DIV_ROUND_CLOSEST.
 
-R-Car Gen2 and RZ/G1 SoCs contain two or three blocks of SRAM, which can be
-used for several purposes.  One such purpose is holding a jump stub for CPU
-core bringup.
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/watchdog/renesas_wdt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This patch series adds the SRAM blocks to the various DTS files, following
-the generic DT bindings for "mmio-sram" in
-Documentation/devicetree/bindings/sram/sram.txt.  Reserving SRAM for jump
-stub for CPU core bringup will be handled in a follow-up series.
-
-Thanks!
-
-Geert Uytterhoeven (7):
-  ARM: dts: r8a7743: Add Inter Connect RAM
-  ARM: dts: r8a7745: Add Inter Connect RAM
-  ARM: dts: r8a7790: Add Inter Connect RAM
-  ARM: dts: r8a7791: Add Inter Connect RAM
-  ARM: dts: r8a7792: Add Inter Connect RAM
-  ARM: dts: r8a7793: Add Inter Connect RAM
-  ARM: dts: r8a7794: Add Inter Connect RAM
-
- arch/arm/boot/dts/r8a7743.dtsi | 15 +++++++++++++++
- arch/arm/boot/dts/r8a7745.dtsi | 15 +++++++++++++++
- arch/arm/boot/dts/r8a7790.dtsi | 10 ++++++++++
- arch/arm/boot/dts/r8a7791.dtsi | 10 ++++++++++
- arch/arm/boot/dts/r8a7792.dtsi | 10 ++++++++++
- arch/arm/boot/dts/r8a7793.dtsi | 10 ++++++++++
- arch/arm/boot/dts/r8a7794.dtsi | 10 ++++++++++
- 7 files changed, 80 insertions(+)
-
+diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
+index 8437dd52153208..3763437cd0b015 100644
+--- a/drivers/watchdog/renesas_wdt.c
++++ b/drivers/watchdog/renesas_wdt.c
+@@ -92,7 +92,7 @@ static unsigned int rwdt_get_timeleft(struct watchdog_device *wdev)
+ 	struct rwdt_priv *priv = watchdog_get_drvdata(wdev);
+ 	u16 val = readw_relaxed(priv->base + RWTCNT);
+ 
+-	return DIV_ROUND_CLOSEST(65536 - val, priv->clks_per_sec);
++	return (65536 - val) / priv->clks_per_sec;
+ }
+ 
+ static const struct watchdog_info rwdt_ident = {
 -- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+2.11.0
