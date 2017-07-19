@@ -1,62 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:40589 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S935554AbdGTSWR (ORCPT
+Received: from sauhun.de ([88.99.104.3]:39777 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752858AbdGSI2G (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 20 Jul 2017 14:22:17 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH 3/4] arm: dts: rskrza1: Add SDHI1 pin group
-Date: Thu, 20 Jul 2017 13:20:18 -0500
-Message-Id: <20170720182019.85075-4-chris.brandt@renesas.com>
-In-Reply-To: <20170720182019.85075-1-chris.brandt@renesas.com>
-References: <20170720182019.85075-1-chris.brandt@renesas.com>
+        Wed, 19 Jul 2017 04:28:06 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-watchdog@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH v2 2/5] watchdog: renesas_wdt: check rate also for upper limit
+Date: Wed, 19 Jul 2017 10:27:52 +0200
+Message-Id: <20170719082755.21733-3-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20170719082755.21733-1-wsa+renesas@sang-engineering.com>
+References: <20170719082755.21733-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add pin configuration for SDHI ch1.
+When checking the clock rate, ensure also that counting all 16 bits
+takes at least one second to match the granularity of the framework.
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm/boot/dts/r7s72100-rskrza1.dts | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/watchdog/renesas_wdt.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r7s72100-rskrza1.dts b/arch/arm/boot/dts/r7s72100-rskrza1.dts
-index cedf887e809a..f8285b951140 100644
---- a/arch/arm/boot/dts/r7s72100-rskrza1.dts
-+++ b/arch/arm/boot/dts/r7s72100-rskrza1.dts
-@@ -78,6 +78,18 @@
- 			 <RZA1_PINMUX(2, 10, 2)>,	/* ET_RXD2  */
- 			 <RZA1_PINMUX(2, 11, 2)>;	/* ET_RXD3  */
- 	};
-+
-+	/* SDHI ch1 on CN1 */
-+	sdhi1_pins: sdhi1 {
-+		pinmux = <RZA1_PINMUX(3, 8, 7)>,	/* SD_CD_1 */
-+			 <RZA1_PINMUX(3, 9, 7)>,	/* SD_WP_1 */
-+			 <RZA1_PINMUX(3, 10, 7)>,	/* SD_D1_1 */
-+			 <RZA1_PINMUX(3, 11, 7)>,	/* SD_D0_1 */
-+			 <RZA1_PINMUX(3, 12, 7)>,	/* SD_CLK_1 */
-+			 <RZA1_PINMUX(3, 13, 7)>,	/* SD_CMD_1 */
-+			 <RZA1_PINMUX(3, 14, 7)>,	/* SD_D3_1 */
-+			 <RZA1_PINMUX(3, 15, 7)>;	/* SD_D2_1 */
-+	};
- };
+diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
+index 22b0348826deb1..8437dd52153208 100644
+--- a/drivers/watchdog/renesas_wdt.c
++++ b/drivers/watchdog/renesas_wdt.c
+@@ -134,14 +134,14 @@ static int rwdt_probe(struct platform_device *pdev)
  
- &mtu2 {
-@@ -96,6 +108,8 @@
- };
+ 	for (i = ARRAY_SIZE(clk_divs) - 1; i >= 0; i--) {
+ 		clks_per_sec = DIV_ROUND_UP(rate, clk_divs[i]);
+-		if (clks_per_sec) {
++		if (clks_per_sec && clks_per_sec < 65536) {
+ 			priv->clks_per_sec = clks_per_sec;
+ 			priv->cks = i;
+ 			break;
+ 		}
+ 	}
  
- &sdhi1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sdhi1_pins>;
- 	bus-width = <4>;
- 	status = "okay";
- };
+-	if (!clks_per_sec) {
++	if (i < 0) {
+ 		dev_err(&pdev->dev, "Can't find suitable clock divider\n");
+ 		return -ERANGE;
+ 	}
 -- 
-2.13.0
+2.11.0
