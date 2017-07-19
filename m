@@ -1,41 +1,48 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-serial@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, magnus.damm@gmail.com,
-        laurent.pinchart@ideasonboard.com, wsa@the-dreams.de,
-        robh@kernel.org, peda@axentia.se, geert@linux-m68k.org,
-        linux-i2c@vger.kernel.org,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [RFC v2 4/6] serial: core: support deferring serdev controller registration
-Date: Mon, 17 Jul 2017 17:24:34 +0200
-Message-Id: <1500305076-15570-5-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1500305076-15570-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1500305076-15570-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-Sender: linux-i2c-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from bh-25.webhostbox.net ([208.91.199.152]:50506 "EHLO
+        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752070AbdGSC5l (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 18 Jul 2017 22:57:41 -0400
+Subject: Re: [PATCH 1/5] watchdog: renesas_wdt: avoid (theoretical) type
+ overflow
+To: Wolfram Sang <wsa@the-dreams.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+References: <20170717151230.12680-1-wsa+renesas@sang-engineering.com>
+ <20170717151230.12680-2-wsa+renesas@sang-engineering.com>
+ <CAMuHMdV+yAy+QmDWFn8a7U8F1F5NcoV5C-1e8LeCV-jKcQHnMA@mail.gmail.com>
+ <20170718072127.GA1627@katana>
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <4f512244-aeb7-2cde-d66c-79e1035e361e@roeck-us.net>
+Date: Tue, 18 Jul 2017 19:57:38 -0700
+MIME-Version: 1.0
+In-Reply-To: <20170718072127.GA1627@katana>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-serdev controllers may depend on other devices (such as multiplexers)
-and thus require deferred probing support.
+On 07/18/2017 12:21 AM, Wolfram Sang wrote:
+>>> -       unsigned long rate;
+>>> -       unsigned int clks_per_sec;
+>>> +       unsigned long rate, clks_per_sec;
+>>
+>> If you make this change, you should also update rwdt_priv.clks_per_sec
+>> (yes I know it's removed in a later patch in this series).
+> 
+> Right. I will change but also wait a bit for more comments.
+> 
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
----
- drivers/tty/serial/serial_core.c | 4 ++++
- 1 file changed, 4 insertions(+)
+I for my part don't have any. Feel free to add
 
-diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
-index f534a40..30a8997 100644
---- a/drivers/tty/serial/serial_core.c
-+++ b/drivers/tty/serial/serial_core.c
-@@ -2785,6 +2785,10 @@ int uart_add_one_port(struct uart_driver *drv, struct uart_port *uport)
- 			uport->line, uport->dev, port, uport->tty_groups);
- 	if (likely(!IS_ERR(tty_dev))) {
- 		device_set_wakeup_capable(tty_dev, 1);
-+	} else if (PTR_ERR(tty_dev) == -EPROBE_DEFER) {
-+		ret = -EPROBE_DEFER;
-+		state->uart_port = NULL;
-+		goto out;
- 	} else {
- 		dev_err(uport->dev, "Cannot register tty device on line %d\n",
- 		       uport->line);
--- 
-2.7.4
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+
+to the series when you resend.
+
+Thanks,
+Guenter
