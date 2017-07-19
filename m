@@ -1,52 +1,135 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:21766 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751678AbdGEQK3 (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:40861 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752182AbdGSHUC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Jul 2017 12:10:29 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH v2 2/2] ARM: shmobile: defconfig: Enable Ethernet AVB
-Date: Wed,  5 Jul 2017 16:56:29 +0100
-Message-Id: <1499270189-29945-3-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1499270189-29945-1-git-send-email-biju.das@bp.renesas.com>
-References: <afcd181c-c805-8f3c-955f-652d001a03d4@cogentembedded.com>
- <1499270189-29945-1-git-send-email-biju.das@bp.renesas.com>
+        Wed, 19 Jul 2017 03:20:02 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <balbi@kernel.org>
+CC: <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>, <stable@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 2/2] usb: renesas_usbhs: gadget: disable all eps when the driver stops
+Date: Wed, 19 Jul 2017 16:16:55 +0900
+Message-ID: <1500448615-25287-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1500448615-25287-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1500448615-25287-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The iWave RZ/G1M Q7 SOM supports Gigabit Ethernet Phy (Micrel KSZ9031MNX).
-Gigabit Ethernet support is available in Renesas AVB driver.
-To increase hardware support enable the driver in the shmobile_defconfig
-multiplatform configuration.
+A gadget driver will not disable eps immediately when ->disconnect()
+is called. But, since this driver assumes all eps stop after
+the ->disconnect(), unexpected behavior happens (especially in system
+suspend).
+So, this patch disables all eps in usbhsg_try_stop(). After disabling
+eps by renesas_usbhs driver, since some functions will be called by
+both a gadget and renesas_usbhs driver, renesas_usbhs driver should
+protect uep->pipe. To protect uep->pipe easily, this patch adds a new
+lock in struct usbhsg_uep.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Fixes: 2f98382dc ("usb: renesas_usbhs: Add Renesas USBHS Gadget")
+Cc: <stable@vger.kernel.org> # v3.0+
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- arch/arm/configs/shmobile_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/usb/renesas_usbhs/mod_gadget.c | 31 ++++++++++++++++++++++++-------
+ 1 file changed, 24 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index 3c66a42..d992911 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -83,6 +83,7 @@ CONFIG_NETDEVICES=y
- # CONFIG_NET_VENDOR_MICREL is not set
- # CONFIG_NET_VENDOR_NATSEMI is not set
- CONFIG_SH_ETH=y
-+CONFIG_RAVB=y
- # CONFIG_NET_VENDOR_SEEQ is not set
- CONFIG_SMSC911X=y
- # CONFIG_NET_VENDOR_STMICRO is not set
+diff --git a/drivers/usb/renesas_usbhs/mod_gadget.c b/drivers/usb/renesas_usbhs/mod_gadget.c
+index 5bc7a61..93fba90 100644
+--- a/drivers/usb/renesas_usbhs/mod_gadget.c
++++ b/drivers/usb/renesas_usbhs/mod_gadget.c
+@@ -37,6 +37,7 @@ struct usbhsg_request {
+ struct usbhsg_uep {
+ 	struct usb_ep		 ep;
+ 	struct usbhs_pipe	*pipe;
++	spinlock_t		lock;	/* protect the pipe */
+ 
+ 	char ep_name[EP_NAME_SIZE];
+ 
+@@ -636,10 +637,16 @@ static int usbhsg_ep_enable(struct usb_ep *ep,
+ static int usbhsg_ep_disable(struct usb_ep *ep)
+ {
+ 	struct usbhsg_uep *uep = usbhsg_ep_to_uep(ep);
+-	struct usbhs_pipe *pipe = usbhsg_uep_to_pipe(uep);
++	struct usbhs_pipe *pipe;
++	unsigned long flags;
++	int ret = 0;
+ 
+-	if (!pipe)
+-		return -EINVAL;
++	spin_lock_irqsave(&uep->lock, flags);
++	pipe = usbhsg_uep_to_pipe(uep);
++	if (!pipe) {
++		ret = -EINVAL;
++		goto out;
++	}
+ 
+ 	usbhsg_pipe_disable(uep);
+ 	usbhs_pipe_free(pipe);
+@@ -647,6 +654,9 @@ static int usbhsg_ep_disable(struct usb_ep *ep)
+ 	uep->pipe->mod_private	= NULL;
+ 	uep->pipe		= NULL;
+ 
++out:
++	spin_unlock_irqrestore(&uep->lock, flags);
++
+ 	return 0;
+ }
+ 
+@@ -696,8 +706,11 @@ static int usbhsg_ep_dequeue(struct usb_ep *ep, struct usb_request *req)
+ {
+ 	struct usbhsg_uep *uep = usbhsg_ep_to_uep(ep);
+ 	struct usbhsg_request *ureq = usbhsg_req_to_ureq(req);
+-	struct usbhs_pipe *pipe = usbhsg_uep_to_pipe(uep);
++	struct usbhs_pipe *pipe;
++	unsigned long flags;
+ 
++	spin_lock_irqsave(&uep->lock, flags);
++	pipe = usbhsg_uep_to_pipe(uep);
+ 	if (pipe)
+ 		usbhs_pkt_pop(pipe, usbhsg_ureq_to_pkt(ureq));
+ 
+@@ -706,6 +719,7 @@ static int usbhsg_ep_dequeue(struct usb_ep *ep, struct usb_request *req)
+ 	 * even if the pipe is NULL.
+ 	 */
+ 	usbhsg_queue_pop(uep, ureq, -ECONNRESET);
++	spin_unlock_irqrestore(&uep->lock, flags);
+ 
+ 	return 0;
+ }
+@@ -852,10 +866,10 @@ static int usbhsg_try_stop(struct usbhs_priv *priv, u32 status)
+ {
+ 	struct usbhsg_gpriv *gpriv = usbhsg_priv_to_gpriv(priv);
+ 	struct usbhs_mod *mod = usbhs_mod_get_current(priv);
+-	struct usbhsg_uep *dcp = usbhsg_gpriv_to_dcp(gpriv);
++	struct usbhsg_uep *uep;
+ 	struct device *dev = usbhs_priv_to_dev(priv);
+ 	unsigned long flags;
+-	int ret = 0;
++	int ret = 0, i;
+ 
+ 	/********************  spin lock ********************/
+ 	usbhs_lock(priv, flags);
+@@ -887,7 +901,9 @@ static int usbhsg_try_stop(struct usbhs_priv *priv, u32 status)
+ 	usbhs_sys_set_test_mode(priv, 0);
+ 	usbhs_sys_function_ctrl(priv, 0);
+ 
+-	usbhsg_ep_disable(&dcp->ep);
++	/* disable all eps */
++	usbhsg_for_each_uep_with_dcp(uep, gpriv, i)
++		usbhsg_ep_disable(&uep->ep);
+ 
+ 	dev_dbg(dev, "stop gadget\n");
+ 
+@@ -1069,6 +1085,7 @@ int usbhs_mod_gadget_probe(struct usbhs_priv *priv)
+ 		ret = -ENOMEM;
+ 		goto usbhs_mod_gadget_probe_err_gpriv;
+ 	}
++	spin_lock_init(&uep->lock);
+ 
+ 	gpriv->transceiver = usb_get_phy(USB_PHY_TYPE_UNDEFINED);
+ 	dev_info(dev, "%stransceiver found\n",
 -- 
 1.9.1
