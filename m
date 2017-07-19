@@ -1,73 +1,122 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:44354 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752324AbdGaPUr (ORCPT
+Received: from sauhun.de ([88.99.104.3]:39787 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752881AbdGSI2H (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 31 Jul 2017 11:20:47 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 25/38] ARM: dts: r8a7790: Use R-Car Gen 2 fallback binding for vin nodes
-Date: Mon, 31 Jul 2017 17:19:37 +0200
-Message-Id: <a94b9e569c8e087c063fb0e66507681453a798b3.1501514100.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1501514100.git.horms+renesas@verge.net.au>
-References: <cover.1501514100.git.horms+renesas@verge.net.au>
+        Wed, 19 Jul 2017 04:28:07 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-watchdog@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH v2 4/5] watchdog: renesas_wdt: apply better precision
+Date: Wed, 19 Jul 2017 10:27:54 +0200
+Message-Id: <20170719082755.21733-5-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20170719082755.21733-1-wsa+renesas@sang-engineering.com>
+References: <20170719082755.21733-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use R-Car Gen 2 fallback binding for vind nodes in DT for r8a7790 SoC.
+The error margin of the clks_per_second variable was too large and
+caused offsets when used with clock frequencies which left a remainder
+after applying the dividers. Now we always calculate directly using the
+clock rate and the divider using some helper macros. That also means
+that DIV_ROUND_UP moves from probe to the multiplication macro. In
+probe, we don't need to ensure anymore that 'clks_per_sec' would go too
+fast but rather ensure that the lower limit is really at least 1 to
+certainly get a full cycle.
 
-This has no run-time effect for the current driver as the initialisation
-sequence is the same for the SoC-specific binding for r8a7790 and the
-fallback binding for R-Car Gen 2
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm/boot/dts/r8a7790.dtsi | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/watchdog/renesas_wdt.c | 28 +++++++++++++++++++---------
+ 1 file changed, 19 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index ff986df23b62..167fd57aea68 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -927,7 +927,7 @@
- 	};
+diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
+index 3763437cd0b015..599ba5aaa0536f 100644
+--- a/drivers/watchdog/renesas_wdt.c
++++ b/drivers/watchdog/renesas_wdt.c
+@@ -26,6 +26,17 @@
  
- 	vin0: video@e6ef0000 {
--		compatible = "renesas,vin-r8a7790";
-+		compatible = "renesas,vin-r8a7790", "renesas,rcar-gen2-vin";
- 		reg = <0 0xe6ef0000 0 0x1000>;
- 		interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp8_clks R8A7790_CLK_VIN0>;
-@@ -936,7 +936,7 @@
- 	};
+ #define RWDT_DEFAULT_TIMEOUT 60U
  
- 	vin1: video@e6ef1000 {
--		compatible = "renesas,vin-r8a7790";
-+		compatible = "renesas,vin-r8a7790", "renesas,rcar-gen2-vin";
- 		reg = <0 0xe6ef1000 0 0x1000>;
- 		interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp8_clks R8A7790_CLK_VIN1>;
-@@ -945,7 +945,7 @@
- 	};
++/*
++ * In probe, clk_rate is checked to be not more than 16 bit * biggest clock
++ * divider (10 bits). d is only a factor to fully utilize the WDT counter and
++ * will not exceed its 16 bits. Thus, no overflow, we stay below 32 bits.
++ */
++#define MUL_BY_CLKS_PER_SEC(p, d) \
++	DIV_ROUND_UP((d) * (p)->clk_rate, clk_divs[(p)->cks])
++
++/* d is 16 bit, clk_divs 10 bit -> no 32 bit overflow */
++#define DIV_BY_CLKS_PER_SEC(p, d) ((d) * clk_divs[(p)->cks] / (p)->clk_rate)
++
+ static const unsigned int clk_divs[] = { 1, 4, 16, 32, 64, 128, 1024 };
  
- 	vin2: video@e6ef2000 {
--		compatible = "renesas,vin-r8a7790";
-+		compatible = "renesas,vin-r8a7790", "renesas,rcar-gen2-vin";
- 		reg = <0 0xe6ef2000 0 0x1000>;
- 		interrupts = <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp8_clks R8A7790_CLK_VIN2>;
-@@ -954,7 +954,7 @@
- 	};
+ static bool nowayout = WATCHDOG_NOWAYOUT;
+@@ -37,7 +48,7 @@ struct rwdt_priv {
+ 	void __iomem *base;
+ 	struct watchdog_device wdev;
+ 	struct clk *clk;
+-	unsigned long clks_per_sec;
++	unsigned long clk_rate;
+ 	u8 cks;
+ };
  
- 	vin3: video@e6ef3000 {
--		compatible = "renesas,vin-r8a7790";
-+		compatible = "renesas,vin-r8a7790", "renesas,rcar-gen2-vin";
- 		reg = <0 0xe6ef3000 0 0x1000>;
- 		interrupts = <GIC_SPI 191 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp8_clks R8A7790_CLK_VIN3>;
+@@ -55,7 +66,7 @@ static int rwdt_init_timeout(struct watchdog_device *wdev)
+ {
+ 	struct rwdt_priv *priv = watchdog_get_drvdata(wdev);
+ 
+-	rwdt_write(priv, 65536 - wdev->timeout * priv->clks_per_sec, RWTCNT);
++	rwdt_write(priv, 65536 - MUL_BY_CLKS_PER_SEC(priv, wdev->timeout), RWTCNT);
+ 
+ 	return 0;
+ }
+@@ -92,7 +103,7 @@ static unsigned int rwdt_get_timeleft(struct watchdog_device *wdev)
+ 	struct rwdt_priv *priv = watchdog_get_drvdata(wdev);
+ 	u16 val = readw_relaxed(priv->base + RWTCNT);
+ 
+-	return (65536 - val) / priv->clks_per_sec;
++	return DIV_BY_CLKS_PER_SEC(priv, 65536 - val);
+ }
+ 
+ static const struct watchdog_info rwdt_ident = {
+@@ -112,7 +123,7 @@ static int rwdt_probe(struct platform_device *pdev)
+ {
+ 	struct rwdt_priv *priv;
+ 	struct resource *res;
+-	unsigned long rate, clks_per_sec;
++	unsigned long clks_per_sec;
+ 	int ret, i;
+ 
+ 	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+@@ -128,14 +139,13 @@ static int rwdt_probe(struct platform_device *pdev)
+ 	if (IS_ERR(priv->clk))
+ 		return PTR_ERR(priv->clk);
+ 
+-	rate = clk_get_rate(priv->clk);
+-	if (!rate)
++	priv->clk_rate = clk_get_rate(priv->clk);
++	if (!priv->clk_rate)
+ 		return -ENOENT;
+ 
+ 	for (i = ARRAY_SIZE(clk_divs) - 1; i >= 0; i--) {
+-		clks_per_sec = DIV_ROUND_UP(rate, clk_divs[i]);
++		clks_per_sec = priv->clk_rate / clk_divs[i];
+ 		if (clks_per_sec && clks_per_sec < 65536) {
+-			priv->clks_per_sec = clks_per_sec;
+ 			priv->cks = i;
+ 			break;
+ 		}
+@@ -153,7 +163,7 @@ static int rwdt_probe(struct platform_device *pdev)
+ 	priv->wdev.ops = &rwdt_ops,
+ 	priv->wdev.parent = &pdev->dev;
+ 	priv->wdev.min_timeout = 1;
+-	priv->wdev.max_timeout = 65536 / clks_per_sec;
++	priv->wdev.max_timeout = DIV_BY_CLKS_PER_SEC(priv, 65536);
+ 	priv->wdev.timeout = min(priv->wdev.max_timeout, RWDT_DEFAULT_TIMEOUT);
+ 
+ 	platform_set_drvdata(pdev, priv);
 -- 
-2.1.4
+2.11.0
