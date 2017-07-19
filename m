@@ -1,125 +1,101 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:37586 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751392AbdGRQoL (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 18 Jul 2017 12:44:11 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-clk@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH 2/2] clk: renesas: rcar-gen3-cpg.c: refactor checks for accessing the div table
-Date: Tue, 18 Jul 2017 18:44:07 +0200
-Message-Id: <20170718164407.22998-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170718164407.22998-1-wsa+renesas@sang-engineering.com>
-References: <20170718164407.22998-1-wsa+renesas@sang-engineering.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Wed, 19 Jul 2017 11:35:45 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-iio@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/4] i2c: sh_mobile: use helper to decide if DMA is
+ useful
+Message-ID: <20170719093544.GN28538@bigcity.dyn.berto.se>
+References: <20170718102339.28726-1-wsa+renesas@sang-engineering.com>
+ <20170718102339.28726-4-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20170718102339.28726-4-wsa+renesas@sang-engineering.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Do the checks for accessing the SD divider table only when the rate gets
-updated, namely on init and set_rate. In all other cases, reuse the last
-value. This simplifies code, runtime load, and error reporting.
+Hi Wolfram,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/clk/renesas/rcar-gen3-cpg.c | 46 ++++++++++++++++---------------------
- 1 file changed, 20 insertions(+), 26 deletions(-)
+On 2017-07-18 12:23:38 +0200, Wolfram Sang wrote:
+> This ensures that we fall back to PIO if the buffer is too small for DMA
+> being useful. Otherwise, we use DMA. A bounce buffer might be applied if
+> the original message buffer is not DMA safe
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>  drivers/i2c/busses/i2c-sh_mobile.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-sh_mobile.c b/drivers/i2c/busses/i2c-sh_mobile.c
+> index 2e097d97d258bc..19f45bcd9b35ca 100644
+> --- a/drivers/i2c/busses/i2c-sh_mobile.c
+> +++ b/drivers/i2c/busses/i2c-sh_mobile.c
+> @@ -145,6 +145,7 @@ struct sh_mobile_i2c_data {
+>  	struct dma_chan *dma_rx;
+>  	struct scatterlist sg;
+>  	enum dma_data_direction dma_direction;
+> +	u8 *bounce_buf;
+>  };
+>  
+>  struct sh_mobile_dt_config {
+> @@ -548,6 +549,8 @@ static void sh_mobile_i2c_dma_callback(void *data)
+>  	pd->pos = pd->msg->len;
+>  	pd->stop_after_dma = true;
+>  
+> +	i2c_release_dma_bounce_buf(pd->msg, pd->bounce_buf);
+> +
+>  	iic_set_clr(pd, ICIC, 0, ICIC_TDMAE | ICIC_RDMAE);
+>  }
+>  
+> @@ -595,6 +598,7 @@ static void sh_mobile_i2c_xfer_dma(struct sh_mobile_i2c_data *pd)
+>  	struct dma_async_tx_descriptor *txdesc;
+>  	dma_addr_t dma_addr;
+>  	dma_cookie_t cookie;
+> +	u8 *dma_buf = pd->bounce_buf ?: pd->msg->buf;
 
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index 71b8a986bd4889..d4d27cf6110d38 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -60,6 +60,7 @@ struct sd_clock {
- 	unsigned int div_num;
- 	unsigned int div_min;
- 	unsigned int div_max;
-+	unsigned int cur_div_idx;
- };
- 
- /* SDn divider
-@@ -96,21 +97,10 @@ static const struct sd_div_table cpg_sd_div_table[] = {
- static int cpg_sd_clock_enable(struct clk_hw *hw)
- {
- 	struct sd_clock *clock = to_sd_clock(hw);
--	u32 val, sd_fc;
--	unsigned int i;
--
--	val = readl(clock->reg);
--
--	sd_fc = val & CPG_SD_FC_MASK;
--	for (i = 0; i < clock->div_num; i++)
--		if (sd_fc == (clock->div_table[i].val & CPG_SD_FC_MASK))
--			break;
--
--	if (i >= clock->div_num)
--		return -EINVAL;
-+	u32 val = readl(clock->reg);
- 
- 	val &= ~(CPG_SD_STP_MASK);
--	val |= clock->div_table[i].val & CPG_SD_STP_MASK;
-+	val |= clock->div_table[clock->cur_div_idx].val & CPG_SD_STP_MASK;
- 
- 	writel(val, clock->reg);
- 
-@@ -135,20 +125,9 @@ static unsigned long cpg_sd_clock_recalc_rate(struct clk_hw *hw,
- 						unsigned long parent_rate)
- {
- 	struct sd_clock *clock = to_sd_clock(hw);
--	u32 val, sd_fc;
--	unsigned int i;
--
--	val = readl(clock->reg);
--
--	sd_fc = val & CPG_SD_FC_MASK;
--	for (i = 0; i < clock->div_num; i++)
--		if (sd_fc == (clock->div_table[i].val & CPG_SD_FC_MASK))
--			break;
--
--	if (i >= clock->div_num)
--		return -EINVAL;
- 
--	return DIV_ROUND_CLOSEST(parent_rate, clock->div_table[i].div);
-+	return DIV_ROUND_CLOSEST(parent_rate,
-+				 clock->div_table[clock->cur_div_idx].div);
- }
- 
- static unsigned int cpg_sd_clock_calc_div(struct sd_clock *clock,
-@@ -189,6 +168,8 @@ static int cpg_sd_clock_set_rate(struct clk_hw *hw, unsigned long rate,
- 	if (i >= clock->div_num)
- 		return -EINVAL;
- 
-+	clock->cur_div_idx = i;
-+
- 	val = readl(clock->reg);
- 	val &= ~(CPG_SD_STP_MASK | CPG_SD_FC_MASK);
- 	val |= clock->div_table[i].val & (CPG_SD_STP_MASK | CPG_SD_FC_MASK);
-@@ -214,6 +195,7 @@ static struct clk * __init cpg_sd_clk_register(const struct cpg_core_clk *core,
- 	struct sd_clock *clock;
- 	struct clk *clk;
- 	unsigned int i;
-+	u32 sd_fc;
- 
- 	clock = kzalloc(sizeof(*clock), GFP_KERNEL);
- 	if (!clock)
-@@ -230,6 +212,18 @@ static struct clk * __init cpg_sd_clk_register(const struct cpg_core_clk *core,
- 	clock->div_table = cpg_sd_div_table;
- 	clock->div_num = ARRAY_SIZE(cpg_sd_div_table);
- 
-+	sd_fc = readl(clock->reg) & CPG_SD_FC_MASK;
-+	for (i = 0; i < clock->div_num; i++)
-+		if (sd_fc == (clock->div_table[i].val & CPG_SD_FC_MASK))
-+			break;
-+
-+	if (WARN_ON(i >= clock->div_num)) {
-+		kfree(clock);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	clock->cur_div_idx = i;
-+
- 	clock->div_max = clock->div_table[0].div;
- 	clock->div_min = clock->div_max;
- 	for (i = 1; i < clock->div_num; i++) {
+This looked funny and I had to look it up, I learnt something new today 
+:-)
+
+>  
+>  	if (PTR_ERR(chan) == -EPROBE_DEFER) {
+>  		if (read)
+> @@ -608,7 +612,7 @@ static void sh_mobile_i2c_xfer_dma(struct sh_mobile_i2c_data *pd)
+>  	if (IS_ERR(chan))
+>  		return;
+>  
+> -	dma_addr = dma_map_single(chan->device->dev, pd->msg->buf, pd->msg->len, dir);
+> +	dma_addr = dma_map_single(chan->device->dev, dma_buf, pd->msg->len, dir);
+>  	if (dma_mapping_error(chan->device->dev, dma_addr)) {
+>  		dev_dbg(pd->dev, "dma map failed, using PIO\n");
+>  		return;
+> @@ -665,7 +669,7 @@ static int start_ch(struct sh_mobile_i2c_data *pd, struct i2c_msg *usr_msg,
+>  	pd->pos = -1;
+>  	pd->sr = 0;
+>  
+> -	if (pd->msg->len > 8)
+> +	if (i2c_check_msg_for_dma(pd->msg, 8, &pd->bounce_buf) == 0)
+
+Maybe the 8 should be declared in a define to explain the value, like 
+you do in patch 4/4?
+
+This nitpick aside:
+
+Reviewed-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+
+>  		sh_mobile_i2c_xfer_dma(pd);
+>  
+>  	/* Enable all interrupts to begin with */
+> -- 
+> 2.11.0
+> 
+
 -- 
-2.11.0
+Regards,
+Niklas S�derlund
