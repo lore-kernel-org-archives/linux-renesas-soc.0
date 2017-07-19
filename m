@@ -1,52 +1,61 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Cc: laurent.pinchart@ideasonboard.com,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH 0/6] vsp1: TLB optimisation
-Date: Fri, 14 Jul 2017 17:14:09 +0100
-Message-Id: <cover.6756808fb978882ae2db0cde7745c7e12b177713.1500047489.git-series.kieran.bingham+renesas@ideasonboard.com>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from bh-25.webhostbox.net ([208.91.199.152]:60107 "EHLO
+        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752811AbdGSNci (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 19 Jul 2017 09:32:38 -0400
+Subject: Re: [PATCH] watchdog: asm9260_wdt: don't round closest with
+ get_timeleft
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-watchdog@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Oleksij Rempel <linux@rempel-privat.de>
+References: <20170717171224.13444-1-wsa+renesas@sang-engineering.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <bfad12d7-6bf2-e30e-f415-dae9759e8d41@roeck-us.net>
+Date: Wed, 19 Jul 2017 06:32:34 -0700
+MIME-Version: 1.0
+In-Reply-To: <20170717171224.13444-1-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Each display list currently allocates an area of DMA memory to store register
-settings for the VSP1 to process. Each of these allocations adds pressure to
-the IPMMU TLB entries.
+On 07/17/2017 10:12 AM, Wolfram Sang wrote:
+> We should never return more time left than there actually is. So, switch
+> to a plain divider instead of DIV_ROUND_CLOSEST.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-We can reduce the pressure by pre-allocating larger areas and dividing the area
-across multiple bodies represented as a pool.
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-Patch 1 adds protection to ensure that the display list body does not overflow
-and will allow us to reduce the size of the body allocations in the future (it
-has already helped me catch an overflow during the development of this series,
-so I thought it was a worth while addition)
-
-Patch 2 implements the fragment pool object and provides function helpers to
-interact with the pool
-
-Patches 3 to 6 convert the existing allocations to use the new fragment pool.
-These are separated for clarity, but I have no objections to squashing those
-into a single commit if it is preferred.
-
-This series has been tested and based on top of Laurent's recent ES2.0 patch
-set at git://linuxtv.org/pinchartl/media.git drm/next/h3-es2/merged
-
-Kieran Bingham (6):
-  v4l: vsp1: Protect fragments against overflow
-  v4l: vsp1: Provide a fragment pool
-  v4l: vsp1: Convert display lists to use new fragment pool
-  v4l: vsp1: Convert CLU to use a fragment pool
-  v4l: vsp1: Convert LUT to use a fragment pool
-  v4l: vsp1: Remove old fragment management
-
- drivers/media/platform/vsp1/vsp1_clu.c |  18 +-
- drivers/media/platform/vsp1/vsp1_clu.h |   1 +-
- drivers/media/platform/vsp1/vsp1_dl.c  | 294 +++++++++++++-------------
- drivers/media/platform/vsp1/vsp1_dl.h  |   8 +-
- drivers/media/platform/vsp1/vsp1_lut.c |  23 +-
- drivers/media/platform/vsp1/vsp1_lut.h |   1 +-
- 6 files changed, 199 insertions(+), 146 deletions(-)
-
-base-commit: 5fee73960b9a0ceb0ccf746dfeb06bdb07199670
--- 
-git-series 0.9.1
+> ---
+> 
+> This is similar to a patch for the renesas-rwdt[1]. I think it makes sense to
+> remove this pattern from the whole subsystem, if we can agree on the behaviour
+> stated in the patch description. So, this is the other driver using
+> DIV_ROUND_CLOSEST.
+> 
+> Note: This driver and the lpc18xx_wdt.c extremly likely drive the same IP core.
+> They would ideally be merged.
+> 
+> [1] https://patchwork.kernel.org/patch/9845459/
+> 
+>   drivers/watchdog/asm9260_wdt.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/watchdog/asm9260_wdt.c b/drivers/watchdog/asm9260_wdt.c
+> index 53da001f0838ee..f40dd71c904bef 100644
+> --- a/drivers/watchdog/asm9260_wdt.c
+> +++ b/drivers/watchdog/asm9260_wdt.c
+> @@ -82,7 +82,7 @@ static unsigned int asm9260_wdt_gettimeleft(struct watchdog_device *wdd)
+>   
+>   	counter = ioread32(priv->iobase + HW_WDTV);
+>   
+> -	return DIV_ROUND_CLOSEST(counter, priv->wdt_freq);
+> +	return counter / priv->wdt_freq;
+>   }
+>   
+>   static int asm9260_wdt_updatetimeout(struct watchdog_device *wdd)
+> 
