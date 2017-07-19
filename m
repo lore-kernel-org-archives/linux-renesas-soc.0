@@ -1,10 +1,21 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Eric Anholt <eric@anholt.net>
-To: Rob Herring <robh@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Lee Jones <lee@kernel.org>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-io0-f196.google.com ([209.85.223.196]:34306 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751364AbdGSHh4 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 19 Jul 2017 03:37:56 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170718214339.7774-43-robh@kernel.org>
+References: <20170718214339.7774-43-robh@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 19 Jul 2017 09:37:53 +0200
+Message-ID: <CAMuHMdXsmcN892-2qxx5W7LX976ARbPH33bWDZ5mTO_PPXL2kg@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: Convert to using %pOF instead of full_name
+To: Rob Herring <robh@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>,
         Stefan Wahren <stefan.wahren@i2se.com>,
         Florian Fainelli <f.fainelli@gmail.com>,
         Ray Jui <rjui@broadcom.com>,
@@ -17,52 +28,39 @@ Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Barry Song <baohua@kernel.org>, linux-gpio@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, kernel@stlinux.com,
-        linux-samsung-soc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] pinctrl: Convert to using %pOF instead of full_name
-In-Reply-To: <20170718214339.7774-43-robh@kernel.org>
-References: <20170718214339.7774-43-robh@kernel.org>
-Date: Wed, 19 Jul 2017 12:50:29 -0700
-Message-ID: <87r2xcdx4q.fsf@eliezer.anholt.net>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
-Sender: linux-kernel-owner@vger.kernel.org
+        Barry Song <baohua@kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>, kernel@stlinux.com,
+        "linux-samsung-soc@vger.kernel.org"
+        <linux-samsung-soc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
-
-Rob Herring <robh@kernel.org> writes:
-
+On Tue, Jul 18, 2017 at 11:43 PM, Rob Herring <robh@kernel.org> wrote:
 > Now that we have a custom printf format specifier, convert users of
 > full_name to use %pOF instead. This is preparation to remove storing
 > of the full path string for each node.
+>
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
-For bcm283x:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Acked-by: Eric Anholt <eric@anholt.net>
+>  drivers/pinctrl/sh-pfc/pinctrl.c          |  2 +-
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+For the sh-pfc part:
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
------BEGIN PGP SIGNATURE-----
+Gr{oetje,eeting}s,
 
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAllvuAUACgkQtdYpNtH8
-nujR1Q//TnAQqX0i19SDkIcn6xngbGWP2ftvGhAA5mQiDWLZwwwZL/XZ3d1rOR/T
-46Auz9+uHZJDN4y44JgM/8+l8Fq6WUKC6rmfdRH+tJjMlY/SJeervfAjNiuff3Wq
-BYGEMp6hrlqqI5Wxct7qN3lASzXaU5JOT5JDj3XsrB5rM8Kankaedar6/J8Ps6nw
-Ukr1usdibBHpLxp6t6+89NanQVwjhLI1VmVamYQ6V6zqW2Mi9mhbvlq+u0kJzDap
-ec0W8hLwL7Ky+MgSOL5r7c1BfGDSi6HNY3/dIBqzd8aZNycmNaMxOvrXLzC5KcAh
-APCiXB1H3lgUy2hqyfN/C6amnYxyZD5mcGrWmrp28L19CF+ur9VNGtVfmDgrqiBQ
-MUNXtv4cEAShmgI9ecAVEXusjpO4JSWTkCdudALRpGxXspaGujeQ110WZL0FQZ+z
-DKHx7CrfrA+ljHW83Mlz9powzQv7/mPbvHwWQPhXTwowRn1n4CuUtJtOrLV1V9yH
-86HeJSr4yffRHaCSjb7AeDzzG1yMCCvaCDff5PePhO1tiWYTSD5mz6VF1Izaa2/J
-dIoLFJbazfHUz9X4hwlVBkEzs551C92eDEFw5TFK1bv39gcTsdCGsWx4KCt8Qhp8
-AdQJ9Qw25XnUR7iGs26hzwuW7vTl4b1KpKd/rvlubwpasFxREhw=
-=etz9
------END PGP SIGNATURE-----
---=-=-=--
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
