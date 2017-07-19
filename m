@@ -1,15 +1,14 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from lb2-smtp-cloud3.xs4all.net ([194.109.24.26]:54927 "EHLO
-        lb2-smtp-cloud3.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753174AbdGSMPQ (ORCPT
+Received: from mail-lf0-f45.google.com ([209.85.215.45]:36502 "EHLO
+        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753436AbdGSLy3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Jul 2017 08:15:16 -0400
-Subject: Re: [PATCH v5 0/4] v4l2-async: add subnotifier registration for
- subdevices
-To: =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>
-References: <20170719104946.7322-1-niklas.soderlund+renesas@ragnatech.se>
- <5e25930e-b249-6d92-1c7e-36266754f3cb@xs4all.nl>
- <20170719115426.GA20077@bigcity.dyn.berto.se>
+        Wed, 19 Jul 2017 07:54:29 -0400
+Received: by mail-lf0-f45.google.com with SMTP id d78so27354306lfg.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Jul 2017 04:54:28 -0700 (PDT)
+From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
+Date: Wed, 19 Jul 2017 13:54:26 +0200
+To: Hans Verkuil <hverkuil@xs4all.nl>
 Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         linux-media@vger.kernel.org,
@@ -17,44 +16,51 @@ Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
         linux-renesas-soc@vger.kernel.org,
         Maxime Ripard <maxime.ripard@free-electrons.com>,
         Sylwester Nawrocki <snawrocki@kernel.org>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <713f4c1c-3643-1295-6862-f4bbba9f3416@xs4all.nl>
-Date: Wed, 19 Jul 2017 14:15:13 +0200
+Subject: Re: [PATCH v5 0/4] v4l2-async: add subnotifier registration for
+ subdevices
+Message-ID: <20170719115426.GA20077@bigcity.dyn.berto.se>
+References: <20170719104946.7322-1-niklas.soderlund+renesas@ragnatech.se>
+ <5e25930e-b249-6d92-1c7e-36266754f3cb@xs4all.nl>
 MIME-Version: 1.0
-In-Reply-To: <20170719115426.GA20077@bigcity.dyn.berto.se>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <5e25930e-b249-6d92-1c7e-36266754f3cb@xs4all.nl>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 19/07/17 13:54, Niklas S�derlund wrote:
-> Hi Hans,
-> 
-> Thanks for your feedback.
-> 
-> On 2017-07-19 13:02:14 +0200, Hans Verkuil wrote:
->> On 19/07/17 12:49, Niklas S�derlund wrote:
->>> * Changes since v4
->>> - Add patch which aborts v4l2_async_notifier_unregister() if the memory 
->>>   allocation for the device cache fails instead of trying to do as much 
->>>   as possible but still leave the system in a semi good state.
->>
->> Since you are working with this code I would very much appreciate it if you
->> can make another patch that adds comments to this reprobing stuff, including
->> why device_reprobe() cannot be used here.
-> 
-> I could do that.
-> 
-> I think it makes most sens to break out patch 1-3 plus this new patch to 
-> a new series 'v4l2-async: clean up v4l2_async_notifier_unregister()' or 
-> something similar and post separate from the subnotifer work as me and 
-> Sakari are still bashing out a common solution to that.
-> 
-> Do this make sens to you or do you wish for me to keep these patches 
-> together in this series?
+Hi Hans,
 
-That makes sense. It's good to have those fixes in.
+Thanks for your feedback.
 
+On 2017-07-19 13:02:14 +0200, Hans Verkuil wrote:
+> On 19/07/17 12:49, Niklas S�derlund wrote:
+> > * Changes since v4
+> > - Add patch which aborts v4l2_async_notifier_unregister() if the memory 
+> >   allocation for the device cache fails instead of trying to do as much 
+> >   as possible but still leave the system in a semi good state.
+> 
+> Since you are working with this code I would very much appreciate it if you
+> can make another patch that adds comments to this reprobing stuff, including
+> why device_reprobe() cannot be used here.
+
+I could do that.
+
+I think it makes most sens to break out patch 1-3 plus this new patch to 
+a new series 'v4l2-async: clean up v4l2_async_notifier_unregister()' or 
+something similar and post separate from the subnotifer work as me and 
+Sakari are still bashing out a common solution to that.
+
+Do this make sens to you or do you wish for me to keep these patches 
+together in this series?
+
+> 
+> That will help in the future.
+> 
+> Regards,
+> 
+> 	Hans
+
+-- 
 Regards,
-
-	Hans
+Niklas S�derlund
