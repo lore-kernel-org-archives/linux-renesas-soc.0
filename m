@@ -1,63 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:39175 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755674AbdGKM5H (ORCPT
+Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:37567
+        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S965097AbdGTNwX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 11 Jul 2017 08:57:07 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/3] ARM: dts: r8a7791: Use R-Car Gen 2 fallback binding for vin nodes
-Date: Tue, 11 Jul 2017 14:56:48 +0200
-Message-Id: <1499777809-27492-3-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1499777809-27492-1-git-send-email-horms+renesas@verge.net.au>
-References: <1499777809-27492-1-git-send-email-horms+renesas@verge.net.au>
+        Thu, 20 Jul 2017 09:52:23 -0400
+Date: Thu, 20 Jul 2017 10:52:14 -0300
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: kieran.bingham@ideasonboard.com,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 03/14] v4l: vsp1: Don't set WPF sink pointer
+Message-ID: <20170720105214.5cd1a014@vento.lan>
+In-Reply-To: <61e7fb65-9f7a-7f36-12dd-02fd709cec52@ideasonboard.com>
+References: <20170626181226.29575-1-laurent.pinchart+renesas@ideasonboard.com>
+        <20170626181226.29575-4-laurent.pinchart+renesas@ideasonboard.com>
+        <61e7fb65-9f7a-7f36-12dd-02fd709cec52@ideasonboard.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use R-Car Gen 2 fallback binding for vind nodes in DT for r8a7791 SoC.
+Em Thu, 13 Jul 2017 13:50:20 +0100
+Kieran Bingham <kieran.bingham+renesas@ideasonboard.com> escreveu:
 
-This has no run-time effect for the current driver as the initialisation
-sequence is the same for the SoC-specific binding for r8a7791 and the
-fallback binding for R-Car Gen 2
+> On 26/06/17 19:12, Laurent Pinchart wrote:
+> > The sink pointer is used to configure routing inside the VSP, and as
+> > such must point to the next VSP entity in the pipeline. The WPF being a
+> > pipeline terminal sink, its output route can't be configured. The
+> > routing configuration code already handles this correctly without
+> > referring to the sink pointer, which thus doesn't need to be set.
+> > 
+> > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>  
+> 
+> Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7791.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Acked-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index e135da440eed..ea4a8147d995 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -987,7 +987,7 @@
- 	};
- 
- 	vin0: video@e6ef0000 {
--		compatible = "renesas,vin-r8a7791";
-+		compatible = "renesas,vin-r8a7791", "renesas,rcar-gen2-vin";
- 		reg = <0 0xe6ef0000 0 0x1000>;
- 		interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp8_clks R8A7791_CLK_VIN0>;
-@@ -996,7 +996,7 @@
- 	};
- 
- 	vin1: video@e6ef1000 {
--		compatible = "renesas,vin-r8a7791";
-+		compatible = "renesas,vin-r8a7791", "renesas,rcar-gen2-vin";
- 		reg = <0 0xe6ef1000 0 0x1000>;
- 		interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp8_clks R8A7791_CLK_VIN1>;
-@@ -1005,7 +1005,7 @@
- 	};
- 
- 	vin2: video@e6ef2000 {
--		compatible = "renesas,vin-r8a7791";
-+		compatible = "renesas,vin-r8a7791", "renesas,rcar-gen2-vin";
- 		reg = <0 0xe6ef2000 0 0x1000>;
- 		interrupts = <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp8_clks R8A7791_CLK_VIN2>;
--- 
-2.1.4
+
+Thanks,
+Mauro
