@@ -1,47 +1,38 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:42651 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750987AbdGaPEL (ORCPT
+Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:37617
+        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S965225AbdGTN7d (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 31 Jul 2017 11:04:11 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 08/10] ARM: multi_v7_defconfig: Replace SND_SOC_RSRC_CARD by SND_SIMPLE_SCU_CARD
-Date: Mon, 31 Jul 2017 17:03:39 +0200
-Message-Id: <883338aa8d3009d67868af53c6a7b8f5f1ff7e2d.1501511664.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1501511664.git.horms+renesas@verge.net.au>
-References: <cover.1501511664.git.horms+renesas@verge.net.au>
+        Thu, 20 Jul 2017 09:59:33 -0400
+Date: Thu, 20 Jul 2017 10:59:24 -0300
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        linux-media@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: Re: [PATCH v2.1 08/14] v4l: vsp1: Add support for new VSP2-BS,
+ VSP2-DL and VSP2-D instances
+Message-ID: <20170720105924.0cea6cfa@vento.lan>
+In-Reply-To: <20170714003557.4057-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170626181226.29575-9-laurent.pinchart+renesas@ideasonboard.com>
+        <20170714003557.4057-1-laurent.pinchart+renesas@ideasonboard.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Em Fri, 14 Jul 2017 03:35:57 +0300
+Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com> escreveu:
 
-SND_SOC_RSRC_CARD was renamed SND_SIMPLE_SCU_CARD, hence update
-multi_v7_defconfig.
+> New Gen3 SoCs come with two new VSP2 variants names VSP2-BS and VSP2-DL,
+> as well as a new VSP2-D variant on V3M and V3H SoCs. Add new entries for
+> them in the VSP device info table.
+> 
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Fixes: d12c6216c4a58f9f ("ASoC: rsrc-card: rename rsrc-card to simple-scu-card phase3")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/configs/multi_v7_defconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Acked-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 4d19c1b4b8e7..7fa1746970ec 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -650,7 +650,7 @@ CONFIG_SND_SOC_SMDK_WM8994_PCM=m
- CONFIG_SND_SOC_SNOW=m
- CONFIG_SND_SOC_SH4_FSI=m
- CONFIG_SND_SOC_RCAR=m
--CONFIG_SND_SOC_RSRC_CARD=m
-+CONFIG_SND_SIMPLE_SCU_CARD=m
- CONFIG_SND_SUN4I_CODEC=m
- CONFIG_SND_SOC_TEGRA=m
- CONFIG_SND_SOC_TEGRA_RT5640=m
--- 
-2.1.4
+Thanks,
+Mauro
