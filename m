@@ -1,92 +1,46 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v4 0/3] v4l2-async: add subnotifier registration for subdevices
-Date: Mon, 17 Jul 2017 18:59:14 +0200
-Message-Id: <20170717165917.24851-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:37572
+        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1755406AbdGTNxT (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 20 Jul 2017 09:53:19 -0400
+Date: Thu, 20 Jul 2017 10:53:11 -0300
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: kieran.bingham@ideasonboard.com,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 04/14] v4l: vsp1: Store source and sink pointers as
+ vsp1_entity
+Message-ID: <20170720105311.147b2308@vento.lan>
+In-Reply-To: <7dbc0bcd-bc72-b45c-0fcd-56b0780880a9@ideasonboard.com>
+References: <20170626181226.29575-1-laurent.pinchart+renesas@ideasonboard.com>
+        <20170626181226.29575-5-laurent.pinchart+renesas@ideasonboard.com>
+        <7dbc0bcd-bc72-b45c-0fcd-56b0780880a9@ideasonboard.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+Em Thu, 13 Jul 2017 14:00:31 +0100
+Kieran Bingham <kieran.bingham+renesas@ideasonboard.com> escreveu:
 
-This is a rewrite of the feature since v3, maybe it should have been 
-posted as a new series?
+> Hi Laurent,
+> 
+> This looks like a good simplification/removal of obfuscation to me!
+> 
+> On 26/06/17 19:12, Laurent Pinchart wrote:
+> > The internal VSP entity source and sink pointers are stored as
+> > media_entity pointers, which are then cast to a vsp1_entity. As all
+> > sources and sinks are vsp1_entity instances, we can store the
+> > vsp1_entity pointers directly.
+> > 
+> > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>  
+> 
+> Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Acked-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 
-This series enables incremental async find and bind of subdevices,
-please se patch 3/3 for a more detailed description of the new behavior, 
-changelog in this cover letter for the differences to v3. The two 
-primary reasons for a new implementation where:
-
-1. Hans expressed an interest having the async complete() callbacks to 
-   happen only once all notifiers in the pipeline where complete. To do 
-   this a stronger connection between the notifiers where needed, hence 
-   the subnotifier is now embedded in struct v4l2_subdev.
-
-   Whit this change it is possible to check all notifiers in a pipeline 
-   is complete before calling any of them.
-
-2. There where concerns that the v3 solution was a bit to complex and 
-   hard to refactor in the future if other issues in the v4l2-async 
-   framework where to be addressed. By hiding the notifier in the struct 
-   v4l2_subdev and adding a new function to set that structure the 
-   interface towards drivers are minimized while everything else happens 
-   in the v4l2-async framework. This leaves the interface in a good 
-   position for possible changes in v4l2-async.
-
-This is tested on Renesas H3 and M3-W together with the Renesas CSI-2
-and VIN Gen3 driver (posted separately). It is based on top of the media-tree.
-
-* Changes since v3
-- Almost a complete rewrite, so drop all Ack-ed by tags.
-- Do not add new functions to register/unregister subnotifiers from 
-  callbacks. Instead have have the subdevice drivers populate the 
-  subnotifer list at probe time and have the v4l2-async framework handle 
-  the (un)registration of the notifiers.
-- Synchronize the call off the complete() callbacks. They will now all 
-  happens once all notifiers in a pipeline are all complete and from the 
-  edge towards the root device.
-- Add a new function v4l2_async_subdev_register_notifier() to hide the 
-  setup of the subnotifier internals to ease improvements later.
-
-* Changes since v2
-- Fixed lots of spelling mistakes, thanks Hans!
-- Used a goto instead if state variable when restarting iteration over
-  subdev list as suggested by Sakari. Thank you it's much easier read
-  now.
-- Added Acked-by from Sakari and Hans, thanks!
-- Rebased to latest media-tree.
-
-* Changes since v1:
-- Added a pre-patch which adds an error check which was previously in
-  the new incremental async code but is more useful on its own.
-- Added documentation to Documentation/media/kapi/v4l2-subdev.rst.
-- Fixed data type of bool variable.
-- Added call to lockdep_assert_held(), thanks Sakari.
-- Fixed commit messages typo, thanks Sakari.
-
-Niklas Söderlund (3):
-  v4l: async: fix unbind error in v4l2_async_notifier_unregister()
-  v4l: async: do not hold list_lock when reprobing devices
-  v4l: async: add subnotifier to subdevices
-
- Documentation/media/kapi/v4l2-subdev.rst |  12 +++
- drivers/media/v4l2-core/v4l2-async.c     | 165 +++++++++++++++++++++++++------
- include/media/v4l2-async.h               |  25 +++++
- include/media/v4l2-subdev.h              |   5 +
- 4 files changed, 179 insertions(+), 28 deletions(-)
-
--- 
-2.13.1
+Thanks,
+Mauro
