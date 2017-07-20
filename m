@@ -1,71 +1,88 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:62011 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751397AbdGZLcz (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:42592 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935132AbdGTMyj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 26 Jul 2017 07:32:55 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 5/5] arm64: dts: renesas: r8a7795: add hsusb ch3 device node
-Date: Wed, 26 Jul 2017 20:29:40 +0900
-Message-Id: <1501068580-3981-6-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1501068580-3981-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1501068580-3981-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Thu, 20 Jul 2017 08:54:39 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 3/4] arm64: dts: renesas: r8a77995: Use r8a7795-sysc binding definitions
+Date: Thu, 20 Jul 2017 14:54:36 +0200
+Message-Id: <1500555277-22921-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1500555277-22921-1-git-send-email-geert+renesas@glider.be>
+References: <1500555277-22921-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds support for hsusb ch3 device nodes for R-Car H3 ES2.0.
+Replace the hardcoded power domain indices by R8A77995_PD_* symbols.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi |  1 +
- arch/arm64/boot/dts/renesas/r8a7795.dtsi     | 17 +++++++++++++++++
- 2 files changed, 18 insertions(+)
+This depends on "soc: renesas: rcar-sysc: Add support for R-Car D3 power
+areas".
+---
+ arch/arm64/boot/dts/renesas/r8a77995.dtsi | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-index 9743aca..aaa5e67 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-@@ -24,6 +24,7 @@
- 	/delete-node/ usb-phy@ee0e0200;
- 	/delete-node/ usb@ee0e0100;
- 	/delete-node/ usb@ee0e0000;
-+	/delete-node/ usb@e659c000;
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+index 7c69b795cd3ebd82..b984c174cf7edb70 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+@@ -11,6 +11,7 @@
  
- 	/delete-node/ dma-controller@e6460000;
- 	/delete-node/ dma-controller@e6470000;
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index d1381d9..b9213e2 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1734,6 +1734,23 @@
- 			status = "disabled";
+ #include <dt-bindings/clock/renesas-cpg-mssr.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/power/r8a77995-sysc.h>
+ 
+ / {
+ 	compatible = "renesas,r8a77995";
+@@ -30,14 +31,14 @@
+ 			compatible = "arm,cortex-a53", "arm,armv8";
+ 			reg = <0x0>;
+ 			device_type = "cpu";
+-			power-domains = <&sysc 5>;
++			power-domains = <&sysc R8A77995_PD_CA53_CPU0>;
+ 			next-level-cache = <&L2_CA53>;
+ 			enable-method = "psci";
  		};
  
-+		hsusb3: usb@e659c000 {
-+			compatible = "renesas,usbhs-r8a7795",
-+				     "renesas,rcar-gen3-usbhs";
-+			reg = <0 0xe659c000 0 0x100>;
-+			interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 705>;
-+			dmas = <&usb_dmac2 0>, <&usb_dmac2 1>,
-+			       <&usb_dmac3 0>, <&usb_dmac3 1>;
-+			dma-names = "ch0", "ch1", "ch2", "ch3";
-+			renesas,buswait = <11>;
-+			phys = <&usb2_phy3>;
-+			phy-names = "usb";
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			resets = <&cpg 705>;
-+			status = "disabled";
-+		};
-+
- 		pciec0: pcie@fe000000 {
- 			compatible = "renesas,pcie-r8a7795",
- 				     "renesas,pcie-rcar-gen3";
+ 		L2_CA53: cache-controller-1 {
+ 			compatible = "cache";
+-			power-domains = <&sysc 21>;
++			power-domains = <&sysc R8A77995_PD_CA53_SCU>;
+ 			cache-unified;
+ 			cache-level = <2>;
+ 		};
+@@ -76,7 +77,7 @@
+ 					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_HIGH)>;
+ 			clocks = <&cpg CPG_MOD 408>;
+ 			clock-names = "clk";
+-			power-domains = <&sysc 32>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+ 			resets = <&cpg 408>;
+ 		};
+ 
+@@ -97,7 +98,7 @@
+ 				     "renesas,rcar-gen3-wdt";
+ 			reg = <0 0xe6020000 0 0x0c>;
+ 			clocks = <&cpg CPG_MOD 402>;
+-			power-domains = <&sysc 32>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+ 			resets = <&cpg 402>;
+ 			status = "disabled";
+ 		};
+@@ -142,7 +143,7 @@
+ 				 <&cpg CPG_CORE 16>,
+ 				 <&scif_clk>;
+ 			clock-names = "fck", "brg_int", "scif_clk";
+-			power-domains = <&sysc 32>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+ 			resets = <&cpg 310>;
+ 			status = "disabled";
+ 		};
 -- 
-1.9.1
+2.7.4
