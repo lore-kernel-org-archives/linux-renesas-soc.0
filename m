@@ -1,55 +1,45 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:35720 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932130AbdGLQ4W (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 12 Jul 2017 12:56:22 -0400
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
+Return-Path: <linux-media-owner@vger.kernel.org>
+Date: Thu, 20 Jul 2017 11:00:41 -0300
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+To: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 06/14] pinctrl: sh-pfc: r8a7796: Fix FMCLK{_C,_D} and FMIN{_C,_D} pin function definitions
-Date: Thu, 13 Jul 2017 01:55:39 +0900
-Message-Id: <1499878547-3452-7-git-send-email-ykaneko0929@gmail.com>
-In-Reply-To: <1499878547-3452-1-git-send-email-ykaneko0929@gmail.com>
-References: <1499878547-3452-1-git-send-email-ykaneko0929@gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Subject: Re: [PATCH v2 09/14] v4l: vsp1: Add support for multiple LIF
+ instances
+Message-ID: <20170720110041.3a9e1ef9@vento.lan>
+In-Reply-To: <1a43853e-d33e-f990-255f-47e77fcc7573@ideasonboard.com>
+References: <20170626181226.29575-1-laurent.pinchart+renesas@ideasonboard.com>
+        <20170626181226.29575-10-laurent.pinchart+renesas@ideasonboard.com>
+        <1a43853e-d33e-f990-255f-47e77fcc7573@ideasonboard.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Em Thu, 13 Jul 2017 18:57:40 +0100
+Kieran Bingham <kieran.bingham@ideasonboard.com> escreveu:
 
-This patch fixes the implementation incorrect of IPSR register value
-definitions for FMCLK{_C,_D} and FMIN{_C,_D} pins function.
+> Hi Laurent,
+> 
+> On 26/06/17 19:12, Laurent Pinchart wrote:
+> > The VSP2-DL instance (present in the H3 ES2.0 and M3-N SoCs) has two LIF
+> > instances. Adapt the driver infrastructure to support multiple LIFs.
+> > Support for multiple display pipelines will be added separately.
+> > 
+> > The change to the entity routing table removes the ability to connect
+> > the LIF output to the HGO or HGT histogram generators. This feature is
+> > only available on Gen2 hardware, isn't supported by the rest of the
+> > driver, and has no known use case, so this isn't an issue.
+> > 
+> > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>  
+> This looks good.
+> 
+> Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-This is a correction to the incorrect implementation of IPSR register
-pin assignment for R8A7796 SoC specification of R-Car Gen3 Hardware
-User's Manual Rev.0.51E or later.
+Acked-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 
-Fixes: f9aece7344bd ("pinctrl: sh-pfc: Initial R8A7796 PFC support")
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-index 467f32e..9a9094f 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-@@ -367,8 +367,8 @@
- #define IP17_23_20	FM(USB1_OVC)		F_(0, 0)	FM(MSIOF1_SS2_C)	F_(0, 0)			FM(SSI_WS1_A)	FM(TS_SDAT0_E)	FM(STP_ISD_0_E)		FM(FMIN_B)	FM(RIF2_SYNC_B)		F_(0, 0)	FM(REMOCON_B)	F_(0, 0)	F_(0, 0) FM(HCTS2_N_C) F_(0, 0) F_(0, 0)
- #define IP17_27_24	FM(USB30_PWEN)		F_(0, 0)	F_(0, 0)		FM(AUDIO_CLKOUT_B)		FM(SSI_SCK2_B)	FM(TS_SDEN1_D)	FM(STP_ISEN_1_D)	FM(STP_OPWM_0_E)FM(RIF3_D0_B)		F_(0, 0)	FM(TCLK2_B)	FM(TPU0TO0)	FM(BPFCLK_C) FM(HRTS2_N_C) F_(0, 0) F_(0, 0)
- #define IP17_31_28	FM(USB30_OVC)		F_(0, 0)	F_(0, 0)		FM(AUDIO_CLKOUT1_B)		FM(SSI_WS2_B)	FM(TS_SPSYNC1_D)FM(STP_ISSYNC_1_D)	FM(STP_IVCXO27_0_E)FM(RIF3_D1_B)	F_(0, 0)	FM(FSO_TOE_B)	FM(TPU0TO1)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
--#define IP18_3_0	FM(GP6_30)		F_(0, 0)	F_(0, 0)		FM(AUDIO_CLKOUT2_B)		FM(SSI_SCK9_B)	FM(TS_SDEN0_E)	FM(STP_ISEN_0_E)	F_(0, 0)	FM(RIF2_D0_B)		F_(0, 0)	FM(FSO_CFE_0_A)	FM(TPU0TO2)	F_(0, 0) FM(FMCLK_C) FM(FMCLK_D) F_(0, 0)
--#define IP18_7_4	FM(GP6_31)		F_(0, 0)	F_(0, 0)		FM(AUDIO_CLKOUT3_B)		FM(SSI_WS9_B)	FM(TS_SPSYNC0_E)FM(STP_ISSYNC_0_E)	F_(0, 0)	FM(RIF2_D1_B)		F_(0, 0)	FM(FSO_CFE_1_A)	FM(TPU0TO3)	F_(0, 0) FM(FMIN_C) FM(FMIN_D) F_(0, 0)
-+#define IP18_3_0	FM(GP6_30)		F_(0, 0)	F_(0, 0)		FM(AUDIO_CLKOUT2_B)		FM(SSI_SCK9_B)	FM(TS_SDEN0_E)	FM(STP_ISEN_0_E)	F_(0, 0)	FM(RIF2_D0_B)		F_(0, 0)	FM(FSO_CFE_0_A)	FM(TPU0TO2)	FM(FMCLK_C) FM(FMCLK_D) F_(0, 0) F_(0, 0)
-+#define IP18_7_4	FM(GP6_31)		F_(0, 0)	F_(0, 0)		FM(AUDIO_CLKOUT3_B)		FM(SSI_WS9_B)	FM(TS_SPSYNC0_E)FM(STP_ISSYNC_0_E)	F_(0, 0)	FM(RIF2_D1_B)		F_(0, 0)	FM(FSO_CFE_1_A)	FM(TPU0TO3)	FM(FMIN_C) FM(FMIN_D) F_(0, 0) F_(0, 0)
- 
- #define PINMUX_GPSR	\
- \
--- 
-1.9.1
+Thanks,
+Mauro
