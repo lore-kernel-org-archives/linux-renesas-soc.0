@@ -1,37 +1,43 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:37888 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751729AbdGXT5k (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 24 Jul 2017 15:57:40 -0400
-Date: Mon, 24 Jul 2017 14:57:38 -0500
-From: Rob Herring <robh@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms+renesas@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/3] ARM: shmobile: Document R-Car D3 SoC DT bindings
-Message-ID: <20170724195738.tjxzivlwt7jsndvs@rob-hp-laptop>
+        Will Deacon <will.deacon@arm.com>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/3] ARM: shmobile: Document R-Car D3 SoC DT bindings
+Date: Thu, 20 Jul 2017 14:28:59 +0200
+Message-Id: <1500553741-21890-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1500553741-21890-1-git-send-email-geert+renesas@glider.be>
 References: <1500553741-21890-1-git-send-email-geert+renesas@glider.be>
- <1500553741-21890-2-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1500553741-21890-2-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Jul 20, 2017 at 02:28:59PM +0200, Geert Uytterhoeven wrote:
-> Note that r8a77995 is the first Renesas "r8a<n>" SoC matching against a 5
-> digit number, as r8a77990 will be a different SoC.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
->  1 file changed, 2 insertions(+)
+Note that r8a77995 is the first Renesas "r8a<n>" SoC matching against a 5
+digit number, as r8a77990 will be a different SoC.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+index 1a671e3298643d9e..91f92d62650207fd 100644
+--- a/Documentation/devicetree/bindings/arm/shmobile.txt
++++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -39,6 +39,8 @@ SoCs:
+     compatible = "renesas,r8a7795"
+   - R-Car M3-W (R8A77960)
+     compatible = "renesas,r8a7796"
++  - R-Car D3 (R8A77995)
++    compatible = "renesas,r8a77995"
+ 
+ 
+ Boards:
+-- 
+2.7.4
+
