@@ -1,69 +1,53 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: joro@8bytes.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-        robin.murphy@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
-        Magnus Damm <magnus.damm@gmail.com>, sricharan@codeaurora.org,
-        m.szyprowski@samsung.com
-Date: Mon, 17 Jul 2017 22:05:10 +0900
-Message-Id: <150029671059.22030.9200719361237858789.sendpatchset@little-apple>
-In-Reply-To: <150029669967.22030.8059216113725566341.sendpatchset@little-apple>
-References: <150029669967.22030.8059216113725566341.sendpatchset@little-apple>
-Subject: [PATCH v2 01/05] iommu/ipmmu-vmsa: Use iommu_device_register()/unregister()
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from albert.telenet-ops.be ([195.130.137.90]:52354 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935939AbdGTM3I (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 20 Jul 2017 08:29:08 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms+renesas@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 3/3] arm64: renesas: Add Renesas R8A77995 Kconfig support
+Date: Thu, 20 Jul 2017 14:29:01 +0200
+Message-Id: <1500553741-21890-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1500553741-21890-1-git-send-email-geert+renesas@glider.be>
+References: <1500553741-21890-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Add a configuration option for the R-Car D3 SoC.
 
-Extend the driver to make use of iommu_device_register()/unregister()
-functions together with iommu_device_set_ops() and iommu_set_fwnode().
+Note that r8a77995 is the first Renesas "r8a<n>" SoC using a 5 digit
+number in its Kconfig symbol, as r8a77990 will be a different SoC.
 
-These used to be part of the earlier posted 64-bit ARM (r8a7795) series but
-it turns out that these days they are required on 32-bit ARM as well.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
+ arch/arm64/Kconfig.platforms | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
- Changes since V1:
- - Perform iommu_device_set_ops() and iommu_device_set_fwnode() before
-   iommu_device_register() - thanks Robin!
-
- drivers/iommu/ipmmu-vmsa.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
-
---- 0001/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2017-07-17 21:01:47.140607110 +0900
-@@ -35,6 +35,7 @@
- struct ipmmu_vmsa_device {
- 	struct device *dev;
- 	void __iomem *base;
-+	struct iommu_device iommu;
- 	struct list_head list;
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index f5f0c813dfecc56c..a1c9f4ed7a887ab2 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -184,6 +184,12 @@ config ARCH_R8A7796
+ 	help
+ 	  This enables support for the Renesas R-Car M3-W SoC.
  
- 	unsigned int num_utlbs;
-@@ -1054,6 +1055,13 @@ static int ipmmu_probe(struct platform_d
- 
- 	ipmmu_device_reset(mmu);
- 
-+	iommu_device_set_ops(&mmu->iommu, &ipmmu_ops);
-+	iommu_device_set_fwnode(&mmu->iommu, &pdev->dev.of_node->fwnode);
++config ARCH_R8A77995
++	bool "Renesas R-Car D3 SoC Platform"
++	depends on ARCH_RENESAS
++	help
++	  This enables support for the Renesas R-Car D3 SoC.
 +
-+	ret = iommu_device_register(&mmu->iommu);
-+	if (ret)
-+		return ret;
-+
- 	/*
- 	 * We can't create the ARM mapping here as it requires the bus to have
- 	 * an IOMMU, which only happens when bus_set_iommu() is called in
-@@ -1077,6 +1085,8 @@ static int ipmmu_remove(struct platform_
- 	list_del(&mmu->list);
- 	spin_unlock(&ipmmu_devices_lock);
- 
-+	iommu_device_unregister(&mmu->iommu);
-+
- #if defined(CONFIG_ARM) && !defined(CONFIG_IOMMU_DMA)
- 	arm_iommu_release_mapping(mmu->mapping);
- #endif
+ config ARCH_STRATIX10
+ 	bool "Altera's Stratix 10 SoCFPGA Family"
+ 	help
+-- 
+2.7.4
