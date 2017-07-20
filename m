@@ -1,91 +1,62 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mark Yao <mark.yao@rock-chips.com>,
-        Heiko Stuebner <heiko@sntech.de>, Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org
-Subject: [PATCH 4/4] drm/sun4i: make sure we don't have a commit pending
-Date: Thu, 13 Jul 2017 16:41:16 +0200
-Message-Id: <a6dfec7ea3598c64f6653e9b8b5febac79172341.1499956639.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.75b0c7f741ed33015a7ad44941bed1f6152a48a9.1499956639.git-series.maxime.ripard@free-electrons.com>
-References: <cover.75b0c7f741ed33015a7ad44941bed1f6152a48a9.1499956639.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.75b0c7f741ed33015a7ad44941bed1f6152a48a9.1499956639.git-series.maxime.ripard@free-electrons.com>
-References: <cover.75b0c7f741ed33015a7ad44941bed1f6152a48a9.1499956639.git-series.maxime.ripard@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor1.renesas.com ([210.160.252.171]:40589 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S935554AbdGTSWR (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 20 Jul 2017 14:22:17 -0400
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Simon Horman <horms+renesas@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH 3/4] arm: dts: rskrza1: Add SDHI1 pin group
+Date: Thu, 20 Jul 2017 13:20:18 -0500
+Message-Id: <20170720182019.85075-4-chris.brandt@renesas.com>
+In-Reply-To: <20170720182019.85075-1-chris.brandt@renesas.com>
+References: <20170720182019.85075-1-chris.brandt@renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-In the earlier display engine designs, any register access while a commit
-is pending is forbidden.
+Add pin configuration for SDHI ch1.
 
-One of the symptoms is that reading a register will return another, random,
-register value which can lead to register corruptions if we ever do a
-read/modify/write cycle.
-
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 ---
- drivers/gpu/drm/sun4i/sun4i_backend.c | 14 ++++++++++++++
- drivers/gpu/drm/sun4i/sun4i_crtc.c    |  1 +
- 2 files changed, 15 insertions(+)
+ arch/arm/boot/dts/r7s72100-rskrza1.dts | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.c b/drivers/gpu/drm/sun4i/sun4i_backend.c
-index cf480218daa5..ce1f40f7511e 100644
---- a/drivers/gpu/drm/sun4i/sun4i_backend.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_backend.c
-@@ -67,6 +67,19 @@ static void sun4i_backend_commit(struct sunxi_engine *engine)
- 		     SUN4I_BACKEND_REGBUFFCTL_LOADCTL);
- }
- 
-+static int sun4i_backend_commit_poll(struct sunxi_engine *engine)
-+{
-+	u32 val;
+diff --git a/arch/arm/boot/dts/r7s72100-rskrza1.dts b/arch/arm/boot/dts/r7s72100-rskrza1.dts
+index cedf887e809a..f8285b951140 100644
+--- a/arch/arm/boot/dts/r7s72100-rskrza1.dts
++++ b/arch/arm/boot/dts/r7s72100-rskrza1.dts
+@@ -78,6 +78,18 @@
+ 			 <RZA1_PINMUX(2, 10, 2)>,	/* ET_RXD2  */
+ 			 <RZA1_PINMUX(2, 11, 2)>;	/* ET_RXD3  */
+ 	};
 +
-+	DRM_DEBUG_DRIVER("Polling for the commit to end\n");
-+
-+	return regmap_read_poll_timeout(engine->regs,
-+					SUN4I_BACKEND_REGBUFFCTL_REG,
-+					val,
-+					!(val & SUN4I_BACKEND_REGBUFFCTL_LOADCTL),
-+					100, 50000);
-+}
-+
- void sun4i_backend_layer_enable(struct sun4i_backend *backend,
- 				int layer, bool enable)
- {
-@@ -330,6 +343,7 @@ static int sun4i_backend_of_get_id(struct device_node *node)
++	/* SDHI ch1 on CN1 */
++	sdhi1_pins: sdhi1 {
++		pinmux = <RZA1_PINMUX(3, 8, 7)>,	/* SD_CD_1 */
++			 <RZA1_PINMUX(3, 9, 7)>,	/* SD_WP_1 */
++			 <RZA1_PINMUX(3, 10, 7)>,	/* SD_D1_1 */
++			 <RZA1_PINMUX(3, 11, 7)>,	/* SD_D0_1 */
++			 <RZA1_PINMUX(3, 12, 7)>,	/* SD_CLK_1 */
++			 <RZA1_PINMUX(3, 13, 7)>,	/* SD_CMD_1 */
++			 <RZA1_PINMUX(3, 14, 7)>,	/* SD_D3_1 */
++			 <RZA1_PINMUX(3, 15, 7)>;	/* SD_D2_1 */
++	};
+ };
  
- static const struct sunxi_engine_ops sun4i_backend_engine_ops = {
- 	.commit				= sun4i_backend_commit,
-+	.commit_poll			= sun4i_backend_commit_poll,
- 	.layers_init			= sun4i_layers_init,
- 	.apply_color_correction		= sun4i_backend_apply_color_correction,
- 	.disable_color_correction	= sun4i_backend_disable_color_correction,
-diff --git a/drivers/gpu/drm/sun4i/sun4i_crtc.c b/drivers/gpu/drm/sun4i/sun4i_crtc.c
-index 2eba1d8639d8..31550493fa1d 100644
---- a/drivers/gpu/drm/sun4i/sun4i_crtc.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_crtc.c
-@@ -34,6 +34,7 @@ static void sun4i_crtc_atomic_begin(struct drm_crtc *crtc,
- 				    struct drm_crtc_state *old_state)
- {
- 	struct sun4i_crtc *scrtc = drm_crtc_to_sun4i_crtc(crtc);
-+	struct sunxi_engine *engine = scrtc->engine;
- 	struct drm_device *dev = crtc->dev;
- 	unsigned long flags;
+ &mtu2 {
+@@ -96,6 +108,8 @@
+ };
  
+ &sdhi1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&sdhi1_pins>;
+ 	bus-width = <4>;
+ 	status = "okay";
+ };
 -- 
-git-series 0.9.1
+2.13.0
