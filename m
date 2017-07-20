@@ -1,61 +1,38 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-yw0-f173.google.com ([209.85.161.173]:35755 "EHLO
-        mail-yw0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753275AbdGGChs (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Jul 2017 22:37:48 -0400
-Received: by mail-yw0-f173.google.com with SMTP id v193so8438529ywg.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 06 Jul 2017 19:37:48 -0700 (PDT)
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH 4/5] arm64: dts: renesas: ulcb: Add HDMI output connector
-Date: Fri,  7 Jul 2017 05:37:36 +0300
-Message-Id: <1499395056-14375-1-git-send-email-vladimir.barinov@cogentembedded.com>
-In-Reply-To: <1499394976-14201-1-git-send-email-vladimir.barinov@cogentembedded.com>
-References: <1499394976-14201-1-git-send-email-vladimir.barinov@cogentembedded.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <mchehab@s-opensource.com>
+Date: Thu, 20 Jul 2017 10:50:22 -0300
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+To: Kieran Bingham <kieranbingham@gmail.com>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+ dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 01/14] v4l: vsp1: Fill display list headers without
+ holding dlm spinlock
+Message-ID: <20170720105022.5f123ca0@vento.lan>
+In-Reply-To: <a45e660b-b931-ba16-d861-901c307afb1c@gmail.com>
+References: <20170626181226.29575-1-laurent.pinchart+renesas@ideasonboard.com>
+	<20170626181226.29575-2-laurent.pinchart+renesas@ideasonboard.com>
+	<a45e660b-b931-ba16-d861-901c307afb1c@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+Em Thu, 13 Jul 2017 13:48:40 +0100
+Kieran Bingham <kieranbingham@gmail.com> escreveu:
 
-The ULCB board has one HDMI output connector.
+> Hi Laurent,
+> 
+> Starts easy ... (I haven't gone through these in numerical order of course :D)
+> 
+> On 26/06/17 19:12, Laurent Pinchart wrote:
+> > The display list headers are filled using information from the display
+> > list only. Lower the display list manager spinlock contention by filling
+> > the headers without holding the lock.
+> > 
+> > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>  
+> 
+> Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Acked-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 
-This connector is available on both the H3 and M3-W ULCB boards.
-Add this to the ulcb.dtsi file.
-
-Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
----
- arch/arm64/boot/dts/renesas/ulcb.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-index 6f0a7ca..fc5408d 100644
---- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
-+++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-@@ -34,6 +34,17 @@
- 		clock-frequency = <11289600>;
- 	};
- 
-+	hdmi0-out {
-+		compatible = "hdmi-connector";
-+		label = "HDMI0 OUT";
-+		type = "a";
-+
-+		port {
-+			hdmi0_con: endpoint {
-+			};
-+		};
-+	};
-+
- 	keyboard {
- 		compatible = "gpio-keys";
- 
--- 
-1.9.1
+Thanks,
+Mauro
