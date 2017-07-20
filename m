@@ -1,47 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:42651 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750987AbdGaPED (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:54824 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935287AbdGTMkM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 31 Jul 2017 11:04:03 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 02/10] ARM: shmobile: defconfig: Enable missing PCIE_RCAR dependency
-Date: Mon, 31 Jul 2017 17:03:33 +0200
-Message-Id: <b217113362f9e24e68ce849fc2fef7a1d2e40b82.1501511664.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1501511664.git.horms+renesas@verge.net.au>
-References: <cover.1501511664.git.horms+renesas@verge.net.au>
+        Thu, 20 Jul 2017 08:40:12 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/4] clk: renesas: Add R-Car D3 support
+Date: Thu, 20 Jul 2017 14:40:05 +0200
+Message-Id: <1500554409-22423-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+	Hi Mike, Stephen,
 
-PCIE_RCAR is no longer enabled, as it now has a dependency on
-PCI_MSI_IRQ_DOMAIN instead of selecting PCI_MSI and PCI_MSI_IRQ_DOMAIN.
-Fix this by explicitly enabling PCIE_RCAR in shmobile_defconfig.
+This patch series adds support for clocks on the R-Car D3 SoC.
 
-Fixes: 3ee803641e76bea7 ("PCI/MSI: irqchip: Fix PCI_MSI dependencies")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/configs/shmobile_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+As usual, this is meant to be queued up in clk-renesas-for-v4.14.
 
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index d9929114d47b..297ef8e584f3 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -27,6 +27,7 @@ CONFIG_ARCH_SH73A0=y
- CONFIG_PL310_ERRATA_588369=y
- CONFIG_ARM_ERRATA_754322=y
- CONFIG_PCI=y
-+CONFIG_PCI_MSI=y
- CONFIG_PCI_RCAR_GEN2=y
- CONFIG_PCIE_RCAR=y
- CONFIG_SMP=y
+Thanks!
+
+Geert Uytterhoeven (4):
+  clk: renesas: Add r8a77995 CPG Core Clock Definitions
+  clk: renesas: rcar-gen3: Add divider support for PLL1 and PLL3
+  clk: renesas: rcar-gen3: Add support for SCCG/Clean peripheral clocks
+  clk: renesas: cpg-mssr: Add R8A77995 support
+
+ .../devicetree/bindings/clock/renesas,cpg-mssr.txt |   3 +-
+ drivers/clk/renesas/Kconfig                        |   5 +
+ drivers/clk/renesas/Makefile                       |   1 +
+ drivers/clk/renesas/r8a7795-cpg-mssr.c             |  34 +--
+ drivers/clk/renesas/r8a7796-cpg-mssr.c             |  34 +--
+ drivers/clk/renesas/r8a77995-cpg-mssr.c            | 236 +++++++++++++++++++++
+ drivers/clk/renesas/rcar-gen3-cpg.c                |  22 +-
+ drivers/clk/renesas/rcar-gen3-cpg.h                |  15 +-
+ drivers/clk/renesas/renesas-cpg-mssr.c             |   6 +
+ drivers/clk/renesas/renesas-cpg-mssr.h             |   1 +
+ include/dt-bindings/clock/r8a77995-cpg-mssr.h      |  57 +++++
+ 11 files changed, 375 insertions(+), 39 deletions(-)
+ create mode 100644 drivers/clk/renesas/r8a77995-cpg-mssr.c
+ create mode 100644 include/dt-bindings/clock/r8a77995-cpg-mssr.h
+
 -- 
-2.1.4
+2.7.4
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
