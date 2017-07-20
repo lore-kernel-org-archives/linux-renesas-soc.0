@@ -1,88 +1,45 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:42592 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935132AbdGTMyj (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 20 Jul 2017 08:54:39 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/4] arm64: dts: renesas: r8a77995: Use r8a7795-sysc binding definitions
-Date: Thu, 20 Jul 2017 14:54:36 +0200
-Message-Id: <1500555277-22921-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1500555277-22921-1-git-send-email-geert+renesas@glider.be>
-References: <1500555277-22921-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+Date: Thu, 20 Jul 2017 10:58:07 -0300
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: kieran.bingham@ideasonboard.com,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 07/14] v4l: vsp1: Add support for the BRS entity
+Message-ID: <20170720105807.4b24e04c@vento.lan>
+In-Reply-To: <a89a37a8-ec11-cd50-5323-48510c11bcce@ideasonboard.com>
+References: <20170626181226.29575-1-laurent.pinchart+renesas@ideasonboard.com>
+        <20170626181226.29575-8-laurent.pinchart+renesas@ideasonboard.com>
+        <a89a37a8-ec11-cd50-5323-48510c11bcce@ideasonboard.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Replace the hardcoded power domain indices by R8A77995_PD_* symbols.
+Em Thu, 13 Jul 2017 14:38:40 +0100
+Kieran Bingham <kieran.bingham+renesas@ideasonboard.com> escreveu:
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-This depends on "soc: renesas: rcar-sysc: Add support for R-Car D3 power
-areas".
----
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+> On 26/06/17 19:12, Laurent Pinchart wrote:
+> > The Blend/ROP Sub Unit (BRS) is a stripped-down version of the BRU found
+> > in several VSP2 instances. Compared to a regular BRU, it supports two
+> > inputs only, and thus has no ROP unit.
+> > 
+> > Add support for the BRS by modeling it as a new entity type, but reuse  
+> 
+> s/modeling/modelling/
+> 
+> 
+> > the vsp1_bru object underneath. Chaining the BRU and BRS entities seems
+> > to be supported by the hardware but isn't implemented yet as it isn't
+> > the primary use case for the BRS.
+> > 
+> > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>  
+> 
+> Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index 7c69b795cd3ebd82..b984c174cf7edb70 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -11,6 +11,7 @@
- 
- #include <dt-bindings/clock/renesas-cpg-mssr.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/power/r8a77995-sysc.h>
- 
- / {
- 	compatible = "renesas,r8a77995";
-@@ -30,14 +31,14 @@
- 			compatible = "arm,cortex-a53", "arm,armv8";
- 			reg = <0x0>;
- 			device_type = "cpu";
--			power-domains = <&sysc 5>;
-+			power-domains = <&sysc R8A77995_PD_CA53_CPU0>;
- 			next-level-cache = <&L2_CA53>;
- 			enable-method = "psci";
- 		};
- 
- 		L2_CA53: cache-controller-1 {
- 			compatible = "cache";
--			power-domains = <&sysc 21>;
-+			power-domains = <&sysc R8A77995_PD_CA53_SCU>;
- 			cache-unified;
- 			cache-level = <2>;
- 		};
-@@ -76,7 +77,7 @@
- 					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_HIGH)>;
- 			clocks = <&cpg CPG_MOD 408>;
- 			clock-names = "clk";
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
- 			resets = <&cpg 408>;
- 		};
- 
-@@ -97,7 +98,7 @@
- 				     "renesas,rcar-gen3-wdt";
- 			reg = <0 0xe6020000 0 0x0c>;
- 			clocks = <&cpg CPG_MOD 402>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
- 			resets = <&cpg 402>;
- 			status = "disabled";
- 		};
-@@ -142,7 +143,7 @@
- 				 <&cpg CPG_CORE 16>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
- 			resets = <&cpg 310>;
- 			status = "disabled";
- 		};
--- 
-2.7.4
+Acked-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+
+Thanks,
+Mauro
