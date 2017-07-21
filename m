@@ -1,39 +1,30 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from lb3-smtp-cloud9.xs4all.net ([194.109.24.30]:37893 "EHLO
-        lb3-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751631AbdG1L2i (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Jul 2017 07:28:38 -0400
-Subject: Re: [PATCH] v4l: rcar-vin: Simplify rvin_group_notify_{bound,unbind}
-To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        niklas.soderlund@ragnatech.se
+Return-Path: <linux-media-owner@vger.kernel.org>
+Date: Fri, 21 Jul 2017 12:15:25 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 Cc: laurent.pinchart@ideasonboard.com, linux-media@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org, kieran.bingham@ideasonboard.com
+Subject: Re: [PATCH] v4l: rcar-vin: Simplify rvin_group_notify_{bound,unbind}
+Message-ID: <20170721101525.GD20077@bigcity.dyn.berto.se>
 References: <1500630950-29870-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <bc3e6468-867c-6372-f488-5e37e77215e2@xs4all.nl>
-Date: Fri, 28 Jul 2017 13:28:32 +0200
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 In-Reply-To: <1500630950-29870-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 07/21/2017 11:55 AM, Kieran Bingham wrote:
+Hi Kieran,
+
+Thanks for your patch.
+
+On 2017-07-21 10:55:50 +0100, Kieran Bingham wrote:
 > Use a container_of macro to obtain the graph entity object from the ASD
 > This removes the error conditions, and reduces the lock contention.
 > 
 > (The locking may even be potentially removed)
-
-I've set the status in patchwork to 'Not Applicable' since the patch isn't
-against the mainline code. I leave it to Niklas to decide what to do with this.
-
-Regards,
-
-	Hans
-
 > 
 > Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 > ---
@@ -41,9 +32,16 @@ Regards,
 > Hi Niklas,
 > 
 > While working through the Multi camera setup, we came across this improvement.
+
+Nice :-)
+
 > 
 > If this code isn't yet upstream, feel free to squash this change into your
 > existing branch if you wish.
+
+Patch is not yet upstream and I'm pending to post the next version of 
+the series so will squash this in, thanks for allowing me to do so!
+
 > 
 > Regards
 > 
@@ -122,4 +120,10 @@ Regards,
 >  struct rvin_group;
 >  
 >  
+> -- 
+> 2.7.4
 > 
+
+-- 
+Regards,
+Niklas S�derlund
