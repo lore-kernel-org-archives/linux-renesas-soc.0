@@ -1,42 +1,56 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:33839 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751303AbdGQPNq (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Jul 2017 11:13:46 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-watchdog@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 3/5] watchdog: renesas_wdt: don't round closest with get_timeleft
-Date: Mon, 17 Jul 2017 17:12:28 +0200
-Message-Id: <20170717151230.12680-4-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170717151230.12680-1-wsa+renesas@sang-engineering.com>
-References: <20170717151230.12680-1-wsa+renesas@sang-engineering.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+MIME-version: 1.0
+Content-type: text/plain; charset="utf-8"; format="flowed"
+Subject: Re: [PATCH v2] media: Convert to using %pOF instead of full_name
+To: Rob Herring <robh@kernel.org>, linux-media@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Songjun Wu <songjun.wu@microchip.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Javier Martinez Canillas <javier@osg.samsung.com>,
+        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Guennadi Liakhovetski <g.liakhovetski@gmx.de>,
+        Hyun Kwon <hyun.kwon@xilinx.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        =?UTF-8?Q?S=c3=b6ren_Brinkmann?= <soren.brinkmann@xilinx.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <97f42d10-d2ed-c5bb-9562-5515d5f13f7d@samsung.com>
+Date: Sat, 22 Jul 2017 08:42:11 +0200
+In-reply-to: <20170721192835.25555-2-robh@kernel.org>
+Content-language: en-GB
+Content-transfer-encoding: 8bit
+References: <20170721192835.25555-1-robh@kernel.org>
+        <CGME20170721192855epcas5p40919807b161c8dee900b5661ea5128aa@epcas5p4.samsung.com>
+        <20170721192835.25555-2-robh@kernel.org>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should never return more time left than there actually is. So, switch
-to a plain divider instead of DIV_ROUND_CLOSEST.
+On 07/21/2017 09:28 PM, Rob Herring wrote:
+> Now that we have a custom printf format specifier, convert users of
+> full_name to use %pOF instead. This is preparation to remove storing
+> of the full path string for each node.
+> 
+> Signed-off-by: Rob Herring<robh@kernel.org>
+> Acked-by: Niklas Söderlund<niklas.soderlund+renesas@ragnatech.se>
+> Acked-by: Laurent Pinchart<laurent.pinchart@ideasonboard.com>
+> Reviewed-by: Matthias Brugger<matthias.bgg@gmail.com>
+> Acked-by: Nicolas Ferre<nicolas.ferre@microchip.com>
+> Acked-by: Lad, Prabhakar<prabhakar.csengg@gmail.com>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/watchdog/renesas_wdt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> ---
+> v2:
+> - Fix missing to_of_node() in xilinx-vipp.c
+> - Drop v4l2-async.c changes. Doing as revert instead.
+> - Add acks
 
-diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
-index 0b9e8a9b1dd14c..d2390695d3453f 100644
---- a/drivers/watchdog/renesas_wdt.c
-+++ b/drivers/watchdog/renesas_wdt.c
-@@ -92,7 +92,7 @@ static unsigned int rwdt_get_timeleft(struct watchdog_device *wdev)
- 	struct rwdt_priv *priv = watchdog_get_drvdata(wdev);
- 	u16 val = readw_relaxed(priv->base + RWTCNT);
- 
--	return DIV_ROUND_CLOSEST(65536 - val, priv->clks_per_sec);
-+	return (65536 - val) / priv->clks_per_sec;
- }
- 
- static const struct watchdog_info rwdt_ident = {
--- 
-2.11.0
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
