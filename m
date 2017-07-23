@@ -1,55 +1,92 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:33228 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751737AbdG1Llk (ORCPT
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:33158 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751354AbdGWQc7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Jul 2017 07:41:40 -0400
+        Sun, 23 Jul 2017 12:32:59 -0400
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdURF=teYxa2iuPDbPQQVV=9mYsE=xBwEGGB0JAhCHXNRA@mail.gmail.com>
+References: <1499878547-3452-1-git-send-email-ykaneko0929@gmail.com>
+ <1499878547-3452-5-git-send-email-ykaneko0929@gmail.com> <CAMuHMdURF=teYxa2iuPDbPQQVV=9mYsE=xBwEGGB0JAhCHXNRA@mail.gmail.com>
 From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>,
+Date: Mon, 24 Jul 2017 01:32:57 +0900
+Message-ID: <CAH1o70+zfgTxnv6nnTpT1foY_fnEUE3kBGqnj+u7S2sPKp9XgQ@mail.gmail.com>
+Subject: Re: [PATCH 04/14] pinctrl: sh-pfc: r8a7796: Fix MOD_SEL register pin
+ assignment for SSI pins group
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 4/9] pinctrl: sh-pfc: r8a7795: Fix FMCLK{_C,_D} and FMIN{_C,_D} pin function definitions
-Date: Fri, 28 Jul 2017 20:41:16 +0900
-Message-Id: <1501242081-3805-5-git-send-email-ykaneko0929@gmail.com>
-In-Reply-To: <1501242081-3805-1-git-send-email-ykaneko0929@gmail.com>
-References: <1501242081-3805-1-git-send-email-ykaneko0929@gmail.com>
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Hi Geert-san,
 
-This patch fixes the implementation incorrect of IPSR register value
-definitions for FMCLK{_C,_D} and FMIN{_C,_D} pins function.
+I'm very sorry that for the long delay in my reply.
 
-This is a correction to the incorrect implementation of IPSR register pin
-assignment of the specifications updated for R8A7795 ES2.0 SoC in R-Car
-Gen3 Hardware User's Manual Rev.0.53E.
+2017-07-13 18:12 GMT+09:00 Geert Uytterhoeven <geert@linux-m68k.org>:
+> Hi Kaneko-san, Kihara-san,
+>
+> On Wed, Jul 12, 2017 at 6:55 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+>> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>>
+>> This patch fixes MOD_SEL1 bit20 and MOD_SEL2 bit20, bit21 pin assignment
+>> for SSI pins group.
+>>
+>> This is a correction to the incorrect implementation of MOD_SEL register
+>> pin assignment for R8A7796 SoC specification of R-Car Gen3 Hardware
+>> User's Manual Rev.0.51E or later.
+>>
+>> Fixes: f9aece7344bd ("pinctrl: sh-pfc: Initial R8A7796 PFC support")
+>> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+>> ---
+>>  drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 38 ++++++++++++++++++------------------
+>>  1 file changed, 19 insertions(+), 19 deletions(-)
+>>
+>> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+>> index 4d070c2..18c9c61 100644
+>> --- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+>> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+>
+>> @@ -1277,7 +1277,7 @@ enum {
+>>         PINMUX_IPSR_MSEL(IP14_3_0,      RX5_A,                  SEL_SCIF5_0),
+>>         PINMUX_IPSR_MSEL(IP14_3_0,      NFWP_N_A,               SEL_NDF_0),
+>>         PINMUX_IPSR_MSEL(IP14_3_0,      AUDIO_CLKA_C,           SEL_ADG_A_2),
+>> -       PINMUX_IPSR_MSEL(IP14_3_0,      SSI_SCK2_A,             SEL_SSI_0),
+>> +       PINMUX_IPSR_MSEL(IP14_3_0,      SSI_SCK2_A,             SEL_SSI2_0),
+>
+> The SSI_SCK2_A part seems to have been removed in Rev.052E and later?
+> However, I can't find that in the errata for Rev.051E.
 
-Fixes: 12f5d9a1dc7f ("pinctrl: sh-pfc: r8a7795: Replace for Renesas R8A7795 ES2.0 SoC")
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Indeed, SSI_SCK2_A seems to have been removed from configuration of
+SEL_SSI2 in Rev.0.52E, but the definition of IP14[3:0] does not
+change.
+Should I remove the entry of SSI_SCK2_A from pinmux_data[]?
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index 37b96b9..3272713 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -361,8 +361,8 @@
- #define IP17_23_20	FM(USB1_OVC)		F_(0, 0)	FM(MSIOF1_SS2_C)	F_(0, 0)			FM(SSI_WS1_A)	FM(TS_SDAT0_E)	FM(STP_ISD_0_E)		FM(FMIN_B)	FM(RIF2_SYNC_B)		F_(0, 0)	FM(REMOCON_B)	F_(0, 0)	F_(0, 0) FM(HCTS2_N_C) F_(0, 0) F_(0, 0)
- #define IP17_27_24	FM(USB30_PWEN)		F_(0, 0)	F_(0, 0)		FM(AUDIO_CLKOUT_B)		FM(SSI_SCK2_B)	FM(TS_SDEN1_D)	FM(STP_ISEN_1_D)	FM(STP_OPWM_0_E)FM(RIF3_D0_B)		F_(0, 0)	FM(TCLK2_B)	FM(TPU0TO0)	FM(BPFCLK_C) FM(HRTS2_N_C) F_(0, 0) F_(0, 0)
- #define IP17_31_28	FM(USB30_OVC)		F_(0, 0)	F_(0, 0)		FM(AUDIO_CLKOUT1_B)		FM(SSI_WS2_B)	FM(TS_SPSYNC1_D)FM(STP_ISSYNC_1_D)	FM(STP_IVCXO27_0_E)FM(RIF3_D1_B)	F_(0, 0)	FM(FSO_TOE_N)	FM(TPU0TO1)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
--#define IP18_3_0	FM(USB3_PWEN)		F_(0, 0)	F_(0, 0)		FM(AUDIO_CLKOUT2_B)		FM(SSI_SCK9_B)	FM(TS_SDEN0_E)	FM(STP_ISEN_0_E)	F_(0, 0)	FM(RIF2_D0_B)		F_(0, 0)	F_(0, 0)	FM(TPU0TO2)	F_(0, 0) FM(FMCLK_C) FM(FMCLK_D) F_(0, 0)
--#define IP18_7_4	FM(USB3_OVC)		F_(0, 0)	F_(0, 0)		FM(AUDIO_CLKOUT3_B)		FM(SSI_WS9_B)	FM(TS_SPSYNC0_E)FM(STP_ISSYNC_0_E)	F_(0, 0)	FM(RIF2_D1_B)		F_(0, 0)	F_(0, 0)	FM(TPU0TO3)	F_(0, 0) FM(FMIN_C) FM(FMIN_D) F_(0, 0)
-+#define IP18_3_0	FM(USB3_PWEN)		F_(0, 0)	F_(0, 0)		FM(AUDIO_CLKOUT2_B)		FM(SSI_SCK9_B)	FM(TS_SDEN0_E)	FM(STP_ISEN_0_E)	F_(0, 0)	FM(RIF2_D0_B)		F_(0, 0)	F_(0, 0)	FM(TPU0TO2)	FM(FMCLK_C) FM(FMCLK_D) F_(0, 0) F_(0, 0)
-+#define IP18_7_4	FM(USB3_OVC)		F_(0, 0)	F_(0, 0)		FM(AUDIO_CLKOUT3_B)		FM(SSI_WS9_B)	FM(TS_SPSYNC0_E)FM(STP_ISSYNC_0_E)	F_(0, 0)	FM(RIF2_D1_B)		F_(0, 0)	F_(0, 0)	FM(TPU0TO3)	FM(FMIN_C) FM(FMIN_D) F_(0, 0) F_(0, 0)
- 
- #define PINMUX_GPSR	\
- \
--- 
-1.9.1
+Thanks,
+Kaneko
+
+>
+>>         PINMUX_IPSR_MSEL(IP14_3_0,      STP_IVCXO27_0_C,        SEL_SSP1_0_2),
+>>         PINMUX_IPSR_GPSR(IP14_3_0,      AUDIO_CLKOUT3_A),
+>>         PINMUX_IPSR_MSEL(IP14_3_0,      TCLK1_B,                SEL_TIMER_TMU_1),
+>
+> The rest looks good to me.
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
