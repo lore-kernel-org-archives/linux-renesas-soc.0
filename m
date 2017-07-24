@@ -1,45 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:56870 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753991AbdGJN20 (ORCPT
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:33861 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751969AbdGXUJR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 10 Jul 2017 09:28:26 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Olof Johansson <olof@lixom.net>,
-        Simon Horman <horms@verge.net.au>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 5/9] ARM: shmobile: defconfig: Enable DMA for serial ports
-Date: Mon, 10 Jul 2017 15:28:18 +0200
-Message-Id: <1499693302-25120-6-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1499693302-25120-1-git-send-email-geert+renesas@glider.be>
-References: <1499693302-25120-1-git-send-email-geert+renesas@glider.be>
+        Mon, 24 Jul 2017 16:09:17 -0400
+Date: Mon, 24 Jul 2017 15:09:15 -0500
+From: Rob Herring <robh@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 4/4] clk: renesas: cpg-mssr: Add R8A77995 support
+Message-ID: <20170724200915.ylyvovphokrqn4e2@rob-hp-laptop>
+References: <1500554409-22423-1-git-send-email-geert+renesas@glider.be>
+ <1500554409-22423-5-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1500554409-22423-5-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-DMA for (H)SCIF(A|B) serial ports on R-Car Gen2 and RZ/G1 SoCs is
-considered stable, hence enable it by default.
+On Thu, Jul 20, 2017 at 02:40:09PM +0200, Geert Uytterhoeven wrote:
+> Add R-Car D3 (R8A77995) Clock Pulse Generator / Module Standby and
+> Software Reset support, using the CPG/MSSR driver core and the common
+> R-Car Gen3 CPG code.
+> 
+> Based on the R-Car Series, 3rd Generation Hardware User's Manual, Rev.
+> 0.55, Jun. 30, 2017.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: devicetree@vger.kernel.org
+> ---
+> Notes:
+>   - I couldn't verify the parent clocks of all module clocks.
+>     For e.g. SYS-DMAC and some multimedia devices, I looked at how
+>     related clocks were changed among R-Car H3, M3-W, and D3.
+>   - For now, R clock handling is hardwired to internal RCLK.
+> ---
+>  .../devicetree/bindings/clock/renesas,cpg-mssr.txt |   3 +-
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/configs/shmobile_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Acked-by: Rob Herring <robh@kernel.org>
 
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index b8d2dcbc9cc745b6..dd9d1f9ede6e7f34 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -106,6 +106,7 @@ CONFIG_SERIAL_8250_EM=y
- CONFIG_SERIAL_SH_SCI=y
- CONFIG_SERIAL_SH_SCI_NR_UARTS=20
- CONFIG_SERIAL_SH_SCI_CONSOLE=y
-+CONFIG_SERIAL_SH_SCI_DMA=y
- CONFIG_I2C_CHARDEV=y
- CONFIG_I2C_MUX=y
- CONFIG_I2C_DEMUX_PINCTRL=y
--- 
-2.7.4
+>  drivers/clk/renesas/Kconfig                        |   5 +
+>  drivers/clk/renesas/Makefile                       |   1 +
+>  drivers/clk/renesas/r8a77995-cpg-mssr.c            | 236 +++++++++++++++++++++
+>  drivers/clk/renesas/renesas-cpg-mssr.c             |   6 +
+>  drivers/clk/renesas/renesas-cpg-mssr.h             |   1 +
+>  6 files changed, 251 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/clk/renesas/r8a77995-cpg-mssr.c
