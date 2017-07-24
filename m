@@ -1,158 +1,202 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:35825 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752168AbdGIN2m (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 9 Jul 2017 09:28:42 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Alexey Firago <alexey_firago@mentor.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH V3 5/8] clk: vc5: Split clock input mux and predivider
-Date: Sun,  9 Jul 2017 15:28:11 +0200
-Message-Id: <20170709132814.2339-5-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20170709132814.2339-1-marek.vasut+renesas@gmail.com>
-References: <20170709132814.2339-1-marek.vasut+renesas@gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Mon, 24 Jul 2017 12:46:59 -0500
+From: Rob Herring <robh@kernel.org>
+To: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+Subject: Re: [PATCH v8 1/2] media: rcar-csi2: add Renesas R-Car MIPI CSI-2
+ receiver documentation
+Message-ID: <20170724174659.2esawsxudve22dlw@rob-hp-laptop>
+References: <20170717170356.25568-1-niklas.soderlund+renesas@ragnatech.se>
+ <20170717170356.25568-2-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20170717170356.25568-2-niklas.soderlund+renesas@ragnatech.se>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Split the VC5 clock input mux and the predivider to more accurately
-model the hardware and fix the previously incorrect assumption that
-both the OUT_SEL_I2CB and the PLL are fed from the predivider.
+On Mon, Jul 17, 2017 at 07:03:55PM +0200, Niklas S�derlund wrote:
+> Documentation for Renesas R-Car MIPI CSI-2 receiver. The CSI-2 receivers
+> are located between the video sources (CSI-2 transmitters) and the video
+> grabbers (VIN) on Gen3 of Renesas R-Car SoC.
+> 
+> Each CSI-2 device is connected to more then one VIN device which
+> simultaneously can receive video from the same CSI-2 device. Each VIN
+> device can also be connected to more then one CSI-2 device. The routing
+> of which link are used are controlled by the VIN devices. There are only
+> a few possible routes which are set by hardware limitations, which are
+> different for each SoC in the Gen3 family.
+> 
+> To work with the limitations of routing possibilities it is necessary
+> for the DT bindings to describe which VIN device is connected to which
+> CSI-2 device. This is why port 1 needs to to assign reg numbers for each
+> VIN device that be connected to it. To setup and to know which links are
+> valid for each SoC is the responsibility of the VIN driver since the
+> register to configure it belongs to the VIN hardware.
+> 
+> Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+> ---
+>  .../devicetree/bindings/media/rcar-csi2.txt        | 118 +++++++++++++++++++++
+>  1 file changed, 118 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/rcar-csi2.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/media/rcar-csi2.txt b/Documentation/devicetree/bindings/media/rcar-csi2.txt
+> new file mode 100644
+> index 0000000000000000..c298a7d821153219
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/rcar-csi2.txt
+> @@ -0,0 +1,118 @@
+> +Renesas R-Car MIPI CSI-2
+> +------------------------
+> +
+> +The rcar-csi2 device provides MIPI CSI-2 capabilities for the Renesas R-Car
+> +family of devices. It is to be used in conjunction with the R-Car VIN module,
+> +which provides the video capture capabilities.
+> +
+> +Mandatory properties
+> +--------------------
+> + - compatible: Must be one or more of the following
+> +   - "renesas,r8a7795-csi2" for the R8A7795 device.
+> +   - "renesas,r8a7796-csi2" for the R8A7796 device.
+> +   - "renesas,rcar-gen3-csi2" for a generic R-Car Gen3 compatible device.
+> +
+> +   When compatible with a generic version nodes must list the
+> +   SoC-specific version corresponding to the platform first
+> +   followed by the generic version.
+> +
+> + - reg: the register base and size for the device registers
+> + - interrupts: the interrupt for the device
+> + - clocks: Reference to the parent clock
+> +
+> +The device node shall contain two 'port' child nodes according to the
+> +bindings defined in Documentation/devicetree/bindings/media/
+> +video-interfaces.txt. Port 0 shall connect the node that is the video
+> +source for to the CSI-2. Port 1 shall connect all the R-Car VIN
+> +modules, which can make use of the CSI-2 module.
+> +
+> +- Port 0 - Video source (Mandatory)
+> +	- Reg 0 - sub-node describing the endpoint that is the video source
 
-It is in fact the clock input mux output which is directly feeding
-the clock into the OUT_SEL_I2CB output, while the clock input mux
-output first passes through the predivider before it is fed into
-the PLL.
+Endpoint 0
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Alexey Firago <alexey_firago@mentor.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-on Salvator-XS with the display LVDS output.
----
-V2: None
-V3: None
----
- drivers/clk/clk-versaclock5.c | 46 ++++++++++++++++++++++++++++++++-----------
- 1 file changed, 34 insertions(+), 12 deletions(-)
+It's not very clear that you are talking endpoints here. I had to look 
+at the example.
 
-diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index 7bdfd34e8280..453c9f721b78 100644
---- a/drivers/clk/clk-versaclock5.c
-+++ b/drivers/clk/clk-versaclock5.c
-@@ -157,6 +157,7 @@ struct vc5_driver_data {
- 	struct clk		*pin_clkin;
- 	unsigned char		clk_mux_ins;
- 	struct clk_hw		clk_mux;
-+	struct clk_hw		clk_pfd;
- 	struct vc5_hw_data	clk_pll;
- 	struct vc5_hw_data	clk_fod[VC5_MAX_FOD_NUM];
- 	struct vc5_hw_data	clk_out[VC5_MAX_CLK_OUT_NUM];
-@@ -166,6 +167,10 @@ static const char * const vc5_mux_names[] = {
- 	"mux"
- };
- 
-+static const char * const vc5_pfd_names[] = {
-+	"pfd"
-+};
-+
- static const char * const vc5_pll_names[] = {
- 	"pll"
- };
-@@ -254,11 +259,16 @@ static int vc5_mux_set_parent(struct clk_hw *hw, u8 index)
- 	return regmap_update_bits(vc5->regmap, VC5_PRIM_SRC_SHDN, mask, src);
- }
- 
--static unsigned long vc5_mux_recalc_rate(struct clk_hw *hw,
-+static const struct clk_ops vc5_mux_ops = {
-+	.set_parent	= vc5_mux_set_parent,
-+	.get_parent	= vc5_mux_get_parent,
-+};
-+
-+static unsigned long vc5_pfd_recalc_rate(struct clk_hw *hw,
- 					 unsigned long parent_rate)
- {
- 	struct vc5_driver_data *vc5 =
--		container_of(hw, struct vc5_driver_data, clk_mux);
-+		container_of(hw, struct vc5_driver_data, clk_pfd);
- 	unsigned int prediv, div;
- 
- 	regmap_read(vc5->regmap, VC5_VCO_CTRL_AND_PREDIV, &prediv);
-@@ -276,7 +286,7 @@ static unsigned long vc5_mux_recalc_rate(struct clk_hw *hw,
- 		return parent_rate / VC5_REF_DIVIDER_REF_DIV(div);
- }
- 
--static long vc5_mux_round_rate(struct clk_hw *hw, unsigned long rate,
-+static long vc5_pfd_round_rate(struct clk_hw *hw, unsigned long rate,
- 			       unsigned long *parent_rate)
- {
- 	unsigned long idiv;
-@@ -296,11 +306,11 @@ static long vc5_mux_round_rate(struct clk_hw *hw, unsigned long rate,
- 	return *parent_rate / idiv;
- }
- 
--static int vc5_mux_set_rate(struct clk_hw *hw, unsigned long rate,
-+static int vc5_pfd_set_rate(struct clk_hw *hw, unsigned long rate,
- 			    unsigned long parent_rate)
- {
- 	struct vc5_driver_data *vc5 =
--		container_of(hw, struct vc5_driver_data, clk_mux);
-+		container_of(hw, struct vc5_driver_data, clk_pfd);
- 	unsigned long idiv;
- 	u8 div;
- 
-@@ -328,12 +338,10 @@ static int vc5_mux_set_rate(struct clk_hw *hw, unsigned long rate,
- 	return 0;
- }
- 
--static const struct clk_ops vc5_mux_ops = {
--	.set_parent	= vc5_mux_set_parent,
--	.get_parent	= vc5_mux_get_parent,
--	.recalc_rate	= vc5_mux_recalc_rate,
--	.round_rate	= vc5_mux_round_rate,
--	.set_rate	= vc5_mux_set_rate,
-+static const struct clk_ops vc5_pfd_ops = {
-+	.recalc_rate	= vc5_pfd_recalc_rate,
-+	.round_rate	= vc5_pfd_round_rate,
-+	.set_rate	= vc5_pfd_set_rate,
- };
- 
- /*
-@@ -698,12 +706,26 @@ static int vc5_probe(struct i2c_client *client,
- 		goto err_clk;
- 	}
- 
-+	/* Register PFD */
-+	memset(&init, 0, sizeof(init));
-+	init.name = vc5_pfd_names[0];
-+	init.ops = &vc5_pfd_ops;
-+	init.flags = CLK_SET_RATE_PARENT;
-+	init.parent_names = vc5_mux_names;
-+	init.num_parents = 1;
-+	vc5->clk_pfd.init = &init;
-+	ret = devm_clk_hw_register(&client->dev, &vc5->clk_pfd);
-+	if (ret) {
-+		dev_err(&client->dev, "unable to register %s\n", init.name);
-+		goto err_clk;
-+	}
-+
- 	/* Register PLL */
- 	memset(&init, 0, sizeof(init));
- 	init.name = vc5_pll_names[0];
- 	init.ops = &vc5_pll_ops;
- 	init.flags = CLK_SET_RATE_PARENT;
--	init.parent_names = vc5_mux_names;
-+	init.parent_names = vc5_pfd_names;
- 	init.num_parents = 1;
- 	vc5->clk_pll.num = 0;
- 	vc5->clk_pll.vc5 = vc5;
--- 
-2.11.0
+> +
+> +- Port 1 - VIN instances (Mandatory for all VIN present in the SoC)
+> +	- Reg 0 - sub-node describing the endpoint that is VIN0
+
+Endpoint 0
+
+> +	- Reg 1 - sub-node describing the endpoint that is VIN1
+
+and so on.
+
+> +	- Reg 2 - sub-node describing the endpoint that is VIN2
+> +	- Reg 3 - sub-node describing the endpoint that is VIN3
+> +	- Reg 4 - sub-node describing the endpoint that is VIN4
+> +	- Reg 5 - sub-node describing the endpoint that is VIN5
+> +	- Reg 6 - sub-node describing the endpoint that is VIN6
+> +	- Reg 7 - sub-node describing the endpoint that is VIN7
+> +
+> +Example:
+> +
+> +/* SoC properties */
+> +
+> +	 csi20: csi2@fea80000 {
+> +		 compatible = "renesas,r8a7796-csi2";
+> +		 reg = <0 0xfea80000 0 0x10000>;
+> +		 interrupts = <0 184 IRQ_TYPE_LEVEL_HIGH>;
+> +		 clocks = <&cpg CPG_MOD 714>;
+> +		 power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+> +		 status = "disabled";
+
+Don't show status in examples.
+
+> +
+> +		 ports {
+> +			 #address-cells = <1>;
+> +			 #size-cells = <0>;
+> +
+> +			 port@1 {
+> +				 #address-cells = <1>;
+> +				 #size-cells = <0>;
+> +
+> +				 reg = <1>;
+> +
+> +				 csi20vin0: endpoint@0 {
+> +					 reg = <0>;
+> +					 remote-endpoint = <&vin0csi20>;
+> +				 };
+> +				 csi20vin1: endpoint@1 {
+> +					 reg = <1>;
+> +					 remote-endpoint = <&vin1csi20>;
+> +				 };
+> +				 csi20vin2: endpoint@2 {
+> +					 reg = <2>;
+> +					 remote-endpoint = <&vin2csi20>;
+> +				 };
+> +				 csi20vin3: endpoint@3 {
+> +					 reg = <3>;
+> +					 remote-endpoint = <&vin3csi20>;
+> +				 };
+> +				 csi20vin4: endpoint@4 {
+> +					 reg = <4>;
+> +					 remote-endpoint = <&vin4csi20>;
+> +				 };
+> +				 csi20vin5: endpoint@5 {
+> +					 reg = <5>;
+> +					 remote-endpoint = <&vin5csi20>;
+> +				 };
+> +				 csi20vin6: endpoint@6 {
+> +					 reg = <6>;
+> +					 remote-endpoint = <&vin6csi20>;
+> +				 };
+> +				 csi20vin7: endpoint@7 {
+> +					 reg = <7>;
+> +					 remote-endpoint = <&vin7csi20>;
+> +				 };
+> +			 };
+> +		 };
+> +	 };
+> +
+> +/* Board properties */
+
+Don't split the example. This is source convention which is independent 
+of the binding.
+
+> +
+> +	&csi20 {
+> +		status = "okay";
+> +
+> +		ports {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +
+> +			port@0 {
+> +				reg = <0>;
+
+Missing #address-cells and #size-cells.
+
+> +				csi20_in: endpoint@0 {
+> +					clock-lanes = <0>;
+> +					data-lanes = <1>;
+> +					remote-endpoint = <&adv7482_txb>;
+> +				};
+> +			};
+> +		};
+> +	};
+> -- 
+> 2.13.1
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
