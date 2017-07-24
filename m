@@ -1,76 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:42651 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752401AbdGaPEC (ORCPT
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:38760 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750796AbdGXT7H (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 31 Jul 2017 11:04:02 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
+        Mon, 24 Jul 2017 15:59:07 -0400
+Date: Mon, 24 Jul 2017 14:59:05 -0500
+From: Rob Herring <robh@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Renesas ARM Based SoC Defconfig Updates for v4.14
-Date: Mon, 31 Jul 2017 17:03:38 +0200
-Message-Id: <cover.1501511664.git.horms+renesas@verge.net.au>
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 3/4] soc: renesas: rcar-sysc: Add support for R-Car D3
+ power areas
+Message-ID: <20170724195905.3wsf6kuxfgygbsuw@rob-hp-laptop>
+References: <1500554094-22198-1-git-send-email-geert+renesas@glider.be>
+ <1500554094-22198-4-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1500554094-22198-4-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+On Thu, Jul 20, 2017 at 02:34:53PM +0200, Geert Uytterhoeven wrote:
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: devicetree@vger.kernel.org
+> ---
+>  .../bindings/power/renesas,rcar-sysc.txt           |  1 +
+>  drivers/soc/renesas/Kconfig                        |  5 ++++
+>  drivers/soc/renesas/Makefile                       |  1 +
+>  drivers/soc/renesas/r8a77995-sysc.c                | 31 ++++++++++++++++++++++
+>  drivers/soc/renesas/rcar-sysc.c                    |  3 +++
+>  drivers/soc/renesas/rcar-sysc.h                    |  1 +
+>  6 files changed, 42 insertions(+)
+>  create mode 100644 drivers/soc/renesas/r8a77995-sysc.c
 
-Please consider these Renesas ARM based SoC defconfig updates for v4.14.
-
-
-The following changes since commit 5771a8c08880cdca3bfb4a3fc6d309d6bba20877:
-
-  Linux v4.13-rc1 (2017-07-15 15:22:10 -0700)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-defconfig-for-v4.14
-
-for you to fetch changes up to 52078ca712cd933844721aaa700b3bd85234841f:
-
-  ARM: multi_v7_defconfig: Enable DMA for Renesas serial ports (2017-07-27 16:06:23 +0200)
-
-----------------------------------------------------------------
-Renesas ARM Based SoC Defconfig Updates for v4.14
-
-* Enable DMA for Renesas serial ports
-
-  Geert Uytterhoeven says, "DMA for (H)SCIF(A|B) serial ports on Renesas
-  R-Car Gen2 and RZ/G1 SoCs is considered stable, hence enable it by
-  default.".
-
-* Enable Ethernet AVB
-
-  For the iWave RZ/G1M Q7 SOM
-
-* Replace DRM_RCAR_HDMI by generic bridge options
-* Replace SND_SOC_RSRC_CARD by SND_SIMPLE_SCU_CARD
-* Replace USB_XHCI_RCAR by USB_XHCI_PLATFORM
-* Enable missing PCIE_RCAR dependency
-
-  Defconfig updates for various Kconfig updates covering
-  renamed Kconfig symbols, now missing dependancies and so on.
-
-----------------------------------------------------------------
-Biju Das (1):
-      ARM: shmobile: defconfig: Enable Ethernet AVB
-
-Geert Uytterhoeven (9):
-      ARM: shmobile: defconfig: Enable missing PCIE_RCAR dependency
-      ARM: shmobile: defconfig: Replace USB_XHCI_RCAR by USB_XHCI_PLATFORM
-      ARM: shmobile: defconfig: Replace SND_SOC_RSRC_CARD by SND_SIMPLE_SCU_CARD
-      ARM: shmobile: defconfig: Replace DRM_RCAR_HDMI by generic bridge options
-      ARM: shmobile: defconfig: Enable DMA for serial ports
-      ARM: shmobile: defconfig: Refresh
-      ARM: multi_v7_defconfig: Replace SND_SOC_RSRC_CARD by SND_SIMPLE_SCU_CARD
-      ARM: multi_v7_defconfig: Replace DRM_RCAR_HDMI by generic bridge options
-      ARM: multi_v7_defconfig: Enable DMA for Renesas serial ports
-
- arch/arm/configs/multi_v7_defconfig |  5 +++--
- arch/arm/configs/shmobile_defconfig | 17 ++++++++++-------
- 2 files changed, 13 insertions(+), 9 deletions(-)
+Acked-by: Rob Herring <robh@kernel.org>
