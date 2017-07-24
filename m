@@ -1,45 +1,37 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:37581 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751490AbdGRQoL (ORCPT
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:37888 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751729AbdGXT5k (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 18 Jul 2017 12:44:11 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-clk@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH 0/2] clk: renesas: rcar-gen3-cpg: refactor accessing the SD div table
-Date: Tue, 18 Jul 2017 18:44:05 +0200
-Message-Id: <20170718164407.22998-1-wsa+renesas@sang-engineering.com>
+        Mon, 24 Jul 2017 15:57:40 -0400
+Date: Mon, 24 Jul 2017 14:57:38 -0500
+From: Rob Herring <robh@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/3] ARM: shmobile: Document R-Car D3 SoC DT bindings
+Message-ID: <20170724195738.tjxzivlwt7jsndvs@rob-hp-laptop>
+References: <1500553741-21890-1-git-send-email-geert+renesas@glider.be>
+ <1500553741-21890-2-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1500553741-21890-2-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Here is a patch series trying to implement the conclusions about accessing the
-SD divider table, coming from this discussion [1]. Patch 1 is a tiny, yet
-seperate cleanup. Patch 2 is the bulk of the work doing the checks only when needed.
-I think the code looks much better now.
+On Thu, Jul 20, 2017 at 02:28:59PM +0200, Geert Uytterhoeven wrote:
+> Note that r8a77995 is the first Renesas "r8a<n>" SoC matching against a 5
+> digit number, as r8a77990 will be a different SoC.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
+>  1 file changed, 2 insertions(+)
 
-I tested this on a Salvator-X (R-Car M3-W) with highspeed and UHS SD cards. I
-could access them and checksum files. I also did not notice any performance
-regressions. There are also no WARNings in the boot log.
-
-Please let me know if this is what you had in mind and if you can think of
-other ways of testing this change.
-
-Thanks,
-
-   Wolfram
-
-[1] https://patchwork.kernel.org/patch/9688509/
-
-Wolfram Sang (2):
-  clk: renesas: rcar-gen3-cpg: drop superfluous variable
-  clk: renesas: rcar-gen3-cpg.c: refactor checks for accessing the div
-    table
-
- drivers/clk/renesas/rcar-gen3-cpg.c | 47 ++++++++++++++++---------------------
- 1 file changed, 20 insertions(+), 27 deletions(-)
-
--- 
-2.11.0
+Acked-by: Rob Herring <robh@kernel.org>
