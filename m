@@ -1,74 +1,338 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from aserp1040.oracle.com ([141.146.126.69]:41229 "EHLO
-        aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753447AbdGCNbo (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:21014 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750757AbdGYG3g (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 3 Jul 2017 09:31:44 -0400
-Date: Mon, 3 Jul 2017 16:31:32 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Chris Brandt <Chris.Brandt@renesas.com>
-Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [bug report] mmc: tmio-mmc: add support for 32bit data port
-Message-ID: <20170703133132.rrwn6kmnyvjhxeo3@mwanda>
-References: <20170629125446.2b5ruac5fev7lqp4@mwanda>
- <SG2PR06MB1165CBAC1354D2E62C3B3FBE8AD20@SG2PR06MB1165.apcprd06.prod.outlook.com>
+        Tue, 25 Jul 2017 02:29:36 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <geert+renesas@glider.be>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+CC: <linux-renesas-soc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH] clk: renesas: rcar-usb2-clock-sel: Add R-Car USB 2.0 clock selector PHY
+Date: Tue, 25 Jul 2017 15:26:27 +0900
+Message-ID: <1500963987-4627-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SG2PR06MB1165CBAC1354D2E62C3B3FBE8AD20@SG2PR06MB1165.apcprd06.prod.outlook.com>
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Jun 29, 2017 at 04:02:11PM +0000, Chris Brandt wrote:
-> Personally, I think a buffer of raw data should be a 'u8 *', not a 
-> 'unsigned short *'.
+R-Car USB 2.0 controller can change the clock source from an oscillator
+to an external clock via a register. So, this patch adds support
+the clock source selector as a clock driver.
 
-That works, or you could make it a void pointer.  (void *)foo + x and
-(u8 *)foo + x are equivalent in kernel code.
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ This patch is based on the renesas-drivers.git /
+renesas-drivers-2017-07-18-v4.13-rc1 tag.
 
-> And, the parameter name "count" should really be something like "size" 
-> or "length" (but that is still confusing because the passed array 'buf' 
-> was designated as an array of "unsigned short *", so what would 'size' 
-> really mean??)
-> 
-> Anyway, that is the API that's in place today, so that's what I needed 
-> to work with.
+ Changes from v2:
+  - Fix the example of device tree doc.
+  - Replace some 8 spaces to a tab in the device tree doc.
+  - Add Rob's Acked-by for the doc.
+  - Drop CLK_IS_BASIC on init.flag.
+  - Use of_clk_add_hw_provider() instead of of_clk_add_provider().
+  - Use builtin_platform_driver() instead of syscall_init_sync().
+  - Use pm_runtime APIs instead of clk APIs for "ehci_ohci" clk.
 
-You can change it.  This is the kernel so you can change anything if it
-makes sense.
+ Changes from v1:
+  - Change this driver as a clock driver from a generic phy driver.
+    https://patchwork.kernel.org/patch/9788697/
+  - Remove "RFC" tag.
 
-> 
-> 
-> > 
-> >    417                  else
-> >    418                          sd_ctrl_write32_rep(host, CTL_SD_DATA_PORT,
-> > (u32 *)buf,
-> >    419                                              count >> 2);
-> >    420
-> >    421                  /* if count was multiple of 4 */
-> >    422                  if (!(count & 0x3))
-> >    423                          return;
-> >    424
-> >    425                  buf8 = (u8 *)(buf + (count >> 2));
-> > 
-> > 
-> > And this looks like the bug...  buf is a u16 pointer but we're adding
-> > "count / sizeof(u32)" when we should be adding "count / (sizeof(*buf))".
-> 
-> I agree this math does not work out to what I wanted because of the 
-> differences in data types.
-> 
-> Since I simply wanted to get a pointer to where I left off in the 
-> buffer, maybe the most clear thing to do is just cast buf and do simple math:
-> 
->    buf8 = (u8 *)buf + (count & ~3);
-> 
-> 
-> Do you agree?
+ .../bindings/clock/renesas,rcar-usb2-clock-sel.txt |  55 ++++++
+ drivers/clk/renesas/Kconfig                        |   5 +
+ drivers/clk/renesas/Makefile                       |   1 +
+ drivers/clk/renesas/rcar-usb2-clock-sel.c          | 188 +++++++++++++++++++++
+ 4 files changed, 249 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.txt
+ create mode 100644 drivers/clk/renesas/rcar-usb2-clock-sel.c
 
-Sure.  Unless you want to round up?
-
-regards,
-dan carpenter
+diff --git a/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.txt b/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.txt
+new file mode 100644
+index 0000000..e96e085
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.txt
+@@ -0,0 +1,55 @@
++* Renesas R-Car USB 2.0 clock selector
++
++This file provides information on what the device node for the R-Car USB 2.0
++clock selector.
++
++If you connect an external clock to the USB_EXTAL pin only, you should set
++the clock rate to "usb_extal" node only.
++If you connect an oscillator to both the USB_XTAL and USB_EXTAL, this module
++is not needed because this is default setting. (Of course, you can set the
++clock rates to both "usb_extal" and "usb_xtal" nodes.
++
++Case 1: An external clock connects to R-Car SoC
++	+----------+   +--- R-Car ---------------------+
++	|External  |---|USB_EXTAL ---> all usb channels|
++	|clock     |   |USB_XTAL                       |
++	+----------+   +-------------------------------+
++In this case, we need this driver with "usb_extal" clock.
++
++Case 2: An oscillator connects to R-Car SoC
++	+----------+   +--- R-Car ---------------------+
++	|Oscillator|---|USB_EXTAL -+-> all usb channels|
++	|          |---|USB_XTAL --+                   |
++	+----------+   +-------------------------------+
++In this case, we don't need this selector.
++
++Required properties:
++- compatible: "renesas,r8a7795-rcar-usb2-clock-sel" if the device is a part of
++	      an R8A7795 SoC.
++	      "renesas,r8a7796-rcar-usb2-clock-sel" if the device if a part of
++	      an R8A7796 SoC.
++	      "renesas,rcar-gen3-usb2-clock-sel" for a generic R-Car Gen3
++	      compatible device.
++
++	      When compatible with the generic version, nodes must list the
++	      SoC-specific version corresponding to the platform first
++	      followed by the generic version.
++
++- reg: offset and length of the USB 2.0 clock selector register block.
++- clocks: A list of phandles and specifier pairs.
++- clock-names: Name of the clocks.
++ - The functional clock must be "ehci_ohci"
++ - The USB_EXTAL clock pin must be "usb_extal"
++ - The USB_XTAL clock pin must be "usb_xtal"
++- #clock-cells: Must be 0
++
++Example (R-Car H3):
++
++	usb2_clksel: clock-controller@e6590630 {
++		compatible = "renesas,r8a77950-rcar-usb2-clock-sel",
++			     "renesas,rcar-gen3-usb2-clock-sel";
++		reg = <0 0xe6590630 0 0x02>;
++		clocks = <&cpg CPG_MOD 703>, <&usb_extal>, <&usb_xtal>;
++		clock-names = "ehci_ohci", "usb_extal", "usb_xtal";
++		#clock-cells = <0>;
++	};
+diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
+index 85526ca..6fb89fd 100644
+--- a/drivers/clk/renesas/Kconfig
++++ b/drivers/clk/renesas/Kconfig
+@@ -114,6 +114,11 @@ config CLK_RCAR_GEN3_CPG
+ 	bool "R-Car Gen3 CPG clock support" if COMPILE_TEST
+ 	select CLK_RENESAS_CPG_MSSR
+ 
++config CLK_RCAR_USB2_CLOCK_SEL
++	bool "Renesas R-Car USB2 clock selector support"
++	depends on ARCH_RENESAS || COMPILE_TEST
++	help
++	  This is a driver for R-Car USB2 clock selector
+ 
+ # Generic
+ config CLK_RENESAS_CPG_MSSR
+diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
+index 02d0412..4eec85b 100644
+--- a/drivers/clk/renesas/Makefile
++++ b/drivers/clk/renesas/Makefile
+@@ -19,6 +19,7 @@ obj-$(CONFIG_CLK_SH73A0)		+= clk-sh73a0.o
+ obj-$(CONFIG_CLK_RCAR_GEN2)		+= clk-rcar-gen2.o
+ obj-$(CONFIG_CLK_RCAR_GEN2_CPG)		+= rcar-gen2-cpg.o
+ obj-$(CONFIG_CLK_RCAR_GEN3_CPG)		+= rcar-gen3-cpg.o
++obj-$(CONFIG_CLK_RCAR_USB2_CLOCK_SEL)	+= rcar-usb2-clock-sel.o
+ 
+ # Generic
+ obj-$(CONFIG_CLK_RENESAS_CPG_MSSR)	+= renesas-cpg-mssr.o
+diff --git a/drivers/clk/renesas/rcar-usb2-clock-sel.c b/drivers/clk/renesas/rcar-usb2-clock-sel.c
+new file mode 100644
+index 0000000..2fe7225
+--- /dev/null
++++ b/drivers/clk/renesas/rcar-usb2-clock-sel.c
+@@ -0,0 +1,188 @@
++/*
++ * Renesas R-Car USB2.0 clock selector
++ *
++ * Copyright (C) 2017 Renesas Electronics Corp.
++ *
++ * Based on renesas-cpg-mssr.c
++ *
++ * Copyright (C) 2015 Glider bvba
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; version 2 of the License.
++ */
++
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include <linux/device.h>
++#include <linux/init.h>
++#include <linux/module.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++#include <linux/pm.h>
++#include <linux/pm_runtime.h>
++#include <linux/slab.h>
++
++#define USB20_CLKSET0		0x00
++#define CLKSET0_INTCLK_EN	BIT(11)
++#define CLKSET0_PRIVATE		BIT(0)
++#define CLKSET0_EXTAL_ONLY	(CLKSET0_INTCLK_EN | CLKSET0_PRIVATE)
++
++struct usb2_clock_sel_priv {
++	void __iomem *base;
++	struct clk_hw hw;
++	bool extal;
++	bool xtal;
++};
++#define to_priv(_hw)	container_of(_hw, struct usb2_clock_sel_priv, hw)
++
++static void usb2_clock_sel_enable_extal_only(struct usb2_clock_sel_priv *priv)
++{
++	u16 val = readw(priv->base + USB20_CLKSET0);
++
++	pr_debug("%s: enter %d %d %x\n", __func__,
++		 priv->extal, priv->xtal, val);
++
++	if (priv->extal && !priv->xtal && val != CLKSET0_EXTAL_ONLY)
++		writew(CLKSET0_EXTAL_ONLY, priv->base + USB20_CLKSET0);
++}
++
++static void usb2_clock_sel_disable_extal_only(struct usb2_clock_sel_priv *priv)
++{
++	if (priv->extal && !priv->xtal)
++		writew(CLKSET0_PRIVATE, priv->base + USB20_CLKSET0);
++}
++
++static int usb2_clock_sel_enable(struct clk_hw *hw)
++{
++	usb2_clock_sel_enable_extal_only(to_priv(hw));
++
++	return 0;
++}
++
++static void usb2_clock_sel_disable(struct clk_hw *hw)
++{
++	usb2_clock_sel_disable_extal_only(to_priv(hw));
++}
++
++/*
++ * This module seems a mux, but this driver assumes a gate because
++ * ehci/ohci platform drivers don't support clk_set_parent() for now.
++ * If this driver acts as a gate, ehci/ohci-platform drivers don't need
++ * any modification.
++ */
++static const struct clk_ops usb2_clock_sel_clock_ops = {
++	.enable = usb2_clock_sel_enable,
++	.disable = usb2_clock_sel_disable,
++};
++
++static const struct of_device_id rcar_usb2_clock_sel_match[] = {
++	{ .compatible = "renesas,rcar-gen3-usb2-clock-sel" },
++	{ }
++};
++
++static int rcar_usb2_clock_sel_suspend(struct device *dev)
++{
++	struct usb2_clock_sel_priv *priv = dev_get_drvdata(dev);
++
++	usb2_clock_sel_disable_extal_only(priv);
++	pm_runtime_put(dev);
++
++	return 0;
++}
++
++static int rcar_usb2_clock_sel_resume(struct device *dev)
++{
++	struct usb2_clock_sel_priv *priv = dev_get_drvdata(dev);
++
++	pm_runtime_get_sync(dev);
++	usb2_clock_sel_enable_extal_only(priv);
++
++	return 0;
++}
++
++static int rcar_usb2_clock_sel_remove(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct usb2_clock_sel_priv *priv = platform_get_drvdata(pdev);
++
++	of_clk_del_provider(dev->of_node);
++	clk_hw_unregister(&priv->hw);
++	pm_runtime_put(dev);
++	pm_runtime_disable(dev);
++
++	return 0;
++}
++
++static int rcar_usb2_clock_sel_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct device_node *np = dev->of_node;
++	struct usb2_clock_sel_priv *priv;
++	struct resource *res;
++	struct clk *clk;
++	struct clk_init_data init;
++
++	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	priv->base = devm_ioremap_resource(dev, res);
++	if (IS_ERR(priv->base))
++		return PTR_ERR(priv->base);
++
++	pm_runtime_enable(dev);
++	pm_runtime_get_sync(dev);
++
++	clk = devm_clk_get(dev, "usb_extal");
++	if (!IS_ERR(clk) && !clk_prepare_enable(clk)) {
++		priv->extal = !!clk_get_rate(clk);
++		clk_disable_unprepare(clk);
++	}
++	clk = devm_clk_get(dev, "usb_xtal");
++	if (!IS_ERR(clk) && !clk_prepare_enable(clk)) {
++		priv->xtal = !!clk_get_rate(clk);
++		clk_disable_unprepare(clk);
++	}
++
++	if (!priv->extal && !priv->extal) {
++		dev_err(dev, "This driver needs usb_extal or usb_xtal\n");
++		return -ENOENT;
++	}
++
++	platform_set_drvdata(pdev, priv);
++	dev_set_drvdata(dev, priv);
++
++	init.name = "rcar_usb2_clock_sel";
++	init.ops = &usb2_clock_sel_clock_ops;
++	init.flags = 0;
++	init.parent_names = NULL;
++	init.num_parents = 0;
++	priv->hw.init = &init;
++
++	clk = clk_register(NULL, &priv->hw);
++	if (IS_ERR(clk))
++		return PTR_ERR(clk);
++
++	return of_clk_add_hw_provider(np, of_clk_hw_simple_get, &priv->hw);
++}
++
++static const struct dev_pm_ops rcar_usb2_clock_sel_pm_ops = {
++	.suspend	= rcar_usb2_clock_sel_suspend,
++	.resume		= rcar_usb2_clock_sel_resume,
++};
++
++static struct platform_driver rcar_usb2_clock_sel_driver = {
++	.driver		= {
++		.name	= "rcar-usb2-clock-sel",
++		.of_match_table = rcar_usb2_clock_sel_match,
++		.pm	= &rcar_usb2_clock_sel_pm_ops,
++	},
++	.probe		= rcar_usb2_clock_sel_probe,
++	.remove		= rcar_usb2_clock_sel_remove,
++};
++builtin_platform_driver(rcar_usb2_clock_sel_driver);
++
++MODULE_DESCRIPTION("Renesas R-Car USB2 clock selector Driver");
++MODULE_LICENSE("GPL v2");
+-- 
+1.9.1
