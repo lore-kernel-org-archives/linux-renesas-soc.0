@@ -1,88 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:48102 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751642AbdGRO0k (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:43442 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751883AbdGZORs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 18 Jul 2017 10:26:40 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 0/3] ARM: renesas: Enable SMP on R-Car E2
-Date: Tue, 18 Jul 2017 16:26:24 +0200
-Message-Id: <1500387987-9240-1-git-send-email-geert+renesas@glider.be>
+        Wed, 26 Jul 2017 10:17:48 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
+In-Reply-To: <87379mxro6.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1daN8A-0003kl-SR@debutante>
+Date: Wed, 26 Jul 2017 15:17:42 +0100
+Subject: Applied "ASoC: sh: hac: add missing "int ret"" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi all,
+The patch
 
-This patch series enables SMP on R-Car E2 (r8a7794).
-The main hurdle here is that R-Car Gen2 boot loaders do not initialize the
-arch_timer CNTVOFF register, which thus needs workarounds on Linux.
+   ASoC: sh: hac: add missing "int ret"
 
-  - The first patch adds a definition for MON_MODE, as suggested by Marc
-    Zyngier,
-  - The second patch makes sure CNTVOFF is initialized for boot and
-    secondary Cortex-A15 and Cortex-A7 CPU cores, like is already done
-    for the boot Cortex-A7 CPU core.  Without this, the ARM arch timer
-    does not work on secondary CPU cores.
-    This patch depends on "[PATCH v2] ARM: shmobile: rcar-gen2: Correct
-    arch timer frequency on RZ/G1E".
-  - The third patch adds the required infrastructure (APMU device node
-    and corresponding enable-method) to DT.
-    Obviously this must not be applied on a branch that does not contain
-    the first two patches!
+has been applied to the asoc tree at
 
-Due to dependencies, I think it is easiest if the ARM maintainers provide
-their Acked-by for patch 1, so the whole series can go in through Simon's
-Renesas tree.
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-Changes compared to v1:
-  - New patch "[PATCH v2 1/3] ARM: Add definition for monitor mode",
-  - Initialize CNTVOFF on Cortex-A15, too,
-  - Use *_MODE definitions instead of hardcoded values,
-  - Reduce duplication by calling the asm version from C,
-  - Always build headsmp-apmu.o on R-Car Gen2.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-This has been tested on r8a7794/alt (dual Cortex-A7), and regression-tested
-on r8a7790/lager (quad Cortex-A15), and r8a7791/koelsch, r8a7791/porter,
-r8a7792/blanche, and r8a7793/gose (dual Cortex-A15).
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-Thanks!
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-Geert Uytterhoeven (2):
-  ARM: Add definition for monitor mode
-  ARM: shmobile: rcar-gen2: Make sure CNTVOFF is initialized on CA7/15
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-Sergei Shtylyov (1):
-  ARM: dts: r8a7794: Add SMP support
+Thanks,
+Mark
 
- arch/arm/boot/dts/r8a7794.dtsi           |  7 ++++++
- arch/arm/include/uapi/asm/ptrace.h       |  1 +
- arch/arm/mach-shmobile/Makefile          |  1 +
- arch/arm/mach-shmobile/common.h          |  2 ++
- arch/arm/mach-shmobile/headsmp-apmu.S    | 37 ++++++++++++++++++++++++++++++++
- arch/arm/mach-shmobile/platsmp-apmu.c    |  2 +-
- arch/arm/mach-shmobile/setup-rcar-gen2.c | 20 ++---------------
- 7 files changed, 51 insertions(+), 19 deletions(-)
- create mode 100644 arch/arm/mach-shmobile/headsmp-apmu.S
+>From 295c5ba4c0886b7d55e229218b077fe3510b0ccd Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Mon, 24 Jul 2017 06:47:59 +0000
+Subject: [PATCH] ASoC: sh: hac: add missing "int ret"
 
+commit b047e1cce8 ("ASoC: ac97: Support multi-platform AC'97")
+modified hac_soc_platform_probe(), but "int ret" was missed.
+This patch adds missing "int ret", otherwise, we will get
+
+linux/sound/soc/sh/hac.c: In function 'hac_soc_platform_probe':
+linux/sound/soc/sh/hac.c:318: error: 'ret' undeclared (first use in this function)
+linux/sound/soc/sh/hac.c:318: error: (Each undeclared identifier is reported only once
+linux/sound/soc/sh/hac.c:318: error: for each function it appears in.)
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/sh/hac.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/sound/soc/sh/hac.c b/sound/soc/sh/hac.c
+index 84c51037a7d0..624aaf569fef 100644
+--- a/sound/soc/sh/hac.c
++++ b/sound/soc/sh/hac.c
+@@ -315,6 +315,8 @@ static const struct snd_soc_component_driver sh4_hac_component = {
+ 
+ static int hac_soc_platform_probe(struct platform_device *pdev)
+ {
++	int ret;
++
+ 	ret = snd_soc_set_ac97_ops(&hac_ac97_ops);
+ 	if (ret != 0)
+ 		return ret;
 -- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+2.13.2
