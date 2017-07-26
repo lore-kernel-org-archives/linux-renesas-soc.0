@@ -1,125 +1,145 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:34844 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751420AbdGZVy6 (ORCPT
+Received: from mail-lf0-f52.google.com ([209.85.215.52]:32929 "EHLO
+        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750922AbdGZIim (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 26 Jul 2017 17:54:58 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-watchdog@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH 1/3] watchdog: renesas_wdt: consistently use RuntimePM for clock management
-Date: Wed, 26 Jul 2017 23:54:37 +0200
-Message-Id: <20170726215439.9623-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170726215439.9623-1-wsa+renesas@sang-engineering.com>
-References: <20170726215439.9623-1-wsa+renesas@sang-engineering.com>
+        Wed, 26 Jul 2017 04:38:42 -0400
+Received: by mail-lf0-f52.google.com with SMTP id p2so49865186lfg.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 26 Jul 2017 01:38:41 -0700 (PDT)
+Date: Wed, 26 Jul 2017 10:38:39 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Naman Jain <nsahula.photo.sharing@gmail.com>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: adv7281m and rcar-vin problem
+Message-ID: <20170726083838.GC22320@bigcity.dyn.berto.se>
+References: <CAPD8ABUMQgL88WdTHLsVuGRqJR46TJuJ4jHzPm7bgdBJp9k_sw@mail.gmail.com>
+ <20170724094158.GA22320@bigcity.dyn.berto.se>
+ <CAPD8ABWD7wqQiYLKiX4AV88Wzjcsc8aH6GgybWiawcAufiQx-g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPD8ABWD7wqQiYLKiX4AV88Wzjcsc8aH6GgybWiawcAufiQx-g@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Renesas R-Car archs, RuntimePM does all the clock handling. So, use
-it consistently to enable/disable the clocks. Also make sure that clocks
-are really enabled around clk_get_rate(). clk_summary looks proper now:
+Hi Naman,
 
-		clock	enable_cnt	prepare_cnt	rate ...
-Before this commit:
+On 2017-07-24 22:43:06 +0530, Naman Jain wrote:
+> On Mon, Jul 24, 2017 at 3:11 PM, Niklas S�derlund
+> <niklas.soderlund@ragnatech.se> wrote:
+> > Hi Naman,
+> >
+> > On 2017-07-24 14:30:52 +0530, Naman Jain wrote:
+> >> i am using renesas soc with video decoder adv7281m
+> >> i have done thr device tree configuration by following dt bindings
+> >> i am getting timeout of reading the phy clock lane, after i start streaming
+> >> and nothing is displayed on the screen
+> >> kindly help me in configuration
+> >
+> > To be able to try and help you I would need a lot more information. For
+> > starters:
+> >
+> > - Which kernel version are you using?
+> >
+> > - How dose the device tree nodes for VIN and ADV7281m look like?
+> >
+> > --
+> > Regards,
+> > Niklas S�derlund
+> 
+> Hi Niklas,
+> 
+> I am using kernel version  - 4.9
 
-At boot:	rwdt	1		1		32768 0 0
-WDT running:	rwdt	2		2		32768 0 0
+The VIN driver which supports CSI-2 and the R-Car CSI-2 driver is not a 
+part of the upstream kernel yet, and the latest patches with contains 
+the most fixes are based on newer kernels then v4.9. So I assume you are 
+using a BSP of some sort, if possible could you tell me which one?
 
-After this commit:
+If you want to try with later increments of the VIN and CSI-2 patches 
+please see:
 
-At boot:	rwdt	0		1		32768 0 0
-WDT running	rwdt	1		1		32768 0 0
+http://elinux.org/R-Car/Tests:rcar-vin
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/watchdog/renesas_wdt.c | 33 +++++++++++++++++++--------------
- 1 file changed, 19 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
-index e3f204bb8802aa..a03997b418ba9c 100644
---- a/drivers/watchdog/renesas_wdt.c
-+++ b/drivers/watchdog/renesas_wdt.c
-@@ -76,7 +76,7 @@ static int rwdt_start(struct watchdog_device *wdev)
- {
- 	struct rwdt_priv *priv = watchdog_get_drvdata(wdev);
- 
--	clk_prepare_enable(priv->clk);
-+	pm_runtime_get_sync(wdev->parent);
- 
- 	rwdt_write(priv, 0, RWTCSRB);
- 	rwdt_write(priv, priv->cks, RWTCSRA);
-@@ -95,7 +95,7 @@ static int rwdt_stop(struct watchdog_device *wdev)
- 	struct rwdt_priv *priv = watchdog_get_drvdata(wdev);
- 
- 	rwdt_write(priv, priv->cks, RWTCSRA);
--	clk_disable_unprepare(priv->clk);
-+	pm_runtime_put(wdev->parent);
- 
- 	return 0;
- }
-@@ -141,9 +141,16 @@ static int rwdt_probe(struct platform_device *pdev)
- 	if (IS_ERR(priv->clk))
- 		return PTR_ERR(priv->clk);
- 
-+	pm_runtime_enable(&pdev->dev);
-+
-+	pm_runtime_get_sync(&pdev->dev);
- 	priv->clk_rate = clk_get_rate(priv->clk);
--	if (!priv->clk_rate)
--		return -ENOENT;
-+	pm_runtime_put(&pdev->dev);
-+
-+	if (!priv->clk_rate) {
-+		ret = -ENOENT;
-+		goto out_pm_disable;
-+	}
- 
- 	for (i = ARRAY_SIZE(clk_divs) - 1; i >= 0; i--) {
- 		clks_per_sec = priv->clk_rate / clk_divs[i];
-@@ -155,12 +162,10 @@ static int rwdt_probe(struct platform_device *pdev)
- 
- 	if (i < 0) {
- 		dev_err(&pdev->dev, "Can't find suitable clock divider\n");
--		return -ERANGE;
-+		ret = -ERANGE;
-+		goto out_pm_disable;
- 	}
- 
--	pm_runtime_enable(&pdev->dev);
--	pm_runtime_get_sync(&pdev->dev);
--
- 	priv->wdev.info = &rwdt_ident,
- 	priv->wdev.ops = &rwdt_ops,
- 	priv->wdev.parent = &pdev->dev;
-@@ -178,13 +183,14 @@ static int rwdt_probe(struct platform_device *pdev)
- 		dev_warn(&pdev->dev, "Specified timeout value invalid, using default\n");
- 
- 	ret = watchdog_register_device(&priv->wdev);
--	if (ret < 0) {
--		pm_runtime_put(&pdev->dev);
--		pm_runtime_disable(&pdev->dev);
--		return ret;
--	}
-+	if (ret < 0)
-+		goto out_pm_disable;
- 
- 	return 0;
-+
-+ out_pm_disable:
-+	pm_runtime_disable(&pdev->dev);
-+	return ret;
- }
- 
- static int rwdt_remove(struct platform_device *pdev)
-@@ -192,7 +198,6 @@ static int rwdt_remove(struct platform_device *pdev)
- 	struct rwdt_priv *priv = platform_get_drvdata(pdev);
- 
- 	watchdog_unregister_device(&priv->wdev);
--	pm_runtime_put(&pdev->dev);
- 	pm_runtime_disable(&pdev->dev);
- 
- 	return 0;
+> 
+> following is the device tree configuration :
+> 
+> &i2c6 {
+> status = "okay";
+> clock-frequency = <400000>;
+> adv7281m@21{
+>                    compatible = "adi,adv7281-m";
+>                    reg = <0x20>;
+>                    interrupt-parent = <&gpio6>;
+>                    interrupts = <4 IRQ_TYPE_LEVEL_LOW>
+>                    adv7281m_out: endpoint {
+>                                 clock-lanes = <0>;
+>                                 data-lanes = <1>;
+>                                 remote-endpoint = <&csi20_in>;
+>                                  };
+>                };
+> 
+> }
+> 
+> &csi20 {
+>   status = "okay";
+>   ports {
+>          #address-cells = <1>;
+>          #size-cells = <0>;
+> 
+>          port@0 {
+>                         reg = <0>;
+>                         csi20_in: endpoint {
+>                                                    clock-lanes = <0>;
+>                                                    data-lanes = <1>;
+>                                                     virtual-channel-number=<0>;
+
+This is interesting for me, I have not worked with any driver for the 
+R-Car CSI-2 driver which understands the virtual-channel-number 
+property.
+
+>                                                    remote-endpoint =
+> <&adv7281m_out>;
+>                                             };
+>                        };
+>             };
+> };
+> 
+> &vin0 {
+> status = "okay";
+> };
+> 
+> &vin1 {
+> status = "okay";
+> };
+> 
+> &vin2 {
+> status = "okay";
+> };
+> 
+> &vin3 {
+> status = "okay";
+> };
+> 
+> &vin4 {
+> status = "okay";
+> };
+> 
+> &vin5 {
+> status = "okay";
+> };
+> 
+> &vin6 {
+> status = "okay";
+> };
+> 
+> &vin7 {
+> status = "okay";
+> };
+
 -- 
-2.11.0
+Regards,
+Niklas S�derlund
