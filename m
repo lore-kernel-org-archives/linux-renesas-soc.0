@@ -1,78 +1,85 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:41146 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756504AbdGLL6h (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:56226 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751474AbdGZLcx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 12 Jul 2017 07:58:37 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Chris Paterson <chris.paterson2@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] pinctrl: sh-pfc: r8a7791: Add missing mmc_data8_b pin group
-Date: Wed, 12 Jul 2017 13:58:33 +0200
-Message-Id: <1499860713-27650-1-git-send-email-geert+renesas@glider.be>
+        Wed, 26 Jul 2017 07:32:53 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 4/5] arm64: dts: renesas: r8a7795: add usb-dmac ch2 and ch3 device nodes
+Date: Wed, 26 Jul 2017 20:29:39 +0900
+Message-Id: <1501068580-3981-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1501068580-3981-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1501068580-3981-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Pins D6 and D7 of the MMC interface can be muxed to two different sets
-of pins, but currently only one set is supported.
-Add a pin group for the alternative set to fix this.
+This patch adds support for usb-dmac ch2 and ch3 device nodes for
+R-Car H3 ES2.0.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
-To be queued in sh-pfc-for-v4.14.
+ arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi |  3 +++
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi     | 28 ++++++++++++++++++++++++++++
+ 2 files changed, 31 insertions(+)
 
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-index 4c5ffbd75be77148..10bd35f8c894c58e 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-@@ -2589,6 +2589,17 @@ static const unsigned int mmc_data8_mux[] = {
- 	MMC_D0_MARK, MMC_D1_MARK, MMC_D2_MARK, MMC_D3_MARK,
- 	MMC_D4_MARK, MMC_D5_MARK, MMC_D6_MARK, MMC_D7_MARK,
- };
-+static const unsigned int mmc_data8_b_pins[] = {
-+	/* D[0:7] */
-+	RCAR_GP_PIN(6, 18), RCAR_GP_PIN(6, 19),
-+	RCAR_GP_PIN(6, 20), RCAR_GP_PIN(6, 21),
-+	RCAR_GP_PIN(6, 22), RCAR_GP_PIN(6, 23),
-+	RCAR_GP_PIN(6, 6), RCAR_GP_PIN(6, 7),
-+};
-+static const unsigned int mmc_data8_b_mux[] = {
-+	MMC_D0_MARK, MMC_D1_MARK, MMC_D2_MARK, MMC_D3_MARK,
-+	MMC_D4_MARK, MMC_D5_MARK, MMC_D6_B_MARK, MMC_D7_B_MARK,
-+};
- static const unsigned int mmc_ctrl_pins[] = {
- 	/* CLK, CMD */
- 	RCAR_GP_PIN(6, 16), RCAR_GP_PIN(6, 17),
-@@ -4420,7 +4431,7 @@ static const unsigned int vin2_clk_mux[] = {
- };
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+index 1eccc7c..9743aca 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+@@ -25,6 +25,9 @@
+ 	/delete-node/ usb@ee0e0100;
+ 	/delete-node/ usb@ee0e0000;
  
- static const struct {
--	struct sh_pfc_pin_group common[341];
-+	struct sh_pfc_pin_group common[342];
- 	struct sh_pfc_pin_group r8a779x[9];
- } pinmux_groups = {
- 	.common = {
-@@ -4523,6 +4534,7 @@ static const struct {
- 		SH_PFC_PIN_GROUP(mmc_data1),
- 		SH_PFC_PIN_GROUP(mmc_data4),
- 		SH_PFC_PIN_GROUP(mmc_data8),
-+		SH_PFC_PIN_GROUP(mmc_data8_b),
- 		SH_PFC_PIN_GROUP(mmc_ctrl),
- 		SH_PFC_PIN_GROUP(msiof0_clk),
- 		SH_PFC_PIN_GROUP(msiof0_sync),
-@@ -4955,6 +4967,7 @@ static const char * const mmc_groups[] = {
- 	"mmc_data1",
- 	"mmc_data4",
- 	"mmc_data8",
-+	"mmc_data8_b",
- 	"mmc_ctrl",
- };
++	/delete-node/ dma-controller@e6460000;
++	/delete-node/ dma-controller@e6470000;
++
+ 	fcpf2: fcp@fe952000 {
+ 		compatible = "renesas,fcpf";
+ 		reg = <0 0xfe952000 0 0x200>;
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index c3b1285..d1381d9 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -1499,6 +1499,34 @@
+ 			dma-channels = <2>;
+ 		};
  
++		usb_dmac2: dma-controller@e6460000 {
++			compatible = "renesas,r8a7795-usb-dmac",
++				     "renesas,usb-dmac";
++			reg = <0 0xe6460000 0 0x100>;
++			interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1";
++			clocks = <&cpg CPG_MOD 326>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++			resets = <&cpg 326>;
++			#dma-cells = <1>;
++			dma-channels = <2>;
++		};
++
++		usb_dmac3: dma-controller@e6470000 {
++			compatible = "renesas,r8a7795-usb-dmac",
++				     "renesas,usb-dmac";
++			reg = <0 0xe6470000 0 0x100>;
++			interrupts = <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1";
++			clocks = <&cpg CPG_MOD 329>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++			resets = <&cpg 329>;
++			#dma-cells = <1>;
++			dma-channels = <2>;
++		};
++
+ 		sdhi0: sd@ee100000 {
+ 			compatible = "renesas,sdhi-r8a7795";
+ 			reg = <0 0xee100000 0 0x2000>;
 -- 
-2.7.4
+1.9.1
