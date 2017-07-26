@@ -1,75 +1,97 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:42947 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752324AbdGaPEg (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:33557 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751068AbdGZLbO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 31 Jul 2017 11:04:36 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Renesas ARM Based SoC DT Bindings Updates for v4.14
-Date: Mon, 31 Jul 2017 17:04:29 +0200
-Message-Id: <cover.1501512759.git.horms+renesas@verge.net.au>
+        Wed, 26 Jul 2017 07:31:14 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
+        linus.walleij@linaro.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 1/2] pinctrl: sh-pfc: r8a7795: Change USB3_{OVC,PWEN} definitions
+Date: Wed, 26 Jul 2017 20:28:10 +0900
+Message-Id: <1501068491-3926-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1501068491-3926-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1501068491-3926-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+Since the latest datasheet revises the names, this patch changes
+the definitions from USB3_{OVC,PWEN} to USB2_CH3_{OVC,PWEN}.
 
-Please consider these Renesas ARM based SoC DT bindings updates for v4.14.
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-
-The following changes since commit 5771a8c08880cdca3bfb4a3fc6d309d6bba20877:
-
-  Linux v4.13-rc1 (2017-07-15 15:22:10 -0700)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-dt-bindings-for-v4.14
-
-for you to fetch changes up to 100acb0bd90be67b3fc625cff91c7617b791743d:
-
-  ARM: shmobile: Document Renesas Draak board DT bindings (2017-07-27 17:10:48 +0200)
-
-----------------------------------------------------------------
-Renesas ARM Based SoC DT Bindings Updates for v4.14
-
-* Document R-Car D3 (r8a77995) SoC and Draak board
-
-* Document reserved SRAM for the SMP jump stub on R-Car Gen2 and RZ/G1 SoCs
-
-  Geert Uytterhoeven says, "+Renesas R-Car Gen2 and RZ/G1 SoCs need a small
-  piece of SRAM for the jump stub +for secondary CPU bringup and CPU
-  hotplug.  +This memory is reserved by adding a child node to a
-  "mmio-sram" node..."
-
-* Add a VSP channel index to DU vsps
-
-  Laurent Pinchart says, "multiple LIF instances in the VSP. The current DT
-  bindings don't support specifying that kind of SoC integration scheme.
-  Extend them with a VSP channel index."
-
-* Add R-Car M3-W (r8a7796) HDMI TX DT bindings
-
-  This is compatible with existing R-Car H3 (r8a7795) support
-
-----------------------------------------------------------------
-Geert Uytterhoeven (3):
-      dt-bindings: sram: Document renesas,smp-sram
-      ARM: shmobile: Document R-Car D3 SoC DT bindings
-      ARM: shmobile: Document Renesas Draak board DT bindings
-
-Laurent Pinchart (2):
-      dt-bindings: display: renesas: Add R-Car M3-W HDMI TX DT bindings
-      dt-bindings: display: rcar-du: Add a VSP channel index to the vsps DT property
-
- Documentation/devicetree/bindings/arm/shmobile.txt |  4 ++
- .../bindings/display/bridge/renesas,dw-hdmi.txt    |  1 +
- .../devicetree/bindings/display/renesas,du.txt     | 51 +++++++++++++---------
- .../devicetree/bindings/sram/renesas,smp-sram.txt  | 27 ++++++++++++
- 4 files changed, 62 insertions(+), 21 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/sram/renesas,smp-sram.txt
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+index 7df11d4..947abbd9 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+@@ -168,8 +168,8 @@
+ #define GPSR5_0		F_(SCK0,		IP11_27_24)
+ 
+ /* GPSR6 */
+-#define GPSR6_31	F_(USB3_OVC,		IP18_7_4)
+-#define GPSR6_30	F_(USB3_PWEN,		IP18_3_0)
++#define GPSR6_31	F_(USB2_CH3_OVC,	IP18_7_4)
++#define GPSR6_30	F_(USB2_CH3_PWEN,	IP18_3_0)
+ #define GPSR6_29	F_(USB30_OVC,		IP17_31_28)
+ #define GPSR6_28	F_(USB30_PWEN,		IP17_27_24)
+ #define GPSR6_27	F_(USB1_OVC,		IP17_23_20)
+@@ -361,8 +361,8 @@
+ #define IP17_23_20	FM(USB1_OVC)		F_(0, 0)	FM(MSIOF1_SS2_C)	F_(0, 0)			FM(SSI_WS1_A)	FM(TS_SDAT0_E)	FM(STP_ISD_0_E)		FM(FMIN_B)	FM(RIF2_SYNC_B)		F_(0, 0)	FM(REMOCON_B)	F_(0, 0)	F_(0, 0) FM(HCTS2_N_C) F_(0, 0) F_(0, 0)
+ #define IP17_27_24	FM(USB30_PWEN)		F_(0, 0)	F_(0, 0)		FM(AUDIO_CLKOUT_B)		FM(SSI_SCK2_B)	FM(TS_SDEN1_D)	FM(STP_ISEN_1_D)	FM(STP_OPWM_0_E)FM(RIF3_D0_B)		F_(0, 0)	FM(TCLK2_B)	FM(TPU0TO0)	FM(BPFCLK_C) FM(HRTS2_N_C) F_(0, 0) F_(0, 0)
+ #define IP17_31_28	FM(USB30_OVC)		F_(0, 0)	F_(0, 0)		FM(AUDIO_CLKOUT1_B)		FM(SSI_WS2_B)	FM(TS_SPSYNC1_D)FM(STP_ISSYNC_1_D)	FM(STP_IVCXO27_0_E)FM(RIF3_D1_B)	F_(0, 0)	FM(FSO_TOE_N)	FM(TPU0TO1)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP18_3_0	FM(USB3_PWEN)		F_(0, 0)	F_(0, 0)		FM(AUDIO_CLKOUT2_B)		FM(SSI_SCK9_B)	FM(TS_SDEN0_E)	FM(STP_ISEN_0_E)	F_(0, 0)	FM(RIF2_D0_B)		F_(0, 0)	F_(0, 0)	FM(TPU0TO2)	F_(0, 0) FM(FMCLK_C) FM(FMCLK_D) F_(0, 0)
+-#define IP18_7_4	FM(USB3_OVC)		F_(0, 0)	F_(0, 0)		FM(AUDIO_CLKOUT3_B)		FM(SSI_WS9_B)	FM(TS_SPSYNC0_E)FM(STP_ISSYNC_0_E)	F_(0, 0)	FM(RIF2_D1_B)		F_(0, 0)	F_(0, 0)	FM(TPU0TO3)	F_(0, 0) FM(FMIN_C) FM(FMIN_D) F_(0, 0)
++#define IP18_3_0	FM(USB2_CH3_PWEN)	F_(0, 0)	F_(0, 0)		FM(AUDIO_CLKOUT2_B)		FM(SSI_SCK9_B)	FM(TS_SDEN0_E)	FM(STP_ISEN_0_E)	F_(0, 0)	FM(RIF2_D0_B)		F_(0, 0)	F_(0, 0)	FM(TPU0TO2)	F_(0, 0) FM(FMCLK_C) FM(FMCLK_D) F_(0, 0)
++#define IP18_7_4	FM(USB2_CH3_OVC)	F_(0, 0)	F_(0, 0)		FM(AUDIO_CLKOUT3_B)		FM(SSI_WS9_B)	FM(TS_SPSYNC0_E)FM(STP_ISSYNC_0_E)	F_(0, 0)	FM(RIF2_D1_B)		F_(0, 0)	F_(0, 0)	FM(TPU0TO3)	F_(0, 0) FM(FMIN_C) FM(FMIN_D) F_(0, 0)
+ 
+ #define PINMUX_GPSR	\
+ \
+@@ -1479,7 +1479,7 @@ enum {
+ 	PINMUX_IPSR_GPSR(IP17_31_28,	TPU0TO1),
+ 
+ 	/* IPSR18 */
+-	PINMUX_IPSR_GPSR(IP18_3_0,	USB3_PWEN),
++	PINMUX_IPSR_GPSR(IP18_3_0,	USB2_CH3_PWEN),
+ 	PINMUX_IPSR_GPSR(IP18_3_0,	AUDIO_CLKOUT2_B),
+ 	PINMUX_IPSR_MSEL(IP18_3_0,	SSI_SCK9_B,		SEL_SSI_1),
+ 	PINMUX_IPSR_MSEL(IP18_3_0,	TS_SDEN0_E,		SEL_TSIF0_4),
+@@ -1489,7 +1489,7 @@ enum {
+ 	PINMUX_IPSR_MSEL(IP18_3_0,	FMCLK_C,		SEL_FM_2),
+ 	PINMUX_IPSR_MSEL(IP18_3_0,	FMCLK_D,		SEL_FM_3),
+ 
+-	PINMUX_IPSR_GPSR(IP18_7_4,	USB3_OVC),
++	PINMUX_IPSR_GPSR(IP18_7_4,	USB2_CH3_OVC),
+ 	PINMUX_IPSR_GPSR(IP18_7_4,	AUDIO_CLKOUT3_B),
+ 	PINMUX_IPSR_MSEL(IP18_7_4,	SSI_WS9_B,		SEL_SSI_1),
+ 	PINMUX_IPSR_MSEL(IP18_7_4,	TS_SPSYNC0_E,		SEL_TSIF0_4),
+@@ -3961,8 +3961,8 @@ enum {
+ 		{ RCAR_GP_PIN(6, 27), 20, 3 },	/* USB1_OVC */
+ 		{ RCAR_GP_PIN(6, 28), 16, 3 },	/* USB30_PWEN */
+ 		{ RCAR_GP_PIN(6, 29), 12, 3 },	/* USB30_OVC */
+-		{ RCAR_GP_PIN(6, 30),  8, 3 },	/* USB3_PWEN */
+-		{ RCAR_GP_PIN(6, 31),  4, 3 },	/* USB3_OVC */
++		{ RCAR_GP_PIN(6, 30),  8, 3 },	/* USB2_CH3_PWEN */
++		{ RCAR_GP_PIN(6, 31),  4, 3 },	/* USB2_CH3_OVC */
+ 	} },
+ 	{ },
+ };
+@@ -4192,8 +4192,8 @@ static int r8a7795_pin_to_pocctrl(struct sh_pfc *pfc, unsigned int pin, u32 *poc
+ 	{ RCAR_GP_PIN(5, 21),    PU5,  1 },	/* MSIOF0_SS2 */
+ 	{ RCAR_GP_PIN(5, 20),    PU5,  0 },	/* MSIOF0_TXD */
+ 
+-	{ RCAR_GP_PIN(6, 31),    PU6,  6 },	/* USB3_OVC */
+-	{ RCAR_GP_PIN(6, 30),    PU6,  5 },	/* USB3_PWEN */
++	{ RCAR_GP_PIN(6, 31),    PU6,  6 },	/* USB2_CH3_OVC */
++	{ RCAR_GP_PIN(6, 30),    PU6,  5 },	/* USB2_CH3_PWEN */
+ 	{ RCAR_GP_PIN(6, 29),    PU6,  4 },	/* USB30_OVC */
+ 	{ RCAR_GP_PIN(6, 28),    PU6,  3 },	/* USB30_PWEN */
+ 	{ RCAR_GP_PIN(6, 27),    PU6,  2 },	/* USB1_OVC */
+-- 
+1.9.1
