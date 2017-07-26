@@ -1,77 +1,31 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:42651 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751827AbdGaPDj (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:40239 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751047AbdGZLbN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 31 Jul 2017 11:03:39 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 10/31] arm64: dts: r8a7796: Add DU device to DT
-Date: Mon, 31 Jul 2017 17:03:02 +0200
-Message-Id: <af413f6581d966baed1e3b7360c139e0d790737d.1501509525.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1501509525.git.horms+renesas@verge.net.au>
-References: <cover.1501509525.git.horms+renesas@verge.net.au>
+        Wed, 26 Jul 2017 07:31:13 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
+        linus.walleij@linaro.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 0/2] pinctrl: sh-pfc: r8a7795: add usb2.0 on R-Car H3 ES2.0
+Date: Wed, 26 Jul 2017 20:28:09 +0900
+Message-Id: <1501068491-3926-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+This patch is based on the renesas-drivers.git /
+renesas-drivers-2017-07-18-v4.13-rc1 tag.
 
-Add the DU device to r8a7796.dtsi in a disabled state.
+Yoshihiro Shimoda (2):
+  pinctrl: sh-pfc: r8a7795: Change USB3_{OVC,PWEN} definitions
+  pinctrl: sh-pfc: r8a7795: Add USB 2.0 pins, groups and functions
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 26 +++++++++++++++++++++++++-
- 1 file changed, 25 insertions(+), 1 deletion(-)
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 77 +++++++++++++++++++++++++++++++-----
+ 1 file changed, 67 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 9ef1729a800c..8c0d58d49bdf 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -1666,7 +1666,21 @@
- 		};
- 
- 		du: display@feb00000 {
--			/* placeholder */
-+			compatible = "renesas,du-r8a7796";
-+			reg = <0 0xfeb00000 0 0x70000>,
-+			      <0 0xfeb90000 0 0x14>;
-+			reg-names = "du", "lvds.0";
-+			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 724>,
-+				 <&cpg CPG_MOD 723>,
-+				 <&cpg CPG_MOD 722>,
-+				 <&cpg CPG_MOD 727>;
-+			clock-names = "du.0", "du.1", "du.2", "lvds.0";
-+			status = "disabled";
-+
-+			vsps = <&vspd0 &vspd1 &vspd2>;
- 
- 			ports {
- 				#address-cells = <1>;
-@@ -1677,6 +1691,16 @@
- 					du_out_rgb: endpoint {
- 					};
- 				};
-+				port@1 {
-+					reg = <1>;
-+					du_out_hdmi0: endpoint {
-+					};
-+				};
-+				port@2 {
-+					reg = <2>;
-+					du_out_lvds0: endpoint {
-+					};
-+				};
- 			};
- 		};
- 
 -- 
-2.1.4
+1.9.1
