@@ -1,49 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:38708 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754168AbdGJN20 (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:42696 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751397AbdGZLcu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 10 Jul 2017 09:28:26 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Olof Johansson <olof@lixom.net>,
-        Simon Horman <horms@verge.net.au>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/9] ARM: shmobile: defconfig: Replace USB_XHCI_RCAR by USB_XHCI_PLATFORM
-Date: Mon, 10 Jul 2017 15:28:15 +0200
-Message-Id: <1499693302-25120-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1499693302-25120-1-git-send-email-geert+renesas@glider.be>
-References: <1499693302-25120-1-git-send-email-geert+renesas@glider.be>
+        Wed, 26 Jul 2017 07:32:50 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 1/5] arm64: dts: renesas: r8a7795: Add usb companion property in EHCI
+Date: Wed, 26 Jul 2017 20:29:36 +0900
+Message-Id: <1501068580-3981-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1501068580-3981-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1501068580-3981-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-USB_XHCI_RCAR is no longer enabled, as it now has a dependency on
-USB_XHCI_PLATFORM, instead of selecting USB_XHCI_PLATFORM.
-As the latter selects the former if ARCH_RENESAS, fix this by replacing
-USB_XHCI_RCAR by USB_XHCI_PLATFORM in shmobile_defconfig.
+From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
 
-Fixes: f879fc32aa0c96fb ("usb: host: xhci-rcar: Avoid long wait in xhci_reset()")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This patch adds the "companion" property in the EHCI ch0, ch1 and
+ch2 nodes to wait for the usb companion controller startup at resume.
+
+Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+[remove ch3 node and revise the commit log]
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- arch/arm/configs/shmobile_defconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index 04cd18424016eba5..bfbeae3f6a884987 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -175,7 +175,7 @@ CONFIG_SND_SOC_AK4642=y
- CONFIG_SND_SOC_WM8978=y
- CONFIG_USB=y
- CONFIG_USB_XHCI_HCD=y
--CONFIG_USB_XHCI_RCAR=y
-+CONFIG_USB_XHCI_PLATFORM=y
- CONFIG_USB_EHCI_HCD=y
- CONFIG_USB_OHCI_HCD=y
- CONFIG_USB_R8A66597_HCD=y
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 95af1e1..b8ffbc6 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -1584,6 +1584,7 @@
+ 			clocks = <&cpg CPG_MOD 703>;
+ 			phys = <&usb2_phy0>;
+ 			phy-names = "usb";
++			companion= <&ohci0>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			resets = <&cpg 703>;
+ 			status = "disabled";
+@@ -1596,6 +1597,7 @@
+ 			clocks = <&cpg CPG_MOD 702>;
+ 			phys = <&usb2_phy1>;
+ 			phy-names = "usb";
++			companion= <&ohci1>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			resets = <&cpg 702>;
+ 			status = "disabled";
+@@ -1608,6 +1610,7 @@
+ 			clocks = <&cpg CPG_MOD 701>;
+ 			phys = <&usb2_phy2>;
+ 			phy-names = "usb";
++			companion= <&ohci2>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			resets = <&cpg 701>;
+ 			status = "disabled";
 -- 
-2.7.4
+1.9.1
