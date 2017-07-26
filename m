@@ -1,167 +1,71 @@
-Subject: Re: [PATCH v2 02/14] v4l: vsp1: Don't recycle active list at display
- start
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- dri-devel@lists.freedesktop.org
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <20170626181226.29575-1-laurent.pinchart+renesas@ideasonboard.com>
- <20170626181226.29575-3-laurent.pinchart+renesas@ideasonboard.com>
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Message-ID: <b020fe7c-78fe-0f40-88bd-58165b22c496@ideasonboard.com>
-Date: Thu, 13 Jul 2017 18:02:20 +0100
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor1.renesas.com ([210.160.252.171]:62011 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751397AbdGZLcz (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 26 Jul 2017 07:32:55 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 5/5] arm64: dts: renesas: r8a7795: add hsusb ch3 device node
+Date: Wed, 26 Jul 2017 20:29:40 +0900
+Message-Id: <1501068580-3981-6-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1501068580-3981-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1501068580-3981-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-In-Reply-To: <20170626181226.29575-3-laurent.pinchart+renesas@ideasonboard.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Laurent,
+This patch adds support for hsusb ch3 device nodes for R-Car H3 ES2.0.
 
-On 26/06/17 19:12, Laurent Pinchart wrote:
-> When the display start interrupt occurs, we know that the hardware has
-> finished loading the active display list. The driver then proceeds to
-> recycle the list, assuming it won't be needed anymore.
-> 
-> This assumption holds true for headerless display lists, as the VSP
-> doesn't reload the list for the next frame if it hasn't changed.
-> However, this isn't true anymore for header display lists, as they are
-> loaded at every frame start regardless of whether they have been
-> updated.
-> 
-> To prepare for header display lists usage in display pipelines, we need
-> to postpone recycling the list until it gets replaced by a new one
-> through a page flip. The driver already does so in the frame end
-> interrupt handler, so all we need is to skip list recycling in the
-> display start interrupt handler.
-> 
-> While the active list can be recycled at display start for headerless
-> display lists, there's no real harm in postponing that to the frame end
-> interrupt handler in all cases. This simplifies interrupt handling as we
-> don't need to process the display start interrupt anymore.
-> 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi |  1 +
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi     | 17 +++++++++++++++++
+ 2 files changed, 18 insertions(+)
 
-Ok, I had skipped this one as I was concerned about its effects in relation to
-11/14 but I see how that's working now.
-
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
-> ---
->  drivers/media/platform/vsp1/vsp1_dl.c  | 16 ----------------
->  drivers/media/platform/vsp1/vsp1_dl.h  |  1 -
->  drivers/media/platform/vsp1/vsp1_drm.c | 12 ++++--------
->  drivers/media/platform/vsp1/vsp1_drm.h |  2 --
->  drivers/media/platform/vsp1/vsp1_drv.c |  8 --------
->  5 files changed, 4 insertions(+), 35 deletions(-)
-> 
-> diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
-> index dc47e236c780..bb92be4fe0f0 100644
-> --- a/drivers/media/platform/vsp1/vsp1_dl.c
-> +++ b/drivers/media/platform/vsp1/vsp1_dl.c
-> @@ -547,22 +547,6 @@ void vsp1_dl_list_commit(struct vsp1_dl_list *dl)
->   * Display List Manager
->   */
->  
-> -/* Interrupt Handling */
-> -void vsp1_dlm_irq_display_start(struct vsp1_dl_manager *dlm)
-> -{
-> -	spin_lock(&dlm->lock);
-> -
-> -	/*
-> -	 * The display start interrupt signals the end of the display list
-> -	 * processing by the device. The active display list, if any, won't be
-> -	 * accessed anymore and can be reused.
-> -	 */
-> -	__vsp1_dl_list_put(dlm->active);
-> -	dlm->active = NULL;
-> -
-> -	spin_unlock(&dlm->lock);
-> -}
-> -
->  /**
->   * vsp1_dlm_irq_frame_end - Display list handler for the frame end interrupt
->   * @dlm: the display list manager
-> diff --git a/drivers/media/platform/vsp1/vsp1_dl.h b/drivers/media/platform/vsp1/vsp1_dl.h
-> index 6ec1380a10af..ee3508172f0a 100644
-> --- a/drivers/media/platform/vsp1/vsp1_dl.h
-> +++ b/drivers/media/platform/vsp1/vsp1_dl.h
-> @@ -27,7 +27,6 @@ struct vsp1_dl_manager *vsp1_dlm_create(struct vsp1_device *vsp1,
->  					unsigned int prealloc);
->  void vsp1_dlm_destroy(struct vsp1_dl_manager *dlm);
->  void vsp1_dlm_reset(struct vsp1_dl_manager *dlm);
-> -void vsp1_dlm_irq_display_start(struct vsp1_dl_manager *dlm);
->  bool vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm);
->  
->  struct vsp1_dl_list *vsp1_dl_list_get(struct vsp1_dl_manager *dlm);
-> diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
-> index 9377aafa8996..bc3fd9bc7126 100644
-> --- a/drivers/media/platform/vsp1/vsp1_drm.c
-> +++ b/drivers/media/platform/vsp1/vsp1_drm.c
-> @@ -32,11 +32,6 @@
->   * Interrupt Handling
->   */
->  
-> -void vsp1_drm_display_start(struct vsp1_device *vsp1)
-> -{
-> -	vsp1_dlm_irq_display_start(vsp1->drm->pipe.output->dlm);
-> -}
-> -
->  static void vsp1_du_pipeline_frame_end(struct vsp1_pipeline *pipe)
->  {
->  	struct vsp1_drm *drm = to_vsp1_drm(pipe);
-> @@ -224,6 +219,10 @@ int vsp1_du_setup_lif(struct device *dev, const struct vsp1_du_lif_config *cfg)
->  		return ret;
->  	}
->  
-> +	/* Disable the display interrupts. */
-> +	vsp1_write(vsp1, VI6_DISP_IRQ_STA, 0);
-> +	vsp1_write(vsp1, VI6_DISP_IRQ_ENB, 0);
-> +
->  	dev_dbg(vsp1->dev, "%s: pipeline enabled\n", __func__);
->  
->  	return 0;
-> @@ -529,13 +528,10 @@ void vsp1_du_atomic_flush(struct device *dev)
->  
->  	/* Start or stop the pipeline if needed. */
->  	if (!vsp1->drm->num_inputs && pipe->num_inputs) {
-> -		vsp1_write(vsp1, VI6_DISP_IRQ_STA, 0);
-> -		vsp1_write(vsp1, VI6_DISP_IRQ_ENB, VI6_DISP_IRQ_ENB_DSTE);
->  		spin_lock_irqsave(&pipe->irqlock, flags);
->  		vsp1_pipeline_run(pipe);
->  		spin_unlock_irqrestore(&pipe->irqlock, flags);
->  	} else if (vsp1->drm->num_inputs && !pipe->num_inputs) {
-> -		vsp1_write(vsp1, VI6_DISP_IRQ_ENB, 0);
->  		vsp1_pipeline_stop(pipe);
->  	}
->  }
-> diff --git a/drivers/media/platform/vsp1/vsp1_drm.h b/drivers/media/platform/vsp1/vsp1_drm.h
-> index e9f80727ff92..cbdbb8a39883 100644
-> --- a/drivers/media/platform/vsp1/vsp1_drm.h
-> +++ b/drivers/media/platform/vsp1/vsp1_drm.h
-> @@ -50,6 +50,4 @@ int vsp1_drm_init(struct vsp1_device *vsp1);
->  void vsp1_drm_cleanup(struct vsp1_device *vsp1);
->  int vsp1_drm_create_links(struct vsp1_device *vsp1);
->  
-> -void vsp1_drm_display_start(struct vsp1_device *vsp1);
-> -
->  #endif /* __VSP1_DRM_H__ */
-> diff --git a/drivers/media/platform/vsp1/vsp1_drv.c b/drivers/media/platform/vsp1/vsp1_drv.c
-> index 95c26edead85..6b35e043b554 100644
-> --- a/drivers/media/platform/vsp1/vsp1_drv.c
-> +++ b/drivers/media/platform/vsp1/vsp1_drv.c
-> @@ -68,14 +68,6 @@ static irqreturn_t vsp1_irq_handler(int irq, void *data)
->  		}
->  	}
->  
-> -	status = vsp1_read(vsp1, VI6_DISP_IRQ_STA);
-> -	vsp1_write(vsp1, VI6_DISP_IRQ_STA, ~status & VI6_DISP_IRQ_STA_DST);
-> -
-> -	if (status & VI6_DISP_IRQ_STA_DST) {
-> -		vsp1_drm_display_start(vsp1);
-> -		ret = IRQ_HANDLED;
-> -	}
-> -
->  	return ret;
->  }
->  
-> 
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+index 9743aca..aaa5e67 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+@@ -24,6 +24,7 @@
+ 	/delete-node/ usb-phy@ee0e0200;
+ 	/delete-node/ usb@ee0e0100;
+ 	/delete-node/ usb@ee0e0000;
++	/delete-node/ usb@e659c000;
+ 
+ 	/delete-node/ dma-controller@e6460000;
+ 	/delete-node/ dma-controller@e6470000;
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index d1381d9..b9213e2 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -1734,6 +1734,23 @@
+ 			status = "disabled";
+ 		};
+ 
++		hsusb3: usb@e659c000 {
++			compatible = "renesas,usbhs-r8a7795",
++				     "renesas,rcar-gen3-usbhs";
++			reg = <0 0xe659c000 0 0x100>;
++			interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 705>;
++			dmas = <&usb_dmac2 0>, <&usb_dmac2 1>,
++			       <&usb_dmac3 0>, <&usb_dmac3 1>;
++			dma-names = "ch0", "ch1", "ch2", "ch3";
++			renesas,buswait = <11>;
++			phys = <&usb2_phy3>;
++			phy-names = "usb";
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++			resets = <&cpg 705>;
++			status = "disabled";
++		};
++
+ 		pciec0: pcie@fe000000 {
+ 			compatible = "renesas,pcie-r8a7795",
+ 				     "renesas,pcie-rcar-gen3";
+-- 
+1.9.1
