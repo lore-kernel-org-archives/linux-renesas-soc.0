@@ -1,60 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:44354 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752398AbdGaPUp (ORCPT
+Received: from sauhun.de ([88.99.104.3]:34848 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751427AbdGZVy7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 31 Jul 2017 11:20:45 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 24/38] ARM: dts: r8a7743: Add MMCIF0 support
-Date: Mon, 31 Jul 2017 17:19:36 +0200
-Message-Id: <873038ddc34b62b55b2ad919995d3f70be12f192.1501514100.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1501514100.git.horms+renesas@verge.net.au>
-References: <cover.1501514100.git.horms+renesas@verge.net.au>
+        Wed, 26 Jul 2017 17:54:59 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-watchdog@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [RFC PATCH 2/3] watchdog: renesas_wdt: make 'clk' a variable local to probe()
+Date: Wed, 26 Jul 2017 23:54:38 +0200
+Message-Id: <20170726215439.9623-3-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20170726215439.9623-1-wsa+renesas@sang-engineering.com>
+References: <20170726215439.9623-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Chris Paterson <chris.paterson2@renesas.com>
+It is not needed outside probe() anymore.
 
-Add the MMCIF0 device to the r8a7743 device tree.
-
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm/boot/dts/r8a7743.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ drivers/watchdog/renesas_wdt.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 0d021919755c..f62e8587f1a8 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -641,6 +641,22 @@
- 			#size-cells = <0>;
- 			status = "disabled";
- 		};
-+
-+		mmcif0: mmc@ee200000 {
-+			compatible = "renesas,mmcif-r8a7743",
-+				     "renesas,sh-mmcif";
-+			reg = <0 0xee200000 0 0x80>;
-+			interrupts = <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 315>;
-+			dmas = <&dmac0 0xd1>, <&dmac0 0xd2>,
-+			       <&dmac1 0xd1>, <&dmac1 0xd2>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 315>;
-+			reg-io-width = <4>;
-+			max-frequency = <97500000>;
-+			status = "disabled";
-+		};
- 	};
+diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
+index a03997b418ba9c..2927b5086e156e 100644
+--- a/drivers/watchdog/renesas_wdt.c
++++ b/drivers/watchdog/renesas_wdt.c
+@@ -48,7 +48,6 @@ MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started (default="
+ struct rwdt_priv {
+ 	void __iomem *base;
+ 	struct watchdog_device wdev;
+-	struct clk *clk;
+ 	unsigned long clk_rate;
+ 	u8 cks;
+ };
+@@ -125,6 +124,7 @@ static int rwdt_probe(struct platform_device *pdev)
+ {
+ 	struct rwdt_priv *priv;
+ 	struct resource *res;
++	struct clk *clk;
+ 	unsigned long clks_per_sec;
+ 	int ret, i;
  
- 	/* External root clock */
+@@ -137,14 +137,14 @@ static int rwdt_probe(struct platform_device *pdev)
+ 	if (IS_ERR(priv->base))
+ 		return PTR_ERR(priv->base);
+ 
+-	priv->clk = devm_clk_get(&pdev->dev, NULL);
+-	if (IS_ERR(priv->clk))
+-		return PTR_ERR(priv->clk);
++	clk = devm_clk_get(&pdev->dev, NULL);
++	if (IS_ERR(clk))
++		return PTR_ERR(clk);
+ 
+ 	pm_runtime_enable(&pdev->dev);
+ 
+ 	pm_runtime_get_sync(&pdev->dev);
+-	priv->clk_rate = clk_get_rate(priv->clk);
++	priv->clk_rate = clk_get_rate(clk);
+ 	pm_runtime_put(&pdev->dev);
+ 
+ 	if (!priv->clk_rate) {
 -- 
-2.1.4
+2.11.0
