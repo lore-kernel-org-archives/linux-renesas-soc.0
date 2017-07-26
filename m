@@ -1,51 +1,119 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 3/6] ARM: ixp4xx_defconfig: Cleanup from non-existing options
-Date: Mon, 17 Jul 2017 07:49:53 +0200
-Message-Id: <1500270596-22384-3-git-send-email-krzk@kernel.org>
-In-Reply-To: <1500270596-22384-1-git-send-email-krzk@kernel.org>
-References: <1500270596-22384-1-git-send-email-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor3.renesas.com ([210.160.252.173]:40239 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751420AbdGZLbP (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 26 Jul 2017 07:31:15 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
+        linus.walleij@linaro.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 2/2] pinctrl: sh-pfc: r8a7795: Add USB 2.0 pins, groups and functions
+Date: Wed, 26 Jul 2017 20:28:11 +0900
+Message-Id: <1501068491-3926-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1501068491-3926-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1501068491-3926-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Remove options which do not exist anymore:
- - ECONET is gone since commit 349f29d841db ("econet: remove ancient bug
-   ridden protocol");
+Add pins, groups, and functions for USB 2.0 on R-Car H3 ES2.0.
 
- - IPDDP_DECAP is gone since commit 9b5645b51384 ("appletalk: remove
-   "config IPDDP_DECAP"");
-
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- arch/arm/configs/ixp4xx_defconfig | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 57 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 57 insertions(+)
 
-diff --git a/arch/arm/configs/ixp4xx_defconfig b/arch/arm/configs/ixp4xx_defconfig
-index c8378da71913..8c3c99cd6de9 100644
---- a/arch/arm/configs/ixp4xx_defconfig
-+++ b/arch/arm/configs/ixp4xx_defconfig
-@@ -81,12 +81,8 @@ CONFIG_ATALK=m
- CONFIG_DEV_APPLETALK=m
- CONFIG_IPDDP=m
- CONFIG_IPDDP_ENCAP=y
--CONFIG_IPDDP_DECAP=y
- CONFIG_X25=m
- CONFIG_LAPB=m
--CONFIG_ECONET=m
--CONFIG_ECONET_AUNUDP=y
--CONFIG_ECONET_NATIVE=y
- CONFIG_WAN_ROUTER=m
- CONFIG_NET_SCHED=y
- CONFIG_NET_SCH_CBQ=m
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+index 947abbd9..d5eddcc 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+@@ -2754,6 +2754,39 @@ enum {
+ 	SCIF_CLK_B_MARK,
+ };
+ 
++/* - USB0 ------------------------------------------------------------------- */
++static const unsigned int usb0_pins[] = {
++	/* PWEN, OVC */
++	RCAR_GP_PIN(6, 24), RCAR_GP_PIN(6, 25),
++};
++static const unsigned int usb0_mux[] = {
++	USB0_PWEN_MARK, USB0_OVC_MARK,
++};
++/* - USB1 ------------------------------------------------------------------- */
++static const unsigned int usb1_pins[] = {
++	/* PWEN, OVC */
++	RCAR_GP_PIN(6, 26), RCAR_GP_PIN(6, 27),
++};
++static const unsigned int usb1_mux[] = {
++	USB1_PWEN_MARK, USB1_OVC_MARK,
++};
++/* - USB2 ------------------------------------------------------------------- */
++static const unsigned int usb2_pins[] = {
++	/* PWEN, OVC */
++	RCAR_GP_PIN(6, 14), RCAR_GP_PIN(6, 15),
++};
++static const unsigned int usb2_mux[] = {
++	USB2_PWEN_MARK, USB2_OVC_MARK,
++};
++/* - USB2_CH3 --------------------------------------------------------------- */
++static const unsigned int usb2_ch3_pins[] = {
++	/* PWEN, OVC */
++	RCAR_GP_PIN(6, 30), RCAR_GP_PIN(6, 31),
++};
++static const unsigned int usb2_ch3_mux[] = {
++	USB2_CH3_PWEN_MARK, USB2_CH3_OVC_MARK,
++};
++
+ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(avb_link),
+ 	SH_PFC_PIN_GROUP(avb_magic),
+@@ -2914,6 +2947,10 @@ enum {
+ 	SH_PFC_PIN_GROUP(scif5_clk_b),
+ 	SH_PFC_PIN_GROUP(scif_clk_a),
+ 	SH_PFC_PIN_GROUP(scif_clk_b),
++	SH_PFC_PIN_GROUP(usb0),
++	SH_PFC_PIN_GROUP(usb1),
++	SH_PFC_PIN_GROUP(usb2),
++	SH_PFC_PIN_GROUP(usb2_ch3),
+ };
+ 
+ static const char * const avb_groups[] = {
+@@ -3135,6 +3172,22 @@ enum {
+ 	"scif_clk_b",
+ };
+ 
++static const char * const usb0_groups[] = {
++	"usb0",
++};
++
++static const char * const usb1_groups[] = {
++	"usb1",
++};
++
++static const char * const usb2_groups[] = {
++	"usb2",
++};
++
++static const char * const usb2_ch3_groups[] = {
++	"usb2_ch3",
++};
++
+ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(avb),
+ 	SH_PFC_FUNCTION(du),
+@@ -3156,6 +3209,10 @@ enum {
+ 	SH_PFC_FUNCTION(scif4),
+ 	SH_PFC_FUNCTION(scif5),
+ 	SH_PFC_FUNCTION(scif_clk),
++	SH_PFC_FUNCTION(usb0),
++	SH_PFC_FUNCTION(usb1),
++	SH_PFC_FUNCTION(usb2),
++	SH_PFC_FUNCTION(usb2_ch3),
+ };
+ 
+ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
 -- 
-2.7.4
+1.9.1
