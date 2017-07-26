@@ -1,79 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f194.google.com ([209.85.223.194]:36091 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750841AbdGEJyW (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:42696 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751413AbdGZLcw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Jul 2017 05:54:22 -0400
+        Wed, 26 Jul 2017 07:32:52 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 2/5] arm64: dts: renesas: r8a7795: add usb2_phy ch3 device node
+Date: Wed, 26 Jul 2017 20:29:37 +0900
+Message-Id: <1501068580-3981-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1501068580-3981-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1501068580-3981-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-In-Reply-To: <20170627173400.581660959@cogentembedded.com>
-References: <20170627173400.581660959@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 5 Jul 2017 11:54:20 +0200
-Message-ID: <CAMuHMdXxcbkPV+Jt7Xo5emQ4fyDHm1p1RgD9nsRfR78va4XFSA@mail.gmail.com>
-Subject: Re: [PATCH v2] arm64: dts: r8a7796: add IMR-LX4 support
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sergei,
+This patch adds support for usb3_phy ch3 device node for R-Car H3 ES2.0.
 
-On Tue, Jun 27, 2017 at 7:33 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Describe the IMR-LX4 devices in the R8A7796 device tree.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi |  2 ++
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi     | 12 ++++++++++++
+ 2 files changed, 14 insertions(+)
 
-> --- renesas.orig/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-> +++ renesas/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-> @@ -1454,5 +1454,23 @@
->                                 };
->                         };
->                 };
-> +
-> +               imr-lx4@fe860000 {
-> +                       compatible = "renesas,r8a7796-imr-lx4",
-> +                                    "renesas,imr-lx4";
-> +                       reg = <0 0xfe860000 0 0x2000>;
-> +                       interrupts = <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>;
-> +                       clocks = <&cpg CPG_MOD 823>;
-> +                       power-domains = <&sysc R8A7796_PD_A3VC>;
-
-resets = <&cpg 823>;
-
-> +               };
-> +
-> +               imr-lx4@fe870000 {
-> +                       compatible = "renesas,r8a7796-imr-lx4",
-> +                                    "renesas,imr-lx4";
-> +                       reg = <0 0xfe870000 0 0x2000>;
-> +                       interrupts = <GIC_SPI 193 IRQ_TYPE_LEVEL_HIGH>;
-> +                       clocks = <&cpg CPG_MOD 822>;
-> +                       power-domains = <&sysc R8A7796_PD_A3VC>;
-
-resets = <&cpg 822>;
-
-With the issues above fixed:
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+index f164633..2c24943 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+@@ -21,6 +21,8 @@
+ 		status = "disabled";
+ 	};
+ 
++	/delete-node/ usb-phy@ee0e0200;
++
+ 	fcpf2: fcp@fe952000 {
+ 		compatible = "renesas,fcpf";
+ 		reg = <0 0xfe952000 0 0x200>;
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index b8ffbc6..1b20892 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -1577,6 +1577,18 @@
+ 			status = "disabled";
+ 		};
+ 
++		usb2_phy3: usb-phy@ee0e0200 {
++			compatible = "renesas,usb2-phy-r8a7795",
++				     "renesas,rcar-gen3-usb2-phy";
++			reg = <0 0xee0e0200 0 0x700>;
++			interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 700>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++			resets = <&cpg 700>;
++			#phy-cells = <0>;
++			status = "disabled";
++		};
++
+ 		ehci0: usb@ee080100 {
+ 			compatible = "generic-ehci";
+ 			reg = <0 0xee080100 0 0x100>;
+-- 
+1.9.1
