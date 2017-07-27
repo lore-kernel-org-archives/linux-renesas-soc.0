@@ -1,97 +1,83 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:35283 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751317AbdGQUpg (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Jul 2017 16:45:36 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH V4 1/2] mfd: Add ROHM BD9571MWV-M PMIC DT bindings
-Date: Mon, 17 Jul 2017 22:45:11 +0200
-Message-Id: <20170717204512.7075-1-marek.vasut+renesas@gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Thu, 27 Jul 2017 15:31:46 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Rob Herring <robh@kernel.org>
+Cc: arm@kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+        Kukjin Kim <kgene@kernel.org>,
+        Javier Martinez Canillas <javier@osg.samsung.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
+        Paul Walmsley <paul@pwsan.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2] ARM: Convert to using %pOF instead of full_name
+Message-ID: <20170727133143.GB16143@verge.net.au>
+References: <20170721192835.25555-1-robh@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20170721192835.25555-1-robh@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add DT bindings for the ROHM BD9571MWV-M PMIC. This PMIC has
-the following features:
-- multiple voltage monitors for 1V8, 2V5, 3V3 voltage rail
-- one voltage regulator for DVFS
-- two GPIOs
+On Fri, Jul 21, 2017 at 02:28:32PM -0500, Rob Herring wrote:
+> Now that we have a custom printf format specifier, convert users of
+> full_name to use %pOF instead. This is preparation to remove storing
+> of the full path string for each node.
+> 
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Acked-by: Heiko Stuebner <heiko@sntech.de>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Acked-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+> Cc: Russell King <linux@armlinux.org.uk>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Javier Martinez Canillas <javier@osg.samsung.com>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Sascha Hauer <kernel@pengutronix.de>
+> Cc: Fabio Estevam <fabio.estevam@nxp.com>
+> Cc: Jason Cooper <jason@lakedaemon.net>
+> Cc: Andrew Lunn <andrew@lunn.ch>
+> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+> Cc: Tony Lindgren <tony@atomide.com>
+> Cc: "Benoît Cousson" <bcousson@baylibre.com>
+> Cc: Paul Walmsley <paul@pwsan.com>
+> Cc: Simon Horman <horms@verge.net.au>
+> Cc: Magnus Damm <magnus.damm@gmail.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-omap@vger.kernel.org
+> Cc: linux-rockchip@lists.infradead.org
+> Cc: linux-renesas-soc@vger.kernel.org
+> ---
+> v2:
+> - Merge several 2 line prints to single line.
+> - Add acks
+> 
+>  arch/arm/kernel/cpuidle.c            | 4 ++--
+>  arch/arm/kernel/devtree.c            | 5 ++---
+>  arch/arm/kernel/topology.c           | 3 +--
+>  arch/arm/mach-exynos/suspend.c       | 7 +++----
+>  arch/arm/mach-imx/gpc.c              | 4 ++--
+>  arch/arm/mach-mvebu/kirkwood.c       | 3 +--
+>  arch/arm/mach-omap2/omap-wakeupgen.c | 4 ++--
+>  arch/arm/mach-omap2/omap_hwmod.c     | 4 ++--
+>  arch/arm/mach-rockchip/platsmp.c     | 4 ++--
+>  arch/arm/mach-shmobile/pm-rmobile.c  | 7 +++----
+>  10 files changed, 20 insertions(+), 25 deletions(-)
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: devicetree@vger.kernel.org
-Cc: Rob Herring <robh@kernel.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-renesas-soc@vger.kernel.org
-Acked-by: Rob Herring <robh@kernel.org>
----
-V2: - Drop the compatible = "regulator-fixed" from the binding example,
-      it should not be there.
-    - List the VD09 regulator
-V3: Replace bd9571@30 with pmic@30
-V4: No changes
----
- .../devicetree/bindings/mfd/bd9571mwv.txt          | 49 ++++++++++++++++++++++
- 1 file changed, 49 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/bd9571mwv.txt
+mach-shmobile portion:
 
-diff --git a/Documentation/devicetree/bindings/mfd/bd9571mwv.txt b/Documentation/devicetree/bindings/mfd/bd9571mwv.txt
-new file mode 100644
-index 000000000000..9ab216a851d5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/bd9571mwv.txt
-@@ -0,0 +1,49 @@
-+* ROHM BD9571MWV Power Management Integrated Circuit (PMIC) bindings
-+
-+Required properties:
-+ - compatible		: Should be "rohm,bd9571mwv".
-+ - reg			: I2C slave address.
-+ - interrupt-parent	: Phandle to the parent interrupt controller.
-+ - interrupts		: The interrupt line the device is connected to.
-+ - interrupt-controller	: Marks the device node as an interrupt controller.
-+ - #interrupt-cells	: The number of cells to describe an IRQ, should be 2.
-+			    The first cell is the IRQ number.
-+			    The second cell is the flags, encoded as trigger
-+			    masks from ../interrupt-controller/interrupts.txt.
-+ - gpio-controller      : Marks the device node as a GPIO Controller.
-+ - #gpio-cells          : Should be two.  The first cell is the pin number and
-+                            the second cell is used to specify flags.
-+                            See ../gpio/gpio.txt for more information.
-+ - regulators:          : List of child nodes that specify the regulator
-+                            initialization data. Child nodes must be named
-+                            after their hardware counterparts:
-+			     - vd09
-+			     - vd18
-+			     - vd25
-+			     - vd33
-+			     - dvfs
-+			    Each child node is defined using the standard
-+			    binding for regulators.
-+
-+Example:
-+
-+	pmic: pmic@30 {
-+		compatible = "rohm,bd9571mwv";
-+		reg = <0x30>;
-+		interrupt-parent = <&gpio2>;
-+		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		regulators {
-+			dvfs: dvfs {
-+				regulator-name = "dvfs";
-+				regulator-min-microvolt = <750000>;
-+				regulator-max-microvolt = <1030000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+		};
-+	};
--- 
-2.11.0
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
