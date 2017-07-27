@@ -1,55 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:42410 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752516AbdGDPXZ (ORCPT
+Received: from utopia.booyaka.com ([74.50.51.50]:43050 "EHLO
+        utopia.booyaka.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751122AbdG0PNp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Jul 2017 11:23:25 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/7] ARM: dts: r8a7743: Add Inter Connect RAM
-Date: Tue,  4 Jul 2017 17:23:12 +0200
-Message-Id: <1499181798-28859-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1499181798-28859-1-git-send-email-geert+renesas@glider.be>
-References: <1499181798-28859-1-git-send-email-geert+renesas@glider.be>
+        Thu, 27 Jul 2017 11:13:45 -0400
+Date: Thu, 27 Jul 2017 15:07:03 +0000 (UTC)
+From: Paul Walmsley <paul@pwsan.com>
+To: Rob Herring <robh@kernel.org>
+cc: arm@kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Javier Martinez Canillas <javier@osg.samsung.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@free-electrons.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        =?ISO-8859-15?Q?Beno=EEt_Cousson?= <bcousson@baylibre.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] ARM: Convert to using %pOF instead of full_name
+In-Reply-To: <20170718214339.7774-1-robh@kernel.org>
+Message-ID: <alpine.DEB.2.02.1707271506200.23088@utopia.booyaka.com>
+References: <20170718214339.7774-1-robh@kernel.org>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-RZ/G1M has 3 regions of Inter Connect RAM (72 + 4 + 256 KiB).
+On Tue, 18 Jul 2017, Rob Herring wrote:
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7743.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+> Now that we have a custom printf format specifier, convert users of
+> full_name to use %pOF instead. This is preparation to remove storing
+> of the full path string for each node.
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 0ddac81742e4cdc7..b8ce935f6fb196fe 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -468,6 +468,21 @@
- 			status = "disabled";
- 		};
- 
-+		icram2:	sram@e6300000 {
-+			compatible = "mmio-sram";
-+			reg = <0 0xe6300000 0 0x40000>;
-+		};
-+
-+		icram0:	sram@e63a0000 {
-+			compatible = "mmio-sram";
-+			reg = <0 0xe63a0000 0 0x12000>;
-+		};
-+
-+		icram1:	sram@e63c0000 {
-+			compatible = "mmio-sram";
-+			reg = <0 0xe63c0000 0 0x1000>;
-+		};
-+
- 		ether: ethernet@ee700000 {
- 			compatible = "renesas,ether-r8a7743";
- 			reg = <0 0xee700000 0 0x400>;
--- 
-2.7.4
+Acked-by: Paul Walmsley <paul@pwsan.com>  # for mach-omap2/omap-hwmod.c
+
+- Paul
