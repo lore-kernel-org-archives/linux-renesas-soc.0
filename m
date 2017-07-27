@@ -1,66 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:63705 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S933267AbdGTSWQ (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:54865 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751461AbdG0PlK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 20 Jul 2017 14:22:16 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH 1/4] arm: dts: rskrza1: Add SCIF2 pin group
-Date: Thu, 20 Jul 2017 13:20:16 -0500
-Message-Id: <20170720182019.85075-2-chris.brandt@renesas.com>
-In-Reply-To: <20170720182019.85075-1-chris.brandt@renesas.com>
-References: <20170720182019.85075-1-chris.brandt@renesas.com>
+        Thu, 27 Jul 2017 11:41:10 -0400
+Date: Thu, 27 Jul 2017 17:40:50 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Chris Paterson <Chris.Paterson2@renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH] ARM: dts: iwg20m: Correct indentation of mmcif0
+ properties
+Message-ID: <20170727154050.GP16143@verge.net.au>
+References: <1500293197-14785-1-git-send-email-geert+renesas@glider.be>
+ <TY1PR06MB0702A521EE7AA82295A9799DB7A00@TY1PR06MB0702.apcprd06.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <TY1PR06MB0702A521EE7AA82295A9799DB7A00@TY1PR06MB0702.apcprd06.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add pin configuration for SCIF2 serial console interface.
+On Mon, Jul 17, 2017 at 12:44:45PM +0000, Chris Paterson wrote:
+> Hello Geert,
+> 
+> > From: Geert Uytterhoeven [mailto:geert+renesas@glider.be]
+> > Sent: 17 July 2017 13:07
+> > 
+> > Fixes: 4658c4b789d8e2ae ("ARM: dts: iwg20m: Add MMCIF0 support")
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> Thanks for this, I'm not sure how we all missed it before!
+> 
+> Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
- arch/arm/boot/dts/r7s72100-rskrza1.dts | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r7s72100-rskrza1.dts b/arch/arm/boot/dts/r7s72100-rskrza1.dts
-index 72df20a04320..5fac0f82d742 100644
---- a/arch/arm/boot/dts/r7s72100-rskrza1.dts
-+++ b/arch/arm/boot/dts/r7s72100-rskrza1.dts
-@@ -10,6 +10,7 @@
- 
- /dts-v1/;
- #include "r7s72100.dtsi"
-+#include <dt-bindings/pinctrl/r7s72100-pinctrl.h>
- 
- / {
- 	model = "RSKRZA1";
-@@ -47,6 +48,15 @@
- 	clock-frequency = <32768>;
- };
- 
-+&pinctrl {
-+
-+	/* Serial Console */
-+	scif2_pins: serial2 {
-+		pinmux = <RZA1_PINMUX(3, 0, 6)>,	/* TxD2 */
-+			 <RZA1_PINMUX(3, 2, 4)>;	/* RxD2 */
-+	};
-+};
-+
- &mtu2 {
- 	status = "okay";
- };
-@@ -78,5 +88,7 @@
- };
- 
- &scif2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&scif2_pins>;
- 	status = "okay";
- };
--- 
-2.13.0
+Thanks, applied for v4.14.
