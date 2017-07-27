@@ -1,73 +1,83 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:42651 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:54196 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751827AbdGaPDx (ORCPT
+        with ESMTP id S1751125AbdG0O7y (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 31 Jul 2017 11:03:53 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 31/31] arm64: dts: renesas: r8a7795: add hsusb ch3 device node
-Date: Mon, 31 Jul 2017 17:03:23 +0200
-Message-Id: <4725f2b8805718a65dcbce8668710f145df797a8.1501509526.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1501509525.git.horms+renesas@verge.net.au>
-References: <cover.1501509525.git.horms+renesas@verge.net.au>
+        Thu, 27 Jul 2017 10:59:54 -0400
+Date: Thu, 27 Jul 2017 16:59:24 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 00/8] Renesas RZ/A1 pin and gpio controller
+Message-ID: <20170727145921.GC16143@verge.net.au>
+References: <1498143276-7976-1-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdWWSD8BD3xqd+OnWGzmEQO39d8Fg8zWXEP3j=te3axZ8Q@mail.gmail.com>
+ <CAMuHMdXCT_Zw8bdzE0SbcDwwqyzKQwxtcyKHL18q2n7eLMaESw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXCT_Zw8bdzE0SbcDwwqyzKQwxtcyKHL18q2n7eLMaESw@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+On Wed, Jun 28, 2017 at 07:36:15PM +0200, Geert Uytterhoeven wrote:
+> Hi Linus,
+> 
+> On Mon, Jun 26, 2017 at 10:45 AM, Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+> > On Thu, Jun 22, 2017 at 4:54 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> >>    this is 6th round of RZ/A1 pin controller patch series.
+> >>
+> >> Where did we stop: discussion from pin controller driver shifted toward two
+> >> new generic pin configuration properties I added to the previous series
+> >> (bi-directional and output-enable).
+> >>
+> >> After a really long discussion, we decided to go for handling internally all
+> >> bi-directional use cases, making the generic property not a requirement for the
+> >> series. Interestingly, we recently found out the number of pins actually
+> >> requiring this flag is less (~half) than what reported by the processor manual,
+> >> so we could have handled these internally from day one :(
+> >>
+> >> We also now manage internally pins requiring IO direction specified in software
+> >> even when configured in alternate function mode (SWIO mode). Most of them are
+> >> handled by the driver, some of them have to come from DTS as the user can freely
+> >> select if they have to be inputs or outputs. For those pins, and after another
+> >> discussion involving NXP developers, we decided to use input-enable and
+> >> output-enable properties. I have just sent a patch to add output-enable to the
+> >> generic pin configuration properties, but it is currently under discussion.
+> >>
+> >> However, none of the pins currently configured by mainline DTS require those
+> >> properties to be specified, so I have dropped in this driver any dependency on
+> >> output-enable property, and I'm using instead the already in place
+> >> PIN_CONFIG_OUTPUT one. Once output-enable will eventually be accepted, we can
+> >> update the driver to make use of it, but since there are no use cases for that
+> >> at the moment, it makes not too much sense holding this series back for that.
+> >>
+> >> The total memory occupation we were so worried about of bi-directional and swio
+> >> pin tables is now around 100 bytes, because of how the number of pins actually
+> >> needing those flags has  reduced and because of how we have arranged the
+> >> tables using bitfield structures (credits to Geert here).
+> >>
+> >> Having cleared out dependencies on new pin configuration properties and having
+> >> made configuration flags a driver specific issue, I hope this version can be
+> >> accepted and land in forthcoming pull request for Renesas PFC updates from
+> >> Geert, pending some feedback from the linux-gpio community.
+> >
+> > If this is OK for you, I'd like to include the first 3 patches (plus a small
+> > fix I received offline from Chris Brandt[*]) in my final pull request of
+> > sh-pfc for v4.13 (which I have been postponing in anticipation of this driver).
+> 
+> And so I did. Queued in sh-pfc-for-v4.13, pull request sent.
 
-This patch adds support for hsusb ch3 device nodes for R-Car H3 ES2.0.
-
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi |  1 +
- arch/arm64/boot/dts/renesas/r8a7795.dtsi     | 17 +++++++++++++++++
- 2 files changed, 18 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-index 9743acad9b9c..aaa5e67a963e 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-@@ -24,6 +24,7 @@
- 	/delete-node/ usb-phy@ee0e0200;
- 	/delete-node/ usb@ee0e0100;
- 	/delete-node/ usb@ee0e0000;
-+	/delete-node/ usb@e659c000;
- 
- 	/delete-node/ dma-controller@e6460000;
- 	/delete-node/ dma-controller@e6470000;
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index f9735a3a736e..a87ae76880ab 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1733,6 +1733,23 @@
- 			status = "disabled";
- 		};
- 
-+		hsusb3: usb@e659c000 {
-+			compatible = "renesas,usbhs-r8a7795",
-+				     "renesas,rcar-gen3-usbhs";
-+			reg = <0 0xe659c000 0 0x100>;
-+			interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 705>;
-+			dmas = <&usb_dmac2 0>, <&usb_dmac2 1>,
-+			       <&usb_dmac3 0>, <&usb_dmac3 1>;
-+			dma-names = "ch0", "ch1", "ch2", "ch3";
-+			renesas,buswait = <11>;
-+			phys = <&usb2_phy3>;
-+			phy-names = "usb";
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			resets = <&cpg 705>;
-+			status = "disabled";
-+		};
-+
- 		pciec0: pcie@fe000000 {
- 			compatible = "renesas,pcie-r8a7795",
- 				     "renesas,pcie-rcar-gen3";
--- 
-2.1.4
+I have applied up the dts changes on top of v4.13-rc1.
