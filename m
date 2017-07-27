@@ -1,50 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:33833 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751304AbdGQPNr (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:54277 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751113AbdG0PJX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Jul 2017 11:13:47 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-watchdog@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 2/5] watchdog: renesas_wdt: check rate also for upper limit
-Date: Mon, 17 Jul 2017 17:12:27 +0200
-Message-Id: <20170717151230.12680-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170717151230.12680-1-wsa+renesas@sang-engineering.com>
-References: <20170717151230.12680-1-wsa+renesas@sang-engineering.com>
+        Thu, 27 Jul 2017 11:09:23 -0400
+Date: Thu, 27 Jul 2017 17:09:00 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/4] soc: renesas: Add R-Car D3 support
+Message-ID: <20170727150859.GE16143@verge.net.au>
+References: <1500554094-22198-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1500554094-22198-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When checking the clock rate, ensure also that counting all 16 bits
-takes at least one second to match the granularity of the framework.
+On Thu, Jul 20, 2017 at 02:34:50PM +0200, Geert Uytterhoeven wrote:
+> 	Hi Simon, Magnus,
+> 
+> This patch series adds R-Car D3 support to the Renesas-specific SoC
+> drivers:
+>   - SoC identification,
+>   - System controller,
+>   - Reset controller.
+> 
+> Thanks!
+> 
+> Geert Uytterhoeven (4):
+>   soc: renesas: Identify R-Car D3
+>   soc: renesas: Add r8a77995 SYSC PM Domain Binding Definitions
+>   soc: renesas: rcar-sysc: Add support for R-Car D3 power areas
+>   soc: renesas: rcar-rst: Add support for R-Car D3
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/watchdog/renesas_wdt.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
-index 4f8a3563b6aa53..0b9e8a9b1dd14c 100644
---- a/drivers/watchdog/renesas_wdt.c
-+++ b/drivers/watchdog/renesas_wdt.c
-@@ -134,14 +134,14 @@ static int rwdt_probe(struct platform_device *pdev)
- 
- 	for (i = ARRAY_SIZE(clk_divs) - 1; i >= 0; i--) {
- 		clks_per_sec = DIV_ROUND_UP(rate, clk_divs[i]);
--		if (clks_per_sec) {
-+		if (clks_per_sec && clks_per_sec < 65536) {
- 			priv->clks_per_sec = clks_per_sec;
- 			priv->cks = i;
- 			break;
- 		}
- 	}
- 
--	if (!clks_per_sec) {
-+	if (i < 0) {
- 		dev_err(&pdev->dev, "Can't find suitable clock divider\n");
- 		return -ERANGE;
- 	}
--- 
-2.11.0
+Thanks, applied for v4.14.
