@@ -1,151 +1,38 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:36964 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753842AbdGNQIt (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:54447 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751413AbdG0PTx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Jul 2017 12:08:49 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v2 2/6] v4l: vsp1: Calculate partition sizes at stream start.
-Date: Fri, 14 Jul 2017 17:08:33 +0100
-Message-Id: <dc42fcf5e6be3c5951d00df56df732e37aab6de5.1500048373.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.525a94c41c3857a3f4bb8b8bbbccf78cf0c1dc78.1500048373.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.525a94c41c3857a3f4bb8b8bbbccf78cf0c1dc78.1500048373.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.525a94c41c3857a3f4bb8b8bbbccf78cf0c1dc78.1500048373.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.525a94c41c3857a3f4bb8b8bbbccf78cf0c1dc78.1500048373.git-series.kieran.bingham+renesas@ideasonboard.com>
+        Thu, 27 Jul 2017 11:19:53 -0400
+Date: Thu, 27 Jul 2017 17:19:33 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: magnus.damm@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 0/5] arm64: dts: renesas: r8a7795: add usb2.0 for R-Car
+ H3 ES2.0
+Message-ID: <20170727151933.GH16143@verge.net.au>
+References: <1501068580-3981-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1501068580-3981-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Previously the active window and partition sizes for each partition were
-calculated for each partition every frame. This data is constant and
-only needs to be calculated once at the start of the stream.
+On Wed, Jul 26, 2017 at 08:29:35PM +0900, Yoshihiro Shimoda wrote:
+> This patch is based on the renesas-drivers.git /
+> renesas-drivers-2017-07-18-v4.13-rc1 tag.
+> 
+> Kazuya Mizuguchi (1):
+>   arm64: dts: renesas: r8a7795: Add usb companion property in EHCI
+> 
+> Yoshihiro Shimoda (4):
+>   arm64: dts: renesas: r8a7795: add usb2_phy ch3 device node
+>   arm64: dts: renesas: r8a7795: add usb2.0 host ch3 device nodes
+>   arm64: dts: renesas: r8a7795: add usb-dmac ch2 and ch3 device nodes
+>   arm64: dts: renesas: r8a7795: add hsusb ch3 device node
 
-Extend the vsp1_pipe object to dynamically store the number of partitions
-required and pre-calculate the partition sizes into this table.
+Thanks Shimoda-san,
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
----
-v2:
- - Partition table allocated dynamically as required.
- - loop uses unsigned int
- - rebase on top of suspend-resume fix commits
----
- drivers/media/platform/vsp1/vsp1_pipe.h  |  3 ++-
- drivers/media/platform/vsp1/vsp1_video.c | 32 +++++++++++++++++++++----
- 2 files changed, 30 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/media/platform/vsp1/vsp1_pipe.h b/drivers/media/platform/vsp1/vsp1_pipe.h
-index c5d01a365370..d345cc6d0d69 100644
---- a/drivers/media/platform/vsp1/vsp1_pipe.h
-+++ b/drivers/media/platform/vsp1/vsp1_pipe.h
-@@ -82,7 +82,9 @@ enum vsp1_pipeline_state {
-  * @dl: display list associated with the pipeline
-  * @div_size: The maximum allowed partition size for the pipeline
-  * @partitions: The number of partitions used to process one frame
-+ * @partition: The current partition for configuration to process
-  * @current_partition: The partition number currently being configured
-+ * @part_table: The pre-calculated partitions used by the pipeline
-  */
- struct vsp1_pipeline {
- 	struct media_pipeline pipe;
-@@ -117,6 +119,7 @@ struct vsp1_pipeline {
- 	unsigned int partitions;
- 	struct v4l2_rect partition;
- 	unsigned int current_partition;
-+	struct v4l2_rect *part_table;
- };
- 
- void vsp1_pipeline_reset(struct vsp1_pipeline *pipe);
-diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
-index 03e139f40dcf..4155c06e9b42 100644
---- a/drivers/media/platform/vsp1/vsp1_video.c
-+++ b/drivers/media/platform/vsp1/vsp1_video.c
-@@ -256,12 +256,13 @@ static struct v4l2_rect vsp1_video_partition(struct vsp1_pipeline *pipe,
- 	return partition;
- }
- 
--static void vsp1_video_pipeline_setup_partitions(struct vsp1_pipeline *pipe)
-+static int vsp1_video_pipeline_setup_partitions(struct vsp1_pipeline *pipe)
- {
- 	struct vsp1_device *vsp1 = pipe->output->entity.vsp1;
- 	const struct v4l2_mbus_framefmt *format;
- 	struct vsp1_entity *entity;
- 	unsigned int div_size;
-+	unsigned int i;
- 
- 	/*
- 	 * Partitions are computed on the size before rotation, use the format
-@@ -274,9 +275,15 @@ static void vsp1_video_pipeline_setup_partitions(struct vsp1_pipeline *pipe)
- 
- 	/* Gen2 hardware doesn't require image partitioning. */
- 	if (vsp1->info->gen == 2) {
-+		pipe->part_table = kcalloc(1, sizeof(*pipe->part_table),
-+					   GFP_ATOMIC);
-+		if (pipe->part_table == NULL)
-+			return -ENOMEM;
-+
- 		pipe->div_size = div_size;
- 		pipe->partitions = 1;
--		return;
-+		pipe->part_table[0] = vsp1_video_partition(pipe, div_size, 0);
-+		return 0;
- 	}
- 
- 	list_for_each_entry(entity, &pipe->entities, list_pipe) {
-@@ -291,6 +298,16 @@ static void vsp1_video_pipeline_setup_partitions(struct vsp1_pipeline *pipe)
- 
- 	pipe->div_size = div_size;
- 	pipe->partitions = DIV_ROUND_UP(format->width, div_size);
-+
-+	pipe->part_table = kcalloc(pipe->partitions, sizeof(*pipe->part_table),
-+				   GFP_ATOMIC);
-+	if (pipe->part_table == NULL)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < pipe->partitions; i++)
-+		pipe->part_table[i] = vsp1_video_partition(pipe, div_size, i);
-+
-+	return 0;
- }
- /* -----------------------------------------------------------------------------
-  * Pipeline Management
-@@ -372,8 +389,7 @@ static void vsp1_video_pipeline_run_partition(struct vsp1_pipeline *pipe,
- {
- 	struct vsp1_entity *entity;
- 
--	pipe->partition = vsp1_video_partition(pipe, pipe->div_size,
--					       pipe->current_partition);
-+	pipe->partition = pipe->part_table[pipe->current_partition];
- 
- 	list_for_each_entry(entity, &pipe->entities, list_pipe) {
- 		if (entity->ops->configure)
-@@ -801,9 +817,12 @@ static void vsp1_video_buffer_queue(struct vb2_buffer *vb)
- static int vsp1_video_setup_pipeline(struct vsp1_pipeline *pipe)
- {
- 	struct vsp1_entity *entity;
-+	int ret;
- 
- 	/* Determine this pipelines sizes for image partitioning support. */
--	vsp1_video_pipeline_setup_partitions(pipe);
-+	ret = vsp1_video_pipeline_setup_partitions(pipe);
-+	if (ret)
-+		return ret;
- 
- 	/* Prepare the display list. */
- 	pipe->dl = vsp1_dl_list_get(pipe->output->dlm);
-@@ -908,6 +927,9 @@ static void vsp1_video_stop_streaming(struct vb2_queue *vq)
- 		vsp1_dl_list_put(pipe->dl);
- 		pipe->dl = NULL;
- 	}
-+
-+	kfree(pipe->part_table);
-+	pipe->part_table = NULL;
- 	mutex_unlock(&pipe->lock);
- 
- 	media_pipeline_stop(&video->video.entity);
--- 
-git-series 0.9.1
+I have applied these for v4.14.
