@@ -1,56 +1,85 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:42651 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750987AbdGaPEM (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 31 Jul 2017 11:04:12 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 09/10] ARM: multi_v7_defconfig: Replace DRM_RCAR_HDMI by generic bridge options
-Date: Mon, 31 Jul 2017 17:03:40 +0200
-Message-Id: <cdbacdaf89226db73aeed157d287a4702a4a09d3.1501511664.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1501511664.git.horms+renesas@verge.net.au>
-References: <cover.1501511664.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: balbi@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 3/3] usb: gadget: udc: renesas_usb3: add support for R-Car M3-W
+Date: Fri, 28 Jul 2017 21:16:59 +0900
+Message-Id: <1501244219-11840-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1501244219-11840-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1501244219-11840-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+This patch adds support for R-Car M3-W. This patch also adds R-Car
+Gen3 generic version's compatible.
 
-The manual bridge implementation was removed in favor of the generic
-one, so now we need to enable standard bridge drivers like
-DRM_DUMB_VGA_DAC and DRM_I2C_ADV7511.
-Both were already enabled, but the (newer) ADV7511 audio part wasn't.
-
-Fixes: 5c602531feb3db39 ("drm: rcar-du: Replace manual bridge implementation with DRM bridge")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- arch/arm/configs/multi_v7_defconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/devicetree/bindings/usb/renesas_usb3.txt | 16 +++++++++++++---
+ drivers/usb/gadget/udc/renesas_usb3.c                  |  8 ++++++++
+ 2 files changed, 21 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 7fa1746970ec..ea2075d8e185 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -584,6 +584,7 @@ CONFIG_VIDEO_ADV7180=m
- CONFIG_VIDEO_ML86V7667=m
- CONFIG_DRM=y
- CONFIG_DRM_I2C_ADV7511=m
-+CONFIG_DRM_I2C_ADV7511_AUDIO=y
- # CONFIG_DRM_I2C_CH7006 is not set
- # CONFIG_DRM_I2C_SIL164 is not set
- CONFIG_DRM_DUMB_VGA_DAC=m
-@@ -603,7 +604,6 @@ CONFIG_ROCKCHIP_DW_MIPI_DSI=y
- CONFIG_ROCKCHIP_INNO_HDMI=y
- CONFIG_DRM_ATMEL_HLCDC=m
- CONFIG_DRM_RCAR_DU=m
--CONFIG_DRM_RCAR_HDMI=y
- CONFIG_DRM_RCAR_LVDS=y
- CONFIG_DRM_SUN4I=m
- CONFIG_DRM_TEGRA=y
+diff --git a/Documentation/devicetree/bindings/usb/renesas_usb3.txt b/Documentation/devicetree/bindings/usb/renesas_usb3.txt
+index 8d52766..e280258 100644
+--- a/Documentation/devicetree/bindings/usb/renesas_usb3.txt
++++ b/Documentation/devicetree/bindings/usb/renesas_usb3.txt
+@@ -3,20 +3,30 @@ Renesas Electronics USB3.0 Peripheral driver
+ Required properties:
+   - compatible: Must contain one of the following:
+ 	- "renesas,r8a7795-usb3-peri"
++	- "renesas,r8a7796-usb3-peri"
++	- "renesas,rcar-gen3-usb3-peri" for a generic R-Car Gen3 compatible
++	  device
++
++    When compatible with the generic version, nodes must list the
++    SoC-specific version corresponding to the platform first
++    followed by the generic version.
++
+   - reg: Base address and length of the register for the USB3.0 Peripheral
+   - interrupts: Interrupt specifier for the USB3.0 Peripheral
+   - clocks: clock phandle and specifier pair
+ 
+-Example:
++Example of R-Car H3 ES1.x:
+ 	usb3_peri0: usb@ee020000 {
+-		compatible = "renesas,r8a7795-usb3-peri";
++		compatible = "renesas,r8a7795-usb3-peri",
++			     "renesas,rcar-gen3-usb3-peri";
+ 		reg = <0 0xee020000 0 0x400>;
+ 		interrupts = <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cpg CPG_MOD 328>;
+ 	};
+ 
+ 	usb3_peri1: usb@ee060000 {
+-		compatible = "renesas,r8a7795-usb3-peri";
++		compatible = "renesas,r8a7795-usb3-peri",
++			     "renesas,rcar-gen3-usb3-peri";
+ 		reg = <0 0xee060000 0 0x400>;
+ 		interrupts = <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cpg CPG_MOD 327>;
+diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
+index aa2b185..45410f3 100644
+--- a/drivers/usb/gadget/udc/renesas_usb3.c
++++ b/drivers/usb/gadget/udc/renesas_usb3.c
+@@ -2506,6 +2506,14 @@ static void renesas_usb3_init_ram(struct renesas_usb3 *usb3, struct device *dev,
+ 		.compatible = "renesas,r8a7795-usb3-peri",
+ 		.data = &renesas_usb3_priv_gen3,
+ 	},
++	{
++		.compatible = "renesas,r8a7796-usb3-peri",
++		.data = &renesas_usb3_priv_gen3,
++	},
++	{
++		.compatible = "renesas,rcar-gen3-usb3-peri",
++		.data = &renesas_usb3_priv_gen3,
++	},
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, usb3_of_match);
 -- 
-2.1.4
+1.9.1
+
