@@ -1,53 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:52354 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935939AbdGTM3I (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:33987 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751822AbdG1KcJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 20 Jul 2017 08:29:08 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms+renesas@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/3] arm64: renesas: Add Renesas R8A77995 Kconfig support
-Date: Thu, 20 Jul 2017 14:29:01 +0200
-Message-Id: <1500553741-21890-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1500553741-21890-1-git-send-email-geert+renesas@glider.be>
-References: <1500553741-21890-1-git-send-email-geert+renesas@glider.be>
+        Fri, 28 Jul 2017 06:32:09 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: balbi@kernel.org
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH] usb: renesas_usbhs: gadget: fix unused-but-set-variable warning
+Date: Fri, 28 Jul 2017 19:28:57 +0900
+Message-Id: <1501237737-498-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a configuration option for the R-Car D3 SoC.
+The commit b8b9c974afee ("usb: renesas_usbhs: gadget: disable all eps
+when the driver stops") causes the unused-but-set-variable warning.
+But, if the usbhsg_ep_disable() will return non-zero value, udc/core.c
+doesn't clear the ep->enabled flag. So, this driver should not return
+non-zero value, if the pipe is zero because this means the pipe is
+already disabled. Otherwise, the ep->enabled flag is never cleared
+when the usbhsg_ep_disable() is called by the renesas_usbhs driver first.
 
-Note that r8a77995 is the first Renesas "r8a<n>" SoC using a 5 digit
-number in its Kconfig symbol, as r8a77990 will be a different SoC.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Fixes: b8b9c974afee ("usb: renesas_usbhs: gadget: disable all eps when the driver stops")
+Fixes: 11432050f070 ("usb: renesas_usbhs: gadget: fix NULL pointer dereference in ep_disable()")
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- arch/arm64/Kconfig.platforms | 6 ++++++
- 1 file changed, 6 insertions(+)
+ Or, should I revert the commit b8b9c974afee first?
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index f5f0c813dfecc56c..a1c9f4ed7a887ab2 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -184,6 +184,12 @@ config ARCH_R8A7796
- 	help
- 	  This enables support for the Renesas R-Car M3-W SoC.
+ drivers/usb/renesas_usbhs/mod_gadget.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/drivers/usb/renesas_usbhs/mod_gadget.c b/drivers/usb/renesas_usbhs/mod_gadget.c
+index 93fba90..2c8161b 100644
+--- a/drivers/usb/renesas_usbhs/mod_gadget.c
++++ b/drivers/usb/renesas_usbhs/mod_gadget.c
+@@ -639,14 +639,11 @@ static int usbhsg_ep_disable(struct usb_ep *ep)
+ 	struct usbhsg_uep *uep = usbhsg_ep_to_uep(ep);
+ 	struct usbhs_pipe *pipe;
+ 	unsigned long flags;
+-	int ret = 0;
  
-+config ARCH_R8A77995
-+	bool "Renesas R-Car D3 SoC Platform"
-+	depends on ARCH_RENESAS
-+	help
-+	  This enables support for the Renesas R-Car D3 SoC.
-+
- config ARCH_STRATIX10
- 	bool "Altera's Stratix 10 SoCFPGA Family"
- 	help
+ 	spin_lock_irqsave(&uep->lock, flags);
+ 	pipe = usbhsg_uep_to_pipe(uep);
+-	if (!pipe) {
+-		ret = -EINVAL;
++	if (!pipe)
+ 		goto out;
+-	}
+ 
+ 	usbhsg_pipe_disable(uep);
+ 	usbhs_pipe_free(pipe);
 -- 
-2.7.4
+1.9.1
