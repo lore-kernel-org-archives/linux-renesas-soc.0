@@ -1,111 +1,117 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:51942 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752198AbdGUJz4 (ORCPT
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:34303 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751737AbdG1Llw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Jul 2017 05:55:56 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: niklas.soderlund@ragnatech.se
-Cc: laurent.pinchart@ideasonboard.com, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, kieran.bingham@ideasonboard.com,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH] v4l: rcar-vin: Simplify rvin_group_notify_{bound,unbind}
-Date: Fri, 21 Jul 2017 10:55:50 +0100
-Message-Id: <1500630950-29870-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+        Fri, 28 Jul 2017 07:41:52 -0400
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+To: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 9/9] pinctrl: sh-pfc: r8a7795: Fix to reserved MOD_SEL2 bit22
+Date: Fri, 28 Jul 2017 20:41:21 +0900
+Message-Id: <1501242081-3805-10-git-send-email-ykaneko0929@gmail.com>
+In-Reply-To: <1501242081-3805-1-git-send-email-ykaneko0929@gmail.com>
+References: <1501242081-3805-1-git-send-email-ykaneko0929@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use a container_of macro to obtain the graph entity object from the ASD
-This removes the error conditions, and reduces the lock contention.
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-(The locking may even be potentially removed)
+This is a correction because MOD_SEL register specification for R8A7795
+ES2.0 SoC was changed in R-Car Gen3 Hardware User's Manual Rev.0.54E.
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Fixes: 12f5d9a1dc7f ("pinctrl: sh-pfc: r8a7795: Replace for Renesas R8A7795 ES2.0 SoC")
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 ---
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-Hi Niklas,
-
-While working through the Multi camera setup, we came across this improvement.
-
-If this code isn't yet upstream, feel free to squash this change into your
-existing branch if you wish.
-
-Regards
-
-Kieran
-
- drivers/media/platform/rcar-vin/rcar-core.c | 28 ++++++----------------------
- drivers/media/platform/rcar-vin/rcar-vin.h  |  3 +++
- 2 files changed, 9 insertions(+), 22 deletions(-)
-
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 8393a1598660..b4fc7b56c8a1 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -688,20 +688,11 @@ static void rvin_group_notify_unbind(struct v4l2_async_notifier *notifier,
- 				     struct v4l2_async_subdev *asd)
- {
- 	struct rvin_dev *vin = notifier_to_vin(notifier);
--	unsigned int i;
-+	struct rvin_graph_entity *csi = to_rvin_graph_entity(asd);
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+index 44beb7c..bbed0d6 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+@@ -496,7 +496,6 @@
+ #define MOD_SEL2_28_27		FM(SEL_FM_0)		FM(SEL_FM_1)		FM(SEL_FM_2)		FM(SEL_FM_3)
+ #define MOD_SEL2_26		FM(SEL_SCIF5_0)		FM(SEL_SCIF5_1)
+ #define MOD_SEL2_25_24_23	FM(SEL_I2C6_0)		FM(SEL_I2C6_1)		FM(SEL_I2C6_2)		F_(0, 0)		F_(0, 0)		F_(0, 0)		F_(0, 0)		F_(0, 0)
+-#define MOD_SEL2_22		FM(SEL_NDF_0)		FM(SEL_NDF_1)
+ #define MOD_SEL2_21		FM(SEL_SSI2_0)		FM(SEL_SSI2_1)
+ #define MOD_SEL2_20		FM(SEL_SSI9_0)		FM(SEL_SSI9_1)
+ #define MOD_SEL2_19		FM(SEL_TIMER_TMU2_0)	FM(SEL_TIMER_TMU2_1)
+@@ -513,7 +512,7 @@
+ MOD_SEL0_26_25_24	MOD_SEL1_26		MOD_SEL2_26 \
+ 			MOD_SEL1_25_24		MOD_SEL2_25_24_23 \
+ MOD_SEL0_23		MOD_SEL1_23_22_21 \
+-MOD_SEL0_22					MOD_SEL2_22 \
++MOD_SEL0_22 \
+ MOD_SEL0_21					MOD_SEL2_21 \
+ MOD_SEL0_20		MOD_SEL1_20		MOD_SEL2_20 \
+ MOD_SEL0_19		MOD_SEL1_19		MOD_SEL2_19 \
+@@ -1020,35 +1019,35 @@ enum {
  
- 	mutex_lock(&vin->group->lock);
--	for (i = 0; i < RVIN_CSI_MAX; i++) {
--		if (&vin->group->csi[i].asd == asd) {
--			vin_dbg(vin, "Unbind CSI-2 %s\n", subdev->name);
--			vin->group->csi[i].subdev = NULL;
--			mutex_unlock(&vin->group->lock);
--			return;
--		}
--	}
-+	csi->subdev = NULL;
- 	mutex_unlock(&vin->group->lock);
--
--	vin_err(vin, "No entity for subdev %s to unbind\n", subdev->name);
- }
+ 	PINMUX_IPSR_GPSR(IP8_15_12,	SD1_CMD),
+ 	PINMUX_IPSR_MSEL(IP8_15_12,	MSIOF1_SYNC_G,		SEL_MSIOF1_6),
+-	PINMUX_IPSR_MSEL(IP8_15_12,	NFCE_N_B,		SEL_NDF_1),
++	PINMUX_IPSR_GPSR(IP8_15_12,	NFCE_N_B),
+ 	PINMUX_IPSR_MSEL(IP8_15_12,	SIM0_D_A,		SEL_SIMCARD_0),
+ 	PINMUX_IPSR_MSEL(IP8_15_12,	STP_IVCXO27_1_B,	SEL_SSP1_1_1),
  
- static int rvin_group_notify_bound(struct v4l2_async_notifier *notifier,
-@@ -709,23 +700,16 @@ static int rvin_group_notify_bound(struct v4l2_async_notifier *notifier,
- 				   struct v4l2_async_subdev *asd)
- {
- 	struct rvin_dev *vin = notifier_to_vin(notifier);
--	unsigned int i;
-+	struct rvin_graph_entity *csi = to_rvin_graph_entity(asd);
+ 	PINMUX_IPSR_GPSR(IP8_19_16,	SD1_DAT0),
+ 	PINMUX_IPSR_GPSR(IP8_19_16,	SD2_DAT4),
+ 	PINMUX_IPSR_MSEL(IP8_19_16,	MSIOF1_RXD_G,		SEL_MSIOF1_6),
+-	PINMUX_IPSR_MSEL(IP8_19_16,	NFWP_N_B,		SEL_NDF_1),
++	PINMUX_IPSR_GPSR(IP8_19_16,	NFWP_N_B),
+ 	PINMUX_IPSR_MSEL(IP8_19_16,	TS_SCK1_B,		SEL_TSIF1_1),
+ 	PINMUX_IPSR_MSEL(IP8_19_16,	STP_ISCLK_1_B,		SEL_SSP1_1_1),
  
- 	v4l2_set_subdev_hostdata(subdev, vin);
+ 	PINMUX_IPSR_GPSR(IP8_23_20,	SD1_DAT1),
+ 	PINMUX_IPSR_GPSR(IP8_23_20,	SD2_DAT5),
+ 	PINMUX_IPSR_MSEL(IP8_23_20,	MSIOF1_TXD_G,		SEL_MSIOF1_6),
+-	PINMUX_IPSR_MSEL(IP8_23_20,	NFDATA14_B,		SEL_NDF_1),
++	PINMUX_IPSR_GPSR(IP8_23_20,	NFDATA14_B),
+ 	PINMUX_IPSR_MSEL(IP8_23_20,	TS_SPSYNC1_B,		SEL_TSIF1_1),
+ 	PINMUX_IPSR_MSEL(IP8_23_20,	STP_ISSYNC_1_B,		SEL_SSP1_1_1),
  
- 	mutex_lock(&vin->group->lock);
--	for (i = 0; i < RVIN_CSI_MAX; i++) {
--		if (&vin->group->csi[i].asd == asd) {
--			vin_dbg(vin, "Bound CSI-2 %s\n", subdev->name);
--			vin->group->csi[i].subdev = subdev;
--			mutex_unlock(&vin->group->lock);
--			return 0;
--		}
--	}
-+	vin_dbg(vin, "Bound CSI-2 %s\n", subdev->name);
-+	csi->subdev = subdev;
- 	mutex_unlock(&vin->group->lock);
+ 	PINMUX_IPSR_GPSR(IP8_27_24,	SD1_DAT2),
+ 	PINMUX_IPSR_GPSR(IP8_27_24,	SD2_DAT6),
+ 	PINMUX_IPSR_MSEL(IP8_27_24,	MSIOF1_SS1_G,		SEL_MSIOF1_6),
+-	PINMUX_IPSR_MSEL(IP8_27_24,	NFDATA15_B,		SEL_NDF_1),
++	PINMUX_IPSR_GPSR(IP8_27_24,	NFDATA15_B),
+ 	PINMUX_IPSR_MSEL(IP8_27_24,	TS_SDAT1_B,		SEL_TSIF1_1),
+ 	PINMUX_IPSR_MSEL(IP8_27_24,	STP_ISD_1_B,		SEL_SSP1_1_1),
  
--	vin_err(vin, "No entity for subdev %s to bind\n", subdev->name);
--	return -EINVAL;
-+	return 0;
- }
+ 	PINMUX_IPSR_GPSR(IP8_31_28,	SD1_DAT3),
+ 	PINMUX_IPSR_GPSR(IP8_31_28,	SD2_DAT7),
+ 	PINMUX_IPSR_MSEL(IP8_31_28,	MSIOF1_SS2_G,		SEL_MSIOF1_6),
+-	PINMUX_IPSR_MSEL(IP8_31_28,	NFRB_N_B,		SEL_NDF_1),
++	PINMUX_IPSR_GPSR(IP8_31_28,	NFRB_N_B),
+ 	PINMUX_IPSR_MSEL(IP8_31_28,	TS_SDEN1_B,		SEL_TSIF1_1),
+ 	PINMUX_IPSR_MSEL(IP8_31_28,	STP_ISEN_1_B,		SEL_SSP1_1_1),
  
- static struct device_node *rvin_group_get_csi(struct rvin_dev *vin,
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index e7e600fdf566..900c473c3d15 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -92,6 +92,9 @@ struct rvin_graph_entity {
- 	unsigned int sink_pad;
- };
- 
-+#define to_rvin_graph_entity(asd) \
-+	container_of(asd, struct rvin_graph_entity, asd)
-+
- struct rvin_group;
- 
- 
+@@ -1268,7 +1267,7 @@ enum {
+ 	/* IPSR14 */
+ 	PINMUX_IPSR_GPSR(IP14_3_0,	MSIOF0_SS1),
+ 	PINMUX_IPSR_MSEL(IP14_3_0,	RX5_A,			SEL_SCIF5_0),
+-	PINMUX_IPSR_MSEL(IP14_3_0,	NFWP_N_A,		SEL_NDF_0),
++	PINMUX_IPSR_GPSR(IP14_3_0,	NFWP_N_A),
+ 	PINMUX_IPSR_MSEL(IP14_3_0,	AUDIO_CLKA_C,		SEL_ADG_A_2),
+ 	PINMUX_IPSR_MSEL(IP14_3_0,	SSI_SCK2_A,		SEL_SSI_0),
+ 	PINMUX_IPSR_MSEL(IP14_3_0,	STP_IVCXO27_0_C,	SEL_SSP1_0_2),
+@@ -2779,7 +2778,8 @@ enum {
+ 		MOD_SEL2_28_27
+ 		MOD_SEL2_26
+ 		MOD_SEL2_25_24_23
+-		MOD_SEL2_22
++		/* RESERVED 22 */
++		0, 0,
+ 		MOD_SEL2_21
+ 		MOD_SEL2_20
+ 		MOD_SEL2_19
 -- 
-2.7.4
+1.9.1
