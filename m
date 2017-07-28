@@ -1,48 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:45892 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751312AbdGQMGl (ORCPT
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:36589 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751595AbdG1Ll3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Jul 2017 08:06:41 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
+        Fri, 28 Jul 2017 07:41:29 -0400
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+To: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] ARM: dts: iwg20m: Correct indentation of mmcif0 properties
-Date: Mon, 17 Jul 2017 14:06:37 +0200
-Message-Id: <1500293197-14785-1-git-send-email-geert+renesas@glider.be>
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 0/9] pinctrl: sh-pfc: r8a7795: Fix pin assignment definitions
+Date: Fri, 28 Jul 2017 20:41:12 +0900
+Message-Id: <1501242081-3805-1-git-send-email-ykaneko0929@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Fixes: 4658c4b789d8e2ae ("ARM: dts: iwg20m: Add MMCIF0 support")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7743-iwg20m.dtsi | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+This series fixes pin assignment definitions for R8A7795 SoC.
+This series is based on the for-next branch of linux-pinctrl tree.
 
-diff --git a/arch/arm/boot/dts/r8a7743-iwg20m.dtsi b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
-index f78dbc542a824f40..ff799381863763de 100644
---- a/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
-+++ b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
-@@ -45,11 +45,11 @@
- };
- 
- &mmcif0 {
--		pinctrl-0 = <&mmcif0_pins>;
--		pinctrl-names = "default";
-+	pinctrl-0 = <&mmcif0_pins>;
-+	pinctrl-names = "default";
- 
--		vmmc-supply = <&reg_3p3v>;
--		bus-width = <8>;
--		non-removable;
--		status = "okay";
-+	vmmc-supply = <&reg_3p3v>;
-+	bus-width = <8>;
-+	non-removable;
-+	status = "okay";
- };
+Takeshi Kihara (9):
+  pinctrl: sh-pfc: r8a7795: Fix MOD_SEL1 bit[25:24] to 0x3 when using
+    STP_ISEN_1_D
+  pinctrl: sh-pfc: r8a7795: Fix MOD_SEL2 bit26 to 0x0 when using SCK5_A
+  pinctrl: sh-pfc: r8a7795: Fix SCIF_CLK_{A,B} pin's MOD_SEL assignment
+    to MOD_SEL1 bit10
+  pinctrl: sh-pfc: r8a7795: Fix FMCLK{_C,_D} and FMIN{_C,_D} pin
+    function definitions
+  pinctrl: sh-pfc: r8a7795: Fix NFDATA{0..13} and NF{ALE,CLE,WE_N,RE_N}
+    pin function definitions
+  pinctrl: sh-pfc: r8a7795: Fix MOD_SEL register pin assignment for
+    TCLK{1,2}_{A,B} pins group
+  pinctrl: sh-pfc: r8a7795: Fix to delete FSCLKST pin and IPSR7
+    bit[15:12] register definitions
+  pinctrl: sh-pfc: r8a7795: Rename CS1# pin function definitions
+  pinctrl: sh-pfc: r8a7795: Fix to reserved MOD_SEL2 bit22
+
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 93 +++++++++++++++++-------------------
+ 1 file changed, 45 insertions(+), 48 deletions(-)
+
 -- 
-2.7.4
+1.9.1
