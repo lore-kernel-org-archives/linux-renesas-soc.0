@@ -1,147 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:42651 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750987AbdGaPEO (ORCPT
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:37903 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751737AbdG1Llo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 31 Jul 2017 11:04:14 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
+        Fri, 28 Jul 2017 07:41:44 -0400
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+To: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 3/4] soc: renesas: rcar-sysc: Add support for R-Car D3 power areas
-Date: Mon, 31 Jul 2017 17:04:04 +0200
-Message-Id: <eed17c427f8b16dc9ca68f80d6b0d39a62b8eee3.1501511923.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1501511923.git.horms+renesas@verge.net.au>
-References: <cover.1501511923.git.horms+renesas@verge.net.au>
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 6/9] pinctrl: sh-pfc: r8a7795: Fix MOD_SEL register pin assignment for TCLK{1,2}_{A,B} pins group
+Date: Fri, 28 Jul 2017 20:41:18 +0900
+Message-Id: <1501242081-3805-7-git-send-email-ykaneko0929@gmail.com>
+In-Reply-To: <1501242081-3805-1-git-send-email-ykaneko0929@gmail.com>
+References: <1501242081-3805-1-git-send-email-ykaneko0929@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+This patch fixes to set MOD_SEL2 bit19 when using TCLK2_A pin function is
+selected for IPSR16 bit[23:20] or using TCLK2_B pin function is selected
+for IPSR17 bit[27:24]. And renames MOD_SEL2 bit26 value definition name
+to SEL_TIMER_TMU1.
+
+This is a correction because MOD_SEL register specification for R8A7795
+ES2.0 SoC was changed in R-Car Gen3 Hardware User's Manual Rev.0.53E.
+
+Fixes: 12f5d9a1dc7f ("pinctrl: sh-pfc: r8a7795: Replace for Renesas R8A7795 ES2.0 SoC")
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 ---
- .../bindings/power/renesas,rcar-sysc.txt           |  1 +
- drivers/soc/renesas/Kconfig                        |  5 ++++
- drivers/soc/renesas/Makefile                       |  1 +
- drivers/soc/renesas/r8a77995-sysc.c                | 31 ++++++++++++++++++++++
- drivers/soc/renesas/rcar-sysc.c                    |  3 +++
- drivers/soc/renesas/rcar-sysc.h                    |  1 +
- 6 files changed, 42 insertions(+)
- create mode 100644 drivers/soc/renesas/r8a77995-sysc.c
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt b/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
-index d91715bc8d52..98cc8c09d02d 100644
---- a/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
-+++ b/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
-@@ -17,6 +17,7 @@ Required properties:
-       - "renesas,r8a7794-sysc" (R-Car E2)
-       - "renesas,r8a7795-sysc" (R-Car H3)
-       - "renesas,r8a7796-sysc" (R-Car M3-W)
-+      - "renesas,r8a77995-sysc" (R-Car D3)
-   - reg: Address start and address range for the device.
-   - #power-domain-cells: Must be 1.
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+index 945d123..18fea79 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+@@ -469,7 +469,7 @@
+ /* MOD_SEL1 */			/* 0 */			/* 1 */			/* 2 */			/* 3 */			/* 4 */			/* 5 */			/* 6 */			/* 7 */
+ #define MOD_SEL1_31_30		FM(SEL_TSIF1_0)		FM(SEL_TSIF1_1)		FM(SEL_TSIF1_2)		FM(SEL_TSIF1_3)
+ #define MOD_SEL1_29_28_27	FM(SEL_TSIF0_0)		FM(SEL_TSIF0_1)		FM(SEL_TSIF0_2)		FM(SEL_TSIF0_3)		FM(SEL_TSIF0_4)		F_(0, 0)		F_(0, 0)		F_(0, 0)
+-#define MOD_SEL1_26		FM(SEL_TIMER_TMU_0)	FM(SEL_TIMER_TMU_1)
++#define MOD_SEL1_26		FM(SEL_TIMER_TMU1_0)	FM(SEL_TIMER_TMU1_1)
+ #define MOD_SEL1_25_24		FM(SEL_SSP1_1_0)	FM(SEL_SSP1_1_1)	FM(SEL_SSP1_1_2)	FM(SEL_SSP1_1_3)
+ #define MOD_SEL1_23_22_21	FM(SEL_SSP1_0_0)	FM(SEL_SSP1_0_1)	FM(SEL_SSP1_0_2)	FM(SEL_SSP1_0_3)	FM(SEL_SSP1_0_4)	F_(0, 0)		F_(0, 0)		F_(0, 0)
+ #define MOD_SEL1_20		FM(SEL_SSI_0)		FM(SEL_SSI_1)
+@@ -1276,7 +1276,7 @@ enum {
+ 	PINMUX_IPSR_MSEL(IP14_3_0,	SSI_SCK2_A,		SEL_SSI_0),
+ 	PINMUX_IPSR_MSEL(IP14_3_0,	STP_IVCXO27_0_C,	SEL_SSP1_0_2),
+ 	PINMUX_IPSR_GPSR(IP14_3_0,	AUDIO_CLKOUT3_A),
+-	PINMUX_IPSR_MSEL(IP14_3_0,	TCLK1_B,		SEL_TIMER_TMU_1),
++	PINMUX_IPSR_MSEL(IP14_3_0,	TCLK1_B,		SEL_TIMER_TMU1_1),
  
-diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
-index 87a4be46bd98..680a5a29837b 100644
---- a/drivers/soc/renesas/Kconfig
-+++ b/drivers/soc/renesas/Kconfig
-@@ -13,6 +13,7 @@ config SOC_RENESAS
- 	select SYSC_R8A7794 if ARCH_R8A7794
- 	select SYSC_R8A7795 if ARCH_R8A7795
- 	select SYSC_R8A7796 if ARCH_R8A7796
-+	select SYSC_R8A77995 if ARCH_R8A77995
+ 	PINMUX_IPSR_GPSR(IP14_7_4,	MSIOF0_SS2),
+ 	PINMUX_IPSR_MSEL(IP14_7_4,	TX5_A,			SEL_SCIF5_0),
+@@ -1392,7 +1392,7 @@ enum {
+ 	PINMUX_IPSR_MSEL(IP16_23_20,	STP_ISEN_1_A,		SEL_SSP1_1_0),
+ 	PINMUX_IPSR_MSEL(IP16_23_20,	RIF1_D0_A,		SEL_DRIF1_0),
+ 	PINMUX_IPSR_MSEL(IP16_23_20,	RIF3_D0_A,		SEL_DRIF3_0),
+-	PINMUX_IPSR_MSEL(IP16_23_20,	TCLK2_A,		SEL_TIMER_TMU_0),
++	PINMUX_IPSR_MSEL(IP16_23_20,	TCLK2_A,		SEL_TIMER_TMU2_0),
  
- if SOC_RENESAS
+ 	PINMUX_IPSR_GPSR(IP16_27_24,	SSI_SDATA8),
+ 	PINMUX_IPSR_MSEL(IP16_27_24,	HRTS2_N_B,		SEL_HSCIF2_1),
+@@ -1419,7 +1419,7 @@ enum {
+ 	PINMUX_IPSR_MSEL(IP17_7_4,	SCIF_CLK_A,		SEL_SCIF_0),
+ 	PINMUX_IPSR_MSEL(IP17_7_4,	STP_IVCXO27_1_D,	SEL_SSP1_1_3),
+ 	PINMUX_IPSR_MSEL(IP17_7_4,	REMOCON_A,		SEL_REMOCON_0),
+-	PINMUX_IPSR_MSEL(IP17_7_4,	TCLK1_A,		SEL_TIMER_TMU_0),
++	PINMUX_IPSR_MSEL(IP17_7_4,	TCLK1_A,		SEL_TIMER_TMU1_0),
  
-@@ -53,6 +54,10 @@ config SYSC_R8A7796
- 	bool "R-Car M3-W System Controller support" if COMPILE_TEST
- 	select SYSC_RCAR
- 
-+config SYSC_R8A77995
-+	bool "R-Car D3 System Controller support" if COMPILE_TEST
-+	select SYSC_RCAR
-+
- # Family
- config RST_RCAR
- 	bool "R-Car Reset Controller support" if COMPILE_TEST
-diff --git a/drivers/soc/renesas/Makefile b/drivers/soc/renesas/Makefile
-index 1a1a297b26a7..6b6e7f16104c 100644
---- a/drivers/soc/renesas/Makefile
-+++ b/drivers/soc/renesas/Makefile
-@@ -11,6 +11,7 @@ obj-$(CONFIG_SYSC_R8A7792)	+= r8a7792-sysc.o
- obj-$(CONFIG_SYSC_R8A7794)	+= r8a7794-sysc.o
- obj-$(CONFIG_SYSC_R8A7795)	+= r8a7795-sysc.o
- obj-$(CONFIG_SYSC_R8A7796)	+= r8a7796-sysc.o
-+obj-$(CONFIG_SYSC_R8A77995)	+= r8a77995-sysc.o
- 
- # Family
- obj-$(CONFIG_RST_RCAR)		+= rcar-rst.o
-diff --git a/drivers/soc/renesas/r8a77995-sysc.c b/drivers/soc/renesas/r8a77995-sysc.c
-new file mode 100644
-index 000000000000..f718429cab02
---- /dev/null
-+++ b/drivers/soc/renesas/r8a77995-sysc.c
-@@ -0,0 +1,31 @@
-+/*
-+ * Renesas R-Car D3 System Controller
-+ *
-+ * Copyright (C) 2017 Glider bvba
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; version 2 of the License.
-+ */
-+
-+#include <linux/bug.h>
-+#include <linux/kernel.h>
-+#include <linux/sys_soc.h>
-+
-+#include <dt-bindings/power/r8a77995-sysc.h>
-+
-+#include "rcar-sysc.h"
-+
-+static struct rcar_sysc_area r8a77995_areas[] __initdata = {
-+	{ "always-on",     0, 0, R8A77995_PD_ALWAYS_ON, -1, PD_ALWAYS_ON },
-+	{ "ca53-scu",  0x140, 0, R8A77995_PD_CA53_SCU,  R8A77995_PD_ALWAYS_ON,
-+	  PD_SCU },
-+	{ "ca53-cpu0", 0x200, 0, R8A77995_PD_CA53_CPU0, R8A77995_PD_CA53_SCU,
-+	  PD_CPU_NOCR },
-+};
-+
-+
-+const struct rcar_sysc_info r8a77995_sysc_info __initconst = {
-+	.areas = r8a77995_areas,
-+	.num_areas = ARRAY_SIZE(r8a77995_areas),
-+};
-diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
-index 7c8da3c90011..e4d3b0101dfb 100644
---- a/drivers/soc/renesas/rcar-sysc.c
-+++ b/drivers/soc/renesas/rcar-sysc.c
-@@ -284,6 +284,9 @@ static const struct of_device_id rcar_sysc_matches[] = {
- #ifdef CONFIG_SYSC_R8A7796
- 	{ .compatible = "renesas,r8a7796-sysc", .data = &r8a7796_sysc_info },
- #endif
-+#ifdef CONFIG_SYSC_R8A77995
-+	{ .compatible = "renesas,r8a77995-sysc", .data = &r8a77995_sysc_info },
-+#endif
- 	{ /* sentinel */ }
- };
- 
-diff --git a/drivers/soc/renesas/rcar-sysc.h b/drivers/soc/renesas/rcar-sysc.h
-index 1a5bebaf54ba..2f524922c4d2 100644
---- a/drivers/soc/renesas/rcar-sysc.h
-+++ b/drivers/soc/renesas/rcar-sysc.h
-@@ -58,6 +58,7 @@ extern const struct rcar_sysc_info r8a7792_sysc_info;
- extern const struct rcar_sysc_info r8a7794_sysc_info;
- extern const struct rcar_sysc_info r8a7795_sysc_info;
- extern const struct rcar_sysc_info r8a7796_sysc_info;
-+extern const struct rcar_sysc_info r8a77995_sysc_info;
- 
- 
-     /*
+ 	PINMUX_IPSR_GPSR(IP17_11_8,	USB0_PWEN),
+ 	PINMUX_IPSR_MSEL(IP17_11_8,	SIM0_RST_C,		SEL_SIMCARD_2),
+@@ -1463,7 +1463,7 @@ enum {
+ 	PINMUX_IPSR_MSEL(IP17_27_24,	STP_ISEN_1_D,		SEL_SSP1_1_3),
+ 	PINMUX_IPSR_MSEL(IP17_27_24,	STP_OPWM_0_E,		SEL_SSP1_0_4),
+ 	PINMUX_IPSR_MSEL(IP17_27_24,	RIF3_D0_B,		SEL_DRIF3_1),
+-	PINMUX_IPSR_MSEL(IP17_27_24,	TCLK2_B,		SEL_TIMER_TMU_1),
++	PINMUX_IPSR_MSEL(IP17_27_24,	TCLK2_B,		SEL_TIMER_TMU2_1),
+ 	PINMUX_IPSR_GPSR(IP17_27_24,	TPU0TO0),
+ 	PINMUX_IPSR_MSEL(IP17_27_24,	BPFCLK_C,		SEL_FM_2),
+ 	PINMUX_IPSR_MSEL(IP17_27_24,	HRTS2_N_C,		SEL_HSCIF2_2),
 -- 
-2.1.4
+1.9.1
