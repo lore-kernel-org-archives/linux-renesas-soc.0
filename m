@@ -1,56 +1,42 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:35221 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753468AbdGXMdW (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 24 Jul 2017 08:33:22 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <mathias.nyman@intel.com>, <gregkh@linuxfoundation.org>
-CC: <linux-usb@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 3/3] usb: host: xhci: rcar: Add support for R-Car H3 ES2.0
-Date: Mon, 24 Jul 2017 21:30:13 +0900
-Message-ID: <1500899413-28565-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1500899413-28565-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1500899413-28565-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v3 1/4] drm: rcar-du: Use the VBK interrupt for vblank events
+Date: Sun, 30 Jul 2017 00:08:52 +0300
+Message-Id: <20170729210855.9187-2-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170729210855.9187-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170729210855.9187-1-laurent.pinchart+renesas@ideasonboard.com>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds support for R-Car H3 ES2.0. Since this SoC revision
-(or later) should use the V3 firmware, the driver needs to check
-the revision via soc_device_match().
+When implementing support for interlaced modes, the driver switched from
+reporting vblank events on the vertical blanking (VBK) interrupt to the
+frame end interrupt (FRM). This incorrectly divided the reported refresh
+rate by two. Fix it by moving back to the VBK interrupt.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Fixes: 906eff7fcada ("drm: rcar-du: Implement support for interlaced modes")
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
- drivers/usb/host/xhci-rcar.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/host/xhci-rcar.c b/drivers/usb/host/xhci-rcar.c
-index 8f78d04..198bc18 100644
---- a/drivers/usb/host/xhci-rcar.c
-+++ b/drivers/usb/host/xhci-rcar.c
-@@ -20,7 +20,8 @@
- #include "xhci-rcar.h"
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+index 98cf446391dc..17fd1cd5212c 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+@@ -698,7 +698,7 @@ static irqreturn_t rcar_du_crtc_irq(int irq, void *arg)
+ 	status = rcar_du_crtc_read(rcrtc, DSSR);
+ 	rcar_du_crtc_write(rcrtc, DSRCR, status & DSRCR_MASK);
  
- /*
--* - The V3 firmware is for r8a7796 (with good performance).
-+* - The V3 firmware is for r8a7796 (with good performance) and r8a7795 es2.0
-+*   or later.
- * - The V2 firmware can be used on both r8a7795 (es1.x) and r8a7796.
- * - The V2 firmware is possible to use on R-Car Gen2. However, the V2 causes
- *   performance degradation. So, this driver continues to use the V1 if R-Car
-@@ -78,6 +79,10 @@
- 		.data = (void *)RCAR_XHCI_FIRMWARE_V2,
- 	},
- 	{
-+		.soc_id = "r8a7795",
-+		.data = (void *)RCAR_XHCI_FIRMWARE_V3,
-+	},
-+	{
- 		.soc_id = "r8a7796",
- 		.data = (void *)RCAR_XHCI_FIRMWARE_V3,
- 	},
+-	if (status & DSSR_FRM) {
++	if (status & DSSR_VBK) {
+ 		drm_crtc_handle_vblank(&rcrtc->crtc);
+ 
+ 		if (rcdu->info->gen < 3)
 -- 
-1.9.1
+Regards,
+
+Laurent Pinchart
