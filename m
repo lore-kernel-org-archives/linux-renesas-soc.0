@@ -1,79 +1,186 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from ant.hostandfound.com ([194.213.4.102]:51349 "EHLO
-        ant.hostandfound.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751656AbdGRIL0 (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:34330 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754609AbdG3U5n (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 18 Jul 2017 04:11:26 -0400
-Received: from exchange.osrenterprises.com ([31.168.148.141] helo=osrsrv.osrdom.local)
-        by ant.hostandfound.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
-        (Exim 4.86)
-        (envelope-from <eli.sherman@osrenterprises.com>)
-        id 1dXNbF-0006cc-Ov
-        for linux-renesas-soc@vger.kernel.org; Tue, 18 Jul 2017 11:11:24 +0300
-From: Eli Sherman <eli.sherman@osrenterprises.com>
-To: "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: [R-CAR H3] Can't Modify U-Boot Environment Variables on Updated
- Firmware
-Date: Tue, 18 Jul 2017 08:12:35 +0000
-Message-ID: <1500365480070.8623@osrenterprises.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Sun, 30 Jul 2017 16:57:43 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [RFC 2/5] arm64: dts: r8a7795-es1: add CSI21
+Date: Sun, 30 Jul 2017 22:56:48 +0200
+Message-Id: <20170730205651.6478-3-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170730205651.6478-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170730205651.6478-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGVsbG8sCkkgdW5kZXJzdGFuZCB0aGF0IHRoaXMgaXMgdGhlIG1haWxpbmcgbGlzdCBmb3Igc3Vw
-cG9ydCBmb3IgdGhlIFItQ2FyIGxpbmUgb2YgYm9hcmRzLiBJZiB0aGlzIGluZm9ybWF0aW9uIGlz
-IGluY29ycmVjdCwgcGxlYXNlIGRpcmVjdCBtZSwgaWYgcG9zc2libGUsIHRvIHRoZSBjb3JyZWN0
-IHJlc291cmNlLgpJIGhhdmUgcG9zdGVkIG15IGlzc3VlIHRvIHZhcmlvdXMgcmNhci1yZWxhdGVk
-IHJlcG9zIG9uIGdpdGh1YiBhcyB3ZWxsIGFzIHRoZSBlLWxpbnV4IHRhbGsgcGFnZS4gSXNzdWUg
-aXMgYXMgZm9sbG93czoKCkkgYW0gdHJ5aW5nIHRvIGdldCB1cCBhbmQgcnVubmluZyB3aXRoIHRo
-ZSBSLUNhciBIMyBTdGFydGVyIEtpdCBQcmVtaWVyIEJvYXJkIChoM3VsY2IpLiBJIGZpcnN0IGZv
-bGxvd2VkIHRoZSBpbnN0cnVjdGlvbnMgYXTCoGh0dHA6Ly9lbGludXgub3JnL1ItQ2FyL0JvYXJk
-cy9Zb2N0by1HZW4zwqB0byBidWlsZCBZb2N0byAyLjE5IGZvciB0aGUgYm9hcmQuIFdoZW4gSSBh
-dHRlbXB0ZWQgdG8gcnVuIHRoZSBidWlsdCBZb2N0byBpbWFnZSBvbiB0aGUgYm9hcmQgKGJvdGgg
-dmlhIHRmdHAgYW5kIHZpYSBtaWNyb1NEKSwgSSByZWNlaXZlZCBhIGtlcm5lbCBwYW5pYyBtZXNz
-YWdlLiBUaGUgbGltaXRlZCByZXNvdXJjZXMgb24gdGhlIGludGVybmV0IChpLmUuLCB0aGUgb3Ro
-ZXIgcG9zdHMgb24gdGhpcyB3aWtpKSBpbmRpY2F0ZWQgdGhpcyBjb3VsZCBsaWtlbHkgYmUgcmVz
-b2x2ZWQgYnkgdXBkYXRpbmcgdGhlIGZpcm13YXJlLiBJIHRoZW4gZm9sbG93ZWQgdGhlIGluc3Ry
-dWN0aW9ucyBhdMKgaHR0cDovL2VsaW51eC5vcmcvUi1DYXIvQm9hcmRzL0gzU0sjRmxhc2hpbmdf
-ZmlybXdhcmXigIvCoHRvIHVwZGF0ZSB0aGUgZmlybXdhcmUgb24gdGhlIGJvYXJkLiBOb3cgd2hl
-biBJIHR1cm4gdGhlIGJvYXJkIG9uLCBJIGNhbm5vdCBnZXQgdG8gdGhlIHN0YWdlIHdoZXJlIHRo
-ZSBvcHRpb24gb2YgY2FuY2VsbGluZyBhdXRvYm9vdCAoYXMgc2hvd24gaW4gZXhhbXBsZXMgaW4g
-dGhlIGxpbmtzIGdpdmVuKS4gSSBhbSB0aGVyZWZvcmUgbm90IGFibGUgdG8gY2hhbmdlIFUtQm9v
-dCdzIGVudmlyb25tZW50IHZhcmlhYmxlcyB0byBzcGVjaWZ5IHRoZSBJbWFnZSBmaWxlIHRvIGJv
-b3QuIEl0IHNlZW1zIHRoYXQgVS1Cb290IGlzIHBlcmhhcHMgbm90IGxvYWRpbmcgYXQgYWxsLiBB
-bnkgaGVscCB3b3VsZCBiZSBncmVhdGx5IGFwcHJlY2lhdGVkIQpPdXRwdXQgb2YgYm9vdCBzZXF1
-ZW5jZSBpcyBiZWxvdzoKCgoKdXNlckB1c2VyLWxpbnV4On4kIHN1ZG8gcGljb2NvbSAtYiAxMTUy
-MDAgLS1zZW5kLWNtZCAiYXNjaWkteGZyIC12dnMiIC9kZXYvdHR5VVNCMApbc3Vkb10gcGFzc3dv
-cmQgZm9yIHVzZXI6CnBpY29jb20gdjEuNwpwb3J0IGlzwqA6IC9kZXYvdHR5VVNCMApmbG93Y29u
-dHJvbMKgOiBub25lCmJhdWRyYXRlIGlzwqA6IDExNTIwMApwYXJpdHkgaXPCoDogbm9uZQpkYXRh
-Yml0cyBhcmXCoDogOAplc2NhcGUgaXPCoDogQy1hCmxvY2FsIGVjaG8gaXPCoDogbm8Kbm9pbml0
-IGlzwqA6IG5vCm5vcmVzZXQgaXPCoDogbm8Kbm9sb2NrIGlzwqA6IG5vCnNlbmRfY21kIGlzwqA6
-IGFzY2lpLXhmciAtdnZzCnJlY2VpdmVfY21kIGlzwqA6IHJ6IC12dgppbWFwIGlzwqA6Cm9tYXAg
-aXPCoDoKZW1hcCBpc8KgOiBjcmNybGYsZGVsYnMsClRlcm1pbmFsIHJlYWR5ClsgMC4wMDAxOTRd
-IE5PVElDRTogQkwyOiBSLUNhciBHZW4zIEluaXRpYWwgUHJvZ3JhbSBMb2FkZXIoQ0E1NykgUmV2
-LjEuMC4xNApbIDAuMDA1NzYxXSBOT1RJQ0U6IEJMMjogUFJSIGlzIFItQ2FyIEgzIFZlcjIuMApb
-IDAuMDEwMzM1XSBOT1RJQ0U6IEJMMjogQm9hcmQgaXMgdW5rbm93biBSZXYwLjAKWyAwLjAxNTAw
-Nl0gTk9USUNFOiBCTDI6IEJvb3QgZGV2aWNlIGlzIEh5cGVyRmxhc2goODBNSHopClsgMC4wMjA0
-NDVdIE5PVElDRTogQkwyOiBMQ00gc3RhdGUgaXMgQ00KWyAwLjAyNDQyM10gTk9USUNFOiBCTDI6
-IEFWUyBzZXR0aW5nIHN1Y2NlZWRlZC4gRFZGU19TZXRWSUQ9MHg1MgpbIDAuMDMwNjExXSBOT1RJ
-Q0U6IEJMMjogRERSMzIwMChyZXYuMC4yMilOT1RJQ0U6IFtDT0xEX0JPT1RdTk9USUNFOiAuLjAK
-WyAwLjA5MTI3MF0gTk9USUNFOiBCTDI6IERSQU0gU3BsaXQgaXMgNGNoClsgMC4wOTUxNTVdIE5P
-VElDRTogQkwyOiBRb1MgaXMgZGVmYXVsdCBzZXR0aW5nKHJldi4wLjE0KQpbIDAuMTAwNjU1XSBO
-T1RJQ0U6IEJMMjogTG9zc3kgRGVjb21wIGFyZWFzClsgMC4xMDQ4MzJdIE5PVElDRTogRW50cnkg
-MDogRENNUEFSRUFDUkF4OjB4ODAwMDA1NDAgRENNUEFSRUFDUkJ4OjB4NTcwClsgMC4xMTE5MTdd
-IE5PVElDRTogRW50cnkgMTogRENNUEFSRUFDUkF4OjB4NDAwMDAwMDAgRENNUEFSRUFDUkJ4OjB4
-MApbIDAuMTE4ODI5XSBOT1RJQ0U6IEVudHJ5IDI6IERDTVBBUkVBQ1JBeDoweDIwMDAwMDAwIERD
-TVBBUkVBQ1JCeDoweDAKWyAwLjEyNTc0M10gTk9USUNFOiBCTDI6IHYxLjMocmVsZWFzZSk6NGVl
-ZjlhMgpbIDAuMTMwMjMzXSBOT1RJQ0U6IEJMMjogQnVpbHTCoDogMTc6MzU6NTYsIEp1bCAxMyAy
-MDE3ClsgMC4xMzU0MjBdIE5PVElDRTogQkwyOiBOb3JtYWwgYm9vdApbIDAuMTM5MDYyXSBOT1RJ
-Q0U6IEJMMjogZHN0PTB4ZTYzMjAxOTAgc3JjPTB4ODE4MDAwMCBsZW49NTEyKDB4MjAwKQpbIDAu
-MTQ1NjA4XSBOT1RJQ0U6IEJMMjogZHN0PTB4NDNmMDAwMDAgc3JjPTB4ODE4MDQwMCBsZW49NjE0
-NCgweDE4MDApClsgMC4xNTIwNzBdIE5PVElDRTogQkwyOiBkc3Q9MHg0NDAwMDAwMCBzcmM9MHg4
-MWMwMDAwIGxlbj02NTUzNigweDEwMDAwKQpbIDAuMTU5Mjk1XSBOT1RJQ0U6IEJMMjogZHN0PTB4
-NDQxMDAwMDAgc3JjPTB4ODIwMDAwMCBsZW49NTI0Mjg4KDB4ODAwMDApClsgMC4xNjk3NzVdIE5P
-VElDRTogQkwyOiBkc3Q9MHg1MDAwMDAwMCBzcmM9MHg4NjQwMDAwIGxlbj0xMDQ4NTc2KDB4MTAw
-MDAwKQoKVGhhbmsgeW91IGluIGFkdmFuY2UgZm9yIHlvdXIgaGVscC4K4oCLCg==
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi | 142 +++++++++++++++++++++++++++
+ 1 file changed, 142 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+index a0ba7bd21ea3aa18..a9c79ff2135ddcfb 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+@@ -76,9 +76,151 @@
+ 		resets = <&cpg 117>;
+ 		renesas,fcp = <&fcpf2>;
+ 	};
++
++	csi21: csi2@fea90000 {
++		compatible = "renesas,r8a7795-csi2", "renesas,rcar-gen3-csi2";
++		reg = <0 0xfea90000 0 0x10000>;
++		interrupts = <GIC_SPI 185 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cpg CPG_MOD 713>;
++		power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++		status = "disabled";
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@1 {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				reg = <1>;
++
++				csi21vin0: endpoint@0 {
++					reg = <0>;
++					remote-endpoint = <&vin0csi21>;
++				};
++				csi21vin1: endpoint@1 {
++					reg = <1>;
++					remote-endpoint = <&vin1csi21>;
++				};
++				csi21vin2: endpoint@2 {
++					reg = <2>;
++					remote-endpoint = <&vin2csi21>;
++				};
++				csi21vin3: endpoint@3 {
++					reg = <3>;
++					remote-endpoint = <&vin3csi21>;
++				};
++				csi21vin4: endpoint@4 {
++					reg = <4>;
++					remote-endpoint = <&vin4csi21>;
++				};
++				csi21vin5: endpoint@5 {
++					reg = <5>;
++					remote-endpoint = <&vin5csi21>;
++				};
++				csi21vin6: endpoint@6 {
++					reg = <6>;
++					remote-endpoint = <&vin6csi21>;
++				};
++				csi21vin7: endpoint@7 {
++					reg = <7>;
++					remote-endpoint = <&vin7csi21>;
++				};
++			};
++		};
++	};
+ };
+ 
+ &du {
+ 	compatible = "renesas,du-r8a7795";
+ 	vsps = <&vspd0 &vspd1 &vspd2 &vspd3>;
+ };
++
++&vin0 {
++	ports {
++		port@1 {
++			vin0csi21: endpoint@1 {
++				reg = <1>;
++				remote-endpoint= <&csi21vin0>;
++			};
++		};
++	};
++};
++
++&vin1 {
++	ports {
++		port@1 {
++			vin1csi21: endpoint@1 {
++				reg = <1>;
++				remote-endpoint= <&csi21vin1>;
++			};
++		};
++	};
++};
++
++&vin2 {
++	ports {
++		port@1 {
++			vin2csi21: endpoint@1 {
++				reg = <1>;
++				remote-endpoint= <&csi21vin2>;
++			};
++		};
++	};
++};
++
++&vin3 {
++	ports {
++		port@1 {
++			vin3csi21: endpoint@1 {
++				reg = <1>;
++				remote-endpoint= <&csi21vin3>;
++			};
++		};
++	};
++};
++
++&vin4 {
++	ports {
++		port@1 {
++			vin4csi21: endpoint@1 {
++				reg = <1>;
++				remote-endpoint= <&csi21vin4>;
++			};
++		};
++	};
++};
++
++&vin5 {
++	ports {
++		port@1 {
++			vin5csi21: endpoint@1 {
++				reg = <1>;
++				remote-endpoint= <&csi21vin5>;
++			};
++		};
++	};
++};
++
++&vin6 {
++	ports {
++		port@1 {
++			vin6csi21: endpoint@1 {
++				reg = <1>;
++				remote-endpoint= <&csi21vin6>;
++			};
++		};
++	};
++};
++
++&vin7 {
++	ports {
++		port@1 {
++			vin7csi21: endpoint@1 {
++				reg = <1>;
++				remote-endpoint= <&csi21vin7>;
++			};
++		};
++	};
++};
+-- 
+2.13.3
