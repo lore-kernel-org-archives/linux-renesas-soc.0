@@ -1,55 +1,49 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:42651 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751827AbdGaPDl (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 31 Jul 2017 11:03:41 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 12/31] arm64: dts: r8a7796: salvator-x: Add DU external dot clocks
-Date: Mon, 31 Jul 2017 17:03:04 +0200
-Message-Id: <5bd1cc72555b6b2c974161e4d0b476fdc10d595c.1501509525.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1501509525.git.horms+renesas@verge.net.au>
-References: <cover.1501509525.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+To: linux-media@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        Archit Taneja <architt@codeaurora.org>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Hans Verkuil <hans.verkuil@cisco.com>
+Subject: [PATCH 1/4] dt-bindings: adi,adv7511.txt: document cec clock
+Date: Sun, 30 Jul 2017 15:07:40 +0200
+Message-Id: <20170730130743.19681-2-hverkuil@xs4all.nl>
+In-Reply-To: <20170730130743.19681-1-hverkuil@xs4all.nl>
+References: <20170730130743.19681-1-hverkuil@xs4all.nl>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+From: Hans Verkuil <hans.verkuil@cisco.com>
 
-The DU1 external dot clock is provided by the fixed frequency clock
-generator X21, while the DU0 and DU2 clocks are provided by the
-programmable Versaclock5 clock generator.
+Document the cec clock binding.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
 ---
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-index b35b15914771..fe2743bcb616 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-@@ -27,3 +27,15 @@
- 		reg = <0x6 0x00000000 0x0 0x80000000>;
- 	};
- };
-+
-+&du {
-+	clocks = <&cpg CPG_MOD 724>,
-+		 <&cpg CPG_MOD 723>,
-+		 <&cpg CPG_MOD 722>,
-+		 <&cpg CPG_MOD 727>,
-+		 <&versaclock5 1>,
-+		 <&x21_clk>,
-+		 <&versaclock5 2>;
-+	clock-names = "du.0", "du.1", "du.2", "lvds.0",
-+		      "dclkin.0", "dclkin.1", "dclkin.2";
-+};
+diff --git a/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt b/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
+index 06668bca7ffc..4497ae054d49 100644
+--- a/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
++++ b/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
+@@ -68,6 +68,8 @@ Optional properties:
+ - adi,disable-timing-generator: Only for ADV7533. Disables the internal timing
+   generator. The chip will rely on the sync signals in the DSI data lanes,
+   rather than generate its own timings for HDMI output.
++- clocks: from common clock binding: handle to CEC clock.
++- clock-names: from common clock binding: must be "cec".
+ 
+ Required nodes:
+ 
+@@ -89,6 +91,8 @@ Example
+ 		reg = <39>;
+ 		interrupt-parent = <&gpio3>;
+ 		interrupts = <29 IRQ_TYPE_EDGE_FALLING>;
++		clocks = <&cec_clock>;
++		clock-names = "cec";
+ 
+ 		adi,input-depth = <8>;
+ 		adi,input-colorspace = "rgb";
 -- 
-2.1.4
+2.13.1
