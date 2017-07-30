@@ -1,78 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:33792 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753878AbdGLQ4l (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:54285 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751681AbdG3WcW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 12 Jul 2017 12:56:41 -0400
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Sun, 30 Jul 2017 18:32:22 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 14/14] pinctrl: sh-pfc: r8a7796: Rename CS1# pin function definitions
-Date: Thu, 13 Jul 2017 01:55:47 +0900
-Message-Id: <1499878547-3452-15-git-send-email-ykaneko0929@gmail.com>
-In-Reply-To: <1499878547-3452-1-git-send-email-ykaneko0929@gmail.com>
-References: <1499878547-3452-1-git-send-email-ykaneko0929@gmail.com>
+        linux-media@vger.kernel.org
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 3/4] v4l: async: do not hold list_lock when re-probing devices
+Date: Mon, 31 Jul 2017 00:31:57 +0200
+Message-Id: <20170730223158.14405-4-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170730223158.14405-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170730223158.14405-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+There is no good reason to hold the list_lock when re-probing the
+devices and it prevents a clean implementation of subdevice notifiers.
+Move the actual release of the devices outside of the loop which
+requires the lock to be held.
 
-This patch renames the pin function macro definitions of the GPSR1 and
-IPSR4 registers value for the CS1# pin.
-
-This is a correction because GPSR and IPSR register specification for
-R8A7796 SoC was changed in R-Car Gen3 Hardware User's Manual Rev.0.54E.
-
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/media/v4l2-core/v4l2-async.c | 19 +++++++++----------
+ 1 file changed, 9 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-index bac9b7fe..6bf26d7 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-@@ -67,7 +67,7 @@
- #define GPSR1_24	F_(RD_WR_N,		IP4_31_28)
- #define GPSR1_23	F_(RD_N,		IP4_27_24)
- #define GPSR1_22	F_(BS_N,		IP4_23_20)
--#define GPSR1_21	F_(CS1_N_A26,		IP4_19_16)
-+#define GPSR1_21	F_(CS1_N,		IP4_19_16)
- #define GPSR1_20	F_(CS0_N,		IP4_15_12)
- #define GPSR1_19	F_(A19,			IP4_11_8)
- #define GPSR1_18	F_(A18,			IP4_7_4)
-@@ -253,7 +253,7 @@
- #define IP4_7_4		FM(A18)			FM(LCDOUT10)	F_(0, 0)		F_(0, 0)			FM(VI4_HSYNC_N)	F_(0, 0)	FM(DU_DG2)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP4_11_8	FM(A19)			FM(LCDOUT11)	F_(0, 0)		F_(0, 0)			FM(VI4_CLKENB)	F_(0, 0)	FM(DU_DG3)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP4_15_12	FM(CS0_N)		F_(0, 0)	F_(0, 0)		F_(0, 0)			F_(0, 0)	FM(VI5_CLKENB)	F_(0, 0)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
--#define IP4_19_16	FM(CS1_N_A26)		F_(0, 0)	F_(0, 0)		F_(0, 0)			F_(0, 0)	FM(VI5_CLK)	F_(0, 0)		FM(EX_WAIT0_B)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
-+#define IP4_19_16	FM(CS1_N)		F_(0, 0)	F_(0, 0)		F_(0, 0)			F_(0, 0)	FM(VI5_CLK)	F_(0, 0)		FM(EX_WAIT0_B)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP4_23_20	FM(BS_N)		FM(QSTVA_QVS)	FM(MSIOF3_SCK_D)	FM(SCK3)			FM(HSCK3)	F_(0, 0)	F_(0, 0)		F_(0, 0)	FM(CAN1_TX)		FM(CANFD1_TX)	FM(IETX_A)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP4_27_24	FM(RD_N)		F_(0, 0)	FM(MSIOF3_SYNC_D)	FM(RX3_A)			FM(HRX3_A)	F_(0, 0)	F_(0, 0)		F_(0, 0)	FM(CAN0_TX_A)		FM(CANFD0_TX_A)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP4_31_28	FM(RD_WR_N)		F_(0, 0)	FM(MSIOF3_RXD_D)	FM(TX3_A)			FM(HTX3_A)	F_(0, 0)	F_(0, 0)		F_(0, 0)	FM(CAN0_RX_A)		FM(CANFD0_RX_A)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
-@@ -834,7 +834,7 @@ enum {
- 	PINMUX_IPSR_GPSR(IP4_15_12,	CS0_N),
- 	PINMUX_IPSR_GPSR(IP4_15_12,	VI5_CLKENB),
+diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
+index 67852f0f2d3000c9..d91ff0a33fd3eaff 100644
+--- a/drivers/media/v4l2-core/v4l2-async.c
++++ b/drivers/media/v4l2-core/v4l2-async.c
+@@ -206,7 +206,7 @@ void v4l2_async_notifier_unregister(struct v4l2_async_notifier *notifier)
+ 	unsigned int notif_n_subdev = notifier->num_subdevs;
+ 	unsigned int n_subdev = min(notif_n_subdev, V4L2_MAX_SUBDEVS);
+ 	struct device **dev;
+-	int i = 0;
++	int i, count = 0;
  
--	PINMUX_IPSR_GPSR(IP4_19_16,	CS1_N_A26),
-+	PINMUX_IPSR_GPSR(IP4_19_16,	CS1_N),
- 	PINMUX_IPSR_GPSR(IP4_19_16,	VI5_CLK),
- 	PINMUX_IPSR_MSEL(IP4_19_16,	EX_WAIT0_B,		SEL_LBSC_1),
+ 	if (!notifier->v4l2_dev)
+ 		return;
+@@ -223,27 +223,26 @@ void v4l2_async_notifier_unregister(struct v4l2_async_notifier *notifier)
+ 	list_del(&notifier->list);
  
-@@ -5494,7 +5494,7 @@ static int r8a7796_pin_to_pocctrl(struct sh_pfc *pfc, unsigned int pin, u32 *poc
- 	{ RCAR_GP_PIN(1, 24),    PU2,  5 },	/* RD_WR_N */
- 	{ RCAR_GP_PIN(1, 23),    PU2,  4 },	/* RD_N */
- 	{ RCAR_GP_PIN(1, 22),    PU2,  3 },	/* BS_N */
--	{ RCAR_GP_PIN(1, 21),    PU2,  2 },	/* CS1_N_A26 */
-+	{ RCAR_GP_PIN(1, 21),    PU2,  2 },	/* CS1_N */
- 	{ RCAR_GP_PIN(1, 20),    PU2,  1 },	/* CS0_N */
- 	{ RCAR_GP_PIN(1, 28),    PU2,  0 },	/* CLKOUT */
+ 	list_for_each_entry_safe(sd, tmp, &notifier->done, async_list) {
+-		struct device *d;
+-
+-		d = get_device(sd->dev);
++		dev[count] = get_device(sd->dev);
++		count++;
  
+ 		if (notifier->unbind)
+ 			notifier->unbind(notifier, sd, sd->asd);
+ 
+ 		v4l2_async_cleanup(sd);
+-
+-		/* If we handled USB devices, we'd have to lock the parent too */
+-		device_release_driver(d);
+-
+-		dev[i++] = d;
+ 	}
+ 
+ 	mutex_unlock(&list_lock);
+ 
++	for (i = 0; i < count; i++) {
++		/* If we handled USB devices, we'd have to lock the parent too */
++		device_release_driver(dev[i]);
++	}
++
+ 	/*
+ 	 * Call device_attach() to reprobe devices
+ 	 */
+-	while (i--) {
++	for (i = 0; i < count; i++) {
+ 		struct device *d = dev[i];
+ 
+ 		if (d && device_attach(d) < 0) {
 -- 
-1.9.1
+2.13.3
