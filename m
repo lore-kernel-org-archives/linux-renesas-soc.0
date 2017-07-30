@@ -1,117 +1,168 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:34303 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751737AbdG1Llw (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:34356 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754442AbdG3U5p (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Jul 2017 07:41:52 -0400
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 9/9] pinctrl: sh-pfc: r8a7795: Fix to reserved MOD_SEL2 bit22
-Date: Fri, 28 Jul 2017 20:41:21 +0900
-Message-Id: <1501242081-3805-10-git-send-email-ykaneko0929@gmail.com>
-In-Reply-To: <1501242081-3805-1-git-send-email-ykaneko0929@gmail.com>
-References: <1501242081-3805-1-git-send-email-ykaneko0929@gmail.com>
+        Sun, 30 Jul 2017 16:57:45 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [RFC 5/5] arm64: dts: renesas: salvator-x: Add ADV7482 support
+Date: Sun, 30 Jul 2017 22:56:51 +0200
+Message-Id: <20170730205651.6478-6-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170730205651.6478-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170730205651.6478-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-This is a correction because MOD_SEL register specification for R8A7795
-ES2.0 SoC was changed in R-Car Gen3 Hardware User's Manual Rev.0.54E.
+The Salvator boards use an ADV7482 receiver for HDMI and CVBS inputs.
 
-Fixes: 12f5d9a1dc7f ("pinctrl: sh-pfc: r8a7795: Replace for Renesas R8A7795 ES2.0 SoC")
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Provide ADV7482 node on the i2c4 bus, along with connectors for the
+hdmi and cvbs inputs, and link to the csi20 and csi40 nodes as outputs.
+
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi | 103 +++++++++++++++++++++++
+ 1 file changed, 103 insertions(+)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index 44beb7c..bbed0d6 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -496,7 +496,6 @@
- #define MOD_SEL2_28_27		FM(SEL_FM_0)		FM(SEL_FM_1)		FM(SEL_FM_2)		FM(SEL_FM_3)
- #define MOD_SEL2_26		FM(SEL_SCIF5_0)		FM(SEL_SCIF5_1)
- #define MOD_SEL2_25_24_23	FM(SEL_I2C6_0)		FM(SEL_I2C6_1)		FM(SEL_I2C6_2)		F_(0, 0)		F_(0, 0)		F_(0, 0)		F_(0, 0)		F_(0, 0)
--#define MOD_SEL2_22		FM(SEL_NDF_0)		FM(SEL_NDF_1)
- #define MOD_SEL2_21		FM(SEL_SSI2_0)		FM(SEL_SSI2_1)
- #define MOD_SEL2_20		FM(SEL_SSI9_0)		FM(SEL_SSI9_1)
- #define MOD_SEL2_19		FM(SEL_TIMER_TMU2_0)	FM(SEL_TIMER_TMU2_1)
-@@ -513,7 +512,7 @@
- MOD_SEL0_26_25_24	MOD_SEL1_26		MOD_SEL2_26 \
- 			MOD_SEL1_25_24		MOD_SEL2_25_24_23 \
- MOD_SEL0_23		MOD_SEL1_23_22_21 \
--MOD_SEL0_22					MOD_SEL2_22 \
-+MOD_SEL0_22 \
- MOD_SEL0_21					MOD_SEL2_21 \
- MOD_SEL0_20		MOD_SEL1_20		MOD_SEL2_20 \
- MOD_SEL0_19		MOD_SEL1_19		MOD_SEL2_19 \
-@@ -1020,35 +1019,35 @@ enum {
+diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+index bba4976bee619d42..30a669f842573474 100644
+--- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+@@ -65,6 +65,29 @@
+ 		enable-gpios = <&gpio6 7 GPIO_ACTIVE_HIGH>;
+ 	};
  
- 	PINMUX_IPSR_GPSR(IP8_15_12,	SD1_CMD),
- 	PINMUX_IPSR_MSEL(IP8_15_12,	MSIOF1_SYNC_G,		SEL_MSIOF1_6),
--	PINMUX_IPSR_MSEL(IP8_15_12,	NFCE_N_B,		SEL_NDF_1),
-+	PINMUX_IPSR_GPSR(IP8_15_12,	NFCE_N_B),
- 	PINMUX_IPSR_MSEL(IP8_15_12,	SIM0_D_A,		SEL_SIMCARD_0),
- 	PINMUX_IPSR_MSEL(IP8_15_12,	STP_IVCXO27_1_B,	SEL_SSP1_1_1),
++	cvbs-in {
++		compatible = "composite-video-connector";
++		label = "CVBS IN";
++
++		port {
++			cvbs_con: endpoint {
++				remote-endpoint = <&adv7482_ain7>;
++			};
++		};
++	};
++
++	hdmi-in {
++		compatible = "hdmi-connector";
++		label = "HDMI IN";
++		type = "a";
++
++		port {
++			hdmi_in_con: endpoint {
++				remote-endpoint = <&adv7482_hdmi>;
++			};
++		};
++	};
++
+ 	reg_1p8v: regulator0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "fixed-1.8V";
+@@ -257,6 +280,37 @@
+ 	};
+ };
  
- 	PINMUX_IPSR_GPSR(IP8_19_16,	SD1_DAT0),
- 	PINMUX_IPSR_GPSR(IP8_19_16,	SD2_DAT4),
- 	PINMUX_IPSR_MSEL(IP8_19_16,	MSIOF1_RXD_G,		SEL_MSIOF1_6),
--	PINMUX_IPSR_MSEL(IP8_19_16,	NFWP_N_B,		SEL_NDF_1),
-+	PINMUX_IPSR_GPSR(IP8_19_16,	NFWP_N_B),
- 	PINMUX_IPSR_MSEL(IP8_19_16,	TS_SCK1_B,		SEL_TSIF1_1),
- 	PINMUX_IPSR_MSEL(IP8_19_16,	STP_ISCLK_1_B,		SEL_SSP1_1_1),
++&csi20 {
++	status = "okay";
++
++	ports {
++		port@0 {
++			reg = <0>;
++			csi20_in: endpoint {
++				clock-lanes = <0>;
++				data-lanes = <1>;
++				remote-endpoint = <&adv7482_txb>;
++			};
++		};
++	};
++};
++
++&csi40 {
++	status = "okay";
++
++	ports {
++		port@0 {
++			reg = <0>;
++
++			csi40_in: endpoint {
++				clock-lanes = <0>;
++				data-lanes = <1 2 3 4>;
++				remote-endpoint = <&adv7482_txa>;
++			};
++		};
++	};
++};
++
+ &du {
+ 	pinctrl-0 = <&du_pins>;
+ 	pinctrl-names = "default";
+@@ -343,6 +397,55 @@
  
- 	PINMUX_IPSR_GPSR(IP8_23_20,	SD1_DAT1),
- 	PINMUX_IPSR_GPSR(IP8_23_20,	SD2_DAT5),
- 	PINMUX_IPSR_MSEL(IP8_23_20,	MSIOF1_TXD_G,		SEL_MSIOF1_6),
--	PINMUX_IPSR_MSEL(IP8_23_20,	NFDATA14_B,		SEL_NDF_1),
-+	PINMUX_IPSR_GPSR(IP8_23_20,	NFDATA14_B),
- 	PINMUX_IPSR_MSEL(IP8_23_20,	TS_SPSYNC1_B,		SEL_TSIF1_1),
- 	PINMUX_IPSR_MSEL(IP8_23_20,	STP_ISSYNC_1_B,		SEL_SSP1_1_1),
+ 		shunt-resistor-micro-ohms = <5000>;
+ 	};
++
++	video-receiver@70 {
++		compatible = "adi,adv7482";
++		reg = <0x70>;
++
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		interrupt-parent = <&gpio6>;
++		interrupt-names = "intrq1", "intrq2";
++		interrupts = <30 IRQ_TYPE_LEVEL_LOW>,
++			     <31 IRQ_TYPE_LEVEL_LOW>;
++
++		port@7 {
++			reg = <7>;
++
++			adv7482_ain7: endpoint {
++				remote-endpoint = <&cvbs_con>;
++			};
++		};
++
++		port@8 {
++			reg = <8>;
++
++			adv7482_hdmi: endpoint {
++				remote-endpoint = <&hdmi_in_con>;
++			};
++		};
++
++		port@10 {
++			reg = <10>;
++
++			adv7482_txa: endpoint {
++				clock-lanes = <0>;
++				data-lanes = <1 2 3 4>;
++				remote-endpoint = <&csi40_in>;
++			};
++		};
++
++		port@11 {
++			reg = <11>;
++
++			adv7482_txb: endpoint {
++				clock-lanes = <0>;
++				data-lanes = <1>;
++				remote-endpoint = <&csi20_in>;
++			};
++		};
++	};
+ };
  
- 	PINMUX_IPSR_GPSR(IP8_27_24,	SD1_DAT2),
- 	PINMUX_IPSR_GPSR(IP8_27_24,	SD2_DAT6),
- 	PINMUX_IPSR_MSEL(IP8_27_24,	MSIOF1_SS1_G,		SEL_MSIOF1_6),
--	PINMUX_IPSR_MSEL(IP8_27_24,	NFDATA15_B,		SEL_NDF_1),
-+	PINMUX_IPSR_GPSR(IP8_27_24,	NFDATA15_B),
- 	PINMUX_IPSR_MSEL(IP8_27_24,	TS_SDAT1_B,		SEL_TSIF1_1),
- 	PINMUX_IPSR_MSEL(IP8_27_24,	STP_ISD_1_B,		SEL_SSP1_1_1),
- 
- 	PINMUX_IPSR_GPSR(IP8_31_28,	SD1_DAT3),
- 	PINMUX_IPSR_GPSR(IP8_31_28,	SD2_DAT7),
- 	PINMUX_IPSR_MSEL(IP8_31_28,	MSIOF1_SS2_G,		SEL_MSIOF1_6),
--	PINMUX_IPSR_MSEL(IP8_31_28,	NFRB_N_B,		SEL_NDF_1),
-+	PINMUX_IPSR_GPSR(IP8_31_28,	NFRB_N_B),
- 	PINMUX_IPSR_MSEL(IP8_31_28,	TS_SDEN1_B,		SEL_TSIF1_1),
- 	PINMUX_IPSR_MSEL(IP8_31_28,	STP_ISEN_1_B,		SEL_SSP1_1_1),
- 
-@@ -1268,7 +1267,7 @@ enum {
- 	/* IPSR14 */
- 	PINMUX_IPSR_GPSR(IP14_3_0,	MSIOF0_SS1),
- 	PINMUX_IPSR_MSEL(IP14_3_0,	RX5_A,			SEL_SCIF5_0),
--	PINMUX_IPSR_MSEL(IP14_3_0,	NFWP_N_A,		SEL_NDF_0),
-+	PINMUX_IPSR_GPSR(IP14_3_0,	NFWP_N_A),
- 	PINMUX_IPSR_MSEL(IP14_3_0,	AUDIO_CLKA_C,		SEL_ADG_A_2),
- 	PINMUX_IPSR_MSEL(IP14_3_0,	SSI_SCK2_A,		SEL_SSI_0),
- 	PINMUX_IPSR_MSEL(IP14_3_0,	STP_IVCXO27_0_C,	SEL_SSP1_0_2),
-@@ -2779,7 +2778,8 @@ enum {
- 		MOD_SEL2_28_27
- 		MOD_SEL2_26
- 		MOD_SEL2_25_24_23
--		MOD_SEL2_22
-+		/* RESERVED 22 */
-+		0, 0,
- 		MOD_SEL2_21
- 		MOD_SEL2_20
- 		MOD_SEL2_19
+ &i2c_dvfs {
 -- 
-1.9.1
+2.13.3
