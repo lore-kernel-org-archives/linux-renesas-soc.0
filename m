@@ -1,55 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:48100 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751702AbdGRO0k (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:54296 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751688AbdG3WcW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 18 Jul 2017 10:26:40 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 1/3] ARM: Add definition for monitor mode
-Date: Tue, 18 Jul 2017 16:26:25 +0200
-Message-Id: <1500387987-9240-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1500387987-9240-1-git-send-email-geert+renesas@glider.be>
-References: <1500387987-9240-1-git-send-email-geert+renesas@glider.be>
+        Sun, 30 Jul 2017 18:32:22 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 4/4] v4l: async: add comment about re-probing to v4l2_async_notifier_unregister()
+Date: Mon, 31 Jul 2017 00:31:58 +0200
+Message-Id: <20170730223158.14405-5-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170730223158.14405-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170730223158.14405-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-<asm/ptrace.h> provides *_MODE definitions for the various processor
-modes, but monitor mode was missing.
+The re-probing of subdevices when unregistering a notifier is tricky to
+understand, and implemented somewhat as a hack. Add a comment trying to
+explain why the re-probing is needed in the first place and why existing
+helper functions can't be used in this situation.
 
-Add MON_MODE to avoid code using the hardcoded value.
-
-Suggested-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
-ARM maintainers: Please provide your ack, as this is a dependency for a
-mach-shmobile patch.
+ drivers/media/v4l2-core/v4l2-async.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-v2:
-  - New.
----
- arch/arm/include/uapi/asm/ptrace.h | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm/include/uapi/asm/ptrace.h b/arch/arm/include/uapi/asm/ptrace.h
-index 5af0ed1b825a2aa9..70ff6bf489f31193 100644
---- a/arch/arm/include/uapi/asm/ptrace.h
-+++ b/arch/arm/include/uapi/asm/ptrace.h
-@@ -53,6 +53,7 @@
- #endif
- #define FIQ_MODE	0x00000011
- #define IRQ_MODE	0x00000012
-+#define MON_MODE	0x00000016
- #define ABT_MODE	0x00000017
- #define HYP_MODE	0x0000001a
- #define UND_MODE	0x0000001b
+diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
+index d91ff0a33fd3eaff..a3c5a1f6d4d2ab03 100644
+--- a/drivers/media/v4l2-core/v4l2-async.c
++++ b/drivers/media/v4l2-core/v4l2-async.c
+@@ -234,6 +234,23 @@ void v4l2_async_notifier_unregister(struct v4l2_async_notifier *notifier)
+ 
+ 	mutex_unlock(&list_lock);
+ 
++	/*
++	 * Try to re-probe the subdevices which where part of the notifier.
++	 * This is done so subdevices which where part of the notifier will
++	 * be re-probed to a pristine state and put back on the global
++	 * list of subdevices so they can once more be found and associated
++	 * with a new notifier.
++	 *
++	 * One might be tempted to use device_reprobe() to handle the re-
++	 * probing. Unfortunately this is not possible since some video
++	 * device drivers call v4l2_async_notifier_unregister() from
++	 * there remove function leading to a dead lock situation on
++	 * device_lock(dev->parent). This lock is held when video device
++	 * drivers remove function is called and device_reprobe() also
++	 * tries to take the same lock, so using it here could lead to a
++	 * dead lock situation.
++	 */
++
+ 	for (i = 0; i < count; i++) {
+ 		/* If we handled USB devices, we'd have to lock the parent too */
+ 		device_release_driver(dev[i]);
 -- 
-2.7.4
+2.13.3
