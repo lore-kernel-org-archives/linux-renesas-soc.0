@@ -1,143 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:56250 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751324AbdGQQHF (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:54263 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751126AbdG3WcV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Jul 2017 12:07:05 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-spi@vger.kernel.org
-In-Reply-To: <1499855161-20518-1-git-send-email-geert+renesas@glider.be>
-Message-Id: <E1dX8Xw-0005GJ-FP@debutante>
-Date: Mon, 17 Jul 2017 17:06:56 +0100
-Subject: Applied "spi: sh-msiof: Limit minimum divider on R-Car Gen3" to the spi tree
+        Sun, 30 Jul 2017 18:32:21 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 1/4] v4l: async: fix unbind error in v4l2_async_notifier_unregister()
+Date: Mon, 31 Jul 2017 00:31:55 +0200
+Message-Id: <20170730223158.14405-2-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170730223158.14405-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170730223158.14405-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+The call to v4l2_async_cleanup() will set sd->asd to NULL so passing it
+to notifier->unbind() have no effect and leaves the notifier confused.
+Call the unbind() callback prior to cleaning up the subdevice to avoid
+this.
 
-   spi: sh-msiof: Limit minimum divider on R-Car Gen3
-
-has been applied to the spi tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 61a8dec502b873879fa240ec7614601523b46a43 Mon Sep 17 00:00:00 2001
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Date: Wed, 12 Jul 2017 12:26:01 +0200
-Subject: [PATCH] spi: sh-msiof: Limit minimum divider on R-Car Gen3
-
-On R-Car Gen3 SoCs (excluding R-Car H3 ES1.x, which cannot be used for
-SPI due to a hardware erratum), BRPS x BRDV = 1/1 is an invalid divider
-setting.
-Implement this limitation using an SoC/family-specific minimum divider.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/spi/spi-sh-msiof.c | 32 +++++++++++++++++++++++---------
- 1 file changed, 23 insertions(+), 9 deletions(-)
+ drivers/media/v4l2-core/v4l2-async.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
-index c304c7167866..0eb1e9583485 100644
---- a/drivers/spi/spi-sh-msiof.c
-+++ b/drivers/spi/spi-sh-msiof.c
-@@ -38,6 +38,7 @@ struct sh_msiof_chipdata {
- 	u16 tx_fifo_size;
- 	u16 rx_fifo_size;
- 	u16 master_flags;
-+	u16 min_div;
- };
+diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
+index 851f128eba2219ad..0acf288d7227ba97 100644
+--- a/drivers/media/v4l2-core/v4l2-async.c
++++ b/drivers/media/v4l2-core/v4l2-async.c
+@@ -226,14 +226,14 @@ void v4l2_async_notifier_unregister(struct v4l2_async_notifier *notifier)
  
- struct sh_msiof_spi_priv {
-@@ -49,6 +50,7 @@ struct sh_msiof_spi_priv {
- 	struct completion done;
- 	unsigned int tx_fifo_size;
- 	unsigned int rx_fifo_size;
-+	unsigned int min_div;
- 	void *tx_dma_page;
- 	void *rx_dma_page;
- 	dma_addr_t tx_dma_addr;
-@@ -261,6 +263,8 @@ static void sh_msiof_spi_set_clk_regs(struct sh_msiof_spi_priv *p,
- 	if (!WARN_ON(!spi_hz || !parent_rate))
- 		div = DIV_ROUND_UP(parent_rate, spi_hz);
+ 		d = get_device(sd->dev);
  
-+	div = max_t(unsigned long, div, p->min_div);
++		if (notifier->unbind)
++			notifier->unbind(notifier, sd, sd->asd);
 +
- 	for (k = 0; k < ARRAY_SIZE(sh_msiof_spi_div_table); k++) {
- 		brps = DIV_ROUND_UP(div, sh_msiof_spi_div_table[k].div);
- 		/* SCR_BRDV_DIV_1 is valid only if BRPS is x 1/1 or x 1/2 */
-@@ -998,24 +1002,33 @@ static const struct sh_msiof_chipdata sh_data = {
- 	.tx_fifo_size = 64,
- 	.rx_fifo_size = 64,
- 	.master_flags = 0,
-+	.min_div = 1,
-+};
-+
-+static const struct sh_msiof_chipdata rcar_gen2_data = {
-+	.tx_fifo_size = 64,
-+	.rx_fifo_size = 64,
-+	.master_flags = SPI_MASTER_MUST_TX,
-+	.min_div = 1,
- };
+ 		v4l2_async_cleanup(sd);
  
--static const struct sh_msiof_chipdata r8a779x_data = {
-+static const struct sh_msiof_chipdata rcar_gen3_data = {
- 	.tx_fifo_size = 64,
- 	.rx_fifo_size = 64,
- 	.master_flags = SPI_MASTER_MUST_TX,
-+	.min_div = 2,
- };
+ 		/* If we handled USB devices, we'd have to lock the parent too */
+ 		device_release_driver(d);
  
- static const struct of_device_id sh_msiof_match[] = {
- 	{ .compatible = "renesas,sh-mobile-msiof", .data = &sh_data },
--	{ .compatible = "renesas,msiof-r8a7790",   .data = &r8a779x_data },
--	{ .compatible = "renesas,msiof-r8a7791",   .data = &r8a779x_data },
--	{ .compatible = "renesas,msiof-r8a7792",   .data = &r8a779x_data },
--	{ .compatible = "renesas,msiof-r8a7793",   .data = &r8a779x_data },
--	{ .compatible = "renesas,msiof-r8a7794",   .data = &r8a779x_data },
--	{ .compatible = "renesas,rcar-gen2-msiof", .data = &r8a779x_data },
--	{ .compatible = "renesas,msiof-r8a7796",   .data = &r8a779x_data },
--	{ .compatible = "renesas,rcar-gen3-msiof", .data = &r8a779x_data },
-+	{ .compatible = "renesas,msiof-r8a7790",   .data = &rcar_gen2_data },
-+	{ .compatible = "renesas,msiof-r8a7791",   .data = &rcar_gen2_data },
-+	{ .compatible = "renesas,msiof-r8a7792",   .data = &rcar_gen2_data },
-+	{ .compatible = "renesas,msiof-r8a7793",   .data = &rcar_gen2_data },
-+	{ .compatible = "renesas,msiof-r8a7794",   .data = &rcar_gen2_data },
-+	{ .compatible = "renesas,rcar-gen2-msiof", .data = &rcar_gen2_data },
-+	{ .compatible = "renesas,msiof-r8a7796",   .data = &rcar_gen3_data },
-+	{ .compatible = "renesas,rcar-gen3-msiof", .data = &rcar_gen3_data },
- 	{ .compatible = "renesas,sh-msiof",        .data = &sh_data }, /* Deprecated */
- 	{},
- };
-@@ -1230,6 +1243,7 @@ static int sh_msiof_spi_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, p);
- 	p->master = master;
- 	p->info = info;
-+	p->min_div = chipdata->min_div;
- 
- 	init_completion(&p->done);
- 
+-		if (notifier->unbind)
+-			notifier->unbind(notifier, sd, sd->asd);
+-
+ 		/*
+ 		 * Store device at the device cache, in order to call
+ 		 * put_device() on the final step
 -- 
-2.13.2
+2.13.3
