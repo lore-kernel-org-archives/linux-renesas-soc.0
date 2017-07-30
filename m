@@ -1,51 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:35368 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751919AbdGAUFe (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:34315 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754546AbdG3U5n (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 1 Jul 2017 16:05:34 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Alexey Firago <alexey_firago@mentor.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 2/8] clk: vc5: Fix trivial typo
-Date: Sat,  1 Jul 2017 22:04:52 +0200
-Message-Id: <20170701200459.11505-2-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20170701200459.11505-1-marek.vasut+renesas@gmail.com>
-References: <20170701200459.11505-1-marek.vasut+renesas@gmail.com>
+        Sun, 30 Jul 2017 16:57:43 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [RFC 0/5] arm64: dts: renesas: add VIN, CSI-2 and ADV7482 nodes
+Date: Sun, 30 Jul 2017 22:56:46 +0200
+Message-Id: <20170730205651.6478-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Fix trivial typo in vc5_clk_out_unprepare() , s/Enable/Disable/ .
+Hi,
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Alexey Firago <alexey_firago@mentor.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-on Salvator-XS with the display LVDS output.
----
- drivers/clk/clk-versaclock5.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This is a RFC for how I imagine the final DT for the video capture nodes 
+will look. Since the DT file layout changed recently I wanted to post a 
+RFC before I include these in my for-renesas-drivers branch.
 
-diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index 60bf4afb51bd..d835d48cf14d 100644
---- a/drivers/clk/clk-versaclock5.c
-+++ b/drivers/clk/clk-versaclock5.c
-@@ -520,7 +520,7 @@ static void vc5_clk_out_unprepare(struct clk_hw *hw)
- 	struct vc5_hw_data *hwdata = container_of(hw, struct vc5_hw_data, hw);
- 	struct vc5_driver_data *vc5 = hwdata->vc5;
- 
--	/* Enable the clock buffer */
-+	/* Disable the clock buffer */
- 	regmap_update_bits(vc5->regmap, VC5_CLK_OUTPUT_CFG(hwdata->num, 1),
- 			   VC5_CLK_OUTPUT_CFG1_EN_CLKBUF, 0);
- }
+These are not intended for Simons tree, the DT bindings are not accepted 
+upstream. checkpatch will warn about missing compat strings if not run 
+ontop a tree which contains the driver patches for Gen3 VIN, CSI-2 and 
+ADV7482.
+
+Please review and give some feedback if you don't think this should be 
+included in renesas-drivers :-)
+
+Kieran Bingham (1):
+  arm64: dts: renesas: salvator-x: Add ADV7482 support
+
+Niklas Söderlund (4):
+  arm64: dts: r8a7795: add VIN and CSI nodes
+  arm64: dts: r8a7795-es1: add CSI21
+  arm64: dts: r8a7796: add VIN and CSI nodes
+  arm64: dts: renesas: salvator: enable VIN
+
+ arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi     | 142 +++++++++
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi         | 378 +++++++++++++++++++++++
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi         | 356 +++++++++++++++++++++
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi | 135 ++++++++
+ 4 files changed, 1011 insertions(+)
+
 -- 
-2.11.0
+2.13.3
