@@ -1,281 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:35871 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751470AbdGRVnp (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:42651 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750987AbdGaPEN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 18 Jul 2017 17:43:45 -0400
-From: Rob Herring <robh@kernel.org>
+        Mon, 31 Jul 2017 11:04:13 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
 To: arm@kernel.org
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Russell King <linux@armlinux.org.uk>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Javier Martinez Canillas <javier@osg.samsung.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@free-electrons.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-        Paul Walmsley <paul@pwsan.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
+Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] ARM: Convert to using %pOF instead of full_name
-Date: Tue, 18 Jul 2017 16:42:41 -0500
-Message-Id: <20170718214339.7774-1-robh@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [GIT PULL] Renesas ARM Based SoC Drivers Updates for v4.14
+Date: Mon, 31 Jul 2017 17:04:03 +0200
+Message-Id: <cover.1501511923.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Now that we have a custom printf format specifier, convert users of
-full_name to use %pOF instead. This is preparation to remove storing
-of the full path string for each node.
+Hi Olof, Hi Kevin, Hi Arnd,
 
-Signed-off-by: Rob Herring <robh@kernel.org>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Sascha Hauer <kernel@pengutronix.de>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Jason Cooper <jason@lakedaemon.net>
-Cc: Andrew Lunn <andrew@lunn.ch>
-Cc: Gregory Clement <gregory.clement@free-electrons.com>
-Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: Tony Lindgren <tony@atomide.com>
-Cc: "Benoît Cousson" <bcousson@baylibre.com>
-Cc: Paul Walmsley <paul@pwsan.com>
-Cc: Heiko Stuebner <heiko@sntech.de>
-Cc: Simon Horman <horms@verge.net.au>
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: linux-omap@vger.kernel.org
-Cc: linux-rockchip@lists.infradead.org
-Cc: linux-renesas-soc@vger.kernel.org
----
- arch/arm/kernel/cpuidle.c            | 4 ++--
- arch/arm/kernel/devtree.c            | 6 +++---
- arch/arm/kernel/topology.c           | 4 ++--
- arch/arm/mach-exynos/suspend.c       | 8 ++++----
- arch/arm/mach-imx/gpc.c              | 4 ++--
- arch/arm/mach-mvebu/kirkwood.c       | 4 ++--
- arch/arm/mach-omap2/omap-wakeupgen.c | 4 ++--
- arch/arm/mach-omap2/omap_hwmod.c     | 4 ++--
- arch/arm/mach-rockchip/platsmp.c     | 4 ++--
- arch/arm/mach-shmobile/pm-rmobile.c  | 8 ++++----
- 10 files changed, 25 insertions(+), 25 deletions(-)
+Please consider these Renesas ARM based SoC drivers updates for v4.14.
 
-diff --git a/arch/arm/kernel/cpuidle.c b/arch/arm/kernel/cpuidle.c
-index a3308ad1a024..fda5579123a8 100644
---- a/arch/arm/kernel/cpuidle.c
-+++ b/arch/arm/kernel/cpuidle.c
-@@ -101,8 +101,8 @@ static int __init arm_cpuidle_read_ops(struct device_node *dn, int cpu)
 
- 	ops = arm_cpuidle_get_ops(enable_method);
- 	if (!ops) {
--		pr_warn("%s: unsupported enable-method property: %s\n",
--			dn->full_name, enable_method);
-+		pr_warn("%pOF: unsupported enable-method property: %s\n",
-+			dn, enable_method);
- 		return -EOPNOTSUPP;
- 	}
+The following changes since commit 5771a8c08880cdca3bfb4a3fc6d309d6bba20877:
 
-diff --git a/arch/arm/kernel/devtree.c b/arch/arm/kernel/devtree.c
-index f676febbb270..28174c9a94ac 100644
---- a/arch/arm/kernel/devtree.c
-+++ b/arch/arm/kernel/devtree.c
-@@ -95,7 +95,7 @@ void __init arm_dt_init_cpu_maps(void)
- 		if (of_node_cmp(cpu->type, "cpu"))
- 			continue;
+  Linux v4.13-rc1 (2017-07-15 15:22:10 -0700)
 
--		pr_debug(" * %s...\n", cpu->full_name);
-+		pr_debug(" * %pOF...\n", cpu);
- 		/*
- 		 * A device tree containing CPU nodes with missing "reg"
- 		 * properties is considered invalid to build the
-@@ -103,8 +103,8 @@ void __init arm_dt_init_cpu_maps(void)
- 		 */
- 		cell = of_get_property(cpu, "reg", &prop_bytes);
- 		if (!cell || prop_bytes < sizeof(*cell)) {
--			pr_debug(" * %s missing reg property\n",
--				     cpu->full_name);
-+			pr_debug(" * %pOF missing reg property\n",
-+				     cpu);
- 			of_node_put(cpu);
- 			return;
- 		}
-diff --git a/arch/arm/kernel/topology.c b/arch/arm/kernel/topology.c
-index bf949a763dbe..e596c5b8f931 100644
---- a/arch/arm/kernel/topology.c
-+++ b/arch/arm/kernel/topology.c
-@@ -127,8 +127,8 @@ static void __init parse_dt_topology(void)
+are available in the git repository at:
 
- 		rate = of_get_property(cn, "clock-frequency", &len);
- 		if (!rate || len != 4) {
--			pr_err("%s missing clock-frequency property\n",
--				cn->full_name);
-+			pr_err("%pOF missing clock-frequency property\n",
-+				cn);
- 			continue;
- 		}
+  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-drivers-for-v4.14
 
-diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
-index 748cfb8d5212..3c7b66c22697 100644
---- a/arch/arm/mach-exynos/suspend.c
-+++ b/arch/arm/mach-exynos/suspend.c
-@@ -187,21 +187,21 @@ static int __init exynos_pmu_irq_init(struct device_node *node,
- 	struct irq_domain *parent_domain, *domain;
+for you to fetch changes up to 105ae504a3eb6c2e188e8d67db59b71186f11967:
 
- 	if (!parent) {
--		pr_err("%s: no parent, giving up\n", node->full_name);
-+		pr_err("%pOF: no parent, giving up\n", node);
- 		return -ENODEV;
- 	}
+  soc: renesas: rcar-rst: Add support for R-Car D3 (2017-07-27 17:08:28 +0200)
 
- 	parent_domain = irq_find_host(parent);
- 	if (!parent_domain) {
--		pr_err("%s: unable to obtain parent domain\n", node->full_name);
-+		pr_err("%pOF: unable to obtain parent domain\n", node);
- 		return -ENXIO;
- 	}
+----------------------------------------------------------------
+Renesas ARM Based SoC Drivers Updates for v4.14
 
- 	pmu_base_addr = of_iomap(node, 0);
+Add R-Car D3 (r8a77995) support to the Renesas-specific SoC drivers
+- SoC identification
+- System controller
+- Reset controller
 
- 	if (!pmu_base_addr) {
--		pr_err("%s: failed to find exynos pmu register\n",
--		       node->full_name);
-+		pr_err("%pOF: failed to find exynos pmu register\n",
-+		       node);
- 		return -ENOMEM;
- 	}
+----------------------------------------------------------------
+Geert Uytterhoeven (4):
+      soc: renesas: Identify R-Car D3
+      soc: renesas: Add r8a77995 SYSC PM Domain Binding Definitions
+      soc: renesas: rcar-sysc: Add support for R-Car D3 power areas
+      soc: renesas: rcar-rst: Add support for R-Car D3
 
-diff --git a/arch/arm/mach-imx/gpc.c b/arch/arm/mach-imx/gpc.c
-index 93f584ba0130..de535cb679b3 100644
---- a/arch/arm/mach-imx/gpc.c
-+++ b/arch/arm/mach-imx/gpc.c
-@@ -224,13 +224,13 @@ static int __init imx_gpc_init(struct device_node *node,
- 	int i;
-
- 	if (!parent) {
--		pr_err("%s: no parent, giving up\n", node->full_name);
-+		pr_err("%pOF: no parent, giving up\n", node);
- 		return -ENODEV;
- 	}
-
- 	parent_domain = irq_find_host(parent);
- 	if (!parent_domain) {
--		pr_err("%s: unable to obtain parent domain\n", node->full_name);
-+		pr_err("%pOF: unable to obtain parent domain\n", node);
- 		return -ENXIO;
- 	}
-
-diff --git a/arch/arm/mach-mvebu/kirkwood.c b/arch/arm/mach-mvebu/kirkwood.c
-index 7d9f2fd9e450..419da435bc94 100644
---- a/arch/arm/mach-mvebu/kirkwood.c
-+++ b/arch/arm/mach-mvebu/kirkwood.c
-@@ -107,8 +107,8 @@ static void __init kirkwood_dt_eth_fixup(void)
- 		clk_prepare_enable(clk);
-
- 		/* store MAC address register contents in local-mac-address */
--		pr_err(FW_INFO "%s: local-mac-address is not set\n",
--		       np->full_name);
-+		pr_err(FW_INFO "%pOF: local-mac-address is not set\n",
-+		       np);
-
- 		pmac = kzalloc(sizeof(*pmac) + 6, GFP_KERNEL);
- 		if (!pmac)
-diff --git a/arch/arm/mach-omap2/omap-wakeupgen.c b/arch/arm/mach-omap2/omap-wakeupgen.c
-index 33ed5d53fa45..4bb6751864a5 100644
---- a/arch/arm/mach-omap2/omap-wakeupgen.c
-+++ b/arch/arm/mach-omap2/omap-wakeupgen.c
-@@ -522,13 +522,13 @@ static int __init wakeupgen_init(struct device_node *node,
- 	u32 val;
-
- 	if (!parent) {
--		pr_err("%s: no parent, giving up\n", node->full_name);
-+		pr_err("%pOF: no parent, giving up\n", node);
- 		return -ENODEV;
- 	}
-
- 	parent_domain = irq_find_host(parent);
- 	if (!parent_domain) {
--		pr_err("%s: unable to obtain parent domain\n", node->full_name);
-+		pr_err("%pOF: unable to obtain parent domain\n", node);
- 		return -ENXIO;
- 	}
- 	/* Not supported on OMAP4 ES1.0 silicon */
-diff --git a/arch/arm/mach-omap2/omap_hwmod.c b/arch/arm/mach-omap2/omap_hwmod.c
-index 3b47ded5fa0c..2dbd63239c54 100644
---- a/arch/arm/mach-omap2/omap_hwmod.c
-+++ b/arch/arm/mach-omap2/omap_hwmod.c
-@@ -2417,8 +2417,8 @@ static int __init _init_mpu_rt_base(struct omap_hwmod *oh, void *data,
- 		if (mem)
- 			pr_err("omap_hwmod: %s: Could not ioremap\n", oh->name);
- 		else
--			pr_err("omap_hwmod: %s: Missing dt reg%i for %s\n",
--			       oh->name, index, np->full_name);
-+			pr_err("omap_hwmod: %s: Missing dt reg%i for %pOF\n",
-+			       oh->name, index, np);
- 		return -ENXIO;
- 	}
-
-diff --git a/arch/arm/mach-rockchip/platsmp.c b/arch/arm/mach-rockchip/platsmp.c
-index 3abafdbdd7f4..2b5b0e43d657 100644
---- a/arch/arm/mach-rockchip/platsmp.c
-+++ b/arch/arm/mach-rockchip/platsmp.c
-@@ -182,8 +182,8 @@ static int __init rockchip_smp_prepare_sram(struct device_node *node)
-
- 	ret = of_address_to_resource(node, 0, &res);
- 	if (ret < 0) {
--		pr_err("%s: could not get address for node %s\n",
--		       __func__, node->full_name);
-+		pr_err("%s: could not get address for node %pOF\n",
-+		       __func__, node);
- 		return ret;
- 	}
-
-diff --git a/arch/arm/mach-shmobile/pm-rmobile.c b/arch/arm/mach-shmobile/pm-rmobile.c
-index 699429f28b73..4c395f9fd178 100644
---- a/arch/arm/mach-shmobile/pm-rmobile.c
-+++ b/arch/arm/mach-shmobile/pm-rmobile.c
-@@ -195,8 +195,8 @@ static void __init add_special_pd(struct device_node *np, enum pd_types type)
- 		return;
- 	}
-
--	pr_debug("Special PM domain %s type %d for %s\n", pd->name, type,
--		 np->full_name);
-+	pr_debug("Special PM domain %s type %d for %pOF\n", pd->name, type,
-+		 np);
-
- 	special_pds[num_special_pds].pd = pd;
- 	special_pds[num_special_pds].type = type;
-@@ -331,13 +331,13 @@ static int __init rmobile_init_pm_domains(void)
- 	for_each_compatible_node(np, NULL, "renesas,sysc-rmobile") {
- 		base = of_iomap(np, 0);
- 		if (!base) {
--			pr_warn("%s cannot map reg 0\n", np->full_name);
-+			pr_warn("%pOF cannot map reg 0\n", np);
- 			continue;
- 		}
-
- 		pmd = of_get_child_by_name(np, "pm-domains");
- 		if (!pmd) {
--			pr_warn("%s lacks pm-domains node\n", np->full_name);
-+			pr_warn("%pOF lacks pm-domains node\n", np);
- 			continue;
- 		}
-
---
-2.11.0
+ .../bindings/power/renesas,rcar-sysc.txt           |  1 +
+ .../devicetree/bindings/reset/renesas,rst.txt      |  1 +
+ drivers/soc/renesas/Kconfig                        |  7 ++++-
+ drivers/soc/renesas/Makefile                       |  1 +
+ drivers/soc/renesas/r8a77995-sysc.c                | 31 ++++++++++++++++++++++
+ drivers/soc/renesas/rcar-rst.c                     |  1 +
+ drivers/soc/renesas/rcar-sysc.c                    |  3 +++
+ drivers/soc/renesas/rcar-sysc.h                    |  1 +
+ drivers/soc/renesas/renesas-soc.c                  |  8 ++++++
+ include/dt-bindings/power/r8a77995-sysc.h          | 23 ++++++++++++++++
+ 10 files changed, 76 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/soc/renesas/r8a77995-sysc.c
+ create mode 100644 include/dt-bindings/power/r8a77995-sysc.h
