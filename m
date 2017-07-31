@@ -1,90 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:42651 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:44331 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751827AbdGaPDb (ORCPT
+        with ESMTP id S1752132AbdGaPUU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 31 Jul 2017 11:03:31 -0400
+        Mon, 31 Jul 2017 11:20:20 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Konstantin Kozhevnikov
-        <Konstantin.Kozhevnikov@cogentembedded.com>,
+        Biju Das <biju.das@bp.renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 01/31] arm64: dts: r8a7795: add IMR-LX4 support
-Date: Mon, 31 Jul 2017 17:02:53 +0200
-Message-Id: <24604cd36c52edf02831d8754efe2d76010885cf.1501509525.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1501509525.git.horms+renesas@verge.net.au>
-References: <cover.1501509525.git.horms+renesas@verge.net.au>
+Subject: [PATCH 07/38] ARM: dts: iwg20d-q7: Add pinctl support for scif0
+Date: Mon, 31 Jul 2017 17:19:19 +0200
+Message-Id: <7095f279c03a05cf9007001852b939236edc2897.1501514100.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1501514100.git.horms+renesas@verge.net.au>
+References: <cover.1501514100.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Biju Das <biju.das@bp.renesas.com>
 
-Describe the IMR-LX4 devices in the R8A7795 device tree.
+Adding pinctrl support for scif0 interface.
 
-Based on the original (and large) patch by Konstantin Kozhevnikov
-<Konstantin.Kozhevnikov@cogentembedded.com>.
-
-Signed-off-by: Konstantin Kozhevnikov <Konstantin.Kozhevnikov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 40 ++++++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+ arch/arm/boot/dts/r8a7743-iwg20d-q7.dts | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index e31c1b660b3f..31d1ba586ec2 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1535,6 +1535,46 @@
- 			status = "disabled";
- 		};
+diff --git a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
+index 9b54783cc2a5..497aec00cfac 100644
+--- a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
++++ b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
+@@ -20,6 +20,16 @@
+ 	};
+ };
  
-+		imr-lx4@fe860000 {
-+			compatible = "renesas,r8a7795-imr-lx4",
-+				     "renesas,imr-lx4";
-+			reg = <0 0xfe860000 0 0x2000>;
-+			interrupts = <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 823>;
-+			power-domains = <&sysc R8A7795_PD_A3VC>;
-+			resets = <&cpg 823>;
-+		};
++&pfc {
++	scif0_pins: scif0 {
++		groups = "scif0_data_d";
++		function = "scif0";
++	};
++};
 +
-+		imr-lx4@fe870000 {
-+			compatible = "renesas,r8a7795-imr-lx4",
-+				     "renesas,imr-lx4";
-+			reg = <0 0xfe870000 0 0x2000>;
-+			interrupts = <GIC_SPI 193 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 822>;
-+			power-domains = <&sysc R8A7795_PD_A3VC>;
-+			resets = <&cpg 822>;
-+		};
+ &scif0 {
++	pinctrl-0 = <&scif0_pins>;
++	pinctrl-names = "default";
 +
-+		imr-lx4@fe880000 {
-+			compatible = "renesas,r8a7795-imr-lx4",
-+				     "renesas,imr-lx4";
-+			reg = <0 0xfe880000 0 0x2000>;
-+			interrupts = <GIC_SPI 194 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 821>;
-+			power-domains = <&sysc R8A7795_PD_A3VC>;
-+			resets = <&cpg 821>;
-+		};
-+
-+		imr-lx4@fe890000 {
-+			compatible = "renesas,r8a7795-imr-lx4",
-+				     "renesas,imr-lx4";
-+			reg = <0 0xfe890000 0 0x2000>;
-+			interrupts = <GIC_SPI 195 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 820>;
-+			power-domains = <&sysc R8A7795_PD_A3VC>;
-+			resets = <&cpg 820>;
-+		};
-+
- 		vspbc: vsp@fe920000 {
- 			compatible = "renesas,vsp2";
- 			reg = <0 0xfe920000 0 0x8000>;
+ 	status = "okay";
+ };
 -- 
 2.1.4
