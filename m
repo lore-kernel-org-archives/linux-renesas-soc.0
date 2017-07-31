@@ -1,56 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:37631 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752354AbdGMMRR (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:44354 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752398AbdGaPUj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Jul 2017 08:17:17 -0400
-Received: from avalon.bb.dnainternet.fi (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by galahad.ideasonboard.com (Postfix) with ESMTPSA id 61B50201F5
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 13 Jul 2017 14:16:45 +0200 (CEST)
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 31 Jul 2017 11:20:39 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] arm64: dts: renesas: salvator-common: Remove extra LVDS port label
-Date: Thu, 13 Jul 2017 15:17:14 +0300
-Message-Id: <20170713121714.30789-1-laurent.pinchart+renesas@ideasonboard.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 34/38] ARM: dts: rskrza1: Add SCIF2 pin group
+Date: Mon, 31 Jul 2017 17:19:46 +0200
+Message-Id: <cde2380548e26afe03e4c9310073e0878af9efd9.1501514100.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1501514100.git.horms+renesas@verge.net.au>
+References: <cover.1501514100.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The DU LVDS output is on port 3 on R8A7795 but on port 2 on R8A7796. The
-lvds_connector label thus can't be defined in salvator-common.dtsi,
-common to the two SoCs.
+From: Chris Brandt <chris.brandt@renesas.com>
 
-The lvds_connector label is meant for convience to be referenced from
-panel device tree files, such as r8a77xx-aa104xd12-panel.dtsi or
-r8a77xx-aa121td01-panel.dtsi.  As those files are not included in any
-device tree source, and the label never used elsewhere, we can simply
-remove it. Out-of-tree patches that include panel device tree files can
-then add a
+Add pin configuration for SCIF2 serial console interface.
 
-	#define lvds_connector du_out_lvds0
-
-before including the panel device tree file.
-
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/salvator-common.dtsi | 4 ----
- 1 file changed, 4 deletions(-)
+ arch/arm/boot/dts/r7s72100-rskrza1.dts | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-index aef35e0b685a..7d46a6c0f74b 100644
---- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-@@ -268,10 +268,6 @@
- 				remote-endpoint = <&adv7123_in>;
- 			};
- 		};
--		port@3 {
--			lvds_connector: endpoint {
--			};
--		};
- 	};
+diff --git a/arch/arm/boot/dts/r7s72100-rskrza1.dts b/arch/arm/boot/dts/r7s72100-rskrza1.dts
+index 72df20a04320..5fac0f82d742 100644
+--- a/arch/arm/boot/dts/r7s72100-rskrza1.dts
++++ b/arch/arm/boot/dts/r7s72100-rskrza1.dts
+@@ -10,6 +10,7 @@
+ 
+ /dts-v1/;
+ #include "r7s72100.dtsi"
++#include <dt-bindings/pinctrl/r7s72100-pinctrl.h>
+ 
+ / {
+ 	model = "RSKRZA1";
+@@ -47,6 +48,15 @@
+ 	clock-frequency = <32768>;
  };
  
++&pinctrl {
++
++	/* Serial Console */
++	scif2_pins: serial2 {
++		pinmux = <RZA1_PINMUX(3, 0, 6)>,	/* TxD2 */
++			 <RZA1_PINMUX(3, 2, 4)>;	/* RxD2 */
++	};
++};
++
+ &mtu2 {
+ 	status = "okay";
+ };
+@@ -78,5 +88,7 @@
+ };
+ 
+ &scif2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&scif2_pins>;
+ 	status = "okay";
+ };
 -- 
-Regards,
-
-Laurent Pinchart
+2.1.4
