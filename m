@@ -1,50 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:42542 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:44313 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751827AbdGaPCi (ORCPT
+        with ESMTP id S1752433AbdGaPUR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 31 Jul 2017 11:02:38 -0400
+        Mon, 31 Jul 2017 11:20:17 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Javier Martinez Canillas <javier@dowhile0.org>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH] arm64: defconfig: compile ak4613 and renesas sound as modules
-Date: Mon, 31 Jul 2017 17:02:32 +0200
-Message-Id: <140cb4111a51381f51f6cdcc97113f2d04e5939b.1501509815.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1501509815.git.horms+renesas@verge.net.au>
-References: <cover.1501509815.git.horms+renesas@verge.net.au>
+Subject: [PATCH 02/38] ARM: dts: koelsch: Add generic compatible string for I2C EEPROM
+Date: Mon, 31 Jul 2017 17:19:14 +0200
+Message-Id: <3e82be14a1dcdfef75b5a87a25862bd7d878b7f8.1501514100.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1501514100.git.horms+renesas@verge.net.au>
+References: <cover.1501514100.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+From: Javier Martinez Canillas <javier@dowhile0.org>
 
-Compile the renesas sound and ak4613 drivers as modules to reduce the ARM64
-kernel size. These modules are currently only used by Renesas platforms so
-there should little risk of negative impact of this change on other users.
+The at24 driver allows to register I2C EEPROM chips using different vendor
+and devices, but the I2C subsystem does not take the vendor into account
+when matching using the I2C table since it only has device entries.
 
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-[simon: consolidated two patches into one]
+But when matching using an OF table, both the vendor and device has to be
+taken into account so the driver defines only a set of compatible strings
+using the "atmel" vendor as a generic fallback for compatible I2C devices.
+
+So add this generic fallback to the device node compatible string to make
+the device to match the driver using the OF device ID table.
+
+Signed-off-by: Javier Martinez Canillas <javier@dowhile0.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/configs/defconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/r8a7791-koelsch.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 6c7d147eed54..a8948bb5167f 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -380,8 +380,8 @@ CONFIG_SND=y
- CONFIG_SND_SOC=y
- CONFIG_SND_BCM2835_SOC_I2S=m
- CONFIG_SND_SOC_SAMSUNG=y
--CONFIG_SND_SOC_RCAR=y
--CONFIG_SND_SOC_AK4613=y
-+CONFIG_SND_SOC_RCAR=m
-+CONFIG_SND_SOC_AK4613=m
- CONFIG_SND_SIMPLE_CARD=y
- CONFIG_USB=y
- CONFIG_USB_OTG=y
+diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
+index 001e6116c47c..dc8ed02de707 100644
+--- a/arch/arm/boot/dts/r8a7791-koelsch.dts
++++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
+@@ -702,7 +702,7 @@
+ 	};
+ 
+ 	eeprom@50 {
+-		compatible = "renesas,24c02";
++		compatible = "renesas,24c02", "atmel,24c02";
+ 		reg = <0x50>;
+ 		pagesize = <16>;
+ 	};
 -- 
 2.1.4
