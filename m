@@ -1,102 +1,122 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:43187 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:42967 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752132AbdGaPFr (ORCPT
+        with ESMTP id S1752462AbdGaPEm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 31 Jul 2017 11:05:47 -0400
+        Mon, 31 Jul 2017 11:04:42 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/5] ARM: shmobile: rcar-gen2: Obtain jump stub region from DT
-Date: Mon, 31 Jul 2017 17:05:37 +0200
-Message-Id: <816756962b15f469d467b09beeb702af015c55cc.1501512320.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1501512320.git.horms+renesas@verge.net.au>
-References: <cover.1501512320.git.horms+renesas@verge.net.au>
+Subject: [PATCH 3/5] dt-bindings: display: rcar-du: Add a VSP channel index to the vsps DT property
+Date: Mon, 31 Jul 2017 17:04:29 +0200
+Message-Id: <fd57d77f9c649cf95216d390647a244fa34b3584.1501512759.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1501512759.git.horms+renesas@verge.net.au>
+References: <cover.1501512759.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Add support for obtaining from DT the SRAM region to store the jump stub
-for CPU core bringup, according to the renesas,smp-sram DT bindings.
+On some R-Car SoCs a single VSP can serve multiple DU channels through
+multiple LIF instances in the VSP. The current DT bindings don't support
+specifying that kind of SoC integration scheme. Extend them with a VSP
+channel index.
 
-If no region is specified in DT, the code falls back to hardcoded ICRAM1
-as before, to maintain backwards compatibility.
+Backward compatibility can be ensured in drivers by checking the length
+of the vsps property and setting the channel to 0 when the property
+doesn't contain channel indices.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/mach-shmobile/pm-rcar-gen2.c | 33 ++++++++++++++++++++++++++++++---
- 1 file changed, 30 insertions(+), 3 deletions(-)
+ .../devicetree/bindings/display/renesas,du.txt     | 51 +++++++++++++---------
+ 1 file changed, 30 insertions(+), 21 deletions(-)
 
-diff --git a/arch/arm/mach-shmobile/pm-rcar-gen2.c b/arch/arm/mach-shmobile/pm-rcar-gen2.c
-index 0178da7ace82..e5f215c8b218 100644
---- a/arch/arm/mach-shmobile/pm-rcar-gen2.c
-+++ b/arch/arm/mach-shmobile/pm-rcar-gen2.c
-@@ -11,7 +11,9 @@
-  */
+diff --git a/Documentation/devicetree/bindings/display/renesas,du.txt b/Documentation/devicetree/bindings/display/renesas,du.txt
+index c6cb96a4fa93..4bbd1e9bf3be 100644
+--- a/Documentation/devicetree/bindings/display/renesas,du.txt
++++ b/Documentation/devicetree/bindings/display/renesas,du.txt
+@@ -36,8 +36,10 @@ Required Properties:
+       When supplied they must be named "dclkin.x" with "x" being the input
+       clock numerical index.
  
- #include <linux/kernel.h>
-+#include <linux/ioport.h>
- #include <linux/of.h>
-+#include <linux/of_address.h>
- #include <linux/smp.h>
- #include <linux/soc/renesas/rcar-sysc.h>
- #include <asm/io.h>
-@@ -69,8 +71,9 @@ void __init rcar_gen2_pm_init(void)
- 	struct device_node *np, *cpus;
- 	bool has_a7 = false;
- 	bool has_a15 = false;
--	phys_addr_t boot_vector_addr = ICRAM1;
-+	struct resource res;
- 	u32 syscier = 0;
-+	int error;
+-  - vsps: A list of phandles to the VSP nodes that handle the memory
+-    interfaces for the DU channels.
++  - vsps: A list of phandle and channel index tuples to the VSPs that handle
++    the memory interfaces for the DU channels. The phandle identifies the VSP
++    instance that serves the DU channel, and the channel index identifies the
++    LIF instance in that VSP.
  
- 	if (once++)
- 		return;
-@@ -91,14 +94,38 @@ void __init rcar_gen2_pm_init(void)
- 	else if (of_machine_is_compatible("renesas,r8a7791"))
- 		syscier = 0x00111003;
+ Required nodes:
  
-+	np = of_find_compatible_node(NULL, NULL, "renesas,smp-sram");
-+	if (!np) {
-+		/* No smp-sram in DT, fall back to hardcoded address */
-+		res = (struct resource)DEFINE_RES_MEM(ICRAM1,
-+						      shmobile_boot_size);
-+		goto map;
-+	}
-+
-+	error = of_address_to_resource(np, 0, &res);
-+	if (error) {
-+		pr_err("Failed to get smp-sram address: %d\n", error);
-+		return;
-+	}
-+
-+map:
- 	/* RAM for jump stub, because BAR requires 256KB aligned address */
--	p = ioremap_nocache(boot_vector_addr, shmobile_boot_size);
-+	if (res.start & (256 * 1024 - 1) ||
-+	    resource_size(&res) < shmobile_boot_size) {
-+		pr_err("Invalid smp-sram region\n");
-+		return;
-+	}
-+
-+	p = ioremap(res.start, resource_size(&res));
-+	if (!p)
-+		return;
-+
- 	memcpy_toio(p, shmobile_boot_vector, shmobile_boot_size);
- 	iounmap(p);
+@@ -59,24 +61,24 @@ corresponding to each DU output.
+  R8A7796 (M3-W)	DPAD		HDMI		LVDS		-
  
- 	/* setup reset vectors */
- 	p = ioremap_nocache(RST, 0x63);
--	bar = phys_to_sbar(boot_vector_addr);
-+	bar = phys_to_sbar(res.start);
- 	if (has_a15) {
- 		writel_relaxed(bar, p + CA15BAR);
- 		writel_relaxed(bar | SBAR_BAREN, p + CA15BAR);
+ 
+-Example: R8A7790 (R-Car H2) DU
++Example: R8A7795 (R-Car H3) ES2.0 DU
+ 
+-	du: du@feb00000 {
+-		compatible = "renesas,du-r8a7790";
+-		reg = <0 0xfeb00000 0 0x70000>,
+-		      <0 0xfeb90000 0 0x1c>,
+-		      <0 0xfeb94000 0 0x1c>;
+-		reg-names = "du", "lvds.0", "lvds.1";
+-		interrupt-parent = <&gic>;
+-		interrupts = <0 256 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 268 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 269 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp7_clks R8A7790_CLK_DU0>,
+-		         <&mstp7_clks R8A7790_CLK_DU1>,
+-		         <&mstp7_clks R8A7790_CLK_DU2>,
+-		         <&mstp7_clks R8A7790_CLK_LVDS0>,
+-		         <&mstp7_clks R8A7790_CLK_LVDS1>;
+-		clock-names = "du.0", "du.1", "du.2", "lvds.0", "lvds.1";
++	du: display@feb00000 {
++		compatible = "renesas,du-r8a7795";
++		reg = <0 0xfeb00000 0 0x80000>,
++		      <0 0xfeb90000 0 0x14>;
++		reg-names = "du", "lvds.0";
++		interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 270 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cpg CPG_MOD 724>,
++			 <&cpg CPG_MOD 723>,
++			 <&cpg CPG_MOD 722>,
++			 <&cpg CPG_MOD 721>,
++			 <&cpg CPG_MOD 727>;
++		clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0";
++		vsps = <&vspd0 0>, <&vspd1 0>, <&vspd2 0>, <&vspd0 1>;
+ 
+ 		ports {
+ 			#address-cells = <1>;
+@@ -89,12 +91,19 @@ Example: R8A7790 (R-Car H2) DU
+ 			};
+ 			port@1 {
+ 				reg = <1>;
+-				du_out_lvds0: endpoint {
++				du_out_hdmi0: endpoint {
++					remote-endpoint = <&dw_hdmi0_in>;
+ 				};
+ 			};
+ 			port@2 {
+ 				reg = <2>;
+-				du_out_lvds1: endpoint {
++				du_out_hdmi1: endpoint {
++					remote-endpoint = <&dw_hdmi1_in>;
++				};
++			};
++			port@3 {
++				reg = <3>;
++				du_out_lvds0: endpoint {
+ 				};
+ 			};
+ 		};
 -- 
 2.1.4
