@@ -1,64 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:44354 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:42651 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752398AbdGaPUf (ORCPT
+        with ESMTP id S1752364AbdGaPDy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 31 Jul 2017 11:20:35 -0400
+        Mon, 31 Jul 2017 11:03:54 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
+        Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 26/38] ARM: dts: r8a7791: Use R-Car Gen 2 fallback binding for vin nodes
-Date: Mon, 31 Jul 2017 17:19:38 +0200
-Message-Id: <b5595f2ffec64cce76fd1c6e4bfeb7a0109517a7.1501514100.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1501514100.git.horms+renesas@verge.net.au>
-References: <cover.1501514100.git.horms+renesas@verge.net.au>
+Subject: [PATCH 18/31] arm64: dts: ulcb: Enable HDMI output
+Date: Mon, 31 Jul 2017 17:03:10 +0200
+Message-Id: <2a50b40fa4edc6aa14e1afeec04aa41c0127c0c6.1501509526.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1501509525.git.horms+renesas@verge.net.au>
+References: <cover.1501509525.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use R-Car Gen 2 fallback binding for vind nodes in DT for r8a7791 SoC.
+From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
 
-This has no run-time effect for the current driver as the initialisation
-sequence is the same for the SoC-specific binding for r8a7791 and the
-fallback binding for R-Car Gen 2
+Enable the HDMI encoder for ULCB board and hook it up to the HDMI connector.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+The HDMI encoder and connector are available on both the H3 and M3-W ULCB boards.
+Add them to the ulcb.dtsi file.
+
+Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7791.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/renesas/ulcb.dtsi | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index e135da440eed..ea4a8147d995 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -987,7 +987,7 @@
- 	};
+diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+index 9f93d6087df2..6b93b42de679 100644
+--- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
++++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+@@ -169,6 +169,23 @@
+ 	clock-frequency = <32768>;
+ };
  
- 	vin0: video@e6ef0000 {
--		compatible = "renesas,vin-r8a7791";
-+		compatible = "renesas,vin-r8a7791", "renesas,rcar-gen2-vin";
- 		reg = <0 0xe6ef0000 0 0x1000>;
- 		interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp8_clks R8A7791_CLK_VIN0>;
-@@ -996,7 +996,7 @@
- 	};
- 
- 	vin1: video@e6ef1000 {
--		compatible = "renesas,vin-r8a7791";
-+		compatible = "renesas,vin-r8a7791", "renesas,rcar-gen2-vin";
- 		reg = <0 0xe6ef1000 0 0x1000>;
- 		interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp8_clks R8A7791_CLK_VIN1>;
-@@ -1005,7 +1005,7 @@
- 	};
- 
- 	vin2: video@e6ef2000 {
--		compatible = "renesas,vin-r8a7791";
-+		compatible = "renesas,vin-r8a7791", "renesas,rcar-gen2-vin";
- 		reg = <0 0xe6ef2000 0 0x1000>;
- 		interrupts = <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp8_clks R8A7791_CLK_VIN2>;
++&hdmi0 {
++	status = "okay";
++
++	ports {
++		port@1 {
++			reg = <1>;
++			rcar_dw_hdmi0_out: endpoint {
++				remote-endpoint = <&hdmi0_con>;
++			};
++		};
++	};
++};
++
++&hdmi0_con {
++	remote-endpoint = <&rcar_dw_hdmi0_out>;
++};
++
+ &i2c2 {
+ 	pinctrl-0 = <&i2c2_pins>;
+ 	pinctrl-names = "default";
 -- 
 2.1.4
