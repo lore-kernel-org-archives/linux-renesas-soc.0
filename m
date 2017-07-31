@@ -1,72 +1,68 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-iio@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v3 2/4] i2c: add docs to clarify DMA handling
-Date: Tue, 18 Jul 2017 12:23:37 +0200
-Message-Id: <20170718102339.28726-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170718102339.28726-1-wsa+renesas@sang-engineering.com>
-References: <20170718102339.28726-1-wsa+renesas@sang-engineering.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:42956 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752357AbdGaPEi (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 31 Jul 2017 11:04:38 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 2/5] dt-bindings: sram: Document renesas,smp-sram
+Date: Mon, 31 Jul 2017 17:04:28 +0200
+Message-Id: <d5f2ac6ae9931227d8ccd71c12182e547ec28c21.1501512759.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1501512759.git.horms+renesas@verge.net.au>
+References: <cover.1501512759.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Document reserved SRAM for the SMP jump stub on Renesas R-Car Gen2 and
+RZ/G1 SoCs.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-Changes since v2:
+ .../devicetree/bindings/sram/renesas,smp-sram.txt  | 27 ++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sram/renesas,smp-sram.txt
 
-* documentation updates. Hopefully better wording now
-
- Documentation/i2c/DMA-considerations | 38 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
- create mode 100644 Documentation/i2c/DMA-considerations
-
-diff --git a/Documentation/i2c/DMA-considerations b/Documentation/i2c/DMA-considerations
+diff --git a/Documentation/devicetree/bindings/sram/renesas,smp-sram.txt b/Documentation/devicetree/bindings/sram/renesas,smp-sram.txt
 new file mode 100644
-index 00000000000000..e46c24d65c8556
+index 000000000000..712d05e3e15e
 --- /dev/null
-+++ b/Documentation/i2c/DMA-considerations
-@@ -0,0 +1,38 @@
-+Linux I2C and DMA
-+-----------------
++++ b/Documentation/devicetree/bindings/sram/renesas,smp-sram.txt
+@@ -0,0 +1,27 @@
++* Renesas SMP SRAM
 +
-+Given that I2C is a low-speed bus where largely small messages are transferred,
-+it is not considered a prime user of DMA access. At this time of writing, only
-+10% of I2C bus master drivers have DMA support implemented. And the vast
-+majority of transactions are so small that setting up DMA for it will likely
-+add more overhead than a plain PIO transfer.
++Renesas R-Car Gen2 and RZ/G1 SoCs need a small piece of SRAM for the jump stub
++for secondary CPU bringup and CPU hotplug.
++This memory is reserved by adding a child node to a "mmio-sram" node, cfr.
++Documentation/devicetree/bindings/sram/sram.txt.
 +
-+Therefore, it is *not* mandatory that the buffer of an I2C message is DMA safe.
-+It does not seem reasonable to apply additional burdens when the feature is so
-+rarely used. However, it is recommended to use a DMA-safe buffer if your
-+message size is likely applicable for DMA. Most drivers have this threshold
-+around 8 bytes. As of today, this is mostly an educated guess, however.
++Required child node properties:
++  - compatible: Must be "renesas,smp-sram",
++  - reg: Address and length of the reserved SRAM.
++    The full physical (bus) address must be aligned to a 256 KiB boundary.
 +
-+To support this scenario, drivers wishing to implement DMA can use helper
-+functions from the I2C core. One checks if a message is DMA capable in terms of
-+size and memory type. It can optionally also create a bounce buffer:
 +
-+	i2c_check_msg_for_dma(msg, threshold, &bounce_buf);
++Example:
 +
-+The bounce buffer handling from the core is generic and simple. It will always
-+allocate a new bounce buffer. If you want a more sophisticated handling (e.g.
-+reusing pre-allocated buffers), you can leave the pointer to the bounce buffer
-+empty and implement your own handling based on the return value of the above
-+function.
++	icram1:	sram@e63c0000 {
++		compatible = "mmio-sram";
++		reg = <0 0xe63c0000 0 0x1000>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0 0 0xe63c0000 0x1000>;
 +
-+The other helper function releases the bounce buffer. It ensures data is copied
-+back to the message:
-+
-+	i2c_release_dma_bounce_buf(msg, bounce_buf);
-+
-+Please check the in-kernel documentation for details. The i2c-sh_mobile driver
-+can be used as a reference example.
-+
-+If you plan to use DMA with I2C (or with any other bus, actually) make sure you
-+have CONFIG_DMA_API_DEBUG enabled during development. It can help you find
-+various issues which can be complex to debug otherwise.
++		smp-sram@0 {
++			compatible = "renesas,smp-sram";
++			reg = <0 0x10>;
++		};
++	};
 -- 
-2.11.0
+2.1.4
