@@ -1,52 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:42651 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:44354 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752364AbdGaPD6 (ORCPT
+        with ESMTP id S1752418AbdGaPU2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 31 Jul 2017 11:03:58 -0400
+        Mon, 31 Jul 2017 11:20:28 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 24/31] arm64: renesas: Add Renesas R8A77995 Kconfig support
-Date: Mon, 31 Jul 2017 17:03:16 +0200
-Message-Id: <a4b68d283bf0922c1d0cbcaf0d3e25a99618d911.1501509526.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1501509525.git.horms+renesas@verge.net.au>
-References: <cover.1501509525.git.horms+renesas@verge.net.au>
+Subject: [PATCH 04/38] ARM: dts: sk-rzg1m: add SCIF0 pins
+Date: Mon, 31 Jul 2017 17:19:16 +0200
+Message-Id: <403812e4c4d853548237417fca2cf400351b72e6.1501514100.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1501514100.git.horms+renesas@verge.net.au>
+References: <cover.1501514100.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Add a configuration option for the R-Car D3 SoC.
+Add the (previously omitted) SCIF0 pin data to the SK-RZG1M board's
+device tree.
 
-Note that r8a77995 is the first Renesas "r8a<n>" SoC using a 5 digit
-number in its Kconfig symbol, as r8a77990 will be a different SoC.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/Kconfig.platforms | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm/boot/dts/r8a7743-sk-rzg1m.dts | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index f5f0c813dfec..a1c9f4ed7a88 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -184,6 +184,12 @@ config ARCH_R8A7796
- 	help
- 	  This enables support for the Renesas R-Car M3-W SoC.
+diff --git a/arch/arm/boot/dts/r8a7743-sk-rzg1m.dts b/arch/arm/boot/dts/r8a7743-sk-rzg1m.dts
+index 3a22538208f2..97a066c22003 100644
+--- a/arch/arm/boot/dts/r8a7743-sk-rzg1m.dts
++++ b/arch/arm/boot/dts/r8a7743-sk-rzg1m.dts
+@@ -1,7 +1,7 @@
+ /*
+  * Device Tree Source for the SK-RZG1M board
+  *
+- * Copyright (C) 2016 Cogent Embedded, Inc.
++ * Copyright (C) 2016-2017 Cogent Embedded, Inc.
+  *
+  * This file is licensed under the terms of the GNU General Public License
+  * version 2. This program is licensed "as is" without any warranty of any
+@@ -39,7 +39,17 @@
+ 	clock-frequency = <20000000>;
+ };
  
-+config ARCH_R8A77995
-+	bool "Renesas R-Car D3 SoC Platform"
-+	depends on ARCH_RENESAS
-+	help
-+	  This enables support for the Renesas R-Car D3 SoC.
++&pfc {
++	scif0_pins: scif0 {
++		groups = "scif0_data_d";
++		function = "scif0";
++	};
++};
 +
- config ARCH_STRATIX10
- 	bool "Altera's Stratix 10 SoCFPGA Family"
- 	help
+ &scif0 {
++	pinctrl-0 = <&scif0_pins>;
++	pinctrl-names = "default";
++
+ 	status = "okay";
+ };
+ 
 -- 
 2.1.4
