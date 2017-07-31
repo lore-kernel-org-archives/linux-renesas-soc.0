@@ -1,51 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:23016 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751548AbdGSHUC (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:43196 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752391AbdGaPFt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Jul 2017 03:20:02 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <balbi@kernel.org>
-CC: <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>, <stable@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 1/2] usb: renesas_usbhs: fix usbhsc_resume() for !USBHSF_RUNTIME_PWCTRL
-Date: Wed, 19 Jul 2017 16:16:54 +0900
-Message-ID: <1500448615-25287-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1500448615-25287-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1500448615-25287-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Mon, 31 Jul 2017 11:05:49 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 4/5] ARM: shmobile: rcar-gen2: Correct arch timer frequency on RZ/G1E
+Date: Mon, 31 Jul 2017 17:05:39 +0200
+Message-Id: <cd66fa4e0203fed9d8af6e1596ff8a68ede7fb1d.1501512320.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1501512320.git.horms+renesas@verge.net.au>
+References: <cover.1501512320.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch fixes an issue that some registers may be not initialized
-after resume if the USBHSF_RUNTIME_PWCTRL is not set. Otherwise,
-if a cable is not connected, the driver will not enable INTENB0.VBSE
-after resume. And then, the driver cannot detect the VBUS.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Fixes: ca8a282a5373 ("usb: gadget: renesas_usbhs: add suspend/resume support")
-Cc: <stable@vger.kernel.org> # v3.2+
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+According to the datasheet, the frequency of the ARM architecture timer
+on RZ/G1E depends on the frequency of the ZS clock, just like on R-Car
+E2 and V2H.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/usb/renesas_usbhs/common.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/arm/mach-shmobile/setup-rcar-gen2.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/usb/renesas_usbhs/common.c b/drivers/usb/renesas_usbhs/common.c
-index 623c513..f0ce304 100644
---- a/drivers/usb/renesas_usbhs/common.c
-+++ b/drivers/usb/renesas_usbhs/common.c
-@@ -752,8 +752,10 @@ static int usbhsc_resume(struct device *dev)
- 	struct usbhs_priv *priv = dev_get_drvdata(dev);
- 	struct platform_device *pdev = usbhs_priv_to_pdev(priv);
+diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
+index 3bd505da3172..7ab1690fab82 100644
+--- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
++++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
+@@ -70,7 +70,8 @@ void __init rcar_gen2_timer_init(void)
+ 	void __iomem *base;
+ 	u32 freq;
  
--	if (!usbhsc_flags_has(priv, USBHSF_RUNTIME_PWCTRL))
-+	if (!usbhsc_flags_has(priv, USBHSF_RUNTIME_PWCTRL)) {
- 		usbhsc_power_ctrl(priv, 1);
-+		usbhs_mod_autonomy_mode(priv);
-+	}
- 
- 	usbhs_platform_call(priv, phy_reset, pdev);
- 
+-	if (of_machine_is_compatible("renesas,r8a7792") ||
++	if (of_machine_is_compatible("renesas,r8a7745") ||
++	    of_machine_is_compatible("renesas,r8a7792") ||
+ 	    of_machine_is_compatible("renesas,r8a7794")) {
+ 		freq = 260000000 / 8;	/* ZS / 8 */
+ 		/* CNTVOFF has to be initialized either from non-secure
 -- 
-1.9.1
+2.1.4
