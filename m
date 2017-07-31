@@ -1,55 +1,87 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:44313 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:42651 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752433AbdGaPUR (ORCPT
+        with ESMTP id S1752364AbdGaPD7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 31 Jul 2017 11:20:17 -0400
+        Mon, 31 Jul 2017 11:03:59 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Javier Martinez Canillas <javier@dowhile0.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 02/38] ARM: dts: koelsch: Add generic compatible string for I2C EEPROM
-Date: Mon, 31 Jul 2017 17:19:14 +0200
-Message-Id: <3e82be14a1dcdfef75b5a87a25862bd7d878b7f8.1501514100.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1501514100.git.horms+renesas@verge.net.au>
-References: <cover.1501514100.git.horms+renesas@verge.net.au>
+Subject: [PATCH 30/31] arm64: dts: renesas: r8a7795: add usb-dmac ch2 and ch3 device nodes
+Date: Mon, 31 Jul 2017 17:03:22 +0200
+Message-Id: <62f40bcfa9a8a360637577fb528872ebcb0937c1.1501509526.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1501509525.git.horms+renesas@verge.net.au>
+References: <cover.1501509525.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Javier Martinez Canillas <javier@dowhile0.org>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-The at24 driver allows to register I2C EEPROM chips using different vendor
-and devices, but the I2C subsystem does not take the vendor into account
-when matching using the I2C table since it only has device entries.
+This patch adds support for usb-dmac ch2 and ch3 device nodes for
+R-Car H3 ES2.0.
 
-But when matching using an OF table, both the vendor and device has to be
-taken into account so the driver defines only a set of compatible strings
-using the "atmel" vendor as a generic fallback for compatible I2C devices.
-
-So add this generic fallback to the device node compatible string to make
-the device to match the driver using the OF device ID table.
-
-Signed-off-by: Javier Martinez Canillas <javier@dowhile0.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7791-koelsch.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi |  3 +++
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi     | 28 ++++++++++++++++++++++++++++
+ 2 files changed, 31 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
-index 001e6116c47c..dc8ed02de707 100644
---- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-@@ -702,7 +702,7 @@
- 	};
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+index 1eccc7c795df..9743acad9b9c 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+@@ -25,6 +25,9 @@
+ 	/delete-node/ usb@ee0e0100;
+ 	/delete-node/ usb@ee0e0000;
  
- 	eeprom@50 {
--		compatible = "renesas,24c02";
-+		compatible = "renesas,24c02", "atmel,24c02";
- 		reg = <0x50>;
- 		pagesize = <16>;
- 	};
++	/delete-node/ dma-controller@e6460000;
++	/delete-node/ dma-controller@e6470000;
++
+ 	fcpf2: fcp@fe952000 {
+ 		compatible = "renesas,fcpf";
+ 		reg = <0 0xfe952000 0 0x200>;
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index cf9ed0d0a1fb..f9735a3a736e 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -1498,6 +1498,34 @@
+ 			dma-channels = <2>;
+ 		};
+ 
++		usb_dmac2: dma-controller@e6460000 {
++			compatible = "renesas,r8a7795-usb-dmac",
++				     "renesas,usb-dmac";
++			reg = <0 0xe6460000 0 0x100>;
++			interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1";
++			clocks = <&cpg CPG_MOD 326>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++			resets = <&cpg 326>;
++			#dma-cells = <1>;
++			dma-channels = <2>;
++		};
++
++		usb_dmac3: dma-controller@e6470000 {
++			compatible = "renesas,r8a7795-usb-dmac",
++				     "renesas,usb-dmac";
++			reg = <0 0xe6470000 0 0x100>;
++			interrupts = <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1";
++			clocks = <&cpg CPG_MOD 329>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++			resets = <&cpg 329>;
++			#dma-cells = <1>;
++			dma-channels = <2>;
++		};
++
+ 		sdhi0: sd@ee100000 {
+ 			compatible = "renesas,sdhi-r8a7795";
+ 			reg = <0 0xee100000 0 0x2000>;
 -- 
 2.1.4
