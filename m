@@ -1,65 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:42696 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751397AbdGZLcu (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:42559 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751827AbdGaPCm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 26 Jul 2017 07:32:50 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 1/5] arm64: dts: renesas: r8a7795: Add usb companion property in EHCI
-Date: Wed, 26 Jul 2017 20:29:36 +0900
-Message-Id: <1501068580-3981-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1501068580-3981-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1501068580-3981-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Mon, 31 Jul 2017 11:02:42 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: arm@kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [GIT PULL] Renesas ARM64 Based SoC Defconfig Updates for v4.14
+Date: Mon, 31 Jul 2017 17:02:28 +0200
+Message-Id: <cover.1501509815.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+Hi Olof, Hi Kevin, Hi Arnd,
 
-This patch adds the "companion" property in the EHCI ch0, ch1 and
-ch2 nodes to wait for the usb companion controller startup at resume.
+Please consider these Renesas ARM64 based SoC defconfig updates for v4.14.
 
-Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[remove ch3 node and revise the commit log]
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 95af1e1..b8ffbc6 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1584,6 +1584,7 @@
- 			clocks = <&cpg CPG_MOD 703>;
- 			phys = <&usb2_phy0>;
- 			phy-names = "usb";
-+			companion= <&ohci0>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			resets = <&cpg 703>;
- 			status = "disabled";
-@@ -1596,6 +1597,7 @@
- 			clocks = <&cpg CPG_MOD 702>;
- 			phys = <&usb2_phy1>;
- 			phy-names = "usb";
-+			companion= <&ohci1>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			resets = <&cpg 702>;
- 			status = "disabled";
-@@ -1608,6 +1610,7 @@
- 			clocks = <&cpg CPG_MOD 701>;
- 			phys = <&usb2_phy2>;
- 			phy-names = "usb";
-+			companion= <&ohci2>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			resets = <&cpg 701>;
- 			status = "disabled";
--- 
-1.9.1
+The following changes since commit 5771a8c08880cdca3bfb4a3fc6d309d6bba20877:
+
+  Linux v4.13-rc1 (2017-07-15 15:22:10 -0700)
+
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm64-defconfig-for-v4.14
+
+for you to fetch changes up to 140cb4111a51381f51f6cdcc97113f2d04e5939b:
+
+  arm64: defconfig: compile ak4613 and renesas sound as modules (2017-07-27 15:51:58 +0200)
+
+----------------------------------------------------------------
+Renesas ARM64 Based SoC Defconfig Updates for v4.14
+
+* compile ak4613 and renesas sound as modules
+
+  This is intended to reduce the size of a kernel image compiled
+  using the defconfig. This is timely as it brings the kernel image
+  back below the size that can be booted in my environment, a limit
+  it crept over in v4.13-rc1.
+
+----------------------------------------------------------------
+Kuninori Morimoto (1):
+      arm64: defconfig: compile ak4613 and renesas sound as modules
+
+ arch/arm64/configs/defconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
