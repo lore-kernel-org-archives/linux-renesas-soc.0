@@ -1,45 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f67.google.com ([209.85.214.67]:35761 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751260AbdGQIvX (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:42651 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751827AbdGaPDw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Jul 2017 04:51:23 -0400
-MIME-Version: 1.0
-In-Reply-To: <1466404822-2540-1-git-send-email-wsa@the-dreams.de>
-References: <1466404822-2540-1-git-send-email-wsa@the-dreams.de>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 17 Jul 2017 10:51:21 +0200
-Message-ID: <CAMuHMdWj_qRaba99Rjw1jSm+wi29c6sBSX7m-Gxpn-FBzM1H_w@mail.gmail.com>
-Subject: Re: [RFC] pinctrl: sh-pfc: propagate errors on group config
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 31 Jul 2017 11:03:52 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 23/31] arm64: dts: r8a7795: salvator-xs: Connect DU dot clocks 0 and 3
+Date: Mon, 31 Jul 2017 17:03:15 +0200
+Message-Id: <20b9911c40543d80e45299aa95585d373fadc134.1501509526.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1501509525.git.horms+renesas@verge.net.au>
+References: <cover.1501509525.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Jun 20, 2016 at 8:40 AM, Wolfram Sang <wsa@the-dreams.de> wrote:
-> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
->
-> On group configuration, bail out if setting one of the individual pins
-> fails. We don't need to roll-back, the pinctrl core will do this for us.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
->
-> Tested on a Lager and Salvator-X without problems. Needs probably more testing
-> on various HW to avoid regressions?
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Queueing in sh-pfc-for-v4.14, now commit 13132b3f44d36009 ("ARM: dts:
-armadillo800eva: Split LCD mux and gpio") is in v4.13-rc1.
+The DU dot clocks 0 and 3 are provided by the programmable VC6 clock
+generator. Connect them to the clock source node.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
+index 6a7d1b22d0fe..7675de5d4f2c 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
+@@ -44,10 +44,12 @@
+ 		 <&cpg CPG_MOD 722>,
+ 		 <&cpg CPG_MOD 721>,
+ 		 <&cpg CPG_MOD 727>,
++		 <&versaclock6 1>,
+ 		 <&x21_clk>,
+-		 <&x22_clk>;
++		 <&x22_clk>,
++		 <&versaclock6 2>;
+ 	clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0",
+-		      "dclkin.1", "dclkin.2";
++		      "dclkin.0", "dclkin.1", "dclkin.2", "dclkin.3";
+ };
+ 
+ &ehci2 {
+-- 
+2.1.4
