@@ -1,53 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:36613 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751678AbdG1Llf (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:60361 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750977AbdGaLND (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Jul 2017 07:41:35 -0400
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
+        Mon, 31 Jul 2017 07:13:03 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: arm@kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 2/9] pinctrl: sh-pfc: r8a7795: Fix MOD_SEL2 bit26 to 0x0 when using SCK5_A
-Date: Fri, 28 Jul 2017 20:41:14 +0900
-Message-Id: <1501242081-3805-3-git-send-email-ykaneko0929@gmail.com>
-In-Reply-To: <1501242081-3805-1-git-send-email-ykaneko0929@gmail.com>
-References: <1501242081-3805-1-git-send-email-ykaneko0929@gmail.com>
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [GIT PULL] Third Round of Renesas ARM Based SoC Fixes for v4.13
+Date: Mon, 31 Jul 2017 13:12:34 +0200
+Message-Id: <cover.1501499175.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Hi Olof, Hi Kevin, Hi Arnd,
 
-This patch fixes the implementation incorrect of MOD_SEL2 bit26 value
-when SCK5_A pin function is selected for IPSR16 bit[31:28].
+Please consider these third round of Renesas ARM based SoC fixes for v4.13.
 
-This is a correction to the incorrect implementation of MOD_SEL register
-pin assignment for R8A7795 ES2.0 SoC specification of R-Car Gen3 Hardware
-User's Manual Rev.0.51E or later.
+This pull request is based on v4.12-rc1 rather than earlier fixes for v4.13
+as it is unrelated to those fixes and their dependencies - arm64 DT updates
+for R-Car Gen 3 SoCs.
 
-Fixes: 12f5d9a1dc7f ("pinctrl: sh-pfc: r8a7795: Replace for Renesas R8A7795 ES2.0 SoC")
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This fix resolves a deadlock during boot on R-Car Gen 2 SoCs.
+The bug has been present since v4.1-rc1 but does not manifest in
+a deadlock until v4.13-rc1.
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index 73507bf..cd433fb 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -1409,7 +1409,7 @@ enum {
- 	PINMUX_IPSR_MSEL(IP16_31_28,	SSI_WS1_B,		SEL_SSI_1),
- 	PINMUX_IPSR_GPSR(IP16_31_28,	SCK1),
- 	PINMUX_IPSR_MSEL(IP16_31_28,	STP_IVCXO27_1_A,	SEL_SSP1_1_0),
--	PINMUX_IPSR_GPSR(IP16_31_28,	SCK5_A),
-+	PINMUX_IPSR_MSEL(IP16_31_28,	SCK5_A,			SEL_SCIF5_0),
- 
- 	/* IPSR17 */
- 	PINMUX_IPSR_MSEL(IP17_3_0,	AUDIO_CLKA_A,		SEL_ADG_A_0),
--- 
-1.9.1
+
+The following changes since commit 2ea659a9ef488125eb46da6eb571de5eae5c43f6:
+
+  Linux 4.12-rc1 (2017-05-13 13:19:49 -0700)
+
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-fixes3-for-v4.13
+
+for you to fetch changes up to fce8dc5e50e44d8f644e0f7854e6d7d518fedb68:
+
+  ARM: shmobile: rcar-gen2: Fix deadlock in regulator quirk (2017-07-29 10:32:52 +0200)
+
+----------------------------------------------------------------
+Third Round of Renesas ARM Based SoC Fixes for v4.13
+
+Fix deadlock in regulator quirk for R-Car Gen 2 SoCs
+
+The da9063/da9210 regulator quirk for R-Car Gen2 boards uses a bus
+notifier, and unregisters the notifier when it is no longer needed.
+However, a notifier must not be unregistered from within the call chain.
+
+This bug went unnoticed, as blocking_notifier_chain_unregister() didn't
+take the semaphore during early boot. This is no longer the case as of
+upstream commit 1c3c5eab171590f8 ("sched/core: Enable might_sleep() and
+smp_processor_id() checks early") and a deadlock occurs.
+
+----------------------------------------------------------------
+Geert Uytterhoeven (1):
+      ARM: shmobile: rcar-gen2: Fix deadlock in regulator quirk
+
+ arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
