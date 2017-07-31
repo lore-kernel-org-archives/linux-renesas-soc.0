@@ -1,85 +1,102 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: balbi@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 3/3] usb: gadget: udc: renesas_usb3: add support for R-Car M3-W
-Date: Fri, 28 Jul 2017 21:16:59 +0900
-Message-Id: <1501244219-11840-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1501244219-11840-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1501244219-11840-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:43187 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752132AbdGaPFr (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 31 Jul 2017 11:05:47 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 2/5] ARM: shmobile: rcar-gen2: Obtain jump stub region from DT
+Date: Mon, 31 Jul 2017 17:05:37 +0200
+Message-Id: <816756962b15f469d467b09beeb702af015c55cc.1501512320.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1501512320.git.horms+renesas@verge.net.au>
+References: <cover.1501512320.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds support for R-Car M3-W. This patch also adds R-Car
-Gen3 generic version's compatible.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Add support for obtaining from DT the SRAM region to store the jump stub
+for CPU core bringup, according to the renesas,smp-sram DT bindings.
+
+If no region is specified in DT, the code falls back to hardcoded ICRAM1
+as before, to maintain backwards compatibility.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- Documentation/devicetree/bindings/usb/renesas_usb3.txt | 16 +++++++++++++---
- drivers/usb/gadget/udc/renesas_usb3.c                  |  8 ++++++++
- 2 files changed, 21 insertions(+), 3 deletions(-)
+ arch/arm/mach-shmobile/pm-rcar-gen2.c | 33 ++++++++++++++++++++++++++++++---
+ 1 file changed, 30 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/usb/renesas_usb3.txt b/Documentation/devicetree/bindings/usb/renesas_usb3.txt
-index 8d52766..e280258 100644
---- a/Documentation/devicetree/bindings/usb/renesas_usb3.txt
-+++ b/Documentation/devicetree/bindings/usb/renesas_usb3.txt
-@@ -3,20 +3,30 @@ Renesas Electronics USB3.0 Peripheral driver
- Required properties:
-   - compatible: Must contain one of the following:
- 	- "renesas,r8a7795-usb3-peri"
-+	- "renesas,r8a7796-usb3-peri"
-+	- "renesas,rcar-gen3-usb3-peri" for a generic R-Car Gen3 compatible
-+	  device
-+
-+    When compatible with the generic version, nodes must list the
-+    SoC-specific version corresponding to the platform first
-+    followed by the generic version.
-+
-   - reg: Base address and length of the register for the USB3.0 Peripheral
-   - interrupts: Interrupt specifier for the USB3.0 Peripheral
-   - clocks: clock phandle and specifier pair
+diff --git a/arch/arm/mach-shmobile/pm-rcar-gen2.c b/arch/arm/mach-shmobile/pm-rcar-gen2.c
+index 0178da7ace82..e5f215c8b218 100644
+--- a/arch/arm/mach-shmobile/pm-rcar-gen2.c
++++ b/arch/arm/mach-shmobile/pm-rcar-gen2.c
+@@ -11,7 +11,9 @@
+  */
  
--Example:
-+Example of R-Car H3 ES1.x:
- 	usb3_peri0: usb@ee020000 {
--		compatible = "renesas,r8a7795-usb3-peri";
-+		compatible = "renesas,r8a7795-usb3-peri",
-+			     "renesas,rcar-gen3-usb3-peri";
- 		reg = <0 0xee020000 0 0x400>;
- 		interrupts = <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 328>;
- 	};
+ #include <linux/kernel.h>
++#include <linux/ioport.h>
+ #include <linux/of.h>
++#include <linux/of_address.h>
+ #include <linux/smp.h>
+ #include <linux/soc/renesas/rcar-sysc.h>
+ #include <asm/io.h>
+@@ -69,8 +71,9 @@ void __init rcar_gen2_pm_init(void)
+ 	struct device_node *np, *cpus;
+ 	bool has_a7 = false;
+ 	bool has_a15 = false;
+-	phys_addr_t boot_vector_addr = ICRAM1;
++	struct resource res;
+ 	u32 syscier = 0;
++	int error;
  
- 	usb3_peri1: usb@ee060000 {
--		compatible = "renesas,r8a7795-usb3-peri";
-+		compatible = "renesas,r8a7795-usb3-peri",
-+			     "renesas,rcar-gen3-usb3-peri";
- 		reg = <0 0xee060000 0 0x400>;
- 		interrupts = <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 327>;
-diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
-index aa2b185..45410f3 100644
---- a/drivers/usb/gadget/udc/renesas_usb3.c
-+++ b/drivers/usb/gadget/udc/renesas_usb3.c
-@@ -2506,6 +2506,14 @@ static void renesas_usb3_init_ram(struct renesas_usb3 *usb3, struct device *dev,
- 		.compatible = "renesas,r8a7795-usb3-peri",
- 		.data = &renesas_usb3_priv_gen3,
- 	},
-+	{
-+		.compatible = "renesas,r8a7796-usb3-peri",
-+		.data = &renesas_usb3_priv_gen3,
-+	},
-+	{
-+		.compatible = "renesas,rcar-gen3-usb3-peri",
-+		.data = &renesas_usb3_priv_gen3,
-+	},
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, usb3_of_match);
+ 	if (once++)
+ 		return;
+@@ -91,14 +94,38 @@ void __init rcar_gen2_pm_init(void)
+ 	else if (of_machine_is_compatible("renesas,r8a7791"))
+ 		syscier = 0x00111003;
+ 
++	np = of_find_compatible_node(NULL, NULL, "renesas,smp-sram");
++	if (!np) {
++		/* No smp-sram in DT, fall back to hardcoded address */
++		res = (struct resource)DEFINE_RES_MEM(ICRAM1,
++						      shmobile_boot_size);
++		goto map;
++	}
++
++	error = of_address_to_resource(np, 0, &res);
++	if (error) {
++		pr_err("Failed to get smp-sram address: %d\n", error);
++		return;
++	}
++
++map:
+ 	/* RAM for jump stub, because BAR requires 256KB aligned address */
+-	p = ioremap_nocache(boot_vector_addr, shmobile_boot_size);
++	if (res.start & (256 * 1024 - 1) ||
++	    resource_size(&res) < shmobile_boot_size) {
++		pr_err("Invalid smp-sram region\n");
++		return;
++	}
++
++	p = ioremap(res.start, resource_size(&res));
++	if (!p)
++		return;
++
+ 	memcpy_toio(p, shmobile_boot_vector, shmobile_boot_size);
+ 	iounmap(p);
+ 
+ 	/* setup reset vectors */
+ 	p = ioremap_nocache(RST, 0x63);
+-	bar = phys_to_sbar(boot_vector_addr);
++	bar = phys_to_sbar(res.start);
+ 	if (has_a15) {
+ 		writel_relaxed(bar, p + CA15BAR);
+ 		writel_relaxed(bar | SBAR_BAREN, p + CA15BAR);
 -- 
-1.9.1
-
+2.1.4
