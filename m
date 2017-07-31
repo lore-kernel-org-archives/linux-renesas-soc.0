@@ -1,144 +1,56 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-iio@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v3 1/4] i2c: add helpers to ease DMA handling
-Date: Tue, 18 Jul 2017 12:23:36 +0200
-Message-Id: <20170718102339.28726-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170718102339.28726-1-wsa+renesas@sang-engineering.com>
-References: <20170718102339.28726-1-wsa+renesas@sang-engineering.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:42651 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750987AbdGaPEM (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 31 Jul 2017 11:04:12 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 09/10] ARM: multi_v7_defconfig: Replace DRM_RCAR_HDMI by generic bridge options
+Date: Mon, 31 Jul 2017 17:03:40 +0200
+Message-Id: <cdbacdaf89226db73aeed157d287a4702a4a09d3.1501511664.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1501511664.git.horms+renesas@verge.net.au>
+References: <cover.1501511664.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-One helper checks if DMA is suitable and optionally creates a bounce
-buffer, if not. The other function returns the bounce buffer and makes
-sure the data is properly copied back to the message.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+The manual bridge implementation was removed in favor of the generic
+one, so now we need to enable standard bridge drivers like
+DRM_DUMB_VGA_DAC and DRM_I2C_ADV7511.
+Both were already enabled, but the (newer) ADV7511 audio part wasn't.
+
+Fixes: 5c602531feb3db39 ("drm: rcar-du: Replace manual bridge implementation with DRM bridge")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-Changes since v2:
+ arch/arm/configs/multi_v7_defconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-* rebased to v4.13-rc1
-* helper functions are not inlined anymore but moved to i2c core
-* __must_check has been added to the buffer check helper
-* the release function has been renamed to contain 'dma' as well
-
- drivers/i2c/i2c-core-base.c | 68 +++++++++++++++++++++++++++++++++++++++++++++
- include/linux/i2c.h         |  5 ++++
- 2 files changed, 73 insertions(+)
-
-diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-index c89dac7fd2e7b7..7326a9d2e4eb69 100644
---- a/drivers/i2c/i2c-core-base.c
-+++ b/drivers/i2c/i2c-core-base.c
-@@ -34,6 +34,7 @@
- #include <linux/irqflags.h>
- #include <linux/jump_label.h>
- #include <linux/kernel.h>
-+#include <linux/mm.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
- #include <linux/of_device.h>
-@@ -44,6 +45,7 @@
- #include <linux/pm_wakeirq.h>
- #include <linux/property.h>
- #include <linux/rwsem.h>
-+#include <linux/sched/task_stack.h>
- #include <linux/slab.h>
- 
- #include "i2c-core.h"
-@@ -2240,6 +2242,72 @@ void i2c_put_adapter(struct i2c_adapter *adap)
- }
- EXPORT_SYMBOL(i2c_put_adapter);
- 
-+/**
-+ * i2c_check_msg_for_dma() - check if a message is suitable for DMA
-+ * @msg: the message to be checked
-+ * @threshold: the amount of byte from which using DMA makes sense
-+ * @ptr_for_bounce_buf: if not NULL, a bounce buffer will be attached to this
-+ *			ptr, if needed. The bounce buffer must be freed by the
-+ *			caller using i2c_release_dma_bounce_buf().
-+ *
-+ * Return: -ERANGE if message is smaller than threshold
-+ *	   -EFAULT if message buffer is not DMA capable and no bounce buffer
-+ *		   was requested
-+ *	   -ENOMEM if a bounce buffer could not be created
-+ *	   0 if message is suitable for DMA
-+ *
-+ * The return value must be checked.
-+ *
-+ * Note: This function should only be called from process context! It uses
-+ * helper functions which work on the 'current' task.
-+ */
-+int i2c_check_msg_for_dma(struct i2c_msg *msg, unsigned int threshold,
-+					u8 **ptr_for_bounce_buf)
-+{
-+	if (ptr_for_bounce_buf)
-+		*ptr_for_bounce_buf = NULL;
-+
-+	if (msg->len < threshold)
-+		return -ERANGE;
-+
-+	if (!virt_addr_valid(msg->buf) || object_is_on_stack(msg->buf)) {
-+		pr_debug("msg buffer to 0x%04x is not DMA safe%s\n", msg->addr,
-+			 ptr_for_bounce_buf ? ", trying bounce buffer" : "");
-+		if (ptr_for_bounce_buf) {
-+			if (msg->flags & I2C_M_RD)
-+				*ptr_for_bounce_buf = kzalloc(msg->len, GFP_KERNEL);
-+			else
-+				*ptr_for_bounce_buf = kmemdup(msg->buf, msg->len,
-+							      GFP_KERNEL);
-+			if (!*ptr_for_bounce_buf)
-+				return -ENOMEM;
-+		} else {
-+			return -EFAULT;
-+		}
-+	}
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(i2c_check_msg_for_dma);
-+
-+/**
-+ * i2c_release_bounce_buf - copy data back from bounce buffer and release it
-+ * @msg: the message to be copied back to
-+ * @bounce_buf: the bounce buffer obtained from i2c_check_msg_for_dma().
-+ *		May be NULL.
-+ */
-+void i2c_release_dma_bounce_buf(struct i2c_msg *msg, u8 *bounce_buf)
-+{
-+	if (!bounce_buf)
-+		return;
-+
-+	if (msg->flags & I2C_M_RD)
-+		memcpy(msg->buf, bounce_buf, msg->len);
-+
-+	kfree(bounce_buf);
-+}
-+EXPORT_SYMBOL_GPL(i2c_release_bounce_buf);
-+
- MODULE_AUTHOR("Simon G. Vogl <simon@tk.uni-linz.ac.at>");
- MODULE_DESCRIPTION("I2C-Bus main module");
- MODULE_LICENSE("GPL");
-diff --git a/include/linux/i2c.h b/include/linux/i2c.h
-index 00ca5b86a753f8..ac02287b6c0d8f 100644
---- a/include/linux/i2c.h
-+++ b/include/linux/i2c.h
-@@ -766,6 +766,11 @@ static inline u8 i2c_8bit_addr_from_msg(const struct i2c_msg *msg)
- 	return (msg->addr << 1) | (msg->flags & I2C_M_RD ? 1 : 0);
- }
- 
-+int __must_check i2c_check_msg_for_dma(struct i2c_msg *msg, unsigned int threshold,
-+					u8 **ptr_for_bounce_buf);
-+
-+void i2c_release_dma_bounce_buf(struct i2c_msg *msg, u8 *bounce_buf);
-+
- int i2c_handle_smbus_host_notify(struct i2c_adapter *adap, unsigned short addr);
- /**
-  * module_i2c_driver() - Helper macro for registering a modular I2C driver
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index 7fa1746970ec..ea2075d8e185 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -584,6 +584,7 @@ CONFIG_VIDEO_ADV7180=m
+ CONFIG_VIDEO_ML86V7667=m
+ CONFIG_DRM=y
+ CONFIG_DRM_I2C_ADV7511=m
++CONFIG_DRM_I2C_ADV7511_AUDIO=y
+ # CONFIG_DRM_I2C_CH7006 is not set
+ # CONFIG_DRM_I2C_SIL164 is not set
+ CONFIG_DRM_DUMB_VGA_DAC=m
+@@ -603,7 +604,6 @@ CONFIG_ROCKCHIP_DW_MIPI_DSI=y
+ CONFIG_ROCKCHIP_INNO_HDMI=y
+ CONFIG_DRM_ATMEL_HLCDC=m
+ CONFIG_DRM_RCAR_DU=m
+-CONFIG_DRM_RCAR_HDMI=y
+ CONFIG_DRM_RCAR_LVDS=y
+ CONFIG_DRM_SUN4I=m
+ CONFIG_DRM_TEGRA=y
 -- 
-2.11.0
+2.1.4
