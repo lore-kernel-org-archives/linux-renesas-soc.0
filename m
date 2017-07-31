@@ -1,55 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:44354 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:42651 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752398AbdGaPUg (ORCPT
+        with ESMTP id S1751827AbdGaPDb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 31 Jul 2017 11:20:36 -0400
+        Mon, 31 Jul 2017 11:03:31 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Konstantin Kozhevnikov
+        <Konstantin.Kozhevnikov@cogentembedded.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 27/38] ARM: dts: r8a7794: Use R-Car Gen 2 fallback binding for vin nodes
-Date: Mon, 31 Jul 2017 17:19:39 +0200
-Message-Id: <a3fbb1dc134f65352ca9188bb23acb233d0b9d89.1501514100.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1501514100.git.horms+renesas@verge.net.au>
-References: <cover.1501514100.git.horms+renesas@verge.net.au>
+Subject: [PATCH 01/31] arm64: dts: r8a7795: add IMR-LX4 support
+Date: Mon, 31 Jul 2017 17:02:53 +0200
+Message-Id: <24604cd36c52edf02831d8754efe2d76010885cf.1501509525.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1501509525.git.horms+renesas@verge.net.au>
+References: <cover.1501509525.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use R-Car Gen 2 fallback binding for vind nodes in DT for r8a7794 SoC.
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-This has no run-time effect for the current driver as the initialisation
-sequence is the same for the SoC-specific binding for r8a7794 and the
-fallback binding for R-Car Gen 2
+Describe the IMR-LX4 devices in the R8A7795 device tree.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Based on the original (and large) patch by Konstantin Kozhevnikov
+<Konstantin.Kozhevnikov@cogentembedded.com>.
+
+Signed-off-by: Konstantin Kozhevnikov <Konstantin.Kozhevnikov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7794.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 40 ++++++++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index f32b458e9328..26535414203a 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -801,7 +801,7 @@
- 	};
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index e31c1b660b3f..31d1ba586ec2 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -1535,6 +1535,46 @@
+ 			status = "disabled";
+ 		};
  
- 	vin0: video@e6ef0000 {
--		compatible = "renesas,vin-r8a7794";
-+		compatible = "renesas,vin-r8a7794", "renesas,rcar-gen2-vin";
- 		reg = <0 0xe6ef0000 0 0x1000>;
- 		interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp8_clks R8A7794_CLK_VIN0>;
-@@ -810,7 +810,7 @@
- 	};
- 
- 	vin1: video@e6ef1000 {
--		compatible = "renesas,vin-r8a7794";
-+		compatible = "renesas,vin-r8a7794", "renesas,rcar-gen2-vin";
- 		reg = <0 0xe6ef1000 0 0x1000>;
- 		interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp8_clks R8A7794_CLK_VIN1>;
++		imr-lx4@fe860000 {
++			compatible = "renesas,r8a7795-imr-lx4",
++				     "renesas,imr-lx4";
++			reg = <0 0xfe860000 0 0x2000>;
++			interrupts = <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 823>;
++			power-domains = <&sysc R8A7795_PD_A3VC>;
++			resets = <&cpg 823>;
++		};
++
++		imr-lx4@fe870000 {
++			compatible = "renesas,r8a7795-imr-lx4",
++				     "renesas,imr-lx4";
++			reg = <0 0xfe870000 0 0x2000>;
++			interrupts = <GIC_SPI 193 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 822>;
++			power-domains = <&sysc R8A7795_PD_A3VC>;
++			resets = <&cpg 822>;
++		};
++
++		imr-lx4@fe880000 {
++			compatible = "renesas,r8a7795-imr-lx4",
++				     "renesas,imr-lx4";
++			reg = <0 0xfe880000 0 0x2000>;
++			interrupts = <GIC_SPI 194 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 821>;
++			power-domains = <&sysc R8A7795_PD_A3VC>;
++			resets = <&cpg 821>;
++		};
++
++		imr-lx4@fe890000 {
++			compatible = "renesas,r8a7795-imr-lx4",
++				     "renesas,imr-lx4";
++			reg = <0 0xfe890000 0 0x2000>;
++			interrupts = <GIC_SPI 195 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 820>;
++			power-domains = <&sysc R8A7795_PD_A3VC>;
++			resets = <&cpg 820>;
++		};
++
+ 		vspbc: vsp@fe920000 {
+ 			compatible = "renesas,vsp2";
+ 			reg = <0 0xfe920000 0 0x8000>;
 -- 
 2.1.4
