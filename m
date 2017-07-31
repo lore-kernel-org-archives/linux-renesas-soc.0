@@ -1,71 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:42651 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750987AbdGaPEP (ORCPT
+        with ESMTP id S1750987AbdGaPEH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 31 Jul 2017 11:04:15 -0400
+        Mon, 31 Jul 2017 11:04:07 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 4/4] soc: renesas: rcar-rst: Add support for R-Car D3
-Date: Mon, 31 Jul 2017 17:04:05 +0200
-Message-Id: <105ae504a3eb6c2e188e8d67db59b71186f11967.1501511923.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1501511923.git.horms+renesas@verge.net.au>
-References: <cover.1501511923.git.horms+renesas@verge.net.au>
+Subject: [PATCH 06/10] ARM: shmobile: defconfig: Enable DMA for serial ports
+Date: Mon, 31 Jul 2017 17:03:37 +0200
+Message-Id: <01b274b46468d56a036a024f9f04d709bcddd8f5.1501511664.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1501511664.git.horms+renesas@verge.net.au>
+References: <cover.1501511664.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
+DMA for (H)SCIF(A|B) serial ports on R-Car Gen2 and RZ/G1 SoCs is
+considered stable, hence enable it by default.
+
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: devicetree@vger.kernel.org
-Acked-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- Documentation/devicetree/bindings/reset/renesas,rst.txt | 1 +
- drivers/soc/renesas/Kconfig                             | 2 +-
- drivers/soc/renesas/rcar-rst.c                          | 1 +
- 3 files changed, 3 insertions(+), 1 deletion(-)
+ arch/arm/configs/shmobile_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/reset/renesas,rst.txt b/Documentation/devicetree/bindings/reset/renesas,rst.txt
-index fe5e0f37b3c9..e5a03ffe04fb 100644
---- a/Documentation/devicetree/bindings/reset/renesas,rst.txt
-+++ b/Documentation/devicetree/bindings/reset/renesas,rst.txt
-@@ -26,6 +26,7 @@ Required properties:
- 		  - "renesas,r8a7794-rst" (R-Car E2)
- 		  - "renesas,r8a7795-rst" (R-Car H3)
- 		  - "renesas,r8a7796-rst" (R-Car M3-W)
-+		  - "renesas,r8a77995-rst" (R-Car D3)
-   - reg: Address start and address range for the device.
- 
- 
-diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
-index 680a5a29837b..567414cb42ba 100644
---- a/drivers/soc/renesas/Kconfig
-+++ b/drivers/soc/renesas/Kconfig
-@@ -3,7 +3,7 @@ config SOC_RENESAS
- 	default y if ARCH_RENESAS
- 	select SOC_BUS
- 	select RST_RCAR if ARCH_RCAR_GEN1 || ARCH_RCAR_GEN2 || \
--			   ARCH_R8A7795 || ARCH_R8A7796
-+			   ARCH_R8A7795 || ARCH_R8A7796 || ARCH_R8A77995
- 	select SYSC_R8A7743 if ARCH_R8A7743
- 	select SYSC_R8A7745 if ARCH_R8A7745
- 	select SYSC_R8A7779 if ARCH_R8A7779
-diff --git a/drivers/soc/renesas/rcar-rst.c b/drivers/soc/renesas/rcar-rst.c
-index a6d1c26d3167..d27d0abe6c2a 100644
---- a/drivers/soc/renesas/rcar-rst.c
-+++ b/drivers/soc/renesas/rcar-rst.c
-@@ -41,6 +41,7 @@ static const struct of_device_id rcar_rst_matches[] __initconst = {
- 	/* R-Car Gen3 is handled like R-Car Gen2 */
- 	{ .compatible = "renesas,r8a7795-rst", .data = &rcar_rst_gen2 },
- 	{ .compatible = "renesas,r8a7796-rst", .data = &rcar_rst_gen2 },
-+	{ .compatible = "renesas,r8a77995-rst", .data = &rcar_rst_gen2 },
- 	{ /* sentinel */ }
- };
- 
+diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
+index 378f6066ea70..e9cc8a557e80 100644
+--- a/arch/arm/configs/shmobile_defconfig
++++ b/arch/arm/configs/shmobile_defconfig
+@@ -107,6 +107,7 @@ CONFIG_SERIAL_8250_EM=y
+ CONFIG_SERIAL_SH_SCI=y
+ CONFIG_SERIAL_SH_SCI_NR_UARTS=20
+ CONFIG_SERIAL_SH_SCI_CONSOLE=y
++CONFIG_SERIAL_SH_SCI_DMA=y
+ CONFIG_I2C_CHARDEV=y
+ CONFIG_I2C_MUX=y
+ CONFIG_I2C_DEMUX_PINCTRL=y
 -- 
 2.1.4
