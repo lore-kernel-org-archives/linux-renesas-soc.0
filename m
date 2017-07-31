@@ -1,62 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:58379 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932658AbdGKW3w (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:42651 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751827AbdGaPDs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 11 Jul 2017 18:29:52 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v2 0/2] drm: rcar-du: Repair vblank event handling
-Date: Wed, 12 Jul 2017 01:29:39 +0300
-Message-Id: <20170711222942.27735-1-laurent.pinchart+renesas@ideasonboard.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Mon, 31 Jul 2017 11:03:48 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 21/31] arm64: dts: r8a7796: Add missing second pair of DMA names to MSIOF nodes
+Date: Mon, 31 Jul 2017 17:03:13 +0200
+Message-Id: <71adc330aa7d88e7c64c66d28ff7b71ddab25465.1501509526.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1501509525.git.horms+renesas@verge.net.au>
+References: <cover.1501509525.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-The recent changes to the rcar-du driver to fix a page flip handling race
-condition changed the order of which vblanks and page flips are handled,
-resulting in incorrect timestamps being reported in the vblan events.
+MSIOF0 and MSIOF1 are tied to two DMA controllers through two pairs of
+DMA specifiers.  However, the second pair of corresponding DMA names was
+missing.
 
-Correct this by handling vblank events in the same completion handler as page
-flips. This removes the need for the IRQ handler on DU instances which are
-sourced by a VSP.
+Fixes: 80fab06e258da762 ("arm64: dts: r8a7796: Add all MSIOF nodes")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Compared to v1,
-
-- Patch 1/3 replaces patch 1/2 to use the VBK interrupt instead of the FRM
-  interrupt when not using the VSP
-- The new patch 2/3 simplifies plane to CRTC assignment when using the VSP to
-  prepare for patch 3/3
-- Patch 3/3 doesn't enable the VBK interrupt when using the VSP
-
-Kieran Bingham (1):
-  drm: rcar-du: Repair vblank for DRM page flips using the VSP
-
-Laurent Pinchart (2):
-  drm: rcar-du: Use the VBK interrupt for vblank events
-  drm: rcar-du: Fix planes to CRTC assignment when using the VSP
-
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c   | 58 +++++++++++++++++++-------------
- drivers/gpu/drm/rcar-du/rcar_du_crtc.h   |  2 ++
- drivers/gpu/drm/rcar-du/rcar_du_group.c  | 12 +++++++
- drivers/gpu/drm/rcar-du/rcar_du_kms.c    | 28 +++++++++------
- drivers/gpu/drm/rcar-du/rcar_du_plane.c  | 10 +-----
- drivers/gpu/drm/rcar-du/rcar_du_vsp.c    | 17 ++++------
- drivers/media/platform/vsp1/vsp1_drm.c   |  5 +--
- drivers/media/platform/vsp1/vsp1_drm.h   |  2 +-
- drivers/media/platform/vsp1/vsp1_pipe.c  | 20 +++++------
- drivers/media/platform/vsp1/vsp1_pipe.h  |  2 +-
- drivers/media/platform/vsp1/vsp1_video.c |  6 +++-
- include/media/vsp1.h                     |  2 +-
- 12 files changed, 94 insertions(+), 70 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 016cdd0bf289..ef1120f4e561 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -999,7 +999,7 @@
+ 			clocks = <&cpg CPG_MOD 211>;
+ 			dmas = <&dmac1 0x41>, <&dmac1 0x40>,
+ 			       <&dmac2 0x41>, <&dmac2 0x40>;
+-			dma-names = "tx", "rx";
++			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+ 			resets = <&cpg 211>;
+ 			#address-cells = <1>;
+@@ -1015,7 +1015,7 @@
+ 			clocks = <&cpg CPG_MOD 210>;
+ 			dmas = <&dmac1 0x43>, <&dmac1 0x42>,
+ 			       <&dmac2 0x43>, <&dmac2 0x42>;
+-			dma-names = "tx", "rx";
++			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+ 			resets = <&cpg 210>;
+ 			#address-cells = <1>;
 -- 
-Regards,
-
-Laurent Pinchart
+2.1.4
