@@ -1,77 +1,63 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-To: linux-media@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        Archit Taneja <architt@codeaurora.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Lars-Peter Clausen <lars@metafoo.de>
-Subject: [PATCH 0/4] drm/bridge/adv7511: add CEC support
-Date: Sun, 30 Jul 2017 15:07:39 +0200
-Message-Id: <20170730130743.19681-1-hverkuil@xs4all.nl>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-wr0-f179.google.com ([209.85.128.179]:37859 "EHLO
+        mail-wr0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750933AbdGaJAD (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 31 Jul 2017 05:00:03 -0400
+Received: by mail-wr0-f179.google.com with SMTP id 33so119818415wrz.4
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 31 Jul 2017 02:00:02 -0700 (PDT)
+Subject: Re: [PATCH v4 00/06] clocksource: sh_cmt: DT binding rework V4
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+        robh@kernel.org, linux-renesas-soc@vger.kernel.org,
+        tglx@linutronix.de
+References: <20160314142342.17180.21352.sendpatchset@little-apple>
+ <20161124105843.GA26737@verge.net.au> <20170711115646.GL4517@verge.net.au>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <00d220a0-8d19-78c8-cd36-ef9ac35f0e37@linaro.org>
+Date: Mon, 31 Jul 2017 10:59:59 +0200
+MIME-Version: 1.0
+In-Reply-To: <20170711115646.GL4517@verge.net.au>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Hans Verkuil <hans.verkuil@cisco.com>
+On 11/07/2017 13:56, Simon Horman wrote:
+> On Thu, Nov 24, 2016 at 11:58:43AM +0100, Simon Horman wrote:
+>> Hi Magnus,
+>>
+>> On Mon, Mar 14, 2016 at 11:23:42PM +0900, Magnus Damm wrote:
+>>> clocksource: sh_cmt: DT binding rework V4
+>>>
+>>> [PATCH v4 01/06] devicetree: bindings: Remove sh7372 CMT binding
+>>> [PATCH v4 02/06] devicetree: bindings: R-Car Gen2 CMT0 and CMT1 bindings
+>>> [PATCH v4 03/06] devicetree: bindings: r8a73a4 and R-Car Gen2 CMT bindings
+>>> [PATCH v4 04/06] devicetree: bindings: Deprecate property, update example
+>>> [PATCH v4 05/06] devicetree: bindings: Remove unused 32-bit CMT bindings
+>>> [PATCH v4 06/06] devicetree: bindings: Remove deprecated properties
+>>>
+>>> Here is the latest and hopefully final take on updating the CMT DT
+>>> bindings for R-Car Gen2. In total there are 6 patches that have acks
+>>> and are ready to be picked up and merged. Other earlier posted changes
+>>> such as driver modification and SoC DTS bits depend on this series.
+>>
+>> I am wondering what the state of this work is.
+>> I see only one minor review comment for this series.
+>> It would be great to see it merged.
+> 
+> Ping
 
-This patch series adds CEC support to the drm adv7511/adv7533 drivers.
+Up.
 
-I have tested this with the Qualcomm Dragonboard C410 (adv7533 based)
-and the Renesas R-Car Koelsch board (adv7511 based).
 
-Note: the Dragonboard needs this patch:
-
-https://patchwork.kernel.org/patch/9824773/
-
-Archit, can you confirm that this patch will go to kernel 4.14?
-
-And the Koelsch board needs this 4.13 fix:
-
-https://patchwork.kernel.org/patch/9836865/
-
-I only have the Koelsch board to test with, but it looks like other
-R-Car boards use the same adv7511. It would be nice if someone can
-add CEC support to the other R-Car boards as well. The main thing
-to check is if they all use the same 12 MHz fixed CEC clock source.
-
-Anyone who wants to test this will need the CEC utilities that
-are part of the v4l-utils git repository:
-
-git clone git://linuxtv.org/v4l-utils.git
-cd v4l-utils
-./bootstrap.sh
-./configure
-make
-sudo make install
-
-Now configure the CEC adapter as a Playback device:
-
-cec-ctl --playback
-
-Discover other CEC devices:
-
-cec-ctl -S
-
-Regards,
-
-	Hans
-
-Hans Verkuil (4):
-  dt-bindings: adi,adv7511.txt: document cec clock
-  arm: dts: qcom: add cec clock for apq8016 board
-  arm: dts: renesas: add cec clock for Koelsch board
-  drm: adv7511/33: add HDMI CEC support
-
- .../bindings/display/bridge/adi,adv7511.txt        |   4 +
- arch/arm/boot/dts/r8a7791-koelsch.dts              |   8 +
- arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi          |   2 +
- drivers/gpu/drm/bridge/adv7511/Kconfig             |   8 +
- drivers/gpu/drm/bridge/adv7511/Makefile            |   1 +
- drivers/gpu/drm/bridge/adv7511/adv7511.h           |  45 ++-
- drivers/gpu/drm/bridge/adv7511/adv7511_cec.c       | 314 +++++++++++++++++++++
- drivers/gpu/drm/bridge/adv7511/adv7511_drv.c       | 152 +++++++++-
- drivers/gpu/drm/bridge/adv7511/adv7533.c           |  30 +-
- 9 files changed, 514 insertions(+), 50 deletions(-)
- create mode 100644 drivers/gpu/drm/bridge/adv7511/adv7511_cec.c
 
 -- 
-2.13.1
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
