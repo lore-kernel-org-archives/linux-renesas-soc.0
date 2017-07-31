@@ -1,49 +1,78 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-To: linux-media@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        Archit Taneja <architt@codeaurora.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Hans Verkuil <hans.verkuil@cisco.com>
-Subject: [PATCH 1/4] dt-bindings: adi,adv7511.txt: document cec clock
-Date: Sun, 30 Jul 2017 15:07:40 +0200
-Message-Id: <20170730130743.19681-2-hverkuil@xs4all.nl>
-In-Reply-To: <20170730130743.19681-1-hverkuil@xs4all.nl>
-References: <20170730130743.19681-1-hverkuil@xs4all.nl>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:44354 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752418AbdGaPUZ (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 31 Jul 2017 11:20:25 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 09/38] ARM: dts: iwg20d-q7: Add Ethernet AVB support
+Date: Mon, 31 Jul 2017 17:19:21 +0200
+Message-Id: <9e70afe39eeb33488f0d18131b023b92c1493db8.1501514100.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1501514100.git.horms+renesas@verge.net.au>
+References: <cover.1501514100.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Hans Verkuil <hans.verkuil@cisco.com>
+From: Biju Das <biju.das@bp.renesas.com>
 
-Document the cec clock binding.
+Define the iWave RainboW-G20D-Qseven board dependent part of the Ethernet
+AVB device node.
 
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm/boot/dts/r8a7743-iwg20d-q7.dts | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt b/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
-index 06668bca7ffc..4497ae054d49 100644
---- a/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
-+++ b/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
-@@ -68,6 +68,8 @@ Optional properties:
- - adi,disable-timing-generator: Only for ADV7533. Disables the internal timing
-   generator. The chip will rely on the sync signals in the DSI data lanes,
-   rather than generate its own timings for HDMI output.
-+- clocks: from common clock binding: handle to CEC clock.
-+- clock-names: from common clock binding: must be "cec".
+diff --git a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
+index 497aec00cfac..081af0192851 100644
+--- a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
++++ b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
+@@ -17,6 +17,7 @@
  
- Required nodes:
+ 	aliases {
+ 		serial0 = &scif0;
++		ethernet0 = &avb;
+ 	};
+ };
  
-@@ -89,6 +91,8 @@ Example
- 		reg = <39>;
- 		interrupt-parent = <&gpio3>;
- 		interrupts = <29 IRQ_TYPE_EDGE_FALLING>;
-+		clocks = <&cec_clock>;
-+		clock-names = "cec";
+@@ -25,6 +26,11 @@
+ 		groups = "scif0_data_d";
+ 		function = "scif0";
+ 	};
++
++	avb_pins: avb {
++		groups = "avb_mdio", "avb_gmii";
++		function = "avb";
++	};
+ };
  
- 		adi,input-depth = <8>;
- 		adi,input-colorspace = "rgb";
+ &scif0 {
+@@ -33,3 +39,18 @@
+ 
+ 	status = "okay";
+ };
++
++&avb {
++	pinctrl-0 = <&avb_pins>;
++	pinctrl-names = "default";
++
++	phy-handle = <&phy3>;
++	phy-mode = "gmii";
++	renesas,no-ether-link;
++	status = "okay";
++
++	phy3: ethernet-phy@3 {
++		reg = <3>;
++		micrel,led-mode = <1>;
++	};
++};
 -- 
-2.13.1
+2.1.4
