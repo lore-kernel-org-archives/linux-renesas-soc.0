@@ -1,63 +1,64 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1.1 2/2] drm: rcar-du: Repair vblank for DRM page flips using the VSP1
-Date: Sun, 02 Jul 2017 17:23:24 +0300
-Message-ID: <1681295.5XGp1sIbmj@avalon>
-In-Reply-To: <87mv8pj2z2.wl%kuninori.morimoto.gx@renesas.com>
-References: <cover.22236bc88adc598797b31ea82329ec99304fe34d.1498744799.git-series.kieran.bingham+renesas@ideasonboard.com> <6d71aa0796dd8892510d6911a280eba235398ed4.1498751638.git-series.kieran.bingham+renesas@ideasonboard.com> <87mv8pj2z2.wl%kuninori.morimoto.gx@renesas.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:44354 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752418AbdGaPU0 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 31 Jul 2017 11:20:26 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 05/38] ARM: dts: sk-rzg1m: add Ether pins
+Date: Mon, 31 Jul 2017 17:19:17 +0200
+Message-Id: <51982d8f4722d1bbc2dabd79d4a1acebb90f6357.1501514100.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1501514100.git.horms+renesas@verge.net.au>
+References: <cover.1501514100.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Morimoto-san,
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-On Friday 30 Jun 2017 08:32:04 Kuninori Morimoto wrote:
-> Hi Kieran
-> 
-> > -static void rcar_du_vsp_complete(void *private)
-> > +static void rcar_du_vsp_complete(void *private, bool completed)
-> >  {
-> >  	struct rcar_du_crtc *crtc = private;
-> > 
-> > -	rcar_du_crtc_finish_page_flip(crtc);
-> > +	if (crtc->vblank_enable)
-> > +		drm_crtc_handle_vblank(&crtc->crtc);
-> > +
-> > +	if (completed)
-> > +		rcar_du_crtc_finish_page_flip(crtc);
-> >  }
-> 
-> Here, this "vblank_enable" flag, timestamp will be update on
-> drm_crtc_handle_vblank().
-> 
-> For example modetest Flip test, if we stop it by Ctrl+C, then, vblank_enable
-> will be false, Then, vblank timestamp isn't updated on waiting method on
-> drm_atomic_helper_wait_for_vblanks(). Thus we will have timeout error.
+Add the (previously omitted) Ether/PHY pin data to the SK-RZG1M board's
+device tree.
 
-I've noticed this issue as well when testing Kieran's patch, and I will fix 
-it.
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7743-sk-rzg1m.dts | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-> And, print complete is now indicated on VSP Frame End,
-> in interlace input case, print complete will be indicated to user
-> on each ODD, EVEN timing.
-> 
-> Before this patch, for example 1080i@60Hz, print complete indication
-> happen in 30Hz.
-> After this patch, in interlace case, indication coming 60Hz
-
-Isn't this to be expected ? In 1080i@60Hz the frame rate is 60 frames per 
-second, so shouldn't vertical blanking be reported at 60Hz ?
-
+diff --git a/arch/arm/boot/dts/r8a7743-sk-rzg1m.dts b/arch/arm/boot/dts/r8a7743-sk-rzg1m.dts
+index 97a066c22003..3d918d106593 100644
+--- a/arch/arm/boot/dts/r8a7743-sk-rzg1m.dts
++++ b/arch/arm/boot/dts/r8a7743-sk-rzg1m.dts
+@@ -44,6 +44,16 @@
+ 		groups = "scif0_data_d";
+ 		function = "scif0";
+ 	};
++
++	ether_pins: ether {
++		groups = "eth_link", "eth_mdio", "eth_rmii";
++		function = "eth";
++	};
++
++	phy1_pins: phy1 {
++		groups = "intc_irq0";
++		function = "intc";
++	};
+ };
+ 
+ &scif0 {
+@@ -54,6 +64,9 @@
+ };
+ 
+ &ether {
++	pinctrl-0 = <&ether_pins &phy1_pins>;
++	pinctrl-names = "default";
++
+ 	phy-handle = <&phy1>;
+ 	renesas,ether-link-active-low;
+ 	status = "okay";
 -- 
-Regards,
-
-Laurent Pinchart
+2.1.4
