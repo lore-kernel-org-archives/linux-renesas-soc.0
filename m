@@ -1,49 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-yb0-f182.google.com ([209.85.213.182]:34318 "EHLO
-        mail-yb0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753045AbdGGCJn (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:42651 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750987AbdGaPEK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Jul 2017 22:09:43 -0400
-Received: by mail-yb0-f182.google.com with SMTP id e201so6444349ybb.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 06 Jul 2017 19:09:38 -0700 (PDT)
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
+        Mon, 31 Jul 2017 11:04:10 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH] arm64: dts: renesas: ulcb: sound clock-frequency needs descending order
-Date: Fri,  7 Jul 2017 05:09:33 +0300
-Message-Id: <1499393373-11514-1-git-send-email-vladimir.barinov@cogentembedded.com>
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 07/10] ARM: shmobile: defconfig: Refresh
+Date: Mon, 31 Jul 2017 17:03:38 +0200
+Message-Id: <e4c4bdbacdfe8e6d6b7b3fcc58fdd2141915b915.1501511664.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1501511664.git.horms+renesas@verge.net.au>
+References: <cover.1501511664.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-It will be used ADG clock initial settings, and will be
-sound codec's initial system clock which needs maximum clock frequency.
-Thus, descending order is required.
+- Several options were moved,
+  - INPUT_MOUSEDEV_PSAUX is no longer enabled by default since commit
+    73d8ef76006b649f ("Input: mousedev - stop offering PS/2 to userspace
+    by default").
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/ulcb.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/configs/shmobile_defconfig | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-index b5c6ee0..d1a3f3b 100644
---- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
-+++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-@@ -281,7 +281,7 @@
- 
- 	/* audio_clkout0/1/2/3 */
- 	#clock-cells = <1>;
--	clock-frequency = <11289600 12288000>;
-+	clock-frequency = <12288000 11289600>;
- 
- 	status = "okay";
- 
+diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
+index e9cc8a557e80..18886c53424a 100644
+--- a/arch/arm/configs/shmobile_defconfig
++++ b/arch/arm/configs/shmobile_defconfig
+@@ -90,9 +90,8 @@ CONFIG_SMSC911X=y
+ # CONFIG_NET_VENDOR_STMICRO is not set
+ # CONFIG_NET_VENDOR_VIA is not set
+ # CONFIG_NET_VENDOR_WIZNET is not set
+-CONFIG_SMSC_PHY=y
+ CONFIG_MICREL_PHY=y
+-# CONFIG_INPUT_MOUSEDEV_PSAUX is not set
++CONFIG_SMSC_PHY=y
+ CONFIG_INPUT_EVDEV=y
+ CONFIG_KEYBOARD_GPIO=y
+ # CONFIG_INPUT_MOUSE is not set
+@@ -124,9 +123,9 @@ CONFIG_SPI_SH_HSPI=y
+ CONFIG_GPIO_EM=y
+ CONFIG_GPIO_RCAR=y
+ CONFIG_GPIO_PCF857X=y
+-CONFIG_POWER_SUPPLY=y
+ CONFIG_POWER_RESET=y
+ CONFIG_POWER_RESET_RMOBILE=y
++CONFIG_POWER_SUPPLY=y
+ # CONFIG_HWMON is not set
+ CONFIG_THERMAL=y
+ CONFIG_CPU_THERMAL=y
 -- 
-1.9.1
+2.1.4
