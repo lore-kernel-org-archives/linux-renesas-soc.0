@@ -1,150 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:42546 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751280AbdGQMEG (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:42651 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750987AbdGaPEL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Jul 2017 08:04:06 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: renesas: Allow compile-testing of all (sub)drivers
-Date: Mon, 17 Jul 2017 14:04:03 +0200
-Message-Id: <1500293043-14654-1-git-send-email-geert+renesas@glider.be>
+        Mon, 31 Jul 2017 11:04:11 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 08/10] ARM: multi_v7_defconfig: Replace SND_SOC_RSRC_CARD by SND_SIMPLE_SCU_CARD
+Date: Mon, 31 Jul 2017 17:03:39 +0200
+Message-Id: <883338aa8d3009d67868af53c6a7b8f5f1ff7e2d.1501511664.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1501511664.git.horms+renesas@verge.net.au>
+References: <cover.1501511664.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable compile-testing of the remaining clock drivers and subdrivers,
-now dummies are available for of_clk_get_from_provider(),
-of_device_compatible_match(), and rcar_rst_read_mode_pins(), and the
-CPG/MSSR driver core has been converted from of_match_node() to
-of_device_get_match_data().
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
+SND_SOC_RSRC_CARD was renamed SND_SIMPLE_SCU_CARD, hence update
+multi_v7_defconfig.
+
+Fixes: d12c6216c4a58f9f ("ASoC: rsrc-card: rename rsrc-card to simple-scu-card phase3")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-To be queued in clk-renesas-for-v4.14.
+ arch/arm/configs/multi_v7_defconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/clk/renesas/Kconfig | 38 +++++++++++++++++++-------------------
- 1 file changed, 19 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
-index 78d1df9112ba3932..85526ca3920229c8 100644
---- a/drivers/clk/renesas/Kconfig
-+++ b/drivers/clk/renesas/Kconfig
-@@ -34,94 +34,94 @@ config CLK_EMEV2
- 	bool "Emma Mobile EV2 clock support" if COMPILE_TEST
- 
- config CLK_RZA1
--	bool
-+	bool "RZ/A1H clock support" if COMPILE_TEST
- 	select CLK_RENESAS_CPG_MSTP
- 
- config CLK_R8A73A4
--	bool
-+	bool "R-Mobile APE6 clock support" if COMPILE_TEST
- 	select CLK_RENESAS_CPG_MSTP
- 	select CLK_RENESAS_DIV6
- 
- config CLK_R8A7740
--	bool
-+	bool "R-Mobile A1 clock support" if COMPILE_TEST
- 	select CLK_RENESAS_CPG_MSTP
- 	select CLK_RENESAS_DIV6
- 
- config CLK_R8A7743
--	bool
-+	bool "RZ/G1M clock support" if COMPILE_TEST
- 	select CLK_RCAR_GEN2_CPG
- 
- config CLK_R8A7745
--	bool
-+	bool "RZ/G1E clock support" if COMPILE_TEST
- 	select CLK_RCAR_GEN2_CPG
- 
- config CLK_R8A7778
--	bool
-+	bool "R-Car M1A clock support" if COMPILE_TEST
- 	select CLK_RENESAS_CPG_MSTP
- 
- config CLK_R8A7779
--	bool
-+	bool "R-Car H1 clock support" if COMPILE_TEST
- 	select CLK_RENESAS_CPG_MSTP
- 
- config CLK_R8A7790
--	bool
-+	bool "R-Car H2 clock support" if COMPILE_TEST
- 	select CLK_RCAR_GEN2 if CLK_RENESAS_LEGACY
- 	select CLK_RCAR_GEN2_CPG
- 	select CLK_RENESAS_DIV6
- 
- config CLK_R8A7791
--	bool
-+	bool "R-Car M2-W/N clock support" if COMPILE_TEST
- 	select CLK_RCAR_GEN2 if CLK_RENESAS_LEGACY
- 	select CLK_RCAR_GEN2_CPG
- 	select CLK_RENESAS_DIV6
- 
- config CLK_R8A7792
--	bool
-+	bool "R-Car V2H clock support" if COMPILE_TEST
- 	select CLK_RCAR_GEN2 if CLK_RENESAS_LEGACY
- 	select CLK_RCAR_GEN2_CPG
- 
- config CLK_R8A7794
--	bool
-+	bool "R-Car E2 clock support" if COMPILE_TEST
- 	select CLK_RCAR_GEN2 if CLK_RENESAS_LEGACY
- 	select CLK_RCAR_GEN2_CPG
- 	select CLK_RENESAS_DIV6
- 
- config CLK_R8A7795
--	bool
-+	bool "R-Car H3 clock support" if COMPILE_TEST
- 	select CLK_RCAR_GEN3_CPG
- 
- config CLK_R8A7796
--	bool
-+	bool "R-Car M3-W clock support" if COMPILE_TEST
- 	select CLK_RCAR_GEN3_CPG
- 
- config CLK_SH73A0
--	bool
-+	bool "SH-Mobile AG5 clock support" if COMPILE_TEST
- 	select CLK_RENESAS_CPG_MSTP
- 	select CLK_RENESAS_DIV6
- 
- 
- # Family
- config CLK_RCAR_GEN2
--	bool
-+	bool "R-Car Gen2 legacy clock support" if COMPILE_TEST
- 	select CLK_RENESAS_CPG_MSTP
- 	select CLK_RENESAS_DIV6
- 
- config CLK_RCAR_GEN2_CPG
--	bool
-+	bool "R-Car Gen2 CPG clock support" if COMPILE_TEST
- 	select CLK_RENESAS_CPG_MSSR
- 
- config CLK_RCAR_GEN3_CPG
--	bool
-+	bool "R-Car Gen3 CPG clock support" if COMPILE_TEST
- 	select CLK_RENESAS_CPG_MSSR
- 
- 
- # Generic
- config CLK_RENESAS_CPG_MSSR
--	bool
-+	bool "CPG/MSSR clock support" if COMPILE_TEST
- 	select CLK_RENESAS_DIV6
- 
- config CLK_RENESAS_CPG_MSTP
--	bool
-+	bool "MSTP clock support" if COMPILE_TEST
- 
- config CLK_RENESAS_DIV6
- 	bool "DIV6 clock support" if COMPILE_TEST
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index 4d19c1b4b8e7..7fa1746970ec 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -650,7 +650,7 @@ CONFIG_SND_SOC_SMDK_WM8994_PCM=m
+ CONFIG_SND_SOC_SNOW=m
+ CONFIG_SND_SOC_SH4_FSI=m
+ CONFIG_SND_SOC_RCAR=m
+-CONFIG_SND_SOC_RSRC_CARD=m
++CONFIG_SND_SIMPLE_SCU_CARD=m
+ CONFIG_SND_SUN4I_CODEC=m
+ CONFIG_SND_SOC_TEGRA=m
+ CONFIG_SND_SOC_TEGRA_RT5640=m
 -- 
-2.7.4
+2.1.4
