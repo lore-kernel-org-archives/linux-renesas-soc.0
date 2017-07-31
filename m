@@ -1,68 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:44354 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:42651 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752398AbdGaPUj (ORCPT
+        with ESMTP id S1751827AbdGaPDi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 31 Jul 2017 11:20:39 -0400
+        Mon, 31 Jul 2017 11:03:38 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Chris Brandt <chris.brandt@renesas.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 34/38] ARM: dts: rskrza1: Add SCIF2 pin group
-Date: Mon, 31 Jul 2017 17:19:46 +0200
-Message-Id: <cde2380548e26afe03e4c9310073e0878af9efd9.1501514100.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1501514100.git.horms+renesas@verge.net.au>
-References: <cover.1501514100.git.horms+renesas@verge.net.au>
+Subject: [PATCH 11/31] arm64: dts: r8a7796: Add HDMI encoder instance
+Date: Mon, 31 Jul 2017 17:03:03 +0200
+Message-Id: <565f5b6f01b8686a4278ec2f60db59cc62b2c312.1501509525.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1501509525.git.horms+renesas@verge.net.au>
+References: <cover.1501509525.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Chris Brandt <chris.brandt@renesas.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Add pin configuration for SCIF2 serial console interface.
+Add the HDMI encoder to the R8A7796 DT in disabled state.
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r7s72100-rskrza1.dts | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r7s72100-rskrza1.dts b/arch/arm/boot/dts/r7s72100-rskrza1.dts
-index 72df20a04320..5fac0f82d742 100644
---- a/arch/arm/boot/dts/r7s72100-rskrza1.dts
-+++ b/arch/arm/boot/dts/r7s72100-rskrza1.dts
-@@ -10,6 +10,7 @@
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 8c0d58d49bdf..016cdd0bf289 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -1665,6 +1665,31 @@
+ 			resets = <&cpg 601>;
+ 		};
  
- /dts-v1/;
- #include "r7s72100.dtsi"
-+#include <dt-bindings/pinctrl/r7s72100-pinctrl.h>
- 
- / {
- 	model = "RSKRZA1";
-@@ -47,6 +48,15 @@
- 	clock-frequency = <32768>;
- };
- 
-+&pinctrl {
++		hdmi0: hdmi@fead0000 {
++			compatible = "renesas,r8a7796-hdmi", "renesas,rcar-gen3-hdmi";
++			reg = <0 0xfead0000 0 0x10000>;
++			interrupts = <GIC_SPI 389 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 729>, <&cpg CPG_CORE R8A7796_CLK_HDMI>;
++			clock-names = "iahb", "isfr";
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			resets = <&cpg 729>;
++			status = "disabled";
 +
-+	/* Serial Console */
-+	scif2_pins: serial2 {
-+		pinmux = <RZA1_PINMUX(3, 0, 6)>,	/* TxD2 */
-+			 <RZA1_PINMUX(3, 2, 4)>;	/* RxD2 */
-+	};
-+};
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++				port@0 {
++					reg = <0>;
++					dw_hdmi0_in: endpoint {
++						remote-endpoint = <&du_out_hdmi0>;
++					};
++				};
++				port@1 {
++					reg = <1>;
++				};
++			};
++		};
 +
- &mtu2 {
- 	status = "okay";
- };
-@@ -78,5 +88,7 @@
- };
- 
- &scif2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&scif2_pins>;
- 	status = "okay";
- };
+ 		du: display@feb00000 {
+ 			compatible = "renesas,du-r8a7796";
+ 			reg = <0 0xfeb00000 0 0x70000>,
+@@ -1694,6 +1719,7 @@
+ 				port@1 {
+ 					reg = <1>;
+ 					du_out_hdmi0: endpoint {
++						remote-endpoint = <&dw_hdmi0_in>;
+ 					};
+ 				};
+ 				port@2 {
 -- 
 2.1.4
