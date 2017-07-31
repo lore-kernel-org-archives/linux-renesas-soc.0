@@ -1,42 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:37024 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750836AbdG0Ktl (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:43228 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752497AbdGaPF5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 27 Jul 2017 06:49:41 -0400
-Received: by mail-oi0-f67.google.com with SMTP id j194so9479983oib.4
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 27 Jul 2017 03:49:41 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <cover.1498814088.git.horms+renesas@verge.net.au>
-References: <cover.1498814088.git.horms+renesas@verge.net.au>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Thu, 27 Jul 2017 12:49:40 +0200
-Message-ID: <CAK8P3a1F5v0egfK1htRoZ-O-qfW1Pcra95Rx6=486Z=7HecUkQ@mail.gmail.com>
-Subject: Re: [GIT PULL] Renesas ARM Based SoC Fixes for v4.13
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: arm-soc <arm@kernel.org>, Kevin Hilman <khilman@kernel.org>,
+        Mon, 31 Jul 2017 11:05:57 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Olof Johansson <olof@lixom.net>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 5/5] ARM: shmobile: Remove ARCH_SHMOBILE_MULTI
+Date: Mon, 31 Jul 2017 17:05:40 +0200
+Message-Id: <84a1e84b95bb7b2596821578c3acc38d4e6e7a59.1501512320.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1501512320.git.horms+renesas@verge.net.au>
+References: <cover.1501512320.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Jun 30, 2017 at 11:16 AM, Simon Horman
-<horms+renesas@verge.net.au> wrote:
-> Hi Olof, Hi Kevin, Hi Arnd,
->
-> Please consider this Renesas ARM based SoC fix for v4.13.
->
-> This pull request is based on
-> "[GIT PULL] Second Round of Renesas ARM64 Based SoC DT Updates for v4.13",
-> tagged as renesas-arm64-dt2-for-v4.13, which you have already pulled.
->
-> It is my understanding that the problem fixed was introduced
-> earlier in the v4.13 development cycle. So I don't think consideration
-> needs to be given to merging for to v4.12 or back-porting to -stable.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Pulled into 'fixes' now, sorry for the delay.
+The migration from ARCH_SHMOBILE_MULTI to ARCH_RENESAS has been
+completed in v4.12 by commit 9ed2d4bc5c0c244d ("ARM: dts: renesas:
+Switch from ARCH_SHMOBILE_MULTI to ARCH_RENESAS"), so the
+ARCH_SHMOBILE_MULTI symbol can be removed.
 
-      Arnd
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/mach-shmobile/Kconfig | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
+index ad7d604ff001..280e7312a9e1 100644
+--- a/arch/arm/mach-shmobile/Kconfig
++++ b/arch/arm/mach-shmobile/Kconfig
+@@ -1,9 +1,6 @@
+ config ARCH_SHMOBILE
+ 	bool
+ 
+-config ARCH_SHMOBILE_MULTI
+-	bool
+-
+ config PM_RMOBILE
+ 	bool
+ 	select PM
+@@ -34,7 +31,6 @@ menuconfig ARCH_RENESAS
+ 	depends on ARCH_MULTI_V7 && MMU
+ 	select ARCH_DMA_ADDR_T_64BIT if ARM_LPAE
+ 	select ARCH_SHMOBILE
+-	select ARCH_SHMOBILE_MULTI
+ 	select ARM_GIC
+ 	select GPIOLIB
+ 	select HAVE_ARM_SCU if SMP
+-- 
+2.1.4
