@@ -1,62 +1,89 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:35804 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750927AbdGIN2j (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:43172 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752132AbdGaPFo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 9 Jul 2017 09:28:39 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Alexey Firago <alexey_firago@mentor.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH V3 3/8] clk: vc5: Do not warn about disabled output buffer input muxes
-Date: Sun,  9 Jul 2017 15:28:09 +0200
-Message-Id: <20170709132814.2339-3-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20170709132814.2339-1-marek.vasut+renesas@gmail.com>
-References: <20170709132814.2339-1-marek.vasut+renesas@gmail.com>
+        Mon, 31 Jul 2017 11:05:44 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: arm@kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [GIT PULL] Renesas ARM Based SoC Updates for v4.14
+Date: Mon, 31 Jul 2017 17:05:38 +0200
+Message-Id: <cover.1501512320.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The output buffer input mux can be configured in either of three
-states -- disabled, input from FOD, input from previous output.
-If the output buffer input mux is set to disabled, the code in
-vc5_clk_out_get_parent() would consider this an invalid setting
-and warn about it, which is not necessarily the case.
+Hi Olof, Hi Kevin, Hi Arnd,
 
-In case the output buffer input mux is disabled, default to input
-from FOD to have some parent and don't print the warning.
+Please consider these Renesas ARM based SoC updates for v4.14.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Alexey Firago <alexey_firago@mentor.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-on Salvator-XS with the display LVDS output.
----
-V2: Drop chunk adding useless newline
-V3: None
----
- drivers/clk/clk-versaclock5.c | 3 +++
- 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index d835d48cf14d..248689d89632 100644
---- a/drivers/clk/clk-versaclock5.c
-+++ b/drivers/clk/clk-versaclock5.c
-@@ -541,6 +541,9 @@ static unsigned char vc5_clk_out_get_parent(struct clk_hw *hw)
- 	regmap_read(vc5->regmap, VC5_OUT_DIV_CONTROL(hwdata->num), &src);
- 	src &= mask;
- 
-+	if (src == 0)	/* Input mux set to DISABLED */
-+		return 0;
-+
- 	if ((src & fodclkmask) == VC5_OUT_DIV_CONTROL_EN_FOD)
- 		return 0;
- 
--- 
-2.11.0
+The following changes since commit 5771a8c08880cdca3bfb4a3fc6d309d6bba20877:
+
+  Linux v4.13-rc1 (2017-07-15 15:22:10 -0700)
+
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-soc-for-v4.14
+
+for you to fetch changes up to 84a1e84b95bb7b2596821578c3acc38d4e6e7a59:
+
+  ARM: shmobile: Remove ARCH_SHMOBILE_MULTI (2017-07-27 17:31:12 +0200)
+
+----------------------------------------------------------------
+Renesas ARM Based SoC Updates for v4.14
+
+* Add debug-ll support to RZ/G1M (r8a7743) SoC
+
+  Chris Paterson says, "RZ/G1M uses SCIF0 for the debug console, like most
+  of the R-Car Gen2 SoCs."
+
+* Remove ARCH_SHMOBILE_MULTI
+
+  Geert Uytterhoeven says, "The migration from ARCH_SHMOBILE_MULTI to
+  ARCH_RENESAS has been completed in v4.12..."
+
+* Correct arch timer frequency on RZ/G1M (r8a7743) SoC
+
+  Geert Uytterhoeven says, "According to the datasheet, the frequency of
+  the ARM architecture timer on RZ/G1E depends on the frequency of the ZS
+  clock..."
+
+* Add support for CPG/MSSR bindings
+
+  Geert Uytterhoeven says, "When using the new CPG/MSSR bindings, there is
+  no longer a "renesas,rcar-gen2-cpg-clocks" node, and the code to obtain
+  the external clock crystal frequency falls back to a default of 20 MHz.
+  While this is correct for all upstream R-Car Gen2 and RZ/G1 boards, this
+  is not necessarily the case for out-of-tree third party boards.
+
+  Add support for finding the external clock crystal oscillator on RZ/G1M,
+  and on R-Car H2, M2-W, and M2-N using the new CPG/MSSR bindings, through
+  the corresponding "renesas,r8a77xx-cpg-mssr" nodes."
+
+* Obtain jump stub region from DT
+
+  Geert Uytterhoeven says, "Add support for obtaining from DT the SRAM
+  region to store the jump stub for CPU core bringup, according to the
+  renesas,smp-sram DT bindings."
+
+----------------------------------------------------------------
+Chris Paterson (1):
+      ARM: debug-ll: Add support for r8a7743
+
+Geert Uytterhoeven (4):
+      ARM: shmobile: rcar-gen2: Obtain jump stub region from DT
+      ARM: shmobile: rcar-gen2: Add support for CPG/MSSR bindings
+      ARM: shmobile: rcar-gen2: Correct arch timer frequency on RZ/G1E
+      ARM: shmobile: Remove ARCH_SHMOBILE_MULTI
+
+ arch/arm/Kconfig.debug                   |  9 +++++----
+ arch/arm/mach-shmobile/Kconfig           |  4 ----
+ arch/arm/mach-shmobile/pm-rcar-gen2.c    | 33 +++++++++++++++++++++++++++++---
+ arch/arm/mach-shmobile/setup-rcar-gen2.c | 21 ++++++++++++++++----
+ 4 files changed, 52 insertions(+), 15 deletions(-)
