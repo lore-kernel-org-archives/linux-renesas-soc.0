@@ -1,50 +1,73 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 0/4] v4l: async: fixes for v4l2_async_notifier_unregister()
-Date: Mon, 31 Jul 2017 00:31:54 +0200
-Message-Id: <20170730223158.14405-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:44354 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752324AbdGaPUr (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 31 Jul 2017 11:20:47 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 25/38] ARM: dts: r8a7790: Use R-Car Gen 2 fallback binding for vin nodes
+Date: Mon, 31 Jul 2017 17:19:37 +0200
+Message-Id: <a94b9e569c8e087c063fb0e66507681453a798b3.1501514100.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1501514100.git.horms+renesas@verge.net.au>
+References: <cover.1501514100.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+Use R-Car Gen 2 fallback binding for vind nodes in DT for r8a7790 SoC.
 
-This series is based on top of media-tree and some patches where
-previously part of the series '[PATCH v5 0/4] v4l2-async: add
-subnotifier registration for subdevices'. Hans suggested the cleanups
-could be broken out to a separate series, so this is this series :-)
+This has no run-time effect for the current driver as the initialisation
+sequence is the same for the SoC-specific binding for r8a7790 and the
+fallback binding for R-Car Gen 2
 
-The aim of this series is to cleanup and document some of the odd things
-that happens in v4l2_async_notifier_unregister(). The purpose for this
-in the short term is to make it easier to implement subnotifiers which
-both I and Sakari are trying to address, this feature is blocking other
-drivers such as the Renesas R-Car CSI-2 receiver driver. And in the long
-run (I hope) to make it easier to get rid of the need to do re-probing
-at all in v4l2_async_notifier_unregister() :-)
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/boot/dts/r8a7790.dtsi | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Niklas Söderlund (4):
-  v4l: async: fix unbind error in v4l2_async_notifier_unregister()
-  v4l: async: abort if memory allocation fails when unregistering
-    notifiers
-  v4l: async: do not hold list_lock when re-probing devices
-  v4l: async: add comment about re-probing to
-    v4l2_async_notifier_unregister()
-
- drivers/media/v4l2-core/v4l2-async.c | 49 ++++++++++++++++++++----------------
- 1 file changed, 28 insertions(+), 21 deletions(-)
-
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index ff986df23b62..167fd57aea68 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -927,7 +927,7 @@
+ 	};
+ 
+ 	vin0: video@e6ef0000 {
+-		compatible = "renesas,vin-r8a7790";
++		compatible = "renesas,vin-r8a7790", "renesas,rcar-gen2-vin";
+ 		reg = <0 0xe6ef0000 0 0x1000>;
+ 		interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp8_clks R8A7790_CLK_VIN0>;
+@@ -936,7 +936,7 @@
+ 	};
+ 
+ 	vin1: video@e6ef1000 {
+-		compatible = "renesas,vin-r8a7790";
++		compatible = "renesas,vin-r8a7790", "renesas,rcar-gen2-vin";
+ 		reg = <0 0xe6ef1000 0 0x1000>;
+ 		interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp8_clks R8A7790_CLK_VIN1>;
+@@ -945,7 +945,7 @@
+ 	};
+ 
+ 	vin2: video@e6ef2000 {
+-		compatible = "renesas,vin-r8a7790";
++		compatible = "renesas,vin-r8a7790", "renesas,rcar-gen2-vin";
+ 		reg = <0 0xe6ef2000 0 0x1000>;
+ 		interrupts = <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp8_clks R8A7790_CLK_VIN2>;
+@@ -954,7 +954,7 @@
+ 	};
+ 
+ 	vin3: video@e6ef3000 {
+-		compatible = "renesas,vin-r8a7790";
++		compatible = "renesas,vin-r8a7790", "renesas,rcar-gen2-vin";
+ 		reg = <0 0xe6ef3000 0 0x1000>;
+ 		interrupts = <GIC_SPI 191 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp8_clks R8A7790_CLK_VIN3>;
 -- 
-2.13.3
+2.1.4
