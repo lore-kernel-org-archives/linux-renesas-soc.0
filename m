@@ -1,63 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:36182 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750927AbdGIN2h (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:44354 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752418AbdGaPUX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 9 Jul 2017 09:28:37 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Alexey Firago <alexey_firago@mentor.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH V3 1/8] clk: vc5: Prevent division by zero on unconfigured outputs
-Date: Sun,  9 Jul 2017 15:28:07 +0200
-Message-Id: <20170709132814.2339-1-marek.vasut+renesas@gmail.com>
+        Mon, 31 Jul 2017 11:20:23 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 03/38] ARM: dts: r8a7743: add PFC support
+Date: Mon, 31 Jul 2017 17:19:15 +0200
+Message-Id: <328968b60231e522ea7e81ae0c83f59f13626a85.1501514100.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1501514100.git.horms+renesas@verge.net.au>
+References: <cover.1501514100.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-In case the initial values of the FOD registers are not configured in
-the OTP or by the bootloader, it is possible that the FOD registers
-will contain zeroes. The code in vc5_fod_recalc_rate() immediately
-feeds the FOD divider value obtained from the FOD registers into the
-div64_u64() and if the FOD divider value is zero, triggers division
-by zero exception.
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Check if the FOD divider value is zero and return the frequency of
-the FOD output as 0 Hz if it is so. This prevents the division by
-zero exception.
+Define the generic R8A7743 part of the PFC device node.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Alexey Firago <alexey_firago@mentor.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-on Salvator-XS with the display LVDS output.
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-V2: None
-V3: None
----
- drivers/clk/clk-versaclock5.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm/boot/dts/r8a7743.dtsi | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index ea7d552a2f2b..60bf4afb51bd 100644
---- a/drivers/clk/clk-versaclock5.c
-+++ b/drivers/clk/clk-versaclock5.c
-@@ -426,6 +426,10 @@ static unsigned long vc5_fod_recalc_rate(struct clk_hw *hw,
- 	div_frc = (od_frc[0] << 22) | (od_frc[1] << 14) |
- 		  (od_frc[2] << 6) | (od_frc[3] >> 2);
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index 0ddac81742e4..8d6b14075865 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -1,7 +1,7 @@
+ /*
+  * Device Tree Source for the r8a7743 SoC
+  *
+- * Copyright (C) 2016 Cogent Embedded Inc.
++ * Copyright (C) 2016-2017 Cogent Embedded Inc.
+  *
+  * This file is licensed under the terms of the GNU General Public License
+  * version 2. This program is licensed "as is" without any warranty of any
+@@ -123,6 +123,11 @@
+ 			#power-domain-cells = <1>;
+ 		};
  
-+	/* Avoid division by zero if the output is not configured. */
-+	if ((div_int == 0) && (div_frc == 0))
-+		return 0;
++		pfc: pin-controller@e6060000 {
++			compatible = "renesas,pfc-r8a7743";
++			reg = <0 0xe6060000 0 0x250>;
++		};
 +
- 	/* The PLL divider has 12 integer bits and 30 fractional bits */
- 	return div64_u64((u64)f_in << 24ULL, ((u64)div_int << 24ULL) + div_frc);
- }
+ 		dmac0: dma-controller@e6700000 {
+ 			compatible = "renesas,dmac-r8a7743",
+ 				     "renesas,rcar-dmac";
 -- 
-2.11.0
+2.1.4
