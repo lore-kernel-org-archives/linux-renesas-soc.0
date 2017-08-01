@@ -1,81 +1,120 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:34481 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752598AbdHNKYH (ORCPT
+Received: from mail-lf0-f53.google.com ([209.85.215.53]:33533 "EHLO
+        mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751012AbdHAKN4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 Aug 2017 06:24:07 -0400
-MIME-Version: 1.0
-In-Reply-To: <20170730195154.GE1382@bigcity.dyn.berto.se>
-References: <20170730140646.11781-1-niklas.soderlund+renesas@ragnatech.se>
- <20170730170738.GA29373@lunn.ch> <20170730195154.GE1382@bigcity.dyn.berto.se>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 14 Aug 2017 12:24:06 +0200
-Message-ID: <CAMuHMdXmyoMeq8K0BpEzviX1BymR0WyOHeXmNnuR-BBs1asn_Q@mail.gmail.com>
+        Tue, 1 Aug 2017 06:13:56 -0400
+Received: by mail-lf0-f53.google.com with SMTP id d17so4956968lfe.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 01 Aug 2017 03:13:55 -0700 (PDT)
+From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
+Date: Tue, 1 Aug 2017 12:13:52 +0200
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH v2] ravb: add wake-on-lan support via magic packet
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-Cc: Andrew Lunn <andrew@lunn.ch>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <20170801101352.GN1382@bigcity.dyn.berto.se>
+References: <20170730140646.11781-1-niklas.soderlund+renesas@ragnatech.se>
+ <111b5ae4-5517-7a07-3077-96ced89db407@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <111b5ae4-5517-7a07-3077-96ced89db407@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Andrew, Niklas,
+Hi Sergei,
 
-On Sun, Jul 30, 2017 at 9:51 PM, Niklas S=C3=B6derlund
-<niklas.soderlund@ragnatech.se> wrote:
-> On 2017-07-30 19:07:38 +0200, Andrew Lunn wrote:
->> > @@ -2041,6 +2073,11 @@ static int ravb_probe(struct platform_device *p=
-dev)
->> >
->> >     priv->chip_id =3D chip_id;
->> >
->> > +   /* Get clock, if not found that's OK but Wake-On-Lan is unavailabl=
-e */
->> > +   priv->clk =3D devm_clk_get(&pdev->dev, NULL);
->> > +   if (IS_ERR(priv->clk))
->> > +           priv->clk =3D NULL;
->>
->> Can you get EPROBE_DEFER returned?
->
-> I don't think so, but I'm not sure :-)
->
-> The clock I'm trying to get is the module clock of the ravb itself, so
-> if that clock is not available (and enabled) no register writes to the
-> ravb would be possible in the first place, so i guess it's safe to
-> assume -EPROBE_DEFER can not happen here?
+Thanks for your feedback!
 
-In theory, the devm_clk_get() can fail.
-In practice, it cannot, as the EtherAVB device is part of a clock domain,
-through its "power-domains" property in DT.
-Hence if the clock (which is the module clock, provided by the SoC's system
-clock controller (CPG/MSSR)) is not yet available, the PM Domain subsystem
-will prevent the device from being probed.
+On 2017-07-31 22:47:12 +0300, Sergei Shtylyov wrote:
+> Hello!
+> 
+> On 07/30/2017 05:06 PM, Niklas S�derlund wrote:
+> 
+> > WoL is enabled in the suspend callback by setting MagicPacket detection
+> > and disabling all interrupts expect MagicPacket. In the resume path the
+> > driver needs to reset the hardware to rearm the WoL logic, this prevents
+> > the driver from simply restoring the registers and to take advantage of
+> > that ravb was not suspended to reduce resume time. To reset the
+> > hardware the driver closes the device, sets it in reset mode and reopens
+> > the device just like it would do in a normal suspend/resume scenario
+> > without WoL enabled, but it both closes and opens the device in the
+> > resume callback since the device needs to be reset for WoL to work.
+> 
+> > One quirk needed for WoL is that the module clock needs to be prevented
+> > from being switched off by Runtime PM. To keep the clock alive the
+> > suspend callback need to call clk_enable() directly to increase the
+> > usage count of the clock. Then when Runtime PM decreases the clock usage
+> > count it won't reach 0 and be switched off.
+> > 
+> > Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+> [...]
+> > diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+> > index 5931e859876c2aee..3d399f85417a83cf 100644
+> > --- a/drivers/net/ethernet/renesas/ravb_main.c
+> > +++ b/drivers/net/ethernet/renesas/ravb_main.c
+> [...]
+> > @@ -2179,6 +2270,32 @@ static int __maybe_unused ravb_resume(struct device *dev)
+> >   	struct ravb_private *priv = netdev_priv(ndev);
+> >   	int ret = 0;
+> > +	/* Reduce the usecount of the clock to zero and then
+> > +	 * restore it to its original value. This is done to force
+> > +	 * the clock to be re-enabled which is a workaround
+> > +	 * for renesas-cpg-mssr driver which do not enable clocks
+> > +	 * when resuming from PSCI suspend/resume.
+> > +	 *
+> > +	 * Without this workaround the driver fails to communicate
+> > +	 * with the hardware if WoL was enabled when the system
+> > +	 * entered PSCI suspend. This is due to that if WoL is enabled
+> > +	 * we explicitly keep the clock from being turned off when
+> > +	 * suspending, but in PSCI sleep power is cut so the clock
+> > +	 * is disabled anyhow, the clock driver is not aware of this
+> > +	 * so the clock is not turned back on when resuming.
+> > +	 *
+> > +	 * TODO: once the renesas-cpg-mssr suspend/resume is working
+> > +	 *       this clock dance should be removed.
+> > +	 */
+> > +	clk_disable(priv->clk);
+> > +	clk_disable(priv->clk);
+> > +	clk_enable(priv->clk);
+> > +	clk_enable(priv->clk);
+> 
+>    After a small chat with Niklas, it became clear that this dance should be
+> behind the *if* that follows. I'd also like to see this workaround as a
+> separate patch since the isse it addresses is R-Car gen3 specific (and thus
+> can be reverted once the CPG/MMSR driver is fixed)...
 
-> I'm just trying to play it safe here since the clock is only needed to
-> support WoL, I though it best to not change behavior here. Try to get
-> the clock, if we can great we can do WoL if not then user-space will be
-> prevented from enabling WoL and nothing in the current behavior changes.
+Thanks for spotting my mistake! I will fix this and break out the 
+workaround in a separate patch and send a v3.
 
-And all this explicit clock handling is done only because
-device_set_wakeup_enable() does not yet prevent the PM Domain code from
-powering down the device during system suspend.  Once that's handled by gen=
-pd,
-all clock magic can be removed.
+> 
+> > +
+> > +	/* If WoL is enabled set reset mode to rearm the WoL logic */
+> > +	if (priv->wol_enabled)
+> > +		ravb_write(ndev, CCC_OPC_RESET, CCC);
+> > +
+> >   	/* All register have been reset to default values.
+> >   	 * Restore all registers which where setup at probe time and
+> >   	 * reopen device if it was running before system suspended.
+> > @@ -2202,6 +2319,11 @@ static int __maybe_unused ravb_resume(struct device *dev)
+> >  	ravb_write(ndev, priv->desc_bat_dma, DBAT);
+> >  	if (netif_running(ndev)) {
+> > +		if (priv->wol_enabled) {
+> > +			ret = ravb_wol_restore(ndev);
+> > +			if (ret)
+> > +				return ret;
+> > +		}
+> >  		ret = ravb_open(ndev);
+> 
+>    Hm, perhaps worth calling sh_eth_open() outside sh_eth_wol_restore() as well?
 
-Gr{oetje,eeting}s,
+Worth looking at, but this is outside the scope of this series as it 
+touches the sh_eth driver :-)
 
-                        Geert
+> 
+> MBR, Sergei
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+-- 
+Regards,
+Niklas S�derlund
