@@ -1,67 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:12553 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751925AbdHHNTC (ORCPT
+Received: from sauhun.de ([88.99.104.3]:56655 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751623AbdHAKsz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 Aug 2017 09:19:02 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH  1/2] ARM: dts: iwg20d-q7: Add RTC support
-Date: Tue,  8 Aug 2017 14:04:24 +0100
-Message-Id: <1502197465-61546-2-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1502197465-61546-1-git-send-email-biju.das@bp.renesas.com>
-References: <1502197465-61546-1-git-send-email-biju.das@bp.renesas.com>
+        Tue, 1 Aug 2017 06:48:55 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-clk@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 3/3] clk: renesas: rcar-gen3-cpg: remove unused SD divider entries
+Date: Tue,  1 Aug 2017 12:46:03 +0200
+Message-Id: <20170801104603.10459-4-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20170801104603.10459-1-wsa+renesas@sang-engineering.com>
+References: <20170801104603.10459-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Define the iWave RainboW-G20D-Qseven board dependent part of the
-RTC device node.
+They will not be selected, so no need to keep them. If there will be a
+use-case, we will re-add that setting.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm/boot/dts/r8a7743-iwg20d-q7.dts | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ drivers/clk/renesas/rcar-gen3-cpg.c | 10 ----------
+ 1 file changed, 10 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-index 081af01..b3a1efa 100644
---- a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-+++ b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-@@ -31,6 +31,11 @@
- 		groups = "avb_mdio", "avb_gmii";
- 		function = "avb";
- 	};
-+
-+	i2c2_pins: i2c2 {
-+		groups = "i2c2";
-+		function = "i2c2";
-+	};
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
+index 4d2574f233290a..5ac4154b459102 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.c
++++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+@@ -73,11 +73,6 @@ struct sd_clock {
+  *  0         0         1 (2)      1 (4)      8 -> SDR50
+  *  1         0         2 (4)      1 (4)     16 -> HS / SDR25
+  *  1         0         3 (8)      1 (4)     32 -> NS / SDR12
+- *  1         0         4 (16)     1 (4)     64
+- *  0         0         0 (1)      0 (2)      2
+- *  1         0         2 (4)      0 (2)      8
+- *  1         0         3 (8)      0 (2)     16
+- *  1         0         4 (16)     0 (2)     32
+  */
+ static const struct sd_div_table cpg_sd_div_table[] = {
+ /*	CPG_SD_DIV_TABLE_DATA(stp_hck,  stp_ck,   sd_srcfc,   sd_fc,  sd_div) */
+@@ -86,11 +81,6 @@ static const struct sd_div_table cpg_sd_div_table[] = {
+ 	CPG_SD_DIV_TABLE_DATA(0,        0,        1,          1,        8),
+ 	CPG_SD_DIV_TABLE_DATA(1,        0,        2,          1,       16),
+ 	CPG_SD_DIV_TABLE_DATA(1,        0,        3,          1,       32),
+-	CPG_SD_DIV_TABLE_DATA(1,        0,        4,          1,       64),
+-	CPG_SD_DIV_TABLE_DATA(0,        0,        0,          0,        2),
+-	CPG_SD_DIV_TABLE_DATA(1,        0,        2,          0,        8),
+-	CPG_SD_DIV_TABLE_DATA(1,        0,        3,          0,       16),
+-	CPG_SD_DIV_TABLE_DATA(1,        0,        4,          0,       32),
  };
  
- &scif0 {
-@@ -54,3 +59,16 @@
- 		micrel,led-mode = <1>;
- 	};
- };
-+
-+&i2c2 {
-+	pinctrl-0 = <&i2c2_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+	clock-frequency = <400000>;
-+
-+	rtc@68 {
-+		compatible = "bq32000";
-+		reg = <0x68>;
-+	};
-+};
+ #define to_sd_clock(_hw) container_of(_hw, struct sd_clock, hw)
 -- 
-1.9.1
+2.11.0
