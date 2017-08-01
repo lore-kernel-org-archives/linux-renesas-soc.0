@@ -1,46 +1,82 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f51.google.com ([209.85.215.51]:34211 "EHLO
-        mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752356AbdHAN1V (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:44207 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751680AbdHAKPU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 1 Aug 2017 09:27:21 -0400
-Received: by mail-lf0-f51.google.com with SMTP id g25so6988175lfh.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 01 Aug 2017 06:27:20 -0700 (PDT)
-Subject: Re: [PATCH v3 2/2] ravb: add workaround for clock when resuming with
- WoL enabled
-To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        Tue, 1 Aug 2017 06:15:20 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Cc: Geert Uytterhoeven <geert@linux-m68k.org>, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
+        linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v3 2/2] ravb: add workaround for clock when resuming with WoL enabled
+Date: Tue,  1 Aug 2017 12:14:37 +0200
+Message-Id: <20170801101437.9020-3-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170801101437.9020-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20170801101437.9020-1-niklas.soderlund+renesas@ragnatech.se>
- <20170801101437.9020-3-niklas.soderlund+renesas@ragnatech.se>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <4e0cd03e-a2f0-2a41-7c66-903a0eed03a6@cogentembedded.com>
-Date: Tue, 1 Aug 2017 16:27:17 +0300
 MIME-Version: 1.0
-In-Reply-To: <20170801101437.9020-3-niklas.soderlund+renesas@ragnatech.se>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-MW
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 08/01/2017 01:14 PM, Niklas Söderlund wrote:
+The renesas-cpg-mssr clock driver are not yet aware of PSCI sleep where
+power is cut to the SoC. When resuming from this state with WoL enabled
+the enable count of the ravb clock is 1 and the clock driver thinks the
+clock is already on when PM core enables the clock and increments the
+enable count to 2. This will result in the ravb driver failing to talk
+to the hardware since the module clock is off. Work around this by
+forcing the enable count to 0 and then back to 2 when resuming with WoL
+enabled.
 
-> The renesas-cpg-mssr clock driver are not yet aware of PSCI sleep where
-> power is cut to the SoC. When resuming from this state with WoL enabled
-> the enable count of the ravb clock is 1 and the clock driver thinks the
-> clock is already on when PM core enables the clock and increments the
-> enable count to 2. This will result in the ravb driver failing to talk
-> to the hardware since the module clock is off. Work around this by
-> forcing the enable count to 0 and then back to 2 when resuming with WoL
-> enabled.
-> 
-> This workaround should be reverted once the renesas-cpg-mssr clock
-> driver becomes aware of this PSCI sleep behavior.
-> 
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+This workaround should be reverted once the renesas-cpg-mssr clock
+driver becomes aware of this PSCI sleep behavior.
 
-Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/net/ethernet/renesas/ravb_main.c | 27 +++++++++++++++++++++++++--
+ 1 file changed, 25 insertions(+), 2 deletions(-)
 
-MBR, Sergei
+diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+index 6d10db1b51468031..fdf30bfa403bf416 100644
+--- a/drivers/net/ethernet/renesas/ravb_main.c
++++ b/drivers/net/ethernet/renesas/ravb_main.c
+@@ -2270,9 +2270,32 @@ static int __maybe_unused ravb_resume(struct device *dev)
+ 	struct ravb_private *priv = netdev_priv(ndev);
+ 	int ret = 0;
+ 
+-	/* If WoL is enabled set reset mode to rearm the WoL logic */
+-	if (priv->wol_enabled)
++	if (priv->wol_enabled) {
++		/* Reduce the usecount of the clock to zero and then
++		 * restore it to its original value. This is done to force
++		 * the clock to be re-enabled which is a workaround
++		 * for renesas-cpg-mssr driver which do not enable clocks
++		 * when resuming from PSCI suspend/resume.
++		 *
++		 * Without this workaround the driver fails to communicate
++		 * with the hardware if WoL was enabled when the system
++		 * entered PSCI suspend. This is due to that if WoL is enabled
++		 * we explicitly keep the clock from being turned off when
++		 * suspending, but in PSCI sleep power is cut so the clock
++		 * is disabled anyhow, the clock driver is not aware of this
++		 * so the clock is not turned back on when resuming.
++		 *
++		 * TODO: once the renesas-cpg-mssr suspend/resume is working
++		 *       this clock dance should be removed.
++		 */
++		clk_disable(priv->clk);
++		clk_disable(priv->clk);
++		clk_enable(priv->clk);
++		clk_enable(priv->clk);
++
++		/* Set reset mode to rearm the WoL logic */
+ 		ravb_write(ndev, CCC_OPC_RESET, CCC);
++	}
+ 
+ 	/* All register have been reset to default values.
+ 	 * Restore all registers which where setup at probe time and
+-- 
+2.13.3
