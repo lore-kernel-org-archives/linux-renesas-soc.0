@@ -1,269 +1,175 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:59734 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933386AbdHYPjZ (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:46395 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751874AbdHASjq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 25 Aug 2017 11:39:25 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH] i2c: gpio: add fault injector
-Date: Fri, 25 Aug 2017 17:39:18 +0200
-Message-Id: <20170825153918.7544-1-wsa+renesas@sang-engineering.com>
+        Tue, 1 Aug 2017 14:39:46 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: kieran.bingham@ideasonboard.com
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 13/14] drm: rcar-du: Restrict DPLL duty cycle workaround to H3 ES1.x
+Date: Tue, 01 Aug 2017 21:39:58 +0300
+Message-ID: <1691982.bJIjkQcVu8@avalon>
+In-Reply-To: <8f72d427-4a7c-29ee-2492-d3a99449dfb8@ideasonboard.com>
+References: <20170626181226.29575-1-laurent.pinchart+renesas@ideasonboard.com> <20170626181226.29575-14-laurent.pinchart+renesas@ideasonboard.com> <8f72d427-4a7c-29ee-2492-d3a99449dfb8@ideasonboard.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add fault injection capabilities to the i2c-gpio driver. When connected to
-another I2C bus, it can create unusual states which the other I2C bus master
-driver needs to handle. Only for debugging!
+Hi Kieran,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+On Tuesday 01 Aug 2017 15:06:20 Kieran Bingham wrote:
+> On 26/06/17 19:12, Laurent Pinchart wrote:
+> > The H3 ES1.x exhibits dot clock duty cycle stability issues. We can work
+> > around them by configuring the DPLL to twice the desired frequency,
+> > coupled with a /2 post-divider. This isn't needed on other SoCs and
+> > breaks HDMI output on M3-W for a currently unknown reason, so restrict
+> > the workaround to H3 ES1.x.
+> > 
+> > From an implementation point of view, move work around handling outside
+> > of the rcar_du_dpll_divider() function by requesting a x2 DPLL output
+> > frequency explicitly. The existing post-divider calculation mechanism
+> > will then take care of dividing the clock by two automatically.
+> > 
+> > While at it, print a more useful debugging message to ease debugging
+> > clock rate issues.
+> > 
+> > Signed-off-by: Laurent Pinchart
+> > <laurent.pinchart+renesas@ideasonboard.com>
+> > ---
+> > 
+> >  drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 37 +++++++++++++++++++++-------
+> >  1 file changed, 27 insertions(+), 10 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> > b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c index 8f942ebdd0c6..6c29981377c0
+> > 100644
+> > --- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> > +++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> > @@ -13,6 +13,7 @@
+> > 
+> >  #include <linux/clk.h>
+> >  #include <linux/mutex.h>
+> > +#include <linux/sys_soc.h>
+> > 
+> >  #include <drm/drmP.h>
+> >  #include <drm/drm_atomic.h>
+> > @@ -129,10 +130,8 @@ static void rcar_du_dpll_divider(struct rcar_du_crtc
+> > *rcrtc,> 
+> >  			for (fdpll = 1; fdpll < 32; fdpll++) {
+> >  				unsigned long output;
+> > 
+> > -				/* 1/2 (FRQSEL=1) for duty rate 50% */
+> >  				output = input * (n + 1) / (m + 1)
+> > -				       / (fdpll + 1) / 2;
+> > -
+> > +				       / (fdpll + 1);
+> 
+> I'm finding this hard to interpret vs the commit-message.
+> 
+> Here we remove the /2 (which affects all targets... is this a problem?)
 
-Here is my take on the GPIO fault injection driver. I hope it can help to make
-Linux I2C bus drivers more robust. Not all ideas I had are implemented
-currently, but I think it is a nice start. Further ideas are: create
-arbitration lost, simulate a device holding SDA low and release it again,
-inject faulty bits and see if PEC works. Also, it could be considered to move
-this functionality into a seperate file. But given the size currently, I think
-it fits nicely into the main driver.
+The purpose of this function is to compute DPLL parameters for given input and 
+output frequencies. However, the current implementation computes parameters 
+that result in twice the requested frequency, assuming that the caller will 
+configure a /2 post-divider.
 
- Documentation/i2c/gpio-fault-injection |  54 ++++++++++++++++
- drivers/i2c/busses/Kconfig             |   8 +++
- drivers/i2c/busses/i2c-gpio.c          | 112 +++++++++++++++++++++++++++++++++
- 3 files changed, 174 insertions(+)
- create mode 100644 Documentation/i2c/gpio-fault-injection
+I found this confusing, so the patch modifies the function to use the 
+requested output frequency, and updates the caller accordingly. The function 
+now performs the operation described by its name.
 
-diff --git a/Documentation/i2c/gpio-fault-injection b/Documentation/i2c/gpio-fault-injection
-new file mode 100644
-index 00000000000000..e0c4f775e2390f
---- /dev/null
-+++ b/Documentation/i2c/gpio-fault-injection
-@@ -0,0 +1,54 @@
-+Linux I2C fault injection
-+=========================
-+
-+The GPIO based I2C bus master driver can be configured to provide fault
-+injection capabilities. It is then meant to be connected to another I2C bus
-+which is driven by the I2C bus master driver under test. The GPIO fault
-+injection driver can create special states on the bus which the other I2C bus
-+master driver should handle gracefully.
-+
-+Once the Kconfig option I2C_GPIO_FAULT_INJECTOR is enabled, there will be an
-+'i2c-fault-injector' subdirectory in the Kernel debugfs filesystem, usually
-+mounted at /sys/kernel/debug. There will be a separate subdirectory per GPIO
-+driven I2C bus. Each subdirectory will contain files to trigger the fault
-+injection. They will be described now along with their intended use-cases.
-+
-+"scl"
-+-----
-+
-+By reading this file, you get the current state of SCL. By writing, you can
-+change its state to either force it low or to release it again. So, by using
-+"echo 0 > scl" you force SCL low and thus, no communication will be possible
-+because the bus master under test will not be able to clock. It should detect
-+the condition of SCL being unresponsive and report an error to the upper
-+layers.
-+
-+"sda"
-+-----
-+
-+By reading this file, you get the current state of SDA. By writing, you can
-+change its state to either force it low or to release it again. So, by using
-+"echo 0 > sda" you force SDA low and thus, data cannot be transmitted. The bus
-+master under test should detect this condition and trigger a bus recovery (see
-+I2C specification version 4, section 3.1.16) using the helpers of the Linux I2C
-+core (see 'struct bus_recovery_info'). However, the bus recovery will not
-+succeed because SDA is still pinned low until you manually release it again
-+with "echo 1 > sda". A test with an automatic release can be done with the
-+'incomplete_transfer' file.
-+
-+"incomplete_transfer"
-+---------------------
-+
-+This file is write only and you need to write the address of an existing I2C
-+client device to it. Then, a transfer to this device will be started, but it
-+will stop at the ACK phase after the address of the client has been
-+transmitted. Because the device will ACK its presence, this results in SDA
-+being pulled low by the device while SCL is high. So, similar to the "sda" file
-+above, the bus master under test should detect this condition and try a bus
-+recovery. This time, however, it should succeed and the device should release
-+SDA after toggling SCL. Please note: there are I2C client devices which detect
-+a stuck SDA on their side and release it on their own after a few milliseconds.
-+Also, there are external devices deglitching and monitoring the I2C bus. They
-+can also detect a stuck SDA and will init a bus recovery on their own. If you
-+want to implement bus recovery in a bus master driver, make sure you checked
-+your hardware setup carefully before.
-diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-index 79c33817e412e6..5b03698e1a3930 100644
---- a/drivers/i2c/busses/Kconfig
-+++ b/drivers/i2c/busses/Kconfig
-@@ -587,6 +587,14 @@ config I2C_GPIO
- 	  This is a very simple bitbanging I2C driver utilizing the
- 	  arch-neutral GPIO API to control the SCL and SDA lines.
- 
-+config I2C_GPIO_FAULT_INJECTOR
-+	bool "GPIO-based fault injector"
-+	depends on I2C_GPIO
-+	help
-+	  This adds some functionality to the i2c-gpio driver which can inject
-+	  faults to an I2C bus, so another bus master can be stress-tested.
-+	  This is for debugging. If unsure, say 'no'.
-+
- config I2C_HIGHLANDER
- 	tristate "Highlander FPGA SMBus interface"
- 	depends on SH_HIGHLANDER
-diff --git a/drivers/i2c/busses/i2c-gpio.c b/drivers/i2c/busses/i2c-gpio.c
-index 0ef8fcc6ac3aca..a49cc136753eb7 100644
---- a/drivers/i2c/busses/i2c-gpio.c
-+++ b/drivers/i2c/busses/i2c-gpio.c
-@@ -7,6 +7,8 @@
-  * it under the terms of the GNU General Public License version 2 as
-  * published by the Free Software Foundation.
-  */
-+#include <linux/debugfs.h>
-+#include <linux/delay.h>
- #include <linux/i2c.h>
- #include <linux/i2c-algo-bit.h>
- #include <linux/i2c-gpio.h>
-@@ -22,6 +24,9 @@ struct i2c_gpio_private_data {
- 	struct i2c_adapter adap;
- 	struct i2c_algo_bit_data bit_data;
- 	struct i2c_gpio_platform_data pdata;
-+#ifdef CONFIG_I2C_GPIO_FAULT_INJECTOR
-+	struct dentry *debug_dir;
-+#endif
- };
- 
- /* Toggle SDA by changing the direction of the pin */
-@@ -85,6 +90,109 @@ static int i2c_gpio_getscl(void *data)
- 	return gpio_get_value(pdata->scl_pin);
- }
- 
-+#ifdef CONFIG_I2C_GPIO_FAULT_INJECTOR
-+static struct dentry *i2c_gpio_debug_dir;
-+
-+#define setsda(bd, val)	(bd)->setsda((bd)->data, val)
-+#define setscl(bd, val)	(bd)->setscl((bd)->data, val)
-+#define getsda(bd)	(bd)->getsda((bd)->data)
-+#define getscl(bd)	(bd)->getscl((bd)->data)
-+
-+#define WIRE_ATTRIBUTE(wire) \
-+static int fops_##wire##_get(void *data, u64 *val)	\
-+{							\
-+	struct i2c_gpio_private_data *priv = data;	\
-+							\
-+	i2c_lock_adapter(&priv->adap);			\
-+	*val = get##wire(&priv->bit_data);		\
-+	i2c_unlock_adapter(&priv->adap);		\
-+	return 0;					\
-+}							\
-+static int fops_##wire##_set(void *data, u64 val)	\
-+{							\
-+	struct i2c_gpio_private_data *priv = data;	\
-+							\
-+	i2c_lock_adapter(&priv->adap);			\
-+	set##wire(&priv->bit_data, val);		\
-+	i2c_unlock_adapter(&priv->adap);		\
-+	return 0;					\
-+}							\
-+DEFINE_DEBUGFS_ATTRIBUTE(fops_##wire, fops_##wire##_get, fops_##wire##_set, "%llu\n")
-+
-+WIRE_ATTRIBUTE(scl);
-+WIRE_ATTRIBUTE(sda);
-+
-+static int fops_incomplete_transfer_set(void *data, u64 addr)
-+{
-+	struct i2c_gpio_private_data *priv = data;
-+	struct i2c_algo_bit_data *bit_data = &priv->bit_data;
-+	int i, pattern;
-+
-+	if (addr > 0x7f)
-+		return -EINVAL;
-+
-+	/* ADDR (7 bit) + RD (1 bit) + SDA hi (1 bit) */
-+	pattern = (addr << 2) | 3;
-+
-+	i2c_lock_adapter(&priv->adap);
-+
-+	/* START condition */
-+	setsda(bit_data, 0);
-+	udelay(bit_data->udelay);
-+
-+	/* Send ADDR+RD, request ACK, don't send STOP */
-+	for (i = 8; i >= 0; i--) {
-+		setscl(bit_data, 0);
-+		udelay(bit_data->udelay / 2);
-+		setsda(bit_data, (pattern >> i) & 1);
-+		udelay((bit_data->udelay + 1) / 2);
-+		setscl(bit_data, 1);
-+		udelay(bit_data->udelay);
-+	}
-+
-+	i2c_unlock_adapter(&priv->adap);
-+
-+	return 0;
-+}
-+DEFINE_DEBUGFS_ATTRIBUTE(fops_incomplete_transfer, NULL, fops_incomplete_transfer_set, "%llu\n");
-+
-+static void i2c_gpio_fault_injector_init(struct platform_device *pdev)
-+{
-+	struct i2c_gpio_private_data *priv = platform_get_drvdata(pdev);
-+
-+	/*
-+	 * If there will be a debugfs-dir per i2c adapter somewhen, put the
-+	 * 'fault-injector' dir there. Until then, we have a global dir with
-+	 * all adapters as subdirs.
-+	 */
-+	if (!i2c_gpio_debug_dir) {
-+		i2c_gpio_debug_dir = debugfs_create_dir("i2c-fault-injector", NULL);
-+		if (!i2c_gpio_debug_dir)
-+			return;
-+	}
-+
-+	priv->debug_dir = debugfs_create_dir(pdev->name, i2c_gpio_debug_dir);
-+	if (!priv->debug_dir)
-+		return;
-+
-+	debugfs_create_file_unsafe("scl", S_IWUSR | S_IRUSR, priv->debug_dir, priv, &fops_scl);
-+	debugfs_create_file_unsafe("sda", S_IWUSR | S_IRUSR, priv->debug_dir, priv, &fops_sda);
-+	debugfs_create_file_unsafe("incomplete_transfer", S_IWUSR, priv->debug_dir,
-+				   priv, &fops_incomplete_transfer);
-+}
-+
-+static void inline i2c_gpio_fault_injector_exit(struct platform_device *pdev)
-+{
-+	struct i2c_gpio_private_data *priv = platform_get_drvdata(pdev);
-+
-+	debugfs_remove_recursive(priv->debug_dir);
-+}
-+#else
-+static void inline i2c_gpio_fault_injector_init(struct platform_device *pdev) {}
-+static void inline i2c_gpio_fault_injector_exit(struct platform_device *pdev) {}
-+#endif /* CONFIG_I2C_GPIO_FAULT_INJECTOR*/
-+
-+
- static int of_i2c_gpio_get_pins(struct device_node *np,
- 				unsigned int *sda_pin, unsigned int *scl_pin)
- {
-@@ -232,6 +340,8 @@ static int i2c_gpio_probe(struct platform_device *pdev)
- 		 pdata->scl_is_output_only
- 		 ? ", no clock stretching" : "");
- 
-+	i2c_gpio_fault_injector_init(pdev);
-+
- 	return 0;
- }
- 
-@@ -240,6 +350,8 @@ static int i2c_gpio_remove(struct platform_device *pdev)
- 	struct i2c_gpio_private_data *priv;
- 	struct i2c_adapter *adap;
- 
-+	i2c_gpio_fault_injector_exit(pdev);
-+
- 	priv = platform_get_drvdata(pdev);
- 	adap = &priv->adap;
- 
+This indeed affects all targets, but there's no DPLL on Gen2, so in practice 
+only H3 and M3-W are affected.
+
+> >  				if (output >= 400000000)
+> >  					continue;
+
+[snip]
+
+> > @@ -185,7 +189,20 @@ static void rcar_du_crtc_set_display_timing(struct
+> > rcar_du_crtc *rcrtc)> 
+> >  		extclk = clk_get_rate(rcrtc->extclock);
+> >  		if (rcdu->info->dpll_ch & (1 << rcrtc->index)) {
+> > 
+> > -			rcar_du_dpll_divider(rcrtc, &dpll, extclk,
+> > mode_clock);
+> > +			unsigned long target = mode_clock;
+> > +
+> > +			/*
+> > +			 * The H3 ES1.x exhibits dot clock duty cycle
+> > stability
+> > +			 * issues. We can work around them by configuring the
+> > +			 * DPLL to twice the desired frequency, coupled with a
+> > +			 * /2 post-divider. This isn't needed on other SoCs
+> > and
+> 
+> But here we discuss 'coupling' it with a /2 post - divider.
+> 
+> My inference here then is that by setting a target that is 'twice' the value
+> - code later will provide the /2 post-divide?
+
+Correct. The /2 post-divider is required on H3 ES1.x to obtain a stable output 
+clock, so the output of the DPLL has to be twice the pixel clock frequency. 
+Based on my understanding it shouldn't hurt to do the same on H3 ES2.0 and M3-
+W, but in practice that doesn't work. I've thus restricted the post-divider to 
+H3 ES1.x.
+
+> > +			 * breaks HDMI output on M3-W for a currently unknown
+> > +			 * reason, so restrict the workaround to H3 ES1.x.
+> > +			 */
+> > +			if (soc_device_match(rcar_du_r8a7795_es1))
+> > +				target *= 2;
+> > +
+> > +			rcar_du_dpll_divider(rcrtc, &dpll, extclk, target);
+> >  			extclk = dpll.output;
+> >  		}
+> > 
+> > @@ -197,8 +214,6 @@ static void rcar_du_crtc_set_display_timing(struct
+> > rcar_du_crtc *rcrtc)
+> >  		if (abs((long)extrate - (long)mode_clock) <
+> >  		    abs((long)rate - (long)mode_clock)) {
+> > -			dev_dbg(rcrtc->group->dev->dev,
+> > -				"crtc%u: using external clock\n", rcrtc-
+>index);
+> > 
+> >  			if (rcdu->info->dpll_ch & (1 << rcrtc->index)) {
+> >  				u32 dpllcr = DPLLCR_CODE | DPLLCR_CLKE
+> > 
+> > @@ -215,12 +230,14 @@ static void rcar_du_crtc_set_display_timing(struct
+> > rcar_du_crtc *rcrtc)
+> >  				rcar_du_group_write(rcrtc->group, DPLLCR,
+> >  						    dpllcr);
+> > -
+> > -				escr = ESCR_DCLKSEL_DCLKIN | 1;
+> > -			} else {
+> > -				escr = ESCR_DCLKSEL_DCLKIN | extdiv;
+> >  			}
+> > +
+> > +			escr = ESCR_DCLKSEL_DCLKIN | extdiv;
+> 
+> Therefore - is this the post-divider?
+
+Correct again. extdiv is computed as DPLL output frequency / pixel clock 
+frequency, so there's no need for any SoC-specific code here.
+
+> If my inferences are correct - then OK:
+> 
+> Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> 
+> >  		}
+> > +
+> > +		dev_dbg(rcrtc->group->dev->dev,
+> > +			"mode clock %lu extrate %lu rate %lu ESCR 0x%08x\n",
+> > +			mode_clock, extrate, rate, escr);
+> >  	}
+> >  	
+> >  	rcar_du_group_write(rcrtc->group, rcrtc->index % 2 ? ESCR2 : ESCR,
+
 -- 
-2.11.0
+Regards,
+
+Laurent Pinchart
