@@ -5,10 +5,9 @@ To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
 Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 References: <20170626181226.29575-1-laurent.pinchart+renesas@ideasonboard.com>
  <20170626181226.29575-14-laurent.pinchart+renesas@ideasonboard.com>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reply-To: kieran.bingham@ideasonboard.com
-Message-ID: <8f72d427-4a7c-29ee-2492-d3a99449dfb8@ideasonboard.com>
-Date: Tue, 1 Aug 2017 15:06:20 +0100
+From: Kieran Bingham <kieranbingham@gmail.com>
+Message-ID: <32012664-1b18-3e7e-783a-052c253ecf0b@gmail.com>
+Date: Tue, 1 Aug 2017 15:04:16 +0100
 MIME-Version: 1.0
 In-Reply-To: <20170626181226.29575-14-laurent.pinchart+renesas@ideasonboard.com>
 Content-Type: text/plain; charset=utf-8
@@ -133,9 +132,6 @@ Therefore - is this the post-divider?
 If my inferences are correct - then OK:
 
 Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
---
-KB
 
 >  		}
 > +
