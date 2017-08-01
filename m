@@ -5,10 +5,9 @@ To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
 Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 References: <20170626181226.29575-1-laurent.pinchart+renesas@ideasonboard.com>
  <20170626181226.29575-11-laurent.pinchart+renesas@ideasonboard.com>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reply-To: kieran.bingham@ideasonboard.com
-Message-ID: <2a9f5843-8343-b5b9-e32f-9ba21d146ae4@ideasonboard.com>
-Date: Tue, 1 Aug 2017 19:39:49 +0100
+From: Kieran Bingham <kieranbingham@gmail.com>
+Message-ID: <c16d8c7a-eebe-6375-0472-e4fb660b8cb2@gmail.com>
+Date: Tue, 1 Aug 2017 19:16:06 +0100
 MIME-Version: 1.0
 In-Reply-To: <20170626181226.29575-11-laurent.pinchart+renesas@ideasonboard.com>
 Content-Type: text/plain; charset=utf-8
@@ -18,8 +17,8 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hi Laurent,
 
-Last one - (and I thought I'd already done this one in the last batch .. but
-perhaps I lost it before hitting send)
+Last one - (and I thought I'd already done this one... but perhaps I lost it
+before hitting send)
 
 On 26/06/17 19:12, Laurent Pinchart wrote:
 > The R-Car H3 ES2.0 VSP-DL instance has two LIF entities and can drive
@@ -28,12 +27,6 @@ On 26/06/17 19:12, Laurent Pinchart wrote:
 > display pipeline.
 > 
 > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-
-I can't see anything wrong here, so maybe my eyes are going fuzzy from all the
-blue text in my mail client :-)
-
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
 > ---
 >  drivers/media/platform/vsp1/vsp1_drm.c | 200 ++++++++++++++++++++-------------
 >  drivers/media/platform/vsp1/vsp1_drm.h |  35 +++---
