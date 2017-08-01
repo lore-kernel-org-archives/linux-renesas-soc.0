@@ -1,161 +1,156 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:7082 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751393AbdIACo6 (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:46445 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751912AbdHATBl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 31 Aug 2017 22:44:58 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: kishon@ti.com
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v3 2/4] phy: rcar-gen3-usb2: split the two meaning of "has_otg"
-Date: Fri,  1 Sep 2017 11:41:23 +0900
-Message-Id: <1504233685-17947-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1504233685-17947-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1504233685-17947-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Tue, 1 Aug 2017 15:01:41 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: kieran.bingham@ideasonboard.com
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 12/14] drm: rcar-du: Support multiple sources from the same VSP
+Date: Tue, 01 Aug 2017 22:01:53 +0300
+Message-ID: <1792412.y3GJ2ps3ge@avalon>
+In-Reply-To: <2ff1d13c-cdf9-3e65-d24d-72b9deb3d3cb@ideasonboard.com>
+References: <20170626181226.29575-1-laurent.pinchart+renesas@ideasonboard.com> <20170626181226.29575-13-laurent.pinchart+renesas@ideasonboard.com> <2ff1d13c-cdf9-3e65-d24d-72b9deb3d3cb@ideasonboard.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The has_otg on previous code has the two meaning:
- - The channel has dedicated otg pins (ID, VBUS).
- - The channel can swap the role via sysfs.
+Hi Kieran,
 
-However, some SoCs (e.g. R-Car D3) doesn't have such dedicated pins,
-but the SoCs can swap the role. So, this patch split the two meaning
-of has_otg as "has dedicated otg pins" and adds a new value
-"can_role_swap". For now, the behavior is the same as before.
+On Tuesday 01 Aug 2017 19:10:20 Kieran Bingham wrote:
+> On 26/06/17 19:12, Laurent Pinchart wrote:
+> > On R-Car H3 ES2.0, DU channels 0 and 3 are served by two separate
+> > pipelines from the same VSP. Support this in the DU driver.
+> > 
+> > Signed-off-by: Laurent Pinchart
+> > <laurent.pinchart+renesas@ideasonboard.com>
+> 
+> This looks good to me.
+> 
+> Minor nit / comment can be safely ignored. Mostly just me thinking outload.
+> 
+> Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> 
+> > ---
+> > 
+> >  drivers/gpu/drm/rcar-du/rcar_du_crtc.c |  2 +-
+> >  drivers/gpu/drm/rcar-du/rcar_du_crtc.h |  3 ++
+> >  drivers/gpu/drm/rcar-du/rcar_du_kms.c  | 91 +++++++++++++++++++++++++----
+> >  drivers/gpu/drm/rcar-du/rcar_du_vsp.c  | 37 +++++++-------
+> >  drivers/gpu/drm/rcar-du/rcar_du_vsp.h  | 10 +++-
+> >  5 files changed, 110 insertions(+), 33 deletions(-)
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/phy/renesas/phy-rcar-gen3-usb2.c | 61 ++++++++++++++++++++++----------
- 1 file changed, 42 insertions(+), 19 deletions(-)
+[snip]
 
-diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-index e00e99a..4ea9902 100644
---- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-@@ -87,7 +87,8 @@ struct rcar_gen3_chan {
- 	struct regulator *vbus;
- 	struct work_struct work;
- 	bool extcon_host;
--	bool has_otg;
-+	bool has_otg;	/* has dedicated pins (ID, VBUS) */
-+	bool can_role_swap;
- };
- 
- static void rcar_gen3_phy_usb2_work(struct work_struct *work)
-@@ -219,14 +220,10 @@ static bool rcar_gen3_is_host(struct rcar_gen3_chan *ch)
- 	return !(readl(ch->base + USB2_COMMCTRL) & USB2_COMMCTRL_OTG_PERI);
- }
- 
--static ssize_t role_store(struct device *dev, struct device_attribute *attr,
--			  const char *buf, size_t count)
-+static ssize_t rcar_gen3_otg_change_role(struct rcar_gen3_chan *ch,
-+					 bool new_mode_is_host)
- {
--	struct rcar_gen3_chan *ch = dev_get_drvdata(dev);
--	bool is_b_device, is_host, new_mode_is_host;
--
--	if (!ch->has_otg || !ch->phy->init_count)
--		return -EIO;
-+	bool is_b_device, is_host;
- 
- 	/*
- 	 * is_b_device: true is B-Device. false is A-Device.
-@@ -234,12 +231,6 @@ static ssize_t role_store(struct device *dev, struct device_attribute *attr,
- 	 */
- 	is_b_device = rcar_gen3_check_id(ch);
- 	is_host = rcar_gen3_is_host(ch);
--	if (!strncmp(buf, "host", strlen("host")))
--		new_mode_is_host = true;
--	else if (!strncmp(buf, "peripheral", strlen("peripheral")))
--		new_mode_is_host = false;
--	else
--		return -EINVAL;
- 
- 	/* If current and new mode is the same, this returns the error */
- 	if (is_host == new_mode_is_host)
-@@ -257,6 +248,32 @@ static ssize_t role_store(struct device *dev, struct device_attribute *attr,
- 			rcar_gen3_init_for_peri(ch);
- 	}
- 
-+	return 0;
-+}
-+
-+static ssize_t role_store(struct device *dev, struct device_attribute *attr,
-+			  const char *buf, size_t count)
-+{
-+	struct rcar_gen3_chan *ch = dev_get_drvdata(dev);
-+	bool new_mode_is_host;
-+	ssize_t ret = -EIO;
-+
-+	if (!ch->phy->init_count)
-+		return -EIO;
-+
-+	if (!strncmp(buf, "host", strlen("host")))
-+		new_mode_is_host = true;
-+	else if (!strncmp(buf, "peripheral", strlen("peripheral")))
-+		new_mode_is_host = false;
-+	else
-+		return -EINVAL;
-+
-+	if (ch->has_otg)
-+		ret = rcar_gen3_otg_change_role(ch, new_mode_is_host);
-+
-+	if (ret < 0)
-+		return ret;
-+
- 	return count;
- }
- 
-@@ -264,12 +281,17 @@ static ssize_t role_show(struct device *dev, struct device_attribute *attr,
- 			 char *buf)
- {
- 	struct rcar_gen3_chan *ch = dev_get_drvdata(dev);
-+	bool is_host;
- 
--	if (!ch->has_otg || !ch->phy->init_count)
-+	if (!ch->phy->init_count)
- 		return -EIO;
- 
--	return sprintf(buf, "%s\n", rcar_gen3_is_host(ch) ? "host" :
--							    "peripheral");
-+	if (ch->has_otg)
-+		is_host = rcar_gen3_is_host(ch);
-+	else
-+		return -EIO;
-+
-+	return sprintf(buf, "%s\n", is_host ? "host" : "peripheral");
- }
- static DEVICE_ATTR_RW(role);
- 
-@@ -427,6 +449,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 		int ret;
- 
- 		channel->has_otg = true;
-+		channel->can_role_swap = true;
- 		channel->extcon = devm_extcon_dev_allocate(dev,
- 							rcar_gen3_phy_cable);
- 		if (IS_ERR(channel->extcon))
-@@ -468,7 +491,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 		dev_err(dev, "Failed to register PHY provider\n");
- 		ret = PTR_ERR(provider);
- 		goto error;
--	} else if (channel->has_otg) {
-+	} else if (channel->can_role_swap) {
- 		int ret;
- 
- 		ret = device_create_file(dev, &dev_attr_role);
-@@ -488,7 +511,7 @@ static int rcar_gen3_phy_usb2_remove(struct platform_device *pdev)
- {
- 	struct rcar_gen3_chan *channel = platform_get_drvdata(pdev);
- 
--	if (channel->has_otg)
-+	if (channel->can_role_swap)
- 		device_remove_file(&pdev->dev, &dev_attr_role);
- 
- 	pm_runtime_disable(&pdev->dev);
+> > diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+> > b/drivers/gpu/drm/rcar-du/rcar_du_kms.c index f4125c8ca902..82b978a5dae6
+> > 100644
+> > --- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+> > +++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+> > @@ -432,6 +432,83 @@ static int rcar_du_properties_init(struct
+> > rcar_du_device *rcdu)
+> >  	return 0;
+> >  }
+> > 
+> > +static int rcar_du_vsps_init(struct rcar_du_device *rcdu)
+> > +{
+> > +	const struct device_node *np = rcdu->dev->of_node;
+> > +	struct of_phandle_args args;
+> > +	struct {
+> > +		struct device_node *np;
+> > +		unsigned int crtcs_mask;
+> > +	} vsps[RCAR_DU_MAX_VSPS] = { { 0, }, };
+> > +	unsigned int vsps_count = 0;
+> > +	unsigned int cells;
+> > +	unsigned int i;
+> > +	int ret;
+> > +
+> > +	/*
+> > +	 * First parse the DT vsps property to populate the list of VSPs. Each
+> > +	 * entry contains a pointer to the VSP DT node and a bitmask of the
+> > +	 * connected DU CRTCs.
+> > +	 */
+> > +	cells = of_property_count_u32_elems(np, "vsps") / rcdu->num_crtcs - 1;
+> > +	if (cells > 1)
+> > +		return -EINVAL;
+> > +
+> > +	for (i = 0; i < rcdu->num_crtcs; ++i) {
+> > +		unsigned int j;
+> > +
+> > +		ret = of_parse_phandle_with_fixed_args(np, "vsps", cells, i,
+> > +						       &args);
+> > +		if (ret < 0)
+> > +			goto error;
+> > +
+> > +		/*
+> > +		 * Add the VSP to the list or update the corresponding
+> > existing
+> > +		 * entry if the VSP has already been added.
+> > +		 */
+> > +		for (j = 0; j < vsps_count; ++j) {
+> > +			if (vsps[j].np == args.np)
+> > +				break;
+> > +		}
+> > +
+> > +		if (j < vsps_count)
+> > +			of_node_put(args.np);
+> > +		else
+> > +			vsps[vsps_count++].np = args.np;
+> > +
+> > +		vsps[j].crtcs_mask |= 1 << i;
+> 
+> I do love the BIT(x) macro personally - but it's not important :)
+
+I wonder why I don't like the BIT macro. There's probably no good reason.
+
+> > +
+> > +		/* Store the VSP pointer and pipe index in the CRTC. */
+> > +		rcdu->crtcs[i].vsp = &rcdu->vsps[j];
+> > +		rcdu->crtcs[i].vsp_pipe = cells >= 1 ? args.args[0] : 0;
+> > +	}
+> > +
+> > +	/*
+> > +	 * Then initialize all the VSPs from the node pointers and CRTCs
+> > bitmask
+> > +	 * computed previously.
+> > +	 */
+> > +	for (i = 0; i < vsps_count; ++i) {
+> > +		struct rcar_du_vsp *vsp = &rcdu->vsps[i];
+> > +
+> > +		vsp->index = i;
+> > +		vsp->dev = rcdu;
+> > +
+> > +		ret = rcar_du_vsp_init(vsp, vsps[i].np, vsps[i].crtcs_mask);
+> > +		if (ret < 0)
+> > +			goto error;
+> > +	}
+> > +
+> > +	return 0;
+> > +
+> > +error:
+> > +	for (i = 0; i < ARRAY_SIZE(vsps); ++i) {
+> > +		if (vsps[i].np)
+> 
+> Minor nit: of_node_put already has NULL protection so we don't need this
+> 'if' but it probably does make it clearer that we are only putting back
+> nodes that we collected.
+
+It's a good point, I'll remove the check.
+
+> > +			of_node_put(vsps[i].np);
+> > +	}
+> > +
+> > +	return ret;
+> > +}
+
+[snip]
+
 -- 
-1.9.1
+Regards,
+
+Laurent Pinchart
