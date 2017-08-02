@@ -1,79 +1,104 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:34140 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751988AbdHBTvc (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:32945 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751180AbdHBMsw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 Aug 2017 15:51:32 -0400
-Date: Wed, 2 Aug 2017 21:51:29 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH mmc/next] mmc: renesas-sdhi: provide a whitelist for Gen3
- SoC ES versions
-Message-ID: <20170802195129.5vf6xc7q7dfaphgx@ninjato>
-References: <1501678122-13956-1-git-send-email-horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="4ap2iajdbxesm4pb"
-Content-Disposition: inline
-In-Reply-To: <1501678122-13956-1-git-send-email-horms+renesas@verge.net.au>
+        Wed, 2 Aug 2017 08:48:52 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH mmc/next] mmc: renesas-sdhi: provide a whitelist for Gen3 SoC ES versions
+Date: Wed,  2 Aug 2017 14:48:42 +0200
+Message-Id: <1501678122-13956-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Provide a whitelist for Gen3 SoC ES versions for both the SYS DMAC and
+internal DMAC variants of the SDHI driver.  This is to allow drivers to
+only initialise for Gen3 SoC ES versions for which they are the appropriate
+DMAC implementation.  Currently internal DMAC is the appropriate
+implementation for all supported Gen3 SoC ES versions.
 
---4ap2iajdbxesm4pb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c | 15 +++++++++++++++
+ drivers/mmc/host/renesas_sdhi_sys_dmac.c      | 15 +++++++++++++++
+ 2 files changed, 30 insertions(+)
 
-On Wed, Aug 02, 2017 at 02:48:42PM +0200, Simon Horman wrote:
-> Provide a whitelist for Gen3 SoC ES versions for both the SYS DMAC and
-> internal DMAC variants of the SDHI driver.  This is to allow drivers to
-> only initialise for Gen3 SoC ES versions for which they are the appropria=
-te
-> DMAC implementation.  Currently internal DMAC is the appropriate
-> implementation for all supported Gen3 SoC ES versions.
->=20
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-> +/*
-> + * Whitelist of specific R-Car Gen3 SoC ES versions to use this DMAC
-> + * implementation. Currently empty as all supported ES versions use
-> + * the internal DMAC.
-> + */
-> +static const struct soc_device_attribute gen3_soc_whitelist[] =3D {
-> +        { /* sentinel */ }
-> +};
-
-It may look strange to add an empty list, but I think it is worth it. We
-have good reasons to believe the soc_device_match distinction is
-necessary and I think it is good to be clear from the beginning how we
-want to deal with the differences.
-
-
---4ap2iajdbxesm4pb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlmCLT0ACgkQFA3kzBSg
-KbY41g/9GbOeTZ4zxaqMitpQYfuEfAiUk8pctTl9bOVke2u2peOf5C6Bd4Vl+lcT
-lCJnBCBNbNDsTB6PrBOmn9B5iTVIkPTz7LzEHrPNlgTSTCeiH+LGncmIvP8fCdPK
-RM/Es6FnO4uY2eiR9jIuF6bg7/OlyERo6Az2C5dFuCp8Gf9SpJJAjIq01O47h8ll
-re9WCDYI3LwrE7cMYw3X+F1XP9ET+Q8mqtAi/KN9Sy8SsjHVwdMeBj1EB3j2Wb9Y
-o3L/9rpYdQ6YPWWrAJCfZLYqNo8TZNEHUqWHsqqDis6f3RNRF7aLEJBTTTDpPExE
-xG+a5NU4seJleYCAfkAsxcVjCWVakSvIAUj5kLPzdzn3jGYR0gD1xqyBEoidvrIf
-TK0ef1MgA5CkgGLyJPLm7/Q0qgJkuvLKOHbuqc/DypJPFCnRov8HvRcONFu+PAaN
-sGhmR7AhrN6abZ0s6yGNR5rS3pW3Ku7o3z51vYvcC/4FUz6PrrlLZkg40LBB0SR6
-1DzAFi5lZq28qW0CstL2XPkaOhrR45mHIntk+ovwihCwrL6UBYFZZz7Mo2NhrXv/
-Zi3STjo1FWukIoD3HJaMhA2ldPqXd0FCUvgCQ2HdRpDBFYLvsv8VV73Zg9YEt/sc
-620vK0mdAFFIevTJCb9U+ox9ZZISn502emcPgXg4pf3QBmrbphA=
-=1RAl
------END PGP SIGNATURE-----
-
---4ap2iajdbxesm4pb--
+diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+index a26c6ed8e029..6717003888e2 100644
+--- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+@@ -18,6 +18,7 @@
+ #include <linux/module.h>
+ #include <linux/pagemap.h>
+ #include <linux/scatterlist.h>
++#include <linux/sys_soc.h>
+ 
+ #include "renesas_sdhi.h"
+ #include "tmio_mmc.h"
+@@ -241,8 +242,22 @@ static struct tmio_mmc_dma_ops renesas_sdhi_internal_dmac_dma_ops = {
+ 	.dataend = renesas_sdhi_internal_dmac_dataend_dma,
+ };
+ 
++/*
++ * Whitelist of specific R-Car Gen3 SoC ES versions to use this DMAC
++ * implementation as others may use a different implementation.
++ */
++static const struct soc_device_attribute gen3_soc_whitelist[] = {
++        { .soc_id = "r8a7795", .revision = "ES1.*" },
++        { .soc_id = "r8a7795", .revision = "ES2.0" },
++        { .soc_id = "r8a7796", .revision = "ES1.0" },
++        { /* sentinel */ }
++};
++
+ static int renesas_sdhi_internal_dmac_probe(struct platform_device *pdev)
+ {
++	if (!soc_device_match(gen3_soc_whitelist))
++		return -ENODEV;
++
+ 	return renesas_sdhi_probe(pdev, &renesas_sdhi_internal_dmac_dma_ops);
+ }
+ 
+diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+index b6789f5197b3..718cb8a9d2ce 100644
+--- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+@@ -18,8 +18,10 @@
+ #include <linux/mmc/host.h>
+ #include <linux/mod_devicetable.h>
+ #include <linux/module.h>
++#include <linux/of_device.h>
+ #include <linux/pagemap.h>
+ #include <linux/scatterlist.h>
++#include <linux/sys_soc.h>
+ 
+ #include "renesas_sdhi.h"
+ #include "tmio_mmc.h"
+@@ -459,8 +461,21 @@ static const struct tmio_mmc_dma_ops renesas_sdhi_sys_dmac_dma_ops = {
+ 	.dataend = renesas_sdhi_sys_dmac_dataend_dma,
+ };
+ 
++/*
++ * Whitelist of specific R-Car Gen3 SoC ES versions to use this DMAC
++ * implementation. Currently empty as all supported ES versions use
++ * the internal DMAC.
++ */
++static const struct soc_device_attribute gen3_soc_whitelist[] = {
++        { /* sentinel */ }
++};
++
+ static int renesas_sdhi_sys_dmac_probe(struct platform_device *pdev)
+ {
++	if (of_device_get_match_data(&pdev->dev) == &of_rcar_gen3_compatible &&
++	    !soc_device_match(gen3_soc_whitelist))
++		return -ENODEV;
++
+ 	return renesas_sdhi_probe(pdev, &renesas_sdhi_sys_dmac_dma_ops);
+ }
+ 
+-- 
+2.1.4
