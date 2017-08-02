@@ -1,93 +1,96 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Thu, 3 Aug 2017 17:28:08 -0500
-From: Rob Herring <robh@kernel.org>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: balbi@kernel.org, mark.rutland@arm.com, gregkh@linuxfoundation.org,
-        linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH 3/3] usb: gadget: udc: renesas_usb3: add support for
- R-Car M3-W
-Message-ID: <20170803222808.v24lt5bzvpzmjwcj@rob-hp-laptop>
-References: <1501244219-11840-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1501244219-11840-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1501244219-11840-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52994 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753103AbdHBRaU (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 2 Aug 2017 13:30:20 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>,
+        "Yokoyama (Renesas)" <hiroyuki.yokoyama.vx@renesas.com>,
+        alsa-devel@alsa-project.org
+In-Reply-To: <87k22mp8zh.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1dcxTK-0003nA-0s@debutante>
+Date: Wed, 02 Aug 2017 18:30:14 +0100
+Subject: Applied "ASoC: rcar: unregister fixed rate on ADG" to the asoc tree
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Jul 28, 2017 at 09:16:59PM +0900, Yoshihiro Shimoda wrote:
-> This patch adds support for R-Car M3-W. This patch also adds R-Car
-> Gen3 generic version's compatible.
-> 
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> ---
->  Documentation/devicetree/bindings/usb/renesas_usb3.txt | 16 +++++++++++++---
->  drivers/usb/gadget/udc/renesas_usb3.c                  |  8 ++++++++
->  2 files changed, 21 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/usb/renesas_usb3.txt b/Documentation/devicetree/bindings/usb/renesas_usb3.txt
-> index 8d52766..e280258 100644
-> --- a/Documentation/devicetree/bindings/usb/renesas_usb3.txt
-> +++ b/Documentation/devicetree/bindings/usb/renesas_usb3.txt
-> @@ -3,20 +3,30 @@ Renesas Electronics USB3.0 Peripheral driver
->  Required properties:
->    - compatible: Must contain one of the following:
->  	- "renesas,r8a7795-usb3-peri"
-> +	- "renesas,r8a7796-usb3-peri"
-> +	- "renesas,rcar-gen3-usb3-peri" for a generic R-Car Gen3 compatible
-> +	  device
-> +
-> +    When compatible with the generic version, nodes must list the
-> +    SoC-specific version corresponding to the platform first
-> +    followed by the generic version.
-> +
->    - reg: Base address and length of the register for the USB3.0 Peripheral
->    - interrupts: Interrupt specifier for the USB3.0 Peripheral
->    - clocks: clock phandle and specifier pair
->  
-> -Example:
-> +Example of R-Car H3 ES1.x:
->  	usb3_peri0: usb@ee020000 {
-> -		compatible = "renesas,r8a7795-usb3-peri";
-> +		compatible = "renesas,r8a7795-usb3-peri",
-> +			     "renesas,rcar-gen3-usb3-peri";
->  		reg = <0 0xee020000 0 0x400>;
->  		interrupts = <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>;
->  		clocks = <&cpg CPG_MOD 328>;
->  	};
->  
->  	usb3_peri1: usb@ee060000 {
-> -		compatible = "renesas,r8a7795-usb3-peri";
-> +		compatible = "renesas,r8a7795-usb3-peri",
-> +			     "renesas,rcar-gen3-usb3-peri";
->  		reg = <0 0xee060000 0 0x400>;
->  		interrupts = <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
->  		clocks = <&cpg CPG_MOD 327>;
-> diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
-> index aa2b185..45410f3 100644
-> --- a/drivers/usb/gadget/udc/renesas_usb3.c
-> +++ b/drivers/usb/gadget/udc/renesas_usb3.c
-> @@ -2506,6 +2506,14 @@ static void renesas_usb3_init_ram(struct renesas_usb3 *usb3, struct device *dev,
->  		.compatible = "renesas,r8a7795-usb3-peri",
->  		.data = &renesas_usb3_priv_gen3,
->  	},
-> +	{
-> +		.compatible = "renesas,r8a7796-usb3-peri",
-> +		.data = &renesas_usb3_priv_gen3,
-> +	},
-> +	{
-> +		.compatible = "renesas,rcar-gen3-usb3-peri",
-> +		.data = &renesas_usb3_priv_gen3,
+The patch
 
-What's the point of a common fallback if you list all the compatibles in 
-the driver?
+   ASoC: rcar: unregister fixed rate on ADG
 
-> +	},
->  	{ },
->  };
->  MODULE_DEVICE_TABLE(of, usb3_of_match);
-> -- 
-> 1.9.1
-> 
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From e3c6de48133ff1355f14a31a74a9027834c0fd65 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Wed, 2 Aug 2017 10:26:09 +0000
+Subject: [PATCH] ASoC: rcar: unregister fixed rate on ADG
+
+ADG is registering fixed rate clock for audio_clkout, but it had not
+been unregister clock when removing.
+
+Salvator-X board is using ak4613 driver now, and it supports
+hw_constraints from commit 907cd8809eebc ("ASoC: ak4613: add
+hw_constraint rule for Sampling Rate").
+And this calculation is using input clk. This ak4613 input clock is
+ADG clkout on Salvator-X.
+
+Because ADG had not been unregister clkout when unbinding, it receives
+fixed rate clk register error when re-binding.
+Thus, ak4613 can't get correct input clock, and hw_constraints will be
+failed after re-binding.
+This means Salvator-X board can't use sound after unbind/bind.
+
+This patch solves this issue.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/sh/rcar/adg.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/sound/soc/sh/rcar/adg.c b/sound/soc/sh/rcar/adg.c
+index 197cb3ec075f..5b5389e5b92b 100644
+--- a/sound/soc/sh/rcar/adg.c
++++ b/sound/soc/sh/rcar/adg.c
+@@ -610,6 +610,13 @@ void rsnd_adg_remove(struct rsnd_priv *priv)
+ {
+ 	struct device *dev = rsnd_priv_to_dev(priv);
+ 	struct device_node *np = dev->of_node;
++	struct rsnd_adg *adg = priv->adg;
++	struct clk *clk;
++	int i;
++
++	for_each_rsnd_clkout(clk, adg, i)
++		if (adg->clkout[i])
++			clk_unregister_fixed_rate(adg->clkout[i]);
+ 
+ 	of_clk_del_provider(np);
+ 
+-- 
+2.13.2
