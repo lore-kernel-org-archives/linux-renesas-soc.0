@@ -1,49 +1,82 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f179.google.com ([209.85.192.179]:36369 "EHLO
-        mail-pf0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751643AbdHPIou (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:29891 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751600AbdHBMyW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Aug 2017 04:44:50 -0400
+        Wed, 2 Aug 2017 08:54:22 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
+        linus.walleij@linaro.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 2/2] pinctrl: sh-pfc: r8a7796: Add USB3.0 host pins, groups and functions
+Date: Wed,  2 Aug 2017 21:51:10 +0900
+Message-Id: <1501678270-922-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1501678270-922-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1501678270-922-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-In-Reply-To: <1501678270-922-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1501678270-922-1-git-send-email-yoshihiro.shimoda.uh@renesas.com> <1501678270-922-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 16 Aug 2017 10:44:49 +0200
-Message-ID: <CAMuHMdUV1NxJWikuPiKHymzkQQN5FE0biUV9Xsw6S8pzsfniCw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: r8a7796: Add USB3.0 host pins,
- groups and functions
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Aug 2, 2017 at 2:51 PM, Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->
-> This patch adds USB30 (USB3.0 host) pin, group and function to R8A7796
-> SoC.
->
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This patch adds USB30 (USB3.0 host) pin, group and function to R8A7796
+SoC.
 
-i.e. will queue in sh-pfc-for-v4.14.
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+index 2a831d3..200e1f4 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+@@ -3805,6 +3805,15 @@ enum {
+ 	USB1_PWEN_MARK, USB1_OVC_MARK,
+ };
+ 
++/* - USB30 ------------------------------------------------------------------ */
++static const unsigned int usb30_pins[] = {
++	/* PWEN, OVC */
++	RCAR_GP_PIN(6, 28), RCAR_GP_PIN(6, 29),
++};
++static const unsigned int usb30_mux[] = {
++	USB30_PWEN_MARK, USB30_OVC_MARK,
++};
++
+ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(audio_clk_a_a),
+ 	SH_PFC_PIN_GROUP(audio_clk_a_b),
+@@ -4107,6 +4116,7 @@ enum {
+ 	SH_PFC_PIN_GROUP(ssi9_ctrl_b),
+ 	SH_PFC_PIN_GROUP(usb0),
+ 	SH_PFC_PIN_GROUP(usb1),
++	SH_PFC_PIN_GROUP(usb30),
+ };
+ 
+ static const char * const audio_clk_groups[] = {
+@@ -4545,6 +4555,10 @@ enum {
+ 	"usb1",
+ };
+ 
++static const char * const usb30_groups[] = {
++	"usb30",
++};
++
+ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(audio_clk),
+ 	SH_PFC_FUNCTION(avb),
+@@ -4591,6 +4605,7 @@ enum {
+ 	SH_PFC_FUNCTION(ssi),
+ 	SH_PFC_FUNCTION(usb0),
+ 	SH_PFC_FUNCTION(usb1),
++	SH_PFC_FUNCTION(usb30),
+ };
+ 
+ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+-- 
+1.9.1
