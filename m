@@ -1,41 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38497 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752958AbdHDNXT (ORCPT
+Received: from sauhun.de ([88.99.104.3]:32770 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753122AbdHBL5I (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 Aug 2017 09:23:19 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH 4/4] clk: renesas: r8a7795: Add Z2 clock
-Date: Fri,  4 Aug 2017 15:23:00 +0200
-Message-Id: <1501852980-22733-5-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1501852980-22733-1-git-send-email-horms+renesas@verge.net.au>
-References: <1501852980-22733-1-git-send-email-horms+renesas@verge.net.au>
+        Wed, 2 Aug 2017 07:57:08 -0400
+Date: Wed, 2 Aug 2017 13:57:06 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>
+Subject: Re: [PATCH 0/3] clk: renesas: rcar-gen3-cpg: updates to SD divider
+ table
+Message-ID: <20170802115706.ij3tqalr7etvl4gx@ninjato>
+References: <20170801104603.10459-1-wsa+renesas@sang-engineering.com>
+ <20170801162936.knvmsojiu7xibdxq@ninjato>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="6x7ck3ul4yetslym"
+Content-Disposition: inline
+In-Reply-To: <20170801162936.knvmsojiu7xibdxq@ninjato>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-This patch adds Z2 clock for r8a7795 SoC.
+--6x7ck3ul4yetslym
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
----
- drivers/clk/renesas/r8a7795-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
+On Tue, Aug 01, 2017 at 06:29:36PM +0200, Wolfram Sang wrote:
+>=20
+> > Tested on a M3-W Salvator-X (r8a7796) with HS and SDR50/104 cards. clk_=
+summary
+> > shows the same frequency selections as before.
+>=20
+> Darn, not tested on H3 ES1.0 where it fails because everything is half
+> speed there :( Need to rethink this.
 
-diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-index 084ccf01fae6..b0266a4b0852 100644
---- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-@@ -75,6 +75,7 @@ static struct cpg_core_clk r8a7795_core_clks[] __initdata = {
- 
- 	/* Core Clock Outputs */
- 	DEF_BASE("z",           R8A7795_CLK_Z,     CLK_TYPE_GEN3_Z, CLK_PLL0),
-+	DEF_BASE("z2",          R8A7795_CLK_Z2,    CLK_TYPE_GEN3_Z2, CLK_PLL2),
- 	DEF_FIXED("ztr",        R8A7795_CLK_ZTR,   CLK_PLL1_DIV2,  6, 1),
- 	DEF_FIXED("ztrd2",      R8A7795_CLK_ZTRD2, CLK_PLL1_DIV2, 12, 1),
- 	DEF_FIXED("zt",         R8A7795_CLK_ZT,    CLK_PLL1_DIV2,  4, 1),
--- 
-2.1.4
+Please discard this series. We need to respin it when we implement HS400
+support.
+
+
+--6x7ck3ul4yetslym
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlmBvg8ACgkQFA3kzBSg
+KbYTmBAAtLBzKcEZLnGV+LZiS2ItpFvuiWVdsaDTQTV0/W+MVdp6byfIWngU9/EI
+IphNCR/CBhGIQPY0c++Ioc3VTbC6Mqr+aJnya67WfXPQH9Nsut/US+Bu6qlVgy+i
+P2wcFqysQKXoFUtLKKwmiGtz50m97pZOWKBwmDpIuTPjsCpFTErkE9PLgdIwlmSg
+RTVb/CSQdtXDV6pljyzS0B7fFTYZ1S6z279OIlSLzsVEN0f9vHP1VhEASFYBv9/0
+laDoK0J8atsWNnkjKY8bXUL6YrCB63u0YkXMiGY3uFqeJ5vCUjdBImFM4J1mmchK
+jkWJPybS2JwiQUma/DUMCHzz1ZCIBDIUtr/MMhXMNidnhXwRZK9aLUwRdW01nO91
+1RKXIjP0VFCOj7fW5uJMD9nAw59QN8M8DJzh3Ruap0aLMB1T4mvTQt5j7zt/vNeU
+6g9TUjmm4qlSwRPQeKlIwAXAU+uC3AUt0jBiGHUUm/LC+4Zfo9YpT1k9yTDZjPh5
+QU7LzxzOe2HCfJz4nBcpMW1PFHVqGHhLwEm6b3czf45i8Elyc/tH5nXVyOBKBtqE
+hmAmMh+p9RZ8q9WsO4LZSivLhTSh14TCks+MT8cTzGBRc/VfD5h4VELjnN4kkmGZ
+1lhbC/VRziK+JuRhA+5HyCxs07qVcTdTk6NE2XWzj7HkGP5/ZMo=
+=SHR7
+-----END PGP SIGNATURE-----
+
+--6x7ck3ul4yetslym--
