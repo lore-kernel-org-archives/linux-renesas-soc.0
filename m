@@ -1,48 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:58892 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751167AbdHRRM4 (ORCPT
+Received: from shards.monkeyblade.net ([184.105.139.130]:41274 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751761AbdHBAy5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Aug 2017 13:12:56 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH ] ARM: dts: iwg20d-q7: Add chosen node
-Date: Fri, 18 Aug 2017 17:58:08 +0100
-Message-Id: <1503075488-44304-1-git-send-email-biju.das@bp.renesas.com>
+        Tue, 1 Aug 2017 20:54:57 -0400
+Date: Tue, 01 Aug 2017 17:54:56 -0700 (PDT)
+Message-Id: <20170801.175456.1013679579280658399.davem@davemloft.net>
+To: niklas.soderlund+renesas@ragnatech.se
+Cc: sergei.shtylyov@cogentembedded.com, geert@linux-m68k.org,
+        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 0/2] ravb: add wake-on-lan support via magic packet
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20170801101437.9020-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170801101437.9020-1-niklas.soderlund+renesas@ragnatech.se>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8BIT
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
----
-This patch tested against renesas-dev tag renesas-devel-20170815-v4.13-rc5
+From: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+Date: Tue,  1 Aug 2017 12:14:35 +0200
 
- arch/arm/boot/dts/r8a7743-iwg20d-q7.dts | 5 +++++
- 1 file changed, 5 insertions(+)
+> WoL is enabled in the suspend callback by setting MagicPacket detection
+> and disabling all interrupts expect MagicPacket. In the resume path the
+> driver needs to reset the hardware to rearm the WoL logic, this prevents
+> the driver from simply restoring the registers and to take advantage of
+> that ravb was not suspended to reduce resume time. To reset the
+> hardware the driver closes the device, sets it in reset mode and reopens
+> the device just like it would do in a normal suspend/resume scenario
+> without WoL enabled, but it both closes and opens the device in the
+> resume callback since the device needs to be reset for WoL to work.
+> 
+> One quirk needed for WoL is that the module clock needs to be prevented
+> from being switched off by Runtime PM. To keep the clock alive the
+> suspend callback need to call clk_enable() directly to increase the
+> usage count of the clock. Then when Runtime PM decreases the clock usage
+> count it won't reach 0 and be switched off.
+> 
+> Changes since v2
+> - Only do the clock dance to workaround PSCI sleep when resuming if WoL 
+>   is enabled. This was a bug in v2 which resulted in a WARN if resuming 
+>   from PSCI sleep with WoL disabled, thanks Sergei for pointing this 
+>   out!
+> - Break out clock dance workaround in separate patch to make it easier 
+>   to revert once a fix is upstream for the clock driver as suggested by 
+>   Sergei.
+> 
+> Changes since v1
+> - Fix issue where device would fail to resume from PSCI suspend if WoL
+>   was enabled, reported by Geert. The fault was that the clock driver
+>   thinks the clock is on, but PSCI have disabled it, added workaround
+>   for this in ravb driver which can be removed once the clock driver is
+>   aware of the PSCI behavior.
+> - Only try to restore from wol wake up if netif is running, since this
+>   is a condition to enable wol in the first place this was a bug in v1.
 
-diff --git a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-index 081af01..305a6a1 100644
---- a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-+++ b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-@@ -19,6 +19,11 @@
- 		serial0 = &scif0;
- 		ethernet0 = &avb;
- 	};
-+
-+	chosen {
-+		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
-+		stdout-path = "serial0:115200n8";
-+	};
- };
- 
- &pfc {
--- 
-1.9.1
+Series applied, thanks.
