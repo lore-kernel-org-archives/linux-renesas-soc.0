@@ -1,60 +1,69 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Chris Paterson <Chris.Paterson2@renesas.com>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>
-CC: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH 2/2] ARM: shmobile: document iW-RainboW-G22D SODIMM SOM
- Development Platform
-Date: Tue, 8 Aug 2017 14:15:38 +0000
-Message-ID: <TY1PR06MB07025B57A216FAD06841241DB78A0@TY1PR06MB0702.apcprd06.prod.outlook.com>
-References: <cover.1502190772.git.fabrizio.castro@bp.renesas.com>
- <8d98401d979ade94d19031ab3240d81c0959380b.1502190772.git.fabrizio.castro@bp.renesas.com>
-In-Reply-To: <8d98401d979ade94d19031ab3240d81c0959380b.1502190772.git.fabrizio.castro@bp.renesas.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor1.renesas.com ([210.160.252.171]:23329 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750742AbdHBEY4 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 2 Aug 2017 00:24:56 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: balbi@kernel.org
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, stable@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH] usb: renesas_usbhs: Fix UGCTRL2 value for R-Car Gen3
+Date: Wed,  2 Aug 2017 13:21:45 +0900
+Message-Id: <1501647705-11636-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-+ linux-renesas-soc
+The latest HW manual (Rev.0.55) shows us this UGCTRL2.VBUSSEL bit.
+If the bit sets to 1, the VBUS drive is controlled by phy related
+registers (called "UCOM Registers" on the manual). Since R-Car Gen3
+environment will control VBUS by phy-rcar-gen3-usb2 driver,
+the UGCTRL2.VBUSSEL bit should be set to 1. So, this patch fixes
+the register's value. Otherwise, even if the ID pin indicates to
+peripheral, the R-Car will output USBn_PWEN to 1 when a host driver
+is running.
 
-> From: Fabrizio Castro [mailto:fabrizio.castro@bp.renesas.com]
-> Sent: 08 August 2017 13:28
->=20
-> Document the iW-RainboW-G22D device tree bindings.
-> It is just a placeholder for the time being, the actual implementation is=
- not
-> available yet.
->=20
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> ---
->  Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
->  1 file changed, 2 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt
-> b/Documentation/devicetree/bindings/arm/shmobile.txt
-> index 64e7f63..ae75cb3 100644
-> --- a/Documentation/devicetree/bindings/arm/shmobile.txt
-> +++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-> @@ -68,6 +68,8 @@ Boards:
->      compatible =3D "renesas,h3ulcb", "renesas,r8a7795";
->    - Henninger
->      compatible =3D "renesas,henninger", "renesas,r8a7791"
-> +  - iWave Systems RZ/G1E SODIMM SOM Development Platform (iW-
-> RainboW-G22D)
-> +    compatible =3D "iwave,g22d", "iwave,g22m", "renesas,r8a7745"
->    - iWave Systems RZ/G1E SODIMM System On Module (iW-RainboW-G22M-
-> SM)
->      compatible =3D "iwave,g22m", "renesas,r8a7745"
->    - iWave Systems RZ/G1M Qseven Development Platform (iW-RainboW-G20D-
-> Qseven)
-> --
-> 1.9.1
+Fixes: de18757e272d ("usb: renesas_usbhs: add R-Car Gen3 power control"
+Cc: <stable@vger.kernel.org> # v4.6+
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ This patch is based on the latest Felipe's usb.git / testing/fixes branch
+(the commit id = 0539cab2ed9e52a57182a909e02db545e8fb1a38).
+
+ drivers/usb/renesas_usbhs/rcar3.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/usb/renesas_usbhs/rcar3.c b/drivers/usb/renesas_usbhs/rcar3.c
+index d544b33..02b67ab 100644
+--- a/drivers/usb/renesas_usbhs/rcar3.c
++++ b/drivers/usb/renesas_usbhs/rcar3.c
+@@ -20,9 +20,13 @@
+ /* Low Power Status register (LPSTS) */
+ #define LPSTS_SUSPM	0x4000
+ 
+-/* USB General control register 2 (UGCTRL2), bit[31:6] should be 0 */
++/*
++ * USB General control register 2 (UGCTRL2)
++ * Remarks: bit[31:11] and bit[9:6] should be 0
++ */
+ #define UGCTRL2_RESERVED_3	0x00000001	/* bit[3:0] should be B'0001 */
+ #define UGCTRL2_USB0SEL_OTG	0x00000030
++#define UGCTRL2_VBUSSEL		0x00000400
+ 
+ static void usbhs_write32(struct usbhs_priv *priv, u32 reg, u32 data)
+ {
+@@ -34,7 +38,8 @@ static int usbhs_rcar3_power_ctrl(struct platform_device *pdev,
+ {
+ 	struct usbhs_priv *priv = usbhs_pdev_to_priv(pdev);
+ 
+-	usbhs_write32(priv, UGCTRL2, UGCTRL2_RESERVED_3 | UGCTRL2_USB0SEL_OTG);
++	usbhs_write32(priv, UGCTRL2, UGCTRL2_RESERVED_3 | UGCTRL2_USB0SEL_OTG |
++		      UGCTRL2_VBUSSEL);
+ 
+ 	if (enable) {
+ 		usbhs_bset(priv, LPSTS, LPSTS_SUSPM, LPSTS_SUSPM);
+-- 
+1.9.1
