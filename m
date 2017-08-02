@@ -1,110 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:33836 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751925AbdHHLGQ (ORCPT
+Received: from mail-io0-f176.google.com ([209.85.223.176]:35208 "EHLO
+        mail-io0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753078AbdHBLvt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 Aug 2017 07:06:16 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <871somn93g.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1df2Kw-0004ve-BA@finisterre>
-Date: Tue, 08 Aug 2017 12:06:10 +0100
-Subject: Applied "ASoC: rsnd: rsnd_ssi_can_output_clk() macro" to the asoc tree
+        Wed, 2 Aug 2017 07:51:49 -0400
+Received: by mail-io0-f176.google.com with SMTP id m88so19311516iod.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 02 Aug 2017 04:51:49 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <20170718214339.7774-43-robh@kernel.org>
+References: <20170718214339.7774-43-robh@kernel.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 2 Aug 2017 13:51:47 +0200
+Message-ID: <CACRpkdauP1T9bpp8C68wt6oK7gosAHt3pR7i=2+zRvPwXHo3ZA@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: Convert to using %pOF instead of full_name
+To: Rob Herring <robh@kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Patrice Chotard <patrice.chotard@st.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Barry Song <baohua@kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/STI ARCHITECTURE" <kernel@stlinux.com>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+On Tue, Jul 18, 2017 at 11:43 PM, Rob Herring <robh@kernel.org> wrote:
 
-   ASoC: rsnd: rsnd_ssi_can_output_clk() macro
+> Now that we have a custom printf format specifier, convert users of
+> full_name to use %pOF instead. This is preparation to remove storing
+> of the full path string for each node.
+>
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Lee Jones <lee@kernel.org>
+> Cc: Eric Anholt <eric@anholt.net>
+> Cc: Stefan Wahren <stefan.wahren@i2se.com>
+> Cc: Florian Fainelli <f.fainelli@gmail.com>
+> Cc: Ray Jui <rjui@broadcom.com>
+> Cc: Scott Branden <sbranden@broadcom.com>
+> Cc: bcm-kernel-feedback-list@broadcom.com
+> Cc: Ludovic Desroches <ludovic.desroches@microchip.com>
+> Cc: Patrice Chotard <patrice.chotard@st.com>
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Barry Song <baohua@kernel.org>
+> Cc: linux-gpio@vger.kernel.org
+> Cc: linux-rpi-kernel@lists.infradead.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: kernel@stlinux.com
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-renesas-soc@vger.kernel.org
 
-has been applied to the asoc tree at
+Patch applied with the recieved ACKs.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From bb002f925ae18c0c9d72d87b74b311a5209d7178 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Tue, 8 Aug 2017 01:32:42 +0000
-Subject: [PATCH] ASoC: rsnd: rsnd_ssi_can_output_clk() macro
-
-For example SSI0/SSI1 case, SSI1 can share pin with SSI0.
-And then, SSI1 needs SSI0's clock.
-This clock controlling is very picky and difficult to understand
-in current code.
-
-This patch adds new rsnd_ssi_can_output_clk() macro,
-the code will be more understandable.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/sh/rcar/ssi.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/sound/soc/sh/rcar/ssi.c b/sound/soc/sh/rcar/ssi.c
-index 3ee7b2de7dea..434996d4054a 100644
---- a/sound/soc/sh/rcar/ssi.c
-+++ b/sound/soc/sh/rcar/ssi.c
-@@ -106,6 +106,7 @@ struct rsnd_ssi {
- 	(rsnd_ssi_multi_slaves(io) & (1 << rsnd_mod_id(mod)))
- #define rsnd_ssi_is_run_mods(mod, io) \
- 	(rsnd_ssi_run_mods(io) & (1 << rsnd_mod_id(mod)))
-+#define rsnd_ssi_can_output_clk(mod) (!__rsnd_ssi_is_pin_sharing(mod))
- 
- int rsnd_ssi_hdmi_port(struct rsnd_dai_stream *io)
- {
-@@ -255,7 +256,6 @@ static int rsnd_ssi_master_clk_start(struct rsnd_mod *mod,
- 	struct device *dev = rsnd_priv_to_dev(priv);
- 	struct rsnd_dai *rdai = rsnd_io_to_rdai(io);
- 	struct rsnd_ssi *ssi = rsnd_mod_to_ssi(mod);
--	struct rsnd_mod *ssi_parent_mod = rsnd_io_to_mod_ssip(io);
- 	int chan = rsnd_runtime_channel_for_ssi(io);
- 	int idx, ret;
- 	unsigned int main_rate;
-@@ -266,7 +266,7 @@ static int rsnd_ssi_master_clk_start(struct rsnd_mod *mod,
- 	if (!rsnd_rdai_is_clk_master(rdai))
- 		return 0;
- 
--	if (ssi_parent_mod && !rsnd_ssi_is_parent(mod, io))
-+	if (!rsnd_ssi_can_output_clk(mod))
- 		return 0;
- 
- 	if (rsnd_ssi_is_multi_slave(mod, io))
-@@ -307,12 +307,11 @@ static void rsnd_ssi_master_clk_stop(struct rsnd_mod *mod,
- {
- 	struct rsnd_dai *rdai = rsnd_io_to_rdai(io);
- 	struct rsnd_ssi *ssi = rsnd_mod_to_ssi(mod);
--	struct rsnd_mod *ssi_parent_mod = rsnd_io_to_mod_ssip(io);
- 
- 	if (!rsnd_rdai_is_clk_master(rdai))
- 		return;
- 
--	if (ssi_parent_mod && !rsnd_ssi_is_parent(mod, io))
-+	if (!rsnd_ssi_can_output_clk(mod))
- 		return;
- 
- 	if (ssi->usrcnt > 1)
--- 
-2.13.2
+Yours,
+Linus Walleij
