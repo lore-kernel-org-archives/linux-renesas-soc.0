@@ -1,44 +1,67 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Biju Das <biju.das@bp.renesas.com>
-To: "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH ] dt-bindings: net: ravb : Add support for r8a7745 SoC
-Date: Tue, 15 Aug 2017 15:40:20 +0100
-Message-Id: <1502808020-22406-1-git-send-email-biju.das@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor1.renesas.com ([210.160.252.171]:21096 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751154AbdHCMca (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 3 Aug 2017 08:32:30 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 1/2] arm64: dts: r8a7796: Add USB-DMAC device nodes
+Date: Thu,  3 Aug 2017 21:29:16 +0900
+Message-Id: <1501763357-26075-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1501763357-26075-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1501763357-26075-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a new compatible string for the RZ/G1E (R8A7745) SoC.
-
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
-This patch is tested against linux-next tag next-20170815
-as well as net-next.
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
- Documentation/devicetree/bindings/net/renesas,ravb.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/net/renesas,ravb.txt b/Documentation/devicetree/bindings/net/renesas,ravb.txt
-index 4717bc2..1672353 100644
---- a/Documentation/devicetree/bindings/net/renesas,ravb.txt
-+++ b/Documentation/devicetree/bindings/net/renesas,ravb.txt
-@@ -6,6 +6,7 @@ interface contains.
- Required properties:
- - compatible: Must contain one or more of the following:
-       - "renesas,etheravb-r8a7743" for the R8A7743 SoC.
-+      - "renesas,etheravb-r8a7745" for the R8A7745 SoC.
-       - "renesas,etheravb-r8a7790" for the R8A7790 SoC.
-       - "renesas,etheravb-r8a7791" for the R8A7791 SoC.
-       - "renesas,etheravb-r8a7792" for the R8A7792 SoC.
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index ef1120f..445a3d9 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -1223,6 +1223,34 @@
+ 			dma-channels = <16>;
+ 		};
+ 
++		usb_dmac0: dma-controller@e65a0000 {
++			compatible = "renesas,r8a7796-usb-dmac",
++				     "renesas,usb-dmac";
++			reg = <0 0xe65a0000 0 0x100>;
++			interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1";
++			clocks = <&cpg CPG_MOD 330>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			resets = <&cpg 330>;
++			#dma-cells = <1>;
++			dma-channels = <2>;
++		};
++
++		usb_dmac1: dma-controller@e65b0000 {
++			compatible = "renesas,r8a7796-usb-dmac",
++				     "renesas,usb-dmac";
++			reg = <0 0xe65b0000 0 0x100>;
++			interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1";
++			clocks = <&cpg CPG_MOD 331>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			resets = <&cpg 331>;
++			#dma-cells = <1>;
++			dma-channels = <2>;
++		};
++
+ 		hsusb: usb@e6590000 {
+ 			/* placeholder */
+ 		};
 -- 
 1.9.1
-
