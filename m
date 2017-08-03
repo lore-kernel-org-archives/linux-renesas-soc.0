@@ -1,70 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:33238 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751555AbdHISWJ (ORCPT
+Received: from mail-qt0-f177.google.com ([209.85.216.177]:35203 "EHLO
+        mail-qt0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751976AbdHCKwY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 9 Aug 2017 14:22:09 -0400
-Date: Wed, 9 Aug 2017 20:22:04 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Ulf Hansson <ulf.hansson@linaro.org>
+        Thu, 3 Aug 2017 06:52:24 -0400
+Received: by mail-qt0-f177.google.com with SMTP id p3so5187372qtg.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 03 Aug 2017 03:52:24 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <20170803095355.GA3251@katana>
+References: <20170803094947.1490-1-wsa+renesas@sang-engineering.com> <20170803095355.GA3251@katana>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 3 Aug 2017 12:52:23 +0200
+Message-ID: <CAPDyKFrpiXz0PM9uZZS8mC3ULBs2VNqfhpqwFM2QH+MZp6uG+A@mail.gmail.com>
+Subject: Re: [PATCH] Revert "mmc: sdhi: use maximum width for the sdbuf register"
+To: Wolfram Sang <wsa@the-dreams.de>
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Simon Horman <horms@verge.net.au>,
         Biju Das <biju.das@bp.renesas.com>
-Subject: Re: [PATCH] Revert "mmc: sdhi: use maximum width for the sdbuf
- register"
-Message-ID: <20170809182204.qqswh6isep7eze5t@ninjato>
-References: <20170803094947.1490-1-wsa+renesas@sang-engineering.com>
- <20170803095355.GA3251@katana>
- <CAPDyKFrpiXz0PM9uZZS8mC3ULBs2VNqfhpqwFM2QH+MZp6uG+A@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="i2bblc7bsivaybxs"
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFrpiXz0PM9uZZS8mC3ULBs2VNqfhpqwFM2QH+MZp6uG+A@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On 3 August 2017 at 11:53, Wolfram Sang <wsa@the-dreams.de> wrote:
+> On Thu, Aug 03, 2017 at 11:49:47AM +0200, Wolfram Sang wrote:
+>> This reverts commit 785b215250310c690142abb1bdbb0767b8487c49. There is a
+>> secondary SDHI instance on Gen2 with has a 32-bit wide SDBUF register
+>> while all other registers are 16 bit apart. So, the logic used here does
+>> not apply and we need to rethink this and start cleanly from scratch.
+>>
+>> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>
+> Extra info for Ulf: I can't work on that in the next days, so I thought
+> it would be good to ASAP fix the regression in mmc/next at least.
+>
 
---i2bblc7bsivaybxs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Instead of applying this revert, I decided to just drop the original
+commit from my next branch.
 
+While working on new version of how to deal with the 32/16 bit
+register correctly, please try to include Biju Das in the changelog as
+to give him cred from his help with testing.
 
-> Instead of applying this revert, I decided to just drop the original
-> commit from my next branch.
-
-Hmmmm, yes, rebasing creates a clean history for occasions like this,
-but makes working on your next-branch kinda complicated if the base I
-merged has gone.
-
-> While working on new version of how to deal with the 32/16 bit
-> register correctly, please try to include Biju Das in the changelog as
-> to give him cred from his help with testing.
-
-Will do. If you had kept the revert, he would have got a tag for
-Reported-by even ;)
-
-
---i2bblc7bsivaybxs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlmLUsgACgkQFA3kzBSg
-KbbDqg/+OQ21AGiOHVw1ZYQjLDged1tDjjZgi+7ztzlCoNbs7NK6PfJAhqVrNdCL
-lv7AEEICFsO+Y3tBe9FuUIaxlVmq6C0NRn4ywb5714to3jQNXruESL03U+JLfk3d
-WgPm8PlIECaAGzC8JTL5NZ0dkXcPoQN0wWA4w06TN4Ss3NCHvBibPSifS3hxfgot
-qbWZjYLT6sRo/fLXtokB0dWYWLsQKfyjydc98EvZdix2hVqsPHFUMj7mJK/AUHvD
-aXJ0bphRLF0gOFTjvuRujnPCPz6XsD1l2QtsY+ohzaBLyL3I+32IPiGbTkEdlY25
-Xmyk51Lpn7qqkwLlmXqc14TFXB/8bX7dB2tiyjrEpiPD4jpy0Uk82xpRLFBK0T7l
-lfceuPdj9cLhqar5ZWlT9XKt/uQaTO/AkvZFVMiIy3L7WVr/ZXeZTfkCEnBc0EKJ
-FY4HLjxxNtgwb2NdpzqsbAKp5Gs9poDt0oQhV5jB2SUfaGosrjJYBA72C2oKsgAT
-nBjKBfzAnTm/BeRZXBR+KrJfGaE/gYqjkDxdo7MDqRspllGXPL7NVJMEM0VRImUy
-aocMz3zIXNQcSj0+cITmGdoXf62vVJU/D+Cs1aCuRCBgJspmIYWESKVnngcZygdA
-WIbyfs5BfUmezTH2Vl3UASG0iNvnTesQUDJmKuXQHCWli8ge55w=
-=ZN77
------END PGP SIGNATURE-----
-
---i2bblc7bsivaybxs--
+Kind regards
+Uffe
