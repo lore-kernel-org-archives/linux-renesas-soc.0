@@ -1,21 +1,20 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:37506 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:35746 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752955AbdHDQcx (ORCPT
+        id S1752547AbdHDP5T (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 Aug 2017 12:32:53 -0400
+        Fri, 4 Aug 2017 11:57:19 -0400
 From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        hans.verkuil@cisco.com
+To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 Cc: laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v4 3/7] v4l: vsp1: Calculate partition sizes at stream start
-Date: Fri,  4 Aug 2017 17:32:40 +0100
-Message-Id: <d6bac3ee449c7b12d8216d3e33809767ec65e2cf.1501864274.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.b619f10db4b4618832ca73df5688ce9f2f36596b.1501864274.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.b619f10db4b4618832ca73df5688ce9f2f36596b.1501864274.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.b619f10db4b4618832ca73df5688ce9f2f36596b.1501864274.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.b619f10db4b4618832ca73df5688ce9f2f36596b.1501864274.git-series.kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v3 3/7] v4l: vsp1: Calculate partition sizes at stream start
+Date: Fri,  4 Aug 2017 16:57:07 +0100
+Message-Id: <fbd686459ec4949b8587b2b44bb30331b0dadd2f.1501861813.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.109dff74bad8730bc9559578df79f47dae253305.1501861813.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.109dff74bad8730bc9559578df79f47dae253305.1501861813.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.109dff74bad8730bc9559578df79f47dae253305.1501861813.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.109dff74bad8730bc9559578df79f47dae253305.1501861813.git-series.kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -30,8 +29,8 @@ Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
  drivers/media/platform/vsp1/vsp1_pipe.h  |  3 ++-
- drivers/media/platform/vsp1/vsp1_video.c | 44 +++++++++++++++++--------
- 2 files changed, 34 insertions(+), 13 deletions(-)
+ drivers/media/platform/vsp1/vsp1_video.c | 48 +++++++++++++++++--------
+ 2 files changed, 36 insertions(+), 15 deletions(-)
 
 diff --git a/drivers/media/platform/vsp1/vsp1_pipe.h b/drivers/media/platform/vsp1/vsp1_pipe.h
 index 91a784a13422..0cfd07a187a2 100644
@@ -56,7 +55,7 @@ index 91a784a13422..0cfd07a187a2 100644
  
  void vsp1_pipeline_reset(struct vsp1_pipeline *pipe);
 diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
-index e4c0bfa0f864..2ac57a436811 100644
+index 097e4db572a9..447597f1b758 100644
 --- a/drivers/media/platform/vsp1/vsp1_video.c
 +++ b/drivers/media/platform/vsp1/vsp1_video.c
 @@ -256,12 +256,13 @@ static struct v4l2_rect vsp1_video_partition(struct vsp1_pipeline *pipe,
@@ -141,7 +140,15 @@ index e4c0bfa0f864..2ac57a436811 100644
  
  	/* Prepare the display list. */
  	pipe->dl = vsp1_dl_list_get(pipe->output->dlm);
-@@ -834,6 +846,12 @@ static void vsp1_video_cleanup_pipeline(struct vsp1_pipeline *pipe)
+@@ -824,6 +836,7 @@ static int vsp1_video_setup_pipeline(struct vsp1_pipeline *pipe)
+ 
+ static void vsp1_video_cleanup_pipeline(struct vsp1_video *video)
+ {
++	struct vsp1_pipeline *pipe = video->rwpf->pipe;
+ 	struct vsp1_vb2_buffer *buffer;
+ 	unsigned long flags;
+ 
+@@ -833,6 +846,12 @@ static void vsp1_video_cleanup_pipeline(struct vsp1_video *video)
  		vb2_buffer_done(&buffer->buf.vb2_buf, VB2_BUF_STATE_ERROR);
  	INIT_LIST_HEAD(&video->irqqueue);
  	spin_unlock_irqrestore(&video->irqlock, flags);
@@ -154,5 +161,16 @@ index e4c0bfa0f864..2ac57a436811 100644
  }
  
  static int vsp1_video_start_streaming(struct vb2_queue *vq, unsigned int count)
+@@ -904,9 +923,8 @@ static void vsp1_video_stop_streaming(struct vb2_queue *vq)
+ 	mutex_unlock(&pipe->lock);
+ 
+ 	media_pipeline_stop(&video->video.entity);
+-	vsp1_video_pipeline_put(pipe);
+-
+ 	vsp1_video_cleanup_pipeline(video);
++	vsp1_video_pipeline_put(pipe);
+ }
+ 
+ static const struct vb2_ops vsp1_video_queue_qops = {
 -- 
 git-series 0.9.1
