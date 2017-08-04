@@ -1,21 +1,20 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:37520 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:35758 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753017AbdHDQc4 (ORCPT
+        id S1752612AbdHDP5W (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 Aug 2017 12:32:56 -0400
+        Fri, 4 Aug 2017 11:57:22 -0400
 From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        hans.verkuil@cisco.com
+To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 Cc: laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v4 5/7] v4l: vsp1: Move partition rectangles to struct and operate directly
-Date: Fri,  4 Aug 2017 17:32:42 +0100
-Message-Id: <28a34cb883231220acd5541e684c0972a192dece.1501864274.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.b619f10db4b4618832ca73df5688ce9f2f36596b.1501864274.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.b619f10db4b4618832ca73df5688ce9f2f36596b.1501864274.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.b619f10db4b4618832ca73df5688ce9f2f36596b.1501864274.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.b619f10db4b4618832ca73df5688ce9f2f36596b.1501864274.git-series.kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v3 5/7] v4l: vsp1: Move partition rectangles to struct and operate directly
+Date: Fri,  4 Aug 2017 16:57:09 +0100
+Message-Id: <f15506e25b4de0c44dbc1e71730f45d42f82c668.1501861813.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.109dff74bad8730bc9559578df79f47dae253305.1501861813.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.109dff74bad8730bc9559578df79f47dae253305.1501861813.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.109dff74bad8730bc9559578df79f47dae253305.1501861813.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.109dff74bad8730bc9559578df79f47dae253305.1501861813.git-series.kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -127,7 +126,7 @@ index 4226403ad235..4a43e7413b68 100644
  	vscale = uds_compute_ratio(input->height, output->height);
  
 diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
-index 176fd4b17df5..abbdcafa7c94 100644
+index f8c3186c0fb6..5522595e9323 100644
 --- a/drivers/media/platform/vsp1/vsp1_video.c
 +++ b/drivers/media/platform/vsp1/vsp1_video.c
 @@ -183,19 +183,19 @@ static int __vsp1_video_try_format(struct vsp1_video *video,
