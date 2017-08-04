@@ -1,42 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38493 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:38497 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752913AbdHDNXN (ORCPT
+        with ESMTP id S1752342AbdHDNXQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 Aug 2017 09:23:13 -0400
+        Fri, 4 Aug 2017 09:23:16 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: Magnus Damm <magnus.damm@gmail.com>,
         linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH 2/4] clk: renesas: r8a7795: Add Z clock
-Date: Fri,  4 Aug 2017 15:22:58 +0200
-Message-Id: <1501852980-22733-3-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1501852980-22733-1-git-send-email-horms+renesas@verge.net.au>
-References: <1501852980-22733-1-git-send-email-horms+renesas@verge.net.au>
+Subject: [PATCH 0/4] r8a7795: Add Z and Z2 clock support
+Date: Fri,  4 Aug 2017 15:22:56 +0200
+Message-Id: <1501852980-22733-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Hi,
 
-This patch adds Z clock for R8A7795 SoC.
+this patch-set adds Z and Z2 clock support. It is a minor rework of BSP
+patches that have been posted before. The main changes are:
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- drivers/clk/renesas/r8a7795-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
+* To divide the parent by an extra factor 2, as per the specification
+* Minor cleanups
 
-diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-index c091a8e024b8..084ccf01fae6 100644
---- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-@@ -74,6 +74,7 @@ static struct cpg_core_clk r8a7795_core_clks[] __initdata = {
- 	DEF_FIXED(".sdsrc",     CLK_SDSRC,         CLK_PLL1_DIV2,  2, 1),
- 
- 	/* Core Clock Outputs */
-+	DEF_BASE("z",           R8A7795_CLK_Z,     CLK_TYPE_GEN3_Z, CLK_PLL0),
- 	DEF_FIXED("ztr",        R8A7795_CLK_ZTR,   CLK_PLL1_DIV2,  6, 1),
- 	DEF_FIXED("ztrd2",      R8A7795_CLK_ZTRD2, CLK_PLL1_DIV2, 12, 1),
- 	DEF_FIXED("zt",         R8A7795_CLK_ZT,    CLK_PLL1_DIV2,  4, 1),
+These are dependencies for supporting CPUFreq. The remainer of that
+work is being posted separately and can be found at:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/r8a7795-cpufreq
+
+A description of steps taken to lightly exercise the above can be found here:
+
+http://elinux.org/Tests:R-CAR-GEN3-CPUFreq
+
+This series is based on clk-renesas-for-v4.14
+
+Takeshi Kihara (4):
+  clk: renesas: rcar-gen3: Add Z clock divider support
+  clk: renesas: r8a7795: Add Z clock
+  clk: renesas: rcar-gen3: Add Z2 clock divider support
+  clk: renesas: r8a7795: Add Z2 clock
+
+ drivers/clk/renesas/r8a7795-cpg-mssr.c |   2 +
+ drivers/clk/renesas/rcar-gen3-cpg.c    | 204 +++++++++++++++++++++++++++++++++
+ drivers/clk/renesas/rcar-gen3-cpg.h    |   2 +
+ 3 files changed, 208 insertions(+)
+
 -- 
 2.1.4
