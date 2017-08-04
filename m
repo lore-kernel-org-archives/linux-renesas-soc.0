@@ -1,79 +1,89 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f45.google.com ([74.125.82.45]:36808 "EHLO
-        mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751900AbdHEUxP (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:60086 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752984AbdHDQjS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 5 Aug 2017 16:53:15 -0400
-Received: by mail-wm0-f45.google.com with SMTP id t201so42445967wmt.1
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 05 Aug 2017 13:53:14 -0700 (PDT)
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-To: linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux@armlinux.org.uk,
-        linux-omap@vger.kernel.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, krzk@kernel.org,
-        jason@lakedaemon.net, arm@kernel.org, andrew@lunn.ch,
-        gregory.clement@free-electrons.com,
-        sebastian.hesselbarth@gmail.com, tony@atomide.com,
-        baohua@kernel.org, horms@verge.net.au, magnus.damm@gmail.com,
-        vireshk@kernel.org, shiraz.linux.kernel@gmail.com,
-        patrice.chotard@st.com, nico@linaro.org, dave.martin@arm.com,
-        marc.zyngier@arm.com
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH 02/15] ARM: head-common.S: use PC-relative insn sequence for __proc_info
-Date: Sat,  5 Aug 2017 21:52:09 +0100
-Message-Id: <20170805205222.19868-3-ard.biesheuvel@linaro.org>
-In-Reply-To: <20170805205222.19868-1-ard.biesheuvel@linaro.org>
-References: <20170805205222.19868-1-ard.biesheuvel@linaro.org>
+        Fri, 4 Aug 2017 12:39:18 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        hans.verkuil@cisco.com, kieran.bingham@ideasonboard.com
+Subject: Re: [PATCH v4 0/7] vsp1 partition algorithm improvements
+Date: Fri, 04 Aug 2017 19:39:31 +0300
+Message-ID: <1576481.bIWHKWdUO9@avalon>
+In-Reply-To: <cover.b619f10db4b4618832ca73df5688ce9f2f36596b.1501864274.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.b619f10db4b4618832ca73df5688ce9f2f36596b.1501864274.git-series.kieran.bingham+renesas@ideasonboard.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Replace the open coded PC relative offset calculations with a pair
-of adr_l invocations.
+Hi Kieran,
 
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
----
- arch/arm/kernel/head-common.S | 22 ++++++--------------
- 1 file changed, 6 insertions(+), 16 deletions(-)
+On Friday 04 Aug 2017 17:32:37 Kieran Bingham wrote:
+> Hans, this series should be ready for integration now. Could you pick up
+> these patches please?
 
-diff --git a/arch/arm/kernel/head-common.S b/arch/arm/kernel/head-common.S
-index 8733012d231f..06035488130c 100644
---- a/arch/arm/kernel/head-common.S
-+++ b/arch/arm/kernel/head-common.S
-@@ -150,11 +150,12 @@ ENDPROC(lookup_processor_type)
-  *	r9 = cpuid (preserved)
-  */
- __lookup_processor_type:
--	adr	r3, __lookup_processor_type_data
--	ldmia	r3, {r4 - r6}
--	sub	r3, r3, r4			@ get offset between virt&phys
--	add	r5, r5, r3			@ convert virt addresses to
--	add	r6, r6, r3			@ physical address space
-+	/*
-+	 * Look in <asm/procinfo.h> for information about the __proc_info
-+	 * structure.
-+	 */
-+	adr_l	r5, __proc_info_begin
-+	adr_l	r6, __proc_info_end
- 1:	ldmia	r5, {r3, r4}			@ value, mask
- 	and	r4, r4, r9			@ mask wanted bits
- 	teq	r3, r4
-@@ -166,17 +167,6 @@ __lookup_processor_type:
- 2:	ret	lr
- ENDPROC(__lookup_processor_type)
- 
--/*
-- * Look in <asm/procinfo.h> for information about the __proc_info structure.
-- */
--	.align	2
--	.type	__lookup_processor_type_data, %object
--__lookup_processor_type_data:
--	.long	.
--	.long	__proc_info_begin
--	.long	__proc_info_end
--	.size	__lookup_processor_type_data, . - __lookup_processor_type_data
--
- __error_lpae:
- #ifdef CONFIG_DEBUG_LL
- 	adr	r0, str_lpae
+Just a note for Hans: the series merges cleanly with Dave's drm-next branch 
+(git://people.freedesktop.org/~airlied/linux) that contains a large series of 
+VSP patches. There should thus be no merge conflict (at least none that git 
+won't solve automatically) when merging upstream.
+
+> Some updates and initial improvements for the VSP1 partition algorithm that
+> remove redundant processing and variables, reducing the processing done in
+> interrupt context slightly.
+> 
+> Patch 1, fixes up a bug to release buffers back to vb2 if errors occur in
+> vsp1_video_start_streaming()
+> 
+> Patches 2, 3 and 4 clean up the calculation of the partition windows such
+> that they are only calculated once at streamon.
+> 
+> Patch 5 improves the allocations with a new vsp1_partition object to track
+> each window state.
+> 
+> Patches 6, and 7 then go on to enhance the partition algorithm by allowing
+> each entity to calculate the requirements for it's pipeline predecessor to
+> successfully generate the requested output window. This system allows the
+> entity objects to specify what they need to fulfil the output for the next
+> entity in the pipeline.
+> 
+> v2:
+>  - Rebased to v4.12-rc1
+>  - Partition tables dynamically allocated
+>  - review fixups
+> 
+> v3:
+>  - Review fixes and changes from Laurent
+>  - v4l: vsp1: Release buffers in start_streaming error path
+> 
+> v4:
+>  - (Final) fixups from Laurent's review, and picked up his reviewed-by tags.
+> 
+> Kieran Bingham (7):
+>   v4l: vsp1: Release buffers in start_streaming error path
+>   v4l: vsp1: Move vsp1_video_pipeline_setup_partitions() function
+>   v4l: vsp1: Calculate partition sizes at stream start
+>   v4l: vsp1: Remove redundant context variables
+>   v4l: vsp1: Move partition rectangles to struct and operate directly
+>   v4l: vsp1: Provide UDS register updates
+>   v4l: vsp1: Allow entities to participate in the partition algorithm
+> 
+>  drivers/media/platform/vsp1/vsp1_entity.h |   7 +-
+>  drivers/media/platform/vsp1/vsp1_pipe.c   |  22 +++-
+>  drivers/media/platform/vsp1/vsp1_pipe.h   |  46 +++++-
+>  drivers/media/platform/vsp1/vsp1_regs.h   |  14 ++-
+>  drivers/media/platform/vsp1/vsp1_rpf.c    |  27 +--
+>  drivers/media/platform/vsp1/vsp1_sru.c    |  26 +++-
+>  drivers/media/platform/vsp1/vsp1_uds.c    |  57 ++++++-
+>  drivers/media/platform/vsp1/vsp1_video.c  | 182 ++++++++++++-----------
+>  drivers/media/platform/vsp1/vsp1_wpf.c    |  24 ++-
+>  9 files changed, 289 insertions(+), 116 deletions(-)
+> 
+> base-commit: 520eccdfe187591a51ea9ab4c1a024ae4d0f68d9
+
 -- 
-2.11.0
+Regards,
+
+Laurent Pinchart
