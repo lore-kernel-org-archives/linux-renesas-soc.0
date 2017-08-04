@@ -1,62 +1,128 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f47.google.com ([74.125.82.47]:35094 "EHLO
-        mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752821AbdHEUxq (ORCPT
+Received: from mail.kernel.org ([198.145.29.99]:37500 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752558AbdHDQcw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 5 Aug 2017 16:53:46 -0400
-Received: by mail-wm0-f47.google.com with SMTP id m85so42482228wma.0
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 05 Aug 2017 13:53:45 -0700 (PDT)
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-To: linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux@armlinux.org.uk,
-        linux-omap@vger.kernel.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, krzk@kernel.org,
-        jason@lakedaemon.net, arm@kernel.org, andrew@lunn.ch,
-        gregory.clement@free-electrons.com,
-        sebastian.hesselbarth@gmail.com, tony@atomide.com,
-        baohua@kernel.org, horms@verge.net.au, magnus.damm@gmail.com,
-        vireshk@kernel.org, shiraz.linux.kernel@gmail.com,
-        patrice.chotard@st.com, nico@linaro.org, dave.martin@arm.com,
-        marc.zyngier@arm.com
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH 11/15] arm-soc: mvebu: replace open coded VA->PA conversion
-Date: Sat,  5 Aug 2017 21:52:18 +0100
-Message-Id: <20170805205222.19868-12-ard.biesheuvel@linaro.org>
-In-Reply-To: <20170805205222.19868-1-ard.biesheuvel@linaro.org>
-References: <20170805205222.19868-1-ard.biesheuvel@linaro.org>
+        Fri, 4 Aug 2017 12:32:52 -0400
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        hans.verkuil@cisco.com
+Cc: laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v4 2/7] v4l: vsp1: Move vsp1_video_pipeline_setup_partitions() function
+Date: Fri,  4 Aug 2017 17:32:39 +0100
+Message-Id: <f413c82853df286c1d0bbff4dee75625beb1f97e.1501864274.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.b619f10db4b4618832ca73df5688ce9f2f36596b.1501864274.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.b619f10db4b4618832ca73df5688ce9f2f36596b.1501864274.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.b619f10db4b4618832ca73df5688ce9f2f36596b.1501864274.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.b619f10db4b4618832ca73df5688ce9f2f36596b.1501864274.git-series.kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This replaces an open coded calculation to obtain the physical
-address of a far symbol with a call to the new ldr_l etc macro.
+Separate the code change from the function move so that code changes can
+be clearly identified. This commit has no functional change.
 
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+The partition algorithm functions will be changed, and
+vsp1_video_pipeline_setup_partitions() will call vsp1_video_partition().
+To prepare for that, move the function without any code change.
+
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- arch/arm/mach-mvebu/coherency_ll.S | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ drivers/media/platform/vsp1/vsp1_video.c | 74 ++++++++++++-------------
+ 1 file changed, 37 insertions(+), 37 deletions(-)
 
-diff --git a/arch/arm/mach-mvebu/coherency_ll.S b/arch/arm/mach-mvebu/coherency_ll.S
-index 8b2fbc8b6bc6..df0ccb5cef1d 100644
---- a/arch/arm/mach-mvebu/coherency_ll.S
-+++ b/arch/arm/mach-mvebu/coherency_ll.S
-@@ -42,9 +42,7 @@ ENTRY(ll_get_coherency_base)
- 	ldr	r1, =coherency_base
- 	cmp	r1, #0
- 	beq	2f
--	adr	r1, 3f
--	ldr	r3, [r1]
--	ldr	r1, [r1, r3]
-+	ldr_l	r1, coherency_phys_base
- 	b	2f
- 1:
- 	/*
-@@ -160,7 +158,3 @@ ENTRY(ll_disable_coherency)
- 	dsb
- 	ret	lr
- ENDPROC(ll_disable_coherency)
+diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
+index fdb135e45fea..e4c0bfa0f864 100644
+--- a/drivers/media/platform/vsp1/vsp1_video.c
++++ b/drivers/media/platform/vsp1/vsp1_video.c
+@@ -182,43 +182,6 @@ static int __vsp1_video_try_format(struct vsp1_video *video,
+  * VSP1 Partition Algorithm support
+  */
+ 
+-static void vsp1_video_pipeline_setup_partitions(struct vsp1_pipeline *pipe)
+-{
+-	struct vsp1_device *vsp1 = pipe->output->entity.vsp1;
+-	const struct v4l2_mbus_framefmt *format;
+-	struct vsp1_entity *entity;
+-	unsigned int div_size;
 -
--	.align 2
--3:
--	.long	coherency_phys_base - .
+-	/*
+-	 * Partitions are computed on the size before rotation, use the format
+-	 * at the WPF sink.
+-	 */
+-	format = vsp1_entity_get_pad_format(&pipe->output->entity,
+-					    pipe->output->entity.config,
+-					    RWPF_PAD_SINK);
+-	div_size = format->width;
+-
+-	/* Gen2 hardware doesn't require image partitioning. */
+-	if (vsp1->info->gen == 2) {
+-		pipe->div_size = div_size;
+-		pipe->partitions = 1;
+-		return;
+-	}
+-
+-	list_for_each_entry(entity, &pipe->entities, list_pipe) {
+-		unsigned int entity_max = VSP1_VIDEO_MAX_WIDTH;
+-
+-		if (entity->ops->max_width) {
+-			entity_max = entity->ops->max_width(entity, pipe);
+-			if (entity_max)
+-				div_size = min(div_size, entity_max);
+-		}
+-	}
+-
+-	pipe->div_size = div_size;
+-	pipe->partitions = DIV_ROUND_UP(format->width, div_size);
+-}
+-
+ /**
+  * vsp1_video_partition - Calculate the active partition output window
+  *
+@@ -293,6 +256,43 @@ static struct v4l2_rect vsp1_video_partition(struct vsp1_pipeline *pipe,
+ 	return partition;
+ }
+ 
++static void vsp1_video_pipeline_setup_partitions(struct vsp1_pipeline *pipe)
++{
++	struct vsp1_device *vsp1 = pipe->output->entity.vsp1;
++	const struct v4l2_mbus_framefmt *format;
++	struct vsp1_entity *entity;
++	unsigned int div_size;
++
++	/*
++	 * Partitions are computed on the size before rotation, use the format
++	 * at the WPF sink.
++	 */
++	format = vsp1_entity_get_pad_format(&pipe->output->entity,
++					    pipe->output->entity.config,
++					    RWPF_PAD_SINK);
++	div_size = format->width;
++
++	/* Gen2 hardware doesn't require image partitioning. */
++	if (vsp1->info->gen == 2) {
++		pipe->div_size = div_size;
++		pipe->partitions = 1;
++		return;
++	}
++
++	list_for_each_entry(entity, &pipe->entities, list_pipe) {
++		unsigned int entity_max = VSP1_VIDEO_MAX_WIDTH;
++
++		if (entity->ops->max_width) {
++			entity_max = entity->ops->max_width(entity, pipe);
++			if (entity_max)
++				div_size = min(div_size, entity_max);
++		}
++	}
++
++	pipe->div_size = div_size;
++	pipe->partitions = DIV_ROUND_UP(format->width, div_size);
++}
++
+ /* -----------------------------------------------------------------------------
+  * Pipeline Management
+  */
 -- 
-2.11.0
+git-series 0.9.1
