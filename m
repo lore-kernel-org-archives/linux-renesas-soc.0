@@ -1,21 +1,20 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:37512 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:35750 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752955AbdHDQcz (ORCPT
+        id S1752433AbdHDP5V (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 Aug 2017 12:32:55 -0400
+        Fri, 4 Aug 2017 11:57:21 -0400
 From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        hans.verkuil@cisco.com
+To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 Cc: laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v4 4/7] v4l: vsp1: Remove redundant context variables
-Date: Fri,  4 Aug 2017 17:32:41 +0100
-Message-Id: <163e44c4345b8427523bbb19bd82aa83c8d379dc.1501864274.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.b619f10db4b4618832ca73df5688ce9f2f36596b.1501864274.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.b619f10db4b4618832ca73df5688ce9f2f36596b.1501864274.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.b619f10db4b4618832ca73df5688ce9f2f36596b.1501864274.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.b619f10db4b4618832ca73df5688ce9f2f36596b.1501864274.git-series.kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v3 4/7] v4l: vsp1: Remove redundant context variables
+Date: Fri,  4 Aug 2017 16:57:08 +0100
+Message-Id: <7cfb3c08fc429360a12f4b21cb6ca2a168ef5ef4.1501861813.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.109dff74bad8730bc9559578df79f47dae253305.1501861813.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.109dff74bad8730bc9559578df79f47dae253305.1501861813.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.109dff74bad8730bc9559578df79f47dae253305.1501861813.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.109dff74bad8730bc9559578df79f47dae253305.1501861813.git-series.kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -62,7 +61,7 @@ index 0cfd07a187a2..9653ef5cfb0c 100644
  };
  
 diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
-index 2ac57a436811..176fd4b17df5 100644
+index 447597f1b758..f8c3186c0fb6 100644
 --- a/drivers/media/platform/vsp1/vsp1_video.c
 +++ b/drivers/media/platform/vsp1/vsp1_video.c
 @@ -290,7 +290,6 @@ static int vsp1_video_pipeline_setup_partitions(struct vsp1_pipeline *pipe)
