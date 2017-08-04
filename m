@@ -1,97 +1,430 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:34588 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753011AbdHNMLa (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:38601 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752832AbdHDN0d (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 Aug 2017 08:11:30 -0400
-Received: by mail-pg0-f68.google.com with SMTP id y192so10394260pgd.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Aug 2017 05:11:29 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1501853180-23939-1-git-send-email-horms+renesas@verge.net.au>
-References: <1501853180-23939-1-git-send-email-horms+renesas@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 14 Aug 2017 14:11:29 +0200
-Message-ID: <CAMuHMdVhRLLU=VW6xp2DtXXjjtxK_or0jRon0nbKJQiqqGfbwA@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: r8a7795: Add OPPs table for cpu devices
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
+        Fri, 4 Aug 2017 09:26:33 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: [PATCH] arm64: dts: r8a7795: Add OPPs table for cpu devices
+Date: Fri,  4 Aug 2017 15:26:20 +0200
+Message-Id: <1501853180-23939-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
+From: Dien Pham <dien.pham.ry@rvc.renesas.com>
 
-2017-08-04 15:26 GMT+02:00 Simon Horman <horms+renesas@verge.net.au>:
-> From: Dien Pham <dien.pham.ry@rvc.renesas.com>
->
-> Current, OPP tables are defined temporary,
-> they are being evaluated and adjust in future.
->
-> Based in part on work by Hien Dang.
->
-> Signed-off-by: Dien Pham <dien.pham.ry@rvc.renesas.com>
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> [simon: consolidated sseveral patches into one]
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> ---
->  arch/arm64/boot/dts/renesas/r8a7795.dtsi | 309 +++++++++++++++++++++++++++++++
->  1 file changed, 309 insertions(+)
->
-> I am not aware of any build-time depdendencies of this patch.
->
-> This patch has run-time depdnencies on:
-> * [PATCH] cpufreq: rcar: Add support for R8A7795 SoC
-> * [PATCH 0/4] r8a7795: Add Z and Z2 clock support
->
-> I have provided an integration patch with this patch, those DTS changes,
-> and Renesas clock updates also depended on by the DTS changes. The result
-> is working CPUFreq for the r8a7795 (R-Car H3) ES1.0.
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/r8a7795-cpufreq
->
-> A description of steps taken to lightly exercise the above can be found here:
->
-> http://elinux.org/Tests:R-CAR-GEN3-CPUFreq
->
-> If this work is acceptable I plan to follow up with patches to
-> enable CPUFreq on the r8a7796 (R-Car M3-W).
->
-> This patch is based on renesas-arm64-dt-for-v4.14
->
-> diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-> index a87ae76880ab..f34da4c9ea52 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+Current, OPP tables are defined temporary,
+they are being evaluated and adjust in future.
 
-> @@ -126,6 +152,289 @@
->                 };
->         };
->
-> +       cluster0_opp_tb0: opp_table0 {
-> +               compatible = "operating-points-v2";
-> +               opp-shared;
-> +
-> +               opp@500000000 {
+Based in part on work by Hien Dang.
 
-No complaints from "make W=1 dtbs" due to unit-address without reg property?
+Signed-off-by: Dien Pham <dien.pham.ry@rvc.renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+[simon: consolidated sseveral patches into one]
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 309 +++++++++++++++++++++++++++++++
+ 1 file changed, 309 insertions(+)
 
-=> "opp-500000000 { ... };"
+I am not aware of any build-time depdendencies of this patch.
 
-> +                       opp-hz = /bits/ 64 <500000000>;
-> +                       opp-microvolt = <830000>;
-> +                       clock-latency-ns = <300000>;
-> +               };
+This patch has run-time depdnencies on:
+* [PATCH] cpufreq: rcar: Add support for R8A7795 SoC
+* [PATCH 0/4] r8a7795: Add Z and Z2 clock support
 
-Gr{oetje,eeting}s,
+I have provided an integration patch with this patch, those DTS changes,
+and Renesas clock updates also depended on by the DTS changes. The result
+is working CPUFreq for the r8a7795 (R-Car H3) ES1.0.
 
-                        Geert
+https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/r8a7795-cpufreq
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+A description of steps taken to lightly exercise the above can be found here:
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+http://elinux.org/Tests:R-CAR-GEN3-CPUFreq
+
+If this work is acceptable I plan to follow up with patches to
+enable CPUFreq on the r8a7796 (R-Car M3-W).
+
+This patch is based on renesas-arm64-dt-for-v4.14
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index a87ae76880ab..f34da4c9ea52 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -46,6 +46,12 @@
+ 			power-domains = <&sysc R8A7795_PD_CA57_CPU0>;
+ 			next-level-cache = <&L2_CA57>;
+ 			enable-method = "psci";
++			clocks =<&cpg CPG_CORE R8A7795_CLK_Z>;
++			operating-points-v2 = <&cluster0_opp_tb0>,
++				<&cluster0_opp_tb1>, <&cluster0_opp_tb2>,
++				<&cluster0_opp_tb3>, <&cluster0_opp_tb4>,
++				<&cluster0_opp_tb5>, <&cluster0_opp_tb6>,
++				<&cluster0_opp_tb7>;
+ 		};
+ 
+ 		a57_1: cpu@1 {
+@@ -55,6 +61,11 @@
+ 			power-domains = <&sysc R8A7795_PD_CA57_CPU1>;
+ 			next-level-cache = <&L2_CA57>;
+ 			enable-method = "psci";
++			operating-points-v2 = <&cluster0_opp_tb0>,
++				<&cluster0_opp_tb1>, <&cluster0_opp_tb2>,
++				<&cluster0_opp_tb3>, <&cluster0_opp_tb4>,
++				<&cluster0_opp_tb5>, <&cluster0_opp_tb6>,
++				<&cluster0_opp_tb7>;
+ 		};
+ 
+ 		a57_2: cpu@2 {
+@@ -64,6 +75,11 @@
+ 			power-domains = <&sysc R8A7795_PD_CA57_CPU2>;
+ 			next-level-cache = <&L2_CA57>;
+ 			enable-method = "psci";
++			operating-points-v2 = <&cluster0_opp_tb0>,
++				<&cluster0_opp_tb1>, <&cluster0_opp_tb2>,
++				<&cluster0_opp_tb3>, <&cluster0_opp_tb4>,
++				<&cluster0_opp_tb5>, <&cluster0_opp_tb6>,
++				<&cluster0_opp_tb7>;
+ 		};
+ 
+ 		a57_3: cpu@3 {
+@@ -73,6 +89,11 @@
+ 			power-domains = <&sysc R8A7795_PD_CA57_CPU3>;
+ 			next-level-cache = <&L2_CA57>;
+ 			enable-method = "psci";
++			operating-points-v2 = <&cluster0_opp_tb0>,
++				<&cluster0_opp_tb1>, <&cluster0_opp_tb2>,
++				<&cluster0_opp_tb3>, <&cluster0_opp_tb4>,
++				<&cluster0_opp_tb5>, <&cluster0_opp_tb6>,
++				<&cluster0_opp_tb7>;
+ 		};
+ 
+ 		a53_0: cpu@100 {
+@@ -82,6 +103,8 @@
+ 			power-domains = <&sysc R8A7795_PD_CA53_CPU0>;
+ 			next-level-cache = <&L2_CA53>;
+ 			enable-method = "psci";
++			clocks =<&cpg CPG_CORE R8A7795_CLK_Z2>;
++			operating-points-v2 = <&cluster1_opp_tb0>;
+ 		};
+ 
+ 		a53_1: cpu@101 {
+@@ -91,6 +114,7 @@
+ 			power-domains = <&sysc R8A7795_PD_CA53_CPU1>;
+ 			next-level-cache = <&L2_CA53>;
+ 			enable-method = "psci";
++			operating-points-v2 = <&cluster1_opp_tb0>;
+ 		};
+ 
+ 		a53_2: cpu@102 {
+@@ -100,6 +124,7 @@
+ 			power-domains = <&sysc R8A7795_PD_CA53_CPU2>;
+ 			next-level-cache = <&L2_CA53>;
+ 			enable-method = "psci";
++			operating-points-v2 = <&cluster1_opp_tb0>;
+ 		};
+ 
+ 		a53_3: cpu@103 {
+@@ -109,6 +134,7 @@
+ 			power-domains = <&sysc R8A7795_PD_CA53_CPU3>;
+ 			next-level-cache = <&L2_CA53>;
+ 			enable-method = "psci";
++			operating-points-v2 = <&cluster1_opp_tb0>;
+ 		};
+ 
+ 		L2_CA57: cache-controller-0 {
+@@ -126,6 +152,289 @@
+ 		};
+ 	};
+ 
++	cluster0_opp_tb0: opp_table0 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp@500000000 {
++			opp-hz = /bits/ 64 <500000000>;
++			opp-microvolt = <830000>;
++			clock-latency-ns = <300000>;
++		};
++		opp@1000000000 {
++			opp-hz = /bits/ 64 <1000000000>;
++			opp-microvolt = <830000>;
++			clock-latency-ns = <300000>;
++		};
++		opp@1500000000 {
++			opp-hz = /bits/ 64 <1500000000>;
++			opp-microvolt = <830000>;
++			clock-latency-ns = <300000>;
++			opp-suspend;
++		};
++		opp@1600000000 {
++			opp-hz = /bits/ 64 <1600000000>;
++			opp-microvolt = <900000>;
++			clock-latency-ns = <300000>;
++			turbo-mode;
++		};
++		opp@1700000000 {
++			opp-hz = /bits/ 64 <1700000000>;
++			opp-microvolt = <960000>;
++			clock-latency-ns = <300000>;
++			turbo-mode;
++		};
++	};
++
++	cluster0_opp_tb1: opp_table1 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp@500000000 {
++			opp-hz = /bits/ 64 <500000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
++		opp@1000000000 {
++			opp-hz = /bits/ 64 <1000000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
++		opp@1500000000 {
++			opp-hz = /bits/ 64 <1500000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++			opp-suspend;
++		};
++		opp@1600000000 {
++			opp-hz = /bits/ 64 <1600000000>;
++			opp-microvolt = <890000>;
++			clock-latency-ns = <300000>;
++			turbo-mode;
++		};
++		opp@1700000000 {
++			opp-hz = /bits/ 64 <1700000000>;
++			opp-microvolt = <950000>;
++			clock-latency-ns = <300000>;
++			turbo-mode;
++		};
++	};
++
++	cluster0_opp_tb2: opp_table2 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp@500000000 {
++			opp-hz = /bits/ 64 <500000000>;
++			opp-microvolt = <810000>;
++			clock-latency-ns = <300000>;
++		};
++		opp@1000000000 {
++			opp-hz = /bits/ 64 <1000000000>;
++			opp-microvolt = <810000>;
++			clock-latency-ns = <300000>;
++		};
++		opp@1500000000 {
++			opp-hz = /bits/ 64 <1500000000>;
++			opp-microvolt = <810000>;
++			clock-latency-ns = <300000>;
++			opp-suspend;
++		};
++		opp@1600000000 {
++			opp-hz = /bits/ 64 <1600000000>;
++			opp-microvolt = <880000>;
++			clock-latency-ns = <300000>;
++			turbo-mode;
++		};
++		opp@1700000000 {
++			opp-hz = /bits/ 64 <1700000000>;
++			opp-microvolt = <930000>;
++			clock-latency-ns = <300000>;
++			turbo-mode;
++		};
++	};
++
++	cluster0_opp_tb3: opp_table3 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp@500000000 {
++			opp-hz = /bits/ 64 <500000000>;
++			opp-microvolt = <800000>;
++			clock-latency-ns = <300000>;
++		};
++		opp@1000000000 {
++			opp-hz = /bits/ 64 <1000000000>;
++			opp-microvolt = <800000>;
++			clock-latency-ns = <300000>;
++		};
++		opp@1500000000 {
++			opp-hz = /bits/ 64 <1500000000>;
++			opp-microvolt = <800000>;
++			clock-latency-ns = <300000>;
++			opp-suspend;
++		};
++		opp@1600000000 {
++			opp-hz = /bits/ 64 <1600000000>;
++			opp-microvolt = <870000>;
++			clock-latency-ns = <300000>;
++			turbo-mode;
++		};
++		opp@1700000000 {
++			opp-hz = /bits/ 64 <1700000000>;
++			opp-microvolt = <910000>;
++			clock-latency-ns = <300000>;
++			turbo-mode;
++		};
++	};
++
++	cluster0_opp_tb4: opp_table4 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp@500000000 {
++			opp-hz = /bits/ 64 <500000000>;
++			opp-microvolt = <790000>;
++			clock-latency-ns = <300000>;
++		};
++		opp@1000000000 {
++			opp-hz = /bits/ 64 <1000000000>;
++			opp-microvolt = <790000>;
++			clock-latency-ns = <300000>;
++		};
++		opp@1500000000 {
++			opp-hz = /bits/ 64 <1500000000>;
++			opp-microvolt = <790000>;
++			clock-latency-ns = <300000>;
++			opp-suspend;
++		};
++		opp@1600000000 {
++			opp-hz = /bits/ 64 <1600000000>;
++			opp-microvolt = <860000>;
++			clock-latency-ns = <300000>;
++			turbo-mode;
++		};
++		opp@1700000000 {
++			opp-hz = /bits/ 64 <1700000000>;
++			opp-microvolt = <890000>;
++			clock-latency-ns = <300000>;
++			turbo-mode;
++		};
++	};
++
++	cluster0_opp_tb5: opp_table5 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp@500000000 {
++			opp-hz = /bits/ 64 <500000000>;
++			opp-microvolt = <780000>;
++			clock-latency-ns = <300000>;
++		};
++		opp@1000000000 {
++			opp-hz = /bits/ 64 <1000000000>;
++			opp-microvolt = <780000>;
++			clock-latency-ns = <300000>;
++		};
++		opp@1500000000 {
++			opp-hz = /bits/ 64 <1500000000>;
++			opp-microvolt = <780000>;
++			clock-latency-ns = <300000>;
++			opp-suspend;
++		};
++		opp@1600000000 {
++			opp-hz = /bits/ 64 <1600000000>;
++			opp-microvolt = <850000>;
++			clock-latency-ns = <300000>;
++			turbo-mode;
++		};
++		opp@1700000000 {
++			opp-hz = /bits/ 64 <1700000000>;
++			opp-microvolt = <880000>;
++			clock-latency-ns = <300000>;
++			turbo-mode;
++		};
++	};
++
++	cluster0_opp_tb6: opp_table6 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp@500000000 {
++			opp-hz = /bits/ 64 <500000000>;
++			opp-microvolt = <770000>;
++			clock-latency-ns = <300000>;
++		};
++		opp@1000000000 {
++			opp-hz = /bits/ 64 <1000000000>;
++			opp-microvolt = <770000>;
++			clock-latency-ns = <300000>;
++		};
++		opp@1500000000 {
++			opp-hz = /bits/ 64 <1500000000>;
++			opp-microvolt = <770000>;
++			clock-latency-ns = <300000>;
++			opp-suspend;
++		};
++		opp@1600000000 {
++			opp-hz = /bits/ 64 <1600000000>;
++			opp-microvolt = <840000>;
++			clock-latency-ns = <300000>;
++			turbo-mode;
++		};
++		opp@1700000000 {
++			opp-hz = /bits/ 64 <1700000000>;
++			opp-microvolt = <870000>;
++			clock-latency-ns = <300000>;
++			turbo-mode;
++		};
++	};
++
++	cluster0_opp_tb7: opp_table7 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp@500000000 {
++			opp-hz = /bits/ 64 <500000000>;
++			opp-microvolt = <760000>;
++			clock-latency-ns = <300000>;
++		};
++		opp@1000000000 {
++			opp-hz = /bits/ 64 <1000000000>;
++			opp-microvolt = <760000>;
++			clock-latency-ns = <300000>;
++		};
++		opp@1500000000 {
++			opp-hz = /bits/ 64 <1500000000>;
++			opp-microvolt = <760000>;
++			clock-latency-ns = <300000>;
++			opp-suspend;
++		};
++		opp@1600000000 {
++			opp-hz = /bits/ 64 <1600000000>;
++			opp-microvolt = <830000>;
++			clock-latency-ns = <300000>;
++			turbo-mode;
++		};
++		opp@1700000000 {
++			opp-hz = /bits/ 64 <1700000000>;
++			opp-microvolt = <860000>;
++			clock-latency-ns = <300000>;
++			turbo-mode;
++		};
++	};
++
++	cluster1_opp_tb0: opp_table10 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp@1200000000 {
++			opp-hz = /bits/ 64 <1200000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
++	};
++
+ 	extal_clk: extal {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+-- 
+2.1.4
