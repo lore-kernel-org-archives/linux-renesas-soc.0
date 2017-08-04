@@ -1,65 +1,38 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:10048 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751208AbdHCMb7 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 3 Aug 2017 08:31:59 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 1/3] arm64: dts: r8a7796: add usb2_phy device nodes
-Date: Thu,  3 Aug 2017 21:28:42 +0900
-Message-Id: <1501763324-26028-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1501763324-26028-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1501763324-26028-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>
+To: horms@verge.net.au, bhelgaas@google.com, linux-pci@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>
+Subject: [PATCH v2 2/2] PCI: rcar-pcie: Fix memory leak when no PCIe card is inserted
+Date: Fri,  4 Aug 2017 12:32:55 +0900
+Message-Id: <20170804033255.27171-3-harunobu.kurokawa.dn@renesas.com>
+In-Reply-To: <20170804033255.27171-1-harunobu.kurokawa.dn@renesas.com>
+References: <20170804033255.27171-1-harunobu.kurokawa.dn@renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 19 +++++++++++++++++--
- 1 file changed, 17 insertions(+), 2 deletions(-)
+When no PCIe card is inserted, there is a memory leak as
+pci_free_resource_list is not called before returning.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index ef1120f..efaf941 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -1240,7 +1240,15 @@
- 		};
+Signed-off-by: Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>
+---
+ drivers/pci/host/pcie-rcar.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
+index 6b73981..70b487c 100644
+--- a/drivers/pci/host/pcie-rcar.c
++++ b/drivers/pci/host/pcie-rcar.c
+@@ -1196,6 +1196,7 @@ static int rcar_pcie_probe(struct platform_device *pdev)
  
- 		usb2_phy0: usb-phy@ee080200 {
--			/* placeholder */
-+			compatible = "renesas,usb2-phy-r8a7796",
-+				     "renesas,rcar-gen3-usb2-phy";
-+			reg = <0 0xee080200 0 0x700>;
-+			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 703>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 703>;
-+			#phy-cells = <0>;
-+			status = "disabled";
- 		};
+ err_free_bridge:
+ 	pci_free_host_bridge(bridge);
++	pci_free_resource_list(&pcie->resources);
  
- 		ohci1: usb@ee0a0000 {
-@@ -1252,7 +1260,14 @@
- 		};
- 
- 		usb2_phy1: usb-phy@ee0a0200 {
--			/* placeholder */
-+			compatible = "renesas,usb2-phy-r8a7796",
-+				     "renesas,rcar-gen3-usb2-phy";
-+			reg = <0 0xee0a0200 0 0x700>;
-+			clocks = <&cpg CPG_MOD 702>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 702>;
-+			#phy-cells = <0>;
-+			status = "disabled";
- 		};
- 
- 		sdhi0: sd@ee100000 {
+ 	return err;
+ }
 -- 
-1.9.1
+2.9.2
