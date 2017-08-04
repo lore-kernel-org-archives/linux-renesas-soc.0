@@ -1,56 +1,95 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33652 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751605AbdHRIT5 (ORCPT
+Received: from mail.kernel.org ([198.145.29.99]:37484 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752558AbdHDQcu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Aug 2017 04:19:57 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 8/9] arm64: dts: r8a7796: Add HSUSB device node
-Date: Fri, 18 Aug 2017 10:19:38 +0200
-Message-Id: <b9535853777fdf14232e6bc5e166b667b2225b76.1502961153.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1502961153.git.horms+renesas@verge.net.au>
-References: <cover.1502961153.git.horms+renesas@verge.net.au>
+        Fri, 4 Aug 2017 12:32:50 -0400
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        hans.verkuil@cisco.com
+Cc: laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v4 1/7] v4l: vsp1: Release buffers in start_streaming error path
+Date: Fri,  4 Aug 2017 17:32:38 +0100
+Message-Id: <abafc888a5872a6bc275849fa52f4d8f3c301a64.1501864274.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.b619f10db4b4618832ca73df5688ce9f2f36596b.1501864274.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.b619f10db4b4618832ca73df5688ce9f2f36596b.1501864274.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.b619f10db4b4618832ca73df5688ce9f2f36596b.1501864274.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.b619f10db4b4618832ca73df5688ce9f2f36596b.1501864274.git-series.kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Presently any received buffers are only released back to vb2 if
+vsp1_video_stop_streaming() is called. If vsp1_video_start_streaming()
+encounters an error, we will be warned by the vb2 handlers that buffers
+have not been returned.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Move the buffer cleanup code to its own function to prevent duplication
+and call from both vsp1_video_stop_streaming() and the error path in
+vsp1_video_start_streaming().
+
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+ drivers/media/platform/vsp1/vsp1_video.c | 24 ++++++++++++++++--------
+ 1 file changed, 16 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index c152b6e30da5..369092e17e34 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -1252,7 +1252,20 @@
- 		};
+diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
+index 5af3486afe07..fdb135e45fea 100644
+--- a/drivers/media/platform/vsp1/vsp1_video.c
++++ b/drivers/media/platform/vsp1/vsp1_video.c
+@@ -822,6 +822,20 @@ static int vsp1_video_setup_pipeline(struct vsp1_pipeline *pipe)
+ 	return 0;
+ }
  
- 		hsusb: usb@e6590000 {
--			/* placeholder */
-+			compatible = "renesas,usbhs-r8a7796",
-+				     "renesas,rcar-gen3-usbhs";
-+			reg = <0 0xe6590000 0 0x100>;
-+			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 704>;
-+			dmas = <&usb_dmac0 0>, <&usb_dmac0 1>,
-+			       <&usb_dmac1 0>, <&usb_dmac1 1>;
-+			dma-names = "ch0", "ch1", "ch2", "ch3";
-+			renesas,buswait = <11>;
-+			phys = <&usb2_phy0>;
-+			phy-names = "usb";
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 704>;
-+			status = "disabled";
- 		};
++static void vsp1_video_cleanup_pipeline(struct vsp1_pipeline *pipe)
++{
++	struct vsp1_video *video = pipe->output->video;
++	struct vsp1_vb2_buffer *buffer;
++	unsigned long flags;
++
++	/* Remove all buffers from the IRQ queue. */
++	spin_lock_irqsave(&video->irqlock, flags);
++	list_for_each_entry(buffer, &video->irqqueue, queue)
++		vb2_buffer_done(&buffer->buf.vb2_buf, VB2_BUF_STATE_ERROR);
++	INIT_LIST_HEAD(&video->irqqueue);
++	spin_unlock_irqrestore(&video->irqlock, flags);
++}
++
+ static int vsp1_video_start_streaming(struct vb2_queue *vq, unsigned int count)
+ {
+ 	struct vsp1_video *video = vb2_get_drv_priv(vq);
+@@ -835,6 +849,7 @@ static int vsp1_video_start_streaming(struct vb2_queue *vq, unsigned int count)
+ 		ret = vsp1_video_setup_pipeline(pipe);
+ 		if (ret < 0) {
+ 			mutex_unlock(&pipe->lock);
++			vsp1_video_cleanup_pipeline(pipe);
+ 			return ret;
+ 		}
  
- 		xhci0: usb@ee000000 {
+@@ -866,7 +881,6 @@ static void vsp1_video_stop_streaming(struct vb2_queue *vq)
+ {
+ 	struct vsp1_video *video = vb2_get_drv_priv(vq);
+ 	struct vsp1_pipeline *pipe = video->rwpf->pipe;
+-	struct vsp1_vb2_buffer *buffer;
+ 	unsigned long flags;
+ 	int ret;
+ 
+@@ -891,14 +905,8 @@ static void vsp1_video_stop_streaming(struct vb2_queue *vq)
+ 	mutex_unlock(&pipe->lock);
+ 
+ 	media_pipeline_stop(&video->video.entity);
++	vsp1_video_cleanup_pipeline(pipe);
+ 	vsp1_video_pipeline_put(pipe);
+-
+-	/* Remove all buffers from the IRQ queue. */
+-	spin_lock_irqsave(&video->irqlock, flags);
+-	list_for_each_entry(buffer, &video->irqqueue, queue)
+-		vb2_buffer_done(&buffer->buf.vb2_buf, VB2_BUF_STATE_ERROR);
+-	INIT_LIST_HEAD(&video->irqqueue);
+-	spin_unlock_irqrestore(&video->irqlock, flags);
+ }
+ 
+ static const struct vb2_ops vsp1_video_queue_qops = {
 -- 
-2.1.4
+git-series 0.9.1
