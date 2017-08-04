@@ -1,22 +1,18 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:37480 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:35734 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752558AbdHDQcs (ORCPT
+        id S1752433AbdHDP5P (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 Aug 2017 12:32:48 -0400
+        Fri, 4 Aug 2017 11:57:15 -0400
 From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        hans.verkuil@cisco.com
+To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 Cc: laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v4 0/7] vsp1 partition algorithm improvements
-Date: Fri,  4 Aug 2017 17:32:37 +0100
-Message-Id: <cover.b619f10db4b4618832ca73df5688ce9f2f36596b.1501864274.git-series.kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v3 0/7] vsp1 partition algorithm improvements
+Date: Fri,  4 Aug 2017 16:57:04 +0100
+Message-Id: <cover.109dff74bad8730bc9559578df79f47dae253305.1501861813.git-series.kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
-
-Hans, this series should be ready for integration now. Could you pick up these
-patches please?
 
 Some updates and initial improvements for the VSP1 partition algorithm that
 remove redundant processing and variables, reducing the processing done in
@@ -45,9 +41,6 @@ v2:
 v3:
  - Review fixes and changes from Laurent
  - v4l: vsp1: Release buffers in start_streaming error path
-
-v4:
- - (Final) fixups from Laurent's review, and picked up his reviewed-by tags.
 
 Kieran Bingham (7):
   v4l: vsp1: Release buffers in start_streaming error path
