@@ -1,40 +1,41 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] dt-bindings: serial: sh-sci: Add support for r8a77995 (H)SCIF
-Date: Thu, 17 Aug 2017 13:16:28 +0200
-Message-Id: <1502968588-7991-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:58764 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751144AbdHEIBc (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sat, 5 Aug 2017 04:01:32 -0400
+Subject: Re: [PATCH] media: i2c: adv748x: Store the pixel rate ctrl on CSI
+ objects
+To: Kieran Bingham <kbingham@kernel.org>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, niklas.soderlund@ragnatech.se
+Cc: kieran.bingham@ideasonboard.com,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+References: <1501768223-23654-1-git-send-email-kbingham@kernel.org>
+From: Sakari Ailus <sakari.ailus@iki.fi>
+Message-ID: <f9219815-55c3-c7d7-0812-3b97144d9cfe@iki.fi>
+Date: Fri, 4 Aug 2017 20:09:34 +0300
+MIME-Version: 1.0
+In-Reply-To: <1501768223-23654-1-git-send-email-kbingham@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document support for the (H)SCIF serial ports in the Renesas R-Car D3
-(r8a77995) SoC.
+Kieran Bingham wrote:
+> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> 
+> The current implementation has to search the list of controls for the
+> pixel rate control, each time it is set.  This can be optimised easily
+> by storing the ctrl pointer in the CSI/TX object, and referencing that
+> directly.
+> 
+> While at it, fix up a missing blank line also highlighted in review
+> comments.
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-No driver update is needed.
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- Documentation/devicetree/bindings/serial/renesas,sci-serial.txt | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-index 8d27d1a603e7bf75..4fc96946f81d6afc 100644
---- a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-+++ b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-@@ -41,6 +41,8 @@ Required properties:
-     - "renesas,hscif-r8a7795" for R8A7795 (R-Car H3) HSCIF compatible UART.
-     - "renesas,scif-r8a7796" for R8A7796 (R-Car M3-W) SCIF compatible UART.
-     - "renesas,hscif-r8a7796" for R8A7796 (R-Car M3-W) HSCIF compatible UART.
-+    - "renesas,scif-r8a77995" for R8A77995 (R-Car D3) SCIF compatible UART.
-+    - "renesas,hscif-r8a77995" for R8A77995 (R-Car D3) HSCIF compatible UART.
-     - "renesas,scifa-sh73a0" for SH73A0 (SH-Mobile AG5) SCIFA compatible UART.
-     - "renesas,scifb-sh73a0" for SH73A0 (SH-Mobile AG5) SCIFB compatible UART.
-     - "renesas,rcar-gen1-scif" for R-Car Gen1 SCIF compatible UART,
 -- 
-2.7.4
-
+Sakari Ailus
+sakari.ailus@iki.fi
