@@ -1,17 +1,21 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:35768 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752646AbdHDP5Z (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 4 Aug 2017 11:57:25 -0400
 From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        hans.verkuil@cisco.com
+To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 Cc: laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v4 7/7] v4l: vsp1: Allow entities to participate in the partition algorithm
-Date: Fri,  4 Aug 2017 17:32:44 +0100
-Message-Id: <e63664c935c09947e72533477ab8ddb676686138.1501864274.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.b619f10db4b4618832ca73df5688ce9f2f36596b.1501864274.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.b619f10db4b4618832ca73df5688ce9f2f36596b.1501864274.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.b619f10db4b4618832ca73df5688ce9f2f36596b.1501864274.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.b619f10db4b4618832ca73df5688ce9f2f36596b.1501864274.git-series.kieran.bingham+renesas@ideasonboard.com>
-Sender: linux-media-owner@vger.kernel.org
+Subject: [PATCH v3 7/7] v4l: vsp1: Allow entities to participate in the partition algorithm
+Date: Fri,  4 Aug 2017 16:57:11 +0100
+Message-Id: <b09bccd2f8c909a2fd2e9e23d9801ea2dd2be176.1501861813.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.109dff74bad8730bc9559578df79f47dae253305.1501861813.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.109dff74bad8730bc9559578df79f47dae253305.1501861813.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.109dff74bad8730bc9559578df79f47dae253305.1501861813.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.109dff74bad8730bc9559578df79f47dae253305.1501861813.git-series.kieran.bingham+renesas@ideasonboard.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The configuration of the pipeline and entities directly affects the
@@ -326,7 +330,7 @@ index 4a43e7413b68..72f72a9d2152 100644
  
  /* -----------------------------------------------------------------------------
 diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
-index abbdcafa7c94..ab53132ad3fa 100644
+index 5522595e9323..0917a42ac5fe 100644
 --- a/drivers/media/platform/vsp1/vsp1_video.c
 +++ b/drivers/media/platform/vsp1/vsp1_video.c
 @@ -196,6 +196,7 @@ static void vsp1_video_calculate_partition(struct vsp1_pipeline *pipe,
