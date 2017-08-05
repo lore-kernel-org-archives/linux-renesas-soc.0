@@ -1,64 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:54699 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751274AbdHXItF (ORCPT
+Received: from mail-wr0-f173.google.com ([209.85.128.173]:38151 "EHLO
+        mail-wr0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751401AbdHEUxS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 Aug 2017 04:49:05 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: horms@verge.net.au
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, magnus.damm@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 2/4] arm: dts: gr-peach: Add SCIF2 pin group
-Date: Thu, 24 Aug 2017 10:48:41 +0200
-Message-Id: <1503564523-31899-3-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1503564523-31899-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1503564523-31899-1-git-send-email-jacopo+renesas@jmondi.org>
+        Sat, 5 Aug 2017 16:53:18 -0400
+Received: by mail-wr0-f173.google.com with SMTP id f21so27115525wrf.5
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 05 Aug 2017 13:53:17 -0700 (PDT)
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+To: linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux@armlinux.org.uk,
+        linux-omap@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, krzk@kernel.org,
+        jason@lakedaemon.net, arm@kernel.org, andrew@lunn.ch,
+        gregory.clement@free-electrons.com,
+        sebastian.hesselbarth@gmail.com, tony@atomide.com,
+        baohua@kernel.org, horms@verge.net.au, magnus.damm@gmail.com,
+        vireshk@kernel.org, shiraz.linux.kernel@gmail.com,
+        patrice.chotard@st.com, nico@linaro.org, dave.martin@arm.com,
+        marc.zyngier@arm.com
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: [PATCH 03/15] ARM: head-common.S: use PC-relative insn sequence for __turn_mmu_on
+Date: Sat,  5 Aug 2017 21:52:10 +0100
+Message-Id: <20170805205222.19868-4-ard.biesheuvel@linaro.org>
+In-Reply-To: <20170805205222.19868-1-ard.biesheuvel@linaro.org>
+References: <20170805205222.19868-1-ard.biesheuvel@linaro.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add pin configuration subnode for SCIF2 serial debug interface.
+Replace the open coded PC relative offset calculations with a pair
+of adr_l invocations.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 ---
- arch/arm/boot/dts/r7s72100-gr-peach.dts | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ arch/arm/kernel/head.S | 12 ++----------
+ 1 file changed, 2 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r7s72100-gr-peach.dts b/arch/arm/boot/dts/r7s72100-gr-peach.dts
-index 1c40a1a..bcfa644 100644
---- a/arch/arm/boot/dts/r7s72100-gr-peach.dts
-+++ b/arch/arm/boot/dts/r7s72100-gr-peach.dts
-@@ -11,6 +11,7 @@
+diff --git a/arch/arm/kernel/head.S b/arch/arm/kernel/head.S
+index 04286fd9e09c..0a98aec0e39d 100644
+--- a/arch/arm/kernel/head.S
++++ b/arch/arm/kernel/head.S
+@@ -227,11 +227,8 @@ __create_page_tables:
+ 	 * Create identity mapping to cater for __enable_mmu.
+ 	 * This identity mapping will be removed by paging_init().
+ 	 */
+-	adr	r0, __turn_mmu_on_loc
+-	ldmia	r0, {r3, r5, r6}
+-	sub	r0, r0, r3			@ virt->phys offset
+-	add	r5, r5, r0			@ phys __turn_mmu_on
+-	add	r6, r6, r0			@ phys __turn_mmu_on_end
++	adr_l	r5, __turn_mmu_on		@ _pa(__turn_mmu_on)
++	adr_l	r6, __turn_mmu_on_end		@ _pa(__turn_mmu_on_end)
+ 	mov	r5, r5, lsr #SECTION_SHIFT
+ 	mov	r6, r6, lsr #SECTION_SHIFT
  
- /dts-v1/;
- #include "r7s72100.dtsi"
-+#include <dt-bindings/pinctrl/r7s72100-pinctrl.h>
+@@ -354,11 +351,6 @@ __create_page_tables:
+ 	ret	lr
+ ENDPROC(__create_page_tables)
+ 	.ltorg
+-	.align
+-__turn_mmu_on_loc:
+-	.long	.
+-	.long	__turn_mmu_on
+-	.long	__turn_mmu_on_end
  
- / {
- 	model = "GR-Peach";
-@@ -52,6 +53,13 @@
- 	};
- };
- 
-+&pinctrl {
-+	scif2_pins: serial2 {
-+		/* P6_2 as RxD2; P6_3 as TxD2 */
-+		pinmux = <RZA1_PINMUX(6, 2, 7)>, <RZA1_PINMUX(6, 3, 7)>;
-+	};
-+};
-+
- &extal_clk {
- 	clock-frequency = <13333000>;
- };
-@@ -61,5 +69,8 @@
- };
- 
- &scif2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&scif2_pins>;
-+
- 	status = "okay";
- };
+ #if defined(CONFIG_SMP)
+ 	.text
 -- 
-2.7.4
+2.11.0
