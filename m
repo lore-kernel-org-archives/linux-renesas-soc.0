@@ -1,76 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:49702 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751571AbdH3N6f (ORCPT
+Received: from mail-wm0-f47.google.com ([74.125.82.47]:35094 "EHLO
+        mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752821AbdHEUxq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 30 Aug 2017 09:58:35 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH  3/5] ARM: dts: r8a7743: Link PCI USB devices to USB PHY
-Date: Wed, 30 Aug 2017 14:41:11 +0100
-Message-Id: <1504100473-5528-4-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1504100473-5528-1-git-send-email-biju.das@bp.renesas.com>
-References: <1504100473-5528-1-git-send-email-biju.das@bp.renesas.com>
+        Sat, 5 Aug 2017 16:53:46 -0400
+Received: by mail-wm0-f47.google.com with SMTP id m85so42482228wma.0
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 05 Aug 2017 13:53:45 -0700 (PDT)
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+To: linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux@armlinux.org.uk,
+        linux-omap@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, krzk@kernel.org,
+        jason@lakedaemon.net, arm@kernel.org, andrew@lunn.ch,
+        gregory.clement@free-electrons.com,
+        sebastian.hesselbarth@gmail.com, tony@atomide.com,
+        baohua@kernel.org, horms@verge.net.au, magnus.damm@gmail.com,
+        vireshk@kernel.org, shiraz.linux.kernel@gmail.com,
+        patrice.chotard@st.com, nico@linaro.org, dave.martin@arm.com,
+        marc.zyngier@arm.com
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: [PATCH 11/15] arm-soc: mvebu: replace open coded VA->PA conversion
+Date: Sat,  5 Aug 2017 21:52:18 +0100
+Message-Id: <20170805205222.19868-12-ard.biesheuvel@linaro.org>
+In-Reply-To: <20170805205222.19868-1-ard.biesheuvel@linaro.org>
+References: <20170805205222.19868-1-ard.biesheuvel@linaro.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe the PCI USB devices that are behind the PCI bridges, adding
-necessary links to the USB PHY device.
+This replaces an open coded calculation to obtain the physical
+address of a far symbol with a call to the new ldr_l etc macro.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 ---
- arch/arm/boot/dts/r8a7743.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ arch/arm/mach-mvebu/coherency_ll.S | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index a81d70e..665a515 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -865,6 +865,18 @@
- 			interrupt-map = <0x0000 0 0 1 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH
- 					 0x0800 0 0 1 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH
- 					 0x1000 0 0 2 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			usb@1,0 {
-+				reg = <0x800 0 0 0 0>;
-+				phys = <&usb0 0>;
-+				phy-names = "usb";
-+			};
-+
-+			usb@2,0 {
-+				reg = <0x1000 0 0 0 0>;
-+				phys = <&usb0 0>;
-+				phy-names = "usb";
-+			};
- 		};
- 
- 		pci1: pci@ee0d0000 {
-@@ -888,6 +900,18 @@
- 			interrupt-map = <0x0000 0 0 1 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH
- 					 0x0800 0 0 1 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH
- 					 0x1000 0 0 2 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			usb@1,0 {
-+				reg = <0x10800 0 0 0 0>;
-+				phys = <&usb2 0>;
-+				phy-names = "usb";
-+			};
-+
-+			usb@2,0 {
-+				reg = <0x11000 0 0 0 0>;
-+				phys = <&usb2 0>;
-+				phy-names = "usb";
-+			};
- 		};
- 	};
- 
+diff --git a/arch/arm/mach-mvebu/coherency_ll.S b/arch/arm/mach-mvebu/coherency_ll.S
+index 8b2fbc8b6bc6..df0ccb5cef1d 100644
+--- a/arch/arm/mach-mvebu/coherency_ll.S
++++ b/arch/arm/mach-mvebu/coherency_ll.S
+@@ -42,9 +42,7 @@ ENTRY(ll_get_coherency_base)
+ 	ldr	r1, =coherency_base
+ 	cmp	r1, #0
+ 	beq	2f
+-	adr	r1, 3f
+-	ldr	r3, [r1]
+-	ldr	r1, [r1, r3]
++	ldr_l	r1, coherency_phys_base
+ 	b	2f
+ 1:
+ 	/*
+@@ -160,7 +158,3 @@ ENTRY(ll_disable_coherency)
+ 	dsb
+ 	ret	lr
+ ENDPROC(ll_disable_coherency)
+-
+-	.align 2
+-3:
+-	.long	coherency_phys_base - .
 -- 
-1.9.1
+2.11.0
