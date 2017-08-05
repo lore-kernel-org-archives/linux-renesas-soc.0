@@ -1,67 +1,80 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:48310 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751998AbdHHLLR (ORCPT
+Received: from mail-wm0-f44.google.com ([74.125.82.44]:35054 "EHLO
+        mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751401AbdHEUx2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 Aug 2017 07:11:17 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH  3/3] ARM: dts: r8a7743: Add OPP table for frequency scaling
-Date: Tue,  8 Aug 2017 11:56:33 +0100
-Message-Id: <1502189793-59679-4-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1502189793-59679-1-git-send-email-biju.das@bp.renesas.com>
-References: <1502189793-59679-1-git-send-email-biju.das@bp.renesas.com>
+        Sat, 5 Aug 2017 16:53:28 -0400
+Received: by mail-wm0-f44.google.com with SMTP id m85so42479813wma.0
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 05 Aug 2017 13:53:27 -0700 (PDT)
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+To: linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux@armlinux.org.uk,
+        linux-omap@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, krzk@kernel.org,
+        jason@lakedaemon.net, arm@kernel.org, andrew@lunn.ch,
+        gregory.clement@free-electrons.com,
+        sebastian.hesselbarth@gmail.com, tony@atomide.com,
+        baohua@kernel.org, horms@verge.net.au, magnus.damm@gmail.com,
+        vireshk@kernel.org, shiraz.linux.kernel@gmail.com,
+        patrice.chotard@st.com, nico@linaro.org, dave.martin@arm.com,
+        marc.zyngier@arm.com
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: [PATCH 06/15] ARM: sleep.S: use PC-relative insn sequence for sleep_save_sp/mpidr_hash
+Date: Sat,  5 Aug 2017 21:52:13 +0100
+Message-Id: <20170805205222.19868-7-ard.biesheuvel@linaro.org>
+In-Reply-To: <20170805205222.19868-1-ard.biesheuvel@linaro.org>
+References: <20170805205222.19868-1-ard.biesheuvel@linaro.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add needed information inside CPU0 for the generic cpufreq-cpu0 driver.
+Replace the open coded PC relative offset calculations with adr_l and
+ldr_l invocations.
 
-- clock-latency = 300 us
-Approximate worst-case latency to do clock transition for every
-OPPs. Using an arbitrary safe value similar to r8a7791(R-Car M2) Soc.
-
-- operating-points = < kHz - uV >
-List of 6 operating points. All of them are using the same voltage
-since DVS is not supported in RZ/G1 Soc.
-
-Note:This also fixes the below errors seen on kernel logs
-[    0.876877] cpu cpu0: dev_pm_opp_get_opp_count: OPP table not found (-19)
-[    0.883727] cpu cpu1: cpufreq_init: failed to get clk: -2
-
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 ---
- arch/arm/boot/dts/r8a7743.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/arm/kernel/sleep.S | 16 +++-------------
+ 1 file changed, 3 insertions(+), 13 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 77da319..8c46f62 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -29,8 +29,17 @@
- 			reg = <0>;
- 			clock-frequency = <1500000000>;
- 			clocks = <&cpg CPG_CORE R8A7743_CLK_Z>;
-+			clock-latency = <300000>; /* 300 us */
- 			power-domains = <&sysc R8A7743_PD_CA15_CPU0>;
- 			next-level-cache = <&L2_CA15>;
+diff --git a/arch/arm/kernel/sleep.S b/arch/arm/kernel/sleep.S
+index 0f6c1000582c..3026b119d3ff 100644
+--- a/arch/arm/kernel/sleep.S
++++ b/arch/arm/kernel/sleep.S
+@@ -137,9 +137,8 @@ ARM_BE8(setend be)			@ ensure we are in BE mode
+ 	mov	r1, #0
+ 	ALT_SMP(mrc p15, 0, r0, c0, c0, 5)
+ 	ALT_UP_B(1f)
+-	adr	r2, mpidr_hash_ptr
+-	ldr	r3, [r2]
+-	add	r2, r2, r3		@ r2 = struct mpidr_hash phys address
++	adr_l	r2, mpidr_hash		@ r2 = struct mpidr_hash phys address
 +
-+			/* kHz - uV - OPPs unknown yet */
-+			operating-points = <1500000 1000000>,
-+					   <1312500 1000000>,
-+					   <1125000 1000000>,
-+					   < 937500 1000000>,
-+					   < 750000 1000000>,
-+					   < 375000 1000000>;
- 		};
+ 	/*
+ 	 * This ldmia relies on the memory layout of the mpidr_hash
+ 	 * struct mpidr_hash.
+@@ -147,10 +146,7 @@ ARM_BE8(setend be)			@ ensure we are in BE mode
+ 	ldmia	r2, { r3-r6 }	@ r3 = mpidr mask (r4,r5,r6) = l[0,1,2] shifts
+ 	compute_mpidr_hash	r1, r4, r5, r6, r0, r3
+ 1:
+-	adr	r0, _sleep_save_sp
+-	ldr	r2, [r0]
+-	add	r0, r0, r2
+-	ldr	r0, [r0, #SLEEP_SAVE_SP_PHYS]
++	ldr_l	r0, sleep_save_sp + SLEEP_SAVE_SP_PHYS
+ 	ldr	r0, [r0, r1, lsl #2]
  
- 		cpu1: cpu@1 {
+ 	@ load phys pgd, stack, resume fn
+@@ -164,12 +160,6 @@ ENDPROC(cpu_resume)
+ ENDPROC(cpu_resume_arm)
+ #endif
+ 
+-	.align 2
+-_sleep_save_sp:
+-	.long	sleep_save_sp - .
+-mpidr_hash_ptr:
+-	.long	mpidr_hash - .			@ mpidr_hash struct offset
+-
+ 	.data
+ 	.type	sleep_save_sp, #object
+ ENTRY(sleep_save_sp)
 -- 
-1.9.1
+2.11.0
