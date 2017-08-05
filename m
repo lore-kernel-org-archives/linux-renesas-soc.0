@@ -1,126 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:38049 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751461AbdHPNWl (ORCPT
+Received: from mail-wm0-f51.google.com ([74.125.82.51]:38579 "EHLO
+        mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752734AbdHEUx4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Aug 2017 09:22:41 -0400
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-serial@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, magnus.damm@gmail.com,
-        laurent.pinchart@ideasonboard.com, wsa@the-dreams.de,
-        robh@kernel.org, peda@axentia.se, geert@linux-m68k.org,
-        linux-i2c@vger.kernel.org,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 1/6] serdev: add method to set parity
-Date: Wed, 16 Aug 2017 15:22:23 +0200
-Message-Id: <1502889748-31499-2-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1502889748-31499-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1502889748-31499-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Sat, 5 Aug 2017 16:53:56 -0400
+Received: by mail-wm0-f51.google.com with SMTP id m85so42574144wma.1
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 05 Aug 2017 13:53:56 -0700 (PDT)
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+To: linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux@armlinux.org.uk,
+        linux-omap@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, krzk@kernel.org,
+        jason@lakedaemon.net, arm@kernel.org, andrew@lunn.ch,
+        gregory.clement@free-electrons.com,
+        sebastian.hesselbarth@gmail.com, tony@atomide.com,
+        baohua@kernel.org, horms@verge.net.au, magnus.damm@gmail.com,
+        vireshk@kernel.org, shiraz.linux.kernel@gmail.com,
+        patrice.chotard@st.com, nico@linaro.org, dave.martin@arm.com,
+        marc.zyngier@arm.com
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: [PATCH 14/15] arm-soc: shmobile: replace open coded VA->PA calculation
+Date: Sat,  5 Aug 2017 21:52:21 +0100
+Message-Id: <20170805205222.19868-15-ard.biesheuvel@linaro.org>
+In-Reply-To: <20170805205222.19868-1-ard.biesheuvel@linaro.org>
+References: <20170805205222.19868-1-ard.biesheuvel@linaro.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Adds serdev_device_set_parity() and an implementation for ttyport.
+This replaces a couple of open coded calculations to obtain the
+physical address of a far symbol with calls to the new adr_l etc
+macros.
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 ---
- drivers/tty/serdev/core.c           | 12 ++++++++++++
- drivers/tty/serdev/serdev-ttyport.c | 18 ++++++++++++++++++
- include/linux/serdev.h              | 10 ++++++++++
- 3 files changed, 40 insertions(+)
+ arch/arm/mach-shmobile/headsmp.S | 14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/tty/serdev/core.c b/drivers/tty/serdev/core.c
-index ae1aaa0..8491056 100644
---- a/drivers/tty/serdev/core.c
-+++ b/drivers/tty/serdev/core.c
-@@ -242,6 +242,18 @@ int serdev_device_set_tiocm(struct serdev_device *serdev, int set, int clear)
- }
- EXPORT_SYMBOL_GPL(serdev_device_set_tiocm);
+diff --git a/arch/arm/mach-shmobile/headsmp.S b/arch/arm/mach-shmobile/headsmp.S
+index 32e0bf6e3ccb..f5e0d7c93cda 100644
+--- a/arch/arm/mach-shmobile/headsmp.S
++++ b/arch/arm/mach-shmobile/headsmp.S
+@@ -46,11 +46,10 @@ ENTRY(shmobile_smp_boot)
+ 	and	r0, r1, #0xffffff		@ MPIDR_HWID_BITMASK
+ 						@ r0 = cpu_logical_map() value
+ 	mov	r1, #0				@ r1 = CPU index
+-	adr	r2, 1f
+-	ldmia	r2, {r5, r6, r7}
+-	add	r5, r5, r2			@ array of per-cpu mpidr values
+-	add	r6, r6, r2			@ array of per-cpu functions
+-	add	r7, r7, r2			@ array of per-cpu arguments
++
++	adr_l	r5, shmobile_smp_mpidr		@ array of per-cpu mpidr values
++	adr_l	r6, shmobile_smp_fn		@ array of per-cpu functions
++	adr_l	r7, shmobile_smp_arg		@ array of per-cpu arguments
  
-+int serdev_device_set_parity(struct serdev_device *serdev,
-+			     enum serdev_parity parity)
-+{
-+	struct serdev_controller *ctrl = serdev->ctrl;
-+
-+	if (!ctrl || !ctrl->ops->set_parity)
-+		return -ENOTSUPP;
-+
-+	return ctrl->ops->set_parity(ctrl, parity);
-+}
-+EXPORT_SYMBOL_GPL(serdev_device_set_parity);
-+
- static int serdev_drv_probe(struct device *dev)
- {
- 	const struct serdev_device_driver *sdrv = to_serdev_device_driver(dev->driver);
-diff --git a/drivers/tty/serdev/serdev-ttyport.c b/drivers/tty/serdev/serdev-ttyport.c
-index 302018d..2883f12 100644
---- a/drivers/tty/serdev/serdev-ttyport.c
-+++ b/drivers/tty/serdev/serdev-ttyport.c
-@@ -195,6 +195,23 @@ static int ttyport_set_tiocm(struct serdev_controller *ctrl, unsigned int set, u
- 	return tty->driver->ops->tiocmset(tty, set, clear);
- }
+ shmobile_smp_boot_find_mpidr:
+ 	ldr	r8, [r5, r1, lsl #2]
+@@ -78,11 +77,6 @@ ENTRY(shmobile_smp_sleep)
+ 	b	shmobile_smp_boot
+ ENDPROC(shmobile_smp_sleep)
  
-+static int ttyport_set_parity(struct serdev_controller *ctrl,
-+			      enum serdev_parity parity)
-+{
-+	struct serport *serport = serdev_controller_get_drvdata(ctrl);
-+	struct tty_struct *tty = serport->tty;
-+	struct ktermios ktermios = tty->termios;
-+
-+	ktermios.c_cflag &= ~(PARENB | PARODD);
-+	if (parity != SERDEV_PARITY_NONE) {
-+		ktermios.c_cflag |= PARENB;
-+		if (parity == SERDEV_PARITY_ODD)
-+			ktermios.c_cflag |= PARODD;
-+	}
-+
-+	return tty_set_termios(tty, &ktermios);
-+}
-+
- static const struct serdev_controller_ops ctrl_ops = {
- 	.write_buf = ttyport_write_buf,
- 	.write_flush = ttyport_write_flush,
-@@ -206,6 +223,7 @@ static const struct serdev_controller_ops ctrl_ops = {
- 	.wait_until_sent = ttyport_wait_until_sent,
- 	.get_tiocm = ttyport_get_tiocm,
- 	.set_tiocm = ttyport_set_tiocm,
-+	.set_parity = ttyport_set_parity,
- };
- 
- struct device *serdev_tty_port_register(struct tty_port *port,
-diff --git a/include/linux/serdev.h b/include/linux/serdev.h
-index e69402d..8f60f11 100644
---- a/include/linux/serdev.h
-+++ b/include/linux/serdev.h
-@@ -76,6 +76,12 @@ static inline struct serdev_device_driver *to_serdev_device_driver(struct device
- 	return container_of(d, struct serdev_device_driver, driver);
- }
- 
-+enum serdev_parity {
-+	SERDEV_PARITY_NONE,
-+	SERDEV_PARITY_EVEN,
-+	SERDEV_PARITY_ODD,
-+};
-+
- /*
-  * serdev controller structures
-  */
-@@ -90,6 +96,7 @@ struct serdev_controller_ops {
- 	void (*wait_until_sent)(struct serdev_controller *, long);
- 	int (*get_tiocm)(struct serdev_controller *);
- 	int (*set_tiocm)(struct serdev_controller *, unsigned int, unsigned int);
-+	int (*set_parity)(struct serdev_controller *, enum serdev_parity);
- };
- 
- /**
-@@ -298,6 +305,9 @@ static inline int serdev_device_set_rts(struct serdev_device *serdev, bool enabl
- 		return serdev_device_set_tiocm(serdev, 0, TIOCM_RTS);
- }
- 
-+int serdev_device_set_parity(struct serdev_device *serdev,
-+			     enum serdev_parity parity);
-+
- /*
-  * serdev hooks into TTY core
-  */
+-	.align	2
+-1:	.long	shmobile_smp_mpidr - .
+-	.long	shmobile_smp_fn - 1b
+-	.long	shmobile_smp_arg - 1b
+-
+ 	.bss
+ 	.globl	shmobile_smp_mpidr
+ shmobile_smp_mpidr:
 -- 
-2.7.4
+2.11.0
