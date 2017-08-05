@@ -1,113 +1,81 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Cc: Russell King <linux@armlinux.org.uk>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Juri Lelli <juri.lelli@arm.com>
-Subject: [PATCH 0/4] arm: remove cpu_efficiency
-Date: Wed, 30 Aug 2017 15:41:16 +0100
-Message-Id: <20170830144120.9312-1-dietmar.eggemann@arm.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-wr0-f175.google.com ([209.85.128.175]:38155 "EHLO
+        mail-wr0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752708AbdHEUxV (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sat, 5 Aug 2017 16:53:21 -0400
+Received: by mail-wr0-f175.google.com with SMTP id f21so27115745wrf.5
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 05 Aug 2017 13:53:21 -0700 (PDT)
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+To: linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux@armlinux.org.uk,
+        linux-omap@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, krzk@kernel.org,
+        jason@lakedaemon.net, arm@kernel.org, andrew@lunn.ch,
+        gregory.clement@free-electrons.com,
+        sebastian.hesselbarth@gmail.com, tony@atomide.com,
+        baohua@kernel.org, horms@verge.net.au, magnus.damm@gmail.com,
+        vireshk@kernel.org, shiraz.linux.kernel@gmail.com,
+        patrice.chotard@st.com, nico@linaro.org, dave.martin@arm.com,
+        marc.zyngier@arm.com
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: [PATCH 04/15] ARM: head.S: use PC-relative insn sequence for secondary_data
+Date: Sat,  5 Aug 2017 21:52:11 +0100
+Message-Id: <20170805205222.19868-5-ard.biesheuvel@linaro.org>
+In-Reply-To: <20170805205222.19868-1-ard.biesheuvel@linaro.org>
+References: <20170805205222.19868-1-ard.biesheuvel@linaro.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-For Cortex-A15/A7 arm big.LITTLE systems there are currently two ways to
-set the cpu capacity.
+Replace the open coded PC relative offset calculations with adr_l
+and ldr_l invocations.
 
-The first one (commit 06073ee26775 "ARM: 8621/3: parse cpu
-capacity-dmips-mhz from DT") is based on dt 'cpu capacity-dmips-mhz'
-bindings and the appropriate dt parsing code in
-drivers/base/arch_topology.c. It further takes differences in maximum
-cpu frequency values into consideration, normalizes the maximum cpu
-capacity to SCHED_CAPACITY_SCALE (1024) and scales all the cpus
-accordingly.
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+---
+ arch/arm/kernel/head.S | 19 ++++---------------
+ 1 file changed, 4 insertions(+), 15 deletions(-)
 
-  cpu capacity = (capacity-dmips-mhz * max cpu frequency) / 
-                 (max capacity-dmips-mhz * max (max cpu frequency)
-
-This solution is shared between arm and arm64 and works for other
-combinations of big and little cpus (besides Cortex-A15/A7) as well.
-
-The second one (commit 339ca09d7ada "ARM: 7463/1: topology: Update
-cpu_power according to DT information" is based on the 'struct
-cpu_efficiency table_efficiency[]' and the dt parsing code in
-arch/arm/kernel/topology.c. It further requires a clock-frequency
-property per cpu node, calculates a so called middle frequency for an
-average cpu in the system which is as close as possible to
-SCHED_CAPACITY_SCALE (1024) and uses this to compute the cpu capacity
-values.
-
-  cpu capacity = (cpu efficiency * clock frequency) / middle capacity
-
-This solution only works for Cortex-A15/A7 arm big.LITTLE systems.
-
-The aim of this patch-set is to have only one solution for all arm and
-arm64 big.LITTLE platforms.
-
-(1) Therefore, it removes the code for the 'cpu_efficiency/
-    clock-frequency dt property' (second) solution [patch 01/04] and
-    migrates the arm big.LITTLE platforms currently using this approach
-    [patch 02-04/04] to use the 'cpu capacity-dmips-mhz' (first)
-    solution.
-
-(2) Moreover, it will also assure that the highest original cpu capacity
-    (rq->cpu_capacity_orig) in a non-smt system is SCHED_CAPACITY_SCALE
-    (1024).
-
-(3) And finally, another advantage is the dynamic detection of the max
-    cpu frequency which comes with the first solution instead of the
-    static clock-frequency dt property value.
-
-Currently, the arm dt parsing code in parse_dt_topology() checks if the
-dt uses the capacity-dmips-mhz property. If this is the case it uses
-the first, otherwise the second solution. This patch-set removes the
-code for the second solution from arch/arm/kernel/topology.c.
-
-The following arm big.LITTLE platforms which use cpu node descriptions
-with the 'compatible' properties "arm,cortex-a15" and "arm,cortex-a7"
-as well as the "clock-frequency" are (theoretically*) affected:
-
-(1) arndale-octa, peach-pi, peach-pit, smdk5420 (exynos5420-cpus.dtsi)
-
-(2) odroidxu3, odroidxu3-lite, odroidxu4 (exynos5422-cpus.dtsi)
-
-(3) r8a7790-lager (r8a7790.dtsi)
-
-TC2 (vexpress-v2p-ca15_a7.dts) already has the capacity-dmips-mhz
-properties (it never had "clock-frequency" properties per cpu node
-though).
-
-*Currently, these platforms are only theoretically affected. The reason
-is because heterogeneous cpu capacity support on arm stopped with commit
-8cd5601c5060 ("sched/fair: Convert arch_scale_cpu_capacity() from weak
-function to #define") because the arch never defined
-arch_scale_cpu_capacity so the task scheduler uses the default
-implementation in kernel/sched/sched.h. This will change as soon the
-patch "arm: wire cpu-invariant accounting support up to the task
-scheduler" [1] is in mainline.
-
-This patch-set has been tested on TC2 and Samsung Chromebook 2 13"
-(peach-pi, Exynos 5800).
-
-[1] https://marc.info/?l=linux-kernel&m=150367158111303&w=2
-
-Dietmar Eggemann (4):
-  arm: topology: remove cpu_efficiency
-  arm: dts: exynos: add exynos5420 cpu capacity-dmips-mhz information
-  arm: dts: exynos: add exynos5422 cpu capacity-dmips-mhz information
-  arm: dts: r8a7790: add cpu capacity-dmips-mhz information
-
- arch/arm/boot/dts/exynos5420-cpus.dtsi |   8 +++
- arch/arm/boot/dts/exynos5422-cpus.dtsi |   8 +++
- arch/arm/boot/dts/r8a7790.dtsi         |   8 +++
- arch/arm/kernel/topology.c             | 113 +--------------------------------
- 4 files changed, 27 insertions(+), 110 deletions(-)
-
+diff --git a/arch/arm/kernel/head.S b/arch/arm/kernel/head.S
+index 0a98aec0e39d..6e9df3663a57 100644
+--- a/arch/arm/kernel/head.S
++++ b/arch/arm/kernel/head.S
+@@ -386,10 +386,8 @@ ENTRY(secondary_startup)
+ 	/*
+ 	 * Use the page tables supplied from  __cpu_up.
+ 	 */
+-	adr	r4, __secondary_data
+-	ldmia	r4, {r5, r7, r12}		@ address to jump to after
+-	sub	lr, r4, r5			@ mmu has been enabled
+-	add	r3, r7, lr
++	adr_l	r3, secondary_data
++	mov_l	r12, __secondary_switched
+ 	ldrd	r4, [r3, #0]			@ get secondary_data.pgdir
+ ARM_BE8(eor	r4, r4, r5)			@ Swap r5 and r4 in BE:
+ ARM_BE8(eor	r5, r4, r5)			@ it can be done in 3 steps
+@@ -404,22 +402,13 @@ ARM_BE8(eor	r4, r4, r5)			@ without using a temp reg.
+ ENDPROC(secondary_startup)
+ ENDPROC(secondary_startup_arm)
+ 
+-	/*
+-	 * r6  = &secondary_data
+-	 */
+ ENTRY(__secondary_switched)
+-	ldr	sp, [r7, #12]			@ get secondary_data.stack
++	ldr_l	r7, secondary_data + 12		@ get secondary_data.stack
++	mov	sp, r7
+ 	mov	fp, #0
+ 	b	secondary_start_kernel
+ ENDPROC(__secondary_switched)
+ 
+-	.align
+-
+-	.type	__secondary_data, %object
+-__secondary_data:
+-	.long	.
+-	.long	secondary_data
+-	.long	__secondary_switched
+ #endif /* defined(CONFIG_SMP) */
+ 
+ 
 -- 
 2.11.0
-
