@@ -1,55 +1,127 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:36090 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752231AbdHPMNP (ORCPT
+Received: from mail-wm0-f51.google.com ([74.125.82.51]:38545 "EHLO
+        mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752731AbdHEUxm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Aug 2017 08:13:15 -0400
-MIME-Version: 1.0
-In-Reply-To: <1501242081-3805-7-git-send-email-ykaneko0929@gmail.com>
-References: <1501242081-3805-1-git-send-email-ykaneko0929@gmail.com> <1501242081-3805-7-git-send-email-ykaneko0929@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 16 Aug 2017 14:13:14 +0200
-Message-ID: <CAMuHMdXRH9UHaoZUYxrmgbS7Eq2BLMfEiKXw91FW1itFpJqB=g@mail.gmail.com>
-Subject: Re: [PATCH 6/9] pinctrl: sh-pfc: r8a7795: Fix MOD_SEL register pin
- assignment for TCLK{1,2}_{A,B} pins group
-To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Sat, 5 Aug 2017 16:53:42 -0400
+Received: by mail-wm0-f51.google.com with SMTP id m85so42572128wma.1
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 05 Aug 2017 13:53:42 -0700 (PDT)
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+To: linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux@armlinux.org.uk,
+        linux-omap@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, krzk@kernel.org,
+        jason@lakedaemon.net, arm@kernel.org, andrew@lunn.ch,
+        gregory.clement@free-electrons.com,
+        sebastian.hesselbarth@gmail.com, tony@atomide.com,
+        baohua@kernel.org, horms@verge.net.au, magnus.damm@gmail.com,
+        vireshk@kernel.org, shiraz.linux.kernel@gmail.com,
+        patrice.chotard@st.com, nico@linaro.org, dave.martin@arm.com,
+        marc.zyngier@arm.com
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: [PATCH 10/15] arm-soc: exynos: replace open coded VA->PA conversions
+Date: Sat,  5 Aug 2017 21:52:17 +0100
+Message-Id: <20170805205222.19868-11-ard.biesheuvel@linaro.org>
+In-Reply-To: <20170805205222.19868-1-ard.biesheuvel@linaro.org>
+References: <20170805205222.19868-1-ard.biesheuvel@linaro.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Jul 28, 2017 at 1:41 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->
-> This patch fixes to set MOD_SEL2 bit19 when using TCLK2_A pin function is
-> selected for IPSR16 bit[23:20] or using TCLK2_B pin function is selected
-> for IPSR17 bit[27:24]. And renames MOD_SEL2 bit26 value definition name
-> to SEL_TIMER_TMU1.
->
-> This is a correction because MOD_SEL register specification for R8A7795
-> ES2.0 SoC was changed in R-Car Gen3 Hardware User's Manual Rev.0.53E.
->
-> Fixes: 12f5d9a1dc7f ("pinctrl: sh-pfc: r8a7795: Replace for Renesas R8A7795 ES2.0 SoC")
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+This replaces a couple of open coded calculations to obtain the
+physical address of a far symbol with calls to the new adr_l etc
+macros.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+---
+ arch/arm/mach-exynos/headsmp.S |  9 +------
+ arch/arm/mach-exynos/sleep.S   | 26 ++++----------------
+ 2 files changed, 6 insertions(+), 29 deletions(-)
 
-i.e. will queue in sh-pfc-for-v4.14 with reference corrected.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/mach-exynos/headsmp.S b/arch/arm/mach-exynos/headsmp.S
+index d3d24ab351ae..25de5aff1c41 100644
+--- a/arch/arm/mach-exynos/headsmp.S
++++ b/arch/arm/mach-exynos/headsmp.S
+@@ -23,10 +23,7 @@ ENTRY(exynos4_secondary_startup)
+ ARM_BE8(setend	be)
+ 	mrc	p15, 0, r0, c0, c0, 5
+ 	and	r0, r0, #15
+-	adr	r4, 1f
+-	ldmia	r4, {r5, r6}
+-	sub	r4, r4, r5
+-	add	r6, r6, r4
++	adr_l	r6, pen_release
+ pen:	ldr	r7, [r6]
+ 	cmp	r7, r0
+ 	bne	pen
+@@ -37,7 +34,3 @@ pen:	ldr	r7, [r6]
+ 	 */
+ 	b	secondary_startup
+ ENDPROC(exynos4_secondary_startup)
+-
+-	.align 2
+-1:	.long	.
+-	.long	pen_release
+diff --git a/arch/arm/mach-exynos/sleep.S b/arch/arm/mach-exynos/sleep.S
+index cf950790fbdc..003465699263 100644
+--- a/arch/arm/mach-exynos/sleep.S
++++ b/arch/arm/mach-exynos/sleep.S
+@@ -17,6 +17,7 @@
+ 
+ #include <linux/linkage.h>
+ #include <asm/asm-offsets.h>
++#include <asm/assembler.h>
+ #include <asm/hardware/cache-l2x0.h>
+ #include "smc.h"
+ 
+@@ -62,19 +63,13 @@ ENTRY(exynos_cpu_resume_ns)
+ 	cmp	r0, r1
+ 	bne	skip_cp15
+ 
+-	adr	r0, _cp15_save_power
+-	ldr	r1, [r0]
+-	ldr	r1, [r0, r1]
+-	adr	r0, _cp15_save_diag
+-	ldr	r2, [r0]
+-	ldr	r2, [r0, r2]
++	ldr_l	r1, cp15_save_power
++	ldr_l	r2, cp15_save_diag
+ 	mov	r0, #SMC_CMD_C15RESUME
+ 	dsb
+ 	smc	#0
+ #ifdef CONFIG_CACHE_L2X0
+-	adr	r0, 1f
+-	ldr	r2, [r0]
+-	add	r0, r2, r0
++	adr_l	r0, l2x0_saved_regs
+ 
+ 	/* Check that the address has been initialised. */
+ 	ldr	r1, [r0, #L2X0_R_PHY_BASE]
+@@ -93,9 +88,7 @@ ENTRY(exynos_cpu_resume_ns)
+ 	smc	#0
+ 
+ 	/* Reload saved regs pointer because smc corrupts registers. */
+-	adr	r0, 1f
+-	ldr	r2, [r0]
+-	add	r0, r2, r0
++	adr_l	r0, l2x0_saved_regs
+ 
+ 	ldr	r1, [r0, #L2X0_R_PWR_CTRL]
+ 	ldr	r2, [r0, #L2X0_R_AUX_CTRL]
+@@ -114,15 +107,6 @@ skip_cp15:
+ 	b	cpu_resume
+ ENDPROC(exynos_cpu_resume_ns)
+ 
+-	.align
+-_cp15_save_power:
+-	.long	cp15_save_power - .
+-_cp15_save_diag:
+-	.long	cp15_save_diag - .
+-#ifdef CONFIG_CACHE_L2X0
+-1:	.long	l2x0_saved_regs - .
+-#endif /* CONFIG_CACHE_L2X0 */
+-
+ 	.data
+ 	.globl cp15_save_diag
+ cp15_save_diag:
+-- 
+2.11.0
