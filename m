@@ -1,188 +1,86 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f51.google.com ([74.125.82.51]:37359 "EHLO
-        mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752786AbdHEUxj (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:40910 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752331AbdHGIzY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 5 Aug 2017 16:53:39 -0400
-Received: by mail-wm0-f51.google.com with SMTP id t201so42546949wmt.0
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 05 Aug 2017 13:53:38 -0700 (PDT)
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-To: linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux@armlinux.org.uk,
-        linux-omap@vger.kernel.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, krzk@kernel.org,
-        jason@lakedaemon.net, arm@kernel.org, andrew@lunn.ch,
-        gregory.clement@free-electrons.com,
-        sebastian.hesselbarth@gmail.com, tony@atomide.com,
-        baohua@kernel.org, horms@verge.net.au, magnus.damm@gmail.com,
-        vireshk@kernel.org, shiraz.linux.kernel@gmail.com,
-        patrice.chotard@st.com, nico@linaro.org, dave.martin@arm.com,
-        marc.zyngier@arm.com
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH 09/15] ARM: kvm: replace open coded VA->PA calculations with adr_l call
-Date: Sat,  5 Aug 2017 21:52:16 +0100
-Message-Id: <20170805205222.19868-10-ard.biesheuvel@linaro.org>
-In-Reply-To: <20170805205222.19868-1-ard.biesheuvel@linaro.org>
-References: <20170805205222.19868-1-ard.biesheuvel@linaro.org>
+        Mon, 7 Aug 2017 04:55:24 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: David Airlie <airlied@linux.ie>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Mark Brown <broonie@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux-Kernel <linux-kernel@vger.kernel.org>,
+        Jose Abreu <joabreu@synopsys.com>,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v2] drm: dw-hdmi-i2s: add missing company name on Copyright
+Date: Mon, 07 Aug 2017 11:55:36 +0300
+Message-ID: <1907475.QQHEzZqjT4@avalon>
+In-Reply-To: <87tw1khvnq.wl%kuninori.morimoto.gx@renesas.com>
+References: <87tw1khvnq.wl%kuninori.morimoto.gx@renesas.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Replace the open coded calculations of the actual physical address
-of the KVM stub vector table with a single adr_l invocation.
+Hi Morimoto-san,
 
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
----
- arch/arm/boot/compressed/head.S | 15 ++-------
- arch/arm/kernel/hyp-stub.S      | 33 +++++++-------------
- arch/arm/kvm/init.S             |  8 +----
- 3 files changed, 15 insertions(+), 41 deletions(-)
+Thank you for the patch.
 
-diff --git a/arch/arm/boot/compressed/head.S b/arch/arm/boot/compressed/head.S
-index 8a756870c238..5884e8151376 100644
---- a/arch/arm/boot/compressed/head.S
-+++ b/arch/arm/boot/compressed/head.S
-@@ -427,15 +427,10 @@ dtb_check_done:
- 
- 		/*
- 		 * Compute the address of the hyp vectors after relocation.
--		 * This requires some arithmetic since we cannot directly
--		 * reference __hyp_stub_vectors in a PC-relative way.
- 		 * Call __hyp_set_vectors with the new address so that we
- 		 * can HVC again after the copy.
- 		 */
--0:		adr	r0, 0b
--		movw	r1, #:lower16:__hyp_stub_vectors - 0b
--		movt	r1, #:upper16:__hyp_stub_vectors - 0b
--		add	r0, r0, r1
-+		adr_l	r0, __hyp_stub_vectors
- 		sub	r0, r0, r5
- 		add	r0, r0, r10
- 		bl	__hyp_set_vectors
-@@ -568,17 +563,11 @@ not_relocated:	mov	r0, #0
- 		cmp	r0, #HYP_MODE		@ if not booted in HYP mode...
- 		bne	__enter_kernel		@ boot kernel directly
- 
--		adr	r12, .L__hyp_reentry_vectors_offset
--		ldr	r0, [r12]
--		add	r0, r0, r12
--
-+		adr_l	r0, __hyp_reentry_vectors
- 		bl	__hyp_set_vectors
- 		__HVC(0)			@ otherwise bounce to hyp mode
- 
- 		b	.			@ should never be reached
--
--		.align	2
--.L__hyp_reentry_vectors_offset:	.long	__hyp_reentry_vectors - .
- #else
- 		b	__enter_kernel
- #endif
-diff --git a/arch/arm/kernel/hyp-stub.S b/arch/arm/kernel/hyp-stub.S
-index ec7e7377d423..55b5fab83861 100644
---- a/arch/arm/kernel/hyp-stub.S
-+++ b/arch/arm/kernel/hyp-stub.S
-@@ -36,41 +36,38 @@ ENTRY(__boot_cpu_mode)
- .text
- 
- 	/*
--	 * Save the primary CPU boot mode. Requires 3 scratch registers.
-+	 * Save the primary CPU boot mode. Requires 2 scratch registers.
- 	 */
--	.macro	store_primary_cpu_mode	reg1, reg2, reg3
-+	.macro	store_primary_cpu_mode	reg1, reg2
- 	mrs	\reg1, cpsr
- 	and	\reg1, \reg1, #MODE_MASK
--	adr	\reg2, .L__boot_cpu_mode_offset
--	ldr	\reg3, [\reg2]
--	str	\reg1, [\reg2, \reg3]
-+	str_l	\reg1, __boot_cpu_mode, \reg2
- 	.endm
- 
- 	/*
- 	 * Compare the current mode with the one saved on the primary CPU.
- 	 * If they don't match, record that fact. The Z bit indicates
- 	 * if there's a match or not.
--	 * Requires 3 additionnal scratch registers.
-+	 * Requires 2 additionnal scratch registers.
- 	 */
--	.macro	compare_cpu_mode_with_primary mode, reg1, reg2, reg3
--	adr	\reg2, .L__boot_cpu_mode_offset
--	ldr	\reg3, [\reg2]
--	ldr	\reg1, [\reg2, \reg3]
-+	.macro	compare_cpu_mode_with_primary mode, reg1, reg2
-+	adr_l	\reg2, __boot_cpu_mode
-+	ldr	\reg1, [\reg2]
- 	cmp	\mode, \reg1		@ matches primary CPU boot mode?
- 	orrne	\reg1, \reg1, #BOOT_CPU_MODE_MISMATCH
--	strne	\reg1, [\reg2, \reg3]	@ record what happened and give up
-+	strne	\reg1, [\reg2]		@ record what happened and give up
- 	.endm
- 
- #else	/* ZIMAGE */
- 
--	.macro	store_primary_cpu_mode	reg1:req, reg2:req, reg3:req
-+	.macro	store_primary_cpu_mode	reg1:req, reg2:req
- 	.endm
- 
- /*
-  * The zImage loader only runs on one CPU, so we don't bother with mult-CPU
-  * consistency checking:
-  */
--	.macro	compare_cpu_mode_with_primary mode, reg1, reg2, reg3
-+	.macro	compare_cpu_mode_with_primary mode, reg1, reg2
- 	cmp	\mode, \mode
- 	.endm
- 
-@@ -85,7 +82,7 @@ ENTRY(__boot_cpu_mode)
-  */
- @ Call this from the primary CPU
- ENTRY(__hyp_stub_install)
--	store_primary_cpu_mode	r4, r5, r6
-+	store_primary_cpu_mode	r4, r5
- ENDPROC(__hyp_stub_install)
- 
- 	@ fall through...
-@@ -99,7 +96,7 @@ ENTRY(__hyp_stub_install_secondary)
- 	 * If the secondary has booted with a different mode, give up
- 	 * immediately.
- 	 */
--	compare_cpu_mode_with_primary	r4, r5, r6, r7
-+	compare_cpu_mode_with_primary	r4, r5, r6
- 	retne	lr
- 
- 	/*
-@@ -264,12 +261,6 @@ ENTRY(__hyp_reset_vectors)
- 	ret	lr
- ENDPROC(__hyp_reset_vectors)
- 
--#ifndef ZIMAGE
--.align 2
--.L__boot_cpu_mode_offset:
--	.long	__boot_cpu_mode - .
--#endif
--
- .align 5
- ENTRY(__hyp_stub_vectors)
- __hyp_stub_reset:	W(b)	.
-diff --git a/arch/arm/kvm/init.S b/arch/arm/kvm/init.S
-index 5386528665b5..d777c6fbd869 100644
---- a/arch/arm/kvm/init.S
-+++ b/arch/arm/kvm/init.S
-@@ -143,13 +143,7 @@ reset:
- 	bic	r1, r1, r0
- 	mcr	p15, 4, r1, c1, c0, 0	@ HSCTLR
- 
--	/*
--	 * Install stub vectors, using ardb's VA->PA trick.
--	 */
--0:	adr	r0, 0b					@ PA(0)
--	movw	r1, #:lower16:__hyp_stub_vectors - 0b   @ VA(stub) - VA(0)
--	movt	r1, #:upper16:__hyp_stub_vectors - 0b
--	add	r1, r1, r0				@ PA(stub)
-+	adr_l	r1, __hyp_stub_vectors			@ PA(stub)
- 	mcr	p15, 4, r1, c12, c0, 0	@ HVBAR
- 	b	exit
- 
+On Monday 07 Aug 2017 04:09:41 Kuninori Morimoto wrote:
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> 
+> This driver's Copyright is under Renesas Solutions Corp.
+> This patch updates the year, because this driver was moved
+> into synopsys folder in 2017.
+> 
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> ---
+> v1 -> v2
+> 
+>  - update year 2016 -> 2017
+> 
+>  drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c
+> b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c index
+> b2cf59f..3b7e5c5 100644
+> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c
+> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c
+> @@ -1,7 +1,8 @@
+>  /*
+>   * dw-hdmi-i2s-audio.c
+>   *
+> - * Copyright (c) 2016 Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> + * Copyright (c) 2017 Renesas Solutions Corp.
+> + * Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+
+What does this mean ? The first line makes it clear that you want to assign 
+copyright ownership to Renesas for the work you've done on this driver. The 
+second line, however, isn't very clear. If you want to list your e-mail 
+address as an author or contact person, you should make that explicit:
+
+ * Author: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+
+or
+
+ * Contact: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+
+Or it could be that you have joint copyright ownership with Renesas, or own 
+parts of the copyright yourself, in which case it should be
+
+ * Copyright (c) 2017 Renesas Solutions Corp.
+ * Copyright (c) 2017 Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+
+>   *
+>   * This program is free software; you can redistribute it and/or modify
+>   * it under the terms of the GNU General Public License version 2 as
+
 -- 
-2.11.0
+Regards,
+
+Laurent Pinchart
