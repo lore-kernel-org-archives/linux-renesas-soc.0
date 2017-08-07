@@ -1,41 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:33419 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751560AbdHITPA (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47136 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752175AbdHGH6G (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 9 Aug 2017 15:15:00 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFT 2/2] mmc: renesas_sdhi: document version of RZ/A1 instance
-Date: Wed,  9 Aug 2017 21:14:52 +0200
-Message-Id: <20170809191452.5254-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170809191452.5254-1-wsa+renesas@sang-engineering.com>
-References: <20170809191452.5254-1-wsa+renesas@sang-engineering.com>
+        Mon, 7 Aug 2017 03:58:06 -0400
+Date: Mon, 7 Aug 2017 09:57:43 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Magnus <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+Subject: Re: [PATCH] arm64: renesas: salvator-common: avoid audio_clkout
+ naming conflict
+Message-ID: <20170807075743.GC7175@verge.net.au>
+References: <87ini6p8y6.wl%kuninori.morimoto.gx@renesas.com>
+ <20170802122352.GB20012@verge.net.au>
+ <874ltppm3l.wl%kuninori.morimoto.gx@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <874ltppm3l.wl%kuninori.morimoto.gx@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We don't use this new define yet, but it is helpful to document which
-versions we know of.
+On Wed, Aug 02, 2017 at 11:55:12PM +0000, Kuninori Morimoto wrote:
+> 
+> Hi Simon
+> 
+> > > From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> > > 
+> > > clock name of "audio_clkout" is used by Renesas sound driver.
+> > > This duplicated naming breaks its clock registering/unregisering.
+> > > Especially, when unbind/bind it can't handle clkout correctly.
+> > > This patch renames "audio_clkout" to "audio-clkout" to avoid
+> > > naming conflict.
+> > > 
+> > > Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> > > ---
+> > > > Simon
+> > > 
+> > > This patch is for v4.13-rcX
+> > 
+> > Thanks, could I get a "Fixes" tag?
+> 
+> Thanks
+> Yes, please
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/mmc/host/renesas_sdhi_core.c | 1 +
- 1 file changed, 1 insertion(+)
+Thanks, I have applied this as a fix for v4.13 with the following tag.
+Please let me know if that was not your expectation.
 
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index e46504edc9fcb4..d0554088adfc41 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -40,6 +40,7 @@
- #define EXT_ACC           0xe4
- 
- #define SDHI_VER_GEN2_SDR50	0x490c
-+#define SDHI_VER_RZ_A1		0x820b
- /* very old datasheets said 0x490c for SDR104, too. They are wrong! */
- #define SDHI_VER_GEN2_SDR104	0xcb0d
- #define SDHI_VER_GEN3_SD	0xcc10
--- 
-2.11.0
+Fixes: 8a8f181d2cfd ("arm64: renesas: salvator-x: use CS2000 as AUDIO_CLK_B")
