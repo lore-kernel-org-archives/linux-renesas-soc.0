@@ -1,48 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:37135 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752199AbdHNNv1 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35269 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752624AbdHHIzm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 Aug 2017 09:51:27 -0400
-Received: by mail-pg0-f66.google.com with SMTP id 83so10798152pgb.4
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Aug 2017 06:51:27 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1502181568-12299-6-git-send-email-horms+renesas@verge.net.au>
-References: <1502181568-12299-1-git-send-email-horms+renesas@verge.net.au> <1502181568-12299-6-git-send-email-horms+renesas@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 14 Aug 2017 15:51:26 +0200
-Message-ID: <CAMuHMdVZ3-XKgjRJSaLXSa9e2-TxpGct6u_wDvPuCADCOu4i4g@mail.gmail.com>
-Subject: Re: [PATCH 05/10] ARM: dts: r8a7791: Use R-Car GPIO Gen2 fallback
- compat string
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 8 Aug 2017 04:55:42 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 2/3] ARM: dts: r8a7791: Use R-Car GPIO Gen2 fallback compat string
+Date: Tue,  8 Aug 2017 10:54:58 +0200
+Message-Id: <1502182499-16210-3-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1502182499-16210-1-git-send-email-horms+renesas@verge.net.au>
+References: <1502182499-16210-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Aug 8, 2017 at 10:39 AM, Simon Horman
-<horms+renesas@verge.net.au> wrote:
-> Use newly added R-Car GPIO Gen2 fallback compat string
-> in place of now deprecated non-generation specific
-> R-Car GPIO fallback compat string in the DT of the r8a7791 SoC.
->
-> This should have no run-time effect as the driver matches against
-> the per-SoC compat string before considering the fallback compat string.
->
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Use newly added R-Car GPIO Gen2 fallback compat string
+in the DT of the r8a7791 SoC.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This should have no run-time effect as the driver matches against
+the per-SoC compat string before the fallback compat string is considered.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7791.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index ea4a8147d995..f1d1a9772153 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -933,7 +933,7 @@
+ 	};
+ 
+ 	sata0: sata@ee300000 {
+-		compatible = "renesas,sata-r8a7791";
++		compatible = "renesas,sata-r8a7791", "renesas,rcar-gen2-sata";
+ 		reg = <0 0xee300000 0 0x2000>;
+ 		interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp8_clks R8A7791_CLK_SATA0>;
+@@ -942,7 +942,7 @@
+ 	};
+ 
+ 	sata1: sata@ee500000 {
+-		compatible = "renesas,sata-r8a7791";
++		compatible = "renesas,sata-r8a7791", "renesas,rcar-gen2-sata";
+ 		reg = <0 0xee500000 0 0x2000>;
+ 		interrupts = <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp8_clks R8A7791_CLK_SATA1>;
+-- 
+2.1.4
