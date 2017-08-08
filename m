@@ -1,66 +1,60 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f51.google.com ([74.125.82.51]:36853 "EHLO
-        mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752756AbdHEUxf (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 5 Aug 2017 16:53:35 -0400
-Received: by mail-wm0-f51.google.com with SMTP id t201so42448836wmt.1
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 05 Aug 2017 13:53:35 -0700 (PDT)
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-To: linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux@armlinux.org.uk,
-        linux-omap@vger.kernel.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, krzk@kernel.org,
-        jason@lakedaemon.net, arm@kernel.org, andrew@lunn.ch,
-        gregory.clement@free-electrons.com,
-        sebastian.hesselbarth@gmail.com, tony@atomide.com,
-        baohua@kernel.org, horms@verge.net.au, magnus.damm@gmail.com,
-        vireshk@kernel.org, shiraz.linux.kernel@gmail.com,
-        patrice.chotard@st.com, nico@linaro.org, dave.martin@arm.com,
-        marc.zyngier@arm.com
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH 08/15] ARM: head.S: use PC relative insn sequence to calculate PHYS_OFFSET
-Date: Sat,  5 Aug 2017 21:52:15 +0100
-Message-Id: <20170805205222.19868-9-ard.biesheuvel@linaro.org>
-In-Reply-To: <20170805205222.19868-1-ard.biesheuvel@linaro.org>
-References: <20170805205222.19868-1-ard.biesheuvel@linaro.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Chris Paterson <Chris.Paterson2@renesas.com>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>
+CC: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH 2/2] ARM: shmobile: document iW-RainboW-G22D SODIMM SOM
+ Development Platform
+Date: Tue, 8 Aug 2017 14:15:38 +0000
+Message-ID: <TY1PR06MB07025B57A216FAD06841241DB78A0@TY1PR06MB0702.apcprd06.prod.outlook.com>
+References: <cover.1502190772.git.fabrizio.castro@bp.renesas.com>
+ <8d98401d979ade94d19031ab3240d81c0959380b.1502190772.git.fabrizio.castro@bp.renesas.com>
+In-Reply-To: <8d98401d979ade94d19031ab3240d81c0959380b.1502190772.git.fabrizio.castro@bp.renesas.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Replace the open coded arithmetic with a simple adr_l/sub pair.
++ linux-renesas-soc
 
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
----
- arch/arm/kernel/head.S | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
-
-diff --git a/arch/arm/kernel/head.S b/arch/arm/kernel/head.S
-index 939543e73874..e08a4623a980 100644
---- a/arch/arm/kernel/head.S
-+++ b/arch/arm/kernel/head.S
-@@ -106,10 +106,8 @@ ENTRY(stext)
- #endif
- 
- #ifndef CONFIG_XIP_KERNEL
--	adr	r3, 2f
--	ldmia	r3, {r4, r8}
--	sub	r4, r3, r4			@ (PHYS_OFFSET - PAGE_OFFSET)
--	add	r8, r8, r4			@ PHYS_OFFSET
-+	adr_l	r8, _text			@ __pa(_text)
-+	sub	r8, r8, #TEXT_OFFSET		@ PHYS_OFFSET
- #else
- 	ldr	r8, =PLAT_PHYS_OFFSET		@ always constant in this case
- #endif
-@@ -161,10 +159,6 @@ ENTRY(stext)
- 1:	b	__enable_mmu
- ENDPROC(stext)
- 	.ltorg
--#ifndef CONFIG_XIP_KERNEL
--2:	.long	.
--	.long	PAGE_OFFSET
--#endif
- 
- /*
-  * Setup the initial page tables.  We only setup the barest
--- 
-2.11.0
+> From: Fabrizio Castro [mailto:fabrizio.castro@bp.renesas.com]
+> Sent: 08 August 2017 13:28
+>=20
+> Document the iW-RainboW-G22D device tree bindings.
+> It is just a placeholder for the time being, the actual implementation is=
+ not
+> available yet.
+>=20
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> ---
+>  Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt
+> b/Documentation/devicetree/bindings/arm/shmobile.txt
+> index 64e7f63..ae75cb3 100644
+> --- a/Documentation/devicetree/bindings/arm/shmobile.txt
+> +++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+> @@ -68,6 +68,8 @@ Boards:
+>      compatible =3D "renesas,h3ulcb", "renesas,r8a7795";
+>    - Henninger
+>      compatible =3D "renesas,henninger", "renesas,r8a7791"
+> +  - iWave Systems RZ/G1E SODIMM SOM Development Platform (iW-
+> RainboW-G22D)
+> +    compatible =3D "iwave,g22d", "iwave,g22m", "renesas,r8a7745"
+>    - iWave Systems RZ/G1E SODIMM System On Module (iW-RainboW-G22M-
+> SM)
+>      compatible =3D "iwave,g22m", "renesas,r8a7745"
+>    - iWave Systems RZ/G1M Qseven Development Platform (iW-RainboW-G20D-
+> Qseven)
+> --
+> 1.9.1
