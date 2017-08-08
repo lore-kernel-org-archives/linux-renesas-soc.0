@@ -1,45 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:32882 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752018AbdHLGJg (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:48310 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751998AbdHHLLR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 12 Aug 2017 02:09:36 -0400
-From: Bhumika Goyal <bhumirks@gmail.com>
-To: julia.lawall@lip6.fr, linus.walleij@linaro.org,
-        marek.vasut+renesas@gmail.com, lee.jones@linaro.org,
-        tony@atomide.com, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-omap@vger.kernel.org
-Cc: Bhumika Goyal <bhumirks@gmail.com>
-Subject: [PATCH 2/2] gpio: make regmap_irq_chip const
-Date: Sat, 12 Aug 2017 11:39:09 +0530
-Message-Id: <1502518149-11663-3-git-send-email-bhumirks@gmail.com>
-In-Reply-To: <1502518149-11663-1-git-send-email-bhumirks@gmail.com>
-References: <1502518149-11663-1-git-send-email-bhumirks@gmail.com>
+        Tue, 8 Aug 2017 07:11:17 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH  3/3] ARM: dts: r8a7743: Add OPP table for frequency scaling
+Date: Tue,  8 Aug 2017 11:56:33 +0100
+Message-Id: <1502189793-59679-4-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1502189793-59679-1-git-send-email-biju.das@bp.renesas.com>
+References: <1502189793-59679-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Make the structure const as it is only passed to the function
-devm_regmap_add_irq_chip having the corresponding argument as const.
-Done using Coccinelle.
+Add needed information inside CPU0 for the generic cpufreq-cpu0 driver.
 
-Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
+- clock-latency = 300 us
+Approximate worst-case latency to do clock transition for every
+OPPs. Using an arbitrary safe value similar to r8a7791(R-Car M2) Soc.
+
+- operating-points = < kHz - uV >
+List of 6 operating points. All of them are using the same voltage
+since DVS is not supported in RZ/G1 Soc.
+
+Note:This also fixes the below errors seen on kernel logs
+[    0.876877] cpu cpu0: dev_pm_opp_get_opp_count: OPP table not found (-19)
+[    0.883727] cpu cpu1: cpufreq_init: failed to get clk: -2
+
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/gpio/gpio-max77620.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a7743.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/gpio/gpio-max77620.c b/drivers/gpio/gpio-max77620.c
-index 743459d..538bce4 100644
---- a/drivers/gpio/gpio-max77620.c
-+++ b/drivers/gpio/gpio-max77620.c
-@@ -82,7 +82,7 @@ struct max77620_gpio {
- 	},
- };
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index 77da319..8c46f62 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -29,8 +29,17 @@
+ 			reg = <0>;
+ 			clock-frequency = <1500000000>;
+ 			clocks = <&cpg CPG_CORE R8A7743_CLK_Z>;
++			clock-latency = <300000>; /* 300 us */
+ 			power-domains = <&sysc R8A7743_PD_CA15_CPU0>;
+ 			next-level-cache = <&L2_CA15>;
++
++			/* kHz - uV - OPPs unknown yet */
++			operating-points = <1500000 1000000>,
++					   <1312500 1000000>,
++					   <1125000 1000000>,
++					   < 937500 1000000>,
++					   < 750000 1000000>,
++					   < 375000 1000000>;
+ 		};
  
--static struct regmap_irq_chip max77620_gpio_irq_chip = {
-+static const struct regmap_irq_chip max77620_gpio_irq_chip = {
- 	.name = "max77620-gpio",
- 	.irqs = max77620_gpio_irqs,
- 	.num_irqs = ARRAY_SIZE(max77620_gpio_irqs),
+ 		cpu1: cpu@1 {
 -- 
 1.9.1
