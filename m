@@ -1,119 +1,137 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:39242 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752942AbdHKJ5Z (ORCPT
+Received: from mail-it0-f46.google.com ([209.85.214.46]:36708 "EHLO
+        mail-it0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752574AbdHHPjW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 11 Aug 2017 05:57:25 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: linux-media@vger.kernel.org
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Benoit Parrot <bparrot@ti.com>,
+        Tue, 8 Aug 2017 11:39:22 -0400
+Received: by mail-it0-f46.google.com with SMTP id 77so6116922itj.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 08 Aug 2017 08:39:22 -0700 (PDT)
+Date: Tue, 8 Aug 2017 11:39:19 -0400 (EDT)
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+cc: "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
         linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 09/20] rcar-csi2: figure out remote pad and stream which are starting
-Date: Fri, 11 Aug 2017 11:56:52 +0200
-Message-Id: <20170811095703.6170-10-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170811095703.6170-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170811095703.6170-1-niklas.soderlund+renesas@ragnatech.se>
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+        KVM devel mailing list <kvm@vger.kernel.org>,
+        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Jason Cooper <jason@lakedaemon.net>, arm@kernel.org,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory CLEMENT <gregory.clement@free-electrons.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Tony Lindgren <tony@atomide.com>, baohua@kernel.org,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>, vireshk@kernel.org,
+        Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
+        Patrice CHOTARD <patrice.chotard@st.com>,
+        Dave Martin <dave.martin@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [PATCH 01/15] ARM: assembler: introduce adr_l, ldr_l and str_l
+ macros
+In-Reply-To: <CAKv+Gu8W68ruOsD9Fit0MrJ=JVDO3xF-SmQ-8qcpBSQm0si-UA@mail.gmail.com>
+Message-ID: <alpine.LFD.2.20.1708081131340.8927@knanqh.ubzr>
+References: <20170805205222.19868-1-ard.biesheuvel@linaro.org> <20170805205222.19868-2-ard.biesheuvel@linaro.org> <alpine.LFD.2.20.1708081030030.8927@knanqh.ubzr> <CAKv+Gu8W68ruOsD9Fit0MrJ=JVDO3xF-SmQ-8qcpBSQm0si-UA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Using the information in v4l2_mbus_frame_desc figure out which remote
-pad and stream should be started or stopped.
+On Tue, 8 Aug 2017, Ard Biesheuvel wrote:
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/rcar-csi2.c | 40 +++++++++++++++++++++++++----
- 1 file changed, 35 insertions(+), 5 deletions(-)
+> On 8 August 2017 at 16:10, Nicolas Pitre <nicolas.pitre@linaro.org> wrote:
+> > On Sat, 5 Aug 2017, Ard Biesheuvel wrote:
+> >
+> >> Like arm64, ARM supports position independent code sequences that
+> >> produce symbol references with a greater reach than the ordinary
+> >> adr/ldr instructions.
+> >>
+> >> Currently, we use open coded instruction sequences involving literals
+> >> and arithmetic operations. Instead, we can use movw/movt pairs on v7
+> >> CPUs, circumventing the D-cache entirely. For older CPUs, we can emit
+> >> the literal into a subsection, allowing it to be emitted out of line
+> >> while retaining the ability to perform arithmetic on label offsets.
+> >>
+> >> E.g., on pre-v7 CPUs, we can emit a PC-relative reference as follows:
+> >>
+> >>        ldr          <reg>, 222f
+> >>   111: add          <reg>, <reg>, pc
+> >>        .subsection  1
+> >>   222: .long        <sym> - (111b + 8)
+> >>        .previous
+> >>
+> >> This is allowed by the assembler because, unlike ordinary sections,
+> >> subsections are combined into a single section into the object file,
+> >> and so the label references are not true cross-section references that
+> >> are visible as relocations. Note that we could even do something like
+> >>
+> >>        add          <reg>, pc, #(222f - 111f) & ~0xfff
+> >>        ldr          <reg>, [<reg>, #(222f - 111f) & 0xfff]
+> >>   111: add          <reg>, <reg>, pc
+> >>        .subsection  1
+> >>   222: .long        <sym> - (111b + 8)
+> >>        .previous
+> >>
+> >> if it turns out that the 4 KB range of the ldr instruction is insufficient
+> >> to reach the literal in the subsection, although this is currently not a
+> >> problem (of the 98 objects built from .S files in a multi_v7_defconfig
+> >> build, only 11 have .text sections that are over 1 KB, and the largest one
+> >> [entry-armv.o] is 3308 bytes)
+> >>
+> >> Subsections have been available in binutils since 2004 at least, so
+> >> they should not cause any issues with older toolchains.
+> >>
+> >> So use the above to implement the macros mov_l, adr_l, adrm_l (using ldm
+> >> to load multiple literals at once), ldr_l and str_l, all of which will
+> >> use movw/movt pairs on v7 and later CPUs, and use PC-relative literals
+> >> otherwise.
+> >
+> > There is no adrm_l definition in this patch.
+> >
+> 
+> Ah yes, I played around with it but it becomes a bit clunky so I removed it:
+> 
+>         adrl         <reg1>, 222f
+>         ldm          <reg1>, {<reg1>, <reg2>}
+>    111: add          <reg1>, <reg1>, pc
+>         add          <reg2>, <reg2>, pc
+>         .subsection  1
+>    222: .long        <sym1> - (111b + 8)
+>         .long        <sym2> - (111b + 12)
+>         .previous
+> 
+> The adrl pseudo op always assembles to two instructions, so you need 5
+> instructions while using adr_l twice uses only 4. I am not sure if
+> eliminating one of the loads would make a huge difference, given that
+> there are no use cases for adrm_l on hot paths, at least not in this
+> series.
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
-index 46da45aea18fe3d3..8b4db70b0dd5d0fb 100644
---- a/drivers/media/platform/rcar-vin/rcar-csi2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
-@@ -533,9 +533,14 @@ static void rcar_csi2_stop(struct rcar_csi2 *priv)
- 	rcar_csi2_reset(priv);
- }
- 
--static int rcar_csi2_sd_info(struct rcar_csi2 *priv, struct v4l2_subdev **sd)
-+static int rcar_csi2_sd_info(struct rcar_csi2 *priv, unsigned int channel,
-+			     struct v4l2_subdev **nextsd, unsigned int *nextpad,
-+			     unsigned int *nextstream)
- {
-+	struct v4l2_mbus_frame_desc_entry *entry;
-+	struct v4l2_mbus_frame_desc fd;
- 	struct media_pad *pad;
-+	unsigned int i;
- 
- 	pad = media_entity_remote_pad(&priv->pads[RCAR_CSI2_SINK]);
- 	if (!pad) {
-@@ -543,31 +548,56 @@ static int rcar_csi2_sd_info(struct rcar_csi2 *priv, struct v4l2_subdev **sd)
- 		return -ENODEV;
- 	}
- 
--	*sd = media_entity_to_v4l2_subdev(pad->entity);
--	if (!*sd) {
-+	*nextsd = media_entity_to_v4l2_subdev(pad->entity);
-+	if (!*nextsd) {
- 		dev_err(priv->dev, "Could not find remote subdevice\n");
- 		return -ENODEV;
- 	}
- 
--	return 0;
-+	*nextpad = pad->index;
-+
-+	if (v4l2_subdev_call(*nextsd, pad, get_frame_desc, *nextpad, &fd)) {
-+		dev_err(priv->dev, "Could not read frame desc\n");
-+		return -EINVAL;
-+	}
-+
-+	for (i = 0; i < fd.num_entries; i++) {
-+		entry = &fd.entry[i];
-+
-+		if ((entry->flags & V4L2_MBUS_FRAME_DESC_FL_CSI2) == 0)
-+			return -EINVAL;
-+
-+		if (entry->csi2.channel == channel) {
-+			*nextstream = i;
-+			return 0;
-+		}
-+	}
-+
-+	dev_err(priv->dev, "Could not find stream for channel %u\n",
-+		channel);
-+	return -EINVAL;
- }
- 
- static int rcar_csi2_s_stream(struct v4l2_subdev *sd, unsigned int pad,
- 			      unsigned int stream, int enable)
- {
- 	struct rcar_csi2 *priv = sd_to_csi2(sd);
-+	unsigned int channel, nextpad, nextstream;
- 	struct v4l2_subdev *nextsd;
- 	int ret;
- 
- 	if (pad < RCAR_CSI2_SOURCE_VC0 || pad > RCAR_CSI2_SOURCE_VC3)
- 		return -EINVAL;
- 
-+	/* Figure out CSI-2 channel from pad. First source is VC0, etc */
-+	channel = pad - 1;
-+
- 	if (stream != 0)
- 		return -EINVAL;
- 
- 	mutex_lock(&priv->lock);
- 
--	ret = rcar_csi2_sd_info(priv, &nextsd);
-+	ret = rcar_csi2_sd_info(priv, channel, &nextsd, &nextpad, &nextstream);
- 	if (ret)
- 		goto out;
- 
--- 
-2.13.3
+I'd suggest you keep it to a minimum.  Using adr_l twice is clear and 
+obvious.
+
+> > Also, might it be better to change mov_l to movl? Tthis looks similar to
+> > the ARM64 movl pseudo-instruction, and unlike all the other _l variants,
+> > this is not producing a pc relative result.
+> >
+> 
+> On arm64, we have mov_q for a 64-bit absolute load, and I thought
+> mov_l was less confusing than mov_w. In general, I like the underscore
+> in the middle because on the one hand, it looks like a ordinary
+> mnemonic but on the other hand, it is obvious that it is not a true
+> instruction. mov_abs perhaps?
+> 
+> > Talking about the _l suffix: I wonder if this could be more meaningful,
+> > like _rel maybe? At least in the adr_l case, this could easily be
+> > confused with adrl.
+> >
+> 
+> On arm64, we have ldr_l, str_l and adr_l as well, and I usually try to
+> align between ARM and arm64 if I can.
+
+OK. I'm much less versed into ARM64 assembly so I'll defer to your 
+judgment.  It's good if this mnemonic scheme already exists there with 
+a similar meaning.
+
+
+Nicolas
