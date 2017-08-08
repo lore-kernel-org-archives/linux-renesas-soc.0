@@ -1,52 +1,100 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:45070 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751845AbdHXJVS (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34766 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752151AbdHHIkN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 Aug 2017 05:21:18 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Haavard Skinnemoen <hskinnemoen@gmail.com>
-Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 1/3] dt-bindings: i2c: i2c-gpio: Add support for named gpios
-Date: Thu, 24 Aug 2017 11:21:12 +0200
-Message-Id: <1503566474-5335-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1503566474-5335-1-git-send-email-geert+renesas@glider.be>
-References: <1503566474-5335-1-git-send-email-geert+renesas@glider.be>
+        Tue, 8 Aug 2017 04:40:13 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 08/10] ARM: dts: r8a7794: Use R-Car GPIO Gen2 fallback compat string
+Date: Tue,  8 Aug 2017 10:39:26 +0200
+Message-Id: <1502181568-12299-9-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1502181568-12299-1-git-send-email-horms+renesas@verge.net.au>
+References: <1502181568-12299-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The current i2c-gpio DT bindings use a single unnamed "gpios" property
-to refer to the SDA and SCL signal lines by index.  This is error-prone
-for the casual DT writer and reviewer, as one has to look up the order
-in the DT bindings.
+Use newly added R-Car GPIO Gen2 fallback compat string
+in place of now deprecated non-generation specific
+R-Car GPIO fallback compat string in the DT of the r8a7794 SoC.
 
-Fix this by amending the DT bindings to use two separate named gpios
-properties, and deprecate the old unnamed variant.
+This should have no run-time effect as the driver matches against
+the per-SoC compat string before considering the fallback compat string.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- Documentation/devicetree/bindings/i2c/i2c-gpio.txt | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/r8a7794.dtsi | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-gpio.txt b/Documentation/devicetree/bindings/i2c/i2c-gpio.txt
-index 4f8ec947c6bd9cad..61033f73577dd70e 100644
---- a/Documentation/devicetree/bindings/i2c/i2c-gpio.txt
-+++ b/Documentation/devicetree/bindings/i2c/i2c-gpio.txt
-@@ -2,8 +2,9 @@ Device-Tree bindings for i2c gpio driver
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index 26535414203a..294bb1a697a6 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -81,7 +81,7 @@
+ 	};
  
- Required properties:
- 	- compatible = "i2c-gpio";
--	- gpios: sda and scl gpio
--
-+	- sda-gpios: gpio used for the sda signal
-+	- scl-gpios: gpio used for the scl signal
-+	- gpios: sda and scl gpio, alternative for {sda,scl}-gpios (deprecated)
+ 	gpio0: gpio@e6050000 {
+-		compatible = "renesas,gpio-r8a7794", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7794", "renesas,rcar-gen2-gpio";
+ 		reg = <0 0xe6050000 0 0x50>;
+ 		interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -94,7 +94,7 @@
+ 	};
  
- Optional properties:
- 	- i2c-gpio,sda-open-drain: sda as open drain
+ 	gpio1: gpio@e6051000 {
+-		compatible = "renesas,gpio-r8a7794", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7794", "renesas,rcar-gen2-gpio";
+ 		reg = <0 0xe6051000 0 0x50>;
+ 		interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -107,7 +107,7 @@
+ 	};
+ 
+ 	gpio2: gpio@e6052000 {
+-		compatible = "renesas,gpio-r8a7794", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7794", "renesas,rcar-gen2-gpio";
+ 		reg = <0 0xe6052000 0 0x50>;
+ 		interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -120,7 +120,7 @@
+ 	};
+ 
+ 	gpio3: gpio@e6053000 {
+-		compatible = "renesas,gpio-r8a7794", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7794", "renesas,rcar-gen2-gpio";
+ 		reg = <0 0xe6053000 0 0x50>;
+ 		interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -133,7 +133,7 @@
+ 	};
+ 
+ 	gpio4: gpio@e6054000 {
+-		compatible = "renesas,gpio-r8a7794", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7794", "renesas,rcar-gen2-gpio";
+ 		reg = <0 0xe6054000 0 0x50>;
+ 		interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -146,7 +146,7 @@
+ 	};
+ 
+ 	gpio5: gpio@e6055000 {
+-		compatible = "renesas,gpio-r8a7794", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7794", "renesas,rcar-gen2-gpio";
+ 		reg = <0 0xe6055000 0 0x50>;
+ 		interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -159,7 +159,7 @@
+ 	};
+ 
+ 	gpio6: gpio@e6055400 {
+-		compatible = "renesas,gpio-r8a7794", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7794", "renesas,rcar-gen2-gpio";
+ 		reg = <0 0xe6055400 0 0x50>;
+ 		interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
 -- 
-2.7.4
+2.1.4
