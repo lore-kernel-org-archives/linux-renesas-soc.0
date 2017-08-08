@@ -1,82 +1,110 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:44207 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751680AbdHAKPU (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:33836 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751925AbdHHLGQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 1 Aug 2017 06:15:20 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, netdev@vger.kernel.org,
+        Tue, 8 Aug 2017 07:06:16 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
         linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v3 2/2] ravb: add workaround for clock when resuming with WoL enabled
-Date: Tue,  1 Aug 2017 12:14:37 +0200
-Message-Id: <20170801101437.9020-3-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170801101437.9020-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170801101437.9020-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
+In-Reply-To: <871somn93g.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1df2Kw-0004ve-BA@finisterre>
+Date: Tue, 08 Aug 2017 12:06:10 +0100
+Subject: Applied "ASoC: rsnd: rsnd_ssi_can_output_clk() macro" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The renesas-cpg-mssr clock driver are not yet aware of PSCI sleep where
-power is cut to the SoC. When resuming from this state with WoL enabled
-the enable count of the ravb clock is 1 and the clock driver thinks the
-clock is already on when PM core enables the clock and increments the
-enable count to 2. This will result in the ravb driver failing to talk
-to the hardware since the module clock is off. Work around this by
-forcing the enable count to 0 and then back to 2 when resuming with WoL
-enabled.
+The patch
 
-This workaround should be reverted once the renesas-cpg-mssr clock
-driver becomes aware of this PSCI sleep behavior.
+   ASoC: rsnd: rsnd_ssi_can_output_clk() macro
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From bb002f925ae18c0c9d72d87b74b311a5209d7178 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Tue, 8 Aug 2017 01:32:42 +0000
+Subject: [PATCH] ASoC: rsnd: rsnd_ssi_can_output_clk() macro
+
+For example SSI0/SSI1 case, SSI1 can share pin with SSI0.
+And then, SSI1 needs SSI0's clock.
+This clock controlling is very picky and difficult to understand
+in current code.
+
+This patch adds new rsnd_ssi_can_output_clk() macro,
+the code will be more understandable.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/net/ethernet/renesas/ravb_main.c | 27 +++++++++++++++++++++++++--
- 1 file changed, 25 insertions(+), 2 deletions(-)
+ sound/soc/sh/rcar/ssi.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 6d10db1b51468031..fdf30bfa403bf416 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -2270,9 +2270,32 @@ static int __maybe_unused ravb_resume(struct device *dev)
- 	struct ravb_private *priv = netdev_priv(ndev);
- 	int ret = 0;
+diff --git a/sound/soc/sh/rcar/ssi.c b/sound/soc/sh/rcar/ssi.c
+index 3ee7b2de7dea..434996d4054a 100644
+--- a/sound/soc/sh/rcar/ssi.c
++++ b/sound/soc/sh/rcar/ssi.c
+@@ -106,6 +106,7 @@ struct rsnd_ssi {
+ 	(rsnd_ssi_multi_slaves(io) & (1 << rsnd_mod_id(mod)))
+ #define rsnd_ssi_is_run_mods(mod, io) \
+ 	(rsnd_ssi_run_mods(io) & (1 << rsnd_mod_id(mod)))
++#define rsnd_ssi_can_output_clk(mod) (!__rsnd_ssi_is_pin_sharing(mod))
  
--	/* If WoL is enabled set reset mode to rearm the WoL logic */
--	if (priv->wol_enabled)
-+	if (priv->wol_enabled) {
-+		/* Reduce the usecount of the clock to zero and then
-+		 * restore it to its original value. This is done to force
-+		 * the clock to be re-enabled which is a workaround
-+		 * for renesas-cpg-mssr driver which do not enable clocks
-+		 * when resuming from PSCI suspend/resume.
-+		 *
-+		 * Without this workaround the driver fails to communicate
-+		 * with the hardware if WoL was enabled when the system
-+		 * entered PSCI suspend. This is due to that if WoL is enabled
-+		 * we explicitly keep the clock from being turned off when
-+		 * suspending, but in PSCI sleep power is cut so the clock
-+		 * is disabled anyhow, the clock driver is not aware of this
-+		 * so the clock is not turned back on when resuming.
-+		 *
-+		 * TODO: once the renesas-cpg-mssr suspend/resume is working
-+		 *       this clock dance should be removed.
-+		 */
-+		clk_disable(priv->clk);
-+		clk_disable(priv->clk);
-+		clk_enable(priv->clk);
-+		clk_enable(priv->clk);
-+
-+		/* Set reset mode to rearm the WoL logic */
- 		ravb_write(ndev, CCC_OPC_RESET, CCC);
-+	}
+ int rsnd_ssi_hdmi_port(struct rsnd_dai_stream *io)
+ {
+@@ -255,7 +256,6 @@ static int rsnd_ssi_master_clk_start(struct rsnd_mod *mod,
+ 	struct device *dev = rsnd_priv_to_dev(priv);
+ 	struct rsnd_dai *rdai = rsnd_io_to_rdai(io);
+ 	struct rsnd_ssi *ssi = rsnd_mod_to_ssi(mod);
+-	struct rsnd_mod *ssi_parent_mod = rsnd_io_to_mod_ssip(io);
+ 	int chan = rsnd_runtime_channel_for_ssi(io);
+ 	int idx, ret;
+ 	unsigned int main_rate;
+@@ -266,7 +266,7 @@ static int rsnd_ssi_master_clk_start(struct rsnd_mod *mod,
+ 	if (!rsnd_rdai_is_clk_master(rdai))
+ 		return 0;
  
- 	/* All register have been reset to default values.
- 	 * Restore all registers which where setup at probe time and
+-	if (ssi_parent_mod && !rsnd_ssi_is_parent(mod, io))
++	if (!rsnd_ssi_can_output_clk(mod))
+ 		return 0;
+ 
+ 	if (rsnd_ssi_is_multi_slave(mod, io))
+@@ -307,12 +307,11 @@ static void rsnd_ssi_master_clk_stop(struct rsnd_mod *mod,
+ {
+ 	struct rsnd_dai *rdai = rsnd_io_to_rdai(io);
+ 	struct rsnd_ssi *ssi = rsnd_mod_to_ssi(mod);
+-	struct rsnd_mod *ssi_parent_mod = rsnd_io_to_mod_ssip(io);
+ 
+ 	if (!rsnd_rdai_is_clk_master(rdai))
+ 		return;
+ 
+-	if (ssi_parent_mod && !rsnd_ssi_is_parent(mod, io))
++	if (!rsnd_ssi_can_output_clk(mod))
+ 		return;
+ 
+ 	if (ssi->usrcnt > 1)
 -- 
-2.13.3
+2.13.2
