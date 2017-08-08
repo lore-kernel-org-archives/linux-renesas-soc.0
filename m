@@ -1,49 +1,86 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
-        Russell King <linux@armlinux.org.uk>
-Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:33970 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751925AbdHHLGU (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 8 Aug 2017 07:06:20 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
         linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH] dt-bindings: mmc: sh_mmcif: Document r8a7745 DT bindings
-Date: Tue, 15 Aug 2017 17:53:27 +0100
-Message-Id: <1502816007-30186-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
+In-Reply-To: <873792n94e.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1df2L0-0004wX-4H@finisterre>
+Date: Tue, 08 Aug 2017 12:06:14 +0100
+Subject: Applied "ASoC: rsnd: move rsnd_ssi_config_init() execute condition into it." to the asoc tree
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
----
- Documentation/devicetree/bindings/mmc/renesas,mmcif.txt | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+The patch
 
-diff --git a/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt b/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt
-index 703e18c..5ff1e12 100644
---- a/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt
-+++ b/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt
-@@ -12,6 +12,7 @@ Required properties:
- 	- "renesas,mmcif-r8a73a4" for the MMCIF found in r8a73a4 SoCs
- 	- "renesas,mmcif-r8a7740" for the MMCIF found in r8a7740 SoCs
- 	- "renesas,mmcif-r8a7743" for the MMCIF found in r8a7743 SoCs
-+	- "renesas,mmcif-r8a7745" for the MMCIF found in r8a7745 SoCs
- 	- "renesas,mmcif-r8a7778" for the MMCIF found in r8a7778 SoCs
- 	- "renesas,mmcif-r8a7790" for the MMCIF found in r8a7790 SoCs
- 	- "renesas,mmcif-r8a7791" for the MMCIF found in r8a7791 SoCs
-@@ -22,7 +23,7 @@ Required properties:
- - interrupts: Some SoCs have only 1 shared interrupt, while others have either
-   2 or 3 individual interrupts (error, int, card detect). Below is the number
-   of interrupts for each SoC:
--    1: r8a73a4, r8a7743, r8a7778, r8a7790, r8a7791, r8a7793, r8a7794
-+    1: r8a73a4, r8a7743, r8a7745, r8a7778, r8a7790, r8a7791, r8a7793, r8a7794
-     2: r8a7740, sh73a0
-     3: r7s72100
+   ASoC: rsnd: move rsnd_ssi_config_init() execute condition into it.
+
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From bf23c6a3813aac96e0af01565aba012b25c8bae5 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Tue, 8 Aug 2017 01:32:08 +0000
+Subject: [PATCH] ASoC: rsnd: move rsnd_ssi_config_init() execute condition
+ into it.
+
+Make it the same style as other functions
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/sh/rcar/ssi.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/sound/soc/sh/rcar/ssi.c b/sound/soc/sh/rcar/ssi.c
+index 49cdc5e007b3..3ee7b2de7dea 100644
+--- a/sound/soc/sh/rcar/ssi.c
++++ b/sound/soc/sh/rcar/ssi.c
+@@ -335,6 +335,9 @@ static void rsnd_ssi_config_init(struct rsnd_mod *mod,
+ 	u32 wsr;
+ 	int is_tdm;
+ 
++	if (rsnd_ssi_is_parent(mod, io))
++		return;
++
+ 	is_tdm = rsnd_runtime_is_ssi_tdm(io);
+ 
+ 	/*
+@@ -472,8 +475,7 @@ static int rsnd_ssi_init(struct rsnd_mod *mod,
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	if (!rsnd_ssi_is_parent(mod, io))
+-		rsnd_ssi_config_init(mod, io);
++	rsnd_ssi_config_init(mod, io);
+ 
+ 	rsnd_ssi_register_setup(mod);
  
 -- 
-2.7.4
-
+2.13.2
