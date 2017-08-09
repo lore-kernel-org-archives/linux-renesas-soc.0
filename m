@@ -1,90 +1,114 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:55076 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751546AbdH3N6a (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:46176 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754513AbdHIQ4q (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 30 Aug 2017 09:58:30 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH  1/5] ARM: dts: r8a7743: Add internal PCI bridge nodes
-Date: Wed, 30 Aug 2017 14:41:09 +0100
-Message-Id: <1504100473-5528-2-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1504100473-5528-1-git-send-email-biju.das@bp.renesas.com>
-References: <1504100473-5528-1-git-send-email-biju.das@bp.renesas.com>
+        Wed, 9 Aug 2017 12:56:46 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Nguyen Viet Dung <dung.nguyen.aj@renesas.com>,
+        Mark Brown <broonie@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Nguyen Viet Dung <dung.nguyen.aj@renesas.com>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
+In-Reply-To: <87wp6decyf.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1dfUHg-0005Kt-QQ@debutante>
+Date: Wed, 09 Aug 2017 17:56:40 +0100
+Subject: Applied "ASoC: rsnd: remove 16ch support for now" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add device nodes for the r8a7743 internal PCI bridge devices.
+The patch
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+   ASoC: rsnd: remove 16ch support for now
+
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 29d03ff5c752e02918e8319fdcc86faa374d36ec Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Wed, 9 Aug 2017 01:46:23 +0000
+Subject: [PATCH] ASoC: rsnd: remove 16ch support for now
+
+R-Car Gen3 sound device can use TDM 16ch, but its usage is very
+limited. It is not yet supported.
+Let's remove unexpected/unsupported channel settings for now.
+This patch makes xx_ADINR register settings sanity without
+runtime check.
+
+R-Car Gen3 datasheet
+
+40.4.7 Note on Usage of the SSIU Module
+When an SSIU module is used in "TDM-16ch mode",
+only the transfer with the external memory is available.
+
+Reported-by: Nguyen Viet Dung <dung.nguyen.aj@renesas.com>
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm/boot/dts/r8a7743.dtsi | 46 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+ sound/soc/sh/rcar/core.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 6dd9b0b..3f1faad 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -821,6 +821,52 @@
- 			resets = <&cpg 311>;
- 			status = "disabled";
- 		};
-+
-+		pci0: pci@ee090000 {
-+			compatible = "renesas,pci-r8a7743",
-+				     "renesas,pci-rcar-gen2";
-+			device_type = "pci";
-+			reg = <0 0xee090000 0 0xc00>,
-+			      <0 0xee080000 0 0x1100>;
-+			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 703>;
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 703>;
-+			status = "disabled";
-+
-+			bus-range = <0 0>;
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			#interrupt-cells = <1>;
-+			ranges = <0x02000000 0 0xee080000 0 0xee080000 0 0x00010000>;
-+			interrupt-map-mask = <0xff00 0 0 0x7>;
-+			interrupt-map = <0x0000 0 0 1 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH
-+					 0x0800 0 0 1 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH
-+					 0x1000 0 0 2 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+
-+		pci1: pci@ee0d0000 {
-+			compatible = "renesas,pci-r8a7743",
-+				     "renesas,pci-rcar-gen2";
-+			device_type = "pci";
-+			reg = <0 0xee0d0000 0 0xc00>,
-+			      <0 0xee0c0000 0 0x1100>;
-+			interrupts = <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 703>;
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 703>;
-+			status = "disabled";
-+
-+			bus-range = <1 1>;
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			#interrupt-cells = <1>;
-+			ranges = <0x02000000 0 0xee0c0000 0 0xee0c0000 0 0x00010000>;
-+			interrupt-map-mask = <0xff00 0 0 0x7>;
-+			interrupt-map = <0x0000 0 0 1 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH
-+					 0x0800 0 0 1 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH
-+					 0x1000 0 0 2 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
-+		};
- 	};
+diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
+index 3f2ced26ed37..7fa40fcad59e 100644
+--- a/sound/soc/sh/rcar/core.c
++++ b/sound/soc/sh/rcar/core.c
+@@ -726,7 +726,6 @@ static int rsnd_soc_set_dai_tdm_slot(struct snd_soc_dai *dai,
+ 	case 2:
+ 	case 6:
+ 	case 8:
+-	case 16:
+ 		/* TDM Extend Mode */
+ 		rsnd_rdai_channels_set(rdai, slots);
+ 		rsnd_rdai_ssi_lane_set(rdai, 1);
+@@ -740,7 +739,7 @@ static int rsnd_soc_set_dai_tdm_slot(struct snd_soc_dai *dai,
+ }
  
- 	/* External root clock */
+ static unsigned int rsnd_soc_hw_channels_list[] = {
+-	2, 6, 8, 16,
++	2, 6, 8,
+ };
+ 
+ static unsigned int rsnd_soc_hw_rate_list[] = {
+@@ -1017,7 +1016,7 @@ static void __rsnd_dai_probe(struct rsnd_priv *priv,
+ 	drv->playback.rates		= RSND_RATES;
+ 	drv->playback.formats		= RSND_FMTS;
+ 	drv->playback.channels_min	= 2;
+-	drv->playback.channels_max	= 16;
++	drv->playback.channels_max	= 8;
+ 	drv->playback.stream_name	= rdai->playback.name;
+ 
+ 	snprintf(rdai->capture.name, RSND_DAI_NAME_SIZE,
+@@ -1025,7 +1024,7 @@ static void __rsnd_dai_probe(struct rsnd_priv *priv,
+ 	drv->capture.rates		= RSND_RATES;
+ 	drv->capture.formats		= RSND_FMTS;
+ 	drv->capture.channels_min	= 2;
+-	drv->capture.channels_max	= 16;
++	drv->capture.channels_max	= 8;
+ 	drv->capture.stream_name	= rdai->capture.name;
+ 
+ 	rdai->playback.rdai		= rdai;
 -- 
-1.9.1
+2.13.3
