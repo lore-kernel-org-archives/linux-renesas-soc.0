@@ -1,49 +1,136 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:37490 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751580AbdHPKux (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:44808 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752815AbdHIMXM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Aug 2017 06:50:53 -0400
-MIME-Version: 1.0
-In-Reply-To: <1502281187-24068-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Wed, 9 Aug 2017 08:23:12 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
+        linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 4/8] pinctrl: sh-pfc: r8a77995: Add I2C pins, groups and functions
+Date: Wed,  9 Aug 2017 21:19:43 +0900
+Message-Id: <1502281187-24068-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1502281187-24068-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 References: <1502281187-24068-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1502281187-24068-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 16 Aug 2017 12:50:52 +0200
-Message-ID: <CAMuHMdXmV4Z-qB-GTa-u6U8jDZNLZ3rzU6=56z_Gm+A2PQQ_tQ@mail.gmail.com>
-Subject: Re: [PATCH 4/8] pinctrl: sh-pfc: r8a77995: Add I2C pins, groups and functions
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Aug 9, 2017 at 2:19 PM, Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ drivers/pinctrl/sh-pfc/pfc-r8a77995.c | 71 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 71 insertions(+)
 
-i.e. will queue in sh-pfc-for-v4.14.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
+index 9be1993..96c97ff 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
+@@ -936,6 +936,50 @@ enum {
+ 	PINMUX_GPIO_GP_ALL(),
+ };
+ 
++/* - I2C -------------------------------------------------------------------- */
++static const unsigned int i2c0_pins[] = {
++	/* SCL, SDA */
++	RCAR_GP_PIN(4, 8), RCAR_GP_PIN(4, 9),
++};
++static const unsigned int i2c0_mux[] = {
++	SCL0_MARK, SDA0_MARK,
++};
++static const unsigned int i2c1_pins[] = {
++	/* SCL, SDA */
++	RCAR_GP_PIN(4, 10), RCAR_GP_PIN(4, 11),
++};
++static const unsigned int i2c1_mux[] = {
++	SCL1_MARK, SDA1_MARK,
++};
++static const unsigned int i2c2_a_pins[] = {
++	/* SCL, SDA */
++	RCAR_GP_PIN(4, 6), RCAR_GP_PIN(4, 7),
++};
++static const unsigned int i2c2_a_mux[] = {
++	SCL2_A_MARK, SDA2_A_MARK,
++};
++static const unsigned int i2c2_b_pins[] = {
++	/* SCL, SDA */
++	RCAR_GP_PIN(2, 29), RCAR_GP_PIN(2, 30),
++};
++static const unsigned int i2c2_b_mux[] = {
++	SCL2_B_MARK, SDA2_B_MARK,
++};
++static const unsigned int i2c3_a_pins[] = {
++	/* SCL, SDA */
++	RCAR_GP_PIN(0, 4), RCAR_GP_PIN(0, 5),
++};
++static const unsigned int i2c3_a_mux[] = {
++	SCL3_A_MARK, SDA3_A_MARK,
++};
++static const unsigned int i2c3_b_pins[] = {
++	/* SCL, SDA */
++	RCAR_GP_PIN(0, 7), RCAR_GP_PIN(0, 8),
++};
++static const unsigned int i2c3_b_mux[] = {
++	SCL3_B_MARK, SDA3_B_MARK,
++};
++
+ /* - SCIF0 ------------------------------------------------------------------ */
+ static const unsigned int scif0_data_a_pins[] = {
+ 	/* RX, TX */
+@@ -1121,6 +1165,12 @@ enum {
+ };
+ 
+ static const struct sh_pfc_pin_group pinmux_groups[] = {
++	SH_PFC_PIN_GROUP(i2c0),
++	SH_PFC_PIN_GROUP(i2c1),
++	SH_PFC_PIN_GROUP(i2c2_a),
++	SH_PFC_PIN_GROUP(i2c2_b),
++	SH_PFC_PIN_GROUP(i2c3_a),
++	SH_PFC_PIN_GROUP(i2c3_b),
+ 	SH_PFC_PIN_GROUP(scif0_data_a),
+ 	SH_PFC_PIN_GROUP(scif0_clk_a),
+ 	SH_PFC_PIN_GROUP(scif0_data_b),
+@@ -1148,6 +1198,23 @@ enum {
+ 	SH_PFC_PIN_GROUP(scif_clk),
+ };
+ 
++static const char * const i2c0_groups[] = {
++	"i2c0",
++};
++static const char * const i2c1_groups[] = {
++	"i2c1",
++};
++
++static const char * const i2c2_groups[] = {
++	"i2c2_a",
++	"i2c2_b",
++};
++
++static const char * const i2c3_groups[] = {
++	"i2c3_a",
++	"i2c3_b",
++};
++
+ static const char * const scif0_groups[] = {
+ 	"scif0_data_a",
+ 	"scif0_clk_a",
+@@ -1195,6 +1262,10 @@ enum {
+ };
+ 
+ static const struct sh_pfc_function pinmux_functions[] = {
++	SH_PFC_FUNCTION(i2c0),
++	SH_PFC_FUNCTION(i2c1),
++	SH_PFC_FUNCTION(i2c2),
++	SH_PFC_FUNCTION(i2c3),
+ 	SH_PFC_FUNCTION(scif0),
+ 	SH_PFC_FUNCTION(scif1),
+ 	SH_PFC_FUNCTION(scif2),
+-- 
+1.9.1
