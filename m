@@ -1,39 +1,37 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:49261 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751914AbdHJM7J (ORCPT
+Received: from sauhun.de ([88.99.104.3]:33411 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751523AbdHITO7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 10 Aug 2017 08:59:09 -0400
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
-CC: "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [RFT 0/2] mmc: renesas_sdhi: small patches for RZ/A1
-Date: Thu, 10 Aug 2017 12:59:05 +0000
-Message-ID: <SG2PR06MB116509EEC14B9FF771BA28308A880@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <20170809191452.5254-1-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170809191452.5254-1-wsa+renesas@sang-engineering.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
+        Wed, 9 Aug 2017 15:14:59 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [RFT 0/2] mmc: renesas_sdhi: small patches for RZ/A1
+Date: Wed,  9 Aug 2017 21:14:50 +0200
+Message-Id: <20170809191452.5254-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello Wolfram,
+Here is a small series to improve RZ support for SDHI. I don't have that
+platform currently, so I hope Chris has some time to check these simple
+patches. It is based on top of the patch just sent out:
+"[PATCH] mmc: renesas_sdhi: use extra flag for CBSY usage"
+
+Regards,
+
+   Wolfram
 
 
-On Wednesday, August 09, 2017, Wolfram Sang wrote:
-> Here is a small series to improve RZ support for SDHI. I don't have that
-> platform currently, so I hope Chris has some time to check these simple
-> patches. It is based on top of the patch just sent out:
-> "[PATCH] mmc: renesas_sdhi: use extra flag for CBSY usage"
+Wolfram Sang (2):
+  mmc: renesas_sdhi: enably CBSY bit for RZ platform
+  mmc: renesas_sdhi: document version of RZ/A1 instance
 
+ drivers/mmc/host/renesas_sdhi_core.c     | 1 +
+ drivers/mmc/host/renesas_sdhi_sys_dmac.c | 3 ++-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-I applied the 3 patches and tested with an SD Card. No issues.
-
-Thank you for considering RZ!
-
-
-Chris
+-- 
+2.11.0
