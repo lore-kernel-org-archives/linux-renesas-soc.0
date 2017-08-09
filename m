@@ -1,72 +1,80 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:33771 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752018AbdHPLKs (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:17247 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752227AbdHIMXO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Aug 2017 07:10:48 -0400
-MIME-Version: 1.0
-In-Reply-To: <1502281187-24068-7-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Wed, 9 Aug 2017 08:23:14 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
+        linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 6/8] pinctrl: sh-pfc: r8a77995: Add USB2.0 host support
+Date: Wed,  9 Aug 2017 21:19:45 +0900
+Message-Id: <1502281187-24068-7-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1502281187-24068-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 References: <1502281187-24068-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1502281187-24068-7-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 16 Aug 2017 13:10:47 +0200
-Message-ID: <CAMuHMdW27kVU2cB=iL-H7t44KeEboL+Ki0zvxkavRpZCepYuLw@mail.gmail.com>
-Subject: Re: [PATCH 6/8] pinctrl: sh-pfc: r8a77995: Add USB2.0 host support
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Shimoda-san, Kihara-san,
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-On Wed, Aug 9, 2017 at 2:19 PM, Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> ---
->  drivers/pinctrl/sh-pfc/pfc-r8a77995.c | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
->
-> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
-> index 9eb0cef..5c0a94f 100644
-> --- a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
-> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
-> @@ -1302,6 +1302,15 @@ enum {
->         SCIF_CLK_MARK,
->  };
->
-> +/* - USB0 ------------------------------------------------------------------- */
-> +static const unsigned int usb0_pins[] = {
-> +       /* PWEN, OVC */
-> +       RCAR_GP_PIN(0, 0), RCAR_GP_PIN(0, 1),
-> +};
-> +static const unsigned int usb0_mux[] = {
-> +       USB0_PWEN_MARK, USB0_OVC_MARK,
-> +};
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ drivers/pinctrl/sh-pfc/pfc-r8a77995.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-What about USB0_IDPU and USB0_IDIN?
-Are they needed for normal operation, or can they be added later?
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
+index 9eb0cef..5c0a94f 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
+@@ -1302,6 +1302,15 @@ enum {
+ 	SCIF_CLK_MARK,
+ };
+ 
++/* - USB0 ------------------------------------------------------------------- */
++static const unsigned int usb0_pins[] = {
++	/* PWEN, OVC */
++	RCAR_GP_PIN(0, 0), RCAR_GP_PIN(0, 1),
++};
++static const unsigned int usb0_mux[] = {
++	USB0_PWEN_MARK, USB0_OVC_MARK,
++};
++
+ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(avb0_td),
+ 	SH_PFC_PIN_GROUP(avb0_rd),
+@@ -1352,6 +1361,7 @@ enum {
+ 	SH_PFC_PIN_GROUP(scif5_data_b),
+ 	SH_PFC_PIN_GROUP(scif5_clk_b),
+ 	SH_PFC_PIN_GROUP(scif_clk),
++	SH_PFC_PIN_GROUP(usb0),
+ };
+ 
+ static const char * const avb0_groups[] = {
+@@ -1438,6 +1448,10 @@ enum {
+ 	"scif_clk",
+ };
+ 
++static const char * const usb0_groups[] = {
++	"usb0",
++};
++
+ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(avb0),
+ 	SH_PFC_FUNCTION(i2c0),
+@@ -1451,6 +1465,7 @@ enum {
+ 	SH_PFC_FUNCTION(scif4),
+ 	SH_PFC_FUNCTION(scif5),
+ 	SH_PFC_FUNCTION(scif_clk),
++	SH_PFC_FUNCTION(usb0),
+ };
+ 
+ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+-- 
+1.9.1
