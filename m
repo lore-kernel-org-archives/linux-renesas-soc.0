@@ -1,94 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:33603 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752893AbdHNMxy (ORCPT
+Received: from sauhun.de ([88.99.104.3]:33415 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751555AbdHITPA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 Aug 2017 08:53:54 -0400
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdXMA7Ux2yiYUrPMGKKJ2AxTLwHOYbnKQHYRwjaSY5+Z7w@mail.gmail.com>
-References: <1494489813-27321-1-git-send-email-geert+renesas@glider.be> <CAMuHMdXMA7Ux2yiYUrPMGKKJ2AxTLwHOYbnKQHYRwjaSY5+Z7w@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 14 Aug 2017 14:53:53 +0200
-Message-ID: <CAMuHMdUQJ38mtsrgY2HJ83RsnCtWRB6dCU=d5RfA3Eq1Q_oQfA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/4] sh: sh7722/sh7757i/sh7264/sh7269: Fix pinctrl registration
-To: Rich Felker <dalias@libc.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 9 Aug 2017 15:15:00 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [RFT 1/2] mmc: renesas_sdhi: enably CBSY bit for RZ platform
+Date: Wed,  9 Aug 2017 21:14:51 +0200
+Message-Id: <20170809191452.5254-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20170809191452.5254-1-wsa+renesas@sang-engineering.com>
+References: <20170809191452.5254-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Jun 30, 2017 at 10:10 AM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Thu, May 11, 2017 at 10:03 AM, Geert Uytterhoeven
-> <geert+renesas@glider.be> wrote:
->> Magnus reported that on sh7722/Migo-R, pinctrl registration fails with:
->>
->>     sh-pfc pfc-sh7722: pin 0 already registered
->>     sh-pfc pfc-sh7722: error during pin registration
->>     sh-pfc pfc-sh7722: could not register: -22
->>     sh-pfc: probe of pfc-sh7722 failed with error -22
->>
->> pinmux_pins[] is initialized through PINMUX_GPIO(), using designated
->> array initializers, where the GPIO_* enums serve as indices.
->> Apparently GPIO_PTQ7 was defined in the enum, but never used.
->> If enum values are defined, but never used, pinmux_pins[] contains
->> (zero-filled) holes.  Hence such entries are treated as pin zero, which
->> was registered before, and pinctrl registration fails.
->>
->> I can't see how this ever worked, as at the time of commit f5e25ae52feff2dc
->> ("sh-pfc: Add sh7722 pinmux support"), pinmux_gpios[] in
->> drivers/pinctrl/sh-pfc/pfc-sh7722.c already had the hole, and
->> drivers/pinctrl/core.c already had the check.
->>
->> Some scripting revealed a few more broken drivers:
->>   - sh7757 has four holes, due to nonexistent GPIO_PT[JLNQ]7_RESV.
->>   - sh7264 and sh7269 define GPIO_PH[0-7], but don't use it with
->>     PINMUX_GPIO().
->>
->> Patch 1 fixes the issue on sh7722, and was tested.
->> Patches 3-4 should fix the issue on the other 3 SoCs, but was untested due
->> to lack of hardware.
->>
->> Changes compared to v1:
->>   - Replace fake error messages by references to sh7722,
->>   - Add Reviewed-by, Tested-by.
->>
->> Thanks for applying!
->>
->> Geert Uytterhoeven (4):
->>   sh: sh7722: Remove nonexistent GPIO_PTQ7 to fix pinctrl registration
->>   sh: sh7757: Remove nonexistent GPIO_PT[JLNQ]7_RESV to fix pinctrl
->>     registration
->>   sh: sh7264: Remove nonexistent GPIO_PH[0-7] to fix pinctrl
->>     registration
->>   sh: sh7269: Remove nonexistent GPIO_PH[0-7] to fix pinctrl
->>     registration
->>
->>  arch/sh/include/cpu-sh2a/cpu/sh7264.h | 4 +---
->>  arch/sh/include/cpu-sh2a/cpu/sh7269.h | 4 +---
->>  arch/sh/include/cpu-sh4/cpu/sh7722.h  | 2 +-
->>  arch/sh/include/cpu-sh4/cpu/sh7757.h  | 8 ++++----
->>  4 files changed, 7 insertions(+), 11 deletions(-)
->
-> Are these patches planned for inclusion in v4.13?
-> I don't see them in next-2016.
+It is documented, so enable it to follow the recommendation in the docs
+and also save a few cycles.
 
-In v4.14, perhaps?
-I don't see them in next-20170811...
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/mmc/host/renesas_sdhi_sys_dmac.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+index 9b77f521cd2c2f..160fbb22ca00b4 100644
+--- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+@@ -33,7 +33,8 @@ static const struct renesas_sdhi_of_data of_default_cfg = {
+ };
+ 
+ static const struct renesas_sdhi_of_data of_rz_compatible = {
+-	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_32BIT_DATA_PORT,
++	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_32BIT_DATA_PORT |
++			  TMIO_MMC_HAVE_CBSY,
+ 	.tmio_ocr_mask	= MMC_VDD_32_33,
+ 	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ,
+ };
+-- 
+2.11.0
