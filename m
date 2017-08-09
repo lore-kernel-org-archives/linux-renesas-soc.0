@@ -1,40 +1,47 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH v4 5/6] i2c: rcar: skip DMA if buffer is not safe
-Date: Thu, 17 Aug 2017 16:14:48 +0200
-Message-Id: <20170817141449.23958-6-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170817141449.23958-1-wsa+renesas@sang-engineering.com>
-References: <20170817141449.23958-1-wsa+renesas@sang-engineering.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor1.renesas.com ([210.160.252.171]:50383 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751443AbdHIMXG (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 9 Aug 2017 08:23:06 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
+        linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 0/8] pinctrl: sh-pfc: r8a77995: Initial R8A77995 PFC support
+Date: Wed,  9 Aug 2017 21:19:39 +0900
+Message-Id: <1502281187-24068-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This HW is prone to races, so it needs to setup new messages in irq
-context. That means we can't alloc bounce buffers if a message buffer is
-not DMA safe. So, in that case, simply fall back to PIO.
+This patch set is based on the renesas-drivers.git /
+topic/r8a77995-integration branch.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/i2c/busses/i2c-rcar.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
-index 93c1a54981df08..5654a7142bffec 100644
---- a/drivers/i2c/busses/i2c-rcar.c
-+++ b/drivers/i2c/busses/i2c-rcar.c
-@@ -359,7 +359,7 @@ static void rcar_i2c_dma(struct rcar_i2c_priv *priv)
- 	int len;
- 
- 	/* Do not use DMA if it's not available or for messages < 8 bytes */
--	if (IS_ERR(chan) || msg->len < 8)
-+	if (IS_ERR(chan) || msg->len < 8 || !(msg->flags & I2C_M_DMA_SAFE))
- 		return;
- 
- 	if (read) {
+Takeshi Kihara (7):
+  pinctrl: sh-pfc: Initial R8A77995 PFC support
+  pinctrl: sh-pfc: r8a77995: Add SCIF pins, groups and functions
+  pinctrl: sh-pfc: r8a77995: Add I2C pins, groups and functions
+  pinctrl: sh-pfc: r8a77995: Add EthernetAVB pins, groups and functions
+  pinctrl: sh-pfc: r8a77995: Add USB2.0 host support
+  pinctrl: sh-pfc: r8a77995: Add MMC pins, groups and functions
+  pinctrl: sh-pfc: r8a77995: Add voltage switch operations for MMC
+
+Yoshihiro Shimoda (1):
+  pinctrl: sh-pfc: Add PORT_GP_{10,2[01]} helper macros
+
+ .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |    1 +
+ drivers/pinctrl/sh-pfc/Kconfig                     |    5 +
+ drivers/pinctrl/sh-pfc/Makefile                    |    1 +
+ drivers/pinctrl/sh-pfc/core.c                      |    6 +
+ drivers/pinctrl/sh-pfc/pfc-r8a77995.c              | 2005 ++++++++++++++++++++
+ drivers/pinctrl/sh-pfc/sh_pfc.h                    |   23 +-
+ 6 files changed, 2036 insertions(+), 5 deletions(-)
+ create mode 100644 drivers/pinctrl/sh-pfc/pfc-r8a77995.c
+
 -- 
-2.11.0
+1.9.1
