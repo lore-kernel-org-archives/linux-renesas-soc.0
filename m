@@ -1,52 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34711 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:53760 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750818AbdHHIjz (ORCPT
+        with ESMTP id S1752033AbdHII0w (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 Aug 2017 04:39:55 -0400
+        Wed, 9 Aug 2017 04:26:52 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 00/10] ARM, arm64: dts: renesas: Use R-Car GPIO Gen[123] fallback compat strings
-Date: Tue,  8 Aug 2017 10:39:18 +0200
-Message-Id: <1502181568-12299-1-git-send-email-horms+renesas@verge.net.au>
+Subject: [PATCH v2 0/3] ARM, arm64: dts: renesas: Use R-Car SATA Gen[23] fallback compat strings
+Date: Wed,  9 Aug 2017 10:26:40 +0200
+Message-Id: <1502267203-12229-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use newly added R-Car GPIO Gen 1, 2 and 3 fallback compat strings in place
-of now deprecated non-generation specific R-Car GPIO fallback compat string
-in the DT of Renesas ARM and arm64 based SoCs.
+Use newly added R-Car SATA Gen 2 and 3 fallback compat strings.
 
 This should have no run-time effect as the driver matches against the
 per-SoC compat string before considering the fallback compat string.
 
+Changes since v1:
+* Update patch changelogs to refer to SATA instead of GPIO,
+  cut-and-paste madness in action
+
 Based on renesas-devel-20170807-v4.13-rc4
 
-Simon Horman (10):
-  ARM: dts: r8a7778: Use R-Car GPIO Gen1 fallback compat string
-  ARM: dts: r8a7779: Use R-Car GPIO Gen1 fallback compat string
-  ARM: dts: r8a7743: Use R-Car GPIO Gen2 fallback compat string
-  ARM: dts: r8a7790: Use R-Car GPIO Gen2 fallback compat string
-  ARM: dts: r8a7791: Use R-Car GPIO Gen2 fallback compat string
-  ARM: dts: r8a7792: Use R-Car GPIO Gen2 fallback compat string
-  ARM: dts: r8a7793: Use R-Car GPIO Gen2 fallback compat string
-  ARM: dts: r8a7794: Use R-Car GPIO Gen2 fallback compat string
-  arm64: dts: r8a7795: Use R-Car GPIO Gen3 fallback compat string
-  arm64: dts: r8a7796: Use R-Car GPIO Gen3 fallback compat string
 
- arch/arm/boot/dts/r8a7743.dtsi           | 16 ++++++++--------
- arch/arm/boot/dts/r8a7778.dtsi           | 10 +++++-----
- arch/arm/boot/dts/r8a7779.dtsi           | 14 +++++++-------
- arch/arm/boot/dts/r8a7790.dtsi           | 12 ++++++------
- arch/arm/boot/dts/r8a7791.dtsi           | 16 ++++++++--------
- arch/arm/boot/dts/r8a7792.dtsi           | 24 ++++++++++++------------
- arch/arm/boot/dts/r8a7793.dtsi           | 16 ++++++++--------
- arch/arm/boot/dts/r8a7794.dtsi           | 14 +++++++-------
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 16 ++++++++--------
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 16 ++++++++--------
- 10 files changed, 77 insertions(+), 77 deletions(-)
+Simon Horman (3):
+  ARM: dts: r8a7790: Use R-Car SATA Gen2 fallback compat string
+  ARM: dts: r8a7791: Use R-Car SATA Gen2 fallback compat string
+  arm64: dts: r8a7795: Use R-Car SATA Gen3 fallback compat string
+
+ arch/arm/boot/dts/r8a7790.dtsi           | 4 ++--
+ arch/arm/boot/dts/r8a7791.dtsi           | 4 ++--
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 3 ++-
+ 3 files changed, 6 insertions(+), 5 deletions(-)
 
 -- 
 2.1.4
