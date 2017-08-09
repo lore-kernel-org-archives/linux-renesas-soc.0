@@ -1,50 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:38399 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751592AbdHPLW4 (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:16822 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752833AbdHIMXQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Aug 2017 07:22:56 -0400
-MIME-Version: 1.0
-In-Reply-To: <1502281187-24068-9-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Wed, 9 Aug 2017 08:23:16 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
+        linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 8/8] pinctrl: sh-pfc: r8a77995: Add voltage switch operations for MMC
+Date: Wed,  9 Aug 2017 21:19:47 +0900
+Message-Id: <1502281187-24068-9-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1502281187-24068-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 References: <1502281187-24068-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1502281187-24068-9-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 16 Aug 2017 13:22:55 +0200
-Message-ID: <CAMuHMdXFdNuXKFFxoOipUUGHhQhS6Px32W_eoy-fCRym-XXMow@mail.gmail.com>
-Subject: Re: [PATCH 8/8] pinctrl: sh-pfc: r8a77995: Add voltage switch
- operations for MMC
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Aug 9, 2017 at 2:19 PM, Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ drivers/pinctrl/sh-pfc/pfc-r8a77995.c | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
 
-i.e. will queue in sh-pfc-for-v4.14.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
+index f8f71b6..f806560 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
+@@ -23,7 +23,7 @@
+ 		PORT_GP_9(0,  fn, sfx),		\
+ 		PORT_GP_32(1, fn, sfx),		\
+ 		PORT_GP_32(2, fn, sfx),		\
+-		PORT_GP_10(3,  fn, sfx),	\
++		PORT_GP_CFG_10(3,  fn, sfx, SH_PFC_PIN_CFG_IO_VOLTAGE),	\
+ 		PORT_GP_32(4, fn, sfx),		\
+ 		PORT_GP_21(5, fn, sfx),		\
+ 		PORT_GP_14(6, fn, sfx)
+@@ -1968,8 +1968,25 @@ enum {
+ 	{ },
+ };
+ 
++static int r8a77995_pin_to_pocctrl(struct sh_pfc *pfc, unsigned int pin, u32 *pocctrl)
++{
++	int bit = -EINVAL;
++
++	*pocctrl = 0xe6060380;
++
++	if (pin >= RCAR_GP_PIN(3, 0) && pin <= RCAR_GP_PIN(3, 9))
++		bit = 29 - (pin - RCAR_GP_PIN(3, 0));
++
++	return bit;
++}
++
++static const struct sh_pfc_soc_operations r8a77995_pinmux_ops = {
++	.pin_to_pocctrl = r8a77995_pin_to_pocctrl,
++};
++
+ const struct sh_pfc_soc_info r8a77995_pinmux_info = {
+ 	.name = "r8a77995_pfc",
++	.ops = &r8a77995_pinmux_ops,
+ 	.unlock_reg = 0xe6060000, /* PMMR */
+ 
+ 	.function = { PINMUX_FUNCTION_BEGIN, PINMUX_FUNCTION_END },
+-- 
+1.9.1
