@@ -1,52 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33652 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751728AbdHRIUY (ORCPT
+Received: from mga05.intel.com ([192.55.52.43]:2127 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751373AbdHJLE2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Aug 2017 04:20:24 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 3/3] dt-bindings: apmu: Document r8a7743 support
-Date: Fri, 18 Aug 2017 10:20:07 +0200
-Message-Id: <304ce59242e11e715bfdc86577771502df99f7cd.1502961902.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1502961902.git.horms+renesas@verge.net.au>
-References: <cover.1502961902.git.horms+renesas@verge.net.au>
+        Thu, 10 Aug 2017 07:04:28 -0400
+Subject: Re: [PATCH 0/3] usb: host: xhci: {plat,rcar}: add support for R-Car
+ H3 ES2.0
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        mathias.nyman@intel.com, gregkh@linuxfoundation.org
+References: <1500899413-28565-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Cc: linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
+Message-ID: <598C3E84.4090405@linux.intel.com>
+Date: Thu, 10 Aug 2017 14:07:48 +0300
+MIME-Version: 1.0
+In-Reply-To: <1500899413-28565-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+On 24.07.2017 15:30, Yoshihiro Shimoda wrote:
+> This patch set is based on the latest Greg's usb.git / usb-next branch
+> (the commit id = 141769851cb73e8f986e9ed83129cde3b645288d)
+>
+> Yoshihiro Shimoda (3):
+>    usb: host: xhci: rcar: Add firmware_name selection by
+>      soc_device_match()
+>    usb: host: xhci: plat: re-fact xhci_plat_priv for R-Car Gen3
+>    usb: host: xhci: rcar: Add support for R-Car H3 ES2.0
+>
+>   drivers/usb/host/xhci-plat.c | 10 +---------
+>   drivers/usb/host/xhci-rcar.c | 40 ++++++++++++++++++++++++++++++++++++++--
+>   2 files changed, 39 insertions(+), 11 deletions(-)
+>
 
-Document APMU and SMP enable method for RZ/G1M
-(also known as r8a7743) SoC.
+Thanks, adding
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- Documentation/devicetree/bindings/power/renesas,apmu.txt | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/power/renesas,apmu.txt b/Documentation/devicetree/bindings/power/renesas,apmu.txt
-index 84404c9edff7..af21502e939c 100644
---- a/Documentation/devicetree/bindings/power/renesas,apmu.txt
-+++ b/Documentation/devicetree/bindings/power/renesas,apmu.txt
-@@ -1,12 +1,13 @@
- DT bindings for the Renesas Advanced Power Management Unit
- 
--Renesas R-Car line of SoCs utilize one or more APMU hardware units
-+Renesas R-Car and RZ/G1 SoCs utilize one or more APMU hardware units
- for CPU core power domain control including SMP boot and CPU Hotplug.
- 
- Required properties:
- 
- - compatible: Should be "renesas,<soctype>-apmu", "renesas,apmu" as fallback.
- 	      Examples with soctypes are:
-+		- "renesas,r8a7743-apmu" (RZ/G1M)
- 		- "renesas,r8a7790-apmu" (R-Car H2)
- 		- "renesas,r8a7791-apmu" (R-Car M2-W)
- 		- "renesas,r8a7792-apmu" (R-Car V2H)
--- 
-2.1.4
+-Mathias
