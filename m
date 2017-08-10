@@ -1,52 +1,132 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:37035 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750957AbdHQMvJ (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:37438 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752658AbdHJPm0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Aug 2017 08:51:09 -0400
-MIME-Version: 1.0
-In-Reply-To: <20170726215439.9623-2-wsa+renesas@sang-engineering.com>
-References: <20170726215439.9623-1-wsa+renesas@sang-engineering.com> <20170726215439.9623-2-wsa+renesas@sang-engineering.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 17 Aug 2017 14:51:08 +0200
-Message-ID: <CAMuHMdVyBYoUifQy+fVE3pdfNdLNBJ6uhhX-VCtXAXN1h+R_LQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/3] watchdog: renesas_wdt: consistently use RuntimePM
- for clock management
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 10 Aug 2017 11:42:26 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
+In-Reply-To: <873790z3y6.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1dfpbH-0001js-DV@finisterre>
+Date: Thu, 10 Aug 2017 16:42:19 +0100
+Subject: Applied "ASoC: rsnd: call request_irq/free_irq once in MIX case" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Jul 26, 2017 at 11:54 PM, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> On Renesas R-Car archs, RuntimePM does all the clock handling. So, use
-> it consistently to enable/disable the clocks. Also make sure that clocks
-> are really enabled around clk_get_rate(). clk_summary looks proper now:
->
->                 clock   enable_cnt      prepare_cnt     rate ...
-> Before this commit:
->
-> At boot:        rwdt    1               1               32768 0 0
-> WDT running:    rwdt    2               2               32768 0 0
->
-> After this commit:
->
-> At boot:        rwdt    0               1               32768 0 0
-> WDT running     rwdt    1               1               32768 0 0
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+The patch
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+   ASoC: rsnd: call request_irq/free_irq once in MIX case
 
-Gr{oetje,eeting}s,
+has been applied to the asoc tree at
 
-                        Geert
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From b6e58fcacb3edc6245ecf700207ba675cba18018 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Thu, 10 Aug 2017 00:07:38 +0000
+Subject: [PATCH] ASoC: rsnd: call request_irq/free_irq once in MIX case
+
+Each module's dai callback function availability is controlled
+by mod->status. For example "always called", "call once".
+In .probe/.remove case, it needs to be called always, because
+.probe will call xxx_attach() function on .probe, especially
+if platform is using MIXer.
+For example, below case, MIX0/DVC0/SSI0 needs to be called twice.
+
+        playback = <&src0 &ctu02 &mix0 &dvc0 &ssi0>;
+        playback = <&src2 &ctu03 &mix0 &dvc0 &ssi0>;
+
+But in this case, SSI0 will call request_irq() twice.
+This patch add new RSND_SSI_PROBED flag and control it
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/sh/rcar/ssi.c | 27 ++++++++++++++++++++++-----
+ 1 file changed, 22 insertions(+), 5 deletions(-)
+
+diff --git a/sound/soc/sh/rcar/ssi.c b/sound/soc/sh/rcar/ssi.c
+index ca9355b86bd9..8bb47144660b 100644
+--- a/sound/soc/sh/rcar/ssi.c
++++ b/sound/soc/sh/rcar/ssi.c
+@@ -90,6 +90,7 @@ struct rsnd_ssi {
+ #define RSND_SSI_NO_BUSIF		(1 << 1) /* SSI+DMA without BUSIF */
+ #define RSND_SSI_HDMI0			(1 << 2) /* for HDMI0 */
+ #define RSND_SSI_HDMI1			(1 << 3) /* for HDMI1 */
++#define RSND_SSI_PROBED			(1 << 4)
+ 
+ #define for_each_rsnd_ssi(pos, priv, i)					\
+ 	for (i = 0;							\
+@@ -103,6 +104,7 @@ struct rsnd_ssi {
+ #define rsnd_mod_to_ssi(_mod) container_of((_mod), struct rsnd_ssi, mod)
+ #define rsnd_ssi_flags_has(p, f) ((p)->flags & f)
+ #define rsnd_ssi_flags_set(p, f) ((p)->flags |= f)
++#define rsnd_ssi_flags_del(p, f) ((p)->flags = ((p)->flags & ~f))
+ #define rsnd_ssi_is_parent(ssi, io) ((ssi) == rsnd_io_to_mod_ssip(io))
+ #define rsnd_ssi_is_multi_slave(mod, io) \
+ 	(rsnd_ssi_multi_slaves(io) & (1 << rsnd_mod_id(mod)))
+@@ -784,11 +786,22 @@ static int rsnd_ssi_common_probe(struct rsnd_mod *mod,
+ 	/*
+ 	 * SSI might be called again as PIO fallback
+ 	 * It is easy to manual handling for IRQ request/free
++	 *
++	 * OTOH, this function might be called many times if platform is
++	 * using MIX. It needs xxx_attach() many times on xxx_probe().
++	 * Because of it, we can't control .probe/.remove calling count by
++	 * mod->status.
++	 * But it don't need to call request_irq() many times.
++	 * Let's control it by RSND_SSI_PROBED flag.
+ 	 */
+-	ret = request_irq(ssi->irq,
+-			  rsnd_ssi_interrupt,
+-			  IRQF_SHARED,
+-			  dev_name(dev), mod);
++	if (!rsnd_ssi_flags_has(ssi, RSND_SSI_PROBED)) {
++		ret = request_irq(ssi->irq,
++				  rsnd_ssi_interrupt,
++				  IRQF_SHARED,
++				  dev_name(dev), mod);
++
++		rsnd_ssi_flags_set(ssi, RSND_SSI_PROBED);
++	}
+ 
+ 	return ret;
+ }
+@@ -805,7 +818,11 @@ static int rsnd_ssi_common_remove(struct rsnd_mod *mod,
+ 		return 0;
+ 
+ 	/* PIO will request IRQ again */
+-	free_irq(ssi->irq, mod);
++	if (rsnd_ssi_flags_has(ssi, RSND_SSI_PROBED)) {
++		free_irq(ssi->irq, mod);
++
++		rsnd_ssi_flags_del(ssi, RSND_SSI_PROBED);
++	}
+ 
+ 	return 0;
+ }
+-- 
+2.13.2
