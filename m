@@ -1,106 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:12607 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752467AbdHOJqv (ORCPT
+Received: from mail-it0-f67.google.com ([209.85.214.67]:36826 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752833AbdHJRmX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 Aug 2017 05:46:51 -0400
-From: Felipe Balbi <balbi@kernel.org>
-To: Rob Herring <robh@kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: mark.rutland@arm.com, gregkh@linuxfoundation.org,
+        Thu, 10 Aug 2017 13:42:23 -0400
+Date: Thu, 10 Aug 2017 12:42:21 -0500
+From: Rob Herring <robh@kernel.org>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: balbi@kernel.org, mark.rutland@arm.com, gregkh@linuxfoundation.org,
         linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] usb: gadget: udc: renesas_usb3: add support for R-Car M3-W
-In-Reply-To: <20170810174221.ovyl7bd64s6mjvyw@rob-hp-laptop>
-References: <1501813018-6116-1-git-send-email-yoshihiro.shimoda.uh@renesas.com> <1501813018-6116-4-git-send-email-yoshihiro.shimoda.uh@renesas.com> <20170810174221.ovyl7bd64s6mjvyw@rob-hp-laptop>
-Date: Tue, 15 Aug 2017 12:46:38 +0300
-Message-ID: <87pobx6u4h.fsf@linux.intel.com>
+Subject: Re: [PATCH v2 3/3] usb: gadget: udc: renesas_usb3: add support for
+ R-Car M3-W
+Message-ID: <20170810174221.ovyl7bd64s6mjvyw@rob-hp-laptop>
+References: <1501813018-6116-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1501813018-6116-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1501813018-6116-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On Fri, Aug 04, 2017 at 11:16:58AM +0900, Yoshihiro Shimoda wrote:
+> This patch adds support for R-Car M3-W. This patch also adds R-Car
+> Gen3 generic version's compatible and changes ".compatible" in
+> the usb3_of_match from "renesas,r8a7796-usb3-peri" to
+> "renesas,rcar-gen3-usb3-peri".
+> 
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> ---
+>  Documentation/devicetree/bindings/usb/renesas_usb3.txt | 16 +++++++++++++---
+>  drivers/usb/gadget/udc/renesas_usb3.c                  |  2 +-
+>  2 files changed, 14 insertions(+), 4 deletions(-)
 
+Binding looks fine, but...
 
-Hi,
+> diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
+> index aa2b185..b1e166c 100644
+> --- a/drivers/usb/gadget/udc/renesas_usb3.c
+> +++ b/drivers/usb/gadget/udc/renesas_usb3.c
+> @@ -2503,7 +2503,7 @@ static void renesas_usb3_init_ram(struct renesas_usb3 *usb3, struct device *dev,
+>  
+>  static const struct of_device_id usb3_of_match[] = {
+>  	{
+> -		.compatible = "renesas,r8a7795-usb3-peri",
+> +		.compatible = "renesas,rcar-gen3-usb3-peri",
 
-Rob Herring <robh@kernel.org> writes:
-> On Fri, Aug 04, 2017 at 11:16:58AM +0900, Yoshihiro Shimoda wrote:
->> This patch adds support for R-Car M3-W. This patch also adds R-Car
->> Gen3 generic version's compatible and changes ".compatible" in
->> the usb3_of_match from "renesas,r8a7796-usb3-peri" to
->> "renesas,rcar-gen3-usb3-peri".
->>=20
->> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
->> ---
->>  Documentation/devicetree/bindings/usb/renesas_usb3.txt | 16 +++++++++++=
-++---
->>  drivers/usb/gadget/udc/renesas_usb3.c                  |  2 +-
->>  2 files changed, 14 insertions(+), 4 deletions(-)
->
-> Binding looks fine, but...
->
->> diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/=
-udc/renesas_usb3.c
->> index aa2b185..b1e166c 100644
->> --- a/drivers/usb/gadget/udc/renesas_usb3.c
->> +++ b/drivers/usb/gadget/udc/renesas_usb3.c
->> @@ -2503,7 +2503,7 @@ static void renesas_usb3_init_ram(struct renesas_u=
-sb3 *usb3, struct device *dev,
->>=20=20
->>  static const struct of_device_id usb3_of_match[] =3D {
->>  	{
->> -		.compatible =3D "renesas,r8a7795-usb3-peri",
->> +		.compatible =3D "renesas,rcar-gen3-usb3-peri",
->
-> You need to keep the existing string for compatibility with existing=20
-> dtbs.
+You need to keep the existing string for compatibility with existing 
+dtbs.
 
-I've fixed it up locally:
-
-diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc=
-/renesas_usb3.c
-index ff69f4645b7c..16ceb445bee8 100644
-=2D-- a/drivers/usb/gadget/udc/renesas_usb3.c
-+++ b/drivers/usb/gadget/udc/renesas_usb3.c
-@@ -2512,6 +2512,10 @@ static const struct of_device_id usb3_of_match[] =3D=
- {
-                .compatible =3D "renesas,r8a7795-usb3-peri",
-                .data =3D &renesas_usb3_priv_gen3,
-        },
-+       {
-+               .compatible =3D "renesas,rcar-gen3-usb3-peri",
-+               .data =3D &renesas_usb3_priv_gen3,
-+       },
-        { },
- };
- MODULE_DEVICE_TABLE(of, usb3_of_match);
-
-
-=2D-=20
-balbi
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlmSwv4ACgkQzL64meEa
-mQauohAA2vFcHkf+98RhRsi1Xws2zQpZHr6EhsbhACYs1Ws7byCxevVNZvg+BApg
-9HHpU1B14N1VV73CEDdxkejBvocwSG6zXja1c4fJHHbZmprloJ6mqTZqORj6KLhx
-qufYP4Z5tAyVjmZ2owtHNKxIRCdFMGLkuTWnBGSCrE/vSAHRxJG8J81LKjQacpQ3
-WtwFQNR84rx0lKAwt5krVqobi4zkfA++Rm4AtJwCJjG3AIoOKnHTYtbc7EjFcMtN
-kwV7MnZdQyDHPFVGhN7XI8G3ACJF+HJ0coi6ktsZhkoc0YTCF8uutjwUX+n+EDAO
-fsLZx+L43SepcwKunm8v0ffgGynsAJkEoGYIIp/xe9Sj9kXc9hgvb3yo2nyhbuw0
-5RTfy4VhcaCjEFT9fQsbyLnUHLgG6YBkITqjKOPXWAXCy8mmZ2GAGZ5pVsym1Y+k
-pJOWSQEhXZ3IihLBO8O2DoGz52h0UIdrewfQCyhh4UBKKcoFr4A/eR5j4TggwOhp
-b2HyhlSGcy4nzKkXmDUi2jnku2hSNXfQM/I0pLL11uqMYSrDHxebndWD7md/7dwD
-lgYyjhffa4MS0oHhqiDZk4TJWp8kLOwiraJMPoGdlSJPX7g91Hk7FSrkTWKZ8Qma
-eg95YElsH6v+w9Swec0D6KUNy3RTwxeyYEEEXZ+a5zUBRpDrOcM=
-=eP/p
------END PGP SIGNATURE-----
---=-=-=--
+>  		.data = &renesas_usb3_priv_gen3,
+>  	},
+>  	{ },
+> -- 
+> 1.9.1
+> 
