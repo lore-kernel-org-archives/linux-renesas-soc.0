@@ -1,75 +1,63 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f179.google.com ([209.85.128.179]:34286 "EHLO
-        mail-wr0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751418AbdHJK4Y (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 10 Aug 2017 06:56:24 -0400
-Received: by mail-wr0-f179.google.com with SMTP id c24so1715294wra.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 10 Aug 2017 03:56:24 -0700 (PDT)
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <20170711115646.GL4517@verge.net.au>
+References: <20160314142342.17180.21352.sendpatchset@little-apple>
+ <20161124105843.GA26737@verge.net.au> <20170711115646.GL4517@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 10 Aug 2017 11:01:46 +0200
+Message-ID: <CAMuHMdX=+HZwOK097HBJ0vWGDpcLQ1dYWSNtb62DSecmvTVz=A@mail.gmail.com>
 Subject: Re: [PATCH v4 00/06] clocksource: sh_cmt: DT binding rework V4
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms@verge.net.au>,
+To: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>
 Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Rob Herring <robh@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
-References: <20160314142342.17180.21352.sendpatchset@little-apple>
- <20161124105843.GA26737@verge.net.au> <20170711115646.GL4517@verge.net.au>
- <CAMuHMdX=+HZwOK097HBJ0vWGDpcLQ1dYWSNtb62DSecmvTVz=A@mail.gmail.com>
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <af57e696-be8d-f44b-0325-8950d2ae87d2@linaro.org>
-Date: Thu, 10 Aug 2017 12:56:21 +0200
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdX=+HZwOK097HBJ0vWGDpcLQ1dYWSNtb62DSecmvTVz=A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 10/08/2017 11:01, Geert Uytterhoeven wrote:
-> On Tue, Jul 11, 2017 at 1:56 PM, Simon Horman <horms@verge.net.au> wrote:
->> On Thu, Nov 24, 2016 at 11:58:43AM +0100, Simon Horman wrote:
->>> On Mon, Mar 14, 2016 at 11:23:42PM +0900, Magnus Damm wrote:
->>>> clocksource: sh_cmt: DT binding rework V4
->>>>
->>>> [PATCH v4 01/06] devicetree: bindings: Remove sh7372 CMT binding
->>>> [PATCH v4 02/06] devicetree: bindings: R-Car Gen2 CMT0 and CMT1 bindings
->>>> [PATCH v4 03/06] devicetree: bindings: r8a73a4 and R-Car Gen2 CMT bindings
->>>> [PATCH v4 04/06] devicetree: bindings: Deprecate property, update example
->>>> [PATCH v4 05/06] devicetree: bindings: Remove unused 32-bit CMT bindings
->>>> [PATCH v4 06/06] devicetree: bindings: Remove deprecated properties
->>>>
->>>> Here is the latest and hopefully final take on updating the CMT DT
->>>> bindings for R-Car Gen2. In total there are 6 patches that have acks
->>>> and are ready to be picked up and merged. Other earlier posted changes
->>>> such as driver modification and SoC DTS bits depend on this series.
->>>
->>> I am wondering what the state of this work is.
->>> I see only one minor review comment for this series.
->>> It would be great to see it merged.
+On Tue, Jul 11, 2017 at 1:56 PM, Simon Horman <horms@verge.net.au> wrote:
+> On Thu, Nov 24, 2016 at 11:58:43AM +0100, Simon Horman wrote:
+>> On Mon, Mar 14, 2016 at 11:23:42PM +0900, Magnus Damm wrote:
+>> > clocksource: sh_cmt: DT binding rework V4
+>> >
+>> > [PATCH v4 01/06] devicetree: bindings: Remove sh7372 CMT binding
+>> > [PATCH v4 02/06] devicetree: bindings: R-Car Gen2 CMT0 and CMT1 bindings
+>> > [PATCH v4 03/06] devicetree: bindings: r8a73a4 and R-Car Gen2 CMT bindings
+>> > [PATCH v4 04/06] devicetree: bindings: Deprecate property, update example
+>> > [PATCH v4 05/06] devicetree: bindings: Remove unused 32-bit CMT bindings
+>> > [PATCH v4 06/06] devicetree: bindings: Remove deprecated properties
+>> >
+>> > Here is the latest and hopefully final take on updating the CMT DT
+>> > bindings for R-Car Gen2. In total there are 6 patches that have acks
+>> > and are ready to be picked up and merged. Other earlier posted changes
+>> > such as driver modification and SoC DTS bits depend on this series.
 >>
->> Ping
-> 
-> Recently, at +1800m, I realized that if we want to continue this work, we
-> better do it soon, so it can be included in the big R-Car Gen2 flag day
-> requiring APMU, CPG/MSSR, ICRAM, RST, and SYSC being described in DT.
+>> I am wondering what the state of this work is.
+>> I see only one minor review comment for this series.
+>> It would be great to see it merged.
+>
+> Ping
 
-Applied.
+Recently, at +1800m, I realized that if we want to continue this work, we
+better do it soon, so it can be included in the big R-Car Gen2 flag day
+requiring APMU, CPG/MSSR, ICRAM, RST, and SYSC being described in DT.
 
-Thanks.
+Thanks!
 
-  -- Daniel
+Gr{oetje,eeting}s,
 
+                        Geert
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
