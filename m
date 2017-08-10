@@ -1,48 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:37541 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752820AbdHNLox (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:57421 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750909AbdHJIGb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 Aug 2017 07:44:53 -0400
-MIME-Version: 1.0
-In-Reply-To: <1502266866-11277-1-git-send-email-horms+renesas@verge.net.au>
-References: <1502266866-11277-1-git-send-email-horms+renesas@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 14 Aug 2017 13:44:52 +0200
-Message-ID: <CAMuHMdWQ=UksGVGUxR0DQYfbhPSZY=rsgHVq=gO3sHRndOfZ+Q@mail.gmail.com>
-Subject: Re: [PATCH] gpio: rcar: reinstate generic compat string
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        Thu, 10 Aug 2017 04:06:31 -0400
+Date: Thu, 10 Aug 2017 10:06:25 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
         Magnus Damm <magnus.damm@gmail.com>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] gpio: rcar: reinstate generic compat string
+Message-ID: <20170810080624.GF16647@verge.net.au>
+References: <1502266866-11277-1-git-send-email-horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1502266866-11277-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
-
-On Wed, Aug 9, 2017 at 10:21 AM, Simon Horman
-<horms+renesas@verge.net.au> wrote:
+On Wed, Aug 09, 2017 at 10:21:06AM +0200, Simon Horman wrote:
 > commit d10bbd156926 ("gpio: rcar: add gen[123] fallback compatibility
 > strings") deprecated the generic compat string, renesas,gpio-rcar. After
 > further discussion this appears not to have been desirable as that compat
 > string is compatible with all R-Car SoCs supported in upstream.
-
-While "renesas,gpio-rcar" is treated as a GPIO controller on R-Car Gen1 SoCs,
-it can indeed be used on R-Car Gen2 and Gen3, with reduced functionality.
-In se this is compatible with the spirit of multiple compatible values.
-
+> 
 > This commit partially reverts that commit, and updates related
 > documentation and examples.
->
+> 
 > Fixes: d10bbd156926 ("gpio: rcar: add gen[123] fallback compatibility strings")
 > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+
+Hi Linus,
+
+I believe Geert is on holidays at the moment (maybe you are to‽).
+I'd like to wait for feedback from him on this as I feel that
+its not at all urgent and it would be best to try to avoid further
+churn in this area.
+
 > ---
 >  .../devicetree/bindings/gpio/renesas,gpio-rcar.txt     | 18 ++++++++++++------
 >  1 file changed, 12 insertions(+), 6 deletions(-)
->
+> 
 > diff --git a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
 > index 48634b01f1bf..347d8ede2982 100644
 > --- a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
@@ -53,7 +54,7 @@ In se this is compatible with the spirit of multiple compatible values.
 >      - "renesas,rcar-gen3-gpio": for a generic R-Car Gen3 GPIO controller.
 > -    - "renesas,gpio-rcar": deprecated.
 > +    - "renesas,gpio-rcar": for generic R-Car GPIO controller.
->
+>  
 > -    When compatible with the generic version nodes must list the
 > -    SoC-specific version corresponding to the platform first followed by
 > -    the generic version.
@@ -62,39 +63,31 @@ In se this is compatible with the spirit of multiple compatible values.
 > +    - A SoC-specific version
 > +    - A generic R-Car generation version
 > +    - The generic R-Car version
-
-The main objective of commit d10bbd156926 ("gpio: rcar: add gen[123] fallback
-compatibility strings") was avoiding the need to add more SoC-specific
-compatible values to the match table in the driver, when adding driver
-support for more R-Car and RZ/G SoCs.
-
-With this amendment, this objective is met at the expense of adding a third
-compatible value to each and every GPIO device node in R-Car .dtsi files :-(
-IMHO keeping "renesas,gpio-rcar" everywhere adds little value.  The only
-exception might be running an old kernel on a new SoC, but that is ruled out
-for a few core components like clocks and PFC anyway.
-
-Of course the driver has to keep matching on the deprecated value, which is
-already the case without this amendment.
-
+>  
 >    - reg: Base address and length of each memory resource used by the GPIO
 >      controller hardware module.
 > @@ -50,7 +52,9 @@ interrupt-controller/interrupts.txt.
 >  Example: R8A7779 (R-Car H1) GPIO controller nodes
->
->         gpio0: gpio@ffc40000 {
-> -               compatible = "renesas,gpio-r8a7779", "renesas,rcar-gen1-gpio";
-> +               compatible = "renesas,gpio-r8a7779",
-> +                            "renesas,rcar-gen1-gpio",
-> +                            "renesas,gpio-rcar";
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+>  
+>  	gpio0: gpio@ffc40000 {
+> -		compatible = "renesas,gpio-r8a7779", "renesas,rcar-gen1-gpio";
+> +		compatible = "renesas,gpio-r8a7779",
+> +			     "renesas,rcar-gen1-gpio",
+> +			     "renesas,gpio-rcar";
+>  		reg = <0xffc40000 0x2c>;
+>  		interrupt-parent = <&gic>;
+>  		interrupts = <0 141 0x4>;
+> @@ -62,7 +66,9 @@ Example: R8A7779 (R-Car H1) GPIO controller nodes
+>  	};
+>  	...
+>  	gpio6: gpio@ffc46000 {
+> -		compatible = "renesas,gpio-r8a7779", "renesas,rcar-gen1-gpio";
+> +		compatible = "renesas,gpio-r8a7779",
+> +			     "renesas,rcar-gen1-gpio",
+> +			     "renesas,gpio-rcar";
+>  		reg = <0xffc46000 0x2c>;
+>  		interrupt-parent = <&gic>;
+>  		interrupts = <0 147 0x4>;
+> -- 
+> 2.1.4
+> 
