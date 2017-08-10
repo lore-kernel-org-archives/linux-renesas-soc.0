@@ -1,76 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f171.google.com ([209.85.216.171]:33527 "EHLO
-        mail-qt0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753807AbdHUMdi (ORCPT
+Received: from www.zeus03.de ([194.117.254.33]:36522 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752022AbdHJIj7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 Aug 2017 08:33:38 -0400
-Received: by mail-qt0-f171.google.com with SMTP id d15so11638431qta.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Aug 2017 05:33:38 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <20170809182926.669-1-wsa+renesas@sang-engineering.com>
-References: <20170809182926.669-1-wsa+renesas@sang-engineering.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 21 Aug 2017 14:33:37 +0200
-Message-ID: <CAPDyKFp7Csi0Sf7aeqOvEevsJzm=tCRvqHvigDFy9Hc_isJ5SQ@mail.gmail.com>
+        Thu, 10 Aug 2017 04:39:59 -0400
+Date: Thu, 10 Aug 2017 10:39:57 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Simon Horman <horms@verge.net.au>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Biju Das <biju.das@bp.renesas.com>
 Subject: Re: [PATCH v2] mmc: sdhi: use maximum width for the sdbuf register
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <20170810083957.GB2175@katana>
+References: <20170809182926.669-1-wsa+renesas@sang-engineering.com>
+ <20170810075309.GC16647@verge.net.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="NDin8bjvE/0mNLFQ"
+Content-Disposition: inline
+In-Reply-To: <20170810075309.GC16647@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 9 August 2017 at 20:29, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> Make use of the 64 bit sdbuf width on Renesas R-Car Gen3. If the
-> registers are 8 byte apart, the width is also 64 bit. For all others,
-> the width is 32 bit, even if the registers are only 16 bit apart.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Thanks, applied for next!
+--NDin8bjvE/0mNLFQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Kind regards
-Uffe
+On Thu, Aug 10, 2017 at 09:53:10AM +0200, Simon Horman wrote:
+> On Wed, Aug 09, 2017 at 08:29:26PM +0200, Wolfram Sang wrote:
+> > Make use of the 64 bit sdbuf width on Renesas R-Car Gen3. If the
+> > registers are 8 byte apart, the width is also 64 bit. For all others,
+> > the width is 32 bit, even if the registers are only 16 bit apart.
+> >=20
+> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>=20
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-> ---
->
-> Change since v1:
-> * width calculation is now fully backwards compatible. If it is not 8 byte
->   apart (which is only on Gen3), we will always default to 32 as before.
->   Thanks to Biju Das and Simon Horman for the error reports!
->
-> Tested on a M3-W Salvator-X and H2 Lager (with both SDHI instances). On
-> the Lager, I could reproduce the problem with the old patch. It is gone now!
->
->  drivers/mmc/host/renesas_sdhi_core.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-> index dd215723fa4312..a252145097d6a5 100644
-> --- a/drivers/mmc/host/renesas_sdhi_core.c
-> +++ b/drivers/mmc/host/renesas_sdhi_core.c
-> @@ -459,10 +459,11 @@ static int renesas_sdhi_multi_io_quirk(struct mmc_card *card,
->
->  static void renesas_sdhi_enable_dma(struct tmio_mmc_host *host, bool enable)
->  {
-> -       sd_ctrl_write16(host, CTL_DMA_ENABLE, enable ? DMA_ENABLE_DMASDRW : 0);
-> +       /* Iff regs are 8 byte apart, sdbuf is 64 bit. Otherwise always 32. */
-> +       int width = (host->bus_shift == 2) ? 64 : 32;
->
-> -       /* enable 32bit access if DMA mode if possibile */
-> -       renesas_sdhi_sdbuf_width(host, enable ? 32 : 16);
-> +       sd_ctrl_write16(host, CTL_DMA_ENABLE, enable ? DMA_ENABLE_DMASDRW : 0);
-> +       renesas_sdhi_sdbuf_width(host, enable ? width : 16);
->  }
->
->  int renesas_sdhi_probe(struct platform_device *pdev,
-> --
-> 2.11.0
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks!
+
+> > Tested on a M3-W Salvator-X and H2 Lager (with both SDHI instances). On
+> > the Lager, I could reproduce the problem with the old patch. It is gone=
+ now!
+>=20
+> Do you think there is any value in widening the test-coverage of this
+> change, f.e. to older SoCs?
+
+Current mmc/next with this patch and the CBSY patch might be worth it,
+I'd think. Mounting, copying and checksumming a file should do IMO.
+
+
+--NDin8bjvE/0mNLFQ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlmMG9wACgkQFA3kzBSg
+KbZTmBAArfvKu62P+6gfiM8a62GAoB1c5vw6Mca9P1r+rPTdtiyO2ZOK0dZI6JBC
+DtBHHH9V6ZLI4vBHefOuzNrFUPbp6VKUhOw00R+klV/ISALR+NJJyOnAZyhQDS8y
+Ok9xmtH5tI6oxkwHW1Z/fF1osulIMqA3Gpm1als3w3rlG7WnKYu2i38RHwKaRvY1
+uS5rCvPR8HwtHL1A1Hp25m5Gj0+a61849AXdyy6KxtirtVTEv8YpJbbJ+NbvKLj5
+PLzBeqQprlJUSyqEqnx6zcjgF8fAFeLLcxwM0JG06ynFhPeRFxMJNcyMJxBkmsLI
+RaC8+f2vjKNOTMcMLu6uLYzGH/sShHjj4Vro4mQj3fmZ+hbQf2doPSQsfsyJaWSL
+M1Z5ZoW8re7zZ8Gt0SE0F0VaHuJGH3JSf0h53nH0rtP7MUDwKXkQhhm2w5Qix3yJ
+rYNyHDTKDz7q/f+er5UxnG2SEabI4Qk7QfYW/hO7Mq3LUp0dBZ7pYjXqnPvK8EIk
+4PGRuI8qaZw0LprWS9WxEMOqW5aVcf0cvanoWPPlj7yYv1Bp6G/8K93+mwGv/nnQ
+5qaio2PK3XeJ5tBf3kvddG4skUSCZzxiXHzXe+Xn3xSomusZknbmSKj16JB6d6wY
+qoSRH4Dbtc6ZpA8Wfv7DSNJ3k4IHyag9+unDQFlhjZqynL31WSs=
+=5fvg
+-----END PGP SIGNATURE-----
+
+--NDin8bjvE/0mNLFQ--
