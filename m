@@ -1,35 +1,52 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1502281247-24124-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1502281247-24124-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 16 Aug 2017 14:24:57 +0200
-Message-ID: <CAMuHMdWTXb0QJaTWh2irT31eGjEHHEqpA--6EcoYUgAFFPfRDg@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: renesas: r8a77995: add pfc device node
+Date: Thu, 10 Aug 2017 10:13:19 +0200
+From: Simon Horman <horms@verge.net.au>
 To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Cc: magnus.damm@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: renesas: r8a77995: add pfc device node
+Message-ID: <20170810081318.GI16647@verge.net.au>
+References: <1502281247-24124-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1502281247-24124-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Aug 9, 2017 at 2:20 PM, Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
+On Wed, Aug 09, 2017 at 09:20:47PM +0900, Yoshihiro Shimoda wrote:
 > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> ---
+> 
+>  This patch set is based on the renesas-drivers.git /
+> topic/r8a77995-integration branch and depends on the following patch
+>  "pinctrl: sh-pfc: r8a77995: Initial R8A77995 PFC support"
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Thanks Shimoda-san,
 
-Gr{oetje,eeting}s,
+this patch looks fine to me, however, I am marking it as deferred pending
+acceptance of the dependency listed above. Please repost or otherwise
+ping me once Geert has indicated he will accept that patch.
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+>  arch/arm64/boot/dts/renesas/r8a77995.dtsi | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+> index 7419688..240b0f8 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+> @@ -123,6 +123,11 @@
+>  			reg = <0 0xe6160000 0 0x0200>;
+>  		};
+>  
+> +		pfc: pfc@e6060000 {
+> +			compatible = "renesas,pfc-r8a77995";
+> +			reg = <0 0xe6060000 0 0x508>;
+> +		};
+> +
+>  		prr: chipid@fff00044 {
+>  			compatible = "renesas,prr";
+>  			reg = <0 0xfff00044 0 4>;
+> -- 
+> 1.9.1
+> 
