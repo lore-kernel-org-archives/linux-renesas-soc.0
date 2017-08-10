@@ -1,122 +1,137 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Cc: laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v3 2/7] v4l: vsp1: Move vsp1_video_pipeline_setup_partitions() function
-Date: Fri,  4 Aug 2017 16:57:06 +0100
-Message-Id: <209eb8c59020c341c745a39ce87b2ae78993726f.1501861813.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.109dff74bad8730bc9559578df79f47dae253305.1501861813.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.109dff74bad8730bc9559578df79f47dae253305.1501861813.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.109dff74bad8730bc9559578df79f47dae253305.1501861813.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.109dff74bad8730bc9559578df79f47dae253305.1501861813.git-series.kieran.bingham+renesas@ideasonboard.com>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:37722 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752876AbdHJPme (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 10 Aug 2017 11:42:34 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
+In-Reply-To: <8760dwz3z9.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1dfpbP-0001lX-RR@finisterre>
+Date: Thu, 10 Aug 2017 16:42:27 +0100
+Subject: Applied "ASoC: rsnd: call free_irq() both DMA/PIO mode" to the asoc tree
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Separate the code change from the function move so that code changes can
-be clearly identified. This commit has no functional change.
+The patch
 
-The partition algorithm functions will be changed, and
-vsp1_video_pipeline_setup_partitions() will call vsp1_video_partition().
-To prepare for that, move the function without any code change.
+   ASoC: rsnd: call free_irq() both DMA/PIO mode
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 213691c7e873206742b39751895d15b41a02b3d1 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Thu, 10 Aug 2017 00:07:00 +0000
+Subject: [PATCH] ASoC: rsnd: call free_irq() both DMA/PIO mode
+
+commit 701172dca15b ("ASoC: rsnd: don't use devm_request_irq() for SSI")
+exchanged devm_request_irq() to request_irq() for SSI, because SSI will
+fallback into PIO mode if DMA doesn't work.
+But, because of it, PIO mode needed to call free_irq() when removing,
+not only DMA mode.
+This patch call free_irq() both PIO/DMA. Otherwise, rsnd IRQ handler
+will be increased if user tried many unbind/bind.
+
+Fixes: 701172dca15b ("ASoC: rsnd: don't use devm_request_irq() for SSI")
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/media/platform/vsp1/vsp1_video.c | 74 ++++++++++++-------------
- 1 file changed, 37 insertions(+), 37 deletions(-)
+ sound/soc/sh/rcar/ssi.c | 37 +++++++++++++++++++------------------
+ 1 file changed, 19 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
-index a24033429cd7..097e4db572a9 100644
---- a/drivers/media/platform/vsp1/vsp1_video.c
-+++ b/drivers/media/platform/vsp1/vsp1_video.c
-@@ -182,43 +182,6 @@ static int __vsp1_video_try_format(struct vsp1_video *video,
-  * VSP1 Partition Algorithm support
-  */
- 
--static void vsp1_video_pipeline_setup_partitions(struct vsp1_pipeline *pipe)
--{
--	struct vsp1_device *vsp1 = pipe->output->entity.vsp1;
--	const struct v4l2_mbus_framefmt *format;
--	struct vsp1_entity *entity;
--	unsigned int div_size;
--
--	/*
--	 * Partitions are computed on the size before rotation, use the format
--	 * at the WPF sink.
--	 */
--	format = vsp1_entity_get_pad_format(&pipe->output->entity,
--					    pipe->output->entity.config,
--					    RWPF_PAD_SINK);
--	div_size = format->width;
--
--	/* Gen2 hardware doesn't require image partitioning. */
--	if (vsp1->info->gen == 2) {
--		pipe->div_size = div_size;
--		pipe->partitions = 1;
--		return;
--	}
--
--	list_for_each_entry(entity, &pipe->entities, list_pipe) {
--		unsigned int entity_max = VSP1_VIDEO_MAX_WIDTH;
--
--		if (entity->ops->max_width) {
--			entity_max = entity->ops->max_width(entity, pipe);
--			if (entity_max)
--				div_size = min(div_size, entity_max);
--		}
--	}
--
--	pipe->div_size = div_size;
--	pipe->partitions = DIV_ROUND_UP(format->width, div_size);
--}
--
- /**
-  * vsp1_video_partition - Calculate the active partition output window
-  *
-@@ -293,6 +256,43 @@ static struct v4l2_rect vsp1_video_partition(struct vsp1_pipeline *pipe,
- 	return partition;
+diff --git a/sound/soc/sh/rcar/ssi.c b/sound/soc/sh/rcar/ssi.c
+index 0309de58bf18..281ed0da6ba1 100644
+--- a/sound/soc/sh/rcar/ssi.c
++++ b/sound/soc/sh/rcar/ssi.c
+@@ -792,6 +792,23 @@ static int rsnd_ssi_common_probe(struct rsnd_mod *mod,
+ 	return ret;
  }
  
-+static void vsp1_video_pipeline_setup_partitions(struct vsp1_pipeline *pipe)
++static int rsnd_ssi_common_remove(struct rsnd_mod *mod,
++				  struct rsnd_dai_stream *io,
++				  struct rsnd_priv *priv)
 +{
-+	struct vsp1_device *vsp1 = pipe->output->entity.vsp1;
-+	const struct v4l2_mbus_framefmt *format;
-+	struct vsp1_entity *entity;
-+	unsigned int div_size;
++	struct rsnd_ssi *ssi = rsnd_mod_to_ssi(mod);
++	struct rsnd_mod *pure_ssi_mod = rsnd_io_to_mod_ssi(io);
 +
-+	/*
-+	 * Partitions are computed on the size before rotation, use the format
-+	 * at the WPF sink.
-+	 */
-+	format = vsp1_entity_get_pad_format(&pipe->output->entity,
-+					    pipe->output->entity.config,
-+					    RWPF_PAD_SINK);
-+	div_size = format->width;
++	/* Do nothing if non SSI (= SSI parent, multi SSI) mod */
++	if (pure_ssi_mod != mod)
++		return 0;
 +
-+	/* Gen2 hardware doesn't require image partitioning. */
-+	if (vsp1->info->gen == 2) {
-+		pipe->div_size = div_size;
-+		pipe->partitions = 1;
-+		return;
-+	}
++	/* PIO will request IRQ again */
++	free_irq(ssi->irq, mod);
 +
-+	list_for_each_entry(entity, &pipe->entities, list_pipe) {
-+		unsigned int entity_max = VSP1_VIDEO_MAX_WIDTH;
-+
-+		if (entity->ops->max_width) {
-+			entity_max = entity->ops->max_width(entity, pipe);
-+			if (entity_max)
-+				div_size = min(div_size, entity_max);
-+		}
-+	}
-+
-+	pipe->div_size = div_size;
-+	pipe->partitions = DIV_ROUND_UP(format->width, div_size);
++	return 0;
 +}
 +
- /* -----------------------------------------------------------------------------
-  * Pipeline Management
-  */
+ static int rsnd_ssi_pointer(struct rsnd_mod *mod,
+ 			    struct rsnd_dai_stream *io,
+ 			    snd_pcm_uframes_t *pointer)
+@@ -807,6 +824,7 @@ static int rsnd_ssi_pointer(struct rsnd_mod *mod,
+ static struct rsnd_mod_ops rsnd_ssi_pio_ops = {
+ 	.name	= SSI_NAME,
+ 	.probe	= rsnd_ssi_common_probe,
++	.remove	= rsnd_ssi_common_remove,
+ 	.init	= rsnd_ssi_init,
+ 	.quit	= rsnd_ssi_quit,
+ 	.start	= rsnd_ssi_start,
+@@ -841,23 +859,6 @@ static int rsnd_ssi_dma_probe(struct rsnd_mod *mod,
+ 	return ret;
+ }
+ 
+-static int rsnd_ssi_dma_remove(struct rsnd_mod *mod,
+-			       struct rsnd_dai_stream *io,
+-			       struct rsnd_priv *priv)
+-{
+-	struct rsnd_ssi *ssi = rsnd_mod_to_ssi(mod);
+-	struct rsnd_mod *pure_ssi_mod = rsnd_io_to_mod_ssi(io);
+-
+-	/* Do nothing if non SSI (= SSI parent, multi SSI) mod */
+-	if (pure_ssi_mod != mod)
+-		return 0;
+-
+-	/* PIO will request IRQ again */
+-	free_irq(ssi->irq, mod);
+-
+-	return 0;
+-}
+-
+ static int rsnd_ssi_fallback(struct rsnd_mod *mod,
+ 			     struct rsnd_dai_stream *io,
+ 			     struct rsnd_priv *priv)
+@@ -899,7 +900,7 @@ static struct rsnd_mod_ops rsnd_ssi_dma_ops = {
+ 	.name	= SSI_NAME,
+ 	.dma_req = rsnd_ssi_dma_req,
+ 	.probe	= rsnd_ssi_dma_probe,
+-	.remove	= rsnd_ssi_dma_remove,
++	.remove	= rsnd_ssi_common_remove,
+ 	.init	= rsnd_ssi_init,
+ 	.quit	= rsnd_ssi_quit,
+ 	.start	= rsnd_ssi_start,
 -- 
-git-series 0.9.1
+2.13.2
