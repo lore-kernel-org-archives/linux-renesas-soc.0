@@ -1,81 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:60701 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:57467 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753077AbdHBMVB (ORCPT
+        with ESMTP id S1751731AbdHJIJS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 Aug 2017 08:21:01 -0400
-Date: Wed, 2 Aug 2017 14:20:59 +0200
+        Thu, 10 Aug 2017 04:09:18 -0400
+Date: Thu, 10 Aug 2017 10:09:13 +0200
 From: Simon Horman <horms@verge.net.au>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: Re: [PATCH 27/31] arm64: dts: renesas: r8a7795: Add usb companion
- property in EHCI
-Message-ID: <20170802122059.GA20012@verge.net.au>
-References: <cover.1501509525.git.horms+renesas@verge.net.au>
- <1c422b4c501ec329802a5d00f664821d3b58e11d.1501509526.git.horms+renesas@verge.net.au>
- <b18c9692-bcbf-a24b-10a9-4a79a74bcead@cogentembedded.com>
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 00/10] ARM, arm64: dts: renesas: Use R-Car GPIO Gen[123]
+ fallback compat strings
+Message-ID: <20170810080912.GG16647@verge.net.au>
+References: <1502181568-12299-1-git-send-email-horms+renesas@verge.net.au>
+ <CANqRtoRcsAhvFB=DNoJHzJt4dejKX+Z8ar04D8O1cFq1XkxWkw@mail.gmail.com>
+ <20170809075526.GE2705@verge.net.au>
+ <20170809082210.GH2705@verge.net.au>
+ <CANqRtoSnRnUWvf0uDv-gjyk6yD4JxxnrGMMvMkBYVQEk6ctDyA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b18c9692-bcbf-a24b-10a9-4a79a74bcead@cogentembedded.com>
+In-Reply-To: <CANqRtoSnRnUWvf0uDv-gjyk6yD4JxxnrGMMvMkBYVQEk6ctDyA@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Jul 31, 2017 at 07:40:23PM +0300, Sergei Shtylyov wrote:
-> On 07/31/2017 06:03 PM, Simon Horman wrote:
+On Wed, Aug 09, 2017 at 08:11:24PM +0900, Magnus Damm wrote:
+> Hi Simon,
 > 
-> >From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+> On Wed, Aug 9, 2017 at 5:22 PM, Simon Horman <horms@verge.net.au> wrote:
+> > On Wed, Aug 09, 2017 at 09:55:26AM +0200, Simon Horman wrote:
+> >> On Tue, Aug 08, 2017 at 07:29:28PM +0900, Magnus Damm wrote:
+> >> > Hi Simon,
+> >> >
+> >> > On Tue, Aug 8, 2017 at 5:39 PM, Simon Horman <horms+renesas@verge.net.au> wrote:
+> >> > > Use newly added R-Car GPIO Gen 1, 2 and 3 fallback compat strings in place
+> >> > > of now deprecated non-generation specific R-Car GPIO fallback compat string
+> >> > > in the DT of Renesas ARM and arm64 based SoCs.
+> >> > >
+> >> > > This should have no run-time effect as the driver matches against the
+> >> > > per-SoC compat string before considering the fallback compat string.
+> >> >
+> >> > Thanks for your efforts.I have no issue with your series (apart from
+> >> > the GPIO and SATA mistake), but at the same time I believe the GPIO
+> >> > hardware itself is backwards compatible between various generations.
+> >> >
+> >> > In the nitpick department I would like to point out that the level of
+> >> > hardware difference between say R-Car Gen1 GPIO and R-Car Gen2 GPIO is
+> >> > similar to say good old uarts like 8250 and 16450 hardware. Basically
+> >> > a couple of registers were added to the hardware in a
+> >> > backwards-compatible way if I recall correctly.
+> >> >
+> >> > So if we are going to use "compatible" to point out if hardware is
+> >> > compatible or not then I would do this instead:
+> >>
+> >> Thanks for your feedback.
+> >>
+> >> When the generation specific compat strings were recently
+> >> added the renesas,gpio-rcar compat string was marked as deprecated
+> >> as I was under the understanding that it was only compatibile with gen 1 SoCs.
+> >>
+> >> It now seems that was not the best thing to do and renesas,gpio-rcar should
+> >> be re-instated as being a generic fallback for all R-Car versions supported
+> >> in upstream.
+> >>
+> >> Do you concur?
 > >
-> >This patch adds the "companion" property in the EHCI ch0, ch1 and
-> >ch2 nodes to wait for the usb companion controller startup at resume.
+> > I posted a patch to un-deprecate the renesas,gpio-rcar compat string
+> > in the bindings documentation.
 > >
-> >Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-> >Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> >[remove ch3 node and revise the commit log]
-> >Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> >
-> >Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> >---
-> >  arch/arm64/boot/dts/renesas/r8a7795.dtsi | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> >diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-> >index d73d986039c8..7246e689b619 100644
-> >--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-> >+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-> >@@ -1583,6 +1583,7 @@
-> >  			clocks = <&cpg CPG_MOD 703>;
-> >  			phys = <&usb2_phy0>;
-> >  			phy-names = "usb";
-> >+			companion= <&ohci0>;
-> >  			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-> >  			resets = <&cpg 703>;
-> >  			status = "disabled";
-> >@@ -1595,6 +1596,7 @@
-> >  			clocks = <&cpg CPG_MOD 702>;
-> >  			phys = <&usb2_phy1>;
-> >  			phy-names = "usb";
-> >+			companion= <&ohci1>;
-> >  			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-> >  			resets = <&cpg 702>;
-> >  			status = "disabled";
-> >@@ -1607,6 +1609,7 @@
-> >  			clocks = <&cpg CPG_MOD 701>;
-> >  			phys = <&usb2_phy2>;
-> >  			phy-names = "usb";
-> >+			companion= <&ohci2>;
-> >  			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-> >  			resets = <&cpg 701>;
-> >  			status = "disabled";
+> > [PATCH] gpio: rcar: reinstate generic compat string
 > 
->    Looks like a space before = is missing in all 3 cases.
+> Thanks, this looks good to me. I would like to hear what Geert thinks as well!
 
-Thanks.
-
-I'll post a follow-up patch for that. I don't think it warrants respinning
-this pull request at this point.
+Thanks, good plan.
