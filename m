@@ -1,15 +1,22 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f178.google.com ([209.85.223.178]:38405 "EHLO
-        mail-io0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752941AbdHKUGE (ORCPT
+Received: from mail-it0-f41.google.com ([209.85.214.41]:36306 "EHLO
+        mail-it0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753357AbdHKUBu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 11 Aug 2017 16:06:04 -0400
-Received: by mail-io0-f178.google.com with SMTP id g71so23641338ioe.5
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 11 Aug 2017 13:06:04 -0700 (PDT)
-Date: Fri, 11 Aug 2017 16:06:02 -0400 (EDT)
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-cc: Tony Lindgren <tony@atomide.com>,
+        Fri, 11 Aug 2017 16:01:50 -0400
+Received: by mail-it0-f41.google.com with SMTP id 77so32795456itj.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 11 Aug 2017 13:01:49 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <alpine.LFD.2.20.1708111553360.8927@knanqh.ubzr>
+References: <20170805205222.19868-1-ard.biesheuvel@linaro.org>
+ <20170805205222.19868-6-ard.biesheuvel@linaro.org> <20170811151346.GR8569@atomide.com>
+ <CAKv+Gu8d8BxRTy6-h5BHTyPvtJrrQraMaMJP+EG2RRRo-Wvv0Q@mail.gmail.com> <alpine.LFD.2.20.1708111553360.8927@knanqh.ubzr>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date: Fri, 11 Aug 2017 21:01:48 +0100
+Message-ID: <CAKv+Gu-Qksstx799FEkadwX0QVr77ccH+oD7Cf5+XRJFv4iA8w@mail.gmail.com>
+Subject: Re: [PATCH 05/15] ARM: head: use PC-relative insn sequence for __smp_alt
+To: Nicolas Pitre <nicolas.pitre@linaro.org>
+Cc: Tony Lindgren <tony@atomide.com>,
         "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>,
         linux-renesas-soc@vger.kernel.org,
@@ -28,96 +35,76 @@ cc: Tony Lindgren <tony@atomide.com>,
         Patrice CHOTARD <patrice.chotard@st.com>,
         Dave Martin <dave.martin@arm.com>,
         Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [PATCH 05/15] ARM: head: use PC-relative insn sequence for
- __smp_alt
-In-Reply-To: <CAKv+Gu-Qksstx799FEkadwX0QVr77ccH+oD7Cf5+XRJFv4iA8w@mail.gmail.com>
-Message-ID: <alpine.LFD.2.20.1708111603270.8927@knanqh.ubzr>
-References: <20170805205222.19868-1-ard.biesheuvel@linaro.org> <20170805205222.19868-6-ard.biesheuvel@linaro.org> <20170811151346.GR8569@atomide.com> <CAKv+Gu8d8BxRTy6-h5BHTyPvtJrrQraMaMJP+EG2RRRo-Wvv0Q@mail.gmail.com> <alpine.LFD.2.20.1708111553360.8927@knanqh.ubzr>
- <CAKv+Gu-Qksstx799FEkadwX0QVr77ccH+oD7Cf5+XRJFv4iA8w@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, 11 Aug 2017, Ard Biesheuvel wrote:
+On 11 August 2017 at 20:58, Nicolas Pitre <nicolas.pitre@linaro.org> wrote:
+> On Fri, 11 Aug 2017, Ard Biesheuvel wrote:
+>
+>> On 11 August 2017 at 16:13, Tony Lindgren <tony@atomide.com> wrote:
+>> > * Ard Biesheuvel <ard.biesheuvel@linaro.org> [170805 13:54]:
+>> >> Replace the open coded PC relative offset calculations with a pair
+>> >> of adr_l invocations.
+>> >>
+>> >> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+>> >> ---
+>> >>  arch/arm/kernel/head.S | 12 ++----------
+>> >>  1 file changed, 2 insertions(+), 10 deletions(-)
+>> >>
+>> >> diff --git a/arch/arm/kernel/head.S b/arch/arm/kernel/head.S
+>> >> index 6e9df3663a57..aed341e0f530 100644
+>> >> --- a/arch/arm/kernel/head.S
+>> >> +++ b/arch/arm/kernel/head.S
+>> >> @@ -523,19 +523,11 @@ ARM_BE8(rev     r0, r0)                 @ byteswap if big endian
+>> >>       retne   lr
+>> >>
+>> >>  __fixup_smp_on_up:
+>> >> -     adr     r0, 1f
+>> >> -     ldmia   r0, {r3 - r5}
+>> >> -     sub     r3, r0, r3
+>> >> -     add     r4, r4, r3
+>> >> -     add     r5, r5, r3
+>> >> +     adr_l   r4, __smpalt_begin
+>> >> +     adr_l   r5, __smpalt_end
+>> >>       b       __do_fixup_smp_on_up
+>> >>  ENDPROC(__fixup_smp)
+>> >>
+>> >> -     .align
+>> >> -1:   .word   .
+>> >> -     .word   __smpalt_begin
+>> >> -     .word   __smpalt_end
+>> >> -
+>> >>       .pushsection .data
+>> >>       .globl  smp_on_up
+>> >>  smp_on_up:
+>> >
+>> > Ard, it's this one that cause boot to fail on omap3.
+>> > The rest of your set works for me with just this one
+>> > left out.
+>> >
+>>
+>> I'm completely puzzled.
+>
+> Found it.
+>
+> You replaced:
+>
+> -       adr     r0, 1f
+> -       ldmia   r0, {r3 - r5}
+> -       sub     r3, r0, r3
+> -       add     r4, r4, r3
+> -       add     r5, r5, r3
+> +       adr_l   r4, __smpalt_begin
+> +       adr_l   r5, __smpalt_end
+>         b       __do_fixup_smp_on_up
+>
+> Notice that r3 is now uninitialized.
+>
+> Now have a look at the code for __do_fixup_smp_on_up.
+>
 
-> On 11 August 2017 at 20:58, Nicolas Pitre <nicolas.pitre@linaro.org> wrote:
-> > On Fri, 11 Aug 2017, Ard Biesheuvel wrote:
-> >
-> >> On 11 August 2017 at 16:13, Tony Lindgren <tony@atomide.com> wrote:
-> >> > * Ard Biesheuvel <ard.biesheuvel@linaro.org> [170805 13:54]:
-> >> >> Replace the open coded PC relative offset calculations with a pair
-> >> >> of adr_l invocations.
-> >> >>
-> >> >> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> >> >> ---
-> >> >>  arch/arm/kernel/head.S | 12 ++----------
-> >> >>  1 file changed, 2 insertions(+), 10 deletions(-)
-> >> >>
-> >> >> diff --git a/arch/arm/kernel/head.S b/arch/arm/kernel/head.S
-> >> >> index 6e9df3663a57..aed341e0f530 100644
-> >> >> --- a/arch/arm/kernel/head.S
-> >> >> +++ b/arch/arm/kernel/head.S
-> >> >> @@ -523,19 +523,11 @@ ARM_BE8(rev     r0, r0)                 @ byteswap if big endian
-> >> >>       retne   lr
-> >> >>
-> >> >>  __fixup_smp_on_up:
-> >> >> -     adr     r0, 1f
-> >> >> -     ldmia   r0, {r3 - r5}
-> >> >> -     sub     r3, r0, r3
-> >> >> -     add     r4, r4, r3
-> >> >> -     add     r5, r5, r3
-> >> >> +     adr_l   r4, __smpalt_begin
-> >> >> +     adr_l   r5, __smpalt_end
-> >> >>       b       __do_fixup_smp_on_up
-> >> >>  ENDPROC(__fixup_smp)
-> >> >>
-> >> >> -     .align
-> >> >> -1:   .word   .
-> >> >> -     .word   __smpalt_begin
-> >> >> -     .word   __smpalt_end
-> >> >> -
-> >> >>       .pushsection .data
-> >> >>       .globl  smp_on_up
-> >> >>  smp_on_up:
-> >> >
-> >> > Ard, it's this one that cause boot to fail on omap3.
-> >> > The rest of your set works for me with just this one
-> >> > left out.
-> >> >
-> >>
-> >> I'm completely puzzled.
-> >
-> > Found it.
-> >
-> > You replaced:
-> >
-> > -       adr     r0, 1f
-> > -       ldmia   r0, {r3 - r5}
-> > -       sub     r3, r0, r3
-> > -       add     r4, r4, r3
-> > -       add     r5, r5, r3
-> > +       adr_l   r4, __smpalt_begin
-> > +       adr_l   r5, __smpalt_end
-> >         b       __do_fixup_smp_on_up
-> >
-> > Notice that r3 is now uninitialized.
-> >
-> > Now have a look at the code for __do_fixup_smp_on_up.
-> >
-> 
-> I still don't see it :-)
-> 
-> __do_fixup_smp_on_up() mentions r3 in the comment block, but it does
-> not actually refer to it in the code, does it?
+I still don't see it :-)
 
-__do_fixup_smp_on_up:
-        cmp     r4, r5
-        reths   lr
-        ldmia   r4!, {r0, r6}
- ARM(   str     r6, [r0, r3]    )	<<============
- THUMB( add     r0, r0, r3      )	<<============
-[...]
-
-
-Nicolas
+__do_fixup_smp_on_up() mentions r3 in the comment block, but it does
+not actually refer to it in the code, does it?
