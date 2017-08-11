@@ -1,97 +1,119 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f50.google.com ([74.125.82.50]:36844 "EHLO
-        mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752745AbdHEUxb (ORCPT
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:39242 "EHLO
+        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752942AbdHKJ5Z (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 5 Aug 2017 16:53:31 -0400
-Received: by mail-wm0-f50.google.com with SMTP id t201so42448284wmt.1
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 05 Aug 2017 13:53:31 -0700 (PDT)
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-To: linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux@armlinux.org.uk,
-        linux-omap@vger.kernel.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, krzk@kernel.org,
-        jason@lakedaemon.net, arm@kernel.org, andrew@lunn.ch,
-        gregory.clement@free-electrons.com,
-        sebastian.hesselbarth@gmail.com, tony@atomide.com,
-        baohua@kernel.org, horms@verge.net.au, magnus.damm@gmail.com,
-        vireshk@kernel.org, shiraz.linux.kernel@gmail.com,
-        patrice.chotard@st.com, nico@linaro.org, dave.martin@arm.com,
-        marc.zyngier@arm.com
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH 07/15] ARM: head.S: use PC-relative insn sequences for __fixup_pv_table
-Date: Sat,  5 Aug 2017 21:52:14 +0100
-Message-Id: <20170805205222.19868-8-ard.biesheuvel@linaro.org>
-In-Reply-To: <20170805205222.19868-1-ard.biesheuvel@linaro.org>
-References: <20170805205222.19868-1-ard.biesheuvel@linaro.org>
+        Fri, 11 Aug 2017 05:57:25 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: linux-media@vger.kernel.org
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Benoit Parrot <bparrot@ti.com>,
+        linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 09/20] rcar-csi2: figure out remote pad and stream which are starting
+Date: Fri, 11 Aug 2017 11:56:52 +0200
+Message-Id: <20170811095703.6170-10-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170811095703.6170-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170811095703.6170-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Replace the open coded PC relative offset calculations with adr_l
-and mov_l invocations.
+Using the information in v4l2_mbus_frame_desc figure out which remote
+pad and stream should be started or stopped.
 
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- arch/arm/kernel/head.S | 27 ++++++--------------
- 1 file changed, 8 insertions(+), 19 deletions(-)
+ drivers/media/platform/rcar-vin/rcar-csi2.c | 40 +++++++++++++++++++++++++----
+ 1 file changed, 35 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm/kernel/head.S b/arch/arm/kernel/head.S
-index aed341e0f530..939543e73874 100644
---- a/arch/arm/kernel/head.S
-+++ b/arch/arm/kernel/head.S
-@@ -578,14 +578,11 @@ ENDPROC(fixup_smp)
-  */
- 	__HEAD
- __fixup_pv_table:
--	adr	r0, 1f
--	ldmia	r0, {r3-r7}
-+	adr_l	r6, __pv_phys_pfn_offset
-+	adr_l	r7, __pv_offset			@ __pa(__pv_offset)
-+	mov_l	r3, __pv_offset			@ __va(__pv_offset)
- 	mvn	ip, #0
--	subs	r3, r0, r3	@ PHYS_OFFSET - PAGE_OFFSET
--	add	r4, r4, r3	@ adjust table start address
--	add	r5, r5, r3	@ adjust table end address
--	add	r6, r6, r3	@ adjust __pv_phys_pfn_offset address
--	add	r7, r7, r3	@ adjust __pv_offset address
-+	subs	r3, r7, r3	@ PHYS_OFFSET - PAGE_OFFSET
- 	mov	r0, r8, lsr #PAGE_SHIFT	@ convert to PFN
- 	str	r0, [r6]	@ save computed PHYS_OFFSET to __pv_phys_pfn_offset
- 	strcc	ip, [r7, #HIGH_OFFSET]	@ save to __pv_offset high bits
-@@ -594,20 +591,15 @@ __fixup_pv_table:
- THUMB(	it	ne		@ cross section branch )
- 	bne	__error
- 	str	r3, [r7, #LOW_OFFSET]	@ save to __pv_offset low bits
-+	adr_l	r4, __pv_table_begin
-+	adr_l	r5, __pv_table_end
- 	b	__fixup_a_pv_table
- ENDPROC(__fixup_pv_table)
--
--	.align
--1:	.long	.
--	.long	__pv_table_begin
--	.long	__pv_table_end
--2:	.long	__pv_phys_pfn_offset
--	.long	__pv_offset
-+	.ltorg
+diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
+index 46da45aea18fe3d3..8b4db70b0dd5d0fb 100644
+--- a/drivers/media/platform/rcar-vin/rcar-csi2.c
++++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
+@@ -533,9 +533,14 @@ static void rcar_csi2_stop(struct rcar_csi2 *priv)
+ 	rcar_csi2_reset(priv);
+ }
  
- 	.text
- __fixup_a_pv_table:
--	adr	r0, 3f
--	ldr	r6, [r0]
-+	mov_l	r6, __pv_offset
- 	add	r6, r6, r3
- 	ldr	r0, [r6, #HIGH_OFFSET]	@ pv_offset high word
- 	ldr	r6, [r6, #LOW_OFFSET]	@ pv_offset low word
-@@ -676,9 +668,6 @@ ARM_BE8(rev16	ip, ip)
- #endif
- ENDPROC(__fixup_a_pv_table)
+-static int rcar_csi2_sd_info(struct rcar_csi2 *priv, struct v4l2_subdev **sd)
++static int rcar_csi2_sd_info(struct rcar_csi2 *priv, unsigned int channel,
++			     struct v4l2_subdev **nextsd, unsigned int *nextpad,
++			     unsigned int *nextstream)
+ {
++	struct v4l2_mbus_frame_desc_entry *entry;
++	struct v4l2_mbus_frame_desc fd;
+ 	struct media_pad *pad;
++	unsigned int i;
  
--	.align
--3:	.long __pv_offset
--
- ENTRY(fixup_pv_table)
- 	stmfd	sp!, {r4 - r7, lr}
- 	mov	r3, #0			@ no offset
+ 	pad = media_entity_remote_pad(&priv->pads[RCAR_CSI2_SINK]);
+ 	if (!pad) {
+@@ -543,31 +548,56 @@ static int rcar_csi2_sd_info(struct rcar_csi2 *priv, struct v4l2_subdev **sd)
+ 		return -ENODEV;
+ 	}
+ 
+-	*sd = media_entity_to_v4l2_subdev(pad->entity);
+-	if (!*sd) {
++	*nextsd = media_entity_to_v4l2_subdev(pad->entity);
++	if (!*nextsd) {
+ 		dev_err(priv->dev, "Could not find remote subdevice\n");
+ 		return -ENODEV;
+ 	}
+ 
+-	return 0;
++	*nextpad = pad->index;
++
++	if (v4l2_subdev_call(*nextsd, pad, get_frame_desc, *nextpad, &fd)) {
++		dev_err(priv->dev, "Could not read frame desc\n");
++		return -EINVAL;
++	}
++
++	for (i = 0; i < fd.num_entries; i++) {
++		entry = &fd.entry[i];
++
++		if ((entry->flags & V4L2_MBUS_FRAME_DESC_FL_CSI2) == 0)
++			return -EINVAL;
++
++		if (entry->csi2.channel == channel) {
++			*nextstream = i;
++			return 0;
++		}
++	}
++
++	dev_err(priv->dev, "Could not find stream for channel %u\n",
++		channel);
++	return -EINVAL;
+ }
+ 
+ static int rcar_csi2_s_stream(struct v4l2_subdev *sd, unsigned int pad,
+ 			      unsigned int stream, int enable)
+ {
+ 	struct rcar_csi2 *priv = sd_to_csi2(sd);
++	unsigned int channel, nextpad, nextstream;
+ 	struct v4l2_subdev *nextsd;
+ 	int ret;
+ 
+ 	if (pad < RCAR_CSI2_SOURCE_VC0 || pad > RCAR_CSI2_SOURCE_VC3)
+ 		return -EINVAL;
+ 
++	/* Figure out CSI-2 channel from pad. First source is VC0, etc */
++	channel = pad - 1;
++
+ 	if (stream != 0)
+ 		return -EINVAL;
+ 
+ 	mutex_lock(&priv->lock);
+ 
+-	ret = rcar_csi2_sd_info(priv, &nextsd);
++	ret = rcar_csi2_sd_info(priv, channel, &nextsd, &nextpad, &nextstream);
+ 	if (ret)
+ 		goto out;
+ 
 -- 
-2.11.0
+2.13.3
