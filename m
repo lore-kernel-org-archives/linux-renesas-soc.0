@@ -1,102 +1,62 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH 2/2] ARM: dts: r8a7743: Add IIC cores to dtsi
-Date: Tue,  8 Aug 2017 13:46:58 +0100
-Message-Id: <1502196418-31341-1-git-send-email-biju.das@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:39078 "EHLO
+        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752927AbdHKJ5V (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 11 Aug 2017 05:57:21 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: linux-media@vger.kernel.org
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Benoit Parrot <bparrot@ti.com>,
+        linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 02/20] v4l2-subdev.h: add pad and stream aware s_stream
+Date: Fri, 11 Aug 2017 11:56:45 +0200
+Message-Id: <20170811095703.6170-3-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170811095703.6170-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170811095703.6170-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+To be able to start and stop individual streams of a multiplexed pad the
+s_stream operation needs to be both pad and stream aware. Add a new
+operation to pad ops to facilitate this.
+
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
-This patch has been tested against Linux-next tag 20170727 and renesas-dev branch.
-This patch depends on https://www.spinics.net/lists/arm-kernel/msg599220.html
+ include/media/v4l2-subdev.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
- arch/arm/boot/dts/r8a7743.dtsi | 55 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 14222c72..5c2b140 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -25,6 +25,9 @@
- 		i2c3 = &i2c3;
- 		i2c4 = &i2c4;
- 		i2c5 = &i2c5;
-+		i2c6 = &i2c6;
-+		i2c7 = &i2c7;
-+		i2c8 = &i2c8;
- 	};
+diff --git a/include/media/v4l2-subdev.h b/include/media/v4l2-subdev.h
+index 7e63124450a963da..c258b1524f94f8ff 100644
+--- a/include/media/v4l2-subdev.h
++++ b/include/media/v4l2-subdev.h
+@@ -643,6 +643,9 @@ struct v4l2_subdev_pad_config {
+  *
+  * @set_frame_desc: set the low level media bus frame parameters, @fd array
+  *                  may be adjusted by the subdev driver to device capabilities.
++ *
++ * @s_stream: used to notify the driver that a stream will start or has
++ *	stopped.
+  */
+ struct v4l2_subdev_pad_ops {
+ 	int (*init_cfg)(struct v4l2_subdev *sd,
+@@ -683,6 +686,8 @@ struct v4l2_subdev_pad_ops {
+ 			      struct v4l2_mbus_frame_desc *fd);
+ 	int (*set_frame_desc)(struct v4l2_subdev *sd, unsigned int pad,
+ 			      struct v4l2_mbus_frame_desc *fd);
++	int (*s_stream)(struct v4l2_subdev *sd, unsigned int pad,
++			unsigned int stream, int enable);
+ };
  
- 	cpus {
-@@ -436,6 +439,58 @@
- 			status = "disabled";
- 		};
- 
-+		i2c6: i2c@e60b0000 {
-+			/* doesn't need pinmux */
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,iic-r8a7743",
-+				     "renesas,rcar-gen2-iic",
-+				     "renesas,rmobile-iic";
-+			reg = <0 0xe60b0000 0 0x425>;
-+			interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 926>;
-+			dmas = <&dmac0 0x77>, <&dmac0 0x78>,
-+			       <&dmac1 0x77>, <&dmac1 0x78>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg CPG_MOD 926>;
-+			status = "disabled";
-+		};
-+
-+		i2c7: i2c@e6500000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,iic-r8a7743",
-+				     "renesas,rcar-gen2-iic",
-+				     "renesas,rmobile-iic";
-+			reg = <0 0xe6500000 0 0x425>;
-+			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 318>;
-+			dmas = <&dmac0 0x61>, <&dmac0 0x62>,
-+			       <&dmac1 0x61>, <&dmac1 0x62>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 318>;
-+			status = "disabled";
-+		};
-+
-+		i2c8: i2c@e6510000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,iic-r8a7743",
-+				     "renesas,rcar-gen2-iic",
-+				     "renesas,rmobile-iic";
-+			reg = <0 0xe6510000 0 0x425>;
-+			interrupts = <GIC_SPI 175 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 323>;
-+			dmas = <&dmac0 0x65>, <&dmac0 0x66>,
-+			       <&dmac1 0x65>, <&dmac1 0x66>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 323>;
-+			status = "disabled";
-+		};
-+
- 		scifa0: serial@e6c40000 {
- 			compatible = "renesas,scifa-r8a7743",
- 				     "renesas,rcar-gen2-scifa", "renesas,scifa";
+ /**
 -- 
-1.9.1
-
+2.13.3
