@@ -1,54 +1,82 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:33407 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751649AbdHPMEk (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Aug 2017 08:04:40 -0400
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: linux-media@vger.kernel.org
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Benoit Parrot <bparrot@ti.com>,
+        linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 12/20] rcar-csi2: only allow formats on source pads
+Date: Fri, 11 Aug 2017 11:56:55 +0200
+Message-Id: <20170811095703.6170-13-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170811095703.6170-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170811095703.6170-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-In-Reply-To: <1501242081-3805-5-git-send-email-ykaneko0929@gmail.com>
-References: <1501242081-3805-1-git-send-email-ykaneko0929@gmail.com> <1501242081-3805-5-git-send-email-ykaneko0929@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 16 Aug 2017 14:04:39 +0200
-Message-ID: <CAMuHMdUvOTx7XK_Me+AQjUWHEYLP6qYBMOCXLGi9FAhKouZBiQ@mail.gmail.com>
-Subject: Re: [PATCH 4/9] pinctrl: sh-pfc: r8a7795: Fix FMCLK{_C,_D} and
- FMIN{_C,_D} pin function definitions
-To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Jul 28, 2017 at 1:41 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->
-> This patch fixes the implementation incorrect of IPSR register value
-> definitions for FMCLK{_C,_D} and FMIN{_C,_D} pins function.
->
-> This is a correction to the incorrect implementation of IPSR register pin
-> assignment of the specifications updated for R8A7795 ES2.0 SoC in R-Car
-> Gen3 Hardware User's Manual Rev.0.53E.
->
-> Fixes: 12f5d9a1dc7f ("pinctrl: sh-pfc: r8a7795: Replace for Renesas R8A7795 ES2.0 SoC")
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+The driver is now pad and stream aware, only allow to get/set format on
+source pads. Also record a different format for each source pad since
+it's no longer true that they are all the same.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/platform/rcar-vin/rcar-csi2.c | 19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
 
-i.e. will queue in sh-pfc-for-v4.14 with reference corrected.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
+index b8ec03d595ba8ac4..034d37bc66e93ac7 100644
+--- a/drivers/media/platform/rcar-vin/rcar-csi2.c
++++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
+@@ -289,7 +289,7 @@ struct rcar_csi2 {
+ 	struct v4l2_subdev subdev;
+ 	struct media_pad pads[NR_OF_RCAR_CSI2_PAD];
+ 
+-	struct v4l2_mbus_framefmt mf;
++	struct v4l2_mbus_framefmt mf[4];
+ 
+ 	struct mutex lock;
+ 	int stream_count[4];
+@@ -644,10 +644,14 @@ static int rcar_csi2_set_pad_format(struct v4l2_subdev *sd,
+ 	struct rcar_csi2 *priv = sd_to_csi2(sd);
+ 	struct v4l2_mbus_framefmt *framefmt;
+ 
++	if (format->pad < RCAR_CSI2_SOURCE_VC0 ||
++	    format->pad > RCAR_CSI2_SOURCE_VC3)
++		return -EINVAL;
++
+ 	if (format->which == V4L2_SUBDEV_FORMAT_ACTIVE) {
+-		priv->mf = format->format;
++		priv->mf[format->pad] = format->format;
+ 	} else {
+-		framefmt = v4l2_subdev_get_try_format(sd, cfg, 0);
++		framefmt = v4l2_subdev_get_try_format(sd, cfg, format->pad);
+ 		*framefmt = format->format;
+ 	}
+ 
+@@ -660,10 +664,15 @@ static int rcar_csi2_get_pad_format(struct v4l2_subdev *sd,
+ {
+ 	struct rcar_csi2 *priv = sd_to_csi2(sd);
+ 
++	if (format->pad < RCAR_CSI2_SOURCE_VC0 ||
++	    format->pad > RCAR_CSI2_SOURCE_VC3)
++		return -EINVAL;
++
+ 	if (format->which == V4L2_SUBDEV_FORMAT_ACTIVE)
+-		format->format = priv->mf;
++		format->format = priv->mf[format->pad];
+ 	else
+-		format->format = *v4l2_subdev_get_try_format(sd, cfg, 0);
++		format->format = *v4l2_subdev_get_try_format(sd, cfg,
++							     format->pad);
+ 
+ 	return 0;
+ }
+-- 
+2.13.3
