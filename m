@@ -1,58 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33652 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751037AbdHRIUN (ORCPT
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:39200 "EHLO
+        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752941AbdHKJ51 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Aug 2017 04:20:13 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 5/9] ARM: dts: koelsch: Add CEC clock for HDMI transmitter
-Date: Fri, 18 Aug 2017 10:19:50 +0200
-Message-Id: <02a5ab18d366223893d634b0992f6434300bee32.1502962873.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1502962873.git.horms+renesas@verge.net.au>
-References: <cover.1502962873.git.horms+renesas@verge.net.au>
+        Fri, 11 Aug 2017 05:57:27 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: linux-media@vger.kernel.org
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Benoit Parrot <bparrot@ti.com>,
+        linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 17/20] adv748x: implement get_frame_desc
+Date: Fri, 11 Aug 2017 11:57:00 +0200
+Message-Id: <20170811095703.6170-18-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170811095703.6170-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170811095703.6170-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Hans Verkuil <hans.verkuil@cisco.com>
-
-The adv7511 on the Koelsch board has a 12 MHz fixed clock
-for the CEC block. Specify this in the dts to enable CEC support.
-
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- arch/arm/boot/dts/r8a7791-koelsch.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/media/i2c/adv748x/adv748x-csi2.c | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
-index dc8ed02de707..0ce0b278e1cb 100644
---- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-@@ -642,11 +642,19 @@
- 		};
- 	};
+diff --git a/drivers/media/i2c/adv748x/adv748x-csi2.c b/drivers/media/i2c/adv748x/adv748x-csi2.c
+index a77069fc1adc1eca..58a9d9105148c15b 100644
+--- a/drivers/media/i2c/adv748x/adv748x-csi2.c
++++ b/drivers/media/i2c/adv748x/adv748x-csi2.c
+@@ -225,9 +225,38 @@ static int adv748x_csi2_set_format(struct v4l2_subdev *sd,
+ 	return ret;
+ }
  
-+	cec_clock: cec-clock {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <12000000>;
-+	};
++static int adv748x_csi2_get_frame_desc(struct v4l2_subdev *sd, unsigned int pad,
++				       struct v4l2_mbus_frame_desc *fd)
++{
++	struct adv748x_csi2 *tx = adv748x_sd_to_csi2(sd);
++	struct adv748x_state *state = tx->state;
++	struct v4l2_mbus_framefmt *mbusformat;
 +
- 	hdmi@39 {
- 		compatible = "adi,adv7511w";
- 		reg = <0x39>;
- 		interrupt-parent = <&gpio3>;
- 		interrupts = <29 IRQ_TYPE_LEVEL_LOW>;
-+		clocks = <&cec_clock>;
-+		clock-names = "cec";
++	if (pad != ADV748X_CSI2_SOURCE || fd == NULL)
++		return -EINVAL;
++
++	mbusformat = adv748x_csi2_get_pad_format(sd, NULL, ADV748X_CSI2_SINK,
++						 V4L2_SUBDEV_FORMAT_ACTIVE);
++	if (!mbusformat)
++		return -EINVAL;
++
++	mutex_lock(&state->mutex);
++	fd->entry[0].flags = V4L2_MBUS_FRAME_DESC_FL_CSI2;
++	fd->entry[0].pixelcode = mbusformat->code;
++	fd->entry[0].csi2.channel = tx->vc;
++	fd->entry[0].csi2.datatype =
++		adv748x_csi2_code_to_datatype(fd->entry[0].pixelcode);
++	fd->entry[0].csi2.pad = ADV748X_CSI2_SINK;
++	fd->num_entries = 1;
++	mutex_unlock(&state->mutex);
++
++	return 0;
++}
++
+ static const struct v4l2_subdev_pad_ops adv748x_csi2_pad_ops = {
+ 	.get_fmt = adv748x_csi2_get_format,
+ 	.set_fmt = adv748x_csi2_set_format,
++	.get_frame_desc = adv748x_csi2_get_frame_desc,
+ };
  
- 		adi,input-depth = <8>;
- 		adi,input-colorspace = "rgb";
+ /* -----------------------------------------------------------------------------
 -- 
-2.1.4
+2.13.3
