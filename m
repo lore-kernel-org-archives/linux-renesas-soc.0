@@ -1,62 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52614 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750775AbdHQI4h (ORCPT
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:39202 "EHLO
+        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752939AbdHKJ5Z (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Aug 2017 04:56:37 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Fourth Round of Renesas ARM Based SoC Fixes for v4.13
-Date: Thu, 17 Aug 2017 10:56:23 +0200
-Message-Id: <cover.1502959921.git.horms+renesas@verge.net.au>
+        Fri, 11 Aug 2017 05:57:25 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: linux-media@vger.kernel.org
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Benoit Parrot <bparrot@ti.com>,
+        linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 06/20] rcar-vin: use the pad and stream aware s_stream
+Date: Fri, 11 Aug 2017 11:56:49 +0200
+Message-Id: <20170811095703.6170-7-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170811095703.6170-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170811095703.6170-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+To work with multiplexed streams the pad and stream aware s_stream
+operation needs to be used.
 
-Please consider these fourth round of Renesas ARM based SoC fixes for v4.13.
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/platform/rcar-vin/rcar-dma.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-This pull request is based on the second round of
-such requests, tagged as renesas-fixes2-for-v4.13,
-which I you have already pulled.
-
-It is not based on the third round of fixes as they
-are not related to arm64 DT and have a different base.
-
-
-The following changes since commit 2752660a37aed65b1e00fd4563d9f152eefb8200:
-
-  arm64: dts: renesas: ulcb: sound clock-frequency needs descending order (2017-07-10 10:28:07 +0200)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-fixes4-for-v4.13
-
-for you to fetch changes up to 8cd7b51ff57c74260b20c97623b0e0d420c22be8:
-
-  arm64: renesas: salvator-common: avoid audio_clkout naming conflict (2017-08-07 09:50:10 +0200)
-
-----------------------------------------------------------------
-Fourth Round of Renesas ARM Based SoC Fixes for v4.13
-
-* Avoid audio_clkout naming conflict for salvator boards using
-  Renesas R-Car Gen 3 SoCs
-
-  Morimoto-san says "The clock name of "audio_clkout" is used by the
-  Renesas sound driver.  This duplicated naming breaks its clock
-  registering/unregistering.  Especially when unbind/bind it can't handle
-  clkout correctly.  This patch renames "audio_clkout" to "audio-clkout" to
-  avoid the naming conflict."
-
-----------------------------------------------------------------
-Kuninori Morimoto (1):
-      arm64: renesas: salvator-common: avoid audio_clkout naming conflict
-
- arch/arm64/boot/dts/renesas/salvator-common.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+index 67a82ac6dc88c0da..395cbf96b40aeb8d 100644
+--- a/drivers/media/platform/rcar-vin/rcar-dma.c
++++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+@@ -1235,16 +1235,18 @@ static int rvin_set_stream(struct rvin_dev *vin, int on)
+ 		if (media_pipeline_start(&vin->vdev.entity, pipe))
+ 			return -EPIPE;
+ 
+-		ret = v4l2_subdev_call(sd, video, s_stream, 1);
++		ret = v4l2_subdev_call(sd, pad, s_stream, pad->index, 0, 1);
+ 		if (ret == -ENOIOCTLCMD)
+ 			ret = 0;
+ 		if (ret)
+ 			media_pipeline_stop(&vin->vdev.entity);
+ 	} else {
+ 		media_pipeline_stop(&vin->vdev.entity);
+-		ret = v4l2_subdev_call(sd, video, s_stream, 0);
++		ret = v4l2_subdev_call(sd, pad, s_stream, pad->index, 0, 0);
+ 	}
+ 
++	vin_dbg(vin, "pad: %u stream: 0 enable: %d\n", pad->index, on);
++
+ 	return ret;
+ }
+ 
+-- 
+2.13.3
