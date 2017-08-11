@@ -1,189 +1,136 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38497 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751382AbdHDNXP (ORCPT
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:39198 "EHLO
+        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752935AbdHKJ5Z (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 Aug 2017 09:23:15 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH 3/4] clk: renesas: rcar-gen3: Add Z2 clock divider support
-Date: Fri,  4 Aug 2017 15:22:59 +0200
-Message-Id: <1501852980-22733-4-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1501852980-22733-1-git-send-email-horms+renesas@verge.net.au>
-References: <1501852980-22733-1-git-send-email-horms+renesas@verge.net.au>
+        Fri, 11 Aug 2017 05:57:25 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: linux-media@vger.kernel.org
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Benoit Parrot <bparrot@ti.com>,
+        linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 05/20] v4l2-core: verify all streams formats on multiplexed links
+Date: Fri, 11 Aug 2017 11:56:48 +0200
+Message-Id: <20170811095703.6170-6-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170811095703.6170-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170811095703.6170-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Extend the format validation for multiplexed pads to verify all streams
+which are part of the multiplexed link. This might take the verification
+to an extreme as it could be argued that one should be able to configure
+and start just one stream without having to configure other streams
+which the user never intends to start.
 
-This patch adds Z2 clock divider support for R-Car Gen3 SoC.
+It could also be argued that the multiplexer and demultiplexer needs to
+know about all formats which could be activated before any stream could
+be started. In such case the number of streams described in the frame
+descriptor should be dynamic and only possible and configured streams
+should be reported which would then solve this issue.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[simon: add recalc_rate() helper; use bitops macros]
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
-v1 [Simon Horman]
-* Provide __cpg_z_clk_recalc_rate() helper
-* Use GENMASK
+ drivers/media/v4l2-core/v4l2-subdev.c | 72 +++++++++++++++++++++++++++++++----
+ 1 file changed, 64 insertions(+), 8 deletions(-)
 
-v0 [Takeshi Kihara]
----
- drivers/clk/renesas/rcar-gen3-cpg.c | 76 ++++++++++++++++++++++++++++++++++---
- drivers/clk/renesas/rcar-gen3-cpg.h |  1 +
- 2 files changed, 72 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index 3b0401a00685..172a91a2e8ee 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -30,7 +30,7 @@
- #define CPG_PLL2CR		0x002c
- #define CPG_PLL4CR		0x01f4
- 
--/* Z Clock
-+/* Z Clock & Z2 Clock
-  *
-  * Traits of this clock:
-  * prepare - clk_prepare only ensures that parents are prepared
-@@ -42,6 +42,7 @@
- #define CPG_FRQCRB_KICK			BIT(31)
- #define CPG_FRQCRC			0x000000e0
- #define CPG_FRQCRC_ZFC_MASK		GENMASK(12, 8)
-+#define CPG_FRQCRC_Z2FC_MASK		GENMASK(4, 0)
- 
- struct cpg_z_clk {
- 	struct clk_hw hw;
-@@ -51,14 +52,13 @@ struct cpg_z_clk {
- 
- #define to_z_clk(_hw)	container_of(_hw, struct cpg_z_clk, hw)
- 
--static unsigned long cpg_z_clk_recalc_rate(struct clk_hw *hw,
--					   unsigned long parent_rate)
-+static unsigned long __cpg_z_clk_recalc_rate(unsigned long parent_rate,
-+					     unsigned int val)
- {
--	struct cpg_z_clk *zclk = to_z_clk(hw);
- 	unsigned long rate;
- 	unsigned int mult;
- 
--	mult = 32 - FIELD_GET(CPG_FRQCRC_ZFC_MASK, clk_readl(zclk->reg));
-+	mult = 32 - val;
- 	/* There is a PLL post-divider of 1/2,
- 	 * thus the doubling of the divisor below.
- 	 */
-@@ -69,6 +69,26 @@ static unsigned long cpg_z_clk_recalc_rate(struct clk_hw *hw,
- 	return rate;
+diff --git a/drivers/media/v4l2-core/v4l2-subdev.c b/drivers/media/v4l2-core/v4l2-subdev.c
+index d6c1a3b777dd2fcd..43cd2b5e3d8ea323 100644
+--- a/drivers/media/v4l2-core/v4l2-subdev.c
++++ b/drivers/media/v4l2-core/v4l2-subdev.c
+@@ -541,20 +541,76 @@ v4l2_subdev_link_validate_get_format(struct media_pad *pad,
+ 	return -EINVAL;
  }
  
-+static unsigned long cpg_z_clk_recalc_rate(struct clk_hw *hw,
-+					   unsigned long parent_rate)
++static int v4l2_subdev_link_validate_muxed(struct media_link *link)
 +{
-+	struct cpg_z_clk *zclk = to_z_clk(hw);
-+	unsigned int val;
++	struct v4l2_mbus_frame_desc sink_fd, source_fd;
++	struct v4l2_subdev *sink_sd, *source_sd;
++	unsigned int i;
++	int ret;
 +
-+	val = FIELD_GET(CPG_FRQCRC_ZFC_MASK, clk_readl(zclk->reg));
-+	return __cpg_z_clk_recalc_rate(parent_rate, val);
-+}
++	/* Require both pads in a link to be multiplexed */
++	if ((link->source->flags & MEDIA_PAD_FL_MUXED) == 0 ||
++	    (link->sink->flags & MEDIA_PAD_FL_MUXED) == 0)
++		return -EINVAL;
 +
-+static unsigned long cpg_z2_clk_recalc_rate(struct clk_hw *hw,
-+					   unsigned long parent_rate)
-+{
-+	struct cpg_z_clk *zclk = to_z_clk(hw);
-+	unsigned int val;
++	sink_sd = media_entity_to_v4l2_subdev(link->sink->entity);
++	source_sd = media_entity_to_v4l2_subdev(link->source->entity);
 +
-+	val = FIELD_GET(CPG_FRQCRC_Z2FC_MASK, clk_readl(zclk->reg));
-+	return __cpg_z_clk_recalc_rate(parent_rate, val);
-+}
++	/* If not both provide frame descs there is not much to be done */
++	ret = v4l2_subdev_call(sink_sd, pad, get_frame_desc,
++			       link->sink->index, &sink_fd);
++	if (ret < 0)
++		return 0;
++	ret = v4l2_subdev_call(source_sd, pad, get_frame_desc,
++			       link->source->index, &source_fd);
++	if (ret < 0)
++		return 0;
 +
- static long cpg_z_clk_round_rate(struct clk_hw *hw, unsigned long rate,
- 				 unsigned long *parent_rate)
- {
-@@ -129,12 +149,25 @@ static int cpg_z_clk_set_rate(struct clk_hw *hw, unsigned long rate,
- 	return -ETIMEDOUT;
- }
- 
-+static int cpg_z2_clk_set_rate(struct clk_hw *hw, unsigned long rate,
-+			      unsigned long parent_rate)
-+{
-+	pr_info("Do not support Z2 clock changing\n");
++	/* Check both side multiplex same number of streams */
++	if (sink_fd.num_entries != source_fd.num_entries)
++		return -EINVAL;
++
++	/* Verify all formats of the multiplexed pads by examining the
++	 * format of the pads which are routed to them. Maybe this is
++	 * a bad idea...
++	 */
++	for (i = 0; i < sink_fd.num_entries; i++) {
++		struct v4l2_subdev_format sink_fmt, source_fmt;
++
++		sink_fmt.which = V4L2_SUBDEV_FORMAT_ACTIVE;
++		sink_fmt.pad = sink_fd.entry[i].csi2.pad;
++		ret = v4l2_subdev_call(sink_sd, pad, get_fmt, NULL, &sink_fmt);
++		if (ret < 0)
++			return 0;
++
++		source_fmt.which = V4L2_SUBDEV_FORMAT_ACTIVE;
++		source_fmt.pad = source_fd.entry[i].csi2.pad;
++		ret = v4l2_subdev_call(source_sd, pad, get_fmt, NULL,
++				       &source_fmt);
++		if (ret < 0)
++			return 0;
++
++		ret = v4l2_subdev_call(sink_sd, pad, link_validate, link,
++					&source_fmt, &sink_fmt);
++		if (ret == -ENOIOCTLCMD)
++			ret = v4l2_subdev_link_validate_default(sink_sd, link,
++								&source_fmt,
++								&sink_fmt);
++		if (ret)
++			return -EPIPE;
++	}
++
 +	return 0;
 +}
 +
- static const struct clk_ops cpg_z_clk_ops = {
- 	.recalc_rate = cpg_z_clk_recalc_rate,
- 	.round_rate = cpg_z_clk_round_rate,
- 	.set_rate = cpg_z_clk_set_rate,
- };
+ int v4l2_subdev_link_validate(struct media_link *link)
+ {
+ 	struct v4l2_subdev *sink;
+ 	struct v4l2_subdev_format sink_fmt, source_fmt;
+ 	int rval;
  
-+static const struct clk_ops cpg_z2_clk_ops = {
-+	.recalc_rate = cpg_z2_clk_recalc_rate,
-+	.round_rate = cpg_z_clk_round_rate,
-+	.set_rate = cpg_z2_clk_set_rate,
-+};
-+
- static struct clk * __init cpg_z_clk_register(const char *name,
- 					      const char *parent_name,
- 					      void __iomem *reg)
-@@ -164,6 +197,35 @@ static struct clk * __init cpg_z_clk_register(const char *name,
- 	return clk;
- }
+-	/* Require both pads in a link to be multiplexed if one is */
+-	if ((link->source->flags | link->sink->flags) & MEDIA_PAD_FL_MUXED) {
+-		if ((link->source->flags & MEDIA_PAD_FL_MUXED) == 0)
+-			return -EINVAL;
+-		if ((link->sink->flags & MEDIA_PAD_FL_MUXED) == 0)
+-			return -EINVAL;
+-		return 0;
+-	}
++	if ((link->source->flags | link->sink->flags) & MEDIA_PAD_FL_MUXED)
++		return v4l2_subdev_link_validate_muxed(link);
  
-+static struct clk * __init cpg_z2_clk_register(const char *name,
-+					      const char *parent_name,
-+					      void __iomem *reg)
-+{
-+	struct clk_init_data init;
-+	struct cpg_z_clk *zclk;
-+	struct clk *clk;
-+
-+	zclk = kzalloc(sizeof(*zclk), GFP_KERNEL);
-+	if (!zclk)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = name;
-+	init.ops = &cpg_z2_clk_ops;
-+	init.flags = 0;
-+	init.parent_names = &parent_name;
-+	init.num_parents = 1;
-+
-+	zclk->reg = reg + CPG_FRQCRC;
-+	zclk->kick_reg = reg + CPG_FRQCRB;
-+	zclk->hw.init = &init;
-+
-+	clk = clk_register(NULL, &zclk->hw);
-+	if (IS_ERR(clk))
-+		kfree(zclk);
-+
-+	return clk;
-+}
-+
- /*
-  * SDn Clock
-  */
-@@ -491,6 +553,10 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
- 		return cpg_z_clk_register(core->name, __clk_get_name(parent),
- 					  base);
- 
-+	case CLK_TYPE_GEN3_Z2:
-+		return cpg_z2_clk_register(core->name, __clk_get_name(parent),
-+					   base);
-+
- 	default:
- 		return ERR_PTR(-EINVAL);
- 	}
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
-index b1e883d19c77..41550236a3d0 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.h
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.h
-@@ -21,6 +21,7 @@ enum rcar_gen3_clk_types {
- 	CLK_TYPE_GEN3_SD,
- 	CLK_TYPE_GEN3_R,
- 	CLK_TYPE_GEN3_Z,
-+	CLK_TYPE_GEN3_Z2,
- };
- 
- #define DEF_GEN3_SD(_name, _id, _parent, _offset)	\
+ 	rval = v4l2_subdev_link_validate_get_format(
+ 		link->source, &source_fmt);
 -- 
-2.1.4
+2.13.3
