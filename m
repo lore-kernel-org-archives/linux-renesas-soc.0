@@ -1,68 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34058 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750818AbdHHHjs (ORCPT
+Received: from sauhun.de ([88.99.104.3]:43359 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750864AbdHLOqy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 Aug 2017 03:39:48 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Sat, 12 Aug 2017 10:46:54 -0400
+Date: Sat, 12 Aug 2017 16:46:52 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH] arm64: dts: renesas: r8a7795: correct whitespace of companion property
-Date: Tue,  8 Aug 2017 09:39:12 +0200
-Message-Id: <1502177952-27983-1-git-send-email-horms+renesas@verge.net.au>
+        Russell King <linux@armlinux.org.uk>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org
+Subject: Re: [PATCH  1/2] dt-bindings: i2c: Document r8a7743/5 support
+Message-ID: <20170812144652.2lcfhur54pfbjihd@ninjato>
+References: <1502191231-8682-1-git-send-email-biju.das@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ljj4kkeausmfw7dv"
+Content-Disposition: inline
+In-Reply-To: <1502191231-8682-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Fixes: 4dad6dcdae7b ("arm64: dts: renesas: r8a7795: add usb2.0 host ch3 device nodes")
-Fixes: 1c422b4c501e ("arm64: dts: renesas: r8a7795: Add usb companion property in EHCI")
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
 
- Based on renesas-devel-20170807-v4.13-rc4
+--ljj4kkeausmfw7dv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index a87ae76880ab..efe2cb2b9951 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1623,7 +1623,7 @@
- 			clocks = <&cpg CPG_MOD 703>;
- 			phys = <&usb2_phy0>;
- 			phy-names = "usb";
--			companion= <&ohci0>;
-+			companion = <&ohci0>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			resets = <&cpg 703>;
- 			status = "disabled";
-@@ -1636,7 +1636,7 @@
- 			clocks = <&cpg CPG_MOD 702>;
- 			phys = <&usb2_phy1>;
- 			phy-names = "usb";
--			companion= <&ohci1>;
-+			companion = <&ohci1>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			resets = <&cpg 702>;
- 			status = "disabled";
-@@ -1649,7 +1649,7 @@
- 			clocks = <&cpg CPG_MOD 701>;
- 			phys = <&usb2_phy2>;
- 			phy-names = "usb";
--			companion= <&ohci2>;
-+			companion = <&ohci2>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			resets = <&cpg 701>;
- 			status = "disabled";
-@@ -1662,7 +1662,7 @@
- 			clocks = <&cpg CPG_MOD 700>;
- 			phys = <&usb2_phy3>;
- 			phy-names = "usb";
--			companion= <&ohci3>;
-+			companion = <&ohci3>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			resets = <&cpg 700>;
- 			status = "disabled";
--- 
-2.1.4
+On Tue, Aug 08, 2017 at 12:20:31PM +0100, Biju Das wrote:
+> Document i2c Device Tree support for RZ/G1[ME]
+> (also known as r8aA774[35]) SoCs. They are compatible with
+> R-Car Gen2 SoC family.
+>=20
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+
+Applied to for-next, thanks!
+
+
+--ljj4kkeausmfw7dv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlmPFNwACgkQFA3kzBSg
+KbYxVxAAiK9zlr4ItErjDGF6qtSMqAZNJ5TfNOV4nJu/8e6xcyW8jRUURmsC7Kg5
++vej66OU3UDnOmQt4jzz2XHIIkOs3Q/a1T4MrhRlCq8huMX6Y3wSjeGOe45A8iMg
+WnZqtC6BMwoUixb86cM/co1JaQx3QxUuOoGdxyLB2xIFQvvKev0hWa3gjnj4UWfA
+tnN9O3jFUkQa9HkvWNp/V4074nE1QXg+PpnCxjD3XKQrDQJ+4IurIPclJxwxClqB
+qPER27554qqc08VNEyQyo+/gNqQRfWWlRjwowLGJm3IHJ8erXxSBanJfJ3hVJu3E
+4FsH+OKfg1uMt2f0+p7V6HX0c01i2KPTJRjd6Xd8J0kU8KChS84nk28gWuodb8XL
+mJsffeaxNzaRJ0RBdeXtpF0OagZ0h9T9cAT7rwRXYOuGcFCTIfXBO94fCiUpp+3q
+hxRPrDcoRNG20V9EZDhpra40vuFlh4JJSeq14B9MOXI1ghnPnzhfFbshnSAlI83X
+isvxHoEujHPFWLYoFgEshnhamBCVkXduFAqFmBd1/LBctut4IZhSLhqwwtXAflvl
+csXryZqoVMX/oS5v9ljApJ3aOZJohqh322C4UKHjuza9nMelIxQ7wjLsCynyUrvB
+wG2aAqLewj3dyIxWfXxJQyDA6PQ1SZjpfn4OExgVGhJHsZbrkHw=
+=heid
+-----END PGP SIGNATURE-----
+
+--ljj4kkeausmfw7dv--
