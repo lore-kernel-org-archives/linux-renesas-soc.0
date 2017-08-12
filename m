@@ -1,137 +1,95 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:37722 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752876AbdHJPme (ORCPT
+Received: from lb2-smtp-cloud7.xs4all.net ([194.109.24.28]:45299 "EHLO
+        lb2-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750802AbdHLKyd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 10 Aug 2017 11:42:34 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <8760dwz3z9.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dfpbP-0001lX-RR@finisterre>
-Date: Thu, 10 Aug 2017 16:42:27 +0100
-Subject: Applied "ASoC: rsnd: call free_irq() both DMA/PIO mode" to the asoc tree
+        Sat, 12 Aug 2017 06:54:33 -0400
+Subject: Re: [PATCH 4/4] drm: adv7511/33: add HDMI CEC support
+To: Archit Taneja <architt@codeaurora.org>, linux-media@vger.kernel.org
+References: <20170730130743.19681-1-hverkuil@xs4all.nl>
+ <20170730130743.19681-5-hverkuil@xs4all.nl>
+ <811a3e0c-d938-744e-2d1d-46be76b708aa@codeaurora.org>
+ <2d2e2a68-8b55-580d-b109-f639aa9fcd00@xs4all.nl>
+Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Hans Verkuil <hans.verkuil@cisco.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <0af0bb9b-51b0-661d-c37b-e4f577207d8c@xs4all.nl>
+Date: Sat, 12 Aug 2017 12:54:29 +0200
+MIME-Version: 1.0
+In-Reply-To: <2d2e2a68-8b55-580d-b109-f639aa9fcd00@xs4all.nl>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+On 12/08/17 11:53, Hans Verkuil wrote:
+> On 10/08/17 10:49, Archit Taneja wrote:
+>>
+>>
+>> On 07/30/2017 06:37 PM, Hans Verkuil wrote:
+>>> From: Hans Verkuil <hans.verkuil@cisco.com>
+>>>
+>>> Add support for HDMI CEC to the drm adv7511/adv7533 drivers.
+>>>
+>>> The CEC registers that we need to use are identical for both drivers,
+>>> but they appear at different offsets in the register map.
+>>
+>> Thanks for the patch. Some minor comments below.
+>>
+>>>
+>>> Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+>>> ---
+>>>   drivers/gpu/drm/bridge/adv7511/Kconfig       |   8 +
+>>>   drivers/gpu/drm/bridge/adv7511/Makefile      |   1 +
+>>>   drivers/gpu/drm/bridge/adv7511/adv7511.h     |  45 +++-
+>>>   drivers/gpu/drm/bridge/adv7511/adv7511_cec.c | 314 +++++++++++++++++++++++++++
+>>>   drivers/gpu/drm/bridge/adv7511/adv7511_drv.c | 152 +++++++++++--
+>>>   drivers/gpu/drm/bridge/adv7511/adv7533.c     |  30 +--
+>>>   6 files changed, 500 insertions(+), 50 deletions(-)
+>>>   create mode 100644 drivers/gpu/drm/bridge/adv7511/adv7511_cec.c
+>>>
 
-   ASoC: rsnd: call free_irq() both DMA/PIO mode
+<snip>
 
-has been applied to the asoc tree at
+>>>   +static bool adv7533_cec_register_volatile(struct device *dev, unsigned int reg)
+>>> +{
+>>> +    switch (reg) {
+>>> +    case ADV7511_REG_CEC_RX_FRAME_HDR + ADV7533_REG_CEC_OFFSET:
+>>> +    case ADV7511_REG_CEC_RX_FRAME_DATA0 + ADV7533_REG_CEC_OFFSET...
+>>> +        ADV7511_REG_CEC_RX_FRAME_DATA0 + ADV7533_REG_CEC_OFFSET + 14:
+>>> +    case ADV7511_REG_CEC_RX_FRAME_LEN + ADV7533_REG_CEC_OFFSET:
+>>> +    case ADV7511_REG_CEC_RX_BUFFERS + ADV7533_REG_CEC_OFFSET:
+>>> +    case ADV7511_REG_CEC_TX_LOW_DRV_CNT + ADV7533_REG_CEC_OFFSET:
+>>> +        return true;
+>>> +    }
+>>> +
+>>> +    return false;
+>>> +}
+>>> +
+>>> +static const struct regmap_config adv7533_cec_regmap_config = {
+>>> +    .reg_bits = 8,
+>>> +    .val_bits = 8,
+>>> +
+>>> +    .max_register = 0xff,
+>>> +    .cache_type = REGCACHE_RBTREE,
+>>> +    .volatile_reg = adv7533_cec_register_volatile,
+>>> +};
+>>> +
+>>> +static bool adv7511_cec_register_volatile(struct device *dev, unsigned int reg)
+>>> +{
+>>
+>> Maybe we could combine the two register_volatile() funcs and the remap_config structs
+>> for adv7511 and adv7533 by passing (reg + offset) to switch?
+> 
+> How? How would I know in the volatile function whether it is an adv7511 or adv7533?
+> Is there an easy way to go from the struct device to a struct adv7511?
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+Never mind, I figured it out.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Implemented.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Regards,
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 213691c7e873206742b39751895d15b41a02b3d1 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Thu, 10 Aug 2017 00:07:00 +0000
-Subject: [PATCH] ASoC: rsnd: call free_irq() both DMA/PIO mode
-
-commit 701172dca15b ("ASoC: rsnd: don't use devm_request_irq() for SSI")
-exchanged devm_request_irq() to request_irq() for SSI, because SSI will
-fallback into PIO mode if DMA doesn't work.
-But, because of it, PIO mode needed to call free_irq() when removing,
-not only DMA mode.
-This patch call free_irq() both PIO/DMA. Otherwise, rsnd IRQ handler
-will be increased if user tried many unbind/bind.
-
-Fixes: 701172dca15b ("ASoC: rsnd: don't use devm_request_irq() for SSI")
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/sh/rcar/ssi.c | 37 +++++++++++++++++++------------------
- 1 file changed, 19 insertions(+), 18 deletions(-)
-
-diff --git a/sound/soc/sh/rcar/ssi.c b/sound/soc/sh/rcar/ssi.c
-index 0309de58bf18..281ed0da6ba1 100644
---- a/sound/soc/sh/rcar/ssi.c
-+++ b/sound/soc/sh/rcar/ssi.c
-@@ -792,6 +792,23 @@ static int rsnd_ssi_common_probe(struct rsnd_mod *mod,
- 	return ret;
- }
- 
-+static int rsnd_ssi_common_remove(struct rsnd_mod *mod,
-+				  struct rsnd_dai_stream *io,
-+				  struct rsnd_priv *priv)
-+{
-+	struct rsnd_ssi *ssi = rsnd_mod_to_ssi(mod);
-+	struct rsnd_mod *pure_ssi_mod = rsnd_io_to_mod_ssi(io);
-+
-+	/* Do nothing if non SSI (= SSI parent, multi SSI) mod */
-+	if (pure_ssi_mod != mod)
-+		return 0;
-+
-+	/* PIO will request IRQ again */
-+	free_irq(ssi->irq, mod);
-+
-+	return 0;
-+}
-+
- static int rsnd_ssi_pointer(struct rsnd_mod *mod,
- 			    struct rsnd_dai_stream *io,
- 			    snd_pcm_uframes_t *pointer)
-@@ -807,6 +824,7 @@ static int rsnd_ssi_pointer(struct rsnd_mod *mod,
- static struct rsnd_mod_ops rsnd_ssi_pio_ops = {
- 	.name	= SSI_NAME,
- 	.probe	= rsnd_ssi_common_probe,
-+	.remove	= rsnd_ssi_common_remove,
- 	.init	= rsnd_ssi_init,
- 	.quit	= rsnd_ssi_quit,
- 	.start	= rsnd_ssi_start,
-@@ -841,23 +859,6 @@ static int rsnd_ssi_dma_probe(struct rsnd_mod *mod,
- 	return ret;
- }
- 
--static int rsnd_ssi_dma_remove(struct rsnd_mod *mod,
--			       struct rsnd_dai_stream *io,
--			       struct rsnd_priv *priv)
--{
--	struct rsnd_ssi *ssi = rsnd_mod_to_ssi(mod);
--	struct rsnd_mod *pure_ssi_mod = rsnd_io_to_mod_ssi(io);
--
--	/* Do nothing if non SSI (= SSI parent, multi SSI) mod */
--	if (pure_ssi_mod != mod)
--		return 0;
--
--	/* PIO will request IRQ again */
--	free_irq(ssi->irq, mod);
--
--	return 0;
--}
--
- static int rsnd_ssi_fallback(struct rsnd_mod *mod,
- 			     struct rsnd_dai_stream *io,
- 			     struct rsnd_priv *priv)
-@@ -899,7 +900,7 @@ static struct rsnd_mod_ops rsnd_ssi_dma_ops = {
- 	.name	= SSI_NAME,
- 	.dma_req = rsnd_ssi_dma_req,
- 	.probe	= rsnd_ssi_dma_probe,
--	.remove	= rsnd_ssi_dma_remove,
-+	.remove	= rsnd_ssi_common_remove,
- 	.init	= rsnd_ssi_init,
- 	.quit	= rsnd_ssi_quit,
- 	.start	= rsnd_ssi_start,
--- 
-2.13.2
+	Hans
