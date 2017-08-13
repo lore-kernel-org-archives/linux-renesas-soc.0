@@ -1,38 +1,39 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [PATCH 3/4] net: sh_eth: constify platform_device_id
-To: Arvind Yadav <arvind.yadav.cs@gmail.com>, wg@grandegger.com,
-        mkl@pengutronix.de, madalin.bucur@nxp.com, davem@davemloft.net,
+From: Arvind Yadav <arvind.yadav.cs@gmail.com>
+To: wg@grandegger.com, mkl@pengutronix.de, madalin.bucur@nxp.com,
+        davem@davemloft.net, sergei.shtylyov@cogentembedded.com,
         grygorii.strashko@ti.com
 Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org
-References: <1502622762-11275-1-git-send-email-arvind.yadav.cs@gmail.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <eab06299-518f-257a-7b73-589ff5210e01@cogentembedded.com>
-Date: Mon, 14 Aug 2017 14:41:57 +0300
-MIME-Version: 1.0
-In-Reply-To: <1502622762-11275-1-git-send-email-arvind.yadav.cs@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH 3/4] net: sh_eth: constify platform_device_id
+Date: Sun, 13 Aug 2017 16:42:42 +0530
+Message-Id: <1502622762-11275-1-git-send-email-arvind.yadav.cs@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+platform_device_id are not supposed to change at runtime. All functions
+working with platform_device_id provided by <linux/platform_device.h>
+work with const platform_device_id. So mark the non-const structs as
+const.
 
-On 08/13/2017 02:12 PM, Arvind Yadav wrote:
+Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+---
+ drivers/net/ethernet/renesas/sh_eth.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> platform_device_id are not supposed to change at runtime. All functions
-> working with platform_device_id provided by <linux/platform_device.h>
-> work with const platform_device_id. So mark the non-const structs as
-> const.
-> 
-> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
-
-Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
-though it seems too late as DaveM has taken the series...
-
-[...]
-
-MBR, Sergei
+diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
+index d2dc0a8..d2e88a3 100644
+--- a/drivers/net/ethernet/renesas/sh_eth.c
++++ b/drivers/net/ethernet/renesas/sh_eth.c
+@@ -3402,7 +3402,7 @@ static const struct dev_pm_ops sh_eth_dev_pm_ops = {
+ #define SH_ETH_PM_OPS NULL
+ #endif
+ 
+-static struct platform_device_id sh_eth_id_table[] = {
++static const struct platform_device_id sh_eth_id_table[] = {
+ 	{ "sh7619-ether", (kernel_ulong_t)&sh7619_data },
+ 	{ "sh771x-ether", (kernel_ulong_t)&sh771x_data },
+ 	{ "sh7724-ether", (kernel_ulong_t)&sh7724_data },
+-- 
+2.7.4
