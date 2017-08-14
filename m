@@ -1,15 +1,14 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:50152 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751031AbdHOPqV (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:21774 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750859AbdHNO0N (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 Aug 2017 11:46:21 -0400
-Date: Tue, 15 Aug 2017 17:45:55 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        Mon, 14 Aug 2017 10:26:13 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
@@ -17,59 +16,51 @@ Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 1/2] ARM: dts: iwg20d-q7: Add RTC support
-Message-ID: <20170815154555.GB26748@verge.net.au>
+Subject: RE: [PATCH 1/2] ARM: dts: iwg20d-q7: Add RTC support
+Date: Mon, 14 Aug 2017 14:26:08 +0000
+Message-ID: <KL1PR06MB1702571F2F9B75205A11280AB88C0@KL1PR06MB1702.apcprd06.prod.outlook.com>
 References: <1502197465-61546-1-git-send-email-biju.das@bp.renesas.com>
  <1502197465-61546-2-git-send-email-biju.das@bp.renesas.com>
  <CAMuHMdUU5fb6G7Wc9ZzfFhLxcUuZFakPdVGh3q_cfUzxZ1AarA@mail.gmail.com>
- <KL1PR06MB1702571F2F9B75205A11280AB88C0@KL1PR06MB1702.apcprd06.prod.outlook.com>
+In-Reply-To: <CAMuHMdUU5fb6G7Wc9ZzfFhLxcUuZFakPdVGh3q_cfUzxZ1AarA@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <KL1PR06MB1702571F2F9B75205A11280AB88C0@KL1PR06MB1702.apcprd06.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Aug 14, 2017 at 02:26:08PM +0000, Biju Das wrote:
-> 
-> 
-> > -----Original Message-----
-> > From: geert.uytterhoeven@gmail.com [mailto:geert.uytterhoeven@gmail.com]
-> > On Behalf Of Geert Uytterhoeven
-> > Sent: 14 August 2017 15:12
-> > To: Biju Das <biju.das@bp.renesas.com>
-> > Cc: Rob Herring <robh+dt@kernel.org>; Mark Rutland
-> > <mark.rutland@arm.com>; Simon Horman <horms@verge.net.au>; Magnus
-> > Damm <magnus.damm@gmail.com>; Russell King <linux@armlinux.org.uk>;
-> > Chris Paterson <Chris.Paterson2@renesas.com>; devicetree@vger.kernel.org;
-> > Linux-Renesas <linux-renesas-soc@vger.kernel.org>; linux-arm-
-> > kernel@lists.infradead.org
-> > Subject: Re: [PATCH 1/2] ARM: dts: iwg20d-q7: Add RTC support
-> >
-> > On Tue, Aug 8, 2017 at 3:04 PM, Biju Das <biju.das@bp.renesas.com> wrote:
-> > > Define the iWave RainboW-G20D-Qseven board dependent part of the RTC
-> > > device node.
-> > >
-> > > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> >
-> > > @@ -54,3 +59,16 @@
-> > >                 micrel,led-mode = <1>;
-> > >         };
-> > >  };
-> > > +
-> > > +&i2c2 {
-> > > +       pinctrl-0 = <&i2c2_pins>;
-> > > +       pinctrl-names = "default";
-> > > +
-> > > +       status = "okay";
-> > > +       clock-frequency = <400000>;
-> > > +
-> > > +       rtc@68 {
-> > > +               compatible = "bq32000";
-> >
-> > "ti,bq32000"
-> 
-> Thanks. I will change this.
-
-Thanks, I have dropped this patch for now.
-Please submit a v2.
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogZ2VlcnQudXl0dGVyaG9l
+dmVuQGdtYWlsLmNvbSBbbWFpbHRvOmdlZXJ0LnV5dHRlcmhvZXZlbkBnbWFpbC5jb21dDQo+IE9u
+IEJlaGFsZiBPZiBHZWVydCBVeXR0ZXJob2V2ZW4NCj4gU2VudDogMTQgQXVndXN0IDIwMTcgMTU6
+MTINCj4gVG86IEJpanUgRGFzIDxiaWp1LmRhc0BicC5yZW5lc2FzLmNvbT4NCj4gQ2M6IFJvYiBI
+ZXJyaW5nIDxyb2JoK2R0QGtlcm5lbC5vcmc+OyBNYXJrIFJ1dGxhbmQNCj4gPG1hcmsucnV0bGFu
+ZEBhcm0uY29tPjsgU2ltb24gSG9ybWFuIDxob3Jtc0B2ZXJnZS5uZXQuYXU+OyBNYWdudXMNCj4g
+RGFtbSA8bWFnbnVzLmRhbW1AZ21haWwuY29tPjsgUnVzc2VsbCBLaW5nIDxsaW51eEBhcm1saW51
+eC5vcmcudWs+Ow0KPiBDaHJpcyBQYXRlcnNvbiA8Q2hyaXMuUGF0ZXJzb24yQHJlbmVzYXMuY29t
+PjsgZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc7DQo+IExpbnV4LVJlbmVzYXMgPGxpbnV4LXJl
+bmVzYXMtc29jQHZnZXIua2VybmVsLm9yZz47IGxpbnV4LWFybS0NCj4ga2VybmVsQGxpc3RzLmlu
+ZnJhZGVhZC5vcmcNCj4gU3ViamVjdDogUmU6IFtQQVRDSCAxLzJdIEFSTTogZHRzOiBpd2cyMGQt
+cTc6IEFkZCBSVEMgc3VwcG9ydA0KPg0KPiBPbiBUdWUsIEF1ZyA4LCAyMDE3IGF0IDM6MDQgUE0s
+IEJpanUgRGFzIDxiaWp1LmRhc0BicC5yZW5lc2FzLmNvbT4gd3JvdGU6DQo+ID4gRGVmaW5lIHRo
+ZSBpV2F2ZSBSYWluYm9XLUcyMEQtUXNldmVuIGJvYXJkIGRlcGVuZGVudCBwYXJ0IG9mIHRoZSBS
+VEMNCj4gPiBkZXZpY2Ugbm9kZS4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IEJpanUgRGFzIDxi
+aWp1LmRhc0BicC5yZW5lc2FzLmNvbT4NCj4NCj4gPiBAQCAtNTQsMyArNTksMTYgQEANCj4gPiAg
+ICAgICAgICAgICAgICAgbWljcmVsLGxlZC1tb2RlID0gPDE+Ow0KPiA+ICAgICAgICAgfTsNCj4g
+PiAgfTsNCj4gPiArDQo+ID4gKyZpMmMyIHsNCj4gPiArICAgICAgIHBpbmN0cmwtMCA9IDwmaTJj
+Ml9waW5zPjsNCj4gPiArICAgICAgIHBpbmN0cmwtbmFtZXMgPSAiZGVmYXVsdCI7DQo+ID4gKw0K
+PiA+ICsgICAgICAgc3RhdHVzID0gIm9rYXkiOw0KPiA+ICsgICAgICAgY2xvY2stZnJlcXVlbmN5
+ID0gPDQwMDAwMD47DQo+ID4gKw0KPiA+ICsgICAgICAgcnRjQDY4IHsNCj4gPiArICAgICAgICAg
+ICAgICAgY29tcGF0aWJsZSA9ICJicTMyMDAwIjsNCj4NCj4gInRpLGJxMzIwMDAiDQoNClRoYW5r
+cy4gSSB3aWxsIGNoYW5nZSB0aGlzLg0KDQo+ID4gKyAgICAgICAgICAgICAgIHJlZyA9IDwweDY4
+PjsNCj4gPiArICAgICAgIH07DQo+ID4gK307DQo+DQo+IEdye29ldGplLGVldGluZ31zLA0KPg0K
+PiAgICAgICAgICAgICAgICAgICAgICAgICBHZWVydA0KPg0KPiAtLQ0KPiBHZWVydCBVeXR0ZXJo
+b2V2ZW4gLS0gVGhlcmUncyBsb3RzIG9mIExpbnV4IGJleW9uZCBpYTMyIC0tIGdlZXJ0QGxpbnV4
+LQ0KPiBtNjhrLm9yZw0KPg0KPiBJbiBwZXJzb25hbCBjb252ZXJzYXRpb25zIHdpdGggdGVjaG5p
+Y2FsIHBlb3BsZSwgSSBjYWxsIG15c2VsZiBhIGhhY2tlci4gQnV0DQo+IHdoZW4gSSdtIHRhbGtp
+bmcgdG8gam91cm5hbGlzdHMgSSBqdXN0IHNheSAicHJvZ3JhbW1lciIgb3Igc29tZXRoaW5nIGxp
+a2UgdGhhdC4NCj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAtLSBMaW51cyBUb3J2
+YWxkcw0KDQoNCg0KUmVuZXNhcyBFbGVjdHJvbmljcyBFdXJvcGUgTHRkLCBEdWtlcyBNZWFkb3cs
+IE1pbGxib2FyZCBSb2FkLCBCb3VybmUgRW5kLCBCdWNraW5naGFtc2hpcmUsIFNMOCA1RkgsIFVL
+LiBSZWdpc3RlcmVkIGluIEVuZ2xhbmQgJiBXYWxlcyB1bmRlciBSZWdpc3RlcmVkIE5vLiAwNDU4
+NjcwOS4NCg==
