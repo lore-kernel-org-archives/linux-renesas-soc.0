@@ -1,50 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:34107 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751196AbdHPL1C (ORCPT
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:37584 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751082AbdHNNuN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Aug 2017 07:27:02 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-        Alexandre Courbot <gnurou@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH ] gpio: rcar: Add r8a7745 (RZ/G1E) support
-Date: Wed, 16 Aug 2017 12:12:16 +0100
-Message-Id: <1502881936-39357-1-git-send-email-biju.das@bp.renesas.com>
+        Mon, 14 Aug 2017 09:50:13 -0400
+Received: by mail-pg0-f65.google.com with SMTP id 83so10792779pgb.4
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Aug 2017 06:50:12 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1502181568-12299-5-git-send-email-horms+renesas@verge.net.au>
+References: <1502181568-12299-1-git-send-email-horms+renesas@verge.net.au> <1502181568-12299-5-git-send-email-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 14 Aug 2017 15:50:12 +0200
+Message-ID: <CAMuHMdVrC7MaXRQBLm5Ym96DFykZqqNjdGmO49Y6saLao2Xs-g@mail.gmail.com>
+Subject: Re: [PATCH 04/10] ARM: dts: r8a7790: Use R-Car GPIO Gen2 fallback
+ compat string
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Renesas RZ/G1E (R8A7745) SoC GPIO blocks are identical to the R-Car Gen2
-family. Add support for its GPIO controllers.
+On Tue, Aug 8, 2017 at 10:39 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> Use newly added R-Car GPIO Gen2 fallback compat string
+> in place of now deprecated non-generation specific
+> R-Car GPIO fallback compat string in the DT of the r8a7790 SoC.
+>
+> This should have no run-time effect as the driver matches against
+> the per-SoC compat string before considering the fallback compat string.
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
----
-This patch is tested against linux-next tag next-20170816 as well as gpio-devel.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
- Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt | 1 +
- 1 file changed, 1 insertion(+)
+Gr{oetje,eeting}s,
 
-diff --git a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-index 48634b0..51c86f6 100644
---- a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-+++ b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-@@ -4,6 +4,7 @@ Required Properties:
- 
-   - compatible: should contain one or more of the following:
-     - "renesas,gpio-r8a7743": for R8A7743 (RZ/G1M) compatible GPIO controller.
-+    - "renesas,gpio-r8a7745": for R8A7745 (RZ/G1E) compatible GPIO controller.
-     - "renesas,gpio-r8a7778": for R8A7778 (R-Mobile M1) compatible GPIO controller.
-     - "renesas,gpio-r8a7779": for R8A7779 (R-Car H1) compatible GPIO controller.
-     - "renesas,gpio-r8a7790": for R8A7790 (R-Car H2) compatible GPIO controller.
--- 
-1.9.1
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
