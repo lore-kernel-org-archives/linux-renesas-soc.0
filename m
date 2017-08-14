@@ -1,62 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:49767 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753516AbdHNP0q (ORCPT
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:32844 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751965AbdHNPAF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 Aug 2017 11:26:46 -0400
-Date: Mon, 14 Aug 2017 17:26:43 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux MMC List <linux-mmc@vger.kernel.org>,
+        Mon, 14 Aug 2017 11:00:05 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170809190041.1052-1-wsa+renesas@sang-engineering.com>
+References: <20170809190041.1052-1-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 14 Aug 2017 17:00:04 +0200
+Message-ID: <CAMuHMdW+HtXwtYbOrHToWc80q+B=v_4s-8Vb8WhP4akeFY31uQ@mail.gmail.com>
+Subject: Re: [PATCH] mmc: renesas_sdhi: use extra flag for CBSY usage
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Linux MMC List <linux-mmc@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Dirk Behme <dirk.behme@de.bosch.com>,
         Chris Brandt <chris.brandt@renesas.com>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH] mmc: renesas_sdhi: use extra flag for CBSY usage
-Message-ID: <20170814152643.3oua647mp3nwdybd@ninjato>
-References: <20170809190041.1052-1-wsa+renesas@sang-engineering.com>
- <CAMuHMdW+HtXwtYbOrHToWc80q+B=v_4s-8Vb8WhP4akeFY31uQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="eoceya6xakxoptnw"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdW+HtXwtYbOrHToWc80q+B=v_4s-8Vb8WhP4akeFY31uQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Wolfram,
 
---eoceya6xakxoptnw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Wed, Aug 9, 2017 at 9:00 PM, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> There is one SDHI instance on Gen2 which does not have the CBSY bit.
+> So, turn CBSY usage into an extra flag and set it accordingly. This has
+> the additional advantage that we can also set it for other incarnations
+> later.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>
+> Tested on a M3-W Salvator-X and H2 Lager (with both SDHI instances). I could
+> move large files around without problems. Note that on the special incarnation
+> without the CBSY bit, the old code still worked, so there might be a CBSY bit.
+> But it is not documented, so we better play safe.
 
+Is this supposed to have any impact on the issue on Magnus' r8a7794/alt, where
+tuning failed before?
 
-> Is this supposed to have any impact on the issue on Magnus' r8a7794/alt, where
-> tuning failed before?
+    sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19)
+    sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19)
+    sh_mobile_sdhi ee100000.sd: Tuning procedure failed
+    mmc1: tuning execution failed: -110
+    mmc1: error -110 whilst initialising SD card
 
-Nope, I'd be very surprised if it does. I wanted to look at this issue
-with my next free time slot.
+Gr{oetje,eeting}s,
 
+                        Geert
 
---eoceya6xakxoptnw
-Content-Type: application/pgp-signature; name="signature.asc"
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlmRwS8ACgkQFA3kzBSg
-Kbbp9A/7BSxSmstdoCEIFPK6x2nj9a4YplkXmDf+yqrhh+9LfAHJd8gk39s2sbSF
-VX5mGCPP/DaoWTEX8VANm6xv4Io0p8g7zvXOND+5wlwbFb80nirE5KuYhcIkNG0n
-CnIht30RLqoa3220Ezzxe4PuEYuff94wC33SgJPtY20WQe1cG+kdVZVUb98HYtt8
-WS06UMy+NuAYBnQD5EYdMYX5lANdJ9p+uXRvH38pLYIDuPIWGLB3jCHyksc+nZXA
-T1YOVUbx/HbiVF3Ea3R4JtTTydl3ShKO2PyWTULkpvx7C7fTeIH4owAa/0O9qS6I
-6kuZ1m8OHjx7DLJzs5lDMlRuZzaS2Yp7tpBq8JLANtj0inTuGElkEdSzuDZrxqeb
-1+Fu1UwDBjLrk5xHx8Vt8L6BpgKT3dS6D9GsTxw0eEcCJdK24crq4Q3Gr0QyfhHh
-imH+0vhcFecvMH9SVpjj1LLoaqKti77ZidDyMuGHe2W11ZfROCY7b0Cs6SIZEsZb
-pMp11oPhaAjPsqEJ+T8xo3GxGM6+34uACuq1LHb+j8M8XM8XTNx1AXmRnCvCORfn
-rR1UFhBkNw2cU2m9yYwzrqB0jHjwSccgn1Z2VXnjM6Pp+pEYICFmJHgY4lYKuNmI
-d7TvO/e+GZtQvBBK8811fq8WsjX8VybCO8r++TtlhK2JQY4S5tw=
-=C1Hy
------END PGP SIGNATURE-----
-
---eoceya6xakxoptnw--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
