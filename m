@@ -1,54 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:31380 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751087AbdHCMcc (ORCPT
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:34113 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752246AbdHNISv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 3 Aug 2017 08:32:32 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 2/2] arm64: dts: r8a7796: Add HSUSB device node
-Date: Thu,  3 Aug 2017 21:29:17 +0900
-Message-Id: <1501763357-26075-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1501763357-26075-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1501763357-26075-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Mon, 14 Aug 2017 04:18:51 -0400
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1501068219-3834-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1501068219-3834-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 14 Aug 2017 10:18:50 +0200
+Message-ID: <CAMuHMdU+p_tkEHpUk0O815iBm5Chg2KEevGPQ4jDbqcJnR1jig@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a7796: Add USB3.0 clock
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+On Wed, Jul 26, 2017 at 1:23 PM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+>
+> This patch adds USB3.0-IF0 clock for R8A7796 SoC.
+>
+> Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 445a3d9..d738d4b 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -1252,7 +1252,20 @@
- 		};
- 
- 		hsusb: usb@e6590000 {
--			/* placeholder */
-+			compatible = "renesas,usbhs-r8a7796",
-+				     "renesas,rcar-gen3-usbhs";
-+			reg = <0 0xe6590000 0 0x100>;
-+			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 704>;
-+			dmas = <&usb_dmac0 0>, <&usb_dmac0 1>,
-+			       <&usb_dmac1 0>, <&usb_dmac1 1>;
-+			dma-names = "ch0", "ch1", "ch2", "ch3";
-+			renesas,buswait = <11>;
-+			phys = <&usb2_phy0>;
-+			phy-names = "usb";
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 704>;
-+			status = "disabled";
- 		};
- 
- 		xhci0: usb@ee000000 {
--- 
-1.9.1
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+I.e. will queue in clk-renesas-for-v4.14.
+
+je,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
