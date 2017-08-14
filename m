@@ -1,21 +1,12 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f54.google.com ([209.85.214.54]:35930 "EHLO
-        mail-it0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752562AbdHNQU4 (ORCPT
+Received: from muru.com ([72.249.23.125]:35870 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752464AbdHNQTP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 Aug 2017 12:20:56 -0400
-Received: by mail-it0-f54.google.com with SMTP id 77so22950578itj.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Aug 2017 09:20:56 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <20170814161909.GV8569@atomide.com>
-References: <20170805205222.19868-1-ard.biesheuvel@linaro.org>
- <20170805205222.19868-6-ard.biesheuvel@linaro.org> <20170811151346.GR8569@atomide.com>
- <CAKv+Gu8d8BxRTy6-h5BHTyPvtJrrQraMaMJP+EG2RRRo-Wvv0Q@mail.gmail.com> <20170814161909.GV8569@atomide.com>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Mon, 14 Aug 2017 17:20:55 +0100
-Message-ID: <CAKv+Gu8FtmOSd3OPvN-p0WyVnAmJeyteDP9ey5XhF6fvmazA9g@mail.gmail.com>
-Subject: Re: [PATCH 05/15] ARM: head: use PC-relative insn sequence for __smp_alt
-To: Tony Lindgren <tony@atomide.com>
+        Mon, 14 Aug 2017 12:19:15 -0400
+Date: Mon, 14 Aug 2017 09:19:10 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Cc: "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>,
         linux-renesas-soc@vger.kernel.org,
@@ -35,103 +26,106 @@ Cc: "linux-arm-kernel@lists.infradead.org"
         "nico@linaro.org" <nico@linaro.org>,
         Dave Martin <dave.martin@arm.com>,
         Marc Zyngier <marc.zyngier@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH 05/15] ARM: head: use PC-relative insn sequence for
+ __smp_alt
+Message-ID: <20170814161909.GV8569@atomide.com>
+References: <20170805205222.19868-1-ard.biesheuvel@linaro.org>
+ <20170805205222.19868-6-ard.biesheuvel@linaro.org>
+ <20170811151346.GR8569@atomide.com>
+ <CAKv+Gu8d8BxRTy6-h5BHTyPvtJrrQraMaMJP+EG2RRRo-Wvv0Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKv+Gu8d8BxRTy6-h5BHTyPvtJrrQraMaMJP+EG2RRRo-Wvv0Q@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 14 August 2017 at 17:19, Tony Lindgren <tony@atomide.com> wrote:
-> * Ard Biesheuvel <ard.biesheuvel@linaro.org> [170811 12:37]:
->> On 11 August 2017 at 16:13, Tony Lindgren <tony@atomide.com> wrote:
->> > * Ard Biesheuvel <ard.biesheuvel@linaro.org> [170805 13:54]:
->> >> Replace the open coded PC relative offset calculations with a pair
->> >> of adr_l invocations.
->> >>
->> >> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
->> >> ---
->> >>  arch/arm/kernel/head.S | 12 ++----------
->> >>  1 file changed, 2 insertions(+), 10 deletions(-)
->> >>
->> >> diff --git a/arch/arm/kernel/head.S b/arch/arm/kernel/head.S
->> >> index 6e9df3663a57..aed341e0f530 100644
->> >> --- a/arch/arm/kernel/head.S
->> >> +++ b/arch/arm/kernel/head.S
->> >> @@ -523,19 +523,11 @@ ARM_BE8(rev     r0, r0)                 @ byteswap if big endian
->> >>       retne   lr
->> >>
->> >>  __fixup_smp_on_up:
->> >> -     adr     r0, 1f
->> >> -     ldmia   r0, {r3 - r5}
->> >> -     sub     r3, r0, r3
->> >> -     add     r4, r4, r3
->> >> -     add     r5, r5, r3
->> >> +     adr_l   r4, __smpalt_begin
->> >> +     adr_l   r5, __smpalt_end
->> >>       b       __do_fixup_smp_on_up
->> >>  ENDPROC(__fixup_smp)
->> >>
->> >> -     .align
->> >> -1:   .word   .
->> >> -     .word   __smpalt_begin
->> >> -     .word   __smpalt_end
->> >> -
->> >>       .pushsection .data
->> >>       .globl  smp_on_up
->> >>  smp_on_up:
->> >
->> > Ard, it's this one that cause boot to fail on omap3.
->> > The rest of your set works for me with just this one
->> > left out.
->> >
->>
->> I'm completely puzzled. The change is so simple that it is difficult
->> to reduce it in parts, but if you still have the time to spare, mind
->> trying the diff below?
->>
->>
->> diff --git a/arch/arm/kernel/head.S b/arch/arm/kernel/head.S
->> index 6e9df3663a57..c0361e608210 100644
->> --- a/arch/arm/kernel/head.S
->> +++ b/arch/arm/kernel/head.S
->> @@ -524,17 +524,15 @@ ARM_BE8(rev       r0, r0)                 @
->> byteswap if big endian
->>
->>  __fixup_smp_on_up:
->>         adr     r0, 1f
->> -       ldmia   r0, {r3 - r5}
->> -       sub     r3, r0, r3
->> -       add     r4, r4, r3
->> -       add     r5, r5, r3
->> +       ldmia   r0, {r4 - r5}
->> +       add     r4, r4, r0
->> +       add     r5, r5, r0
->>         b       __do_fixup_smp_on_up
->>  ENDPROC(__fixup_smp)
->>
->>         .align
->> -1:     .word   .
->> -       .word   __smpalt_begin
->> -       .word   __smpalt_end
->> +1:     .word   __smpalt_begin - 1b
->> +       .word   __smpalt_end - 1b
->>
->>         .pushsection .data
->>         .globl  smp_on_up
->>
->> The main point of these changes is to eliminate absolute references,
->> not to use the new macros, so if this does work, I will go with this
->> instead.
->
-> For reference, I manually did this changes as it did not apply
-> after reverting your earlier version of this patch. No luck with
-> this change, so I'll test again when you you have updated patches
-> available.
->
+* Ard Biesheuvel <ard.biesheuvel@linaro.org> [170811 12:37]:
+> On 11 August 2017 at 16:13, Tony Lindgren <tony@atomide.com> wrote:
+> > * Ard Biesheuvel <ard.biesheuvel@linaro.org> [170805 13:54]:
+> >> Replace the open coded PC relative offset calculations with a pair
+> >> of adr_l invocations.
+> >>
+> >> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> >> ---
+> >>  arch/arm/kernel/head.S | 12 ++----------
+> >>  1 file changed, 2 insertions(+), 10 deletions(-)
+> >>
+> >> diff --git a/arch/arm/kernel/head.S b/arch/arm/kernel/head.S
+> >> index 6e9df3663a57..aed341e0f530 100644
+> >> --- a/arch/arm/kernel/head.S
+> >> +++ b/arch/arm/kernel/head.S
+> >> @@ -523,19 +523,11 @@ ARM_BE8(rev     r0, r0)                 @ byteswap if big endian
+> >>       retne   lr
+> >>
+> >>  __fixup_smp_on_up:
+> >> -     adr     r0, 1f
+> >> -     ldmia   r0, {r3 - r5}
+> >> -     sub     r3, r0, r3
+> >> -     add     r4, r4, r3
+> >> -     add     r5, r5, r3
+> >> +     adr_l   r4, __smpalt_begin
+> >> +     adr_l   r5, __smpalt_end
+> >>       b       __do_fixup_smp_on_up
+> >>  ENDPROC(__fixup_smp)
+> >>
+> >> -     .align
+> >> -1:   .word   .
+> >> -     .word   __smpalt_begin
+> >> -     .word   __smpalt_end
+> >> -
+> >>       .pushsection .data
+> >>       .globl  smp_on_up
+> >>  smp_on_up:
+> >
+> > Ard, it's this one that cause boot to fail on omap3.
+> > The rest of your set works for me with just this one
+> > left out.
+> >
+> 
+> I'm completely puzzled. The change is so simple that it is difficult
+> to reduce it in parts, but if you still have the time to spare, mind
+> trying the diff below?
+> 
+> 
+> diff --git a/arch/arm/kernel/head.S b/arch/arm/kernel/head.S
+> index 6e9df3663a57..c0361e608210 100644
+> --- a/arch/arm/kernel/head.S
+> +++ b/arch/arm/kernel/head.S
+> @@ -524,17 +524,15 @@ ARM_BE8(rev       r0, r0)                 @
+> byteswap if big endian
+> 
+>  __fixup_smp_on_up:
+>         adr     r0, 1f
+> -       ldmia   r0, {r3 - r5}
+> -       sub     r3, r0, r3
+> -       add     r4, r4, r3
+> -       add     r5, r5, r3
+> +       ldmia   r0, {r4 - r5}
+> +       add     r4, r4, r0
+> +       add     r5, r5, r0
+>         b       __do_fixup_smp_on_up
+>  ENDPROC(__fixup_smp)
+> 
+>         .align
+> -1:     .word   .
+> -       .word   __smpalt_begin
+> -       .word   __smpalt_end
+> +1:     .word   __smpalt_begin - 1b
+> +       .word   __smpalt_end - 1b
+> 
+>         .pushsection .data
+>         .globl  smp_on_up
+> 
+> The main point of these changes is to eliminate absolute references,
+> not to use the new macros, so if this does work, I will go with this
+> instead.
 
-Thanks Tony,
+For reference, I manually did this changes as it did not apply
+after reverting your earlier version of this patch. No luck with
+this change, so I'll test again when you you have updated patches
+available.
 
-But Nico already found the issue: I was looking at the code with
-another patch on top, which removed the reference to r3 in the
-followup code.
+Regards,
 
-In the KASLR series I just posted, I reordered that patch with this
-one, so everything should be good.
+Tony
