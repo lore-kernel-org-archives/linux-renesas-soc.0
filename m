@@ -1,53 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:48310 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751998AbdHHLLM (ORCPT
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:37938 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750876AbdHNNq7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 Aug 2017 07:11:12 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH  1/3] dt-bindings: apmu: Document r8a7743 support
-Date: Tue,  8 Aug 2017 11:56:31 +0100
-Message-Id: <1502189793-59679-2-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1502189793-59679-1-git-send-email-biju.das@bp.renesas.com>
-References: <1502189793-59679-1-git-send-email-biju.das@bp.renesas.com>
+        Mon, 14 Aug 2017 09:46:59 -0400
+Received: by mail-pg0-f67.google.com with SMTP id 123so10760570pga.5
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Aug 2017 06:46:59 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1502181568-12299-2-git-send-email-horms+renesas@verge.net.au>
+References: <1502181568-12299-1-git-send-email-horms+renesas@verge.net.au> <1502181568-12299-2-git-send-email-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 14 Aug 2017 15:46:58 +0200
+Message-ID: <CAMuHMdUxjAmSg=PNXhSU-M6CVVVH-Q1F+75XRpmsH7Hhye6XEQ@mail.gmail.com>
+Subject: Re: [PATCH 01/10] ARM: dts: r8a7778: Use R-Car GPIO Gen1 fallback
+ compat string
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document APMU and SMP enable method for RZ/G1M
-(also known as r8a7743) SoC.
+Hi Simon,
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
----
- Documentation/devicetree/bindings/power/renesas,apmu.txt | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+On Tue, Aug 8, 2017 at 10:39 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> Use newly added R-Car GPIO Gen1 fallback compat string
+> in place of now deprecated non-generation specific
+> R-Car GPIO fallback compat string in DT of r8a7778 SoC.
+>
+> This should have no run-time effect as the driver matches against
+> the per-SoC compat string before considering the fallback compat string.
 
-diff --git a/Documentation/devicetree/bindings/power/renesas,apmu.txt b/Documentation/devicetree/bindings/power/renesas,apmu.txt
-index 84404c9..af21502 100644
---- a/Documentation/devicetree/bindings/power/renesas,apmu.txt
-+++ b/Documentation/devicetree/bindings/power/renesas,apmu.txt
-@@ -1,12 +1,13 @@
- DT bindings for the Renesas Advanced Power Management Unit
- 
--Renesas R-Car line of SoCs utilize one or more APMU hardware units
-+Renesas R-Car and RZ/G1 SoCs utilize one or more APMU hardware units
- for CPU core power domain control including SMP boot and CPU Hotplug.
- 
- Required properties:
- 
- - compatible: Should be "renesas,<soctype>-apmu", "renesas,apmu" as fallback.
- 	      Examples with soctypes are:
-+		- "renesas,r8a7743-apmu" (RZ/G1M)
- 		- "renesas,r8a7790-apmu" (R-Car H2)
- 		- "renesas,r8a7791-apmu" (R-Car M2-W)
- 		- "renesas,r8a7792-apmu" (R-Car V2H)
--- 
-1.9.1
+That is not correct: the driver does not match against "renesas,gpio-r8a7778".
+Hence this breaks using a new DTS and an old kernel (which we may decide not
+to care about for R-Car Gen1, though).
+But at least the DTS change should be postponed until commit d10bbd156926e65d
+("gpio: rcar: add gen[123] fallback compatibility strings") has hit mainline.
+
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> ---
+>  arch/arm/boot/dts/r8a7778.dtsi | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/arch/arm/boot/dts/r8a7778.dtsi b/arch/arm/boot/dts/r8a7778.dtsi
+> index 8f3156c0e575..b3975e4c75dd 100644
+> --- a/arch/arm/boot/dts/r8a7778.dtsi
+> +++ b/arch/arm/boot/dts/r8a7778.dtsi
+> @@ -88,7 +88,7 @@
+>         };
+>
+>         gpio0: gpio@ffc40000 {
+> -               compatible = "renesas,gpio-r8a7778", "renesas,gpio-rcar";
+> +               compatible = "renesas,gpio-r8a7778", "renesas,rcar-gen2-gpio";
+
+... "renesas,rcar-gen1-gpio";
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
