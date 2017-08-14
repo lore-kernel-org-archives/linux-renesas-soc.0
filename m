@@ -1,49 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:48028 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751843AbdH2KNk (ORCPT
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:34481 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752598AbdHNKYH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 29 Aug 2017 06:13:40 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH v2 1/2] ARM: dts: iwg20d-q7: Add chosen node
-Date: Tue, 29 Aug 2017 10:56:22 +0100
-Message-Id: <1504000583-21996-2-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1504000583-21996-1-git-send-email-biju.das@bp.renesas.com>
-References: <1504000583-21996-1-git-send-email-biju.das@bp.renesas.com>
+        Mon, 14 Aug 2017 06:24:07 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170730195154.GE1382@bigcity.dyn.berto.se>
+References: <20170730140646.11781-1-niklas.soderlund+renesas@ragnatech.se>
+ <20170730170738.GA29373@lunn.ch> <20170730195154.GE1382@bigcity.dyn.berto.se>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 14 Aug 2017 12:24:06 +0200
+Message-ID: <CAMuHMdXmyoMeq8K0BpEzviX1BymR0WyOHeXmNnuR-BBs1asn_Q@mail.gmail.com>
+Subject: Re: [PATCH v2] ravb: add wake-on-lan support via magic packet
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: Andrew Lunn <andrew@lunn.ch>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
----
-v1-->v2
-    Position the chosen node similar to r8a7791(R-Car M2) SoC.
+Hi Andrew, Niklas,
 
- arch/arm/boot/dts/r8a7743-iwg20d-q7.dts | 5 +++++
- 1 file changed, 5 insertions(+)
+On Sun, Jul 30, 2017 at 9:51 PM, Niklas S=C3=B6derlund
+<niklas.soderlund@ragnatech.se> wrote:
+> On 2017-07-30 19:07:38 +0200, Andrew Lunn wrote:
+>> > @@ -2041,6 +2073,11 @@ static int ravb_probe(struct platform_device *p=
+dev)
+>> >
+>> >     priv->chip_id =3D chip_id;
+>> >
+>> > +   /* Get clock, if not found that's OK but Wake-On-Lan is unavailabl=
+e */
+>> > +   priv->clk =3D devm_clk_get(&pdev->dev, NULL);
+>> > +   if (IS_ERR(priv->clk))
+>> > +           priv->clk =3D NULL;
+>>
+>> Can you get EPROBE_DEFER returned?
+>
+> I don't think so, but I'm not sure :-)
+>
+> The clock I'm trying to get is the module clock of the ravb itself, so
+> if that clock is not available (and enabled) no register writes to the
+> ravb would be possible in the first place, so i guess it's safe to
+> assume -EPROBE_DEFER can not happen here?
 
-diff --git a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-index 4ff27d2..e30c586 100644
---- a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-+++ b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-@@ -20,6 +20,11 @@
- 		ethernet0 = &avb;
- 	};
- 
-+	chosen {
-+		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
-+		stdout-path = "serial0:115200n8";
-+	};
-+
- 	vcc_sdhi1: regulator-vcc-sdhi1 {
- 		compatible = "regulator-fixed";
- 
--- 
-1.9.1
+In theory, the devm_clk_get() can fail.
+In practice, it cannot, as the EtherAVB device is part of a clock domain,
+through its "power-domains" property in DT.
+Hence if the clock (which is the module clock, provided by the SoC's system
+clock controller (CPG/MSSR)) is not yet available, the PM Domain subsystem
+will prevent the device from being probed.
+
+> I'm just trying to play it safe here since the clock is only needed to
+> support WoL, I though it best to not change behavior here. Try to get
+> the clock, if we can great we can do WoL if not then user-space will be
+> prevented from enabling WoL and nothing in the current behavior changes.
+
+And all this explicit clock handling is done only because
+device_set_wakeup_enable() does not yet prevent the PM Domain code from
+powering down the device during system suspend.  Once that's handled by gen=
+pd,
+all clock magic can be removed.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
