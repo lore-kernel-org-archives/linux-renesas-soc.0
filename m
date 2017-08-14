@@ -1,65 +1,104 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:53702 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751916AbdHUIe6 (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:59049 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753207AbdHNMEr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 Aug 2017 04:34:58 -0400
-Date: Mon, 21 Aug 2017 10:34:56 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
+        Mon, 14 Aug 2017 08:04:47 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Chris Paterson <chris.paterson2@renesas.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH  3/3] ARM: dts: iwg20d-q7: Add SDHI1 support
-Message-ID: <20170821083456.GD2418@katana>
+        linux-arm-kernel@lists.infradead.org,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH  3/3] ARM: dts: iwg20d-q7: Add SDHI1 support
+Date: Mon, 14 Aug 2017 12:49:49 +0100
+Message-Id: <1502711389-16040-4-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1502711389-16040-1-git-send-email-biju.das@bp.renesas.com>
 References: <1502711389-16040-1-git-send-email-biju.das@bp.renesas.com>
- <1502711389-16040-4-git-send-email-biju.das@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="pZs/OQEoSSbxGlYw"
-Content-Disposition: inline
-In-Reply-To: <1502711389-16040-4-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Define the iWave RainboW-G20D-Qseven board dependent part of the
+SDHI1 device node.
 
---pZs/OQEoSSbxGlYw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+---
+ arch/arm/boot/dts/r8a7743-iwg20d-q7.dts | 48 +++++++++++++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
 
-On Mon, Aug 14, 2017 at 12:49:49PM +0100, Biju Das wrote:
-> Define the iWave RainboW-G20D-Qseven board dependent part of the
-> SDHI1 device node.
->=20
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---pZs/OQEoSSbxGlYw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlmamzAACgkQFA3kzBSg
-Kbb4PBAAieVL8oAiahaU0mCSIiwOvWY9VRi+C1x8wZPlXrEPTaNFWL+ZvxJ7GrFL
-wS6WvPvdyBQrOLhk9CWPwn7IKu/9I+OsGgEkkQ6fjYT1bu8cp2rZAcYy1eSrRE9s
-SAWqFVHtZ5l/j2xkl8d2Zjg/TPuuy6in6vfhJA0psNhd1HYjr6DSntVAdrm4ebFT
-cAb8cQnYm183794RZzWihYs17EzmTFeqP1hfeo+LDQYtajI/CJRcvzM2IwYyT9on
-1qMycLVh4eKHQ+qFucnvNz1meAxXb0Ynw1gutPdmwOniH22SVzzHHYMD9SSqZhrr
-X8PJQxEy6wBFTB0cEFgIyJeJvTURCK3DiZZulo7suywELM/xNxUODWD57DcKb1Cm
-Jf9Gg7jnzltcoGTTCGbTMDk4JHfYtHotWHYInE6Xzw22PRIQRqKwLCPISW5k2POo
-2bCZkAkzCve9JgwWaGHUiEXEA220ZE+MC4vYI8Tu7DImi6J4mtPcxlu2KRsw+X8V
-z2Mjhpsgf4zW0JK2TniO1f+1HlPRLNGSH8l/2n6MOy31HnJfg0oV74jvj35EA1Mi
-n29hNqIPuLR+e/UqZzWRxD1bRXP6tEUJKJ2VDIo2hbB6+EYfqbI8DVs6TfAd2zge
-yYnULu5DN1P50gD5d8Fb/oTisNOrqkUYOuw2fIhbf1kLExBC3gc=
-=fRLy
------END PGP SIGNATURE-----
-
---pZs/OQEoSSbxGlYw--
+diff --git a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
+index b3a1efa..b5ac0ff 100644
+--- a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
++++ b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
+@@ -19,6 +19,29 @@
+ 		serial0 = &scif0;
+ 		ethernet0 = &avb;
+ 	};
++
++	vcc_sdhi1: regulator-vcc-sdhi1 {
++		compatible = "regulator-fixed";
++
++		regulator-name = "SDHI1 Vcc";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++
++		gpio = <&gpio1 16 GPIO_ACTIVE_LOW>;
++	};
++
++	vccq_sdhi1: regulator-vccq-sdhi1 {
++		compatible = "regulator-gpio";
++
++		regulator-name = "SDHI1 VccQ";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <3300000>;
++
++		gpios = <&gpio2 30 GPIO_ACTIVE_LOW>;
++		gpios-states = <1>;
++		states = <3300000 1
++			  1800000 0>;
++	};
+ };
+ 
+ &pfc {
+@@ -36,6 +59,18 @@
+ 		groups = "i2c2";
+ 		function = "i2c2";
+ 	};
++
++	sdhi1_pins: sd1 {
++		groups = "sdhi1_data4", "sdhi1_ctrl";
++		function = "sdhi1";
++		power-source = <3300>;
++	};
++
++	sdhi1_pins_uhs: sd1_uhs {
++		groups = "sdhi1_data4", "sdhi1_ctrl";
++		function = "sdhi1";
++		power-source = <1800>;
++	};
+ };
+ 
+ &scif0 {
+@@ -72,3 +107,16 @@
+ 		reg = <0x68>;
+ 	};
+ };
++
++&sdhi1 {
++	pinctrl-0 = <&sdhi1_pins>;
++	pinctrl-1 = <&sdhi1_pins_uhs>;
++	pinctrl-names = "default", "state_uhs";
++
++	vmmc-supply = <&vcc_sdhi1>;
++	vqmmc-supply = <&vccq_sdhi1>;
++	cd-gpios = <&gpio6 14 GPIO_ACTIVE_LOW>;
++	wp-gpios = <&gpio6 15 GPIO_ACTIVE_HIGH>;
++	sd-uhs-sdr50;
++	status = "okay";
++};
+-- 
+1.9.1
