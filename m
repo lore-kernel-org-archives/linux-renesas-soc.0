@@ -1,96 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52994 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753103AbdHBRaU (ORCPT
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:35101 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751141AbdHNNsU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 Aug 2017 13:30:20 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>,
-        "Yokoyama (Renesas)" <hiroyuki.yokoyama.vx@renesas.com>,
-        alsa-devel@alsa-project.org
-In-Reply-To: <87k22mp8zh.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dcxTK-0003nA-0s@debutante>
-Date: Wed, 02 Aug 2017 18:30:14 +0100
-Subject: Applied "ASoC: rcar: unregister fixed rate on ADG" to the asoc tree
+        Mon, 14 Aug 2017 09:48:20 -0400
+Received: by mail-pg0-f67.google.com with SMTP id l64so10794391pge.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Aug 2017 06:48:20 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1502181568-12299-3-git-send-email-horms+renesas@verge.net.au>
+References: <1502181568-12299-1-git-send-email-horms+renesas@verge.net.au> <1502181568-12299-3-git-send-email-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 14 Aug 2017 15:48:19 +0200
+Message-ID: <CAMuHMdXEsN1GzFUYy_Zcs5L2TXm7n-m6e1A9kxpZA=jHNhfaDw@mail.gmail.com>
+Subject: Re: [PATCH 02/10] ARM: dts: r8a7779: Use R-Car GPIO Gen1 fallback
+ compat string
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+On Tue, Aug 8, 2017 at 10:39 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> Use newly added R-Car GPIO Gen1 fallback compat string
+> in place of now deprecated non-generation specific
+> R-Car GPIO fallback compat string in DT of r8a7779 SoC.
+>
+> This should have no run-time effect as the driver matches against
+> the per-SoC compat string before considering the fallback compat string.
 
-   ASoC: rcar: unregister fixed rate on ADG
+That is not correct: the driver does not match against "renesas,gpio-r8a7779".
+Hence this breaks using a new DTS and an old kernel (which we may decide not
+to care about for R-Car Gen1, though).
+But at least the DTS change should be postponed until commit d10bbd156926e65d
+("gpio: rcar: add gen[123] fallback compatibility strings") has hit mainline.
 
-has been applied to the asoc tree at
+Gr{oetje,eeting}s,
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+                        Geert
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From e3c6de48133ff1355f14a31a74a9027834c0fd65 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Wed, 2 Aug 2017 10:26:09 +0000
-Subject: [PATCH] ASoC: rcar: unregister fixed rate on ADG
-
-ADG is registering fixed rate clock for audio_clkout, but it had not
-been unregister clock when removing.
-
-Salvator-X board is using ak4613 driver now, and it supports
-hw_constraints from commit 907cd8809eebc ("ASoC: ak4613: add
-hw_constraint rule for Sampling Rate").
-And this calculation is using input clk. This ak4613 input clock is
-ADG clkout on Salvator-X.
-
-Because ADG had not been unregister clkout when unbinding, it receives
-fixed rate clk register error when re-binding.
-Thus, ak4613 can't get correct input clock, and hw_constraints will be
-failed after re-binding.
-This means Salvator-X board can't use sound after unbind/bind.
-
-This patch solves this issue.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/sh/rcar/adg.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/sound/soc/sh/rcar/adg.c b/sound/soc/sh/rcar/adg.c
-index 197cb3ec075f..5b5389e5b92b 100644
---- a/sound/soc/sh/rcar/adg.c
-+++ b/sound/soc/sh/rcar/adg.c
-@@ -610,6 +610,13 @@ void rsnd_adg_remove(struct rsnd_priv *priv)
- {
- 	struct device *dev = rsnd_priv_to_dev(priv);
- 	struct device_node *np = dev->of_node;
-+	struct rsnd_adg *adg = priv->adg;
-+	struct clk *clk;
-+	int i;
-+
-+	for_each_rsnd_clkout(clk, adg, i)
-+		if (adg->clkout[i])
-+			clk_unregister_fixed_rate(adg->clkout[i]);
- 
- 	of_clk_del_provider(np);
- 
--- 
-2.13.2
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
