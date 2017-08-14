@@ -1,87 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55022 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751271AbdH3Iqw (ORCPT
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:33091 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751030AbdHNNy0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 30 Aug 2017 04:46:52 -0400
-Date: Wed, 30 Aug 2017 10:46:47 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        laurent.pinchart@ideasonboard.com, dri-devel@lists.freedesktop.org,
-        linux-media@vger.kernel.org, magnus.damm@gmail.com
-Subject: Re: [PATCH v1.5 0/6] R-Car DU: Fix IOMMU operation when connected to
- VSP
-Message-ID: <20170830084645.GS10398@verge.net.au>
-References: <1481286912-16555-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Mon, 14 Aug 2017 09:54:26 -0400
+Received: by mail-pg0-f65.google.com with SMTP id u185so10811154pgb.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Aug 2017 06:54:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1481286912-16555-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <1502181568-12299-11-git-send-email-horms+renesas@verge.net.au>
+References: <1502181568-12299-1-git-send-email-horms+renesas@verge.net.au> <1502181568-12299-11-git-send-email-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 14 Aug 2017 15:54:25 +0200
+Message-ID: <CAMuHMdUb8JZ59HqE+HH2vV7uvGDnZ5MS4A_UMeToCdeEPBmDMg@mail.gmail.com>
+Subject: Re: [PATCH 10/10] arm64: dts: r8a7796: Use R-Car GPIO Gen3 fallback
+ compat string
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Dec 09, 2016 at 01:35:06PM +0100, Ulrich Hecht wrote:
-> Hi!
-> 
-> This is a slightly updated version of Laurent's series that adds the fix
-> suggested by Magnus Damm and connects the FCP devices on M3-W to their
-> IPMMU. It also drops the patches that have already been picked up in the
-> media tree.
-> 
-> With this series and an assortment of patches from the renesas-drivers tree (
->     iommu/ipmmu-vmsa: Remove platform data handling
->     iommu/ipmmu-vmsa: Rework interrupt code and use bitmap for context
->     iommu/ipmmu-vmsa: Break out utlb parsing code
->     iommu/ipmmu-vmsa: Break out domain allocation code
->     iommu/ipmmu-vmsa: Add new IOMMU_DOMAIN_DMA ops
->     iommu/ipmmu-vmsa: ARM and ARM64 archdata access
->     iommu/ipmmu-vmsa: Drop LPAE Kconfig dependency
->     iommu/ipmmu-vmsa: Introduce features, break out alias
->     iommu/ipmmu-vmsa: Add optional root device feature
->     iommu/ipmmu-vmsa: Enable multi context support
->     iommu/ipmmu-vmsa: Reuse iommu groups
->     iommu/ipmmu-vmsa: Make use of IOMMU_OF_DECLARE()
->     iommu/ipmmu-vmsa: Teach xlate() to skip disabled iommus
->     iommu/ipmmu-vmsa: IPMMU device is 64-bit bus master
->     iommu/ipmmu-vmsa: Write IMCTR twice
->     iommu/ipmmu-vmsa: Make IMBUSCTR setup optional
->     iommu/ipmmu-vmsa: Allow two bit SL0
->     iommu/ipmmu-vmsa: Hook up r8a7795 DT matching code
->     iommu/ipmmu-vmsa: Add r8a7796 DT binding
->     iommu/ipmmu-vmsa: Increase maximum micro-TLBS to 48
->     iommu/ipmmu-vmsa: Hook up r8a7796 DT matching code
->     arm64: dts: r8a7795: Add IPMMU device nodes
->     arm64: dts: r8a7795: Hook up SYS-DMAC to IPMMU
->     arm64: dts: r8a7795: Point FCP devices to IPMMU
->     arm64: dts: r8a7795: Connect Ethernet AVB to IPMMU
->     arm64: dts: r8a7796: Add IPMMU device nodes
->     clk: renesas: r8a7796: Add FCP clocks
->     clk: renesas: r8a7796: Add VSP clocks
->     clk: renesas: r8a7796: Add DU and LVDS clocks
->     drm: rcar-du: Add R8A7796 device support
->     arm64: dts: renesas: r8a7795: Remove FCP SoC-specific compatible strings
->     arm64: dts: renesas: r8a7796: Add FCPF and FCPV instances
->     arm64: dts: renesas: r8a7796: Add VSP instances
->     arm64: dts: renesas: r8a7796: Add DU device to DT
->     arm64: dts: renesas: r8a7796-salvator-x: Enable DU
-> ), I can enable IPMMU on both the H3 and M3-W Salvator-X boards with no ill
-> effects on the results of the vsp-tests suite.
-> 
-> CU
-> Uli
-> 
-> 
-> Laurent Pinchart (4):
->   v4l: rcar-fcp: Don't get/put module reference
->   v4l: rcar-fcp: Add an API to retrieve the FCP device
->   v4l: vsp1: Add API to map and unmap DRM buffers through the VSP
->   drm: rcar-du: Map memory through the VSP device
-> 
-> Ulrich Hecht (2):
->   v4l: vsp1: Provide display list and VB2 queue with FCP device
->   arm64: dts: r8a7796: Connect FCP devices to IPMMU
+On Tue, Aug 8, 2017 at 10:39 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> Use newly added R-Car GPIO Gen3 fallback compat string
+> in place of now deprecated non-generation specific
+> R-Car GPIO fallback compat string in the DT of the r8a7796 SoC.
+>
+> This should have no run-time effect as the driver matches against
+> the per-SoC compat string before considering the fallback compat string.
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-Hi Ulrich,
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-I am wondering what the status of this work is.
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
