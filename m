@@ -1,65 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:34746 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750876AbdHNOLe (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:54222 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750836AbdHNFiz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 Aug 2017 10:11:34 -0400
-MIME-Version: 1.0
-In-Reply-To: <1502197465-61546-2-git-send-email-biju.das@bp.renesas.com>
-References: <1502197465-61546-1-git-send-email-biju.das@bp.renesas.com> <1502197465-61546-2-git-send-email-biju.das@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 14 Aug 2017 16:11:33 +0200
-Message-ID: <CAMuHMdUU5fb6G7Wc9ZzfFhLxcUuZFakPdVGh3q_cfUzxZ1AarA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] ARM: dts: iwg20d-q7: Add RTC support
+        Mon, 14 Aug 2017 01:38:55 -0400
+Date: Mon, 14 Aug 2017 07:38:51 +0200
+From: Simon Horman <horms@verge.net.au>
 To: Biju Das <biju.das@bp.renesas.com>
 Cc: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
         Chris Paterson <chris.paterson2@renesas.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH  1/2] ARM: dts: iwg20d-q7: Add RTC support
+Message-ID: <20170814053851.GE5654@verge.net.au>
+References: <1502197465-61546-1-git-send-email-biju.das@bp.renesas.com>
+ <1502197465-61546-2-git-send-email-biju.das@bp.renesas.com>
+ <20170809090230.GM2705@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170809090230.GM2705@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Aug 8, 2017 at 3:04 PM, Biju Das <biju.das@bp.renesas.com> wrote:
-> Define the iWave RainboW-G20D-Qseven board dependent part of the
-> RTC device node.
->
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+On Wed, Aug 09, 2017 at 11:02:30AM +0200, Simon Horman wrote:
+> On Tue, Aug 08, 2017 at 02:04:24PM +0100, Biju Das wrote:
+> > Define the iWave RainboW-G20D-Qseven board dependent part of the
+> > RTC device node.
+> > 
+> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > ---
+> >  arch/arm/boot/dts/r8a7743-iwg20d-q7.dts | 18 ++++++++++++++++++
+> >  1 file changed, 18 insertions(+)
+> 
+> This has a compile-time dependency on
+> "[PATCH  2/2] ARM: dts: r8a7743: Add I2C DT support"
+> for the i2c2 node, right?
 
-> @@ -54,3 +59,16 @@
->                 micrel,led-mode = <1>;
->         };
->  };
-> +
-> +&i2c2 {
-> +       pinctrl-0 = <&i2c2_pins>;
-> +       pinctrl-names = "default";
-> +
-> +       status = "okay";
-> +       clock-frequency = <400000>;
-> +
-> +       rtc@68 {
-> +               compatible = "bq32000";
-
-"ti,bq32000"
-
-> +               reg = <0x68>;
-> +       };
-> +};
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+As I have now applied the above dependency I have
+also applied this patch for v4.14.
