@@ -1,43 +1,78 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:33415 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751555AbdHITPA (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 9 Aug 2017 15:15:00 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFT 1/2] mmc: renesas_sdhi: enably CBSY bit for RZ platform
-Date: Wed,  9 Aug 2017 21:14:51 +0200
-Message-Id: <20170809191452.5254-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170809191452.5254-1-wsa+renesas@sang-engineering.com>
-References: <20170809191452.5254-1-wsa+renesas@sang-engineering.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Mon, 14 Aug 2017 07:37:17 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH  2/2] ARM: dts: r8a7743: Add I2C DT support
+Message-ID: <20170814053717.GD5654@verge.net.au>
+References: <1502191449-16118-1-git-send-email-biju.das@bp.renesas.com>
+ <20170809085238.GJ2705@verge.net.au>
+ <KL1PR06MB17020664F5636F87F9F97597B88B0@KL1PR06MB1702.apcprd06.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <KL1PR06MB17020664F5636F87F9F97597B88B0@KL1PR06MB1702.apcprd06.prod.outlook.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-It is documented, so enable it to follow the recommendation in the docs
-and also save a few cycles.
+On Wed, Aug 09, 2017 at 09:23:05AM +0000, Biju Das wrote:
+> 
+> 
+> > -----Original Message-----
+> > From: Simon Horman [mailto:horms@verge.net.au]
+> > Sent: 09 August 2017 09:53
+> > To: Biju Das <biju.das@bp.renesas.com>
+> > Cc: Rob Herring <robh+dt@kernel.org>; Mark Rutland
+> > <mark.rutland@arm.com>; Wolfram Sang <wsa@the-dreams.de>; Magnus
+> > Damm <magnus.damm@gmail.com>; Russell King <linux@armlinux.org.uk>;
+> > Chris Paterson <Chris.Paterson2@renesas.com>; devicetree@vger.kernel.org;
+> > linux-renesas-soc@vger.kernel.org; linux-arm-kernel@lists.infradead.org
+> > Subject: Re: [PATCH 2/2] ARM: dts: r8a7743: Add I2C DT support
+> >
+> > On Tue, Aug 08, 2017 at 12:24:09PM +0100, Biju Das wrote:
+> > > Add the I2C[0-5] devices to the r8a7743 device tree.
+> > >
+> > > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > > ---
+> > > This patch has been tested against Linux-next tag 20170727 and renesas-dev
+> > branch.
+> > > This patch depends on
+> > > https://www.mail-archive.com/linux-renesas-soc@vger.kernel.org/msg1700
+> > > 8.html
+> >
+> > As per the patch at the link above it seems that these patches are targeted at
+> > the renesas tree.  The best practice in that case is to base patches on the latest
+> > devel branch. Please consider doing so in future.
+> >
+> > I would also slightly prefer if dependencies were referenced by name, in this
+> > case:
+> >
+> > *  [PATCH 2/3] ARM: dts: r8a7743: Add APMU node and second CPU core
+> >
+> > or
+> >
+> > * [PATCH  0/3] Add SMP support
+> >
+> > Also including a link is fine by me.
+> >
+> >
+> > It would also be useful if you described the dependency as a conflict (merge-
+> > time), compile-time or run-time.
+> 
+> 
+> Thanks Simon. I will take care this next time.
+> 
+> > As for the patch itself, it looks good to me.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/mmc/host/renesas_sdhi_sys_dmac.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-index 9b77f521cd2c2f..160fbb22ca00b4 100644
---- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-@@ -33,7 +33,8 @@ static const struct renesas_sdhi_of_data of_default_cfg = {
- };
- 
- static const struct renesas_sdhi_of_data of_rz_compatible = {
--	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_32BIT_DATA_PORT,
-+	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_32BIT_DATA_PORT |
-+			  TMIO_MMC_HAVE_CBSY,
- 	.tmio_ocr_mask	= MMC_VDD_32_33,
- 	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ,
- };
--- 
-2.11.0
+As I believe the dependencies are apply-time and seemed easy to resolve
+I have applied this patch for v4.14.
