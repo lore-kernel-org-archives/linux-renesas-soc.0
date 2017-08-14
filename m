@@ -1,38 +1,48 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:34771 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751510AbdHNNtX (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 14 Aug 2017 09:49:23 -0400
+Received: by mail-pg0-f68.google.com with SMTP id y192so10788344pgd.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Aug 2017 06:49:23 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqJ5M18+cSr0GaMHs5N5quJxLaU-fE2vDPYE1+X5pSFmuQ@mail.gmail.com>
-References: <1500305076-15570-1-git-send-email-ulrich.hecht+renesas@gmail.com>
- <1500305076-15570-4-git-send-email-ulrich.hecht+renesas@gmail.com> <CAL_JsqJ5M18+cSr0GaMHs5N5quJxLaU-fE2vDPYE1+X5pSFmuQ@mail.gmail.com>
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Date: Wed, 16 Aug 2017 15:23:37 +0200
-Message-ID: <CAO3366xyGjrkC_JYCk9kpS=ENDZTW3uBnFThFo4PjcpyBKpgjw@mail.gmail.com>
-Subject: Re: [RFC v2 3/6] serdev: add multiplexer support
-To: Rob Herring <robh@kernel.org>
-Cc: "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        "open list:MEDIA DRIVERS FOR RENESAS - FCP"
-        <linux-renesas-soc@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        "wsa@the-dreams.de" <wsa@the-dreams.de>,
-        Peter Rosin <peda@axentia.se>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+In-Reply-To: <1502181568-12299-4-git-send-email-horms+renesas@verge.net.au>
+References: <1502181568-12299-1-git-send-email-horms+renesas@verge.net.au> <1502181568-12299-4-git-send-email-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 14 Aug 2017 15:49:22 +0200
+Message-ID: <CAMuHMdXM8H8cswSYodHJRA7TQkf9QaYo5pV=OMu9SkP44ZF_1g@mail.gmail.com>
+Subject: Re: [PATCH 03/10] ARM: dts: r8a7743: Use R-Car GPIO Gen2 fallback
+ compat string
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Sender: linux-i2c-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Jul 19, 2017 at 1:06 AM, Rob Herring <robh@kernel.org> wrote:
->>  static inline struct serdev_controller *to_serdev_controller(struct device *d)
->> @@ -172,7 +180,7 @@ static inline void serdev_controller_write_wakeup(struct serdev_controller *ctrl
->>  {
->>         struct serdev_device *serdev = ctrl->serdev;
->>
->> -       if (!serdev || !serdev->ops->write_wakeup)
->> +       if (!serdev || !serdev->ops || !serdev->ops->write_wakeup)
+On Tue, Aug 8, 2017 at 10:39 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> Use newly added R-Car GPIO Gen2 fallback compat string
+> in place of now deprecated non-generation specific
+> R-Car GPIO fallback compat string in the DT of the r8a7743 SoC.
 >
-> When is ops ever NULL? Should be a separate change AFIACT.
+> This should have no run-time effect as the driver matches against
+> the per-SoC compat string before considering the fallback compat string.
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-I dumped it; IIRC that happened once during development due to a bug elsewhere.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-CU
-Uli
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
