@@ -1,63 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:23571 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752803AbdHNLyL (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:63541 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752680AbdHNLeY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 Aug 2017 07:54:11 -0400
+        Mon, 14 Aug 2017 07:34:24 -0400
 From: Biju Das <biju.das@bp.renesas.com>
 To: Ulf Hansson <ulf.hansson@linaro.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
 Cc: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Chris Paterson <chris.paterson2@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
         Biju Das <biju.das@bp.renesas.com>
 Subject: [PATCH ] mmc: renesas_sdhi: Add r8a7743/5 support
-Date: Mon, 14 Aug 2017 12:39:26 +0100
-Message-Id: <1502710766-44361-1-git-send-email-biju.das@bp.renesas.com>
+Date: Mon, 14 Aug 2017 12:19:41 +0100
+Message-Id: <1502709581-26546-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for r8a7743/5 SoC. Renesas RZ/G1[ME] (R8A7743/5) SDHI
+Add support for r8a7743/5 SoC.Renesas RZ/G1[ME] (R8A7743/5) SDHI
 is identical to the R-Car Gen2 family.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
-This patch is compiled and tested againt linux next tag
-next-20170811. This patch depend on the driver change
-[PATCH ] mmc: renesas_sdhi: Add r8a7743/5 support
-https://patchwork.kernel.org/patch/9898611/
+This patch is compiled and tested against mmc/next.
 
+ drivers/mmc/host/renesas_sdhi_sys_dmac.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
- Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-index 4fd8b7a..0d507ec 100644
---- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-+++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-@@ -15,6 +15,8 @@ Required properties:
- 		"renesas,sdhi-r7s72100" - SDHI IP on R7S72100 SoC
- 		"renesas,sdhi-r8a73a4" - SDHI IP on R8A73A4 SoC
- 		"renesas,sdhi-r8a7740" - SDHI IP on R8A7740 SoC
-+		"renesas,sdhi-r8a7743" - SDHI IP on R8A7743 SoC
-+		"renesas,sdhi-r8a7745" - SDHI IP on R8A7745 SoC
- 		"renesas,sdhi-r8a7778" - SDHI IP on R8A7778 SoC
- 		"renesas,sdhi-r8a7779" - SDHI IP on R8A7779 SoC
- 		"renesas,sdhi-r8a7790" - SDHI IP on R8A7790 SoC
-@@ -34,8 +36,8 @@ Required properties:
- 	  "core" and "cd". If the controller only has 1 clock, naming is not
- 	  required.
- 	  Below is the number clocks for each supported SoC:
--	   1: SH73A0, R8A73A4, R8A7740, R8A7778, R8A7779, R8A7790
--	      R8A7791, R8A7792, R8A7793, R8A7794, R8A7795, R8A7796
-+	   1: SH73A0, R8A73A4, R8A7740, R8A7743, R8A7745, R8A7778, R8A7779,
-+	      R8A7790, R8A7791, R8A7792, R8A7793, R8A7794, R8A7795, R8A7796
- 	   2: R7S72100
- 
- Optional properties:
+diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+index 718cb8a..f709f7f 100644
+--- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+@@ -95,6 +95,8 @@
+ 	{ .compatible = "renesas,sdhi-r7s72100", .data = &of_rz_compatible, },
+ 	{ .compatible = "renesas,sdhi-r8a7778", .data = &of_rcar_gen1_compatible, },
+ 	{ .compatible = "renesas,sdhi-r8a7779", .data = &of_rcar_gen1_compatible, },
++	{ .compatible = "renesas,sdhi-r8a7743", .data = &of_rcar_gen2_compatible, },
++	{ .compatible = "renesas,sdhi-r8a7745", .data = &of_rcar_gen2_compatible, },
+ 	{ .compatible = "renesas,sdhi-r8a7790", .data = &of_rcar_gen2_compatible, },
+ 	{ .compatible = "renesas,sdhi-r8a7791", .data = &of_rcar_gen2_compatible, },
+ 	{ .compatible = "renesas,sdhi-r8a7792", .data = &of_rcar_gen2_compatible, },
 -- 
 1.9.1
