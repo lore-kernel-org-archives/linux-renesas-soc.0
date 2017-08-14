@@ -1,111 +1,94 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
-        linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 7/8] pinctrl: sh-pfc: r8a77995: Add MMC pins, groups and functions
-Date: Wed,  9 Aug 2017 21:19:46 +0900
-Message-Id: <1502281187-24068-8-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1502281187-24068-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1502281187-24068-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:33603 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752893AbdHNMxy (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 14 Aug 2017 08:53:54 -0400
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: devicetree-owner@vger.kernel.org
+In-Reply-To: <CAMuHMdXMA7Ux2yiYUrPMGKKJ2AxTLwHOYbnKQHYRwjaSY5+Z7w@mail.gmail.com>
+References: <1494489813-27321-1-git-send-email-geert+renesas@glider.be> <CAMuHMdXMA7Ux2yiYUrPMGKKJ2AxTLwHOYbnKQHYRwjaSY5+Z7w@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 14 Aug 2017 14:53:53 +0200
+Message-ID: <CAMuHMdUQJ38mtsrgY2HJ83RsnCtWRB6dCU=d5RfA3Eq1Q_oQfA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/4] sh: sh7722/sh7757i/sh7264/sh7269: Fix pinctrl registration
+To: Rich Felker <dalias@libc.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+On Fri, Jun 30, 2017 at 10:10 AM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Thu, May 11, 2017 at 10:03 AM, Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
+>> Magnus reported that on sh7722/Migo-R, pinctrl registration fails with:
+>>
+>>     sh-pfc pfc-sh7722: pin 0 already registered
+>>     sh-pfc pfc-sh7722: error during pin registration
+>>     sh-pfc pfc-sh7722: could not register: -22
+>>     sh-pfc: probe of pfc-sh7722 failed with error -22
+>>
+>> pinmux_pins[] is initialized through PINMUX_GPIO(), using designated
+>> array initializers, where the GPIO_* enums serve as indices.
+>> Apparently GPIO_PTQ7 was defined in the enum, but never used.
+>> If enum values are defined, but never used, pinmux_pins[] contains
+>> (zero-filled) holes.  Hence such entries are treated as pin zero, which
+>> was registered before, and pinctrl registration fails.
+>>
+>> I can't see how this ever worked, as at the time of commit f5e25ae52feff2dc
+>> ("sh-pfc: Add sh7722 pinmux support"), pinmux_gpios[] in
+>> drivers/pinctrl/sh-pfc/pfc-sh7722.c already had the hole, and
+>> drivers/pinctrl/core.c already had the check.
+>>
+>> Some scripting revealed a few more broken drivers:
+>>   - sh7757 has four holes, due to nonexistent GPIO_PT[JLNQ]7_RESV.
+>>   - sh7264 and sh7269 define GPIO_PH[0-7], but don't use it with
+>>     PINMUX_GPIO().
+>>
+>> Patch 1 fixes the issue on sh7722, and was tested.
+>> Patches 3-4 should fix the issue on the other 3 SoCs, but was untested due
+>> to lack of hardware.
+>>
+>> Changes compared to v1:
+>>   - Replace fake error messages by references to sh7722,
+>>   - Add Reviewed-by, Tested-by.
+>>
+>> Thanks for applying!
+>>
+>> Geert Uytterhoeven (4):
+>>   sh: sh7722: Remove nonexistent GPIO_PTQ7 to fix pinctrl registration
+>>   sh: sh7757: Remove nonexistent GPIO_PT[JLNQ]7_RESV to fix pinctrl
+>>     registration
+>>   sh: sh7264: Remove nonexistent GPIO_PH[0-7] to fix pinctrl
+>>     registration
+>>   sh: sh7269: Remove nonexistent GPIO_PH[0-7] to fix pinctrl
+>>     registration
+>>
+>>  arch/sh/include/cpu-sh2a/cpu/sh7264.h | 4 +---
+>>  arch/sh/include/cpu-sh2a/cpu/sh7269.h | 4 +---
+>>  arch/sh/include/cpu-sh4/cpu/sh7722.h  | 2 +-
+>>  arch/sh/include/cpu-sh4/cpu/sh7757.h  | 8 ++++----
+>>  4 files changed, 7 insertions(+), 11 deletions(-)
+>
+> Are these patches planned for inclusion in v4.13?
+> I don't see them in next-2016.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/pinctrl/sh-pfc/pfc-r8a77995.c | 50 +++++++++++++++++++++++++++++++++++
- 1 file changed, 50 insertions(+)
+In v4.14, perhaps?
+I don't see them in next-20170811...
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
-index 5c0a94f..f8f71b6 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
-@@ -1118,6 +1118,44 @@ enum {
- 	SCL3_B_MARK, SDA3_B_MARK,
- };
- 
-+/* - MMC ------------------------------------------------------------------- */
-+static const unsigned int mmc_data1_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(3, 2),
-+};
-+static const unsigned int mmc_data1_mux[] = {
-+	MMC_D0_MARK,
-+};
-+static const unsigned int mmc_data4_pins[] = {
-+	/* D[0:3] */
-+	RCAR_GP_PIN(3, 2), RCAR_GP_PIN(3, 3),
-+	RCAR_GP_PIN(3, 4), RCAR_GP_PIN(3, 5),
-+};
-+static const unsigned int mmc_data4_mux[] = {
-+	MMC_D0_MARK, MMC_D1_MARK,
-+	MMC_D2_MARK, MMC_D3_MARK,
-+};
-+static const unsigned int mmc_data8_pins[] = {
-+	/* D[0:7] */
-+	RCAR_GP_PIN(3, 2), RCAR_GP_PIN(3, 3),
-+	RCAR_GP_PIN(3, 4), RCAR_GP_PIN(3, 5),
-+	RCAR_GP_PIN(3, 6), RCAR_GP_PIN(3, 7),
-+	RCAR_GP_PIN(3, 8), RCAR_GP_PIN(3, 9),
-+};
-+static const unsigned int mmc_data8_mux[] = {
-+	MMC_D0_MARK, MMC_D1_MARK,
-+	MMC_D2_MARK, MMC_D3_MARK,
-+	MMC_D4_MARK, MMC_D5_MARK,
-+	MMC_D6_MARK, MMC_D7_MARK,
-+};
-+static const unsigned int mmc_ctrl_pins[] = {
-+	/* CLK, CMD */
-+	RCAR_GP_PIN(3, 1), RCAR_GP_PIN(3, 0),
-+};
-+static const unsigned int mmc_ctrl_mux[] = {
-+	MMC_CLK_MARK, MMC_CMD_MARK,
-+};
-+
- /* - SCIF0 ------------------------------------------------------------------ */
- static const unsigned int scif0_data_a_pins[] = {
- 	/* RX, TX */
-@@ -1336,6 +1374,10 @@ enum {
- 	SH_PFC_PIN_GROUP(i2c2_b),
- 	SH_PFC_PIN_GROUP(i2c3_a),
- 	SH_PFC_PIN_GROUP(i2c3_b),
-+	SH_PFC_PIN_GROUP(mmc_data1),
-+	SH_PFC_PIN_GROUP(mmc_data4),
-+	SH_PFC_PIN_GROUP(mmc_data8),
-+	SH_PFC_PIN_GROUP(mmc_ctrl),
- 	SH_PFC_PIN_GROUP(scif0_data_a),
- 	SH_PFC_PIN_GROUP(scif0_clk_a),
- 	SH_PFC_PIN_GROUP(scif0_data_b),
-@@ -1402,6 +1444,13 @@ enum {
- 	"i2c3_b",
- };
- 
-+static const char * const mmc_groups[] = {
-+	"mmc_data1",
-+	"mmc_data4",
-+	"mmc_data8",
-+	"mmc_ctrl",
-+};
-+
- static const char * const scif0_groups[] = {
- 	"scif0_data_a",
- 	"scif0_clk_a",
-@@ -1458,6 +1507,7 @@ enum {
- 	SH_PFC_FUNCTION(i2c1),
- 	SH_PFC_FUNCTION(i2c2),
- 	SH_PFC_FUNCTION(i2c3),
-+	SH_PFC_FUNCTION(mmc),
- 	SH_PFC_FUNCTION(scif0),
- 	SH_PFC_FUNCTION(scif1),
- 	SH_PFC_FUNCTION(scif2),
--- 
-1.9.1
+Gr{oetje,eeting}s,
 
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
