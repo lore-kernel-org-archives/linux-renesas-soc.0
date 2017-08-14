@@ -1,41 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:36546 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751169AbdHQLcO (ORCPT
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:33083 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752441AbdHNNwE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Aug 2017 07:32:14 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
+        Mon, 14 Aug 2017 09:52:04 -0400
+Received: by mail-pg0-f68.google.com with SMTP id u185so10802114pgb.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Aug 2017 06:52:03 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1502181568-12299-7-git-send-email-horms+renesas@verge.net.au>
+References: <1502181568-12299-1-git-send-email-horms+renesas@verge.net.au> <1502181568-12299-7-git-send-email-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 14 Aug 2017 15:52:02 +0200
+Message-ID: <CAMuHMdUgdNv60OkcD1FafU-OLA0LEidg3dOqzCdYyc_Xsq5Zag@mail.gmail.com>
+Subject: Re: [PATCH 06/10] ARM: dts: r8a7792: Use R-Car GPIO Gen2 fallback
+ compat string
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
         Magnus Damm <magnus.damm@gmail.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] arm64: defconfig: Enable Renesas R8A77995 SoC
-Date: Thu, 17 Aug 2017 13:32:11 +0200
-Message-Id: <1502969531-15248-1-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable support for the Renesas R-Car D3 SoC.
+On Tue, Aug 8, 2017 at 10:39 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> Use newly added R-Car GPIO Gen2 fallback compat string
+> in place of now deprecated non-generation specific
+> R-Car GPIO fallback compat string in the DT of the r8a7792 SoC.
+>
+> This should have no run-time effect as the driver matches against
+> the per-SoC compat string before considering the fallback compat string.
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index b0cc318abea8fae7..ccca96ff8a19bf89 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -50,6 +50,7 @@ CONFIG_ARCH_SEATTLE=y
- CONFIG_ARCH_RENESAS=y
- CONFIG_ARCH_R8A7795=y
- CONFIG_ARCH_R8A7796=y
-+CONFIG_ARCH_R8A77995=y
- CONFIG_ARCH_STRATIX10=y
- CONFIG_ARCH_TEGRA=y
- CONFIG_ARCH_SPRD=y
--- 
-2.7.4
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
