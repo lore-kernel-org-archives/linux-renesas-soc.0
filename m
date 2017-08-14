@@ -1,82 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:29891 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751600AbdHBMyW (ORCPT
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:33080 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751030AbdHNN7R (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 Aug 2017 08:54:22 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
-        linus.walleij@linaro.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 2/2] pinctrl: sh-pfc: r8a7796: Add USB3.0 host pins, groups and functions
-Date: Wed,  2 Aug 2017 21:51:10 +0900
-Message-Id: <1501678270-922-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1501678270-922-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1501678270-922-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Mon, 14 Aug 2017 09:59:17 -0400
+Received: by mail-pg0-f65.google.com with SMTP id u185so10829038pgb.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Aug 2017 06:59:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1502267203-12229-4-git-send-email-horms+renesas@verge.net.au>
+References: <1502267203-12229-1-git-send-email-horms+renesas@verge.net.au> <1502267203-12229-4-git-send-email-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 14 Aug 2017 15:59:16 +0200
+Message-ID: <CAMuHMdX26bRY-n+PENFqXQ-D7t9EfnVTEbYNESg1u4VR4i4yDg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] arm64: dts: r8a7795: Use R-Car SATA Gen3 fallback
+ compat string
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+On Wed, Aug 9, 2017 at 10:26 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> Use newly added R-Car SATA Gen3 fallback compat string
+> in the DT of the r8a7795 SoC.
+>
+> This should have no run-time effect as the driver matches against
+> the per-SoC compat string before the fallback compat string is considered.
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-This patch adds USB30 (USB3.0 host) pin, group and function to R8A7796
-SoC.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-index 2a831d3..200e1f4 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-@@ -3805,6 +3805,15 @@ enum {
- 	USB1_PWEN_MARK, USB1_OVC_MARK,
- };
- 
-+/* - USB30 ------------------------------------------------------------------ */
-+static const unsigned int usb30_pins[] = {
-+	/* PWEN, OVC */
-+	RCAR_GP_PIN(6, 28), RCAR_GP_PIN(6, 29),
-+};
-+static const unsigned int usb30_mux[] = {
-+	USB30_PWEN_MARK, USB30_OVC_MARK,
-+};
-+
- static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(audio_clk_a_a),
- 	SH_PFC_PIN_GROUP(audio_clk_a_b),
-@@ -4107,6 +4116,7 @@ enum {
- 	SH_PFC_PIN_GROUP(ssi9_ctrl_b),
- 	SH_PFC_PIN_GROUP(usb0),
- 	SH_PFC_PIN_GROUP(usb1),
-+	SH_PFC_PIN_GROUP(usb30),
- };
- 
- static const char * const audio_clk_groups[] = {
-@@ -4545,6 +4555,10 @@ enum {
- 	"usb1",
- };
- 
-+static const char * const usb30_groups[] = {
-+	"usb30",
-+};
-+
- static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(audio_clk),
- 	SH_PFC_FUNCTION(avb),
-@@ -4591,6 +4605,7 @@ enum {
- 	SH_PFC_FUNCTION(ssi),
- 	SH_PFC_FUNCTION(usb0),
- 	SH_PFC_FUNCTION(usb1),
-+	SH_PFC_FUNCTION(usb30),
- };
- 
- static const struct pinmux_cfg_reg pinmux_config_regs[] = {
--- 
-1.9.1
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
