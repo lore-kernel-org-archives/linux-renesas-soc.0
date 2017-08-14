@@ -1,109 +1,67 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: linux-media@vger.kernel.org
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Benoit Parrot <bparrot@ti.com>,
-        linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 13/20] rcar-csi2: implement get_frame_desc
-Date: Fri, 11 Aug 2017 11:56:56 +0200
-Message-Id: <20170811095703.6170-14-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170811095703.6170-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170811095703.6170-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:36292 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752521AbdHNJpo (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 14 Aug 2017 05:45:44 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+In-Reply-To: <20170717204512.7075-1-marek.vasut+renesas@gmail.com>
+References: <20170717204512.7075-1-marek.vasut+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 14 Aug 2017 11:45:43 +0200
+Message-ID: <CAMuHMdV3d-0GHaZ4x8u20niHYjf3UiPow88K7wSW3rtrdjrpSQ@mail.gmail.com>
+Subject: Re: [PATCH V4 1/2] mfd: Add ROHM BD9571MWV-M PMIC DT bindings
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lee Jones <lee.jones@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The frame descriptor of the CSI-2 receiver mirrors that of the
-transmitter in all aspects but the routing from the multiplexed sink pad
-to the 'normal' source pads. Simply fetch the frame descriptor of the
-transmitter and update the routing.
+Hi Marek,
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/rcar-csi2.c | 56 +++++++++++++++++++++++++++++
- 1 file changed, 56 insertions(+)
+You forgot to CC Lee (added ;-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
-index 034d37bc66e93ac7..e01f334364d50754 100644
---- a/drivers/media/platform/rcar-vin/rcar-csi2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
-@@ -677,6 +677,61 @@ static int rcar_csi2_get_pad_format(struct v4l2_subdev *sd,
- 	return 0;
- }
- 
-+static int rcar_csi2_get_frame_desc(struct v4l2_subdev *sd, unsigned int pad,
-+				    struct v4l2_mbus_frame_desc *fd)
-+{
-+	struct rcar_csi2 *priv = sd_to_csi2(sd);
-+	struct v4l2_subdev *nextsd;
-+	struct media_pad *nextpad;
-+	unsigned int i;
-+
-+	/* Only valid for sink pad */
-+	if (pad != RCAR_CSI2_SINK || fd == NULL)
-+		return -EINVAL;
-+
-+	/* Figoure out remote subdev and pad */
-+	nextpad = media_entity_remote_pad(&priv->pads[RCAR_CSI2_SINK]);
-+	if (!nextpad) {
-+		dev_err(priv->dev, "Could not find remote pad\n");
-+		return -EPIPE;
-+	}
-+
-+	nextsd = media_entity_to_v4l2_subdev(nextpad->entity);
-+	if (!nextsd) {
-+		dev_err(priv->dev, "Could not find remote subdevice\n");
-+		return -ENODEV;
-+	}
-+
-+	/*
-+	 * Our frame descriptor will mirror that of the remote device
-+	 * in all aspects but which of our source pads are routed to
-+	 * which muxed channel. So start with a copy of the remote
-+	 * description and then update the pads
-+	 */
-+
-+	if (v4l2_subdev_call(nextsd, pad, get_frame_desc, nextpad->index, fd)) {
-+		dev_err(priv->dev, "Could not read frame desc\n");
-+		return -EINVAL;
-+	}
-+
-+	for (i = 0; i < fd->num_entries; i++) {
-+		/* Make sure it's a muxed CSI2 bus */
-+		if ((fd->entry[i].flags & V4L2_MBUS_FRAME_DESC_FL_CSI2) == 0)
-+			return -EINVAL;
-+
-+		if (fd->entry[i].csi2.channel >= 4) {
-+			dev_err(priv->dev, "CSI-2 channel value to large: %u\n",
-+				fd->entry[i].csi2.channel);
-+			return -EINVAL;
-+		}
-+
-+		/* Figure out pad from CSI-2 channel. First source pad is 1 */
-+		fd->entry[i].csi2.pad = fd->entry[i].csi2.channel + 1;
-+	}
-+
-+	return 0;
-+}
-+
- static const struct v4l2_subdev_core_ops rcar_csi2_subdev_core_ops = {
- 	.s_power = rcar_csi2_s_power,
- };
-@@ -684,6 +739,7 @@ static const struct v4l2_subdev_core_ops rcar_csi2_subdev_core_ops = {
- static const struct v4l2_subdev_pad_ops rcar_csi2_pad_ops = {
- 	.set_fmt = rcar_csi2_set_pad_format,
- 	.get_fmt = rcar_csi2_get_pad_format,
-+	.get_frame_desc = rcar_csi2_get_frame_desc,
- 	.s_stream = rcar_csi2_s_stream,
- };
- 
--- 
-2.13.3
+On Mon, Jul 17, 2017 at 10:45 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+> Add DT bindings for the ROHM BD9571MWV-M PMIC. This PMIC has
+> the following features:
+> - multiple voltage monitors for 1V8, 2V5, 3V3 voltage rail
+> - one voltage regulator for DVFS
+> - two GPIOs
+>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: devicetree@vger.kernel.org
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: linux-renesas-soc@vger.kernel.org
+> Acked-by: Rob Herring <robh@kernel.org>
+> ---
+> V2: - Drop the compatible = "regulator-fixed" from the binding example,
+>       it should not be there.
+>     - List the VD09 regulator
+> V3: Replace bd9571@30 with pmic@30
+> V4: No changes
+> ---
+>  .../devicetree/bindings/mfd/bd9571mwv.txt          | 49 ++++++++++++++++++++++
+>  1 file changed, 49 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/bd9571mwv.txt
+
+Anyway, as there were no changes in V4, Lee can just apply V3, for which he
+was CCed.
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
