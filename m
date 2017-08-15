@@ -1,11 +1,11 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f46.google.com ([209.85.215.46]:34394 "EHLO
-        mail-lf0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751780AbdHPLAl (ORCPT
+Received: from mail-lf0-f45.google.com ([209.85.215.45]:36894 "EHLO
+        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752111AbdHOQGu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Aug 2017 07:00:41 -0400
-Received: by mail-lf0-f46.google.com with SMTP id g25so14833346lfh.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Aug 2017 04:00:40 -0700 (PDT)
+        Tue, 15 Aug 2017 12:06:50 -0400
+Received: by mail-lf0-f45.google.com with SMTP id m86so5559107lfi.4
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 15 Aug 2017 09:06:49 -0700 (PDT)
 Subject: Re: [PATCH 1/3] ARM: dts: r8a7745: add PFC support
 To: Simon Horman <horms@verge.net.au>
 Cc: Chris Paterson <Chris.Paterson2@renesas.com>,
@@ -24,8 +24,8 @@ References: <20170415202036.987901107@cogentembedded.com>
  <b3bcd091-4f96-c37a-54ec-c8ee5b0fd916@cogentembedded.com>
  <20170815160049.GC26748@verge.net.au>
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <521e62cc-46d4-b067-59b2-cc085fd88e84@cogentembedded.com>
-Date: Wed, 16 Aug 2017 14:00:37 +0300
+Message-ID: <6e68e4d5-aa95-4b88-abdc-1a78dcbdc22f@cogentembedded.com>
+Date: Tue, 15 Aug 2017 19:06:45 +0300
 MIME-Version: 1.0
 In-Reply-To: <20170815160049.GC26748@verge.net.au>
 Content-Type: text/plain; charset=utf-8; format=flowed
@@ -58,7 +58,7 @@ On 08/15/2017 07:00 PM, Simon Horman wrote:
 > 
 > Thanks, I have applied the series for v4.14.
 
-    Are you going to finally push the devel branch? I'm not seeing changes 
-since the Monday tags.
+    TY! High time, otherwise we may end up with R8A7743 PFC patches merged and 
+R8A7745 PFC patches not merged...
 
 MBR, Sergei
