@@ -1,147 +1,138 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33652 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751626AbdHRIUX (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:38511 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752048AbdHOXDR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Aug 2017 04:20:23 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 1/9] ARM: dts: r8a7743: Add I2C DT support
-Date: Fri, 18 Aug 2017 10:19:46 +0200
-Message-Id: <2d33ced5500320f55fd2f63364f1212ba19453e8.1502962873.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1502962873.git.horms+renesas@verge.net.au>
-References: <cover.1502962873.git.horms+renesas@verge.net.au>
+        Tue, 15 Aug 2017 19:03:17 -0400
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 1/3] drm: rcar-du: Share plane atomic check code between Gen2 and Gen3
+Date: Wed, 16 Aug 2017 02:03:36 +0300
+Message-Id: <20170815230338.14913-2-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170815230338.14913-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170815230338.14913-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+The plane atomic check implementation is identical on Gen2 (DU planes)
+and Gen3 (VSP planes), but two separate functions exist as they operate
+on different data structures. Refactor the code to share the
+implementation.
 
-Add the I2C[0-5] devices to the r8a7743 device tree.
-
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- arch/arm/boot/dts/r8a7743.dtsi | 97 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 97 insertions(+)
+ drivers/gpu/drm/rcar-du/rcar_du_plane.c | 27 +++++++++++++++++----------
+ drivers/gpu/drm/rcar-du/rcar_du_plane.h |  4 ++++
+ drivers/gpu/drm/rcar-du/rcar_du_vsp.c   | 22 +---------------------
+ 3 files changed, 22 insertions(+), 31 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index f62e8587f1a8..ce80a26c421a 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -18,6 +18,15 @@
- 	#address-cells = <2>;
- 	#size-cells = <2>;
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.c b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
+index 61833cc1c699..4f076c364f25 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
+@@ -565,27 +565,26 @@ void __rcar_du_plane_setup(struct rcar_du_group *rgrp,
+ 	}
+ }
  
-+	aliases {
-+		i2c0 = &i2c0;
-+		i2c1 = &i2c1;
-+		i2c2 = &i2c2;
-+		i2c3 = &i2c3;
-+		i2c4 = &i2c4;
-+		i2c5 = &i2c5;
-+	};
-+
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -314,6 +323,94 @@
- 			dma-channels = <15>;
- 		};
+-static int rcar_du_plane_atomic_check(struct drm_plane *plane,
+-				      struct drm_plane_state *state)
++int __rcar_du_plane_atomic_check(struct drm_plane *plane,
++				 struct drm_plane_state *state,
++				 const struct rcar_du_format_info **format)
+ {
+-	struct rcar_du_plane_state *rstate = to_rcar_plane_state(state);
+-	struct rcar_du_plane *rplane = to_rcar_plane(plane);
+-	struct rcar_du_device *rcdu = rplane->group->dev;
++	struct drm_device *dev = plane->dev;
  
-+		/* The memory map in the User's Manual maps the cores to bus
-+		 *  numbers
-+		 */
-+		i2c0: i2c@e6508000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a7743",
-+				     "renesas,rcar-gen2-i2c";
-+			reg = <0 0xe6508000 0 0x40>;
-+			interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 931>;
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 931>;
-+			i2c-scl-internal-delay-ns = <6>;
-+			status = "disabled";
-+		};
+ 	if (!state->fb || !state->crtc) {
+-		rstate->format = NULL;
++		*format = NULL;
+ 		return 0;
+ 	}
+ 
+ 	if (state->src_w >> 16 != state->crtc_w ||
+ 	    state->src_h >> 16 != state->crtc_h) {
+-		dev_dbg(rcdu->dev, "%s: scaling not supported\n", __func__);
++		dev_dbg(dev->dev, "%s: scaling not supported\n", __func__);
+ 		return -EINVAL;
+ 	}
+ 
+-	rstate->format = rcar_du_format_info(state->fb->format->format);
+-	if (rstate->format == NULL) {
+-		dev_dbg(rcdu->dev, "%s: unsupported format %08x\n", __func__,
++	*format = rcar_du_format_info(state->fb->format->format);
++	if (*format == NULL) {
++		dev_dbg(dev->dev, "%s: unsupported format %08x\n", __func__,
+ 			state->fb->format->format);
+ 		return -EINVAL;
+ 	}
+@@ -593,6 +592,14 @@ static int rcar_du_plane_atomic_check(struct drm_plane *plane,
+ 	return 0;
+ }
+ 
++static int rcar_du_plane_atomic_check(struct drm_plane *plane,
++				      struct drm_plane_state *state)
++{
++	struct rcar_du_plane_state *rstate = to_rcar_plane_state(state);
 +
-+		i2c1: i2c@e6518000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a7743",
-+				     "renesas,rcar-gen2-i2c";
-+			reg = <0 0xe6518000 0 0x40>;
-+			interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 930>;
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 930>;
-+			i2c-scl-internal-delay-ns = <6>;
-+			status = "disabled";
-+		};
++	return __rcar_du_plane_atomic_check(plane, state, &rstate->format);
++}
 +
-+		i2c2: i2c@e6530000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a7743",
-+				     "renesas,rcar-gen2-i2c";
-+			reg = <0 0xe6530000 0 0x40>;
-+			interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 929>;
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 929>;
-+			i2c-scl-internal-delay-ns = <6>;
-+			status = "disabled";
-+		};
+ static void rcar_du_plane_atomic_update(struct drm_plane *plane,
+ 					struct drm_plane_state *old_state)
+ {
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.h b/drivers/gpu/drm/rcar-du/rcar_du_plane.h
+index f62e09f195de..890321b4665d 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_plane.h
++++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.h
+@@ -73,6 +73,10 @@ to_rcar_plane_state(struct drm_plane_state *state)
+ int rcar_du_atomic_check_planes(struct drm_device *dev,
+ 				struct drm_atomic_state *state);
+ 
++int __rcar_du_plane_atomic_check(struct drm_plane *plane,
++				 struct drm_plane_state *state,
++				 const struct rcar_du_format_info **format);
 +
-+		i2c3: i2c@e6540000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a7743",
-+				     "renesas,rcar-gen2-i2c";
-+			reg = <0 0xe6540000 0 0x40>;
-+			interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 928>;
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 928>;
-+			i2c-scl-internal-delay-ns = <6>;
-+			status = "disabled";
-+		};
-+
-+		i2c4: i2c@e6520000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a7743",
-+				     "renesas,rcar-gen2-i2c";
-+			reg = <0 0xe6520000 0 0x40>;
-+			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 927>;
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 927>;
-+			i2c-scl-internal-delay-ns = <6>;
-+			status = "disabled";
-+		};
-+
-+		i2c5: i2c@e6528000 {
-+			/* doesn't need pinmux */
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a7743",
-+				     "renesas,rcar-gen2-i2c";
-+			reg = <0 0xe6528000 0 0x40>;
-+			interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 925>;
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 925>;
-+			i2c-scl-internal-delay-ns = <110>;
-+			status = "disabled";
-+		};
-+
- 		scifa0: serial@e6c40000 {
- 			compatible = "renesas,scifa-r8a7743",
- 				     "renesas,rcar-gen2-scifa", "renesas,scifa";
+ int rcar_du_planes_init(struct rcar_du_group *rgrp);
+ 
+ void __rcar_du_plane_setup(struct rcar_du_group *rgrp,
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+index 2c96147bc444..dd66dcb8da23 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+@@ -268,28 +268,8 @@ static int rcar_du_vsp_plane_atomic_check(struct drm_plane *plane,
+ 					  struct drm_plane_state *state)
+ {
+ 	struct rcar_du_vsp_plane_state *rstate = to_rcar_vsp_plane_state(state);
+-	struct rcar_du_vsp_plane *rplane = to_rcar_vsp_plane(plane);
+-	struct rcar_du_device *rcdu = rplane->vsp->dev;
+-
+-	if (!state->fb || !state->crtc) {
+-		rstate->format = NULL;
+-		return 0;
+-	}
+ 
+-	if (state->src_w >> 16 != state->crtc_w ||
+-	    state->src_h >> 16 != state->crtc_h) {
+-		dev_dbg(rcdu->dev, "%s: scaling not supported\n", __func__);
+-		return -EINVAL;
+-	}
+-
+-	rstate->format = rcar_du_format_info(state->fb->format->format);
+-	if (rstate->format == NULL) {
+-		dev_dbg(rcdu->dev, "%s: unsupported format %08x\n", __func__,
+-			state->fb->format->format);
+-		return -EINVAL;
+-	}
+-
+-	return 0;
++	return __rcar_du_plane_atomic_check(plane, state, &rstate->format);
+ }
+ 
+ static void rcar_du_vsp_plane_atomic_update(struct drm_plane *plane,
 -- 
-2.1.4
+Regards,
+
+Laurent Pinchart
