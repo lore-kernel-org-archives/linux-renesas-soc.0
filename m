@@ -1,78 +1,49 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:9553 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751067AbdHVQD2 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 22 Aug 2017 12:03:28 -0400
-From: Chris Paterson <Chris.Paterson2@renesas.com>
-To: Biju Das <biju.das@bp.renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "Mark Rutland" <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>
-CC: Magnus Damm <magnus.damm@gmail.com>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: RE: [PATCH  0/2] ARM: dts: Add iWave RZ/G1E board support
-Date: Tue, 22 Aug 2017 16:03:23 +0000
-Message-ID: <TY1PR06MB070230193DD40E5D09D0A9AFB7840@TY1PR06MB0702.apcprd06.prod.outlook.com>
-References: <1502794460-30213-1-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1502794460-30213-1-git-send-email-biju.das@bp.renesas.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Chris Paterson <chris.paterson2@renesas.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH  0/2] ARM: dts: Add iWave RZ/G1E board support
+Date: Tue, 15 Aug 2017 11:54:18 +0100
+Message-Id: <1502794460-30213-1-git-send-email-biju.das@bp.renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello Simon,
+Hello,
 
-> From: Biju Das [mailto:biju.das@bp.renesas.com]
-> Sent: 15 August 2017 11:54
->=20
-> Hello,
->=20
-> This series aims to add iWave RZ/G1E (R8A7745) based RainboW-G22M-SM
-> SODIMM SoM and RainboW-G22D board support.
->=20
-> This series has been tested against linux-next tag next-20170815 as well =
-as
-> renesas-dev tag 20170814-v4.13-rc5
->=20
-> This patch has documentation dependency on below patches
+This series aims to add iWave RZ/G1E (R8A7745) based RainboW-G22M-SM SODIMM 
+SoM and RainboW-G22D board support. 
 
-The below patches are now in your v4.14 branch. Does this mean that this DT=
- series can now be accepted?
+This series has been tested against linux-next tag next-20170815 as well as
+renesas-dev tag 20170814-v4.13-rc5
 
-Thanks, Chris
+This patch has documentation dependency on below patches
+
+[repost,1/2] ARM: shmobile: document iW-RainboW-G22M-SM SODIMM System on Module
+https://patchwork.kernel.org/patch/9890389/
+[repost, 2/2] ARM: shmobile: document iW-RainboW-G22D SODIMM SOM Development Platform
+https://patchwork.kernel.org/patch/9890391/
 
 
->=20
-> [repost,1/2] ARM: shmobile: document iW-RainboW-G22M-SM SODIMM
-> System on Module https://patchwork.kernel.org/patch/9890389/
-> [repost, 2/2] ARM: shmobile: document iW-RainboW-G22D SODIMM SOM
-> Development Platform https://patchwork.kernel.org/patch/9890391/
->=20
->=20
-> Regards,
->=20
-> Biju Das (2):
->   ARM: dts: iwg22m: Add iWave RZG1E SODIMM SOM
->   ARM: dts: iwg22d-sodimm: Add support for iWave G22D-SODIMM board
->=20
->  arch/arm/boot/dts/Makefile                  |  1 +
->  arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts | 29
-> +++++++++++++++++++++++++++++
->  arch/arm/boot/dts/r8a7745-iwg22m.dtsi       | 24
-> ++++++++++++++++++++++++
->  3 files changed, 54 insertions(+)
->  create mode 100644 arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
->  create mode 100644 arch/arm/boot/dts/r8a7745-iwg22m.dtsi
->=20
-> --
-> 1.9.1
+Regards,
+
+Biju Das (2):
+  ARM: dts: iwg22m: Add iWave RZG1E SODIMM SOM
+  ARM: dts: iwg22d-sodimm: Add support for iWave G22D-SODIMM board
+
+ arch/arm/boot/dts/Makefile                  |  1 +
+ arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts | 29 +++++++++++++++++++++++++++++
+ arch/arm/boot/dts/r8a7745-iwg22m.dtsi       | 24 ++++++++++++++++++++++++
+ 3 files changed, 54 insertions(+)
+ create mode 100644 arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
+ create mode 100644 arch/arm/boot/dts/r8a7745-iwg22m.dtsi
+
+-- 
+1.9.1
+
