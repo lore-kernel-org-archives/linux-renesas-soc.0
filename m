@@ -1,67 +1,42 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: "David S . Miller" <davem@davemloft.net>,
-        Steve Glendinning <steve.glendinning@shawell.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>
-Cc: Lukas Wunner <lukas@wunner.de>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        netdev@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/2] net: Fix crashes due to activity during suspend
-Date: Tue, 22 Aug 2017 20:37:24 +0200
-Message-Id: <1503427046-17618-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:35340 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751495AbdHOQBd (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 15 Aug 2017 12:01:33 -0400
+Received: by mail-oi0-f66.google.com with SMTP id q70so1127674oic.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 15 Aug 2017 09:01:33 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <cover.1501509815.git.horms+renesas@verge.net.au>
+References: <cover.1501509815.git.horms+renesas@verge.net.au>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Tue, 15 Aug 2017 18:01:32 +0200
+Message-ID: <CAK8P3a2VnommvfALpR+q8Dh8sa421oF3z45ZH4W8s1qVjFo8zw@mail.gmail.com>
+Subject: Re: [GIT PULL] Renesas ARM64 Based SoC Defconfig Updates for v4.14
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: arm-soc <arm@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi all,
+On Mon, Jul 31, 2017 at 5:02 PM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
 
-If an Ethernet device is used while the device is suspended, the system may
-crash.
+> ----------------------------------------------------------------
+> Renesas ARM64 Based SoC Defconfig Updates for v4.14
+>
+> * compile ak4613 and renesas sound as modules
+>
+>   This is intended to reduce the size of a kernel image compiled
+>   using the defconfig. This is timely as it brings the kernel image
+>   back below the size that can be booted in my environment, a limit
+>   it crept over in v4.13-rc1.
 
-E.g. on sh73a0/kzm9g and r8a73a4/ape6evm, the external Ethernet chip is
-driven by a PM controlled clock.  If the Ethernet registers are accessed
-while the clock is not running, the system will crash with an imprecise
-external abort.
+Good idea, thanks! Pulled into next/arm64.
 
-This patch series fixes two of such crashes:
-  1. The first patch prevents the PHY polling state machine from accessing
-     PHY registers while a device is suspended,
-  2. The second patch prevents the net core from trying to transmit packets
-     when an smsc911x device is suspended.
-
-Both crashes can be reproduced on sh73a0/kzm9g and r8a73a4/ape6evm during
-s2ram (rarely), or by using pm_test (more likely to trigger):
-
-    # echo 0 > /sys/module/printk/parameters/console_suspend
-    # echo platform > /sys/power/pm_test
-    # echo mem > /sys/power/state
-
-With this series applied, my test systems survive a loop of 100 test
-suspends.
-
-Thanks for your comments!
-
-Geert Uytterhoeven (2):
-  net: phy: Freeze PHY polling before suspending devices
-  net: smsc911x: Quiten netif during suspend
-
- drivers/net/ethernet/smsc/smsc911x.c | 15 ++++++++++++++-
- drivers/net/phy/phy.c                | 12 +++++++-----
- 2 files changed, 21 insertions(+), 6 deletions(-)
-
--- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+       Arnd
