@@ -1,74 +1,84 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:36676 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752412AbdHOQQR (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 15 Aug 2017 12:16:17 -0400
+Date: Tue, 15 Aug 2017 19:16:14 +0300
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Niklas =?iso-8859-1?Q?S=F6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
 Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org,
         Kieran Bingham <kieran.bingham@ideasonboard.com>,
         linux-renesas-soc@vger.kernel.org,
         Maxime Ripard <maxime.ripard@free-electrons.com>,
         Sylwester Nawrocki <snawrocki@kernel.org>
-Subject: Re: [PATCH 1/4] v4l: async: fix unbind error in v4l2_async_notifier_unregister()
-Date: Fri, 18 Aug 2017 14:13:17 +0300
-Message-ID: <3708304.dzPkAFdM1e@avalon>
-In-Reply-To: <20170730223158.14405-2-niklas.soderlund+renesas@ragnatech.se>
-References: <20170730223158.14405-1-niklas.soderlund+renesas@ragnatech.se> <20170730223158.14405-2-niklas.soderlund+renesas@ragnatech.se>
+Subject: Re: [PATCH 1/4] v4l: async: fix unbind error in
+ v4l2_async_notifier_unregister()
+Message-ID: <20170815161604.5qjrd3eas4tlvrt6@valkosipuli.retiisi.org.uk>
+References: <20170730223158.14405-1-niklas.soderlund+renesas@ragnatech.se>
+ <20170730223158.14405-2-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-Sender: linux-media-owner@vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20170730223158.14405-2-niklas.soderlund+renesas@ragnatech.se>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Niklas,
-
-Thank you for the patch.
-
-On Monday 31 Jul 2017 00:31:55 Niklas S=F6derlund wrote:
-> The call to v4l2_async_cleanup() will set sd->asd to NULL so passing =
-it
-> to notifier->unbind() have no effect and leaves the notifier confused=
-.
-> Call the unbind() callback prior to cleaning up the subdevice to avoi=
-d
+On Mon, Jul 31, 2017 at 12:31:55AM +0200, Niklas S�derlund wrote:
+> The call to v4l2_async_cleanup() will set sd->asd to NULL so passing it
+> to notifier->unbind() have no effect and leaves the notifier confused.
+> Call the unbind() callback prior to cleaning up the subdevice to avoid
 > this.
->=20
-> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech=
-.se>
+> 
+> Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+This is a bugfix and worthy without any other patches and so should be
+applied separately.
+
+I think it'd be safer to store sd->asd locally and call the notifier unbind
+with that. Now you're making changes to the order in which things work, and
+that's not necessary to achieve the objective of passing the async subdev
+pointer to the notifier.
+
+With that changed,
+
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
 > ---
 >  drivers/media/v4l2-core/v4l2-async.c | 6 +++---
 >  1 file changed, 3 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/media/v4l2-core/v4l2-async.c
-> b/drivers/media/v4l2-core/v4l2-async.c index
-> 851f128eba2219ad..0acf288d7227ba97 100644
+> 
+> diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
+> index 851f128eba2219ad..0acf288d7227ba97 100644
 > --- a/drivers/media/v4l2-core/v4l2-async.c
 > +++ b/drivers/media/v4l2-core/v4l2-async.c
-> @@ -226,14 +226,14 @@ void v4l2_async_notifier_unregister(struct
-> v4l2_async_notifier *notifier)
->=20
->  =09=09d =3D get_device(sd->dev);
->=20
-> +=09=09if (notifier->unbind)
-> +=09=09=09notifier->unbind(notifier, sd, sd->asd);
+> @@ -226,14 +226,14 @@ void v4l2_async_notifier_unregister(struct v4l2_async_notifier *notifier)
+>  
+>  		d = get_device(sd->dev);
+>  
+> +		if (notifier->unbind)
+> +			notifier->unbind(notifier, sd, sd->asd);
 > +
->  =09=09v4l2_async_cleanup(sd);
->=20
->  =09=09/* If we handled USB devices, we'd have to lock the parent too=
-=20
-*/
->  =09=09device_release_driver(d);
->=20
-> -=09=09if (notifier->unbind)
-> -=09=09=09notifier->unbind(notifier, sd, sd->asd);
+>  		v4l2_async_cleanup(sd);
+>  
+>  		/* If we handled USB devices, we'd have to lock the parent too */
+>  		device_release_driver(d);
+>  
+> -		if (notifier->unbind)
+> -			notifier->unbind(notifier, sd, sd->asd);
 > -
->  =09=09/*
->  =09=09 * Store device at the device cache, in order to call
->  =09=09 * put_device() on the final step
+>  		/*
+>  		 * Store device at the device cache, in order to call
+>  		 * put_device() on the final step
+> -- 
+> 2.13.3
+> 
 
---=20
-Regards,
-
-Laurent Pinchart
+-- 
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi
