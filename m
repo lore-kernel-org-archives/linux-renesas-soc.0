@@ -1,80 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:34253 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752766AbdHBUNT (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:50093 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751749AbdHOPn5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 Aug 2017 16:13:19 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-mmc@vger.kernel.org, Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFT] arm64: dts: renesas: salvator-common: enable SDR104 for SD cards
-Date: Wed,  2 Aug 2017 22:13:11 +0200
-Message-Id: <20170802201311.1394-1-wsa+renesas@sang-engineering.com>
+        Tue, 15 Aug 2017 11:43:57 -0400
+Date: Tue, 15 Aug 2017 17:43:37 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH v2 1/3] ARM: dts: r8a7790: Use R-Car SATA Gen2 fallback
+ compat string
+Message-ID: <20170815154336.GA26748@verge.net.au>
+References: <1502267203-12229-1-git-send-email-horms+renesas@verge.net.au>
+ <1502267203-12229-2-git-send-email-horms+renesas@verge.net.au>
+ <CAMuHMdXYXU_ox_8d1jC+jgbwupzFWuxDtVSATWSyMxYVZz6kLA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXYXU_ox_8d1jC+jgbwupzFWuxDtVSATWSyMxYVZz6kLA@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Tests showed that SDHI driver problems have been solved and SDR104 works
-now reliably on both Salvator-X SD card slots, both with an R-Car H3
-(r8a7795 ES1.0) and R-Car M3 (r8a7796 ES 1.0). So, finally, enable it.
+On Mon, Aug 14, 2017 at 03:57:59PM +0200, Geert Uytterhoeven wrote:
+> On Wed, Aug 9, 2017 at 10:26 AM, Simon Horman
+> <horms+renesas@verge.net.au> wrote:
+> > Use newly added R-Car SATA Gen2 fallback compat string
+> > in the DT of the r8a7790 SoC.
+> >
+> > This should have no run-time effect as the driver matches against
+> > the per-SoC compat string before the fallback compat string is considered.
+> >
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-
-Awesome, awesome! For the last two days, I did various tests with my boards and
-SD cards and SDR104 worked absolutely reliably :D Even the problematic card I
-had works flawlessly. I couldn't trigger the known failures anymore. Although I
-tried, I can't point to a single patch which "fixed" the issue. It is the
-constant work on dealing with smaller issues which makes SDR104 work at the end
-of the day. However, two patches are likely a bigger part of the cake:
-
-43b0b361b01700 ("mmc: tmio: always get number of taps")
--> Already upstream. This fixed retuning on card changes.
-
-85b81aa16ec4ed ("mmc: tmio: fix CMD12 (STOP) handling")
--> In mmc/next. This allows to handle tuning errors gracefully and to retune.
-
-With the freshly submitted Gen3 DMA patches, we also get nice transfer speeds :)
-
-This patch is based on renesas-drivers/master as of today. A branch for testing
-can be found here:
-
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/v8-sdr104
-
-All patches needed for reliable SDR104 are already upstream or in mmc/next. The
-above branch only adds another patch to enable DMA on Gen3. It is not strictly
-needed, but very nice to have. I think it would be cool to get both patches
-into v4.14.
-
-Looking forward to other testers. Simon, do you have some time for this?
-
-Thanks and kind regards,
-
-  a very happy Wolfram
-
-
- arch/arm64/boot/dts/renesas/salvator-common.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-index a451996f590a51..18e2da9f866684 100644
---- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-@@ -569,6 +569,7 @@
- 	wp-gpios = <&gpio3 13 GPIO_ACTIVE_HIGH>;
- 	bus-width = <4>;
- 	sd-uhs-sdr50;
-+	sd-uhs-sdr104;
- 	status = "okay";
- };
- 
-@@ -597,6 +598,7 @@
- 	wp-gpios = <&gpio4 16 GPIO_ACTIVE_HIGH>;
- 	bus-width = <4>;
- 	sd-uhs-sdr50;
-+	sd-uhs-sdr104;
- 	status = "okay";
- };
- 
--- 
-2.11.0
+Thanks. I have applied this and the other two patches in this series
+with your Acks.
