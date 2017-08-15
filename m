@@ -1,77 +1,106 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mga01.intel.com ([192.55.52.88]:12607 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752467AbdHOJqv (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 15 Aug 2017 05:46:51 -0400
+From: Felipe Balbi <balbi@kernel.org>
+To: Rob Herring <robh@kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: mark.rutland@arm.com, gregkh@linuxfoundation.org,
+        linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] usb: gadget: udc: renesas_usb3: add support for R-Car M3-W
+In-Reply-To: <20170810174221.ovyl7bd64s6mjvyw@rob-hp-laptop>
+References: <1501813018-6116-1-git-send-email-yoshihiro.shimoda.uh@renesas.com> <1501813018-6116-4-git-send-email-yoshihiro.shimoda.uh@renesas.com> <20170810174221.ovyl7bd64s6mjvyw@rob-hp-laptop>
+Date: Tue, 15 Aug 2017 12:46:38 +0300
+Message-ID: <87pobx6u4h.fsf@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20170718102339.28726-2-wsa+renesas@sang-engineering.com>
-References: <20170718102339.28726-1-wsa+renesas@sang-engineering.com> <20170718102339.28726-2-wsa+renesas@sang-engineering.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 16 Aug 2017 16:51:33 +0200
-Message-ID: <CAMuHMdUiVH5FarZLaJ=_aon2LOApoTgH6aZomjS3BgcdCcPY7Q@mail.gmail.com>
-Subject: Re: [PATCH v3 1/4] i2c: add helpers to ease DMA handling
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Linux I2C <linux-i2c@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        linux-iio@vger.kernel.org,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Wolfram,
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 18, 2017 at 12:23 PM, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> One helper checks if DMA is suitable and optionally creates a bounce
-> buffer, if not. The other function returns the bounce buffer and makes
-> sure the data is properly copied back to the message.
+
+Hi,
+
+Rob Herring <robh@kernel.org> writes:
+> On Fri, Aug 04, 2017 at 11:16:58AM +0900, Yoshihiro Shimoda wrote:
+>> This patch adds support for R-Car M3-W. This patch also adds R-Car
+>> Gen3 generic version's compatible and changes ".compatible" in
+>> the usb3_of_match from "renesas,r8a7796-usb3-peri" to
+>> "renesas,rcar-gen3-usb3-peri".
+>>=20
+>> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+>> ---
+>>  Documentation/devicetree/bindings/usb/renesas_usb3.txt | 16 +++++++++++=
+++---
+>>  drivers/usb/gadget/udc/renesas_usb3.c                  |  2 +-
+>>  2 files changed, 14 insertions(+), 4 deletions(-)
 >
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
-> Changes since v2:
+> Binding looks fine, but...
 >
-> * rebased to v4.13-rc1
-> * helper functions are not inlined anymore but moved to i2c core
-> * __must_check has been added to the buffer check helper
-> * the release function has been renamed to contain 'dma' as well
+>> diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/=
+udc/renesas_usb3.c
+>> index aa2b185..b1e166c 100644
+>> --- a/drivers/usb/gadget/udc/renesas_usb3.c
+>> +++ b/drivers/usb/gadget/udc/renesas_usb3.c
+>> @@ -2503,7 +2503,7 @@ static void renesas_usb3_init_ram(struct renesas_u=
+sb3 *usb3, struct device *dev,
+>>=20=20
+>>  static const struct of_device_id usb3_of_match[] =3D {
+>>  	{
+>> -		.compatible =3D "renesas,r8a7795-usb3-peri",
+>> +		.compatible =3D "renesas,rcar-gen3-usb3-peri",
+>
+> You need to keep the existing string for compatibility with existing=20
+> dtbs.
 
-Right:
+I've fixed it up locally:
 
-drivers/i2c/i2c-core-base.c:2310:15: error: 'i2c_release_bounce_buf'
-undeclared here (not in a function)
- EXPORT_SYMBOL_GPL(i2c_release_bounce_buf);
+diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc=
+/renesas_usb3.c
+index ff69f4645b7c..16ceb445bee8 100644
+=2D-- a/drivers/usb/gadget/udc/renesas_usb3.c
++++ b/drivers/usb/gadget/udc/renesas_usb3.c
+@@ -2512,6 +2512,10 @@ static const struct of_device_id usb3_of_match[] =3D=
+ {
+                .compatible =3D "renesas,r8a7795-usb3-peri",
+                .data =3D &renesas_usb3_priv_gen3,
+        },
++       {
++               .compatible =3D "renesas,rcar-gen3-usb3-peri",
++               .data =3D &renesas_usb3_priv_gen3,
++       },
+        { },
+ };
+ MODULE_DEVICE_TABLE(of, usb3_of_match);
 
-> --- a/drivers/i2c/i2c-core-base.c
-> +++ b/drivers/i2c/i2c-core-base.c
 
-> +/**
-> + * i2c_release_bounce_buf - copy data back from bounce buffer and release it
-      ^^^^^^^^^^^^^^^^^^^^^^
-> + * @msg: the message to be copied back to
-> + * @bounce_buf: the bounce buffer obtained from i2c_check_msg_for_dma().
-> + *             May be NULL.
-> + */
-> +void i2c_release_dma_bounce_buf(struct i2c_msg *msg, u8 *bounce_buf)
-> +{
-> +       if (!bounce_buf)
-> +               return;
-> +
-> +       if (msg->flags & I2C_M_RD)
-> +               memcpy(msg->buf, bounce_buf, msg->len);
-> +
-> +       kfree(bounce_buf);
-> +}
-> +EXPORT_SYMBOL_GPL(i2c_release_bounce_buf);
-                     ^^^^^^^^^^^^^^^^^^^^^^
+=2D-=20
+balbi
 
-Gr{oetje,eeting}s,
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
-                        Geert
+-----BEGIN PGP SIGNATURE-----
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlmSwv4ACgkQzL64meEa
+mQauohAA2vFcHkf+98RhRsi1Xws2zQpZHr6EhsbhACYs1Ws7byCxevVNZvg+BApg
+9HHpU1B14N1VV73CEDdxkejBvocwSG6zXja1c4fJHHbZmprloJ6mqTZqORj6KLhx
+qufYP4Z5tAyVjmZ2owtHNKxIRCdFMGLkuTWnBGSCrE/vSAHRxJG8J81LKjQacpQ3
+WtwFQNR84rx0lKAwt5krVqobi4zkfA++Rm4AtJwCJjG3AIoOKnHTYtbc7EjFcMtN
+kwV7MnZdQyDHPFVGhN7XI8G3ACJF+HJ0coi6ktsZhkoc0YTCF8uutjwUX+n+EDAO
+fsLZx+L43SepcwKunm8v0ffgGynsAJkEoGYIIp/xe9Sj9kXc9hgvb3yo2nyhbuw0
+5RTfy4VhcaCjEFT9fQsbyLnUHLgG6YBkITqjKOPXWAXCy8mmZ2GAGZ5pVsym1Y+k
+pJOWSQEhXZ3IihLBO8O2DoGz52h0UIdrewfQCyhh4UBKKcoFr4A/eR5j4TggwOhp
+b2HyhlSGcy4nzKkXmDUi2jnku2hSNXfQM/I0pLL11uqMYSrDHxebndWD7md/7dwD
+lgYyjhffa4MS0oHhqiDZk4TJWp8kLOwiraJMPoGdlSJPX7g91Hk7FSrkTWKZ8Qma
+eg95YElsH6v+w9Swec0D6KUNy3RTwxeyYEEEXZ+a5zUBRpDrOcM=
+=eP/p
+-----END PGP SIGNATURE-----
+--=-=-=--
