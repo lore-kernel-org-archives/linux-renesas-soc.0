@@ -1,58 +1,82 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33652 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751730AbdHRIUS (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:19362 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752027AbdHOLJL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Aug 2017 04:20:18 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Tue, 15 Aug 2017 07:09:11 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/9] ARM: dts: r8a7745: add PFC support
-Date: Fri, 18 Aug 2017 10:19:47 +0200
-Message-Id: <95b94ed9abb58d2f5372a980a0af037e76c0beaf.1502962873.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1502962873.git.horms+renesas@verge.net.au>
-References: <cover.1502962873.git.horms+renesas@verge.net.au>
+        Russell King <linux@armlinux.org.uk>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH  2/2] ARM: dts: iwg22d-sodimm: Add support for iWave G22D-SODIMM board
+Date: Tue, 15 Aug 2017 11:54:20 +0100
+Message-Id: <1502794460-30213-3-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1502794460-30213-1-git-send-email-biju.das@bp.renesas.com>
+References: <1502794460-30213-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Add support for iWave RainboW-G22D-SODIMM board based on RZ/G1E.
 
-Define the generic R8A7745 part of the PFC device node.
-
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- arch/arm/boot/dts/r8a7745.dtsi | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/Makefile                  |  1 +
+ arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts | 29 +++++++++++++++++++++++++++++
+ 2 files changed, 30 insertions(+)
+ create mode 100644 arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
 
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index 354534cdc588..aff90dfb8b32 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -1,7 +1,7 @@
- /*
-  * Device Tree Source for the r8a7745 SoC
-  *
-- * Copyright (C) 2016 Cogent Embedded Inc.
-+ * Copyright (C) 2016-2017 Cogent Embedded Inc.
-  *
-  * This file is licensed under the terms of the GNU General Public License
-  * version 2. This program is licensed "as is" without any warranty of any
-@@ -123,6 +123,11 @@
- 			#power-domain-cells = <1>;
- 		};
- 
-+		pfc: pin-controller@e6060000 {
-+			compatible = "renesas,pfc-r8a7745";
-+			reg = <0 0xe6060000 0 0x11c>;
-+		};
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 4b17f35..51641d4 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -715,6 +715,7 @@ dtb-$(CONFIG_ARCH_RENESAS) += \
+ 	r8a7740-armadillo800eva.dtb \
+ 	r8a7743-iwg20d-q7.dtb \
+ 	r8a7743-sk-rzg1m.dtb \
++	r8a7745-iwg22d-sodimm.dtb \
+ 	r8a7745-sk-rzg1e.dtb \
+ 	r8a7778-bockw.dtb \
+ 	r8a7779-marzen.dtb \
+diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
+new file mode 100644
+index 0000000..cbc19fe
+--- /dev/null
++++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
+@@ -0,0 +1,29 @@
++/*
++ * Device Tree Source for the iWave-RZG1E SODIMM carrier board
++ *
++ * Copyright (C) 2017 Renesas Electronics Corp.
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
 +
- 		dmac0: dma-controller@e6700000 {
- 			compatible = "renesas,dmac-r8a7745",
- 				     "renesas,rcar-dmac";
++/dts-v1/;
++#include "r8a7745-iwg22m.dtsi"
++
++/ {
++	model = "iWave Systems RainboW-G22D-SODIMM board based on RZ/G1E";
++	compatible = "iwave,g22d", "iwave,g22m", "renesas,r8a7745";
++
++	aliases {
++		serial0 = &scif4;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++};
++
++&scif4 {
++	status = "okay";
++};
 -- 
-2.1.4
+1.9.1
