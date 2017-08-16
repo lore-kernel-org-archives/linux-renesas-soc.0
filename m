@@ -1,47 +1,30 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f47.google.com ([209.85.215.47]:33829 "EHLO
-        mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753142AbdHXT4V (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 Aug 2017 15:56:21 -0400
-Received: by mail-lf0-f47.google.com with SMTP id d17so2086585lfe.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 24 Aug 2017 12:56:20 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20170824195616.327888699@cogentembedded.com>
-Date: Thu, 24 Aug 2017 22:56:07 +0300
-To: Vinod Koul <vinod.koul@intel.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, dmaengine@vger.kernel.org,
-        devicetree@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] dmaengine: rcar-dmac: document R8A7797 bindings
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=dmaengine-rcar-dmac-document-R8A7797-bindings.patch
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Tue, 15 Aug 2017 17:23:02 -0700 (PDT)
+Message-Id: <20170815.172302.1712473214317232015.davem@davemloft.net>
+To: biju.das@bp.renesas.com
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk,
+        sergei.shtylyov@cogentembedded.com, horms@verge.net.au,
+        magnus.damm@gmail.com, chris.paterson2@renesas.com,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org
+Subject: Re: [PATCH ] dt-bindings: net: ravb : Add support for r8a7745 SoC
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <1502808020-22406-1-git-send-email-biju.das@bp.renesas.com>
+References: <1502808020-22406-1-git-send-email-biju.das@bp.renesas.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Renesas  R-Car V3M (R8A7797) SoC also has the R-Car gen2/3 compatible DMA
-controllers, so document the SoC specific binding.
+From: Biju Das <biju.das@bp.renesas.com>
+Date: Tue, 15 Aug 2017 15:40:20 +0100
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> Add a new compatible string for the RZ/G1E (R8A7745) SoC.
+> 
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> ---
+> This patch is tested against linux-next tag next-20170815
+> as well as net-next.
 
----
-The patch is against the 'next' branch of Vinod Koul's 'slave-dma.git' repo.
- 
- Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt |    1 +
- 1 file changed, 1 insertion(+)
-
-Index: slave-dma/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
-===================================================================
---- slave-dma.orig/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
-+++ slave-dma/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
-@@ -25,6 +25,7 @@ Required Properties:
- 		- "renesas,dmac-r8a7794" (R-Car E2)
- 		- "renesas,dmac-r8a7795" (R-Car H3)
- 		- "renesas,dmac-r8a7796" (R-Car M3-W)
-+		- "renesas,dmac-r8a7797" (R-Car V3M)
- 
- - reg: base address and length of the registers block for the DMAC
- 
+Applied.
