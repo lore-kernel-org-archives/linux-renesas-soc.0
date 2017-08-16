@@ -1,57 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:33265 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752335AbdHIS3f (ORCPT
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:35859 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752048AbdHPLzj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 9 Aug 2017 14:29:35 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Biju Das <biju.das@bp.renesas.com>,
+        Wed, 16 Aug 2017 07:55:39 -0400
+MIME-Version: 1.0
+In-Reply-To: <1501242081-3805-2-git-send-email-ykaneko0929@gmail.com>
+References: <1501242081-3805-1-git-send-email-ykaneko0929@gmail.com> <1501242081-3805-2-git-send-email-ykaneko0929@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 16 Aug 2017 13:55:37 +0200
+Message-ID: <CAMuHMdXrM3vNBuEAV0Or-+Ga7=LOvM=XynFToq_gbNt=2xs5kA@mail.gmail.com>
+Subject: Re: [PATCH 1/9] pinctrl: sh-pfc: r8a7795: Fix MOD_SEL1 bit[25:24] to
+ 0x3 when using STP_ISEN_1_D
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2] mmc: sdhi: use maximum width for the sdbuf register
-Date: Wed,  9 Aug 2017 20:29:26 +0200
-Message-Id: <20170809182926.669-1-wsa+renesas@sang-engineering.com>
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Make use of the 64 bit sdbuf width on Renesas R-Car Gen3. If the
-registers are 8 byte apart, the width is also 64 bit. For all others,
-the width is 32 bit, even if the registers are only 16 bit apart.
+On Fri, Jul 28, 2017 at 1:41 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch fixes the implementation incorrect of MOD_SEL1 bit[25:24]
+> value when STP_ISEN_1_D pin function is selected for IPSR17 bit[27:24].
+>
+> This is a correction to the incorrect implementation of MOD_SEL register
+> pin assignment for R8A7795 SoC specification of R-Car Gen3 Hardware
+> User's Manual Rev.0.51E or later.
+>
+> Fixes: 0b0ffc96dbe3 ("pinctrl: sh-pfc: Initial R8A7795 PFC support)
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Change since v1:
-* width calculation is now fully backwards compatible. If it is not 8 byte
-  apart (which is only on Gen3), we will always default to 32 as before.
-  Thanks to Biju Das and Simon Horman for the error reports!
+i.e. will queue in sh-pfc-for-v4.14.
 
-Tested on a M3-W Salvator-X and H2 Lager (with both SDHI instances). On
-the Lager, I could reproduce the problem with the old patch. It is gone now!
+Gr{oetje,eeting}s,
 
- drivers/mmc/host/renesas_sdhi_core.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+                        Geert
 
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index dd215723fa4312..a252145097d6a5 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -459,10 +459,11 @@ static int renesas_sdhi_multi_io_quirk(struct mmc_card *card,
- 
- static void renesas_sdhi_enable_dma(struct tmio_mmc_host *host, bool enable)
- {
--	sd_ctrl_write16(host, CTL_DMA_ENABLE, enable ? DMA_ENABLE_DMASDRW : 0);
-+	/* Iff regs are 8 byte apart, sdbuf is 64 bit. Otherwise always 32. */
-+	int width = (host->bus_shift == 2) ? 64 : 32;
- 
--	/* enable 32bit access if DMA mode if possibile */
--	renesas_sdhi_sdbuf_width(host, enable ? 32 : 16);
-+	sd_ctrl_write16(host, CTL_DMA_ENABLE, enable ? DMA_ENABLE_DMASDRW : 0);
-+	renesas_sdhi_sdbuf_width(host, enable ? width : 16);
- }
- 
- int renesas_sdhi_probe(struct platform_device *pdev,
--- 
-2.11.0
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
