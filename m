@@ -1,42 +1,37 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:35859 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752048AbdHPLzj (ORCPT
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:37490 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751580AbdHPKux (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Aug 2017 07:55:39 -0400
+        Wed, 16 Aug 2017 06:50:53 -0400
 MIME-Version: 1.0
-In-Reply-To: <1501242081-3805-2-git-send-email-ykaneko0929@gmail.com>
-References: <1501242081-3805-1-git-send-email-ykaneko0929@gmail.com> <1501242081-3805-2-git-send-email-ykaneko0929@gmail.com>
+In-Reply-To: <1502281187-24068-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1502281187-24068-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1502281187-24068-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 16 Aug 2017 13:55:37 +0200
-Message-ID: <CAMuHMdXrM3vNBuEAV0Or-+Ga7=LOvM=XynFToq_gbNt=2xs5kA@mail.gmail.com>
-Subject: Re: [PATCH 1/9] pinctrl: sh-pfc: r8a7795: Fix MOD_SEL1 bit[25:24] to
- 0x3 when using STP_ISEN_1_D
-To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+Date: Wed, 16 Aug 2017 12:50:52 +0200
+Message-ID: <CAMuHMdXmV4Z-qB-GTa-u6U8jDZNLZ3rzU6=56z_Gm+A2PQQ_tQ@mail.gmail.com>
+Subject: Re: [PATCH 4/8] pinctrl: sh-pfc: r8a77995: Add I2C pins, groups and functions
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Jul 28, 2017 at 1:41 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+On Wed, Aug 9, 2017 at 2:19 PM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
 > From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 >
-> This patch fixes the implementation incorrect of MOD_SEL1 bit[25:24]
-> value when STP_ISEN_1_D pin function is selected for IPSR17 bit[27:24].
->
-> This is a correction to the incorrect implementation of MOD_SEL register
-> pin assignment for R8A7795 SoC specification of R-Car Gen3 Hardware
-> User's Manual Rev.0.51E or later.
->
-> Fixes: 0b0ffc96dbe3 ("pinctrl: sh-pfc: Initial R8A7795 PFC support)
 > Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
