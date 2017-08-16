@@ -1,243 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:44850 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752244AbdHIMXN (ORCPT
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:34062 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752282AbdHPJSu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 9 Aug 2017 08:23:13 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
-        linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 5/8] pinctrl: sh-pfc: r8a77995: Add EthernetAVB pins, groups and functions
-Date: Wed,  9 Aug 2017 21:19:44 +0900
-Message-Id: <1502281187-24068-6-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1502281187-24068-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1502281187-24068-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Wed, 16 Aug 2017 05:18:50 -0400
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1502281187-24068-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1502281187-24068-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1502281187-24068-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 16 Aug 2017 11:18:49 +0200
+Message-ID: <CAMuHMdVRWa9uRLHoABXsYbTMke7sEX_bkT8mXFw2CRFnaXQpxA@mail.gmail.com>
+Subject: Re: [PATCH 1/8] pinctrl: sh-pfc: Add PORT_GP_{10,2[01]} helper macros
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Hi Shimoda-san,
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/pinctrl/sh-pfc/pfc-r8a77995.c | 178 ++++++++++++++++++++++++++++++++++
- 1 file changed, 178 insertions(+)
+On Wed, Aug 9, 2017 at 2:19 PM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> This follows the style of existion PORT_GP_X macros and
+> will be used by a follow-up patch for the r8a77995 SoC.
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
-index 96c97ff..9eb0cef 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
-@@ -936,6 +936,144 @@ enum {
- 	PINMUX_GPIO_GP_ALL(),
- };
- 
-+/* - EtherAVB --------------------------------------------------------------- */
-+static const unsigned int avb0_td_pins[] = {
-+	/*
-+	 * AVB0_TD0, AVB0_TD1,
-+	 * AVB0_TD2, AVB0_TD3,
-+	 */
-+	RCAR_GP_PIN(5, 11), RCAR_GP_PIN(5, 12),
-+	RCAR_GP_PIN(5, 13), RCAR_GP_PIN(5, 14),
-+};
-+static const unsigned int avb0_td_mux[] = {
-+	AVB0_TD0_MARK, AVB0_TD1_MARK,
-+	AVB0_TD2_MARK, AVB0_TD3_MARK,
-+};
-+static const unsigned int avb0_rd_pins[] = {
-+	/*
-+	 * AVB0_RD0, AVB0_RD1,
-+	 * AVB0_RD2, AVB0_RD3,
-+	 */
-+	RCAR_GP_PIN(5, 5), RCAR_GP_PIN(5, 6),
-+	RCAR_GP_PIN(5, 7), RCAR_GP_PIN(5, 8),
-+};
-+static const unsigned int avb0_rd_mux[] = {
-+	AVB0_RD0_MARK, AVB0_RD1_MARK,
-+	AVB0_RD2_MARK, AVB0_RD3_MARK,
-+};
-+static const unsigned int avb0_tx_ctl_pins[] = {
-+	/* AVB0_TX_CTL */
-+	RCAR_GP_PIN(5, 9),
-+};
-+static const unsigned int avb0_tx_ctl_mux[] = {
-+	AVB0_TX_CTL_MARK,
-+};
-+static const unsigned int avb0_rx_ctl_pins[] = {
-+	/* AVB0_RX_CTL */
-+	RCAR_GP_PIN(5, 3),
-+};
-+static const unsigned int avb0_rx_ctl_mux[] = {
-+	AVB0_RX_CTL_MARK,
-+};
-+static const unsigned int avb0_txc_pins[] = {
-+	/* AVB0_TXC */
-+	RCAR_GP_PIN(5, 10),
-+};
-+static const unsigned int avb0_txc_mux[] = {
-+	AVB0_TXC_MARK,
-+};
-+static const unsigned int avb0_rxc_pins[] = {
-+	/* AVB0_RXC */
-+	RCAR_GP_PIN(5, 4),
-+};
-+static const unsigned int avb0_rxc_mux[] = {
-+	AVB0_RXC_MARK,
-+};
-+static const unsigned int avb0_txcrefclk_pins[] = {
-+	/* AVB0_TXCREFCLK */
-+	RCAR_GP_PIN(5, 15),
-+};
-+static const unsigned int avb0_txcrefclk_mux[] = {
-+	AVB0_TXCREFCLK_MARK,
-+};
-+static const unsigned int avb0_link_pins[] = {
-+	/* AVB0_LINK */
-+	RCAR_GP_PIN(5, 20),
-+};
-+static const unsigned int avb0_link_mux[] = {
-+	AVB0_LINK_MARK,
-+};
-+static const unsigned int avb0_magic_pins[] = {
-+	/* AVB0_MAGIC */
-+	RCAR_GP_PIN(5, 18),
-+};
-+static const unsigned int avb0_magic_mux[] = {
-+	AVB0_MAGIC_MARK,
-+};
-+static const unsigned int avb0_phy_int_pins[] = {
-+	/* AVB0_PHY_INT */
-+	RCAR_GP_PIN(5, 19),
-+};
-+static const unsigned int avb0_phy_int_mux[] = {
-+	AVB0_PHY_INT_MARK,
-+};
-+static const unsigned int avb0_mdc_pins[] = {
-+	/* AVB0_MDC */
-+	RCAR_GP_PIN(5, 17),
-+};
-+static const unsigned int avb0_mdc_mux[] = {
-+	AVB0_MDC_MARK,
-+};
-+static const unsigned int avb0_mdio_pins[] = {
-+	/* AVB0_MDIO */
-+	RCAR_GP_PIN(5, 16),
-+};
-+static const unsigned int avb0_mdio_mux[] = {
-+	AVB0_MDIO_MARK,
-+};
-+static const unsigned int avb0_avtp_pps_a_pins[] = {
-+	/* AVB0_AVTP_PPS_A */
-+	RCAR_GP_PIN(5, 2),
-+};
-+static const unsigned int avb0_avtp_pps_a_mux[] = {
-+	AVB0_AVTP_PPS_A_MARK,
-+};
-+static const unsigned int avb0_avtp_match_a_pins[] = {
-+	/* AVB0_AVTP_MATCH_A */
-+	RCAR_GP_PIN(5, 1),
-+};
-+static const unsigned int avb0_avtp_match_a_mux[] = {
-+	AVB0_AVTP_MATCH_A_MARK,
-+};
-+static const unsigned int avb0_avtp_capture_a_pins[] = {
-+	/* AVB0_AVTP_CAPTURE_A */
-+	RCAR_GP_PIN(5, 0),
-+};
-+static const unsigned int avb0_avtp_capture_a_mux[] = {
-+	AVB0_AVTP_CAPTURE_A_MARK,
-+};
-+static const unsigned int avb0_avtp_pps_b_pins[] = {
-+	/* AVB0_AVTP_PPS_B */
-+	RCAR_GP_PIN(4, 16),
-+};
-+static const unsigned int avb0_avtp_pps_b_mux[] = {
-+	AVB0_AVTP_PPS_B_MARK,
-+};
-+static const unsigned int avb0_avtp_match_b_pins[] = {
-+	/*  AVB0_AVTP_MATCH_B */
-+	RCAR_GP_PIN(4, 18),
-+};
-+static const unsigned int avb0_avtp_match_b_mux[] = {
-+	AVB0_AVTP_MATCH_B_MARK,
-+};
-+static const unsigned int avb0_avtp_capture_b_pins[] = {
-+	/* AVB0_AVTP_CAPTURE_B */
-+	RCAR_GP_PIN(4, 17),
-+};
-+static const unsigned int avb0_avtp_capture_b_mux[] = {
-+	AVB0_AVTP_CAPTURE_B_MARK,
-+};
-+
- /* - I2C -------------------------------------------------------------------- */
- static const unsigned int i2c0_pins[] = {
- 	/* SCL, SDA */
-@@ -1165,6 +1303,24 @@ enum {
- };
- 
- static const struct sh_pfc_pin_group pinmux_groups[] = {
-+	SH_PFC_PIN_GROUP(avb0_td),
-+	SH_PFC_PIN_GROUP(avb0_rd),
-+	SH_PFC_PIN_GROUP(avb0_tx_ctl),
-+	SH_PFC_PIN_GROUP(avb0_rx_ctl),
-+	SH_PFC_PIN_GROUP(avb0_txc),
-+	SH_PFC_PIN_GROUP(avb0_rxc),
-+	SH_PFC_PIN_GROUP(avb0_txcrefclk),
-+	SH_PFC_PIN_GROUP(avb0_link),
-+	SH_PFC_PIN_GROUP(avb0_magic),
-+	SH_PFC_PIN_GROUP(avb0_phy_int),
-+	SH_PFC_PIN_GROUP(avb0_mdc),
-+	SH_PFC_PIN_GROUP(avb0_mdio),
-+	SH_PFC_PIN_GROUP(avb0_avtp_pps_a),
-+	SH_PFC_PIN_GROUP(avb0_avtp_match_a),
-+	SH_PFC_PIN_GROUP(avb0_avtp_capture_a),
-+	SH_PFC_PIN_GROUP(avb0_avtp_pps_b),
-+	SH_PFC_PIN_GROUP(avb0_avtp_match_b),
-+	SH_PFC_PIN_GROUP(avb0_avtp_capture_b),
- 	SH_PFC_PIN_GROUP(i2c0),
- 	SH_PFC_PIN_GROUP(i2c1),
- 	SH_PFC_PIN_GROUP(i2c2_a),
-@@ -1198,6 +1354,27 @@ enum {
- 	SH_PFC_PIN_GROUP(scif_clk),
- };
- 
-+static const char * const avb0_groups[] = {
-+	"avb0_td",
-+	"avb0_rd",
-+	"avb0_tx_ctl",
-+	"avb0_rx_ctl",
-+	"avb0_txc",
-+	"avb0_rxc",
-+	"avb0_txcrefclk",
-+	"avb0_link",
-+	"avb0_magic",
-+	"avb0_phy_int",
-+	"avb0_mdc",
-+	"avb0_mdio",
-+	"avb0_avtp_pps_a",
-+	"avb0_avtp_match_a",
-+	"avb0_avtp_capture_a",
-+	"avb0_avtp_pps_b",
-+	"avb0_avtp_match_b",
-+	"avb0_avtp_capture_b",
-+};
-+
- static const char * const i2c0_groups[] = {
- 	"i2c0",
- };
-@@ -1262,6 +1439,7 @@ enum {
- };
- 
- static const struct sh_pfc_function pinmux_functions[] = {
-+	SH_PFC_FUNCTION(avb0),
- 	SH_PFC_FUNCTION(i2c0),
- 	SH_PFC_FUNCTION(i2c1),
- 	SH_PFC_FUNCTION(i2c2),
--- 
-1.9.1
+Apparently PORT_GP_20 won't be used by the follow-up patches ;-)
+But I don't care...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
