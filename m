@@ -1,65 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:19362 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751830AbdHOLJH (ORCPT
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:33907 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751287AbdHPMUv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 Aug 2017 07:09:07 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
+        Wed, 16 Aug 2017 08:20:51 -0400
+MIME-Version: 1.0
+In-Reply-To: <1501242081-3805-9-git-send-email-ykaneko0929@gmail.com>
+References: <1501242081-3805-1-git-send-email-ykaneko0929@gmail.com> <1501242081-3805-9-git-send-email-ykaneko0929@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 16 Aug 2017 14:20:50 +0200
+Message-ID: <CAMuHMdWhi7Fnikj9eL=zT7G73Vnj3vZc3=+784r+gt++6JrVUA@mail.gmail.com>
+Subject: Re: [PATCH 8/9] pinctrl: sh-pfc: r8a7795: Rename CS1# pin function definitions
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH  1/2] ARM: dts: iwg22m: Add iWave RZG1E SODIMM SOM
-Date: Tue, 15 Aug 2017 11:54:19 +0100
-Message-Id: <1502794460-30213-2-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1502794460-30213-1-git-send-email-biju.das@bp.renesas.com>
-References: <1502794460-30213-1-git-send-email-biju.das@bp.renesas.com>
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for iWave RZG1E SODIMM System On Module.
-http://www.iwavesystems.com/rz-g1e-sodimm-module.html
+On Fri, Jul 28, 2017 at 1:41 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch renames the pin function macro definitions of the GPSR1 and
+> IPSR4 registers value for the CS1# pin.
+>
+> This is a correction because GPSR and IPSR register specification for
+> R8A7795 ES2.0 SoC was changed in R-Car Gen3 Hardware User's Manual
+> Rev.0.54E.
+>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
----
- arch/arm/boot/dts/r8a7745-iwg22m.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
- create mode 100644 arch/arm/boot/dts/r8a7745-iwg22m.dtsi
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/arch/arm/boot/dts/r8a7745-iwg22m.dtsi b/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
-new file mode 100644
-index 0000000..9dbd854
---- /dev/null
-+++ b/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
-@@ -0,0 +1,24 @@
-+/*
-+ * Device Tree Source for the iWave-RZG1E-G22M SODIMM SOM
-+ *
-+ * Copyright (C) 2017 Renesas Electronics Corp.
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2.  This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
-+
-+#include "r8a7745.dtsi"
-+
-+/ {
-+	compatible = "iwave,g22m", "renesas,r8a7745";
-+
-+	memory@40000000 {
-+		device_type = "memory";
-+		reg = <0 0x40000000 0 0x20000000>;
-+	};
-+};
-+
-+&extal_clk {
-+	clock-frequency = <20000000>;
-+};
--- 
-1.9.1
+i.e. will queue in sh-pfc-for-v4.14.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
