@@ -1,108 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:56064 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752835AbdHVX2r (ORCPT
+Received: from mail-oi0-f49.google.com ([209.85.218.49]:33707 "EHLO
+        mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752233AbdHPVGg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 22 Aug 2017 19:28:47 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        tomoharu.fukawa.eb@renesas.com, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v6 18/25] rcar-vin: prepare for media controller mode initialization
-Date: Wed, 23 Aug 2017 01:26:33 +0200
-Message-Id: <20170822232640.26147-19-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170822232640.26147-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170822232640.26147-1-niklas.soderlund+renesas@ragnatech.se>
+        Wed, 16 Aug 2017 17:06:36 -0400
+Received: by mail-oi0-f49.google.com with SMTP id f11so48642989oic.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Aug 2017 14:06:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <cover.1501514100.git.horms+renesas@verge.net.au>
+References: <cover.1501514100.git.horms+renesas@verge.net.au>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Wed, 16 Aug 2017 23:06:35 +0200
+Message-ID: <CAK8P3a1GwoJ6hB7m+s+ADn6qg0YVoNXkBoVp4JLH3QJY70QK2w@mail.gmail.com>
+Subject: Re: [GIT PULL] Renesas ARM Based SoC DT Updates for v4.14
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: arm-soc <arm@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When running in media controller mode a media pad is needed, register
-one. Also set the media bus format to CSI-2.
+On Mon, Jul 31, 2017 at 5:19 PM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> Renesas ARM Based SoC DT Updates for v4.14
+>
+> Changes of note:
+>
+> * Add pin controller support to the RZ/G1M (r8a7743) SoC and
+>   RZ/A1 (r7s72100) SoCs now that the driver is available in v4.13-rc1.
+>
+> * Add GPIO support to the RZ/G1M (r8a7743) SoC now that the driver
+>   is availabe in v4.13-rc1.
+>
+> * Enable MMCIF0 and Ethernet AVB support on the RZ/G1M (r8a7743) SoC and
+>   the iWave-RZG1M-20M Qseven SOM. This depends on newly added pin
+>   controller support noted above.
+>
+> * Use R-Car Gen 2 fallback binding for vin nodes
+>
+>   This makes binding use consistent across R-Car Gen 2 SoCs.
+>   It does not have any run-time effect
+>
+> * Use SMP jump stub SRAM region from DT on R-Car Gen 2 SoCs
+>
+>   Geert Uytterhoeven says, "The R-Car Gen2 platform code for CPU core
+>   bringup needs to copy a jump stub to on-SoC SRAM.  Currently it uses a
+>   hardcoded address pointing to ICRAM1."
+>
+> * Add Inter Connect RAM to R-Car Gen 2 and RZ/G1 SoCs
+>
+>   Geert Uytterhoeven says, "R-Car Gen2 and RZ/G1 SoCs contain two or three
+>   blocks of SRAM, which can be used for several purposes.  One such purpose
+>   is holding a jump stub for CPU core bringup."
+> * Use generic compatible string for I2C EEPROM for RZ/A1 (r7s72100) SoC
+>   and koelsch board.
+>
+>   This is part of a tree-wide cleanup by Javier Martinez Canillas
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/rcar-core.c | 23 ++++++++++++++++++++++-
- drivers/media/platform/rcar-vin/rcar-vin.h  |  4 ++++
- 2 files changed, 26 insertions(+), 1 deletion(-)
+Pulled into next/dt, thanks!
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index fbbb22924cf3a045..dd0525f2ba336bc2 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -45,6 +45,10 @@ static int rvin_find_pad(struct v4l2_subdev *sd, int direction)
- 	return -EINVAL;
- }
- 
-+/* -----------------------------------------------------------------------------
-+ * Digital async notifier
-+ */
-+
- static bool rvin_mbus_supported(struct rvin_dev *vin)
- {
- 	struct v4l2_subdev *sd = vin->digital.subdev;
-@@ -273,6 +277,20 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
- 	return 0;
- }
- 
-+/* -----------------------------------------------------------------------------
-+ * Group async notifier
-+ */
-+
-+static int rvin_group_init(struct rvin_dev *vin)
-+{
-+	/* All our sources are CSI-2 */
-+	vin->mbus_cfg.type = V4L2_MBUS_CSI2;
-+	vin->mbus_cfg.flags = 0;
-+
-+	vin->pad.flags = MEDIA_PAD_FL_SINK;
-+	return media_entity_pads_init(&vin->vdev.entity, 1, &vin->pad);
-+}
-+
- /* -----------------------------------------------------------------------------
-  * Platform Device Driver
-  */
-@@ -365,7 +383,10 @@ static int rcar_vin_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	ret = rvin_digital_graph_init(vin);
-+	if (vin->info->use_mc)
-+		ret = rvin_group_init(vin);
-+	else
-+		ret = rvin_digital_graph_init(vin);
- 	if (ret < 0)
- 		goto error;
- 
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 12daff804bb6f77f..9c47669669c0469c 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -103,6 +103,8 @@ struct rvin_info {
-  * @notifier:		V4L2 asynchronous subdevs notifier
-  * @digital:		entity in the DT for local digital subdevice
-  *
-+ * @pad:		pad for media controller
-+ *
-  * @lock:		protects @queue
-  * @queue:		vb2 buffers queue
-  *
-@@ -132,6 +134,8 @@ struct rvin_dev {
- 	struct v4l2_async_notifier notifier;
- 	struct rvin_graph_entity digital;
- 
-+	struct media_pad pad;
-+
- 	struct mutex lock;
- 	struct vb2_queue queue;
- 
--- 
-2.14.0
+       Arnd
