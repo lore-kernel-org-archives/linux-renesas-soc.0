@@ -1,47 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33652 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750988AbdHRITt (ORCPT
+Received: from mail-oi0-f54.google.com ([209.85.218.54]:34700 "EHLO
+        mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752627AbdHPVFI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Aug 2017 04:19:49 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/9] arm64: dts: r8a7795: Use R-Car SATA Gen3 fallback compat string
-Date: Fri, 18 Aug 2017 10:19:32 +0200
-Message-Id: <41f148f63be68bca27f99e0fa16961436e10cd9b.1502961153.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1502961153.git.horms+renesas@verge.net.au>
-References: <cover.1502961153.git.horms+renesas@verge.net.au>
+        Wed, 16 Aug 2017 17:05:08 -0400
+Received: by mail-oi0-f54.google.com with SMTP id x3so48573837oia.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Aug 2017 14:05:08 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <cover.1501512759.git.horms+renesas@verge.net.au>
+References: <cover.1501512759.git.horms+renesas@verge.net.au>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Wed, 16 Aug 2017 23:05:07 +0200
+Message-ID: <CAK8P3a3oa_0sEy=mQgBDS3mXw8kTGYbQ2z64PMGB7HTs1HBLCg@mail.gmail.com>
+Subject: Re: [GIT PULL] Renesas ARM Based SoC DT Bindings Updates for v4.14
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: arm-soc <arm@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use newly added R-Car SATA Gen3 fallback compat string
-in the DT of the r8a7795 SoC.
+On Mon, Jul 31, 2017 at 5:04 PM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> Renesas ARM Based SoC DT Bindings Updates for v4.14
+>
+> * Document R-Car D3 (r8a77995) SoC and Draak board
+>
+> * Document reserved SRAM for the SMP jump stub on R-Car Gen2 and RZ/G1 SoCs
+>
+>   Geert Uytterhoeven says, "+Renesas R-Car Gen2 and RZ/G1 SoCs need a small
+>   piece of SRAM for the jump stub +for secondary CPU bringup and CPU
+>   hotplug.  +This memory is reserved by adding a child node to a
+>   "mmio-sram" node..."
+>
+> * Add a VSP channel index to DU vsps
+>
+>   Laurent Pinchart says, "multiple LIF instances in the VSP. The current DT
+>   bindings don't support specifying that kind of SoC integration scheme.
+>   Extend them with a VSP channel index."
+>
+> * Add R-Car M3-W (r8a7796) HDMI TX DT bindings
+>
+>   This is compatible with existing R-Car H3 (r8a7795) support
 
-This should have no run-time effect as the driver matches against
-the per-SoC compat string before the fallback compat string is considered.
+Pulled into next/dt, thanks!
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index a87ae76880ab..c9f2b87e7ee3 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1451,7 +1451,8 @@
- 		};
- 
- 		sata: sata@ee300000 {
--			compatible = "renesas,sata-r8a7795";
-+			compatible = "renesas,sata-r8a7795",
-+				     "renesas,rcar-gen3-sata";
- 			reg = <0 0xee300000 0 0x200000>;
- 			interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 815>;
--- 
-2.1.4
+       Arnd
