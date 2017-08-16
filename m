@@ -1,47 +1,49 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>
-To: horms@verge.net.au, bhelgaas@google.com, linux-pci@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>
-Subject: [PATCH] PCI: rcar-pcie: Fix memory leak when no PCIe card is inserted
-Date: Wed,  2 Aug 2017 16:13:20 +0900
-Message-Id: <20170802071320.28674-1-harunobu.kurokawa.dn@renesas.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:35935 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751578AbdHPIoe (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 16 Aug 2017 04:44:34 -0400
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <1501678270-922-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1501678270-922-1-git-send-email-yoshihiro.shimoda.uh@renesas.com> <1501678270-922-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 16 Aug 2017 10:44:33 +0200
+Message-ID: <CAMuHMdVpgKpp0FBULi32trJdBa=G7b3G5qAP13QmdwnkR-6nAw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] pinctrl: sh-pfc: r8a7796: Add USB2.0 host pins,
+ groups and functions
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When no PCIe card is inserted, there is a memory leak as
-pci_free_resource_list is not called before returning.
+On Wed, Aug 2, 2017 at 2:51 PM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch adds USB{0,1} (USB2.0 host) pins, groups and functions to
+> R8A7796 SoC.
+>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-Signed-off-by: Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>
----
- drivers/pci/host/pcie-rcar.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
-index ac80fbb..9b06de6 100644
---- a/drivers/pci/host/pcie-rcar.c
-+++ b/drivers/pci/host/pcie-rcar.c
-@@ -1190,14 +1190,15 @@ static int rcar_pcie_probe(struct platform_device *pdev)
- 
- 	return 0;
- 
--err_free_bridge:
--	pci_free_host_bridge(bridge);
--
- err_pm_put:
- 	pm_runtime_put(dev);
- 
- err_pm_disable:
- 	pm_runtime_disable(dev);
-+
-+err_free_bridge:
-+	pci_free_host_bridge(bridge);
-+	pci_free_resource_list(&pcie->resources);
- 	return err;
- }
- 
--- 
-2.9.2
+i.e. will queue in sh-pfc-for-v4.14.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
