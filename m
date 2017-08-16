@@ -1,78 +1,84 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH v4 0/6] i2c: document DMA handling and add helpers for it
-Date: Thu, 17 Aug 2017 16:14:43 +0200
-Message-Id: <20170817141449.23958-1-wsa+renesas@sang-engineering.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-oi0-f46.google.com ([209.85.218.46]:36472 "EHLO
+        mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752339AbdHPVig (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 16 Aug 2017 17:38:36 -0400
+Received: by mail-oi0-f46.google.com with SMTP id g131so49177627oic.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Aug 2017 14:38:36 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <cover.1501509525.git.horms+renesas@verge.net.au>
+References: <cover.1501509525.git.horms+renesas@verge.net.au>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Wed, 16 Aug 2017 23:38:35 +0200
+Message-ID: <CAK8P3a1iaMrJ0dvS67uw9Am4CoGbcZQdZw2H7OQ6aabHHWnuxQ@mail.gmail.com>
+Subject: Re: [GIT PULL] Renesas ARM64 Based SoC DT Updates for v4.14
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: arm-soc <arm@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-So, after revisiting old mail threads, taking part in a similar discussion on
-the USB list, and implementing a not-convincing solution before, here is what I
-cooked up to document and ease DMA handling for I2C within Linux. Please have a
-look at the documentation introduced in patch 3 for details.
+On Mon, Jul 31, 2017 at 5:03 PM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> ----------------------------------------------------------------
+> Renesas ARM64 Based SoC DT Updates for v4.14
+>
+> * Add usb2.0 for R-Car H3 (r8a7795) ES2.0 SoC
+>
+> * Add R-Car D3 (r8a77995) SoC and Draak board support
+>
+>   Adds minimal support for the R-Car D3 SoC and the Draak development
+>   board, allowing to boot from a ramdisk using a serial console.
+>
+> * Add Add VC6 clock generator to R-Car H3 (r8a7795)/Salvator-XS board
+>
+>   The VC6 is an I2C-controlled programmable clock generator, used on the
+>   board to provide a display dot clock. Add it to DT.
+>
+> * Add missing second pair of DMA names to MSIOF nodes to
+>   R-Car M3-W (r8a7796) SoC
+>
+>   MSIOF0 and MSIOF1 are tied to two DMA controllers through two pairs of
+>   DMA specifiers.  However, the second pair of corresponding DMA names was
+>   missing.
+>
+> * Add support for the DU to R-Car H3 (r8a7795) SoC
+>
+>   Add a compatible string and VSP links to the DU node. The H3 ES1.x and H3
+>   ES2.0 are compatible save for the links to the VSPs that are described
+>   explicitly in DT, so there's no need for a new ES2-specific compatible
+>   string.
+>
+> * Enable HDMI on R-Car H3 (r8a7795) and M3-W (r8a7796) ULCB boards
+>
+> * Enable DU on R-Car M3-W (r8a7796) Salvator-X board
+>
+> * Enable I2C for DVFS on R-Car H3 (r8a7795) and M3-W (r8a7796) ULCB boards
+>
+> * Add Add DRIF support to R-Car H3 (r8a7795) and M3-W (r8a7796) SoCs
+>
+>   Ramesh Shanmugasundaram says, "R-Car Gen3 DRIF is a SPI like receive only
+>   slave device."
+>
+> * Move CPG_AUDIO_CLK_I from board to soc files
+>
+>   Geert Uytterhoeven says, "The definition of CPG_AUDIO_CLK_I is
+>   SoC-specific, not board-specific."
+>
+> * Add IMR-LX4 support to R-Car H3 (r8a7795) and M3-W (r8a7796) SoCs
+>
+>   Sergei Shtylyov says, "The image renderer light extended 4 (IMR-LX4) or
+>   the distortion correction engine is a drawing processor with a simple
+>   instruction system capable of referencing data on an external memory as
+>   2D texture data and performing texture mapping and drawing with respect
+>   to any shape that is split into triangular objects."
 
-While the previous versions tried to magically apply bounce buffers when
-needed, it became clear that detecting DMA safe buffers is too fragile. This
-approach is now opt-in, a DMA_SAFE flag needs to be set on an i2c_msg. The
-outcome so far is very convincing IMO. The core additions are simple and easy
-to understand (makes me even think of inlining them again?). The driver changes
-for the Renesas IP cores became easier to understand, too. While only a tad for
-the i2c-sh_mobile driver, the situation became a LOT better for the i2c-rcar
-driver. No more DMA disabling for the whole transfer in case of unsafe buffers,
-we are back to per-msg handling. And the code fix is now an easy to understand
-one line change. Yay!
+Pulled into next/dt64, thanks!
 
-Of course, we must now whitelist DMA safe buffers. An example for I2C_RDWR case
-is in this series. It makes the i2ctransfer utility have DMA_SAFE buffers,
-which is nice for testing as i2cdump will (currently) not use DMA_SAFE buffers.
-My plan is to add two new calls: i2c_master_{send|receive}_dma_safe which can
-be used if DMA_SAFE buffers are provided. So, drivers can simply switch to
-them. Also, the buffers used within i2c_smbus_xfer_emulated() need to be
-converted to be DMA_SAFE which will cover a huge bunch of use cases. The rest
-is then updating drivers which can be done when needed.
-
-As these conversions are not done yet, this patch series has RFC status. But I
-already would like to get opinions on this approach, so I'll cc mailing lists
-of the heavier I2C users. Please let me know what you think.
-
-All patches have been tested with a Renesas Salvator-X board (r8a7796/M3-W).
-
-The branch can be found here:
-
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/i2c-core-dma-rfc-v4
-
-And big kudos to Renesas Electronics for funding this work, thank you very much!
-
-Regards,
-
-   Wolfram
-
-Changes since v3:
-	* completely redesigned
-
-Wolfram Sang (6):
-  i2c: add a message flag for DMA safe buffers
-  i2c: add helpers to ease DMA handling
-  i2c: add docs to clarify DMA handling
-  i2c: sh_mobile: use helper to decide if DMA is useful
-  i2c: rcar: skip DMA if buffer is not safe
-  i2c: dev: mark RDWR buffers as DMA_SAFE
-
- Documentation/i2c/DMA-considerations | 50 ++++++++++++++++++++++++++++++++++++
- drivers/i2c/busses/i2c-rcar.c        |  2 +-
- drivers/i2c/busses/i2c-sh_mobile.c   |  8 ++++--
- drivers/i2c/i2c-core-base.c          | 45 ++++++++++++++++++++++++++++++++
- drivers/i2c/i2c-dev.c                |  2 ++
- include/linux/i2c.h                  |  3 +++
- include/uapi/linux/i2c.h             |  3 +++
- 7 files changed, 110 insertions(+), 3 deletions(-)
- create mode 100644 Documentation/i2c/DMA-considerations
-
--- 
-2.11.0
+       Arnd
