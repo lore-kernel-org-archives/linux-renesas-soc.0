@@ -1,46 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:36627 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751584AbdHPMGy (ORCPT
+Received: from mail-pf0-f179.google.com ([209.85.192.179]:36369 "EHLO
+        mail-pf0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751643AbdHPIou (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Aug 2017 08:06:54 -0400
+        Wed, 16 Aug 2017 04:44:50 -0400
 MIME-Version: 1.0
-In-Reply-To: <1501242081-3805-6-git-send-email-ykaneko0929@gmail.com>
-References: <1501242081-3805-1-git-send-email-ykaneko0929@gmail.com> <1501242081-3805-6-git-send-email-ykaneko0929@gmail.com>
+In-Reply-To: <1501678270-922-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1501678270-922-1-git-send-email-yoshihiro.shimoda.uh@renesas.com> <1501678270-922-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 16 Aug 2017 14:06:53 +0200
-Message-ID: <CAMuHMdVeC8pVZ46O_Q98BhMR3Hb0o2SJjMLzR0=s-Dv6W8jvKA@mail.gmail.com>
-Subject: Re: [PATCH 5/9] pinctrl: sh-pfc: r8a7795: Fix NFDATA{0..13} and
- NF{ALE,CLE,WE_N,RE_N} pin function definitions
-To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+Date: Wed, 16 Aug 2017 10:44:49 +0200
+Message-ID: <CAMuHMdUV1NxJWikuPiKHymzkQQN5FE0biUV9Xsw6S8pzsfniCw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: r8a7796: Add USB3.0 host pins,
+ groups and functions
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Jul 28, 2017 at 1:41 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+On Wed, Aug 2, 2017 at 2:51 PM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
 > From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 >
-> This patch fixes the implementation incorrect of IPSR register value
-> definitions for NFDATA{0..13} and NF{ALE,CLE,WE_N,RE_N} pins function.
+> This patch adds USB30 (USB3.0 host) pin, group and function to R8A7796
+> SoC.
 >
-> This is a correction to the incorrect implementation of IPSR register pin
-> assignment of the specifications updated for R8A7795 ES2.0 SoC in R-Car
-> Gen3 Hardware User's Manual Rev.0.53E.
->
-> Fixes: 12f5d9a1dc7f ("pinctrl: sh-pfc: r8a7795: Replace for Renesas R8A7795 ES2.0 SoC")
 > Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-i.e. will queue in sh-pfc-for-v4.14 with reference corrected.
+i.e. will queue in sh-pfc-for-v4.14.
 
 Gr{oetje,eeting}s,
 
