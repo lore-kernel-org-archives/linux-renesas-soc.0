@@ -1,71 +1,126 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: kishon@ti.com
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 1/4] phy: rcar-gen3-usb2: check dr_mode for otg mode
-Date: Thu, 31 Aug 2017 16:31:09 +0900
-Message-Id: <1504164672-20677-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1504164672-20677-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1504164672-20677-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:38049 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751461AbdHPNWl (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 16 Aug 2017 09:22:41 -0400
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-serial@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, magnus.damm@gmail.com,
+        laurent.pinchart@ideasonboard.com, wsa@the-dreams.de,
+        robh@kernel.org, peda@axentia.se, geert@linux-m68k.org,
+        linux-i2c@vger.kernel.org,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH 1/6] serdev: add method to set parity
+Date: Wed, 16 Aug 2017 15:22:23 +0200
+Message-Id: <1502889748-31499-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <1502889748-31499-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1502889748-31499-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The previous code assumed a channel has otg capability if a channel
-has interrupt property. But, it is not good because:
- - Battery charging feature also needs interrupt property.
- - Some R-Car Gen3 SoCs (e.g. R-Car D3) doesn't have OTG capability.
+Adds serdev_device_set_parity() and an implementation for ttyport.
 
-So, this patch checks whether usb 2.0 host node has dr_mode property or
-not. If it has 'dr_mode = "otg";', this driver enables otg capability.
-
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 ---
- drivers/phy/renesas/phy-rcar-gen3-usb2.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/tty/serdev/core.c           | 12 ++++++++++++
+ drivers/tty/serdev/serdev-ttyport.c | 18 ++++++++++++++++++
+ include/linux/serdev.h              | 10 ++++++++++
+ 3 files changed, 40 insertions(+)
 
-diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-index 54c3429..e00e99a 100644
---- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-@@ -1,7 +1,7 @@
- /*
-  * Renesas R-Car Gen3 for USB2.0 PHY driver
-  *
-- * Copyright (C) 2015 Renesas Electronics Corporation
-+ * Copyright (C) 2015-2017 Renesas Electronics Corporation
-  *
-  * This is based on the phy-rcar-gen2 driver:
-  * Copyright (C) 2014 Renesas Solutions Corp.
-@@ -22,6 +22,7 @@
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/regulator/consumer.h>
-+#include <linux/usb/of.h>
- #include <linux/workqueue.h>
+diff --git a/drivers/tty/serdev/core.c b/drivers/tty/serdev/core.c
+index ae1aaa0..8491056 100644
+--- a/drivers/tty/serdev/core.c
++++ b/drivers/tty/serdev/core.c
+@@ -242,6 +242,18 @@ int serdev_device_set_tiocm(struct serdev_device *serdev, int set, int clear)
+ }
+ EXPORT_SYMBOL_GPL(serdev_device_set_tiocm);
  
- /******* USB2.0 Host registers (original offset is +0x200) *******/
-@@ -415,13 +416,16 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 	/* call request_irq for OTG */
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq >= 0) {
--		int ret;
--
- 		INIT_WORK(&channel->work, rcar_gen3_phy_usb2_work);
- 		irq = devm_request_irq(dev, irq, rcar_gen3_phy_usb2_irq,
- 				       IRQF_SHARED, dev_name(dev), channel);
- 		if (irq < 0)
- 			dev_err(dev, "No irq handler (%d)\n", irq);
++int serdev_device_set_parity(struct serdev_device *serdev,
++			     enum serdev_parity parity)
++{
++	struct serdev_controller *ctrl = serdev->ctrl;
++
++	if (!ctrl || !ctrl->ops->set_parity)
++		return -ENOTSUPP;
++
++	return ctrl->ops->set_parity(ctrl, parity);
++}
++EXPORT_SYMBOL_GPL(serdev_device_set_parity);
++
+ static int serdev_drv_probe(struct device *dev)
+ {
+ 	const struct serdev_device_driver *sdrv = to_serdev_device_driver(dev->driver);
+diff --git a/drivers/tty/serdev/serdev-ttyport.c b/drivers/tty/serdev/serdev-ttyport.c
+index 302018d..2883f12 100644
+--- a/drivers/tty/serdev/serdev-ttyport.c
++++ b/drivers/tty/serdev/serdev-ttyport.c
+@@ -195,6 +195,23 @@ static int ttyport_set_tiocm(struct serdev_controller *ctrl, unsigned int set, u
+ 	return tty->driver->ops->tiocmset(tty, set, clear);
+ }
+ 
++static int ttyport_set_parity(struct serdev_controller *ctrl,
++			      enum serdev_parity parity)
++{
++	struct serport *serport = serdev_controller_get_drvdata(ctrl);
++	struct tty_struct *tty = serport->tty;
++	struct ktermios ktermios = tty->termios;
++
++	ktermios.c_cflag &= ~(PARENB | PARODD);
++	if (parity != SERDEV_PARITY_NONE) {
++		ktermios.c_cflag |= PARENB;
++		if (parity == SERDEV_PARITY_ODD)
++			ktermios.c_cflag |= PARODD;
 +	}
 +
-+	if (of_usb_get_dr_mode_by_phy(dev->of_node, 0) == USB_DR_MODE_OTG) {
-+		int ret;
++	return tty_set_termios(tty, &ktermios);
++}
 +
- 		channel->has_otg = true;
- 		channel->extcon = devm_extcon_dev_allocate(dev,
- 							rcar_gen3_phy_cable);
+ static const struct serdev_controller_ops ctrl_ops = {
+ 	.write_buf = ttyport_write_buf,
+ 	.write_flush = ttyport_write_flush,
+@@ -206,6 +223,7 @@ static const struct serdev_controller_ops ctrl_ops = {
+ 	.wait_until_sent = ttyport_wait_until_sent,
+ 	.get_tiocm = ttyport_get_tiocm,
+ 	.set_tiocm = ttyport_set_tiocm,
++	.set_parity = ttyport_set_parity,
+ };
+ 
+ struct device *serdev_tty_port_register(struct tty_port *port,
+diff --git a/include/linux/serdev.h b/include/linux/serdev.h
+index e69402d..8f60f11 100644
+--- a/include/linux/serdev.h
++++ b/include/linux/serdev.h
+@@ -76,6 +76,12 @@ static inline struct serdev_device_driver *to_serdev_device_driver(struct device
+ 	return container_of(d, struct serdev_device_driver, driver);
+ }
+ 
++enum serdev_parity {
++	SERDEV_PARITY_NONE,
++	SERDEV_PARITY_EVEN,
++	SERDEV_PARITY_ODD,
++};
++
+ /*
+  * serdev controller structures
+  */
+@@ -90,6 +96,7 @@ struct serdev_controller_ops {
+ 	void (*wait_until_sent)(struct serdev_controller *, long);
+ 	int (*get_tiocm)(struct serdev_controller *);
+ 	int (*set_tiocm)(struct serdev_controller *, unsigned int, unsigned int);
++	int (*set_parity)(struct serdev_controller *, enum serdev_parity);
+ };
+ 
+ /**
+@@ -298,6 +305,9 @@ static inline int serdev_device_set_rts(struct serdev_device *serdev, bool enabl
+ 		return serdev_device_set_tiocm(serdev, 0, TIOCM_RTS);
+ }
+ 
++int serdev_device_set_parity(struct serdev_device *serdev,
++			     enum serdev_parity parity);
++
+ /*
+  * serdev hooks into TTY core
+  */
 -- 
-1.9.1
+2.7.4
