@@ -1,47 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:33567 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753120AbdHQNBb (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:40080 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751530AbdHPKUX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Aug 2017 09:01:31 -0400
-Received: by mail-pg0-f68.google.com with SMTP id u185so9811803pgb.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 17 Aug 2017 06:01:31 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1502878810-17011-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1502878810-17011-1-git-send-email-fabrizio.castro@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 17 Aug 2017 15:01:30 +0200
-Message-ID: <CAMuHMdW_XMQGYrKcEmax59ADBD+zNMkNbqZQAPGOAkB0Ja5MJw@mail.gmail.com>
-Subject: Re: [PATCH v2] ARM: debug-ll: Add support for r8a7745
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Russell King <linux@armlinux.org.uk>,
+        Wed, 16 Aug 2017 06:20:23 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Russell King <linux@armlinux.org.uk>,
         Chris Paterson <chris.paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2] ARM: debug-ll: Add support for r8a7745
+Date: Wed, 16 Aug 2017 11:20:10 +0100
+Message-Id: <1502878810-17011-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Aug 16, 2017 at 12:20 PM, Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
-> Enable low-level debugging support for RZ/G1E (r8a7745). RZ/G1E uses
-> SCIF4 for the debug console.
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+Enable low-level debugging support for RZ/G1E (r8a7745). RZ/G1E uses
+SCIF4 for the debug console.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+---
+Changes in v2:
+  - Keep the list sorted by physical address
 
-Gr{oetje,eeting}s,
+ arch/arm/Kconfig.debug | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
+index 6dcea8e..31bf312 100644
+--- a/arch/arm/Kconfig.debug
++++ b/arch/arm/Kconfig.debug
+@@ -911,6 +911,13 @@ choice
+ 		  Say Y here if you want kernel low-level debugging support
+ 		  via SCIF2 on Renesas R-Car E2 (R8A7794).
+ 
++	config DEBUG_RCAR_GEN2_SCIF4
++		bool "Kernel low-level debugging messages via SCIF4 on R8A7745"
++		depends on ARCH_R8A7745
++		help
++		  Say Y here if you want kernel low-level debugging support
++		  via SCIF4 on Renesas RZ/G1E (R8A7745).
++
+ 	config DEBUG_RMOBILE_SCIFA0
+ 		bool "Kernel low-level debugging messages via SCIFA0 on R8A73A4"
+ 		depends on ARCH_R8A73A4
+@@ -1451,6 +1458,7 @@ config DEBUG_LL_INCLUDE
+ 	default "debug/renesas-scif.S" if DEBUG_RCAR_GEN1_SCIF2
+ 	default "debug/renesas-scif.S" if DEBUG_RCAR_GEN2_SCIF0
+ 	default "debug/renesas-scif.S" if DEBUG_RCAR_GEN2_SCIF2
++	default "debug/renesas-scif.S" if DEBUG_RCAR_GEN2_SCIF4
+ 	default "debug/renesas-scif.S" if DEBUG_RMOBILE_SCIFA0
+ 	default "debug/renesas-scif.S" if DEBUG_RMOBILE_SCIFA1
+ 	default "debug/renesas-scif.S" if DEBUG_RMOBILE_SCIFA4
+@@ -1570,6 +1578,7 @@ config DEBUG_UART_PHYS
+ 	default 0xe6c80000 if DEBUG_RMOBILE_SCIFA4
+ 	default 0xe6e58000 if DEBUG_RCAR_GEN2_SCIF2
+ 	default 0xe6e60000 if DEBUG_RCAR_GEN2_SCIF0
++	default 0xe6ee0000 if DEBUG_RCAR_GEN2_SCIF4
+ 	default 0xe8008000 if DEBUG_R7S72100_SCIF2
+ 	default 0xf0000be0 if ARCH_EBSA110
+ 	default 0xf1012000 if DEBUG_MVEBU_UART0_ALTERNATE
+@@ -1604,6 +1613,7 @@ config DEBUG_UART_PHYS
+ 		DEBUG_QCOM_UARTDM || DEBUG_R7S72100_SCIF2 || \
+ 		DEBUG_RCAR_GEN1_SCIF0 || DEBUG_RCAR_GEN1_SCIF2 || \
+ 		DEBUG_RCAR_GEN2_SCIF0 || DEBUG_RCAR_GEN2_SCIF2 || \
++		DEBUG_RCAR_GEN2_SCIF4 || \
+ 		DEBUG_RMOBILE_SCIFA0 || DEBUG_RMOBILE_SCIFA1 || \
+ 		DEBUG_RMOBILE_SCIFA4 || DEBUG_S3C24XX_UART || \
+ 		DEBUG_S3C64XX_UART || \
+-- 
+2.7.4
