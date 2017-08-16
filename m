@@ -1,67 +1,72 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:36292 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752521AbdHNJpo (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 Aug 2017 05:45:44 -0400
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20170717204512.7075-1-marek.vasut+renesas@gmail.com>
-References: <20170717204512.7075-1-marek.vasut+renesas@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 14 Aug 2017 11:45:43 +0200
-Message-ID: <CAMuHMdV3d-0GHaZ4x8u20niHYjf3UiPow88K7wSW3rtrdjrpSQ@mail.gmail.com>
-Subject: Re: [PATCH V4 1/2] mfd: Add ROHM BD9571MWV-M PMIC DT bindings
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
+In-Reply-To: <CAL_JsqJQ7yUhtJca1hupd5zSqo5RTj5k5zc_Ueex1nzbOnjXdw@mail.gmail.com>
+References: <20170721192835.25555-1-robh@kernel.org> <CAL_JsqJQ7yUhtJca1hupd5zSqo5RTj5k5zc_Ueex1nzbOnjXdw@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Wed, 16 Aug 2017 22:27:44 +0200
+Message-ID: <CAK8P3a0UfQ6fThn61Dch1TKPvKkF+7RtDwbv+xhSoWPHNC60hg@mail.gmail.com>
+Subject: Re: [PATCH v2] ARM: Convert to using %pOF instead of full_name
+To: Rob Herring <robh@kernel.org>
+Cc: "arm@kernel.org" <arm@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee.jones@linaro.org>
+        Russell King <linux@armlinux.org.uk>,
+        Kukjin Kim <kgene@kernel.org>,
+        Javier Martinez Canillas <javier@osg.samsung.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
+        Paul Walmsley <paul@pwsan.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-samsung-soc@vger.kernel.org"
+        <linux-samsung-soc@vger.kernel.org>,
+        linux-omap <linux-omap@vger.kernel.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        "open list:MEDIA DRIVERS FOR RENESAS - FCP"
+        <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Marek,
-
-You forgot to CC Lee (added ;-)
-
-On Mon, Jul 17, 2017 at 10:45 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
-> Add DT bindings for the ROHM BD9571MWV-M PMIC. This PMIC has
-> the following features:
-> - multiple voltage monitors for 1V8, 2V5, 3V3 voltage rail
-> - one voltage regulator for DVFS
-> - two GPIOs
+On Thu, Aug 10, 2017 at 12:06 AM, Rob Herring <robh@kernel.org> wrote:
+> On Fri, Jul 21, 2017 at 2:28 PM, Rob Herring <robh@kernel.org> wrote:
+>> Now that we have a custom printf format specifier, convert users of
+>> full_name to use %pOF instead. This is preparation to remove storing
+>> of the full path string for each node.
+>>
+>> Signed-off-by: Rob Herring <robh@kernel.org>
+>> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+>> Acked-by: Heiko Stuebner <heiko@sntech.de>
+>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> Acked-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+>>
+>>  arch/arm/kernel/cpuidle.c            | 4 ++--
+>>  arch/arm/kernel/devtree.c            | 5 ++---
+>>  arch/arm/kernel/topology.c           | 3 +--
+>>  arch/arm/mach-exynos/suspend.c       | 7 +++----
+>>  arch/arm/mach-imx/gpc.c              | 4 ++--
+>>  arch/arm/mach-mvebu/kirkwood.c       | 3 +--
+>>  arch/arm/mach-omap2/omap-wakeupgen.c | 4 ++--
+>>  arch/arm/mach-omap2/omap_hwmod.c     | 4 ++--
+>>  arch/arm/mach-rockchip/platsmp.c     | 4 ++--
+>>  arch/arm/mach-shmobile/pm-rmobile.c  | 7 +++----
+>>  10 files changed, 20 insertions(+), 25 deletions(-)
 >
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: devicetree@vger.kernel.org
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: linux-renesas-soc@vger.kernel.org
-> Acked-by: Rob Herring <robh@kernel.org>
-> ---
-> V2: - Drop the compatible = "regulator-fixed" from the binding example,
->       it should not be there.
->     - List the VD09 regulator
-> V3: Replace bd9571@30 with pmic@30
-> V4: No changes
-> ---
->  .../devicetree/bindings/mfd/bd9571mwv.txt          | 49 ++++++++++++++++++++++
->  1 file changed, 49 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/bd9571mwv.txt
+> Arnd, Olof,
+>
+> Can you please apply this one.
 
-Anyway, as there were no changes in V4, Lee can just apply V3, for which he
-was CCed.
+Applied to next/cleanup now, with the Acks. I think that should be the last
+patch of this series that you wanted me to apply. Can you double-check
+and maybe re-submit any patches I may have missed?
 
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+        Arnd
