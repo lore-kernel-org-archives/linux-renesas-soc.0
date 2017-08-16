@@ -1,43 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:61766 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752953AbdHNMEh (ORCPT
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:36627 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751584AbdHPMGy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 Aug 2017 08:04:37 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
+        Wed, 16 Aug 2017 08:06:54 -0400
+MIME-Version: 1.0
+In-Reply-To: <1501242081-3805-6-git-send-email-ykaneko0929@gmail.com>
+References: <1501242081-3805-1-git-send-email-ykaneko0929@gmail.com> <1501242081-3805-6-git-send-email-ykaneko0929@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 16 Aug 2017 14:06:53 +0200
+Message-ID: <CAMuHMdVeC8pVZ46O_Q98BhMR3Hb0o2SJjMLzR0=s-Dv6W8jvKA@mail.gmail.com>
+Subject: Re: [PATCH 5/9] pinctrl: sh-pfc: r8a7795: Fix NFDATA{0..13} and
+ NF{ALE,CLE,WE_N,RE_N} pin function definitions
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH  0/3] Add SDHI Support
-Date: Mon, 14 Aug 2017 12:49:46 +0100
-Message-Id: <1502711389-16040-1-git-send-email-biju.das@bp.renesas.com>
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This series aims to add SDHI support for r8a7743 SoC.
+On Fri, Jul 28, 2017 at 1:41 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch fixes the implementation incorrect of IPSR register value
+> definitions for NFDATA{0..13} and NF{ALE,CLE,WE_N,RE_N} pins function.
+>
+> This is a correction to the incorrect implementation of IPSR register pin
+> assignment of the specifications updated for R8A7795 ES2.0 SoC in R-Car
+> Gen3 Hardware User's Manual Rev.0.53E.
+>
+> Fixes: 12f5d9a1dc7f ("pinctrl: sh-pfc: r8a7795: Replace for Renesas R8A7795 ES2.0 SoC")
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 
-This series has been compiled and tested against renesas-dev tag
-renesas-devel-20170814-v4.13-rc5.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-There is no compile time dependencies.It has run time dependency on
-[PATCH ] mmc: renesas_sdhi: Add r8a7743/5 support.
-https://patchwork.kernel.org/patch/9898611/ 
+i.e. will queue in sh-pfc-for-v4.14 with reference corrected.
 
-Biju Das (3):
-  ARM: dts: r8a7743: Add SDHI controllers
-  ARM: dts: iwg20m: Enable SDHI0 controller
-  ARM: dts: iwg20d-q7: Add SDHI1 support
+Gr{oetje,eeting}s,
 
- arch/arm/boot/dts/r8a7743-iwg20d-q7.dts | 48 +++++++++++++++++++++++++++++++++
- arch/arm/boot/dts/r8a7743-iwg20m.dtsi   | 17 ++++++++++++
- arch/arm/boot/dts/r8a7743.dtsi          | 42 +++++++++++++++++++++++++++++
- 3 files changed, 107 insertions(+)
+                        Geert
 
--- 
-1.9.1
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
