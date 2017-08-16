@@ -1,65 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:61453 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751345AbdH3NH1 (ORCPT
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:33771 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752018AbdHPLKs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 30 Aug 2017 09:07:27 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        TAKESHI KIHARA <takeshi.kihara.df@renesas.com>
-CC: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Wed, 16 Aug 2017 07:10:48 -0400
+MIME-Version: 1.0
+In-Reply-To: <1502281187-24068-7-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1502281187-24068-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1502281187-24068-7-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 16 Aug 2017 13:10:47 +0200
+Message-ID: <CAMuHMdW27kVU2cB=iL-H7t44KeEboL+Ki0zvxkavRpZCepYuLw@mail.gmail.com>
+Subject: Re: [PATCH 6/8] pinctrl: sh-pfc: r8a77995: Add USB2.0 host support
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Linus Walleij <linus.walleij@linaro.org>,
-        "Rob Herring" <robh+dt@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: RE: [PATCH 6/8] pinctrl: sh-pfc: r8a77995: Add USB2.0 host support
-Date: Wed, 30 Aug 2017 13:07:21 +0000
-Message-ID: <TY1PR06MB0992563B4C992762105E8590D89C0@TY1PR06MB0992.apcprd06.prod.outlook.com>
-References: <1502281187-24068-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1502281187-24068-7-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <CAMuHMdW27kVU2cB=iL-H7t44KeEboL+Ki0zvxkavRpZCepYuLw@mail.gmail.com>
-In-Reply-To: <CAMuHMdW27kVU2cB=iL-H7t44KeEboL+Ki0zvxkavRpZCepYuLw@mail.gmail.com>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQtc2FuLA0KDQpJJ20gc29ycnkuIEkgbWlzc2VkIHRoaXMgZW1haWwuLi4NCg0KPiBG
-cm9tOiBHZWVydCBVeXR0ZXJob2V2ZW4NCj4gU2VudDogV2VkbmVzZGF5LCBBdWd1c3QgMTYsIDIw
-MTcgODoxMSBQTQ0KPiANCj4gSGkgU2hpbW9kYS1zYW4sIEtpaGFyYS1zYW4sDQo+IA0KPiBPbiBX
-ZWQsIEF1ZyA5LCAyMDE3IGF0IDI6MTkgUE0sIFlvc2hpaGlybyBTaGltb2RhDQo+IDx5b3NoaWhp
-cm8uc2hpbW9kYS51aEByZW5lc2FzLmNvbT4gd3JvdGU6DQo+ID4gRnJvbTogVGFrZXNoaSBLaWhh
-cmEgPHRha2VzaGkua2loYXJhLmRmQHJlbmVzYXMuY29tPg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1i
-eTogVGFrZXNoaSBLaWhhcmEgPHRha2VzaGkua2loYXJhLmRmQHJlbmVzYXMuY29tPg0KPiA+IFNp
-Z25lZC1vZmYtYnk6IFlvc2hpaGlybyBTaGltb2RhIDx5b3NoaWhpcm8uc2hpbW9kYS51aEByZW5l
-c2FzLmNvbT4NCj4gPiAtLS0NCj4gPiAgZHJpdmVycy9waW5jdHJsL3NoLXBmYy9wZmMtcjhhNzc5
-OTUuYyB8IDE1ICsrKysrKysrKysrKysrKw0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgMTUgaW5zZXJ0
-aW9ucygrKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvcGluY3RybC9zaC1wZmMvcGZj
-LXI4YTc3OTk1LmMgYi9kcml2ZXJzL3BpbmN0cmwvc2gtcGZjL3BmYy1yOGE3Nzk5NS5jDQo+ID4g
-aW5kZXggOWViMGNlZi4uNWMwYTk0ZiAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL3BpbmN0cmwv
-c2gtcGZjL3BmYy1yOGE3Nzk5NS5jDQo+ID4gKysrIGIvZHJpdmVycy9waW5jdHJsL3NoLXBmYy9w
-ZmMtcjhhNzc5OTUuYw0KPiA+IEBAIC0xMzAyLDYgKzEzMDIsMTUgQEAgZW51bSB7DQo+ID4gICAg
-ICAgICBTQ0lGX0NMS19NQVJLLA0KPiA+ICB9Ow0KPiA+DQo+ID4gKy8qIC0gVVNCMCAtLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tICovDQo+ID4gK3N0YXRpYyBjb25zdCB1bnNpZ25lZCBpbnQgdXNiMF9waW5zW10gPSB7DQo+
-ID4gKyAgICAgICAvKiBQV0VOLCBPVkMgKi8NCj4gPiArICAgICAgIFJDQVJfR1BfUElOKDAsIDAp
-LCBSQ0FSX0dQX1BJTigwLCAxKSwNCj4gPiArfTsNCj4gPiArc3RhdGljIGNvbnN0IHVuc2lnbmVk
-IGludCB1c2IwX211eFtdID0gew0KPiA+ICsgICAgICAgVVNCMF9QV0VOX01BUkssIFVTQjBfT1ZD
-X01BUkssDQo+ID4gK307DQo+IA0KPiBXaGF0IGFib3V0IFVTQjBfSURQVSBhbmQgVVNCMF9JRElO
-Pw0KPiBBcmUgdGhleSBuZWVkZWQgZm9yIG5vcm1hbCBvcGVyYXRpb24sIG9yIGNhbiB0aGV5IGJl
-IGFkZGVkIGxhdGVyPw0KDQpJIGRvbid0IGtub3cgYWJvdXQgdGhlc2UgcGlucy4gVGhlIGRhdGFz
-aGVldCBkb2Vzbid0IG1lbnRpb24gdXNhZ2UgaW4gVVNCIHNlY3Rpb25zLi4uDQpTbywgSSdtIGFz
-a2luZyBIVyB0ZWFtIG5vdy4gKEkgdGhpbmsgdGhleSBjYW4gYmUgYWRkZWQgbGF0ZXIuKQ0KDQpC
-ZXN0IHJlZ2FyZHMsDQpZb3NoaWhpcm8gU2hpbW9kYQ0KDQo+IFRoYW5rcyENCj4gDQo+IEdye29l
-dGplLGVldGluZ31zLA0KPiANCj4gICAgICAgICAgICAgICAgICAgICAgICAgR2VlcnQNCj4gDQo+
-IC0tDQo+IEdlZXJ0IFV5dHRlcmhvZXZlbiAtLSBUaGVyZSdzIGxvdHMgb2YgTGludXggYmV5b25k
-IGlhMzIgLS0gZ2VlcnRAbGludXgtbTY4ay5vcmcNCj4gDQo+IEluIHBlcnNvbmFsIGNvbnZlcnNh
-dGlvbnMgd2l0aCB0ZWNobmljYWwgcGVvcGxlLCBJIGNhbGwgbXlzZWxmIGEgaGFja2VyLiBCdXQN
-Cj4gd2hlbiBJJ20gdGFsa2luZyB0byBqb3VybmFsaXN0cyBJIGp1c3Qgc2F5ICJwcm9ncmFtbWVy
-IiBvciBzb21ldGhpbmcgbGlrZSB0aGF0Lg0KPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgIC0tIExpbnVzIFRvcnZhbGRzDQo=
+Hi Shimoda-san, Kihara-san,
+
+On Wed, Aug 9, 2017 at 2:19 PM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> ---
+>  drivers/pinctrl/sh-pfc/pfc-r8a77995.c | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+>
+> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
+> index 9eb0cef..5c0a94f 100644
+> --- a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
+> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
+> @@ -1302,6 +1302,15 @@ enum {
+>         SCIF_CLK_MARK,
+>  };
+>
+> +/* - USB0 ------------------------------------------------------------------- */
+> +static const unsigned int usb0_pins[] = {
+> +       /* PWEN, OVC */
+> +       RCAR_GP_PIN(0, 0), RCAR_GP_PIN(0, 1),
+> +};
+> +static const unsigned int usb0_mux[] = {
+> +       USB0_PWEN_MARK, USB0_OVC_MARK,
+> +};
+
+What about USB0_IDPU and USB0_IDIN?
+Are they needed for normal operation, or can they be added later?
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
