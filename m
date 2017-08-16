@@ -1,39 +1,35 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52203 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750741AbdHQI12 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Aug 2017 04:27:28 -0400
-Date: Thu, 17 Aug 2017 10:27:26 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: magnus.damm@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: renesas: r8a77995: add pfc device node
-Message-ID: <20170817082726.GD27693@verge.net.au>
-References: <1502281247-24124-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <20170810081318.GI16647@verge.net.au>
+Return-Path: <devicetree-owner@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20170810081318.GI16647@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <1502281247-24124-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1502281247-24124-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 16 Aug 2017 14:24:57 +0200
+Message-ID: <CAMuHMdWTXb0QJaTWh2irT31eGjEHHEqpA--6EcoYUgAFFPfRDg@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: renesas: r8a77995: add pfc device node
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Aug 10, 2017 at 10:13:19AM +0200, Simon Horman wrote:
-> On Wed, Aug 09, 2017 at 09:20:47PM +0900, Yoshihiro Shimoda wrote:
-> > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> > ---
-> > 
-> >  This patch set is based on the renesas-drivers.git /
-> > topic/r8a77995-integration branch and depends on the following patch
-> >  "pinctrl: sh-pfc: r8a77995: Initial R8A77995 PFC support"
-> 
-> Thanks Shimoda-san,
-> 
-> this patch looks fine to me, however, I am marking it as deferred pending
-> acceptance of the dependency listed above. Please repost or otherwise
-> ping me once Geert has indicated he will accept that patch.
+On Wed, Aug 9, 2017 at 2:20 PM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-That dependency appears to be satisfied now,
-I have applied this patch.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
