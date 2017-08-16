@@ -1,41 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:33474 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751316AbdH3J4F (ORCPT
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:33407 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751649AbdHPMEk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 30 Aug 2017 05:56:05 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] dt-bindings: pinctrl: sh-pfc: Use generic node name
-Date: Wed, 30 Aug 2017 11:55:58 +0200
-Message-Id: <1504086958-5286-1-git-send-email-geert+renesas@glider.be>
+        Wed, 16 Aug 2017 08:04:40 -0400
+MIME-Version: 1.0
+In-Reply-To: <1501242081-3805-5-git-send-email-ykaneko0929@gmail.com>
+References: <1501242081-3805-1-git-send-email-ykaneko0929@gmail.com> <1501242081-3805-5-git-send-email-ykaneko0929@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 16 Aug 2017 14:04:39 +0200
+Message-ID: <CAMuHMdUvOTx7XK_Me+AQjUWHEYLP6qYBMOCXLGi9FAhKouZBiQ@mail.gmail.com>
+Subject: Re: [PATCH 4/9] pinctrl: sh-pfc: r8a7795: Fix FMCLK{_C,_D} and
+ FMIN{_C,_D} pin function definitions
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use the preferred generic node name in the example.
+On Fri, Jul 28, 2017 at 1:41 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch fixes the implementation incorrect of IPSR register value
+> definitions for FMCLK{_C,_D} and FMIN{_C,_D} pins function.
+>
+> This is a correction to the incorrect implementation of IPSR register pin
+> assignment of the specifications updated for R8A7795 ES2.0 SoC in R-Car
+> Gen3 Hardware User's Manual Rev.0.53E.
+>
+> Fixes: 12f5d9a1dc7f ("pinctrl: sh-pfc: r8a7795: Replace for Renesas R8A7795 ES2.0 SoC")
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt
-index f4d127df980dccbc..b4083787e3ce0af7 100644
---- a/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt
-@@ -112,7 +112,7 @@ Examples
- 
- Example 1: SH73A0 (SH-Mobile AG5) pin controller node
- 
--	pfc: pfc@e6050000 {
-+	pfc: pin-controller@e6050000 {
- 		compatible = "renesas,pfc-sh73a0";
- 		reg = <0xe6050000 0x8000>,
- 		      <0xe605801c 0x1c>;
--- 
-2.7.4
+i.e. will queue in sh-pfc-for-v4.14 with reference corrected.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
