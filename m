@@ -1,114 +1,105 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:46176 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754513AbdHIQ4q (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 9 Aug 2017 12:56:46 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Nguyen Viet Dung <dung.nguyen.aj@renesas.com>,
-        Mark Brown <broonie@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Nguyen Viet Dung <dung.nguyen.aj@renesas.com>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <87wp6decyf.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dfUHg-0005Kt-QQ@debutante>
-Date: Wed, 09 Aug 2017 17:56:40 +0100
-Subject: Applied "ASoC: rsnd: remove 16ch support for now" to the asoc tree
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Wed, 16 Aug 2017 22:58:26 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-iio@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/4] i2c: add helpers to ease DMA handling
+Message-ID: <20170816205825.zq5u7gqgyrcqptsb@ninjato>
+References: <20170718102339.28726-1-wsa+renesas@sang-engineering.com>
+ <20170718102339.28726-2-wsa+renesas@sang-engineering.com>
+ <20170723122242.7fd0edf4@jic23.retrosnub.co.uk>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="iw76m45wyrc7u532"
+Content-Disposition: inline
+In-Reply-To: <20170723122242.7fd0edf4@jic23.retrosnub.co.uk>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
 
-   ASoC: rsnd: remove 16ch support for now
+--iw76m45wyrc7u532
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-has been applied to the asoc tree at
+Hi Jonathan,
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+> I like the basic idea of this patch set a lot btw!
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Thanks!
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+> Jonathan
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+Could you delete irrelevant parts of the message, please? I nearly
+missed your other comment which would have been a great loss!
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+> I'm trying to get my head around whether this is a sufficient set of cond=
+itions
+> for a dma safe buffer and I'm not sure it is.
+>=20
+> We go to a lot of effort with SPI buffers to ensure they are in their own=
+ cache
+> lines.  Do we not need to do the same here?  The issue would be the
+> classic case of embedding a buffer inside a larger structure which is on
+> the stack.  Need the magic of __cacheline_aligned to force it into it's
+> own line for devices with dma-incoherent caches.
+> DMA-API-HOWTO.txt (not read that for a while at it is a rather good
+> at describing this stuff these days!)
+>=20
+> So that one is easy enough to check by checking if it is cache line align=
+ed,
+> but what do you do to know there is nothing much after it?
 
-Thanks,
-Mark
+Thank you, really!
 
->From 29d03ff5c752e02918e8319fdcc86faa374d36ec Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Wed, 9 Aug 2017 01:46:23 +0000
-Subject: [PATCH] ASoC: rsnd: remove 16ch support for now
+This patch series addressed all cases I have created, but I also
+wondered if there are cases left which I missed. Now, also because you
+mentioned cacheline alignments, the faint idea of "maybe it could be
+fragile" became a strong "it is too fragile"! lib/dma-debug.c is >40KB
+for a reason. I just rewrote this series...
 
-R-Car Gen3 sound device can use TDM 16ch, but its usage is very
-limited. It is not yet supported.
-Let's remove unexpected/unsupported channel settings for now.
-This patch makes xx_ADINR register settings sanity without
-runtime check.
+> Not sure there is a way around this short of auditing i2c drivers to
+> change any that do this.
 
-R-Car Gen3 datasheet
+=2E.. to do something like this, more precisely: an opt-in approach. I
+introduce a new flag for i2c_msg, namely I2C_M_DMA_SAFE which can opt-in
+DMA if we know the i2c_msg buffer is DMA safe. I finished a
+proof-of-concept this evening and pushed it here:
 
-40.4.7 Note on Usage of the SSIU Module
-When an SSIU module is used in "TDM-16ch mode",
-only the transfer with the external memory is available.
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/i=
+2c-core-dma-rfc-v4
 
-Reported-by: Nguyen Viet Dung <dung.nguyen.aj@renesas.com>
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/sh/rcar/core.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+I will test it on HW tomorrow and send it out, then. There are still
+some bits missing, but for getting opinions, it should be good enough.
 
-diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
-index 3f2ced26ed37..7fa40fcad59e 100644
---- a/sound/soc/sh/rcar/core.c
-+++ b/sound/soc/sh/rcar/core.c
-@@ -726,7 +726,6 @@ static int rsnd_soc_set_dai_tdm_slot(struct snd_soc_dai *dai,
- 	case 2:
- 	case 6:
- 	case 8:
--	case 16:
- 		/* TDM Extend Mode */
- 		rsnd_rdai_channels_set(rdai, slots);
- 		rsnd_rdai_ssi_lane_set(rdai, 1);
-@@ -740,7 +739,7 @@ static int rsnd_soc_set_dai_tdm_slot(struct snd_soc_dai *dai,
- }
- 
- static unsigned int rsnd_soc_hw_channels_list[] = {
--	2, 6, 8, 16,
-+	2, 6, 8,
- };
- 
- static unsigned int rsnd_soc_hw_rate_list[] = {
-@@ -1017,7 +1016,7 @@ static void __rsnd_dai_probe(struct rsnd_priv *priv,
- 	drv->playback.rates		= RSND_RATES;
- 	drv->playback.formats		= RSND_FMTS;
- 	drv->playback.channels_min	= 2;
--	drv->playback.channels_max	= 16;
-+	drv->playback.channels_max	= 8;
- 	drv->playback.stream_name	= rdai->playback.name;
- 
- 	snprintf(rdai->capture.name, RSND_DAI_NAME_SIZE,
-@@ -1025,7 +1024,7 @@ static void __rsnd_dai_probe(struct rsnd_priv *priv,
- 	drv->capture.rates		= RSND_RATES;
- 	drv->capture.formats		= RSND_FMTS;
- 	drv->capture.channels_min	= 2;
--	drv->capture.channels_max	= 16;
-+	drv->capture.channels_max	= 8;
- 	drv->capture.stream_name	= rdai->capture.name;
- 
- 	rdai->playback.rdai		= rdai;
--- 
-2.13.3
+Thanks and kind regards,
+
+   Wolfram
+
+
+--iw76m45wyrc7u532
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlmUsfEACgkQFA3kzBSg
+KbYvTA/9GfvNkpGoyhvY6GHFOWPKNXd8Z3pDbev1Kh9OZIV9fveLjRa8Sq20pdiI
+o0YKCO4ljVL41BDXt/4GOHbONYjmrbPO6KequfqRhn/Eb1QZHgO5lpLuFkIqnSbW
+oWecM6dZqzzhRHIteRKgUYw+d7CU7FdT7RFOZrRllRaPjxZ+fnbw+Mh/fWXapQlK
+/Qz73224MOCDoQgmVqfGIlvwK4pAB6pv7rpV+Qu0S8TOI5NT/j3Ne/hFgMHDQj/E
+fphOGr4/V9UKPAoz6KasbuUgAlqqN8qIs2MwOwLBB+qZV/odTJDvG7+JvH2rLIMe
+QOGZwFxbTVnEllEdKgk056a7rFkSBVFA5jmmLKAPw8CtbNKvpYVKMYXPUih5ea4u
+FNKl2bcxXawuVLyvmovfPzZOhRu85Cw6eS+MFsMZGK32XVL6fd6ZjX0YDhA6+wkt
+BEtFQHLO1K1UCeEFtLmFn9f71pXOX+RZtGgKFuGzNSb9tDN540kanc1Oxpm4KEuz
+jJv9FM9QWkUGFxT+yuRaX4AxXAQNBt46HiWjPNEbpf906Ef4ghf74vj+xM9UxuRQ
+ABhKkOp5RIFYpUHJgnUfgdco36XIMLoF52aUP5+5OAYZ4msnGMy0sEcr3sHQ7Nlg
+Y1zlV9yyesdPAI5soo126qDlFbEpIljXOoMKGk/G5oI5ANl3xD4=
+=UtP7
+-----END PGP SIGNATURE-----
+
+--iw76m45wyrc7u532--
