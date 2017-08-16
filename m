@@ -1,46 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:53361 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751695AbdHQJta (ORCPT
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:38454 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751584AbdHPMXt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Aug 2017 05:49:30 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Wed, 16 Aug 2017 08:23:49 -0400
+MIME-Version: 1.0
+In-Reply-To: <1501242081-3805-10-git-send-email-ykaneko0929@gmail.com>
+References: <1501242081-3805-1-git-send-email-ykaneko0929@gmail.com> <1501242081-3805-10-git-send-email-ykaneko0929@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 16 Aug 2017 14:23:48 +0200
+Message-ID: <CAMuHMdW=5YE3kuCofgi3r35VVK0N6b7eobzr_9ZzOBPQUDVXCg@mail.gmail.com>
+Subject: Re: [PATCH 9/9] pinctrl: sh-pfc: r8a7795: Fix to reserved MOD_SEL2 bit22
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH] ARM: shmobile: Enable BQ32000 rtc in shmobile_defconfig
-Date: Thu, 17 Aug 2017 11:49:27 +0200
-Message-Id: <0736aad1290d61bc3668f20253e1e1997ad8b3c1.1502960320.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1502960320.git.horms+renesas@verge.net.au>
-References: <cover.1502960320.git.horms+renesas@verge.net.au>
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+On Fri, Jul 28, 2017 at 1:41 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This is a correction because MOD_SEL register specification for R8A7795
+> ES2.0 SoC was changed in R-Car Gen3 Hardware User's Manual Rev.0.54E.
+>
+> Fixes: 12f5d9a1dc7f ("pinctrl: sh-pfc: r8a7795: Replace for Renesas R8A7795 ES2.0 SoC")
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 
-The iWave RZ/G1M Q7 SOM supports RTC (TI BQ32000).
-To increase hardware support enable the driver in the
-shmobile_defconfig multiplatform configuration.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/configs/shmobile_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+i.e. will queue in sh-pfc-for-v4.14 with reference corrected.
 
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index 18886c53424a..7b4fc0143148 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -193,6 +193,7 @@ CONFIG_LEDS_CLASS=y
- CONFIG_LEDS_GPIO=y
- CONFIG_RTC_CLASS=y
- CONFIG_RTC_DRV_RS5C372=y
-+CONFIG_RTC_DRV_BQ32K=y
- CONFIG_RTC_DRV_S35390A=y
- CONFIG_RTC_DRV_RX8581=y
- CONFIG_RTC_DRV_DA9063=y
--- 
-2.1.4
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
