@@ -1,98 +1,69 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: balbi@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 2/3] usb: gadget: udc: renesas_usb3: add support for R-Car H3 ES2.0
-Date: Fri,  4 Aug 2017 11:16:57 +0900
-Message-Id: <1501813018-6116-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1501813018-6116-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1501813018-6116-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:56941 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753372AbdHQR6Y (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 17 Aug 2017 13:58:24 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH v2 6/8] v4l: vsp1: Adapt entities to configure into a body
+Date: Thu, 17 Aug 2017 20:58:33 +0300
+Message-ID: <1807083.ZJnR2iqIOD@avalon>
+In-Reply-To: <b37d6201d498f4e32016217adb33557cea30e655.1502723341.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.4457988ad8b64b5c7636e35039ef61d507af3648.1502723341.git-series.kieran.bingham+renesas@ideasonboard.com> <b37d6201d498f4e32016217adb33557cea30e655.1502723341.git-series.kieran.bingham+renesas@ideasonboard.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: devicetree-owner@vger.kernel.org
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds support for R-Car H3 ES2.0. Since this SoC revision
-doesn't need workaround for vbus detection and number of ramif is
-increased. So, this driver uses soc_device_match() to detect it.
+Hi Kieran,
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/usb/gadget/udc/renesas_usb3.c | 27 ++++++++++++++++++++++++---
- 1 file changed, 24 insertions(+), 3 deletions(-)
+Thank you for the patch.
 
-diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
-index 3415d32..aa2b185 100644
---- a/drivers/usb/gadget/udc/renesas_usb3.c
-+++ b/drivers/usb/gadget/udc/renesas_usb3.c
-@@ -21,6 +21,7 @@
- #include <linux/pm_runtime.h>
- #include <linux/sizes.h>
- #include <linux/slab.h>
-+#include <linux/sys_soc.h>
- #include <linux/uaccess.h>
- #include <linux/usb/ch9.h>
- #include <linux/usb/gadget.h>
-@@ -2487,22 +2488,36 @@ static void renesas_usb3_init_ram(struct renesas_usb3 *usb3, struct device *dev,
- 	}
- }
- 
--static const struct renesas_usb3_priv renesas_usb3_priv_r8a7795 = {
-+static const struct renesas_usb3_priv renesas_usb3_priv_r8a7795_es1 = {
- 	.ramsize_per_ramif = SZ_16K,
- 	.num_ramif = 2,
- 	.ramsize_per_pipe = SZ_4K,
- 	.workaround_for_vbus = true,
- };
- 
-+static const struct renesas_usb3_priv renesas_usb3_priv_gen3 = {
-+	.ramsize_per_ramif = SZ_16K,
-+	.num_ramif = 4,
-+	.ramsize_per_pipe = SZ_4K,
-+};
-+
- static const struct of_device_id usb3_of_match[] = {
- 	{
- 		.compatible = "renesas,r8a7795-usb3-peri",
--		.data = &renesas_usb3_priv_r8a7795,
-+		.data = &renesas_usb3_priv_gen3,
- 	},
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, usb3_of_match);
- 
-+static const struct soc_device_attribute renesas_usb3_quirks_match[] = {
-+	{
-+		.soc_id = "r8a7795", .revision = "ES1.*",
-+		.data = &renesas_usb3_priv_r8a7795_es1,
-+	},
-+	{ /* sentinel */ },
-+};
-+
- static const unsigned int renesas_usb3_cable[] = {
- 	EXTCON_USB,
- 	EXTCON_USB_HOST,
-@@ -2516,11 +2531,17 @@ static int renesas_usb3_probe(struct platform_device *pdev)
- 	const struct of_device_id *match;
- 	int irq, ret;
- 	const struct renesas_usb3_priv *priv;
-+	const struct soc_device_attribute *attr;
- 
- 	match = of_match_node(usb3_of_match, pdev->dev.of_node);
- 	if (!match)
- 		return -ENODEV;
--	priv = match->data;
-+
-+	attr = soc_device_match(renesas_usb3_quirks_match);
-+	if (attr)
-+		priv = attr->data;
-+	else
-+		priv = match->data;
- 
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq < 0)
+On Monday 14 Aug 2017 16:13:29 Kieran Bingham wrote:
+> Currently the entities store their configurations into a display list.
+> Adapt this such that the code can be configured into a body fragment
+> directly, allowing greater flexibility and control of the content.
+> 
+> All users of vsp1_dl_list_write() are removed in this process, thus it
+> too is removed.
+> 
+> A helper, vsp1_dl_list_body() is provided to access the internal body0
+> from the display list.
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> ---
+>  drivers/media/platform/vsp1/vsp1_bru.c    | 22 ++++++------
+>  drivers/media/platform/vsp1/vsp1_clu.c    | 22 ++++++------
+>  drivers/media/platform/vsp1/vsp1_dl.c     | 12 ++-----
+>  drivers/media/platform/vsp1/vsp1_dl.h     |  2 +-
+>  drivers/media/platform/vsp1/vsp1_drm.c    | 14 +++++---
+>  drivers/media/platform/vsp1/vsp1_entity.c | 16 ++++-----
+>  drivers/media/platform/vsp1/vsp1_entity.h | 12 ++++---
+>  drivers/media/platform/vsp1/vsp1_hgo.c    | 16 ++++-----
+>  drivers/media/platform/vsp1/vsp1_hgt.c    | 18 +++++-----
+>  drivers/media/platform/vsp1/vsp1_hsit.c   | 10 +++---
+>  drivers/media/platform/vsp1/vsp1_lif.c    | 13 +++----
+>  drivers/media/platform/vsp1/vsp1_lut.c    | 21 ++++++------
+>  drivers/media/platform/vsp1/vsp1_pipe.c   |  4 +-
+>  drivers/media/platform/vsp1/vsp1_pipe.h   |  3 +-
+>  drivers/media/platform/vsp1/vsp1_rpf.c    | 43 +++++++++++-------------
+>  drivers/media/platform/vsp1/vsp1_sru.c    | 14 ++++----
+>  drivers/media/platform/vsp1/vsp1_uds.c    | 24 +++++++------
+>  drivers/media/platform/vsp1/vsp1_uds.h    |  2 +-
+>  drivers/media/platform/vsp1/vsp1_video.c  | 11 ++++--
+>  drivers/media/platform/vsp1/vsp1_wpf.c    | 42 ++++++++++++-----------
+>  20 files changed, 168 insertions(+), 153 deletions(-)
+
+This is quite intrusive, and it bothers me slightly that we need to pass both 
+the DL and the DLB to the configure function in order to add fragments to the 
+DL in the CLU and LUT modules. Wouldn't it be simpler to add a pointer to the 
+current body in the DL structure, and modify vsp1_dl_list_write() to write to 
+the current fragment ?
+
 -- 
-1.9.1
+Regards,
 
+Laurent Pinchart
