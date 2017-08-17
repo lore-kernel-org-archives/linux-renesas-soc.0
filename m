@@ -1,40 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f43.google.com ([209.85.218.43]:36719 "EHLO
-        mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751586AbdHRU1F (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:53354 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751169AbdHQJt2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Aug 2017 16:27:05 -0400
-Received: by mail-oi0-f43.google.com with SMTP id g131so107396878oic.3
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 18 Aug 2017 13:27:05 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <cover.1502960320.git.horms+renesas@verge.net.au>
-References: <cover.1502960320.git.horms+renesas@verge.net.au>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Fri, 18 Aug 2017 22:27:04 +0200
-Message-ID: <CAK8P3a3wH_jVSQuJUpMnmYJeZf=sFmHX-dhOYKdf8sKeTkvgGw@mail.gmail.com>
-Subject: Re: [GIT PULL] Second Round of Renesas ARM Based SoC Defconfig
- Updates for v4.14
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: arm-soc <arm@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Olof Johansson <olof@lixom.net>,
+        Thu, 17 Aug 2017 05:49:28 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: arm@kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
         Kevin Hilman <khilman@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [GIT PULL] Second Round of Renesas ARM Based SoC Defconfig Updates for v4.14
+Date: Thu, 17 Aug 2017 11:49:22 +0200
+Message-Id: <cover.1502960320.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Aug 17, 2017 at 11:49 AM, Simon Horman
-<horms+renesas@verge.net.au> wrote:
-> Hi Olof, Hi Kevin, Hi Arnd,
->
-> Please consider these second round of Renesas ARM based SoC defconfig updates for v4.14.
->
-> This pull request is based on the previous round of
-> such requests, tagged as renesas-defconfig-for-v4.14,
-> which you have already pulled.
+Hi Olof, Hi Kevin, Hi Arnd,
 
-Pulled into next/defconfig, thanks!
+Please consider these second round of Renesas ARM based SoC defconfig updates for v4.14.
 
-       Arnd
+This pull request is based on the previous round of
+such requests, tagged as renesas-defconfig-for-v4.14,
+which you have already pulled.
+
+
+The following changes since commit 52078ca712cd933844721aaa700b3bd85234841f:
+
+  ARM: multi_v7_defconfig: Enable DMA for Renesas serial ports (2017-07-27 16:06:23 +0200)
+
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-defconfig2-for-v4.14
+
+for you to fetch changes up to 0736aad1290d61bc3668f20253e1e1997ad8b3c1:
+
+  ARM: shmobile: Enable BQ32000 rtc in shmobile_defconfig (2017-08-09 11:03:26 +0200)
+
+----------------------------------------------------------------
+Second Round of Renesas ARM Based SoC Defconfig Updates for v4.14
+
+* Enable BQ32000 rtc in shmobile_defconfig
+
+  Biju Das says "The iWave RZ/G1M Q7 SOM supports RTC (TI BQ32000).  To
+  increase hardware support enable the driver in the shmobile_defconfig
+  multiplatform configuration."
+
+----------------------------------------------------------------
+Biju Das (1):
+      ARM: shmobile: Enable BQ32000 rtc in shmobile_defconfig
+
+ arch/arm/configs/shmobile_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
