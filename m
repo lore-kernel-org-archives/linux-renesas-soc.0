@@ -1,60 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:44477 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751870AbdHCBzJ (ORCPT
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:34595 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751853AbdHQHXl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 Aug 2017 21:55:09 -0400
-Date: Wed, 2 Aug 2017 18:55:04 -0700
-From: Greg KH <greg@kroah.com>
-To: Simon Horman <horms@verge.net.au>
-Cc: ltsi-dev@lists.linuxfoundation.org,
-        linux-renesas-soc@vger.kernel.org,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: [LTSI-dev] [GIT PULL LTSI-4.9] Renesas SoCs and Drivers to v4.12
-Message-ID: <20170803015504.GC3031@kroah.com>
-References: <20170710133333.GC27613@verge.net.au>
+        Thu, 17 Aug 2017 03:23:41 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20170710133333.GC27613@verge.net.au>
+In-Reply-To: <1500963987-4627-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1500963987-4627-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 17 Aug 2017 09:23:40 +0200
+Message-ID: <CAMuHMdVypfK4n720SyTAkOZJx3gbA6_gaUA0RhXKGhVEB=54ig@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: rcar-usb2-clock-sel: Add R-Car USB 2.0
+ clock selector PHY
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Jul 10, 2017 at 03:33:34PM +0200, Simon Horman wrote:
-> Hi,
-> 
-> This is a submission to LTSI-v4.9.
-> 
-> This series is comprised of backports to v4.9 of the following
-> components to their standard as of v4.12:
-> 
-> It is a follow up to early preparatory work the main difference being
-> a rebase onto v4.9.36. This is a follow-up to a similar submission
-> backporting Renesas SoCs and Drivers to v4.10. I plan to follow-up with
-> a backport to v4.12.
-> 
-> I have tested for build regressions on a wide range of defconfigs
-> on a wide range of architectures.
-> 
-> There are 286 patches.
-> 
-> This is based on a similar backports to v4.11 which is in turn based on v4.9.36.
-> That work was posted as "[GIT PULL LTSI-4.9] Renesas SoCs and Drivers to v4.11"
-> and is tagged as tags/backport/v4.9.36/snapshot-to-v4.11-flattened
-> 
-> 
-> The following changes since commit 338ec844533e7bb1120f88f83a3fcc1d9618eef7:
-> 
->   drm: bridge: dw-hdmi: fix building without CONFIG_OF (2017-07-10 14:51:26 +0200)
-> 
-> are available in the git repository at:
-> 
->   https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas-backport.git tags/backport/v4.9.36/snapshot-to-v4.12-flattened
+On Tue, Jul 25, 2017 at 8:26 AM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> R-Car USB 2.0 controller can change the clock source from an oscillator
+> to an external clock via a register. So, this patch adds support
+> the clock source selector as a clock driver.
+>
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Acked-by: Rob Herring <robh@kernel.org>
+> ---
+>  This patch is based on the renesas-drivers.git /
+> renesas-drivers-2017-07-18-v4.13-rc1 tag.
+>
+>  Changes from v2:
+>   - Fix the example of device tree doc.
+>   - Replace some 8 spaces to a tab in the device tree doc.
+>   - Add Rob's Acked-by for the doc.
+>   - Drop CLK_IS_BASIC on init.flag.
+>   - Use of_clk_add_hw_provider() instead of of_clk_add_provider().
+>   - Use builtin_platform_driver() instead of syscall_init_sync().
+>   - Use pm_runtime APIs instead of clk APIs for "ehci_ohci" clk.
+>
+>  Changes from v1:
+>   - Change this driver as a clock driver from a generic phy driver.
+>     https://patchwork.kernel.org/patch/9788697/
+>   - Remove "RFC" tag.
 
-Hm, this was odd, I had to drop a number of patches in the middle here,
-but then got the rest to apply.  Did some patches end up already in the
-earlier series?
+Thank you, queued v3 + the fix from Julia in clk-renesas-for-4.14.
 
-Anyway, all now applied, thanks.
+Gr{oetje,eeting}s,
 
-greg k-h
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
