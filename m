@@ -1,109 +1,30 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34766 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:53341 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752153AbdHHIkP (ORCPT
+        with ESMTP id S1750913AbdHQJsu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 Aug 2017 04:40:15 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 09/10] arm64: dts: r8a7795: Use R-Car GPIO Gen3 fallback compat string
-Date: Tue,  8 Aug 2017 10:39:27 +0200
-Message-Id: <1502181568-12299-10-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1502181568-12299-1-git-send-email-horms+renesas@verge.net.au>
-References: <1502181568-12299-1-git-send-email-horms+renesas@verge.net.au>
+        Thu, 17 Aug 2017 05:48:50 -0400
+Received: from reginn.horms.nl (52D9BC73.cm-11-1c.dynamic.ziggo.nl [82.217.188.115])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 2E9A225AD59
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 17 Aug 2017 19:48:49 +1000 (AEST)
+Date: Thu, 17 Aug 2017 11:48:49 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: [ANNOUNCE] Renesas tree closed for v4.14
+Message-ID: <20170817094848.GA25223@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use newly added R-Car GPIO Gen3 fallback compat string
-in place of now deprecated non-generation specific
-R-Car GPIO fallback compat string in the DT of the r8a7795 SoC.
+Hi,
 
-This should have no run-time effect as the driver matches against
-the per-SoC compat string before considering the fallback compat string.
+I would like to stop accepting non-bug-fix patches for v4.14 and get
+the last pull requests posted by the end of this week. This is in order
+for them to be sent before the release of v4.13-rc6, the deadline set by the
+ARM SoC maintainers.  As patches should ideally progress from the renesas
+tree into linux-next before sending pull requests there is a few days lead
+time involved.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index a87ae76880ab..79d611db142a 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -220,7 +220,7 @@
- 
- 		gpio0: gpio@e6050000 {
- 			compatible = "renesas,gpio-r8a7795",
--				     "renesas,gpio-rcar";
-+				     "renesas,rcar-gen3-gpio";
- 			reg = <0 0xe6050000 0 0x50>;
- 			interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
- 			#gpio-cells = <2>;
-@@ -235,7 +235,7 @@
- 
- 		gpio1: gpio@e6051000 {
- 			compatible = "renesas,gpio-r8a7795",
--				     "renesas,gpio-rcar";
-+				     "renesas,rcar-gen3-gpio";
- 			reg = <0 0xe6051000 0 0x50>;
- 			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
- 			#gpio-cells = <2>;
-@@ -250,7 +250,7 @@
- 
- 		gpio2: gpio@e6052000 {
- 			compatible = "renesas,gpio-r8a7795",
--				     "renesas,gpio-rcar";
-+				     "renesas,rcar-gen3-gpio";
- 			reg = <0 0xe6052000 0 0x50>;
- 			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
- 			#gpio-cells = <2>;
-@@ -265,7 +265,7 @@
- 
- 		gpio3: gpio@e6053000 {
- 			compatible = "renesas,gpio-r8a7795",
--				     "renesas,gpio-rcar";
-+				     "renesas,rcar-gen3-gpio";
- 			reg = <0 0xe6053000 0 0x50>;
- 			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
- 			#gpio-cells = <2>;
-@@ -280,7 +280,7 @@
- 
- 		gpio4: gpio@e6054000 {
- 			compatible = "renesas,gpio-r8a7795",
--				     "renesas,gpio-rcar";
-+				     "renesas,rcar-gen3-gpio";
- 			reg = <0 0xe6054000 0 0x50>;
- 			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
- 			#gpio-cells = <2>;
-@@ -295,7 +295,7 @@
- 
- 		gpio5: gpio@e6055000 {
- 			compatible = "renesas,gpio-r8a7795",
--				     "renesas,gpio-rcar";
-+				     "renesas,rcar-gen3-gpio";
- 			reg = <0 0xe6055000 0 0x50>;
- 			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
- 			#gpio-cells = <2>;
-@@ -310,7 +310,7 @@
- 
- 		gpio6: gpio@e6055400 {
- 			compatible = "renesas,gpio-r8a7795",
--				     "renesas,gpio-rcar";
-+				     "renesas,rcar-gen3-gpio";
- 			reg = <0 0xe6055400 0 0x50>;
- 			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
- 			#gpio-cells = <2>;
-@@ -325,7 +325,7 @@
- 
- 		gpio7: gpio@e6055800 {
- 			compatible = "renesas,gpio-r8a7795",
--				     "renesas,gpio-rcar";
-+				     "renesas,rcar-gen3-gpio";
- 			reg = <0 0xe6055800 0 0x50>;
- 			interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
- 			#gpio-cells = <2>;
--- 
-2.1.4
+I intend to begin queueing up patches for v4.15 as new patches are ready.
