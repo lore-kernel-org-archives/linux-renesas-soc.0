@@ -1,55 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:36228 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751711AbdHQMna (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52623 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750775AbdHQI4j (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Aug 2017 08:43:30 -0400
-MIME-Version: 1.0
-In-Reply-To: <20170721201650.GC19878@codeaurora.org>
-References: <1492624001-3758-11-git-send-email-ykaneko0929@gmail.com> <20170721201650.GC19878@codeaurora.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 17 Aug 2017 14:43:28 +0200
-Message-ID: <CAMuHMdUa05_6qfq5FXrrRq14J-OOrE4CRuo1Qhtmh58k2FLBYw@mail.gmail.com>
-Subject: Re: [PATCH] clk: cs2000: Add cs2000_set_saved_rate
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Yoshihiro Kaneko <ykaneko0929@gmail.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
+        Thu, 17 Aug 2017 04:56:39 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH] arm64: renesas: salvator-common: avoid audio_clkout naming conflict
+Date: Thu, 17 Aug 2017 10:56:35 +0200
+Message-Id: <8cd7b51ff57c74260b20c97623b0e0d420c22be8.1502959921.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1502959921.git.horms+renesas@verge.net.au>
+References: <cover.1502959921.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Stephen,
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-On Fri, Jul 21, 2017 at 10:16 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 04/20, Yoshihiro Kaneko wrote:
->> From: Gaku Inami <gaku.inami.xw@bp.renesas.com>
->>
->> This patch adds the common function to reset the clk rate in order to
->> be able to use it in other cases.
->>
->> Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
->> Signed-off-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
->> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
->> ---
->> This patch is based on the clk-next branch of linux-clk tree.
->
-> Geert?
+clock name of "audio_clkout" is used by Renesas sound driver.
+This duplicated naming breaks its clock registering/unregistering.
+Especially, when unbind/bind it can't handle clkout correctly.
+This patch renames "audio_clkout" to "audio-clkout" to avoid
+naming conflict.
 
-The CS2000 clock generator is not a Renesas part, so please take it directly.
-Thanks!
+Fixes: 8a8f181d2cfd ("arm64: renesas: salvator-x: use CS2000 as AUDIO_CLK_B")
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+index a451996f590a..f903957da504 100644
+--- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+@@ -45,7 +45,7 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	audio_clkout: audio_clkout {
++	audio_clkout: audio-clkout {
+ 		/*
+ 		 * This is same as <&rcar_sound 0>
+ 		 * but needed to avoid cs2000/rcar_sound probe dead-lock
+-- 
+2.1.4
