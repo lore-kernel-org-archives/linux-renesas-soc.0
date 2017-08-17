@@ -1,50 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52623 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750775AbdHQI4j (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:36501 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753233AbdHQRci (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Aug 2017 04:56:39 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH] arm64: renesas: salvator-common: avoid audio_clkout naming conflict
-Date: Thu, 17 Aug 2017 10:56:35 +0200
-Message-Id: <8cd7b51ff57c74260b20c97623b0e0d420c22be8.1502959921.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1502959921.git.horms+renesas@verge.net.au>
-References: <cover.1502959921.git.horms+renesas@verge.net.au>
+        Thu, 17 Aug 2017 13:32:38 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+        Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH 2/2] ARM: dtsi: iwg22m: Add eMMC support
+Date: Thu, 17 Aug 2017 18:31:43 +0100
+Message-Id: <1502991103-2325-3-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1502991103-2325-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1502991103-2325-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Add eMMC support for iW-RainboW-G22M-SM.
 
-clock name of "audio_clkout" is used by Renesas sound driver.
-This duplicated naming breaks its clock registering/unregistering.
-Especially, when unbind/bind it can't handle clkout correctly.
-This patch renames "audio_clkout" to "audio-clkout" to avoid
-naming conflict.
-
-Fixes: 8a8f181d2cfd ("arm64: renesas: salvator-x: use CS2000 as AUDIO_CLK_B")
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/salvator-common.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a7745-iwg22m.dtsi | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-index a451996f590a..f903957da504 100644
---- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-@@ -45,7 +45,7 @@
- 		stdout-path = "serial0:115200n8";
+diff --git a/arch/arm/boot/dts/r8a7745-iwg22m.dtsi b/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
+index 9dbd854..afb1148 100644
+--- a/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
++++ b/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
+@@ -17,8 +17,34 @@
+ 		device_type = "memory";
+ 		reg = <0 0x40000000 0 0x20000000>;
  	};
++
++	reg_3p3v: 3p3v {
++		compatible = "regulator-fixed";
++		regulator-name = "3P3V";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-always-on;
++		regulator-boot-on;
++	};
+ };
  
--	audio_clkout: audio_clkout {
-+	audio_clkout: audio-clkout {
- 		/*
- 		 * This is same as <&rcar_sound 0>
- 		 * but needed to avoid cs2000/rcar_sound probe dead-lock
+ &extal_clk {
+ 	clock-frequency = <20000000>;
+ };
++
++&pfc {
++	mmcif0_pins: mmc {
++		groups = "mmc_data8", "mmc_ctrl";
++		function = "mmc";
++	};
++};
++
++&mmcif0 {
++	pinctrl-0 = <&mmcif0_pins>;
++	pinctrl-names = "default";
++
++	vmmc-supply = <&reg_3p3v>;
++	bus-width = <8>;
++	non-removable;
++	status = "okay";
++};
 -- 
-2.1.4
+2.7.4
