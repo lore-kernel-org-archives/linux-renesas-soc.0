@@ -1,57 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:41292 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752160AbdHXJwy (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:63110 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753233AbdHQRcd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 Aug 2017 05:52:54 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
+        Thu, 17 Aug 2017 13:32:33 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
         Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH ] PCI: rcar: Add r8a7743/5 support
-Date: Thu, 24 Aug 2017 10:35:44 +0100
-Message-Id: <1503567344-5610-1-git-send-email-biju.das@bp.renesas.com>
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH 1/2] ARM: dts: r8a7745: Add MMC interface support
+Date: Thu, 17 Aug 2017 18:31:42 +0100
+Message-Id: <1502991103-2325-2-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1502991103-2325-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1502991103-2325-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add internal PCI bridge support for r8a7743/5 SoC. Renesas RZ/G1[ME]
-(R8A7743/5) internal PCI bridge is identical to the R-Car Gen2 family.
+Add MMC interface support for r8a7745 SoC.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
-This patch is tested against Linux next tag next-20170824 and
-renesas-dev branch renesas-devel-20170822-v4.13-rc6. 
+ arch/arm/boot/dts/r8a7745.dtsi | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
- Documentation/devicetree/bindings/pci/pci-rcar-gen2.txt | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/pci/pci-rcar-gen2.txt b/Documentation/devicetree/bindings/pci/pci-rcar-gen2.txt
-index 07a7509..3d03863 100644
---- a/Documentation/devicetree/bindings/pci/pci-rcar-gen2.txt
-+++ b/Documentation/devicetree/bindings/pci/pci-rcar-gen2.txt
-@@ -6,11 +6,14 @@ AHB. There is one bridge instance per USB port connected to the internal
- OHCI and EHCI controllers.
+diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+index aff90df..e17289f 100644
+--- a/arch/arm/boot/dts/r8a7745.dtsi
++++ b/arch/arm/boot/dts/r8a7745.dtsi
+@@ -508,6 +508,22 @@
+ 			#size-cells = <0>;
+ 			status = "disabled";
+ 		};
++
++		mmcif0: mmc@ee200000 {
++			compatible = "renesas,mmcif-r8a7745",
++				     "renesas,sh-mmcif";
++			reg = <0 0xee200000 0 0x80>;
++			interrupts = <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 315>;
++			dmas = <&dmac0 0xd1>, <&dmac0 0xd2>,
++			       <&dmac1 0xd1>, <&dmac1 0xd2>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
++			resets = <&cpg 315>;
++			reg-io-width = <4>;
++			max-frequency = <97500000>;
++			status = "disabled";
++		};
+ 	};
  
- Required properties:
--- compatible: "renesas,pci-r8a7790" for the R8A7790 SoC;
-+- compatible: "renesas,pci-r8a7743" for the R8A7743 SoC;
-+	      "renesas,pci-r8a7745" for the R8A7745 SoC;
-+	      "renesas,pci-r8a7790" for the R8A7790 SoC;
- 	      "renesas,pci-r8a7791" for the R8A7791 SoC;
- 	      "renesas,pci-r8a7793" for the R8A7793 SoC;
- 	      "renesas,pci-r8a7794" for the R8A7794 SoC;
--	      "renesas,pci-rcar-gen2" for a generic R-Car Gen2 compatible device
-+	      "renesas,pci-rcar-gen2" for a generic R-Car Gen2 or
-+				      RZ/G1 compatible device.
- 
- 
- 	      When compatible with the generic version, nodes must list the
+ 	/* External root clock */
 -- 
-1.9.1
+2.7.4
