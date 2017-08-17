@@ -1,41 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:39031 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751274AbdHXItC (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52231 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751552AbdHQIaS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 Aug 2017 04:49:02 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: horms@verge.net.au
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, magnus.damm@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Thu, 17 Aug 2017 04:30:18 -0400
+Date: Thu, 17 Aug 2017 10:30:15 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 1/4] arm: dts: gr-peach: Remove empty line
-Date: Thu, 24 Aug 2017 10:48:40 +0200
-Message-Id: <1503564523-31899-2-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1503564523-31899-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1503564523-31899-1-git-send-email-jacopo+renesas@jmondi.org>
+Subject: Re: [PATCH repost 0/2] ARM: shmobile: document iWave's
+ iW-RainboW-G22D-SODIMM RZ/G1E SODIMM development platform
+Message-ID: <20170817083015.GF26170@verge.net.au>
+References: <cover.1502274234.git.fabrizio.castro@bp.renesas.com>
+ <20170810081148.GH16647@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170810081148.GH16647@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Remove an empty line in gr-peach device tree source file.
+On Thu, Aug 10, 2017 at 10:11:48AM +0200, Simon Horman wrote:
+> On Wed, Aug 09, 2017 at 12:27:38PM +0100, Fabrizio Castro wrote:
+> > Hello,
+> > 
+> > This series aims to add the documentation for the device tree bindings
+> > of the iWave iW-RainboW-G22D-SODIMM RZ/G1E SODIMM development kit:
+> > http://www.iwavesystems.com/product/development-platform/sodimm-evaluation-boards/rz-g1e-sodimm-development-kit-28/rz-g1e-sodimm-development-kit.html
+> > 
+> > which consists of a System on Module (iW-RainboW-G22M-SM) and a carrier
+> > card (iW-RainboW-G22D).
+> 
+> Hi Fabrizio,
+> 
+> Thanks for reposting with myself and linux-renesas-soc CCed.
+> 
+> As is the common practice for DT binding updates I will wait to see if Rob
+> or others wish to Ack this change before applying it.  Please ping me, f.e.
+> by a reply-to-all to this email, in one week if there has been no further
+> activity.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- arch/arm/boot/dts/r7s72100-gr-peach.dts | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/r7s72100-gr-peach.dts b/arch/arm/boot/dts/r7s72100-gr-peach.dts
-index a1b2aef9..1c40a1a 100644
---- a/arch/arm/boot/dts/r7s72100-gr-peach.dts
-+++ b/arch/arm/boot/dts/r7s72100-gr-peach.dts
-@@ -28,7 +28,6 @@
- 	memory@20000000 {
- 		device_type = "memory";
- 		reg = <0x20000000 0x00a00000>;
--
- 	};
- 
- 	lbsc {
--- 
-2.7.4
+I have applied these for v4.14.
