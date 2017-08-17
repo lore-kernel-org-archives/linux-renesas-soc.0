@@ -1,95 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f47.google.com ([209.85.215.47]:35400 "EHLO
-        mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754041AbdHWM5p (ORCPT
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:34688 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752027AbdHQHXw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Aug 2017 08:57:45 -0400
-Received: by mail-lf0-f47.google.com with SMTP id k186so99651lfe.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 23 Aug 2017 05:57:44 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20170823125740.342120870@cogentembedded.com>
-Date: Wed, 23 Aug 2017 15:52:28 +0300
-To: Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-To: Stephen Boyd <sboyd@codeaurora.org>
-To: linux-clk@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 1/2] clk: renesas: add R8A7797 CPG core clock definitions
+        Thu, 17 Aug 2017 03:23:52 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=clk-renesas-add-R8A7797-CPG-core-clock-definitions.patch
+In-Reply-To: <1500554409-22423-1-git-send-email-geert+renesas@glider.be>
+References: <1500554409-22423-1-git-send-email-geert+renesas@glider.be>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 17 Aug 2017 09:23:51 +0200
+Message-ID: <CAMuHMdV0garQZ-5tinC_95UVb172mfW5saff8axnMRAy8KUtCQ@mail.gmail.com>
+Subject: Re: [PATCH 0/4] clk: renesas: Add R-Car D3 support
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add macros usable by the device tree sources to reference the R8A7797 CPG
-clocks  by index.
+On Thu, Jul 20, 2017 at 2:40 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> This patch series adds support for clocks on the R-Car D3 SoC.
+>
+> As usual, this is meant to be queued up in clk-renesas-for-v4.14.
 
-Based on the original (and large) patch by Daisuke Matsushita
-<daisuke.matsushita.ns@hitachi.com>.
+Done.
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> Geert Uytterhoeven (4):
+>   clk: renesas: Add r8a77995 CPG Core Clock Definitions
+>   clk: renesas: rcar-gen3: Add divider support for PLL1 and PLL3
+>   clk: renesas: rcar-gen3: Add support for SCCG/Clean peripheral clocks
+>   clk: renesas: cpg-mssr: Add R8A77995 support
+>
+>  .../devicetree/bindings/clock/renesas,cpg-mssr.txt |   3 +-
+>  drivers/clk/renesas/Kconfig                        |   5 +
+>  drivers/clk/renesas/Makefile                       |   1 +
+>  drivers/clk/renesas/r8a7795-cpg-mssr.c             |  34 +--
+>  drivers/clk/renesas/r8a7796-cpg-mssr.c             |  34 +--
+>  drivers/clk/renesas/r8a77995-cpg-mssr.c            | 236 +++++++++++++++++++++
+>  drivers/clk/renesas/rcar-gen3-cpg.c                |  22 +-
+>  drivers/clk/renesas/rcar-gen3-cpg.h                |  15 +-
+>  drivers/clk/renesas/renesas-cpg-mssr.c             |   6 +
+>  drivers/clk/renesas/renesas-cpg-mssr.h             |   1 +
+>  include/dt-bindings/clock/r8a77995-cpg-mssr.h      |  57 +++++
+>  11 files changed, 375 insertions(+), 39 deletions(-)
+>  create mode 100644 drivers/clk/renesas/r8a77995-cpg-mssr.c
+>  create mode 100644 include/dt-bindings/clock/r8a77995-cpg-mssr.h
 
----
- include/dt-bindings/clock/r8a7797-cpg-mssr.h |   48 +++++++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
+Gr{oetje,eeting}s,
 
-Index: linux/include/dt-bindings/clock/r8a7797-cpg-mssr.h
-===================================================================
---- /dev/null
-+++ linux/include/dt-bindings/clock/r8a7797-cpg-mssr.h
-@@ -0,0 +1,48 @@
-+/*
-+ * Copyright (C) 2016 Renesas Electronics Corp.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ */
-+#ifndef __DT_BINDINGS_CLOCK_R8A7797_CPG_MSSR_H__
-+#define __DT_BINDINGS_CLOCK_R8A7797_CPG_MSSR_H__
-+
-+#include <dt-bindings/clock/renesas-cpg-mssr.h>
-+
-+/* r8a7797 CPG Core Clocks */
-+#define R8A7797_CLK_Z2			0
-+#define R8A7797_CLK_ZR			1
-+#define R8A7797_CLK_ZTR			2
-+#define R8A7797_CLK_ZTRD2		3
-+#define R8A7797_CLK_ZT			4
-+#define R8A7797_CLK_ZX			5
-+#define R8A7797_CLK_S1D1		6
-+#define R8A7797_CLK_S1D2		7
-+#define R8A7797_CLK_S1D4		8
-+#define R8A7797_CLK_S2D1		9
-+#define R8A7797_CLK_S2D2		10
-+#define R8A7797_CLK_S2D4		11
-+#define R8A7797_CLK_LB			12
-+#define R8A7797_CLK_CL			13
-+#define R8A7797_CLK_ZB3			14
-+#define R8A7797_CLK_ZB3D2		15
-+#define R8A7797_CLK_DDR			16
-+#define R8A7797_CLK_CR			17
-+#define R8A7797_CLK_CRD2		18
-+#define R8A7797_CLK_SD0H		19
-+#define R8A7797_CLK_SD0			20
-+#define R8A7797_CLK_RPC			21
-+#define R8A7797_CLK_RPCD2		22
-+#define R8A7797_CLK_MSO			23
-+#define R8A7797_CLK_CANFD		24
-+#define R8A7797_CLK_CSI0		25
-+#define R8A7797_CLK_CSIREF		26
-+#define R8A7797_CLK_FRAY		27
-+#define R8A7797_CLK_CP			28
-+#define R8A7797_CLK_CPEX		29
-+#define R8A7797_CLK_R			30
-+#define R8A7797_CLK_OSC			31
-+
-+#endif /* __DT_BINDINGS_CLOCK_R8A7797_CPG_MSSR_H__ */
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
