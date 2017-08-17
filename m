@@ -1,103 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:38499 "EHLO
+Received: from galahad.ideasonboard.com ([185.26.127.97]:56486 "EHLO
         galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752453AbdHOW52 (ORCPT
+        with ESMTP id S1750857AbdHQQLG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 Aug 2017 18:57:28 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] v4l: vsp1: Start and stop DRM pipeline independently of planes
-Date: Wed, 16 Aug 2017 01:57:44 +0300
-Message-Id: <20170815225744.14730-1-laurent.pinchart+renesas@ideasonboard.com>
+        Thu, 17 Aug 2017 12:11:06 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH v2 8/8] v4l: vsp1: Reduce display list body size
+Date: Thu, 17 Aug 2017 19:11:30 +0300
+Message-ID: <3704707.T2fvHgbeUE@avalon>
+In-Reply-To: <fa078611769415d7adbad208f1299d05bee3bda8.1502723341.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.4457988ad8b64b5c7636e35039ef61d507af3648.1502723341.git-series.kieran.bingham+renesas@ideasonboard.com> <fa078611769415d7adbad208f1299d05bee3bda8.1502723341.git-series.kieran.bingham+renesas@ideasonboard.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The KMS API supports enabling a CRTC without any plane. To enable that
-use case, we need to start the pipeline when configuring the LIF,
-instead of when enabling the first plane.
+Hi Kieran,
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/media/platform/vsp1/vsp1_drm.c | 37 +++++++++++++++++++++++++---------
- 1 file changed, 27 insertions(+), 10 deletions(-)
+Thank you for the patch.
 
-This patch is based on top of the VSP+DU large patch series queued through
-Dave's DRM tree for v4.14-rc1. It doesn't can't be merged independently
-through the linux-media tree for the same kernel version. As the change is not
-urgent, it can be delayed until v4.15-rc1.
+On Monday 14 Aug 2017 16:13:31 Kieran Bingham wrote:
+> The display list originally allocated a body of 256 entries to store all
+> of the register lists required for each frame.
+> 
+> This has now been separated into fragments for constant stream setup, and
+> runtime updates.
+> 
+> Empirical testing shows that the body0 now uses a maximum of 41
+> registers for each frame, for both DRM and Video API pipelines thus a
+> rounded 64 entries provides a suitable allocation.
 
-diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
-index 4dfbeac8f42c..7ce69f23f50a 100644
---- a/drivers/media/platform/vsp1/vsp1_drm.c
-+++ b/drivers/media/platform/vsp1/vsp1_drm.c
-@@ -84,8 +84,12 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
- 	struct vsp1_drm_pipeline *drm_pipe;
- 	struct vsp1_pipeline *pipe;
- 	struct vsp1_bru *bru;
-+	struct vsp1_entity *entity;
-+	struct vsp1_entity *next;
-+	struct vsp1_dl_list *dl;
- 	struct v4l2_subdev_format format;
- 	const char *bru_name;
-+	unsigned long flags;
- 	unsigned int i;
- 	int ret;
- 
-@@ -250,6 +254,29 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
- 	vsp1_write(vsp1, VI6_DISP_IRQ_STA, 0);
- 	vsp1_write(vsp1, VI6_DISP_IRQ_ENB, 0);
- 
-+	/* Configure all entities in the pipeline. */
-+	dl = vsp1_dl_list_get(pipe->output->dlm);
-+
-+	list_for_each_entry_safe(entity, next, &pipe->entities, list_pipe) {
-+		vsp1_entity_route_setup(entity, pipe, dl);
-+
-+		if (entity->ops->configure) {
-+			entity->ops->configure(entity, pipe, dl,
-+					       VSP1_ENTITY_PARAMS_INIT);
-+			entity->ops->configure(entity, pipe, dl,
-+					       VSP1_ENTITY_PARAMS_RUNTIME);
-+			entity->ops->configure(entity, pipe, dl,
-+					       VSP1_ENTITY_PARAMS_PARTITION);
-+		}
-+	}
-+
-+	vsp1_dl_list_commit(dl);
-+
-+	/* Start the pipeline. */
-+	spin_lock_irqsave(&pipe->irqlock, flags);
-+	vsp1_pipeline_run(pipe);
-+	spin_unlock_irqrestore(&pipe->irqlock, flags);
-+
- 	dev_dbg(vsp1->dev, "%s: pipeline enabled\n", __func__);
- 
- 	return 0;
-@@ -488,7 +515,6 @@ void vsp1_du_atomic_flush(struct device *dev, unsigned int pipe_index)
- 	struct vsp1_entity *next;
- 	struct vsp1_dl_list *dl;
- 	const char *bru_name;
--	unsigned long flags;
- 	unsigned int i;
- 	int ret;
- 
-@@ -570,15 +596,6 @@ void vsp1_du_atomic_flush(struct device *dev, unsigned int pipe_index)
- 	}
- 
- 	vsp1_dl_list_commit(dl);
--
--	/* Start or stop the pipeline if needed. */
--	if (!drm_pipe->enabled && pipe->num_inputs) {
--		spin_lock_irqsave(&pipe->irqlock, flags);
--		vsp1_pipeline_run(pipe);
--		spin_unlock_irqrestore(&pipe->irqlock, flags);
--	} else if (drm_pipe->enabled && !pipe->num_inputs) {
--		vsp1_pipeline_stop(pipe);
--	}
- }
- EXPORT_SYMBOL_GPL(vsp1_du_atomic_flush);
- 
+Didn't you mention in patch 7/8 that one of the fragments uses exactly 64 
+entries ? Which one is it, and is there a risk it could use more ? 
+
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> ---
+>  drivers/media/platform/vsp1/vsp1_dl.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/vsp1/vsp1_dl.c
+> b/drivers/media/platform/vsp1/vsp1_dl.c index 176a258146ac..b3f5eb2f9a4f
+> 100644
+> --- a/drivers/media/platform/vsp1/vsp1_dl.c
+> +++ b/drivers/media/platform/vsp1/vsp1_dl.c
+> @@ -21,7 +21,7 @@
+>  #include "vsp1.h"
+>  #include "vsp1_dl.h"
+> 
+> -#define VSP1_DL_NUM_ENTRIES		256
+> +#define VSP1_DL_NUM_ENTRIES		64
+> 
+>  #define VSP1_DLH_INT_ENABLE		(1 << 1)
+>  #define VSP1_DLH_AUTO_START		(1 << 0)
+
 -- 
 Regards,
 
