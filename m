@@ -1,43 +1,38 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:49702 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751607AbdH3N6l (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52103 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750775AbdHQIUa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 30 Aug 2017 09:58:41 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH  5/5] ARM: dts: iwg20d-q7: Enable USB PHY
-Date: Wed, 30 Aug 2017 14:41:13 +0100
-Message-Id: <1504100473-5528-6-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1504100473-5528-1-git-send-email-biju.das@bp.renesas.com>
-References: <1504100473-5528-1-git-send-email-biju.das@bp.renesas.com>
+        Thu, 17 Aug 2017 04:20:30 -0400
+Date: Thu, 17 Aug 2017 10:20:28 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: magnus.damm@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 0/3] arm64: dts: r8a7796: add usb host device nodes
+Message-ID: <20170817082028.GA27693@verge.net.au>
+References: <1501763324-26028-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <20170804105919.GA9178@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170804105919.GA9178@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
----
- arch/arm/boot/dts/r8a7743-iwg20d-q7.dts | 4 ++++
- 1 file changed, 4 insertions(+)
+On Fri, Aug 04, 2017 at 12:59:19PM +0200, Simon Horman wrote:
+> On Thu, Aug 03, 2017 at 09:28:41PM +0900, Yoshihiro Shimoda wrote:
+> > This patch is based on the renesas.git / renesas-devel-20170731v2-v4.13-rc3 tag.
+> > 
+> > For usb2.0 host, we need the following patch:
+> >  https://patchwork.kernel.org/patch/9864583/
+> > 
+> > For usb3.0 host, we need the following patch:
+> >  https://patchwork.kernel.org/patch/9864579/
+> 
+> Thanks, I am marking this series as deferred pending acceptance of the
+> above patches. Please repost this series or otherwise ping me once the
+> dependencies are in place.
 
-diff --git a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-index 63166f9..0136864 100644
---- a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-+++ b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-@@ -147,3 +147,7 @@
- 	pinctrl-0 = <&usb1_pins>;
- 	pinctrl-names = "default";
- };
-+
-+&usbphy {
-+	status = "okay";
-+};
--- 
-1.9.1
+It looks like Geert has accepted the patches above,
+accordingly I have applied this series.
