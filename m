@@ -1,45 +1,41 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:49530 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932945AbdHVNxA (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 22 Aug 2017 09:53:00 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] dt-bindings: apmu: Document r8a7745 support
-Date: Tue, 22 Aug 2017 14:52:19 +0100
-Message-Id: <1503409939-9355-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Thu, 17 Aug 2017 10:13:20 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Hans Verkuil <hans.verkuil@cisco.com>
+Subject: Re: [PATCH 3/4] arm: dts: renesas: add cec clock for Koelsch board
+Message-ID: <20170817081320.GD26170@verge.net.au>
+References: <20170730130743.19681-1-hverkuil@xs4all.nl>
+ <20170730130743.19681-4-hverkuil@xs4all.nl>
+ <CAMuHMdXSHz2vKNOfJGM3ByzTankzd66Hj_Q_KewmHSWhSmV1Sg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXSHz2vKNOfJGM3ByzTankzd66Hj_Q_KewmHSWhSmV1Sg@mail.gmail.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document APMU and SMP enable method for RZ/G1E (also known as
-r8a7745) SoC.
+On Mon, Aug 14, 2017 at 05:34:41PM +0200, Geert Uytterhoeven wrote:
+> On Sun, Jul 30, 2017 at 3:07 PM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
+> > From: Hans Verkuil <hans.verkuil@cisco.com>
+> 
+> Probably the one-line summary should be
+> 
+>     ARM: dts: koelsch: Add CEC clock  for HDMI transmitter
+> 
+> > The adv7511 on the Koelsch board has a 12 MHz fixed clock
+> > for the CEC block. Specify this in the dts to enable CEC support.
+> >
+> > Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
- Documentation/devicetree/bindings/power/renesas,apmu.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/power/renesas,apmu.txt b/Documentation/devicetree/bindings/power/renesas,apmu.txt
-index af21502..f747f95 100644
---- a/Documentation/devicetree/bindings/power/renesas,apmu.txt
-+++ b/Documentation/devicetree/bindings/power/renesas,apmu.txt
-@@ -8,6 +8,7 @@ Required properties:
- - compatible: Should be "renesas,<soctype>-apmu", "renesas,apmu" as fallback.
- 	      Examples with soctypes are:
- 		- "renesas,r8a7743-apmu" (RZ/G1M)
-+		- "renesas,r8a7745-apmu" (RZ/G1E)
- 		- "renesas,r8a7790-apmu" (R-Car H2)
- 		- "renesas,r8a7791-apmu" (R-Car M2-W)
- 		- "renesas,r8a7792-apmu" (R-Car V2H)
--- 
-2.7.4
+Thanks, I have applied this patch with the updated one-line summary.
