@@ -1,39 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:35651 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751637AbdHQMvs (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:53398 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751169AbdHQJuP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Aug 2017 08:51:48 -0400
+        Thu, 17 Aug 2017 05:50:15 -0400
+Date: Thu, 17 Aug 2017 11:50:13 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: arm-soc <arm@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [GIT PULL] Fourth Round of Renesas ARM Based SoC Fixes for v4.13
+Message-ID: <20170817095013.GB25223@verge.net.au>
+References: <cover.1502959921.git.horms+renesas@verge.net.au>
+ <CAK8P3a0F5xKg1A3Oi-DzsZic0YK_UWMKxdO6Ka2EweAxq229=w@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20170726215439.9623-3-wsa+renesas@sang-engineering.com>
-References: <20170726215439.9623-1-wsa+renesas@sang-engineering.com> <20170726215439.9623-3-wsa+renesas@sang-engineering.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 17 Aug 2017 14:51:48 +0200
-Message-ID: <CAMuHMdWZ4YG5nNNbKecshciWjfLFWwAy4gdhbOfbT2qPVM-OtA@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/3] watchdog: renesas_wdt: make 'clk' a variable
- local to probe()
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a0F5xKg1A3Oi-DzsZic0YK_UWMKxdO6Ka2EweAxq229=w@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Jul 26, 2017 at 11:54 PM, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> It is not needed outside probe() anymore.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On Thu, Aug 17, 2017 at 11:01:05AM +0200, Arnd Bergmann wrote:
+> On Thu, Aug 17, 2017 at 10:56 AM, Simon Horman
+> <horms+renesas@verge.net.au> wrote:
+> > Hi Olof, Hi Kevin, Hi Arnd,
+> >
+> > Please consider these fourth round of Renesas ARM based SoC fixes for v4.13.
+> >
+> > This pull request is based on the second round of
+> > such requests, tagged as renesas-fixes2-for-v4.13,
+> > which I you have already pulled.
+> >
+> > It is not based on the third round of fixes as they
+> > are not related to arm64 DT and have a different base.
+> 
+> Pulled into the fixes branch, thanks!
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks, that was quick :)
