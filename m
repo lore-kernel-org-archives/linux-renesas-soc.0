@@ -1,51 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp1.de.adit-jv.com ([62.225.105.245]:32795 "EHLO
-        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753101AbdHTQp7 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:51612 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750755AbdHQH4V (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 20 Aug 2017 12:45:59 -0400
-Date: Sun, 20 Aug 2017 18:37:23 +0200
-From: Eugeniu Rosca <erosca@de.adit-jv.com>
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Jose Abreu <joabreu@synopsys.com>
-CC: <linux-renesas-soc@vger.kernel.org>, <erosca@de.adit-jv.com>
-Subject: Re: [v3,15/20] drm: bridge: dw-hdmi: Handle overflow workaround
- based on device version
-Message-ID: <20170820163723.GA13473@vmlxhi-102.adit-jv.com>
+        Thu, 17 Aug 2017 03:56:21 -0400
+Date: Thu, 17 Aug 2017 09:56:18 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Chris Paterson <Chris.Paterson2@renesas.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 1/3] ARM: dts: r8a7745: add PFC support
+Message-ID: <20170817075618.GB26170@verge.net.au>
+References: <20170415202036.987901107@cogentembedded.com>
+ <CAMuHMdUPda7Mjo_P8p1V5a20XOAYM6GFf8Jqf0KLUuO7zAODeA@mail.gmail.com>
+ <TY1PR06MB07025D9CE628A3D4CED37AA9B78D0@TY1PR06MB0702.apcprd06.prod.outlook.com>
+ <b3bcd091-4f96-c37a-54ec-c8ee5b0fd916@cogentembedded.com>
+ <20170815160049.GC26748@verge.net.au>
+ <521e62cc-46d4-b067-59b2-cc085fd88e84@cogentembedded.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20170117082910.27023-16-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <521e62cc-46d4-b067-59b2-cc085fd88e84@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello Laurent, Jose,
+On Wed, Aug 16, 2017 at 02:00:37PM +0300, Sergei Shtylyov wrote:
+> On 08/15/2017 07:00 PM, Simon Horman wrote:
+> 
+> >>>>>Define the generic R8A7745 part of the PFC device node.
+> >>>>>
+> >>>>>Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> >>>>
+> >>>>Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >>>
+> >>>It looks like the dependencies for this patch are met now [1].
+> >>>
+> >>>Are you happy to accept this patch? (and presumably the others in the series for the sk-rzg1e board).
+> >>>
+> >>>We plan to add GPIO support for r8a7745, but need this patch in place first.
+> >>>
+> >>>
+> >>>[1] https://patchwork.kernel.org/patch/9705249/
+> >>
+> >>    Actually, R8A774x PFC support has hit the Linus' tree in the meanwhile.
+> >>Simon, please merge the .dts patches.
+> >>
+> >>>Kind regards, Chris
+> >
+> >Thanks, I have applied the series for v4.14.
+> 
+>    Are you going to finally push the devel branch? I'm not seeing changes
+> since the Monday tags.
 
-As you might know, Renesas uses the same Synopsis Designware HDMI
-transmitter IP in the Rcar Gen3 SoCs. There are v4.9+ patches present
-in [1] to enable support for this.
-
-Why I reply in this specific thread is because I am having a trial
-attempt to rebase the RCAR-specific v4.9+ dw-hdmi patches on top of
-a more recent kernel, which already contains mainline commit [2],
-being proposed as part of this patch series.
-
-Based on [3], it looks like that the `dw_hdmi_clear_overflow()`
-workaround, formerly implemented for IMX6, is still used on Rcar3.
-
-Current patch (integrated in upstream as commit [2]) assumes that
-the workaround is only needed for the older v1.30a and v1.31a IP
-implementations. Given much newer HDMI controller contained in RCAR3
-(kernel reports v2.01a) and given it's you who witnessed the
-original issue, I wonder what is the easiest way to check if the
-problem fixed by the workaround still occurs on the Renesas SoC?
-I have plenty of Salvator-X and ULCB boards, so HW is not a problem.
-
-Your feedback is much appreciated.
-
-Best regards,
-Eugeniu.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas-bsp.git/
-[2] mainline commit be41fc55f1aa ("drm: bridge: dw-hdmi: Handle overflow workaround based on device version")
-[3] https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas-bsp.git/commit/?h=8fdb115e6e1f
+Sorry, about the delay.
+I have (finally) pushed Tuesday's tags.
