@@ -1,86 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:33970 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751925AbdHHLGU (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:53361 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751695AbdHQJta (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 Aug 2017 07:06:20 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <873792n94e.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1df2L0-0004wX-4H@finisterre>
-Date: Tue, 08 Aug 2017 12:06:14 +0100
-Subject: Applied "ASoC: rsnd: move rsnd_ssi_config_init() execute condition into it." to the asoc tree
+        Thu, 17 Aug 2017 05:49:30 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH] ARM: shmobile: Enable BQ32000 rtc in shmobile_defconfig
+Date: Thu, 17 Aug 2017 11:49:27 +0200
+Message-Id: <0736aad1290d61bc3668f20253e1e1997ad8b3c1.1502960320.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1502960320.git.horms+renesas@verge.net.au>
+References: <cover.1502960320.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+From: Biju Das <biju.das@bp.renesas.com>
 
-   ASoC: rsnd: move rsnd_ssi_config_init() execute condition into it.
+The iWave RZ/G1M Q7 SOM supports RTC (TI BQ32000).
+To increase hardware support enable the driver in the
+shmobile_defconfig multiplatform configuration.
 
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From bf23c6a3813aac96e0af01565aba012b25c8bae5 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Tue, 8 Aug 2017 01:32:08 +0000
-Subject: [PATCH] ASoC: rsnd: move rsnd_ssi_config_init() execute condition
- into it.
-
-Make it the same style as other functions
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- sound/soc/sh/rcar/ssi.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ arch/arm/configs/shmobile_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/sound/soc/sh/rcar/ssi.c b/sound/soc/sh/rcar/ssi.c
-index 49cdc5e007b3..3ee7b2de7dea 100644
---- a/sound/soc/sh/rcar/ssi.c
-+++ b/sound/soc/sh/rcar/ssi.c
-@@ -335,6 +335,9 @@ static void rsnd_ssi_config_init(struct rsnd_mod *mod,
- 	u32 wsr;
- 	int is_tdm;
- 
-+	if (rsnd_ssi_is_parent(mod, io))
-+		return;
-+
- 	is_tdm = rsnd_runtime_is_ssi_tdm(io);
- 
- 	/*
-@@ -472,8 +475,7 @@ static int rsnd_ssi_init(struct rsnd_mod *mod,
- 	if (ret < 0)
- 		return ret;
- 
--	if (!rsnd_ssi_is_parent(mod, io))
--		rsnd_ssi_config_init(mod, io);
-+	rsnd_ssi_config_init(mod, io);
- 
- 	rsnd_ssi_register_setup(mod);
- 
+diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
+index 18886c53424a..7b4fc0143148 100644
+--- a/arch/arm/configs/shmobile_defconfig
++++ b/arch/arm/configs/shmobile_defconfig
+@@ -193,6 +193,7 @@ CONFIG_LEDS_CLASS=y
+ CONFIG_LEDS_GPIO=y
+ CONFIG_RTC_CLASS=y
+ CONFIG_RTC_DRV_RS5C372=y
++CONFIG_RTC_DRV_BQ32K=y
+ CONFIG_RTC_DRV_S35390A=y
+ CONFIG_RTC_DRV_RX8581=y
+ CONFIG_RTC_DRV_DA9063=y
 -- 
-2.13.2
+2.1.4
