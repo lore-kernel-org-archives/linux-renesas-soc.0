@@ -1,37 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:42841 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751191AbdHXKok (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:8124 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753233AbdHQRcQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 Aug 2017 06:44:40 -0400
-Date: Thu, 24 Aug 2017 06:44:30 -0400
-From: Simon Horman <horms@verge.net.au>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+        Thu, 17 Aug 2017 13:32:16 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+        Simon Horman <horms@verge.net.au>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: Re: [PATCH 0/2] ARM: dtsi: r8a7745: iwg22m: Add eMMC support
-Message-ID: <20170824104430.GA27788@verge.net.au>
-References: <1502991103-2325-1-git-send-email-fabrizio.castro@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1502991103-2325-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Biju Das <biju.das@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH 0/2] ARM: dtsi: r8a7745: iwg22m: Add eMMC support
+Date: Thu, 17 Aug 2017 18:31:41 +0100
+Message-Id: <1502991103-2325-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Aug 17, 2017 at 06:31:41PM +0100, Fabrizio Castro wrote:
-> This series adds eMMC support to r8a7745 SoC and iW-RainboW-G22M-SM SoM.
-> 
-> Testing has been made on top of Renesas's devel branch.
-> 
-> The patches contained in this series depend on the following patches:
-> [1/2] ARM: dts: iwg22m: Add iWave RZG1E SODIMM SOM - https://patchwork.kernel.org/patch/9901619/
-> [2/2] ARM: dts: iwg22d-sodimm: Add support for iWave G22D-SODIMM board - https://patchwork.kernel.org/patch/9901623/
-> dt-bindings: mmc: sh_mmcif: Document r8a7745 DT bindings - https://patchwork.kernel.org/patch/9902199/
+This series adds eMMC support to r8a7745 SoC and iW-RainboW-G22M-SM SoM.
 
-Thanks, applied for v4.15.
+Testing has been made on top of Renesas's devel branch.
+
+The patches contained in this series depend on the following patches:
+[1/2] ARM: dts: iwg22m: Add iWave RZG1E SODIMM SOM - https://patchwork.kernel.org/patch/9901619/
+[2/2] ARM: dts: iwg22d-sodimm: Add support for iWave G22D-SODIMM board - https://patchwork.kernel.org/patch/9901623/
+dt-bindings: mmc: sh_mmcif: Document r8a7745 DT bindings - https://patchwork.kernel.org/patch/9902199/
+
+Regards,
+
+Fabrizio Castro (2):
+  ARM: dts: r8a7745: Add MMC interface support
+  ARM: dtsi: iwg22m: Add eMMC support
+
+ arch/arm/boot/dts/r8a7745-iwg22m.dtsi | 26 ++++++++++++++++++++++++++
+ arch/arm/boot/dts/r8a7745.dtsi        | 16 ++++++++++++++++
+ 2 files changed, 42 insertions(+)
+
+-- 
+2.7.4
