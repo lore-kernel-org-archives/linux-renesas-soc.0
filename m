@@ -1,63 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33652 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751644AbdHRIU3 (ORCPT
+Received: from mail-pg0-f50.google.com ([74.125.83.50]:35742 "EHLO
+        mail-pg0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752687AbdHQNAQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Aug 2017 04:20:29 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Second Round of Renesas ARM Based SoC DT Bindings Updates for v4.14
-Date: Fri, 18 Aug 2017 10:20:06 +0200
-Message-Id: <cover.1502961902.git.horms+renesas@verge.net.au>
+        Thu, 17 Aug 2017 09:00:16 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170813191134.674818373@cogentembedded.com>
+References: <20170813191134.674818373@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 17 Aug 2017 15:00:15 +0200
+Message-ID: <CAMuHMdVWi-xdeiTYF91-0sOJwLfR26GOnPxWkxQO9JfwQqV7_A@mail.gmail.com>
+Subject: Re: [PATCH repost] serial: sh-sci: use of_property_read_bool()
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+On Sun, Aug 13, 2017 at 9:11 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Use more compact of_property_read_bool() call for a boolean property
+> instead  of of_find_property() call in sci_parse_dt().
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Please consider these second round of Renesas ARM based SoC DT bindings updates for v4.14.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This pull request is based on the previous round of
-such requests, tagged as renesas-dt-bindings-for-v4.14,
-which I have already sent a pull-request for.
+Gr{oetje,eeting}s,
 
+                        Geert
 
-The following changes since commit 100acb0bd90be67b3fc625cff91c7617b791743d:
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-  ARM: shmobile: Document Renesas Draak board DT bindings (2017-07-27 17:10:48 +0200)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-dt-bindings2-for-v4.14
-
-for you to fetch changes up to 304ce59242e11e715bfdc86577771502df99f7cd:
-
-  dt-bindings: apmu: Document r8a7743 support (2017-08-17 10:32:24 +0200)
-
-----------------------------------------------------------------
-Second Round of Renesas ARM Based SoC DT Bindings Updates for v4.14
-
-* Add RZ/G1M (r8a7743) binding to apmu driver
-
-  This allows SMP to be supported on the RZ/G1M SoC
-
-* Add bindings for iW-RainboW-G22D-SODIMM RZ/G1E SODIMM development kit
-
-  This is in preparation for adding DTS to support this hardware
-
-----------------------------------------------------------------
-Biju Das (1):
-      dt-bindings: apmu: Document r8a7743 support
-
-Fabrizio Castro (2):
-      ARM: shmobile: document iW-RainboW-G22M-SM SODIMM System on Module
-      ARM: shmobile: document iW-RainboW-G22D SODIMM SOM Development Platform
-
- Documentation/devicetree/bindings/arm/shmobile.txt       | 4 ++++
- Documentation/devicetree/bindings/power/renesas,apmu.txt | 3 ++-
- 2 files changed, 6 insertions(+), 1 deletion(-)
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
