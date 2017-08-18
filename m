@@ -1,44 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:45905 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:33652 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753243AbdHUNBo (ORCPT
+        with ESMTP id S1751107AbdHRIUP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 Aug 2017 09:01:44 -0400
+        Fri, 18 Aug 2017 04:20:15 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 5/6] clk: renesas: r8a7796: Add Z clock
-Date: Mon, 21 Aug 2017 15:01:26 +0200
-Message-Id: <1503320487-13591-6-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1503320487-13591-1-git-send-email-horms+renesas@verge.net.au>
-References: <1503320487-13591-1-git-send-email-horms+renesas@verge.net.au>
+Subject: [PATCH 9/9] ARM: dts: r8a7791: Use R-Car SATA Gen2 fallback compat string
+Date: Fri, 18 Aug 2017 10:19:54 +0200
+Message-Id: <a4bc74d570a79dbfeb64766b130c0113ac39ec3e.1502962873.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1502962873.git.horms+renesas@verge.net.au>
+References: <cover.1502962873.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Use newly added R-Car SATA Gen2 fallback compat string
+in the DT of the r8a7791 SoC.
 
-This patch adds Z clock for R8A7796 SoC.
+This should have no run-time effect as the driver matches against
+the per-SoC compat string before the fallback compat string is considered.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/r8a7791.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index e5e7fb212288..e8d5e75afc65 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -74,6 +74,7 @@ static const struct cpg_core_clk r8a7796_core_clks[] __initconst = {
- 	DEF_FIXED(".sdsrc",     CLK_SDSRC,         CLK_PLL1_DIV2,  2, 1),
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index ea4a8147d995..f1d1a9772153 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -933,7 +933,7 @@
+ 	};
  
- 	/* Core Clock Outputs */
-+	DEF_BASE("z",           R8A7796_CLK_Z,     CLK_TYPE_GEN3_Z, CLK_PLL0),
- 	DEF_FIXED("ztr",        R8A7796_CLK_ZTR,   CLK_PLL1_DIV2,  6, 1),
- 	DEF_FIXED("ztrd2",      R8A7796_CLK_ZTRD2, CLK_PLL1_DIV2, 12, 1),
- 	DEF_FIXED("zt",         R8A7796_CLK_ZT,    CLK_PLL1_DIV2,  4, 1),
+ 	sata0: sata@ee300000 {
+-		compatible = "renesas,sata-r8a7791";
++		compatible = "renesas,sata-r8a7791", "renesas,rcar-gen2-sata";
+ 		reg = <0 0xee300000 0 0x2000>;
+ 		interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp8_clks R8A7791_CLK_SATA0>;
+@@ -942,7 +942,7 @@
+ 	};
+ 
+ 	sata1: sata@ee500000 {
+-		compatible = "renesas,sata-r8a7791";
++		compatible = "renesas,sata-r8a7791", "renesas,rcar-gen2-sata";
+ 		reg = <0 0xee500000 0 0x2000>;
+ 		interrupts = <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp8_clks R8A7791_CLK_SATA1>;
 -- 
 2.1.4
