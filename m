@@ -1,35 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:38532 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751754AbdHCXf4 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33652 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751605AbdHRIT5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 3 Aug 2017 19:35:56 -0400
-Date: Thu, 3 Aug 2017 18:35:53 -0500
-From: Rob Herring <robh@kernel.org>
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org,
-        Hans Verkuil <hans.verkuil@cisco.com>
-Subject: Re: [PATCH 1/4] dt-bindings: adi,adv7511.txt: document cec clock
-Message-ID: <20170803233553.xazboombv4jpggxg@rob-hp-laptop>
-References: <20170730130743.19681-1-hverkuil@xs4all.nl>
- <20170730130743.19681-2-hverkuil@xs4all.nl>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20170730130743.19681-2-hverkuil@xs4all.nl>
+        Fri, 18 Aug 2017 04:19:57 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 8/9] arm64: dts: r8a7796: Add HSUSB device node
+Date: Fri, 18 Aug 2017 10:19:38 +0200
+Message-Id: <b9535853777fdf14232e6bc5e166b667b2225b76.1502961153.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1502961153.git.horms+renesas@verge.net.au>
+References: <cover.1502961153.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sun, Jul 30, 2017 at 03:07:40PM +0200, Hans Verkuil wrote:
-> From: Hans Verkuil <hans.verkuil@cisco.com>
-> 
-> Document the cec clock binding.
-> 
-> Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-> ---
->  Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt | 4 ++++
->  1 file changed, 4 insertions(+)
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index c152b6e30da5..369092e17e34 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -1252,7 +1252,20 @@
+ 		};
+ 
+ 		hsusb: usb@e6590000 {
+-			/* placeholder */
++			compatible = "renesas,usbhs-r8a7796",
++				     "renesas,rcar-gen3-usbhs";
++			reg = <0 0xe6590000 0 0x100>;
++			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 704>;
++			dmas = <&usb_dmac0 0>, <&usb_dmac0 1>,
++			       <&usb_dmac1 0>, <&usb_dmac1 1>;
++			dma-names = "ch0", "ch1", "ch2", "ch3";
++			renesas,buswait = <11>;
++			phys = <&usb2_phy0>;
++			phy-names = "usb";
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			resets = <&cpg 704>;
++			status = "disabled";
+ 		};
+ 
+ 		xhci0: usb@ee000000 {
+-- 
+2.1.4
