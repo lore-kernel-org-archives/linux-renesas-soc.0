@@ -1,67 +1,165 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH v4 4/6] i2c: sh_mobile: use helper to decide if DMA is useful
-Date: Thu, 17 Aug 2017 16:14:47 +0200
-Message-Id: <20170817141449.23958-5-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170817141449.23958-1-wsa+renesas@sang-engineering.com>
-References: <20170817141449.23958-1-wsa+renesas@sang-engineering.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:45538 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751711AbdHRJRB (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 18 Aug 2017 05:17:01 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 4/4] ARM: dts: r8a7794: Stop grouping clocks under a "clocks" subnode
+Date: Fri, 18 Aug 2017 11:16:57 +0200
+Message-Id: <1503047817-29439-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1503047817-29439-1-git-send-email-geert+renesas@glider.be>
+References: <1503047817-29439-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This ensures that we fall back to PIO if the message length is too small
-for DMA being useful. Otherwise, we use DMA. A bounce buffer might be
-applied by the helper if the original message buffer is not DMA safe.
+The current practice is to not group clocks under a "clocks" subnode,
+but just put them together with the other on-SoC devices.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/i2c/busses/i2c-sh_mobile.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/r8a7794.dtsi | 124 ++++++++++++++++++++---------------------
+ 1 file changed, 59 insertions(+), 65 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-sh_mobile.c b/drivers/i2c/busses/i2c-sh_mobile.c
-index 2e097d97d258bc..5efdb7becd83d6 100644
---- a/drivers/i2c/busses/i2c-sh_mobile.c
-+++ b/drivers/i2c/busses/i2c-sh_mobile.c
-@@ -145,6 +145,7 @@ struct sh_mobile_i2c_data {
- 	struct dma_chan *dma_rx;
- 	struct scatterlist sg;
- 	enum dma_data_direction dma_direction;
-+	u8 *dma_buf;
- };
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index ebd44d9982be07cc..a4c35d29f77c16dc 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -982,71 +982,65 @@
+ 		status = "disabled";
+ 	};
  
- struct sh_mobile_dt_config {
-@@ -548,6 +549,8 @@ static void sh_mobile_i2c_dma_callback(void *data)
- 	pd->pos = pd->msg->len;
- 	pd->stop_after_dma = true;
- 
-+	i2c_release_dma_safe_msg_buf(pd->msg, pd->dma_buf);
+-	clocks {
+-		#address-cells = <2>;
+-		#size-cells = <2>;
+-		ranges;
+-
+-		/* External root clock */
+-		extal_clk: extal {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			/* This value must be overriden by the board. */
+-			clock-frequency = <0>;
+-		};
+-
+-		/* External USB clock - can be overridden by the board */
+-		usb_extal_clk: usb_extal {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			clock-frequency = <48000000>;
+-		};
+-
+-		/* External CAN clock */
+-		can_clk: can {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			/* This value must be overridden by the board. */
+-			clock-frequency = <0>;
+-		};
+-
+-		/* External SCIF clock */
+-		scif_clk: scif {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			/* This value must be overridden by the board. */
+-			clock-frequency = <0>;
+-		};
+-
+-		/*
+-		 * The external audio clocks are configured  as 0 Hz fixed
+-		 * frequency clocks by default.  Boards that provide audio
+-		 * clocks should override them.
+-		 */
+-		audio_clka: audio_clka {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			clock-frequency = <0>;
+-		};
+-		audio_clkb: audio_clkb {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			clock-frequency = <0>;
+-		};
+-		audio_clkc: audio_clkc {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			clock-frequency = <0>;
+-		};
+-
+-		cpg: clock-controller@e6150000 {
+-			compatible = "renesas,r8a7794-cpg-mssr";
+-			reg = <0 0xe6150000 0 0x1000>;
+-			clocks = <&extal_clk>, <&usb_extal_clk>;
+-			clock-names = "extal", "usb_extal";
+-			#clock-cells = <2>;
+-			#power-domain-cells = <0>;
+-		};
++	/* External root clock */
++	extal_clk: extal {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
 +
- 	iic_set_clr(pd, ICIC, 0, ICIC_TDMAE | ICIC_RDMAE);
- }
++	/* External USB clock - can be overridden by the board */
++	usb_extal_clk: usb_extal {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <48000000>;
++	};
++
++	/* External CAN clock */
++	can_clk: can {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
++
++	/* External SCIF clock */
++	scif_clk: scif {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
++
++	/*
++	 * The external audio clocks are configured  as 0 Hz fixed
++	 * frequency clocks by default.  Boards that provide audio
++	 * clocks should override them.
++	 */
++	audio_clka: audio_clka {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++	audio_clkb: audio_clkb {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++	audio_clkc: audio_clkc {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
++	cpg: clock-controller@e6150000 {
++		compatible = "renesas,r8a7794-cpg-mssr";
++		reg = <0 0xe6150000 0 0x1000>;
++		clocks = <&extal_clk>, <&usb_extal_clk>;
++		clock-names = "extal", "usb_extal";
++		#clock-cells = <2>;
++		#power-domain-cells = <0>;
+ 	};
  
-@@ -608,7 +611,7 @@ static void sh_mobile_i2c_xfer_dma(struct sh_mobile_i2c_data *pd)
- 	if (IS_ERR(chan))
- 		return;
- 
--	dma_addr = dma_map_single(chan->device->dev, pd->msg->buf, pd->msg->len, dir);
-+	dma_addr = dma_map_single(chan->device->dev, pd->dma_buf, pd->msg->len, dir);
- 	if (dma_mapping_error(chan->device->dev, dma_addr)) {
- 		dev_dbg(pd->dev, "dma map failed, using PIO\n");
- 		return;
-@@ -665,7 +668,8 @@ static int start_ch(struct sh_mobile_i2c_data *pd, struct i2c_msg *usr_msg,
- 	pd->pos = -1;
- 	pd->sr = 0;
- 
--	if (pd->msg->len > 8)
-+	pd->dma_buf = i2c_get_dma_safe_msg_buf(pd->msg, 8);
-+	if (pd->dma_buf)
- 		sh_mobile_i2c_xfer_dma(pd);
- 
- 	/* Enable all interrupts to begin with */
+ 	rst: reset-controller@e6160000 {
 -- 
-2.11.0
+2.7.4
