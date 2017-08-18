@@ -1,67 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:46429 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751814AbdHUJYw (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33652 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751695AbdHRIUK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 Aug 2017 05:24:52 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Simon Horman <horms@verge.net.au>
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2] arm64: dts: renesas: r8a7796: Add FDP1 instance
-Date: Mon, 21 Aug 2017 12:25:21 +0300
-Message-ID: <1709301.HiysQ4booP@avalon>
-In-Reply-To: <20170713112110.9627-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170713112110.9627-1-laurent.pinchart+renesas@ideasonboard.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Fri, 18 Aug 2017 04:20:10 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 6/9] ARM: dts: r8a7743: Add APMU node and second CPU core
+Date: Fri, 18 Aug 2017 10:19:51 +0200
+Message-Id: <60dce695b097a52e6ea5874aa80301f2e4ac627a.1502962873.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1502962873.git.horms+renesas@verge.net.au>
+References: <cover.1502962873.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
+From: Biju Das <biju.das@bp.renesas.com>
 
-On Thursday, 13 July 2017 14:21:10 EEST Laurent Pinchart wrote:
-> The r8a7796 has a single FDP1 instance.
-> 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Add DT nodes for the Advanced Power Management Unit (APMU) and the
+second CPU core.  Use the enable-method to point out that the APMU
+should be used for SMP support.
 
-Could you pick this up ?
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7743.dtsi | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-> ---
->  arch/arm64/boot/dts/renesas/r8a7796.dtsi | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> Changes since v1:
-> 
-> - Added resets property
-> 
-> diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-> b/arch/arm64/boot/dts/renesas/r8a7796.dtsi index ef1120f4e561..898a8dbb31de
-> 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-> @@ -1562,6 +1562,16 @@
->  			/* placeholder */
->  		};
-> 
-> +		fdp1@fe940000 {
-> +			compatible = "renesas,fdp1";
-> +			reg = <0 0xfe940000 0 0x2400>;
-> +			interrupts = <GIC_SPI 262 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&cpg CPG_MOD 119>;
-> +			power-domains = <&sysc R8A7796_PD_A3VC>;
-> +			resets = <&cpg 119>;
-> +			renesas,fcp = <&fcpf0>;
-> +		};
-> +
->  		fcpf0: fcp@fe950000 {
->  			compatible = "renesas,fcpf";
->  			reg = <0 0xfe950000 0 0x200>;
-
-
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index ce80a26c421a..ec9db0fcffc6 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -30,6 +30,7 @@
+ 	cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
++		enable-method = "renesas,apmu";
+ 
+ 		cpu0: cpu@0 {
+ 			device_type = "cpu";
+@@ -41,6 +42,15 @@
+ 			next-level-cache = <&L2_CA15>;
+ 		};
+ 
++		cpu1: cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a15";
++			reg = <1>;
++			clock-frequency = <1500000000>;
++			power-domains = <&sysc R8A7743_PD_CA15_CPU1>;
++			next-level-cache = <&L2_CA15>;
++		};
++
+ 		L2_CA15: cache-controller-0 {
+ 			compatible = "cache";
+ 			cache-unified;
+@@ -57,6 +67,12 @@
+ 		#size-cells = <2>;
+ 		ranges;
+ 
++		apmu@e6152000 {
++			compatible = "renesas,r8a7743-apmu", "renesas,apmu";
++			reg = <0 0xe6152000 0 0x188>;
++			cpus = <&cpu0 &cpu1>;
++		};
++
+ 		gic: interrupt-controller@f1001000 {
+ 			compatible = "arm,gic-400";
+ 			#interrupt-cells = <3>;
 -- 
-Regards,
-
-Laurent Pinchart
+2.1.4
