@@ -1,34 +1,47 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Bhumika Goyal <bhumirks@gmail.com>
-To: julia.lawall@lip6.fr, linus.walleij@linaro.org,
-        marek.vasut+renesas@gmail.com, lee.jones@linaro.org,
-        tony@atomide.com, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-omap@vger.kernel.org
-Cc: Bhumika Goyal <bhumirks@gmail.com>
-Subject: [PATCH 0/2] drivers: make regmap_irq_chip const
-Date: Sat, 12 Aug 2017 11:39:07 +0530
-Message-Id: <1502518149-11663-1-git-send-email-bhumirks@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:33652 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750988AbdHRITt (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 18 Aug 2017 04:19:49 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 2/9] arm64: dts: r8a7795: Use R-Car SATA Gen3 fallback compat string
+Date: Fri, 18 Aug 2017 10:19:32 +0200
+Message-Id: <41f148f63be68bca27f99e0fa16961436e10cd9b.1502961153.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1502961153.git.horms+renesas@verge.net.au>
+References: <cover.1502961153.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Make these structures const. Done using Coccinelle.
+Use newly added R-Car SATA Gen3 fallback compat string
+in the DT of the r8a7795 SoC.
 
-Bhumika Goyal (2):
-  mfd: make regmap_irq_chip const
-  gpio: make regmap_irq_chip const
+This should have no run-time effect as the driver matches against
+the per-SoC compat string before the fallback compat string is considered.
 
- drivers/gpio/gpio-max77620.c       | 2 +-
- drivers/mfd/bd9571mwv.c            | 2 +-
- drivers/mfd/intel_soc_pmic_bxtwc.c | 2 +-
- drivers/mfd/tps65086.c             | 2 +-
- drivers/mfd/tps65090.c             | 2 +-
- drivers/mfd/tps65218.c             | 2 +-
- drivers/mfd/tps65912-core.c        | 2 +-
- drivers/mfd/tps80031.c             | 2 +-
- drivers/mfd/twl6040.c              | 2 +-
- 9 files changed, 9 insertions(+), 9 deletions(-)
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index a87ae76880ab..c9f2b87e7ee3 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -1451,7 +1451,8 @@
+ 		};
+ 
+ 		sata: sata@ee300000 {
+-			compatible = "renesas,sata-r8a7795";
++			compatible = "renesas,sata-r8a7795",
++				     "renesas,rcar-gen3-sata";
+ 			reg = <0 0xee300000 0 0x200000>;
+ 			interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 815>;
 -- 
-1.9.1
+2.1.4
