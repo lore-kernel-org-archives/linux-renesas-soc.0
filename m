@@ -1,46 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:60519 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751274AbdHXIs7 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33652 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750977AbdHRITr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 Aug 2017 04:48:59 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: horms@verge.net.au
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, magnus.damm@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 0/4] GR-Peach DTS update
-Date: Thu, 24 Aug 2017 10:48:39 +0200
-Message-Id: <1503564523-31899-1-git-send-email-jacopo+renesas@jmondi.org>
+        Fri, 18 Aug 2017 04:19:47 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 4/9] arm64: dts: r8a7796: add usb2_phy device nodes
+Date: Fri, 18 Aug 2017 10:19:34 +0200
+Message-Id: <bf68012373546fe4e9078ae294f5886f497fb0e3.1502961153.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1502961153.git.horms+renesas@verge.net.au>
+References: <cover.1502961153.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello Simon,
-   now that RZ/A1 pin controller is merged, it's time to enable some peripheral
-devices on GR-Peach has it has been done for Genmai and RSK boards.
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-The series is based on Simon's "renesas-dt2-for-v4.14" tag release, so it should
-be ideally applied after v4.14-rc1 is out, as it needs pin controller nodes to
-be defined in r7s72100.dtsi.
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 19 +++++++++++++++++--
+ 1 file changed, 17 insertions(+), 2 deletions(-)
 
-Patch 2/4 enables EHTER interface, even if I've not been able to exchange any
-traffic on that. I can set the ip address and probe the device and double
-checked the pin configuration process against u-boot sources (where the
-interface is working instead). Sending the patch anyway and let you decide what
-to do with that.
-
-Thanks
-   j
-
-Jacopo Mondi (4):
-  arm: dts: gr-peach: Remove empty line
-  arm: dts: gr-peach: Add SCIF2 pin group
-  arm: dts: gr-peach: Add ETHER pin group
-  arm: dts: gr-peach: Add user led device nodes
-
- arch/arm/boot/dts/r7s72100-gr-peach.dts | 57 ++++++++++++++++++++++++++++++++-
- 1 file changed, 56 insertions(+), 1 deletion(-)
-
---
-2.7.4
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index ef1120f4e561..efaf941837ac 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -1240,7 +1240,15 @@
+ 		};
+ 
+ 		usb2_phy0: usb-phy@ee080200 {
+-			/* placeholder */
++			compatible = "renesas,usb2-phy-r8a7796",
++				     "renesas,rcar-gen3-usb2-phy";
++			reg = <0 0xee080200 0 0x700>;
++			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 703>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			resets = <&cpg 703>;
++			#phy-cells = <0>;
++			status = "disabled";
+ 		};
+ 
+ 		ohci1: usb@ee0a0000 {
+@@ -1252,7 +1260,14 @@
+ 		};
+ 
+ 		usb2_phy1: usb-phy@ee0a0200 {
+-			/* placeholder */
++			compatible = "renesas,usb2-phy-r8a7796",
++				     "renesas,rcar-gen3-usb2-phy";
++			reg = <0 0xee0a0200 0 0x700>;
++			clocks = <&cpg CPG_MOD 702>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			resets = <&cpg 702>;
++			#phy-cells = <0>;
++			status = "disabled";
+ 		};
+ 
+ 		sdhi0: sd@ee100000 {
+-- 
+2.1.4
