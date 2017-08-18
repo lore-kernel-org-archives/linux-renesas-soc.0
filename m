@@ -1,44 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:33133 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751810AbdHPNWw (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33652 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751218AbdHRITx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Aug 2017 09:22:52 -0400
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-serial@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, magnus.damm@gmail.com,
-        laurent.pinchart@ideasonboard.com, wsa@the-dreams.de,
-        robh@kernel.org, peda@axentia.se, geert@linux-m68k.org,
-        linux-i2c@vger.kernel.org,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 6/6] dt-bindings: slave-device: add reg property
-Date: Wed, 16 Aug 2017 15:22:28 +0200
-Message-Id: <1502889748-31499-7-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1502889748-31499-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1502889748-31499-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Fri, 18 Aug 2017 04:19:53 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 3/9] arm64: dts: r8a7795: correct whitespace of companion property
+Date: Fri, 18 Aug 2017 10:19:33 +0200
+Message-Id: <c3a937bbdd91618ede7a582fe5c0d21d5722c3fa.1502961153.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1502961153.git.horms+renesas@verge.net.au>
+References: <cover.1502961153.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This adds a new DT property to define the index used by a multiplexer to
-select the device.
-
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Fixes: 4dad6dcdae7b ("arm64: dts: renesas: r8a7795: add usb2.0 host ch3 device nodes")
+Fixes: 1c422b4c501e ("arm64: dts: renesas: r8a7795: Add usb companion property in EHCI")
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- Documentation/devicetree/bindings/serial/slave-device.txt | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/serial/slave-device.txt b/Documentation/devicetree/bindings/serial/slave-device.txt
-index 40110e0..f9b0783 100644
---- a/Documentation/devicetree/bindings/serial/slave-device.txt
-+++ b/Documentation/devicetree/bindings/serial/slave-device.txt
-@@ -30,6 +30,8 @@ Optional Properties:
- 		      way to reset the device
- 		    * device baud rate is configured by its firmware but
- 		      there is no way to request the actual settings
-+- reg		: Index used to select the device if it is controlled by a
-+		  multiplexer.
- 
- Example:
- 
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index c9f2b87e7ee3..2938195b9571 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -1624,7 +1624,7 @@
+ 			clocks = <&cpg CPG_MOD 703>;
+ 			phys = <&usb2_phy0>;
+ 			phy-names = "usb";
+-			companion= <&ohci0>;
++			companion = <&ohci0>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			resets = <&cpg 703>;
+ 			status = "disabled";
+@@ -1637,7 +1637,7 @@
+ 			clocks = <&cpg CPG_MOD 702>;
+ 			phys = <&usb2_phy1>;
+ 			phy-names = "usb";
+-			companion= <&ohci1>;
++			companion = <&ohci1>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			resets = <&cpg 702>;
+ 			status = "disabled";
+@@ -1650,7 +1650,7 @@
+ 			clocks = <&cpg CPG_MOD 701>;
+ 			phys = <&usb2_phy2>;
+ 			phy-names = "usb";
+-			companion= <&ohci2>;
++			companion = <&ohci2>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			resets = <&cpg 701>;
+ 			status = "disabled";
+@@ -1663,7 +1663,7 @@
+ 			clocks = <&cpg CPG_MOD 700>;
+ 			phys = <&usb2_phy3>;
+ 			phy-names = "usb";
+-			companion= <&ohci3>;
++			companion = <&ohci3>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			resets = <&cpg 700>;
+ 			status = "disabled";
 -- 
-2.7.4
+2.1.4
