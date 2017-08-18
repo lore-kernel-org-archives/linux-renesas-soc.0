@@ -1,73 +1,58 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
-        linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 1/8] pinctrl: sh-pfc: Add PORT_GP_{10,2[01]} helper macros
-Date: Wed,  9 Aug 2017 21:19:40 +0900
-Message-Id: <1502281187-24068-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1502281187-24068-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1502281187-24068-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:33652 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751037AbdHRIUN (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 18 Aug 2017 04:20:13 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 5/9] ARM: dts: koelsch: Add CEC clock for HDMI transmitter
+Date: Fri, 18 Aug 2017 10:19:50 +0200
+Message-Id: <02a5ab18d366223893d634b0992f6434300bee32.1502962873.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1502962873.git.horms+renesas@verge.net.au>
+References: <cover.1502962873.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This follows the style of existion PORT_GP_X macros and
-will be used by a follow-up patch for the r8a77995 SoC.
+From: Hans Verkuil <hans.verkuil@cisco.com>
 
-Extracted from the initial r8a77995 patch in the BSP by Takeshi Kihara.
+The adv7511 on the Koelsch board has a 12 MHz fixed clock
+for the CEC block. Specify this in the dts to enable CEC support.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/pinctrl/sh-pfc/sh_pfc.h | 22 +++++++++++++++++-----
- 1 file changed, 17 insertions(+), 5 deletions(-)
+ arch/arm/boot/dts/r8a7791-koelsch.dts | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
-index 4376397..89e77e5 100644
---- a/drivers/pinctrl/sh-pfc/sh_pfc.h
-+++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-@@ -389,9 +389,13 @@ struct sh_pfc_soc_info {
- 	PORT_GP_CFG_1(bank, 8,  fn, sfx, cfg)
- #define PORT_GP_9(bank, fn, sfx)	PORT_GP_CFG_9(bank, fn, sfx, 0)
+diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
+index dc8ed02de707..0ce0b278e1cb 100644
+--- a/arch/arm/boot/dts/r8a7791-koelsch.dts
++++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
+@@ -642,11 +642,19 @@
+ 		};
+ 	};
  
--#define PORT_GP_CFG_12(bank, fn, sfx, cfg)				\
-+#define PORT_GP_CFG_10(bank, fn, sfx, cfg)				\
- 	PORT_GP_CFG_9(bank, fn, sfx, cfg),				\
--	PORT_GP_CFG_1(bank, 9,  fn, sfx, cfg),				\
-+	PORT_GP_CFG_1(bank, 9,  fn, sfx, cfg)
-+#define PORT_GP_10(bank, fn, sfx)	PORT_GP_CFG_10(bank, fn, sfx, 0)
++	cec_clock: cec-clock {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <12000000>;
++	};
 +
-+#define PORT_GP_CFG_12(bank, fn, sfx, cfg)				\
-+	PORT_GP_CFG_10(bank, fn, sfx, cfg),				\
- 	PORT_GP_CFG_1(bank, 10, fn, sfx, cfg),				\
- 	PORT_GP_CFG_1(bank, 11, fn, sfx, cfg)
- #define PORT_GP_12(bank, fn, sfx)	PORT_GP_CFG_12(bank, fn, sfx, 0)
-@@ -422,11 +426,19 @@ struct sh_pfc_soc_info {
- 	PORT_GP_CFG_1(bank, 17, fn, sfx, cfg)
- #define PORT_GP_18(bank, fn, sfx)	PORT_GP_CFG_18(bank, fn, sfx, 0)
+ 	hdmi@39 {
+ 		compatible = "adi,adv7511w";
+ 		reg = <0x39>;
+ 		interrupt-parent = <&gpio3>;
+ 		interrupts = <29 IRQ_TYPE_LEVEL_LOW>;
++		clocks = <&cec_clock>;
++		clock-names = "cec";
  
--#define PORT_GP_CFG_23(bank, fn, sfx, cfg)				\
-+#define PORT_GP_CFG_20(bank, fn, sfx, cfg)				\
- 	PORT_GP_CFG_18(bank, fn, sfx, cfg),				\
- 	PORT_GP_CFG_1(bank, 18, fn, sfx, cfg),				\
--	PORT_GP_CFG_1(bank, 19, fn, sfx, cfg),				\
--	PORT_GP_CFG_1(bank, 20, fn, sfx, cfg),				\
-+	PORT_GP_CFG_1(bank, 19, fn, sfx, cfg)
-+#define PORT_GP_20(bank, fn, sfx)	PORT_GP_CFG_20(bank, fn, sfx, 0)
-+
-+#define PORT_GP_CFG_21(bank, fn, sfx, cfg)				\
-+	PORT_GP_CFG_20(bank, fn, sfx, cfg),				\
-+	PORT_GP_CFG_1(bank, 20, fn, sfx, cfg)
-+#define PORT_GP_21(bank, fn, sfx)	PORT_GP_CFG_21(bank, fn, sfx, 0)
-+
-+#define PORT_GP_CFG_23(bank, fn, sfx, cfg)				\
-+	PORT_GP_CFG_21(bank, fn, sfx, cfg),				\
- 	PORT_GP_CFG_1(bank, 21, fn, sfx, cfg),				\
- 	PORT_GP_CFG_1(bank, 22, fn, sfx, cfg)
- #define PORT_GP_23(bank, fn, sfx)	PORT_GP_CFG_23(bank, fn, sfx, 0)
+ 		adi,input-depth = <8>;
+ 		adi,input-colorspace = "rgb";
 -- 
-1.9.1
-
+2.1.4
