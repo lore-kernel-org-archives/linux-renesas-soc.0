@@ -1,37 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:21096 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751010AbdHCMc2 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33652 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751626AbdHRIUU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 3 Aug 2017 08:32:28 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 0/2] arm64: dts: r8a7796: add USB-DMAC and HSUSB device nodes
-Date: Thu,  3 Aug 2017 21:29:15 +0900
-Message-Id: <1501763357-26075-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Fri, 18 Aug 2017 04:20:20 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 4/9] ARM: dts: sk-rzg1e: add Ether pins
+Date: Fri, 18 Aug 2017 10:19:49 +0200
+Message-Id: <485a40469cf05d7948e1d8c9dbd9058044ded91c.1502962873.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1502962873.git.horms+renesas@verge.net.au>
+References: <cover.1502962873.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch is based on the renesas.git / renesas-devel-20170731v2-v4.13-rc3 tag.
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-For usb-dmac, we should wait for the following patch (even if we don't apply
-the patch, the usb-dmac driver can be probed correctly though.)
- https://patchwork.kernel.org/patch/9876639/
+Add the (previously omitted) Ether/PHY pin data to the SK-RZG1E board's
+device tree.
 
-For hsusb, we need the "arm64: dts: r8a7796: add usb host device nodes" patch
-set for using usb2_phy0.
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7745-sk-rzg1e.dts | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-Yoshihiro Shimoda (2):
-  arm64: dts: r8a7796: Add USB-DMAC device nodes
-  arm64: dts: r8a7796: Add HSUSB device node
-
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 43 +++++++++++++++++++++++++++++++-
- 1 file changed, 42 insertions(+), 1 deletion(-)
-
+diff --git a/arch/arm/boot/dts/r8a7745-sk-rzg1e.dts b/arch/arm/boot/dts/r8a7745-sk-rzg1e.dts
+index 0cd908796055..b4d679b04ad6 100644
+--- a/arch/arm/boot/dts/r8a7745-sk-rzg1e.dts
++++ b/arch/arm/boot/dts/r8a7745-sk-rzg1e.dts
+@@ -39,6 +39,16 @@
+ 		groups = "scif2_data";
+ 		function = "scif2";
+ 	};
++
++	ether_pins: ether {
++		groups = "eth_link", "eth_mdio", "eth_rmii";
++		function = "eth";
++	};
++
++	phy1_pins: phy1 {
++		groups = "intc_irq8";
++		function = "intc";
++	};
+ };
+ 
+ &scif2 {
+@@ -49,6 +59,9 @@
+ };
+ 
+ &ether {
++	pinctrl-0 = <&ether_pins &phy1_pins>;
++	pinctrl-names = "default";
++
+ 	phy-handle = <&phy1>;
+ 	renesas,ether-link-active-low;
+ 	status = "okay";
 -- 
-1.9.1
+2.1.4
