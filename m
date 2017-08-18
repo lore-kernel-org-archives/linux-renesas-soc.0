@@ -1,94 +1,121 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:41055 "EHLO pokefinder.org"
+Received: from mga05.intel.com ([192.55.52.43]:59288 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751280AbdH1QBX (ORCPT
+        id S1752114AbdHRNuA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 28 Aug 2017 12:01:23 -0400
-Date: Mon, 28 Aug 2017 18:01:21 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Javier Martinez Canillas <javier@dowhile0.org>
-Cc: Linux Kernel <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh@kernel.org>, Florian Larysch <fl@n621.de>,
-        David Lechner <david@lechnology.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>,
-        Simon Horman <horms@verge.net.au>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Will Deacon <will.deacon@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Sekhar Nori <nsekhar@ti.com>, Scott Wood <oss@buserror.net>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Joachim Eastwood <manabian@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <kernel@pengutronix.de>,
-        Linux I2C <linux-i2c@vger.kernel.org>
-Subject: Re: [RESEND PATCH v5 00/16] eeprom: at24: Add OF device ID table
-Message-ID: <20170828160121.gu4wf7jqu4ditksc@ninjato>
-References: <20170615185418.13980-1-javier@dowhile0.org>
- <20170731153009.xkjknygpmckv2pfp@ninjato>
- <CABxcv=mdbE0QGjoi3aLzxRqM3-MbkQ_Ai6fShcGVUGSNNqqrqw@mail.gmail.com>
+        Fri, 18 Aug 2017 09:50:00 -0400
+Date: Fri, 18 Aug 2017 16:49:57 +0300
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@iki.fi>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>
+Subject: Re: [PATCH 1/4] v4l: async: fix unbind error in
+ v4l2_async_notifier_unregister()
+Message-ID: <20170818134956.epncpl4fkeegmo4z@paasikivi.fi.intel.com>
+References: <20170730223158.14405-1-niklas.soderlund+renesas@ragnatech.se>
+ <20170730223158.14405-2-niklas.soderlund+renesas@ragnatech.se>
+ <20170815161604.5qjrd3eas4tlvrt6@valkosipuli.retiisi.org.uk>
+ <2638355.RUWT87hFr5@avalon>
+ <20170818134207.GA8460@bigcity.dyn.berto.se>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="kxl2ldofwcq27yov"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <CABxcv=mdbE0QGjoi3aLzxRqM3-MbkQ_Ai6fShcGVUGSNNqqrqw@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20170818134207.GA8460@bigcity.dyn.berto.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On Fri, Aug 18, 2017 at 03:42:07PM +0200, Niklas S�derlund wrote:
+> Hi,
+> 
+> On 2017-08-18 14:15:26 +0300, Laurent Pinchart wrote:
+> > Hi Sakari,
+> > 
+> > On Tuesday 15 Aug 2017 19:16:14 Sakari Ailus wrote:
+> > > On Mon, Jul 31, 2017 at 12:31:55AM +0200, Niklas S�derlund wrote:
+> > > > The call to v4l2_async_cleanup() will set sd->asd to NULL so passing it
+> > > > to notifier->unbind() have no effect and leaves the notifier confused.
+> > > > Call the unbind() callback prior to cleaning up the subdevice to avoid
+> > > > this.
+> > > > 
+> > > > Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+> > > 
+> > > This is a bugfix and worthy without any other patches and so should be
+> > > applied separately.
+> > > 
+> > > I think it'd be safer to store sd->asd locally and call the notifier unbind
+> > > with that. Now you're making changes to the order in which things work, and
+> > > that's not necessary to achieve the objective of passing the async subdev
+> > > pointer to the notifier.
+> > 
+> > But on the other hand I think the unbind notification should be called before 
+> > the subdevice gets unbound, the same way the bound notification is called 
+> > after it gets bound. One of the purposes of the unbind notification is to 
+> > allow drivers to prepare for subdev about to be unbound, and they can't 
+> > prepare if the unbind happened already.
+> 
+> I'm not opposed to move in the direction suggested by Sakari but I agree 
+> with Laurent here. It makes more sens that the unbind callback is called 
+> before the actual unbind happens. At the same time I agree that it dose 
+> change the behavior, but I think it's for the better.
 
---kxl2ldofwcq27yov
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I agree with Laurent's reasoning. Feel free to add my ack.
 
+> 
+> > 
+> > > With that changed,
+> > > 
+> > > Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> > > 
+> > > > ---
+> > > > 
+> > > >  drivers/media/v4l2-core/v4l2-async.c | 6 +++---
+> > > >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/media/v4l2-core/v4l2-async.c
+> > > > b/drivers/media/v4l2-core/v4l2-async.c index
+> > > > 851f128eba2219ad..0acf288d7227ba97 100644
+> > > > --- a/drivers/media/v4l2-core/v4l2-async.c
+> > > > +++ b/drivers/media/v4l2-core/v4l2-async.c
+> > > > @@ -226,14 +226,14 @@ void v4l2_async_notifier_unregister(struct
+> > > > v4l2_async_notifier *notifier)> 
+> > > >  		d = get_device(sd->dev);
+> > > > 
+> > > > +		if (notifier->unbind)
+> > > > +			notifier->unbind(notifier, sd, sd->asd);
+> > > > +
+> > > > 
+> > > >  		v4l2_async_cleanup(sd);
+> > > >  		
+> > > >  		/* If we handled USB devices, we'd have to lock the parent too 
+> > */
+> > > >  		device_release_driver(d);
+> > > > 
+> > > > -		if (notifier->unbind)
+> > > > -			notifier->unbind(notifier, sd, sd->asd);
+> > > > -
+> > > > 
+> > > >  		/*
+> > > >  		
+> > > >  		 * Store device at the device cache, in order to call
+> > > >  		 * put_device() on the final step
+> > 
+> > -- 
+> > Regards,
+> > 
+> > Laurent Pinchart
+> > 
+> 
+> -- 
+> Regards,
+> Niklas S�derlund
 
-> > But there is a dependency, no? If I apply the driver patch,
-> > non-converted device trees will not find their eeproms anymore. So, I
->=20
-> I don't think that's correct. If you apply this patch before the DTS
-> changes, the driver will still match using the I2C device ID table
-> like it has been doing it until today.
-
-My tests do not confirm this. If I add a node with a "renesas,24c01"
-compatible to my board, it works before your patch, but not after. If I
-change it to "atmel,24c01" it works even after your patch. I haven't
-looked into it, though, maybe i2c_of_match_device_sysfs() is stepping on
-our foots here?
-
-Did you test and did it work for you?
-
-
---kxl2ldofwcq27yov
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlmkPlEACgkQFA3kzBSg
-KbY9mQ//ZYxuivYI37NBqNzvT6LEyeDnhT5YpI+3SDGk88+Ny3uOysJpehIW1zmQ
-/o4MmLhMZq0emuNniTUcq6hs1DmPC1YFAHoNPhdcPEJY9BDB5Z28l187ETQ0wtYD
-u8DAc11LnQLCGRgBngM9zAVClRI16o07T68hSGlUntK/oEAuqEqtcw3Nt4wAY1nD
-1ALzfhgtBsGJ+BSDLTvW7sZ5cqJ1NhjHnEV2rLDIxTQPTTVBc3guI7Zw7+qXuETX
-cJ/mIhwyYPpcdlPM7A9mt3CozKhjFEnWG+TZEl3xiQVs/5Gb6hF7c+q06g1t1BBE
-OufNGdCTbg3etFN0y//oj2+K2iUqfw4m/33VmGBltVZuKxcrEFCOHBaONdyAJ2ET
-tki7C+Vz/JzD5VDl7nUp7Ci95FbRjFGXDy45e8u0Nyb1eQX02Y+owo/Pk5ZuiRQw
-fi6c5lJP34KazsrmGpqm9W/wzggxJSoXW1abAOeDTindLZ4DiSH41od6tx2y/nHs
-e2i2OygFb3NNccXZ9QL/xmcRiCzwi9hk9Tt71fawGWQ+hLKxrLs7emt8kfpPU4aU
-ZpdA4TbozeaOWWDzbOzwV25d0kOe+LiwKx+PTNgW2Uimz1sQBWOpIm0vZGXxqa8y
-wSSRx/WWug0tYILnAP5BQmLV9X5N3m8zaJ6u1neWImCTNpCweFU=
-=nrOV
------END PGP SIGNATURE-----
-
---kxl2ldofwcq27yov--
+-- 
+Sakari Ailus
+sakari.ailus@linux.intel.com
