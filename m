@@ -1,91 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34711 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:33652 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750818AbdHHIj4 (ORCPT
+        with ESMTP id S1751730AbdHRIUS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 Aug 2017 04:39:56 -0400
+        Fri, 18 Aug 2017 04:20:18 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 04/10] ARM: dts: r8a7790: Use R-Car GPIO Gen2 fallback compat string
-Date: Tue,  8 Aug 2017 10:39:22 +0200
-Message-Id: <1502181568-12299-5-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1502181568-12299-1-git-send-email-horms+renesas@verge.net.au>
-References: <1502181568-12299-1-git-send-email-horms+renesas@verge.net.au>
+Subject: [PATCH 2/9] ARM: dts: r8a7745: add PFC support
+Date: Fri, 18 Aug 2017 10:19:47 +0200
+Message-Id: <95b94ed9abb58d2f5372a980a0af037e76c0beaf.1502962873.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1502962873.git.horms+renesas@verge.net.au>
+References: <cover.1502962873.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use newly added R-Car GPIO Gen2 fallback compat string
-in place of now deprecated non-generation specific
-R-Car GPIO fallback compat string in the DT of the r8a7790 SoC.
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-This should have no run-time effect as the driver matches against
-the per-SoC compat string before considering the fallback compat string.
+Define the generic R8A7745 part of the PFC device node.
 
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7790.dtsi | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/r8a7745.dtsi | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 167fd57aea68..34cc293ac087 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -191,7 +191,7 @@
- 	};
+diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+index 354534cdc588..aff90dfb8b32 100644
+--- a/arch/arm/boot/dts/r8a7745.dtsi
++++ b/arch/arm/boot/dts/r8a7745.dtsi
+@@ -1,7 +1,7 @@
+ /*
+  * Device Tree Source for the r8a7745 SoC
+  *
+- * Copyright (C) 2016 Cogent Embedded Inc.
++ * Copyright (C) 2016-2017 Cogent Embedded Inc.
+  *
+  * This file is licensed under the terms of the GNU General Public License
+  * version 2. This program is licensed "as is" without any warranty of any
+@@ -123,6 +123,11 @@
+ 			#power-domain-cells = <1>;
+ 		};
  
- 	gpio0: gpio@e6050000 {
--		compatible = "renesas,gpio-r8a7790", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7790", "renesas,rcar-gen2-gpio";
- 		reg = <0 0xe6050000 0 0x50>;
- 		interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -204,7 +204,7 @@
- 	};
- 
- 	gpio1: gpio@e6051000 {
--		compatible = "renesas,gpio-r8a7790", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7790", "renesas,rcar-gen2-gpio";
- 		reg = <0 0xe6051000 0 0x50>;
- 		interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -217,7 +217,7 @@
- 	};
- 
- 	gpio2: gpio@e6052000 {
--		compatible = "renesas,gpio-r8a7790", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7790", "renesas,rcar-gen2-gpio";
- 		reg = <0 0xe6052000 0 0x50>;
- 		interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -230,7 +230,7 @@
- 	};
- 
- 	gpio3: gpio@e6053000 {
--		compatible = "renesas,gpio-r8a7790", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7790", "renesas,rcar-gen2-gpio";
- 		reg = <0 0xe6053000 0 0x50>;
- 		interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -243,7 +243,7 @@
- 	};
- 
- 	gpio4: gpio@e6054000 {
--		compatible = "renesas,gpio-r8a7790", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7790", "renesas,rcar-gen2-gpio";
- 		reg = <0 0xe6054000 0 0x50>;
- 		interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -256,7 +256,7 @@
- 	};
- 
- 	gpio5: gpio@e6055000 {
--		compatible = "renesas,gpio-r8a7790", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7790", "renesas,rcar-gen2-gpio";
- 		reg = <0 0xe6055000 0 0x50>;
- 		interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
++		pfc: pin-controller@e6060000 {
++			compatible = "renesas,pfc-r8a7745";
++			reg = <0 0xe6060000 0 0x11c>;
++		};
++
+ 		dmac0: dma-controller@e6700000 {
+ 			compatible = "renesas,dmac-r8a7745",
+ 				     "renesas,rcar-dmac";
 -- 
 2.1.4
