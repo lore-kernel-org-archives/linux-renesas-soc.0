@@ -1,51 +1,65 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Mon, 21 Aug 2017 11:06:13 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 0/4] ARM: dts: rcar-gen2: Stop grouping clocks under a
- "clocks" subnode
-Message-ID: <20170821090613.GF14174@verge.net.au>
-References: <1503047817-29439-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1503047817-29439-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from michel.telenet-ops.be ([195.130.137.88]:48618 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751744AbdHRJRC (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 18 Aug 2017 05:17:02 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 0/4] ARM: dts: rcar-gen2: Stop grouping clocks under a "clocks" subnode
+Date: Fri, 18 Aug 2017 11:16:53 +0200
+Message-Id: <1503047817-29439-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Aug 18, 2017 at 11:16:53AM +0200, Geert Uytterhoeven wrote:
-> 	Hi Simon, Magnus,
-> 
-> The current practice is to not group clocks under a "clocks" subnode,
-> but just put them together with the other on-SoC devices.
-> 
-> Hence this patch series implements this for the various R-Car Gen2
-> DTSes that still need this (r8a7792.dtsi is OK).
-> 
-> Changes compared to v1:
->   - Rebased.
-> 
-> Dependencies:
->   - renesas-devel-20170818-v4.13-rc5,
->   - Patch series "[PATCH v2 0/5] ARM: dts: rcar-gen2: Convert to new
->     CPG/MSSR bindings".
-> 
-> For your convenience, this series is also available in the
-> topic/rcar2-cpg-mssr-dt-v2 branch of my renesas-drivers git repository at
-> git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
-> 
-> Thanks for applying!
-> 
-> Geert Uytterhoeven (4):
->   ARM: dts: r8a7790: Stop grouping clocks under a "clocks" subnode
->   ARM: dts: r8a7791: Stop grouping clocks under a "clocks" subnode
->   ARM: dts: r8a7793: Stop grouping clocks under a "clocks" subnode
->   ARM: dts: r8a7794: Stop grouping clocks under a "clocks" subnode
+	Hi Simon, Magnus,
 
-Thanks. r8a779[034] patches applied for v4.15.
+The current practice is to not group clocks under a "clocks" subnode,
+but just put them together with the other on-SoC devices.
 
-The r8a7791 patch did not apply cleanly for some reason.
-Could you rebase and repost once I have pushed today's devel branch?
+Hence this patch series implements this for the various R-Car Gen2
+DTSes that still need this (r8a7792.dtsi is OK).
+
+Changes compared to v1:
+  - Rebased.
+
+Dependencies:
+  - renesas-devel-20170818-v4.13-rc5,
+  - Patch series "[PATCH v2 0/5] ARM: dts: rcar-gen2: Convert to new
+    CPG/MSSR bindings".
+
+For your convenience, this series is also available in the
+topic/rcar2-cpg-mssr-dt-v2 branch of my renesas-drivers git repository at
+git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
+
+Thanks for applying!
+
+Geert Uytterhoeven (4):
+  ARM: dts: r8a7790: Stop grouping clocks under a "clocks" subnode
+  ARM: dts: r8a7791: Stop grouping clocks under a "clocks" subnode
+  ARM: dts: r8a7793: Stop grouping clocks under a "clocks" subnode
+  ARM: dts: r8a7794: Stop grouping clocks under a "clocks" subnode
+
+ arch/arm/boot/dts/r8a7790.dtsi | 137 ++++++++++++++++++++---------------------
+ arch/arm/boot/dts/r8a7791.dtsi | 137 ++++++++++++++++++++---------------------
+ arch/arm/boot/dts/r8a7793.dtsi | 125 ++++++++++++++++++-------------------
+ arch/arm/boot/dts/r8a7794.dtsi | 124 ++++++++++++++++++-------------------
+ 4 files changed, 251 insertions(+), 272 deletions(-)
+
+-- 
+2.7.4
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
