@@ -1,66 +1,51 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f50.google.com ([209.85.218.50]:33193 "EHLO
-        mail-oi0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751969AbdHPUca (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Aug 2017 16:32:30 -0400
-Received: by mail-oi0-f50.google.com with SMTP id f11so47814417oic.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Aug 2017 13:32:29 -0700 (PDT)
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Mon, 21 Aug 2017 11:06:13 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 0/4] ARM: dts: rcar-gen2: Stop grouping clocks under a
+ "clocks" subnode
+Message-ID: <20170821090613.GF14174@verge.net.au>
+References: <1503047817-29439-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-In-Reply-To: <cover.1501512320.git.horms+renesas@verge.net.au>
-References: <cover.1501512320.git.horms+renesas@verge.net.au>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Wed, 16 Aug 2017 22:32:29 +0200
-Message-ID: <CAK8P3a1mN8o4UNzHeZAnWi+177a7oTx+HcNUAJf-Nb+KnND0QQ@mail.gmail.com>
-Subject: Re: [GIT PULL] Renesas ARM Based SoC Updates for v4.14
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: arm-soc <arm@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1503047817-29439-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Jul 31, 2017 at 5:05 PM, Simon Horman
-<horms+renesas@verge.net.au> wrote:
->
-> * Add debug-ll support to RZ/G1M (r8a7743) SoC
->
->   Chris Paterson says, "RZ/G1M uses SCIF0 for the debug console, like most
->   of the R-Car Gen2 SoCs."
->
-> * Remove ARCH_SHMOBILE_MULTI
->
->   Geert Uytterhoeven says, "The migration from ARCH_SHMOBILE_MULTI to
->   ARCH_RENESAS has been completed in v4.12..."
->
-> * Correct arch timer frequency on RZ/G1M (r8a7743) SoC
->
->   Geert Uytterhoeven says, "According to the datasheet, the frequency of
->   the ARM architecture timer on RZ/G1E depends on the frequency of the ZS
->   clock..."
->
-> * Add support for CPG/MSSR bindings
->
->   Geert Uytterhoeven says, "When using the new CPG/MSSR bindings, there is
->   no longer a "renesas,rcar-gen2-cpg-clocks" node, and the code to obtain
->   the external clock crystal frequency falls back to a default of 20 MHz.
->   While this is correct for all upstream R-Car Gen2 and RZ/G1 boards, this
->   is not necessarily the case for out-of-tree third party boards.
->
->   Add support for finding the external clock crystal oscillator on RZ/G1M,
->   and on R-Car H2, M2-W, and M2-N using the new CPG/MSSR bindings, through
->   the corresponding "renesas,r8a77xx-cpg-mssr" nodes."
->
-> * Obtain jump stub region from DT
->
->   Geert Uytterhoeven says, "Add support for obtaining from DT the SRAM
->   region to store the jump stub for CPU core bringup, according to the
->   renesas,smp-sram DT bindings."
+On Fri, Aug 18, 2017 at 11:16:53AM +0200, Geert Uytterhoeven wrote:
+> 	Hi Simon, Magnus,
+> 
+> The current practice is to not group clocks under a "clocks" subnode,
+> but just put them together with the other on-SoC devices.
+> 
+> Hence this patch series implements this for the various R-Car Gen2
+> DTSes that still need this (r8a7792.dtsi is OK).
+> 
+> Changes compared to v1:
+>   - Rebased.
+> 
+> Dependencies:
+>   - renesas-devel-20170818-v4.13-rc5,
+>   - Patch series "[PATCH v2 0/5] ARM: dts: rcar-gen2: Convert to new
+>     CPG/MSSR bindings".
+> 
+> For your convenience, this series is also available in the
+> topic/rcar2-cpg-mssr-dt-v2 branch of my renesas-drivers git repository at
+> git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
+> 
+> Thanks for applying!
+> 
+> Geert Uytterhoeven (4):
+>   ARM: dts: r8a7790: Stop grouping clocks under a "clocks" subnode
+>   ARM: dts: r8a7791: Stop grouping clocks under a "clocks" subnode
+>   ARM: dts: r8a7793: Stop grouping clocks under a "clocks" subnode
+>   ARM: dts: r8a7794: Stop grouping clocks under a "clocks" subnode
 
-Pulled into next/soc, thanks!
+Thanks. r8a779[034] patches applied for v4.15.
 
-      Arnd
+The r8a7791 patch did not apply cleanly for some reason.
+Could you rebase and repost once I have pushed today's devel branch?
