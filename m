@@ -1,75 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33652 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751695AbdHRIUK (ORCPT
+Received: from mail-qk0-f171.google.com ([209.85.220.171]:38006 "EHLO
+        mail-qk0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753794AbdHUMdc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Aug 2017 04:20:10 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 6/9] ARM: dts: r8a7743: Add APMU node and second CPU core
-Date: Fri, 18 Aug 2017 10:19:51 +0200
-Message-Id: <60dce695b097a52e6ea5874aa80301f2e4ac627a.1502962873.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1502962873.git.horms+renesas@verge.net.au>
-References: <cover.1502962873.git.horms+renesas@verge.net.au>
+        Mon, 21 Aug 2017 08:33:32 -0400
+Received: by mail-qk0-f171.google.com with SMTP id x77so37779744qka.5
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Aug 2017 05:33:32 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <20170809191452.5254-1-wsa+renesas@sang-engineering.com>
+References: <20170809191452.5254-1-wsa+renesas@sang-engineering.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 21 Aug 2017 14:33:31 +0200
+Message-ID: <CAPDyKFoV33yAVLO3Ke8E5_UTBG4wsDn4qNPiTrQdnQAJqWR2_w@mail.gmail.com>
+Subject: Re: [RFT 0/2] mmc: renesas_sdhi: small patches for RZ/A1
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Chris Brandt <chris.brandt@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+On 9 August 2017 at 21:14, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> Here is a small series to improve RZ support for SDHI. I don't have that
+> platform currently, so I hope Chris has some time to check these simple
+> patches. It is based on top of the patch just sent out:
+> "[PATCH] mmc: renesas_sdhi: use extra flag for CBSY usage"
+>
+> Regards,
+>
+>    Wolfram
+>
+>
+> Wolfram Sang (2):
+>   mmc: renesas_sdhi: enably CBSY bit for RZ platform
+>   mmc: renesas_sdhi: document version of RZ/A1 instance
+>
+>  drivers/mmc/host/renesas_sdhi_core.c     | 1 +
+>  drivers/mmc/host/renesas_sdhi_sys_dmac.c | 3 ++-
+>  2 files changed, 3 insertions(+), 1 deletion(-)
+>
+> --
 
-Add DT nodes for the Advanced Power Management Unit (APMU) and the
-second CPU core.  Use the enable-method to point out that the APMU
-should be used for SMP support.
+Thanks, applied for next!
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7743.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+Adding tags from Simon and Chris.
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index ce80a26c421a..ec9db0fcffc6 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -30,6 +30,7 @@
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		enable-method = "renesas,apmu";
- 
- 		cpu0: cpu@0 {
- 			device_type = "cpu";
-@@ -41,6 +42,15 @@
- 			next-level-cache = <&L2_CA15>;
- 		};
- 
-+		cpu1: cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a15";
-+			reg = <1>;
-+			clock-frequency = <1500000000>;
-+			power-domains = <&sysc R8A7743_PD_CA15_CPU1>;
-+			next-level-cache = <&L2_CA15>;
-+		};
-+
- 		L2_CA15: cache-controller-0 {
- 			compatible = "cache";
- 			cache-unified;
-@@ -57,6 +67,12 @@
- 		#size-cells = <2>;
- 		ranges;
- 
-+		apmu@e6152000 {
-+			compatible = "renesas,r8a7743-apmu", "renesas,apmu";
-+			reg = <0 0xe6152000 0 0x188>;
-+			cpus = <&cpu0 &cpu1>;
-+		};
-+
- 		gic: interrupt-controller@f1001000 {
- 			compatible = "arm,gic-400";
- 			#interrupt-cells = <3>;
--- 
-2.1.4
+Kind regards
+Uffe
