@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:60267 "EHLO
+Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:51613 "EHLO
         smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751941AbdHUMvi (ORCPT
+        with ESMTP id S1752354AbdHUIY6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 Aug 2017 08:51:38 -0400
+        Mon, 21 Aug 2017 04:24:58 -0400
 Subject: Re: Status of r8a7795 SDHI support?
 To: Wolfram Sang <wsa@the-dreams.de>
 CC: <linux-renesas-soc@vger.kernel.org>
@@ -13,68 +13,40 @@ References: <513dd4ea-7309-d2a3-7940-b14bc1836c31@de.bosch.com>
  <20170818090042.z3jx6rufxuc56m2t@ninjato>
  <32eb505f-b622-2562-e6d0-818c6bbab32a@de.bosch.com>
  <20170821081808.7teztwh4hbz25zjq@ninjato>
- <977e03d5-f59d-b41e-9135-fc6dfc19482d@de.bosch.com>
 From: Dirk Behme <dirk.behme@de.bosch.com>
-Message-ID: <06bc290a-8173-3d41-ff1e-8c26b4d4c093@de.bosch.com>
-Date: Mon, 21 Aug 2017 14:51:36 +0200
+Message-ID: <977e03d5-f59d-b41e-9135-fc6dfc19482d@de.bosch.com>
+Date: Mon, 21 Aug 2017 10:24:55 +0200
 MIME-Version: 1.0
-In-Reply-To: <977e03d5-f59d-b41e-9135-fc6dfc19482d@de.bosch.com>
+In-Reply-To: <20170821081808.7teztwh4hbz25zjq@ninjato>
 Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 21.08.2017 10:24, Dirk Behme wrote:
-> On 21.08.2017 10:18, Wolfram Sang wrote:
->> Hi Dirk,
+On 21.08.2017 10:18, Wolfram Sang wrote:
+> Hi Dirk,
+> 
+>>> Ah, ES2.0. That's the missing information. Yup, is on the todo-list. I
+>>> will try to test your patch on my Salvator-XS board today.
 >>
->>>> Ah, ES2.0. That's the missing information. Yup, is on the todo-list. I
->>>> will try to test your patch on my Salvator-XS board today.
->>>
->>> Ok, thanks :)
->>
->> Your patch on top of v4.13-rc5 makes SDHI work on my Salvator-XS with a
+>> Ok, thanks :)
 > 
-> 
-> Please feel free to forward it to the correct channels for merge, then.
-> 
-> 
->> H3 ES2.0. It detects the eMMC and I can mount SD cards on both slots and
->> checksum large files.
-> 
-> 
-> Hmm, sounds like I have to search on my custom board why there is not 
-> output at all, then :(
+> Your patch on top of v4.13-rc5 makes SDHI work on my Salvator-XS with a
 
 
-It works, now :)
+Please feel free to forward it to the correct channels for merge, then.
 
-Just for the logs:
 
-While creating the defconfig for testing v4.13-rc5 somehow
+> H3 ES2.0. It detects the eMMC and I can mount SD cards on both slots and
+> checksum large files.
 
-CONFIG_GPIOLIB=y
-CONFIG_GPIO_RCAR=y
 
-was dropped. Without GPIO support the statement
+Hmm, sounds like I have to search on my custom board why there is not 
+output at all, then :(
 
-of_get_fixed_voltage_config(...) {
-	...
-	config->gpio = of_get_named_gpio(np, "gpio", 0);
-	if ((config->gpio < 0) && (config->gpio != -ENOENT)) {
+Anyway, many thanks for testing!
 
-failed, resulting in failing regulator support. Without regulator support
-
-tmio_mmc_init_ocr()
-
-fails (silently!). And with this the whole RCar3 SDHI, without any error 
-message.
-
-Enabling GPIO does fix the issue.
-
-Many thanks for your help!
+Best regards
 
 Dirk
-
-P.S.: Will try to send the pin mux patch tomorrow.
