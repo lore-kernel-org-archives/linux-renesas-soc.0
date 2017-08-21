@@ -1,47 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:50383 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751443AbdHIMXG (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:41773 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752566AbdHUI4w (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 9 Aug 2017 08:23:06 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
-        linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 0/8] pinctrl: sh-pfc: r8a77995: Initial R8A77995 PFC support
-Date: Wed,  9 Aug 2017 21:19:39 +0900
-Message-Id: <1502281187-24068-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Mon, 21 Aug 2017 04:56:52 -0400
+Date: Mon, 21 Aug 2017 10:56:52 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] arm64: dts: r8a7795-es1: Drop extra zero from usb unit
+ address
+Message-ID: <20170821085651.GC14174@verge.net.au>
+References: <1502969354-14968-1-git-send-email-geert+renesas@glider.be>
+ <20170818080215.GG9175@verge.net.au>
+ <CAMuHMdVrtWBYEgS5Wapn_oyg2izuOkGzSdX-hXmMn8C2iJaJXQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVrtWBYEgS5Wapn_oyg2izuOkGzSdX-hXmMn8C2iJaJXQ@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch set is based on the renesas-drivers.git /
-topic/r8a77995-integration branch.
+On Fri, Aug 18, 2017 at 10:07:26AM +0200, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Fri, Aug 18, 2017 at 10:02 AM, Simon Horman <horms@verge.net.au> wrote:
+> > On Thu, Aug 17, 2017 at 01:29:14PM +0200, Geert Uytterhoeven wrote:
+> >> With W=1:
+> >>
+> >>     arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dtb: Warning (simple_bus_reg): Node /soc/usb@ee0400000 simple-bus unit address format error, expected "ee040000"
+> >>     arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb.dtb: Warning (simple_bus_reg): Node /soc/usb@ee0400000 simple-bus unit address format error, expected "ee040000"
+> >>
+> >> Fixes: 291e0c4994d0813f ("arm64: dts: r8a7795: Add support for R-Car H3 ES2.0")
+> >> Fixes: 171f2ef82284f61b ("arm64: dts: r8a7795: Add USB3.0 host device nodes")
+> >> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >> ---
+> >> The second fixes tag is for the original r8a7795.dtsi, before
+> >> r8a7795-es1.dtsi was split off.
+> >
+> > Do you want this treated as a fix for v4.13 or v4.14, or a regular patch
+> > for v4.15? It looks like the problem has been present in some form since
+> > v4.12.
+> 
+> It's not a critical fix (no impact at all?), so v4.15 is fine.
 
+Thanks for the clarification. I have applied it for v4.15.
 
-Takeshi Kihara (7):
-  pinctrl: sh-pfc: Initial R8A77995 PFC support
-  pinctrl: sh-pfc: r8a77995: Add SCIF pins, groups and functions
-  pinctrl: sh-pfc: r8a77995: Add I2C pins, groups and functions
-  pinctrl: sh-pfc: r8a77995: Add EthernetAVB pins, groups and functions
-  pinctrl: sh-pfc: r8a77995: Add USB2.0 host support
-  pinctrl: sh-pfc: r8a77995: Add MMC pins, groups and functions
-  pinctrl: sh-pfc: r8a77995: Add voltage switch operations for MMC
-
-Yoshihiro Shimoda (1):
-  pinctrl: sh-pfc: Add PORT_GP_{10,2[01]} helper macros
-
- .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |    1 +
- drivers/pinctrl/sh-pfc/Kconfig                     |    5 +
- drivers/pinctrl/sh-pfc/Makefile                    |    1 +
- drivers/pinctrl/sh-pfc/core.c                      |    6 +
- drivers/pinctrl/sh-pfc/pfc-r8a77995.c              | 2005 ++++++++++++++++++++
- drivers/pinctrl/sh-pfc/sh_pfc.h                    |   23 +-
- 6 files changed, 2036 insertions(+), 5 deletions(-)
- create mode 100644 drivers/pinctrl/sh-pfc/pfc-r8a77995.c
-
--- 
-1.9.1
+I guess some sort of auto-backporting will take place at some point
+due to the fixes tags.
