@@ -1,69 +1,67 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:32128 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752481AbdHUKxJ (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 Aug 2017 06:53:09 -0400
+Return-Path: <devicetree-owner@vger.kernel.org>
 From: Biju Das <biju.das@bp.renesas.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
+To: Wolfram Sang <wsa@the-dreams.de>
+CC: Ulf Hansson <ulf.hansson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Wolfram Sang <wsa@the-dreams.de>
-Cc: Simon Horman <horms@verge.net.au>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH v2] mmc: renesas_sdhi: Add r8a7743/5 support
-Date: Mon, 21 Aug 2017 11:38:17 +0100
-Message-Id: <1503311897-18807-1-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1502710766-44361-1-git-send-email-biju.das@bp.renesas.com>
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
+Subject: RE: [PATCH ] mmc: renesas_sdhi: Add r8a7743/5 support
+Date: Mon, 21 Aug 2017 09:47:36 +0000
+Message-ID: <KL1PR06MB1702E32A5BF249BC5D5FB767B8870@KL1PR06MB1702.apcprd06.prod.outlook.com>
 References: <1502710766-44361-1-git-send-email-biju.das@bp.renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+ <20170821082523.GA2418@katana>
+In-Reply-To: <20170821082523.GA2418@katana>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for r8a7743/5 SoC. Renesas RZ/G1[ME] (R8A7743/5) SDHI
-is identical to the R-Car Gen2 family.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
----
-v1->v2
-    -Modified the listing SoC's description related to SoC
-     with 1 Clock and 2 Clocks
 
-This patch is compiled and tested against linux next tag
-next-20170817.
+> -----Original Message-----
+> From: Wolfram Sang [mailto:wsa@the-dreams.de]
+> Sent: 21 August 2017 09:25
+> To: Biju Das <biju.das@bp.renesas.com>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>; Rob Herring <robh+dt@kernel.org=
+>;
+> Mark Rutland <mark.rutland@arm.com>; Simon Horman
+> <horms@verge.net.au>; Magnus Damm <magnus.damm@gmail.com>; Chris
+> Paterson <Chris.Paterson2@renesas.com>; Wolfram Sang
+> <wsa+renesas@sang-engineering.com>; devicetree@vger.kernel.org; linux-
+> renesas-soc@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
+> mmc@vger.kernel.org
+> Subject: Re: [PATCH ] mmc: renesas_sdhi: Add r8a7743/5 support
+>
+>
+> >    Below is the number clocks for each supported SoC:
+> > -   1: SH73A0, R8A73A4, R8A7740, R8A7778, R8A7779, R8A7790
+> > -      R8A7791, R8A7792, R8A7793, R8A7794, R8A7795, R8A7796
+> > +   1: SH73A0, R8A73A4, R8A7740, R8A7743, R8A7745, R8A7778,
+> R8A7779,
+> > +      R8A7790, R8A7791, R8A7792, R8A7793, R8A7794, R8A7795,
+> R8A7796
+> >     2: R7S72100
+>
+> Hmm, maybe we should convert this to only listing SoCs with two clocks?
+> That will be easier to maintaine since the majority seems to have one.
 
- Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+Ok. I will send v2 with the suggested  changes.
 
-diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-index 4fd8b7a..1e3106e 100644
---- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-+++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-@@ -15,6 +15,8 @@ Required properties:
- 		"renesas,sdhi-r7s72100" - SDHI IP on R7S72100 SoC
- 		"renesas,sdhi-r8a73a4" - SDHI IP on R8A73A4 SoC
- 		"renesas,sdhi-r8a7740" - SDHI IP on R8A7740 SoC
-+		"renesas,sdhi-r8a7743" - SDHI IP on R8A7743 SoC
-+		"renesas,sdhi-r8a7745" - SDHI IP on R8A7745 SoC
- 		"renesas,sdhi-r8a7778" - SDHI IP on R8A7778 SoC
- 		"renesas,sdhi-r8a7779" - SDHI IP on R8A7779 SoC
- 		"renesas,sdhi-r8a7790" - SDHI IP on R8A7790 SoC
-@@ -33,10 +35,9 @@ Required properties:
- 	  If 2 clocks are specified by the hardware, you must name them as
- 	  "core" and "cd". If the controller only has 1 clock, naming is not
- 	  required.
--	  Below is the number clocks for each supported SoC:
--	   1: SH73A0, R8A73A4, R8A7740, R8A7778, R8A7779, R8A7790
--	      R8A7791, R8A7792, R8A7793, R8A7794, R8A7795, R8A7796
--	   2: R7S72100
-+	  Most supported SoCs only have 1 clock. Devices which have more
-+	  than 1 clock are listed below:
-+	  2: R7S72100"
- 
- Optional properties:
- - toshiba,mmc-wrprotect-disable: write-protect detection is unavailable
--- 
-1.9.1
+
+
+
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
