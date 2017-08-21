@@ -1,77 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:53390 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751866AbdHUId7 (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:15726 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751245AbdHUIba (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 Aug 2017 04:33:59 -0400
-Date: Mon, 21 Aug 2017 10:33:57 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
+        Mon, 21 Aug 2017 04:31:30 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Wolfram Sang <wsa@the-dreams.de>
+CC: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
+        "Chris Paterson" <Chris.Paterson2@renesas.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>,
         "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH  2/3] ARM: dts: iwg20m: Enable SDHI0 controller
-Message-ID: <20170821083357.GC2418@katana>
+Subject: RE: [PATCH  2/3] ARM: dts: iwg20m: Enable SDHI0 controller
+Date: Mon, 21 Aug 2017 08:31:24 +0000
+Message-ID: <KL1PR06MB1702AC0B4C40F48A80505B74B8870@KL1PR06MB1702.apcprd06.prod.outlook.com>
 References: <1502711389-16040-1-git-send-email-biju.das@bp.renesas.com>
  <1502711389-16040-3-git-send-email-biju.das@bp.renesas.com>
  <20170821082842.GB2418@katana>
- <KL1PR06MB1702AC0B4C40F48A80505B74B8870@KL1PR06MB1702.apcprd06.prod.outlook.com>
+In-Reply-To: <20170821082842.GB2418@katana>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="JWEK1jqKZ6MHAcjA"
-Content-Disposition: inline
-In-Reply-To: <KL1PR06MB1702AC0B4C40F48A80505B74B8870@KL1PR06MB1702.apcprd06.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 
---JWEK1jqKZ6MHAcjA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+
+> -----Original Message-----
+> From: Wolfram Sang [mailto:wsa@the-dreams.de]
+> Sent: 21 August 2017 09:29
+> To: Biju Das <biju.das@bp.renesas.com>
+> Cc: Rob Herring <robh+dt@kernel.org>; Mark Rutland
+> <mark.rutland@arm.com>; Simon Horman <horms@verge.net.au>; Magnus
+> Damm <magnus.damm@gmail.com>; Chris Paterson
+> <Chris.Paterson2@renesas.com>; Wolfram Sang <wsa+renesas@sang-
+> engineering.com>; devicetree@vger.kernel.org; linux-renesas-
+> soc@vger.kernel.org; linux-arm-kernel@lists.infradead.org
+> Subject: Re: [PATCH 2/3] ARM: dts: iwg20m: Enable SDHI0 controller
+>
+> > +
+> > +&sdhi0 {
+> > +pinctrl-0 =3D <&sdhi0_pins>;
+> > +pinctrl-names =3D "default";
+> > +
+> > +vmmc-supply =3D <&reg_3p3v>;
+> > +vqmmc-supply =3D <&reg_3p3v>;
+> > +cd-gpios =3D <&gpio7 11 GPIO_ACTIVE_LOW>;
+> > +status =3D "okay";
+> > +};
+>
+> Just to make sure: No 1.8V and UHS support (SDR50/104)? Or is this to be
+> tested and added later?
+
+Thanks. The current hardware doesn't support 1.8V switching for SDHI0. Ther=
+e is a plan to
+add this in future board varient, at that time we will add UHS support.
 
 
-> > > +vmmc-supply =3D <&reg_3p3v>;
-> > > +vqmmc-supply =3D <&reg_3p3v>;
-> >
-> > Just to make sure: No 1.8V and UHS support (SDR50/104)? Or is this to be
-> > tested and added later?
->=20
-> Thanks. The current hardware doesn't support 1.8V switching for SDHI0. Th=
-ere is a plan to
-> add this in future board varient, at that time we will add UHS support.
-
-I see. Thanks for the info, patch looks good to me then:
-
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 
---JWEK1jqKZ6MHAcjA
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlmamvUACgkQFA3kzBSg
-KbZRZw//VaHQeiky1O6xGyUVW2w5/Az3BK/kibuncjXKbwI1kduAfB6sylnYo7FB
-UuHV4vldj2Tpq/k1TtYm+MppCIDbAZwwOcTevB7+rP138cUKO5/GBo0qhQUcYkKK
-P8nWWvIESb7naW0khTtyeFOE7bGDMUM9ToVIUYSVVpm5pqNFZ5UbV3uMK2LCt+0k
-fM3dq6iFGr1NP7zAaazAU1QOwF8Tm4X0uIBl84dMGsdwRR9UdgzVsGFpqxCj2M2v
-q03p3q5m0lgMzeSQv1V2mtFmaVayVBSE98obdIgmr8c3MvL8RAixRAvBsjHKdQMT
-RiNVp4WPJD1mmWt9Dh6C+DqvRahWBMQIfbh+BIYPtpSBbCIXPONtElXXk/MTeP1z
-965Z37RGELOW0M//3zsGRYO/M0LB86zDMtad30E4Oc9GB8bAFa97d/PlpuN1ys18
-yG22y5Or/LBupbzIcSGiKyKXo4D9VxjcLX0Kaj10GNN+/IfS4+CSU4T1o9JolUvP
-LaG1XmLJgU7VfvI9W46zgdgqXOrZgxYZKKW3B9FWf/8MuJAqdg52ex9erykYdMBR
-Wddj4c12EH8oyfJrFNPah3DuU9hOZYu30KT9rnFeST8G8SxvANpqMivrNt2TZH9L
-t17/ieMPji3YY6mjLb0YW9qyEE3Rmx6fhxSiT1lyMIVuPpe4u2k=
-=NiQK
------END PGP SIGNATURE-----
 
---JWEK1jqKZ6MHAcjA--
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
