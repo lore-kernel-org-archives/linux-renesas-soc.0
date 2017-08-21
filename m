@@ -1,109 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34766 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:46682 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750818AbdHHIkM (ORCPT
+        with ESMTP id S1753387AbdHUN2V (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 Aug 2017 04:40:12 -0400
+        Mon, 21 Aug 2017 09:28:21 -0400
+Date: Mon, 21 Aug 2017 15:28:14 +0200
 From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 05/10] ARM: dts: r8a7791: Use R-Car GPIO Gen2 fallback compat string
-Date: Tue,  8 Aug 2017 10:39:23 +0200
-Message-Id: <1502181568-12299-6-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1502181568-12299-1-git-send-email-horms+renesas@verge.net.au>
-References: <1502181568-12299-1-git-send-email-horms+renesas@verge.net.au>
+To: Geert Uytterhoeven <geert@glider.be>
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [GIT PULL FOR renesas-drivers] arm64: dts: r8a779[56]: Add OPPs
+ table for cpu devices
+Message-ID: <20170821132813.GB13133@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use newly added R-Car GPIO Gen2 fallback compat string
-in place of now deprecated non-generation specific
-R-Car GPIO fallback compat string in the DT of the r8a7791 SoC.
+Hi Geert,
 
-This should have no run-time effect as the driver matches against
-the per-SoC compat string before considering the fallback compat string.
+please consider pulling OPPs table for cpufreq support on the r8a7796 and
+r8a7795.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7791.dtsi | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+This pull request is based on renesas-arm64-dt-for-v4.14.
 
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index ea4a8147d995..4bef05f186df 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -123,7 +123,7 @@
- 	};
- 
- 	gpio0: gpio@e6050000 {
--		compatible = "renesas,gpio-r8a7791", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7791", "renesas,rcar-gen2-gpio";
- 		reg = <0 0xe6050000 0 0x50>;
- 		interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -136,7 +136,7 @@
- 	};
- 
- 	gpio1: gpio@e6051000 {
--		compatible = "renesas,gpio-r8a7791", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7791", "renesas,rcar-gen2-gpio";
- 		reg = <0 0xe6051000 0 0x50>;
- 		interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -149,7 +149,7 @@
- 	};
- 
- 	gpio2: gpio@e6052000 {
--		compatible = "renesas,gpio-r8a7791", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7791", "renesas,rcar-gen2-gpio";
- 		reg = <0 0xe6052000 0 0x50>;
- 		interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -162,7 +162,7 @@
- 	};
- 
- 	gpio3: gpio@e6053000 {
--		compatible = "renesas,gpio-r8a7791", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7791", "renesas,rcar-gen2-gpio";
- 		reg = <0 0xe6053000 0 0x50>;
- 		interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -175,7 +175,7 @@
- 	};
- 
- 	gpio4: gpio@e6054000 {
--		compatible = "renesas,gpio-r8a7791", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7791", "renesas,rcar-gen2-gpio";
- 		reg = <0 0xe6054000 0 0x50>;
- 		interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -188,7 +188,7 @@
- 	};
- 
- 	gpio5: gpio@e6055000 {
--		compatible = "renesas,gpio-r8a7791", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7791", "renesas,rcar-gen2-gpio";
- 		reg = <0 0xe6055000 0 0x50>;
- 		interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -201,7 +201,7 @@
- 	};
- 
- 	gpio6: gpio@e6055400 {
--		compatible = "renesas,gpio-r8a7791", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7791", "renesas,rcar-gen2-gpio";
- 		reg = <0 0xe6055400 0 0x50>;
- 		interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -214,7 +214,7 @@
- 	};
- 
- 	gpio7: gpio@e6055800 {
--		compatible = "renesas,gpio-r8a7791", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7791", "renesas,rcar-gen2-gpio";
- 		reg = <0 0xe6055800 0 0x50>;
- 		interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
--- 
-2.1.4
+These are dependencies for supporting CPUFreq. The remainder of that
+work is being posted separately and can be found at:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/rcar-gen3-cpufreq
+
+
+A description of steps taken to lightly exercise the same feature for the
+r8a7795 the above can be found at the link below. The results are the same
+for the r8a7796 with the exception that it has two active CPU cores rather
+than four.
+
+http://elinux.org/Tests:R-CAR-GEN3-CPUFreq
+
+
+The following changes since commit 4725f2b8805718a65dcbce8668710f145df797a8:
+
+  arm64: dts: renesas: r8a7795: add hsusb ch3 device node (2017-07-27 17:19:05 +0200)
+
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/rcar-gen3-cpufreq-dts
+
+for you to fetch changes up to af95354abbae345bcb5f3c8ab5b5ff67f833bbd6:
+
+  arm64: dts: r8a7796: Add OPPs table for cpu devices (2017-08-21 14:39:58 +0200)
+
+----------------------------------------------------------------
+Dien Pham (2):
+      arm64: dts: r8a7795: Add OPPs table for cpu devices
+      arm64: dts: r8a7796: Add OPPs table for cpu devices
+
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 309 ++++++++++++++++++++++++++++
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 341 +++++++++++++++++++++++++++++++
+ 2 files changed, 650 insertions(+)
