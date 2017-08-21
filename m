@@ -1,30 +1,56 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Tue, 22 Aug 2017 16:19:25 +0200
-From: Joerg Roedel <joro@8bytes.org>
-To: Magnus Damm <magnus.damm@gmail.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:38629 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750937AbdHUF42 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 21 Aug 2017 01:56:28 -0400
+From: Magnus Damm <magnus.damm@gmail.com>
+To: joro@8bytes.org
 Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
         sricharan@codeaurora.org, will.deacon@arm.com,
         linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
-        robin.murphy@arm.com, m.szyprowski@samsung.com
-Subject: Re: [PATCH] iommu/ipmmu-vmsa: Use iommu_device_sysfs_add()/remove()
-Message-ID: <20170822141925.5jfh7j22ttsu63b5@8bytes.org>
-References: <150329481531.31395.6238405988822544474.sendpatchset@little-apple>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <150329481531.31395.6238405988822544474.sendpatchset@little-apple>
-Sender: linux-kernel-owner@vger.kernel.org
+        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
+        m.szyprowski@samsung.com
+Date: Mon, 21 Aug 2017 14:53:35 +0900
+Message-Id: <150329481531.31395.6238405988822544474.sendpatchset@little-apple>
+Subject: [PATCH] iommu/ipmmu-vmsa: Use iommu_device_sysfs_add()/remove()
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Aug 21, 2017 at 02:53:35PM +0900, Magnus Damm wrote:
-> From: Magnus Damm <damm+renesas@opensource.se>
-> 
-> Extend the driver to make use of iommu_device_sysfs_add()/remove()
-> functions to hook up initial sysfs support.
-> 
-> Suggested-by: Joerg Roedel <jroedel@suse.de>
-> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Applied, thanks.
+Extend the driver to make use of iommu_device_sysfs_add()/remove()
+functions to hook up initial sysfs support.
+
+Suggested-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+---
+
+ Applies on top of next-20170817
+
+ drivers/iommu/ipmmu-vmsa.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
+
+--- 0001/drivers/iommu/ipmmu-vmsa.c
++++ work/drivers/iommu/ipmmu-vmsa.c	2017-08-21 14:40:13.940607110 +0900
+@@ -953,6 +953,11 @@ static int ipmmu_probe(struct platform_d
+ 
+ 	ipmmu_device_reset(mmu);
+ 
++	ret = iommu_device_sysfs_add(&mmu->iommu, &pdev->dev, NULL,
++				     dev_name(&pdev->dev));
++	if (ret)
++		return ret;
++
+ 	iommu_device_set_ops(&mmu->iommu, &ipmmu_ops);
+ 	iommu_device_set_fwnode(&mmu->iommu, &pdev->dev.of_node->fwnode);
+ 
+@@ -975,6 +980,7 @@ static int ipmmu_remove(struct platform_
+ {
+ 	struct ipmmu_vmsa_device *mmu = platform_get_drvdata(pdev);
+ 
++	iommu_device_sysfs_remove(&mmu->iommu);
+ 	iommu_device_unregister(&mmu->iommu);
+ 
+ #if defined(CONFIG_ARM) && !defined(CONFIG_IOMMU_DMA)
