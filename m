@@ -1,158 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:34913 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751274AbdHXJaS (ORCPT
+Received: from mail-oi0-f43.google.com ([209.85.218.43]:34674 "EHLO
+        mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932823AbdHVNdJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 Aug 2017 05:30:18 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH 2/3] vsp-lib: Add support for RPF-BRS-WPF pipelines
-Date: Thu, 24 Aug 2017 12:30:42 +0300
-Message-Id: <20170824093043.8606-3-laurent.pinchart@ideasonboard.com>
-In-Reply-To: <20170824093043.8606-1-laurent.pinchart@ideasonboard.com>
-References: <20170824093043.8606-1-laurent.pinchart@ideasonboard.com>
+        Tue, 22 Aug 2017 09:33:09 -0400
+Received: by mail-oi0-f43.google.com with SMTP id j144so57686115oib.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 22 Aug 2017 06:33:08 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1502962235-4877-1-git-send-email-geert+renesas@glider.be>
+References: <1502962235-4877-1-git-send-email-geert+renesas@glider.be>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 22 Aug 2017 15:33:08 +0200
+Message-ID: <CACRpkdaX6QdvmRoSkH4MOYqU-JD_tUumK3cu8oVaf7Z=DtNs2Q@mail.gmail.com>
+Subject: Re: [git pull] pinctrl: sh-pfc: Updates for v4.14
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Reuse the BRU code, using the brx generic name to cover both BRU and
-BRS.
+On Thu, Aug 17, 2017 at 11:30 AM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- scripts/vsp-lib.sh | 63 +++++++++++++++++++++++++++++++++++++-----------------
- 1 file changed, 43 insertions(+), 20 deletions(-)
+>         Hi Linus,
+>
+> The following changes since commit 5771a8c08880cdca3bfb4a3fc6d309d6bba20877:
+>
+>   Linux v4.13-rc1 (2017-07-15 15:22:10 -0700)
+>
+> are available in the git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.14-tag1
+>
+> for you to fetch changes up to 56d57391ab6720c4b7bbc0a0cbc079c7b7d653fb:
+>
+>   pinctrl: sh-pfc: r8a77995: Add voltage switch operations for MMC (2017-08-16 14:26:32 +0200)
 
-diff --git a/scripts/vsp-lib.sh b/scripts/vsp-lib.sh
-index fa4a6984e1bb..0f3992a7827e 100755
---- a/scripts/vsp-lib.sh
-+++ b/scripts/vsp-lib.sh
-@@ -53,11 +53,16 @@ vsp1_count_wpfs() {
- 	$mediactl -d $mdev -p | grep -- '- entity.*wpf.[0-9] [^o]' | wc -l
- }
- 
--vsp1_count_bru_inputs() {
--	local num_pads=`$mediactl -d $mdev -p | grep 'entity.*bru' | sed 's/.*(\([0-9]\) pads.*/\1/'`
-+__vsp1_count_brx_inputs() {
-+	local name=$1
-+	local num_pads=`$mediactl -d $mdev -p | grep "entity.*$name" | sed 's/.*(\([0-9]\) pads.*/\1/'`
- 	echo $((num_pads-1))
- }
- 
-+vsp1_count_bru_inputs() {
-+	__vsp1_count_brx_inputs "bru"
-+}
-+
- vsp1_entity_subdev() {
- 	$mediactl -d $mdev -e "$dev $1"
- }
-@@ -105,7 +110,7 @@ reference_frame() {
- 
- 	# gen-image doesn't support processing HSV input images. The good news
- 	# is that the HSV tests that take HSV images as inputs don't need to
--	# perform any processing. We can set the input format to RGB for HSV
-+	# perform any processing. We can set the input format to RGB for HSB
- 	# reference frame generation.
- 	case $in_format in
- 	HSV24 | HSV32)
-@@ -178,7 +183,7 @@ reference_frame() {
- 		esac
- 	done
- 
--	[ x$__vsp_bru_inputs != x ] && options="$options -c $__vsp_bru_inputs"
-+	[ x$__vsp_brx_inputs != x ] && options="$options -c $__vsp_brx_inputs"
- 
- 	$genimage -i $in_format -f $out_format -s $size -a $alpha $options -o $file \
- 		frames/frame-reference-1024x768.pnm
-@@ -363,18 +368,27 @@ pipe_none() {
- 	return
- }
- 
--pipe_rpf_bru() {
--	local ninputs=$1
-+__pipe_rpf_brx() {
-+	local name=$1
-+	local ninputs=$2
- 
--	local bru_output=$(vsp1_count_bru_inputs)
-+	local output=$(__vsp1_count_brx_inputs $name)
- 
- 	for input in `seq 0 1 $((ninputs-1))` ; do
--		$mediactl -d $mdev -l "'$dev rpf.$input':1 -> '$dev bru':$input [1]"
-+		$mediactl -d $mdev -l "'$dev rpf.$input':1 -> '$dev $name':$input [1]"
- 	done
--	$mediactl -d $mdev -l "'$dev bru':$bru_output -> '$dev wpf.0':0 [1]"
-+	$mediactl -d $mdev -l "'$dev $name':$output -> '$dev wpf.0':0 [1]"
- 	$mediactl -d $mdev -l "'$dev wpf.0':1 -> '$dev wpf.0 output':0 [1]"
- 
--	__vsp_bru_inputs=$ninputs
-+	__vsp_brx_inputs=$ninputs
-+}
-+
-+pipe_rpf_brs() {
-+	__pipe_rpf_brx "brs" $*
-+}
-+
-+pipe_rpf_bru() {
-+	__pipe_rpf_brx "bru" $*
- }
- 
- pipe_rpf_bru_uds() {
-@@ -468,7 +482,7 @@ pipe_rpf_wpf() {
- pipe_reset() {
- 	$mediactl -d $mdev -r
- 
--	__vsp_bru_inputs=
-+	__vsp_brx_inputs=
- 	__vsp_histo_type=
- 	__vsp_rpf_format=
- 	__vsp_wpf_index=0
-@@ -532,26 +546,35 @@ format_rpf() {
- 	__vsp_rpf_format=$1
- }
- 
--format_rpf_bru() {
--	local format=$(format_v4l2_to_mbus $1)
--	local size=$2
--	local ninputs=$3
-+__format_rpf_brx() {
-+	local name=$1
-+	local format=$(format_v4l2_to_mbus $2)
-+	local size=$3
-+	local ninputs=$4
- 	local offset=0
- 
--	local bru_output=$(vsp1_count_bru_inputs)
-+	local output=$(__vsp1_count_brx_inputs $name)
- 
- 	for input in `seq 0 1 $((ninputs-1))` ; do
- 		offset=$((offset+50))
- 		$mediactl -d $mdev -V "'$dev rpf.$input':0 [fmt:$format/$size]"
--		$mediactl -d $mdev -V "'$dev bru':$input   [fmt:$format/$size compose:($offset,$offset)/$size]"
-+		$mediactl -d $mdev -V "'$dev $name':$input [fmt:$format/$size compose:($offset,$offset)/$size]"
- 	done
- 
--	$mediactl -d $mdev -V "'$dev bru':$bru_output [fmt:$format/$size]"
-+	$mediactl -d $mdev -V "'$dev $name':$output [fmt:$format/$size]"
- 	$mediactl -d $mdev -V "'$dev wpf.0':0 [fmt:$format/$size]"
- 	$mediactl -d $mdev -V "'$dev wpf.0':1 [fmt:$format/$size]"
- 
--	__vsp_rpf_format=$1
--	__vsp_wpf_format=$1
-+	__vsp_rpf_format=$2
-+	__vsp_wpf_format=$2
-+}
-+
-+format_rpf_brs() {
-+	__format_rpf_brx "brs" $*
-+}
-+
-+format_rpf_bru() {
-+	__format_rpf_brx "bru" $*
- }
- 
- format_rpf_bru_uds() {
--- 
-Regards,
+Pulled into my devel branch for v4.14, excellent work as usual!
 
-Laurent Pinchart
+Yours,
+Linus Walleij
