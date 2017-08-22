@@ -1,4 +1,9 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor3.renesas.com ([210.160.252.173]:8036 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932152AbdHVIcL (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 22 Aug 2017 04:32:11 -0400
 From: Biju Das <biju.das@bp.renesas.com>
 To: Simon Horman <horms@verge.net.au>
 CC: Rob Herring <robh+dt@kernel.org>,
@@ -13,8 +18,8 @@ CC: Rob Herring <robh+dt@kernel.org>,
         "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>
 Subject: RE: [PATCH ] ARM: dts: iwg20d-q7: Add chosen node
-Date: Thu, 24 Aug 2017 14:32:47 +0000
-Message-ID: <SG2PR06MB1711E12964D1C1300C4EEB64B89A0@SG2PR06MB1711.apcprd06.prod.outlook.com>
+Date: Tue, 22 Aug 2017 08:32:06 +0000
+Message-ID: <KL1PR06MB1702BB904D378CC1303D935BB8840@KL1PR06MB1702.apcprd06.prod.outlook.com>
 References: <1503075488-44304-1-git-send-email-biju.das@bp.renesas.com>
  <20170822080735.GH30838@verge.net.au>
 In-Reply-To: <20170822080735.GH30838@verge.net.au>
@@ -22,7 +27,7 @@ Content-Language: en-US
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Sender: devicetree-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 
@@ -53,7 +58,9 @@ as-
 he
 > renesas tree.
 
-Looks like this node is misplaced. I will repost this patch.
+Thanks. I guess it may be related to the below RTC patch.
+[v2] ARM: dts: iwg20d-q7: Add RTC support
+https://patchwork.kernel.org/patch/9903327/
 
 > >
 > >  arch/arm/boot/dts/r8a7743-iwg20d-q7.dts | 5 +++++
