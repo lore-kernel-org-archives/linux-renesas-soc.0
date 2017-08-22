@@ -1,84 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f46.google.com ([209.85.218.46]:36472 "EHLO
-        mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752339AbdHPVig (ORCPT
+Received: from www.zeus03.de ([194.117.254.33]:34026 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754620AbdHVHgV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Aug 2017 17:38:36 -0400
-Received: by mail-oi0-f46.google.com with SMTP id g131so49177627oic.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Aug 2017 14:38:36 -0700 (PDT)
+        Tue, 22 Aug 2017 03:36:21 -0400
+Date: Tue, 22 Aug 2017 09:36:19 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Dirk Behme <dirk.behme@de.bosch.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: Re: Status of r8a7795 SDHI support?
+Message-ID: <20170822073619.GB1451@katana>
+References: <fd4fb97d-9284-f2fa-5719-e28e6cc2fe20@de.bosch.com>
+ <20170818090042.z3jx6rufxuc56m2t@ninjato>
+ <32eb505f-b622-2562-e6d0-818c6bbab32a@de.bosch.com>
+ <20170821081808.7teztwh4hbz25zjq@ninjato>
+ <977e03d5-f59d-b41e-9135-fc6dfc19482d@de.bosch.com>
+ <06bc290a-8173-3d41-ff1e-8c26b4d4c093@de.bosch.com>
+ <20170821134722.GA5226@katana>
+ <fc4e436e-9b6c-d39a-2061-aeaa1a249cc4@de.bosch.com>
+ <20170822065644.GA1451@katana>
+ <770993ca-9bd5-4af3-6a76-69db6f2a0a0f@de.bosch.com>
 MIME-Version: 1.0
-In-Reply-To: <cover.1501509525.git.horms+renesas@verge.net.au>
-References: <cover.1501509525.git.horms+renesas@verge.net.au>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Wed, 16 Aug 2017 23:38:35 +0200
-Message-ID: <CAK8P3a1iaMrJ0dvS67uw9Am4CoGbcZQdZw2H7OQ6aabHHWnuxQ@mail.gmail.com>
-Subject: Re: [GIT PULL] Renesas ARM64 Based SoC DT Updates for v4.14
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: arm-soc <arm@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="XOIedfhf+7KOe/yw"
+Content-Disposition: inline
+In-Reply-To: <770993ca-9bd5-4af3-6a76-69db6f2a0a0f@de.bosch.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Jul 31, 2017 at 5:03 PM, Simon Horman
-<horms+renesas@verge.net.au> wrote:
-> ----------------------------------------------------------------
-> Renesas ARM64 Based SoC DT Updates for v4.14
->
-> * Add usb2.0 for R-Car H3 (r8a7795) ES2.0 SoC
->
-> * Add R-Car D3 (r8a77995) SoC and Draak board support
->
->   Adds minimal support for the R-Car D3 SoC and the Draak development
->   board, allowing to boot from a ramdisk using a serial console.
->
-> * Add Add VC6 clock generator to R-Car H3 (r8a7795)/Salvator-XS board
->
->   The VC6 is an I2C-controlled programmable clock generator, used on the
->   board to provide a display dot clock. Add it to DT.
->
-> * Add missing second pair of DMA names to MSIOF nodes to
->   R-Car M3-W (r8a7796) SoC
->
->   MSIOF0 and MSIOF1 are tied to two DMA controllers through two pairs of
->   DMA specifiers.  However, the second pair of corresponding DMA names was
->   missing.
->
-> * Add support for the DU to R-Car H3 (r8a7795) SoC
->
->   Add a compatible string and VSP links to the DU node. The H3 ES1.x and H3
->   ES2.0 are compatible save for the links to the VSPs that are described
->   explicitly in DT, so there's no need for a new ES2-specific compatible
->   string.
->
-> * Enable HDMI on R-Car H3 (r8a7795) and M3-W (r8a7796) ULCB boards
->
-> * Enable DU on R-Car M3-W (r8a7796) Salvator-X board
->
-> * Enable I2C for DVFS on R-Car H3 (r8a7795) and M3-W (r8a7796) ULCB boards
->
-> * Add Add DRIF support to R-Car H3 (r8a7795) and M3-W (r8a7796) SoCs
->
->   Ramesh Shanmugasundaram says, "R-Car Gen3 DRIF is a SPI like receive only
->   slave device."
->
-> * Move CPG_AUDIO_CLK_I from board to soc files
->
->   Geert Uytterhoeven says, "The definition of CPG_AUDIO_CLK_I is
->   SoC-specific, not board-specific."
->
-> * Add IMR-LX4 support to R-Car H3 (r8a7795) and M3-W (r8a7796) SoCs
->
->   Sergei Shtylyov says, "The image renderer light extended 4 (IMR-LX4) or
->   the distortion correction engine is a drawing processor with a simple
->   instruction system capable of referencing data on an external memory as
->   2D texture data and performing texture mapping and drawing with respect
->   to any shape that is split into triangular objects."
 
-Pulled into next/dt64, thanks!
+--XOIedfhf+7KOe/yw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-       Arnd
+
+> Btw, whats about HS400 support for the eMMC? As the eMMC is often the 'mass
+> storage' device for the rootfs, the eMMC performance will have a direct
+> influence to the overall system performance.
+
+Sure, I know. We finally have Gen3 SDHI DMA upstream and SDR104 seems to
+be stable as well (we are still testing corner cases, though). HS400
+would obviously be next.
+
+
+--XOIedfhf+7KOe/yw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlmb3u8ACgkQFA3kzBSg
+Kbbo9g/+MvUnpnv337Lj27MM8tjOri1oQEZA07FkIlOyuLBCtVCpDUiB7IJIlYxn
+yvxUo8oRUhkUrHaG8ynXchS//kAMllvUxEKa+IMsXlJz/TJCUMEMfhCeGCv41ehu
+xZgZIrj9gSv5v7dDRhfMyMosuRLLakdKGzT7WEeHbhx1TI3+3HycYVJq+SfbW9Pw
+vIjCbRlsIAtdFBgaL3Fppk+sQiJWdHX8FByMDqMyNqxSixjXAkeOTmQnNtl5Cat9
+HmjDIOoJHTPBkPbUvC6KWJ/cFZ/HBvxvh7aPTSC8LkRedNsA3yPkb68rponGZda8
+O1/N9qrWVBLJ6z0We9Q/zwaTTfYglYGmjXN9lHPN+Tgf5AmipFsG1m6P9/iwwaV7
++t7WgsvpHqr2oqAHFb1mhz5dyP3D2JYt9F3qEy1sx188kGWIa/nzI+NUKDcrpIzd
+qezn5Za1Oz1TfZZol78ZXAwDoqxJ98Gwj5k+MbfoD2E/PFZCEW0OJJz4oeL5ckin
+O32ACHnc5VlASWByRytZDc9WFSPqCbbq+K515flfdQVVtfjQUIE0Eoq/AO46+2Ze
+qBHt1nrrfLF0wwC2oKRHCH8XMlGsvbHY7u70LwoNpG6RgXbdmkguWzz/IoSLrEHC
+k5DJrDARaiDF7/Wb28OV3HnKag+DWW+5CDarcbScEgzCHxwUGBw=
+=Dak9
+-----END PGP SIGNATURE-----
+
+--XOIedfhf+7KOe/yw--
