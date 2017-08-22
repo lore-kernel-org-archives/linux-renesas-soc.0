@@ -1,62 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f52.google.com ([209.85.215.52]:35185 "EHLO
-        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932329AbdHVPAx (ORCPT
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:34455 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932329AbdHVO6o (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 22 Aug 2017 11:00:53 -0400
-Received: by mail-lf0-f52.google.com with SMTP id k186so24833274lfe.2
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 22 Aug 2017 08:00:53 -0700 (PDT)
-From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
-Date: Tue, 22 Aug 2017 17:00:50 +0200
+        Tue, 22 Aug 2017 10:58:44 -0400
+MIME-Version: 1.0
+In-Reply-To: <CAL_Jsq+ABipq+YCpSwu_vhjk0rkZQimCD2vG1x5GL91wi6dzKw@mail.gmail.com>
+References: <20170822001912.27638-1-niklas.soderlund+renesas@ragnatech.se> <CAL_Jsq+ABipq+YCpSwu_vhjk0rkZQimCD2vG1x5GL91wi6dzKw@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 22 Aug 2017 16:58:43 +0200
+Message-ID: <CAMuHMdXU1j=vwJJnhjt96=g5ikCVhuoH7AZysk+WAd5HYJnV4w@mail.gmail.com>
+Subject: Re: [PATCH v2] device property: preserve usecount for node passed to of_fwnode_graph_get_port_parent()
 To: Rob Herring <robh@kernel.org>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+Cc: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
         Kieran Bingham <kieran.bingham@ideasonboard.com>,
         "open list:MEDIA DRIVERS FOR RENESAS - FCP"
         <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH v2] device property: preserve usecount for node passed to
- of_fwnode_graph_get_port_parent()
-Message-ID: <20170822150050.GD14873@bigcity.dyn.berto.se>
-References: <20170822001912.27638-1-niklas.soderlund+renesas@ragnatech.se>
- <CAL_Jsq+ABipq+YCpSwu_vhjk0rkZQimCD2vG1x5GL91wi6dzKw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAL_Jsq+ABipq+YCpSwu_vhjk0rkZQimCD2vG1x5GL91wi6dzKw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hi Rob,
 
-On 2017-08-22 09:49:35 -0500, Rob Herring wrote:
-> On Mon, Aug 21, 2017 at 7:19 PM, Niklas S�derlund
+On Tue, Aug 22, 2017 at 4:49 PM, Rob Herring <robh@kernel.org> wrote:
+> On Mon, Aug 21, 2017 at 7:19 PM, Niklas S=C3=B6derlund
 > <niklas.soderlund+renesas@ragnatech.se> wrote:
-> > Using CONFIG_OF_DYNAMIC=y uncovered an imbalance in the usecount of the
-> > node being passed to of_fwnode_graph_get_port_parent(). Preserve the
-> > usecount by using of_get_parent() instead of of_get_next_parent() which
-> > don't decrement the usecount of the node passed to it.
-> >
-> > Fixes: 3b27d00e7b6d7c88 ("device property: Move fwnode graph ops to firmware specific locations")
-> > Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
-> > Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> > ---
-> >  drivers/of/property.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
+>> Using CONFIG_OF_DYNAMIC=3Dy uncovered an imbalance in the usecount of th=
+e
+>> node being passed to of_fwnode_graph_get_port_parent(). Preserve the
+>> usecount by using of_get_parent() instead of of_get_next_parent() which
+>> don't decrement the usecount of the node passed to it.
+>>
+>> Fixes: 3b27d00e7b6d7c88 ("device property: Move fwnode graph ops to firm=
+ware specific locations")
+>> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech=
+.se>
+>> Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+>> ---
+>>  drivers/of/property.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
 > Isn't this already fixed with this fix:
-> 
+>
 > commit c0a480d1acf7dc184f9f3e7cf724483b0d28dc2e
 > Author: Tony Lindgren <tony@atomide.com>
 > Date:   Fri Jul 28 01:23:15 2017 -0700
-> 
+>
 > device property: Fix usecount for of_graph_get_port_parent()
 
-No, that commit fixes it for of_graph_get_port_parent() while this 
-commit fixes it for of_fwnode_graph_get_port_parent(). But in essence it 
-is the same issue but needs two separate fixes.
+No, this one is for of_fwnode_graph_get_port_parent().
 
--- 
-Regards,
-Niklas S�derlund
+You're letting too many similarly-named new functions through ;-)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
