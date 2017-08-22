@@ -1,15 +1,11 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f174.google.com ([209.85.192.174]:36203 "EHLO
-        mail-pf0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753768AbdHWLp6 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Aug 2017 07:45:58 -0400
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
 In-Reply-To: <757f672b-d3cf-9189-0533-cb45e325c6b8@gmail.com>
 References: <1503427046-17618-1-git-send-email-geert+renesas@glider.be> <757f672b-d3cf-9189-0533-cb45e325c6b8@gmail.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 23 Aug 2017 13:45:57 +0200
-Message-ID: <CAMuHMdVMuW+5UQc3Tg5bWkix_PLEaxsoGA6sgSdVz0fV6UsO6Q@mail.gmail.com>
+Date: Tue, 22 Aug 2017 23:16:39 +0200
+Message-ID: <CAMuHMdUyz9BeXpWxLwpLtb0bpLmcbbKW5UQA9-k-NPG4TWXTxg@mail.gmail.com>
 Subject: Re: [PATCH 0/2] net: Fix crashes due to activity during suspend
 To: Florian Fainelli <f.fainelli@gmail.com>
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -22,7 +18,7 @@ Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hi Florian,
@@ -67,13 +63,7 @@ On Tue, Aug 22, 2017 at 8:49 PM, Florian Fainelli <f.fainelli@gmail.com> wrote:
 >
 > Have you tried that?
 
-Unfortunately that doesn't help.
-In state PHY_HALTED, the PHY state machine still calls the .adjust_link()
-callback while the device is suspended.
-
-Do you have a clue? This is too far beyond my phy-foo...
-
-Thanks!
+Thank you, I will give that a try!
 
 Gr{oetje,eeting}s,
 
