@@ -1,42 +1,50 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <20170822001912.27638-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170822001912.27638-1-niklas.soderlund+renesas@ragnatech.se>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 22 Aug 2017 09:49:35 -0500
-Message-ID: <CAL_Jsq+ABipq+YCpSwu_vhjk0rkZQimCD2vG1x5GL91wi6dzKw@mail.gmail.com>
-Subject: Re: [PATCH v2] device property: preserve usecount for node passed to of_fwnode_graph_get_port_parent()
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:49056 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754328AbdHVAT0 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 21 Aug 2017 20:19:26 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
+To: devicetree@vger.kernel.org, linux-media@vger.kernel.org
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
         Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        "open list:MEDIA DRIVERS FOR RENESAS - FCP"
-        <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-Sender: linux-media-owner@vger.kernel.org
+        linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2] device property: preserve usecount for node passed to of_fwnode_graph_get_port_parent()
+Date: Tue, 22 Aug 2017 02:19:12 +0200
+Message-Id: <20170822001912.27638-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Aug 21, 2017 at 7:19 PM, Niklas Söderlund
-<niklas.soderlund+renesas@ragnatech.se> wrote:
-> Using CONFIG_OF_DYNAMIC=y uncovered an imbalance in the usecount of the
-> node being passed to of_fwnode_graph_get_port_parent(). Preserve the
-> usecount by using of_get_parent() instead of of_get_next_parent() which
-> don't decrement the usecount of the node passed to it.
->
-> Fixes: 3b27d00e7b6d7c88 ("device property: Move fwnode graph ops to firmware specific locations")
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> ---
->  drivers/of/property.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Using CONFIG_OF_DYNAMIC=y uncovered an imbalance in the usecount of the
+node being passed to of_fwnode_graph_get_port_parent(). Preserve the
+usecount by using of_get_parent() instead of of_get_next_parent() which
+don't decrement the usecount of the node passed to it.
 
-Isn't this already fixed with this fix:
+Fixes: 3b27d00e7b6d7c88 ("device property: Move fwnode graph ops to firmware specific locations")
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+---
+ drivers/of/property.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-commit c0a480d1acf7dc184f9f3e7cf724483b0d28dc2e
-Author: Tony Lindgren <tony@atomide.com>
-Date:   Fri Jul 28 01:23:15 2017 -0700
-
-device property: Fix usecount for of_graph_get_port_parent()
+diff --git a/drivers/of/property.c b/drivers/of/property.c
+index 067f9fab7b77c794..59afeea9888e3b3d 100644
+--- a/drivers/of/property.c
++++ b/drivers/of/property.c
+@@ -923,7 +923,7 @@ of_fwnode_graph_get_port_parent(struct fwnode_handle *fwnode)
+ 	struct device_node *np;
+ 
+ 	/* Get the parent of the port */
+-	np = of_get_next_parent(to_of_node(fwnode));
++	np = of_get_parent(to_of_node(fwnode));
+ 	if (!np)
+ 		return NULL;
+ 
+-- 
+2.14.0
