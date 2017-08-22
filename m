@@ -1,4 +1,9 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:56050 "EHLO
+        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752834AbdHVX2s (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 22 Aug 2017 19:28:48 -0400
 From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -9,72 +14,254 @@ Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
         linux-renesas-soc@vger.kernel.org,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v6 08/25] rcar-vin: do not reset crop and compose when setting format
-Date: Wed, 23 Aug 2017 01:26:23 +0200
-Message-Id: <20170822232640.26147-9-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v6 17/25] rcar-vin: use different v4l2 operations in media controller mode
+Date: Wed, 23 Aug 2017 01:26:32 +0200
+Message-Id: <20170822232640.26147-18-niklas.soderlund+renesas@ragnatech.se>
 In-Reply-To: <20170822232640.26147-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20170822232640.26147-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-It was a bad idea to reset the crop and compose settings when a new
-format is set. This would overwrite any crop/compose set by s_select and
-cause unexpected behaviors, remove it. Also fold the reset helper in to
-the only remaining caller.
+When the driver runs in media controller mode it should not directly
+control the subdevice instead userspace will be responsible for
+configuring the pipeline. To be able to run in this mode a different set
+of v4l2 operations needs to be used.
+
+Add a new set of v4l2 operations to support the running without directly
+interacting with the source subdevice.
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 21 +++++++--------------
- 1 file changed, 7 insertions(+), 14 deletions(-)
+ drivers/media/platform/rcar-vin/rcar-dma.c  |   3 +-
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 155 +++++++++++++++++++++++++++-
+ drivers/media/platform/rcar-vin/rcar-vin.h  |   1 +
+ 3 files changed, 155 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+index 6206fab7b6cdc55a..de1486ee2786b499 100644
+--- a/drivers/media/platform/rcar-vin/rcar-dma.c
++++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+@@ -628,7 +628,8 @@ static int rvin_setup(struct rvin_dev *vin)
+ 		/* Default to TB */
+ 		vnmc = VNMC_IM_FULL;
+ 		/* Use BT if video standard can be read and is 60 Hz format */
+-		if (!v4l2_subdev_call(vin_to_source(vin), video, g_std, &std)) {
++		if (!vin->info->use_mc &&
++		    !v4l2_subdev_call(vin_to_source(vin), video, g_std, &std)) {
+ 			if (std & V4L2_STD_525_60)
+ 				vnmc = VNMC_IM_FULL | VNMC_FOC;
+ 		}
 diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index affdc128a75e502e..421820caf275b066 100644
+index f71dea8d5d40323a..9d540644bbe446f6 100644
 --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
 +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -90,17 +90,6 @@ static u32 rvin_format_sizeimage(struct v4l2_pix_format *pix)
-  * V4L2
-  */
+@@ -23,6 +23,9 @@
+ #include "rcar-vin.h"
  
--static void rvin_reset_crop_compose(struct rvin_dev *vin)
--{
--	vin->crop.top = vin->crop.left = 0;
--	vin->crop.width = vin->source.width;
--	vin->crop.height = vin->source.height;
--
--	vin->compose.top = vin->compose.left = 0;
--	vin->compose.width = vin->format.width;
--	vin->compose.height = vin->format.height;
--}
--
- int rvin_reset_format(struct rvin_dev *vin)
- {
- 	struct v4l2_subdev_format fmt = {
-@@ -147,7 +136,13 @@ int rvin_reset_format(struct rvin_dev *vin)
- 		break;
- 	}
+ #define RVIN_DEFAULT_FORMAT	V4L2_PIX_FMT_YUYV
++#define RVIN_DEFAULT_WIDTH	800
++#define RVIN_DEFAULT_HEIGHT	600
++#define RVIN_DEFAULT_COLORSPACE	V4L2_COLORSPACE_SRGB
  
--	rvin_reset_crop_compose(vin);
-+	vin->crop.top = vin->crop.left = 0;
-+	vin->crop.width = mf->width;
-+	vin->crop.height = mf->height;
+ /* -----------------------------------------------------------------------------
+  * Format Conversions
+@@ -671,6 +674,84 @@ static const struct v4l2_ioctl_ops rvin_ioctl_ops = {
+ 	.vidioc_unsubscribe_event	= v4l2_event_unsubscribe,
+ };
+ 
++/* -----------------------------------------------------------------------------
++ * V4L2 Media Controller
++ */
 +
-+	vin->compose.top = vin->compose.left = 0;
-+	vin->compose.width = mf->width;
-+	vin->compose.height = mf->height;
++static int __rvin_mc_try_format(struct rvin_dev *vin,
++				struct v4l2_pix_format *pix)
++{
++	/* Keep current field if no specific one is asked for */
++	if (pix->field == V4L2_FIELD_ANY)
++		pix->field = vin->format.field;
++
++	return rvin_format_align(vin, pix);
++}
++
++static int rvin_mc_try_fmt_vid_cap(struct file *file, void *priv,
++				   struct v4l2_format *f)
++{
++	struct rvin_dev *vin = video_drvdata(file);
++
++	return __rvin_mc_try_format(vin, &f->fmt.pix);
++}
++
++static int rvin_mc_s_fmt_vid_cap(struct file *file, void *priv,
++				 struct v4l2_format *f)
++{
++	struct rvin_dev *vin = video_drvdata(file);
++	int ret;
++
++	if (vb2_is_busy(&vin->queue))
++		return -EBUSY;
++
++	ret = __rvin_mc_try_format(vin, &f->fmt.pix);
++	if (ret)
++		return ret;
++
++	vin->format = f->fmt.pix;
++
++	return 0;
++}
++
++static int rvin_mc_enum_input(struct file *file, void *priv,
++			      struct v4l2_input *i)
++{
++	if (i->index != 0)
++		return -EINVAL;
++
++	i->type = V4L2_INPUT_TYPE_CAMERA;
++	strlcpy(i->name, "Camera", sizeof(i->name));
++
++	return 0;
++}
++
++static const struct v4l2_ioctl_ops rvin_mc_ioctl_ops = {
++	.vidioc_querycap		= rvin_querycap,
++	.vidioc_try_fmt_vid_cap		= rvin_mc_try_fmt_vid_cap,
++	.vidioc_g_fmt_vid_cap		= rvin_g_fmt_vid_cap,
++	.vidioc_s_fmt_vid_cap		= rvin_mc_s_fmt_vid_cap,
++	.vidioc_enum_fmt_vid_cap	= rvin_enum_fmt_vid_cap,
++
++	.vidioc_enum_input		= rvin_mc_enum_input,
++	.vidioc_g_input			= rvin_g_input,
++	.vidioc_s_input			= rvin_s_input,
++
++	.vidioc_reqbufs			= vb2_ioctl_reqbufs,
++	.vidioc_create_bufs		= vb2_ioctl_create_bufs,
++	.vidioc_querybuf		= vb2_ioctl_querybuf,
++	.vidioc_qbuf			= vb2_ioctl_qbuf,
++	.vidioc_dqbuf			= vb2_ioctl_dqbuf,
++	.vidioc_expbuf			= vb2_ioctl_expbuf,
++	.vidioc_prepare_buf		= vb2_ioctl_prepare_buf,
++	.vidioc_streamon		= vb2_ioctl_streamon,
++	.vidioc_streamoff		= vb2_ioctl_streamoff,
++
++	.vidioc_log_status		= v4l2_ctrl_log_status,
++	.vidioc_subscribe_event		= rvin_subscribe_event,
++	.vidioc_unsubscribe_event	= v4l2_event_unsubscribe,
++};
++
+ /* -----------------------------------------------------------------------------
+  * File Operations
+  */
+@@ -819,6 +900,60 @@ static const struct v4l2_file_operations rvin_fops = {
+ 	.read		= vb2_fop_read,
+ };
  
- 	vin->format.bytesperline = rvin_format_bytesperline(&vin->format);
- 	vin->format.sizeimage = rvin_format_sizeimage(&vin->format);
-@@ -317,8 +312,6 @@ static int rvin_s_fmt_vid_cap(struct file *file, void *priv,
++/* -----------------------------------------------------------------------------
++ * Media controller file Operations
++ */
++
++static int rvin_mc_open(struct file *file)
++{
++	struct rvin_dev *vin = video_drvdata(file);
++	int ret;
++
++	mutex_lock(&vin->lock);
++
++	file->private_data = vin;
++
++	ret = v4l2_fh_open(file);
++	if (ret)
++		goto unlock;
++
++	pm_runtime_get_sync(vin->dev);
++	v4l2_pipeline_pm_use(&vin->vdev.entity, 1);
++
++unlock:
++	mutex_unlock(&vin->lock);
++
++	return ret;
++}
++
++static int rvin_mc_release(struct file *file)
++{
++	struct rvin_dev *vin = video_drvdata(file);
++	int ret;
++
++	mutex_lock(&vin->lock);
++
++	/* the release helper will cleanup any on-going streaming */
++	ret = _vb2_fop_release(file, NULL);
++
++	v4l2_pipeline_pm_use(&vin->vdev.entity, 0);
++	pm_runtime_put(vin->dev);
++
++	mutex_unlock(&vin->lock);
++
++	return ret;
++}
++
++static const struct v4l2_file_operations rvin_mc_fops = {
++	.owner		= THIS_MODULE,
++	.unlocked_ioctl	= video_ioctl2,
++	.open		= rvin_mc_open,
++	.release	= rvin_mc_release,
++	.poll		= vb2_fop_poll,
++	.mmap		= vb2_fop_mmap,
++	.read		= vb2_fop_read,
++};
++
+ void rvin_v4l2_remove(struct rvin_dev *vin)
+ {
+ 	v4l2_info(&vin->v4l2_dev, "Removing %s\n",
+@@ -851,19 +986,33 @@ int rvin_v4l2_probe(struct rvin_dev *vin)
+ 	vin->v4l2_dev.notify = rvin_notify;
  
- 	vin->format = f->fmt.pix;
+ 	/* video node */
+-	vdev->fops = &rvin_fops;
+ 	vdev->v4l2_dev = &vin->v4l2_dev;
+ 	vdev->queue = &vin->queue;
+ 	snprintf(vdev->name, sizeof(vdev->name), "%s %s", KBUILD_MODNAME,
+ 		 dev_name(vin->dev));
+ 	vdev->release = video_device_release_empty;
+-	vdev->ioctl_ops = &rvin_ioctl_ops;
+ 	vdev->lock = &vin->lock;
+-	vdev->ctrl_handler = &vin->ctrl_handler;
+ 	vdev->device_caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING |
+ 		V4L2_CAP_READWRITE;
  
--	rvin_reset_crop_compose(vin);
--
- 	return 0;
- }
++	/* Set some form of default format */
+ 	vin->format.pixelformat	= RVIN_DEFAULT_FORMAT;
++	vin->format.width = RVIN_DEFAULT_WIDTH;
++	vin->format.height = RVIN_DEFAULT_HEIGHT;
++	vin->format.colorspace = RVIN_DEFAULT_COLORSPACE;
++
++	ret = rvin_format_align(vin, &vin->format);
++	if (ret)
++		return ret;
++
++	if (vin->info->use_mc) {
++		vdev->fops = &rvin_mc_fops;
++		vdev->ioctl_ops = &rvin_mc_ioctl_ops;
++	} else {
++		vdev->fops = &rvin_fops;
++		vdev->ioctl_ops = &rvin_ioctl_ops;
++		vdev->ctrl_handler = &vin->ctrl_handler;
++	}
  
+ 	ret = video_register_device(&vin->vdev, VFL_TYPE_GRABBER, -1);
+ 	if (ret) {
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index 819d9c04ed8ffb36..12daff804bb6f77f 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -21,6 +21,7 @@
+ #include <media/v4l2-ctrls.h>
+ #include <media/v4l2-dev.h>
+ #include <media/v4l2-device.h>
++#include <media/v4l2-mc.h>
+ #include <media/videobuf2-v4l2.h>
+ 
+ /* Number of HW buffers */
 -- 
 2.14.0
