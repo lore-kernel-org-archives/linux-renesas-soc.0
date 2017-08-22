@@ -1,66 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:44196 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751591AbdHAKPT (ORCPT
+Received: from mail-lf0-f48.google.com ([209.85.215.48]:33597 "EHLO
+        mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932684AbdHVMUs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 1 Aug 2017 06:15:19 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v3 0/2] ravb: add wake-on-lan support via magic packet
-Date: Tue,  1 Aug 2017 12:14:35 +0200
-Message-Id: <20170801101437.9020-1-niklas.soderlund+renesas@ragnatech.se>
+        Tue, 22 Aug 2017 08:20:48 -0400
+Received: by mail-lf0-f48.google.com with SMTP id d17so78446497lfe.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 22 Aug 2017 05:20:48 -0700 (PDT)
+Subject: Re: [PATCH 2/2] ARM: dts: r8a7743: Add IIC cores to dtsi
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>,
+        Simon Horman <horms@verge.net.au>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Biju Das <biju.das@bp.renesas.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+References: <1502196418-31341-1-git-send-email-biju.das@bp.renesas.com>
+ <12d923ba-184c-ef59-f27b-41a7592a5f93@cogentembedded.com>
+ <20170810080121.GE16647@verge.net.au> <20170810112411.GA4380@katana>
+ <TY1PR06MB0702EA22AFE7D8145BF623A6B7880@TY1PR06MB0702.apcprd06.prod.outlook.com>
+ <CAMuHMdXX0BRvWOc4iosiYNWuA4tP2BpLF5kndNrDL4FeKctgkA@mail.gmail.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <0b7c2e3e-e620-fc47-6bca-6ec4e6b4efb2@cogentembedded.com>
+Date: Tue, 22 Aug 2017 15:20:44 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdXX0BRvWOc4iosiYNWuA4tP2BpLF5kndNrDL4FeKctgkA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-WoL is enabled in the suspend callback by setting MagicPacket detection
-and disabling all interrupts expect MagicPacket. In the resume path the
-driver needs to reset the hardware to rearm the WoL logic, this prevents
-the driver from simply restoring the registers and to take advantage of
-that ravb was not suspended to reduce resume time. To reset the
-hardware the driver closes the device, sets it in reset mode and reopens
-the device just like it would do in a normal suspend/resume scenario
-without WoL enabled, but it both closes and opens the device in the
-resume callback since the device needs to be reset for WoL to work.
+Hello!
 
-One quirk needed for WoL is that the module clock needs to be prevented
-from being switched off by Runtime PM. To keep the clock alive the
-suspend callback need to call clk_enable() directly to increase the
-usage count of the clock. Then when Runtime PM decreases the clock usage
-count it won't reach 0 and be switched off.
+On 08/14/2017 05:15 PM, Geert Uytterhoeven wrote:
 
-Changes since v2
-- Only do the clock dance to workaround PSCI sleep when resuming if WoL 
-  is enabled. This was a bug in v2 which resulted in a WARN if resuming 
-  from PSCI sleep with WoL disabled, thanks Sergei for pointing this 
-  out!
-- Break out clock dance workaround in separate patch to make it easier 
-  to revert once a fix is upstream for the clock driver as suggested by 
-  Sergei.
+>>> From: Wolfram Sang [mailto:wsa@the-dreams.de]
+>>> Sent: 10 August 2017 12:24
+>>>
+>>>
+>>>>>> +                i2c6: i2c@e60b0000 {
+>>>>>
+>>>>>     I'd use iic0 as the label.
+> 
+> Sergei: I assume you meant "iic3"? ;-)
 
-Changes since v1
-- Fix issue where device would fail to resume from PSCI suspend if WoL
-  was enabled, reported by Geert. The fault was that the clock driver
-  thinks the clock is on, but PSCI have disabled it, added workaround
-  for this in ravb driver which can be removed once the clock driver is
-  aware of the PSCI behavior.
-- Only try to restore from wol wake up if netif is running, since this
-  is a condition to enable wol in the first place this was a bug in v1.
+    After having a look at the manual, yes. :-)
 
-Niklas Söderlund (2):
-  ravb: add wake-on-lan support via magic packet
-  ravb: add workaround for clock when resuming with WoL enabled
+[...]
 
- drivers/net/ethernet/renesas/ravb.h      |   2 +
- drivers/net/ethernet/renesas/ravb_main.c | 131 ++++++++++++++++++++++++++++++-
- 2 files changed, 129 insertions(+), 4 deletions(-)
+> Gr{oetje,eeting}s,
+> 
+>                          Geert
 
--- 
-2.13.3
+MBR, Sergei
