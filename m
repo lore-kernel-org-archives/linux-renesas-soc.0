@@ -1,46 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:53767 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752228AbdHII04 (ORCPT
+Received: from mail-oi0-f48.google.com ([209.85.218.48]:34815 "EHLO
+        mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932523AbdHVNj6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 9 Aug 2017 04:26:56 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Tue, 22 Aug 2017 09:39:58 -0400
+Received: by mail-oi0-f48.google.com with SMTP id j144so57890838oib.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 22 Aug 2017 06:39:58 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1502881936-39357-1-git-send-email-biju.das@bp.renesas.com>
+References: <1502881936-39357-1-git-send-email-biju.das@bp.renesas.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 22 Aug 2017 15:39:57 +0200
+Message-ID: <CACRpkdZzQfe-Mdv0hnf_rTHh0KwX9QrKOUUd0tam_DndkCTy5A@mail.gmail.com>
+Subject: Re: [PATCH ] gpio: rcar: Add r8a7745 (RZ/G1E) support
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 3/3] arm64: dts: r8a7795: Use R-Car SATA Gen3 fallback compat string
-Date: Wed,  9 Aug 2017 10:26:43 +0200
-Message-Id: <1502267203-12229-4-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1502267203-12229-1-git-send-email-horms+renesas@verge.net.au>
-References: <1502267203-12229-1-git-send-email-horms+renesas@verge.net.au>
+        Russell King <linux@armlinux.org.uk>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use newly added R-Car SATA Gen3 fallback compat string
-in the DT of the r8a7795 SoC.
+On Wed, Aug 16, 2017 at 1:12 PM, Biju Das <biju.das@bp.renesas.com> wrote:
 
-This should have no run-time effect as the driver matches against
-the per-SoC compat string before the fallback compat string is considered.
+> Renesas RZ/G1E (R8A7745) SoC GPIO blocks are identical to the R-Car Gen2
+> family. Add support for its GPIO controllers.
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Patch applied with the ACKs
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index a87ae76880ab..c9f2b87e7ee3 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1451,7 +1451,8 @@
- 		};
- 
- 		sata: sata@ee300000 {
--			compatible = "renesas,sata-r8a7795";
-+			compatible = "renesas,sata-r8a7795",
-+				     "renesas,rcar-gen3-sata";
- 			reg = <0 0xee300000 0 0x200000>;
- 			interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 815>;
--- 
-2.1.4
+Yours,
+Linus Walleij
