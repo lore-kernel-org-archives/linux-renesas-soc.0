@@ -1,61 +1,30 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:54393 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751340AbdH3HvI (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 30 Aug 2017 03:51:08 -0400
-Date: Wed, 30 Aug 2017 09:51:03 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 1/3] ARM: Add definition for monitor mode
-Message-ID: <20170830075103.GN10398@verge.net.au>
-References: <1500387987-9240-1-git-send-email-geert+renesas@glider.be>
- <1500387987-9240-2-git-send-email-geert+renesas@glider.be>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Tue, 22 Aug 2017 16:19:25 +0200
+From: Joerg Roedel <joro@8bytes.org>
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+        sricharan@codeaurora.org, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
+        robin.murphy@arm.com, m.szyprowski@samsung.com
+Subject: Re: [PATCH] iommu/ipmmu-vmsa: Use iommu_device_sysfs_add()/remove()
+Message-ID: <20170822141925.5jfh7j22ttsu63b5@8bytes.org>
+References: <150329481531.31395.6238405988822544474.sendpatchset@little-apple>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1500387987-9240-2-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <150329481531.31395.6238405988822544474.sendpatchset@little-apple>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Jul 18, 2017 at 04:26:25PM +0200, Geert Uytterhoeven wrote:
-> <asm/ptrace.h> provides *_MODE definitions for the various processor
-> modes, but monitor mode was missing.
+On Mon, Aug 21, 2017 at 02:53:35PM +0900, Magnus Damm wrote:
+> From: Magnus Damm <damm+renesas@opensource.se>
 > 
-> Add MON_MODE to avoid code using the hardcoded value.
+> Extend the driver to make use of iommu_device_sysfs_add()/remove()
+> functions to hook up initial sysfs support.
 > 
-> Suggested-by: Marc Zyngier <marc.zyngier@arm.com>
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> ARM maintainers: Please provide your ack, as this is a dependency for a
-> mach-shmobile patch.
-> 
-> v2:
->   - New.
-> ---
->  arch/arm/include/uapi/asm/ptrace.h | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm/include/uapi/asm/ptrace.h b/arch/arm/include/uapi/asm/ptrace.h
-> index 5af0ed1b825a2aa9..70ff6bf489f31193 100644
-> --- a/arch/arm/include/uapi/asm/ptrace.h
-> +++ b/arch/arm/include/uapi/asm/ptrace.h
-> @@ -53,6 +53,7 @@
->  #endif
->  #define FIQ_MODE	0x00000011
->  #define IRQ_MODE	0x00000012
-> +#define MON_MODE	0x00000016
->  #define ABT_MODE	0x00000017
->  #define HYP_MODE	0x0000001a
->  #define UND_MODE	0x0000001b
+> Suggested-by: Joerg Roedel <jroedel@suse.de>
+> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 
-Coming back to this after somewhat of a hiatus.
-It seems that we are still waiting on an Ack to allow this
-series to proceed.
+Applied, thanks.
