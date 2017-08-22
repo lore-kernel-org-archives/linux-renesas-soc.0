@@ -1,41 +1,35 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH v4 1/6] i2c: add a message flag for DMA safe buffers
-Date: Thu, 17 Aug 2017 16:14:44 +0200
-Message-Id: <20170817141449.23958-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170817141449.23958-1-wsa+renesas@sang-engineering.com>
-References: <20170817141449.23958-1-wsa+renesas@sang-engineering.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:33271 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932147AbdHVHwC (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 22 Aug 2017 03:52:02 -0400
+Date: Tue, 22 Aug 2017 09:51:59 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2] arm64: dts: renesas: r8a7796: Add FDP1 instance
+Message-ID: <20170822075158.GD30838@verge.net.au>
+References: <20170713112110.9627-1-laurent.pinchart+renesas@ideasonboard.com>
+ <1709301.HiysQ4booP@avalon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1709301.HiysQ4booP@avalon>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I2C has no requirement that the buffer of a message needs to be DMA
-safe. In case it is, it can now be flagged, so drivers wishing to
-do DMA can use the buffer directly.
+On Mon, Aug 21, 2017 at 12:25:21PM +0300, Laurent Pinchart wrote:
+> Hi Simon,
+> 
+> On Thursday, 13 July 2017 14:21:10 EEST Laurent Pinchart wrote:
+> > The r8a7796 has a single FDP1 instance.
+> > 
+> > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> > Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> Could you pick this up ?
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- include/uapi/linux/i2c.h | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/include/uapi/linux/i2c.h b/include/uapi/linux/i2c.h
-index 009e27bb9abe19..1c683cb319e4b7 100644
---- a/include/uapi/linux/i2c.h
-+++ b/include/uapi/linux/i2c.h
-@@ -71,6 +71,9 @@ struct i2c_msg {
- #define I2C_M_RD		0x0001	/* read data, from slave to master */
- 					/* I2C_M_RD is guaranteed to be 0x0001! */
- #define I2C_M_TEN		0x0010	/* this is a ten bit chip address */
-+#define I2C_M_DMA_SAFE		0x0200	/* the buffer of this message is DMA safe */
-+					/* makes only sense in kernelspace */
-+					/* userspace buffers are copied anyway */
- #define I2C_M_RECV_LEN		0x0400	/* length will be first received byte */
- #define I2C_M_NO_RD_ACK		0x0800	/* if I2C_FUNC_PROTOCOL_MANGLING */
- #define I2C_M_IGNORE_NAK	0x1000	/* if I2C_FUNC_PROTOCOL_MANGLING */
--- 
-2.11.0
+Sorry for letting this slip through.
+I have applied it for v4.15.
