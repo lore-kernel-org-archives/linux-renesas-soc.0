@@ -1,79 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:41455 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753148AbdHBMNH (ORCPT
+Received: from mail-qt0-f180.google.com ([209.85.216.180]:34002 "EHLO
+        mail-qt0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932623AbdHVLO4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 Aug 2017 08:13:07 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: balbi@kernel.org
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, stable@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH] usb: gadget: udc: renesas_usb3: Fix usb_gadget_giveback_request() calling
-Date: Wed,  2 Aug 2017 21:06:35 +0900
-Message-Id: <1501675595-6829-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Tue, 22 Aug 2017 07:14:56 -0400
+Received: by mail-qt0-f180.google.com with SMTP id p10so1190495qte.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 22 Aug 2017 04:14:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1502816007-30186-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1502816007-30186-1-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 22 Aug 2017 13:14:55 +0200
+Message-ID: <CAPDyKFoPm8H8r1tnG0+HtGe_L2afMZw6_-eFOC_H4u8eO7Qbbg@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: mmc: sh_mmcif: Document r8a7745 DT bindings
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Russell King <linux@armlinux.org.uk>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-According to the gadget.h, a "complete" function will always be called
-with interrupts disabled. However, sometimes usb3_request_done() function
-is called with interrupts enabled. So, this function should be held
-by spin_lock_irqsave() to disable interruption. Also, this driver has
-to call spin_unlock() to avoid spinlock recursion by this driver before
-calling usb_gadget_giveback_request().
+On 15 August 2017 at 18:53, Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
 
-Reported-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-Tested-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-Fixes: 746bfe63bba3 ("usb: gadget: renesas_usb3: add support for Renesas USB3.0 peripheral controller")
-Cc: <stable@vger.kernel.org> # v4.5+
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/usb/gadget/udc/renesas_usb3.c | 21 ++++++++++++++++-----
- 1 file changed, 16 insertions(+), 5 deletions(-)
+Thanks, applied for next!
 
-diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
-index 62dc9c7..e1de8fe 100644
---- a/drivers/usb/gadget/udc/renesas_usb3.c
-+++ b/drivers/usb/gadget/udc/renesas_usb3.c
-@@ -838,21 +838,32 @@ static struct renesas_usb3_request *usb3_get_request(struct renesas_usb3_ep
- 	return usb3_req;
- }
- 
--static void usb3_request_done(struct renesas_usb3_ep *usb3_ep,
--			      struct renesas_usb3_request *usb3_req, int status)
-+static void __usb3_request_done(struct renesas_usb3_ep *usb3_ep,
-+				struct renesas_usb3_request *usb3_req,
-+				int status)
- {
- 	struct renesas_usb3 *usb3 = usb3_ep_to_usb3(usb3_ep);
--	unsigned long flags;
- 
- 	dev_dbg(usb3_to_dev(usb3), "giveback: ep%2d, %u, %u, %d\n",
- 		usb3_ep->num, usb3_req->req.length, usb3_req->req.actual,
- 		status);
- 	usb3_req->req.status = status;
--	spin_lock_irqsave(&usb3->lock, flags);
- 	usb3_ep->started = false;
- 	list_del_init(&usb3_req->queue);
--	spin_unlock_irqrestore(&usb3->lock, flags);
-+	spin_unlock(&usb3->lock);
- 	usb_gadget_giveback_request(&usb3_ep->ep, &usb3_req->req);
-+	spin_lock(&usb3->lock);
-+}
-+
-+static void usb3_request_done(struct renesas_usb3_ep *usb3_ep,
-+			      struct renesas_usb3_request *usb3_req, int status)
-+{
-+	struct renesas_usb3 *usb3 = usb3_ep_to_usb3(usb3_ep);
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&usb3->lock, flags);
-+	__usb3_request_done(usb3_ep, usb3_req, status);
-+	spin_unlock_irqrestore(&usb3->lock, flags);
- }
- 
- static void usb3_irq_epc_pipe0_status_end(struct renesas_usb3 *usb3)
--- 
-1.9.1
+Kind regards
+Uffe
+
+> ---
+>  Documentation/devicetree/bindings/mmc/renesas,mmcif.txt | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt b/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt
+> index 703e18c..5ff1e12 100644
+> --- a/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt
+> +++ b/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt
+> @@ -12,6 +12,7 @@ Required properties:
+>         - "renesas,mmcif-r8a73a4" for the MMCIF found in r8a73a4 SoCs
+>         - "renesas,mmcif-r8a7740" for the MMCIF found in r8a7740 SoCs
+>         - "renesas,mmcif-r8a7743" for the MMCIF found in r8a7743 SoCs
+> +       - "renesas,mmcif-r8a7745" for the MMCIF found in r8a7745 SoCs
+>         - "renesas,mmcif-r8a7778" for the MMCIF found in r8a7778 SoCs
+>         - "renesas,mmcif-r8a7790" for the MMCIF found in r8a7790 SoCs
+>         - "renesas,mmcif-r8a7791" for the MMCIF found in r8a7791 SoCs
+> @@ -22,7 +23,7 @@ Required properties:
+>  - interrupts: Some SoCs have only 1 shared interrupt, while others have either
+>    2 or 3 individual interrupts (error, int, card detect). Below is the number
+>    of interrupts for each SoC:
+> -    1: r8a73a4, r8a7743, r8a7778, r8a7790, r8a7791, r8a7793, r8a7794
+> +    1: r8a73a4, r8a7743, r8a7745, r8a7778, r8a7790, r8a7791, r8a7793, r8a7794
+>      2: r8a7740, sh73a0
+>      3: r7s72100
+>
+> --
+> 2.7.4
+>
