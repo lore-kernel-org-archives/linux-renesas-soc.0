@@ -1,70 +1,74 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] ARM: dtsi: iwg22m: Add RTC support
-Date: Tue, 22 Aug 2017 19:22:46 +0100
-Message-Id: <1503426166-26773-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from cloudserver094114.home.net.pl ([79.96.170.134]:45580 "EHLO
+        cloudserver094114.home.net.pl" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932833AbdHVNiL (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 22 Aug 2017 09:38:11 -0400
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Viresh Kumar <viresh.kumar@linaro.org>,
+        Simon Horman <horms+renesas@verge.net.au>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-pm@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
+Subject: Re: [PATCH] cpufreq: dt: Add r8a7796 support to to use generic cpufreq driver
+Date: Tue, 22 Aug 2017 15:29:39 +0200
+Message-ID: <300711551.YezXHKMQbv@aspire.rjw.lan>
+In-Reply-To: <20170816032518.GA4233@vireshk-i7>
+References: <1502465817-19804-1-git-send-email-horms+renesas@verge.net.au> <20170816032518.GA4233@vireshk-i7>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for the bq32000 RTC to the iwg22m device tree.
+On Wednesday, August 16, 2017 5:25:18 AM CEST Viresh Kumar wrote:
+> On 11-08-17, 17:36, Simon Horman wrote:
+> > From: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
+> > 
+> > This patch adds the r8a7796 support the generic cpufreq driver
+> > by adding an appropriate compat string. This is in keeping
+> > with support for other Renesas ARM and arm64 based SoCs.
+> > 
+> > Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
+> > [simon: new changelog]
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> > ---
+> >  drivers/cpufreq/cpufreq-dt-platdev.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > This is a follow-up for a similar change that has already been accepted
+> > for the r8a7795.
+> > 
+> > 
+> > I have provided an integration branch that includes with this patch, those
+> > DTS updates that make use of opp-v2 bindings that depend on this change,
+> > and Renesas clock updates also depended on by the DTS changes.  The result
+> > is working CPUFreq for the r8a7796 (R-Car M3-W).
+> > 
+> > https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/r8a7796-cpufreq
+> > 
+> > A description of steps taken to lightly exercise the same feature for the
+> > r88a7795 the above can be found at the link below. The results are the same
+> > for the r8a7796 with the exception that it has two active CPU cores rather
+> > than four.
+> > 
+> > http://elinux.org/Tests:R-CAR-GEN3-CPUFreq
+> > 
+> > diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
+> > index bcee384b3251..233e18ad3948 100644
+> > --- a/drivers/cpufreq/cpufreq-dt-platdev.c
+> > +++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+> > @@ -68,6 +68,7 @@ static const struct of_device_id machines[] __initconst = {
+> >  	{ .compatible = "renesas,r8a7793", },
+> >  	{ .compatible = "renesas,r8a7794", },
+> >  	{ .compatible = "renesas,r8a7795", },
+> > +	{ .compatible = "renesas,r8a7796", },
+> >  	{ .compatible = "renesas,sh73a0", },
+> >  
+> >  	{ .compatible = "rockchip,rk2928", },
+> 
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> 
+> 
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
-
- This patch has some dependency:
- * [1/2] ARM: dts: iwg22m: Add iWave RZG1E SODIMM SOM - https://patchwork.kernel.org/patch/9901619/
- * [2/2] ARM: dts: iwg22d-sodimm: Add support for iWave G22D-SODIMM board - https://patchwork.kernel.org/patch/9901623/
- * ARM: dtsi: r8a7745: Add I2C DT support - https://patchwork.kernel.org/patch/9915525/
- * [1/2] ARM: dts: r8a7745: Add MMC interface support - https://patchwork.kernel.org/patch/9906803/
- * [2/2] ARM: dtsi: iwg22m: Add eMMC support - https://patchwork.kernel.org/patch/9906805/
-
- arch/arm/boot/dts/r8a7745-iwg22m.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7745-iwg22m.dtsi b/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
-index afb1148..e306e7c 100644
---- a/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
-+++ b/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
-@@ -37,6 +37,11 @@
- 		groups = "mmc_data8", "mmc_ctrl";
- 		function = "mmc";
- 	};
-+
-+	i2c3_pins: i2c3 {
-+		groups = "i2c3_b";
-+		function = "i2c3";
-+	};
- };
- 
- &mmcif0 {
-@@ -48,3 +53,16 @@
- 	non-removable;
- 	status = "okay";
- };
-+
-+&i2c3 {
-+	pinctrl-0 = <&i2c3_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+	clock-frequency = <400000>;
-+
-+	rtc@68 {
-+		compatible = "ti,bq32000";
-+		reg = <0x68>;
-+	};
-+};
--- 
-2.7.4
-
+Applied, thanks!
