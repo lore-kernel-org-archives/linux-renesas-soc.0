@@ -1,36 +1,70 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:42923 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751182AbdHXKsb (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 Aug 2017 06:48:31 -0400
-Date: Thu, 24 Aug 2017 06:48:16 -0400
-From: Simon Horman <horms@verge.net.au>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>,
         Russell King <linux@armlinux.org.uk>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         linux-arm-kernel@lists.infradead.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] ARM: dtsi: iwg22m: Add RTC support
-Message-ID: <20170824104816.GB27788@verge.net.au>
-References: <1503426166-26773-1-git-send-email-fabrizio.castro@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1503426166-26773-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Biju Das <biju.das@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] ARM: dtsi: iwg22m: Add RTC support
+Date: Tue, 22 Aug 2017 19:22:46 +0100
+Message-Id: <1503426166-26773-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Aug 22, 2017 at 07:22:46PM +0100, Fabrizio Castro wrote:
-> Add support for the bq32000 RTC to the iwg22m device tree.
-> 
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Add support for the bq32000 RTC to the iwg22m device tree.
 
-The prefix of this patch should be "ARM: dts: iwg22m:"
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+---
 
-I have fixed that and applied this patch for v4.15
+ This patch has some dependency:
+ * [1/2] ARM: dts: iwg22m: Add iWave RZG1E SODIMM SOM - https://patchwork.kernel.org/patch/9901619/
+ * [2/2] ARM: dts: iwg22d-sodimm: Add support for iWave G22D-SODIMM board - https://patchwork.kernel.org/patch/9901623/
+ * ARM: dtsi: r8a7745: Add I2C DT support - https://patchwork.kernel.org/patch/9915525/
+ * [1/2] ARM: dts: r8a7745: Add MMC interface support - https://patchwork.kernel.org/patch/9906803/
+ * [2/2] ARM: dtsi: iwg22m: Add eMMC support - https://patchwork.kernel.org/patch/9906805/
+
+ arch/arm/boot/dts/r8a7745-iwg22m.dtsi | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7745-iwg22m.dtsi b/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
+index afb1148..e306e7c 100644
+--- a/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
++++ b/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
+@@ -37,6 +37,11 @@
+ 		groups = "mmc_data8", "mmc_ctrl";
+ 		function = "mmc";
+ 	};
++
++	i2c3_pins: i2c3 {
++		groups = "i2c3_b";
++		function = "i2c3";
++	};
+ };
+ 
+ &mmcif0 {
+@@ -48,3 +53,16 @@
+ 	non-removable;
+ 	status = "okay";
+ };
++
++&i2c3 {
++	pinctrl-0 = <&i2c3_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++	clock-frequency = <400000>;
++
++	rtc@68 {
++		compatible = "ti,bq32000";
++		reg = <0x68>;
++	};
++};
+-- 
+2.7.4
+
