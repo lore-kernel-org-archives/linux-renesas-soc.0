@@ -1,104 +1,36 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:59049 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753207AbdHNMEr (ORCPT
+Received: from mail-lf0-f54.google.com ([209.85.215.54]:34781 "EHLO
+        mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754035AbdHWM5l (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 Aug 2017 08:04:47 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH  3/3] ARM: dts: iwg20d-q7: Add SDHI1 support
-Date: Mon, 14 Aug 2017 12:49:49 +0100
-Message-Id: <1502711389-16040-4-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1502711389-16040-1-git-send-email-biju.das@bp.renesas.com>
-References: <1502711389-16040-1-git-send-email-biju.das@bp.renesas.com>
+        Wed, 23 Aug 2017 08:57:41 -0400
+Received: by mail-lf0-f54.google.com with SMTP id g77so149515lfg.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 23 Aug 2017 05:57:41 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-Id: <20170823125227.387729191@cogentembedded.com>
+Date: Wed, 23 Aug 2017 15:52:27 +0300
+To: Michael Turquette <mturquette@baylibre.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+To: Rob Herring <robh+dt@kernel.org>
+To: Mark Rutland <mark.rutland@arm.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+To: linux-clk@vger.kernel.org
+To: devicetree@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 0/2] Renesas R8A7797 CPG/MSSR clock support
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Define the iWave RainboW-G20D-Qseven board dependent part of the
-SDHI1 device node.
+Hello.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
----
- arch/arm/boot/dts/r8a7743-iwg20d-q7.dts | 48 +++++++++++++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
+   Here's the set of 2 patches against the 'clk-next' branch of CLK group's
+'linux.git' repo. As the DT patches in the R8A7797/Eagle board support series
+depend on the patch #1 of this series, it might make sense to merge this patch
+to the 'renesas.git' repo as well...
 
-diff --git a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-index b3a1efa..b5ac0ff 100644
---- a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-+++ b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-@@ -19,6 +19,29 @@
- 		serial0 = &scif0;
- 		ethernet0 = &avb;
- 	};
-+
-+	vcc_sdhi1: regulator-vcc-sdhi1 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "SDHI1 Vcc";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&gpio1 16 GPIO_ACTIVE_LOW>;
-+	};
-+
-+	vccq_sdhi1: regulator-vccq-sdhi1 {
-+		compatible = "regulator-gpio";
-+
-+		regulator-name = "SDHI1 VccQ";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpios = <&gpio2 30 GPIO_ACTIVE_LOW>;
-+		gpios-states = <1>;
-+		states = <3300000 1
-+			  1800000 0>;
-+	};
- };
- 
- &pfc {
-@@ -36,6 +59,18 @@
- 		groups = "i2c2";
- 		function = "i2c2";
- 	};
-+
-+	sdhi1_pins: sd1 {
-+		groups = "sdhi1_data4", "sdhi1_ctrl";
-+		function = "sdhi1";
-+		power-source = <3300>;
-+	};
-+
-+	sdhi1_pins_uhs: sd1_uhs {
-+		groups = "sdhi1_data4", "sdhi1_ctrl";
-+		function = "sdhi1";
-+		power-source = <1800>;
-+	};
- };
- 
- &scif0 {
-@@ -72,3 +107,16 @@
- 		reg = <0x68>;
- 	};
- };
-+
-+&sdhi1 {
-+	pinctrl-0 = <&sdhi1_pins>;
-+	pinctrl-1 = <&sdhi1_pins_uhs>;
-+	pinctrl-names = "default", "state_uhs";
-+
-+	vmmc-supply = <&vcc_sdhi1>;
-+	vqmmc-supply = <&vccq_sdhi1>;
-+	cd-gpios = <&gpio6 14 GPIO_ACTIVE_LOW>;
-+	wp-gpios = <&gpio6 15 GPIO_ACTIVE_HIGH>;
-+	sd-uhs-sdr50;
-+	status = "okay";
-+};
--- 
-1.9.1
+[1/2] clk: renesas: add R8A7797 CPG core clock definitions
+[2/2] clk: renesas: cpg-mssr: add R8A7797 support
+
+MBR, Sergei
