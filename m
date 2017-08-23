@@ -1,56 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:38629 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750937AbdHUF42 (ORCPT
+Received: from mail.kernel.org ([198.145.29.99]:45216 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751162AbdHWWlK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 Aug 2017 01:56:28 -0400
-From: Magnus Damm <magnus.damm@gmail.com>
-To: joro@8bytes.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-        sricharan@codeaurora.org, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
-        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
-        m.szyprowski@samsung.com
-Date: Mon, 21 Aug 2017 14:53:35 +0900
-Message-Id: <150329481531.31395.6238405988822544474.sendpatchset@little-apple>
-Subject: [PATCH] iommu/ipmmu-vmsa: Use iommu_device_sysfs_add()/remove()
+        Wed, 23 Aug 2017 18:41:10 -0400
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: laurent.pinchart@ideasonboard.com
+Cc: linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: [PATCH 0/2] vsp-tests: Shell compatibility
+Date: Wed, 23 Aug 2017 23:41:02 +0100
+Message-Id: <1503528064-10454-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
 
-Extend the driver to make use of iommu_device_sysfs_add()/remove()
-functions to hook up initial sysfs support.
+Update the vsp-tests to source the vsp-lib.sh with an explicit path, and
+use the POSIX compliant '.' rather than 'source'.
 
-Suggested-by: Joerg Roedel <jroedel@suse.de>
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
+Also update the README to document new requirements.
 
- Applies on top of next-20170817
+Kieran Bingham (2):
+  tests: Use POSIX '.' as 'source'
+  README: Document need for killall command
 
- drivers/iommu/ipmmu-vmsa.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ README                      | 2 +-
+ tests/vsp-unit-test-0001.sh | 2 +-
+ tests/vsp-unit-test-0002.sh | 2 +-
+ tests/vsp-unit-test-0003.sh | 2 +-
+ tests/vsp-unit-test-0004.sh | 2 +-
+ tests/vsp-unit-test-0005.sh | 2 +-
+ tests/vsp-unit-test-0006.sh | 2 +-
+ tests/vsp-unit-test-0007.sh | 2 +-
+ tests/vsp-unit-test-0008.sh | 2 +-
+ tests/vsp-unit-test-0009.sh | 2 +-
+ tests/vsp-unit-test-0010.sh | 2 +-
+ tests/vsp-unit-test-0011.sh | 2 +-
+ tests/vsp-unit-test-0012.sh | 2 +-
+ tests/vsp-unit-test-0013.sh | 2 +-
+ tests/vsp-unit-test-0014.sh | 2 +-
+ tests/vsp-unit-test-0015.sh | 2 +-
+ tests/vsp-unit-test-0016.sh | 2 +-
+ tests/vsp-unit-test-0017.sh | 2 +-
+ tests/vsp-unit-test-0018.sh | 2 +-
+ tests/vsp-unit-test-0019.sh | 2 +-
+ tests/vsp-unit-test-0020.sh | 2 +-
+ tests/vsp-unit-test-0021.sh | 2 +-
+ tests/vsp-unit-test-0022.sh | 2 +-
+ tests/vsp-unit-test-0023.sh | 2 +-
+ 24 files changed, 24 insertions(+), 24 deletions(-)
 
---- 0001/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2017-08-21 14:40:13.940607110 +0900
-@@ -953,6 +953,11 @@ static int ipmmu_probe(struct platform_d
- 
- 	ipmmu_device_reset(mmu);
- 
-+	ret = iommu_device_sysfs_add(&mmu->iommu, &pdev->dev, NULL,
-+				     dev_name(&pdev->dev));
-+	if (ret)
-+		return ret;
-+
- 	iommu_device_set_ops(&mmu->iommu, &ipmmu_ops);
- 	iommu_device_set_fwnode(&mmu->iommu, &pdev->dev.of_node->fwnode);
- 
-@@ -975,6 +980,7 @@ static int ipmmu_remove(struct platform_
- {
- 	struct ipmmu_vmsa_device *mmu = platform_get_drvdata(pdev);
- 
-+	iommu_device_sysfs_remove(&mmu->iommu);
- 	iommu_device_unregister(&mmu->iommu);
- 
- #if defined(CONFIG_ARM) && !defined(CONFIG_IOMMU_DMA)
+-- 
+2.7.4
