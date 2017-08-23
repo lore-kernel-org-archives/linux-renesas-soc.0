@@ -1,44 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:56212 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750913AbdHQLO2 (ORCPT
+Received: from smtp.codeaurora.org ([198.145.29.96]:54424 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750812AbdHWWmR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Aug 2017 07:14:28 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Wim Van Sebroeck <wim@iguana.be>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] dt-bindings: watchdog: renesas-wdt: Add support for the r8a77995 wdt
-Date: Thu, 17 Aug 2017 13:14:25 +0200
-Message-Id: <1502968465-7809-1-git-send-email-geert+renesas@glider.be>
+        Wed, 23 Aug 2017 18:42:17 -0400
+Date: Wed, 23 Aug 2017 15:42:16 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [git pull] clk: renesas: Updates for v4.14
+Message-ID: <20170823224216.GH21656@codeaurora.org>
+References: <1502958542-2900-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1502958542-2900-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document support for the Watchdog Timer (WDT) Controller in the Renesas
-R-Car D3 (r8a77995) SoC.
+On 08/17, Geert Uytterhoeven wrote:
+> 	Hi Mike, Stephen,
+> 
+> The following changes since commit 5771a8c08880cdca3bfb4a3fc6d309d6bba20877:
+> 
+>   Linux v4.13-rc1 (2017-07-15 15:22:10 -0700)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.14-tag1
+> 
+> for you to fetch changes up to c29f82951b974f27e0bc4ce2525db164f86f2e4d:
+> 
+>   clk: renesas: r8a7796: Add USB3.0 clock (2017-08-17 09:22:26 +0200)
+> 
+> ----------------------------------------------------------------
+> A bit delayed due to holidays, but here they are!
+> 
+> clk: renesas: Updates for v4.14
+> 
+>   - Add more module clocks for R-Car V2H and M3-W,
+>   - Add support for the R-Car Gen3 USB 2.0 clock selector PHY,
+>   - Add support for the new R-Car D3 SoC,
+>   - Allow compile-testing of all (sub)drivers now all dummy infrastructure
+>     is available,
+>   - Small fixes and cleanups.
+> 
 
-No driver update is needed.
+Thanks. Pulled into clk-next.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- Documentation/devicetree/bindings/watchdog/renesas-wdt.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
-index 9e306afbbd49e91b..bf6d1ca58af7d198 100644
---- a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
-+++ b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
-@@ -6,6 +6,7 @@ Required properties:
- 	       Examples with soctypes are:
- 	         - "renesas,r8a7795-wdt" (R-Car H3)
- 	         - "renesas,r8a7796-wdt" (R-Car M3-W)
-+	         - "renesas,r8a77995-wdt" (R-Car D3)
- 	         - "renesas,r7s72100-wdt" (RZ/A1)
- 
-   When compatible with the generic version, nodes must list the SoC-specific
 -- 
-2.7.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
