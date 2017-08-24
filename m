@@ -1,74 +1,139 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:39858 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751662AbdHGUvV (ORCPT
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:35183 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751056AbdHXNQ6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 Aug 2017 16:51:21 -0400
-Date: Mon, 7 Aug 2017 22:51:17 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Shawn Lin <shawn.lin@rock-chips.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
-        Shawn Guo <shawnguo@kernel.org>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] mmc: block: prevent propagating R1_OUT_OF_RANGE for
- open-ending mode
-Message-ID: <20170807205117.GA2104@katana>
-References: <1502069565-114396-1-git-send-email-shawn.lin@rock-chips.com>
+        Thu, 24 Aug 2017 09:16:58 -0400
+Received: by mail-pg0-f68.google.com with SMTP id b3so3893793pga.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 24 Aug 2017 06:16:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="7AUc2qLy4jB3hD7Z"
-Content-Disposition: inline
-In-Reply-To: <1502069565-114396-1-git-send-email-shawn.lin@rock-chips.com>
+In-Reply-To: <1503320487-13591-3-git-send-email-horms+renesas@verge.net.au>
+References: <1503320487-13591-1-git-send-email-horms+renesas@verge.net.au> <1503320487-13591-3-git-send-email-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 24 Aug 2017 15:16:57 +0200
+Message-ID: <CAMuHMdXyUoRvoOaPRN8SyKtiWVOB6SLDMbtBMrC3wOSYc447tA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/6] clk: renesas: rcar-gen3: Add Z2 clock divider support
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Simon,
 
---7AUc2qLy4jB3hD7Z
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, Aug 21, 2017 at 3:01 PM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch adds Z2 clock divider support for R-Car Gen3 SoC.
+>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> [simon: add recalc_rate() helper; use bitops macros]
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-Hi Shawn,
+Thanks for this patch!
 
-On Mon, Aug 07, 2017 at 09:32:45AM +0800, Shawn Lin wrote:
-> We to some extent should tolerate R1_OUT_OF_RANGE for open-ending
-> mode as it is expected behaviour and most of the backup partition
-> tables should be located near some the last blocks which will always
-> make open-ending read exceed the capcity of cards.
->=20
-> Fixes: 9820a5b11101 ("mmc: core: for data errors, take response of stop c=
-md into account")
-> Fixes: a04e6bae9e6f (mmc: core: check also R1 response for stop commands)
-> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+> --- a/drivers/clk/renesas/rcar-gen3-cpg.c
+> +++ b/drivers/clk/renesas/rcar-gen3-cpg.c
 
-Thanks a lot for debugging and working on this issue! I think the above
-reason is correct, yet I wonder if we shouldn't implement it
-differently: how about introducing a new #define called STOP_ERRORS
-which does not include R1_OUT_OF_RANGE and use it instead of CMD_ERRORS?
+> @@ -69,6 +69,26 @@ static unsigned long cpg_z_clk_recalc_rate(struct clk_hw *hw,
+>         return rate;
+>  }
+>
+> +static unsigned long cpg_z_clk_recalc_rate(struct clk_hw *hw,
+> +                                          unsigned long parent_rate)
+> +{
+> +       struct cpg_z_clk *zclk = to_z_clk(hw);
+> +       unsigned int val;
+> +
+> +       val = FIELD_GET(CPG_FRQCRC_ZFC_MASK, clk_readl(zclk->reg));
+> +       return __cpg_z_clk_recalc_rate(parent_rate, val);
+> +}
+> +
+> +static unsigned long cpg_z2_clk_recalc_rate(struct clk_hw *hw,
+> +                                          unsigned long parent_rate)
+> +{
+> +       struct cpg_z_clk *zclk = to_z_clk(hw);
+> +       unsigned int val;
+> +
+> +       val = FIELD_GET(CPG_FRQCRC_Z2FC_MASK, clk_readl(zclk->reg));
+> +       return __cpg_z_clk_recalc_rate(parent_rate, val);
+> +}
+> +
+>  static long cpg_z_clk_round_rate(struct clk_hw *hw, unsigned long rate,
+>                                  unsigned long *parent_rate)
+>  {
+> @@ -129,12 +149,25 @@ static int cpg_z_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+>         return -ETIMEDOUT;
+>  }
+>
+> +static int cpg_z2_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+> +                             unsigned long parent_rate)
+> +{
+> +       pr_info("Do not support Z2 clock changing\n");
 
-Kind regards,
+Oops?
+This can be handled like the Z clock, can't it?
+If not, please ignore some of my comments below.
 
-   Wolfram
+> +       return 0;
+> +}
+> +
+>  static const struct clk_ops cpg_z_clk_ops = {
+>         .recalc_rate = cpg_z_clk_recalc_rate,
+>         .round_rate = cpg_z_clk_round_rate,
+>         .set_rate = cpg_z_clk_set_rate,
+>  };
+>
+> +static const struct clk_ops cpg_z2_clk_ops = {
+> +       .recalc_rate = cpg_z2_clk_recalc_rate,
+> +       .round_rate = cpg_z_clk_round_rate,
+> +       .set_rate = cpg_z2_clk_set_rate,
+> +};
 
+Apart from the field mask, above ops are identical.
+What about storing the field mask in struct cpg_z_clk instead, so the ops
+can be unified?
+They can even be reused for the ZR (Cortex-R7) clock, which uses yet
+another field mask in the same register.
 
---7AUc2qLy4jB3hD7Z
-Content-Type: application/pgp-signature; name="signature.asc"
+The field mask can be obtained from the r8a7795_core_clks[] table,
+cfr. the offset for SD clocks used by DEF_GEN3_SD().
+With a new DEF_GEN3_Z() macro, we can use a single CLK_TYPE_GEN3_Z
+type for all 3 clocks.
 
------BEGIN PGP SIGNATURE-----
+> @@ -164,6 +197,35 @@ static struct clk * __init cpg_z_clk_register(const char *name,
+>         return clk;
+>  }
+>
+> +static struct clk * __init cpg_z2_clk_register(const char *name,
+> +                                             const char *parent_name,
+> +                                             void __iomem *reg)
+> +{
 
-iQIzBAEBCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlmI0sEACgkQFA3kzBSg
-KbZG7Q/+ODFbSPvjzua7h482Bx1d2Cdufk+i1QJlubBpKmqaU9HSzib3IMv5XCTH
-wEP85+kLgoLOAwVcgrzPHpZENPOMEUTJVUjP9vNvIGUSOVB69usrf6MASv6XYLQq
-TqduNLgp+XIaxY7wNXtVdFsQBKqUPV61D7M4ThMoUTRPRIGXzVLj93YM6miDzquc
-sAQxOhQJzhUu4ygZeSHZ77nZADToG4i45N/pjXYwoAO+wcxsfRfMsua5ZfoyFESw
-iMCWPqB5ODOrpVNhJeBDSPBFptU8mGGY+Qj864cN5KN+pV3rvkcvtwyfbuGEvhYo
-wnM0VHyuFa1fDm/fh7DxpHd5vDSmSKgzCADslbFeHynNfEpG6s6HFxWiBSNeKUpI
-ZgR/uWCxycNh0NwHfHzTo6ksHJtBQJTvqbH+51NcwblBuI5/Ds16f4Qre2cZm6Ed
-NuG/u0NzQ0T3sTLPms31PflSlom32bIMNhdFsQ8qkdSKYOuwpHsKyzybP1ZjaGX3
-BZxUzWSq1j+qVSLoGgkUJoA+OkFNKwnXJvBjhwe3+XuDvcY63XVbbZmnj3iCO2Ei
-xhgTFFlaVmiET7/xnQ7UmyPRABHlc7GAZPQjp0yKLVUIM+8iZvvZ61nKLJl0bLVL
-HnnQMX0RQx8dwbj/vuo4UGG8aSZRFicwW+825SQQmFVhjSCh1MU=
-=Aa2U
------END PGP SIGNATURE-----
+> +       init.ops = &cpg_z2_clk_ops;
 
---7AUc2qLy4jB3hD7Z--
+This is the only difference in this function, compared to cpg_z_clk_register()
+(assumed you pass the field mask to this function).
+
+> +       zclk->reg = reg + CPG_FRQCRC;
+> +       zclk->kick_reg = reg + CPG_FRQCRB;
+
+Given the same registers are used for Z and Z2 (and ZR), what about just
+storing the base address (reg) here?
+And the field mask, of course.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
