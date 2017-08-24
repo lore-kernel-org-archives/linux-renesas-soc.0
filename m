@@ -1,82 +1,87 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: "David S . Miller" <davem@davemloft.net>,
-        Steve Glendinning <steve.glendinning@shawell.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>
-Cc: Lukas Wunner <lukas@wunner.de>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        netdev@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/2] net: smsc911x: Quiten netif during suspend
-Date: Tue, 22 Aug 2017 20:37:26 +0200
-Message-Id: <1503427046-17618-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1503427046-17618-1-git-send-email-geert+renesas@glider.be>
-References: <1503427046-17618-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:37064 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753590AbdHXQDN (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 24 Aug 2017 12:03:13 -0400
+Reply-To: kieran.bingham@ideasonboard.com
+Subject: Re: [PATCH 2/2] README: Document need for killall command
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+References: <1503528064-10454-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+ <1503528064-10454-3-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+ <1699997.AfhkDGHqSO@avalon>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Message-ID: <eed25a61-b24f-d462-b40f-d8824441671f@ideasonboard.com>
+Date: Thu, 24 Aug 2017 17:03:08 +0100
+MIME-Version: 1.0
+In-Reply-To: <1699997.AfhkDGHqSO@avalon>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If the network interface is kept running during suspend, the net core
-may call net_device_ops.ndo_start_xmit() while the Ethernet device is
-still suspended, which may lead to a system crash.
+Hi Laurent,
 
-E.g. on sh73a0/kzm9g and r8a73a4/ape6evm, the external Ethernet chip is
-driven by a PM controlled clock.  If the Ethernet registers are accessed
-while the clock is not running, the system will crash with an imprecise
-external abort.
+On 24/08/17 10:36, Laurent Pinchart wrote:
+> Hi Kieran,
+> 
+> Thank you for the patch.
+> 
+> On Thursday, 24 August 2017 01:41:04 EEST Kieran Bingham wrote:
+>> From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+>>
+>> The killall command is provided by the psmisc package on debian based
+>> systems. On other systems it should be built or added to the filesystem as
+>> appropriate.
+>>
+>> Also remove unnecessary blank line.
+>>
+>> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+>> ---
+>>  README | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/README b/README
+>> index e503a2c41aef..7efcef394ae9 100644
+>> --- a/README
+>> +++ b/README
+>> @@ -43,6 +43,7 @@ system in a directory included in $PATH.
+>>  * media-ctl (part of v4l-utils, available at
+>> git://linuxtv.org/v4l-utils.git) * raw2rgbpnm (available at
+>> git://git.retiisi.org.uk/~sailus/raw2rgbpnm.git) * yavta (available at
+>> git://git.ideasonboard.org/yavta.git)
+>> +* killall (available from the psmisc package)
+> 
+> I've moved this between compare and media-ctl to keep the dependencies 
+> alphabetically sorted.
 
-As this is a race condition with a small time window, it is not so easy
-to trigger at will.  Using pm_test may increase your chances:
+That's fine with me.
 
-    # echo 0 > /sys/module/printk/parameters/console_suspend
-    # echo platform > /sys/power/pm_test
-    # echo mem > /sys/power/state
+>>  All but the HGO and CLU/LUT tests can be run with the latest version of
+>> these tools. To test the HGO, HGT and CLU/LUT, the 'vsp' branch of 'yavta'
+>> is currently @@ -53,7 +54,6 @@ tool is not available the corresponding
+>> tests will be skipped.
+>>
+>>  * stress (available at http://people.seas.harvard.edu/~apw/stress/)
+>>
+>> -
+> 
+> I like this blank line :-) There are two blank lines before each section title 
+> in the README file.
+> 
 
-To fix this, make sure the network interface is quitened during suspend.
+Ah ok, I must have seen two lines and deleted one without looking further.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-No stacktrace is provided, as the imprecise external abort is usually
-reported from an innocent looking and unrelated function like
-__loop_delay(), cpu_idle_poll(), or arch_timer_read_counter_long().
----
- drivers/net/ethernet/smsc/smsc911x.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+> Apart from that,
+> 
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> 
+> If you're fine the comments I'll update the patch when applying and push it.
 
-diff --git a/drivers/net/ethernet/smsc/smsc911x.c b/drivers/net/ethernet/smsc/smsc911x.c
-index 0b6a39b003a4e188..012fb66eed8dd618 100644
---- a/drivers/net/ethernet/smsc/smsc911x.c
-+++ b/drivers/net/ethernet/smsc/smsc911x.c
-@@ -2595,6 +2595,11 @@ static int smsc911x_suspend(struct device *dev)
- 	struct net_device *ndev = dev_get_drvdata(dev);
- 	struct smsc911x_data *pdata = netdev_priv(ndev);
- 
-+	if (netif_running(ndev)) {
-+		netif_stop_queue(ndev);
-+		netif_device_detach(ndev);
-+	}
-+
- 	/* enable wake on LAN, energy detection and the external PME
- 	 * signal. */
- 	smsc911x_reg_write(pdata, PMT_CTRL,
-@@ -2628,7 +2633,15 @@ static int smsc911x_resume(struct device *dev)
- 	while (!(smsc911x_reg_read(pdata, PMT_CTRL) & PMT_CTRL_READY_) && --to)
- 		udelay(1000);
- 
--	return (to == 0) ? -EIO : 0;
-+	if (to == 0)
-+		return -EIO;
-+
-+	if (netif_running(ndev)) {
-+		netif_device_attach(ndev);
-+		netif_start_queue(ndev);
-+	}
-+
-+	return 0;
- }
- 
- static const struct dev_pm_ops smsc911x_pm_ops = {
--- 
-2.7.4
+Sure, that's fine.
+
+--
+Kieran
