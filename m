@@ -1,92 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:56038 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752555AbdHVX2s (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:60714 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751979AbdHXJVS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 22 Aug 2017 19:28:48 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        tomoharu.fukawa.eb@renesas.com, linux-media@vger.kernel.org,
+        Thu, 24 Aug 2017 05:21:18 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Haavard Skinnemoen <hskinnemoen@gmail.com>
+Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v6 20/25] rcar-vin: add chsel information to rvin_info
-Date: Wed, 23 Aug 2017 01:26:35 +0200
-Message-Id: <20170822232640.26147-21-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170822232640.26147-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170822232640.26147-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC 0/3] i2c: gpio: Add support for named gpios in DT
+Date: Thu, 24 Aug 2017 11:21:11 +0200
+Message-Id: <1503566474-5335-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Each Gen3 SoC has a limited set of predefined routing possibilities for
-which CSI-2 device and virtual channel can be routed to which VIN
-instance. Prepare to store this information in the struct rvin_info.
+	Hi all,
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/rcar-vin.h | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+The current i2c-gpio DT bindings use a single unnamed "gpios" property
+to refer to the SDA and SCL signal lines by index.  This is error-prone
+for the casual DT writer and reviewer, as one has to look up the order
+in the DT bindings, and leads to the addition of comments in DTS files,
+like
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 88683aaee3b6acd5..617f254b52fe106d 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -35,6 +35,9 @@
- /* Max number on VIN instances that can be in a system */
- #define RCAR_VIN_NUM 8
- 
-+/* Max number of CHSEL values for any Gen3 SoC */
-+#define RCAR_CHSEL_MAX 6
-+
- enum chip_id {
- 	RCAR_H1,
- 	RCAR_M1,
-@@ -91,6 +94,19 @@ struct rvin_graph_entity {
- 
- struct rvin_group;
- 
-+
-+/** struct rvin_group_chsel - Map a CSI2 device and channel for a CHSEL value
-+ * @csi:		VIN internal number for CSI2 device
-+ * @chan:		CSI-2 channel number on remote. Note that channel
-+ *			is not the same as VC. The CSI-2 hardware have 4
-+ *			channels it can output on but which VC is outputted
-+ *			on which channel is configurable inside the CSI-2.
-+ */
-+struct rvin_group_chsel {
-+	enum rvin_csi_id csi;
-+	unsigned int chan;
-+};
-+
- /**
-  * struct rvin_info - Information about the particular VIN implementation
-  * @chip:		type of VIN chip
-@@ -98,6 +114,9 @@ struct rvin_group;
-  *
-  * max_width:		max input width the VIN supports
-  * max_height:		max input height the VIN supports
-+ *
-+ * num_chsels:		number of possible chsel values for this VIN
-+ * chsels:		routing table VIN <-> CSI-2 for the chsel values
-  */
- struct rvin_info {
- 	enum chip_id chip;
-@@ -105,6 +124,9 @@ struct rvin_info {
- 
- 	unsigned int max_width;
- 	unsigned int max_height;
-+
-+	unsigned int num_chsels;
-+	struct rvin_group_chsel chsels[RCAR_VIN_NUM][RCAR_CHSEL_MAX];
- };
- 
- /**
+	gpios = <&pfc 208 GPIO_ACTIVE_HIGH /* sda */
+		 &pfc 91 GPIO_ACTIVE_HIGH /* scl */
+		>;
+
+This patch series:
+  - Amends the DT bindings to use named gpios,
+  - Adds support for the new bindings to the driver,
+  - Converts the armadillo800eva to use the new bindings, as an example.
+
+Thanks for your comments!
+
+Geert Uytterhoeven (3):
+  dt-bindings: i2c: i2c-gpio: Add support for named gpios
+  i2c: gpio: Add support for named gpios in DT
+  ARM: dts: armadillo800eva: Convert to named i2c-gpio bindings
+
+ Documentation/devicetree/bindings/i2c/i2c-gpio.txt | 5 +++--
+ arch/arm/boot/dts/r8a7740-armadillo800eva.dts      | 5 ++---
+ drivers/i2c/busses/i2c-gpio.c                      | 9 +++++++++
+ 3 files changed, 14 insertions(+), 5 deletions(-)
+
 -- 
-2.14.0
+2.7.4
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
