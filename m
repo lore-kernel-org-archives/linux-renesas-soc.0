@@ -1,24 +1,22 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:33376 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751363AbdH3Tnz (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:43044 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751182AbdHXKzV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 30 Aug 2017 15:43:55 -0400
-Date: Wed, 30 Aug 2017 14:43:53 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
+        Thu, 24 Aug 2017 06:55:21 -0400
+Date: Thu, 24 Aug 2017 06:55:11 -0400
+From: Simon Horman <horms@verge.net.au>
 To: Biju Das <biju.das@bp.renesas.com>
 Cc: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        linux-pci@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
         Bjorn Helgaas <bhelgaas@google.com>,
-        linux-arm-kernel@lists.infradead.org
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org
 Subject: Re: [PATCH ] PCI: rcar: Add r8a7743/5 support
-Message-ID: <20170830194353.GW8154@bhelgaas-glaptop.roam.corp.google.com>
+Message-ID: <20170824105511.GE27788@verge.net.au>
 References: <1503567344-5610-1-git-send-email-biju.das@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -33,7 +31,7 @@ On Thu, Aug 24, 2017 at 10:35:44AM +0100, Biju Das wrote:
 > 
 > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 
-Applied with Simon's ack to pci/host-rcar, thanks!
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
 
 > ---
 > This patch is tested against Linux next tag next-20170824 and
@@ -66,8 +64,3 @@ Applied with Simon's ack to pci/host-rcar, thanks!
 > -- 
 > 1.9.1
 > 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
