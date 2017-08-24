@@ -1,109 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48526 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751184AbdHCBcW (ORCPT
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:35498 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751290AbdHXLuf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 Aug 2017 21:32:22 -0400
-Date: Wed, 2 Aug 2017 18:32:19 -0700
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Simon Horman <horms@verge.net.au>
-Cc: ltsi-dev@lists.linuxfoundation.org,
-        linux-renesas-soc@vger.kernel.org,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: [LTSI-dev] [GIT PULL LTSI-4.9 repost] Renesas SoCs and Drivers
- to v4.10
-Message-ID: <20170803013219.GA3031@kroah.com>
-References: <20170710131835.GA27613@verge.net.au>
- <20170710132658.GA984@verge.net.au>
+        Thu, 24 Aug 2017 07:50:35 -0400
+Received: by mail-pg0-f66.google.com with SMTP id b3so3580207pga.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 24 Aug 2017 04:50:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20170710132658.GA984@verge.net.au>
+In-Reply-To: <1503320487-13591-5-git-send-email-horms+renesas@verge.net.au>
+References: <1503320487-13591-1-git-send-email-horms+renesas@verge.net.au> <1503320487-13591-5-git-send-email-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 24 Aug 2017 13:50:34 +0200
+Message-ID: <CAMuHMdXsbnuEgVQCFiHAVU4tedCuCoXzN+c67QrSVLd-4jVZhA@mail.gmail.com>
+Subject: Re: [PATCH v2 4/6] clk: renesas: r8a7795: Add Z2 clock
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Jul 10, 2017 at 03:26:58PM +0200, Simon Horman wrote:
-> [Reposting with correct tag to pull, an old revision was posted by mistake]
-> 
-> Hi,
-> 
-> This is a submission to LTSI-v4.9.
-> 
-> This series is comprised of backports to v4.9 of the following
-> components to their standard as of v4.10:
-> 
-> * adv7511
-> * cpg
-> * em-sti
-> * gen3
-> * gpio-keys
-> * gpio-regulator
-> * i2c-rcar
-> * i2c-sh-mobile
-> * intc
-> * irq-gic
-> * mach-shmobile
-> * pci-rcar-gen2
-> * pcie-rcar
-> * phy-micrel
-> * phy-rcar-gen3-usb2
-> * ravb
-> * rcar-can
-> * rcar-canfd
-> * rcar-dmac
-> * rcar-du
-> * rcar-fcp
-> * rcar-fdp1
-> * rcar-rst
-> * rcar-snd
-> * renesas-soc-id
-> * rspi
-> * sh-cmt
-> * sh-drivers
-> * sh-eth
-> * sh-mmcif
-> * sh-mobile-sdhi
-> * sh-msiof
-> * sh-pfc
-> * sh-sci
-> * sh-timers
-> * sh-tmu
-> * smsc911x
-> * sysc
-> * usbhs
-> * vsp1
-> * wm8978
-> * xhci-plat
-> * xhci-rcar
-> 
-> Limited backport of the following to provide dependencies for the above:
-> * drm
-> * fsi
-> * phy
-> * simple-scu-card
-> * soc-device-match
-> 
-> It is a follow up to early preparatory work the main difference being
-> a rebase onto v4.9.36. I plan to follow-up with similar submissions
-> backporting Renesas SoCs and Drivers to v4.11 and v4.12.
-> 
-> I have tested for build regressions on a wide range of defconfigs
-> on a wide range of architectures.
-> 
-> There are 299 patches.
-> 
-> This is based on of v4.9.36.
-> Earlier revisions of this work was based on v4.9.21 and v4.9.31.
-> 
-> 
-> The following changes since commit 9f86f302ec0e37e84617481c587e11c47a397e3f:
-> 
->   Linux 4.9.36 (2017-07-05 14:40:44 +0200)
-> 
-> are available in the git repository at:
-> 
->   https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas-backport.git tags/backport/v4.9.36/snapshot-to-v4.10-flattened
+On Mon, Aug 21, 2017 at 3:01 PM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch adds Z2 clock for r8a7795 SoC.
+>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-All now pulled and checked in, thanks!
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+(queue up pending acceptance of patch 2/6)
 
-greg k-h
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
