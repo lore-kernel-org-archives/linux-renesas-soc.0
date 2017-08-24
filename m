@@ -1,18 +1,17 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:38543 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751290AbdHXLvR (ORCPT
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:34116 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751290AbdHXLut (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 Aug 2017 07:51:17 -0400
-Received: by mail-pg0-f68.google.com with SMTP id u9so3559937pgn.5
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 24 Aug 2017 04:51:17 -0700 (PDT)
+        Thu, 24 Aug 2017 07:50:49 -0400
+Received: by mail-pg0-f66.google.com with SMTP id p14so3581991pgd.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 24 Aug 2017 04:50:49 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdV0vJXLZuc-vDmWGeS1L1pR8df0jUmdx_xdO+HPF90Rqw@mail.gmail.com>
-References: <1503320487-13591-1-git-send-email-horms+renesas@verge.net.au>
- <1503320487-13591-7-git-send-email-horms+renesas@verge.net.au> <CAMuHMdV0vJXLZuc-vDmWGeS1L1pR8df0jUmdx_xdO+HPF90Rqw@mail.gmail.com>
+In-Reply-To: <1503320487-13591-7-git-send-email-horms+renesas@verge.net.au>
+References: <1503320487-13591-1-git-send-email-horms+renesas@verge.net.au> <1503320487-13591-7-git-send-email-horms+renesas@verge.net.au>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 24 Aug 2017 13:51:16 +0200
-Message-ID: <CAMuHMdV74j2=doM_pREWgbxERDeB+KSgtqyK7WEfo4EGKLf_Jg@mail.gmail.com>
+Date: Thu, 24 Aug 2017 13:50:48 +0200
+Message-ID: <CAMuHMdV0vJXLZuc-vDmWGeS1L1pR8df0jUmdx_xdO+HPF90Rqw@mail.gmail.com>
 Subject: Re: [PATCH v2 6/6] clk: renesas: r8a7796: Add Z2 clock
 To: Simon Horman <horms+renesas@verge.net.au>
 Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
@@ -24,21 +23,17 @@ Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Aug 24, 2017 at 1:50 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Mon, Aug 21, 2017 at 3:01 PM, Simon Horman
-> <horms+renesas@verge.net.au> wrote:
->> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->>
->> This patch adds Z2 clock for R8A7796 SoC.
->>
->> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+On Mon, Aug 21, 2017 at 3:01 PM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 >
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> (queue up pending acceptance of patch 1/6)
+> This patch adds Z2 clock for R8A7796 SoC.
+>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-2/6, of course.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+(queue up pending acceptance of patch 1/6)
 
 Gr{oetje,eeting}s,
 
