@@ -1,12 +1,19 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:35969 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751380AbdHXMyH (ORCPT
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:37227 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751317AbdHXL4R (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 Aug 2017 08:54:07 -0400
-Date: Thu, 24 Aug 2017 14:53:59 +0200
-From: jmondi <jacopo@jmondi.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+        Thu, 24 Aug 2017 07:56:17 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170824114656.GA3905@w540>
+References: <1503564523-31899-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1503564523-31899-4-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdUoMU=qN3Qjoqmf6uxcS3j5hqthhuBDMPZzA+wSD_BH5A@mail.gmail.com> <20170824114656.GA3905@w540>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 24 Aug 2017 13:56:16 +0200
+Message-ID: <CAMuHMdU5Vep+m7XtjcbSvyXUzD_Pn2crcQ68VRmS4bgY44ut0w@mail.gmail.com>
+Subject: Re: [PATCH 3/4] arm: dts: gr-peach: Add ETHER pin group
+To: jmondi <jacopo@jmondi.org>
 Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
@@ -17,88 +24,57 @@ Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 3/4] arm: dts: gr-peach: Add ETHER pin group
-Message-ID: <20170824125359.GB3905@w540>
-References: <1503564523-31899-1-git-send-email-jacopo+renesas@jmondi.org>
- <1503564523-31899-4-git-send-email-jacopo+renesas@jmondi.org>
- <CAMuHMdUoMU=qN3Qjoqmf6uxcS3j5hqthhuBDMPZzA+wSD_BH5A@mail.gmail.com>
- <20170824114656.GA3905@w540>
- <CAMuHMdU5Vep+m7XtjcbSvyXUzD_Pn2crcQ68VRmS4bgY44ut0w@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdU5Vep+m7XtjcbSvyXUzD_Pn2crcQ68VRmS4bgY44ut0w@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Thanks Geert,
+Hi Jacopo,
 
-On Thu, Aug 24, 2017 at 01:56:16PM +0200, Geert Uytterhoeven wrote:
-> Hi Jacopo,
+On Thu, Aug 24, 2017 at 1:46 PM, jmondi <jacopo@jmondi.org> wrote:
+> On Thu, Aug 24, 2017 at 11:48:14AM +0200, Geert Uytterhoeven wrote:
+>> On Thu, Aug 24, 2017 at 10:48 AM, Jacopo Mondi
+>> <jacopo+renesas@jmondi.org> wrote:
+>> > Add pin configuration subnode for ETHER pin group.
+>> > The interface can be configured and probed, but no traffic can be
+>> > transmitted or received.
+>> >
+>> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+>> >
+>> > ---
+>> > When in u-boot console I can ping a connected host, after the
+>> > system has booted I can configure an ip address on the interface but
+>> > cannot exchange any traffic.
+>> > I have compared the pin configuration procedure with the u-boot
+>> > implemented one and some sketches from mbed operating system libraries,
+>> > the configured pins are correct and registers values seems to match.
+>> > Not sure if this patch should be sent for inclusion but sending it out
+>> > anyway for you to judge this.
+
+>> All OK, but do you need P4_2, which is used for ET_nRST?
 >
-
-[snip]
-
-> > I haven't find any mention in device tree bindings documentation of a
-> > "reset-gpio" property for sh_eth, in the code examples I've seen in
-> > u-boot and mbed, the interface is reset before any actual
-> > configuration is performed. I feel like that should be the place where
-> > that gpio is requested and cycled...
+> I tried requesting the GPIO in the "ether" subnode and define it as
+> "active low", so that it is kept high during regular operations.
+> I have verified through register writes dump it is cycled just after
+> the gpio is requested, and this should reset the interface before the
+> actual sh_eth driver kicks in.
 >
-> Documentation/devicetree/bindings/net/mdio.txt says
->
-> These are generic properties that can apply to any MDIO bus.
->
+> I haven't find any mention in device tree bindings documentation of a
+> "reset-gpio" property for sh_eth, in the code examples I've seen in
+> u-boot and mbed, the interface is reset before any actual
+> configuration is performed. I feel like that should be the place where
+> that gpio is requested and cycled...
 
-I have now used mdio defined generic properties
+Documentation/devicetree/bindings/net/mdio.txt says
 
-&ether {
-	pinctrl-names = "default";
-	pinctrl-0 = <&ether_pins>;
+These are generic properties that can apply to any MDIO bus.
 
-	status = "okay";
+Gr{oetje,eeting}s,
 
-	reset-gpios = <&port4 2 GPIO_ACTIVE_LOW>;
-	reset-delay-us = <5>;
+                        Geert
 
-	renesas,no-ether-link;
-	phy-handle = <&phy0>;
-	phy0: ethernet-phy@0 {
-               reg = <0>;
-	};
-};
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-I see the gpio being cycled, but same results as before: device gets
-probed, address set, but I cannot ping, device gets probed, address
-gets set, but I cannot ping
-
---- target ---
-[    0.000000] libphy: sh_mii: probed
-[    0.000000] sh-eth e8203000.ethernet eth0: Base address at 0xe8203000, 68:14:97:20:97:00, IRQ 22.
-
-# ifconfig eth0 192.168.100.50
-[    0.000000] Generic PHY e8203000.ethernet-ffffffff:00: attached PHY driver [Generic PHY] (mii_bus:phy_addr=e8203000.ethernet-f)
-
---- host ---
-$ping 192.168.100.50
-PING 192.168.100.50 (192.168.100.50) 56(84) bytes of data.
->From 192.168.100.18 icmp_seq=1 Destination Host Unreachable
->From 192.168.100.18 icmp_seq=1 Destination Host Unreachable
->From 192.168.100.18 icmp_seq=1 Destination Host Unreachable
-
-
-Let's leave this out of the DTS series I've just sent for now, ok?
-
-Thanks
-   j
-
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
