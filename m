@@ -1,45 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:37247 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751259AbdHXJ10 (ORCPT
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:54699 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751274AbdHXItF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 Aug 2017 05:27:26 -0400
-MIME-Version: 1.0
-In-Reply-To: <1503564523-31899-3-git-send-email-jacopo+renesas@jmondi.org>
-References: <1503564523-31899-1-git-send-email-jacopo+renesas@jmondi.org> <1503564523-31899-3-git-send-email-jacopo+renesas@jmondi.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 24 Aug 2017 11:27:25 +0200
-Message-ID: <CAMuHMdVfKmgFcU9o9u9U8x_XsHbUACUiTKcJuvYozn2i1XK6JA@mail.gmail.com>
-Subject: Re: [PATCH 2/4] arm: dts: gr-peach: Add SCIF2 pin group
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 24 Aug 2017 04:49:05 -0400
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: horms@verge.net.au
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, magnus.damm@gmail.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 2/4] arm: dts: gr-peach: Add SCIF2 pin group
+Date: Thu, 24 Aug 2017 10:48:41 +0200
+Message-Id: <1503564523-31899-3-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1503564523-31899-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1503564523-31899-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Aug 24, 2017 at 10:48 AM, Jacopo Mondi
-<jacopo+renesas@jmondi.org> wrote:
-> Add pin configuration subnode for SCIF2 serial debug interface.
->
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Add pin configuration subnode for SCIF2 serial debug interface.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+---
+ arch/arm/boot/dts/r7s72100-gr-peach.dts | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/r7s72100-gr-peach.dts b/arch/arm/boot/dts/r7s72100-gr-peach.dts
+index 1c40a1a..bcfa644 100644
+--- a/arch/arm/boot/dts/r7s72100-gr-peach.dts
++++ b/arch/arm/boot/dts/r7s72100-gr-peach.dts
+@@ -11,6 +11,7 @@
+ 
+ /dts-v1/;
+ #include "r7s72100.dtsi"
++#include <dt-bindings/pinctrl/r7s72100-pinctrl.h>
+ 
+ / {
+ 	model = "GR-Peach";
+@@ -52,6 +53,13 @@
+ 	};
+ };
+ 
++&pinctrl {
++	scif2_pins: serial2 {
++		/* P6_2 as RxD2; P6_3 as TxD2 */
++		pinmux = <RZA1_PINMUX(6, 2, 7)>, <RZA1_PINMUX(6, 3, 7)>;
++	};
++};
++
+ &extal_clk {
+ 	clock-frequency = <13333000>;
+ };
+@@ -61,5 +69,8 @@
+ };
+ 
+ &scif2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&scif2_pins>;
++
+ 	status = "okay";
+ };
+-- 
+2.7.4
