@@ -1,57 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:58722 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751615AbdHXItK (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:45064 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751935AbdHXJVS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 Aug 2017 04:49:10 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: horms@verge.net.au
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, magnus.damm@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 4/4] arm: dts: gr-peach: Add user led device nodes
-Date: Thu, 24 Aug 2017 10:48:43 +0200
-Message-Id: <1503564523-31899-5-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1503564523-31899-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1503564523-31899-1-git-send-email-jacopo+renesas@jmondi.org>
+        Thu, 24 Aug 2017 05:21:18 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Haavard Skinnemoen <hskinnemoen@gmail.com>
+Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC 3/3] ARM: dts: armadillo800eva: Convert to named i2c-gpio bindings
+Date: Thu, 24 Aug 2017 11:21:14 +0200
+Message-Id: <1503566474-5335-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1503566474-5335-1-git-send-email-geert+renesas@glider.be>
+References: <1503566474-5335-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add device nodes for user leds on gr-peach board.
-
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r7s72100-gr-peach.dts | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/arm/boot/dts/r8a7740-armadillo800eva.dts | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r7s72100-gr-peach.dts b/arch/arm/boot/dts/r7s72100-gr-peach.dts
-index 5ce558f..29ad54e 100644
---- a/arch/arm/boot/dts/r7s72100-gr-peach.dts
-+++ b/arch/arm/boot/dts/r7s72100-gr-peach.dts
-@@ -11,6 +11,7 @@
- 
- /dts-v1/;
- #include "r7s72100.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/pinctrl/r7s72100-pinctrl.h>
- 
- / {
-@@ -51,6 +52,15 @@
- 			reg = <0x00600000 0x00200000>;
- 		};
+diff --git a/arch/arm/boot/dts/r8a7740-armadillo800eva.dts b/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
+index 153609c1a5d83923..d62d22c36da1c9b9 100644
+--- a/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
++++ b/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
+@@ -131,9 +131,8 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 		compatible = "i2c-gpio";
+-		gpios = <&pfc 208 GPIO_ACTIVE_HIGH /* sda */
+-			 &pfc 91 GPIO_ACTIVE_HIGH /* scl */
+-			>;
++		sda-gpios = <&pfc 208 GPIO_ACTIVE_HIGH>;
++		scl-gpios = <&pfc 91 GPIO_ACTIVE_HIGH>;
+ 		i2c-gpio,delay-us = <5>;
  	};
-+
-+leds {
-+		status = "okay";
-+		compatible = "gpio-leds";
-+
-+		led1 {
-+			gpios = <&port6 12 GPIO_ACTIVE_HIGH>;
-+		};
-+	};
- };
  
- &pinctrl {
 -- 
 2.7.4
