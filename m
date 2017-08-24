@@ -1,21 +1,21 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:34544 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751333AbdHaR53 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:43059 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751178AbdHXKzm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 31 Aug 2017 13:57:29 -0400
-Date: Thu, 31 Aug 2017 12:57:27 -0500
-From: Rob Herring <robh@kernel.org>
+        Thu, 24 Aug 2017 06:55:42 -0400
+Date: Thu, 24 Aug 2017 06:55:32 -0400
+From: Simon Horman <horms@verge.net.au>
 To: Biju Das <biju.das@bp.renesas.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
         Chris Paterson <chris.paterson2@renesas.com>,
         devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
 Subject: Re: [PATCH ] phy: rcar-gen2: Add r8a7743/5 support
-Message-ID: <20170831175727.tjncwk2c2gvzmlzb@rob-hp-laptop>
+Message-ID: <20170824105532.GF27788@verge.net.au>
 References: <1503568773-41410-1-git-send-email-biju.das@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -29,11 +29,5 @@ On Thu, Aug 24, 2017 at 10:59:33AM +0100, Biju Das wrote:
 > USB PHY is identical to the R-Car Gen2 family.
 > 
 > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> ---
-> This patch is tested against Linux next tag next-20170824 and 
-> renesas-dev branch renesas-devel-20170822-v4.13-rc6. 
-> 
->  Documentation/devicetree/bindings/phy/rcar-gen2-phy.txt | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
 
-Acked-by: Rob Herring <robh@kernel.org>
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
