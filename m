@@ -1,192 +1,50 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Cc: Russell King <linux@armlinux.org.uk>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:42390 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751102AbdHXKMC (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 24 Aug 2017 06:12:02 -0400
+Date: Thu, 24 Aug 2017 06:11:52 -0400
+From: Simon Horman <horms@verge.net.au>
+To: Chris Paterson <Chris.Paterson2@renesas.com>
+Cc: Biju Das <biju.das@bp.renesas.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Juri Lelli <juri.lelli@arm.com>
-Subject: [PATCH 1/4] arm: topology: remove cpu_efficiency
-Date: Wed, 30 Aug 2017 15:41:17 +0100
-Message-Id: <20170830144120.9312-2-dietmar.eggemann@arm.com>
-In-Reply-To: <20170830144120.9312-1-dietmar.eggemann@arm.com>
-References: <20170830144120.9312-1-dietmar.eggemann@arm.com>
-Sender: linux-kernel-owner@vger.kernel.org
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [PATCH  0/2] ARM: dts: Add iWave RZ/G1E board support
+Message-ID: <20170824101152.GD17607@verge.net.au>
+References: <1502794460-30213-1-git-send-email-biju.das@bp.renesas.com>
+ <TY1PR06MB070230193DD40E5D09D0A9AFB7840@TY1PR06MB0702.apcprd06.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <TY1PR06MB070230193DD40E5D09D0A9AFB7840@TY1PR06MB0702.apcprd06.prod.outlook.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Remove the 'cpu_efficiency/clock-frequency dt property' based solution
-to set cpu capacity which was only working for Cortex-A15/A7 arm
-big.LITTLE systems.
+On Tue, Aug 22, 2017 at 04:03:23PM +0000, Chris Paterson wrote:
+> Hello Simon,
+> 
+> > From: Biju Das [mailto:biju.das@bp.renesas.com]
+> > Sent: 15 August 2017 11:54
+> > 
+> > Hello,
+> > 
+> > This series aims to add iWave RZ/G1E (R8A7745) based RainboW-G22M-SM
+> > SODIMM SoM and RainboW-G22D board support.
+> > 
+> > This series has been tested against linux-next tag next-20170815 as well as
+> > renesas-dev tag 20170814-v4.13-rc5
+> > 
+> > This patch has documentation dependency on below patches
+> 
+> The below patches are now in your v4.14 branch. Does this mean that this DT series can now be accepted?
 
-I.e. the 'capacity-dmips-mhz' based solution is now the only one. It is
-shared between arm and arm64 and works for every big.LITTLE system no
-matter which core types it consists of.
-
-Cc: Russell King <linux@arm.linux.org.uk>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Juri Lelli <juri.lelli@arm.com>
-Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
----
- arch/arm/kernel/topology.c | 113 ++-------------------------------------------
- 1 file changed, 3 insertions(+), 110 deletions(-)
-
-diff --git a/arch/arm/kernel/topology.c b/arch/arm/kernel/topology.c
-index bf949a763dbe..04ccfdd94213 100644
---- a/arch/arm/kernel/topology.c
-+++ b/arch/arm/kernel/topology.c
-@@ -47,52 +47,10 @@
-  */
- 
- #ifdef CONFIG_OF
--struct cpu_efficiency {
--	const char *compatible;
--	unsigned long efficiency;
--};
--
--/*
-- * Table of relative efficiency of each processors
-- * The efficiency value must fit in 20bit and the final
-- * cpu_scale value must be in the range
-- *   0 < cpu_scale < 3*SCHED_CAPACITY_SCALE/2
-- * in order to return at most 1 when DIV_ROUND_CLOSEST
-- * is used to compute the capacity of a CPU.
-- * Processors that are not defined in the table,
-- * use the default SCHED_CAPACITY_SCALE value for cpu_scale.
-- */
--static const struct cpu_efficiency table_efficiency[] = {
--	{"arm,cortex-a15", 3891},
--	{"arm,cortex-a7",  2048},
--	{NULL, },
--};
--
--static unsigned long *__cpu_capacity;
--#define cpu_capacity(cpu)	__cpu_capacity[cpu]
--
--static unsigned long middle_capacity = 1;
--static bool cap_from_dt = true;
--
--/*
-- * Iterate all CPUs' descriptor in DT and compute the efficiency
-- * (as per table_efficiency). Also calculate a middle efficiency
-- * as close as possible to  (max{eff_i} - min{eff_i}) / 2
-- * This is later used to scale the cpu_capacity field such that an
-- * 'average' CPU is of middle capacity. Also see the comments near
-- * table_efficiency[] and update_cpu_capacity().
-- */
- static void __init parse_dt_topology(void)
- {
--	const struct cpu_efficiency *cpu_eff;
--	struct device_node *cn = NULL;
--	unsigned long min_capacity = ULONG_MAX;
--	unsigned long max_capacity = 0;
--	unsigned long capacity = 0;
--	int cpu = 0;
--
--	__cpu_capacity = kcalloc(nr_cpu_ids, sizeof(*__cpu_capacity),
--				 GFP_NOWAIT);
-+	struct device_node *cn;
-+	int cpu;
- 
- 	cn = of_find_node_by_path("/cpus");
- 	if (!cn) {
-@@ -101,9 +59,6 @@ static void __init parse_dt_topology(void)
- 	}
- 
- 	for_each_possible_cpu(cpu) {
--		const u32 *rate;
--		int len;
--
- 		/* too early to use cpu->of_node */
- 		cn = of_get_cpu_node(cpu, NULL);
- 		if (!cn) {
-@@ -115,73 +70,13 @@ static void __init parse_dt_topology(void)
- 			of_node_put(cn);
- 			continue;
- 		}
--
--		cap_from_dt = false;
--
--		for (cpu_eff = table_efficiency; cpu_eff->compatible; cpu_eff++)
--			if (of_device_is_compatible(cn, cpu_eff->compatible))
--				break;
--
--		if (cpu_eff->compatible == NULL)
--			continue;
--
--		rate = of_get_property(cn, "clock-frequency", &len);
--		if (!rate || len != 4) {
--			pr_err("%s missing clock-frequency property\n",
--				cn->full_name);
--			continue;
--		}
--
--		capacity = ((be32_to_cpup(rate)) >> 20) * cpu_eff->efficiency;
--
--		/* Save min capacity of the system */
--		if (capacity < min_capacity)
--			min_capacity = capacity;
--
--		/* Save max capacity of the system */
--		if (capacity > max_capacity)
--			max_capacity = capacity;
--
--		cpu_capacity(cpu) = capacity;
- 	}
- 
--	/* If min and max capacities are equals, we bypass the update of the
--	 * cpu_scale because all CPUs have the same capacity. Otherwise, we
--	 * compute a middle_capacity factor that will ensure that the capacity
--	 * of an 'average' CPU of the system will be as close as possible to
--	 * SCHED_CAPACITY_SCALE, which is the default value, but with the
--	 * constraint explained near table_efficiency[].
--	 */
--	if (4*max_capacity < (3*(max_capacity + min_capacity)))
--		middle_capacity = (min_capacity + max_capacity)
--				>> (SCHED_CAPACITY_SHIFT+1);
--	else
--		middle_capacity = ((max_capacity / 3)
--				>> (SCHED_CAPACITY_SHIFT-1)) + 1;
--
--	if (cap_from_dt)
--		topology_normalize_cpu_scale();
--}
--
--/*
-- * Look for a customed capacity of a CPU in the cpu_capacity table during the
-- * boot. The update of all CPUs is in O(n^2) for heteregeneous system but the
-- * function returns directly for SMP system.
-- */
--static void update_cpu_capacity(unsigned int cpu)
--{
--	if (!cpu_capacity(cpu) || cap_from_dt)
--		return;
--
--	topology_set_cpu_scale(cpu, cpu_capacity(cpu) / middle_capacity);
--
--	pr_info("CPU%u: update cpu_capacity %lu\n",
--		cpu, topology_get_cpu_scale(NULL, cpu));
-+	topology_normalize_cpu_scale();
- }
- 
- #else
- static inline void parse_dt_topology(void) {}
--static inline void update_cpu_capacity(unsigned int cpuid) {}
- #endif
- 
-  /*
-@@ -277,8 +172,6 @@ void store_cpu_topology(unsigned int cpuid)
- 
- 	update_siblings_masks(cpuid);
- 
--	update_cpu_capacity(cpuid);
--
- 	pr_info("CPU%u: thread %d, cpu %d, socket %d, mpidr %x\n",
- 		cpuid, cpu_topology[cpuid].thread_id,
- 		cpu_topology[cpuid].core_id,
--- 
-2.11.0
+Thanks, I have applied them for v4.15.
