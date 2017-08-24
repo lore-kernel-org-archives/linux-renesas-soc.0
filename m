@@ -1,66 +1,34 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33652 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:42547 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751626AbdHRIUQ (ORCPT
+        with ESMTP id S1751276AbdHXKUc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Aug 2017 04:20:16 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Thu, 24 Aug 2017 06:20:32 -0400
+Date: Thu, 24 Aug 2017 06:20:21 -0400
+From: Simon Horman <horms@verge.net.au>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
         Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 7/9] ARM: dts: r8a7743: Add OPP table for frequency scaling
-Date: Fri, 18 Aug 2017 10:19:52 +0200
-Message-Id: <0417814ea140d1bc7e8a5d54e95e17a234b34e49.1502962873.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1502962873.git.horms+renesas@verge.net.au>
-References: <cover.1502962873.git.horms+renesas@verge.net.au>
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] dt-bindings: apmu: Document r8a7745 support
+Message-ID: <20170824102021.GG17607@verge.net.au>
+References: <1503409939-9355-1-git-send-email-fabrizio.castro@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1503409939-9355-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+On Tue, Aug 22, 2017 at 02:52:19PM +0100, Fabrizio Castro wrote:
+> Document APMU and SMP enable method for RZ/G1E (also known as
+> r8a7745) SoC.
+> 
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Add needed information inside CPU0 for the generic cpufreq-cpu0 driver.
-
-- clock-latency = 300 us
-Approximate worst-case latency to do clock transition for every
-OPPs. Using an arbitrary safe value similar to r8a7791(R-Car M2) Soc.
-
-- operating-points = < kHz - uV >
-List of 6 operating points. All of them are using the same voltage
-since DVS is not supported in RZ/G1 Soc.
-
-Note:This also fixes the below errors seen on kernel logs
-[    0.876877] cpu cpu0: dev_pm_opp_get_opp_count: OPP table not found (-19)
-[    0.883727] cpu cpu1: cpufreq_init: failed to get clk: -2
-
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7743.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index ec9db0fcffc6..14222c72f0e0 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -38,8 +38,17 @@
- 			reg = <0>;
- 			clock-frequency = <1500000000>;
- 			clocks = <&cpg CPG_CORE R8A7743_CLK_Z>;
-+			clock-latency = <300000>; /* 300 us */
- 			power-domains = <&sysc R8A7743_PD_CA15_CPU0>;
- 			next-level-cache = <&L2_CA15>;
-+
-+			/* kHz - uV - OPPs unknown yet */
-+			operating-points = <1500000 1000000>,
-+					   <1312500 1000000>,
-+					   <1125000 1000000>,
-+					   < 937500 1000000>,
-+					   < 750000 1000000>,
-+					   < 375000 1000000>;
- 		};
- 
- 		cpu1: cpu@1 {
--- 
-2.1.4
+Thanks, applied for v4.15.
