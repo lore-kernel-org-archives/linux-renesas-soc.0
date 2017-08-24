@@ -1,72 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:36501 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753233AbdHQRci (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:43105 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751788AbdHXK5R (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Aug 2017 13:32:38 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 2/2] ARM: dtsi: iwg22m: Add eMMC support
-Date: Thu, 17 Aug 2017 18:31:43 +0100
-Message-Id: <1502991103-2325-3-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1502991103-2325-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1502991103-2325-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Thu, 24 Aug 2017 06:57:17 -0400
+Date: Thu, 24 Aug 2017 06:57:04 -0400
+From: Simon Horman <horms@verge.net.au>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: magnus.damm@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux@armlinux.org.uk, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/4] GR-Peach DTS update
+Message-ID: <20170824105704.GG27788@verge.net.au>
+References: <1503564523-31899-1-git-send-email-jacopo+renesas@jmondi.org>
+ <20170824105350.GD27788@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170824105350.GD27788@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add eMMC support for iW-RainboW-G22M-SM.
+On Thu, Aug 24, 2017 at 06:53:50AM -0400, Simon Horman wrote:
+> On Thu, Aug 24, 2017 at 10:48:39AM +0200, Jacopo Mondi wrote:
+> > Hello Simon,
+> >    now that RZ/A1 pin controller is merged, it's time to enable some peripheral
+> > devices on GR-Peach has it has been done for Genmai and RSK boards.
+> > 
+> > The series is based on Simon's "renesas-dt2-for-v4.14" tag release, so it should
+> > be ideally applied after v4.14-rc1 is out, as it needs pin controller nodes to
+> > be defined in r7s72100.dtsi.
+> > 
+> > Patch 2/4 enables EHTER interface, even if I've not been able to exchange any
+> > traffic on that. I can set the ip address and probe the device and double
+> > checked the pin configuration process against u-boot sources (where the
+> > interface is working instead). Sending the patch anyway and let you decide what
+> > to do with that.
+> > 
+> > Thanks
+> >    j
+> > 
+> > Jacopo Mondi (4):
+> >   arm: dts: gr-peach: Remove empty line
+> >   arm: dts: gr-peach: Add SCIF2 pin group
+> >   arm: dts: gr-peach: Add ETHER pin group
+> >   arm: dts: gr-peach: Add user led device nodes
+> 
+> Thanks I have applied the 1st, 2nd and 4th (non-ETHER) patches above for v4.15.
+> I am leaving the 3rd (ETHER) patch pending resolution of the review
+> provided by Geert.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
- arch/arm/boot/dts/r8a7745-iwg22m.dtsi | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7745-iwg22m.dtsi b/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
-index 9dbd854..afb1148 100644
---- a/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
-+++ b/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
-@@ -17,8 +17,34 @@
- 		device_type = "memory";
- 		reg = <0 0x40000000 0 0x20000000>;
- 	};
-+
-+	reg_3p3v: 3p3v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "3P3V";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
- };
- 
- &extal_clk {
- 	clock-frequency = <20000000>;
- };
-+
-+&pfc {
-+	mmcif0_pins: mmc {
-+		groups = "mmc_data8", "mmc_ctrl";
-+		function = "mmc";
-+	};
-+};
-+
-+&mmcif0 {
-+	pinctrl-0 = <&mmcif0_pins>;
-+	pinctrl-names = "default";
-+
-+	vmmc-supply = <&reg_3p3v>;
-+	bus-width = <8>;
-+	non-removable;
-+	status = "okay";
-+};
--- 
-2.7.4
+BTW, the prefix these patches should start with "ARM:".
+I fixed this when applying the patches described above.
