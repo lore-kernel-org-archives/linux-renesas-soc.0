@@ -1,64 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52799 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752631AbdHKPhE (ORCPT
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:36479 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751342AbdHXJbQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 11 Aug 2017 11:37:04 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-pm@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH] cpufreq: dt: Add r8a7796 support to to use generic cpufreq driver
-Date: Fri, 11 Aug 2017 17:36:57 +0200
-Message-Id: <1502465817-19804-1-git-send-email-horms+renesas@verge.net.au>
+        Thu, 24 Aug 2017 05:31:16 -0400
+MIME-Version: 1.0
+In-Reply-To: <1503564523-31899-5-git-send-email-jacopo+renesas@jmondi.org>
+References: <1503564523-31899-1-git-send-email-jacopo+renesas@jmondi.org> <1503564523-31899-5-git-send-email-jacopo+renesas@jmondi.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 24 Aug 2017 11:31:15 +0200
+Message-ID: <CAMuHMdWtkf7tc_QNZdrJzGXE2pu1tdjYmNS+kqSu_2u=79oAxA@mail.gmail.com>
+Subject: Re: [PATCH 4/4] arm: dts: gr-peach: Add user led device nodes
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
+On Thu, Aug 24, 2017 at 10:48 AM, Jacopo Mondi
+<jacopo+renesas@jmondi.org> wrote:
+> Add device nodes for user leds on gr-peach board.
 
-This patch adds the r8a7796 support the generic cpufreq driver
-by adding an appropriate compat string. This is in keeping
-with support for other Renesas ARM and arm64 based SoCs.
+Singular? (also in the one-line summary)
 
-Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
-[simon: new changelog]
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- drivers/cpufreq/cpufreq-dt-platdev.c | 1 +
- 1 file changed, 1 insertion(+)
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-This is a follow-up for a similar change that has already been accepted
-for the r8a7795.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
+Gr{oetje,eeting}s,
 
-I have provided an integration branch that includes with this patch, those
-DTS updates that make use of opp-v2 bindings that depend on this change,
-and Renesas clock updates also depended on by the DTS changes.  The result
-is working CPUFreq for the r8a7796 (R-Car M3-W).
+                        Geert
 
-https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/r8a7796-cpufreq
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-A description of steps taken to lightly exercise the same feature for the
-r88a7795 the above can be found at the link below. The results are the same
-for the r8a7796 with the exception that it has two active CPU cores rather
-than four.
-
-http://elinux.org/Tests:R-CAR-GEN3-CPUFreq
-
-diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
-index bcee384b3251..233e18ad3948 100644
---- a/drivers/cpufreq/cpufreq-dt-platdev.c
-+++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-@@ -68,6 +68,7 @@ static const struct of_device_id machines[] __initconst = {
- 	{ .compatible = "renesas,r8a7793", },
- 	{ .compatible = "renesas,r8a7794", },
- 	{ .compatible = "renesas,r8a7795", },
-+	{ .compatible = "renesas,r8a7796", },
- 	{ .compatible = "renesas,sh73a0", },
- 
- 	{ .compatible = "rockchip,rk2928", },
--- 
-2.1.4
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
