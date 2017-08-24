@@ -1,72 +1,106 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:36067 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751068AbdHPJQo (ORCPT
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:53338 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753618AbdHXQUi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Aug 2017 05:16:44 -0400
-From: Chris Paterson <chris.paterson2@renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Biju Das <biju.das@bp.renesas.com>, devicetree@vger.kernel.org,
+        Thu, 24 Aug 2017 12:20:38 -0400
+Date: Thu, 24 Aug 2017 19:20:36 +0300
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
         linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Chris Paterson <chris.paterson2@renesas.com>
-Subject: [PATCH v2] ARM: dts: iwg20d-q7: Add RTC support
-Date: Wed, 16 Aug 2017 10:16:30 +0100
-Message-Id: <1502874990-12006-1-git-send-email-chris.paterson2@renesas.com>
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>
+Subject: Re: [PATCH 2/4] v4l: async: abort if memory allocation fails when
+ unregistering notifiers
+Message-ID: <20170824162036.k5szzrvdwnwt4pat@valkosipuli.retiisi.org.uk>
+References: <20170730223158.14405-1-niklas.soderlund+renesas@ragnatech.se>
+ <20170730223158.14405-3-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20170730223158.14405-3-niklas.soderlund+renesas@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+Hi Niklas,
 
-Define the iWave RainboW-G20D-Qseven board dependent part of the
-RTC device node.
+On Mon, Jul 31, 2017 at 12:31:56AM +0200, Niklas S�derlund wrote:
+> Instead of trying to cope with the failed memory allocation and still
+> leaving the kernel in a semi-broken state (the subdevices will be
+> released but never re-probed) simply abort. The kernel have already
+> printed a warning about allocation failure but keep the error printout
+> to ease pinpointing the problem if it happens.
+> 
+> By doing this we can increase the readability of this complex function
+> which puts it in a better state to separate the v4l2 housekeeping tasks
+> from the re-probing of devices. It also serves to prepare for adding
+> subnotifers.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-[chris: corrected bq32000 compatible string]
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
----
-v1 -> v2
-Added ti to bq32000 compatible string - Thanks Geert
+By the time the notifier has been removed from the notifier list, we're the
+sole user of the notifier done list. There is thus no need to acquire the
+list lock to serialise access to that list.
 
- arch/arm/boot/dts/r8a7743-iwg20d-q7.dts | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+Is there something that prevents re-probing the devices directly off the
+notifier's done list without gathering the device pointers first? As the
+notifier has been removed from the notifier list already, there will be no
+matches found.
 
-diff --git a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-index 081af01..2c81ea7 100644
---- a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-+++ b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-@@ -31,6 +31,11 @@
- 		groups = "avb_mdio", "avb_gmii";
- 		function = "avb";
- 	};
-+
-+	i2c2_pins: i2c2 {
-+		groups = "i2c2";
-+		function = "i2c2";
-+	};
- };
- 
- &scif0 {
-@@ -54,3 +59,16 @@
- 		micrel,led-mode = <1>;
- 	};
- };
-+
-+&i2c2 {
-+	pinctrl-0 = <&i2c2_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+	clock-frequency = <400000>;
-+
-+	rtc@68 {
-+		compatible = "ti,bq32000";
-+		reg = <0x68>;
-+	};
-+};
+> 
+> Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+> ---
+>  drivers/media/v4l2-core/v4l2-async.c | 13 ++-----------
+>  1 file changed, 2 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
+> index 0acf288d7227ba97..67852f0f2d3000c9 100644
+> --- a/drivers/media/v4l2-core/v4l2-async.c
+> +++ b/drivers/media/v4l2-core/v4l2-async.c
+> @@ -215,6 +215,7 @@ void v4l2_async_notifier_unregister(struct v4l2_async_notifier *notifier)
+>  	if (!dev) {
+>  		dev_err(notifier->v4l2_dev->dev,
+>  			"Failed to allocate device cache!\n");
+> +		return;
+>  	}
+>  
+>  	mutex_lock(&list_lock);
+> @@ -234,23 +235,13 @@ void v4l2_async_notifier_unregister(struct v4l2_async_notifier *notifier)
+>  		/* If we handled USB devices, we'd have to lock the parent too */
+>  		device_release_driver(d);
+>  
+> -		/*
+> -		 * Store device at the device cache, in order to call
+> -		 * put_device() on the final step
+> -		 */
+> -		if (dev)
+> -			dev[i++] = d;
+> -		else
+> -			put_device(d);
+> +		dev[i++] = d;
+>  	}
+>  
+>  	mutex_unlock(&list_lock);
+>  
+>  	/*
+>  	 * Call device_attach() to reprobe devices
+> -	 *
+> -	 * NOTE: If dev allocation fails, i is 0, and the whole loop won't be
+> -	 * executed.
+>  	 */
+>  	while (i--) {
+>  		struct device *d = dev[i];
+> -- 
+> 2.13.3
+> 
+
 -- 
-1.9.1
+Regards,
+
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi
