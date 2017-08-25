@@ -1,384 +1,269 @@
-Subject: Re: [PATCH v2 11/14] v4l: vsp1: Add support for header display lists
- in continuous mode
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- dri-devel@lists.freedesktop.org
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <20170626181226.29575-1-laurent.pinchart+renesas@ideasonboard.com>
- <20170626181226.29575-12-laurent.pinchart+renesas@ideasonboard.com>
-Reply-To: kieran.bingham@ideasonboard.com
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Message-ID: <5051664d-1793-2245-28cd-94334f847977@ideasonboard.com>
-Date: Tue, 1 Aug 2017 18:35:48 +0100
-MIME-Version: 1.0
-In-Reply-To: <20170626181226.29575-12-laurent.pinchart+renesas@ideasonboard.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([88.99.104.3]:59734 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933386AbdHYPjZ (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 25 Aug 2017 11:39:25 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-i2c@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH] i2c: gpio: add fault injector
+Date: Fri, 25 Aug 2017 17:39:18 +0200
+Message-Id: <20170825153918.7544-1-wsa+renesas@sang-engineering.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Laurent,
+Add fault injection capabilities to the i2c-gpio driver. When connected to
+another I2C bus, it can create unusual states which the other I2C bus master
+driver needs to handle. Only for debugging!
 
-On 26/06/17 19:12, Laurent Pinchart wrote:
-> The VSP supports both header and headerless display lists. The latter is
-> easier to use when the VSP feeds data directly to the DU in continuous
-> mode, and the driver thus uses headerless display lists for DU operation
-> and header display lists otherwise.
-> 
-> Headerless display lists are only available on WPF.0. This has never
-> been an issue so far, as only WPF.0 is connected to the DU. However, on
-> H3 ES2.0, the VSP-DL instance has both WPF.0 and WPF.1 connected to the
-> DU. We thus can't use headerless display lists unconditionally for DU
-> operation.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-Would it be crazy to suggest we drop headerless display lists?
+Here is my take on the GPIO fault injection driver. I hope it can help to make
+Linux I2C bus drivers more robust. Not all ideas I had are implemented
+currently, but I think it is a nice start. Further ideas are: create
+arbitration lost, simulate a device holding SDA low and release it again,
+inject faulty bits and see if PEC works. Also, it could be considered to move
+this functionality into a seperate file. But given the size currently, I think
+it fits nicely into the main driver.
 
-If we must support header display lists in continuous mode - Rather than having
-2 cases for continuous modes to support (having to support headerless, on WPF.0,
-and header on WPF.1) if we just use your header loop trick - would that simplify
-our code maintenance?
+ Documentation/i2c/gpio-fault-injection |  54 ++++++++++++++++
+ drivers/i2c/busses/Kconfig             |   8 +++
+ drivers/i2c/busses/i2c-gpio.c          | 112 +++++++++++++++++++++++++++++++++
+ 3 files changed, 174 insertions(+)
+ create mode 100644 Documentation/i2c/gpio-fault-injection
 
-(We can always remove headerless support later if you agree, this is more of an
-idea at the moment)
-
-
-> Implement support for continuous mode with header display lists, and use
-> it for DU operation on WPF outputs that don't support headerless mode.
-> 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-
-Except for future discussion points, I can't see anything wrong here so:
-
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
-> ---
->  drivers/media/platform/vsp1/vsp1_dl.c   | 195 +++++++++++++++++++++-----------
->  drivers/media/platform/vsp1/vsp1_regs.h |   1 +
->  2 files changed, 127 insertions(+), 69 deletions(-)
-> 
-> diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
-> index bb92be4fe0f0..8b5cbb6b7a70 100644
-> --- a/drivers/media/platform/vsp1/vsp1_dl.c
-> +++ b/drivers/media/platform/vsp1/vsp1_dl.c
-> @@ -95,6 +95,7 @@ enum vsp1_dl_mode {
->   * struct vsp1_dl_manager - Display List manager
->   * @index: index of the related WPF
->   * @mode: display list operation mode (header or headerless)
-> + * @singleshot: execute the display list in single-shot mode
->   * @vsp1: the VSP1 device
->   * @lock: protects the free, active, queued, pending and gc_fragments lists
->   * @free: array of all free display lists
-> @@ -107,6 +108,7 @@ enum vsp1_dl_mode {
->  struct vsp1_dl_manager {
->  	unsigned int index;
->  	enum vsp1_dl_mode mode;
-> +	bool singleshot;
->  	struct vsp1_device *vsp1;
->  
->  	spinlock_t lock;
-> @@ -437,6 +439,7 @@ int vsp1_dl_list_add_chain(struct vsp1_dl_list *head,
->  
->  static void vsp1_dl_list_fill_header(struct vsp1_dl_list *dl, bool is_last)
->  {
-> +	struct vsp1_dl_manager *dlm = dl->dlm;
->  	struct vsp1_dl_header_list *hdr = dl->header->lists;
->  	struct vsp1_dl_body *dlb;
->  	unsigned int num_lists = 0;
-> @@ -461,85 +464,145 @@ static void vsp1_dl_list_fill_header(struct vsp1_dl_list *dl, bool is_last)
->  
->  	dl->header->num_lists = num_lists;
->  
-> -	/*
-> -	 * If this display list's chain is not empty, we are on a list, where
-> -	 * the next item in the list is the display list entity which should be
-> -	 * automatically queued by the hardware.
-> -	 */
->  	if (!list_empty(&dl->chain) && !is_last) {
-> +		/*
-> +		 * If this display list's chain is not empty, we are on a list,
-> +		 * and the next item is the display list that we must queue for
-> +		 * automatic processing by the hardware.
-> +		 */
->  		struct vsp1_dl_list *next = list_next_entry(dl, chain);
->  
->  		dl->header->next_header = next->dma;
->  		dl->header->flags = VSP1_DLH_AUTO_START;
-> +	} else if (!dlm->singleshot) {
-> +		/*
-> +		 * if the display list manager works in continuous mode, the VSP
-> +		 * should loop over the display list continuously until
-> +		 * instructed to do otherwise.
-> +		 */
-> +		dl->header->next_header = dl->dma;
-> +		dl->header->flags = VSP1_DLH_INT_ENABLE | VSP1_DLH_AUTO_START;
-
-This is a neat trick - and I wonder if actually - it gives us even more
-flexibility in our control.
-
-Presently on continuous mode - I believe we have to reset the WPF to 'stop' ...
-In this mode - I suspect we could update the display list - (albeit that might
-be a bit racy) to disable the AUTO_START. Maybe that's better .. Maybe it's worse :)
-
->  	} else {
-> +		/*
-> +		 * Otherwise, in mem-to-mem mode, we work in single-shot mode
-> +		 * and the next display list must not be started automatically.
-> +		 */
->  		dl->header->flags = VSP1_DLH_INT_ENABLE;
->  	}
->  }
->  
-> -void vsp1_dl_list_commit(struct vsp1_dl_list *dl)
-> +static bool vsp1_dl_list_hw_update_pending(struct vsp1_dl_manager *dlm)
->  {
-> -	struct vsp1_dl_manager *dlm = dl->dlm;
->  	struct vsp1_device *vsp1 = dlm->vsp1;
-> -	unsigned long flags;
-> -	bool update;
-> -
-> -	if (dl->dlm->mode == VSP1_DL_MODE_HEADER) {
-> -		struct vsp1_dl_list *dl_child;
-> -
-> -		/*
-> -		 * In header mode the caller guarantees that the hardware is
-> -		 * idle at this point.
-> -		 */
->  
-> -		/* Fill the header for the head and chained display lists. */
-> -		vsp1_dl_list_fill_header(dl, list_empty(&dl->chain));
-> -
-> -		list_for_each_entry(dl_child, &dl->chain, chain) {
-> -			bool last = list_is_last(&dl_child->chain, &dl->chain);
-> +	if (!dlm->queued)
-> +		return false;
->  
-> -			vsp1_dl_list_fill_header(dl_child, last);
-> -		}
-> -	}
-> +	/*
-> +	 * Check whether the VSP1 has taken the update. In headerless mode the
-> +	 * hardware indicates this by clearing the UPD bit in the DL_BODY_SIZE
-> +	 * register, and in header mode by clearing the UPDHDR bit in the CMD
-> +	 * register.
-> +	 */
-> +	if (dlm->mode == VSP1_DL_MODE_HEADERLESS)
-> +		return !!(vsp1_read(vsp1, VI6_DL_BODY_SIZE)
-> +			  & VI6_DL_BODY_SIZE_UPD);
-> +	else
-> +		return !!(vsp1_read(vsp1, VI6_CMD(dlm->index) & VI6_CMD_UPDHDR));
-> +}
->  
-> -	spin_lock_irqsave(&dlm->lock, flags);
-> +static void vsp1_dl_list_hw_enqueue(struct vsp1_dl_list *dl)
-> +{
-> +	struct vsp1_dl_manager *dlm = dl->dlm;
-> +	struct vsp1_device *vsp1 = dlm->vsp1;
->  
-> -	if (dl->dlm->mode == VSP1_DL_MODE_HEADER) {
-> +	if (dlm->mode == VSP1_DL_MODE_HEADERLESS) {
->  		/*
-> -		 * Commit the head display list to hardware. Chained headers
-> -		 * will auto-start.
-> +		 * In headerless mode, program the hardware directly with the
-> +		 * display list body address and size and set the UPD bit. The
-> +		 * bit will be cleared by the hardware when the display list
-> +		 * processing starts.
-> +		 */
-> +		vsp1_write(vsp1, VI6_DL_HDR_ADDR(0), dl->body0.dma);
-> +		vsp1_write(vsp1, VI6_DL_BODY_SIZE, VI6_DL_BODY_SIZE_UPD |
-> +			   (dl->body0.num_entries * sizeof(*dl->header->lists)));
-> +	} else {
-> +		/*
-> +		 * In header mode, program the display list header address. If
-> +		 * the hardware is idle (single-shot mode or first frame in
-> +		 * continuous mode) it will then be started independently. If
-> +		 * the hardware is operating, the VI6_DL_HDR_REF_ADDR register
-> +		 * will be updated with the display list address.
->  		 */
->  		vsp1_write(vsp1, VI6_DL_HDR_ADDR(dlm->index), dl->dma);
-> -
-> -		dlm->active = dl;
-> -		goto done;
->  	}
-> +}
-> +
-> +static void vsp1_dl_list_commit_continuous(struct vsp1_dl_list *dl)
-> +{
-> +	struct vsp1_dl_manager *dlm = dl->dlm;
->  
->  	/*
-> -	 * Once the UPD bit has been set the hardware can start processing the
-> -	 * display list at any time and we can't touch the address and size
-> -	 * registers. In that case mark the update as pending, it will be
-> -	 * queued up to the hardware by the frame end interrupt handler.
-> +	 * If a previous display list has been queued to the hardware but not
-> +	 * processed yet, the VSP can start processing it at any time. In that
-> +	 * case we can't replace the queued list by the new one, as we could
-> +	 * race with the hardware. We thus mark the update as pending, it will
-> +	 * be queued up to the hardware by the frame end interrupt handler.
->  	 */
-> -	update = !!(vsp1_read(vsp1, VI6_DL_BODY_SIZE) & VI6_DL_BODY_SIZE_UPD);
-> -	if (update) {
-> +	if (vsp1_dl_list_hw_update_pending(dlm)) {
->  		__vsp1_dl_list_put(dlm->pending);
->  		dlm->pending = dl;
-> -		goto done;
-> +		return;
->  	}
->  
->  	/*
-> -	 * Program the hardware with the display list body address and size.
-> -	 * The UPD bit will be cleared by the device when the display list is
-> -	 * processed.
-> +	 * Pass the new display list to the hardware and mark it as queued. It
-> +	 * will become active when the hardware starts processing it.
->  	 */
-> -	vsp1_write(vsp1, VI6_DL_HDR_ADDR(0), dl->body0.dma);
-> -	vsp1_write(vsp1, VI6_DL_BODY_SIZE, VI6_DL_BODY_SIZE_UPD |
-> -		   (dl->body0.num_entries * sizeof(*dl->header->lists)));
-> +	vsp1_dl_list_hw_enqueue(dl);
->  
->  	__vsp1_dl_list_put(dlm->queued);
->  	dlm->queued = dl;
-> +}
-> +
-> +static void vsp1_dl_list_commit_singleshot(struct vsp1_dl_list *dl)
-> +{
-> +	struct vsp1_dl_manager *dlm = dl->dlm;
-> +
-> +	/*
-> +	 * When working in single-shot mode, the caller guarantees that the
-> +	 * hardware is idle at this point. Just commit the head display list
-> +	 * to hardware. Chained lists will be started automatically.
-> +	 */
-> +	vsp1_dl_list_hw_enqueue(dl);
-> +
-> +	dlm->active = dl;
-> +}
-
-I'm pleased to see the _commit_singleshot split out. That certainly makes that
-case read easier :)
-
-
-> +
-> +void vsp1_dl_list_commit(struct vsp1_dl_list *dl)
-> +{
-> +	struct vsp1_dl_manager *dlm = dl->dlm;
-> +	struct vsp1_dl_list *dl_child;
-> +	unsigned long flags;
-> +
-> +	if (dlm->mode == VSP1_DL_MODE_HEADER) {
-> +		/* Fill the header for the head and chained display lists. */
-> +		vsp1_dl_list_fill_header(dl, list_empty(&dl->chain));
-> +
-> +		list_for_each_entry(dl_child, &dl->chain, chain) {
-> +			bool last = list_is_last(&dl_child->chain, &dl->chain);
-> +
-> +			vsp1_dl_list_fill_header(dl_child, last);
-> +		}
-> +	}
-> +
-> +	spin_lock_irqsave(&dlm->lock, flags);
-> +
-> +	if (dlm->singleshot)
-> +		vsp1_dl_list_commit_singleshot(dl);
-> +	else
-> +		vsp1_dl_list_commit_continuous(dl);
->  
-> -done:
->  	spin_unlock_irqrestore(&dlm->lock, flags);
->  }
->  
-> @@ -558,31 +621,28 @@ void vsp1_dl_list_commit(struct vsp1_dl_list *dl)
->   */
->  bool vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm)
->  {
-> -	struct vsp1_device *vsp1 = dlm->vsp1;
->  	bool completed = false;
->  
->  	spin_lock(&dlm->lock);
->  
-> -	__vsp1_dl_list_put(dlm->active);
-> -	dlm->active = NULL;
-> -
->  	/*
-> -	 * Header mode is used for mem-to-mem pipelines only. We don't need to
-> -	 * perform any operation as there can't be any new display list queued
-> -	 * in that case.
-> +	 * The mem-to-mem pipelines work in single-shot mode. No new display
-> +	 * list can be queued, we don't have to do anything.
->  	 */
-> -	if (dlm->mode == VSP1_DL_MODE_HEADER) {
-> +	if (dlm->singleshot) {
-> +		__vsp1_dl_list_put(dlm->active);
-> +		dlm->active = NULL;
->  		completed = true;
->  		goto done;
->  	}
->  
->  	/*
-> -	 * The UPD bit set indicates that the commit operation raced with the
-> -	 * interrupt and occurred after the frame end event and UPD clear but
-> -	 * before interrupt processing. The hardware hasn't taken the update
-> -	 * into account yet, we'll thus skip one frame and retry.
-> +	 * If the commit operation raced with the interrupt and occurred after
-> +	 * the frame end event but before interrupt processing, the hardware
-> +	 * hasn't taken the update into account yet. We have to skip one frame
-> +	 * and retry.
->  	 */
-> -	if (vsp1_read(vsp1, VI6_DL_BODY_SIZE) & VI6_DL_BODY_SIZE_UPD)
-> +	if (vsp1_dl_list_hw_update_pending(dlm))
->  		goto done;
->  
->  	/*
-> @@ -590,24 +650,20 @@ bool vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm)
->  	 * frame end interrupt. The display list thus becomes active.
->  	 */
->  	if (dlm->queued) {
-> +		__vsp1_dl_list_put(dlm->active);
->  		dlm->active = dlm->queued;
->  		dlm->queued = NULL;
->  		completed = true;
->  	}
->  
->  	/*
-> -	 * Now that the UPD bit has been cleared we can queue the next display
-> -	 * list to the hardware if one has been prepared.
-> +	 * Now that the VSP has started processing the queued display list, we
-> +	 * can queue the pending display list to the hardware if one has been
-> +	 * prepared.
->  	 */
->  	if (dlm->pending) {
-> -		struct vsp1_dl_list *dl = dlm->pending;
-> -
-> -		vsp1_write(vsp1, VI6_DL_HDR_ADDR(0), dl->body0.dma);
-> -		vsp1_write(vsp1, VI6_DL_BODY_SIZE, VI6_DL_BODY_SIZE_UPD |
-> -			   (dl->body0.num_entries *
-> -			    sizeof(*dl->header->lists)));
-> -
-> -		dlm->queued = dl;
-> +		vsp1_dl_list_hw_enqueue(dlm->pending);
-> +		dlm->queued = dlm->pending;
->  		dlm->pending = NULL;
->  	}
->  
-> @@ -700,6 +756,7 @@ struct vsp1_dl_manager *vsp1_dlm_create(struct vsp1_device *vsp1,
->  	dlm->index = index;
->  	dlm->mode = index == 0 && !vsp1->info->uapi
->  		  ? VSP1_DL_MODE_HEADERLESS : VSP1_DL_MODE_HEADER;
-> +	dlm->singleshot = vsp1->info->uapi;
->  	dlm->vsp1 = vsp1;
->  
->  	spin_lock_init(&dlm->lock);
-> diff --git a/drivers/media/platform/vsp1/vsp1_regs.h b/drivers/media/platform/vsp1/vsp1_regs.h
-> index 007e2bbc26c0..58d0bea963a6 100644
-> --- a/drivers/media/platform/vsp1/vsp1_regs.h
-> +++ b/drivers/media/platform/vsp1/vsp1_regs.h
-> @@ -18,6 +18,7 @@
->   */
->  
->  #define VI6_CMD(n)			(0x0000 + (n) * 4)
-> +#define VI6_CMD_UPDHDR			(1 << 4)
->  #define VI6_CMD_STRCMD			(1 << 0)
->  
->  #define VI6_CLK_DCSWT			0x0018
-> 
+diff --git a/Documentation/i2c/gpio-fault-injection b/Documentation/i2c/gpio-fault-injection
+new file mode 100644
+index 00000000000000..e0c4f775e2390f
+--- /dev/null
++++ b/Documentation/i2c/gpio-fault-injection
+@@ -0,0 +1,54 @@
++Linux I2C fault injection
++=========================
++
++The GPIO based I2C bus master driver can be configured to provide fault
++injection capabilities. It is then meant to be connected to another I2C bus
++which is driven by the I2C bus master driver under test. The GPIO fault
++injection driver can create special states on the bus which the other I2C bus
++master driver should handle gracefully.
++
++Once the Kconfig option I2C_GPIO_FAULT_INJECTOR is enabled, there will be an
++'i2c-fault-injector' subdirectory in the Kernel debugfs filesystem, usually
++mounted at /sys/kernel/debug. There will be a separate subdirectory per GPIO
++driven I2C bus. Each subdirectory will contain files to trigger the fault
++injection. They will be described now along with their intended use-cases.
++
++"scl"
++-----
++
++By reading this file, you get the current state of SCL. By writing, you can
++change its state to either force it low or to release it again. So, by using
++"echo 0 > scl" you force SCL low and thus, no communication will be possible
++because the bus master under test will not be able to clock. It should detect
++the condition of SCL being unresponsive and report an error to the upper
++layers.
++
++"sda"
++-----
++
++By reading this file, you get the current state of SDA. By writing, you can
++change its state to either force it low or to release it again. So, by using
++"echo 0 > sda" you force SDA low and thus, data cannot be transmitted. The bus
++master under test should detect this condition and trigger a bus recovery (see
++I2C specification version 4, section 3.1.16) using the helpers of the Linux I2C
++core (see 'struct bus_recovery_info'). However, the bus recovery will not
++succeed because SDA is still pinned low until you manually release it again
++with "echo 1 > sda". A test with an automatic release can be done with the
++'incomplete_transfer' file.
++
++"incomplete_transfer"
++---------------------
++
++This file is write only and you need to write the address of an existing I2C
++client device to it. Then, a transfer to this device will be started, but it
++will stop at the ACK phase after the address of the client has been
++transmitted. Because the device will ACK its presence, this results in SDA
++being pulled low by the device while SCL is high. So, similar to the "sda" file
++above, the bus master under test should detect this condition and try a bus
++recovery. This time, however, it should succeed and the device should release
++SDA after toggling SCL. Please note: there are I2C client devices which detect
++a stuck SDA on their side and release it on their own after a few milliseconds.
++Also, there are external devices deglitching and monitoring the I2C bus. They
++can also detect a stuck SDA and will init a bus recovery on their own. If you
++want to implement bus recovery in a bus master driver, make sure you checked
++your hardware setup carefully before.
+diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+index 79c33817e412e6..5b03698e1a3930 100644
+--- a/drivers/i2c/busses/Kconfig
++++ b/drivers/i2c/busses/Kconfig
+@@ -587,6 +587,14 @@ config I2C_GPIO
+ 	  This is a very simple bitbanging I2C driver utilizing the
+ 	  arch-neutral GPIO API to control the SCL and SDA lines.
+ 
++config I2C_GPIO_FAULT_INJECTOR
++	bool "GPIO-based fault injector"
++	depends on I2C_GPIO
++	help
++	  This adds some functionality to the i2c-gpio driver which can inject
++	  faults to an I2C bus, so another bus master can be stress-tested.
++	  This is for debugging. If unsure, say 'no'.
++
+ config I2C_HIGHLANDER
+ 	tristate "Highlander FPGA SMBus interface"
+ 	depends on SH_HIGHLANDER
+diff --git a/drivers/i2c/busses/i2c-gpio.c b/drivers/i2c/busses/i2c-gpio.c
+index 0ef8fcc6ac3aca..a49cc136753eb7 100644
+--- a/drivers/i2c/busses/i2c-gpio.c
++++ b/drivers/i2c/busses/i2c-gpio.c
+@@ -7,6 +7,8 @@
+  * it under the terms of the GNU General Public License version 2 as
+  * published by the Free Software Foundation.
+  */
++#include <linux/debugfs.h>
++#include <linux/delay.h>
+ #include <linux/i2c.h>
+ #include <linux/i2c-algo-bit.h>
+ #include <linux/i2c-gpio.h>
+@@ -22,6 +24,9 @@ struct i2c_gpio_private_data {
+ 	struct i2c_adapter adap;
+ 	struct i2c_algo_bit_data bit_data;
+ 	struct i2c_gpio_platform_data pdata;
++#ifdef CONFIG_I2C_GPIO_FAULT_INJECTOR
++	struct dentry *debug_dir;
++#endif
+ };
+ 
+ /* Toggle SDA by changing the direction of the pin */
+@@ -85,6 +90,109 @@ static int i2c_gpio_getscl(void *data)
+ 	return gpio_get_value(pdata->scl_pin);
+ }
+ 
++#ifdef CONFIG_I2C_GPIO_FAULT_INJECTOR
++static struct dentry *i2c_gpio_debug_dir;
++
++#define setsda(bd, val)	(bd)->setsda((bd)->data, val)
++#define setscl(bd, val)	(bd)->setscl((bd)->data, val)
++#define getsda(bd)	(bd)->getsda((bd)->data)
++#define getscl(bd)	(bd)->getscl((bd)->data)
++
++#define WIRE_ATTRIBUTE(wire) \
++static int fops_##wire##_get(void *data, u64 *val)	\
++{							\
++	struct i2c_gpio_private_data *priv = data;	\
++							\
++	i2c_lock_adapter(&priv->adap);			\
++	*val = get##wire(&priv->bit_data);		\
++	i2c_unlock_adapter(&priv->adap);		\
++	return 0;					\
++}							\
++static int fops_##wire##_set(void *data, u64 val)	\
++{							\
++	struct i2c_gpio_private_data *priv = data;	\
++							\
++	i2c_lock_adapter(&priv->adap);			\
++	set##wire(&priv->bit_data, val);		\
++	i2c_unlock_adapter(&priv->adap);		\
++	return 0;					\
++}							\
++DEFINE_DEBUGFS_ATTRIBUTE(fops_##wire, fops_##wire##_get, fops_##wire##_set, "%llu\n")
++
++WIRE_ATTRIBUTE(scl);
++WIRE_ATTRIBUTE(sda);
++
++static int fops_incomplete_transfer_set(void *data, u64 addr)
++{
++	struct i2c_gpio_private_data *priv = data;
++	struct i2c_algo_bit_data *bit_data = &priv->bit_data;
++	int i, pattern;
++
++	if (addr > 0x7f)
++		return -EINVAL;
++
++	/* ADDR (7 bit) + RD (1 bit) + SDA hi (1 bit) */
++	pattern = (addr << 2) | 3;
++
++	i2c_lock_adapter(&priv->adap);
++
++	/* START condition */
++	setsda(bit_data, 0);
++	udelay(bit_data->udelay);
++
++	/* Send ADDR+RD, request ACK, don't send STOP */
++	for (i = 8; i >= 0; i--) {
++		setscl(bit_data, 0);
++		udelay(bit_data->udelay / 2);
++		setsda(bit_data, (pattern >> i) & 1);
++		udelay((bit_data->udelay + 1) / 2);
++		setscl(bit_data, 1);
++		udelay(bit_data->udelay);
++	}
++
++	i2c_unlock_adapter(&priv->adap);
++
++	return 0;
++}
++DEFINE_DEBUGFS_ATTRIBUTE(fops_incomplete_transfer, NULL, fops_incomplete_transfer_set, "%llu\n");
++
++static void i2c_gpio_fault_injector_init(struct platform_device *pdev)
++{
++	struct i2c_gpio_private_data *priv = platform_get_drvdata(pdev);
++
++	/*
++	 * If there will be a debugfs-dir per i2c adapter somewhen, put the
++	 * 'fault-injector' dir there. Until then, we have a global dir with
++	 * all adapters as subdirs.
++	 */
++	if (!i2c_gpio_debug_dir) {
++		i2c_gpio_debug_dir = debugfs_create_dir("i2c-fault-injector", NULL);
++		if (!i2c_gpio_debug_dir)
++			return;
++	}
++
++	priv->debug_dir = debugfs_create_dir(pdev->name, i2c_gpio_debug_dir);
++	if (!priv->debug_dir)
++		return;
++
++	debugfs_create_file_unsafe("scl", S_IWUSR | S_IRUSR, priv->debug_dir, priv, &fops_scl);
++	debugfs_create_file_unsafe("sda", S_IWUSR | S_IRUSR, priv->debug_dir, priv, &fops_sda);
++	debugfs_create_file_unsafe("incomplete_transfer", S_IWUSR, priv->debug_dir,
++				   priv, &fops_incomplete_transfer);
++}
++
++static void inline i2c_gpio_fault_injector_exit(struct platform_device *pdev)
++{
++	struct i2c_gpio_private_data *priv = platform_get_drvdata(pdev);
++
++	debugfs_remove_recursive(priv->debug_dir);
++}
++#else
++static void inline i2c_gpio_fault_injector_init(struct platform_device *pdev) {}
++static void inline i2c_gpio_fault_injector_exit(struct platform_device *pdev) {}
++#endif /* CONFIG_I2C_GPIO_FAULT_INJECTOR*/
++
++
+ static int of_i2c_gpio_get_pins(struct device_node *np,
+ 				unsigned int *sda_pin, unsigned int *scl_pin)
+ {
+@@ -232,6 +340,8 @@ static int i2c_gpio_probe(struct platform_device *pdev)
+ 		 pdata->scl_is_output_only
+ 		 ? ", no clock stretching" : "");
+ 
++	i2c_gpio_fault_injector_init(pdev);
++
+ 	return 0;
+ }
+ 
+@@ -240,6 +350,8 @@ static int i2c_gpio_remove(struct platform_device *pdev)
+ 	struct i2c_gpio_private_data *priv;
+ 	struct i2c_adapter *adap;
+ 
++	i2c_gpio_fault_injector_exit(pdev);
++
+ 	priv = platform_get_drvdata(pdev);
+ 	adap = &priv->adap;
+ 
+-- 
+2.11.0
