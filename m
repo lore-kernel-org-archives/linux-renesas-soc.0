@@ -1,159 +1,199 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f179.google.com ([209.85.128.179]:34048 "EHLO
-        mail-wr0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751401AbdHEUxL (ORCPT
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:37317 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755168AbdHYIfr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 5 Aug 2017 16:53:11 -0400
-Received: by mail-wr0-f179.google.com with SMTP id 12so27171124wrb.1
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 05 Aug 2017 13:53:11 -0700 (PDT)
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-To: linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux@armlinux.org.uk,
-        linux-omap@vger.kernel.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, krzk@kernel.org,
-        jason@lakedaemon.net, arm@kernel.org, andrew@lunn.ch,
-        gregory.clement@free-electrons.com,
-        sebastian.hesselbarth@gmail.com, tony@atomide.com,
-        baohua@kernel.org, horms@verge.net.au, magnus.damm@gmail.com,
-        vireshk@kernel.org, shiraz.linux.kernel@gmail.com,
-        patrice.chotard@st.com, nico@linaro.org, dave.martin@arm.com,
-        marc.zyngier@arm.com
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH 01/15] ARM: assembler: introduce adr_l, ldr_l and str_l macros
-Date: Sat,  5 Aug 2017 21:52:08 +0100
-Message-Id: <20170805205222.19868-2-ard.biesheuvel@linaro.org>
-In-Reply-To: <20170805205222.19868-1-ard.biesheuvel@linaro.org>
-References: <20170805205222.19868-1-ard.biesheuvel@linaro.org>
+        Fri, 25 Aug 2017 04:35:47 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170823125744.424675523@cogentembedded.com>
+References: <20170823125744.424675523@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 25 Aug 2017 10:35:45 +0200
+Message-ID: <CAMuHMdU5CSeoHfBrp-TU8wka-jY3PQfD1YUTDAnfXkU62b7UBg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: renesas: cpg-mssr: add R8A7797 support
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Like arm64, ARM supports position independent code sequences that
-produce symbol references with a greater reach than the ordinary
-adr/ldr instructions.
+Hi Sergei,
 
-Currently, we use open coded instruction sequences involving literals
-and arithmetic operations. Instead, we can use movw/movt pairs on v7
-CPUs, circumventing the D-cache entirely. For older CPUs, we can emit
-the literal into a subsection, allowing it to be emitted out of line
-while retaining the ability to perform arithmetic on label offsets.
+On Wed, Aug 23, 2017 at 2:52 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add R-Car V3M (R8A7797) Clock Pulse Generator / Module Standby and
+> Software Reset support, using the CPG/MSSR driver core and the common
+> R-Car Gen3 code.
+>
+> Based on the original (and large) patch by Daisuke Matsushita
+> <daisuke.matsushita.ns@hitachi.com>.
+>
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-E.g., on pre-v7 CPUs, we can emit a PC-relative reference as follows:
+Thanks for your patch!
 
-       ldr          <reg>, 222f
-  111: add          <reg>, <reg>, pc
-       .subsection  1
-  222: .long        <sym> - (111b + 8)
-       .previous
+> +++ linux/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+> @@ -22,6 +22,7 @@ Required Properties:
+>        - "renesas,r8a7794-cpg-mssr" for the r8a7794 SoC (R-Car E2)
+>        - "renesas,r8a7795-cpg-mssr" for the r8a7795 SoC (R-Car H3)
+>        - "renesas,r8a7796-cpg-mssr" for the r8a7796 SoC (R-Car M3-W)
+> +      - "renesas,r8a7797-cpg-mssr" for the r8a7797 SoC (R-Car V3M)
 
-This is allowed by the assembler because, unlike ordinary sections,
-subsections are combined into a single section into the object file,
-and so the label references are not true cross-section references that
-are visible as relocations. Note that we could even do something like
+Please use "renesas,r8a77970-cpg-mssr", to follow the new 5-digit scheme
+started with r8a77995, and "r8a77970".
 
-       add          <reg>, pc, #(222f - 111f) & ~0xfff
-       ldr          <reg>, [<reg>, #(222f - 111f) & 0xfff]
-  111: add          <reg>, <reg>, pc
-       .subsection  1
-  222: .long        <sym> - (111b + 8)
-       .previous
+> @@ -30,8 +31,8 @@ Required Properties:
+>      clock-names
+>    - clock-names: List of external parent clock names. Valid names are:
+>        - "extal" (r8a7743, r8a7745, r8a7790, r8a7791, r8a7792, r8a7793, r8a7794,
+> -                r8a7795, r8a7796)
+> -      - "extalr" (r8a7795, r8a7796)
+> +                r8a7795, r8a7796, r8a7797)
+> +      - "extalr" (r8a7795, r8a7796, r8a7797)
 
-if it turns out that the 4 KB range of the ldr instruction is insufficient
-to reach the literal in the subsection, although this is currently not a
-problem (of the 98 objects built from .S files in a multi_v7_defconfig
-build, only 11 have .text sections that are over 1 KB, and the largest one
-[entry-armv.o] is 3308 bytes)
+Likewise.
 
-Subsections have been available in binutils since 2004 at least, so
-they should not cause any issues with older toolchains.
+> --- linux.orig/drivers/clk/renesas/Kconfig
+> +++ linux/drivers/clk/renesas/Kconfig
+> @@ -15,6 +15,7 @@ config CLK_RENESAS
+>         select CLK_R8A7794 if ARCH_R8A7794
+>         select CLK_R8A7795 if ARCH_R8A7795
+>         select CLK_R8A7796 if ARCH_R8A7796
+> +       select CLK_R8A7797 if ARCH_R8A7797
 
-So use the above to implement the macros mov_l, adr_l, adrm_l (using ldm
-to load multiple literals at once), ldr_l and str_l, all of which will
-use movw/movt pairs on v7 and later CPUs, and use PC-relative literals
-otherwise.
+There's no ARCH_R8A7797 yet.
+Should be CLK_R8A77970 and ARCH_R8A77970.
 
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
----
- arch/arm/include/asm/assembler.h | 70 ++++++++++++++++++++
- 1 file changed, 70 insertions(+)
+>         select CLK_SH73A0 if ARCH_SH73A0
+>
+>  if CLK_RENESAS
+> @@ -94,6 +95,10 @@ config CLK_R8A7796
+>         bool
+>         select CLK_RCAR_GEN3_CPG
+>
+> +config CLK_R8A7797
 
-diff --git a/arch/arm/include/asm/assembler.h b/arch/arm/include/asm/assembler.h
-index ad301f107dd2..cedf59a7f853 100644
---- a/arch/arm/include/asm/assembler.h
-+++ b/arch/arm/include/asm/assembler.h
-@@ -518,4 +518,74 @@ THUMB(	orr	\reg , \reg , #PSR_T_BIT	)
- #endif
- 	.endm
- 
-+#ifdef CONFIG_THUMB2_KERNEL
-+#define	ARM_PC_BIAS		4
-+#else
-+#define	ARM_PC_BIAS		8
-+#endif
-+
-+	.macro		__adldst_l, op, reg, sym, tmp
-+	.if		__LINUX_ARM_ARCH__ < 7
-+	ldr		\tmp, 111f
-+	.subsection	1
-+	.align		2
-+111:	.long		\sym - (222f + ARM_PC_BIAS)
-+	.previous
-+	.else
-+	movw		\tmp, #:lower16:\sym - (222f + ARM_PC_BIAS)
-+	movt		\tmp, #:upper16:\sym - (222f + ARM_PC_BIAS)
-+	.endif
-+222:;	.ifc		\op, add
-+	add		\reg, \tmp, pc
-+	.elseif		CONFIG_THUMB2_KERNEL == 1
-+	add		\tmp, \tmp, pc
-+	\op		\reg, [\tmp]
-+	.else
-+	\op		\reg, [pc, \tmp]
-+	.endif
-+	.endm
-+
-+	/*
-+	 * mov_l - move a constant value or [relocated] address into a register
-+	 */
-+	.macro		mov_l, dst:req, imm:req
-+	.if		__LINUX_ARM_ARCH__ < 7
-+	ldr		\dst, =\imm
-+	.else
-+	movw		\dst, #:lower16:\imm
-+	movt		\dst, #:upper16:\imm
-+	.endif
-+	.endm
-+
-+	/*
-+	 * adr_l - adr pseudo-op with unlimited range
-+	 *
-+	 * @dst: destination register
-+	 * @sym: name of the symbol
-+	 */
-+	.macro		adr_l, dst:req, sym:req
-+	__adldst_l	add, \dst, \sym, \dst
-+	.endm
-+
-+	/*
-+	 * ldr_l - ldr <literal> pseudo-op with unlimited range
-+	 *
-+	 * @dst: destination register
-+	 * @sym: name of the symbol
-+	 */
-+	.macro		ldr_l, dst:req, sym:req
-+	__adldst_l	ldr, \dst, \sym, \dst
-+	.endm
-+
-+	/*
-+	 * str_l - str <literal> pseudo-op with unlimited range
-+	 *
-+	 * @src: source register
-+	 * @sym: name of the symbol
-+	 * @tmp: mandatory scratch register
-+	 */
-+	.macro		str_l, src:req, sym:req, tmp:req
-+	__adldst_l	str, \src, \sym, \tmp
-+	.endm
-+
- #endif /* __ASM_ASSEMBLER_H__ */
--- 
-2.11.0
+CLK_R8A77970
+
+> +       bool
+
+bool "R-Car V3M clock support" if COMPILE_TEST
+
+> --- linux.orig/drivers/clk/renesas/Makefile
+> +++ linux/drivers/clk/renesas/Makefile
+> @@ -13,6 +13,7 @@ obj-$(CONFIG_CLK_R8A7792)             += r8a7792-cp
+>  obj-$(CONFIG_CLK_R8A7794)              += r8a7794-cpg-mssr.o
+>  obj-$(CONFIG_CLK_R8A7795)              += r8a7795-cpg-mssr.o
+>  obj-$(CONFIG_CLK_R8A7796)              += r8a7796-cpg-mssr.o
+> +obj-$(CONFIG_CLK_R8A7797)              += r8a7797-cpg-mssr.o
+
+...77970...
+
+>  obj-$(CONFIG_CLK_SH73A0)               += clk-sh73a0.o
+>
+>  # Family
+> Index: linux/drivers/clk/renesas/r8a7797-cpg-mssr.c
+> ===================================================================
+> --- /dev/null
+> +++ linux/drivers/clk/renesas/r8a7797-cpg-mssr.c
+
+...77970...
+
+> +       /* Internal Core Clocks */
+
+> +       CLK_S1,
+> +       CLK_S2,
+
+There are no S1 and S2 clocks in Figure 8.1c.
+
+> +static const struct cpg_core_clk r8a7797_core_clks[] __initconst = {
+
+> +       /* Internal Core Clocks */
+
+> +       DEF_FIXED(".s1",        CLK_S1,         CLK_PLL1_DIV2,  4, 1),
+> +       DEF_FIXED(".s2",        CLK_S2,         CLK_PLL1_DIV2,  6, 1),
+
+There are no S1 and S2 clocks in Figure 8.1c.
+
+> +       /* Core Clock Outputs */
+
+> +       DEF_FIXED("s1d1",       R8A7797_CLK_S1D1,  CLK_S1,         1, 1),
+> +       DEF_FIXED("s1d2",       R8A7797_CLK_S1D2,  CLK_S1,         2, 1),
+> +       DEF_FIXED("s1d4",       R8A7797_CLK_S1D4,  CLK_S1,         4, 1),
+> +       DEF_FIXED("s2d1",       R8A7797_CLK_S2D1,  CLK_S2,         1, 1),
+> +       DEF_FIXED("s2d2",       R8A7797_CLK_S2D2,  CLK_S2,         2, 1),
+> +       DEF_FIXED("s2d4",       R8A7797_CLK_S2D4,  CLK_S2,         4, 1),
+
+There are no S1 and S2 clocks in Figure 8.1c.
+Please divide CLK_PLL1_DIV2 directly.
+
+> +static const struct mssr_mod_clk r8a7797_mod_clks[] __initconst = {
+
+As usual, I could not verify all parent clocks.
+
+> +static const struct rcar_gen3_cpg_pll_config cpg_pll_configs[8] __initconst = {
+> +       /* EXTAL div    PLL1 mult       PLL3 mult */
+
+This struct recently gained a "PLL1 div" column, which should be all ones
+for V3M.
+
+> +static int __init r8a7797_cpg_mssr_init(struct device *dev)
+> +{
+> +       const struct rcar_gen3_cpg_pll_config *cpg_pll_config;
+> +       u32 cpg_mode;
+> +       int error;
+> +
+> +       error = rcar_rst_read_mode_pins(&cpg_mode);
+> +       if (error)
+> +               return error;
+> +
+> +       cpg_pll_config = &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_mode)];
+> +       if (!cpg_pll_config->extal_div) {
+
+This check is not needed on V3M, as all 8 combinations are valid.
+
+> --- linux.orig/drivers/clk/renesas/renesas-cpg-mssr.c
+> +++ linux/drivers/clk/renesas/renesas-cpg-mssr.c
+> @@ -680,6 +680,12 @@ static const struct of_device_id cpg_mss
+>                 .data = &r8a7796_cpg_mssr_info,
+>         },
+>  #endif
+> +#ifdef CONFIG_CLK_R8A7797
+> +       {
+> +               .compatible = "renesas,r8a7797-cpg-mssr",
+> +               .data = &r8a7797_cpg_mssr_info,
+> +       },
+> +#endif
+
+...77970...
+
+> --- linux.orig/drivers/clk/renesas/renesas-cpg-mssr.h
+> +++ linux/drivers/clk/renesas/renesas-cpg-mssr.h
+> @@ -138,6 +138,7 @@ extern const struct cpg_mssr_info r8a779
+>  extern const struct cpg_mssr_info r8a7794_cpg_mssr_info;
+>  extern const struct cpg_mssr_info r8a7795_cpg_mssr_info;
+>  extern const struct cpg_mssr_info r8a7796_cpg_mssr_info;
+> +extern const struct cpg_mssr_info r8a7797_cpg_mssr_info;
+
+...77970...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
