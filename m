@@ -1,35 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:38708 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750908AbdHaUIC (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:47496 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755487AbdHYM4z (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 31 Aug 2017 16:08:02 -0400
-Date: Thu, 31 Aug 2017 15:08:01 -0500
-From: Rob Herring <robh@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
+        Fri, 25 Aug 2017 08:56:55 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms+renesas@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/2] ARM: shmobile: Document R-Car V3M SoC DT bindings
-Message-ID: <20170831200801.uxzle5gum5qz535p@rob-hp-laptop>
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/2] ARM: shmobile: Document R-Car V3M SoC DT bindings
+Date: Fri, 25 Aug 2017 14:56:49 +0200
+Message-Id: <1503665810-13945-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1503665810-13945-1-git-send-email-geert+renesas@glider.be>
 References: <1503665810-13945-1-git-send-email-geert+renesas@glider.be>
- <1503665810-13945-2-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1503665810-13945-2-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Aug 25, 2017 at 02:56:49PM +0200, Geert Uytterhoeven wrote:
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
->  1 file changed, 2 insertions(+)
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Acked-by: Rob Herring <robh@kernel.org>
+diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+index 275cda1469b8b95c..387cbd1a10375f2b 100644
+--- a/Documentation/devicetree/bindings/arm/shmobile.txt
++++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -39,6 +39,8 @@ SoCs:
+     compatible = "renesas,r8a7795"
+   - R-Car M3-W (R8A77960)
+     compatible = "renesas,r8a7796"
++  - R-Car V3M (R8A77970)
++    compatible = "renesas,r8a77970"
+   - R-Car D3 (R8A77995)
+     compatible = "renesas,r8a77995"
+ 
+-- 
+2.7.4
