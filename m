@@ -1,56 +1,82 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:33915 "EHLO pokefinder.org"
+Received: from sauhun.de ([88.99.104.3]:59773 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751868AbdHZJuY (ORCPT
+        id S933881AbdHYPxZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 26 Aug 2017 05:50:24 -0400
-Date: Sat, 26 Aug 2017 11:50:22 +0200
+        Fri, 25 Aug 2017 11:53:25 -0400
+Date: Fri, 25 Aug 2017 17:53:23 +0200
 From: Wolfram Sang <wsa@the-dreams.de>
 To: linux-renesas-soc@vger.kernel.org
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PULL REQUEST] renesas/topic/i2c-fault-injection for renesas
- drivers
-Message-ID: <20170826095022.xxnrbwdenjz27gje@ninjato>
-References: <20170825155319.5h5qfezsrdvnbhpk@ninjato>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Wolfram Sang <wsa@the-dreams.de>
+Subject: [PULL REQUEST] renesas/topic/i2c-fault-injection for renesas drivers
+Message-ID: <20170825155319.5h5qfezsrdvnbhpk@ninjato>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="4yw43ijeat62vtcq"
+        protocol="application/pgp-signature"; boundary="vucn4uz44gd4mguf"
 Content-Disposition: inline
-In-Reply-To: <20170825155319.5h5qfezsrdvnbhpk@ninjato>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 
---4yw43ijeat62vtcq
+--vucn4uz44gd4mguf
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
+Hi Geert,
 
-> renesas-drivers/master. Please let me know if there is more suitable
-> base and I will happily rebase it for you.
+here is a topic branch for renesas-drivers introducing the I2C fault
+injection feature. Because of the DTS addition, it is based on
+renesas-drivers/master. Please let me know if there is more suitable
+base and I will happily rebase it for you.
 
-Rebased now to i2c/for-next plus renesas/dt-bindings-for-v4.15 and
-pushed out.
+Kind regards,
+
+   Wolfram
 
 
---4yw43ijeat62vtcq
+The following changes since commit 91538653fd513606684cae7b58972966b0279ca3:
+
+  media: rcar-csi2: Fix section mismatch from rcar_csi2_probe() (2017-08-16 19:26:39 +0200)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/i2c-fault-injection
+
+for you to fetch changes up to 4051abe643e3995ec4c7e42d1e27793bbf36cedc:
+
+  i2c: gpio: add fault injector (2017-08-25 17:24:38 +0200)
+
+----------------------------------------------------------------
+Wolfram Sang (2):
+      arm64: dts: salvator-common: add GPIO based I2C bus
+      i2c: gpio: add fault injector
+
+ Documentation/i2c/gpio-fault-injection           |  54 +++++++++++
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi |  11 +++
+ drivers/i2c/busses/Kconfig                       |   8 ++
+ drivers/i2c/busses/i2c-gpio.c                    | 112 +++++++++++++++++++++++
+ 4 files changed, 185 insertions(+)
+ create mode 100644 Documentation/i2c/gpio-fault-injection
+
+--vucn4uz44gd4mguf
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlmhRFoACgkQFA3kzBSg
-KbYiXhAAh7m7OgJkbYWwg8xrLrfDNgJGGrH/8qbH/qkpzae2XX3oRs+i9bSal1w/
-ONbg2yvhp1yf5oJM5v5rwMnwUVzGN8kMFrd2EYPY+SR885Bl9GlKFYcXluonWKvH
-7o8LJoCcJ2jBowehnYVacXn/DbM+xVL7TRtBQvz7drKTXS2qv/nEmbhzf9MCcoiM
-mHgPf2e5cy0uDN6Go5JclLihZhiOSZ5OeKnNyViV6DawJak1yNvCKWGQ8x4pc/AG
-P04bZs/BIuBn3fB9/GCKSSkCu7phNUEPODPcTTkqkAT6o4F4UQFtxl3yHUiQdV1X
-4eKH6aauklDMC5uxF7VZqN10Jpp/7pURUdK7pz1tq9xAEHKDuMcmtkst8jhkEnsD
-9e4JR657BdW0gvoLBNGeba3osK2pbIp9wxGOeJcXFiCfQOZSMkKiKuY9dE6AVmhz
-xWM2NzYBBuYtek9/bScs0wtWeub+zo9i1qRVZAexeTGVsgstDrY6O/Hx2OfgEYKx
-SIhxCrYAr+ZdxlcLvCZ+GCBGwfSmA3Xx7GFnmRHzWjVO41HL7YtsRKgKYTgAq5Fz
-OA5mfLoBsDgTVIFufCtfPRGUfbffVoMpvf4AcKmt17rwPW0PeG+AoDzJzKniXQut
-NMaMxeu5WTtKCt5Ve6YSjTMa1uH6yIiaTSfhBcoZvOuKRT5s67Y=
-=1a16
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlmgR+oACgkQFA3kzBSg
+KbYA7RAAjev3enPrLgza0x91peLfenfdb/fOi8XUhCfNm8bgSKDDlh9oZrQLBbU0
+lN/gFprig5KLVvwm3QmGfCPsOGYNYyLtGe7Y/2GM7kHMBFhIAneQW91EXiJKtL92
+8karUn/EXByfl2T4D5G56BkK+Dl7AT5clfrpb6LzyDyzsz3hH2wdOuPP9TnvhvfK
+XCosxpYauZ8gKW9LNLDKagXn5xzUT28OymTrU7yYdbTudmW+2FTonB5Ie9fOm9Du
+yx6fUN76d/a8fPE6XnEAJtIO9r+r9HH4iHB6UWmzWsUp3xotflnXYMdik9xZtLyO
+NHFxa2ktjhnXrsbma3DoOeSEcL9Dyt2vZcf6kz3X3ssYgW5PXvArYFxQxkCd7F9b
+AXkmY29HpYSZ9HpFG401oHRtcqpcJ9feoVEOc5a0/PGYTrOSidkFIL/StuRQNa1H
+B5sdJ7hiFJB1GbYy/a/mTtbgth4q+dICoBPHKeJuJA3UClC+e28vo/QET7T8jR0O
+cW9zxP6CKNch98wgxNLkWoD04ubF1K7uRaWbsqV3j55W2hAqmh2LiF1frrySe+/w
+3XAvC/2FP6XfQ/ySSh2FnIALSW6UKFGKnudbYKF7YDH/YZvt9/y+RXPoqFXEsTG/
+rYvGAwmq9AHXAnf6+kBQdSSlnBvV/G26lpkQoVv7Jdz7lAJd+xE=
+=TPKn
 -----END PGP SIGNATURE-----
 
---4yw43ijeat62vtcq--
+--vucn4uz44gd4mguf--
