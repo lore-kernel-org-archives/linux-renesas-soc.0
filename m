@@ -1,47 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from slow1-d.mail.gandi.net ([217.70.178.86]:44933 "EHLO
-        slow1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751227AbdHXI7e (ORCPT
+Received: from sauhun.de ([88.99.104.3]:33915 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751868AbdHZJuY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 Aug 2017 04:59:34 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: linus.walleij@linaro.org, laurent.pinchart@ideasonboard.com,
-        geert+renesas@glider.be
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] pinctrl: rza1: Remove suffix from gpiochip label
-Date: Thu, 24 Aug 2017 10:52:18 +0200
-Message-Id: <1503564738-32392-1-git-send-email-jacopo+renesas@jmondi.org>
+        Sat, 26 Aug 2017 05:50:24 -0400
+Date: Sat, 26 Aug 2017 11:50:22 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PULL REQUEST] renesas/topic/i2c-fault-injection for renesas
+ drivers
+Message-ID: <20170826095022.xxnrbwdenjz27gje@ninjato>
+References: <20170825155319.5h5qfezsrdvnbhpk@ninjato>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="4yw43ijeat62vtcq"
+Content-Disposition: inline
+In-Reply-To: <20170825155319.5h5qfezsrdvnbhpk@ninjato>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The OF node name already contains the gpio chip identifier, no need to
-append it when creating the label.
 
-The following debug message clearly shows the suffix is not required
-"pinctrl-rza1 fcfe3000.pin-controller: Parsed gpiochip gpio-0-0 with 6
-pins"
+--4yw43ijeat62vtcq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- drivers/pinctrl/pinctrl-rza1.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-rza1.c b/drivers/pinctrl/pinctrl-rza1.c
-index dc164da..7e896bd 100644
---- a/drivers/pinctrl/pinctrl-rza1.c
-+++ b/drivers/pinctrl/pinctrl-rza1.c
-@@ -1096,8 +1096,8 @@ static int rza1_parse_gpiochip(struct rza1_pinctrl *rza1_pctl,
+> renesas-drivers/master. Please let me know if there is more suitable
+> base and I will happily rebase it for you.
 
- 	*chip		= rza1_gpiochip_template;
- 	chip->base	= -1;
--	chip->label	= devm_kasprintf(rza1_pctl->dev, GFP_KERNEL, "%s-%u",
--					 np->name, gpioport);
-+	chip->label	= devm_kasprintf(rza1_pctl->dev, GFP_KERNEL, "%s",
-+					 np->name);
- 	chip->ngpio	= of_args.args[2];
- 	chip->of_node	= np;
- 	chip->parent	= rza1_pctl->dev;
---
-2.7.4
+Rebased now to i2c/for-next plus renesas/dt-bindings-for-v4.15 and
+pushed out.
+
+
+--4yw43ijeat62vtcq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlmhRFoACgkQFA3kzBSg
+KbYiXhAAh7m7OgJkbYWwg8xrLrfDNgJGGrH/8qbH/qkpzae2XX3oRs+i9bSal1w/
+ONbg2yvhp1yf5oJM5v5rwMnwUVzGN8kMFrd2EYPY+SR885Bl9GlKFYcXluonWKvH
+7o8LJoCcJ2jBowehnYVacXn/DbM+xVL7TRtBQvz7drKTXS2qv/nEmbhzf9MCcoiM
+mHgPf2e5cy0uDN6Go5JclLihZhiOSZ5OeKnNyViV6DawJak1yNvCKWGQ8x4pc/AG
+P04bZs/BIuBn3fB9/GCKSSkCu7phNUEPODPcTTkqkAT6o4F4UQFtxl3yHUiQdV1X
+4eKH6aauklDMC5uxF7VZqN10Jpp/7pURUdK7pz1tq9xAEHKDuMcmtkst8jhkEnsD
+9e4JR657BdW0gvoLBNGeba3osK2pbIp9wxGOeJcXFiCfQOZSMkKiKuY9dE6AVmhz
+xWM2NzYBBuYtek9/bScs0wtWeub+zo9i1qRVZAexeTGVsgstDrY6O/Hx2OfgEYKx
+SIhxCrYAr+ZdxlcLvCZ+GCBGwfSmA3Xx7GFnmRHzWjVO41HL7YtsRKgKYTgAq5Fz
+OA5mfLoBsDgTVIFufCtfPRGUfbffVoMpvf4AcKmt17rwPW0PeG+AoDzJzKniXQut
+NMaMxeu5WTtKCt5Ve6YSjTMa1uH6yIiaTSfhBcoZvOuKRT5s67Y=
+=1a16
+-----END PGP SIGNATURE-----
+
+--4yw43ijeat62vtcq--
