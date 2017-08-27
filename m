@@ -1,215 +1,141 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        tomoharu.fukawa.eb@renesas.com, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v6 13/25] rcar-vin: enable Gen3 hardware configuration
-Date: Wed, 23 Aug 2017 01:26:28 +0200
-Message-Id: <20170822232640.26147-14-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170822232640.26147-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170822232640.26147-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Sun, 27 Aug 2017 08:37:48 -0300
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-input@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [RFC PATCH v4 3/6] i2c: add docs to clarify DMA handling
+Message-ID: <20170827083748.248e2430@vento.lan>
+In-Reply-To: <20170817141449.23958-4-wsa+renesas@sang-engineering.com>
+References: <20170817141449.23958-1-wsa+renesas@sang-engineering.com>
+        <20170817141449.23958-4-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the register needed to work with Gen3 hardware. This patch adds
-the logic for how to work with the Gen3 hardware. More work is required
-to enable the subdevice structure needed to configure capturing.
+Em Thu, 17 Aug 2017 16:14:46 +0200
+Wolfram Sang <wsa+renesas@sang-engineering.com> escreveu:
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/rcar-dma.c | 94 ++++++++++++++++++++----------
- drivers/media/platform/rcar-vin/rcar-vin.h |  1 +
- 2 files changed, 64 insertions(+), 31 deletions(-)
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>  Documentation/i2c/DMA-considerations | 50 ++++++++++++++++++++++++++++++++++++
+>  1 file changed, 50 insertions(+)
+>  create mode 100644 Documentation/i2c/DMA-considerations
+> 
+> diff --git a/Documentation/i2c/DMA-considerations b/Documentation/i2c/DMA-considerations
+> new file mode 100644
+> index 00000000000000..a4b4a107102452
+> --- /dev/null
+> +++ b/Documentation/i2c/DMA-considerations
+> @@ -0,0 +1,50 @@
+> +Linux I2C and DMA
+> +-----------------
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index 9362e7dba5e3ba95..c4f8e81e88c99e28 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -33,21 +33,23 @@
- #define VNELPRC_REG	0x10	/* Video n End Line Pre-Clip Register */
- #define VNSPPRC_REG	0x14	/* Video n Start Pixel Pre-Clip Register */
- #define VNEPPRC_REG	0x18	/* Video n End Pixel Pre-Clip Register */
--#define VNSLPOC_REG	0x1C	/* Video n Start Line Post-Clip Register */
--#define VNELPOC_REG	0x20	/* Video n End Line Post-Clip Register */
--#define VNSPPOC_REG	0x24	/* Video n Start Pixel Post-Clip Register */
--#define VNEPPOC_REG	0x28	/* Video n End Pixel Post-Clip Register */
- #define VNIS_REG	0x2C	/* Video n Image Stride Register */
- #define VNMB_REG(m)	(0x30 + ((m) << 2)) /* Video n Memory Base m Register */
- #define VNIE_REG	0x40	/* Video n Interrupt Enable Register */
- #define VNINTS_REG	0x44	/* Video n Interrupt Status Register */
- #define VNSI_REG	0x48	/* Video n Scanline Interrupt Register */
- #define VNMTC_REG	0x4C	/* Video n Memory Transfer Control Register */
--#define VNYS_REG	0x50	/* Video n Y Scale Register */
--#define VNXS_REG	0x54	/* Video n X Scale Register */
- #define VNDMR_REG	0x58	/* Video n Data Mode Register */
- #define VNDMR2_REG	0x5C	/* Video n Data Mode Register 2 */
- #define VNUVAOF_REG	0x60	/* Video n UV Address Offset Register */
-+
-+/* Register offsets specific for Gen2 */
-+#define VNSLPOC_REG	0x1C	/* Video n Start Line Post-Clip Register */
-+#define VNELPOC_REG	0x20	/* Video n End Line Post-Clip Register */
-+#define VNSPPOC_REG	0x24	/* Video n Start Pixel Post-Clip Register */
-+#define VNEPPOC_REG	0x28	/* Video n End Pixel Post-Clip Register */
-+#define VNYS_REG	0x50	/* Video n Y Scale Register */
-+#define VNXS_REG	0x54	/* Video n X Scale Register */
- #define VNC1A_REG	0x80	/* Video n Coefficient Set C1A Register */
- #define VNC1B_REG	0x84	/* Video n Coefficient Set C1B Register */
- #define VNC1C_REG	0x88	/* Video n Coefficient Set C1C Register */
-@@ -73,9 +75,13 @@
- #define VNC8B_REG	0xF4	/* Video n Coefficient Set C8B Register */
- #define VNC8C_REG	0xF8	/* Video n Coefficient Set C8C Register */
- 
-+/* Register offsets specific for Gen3 */
-+#define VNCSI_IFMD_REG		0x20 /* Video n CSI2 Interface Mode Register */
- 
- /* Register bit fields for R-Car VIN */
- /* Video n Main Control Register bits */
-+#define VNMC_DPINE		(1 << 27) /* Gen3 specific */
-+#define VNMC_SCLE		(1 << 26) /* Gen3 specific */
- #define VNMC_FOC		(1 << 21)
- #define VNMC_YCAL		(1 << 19)
- #define VNMC_INF_YUV8_BT656	(0 << 16)
-@@ -119,6 +125,13 @@
- #define VNDMR2_FTEV		(1 << 17)
- #define VNDMR2_VLV(n)		((n & 0xf) << 12)
- 
-+/* Video n CSI2 Interface Mode Register (Gen3) */
-+#define VNCSI_IFMD_DES2		(1 << 27)
-+#define VNCSI_IFMD_DES1		(1 << 26)
-+#define VNCSI_IFMD_DES0		(1 << 25)
-+#define VNCSI_IFMD_CSI_CHSEL(n) ((n & 0xf) << 0)
-+#define VNCSI_IFMD_CSI_CHSEL_MASK 0xf
-+
- struct rvin_buffer {
- 	struct vb2_v4l2_buffer vb;
- 	struct list_head list;
-@@ -514,28 +527,10 @@ static void rvin_set_coeff(struct rvin_dev *vin, unsigned short xs)
- 	rvin_write(vin, p_set->coeff_set[23], VNC8C_REG);
- }
- 
--static void rvin_crop_scale_comp(struct rvin_dev *vin)
-+static void rvin_crop_scale_comp_gen2(struct rvin_dev *vin)
- {
- 	u32 xs, ys;
- 
--	/* Set Start/End Pixel/Line Pre-Clip */
--	rvin_write(vin, vin->crop.left, VNSPPRC_REG);
--	rvin_write(vin, vin->crop.left + vin->crop.width - 1, VNEPPRC_REG);
--	switch (vin->format.field) {
--	case V4L2_FIELD_INTERLACED:
--	case V4L2_FIELD_INTERLACED_TB:
--	case V4L2_FIELD_INTERLACED_BT:
--		rvin_write(vin, vin->crop.top / 2, VNSLPRC_REG);
--		rvin_write(vin, (vin->crop.top + vin->crop.height) / 2 - 1,
--			   VNELPRC_REG);
--		break;
--	default:
--		rvin_write(vin, vin->crop.top, VNSLPRC_REG);
--		rvin_write(vin, vin->crop.top + vin->crop.height - 1,
--			   VNELPRC_REG);
--		break;
--	}
--
- 	/* Set scaling coefficient */
- 	ys = 0;
- 	if (vin->crop.height != vin->compose.height)
-@@ -573,11 +568,6 @@ static void rvin_crop_scale_comp(struct rvin_dev *vin)
- 		break;
- 	}
- 
--	if (vin->format.pixelformat == V4L2_PIX_FMT_NV16)
--		rvin_write(vin, ALIGN(vin->format.width, 0x20), VNIS_REG);
--	else
--		rvin_write(vin, ALIGN(vin->format.width, 0x10), VNIS_REG);
--
- 	vin_dbg(vin,
- 		"Pre-Clip: %ux%u@%u:%u YS: %d XS: %d Post-Clip: %ux%u@%u:%u\n",
- 		vin->crop.width, vin->crop.height, vin->crop.left,
-@@ -585,6 +575,37 @@ static void rvin_crop_scale_comp(struct rvin_dev *vin)
- 		0, 0);
- }
- 
-+static void rvin_crop_scale_comp(struct rvin_dev *vin)
-+{
-+	/* Set Start/End Pixel/Line Pre-Clip */
-+	rvin_write(vin, vin->crop.left, VNSPPRC_REG);
-+	rvin_write(vin, vin->crop.left + vin->crop.width - 1, VNEPPRC_REG);
-+
-+	switch (vin->format.field) {
-+	case V4L2_FIELD_INTERLACED:
-+	case V4L2_FIELD_INTERLACED_TB:
-+	case V4L2_FIELD_INTERLACED_BT:
-+		rvin_write(vin, vin->crop.top / 2, VNSLPRC_REG);
-+		rvin_write(vin, (vin->crop.top + vin->crop.height) / 2 - 1,
-+			   VNELPRC_REG);
-+		break;
-+	default:
-+		rvin_write(vin, vin->crop.top, VNSLPRC_REG);
-+		rvin_write(vin, vin->crop.top + vin->crop.height - 1,
-+			   VNELPRC_REG);
-+		break;
-+	}
-+
-+	/* TODO: Add support for the UDS scaler. */
-+	if (vin->info->chip != RCAR_GEN3)
-+		rvin_crop_scale_comp_gen2(vin);
-+
-+	if (vin->format.pixelformat == V4L2_PIX_FMT_NV16)
-+		rvin_write(vin, ALIGN(vin->format.width, 0x20), VNIS_REG);
-+	else
-+		rvin_write(vin, ALIGN(vin->format.width, 0x10), VNIS_REG);
-+}
-+
- /* -----------------------------------------------------------------------------
-  * Hardware setup
-  */
-@@ -659,7 +680,10 @@ static int rvin_setup(struct rvin_dev *vin)
- 	}
- 
- 	/* Enable VSYNC Field Toogle mode after one VSYNC input */
--	dmr2 = VNDMR2_FTEV | VNDMR2_VLV(1);
-+	if (vin->info->chip == RCAR_GEN3)
-+		dmr2 = VNDMR2_FTEV;
-+	else
-+		dmr2 = VNDMR2_FTEV | VNDMR2_VLV(1);
- 
- 	/* Hsync Signal Polarity Select */
- 	if (!(vin->mbus_cfg.flags & V4L2_MBUS_HSYNC_ACTIVE_LOW))
-@@ -711,6 +735,14 @@ static int rvin_setup(struct rvin_dev *vin)
- 	if (input_is_yuv == output_is_yuv)
- 		vnmc |= VNMC_BPS;
- 
-+	if (vin->info->chip == RCAR_GEN3) {
-+		/* Select between CSI-2 and Digital input */
-+		if (vin->mbus_cfg.type == V4L2_MBUS_CSI2)
-+			vnmc &= ~VNMC_DPINE;
-+		else
-+			vnmc |= VNMC_DPINE;
-+	}
-+
- 	/* Progressive or interlaced mode */
- 	interrupts = progressive ? VNIE_FIE : VNIE_EFE;
- 
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 82f074c601ea4efe..c4608686666d2d81 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -33,6 +33,7 @@ enum chip_id {
- 	RCAR_H1,
- 	RCAR_M1,
- 	RCAR_GEN2,
-+	RCAR_GEN3,
- };
- 
- /**
--- 
-2.14.0
+I would use, instead:
+
+=================
+Linux I2C and DMA
+=================
+
+As this is the way we're starting document titles, after converted to
+ReST. So, better to have it already using the right format, as one day
+someone will convert i2c documentation to ReST. So, it would be
+really cool if this document could be just renamed without needing
+to patch it during such conversion :-)
+
+There are also a couple of things here that Sphinx would complain.
+So, it could be worth to rename it to *.rst, while you're writing
+it, and see what:
+	make htmldocs
+will complain and how it will look in html.
+
+> +
+> +Given that I2C is a low-speed bus where largely small messages are transferred,
+> +it is not considered a prime user of DMA access. At this time of writing, only
+> +10% of I2C bus master drivers have DMA support implemented.
+
+Are you sure about that? I'd say that, on media, at least half of the
+drivers use DMA for I2C bus access, as the I2C bus is on a remote
+board that talks with CPU via USB, using DMA, and all communication
+with USB should be DMA-safe.
+
+I guess what you really wanted to say on most of this section is
+about SoC (and other CPUs) where the I2C bus master is is at the
+mainboard, and not on some peripheral.
+
+> And the vast
+> +majority of transactions are so small that setting up DMA for it will likely
+> +add more overhead than a plain PIO transfer.
+> +
+> +Therefore, it is *not* mandatory that the buffer of an I2C message is DMA safe.
+
+Again, that may not be true on media boards. The code that implements the
+I2C transfers there, on most boards, have to be DMA safe, as it won't
+otherwise send/receive commands from the chips that are after the USB
+bridge.
+
+> +It does not seem reasonable to apply additional burdens when the feature is so
+> +rarely used. However, it is recommended to use a DMA-safe buffer if your
+> +message size is likely applicable for DMA. Most drivers have this threshold
+> +around 8 bytes (as of today, this is mostly an educated guess, however). For
+> +any message of 16 byte or larger, it is probably a really good idea.
+> +
+> +If you use such a buffer in a i2c_msg, set the I2C_M_DMA_SAFE flag with it.
+> +Then, the I2C core and drivers know they can safely operate DMA on it. Note
+> +that setting this flag makes only sense in kernel space. User space data is
+> +copied into kernel space anyhow. The I2C core makes sure the destination
+> +buffers in kernel space are always DMA capable.
+> +
+> +FIXME: Need to implement i2c_master_{send|receive}_dma and proper buffers for i2c_smbus_xfer_emulated.
+> +
+> +Drivers wishing to implement DMA can use helper functions from the I2C core.
+> +One gives you a DMA-safe buffer for a given i2c_msg as long as a certain
+> +threshold is met.
+> +
+> +	dma_buf = i2c_get_dma_safe_msg_buf(msg, threshold_in_byte);
+
+I'm concerned about the new bits added by this call. Right now,
+USB drivers just use kalloc() for transfer buffers used to send and
+receive URB control messages for both setting the main device and
+for I2C messages. Before this changeset, buffers allocated this
+way are DMA save and have been working for years.
+
+When you add some flags that would make the I2C subsystem aware
+that a buffer is now DMA safe, I guess you could be breaking
+those drivers, as a DMA safe buffer will now be considered as
+DMA-unsafe.
+
+So, you'll likely need to patch all media USB drivers to fix it,
+or come up with some other solution.
+
+> +
+> +If a buffer is returned, it either msg->buf for the I2C_M_DMA_SAFE case or a
+> +bounce buffer. But you don't need to care about that detail. If NULL is
+> +returned, the threshold was not met or a bounce buffer could not be allocated.
+> +Fall back to PIO in that case.
+> +
+> +In any case, a buffer obtained from above needs to be released. It ensures data
+> +is copied back to the message and a potentially used bounce buffer is freed.
+> +
+> +	i2c_release_dma_safe_msg_buf(msg, dma_buf);
+> +
+> +The bounce buffer handling from the core is generic and simple. It will always
+> +allocate a new bounce buffer. If you want a more sophisticated handling (e.g.
+> +reusing pre-allocated buffers), you are free to implement your own.
+> +
+> +Please also check the in-kernel documentation for details. The i2c-sh_mobile
+> +driver can be used as a reference example how to use the above helpers.
+> +
+> +Final note: If you plan to use DMA with I2C (or with anything else, actually)
+> +make sure you have CONFIG_DMA_API_DEBUG enabled during development. It can help
+> +you find various issues which can be complex to debug otherwise.
+
+
+
+Thanks,
+Mauro
