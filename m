@@ -1,48 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38497 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:53874 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752342AbdHDNXQ (ORCPT
+        with ESMTP id S1750735AbdH1HxV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 Aug 2017 09:23:16 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH 0/4] r8a7795: Add Z and Z2 clock support
-Date: Fri,  4 Aug 2017 15:22:56 +0200
-Message-Id: <1501852980-22733-1-git-send-email-horms+renesas@verge.net.au>
+        Mon, 28 Aug 2017 03:53:21 -0400
+Date: Mon, 28 Aug 2017 09:53:01 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH ] ARM: dts: iwg20d-q7: Add chosen node
+Message-ID: <20170828075301.GC22421@verge.net.au>
+References: <1503075488-44304-1-git-send-email-biju.das@bp.renesas.com>
+ <20170822080735.GH30838@verge.net.au>
+ <SG2PR06MB1711E12964D1C1300C4EEB64B89A0@SG2PR06MB1711.apcprd06.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SG2PR06MB1711E12964D1C1300C4EEB64B89A0@SG2PR06MB1711.apcprd06.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+On Thu, Aug 24, 2017 at 02:32:47PM +0000, Biju Das wrote:
+> 
+> 
+> > -----Original Message-----
+> > From: Simon Horman [mailto:horms@verge.net.au]
+> > Sent: 22 August 2017 09:08
+> > To: Biju Das <biju.das@bp.renesas.com>
+> > Cc: Rob Herring <robh+dt@kernel.org>; Mark Rutland
+> > <mark.rutland@arm.com>; Magnus Damm <magnus.damm@gmail.com>;
+> > Russell King <linux@armlinux.org.uk>; Chris Paterson
+> > <Chris.Paterson2@renesas.com>; Fabrizio Castro
+> > <fabrizio.castro@bp.renesas.com>; devicetree@vger.kernel.org; linux-renesas-
+> > soc@vger.kernel.org; linux-arm-kernel@lists.infradead.org
+> > Subject: Re: [PATCH ] ARM: dts: iwg20d-q7: Add chosen node
+> >
+> > On Fri, Aug 18, 2017 at 05:58:08PM +0100, Biju Das wrote:
+> > > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > > ---
+> > > This patch tested against renesas-dev tag
+> > > renesas-devel-20170815-v4.13-rc5
+> >
+> > Thanks, I have applied this for v4.15.
+> >
+> > There was some fuzz when applying this patch.
+> > Please check that it is correct when I have pushed today's devel tag to the
+> > renesas tree.
+> 
+> Looks like this node is misplaced. I will repost this patch.
 
-this patch-set adds Z and Z2 clock support. It is a minor rework of BSP
-patches that have been posted before. The main changes are:
-
-* To divide the parent by an extra factor 2, as per the specification
-* Minor cleanups
-
-These are dependencies for supporting CPUFreq. The remainer of that
-work is being posted separately and can be found at:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/r8a7795-cpufreq
-
-A description of steps taken to lightly exercise the above can be found here:
-
-http://elinux.org/Tests:R-CAR-GEN3-CPUFreq
-
-This series is based on clk-renesas-for-v4.14
-
-Takeshi Kihara (4):
-  clk: renesas: rcar-gen3: Add Z clock divider support
-  clk: renesas: r8a7795: Add Z clock
-  clk: renesas: rcar-gen3: Add Z2 clock divider support
-  clk: renesas: r8a7795: Add Z2 clock
-
- drivers/clk/renesas/r8a7795-cpg-mssr.c |   2 +
- drivers/clk/renesas/rcar-gen3-cpg.c    | 204 +++++++++++++++++++++++++++++++++
- drivers/clk/renesas/rcar-gen3-cpg.h    |   2 +
- 3 files changed, 208 insertions(+)
-
--- 
-2.1.4
+Thanks, I have dropped this patch.
