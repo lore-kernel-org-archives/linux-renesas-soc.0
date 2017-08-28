@@ -1,39 +1,37 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f47.google.com ([209.85.218.47]:36096 "EHLO
-        mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752229AbdHPTzh (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:53928 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750797AbdH1IBC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Aug 2017 15:55:37 -0400
-Received: by mail-oi0-f47.google.com with SMTP id g131so46688235oic.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Aug 2017 12:55:37 -0700 (PDT)
+        Mon, 28 Aug 2017 04:01:02 -0400
+Date: Mon, 28 Aug 2017 10:00:43 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2] ARM: dts: r8a7745: Add Ethernet AVB support
+Message-ID: <20170828080043.GD22421@verge.net.au>
+References: <1503649913-9985-1-git-send-email-biju.das@bp.renesas.com>
 MIME-Version: 1.0
-In-Reply-To: <cover.1501511923.git.horms+renesas@verge.net.au>
-References: <cover.1501511923.git.horms+renesas@verge.net.au>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Wed, 16 Aug 2017 21:55:36 +0200
-Message-ID: <CAK8P3a1YxZcs59bdw=EJGKGcRWmHKiaEdR18BWEgOFWAH-FwLw@mail.gmail.com>
-Subject: Re: [GIT PULL] Renesas ARM Based SoC Drivers Updates for v4.14
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: arm-soc <arm@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1503649913-9985-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Jul 31, 2017 at 5:04 PM, Simon Horman
-<horms+renesas@verge.net.au> wrote:
-> ----------------------------------------------------------------
-> Renesas ARM Based SoC Drivers Updates for v4.14
->
-> Add R-Car D3 (r8a77995) support to the Renesas-specific SoC drivers
-> - SoC identification
-> - System controller
-> - Reset controller
+On Fri, Aug 25, 2017 at 09:31:53AM +0100, Biju Das wrote:
+> Add Ethernet AVB support for r8a7745 SoC.
+> 
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> ---
+> v1-->v2
+>     Position the avb node similar to r8a7794(R-Car E2) SoC.
+> 
+> It is tested against renesas-devel branch tag
+> renesas-devel-20170824-v4.13-rc6.
 
-Pulled into next/drivers, thanks!
-
-       Arnd
+Thanks, applied for v4.15.
