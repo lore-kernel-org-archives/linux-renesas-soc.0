@@ -1,21 +1,19 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <20170828160121.gu4wf7jqu4ditksc@ninjato>
-References: <20170615185418.13980-1-javier@dowhile0.org> <20170731153009.xkjknygpmckv2pfp@ninjato>
- <CABxcv=mdbE0QGjoi3aLzxRqM3-MbkQ_Ai6fShcGVUGSNNqqrqw@mail.gmail.com> <20170828160121.gu4wf7jqu4ditksc@ninjato>
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Date: Tue, 29 Aug 2017 10:44:09 +0200
-Message-ID: <CABxcv=kSiqDN1=9fSfLkyW=uuXQZAoW4dhw=fco9RyOdDuPAdA@mail.gmail.com>
-Subject: Re: [RESEND PATCH v5 00/16] eeprom: at24: Add OF device ID table
-To: Wolfram Sang <wsa@the-dreams.de>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([88.99.104.3]:41055 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751280AbdH1QBX (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 28 Aug 2017 12:01:23 -0400
+Date: Mon, 28 Aug 2017 18:01:21 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Javier Martinez Canillas <javier@dowhile0.org>
 Cc: Linux Kernel <linux-kernel@vger.kernel.org>,
         Rob Herring <robh@kernel.org>, Florian Larysch <fl@n621.de>,
         David Lechner <david@lechnology.com>,
         Rob Herring <robh+dt@kernel.org>,
         Andy Shevchenko <andy.shevchenko@gmail.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>,
+        =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>,
         Simon Horman <horms@verge.net.au>,
         Michal Simek <michal.simek@xilinx.com>,
         Dinh Nguyen <dinguyen@kernel.org>,
@@ -35,38 +33,62 @@ Cc: Linux Kernel <linux-kernel@vger.kernel.org>,
         Paul Mackerras <paulus@samba.org>,
         Magnus Damm <magnus.damm@gmail.com>,
         linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <kernel@pengutronix.de>,
+        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <kernel@pengutronix.de>,
         Linux I2C <linux-i2c@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: Re: [RESEND PATCH v5 00/16] eeprom: at24: Add OF device ID table
+Message-ID: <20170828160121.gu4wf7jqu4ditksc@ninjato>
+References: <20170615185418.13980-1-javier@dowhile0.org>
+ <20170731153009.xkjknygpmckv2pfp@ninjato>
+ <CABxcv=mdbE0QGjoi3aLzxRqM3-MbkQ_Ai6fShcGVUGSNNqqrqw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="kxl2ldofwcq27yov"
+Content-Disposition: inline
+In-Reply-To: <CABxcv=mdbE0QGjoi3aLzxRqM3-MbkQ_Ai6fShcGVUGSNNqqrqw@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello Wolfram,
 
-On Mon, Aug 28, 2017 at 6:01 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
->
->> > But there is a dependency, no? If I apply the driver patch,
->> > non-converted device trees will not find their eeproms anymore. So, I
->>
->> I don't think that's correct. If you apply this patch before the DTS
->> changes, the driver will still match using the I2C device ID table
->> like it has been doing it until today.
->
-> My tests do not confirm this. If I add a node with a "renesas,24c01"
-> compatible to my board, it works before your patch, but not after. If I
-> change it to "atmel,24c01" it works even after your patch. I haven't
-> looked into it, though, maybe i2c_of_match_device_sysfs() is stepping on
-> our foots here?
->
-> Did you test and did it work for you?
->
+--kxl2ldofwcq27yov
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I would swear that I tested both combinations (driver patch without DT
-changes and DTS changes without driver patch), but it was months ago
-when I first posted the patches so I may misremembering.
 
-I don't have a DT based system at hand now, but I'll test it again and
-let you know probably tomorrow.
+> > But there is a dependency, no? If I apply the driver patch,
+> > non-converted device trees will not find their eeproms anymore. So, I
+>=20
+> I don't think that's correct. If you apply this patch before the DTS
+> changes, the driver will still match using the I2C device ID table
+> like it has been doing it until today.
 
-Best regards,
-Javier
+My tests do not confirm this. If I add a node with a "renesas,24c01"
+compatible to my board, it works before your patch, but not after. If I
+change it to "atmel,24c01" it works even after your patch. I haven't
+looked into it, though, maybe i2c_of_match_device_sysfs() is stepping on
+our foots here?
+
+Did you test and did it work for you?
+
+
+--kxl2ldofwcq27yov
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlmkPlEACgkQFA3kzBSg
+KbY9mQ//ZYxuivYI37NBqNzvT6LEyeDnhT5YpI+3SDGk88+Ny3uOysJpehIW1zmQ
+/o4MmLhMZq0emuNniTUcq6hs1DmPC1YFAHoNPhdcPEJY9BDB5Z28l187ETQ0wtYD
+u8DAc11LnQLCGRgBngM9zAVClRI16o07T68hSGlUntK/oEAuqEqtcw3Nt4wAY1nD
+1ALzfhgtBsGJ+BSDLTvW7sZ5cqJ1NhjHnEV2rLDIxTQPTTVBc3guI7Zw7+qXuETX
+cJ/mIhwyYPpcdlPM7A9mt3CozKhjFEnWG+TZEl3xiQVs/5Gb6hF7c+q06g1t1BBE
+OufNGdCTbg3etFN0y//oj2+K2iUqfw4m/33VmGBltVZuKxcrEFCOHBaONdyAJ2ET
+tki7C+Vz/JzD5VDl7nUp7Ci95FbRjFGXDy45e8u0Nyb1eQX02Y+owo/Pk5ZuiRQw
+fi6c5lJP34KazsrmGpqm9W/wzggxJSoXW1abAOeDTindLZ4DiSH41od6tx2y/nHs
+e2i2OygFb3NNccXZ9QL/xmcRiCzwi9hk9Tt71fawGWQ+hLKxrLs7emt8kfpPU4aU
+ZpdA4TbozeaOWWDzbOzwV25d0kOe+LiwKx+PTNgW2Uimz1sQBWOpIm0vZGXxqa8y
+wSSRx/WWug0tYILnAP5BQmLV9X5N3m8zaJ6u1neWImCTNpCweFU=
+=nrOV
+-----END PGP SIGNATURE-----
+
+--kxl2ldofwcq27yov--
