@@ -1,20 +1,20 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:37991 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750955AbdHaRzb (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:54046 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754707AbdH1IRM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 31 Aug 2017 13:55:31 -0400
-Date: Thu, 31 Aug 2017 12:55:29 -0500
-From: Rob Herring <robh@kernel.org>
+        Mon, 28 Aug 2017 04:17:12 -0400
+Date: Mon, 28 Aug 2017 10:16:52 +0200
+From: Simon Horman <horms@verge.net.au>
 To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Wolfram Sang <wsa@the-dreams.de>,
+Cc: Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Haavard Skinnemoen <hskinnemoen@gmail.com>,
         linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH/RFC 1/3] dt-bindings: i2c: i2c-gpio: Add support for
  named gpios
-Message-ID: <20170831175529.vuchpgvi2aigz2r5@rob-hp-laptop>
+Message-ID: <20170828081651.GF22421@verge.net.au>
 References: <1503566474-5335-1-git-send-email-geert+renesas@glider.be>
  <1503566474-5335-2-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
@@ -55,8 +55,4 @@ On Thu, Aug 24, 2017 at 11:21:12AM +0200, Geert Uytterhoeven wrote:
 >  Optional properties:
 >  	- i2c-gpio,sda-open-drain: sda as open drain
 
-Well, if we're going to change things, we should drop these open-drain 
-properties. We have open-drain flags in gpio cells, so we don't need 
-these I think.
-
-Rob
+Maybe it would be best to update the example too?
