@@ -1,68 +1,58 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
+Date: Mon, 28 Aug 2017 09:51:09 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Chris Paterson <Chris.Paterson2@renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH  2/3] ARM: dts: iwg20m: Enable SDHI0 controller
-Date: Mon, 14 Aug 2017 12:49:48 +0100
-Message-Id: <1502711389-16040-3-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1502711389-16040-1-git-send-email-biju.das@bp.renesas.com>
-References: <1502711389-16040-1-git-send-email-biju.das@bp.renesas.com>
+        Russell King <linux@armlinux.org.uk>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2] ARM: dts: iwg20d-q7: Add RTC support
+Message-ID: <20170828075109.GB22421@verge.net.au>
+References: <1502874990-12006-1-git-send-email-chris.paterson2@renesas.com>
+ <20170824104701.GA30281@verge.net.au>
+ <SG2PR06MB1711B313440D06B838E3DBD1B89A0@SG2PR06MB1711.apcprd06.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SG2PR06MB1711B313440D06B838E3DBD1B89A0@SG2PR06MB1711.apcprd06.prod.outlook.com>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable the SDHI0 controller on iWave RZG1M Qseven SOM.
+On Thu, Aug 24, 2017 at 02:53:55PM +0000, Biju Das wrote:
+> 
+> > -----Original Message-----
+> > From: Simon Horman [mailto:horms@verge.net.au]
+> > Sent: 24 August 2017 11:47
+> > To: Chris Paterson <Chris.Paterson2@renesas.com>
+> > Cc: Rob Herring <robh+dt@kernel.org>; Mark Rutland
+> > <mark.rutland@arm.com>; Magnus Damm <magnus.damm@gmail.com>;
+> > Russell King <linux@armlinux.org.uk>; Biju Das <biju.das@bp.renesas.com>;
+> > devicetree@vger.kernel.org; linux-renesas-soc@vger.kernel.org; linux-arm-
+> > kernel@lists.infradead.org
+> > Subject: Re: [PATCH v2] ARM: dts: iwg20d-q7: Add RTC support
+> >
+> > On Wed, Aug 16, 2017 at 10:16:30AM +0100, Chris Paterson wrote:
+> > > From: Biju Das <biju.das@bp.renesas.com>
+> > >
+> > > Define the iWave RainboW-G20D-Qseven board dependent part of the RTC
+> > > device node.
+> > >
+> > > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > > [chris: corrected bq32000 compatible string]
+> > > Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+> > > ---
+> > > v1 -> v2
+> > > Added ti to bq32000 compatible string - Thanks Geert
+> >
+> > Thanks, applied for v4.15.
+> 
+> Looks like i2c2_pins nodes are misplaced. Please drop this patch,
+> So that I can send a new patch.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
----
- arch/arm/boot/dts/r8a7743-iwg20m.dtsi | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7743-iwg20m.dtsi b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
-index ff79938..4119737 100644
---- a/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
-+++ b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
-@@ -9,6 +9,7 @@
-  */
- 
- #include "r8a7743.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
- 
- / {
- 	compatible = "iwave,g20m", "renesas,r8a7743";
-@@ -42,6 +43,12 @@
- 		groups = "mmc_data8_b", "mmc_ctrl";
- 		function = "mmc";
- 	};
-+
-+	sdhi0_pins: sd0 {
-+		groups = "sdhi0_data4", "sdhi0_ctrl";
-+		function = "sdhi0";
-+		power-source = <3300>;
-+	};
- };
- 
- &mmcif0 {
-@@ -53,3 +60,13 @@
- 	non-removable;
- 	status = "okay";
- };
-+
-+&sdhi0 {
-+	pinctrl-0 = <&sdhi0_pins>;
-+	pinctrl-names = "default";
-+
-+	vmmc-supply = <&reg_3p3v>;
-+	vqmmc-supply = <&reg_3p3v>;
-+	cd-gpios = <&gpio7 11 GPIO_ACTIVE_LOW>;
-+	status = "okay";
-+};
--- 
-1.9.1
-
+Thanks, I have dropped the patch.
