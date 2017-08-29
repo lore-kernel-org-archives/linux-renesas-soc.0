@@ -1,49 +1,71 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH  0/2] ARM: dts: Add iWave RZ/G1E board support
-Date: Tue, 15 Aug 2017 11:54:18 +0100
-Message-Id: <1502794460-30213-1-git-send-email-biju.das@bp.renesas.com>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH] arm64: dts: renesas: r8a77995: add pfc device node
+Date: Tue, 29 Aug 2017 07:42:19 +0000
+Message-ID: <TY1PR06MB0992E9BA887138507CC3A216D89F0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+References: <1502281247-24124-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <CAMuHMdWzc0A-16LUz4rVHJBRk9Fdhs_BLBHqpgPrYOdm23qzAg@mail.gmail.com>
+ <20170828140503.GI18592@verge.net.au>
+In-Reply-To: <20170828140503.GI18592@verge.net.au>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+Hi Simon-san,
 
-This series aims to add iWave RZ/G1E (R8A7745) based RainboW-G22M-SM SODIMM 
-SoM and RainboW-G22D board support. 
+> -----Original Message-----
+> From: Simon Horman
+> Sent: Monday, August 28, 2017 11:05 PM
+>=20
+> On Mon, Aug 28, 2017 at 10:39:47AM +0200, Geert Uytterhoeven wrote:
+> > Hi Shimoda-san, Simon,
+> >
+> > On Wed, Aug 9, 2017 at 2:20 PM, Yoshihiro Shimoda
+> > <yoshihiro.shimoda.uh@renesas.com> wrote:
+> > > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> > > ---
+> > >
+> > >  This patch set is based on the renesas-drivers.git /
+> > > topic/r8a77995-integration branch and depends on the following patch
+> > >  "pinctrl: sh-pfc: r8a77995: Initial R8A77995 PFC support"
+> > >
+> > >  arch/arm64/boot/dts/renesas/r8a77995.dtsi | 5 +++++
+> > >  1 file changed, 5 insertions(+)
+> > >
+> > > diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/b=
+oot/dts/renesas/r8a77995.dtsi
+> > > index 7419688..240b0f8 100644
+> > > --- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+> > > +++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+> > > @@ -123,6 +123,11 @@
+> > >                         reg =3D <0 0xe6160000 0 0x0200>;
+> > >                 };
+> > >
+> > > +               pfc: pfc@e6060000 {
+> >
+> > Upon second look, this should use the generic "pin-controller@..." node=
+ name.
+> > I will fix the example in the bindings.
+> >
+> > > +                       compatible =3D "renesas,pfc-r8a77995";
+> > > +                       reg =3D <0 0xe6060000 0 0x508>;
+> > > +               };
+>=20
+> Shimoda-san, as this patch has been accepted for v4.14 could
+> you please send a follow-up patch (for v4.15)?
 
-This series has been tested against linux-next tag next-20170815 as well as
-renesas-dev tag 20170814-v4.13-rc5
+Sure. I submitted a patch now.
 
-This patch has documentation dependency on below patches
-
-[repost,1/2] ARM: shmobile: document iW-RainboW-G22M-SM SODIMM System on Module
-https://patchwork.kernel.org/patch/9890389/
-[repost, 2/2] ARM: shmobile: document iW-RainboW-G22D SODIMM SOM Development Platform
-https://patchwork.kernel.org/patch/9890391/
-
-
-Regards,
-
-Biju Das (2):
-  ARM: dts: iwg22m: Add iWave RZG1E SODIMM SOM
-  ARM: dts: iwg22d-sodimm: Add support for iWave G22D-SODIMM board
-
- arch/arm/boot/dts/Makefile                  |  1 +
- arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts | 29 +++++++++++++++++++++++++++++
- arch/arm/boot/dts/r8a7745-iwg22m.dtsi       | 24 ++++++++++++++++++++++++
- 3 files changed, 54 insertions(+)
- create mode 100644 arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
- create mode 100644 arch/arm/boot/dts/r8a7745-iwg22m.dtsi
-
--- 
-1.9.1
+Best regards,
+Yoshihiro Shimoda
 
