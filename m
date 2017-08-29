@@ -1,72 +1,103 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:54668 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750780AbdH3IQE (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:34226 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751873AbdH2LF5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 30 Aug 2017 04:16:04 -0400
-Date: Wed, 30 Aug 2017 10:15:59 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        laurent.pinchart+renesas@ideasonboard.com, joro@8bytes.org,
-        geert+renesas@glider.be
-Subject: Re: [PATCH v3 00/09] arm64: dts: r8a7795: IPMMU upstream integration
- V3
-Message-ID: <20170830081559.GQ10398@verge.net.au>
-References: <148999891819.20118.10698449216124481808.sendpatchset@little-apple>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <148999891819.20118.10698449216124481808.sendpatchset@little-apple>
+        Tue, 29 Aug 2017 07:05:57 -0400
+Received: from ramsan.of.borg ([192.168.97.29] helo=ramsan)
+        by ayla.of.borg with esmtp (Exim 4.86_2)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1dmeLA-0007RR-2p
+        for linux-renesas-soc@vger.kernel.org; Tue, 29 Aug 2017 13:05:52 +0200
+Received: from geert by ramsan with local (Exim 4.86_2)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1dmeLD-0002H3-QO
+        for linux-renesas-soc@vger.kernel.org; Tue, 29 Aug 2017 13:05:55 +0200
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: linux-renesas-soc@vger.kernel.org
+Subject: renesas-drivers-2017-08-29-v4.13-rc7
+Date: Tue, 29 Aug 2017 13:05:55 +0200
+Message-Id: <1504004755-8702-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Mar 20, 2017 at 05:35:18PM +0900, Magnus Damm wrote:
-> arm64: dts: r8a7795: IPMMU upstream integration V3
-> 
-> [PATCH v3 01/09] arm64: dts: r8a7795: Add IPMMU device nodes
-> [PATCH v3 02/09] arm64: dts: r8a7795: Tie Audio/SYS-DMAC to IPMMU-DS0/1 and MP1
-> [PATCH v3 03/09] arm64: dts: r8a7795: Point DU/VSPD via FCPVD to IPMMU-VI
-> [PATCH v3 04/09] arm64: dts: r8a7795: Point FDP1 via FCPF to IPMMU-VP
-> [PATCH v3 05/09] arm64: dts: r8a7795: Point VSPBC/VSPBD via FCPVB to IPMMU-VP
-> [PATCH v3 06/09] arm64: dts: r8a7795: Point VSPI via FCPVI to IPMMU-VP
-> [PATCH v3 07/09] arm64: dts: r8a7795: Connect Ethernet-AVB to IPMMU-DS0
-> [PATCH v3 08/09] arm64: dts: r8a7795: Connect SATA to IPMMU-HC
-> [PATCH v3 09/09] arm64: dts: r8a7795: Enable IPMMU-VI, VP, MP1, DS0, DS1 and MM
-> 
-> This series adds DT nodes for IPMMU instances on r8a7795 together with
-> connections to various r8a7795 on-chip devices such as Audio-DMAC, SYS-DMAC,
-> Ethernet-AVB, SATA and a bunch of multimedia devices that make use of FCP.
-> 
-> With these patches applied a white list enabled IPMMU driver may be used
-> to check silicon revision and then enable IPMMU in the known working cases.
-> 
-> The recommended IPMMU driver patch stack consists of the following series:
->  [PATCH v7 00/07] iommu/ipmmu-vmsa: IPMMU multi-arch update V7
->  [PATCH v3 00/09] iommu/ipmmu-vmsa: r8a7795 support V3
->  [PATCH v3 0/3] iommu/ipmmu-vmsa: r8a7796 support V3
-> 
-> The final patch in the series enable IPMMU support for all IPMMU instances
-> on r8a7795 that are used by IPMMU devices listed above with one exception.
-> The exception is the SATA device connected to IPMMU-HC which still is disabled
-> pending IPMMU USB integration support. I expect IPMMU USB integration to be
-> handled as a second step once this series is agreed on.
-> 
-> The DT binding for r8a7795 has since long been included in mainline
-> and this series implements support following such format:
-> 
-> d4e42e7 iommu/ipmmu-vmsa: Add r8a7795 DT binding
-> 
-> Changes since V2:
->  - Added the iommus property before power domains - thanks Geert!
->  - Added reviewed-by to patch 2 and 3 from Laurent - thanks!
->  - Re-added Ethernet and FCPVD patches (They were present in V1 but not V2)
->  - Added remaining FCP devices such as FCPF, FCPVB and FCPVI
->  - Added SATA device
->  - Added final patch to enable various IPMMU devices in the DTS file
-> 
-> Since the DT binding has been merged quite some time ago and the interface
-> seems stable enough I see no reason not to queue these up for upstream merge.
+I have pushed renesas-drivers-2017-08-29-v4.13-rc7 to
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
 
-Going through old patches I noticed that I seem to have missed this somehow.
-I assume its still applicable but wants a rebase. If so could you do so?
+This tree is meant to ease development of platform support and drivers
+for Renesas ARM SoCs. It is created by merging (a) the for-next branches
+of various subsystem trees and (b) branches with driver code submitted
+or planned for submission to maintainers into the development branch of
+Simon Horman's renesas.git tree.
+
+Today's version is based on renesas-devel-20170828-v4.13-rc7.
+
+Included branches with driver code:
+  - clk-renesas-for-v4.14
+  - sh-pfc-for-v4.14
+  - topic/suspend-to-idle-v1
+  - topic/sh-sh7722-sh7757-sh7264-sh7269-fix-pinctrl-v2
+  - topic/r8a77995-integration
+  - topic/r8a77970-integration
+  - topic/r8a7794-smp-v2
+  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/rcar-gen3-z-clk
+  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/cpufreq-automatic
+  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/rcar-gen3-cpufreq-dts
+  - git://git.ragnatech.se/linux#for-renesas-drivers
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#renesas/topic/i2c-fault-injection
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#tags/vsp1/tlb-optimise-v2
+
+Included fixes:
+  - of_mdio: Fix broken PHY IRQ in case of probe deferral
+  - rcar-vin: Fix section mismatch from rcar_vin_probe()
+  - media: rcar-csi2: Fix section mismatch from rcar_csi2_probe()
+
+Included subsystem trees:
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
+  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
+  - git://people.freedesktop.org/~airlied/linux#drm-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
+  - git://linuxtv.org/mchehab/media-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
+  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
+  - git://git.infradead.org/users/vkoul/slave-dma.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
+  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
+  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
+  - git://github.com/bzolnier/linux.git#fbdev-for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
+  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
+  - git://anongit.freedesktop.org/drm/drm-misc#for-linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
