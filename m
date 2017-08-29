@@ -1,45 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:36706 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751227AbdH2Hrx (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:20308 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751250AbdH2Hkd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 29 Aug 2017 03:47:53 -0400
+        Tue, 29 Aug 2017 03:40:33 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH] arm64: dts: r8a77995: update PFC node name to pin-controller
+Date: Tue, 29 Aug 2017 16:35:59 +0900
+Message-Id: <1503992159-16354-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-In-Reply-To: <1503992159-16354-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1503992159-16354-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 29 Aug 2017 09:47:51 +0200
-Message-ID: <CAMuHMdVdZg4x6xEcP=h0anrXTMc=9eLN9vJAeaYSj2ci9t9TcQ@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: r8a77995: update PFC node name to pin-controller
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Aug 29, 2017 at 9:35 AM, Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> This patch changes the name from from e6060000.pfc and pfc@e6060000 to
-> e6060000.pin-controller and pin-controller@e6060000 like other Renesas
-> SoCs.
->
-> Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+This patch changes the name from from e6060000.pfc and pfc@e6060000 to
+e6060000.pin-controller and pin-controller@e6060000 like other Renesas
+SoCs.
 
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ arch/arm64/boot/dts/renesas/r8a77995.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+index d0f95b7..72c3033 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+@@ -122,7 +122,7 @@
+ 			reg = <0 0xe6160000 0 0x0200>;
+ 		};
+ 
+-		pfc: pfc@e6060000 {
++		pfc: pin-controller@e6060000 {
+ 			compatible = "renesas,pfc-r8a77995";
+ 			reg = <0 0xe6060000 0 0x508>;
+ 		};
+-- 
+1.9.1
