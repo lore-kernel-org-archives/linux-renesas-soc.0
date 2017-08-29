@@ -1,46 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f53.google.com ([209.85.215.53]:38024 "EHLO
-        mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751011AbdHMTIR (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:48028 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751843AbdH2KNk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 13 Aug 2017 15:08:17 -0400
-Received: by mail-lf0-f53.google.com with SMTP id y15so32355080lfd.5
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 13 Aug 2017 12:08:16 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20170813190811.352748420@cogentembedded.com>
-Date: Sun, 13 Aug 2017 22:07:39 +0300
-To: linux-serial@vger.kernel.org ("open list:SERIAL DRIVERS")
-Cc: linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] serial: sh-sci: use of_property_read_bool()
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=serial-sh-sci-use-of_property_read_bool.patch
+        Tue, 29 Aug 2017 06:13:40 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH v2 1/2] ARM: dts: iwg20d-q7: Add chosen node
+Date: Tue, 29 Aug 2017 10:56:22 +0100
+Message-Id: <1504000583-21996-2-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1504000583-21996-1-git-send-email-biju.das@bp.renesas.com>
+References: <1504000583-21996-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use more compact of_property_read_bool() call for a boolean property
-instead  of of_find_property() call in sci_parse_dt().
-
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
-This patch is against the 'tty-next' branch of GregKH's 'tty.git' repo.
+v1-->v2
+    Position the chosen node similar to r8a7791(R-Car M2) SoC.
 
- drivers/tty/serial/sh-sci.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/arm/boot/dts/r8a7743-iwg20d-q7.dts | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Index: tty/drivers/tty/serial/sh-sci.c
-===================================================================
---- tty.orig/drivers/tty/serial/sh-sci.c
-+++ tty/drivers/tty/serial/sh-sci.c
-@@ -3073,8 +3073,7 @@ static struct plat_sci_port *sci_parse_d
- 	p->type = SCI_OF_TYPE(match->data);
- 	p->regtype = SCI_OF_REGTYPE(match->data);
+diff --git a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
+index 4ff27d2..e30c586 100644
+--- a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
++++ b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
+@@ -20,6 +20,11 @@
+ 		ethernet0 = &avb;
+ 	};
  
--	if (of_find_property(np, "uart-has-rtscts", NULL))
--		sp->has_rtscts = true;
-+	sp->has_rtscts = of_property_read_bool(np, "uart-has-rtscts");
++	chosen {
++		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
++		stdout-path = "serial0:115200n8";
++	};
++
+ 	vcc_sdhi1: regulator-vcc-sdhi1 {
+ 		compatible = "regulator-fixed";
  
- 	return p;
- }
+-- 
+1.9.1
