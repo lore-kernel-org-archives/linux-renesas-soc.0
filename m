@@ -1,114 +1,36 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:46372 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750755AbdHQJak (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:53197 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751039AbdH3GoI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Aug 2017 05:30:40 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [git pull] pinctrl: sh-pfc: Updates for v4.14
-Date: Thu, 17 Aug 2017 11:30:35 +0200
-Message-Id: <1502962235-4877-1-git-send-email-geert+renesas@glider.be>
+        Wed, 30 Aug 2017 02:44:08 -0400
+Date: Wed, 30 Aug 2017 08:44:03 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] arm64: dts: draak: Add serial console pins
+Message-ID: <20170830064402.GB10398@verge.net.au>
+References: <1503912370-20180-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1503912370-20180-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Linus,
+On Mon, Aug 28, 2017 at 11:26:10AM +0200, Geert Uytterhoeven wrote:
+> Add pin control for SCIF2.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> To be applied after v4.14-rc1, when commit 794a6711764658a1 ("pinctrl:
+> sh-pfc: Initial R8A77995 PFC support") has hit mainline.
+> 
+> Else the serial console will fail, reporting (on earlycon):
+> 
+>     sh-sci e6e88000.serial: could not find pctldev for node /soc/pin-controller@e6060000/scif2, deferring probe
 
-The following changes since commit 5771a8c08880cdca3bfb4a3fc6d309d6bba20877:
-
-  Linux v4.13-rc1 (2017-07-15 15:22:10 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.14-tag1
-
-for you to fetch changes up to 56d57391ab6720c4b7bbc0a0cbc079c7b7d653fb:
-
-  pinctrl: sh-pfc: r8a77995: Add voltage switch operations for MMC (2017-08-16 14:26:32 +0200)
-
-----------------------------------------------------------------
-A bit delayed due to holidays, but here they are!
-
-pinctrl: sh-pfc: Updates for v4.14
-
-  - Propagate errors on group config, now r8a7740-armadillo800eva.dts is
-    fixed,
-  - Add MSIOF and USB2.0 pin groups on R-Car H3 ES2.0,
-  - Add USB2.0 and USB3.0 pin groups on R-Car M3-W,
-  - Add a missing MMC pin group on R-Car M2-W and RZ/G1M,
-  - Add initial support for R-Car D3,
-  - Small fixes and cleanups.
-
-Thanks for pulling!
-----------------------------------------------------------------
-Geert Uytterhoeven (3):
-      pinctrl: sh-pfc: r8a7795: Add MSIOF pins, groups and functions
-      pinctrl: sh-pfc: r8a7796: Fix MSIOF3 SS2_E mux
-      pinctrl: sh-pfc: r8a7791: Add missing mmc_data8_b pin group
-
-Takeshi Kihara (30):
-      pinctrl: sh-pfc: r8a7795: Fix MSIOF3_{SS1,SS2}_E pin function definitions
-      pinctrl: sh-pfc: r8a7796: Fix MSIOF3_{SS1,SS2}_E pin function definitions
-      pinctrl: sh-pfc: r8a7796: Fix IPSR setting for MSIOF3_SS1_E pin
-      pinctrl: sh-pfc: r8a7796: Fix MOD_SEL1 bit[25:24] to 0x3 when using STP_ISEN_1_D
-      pinctrl: sh-pfc: r8a7796: Fix MOD_SEL2 bit26 to 0x0 when using SCK5_A
-      pinctrl: sh-pfc: r8a7796: Fix SCIF_CLK_{A,B} pin's MOD_SEL assignment to MOD_SEL1 bit10
-      pinctrl: sh-pfc: r8a7796: Fix FMCLK{_C,_D} and FMIN{_C,_D} pin function definitions
-      pinctrl: sh-pfc: r8a7796: Fix NFDATA{0..13} and NF{ALE,CLE,WE_N,RE_N} pin function definitions
-      pinctrl: sh-pfc: r8a7796: Fix MOD_SEL register pin assignment for TCLK{1,2}_{A,B} pins group
-      pinctrl: sh-pfc: r8a7796: Fix to delete FSCLKST pin and IPSR7 bit[15:12] register definitions
-      pinctrl: sh-pfc: r8a7796: Fix to delete SATA_DEVSLP_B pins function definitions
-      pinctrl: sh-pfc: r8a7796: Fix to delete MOD_SEL0 bit2 register definitions
-      pinctrl: sh-pfc: r8a7796: Fix IPSR and MOD_SEL register pin assignment for FSO pins group
-      pinctrl: sh-pfc: r8a7796: Rename CS1# pin function definitions
-      pinctrl: sh-pfc: r8a7795: Fix MOD_SEL1 bit[25:24] to 0x3 when using STP_ISEN_1_D
-      pinctrl: sh-pfc: r8a7795: Fix MOD_SEL2 bit26 to 0x0 when using SCK5_A
-      pinctrl: sh-pfc: r8a7795: Fix SCIF_CLK_{A,B} pin's MOD_SEL assignment to MOD_SEL1 bit10
-      pinctrl: sh-pfc: r8a7795: Fix FMCLK{_C,_D} and FMIN{_C,_D} pin function definitions
-      pinctrl: sh-pfc: r8a7795: Fix NFDATA{0..13} and NF{ALE,CLE,WE_N,RE_N} pin function definitions
-      pinctrl: sh-pfc: r8a7795: Fix MOD_SEL register pin assignment for TCLK{1,2}_{A,B} pins group
-      pinctrl: sh-pfc: r8a7795: Fix to delete FSCLKST pin and IPSR7 bit[15:12] register definitions
-      pinctrl: sh-pfc: r8a7795: Rename CS1# pin function definitions
-      pinctrl: sh-pfc: r8a7795: Fix to reserved MOD_SEL2 bit22
-      pinctrl: sh-pfc: r8a7796: Add USB2.0 host pins, groups and functions
-      pinctrl: sh-pfc: r8a7796: Add USB3.0 host pins, groups and functions
-      pinctrl: sh-pfc: Initial R8A77995 PFC support
-      pinctrl: sh-pfc: r8a77995: Add SCIF pins, groups and functions
-      pinctrl: sh-pfc: r8a77995: Add I2C pins, groups and functions
-      pinctrl: sh-pfc: r8a77995: Add MMC pins, groups and functions
-      pinctrl: sh-pfc: r8a77995: Add voltage switch operations for MMC
-
-Wolfram Sang (1):
-      pinctrl: sh-pfc: Propagate errors on group config
-
-Yoshihiro Shimoda (3):
-      pinctrl: sh-pfc: r8a7795: Change USB3_{OVC,PWEN} definitions
-      pinctrl: sh-pfc: r8a7795: Add USB 2.0 pins, groups and functions
-      pinctrl: sh-pfc: Add PORT_GP_{10,2[01]} helper macros
-
- .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |    1 +
- drivers/pinctrl/sh-pfc/Kconfig                     |    5 +
- drivers/pinctrl/sh-pfc/Makefile                    |    1 +
- drivers/pinctrl/sh-pfc/core.c                      |    6 +
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c               |   15 +-
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c               | 1082 +++++++++++-
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c               |  146 +-
- drivers/pinctrl/sh-pfc/pfc-r8a77995.c              | 1812 ++++++++++++++++++++
- drivers/pinctrl/sh-pfc/pinctrl.c                   |    9 +-
- drivers/pinctrl/sh-pfc/sh_pfc.h                    |   23 +-
- 10 files changed, 2978 insertions(+), 122 deletions(-)
- create mode 100644 drivers/pinctrl/sh-pfc/pfc-r8a77995.c
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Thanks, please ping me once that has happened.
+In the meantime I have marked this patch as deferred.
