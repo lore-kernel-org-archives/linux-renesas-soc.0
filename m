@@ -1,56 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:42758 "EHLO
-        smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751223AbdH2Hvb (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:61453 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751345AbdH3NH1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 29 Aug 2017 03:51:31 -0400
-Received: from vsmta13.fe.internet.bosch.com (unknown [10.4.98.53])
-        by imta23.fe.bosch.de (Postfix) with ESMTP id 37B44158014F
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 29 Aug 2017 09:51:12 +0200 (CEST)
-Received: from FE-HUB1000.de.bosch.com (vsgw23.fe.internet.bosch.com [10.4.98.23])
-        by vsmta13.fe.internet.bosch.com (Postfix) with ESMTP id 7230E2E40A29
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 29 Aug 2017 09:51:29 +0200 (CEST)
-To: <linux-renesas-soc@vger.kernel.org>
-From: Dirk Behme <dirk.behme@de.bosch.com>
-Subject: clk: renesas: rcar-gen3: Status of Z* clocks?
-Message-ID: <705d6de1-a037-f1e1-8c61-7b5aa5e0f30a@de.bosch.com>
-Date: Tue, 29 Aug 2017 09:51:28 +0200
+        Wed, 30 Aug 2017 09:07:27 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        TAKESHI KIHARA <takeshi.kihara.df@renesas.com>
+CC: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: RE: [PATCH 6/8] pinctrl: sh-pfc: r8a77995: Add USB2.0 host support
+Date: Wed, 30 Aug 2017 13:07:21 +0000
+Message-ID: <TY1PR06MB0992563B4C992762105E8590D89C0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+References: <1502281187-24068-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1502281187-24068-7-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <CAMuHMdW27kVU2cB=iL-H7t44KeEboL+Ki0zvxkavRpZCepYuLw@mail.gmail.com>
+In-Reply-To: <CAMuHMdW27kVU2cB=iL-H7t44KeEboL+Ki0zvxkavRpZCepYuLw@mail.gmail.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
-
-as mentioned previously since ages I'm back looking at the RCar3 status 
-in recent mainline (4.13-rc7). While doing so, it looks to me that some 
-Z* clock patches from recent BSP
-
-https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas-bsp.git/log/?h=v4.9/rcar-3.5.8
-
-are not in mainline clock configuration, yet. E.g.:
-
-Takeshi Kihara | clk: renesas: r8a7795: Add ZG clock
-Takeshi Kihara | clk: renesas: r8a7795: Add ZG clock
-Takeshi Kihara | clk: renesas: r8a7795: Add Z2 clock
-Takeshi Kihara | clk: renesas: r8a7795: Add Z clock
-Takeshi Kihara | clk: renesas: rcar-gen3: Adjust output of PLL4 as 3DGE 
-clock divider input
-Takeshi Kihara | clk: renesas: rcar-gen3: Add ZG clock divider support
-Dien Pham | clk: renesas: rcar-gen3: Add PLL0 clock errata workaround in 
-PLL0 clk driver
-Dien Pham | clk: renesas: rcar-gen3: Add PLL0 clk driver support
-Dien Pham | clk: renesas: rcar-gen3: Adjust output of PLL0, PLL2 as 
-SYSC-CPUs input
-Takeshi Kihara | clk: renesas: rcar-gen3: Add Z2 clock divider support
-Takeshi Kihara | clk: renesas: rcar-gen3: Add Z clock divider support
-
-Are there any plans to pick these, already? Or, if not, would it be fine 
-to pick them from the BSP and just submit them here? Or is some major 
-rework needed?
-
-Best regards
-
-Dirk
+SGkgR2VlcnQtc2FuLA0KDQpJJ20gc29ycnkuIEkgbWlzc2VkIHRoaXMgZW1haWwuLi4NCg0KPiBG
+cm9tOiBHZWVydCBVeXR0ZXJob2V2ZW4NCj4gU2VudDogV2VkbmVzZGF5LCBBdWd1c3QgMTYsIDIw
+MTcgODoxMSBQTQ0KPiANCj4gSGkgU2hpbW9kYS1zYW4sIEtpaGFyYS1zYW4sDQo+IA0KPiBPbiBX
+ZWQsIEF1ZyA5LCAyMDE3IGF0IDI6MTkgUE0sIFlvc2hpaGlybyBTaGltb2RhDQo+IDx5b3NoaWhp
+cm8uc2hpbW9kYS51aEByZW5lc2FzLmNvbT4gd3JvdGU6DQo+ID4gRnJvbTogVGFrZXNoaSBLaWhh
+cmEgPHRha2VzaGkua2loYXJhLmRmQHJlbmVzYXMuY29tPg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1i
+eTogVGFrZXNoaSBLaWhhcmEgPHRha2VzaGkua2loYXJhLmRmQHJlbmVzYXMuY29tPg0KPiA+IFNp
+Z25lZC1vZmYtYnk6IFlvc2hpaGlybyBTaGltb2RhIDx5b3NoaWhpcm8uc2hpbW9kYS51aEByZW5l
+c2FzLmNvbT4NCj4gPiAtLS0NCj4gPiAgZHJpdmVycy9waW5jdHJsL3NoLXBmYy9wZmMtcjhhNzc5
+OTUuYyB8IDE1ICsrKysrKysrKysrKysrKw0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgMTUgaW5zZXJ0
+aW9ucygrKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvcGluY3RybC9zaC1wZmMvcGZj
+LXI4YTc3OTk1LmMgYi9kcml2ZXJzL3BpbmN0cmwvc2gtcGZjL3BmYy1yOGE3Nzk5NS5jDQo+ID4g
+aW5kZXggOWViMGNlZi4uNWMwYTk0ZiAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL3BpbmN0cmwv
+c2gtcGZjL3BmYy1yOGE3Nzk5NS5jDQo+ID4gKysrIGIvZHJpdmVycy9waW5jdHJsL3NoLXBmYy9w
+ZmMtcjhhNzc5OTUuYw0KPiA+IEBAIC0xMzAyLDYgKzEzMDIsMTUgQEAgZW51bSB7DQo+ID4gICAg
+ICAgICBTQ0lGX0NMS19NQVJLLA0KPiA+ICB9Ow0KPiA+DQo+ID4gKy8qIC0gVVNCMCAtLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tICovDQo+ID4gK3N0YXRpYyBjb25zdCB1bnNpZ25lZCBpbnQgdXNiMF9waW5zW10gPSB7DQo+
+ID4gKyAgICAgICAvKiBQV0VOLCBPVkMgKi8NCj4gPiArICAgICAgIFJDQVJfR1BfUElOKDAsIDAp
+LCBSQ0FSX0dQX1BJTigwLCAxKSwNCj4gPiArfTsNCj4gPiArc3RhdGljIGNvbnN0IHVuc2lnbmVk
+IGludCB1c2IwX211eFtdID0gew0KPiA+ICsgICAgICAgVVNCMF9QV0VOX01BUkssIFVTQjBfT1ZD
+X01BUkssDQo+ID4gK307DQo+IA0KPiBXaGF0IGFib3V0IFVTQjBfSURQVSBhbmQgVVNCMF9JRElO
+Pw0KPiBBcmUgdGhleSBuZWVkZWQgZm9yIG5vcm1hbCBvcGVyYXRpb24sIG9yIGNhbiB0aGV5IGJl
+IGFkZGVkIGxhdGVyPw0KDQpJIGRvbid0IGtub3cgYWJvdXQgdGhlc2UgcGlucy4gVGhlIGRhdGFz
+aGVldCBkb2Vzbid0IG1lbnRpb24gdXNhZ2UgaW4gVVNCIHNlY3Rpb25zLi4uDQpTbywgSSdtIGFz
+a2luZyBIVyB0ZWFtIG5vdy4gKEkgdGhpbmsgdGhleSBjYW4gYmUgYWRkZWQgbGF0ZXIuKQ0KDQpC
+ZXN0IHJlZ2FyZHMsDQpZb3NoaWhpcm8gU2hpbW9kYQ0KDQo+IFRoYW5rcyENCj4gDQo+IEdye29l
+dGplLGVldGluZ31zLA0KPiANCj4gICAgICAgICAgICAgICAgICAgICAgICAgR2VlcnQNCj4gDQo+
+IC0tDQo+IEdlZXJ0IFV5dHRlcmhvZXZlbiAtLSBUaGVyZSdzIGxvdHMgb2YgTGludXggYmV5b25k
+IGlhMzIgLS0gZ2VlcnRAbGludXgtbTY4ay5vcmcNCj4gDQo+IEluIHBlcnNvbmFsIGNvbnZlcnNh
+dGlvbnMgd2l0aCB0ZWNobmljYWwgcGVvcGxlLCBJIGNhbGwgbXlzZWxmIGEgaGFja2VyLiBCdXQN
+Cj4gd2hlbiBJJ20gdGFsa2luZyB0byBqb3VybmFsaXN0cyBJIGp1c3Qgc2F5ICJwcm9ncmFtbWVy
+IiBvciBzb21ldGhpbmcgbGlrZSB0aGF0Lg0KPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgIC0tIExpbnVzIFRvcnZhbGRzDQo=
