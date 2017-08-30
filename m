@@ -1,84 +1,217 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:48550 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751285AbdHaOEx (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:40250 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751321AbdH3KBL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 31 Aug 2017 10:04:53 -0400
-Date: Thu, 31 Aug 2017 16:04:47 +0200
-From: Simon Horman <horms@verge.net.au>
-To: ltsi-dev@lists.linuxfoundation.org
-Cc: Hisao Munakata <hisao.munakata.vt@renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [GIT PULL LTSI-4.9] Third Round of Renesas SoCs and Drivers to v4.12
-Message-ID: <20170831140447.GA24787@verge.net.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+        Wed, 30 Aug 2017 06:01:11 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] ASoC: rsnd: Drop unit-addresses without reg properties
+Date: Wed, 30 Aug 2017 12:01:06 +0200
+Message-Id: <1504087266-5807-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+Nodes without reg properties must not have unit addresses:
 
-This is a submission to LTSI-v4.9.
+    Warning (unit_address_vs_reg): Node .../rcar_sound,dvc/dvc@0 has a unit name, but no reg property
 
-This series is comprised of a limited backport to v4.9 of usb core,
-ohci-platform, ehci-platform and cs2000.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Despite the example, there don't seem to be any DTSes with multiple
+"simple-audio-card,cpu" nodes?
+---
+ .../devicetree/bindings/sound/renesas,rsnd.txt     | 68 +++++++++++-----------
+ 1 file changed, 34 insertions(+), 34 deletions(-)
 
-These were have been suggested after examination and testing of
-LTSI-4.9 RC1.
-
-There are 5 patches.
-
-This is based on a merge of:
-* Earlier work posted as
-  "[GIT PULL LTSI-4.9] Second Round Renesas SoCs and Drivers to v4.12"
-  and is tagged as tags/backport/v4.9.45/snapshot2-to-v4.12-flattened
-* v4.9.46
-
-It appears to apply cleanly to an ltsi-4.9 tree generated using
-scripts/generate_git
-
-
-The following changes since commit 06ce9c3fa43d22ed328b979562b16216053d031d:
-
-  Merge tag 'v4.9.46' into backport/v4.9.46/snapshot-flattened (2017-08-31 12:31:10 +0200)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas-backport.git tags/backport/v4.9.46/snapshot3-to-v4.12-flattened
-
-for you to fetch changes up to ea34fab45250defe5605f8ebf4d80872e6022925:
-
-  clk: cs2000: add Suspend/Resume feature (2017-08-31 12:32:25 +0200)
-
-----------------------------------------------------------------
-Third Round of LTSI-v4.9 Preparation for Renesas SoCs to v4.12
-
-Base:
-* v4.9.46
-* Second round of such backports
-
-Components selectively backported in this snapshot:
-* usb core
-* ohci-platform
-* ehci-platform
-* cs2000
-
-----------------------------------------------------------------
-Khiem Nguyen (1):
-      clk: cs2000: add Suspend/Resume feature
-
-Yoshihiro Shimoda (4):
-      usb: of: add functions to bind a companion controller
-      usb: host: ehci-platform: fix usb 1.1 device is not connected in system resume
-      usb: host: ehci-platform: set hcd->phy to avoid phy_get() in usb_add_hcd()
-      usb: host: ohci-platform: set hcd->phy to avoid phy_get() in usb_add_hcd()
-
- Documentation/devicetree/bindings/usb/generic.txt |  1 +
- drivers/clk/clk-cs2000-cp.c                       | 22 ++++++++++++++++++++++
- drivers/usb/core/of.c                             | 23 +++++++++++++++++++++++
- drivers/usb/host/ehci-platform.c                  | 10 ++++++++++
- drivers/usb/host/ohci-platform.c                  |  3 +++
- include/linux/usb/of.h                            |  5 +++++
- 6 files changed, 64 insertions(+)
+diff --git a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
+index 7246bb268bf9bab6..a1536fdc60e62c49 100644
+--- a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
++++ b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
+@@ -199,10 +199,10 @@ Ex)
+ 	sound {
+ 		compatible = "simple-scu-audio-card";
+ 		...
+-		simple-audio-card,cpu@0 {
++		simple-audio-card,cpu-0 {
+ 			sound-dai = <&rcar_sound 0>;
+ 		};
+-		simple-audio-card,cpu@1 {
++		simple-audio-card,cpu-1 {
+ 			sound-dai = <&rcar_sound 1>;
+ 		};
+ 		simple-audio-card,codec {
+@@ -441,79 +441,79 @@ rcar_sound: sound@ec500000 {
+ 			"clk_a", "clk_b", "clk_c", "clk_i";
+ 
+ 	rcar_sound,dvc {
+-		dvc0: dvc@0 {
++		dvc0: dvc-0 {
+ 			dmas = <&audma0 0xbc>;
+ 			dma-names = "tx";
+ 		};
+-		dvc1: dvc@1 {
++		dvc1: dvc-1 {
+ 			dmas = <&audma0 0xbe>;
+ 			dma-names = "tx";
+ 		};
+ 	};
+ 
+ 	rcar_sound,mix {
+-		mix0: mix@0 { };
+-		mix1: mix@1 { };
++		mix0: mix-0 { };
++		mix1: mix-1 { };
+ 	};
+ 
+ 	rcar_sound,ctu {
+-		ctu00: ctu@0 { };
+-		ctu01: ctu@1 { };
+-		ctu02: ctu@2 { };
+-		ctu03: ctu@3 { };
+-		ctu10: ctu@4 { };
+-		ctu11: ctu@5 { };
+-		ctu12: ctu@6 { };
+-		ctu13: ctu@7 { };
++		ctu00: ctu-0 { };
++		ctu01: ctu-1 { };
++		ctu02: ctu-2 { };
++		ctu03: ctu-3 { };
++		ctu10: ctu-4 { };
++		ctu11: ctu-5 { };
++		ctu12: ctu-6 { };
++		ctu13: ctu-7 { };
+ 	};
+ 
+ 	rcar_sound,src {
+-		src0: src@0 {
++		src0: src-0 {
+ 			interrupts = <0 352 IRQ_TYPE_LEVEL_HIGH>;
+ 			dmas = <&audma0 0x85>, <&audma1 0x9a>;
+ 			dma-names = "rx", "tx";
+ 		};
+-		src1: src@1 {
++		src1: src-1 {
+ 			interrupts = <0 353 IRQ_TYPE_LEVEL_HIGH>;
+ 			dmas = <&audma0 0x87>, <&audma1 0x9c>;
+ 			dma-names = "rx", "tx";
+ 		};
+-		src2: src@2 {
++		src2: src-2 {
+ 			interrupts = <0 354 IRQ_TYPE_LEVEL_HIGH>;
+ 			dmas = <&audma0 0x89>, <&audma1 0x9e>;
+ 			dma-names = "rx", "tx";
+ 		};
+-		src3: src@3 {
++		src3: src-3 {
+ 			interrupts = <0 355 IRQ_TYPE_LEVEL_HIGH>;
+ 			dmas = <&audma0 0x8b>, <&audma1 0xa0>;
+ 			dma-names = "rx", "tx";
+ 		};
+-		src4: src@4 {
++		src4: src-4 {
+ 			interrupts = <0 356 IRQ_TYPE_LEVEL_HIGH>;
+ 			dmas = <&audma0 0x8d>, <&audma1 0xb0>;
+ 			dma-names = "rx", "tx";
+ 		};
+-		src5: src@5 {
++		src5: src-5 {
+ 			interrupts = <0 357 IRQ_TYPE_LEVEL_HIGH>;
+ 			dmas = <&audma0 0x8f>, <&audma1 0xb2>;
+ 			dma-names = "rx", "tx";
+ 		};
+-		src6: src@6 {
++		src6: src-6 {
+ 			interrupts = <0 358 IRQ_TYPE_LEVEL_HIGH>;
+ 			dmas = <&audma0 0x91>, <&audma1 0xb4>;
+ 			dma-names = "rx", "tx";
+ 		};
+-		src7: src@7 {
++		src7: src-7 {
+ 			interrupts = <0 359 IRQ_TYPE_LEVEL_HIGH>;
+ 			dmas = <&audma0 0x93>, <&audma1 0xb6>;
+ 			dma-names = "rx", "tx";
+ 		};
+-		src8: src@8 {
++		src8: src-8 {
+ 			interrupts = <0 360 IRQ_TYPE_LEVEL_HIGH>;
+ 			dmas = <&audma0 0x95>, <&audma1 0xb8>;
+ 			dma-names = "rx", "tx";
+ 		};
+-		src9: src@9 {
++		src9: src-9 {
+ 			interrupts = <0 361 IRQ_TYPE_LEVEL_HIGH>;
+ 			dmas = <&audma0 0x97>, <&audma1 0xba>;
+ 			dma-names = "rx", "tx";
+@@ -521,52 +521,52 @@ rcar_sound: sound@ec500000 {
+ 	};
+ 
+ 	rcar_sound,ssi {
+-		ssi0: ssi@0 {
++		ssi0: ssi-0 {
+ 			interrupts = <0 370 IRQ_TYPE_LEVEL_HIGH>;
+ 			dmas = <&audma0 0x01>, <&audma1 0x02>, <&audma0 0x15>, <&audma1 0x16>;
+ 			dma-names = "rx", "tx", "rxu", "txu";
+ 		};
+-		ssi1: ssi@1 {
++		ssi1: ssi-1 {
+ 			interrupts = <0 371 IRQ_TYPE_LEVEL_HIGH>;
+ 			dmas = <&audma0 0x03>, <&audma1 0x04>, <&audma0 0x49>, <&audma1 0x4a>;
+ 			dma-names = "rx", "tx", "rxu", "txu";
+ 		};
+-		ssi2: ssi@2 {
++		ssi2: ssi-2 {
+ 			interrupts = <0 372 IRQ_TYPE_LEVEL_HIGH>;
+ 			dmas = <&audma0 0x05>, <&audma1 0x06>, <&audma0 0x63>, <&audma1 0x64>;
+ 			dma-names = "rx", "tx", "rxu", "txu";
+ 		};
+-		ssi3: ssi@3 {
++		ssi3: ssi-3 {
+ 			interrupts = <0 373 IRQ_TYPE_LEVEL_HIGH>;
+ 			dmas = <&audma0 0x07>, <&audma1 0x08>, <&audma0 0x6f>, <&audma1 0x70>;
+ 			dma-names = "rx", "tx", "rxu", "txu";
+ 		};
+-		ssi4: ssi@4 {
++		ssi4: ssi-4 {
+ 			interrupts = <0 374 IRQ_TYPE_LEVEL_HIGH>;
+ 			dmas = <&audma0 0x09>, <&audma1 0x0a>, <&audma0 0x71>, <&audma1 0x72>;
+ 			dma-names = "rx", "tx", "rxu", "txu";
+ 		};
+-		ssi5: ssi@5 {
++		ssi5: ssi-5 {
+ 			interrupts = <0 375 IRQ_TYPE_LEVEL_HIGH>;
+ 			dmas = <&audma0 0x0b>, <&audma1 0x0c>, <&audma0 0x73>, <&audma1 0x74>;
+ 			dma-names = "rx", "tx", "rxu", "txu";
+ 		};
+-		ssi6: ssi@6 {
++		ssi6: ssi-6 {
+ 			interrupts = <0 376 IRQ_TYPE_LEVEL_HIGH>;
+ 			dmas = <&audma0 0x0d>, <&audma1 0x0e>, <&audma0 0x75>, <&audma1 0x76>;
+ 			dma-names = "rx", "tx", "rxu", "txu";
+ 		};
+-		ssi7: ssi@7 {
++		ssi7: ssi-7 {
+ 			interrupts = <0 377 IRQ_TYPE_LEVEL_HIGH>;
+ 			dmas = <&audma0 0x0f>, <&audma1 0x10>, <&audma0 0x79>, <&audma1 0x7a>;
+ 			dma-names = "rx", "tx", "rxu", "txu";
+ 		};
+-		ssi8: ssi@8 {
++		ssi8: ssi-8 {
+ 			interrupts = <0 378 IRQ_TYPE_LEVEL_HIGH>;
+ 			dmas = <&audma0 0x11>, <&audma1 0x12>, <&audma0 0x7b>, <&audma1 0x7c>;
+ 			dma-names = "rx", "tx", "rxu", "txu";
+ 		};
+-		ssi9: ssi@9 {
++		ssi9: ssi-9 {
+ 			interrupts = <0 379 IRQ_TYPE_LEVEL_HIGH>;
+ 			dmas = <&audma0 0x13>, <&audma1 0x14>, <&audma0 0x7d>, <&audma1 0x7e>;
+ 			dma-names = "rx", "tx", "rxu", "txu";
+-- 
+2.7.4
