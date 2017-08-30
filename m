@@ -1,81 +1,119 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:17184 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751399AbdH3M5g (ORCPT
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:52890 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751282AbdH3MBq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 30 Aug 2017 08:57:36 -0400
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: jmondi <jacopo@jmondi.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-CC: "linux-renesas-soc@vger.kernel.org"
+        Wed, 30 Aug 2017 08:01:46 -0400
+Date: Wed, 30 Aug 2017 14:01:41 +0200
+From: jmondi <jacopo@jmondi.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Chris Brandt <Chris.Brandt@renesas.com>,
+        "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>,
         Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Timur Tabi <timur@codeaurora.org>,
         Linus Walleij <linus.walleij@linaro.org>,
         "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Subject: RE: The RZ/A1 pin controller driver will be broken for 4.13
-Date: Wed, 30 Aug 2017 12:57:29 +0000
-Message-ID: <SG2PR06MB116525C9B2E8573DB427FA958A9C0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+Subject: Re: The RZ/A1 pin controller driver will be broken for 4.13
+Message-ID: <20170830120141.GB1863@w540>
 References: <SG2PR06MB1165ADDEBA8097EA034C27D28A9F0@SG2PR06MB1165.apcprd06.prod.outlook.com>
  <CAMuHMdVNNX7xHjmnrLndDpKb9OfxCCVHO7wLUEiFsExk578zsg@mail.gmail.com>
- <20170830120141.GB1863@w540>
-In-Reply-To: <20170830120141.GB1863@w540>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVNNX7xHjmnrLndDpKb9OfxCCVHO7wLUEiFsExk578zsg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgSmFjb3BvLA0KDQpUaGFuayB5b3UgZm9yIHRoZSBxdWljayBhbmFseXNpcy4NCg0KT24gV2Vk
-bmVzZGF5LCBBdWd1c3QgMzAsIDIwMTcsIGptb25kaSB3cm90ZToNCj4gQWZ0ZXIgc29tZSBpbnZl
-c3RpZ2F0aW9ucywgaXQgdHVybnMgb3V0IHNvbWUgcmVnaXN0ZXIgc2V0dGluZ3MNCj4gcGVyZm9y
-bWVkIGR1cmluZyBwaW5fcmVzZXQoKSBhcmUgaW52YWxpZCBhbmQgaGFuZyB0aGUgc3lzdGVtIEJV
-VCBvbmx5DQo+IHdoZW4gcGVyZm9ybWVkIG9uIFBvcnRfOS4NCj4gDQo+IFNwZWNpZmljYWxseSwg
-c2V0dGluZyBQTUMgYW5kIFBJUEMgcmVnaXN0ZXJzIHRvIDAgKGRlZmF1bHQgaW5pdGlhbCBzdGF0
-ZSkNCj4gb24gUG9ydF85LCBoYW5ncyB0aGUgc3lzdGVtLg0KPiANCj4gVGhlcmUgaXMgbm8gbWVu
-dGlvbiAobm9uZSB0aGF0IEkndmUgZm91bmQpIGluIHRoZSBwcm9jZXNzb3IgbWFudWFsIG9mDQo+
-IHNwZWNpZmljIHByb2NlZHVyZXMgdG8gYmUgcGVyZm9ybWVkIHdoZW4gcmVzZXR0aW5nIHRoYXQg
-cG9ydCB0byBpdHMNCj4gaW5pdGlhbCBzdGF0ZSwgc28gSSBndWVzcyB0aGlzIG1heSBlaXRoZXIg
-YmUgYW4gaW5kaWNhdGlvbiBvZg0KPiBzb21ldGhpbmcgZWxzZSBnb2luZyB3cm9uZyAobGlrZSB3
-cml0aW5nIHRvIHNvbWUgaW52YWxpZCBtZW1vcnkNCj4gYWRkcmVzcykgb3IgaXQncyBhbiBIVyBp
-c3N1ZSBub3QgeWV0IGRvY3VtZW50ZWQuDQo+IA0KPiBUaW11cidzIHBhdGNoIGRvZXMgdHJpZ2dl
-ciBhICJyZXNldCIgb24gYWxsIFBvcnRzIGR1cmluZyBncGlvY2hpcA0KPiByZWdpc3RyYXRpb24g
-LCB3aGlsZSBiZWZvcmUgdGhhdCBwYXRjaCBtYWRlIGludG8gLW5leHQgYnJhbmNoLCByZXNldA0K
-PiB3YXMgb25seSB0cmlnZ2VyZWQgd2hlbiBhY3R1YWxseSByZXF1ZXN0aW5nIGEgZ3BpbyBvciB3
-aGVuIHBlcmZvcm1pbmcNCj4gbXV4aW5nIG9uIGEgcGluLg0KPiANCj4gQXBwYXJlbnRseSwgd2Ug
-bmV2ZXIgbXVsdGlwbGV4ZWQgYW55IHBpbiBvbiBQb3J0Xzkgbm9yIHRlc3RlZCBncGlvDQo+IGZ1
-bmN0aW9uYWxpdGllcyBvbiB0aGF0IHBvcnQgYmVmb3JlLg0KDQpBY3R1YWxseSwgd2UgZGlkLiBU
-aGUgUVNQSSBGbGFzaCB3YXMgYWx3YXlzIG9uIHBvcnQgOSBhbmQgc2V0IHVwIGJ5IA0KdS1ib290
-LiBTaW5jZSBpdCdzIHNldCB1cCBpbiBYSVAtbW9kZSBhbmQgbGluZWFybHkgbWFwcGVkIHRvIGlu
-dGVybmFsIA0KYWRkcmVzcyBzcGFjZSwgdGhlIGtlcm5lbCBuZXZlciBuZWVkZWQgdG8ga25vdyBh
-Ym91dCBhbnkgcGlucyBvciBkcml2ZXIgZm9yIA0KaXQuDQoNClNvLCBpZiB5b3Ugc2V0IHRoZSBR
-U1BJIHBpbnMgYmFjayB0byBHUElPLCB5b3UgZGllIHByZXR0eSBxdWlja2x5IA0KKGVzcGVjaWFs
-bHkgd2l0aCBhbiBYSVAga2VybmVsKS4NCg0KPiBUaGlzOg0KPiANCj4gQEAgLTQ4Nyw4ICs0OTEs
-MTAgQEAgc3RhdGljIHZvaWQgcnphMV9waW5fcmVzZXQoc3RydWN0IHJ6YTFfcG9ydCAqcG9ydCwN
-Cj4gdW5zaWduZWQgaW50IHBpbikNCj4gICAgICAgICByemExX3NldF9iaXQocG9ydCwgUlpBMV9Q
-QkRDX1JFRywgcGluLCAwKTsNCj4gDQo+ICAgICAgICAgcnphMV9zZXRfYml0KHBvcnQsIFJaQTFf
-UE1fUkVHLCBwaW4sIDEpOw0KPiAtICAgICAgIHJ6YTFfc2V0X2JpdChwb3J0LCBSWkExX1BNQ19S
-RUcsIHBpbiwgMCk7DQo+IC0gICAgICAgcnphMV9zZXRfYml0KHBvcnQsIFJaQTFfUElQQ19SRUcs
-IHBpbiwgMCk7DQo+ICsgICAgICAgaWYgKHBvcnQtPmlkICE9IDkpIHsNCj4gKyAgICAgICAgICAg
-ICAgIHJ6YTFfc2V0X2JpdChwb3J0LCBSWkExX1BNQ19SRUcsIHBpbiwgMCk7DQo+ICsgICAgICAg
-ICAgICAgICByemExX3NldF9iaXQocG9ydCwgUlpBMV9QSVBDX1JFRywgcGluLCAwKTsNCj4gKyAg
-ICAgICB9DQo+ICAgICAgICAgc3Bpbl91bmxvY2tfaXJxcmVzdG9yZSgmcG9ydC0+bG9jaywgaXJx
-ZmxhZ3MpOw0KPiAgfQ0KPiANCj4gRml4ZXMgdGhlIGlzc3VlLCBidXQgSSdtIG5vdCB0aGF0IHNh
-dGlzZmllZCB3aXRoIHRoaXMgYXMgSSB3b3VsZCBsaWtlDQo+IHRvIGtub3cgaWYgdGhlIHNhbWUg
-aXNzdWUgaGFwcGVucyBvbiBvdGhlciBwcm9jZXNzb3JzIG9mIHRoZSBSWi9BMSBmYW1pbHkNCj4g
-b3RoZXIgdGhhbiBSWi9BMUggYmVmb3JlIHByb3Bvc2luZyB0aGlzIGFzIGEgcHJvcGVyIGZpeC4N
-Cj4gDQo+IENocmlzLCBkbyB5b3UgaGF2ZSBSWi9BMSogZGV2aWNlcyB3aGVyZSB0byB0ZXN0IHRo
-aXM/DQoNCg0KUlovQTFIIGFuZCBSWi9BMU0gYXJlIHRoZSBzYW1lIHBhcnQsIGp1c3Qgd2l0aCBk
-aWZmZXJlbnQgUkFNIHNpemVzLCBzbyANCm9ubHkgUlovQTFMIGlzIHRoZSBkaWZmZXJlbnQgb25l
-Lg0KDQpCdXQsIGlmIHlvdSByZW1lbWJlciwgSSBoYXZlIG5vdCBhZGRlZCB0aGUgbG9vay11cCB0
-YWJsZSBmb3IgdGhlIFJaL0ExTCANCmluIHRoZSBkcml2ZXIgeWV0Lg0KDQpGb3IgdGhlIFJaL0Ex
-TCwgUVNQSSBpcyBvbiBwb3J0IDQuDQoNCg0KSW4gZ2VuZXJhbCwgSSBkaXNhZ3JlZSB3aXRoIHRo
-ZSBrZXJuZWwgYmxpbmRseSByZXNldHRpbmcgcG9ydHMgdGhhdCBpdCANCmtub3dzIG5vdGhpbmcg
-YWJvdXQuIE1heWJlIHRoZXJlJ3MgYSByZWFzb24gaXQgZG9lc24ndCBrbm93IGFib3V0IHRoZW0u
-DQoNCldoYXQgYWJvdXQgdGhlIGV4dGVybmFsIG1lbW9yeSBjb25uZWN0aW9ucyB0aGF0IGlzIHNl
-dCB1cCBpbiB1LWJvb3Q/IElzIA0KaXQgZ29pbmcgdG8gcmVzZXQgdGhvc2UgcGlucyBhcyB3ZWxs
-Pw0KTWF5YmUgdGhhdCdzIHdoeSBteSBzeXN0ZW0gd2FzIGNyYXNoaW5nIG9uIHRoZSBpbml0IG9m
-IHBvcnQgMiAod2hlcmUgbXkgDQpTRFJBTSBjb25uZWN0aW9ucyBhcmUpIGJlY2F1c2UgSSB3YXMg
-cnVubmluZyBhbiBYSVBfS0VSTkVMICsgZXh0ZXJuYWwgDQpTRFJBTSwgc28gSSBuZXZlciBldmVu
-IG1hZGUgaXQgdG8gcG9ydCA5Lg0KDQoNCg0KQ2hyaXMNCg0K
+Hi Geert, Chris,
+
+On Wed, Aug 30, 2017 at 10:26:30AM +0200, Geert Uytterhoeven wrote:
+> CC Timur, LinusW, gpio
+>
+> On Tue, Aug 29, 2017 at 8:56 PM, Chris Brandt <Chris.Brandt@renesas.com> wrote:
+> > Just FYI,
+> >
+> > After pulling Geert's new renesas-drivers-2017-08-29-v4.13-rc7, I tried
+> > testing RZ/A1 and it hangs during boot.
+> >
+> > Basically...
+> >
+> > [  110.329579] pinctrl-rza1 fcfe3000.pin-controller: Parsed gpiochip gpio-0-0 with 6 pins
+> > [  112.970056] pinctrl-rza1 fcfe3000.pin-controller: Parsed gpiochip gpio-1-1 with 16 pins
+> > (hangs here forever)
+> >
+> >
+> > After some debug, I found that this commit broke the new
+> > drivers/pinctrl/pinctrl-rza1.c driver.
+> >
+> >  108d23e322a2 ("gpiolib: request the gpio before querying its direction")
+> >
+> > Looks like it was added for -rc5.
+> >
+> > If I revert that one patch, RZ/A1 boots fine.
+> >
+> > Since we're at -rc7, I probably won't have time to fix it before the
+> > release.
+>
+> It's not in v4.13-rc5, only in -next, for v4.14.
+> So v4.13 will be fine, and we still have plenty of time to fix the issue.
+
+After some investigations, it turns out some register settings
+performed during pin_reset() are invalid and hang the system BUT only
+when performed on Port_9.
+
+Specifically, setting PMC and PIPC registers to 0 (default initial state)
+on Port_9, hangs the system.
+
+There is no mention (none that I've found) in the processor manual of
+specific procedures to be performed when resetting that port to its
+initial state, so I guess this may either be an indication of
+something else going wrong (like writing to some invalid memory
+address) or it's an HW issue not yet documented.
+
+Timur's patch does trigger a "reset" on all Ports during gpiochip
+registration , while before that patch made into -next branch, reset
+was only triggered when actually requesting a gpio or when performing
+muxing on a pin.
+
+Apparently, we never multiplexed any pin on Port_9 nor tested gpio
+functionalities on that port before.
+
+This:
+
+@@ -487,8 +491,10 @@ static void rza1_pin_reset(struct rza1_port *port, unsigned int pin)
+        rza1_set_bit(port, RZA1_PBDC_REG, pin, 0);
+
+        rza1_set_bit(port, RZA1_PM_REG, pin, 1);
+-       rza1_set_bit(port, RZA1_PMC_REG, pin, 0);
+-       rza1_set_bit(port, RZA1_PIPC_REG, pin, 0);
++       if (port->id != 9) {
++               rza1_set_bit(port, RZA1_PMC_REG, pin, 0);
++               rza1_set_bit(port, RZA1_PIPC_REG, pin, 0);
++       }
+        spin_unlock_irqrestore(&port->lock, irqflags);
+ }
+
+Fixes the issue, but I'm not that satisfied with this as I would like
+to know if the same issue happens on other processors of the RZ/A1 family
+other than RZ/A1H before proposing this as a proper fix.
+
+Chris, do you have RZ/A1* devices where to test this?
+
+Thanks
+  j
+
+>
+> > Poor RZ/A1 pinctrl driver...it took so long to get into mainline, and
+> > then it only worked for 1 release.
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
