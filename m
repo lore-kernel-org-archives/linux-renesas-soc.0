@@ -1,65 +1,87 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f174.google.com ([209.85.128.174]:36320 "EHLO
-        mail-wr0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752728AbdHEUxZ (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55022 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751271AbdH3Iqw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 5 Aug 2017 16:53:25 -0400
-Received: by mail-wr0-f174.google.com with SMTP id y43so27167955wrd.3
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 05 Aug 2017 13:53:24 -0700 (PDT)
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-To: linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux@armlinux.org.uk,
-        linux-omap@vger.kernel.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, krzk@kernel.org,
-        jason@lakedaemon.net, arm@kernel.org, andrew@lunn.ch,
-        gregory.clement@free-electrons.com,
-        sebastian.hesselbarth@gmail.com, tony@atomide.com,
-        baohua@kernel.org, horms@verge.net.au, magnus.damm@gmail.com,
-        vireshk@kernel.org, shiraz.linux.kernel@gmail.com,
-        patrice.chotard@st.com, nico@linaro.org, dave.martin@arm.com,
-        marc.zyngier@arm.com
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH 05/15] ARM: head: use PC-relative insn sequence for __smp_alt
-Date: Sat,  5 Aug 2017 21:52:12 +0100
-Message-Id: <20170805205222.19868-6-ard.biesheuvel@linaro.org>
-In-Reply-To: <20170805205222.19868-1-ard.biesheuvel@linaro.org>
-References: <20170805205222.19868-1-ard.biesheuvel@linaro.org>
+        Wed, 30 Aug 2017 04:46:52 -0400
+Date: Wed, 30 Aug 2017 10:46:47 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        laurent.pinchart@ideasonboard.com, dri-devel@lists.freedesktop.org,
+        linux-media@vger.kernel.org, magnus.damm@gmail.com
+Subject: Re: [PATCH v1.5 0/6] R-Car DU: Fix IOMMU operation when connected to
+ VSP
+Message-ID: <20170830084645.GS10398@verge.net.au>
+References: <1481286912-16555-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1481286912-16555-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Replace the open coded PC relative offset calculations with a pair
-of adr_l invocations.
+On Fri, Dec 09, 2016 at 01:35:06PM +0100, Ulrich Hecht wrote:
+> Hi!
+> 
+> This is a slightly updated version of Laurent's series that adds the fix
+> suggested by Magnus Damm and connects the FCP devices on M3-W to their
+> IPMMU. It also drops the patches that have already been picked up in the
+> media tree.
+> 
+> With this series and an assortment of patches from the renesas-drivers tree (
+>     iommu/ipmmu-vmsa: Remove platform data handling
+>     iommu/ipmmu-vmsa: Rework interrupt code and use bitmap for context
+>     iommu/ipmmu-vmsa: Break out utlb parsing code
+>     iommu/ipmmu-vmsa: Break out domain allocation code
+>     iommu/ipmmu-vmsa: Add new IOMMU_DOMAIN_DMA ops
+>     iommu/ipmmu-vmsa: ARM and ARM64 archdata access
+>     iommu/ipmmu-vmsa: Drop LPAE Kconfig dependency
+>     iommu/ipmmu-vmsa: Introduce features, break out alias
+>     iommu/ipmmu-vmsa: Add optional root device feature
+>     iommu/ipmmu-vmsa: Enable multi context support
+>     iommu/ipmmu-vmsa: Reuse iommu groups
+>     iommu/ipmmu-vmsa: Make use of IOMMU_OF_DECLARE()
+>     iommu/ipmmu-vmsa: Teach xlate() to skip disabled iommus
+>     iommu/ipmmu-vmsa: IPMMU device is 64-bit bus master
+>     iommu/ipmmu-vmsa: Write IMCTR twice
+>     iommu/ipmmu-vmsa: Make IMBUSCTR setup optional
+>     iommu/ipmmu-vmsa: Allow two bit SL0
+>     iommu/ipmmu-vmsa: Hook up r8a7795 DT matching code
+>     iommu/ipmmu-vmsa: Add r8a7796 DT binding
+>     iommu/ipmmu-vmsa: Increase maximum micro-TLBS to 48
+>     iommu/ipmmu-vmsa: Hook up r8a7796 DT matching code
+>     arm64: dts: r8a7795: Add IPMMU device nodes
+>     arm64: dts: r8a7795: Hook up SYS-DMAC to IPMMU
+>     arm64: dts: r8a7795: Point FCP devices to IPMMU
+>     arm64: dts: r8a7795: Connect Ethernet AVB to IPMMU
+>     arm64: dts: r8a7796: Add IPMMU device nodes
+>     clk: renesas: r8a7796: Add FCP clocks
+>     clk: renesas: r8a7796: Add VSP clocks
+>     clk: renesas: r8a7796: Add DU and LVDS clocks
+>     drm: rcar-du: Add R8A7796 device support
+>     arm64: dts: renesas: r8a7795: Remove FCP SoC-specific compatible strings
+>     arm64: dts: renesas: r8a7796: Add FCPF and FCPV instances
+>     arm64: dts: renesas: r8a7796: Add VSP instances
+>     arm64: dts: renesas: r8a7796: Add DU device to DT
+>     arm64: dts: renesas: r8a7796-salvator-x: Enable DU
+> ), I can enable IPMMU on both the H3 and M3-W Salvator-X boards with no ill
+> effects on the results of the vsp-tests suite.
+> 
+> CU
+> Uli
+> 
+> 
+> Laurent Pinchart (4):
+>   v4l: rcar-fcp: Don't get/put module reference
+>   v4l: rcar-fcp: Add an API to retrieve the FCP device
+>   v4l: vsp1: Add API to map and unmap DRM buffers through the VSP
+>   drm: rcar-du: Map memory through the VSP device
+> 
+> Ulrich Hecht (2):
+>   v4l: vsp1: Provide display list and VB2 queue with FCP device
+>   arm64: dts: r8a7796: Connect FCP devices to IPMMU
 
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
----
- arch/arm/kernel/head.S | 12 ++----------
- 1 file changed, 2 insertions(+), 10 deletions(-)
+Hi Ulrich,
 
-diff --git a/arch/arm/kernel/head.S b/arch/arm/kernel/head.S
-index 6e9df3663a57..aed341e0f530 100644
---- a/arch/arm/kernel/head.S
-+++ b/arch/arm/kernel/head.S
-@@ -523,19 +523,11 @@ ARM_BE8(rev	r0, r0)			@ byteswap if big endian
- 	retne	lr
- 
- __fixup_smp_on_up:
--	adr	r0, 1f
--	ldmia	r0, {r3 - r5}
--	sub	r3, r0, r3
--	add	r4, r4, r3
--	add	r5, r5, r3
-+	adr_l	r4, __smpalt_begin
-+	adr_l	r5, __smpalt_end
- 	b	__do_fixup_smp_on_up
- ENDPROC(__fixup_smp)
- 
--	.align
--1:	.word	.
--	.word	__smpalt_begin
--	.word	__smpalt_end
--
- 	.pushsection .data
- 	.globl	smp_on_up
- smp_on_up:
--- 
-2.11.0
+I am wondering what the status of this work is.
