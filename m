@@ -1,80 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:17247 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752227AbdHIMXO (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:54120 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751242AbdH3Haz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 9 Aug 2017 08:23:14 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
-        linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 6/8] pinctrl: sh-pfc: r8a77995: Add USB2.0 host support
-Date: Wed,  9 Aug 2017 21:19:45 +0900
-Message-Id: <1502281187-24068-7-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1502281187-24068-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1502281187-24068-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Wed, 30 Aug 2017 03:30:55 -0400
+Date: Wed, 30 Aug 2017 09:30:51 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH ] ARM: dts: iwg22d-sodimm: Add pinctl support for scif4
+Message-ID: <20170830073051.GK10398@verge.net.au>
+References: <1502982549-19429-1-git-send-email-biju.das@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1502982549-19429-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+On Thu, Aug 17, 2017 at 04:09:09PM +0100, Biju Das wrote:
+> Adding pinctrl support for scif4 interface.
+> 
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> ---
+> This patch depends upon the below patch series
+> [PATCH  0/2] ARM: dts: Add iWave RZ/G1E board support
+> http://www.spinics.net/lists/devicetree/msg190513.html
+> 
+> This patch is tested against renesas-dev tag 
+> renesas-devel-20170815-v4.13-rc5 + above dependency patch.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/pinctrl/sh-pfc/pfc-r8a77995.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+Thanks for the dependency and testing details, it is very helpful.
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
-index 9eb0cef..5c0a94f 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
-@@ -1302,6 +1302,15 @@ enum {
- 	SCIF_CLK_MARK,
- };
- 
-+/* - USB0 ------------------------------------------------------------------- */
-+static const unsigned int usb0_pins[] = {
-+	/* PWEN, OVC */
-+	RCAR_GP_PIN(0, 0), RCAR_GP_PIN(0, 1),
-+};
-+static const unsigned int usb0_mux[] = {
-+	USB0_PWEN_MARK, USB0_OVC_MARK,
-+};
-+
- static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(avb0_td),
- 	SH_PFC_PIN_GROUP(avb0_rd),
-@@ -1352,6 +1361,7 @@ enum {
- 	SH_PFC_PIN_GROUP(scif5_data_b),
- 	SH_PFC_PIN_GROUP(scif5_clk_b),
- 	SH_PFC_PIN_GROUP(scif_clk),
-+	SH_PFC_PIN_GROUP(usb0),
- };
- 
- static const char * const avb0_groups[] = {
-@@ -1438,6 +1448,10 @@ enum {
- 	"scif_clk",
- };
- 
-+static const char * const usb0_groups[] = {
-+	"usb0",
-+};
-+
- static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(avb0),
- 	SH_PFC_FUNCTION(i2c0),
-@@ -1451,6 +1465,7 @@ enum {
- 	SH_PFC_FUNCTION(scif4),
- 	SH_PFC_FUNCTION(scif5),
- 	SH_PFC_FUNCTION(scif_clk),
-+	SH_PFC_FUNCTION(usb0),
- };
- 
- static const struct pinmux_cfg_reg pinmux_config_regs[] = {
--- 
-1.9.1
+I have applied this for v4.15.
