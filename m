@@ -1,48 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:58998 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751305AbdHQL3Z (ORCPT
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:33067 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751323AbdH3OO3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Aug 2017 07:29:25 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] arm64: dts: r8a7795-es1: Drop extra zero from usb unit address
-Date: Thu, 17 Aug 2017 13:29:14 +0200
-Message-Id: <1502969354-14968-1-git-send-email-geert+renesas@glider.be>
+        Wed, 30 Aug 2017 10:14:29 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170829155157.6272-1-wsa+renesas@sang-engineering.com>
+References: <20170829155157.6272-1-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 30 Aug 2017 16:14:28 +0200
+Message-ID: <CAMuHMdWb1kLNSRpBB4uaqmHPPGn3dK17snFgStHskT6SckEwzw@mail.gmail.com>
+Subject: Re: [PATCH v3] pinctrl: sh-pfc: r8a7795: Add SDHI0-3 support
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Dirk Behme <dirk.behme@de.bosch.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-With W=1:
+On Tue, Aug 29, 2017 at 5:51 PM, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> Add SDHI0-3 support for R-Car H3 ES2.0 based on a patch from the Renesas
+> BSP. SDHI pin config is identical to H3 ES1.*.
+>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-    arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dtb: Warning (simple_bus_reg): Node /soc/usb@ee0400000 simple-bus unit address format error, expected "ee040000"
-    arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb.dtb: Warning (simple_bus_reg): Node /soc/usb@ee0400000 simple-bus unit address format error, expected "ee040000"
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+I.e. will queue in sh-pfc-for-v4.15.
 
-Fixes: 291e0c4994d0813f ("arm64: dts: r8a7795: Add support for R-Car H3 ES2.0")
-Fixes: 171f2ef82284f61b ("arm64: dts: r8a7795: Add USB3.0 host device nodes")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-The second fixes tag is for the original r8a7795.dtsi, before
-r8a7795-es1.dtsi was split off.
----
- arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Gr{oetje,eeting}s,
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-index aaa5e67a963ea9ff..655dd30639c55027 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-@@ -11,7 +11,7 @@
- #include "r8a7795.dtsi"
- 
- &soc {
--	xhci1: usb@ee0400000 {
-+	xhci1: usb@ee040000 {
- 		compatible = "renesas,xhci-r8a7795", "renesas,rcar-gen3-xhci";
- 		reg = <0 0xee040000 0 0xc00>;
- 		interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
--- 
-2.7.4
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
