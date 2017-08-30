@@ -1,49 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33652 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751798AbdHRIU2 (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:23361 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751545AbdH3N6d (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Aug 2017 04:20:28 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Wed, 30 Aug 2017 09:58:33 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/3] ARM: shmobile: document iW-RainboW-G22D SODIMM SOM Development Platform
-Date: Fri, 18 Aug 2017 10:20:06 +0200
-Message-Id: <61c687e8223f842ed71267ad142f5a920b32213d.1502961902.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1502961902.git.horms+renesas@verge.net.au>
-References: <cover.1502961902.git.horms+renesas@verge.net.au>
+        Russell King <linux@armlinux.org.uk>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH  2/5] ARM: dts: r8a7743: Add USB PHY DT support
+Date: Wed, 30 Aug 2017 14:41:10 +0100
+Message-Id: <1504100473-5528-3-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1504100473-5528-1-git-send-email-biju.das@bp.renesas.com>
+References: <1504100473-5528-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Define the r8a7743 generic part of the USB PHY device node.
 
-Document the iW-RainboW-G22D device tree bindings.
-It is just a placeholder for the time being, the actual
-implementation is not available yet.
-
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/boot/dts/r8a7743.dtsi | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index 64e7f63826c3..ae75cb3b1331 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -68,6 +68,8 @@ Boards:
-     compatible = "renesas,h3ulcb", "renesas,r8a7795";
-   - Henninger
-     compatible = "renesas,henninger", "renesas,r8a7791"
-+  - iWave Systems RZ/G1E SODIMM SOM Development Platform (iW-RainboW-G22D)
-+    compatible = "iwave,g22d", "iwave,g22m", "renesas,r8a7745"
-   - iWave Systems RZ/G1E SODIMM System On Module (iW-RainboW-G22M-SM)
-     compatible = "iwave,g22m", "renesas,r8a7745"
-   - iWave Systems RZ/G1M Qseven Development Platform (iW-RainboW-G20D-Qseven)
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index 3f1faad..a81d70e 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -822,6 +822,28 @@
+ 			status = "disabled";
+ 		};
+ 
++		usbphy: usb-phy@e6590100 {
++			compatible = "renesas,usb-phy-r8a7743",
++				     "renesas,rcar-gen2-usb-phy";
++			reg = <0 0xe6590100 0 0x100>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			clocks = <&cpg CPG_MOD 704>;
++			clock-names = "usbhs";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			resets = <&cpg 704>;
++			status = "disabled";
++
++			usb0: usb-channel@0 {
++				reg = <0>;
++				#phy-cells = <1>;
++			};
++			usb2: usb-channel@2 {
++				reg = <2>;
++				#phy-cells = <1>;
++			};
++		};
++
+ 		pci0: pci@ee090000 {
+ 			compatible = "renesas,pci-r8a7743",
+ 				     "renesas,pci-rcar-gen2";
 -- 
-2.1.4
+1.9.1
