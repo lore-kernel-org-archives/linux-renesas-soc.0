@@ -1,48 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:47548 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751234AbdHCMcB (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:55076 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751546AbdH3N6a (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 3 Aug 2017 08:32:01 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 3/3] arm64: dts: r8a7795: Add USB3.0 host device node
-Date: Thu,  3 Aug 2017 21:28:44 +0900
-Message-Id: <1501763324-26028-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1501763324-26028-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1501763324-26028-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Wed, 30 Aug 2017 09:58:30 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH  1/5] ARM: dts: r8a7743: Add internal PCI bridge nodes
+Date: Wed, 30 Aug 2017 14:41:09 +0100
+Message-Id: <1504100473-5528-2-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1504100473-5528-1-git-send-email-biju.das@bp.renesas.com>
+References: <1504100473-5528-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+Add device nodes for the r8a7743 internal PCI bridge devices.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 5301bfc..882a556 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -1228,7 +1228,14 @@
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+---
+ arch/arm/boot/dts/r8a7743.dtsi | 46 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index 6dd9b0b..3f1faad 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -821,6 +821,52 @@
+ 			resets = <&cpg 311>;
+ 			status = "disabled";
  		};
- 
- 		xhci0: usb@ee000000 {
--			/* placeholder */
-+			compatible = "renesas,xhci-r8a7796",
-+				     "renesas,rcar-gen3-xhci";
-+			reg = <0 0xee000000 0 0xc00>;
-+			interrupts = <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 328>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 328>;
++
++		pci0: pci@ee090000 {
++			compatible = "renesas,pci-r8a7743",
++				     "renesas,pci-rcar-gen2";
++			device_type = "pci";
++			reg = <0 0xee090000 0 0xc00>,
++			      <0 0xee080000 0 0x1100>;
++			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 703>;
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			resets = <&cpg 703>;
 +			status = "disabled";
- 		};
++
++			bus-range = <0 0>;
++			#address-cells = <3>;
++			#size-cells = <2>;
++			#interrupt-cells = <1>;
++			ranges = <0x02000000 0 0xee080000 0 0xee080000 0 0x00010000>;
++			interrupt-map-mask = <0xff00 0 0 0x7>;
++			interrupt-map = <0x0000 0 0 1 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH
++					 0x0800 0 0 1 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH
++					 0x1000 0 0 2 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
++		};
++
++		pci1: pci@ee0d0000 {
++			compatible = "renesas,pci-r8a7743",
++				     "renesas,pci-rcar-gen2";
++			device_type = "pci";
++			reg = <0 0xee0d0000 0 0xc00>,
++			      <0 0xee0c0000 0 0x1100>;
++			interrupts = <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 703>;
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			resets = <&cpg 703>;
++			status = "disabled";
++
++			bus-range = <1 1>;
++			#address-cells = <3>;
++			#size-cells = <2>;
++			#interrupt-cells = <1>;
++			ranges = <0x02000000 0 0xee0c0000 0 0xee0c0000 0 0x00010000>;
++			interrupt-map-mask = <0xff00 0 0 0x7>;
++			interrupt-map = <0x0000 0 0 1 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH
++					 0x0800 0 0 1 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH
++					 0x1000 0 0 2 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
++		};
+ 	};
  
- 		ohci0: usb@ee080000 {
+ 	/* External root clock */
 -- 
 1.9.1
