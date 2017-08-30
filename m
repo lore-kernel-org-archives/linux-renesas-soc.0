@@ -1,52 +1,70 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:45230 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751269AbdHWWlM (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Aug 2017 18:41:12 -0400
+Subject: Re: [PATCH 0/3] vsp-tests: Add BRS test
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ linux-renesas-soc@vger.kernel.org
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>
+References: <20170824093043.8606-1-laurent.pinchart@ideasonboard.com>
+Reply-To: kieran.bingham@ideasonboard.com
 From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH 2/2] README: Document need for killall command
-Date: Wed, 23 Aug 2017 23:41:04 +0100
-Message-Id: <1503528064-10454-3-git-send-email-kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <1503528064-10454-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
-References: <1503528064-10454-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Message-ID: <95423ae3-33c3-ceff-59c5-95c1c13e62b8@ideasonboard.com>
+Date: Wed, 30 Aug 2017 16:09:37 +0100
+MIME-Version: 1.0
+In-Reply-To: <20170824093043.8606-1-laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+For the series,
 
-The killall command is provided by the psmisc package on debian based systems.
-On other systems it should be built or added to the filesystem as appropriate.
+On Salvator-XS (with minor kernel change to enable .uapi on VSPD entities)
 
-Also remove unnecessary blank line.
+root@Ubuntu-ARM64:~/vsp-tests# ./vsp-unit-test-0024.sh
+Testing BRS in RGB24 with 1 inputs: pass
+Testing BRS in RGB24 with 2 inputs: pass
+Testing BRS in YUV444M with 1 inputs: pass
+Testing BRS in YUV444M with 2 inputs: pass
+root@Ubuntu-ARM64:~/vsp-tests#
 
-Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
----
- README | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Tested-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-diff --git a/README b/README
-index e503a2c41aef..7efcef394ae9 100644
---- a/README
-+++ b/README
-@@ -43,6 +43,7 @@ system in a directory included in $PATH.
- * media-ctl (part of v4l-utils, available at git://linuxtv.org/v4l-utils.git)
- * raw2rgbpnm (available at git://git.retiisi.org.uk/~sailus/raw2rgbpnm.git)
- * yavta (available at git://git.ideasonboard.org/yavta.git)
-+* killall (available from the psmisc package)
- 
- All but the HGO and CLU/LUT tests can be run with the latest version of these
- tools. To test the HGO, HGT and CLU/LUT, the 'vsp' branch of 'yavta' is currently
-@@ -53,7 +54,6 @@ tool is not available the corresponding tests will be skipped.
- 
- * stress (available at http://people.seas.harvard.edu/~apw/stress/)
- 
--
- -----------------
- Running the Tests
- -----------------
--- 
-2.7.4
+--
+Regards
+
+Kieran
+
+Interestingly as a side note, while on the Salvator-XS, I ran test-0003 and it
+went straight through 4 times consecutively!
+
+root@Ubuntu-ARM64:~/vsp-tests# ./vsp-unit-test-0003.sh
+Testing scaling from 640x640 to 640x480 in RGB24: pass
+Testing scaling from 1024x768 to 640x480 in RGB24: pass
+Testing scaling from 640x480 to 1024x768 in RGB24: pass
+Testing scaling from 640x640 to 640x480 in YUV444M: pass
+Testing scaling from 1024x768 to 640x480 in YUV444M: pass
+Testing scaling from 640x480 to 1024x768 in YUV444M: pass
+
+
+
+On 24/08/17 10:30, Laurent Pinchart wrote:
+> Hello,
+> 
+> This patch series adds a test to the VSP unit test suite for the BRS module.
+> 
+> The BRS is the Blend/ROP Secondary unit, a stripped-down version of the BRU
+> that supports two inputs only. It is present in some VSPD instances, in
+> particular on the H3 ES2.0.
+> 
+> As the VSPD is used for display pipelines only the BRS can't be tested through
+> the V4L2 API with the upstream VSP driver. A simple hack that exposes the VSPD
+> through V4L2 is needed.
+> 
+> Laurent Pinchart (3):
+>   vsp-lib: Use the correct media device name to count BRU inputs
+>   vsp-lib: Add support for RPF-BRS-WPF pipelines
+>   tests: Add BRS test
+> 
+>  scripts/vsp-lib.sh          | 63 +++++++++++++++++++++++++++++++--------------
+>  tests/vsp-unit-test-0024.sh | 45 ++++++++++++++++++++++++++++++++
+>  2 files changed, 88 insertions(+), 20 deletions(-)
+>  create mode 100755 tests/vsp-unit-test-0024.sh
+> 
