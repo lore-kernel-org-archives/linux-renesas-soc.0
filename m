@@ -1,103 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:40350 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751755AbdHCNu2 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:53790 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751242AbdH3HOY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 3 Aug 2017 09:50:28 -0400
-From: Kieran Bingham <kbingham@kernel.org>
-To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        niklas.soderlund@ragnatech.se
-Cc: sakari.ailus@iki.fi, kieran.bingham@ideasonboard.com,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH] media: i2c: adv748x: Store the pixel rate ctrl on CSI objects
-Date: Thu,  3 Aug 2017 14:50:23 +0100
-Message-Id: <1501768223-23654-1-git-send-email-kbingham@kernel.org>
+        Wed, 30 Aug 2017 03:14:24 -0400
+Date: Wed, 30 Aug 2017 09:14:19 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH RESEND] mmc: renesas_sdhi: Add r8a7743/5 support
+Message-ID: <20170830071419.GF10398@verge.net.au>
+References: <1504014726-17288-1-git-send-email-biju.das@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1504014726-17288-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+On Tue, Aug 29, 2017 at 02:52:06PM +0100, Biju Das wrote:
+> Add support for r8a7743/5 SoC.Renesas RZ/G1[ME] (R8A7743/5) SDHI
+> is identical to the R-Car Gen2 family.
+> 
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 
-The current implementation has to search the list of controls for the
-pixel rate control, each time it is set.  This can be optimised easily
-by storing the ctrl pointer in the CSI/TX object, and referencing that
-directly.
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
 
-While at it, fix up a missing blank line also highlighted in review
-comments.
-
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
-Small enhancement and fixup as suggested by Sakari, after driver acceptance.
-
-Niklas, with my current 8 Camera set up - I can't fully test this change.
-Could you give it a spin if you get chance please?
-
- drivers/media/i2c/adv748x/adv748x-afe.c  |  1 +
- drivers/media/i2c/adv748x/adv748x-csi2.c | 15 +++++++--------
- drivers/media/i2c/adv748x/adv748x.h      |  1 +
- 3 files changed, 9 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/media/i2c/adv748x/adv748x-afe.c b/drivers/media/i2c/adv748x/adv748x-afe.c
-index b33ccfc08708..134d981d69d3 100644
---- a/drivers/media/i2c/adv748x/adv748x-afe.c
-+++ b/drivers/media/i2c/adv748x/adv748x-afe.c
-@@ -262,6 +262,7 @@ static int adv748x_afe_g_input_status(struct v4l2_subdev *sd, u32 *status)
- 	ret = adv748x_afe_status(afe, status, NULL);
- 
- 	mutex_unlock(&state->mutex);
-+
- 	return ret;
- }
- 
-diff --git a/drivers/media/i2c/adv748x/adv748x-csi2.c b/drivers/media/i2c/adv748x/adv748x-csi2.c
-index b4fee7f52d6a..609d960c0749 100644
---- a/drivers/media/i2c/adv748x/adv748x-csi2.c
-+++ b/drivers/media/i2c/adv748x/adv748x-csi2.c
-@@ -223,13 +223,12 @@ static const struct v4l2_subdev_ops adv748x_csi2_ops = {
- 
- int adv748x_csi2_set_pixelrate(struct v4l2_subdev *sd, s64 rate)
- {
--	struct v4l2_ctrl *ctrl;
-+	struct adv748x_csi2 *tx = adv748x_sd_to_csi2(sd);
- 
--	ctrl = v4l2_ctrl_find(sd->ctrl_handler, V4L2_CID_PIXEL_RATE);
--	if (!ctrl)
-+	if (!tx->pixel_rate)
- 		return -EINVAL;
- 
--	return v4l2_ctrl_s_ctrl_int64(ctrl, rate);
-+	return v4l2_ctrl_s_ctrl_int64(tx->pixel_rate, rate);
- }
- 
- static int adv748x_csi2_s_ctrl(struct v4l2_ctrl *ctrl)
-@@ -248,12 +247,12 @@ static const struct v4l2_ctrl_ops adv748x_csi2_ctrl_ops = {
- 
- static int adv748x_csi2_init_controls(struct adv748x_csi2 *tx)
- {
--	struct v4l2_ctrl *ctrl;
--
- 	v4l2_ctrl_handler_init(&tx->ctrl_hdl, 1);
- 
--	ctrl = v4l2_ctrl_new_std(&tx->ctrl_hdl, &adv748x_csi2_ctrl_ops,
--				 V4L2_CID_PIXEL_RATE, 1, INT_MAX, 1, 1);
-+	tx->pixel_rate = v4l2_ctrl_new_std(&tx->ctrl_hdl,
-+					   &adv748x_csi2_ctrl_ops,
-+					   V4L2_CID_PIXEL_RATE, 1, INT_MAX,
-+					   1, 1);
- 
- 	tx->sd.ctrl_handler = &tx->ctrl_hdl;
- 	if (tx->ctrl_hdl.error) {
-diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
-index cc4151b5b31e..6789e2f3bc8c 100644
---- a/drivers/media/i2c/adv748x/adv748x.h
-+++ b/drivers/media/i2c/adv748x/adv748x.h
-@@ -97,6 +97,7 @@ struct adv748x_csi2 {
- 
- 	struct media_pad pads[ADV748X_CSI2_NR_PADS];
- 	struct v4l2_ctrl_handler ctrl_hdl;
-+	struct v4l2_ctrl *pixel_rate;
- 	struct v4l2_subdev sd;
- };
- 
--- 
-2.7.4
+> ---
+> DT binding patch for r8a7743/5 SoC is applied for mmc next. But the driver patch 
+> is still not applied for mmc next.So resending the driver patch.
+> 
+> This patch is compiled and tested against mmc/next.
+> 
+>  drivers/mmc/host/renesas_sdhi_sys_dmac.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+> index 160fbb2..df44654 100644
+> --- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+> +++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+> @@ -98,6 +98,8 @@
+>  	{ .compatible = "renesas,sdhi-r7s72100", .data = &of_rz_compatible, },
+>  	{ .compatible = "renesas,sdhi-r8a7778", .data = &of_rcar_gen1_compatible, },
+>  	{ .compatible = "renesas,sdhi-r8a7779", .data = &of_rcar_gen1_compatible, },
+> +	{ .compatible = "renesas,sdhi-r8a7743", .data = &of_rcar_gen2_compatible, },
+> +	{ .compatible = "renesas,sdhi-r8a7745", .data = &of_rcar_gen2_compatible, },
+>  	{ .compatible = "renesas,sdhi-r8a7790", .data = &of_rcar_gen2_compatible, },
+>  	{ .compatible = "renesas,sdhi-r8a7791", .data = &of_rcar_gen2_compatible, },
+>  	{ .compatible = "renesas,sdhi-r8a7792", .data = &of_rcar_gen2_compatible, },
+> -- 
+> 1.9.1
+> 
