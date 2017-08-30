@@ -1,45 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:47496 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755487AbdHYM4z (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:17184 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751399AbdH3M5g (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 25 Aug 2017 08:56:55 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms+renesas@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/2] ARM: shmobile: Document R-Car V3M SoC DT bindings
-Date: Fri, 25 Aug 2017 14:56:49 +0200
-Message-Id: <1503665810-13945-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1503665810-13945-1-git-send-email-geert+renesas@glider.be>
-References: <1503665810-13945-1-git-send-email-geert+renesas@glider.be>
+        Wed, 30 Aug 2017 08:57:36 -0400
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: jmondi <jacopo@jmondi.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+CC: "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Timur Tabi <timur@codeaurora.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Subject: RE: The RZ/A1 pin controller driver will be broken for 4.13
+Date: Wed, 30 Aug 2017 12:57:29 +0000
+Message-ID: <SG2PR06MB116525C9B2E8573DB427FA958A9C0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <SG2PR06MB1165ADDEBA8097EA034C27D28A9F0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <CAMuHMdVNNX7xHjmnrLndDpKb9OfxCCVHO7wLUEiFsExk578zsg@mail.gmail.com>
+ <20170830120141.GB1863@w540>
+In-Reply-To: <20170830120141.GB1863@w540>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index 275cda1469b8b95c..387cbd1a10375f2b 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -39,6 +39,8 @@ SoCs:
-     compatible = "renesas,r8a7795"
-   - R-Car M3-W (R8A77960)
-     compatible = "renesas,r8a7796"
-+  - R-Car V3M (R8A77970)
-+    compatible = "renesas,r8a77970"
-   - R-Car D3 (R8A77995)
-     compatible = "renesas,r8a77995"
- 
--- 
-2.7.4
+SGkgSmFjb3BvLA0KDQpUaGFuayB5b3UgZm9yIHRoZSBxdWljayBhbmFseXNpcy4NCg0KT24gV2Vk
+bmVzZGF5LCBBdWd1c3QgMzAsIDIwMTcsIGptb25kaSB3cm90ZToNCj4gQWZ0ZXIgc29tZSBpbnZl
+c3RpZ2F0aW9ucywgaXQgdHVybnMgb3V0IHNvbWUgcmVnaXN0ZXIgc2V0dGluZ3MNCj4gcGVyZm9y
+bWVkIGR1cmluZyBwaW5fcmVzZXQoKSBhcmUgaW52YWxpZCBhbmQgaGFuZyB0aGUgc3lzdGVtIEJV
+VCBvbmx5DQo+IHdoZW4gcGVyZm9ybWVkIG9uIFBvcnRfOS4NCj4gDQo+IFNwZWNpZmljYWxseSwg
+c2V0dGluZyBQTUMgYW5kIFBJUEMgcmVnaXN0ZXJzIHRvIDAgKGRlZmF1bHQgaW5pdGlhbCBzdGF0
+ZSkNCj4gb24gUG9ydF85LCBoYW5ncyB0aGUgc3lzdGVtLg0KPiANCj4gVGhlcmUgaXMgbm8gbWVu
+dGlvbiAobm9uZSB0aGF0IEkndmUgZm91bmQpIGluIHRoZSBwcm9jZXNzb3IgbWFudWFsIG9mDQo+
+IHNwZWNpZmljIHByb2NlZHVyZXMgdG8gYmUgcGVyZm9ybWVkIHdoZW4gcmVzZXR0aW5nIHRoYXQg
+cG9ydCB0byBpdHMNCj4gaW5pdGlhbCBzdGF0ZSwgc28gSSBndWVzcyB0aGlzIG1heSBlaXRoZXIg
+YmUgYW4gaW5kaWNhdGlvbiBvZg0KPiBzb21ldGhpbmcgZWxzZSBnb2luZyB3cm9uZyAobGlrZSB3
+cml0aW5nIHRvIHNvbWUgaW52YWxpZCBtZW1vcnkNCj4gYWRkcmVzcykgb3IgaXQncyBhbiBIVyBp
+c3N1ZSBub3QgeWV0IGRvY3VtZW50ZWQuDQo+IA0KPiBUaW11cidzIHBhdGNoIGRvZXMgdHJpZ2dl
+ciBhICJyZXNldCIgb24gYWxsIFBvcnRzIGR1cmluZyBncGlvY2hpcA0KPiByZWdpc3RyYXRpb24g
+LCB3aGlsZSBiZWZvcmUgdGhhdCBwYXRjaCBtYWRlIGludG8gLW5leHQgYnJhbmNoLCByZXNldA0K
+PiB3YXMgb25seSB0cmlnZ2VyZWQgd2hlbiBhY3R1YWxseSByZXF1ZXN0aW5nIGEgZ3BpbyBvciB3
+aGVuIHBlcmZvcm1pbmcNCj4gbXV4aW5nIG9uIGEgcGluLg0KPiANCj4gQXBwYXJlbnRseSwgd2Ug
+bmV2ZXIgbXVsdGlwbGV4ZWQgYW55IHBpbiBvbiBQb3J0Xzkgbm9yIHRlc3RlZCBncGlvDQo+IGZ1
+bmN0aW9uYWxpdGllcyBvbiB0aGF0IHBvcnQgYmVmb3JlLg0KDQpBY3R1YWxseSwgd2UgZGlkLiBU
+aGUgUVNQSSBGbGFzaCB3YXMgYWx3YXlzIG9uIHBvcnQgOSBhbmQgc2V0IHVwIGJ5IA0KdS1ib290
+LiBTaW5jZSBpdCdzIHNldCB1cCBpbiBYSVAtbW9kZSBhbmQgbGluZWFybHkgbWFwcGVkIHRvIGlu
+dGVybmFsIA0KYWRkcmVzcyBzcGFjZSwgdGhlIGtlcm5lbCBuZXZlciBuZWVkZWQgdG8ga25vdyBh
+Ym91dCBhbnkgcGlucyBvciBkcml2ZXIgZm9yIA0KaXQuDQoNClNvLCBpZiB5b3Ugc2V0IHRoZSBR
+U1BJIHBpbnMgYmFjayB0byBHUElPLCB5b3UgZGllIHByZXR0eSBxdWlja2x5IA0KKGVzcGVjaWFs
+bHkgd2l0aCBhbiBYSVAga2VybmVsKS4NCg0KPiBUaGlzOg0KPiANCj4gQEAgLTQ4Nyw4ICs0OTEs
+MTAgQEAgc3RhdGljIHZvaWQgcnphMV9waW5fcmVzZXQoc3RydWN0IHJ6YTFfcG9ydCAqcG9ydCwN
+Cj4gdW5zaWduZWQgaW50IHBpbikNCj4gICAgICAgICByemExX3NldF9iaXQocG9ydCwgUlpBMV9Q
+QkRDX1JFRywgcGluLCAwKTsNCj4gDQo+ICAgICAgICAgcnphMV9zZXRfYml0KHBvcnQsIFJaQTFf
+UE1fUkVHLCBwaW4sIDEpOw0KPiAtICAgICAgIHJ6YTFfc2V0X2JpdChwb3J0LCBSWkExX1BNQ19S
+RUcsIHBpbiwgMCk7DQo+IC0gICAgICAgcnphMV9zZXRfYml0KHBvcnQsIFJaQTFfUElQQ19SRUcs
+IHBpbiwgMCk7DQo+ICsgICAgICAgaWYgKHBvcnQtPmlkICE9IDkpIHsNCj4gKyAgICAgICAgICAg
+ICAgIHJ6YTFfc2V0X2JpdChwb3J0LCBSWkExX1BNQ19SRUcsIHBpbiwgMCk7DQo+ICsgICAgICAg
+ICAgICAgICByemExX3NldF9iaXQocG9ydCwgUlpBMV9QSVBDX1JFRywgcGluLCAwKTsNCj4gKyAg
+ICAgICB9DQo+ICAgICAgICAgc3Bpbl91bmxvY2tfaXJxcmVzdG9yZSgmcG9ydC0+bG9jaywgaXJx
+ZmxhZ3MpOw0KPiAgfQ0KPiANCj4gRml4ZXMgdGhlIGlzc3VlLCBidXQgSSdtIG5vdCB0aGF0IHNh
+dGlzZmllZCB3aXRoIHRoaXMgYXMgSSB3b3VsZCBsaWtlDQo+IHRvIGtub3cgaWYgdGhlIHNhbWUg
+aXNzdWUgaGFwcGVucyBvbiBvdGhlciBwcm9jZXNzb3JzIG9mIHRoZSBSWi9BMSBmYW1pbHkNCj4g
+b3RoZXIgdGhhbiBSWi9BMUggYmVmb3JlIHByb3Bvc2luZyB0aGlzIGFzIGEgcHJvcGVyIGZpeC4N
+Cj4gDQo+IENocmlzLCBkbyB5b3UgaGF2ZSBSWi9BMSogZGV2aWNlcyB3aGVyZSB0byB0ZXN0IHRo
+aXM/DQoNCg0KUlovQTFIIGFuZCBSWi9BMU0gYXJlIHRoZSBzYW1lIHBhcnQsIGp1c3Qgd2l0aCBk
+aWZmZXJlbnQgUkFNIHNpemVzLCBzbyANCm9ubHkgUlovQTFMIGlzIHRoZSBkaWZmZXJlbnQgb25l
+Lg0KDQpCdXQsIGlmIHlvdSByZW1lbWJlciwgSSBoYXZlIG5vdCBhZGRlZCB0aGUgbG9vay11cCB0
+YWJsZSBmb3IgdGhlIFJaL0ExTCANCmluIHRoZSBkcml2ZXIgeWV0Lg0KDQpGb3IgdGhlIFJaL0Ex
+TCwgUVNQSSBpcyBvbiBwb3J0IDQuDQoNCg0KSW4gZ2VuZXJhbCwgSSBkaXNhZ3JlZSB3aXRoIHRo
+ZSBrZXJuZWwgYmxpbmRseSByZXNldHRpbmcgcG9ydHMgdGhhdCBpdCANCmtub3dzIG5vdGhpbmcg
+YWJvdXQuIE1heWJlIHRoZXJlJ3MgYSByZWFzb24gaXQgZG9lc24ndCBrbm93IGFib3V0IHRoZW0u
+DQoNCldoYXQgYWJvdXQgdGhlIGV4dGVybmFsIG1lbW9yeSBjb25uZWN0aW9ucyB0aGF0IGlzIHNl
+dCB1cCBpbiB1LWJvb3Q/IElzIA0KaXQgZ29pbmcgdG8gcmVzZXQgdGhvc2UgcGlucyBhcyB3ZWxs
+Pw0KTWF5YmUgdGhhdCdzIHdoeSBteSBzeXN0ZW0gd2FzIGNyYXNoaW5nIG9uIHRoZSBpbml0IG9m
+IHBvcnQgMiAod2hlcmUgbXkgDQpTRFJBTSBjb25uZWN0aW9ucyBhcmUpIGJlY2F1c2UgSSB3YXMg
+cnVubmluZyBhbiBYSVBfS0VSTkVMICsgZXh0ZXJuYWwgDQpTRFJBTSwgc28gSSBuZXZlciBldmVu
+IG1hZGUgaXQgdG8gcG9ydCA5Lg0KDQoNCg0KQ2hyaXMNCg0K
