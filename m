@@ -1,50 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:40442 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752199AbdHNPNv (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:54571 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751321AbdH3II2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 Aug 2017 11:13:51 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: laurent.pinchart@ideasonboard.com,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v2 8/8] v4l: vsp1: Reduce display list body size
-Date: Mon, 14 Aug 2017 16:13:31 +0100
-Message-Id: <fa078611769415d7adbad208f1299d05bee3bda8.1502723341.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.4457988ad8b64b5c7636e35039ef61d507af3648.1502723341.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.4457988ad8b64b5c7636e35039ef61d507af3648.1502723341.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.4457988ad8b64b5c7636e35039ef61d507af3648.1502723341.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.4457988ad8b64b5c7636e35039ef61d507af3648.1502723341.git-series.kieran.bingham+renesas@ideasonboard.com>
+        Wed, 30 Aug 2017 04:08:28 -0400
+Date: Wed, 30 Aug 2017 10:08:24 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>, geert@glider.be,
+        linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        magnus.damm@gmail.com,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Subject: Re: [PATCH v2 7/8] arm64: dts: r8a7795-salvator-x: Enable PWM2
+Message-ID: <20170830080823.GP10398@verge.net.au>
+References: <1493303863-23719-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <1493303863-23719-8-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <5664970.rvzlHsyOZi@avalon>
+ <20170830080629.GO10398@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170830080629.GO10398@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The display list originally allocated a body of 256 entries to store all
-of the register lists required for each frame.
+On Wed, Aug 30, 2017 at 10:06:30AM +0200, Simon Horman wrote:
+> On Thu, Apr 27, 2017 at 05:40:51PM +0300, Laurent Pinchart wrote:
+> > Hi Ulrich,
+> > 
+> > Thank you for the patch.
+> > 
+> > On Thursday 27 Apr 2017 16:37:42 Ulrich Hecht wrote:
+> > > From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> > > 
+> > > This patch enables PWM2 for Salvator-X board on R8A7795 SoC.
+> > > 
+> > > Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> > > Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> > > ---
+> > >  arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 12 ++++++++++++
+> > >  1 file changed, 12 insertions(+)
+> > > 
+> > > diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+> > > b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts index 8558b27..534b17e
+> > > 100644
+> > > --- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+> > > +++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+> > > @@ -381,6 +381,11 @@
+> > >  		function = "pwm1";
+> > >  	};
+> > > 
+> > > +	pwm2_pins: pwm2 {
+> > > +		groups = "pwm2_a";
+> > > +		function = "pwm2";
+> > > +	};
+> > > +
+> > >  	sdhi0_pins: sd0 {
+> > >  		groups = "sdhi0_data4", "sdhi0_ctrl";
+> > >  		function = "sdhi0";
+> > > @@ -463,6 +468,13 @@
+> > >  	status = "okay";
+> > >  };
+> > > 
+> > > +&pwm2 {
+> > > +	/* PMIC DC/DC switching frequency synchronization */
+> > 
+> > Please pardon the stupid question, but if the PWM channel is used by the PMIC, 
+> > is there a point in enabling it without a PMIC DT node using it ?
+> 
+> Hi Ulrich,
+> 
+> I'm wondering if you have any plans to follow-up on this patch.
 
-This has now been separated into fragments for constant stream setup, and
-runtime updates.
-
-Empirical testing shows that the body0 now uses a maximum of 41
-registers for each frame, for both DRM and Video API pipelines thus a
-rounded 64 entries provides a suitable allocation.
-
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- drivers/media/platform/vsp1/vsp1_dl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
-index 176a258146ac..b3f5eb2f9a4f 100644
---- a/drivers/media/platform/vsp1/vsp1_dl.c
-+++ b/drivers/media/platform/vsp1/vsp1_dl.c
-@@ -21,7 +21,7 @@
- #include "vsp1.h"
- #include "vsp1_dl.h"
- 
--#define VSP1_DL_NUM_ENTRIES		256
-+#define VSP1_DL_NUM_ENTRIES		64
- 
- #define VSP1_DLH_INT_ENABLE		(1 << 1)
- #define VSP1_DLH_AUTO_START		(1 << 0)
--- 
-git-series 0.9.1
+And likewise
+"[v2,5/8] arm64: dts: r8a7796-salvator-x: Add PWM device support"
