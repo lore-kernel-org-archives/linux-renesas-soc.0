@@ -1,54 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f51.google.com ([74.125.83.51]:35296 "EHLO
-        mail-pg0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752109AbdHNKNH (ORCPT
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:37991 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750955AbdHaRzb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 Aug 2017 06:13:07 -0400
-Received: by mail-pg0-f51.google.com with SMTP id v189so44397516pgd.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Aug 2017 03:13:07 -0700 (PDT)
+        Thu, 31 Aug 2017 13:55:31 -0400
+Date: Thu, 31 Aug 2017 12:55:29 -0500
+From: Rob Herring <robh@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Wolfram Sang <wsa@the-dreams.de>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Haavard Skinnemoen <hskinnemoen@gmail.com>,
+        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH/RFC 1/3] dt-bindings: i2c: i2c-gpio: Add support for
+ named gpios
+Message-ID: <20170831175529.vuchpgvi2aigz2r5@rob-hp-laptop>
+References: <1503566474-5335-1-git-send-email-geert+renesas@glider.be>
+ <1503566474-5335-2-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-In-Reply-To: <20170730205651.6478-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170730205651.6478-1-niklas.soderlund+renesas@ragnatech.se>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 14 Aug 2017 12:13:06 +0200
-Message-ID: <CAMuHMdVshuf-DytMkP=kXGBey4tuESAt8-1hb63T1g1uJuB0Fg@mail.gmail.com>
-Subject: Re: [RFC 0/5] arm64: dts: renesas: add VIN, CSI-2 and ADV7482 nodes
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1503566474-5335-2-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Niklas,
+On Thu, Aug 24, 2017 at 11:21:12AM +0200, Geert Uytterhoeven wrote:
+> The current i2c-gpio DT bindings use a single unnamed "gpios" property
+> to refer to the SDA and SCL signal lines by index.  This is error-prone
+> for the casual DT writer and reviewer, as one has to look up the order
+> in the DT bindings.
+> 
+> Fix this by amending the DT bindings to use two separate named gpios
+> properties, and deprecate the old unnamed variant.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  Documentation/devicetree/bindings/i2c/i2c-gpio.txt | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/i2c/i2c-gpio.txt b/Documentation/devicetree/bindings/i2c/i2c-gpio.txt
+> index 4f8ec947c6bd9cad..61033f73577dd70e 100644
+> --- a/Documentation/devicetree/bindings/i2c/i2c-gpio.txt
+> +++ b/Documentation/devicetree/bindings/i2c/i2c-gpio.txt
+> @@ -2,8 +2,9 @@ Device-Tree bindings for i2c gpio driver
+>  
+>  Required properties:
+>  	- compatible = "i2c-gpio";
+> -	- gpios: sda and scl gpio
+> -
+> +	- sda-gpios: gpio used for the sda signal
+> +	- scl-gpios: gpio used for the scl signal
+> +	- gpios: sda and scl gpio, alternative for {sda,scl}-gpios (deprecated)
+>  
+>  Optional properties:
+>  	- i2c-gpio,sda-open-drain: sda as open drain
 
-On Sun, Jul 30, 2017 at 10:56 PM, Niklas S=C3=B6derlund
-<niklas.soderlund+renesas@ragnatech.se> wrote:
-> This is a RFC for how I imagine the final DT for the video capture nodes
-> will look. Since the DT file layout changed recently I wanted to post a
-> RFC before I include these in my for-renesas-drivers branch.
->
-> These are not intended for Simons tree, the DT bindings are not accepted
-> upstream. checkpatch will warn about missing compat strings if not run
-> ontop a tree which contains the driver patches for Gen3 VIN, CSI-2 and
-> ADV7482.
->
-> Please review and give some feedback if you don't think this should be
-> included in renesas-drivers :-)
+Well, if we're going to change things, we should drop these open-drain 
+properties. We have open-drain flags in gpio cells, so we don't need 
+these I think.
 
-Preliminary general comment: "resets" properties are missing.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Rob
