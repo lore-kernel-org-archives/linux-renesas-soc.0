@@ -1,66 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38384 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:42894 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752460AbdHDNSU (ORCPT
+        with ESMTP id S1750772AbdHaIeZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 Aug 2017 09:18:20 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-pm@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] cpufreq: rcar: Add support for R8A7795 SoC
-Date: Fri,  4 Aug 2017 15:18:00 +0200
-Message-Id: <1501852680-21127-1-git-send-email-horms+renesas@verge.net.au>
+        Thu, 31 Aug 2017 04:34:25 -0400
+Date: Thu, 31 Aug 2017 10:34:19 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: display: renesas: dw-hdmi: Drop bogus node
+ name suffix
+Message-ID: <20170831083418.GC29946@verge.net.au>
+References: <1504086781-4974-1-git-send-email-geert+renesas@glider.be>
+ <5881756.p5TDNJ9VNb@avalon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5881756.p5TDNJ9VNb@avalon>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
+On Wed, Aug 30, 2017 at 01:05:43PM +0300, Laurent Pinchart wrote:
+> Hi Geert,
+> 
+> Thank you for the patch.
+> 
+> On Wednesday, 30 August 2017 12:53:01 EEST Geert Uytterhoeven wrote:
+> > Node names should not use numerical suffixes if the nodes can be
+> > distinguished by unit-address.
+> > 
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-After the commit "a399dc9fc50 cpufreq: shmobile: Use generic platdev
-driver", will use cpufreq-dt-platdev driver to enable cpufreq-dt support.
-Hence, follow the implementation to support new R8A7795 SoC.
-
-Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- drivers/cpufreq/cpufreq-dt-platdev.c | 1 +
- 1 file changed, 1 insertion(+)
-
-This is identical to a patch posted by Khiem last year.
-At the time it was asked if using opp-v2 was the preferred approach.
-
-https://patchwork.kernel.org/patch/9054011/
-
-An inspection of the current upstream kernel code seems to indicate
-that adding a binding as this patch does is compatibile with using opp-v2
-and I plan to post DTS patches separately which make use of the opp-v2
-bindings - they depend on this driver change to work.
-
-I have provided an integration patch with this patch, those DTS changes,
-and Renesas clock updates also depended on by the DTS changes. The result
-is working CPUFreq for the r8a7795 (R-Car H3) ES1.0.
-
-If this work is acceptable I plan to follow up with patches to
-enable CPUFreq on the r8a7796 (R-Car M3-W).
-
-https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/r8a7795-cpufreq
-
-A description of steps taken to lightly exercise the above can be found here:
-
-http://elinux.org/Tests:R-CAR-GEN3-CPUFreq
-
-diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
-index 096aea7fcb67..13b72f3c420b 100644
---- a/drivers/cpufreq/cpufreq-dt-platdev.c
-+++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-@@ -67,6 +67,7 @@ static const struct of_device_id machines[] __initconst = {
- 	{ .compatible = "renesas,r8a7792", },
- 	{ .compatible = "renesas,r8a7793", },
- 	{ .compatible = "renesas,r8a7794", },
-+	{ .compatible = "renesas,r8a7795", },
- 	{ .compatible = "renesas,sh73a0", },
- 
- 	{ .compatible = "rockchip,rk2928", },
--- 
-2.1.4
+Thanks, applied.
