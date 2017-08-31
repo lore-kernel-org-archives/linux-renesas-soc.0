@@ -4,11 +4,11 @@ From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To: kishon@ti.com
 Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 1/4] phy: rcar-gen3-usb2: check dr_mode for otg mode
-Date: Thu, 31 Aug 2017 17:32:44 +0900
-Message-Id: <1504168367-29464-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1504168367-29464-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1504168367-29464-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 1/4] phy: rcar-gen3-usb2: check dr_mode for otg mode
+Date: Thu, 31 Aug 2017 16:31:09 +0900
+Message-Id: <1504164672-20677-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1504164672-20677-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1504164672-20677-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
