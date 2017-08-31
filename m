@@ -1,86 +1,84 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:61766 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753193AbdHNMEj (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:48550 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751285AbdHaOEx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 Aug 2017 08:04:39 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
+        Thu, 31 Aug 2017 10:04:53 -0400
+Date: Thu, 31 Aug 2017 16:04:47 +0200
+From: Simon Horman <horms@verge.net.au>
+To: ltsi-dev@lists.linuxfoundation.org
+Cc: Hisao Munakata <hisao.munakata.vt@renesas.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH  1/3] ARM: dts: r8a7743: Add SDHI controllers
-Date: Mon, 14 Aug 2017 12:49:47 +0100
-Message-Id: <1502711389-16040-2-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1502711389-16040-1-git-send-email-biju.das@bp.renesas.com>
-References: <1502711389-16040-1-git-send-email-biju.das@bp.renesas.com>
+        linux-renesas-soc@vger.kernel.org
+Subject: [GIT PULL LTSI-4.9] Third Round of Renesas SoCs and Drivers to v4.12
+Message-ID: <20170831140447.GA24787@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the SDHI controllers to the r8a7743 device tree.
+Hi,
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
----
- arch/arm/boot/dts/r8a7743.dtsi | 42 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+This is a submission to LTSI-v4.9.
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index ce80a26..3bd3ab5 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -754,6 +754,48 @@
- 			max-frequency = <97500000>;
- 			status = "disabled";
- 		};
-+
-+		sdhi0: sd@ee100000 {
-+			compatible = "renesas,sdhi-r8a7743";
-+			reg = <0 0xee100000 0 0x328>;
-+			interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 314>;
-+			dmas = <&dmac0 0xcd>, <&dmac0 0xce>,
-+			       <&dmac1 0xcd>, <&dmac1 0xce>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			max-frequency = <195000000>;
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 314>;
-+			status = "disabled";
-+		};
-+
-+		sdhi1: sd@ee140000 {
-+			compatible = "renesas,sdhi-r8a7743";
-+			reg = <0 0xee140000 0 0x100>;
-+			interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 312>;
-+			dmas = <&dmac0 0xc1>, <&dmac0 0xc2>,
-+			       <&dmac1 0xc1>, <&dmac1 0xc2>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			max-frequency = <97500000>;
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 312>;
-+			status = "disabled";
-+		};
-+
-+		sdhi2: sd@ee160000 {
-+			compatible = "renesas,sdhi-r8a7743";
-+			reg = <0 0xee160000 0 0x100>;
-+			interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 311>;
-+			dmas = <&dmac0 0xd3>, <&dmac0 0xd4>,
-+			       <&dmac1 0xd3>, <&dmac1 0xd4>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			max-frequency = <97500000>;
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 311>;
-+			status = "disabled";
-+		};
- 	};
- 
- 	/* External root clock */
--- 
-1.9.1
+This series is comprised of a limited backport to v4.9 of usb core,
+ohci-platform, ehci-platform and cs2000.
+
+These were have been suggested after examination and testing of
+LTSI-4.9 RC1.
+
+There are 5 patches.
+
+This is based on a merge of:
+* Earlier work posted as
+  "[GIT PULL LTSI-4.9] Second Round Renesas SoCs and Drivers to v4.12"
+  and is tagged as tags/backport/v4.9.45/snapshot2-to-v4.12-flattened
+* v4.9.46
+
+It appears to apply cleanly to an ltsi-4.9 tree generated using
+scripts/generate_git
+
+
+The following changes since commit 06ce9c3fa43d22ed328b979562b16216053d031d:
+
+  Merge tag 'v4.9.46' into backport/v4.9.46/snapshot-flattened (2017-08-31 12:31:10 +0200)
+
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas-backport.git tags/backport/v4.9.46/snapshot3-to-v4.12-flattened
+
+for you to fetch changes up to ea34fab45250defe5605f8ebf4d80872e6022925:
+
+  clk: cs2000: add Suspend/Resume feature (2017-08-31 12:32:25 +0200)
+
+----------------------------------------------------------------
+Third Round of LTSI-v4.9 Preparation for Renesas SoCs to v4.12
+
+Base:
+* v4.9.46
+* Second round of such backports
+
+Components selectively backported in this snapshot:
+* usb core
+* ohci-platform
+* ehci-platform
+* cs2000
+
+----------------------------------------------------------------
+Khiem Nguyen (1):
+      clk: cs2000: add Suspend/Resume feature
+
+Yoshihiro Shimoda (4):
+      usb: of: add functions to bind a companion controller
+      usb: host: ehci-platform: fix usb 1.1 device is not connected in system resume
+      usb: host: ehci-platform: set hcd->phy to avoid phy_get() in usb_add_hcd()
+      usb: host: ohci-platform: set hcd->phy to avoid phy_get() in usb_add_hcd()
+
+ Documentation/devicetree/bindings/usb/generic.txt |  1 +
+ drivers/clk/clk-cs2000-cp.c                       | 22 ++++++++++++++++++++++
+ drivers/usb/core/of.c                             | 23 +++++++++++++++++++++++
+ drivers/usb/host/ehci-platform.c                  | 10 ++++++++++
+ drivers/usb/host/ohci-platform.c                  |  3 +++
+ include/linux/usb/of.h                            |  5 +++++
+ 6 files changed, 64 insertions(+)
