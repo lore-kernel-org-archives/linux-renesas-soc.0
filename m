@@ -1,152 +1,80 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f179.google.com ([209.85.128.179]:33046 "EHLO
-        mail-wr0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752834AbdHEUxt (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:33227 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750826AbdHaE3h (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 5 Aug 2017 16:53:49 -0400
-Received: by mail-wr0-f179.google.com with SMTP id v105so27165090wrb.0
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 05 Aug 2017 13:53:49 -0700 (PDT)
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-To: linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux@armlinux.org.uk,
-        linux-omap@vger.kernel.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, krzk@kernel.org,
-        jason@lakedaemon.net, arm@kernel.org, andrew@lunn.ch,
-        gregory.clement@free-electrons.com,
-        sebastian.hesselbarth@gmail.com, tony@atomide.com,
-        baohua@kernel.org, horms@verge.net.au, magnus.damm@gmail.com,
-        vireshk@kernel.org, shiraz.linux.kernel@gmail.com,
-        patrice.chotard@st.com, nico@linaro.org, dave.martin@arm.com,
-        marc.zyngier@arm.com
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH 12/15] arm-soc: omap: replace open coded VA->PA calculations
-Date: Sat,  5 Aug 2017 21:52:19 +0100
-Message-Id: <20170805205222.19868-13-ard.biesheuvel@linaro.org>
-In-Reply-To: <20170805205222.19868-1-ard.biesheuvel@linaro.org>
-References: <20170805205222.19868-1-ard.biesheuvel@linaro.org>
+        Thu, 31 Aug 2017 00:29:37 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        TAKESHI KIHARA <takeshi.kihara.df@renesas.com>
+CC: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: RE: [PATCH 5/8] pinctrl: sh-pfc: r8a77995: Add EthernetAVB pins,
+ groups and functions
+Date: Thu, 31 Aug 2017 04:29:32 +0000
+Message-ID: <TY1PR06MB0992331C7DF35D5054B7BEF6D89D0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+References: <1502281187-24068-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1502281187-24068-6-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <CAMuHMdWQD9Gnt0hCHf8nwdq0etWQW=zSuXqFe7qrxmQ7SAEVjw@mail.gmail.com>
+ <TY1PR06MB099216F35EEA6909DFE6AC80D89C0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+In-Reply-To: <TY1PR06MB099216F35EEA6909DFE6AC80D89C0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This replaces a couple of open coded calculations to obtain the
-physical address of a far symbol with calls to the new adr_l etc
-macros.
-
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
----
- arch/arm/mach-omap2/sleep34xx.S | 21 ++++----------------
- arch/arm/mach-omap2/sleep44xx.S | 12 ++---------
- 2 files changed, 6 insertions(+), 27 deletions(-)
-
-diff --git a/arch/arm/mach-omap2/sleep34xx.S b/arch/arm/mach-omap2/sleep34xx.S
-index 1b9f0520dea9..418a4478622d 100644
---- a/arch/arm/mach-omap2/sleep34xx.S
-+++ b/arch/arm/mach-omap2/sleep34xx.S
-@@ -86,9 +86,7 @@ ENTRY(enable_omap3630_toggle_l2_on_restore)
- 	stmfd	sp!, {lr}	@ save registers on stack
- 	/* Setup so that we will disable and enable l2 */
- 	mov	r1, #0x1
--	adrl	r3, l2dis_3630_offset	@ may be too distant for plain adr
--	ldr	r2, [r3]		@ value for offset
--	str	r1, [r2, r3]		@ write to l2dis_3630
-+	str_l	r1, l2dis_3630, r2	@ write to l2dis_3630
- 	ldmfd	sp!, {pc}	@ restore regs and return
- ENDPROC(enable_omap3630_toggle_l2_on_restore)
- 
-@@ -422,9 +420,7 @@ ENTRY(omap3_restore)
- 	cmp	r2, #0x0	@ Check if target power state was OFF or RET
- 	bne	logic_l1_restore
- 
--	adr	r1, l2dis_3630_offset	@ address for offset
--	ldr	r0, [r1]		@ value for offset
--	ldr	r0, [r1, r0]		@ value at l2dis_3630
-+	ldr_l	r0, l2dis_3630	@ value at l2dis_3630
- 	cmp	r0, #0x1	@ should we disable L2 on 3630?
- 	bne	skipl2dis
- 	mrc	p15, 0, r0, c1, c0, 1
-@@ -436,9 +432,7 @@ skipl2dis:
- 	and	r1, #0x700
- 	cmp	r1, #0x300
- 	beq	l2_inv_gp
--	adr	r0, l2_inv_api_params_offset
--	ldr	r3, [r0]
--	add	r3, r3, r0		@ r3 points to dummy parameters
-+	adr_l	r3, l2_inv_api_params	@ r3 points to dummy parameters
- 	mov	r0, #40			@ set service ID for PPA
- 	mov	r12, r0			@ copy secure Service ID in r12
- 	mov	r1, #0			@ set task id for ROM code in r1
-@@ -476,9 +470,6 @@ skipl2dis:
- #endif
- 	b	logic_l1_restore
- 
--	.align
--l2_inv_api_params_offset:
--	.long	l2_inv_api_params - .
- l2_inv_gp:
- 	/* Execute smi to invalidate L2 cache */
- 	mov r12, #0x1			@ set up to invalidate L2
-@@ -495,9 +486,7 @@ l2_inv_gp:
- 	mov	r12, #0x2
- 	smc	#0			@ Call SMI monitor (smieq)
- logic_l1_restore:
--	adr	r0, l2dis_3630_offset	@ adress for offset
--	ldr	r1, [r0]		@ value for offset
--	ldr	r1, [r0, r1]		@ value at l2dis_3630
-+	ldr_l	r1, l2dis_3630		@ value at l2dis_3630
- 	cmp	r1, #0x1		@ Test if L2 re-enable needed on 3630
- 	bne	skipl2reen
- 	mrc	p15, 0, r1, c1, c0, 1
-@@ -526,8 +515,6 @@ control_stat:
- 	.word	CONTROL_STAT
- control_mem_rta:
- 	.word	CONTROL_MEM_RTA_CTRL
--l2dis_3630_offset:
--	.long	l2dis_3630 - .
- 
- 	.data
- l2dis_3630:
-diff --git a/arch/arm/mach-omap2/sleep44xx.S b/arch/arm/mach-omap2/sleep44xx.S
-index c7a3b4aab4b5..274fbb91f08f 100644
---- a/arch/arm/mach-omap2/sleep44xx.S
-+++ b/arch/arm/mach-omap2/sleep44xx.S
-@@ -260,9 +260,7 @@ ENTRY(omap4_cpu_resume)
- 	beq	skip_ns_smp_enable
- ppa_actrl_retry:
- 	mov     r0, #OMAP4_PPA_CPU_ACTRL_SMP_INDEX
--	adr	r1, ppa_zero_params_offset
--	ldr	r3, [r1]
--	add	r3, r3, r1			@ Pointer to ppa_zero_params
-+	adr_l	r3, ppa_zero_params		@ Pointer to ppa_zero_params
- 	mov	r1, #0x0			@ Process ID
- 	mov	r2, #0x4			@ Flag
- 	mov	r6, #0xff
-@@ -299,9 +297,7 @@ skip_ns_smp_enable:
- 	ldr     r0, =OMAP4_PPA_L2_POR_INDEX
- 	ldr     r1, =OMAP44XX_SAR_RAM_BASE
- 	ldr     r4, [r1, #L2X0_PREFETCH_CTRL_OFFSET]
--	adr     r1, ppa_por_params_offset
--	ldr	r3, [r1]
--	add	r3, r3, r1			@ Pointer to ppa_por_params
-+	adr_l	r3, ppa_por_params		@ Pointer to ppa_por_params
- 	str     r4, [r3, #0x04]
- 	mov	r1, #0x0			@ Process ID
- 	mov	r2, #0x4			@ Flag
-@@ -326,8 +322,6 @@ skip_l2en:
- #endif
- 
- 	b	cpu_resume			@ Jump to generic resume
--ppa_por_params_offset:
--	.long	ppa_por_params - .
- ENDPROC(omap4_cpu_resume)
- #endif	/* CONFIG_ARCH_OMAP4 */
- 
-@@ -380,8 +374,6 @@ ENTRY(omap_do_wfi)
- 	nop
- 
- 	ldmfd	sp!, {pc}
--ppa_zero_params_offset:
--	.long	ppa_zero_params - .
- ENDPROC(omap_do_wfi)
- 
- 	.data
--- 
-2.11.0
+SGkgR2VlcnQtc2FuLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IFlv
+c2hpaGlybyBTaGltb2RhDQo+IFNlbnQ6IFdlZG5lc2RheSwgQXVndXN0IDMwLCAyMDE3IDEwOjE0
+IFBNDQo+IA0KPiBIaSBHZWVydC1zYW4sDQo+IA0KPiBTb3JyeSwgSSBhbHNvIG1pc3NlZCB0aGlz
+IGVtYWlsLi4uDQo+IA0KPiA+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+ID4gRnJvbTog
+R2VlcnQgVXl0dGVyaG9ldmVuDQo+ID4gU2VudDogV2VkbmVzZGF5LCBBdWd1c3QgMTYsIDIwMTcg
+ODowNiBQTQ0KPiA+DQo+ID4gSGkgU2hpbW9kYS1zYW4sIEtpaGFyYS1zYW4sDQo+ID4NCj4gPiBP
+biBXZWQsIEF1ZyA5LCAyMDE3IGF0IDI6MTkgUE0sIFlvc2hpaGlybyBTaGltb2RhDQo+ID4gPHlv
+c2hpaGlyby5zaGltb2RhLnVoQHJlbmVzYXMuY29tPiB3cm90ZToNCj4gPiA+IEZyb206IFRha2Vz
+aGkgS2loYXJhIDx0YWtlc2hpLmtpaGFyYS5kZkByZW5lc2FzLmNvbT4NCj4gPiA+DQo+ID4gPiBT
+aWduZWQtb2ZmLWJ5OiBUYWtlc2hpIEtpaGFyYSA8dGFrZXNoaS5raWhhcmEuZGZAcmVuZXNhcy5j
+b20+DQo+ID4gPiBTaWduZWQtb2ZmLWJ5OiBZb3NoaWhpcm8gU2hpbW9kYSA8eW9zaGloaXJvLnNo
+aW1vZGEudWhAcmVuZXNhcy5jb20+DQo+ID4NCj4gPiBSZXZpZXdlZC1ieTogR2VlcnQgVXl0dGVy
+aG9ldmVuIDxnZWVydCtyZW5lc2FzQGdsaWRlci5iZT4NCj4gPg0KPiA+IEJ1dCBiZWZvcmUgSSBh
+cHBseSB0aGlzLCBwbGVhc2Ugc2VlIG15IHF1ZXN0aW9uIGJlbG93Li4uDQo+ID4NCj4gPiA+IC0t
+LSBhL2RyaXZlcnMvcGluY3RybC9zaC1wZmMvcGZjLXI4YTc3OTk1LmMNCj4gPiA+ICsrKyBiL2Ry
+aXZlcnMvcGluY3RybC9zaC1wZmMvcGZjLXI4YTc3OTk1LmMNCj4gPg0KPiA+ID4gK3N0YXRpYyBj
+b25zdCBjaGFyICogY29uc3QgYXZiMF9ncm91cHNbXSA9IHsNCj4gPiA+ICsgICAgICAgImF2YjBf
+dGQiLA0KPiA+ID4gKyAgICAgICAiYXZiMF9yZCIsDQo+ID4gPiArICAgICAgICJhdmIwX3R4X2N0
+bCIsDQo+ID4gPiArICAgICAgICJhdmIwX3J4X2N0bCIsDQo+ID4gPiArICAgICAgICJhdmIwX3R4
+YyIsDQo+ID4gPiArICAgICAgICJhdmIwX3J4YyIsDQo+ID4gPiArICAgICAgICJhdmIwX3R4Y3Jl
+ZmNsayIsDQo+ID4gPiArICAgICAgICJhdmIwX2xpbmsiLA0KPiA+ID4gKyAgICAgICAiYXZiMF9t
+YWdpYyIsDQo+ID4gPiArICAgICAgICJhdmIwX3BoeV9pbnQiLA0KPiA+ID4gKyAgICAgICAiYXZi
+MF9tZGMiLA0KPiA+ID4gKyAgICAgICAiYXZiMF9tZGlvIiwNCj4gPiA+ICsgICAgICAgImF2YjBf
+YXZ0cF9wcHNfYSIsDQo+ID4gPiArICAgICAgICJhdmIwX2F2dHBfbWF0Y2hfYSIsDQo+ID4gPiAr
+ICAgICAgICJhdmIwX2F2dHBfY2FwdHVyZV9hIiwNCj4gPiA+ICsgICAgICAgImF2YjBfYXZ0cF9w
+cHNfYiIsDQo+ID4gPiArICAgICAgICJhdmIwX2F2dHBfbWF0Y2hfYiIsDQo+ID4gPiArICAgICAg
+ICJhdmIwX2F2dHBfY2FwdHVyZV9iIiwNCj4gPiA+ICt9Ow0KPiA+DQo+ID4gSXMgdGhlcmUgYW55
+IHNwZWNpZmljIHJlYXNvbiB0aGlzIHVzZXMgYSBkaWZmZXJlbnQgc3BsaXQgdGhhbiB0aGUNCj4g
+PiBFdGhlckFWQiBncm91cHMNCj4gPiBpbiBwaW5jdHJsIGRyaXZlcnMgZm9yIG90aGVyIFNvQ3M/
+DQo+IA0KPiBJIHdpbGwgY2hlY2sgdGhpcyB0b21vcnJvdyAob3IgbGF0ZXIuLi4pLg0KDQpJIGFz
+a2VkIEtpaGFyYS1zYW4gYWJvdXQgdGhpcyBhbmQgaGUgZG9lc24ndCBrbm93IG90aGVyIFNvQyAo
+cjhhNzc5NSkgaGFzIG1paSBncm91cC4NClNvLCBJIHdpbGwgbW9kaWZ5IHRoZSBwYXRjaCBsaWtl
+IHI4YTc3OTUncyBncm91cC4NCg0KQnV0Li4uDQoNCj4gPiBOb3RlIHRoYXQgSSBkbyB1bmRlcnN0
+YW5kIHRoYXQgdGhlIGRpZmZlcmVudCBwcmVmaXggKCJhdmIwIiB2cy4gImF2YiIpDQo+ID4gd2Fz
+IHVzZWQgdG8NCj4gPiBtYXRjaCB0aGUgUi1DYXIgRDMgZGF0YXNoZWV0LCB3aGljaCBpcyB0aHVz
+IE9LLg0KDQpJIGNoZWNrZWQgdGhpcyBvbiB0aGUgZGF0YXNoZWV0LCBidXQgaXQgc2VlbXMgZXJy
+b3IgaW4gaXQuDQpQRkMgc2VjdGlvbiBuYW1lcyAiQVZCMCIsIGJ1dCBFdGhlcm5ldCBBVkIgc2Vj
+dGlvbiBuYW1lcyAiQVZCIi4NClNvLCBJJ20gYXNraW5nIGh3IHRlYW0gYWJvdXQgdGhpcy4gQWZ0
+ZXIgSSBnb3QgcmVwbHkgZnJvbSB0aGVtLA0KSSB3aWxsIHNlbmQgdjIgcGF0Y2guDQoNCkJlc3Qg
+cmVnYXJkcywNCllvc2hpaGlybyBTaGltb2RhDQoNCj4gPiBUaGFua3MhDQo+ID4NCj4gPiBHcntv
+ZXRqZSxlZXRpbmd9cywNCj4gPg0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAgIEdlZXJ0DQo+
+ID4NCj4gPiAtLQ0KPiA+IEdlZXJ0IFV5dHRlcmhvZXZlbiAtLSBUaGVyZSdzIGxvdHMgb2YgTGlu
+dXggYmV5b25kIGlhMzIgLS0gZ2VlcnRAbGludXgtbTY4ay5vcmcNCj4gPg0KPiA+IEluIHBlcnNv
+bmFsIGNvbnZlcnNhdGlvbnMgd2l0aCB0ZWNobmljYWwgcGVvcGxlLCBJIGNhbGwgbXlzZWxmIGEg
+aGFja2VyLiBCdXQNCj4gPiB3aGVuIEknbSB0YWxraW5nIHRvIGpvdXJuYWxpc3RzIEkganVzdCBz
+YXkgInByb2dyYW1tZXIiIG9yIHNvbWV0aGluZyBsaWtlIHRoYXQuDQo+ID4gICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAtLSBMaW51cyBUb3J2YWxkcw0K
