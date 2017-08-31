@@ -1,102 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:36494 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750922AbdHaI1C (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:65179 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751440AbdHaIP5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 31 Aug 2017 04:27:02 -0400
-MIME-Version: 1.0
-In-Reply-To: <TY1PR06MB0992F3C5BB9FB2808980FEB1D89D0@TY1PR06MB0992.apcprd06.prod.outlook.com>
-References: <1504164672-20677-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1504164672-20677-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <CAMuHMdWm2Ej6gV0QSBUrh1u9YY5KkE-iSWKVc7KGDZEEKmu3oA@mail.gmail.com> <TY1PR06MB0992F3C5BB9FB2808980FEB1D89D0@TY1PR06MB0992.apcprd06.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 31 Aug 2017 10:27:01 +0200
-Message-ID: <CAMuHMdWwqnR0hFhkD8=LdV2RyRm+-S8AU3jBbgJGHfFb+s2pzg@mail.gmail.com>
-Subject: Re: [PATCH 3/4] phy: rcar-gen3-usb2: add SoC-specific parameter for
- dedicated pins
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>,
+        Thu, 31 Aug 2017 04:15:57 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Kishon Vijay Abraham I <kishon@ti.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: RE: [PATCH 3/4] phy: rcar-gen3-usb2: add SoC-specific parameter for
+ dedicated pins
+Date: Thu, 31 Aug 2017 08:15:52 +0000
+Message-ID: <TY1PR06MB0992F3C5BB9FB2808980FEB1D89D0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+References: <1504164672-20677-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1504164672-20677-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <CAMuHMdWm2Ej6gV0QSBUrh1u9YY5KkE-iSWKVc7KGDZEEKmu3oA@mail.gmail.com>
+In-Reply-To: <CAMuHMdWm2Ej6gV0QSBUrh1u9YY5KkE-iSWKVc7KGDZEEKmu3oA@mail.gmail.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Shimoda-san,
-
-On Thu, Aug 31, 2017 at 10:15 AM, Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
->> From: Geert Uytterhoeven
->> Sent: Thursday, August 31, 2017 4:51 PM
->> On Thu, Aug 31, 2017 at 9:31 AM, Yoshihiro Shimoda
->> <yoshihiro.shimoda.uh@renesas.com> wrote:
->> > This patch adds SoC-specific parameter to avoid reading/writing
->> > specific registers wronly if this driver runs on a SoC which doesn't
->> > have dedicated pins (e.g. R-Car D3).
->> >
->> > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
->> > ---
->> >  drivers/phy/renesas/phy-rcar-gen3-usb2.c | 25 ++++++++++++++++++++-----
->> >  1 file changed, 20 insertions(+), 5 deletions(-)
->> >
->> > diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
->> > index 4ea9902..28ebc98 100644
->> > --- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
->> > +++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
->>
->> > @@ -400,9 +403,18 @@ static irqreturn_t rcar_gen3_phy_usb2_irq(int irq, void *_ch)
->> >  }
->> >
->> >  static const struct of_device_id rcar_gen3_phy_usb2_match_table[] = {
->> > -       { .compatible = "renesas,usb2-phy-r8a7795" },
->> > -       { .compatible = "renesas,usb2-phy-r8a7796" },
->> > -       { .compatible = "renesas,rcar-gen3-usb2-phy" },
->> > +       {
->> > +               .compatible = "renesas,usb2-phy-r8a7795",
->> > +               .data = (void *)RCAR_GEN3_PHY_HAS_DEDICATED_PINS,
->> > +       },
->> > +       {
->> > +               .compatible = "renesas,usb2-phy-r8a7796",
->> > +               .data = (void *)RCAR_GEN3_PHY_HAS_DEDICATED_PINS,
->> > +       },
->> > +       {
->> > +               .compatible = "renesas,rcar-gen3-usb2-phy",
->> > +               .data = (void *)RCAR_GEN3_PHY_HAS_DEDICATED_PINS,
->> > +       },
->> >         { }
->> >  };
->>
->> Given the generic R-Car Gen3 entry sets RCAR_GEN3_PHY_HAS_DEDICATED_PINS, you
->> cannot specify the fallback compatible value of "renesas,rcar-gen3-usb2-phy"
->> in the R-Car D3 .dtsi.
->
-> I understood it.
->
->> So I'm wondering, does the USB2 PHY still work (with limitations) on R-Car H3
->> and M3-W if you drop RCAR_GEN3_PHY_HAS_DEDICATED_PINS?
->
-> Yes, the USB PHY still work with limitation (otg capability channel works as
-> peripheral mode only. Other channels are no limitation).
-
-That's good to hear.
-
->> If yes, you can drop the flag from the generic entry, and R-Car D3 can specify
->> the generic fallback compatible value in its .dtsi, like H3 and M3-W.
->
-> I got it. I will fix this patch set.
-
-And you can drop the driver change from "[PATCH 4/4] phy: rcar-gen3-usb2: add
-binding for r8a77995", as it will match against the generic fallback on D3.
-
-Thanks.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+SGkgR2VlcnQtc2FuLA0KDQpUaGFuayB5b3UgZm9yIHRoZSBjb21tZW50cyENCg0KPiBGcm9tOiBH
+ZWVydCBVeXR0ZXJob2V2ZW4NCj4gU2VudDogVGh1cnNkYXksIEF1Z3VzdCAzMSwgMjAxNyA0OjUx
+IFBNDQo+IA0KPiBIaSBTaGltb2RhLXNhbiwNCj4gDQo+IE9uIFRodSwgQXVnIDMxLCAyMDE3IGF0
+IDk6MzEgQU0sIFlvc2hpaGlybyBTaGltb2RhDQo+IDx5b3NoaWhpcm8uc2hpbW9kYS51aEByZW5l
+c2FzLmNvbT4gd3JvdGU6DQo+ID4gVGhpcyBwYXRjaCBhZGRzIFNvQy1zcGVjaWZpYyBwYXJhbWV0
+ZXIgdG8gYXZvaWQgcmVhZGluZy93cml0aW5nDQo+ID4gc3BlY2lmaWMgcmVnaXN0ZXJzIHdyb25s
+eSBpZiB0aGlzIGRyaXZlciBydW5zIG9uIGEgU29DIHdoaWNoIGRvZXNuJ3QNCj4gPiBoYXZlIGRl
+ZGljYXRlZCBwaW5zIChlLmcuIFItQ2FyIEQzKS4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFlv
+c2hpaGlybyBTaGltb2RhIDx5b3NoaWhpcm8uc2hpbW9kYS51aEByZW5lc2FzLmNvbT4NCj4gPiAt
+LS0NCj4gPiAgZHJpdmVycy9waHkvcmVuZXNhcy9waHktcmNhci1nZW4zLXVzYjIuYyB8IDI1ICsr
+KysrKysrKysrKysrKysrKysrLS0tLS0NCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDIwIGluc2VydGlv
+bnMoKyksIDUgZGVsZXRpb25zKC0pDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9waHkv
+cmVuZXNhcy9waHktcmNhci1nZW4zLXVzYjIuYyBiL2RyaXZlcnMvcGh5L3JlbmVzYXMvcGh5LXJj
+YXItZ2VuMy11c2IyLmMNCj4gPiBpbmRleCA0ZWE5OTAyLi4yOGViYzk4IDEwMDY0NA0KPiA+IC0t
+LSBhL2RyaXZlcnMvcGh5L3JlbmVzYXMvcGh5LXJjYXItZ2VuMy11c2IyLmMNCj4gPiArKysgYi9k
+cml2ZXJzL3BoeS9yZW5lc2FzL3BoeS1yY2FyLWdlbjMtdXNiMi5jDQo+IA0KPiA+IEBAIC00MDAs
+OSArNDAzLDE4IEBAIHN0YXRpYyBpcnFyZXR1cm5fdCByY2FyX2dlbjNfcGh5X3VzYjJfaXJxKGlu
+dCBpcnEsIHZvaWQgKl9jaCkNCj4gPiAgfQ0KPiA+DQo+ID4gIHN0YXRpYyBjb25zdCBzdHJ1Y3Qg
+b2ZfZGV2aWNlX2lkIHJjYXJfZ2VuM19waHlfdXNiMl9tYXRjaF90YWJsZVtdID0gew0KPiA+IC0g
+ICAgICAgeyAuY29tcGF0aWJsZSA9ICJyZW5lc2FzLHVzYjItcGh5LXI4YTc3OTUiIH0sDQo+ID4g
+LSAgICAgICB7IC5jb21wYXRpYmxlID0gInJlbmVzYXMsdXNiMi1waHktcjhhNzc5NiIgfSwNCj4g
+PiAtICAgICAgIHsgLmNvbXBhdGlibGUgPSAicmVuZXNhcyxyY2FyLWdlbjMtdXNiMi1waHkiIH0s
+DQo+ID4gKyAgICAgICB7DQo+ID4gKyAgICAgICAgICAgICAgIC5jb21wYXRpYmxlID0gInJlbmVz
+YXMsdXNiMi1waHktcjhhNzc5NSIsDQo+ID4gKyAgICAgICAgICAgICAgIC5kYXRhID0gKHZvaWQg
+KilSQ0FSX0dFTjNfUEhZX0hBU19ERURJQ0FURURfUElOUywNCj4gPiArICAgICAgIH0sDQo+ID4g
+KyAgICAgICB7DQo+ID4gKyAgICAgICAgICAgICAgIC5jb21wYXRpYmxlID0gInJlbmVzYXMsdXNi
+Mi1waHktcjhhNzc5NiIsDQo+ID4gKyAgICAgICAgICAgICAgIC5kYXRhID0gKHZvaWQgKilSQ0FS
+X0dFTjNfUEhZX0hBU19ERURJQ0FURURfUElOUywNCj4gPiArICAgICAgIH0sDQo+ID4gKyAgICAg
+ICB7DQo+ID4gKyAgICAgICAgICAgICAgIC5jb21wYXRpYmxlID0gInJlbmVzYXMscmNhci1nZW4z
+LXVzYjItcGh5IiwNCj4gPiArICAgICAgICAgICAgICAgLmRhdGEgPSAodm9pZCAqKVJDQVJfR0VO
+M19QSFlfSEFTX0RFRElDQVRFRF9QSU5TLA0KPiA+ICsgICAgICAgfSwNCj4gPiAgICAgICAgIHsg
+fQ0KPiA+ICB9Ow0KPiANCj4gR2l2ZW4gdGhlIGdlbmVyaWMgUi1DYXIgR2VuMyBlbnRyeSBzZXRz
+IFJDQVJfR0VOM19QSFlfSEFTX0RFRElDQVRFRF9QSU5TLCB5b3UNCj4gY2Fubm90IHNwZWNpZnkg
+dGhlIGZhbGxiYWNrIGNvbXBhdGlibGUgdmFsdWUgb2YgInJlbmVzYXMscmNhci1nZW4zLXVzYjIt
+cGh5Ig0KPiBpbiB0aGUgUi1DYXIgRDMgLmR0c2kuDQoNCkkgdW5kZXJzdG9vZCBpdC4NCg0KPiBT
+byBJJ20gd29uZGVyaW5nLCBkb2VzIHRoZSBVU0IyIFBIWSBzdGlsbCB3b3JrICh3aXRoIGxpbWl0
+YXRpb25zKSBvbiBSLUNhciBIMw0KPiBhbmQgTTMtVyBpZiB5b3UgZHJvcCBSQ0FSX0dFTjNfUEhZ
+X0hBU19ERURJQ0FURURfUElOUz8NCg0KWWVzLCB0aGUgVVNCIFBIWSBzdGlsbCB3b3JrIHdpdGgg
+bGltaXRhdGlvbiAob3RnIGNhcGFiaWxpdHkgY2hhbm5lbCB3b3JrcyBhcw0KcGVyaXBoZXJhbCBt
+b2RlIG9ubHkuIE90aGVyIGNoYW5uZWxzIGFyZSBubyBsaW1pdGF0aW9uKS4NCg0KPiBJZiB5ZXMs
+IHlvdSBjYW4gZHJvcCB0aGUgZmxhZyBmcm9tIHRoZSBnZW5lcmljIGVudHJ5LCBhbmQgUi1DYXIg
+RDMgY2FuIHNwZWNpZnkNCj4gdGhlIGdlbmVyaWMgZmFsbGJhY2sgY29tcGF0aWJsZSB2YWx1ZSBp
+biBpdHMgLmR0c2ksIGxpa2UgSDMgYW5kIE0zLVcuDQoNCkkgZ290IGl0LiBJIHdpbGwgZml4IHRo
+aXMgcGF0Y2ggc2V0Lg0KDQpCZXN0IHJlZ2FyZHMsDQpZb3NoaWhpcm8gU2hpbW9kYQ0KDQo+IEdy
+e29ldGplLGVldGluZ31zLA0KPiANCj4gICAgICAgICAgICAgICAgICAgICAgICAgR2VlcnQNCj4g
+DQo+IC0tDQo+IEdlZXJ0IFV5dHRlcmhvZXZlbiAtLSBUaGVyZSdzIGxvdHMgb2YgTGludXggYmV5
+b25kIGlhMzIgLS0gZ2VlcnRAbGludXgtbTY4ay5vcmcNCj4gDQo+IEluIHBlcnNvbmFsIGNvbnZl
+cnNhdGlvbnMgd2l0aCB0ZWNobmljYWwgcGVvcGxlLCBJIGNhbGwgbXlzZWxmIGEgaGFja2VyLiBC
+dXQNCj4gd2hlbiBJJ20gdGFsa2luZyB0byBqb3VybmFsaXN0cyBJIGp1c3Qgc2F5ICJwcm9ncmFt
+bWVyIiBvciBzb21ldGhpbmcgbGlrZSB0aGF0Lg0KPiAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgIC0tIExpbnVzIFRvcnZhbGRzDQo=
