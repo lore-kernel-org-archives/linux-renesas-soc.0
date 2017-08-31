@@ -1,44 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:20308 "EHLO
+Received: from relmlor3.renesas.com ([210.160.252.173]:37352 "EHLO
         relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751250AbdH2Hkd (ORCPT
+        by vger.kernel.org with ESMTP id S1751291AbdHaJca (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 29 Aug 2017 03:40:33 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH] arm64: dts: r8a77995: update PFC node name to pin-controller
-Date: Tue, 29 Aug 2017 16:35:59 +0900
-Message-Id: <1503992159-16354-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Thu, 31 Aug 2017 05:32:30 -0400
+From: Chris Paterson <Chris.Paterson2@renesas.com>
+To: Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>
+CC: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH ] ARM: dts: iwg22d-sodimm: Add Ethernet AVB support
+Date: Thu, 31 Aug 2017 09:32:25 +0000
+Message-ID: <TY1PR06MB07029D315FC6EE500D1EEA55B79D0@TY1PR06MB0702.apcprd06.prod.outlook.com>
+References: <1504106234-41450-1-git-send-email-biju.das@bp.renesas.com>
+ <20170831084534.GF29946@verge.net.au>
+ <KL1PR06MB170280A3D466C9B35AF73939B89D0@KL1PR06MB1702.apcprd06.prod.outlook.com>
+In-Reply-To: <KL1PR06MB170280A3D466C9B35AF73939B89D0@KL1PR06MB1702.apcprd06.prod.outlook.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch changes the name from from e6060000.pfc and pfc@e6060000 to
-e6060000.pin-controller and pin-controller@e6060000 like other Renesas
-SoCs.
+Hello,
 
-Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> From: Biju Das
+> Sent: 31 August 2017 10:24
+>=20
+> > From: Simon Horman [mailto:horms@verge.net.au]
+> > Sent: 31 August 2017 09:46
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index d0f95b7..72c3033 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -122,7 +122,7 @@
- 			reg = <0 0xe6160000 0 0x0200>;
- 		};
- 
--		pfc: pfc@e6060000 {
-+		pfc: pin-controller@e6060000 {
- 			compatible = "renesas,pfc-r8a77995";
- 			reg = <0 0xe6060000 0 0x508>;
- 		};
--- 
-1.9.1
+<snip>
+
+> > > +	phy3: ethernet-phy@3 {
+> > > +	/*
+> > > +	 * On some older versions of the platform (before R4.0) the phy
+> > address
+> > > +	 * may be 1 or 3. The address is fixed to 3 for R4.0 onwards.
+> > > +	 */
+> > > +		reg =3D <3>;
+> > > +		micrel,led-mode =3D <1>;
+> >
+> > Does the phy have an interrupt?
+>=20
+> The current board doesn't support interrupt . But there is a plan to supp=
+ort this
+> in future board variants through (GPIO3_28).
+
+Actually, the plan has recently changed and at the moment interrupt support=
+ will not be added in the production version of the board.
+
+If in the end the plan changes again and the actual hardware does add inter=
+rupt support we'll submit a new patch accordingly.
+
+Kind regards, Chris
