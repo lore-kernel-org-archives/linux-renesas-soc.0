@@ -1,53 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:15905 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752260AbdHILmu (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:42942 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750783AbdHaIgw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 9 Aug 2017 07:42:50 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
+        Thu, 31 Aug 2017 04:36:52 -0400
+Date: Thu, 31 Aug 2017 10:36:46 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH repost 2/2] ARM: shmobile: document iW-RainboW-G22D SODIMM SOM Development Platform
-Date: Wed,  9 Aug 2017 12:27:40 +0100
-Message-Id: <900bcfb0f9d42a5a448af5a03f9449a07f8dfe65.1502274234.git.fabrizio.castro@bp.renesas.com>
-In-Reply-To: <cover.1502274234.git.fabrizio.castro@bp.renesas.com>
-References: <cover.1502274234.git.fabrizio.castro@bp.renesas.com>
-In-Reply-To: <cover.1502274234.git.fabrizio.castro@bp.renesas.com>
-References: <cover.1502274234.git.fabrizio.castro@bp.renesas.com>
+Subject: Re: [PATCH] arm64: dts: r8a7795: Drop bogus HDMI node names suffixes
+Message-ID: <20170831083645.GE29946@verge.net.au>
+References: <1504087397-6211-1-git-send-email-geert+renesas@glider.be>
+ <3276171.anaVMsVBRO@avalon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3276171.anaVMsVBRO@avalon>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document the iW-RainboW-G22D device tree bindings.
-It is just a placeholder for the time being, the actual
-implementation is not available yet.
+On Wed, Aug 30, 2017 at 01:10:58PM +0300, Laurent Pinchart wrote:
+> Hi Geert,
+> 
+> Thank you for the patch.
+> 
+> On Wednesday, 30 August 2017 13:03:17 EEST Geert Uytterhoeven wrote:
+> > Node names should not use numerical suffixes if the nodes can be
+> > distinguished by unit-address.
+> > 
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
----
- Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index 64e7f63..ae75cb3 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -68,6 +68,8 @@ Boards:
-     compatible = "renesas,h3ulcb", "renesas,r8a7795";
-   - Henninger
-     compatible = "renesas,henninger", "renesas,r8a7791"
-+  - iWave Systems RZ/G1E SODIMM SOM Development Platform (iW-RainboW-G22D)
-+    compatible = "iwave,g22d", "iwave,g22m", "renesas,r8a7745"
-   - iWave Systems RZ/G1E SODIMM System On Module (iW-RainboW-G22M-SM)
-     compatible = "iwave,g22m", "renesas,r8a7745"
-   - iWave Systems RZ/G1M Qseven Development Platform (iW-RainboW-G20D-Qseven)
--- 
-1.9.1
+Thanks, applied.
