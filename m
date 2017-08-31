@@ -1,82 +1,87 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:56050 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752376AbdHVX2o (ORCPT
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54034 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750790AbdHaKgL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 22 Aug 2017 19:28:44 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        tomoharu.fukawa.eb@renesas.com, linux-media@vger.kernel.org,
+        Thu, 31 Aug 2017 06:36:11 -0400
+Subject: Re: [PATCH 2/4] arm: dts: exynos: add exynos5420 cpu
+ capacity-dmips-mhz information
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v6 09/25] rcar-vin: do not allow changing scaling and composing while streaming
-Date: Wed, 23 Aug 2017 01:26:24 +0200
-Message-Id: <20170822232640.26147-10-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170822232640.26147-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170822232640.26147-1-niklas.soderlund+renesas@ragnatech.se>
+        Russell King <linux@armlinux.org.uk>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Juri Lelli <juri.lelli@arm.com>
+References: <20170830144120.9312-1-dietmar.eggemann@arm.com>
+ <20170830144120.9312-3-dietmar.eggemann@arm.com>
+ <20170830202650.mdlxy2c3uwuq5vde@kozik-lap>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <94c1d6c6-655a-2a63-1f01-06ac45990388@arm.com>
+Date: Thu, 31 Aug 2017 11:36:07 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20170830202650.mdlxy2c3uwuq5vde@kozik-lap>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-It is possible on Gen2 to change the registers controlling composing and
-scaling while the stream is running. Is however not a good idea to do so
-and could result in trouble. There are also no good reason to allow
-this, remove immediate reflection in hardware registers from
-vidioc_s_selection and only configure scaling and composing when the
-stream starts.
+On 30/08/17 21:26, Krzysztof Kozlowski wrote:
+> On Wed, Aug 30, 2017 at 03:41:18PM +0100, Dietmar Eggemann wrote:
+>> The following 'capacity-dmips-mhz' dt property values are used:
+>>
+>> Cortex-A15: 1024, Cortex-A7: 539
+>>
+>> They have been derived from the cpu_efficiency values:
+>>
+>> Cortex-A15: 3891, Cortex-A7: 2048
+>>
+>> by scaling them so that the Cortex-A15s (big cores) use 1024.
+>>
+>> The cpu_efficiency values were originally derived from the "Big.LITTLE
+>> Processing with ARM Cortex™-A15 & Cortex-A7" white paper
+>> (http://www.cl.cam.ac.uk/~rdm34/big.LITTLE.pdf). Table 1 lists 1.9x
+>> (3891/2048) as the Cortex-A15 vs Cortex-A7 performance ratio for the
+>> Dhrystone benchmark.
+>>
+>> The following platforms are affected once cpu-invariant accounting
+>> support is re-connected to the task scheduler:
+>>
+>> arndale-octa, peach-pi, peach-pit, smdk5420
+>>
+>> The patch has been tested on Samsung Chromebook 2 13" (peach-pi, Exynos
+>> 5800).
+>>
+>> $ cat /sys/devices/system/cpu/cpu*/cpu_capacity
+>> 1024
+>> 1024
+>> 1024
+>> 1024
+>> 389
+>> 389
+>> 389
+>> 389
+> 
+> I am missing something... shouldn't this be 539? Or is it scaled with
+> the clock-frequency (1 GHz) value?
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/rcar-dma.c  | 2 +-
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 3 ---
- drivers/media/platform/rcar-vin/rcar-vin.h  | 3 ---
- 3 files changed, 1 insertion(+), 7 deletions(-)
+Yeah, the capacity-dmips-mhz dt value of 539 for the little cpus is
+scaled by 1.3/1.8 (max cpu capacity/ system wide max cpu capacity):
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index 5f9674dc898305ba..6cc880e5ef7e0718 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -514,7 +514,7 @@ static void rvin_set_coeff(struct rvin_dev *vin, unsigned short xs)
- 	rvin_write(vin, p_set->coeff_set[23], VNC8C_REG);
- }
- 
--void rvin_crop_scale_comp(struct rvin_dev *vin)
-+static void rvin_crop_scale_comp(struct rvin_dev *vin)
- {
- 	u32 xs, ys;
- 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 421820caf275b066..305a74d033b2d9c5 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -436,9 +436,6 @@ static int rvin_s_selection(struct file *file, void *fh,
- 		return -EINVAL;
- 	}
- 
--	/* HW supports modifying configuration while running */
--	rvin_crop_scale_comp(vin);
--
- 	return 0;
- }
- 
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index b2bac06c0a3cfcb7..fc70ded462ed3244 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -176,7 +176,4 @@ int rvin_reset_format(struct rvin_dev *vin);
- 
- const struct rvin_video_format *rvin_format_from_pixel(u32 pixelformat);
- 
--/* Cropping, composing and scaling */
--void rvin_crop_scale_comp(struct rvin_dev *vin);
--
- #endif
--- 
-2.14.0
+539 * 1.3/1.8 = 389
+
+This max cpu capacity scaling is part of both solutions, the 'cpu
+capacity-dmips-mhz' and the 'cpu_efficiency/clock-frequency dt property'
+one.
+
+The (original*) cpu capacity on a heterogeneous platform expresses uArch
+and max cpu frequency differences between the (logical) cpus of the
+system.
+
+* not further reduced by rt and/or irq pressure.
+
+[...]
