@@ -1,50 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:49056 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754328AbdHVAT0 (ORCPT
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:34544 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751333AbdHaR53 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 Aug 2017 20:19:26 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: devicetree@vger.kernel.org, linux-media@vger.kernel.org
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2] device property: preserve usecount for node passed to of_fwnode_graph_get_port_parent()
-Date: Tue, 22 Aug 2017 02:19:12 +0200
-Message-Id: <20170822001912.27638-1-niklas.soderlund+renesas@ragnatech.se>
+        Thu, 31 Aug 2017 13:57:29 -0400
+Date: Thu, 31 Aug 2017 12:57:27 -0500
+From: Rob Herring <robh@kernel.org>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH ] phy: rcar-gen2: Add r8a7743/5 support
+Message-ID: <20170831175727.tjncwk2c2gvzmlzb@rob-hp-laptop>
+References: <1503568773-41410-1-git-send-email-biju.das@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1503568773-41410-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Using CONFIG_OF_DYNAMIC=y uncovered an imbalance in the usecount of the
-node being passed to of_fwnode_graph_get_port_parent(). Preserve the
-usecount by using of_get_parent() instead of of_get_next_parent() which
-don't decrement the usecount of the node passed to it.
+On Thu, Aug 24, 2017 at 10:59:33AM +0100, Biju Das wrote:
+> Add USB PHY support for r8a7743/5 SoC. Renesas RZ/G1[ME] (R8A7743/5)
+> USB PHY is identical to the R-Car Gen2 family.
+> 
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> ---
+> This patch is tested against Linux next tag next-20170824 and 
+> renesas-dev branch renesas-devel-20170822-v4.13-rc6. 
+> 
+>  Documentation/devicetree/bindings/phy/rcar-gen2-phy.txt | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
 
-Fixes: 3b27d00e7b6d7c88 ("device property: Move fwnode graph ops to firmware specific locations")
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
----
- drivers/of/property.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/of/property.c b/drivers/of/property.c
-index 067f9fab7b77c794..59afeea9888e3b3d 100644
---- a/drivers/of/property.c
-+++ b/drivers/of/property.c
-@@ -923,7 +923,7 @@ of_fwnode_graph_get_port_parent(struct fwnode_handle *fwnode)
- 	struct device_node *np;
- 
- 	/* Get the parent of the port */
--	np = of_get_next_parent(to_of_node(fwnode));
-+	np = of_get_parent(to_of_node(fwnode));
- 	if (!np)
- 		return NULL;
- 
--- 
-2.14.0
+Acked-by: Rob Herring <robh@kernel.org>
