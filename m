@@ -1,55 +1,42 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH ] ARM: dts: iwg22d-sodimm: Add pinctl support for scif4
-Date: Thu, 17 Aug 2017 16:09:09 +0100
-Message-Id: <1502982549-19429-1-git-send-email-biju.das@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: kishon@ti.com
+Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v2 4/4] phy: rcar-gen3-usb2: add binding for r8a77995
+Date: Thu, 31 Aug 2017 17:32:47 +0900
+Message-Id: <1504168367-29464-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1504168367-29464-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1504168367-29464-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Adding pinctrl support for scif4 interface.
+This patch adds binding for r8a77995 (R-Car D3). Since r8a77995 doesn't
+have dedicated pins (ID, VBUS), this will match against the generic
+fallback on R-Car D3.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+For now, this driver doesn't support usb role swap for r8a77995.
+
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
-This patch depends upon the below patch series
-[PATCH  0/2] ARM: dts: Add iWave RZ/G1E board support
-http://www.spinics.net/lists/devicetree/msg190513.html
+ Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-This patch is tested against renesas-dev tag 
-renesas-devel-20170815-v4.13-rc5 + above dependency patch.
-
- arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-index cbc19fe..442a5cb 100644
---- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-+++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-@@ -24,6 +24,16 @@
- 	};
- };
+diff --git a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
+index ace9cce..99b651b 100644
+--- a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
++++ b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
+@@ -8,6 +8,8 @@ Required properties:
+ 	      SoC.
+ 	      "renesas,usb2-phy-r8a7796" if the device is a part of an R8A7796
+ 	      SoC.
++	      "renesas,usb2-phy-r8a77995" if the device is a part of an
++	      R8A77995 SoC.
+ 	      "renesas,rcar-gen3-usb2-phy" for a generic R-Car Gen3 compatible device.
  
-+&pfc {
-+	scif4_pins: scif4 {
-+		groups = "scif4_data_b";
-+		function = "scif4";
-+	};
-+};
-+
- &scif4 {
-+	pinctrl-0 = <&scif4_pins>;
-+	pinctrl-names = "default";
-+
- 	status = "okay";
- };
+ 	      When compatible with the generic version, nodes must list the
 -- 
 1.9.1
-
