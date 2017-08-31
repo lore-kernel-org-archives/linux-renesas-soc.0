@@ -1,48 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:48676 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753768AbdHWL73 (ORCPT
+Received: from mail-lf0-f53.google.com ([209.85.215.53]:36569 "EHLO
+        mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750908AbdHaU7m (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Aug 2017 07:59:29 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
+        Thu, 31 Aug 2017 16:59:42 -0400
+Received: by mail-lf0-f53.google.com with SMTP id z12so2981987lfd.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 31 Aug 2017 13:59:41 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-Id: <20170831205936.865765713@cogentembedded.com>
+Date: Thu, 31 Aug 2017 23:59:24 +0300
+To: Vinod Koul <vinod.koul@intel.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, dmaengine@vger.kernel.org,
+        devicetree@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 0/2] ARM: dts: r8a7791: CPG/MSSR conversion fallout
-Date: Wed, 23 Aug 2017 13:59:24 +0200
-Message-Id: <1503489566-9423-1-git-send-email-geert+renesas@glider.be>
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH v2] dmaengine: rcar-dmac: document R8A77970 bindings
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Disposition: inline; filename=dmaengine-rcar-dmac-document-R8A77970-bindings-v2.patch
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Simon, Magnus,
+Renesas R-Car V3M (R8A77970) SoC also has the R-Car gen2/3 compatible DMA
+controllers, so document the SoC specific binding.
 
-Here are the two remaining patches from the series "[PATCH v2 0/5] ARM:
-dts: rcar-gen2: Convert to new CPG/MSSR bindings" and "[PATCH v2 0/4] ARM:
-dts: rcar-gen2: Stop grouping clocks under a "clocks" subnode", rebased
-against renesas-devel-20170822-v4.13-rc6 (actually no changes at all!).
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Thanks for applying!
+---
+The patch is against the 'next' branch of Vinod Koul's 'slave-dma.git' repo.
+ 
+Changes in version 2:
+- changed R8A7797 to R8A77970 everywhere.
 
-Geert Uytterhoeven (2):
-  ARM: dts: r8a7791: Convert to new CPG/MSSR bindings
-  ARM: dts: r8a7791: Stop grouping clocks under a "clocks" subnode
+ Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt |    1 +
+ 1 file changed, 1 insertion(+)
 
- arch/arm/boot/dts/r8a7791-koelsch.dts |   4 +-
- arch/arm/boot/dts/r8a7791-porter.dts  |   4 +-
- arch/arm/boot/dts/r8a7791.dtsi        | 672 ++++++++--------------------------
- 3 files changed, 159 insertions(+), 521 deletions(-)
-
--- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Index: slave-dma/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
+===================================================================
+--- slave-dma.orig/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
++++ slave-dma/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
+@@ -25,6 +25,7 @@ Required Properties:
+ 		- "renesas,dmac-r8a7794" (R-Car E2)
+ 		- "renesas,dmac-r8a7795" (R-Car H3)
+ 		- "renesas,dmac-r8a7796" (R-Car M3-W)
++		- "renesas,dmac-r8a77970" (R-Car V3M)
+ 
+ - reg: base address and length of the registers block for the DMAC
+ 
