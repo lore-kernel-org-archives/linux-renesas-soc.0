@@ -1,55 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34495 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:60252 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752242AbdI2Lxq (ORCPT
+        with ESMTP id S1751742AbdIAI7c (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Sep 2017 07:53:46 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Fri, 1 Sep 2017 04:59:32 -0400
+Date: Fri, 1 Sep 2017 10:59:02 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 22/22] arm64: dts: renesas: r8a7796: add USB3.0 peripheral device node
-Date: Fri, 29 Sep 2017 13:52:31 +0200
-Message-Id: <2affee619d48d101831e83e74cadeb7c5200d9cb.1506678250.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1506678250.git.horms+renesas@verge.net.au>
-References: <cover.1506678250.git.horms+renesas@verge.net.au>
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 0/2] arm64: renesas: Add support for R-Car V3M
+Message-ID: <20170901085901.GE14918@verge.net.au>
+References: <1503665810-13945-1-git-send-email-geert+renesas@glider.be>
+ <20170828074453.GA22421@verge.net.au>
+ <20170830072644.GI10398@verge.net.au>
+ <CAMuHMdWvRBH8ZNgQKDGS3Z41BN7_o_H=hN5aGdbK44YT8rusXw@mail.gmail.com>
+ <20170830092838.GC5183@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170830092838.GC5183@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+On Wed, Aug 30, 2017 at 11:28:39AM +0200, Simon Horman wrote:
+> On Wed, Aug 30, 2017 at 10:21:46AM +0200, Geert Uytterhoeven wrote:
+> > Hi Simon,
+> > 
+> > On Wed, Aug 30, 2017 at 9:26 AM, Simon Horman <horms@verge.net.au> wrote:
+> > > On Mon, Aug 28, 2017 at 09:44:54AM +0200, Simon Horman wrote:
+> > >> On Fri, Aug 25, 2017 at 02:56:48PM +0200, Geert Uytterhoeven wrote:
+> > >> > This patch series adds initial R-Car V3M infrastructure:
+> > >> >   1. SoC DT bindings,
+> > >> >   2. Main Kconfig symbol.
+> > >> >
+> > >> > Both follow the example set by R-Car D3 aka r8a77995, using 5-digit instead
+> > >> > of 4-digit part numbers.
+> > >> > Alternatively, we could stick to 4-digit part numbers if the fifth digit is
+> > >> > a zero.
+> > >> >
+> > >> > For your convenience, a branch with more preliminary work (thanks Sergei,
+> > >> > for posting the clock driver!) for testing on v3m/eagle is also available
+> > >> > in the topic/r8a77970-integration branch of my renesas-drivers git
+> > >> > repository at
+> > >> > git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
+> > >> >
+> > >> > Thanks for your comments!
+> > >>
+> > >> This looks good to me.
+> > >>
+> > >> I am in favour of using the 5-digit scheme for all new R-Car Gen 3 SoCs
+> > >> as it seems the safest option with regards to as yet unknown (to me) part
+> > >> numbers.
+> > >
+> > > Geert, any objections to me applying these?
+> > > I'm happy to wait longer if you prefer.
+> > 
+> > It would be good to have an ack from Rob.
+> > No need to hurry.
+> 
+> Understood, I will wait.
 
-This patch adds USB3.0 peripheral channel 0 device node for r8a7796.
-
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 16da83458f18..57ac5ca6ed98 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -1279,6 +1279,17 @@
- 			status = "disabled";
- 		};
- 
-+		usb3_peri0: usb@ee020000 {
-+			compatible = "renesas,r8a7796-usb3-peri",
-+				     "renesas,rcar-gen3-usb3-peri";
-+			reg = <0 0xee020000 0 0x400>;
-+			interrupts = <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 328>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 328>;
-+			status = "disabled";
-+		};
-+
- 		ohci0: usb@ee080000 {
- 			compatible = "generic-ohci";
- 			reg = <0 0xee080000 0 0x100>;
--- 
-2.1.4
+Rob has acked the DT binding patch and I have applied the series.
