@@ -1,77 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:57110 "EHLO
-        smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751875AbdIFHFO (ORCPT
+Received: from mail-io0-f181.google.com ([209.85.223.181]:34617 "EHLO
+        mail-io0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752232AbdIANcg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Sep 2017 03:05:14 -0400
-From: Dirk Behme <dirk.behme@de.bosch.com>
-To: <linux-renesas-soc@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-CC: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
-        Dirk Behme <dirk.behme@de.bosch.com>
-Subject: [PATCH 6/8] spi: sh-msiof: Add MSIOF parent clock changing function for R-Car Gen3
-Date: Wed, 6 Sep 2017 09:05:05 +0200
-Message-ID: <20170906070507.26223-7-dirk.behme@de.bosch.com>
-In-Reply-To: <20170906070507.26223-1-dirk.behme@de.bosch.com>
-References: <20170906070507.26223-1-dirk.behme@de.bosch.com>
+        Fri, 1 Sep 2017 09:32:36 -0400
+Received: by mail-io0-f181.google.com with SMTP id i200so1413244ioa.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 01 Sep 2017 06:32:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1504014726-17288-1-git-send-email-biju.das@bp.renesas.com>
+References: <1504014726-17288-1-git-send-email-biju.das@bp.renesas.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 1 Sep 2017 15:32:35 +0200
+Message-ID: <CAPDyKFoPyhGUVwjXHQ-1HcTN-p-3RaOE1zT+9w+GdeBeWbc1kg@mail.gmail.com>
+Subject: Re: [PATCH RESEND] mmc: renesas_sdhi: Add r8a7743/5 support
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+On 29 August 2017 at 15:52, Biju Das <biju.das@bp.renesas.com> wrote:
+> Add support for r8a7743/5 SoC.Renesas RZ/G1[ME] (R8A7743/5) SDHI
+> is identical to the R-Car Gen2 family.
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 
-Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
-Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
----
- drivers/spi/spi-sh-msiof.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+Thanks, applied for next!
 
-diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
-index a960e8da123d..2c53fc3f73af 100644
---- a/drivers/spi/spi-sh-msiof.c
-+++ b/drivers/spi/spi-sh-msiof.c
-@@ -188,6 +188,14 @@ struct sh_msiof_spi_priv {
- #define IER_RFOVFE	0x00000008 /* Receive FIFO Overflow Enable */
- 
- 
-+static int msiof_rcar_is_gen3(struct device *dev)
-+{
-+	struct device_node *node = dev->of_node;
-+
-+	return of_device_is_compatible(node, "renesas,msiof-r8a7795") ||
-+		of_device_is_compatible(node, "renesas,msiof-r8a7796");
-+}
-+
- static u32 sh_msiof_read(struct sh_msiof_spi_priv *p, int reg_offs)
- {
- 	switch (reg_offs) {
-@@ -1252,6 +1260,8 @@ static int sh_msiof_spi_probe(struct platform_device *pdev)
- 	const struct of_device_id *of_id;
- 	struct sh_msiof_spi_info *info;
- 	struct sh_msiof_spi_priv *p;
-+	struct clk *ref_clk;
-+	u32 clk_rate = 0;
- 	int i;
- 	int ret;
- 
-@@ -1352,6 +1362,17 @@ static int sh_msiof_spi_probe(struct platform_device *pdev)
- 		goto err2;
- 	}
- 
-+	if (msiof_rcar_is_gen3(&master->dev)) {
-+		ref_clk = devm_clk_get(&pdev->dev, "msiof_ref_clk");
-+		if (!IS_ERR(ref_clk))
-+			clk_rate = clk_get_rate(ref_clk);
-+		if (clk_rate) {
-+			clk_prepare_enable(p->clk);
-+			clk_set_rate(p->clk, clk_rate);
-+			clk_disable_unprepare(p->clk);
-+		}
-+	}
-+
- 	return 0;
- 
-  err2:
--- 
-2.14.1
+Kind regards
+Uffe
+
+> ---
+> DT binding patch for r8a7743/5 SoC is applied for mmc next. But the driver patch
+> is still not applied for mmc next.So resending the driver patch.
+>
+> This patch is compiled and tested against mmc/next.
+>
+>  drivers/mmc/host/renesas_sdhi_sys_dmac.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+> index 160fbb2..df44654 100644
+> --- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+> +++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+> @@ -98,6 +98,8 @@
+>         { .compatible = "renesas,sdhi-r7s72100", .data = &of_rz_compatible, },
+>         { .compatible = "renesas,sdhi-r8a7778", .data = &of_rcar_gen1_compatible, },
+>         { .compatible = "renesas,sdhi-r8a7779", .data = &of_rcar_gen1_compatible, },
+> +       { .compatible = "renesas,sdhi-r8a7743", .data = &of_rcar_gen2_compatible, },
+> +       { .compatible = "renesas,sdhi-r8a7745", .data = &of_rcar_gen2_compatible, },
+>         { .compatible = "renesas,sdhi-r8a7790", .data = &of_rcar_gen2_compatible, },
+>         { .compatible = "renesas,sdhi-r8a7791", .data = &of_rcar_gen2_compatible, },
+>         { .compatible = "renesas,sdhi-r8a7792", .data = &of_rcar_gen2_compatible, },
+> --
+> 1.9.1
+>
