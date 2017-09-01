@@ -1,47 +1,34 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f46.google.com ([209.85.215.46]:36480 "EHLO
-        mail-lf0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753545AbdIFWfQ (ORCPT
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:33834 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752437AbdIARQ7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Sep 2017 18:35:16 -0400
-Received: by mail-lf0-f46.google.com with SMTP id m199so20742326lfe.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 06 Sep 2017 15:35:16 -0700 (PDT)
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
+        Fri, 1 Sep 2017 13:16:59 -0400
+Date: Fri, 1 Sep 2017 12:16:57 -0500
+From: Rob Herring <robh@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH 02/18] dt: arm: shmobile: add H3ULCB Kingfisher board DT bindings
-Date: Thu,  7 Sep 2017 01:35:13 +0300
-Message-Id: <1504737313-22915-1-git-send-email-vladimir.barinov@cogentembedded.com>
-In-Reply-To: <1504737267-22829-1-git-send-email-vladimir.barinov@cogentembedded.com>
-References: <1504737267-22829-1-git-send-email-vladimir.barinov@cogentembedded.com>
+        devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: pinctrl: sh-pfc: Use generic node name
+Message-ID: <20170901171657.w6euk7espdnssrlh@rob-hp-laptop>
+References: <1504086958-5286-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1504086958-5286-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add H3ULCB Kingfisher Device tree bindings Documentation, listing it as a
-supported board.
+On Wed, Aug 30, 2017 at 11:55:58AM +0200, Geert Uytterhoeven wrote:
+> Use the preferred generic node name in the example.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
----
- Documentation/devicetree/bindings/arm/shmobile.txt | 1 +
- 1 file changed, 1 insertion(+)
+Applied.
 
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index 89bd3a6..b313fe2 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -65,6 +65,7 @@ Boards:
-     compatible = "renesas,gose", "renesas,r8a7793"
-   - H3ULCB (R-Car Starter Kit Premier, RTP0RC7795SKBX0010SA00 (H3 ES1.1))
-     H3ULCB (R-Car Starter Kit Premier, RTP0RC77951SKBX010SA00 (H3 ES2.0))
-+    H3ULCB Kingfisher (SBEV-RCAR-KF-M03)
-     compatible = "renesas,h3ulcb", "renesas,r8a7795";
-   - Henninger
-     compatible = "renesas,henninger", "renesas,r8a7791"
--- 
-1.9.1
+Rob
