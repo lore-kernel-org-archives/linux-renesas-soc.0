@@ -1,84 +1,38 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor3.renesas.com ([210.160.252.173]:43860 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750925AbdIACoc (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 31 Aug 2017 22:44:32 -0400
 From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: kishon@ti.com
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v3 3/4] phy: rcar-gen3-usb2: add SoC-specific parameter for dedicated pins
-Date: Fri,  1 Sep 2017 11:41:24 +0900
-Message-Id: <1504233685-17947-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1504233685-17947-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1504233685-17947-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        "kishon@ti.com" <kishon@ti.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH 3/4] phy: rcar-gen3-usb2: add SoC-specific parameter for
+ dedicated pins
+Date: Fri, 1 Sep 2017 02:44:28 +0000
+Message-ID: <SG2PR06MB098116595A47B34EDDBE2AE5D8920@SG2PR06MB0981.apcprd06.prod.outlook.com>
+References: <1504164672-20677-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1504164672-20677-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <4feced7a-6fcc-096e-d056-af87be4d4686@cogentembedded.com>
+In-Reply-To: <4feced7a-6fcc-096e-d056-af87be4d4686@cogentembedded.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds SoC-specific parameter to avoid reading/writing
-specific registers wrongly if this driver runs on a SoC which doesn't
-have dedicated pins (e.g. R-Car D3).
-
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/phy/renesas/phy-rcar-gen3-usb2.c | 24 +++++++++++++++++++-----
- 1 file changed, 19 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-index 4ea9902..15e095e 100644
---- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-@@ -18,6 +18,7 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-+#include <linux/of_device.h>
- #include <linux/phy/phy.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
-@@ -80,6 +81,8 @@
- #define USB2_ADPCTRL_IDPULLUP		BIT(5)	/* 1 = ID sampling is enabled */
- #define USB2_ADPCTRL_DRVVBUS		BIT(4)
- 
-+#define RCAR_GEN3_PHY_HAS_DEDICATED_PINS	1
-+
- struct rcar_gen3_chan {
- 	void __iomem *base;
- 	struct extcon_dev *extcon;
-@@ -400,9 +403,17 @@ static irqreturn_t rcar_gen3_phy_usb2_irq(int irq, void *_ch)
- }
- 
- static const struct of_device_id rcar_gen3_phy_usb2_match_table[] = {
--	{ .compatible = "renesas,usb2-phy-r8a7795" },
--	{ .compatible = "renesas,usb2-phy-r8a7796" },
--	{ .compatible = "renesas,rcar-gen3-usb2-phy" },
-+	{
-+		.compatible = "renesas,usb2-phy-r8a7795",
-+		.data = (void *)RCAR_GEN3_PHY_HAS_DEDICATED_PINS,
-+	},
-+	{
-+		.compatible = "renesas,usb2-phy-r8a7796",
-+		.data = (void *)RCAR_GEN3_PHY_HAS_DEDICATED_PINS,
-+	},
-+	{
-+		.compatible = "renesas,rcar-gen3-usb2-phy",
-+	},
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, rcar_gen3_phy_usb2_match_table);
-@@ -446,9 +457,12 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 	}
- 
- 	if (of_usb_get_dr_mode_by_phy(dev->of_node, 0) == USB_DR_MODE_OTG) {
--		int ret;
-+		int ret, dedicated_pins;
-+		const struct of_device_id *of_id =
-+			of_match_device(rcar_gen3_phy_usb2_match_table, dev);
- 
--		channel->has_otg = true;
-+		dedicated_pins = of_id ? (uintptr_t)of_id->data : 0;
-+		channel->has_otg = !!dedicated_pins;
- 		channel->can_role_swap = true;
- 		channel->extcon = devm_extcon_dev_allocate(dev,
- 							rcar_gen3_phy_cable);
--- 
-1.9.1
+DQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IFNlcmdlaSBTaHR5bHlvdg0K
+PiBTZW50OiBUaHVyc2RheSwgQXVndXN0IDMxLCAyMDE3IDY6NDMgUE0NCj4gDQo+IE9uIDgvMzEv
+MjAxNyAxMDozMSBBTSwgWW9zaGloaXJvIFNoaW1vZGEgd3JvdGU6DQo+IA0KPiA+IFRoaXMgcGF0
+Y2ggYWRkcyBTb0Mtc3BlY2lmaWMgcGFyYW1ldGVyIHRvIGF2b2lkIHJlYWRpbmcvd3JpdGluZw0K
+PiA+IHNwZWNpZmljIHJlZ2lzdGVycyB3cm9ubHkgaWYgdGhpcyBkcml2ZXIgcnVucyBvbiBhIFNv
+QyB3aGljaCBkb2Vzbid0DQo+IA0KPiAgICAgV3JvbmdseT8gUGVyaGFwcyAiaW5jb3JyZWN0bHki
+Pw0KDQpUaGFuayB5b3UgZm9yIHRoZSBwb2ludC4gSW4gdjIgcGF0Y2gsIEkgYWxyZWFkeSByZXZp
+c2VkIGl0IGFzICJ3cm9uZ2x5Ii4NCg0KQmVzdCByZWdhcmRzLA0KWW9zaGloaXJvIFNoaW1vZGEN
+Cg0KPiA+IGhhdmUgZGVkaWNhdGVkIHBpbnMgKGUuZy4gUi1DYXIgRDMpLg0KPiA+DQo+ID4gU2ln
+bmVkLW9mZi1ieTogWW9zaGloaXJvIFNoaW1vZGEgPHlvc2hpaGlyby5zaGltb2RhLnVoQHJlbmVz
+YXMuY29tPg0KPiBbLi4uXQ0KPiANCj4gTUJSLCBTZXJnZWkNCg==
