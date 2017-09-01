@@ -1,71 +1,41 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor3.renesas.com ([210.160.252.173]:56003 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751009AbdIACnd (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 31 Aug 2017 22:43:33 -0400
 From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: kishon@ti.com
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v3 1/4] phy: rcar-gen3-usb2: check dr_mode for otg mode
-Date: Fri,  1 Sep 2017 11:41:22 +0900
-Message-Id: <1504233685-17947-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1504233685-17947-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1504233685-17947-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        "kishon@ti.com" <kishon@ti.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH 1/4] phy: rcar-gen3-usb2: check dr_mode for otg mode
+Date: Fri, 1 Sep 2017 02:43:29 +0000
+Message-ID: <SG2PR06MB0981D9D229370B1A6DAD241DD8920@SG2PR06MB0981.apcprd06.prod.outlook.com>
+References: <1504164672-20677-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1504164672-20677-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <3a5b6050-01c6-1f92-7d79-42b74c692e3c@cogentembedded.com>
+In-Reply-To: <3a5b6050-01c6-1f92-7d79-42b74c692e3c@cogentembedded.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The previous code assumed a channel has otg capability if a channel
-has interrupt property. But, it is not good because:
- - Battery charging feature also needs interrupt property.
- - Some R-Car Gen3 SoCs (e.g. R-Car D3) don't have OTG capability.
-
-So, this patch checks whether usb 2.0 host node has dr_mode property or
-not. If it has 'dr_mode = "otg";', this driver enables otg capability.
-
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/phy/renesas/phy-rcar-gen3-usb2.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-index 54c3429..e00e99a 100644
---- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-@@ -1,7 +1,7 @@
- /*
-  * Renesas R-Car Gen3 for USB2.0 PHY driver
-  *
-- * Copyright (C) 2015 Renesas Electronics Corporation
-+ * Copyright (C) 2015-2017 Renesas Electronics Corporation
-  *
-  * This is based on the phy-rcar-gen2 driver:
-  * Copyright (C) 2014 Renesas Solutions Corp.
-@@ -22,6 +22,7 @@
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/regulator/consumer.h>
-+#include <linux/usb/of.h>
- #include <linux/workqueue.h>
- 
- /******* USB2.0 Host registers (original offset is +0x200) *******/
-@@ -415,13 +416,16 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 	/* call request_irq for OTG */
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq >= 0) {
--		int ret;
--
- 		INIT_WORK(&channel->work, rcar_gen3_phy_usb2_work);
- 		irq = devm_request_irq(dev, irq, rcar_gen3_phy_usb2_irq,
- 				       IRQF_SHARED, dev_name(dev), channel);
- 		if (irq < 0)
- 			dev_err(dev, "No irq handler (%d)\n", irq);
-+	}
-+
-+	if (of_usb_get_dr_mode_by_phy(dev->of_node, 0) == USB_DR_MODE_OTG) {
-+		int ret;
-+
- 		channel->has_otg = true;
- 		channel->extcon = devm_extcon_dev_allocate(dev,
- 							rcar_gen3_phy_cable);
--- 
-1.9.1
+SGVsbG8sDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogU2VyZ2VpIFNo
+dHlseW92DQo+IFNlbnQ6IFRodXJzZGF5LCBBdWd1c3QgMzEsIDIwMTcgNjo0MSBQTQ0KPiANCj4g
+SGVsbG8hDQo+IA0KPiBPbiA4LzMxLzIwMTcgMTA6MzEgQU0sIFlvc2hpaGlybyBTaGltb2RhIHdy
+b3RlOg0KPiANCj4gPiBUaGUgcHJldmlvdXMgY29kZSBhc3N1bWVkIGEgY2hhbm5lbCBoYXMgb3Rn
+IGNhcGFiaWxpdHkgaWYgYSBjaGFubmVsDQo+ID4gaGFzIGludGVycnVwdCBwcm9wZXJ0eS4gQnV0
+LCBpdCBpcyBub3QgZ29vZCBiZWNhdXNlOg0KPiA+ICAgLSBCYXR0ZXJ5IGNoYXJnaW5nIGZlYXR1
+cmUgYWxzbyBuZWVkcyBpbnRlcnJ1cHQgcHJvcGVydHkuDQo+ID4gICAtIFNvbWUgUi1DYXIgR2Vu
+MyBTb0NzIChlLmcuIFItQ2FyIEQzKSBkb2Vzbid0IGhhdmUgT1RHIGNhcGFiaWxpdHkuDQo+IA0K
+PiAgICAgRG9uJ3QuDQoNClRoYW5rIHlvdSBmb3IgdGhlIHBvaW50LiBJIHdpbGwgcmV2aXNlIGl0
+Lg0KDQpCZXN0IHJlZ2FyZHMsDQpZb3NoaWhpcm8gU2hpbW9kYQ0KDQo+ID4gU28sIHRoaXMgcGF0
+Y2ggY2hlY2tzIHdoZXRoZXIgdXNiIDIuMCBob3N0IG5vZGUgaGFzIGRyX21vZGUgcHJvcGVydHkg
+b3INCj4gPiBub3QuIElmIGl0IGhhcyAnZHJfbW9kZSA9ICJvdGciOycsIHRoaXMgZHJpdmVyIGVu
+YWJsZXMgb3RnIGNhcGFiaWxpdHkuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBZb3NoaWhpcm8g
+U2hpbW9kYSA8eW9zaGloaXJvLnNoaW1vZGEudWhAcmVuZXNhcy5jb20+DQo+IFsuLi5dDQo+IA0K
+PiBNQlIsIFNlcmdlaQ0K
