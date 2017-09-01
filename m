@@ -1,87 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52446 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:60174 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751584AbdIEIHv (ORCPT
+        with ESMTP id S1751237AbdIAI4E (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Sep 2017 04:07:51 -0400
+        Fri, 1 Sep 2017 04:56:04 -0400
+Date: Fri, 1 Sep 2017 10:55:43 +0200
 From: Simon Horman <horms@verge.net.au>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: ltsi-dev@lists.linuxfoundation.org,
-        linux-renesas-soc@vger.kernel.org,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: [PATCH 13/13] clk: cs2000: add Suspend/Resume feature
-Date: Tue,  5 Sep 2017 10:06:48 +0200
-Message-Id: <1504598808-19810-14-git-send-email-horms@verge.net.au>
-In-Reply-To: <1504598808-19810-1-git-send-email-horms@verge.net.au>
-References: <1504598808-19810-1-git-send-email-horms@verge.net.au>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH  0/5] Add USB2.0 Host support
+Message-ID: <20170901085543.GD14918@verge.net.au>
+References: <1504100473-5528-1-git-send-email-biju.das@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1504100473-5528-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
+On Wed, Aug 30, 2017 at 02:41:08PM +0100, Biju Das wrote:
+> Hello,
+> 
+> This series aims to add USB2.0 Host support on iWave RZ/G1M(r8a7743)
+> based board.
+> 
+> This series has been tested against renesas-dev tag 20170830-v4.13-rc7
+> 
+> This patch has documentation dependency on below patches
+>  * PCI: rcar: Add r8a7743/5 support
+> https://patchwork.kernel.org/patch/9919697/
+>  * phy: rcar-gen2: Add r8a7743/5 support
+> https://patchwork.kernel.org/patch/9919727/
 
-CS2000 needs re-setup when redume, otherwise, it can't
-handle correct clock rate.
+Thanks for the testing and dependency information.
 
-Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
-[Kuninori: cleanup original patch]
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+I see that the PCI dependency has been accepted by Bjorn Helgaas.
+And the phy dependency is both trivial and has been acked by Rob Herring
+so it seems very likely to be accepted.
 
-(cherry picked from commit c567fb37f123511d752a454fb11d8bcaf46a7895)
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- drivers/clk/clk-cs2000-cp.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+On the strength of the above I have accepted this series for v4.15.
 
-diff --git a/drivers/clk/clk-cs2000-cp.c b/drivers/clk/clk-cs2000-cp.c
-index 021f3daf34e1..3fca0526d940 100644
---- a/drivers/clk/clk-cs2000-cp.c
-+++ b/drivers/clk/clk-cs2000-cp.c
-@@ -59,6 +59,10 @@ struct cs2000_priv {
- 	struct i2c_client *client;
- 	struct clk *clk_in;
- 	struct clk *ref_clk;
-+
-+	/* suspend/resume */
-+	unsigned long saved_rate;
-+	unsigned long saved_parent_rate;
- };
- 
- static const struct of_device_id cs2000_of_match[] = {
-@@ -286,6 +290,9 @@ static int __cs2000_set_rate(struct cs2000_priv *priv, int ch,
- 	if (ret < 0)
- 		return ret;
- 
-+	priv->saved_rate	= rate;
-+	priv->saved_parent_rate	= parent_rate;
-+
- 	return 0;
- }
- 
-@@ -489,9 +496,24 @@ static int cs2000_probe(struct i2c_client *client,
- 	return ret;
- }
- 
-+static int cs2000_resume(struct device *dev)
-+{
-+	struct cs2000_priv *priv = dev_get_drvdata(dev);
-+	int ch = 0; /* it uses ch0 only at this point */
-+
-+	return __cs2000_set_rate(priv, ch,
-+				 priv->saved_rate,
-+				 priv->saved_parent_rate);
-+}
-+
-+static const struct dev_pm_ops cs2000_pm_ops = {
-+	.resume_early	= cs2000_resume,
-+};
-+
- static struct i2c_driver cs2000_driver = {
- 	.driver = {
- 		.name = "cs2000-cp",
-+		.pm	= &cs2000_pm_ops,
- 		.of_match_table = cs2000_of_match,
- 	},
- 	.probe		= cs2000_probe,
--- 
-2.1.4
+> 
+> Biju Das (5):
+>   ARM: dts: r8a7743: Add internal PCI bridge nodes
+>   ARM: dts: r8a7743: Add USB PHY DT support
+>   ARM: dts: r8a7743: Link PCI USB devices to USB PHY
+>   ARM: dts: iwg20d-q7: Enable internal PCI
+>   ARM: dts: iwg20d-q7: Enable USB PHY
+> 
+>  arch/arm/boot/dts/r8a7743-iwg20d-q7.dts | 26 ++++++++++
+>  arch/arm/boot/dts/r8a7743.dtsi          | 92 +++++++++++++++++++++++++++++++++
+>  2 files changed, 118 insertions(+)
+> 
+> -- 
+> 1.9.1
+> 
