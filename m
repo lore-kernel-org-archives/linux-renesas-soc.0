@@ -1,51 +1,71 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:39202 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752943AbdHKJ52 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 11 Aug 2017 05:57:28 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: linux-media@vger.kernel.org
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Benoit Parrot <bparrot@ti.com>,
-        linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 20/20] arm64: dts: renesas: salvator: use VC1 for CVBS
-Date: Fri, 11 Aug 2017 11:57:03 +0200
-Message-Id: <20170811095703.6170-21-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170811095703.6170-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170811095703.6170-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: kishon@ti.com
+Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v3 1/4] phy: rcar-gen3-usb2: check dr_mode for otg mode
+Date: Fri,  1 Sep 2017 11:41:22 +0900
+Message-Id: <1504233685-17947-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1504233685-17947-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1504233685-17947-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-In order to test Virtual Channels use VC1 for CVBS input from the
-adv748x.
+The previous code assumed a channel has otg capability if a channel
+has interrupt property. But, it is not good because:
+ - Battery charging feature also needs interrupt property.
+ - Some R-Car Gen3 SoCs (e.g. R-Car D3) don't have OTG capability.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+So, this patch checks whether usb 2.0 host node has dr_mode property or
+not. If it has 'dr_mode = "otg";', this driver enables otg capability.
+
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- arch/arm64/boot/dts/renesas/salvator-common.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-index 7b67efcb1d22090a..8047fe1df065d63b 100644
---- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-@@ -41,7 +41,7 @@
- 	};
+diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+index 54c3429..e00e99a 100644
+--- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
++++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+@@ -1,7 +1,7 @@
+ /*
+  * Renesas R-Car Gen3 for USB2.0 PHY driver
+  *
+- * Copyright (C) 2015 Renesas Electronics Corporation
++ * Copyright (C) 2015-2017 Renesas Electronics Corporation
+  *
+  * This is based on the phy-rcar-gen2 driver:
+  * Copyright (C) 2014 Renesas Solutions Corp.
+@@ -22,6 +22,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/regulator/consumer.h>
++#include <linux/usb/of.h>
+ #include <linux/workqueue.h>
  
- 	chosen {
--		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
-+		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp adv748x.txbvc=1";
- 		stdout-path = "serial0:115200n8";
- 	};
- 
+ /******* USB2.0 Host registers (original offset is +0x200) *******/
+@@ -415,13 +416,16 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
+ 	/* call request_irq for OTG */
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq >= 0) {
+-		int ret;
+-
+ 		INIT_WORK(&channel->work, rcar_gen3_phy_usb2_work);
+ 		irq = devm_request_irq(dev, irq, rcar_gen3_phy_usb2_irq,
+ 				       IRQF_SHARED, dev_name(dev), channel);
+ 		if (irq < 0)
+ 			dev_err(dev, "No irq handler (%d)\n", irq);
++	}
++
++	if (of_usb_get_dr_mode_by_phy(dev->of_node, 0) == USB_DR_MODE_OTG) {
++		int ret;
++
+ 		channel->has_otg = true;
+ 		channel->extcon = devm_extcon_dev_allocate(dev,
+ 							rcar_gen3_phy_cable);
 -- 
-2.13.3
+1.9.1
