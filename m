@@ -1,50 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34495 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:52446 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752453AbdI2Lx3 (ORCPT
+        with ESMTP id S1751355AbdIEIH6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Sep 2017 07:53:29 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 01/22] arm64: dts: renesas: r8a7795-es1: Drop extra zero from usb unit address
-Date: Fri, 29 Sep 2017 13:52:10 +0200
-Message-Id: <0e0f4d47288a8e56ed2586699b89573afcb1bf72.1506678250.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1506678250.git.horms+renesas@verge.net.au>
-References: <cover.1506678250.git.horms+renesas@verge.net.au>
+        Tue, 5 Sep 2017 04:07:58 -0400
+From: Simon Horman <horms@verge.net.au>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: ltsi-dev@lists.linuxfoundation.org,
+        linux-renesas-soc@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: [PATCH 11/13] usb: host: ehci-platform: set hcd->phy to avoid phy_get() in usb_add_hcd()
+Date: Tue,  5 Sep 2017 10:06:46 +0200
+Message-Id: <1504598808-19810-12-git-send-email-horms@verge.net.au>
+In-Reply-To: <1504598808-19810-1-git-send-email-horms@verge.net.au>
+References: <1504598808-19810-1-git-send-email-horms@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-With W=1:
+This patch sets hcd->phy from own phy context to avoid phy_get()
+in usb_add_hcd(). Since core/hcd.c manages the phy only in
+usb_add_hcd() and usb_remove_hcd(), there is difficult to manage
+the phy in suspend/resume.
 
-    arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dtb: Warning (simple_bus_reg): Node /soc/usb@ee0400000 simple-bus unit address format error, expected "ee040000"
-    arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb.dtb: Warning (simple_bus_reg): Node /soc/usb@ee0400000 simple-bus unit address format error, expected "ee040000"
-
-Fixes: 291e0c4994d0813f ("arm64: dts: r8a7795: Add support for R-Car H3 ES2.0")
-Fixes: 171f2ef82284f61b ("arm64: dts: r8a7795: Add USB3.0 host device nodes")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+(cherry picked from commit 42a58c9949ddf16e557f5c2e22566f3440e7b60f)
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/host/ehci-platform.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-index aaa5e67a963e..655dd30639c5 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-@@ -11,7 +11,7 @@
- #include "r8a7795.dtsi"
+diff --git a/drivers/usb/host/ehci-platform.c b/drivers/usb/host/ehci-platform.c
+index 3214300396a0..bc7b9be12f54 100644
+--- a/drivers/usb/host/ehci-platform.c
++++ b/drivers/usb/host/ehci-platform.c
+@@ -221,6 +221,9 @@ static int ehci_platform_probe(struct platform_device *dev)
+ 			if (IS_ERR(priv->phys[phy_num])) {
+ 				err = PTR_ERR(priv->phys[phy_num]);
+ 					goto err_put_hcd;
++			} else if (!hcd->phy) {
++				/* Avoiding phy_get() in usb_add_hcd() */
++				hcd->phy = priv->phys[phy_num];
+ 			}
+ 		}
  
- &soc {
--	xhci1: usb@ee0400000 {
-+	xhci1: usb@ee040000 {
- 		compatible = "renesas,xhci-r8a7795", "renesas,rcar-gen3-xhci";
- 		reg = <0 0xee040000 0 0xc00>;
- 		interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
 -- 
 2.1.4
