@@ -1,73 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:24528 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751587AbdINJfw (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52393 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751538AbdIEIHg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Sep 2017 05:35:52 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        TAKESHI KIHARA <takeshi.kihara.df@renesas.com>
-CC: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: RE: [PATCH 6/8] pinctrl: sh-pfc: r8a77995: Add USB2.0 host support
-Date: Thu, 14 Sep 2017 09:35:46 +0000
-Message-ID: <TY1PR06MB09922F8C146BCB91568C9F05D86F0@TY1PR06MB0992.apcprd06.prod.outlook.com>
-References: <1502281187-24068-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1502281187-24068-7-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <CAMuHMdW27kVU2cB=iL-H7t44KeEboL+Ki0zvxkavRpZCepYuLw@mail.gmail.com>
- <TY1PR06MB0992563B4C992762105E8590D89C0@TY1PR06MB0992.apcprd06.prod.outlook.com>
-In-Reply-To: <TY1PR06MB0992563B4C992762105E8590D89C0@TY1PR06MB0992.apcprd06.prod.outlook.com>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Tue, 5 Sep 2017 04:07:36 -0400
+From: Simon Horman <horms@verge.net.au>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: ltsi-dev@lists.linuxfoundation.org,
+        linux-renesas-soc@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: [PATCH 03/13] thermal: rcar_gen3_thermal: add delay in .thermal_init on r8a7796
+Date: Tue,  5 Sep 2017 10:06:38 +0200
+Message-Id: <1504598808-19810-4-git-send-email-horms@verge.net.au>
+In-Reply-To: <1504598808-19810-1-git-send-email-horms@verge.net.au>
+References: <1504598808-19810-1-git-send-email-horms@verge.net.au>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQtc2FuLA0KDQo+IEZyb206IFlvc2hpaGlybyBTaGltb2RhDQo+IFNlbnQ6IFdlZG5l
-c2RheSwgQXVndXN0IDMwLCAyMDE3IDEwOjA3IFBNDQo+IA0KPiBIaSBHZWVydC1zYW4sDQo+IA0K
-PiBJJ20gc29ycnkuIEkgbWlzc2VkIHRoaXMgZW1haWwuLi4NCj4gDQo+ID4gRnJvbTogR2VlcnQg
-VXl0dGVyaG9ldmVuDQo+ID4gU2VudDogV2VkbmVzZGF5LCBBdWd1c3QgMTYsIDIwMTcgODoxMSBQ
-TQ0KPiA+DQo+ID4gSGkgU2hpbW9kYS1zYW4sIEtpaGFyYS1zYW4sDQo+ID4NCj4gPiBPbiBXZWQs
-IEF1ZyA5LCAyMDE3IGF0IDI6MTkgUE0sIFlvc2hpaGlybyBTaGltb2RhDQo+ID4gPHlvc2hpaGly
-by5zaGltb2RhLnVoQHJlbmVzYXMuY29tPiB3cm90ZToNCj4gPiA+IEZyb206IFRha2VzaGkgS2lo
-YXJhIDx0YWtlc2hpLmtpaGFyYS5kZkByZW5lc2FzLmNvbT4NCj4gPiA+DQo+ID4gPiBTaWduZWQt
-b2ZmLWJ5OiBUYWtlc2hpIEtpaGFyYSA8dGFrZXNoaS5raWhhcmEuZGZAcmVuZXNhcy5jb20+DQo+
-ID4gPiBTaWduZWQtb2ZmLWJ5OiBZb3NoaWhpcm8gU2hpbW9kYSA8eW9zaGloaXJvLnNoaW1vZGEu
-dWhAcmVuZXNhcy5jb20+DQo+ID4gPiAtLS0NCj4gPiA+ICBkcml2ZXJzL3BpbmN0cmwvc2gtcGZj
-L3BmYy1yOGE3Nzk5NS5jIHwgMTUgKysrKysrKysrKysrKysrDQo+ID4gPiAgMSBmaWxlIGNoYW5n
-ZWQsIDE1IGluc2VydGlvbnMoKykNCj4gPiA+DQo+ID4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9w
-aW5jdHJsL3NoLXBmYy9wZmMtcjhhNzc5OTUuYyBiL2RyaXZlcnMvcGluY3RybC9zaC1wZmMvcGZj
-LXI4YTc3OTk1LmMNCj4gPiA+IGluZGV4IDllYjBjZWYuLjVjMGE5NGYgMTAwNjQ0DQo+ID4gPiAt
-LS0gYS9kcml2ZXJzL3BpbmN0cmwvc2gtcGZjL3BmYy1yOGE3Nzk5NS5jDQo+ID4gPiArKysgYi9k
-cml2ZXJzL3BpbmN0cmwvc2gtcGZjL3BmYy1yOGE3Nzk5NS5jDQo+ID4gPiBAQCAtMTMwMiw2ICsx
-MzAyLDE1IEBAIGVudW0gew0KPiA+ID4gICAgICAgICBTQ0lGX0NMS19NQVJLLA0KPiA+ID4gIH07
-DQo+ID4gPg0KPiA+ID4gKy8qIC0gVVNCMCAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tICovDQo+ID4gPiArc3RhdGljIGNv
-bnN0IHVuc2lnbmVkIGludCB1c2IwX3BpbnNbXSA9IHsNCj4gPiA+ICsgICAgICAgLyogUFdFTiwg
-T1ZDICovDQo+ID4gPiArICAgICAgIFJDQVJfR1BfUElOKDAsIDApLCBSQ0FSX0dQX1BJTigwLCAx
-KSwNCj4gPiA+ICt9Ow0KPiA+ID4gK3N0YXRpYyBjb25zdCB1bnNpZ25lZCBpbnQgdXNiMF9tdXhb
-XSA9IHsNCj4gPiA+ICsgICAgICAgVVNCMF9QV0VOX01BUkssIFVTQjBfT1ZDX01BUkssDQo+ID4g
-PiArfTsNCj4gPg0KPiA+IFdoYXQgYWJvdXQgVVNCMF9JRFBVIGFuZCBVU0IwX0lESU4/DQo+ID4g
-QXJlIHRoZXkgbmVlZGVkIGZvciBub3JtYWwgb3BlcmF0aW9uLCBvciBjYW4gdGhleSBiZSBhZGRl
-ZCBsYXRlcj8NCj4gDQo+IEkgZG9uJ3Qga25vdyBhYm91dCB0aGVzZSBwaW5zLiBUaGUgZGF0YXNo
-ZWV0IGRvZXNuJ3QgbWVudGlvbiB1c2FnZSBpbiBVU0Igc2VjdGlvbnMuLi4NCj4gU28sIEknbSBh
-c2tpbmcgSFcgdGVhbSBub3cuIChJIHRoaW5rIHRoZXkgY2FuIGJlIGFkZGVkIGxhdGVyLikNCg0K
-SFcgdGVhbSBzYWlkIGl0IGlzIGFuIGVycm9yIGluIHdyaXRpbmcsIGFuZCB0aGVzZSBwaW5zIGRl
-c2NyaXB0aW9ucyB3aWxsIGJlDQpyZW1vdmVkIGluIHRoZSBmdXR1cmUuIFNvLCBJIHdpbGwgcmVi
-YXNlIHRoaXMgcGF0Y2ggb24gZXRoZXJldmIgcGZjIHBhdGNoIHdoaWNoIEkgc2VudC4NCg0KQmVz
-dCByZWdhcmRzLA0KWW9zaGloaXJvIFNoaW1vZGENCg0KPiBCZXN0IHJlZ2FyZHMsDQo+IFlvc2hp
-aGlybyBTaGltb2RhDQo+IA0KPiA+IFRoYW5rcyENCj4gPg0KPiA+IEdye29ldGplLGVldGluZ31z
-LA0KPiA+DQo+ID4gICAgICAgICAgICAgICAgICAgICAgICAgR2VlcnQNCj4gPg0KPiA+IC0tDQo+
-ID4gR2VlcnQgVXl0dGVyaG9ldmVuIC0tIFRoZXJlJ3MgbG90cyBvZiBMaW51eCBiZXlvbmQgaWEz
-MiAtLSBnZWVydEBsaW51eC1tNjhrLm9yZw0KPiA+DQo+ID4gSW4gcGVyc29uYWwgY29udmVyc2F0
-aW9ucyB3aXRoIHRlY2huaWNhbCBwZW9wbGUsIEkgY2FsbCBteXNlbGYgYSBoYWNrZXIuIEJ1dA0K
-PiA+IHdoZW4gSSdtIHRhbGtpbmcgdG8gam91cm5hbGlzdHMgSSBqdXN0IHNheSAicHJvZ3JhbW1l
-ciIgb3Igc29tZXRoaW5nIGxpa2UgdGhhdC4NCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgIC0tIExpbnVzIFRvcnZhbGRzDQo=
+From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+
+The .thermal_init needs to be delayed a short amount of time to allow
+for the TEMP register to contain something useful. If it's not delayed
+these warnings are common during boot:
+
+thermal thermal_zone0: failed to read out thermal zone (-5)
+thermal thermal_zone1: failed to read out thermal zone (-5)
+thermal thermal_zone2: failed to read out thermal zone (-5)
+
+The warnings are triggered by the first call to .get_temp() while the
+TEMP register contains 0 and rcar_gen3_thermal_get_temp() returns -EIO
+since a TEMP value of 0 will result in a temperature reading which is
+out of specifications.
+
+This should have been done in the initial commit which adds the driver
+as the same issue was found and corrected for r8a7795.
+
+Fixes: 564e73d283af9d4c ("thermal: rcar_gen3_thermal: Add R-Car Gen3 thermal driver")
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
+(cherry picked from commit 78aefd2d5911c4e0b5dc0b0578b3b8c7673be1d2)
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ drivers/thermal/rcar_gen3_thermal.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
+index d33c845244b1..ec477d47d0ba 100644
+--- a/drivers/thermal/rcar_gen3_thermal.c
++++ b/drivers/thermal/rcar_gen3_thermal.c
+@@ -222,6 +222,8 @@ static void r8a7796_thermal_init(struct rcar_gen3_thermal_tsc *tsc)
+ 	reg_val = rcar_gen3_thermal_read(tsc, REG_GEN3_THCTR);
+ 	reg_val |= THCTR_THSST;
+ 	rcar_gen3_thermal_write(tsc, REG_GEN3_THCTR, reg_val);
++
++	usleep_range(1000, 2000);
+ }
+ 
+ static const struct rcar_gen3_thermal_data r8a7795_data = {
+-- 
+2.1.4
