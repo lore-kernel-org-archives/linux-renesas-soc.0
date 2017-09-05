@@ -1,211 +1,100 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f43.google.com ([209.85.215.43]:45861 "EHLO
-        mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751780AbdIOToj (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52393 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751360AbdIEIHd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Sep 2017 15:44:39 -0400
-Received: by mail-lf0-f43.google.com with SMTP id d17so3407333lfe.2
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 15 Sep 2017 12:44:38 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20170915194433.872217806@cogentembedded.com>
-Date: Fri, 15 Sep 2017 22:43:22 +0300
-To: Rob Herring <robh+dt@kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH v2 4/8] arm64: dts: renesas: r8a77970: add [H]SCIF support
+        Tue, 5 Sep 2017 04:07:33 -0400
+From: Simon Horman <horms@verge.net.au>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: ltsi-dev@lists.linuxfoundation.org,
+        linux-renesas-soc@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: [PATCH 01/13] thermal: rcar_gen3_thermal: Document the R-Car Gen3
+Date: Tue,  5 Sep 2017 10:06:36 +0200
+Message-Id: <1504598808-19810-2-git-send-email-horms@verge.net.au>
+In-Reply-To: <1504598808-19810-1-git-send-email-horms@verge.net.au>
+References: <1504598808-19810-1-git-send-email-horms@verge.net.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=arm64-dts-renesas-r8a77970-add-H-SCIF-support-v2.patch
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe [H]SCIF ports in the R8A77970 device tree.
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Based on the original (and large) patch by Daisuke Matsushita
-<daisuke.matsushita.ns@hitachi.com>.
-
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Signed-off-by: Hien Dang <hien.dang.eb@renesas.com>
+Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
+(cherry picked from commit b022e9b9d0e67f4cba62bc790bd387e23c29dc6c)
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-Changes in version 2:
-- enabled  the use of SYS-DMAC2;
-- replaced the use of the SYSC power domain #define's with the bare numbers;
-- refreshed the patch.
+ .../bindings/thermal/rcar-gen3-thermal.txt         | 56 ++++++++++++++++++++++
+ 1 file changed, 56 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt
 
- arch/arm64/boot/dts/renesas/r8a77970.dtsi |  149 ++++++++++++++++++++++++++++++
- 1 file changed, 149 insertions(+)
-
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -59,6 +59,13 @@
- 		clock-frequency = <0>;
- 	};
- 
-+	/* External SCIF clock - to be overridden by boards that provide it */
-+	scif_clk: scif {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
+diff --git a/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt b/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt
+new file mode 100644
+index 000000000000..07a9713ae6a7
+--- /dev/null
++++ b/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt
+@@ -0,0 +1,56 @@
++* DT bindings for Renesas R-Car Gen3 Thermal Sensor driver
++
++On R-Car Gen3 SoCs, the thermal sensor controllers (TSC) control the thermal
++sensors (THS) which are the analog circuits for measuring temperature (Tj)
++inside the LSI.
++
++Required properties:
++- compatible		: "renesas,<soctype>-thermal",
++			  Examples with soctypes are:
++			    - "renesas,r8a7795-thermal" (R-Car H3)
++			    - "renesas,r8a7796-thermal" (R-Car M3-W)
++- reg			: Address ranges of the thermal registers. Each sensor
++			  needs one address range. Sorting must be done in
++			  increasing order according to datasheet, i.e.
++			  TSC1, TSC2, ...
++- clocks		: Must contain a reference to the functional clock.
++- #thermal-sensor-cells : must be <1>.
++
++Optional properties:
++
++- interrupts           : interrupts routed to the TSC (3 for H3 and M3-W)
++- power-domain		: Must contain a reference to the power domain. This
++			  property is mandatory if the thermal sensor instance
++			  is part of a controllable power domain.
++
++Example:
++
++	tsc: thermal@e6198000 {
++		compatible = "renesas,r8a7795-thermal";
++		reg = <0 0xe6198000 0 0x68>,
++		      <0 0xe61a0000 0 0x5c>,
++		      <0 0xe61a8000 0 0x5c>;
++		interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cpg CPG_MOD 522>;
++		power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++		#thermal-sensor-cells = <1>;
++		status = "okay";
 +	};
 +
- 	soc {
- 		compatible = "simple-bus";
- 		interrupt-parent = <&gic>;
-@@ -169,5 +176,147 @@
- 			#dma-cells = <1>;
- 			dma-channels = <8>;
- 		};
++	thermal-zones {
++		sensor_thermal1: sensor-thermal1 {
++			polling-delay-passive = <250>;
++			polling-delay = <1000>;
++			thermal-sensors = <&tsc 0>;
 +
-+		hscif0: serial@e6540000 {
-+			compatible = "renesas,hscif-r8a77970",
-+				     "renesas,rcar-gen3-hscif",
-+				     "renesas,hscif";
-+			reg = <0 0xe6540000 0 96>;
-+			interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 520>,
-+				 <&cpg CPG_CORE 9>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x31>, <&dmac1 0x30>,
-+			       <&dmac2 0x31>, <&dmac2 0x30>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 520>;
-+			status = "disabled";
++			trips {
++				sensor1_crit: sensor1-crit {
++					temperature = <90000>;
++					hysteresis = <2000>;
++					type = "critical";
++				};
++			};
 +		};
-+
-+		hscif1: serial@e6550000 {
-+			compatible = "renesas,hscif-r8a77970",
-+				     "renesas,rcar-gen3-hscif",
-+				     "renesas,hscif";
-+			reg = <0 0xe6550000 0 96>;
-+			interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 519>,
-+				 <&cpg CPG_CORE 9>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x33>, <&dmac1 0x32>,
-+			       <&dmac2 0x33>, <&dmac2 0x32>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 519>;
-+			status = "disabled";
-+		};
-+
-+		hscif2: serial@e6560000 {
-+			compatible = "renesas,hscif-r8a77970",
-+				     "renesas,rcar-gen3-hscif",
-+				     "renesas,hscif";
-+			reg = <0 0xe6560000 0 96>;
-+			interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 518>,
-+				 <&cpg CPG_CORE 9>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x35>, <&dmac1 0x34>,
-+			       <&dmac2 0x35>, <&dmac2 0x34>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 518>;
-+			status = "disabled";
-+		};
-+
-+		hscif3: serial@e66a0000 {
-+			compatible = "renesas,hscif-r8a77970",
-+				     "renesas,rcar-gen3-hscif", "renesas,hscif";
-+			reg = <0 0xe66a0000 0 96>;
-+			interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 517>,
-+				 <&cpg CPG_CORE 9>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x37>, <&dmac1 0x36>,
-+			       <&dmac2 0x37>, <&dmac2 0x36>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 517>;
-+			status = "disabled";
-+		};
-+
-+		scif0: serial@e6e60000 {
-+			compatible = "renesas,scif-r8a77970",
-+				     "renesas,rcar-gen3-scif",
-+				     "renesas,scif";
-+			reg = <0 0xe6e60000 0 64>;
-+			interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 207>,
-+				 <&cpg CPG_CORE 9>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x51>, <&dmac1 0x50>,
-+			       <&dmac2 0x51>, <&dmac2 0x50>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 207>;
-+			status = "disabled";
-+		};
-+
-+		scif1: serial@e6e68000 {
-+			compatible = "renesas,scif-r8a77970",
-+				     "renesas,rcar-gen3-scif",
-+				     "renesas,scif";
-+			reg = <0 0xe6e68000 0 64>;
-+			interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 206>,
-+				 <&cpg CPG_CORE 9>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x53>, <&dmac1 0x52>,
-+			       <&dmac2 0x53>, <&dmac2 0x52>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 206>;
-+			status = "disabled";
-+		};
-+
-+		scif3: serial@e6c50000 {
-+			compatible = "renesas,scif-r8a77970",
-+				     "renesas,rcar-gen3-scif",
-+				     "renesas,scif";
-+			reg = <0 0xe6c50000 0 64>;
-+			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 204>,
-+				 <&cpg CPG_CORE 9>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x57>, <&dmac1 0x56>,
-+			       <&dmac2 0x57>, <&dmac2 0x56>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 204>;
-+			status = "disabled";
-+		};
-+
-+		scif4: serial@e6c40000 {
-+			compatible = "renesas,scif-r8a77970",
-+				     "renesas,rcar-gen3-scif", "renesas,scif";
-+			reg = <0 0xe6c40000 0 64>;
-+			interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 203>,
-+				 <&cpg CPG_CORE 9>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x59>, <&dmac1 0x58>,
-+			       <&dmac2 0x59>, <&dmac2 0x58>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 203>;
-+			status = "disabled";
-+		};
- 	};
- };
++	};
+-- 
+2.1.4
