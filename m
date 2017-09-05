@@ -1,84 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:37227 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751386AbdIEPI4 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52446 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751607AbdIEIID (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Sep 2017 11:08:56 -0400
-MIME-Version: 1.0
-In-Reply-To: <1493303863-23719-5-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1493303863-23719-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1493303863-23719-5-git-send-email-ulrich.hecht+renesas@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 5 Sep 2017 17:08:55 +0200
-Message-ID: <CAMuHMdVvE=L2cv6bhAqqaENMm1+ZYbrGKr4SFwodv1mawyv2Sw@mail.gmail.com>
-Subject: Re: [PATCH v2 4/8] arm64: dts: r8a7796: salvator-x: Add panel
- backlight support
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Linux PWM List <linux-pwm@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 5 Sep 2017 04:08:03 -0400
+From: Simon Horman <horms@verge.net.au>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: ltsi-dev@lists.linuxfoundation.org,
+        linux-renesas-soc@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: [PATCH 10/13] usb: host: ehci-platform: fix usb 1.1 device is not connected in system resume
+Date: Tue,  5 Sep 2017 10:06:45 +0200
+Message-Id: <1504598808-19810-11-git-send-email-horms@verge.net.au>
+In-Reply-To: <1504598808-19810-1-git-send-email-horms@verge.net.au>
+References: <1504598808-19810-1-git-send-email-horms@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Ulrich,
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-On Thu, Apr 27, 2017 at 4:37 PM, Ulrich Hecht
-<ulrich.hecht+renesas@gmail.com> wrote:
-> The panel backlight is controlled through a GPIO and a PWM channel.
->
-> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-> ---
->  arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-> index 14d9e51..abda84c 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-> +++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-> @@ -133,6 +133,11 @@
->                 function = "i2c2";
->         };
->
-> +       pwm1_pins: pwm {
-> +               groups = "pwm1_a";
-> +               function = "pwm1";
-> +       };
-> +
->         sdhi0_pins: sd0 {
->                 groups = "sdhi0_data4", "sdhi0_ctrl";
->                 function = "sdhi0";
-> @@ -183,6 +188,16 @@
->                 interrupt-parent = <&gpio2>;
->                 interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
->         };
-> +
-> +       backlight: backlight {
-> +               compatible = "pwm-backlight";
-> +               pwms = <&pwm1 0 50000>;
-> +
-> +               brightness-levels = <256 128 64 16 8 4 0>;
-> +               default-brightness-level = <6>;
-> +
-> +               enable-gpios = <&gpio6 7 GPIO_ACTIVE_HIGH>;
-> +       };
->  };
+This patch fixes an issue that a usb 1.1 device is not connected in
+system resume and then the following message appeared if debug messages
+are enabled:
+	usb 2-1: Waited 2000ms for CONNECT
 
-This prints the following warning:
+To resolve this issue, the EHCI controller must be resumed after its
+companion controllers. So, this patch adds such code on the driver.
 
-pwm-backlight backlight: backlight supply power not found, using dummy regulator
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+(cherry picked from commit d4d75128b8fd727d42c775a16b41634d09409dba)
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ drivers/usb/host/ehci-platform.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-According to Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt,
-the "power-supply" property is required.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/usb/host/ehci-platform.c b/drivers/usb/host/ehci-platform.c
+index a268d9e8d6cf..3214300396a0 100644
+--- a/drivers/usb/host/ehci-platform.c
++++ b/drivers/usb/host/ehci-platform.c
+@@ -34,6 +34,7 @@
+ #include <linux/usb.h>
+ #include <linux/usb/hcd.h>
+ #include <linux/usb/ehci_pdriver.h>
++#include <linux/usb/of.h>
+ 
+ #include "ehci.h"
+ 
+@@ -297,6 +298,7 @@ static int ehci_platform_probe(struct platform_device *dev)
+ 		goto err_power;
+ 
+ 	device_wakeup_enable(hcd->self.controller);
++	device_enable_async_suspend(hcd->self.controller);
+ 	platform_set_drvdata(dev, hcd);
+ 
+ 	return err;
+@@ -370,6 +372,7 @@ static int ehci_platform_resume(struct device *dev)
+ 	struct usb_ehci_pdata *pdata = dev_get_platdata(dev);
+ 	struct platform_device *pdev = to_platform_device(dev);
+ 	struct ehci_platform_priv *priv = hcd_to_ehci_priv(hcd);
++	struct device *companion_dev;
+ 
+ 	if (pdata->power_on) {
+ 		int err = pdata->power_on(pdev);
+@@ -377,6 +380,10 @@ static int ehci_platform_resume(struct device *dev)
+ 			return err;
+ 	}
+ 
++	companion_dev = usb_of_get_companion_dev(hcd->self.controller);
++	if (companion_dev)
++		device_pm_wait_for_dev(hcd->self.controller, companion_dev);
++
+ 	ehci_resume(hcd, priv->reset_on_resume);
+ 	return 0;
+ }
+-- 
+2.1.4
