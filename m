@@ -1,32 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47542 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751836AbdIFI06 (ORCPT
+Received: from sauhun.de ([88.99.104.3]:42570 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752089AbdIER0k (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Sep 2017 04:26:58 -0400
-Date: Wed, 6 Sep 2017 10:26:39 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] ARM: dts: alt: use correct logic for SD WP pins
-Message-ID: <20170906082639.GC10048@verge.net.au>
-References: <20170905172631.31083-1-wsa+renesas@sang-engineering.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20170905172631.31083-1-wsa+renesas@sang-engineering.com>
+        Tue, 5 Sep 2017 13:26:40 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Simon Horman <horms@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH] ARM: dts: alt: use correct logic for SD WP pins
+Date: Tue,  5 Sep 2017 19:26:31 +0200
+Message-Id: <20170905172631.31083-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Sep 05, 2017 at 07:26:31PM +0200, Wolfram Sang wrote:
-> The WP pins are ACTIVE_HIGH, fix it in the DTS.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+The WP pins are ACTIVE_HIGH, fix it in the DTS.
 
-Thanks, I applied this for v4.15 with:
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ arch/arm/boot/dts/r8a7794-alt.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Fixes: 2b41091b896b ("ARM: dts: alt: add SDHI0 and 1 support")
-
-Let me know if you'd prefer it to be handled as a fix for v4.14.
-If the tag above is correct then it looks like this problem
-has been present since v4.9.
+diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
+index e45f92b5eb1107..bd98790d964e13 100644
+--- a/arch/arm/boot/dts/r8a7794-alt.dts
++++ b/arch/arm/boot/dts/r8a7794-alt.dts
+@@ -304,7 +304,7 @@
+ 	vmmc-supply = <&vcc_sdhi0>;
+ 	vqmmc-supply = <&vccq_sdhi0>;
+ 	cd-gpios = <&gpio6 6 GPIO_ACTIVE_LOW>;
+-	wp-gpios = <&gpio6 7 GPIO_ACTIVE_LOW>;
++	wp-gpios = <&gpio6 7 GPIO_ACTIVE_HIGH>;
+ 	sd-uhs-sdr50;
+ 	sd-uhs-sdr104;
+ 	status = "okay";
+@@ -318,7 +318,7 @@
+ 	vmmc-supply = <&vcc_sdhi1>;
+ 	vqmmc-supply = <&vccq_sdhi1>;
+ 	cd-gpios = <&gpio6 14 GPIO_ACTIVE_LOW>;
+-	wp-gpios = <&gpio6 15 GPIO_ACTIVE_LOW>;
++	wp-gpios = <&gpio6 15 GPIO_ACTIVE_HIGH>;
+ 	sd-uhs-sdr50;
+ 	status = "okay";
+ };
+-- 
+2.11.0
