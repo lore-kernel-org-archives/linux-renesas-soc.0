@@ -1,39 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55418 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750989AbdIKHj4 (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:18861 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750707AbdIELHX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Sep 2017 03:39:56 -0400
-Date: Mon, 11 Sep 2017 09:39:36 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Tue, 5 Sep 2017 07:07:23 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
+        "Catalin Marinas" <catalin.marinas@arm.com>,
         Marc Zyngier <marc.zyngier@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 0/3] ARM: renesas: Enable SMP on R-Car E2
-Message-ID: <20170911073936.GA19090@verge.net.au>
+        "Mark Rutland" <mark.rutland@arm.com>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+CC: "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH v3 0/3] ARM: renesas: Enable SMP on R-Car E2
+Date: Tue, 5 Sep 2017 11:07:19 +0000
+Message-ID: <TY1PR06MB0895C42C10E4222993A5575EC0960@TY1PR06MB0895.apcprd06.prod.outlook.com>
 References: <1504255066-5103-1-git-send-email-geert+renesas@glider.be>
- <20170901084243.GB14918@verge.net.au>
+ <TY1PR06MB0895EB3FDC2C1A9647C51D80C0920@TY1PR06MB0895.apcprd06.prod.outlook.com>
+In-Reply-To: <TY1PR06MB0895EB3FDC2C1A9647C51D80C0920@TY1PR06MB0895.apcprd06.prod.outlook.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20170901084243.GB14918@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Sep 01, 2017 at 10:42:44AM +0200, Simon Horman wrote:
-> On Fri, Sep 01, 2017 at 10:37:43AM +0200, Geert Uytterhoeven wrote:
+> -----Original Message-----
+> From: linux-renesas-soc-owner@vger.kernel.org [mailto:linux-renesas-soc-o=
+wner@vger.kernel.org] On Behalf Of Fabrizio Castro
+> Sent: 01 September 2017 18:04
+> To: Geert Uytterhoeven <geert+renesas@glider.be>; Simon Horman <horms@ver=
+ge.net.au>; Magnus Damm
+> <magnus.damm@gmail.com>; Russell King <linux@armlinux.org.uk>; Catalin Ma=
+rinas <catalin.marinas@arm.com>; Marc Zyngier
+> <marc.zyngier@arm.com>; Mark Rutland <mark.rutland@arm.com>
+> Cc: linux-renesas-soc@vger.kernel.org; linux-arm-kernel@lists.infradead.o=
+rg
+> Subject: RE: [PATCH v3 0/3] ARM: renesas: Enable SMP on R-Car E2
+>
+> > -----Original Message-----
+> > From: linux-renesas-soc-owner@vger.kernel.org [mailto:linux-renesas-soc=
+-owner@vger.kernel.org] On Behalf Of Geert
+> > Uytterhoeven
+> > Sent: 01 September 2017 09:38
+> > To: Simon Horman <horms@verge.net.au>; Magnus Damm <magnus.damm@gmail.c=
+om>; Russell King <linux@armlinux.org.uk>;
+> > Catalin Marinas <catalin.marinas@arm.com>; Marc Zyngier <marc.zyngier@a=
+rm.com>; Mark Rutland <mark.rutland@arm.com>
+> > Cc: linux-renesas-soc@vger.kernel.org; linux-arm-kernel@lists.infradead=
+.org; Geert Uytterhoeven <geert+renesas@glider.be>
+> > Subject: [PATCH v3 0/3] ARM: renesas: Enable SMP on R-Car E2
+> >
 > >         Hi all,
-> > 
+> >
 > > This patch series enables SMP on R-Car E2 (r8a7794).
-> > The main hurdle here is that R-Car Gen2 boot loaders do not initialize the
-> > arch_timer CNTVOFF register, which thus needs workarounds on Linux.
-> > 
-> >   - The first patch adds a definition for MON_MODE, as suggested by Marc
+> > The main hurdle here is that R-Car Gen2 boot loaders do not initialize =
+the arch_timer CNTVOFF register, which thus needs
+> > workarounds on Linux.
+> >
+> >   - The first patch adds a definition for MON_MODE, as suggested by Mar=
+c
 > >     Zyngier,
 > >   - The second patch makes sure CNTVOFF is initialized for boot and
 > >     secondary Cortex-A15 and Cortex-A7 CPU cores, like is already done
@@ -43,28 +76,84 @@ On Fri, Sep 01, 2017 at 10:42:44AM +0200, Simon Horman wrote:
 > >     arch timer frequency on RZ/G1E".
 > >   - The third patch adds the required infrastructure (APMU device node
 > >     and corresponding enable-method) to DT.
-> >     Obviously this must not be applied on a branch that does not contain
+> >     Obviously this must not be applied on a branch that does not contai=
+n
 > >     the first two patches!
-> > 
-> > Due to dependencies, I think it is easiest if the ARM maintainers provide
-> > their Acked-by for patch 1, so the whole series can go in through Simon's
-> > Renesas tree.
-> 
-> Thanks Geert, this merge strategy is fine by me.
+> >
+> > Due to dependencies, I think it is easiest if the ARM maintainers provi=
+de their Acked-by for patch 1, so the whole series can go in
+> > through Simon's Renesas tree.
+> >
+> > Changes compared to v2:
+> >   - Replace "isb" by "instr_sync" to fix the arm v6 build (e.g.
+> >     allmodconfig),
+> >
+> > Changes compared to v1:
+> >   - New patch "[PATCH v2 1/3] ARM: Add definition for monitor mode",
+> >   - Initialize CNTVOFF on Cortex-A15, too,
+> >   - Use *_MODE definitions instead of hardcoded values,
+> >   - Reduce duplication by calling the asm version from C,
+> >   - Always build headsmp-apmu.o on R-Car Gen2.
+> >
+> > This has been tested on r8a7794/alt (dual Cortex-A7), and regression-te=
+sted on r8a7790/lager (quad Cortex-A15), and
+> > r8a7791/koelsch, r8a7791/porter, r8a7792/blanche, and r8a7793/gose (dua=
+l Cortex-A15).
+>
+> Hello Geert,
+>
+> last week we tried to enable APMU/SMP on the iWave RZG1E (r8a7745, dual C=
+ortex-A7) G22D-SODIMM board unsuccessfully, this
+> patch series fixes the problems we have been experiencing.
 
-This patch-set has been floating around one form or another for quite
-some time now and this version is now well over a week old.
+Hello Geert,
 
-I've gone ahead and applied the first two patches for v4.15:
-* ARM: Add definition for monitor mode
-* ARM: shmobile: rcar-gen2: Make sure CNTVOFF is initialized on CA7/15
+we tested your patch series on the RZG1M (r8a7743, dual Cortex-A15) too whi=
+ch was working well already, and it looks like the system keeps behaving pr=
+operly.
 
-I will push those to the devel branch of the renesas tree later today.
+Thanks,
+Fabrizio
 
-I would like to deffer the third and last patch until v4.16 to avoid
-an awkward branch dependency on the above - the branches are different
-even though the tree is the same. Please resubmit this patch once the
-above dependencies are present in an rc release, which at this stage
-I expect to be v4.15-rc1.
+>
+> Thanks,
+> Fabrizio
+>
+> Tested-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+>
+> >
+> > Thanks!
+> >
+> > Geert Uytterhoeven (2):
+> >   ARM: Add definition for monitor mode
+> >   ARM: shmobile: rcar-gen2: Make sure CNTVOFF is initialized on CA7/15
+> >
+> > Sergei Shtylyov (1):
+> >   ARM: dts: r8a7794: Add SMP support
+> >
+> >  arch/arm/boot/dts/r8a7794.dtsi           |  7 ++++++
+> >  arch/arm/include/uapi/asm/ptrace.h       |  1 +
+> >  arch/arm/mach-shmobile/Makefile          |  1 +
+> >  arch/arm/mach-shmobile/common.h          |  2 ++
+> >  arch/arm/mach-shmobile/headsmp-apmu.S    | 37 ++++++++++++++++++++++++=
+++++++++
+> >  arch/arm/mach-shmobile/platsmp-apmu.c    |  2 +-
+> >  arch/arm/mach-shmobile/setup-rcar-gen2.c | 20 ++---------------
+> >  7 files changed, 51 insertions(+), 19 deletions(-)  create mode 100644=
+ arch/arm/mach-shmobile/headsmp-apmu.S
+> >
+> > --
+> > 2.7.4
+>
+>
+>
+>
+> Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End,=
+ Buckinghamshire, SL8 5FH, UK. Registered in England &
+> Wales under Registered No. 04586709.
 
-* ARM: dts: r8a7794: Add SMP support
+
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
