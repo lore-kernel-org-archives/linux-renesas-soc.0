@@ -1,57 +1,85 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <damm+renesas@opensource.se>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 7/7] clocksource: sh_cmt: Use of_device_get_match_data() helper
-Date: Mon, 18 Sep 2017 15:46:47 +0200
-Message-Id: <1505742407-31576-8-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1505742407-31576-1-git-send-email-geert+renesas@glider.be>
-References: <1505742407-31576-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:52393 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751243AbdIEIHc (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 5 Sep 2017 04:07:32 -0400
+From: Simon Horman <horms@verge.net.au>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: ltsi-dev@lists.linuxfoundation.org,
+        linux-renesas-soc@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: [PATCH 04/13] thermal: rcar_gen3_thermal: remove unneeded mutex
+Date: Tue,  5 Sep 2017 10:06:39 +0200
+Message-Id: <1504598808-19810-5-git-send-email-horms@verge.net.au>
+In-Reply-To: <1504598808-19810-1-git-send-email-horms@verge.net.au>
+References: <1504598808-19810-1-git-send-email-horms@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use the existing of_device_get_match_data() helper instead of
-open-coding its functionality.
+From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3:
-  - New.
----
- drivers/clocksource/sh_cmt.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+There is no point in protecting a register read with a lock. This is
+most likely a leftover from when the driver was reworked before being
+submitted for upstream.
 
-diff --git a/drivers/clocksource/sh_cmt.c b/drivers/clocksource/sh_cmt.c
-index 89c514cf59a44e48..70b3cf8e23d01bd8 100644
---- a/drivers/clocksource/sh_cmt.c
-+++ b/drivers/clocksource/sh_cmt.c
-@@ -25,6 +25,7 @@
- #include <linux/irq.h>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
+(cherry picked from commit 100cfbcf2580b0605f50af32fefd9c8d1d8357fb)
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ drivers/thermal/rcar_gen3_thermal.c | 7 -------
+ 1 file changed, 7 deletions(-)
+
+diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
+index ec477d47d0ba..cb5c362c0000 100644
+--- a/drivers/thermal/rcar_gen3_thermal.c
++++ b/drivers/thermal/rcar_gen3_thermal.c
+@@ -20,7 +20,6 @@
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
  #include <linux/module.h>
- #include <linux/of.h>
-+#include <linux/of_device.h>
+-#include <linux/mutex.h>
+ #include <linux/of_device.h>
  #include <linux/platform_device.h>
- #include <linux/pm_domain.h>
  #include <linux/pm_runtime.h>
-@@ -956,10 +957,7 @@ static int sh_cmt_setup(struct sh_cmt_device *cmt, struct platform_device *pdev)
- 	raw_spin_lock_init(&cmt->lock);
+@@ -72,7 +71,6 @@ struct rcar_gen3_thermal_tsc {
+ 	void __iomem *base;
+ 	struct thermal_zone_device *zone;
+ 	struct equation_coefs coef;
+-	struct mutex lock;
+ };
  
- 	if (IS_ENABLED(CONFIG_OF) && pdev->dev.of_node) {
--		const struct of_device_id *id;
+ struct rcar_gen3_thermal_priv {
+@@ -163,16 +161,12 @@ static int rcar_gen3_thermal_get_temp(void *devdata, int *temp)
+ 	u32 reg;
+ 
+ 	/* Read register and convert to mili Celsius */
+-	mutex_lock(&tsc->lock);
 -
--		id = of_match_node(sh_cmt_of_table, pdev->dev.of_node);
--		cmt->info = id->data;
-+		cmt->info = of_device_get_match_data(&pdev->dev);
- 		cmt->hw_channels = cmt->info->channels_mask;
- 	} else if (pdev->dev.platform_data) {
- 		struct sh_timer_config *cfg = pdev->dev.platform_data;
+ 	reg = rcar_gen3_thermal_read(tsc, REG_GEN3_TEMP) & CTEMP_MASK;
+ 
+ 	val1 = FIXPT_DIV(FIXPT_INT(reg) - tsc->coef.b1, tsc->coef.a1);
+ 	val2 = FIXPT_DIV(FIXPT_INT(reg) - tsc->coef.b2, tsc->coef.a2);
+ 	mcelsius = FIXPT_TO_MCELSIUS((val1 + val2) / 2);
+ 
+-	mutex_unlock(&tsc->lock);
+-
+ 	/* Make sure we are inside specifications */
+ 	if ((mcelsius < MCELSIUS(-40)) || (mcelsius > MCELSIUS(125)))
+ 		return -EIO;
+@@ -299,7 +293,6 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
+ 		}
+ 
+ 		priv->tscs[i] = tsc;
+-		mutex_init(&tsc->lock);
+ 
+ 		match_data->thermal_init(tsc);
+ 		rcar_gen3_thermal_calc_coefs(&tsc->coef, ptat, thcode[i]);
 -- 
-2.7.4
+2.1.4
