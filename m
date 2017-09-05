@@ -1,98 +1,420 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f52.google.com ([209.85.215.52]:38625 "EHLO
-        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751470AbdILVFc (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52373 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751243AbdIEIH2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Sep 2017 17:05:32 -0400
-Received: by mail-lf0-f52.google.com with SMTP id q132so29471661lfe.5
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Sep 2017 14:05:31 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20170912210527.851901553@cogentembedded.com>
-Date: Tue, 12 Sep 2017 23:37:22 +0300
-To: Rob Herring <robh+dt@kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH 06/11] arm64: dts: renesas: r8a77970: add SYS-DMAC support
+        Tue, 5 Sep 2017 04:07:28 -0400
+From: Simon Horman <horms@verge.net.au>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: ltsi-dev@lists.linuxfoundation.org,
+        linux-renesas-soc@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: [PATCH 02/13] thermal: rcar_gen3_thermal: Add R-Car Gen3 thermal driver
+Date: Tue,  5 Sep 2017 10:06:37 +0200
+Message-Id: <1504598808-19810-3-git-send-email-horms@verge.net.au>
+In-Reply-To: <1504598808-19810-1-git-send-email-horms@verge.net.au>
+References: <1504598808-19810-1-git-send-email-horms@verge.net.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=arm64-dts-renesas-r8a77970-add-SYS-DMAC-support.patch
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe SYS-DMAC1/2 in the R8A77970 device tree.
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Based on the original (and large) patch by Daisuke Matsushita
-<daisuke.matsushita.ns@hitachi.com>.
+Add support for R-Car Gen3 thermal sensors. Polling only for now,
+interrupts will be added incrementally. Same goes for reading fuses.
+This is documented already, but no hardware available for now.
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Hien Dang <hien.dang.eb@renesas.com>
+Signed-off-by: Thao Nguyen <thao.nguyen.yb@rvc.renesas.com>
+Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+[Niklas: document and rework temperature calculation]
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
 
+(cherry picked from commit 564e73d283af9d4c1d642079d5c7ac601876162f)
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a77970.dtsi |   48 ++++++++++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
+ drivers/thermal/Kconfig             |   9 +
+ drivers/thermal/Makefile            |   1 +
+ drivers/thermal/rcar_gen3_thermal.c | 335 ++++++++++++++++++++++++++++++++++++
+ 3 files changed, 345 insertions(+)
+ create mode 100644 drivers/thermal/rcar_gen3_thermal.c
 
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -122,5 +122,53 @@
- 			compatible = "renesas,prr";
- 			reg = <0 0xfff00044 0 4>;
- 		};
+diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
+index a13541bdc726..da71f94d2d33 100644
+--- a/drivers/thermal/Kconfig
++++ b/drivers/thermal/Kconfig
+@@ -243,6 +243,15 @@ config RCAR_THERMAL
+ 	  Enable this to plug the R-Car thermal sensor driver into the Linux
+ 	  thermal framework.
+ 
++config RCAR_GEN3_THERMAL
++	tristate "Renesas R-Car Gen3 thermal driver"
++	depends on ARCH_RENESAS || COMPILE_TEST
++	depends on HAS_IOMEM
++	depends on OF
++	help
++	  Enable this to plug the R-Car Gen3 thermal sensor driver into the Linux
++	  thermal framework.
 +
-+		dmac1: dma-controller@e7300000 {
-+			compatible = "renesas,dmac-r8a77970",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xe7300000 0 0x10000>;
-+			interrupts = <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 217 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 309 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 311 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					  "ch0", "ch1", "ch2", "ch3",
-+					  "ch4", "ch5", "ch6", "ch7";
-+			clocks = <&cpg CPG_MOD 218>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			resets = <&cpg 218>;
-+			#dma-cells = <1>;
-+			dma-channels = <8>;
-+		};
+ config KIRKWOOD_THERMAL
+ 	tristate "Temperature sensor on Marvell Kirkwood SoCs"
+ 	depends on MACH_KIRKWOOD || COMPILE_TEST
+diff --git a/drivers/thermal/Makefile b/drivers/thermal/Makefile
+index c92eb22a41ff..1216fb31ed40 100644
+--- a/drivers/thermal/Makefile
++++ b/drivers/thermal/Makefile
+@@ -30,6 +30,7 @@ obj-$(CONFIG_QCOM_SPMI_TEMP_ALARM)	+= qcom-spmi-temp-alarm.o
+ obj-$(CONFIG_SPEAR_THERMAL)	+= spear_thermal.o
+ obj-$(CONFIG_ROCKCHIP_THERMAL)	+= rockchip_thermal.o
+ obj-$(CONFIG_RCAR_THERMAL)	+= rcar_thermal.o
++obj-$(CONFIG_RCAR_GEN3_THERMAL)	+= rcar_gen3_thermal.o
+ obj-$(CONFIG_KIRKWOOD_THERMAL)  += kirkwood_thermal.o
+ obj-y				+= samsung/
+ obj-$(CONFIG_DOVE_THERMAL)  	+= dove_thermal.o
+diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
+new file mode 100644
+index 000000000000..d33c845244b1
+--- /dev/null
++++ b/drivers/thermal/rcar_gen3_thermal.c
+@@ -0,0 +1,335 @@
++/*
++ *  R-Car Gen3 THS thermal sensor driver
++ *  Based on rcar_thermal.c and work from Hien Dang and Khiem Nguyen.
++ *
++ * Copyright (C) 2016 Renesas Electronics Corporation.
++ * Copyright (C) 2016 Sang Engineering
++ *
++ *  This program is free software; you can redistribute it and/or modify
++ *  it under the terms of the GNU General Public License as published by
++ *  the Free Software Foundation; version 2 of the License.
++ *
++ *  This program is distributed in the hope that it will be useful, but
++ *  WITHOUT ANY WARRANTY; without even the implied warranty of
++ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ *  General Public License for more details.
++ *
++ */
++#include <linux/delay.h>
++#include <linux/err.h>
++#include <linux/interrupt.h>
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/mutex.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
++#include <linux/thermal.h>
 +
-+		dmac2: dma-controller@e7310000 {
-+			compatible = "renesas,dmac-r8a77970",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xe7310000 0 0x10000>;
-+			interrupts = <GIC_SPI 307 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 312 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 313 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 314 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 315 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 317 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 318 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 319 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					  "ch0", "ch1", "ch2", "ch3",
-+					  "ch4", "ch5", "ch6", "ch7";
-+			clocks = <&cpg CPG_MOD 217>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			resets = <&cpg 217>;
-+			#dma-cells = <1>;
-+			dma-channels = <8>;
-+		};
- 	};
- };
++/* Register offsets */
++#define REG_GEN3_IRQSTR		0x04
++#define REG_GEN3_IRQMSK		0x08
++#define REG_GEN3_IRQCTL		0x0C
++#define REG_GEN3_IRQEN		0x10
++#define REG_GEN3_IRQTEMP1	0x14
++#define REG_GEN3_IRQTEMP2	0x18
++#define REG_GEN3_IRQTEMP3	0x1C
++#define REG_GEN3_CTSR		0x20
++#define REG_GEN3_THCTR		0x20
++#define REG_GEN3_TEMP		0x28
++#define REG_GEN3_THCODE1	0x50
++#define REG_GEN3_THCODE2	0x54
++#define REG_GEN3_THCODE3	0x58
++
++/* CTSR bits */
++#define CTSR_PONM	BIT(8)
++#define CTSR_AOUT	BIT(7)
++#define CTSR_THBGR	BIT(5)
++#define CTSR_VMEN	BIT(4)
++#define CTSR_VMST	BIT(1)
++#define CTSR_THSST	BIT(0)
++
++/* THCTR bits */
++#define THCTR_PONM	BIT(6)
++#define THCTR_THSST	BIT(0)
++
++#define CTEMP_MASK	0xFFF
++
++#define MCELSIUS(temp)	((temp) * 1000)
++#define GEN3_FUSE_MASK	0xFFF
++
++#define TSC_MAX_NUM	3
++
++/* Structure for thermal temperature calculation */
++struct equation_coefs {
++	int a1;
++	int b1;
++	int a2;
++	int b2;
++};
++
++struct rcar_gen3_thermal_tsc {
++	void __iomem *base;
++	struct thermal_zone_device *zone;
++	struct equation_coefs coef;
++	struct mutex lock;
++};
++
++struct rcar_gen3_thermal_priv {
++	struct rcar_gen3_thermal_tsc *tscs[TSC_MAX_NUM];
++};
++
++struct rcar_gen3_thermal_data {
++	void (*thermal_init)(struct rcar_gen3_thermal_tsc *tsc);
++};
++
++static inline u32 rcar_gen3_thermal_read(struct rcar_gen3_thermal_tsc *tsc,
++					 u32 reg)
++{
++	return ioread32(tsc->base + reg);
++}
++
++static inline void rcar_gen3_thermal_write(struct rcar_gen3_thermal_tsc *tsc,
++					   u32 reg, u32 data)
++{
++	iowrite32(data, tsc->base + reg);
++}
++
++/*
++ * Linear approximation for temperature
++ *
++ * [reg] = [temp] * a + b => [temp] = ([reg] - b) / a
++ *
++ * The constants a and b are calculated using two triplets of int values PTAT
++ * and THCODE. PTAT and THCODE can either be read from hardware or use hard
++ * coded values from driver. The formula to calculate a and b are taken from
++ * BSP and sparsely documented and understood.
++ *
++ * Examining the linear formula and the formula used to calculate constants a
++ * and b while knowing that the span for PTAT and THCODE values are between
++ * 0x000 and 0xfff the largest integer possible is 0xfff * 0xfff == 0xffe001.
++ * Integer also needs to be signed so that leaves 7 bits for binary
++ * fixed point scaling.
++ */
++
++#define FIXPT_SHIFT 7
++#define FIXPT_INT(_x) ((_x) << FIXPT_SHIFT)
++#define FIXPT_DIV(_a, _b) DIV_ROUND_CLOSEST(((_a) << FIXPT_SHIFT), (_b))
++#define FIXPT_TO_MCELSIUS(_x) ((_x) * 1000 >> FIXPT_SHIFT)
++
++#define RCAR3_THERMAL_GRAN 500 /* mili Celsius */
++
++/* no idea where these constants come from */
++#define TJ_1 96
++#define TJ_3 -41
++
++static void rcar_gen3_thermal_calc_coefs(struct equation_coefs *coef,
++					 int *ptat, int *thcode)
++{
++	int tj_2;
++
++	/* TODO: Find documentation and document constant calculation formula */
++
++	/*
++	 * Division is not scaled in BSP and if scaled it might overflow
++	 * the dividend (4095 * 4095 << 14 > INT_MAX) so keep it unscaled
++	 */
++	tj_2 = (FIXPT_INT((ptat[1] - ptat[2]) * 137)
++		/ (ptat[0] - ptat[2])) - FIXPT_INT(41);
++
++	coef->a1 = FIXPT_DIV(FIXPT_INT(thcode[1] - thcode[2]),
++			     tj_2 - FIXPT_INT(TJ_3));
++	coef->b1 = FIXPT_INT(thcode[2]) - coef->a1 * TJ_3;
++
++	coef->a2 = FIXPT_DIV(FIXPT_INT(thcode[1] - thcode[0]),
++			     tj_2 - FIXPT_INT(TJ_1));
++	coef->b2 = FIXPT_INT(thcode[0]) - coef->a2 * TJ_1;
++}
++
++static int rcar_gen3_thermal_round(int temp)
++{
++	int result, round_offs;
++
++	round_offs = temp >= 0 ? RCAR3_THERMAL_GRAN / 2 :
++		-RCAR3_THERMAL_GRAN / 2;
++	result = (temp + round_offs) / RCAR3_THERMAL_GRAN;
++	return result * RCAR3_THERMAL_GRAN;
++}
++
++static int rcar_gen3_thermal_get_temp(void *devdata, int *temp)
++{
++	struct rcar_gen3_thermal_tsc *tsc = devdata;
++	int mcelsius, val1, val2;
++	u32 reg;
++
++	/* Read register and convert to mili Celsius */
++	mutex_lock(&tsc->lock);
++
++	reg = rcar_gen3_thermal_read(tsc, REG_GEN3_TEMP) & CTEMP_MASK;
++
++	val1 = FIXPT_DIV(FIXPT_INT(reg) - tsc->coef.b1, tsc->coef.a1);
++	val2 = FIXPT_DIV(FIXPT_INT(reg) - tsc->coef.b2, tsc->coef.a2);
++	mcelsius = FIXPT_TO_MCELSIUS((val1 + val2) / 2);
++
++	mutex_unlock(&tsc->lock);
++
++	/* Make sure we are inside specifications */
++	if ((mcelsius < MCELSIUS(-40)) || (mcelsius > MCELSIUS(125)))
++		return -EIO;
++
++	/* Round value to device granularity setting */
++	*temp = rcar_gen3_thermal_round(mcelsius);
++
++	return 0;
++}
++
++static struct thermal_zone_of_device_ops rcar_gen3_tz_of_ops = {
++	.get_temp	= rcar_gen3_thermal_get_temp,
++};
++
++static void r8a7795_thermal_init(struct rcar_gen3_thermal_tsc *tsc)
++{
++	rcar_gen3_thermal_write(tsc, REG_GEN3_CTSR,  CTSR_THBGR);
++	rcar_gen3_thermal_write(tsc, REG_GEN3_CTSR,  0x0);
++
++	usleep_range(1000, 2000);
++
++	rcar_gen3_thermal_write(tsc, REG_GEN3_CTSR, CTSR_PONM);
++	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQCTL, 0x3F);
++	rcar_gen3_thermal_write(tsc, REG_GEN3_CTSR,
++				CTSR_PONM | CTSR_AOUT | CTSR_THBGR | CTSR_VMEN);
++
++	usleep_range(100, 200);
++
++	rcar_gen3_thermal_write(tsc, REG_GEN3_CTSR,
++				CTSR_PONM | CTSR_AOUT | CTSR_THBGR | CTSR_VMEN |
++				CTSR_VMST | CTSR_THSST);
++
++	usleep_range(1000, 2000);
++}
++
++static void r8a7796_thermal_init(struct rcar_gen3_thermal_tsc *tsc)
++{
++	u32 reg_val;
++
++	reg_val = rcar_gen3_thermal_read(tsc, REG_GEN3_THCTR);
++	reg_val &= ~THCTR_PONM;
++	rcar_gen3_thermal_write(tsc, REG_GEN3_THCTR, reg_val);
++
++	usleep_range(1000, 2000);
++
++	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQCTL, 0x3F);
++	reg_val = rcar_gen3_thermal_read(tsc, REG_GEN3_THCTR);
++	reg_val |= THCTR_THSST;
++	rcar_gen3_thermal_write(tsc, REG_GEN3_THCTR, reg_val);
++}
++
++static const struct rcar_gen3_thermal_data r8a7795_data = {
++	.thermal_init = r8a7795_thermal_init,
++};
++
++static const struct rcar_gen3_thermal_data r8a7796_data = {
++	.thermal_init = r8a7796_thermal_init,
++};
++
++static const struct of_device_id rcar_gen3_thermal_dt_ids[] = {
++	{ .compatible = "renesas,r8a7795-thermal", .data = &r8a7795_data},
++	{ .compatible = "renesas,r8a7796-thermal", .data = &r8a7796_data},
++	{},
++};
++MODULE_DEVICE_TABLE(of, rcar_gen3_thermal_dt_ids);
++
++static int rcar_gen3_thermal_remove(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++
++	pm_runtime_put(dev);
++	pm_runtime_disable(dev);
++
++	return 0;
++}
++
++static int rcar_gen3_thermal_probe(struct platform_device *pdev)
++{
++	struct rcar_gen3_thermal_priv *priv;
++	struct device *dev = &pdev->dev;
++	struct resource *res;
++	struct thermal_zone_device *zone;
++	int ret, i;
++	const struct rcar_gen3_thermal_data *match_data =
++		of_device_get_match_data(dev);
++
++	/* default values if FUSEs are missing */
++	/* TODO: Read values from hardware on supported platforms */
++	int ptat[3] = { 2351, 1509, 435 };
++	int thcode[TSC_MAX_NUM][3] = {
++		{ 3248, 2800, 2221 },
++		{ 3245, 2795, 2216 },
++		{ 3250, 2805, 2237 },
++	};
++
++	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	platform_set_drvdata(pdev, priv);
++
++	pm_runtime_enable(dev);
++	pm_runtime_get_sync(dev);
++
++	for (i = 0; i < TSC_MAX_NUM; i++) {
++		struct rcar_gen3_thermal_tsc *tsc;
++
++		tsc = devm_kzalloc(dev, sizeof(*tsc), GFP_KERNEL);
++		if (!tsc) {
++			ret = -ENOMEM;
++			goto error_unregister;
++		}
++
++		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
++		if (!res)
++			break;
++
++		tsc->base = devm_ioremap_resource(dev, res);
++		if (IS_ERR(tsc->base)) {
++			ret = PTR_ERR(tsc->base);
++			goto error_unregister;
++		}
++
++		priv->tscs[i] = tsc;
++		mutex_init(&tsc->lock);
++
++		match_data->thermal_init(tsc);
++		rcar_gen3_thermal_calc_coefs(&tsc->coef, ptat, thcode[i]);
++
++		zone = devm_thermal_zone_of_sensor_register(dev, i, tsc,
++							    &rcar_gen3_tz_of_ops);
++		if (IS_ERR(zone)) {
++			dev_err(dev, "Can't register thermal zone\n");
++			ret = PTR_ERR(zone);
++			goto error_unregister;
++		}
++		tsc->zone = zone;
++	}
++
++	return 0;
++
++error_unregister:
++	rcar_gen3_thermal_remove(pdev);
++
++	return ret;
++}
++
++static struct platform_driver rcar_gen3_thermal_driver = {
++	.driver	= {
++		.name	= "rcar_gen3_thermal",
++		.of_match_table = rcar_gen3_thermal_dt_ids,
++	},
++	.probe		= rcar_gen3_thermal_probe,
++	.remove		= rcar_gen3_thermal_remove,
++};
++module_platform_driver(rcar_gen3_thermal_driver);
++
++MODULE_LICENSE("GPL v2");
++MODULE_DESCRIPTION("R-Car Gen3 THS thermal sensor driver");
++MODULE_AUTHOR("Wolfram Sang <wsa+renesas@sang-engineering.com>");
+-- 
+2.1.4
