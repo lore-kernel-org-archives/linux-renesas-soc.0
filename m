@@ -1,60 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:46287 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753890AbdIFQhb (ORCPT
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:34448 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932136AbdIFQFW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Sep 2017 12:37:31 -0400
-Date: Wed, 6 Sep 2017 18:37:28 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>
-Subject: Re: [PATCH] ARM: dts: alt: use correct logic for SD WP pins
-Message-ID: <20170906163728.p7r5h6cx37evpbfb@ninjato>
-References: <20170905172631.31083-1-wsa+renesas@sang-engineering.com>
- <CAMuHMdVrbiWJcodEfRhJG3w9Pdk-9hZMov5fLewhkf-mW14n2g@mail.gmail.com>
+        Wed, 6 Sep 2017 12:05:22 -0400
+Received: by mail-pg0-f66.google.com with SMTP id v82so3051797pgb.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 06 Sep 2017 09:05:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="vtlmuzkz5kwl5jwv"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdVrbiWJcodEfRhJG3w9Pdk-9hZMov5fLewhkf-mW14n2g@mail.gmail.com>
+In-Reply-To: <20170905172631.31083-1-wsa+renesas@sang-engineering.com>
+References: <20170905172631.31083-1-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 6 Sep 2017 18:05:21 +0200
+Message-ID: <CAMuHMdVrbiWJcodEfRhJG3w9Pdk-9hZMov5fLewhkf-mW14n2g@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: alt: use correct logic for SD WP pins
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Wolfram,
 
---vtlmuzkz5kwl5jwv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Sep 5, 2017 at 7:26 PM, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> The WP pins are ACTIVE_HIGH, fix it in the DTS.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>  arch/arm/boot/dts/r8a7794-alt.dts | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
+> index e45f92b5eb1107..bd98790d964e13 100644
+> --- a/arch/arm/boot/dts/r8a7794-alt.dts
+> +++ b/arch/arm/boot/dts/r8a7794-alt.dts
+> @@ -304,7 +304,7 @@
+>         vmmc-supply = <&vcc_sdhi0>;
+>         vqmmc-supply = <&vccq_sdhi0>;
+>         cd-gpios = <&gpio6 6 GPIO_ACTIVE_LOW>;
+> -       wp-gpios = <&gpio6 7 GPIO_ACTIVE_LOW>;
+> +       wp-gpios = <&gpio6 7 GPIO_ACTIVE_HIGH>;
+>         sd-uhs-sdr50;
+>         sd-uhs-sdr104;
+>         status = "okay";
+> @@ -318,7 +318,7 @@
+>         vmmc-supply = <&vcc_sdhi1>;
+>         vqmmc-supply = <&vccq_sdhi1>;
+>         cd-gpios = <&gpio6 14 GPIO_ACTIVE_LOW>;
+> -       wp-gpios = <&gpio6 15 GPIO_ACTIVE_LOW>;
+> +       wp-gpios = <&gpio6 15 GPIO_ACTIVE_HIGH>;
+>         sd-uhs-sdr50;
+>         status = "okay";
 
+Thanks, looks good, as in "the same as on the other R-Car Gen2 boards".
 
-> Doesn't seem to fix this issue, though:
->=20
-> [    8.792344] sh_mobile_sdhi ee100000.sd: timeout waiting for hardware i=
-nterrupt (CMD19)
+Doesn't seem to fix this issue, though:
 
-Of course, not :)) But it was still wrong.
+[    8.792344] sh_mobile_sdhi ee100000.sd: timeout waiting for
+hardware interrupt (CMD19)
+[   13.912331] sh_mobile_sdhi ee100000.sd: timeout waiting for
+hardware interrupt (CMD19)
+[   13.972338] sh_mobile_sdhi ee100000.sd: Tuning procedure failed
+[   13.978277] mmc1: tuning execution failed: -110
+[   13.982854] mmc1: error -110 whilst initialising SD card
 
+Gr{oetje,eeting}s,
 
---vtlmuzkz5kwl5jwv
-Content-Type: application/pgp-signature; name="signature.asc"
+                        Geert
 
------BEGIN PGP SIGNATURE-----
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlmwJEQACgkQFA3kzBSg
-KbbYpg/+MArGvJCvimqFsT28kubPpRRFGqfOrEvnjfeEh7SLtAuUoqs3dKRFUkMB
-QsU+N5bm6JAN4GZ+Pf6Z5/bpmk3Yn6BgHU82hCpXTTT9f5ytMm5kTXfSBQ97CW7V
-MTjsgwVerKR1kcYpn0I7FgIWOunC04pkZA86ckkmHYEPLC7njwPFOFrB3ZVSTnnl
-JDLjIGsL+Kr2pimUr8QFk0lFABGBJ488ITEH8ym4rwHki1JQINAr6bE7nNUu2FiA
-wKWQ287Yx9Un4SEsfVN7Q76h8qRU1f5rpmHvr27mQ3Sn7J9bsDKIUwTi7sgOGgKc
-b+i0gr2GWNBSrtuokW2ElsGdsHlg5sciA3c5loFjy/mfTqzuwVUKimy7yXQTPERq
-Z5KAXXsSdeBFMvkpAHHTlZoEPBOouSVmKocRHHPO0FCrhSPR7IKtT1kJ5gvDRkmJ
-ZayKyUFMQY0yjbAF6Or+nST+5vLqQI2BzfSNm2OX9mzXHos/behmrVsH7HVmhYI6
-NYPGNnj2I5vv5/rV1w4xxkTgC79bp4mZ73NOq6lz/6DW0uOOxYlBzYQh5+5b4RH9
-P4Lia1FpOTIPlKmVcaRQ0m2mP32TVD5pFqJjBd085ZzlAwgDoh9gKK7L1+FQNkmw
-kZ5C6qnTzPg+fClZfyAcnMBEkWm2u8uwd9ugdTaIz/G4Hw4R5BI=
-=Alex
------END PGP SIGNATURE-----
-
---vtlmuzkz5kwl5jwv--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
