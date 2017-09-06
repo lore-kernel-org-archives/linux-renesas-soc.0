@@ -1,46 +1,116 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55204 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751153AbdIKHZW (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Sep 2017 03:25:22 -0400
-Date: Mon, 11 Sep 2017 09:25:02 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Chris Paterson <chris.paterson2@renesas.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Chris Paterson <chris.paterson2@renesas.com>
+To: Simon Horman <horms@verge.net.au>,
+        Biju Das <biju.das@bp.renesas.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Russell King <linux@armlinux.org.uk>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3] ARM: dts: r8a7743: Add IIC cores to dtsi
-Message-ID: <20170911072502.GA10251@verge.net.au>
+        linux-arm-kernel@lists.infradead.org,
+        Chris Paterson <chris.paterson2@renesas.com>
+Subject: [PATCH v3] ARM: dts: r8a7743: Add IIC cores to dtsi
+Date: Wed,  6 Sep 2017 14:52:06 +0100
+Message-Id: <1504705926-31625-1-git-send-email-chris.paterson2@renesas.com>
+In-Reply-To: <1502704398-28378-1-git-send-email-biju.das@bp.renesas.com>
 References: <1502704398-28378-1-git-send-email-biju.das@bp.renesas.com>
- <1504705926-31625-1-git-send-email-chris.paterson2@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1504705926-31625-1-git-send-email-chris.paterson2@renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Sep 06, 2017 at 02:52:06PM +0100, Chris Paterson wrote:
-> From: Biju Das <biju.das@bp.renesas.com>
-> 
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-> ---
-> v2->v3
-> - Renamed lables to use iic instead of i2c.
-> 
-> v1->v2
-> - Corrected the resets property for i2c6 device node.
-> 
-> This patch is based on renesas-devel tag renesas-devel-20170905-v4.13.
-> 
-> DT bindings has been accepted by Wolfram:
-> https://patchwork.kernel.org/patch/9888119
+From: Biju Das <biju.das@bp.renesas.com>
 
-Thanks, applied.
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+---
+v2->v3
+- Renamed lables to use iic instead of i2c.
+
+v1->v2
+- Corrected the resets property for i2c6 device node.
+
+This patch is based on renesas-devel tag renesas-devel-20170905-v4.13.
+
+DT bindings has been accepted by Wolfram:
+https://patchwork.kernel.org/patch/9888119
+
+
+ arch/arm/boot/dts/r8a7743.dtsi | 55 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 55 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index 665a515..266c5ec 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -25,6 +25,9 @@
+ 		i2c3 = &i2c3;
+ 		i2c4 = &i2c4;
+ 		i2c5 = &i2c5;
++		i2c6 = &iic0;
++		i2c7 = &iic1;
++		i2c8 = &iic3;
+ 	};
+ 
+ 	cpus {
+@@ -436,6 +439,58 @@
+ 			status = "disabled";
+ 		};
+ 
++		iic0: i2c@e6500000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "renesas,iic-r8a7743",
++				     "renesas,rcar-gen2-iic",
++				     "renesas,rmobile-iic";
++			reg = <0 0xe6500000 0 0x425>;
++			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 318>;
++			dmas = <&dmac0 0x61>, <&dmac0 0x62>,
++			       <&dmac1 0x61>, <&dmac1 0x62>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			resets = <&cpg 318>;
++			status = "disabled";
++		};
++
++		iic1: i2c@e6510000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "renesas,iic-r8a7743",
++				     "renesas,rcar-gen2-iic",
++				     "renesas,rmobile-iic";
++			reg = <0 0xe6510000 0 0x425>;
++			interrupts = <GIC_SPI 175 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 323>;
++			dmas = <&dmac0 0x65>, <&dmac0 0x66>,
++			       <&dmac1 0x65>, <&dmac1 0x66>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			resets = <&cpg 323>;
++			status = "disabled";
++		};
++
++		iic3: i2c@e60b0000 {
++			/* doesn't need pinmux */
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "renesas,iic-r8a7743",
++				     "renesas,rcar-gen2-iic",
++				     "renesas,rmobile-iic";
++			reg = <0 0xe60b0000 0 0x425>;
++			interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 926>;
++			dmas = <&dmac0 0x77>, <&dmac0 0x78>,
++			       <&dmac1 0x77>, <&dmac1 0x78>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			resets = <&cpg 926>;
++			status = "disabled";
++		};
++
+ 		scifa0: serial@e6c40000 {
+ 			compatible = "renesas,scifa-r8a7743",
+ 				     "renesas,rcar-gen2-scifa", "renesas,scifa";
+-- 
+1.9.1
+
