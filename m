@@ -1,63 +1,72 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-Subject: Re: [PATCH 08/18] arm64: dts: ulcb-kf: enable CAN0/1
-To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Simon Horman <horms@verge.net.au>,
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+To: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Subject: [PATCH 08/18] arm64: dts: ulcb-kf: enable CAN0/1
+Date: Thu,  7 Sep 2017 01:36:08 +0300
+Message-Id: <1504737368-23152-1-git-send-email-vladimir.barinov@cogentembedded.com>
+In-Reply-To: <1504737267-22829-1-git-send-email-vladimir.barinov@cogentembedded.com>
 References: <1504737267-22829-1-git-send-email-vladimir.barinov@cogentembedded.com>
- <1504737368-23152-1-git-send-email-vladimir.barinov@cogentembedded.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <26913428-fc25-99ba-318c-315ace63717c@cogentembedded.com>
-Date: Thu, 7 Sep 2017 12:50:44 +0300
-MIME-Version: 1.0
-In-Reply-To: <1504737368-23152-1-git-send-email-vladimir.barinov@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+This supports CAN0/1 on ULCB Kingfisher board
 
-On 9/7/2017 1:36 AM, Vladimir Barinov wrote:
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+---
+ arch/arm64/boot/dts/renesas/ulcb-kf.dtsi | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-> This supports CAN0/1 on ULCB Kingfisher board
-> 
-> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-> ---
->   arch/arm64/boot/dts/renesas/ulcb-kf.dtsi | 26 ++++++++++++++++++++++++++
->   1 file changed, 26 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-> index 2449915..ca8de1a 100644
-> --- a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-> @@ -16,6 +16,22 @@
->   	};
->   };
->   
-> +&can0 {
-> +	pinctrl-0 = <&can0_pins>;
-> +	pinctrl-names = "default";
-> +	status = "okay";
-> +
-> +	renesas,can-clock-select = <0x0>;
-> +};
-> +
-> +&can1 {
-> +	pinctrl-0 = <&can1_pins>;
-> +	pinctrl-names = "default";
-> +	status = "okay";
-> +
-> +	renesas,can-clock-select = <0x0>;
+diff --git a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
+index 2449915..ca8de1a 100644
+--- a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
++++ b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
+@@ -16,6 +16,22 @@
+ 	};
+ };
+ 
++&can0 {
++	pinctrl-0 = <&can0_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++
++	renesas,can-clock-select = <0x0>;
++};
++
++&can1 {
++	pinctrl-0 = <&can1_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++
++	renesas,can-clock-select = <0x0>;
++};
++
+ &hscif0 {
+ 	pinctrl-0 = <&hscif0_pins>;
+ 	pinctrl-names = "default";
+@@ -25,6 +41,16 @@
+ };
+ 
+ &pfc {
++	can0_pins: can0 {
++		groups = "can0_data_a";
++		function = "can0";
++	};
++
++	can1_pins: can1 {
++		groups = "can1_data";
++		function = "can1";
++	};
++
+ 	hscif0_pins: hscif0 {
+ 		groups = "hscif0_data", "hscif0_ctrl";
+ 		function = "hscif0";
+-- 
+1.9.1
 
-    IIRC, you can omit these Renesas specific props -- the driver uses 0 if it 
-doesn't find the prop.
-
-[...]
-
-MBR, Sergei
