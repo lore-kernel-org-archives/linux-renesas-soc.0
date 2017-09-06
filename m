@@ -1,173 +1,147 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:57114 "EHLO
-        smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751880AbdIFHFO (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Sep 2017 03:05:14 -0400
-From: Dirk Behme <dirk.behme@de.bosch.com>
-To: <linux-renesas-soc@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-CC: Ryo Kataoka <ryo.kataoka.wt@renesas.com>,
-        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
-        Dirk Behme <dirk.behme@de.bosch.com>
-Subject: [PATCH 4/8] spi: sh-msiof: Fix DMA completion
-Date: Wed, 6 Sep 2017 09:05:03 +0200
-Message-ID: <20170906070507.26223-5-dirk.behme@de.bosch.com>
-In-Reply-To: <20170906070507.26223-1-dirk.behme@de.bosch.com>
-References: <20170906070507.26223-1-dirk.behme@de.bosch.com>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH v3 2/2] mtd: spi-nor: parse Serial Flash Discoverable
+ Parameters (SFDP) tables
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Cyrille Pitchen <cyrille.pitchen@microchip.com>,
+        Boris BREZILLON <boris.brezillon@free-electrons.com>
+Cc: Richard Weinberger <richard@nod.at>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        MTD Maling List <linux-mtd@lists.infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>
+References: <cover.1498481714.git.cyrille.pitchen@microchip.com>
+ <bd2526cb6d08011ba2e5e6ef8282b6d68d888b88.1498481714.git.cyrille.pitchen@microchip.com>
+ <CAMuHMdU_34gtsDmnEKYHk_pRCz6owTED7xVzNuaCkQA7L2gdPg@mail.gmail.com>
+From: Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>
+Message-ID: <ca99e4b6-a413-9553-6756-1653ad5b02d3@wedev4u.fr>
+Date: Wed, 6 Sep 2017 22:52:53 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <CAMuHMdU_34gtsDmnEKYHk_pRCz6owTED7xVzNuaCkQA7L2gdPg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Ryo Kataoka <ryo.kataoka.wt@renesas.com>
+Hi Geert,
 
-When reception DMA completes before transmission DMA, next transmission
-DMA may not be able to start. This patch adds wait_for_completion_timeout()
-to both of reception DMA and transmission DMA.
+thanks for your report: I'm writing a bug fix right now!
 
-If the driver waits only for the Rx DMA completion, the Tx DMA completion
-thread of DMA Engine may be still processing.
+Best regards,
 
-Signed-off-by: Ryo Kataoka <ryo.kataoka.wt@renesas.com>
-[reword commit message]
-Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
-[adjust context]
-Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
----
- drivers/spi/spi-sh-msiof.c | 53 +++++++++++++++++++++++++++++++---------------
- 1 file changed, 36 insertions(+), 17 deletions(-)
+Cyrille
 
-diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
-index 24b49d3ca9a8..660b03ed6770 100644
---- a/drivers/spi/spi-sh-msiof.c
-+++ b/drivers/spi/spi-sh-msiof.c
-@@ -52,6 +52,7 @@ struct sh_msiof_spi_priv {
- 	struct platform_device *pdev;
- 	struct sh_msiof_spi_info *info;
- 	struct completion done;
-+	struct completion done_dma_tx, done_dma_rx;
- 	unsigned int tx_fifo_size;
- 	unsigned int rx_fifo_size;
- 	unsigned int min_div;
-@@ -621,7 +622,8 @@ static int sh_msiof_slave_abort(struct spi_master *master)
- 	return 0;
- }
- 
--static int sh_msiof_wait_for_completion(struct sh_msiof_spi_priv *p)
-+static int sh_msiof_wait_for_completion(struct sh_msiof_spi_priv *p,
-+					const void *tx, void *rx)
- {
- 	if (spi_controller_is_slave(p->master)) {
- 		if (wait_for_completion_interruptible(&p->done) ||
-@@ -630,10 +632,22 @@ static int sh_msiof_wait_for_completion(struct sh_msiof_spi_priv *p)
- 			return -EINTR;
- 		}
- 	} else {
--		if (!wait_for_completion_timeout(&p->done, HZ)) {
--			dev_err(&p->pdev->dev, "timeout\n");
--			return -ETIMEDOUT;
-+		if (tx) {
-+			if (!wait_for_completion_timeout(&p->done_dma_tx,
-+							 HZ)) {
-+				dev_err(&p->pdev->dev, "Tx DMA timeout\n");
-+				return -ETIMEDOUT;
-+			}
- 		}
-+		if (rx) {
-+			if (!wait_for_completion_timeout(&p->done_dma_rx,
-+							 HZ)) {
-+				dev_err(&p->pdev->dev, "Rx DMA timeout\n");
-+				return -ETIMEDOUT;
-+			}
-+		}
-+
-+		sh_msiof_write(p, IER, 0);
- 	}
- 
- 	return 0;
-@@ -680,7 +694,7 @@ static int sh_msiof_spi_txrx_once(struct sh_msiof_spi_priv *p,
- 	}
- 
- 	/* wait for tx fifo to be emptied / rx fifo to be filled */
--	ret = sh_msiof_wait_for_completion(p);
-+	ret = sh_msiof_wait_for_completion(p, tx_buf, rx_buf);
- 	if (ret)
- 		goto stop_reset;
- 
-@@ -707,12 +721,18 @@ static int sh_msiof_spi_txrx_once(struct sh_msiof_spi_priv *p,
- 	return ret;
- }
- 
--static void sh_msiof_dma_complete(void *arg)
-+static void sh_msiof_tx_dma_complete(void *arg)
- {
- 	struct sh_msiof_spi_priv *p = arg;
- 
--	sh_msiof_write(p, IER, 0);
--	complete(&p->done);
-+	complete(&p->done_dma_tx);
-+}
-+
-+static void sh_msiof_rx_dma_complete(void *arg)
-+{
-+	struct sh_msiof_spi_priv *p = arg;
-+
-+	complete(&p->done_dma_rx);
- }
- 
- static int sh_msiof_dma_once(struct sh_msiof_spi_priv *p, const void *tx,
-@@ -732,7 +752,7 @@ static int sh_msiof_dma_once(struct sh_msiof_spi_priv *p, const void *tx,
- 		if (!desc_rx)
- 			return -EAGAIN;
- 
--		desc_rx->callback = sh_msiof_dma_complete;
-+		desc_rx->callback = sh_msiof_rx_dma_complete;
- 		desc_rx->callback_param = p;
- 		cookie = dmaengine_submit(desc_rx);
- 		if (dma_submit_error(cookie))
-@@ -751,13 +771,8 @@ static int sh_msiof_dma_once(struct sh_msiof_spi_priv *p, const void *tx,
- 			goto no_dma_tx;
- 		}
- 
--		if (rx) {
--			/* No callback */
--			desc_tx->callback = NULL;
--		} else {
--			desc_tx->callback = sh_msiof_dma_complete;
--			desc_tx->callback_param = p;
--		}
-+		desc_tx->callback = sh_msiof_tx_dma_complete;
-+		desc_tx->callback_param = p;
- 		cookie = dmaengine_submit(desc_tx);
- 		if (dma_submit_error(cookie)) {
- 			ret = cookie;
-@@ -774,6 +789,8 @@ static int sh_msiof_dma_once(struct sh_msiof_spi_priv *p, const void *tx,
- 	sh_msiof_write(p, IER, ier_bits);
- 
- 	reinit_completion(&p->done);
-+	reinit_completion(&p->done_dma_tx);
-+	reinit_completion(&p->done_dma_rx);
- 	p->slave_aborted = false;
- 
- 	/* Now start DMA */
-@@ -789,7 +806,7 @@ static int sh_msiof_dma_once(struct sh_msiof_spi_priv *p, const void *tx,
- 	}
- 
- 	/* wait for tx fifo to be emptied / rx fifo to be filled */
--	ret = sh_msiof_wait_for_completion(p);
-+	ret = sh_msiof_wait_for_completion(p, tx, rx);
- 	if (ret)
- 		goto stop_reset;
- 
-@@ -1258,6 +1275,8 @@ static int sh_msiof_spi_probe(struct platform_device *pdev)
- 	p->min_div = chipdata->min_div;
- 
- 	init_completion(&p->done);
-+	init_completion(&p->done_dma_tx);
-+	init_completion(&p->done_dma_rx);
- 
- 	p->clk = devm_clk_get(&pdev->dev, NULL);
- 	if (IS_ERR(p->clk)) {
--- 
-2.14.1
+Le 06/09/2017 à 18:51, Geert Uytterhoeven a écrit :
+> Hi Cyrille, Boris,
+> 
+> On Mon, Jun 26, 2017 at 3:10 PM, Cyrille Pitchen
+> <cyrille.pitchen@microchip.com> wrote:
+>> This patch adds support to the JESD216 rev B standard and parses the SFDP
+>> tables to dynamically initialize the 'struct spi_nor_flash_parameter'.
+>>
+>> Signed-off-by: Cyrille Pitchen <cyrille.pitchen@microchip.com>
+> 
+> This patch, which is now commit f384b352cbf0310f ("mtd: spi-nor: parse
+> Serial Flash
+> Discoverable Parameters (SFDP) tables") in -next, and which was included in the
+> "MTD updates for 4.14" pull request, broke QSPI FLASH on R-Car Gen2.
+> 
+> E.g. on r8a7794/alt, the following warning is printed with
+> CONFIG_DMA_API_DEBUG=y:
+> 
+>     WARNING: CPU: 1 PID: 1 at lib/dma-debug.c:1188 check_for_stack+0xcc/0x114
+>     rcar-dmac e6720000.dma-controller: DMA-API: device driver maps
+> memory from stack [addr=ef43dad8]
+>     Modules linked in:
+>     CPU: 1 PID: 1 Comm: swapper/0 Not tainted
+> 4.13.0-rcar2-initrd-00404-g3d49bfdcf5ecd040 #76
+>     Hardware name: Generic R-Car Gen2 (Flattened Device Tree)
+>     [<c020e664>] (unwind_backtrace) from [<c020a13c>] (show_stack+0x10/0x14)
+>     [<c020a13c>] (show_stack) from [<c06a5c50>] (dump_stack+0x7c/0x9c)
+>     [<c06a5c50>] (dump_stack) from [<c021ef58>] (__warn+0xcc/0xfc)
+>     [<c021ef58>] (__warn) from [<c021efbc>] (warn_slowpath_fmt+0x34/0x44)
+>     [<c021efbc>] (warn_slowpath_fmt) from [<c0403228>]
+> (check_for_stack+0xcc/0x114)
+>     [<c0403228>] (check_for_stack) from [<c0403a9c>]
+> (debug_dma_map_sg+0xe4/0x168)
+>     [<c0403a9c>] (debug_dma_map_sg) from [<c04cd7b8>] (spi_map_buf+0x2f4/0x32c)
+>     [<c04cd7b8>] (spi_map_buf) from [<c04ce560>]
+> (__spi_pump_messages+0x430/0x4d8)
+>     [<c04ce560>] (__spi_pump_messages) from [<c04ce77c>]
+> (__spi_sync+0x168/0x194)
+>     [<c04ce77c>] (__spi_sync) from [<c04ce7cc>] (spi_sync+0x24/0x3c)
+>     [<c04ce7cc>] (spi_sync) from [<c04c97fc>] (m25p80_read+0x2e4/0x300)
+>     [<c04c97fc>] (m25p80_read) from [<c04c99d8>] (spi_nor_read_sfdp+0x58/0xa8)
+>     [<c04c99d8>] (spi_nor_read_sfdp) from [<c04c9fc8>]
+> (spi_nor_init_params+0x2e8/0x5f4)
+>     [<c04c9fc8>] (spi_nor_init_params) from [<c04cb510>]
+> (spi_nor_scan+0xc4/0x830)
+>     [<c04cb510>] (spi_nor_scan) from [<c04c9928>] (m25p_probe+0x110/0x168)
+>     [<c04c9928>] (m25p_probe) from [<c04cce0c>] (spi_drv_probe+0x84/0xa0)
+>     [<c04cce0c>] (spi_drv_probe) from [<c0470f80>]
+> (driver_probe_device+0x150/0x2d0)
+>     [<c0470f80>] (driver_probe_device) from [<c046f7fc>]
+> (bus_for_each_drv+0x84/0x94)
+>     [<c046f7fc>] (bus_for_each_drv) from [<c0470d98>]
+> (__device_attach+0x88/0xfc)
+>     [<c0470d98>] (__device_attach) from [<c0470450>]
+> (bus_probe_device+0x28/0x80)
+>     [<c0470450>] (bus_probe_device) from [<c046ebac>] (device_add+0x3f8/0x50c)
+>     [<c046ebac>] (device_add) from [<c04cef54>] (spi_add_device+0xd0/0x14c)
+>     [<c04cef54>] (spi_add_device) from [<c04cf308>]
+> (of_register_spi_device+0x200/0x2f4)
+>     [<c04cf308>] (of_register_spi_device) from [<c04cf878>]
+> (spi_register_controller+0x47c/0x5e4)
+>     [<c04cf878>] (spi_register_controller) from [<c04cfa10>]
+> (devm_spi_register_controller+0x30/0x6c)
+>     [<c04cfa10>] (devm_spi_register_controller) from [<c04d190c>]
+> (rspi_probe+0x258/0x404)
+>     [<c04d190c>] (rspi_probe) from [<c0472780>] (platform_drv_probe+0x50/0xa0)
+>     [<c0472780>] (platform_drv_probe) from [<c0470f80>]
+> (driver_probe_device+0x150/0x2d0)
+>     [<c0470f80>] (driver_probe_device) from [<c0471180>]
+> (__driver_attach+0x80/0xa4)
+>     [<c0471180>] (__driver_attach) from [<c046f740>]
+> (bus_for_each_dev+0x6c/0x90)
+>     [<c046f740>] (bus_for_each_dev) from [<c047064c>]
+> (bus_add_driver+0xc8/0x1e4)
+>     [<c047064c>] (bus_add_driver) from [<c0471a14>] (driver_register+0x9c/0xe0)
+>     [<c0471a14>] (driver_register) from [<c0201718>]
+> (do_one_initcall+0xa8/0x14c)
+>     [<c0201718>] (do_one_initcall) from [<c0c00d84>]
+> (kernel_init_freeable+0x114/0x:
+>     [<c0c00d84>] (kernel_init_freeable) from [<c06b6244>]
+> (kernel_init+0x8/0x10c)
+>     [<c06b6244>] (kernel_init) from [<c0206b68>] (ret_from_fork+0x14/0x2c)
+> 
+> This leads to the SPI FLASH size being misdetected as zero:
+> 
+>     -m25p80 spi0.0: s25fl512s (65536 Kbytes)
+>     +m25p80 spi0.0: s25fl512s (0 Kbytes)
+>      3 ofpart partitions found on MTD device spi0.0
+>      Creating 3 MTD partitions on "spi0.0":
+>      0x000000000000-0x000000040000 : "loader"
+>     +mtd: partition "loader" is out of reach -- disabled
+>      0x000000040000-0x000000080000 : "system"
+>     +mtd: partition "system" is out of reach -- disabled
+>      0x000000080000-0x000004000000 : "user"
+>     +mtd: partition "user" is out of reach -- disabled
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+> 
+> ______________________________________________________
+> Linux MTD discussion mailing list
+> http://lists.infradead.org/mailman/listinfo/linux-mtd/
+> 
