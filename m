@@ -1,77 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:34448 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932136AbdIFQFW (ORCPT
+Received: from sauhun.de ([88.99.104.3]:45878 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932562AbdIFOwk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Sep 2017 12:05:22 -0400
-Received: by mail-pg0-f66.google.com with SMTP id v82so3051797pgb.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 06 Sep 2017 09:05:22 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <20170905172631.31083-1-wsa+renesas@sang-engineering.com>
-References: <20170905172631.31083-1-wsa+renesas@sang-engineering.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 6 Sep 2017 18:05:21 +0200
-Message-ID: <CAMuHMdVrbiWJcodEfRhJG3w9Pdk-9hZMov5fLewhkf-mW14n2g@mail.gmail.com>
+        Wed, 6 Sep 2017 10:52:40 -0400
+Date: Wed, 6 Sep 2017 16:52:37 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Simon Horman <horms@verge.net.au>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH] ARM: dts: alt: use correct logic for SD WP pins
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <20170906145236.3ezypiuteml5kb7q@ninjato>
+References: <20170905172631.31083-1-wsa+renesas@sang-engineering.com>
+ <20170906082639.GC10048@verge.net.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="vlxzsgxe7f46mtlk"
+Content-Disposition: inline
+In-Reply-To: <20170906082639.GC10048@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Wolfram,
 
-On Tue, Sep 5, 2017 at 7:26 PM, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> The WP pins are ACTIVE_HIGH, fix it in the DTS.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
->  arch/arm/boot/dts/r8a7794-alt.dts | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
-> index e45f92b5eb1107..bd98790d964e13 100644
-> --- a/arch/arm/boot/dts/r8a7794-alt.dts
-> +++ b/arch/arm/boot/dts/r8a7794-alt.dts
-> @@ -304,7 +304,7 @@
->         vmmc-supply = <&vcc_sdhi0>;
->         vqmmc-supply = <&vccq_sdhi0>;
->         cd-gpios = <&gpio6 6 GPIO_ACTIVE_LOW>;
-> -       wp-gpios = <&gpio6 7 GPIO_ACTIVE_LOW>;
-> +       wp-gpios = <&gpio6 7 GPIO_ACTIVE_HIGH>;
->         sd-uhs-sdr50;
->         sd-uhs-sdr104;
->         status = "okay";
-> @@ -318,7 +318,7 @@
->         vmmc-supply = <&vcc_sdhi1>;
->         vqmmc-supply = <&vccq_sdhi1>;
->         cd-gpios = <&gpio6 14 GPIO_ACTIVE_LOW>;
-> -       wp-gpios = <&gpio6 15 GPIO_ACTIVE_LOW>;
-> +       wp-gpios = <&gpio6 15 GPIO_ACTIVE_HIGH>;
->         sd-uhs-sdr50;
->         status = "okay";
+--vlxzsgxe7f46mtlk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks, looks good, as in "the same as on the other R-Car Gen2 boards".
 
-Doesn't seem to fix this issue, though:
+> > The WP pins are ACTIVE_HIGH, fix it in the DTS.
+> >=20
+> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>=20
+> Thanks, I applied this for v4.15 with:
+>=20
+> Fixes: 2b41091b896b ("ARM: dts: alt: add SDHI0 and 1 support")
+>=20
+> Let me know if you'd prefer it to be handled as a fix for v4.14.
 
-[    8.792344] sh_mobile_sdhi ee100000.sd: timeout waiting for
-hardware interrupt (CMD19)
-[   13.912331] sh_mobile_sdhi ee100000.sd: timeout waiting for
-hardware interrupt (CMD19)
-[   13.972338] sh_mobile_sdhi ee100000.sd: Tuning procedure failed
-[   13.978277] mmc1: tuning execution failed: -110
-[   13.982854] mmc1: error -110 whilst initialising SD card
+I'd think 4.14 is more appropriate since it is a bugfix. But then again,
+nobody noticed so far, so I don't really mind.
 
-Gr{oetje,eeting}s,
 
-                        Geert
+--vlxzsgxe7f46mtlk
+Content-Type: application/pgp-signature; name="signature.asc"
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+-----BEGIN PGP SIGNATURE-----
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlmwC7AACgkQFA3kzBSg
+KbZEjxAAk/Dr2nmpyvv1aDv274fE0B+0Kx8HHl/cmf3llaUrSw6YmIuF5V5HVtIs
+8cPTuk9nN/3o0OfR1Ea2N3DpWZH29DaRpk0gpTvZJdxe7X1k7d9zj/HENpVgQFgf
+crwfauaV7isO+NY4wR45bel+p0FccDeA/r18DX90GRehJlc4kg4yJy0XGxYtLN78
+j9ZJiyWbs6lgXkPMH8PKKxpoOfv+Lkq2kosN6OOhV4QeDPq1j2yaTHBd+9w3M5b4
+RwOcLgBBx9hJU2dvD1N5fAWaahiQ9LdPYpVY5fqzaASys2oeU+QFx35kI9xhx+7K
+g/bkOS6xDRrIMhCnE8p3QiAwWRgqnLG9fDMfFO4LLyuUWC6fJr5zN4F/K0m4CL51
+SH7HjmBTTxMb9H8hZVF6hYpOkbXTKzlV6rE6LRH/1ZAkcQUFusuM2AJ9nOIvRTBv
+f4FzAdYksul7H3EuLpTyKqUQex2FklwFeDWVhzd4rdpNLUjpDPt4Qt3u+bsUKAw5
+mJc9ftiVCov2UVr0EMMocQAm9ZG6oBthfbaDcQpdPmg7WpZrAa8jBi3vQMSzP9nA
+2mdT9HckuMldkFXerTXPPs5O9xVe573/8Ga6E9AG3DEcKnQ9jCri6fHouLQGXpqu
+XwIGwfqyludzjZMzJOj18/puy0GVWSqREC/rjsx+ElDeZH2abw8=
+=N4WN
+-----END PGP SIGNATURE-----
+
+--vlxzsgxe7f46mtlk--
