@@ -1,102 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:36750 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751481AbdIELGS (ORCPT
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:37415 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753927AbdIGKhD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Sep 2017 07:06:18 -0400
-Received: from ramsan.of.borg ([192.168.97.29] helo=ramsan)
-        by ayla.of.borg with esmtp (Exim 4.86_2)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1dpBgI-0003QU-TJ
-        for linux-renesas-soc@vger.kernel.org; Tue, 05 Sep 2017 13:06:10 +0200
-Received: from geert by ramsan with local (Exim 4.86_2)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1dpBgO-0003oR-Eb
-        for linux-renesas-soc@vger.kernel.org; Tue, 05 Sep 2017 13:06:16 +0200
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: linux-renesas-soc@vger.kernel.org
-Subject: renesas-drivers-2017-09-05-v4.13
-Date: Tue,  5 Sep 2017 13:06:16 +0200
-Message-Id: <1504609576-14617-1-git-send-email-geert+renesas@glider.be>
+        Thu, 7 Sep 2017 06:37:03 -0400
+MIME-Version: 1.0
+In-Reply-To: <1504737430-23465-1-git-send-email-vladimir.barinov@cogentembedded.com>
+References: <1504737267-22829-1-git-send-email-vladimir.barinov@cogentembedded.com>
+ <1504737430-23465-1-git-send-email-vladimir.barinov@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 7 Sep 2017 12:37:02 +0200
+Message-ID: <CAMuHMdU8qeM2RXSSsqf5ouPAE2gq_gpSd0iDj7TE2s9O_f-GVw@mail.gmail.com>
+Subject: Re: [PATCH 16/18] arm64: dts: ulcb-kf: enable PCA9548 on I2C2
+To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I have pushed renesas-drivers-2017-09-05-v4.13 to
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
+On Thu, Sep 7, 2017 at 12:37 AM, Vladimir Barinov
+<vladimir.barinov@cogentembedded.com> wrote:
+> This supports PCA9548 I2C switch on I2C2 bus on ULCB Kingfisher board
+>
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> ---
+>  arch/arm64/boot/dts/renesas/ulcb-kf.dtsi | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
+> index 1cf8466..3bbc490 100644
+> --- a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
+> @@ -68,6 +68,14 @@
+>                 interrupt-parent = <&gpio6>;
+>                 interrupts = <4 IRQ_TYPE_EDGE_FALLING>;
+>         };
+> +
+> +       i2cswitch2: pca9548@71 {
 
-This tree is meant to ease development of platform support and drivers
-for Renesas ARM SoCs. It is created by merging (a) the for-next branches
-of various subsystem trees and (b) branches with driver code submitted
-or planned for submission to maintainers into the development branch of
-Simon Horman's renesas.git tree.
+Please use generic node names: i2c-switch@71
 
-Today's version is based on renesas-devel-20170905-v4.13.
-
-Included branches with driver code:
-  - sh-pfc-for-v4.15
-  - topic/suspend-to-idle-v1
-  - topic/sh-sh7722-sh7757-sh7264-sh7269-fix-pinctrl-v2
-  - topic/r8a77995-integration
-  - topic/r8a77970-integration
-  - topic/r8a7794-smp-v3
-  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/rcar-gen3-z-clk
-  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/cpufreq-automatic
-  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/rcar-gen3-cpufreq-dts
-  - git://git.ragnatech.se/linux#for-renesas-drivers
-  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#renesas/topic/i2c-fault-injection
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#tags/vsp1/tlb-optimise-v2
-
-Included fixes:
-  - of_mdio: Fix broken PHY IRQ in case of probe deferral
-  - rcar-vin: Fix section mismatch from rcar_vin_probe()
-  - media: rcar-csi2: Fix section mismatch from rcar_csi2_probe()
-
-Included subsystem trees:
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
-  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
-  - git://people.freedesktop.org/~airlied/linux#drm-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
-  - git://linuxtv.org/mchehab/media-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
-  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
-  - git://git.infradead.org/users/vkoul/slave-dma.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
-  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
-  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
-  - git://github.com/bzolnier/linux.git#fbdev-for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
-  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
-  - git://anongit.freedesktop.org/drm/drm-misc#for-linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
+> +               compatible = "nxp,pca9548";
+> +               #address-cells = <1>;
+> +               #size-cells = <0>;
+> +               reg = <0x71>;
+> +               reset-gpios = <&gpio5 3 GPIO_ACTIVE_LOW>;
+> +       };
+>  };
 
 Gr{oetje,eeting}s,
 
-						Geert
+                        Geert
 
 --
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
 when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+                                -- Linus Torvalds
