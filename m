@@ -1,32 +1,63 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:64787 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750949AbdIMMWQ (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Sep 2017 08:22:16 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 0/2] arm64: dts: renesas: r8a77995 and draak: add support EthernetAVB
-Date: Wed, 13 Sep 2017 21:18:37 +0900
-Message-Id: <1505305119-4257-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Return-Path: <devicetree-owner@vger.kernel.org>
+Subject: Re: [PATCH 08/18] arm64: dts: ulcb-kf: enable CAN0/1
+To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <1504737267-22829-1-git-send-email-vladimir.barinov@cogentembedded.com>
+ <1504737368-23152-1-git-send-email-vladimir.barinov@cogentembedded.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <26913428-fc25-99ba-318c-315ace63717c@cogentembedded.com>
+Date: Thu, 7 Sep 2017 12:50:44 +0300
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <1504737368-23152-1-git-send-email-vladimir.barinov@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch is based on the renesas-drivers.git /
-renesas-drivers-2017-09-05-v4.13 tag.
+Hello!
 
-Yoshihiro Shimoda (2):
-  arm64: dts: renesas: r8a77995: Add EthernetAVB device node
-  arm64: dts: renesas: r8a77995: draak: enable EthernetAVB
+On 9/7/2017 1:36 AM, Vladimir Barinov wrote:
 
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 25 ++++++++++++++
- arch/arm64/boot/dts/renesas/r8a77995.dtsi      | 45 ++++++++++++++++++++++++++
- 2 files changed, 70 insertions(+)
+> This supports CAN0/1 on ULCB Kingfisher board
+> 
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> ---
+>   arch/arm64/boot/dts/renesas/ulcb-kf.dtsi | 26 ++++++++++++++++++++++++++
+>   1 file changed, 26 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
+> index 2449915..ca8de1a 100644
+> --- a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
+> @@ -16,6 +16,22 @@
+>   	};
+>   };
+>   
+> +&can0 {
+> +	pinctrl-0 = <&can0_pins>;
+> +	pinctrl-names = "default";
+> +	status = "okay";
+> +
+> +	renesas,can-clock-select = <0x0>;
+> +};
+> +
+> +&can1 {
+> +	pinctrl-0 = <&can1_pins>;
+> +	pinctrl-names = "default";
+> +	status = "okay";
+> +
+> +	renesas,can-clock-select = <0x0>;
 
--- 
-1.9.1
+    IIRC, you can omit these Renesas specific props -- the driver uses 0 if it 
+doesn't find the prop.
+
+[...]
+
+MBR, Sergei
