@@ -1,70 +1,116 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34793 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752181AbdI2LzA (ORCPT
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:37429 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752778AbdIGIYK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Sep 2017 07:55:00 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 44/48] ARM: dts: r8a7745: Add QSPI support
-Date: Fri, 29 Sep 2017 13:53:36 +0200
-Message-Id: <2391d0269a85c3a7942cb7e2bbac5751a7191e10.1506683482.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1506683482.git.horms+renesas@verge.net.au>
-References: <cover.1506683482.git.horms+renesas@verge.net.au>
+        Thu, 7 Sep 2017 04:24:10 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170906070507.26223-8-dirk.behme@de.bosch.com>
+References: <20170906070507.26223-1-dirk.behme@de.bosch.com> <20170906070507.26223-8-dirk.behme@de.bosch.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 7 Sep 2017 10:24:09 +0200
+Message-ID: <CAMuHMdV2H5GdAB=FETqFnmQvrwDKuaTfTwV7pxqW+RATj-nH+w@mail.gmail.com>
+Subject: Re: [PATCH 7/8] spi: sh-msiof: Fix gpio function
+To: Dirk Behme <dirk.behme@de.bosch.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Hi Dirk,
 
-Add the DT node for the QSPI interface to the SoC dtsi.
+On Wed, Sep 6, 2017 at 9:05 AM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
+> From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+>
+> This patch adds a function to control chip select by GPIO.
+> In order to use this patch, it is necessary to define it to
+> devicetree. <refer Documentation/devicetree/bindings/spi/spi-bus.txt>
+>
+> <devicetree example>
+>
+> &pfc {
+>         ...
+>         /* MSIOF_SYMC Pin delete. */
+>         msiof1_pins: spi2 {
+>                 /* The definition of sync, ss1 and ss2 are
+>                    unnecessary because of using GPIO as chip
+>                    select. */
+>                 groups = "msiof1_clk_c",
+>                                 "msiof1_rxd_c",  "msiof1_txd_c";
+>                 function = "msiof1";
+>         };
+>         ...
+> };
+>
+> &msiof1 {
+>         pinctrl-0 = <&msiof1_pins>;
+>         pinctrl-names = "default";
+>         cs-gpios = <&gpio6 21 GPIO_ACTIVE_LOW>,
+>                     <&gpio6 27 GPIO_ACTIVE_LOW>;
+>         status = "okay";
+>
+>         spidev@0 {
+>                 ...
+>                 reg = <0>;
+>                 ...
+>         };
+>         spidev@1 {
+>                 ...
+>                 reg = <1>;
+>                 ...
+>         };
+> };
+>
+> Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+> Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+> ---
+>  drivers/spi/spi-sh-msiof.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
+> index 2c53fc3f73af..fdad8d852602 100644
+> --- a/drivers/spi/spi-sh-msiof.c
+> +++ b/drivers/spi/spi-sh-msiof.c
+> @@ -541,6 +541,7 @@ static int sh_msiof_spi_setup(struct spi_device *spi)
+>  {
+>         struct device_node      *np = spi->master->dev.of_node;
+>         struct sh_msiof_spi_priv *p = spi_master_get_devdata(spi->master);
+> +       int ret;
+>
+>         pm_runtime_get_sync(&p->pdev->dev);
+>
+> @@ -559,8 +560,12 @@ static int sh_msiof_spi_setup(struct spi_device *spi)
+>                                   !!(spi->mode & SPI_LSB_FIRST),
+>                                   !!(spi->mode & SPI_CS_HIGH));
+>
+> -       if (spi->cs_gpio >= 0)
+> -               gpio_set_value(spi->cs_gpio, !(spi->mode & SPI_CS_HIGH));
+> +       if (gpio_is_valid(spi->cs_gpio)) {
+> +               ret = gpio_request(spi->cs_gpio, dev_name(&spi->dev));
+> +               if (!ret)
+> +                       gpio_direction_output(spi->cs_gpio,
+> +                                       !(spi->mode & SPI_CS_HIGH));
+> +       }
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7745.dtsi | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+The GPIO is never freed, and .setup() is called multiple times.
 
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index adf30890cb07..5cc4009c4265 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -25,6 +25,7 @@
- 		i2c3 = &i2c3;
- 		i2c4 = &i2c4;
- 		i2c5 = &i2c5;
-+		spi0 = &qspi;
- 	};
- 
- 	cpus {
-@@ -736,6 +737,22 @@
- 			status = "disabled";
- 		};
- 
-+		qspi: spi@e6b10000 {
-+			compatible = "renesas,qspi-r8a7745", "renesas,qspi";
-+			reg = <0 0xe6b10000 0 0x2c>;
-+			interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 917>;
-+			dmas = <&dmac0 0x17>, <&dmac0 0x18>,
-+			       <&dmac1 0x17>, <&dmac1 0x18>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			num-cs = <1>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			resets = <&cpg 917>;
-+			status = "disabled";
-+		};
-+
- 		sdhi0: sd@ee100000 {
- 			compatible = "renesas,sdhi-r8a7745";
- 			reg = <0 0xee100000 0 0x328>;
--- 
-2.1.4
+In addition, sh_msiof_spi_setup() writes to hardware registers.
+Hence if multiple SPI slaves are present (e.g. hardware CS plus GPIO CS,
+or multiple GPIO CSses), SPI transfers to a slave may use some configuration
+from the previous call to .setup() for another SPI slave.
+
+>         pm_runtime_put(&p->pdev->dev);
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
