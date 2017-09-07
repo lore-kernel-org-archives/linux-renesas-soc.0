@@ -1,159 +1,112 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:39457 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750957AbdIKVQz (ORCPT
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:35404 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754349AbdIGJMR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Sep 2017 17:16:55 -0400
-Reply-To: kieran.bingham@ideasonboard.com
-Subject: Re: [PATCH v2 5/8] v4l: vsp1: Refactor display list configure
- operations
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
-References: <cover.4457988ad8b64b5c7636e35039ef61d507af3648.1502723341.git-series.kieran.bingham+renesas@ideasonboard.com>
- <8063f125293346adfdcc66b5d6768d250895f612.1502723341.git-series.kieran.bingham+renesas@ideasonboard.com>
- <9223590.WNj3Hrfh0H@avalon>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Message-ID: <70512969-8fca-3056-1a0e-d294549b827d@ideasonboard.com>
-Date: Mon, 11 Sep 2017 22:16:50 +0100
+        Thu, 7 Sep 2017 05:12:17 -0400
 MIME-Version: 1.0
-In-Reply-To: <9223590.WNj3Hrfh0H@avalon>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <a3fbaa5c-caa1-c28f-3248-6c5557a96d8c@de.bosch.com>
+References: <20170906070507.26223-1-dirk.behme@de.bosch.com>
+ <20170906070507.26223-3-dirk.behme@de.bosch.com> <CAMuHMdWzWK5UTtmfoGmpHEwac8i3r1c6XqzT6cmwMXko2X7mvw@mail.gmail.com>
+ <931484ec-8830-0e63-98cb-9dd58ce35230@de.bosch.com> <CAMuHMdVY5fLf+qH0rKSe5BrXSd7xDpA3x=GAnwD43cu9LT8wig@mail.gmail.com>
+ <09ce4c7a-347c-7df8-d8ed-4eb61a00bd20@de.bosch.com> <CAMuHMdVo_62kYYmgLZNHksRi+Z96K+tu9KTsgyKfmk6U_gP79w@mail.gmail.com>
+ <a3fbaa5c-caa1-c28f-3248-6c5557a96d8c@de.bosch.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 7 Sep 2017 11:12:16 +0200
+Message-ID: <CAMuHMdXQKj3F02zur3BZ95Et+btQD=rOfpMUC8cFWBnwF4Qxdw@mail.gmail.com>
+Subject: Re: [PATCH 2/8] spi: sh-msiof: Fix DMA transfer size check
+To: Dirk Behme <dirk.behme@de.bosch.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Laurent,
+Hi Dirk,
 
-On 17/08/17 19:13, Laurent Pinchart wrote:
-> Hi Kieran,
-> 
-> Thank you for the patch.
-> 
-> On Monday 14 Aug 2017 16:13:28 Kieran Bingham wrote:
->> The entities provide a single .configure operation which configures the
->> object into the target display list, based on the vsp1_entity_params
->> selection.
+On Thu, Sep 7, 2017 at 11:05 AM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
+> On 07.09.2017 10:59, Geert Uytterhoeven wrote:
+>> On Thu, Sep 7, 2017 at 10:42 AM, Dirk Behme <dirk.behme@de.bosch.com>
+>> wrote:
+>>> On 07.09.2017 10:39, Geert Uytterhoeven wrote:
+>>>> On Thu, Sep 7, 2017 at 10:33 AM, Dirk Behme <dirk.behme@de.bosch.com>
+>>>> wrote:
+>>>>> On 07.09.2017 10:31, Geert Uytterhoeven wrote:
+>>>>>> On Wed, Sep 6, 2017 at 9:05 AM, Dirk Behme <dirk.behme@de.bosch.com>
+>>>>>> wrote:
+>>>>>>> From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+>>>>>>> DMA supports 32-bit words only,
+>>>>>>> even if BITLEN1 of SITMDR2 register is 16bit.
+>>>>>>>
+>>>>>>> Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+>>>>>>> Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+>>>>>>> ---
+>>>>>>>     drivers/spi/spi-sh-msiof.c | 2 +-
+>>>>>>>     1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>>>>
+>>>>>>> diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
+>>>>>>> index 2b4d3a520176..f9300fdf41e5 100644
+>>>>>>> --- a/drivers/spi/spi-sh-msiof.c
+>>>>>>> +++ b/drivers/spi/spi-sh-msiof.c
+>>>>>>> @@ -904,7 +904,7 @@ static int sh_msiof_transfer_one(struct
+>>>>>>> spi_master
+>>>>>>> *master,
+>>>>>>>                                    break;
+>>>>>>>                            copy32 = copy_bswap32;
+>>>>>>>                    } else if (bits <= 16) {
+>>>>>>> -                       if (l & 1)
+>>>>>>> +                       if (l & 3)
+>>>>>>>                                    break;
+>>>>>>>                            copy32 = copy_wswap32;
+>>>>>>>                    } else {
+>>>>>>
+>>>>>> Looks OK, as l is in bytes, not 16-bit words.
+>>>>>>
+>>>>>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>>>>>
+>>>>> What do you think about CCing this to -stable?
+>>>>
+>>>> Sounds OK. Have you tested this?
+>>>
+>>> I tested all 8 patches together if they fix the issues I observed with
+>>> plain
+>>> mainline.
 >>
->> This restricts us to a single function prototype for both static
->> configuration (the pre-stream INIT stage) and the dynamic runtime stages
->> for both each frame - and each partition therein.
->>
->> Split the configure function into two parts, '.prepare()' and
->> '.configure()', merging both the VSP1_ENTITY_PARAMS_RUNTIME and
->> VSP1_ENTITY_PARAMS_PARTITION stages into a single call through the
->> .configure(). The configuration for individual partitions is handled by
->> passing the partition number to the configure call, and processing any
->> runtime stage actions on the first partition only.
->>
->> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
->> ---
->>  drivers/media/platform/vsp1/vsp1_bru.c    |  12 +-
->>  drivers/media/platform/vsp1/vsp1_clu.c    |  43 +--
->>  drivers/media/platform/vsp1/vsp1_drm.c    |  11 +-
->>  drivers/media/platform/vsp1/vsp1_entity.c |  15 +-
->>  drivers/media/platform/vsp1/vsp1_entity.h |  27 +--
->>  drivers/media/platform/vsp1/vsp1_hgo.c    |  12 +-
->>  drivers/media/platform/vsp1/vsp1_hgt.c    |  12 +-
->>  drivers/media/platform/vsp1/vsp1_hsit.c   |  12 +-
->>  drivers/media/platform/vsp1/vsp1_lif.c    |  12 +-
->>  drivers/media/platform/vsp1/vsp1_lut.c    |  24 +-
->>  drivers/media/platform/vsp1/vsp1_rpf.c    | 162 ++++++-------
->>  drivers/media/platform/vsp1/vsp1_sru.c    |  12 +-
->>  drivers/media/platform/vsp1/vsp1_uds.c    |  55 ++--
->>  drivers/media/platform/vsp1/vsp1_video.c  |  24 +--
->>  drivers/media/platform/vsp1/vsp1_wpf.c    | 297 ++++++++++++-----------
->>  15 files changed, 359 insertions(+), 371 deletions(-)
-> 
-> [snip]
-> 
->> diff --git a/drivers/media/platform/vsp1/vsp1_clu.c
->> b/drivers/media/platform/vsp1/vsp1_clu.c index 175717018e11..5f65ce3ad97f
->> 100644
->> --- a/drivers/media/platform/vsp1/vsp1_clu.c
->> +++ b/drivers/media/platform/vsp1/vsp1_clu.c
->> @@ -213,37 +213,37 @@ static const struct v4l2_subdev_ops clu_ops = {
->>  /* ------------------------------------------------------------------------
->>   * VSP1 Entity Operations
->>   */
->> +static void clu_prepare(struct vsp1_entity *entity,
->> +			struct vsp1_pipeline *pipe,
->> +			struct vsp1_dl_list *dl)
->> +{
->> +	struct vsp1_clu *clu = to_clu(&entity->subdev);
->> +
->> +	/*
->> +	 * The format can't be changed during streaming, only verify it
->> +	 * at setup time and store the information internally for future
->> +	 * runtime configuration calls.
->> +	 */
-> 
-> I know you're just moving the comment around, but let's fix it at the same 
-> time. There's no verification here (and no "setup time" either). I'd write it 
-> as
-> 
-> 	/*
-> 	 * The format can't be changed during streaming. Cache it internally
-> 	 * for future runtime configuration calls.
-> 	 */
+>> Could you please elaborate about the issues you observed with plain
+>> mainline?
+>> It may help to identify which patches are responsible for fixing them.
+>
+> I've been told that an easy test case is to just cat random data (any mid
+> sized file) into SPI. E.g.:
+>
+> # cat /proc/cpuinfo > /dev/spidev32764.2
+> [  504.544948] spi_sh_msiof e6e90000.spi: failed to shut down hardware
+> [  504.551265] spidev spi32764.2: SPI transfer failed: -110
+> [  504.556625] spi_master spi32764: failed to transfer one message from
+> queue
+> [  504.564857] spi_sh_msiof e6e90000.spi: failed to shut down hardware
+> [  504.571177] spidev spi32764.2: SPI transfer failed: -110
+> [  504.576528] spi_master spi32764: failed to transfer one message from
+> queue
+> cat: write error: Connection timed out
+>
+> done on plain 4.13-rc6.
 
-I think I'm ok with that and I've updated the patch - but I'm not sure we are
-really caching the 'format' here, as much as the yuv_mode ...
+Thank you, that's very valuable information!
+We'll give it a try...
 
-I'll ponder ...
+Note that this test does not exercise the code path affected by this particular
+patch ;-)
 
-> 
->> +	struct v4l2_mbus_framefmt *format;
->> +
->> +	format = vsp1_entity_get_pad_format(&clu->entity,
->> +					    clu->entity.config,
->> +					    CLU_PAD_SINK);
->> +	clu->yuv_mode = format->code == MEDIA_BUS_FMT_AYUV8_1X32;
->> +}
-> 
-> [snip]
-> 
->> diff --git a/drivers/media/platform/vsp1/vsp1_entity.h
->> b/drivers/media/platform/vsp1/vsp1_entity.h index
->> 408602ebeb97..2f33e343ccc6 100644
->> --- a/drivers/media/platform/vsp1/vsp1_entity.h
->> +++ b/drivers/media/platform/vsp1/vsp1_entity.h
-> 
-> [snip]
-> 
->> @@ -80,8 +68,10 @@ struct vsp1_route {
->>  /**
->>   * struct vsp1_entity_operations - Entity operations
->>   * @destroy:	Destroy the entity.
->> - * @configure:	Setup the hardware based on the entity state
->> (pipeline, formats,
->> - *		selection rectangles, ...)
->> + * @prepare:	Setup the initial hardware parameters for the stream
->> (pipeline,
->> + *		formats)
->> + * @configure:	Configure the runtime parameters for each partition
->> (rectangles,
->> + *		buffer addresses, ...)
-> 
-> Now moving to the bikeshedding territory, I'm not sure if prepare and 
-> configure are the best names for those operations. I'd like to also point out 
-> that we could go one step further by caching the partition-related parameters 
-> too, in which case we would need a third operation (or possibly passing the 
-> partition number to the prepare operation). While I won't mind if you 
-> implement this now, the issue could also be addressed later, but I'd like the 
-> operations to already support that use case to avoid yet another painful 
-> rename patch.
+Gr{oetje,eeting}s,
 
-Ok, understood - but I think I'll have to defer to a v4 for now ... I'm running
-out of time.
+                        Geert
 
->>   * @max_width:	Return the max supported width of data that the entity
->> can
->>   *		process in a single operation.
->>   * @partition:	Process the partition construction based on this
->> entity's
-> 
-> [snip]
-> 
-> The rest of the patch looks good to me.
-> 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
