@@ -1,53 +1,105 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:37290 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750989AbdIKODS (ORCPT
+Received: from mail-lf0-f46.google.com ([209.85.215.46]:36505 "EHLO
+        mail-lf0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757207AbdIHViD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Sep 2017 10:03:18 -0400
-MIME-Version: 1.0
-In-Reply-To: <20170908213758.670316956@cogentembedded.com>
-References: <20170908213758.670316956@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 11 Sep 2017 16:03:16 +0200
-Message-ID: <CAMuHMdVgir5ZriM+tcL6cHPCGcDg_oGtGaygdzGa3zLcO1aFvw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: clock: add R8A77970 CPG core clock definitions
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
+        Fri, 8 Sep 2017 17:38:03 -0400
+Received: by mail-lf0-f46.google.com with SMTP id m199so8180696lfe.3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 08 Sep 2017 14:38:02 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-Id: <20170908213758.670316956@cogentembedded.com>
+Date: Sat, 09 Sep 2017 00:34:19 +0300
+To: Michael Turquette <mturquette@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+To: Stephen Boyd <sboyd@codeaurora.org>
+To: linux-clk@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
         Simon Horman <horms+renesas@verge.net.au>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Content-Type: text/plain; charset="UTF-8"
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH v2 1/2] dt-bindings: clock: add R8A77970 CPG core clock definitions
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Disposition: inline; filename=dt-bindings-clock-add-R8A77970-CPG-core-clock-definitions-v2.patch
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Sep 8, 2017 at 11:34 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Add macros usable by the device tree sources to reference the R8A77970
-> CPG core clocks by index. The data come from the table 8.2c of R-Car
-> Series, 3rd Generation User's Manual: Hardware (Rev. 0.55, Jun. 30, 2017).
->
-> Based on the original (and large) patch by Daisuke Matsushita
-> <daisuke.matsushita.ns@hitachi.com>.
->
-> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Add macros usable by the device tree sources to reference the R8A77970
+CPG core clocks by index. The data come from the table 8.2c of R-Car
+Series, 3rd Generation User's Manual: Hardware (Rev. 0.55, Jun. 30, 2017).
 
-Thank you, will queue in clk-renesas-for-v4.15.
+Based on the original (and large) patch by Daisuke Matsushita
+<daisuke.matsushita.ns@hitachi.com>.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-                        Geert
+---
+Changed in version 2:
+- changed R8A7797 to R8A77970 everywhere;
+- removed the CSIREF clock (renumbering the clocks that followed it);
+- added the R-Car gen3 manual reference to the patch description;
+- added Geert's tag;
+- added Cogent Embedded's copyright;
+- renamed the patch.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+ include/dt-bindings/clock/r8a77970-cpg-mssr.h |   48 ++++++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Index: linux/include/dt-bindings/clock/r8a77970-cpg-mssr.h
+===================================================================
+--- /dev/null
++++ linux/include/dt-bindings/clock/r8a77970-cpg-mssr.h
+@@ -0,0 +1,48 @@
++/*
++ * Copyright (C) 2016 Renesas Electronics Corp.
++ * Copyright (C) 2017 Cogent Embedded, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++#ifndef __DT_BINDINGS_CLOCK_R8A77970_CPG_MSSR_H__
++#define __DT_BINDINGS_CLOCK_R8A77970_CPG_MSSR_H__
++
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
++
++/* r8a77970 CPG Core Clocks */
++#define R8A77970_CLK_Z2			0
++#define R8A77970_CLK_ZR			1
++#define R8A77970_CLK_ZTR		2
++#define R8A77970_CLK_ZTRD2		3
++#define R8A77970_CLK_ZT			4
++#define R8A77970_CLK_ZX			5
++#define R8A77970_CLK_S1D1		6
++#define R8A77970_CLK_S1D2		7
++#define R8A77970_CLK_S1D4		8
++#define R8A77970_CLK_S2D1		9
++#define R8A77970_CLK_S2D2		10
++#define R8A77970_CLK_S2D4		11
++#define R8A77970_CLK_LB			12
++#define R8A77970_CLK_CL			13
++#define R8A77970_CLK_ZB3		14
++#define R8A77970_CLK_ZB3D2		15
++#define R8A77970_CLK_DDR		16
++#define R8A77970_CLK_CR			17
++#define R8A77970_CLK_CRD2		18
++#define R8A77970_CLK_SD0H		19
++#define R8A77970_CLK_SD0		20
++#define R8A77970_CLK_RPC		21
++#define R8A77970_CLK_RPCD2		22
++#define R8A77970_CLK_MSO		23
++#define R8A77970_CLK_CANFD		24
++#define R8A77970_CLK_CSI0		25
++#define R8A77970_CLK_FRAY		26
++#define R8A77970_CLK_CP			27
++#define R8A77970_CLK_CPEX		28
++#define R8A77970_CLK_R			29
++#define R8A77970_CLK_OSC		30
++
++#endif /* __DT_BINDINGS_CLOCK_R8A77970_CPG_MSSR_H__ */
