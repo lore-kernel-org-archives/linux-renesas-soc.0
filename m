@@ -1,71 +1,53 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-Reply-To: kieran.bingham@ideasonboard.com
-Subject: Re: [PATCH v2 8/8] v4l: vsp1: Reduce display list body size
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
-References: <cover.4457988ad8b64b5c7636e35039ef61d507af3648.1502723341.git-series.kieran.bingham+renesas@ideasonboard.com>
- <fa078611769415d7adbad208f1299d05bee3bda8.1502723341.git-series.kieran.bingham+renesas@ideasonboard.com>
- <3704707.T2fvHgbeUE@avalon>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Message-ID: <af16106d-4a56-c022-49cf-8d5e5b143f80@ideasonboard.com>
-Date: Mon, 11 Sep 2017 22:15:10 +0100
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:37290 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750989AbdIKODS (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 11 Sep 2017 10:03:18 -0400
 MIME-Version: 1.0
-In-Reply-To: <3704707.T2fvHgbeUE@avalon>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-Sender: linux-media-owner@vger.kernel.org
+In-Reply-To: <20170908213758.670316956@cogentembedded.com>
+References: <20170908213758.670316956@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 11 Sep 2017 16:03:16 +0200
+Message-ID: <CAMuHMdVgir5ZriM+tcL6cHPCGcDg_oGtGaygdzGa3zLcO1aFvw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: clock: add R8A77970 CPG core clock definitions
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 17/08/17 17:11, Laurent Pinchart wrote:
-> Hi Kieran,
-> 
-> Thank you for the patch.
-> 
-> On Monday 14 Aug 2017 16:13:31 Kieran Bingham wrote:
->> The display list originally allocated a body of 256 entries to store all
->> of the register lists required for each frame.
->>
->> This has now been separated into fragments for constant stream setup, and
->> runtime updates.
->>
->> Empirical testing shows that the body0 now uses a maximum of 41
->> registers for each frame, for both DRM and Video API pipelines thus a
->> rounded 64 entries provides a suitable allocation.
-> 
-> Didn't you mention in patch 7/8 that one of the fragments uses exactly 64 
-> entries ? Which one is it, and is there a risk it could use more ? 
+On Fri, Sep 8, 2017 at 11:34 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add macros usable by the device tree sources to reference the R8A77970
+> CPG core clocks by index. The data come from the table 8.2c of R-Car
+> Series, 3rd Generation User's Manual: Hardware (Rev. 0.55, Jun. 30, 2017).
+>
+> Based on the original (and large) patch by Daisuke Matsushita
+> <daisuke.matsushita.ns@hitachi.com>.
+>
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-No, that referred to the fragments(bodies) which had been attached. This change
-refers only to the body0 allocation which has a maximum of 41 entries written.
+Thank you, will queue in clk-renesas-for-v4.15.
 
-The fragment and partition allocations which reach 64 entries, are allocated
-with room for 128 currently...
+Gr{oetje,eeting}s,
 
-< yes, this can be revisited >
+                        Geert
 
->> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
->> ---
->>  drivers/media/platform/vsp1/vsp1_dl.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/media/platform/vsp1/vsp1_dl.c
->> b/drivers/media/platform/vsp1/vsp1_dl.c index 176a258146ac..b3f5eb2f9a4f
->> 100644
->> --- a/drivers/media/platform/vsp1/vsp1_dl.c
->> +++ b/drivers/media/platform/vsp1/vsp1_dl.c
->> @@ -21,7 +21,7 @@
->>  #include "vsp1.h"
->>  #include "vsp1_dl.h"
->>
->> -#define VSP1_DL_NUM_ENTRIES		256
->> +#define VSP1_DL_NUM_ENTRIES		64
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-This now only defines the size of the body0 which is the defacto list of entries
-in a display list.
-
-This too could / should be removed at somepoint I believe, leaving allocations
-only where they are needed.
->>  #define VSP1_DLH_INT_ENABLE		(1 << 1)
->>  #define VSP1_DLH_AUTO_START		(1 << 0)
-> 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
