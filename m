@@ -1,84 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:49184 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755138AbdIRNsh (ORCPT
+Received: from mail-lf0-f48.google.com ([209.85.215.48]:35839 "EHLO
+        mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750989AbdIKK6H (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Sep 2017 09:48:37 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
+        Mon, 11 Sep 2017 06:58:07 -0400
+Received: by mail-lf0-f48.google.com with SMTP id d17so17525526lfe.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 11 Sep 2017 03:58:06 -0700 (PDT)
+Subject: Re: [PATCH] MAINTAINERS: Add Renesas SoC DT bindings doc to Renesas
+ ARM sections
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 00/12] ARM: dts: renesas: Update DTS for CMT DT binding rework
-Date: Mon, 18 Sep 2017 15:48:23 +0200
-Message-Id: <1505742515-31727-1-git-send-email-geert+renesas@glider.be>
+Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1505127298-4497-1-git-send-email-geert+renesas@glider.be>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <111a853f-41f0-83d6-6ce1-2415d3b08ad5@cogentembedded.com>
+Date: Mon, 11 Sep 2017 13:58:05 +0300
+MIME-Version: 1.0
+In-Reply-To: <1505127298-4497-1-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Simon, Magnus,
+Hello!
 
-This patch series updates the CMT device nodes in the various Renesas DTS
-files sh_cmt clocksource driver for the recent DT binding rework that was
-merged in v4.14-rc1.
+On 9/11/2017 1:54 PM, Geert Uytterhoeven wrote:
 
-This series is an evolutionary improvement of Magnus Damm's series "[PATCH
-v2 00/11] clocksource: sh_cmt: DT binding rework V2".
-It complements Magnus' series "[PATCH v3 00/06] clocksource: sh_cmt: DT 
-binding rework V3" and "[PATCH v4 00/06] clocksource: sh_cmt: DT binding 
-rework V4", which included DT binding updates only.
+> Suggested-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>   MAINTAINERS | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 28e9ab798e35b7ab..f714eea70cb1eea5 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1744,6 +1744,7 @@ Q:	http://patchwork.kernel.org/project/linux-renesas-soc/list/
+>   T:	git git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git next
+>   S:	Supported
+>   F:	arch/arm64/boot/dts/renesas/
+> +F:	Documentation/deviuetree/bindings/arm/shmobile.txt
 
-  - Patches 1-5 update the compatible values for the CMT0 and CMT1 device
-    nodes on R-Mobile APE6 and R-Car Gen2,
-  - Patches 6-12 remove the now obsolete "renesas,channels-mask" properties
-    from the CMT device nodes on all affected SoCs.
+    It's devicetree. :-)
 
-Changes compared to v2:
-  - Take over from Magnus,
-  - Update compatible values,
-  - Split in per-SoC patches,
+>   F:	drivers/soc/renesas/
+>   F:	include/linux/soc/renesas/
+>   
+> @@ -1863,6 +1864,7 @@ F:	arch/arm/boot/dts/sh*
+>   F:	arch/arm/configs/shmobile_defconfig
+>   F:	arch/arm/include/debug/renesas-scif.S
+>   F:	arch/arm/mach-shmobile/
+> +F:	Documentation/deviuetree/bindings/arm/shmobile.txt
 
-Dependencies:
-  - This patch series has a runtime dependency on "[PATCH v3 0/7]
-    clocksource: sh_cmt: Update driver for DT binding rework", and thus
-    must not be applied yet,
-  - Patches were created against renesas-devel-20170918-v4.14-rc1.
+    Same here.
 
-Thanks!
+>   F:	drivers/soc/renesas/
+>   F:	include/linux/soc/renesas/
+>   
 
-Magnus Damm (12):
-  ARM: dts: r8a73a4: Update CMT compat string
-  ARM: dts: r8a7790: Update CMT compat strings
-  ARM: dts: r8a7791: Update CMT compat strings
-  ARM: dts: r8a7793: Update CMT compat strings
-  ARM: dts: r8a7794: Update CMT compat strings
-  ARM: dts: r8a73a4: Remove CMT renesas,channels-mask
-  ARM: dts: r8a7740: Remove CMT renesas,channels-mask
-  ARM: dts: r8a7790: Remove CMT renesas,channels-mask
-  ARM: dts: r8a7791: Remove CMT renesas,channels-mask
-  ARM: dts: r8a7793: Remove CMT renesas,channels-mask
-  ARM: dts: r8a7794: Remove CMT renesas,channels-mask
-  ARM: dts: sh73a0: Remove CMT renesas,channels-mask
-
- arch/arm/boot/dts/r8a73a4.dtsi | 5 +----
- arch/arm/boot/dts/r8a7740.dtsi | 3 ---
- arch/arm/boot/dts/r8a7790.dtsi | 8 ++------
- arch/arm/boot/dts/r8a7791.dtsi | 8 ++------
- arch/arm/boot/dts/r8a7793.dtsi | 8 ++------
- arch/arm/boot/dts/r8a7794.dtsi | 8 ++------
- arch/arm/boot/dts/sh73a0.dtsi  | 3 ---
- 7 files changed, 9 insertions(+), 34 deletions(-)
-
--- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+MBR, Sergei
