@@ -1,68 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:40542 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755322AbdIRNsh (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:44204 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751311AbdILIlD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Sep 2017 09:48:37 -0400
+        Tue, 12 Sep 2017 04:41:03 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Magnus Damm <damm+renesas@opensource.se>,
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-sh@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 02/12] ARM: dts: r8a7790: Update CMT compat strings
-Date: Mon, 18 Sep 2017 15:48:25 +0200
-Message-Id: <1505742515-31727-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1505742515-31727-1-git-send-email-geert+renesas@glider.be>
-References: <1505742515-31727-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v2 resend 4/4] sh: sh7269: Remove nonexistent GPIO_PH[0-7] to fix pinctrl registration
+Date: Tue, 12 Sep 2017 10:40:57 +0200
+Message-Id: <1505205657-18012-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1505205657-18012-1-git-send-email-geert+renesas@glider.be>
+References: <1505205657-18012-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Pinmux_pins[] is initialized through PINMUX_GPIO(), using designated
+array initializers, where the GPIO_* enums serve as indices.
+If enum values are defined, but never used, pinmux_pins[] contains
+(zero-filled) holes.  Such entries are treated as pin zero, which was
+registered before, thus leading to pinctrl registration failures, as
+seen on sh7722:
 
-Use recently updated R-Car Gen2 CMT0 and CMT1 compat strings.
+    sh-pfc pfc-sh7722: pin 0 already registered
+    sh-pfc pfc-sh7722: error during pin registration
+    sh-pfc pfc-sh7722: could not register: -22
+    sh-pfc: probe of pfc-sh7722 failed with error -22
 
-With this change in place we can keep device-specific configuration in
-the driver and the driver can be able to support CMT1 specific features.
+Remove GPIO_PH[0-7] from the enum to fix this.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Fixes: ef0fa5331a73e479 ("sh: Add pinmux for sh7269")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
-v3:
-  - Take over from Magnus,
-  - Update compatible values,
-  - Split in per-SoC patches,
+Untested due to lack of hardware.
 
 v2:
-  - Added Acked-by and Tested-by from Geert,
-  - Added Acked-by from Laurent.
+  - Replace fake error messages by reference to sh7722,
+  - Add Reviewed-by.
 ---
- arch/arm/boot/dts/r8a7790.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/sh/include/cpu-sh2a/cpu/sh7269.h | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 081cf5cdb13bf2ce..886844bb773114a5 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -296,7 +296,7 @@
- 	};
+diff --git a/arch/sh/include/cpu-sh2a/cpu/sh7269.h b/arch/sh/include/cpu-sh2a/cpu/sh7269.h
+index 2a0ca8780f0d8c34..13c495a9fc0007b4 100644
+--- a/arch/sh/include/cpu-sh2a/cpu/sh7269.h
++++ b/arch/sh/include/cpu-sh2a/cpu/sh7269.h
+@@ -45,9 +45,7 @@ enum {
+ 	GPIO_PG7, GPIO_PG6, GPIO_PG5, GPIO_PG4,
+ 	GPIO_PG3, GPIO_PG2, GPIO_PG1, GPIO_PG0,
  
- 	cmt0: timer@ffca0000 {
--		compatible = "renesas,cmt-48-r8a7790", "renesas,cmt-48-gen2";
-+		compatible = "renesas,r8a7790-cmt0", "renesas,rcar-gen2-cmt0";
- 		reg = <0 0xffca0000 0 0x1004>;
- 		interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
-@@ -311,7 +311,7 @@
- 	};
+-	/* Port H */
+-	GPIO_PH7, GPIO_PH6, GPIO_PH5, GPIO_PH4,
+-	GPIO_PH3, GPIO_PH2, GPIO_PH1, GPIO_PH0,
++	/* Port H - Port H does not have a Data Register */
  
- 	cmt1: timer@e6130000 {
--		compatible = "renesas,cmt-48-r8a7790", "renesas,cmt-48-gen2";
-+		compatible = "renesas,r8a7790-cmt1", "renesas,rcar-gen2-cmt1";
- 		reg = <0 0xe6130000 0 0x1004>;
- 		interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
+ 	/* Port I - not on device */
+ 
 -- 
 2.7.4
