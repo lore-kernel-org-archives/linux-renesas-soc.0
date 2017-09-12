@@ -1,53 +1,65 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:38105 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751000AbdISJN0 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Sep 2017 05:13:26 -0400
-Received: by mail-pg0-f67.google.com with SMTP id m30so1717490pgn.5
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 19 Sep 2017 02:13:26 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <20170830064402.GB10398@verge.net.au>
-References: <1503912370-20180-1-git-send-email-geert+renesas@glider.be> <20170830064402.GB10398@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 19 Sep 2017 11:13:25 +0200
-Message-ID: <CAMuHMdVCUcy48qDvDSDZ9MAgCLiSUd4zgFD2iu5eWkTVinN1Jw@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: draak: Add serial console pins
-To: Simon Horman <horms@verge.net.au>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-sh@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 resend 1/4] sh: sh7722: Remove nonexistent GPIO_PTQ7 to fix pinctrl registration
+Date: Tue, 12 Sep 2017 10:40:54 +0200
+Message-Id: <1505205657-18012-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1505205657-18012-1-git-send-email-geert+renesas@glider.be>
+References: <1505205657-18012-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Aug 30, 2017 at 8:44 AM, Simon Horman <horms@verge.net.au> wrote:
-> On Mon, Aug 28, 2017 at 11:26:10AM +0200, Geert Uytterhoeven wrote:
->> Add pin control for SCIF2.
->>
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> ---
->> To be applied after v4.14-rc1, when commit 794a6711764658a1 ("pinctrl:
->> sh-pfc: Initial R8A77995 PFC support") has hit mainline.
->>
->> Else the serial console will fail, reporting (on earlycon):
->>
->>     sh-sci e6e88000.serial: could not find pctldev for node /soc/pin-controller@e6060000/scif2, deferring probe
->
-> Thanks, please ping me once that has happened.
-> In the meantime I have marked this patch as deferred.
+On sh7722/Migo-R, pinctrl registration fails with:
 
-Ping...
+    sh-pfc pfc-sh7722: pin 0 already registered
+    sh-pfc pfc-sh7722: error during pin registration
+    sh-pfc pfc-sh7722: could not register: -22
+    sh-pfc: probe of pfc-sh7722 failed with error -22
 
-Gr{oetje,eeting}s,
+pinmux_pins[] is initialized through PINMUX_GPIO(), using designated
+array initializers, where the GPIO_* enums serve as indices.
+As GPIO_PTQ7 is defined in the enum, but never used, pinmux_pins[]
+contains a (zero-filled) hole. Hence this entry is treated as pin zero,
+which was registered before, and pinctrl registration fails.
 
-                        Geert
+According to the datasheet, port PTQ7 does not exist. Hence remove
+GPIO_PTQ7 from the enum to fix this.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Fixes: 8d7b5b0af7e070b9 ("sh: Add sh7722 pinmux code")
+Reported-by: Magnus Damm <magnus.damm@gmail.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Tested-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+---
+Tested on sh7722/Migo-R.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+v2:
+  - Add Reviewed-by, Tested-by.
+---
+ arch/sh/include/cpu-sh4/cpu/sh7722.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/sh/include/cpu-sh4/cpu/sh7722.h b/arch/sh/include/cpu-sh4/cpu/sh7722.h
+index 3bb74e534d0f8ca4..78961ab78a5a9c83 100644
+--- a/arch/sh/include/cpu-sh4/cpu/sh7722.h
++++ b/arch/sh/include/cpu-sh4/cpu/sh7722.h
+@@ -67,7 +67,7 @@ enum {
+ 	GPIO_PTN3, GPIO_PTN2, GPIO_PTN1, GPIO_PTN0,
+ 
+ 	/* PTQ */
+-	GPIO_PTQ7, GPIO_PTQ6, GPIO_PTQ5, GPIO_PTQ4,
++	GPIO_PTQ6, GPIO_PTQ5, GPIO_PTQ4,
+ 	GPIO_PTQ3, GPIO_PTQ2, GPIO_PTQ1, GPIO_PTQ0,
+ 
+ 	/* PTR */
+-- 
+2.7.4
