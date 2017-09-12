@@ -1,78 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f41.google.com ([209.85.215.41]:35711 "EHLO
-        mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751430AbdILVFT (ORCPT
+Received: from mail-lf0-f45.google.com ([209.85.215.45]:34946 "EHLO
+        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750962AbdILVSM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Sep 2017 17:05:19 -0400
-Received: by mail-lf0-f41.google.com with SMTP id d17so29519164lfe.2
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Sep 2017 14:05:18 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20170912210514.517628239@cogentembedded.com>
-Date: Tue, 12 Sep 2017 23:37:19 +0300
+        Tue, 12 Sep 2017 17:18:12 -0400
+Received: by mail-lf0-f45.google.com with SMTP id d17so29585745lfe.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Sep 2017 14:18:11 -0700 (PDT)
+Subject: Re: [PATCH 11/11] arm64: dts: renesas: eagle: add EtherAVB support
 To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
-        linux-renesas-soc@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: Catalin Marinas <catalin.marinas@arm.com>
-To: Will Deacon <will.deacon@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 03/11] dt-bindings: power: add R8A77970 SYSC power domain definitions
+        Simon Horman <horms@verge.net.au>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+References: <20170912210547.471712392@cogentembedded.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <a2e8db4a-bcc7-edd0-7abc-37a74922a624@cogentembedded.com>
+Date: Wed, 13 Sep 2017 00:18:08 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=dt-bindings-power-add-R8A77970-SYSC-power-domain-definitions.patch
+In-Reply-To: <20170912210547.471712392@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add macros usable by the device tree sources to reference R8A77970 SYSC
-power domains by index.
+On 09/12/2017 11:37 PM, Sergei Shtylyov wrote:
 
-Based on the original (and large) patch by Daisuke Matsushita
-<daisuke.matsushita.ns@hitachi.com>.
+> Define the Eagle board  dependent part of the EtherAVB device node.
+> Enable DHCP  and NFS root for the kernel booting.
+> 
+> Based  on the original (and large) patch by Vladimir Barinov.
+> 
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> ---
+>  arch/arm64/boot/dts/renesas/r8a77970-eagle.dts |   15 ++++++++++++++-
+>  1 file changed, 14 insertions(+), 1 deletion(-)
+> 
+> Index: renesas/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+> ===================================================================
+> --- renesas.orig/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+> +++ renesas/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+[...]
+> @@ -43,3 +44,15 @@
+>  &scif0 {
+>  	status = "okay";
+>  };
+> +
+> +&avb {
+> +//	renesas,no-ether-link;
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+    Oops, overlooked it, will fix!
 
----
- include/dt-bindings/power/r8a77970-sysc.h |   32 +++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+> +	phy-handle = <&phy0>;
+> +	status = "okay";
+> +
+> +	phy0: ethernet-phy@0 {
+> +		rxc-skew-ps = <1500>;
+> +		reg = <0>;
+> +		max-speed = <1000>;
+> +	};
+> +};
 
-Index: renesas/include/dt-bindings/power/r8a77970-sysc.h
-===================================================================
---- /dev/null
-+++ renesas/include/dt-bindings/power/r8a77970-sysc.h
-@@ -0,0 +1,32 @@
-+/*
-+ * Copyright (C) 2017 Cogent Embedded Inc.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+#ifndef __DT_BINDINGS_POWER_R8A77970_SYSC_H__
-+#define __DT_BINDINGS_POWER_R8A77970_SYSC_H__
-+
-+/*
-+ * These power domain indices match the numbers of the interrupt bits
-+ * representing the power areas in the various Interrupt Registers
-+ * (e.g. SYSCISR, Interrupt Status Register)
-+ */
-+
-+#define R8A77970_PD_CA53_CPU0		 5
-+#define R8A77970_PD_CA53_CPU1		 6
-+#define R8A77970_PD_CR7			13
-+#define R8A77970_PD_CA53_SCU		21
-+#define R8A77970_PD_A2IR0		23
-+#define R8A77970_PD_A3IR			24
-+#define R8A77970_PD_A2IR1		27
-+#define R8A77970_PD_A2IR2		28
-+#define R8A77970_PD_A2IR3		29
-+#define R8A77970_PD_A2SC0		30
-+#define R8A77970_PD_A2SC1		31
-+
-+/* Always-on power area */
-+#define R8A77970_PD_ALWAYS_ON		32
-+
-+#endif /* __DT_BINDINGS_POWER_R8A77970_SYSC_H__ */
+MNR, Sergei
