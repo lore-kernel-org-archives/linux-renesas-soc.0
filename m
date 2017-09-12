@@ -1,73 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:32746 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752131AbdI2Lst (ORCPT
+Received: from mail-lf0-f52.google.com ([209.85.215.52]:36602 "EHLO
+        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751470AbdILVFo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Sep 2017 07:48:49 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: balbi@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 1/3] usb: gadget: udc: renesas_usb3: move pm_runtime_{en,dis}able()
-Date: Fri, 29 Sep 2017 20:44:59 +0900
-Message-Id: <1506685501-24988-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1506685501-24988-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1506685501-24988-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Tue, 12 Sep 2017 17:05:44 -0400
+Received: by mail-lf0-f52.google.com with SMTP id m199so29513717lfe.3
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Sep 2017 14:05:44 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-Id: <20170912210540.129836169@cogentembedded.com>
+Date: Tue, 12 Sep 2017 23:37:25 +0300
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: Catalin Marinas <catalin.marinas@arm.com>
+To: Will Deacon <will.deacon@arm.com>
+To: Simon Horman <horms@verge.net.au>
+Cc: Magnus Damm <magnus.damm@gmail.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 09/11] arm64: renesas: document Eagle board
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Disposition: inline; filename=arm64-renesas-document-Eagle-board.patch
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+Document the Eagle device tree bindings, listing it as a supported board.
 
-This patch moves pm_runtime_{en,dis}able() call timing to
-renesas_usb3_{probe,remove}() for supporting PM_SLEEP feature in
-the future.
+This allows to use checkpatch.pl to validate .dts files referring to the
+Eagle board.
 
-Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-[shimoda: Revise the commit log]
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
 ---
- drivers/usb/gadget/udc/renesas_usb3.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/arm/shmobile.txt |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
-index df37c1e..7d99774 100644
---- a/drivers/usb/gadget/udc/renesas_usb3.c
-+++ b/drivers/usb/gadget/udc/renesas_usb3.c
-@@ -2228,7 +2228,6 @@ static int renesas_usb3_start(struct usb_gadget *gadget,
- 	/* hook up the driver */
- 	usb3->driver = driver;
- 
--	pm_runtime_enable(usb3_to_dev(usb3));
- 	pm_runtime_get_sync(usb3_to_dev(usb3));
- 
- 	renesas_usb3_init_controller(usb3);
-@@ -2246,7 +2245,6 @@ static int renesas_usb3_stop(struct usb_gadget *gadget)
- 	renesas_usb3_stop_controller(usb3);
- 
- 	pm_runtime_put(usb3_to_dev(usb3));
--	pm_runtime_disable(usb3_to_dev(usb3));
- 
- 	return 0;
- }
-@@ -2394,6 +2392,7 @@ static int renesas_usb3_remove(struct platform_device *pdev)
- 	renesas_usb3_dma_free_prd(usb3, &pdev->dev);
- 
- 	__renesas_usb3_ep_free_request(usb3->ep0_req);
-+	pm_runtime_disable(usb3_to_dev(usb3));
- 
- 	return 0;
- }
-@@ -2629,6 +2628,7 @@ static int renesas_usb3_probe(struct platform_device *pdev)
- 	renesas_usb3_debugfs_init(usb3, &pdev->dev);
- 
- 	dev_info(&pdev->dev, "probed\n");
-+	pm_runtime_enable(usb3_to_dev(usb3));
- 
- 	return 0;
- 
--- 
-1.9.1
+Index: renesas/Documentation/devicetree/bindings/arm/shmobile.txt
+===================================================================
+--- renesas.orig/Documentation/devicetree/bindings/arm/shmobile.txt
++++ renesas/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -59,6 +59,8 @@ Boards:
+     compatible = "renesas,bockw", "renesas,r8a7778"
+   - Draak (RTP0RC77995SEB0010S)
+     compatible = "renesas,draak", "renesas,r8a77995"
++  - Eagle (RTP0RC77970SEB0010S)
++    compatible = "renesas,eagle", "renesas,r8a77970";
+   - Genmai (RTK772100BC00000BR)
+     compatible = "renesas,genmai", "renesas,r7s72100"
+   - GR-Peach (X28A-M01-E/F)
