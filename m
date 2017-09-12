@@ -1,73 +1,169 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:9961 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753207AbdHOQWO (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:40603 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750944AbdILTTq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 Aug 2017 12:22:14 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Simon Horman <horms@verge.net.au>
-Cc: Russell King <linux@armlinux.org.uk>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] ARM: debug-ll: Add support for r8a7745
-Date: Tue, 15 Aug 2017 17:21:28 +0100
-Message-Id: <1502814088-29767-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Tue, 12 Sep 2017 15:19:46 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: kieran.bingham@ideasonboard.com
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH v2 5/8] v4l: vsp1: Refactor display list configure operations
+Date: Tue, 12 Sep 2017 22:19:47 +0300
+Message-ID: <3974720.2jhbfEKCZX@avalon>
+In-Reply-To: <70512969-8fca-3056-1a0e-d294549b827d@ideasonboard.com>
+References: <cover.4457988ad8b64b5c7636e35039ef61d507af3648.1502723341.git-series.kieran.bingham+renesas@ideasonboard.com> <9223590.WNj3Hrfh0H@avalon> <70512969-8fca-3056-1a0e-d294549b827d@ideasonboard.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable low-level debugging support for RZ/G1E (r8a7745). RZ/G1E uses
-SCIF4 for the debug console.
+Hi Kieran,
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
----
- arch/arm/Kconfig.debug | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+On Tuesday, 12 September 2017 00:16:50 EEST Kieran Bingham wrote:
+> On 17/08/17 19:13, Laurent Pinchart wrote:
+> > On Monday 14 Aug 2017 16:13:28 Kieran Bingham wrote:
+> >> The entities provide a single .configure operation which configures the
+> >> object into the target display list, based on the vsp1_entity_params
+> >> selection.
+> >> 
+> >> This restricts us to a single function prototype for both static
+> >> configuration (the pre-stream INIT stage) and the dynamic runtime stages
+> >> for both each frame - and each partition therein.
+> >> 
+> >> Split the configure function into two parts, '.prepare()' and
+> >> '.configure()', merging both the VSP1_ENTITY_PARAMS_RUNTIME and
+> >> VSP1_ENTITY_PARAMS_PARTITION stages into a single call through the
+> >> .configure(). The configuration for individual partitions is handled by
+> >> passing the partition number to the configure call, and processing any
+> >> runtime stage actions on the first partition only.
+> >> 
+> >> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> >> ---
+> >> 
+> >>  drivers/media/platform/vsp1/vsp1_bru.c    |  12 +-
+> >>  drivers/media/platform/vsp1/vsp1_clu.c    |  43 +--
+> >>  drivers/media/platform/vsp1/vsp1_drm.c    |  11 +-
+> >>  drivers/media/platform/vsp1/vsp1_entity.c |  15 +-
+> >>  drivers/media/platform/vsp1/vsp1_entity.h |  27 +--
+> >>  drivers/media/platform/vsp1/vsp1_hgo.c    |  12 +-
+> >>  drivers/media/platform/vsp1/vsp1_hgt.c    |  12 +-
+> >>  drivers/media/platform/vsp1/vsp1_hsit.c   |  12 +-
+> >>  drivers/media/platform/vsp1/vsp1_lif.c    |  12 +-
+> >>  drivers/media/platform/vsp1/vsp1_lut.c    |  24 +-
+> >>  drivers/media/platform/vsp1/vsp1_rpf.c    | 162 ++++++-------
+> >>  drivers/media/platform/vsp1/vsp1_sru.c    |  12 +-
+> >>  drivers/media/platform/vsp1/vsp1_uds.c    |  55 ++--
+> >>  drivers/media/platform/vsp1/vsp1_video.c  |  24 +--
+> >>  drivers/media/platform/vsp1/vsp1_wpf.c    | 297 ++++++++++++-----------
+> >>  15 files changed, 359 insertions(+), 371 deletions(-)
+> > 
+> > [snip]
+> > 
+> >> diff --git a/drivers/media/platform/vsp1/vsp1_clu.c
+> >> b/drivers/media/platform/vsp1/vsp1_clu.c index 175717018e11..5f65ce3ad97f
+> >> 100644
+> >> --- a/drivers/media/platform/vsp1/vsp1_clu.c
+> >> +++ b/drivers/media/platform/vsp1/vsp1_clu.c
+> >> @@ -213,37 +213,37 @@ static const struct v4l2_subdev_ops clu_ops = {
+> >> 
+> >>  /*
+> >>  -----------------------------------------------------------------------
+> >>  -
+> >>  
+> >>   * VSP1 Entity Operations
+> >>   */
+> >> 
+> >> +static void clu_prepare(struct vsp1_entity *entity,
+> >> +			struct vsp1_pipeline *pipe,
+> >> +			struct vsp1_dl_list *dl)
+> >> +{
+> >> +	struct vsp1_clu *clu = to_clu(&entity->subdev);
+> >> +
+> >> +	/*
+> >> +	 * The format can't be changed during streaming, only verify it
+> >> +	 * at setup time and store the information internally for future
+> >> +	 * runtime configuration calls.
+> >> +	 */
+> > 
+> > I know you're just moving the comment around, but let's fix it at the same
+> > time. There's no verification here (and no "setup time" either). I'd write
+> > it as
+> > 
+> > 	/*
+> > 	
+> > 	 * The format can't be changed during streaming. Cache it internally
+> > 	 * for future runtime configuration calls.
+> > 	 */
+> 
+> I think I'm ok with that and I've updated the patch - but I'm not sure we
+> are really caching the 'format' here, as much as the yuv_mode ...
 
-diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
-index 6dcea8e..be8916d 100644
---- a/arch/arm/Kconfig.debug
-+++ b/arch/arm/Kconfig.debug
-@@ -911,6 +911,13 @@ choice
- 		  Say Y here if you want kernel low-level debugging support
- 		  via SCIF2 on Renesas R-Car E2 (R8A7794).
- 
-+	config DEBUG_RCAR_GEN2_SCIF4
-+		bool "Kernel low-level debugging messages via SCIF4 on R8A7745"
-+		depends on ARCH_R8A7745
-+		help
-+		  Say Y here if you want kernel low-level debugging support
-+		  via SCIF4 on Renesas RZ/G1E (R8A7745).
-+
- 	config DEBUG_RMOBILE_SCIFA0
- 		bool "Kernel low-level debugging messages via SCIFA0 on R8A73A4"
- 		depends on ARCH_R8A73A4
-@@ -1451,6 +1458,7 @@ config DEBUG_LL_INCLUDE
- 	default "debug/renesas-scif.S" if DEBUG_RCAR_GEN1_SCIF2
- 	default "debug/renesas-scif.S" if DEBUG_RCAR_GEN2_SCIF0
- 	default "debug/renesas-scif.S" if DEBUG_RCAR_GEN2_SCIF2
-+	default "debug/renesas-scif.S" if DEBUG_RCAR_GEN2_SCIF4
- 	default "debug/renesas-scif.S" if DEBUG_RMOBILE_SCIFA0
- 	default "debug/renesas-scif.S" if DEBUG_RMOBILE_SCIFA1
- 	default "debug/renesas-scif.S" if DEBUG_RMOBILE_SCIFA4
-@@ -1568,6 +1576,7 @@ config DEBUG_UART_PHYS
- 	default 0xe6c40000 if DEBUG_RMOBILE_SCIFA0
- 	default 0xe6c50000 if DEBUG_RMOBILE_SCIFA1
- 	default 0xe6c80000 if DEBUG_RMOBILE_SCIFA4
-+	default 0xe6ee0000 if DEBUG_RCAR_GEN2_SCIF4
- 	default 0xe6e58000 if DEBUG_RCAR_GEN2_SCIF2
- 	default 0xe6e60000 if DEBUG_RCAR_GEN2_SCIF0
- 	default 0xe8008000 if DEBUG_R7S72100_SCIF2
-@@ -1604,6 +1613,7 @@ config DEBUG_UART_PHYS
- 		DEBUG_QCOM_UARTDM || DEBUG_R7S72100_SCIF2 || \
- 		DEBUG_RCAR_GEN1_SCIF0 || DEBUG_RCAR_GEN1_SCIF2 || \
- 		DEBUG_RCAR_GEN2_SCIF0 || DEBUG_RCAR_GEN2_SCIF2 || \
-+		DEBUG_RCAR_GEN2_SCIF4 || \
- 		DEBUG_RMOBILE_SCIFA0 || DEBUG_RMOBILE_SCIFA1 || \
- 		DEBUG_RMOBILE_SCIFA4 || DEBUG_S3C24XX_UART || \
- 		DEBUG_S3C64XX_UART || \
+Yes, it's the YUV mode we're caching, feel free to update the comment.
+
+> I'll ponder ...
+> 
+> >> +	struct v4l2_mbus_framefmt *format;
+> >> +
+> >> +	format = vsp1_entity_get_pad_format(&clu->entity,
+> >> +					    clu->entity.config,
+> >> +					    CLU_PAD_SINK);
+> >> +	clu->yuv_mode = format->code == MEDIA_BUS_FMT_AYUV8_1X32;
+> >> +}
+> > 
+> > [snip]
+> > 
+> >> diff --git a/drivers/media/platform/vsp1/vsp1_entity.h
+> >> b/drivers/media/platform/vsp1/vsp1_entity.h index
+> >> 408602ebeb97..2f33e343ccc6 100644
+> >> --- a/drivers/media/platform/vsp1/vsp1_entity.h
+> >> +++ b/drivers/media/platform/vsp1/vsp1_entity.h
+> > 
+> > [snip]
+> > 
+> >> @@ -80,8 +68,10 @@ struct vsp1_route {
+> >> 
+> >>  /**
+> >>  
+> >>   * struct vsp1_entity_operations - Entity operations
+> >>   * @destroy:	Destroy the entity.
+> >> 
+> >> - * @configure:	Setup the hardware based on the entity state
+> >> (pipeline, formats,
+> >> - *		selection rectangles, ...)
+> >> + * @prepare:	Setup the initial hardware parameters for the stream
+> >> (pipeline,
+> >> + *		formats)
+> >> + * @configure:	Configure the runtime parameters for each partition
+> >> (rectangles,
+> >> + *		buffer addresses, ...)
+> > 
+> > Now moving to the bikeshedding territory, I'm not sure if prepare and
+> > configure are the best names for those operations. I'd like to also point
+> > out that we could go one step further by caching the partition-related
+> > parameters too, in which case we would need a third operation (or
+> > possibly passing the partition number to the prepare operation). While I
+> > won't mind if you implement this now, the issue could also be addressed
+> > later, but I'd like the operations to already support that use case to
+> > avoid yet another painful rename patch.
+> 
+> Ok, understood - but I think I'll have to defer to a v4 for now ... I'm
+> running out of time.
+> 
+> >>   * @max_width:	Return the max supported width of data that the entity
+> >> 
+> >> can
+> >> 
+> >>   *		process in a single operation.
+> >>   * @partition:	Process the partition construction based on this
+> >> 
+> >> entity's
+> > 
+> > [snip]
+> > 
+> > The rest of the patch looks good to me.
+
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
