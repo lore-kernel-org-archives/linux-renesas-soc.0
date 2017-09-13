@@ -1,46 +1,31 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34793 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752162AbdI2Lyl (ORCPT
+Received: from shards.monkeyblade.net ([184.105.139.130]:56986 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751112AbdIMUlU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Sep 2017 07:54:41 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 24/48] ARM: dts: iwg20d-q7: Add chosen node
-Date: Fri, 29 Sep 2017 13:53:16 +0200
-Message-Id: <f9c1e87e77ca1ef1c4de2d419b0dcb42e4a47043.1506683482.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1506683482.git.horms+renesas@verge.net.au>
-References: <cover.1506683482.git.horms+renesas@verge.net.au>
+        Wed, 13 Sep 2017 16:41:20 -0400
+Date: Wed, 13 Sep 2017 13:41:18 -0700 (PDT)
+Message-Id: <20170913.134118.633974913377283564.davem@davemloft.net>
+To: sergei.shtylyov@cogentembedded.com
+Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: review Renesas DT bindings as well
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20170913192913.138491844@cogentembedded.com>
+References: <20170913192913.138491844@cogentembedded.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Date: Wed, 13 Sep 2017 22:28:53 +0300
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7743-iwg20d-q7.dts | 5 +++++
- 1 file changed, 5 insertions(+)
+> When adding myself  as a reviewer for  the Renesas  Ethernet drivers
+> I somehow forgot about the bindings -- I want to review them as well.
+> 
+> Fixes: 8e6569af3a1b ("MAINTAINERS: add myself as Renesas Ethernet drivers reviewer")
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-diff --git a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-index 4ff27d23ecf0..e30c58625e65 100644
---- a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-+++ b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-@@ -20,6 +20,11 @@
- 		ethernet0 = &avb;
- 	};
- 
-+	chosen {
-+		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
-+		stdout-path = "serial0:115200n8";
-+	};
-+
- 	vcc_sdhi1: regulator-vcc-sdhi1 {
- 		compatible = "regulator-fixed";
- 
--- 
-2.1.4
+Applied.
