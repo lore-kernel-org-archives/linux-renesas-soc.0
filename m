@@ -1,74 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:46122 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933608AbdIYHyV (ORCPT
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:42154 "EHLO
+        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751940AbdIMLCH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Sep 2017 03:54:21 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 1/3] soc: renesas: rcar-rst: add R8A77970 support
-Date: Mon, 25 Sep 2017 09:53:56 +0200
-Message-Id: <17760376ae31e06f66b3c3b8981f5978d4c53150.1506325468.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1506325468.git.horms+renesas@verge.net.au>
-References: <cover.1506325468.git.horms+renesas@verge.net.au>
+        Wed, 13 Sep 2017 07:02:07 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: linux-pm@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [RFC 2/3] arm64: dts: r8a7795: update register size for thermal
+Date: Wed, 13 Sep 2017 13:01:36 +0200
+Message-Id: <20170913110137.13490-3-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170913110137.13490-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170913110137.13490-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To be able to read fused calibration values from hardware the size of
+the register resource of TSC1 needs to be incremented to cover one more
+register which holds the information if the calibration values have been
+fused or not.
 
-Add support for R-Car V3M (R8A77970) to the R-Car RST driver -- this driver
-is  needed  for the clock driver to work.
-
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- Documentation/devicetree/bindings/reset/renesas,rst.txt | 1 +
- drivers/soc/renesas/Kconfig                             | 3 ++-
- drivers/soc/renesas/rcar-rst.c                          | 1 +
- 3 files changed, 4 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/reset/renesas,rst.txt b/Documentation/devicetree/bindings/reset/renesas,rst.txt
-index e5a03ffe04fb..a8014f3ab8ba 100644
---- a/Documentation/devicetree/bindings/reset/renesas,rst.txt
-+++ b/Documentation/devicetree/bindings/reset/renesas,rst.txt
-@@ -26,6 +26,7 @@ Required properties:
- 		  - "renesas,r8a7794-rst" (R-Car E2)
- 		  - "renesas,r8a7795-rst" (R-Car H3)
- 		  - "renesas,r8a7796-rst" (R-Car M3-W)
-+		  - "renesas,r8a77970-rst" (R-Car V3M)
- 		  - "renesas,r8a77995-rst" (R-Car D3)
-   - reg: Address start and address range for the device.
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 1818fd20660d0315..be3c7ff6999af57e 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -2805,7 +2805,7 @@
  
-diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
-index 567414cb42ba..f0d562a7c4d3 100644
---- a/drivers/soc/renesas/Kconfig
-+++ b/drivers/soc/renesas/Kconfig
-@@ -3,7 +3,8 @@ config SOC_RENESAS
- 	default y if ARCH_RENESAS
- 	select SOC_BUS
- 	select RST_RCAR if ARCH_RCAR_GEN1 || ARCH_RCAR_GEN2 || \
--			   ARCH_R8A7795 || ARCH_R8A7796 || ARCH_R8A77995
-+			   ARCH_R8A7795 || ARCH_R8A7796 || ARCH_R8A77970 || \
-+			   ARCH_R8A77995
- 	select SYSC_R8A7743 if ARCH_R8A7743
- 	select SYSC_R8A7745 if ARCH_R8A7745
- 	select SYSC_R8A7779 if ARCH_R8A7779
-diff --git a/drivers/soc/renesas/rcar-rst.c b/drivers/soc/renesas/rcar-rst.c
-index baa47014e96b..3316b028f231 100644
---- a/drivers/soc/renesas/rcar-rst.c
-+++ b/drivers/soc/renesas/rcar-rst.c
-@@ -41,6 +41,7 @@ static const struct of_device_id rcar_rst_matches[] __initconst = {
- 	/* R-Car Gen3 is handled like R-Car Gen2 */
- 	{ .compatible = "renesas,r8a7795-rst", .data = &rcar_rst_gen2 },
- 	{ .compatible = "renesas,r8a7796-rst", .data = &rcar_rst_gen2 },
-+	{ .compatible = "renesas,r8a77970-rst", .data = &rcar_rst_gen2 },
- 	{ .compatible = "renesas,r8a77995-rst", .data = &rcar_rst_gen2 },
- 	{ /* sentinel */ }
- };
+ 		tsc: thermal@e6198000 {
+ 			compatible = "renesas,r8a7795-thermal";
+-			reg = <0 0xe6198000 0 0x68>,
++			reg = <0 0xe6198000 0 0x6c>,
+ 			      <0 0xe61a0000 0 0x5c>,
+ 			      <0 0xe61a8000 0 0x5c>;
+ 			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
 -- 
-2.1.4
+2.14.1
