@@ -1,72 +1,94 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH 08/18] arm64: dts: ulcb-kf: enable CAN0/1
-Date: Thu,  7 Sep 2017 01:36:08 +0300
-Message-Id: <1504737368-23152-1-git-send-email-vladimir.barinov@cogentembedded.com>
-In-Reply-To: <1504737267-22829-1-git-send-email-vladimir.barinov@cogentembedded.com>
-References: <1504737267-22829-1-git-send-email-vladimir.barinov@cogentembedded.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:37436 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752268AbdIMLSy (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 13 Sep 2017 07:18:54 -0400
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: laurent.pinchart@ideasonboard.com,
+        linux-renesas-soc@vger.kernel.org
+Cc: linux-media@vger.kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v3 0/9] vsp1: TLB optimisation and DL caching
+Date: Wed, 13 Sep 2017 12:18:39 +0100
+Message-Id: <cover.fd1ad59f0229dc110549eecc18b11ad441997b3a.1505299165.git-series.kieran.bingham+renesas@ideasonboard.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This supports CAN0/1 on ULCB Kingfisher board
+Each display list currently allocates an area of DMA memory to store register
+settings for the VSP1 to process. Each of these allocations adds pressure to
+the IPMMU TLB entries.
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
----
- arch/arm64/boot/dts/renesas/ulcb-kf.dtsi | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+We can reduce the pressure by pre-allocating larger areas and dividing the area
+across multiple bodies represented as a pool.
 
-diff --git a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-index 2449915..ca8de1a 100644
---- a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-+++ b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-@@ -16,6 +16,22 @@
- 	};
- };
- 
-+&can0 {
-+	pinctrl-0 = <&can0_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+
-+	renesas,can-clock-select = <0x0>;
-+};
-+
-+&can1 {
-+	pinctrl-0 = <&can1_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+
-+	renesas,can-clock-select = <0x0>;
-+};
-+
- &hscif0 {
- 	pinctrl-0 = <&hscif0_pins>;
- 	pinctrl-names = "default";
-@@ -25,6 +41,16 @@
- };
- 
- &pfc {
-+	can0_pins: can0 {
-+		groups = "can0_data_a";
-+		function = "can0";
-+	};
-+
-+	can1_pins: can1 {
-+		groups = "can1_data";
-+		function = "can1";
-+	};
-+
- 	hscif0_pins: hscif0 {
- 		groups = "hscif0_data", "hscif0_ctrl";
- 		function = "hscif0";
+With this reconfiguration of bodies, we can adapt the configuration code to
+separate out constant hardware configuration and cache it for re-use.
+
+This posting is only really a status update following the previous review after
+quite a bit of work has been done. However this series is not yet complete, and
+I do not expect a full review - or integration of this series in its current
+form.
+
+In particular:
+  Patch 1 : Reword uses of 'fragment' as 'body'
+          - Is new and can be reviewed if desired.
+
+Otherwise, most other issues have been addressed, and the series is rebased to
+utilise the term 'bodies' instead of 'fragments'. A few 'larger' topics came up
+in review, and will be considered in a follow up series. (v4+)
+
+  Patch 3 : Provide a body pool
+          - Allocates more memory than is required for 'extra_size'
+
+  Patch 5 : Use reference counting for bodies
+          - Minor comment to be fixed up. (I should have done this already)
+
+  Patch 7 : Adapt entities to configure into a body
+          - To be reworked, quite substantially.
+
+  Patch 8 : Move video configuration to a cached dlb
+          - Previous review comments still to be addressed
+
+The patches provided in this series can be found at:
+  git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git  tags/vsp1/tlb-optimise/v3
+
+Kieran Bingham (9):
+  v4l: vsp1: Reword uses of 'fragment' as 'body'
+  v4l: vsp1: Protect bodies against overflow
+  v4l: vsp1: Provide a body pool
+  v4l: vsp1: Convert display lists to use new body pool
+  v4l: vsp1: Use reference counting for bodies
+  v4l: vsp1: Refactor display list configure operations
+  v4l: vsp1: Adapt entities to configure into a body
+  v4l: vsp1: Move video configuration to a cached dlb
+  v4l: vsp1: Reduce display list body size
+
+ drivers/media/platform/vsp1/vsp1_bru.c    |  32 +--
+ drivers/media/platform/vsp1/vsp1_clu.c    |  94 +++---
+ drivers/media/platform/vsp1/vsp1_clu.h    |   1 +-
+ drivers/media/platform/vsp1/vsp1_dl.c     | 387 +++++++++++++----------
+ drivers/media/platform/vsp1/vsp1_dl.h     |  21 +-
+ drivers/media/platform/vsp1/vsp1_drm.c    |  21 +-
+ drivers/media/platform/vsp1/vsp1_entity.c |  23 +-
+ drivers/media/platform/vsp1/vsp1_entity.h |  31 +--
+ drivers/media/platform/vsp1/vsp1_hgo.c    |  26 +--
+ drivers/media/platform/vsp1/vsp1_hgt.c    |  28 +--
+ drivers/media/platform/vsp1/vsp1_hsit.c   |  20 +-
+ drivers/media/platform/vsp1/vsp1_lif.c    |  23 +-
+ drivers/media/platform/vsp1/vsp1_lut.c    |  71 ++--
+ drivers/media/platform/vsp1/vsp1_lut.h    |   1 +-
+ drivers/media/platform/vsp1/vsp1_pipe.c   |   8 +-
+ drivers/media/platform/vsp1/vsp1_pipe.h   |   7 +-
+ drivers/media/platform/vsp1/vsp1_rpf.c    | 179 +++++------
+ drivers/media/platform/vsp1/vsp1_sru.c    |  24 +-
+ drivers/media/platform/vsp1/vsp1_uds.c    |  73 ++--
+ drivers/media/platform/vsp1/vsp1_uds.h    |   2 +-
+ drivers/media/platform/vsp1/vsp1_video.c  |  82 ++---
+ drivers/media/platform/vsp1/vsp1_video.h  |   2 +-
+ drivers/media/platform/vsp1/vsp1_wpf.c    | 325 +++++++++----------
+ 23 files changed, 811 insertions(+), 670 deletions(-)
+
+base-commit: f44bd631453bf7dcbe57f79b924db3a6dd038bff
 -- 
-1.9.1
-
+git-series 0.9.1
