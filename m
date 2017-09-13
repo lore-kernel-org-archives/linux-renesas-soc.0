@@ -1,98 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:53307 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750838AbdIOIME (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:35870 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751054AbdIMRGD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Sep 2017 04:12:04 -0400
-Date: Fri, 15 Sep 2017 10:11:44 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Chris Paterson <chris.paterson2@renesas.com>
+        Wed, 13 Sep 2017 13:06:03 -0400
+From: Chris Paterson <chris.paterson2@renesas.com>
+To: Simon Horman <horms@verge.net.au>
 Cc: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 3/8] ARM: dts: iwg22m: Enable SDHI1 controller
-Message-ID: <20170915081144.GI3924@verge.net.au>
+        linux-arm-kernel@lists.infradead.org,
+        Chris Paterson <chris.paterson2@renesas.com>
+Subject: [PATCH 3/8] ARM: dts: iwg22m: Enable SDHI1 controller
+Date: Wed, 13 Sep 2017 18:05:36 +0100
+Message-Id: <1505322341-9480-4-git-send-email-chris.paterson2@renesas.com>
+In-Reply-To: <1505322341-9480-1-git-send-email-chris.paterson2@renesas.com>
 References: <1505322341-9480-1-git-send-email-chris.paterson2@renesas.com>
- <1505322341-9480-4-git-send-email-chris.paterson2@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1505322341-9480-4-git-send-email-chris.paterson2@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Sep 13, 2017 at 06:05:36PM +0100, Chris Paterson wrote:
-> From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> 
-> Enable the SDHI1 controller on iWave RZ/G1E SoM.
-> 
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-> ---
-> This patch is based on renesas-devel-20170913-v4.13.
-> 
-> 
->  arch/arm/boot/dts/r8a7745-iwg22m.dtsi | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/r8a7745-iwg22m.dtsi b/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
-> index e306e7c..f7f9cef 100644
-> --- a/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
-> +++ b/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
-> @@ -9,6 +9,7 @@
->   */
->  
->  #include "r8a7745.dtsi"
-> +#include <dt-bindings/gpio/gpio.h>
->  
->  / {
->  	compatible = "iwave,g22m", "renesas,r8a7745";
-> @@ -38,6 +39,12 @@
->  		function = "mmc";
->  	};
->  
-> +	sdhi1_pins: sd1 {
-> +		groups = "sdhi1_data4", "sdhi1_ctrl";
-> +		function = "sdhi1";
-> +		power-source = <3300>;
-> +	};
-> +
->  	i2c3_pins: i2c3 {
->  		groups = "i2c3_b";
->  		function = "i2c3";
-> @@ -54,6 +61,16 @@
->  	status = "okay";
->  };
->  
-> +&sdhi1 {
-> +	pinctrl-0 = <&sdhi1_pins>;
-> +	pinctrl-names = "default";
-> +
-> +	vmmc-supply = <&reg_3p3v>;
-> +	vqmmc-supply = <&reg_3p3v>;
-> +	cd-gpios = <&gpio3 31 GPIO_ACTIVE_LOW>;
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-No wp-gpios property means this is a µSD slot, right?
+Enable the SDHI1 controller on iWave RZ/G1E SoM.
 
-Do you have any plans to enable sdr-50 and sdr-104?
-Is it not supported for some reason?
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+---
+This patch is based on renesas-devel-20170913-v4.13.
 
-I don't mind if its not enabled in this patch but I would like to
-know if it can be enabled or not and reflect that information in the wiki.
 
-http://elinux.org/index.php?title=Renesas-MMC-Enabled-Speeds
+ arch/arm/boot/dts/r8a7745-iwg22m.dtsi | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-> +	status = "okay";
-> +};
-> +
->  &i2c3 {
->  	pinctrl-0 = <&i2c3_pins>;
->  	pinctrl-names = "default";
-> -- 
-> 1.9.1
-> 
+diff --git a/arch/arm/boot/dts/r8a7745-iwg22m.dtsi b/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
+index e306e7c..f7f9cef 100644
+--- a/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
++++ b/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
+@@ -9,6 +9,7 @@
+  */
+ 
+ #include "r8a7745.dtsi"
++#include <dt-bindings/gpio/gpio.h>
+ 
+ / {
+ 	compatible = "iwave,g22m", "renesas,r8a7745";
+@@ -38,6 +39,12 @@
+ 		function = "mmc";
+ 	};
+ 
++	sdhi1_pins: sd1 {
++		groups = "sdhi1_data4", "sdhi1_ctrl";
++		function = "sdhi1";
++		power-source = <3300>;
++	};
++
+ 	i2c3_pins: i2c3 {
+ 		groups = "i2c3_b";
+ 		function = "i2c3";
+@@ -54,6 +61,16 @@
+ 	status = "okay";
+ };
+ 
++&sdhi1 {
++	pinctrl-0 = <&sdhi1_pins>;
++	pinctrl-names = "default";
++
++	vmmc-supply = <&reg_3p3v>;
++	vqmmc-supply = <&reg_3p3v>;
++	cd-gpios = <&gpio3 31 GPIO_ACTIVE_LOW>;
++	status = "okay";
++};
++
+ &i2c3 {
+ 	pinctrl-0 = <&i2c3_pins>;
+ 	pinctrl-names = "default";
+-- 
+1.9.1
