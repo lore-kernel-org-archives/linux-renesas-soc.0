@@ -1,31 +1,40 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([184.105.139.130]:56986 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751112AbdIMUlU (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Sep 2017 16:41:20 -0400
-Date: Wed, 13 Sep 2017 13:41:18 -0700 (PDT)
-Message-Id: <20170913.134118.633974913377283564.davem@davemloft.net>
-To: sergei.shtylyov@cogentembedded.com
-Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: review Renesas DT bindings as well
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20170913192913.138491844@cogentembedded.com>
-References: <20170913192913.138491844@cogentembedded.com>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-Id: <20170913192913.138491844@cogentembedded.com>
+Date: Wed, 13 Sep 2017 22:28:53 +0300
+To: netdev@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH] MAINTAINERS: review Renesas DT bindings as well
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Disposition: inline; filename=MAINTAINERS-review-Renesas-DT-bindings-as-well.patch
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Date: Wed, 13 Sep 2017 22:28:53 +0300
+When adding myself  as a reviewer for  the Renesas  Ethernet drivers
+I somehow forgot about the bindings -- I want to review them as well.
 
-> When adding myself  as a reviewer for  the Renesas  Ethernet drivers
-> I somehow forgot about the bindings -- I want to review them as well.
-> 
-> Fixes: 8e6569af3a1b ("MAINTAINERS: add myself as Renesas Ethernet drivers reviewer")
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Fixes: 8e6569af3a1b ("MAINTAINERS: add myself as Renesas Ethernet drivers reviewer")
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Applied.
+---
+The patch is against DaveM's 'net.git' repo.
+
+ MAINTAINERS |    2 ++
+ 1 file changed, 2 insertions(+)
+
+Index: net/MAINTAINERS
+===================================================================
+--- net.orig/MAINTAINERS
++++ net/MAINTAINERS
+@@ -11379,6 +11379,8 @@ RENESAS ETHERNET DRIVERS
+ R:	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+ L:	netdev@vger.kernel.org
+ L:	linux-renesas-soc@vger.kernel.org
++F:	Documentation/devicetree/bindings/net/renesas,*.txt
++F:	Documentation/devicetree/bindings/net/sh_eth.txt
+ F:	drivers/net/ethernet/renesas/
+ F:	include/linux/sh_eth.h
+ 
