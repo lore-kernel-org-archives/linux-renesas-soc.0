@@ -1,81 +1,129 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:35870 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751054AbdIMRGD (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Sep 2017 13:06:03 -0400
-From: Chris Paterson <chris.paterson2@renesas.com>
-To: Simon Horman <horms@verge.net.au>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Chris Paterson <chris.paterson2@renesas.com>
-Subject: [PATCH 3/8] ARM: dts: iwg22m: Enable SDHI1 controller
-Date: Wed, 13 Sep 2017 18:05:36 +0100
-Message-Id: <1505322341-9480-4-git-send-email-chris.paterson2@renesas.com>
-In-Reply-To: <1505322341-9480-1-git-send-email-chris.paterson2@renesas.com>
-References: <1505322341-9480-1-git-send-email-chris.paterson2@renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <af7d0675-0cf2-1345-f137-59346e6f962c@gmail.com>
+References: <1503427046-17618-1-git-send-email-geert+renesas@glider.be>
+ <757f672b-d3cf-9189-0533-cb45e325c6b8@gmail.com> <CAMuHMdVMuW+5UQc3Tg5bWkix_PLEaxsoGA6sgSdVz0fV6UsO6Q@mail.gmail.com>
+ <5a1b6f23-6fce-1a68-f9c3-ca0d709979e7@gmail.com> <af7d0675-0cf2-1345-f137-59346e6f962c@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 13 Sep 2017 19:33:07 +0200
+Message-ID: <CAMuHMdU4B3-isRbJmuxE2y0kKcM6hLoRPuzz9aNUgr7uz3VLYg@mail.gmail.com>
+Subject: Re: [PATCH 0/2] net: Fix crashes due to activity during suspend
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, marc_gonzalez@sigmadesigns.com,
+        Mason <slash.tmp@free.fr>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        "David S . Miller" <davem@davemloft.net>,
+        Steve Glendinning <steve.glendinning@shawell.net>,
+        Lukas Wunner <lukas@wunner.de>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Hi Florian,
 
-Enable the SDHI1 controller on iWave RZ/G1E SoM.
+On Thu, Sep 7, 2017 at 3:09 PM, Florian Fainelli <f.fainelli@gmail.com> wrote:
+> On 08/23/2017 10:13 AM, Florian Fainelli wrote:
+>> On 08/23/2017 04:45 AM, Geert Uytterhoeven wrote:
+>>> On Tue, Aug 22, 2017 at 8:49 PM, Florian Fainelli <f.fainelli@gmail.com> wrote:
+>>>> On 08/22/2017 11:37 AM, Geert Uytterhoeven wrote:
+>>>>> If an Ethernet device is used while the device is suspended, the system may
+>>>>> crash.
+>>>>>
+>>>>> E.g. on sh73a0/kzm9g and r8a73a4/ape6evm, the external Ethernet chip is
+>>>>> driven by a PM controlled clock.  If the Ethernet registers are accessed
+>>>>> while the clock is not running, the system will crash with an imprecise
+>>>>> external abort.
+>>>>>
+>>>>> This patch series fixes two of such crashes:
+>>>>>   1. The first patch prevents the PHY polling state machine from accessing
+>>>>>      PHY registers while a device is suspended,
+>>>>>   2. The second patch prevents the net core from trying to transmit packets
+>>>>>      when an smsc911x device is suspended.
+>>>>>
+>>>>> Both crashes can be reproduced on sh73a0/kzm9g and r8a73a4/ape6evm during
+>>>>> s2ram (rarely), or by using pm_test (more likely to trigger):
+>>>>>
+>>>>>     # echo 0 > /sys/module/printk/parameters/console_suspend
+>>>>>     # echo platform > /sys/power/pm_test
+>>>>>     # echo mem > /sys/power/state
+>>>>>
+>>>>> With this series applied, my test systems survive a loop of 100 test
+>>>>> suspends.
+>>>>
+>>>> It seems to me like part, if not the entire problem is that smsc91xx's
+>>>> suspend and resume functions are way too simplistic and absolutely do
+>>>> not manage the PHY during suspend/resume, the PHY state machine is not
+>>>> even stopped, so of course, this will cause bus errors if you access
+>>>> those registers.
+>>>>
+>>>> You are addressing this as part of patch 2, but this seems to me like
+>>>> this is still a bit incomplete and you'd need at least phy_stop() and/or
+>>>> phy_suspend() (does a power down of the PHY) and phy_start() and/or
+>>>> phy_resume() calls to complete the PHY state machine shutdown during
+>>>> suspend.
+>>>>
+>>>> Have you tried that?
+>>>
+>>> Unfortunately that doesn't help.
+>>> In state PHY_HALTED, the PHY state machine still calls the .adjust_link()
+>>> callback while the device is suspended.
+>>
+>> Humm that is correct yes.
+>>
+>>> Do you have a clue? This is too far beyond my phy-foo...
+>>
+>> I was initially contemplating a revert of
+>> 7ad813f208533cebfcc32d3d7474dc1677d1b09a ("net: phy: Correctly process
+>> PHY_HALTED in phy_stop_machine()") but this is not the root of the
+>> problem. The problem really is that phy_stop() does not wait for the PHY
+>> state machine to be stopped so you cannot rely on that and past the
+>> function return be offered any guarantees that adjust_link is not called.
+>>
+>> We seem to be getting away with that in most drivers because when we see
+>> phydev->link = 0, we either do nothing or actually turn of the HW block.
+>>
+>> How about we export phy_stop_machine() to drivers which would provide a
+>> synchronization point that would ensure that no HW accesses are done
+>> past this point?
+>>
+>> I am absolutely not clear on the implications of using a freezable
+>> workqueue with respect to the PHY state machine and how devices are
+>> going to wind-up being powered down or not...
+>
+> Geert, as you may have notice a revert of the change was sent so 4.13
+> should be fine, but ultimately I would like to put the non-reverted code
+> back in after we add a few safeguards:
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
----
-This patch is based on renesas-devel-20170913-v4.13.
+With the revert, I no longer need "[PATCH 1/2] net: phy: Freeze PHY polling
+before suspending devices".
+I just did more than 50 successful suspend/resume cycles to verify that.
 
+I still need "[PATCH 2/2] net: smsc911x: Quiten netif during suspend", so
+I'll submit a v2 for that.
 
- arch/arm/boot/dts/r8a7745-iwg22m.dtsi | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+> - and you reported the bus errors on smsc911x when we call adjust_link
+> during suspend, and due to a lack of hard synchronization so phy_stop()
+> here does not give you enough guarantees to let you turn off power to
+> the smsc911x block
+>
+> If that seems accurate then we can work on something that should be
+> working again (famous last words).
 
-diff --git a/arch/arm/boot/dts/r8a7745-iwg22m.dtsi b/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
-index e306e7c..f7f9cef 100644
---- a/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
-+++ b/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
-@@ -9,6 +9,7 @@
-  */
- 
- #include "r8a7745.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
- 
- / {
- 	compatible = "iwave,g22m", "renesas,r8a7745";
-@@ -38,6 +39,12 @@
- 		function = "mmc";
- 	};
- 
-+	sdhi1_pins: sd1 {
-+		groups = "sdhi1_data4", "sdhi1_ctrl";
-+		function = "sdhi1";
-+		power-source = <3300>;
-+	};
-+
- 	i2c3_pins: i2c3 {
- 		groups = "i2c3_b";
- 		function = "i2c3";
-@@ -54,6 +61,16 @@
- 	status = "okay";
- };
- 
-+&sdhi1 {
-+	pinctrl-0 = <&sdhi1_pins>;
-+	pinctrl-names = "default";
-+
-+	vmmc-supply = <&reg_3p3v>;
-+	vqmmc-supply = <&reg_3p3v>;
-+	cd-gpios = <&gpio3 31 GPIO_ACTIVE_LOW>;
-+	status = "okay";
-+};
-+
- &i2c3 {
- 	pinctrl-0 = <&i2c3_pins>;
- 	pinctrl-names = "default";
--- 
-1.9.1
+Sounds accurate to me.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
