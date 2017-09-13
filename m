@@ -1,55 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:43484 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751173AbdINALQ (ORCPT
+Received: from mail-lf0-f53.google.com ([209.85.215.53]:46253 "EHLO
+        mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751067AbdIMQI5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Sep 2017 20:11:16 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>
-CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: RE: [PATCH] dt-bindings: net: renesas-ravb: Add support for R8A77995
+        Wed, 13 Sep 2017 12:08:57 -0400
+Received: by mail-lf0-f53.google.com with SMTP id m199so1880163lfe.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 13 Sep 2017 09:08:57 -0700 (PDT)
+Subject: Re: [PATCH] dt-bindings: net: renesas-ravb: Add support for R8A77995
  RAVB
-Date: Thu, 14 Sep 2017 00:11:12 +0000
-Message-ID: <TY1PR06MB09928CA5EC51D95B135AE662D86F0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        davem@davemloft.net, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org
 References: <1505305060-4192-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
  <1f4763ea-9f8a-03a6-1215-69b96c404590@cogentembedded.com>
-In-Reply-To: <1f4763ea-9f8a-03a6-1215-69b96c404590@cogentembedded.com>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Message-ID: <1e2957a8-b2e8-a5a5-fed9-dd9d249b03eb@cogentembedded.com>
+Date: Wed, 13 Sep 2017 19:08:53 +0300
 MIME-Version: 1.0
+In-Reply-To: <1f4763ea-9f8a-03a6-1215-69b96c404590@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGVsbG8hDQoNCj4gRnJvbTogU2VyZ2VpIFNodHlseW92DQo+IFNlbnQ6IFRodXJzZGF5LCBTZXB0
-ZW1iZXIgMTQsIDIwMTcgMTowMiBBTQ0KPiANCj4gSGVsbG8hDQo+IA0KPiBPbiAwOS8xMy8yMDE3
-IDAzOjE3IFBNLCBZb3NoaWhpcm8gU2hpbW9kYSB3cm90ZToNCj4gDQo+ID4gQWRkIGEgbmV3IGNv
-bXBhdGlibGUgc3RyaW5nIGZvciB0aGUgUjhBNzc5OTUgKFItQ2FyIEQzKSBSQVZCLg0KPiA+DQo+
-ID4gU2lnbmVkLW9mZi1ieTogWW9zaGloaXJvIFNoaW1vZGEgPHlvc2hpaGlyby5zaGltb2RhLnVo
-QHJlbmVzYXMuY29tPg0KPiA+IC0tLQ0KPiA+ICAgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2Jp
-bmRpbmdzL25ldC9yZW5lc2FzLHJhdmIudHh0IHwgMSArDQo+ID4gICAxIGZpbGUgY2hhbmdlZCwg
-MSBpbnNlcnRpb24oKykNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2Rldmlj
-ZXRyZWUvYmluZGluZ3MvbmV0L3JlbmVzYXMscmF2Yi50eHQNCj4gYi9Eb2N1bWVudGF0aW9uL2Rl
-dmljZXRyZWUvYmluZGluZ3MvbmV0L3JlbmVzYXMscmF2Yi50eHQNCj4gPiBpbmRleCAxNjcyMzUz
-Li5hZTIyMTNmIDEwMDY0NA0KPiA+IC0tLSBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5k
-aW5ncy9uZXQvcmVuZXNhcyxyYXZiLnR4dA0KPiA+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNl
-dHJlZS9iaW5kaW5ncy9uZXQvcmVuZXNhcyxyYXZiLnR4dA0KPiA+IEBAIC0xNyw2ICsxNyw3IEBA
-IFJlcXVpcmVkIHByb3BlcnRpZXM6DQo+ID4NCj4gPiAgICAgICAgIC0gInJlbmVzYXMsZXRoZXJh
-dmItcjhhNzc5NSIgZm9yIHRoZSBSOEE3Nzk1IFNvQy4NCj4gPiAgICAgICAgIC0gInJlbmVzYXMs
-ZXRoZXJhdmItcjhhNzc5NiIgZm9yIHRoZSBSOEE3Nzk2IFNvQy4NCj4gPiArICAgICAgLSAicmVu
-ZXNhcyxldGhlcmF2Yi1yOGE3Nzk5NSIgZm9yIHRoZSBSOEE3Nzk5NSBTb0MuDQo+IA0KPiAgICAg
-VGhhdCB3b3VsZCBjb25mbGljdCB3aXRoIHRoZSBSOEE3Nzk3MCBiaW5kaW5ncyBwYXRjaCBwb3N0
-ZWQgYnkgbWUNCj4geWVzdGVyZGF5LiBQbGVhc2UgcmVzcGluIGF0b3Agb2YgaXQuDQoNClllcywg
-SSBzdWJtaXR0ZWQgdjIgcGF0Y2ggbm93Lg0KDQo+ID4gICAgICAgICAtICJyZW5lc2FzLGV0aGVy
-YXZiLXJjYXItZ2VuMyIgYXMgYSBmYWxsYmFjayBmb3IgdGhlIGFib3ZlDQo+ID4gICAJCVItQ2Fy
-IEdlbjMgZGV2aWNlcy4NCj4gPg0KPiANCj4gICAgIE9uZSBtb3JlIGZyYWdtZW50IGlzIG5lZWRl
-ZCBoZXJlLCBhYm91dCB0aGUgbWFuZGF0b3J5ICdpbnRlcnJ1cHQtbmFtZXMiDQo+IHByb3AuIE15
-IHBhdGNoIG1ha2VzIHRoaXMgY2hhbmdlIHVubmVjZXNzYXJ5LCBob3dldmVyLi4uDQoNCkkgdW5k
-ZXJzdG9vZCBpdC4NCg0KQmVzdCByZWdhcmRzLA0KWW9zaGloaXJvIFNoaW1vZGENCg0KPiBNQlIs
-IFNlcmdlaQ0K
+On 09/13/2017 07:02 PM, Sergei Shtylyov wrote:
+
+>> Add a new compatible string for the R8A77995 (R-Car D3) RAVB.
+>>
+>> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+>> ---
+>>   Documentation/devicetree/bindings/net/renesas,ravb.txt | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/net/renesas,ravb.txt 
+>> b/Documentation/devicetree/bindings/net/renesas,ravb.txt
+>> index 1672353..ae2213f 100644
+>> --- a/Documentation/devicetree/bindings/net/renesas,ravb.txt
+>> +++ b/Documentation/devicetree/bindings/net/renesas,ravb.txt
+>> @@ -17,6 +17,7 @@ Required properties:
+>>         - "renesas,etheravb-r8a7795" for the R8A7795 SoC.
+>>         - "renesas,etheravb-r8a7796" for the R8A7796 SoC.
+>> +      - "renesas,etheravb-r8a77995" for the R8A77995 SoC.
+> 
+>     That would conflict with the R8A77970 bindings patch posted by me 
+> yesterday. Please respin atop of it.
+
+    Here's the link for your convenience:
+
+https://marc.info/?l=linux-renesas-soc&m=150524655515476
+
+[...]
+
+MBR, Sergei
