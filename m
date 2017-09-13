@@ -1,88 +1,156 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:35973 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751148AbdIMLs2 (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:12304 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751451AbdIMKhl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Sep 2017 07:48:28 -0400
+        Wed, 13 Sep 2017 06:37:41 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v2] arm64: dts: renesas: r8a77995: add GPIO device nodes
+Date: Wed, 13 Sep 2017 19:33:59 +0900
+Message-Id: <1505298839-17435-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-In-Reply-To: <TY1PR06MB099246295272BBF0F08022C8D86E0@TY1PR06MB0992.apcprd06.prod.outlook.com>
-References: <1505285528-7033-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <CAMuHMdX9qowD3039OxPyPoyUsnaq7e=kWyxqDdDqzz5RTZtSwQ@mail.gmail.com> <TY1PR06MB099246295272BBF0F08022C8D86E0@TY1PR06MB0992.apcprd06.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 13 Sep 2017 13:48:26 +0200
-Message-ID: <CAMuHMdUiZyK3xA=_rYjbAaSYhm=-p5Spug0mmLc=mf+pRfxgoA@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: renesas: r8a77995: add GPIO device nodes
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Shimoda-san,
+This patch adds GPIO device nodes for r8a77995.
 
-On Wed, Sep 13, 2017 at 11:35 AM, Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
->> From: Geert Uytterhoeven
->> Sent: Wednesday, September 13, 2017 6:22 PM
->> On Wed, Sep 13, 2017 at 8:52 AM, Yoshihiro Shimoda
->> <yoshihiro.shimoda.uh@renesas.com> wrote:
->> > --- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
->> > +++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
->> > @@ -139,6 +139,118 @@
->> >                         #power-domain-cells = <1>;
->> >                 };
->> >
->> > +               gpio0: gpio@e6050000 {
->> > +                       compatible = "renesas,gpio-r8a77995",
->> > +                                    "renesas,rcar-gen3-gpio",
->> > +                                    "renesas,gpio-rcar";
->> > +                       reg = <0 0xe6050000 0 0x50>;
->> > +                       interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
->> > +                       #gpio-cells = <2>;
->> > +                       gpio-controller;
->> > +                       gpio-ranges = <&pfc 0 0 9>;
->> > +                       #interrupt-cells = <2>;
->> > +                       interrupt-controller;
->> > +                       clocks = <&cpg CPG_MOD 912>;
->> > +                       power-domains = <&cpg>;
->>
->> All nodes lack the power domain index (32, to be replaced by
->> R8A77995_PD_ALWAYS_ON later):
->>
->>     power-domains = <&sysc 32>;
->
-> The r8a77995.dtsi file already uses R8A77995_PD_ALWAYS_ON in scif2 node.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ Changes from v1:
+  - Change power-domains property in each node.
+  - Add Reviewed-by (Thanks Geert-san!).
 
-In my renesas-drivers it does.
-In Simon's renesas/devel it doesn't, as the R8A77995_PD_* definitions
-go upstream through a different branch than the DTS changes.
+ arch/arm64/boot/dts/renesas/r8a77995.dtsi | 112 ++++++++++++++++++++++++++++++
+ 1 file changed, 112 insertions(+)
 
-> So, should I fix this patch like the following?
->
->      power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-
-For now you should use 32.
-However, as soon as Simon merges v4.14-rc1 into renesas/devel, you
-can start on using R8A77995_PD_ALWAYS_ON.
-As that is expected to happen this Monday, he can just postpone applying
-your updated patch until then, so I don't think there's a need to resend a
-version with hardcoded numbers.
-
-For R-Car V3M it's different, as the definitions for that SoC won't appear
-in upstream for another full cycle, i.e. in v4.15-rc1 the earliest.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+index 84b6bd5..d7756256 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+@@ -139,6 +139,118 @@
+ 			#power-domain-cells = <1>;
+ 		};
+ 
++		gpio0: gpio@e6050000 {
++			compatible = "renesas,gpio-r8a77995",
++				     "renesas,rcar-gen3-gpio",
++				     "renesas,gpio-rcar";
++			reg = <0 0xe6050000 0 0x50>;
++			interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 0 9>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 912>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 912>;
++		};
++
++		gpio1: gpio@e6051000 {
++			compatible = "renesas,gpio-r8a77995",
++				     "renesas,rcar-gen3-gpio",
++				     "renesas,gpio-rcar";
++			reg = <0 0xe6051000 0 0x50>;
++			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 32 32>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 911>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 911>;
++		};
++
++		gpio2: gpio@e6052000 {
++			compatible = "renesas,gpio-r8a77995",
++				     "renesas,rcar-gen3-gpio",
++				     "renesas,gpio-rcar";
++			reg = <0 0xe6052000 0 0x50>;
++			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 64 32>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 910>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 910>;
++		};
++
++		gpio3: gpio@e6053000 {
++			compatible = "renesas,gpio-r8a77995",
++				     "renesas,rcar-gen3-gpio",
++				     "renesas,gpio-rcar";
++			reg = <0 0xe6053000 0 0x50>;
++			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 96 10>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 909>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 909>;
++		};
++
++		gpio4: gpio@e6054000 {
++			compatible = "renesas,gpio-r8a77995",
++				     "renesas,rcar-gen3-gpio",
++				     "renesas,gpio-rcar";
++			reg = <0 0xe6054000 0 0x50>;
++			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 128 32>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 908>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 908>;
++		};
++
++		gpio5: gpio@e6055000 {
++			compatible = "renesas,gpio-r8a77995",
++				     "renesas,rcar-gen3-gpio",
++				     "renesas,gpio-rcar";
++			reg = <0 0xe6055000 0 0x50>;
++			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 160 21>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 907>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 907>;
++		};
++
++		gpio6: gpio@e6055400 {
++			compatible = "renesas,gpio-r8a77995",
++				     "renesas,rcar-gen3-gpio",
++				     "renesas,gpio-rcar";
++			reg = <0 0xe6055400 0 0x50>;
++			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 192 14>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 906>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 906>;
++		};
++
+ 		scif2: serial@e6e88000 {
+ 			compatible = "renesas,scif-r8a77995",
+ 				     "renesas,rcar-gen3-scif", "renesas,scif";
+-- 
+1.9.1
