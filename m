@@ -1,52 +1,163 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:55538 "EHLO
-        smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751824AbdIFHFN (ORCPT
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:42036 "EHLO
+        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751354AbdIMLB7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Sep 2017 03:05:13 -0400
-From: Dirk Behme <dirk.behme@de.bosch.com>
-To: <linux-renesas-soc@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-CC: Ryo Kataoka <ryo.kataoka.wt@renesas.com>,
-        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
-        Dirk Behme <dirk.behme@de.bosch.com>
-Subject: [PATCH 3/8] spi: sh-msiof: Fix MSIOF address for DMAC
-Date: Wed, 6 Sep 2017 09:05:02 +0200
-Message-ID: <20170906070507.26223-4-dirk.behme@de.bosch.com>
-In-Reply-To: <20170906070507.26223-1-dirk.behme@de.bosch.com>
-References: <20170906070507.26223-1-dirk.behme@de.bosch.com>
+        Wed, 13 Sep 2017 07:01:59 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: linux-pm@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [RFC 1/3] thermal: rcar_gen3_thermal: read calibration from hardware
+Date: Wed, 13 Sep 2017 13:01:35 +0200
+Message-Id: <20170913110137.13490-2-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170913110137.13490-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170913110137.13490-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Ryo Kataoka <ryo.kataoka.wt@renesas.com>
+In production hardware the calibration values used to convert register
+values to temperatures can be read from hardware. While pre-production
+hardware still depends on pseudo values hard-coded in the driver.
 
-MSIOF Base Address H'E6xx can be accessed by CPU and DMAC.
-MSIOF Base Address H'E7xx for DMAC was removed from H/W manual.
+Add support for reading out calibration values from hardware if it's
+fused. The presence of fused calibration is indicated in the THSCP
+register, unfortunately this register where not present in early
+datasheets. The resource size used in early DT descriptions do not cover
+this register. This change takes this into account and fallback to the
+pseudo values if the resource size in DT is to small.
 
-Signed-off-by: Ryo Kataoka <ryo.kataoka.wt@renesas.com>
-Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
-Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/spi/spi-sh-msiof.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/thermal/rcar_gen3_thermal.c | 70 +++++++++++++++++++++++++++++++++++--
+ 1 file changed, 68 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
-index f9300fdf41e5..24b49d3ca9a8 100644
---- a/drivers/spi/spi-sh-msiof.c
-+++ b/drivers/spi/spi-sh-msiof.c
-@@ -1145,10 +1145,7 @@ static int sh_msiof_request_dma(struct sh_msiof_spi_priv *p)
- 		return 0;
+diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
+index 528a65b05b304ca3..29d041d79c6856d6 100644
+--- a/drivers/thermal/rcar_gen3_thermal.c
++++ b/drivers/thermal/rcar_gen3_thermal.c
+@@ -43,6 +43,10 @@
+ #define REG_GEN3_THCODE1	0x50
+ #define REG_GEN3_THCODE2	0x54
+ #define REG_GEN3_THCODE3	0x58
++#define REG_GEN3_PTAT1		0x5c
++#define REG_GEN3_PTAT2		0x60
++#define REG_GEN3_PTAT3		0x64
++#define REG_GEN3_THSCP		0x68
+ 
+ /* IRQ{STR,MSK,EN} bits */
+ #define IRQ_TEMP1		BIT(0)
+@@ -64,6 +68,9 @@
+ #define THCTR_PONM	BIT(6)
+ #define THCTR_THSST	BIT(0)
+ 
++/* THSCP bits */
++#define THSCP_COR_PARA_VLD	(BIT(15) | BIT(14))
++
+ #define CTEMP_MASK	0xFFF
+ 
+ #define MCELSIUS(temp)	((temp) * 1000)
+@@ -81,6 +88,7 @@ struct equation_coefs {
+ 
+ struct rcar_gen3_thermal_tsc {
+ 	void __iomem *base;
++	resource_size_t size;
+ 	struct thermal_zone_device *zone;
+ 	struct equation_coefs coef;
+ 	int low;
+@@ -284,6 +292,55 @@ static const struct soc_device_attribute r8a7795es1[] = {
+ 	{ /* sentinel */ }
+ };
+ 
++static bool rcar_gen3_thermal_update_fuses(struct rcar_gen3_thermal_priv *priv)
++{
++	int i, ptat[3], thcode[3];
++	u32 thscp;
++
++	if (!priv->num_tscs)
++		return false;
++
++	/*
++	 * If resource size of TSC1 is less then 0x6c0 old DT is used, not
++	 * possible to read all fusees, fallback to pseudo values.
++	 */
++	if (priv->tscs[0]->size < 0x6c)
++		return false;
++
++	/* If fuses are not set, fallback to pseudo values. */
++	thscp = rcar_gen3_thermal_read(priv->tscs[0], REG_GEN3_THSCP);
++	if ((thscp & THSCP_COR_PARA_VLD) != THSCP_COR_PARA_VLD)
++		return false;
++
++	/*
++	 * Update the pseudo calibration points with fused values.
++	 * PTAT is shared between all TSC:s but only fused for the first
++	 * TSC while THCODEs are fused for each TSC.
++	 */
++
++	ptat[0] = rcar_gen3_thermal_read(priv->tscs[0], REG_GEN3_PTAT1) &
++		GEN3_FUSE_MASK;
++	ptat[1] = rcar_gen3_thermal_read(priv->tscs[0], REG_GEN3_PTAT2) &
++		GEN3_FUSE_MASK;
++	ptat[2] = rcar_gen3_thermal_read(priv->tscs[0], REG_GEN3_PTAT3) &
++		GEN3_FUSE_MASK;
++
++	for (i = 0; i < priv->num_tscs; i++) {
++		struct rcar_gen3_thermal_tsc *tsc = priv->tscs[i];
++
++		thcode[0] = rcar_gen3_thermal_read(tsc, REG_GEN3_THCODE1) &
++			GEN3_FUSE_MASK;
++		thcode[1] = rcar_gen3_thermal_read(tsc, REG_GEN3_THCODE2) &
++			GEN3_FUSE_MASK;
++		thcode[2] = rcar_gen3_thermal_read(tsc, REG_GEN3_THCODE3) &
++			GEN3_FUSE_MASK;
++
++		rcar_gen3_thermal_calc_coefs(&tsc->coef, ptat, thcode);
++	}
++
++	return true;
++}
++
+ static void r8a7796_thermal_init(struct rcar_gen3_thermal_tsc *tsc)
+ {
+ 	u32 reg_val;
+@@ -432,11 +489,22 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
+ 			ret = PTR_ERR(tsc->base);
+ 			goto error_unregister;
+ 		}
++		tsc->size = resource_size(res);
+ 
+ 		priv->tscs[i] = tsc;
+ 
+ 		priv->data->thermal_init(tsc);
++
+ 		rcar_gen3_thermal_calc_coefs(&tsc->coef, ptat, thcode[i]);
++	}
++
++	priv->num_tscs = i;
++
++	if (rcar_gen3_thermal_update_fuses(priv))
++		dev_info(dev, "Using fused calibration values\n");
++
++	for (i = 0; i < priv->num_tscs; i++) {
++		struct rcar_gen3_thermal_tsc *tsc = priv->tscs[i];
+ 
+ 		zone = devm_thermal_zone_of_sensor_register(dev, i, tsc,
+ 							    &rcar_gen3_tz_of_ops);
+@@ -454,8 +522,6 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
+ 		dev_info(dev, "TSC%d: Loaded %d trip points\n", i, ret);
  	}
  
--	/* The DMA engine uses the second register set, if present */
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
--	if (!res)
--		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 
- 	master = p->master;
- 	master->dma_tx = sh_msiof_request_dma_chan(dev, DMA_MEM_TO_DEV,
+-	priv->num_tscs = i;
+-
+ 	if (!priv->num_tscs) {
+ 		ret = -ENODEV;
+ 		goto error_unregister;
 -- 
 2.14.1
