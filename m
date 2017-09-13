@@ -1,51 +1,57 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52446 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751355AbdIEIH6 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Sep 2017 04:07:58 -0400
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Wed, 13 Sep 2017 09:36:03 +0200
 From: Simon Horman <horms@verge.net.au>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: ltsi-dev@lists.linuxfoundation.org,
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
         linux-renesas-soc@vger.kernel.org,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: [PATCH 11/13] usb: host: ehci-platform: set hcd->phy to avoid phy_get() in usb_add_hcd()
-Date: Tue,  5 Sep 2017 10:06:46 +0200
-Message-Id: <1504598808-19810-12-git-send-email-horms@verge.net.au>
-In-Reply-To: <1504598808-19810-1-git-send-email-horms@verge.net.au>
-References: <1504598808-19810-1-git-send-email-horms@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 0/5] ARM: dts: rcar-gen2: Add reset control properties
+Message-ID: <20170913073602.GD6756@verge.net.au>
+References: <1505135399-24840-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1505135399-24840-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+On Mon, Sep 11, 2017 at 03:09:54PM +0200, Geert Uytterhoeven wrote:
+> 	Hi Simon, Magnus,
+> 
+> This patch series describes the reset topology on all R-Car Gen2 Socs, like
+> was done before for R-Car Gen3 and RZ/G1.
+> 
+> Resets usually match the corresponding module clocks.  Exceptions are:
+>   - The audio module has resets for the Serial Sound Interfaces only,
+>   - The display module has only a single reset for all DU channels, but
+>     adding reset properties for the display is postponed upon request from
+>     Laurent.
+> 
+> Note that this patch series contains hardware description only.
+> Actual reset policy is to be defined and implemented separately.
+> Also, this is an optional feature, to be enabled explicitly using
+> CONFIG_RESET_CONTROLLER=y.  When enabled, an on-SoC device can be reset
+> easily using device_reset(), or by using the reset_control_*() API when
+> more fine-grained control is desired.
+> 
+> Possible use cases are (not exhaustive):
+>   - Reset a device before use, to make sure it's in a predefined state, and
+>     doesn't depend on earlier configuration by e.g. the boot loader,
+>   - Reset a device after detecting an anomaly,
+>   - Reset a device to verify suspend/resume is handled correctly by the
+>     driver in case the device would be part of a power domain on a
+>     different/future SoC.
+> 
+> This has been tested on r8a7790/lager, r8a7791/koelsch, r8a7792/blanche,
+> and r8a7794/alt (r8a7793/gose was offline).
+> 
+> Thanks for applying!
+> 
+> Geert Uytterhoeven (5):
+>   ARM: dts: r8a7790: Add reset control properties
+>   ARM: dts: r8a7791: Add reset control properties
+>   ARM: dts: r8a7792: Add reset control properties
+>   ARM: dts: r8a7793: Add reset control properties
+>   ARM: dts: r8a7794: Add reset control properties
 
-This patch sets hcd->phy from own phy context to avoid phy_get()
-in usb_add_hcd(). Since core/hcd.c manages the phy only in
-usb_add_hcd() and usb_remove_hcd(), there is difficult to manage
-the phy in suspend/resume.
-
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-(cherry picked from commit 42a58c9949ddf16e557f5c2e22566f3440e7b60f)
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- drivers/usb/host/ehci-platform.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/usb/host/ehci-platform.c b/drivers/usb/host/ehci-platform.c
-index 3214300396a0..bc7b9be12f54 100644
---- a/drivers/usb/host/ehci-platform.c
-+++ b/drivers/usb/host/ehci-platform.c
-@@ -221,6 +221,9 @@ static int ehci_platform_probe(struct platform_device *dev)
- 			if (IS_ERR(priv->phys[phy_num])) {
- 				err = PTR_ERR(priv->phys[phy_num]);
- 					goto err_put_hcd;
-+			} else if (!hcd->phy) {
-+				/* Avoiding phy_get() in usb_add_hcd() */
-+				hcd->phy = priv->phys[phy_num];
- 			}
- 		}
- 
--- 
-2.1.4
+Thanks, applied.
