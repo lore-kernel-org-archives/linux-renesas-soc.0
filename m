@@ -1,31 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([184.105.139.130]:48460 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756773AbdIRSia (ORCPT
+Received: from mail-pf0-f170.google.com ([209.85.192.170]:34060 "EHLO
+        mail-pf0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751317AbdIMH4b (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Sep 2017 14:38:30 -0400
-Date: Mon, 18 Sep 2017 11:38:28 -0700 (PDT)
-Message-Id: <20170918.113828.1780561294605005940.davem@davemloft.net>
-To: sergei.shtylyov@cogentembedded.com
-Cc: robh+dt@kernel.org, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, mark.rutland@arm.com,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] ravb: document R8A77970 bindings
-From: David Miller <davem@davemloft.net>
+        Wed, 13 Sep 2017 03:56:31 -0400
+MIME-Version: 1.0
 In-Reply-To: <20170912200228.015376134@cogentembedded.com>
 References: <20170912200228.015376134@cogentembedded.com>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 13 Sep 2017 09:56:30 +0200
+Message-ID: <CAMuHMdVV6R9si2O0xwyCbbAtjZJjhQC+on69mmzJoux5JB0ZTg@mail.gmail.com>
+Subject: Re: [PATCH] ravb: document R8A77970 bindings
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Date: Tue, 12 Sep 2017 23:02:08 +0300
-
+On Tue, Sep 12, 2017 at 10:02 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
 > R-Car V3M (R8A77970) SoC also has the R-Car gen3 compatible EtherAVB
 > device, so document  the SoC specific bindings.
-> 
+>
 > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Applied to net-next.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
