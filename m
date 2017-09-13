@@ -1,103 +1,129 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:37148 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750993AbdIMNhc (ORCPT
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:39590 "EHLO
+        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751661AbdIMK4F (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Sep 2017 09:37:32 -0400
-MIME-Version: 1.0
-In-Reply-To: <20170913105522.12880-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170913105522.12880-1-niklas.soderlund+renesas@ragnatech.se>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 13 Sep 2017 15:37:31 +0200
-Message-ID: <CAMuHMdVEbUx5N02eGYembN8-ZSRbfkeHgThA70TntdcC2MQhxg@mail.gmail.com>
-Subject: Re: [PATCH] thermal: rcar_gen3_thermal: fix initialization sequence
- for H3 ES2.0
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        Wed, 13 Sep 2017 06:56:05 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Cc: Linux PM list <linux-pm@vger.kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+To: linux-pm@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH] thermal: rcar_gen3_thermal: fix initialization sequence for H3 ES2.0
+Date: Wed, 13 Sep 2017 12:55:22 +0200
+Message-Id: <20170913105522.12880-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Niklas,
+The initialization sequence for H3 (r8a7795) ES1.x and ES2.0 is
+different. H3 ES2.0 and later uses the same sequence as M3 (r8a7796)
+ES1.0. Fix this by swapping place of the two initialization functions
+and calling the r8a7796 init function from the r8a7795 init function if
+the ES version is not "ES1.*".
 
-On Wed, Sep 13, 2017 at 12:55 PM, Niklas S=C3=B6derlund
-<niklas.soderlund+renesas@ragnatech.se> wrote:
-> The initialization sequence for H3 (r8a7795) ES1.x and ES2.0 is
-> different. H3 ES2.0 and later uses the same sequence as M3 (r8a7796)
-> ES1.0. Fix this by swapping place of the two initialization functions
-> and calling the r8a7796 init function from the r8a7795 init function if
-> the ES version is not "ES1.*".
->
-> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
-se>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/thermal/rcar_gen3_thermal.c | 54 ++++++++++++++++++++++---------------
+ 1 file changed, 33 insertions(+), 21 deletions(-)
 
-Thanks for your patch!
-
-> --- a/drivers/thermal/rcar_gen3_thermal.c
-> +++ b/drivers/thermal/rcar_gen3_thermal.c
-
-> -static void r8a7796_thermal_init(struct rcar_gen3_thermal_tsc *tsc)
-> +static void r8a7795_thermal_init(struct rcar_gen3_thermal_tsc *tsc)
->  {
-> -       u32 reg_val;
-> +       /* H3 ES2.0 and later uses same initialization sequence as M3 ES1=
-.0 */
-
-... use the same ...
-
-> +       if (!soc_device_match(r8a7795es1)) {
-> +               r8a7796_thermal_init(tsc);
-> +               return;
-> +       }
-
-In general, I prefer soc_device_match() tests for pre-production SoCs to
-use positive tests, not negative tests. That makes it easier to drop the
-tests and the related code when support for these pre-production SoCs is
-dropped later.
-
-I.e.
-
-        static void rcar_gen3_thermal_init(struct rcar_gen3_thermal_tsc *ts=
-c)
-        {
-                if (soc_device_match(r8a7795es1))
-                        return r8a7795es1_thermal_init(tsc);
-
-                [... common init code ...]
-        }
-
-Notes:
-  - The above naming ("rcar_gen3_thermal_init") assumes other R-Car Gen3
-    SoCs need the same initialization sequence.
-  - Yes, you can call and return from a void function like that ;-)
-
-However, that still leaves the test in the .thermal_init() callback, so it
-will be evaluated multiple times, during probe and during each and every
-resume.
-
-You can avoid that by using a separate rcar_gen3_thermal_data structure for
-H3 ES1.x, and changing the probe function like:
-
-     priv->data =3D of_device_get_match_data(dev);
-+       if (soc_device_match(r8a7795es1))
-+               priv->data =3D &r8a7795es_data;
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
+index 203aca44a2bb4bdf..528a65b05b304ca3 100644
+--- a/drivers/thermal/rcar_gen3_thermal.c
++++ b/drivers/thermal/rcar_gen3_thermal.c
+@@ -24,6 +24,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/spinlock.h>
++#include <linux/sys_soc.h>
+ #include <linux/thermal.h>
+ 
+ #include "thermal_core.h"
+@@ -278,48 +279,59 @@ static irqreturn_t rcar_gen3_thermal_irq_thread(int irq, void *data)
+ 	return IRQ_HANDLED;
+ }
+ 
+-static void r8a7795_thermal_init(struct rcar_gen3_thermal_tsc *tsc)
++static const struct soc_device_attribute r8a7795es1[] = {
++	{ .soc_id = "r8a7795", .revision = "ES1.*" },
++	{ /* sentinel */ }
++};
++
++static void r8a7796_thermal_init(struct rcar_gen3_thermal_tsc *tsc)
+ {
+-	rcar_gen3_thermal_write(tsc, REG_GEN3_CTSR,  CTSR_THBGR);
+-	rcar_gen3_thermal_write(tsc, REG_GEN3_CTSR,  0x0);
++	u32 reg_val;
+ 
+-	usleep_range(1000, 2000);
++	reg_val = rcar_gen3_thermal_read(tsc, REG_GEN3_THCTR);
++	reg_val &= ~THCTR_PONM;
++	rcar_gen3_thermal_write(tsc, REG_GEN3_THCTR, reg_val);
+ 
+-	rcar_gen3_thermal_write(tsc, REG_GEN3_CTSR, CTSR_PONM);
++	usleep_range(1000, 2000);
+ 
+ 	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQCTL, 0x3F);
+ 	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQMSK, 0);
+ 	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQEN, IRQ_TEMPD1 | IRQ_TEMP2);
+ 
+-	rcar_gen3_thermal_write(tsc, REG_GEN3_CTSR,
+-				CTSR_PONM | CTSR_AOUT | CTSR_THBGR | CTSR_VMEN);
+-
+-	usleep_range(100, 200);
+-
+-	rcar_gen3_thermal_write(tsc, REG_GEN3_CTSR,
+-				CTSR_PONM | CTSR_AOUT | CTSR_THBGR | CTSR_VMEN |
+-				CTSR_VMST | CTSR_THSST);
++	reg_val = rcar_gen3_thermal_read(tsc, REG_GEN3_THCTR);
++	reg_val |= THCTR_THSST;
++	rcar_gen3_thermal_write(tsc, REG_GEN3_THCTR, reg_val);
+ 
+ 	usleep_range(1000, 2000);
+ }
+ 
+-static void r8a7796_thermal_init(struct rcar_gen3_thermal_tsc *tsc)
++static void r8a7795_thermal_init(struct rcar_gen3_thermal_tsc *tsc)
+ {
+-	u32 reg_val;
++	/* H3 ES2.0 and later uses same initialization sequence as M3 ES1.0 */
++	if (!soc_device_match(r8a7795es1)) {
++		r8a7796_thermal_init(tsc);
++		return;
++	}
+ 
+-	reg_val = rcar_gen3_thermal_read(tsc, REG_GEN3_THCTR);
+-	reg_val &= ~THCTR_PONM;
+-	rcar_gen3_thermal_write(tsc, REG_GEN3_THCTR, reg_val);
++	rcar_gen3_thermal_write(tsc, REG_GEN3_CTSR,  CTSR_THBGR);
++	rcar_gen3_thermal_write(tsc, REG_GEN3_CTSR,  0x0);
+ 
+ 	usleep_range(1000, 2000);
+ 
++	rcar_gen3_thermal_write(tsc, REG_GEN3_CTSR, CTSR_PONM);
++
+ 	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQCTL, 0x3F);
+ 	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQMSK, 0);
+ 	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQEN, IRQ_TEMPD1 | IRQ_TEMP2);
+ 
+-	reg_val = rcar_gen3_thermal_read(tsc, REG_GEN3_THCTR);
+-	reg_val |= THCTR_THSST;
+-	rcar_gen3_thermal_write(tsc, REG_GEN3_THCTR, reg_val);
++	rcar_gen3_thermal_write(tsc, REG_GEN3_CTSR,
++				CTSR_PONM | CTSR_AOUT | CTSR_THBGR | CTSR_VMEN);
++
++	usleep_range(100, 200);
++
++	rcar_gen3_thermal_write(tsc, REG_GEN3_CTSR,
++				CTSR_PONM | CTSR_AOUT | CTSR_THBGR | CTSR_VMEN |
++				CTSR_VMST | CTSR_THSST);
+ 
+ 	usleep_range(1000, 2000);
+ }
+-- 
+2.14.1
