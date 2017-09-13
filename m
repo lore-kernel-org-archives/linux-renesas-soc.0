@@ -1,75 +1,75 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:35959 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751825AbdIMJVc (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Sep 2017 05:21:32 -0400
-MIME-Version: 1.0
-In-Reply-To: <1505285528-7033-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1505285528-7033-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 13 Sep 2017 11:21:31 +0200
-Message-ID: <CAMuHMdX9qowD3039OxPyPoyUsnaq7e=kWyxqDdDqzz5RTZtSwQ@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: renesas: r8a77995: add GPIO device nodes
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Simon Horman <horms@verge.net.au>
+CC: "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH] arm64: dts: renesas: r8a77995: add GPIO device nodes
+Date: Wed, 13 Sep 2017 07:56:13 +0000
+Message-ID: <TY1PR06MB09922EEDDAC86AD23A966B2ED86E0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+References: <1505285528-7033-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <20170913074934.GH6756@verge.net.au>
+In-Reply-To: <20170913074934.GH6756@verge.net.au>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Shimoda-san,
+Hi Simon-san,
 
-On Wed, Sep 13, 2017 at 8:52 AM, Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> This patch adds GPIO device nodes for r8a77995.
->
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> From: Simon Horman
+> Sent: Wednesday, September 13, 2017 4:50 PM
+>=20
+> On Wed, Sep 13, 2017 at 03:52:08PM +0900, Yoshihiro Shimoda wrote:
+> > This patch adds GPIO device nodes for r8a77995.
+> >
+> > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> > ---
+> >  This patch should be applied after the following patch is applied:
+> >   "gpio: rcar: Add r8a77995 (R-Car D3) support".
+>=20
+> I think it can be applied in parallel with that patch as the driver
+> will match on "renesas,rcar-gen3-gpio". Right?
 
-Thanks for your patch!
+That's right.
+My little concern was checkpatch.pl output warning if we didn't applied
+the gpio patch :)
 
-> --- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-> @@ -139,6 +139,118 @@
->                         #power-domain-cells = <1>;
->                 };
->
-> +               gpio0: gpio@e6050000 {
-> +                       compatible = "renesas,gpio-r8a77995",
-> +                                    "renesas,rcar-gen3-gpio",
-> +                                    "renesas,gpio-rcar";
-> +                       reg = <0 0xe6050000 0 0x50>;
-> +                       interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
-> +                       #gpio-cells = <2>;
-> +                       gpio-controller;
-> +                       gpio-ranges = <&pfc 0 0 9>;
-> +                       #interrupt-cells = <2>;
-> +                       interrupt-controller;
-> +                       clocks = <&cpg CPG_MOD 912>;
-> +                       power-domains = <&cpg>;
+Best regards,
+Yoshihiro Shimoda
 
-All nodes lack the power domain index (32, to be replaced by
-R8A77995_PD_ALWAYS_ON later):
-
-    power-domains = <&sysc 32>;
-
-> +                       resets = <&cpg 912>;
-> +               };
-
-With that fixed:
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> >  arch/arm64/boot/dts/renesas/r8a77995.dtsi | 112 ++++++++++++++++++++++=
+++++++++
+> >  1 file changed, 112 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boo=
+t/dts/renesas/r8a77995.dtsi
+> > index 84b6bd5..a1c9271 100644
+> > --- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+> > +++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+> > @@ -139,6 +139,118 @@
+> >  			#power-domain-cells =3D <1>;
+> >  		};
+> >
+> > +		gpio0: gpio@e6050000 {
+> > +			compatible =3D "renesas,gpio-r8a77995",
+> > +				     "renesas,rcar-gen3-gpio",
+> > +				     "renesas,gpio-rcar";
+> > +			reg =3D <0 0xe6050000 0 0x50>;
+> > +			interrupts =3D <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
+> > +			#gpio-cells =3D <2>;
+> > +			gpio-controller;
+> > +			gpio-ranges =3D <&pfc 0 0 9>;
+> > +			#interrupt-cells =3D <2>;
+> > +			interrupt-controller;
+> > +			clocks =3D <&cpg CPG_MOD 912>;
+> > +			power-domains =3D <&cpg>;
+> > +			resets =3D <&cpg 912>;
+> > +		};
+>=20
+> ...
