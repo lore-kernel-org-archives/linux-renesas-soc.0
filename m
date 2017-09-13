@@ -1,35 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52729 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750865AbdIOH2P (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:43000 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751015AbdIMMGo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Sep 2017 03:28:15 -0400
-Date: Fri, 15 Sep 2017 09:27:55 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v2] arm64: dts: renesas: r8a77995: add GPIO device nodes
-Message-ID: <20170915072755.GB3924@verge.net.au>
-References: <1505298839-17435-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Wed, 13 Sep 2017 08:06:44 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH] arm64: dts: renesas: r8a77995: add GPIO device nodes
+Date: Wed, 13 Sep 2017 12:06:39 +0000
+Message-ID: <TY1PR06MB09929D41838D1427F3D10210D86E0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+References: <1505285528-7033-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <CAMuHMdX9qowD3039OxPyPoyUsnaq7e=kWyxqDdDqzz5RTZtSwQ@mail.gmail.com>
+ <TY1PR06MB099246295272BBF0F08022C8D86E0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+ <CAMuHMdUiZyK3xA=_rYjbAaSYhm=-p5Spug0mmLc=mf+pRfxgoA@mail.gmail.com>
+In-Reply-To: <CAMuHMdUiZyK3xA=_rYjbAaSYhm=-p5Spug0mmLc=mf+pRfxgoA@mail.gmail.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1505298839-17435-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Sep 13, 2017 at 07:33:59PM +0900, Yoshihiro Shimoda wrote:
-> This patch adds GPIO device nodes for r8a77995.
-> 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> ---
->  Changes from v1:
->   - Change power-domains property in each node.
->   - Add Reviewed-by (Thanks Geert-san!).
-> 
->  arch/arm64/boot/dts/renesas/r8a77995.dtsi | 112 ++++++++++++++++++++++++++++++
-
-Thanks, applied.
+SGkgR2VlcnQtc2FuLA0KDQo+IEZyb206IEdlZXJ0IFV5dHRlcmhvZXZlbg0KPiBTZW50OiBXZWRu
+ZXNkYXksIFNlcHRlbWJlciAxMywgMjAxNyA4OjQ4IFBNDQo+IA0KPiBIaSBTaGltb2RhLXNhbiwN
+Cj4gDQo+IE9uIFdlZCwgU2VwIDEzLCAyMDE3IGF0IDExOjM1IEFNLCBZb3NoaWhpcm8gU2hpbW9k
+YQ0KPiA8eW9zaGloaXJvLnNoaW1vZGEudWhAcmVuZXNhcy5jb20+IHdyb3RlOg0KPiA+PiBGcm9t
+OiBHZWVydCBVeXR0ZXJob2V2ZW4NCj4gPj4gU2VudDogV2VkbmVzZGF5LCBTZXB0ZW1iZXIgMTMs
+IDIwMTcgNjoyMiBQTQ0KPiA+PiBPbiBXZWQsIFNlcCAxMywgMjAxNyBhdCA4OjUyIEFNLCBZb3No
+aWhpcm8gU2hpbW9kYQ0KPiA+PiA8eW9zaGloaXJvLnNoaW1vZGEudWhAcmVuZXNhcy5jb20+IHdy
+b3RlOg0KPiA+PiA+IC0tLSBhL2FyY2gvYXJtNjQvYm9vdC9kdHMvcmVuZXNhcy9yOGE3Nzk5NS5k
+dHNpDQo+ID4+ID4gKysrIGIvYXJjaC9hcm02NC9ib290L2R0cy9yZW5lc2FzL3I4YTc3OTk1LmR0
+c2kNCj4gPj4gPiBAQCAtMTM5LDYgKzEzOSwxMTggQEANCj4gPj4gPiAgICAgICAgICAgICAgICAg
+ICAgICAgICAjcG93ZXItZG9tYWluLWNlbGxzID0gPDE+Ow0KPiA+PiA+ICAgICAgICAgICAgICAg
+ICB9Ow0KPiA+PiA+DQo+ID4+ID4gKyAgICAgICAgICAgICAgIGdwaW8wOiBncGlvQGU2MDUwMDAw
+IHsNCj4gPj4gPiArICAgICAgICAgICAgICAgICAgICAgICBjb21wYXRpYmxlID0gInJlbmVzYXMs
+Z3Bpby1yOGE3Nzk5NSIsDQo+ID4+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICJyZW5lc2FzLHJjYXItZ2VuMy1ncGlvIiwNCj4gPj4gPiArICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgInJlbmVzYXMsZ3Bpby1yY2FyIjsNCj4gPj4gPiArICAgICAgICAg
+ICAgICAgICAgICAgICByZWcgPSA8MCAweGU2MDUwMDAwIDAgMHg1MD47DQo+ID4+ID4gKyAgICAg
+ICAgICAgICAgICAgICAgICAgaW50ZXJydXB0cyA9IDxHSUNfU1BJIDQgSVJRX1RZUEVfTEVWRUxf
+SElHSD47DQo+ID4+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgI2dwaW8tY2VsbHMgPSA8Mj47
+DQo+ID4+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgZ3Bpby1jb250cm9sbGVyOw0KPiA+PiA+
+ICsgICAgICAgICAgICAgICAgICAgICAgIGdwaW8tcmFuZ2VzID0gPCZwZmMgMCAwIDk+Ow0KPiA+
+PiA+ICsgICAgICAgICAgICAgICAgICAgICAgICNpbnRlcnJ1cHQtY2VsbHMgPSA8Mj47DQo+ID4+
+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgaW50ZXJydXB0LWNvbnRyb2xsZXI7DQo+ID4+ID4g
+KyAgICAgICAgICAgICAgICAgICAgICAgY2xvY2tzID0gPCZjcGcgQ1BHX01PRCA5MTI+Ow0KPiA+
+PiA+ICsgICAgICAgICAgICAgICAgICAgICAgIHBvd2VyLWRvbWFpbnMgPSA8JmNwZz47DQo+ID4+
+DQo+ID4+IEFsbCBub2RlcyBsYWNrIHRoZSBwb3dlciBkb21haW4gaW5kZXggKDMyLCB0byBiZSBy
+ZXBsYWNlZCBieQ0KPiA+PiBSOEE3Nzk5NV9QRF9BTFdBWVNfT04gbGF0ZXIpOg0KPiA+Pg0KPiA+
+PiAgICAgcG93ZXItZG9tYWlucyA9IDwmc3lzYyAzMj47DQo+ID4NCj4gPiBUaGUgcjhhNzc5OTUu
+ZHRzaSBmaWxlIGFscmVhZHkgdXNlcyBSOEE3Nzk5NV9QRF9BTFdBWVNfT04gaW4gc2NpZjIgbm9k
+ZS4NCj4gDQo+IEluIG15IHJlbmVzYXMtZHJpdmVycyBpdCBkb2VzLg0KPiBJbiBTaW1vbidzIHJl
+bmVzYXMvZGV2ZWwgaXQgZG9lc24ndCwgYXMgdGhlIFI4QTc3OTk1X1BEXyogZGVmaW5pdGlvbnMN
+Cj4gZ28gdXBzdHJlYW0gdGhyb3VnaCBhIGRpZmZlcmVudCBicmFuY2ggdGhhbiB0aGUgRFRTIGNo
+YW5nZXMuDQoNCkkgdW5kZXJzdG9vZCBpdC4NCg0KPiA+IFNvLCBzaG91bGQgSSBmaXggdGhpcyBw
+YXRjaCBsaWtlIHRoZSBmb2xsb3dpbmc/DQo+ID4NCj4gPiAgICAgIHBvd2VyLWRvbWFpbnMgPSA8
+JnN5c2MgUjhBNzc5OTVfUERfQUxXQVlTX09OPjsNCj4gDQo+IEZvciBub3cgeW91IHNob3VsZCB1
+c2UgMzIuDQo+IEhvd2V2ZXIsIGFzIHNvb24gYXMgU2ltb24gbWVyZ2VzIHY0LjE0LXJjMSBpbnRv
+IHJlbmVzYXMvZGV2ZWwsIHlvdQ0KPiBjYW4gc3RhcnQgb24gdXNpbmcgUjhBNzc5OTVfUERfQUxX
+QVlTX09OLg0KPiBBcyB0aGF0IGlzIGV4cGVjdGVkIHRvIGhhcHBlbiB0aGlzIE1vbmRheSwgaGUg
+Y2FuIGp1c3QgcG9zdHBvbmUgYXBwbHlpbmcNCj4geW91ciB1cGRhdGVkIHBhdGNoIHVudGlsIHRo
+ZW4sIHNvIEkgZG9uJ3QgdGhpbmsgdGhlcmUncyBhIG5lZWQgdG8gcmVzZW5kIGENCj4gdmVyc2lv
+biB3aXRoIGhhcmRjb2RlZCBudW1iZXJzLg0KDQpJIGdvdCBpdC4gU28sIEkgd2lsbCBub3QgcmVz
+ZW5kIHN1Y2ggdmVyc2lvbi4NCg0KPiBGb3IgUi1DYXIgVjNNIGl0J3MgZGlmZmVyZW50LCBhcyB0
+aGUgZGVmaW5pdGlvbnMgZm9yIHRoYXQgU29DIHdvbid0IGFwcGVhcg0KPiBpbiB1cHN0cmVhbSBm
+b3IgYW5vdGhlciBmdWxsIGN5Y2xlLCBpLmUuIGluIHY0LjE1LXJjMSB0aGUgZWFybGllc3QuDQoN
+ClRoYW5rIHlvdSBmb3IgdGhlIGluZm9ybWF0aW9uLiBJIGdvdCBpdC4NCg0KQmVzdCByZWdhcmRz
+LA0KWW9zaGloaXJvIFNoaW1vZGENCg0KPiBHcntvZXRqZSxlZXRpbmd9cywNCj4gDQo+ICAgICAg
+ICAgICAgICAgICAgICAgICAgIEdlZXJ0DQo+IA0KPiAtLQ0KPiBHZWVydCBVeXR0ZXJob2V2ZW4g
+LS0gVGhlcmUncyBsb3RzIG9mIExpbnV4IGJleW9uZCBpYTMyIC0tIGdlZXJ0QGxpbnV4LW02OGsu
+b3JnDQo+IA0KPiBJbiBwZXJzb25hbCBjb252ZXJzYXRpb25zIHdpdGggdGVjaG5pY2FsIHBlb3Bs
+ZSwgSSBjYWxsIG15c2VsZiBhIGhhY2tlci4gQnV0DQo+IHdoZW4gSSdtIHRhbGtpbmcgdG8gam91
+cm5hbGlzdHMgSSBqdXN0IHNheSAicHJvZ3JhbW1lciIgb3Igc29tZXRoaW5nIGxpa2UgdGhhdC4N
+Cj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAtLSBMaW51cyBUb3J2YWxkcw0K
