@@ -1,42 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f170.google.com ([209.85.192.170]:34060 "EHLO
-        mail-pf0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751317AbdIMH4b (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:51866 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751465AbdIMHjF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Sep 2017 03:56:31 -0400
-MIME-Version: 1.0
-In-Reply-To: <20170912200228.015376134@cogentembedded.com>
-References: <20170912200228.015376134@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 13 Sep 2017 09:56:30 +0200
-Message-ID: <CAMuHMdVV6R9si2O0xwyCbbAtjZJjhQC+on69mmzJoux5JB0ZTg@mail.gmail.com>
-Subject: Re: [PATCH] ravb: document R8A77970 bindings
+        Wed, 13 Sep 2017 03:39:05 -0400
+Date: Wed, 13 Sep 2017 09:39:02 +0200
+From: Simon Horman <horms@verge.net.au>
 To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Cc: Rob Herring <robh+dt@kernel.org>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] ravb: document R8A77970 bindings
+Message-ID: <20170913073901.GE6756@verge.net.au>
+References: <20170912200228.015376134@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170912200228.015376134@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Sep 12, 2017 at 10:02 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
+On Tue, Sep 12, 2017 at 11:02:08PM +0300, Sergei Shtylyov wrote:
 > R-Car V3M (R8A77970) SoC also has the R-Car gen3 compatible EtherAVB
 > device, so document  the SoC specific bindings.
->
+> 
 > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
 
-Gr{oetje,eeting}s,
+> ---
+> The patch is against DaveM's 'net-next.git' repo but I wouldn't mind if it's
+> applied to 'net.git' instead. :-)
 
-                        Geert
+Personally I would prefer net-next, but I don't feel strongly about this.
+If you want it considered for net then I think it is likely that you will
+need to repost it with the appropriate patch prefix.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> 
+>  Documentation/devicetree/bindings/net/renesas,ravb.txt |    3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> Index: net-next/Documentation/devicetree/bindings/net/renesas,ravb.txt
+> ===================================================================
+> --- net-next.orig/Documentation/devicetree/bindings/net/renesas,ravb.txt
+> +++ net-next/Documentation/devicetree/bindings/net/renesas,ravb.txt
+> @@ -17,6 +17,7 @@ Required properties:
+>  
+>        - "renesas,etheravb-r8a7795" for the R8A7795 SoC.
+>        - "renesas,etheravb-r8a7796" for the R8A7796 SoC.
+> +      - "renesas,etheravb-r8a77970" for the R8A77970 SoC.
+>        - "renesas,etheravb-rcar-gen3" as a fallback for the above
+>  		R-Car Gen3 devices.
+>  
+> @@ -40,7 +41,7 @@ Optional properties:
+>  - interrupt-parent: the phandle for the interrupt controller that services
+>  		    interrupts for this device.
+>  - interrupt-names: A list of interrupt names.
+> -		   For the R8A779[56] SoCs this property is mandatory;
+> +		   For the R-Car Gen 3 SoCs this property is mandatory;
+>  		   it should include one entry per channel, named "ch%u",
+>  		   where %u is the channel number ranging from 0 to 24.
+>  		   For other SoCs this property is optional; if present
+> 
