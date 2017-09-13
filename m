@@ -1,49 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:34561 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751165AbdISPJs (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:64134 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751054AbdIMRGJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Sep 2017 11:09:48 -0400
-MIME-Version: 1.0
-In-Reply-To: <1505322341-9480-6-git-send-email-chris.paterson2@renesas.com>
-References: <1505322341-9480-1-git-send-email-chris.paterson2@renesas.com> <1505322341-9480-6-git-send-email-chris.paterson2@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 19 Sep 2017 17:09:47 +0200
-Message-ID: <CAMuHMdXpxnuP2eY-J+Va8xK1C9cAeJfpRhAfMBCin_yVXiuCUw@mail.gmail.com>
-Subject: Re: [PATCH 5/8] ARM: dts: r8a7743: Add QSPI support
-To: Chris Paterson <chris.paterson2@renesas.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
+        Wed, 13 Sep 2017 13:06:09 -0400
+From: Chris Paterson <chris.paterson2@renesas.com>
+To: Simon Horman <horms@verge.net.au>
+Cc: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Chris Paterson <chris.paterson2@renesas.com>
+Subject: [PATCH 5/8] ARM: dts: r8a7743: Add QSPI support
+Date: Wed, 13 Sep 2017 18:05:38 +0100
+Message-Id: <1505322341-9480-6-git-send-email-chris.paterson2@renesas.com>
+In-Reply-To: <1505322341-9480-1-git-send-email-chris.paterson2@renesas.com>
+References: <1505322341-9480-1-git-send-email-chris.paterson2@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Sep 13, 2017 at 7:05 PM, Chris Paterson
-<chris.paterson2@renesas.com> wrote:
-> From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
->
-> Add the DT node for the QSPI interface to the SoC dtsi.
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Add the DT node for the QSPI interface to the SoC dtsi.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+---
+This patch is based on renesas-devel-20170913-v4.13.
 
-                        Geert
+This patch is dependant on:
+- "dt-bindings: qspi: Add r8a7743/5 to the compatible list"
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+ arch/arm/boot/dts/r8a7743.dtsi | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index 266c5ec..454f980 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -28,6 +28,7 @@
+ 		i2c6 = &iic0;
+ 		i2c7 = &iic1;
+ 		i2c8 = &iic3;
++		spi0 = &qspi;
+ 	};
+ 
+ 	cpus {
+@@ -835,6 +836,22 @@
+ 			status = "disabled";
+ 		};
+ 
++		qspi: spi@e6b10000 {
++			compatible = "renesas,qspi-r8a7743", "renesas,qspi";
++			reg = <0 0xe6b10000 0 0x2c>;
++			interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 917>;
++			dmas = <&dmac0 0x17>, <&dmac0 0x18>,
++			       <&dmac1 0x17>, <&dmac1 0x18>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			num-cs = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			resets = <&cpg 917>;
++			status = "disabled";
++		};
++
+ 		sdhi0: sd@ee100000 {
+ 			compatible = "renesas,sdhi-r8a7743";
+ 			reg = <0 0xee100000 0 0x328>;
+-- 
+1.9.1
