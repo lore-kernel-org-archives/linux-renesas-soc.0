@@ -1,49 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:42154 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751940AbdIMLCH (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:51661 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750949AbdIMH2d (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Sep 2017 07:02:07 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: linux-pm@vger.kernel.org, Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [RFC 2/3] arm64: dts: r8a7795: update register size for thermal
-Date: Wed, 13 Sep 2017 13:01:36 +0200
-Message-Id: <20170913110137.13490-3-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170913110137.13490-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170913110137.13490-1-niklas.soderlund+renesas@ragnatech.se>
+        Wed, 13 Sep 2017 03:28:33 -0400
+Date: Wed, 13 Sep 2017 09:28:29 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v2 0/2] Renesas R8A77970 CPG/MSSR clock support
+Message-ID: <20170913072829.GB6756@verge.net.au>
+References: <20170908213418.823028011@cogentembedded.com>
+ <CAMuHMdUy_UGZsa87e-=SuYutt5sXd4ZTiZKLfLGfD2css3RPcw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUy_UGZsa87e-=SuYutt5sXd4ZTiZKLfLGfD2css3RPcw@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-To be able to read fused calibration values from hardware the size of
-the register resource of TSC1 needs to be incremented to cover one more
-register which holds the information if the calibration values have been
-fused or not.
+On Mon, Sep 11, 2017 at 04:38:43PM +0200, Geert Uytterhoeven wrote:
+> Hi Sergei,
+> 
+> On Fri, Sep 8, 2017 at 11:34 PM, Sergei Shtylyov
+> <sergei.shtylyov@cogentembedded.com> wrote:
+> >    Here's the set of 2 patches against the 'clk-next' branch of CLK group's
+> > 'linux.git' repo.
+> 
+> Thank you, looks good!
+> 
+> > As the DT patches in the R8A77970/Eagle board support series
+> > depend on the patch #1 of this series, it might make sense to merge this patch
+> > to the 'renesas.git' repo as well...
+> >
+> > [1/2] dt-bindings: clock: add R8A77970 CPG core clock definitions
+> 
+> The modern way to avoid this dependency is to use hardcoded numbers in
+> the initial submission of the DTS, cfr.
+> https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git/commit/?h=arm64-dt-for-v4.15&id=d917e0b24811eadeba419ba7318b967ee15933b3
+> 
+> After the definitions have hit upstream, you can replace the hardcoded
+> numbers by symbols, cfr.
+> https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/commit/?h=topic/r8a77995-integration&id=d3f6987db28a4657bf3304eeeb8e2cd8dd510ad0
+> https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/commit/?h=topic/r8a77995-integration&id=81426223583d5575767c77684be28c40034785bd
+> 
+> So I don't think Simon will merge the core clock definitions patch, unless
+> you plan to submit a full DTS describing the whole SoC in the initial
+> submissiong.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 1818fd20660d0315..be3c7ff6999af57e 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -2805,7 +2805,7 @@
- 
- 		tsc: thermal@e6198000 {
- 			compatible = "renesas,r8a7795-thermal";
--			reg = <0 0xe6198000 0 0x68>,
-+			reg = <0 0xe6198000 0 0x6c>,
- 			      <0 0xe61a0000 0 0x5c>,
- 			      <0 0xe61a8000 0 0x5c>;
- 			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
--- 
-2.14.1
+Thanks, I would prefer if the DT patches followed the scheme described by
+Geert such that they do not depend on any part of this series. I expect
+that will allow the smoothest path for acceptance of those patches.
