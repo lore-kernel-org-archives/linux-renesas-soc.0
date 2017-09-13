@@ -1,68 +1,38 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:40554 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755034AbdIRNsh (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Sep 2017 09:48:37 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 03/12] ARM: dts: r8a7791: Update CMT compat strings
-Date: Mon, 18 Sep 2017 15:48:26 +0200
-Message-Id: <1505742515-31727-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1505742515-31727-1-git-send-email-geert+renesas@glider.be>
-References: <1505742515-31727-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Wed, 13 Sep 2017 10:12:45 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 01/11] soc: renesas: identify R-Car V3M
+Message-ID: <20170913081244.GJ6756@verge.net.au>
+References: <20170912210506.997827638@cogentembedded.com>
+ <CAMuHMdWy=dFSt=3rpy8XTQisUBS=0FTAx1s1twAJD7pPV2zZYw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWy=dFSt=3rpy8XTQisUBS=0FTAx1s1twAJD7pPV2zZYw@mail.gmail.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On Wed, Sep 13, 2017 at 09:59:42AM +0200, Geert Uytterhoeven wrote:
+> On Tue, Sep 12, 2017 at 10:37 PM, Sergei Shtylyov
+> <sergei.shtylyov@cogentembedded.com> wrote:
+> > Add support for identifying the R-Car V3M (R8A77970) SoC.
+> >
+> > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> (identical to what I wrote for topic/r8a77970-integration, which is no
+> surprise ;-)
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Use recently updated R-Car Gen2 CMT0 and CMT1 compat strings.
-
-With this change in place we can keep device-specific configuration in
-the driver and the driver can be able to support CMT1 specific features.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3:
-  - Take over from Magnus,
-  - Update compatible values,
-  - Split in per-SoC patches,
-
-v2:
-  - Added Acked-by and Tested-by from Geert,
-  - Added Acked-by from Laurent.
----
- arch/arm/boot/dts/r8a7791.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index 5a8a158470765d89..09a9a213f90d445b 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -256,7 +256,7 @@
- 	};
- 
- 	cmt0: timer@ffca0000 {
--		compatible = "renesas,cmt-48-r8a7791", "renesas,cmt-48-gen2";
-+		compatible = "renesas,r8a7791-cmt0", "renesas,rcar-gen2-cmt0";
- 		reg = <0 0xffca0000 0 0x1004>;
- 		interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
-@@ -271,7 +271,7 @@
- 	};
- 
- 	cmt1: timer@e6130000 {
--		compatible = "renesas,cmt-48-r8a7791", "renesas,cmt-48-gen2";
-+		compatible = "renesas,r8a7791-cmt1", "renesas,rcar-gen2-cmt1";
- 		reg = <0 0xe6130000 0 0x1004>;
- 		interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
--- 
-2.7.4
+Thanks, applied.
