@@ -1,156 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:12304 "EHLO
+Received: from relmlor3.renesas.com ([210.160.252.173]:38429 "EHLO
         relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751451AbdIMKhl (ORCPT
+        by vger.kernel.org with ESMTP id S1752056AbdIMJfE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Sep 2017 06:37:41 -0400
+        Wed, 13 Sep 2017 05:35:04 -0400
 From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2] arm64: dts: renesas: r8a77995: add GPIO device nodes
-Date: Wed, 13 Sep 2017 19:33:59 +0900
-Message-Id: <1505298839-17435-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH] arm64: dts: renesas: r8a77995: add GPIO device nodes
+Date: Wed, 13 Sep 2017 09:35:00 +0000
+Message-ID: <TY1PR06MB099246295272BBF0F08022C8D86E0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+References: <1505285528-7033-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <CAMuHMdX9qowD3039OxPyPoyUsnaq7e=kWyxqDdDqzz5RTZtSwQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdX9qowD3039OxPyPoyUsnaq7e=kWyxqDdDqzz5RTZtSwQ@mail.gmail.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds GPIO device nodes for r8a77995.
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- Changes from v1:
-  - Change power-domains property in each node.
-  - Add Reviewed-by (Thanks Geert-san!).
-
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 112 ++++++++++++++++++++++++++++++
- 1 file changed, 112 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index 84b6bd5..d7756256 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -139,6 +139,118 @@
- 			#power-domain-cells = <1>;
- 		};
- 
-+		gpio0: gpio@e6050000 {
-+			compatible = "renesas,gpio-r8a77995",
-+				     "renesas,rcar-gen3-gpio",
-+				     "renesas,gpio-rcar";
-+			reg = <0 0xe6050000 0 0x50>;
-+			interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 0 9>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&cpg CPG_MOD 912>;
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 912>;
-+		};
-+
-+		gpio1: gpio@e6051000 {
-+			compatible = "renesas,gpio-r8a77995",
-+				     "renesas,rcar-gen3-gpio",
-+				     "renesas,gpio-rcar";
-+			reg = <0 0xe6051000 0 0x50>;
-+			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 32 32>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&cpg CPG_MOD 911>;
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 911>;
-+		};
-+
-+		gpio2: gpio@e6052000 {
-+			compatible = "renesas,gpio-r8a77995",
-+				     "renesas,rcar-gen3-gpio",
-+				     "renesas,gpio-rcar";
-+			reg = <0 0xe6052000 0 0x50>;
-+			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 64 32>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&cpg CPG_MOD 910>;
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 910>;
-+		};
-+
-+		gpio3: gpio@e6053000 {
-+			compatible = "renesas,gpio-r8a77995",
-+				     "renesas,rcar-gen3-gpio",
-+				     "renesas,gpio-rcar";
-+			reg = <0 0xe6053000 0 0x50>;
-+			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 96 10>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&cpg CPG_MOD 909>;
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 909>;
-+		};
-+
-+		gpio4: gpio@e6054000 {
-+			compatible = "renesas,gpio-r8a77995",
-+				     "renesas,rcar-gen3-gpio",
-+				     "renesas,gpio-rcar";
-+			reg = <0 0xe6054000 0 0x50>;
-+			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 128 32>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&cpg CPG_MOD 908>;
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 908>;
-+		};
-+
-+		gpio5: gpio@e6055000 {
-+			compatible = "renesas,gpio-r8a77995",
-+				     "renesas,rcar-gen3-gpio",
-+				     "renesas,gpio-rcar";
-+			reg = <0 0xe6055000 0 0x50>;
-+			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 160 21>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&cpg CPG_MOD 907>;
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 907>;
-+		};
-+
-+		gpio6: gpio@e6055400 {
-+			compatible = "renesas,gpio-r8a77995",
-+				     "renesas,rcar-gen3-gpio",
-+				     "renesas,gpio-rcar";
-+			reg = <0 0xe6055400 0 0x50>;
-+			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 192 14>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&cpg CPG_MOD 906>;
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 906>;
-+		};
-+
- 		scif2: serial@e6e88000 {
- 			compatible = "renesas,scif-r8a77995",
- 				     "renesas,rcar-gen3-scif", "renesas,scif";
--- 
-1.9.1
+SGkgR2VlcnQtc2FuLA0KDQo+IEZyb206IEdlZXJ0IFV5dHRlcmhvZXZlbg0KPiBTZW50OiBXZWRu
+ZXNkYXksIFNlcHRlbWJlciAxMywgMjAxNyA2OjIyIFBNDQo+IA0KPiBIaSBTaGltb2RhLXNhbiwN
+Cj4gDQo+IE9uIFdlZCwgU2VwIDEzLCAyMDE3IGF0IDg6NTIgQU0sIFlvc2hpaGlybyBTaGltb2Rh
+DQo+IDx5b3NoaWhpcm8uc2hpbW9kYS51aEByZW5lc2FzLmNvbT4gd3JvdGU6DQo+ID4gVGhpcyBw
+YXRjaCBhZGRzIEdQSU8gZGV2aWNlIG5vZGVzIGZvciByOGE3Nzk5NS4NCj4gPg0KPiA+IFNpZ25l
+ZC1vZmYtYnk6IFlvc2hpaGlybyBTaGltb2RhIDx5b3NoaWhpcm8uc2hpbW9kYS51aEByZW5lc2Fz
+LmNvbT4NCj4gDQo+IFRoYW5rcyBmb3IgeW91ciBwYXRjaCENCj4gDQo+ID4gLS0tIGEvYXJjaC9h
+cm02NC9ib290L2R0cy9yZW5lc2FzL3I4YTc3OTk1LmR0c2kNCj4gPiArKysgYi9hcmNoL2FybTY0
+L2Jvb3QvZHRzL3JlbmVzYXMvcjhhNzc5OTUuZHRzaQ0KPiA+IEBAIC0xMzksNiArMTM5LDExOCBA
+QA0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICNwb3dlci1kb21haW4tY2VsbHMgPSA8MT47
+DQo+ID4gICAgICAgICAgICAgICAgIH07DQo+ID4NCj4gPiArICAgICAgICAgICAgICAgZ3BpbzA6
+IGdwaW9AZTYwNTAwMDAgew0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIGNvbXBhdGlibGUg
+PSAicmVuZXNhcyxncGlvLXI4YTc3OTk1IiwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgInJlbmVzYXMscmNhci1nZW4zLWdwaW8iLA0KPiA+ICsgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAicmVuZXNhcyxncGlvLXJjYXIiOw0KPiA+ICsgICAgICAg
+ICAgICAgICAgICAgICAgIHJlZyA9IDwwIDB4ZTYwNTAwMDAgMCAweDUwPjsNCj4gPiArICAgICAg
+ICAgICAgICAgICAgICAgICBpbnRlcnJ1cHRzID0gPEdJQ19TUEkgNCBJUlFfVFlQRV9MRVZFTF9I
+SUdIPjsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAjZ3Bpby1jZWxscyA9IDwyPjsNCj4g
+PiArICAgICAgICAgICAgICAgICAgICAgICBncGlvLWNvbnRyb2xsZXI7DQo+ID4gKyAgICAgICAg
+ICAgICAgICAgICAgICAgZ3Bpby1yYW5nZXMgPSA8JnBmYyAwIDAgOT47DQo+ID4gKyAgICAgICAg
+ICAgICAgICAgICAgICAgI2ludGVycnVwdC1jZWxscyA9IDwyPjsNCj4gPiArICAgICAgICAgICAg
+ICAgICAgICAgICBpbnRlcnJ1cHQtY29udHJvbGxlcjsNCj4gPiArICAgICAgICAgICAgICAgICAg
+ICAgICBjbG9ja3MgPSA8JmNwZyBDUEdfTU9EIDkxMj47DQo+ID4gKyAgICAgICAgICAgICAgICAg
+ICAgICAgcG93ZXItZG9tYWlucyA9IDwmY3BnPjsNCj4gDQo+IEFsbCBub2RlcyBsYWNrIHRoZSBw
+b3dlciBkb21haW4gaW5kZXggKDMyLCB0byBiZSByZXBsYWNlZCBieQ0KPiBSOEE3Nzk5NV9QRF9B
+TFdBWVNfT04gbGF0ZXIpOg0KPiANCj4gICAgIHBvd2VyLWRvbWFpbnMgPSA8JnN5c2MgMzI+Ow0K
+DQpUaGUgcjhhNzc5OTUuZHRzaSBmaWxlIGFscmVhZHkgdXNlcyBSOEE3Nzk5NV9QRF9BTFdBWVNf
+T04gaW4gc2NpZjIgbm9kZS4NClNvLCBzaG91bGQgSSBmaXggdGhpcyBwYXRjaCBsaWtlIHRoZSBm
+b2xsb3dpbmc/DQoNCiAgICAgcG93ZXItZG9tYWlucyA9IDwmc3lzYyBSOEE3Nzk5NV9QRF9BTFdB
+WVNfT04+Ow0KDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgcmVzZXRzID0gPCZjcGcgOTEy
+PjsNCj4gPiArICAgICAgICAgICAgICAgfTsNCj4gDQo+IFdpdGggdGhhdCBmaXhlZDoNCj4gUmV2
+aWV3ZWQtYnk6IEdlZXJ0IFV5dHRlcmhvZXZlbiA8Z2VlcnQrcmVuZXNhc0BnbGlkZXIuYmU+DQoN
+ClRoYW5rIHlvdSBmb3IgdGhlIHJldmlldyENCg0KQmVzdCByZWdhcmRzLA0KWW9zaGloaXJvIFNo
+aW1vZGENCg0KPiBHcntvZXRqZSxlZXRpbmd9cywNCj4gDQo+ICAgICAgICAgICAgICAgICAgICAg
+ICAgIEdlZXJ0DQo+IA0KPiAtLQ0KPiBHZWVydCBVeXR0ZXJob2V2ZW4gLS0gVGhlcmUncyBsb3Rz
+IG9mIExpbnV4IGJleW9uZCBpYTMyIC0tIGdlZXJ0QGxpbnV4LW02OGsub3JnDQo+IA0KPiBJbiBw
+ZXJzb25hbCBjb252ZXJzYXRpb25zIHdpdGggdGVjaG5pY2FsIHBlb3BsZSwgSSBjYWxsIG15c2Vs
+ZiBhIGhhY2tlci4gQnV0DQo+IHdoZW4gSSdtIHRhbGtpbmcgdG8gam91cm5hbGlzdHMgSSBqdXN0
+IHNheSAicHJvZ3JhbW1lciIgb3Igc29tZXRoaW5nIGxpa2UgdGhhdC4NCj4gICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAtLSBMaW51cyBUb3J2YWxkcw0K
