@@ -1,44 +1,95 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:53012 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751203AbdIOHyh (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:35870 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751054AbdIMRGB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Sep 2017 03:54:37 -0400
-Date: Fri, 15 Sep 2017 09:54:15 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Chris Paterson <chris.paterson2@renesas.com>
+        Wed, 13 Sep 2017 13:06:01 -0400
+From: Chris Paterson <chris.paterson2@renesas.com>
+To: Simon Horman <horms@verge.net.au>
 Cc: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/8] ARM: dts: r8a7745: Add SDHI controllers
-Message-ID: <20170915075415.GG3924@verge.net.au>
+        linux-arm-kernel@lists.infradead.org,
+        Chris Paterson <chris.paterson2@renesas.com>
+Subject: [PATCH 2/8] ARM: dts: r8a7745: Add SDHI controllers
+Date: Wed, 13 Sep 2017 18:05:35 +0100
+Message-Id: <1505322341-9480-3-git-send-email-chris.paterson2@renesas.com>
+In-Reply-To: <1505322341-9480-1-git-send-email-chris.paterson2@renesas.com>
 References: <1505322341-9480-1-git-send-email-chris.paterson2@renesas.com>
- <1505322341-9480-3-git-send-email-chris.paterson2@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1505322341-9480-3-git-send-email-chris.paterson2@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Sep 13, 2017 at 06:05:35PM +0100, Chris Paterson wrote:
-> From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> 
-> Add the SDHI controllers to the r8a7745 device tree.
-> 
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Thanks, applied.
+Add the SDHI controllers to the r8a7745 device tree.
 
-> ---
-> This patch is based on renesas-devel-20170913-v4.13.
-> 
-> This patch is dependant on:
-> - "dt-bindings: mmc: sh_mmcif: Document r8a7745 DT bindings"
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+---
+This patch is based on renesas-devel-20170913-v4.13.
 
-I think that should be "[PATCH v3] mmc: renesas_sdhi: Add r8a7743/5 support"
+This patch is dependant on:
+- "dt-bindings: mmc: sh_mmcif: Document r8a7745 DT bindings"
+
+
+ arch/arm/boot/dts/r8a7745.dtsi | 42 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+index 8ed2ac5..37c0fac 100644
+--- a/arch/arm/boot/dts/r8a7745.dtsi
++++ b/arch/arm/boot/dts/r8a7745.dtsi
+@@ -751,6 +751,48 @@
+ 			max-frequency = <97500000>;
+ 			status = "disabled";
+ 		};
++
++		sdhi0: sd@ee100000 {
++			compatible = "renesas,sdhi-r8a7745";
++			reg = <0 0xee100000 0 0x328>;
++			interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 314>;
++			dmas = <&dmac0 0xcd>, <&dmac0 0xce>,
++			       <&dmac1 0xcd>, <&dmac1 0xce>;
++			dma-names = "tx", "rx", "tx", "rx";
++			max-frequency = <195000000>;
++			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
++			resets = <&cpg 314>;
++			status = "disabled";
++		};
++
++		sdhi1: sd@ee140000 {
++			compatible = "renesas,sdhi-r8a7745";
++			reg = <0 0xee140000 0 0x100>;
++			interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 312>;
++			dmas = <&dmac0 0xc1>, <&dmac0 0xc2>,
++			       <&dmac1 0xc1>, <&dmac1 0xc2>;
++			dma-names = "tx", "rx", "tx", "rx";
++			max-frequency = <97500000>;
++			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
++			resets = <&cpg 312>;
++			status = "disabled";
++		};
++
++		sdhi2: sd@ee160000 {
++			compatible = "renesas,sdhi-r8a7745";
++			reg = <0 0xee160000 0 0x100>;
++			interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 311>;
++			dmas = <&dmac0 0xd3>, <&dmac0 0xd4>,
++			       <&dmac1 0xd3>, <&dmac1 0xd4>;
++			dma-names = "tx", "rx", "tx", "rx";
++			max-frequency = <97500000>;
++			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
++			resets = <&cpg 311>;
++			status = "disabled";
++		};
+ 	};
+ 
+ 	/* External root clock */
+-- 
+1.9.1
