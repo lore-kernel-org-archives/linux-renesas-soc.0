@@ -1,104 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34722 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751964AbdI2LyY (ORCPT
+Received: from mail-ua0-f176.google.com ([209.85.217.176]:49794 "EHLO
+        mail-ua0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751318AbdINOTB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Sep 2017 07:54:24 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Thu, 14 Sep 2017 10:19:01 -0400
+Received: by mail-ua0-f176.google.com with SMTP id 97so275598uai.6
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Sep 2017 07:19:01 -0700 (PDT)
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+To: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 10/48] ARM: dts: iwg20d-q7: Add SDHI1 support
-Date: Fri, 29 Sep 2017 13:53:02 +0200
-Message-Id: <029efb3a03c5039902a6f1cfe266ed664cb97f20.1506683482.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1506683482.git.horms+renesas@verge.net.au>
-References: <cover.1506683482.git.horms+renesas@verge.net.au>
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Subject: [PATCH v2 05/18] arm64: dts: h3ulcb-kf: ES1.x SoC initial device tree
+Date: Thu, 14 Sep 2017 17:18:58 +0300
+Message-Id: <1505398738-4656-1-git-send-email-vladimir.barinov@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+Add the initial device tree for the H3ULCB ES1.x SoC with Kingfisher
+extension infotainment board.
 
-Define the iWave RainboW-G20D-Qseven board dependent part of the
-SDHI1 device node.
-
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 ---
- arch/arm/boot/dts/r8a7743-iwg20d-q7.dts | 48 +++++++++++++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
+Changes in version 2:
+- added own compatible value "shimafuji,kingfisher"
 
-diff --git a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-index 081af0192851..4ff27d23ecf0 100644
---- a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-+++ b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-@@ -19,6 +19,29 @@
- 		serial0 = &scif0;
- 		ethernet0 = &avb;
- 	};
+ arch/arm64/boot/dts/renesas/Makefile                  |  1 +
+ arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb-kf.dts | 17 +++++++++++++++++
+ 2 files changed, 18 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb-kf.dts
+
+diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
+index 54e8316..e745450 100644
+--- a/arch/arm64/boot/dts/renesas/Makefile
++++ b/arch/arm64/boot/dts/renesas/Makefile
+@@ -1,6 +1,7 @@
+ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-x.dtb r8a7795-h3ulcb.dtb
+ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-xs.dtb
+ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-es1-salvator-x.dtb r8a7795-es1-h3ulcb.dtb
++dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-es1-h3ulcb-kf.dtb
+ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-x.dtb r8a7796-m3ulcb.dtb
+ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-m3ulcb-kf.dtb
+ dtb-$(CONFIG_ARCH_R8A77995) += r8a77995-draak.dtb
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb-kf.dts b/arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb-kf.dts
+new file mode 100644
+index 0000000..dcc9e68
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb-kf.dts
+@@ -0,0 +1,19 @@
++/*
++ * Device Tree Source for the H3ULCB Kingfisher board
++ *
++ * Copyright (C) 2017 Renesas Electronics Corp.
++ * Copyright (C) 2017 Cogent Embedded, Inc.
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
 +
-+	vcc_sdhi1: regulator-vcc-sdhi1 {
-+		compatible = "regulator-fixed";
++#include "r8a7795-es1-h3ulcb.dts"
++#include "ulcb-kf.dtsi"
 +
-+		regulator-name = "SDHI1 Vcc";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&gpio1 16 GPIO_ACTIVE_LOW>;
-+	};
-+
-+	vccq_sdhi1: regulator-vccq-sdhi1 {
-+		compatible = "regulator-gpio";
-+
-+		regulator-name = "SDHI1 VccQ";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpios = <&gpio2 30 GPIO_ACTIVE_LOW>;
-+		gpios-states = <1>;
-+		states = <3300000 1
-+			  1800000 0>;
-+	};
- };
- 
- &pfc {
-@@ -31,6 +54,18 @@
- 		groups = "avb_mdio", "avb_gmii";
- 		function = "avb";
- 	};
-+
-+	sdhi1_pins: sd1 {
-+		groups = "sdhi1_data4", "sdhi1_ctrl";
-+		function = "sdhi1";
-+		power-source = <3300>;
-+	};
-+
-+	sdhi1_pins_uhs: sd1_uhs {
-+		groups = "sdhi1_data4", "sdhi1_ctrl";
-+		function = "sdhi1";
-+		power-source = <1800>;
-+	};
- };
- 
- &scif0 {
-@@ -54,3 +89,16 @@
- 		micrel,led-mode = <1>;
- 	};
- };
-+
-+&sdhi1 {
-+	pinctrl-0 = <&sdhi1_pins>;
-+	pinctrl-1 = <&sdhi1_pins_uhs>;
-+	pinctrl-names = "default", "state_uhs";
-+
-+	vmmc-supply = <&vcc_sdhi1>;
-+	vqmmc-supply = <&vccq_sdhi1>;
-+	cd-gpios = <&gpio6 14 GPIO_ACTIVE_LOW>;
-+	wp-gpios = <&gpio6 15 GPIO_ACTIVE_HIGH>;
-+	sd-uhs-sdr50;
-+	status = "okay";
++/ {
++	model = "Renesas H3ULCB Kingfisher board based on r8a7795 ES1.x";
++	compatible = "shimafuji,kingfisher", "renesas,h3ulcb",
++		     "renesas,r8a7795";
 +};
 -- 
-2.1.4
+1.9.1
