@@ -1,45 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:33305 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752595AbdIRIw6 (ORCPT
+Received: from mail-vk0-f49.google.com ([209.85.213.49]:44154 "EHLO
+        mail-vk0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751131AbdINOSe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Sep 2017 04:52:58 -0400
-MIME-Version: 1.0
-In-Reply-To: <1505398710-4496-1-git-send-email-vladimir.barinov@cogentembedded.com>
-References: <1505398710-4496-1-git-send-email-vladimir.barinov@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 18 Sep 2017 10:52:57 +0200
-Message-ID: <CAMuHMdVvKenEdeqe5Y3qgiOa6AoB3E=QTFnzq9XqVogN=ikGXA@mail.gmail.com>
-Subject: Re: [PATCH] dt: Add vendor prefix 'shimafuji'
-To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
+        Thu, 14 Sep 2017 10:18:34 -0400
+Received: by mail-vk0-f49.google.com with SMTP id o22so3290126vke.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Sep 2017 07:18:34 -0700 (PDT)
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+To: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Will Deacon <will.deacon@arm.com>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Subject: [PATCH] dt: Add vendor prefix 'shimafuji'
+Date: Thu, 14 Sep 2017 17:18:30 +0300
+Message-Id: <1505398710-4496-1-git-send-email-vladimir.barinov@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Sep 14, 2017 at 4:18 PM, Vladimir Barinov
-<vladimir.barinov@cogentembedded.com> wrote:
-> Add Shimafuji Electric, Inc. to the list of device tree vendor
-> prefixes
->
-> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Add Shimafuji Electric, Inc. to the list of device tree vendor
+prefixes
 
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+---
+ Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+index daf465be..a30e0b1 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.txt
++++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+@@ -289,6 +289,7 @@ semtech	Semtech Corporation
+ sensirion	Sensirion AG
+ sgx	SGX Sensortech
+ sharp	Sharp Corporation
++shimafuji	Shimafuji Electric, Inc.
+ si-en	Si-En Technology Ltd.
+ sigma	Sigma Designs, Inc.
+ sii	Seiko Instruments, Inc.
+-- 
+1.9.1
