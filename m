@@ -1,90 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:37952 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751266AbdILIlD (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:14647 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751509AbdINQJo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Sep 2017 04:41:03 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
+        Thu, 14 Sep 2017 12:09:44 -0400
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: jacopo mondi <jacopo@jmondi.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-sh@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 resend 0/4] sh: sh7722/sh7757i/sh7264/sh7269: Fix pinctrl registration
-Date: Tue, 12 Sep 2017 10:40:53 +0200
-Message-Id: <1505205657-18012-1-git-send-email-geert+renesas@glider.be>
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH 3/4] arm: dts: gr-peach: Add ETHER pin group
+Date: Thu, 14 Sep 2017 16:09:39 +0000
+Message-ID: <SG2PR06MB1165759C1138311A726D35228A6F0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <1503564523-31899-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1503564523-31899-4-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdUoMU=qN3Qjoqmf6uxcS3j5hqthhuBDMPZzA+wSD_BH5A@mail.gmail.com>
+ <20170824114656.GA3905@w540>
+ <CAMuHMdU5Vep+m7XtjcbSvyXUzD_Pn2crcQ68VRmS4bgY44ut0w@mail.gmail.com>
+ <20170824125359.GB3905@w540> <20170914155911.GI3358@w540>
+In-Reply-To: <20170914155911.GI3358@w540>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Andrew,
-
-I'm resending this to you due to unresponsiveness from the SuperH
-maintainers (v2 sent before on May 11, pinged on June 30 and August 14).
-
-Magnus Damm reported that on sh7722/Migo-R, pinctrl registration fails
-with:
-
-    sh-pfc pfc-sh7722: pin 0 already registered
-    sh-pfc pfc-sh7722: error during pin registration
-    sh-pfc pfc-sh7722: could not register: -22
-    sh-pfc: probe of pfc-sh7722 failed with error -22
-
-pinmux_pins[] is initialized through PINMUX_GPIO(), using designated
-array initializers, where the GPIO_* enums serve as indices.
-Apparently GPIO_PTQ7 was defined in the enum, but never used.
-If enum values are defined, but never used, pinmux_pins[] contains
-(zero-filled) holes.  Hence such entries are treated as pin zero, which
-was registered before, and pinctrl registration fails.
-
-I can't see how this ever worked, as at the time of commit f5e25ae52feff2dc
-("sh-pfc: Add sh7722 pinmux support"), pinmux_gpios[] in
-drivers/pinctrl/sh-pfc/pfc-sh7722.c already had the hole, and
-drivers/pinctrl/core.c already had the check.
-
-Some scripting revealed a few more broken drivers:
-  - sh7757 has four holes, due to nonexistent GPIO_PT[JLNQ]7_RESV.
-  - sh7264 and sh7269 define GPIO_PH[0-7], but don't use it with
-    PINMUX_GPIO().
-
-Patch 1 fixes the issue on sh7722, and was tested.
-Patches 3-4 should fix the issue on the other 3 SoCs, but was untested due
-to lack of hardware.
-
-Changes compared to v1:
-  - Replace fake error messages by references to sh7722,
-  - Add Reviewed-by, Tested-by.
-
-Thanks for applying!
-
-Geert Uytterhoeven (4):
-  sh: sh7722: Remove nonexistent GPIO_PTQ7 to fix pinctrl registration
-  sh: sh7757: Remove nonexistent GPIO_PT[JLNQ]7_RESV to fix pinctrl
-    registration
-  sh: sh7264: Remove nonexistent GPIO_PH[0-7] to fix pinctrl
-    registration
-  sh: sh7269: Remove nonexistent GPIO_PH[0-7] to fix pinctrl
-    registration
-
- arch/sh/include/cpu-sh2a/cpu/sh7264.h | 4 +---
- arch/sh/include/cpu-sh2a/cpu/sh7269.h | 4 +---
- arch/sh/include/cpu-sh4/cpu/sh7722.h  | 2 +-
- arch/sh/include/cpu-sh4/cpu/sh7757.h  | 8 ++++----
- 4 files changed, 7 insertions(+), 11 deletions(-)
-
--- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+SGkgSmFjb3BvLA0KDQpPbiBUaHVyc2RheSwgU2VwdGVtYmVyIDE0LCAyMDE3IDEsIGxpbnV4LXJl
+bmVzYXMtc29jLW93bmVyQHZnZXIua2VybmVsLm9yZyB3cm90ZToNCj4gQmVmb3JlIGdvaW5nIGFu
+eSBmdXJ0aGVyIHdpdGggdGhpcywgSSB3b3VsZCBsaWtlIHRvIGJldHRlciB1bmRlcnN0YW5kDQo+
+IGlmOg0KPiANCj4gMSkgaXMgYW4gaW50ZXJydXB0IHNpZ25hbCBmcm9tIFBIWSB0byBFVEhFUiBt
+YW5kYXRvcnk/IFRoZXJlIGlzIG5vDQo+IG1lbnRpb24gb2YgaW4gdGhlIEVUSEVSIHBpbiBkZXNj
+cmlwdGlvbiBsaXN0IG9mIGFuIGludGVycnVwdCBwaW4sIGFuZA0KPiBteSB1bmRlcnN0YW5kaW5n
+IHdhcyB0aGUgRS1ETUFDIGRvZXMgbm90IG5lZWQgYW55Lg0KPiAyKSB3aGVyZSBpcyB0aGF0IGlu
+dGVycnVwdCBwaW4gZGVzY3JpYmVkIGluIGR0cyBmb3IgZ2VubWFpIGFuZCBvdGhlcg0KPiBSWiBk
+ZXZpY2VzPw0KDQpJJ3ZlIG5ldmVyIHVzZWQgdGhhdCBQSFkgaW50ZXJydXB0IHBpbiBvbiB0aGUg
+UlovQSBib2FyZC4gSW4gZmFjdCwgb24gDQpzb21lIGJvYXJkLCBpdCdzIHRpZWQgdG8gYSBHUElP
+IHBpbiAobm90IGV2ZW4gYW4gaW50ZXJydXB0IHBpbikuDQoNCkkgZ3Vlc3MgaW4gdGhlb3J5IGl0
+IGNvdWxkIHRlbGwgeW91IHdoZW4gdGhlIGNhYmxlIGhhcyBiZWVuIA0KY29ubmVjdGVkL2Rpc2Nv
+bm5lY3RlZCwgYnV0IGl0IGRvZXMgdGhhdCBub3cgYW55d2F5IChtZWFuaW5nIHRoZSBQSFkNCm11
+c3QgYmUgcG9sbGVkIHNvbWVob3cpLg0KDQoNCkNocmlzDQoNCg==
