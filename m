@@ -1,47 +1,78 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:34529 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750974AbdISORQ (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Sep 2017 10:17:16 -0400
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
+        linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v2] pinctrl: sh-pfc: r8a77995: Add USB2.0 host support
+Date: Thu, 14 Sep 2017 19:29:21 +0900
+Message-Id: <1505384961-1445-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-In-Reply-To: <1505384961-1445-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1505384961-1445-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 19 Sep 2017 16:17:15 +0200
-Message-ID: <CAMuHMdXYpsm9qJKCd5Pxt0aiV1t18pr3E6u8jhrVq08306SJjQ@mail.gmail.com>
-Subject: Re: [PATCH v2] pinctrl: sh-pfc: r8a77995: Add USB2.0 host support
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Sep 14, 2017 at 12:29 PM, Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in sh-pfc-for-v4.15...
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ Changes from v1:
+  - Rebase this patch on renesas-drivers' 2017-09-05 tag +
+    https://patchwork.kernel.org/patch/9952291/ patch.
 
-Gr{oetje,eeting}s,
+ drivers/pinctrl/sh-pfc/pfc-r8a77995.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-                        Geert
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
+index 0e803e9..dbe6b1c 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
+@@ -1295,6 +1295,15 @@ enum {
+ 	SCIF_CLK_MARK,
+ };
+ 
++/* - USB0 ------------------------------------------------------------------- */
++static const unsigned int usb0_pins[] = {
++	/* PWEN, OVC */
++	RCAR_GP_PIN(0, 0), RCAR_GP_PIN(0, 1),
++};
++static const unsigned int usb0_mux[] = {
++	USB0_PWEN_MARK, USB0_OVC_MARK,
++};
++
+ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(avb0_link),
+ 	SH_PFC_PIN_GROUP(avb0_magic),
+@@ -1342,6 +1351,7 @@ enum {
+ 	SH_PFC_PIN_GROUP(scif5_data_b),
+ 	SH_PFC_PIN_GROUP(scif5_clk_b),
+ 	SH_PFC_PIN_GROUP(scif_clk),
++	SH_PFC_PIN_GROUP(usb0),
+ };
+ 
+ static const char * const avb0_groups[] = {
+@@ -1428,6 +1438,10 @@ enum {
+ 	"scif_clk",
+ };
+ 
++static const char * const usb0_groups[] = {
++	"usb0",
++};
++
+ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(avb0),
+ 	SH_PFC_FUNCTION(i2c0),
+@@ -1442,6 +1456,7 @@ enum {
+ 	SH_PFC_FUNCTION(scif4),
+ 	SH_PFC_FUNCTION(scif5),
+ 	SH_PFC_FUNCTION(scif_clk),
++	SH_PFC_FUNCTION(usb0),
+ };
+ 
+ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+-- 
+1.9.1
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
