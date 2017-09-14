@@ -1,128 +1,55 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor2.renesas.com ([210.160.252.172]:43484 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751173AbdINALQ (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 13 Sep 2017 20:11:16 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>
+CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: RE: [PATCH] dt-bindings: net: renesas-ravb: Add support for R8A77995
+ RAVB
+Date: Thu, 14 Sep 2017 00:11:12 +0000
+Message-ID: <TY1PR06MB09928CA5EC51D95B135AE662D86F0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+References: <1505305060-4192-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1f4763ea-9f8a-03a6-1215-69b96c404590@cogentembedded.com>
+In-Reply-To: <1f4763ea-9f8a-03a6-1215-69b96c404590@cogentembedded.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <bd2526cb6d08011ba2e5e6ef8282b6d68d888b88.1498481714.git.cyrille.pitchen@microchip.com>
-References: <cover.1498481714.git.cyrille.pitchen@microchip.com> <bd2526cb6d08011ba2e5e6ef8282b6d68d888b88.1498481714.git.cyrille.pitchen@microchip.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 6 Sep 2017 18:51:48 +0200
-Message-ID: <CAMuHMdU_34gtsDmnEKYHk_pRCz6owTED7xVzNuaCkQA7L2gdPg@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] mtd: spi-nor: parse Serial Flash Discoverable
- Parameters (SFDP) tables
-To: Cyrille Pitchen <cyrille.pitchen@microchip.com>,
-        Boris BREZILLON <boris.brezillon@free-electrons.com>
-Cc: Marek Vasut <marek.vasut@gmail.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        MTD Maling List <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Cyrille, Boris,
-
-On Mon, Jun 26, 2017 at 3:10 PM, Cyrille Pitchen
-<cyrille.pitchen@microchip.com> wrote:
-> This patch adds support to the JESD216 rev B standard and parses the SFDP
-> tables to dynamically initialize the 'struct spi_nor_flash_parameter'.
->
-> Signed-off-by: Cyrille Pitchen <cyrille.pitchen@microchip.com>
-
-This patch, which is now commit f384b352cbf0310f ("mtd: spi-nor: parse
-Serial Flash
-Discoverable Parameters (SFDP) tables") in -next, and which was included in the
-"MTD updates for 4.14" pull request, broke QSPI FLASH on R-Car Gen2.
-
-E.g. on r8a7794/alt, the following warning is printed with
-CONFIG_DMA_API_DEBUG=y:
-
-    WARNING: CPU: 1 PID: 1 at lib/dma-debug.c:1188 check_for_stack+0xcc/0x114
-    rcar-dmac e6720000.dma-controller: DMA-API: device driver maps
-memory from stack [addr=ef43dad8]
-    Modules linked in:
-    CPU: 1 PID: 1 Comm: swapper/0 Not tainted
-4.13.0-rcar2-initrd-00404-g3d49bfdcf5ecd040 #76
-    Hardware name: Generic R-Car Gen2 (Flattened Device Tree)
-    [<c020e664>] (unwind_backtrace) from [<c020a13c>] (show_stack+0x10/0x14)
-    [<c020a13c>] (show_stack) from [<c06a5c50>] (dump_stack+0x7c/0x9c)
-    [<c06a5c50>] (dump_stack) from [<c021ef58>] (__warn+0xcc/0xfc)
-    [<c021ef58>] (__warn) from [<c021efbc>] (warn_slowpath_fmt+0x34/0x44)
-    [<c021efbc>] (warn_slowpath_fmt) from [<c0403228>]
-(check_for_stack+0xcc/0x114)
-    [<c0403228>] (check_for_stack) from [<c0403a9c>]
-(debug_dma_map_sg+0xe4/0x168)
-    [<c0403a9c>] (debug_dma_map_sg) from [<c04cd7b8>] (spi_map_buf+0x2f4/0x32c)
-    [<c04cd7b8>] (spi_map_buf) from [<c04ce560>]
-(__spi_pump_messages+0x430/0x4d8)
-    [<c04ce560>] (__spi_pump_messages) from [<c04ce77c>]
-(__spi_sync+0x168/0x194)
-    [<c04ce77c>] (__spi_sync) from [<c04ce7cc>] (spi_sync+0x24/0x3c)
-    [<c04ce7cc>] (spi_sync) from [<c04c97fc>] (m25p80_read+0x2e4/0x300)
-    [<c04c97fc>] (m25p80_read) from [<c04c99d8>] (spi_nor_read_sfdp+0x58/0xa8)
-    [<c04c99d8>] (spi_nor_read_sfdp) from [<c04c9fc8>]
-(spi_nor_init_params+0x2e8/0x5f4)
-    [<c04c9fc8>] (spi_nor_init_params) from [<c04cb510>]
-(spi_nor_scan+0xc4/0x830)
-    [<c04cb510>] (spi_nor_scan) from [<c04c9928>] (m25p_probe+0x110/0x168)
-    [<c04c9928>] (m25p_probe) from [<c04cce0c>] (spi_drv_probe+0x84/0xa0)
-    [<c04cce0c>] (spi_drv_probe) from [<c0470f80>]
-(driver_probe_device+0x150/0x2d0)
-    [<c0470f80>] (driver_probe_device) from [<c046f7fc>]
-(bus_for_each_drv+0x84/0x94)
-    [<c046f7fc>] (bus_for_each_drv) from [<c0470d98>]
-(__device_attach+0x88/0xfc)
-    [<c0470d98>] (__device_attach) from [<c0470450>]
-(bus_probe_device+0x28/0x80)
-    [<c0470450>] (bus_probe_device) from [<c046ebac>] (device_add+0x3f8/0x50c)
-    [<c046ebac>] (device_add) from [<c04cef54>] (spi_add_device+0xd0/0x14c)
-    [<c04cef54>] (spi_add_device) from [<c04cf308>]
-(of_register_spi_device+0x200/0x2f4)
-    [<c04cf308>] (of_register_spi_device) from [<c04cf878>]
-(spi_register_controller+0x47c/0x5e4)
-    [<c04cf878>] (spi_register_controller) from [<c04cfa10>]
-(devm_spi_register_controller+0x30/0x6c)
-    [<c04cfa10>] (devm_spi_register_controller) from [<c04d190c>]
-(rspi_probe+0x258/0x404)
-    [<c04d190c>] (rspi_probe) from [<c0472780>] (platform_drv_probe+0x50/0xa0)
-    [<c0472780>] (platform_drv_probe) from [<c0470f80>]
-(driver_probe_device+0x150/0x2d0)
-    [<c0470f80>] (driver_probe_device) from [<c0471180>]
-(__driver_attach+0x80/0xa4)
-    [<c0471180>] (__driver_attach) from [<c046f740>]
-(bus_for_each_dev+0x6c/0x90)
-    [<c046f740>] (bus_for_each_dev) from [<c047064c>]
-(bus_add_driver+0xc8/0x1e4)
-    [<c047064c>] (bus_add_driver) from [<c0471a14>] (driver_register+0x9c/0xe0)
-    [<c0471a14>] (driver_register) from [<c0201718>]
-(do_one_initcall+0xa8/0x14c)
-    [<c0201718>] (do_one_initcall) from [<c0c00d84>]
-(kernel_init_freeable+0x114/0x:
-    [<c0c00d84>] (kernel_init_freeable) from [<c06b6244>]
-(kernel_init+0x8/0x10c)
-    [<c06b6244>] (kernel_init) from [<c0206b68>] (ret_from_fork+0x14/0x2c)
-
-This leads to the SPI FLASH size being misdetected as zero:
-
-    -m25p80 spi0.0: s25fl512s (65536 Kbytes)
-    +m25p80 spi0.0: s25fl512s (0 Kbytes)
-     3 ofpart partitions found on MTD device spi0.0
-     Creating 3 MTD partitions on "spi0.0":
-     0x000000000000-0x000000040000 : "loader"
-    +mtd: partition "loader" is out of reach -- disabled
-     0x000000040000-0x000000080000 : "system"
-    +mtd: partition "system" is out of reach -- disabled
-     0x000000080000-0x000004000000 : "user"
-    +mtd: partition "user" is out of reach -- disabled
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+SGVsbG8hDQoNCj4gRnJvbTogU2VyZ2VpIFNodHlseW92DQo+IFNlbnQ6IFRodXJzZGF5LCBTZXB0
+ZW1iZXIgMTQsIDIwMTcgMTowMiBBTQ0KPiANCj4gSGVsbG8hDQo+IA0KPiBPbiAwOS8xMy8yMDE3
+IDAzOjE3IFBNLCBZb3NoaWhpcm8gU2hpbW9kYSB3cm90ZToNCj4gDQo+ID4gQWRkIGEgbmV3IGNv
+bXBhdGlibGUgc3RyaW5nIGZvciB0aGUgUjhBNzc5OTUgKFItQ2FyIEQzKSBSQVZCLg0KPiA+DQo+
+ID4gU2lnbmVkLW9mZi1ieTogWW9zaGloaXJvIFNoaW1vZGEgPHlvc2hpaGlyby5zaGltb2RhLnVo
+QHJlbmVzYXMuY29tPg0KPiA+IC0tLQ0KPiA+ICAgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2Jp
+bmRpbmdzL25ldC9yZW5lc2FzLHJhdmIudHh0IHwgMSArDQo+ID4gICAxIGZpbGUgY2hhbmdlZCwg
+MSBpbnNlcnRpb24oKykNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2Rldmlj
+ZXRyZWUvYmluZGluZ3MvbmV0L3JlbmVzYXMscmF2Yi50eHQNCj4gYi9Eb2N1bWVudGF0aW9uL2Rl
+dmljZXRyZWUvYmluZGluZ3MvbmV0L3JlbmVzYXMscmF2Yi50eHQNCj4gPiBpbmRleCAxNjcyMzUz
+Li5hZTIyMTNmIDEwMDY0NA0KPiA+IC0tLSBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5k
+aW5ncy9uZXQvcmVuZXNhcyxyYXZiLnR4dA0KPiA+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNl
+dHJlZS9iaW5kaW5ncy9uZXQvcmVuZXNhcyxyYXZiLnR4dA0KPiA+IEBAIC0xNyw2ICsxNyw3IEBA
+IFJlcXVpcmVkIHByb3BlcnRpZXM6DQo+ID4NCj4gPiAgICAgICAgIC0gInJlbmVzYXMsZXRoZXJh
+dmItcjhhNzc5NSIgZm9yIHRoZSBSOEE3Nzk1IFNvQy4NCj4gPiAgICAgICAgIC0gInJlbmVzYXMs
+ZXRoZXJhdmItcjhhNzc5NiIgZm9yIHRoZSBSOEE3Nzk2IFNvQy4NCj4gPiArICAgICAgLSAicmVu
+ZXNhcyxldGhlcmF2Yi1yOGE3Nzk5NSIgZm9yIHRoZSBSOEE3Nzk5NSBTb0MuDQo+IA0KPiAgICAg
+VGhhdCB3b3VsZCBjb25mbGljdCB3aXRoIHRoZSBSOEE3Nzk3MCBiaW5kaW5ncyBwYXRjaCBwb3N0
+ZWQgYnkgbWUNCj4geWVzdGVyZGF5LiBQbGVhc2UgcmVzcGluIGF0b3Agb2YgaXQuDQoNClllcywg
+SSBzdWJtaXR0ZWQgdjIgcGF0Y2ggbm93Lg0KDQo+ID4gICAgICAgICAtICJyZW5lc2FzLGV0aGVy
+YXZiLXJjYXItZ2VuMyIgYXMgYSBmYWxsYmFjayBmb3IgdGhlIGFib3ZlDQo+ID4gICAJCVItQ2Fy
+IEdlbjMgZGV2aWNlcy4NCj4gPg0KPiANCj4gICAgIE9uZSBtb3JlIGZyYWdtZW50IGlzIG5lZWRl
+ZCBoZXJlLCBhYm91dCB0aGUgbWFuZGF0b3J5ICdpbnRlcnJ1cHQtbmFtZXMiDQo+IHByb3AuIE15
+IHBhdGNoIG1ha2VzIHRoaXMgY2hhbmdlIHVubmVjZXNzYXJ5LCBob3dldmVyLi4uDQoNCkkgdW5k
+ZXJzdG9vZCBpdC4NCg0KQmVzdCByZWdhcmRzLA0KWW9zaGloaXJvIFNoaW1vZGENCg0KPiBNQlIs
+IFNlcmdlaQ0K
