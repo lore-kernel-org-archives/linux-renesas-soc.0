@@ -1,44 +1,46 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Subject: Re: [PATCH] dt-bindings: net: renesas-ravb: Add support for R8A77995
- RAVB
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        davem@davemloft.net, robh+dt@kernel.org, mark.rutland@arm.com
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor2.renesas.com ([210.160.252.172]:38116 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751173AbdINAKZ (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 13 Sep 2017 20:10:25 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: davem@davemloft.net, robh+dt@kernel.org, mark.rutland@arm.com
 Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <1505347598-4156-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <de2287b5-f208-1ffd-e8a4-3779a11695f7@cogentembedded.com>
-Date: Thu, 14 Sep 2017 12:44:58 +0300
+        devicetree@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH] dt-bindings: net: renesas-ravb: Add support for R8A77995 RAVB
+Date: Thu, 14 Sep 2017 09:06:38 +0900
+Message-Id: <1505347598-4156-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-In-Reply-To: <1505347598-4156-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+Add a new compatible string for the R8A77995 (R-Car D3) RAVB.
 
-On 9/14/2017 3:06 AM, Yoshihiro Shimoda wrote:
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ Changes from v1:
+  - Based on r8a77970 patch.
+   https://marc.info/?l=linux-renesas-soc&m=150524655515476
+  - Add Acked-by (Thanks Geert-san!).
 
-> Add a new compatible string for the R8A77995 (R-Car D3) RAVB.
-> 
-> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+ Documentation/devicetree/bindings/net/renesas,ravb.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-    Usually those are added after sign-off.
-
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-
-Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
-> ---
->   Changes from v1:
->    - Based on r8a77970 patch.
->     https://marc.info/?l=linux-renesas-soc&m=150524655515476
-
-    So this is against net-next, right? The net.git repo now has a patch 
-making me a reviewer for the Renesas bindings too.
-
-[...]
-
-MBR, Sergei
+diff --git a/Documentation/devicetree/bindings/net/renesas,ravb.txt b/Documentation/devicetree/bindings/net/renesas,ravb.txt
+index 2689211..c902261 100644
+--- a/Documentation/devicetree/bindings/net/renesas,ravb.txt
++++ b/Documentation/devicetree/bindings/net/renesas,ravb.txt
+@@ -18,6 +18,7 @@ Required properties:
+       - "renesas,etheravb-r8a7795" for the R8A7795 SoC.
+       - "renesas,etheravb-r8a7796" for the R8A7796 SoC.
+       - "renesas,etheravb-r8a77970" for the R8A77970 SoC.
++      - "renesas,etheravb-r8a77995" for the R8A77995 SoC.
+       - "renesas,etheravb-rcar-gen3" as a fallback for the above
+ 		R-Car Gen3 devices.
+ 
+-- 
+1.9.1
