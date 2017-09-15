@@ -1,41 +1,42 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] MAINTAINERS: Add Renesas SoC DT bindings doc to Renesas ARM sections
-Date: Mon, 11 Sep 2017 12:54:58 +0200
-Message-Id: <1505127298-4497-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: Arnd Bergmann <arnd@arndb.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+CC: Hans Verkuil <hansverk@cisco.com>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>
+Subject: RE: [PATCH] [media] rcar_drif: fix potential uninitialized variable
+ use
+Date: Fri, 15 Sep 2017 08:20:17 +0000
+Message-ID: <KL1PR0601MB203870A27AC25380926691C3C36C0@KL1PR0601MB2038.apcprd06.prod.outlook.com>
+References: <20170914110733.3592437-1-arnd@arndb.de>
+In-Reply-To: <20170914110733.3592437-1-arnd@arndb.de>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Suggested-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 28e9ab798e35b7ab..f714eea70cb1eea5 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1744,6 +1744,7 @@ Q:	http://patchwork.kernel.org/project/linux-renesas-soc/list/
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git next
- S:	Supported
- F:	arch/arm64/boot/dts/renesas/
-+F:	Documentation/deviuetree/bindings/arm/shmobile.txt
- F:	drivers/soc/renesas/
- F:	include/linux/soc/renesas/
- 
-@@ -1863,6 +1864,7 @@ F:	arch/arm/boot/dts/sh*
- F:	arch/arm/configs/shmobile_defconfig
- F:	arch/arm/include/debug/renesas-scif.S
- F:	arch/arm/mach-shmobile/
-+F:	Documentation/deviuetree/bindings/arm/shmobile.txt
- F:	drivers/soc/renesas/
- F:	include/linux/soc/renesas/
- 
--- 
-2.7.4
+SGkgQXJuZCwNCg0KVGhhbmsgeW91IGZvciB0aGUgcGF0Y2guDQoNCj4gU3ViamVjdDogW1BBVENI
+XSBbbWVkaWFdIHJjYXJfZHJpZjogZml4IHBvdGVudGlhbCB1bmluaXRpYWxpemVkIHZhcmlhYmxl
+DQo+IHVzZQ0KPiANCj4gT2xkZXIgY29tcGlsZXJzIGxpa2UgZ2NjLTQuNiBtYXkgcnVuIGludG8g
+YSBjYXNlIHRoYXQgcmV0dXJucyBhbg0KPiB1bmluaXRpYWxpemVkIHZhcmlhYmxlIGZyb20gcmNh
+cl9kcmlmX2VuYWJsZV9yeCgpIGlmIHRoYXQgZnVuY3Rpb24gd2FzDQo+IGV2ZXIgY2FsbGVkIHdp
+dGggYW4gZW1wdHkgY3VyX2NoX21hc2s6DQo+IA0KPiBkcml2ZXJzL21lZGlhL3BsYXRmb3JtL3Jj
+YXJfZHJpZi5jOjY1ODoyOiBlcnJvcjog4oCYcmV04oCZIG1heSBiZSB1c2VkDQo+IHVuaW5pdGlh
+bGl6ZWQgaW4gdGhpcyBmdW5jdGlvbiBbLVdlcnJvcj11bmluaXRpYWxpemVkXQ0KPiANCj4gTmV3
+ZXIgY29tcGlsZXJzIGRvbid0IGhhdmUgdGhhdCBwcm9ibGVtIGFzIHRoZXkgb3B0aW1pemUgdGhl
+ICdyZXQnDQo+IHZhcmlhYmxlIGF3YXkgYW5kIGp1c3QgcmV0dXJuIHplcm8gaW4gdGhhdCBjYXNl
+Lg0KPiANCj4gVGhpcyBjaGFuZ2VzIHRoZSBmdW5jdGlvbiB0byByZXR1cm4gLUVJTlZBTCBmb3Ig
+dGhpcyBwYXJ0aWN1bGFyIGZhaWx1cmUsDQo+IHRvIG1ha2UgaXQgY29uc2lzdGVudCBhY3Jvc3Mg
+YWxsIGNvbXBpbGVyIHZlcnNpb25zLg0KPiBJbiBjYXNlIGdjYyBnZXRzIGNoYW5nZWQgdG8gcmVw
+b3J0IGEgd2FybmluZyBmb3IgaXQgaW4gdGhlIGZ1dHVyZSwgaXQncw0KPiBhbHNvIGEgZ29vZCBp
+ZGVhIHRvIHNodXQgaXQgdXAgbm93Lg0KPiANCj4gTGluazogaHR0cHM6Ly9nY2MuZ251Lm9yZy9i
+dWd6aWxsYS9zaG93X2J1Zy5jZ2k/aWQ9ODIyMDMNCj4gU2lnbmVkLW9mZi1ieTogQXJuZCBCZXJn
+bWFubiA8YXJuZEBhcm5kYi5kZT4NCg0KQWNrZWQtYnk6IFJhbWVzaCBTaGFubXVnYXN1bmRhcmFt
+IDxyYW1lc2guc2hhbm11Z2FzdW5kYXJhbUBicC5yZW5lc2FzLmNvbT4NCg0KVGhhbmtzLA0KUmFt
+ZXNoDQo=
