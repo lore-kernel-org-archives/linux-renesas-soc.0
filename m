@@ -1,14 +1,18 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f41.google.com ([209.85.215.41]:43329 "EHLO
-        mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751519AbdIOSxG (ORCPT
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:36250 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751454AbdIOSoS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Sep 2017 14:53:06 -0400
-Received: by mail-lf0-f41.google.com with SMTP id c80so3300759lfh.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 15 Sep 2017 11:53:05 -0700 (PDT)
-Subject: Re: [PATCH 10/11] arm64: dts: renesas: initial Eagle board device
- tree
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+        Fri, 15 Sep 2017 14:44:18 -0400
+MIME-Version: 1.0
+In-Reply-To: <5c680bad-39c8-a6c7-ee2a-6a2e72c33026@cogentembedded.com>
+References: <20170912210543.810219167@cogentembedded.com> <d6f9d5ef-4864-3ffb-9406-acd65bff10aa@cogentembedded.com>
+ <5c680bad-39c8-a6c7-ee2a-6a2e72c33026@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 15 Sep 2017 20:44:16 +0200
+Message-ID: <CAMuHMdU+DYBCu1bKLh_VjuSR-cSfjwPQuAxTsaU2JW-3d-5QUw@mail.gmail.com>
+Subject: Re: [PATCH 10/11] arm64: dts: renesas: initial Eagle board device tree
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Cc: Rob Herring <robh+dt@kernel.org>,
         Simon Horman <horms@verge.net.au>,
         Catalin Marinas <catalin.marinas@arm.com>,
@@ -20,71 +24,62 @@ Cc: Rob Herring <robh+dt@kernel.org>,
         "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>,
         Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-References: <20170912210543.810219167@cogentembedded.com>
- <d6f9d5ef-4864-3ffb-9406-acd65bff10aa@cogentembedded.com>
- <5c680bad-39c8-a6c7-ee2a-6a2e72c33026@cogentembedded.com>
- <CAMuHMdU+DYBCu1bKLh_VjuSR-cSfjwPQuAxTsaU2JW-3d-5QUw@mail.gmail.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <323063a2-1256-fa25-b91c-4c726ab277a2@cogentembedded.com>
-Date: Fri, 15 Sep 2017 21:53:02 +0300
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdU+DYBCu1bKLh_VjuSR-cSfjwPQuAxTsaU2JW-3d-5QUw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 09/15/2017 09:44 PM, Geert Uytterhoeven wrote:
+Hi Sergei,
 
->>>> Add the initial device  tree for  the R8A77970 SoC based Eagle board.
->>>> The board has 1 debug serial port (SCIF0); include support for it,
->>>> so that the serial console can work.
->>>>
->>>> Based on the original (and large) patch by Vladimir Barinov
->>>> <vladimir.barinov@cogentembedded.com>.
->>>>
->>>> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
->>>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->>>>
->>> [...]
->>>>
->>>> Index: renesas/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
->>>> ===================================================================
->>>> --- /dev/null
->>>> +++ renesas/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
->>>> @@ -0,0 +1,45 @@
+On Fri, Sep 15, 2017 at 7:28 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> On 09/13/2017 12:19 AM, Sergei Shtylyov wrote:
+>>> Add the initial device  tree for  the R8A77970 SoC based Eagle board.
+>>> The board has 1 debug serial port (SCIF0); include support for it,
+>>> so that the serial console can work.
 >>>
->>> [...]
->>>>
->>>> +&extal_clk {
->>>> +    clock-frequency = <16666666>;
->>>> +};
->>>> +
->>>> +&extalr_clk {
->>>> +    clock-frequency = <32768>;
->>>> +};
->>>> +
+>>> Based on the original (and large) patch by Vladimir Barinov
+>>> <vladimir.barinov@cogentembedded.com>.
 >>>
->>>      Forgot to specify SCIF_CLK -- it's populated.
+>>> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+>>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>>>
+>> [...]
+>>>
+>>> Index: renesas/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+>>> ===================================================================
+>>> --- /dev/null
+>>> +++ renesas/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+>>> @@ -0,0 +1,45 @@
 >>
->>     Unfortunately, the kernel hangs after ttySC0 is registered if I specify
->> this frequency...
-> 
-> Is the crystal populated?
+>> [...]
+>>>
+>>> +&extal_clk {
+>>> +    clock-frequency = <16666666>;
+>>> +};
+>>> +
+>>> +&extalr_clk {
+>>> +    clock-frequency = <32768>;
+>>> +};
+>>> +
+>>
+>>     Forgot to specify SCIF_CLK -- it's populated.
+>
+>    Unfortunately, the kernel hangs after ttySC0 is registered if I specify
+> this frequency...
 
-    It should be, with 14.7456MHz chrystal. But it's connected to SCIF_CLK_B 
-pin -- perhaps that's the problem...
+Is the crystal populated?
 
-> When doing initial bringup of the remote Eagle I have access to, the SCIF
-> registers didn't indicate SCIF_CLK was being used from U-Boot, while it
-> is used on R-Car Gen2 boards that have it populated.
+When doing initial bringup of the remote Eagle I have access to, the SCIF
+registers didn't indicate SCIF_CLK was being used from U-Boot, while it
+is used on R-Car Gen2 boards that have it populated.
 
-    Perhaps PFC is just not configured properly?
+Gr{oetje,eeting}s,
 
-> 
-> Gr{oetje,eeting}s,
-> 
->                          Geert
+                        Geert
 
-MBR, Sergei
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
