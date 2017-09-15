@@ -1,58 +1,44 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:14458 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751938AbdI0JvU (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 27 Sep 2017 05:51:20 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: balbi@kernel.org
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, stable@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 2/2] usb: renesas_usbhs: fix usbhsf_fifo_clear() for RX direction
-Date: Wed, 27 Sep 2017 18:47:13 +0900
-Message-Id: <1506505633-4688-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1506505633-4688-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1506505633-4688-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Fri, 15 Sep 2017 14:26:22 -0700 (PDT)
+Message-Id: <20170915.142622.1357636170906048191.davem@davemloft.net>
+To: geert+renesas@glider.be
+Cc: steve.glendinning@shawell.net, andrew@lunn.ch,
+        f.fainelli@gmail.com, netdev@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] net: smsc911x: Quieten netif during suspend
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <1505324525-9998-1-git-send-email-geert+renesas@glider.be>
+References: <1505324525-9998-1-git-send-email-geert+renesas@glider.be>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch fixes an issue that the usbhsf_fifo_clear() is possible
-to cause 10 msec delay if the pipe is RX direction and empty because
-the FRDY bit will never be set to 1 in such case.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Date: Wed, 13 Sep 2017 19:42:05 +0200
 
-Fixes: e8d548d54968 ("usb: renesas_usbhs: fifo became independent from pipe.")
-Cc: <stable@vger.kernel.org> # v3.1+
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/usb/renesas_usbhs/fifo.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+> If the network interface is kept running during suspend, the net core
+> may call net_device_ops.ndo_start_xmit() while the Ethernet device is
+> still suspended, which may lead to a system crash.
+> 
+> E.g. on sh73a0/kzm9g and r8a73a4/ape6evm, the external Ethernet chip is
+> driven by a PM controlled clock.  If the Ethernet registers are accessed
+> while the clock is not running, the system will crash with an imprecise
+> external abort.
+> 
+> As this is a race condition with a small time window, it is not so easy
+> to trigger at will.  Using pm_test may increase your chances:
+> 
+>     # echo 0 > /sys/module/printk/parameters/console_suspend
+>     # echo platform > /sys/power/pm_test
+>     # echo mem > /sys/power/state
+> 
+> To fix this, make sure the network interface is quietened during
+> suspend.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/usb/renesas_usbhs/fifo.c b/drivers/usb/renesas_usbhs/fifo.c
-index 03cac07..68f2690 100644
---- a/drivers/usb/renesas_usbhs/fifo.c
-+++ b/drivers/usb/renesas_usbhs/fifo.c
-@@ -284,8 +284,17 @@ static void usbhsf_fifo_clear(struct usbhs_pipe *pipe,
- 	struct usbhs_priv *priv = usbhs_pipe_to_priv(pipe);
- 	int ret = 0;
- 
--	if (!usbhs_pipe_is_dcp(pipe))
--		ret = usbhsf_fifo_barrier(priv, fifo);
-+	if (!usbhs_pipe_is_dcp(pipe)) {
-+		/*
-+		 * This driver checks the pipe condition first to avoid -EBUSY
-+		 * from usbhsf_fifo_barrier() with about 10 msec delay in
-+		 * the interrupt handler if the pipe is RX direction and empty.
-+		 */
-+		if (usbhs_pipe_is_dir_in(pipe))
-+			ret = usbhs_pipe_is_accessible(pipe);
-+		if (!ret)
-+			ret = usbhsf_fifo_barrier(priv, fifo);
-+	}
- 
- 	/*
- 	 * if non-DCP pipe, this driver should set BCLR when
--- 
-1.9.1
+Applied.
