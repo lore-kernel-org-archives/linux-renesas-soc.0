@@ -1,14 +1,13 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:54994 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751213AbdIOLGa (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:38641 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750879AbdIOI56 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Sep 2017 07:06:30 -0400
-Date: Fri, 15 Sep 2017 13:06:09 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fri, 15 Sep 2017 04:57:58 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms@verge.net.au>
+CC: Chris Paterson <Chris.Paterson2@renesas.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
@@ -18,82 +17,78 @@ Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
         "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [PATCH 1/8] ARM: dts: r8a7745: Add APMU node and second CPU core
-Message-ID: <20170915110609.GL3924@verge.net.au>
+Subject: RE: [PATCH 1/8] ARM: dts: r8a7745: Add APMU node and second CPU core
+Date: Fri, 15 Sep 2017 08:57:53 +0000
+Message-ID: <TY1PR06MB0895763DA6DE79A64B9981ECC06C0@TY1PR06MB0895.apcprd06.prod.outlook.com>
 References: <1505322341-9480-1-git-send-email-chris.paterson2@renesas.com>
  <1505322341-9480-2-git-send-email-chris.paterson2@renesas.com>
  <20170915074551.GF3924@verge.net.au>
  <CAMuHMdWrMiHQz_Tadh3R00n+zeSnGOW-o=skbK-R-yD6Z-x2+A@mail.gmail.com>
- <TY1PR06MB0895763DA6DE79A64B9981ECC06C0@TY1PR06MB0895.apcprd06.prod.outlook.com>
+In-Reply-To: <CAMuHMdWrMiHQz_Tadh3R00n+zeSnGOW-o=skbK-R-yD6Z-x2+A@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <TY1PR06MB0895763DA6DE79A64B9981ECC06C0@TY1PR06MB0895.apcprd06.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Sep 15, 2017 at 08:57:53AM +0000, Fabrizio Castro wrote:
-> Hi Simon, Geert,
-> 
-> > -----Original Message-----
-> > From: linux-renesas-soc-owner@vger.kernel.org [mailto:linux-renesas-soc-owner@vger.kernel.org] On Behalf Of Geert
-> > Uytterhoeven
-> > Sent: 15 September 2017 09:05
-> > To: Simon Horman <horms@verge.net.au>; Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > Cc: Chris Paterson <Chris.Paterson2@renesas.com>; Rob Herring <robh+dt@kernel.org>; Mark Rutland <mark.rutland@arm.com>;
-> > Magnus Damm <magnus.damm@gmail.com>; Russell King <linux@armlinux.org.uk>; devicetree@vger.kernel.org; Linux-Renesas
-> > <linux-renesas-soc@vger.kernel.org>; linux-arm-kernel@lists.infradead.org; Geert Uytterhoeven <geert+renesas@glider.be>
-> > Subject: Re: [PATCH 1/8] ARM: dts: r8a7745: Add APMU node and second CPU core
-> >
-> > Hi Simon, Fabrizio,
-> >
-> > On Fri, Sep 15, 2017 at 9:45 AM, Simon Horman <horms@verge.net.au> wrote:
-> > > On Wed, Sep 13, 2017 at 06:05:34PM +0100, Chris Paterson wrote:
-> > >> From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > >>
-> > >> Add DT node for the Advanced Power Management Unit (APMU), add the
-> > >> second CPU core, and use "renesas,apmu" as "enable-method".
-> > >>
-> > >> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > >> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-> > >> ---
-> > >> This patch is based on renesas-devel-20170913-v4.13.
-> > >
-> > > Hi,
-> > >
-> > > with reference to "[PATCH v3 0/3] ARM: renesas: Enable SMP on R-Car E2"
-> > > is the CNTVOFF initialised in the boot loader of boards (in upstream)
-> > > for this SoC? If not I expect you will have trouble with the arch timer
-> > > on secondary CPU cores.
-> 
-> I can confirm that this patch relies on:
-> * "ARM: Add definition for monitor mode", and
-> * "ARM: shmobile: rcar-gen2: Make sure CNTVOFF is initialized on CA7/15 "
-> as the bootloader doesn't initialize CNTVOFF.
-> 
-> >
-> > Exactly my question.
-> >
-> > Fabrizio: Given your feedback on "[PATCH v3 0/3] ARM: renesas: Enable SMP on
-> > R-Car E2", I think SMP enablement on RZ/G1E has to be postponed until "ARM:
-> > shmobile: rcar-gen2: Make sure CNTVOFF is initialized on CA7/15" has been
-> > accepted upstream.
-> 
-> You are right, somehow we missed the comment made by Simon on Monday:
-> 
-> " I would like to deffer the third and last patch until v4.16 to avoid
-> an awkward branch dependency on the above - the branches are different
-> even though the tree is the same. Please resubmit this patch once the
-> above dependencies are present in an rc release, which at this stage
-> I expect to be v4.15-rc1."
-> 
-> Apologies for this, we will send this patch later on, once both patches have been
-> accepted upstream.
-
-No problem, I will mark this one as deferred.
-
-> Simon, is this going to make the application of the remaining patches
-> problematic?  Please, let me (or Chris) know if you want us to rebase and
-> resend without this patch.
-
-No, I don't think you need to rebase and repost due to this.
+SGkgU2ltb24sIEdlZXJ0LA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206
+IGxpbnV4LXJlbmVzYXMtc29jLW93bmVyQHZnZXIua2VybmVsLm9yZyBbbWFpbHRvOmxpbnV4LXJl
+bmVzYXMtc29jLW93bmVyQHZnZXIua2VybmVsLm9yZ10gT24gQmVoYWxmIE9mIEdlZXJ0DQo+IFV5
+dHRlcmhvZXZlbg0KPiBTZW50OiAxNSBTZXB0ZW1iZXIgMjAxNyAwOTowNQ0KPiBUbzogU2ltb24g
+SG9ybWFuIDxob3Jtc0B2ZXJnZS5uZXQuYXU+OyBGYWJyaXppbyBDYXN0cm8gPGZhYnJpemlvLmNh
+c3Ryb0BicC5yZW5lc2FzLmNvbT4NCj4gQ2M6IENocmlzIFBhdGVyc29uIDxDaHJpcy5QYXRlcnNv
+bjJAcmVuZXNhcy5jb20+OyBSb2IgSGVycmluZyA8cm9iaCtkdEBrZXJuZWwub3JnPjsgTWFyayBS
+dXRsYW5kIDxtYXJrLnJ1dGxhbmRAYXJtLmNvbT47DQo+IE1hZ251cyBEYW1tIDxtYWdudXMuZGFt
+bUBnbWFpbC5jb20+OyBSdXNzZWxsIEtpbmcgPGxpbnV4QGFybWxpbnV4Lm9yZy51az47IGRldmlj
+ZXRyZWVAdmdlci5rZXJuZWwub3JnOyBMaW51eC1SZW5lc2FzDQo+IDxsaW51eC1yZW5lc2FzLXNv
+Y0B2Z2VyLmtlcm5lbC5vcmc+OyBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7
+IEdlZXJ0IFV5dHRlcmhvZXZlbiA8Z2VlcnQrcmVuZXNhc0BnbGlkZXIuYmU+DQo+IFN1YmplY3Q6
+IFJlOiBbUEFUQ0ggMS84XSBBUk06IGR0czogcjhhNzc0NTogQWRkIEFQTVUgbm9kZSBhbmQgc2Vj
+b25kIENQVSBjb3JlDQo+DQo+IEhpIFNpbW9uLCBGYWJyaXppbywNCj4NCj4gT24gRnJpLCBTZXAg
+MTUsIDIwMTcgYXQgOTo0NSBBTSwgU2ltb24gSG9ybWFuIDxob3Jtc0B2ZXJnZS5uZXQuYXU+IHdy
+b3RlOg0KPiA+IE9uIFdlZCwgU2VwIDEzLCAyMDE3IGF0IDA2OjA1OjM0UE0gKzAxMDAsIENocmlz
+IFBhdGVyc29uIHdyb3RlOg0KPiA+PiBGcm9tOiBGYWJyaXppbyBDYXN0cm8gPGZhYnJpemlvLmNh
+c3Ryb0BicC5yZW5lc2FzLmNvbT4NCj4gPj4NCj4gPj4gQWRkIERUIG5vZGUgZm9yIHRoZSBBZHZh
+bmNlZCBQb3dlciBNYW5hZ2VtZW50IFVuaXQgKEFQTVUpLCBhZGQgdGhlDQo+ID4+IHNlY29uZCBD
+UFUgY29yZSwgYW5kIHVzZSAicmVuZXNhcyxhcG11IiBhcyAiZW5hYmxlLW1ldGhvZCIuDQo+ID4+
+DQo+ID4+IFNpZ25lZC1vZmYtYnk6IEZhYnJpemlvIENhc3RybyA8ZmFicml6aW8uY2FzdHJvQGJw
+LnJlbmVzYXMuY29tPg0KPiA+PiBTaWduZWQtb2ZmLWJ5OiBDaHJpcyBQYXRlcnNvbiA8Y2hyaXMu
+cGF0ZXJzb24yQHJlbmVzYXMuY29tPg0KPiA+PiAtLS0NCj4gPj4gVGhpcyBwYXRjaCBpcyBiYXNl
+ZCBvbiByZW5lc2FzLWRldmVsLTIwMTcwOTEzLXY0LjEzLg0KPiA+DQo+ID4gSGksDQo+ID4NCj4g
+PiB3aXRoIHJlZmVyZW5jZSB0byAiW1BBVENIIHYzIDAvM10gQVJNOiByZW5lc2FzOiBFbmFibGUg
+U01QIG9uIFItQ2FyIEUyIg0KPiA+IGlzIHRoZSBDTlRWT0ZGIGluaXRpYWxpc2VkIGluIHRoZSBi
+b290IGxvYWRlciBvZiBib2FyZHMgKGluIHVwc3RyZWFtKQ0KPiA+IGZvciB0aGlzIFNvQz8gSWYg
+bm90IEkgZXhwZWN0IHlvdSB3aWxsIGhhdmUgdHJvdWJsZSB3aXRoIHRoZSBhcmNoIHRpbWVyDQo+
+ID4gb24gc2Vjb25kYXJ5IENQVSBjb3Jlcy4NCg0KSSBjYW4gY29uZmlybSB0aGF0IHRoaXMgcGF0
+Y2ggcmVsaWVzIG9uOg0KKiAiQVJNOiBBZGQgZGVmaW5pdGlvbiBmb3IgbW9uaXRvciBtb2RlIiwg
+YW5kDQoqICJBUk06IHNobW9iaWxlOiByY2FyLWdlbjI6IE1ha2Ugc3VyZSBDTlRWT0ZGIGlzIGlu
+aXRpYWxpemVkIG9uIENBNy8xNSAiDQphcyB0aGUgYm9vdGxvYWRlciBkb2Vzbid0IGluaXRpYWxp
+emUgQ05UVk9GRi4NCg0KPg0KPiBFeGFjdGx5IG15IHF1ZXN0aW9uLg0KPg0KPiBGYWJyaXppbzog
+R2l2ZW4geW91ciBmZWVkYmFjayBvbiAiW1BBVENIIHYzIDAvM10gQVJNOiByZW5lc2FzOiBFbmFi
+bGUgU01QIG9uDQo+IFItQ2FyIEUyIiwgSSB0aGluayBTTVAgZW5hYmxlbWVudCBvbiBSWi9HMUUg
+aGFzIHRvIGJlIHBvc3Rwb25lZCB1bnRpbCAiQVJNOg0KPiBzaG1vYmlsZTogcmNhci1nZW4yOiBN
+YWtlIHN1cmUgQ05UVk9GRiBpcyBpbml0aWFsaXplZCBvbiBDQTcvMTUiIGhhcyBiZWVuDQo+IGFj
+Y2VwdGVkIHVwc3RyZWFtLg0KDQpZb3UgYXJlIHJpZ2h0LCBzb21laG93IHdlIG1pc3NlZCB0aGUg
+Y29tbWVudCBtYWRlIGJ5IFNpbW9uIG9uIE1vbmRheToNCg0KIiBJIHdvdWxkIGxpa2UgdG8gZGVm
+ZmVyIHRoZSB0aGlyZCBhbmQgbGFzdCBwYXRjaCB1bnRpbCB2NC4xNiB0byBhdm9pZA0KYW4gYXdr
+d2FyZCBicmFuY2ggZGVwZW5kZW5jeSBvbiB0aGUgYWJvdmUgLSB0aGUgYnJhbmNoZXMgYXJlIGRp
+ZmZlcmVudA0KZXZlbiB0aG91Z2ggdGhlIHRyZWUgaXMgdGhlIHNhbWUuIFBsZWFzZSByZXN1Ym1p
+dCB0aGlzIHBhdGNoIG9uY2UgdGhlDQphYm92ZSBkZXBlbmRlbmNpZXMgYXJlIHByZXNlbnQgaW4g
+YW4gcmMgcmVsZWFzZSwgd2hpY2ggYXQgdGhpcyBzdGFnZQ0KSSBleHBlY3QgdG8gYmUgdjQuMTUt
+cmMxLiINCg0KQXBvbG9naWVzIGZvciB0aGlzLCB3ZSB3aWxsIHNlbmQgdGhpcyBwYXRjaCBsYXRl
+ciBvbiwgb25jZSBib3RoIHBhdGNoZXMgaGF2ZSBiZWVuDQphY2NlcHRlZCB1cHN0cmVhbS4NCg0K
+U2ltb24sIGlzIHRoaXMgZ29pbmcgdG8gbWFrZSB0aGUgYXBwbGljYXRpb24gb2YgdGhlIHJlbWFp
+bmluZyBwYXRjaGVzIHByb2JsZW1hdGljPw0KUGxlYXNlLCBsZXQgbWUgKG9yIENocmlzKSBrbm93
+IGlmIHlvdSB3YW50IHVzIHRvIHJlYmFzZSBhbmQgcmVzZW5kIHdpdGhvdXQgdGhpcw0KcGF0Y2gu
+DQoNCkJlc3QgcmVnYXJkcywNCkZhYnJpemlvDQoNCj4NCj4gR3J7b2V0amUsZWV0aW5nfXMsDQo+
+DQo+ICAgICAgICAgICAgICAgICAgICAgICAgIEdlZXJ0DQo+DQo+IC0tDQo+IEdlZXJ0IFV5dHRl
+cmhvZXZlbiAtLSBUaGVyZSdzIGxvdHMgb2YgTGludXggYmV5b25kIGlhMzIgLS0gZ2VlcnRAbGlu
+dXgtbTY4ay5vcmcNCj4NCj4gSW4gcGVyc29uYWwgY29udmVyc2F0aW9ucyB3aXRoIHRlY2huaWNh
+bCBwZW9wbGUsIEkgY2FsbCBteXNlbGYgYSBoYWNrZXIuIEJ1dA0KPiB3aGVuIEknbSB0YWxraW5n
+IHRvIGpvdXJuYWxpc3RzIEkganVzdCBzYXkgInByb2dyYW1tZXIiIG9yIHNvbWV0aGluZyBsaWtl
+IHRoYXQuDQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLS0gTGludXMgVG9ydmFs
+ZHMNCg0KDQoNClJlbmVzYXMgRWxlY3Ryb25pY3MgRXVyb3BlIEx0ZCwgRHVrZXMgTWVhZG93LCBN
+aWxsYm9hcmQgUm9hZCwgQm91cm5lIEVuZCwgQnVja2luZ2hhbXNoaXJlLCBTTDggNUZILCBVSy4g
+UmVnaXN0ZXJlZCBpbiBFbmdsYW5kICYgV2FsZXMgdW5kZXIgUmVnaXN0ZXJlZCBOby4gMDQ1ODY3
+MDkuDQo=
