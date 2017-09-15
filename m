@@ -1,73 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:64932 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752976AbdIRQ0e (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:53228 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750787AbdIOIFu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Sep 2017 12:26:34 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Simon Horman <horms@verge.net.au>,
-        Chris Paterson <Chris.Paterson2@renesas.com>
-CC: Rob Herring <robh+dt@kernel.org>,
+        Fri, 15 Sep 2017 04:05:50 -0400
+Date: Fri, 15 Sep 2017 10:05:30 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Chris Paterson <chris.paterson2@renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH 4/8] ARM: dts: iwg22d: Enable SDHI0 controller
-Date: Mon, 18 Sep 2017 16:26:24 +0000
-Message-ID: <TY1PR06MB08952278EF3A13B4CDBD568CC0630@TY1PR06MB0895.apcprd06.prod.outlook.com>
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 4/8] ARM: dts: iwg22d: Enable SDHI0 controller
+Message-ID: <20170915080530.GH3924@verge.net.au>
 References: <1505322341-9480-1-git-send-email-chris.paterson2@renesas.com>
  <1505322341-9480-5-git-send-email-chris.paterson2@renesas.com>
- <20170915080530.GH3924@verge.net.au>
-In-Reply-To: <20170915080530.GH3924@verge.net.au>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1505322341-9480-5-git-send-email-chris.paterson2@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgU2ltb24sDQoNCkFwb2xvZ2llcyBmb3IgdGhlIGRlbGF5IGluIGdldHRpbmcgYmFjayB0byB5
-b3UuDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogU2ltb24gSG9ybWFu
-IFttYWlsdG86aG9ybXNAdmVyZ2UubmV0LmF1XQ0KPiBTZW50OiAxNSBTZXB0ZW1iZXIgMjAxNyAw
-OTowNg0KPiBUbzogQ2hyaXMgUGF0ZXJzb24gPENocmlzLlBhdGVyc29uMkByZW5lc2FzLmNvbT4N
-Cj4gQ2M6IFJvYiBIZXJyaW5nIDxyb2JoK2R0QGtlcm5lbC5vcmc+OyBNYXJrIFJ1dGxhbmQgPG1h
-cmsucnV0bGFuZEBhcm0uY29tPjsgTWFnbnVzIERhbW0gPG1hZ251cy5kYW1tQGdtYWlsLmNvbT47
-DQo+IFJ1c3NlbGwgS2luZyA8bGludXhAYXJtbGludXgub3JnLnVrPjsgRmFicml6aW8gQ2FzdHJv
-IDxmYWJyaXppby5jYXN0cm9AYnAucmVuZXNhcy5jb20+OyBkZXZpY2V0cmVlQHZnZXIua2VybmVs
-Lm9yZzsgbGludXgtcmVuZXNhcy0NCj4gc29jQHZnZXIua2VybmVsLm9yZzsgbGludXgtYXJtLWtl
-cm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggNC84XSBBUk06
-IGR0czogaXdnMjJkOiBFbmFibGUgU0RISTAgY29udHJvbGxlcg0KPg0KPiBPbiBXZWQsIFNlcCAx
-MywgMjAxNyBhdCAwNjowNTozN1BNICswMTAwLCBDaHJpcyBQYXRlcnNvbiB3cm90ZToNCj4gPiBG
-cm9tOiBGYWJyaXppbyBDYXN0cm8gPGZhYnJpemlvLmNhc3Ryb0BicC5yZW5lc2FzLmNvbT4NCj4g
-Pg0KPiA+IEVuYWJsZSB0aGUgU0RISTAgY29udHJvbGxlciBvbiBpV2F2ZSBSWi9HMUUgY2Fycmll
-ciBib2FyZC4NCj4NCj4gLi4uDQo+DQo+ID4gQEAgLTYzLDMgKzg4LDE1IEBADQo+ID4gIG1pY3Jl
-bCxsZWQtbW9kZSA9IDwxPjsNCj4gPiAgfTsNCj4gPiAgfTsNCj4gPiArDQo+ID4gKyZzZGhpMCB7
-DQo+ID4gK3BpbmN0cmwtMCA9IDwmc2RoaTBfcGlucz47DQo+ID4gK3BpbmN0cmwtMSA9IDwmc2Ro
-aTBfcGluc191aHM+Ow0KPiA+ICtwaW5jdHJsLW5hbWVzID0gImRlZmF1bHQiLCAic3RhdGVfdWhz
-IjsNCj4gPiArDQo+ID4gK3ZtbWMtc3VwcGx5ID0gPCZyZWdfM3Azdj47DQo+ID4gK3ZxbW1jLXN1
-cHBseSA9IDwmdmNjcV9zZGhpMD47DQo+ID4gK2NkLWdwaW9zID0gPCZncGlvNiA2IEdQSU9fQUNU
-SVZFX0xPVz47DQo+DQo+IEkgdGFrZSB0aGF0IHRoZSBhYnNlbmNlIG9mIGEgd3AtZ3BpbyBtZWFu
-cyB0aGF0IHRoYXQgdGhpcyBpcyBhIMK1U0Qgc2xvdC4NCj4gQ291bGQgeW91IGhlbHAgbWUgYnkg
-ZG9jdW1lbnRpbmcgdGhpcyBjb3JyZWN0bHkgb24NCj4gaHR0cDovL2VsaW51eC5vcmcvaW5kZXgu
-cGhwP3RpdGxlPVJlbmVzYXMtTU1DLUVuYWJsZWQtU3BlZWRzID8NCj4NCj4gRm9yIHNvbWUgcmVh
-c29uIEkgdGhvdWdodCB0aGF0IFNESEkwIHdhc24ndCBleHBvc2VkIGF0IGFsbCwgc28gSSBndWVz
-cw0KPiBteSByZWFkaW5nIG9mIHRoZSBkb2N1bWVudGF0aW9uIHdhcyBpbmNvcnJlY3QuDQo+DQo+
-DQo+IEkgdGhpbmsgeW91IGFsc28gd2FudCBzZC11aHMtc2RyNTAgaGVyZSB0b28uDQo+IFlvdSBj
-YW4gdGVzdCBpdCBieSByZW1vdmluZyB0aGUgc2QtdWhzLXNkcjEwNCBwcm9wZXJ0eS4NCg0KV2hp
-bHN0IHBsYXlpbmcgd2l0aCB1aHMgcHJvcGVydGllcyBJIGhhdmUgbm90aWNlZCB0aGF0IHdpdGgg
-dGhlIHZlcnNpb24gb2YgdGhlIERUIEkgd2FzIHVzaW5nIEkgY291bGRuJ3QgcHV0IHNkaGkwIGlu
-dG8gYW4gdWhzIG1vZGUgYW5kIHRoYXQgd2FzIGRvd24gdG8gdGhlIGZhY3QgdGhhdCB0aGUgZHJp
-dmVyIHdhc24ndCBkcml2aW5nIHRoZSByZWd1bGF0b3IgdG8gMS44Vi4gVGhpcyBoYXBwZW5zIGJl
-Y2F1c2UgKGluIG15IGNhc2UpIHRoZSBwb3dlciByZWd1bGF0b3IgZ2V0cyBwcm9iZWQgYWZ0ZXIg
-dGhlIHNkaGkgZG9lcywgYW5kIHRoZSBzZGhpIGNvZGUgZG9lc24ndCBzZWVtIHRvIGRlYWwgd2l0
-aCBpdC4gQW0gSSB0aGUgb25seSBvbmUgd2l0aCB0aGlzIHByb2JsZW0gb3IgaXMgaXQgYSBrbm93
-biBwcm9ibGVtPw0KDQpUaGFua3MsDQpGYWJyaXppbw0KDQo+DQo+ID4gK3NkLXVocy1zZHIxMDQ7
-DQo+ID4gK3N0YXR1cyA9ICJva2F5IjsNCj4gPiArfTsNCj4gPiAtLQ0KPiA+IDEuOS4xDQo+ID4N
-Cg0KDQoNClJlbmVzYXMgRWxlY3Ryb25pY3MgRXVyb3BlIEx0ZCwgRHVrZXMgTWVhZG93LCBNaWxs
-Ym9hcmQgUm9hZCwgQm91cm5lIEVuZCwgQnVja2luZ2hhbXNoaXJlLCBTTDggNUZILCBVSy4gUmVn
-aXN0ZXJlZCBpbiBFbmdsYW5kICYgV2FsZXMgdW5kZXIgUmVnaXN0ZXJlZCBOby4gMDQ1ODY3MDku
-DQo=
+On Wed, Sep 13, 2017 at 06:05:37PM +0100, Chris Paterson wrote:
+> From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> 
+> Enable the SDHI0 controller on iWave RZ/G1E carrier board.
+
+...
+
+> @@ -63,3 +88,15 @@
+>  		micrel,led-mode = <1>;
+>  	};
+>  };
+> +
+> +&sdhi0 {
+> +	pinctrl-0 = <&sdhi0_pins>;
+> +	pinctrl-1 = <&sdhi0_pins_uhs>;
+> +	pinctrl-names = "default", "state_uhs";
+> +
+> +	vmmc-supply = <&reg_3p3v>;
+> +	vqmmc-supply = <&vccq_sdhi0>;
+> +	cd-gpios = <&gpio6 6 GPIO_ACTIVE_LOW>;
+
+I take that the absence of a wp-gpio means that that this is a µSD slot.
+Could you help me by documenting this correctly on
+http://elinux.org/index.php?title=Renesas-MMC-Enabled-Speeds ?
+
+For some reason I thought that SDHI0 wasn't exposed at all, so I guess
+my reading of the documentation was incorrect.
+
+
+I think you also want sd-uhs-sdr50 here too.
+You can test it by removing the sd-uhs-sdr104 property.
+
+> +	sd-uhs-sdr104;
+> +	status = "okay";
+> +};
+> -- 
+> 1.9.1
+> 
