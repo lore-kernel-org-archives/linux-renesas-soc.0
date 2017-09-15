@@ -1,65 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52446 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751635AbdIEIIF (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:63249 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751169AbdIOPjV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Sep 2017 04:08:05 -0400
-From: Simon Horman <horms@verge.net.au>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: ltsi-dev@lists.linuxfoundation.org,
-        linux-renesas-soc@vger.kernel.org,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: [PATCH 05/13] thermal: rcar_gen3_thermal: check that TSC exists before memory allocation
-Date: Tue,  5 Sep 2017 10:06:40 +0200
-Message-Id: <1504598808-19810-6-git-send-email-horms@verge.net.au>
-In-Reply-To: <1504598808-19810-1-git-send-email-horms@verge.net.au>
-References: <1504598808-19810-1-git-send-email-horms@verge.net.au>
+        Fri, 15 Sep 2017 11:39:21 -0400
+From: Chris Paterson <Chris.Paterson2@renesas.com>
+To: Simon Horman <horms@verge.net.au>
+CC: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH 2/8] ARM: dts: r8a7745: Add SDHI controllers
+Date: Fri, 15 Sep 2017 15:39:16 +0000
+Message-ID: <TY1PR06MB0702D6FD85B738B2B93627EEB76C0@TY1PR06MB0702.apcprd06.prod.outlook.com>
+References: <1505322341-9480-1-git-send-email-chris.paterson2@renesas.com>
+ <1505322341-9480-3-git-send-email-chris.paterson2@renesas.com>
+ <20170915075415.GG3924@verge.net.au>
+In-Reply-To: <20170915075415.GG3924@verge.net.au>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Move the check for a TSC resource before allocating memory for a new
-TSC. If no TSC is found there is little point in allocating memory for
-it.
+> From: Simon Horman [mailto:horms@verge.net.au]
+> Sent: 15 September 2017 08:54
+>=20
+> On Wed, Sep 13, 2017 at 06:05:35PM +0100, Chris Paterson wrote:
+> > From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> >
+> > Add the SDHI controllers to the r8a7745 device tree.
+> >
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+>=20
+> Thanks, applied.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
-(cherry picked from commit d51546c0db975a4750161d17eef62dfcf9eedc90)
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- drivers/thermal/rcar_gen3_thermal.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Thank you!
 
-diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
-index cb5c362c0000..9b6bc03dd142 100644
---- a/drivers/thermal/rcar_gen3_thermal.c
-+++ b/drivers/thermal/rcar_gen3_thermal.c
-@@ -276,16 +276,16 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
- 	for (i = 0; i < TSC_MAX_NUM; i++) {
- 		struct rcar_gen3_thermal_tsc *tsc;
- 
-+		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
-+		if (!res)
-+			break;
-+
- 		tsc = devm_kzalloc(dev, sizeof(*tsc), GFP_KERNEL);
- 		if (!tsc) {
- 			ret = -ENOMEM;
- 			goto error_unregister;
- 		}
- 
--		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
--		if (!res)
--			break;
--
- 		tsc->base = devm_ioremap_resource(dev, res);
- 		if (IS_ERR(tsc->base)) {
- 			ret = PTR_ERR(tsc->base);
--- 
-2.1.4
+>=20
+> > ---
+> > This patch is based on renesas-devel-20170913-v4.13.
+> >
+> > This patch is dependant on:
+> > - "dt-bindings: mmc: sh_mmcif: Document r8a7745 DT bindings"
+>=20
+> I think that should be "[PATCH v3] mmc: renesas_sdhi: Add r8a7743/5
+> support"
+
+Correct. Sorry for the confusion!
