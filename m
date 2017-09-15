@@ -1,34 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:33834 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752437AbdIARQ7 (ORCPT
+Received: from mail.kernel.org ([198.145.29.99]:42638 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750865AbdIOQmN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 1 Sep 2017 13:16:59 -0400
-Date: Fri, 1 Sep 2017 12:16:57 -0500
-From: Rob Herring <robh@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Fri, 15 Sep 2017 12:42:13 -0400
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: laurent.pinchart@ideasonboard.com,
         linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: pinctrl: sh-pfc: Use generic node name
-Message-ID: <20170901171657.w6euk7espdnssrlh@rob-hp-laptop>
-References: <1504086958-5286-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1504086958-5286-1-git-send-email-geert+renesas@glider.be>
+Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v1 0/3] drm/media: Implement DU Suspend and Resume on VSP pipelines
+Date: Fri, 15 Sep 2017 17:42:04 +0100
+Message-Id: <cover.3bc8f413af3b3a9548574c3591aad0bf5b10e181.1505493461.git-series.kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Aug 30, 2017 at 11:55:58AM +0200, Geert Uytterhoeven wrote:
-> Use the preferred generic node name in the example.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+This short series covers two subsystems and implements support for suspend and
+resume operations on the DU pipelines on Gen3 Rcar platforms.
 
-Applied.
+Patch 1: Prevent resuming DRM pipelines,
+  - Ensures that the VSP does not incorrectly start DU pipelines.
 
-Rob
+Patch 2: Add suspend resume helpers
+  - Makes use of the atomic helper functions to control the CRTCs
+    and fbdev emulation.
+
+Patch 3: Remove unused CRTC suspend/resume functions
+  - Cleans up some old, related but unused functions that are not
+    necessary to keep in the code base.
+
+Whilst this is posted as a single series, there are no hard dependencies
+between any of the three patches. They can be picked up independently as
+and when they are successfully reviewed.
+
+This series can be fetched from the following:
+
+ git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git tags/vsp-du/du-suspend-resume/v1
+  
+It is based upon a merge of both the current linux-media master branch and the DRM drm-next tree.
+
+Kieran Bingham (3):
+  media: vsp1: Prevent resuming DRM pipelines
+  drm: rcar-du: Add suspend resume helpers
+  drm: rcar-du: Remove unused CRTC suspend/resume functions
+
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 35 +---------------------------
+ drivers/gpu/drm/rcar-du/rcar_du_drv.c  | 18 +++++++++++---
+ drivers/gpu/drm/rcar-du/rcar_du_drv.h  |  1 +-
+ drivers/media/platform/vsp1/vsp1_drv.c |  8 +++++-
+ 4 files changed, 23 insertions(+), 39 deletions(-)
+
+base-commit: 8d2ec9ae96657bbd539d88dbc9d01088f2c9ee63
+-- 
+git-series 0.9.1
