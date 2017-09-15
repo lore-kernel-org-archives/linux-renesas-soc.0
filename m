@@ -1,16 +1,16 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Tue, 19 Sep 2017 11:31:59 -0500
-From: Rob Herring <robh@kernel.org>
+Date: Fri, 15 Sep 2017 13:16:39 +0200
+From: Simon Horman <horms@verge.net.au>
 To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>, devicetree@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH v2 02/18] dt: arm: shmobile: add H3ULCB Kingfisher board
  DT bindings
-Message-ID: <20170919163159.ewuqxypqu6mmpvzk@rob-hp-laptop>
+Message-ID: <20170915111639.GN3924@verge.net.au>
 References: <1505398726-4575-1-git-send-email-vladimir.barinov@cogentembedded.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -24,11 +24,8 @@ On Thu, Sep 14, 2017 at 05:18:46PM +0300, Vladimir Barinov wrote:
 > supported board.
 > 
 > Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-> ---
-> Changes in version 2:
-> - added own compatible value "shimafuji,kingfisher"
-> 
->  Documentation/devicetree/bindings/arm/shmobile.txt | 1 +
->  1 file changed, 1 insertion(+)
 
-Acked-by: Rob Herring <robh@kernel.org>
+ARM: shmobile: Document H3ULCB Kingfisher board DT bindings
+
+There is no need to repost just because of this change
+but please update the subject if you repost for other reasons.
