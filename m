@@ -1,49 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34495 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752477AbdI2Lxf (ORCPT
+Received: from mail.kernel.org ([198.145.29.99]:43806 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750838AbdIORCL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Sep 2017 07:53:35 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 06/22] arm64: renesas: Add Renesas R8A77970 Kconfig support
-Date: Fri, 29 Sep 2017 13:52:15 +0200
-Message-Id: <a6d21c0940490a343c6894bd78601be9e0e36f45.1506678250.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1506678250.git.horms+renesas@verge.net.au>
-References: <cover.1506678250.git.horms+renesas@verge.net.au>
+        Fri, 15 Sep 2017 13:02:11 -0400
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org, geert@glider.be
+Subject: [PULL REQUEST] vsp-du: Updates for the R-Car VSP1/DU drivers
+Date: Fri, 15 Sep 2017 18:02:08 +0100
+Message-Id: <1505494928-5616-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+The following changes since commit ac74d019be78a24c610f9fb1f007bb46dbcf6fba:
 
-Add a configuration option for the R-Car V3M SoC.
+  Merge remote-tracking branch 'airlied-drm/drm-next' into vsp1/next (2017-09-15 14:40:32 +0100)
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/Kconfig.platforms | 6 ++++++
- 1 file changed, 6 insertions(+)
+are available in the git repository at:
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 6b54ee8c1262..a07f9b5a4f82 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -184,6 +184,12 @@ config ARCH_R8A7796
- 	help
- 	  This enables support for the Renesas R-Car M3-W SoC.
- 
-+config ARCH_R8A77970
-+	bool "Renesas R-Car V3M SoC Platform"
-+	depends on ARCH_RENESAS
-+	help
-+	  This enables support for the Renesas R-Car V3M SoC.
-+
- config ARCH_R8A77995
- 	bool "Renesas R-Car D3 SoC Platform"
- 	depends on ARCH_RENESAS
--- 
-2.1.4
+  git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git tags/vsp-du/du-suspend-resume/v1
+
+for you to fetch changes up to 29952c78e7fa4533f18bbf629dd01a95abdfd61f:
+
+  drm: rcar-du: Remove unused CRTC suspend/resume functions (2017-09-15 14:45:31 +0100)
+
+----------------------------------------------------------------
+VSP1 and DU Suspend Resume v1
+
+Support DU suspend and resume, with a bug fix in VSP1 and (re-)implementation
+in rcar-du of the suspend handlers
+
+----------------------------------------------------------------
+Kieran Bingham (3):
+      media: vsp1: Prevent resuming DRM pipelines
+      drm: rcar-du: Add suspend resume helpers
+      drm: rcar-du: Remove unused CRTC suspend/resume functions
+
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 35 ----------------------------------
+ drivers/gpu/drm/rcar-du/rcar_du_drv.c  | 18 ++++++++++++++---
+ drivers/gpu/drm/rcar-du/rcar_du_drv.h  |  1 +
+ drivers/media/platform/vsp1/vsp1_drv.c |  8 +++++++-
+ 4 files changed, 23 insertions(+), 39 deletions(-)
