@@ -1,68 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:33987 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751171AbdIOIFY (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52875 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750841AbdIOHqL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Sep 2017 04:05:24 -0400
-MIME-Version: 1.0
-In-Reply-To: <20170915074551.GF3924@verge.net.au>
-References: <1505322341-9480-1-git-send-email-chris.paterson2@renesas.com>
- <1505322341-9480-2-git-send-email-chris.paterson2@renesas.com> <20170915074551.GF3924@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 15 Sep 2017 10:05:23 +0200
-Message-ID: <CAMuHMdWrMiHQz_Tadh3R00n+zeSnGOW-o=skbK-R-yD6Z-x2+A@mail.gmail.com>
-Subject: Re: [PATCH 1/8] ARM: dts: r8a7745: Add APMU node and second CPU core
-To: Simon Horman <horms@verge.net.au>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Chris Paterson <chris.paterson2@renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
+        Fri, 15 Sep 2017 03:46:11 -0400
+Date: Fri, 15 Sep 2017 09:45:51 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Chris Paterson <chris.paterson2@renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH 1/8] ARM: dts: r8a7745: Add APMU node and second CPU core
+Message-ID: <20170915074551.GF3924@verge.net.au>
+References: <1505322341-9480-1-git-send-email-chris.paterson2@renesas.com>
+ <1505322341-9480-2-git-send-email-chris.paterson2@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1505322341-9480-2-git-send-email-chris.paterson2@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon, Fabrizio,
+[Cc Geert]
 
-On Fri, Sep 15, 2017 at 9:45 AM, Simon Horman <horms@verge.net.au> wrote:
-> On Wed, Sep 13, 2017 at 06:05:34PM +0100, Chris Paterson wrote:
->> From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
->>
->> Add DT node for the Advanced Power Management Unit (APMU), add the
->> second CPU core, and use "renesas,apmu" as "enable-method".
->>
->> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
->> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
->> ---
->> This patch is based on renesas-devel-20170913-v4.13.
->
-> Hi,
->
-> with reference to "[PATCH v3 0/3] ARM: renesas: Enable SMP on R-Car E2"
-> is the CNTVOFF initialised in the boot loader of boards (in upstream)
-> for this SoC? If not I expect you will have trouble with the arch timer
-> on secondary CPU cores.
+On Wed, Sep 13, 2017 at 06:05:34PM +0100, Chris Paterson wrote:
+> From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> 
+> Add DT node for the Advanced Power Management Unit (APMU), add the
+> second CPU core, and use "renesas,apmu" as "enable-method".
+> 
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+> ---
+> This patch is based on renesas-devel-20170913-v4.13.
 
-Exactly my question.
+Hi,
 
-Fabrizio: Given your feedback on "[PATCH v3 0/3] ARM: renesas: Enable SMP on
-R-Car E2", I think SMP enablement on RZ/G1E has to be postponed until "ARM:
-shmobile: rcar-gen2: Make sure CNTVOFF is initialized on CA7/15" has been
-accepted upstream.
+with reference to "[PATCH v3 0/3] ARM: renesas: Enable SMP on R-Car E2"
+is the CNTVOFF initialised in the boot loader of boards (in upstream)
+for this SoC? If not I expect you will have trouble with the arch timer
+on secondary CPU cores.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+The patch itself looks good to me.
