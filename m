@@ -1,58 +1,54 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:51702 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752539AbdIRJJd (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Sep 2017 05:09:33 -0400
-Date: Mon, 18 Sep 2017 11:09:12 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 0/4] arm64: dts: renesas: Add Support for R-Car D3 and
- Draak
-Message-ID: <20170918090909.GF4644@verge.net.au>
-References: <1500555277-22921-1-git-send-email-geert+renesas@glider.be>
- <20170727151622.GG16143@verge.net.au>
+Subject: Re: [PULL REQUEST] vsp-du: Updates for the R-Car VSP1/DU drivers [No
+ it's not]
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+ linux-renesas-soc@vger.kernel.org, geert@glider.be
+References: <1505494928-5616-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Message-ID: <3f3898ee-6f93-50b2-a2f3-9fd1e2f171c3@ideasonboard.com>
+Date: Fri, 15 Sep 2017 18:05:47 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20170727151622.GG16143@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <1505494928-5616-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Jul 27, 2017 at 05:16:23PM +0200, Simon Horman wrote:
-> On Thu, Jul 20, 2017 at 02:54:33PM +0200, Geert Uytterhoeven wrote:
-> > 	Hi Simon, Magnus,
-> > 
-> > This patch series adds minimal support for the R-Car D3 SoC and the
-> > Draak development board, allowing to boot from a ramdisk using a serial
-> > console.
-> > 
-> >   - The first two patches add DT sources for R-Car D3 and Draak.
-> >     Due to the use of hardcoded constants, they have no further (build)
-> >     dependencies (obviously there is a runtime dependency).
-> >   - The last two patches replace the hardcoded constants by symbols from
-> >     DT binding headers, and thus depend on those headers.  Hence it
-> >     should be postponed to v4.15.
-> > 
-> > For proper operation, this depends on the 3 series I have just sent:
-> >   - [PATCH 0/3] arm64: renesas: Base R-Car D3 support,
-> 
-> I have applied the above patchset for v4.14.
-> 
-> >   - [PATCH 0/4] soc: renesas: Add R-Car D3 support,
-> 
-> And this one too.
-> 
-> >   - [PATCH 0/4] clk: renesas: Add R-Car D3 support.
-> 
-> And this one seems to have been acked, so I assume you will
-> apply it once you are back from holidays.
-> 
-> So I have applied the first two patches for v4.14.
-> Please repost the remaining two after v4.13-rc6 at which time I should
-> be able to queue them up for v4.15.
+Please excuse my copy/paste error, and ignore this one :D
+A very much similar pull request immediately follows.
 
-I have now done so.
+It's been a *long* week, and I should step away from the office :D
+
+--
+Kieran
+
+On 15/09/17 18:02, Kieran Bingham wrote:
+> The following changes since commit ac74d019be78a24c610f9fb1f007bb46dbcf6fba:
+> 
+>   Merge remote-tracking branch 'airlied-drm/drm-next' into vsp1/next (2017-09-15 14:40:32 +0100)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git tags/vsp-du/du-suspend-resume/v1
+> 
+> for you to fetch changes up to 29952c78e7fa4533f18bbf629dd01a95abdfd61f:
+> 
+>   drm: rcar-du: Remove unused CRTC suspend/resume functions (2017-09-15 14:45:31 +0100)
+> 
+> ----------------------------------------------------------------
+> VSP1 and DU Suspend Resume v1
+> 
+> Support DU suspend and resume, with a bug fix in VSP1 and (re-)implementation
+> in rcar-du of the suspend handlers
+> 
+> ----------------------------------------------------------------
+> Kieran Bingham (3):
+>       media: vsp1: Prevent resuming DRM pipelines
+>       drm: rcar-du: Add suspend resume helpers
+>       drm: rcar-du: Remove unused CRTC suspend/resume functions
+> 
+>  drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 35 ----------------------------------
+>  drivers/gpu/drm/rcar-du/rcar_du_drv.c  | 18 ++++++++++++++---
+>  drivers/gpu/drm/rcar-du/rcar_du_drv.h  |  1 +
+>  drivers/media/platform/vsp1/vsp1_drv.c |  8 +++++++-
+>  4 files changed, 23 insertions(+), 39 deletions(-)
+> 
