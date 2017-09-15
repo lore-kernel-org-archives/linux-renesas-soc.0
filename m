@@ -1,61 +1,129 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f51.google.com ([209.85.215.51]:37089 "EHLO
-        mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932163AbdIFWgV (ORCPT
+Received: from sauhun.de ([88.99.104.3]:50135 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751499AbdIOSDF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Sep 2017 18:36:21 -0400
-Received: by mail-lf0-f51.google.com with SMTP id 80so15991624lfy.4
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 06 Sep 2017 15:36:20 -0700 (PDT)
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH 09/18] arm64: dts: ulcb-kf: enable USB2 PHY of channel 0
-Date: Thu,  7 Sep 2017 01:36:17 +0300
-Message-Id: <1504737377-23191-1-git-send-email-vladimir.barinov@cogentembedded.com>
-In-Reply-To: <1504737267-22829-1-git-send-email-vladimir.barinov@cogentembedded.com>
-References: <1504737267-22829-1-git-send-email-vladimir.barinov@cogentembedded.com>
+        Fri, 15 Sep 2017 14:03:05 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Rob Herring <robh@kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [RFC PATCH 2/3] mmc: parse new binding for eMMC fixed driver type
+Date: Fri, 15 Sep 2017 20:03:00 +0200
+Message-Id: <20170915180301.29175-3-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20170915180301.29175-1-wsa+renesas@sang-engineering.com>
+References: <20170915180301.29175-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This supports USB2 PHY channel #0 on ULCB Kingfisher board
+Parse the new binding and store it in the host struct after doing some
+sanity checks. The code is designed to support fixed SD driver type if
+we ever need that.
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm64/boot/dts/renesas/ulcb-kf.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/mmc/core/core.c  | 28 +++++++++++++++++++++++-----
+ drivers/mmc/core/host.c  | 11 ++++++++++-
+ include/linux/mmc/host.h |  2 ++
+ 3 files changed, 35 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-index ca8de1a..0854600 100644
---- a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-+++ b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-@@ -60,6 +60,11 @@
- 		groups = "scif1_data_b";
- 		function = "scif1";
- 	};
-+
-+	usb0_pins: usb0 {
-+		groups = "usb0";
-+		function = "usb0";
-+	};
- };
+diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
+index 66c9cf49ad2f11..db5e55b654c04d 100644
+--- a/drivers/mmc/core/core.c
++++ b/drivers/mmc/core/core.c
+@@ -1580,6 +1580,18 @@ void mmc_set_driver_type(struct mmc_host *host, unsigned int drv_type)
+ 	mmc_set_ios(host);
+ }
  
- &scif1 {
-@@ -68,3 +73,10 @@
++static int mmc_select_fixed_drive_strength(struct mmc_card *card,
++				       unsigned int max_dtr, int host_drv,
++				       int card_drv, int *drv_type)
++{
++	int ret = 0, preset = card->host->fixed_drv_type;
++
++	if (card->type == MMC_TYPE_MMC)
++		ret = card_drv & mmc_driver_type_mask(preset) ? preset : 0;
++
++	return ret;
++}
++
+ int mmc_select_drive_strength(struct mmc_card *card, unsigned int max_dtr,
+ 			      int card_drv_type, int *drv_type)
+ {
+@@ -1588,7 +1600,7 @@ int mmc_select_drive_strength(struct mmc_card *card, unsigned int max_dtr,
  
- 	status = "okay";
- };
+ 	*drv_type = 0;
+ 
+-	if (!host->ops->select_drive_strength)
++	if (!host->ops->select_drive_strength && !host->fixed_drv_type)
+ 		return 0;
+ 
+ 	/* Use SD definition of driver strength for hosts */
+@@ -1607,10 +1619,16 @@ int mmc_select_drive_strength(struct mmc_card *card, unsigned int max_dtr,
+ 	 * information and let the hardware specific code
+ 	 * return what is possible given the options
+ 	 */
+-	return host->ops->select_drive_strength(card, max_dtr,
+-						host_drv_type,
+-						card_drv_type,
+-						drv_type);
++	if (host->ops->select_drive_strength)
++		return host->ops->select_drive_strength(card, max_dtr,
++							host_drv_type,
++							card_drv_type,
++							drv_type);
++	else
++		return mmc_select_fixed_drive_strength(card, max_dtr,
++							host_drv_type,
++							card_drv_type,
++							drv_type);
+ }
+ 
+ /*
+diff --git a/drivers/mmc/core/host.c b/drivers/mmc/core/host.c
+index ad88deb2e8f3b0..cac61c71334310 100644
+--- a/drivers/mmc/core/host.c
++++ b/drivers/mmc/core/host.c
+@@ -184,7 +184,7 @@ static void mmc_retune_timer(unsigned long data)
+ int mmc_of_parse(struct mmc_host *host)
+ {
+ 	struct device *dev = host->parent;
+-	u32 bus_width;
++	u32 bus_width, drv_type = 0;
+ 	int ret;
+ 	bool cd_cap_invert, cd_gpio_invert = false;
+ 	bool ro_cap_invert, ro_gpio_invert = false;
+@@ -326,6 +326,15 @@ int mmc_of_parse(struct mmc_host *host)
+ 	if (device_property_read_bool(dev, "no-mmc"))
+ 		host->caps2 |= MMC_CAP2_NO_MMC;
+ 
++	/* Must be after "non-removable" check */
++	if (device_property_read_u32(dev, "fixed-emmc-driver-type", &drv_type) == 0) {
++		if (host->caps & MMC_CAP_NONREMOVABLE)
++			host->fixed_drv_type = drv_type;
++		else
++			dev_err(host->parent,
++				"can't use fixed driver type, media is removable\n");
++	}
 +
-+&usb2_phy0 {
-+	pinctrl-0 = <&usb0_pins>;
-+	pinctrl-names = "default";
+ 	host->dsr_req = !device_property_read_u32(dev, "dsr", &host->dsr);
+ 	if (host->dsr_req && (host->dsr & ~0xffff)) {
+ 		dev_err(host->parent,
+diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
+index f3f2d07feb2a62..1fef9b55a65805 100644
+--- a/include/linux/mmc/host.h
++++ b/include/linux/mmc/host.h
+@@ -350,6 +350,8 @@ struct mmc_host {
+ #define MMC_CAP2_CQE		(1 << 23)	/* Has eMMC command queue engine */
+ #define MMC_CAP2_CQE_DCMD	(1 << 24)	/* CQE can issue a direct command */
+ 
++	int			fixed_drv_type;	/* fixed driver type for non-removable media */
 +
-+	status = "okay";
-+};
+ 	mmc_pm_flag_t		pm_caps;	/* supported pm features */
+ 
+ 	/* host specific block data */
 -- 
-1.9.1
+2.11.0
