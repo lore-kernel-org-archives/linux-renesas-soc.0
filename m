@@ -1,105 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34793 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751906AbdI2LzI (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:48719 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751316AbdIOSUR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Sep 2017 07:55:08 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 47/48] ARM: dts: r8a7745: Add MSIOF[012] support
-Date: Fri, 29 Sep 2017 13:53:39 +0200
-Message-Id: <e527649c320062f53d8437d1a49b3ed4fccf7750.1506683482.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1506683482.git.horms+renesas@verge.net.au>
-References: <cover.1506683482.git.horms+renesas@verge.net.au>
+        Fri, 15 Sep 2017 14:20:17 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: kieran.bingham@ideasonboard.com
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v1 2/3] drm: rcar-du: Add suspend resume helpers
+Date: Fri, 15 Sep 2017 21:20:18 +0300
+Message-ID: <41822401.KNpIGo2cP1@avalon>
+In-Reply-To: <3416c30a-620c-0238-2569-02de80a53ba2@ideasonboard.com>
+References: <cover.3bc8f413af3b3a9548574c3591aad0bf5b10e181.1505493461.git-series.kieran.bingham+renesas@ideasonboard.com> <1607973.DTifMlLdNl@avalon> <3416c30a-620c-0238-2569-02de80a53ba2@ideasonboard.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Hi Kieran,
 
-Add the DT nodes needed by MSIOF[012] interfaces to the SoC dtsi.
-Also, define aliases for spi[123].
+On Friday, 15 September 2017 20:49:15 EEST Kieran Bingham wrote:
+> On 15/09/17 18:02, Laurent Pinchart wrote:
+> > On Friday, 15 September 2017 19:42:06 EEST Kieran Bingham wrote:
+> >> The pipeline needs to ensure that the hardware is idle for suspend and
+> >> resume operations.
+> > 
+> > I'm not sure to really understand this sentence.
+> 
+> It makes sense to me ... :) - But I'm not the (only) target audience.
+> 
+> How about re-wording it in a similar way to your suggestion in [1/3]
+> 
+> """
+> To support system suspend operations we must ensure the hardware is stopped,
+> and resumed explicitly from the suspend and resume handlers.
+> 
+> Implement suspend and resume functions using the DRM atomic helper
+> functions.
+> """
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7745.dtsi | 51 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 51 insertions(+)
+Sounds good to me. I'll update the commit message in my tree, and update the 
+subject line to "drm: rcar-du: Implement system suspend/resume support".
 
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index 5cc4009c4265..6ba3b8b04edb 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -26,6 +26,9 @@
- 		i2c4 = &i2c4;
- 		i2c5 = &i2c5;
- 		spi0 = &qspi;
-+		spi1 = &msiof0;
-+		spi2 = &msiof1;
-+		spi3 = &msiof2;
- 	};
- 
- 	cpus {
-@@ -753,6 +756,54 @@
- 			status = "disabled";
- 		};
- 
-+		msiof0: spi@e6e20000 {
-+			compatible = "renesas,msiof-r8a7745",
-+				     "renesas,rcar-gen2-msiof";
-+			reg = <0 0xe6e20000 0 0x0064>;
-+			interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 000>;
-+			dmas = <&dmac0 0x51>, <&dmac0 0x52>,
-+			       <&dmac1 0x51>, <&dmac1 0x52>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			resets = <&cpg 000>;
-+			status = "disabled";
-+		};
-+
-+		msiof1: spi@e6e10000 {
-+			compatible = "renesas,msiof-r8a7745",
-+				     "renesas,rcar-gen2-msiof";
-+			reg = <0 0xe6e10000 0 0x0064>;
-+			interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 208>;
-+			dmas = <&dmac0 0x55>, <&dmac0 0x56>,
-+			       <&dmac1 0x55>, <&dmac1 0x56>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			resets = <&cpg 208>;
-+			status = "disabled";
-+		};
-+
-+		msiof2: spi@e6e00000 {
-+			compatible = "renesas,msiof-r8a7745",
-+				     "renesas,rcar-gen2-msiof";
-+			reg = <0 0xe6e00000 0 0x0064>;
-+			interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 205>;
-+			dmas = <&dmac0 0x41>, <&dmac0 0x42>,
-+			       <&dmac1 0x41>, <&dmac1 0x42>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			resets = <&cpg 205>;
-+			status = "disabled";
-+		};
-+
- 		sdhi0: sd@ee100000 {
- 			compatible = "renesas,sdhi-r8a7745";
- 			reg = <0 0xee100000 0 0x328>;
+> >> Implement suspend and resume functions using the DRM atomic helper
+> >> functions.
+> >> 
+> >> CC: dri-devel@lists.freedesktop.org
+> >> 
+> >> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> > 
+> > The rest of the patch looks good to me. With the commit message clarified,
+> > 
+> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > 
+> >> ---
+> >> 
+> >>  drivers/gpu/drm/rcar-du/rcar_du_drv.c | 18 +++++++++++++++---
+> >>  drivers/gpu/drm/rcar-du/rcar_du_drv.h |  1 +
+> >>  2 files changed, 16 insertions(+), 3 deletions(-)
+
+[snip]
+
 -- 
-2.1.4
+Regards,
+
+Laurent Pinchart
