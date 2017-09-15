@@ -1,52 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:53263 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751283AbdIUFfF (ORCPT
+Received: from mail.kernel.org ([198.145.29.99]:43832 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751172AbdIORCm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 21 Sep 2017 01:35:05 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 1/2] arm64: dts: renesas: r8a7795: add USB3.0 peripheral device node
-Date: Thu, 21 Sep 2017 14:31:25 +0900
-Message-Id: <1505971886-14916-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1505971886-14916-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1505971886-14916-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Fri, 15 Sep 2017 13:02:42 -0400
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org, geert@glider.be
+Subject: [PULL REQUEST] vsp-du: Provide support for DU Suspend and Resume
+Date: Fri, 15 Sep 2017 18:02:40 +0100
+Message-Id: <1505494960-5770-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds USB3.0 peripheral channel 0 device node for r8a7795.
+The following changes since commit ac74d019be78a24c610f9fb1f007bb46dbcf6fba:
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+  Merge remote-tracking branch 'airlied-drm/drm-next' into vsp1/next (2017-09-15 14:40:32 +0100)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 0ccac86..cab70cf 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -2159,6 +2159,17 @@
- 			status = "disabled";
- 		};
- 
-+		usb3_peri0: usb@ee020000 {
-+			compatible = "renesas,r8a7795-usb3-peri",
-+				     "renesas,rcar-gen3-usb3-peri";
-+			reg = <0 0xee020000 0 0x400>;
-+			interrupts = <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 328>;
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			resets = <&cpg 328>;
-+			status = "disabled";
-+		};
-+
- 		usb_dmac0: dma-controller@e65a0000 {
- 			compatible = "renesas,r8a7795-usb-dmac",
- 				     "renesas,usb-dmac";
--- 
-1.9.1
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git tags/vsp-du/du-suspend-resume/v1
+
+for you to fetch changes up to 29952c78e7fa4533f18bbf629dd01a95abdfd61f:
+
+  drm: rcar-du: Remove unused CRTC suspend/resume functions (2017-09-15 14:45:31 +0100)
+
+----------------------------------------------------------------
+VSP1 and DU Suspend Resume v1
+
+Support DU suspend and resume, with a bug fix in VSP1 and (re-)implementation
+in rcar-du of the suspend handlers
+
+----------------------------------------------------------------
+Kieran Bingham (3):
+      media: vsp1: Prevent resuming DRM pipelines
+      drm: rcar-du: Add suspend resume helpers
+      drm: rcar-du: Remove unused CRTC suspend/resume functions
+
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 35 ----------------------------------
+ drivers/gpu/drm/rcar-du/rcar_du_drv.c  | 18 ++++++++++++++---
+ drivers/gpu/drm/rcar-du/rcar_du_drv.h  |  1 +
+ drivers/media/platform/vsp1/vsp1_drv.c |  8 +++++++-
+ 4 files changed, 23 insertions(+), 39 deletions(-)
