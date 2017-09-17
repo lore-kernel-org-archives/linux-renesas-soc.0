@@ -1,95 +1,138 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from lb2-smtp-cloud7.xs4all.net ([194.109.24.28]:44942 "EHLO
-        lb2-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932879AbdIYJuj (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Sep 2017 05:50:39 -0400
-Subject: Re: [PATCH v6 09/25] rcar-vin: do not allow changing scaling and
- composing while streaming
-To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-References: <20170822232640.26147-1-niklas.soderlund+renesas@ragnatech.se>
- <20170822232640.26147-10-niklas.soderlund+renesas@ragnatech.se>
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        tomoharu.fukawa.eb@renesas.com, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <458b7c1c-493e-cce7-a204-d7a9d5043428@xs4all.nl>
-Date: Mon, 25 Sep 2017 11:50:36 +0200
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Sun, 17 Sep 2017 09:37:05 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Russell King <linux@armlinux.org.uk>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Juri Lelli <juri.lelli@arm.com>
+Subject: Re: [PATCH 2/4] arm: dts: exynos: add exynos5420 cpu
+ capacity-dmips-mhz information
+Message-ID: <20170917073705.GC19716@kozik-book>
+References: <20170830144120.9312-1-dietmar.eggemann@arm.com>
+ <20170830144120.9312-3-dietmar.eggemann@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20170822232640.26147-10-niklas.soderlund+renesas@ragnatech.se>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20170830144120.9312-3-dietmar.eggemann@arm.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 23/08/17 01:26, Niklas Söderlund wrote:
-> It is possible on Gen2 to change the registers controlling composing and
-> scaling while the stream is running. Is however not a good idea to do so
-
-Is -> It
-
-> and could result in trouble. There are also no good reason to allow
-
-reason -> reasons
-
-> this, remove immediate reflection in hardware registers from
-> vidioc_s_selection and only configure scaling and composing when the
-> stream starts.
+On Wed, Aug 30, 2017 at 03:41:18PM +0100, Dietmar Eggemann wrote:
+> The following 'capacity-dmips-mhz' dt property values are used:
 > 
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
-
-Regards,
-
-	Hans
-
+> Cortex-A15: 1024, Cortex-A7: 539
+> 
+> They have been derived from the cpu_efficiency values:
+> 
+> Cortex-A15: 3891, Cortex-A7: 2048
+> 
+> by scaling them so that the Cortex-A15s (big cores) use 1024.
+> 
+> The cpu_efficiency values were originally derived from the "Big.LITTLE
+> Processing with ARM Cortex™-A15 & Cortex-A7" white paper
+> (http://www.cl.cam.ac.uk/~rdm34/big.LITTLE.pdf). Table 1 lists 1.9x
+> (3891/2048) as the Cortex-A15 vs Cortex-A7 performance ratio for the
+> Dhrystone benchmark.
+> 
+> The following platforms are affected once cpu-invariant accounting
+> support is re-connected to the task scheduler:
+> 
+> arndale-octa, peach-pi, peach-pit, smdk5420
+> 
+> The patch has been tested on Samsung Chromebook 2 13" (peach-pi, Exynos
+> 5800).
+> 
+> $ cat /sys/devices/system/cpu/cpu*/cpu_capacity
+> 1024
+> 1024
+> 1024
+> 1024
+> 389
+> 389
+> 389
+> 389
+> 
+> The Cortex-A15 vs Cortex-A7 performance ratio is 1024/389 = 2.63.
+> 
+> The values derived with the 'cpu_efficiency/clock-frequency dt property'
+> solution are:
+> 
+> $ cat /sys/devices/system/cpu/cpu*/cpu_capacity
+> 1535
+> 1535
+> 1535
+> 1535
+> 448
+> 448
+> 448
+> 448
+> 
+> The Cortex-A15 vs Cortex-A7 performance ratio is 1535/448 = 3.43.
+> 
+> The discrepancy between 2.63 and 3.43 is due to the false assumption
+> when using the 'cpu_efficiency/clock-frequency dt property' solution
+> that the max cpu frequency of the little cpus is 1 GHZ and not 1.3 GHz.
+> The Cortex-A7 cluster runs with a max cpu frequency of 1.3 GHZ whereas
+> the 'clock-frequency' property value is set to 1 GHz.
+> 
+> 3.43/1.3 = 2.64
+> 
+> $ cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_max_freq
+> 1800000
+> 1800000
+> 1800000
+> 1800000
+> 1300000 <-- max cpu frequency of the Cortex-A7s (little cores)
+> 1300000
+> 1300000
+> 1300000
+> 
+> Running another benchmark (single-threaded sysbench affine to the
+> individual cpus) with performance cpufreq governor on the Samsung
+> Chromebook 2 13" showed the following numbers:
+> 
+> $ for i in `seq 0 7`; do taskset -c $i sysbench --test=cpu
+>   --num-threads=1 --max-time=10 run | grep "total number of events:";
+>   done
+> 
+> total number of events: 1083
+> total number of events: 1085
+> total number of events: 1085
+> total number of events: 1085
+> total number of events: 454
+> total number of events: 454
+> total number of events: 454
+> total number of events: 454
+> 
+> The Cortex-A15 vs Cortex-A7 performance ratio is 2.39, i.e. very close
+> to the one derived from the Dhrystone based one of the "Big.LITTLE
+> Processing with ARM Cortex™-A15 & Cortex-A7" white paper (2.63).
+> 
+> We don't aim for exact values for the cpu capacity values. Besides the
+> CPI (Cycles Per Instruction), the instruction mix and whether the system
+> runs cpu-bound or memory-bound has an impact on the cpu capacity values
+> derived from these benchmark results.
+> 
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Russell King <linux@armlinux.org.uk>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
 > ---
->  drivers/media/platform/rcar-vin/rcar-dma.c  | 2 +-
->  drivers/media/platform/rcar-vin/rcar-v4l2.c | 3 ---
->  drivers/media/platform/rcar-vin/rcar-vin.h  | 3 ---
->  3 files changed, 1 insertion(+), 7 deletions(-)
+>  arch/arm/boot/dts/exynos5420-cpus.dtsi | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 > 
-> diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-> index 5f9674dc898305ba..6cc880e5ef7e0718 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-dma.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-> @@ -514,7 +514,7 @@ static void rvin_set_coeff(struct rvin_dev *vin, unsigned short xs)
->  	rvin_write(vin, p_set->coeff_set[23], VNC8C_REG);
->  }
->  
-> -void rvin_crop_scale_comp(struct rvin_dev *vin)
-> +static void rvin_crop_scale_comp(struct rvin_dev *vin)
->  {
->  	u32 xs, ys;
->  
-> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> index 421820caf275b066..305a74d033b2d9c5 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> @@ -436,9 +436,6 @@ static int rvin_s_selection(struct file *file, void *fh,
->  		return -EINVAL;
->  	}
->  
-> -	/* HW supports modifying configuration while running */
-> -	rvin_crop_scale_comp(vin);
-> -
->  	return 0;
->  }
->  
-> diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-> index b2bac06c0a3cfcb7..fc70ded462ed3244 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-vin.h
-> +++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-> @@ -176,7 +176,4 @@ int rvin_reset_format(struct rvin_dev *vin);
->  
->  const struct rvin_video_format *rvin_format_from_pixel(u32 pixelformat);
->  
-> -/* Cropping, composing and scaling */
-> -void rvin_crop_scale_comp(struct rvin_dev *vin);
-> -
->  #endif
-> 
+
+Thanks, applied (with s/arm/ARM/ change in subject).
+
+Best regards,
+Krzysztof
