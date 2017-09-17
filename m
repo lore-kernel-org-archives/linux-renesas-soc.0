@@ -1,64 +1,48 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-sh@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 resend 3/4] sh: sh7264: Remove nonexistent GPIO_PH[0-7] to fix pinctrl registration
-Date: Tue, 12 Sep 2017 10:40:56 +0200
-Message-Id: <1505205657-18012-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1505205657-18012-1-git-send-email-geert+renesas@glider.be>
-References: <1505205657-18012-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:45250 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751242AbdIQXst (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sun, 17 Sep 2017 19:48:49 -0400
+From: Kieran Bingham <kbingham@kernel.org>
+To: laurent.pinchart@ideasonboard.com
+Cc: linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH 1/5] kmstest: Repair pep8 line formatting
+Date: Mon, 18 Sep 2017 00:48:40 +0100
+Message-Id: <1505692124-12167-2-git-send-email-kbingham@kernel.org>
+In-Reply-To: <1505692124-12167-1-git-send-email-kbingham@kernel.org>
+References: <1505692124-12167-1-git-send-email-kbingham@kernel.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Pinmux_pins[] is initialized through PINMUX_GPIO(), using designated
-array initializers, where the GPIO_* enums serve as indices.
-If enum values are defined, but never used, pinmux_pins[] contains
-(zero-filled) holes.  Such entries are treated as pin zero, which was
-registered before, thus leading to pinctrl registration failures, as
-seen on sh7722:
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-    sh-pfc pfc-sh7722: pin 0 already registered
-    sh-pfc pfc-sh7722: error during pin registration
-    sh-pfc pfc-sh7722: could not register: -22
-    sh-pfc: probe of pfc-sh7722 failed with error -22
+PEP8 reports issues with blank lines, both at the start and end of the module.
 
-Remove GPIO_PH[0-7] from the enum to fix this.
+Fix them.
 
-Fixes: 41797f75486d8ca3 ("sh: Add pinmux for sh7264")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
-Untested due to lack of hardware.
+ tests/kmstest.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-v2:
-  - Replace fake error messages by reference to sh7722,
-  - Add Reviewed-by.
----
- arch/sh/include/cpu-sh2a/cpu/sh7264.h | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/arch/sh/include/cpu-sh2a/cpu/sh7264.h b/arch/sh/include/cpu-sh2a/cpu/sh7264.h
-index 4d1ef6d74bd6050c..2ae0e938b657a109 100644
---- a/arch/sh/include/cpu-sh2a/cpu/sh7264.h
-+++ b/arch/sh/include/cpu-sh2a/cpu/sh7264.h
-@@ -43,9 +43,7 @@ enum {
- 	GPIO_PG7, GPIO_PG6, GPIO_PG5, GPIO_PG4,
- 	GPIO_PG3, GPIO_PG2, GPIO_PG1, GPIO_PG0,
+diff --git a/tests/kmstest.py b/tests/kmstest.py
+index 5938dc4a4da2..e8e3c3a0305b 100755
+--- a/tests/kmstest.py
++++ b/tests/kmstest.py
+@@ -8,6 +8,7 @@ import selectors
+ import sys
+ import time
  
--	/* Port H */
--	GPIO_PH7, GPIO_PH6, GPIO_PH5, GPIO_PH4,
--	GPIO_PH3, GPIO_PH2, GPIO_PH1, GPIO_PH0,
-+	/* Port H - Port H does not have a Data Register */
- 
- 	/* Port I - not on device */
- 
++
+ class Timer(object):
+     def __init__(self, timeout, callback):
+         self.timeout = time.clock_gettime(time.CLOCK_MONOTONIC) + timeout
+@@ -327,4 +328,3 @@ class KMSTest(object):
+         sys.stdout.write("\rTesting %s: SUCCESS\n" % self.test_name)
+         sys.stdout.flush()
+         return self.success
+-
 -- 
 2.7.4
