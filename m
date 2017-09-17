@@ -1,67 +1,113 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH v5 4/6] i2c: sh_mobile: use helper to decide if DMA is useful
-Date: Wed, 20 Sep 2017 20:59:54 +0200
-Message-Id: <20170920185956.13874-5-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170920185956.13874-1-wsa+renesas@sang-engineering.com>
-References: <20170920185956.13874-1-wsa+renesas@sang-engineering.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:45266 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751551AbdIQXsx (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sun, 17 Sep 2017 19:48:53 -0400
+From: Kieran Bingham <kbingham@kernel.org>
+To: laurent.pinchart@ideasonboard.com
+Cc: linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH 5/5] tests: Add a CRTC mode set stress test
+Date: Mon, 18 Sep 2017 00:48:44 +0100
+Message-Id: <1505692124-12167-6-git-send-email-kbingham@kernel.org>
+In-Reply-To: <1505692124-12167-1-git-send-email-kbingham@kernel.org>
+References: <1505692124-12167-1-git-send-email-kbingham@kernel.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This ensures that we fall back to PIO if the message length is too small
-for DMA being useful. Otherwise, we use DMA. A bounce buffer might be
-applied by the helper if the original message buffer is not DMA safe.
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Provide a stress routine on the CRTC by continuously disabling and
+resetting the mode.
+
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
- drivers/i2c/busses/i2c-sh_mobile.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ tests/kms-test-stresstest.py | 76 ++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 76 insertions(+)
+ create mode 100755 tests/kms-test-stresstest.py
 
-diff --git a/drivers/i2c/busses/i2c-sh_mobile.c b/drivers/i2c/busses/i2c-sh_mobile.c
-index 6f2aaeb7c4fa15..b76399d8a3abd3 100644
---- a/drivers/i2c/busses/i2c-sh_mobile.c
-+++ b/drivers/i2c/busses/i2c-sh_mobile.c
-@@ -145,6 +145,7 @@ struct sh_mobile_i2c_data {
- 	struct dma_chan *dma_rx;
- 	struct scatterlist sg;
- 	enum dma_data_direction dma_direction;
-+	u8 *dma_buf;
- };
- 
- struct sh_mobile_dt_config {
-@@ -548,6 +549,8 @@ static void sh_mobile_i2c_dma_callback(void *data)
- 	pd->pos = pd->msg->len;
- 	pd->stop_after_dma = true;
- 
-+	i2c_release_dma_safe_msg_buf(pd->msg, pd->dma_buf);
+diff --git a/tests/kms-test-stresstest.py b/tests/kms-test-stresstest.py
+new file mode 100755
+index 000000000000..0db6df63896c
+--- /dev/null
++++ b/tests/kms-test-stresstest.py
+@@ -0,0 +1,76 @@
++#!/usr/bin/python3
 +
- 	iic_set_clr(pd, ICIC, 0, ICIC_TDMAE | ICIC_RDMAE);
- }
- 
-@@ -608,7 +611,7 @@ static void sh_mobile_i2c_xfer_dma(struct sh_mobile_i2c_data *pd)
- 	if (IS_ERR(chan))
- 		return;
- 
--	dma_addr = dma_map_single(chan->device->dev, pd->msg->buf, pd->msg->len, dir);
-+	dma_addr = dma_map_single(chan->device->dev, pd->dma_buf, pd->msg->len, dir);
- 	if (dma_mapping_error(chan->device->dev, dma_addr)) {
- 		dev_dbg(pd->dev, "dma map failed, using PIO\n");
- 		return;
-@@ -665,7 +668,8 @@ static int start_ch(struct sh_mobile_i2c_data *pd, struct i2c_msg *usr_msg,
- 	pd->pos = -1;
- 	pd->sr = 0;
- 
--	if (pd->msg->len > 8)
-+	pd->dma_buf = i2c_get_dma_safe_msg_buf(pd->msg, 8);
-+	if (pd->dma_buf)
- 		sh_mobile_i2c_xfer_dma(pd);
- 
- 	/* Enable all interrupts to begin with */
++import kmstest
++import pykms
++
++class StressModeSetTest(kmstest.KMSTest):
++    """Stress test the mode setting on all connectors in sequence with the default mode."""
++
++    def handle_page_flip(self, frame, time):
++        self.logger.log("Page flip complete")
++
++    def main(self):
++        for connector in self.card.connectors:
++            self.start("stress atomic mode set on connector %s" % connector.fullname)
++
++            # Skip disconnected connectors
++            if not connector.connected():
++                self.skip("unconnected connector")
++                continue
++
++            # Find a CRTC suitable for the connector
++            crtc = connector.get_current_crtc()
++            if not crtc:
++                crtcs = connector.get_possible_crtcs()
++                if len(crtcs) == 0:
++                    pass
++
++                crtc = crtcs[0]
++
++            # Get the default mode for the connector
++            try:
++                mode = connector.get_default_mode()
++            except ValueError:
++                self.skip("no mode available")
++                continue
++
++            self.logger.log("Testing connector %s on CRTC %u with mode %s" % \
++                  (connector.fullname, crtc.id, mode.name))
++
++            # Create a frame buffer
++            fb = pykms.DumbFramebuffer(self.card, mode.hdisplay, mode.vdisplay, "XR24")
++            pykms.draw_test_pattern(fb)
++
++            # Track any failures in the iterations
++            failures = 0
++
++            for i in range(50):
++                # Disable the crtc
++                ret = self.atomic_crtc_disable(crtc)
++                if ret < 0:
++                    self.fail("Failed to disable CRTC")
++                    failures += 1
++                    break
++
++                # Reset the flips counter
++                self.flips = 0
++
++                # Perform a mode set
++                ret = self.atomic_crtc_mode_set(crtc, connector, mode, fb)
++                if ret < 0:
++                    self.fail("atomic mode set failed with %d" % ret)
++                    failures += 1
++                    break
++    
++                self.logger.log("Atomic mode set complete")
++                self.run(1)
++
++                if self.flips == 0:
++                    self.fail("Page flip not registered")
++                    failures += 1
++                    break
++
++            if failures == 0:
++                self.success()
++
++StressModeSetTest().execute()
 -- 
-2.11.0
+2.7.4
