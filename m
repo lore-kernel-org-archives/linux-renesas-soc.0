@@ -1,82 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:23727 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752155AbdI2Lst (ORCPT
+Received: from mail.kernel.org ([198.145.29.99]:45254 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751295AbdIQXsu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Sep 2017 07:48:49 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: balbi@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 2/3] usb: gadget: udc: renesas_usb3: Add suspend/resume functions
-Date: Fri, 29 Sep 2017 20:45:00 +0900
-Message-Id: <1506685501-24988-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1506685501-24988-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1506685501-24988-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Sun, 17 Sep 2017 19:48:50 -0400
+From: Kieran Bingham <kbingham@kernel.org>
+To: laurent.pinchart@ideasonboard.com
+Cc: linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH 2/5] kmstest: Repeir pep8 whitespace errors
+Date: Mon, 18 Sep 2017 00:48:41 +0100
+Message-Id: <1505692124-12167-3-git-send-email-kbingham@kernel.org>
+In-Reply-To: <1505692124-12167-1-git-send-email-kbingham@kernel.org>
+References: <1505692124-12167-1-git-send-email-kbingham@kernel.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds support suspend/resume functions
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-[shimoda: add the commit log]
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+PEP8 defines that there should be no whitespace before or after the '{'
+and '}' braces.
+
+Remove whitespace from two statements that incorrectly place spaces
+around these braces.
+
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
- drivers/usb/gadget/udc/renesas_usb3.c | 34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+ tests/kmstest.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
-index 7d99774..d55a06b 100644
---- a/drivers/usb/gadget/udc/renesas_usb3.c
-+++ b/drivers/usb/gadget/udc/renesas_usb3.c
-@@ -2644,11 +2644,45 @@ static int renesas_usb3_probe(struct platform_device *pdev)
- 	return ret;
- }
+diff --git a/tests/kmstest.py b/tests/kmstest.py
+index e8e3c3a0305b..0cf69f44703e 100755
+--- a/tests/kmstest.py
++++ b/tests/kmstest.py
+@@ -197,7 +197,7 @@ class KMSTest(object):
  
-+#ifdef CONFIG_PM_SLEEP
-+static int renesas_usb3_suspend(struct device *dev)
-+{
-+	struct renesas_usb3 *usb3 = dev_get_drvdata(dev);
-+
-+	/* Not started */
-+	if (!usb3->driver)
-+		return 0;
-+
-+	renesas_usb3_stop_controller(usb3);
-+	pm_runtime_put(dev);
-+
-+	return 0;
-+}
-+
-+static int renesas_usb3_resume(struct device *dev)
-+{
-+	struct renesas_usb3 *usb3 = dev_get_drvdata(dev);
-+
-+	/* Not started */
-+	if (!usb3->driver)
-+		return 0;
-+
-+	pm_runtime_get_sync(dev);
-+	renesas_usb3_init_controller(usb3);
-+
-+	return 0;
-+}
-+#endif
-+
-+static SIMPLE_DEV_PM_OPS(renesas_usb3_pm_ops, renesas_usb3_suspend,
-+			renesas_usb3_resume);
-+
- static struct platform_driver renesas_usb3_driver = {
- 	.probe		= renesas_usb3_probe,
- 	.remove		= renesas_usb3_remove,
- 	.driver		= {
- 		.name =	(char *)udc_name,
-+		.pm		= &renesas_usb3_pm_ops,
- 		.of_match_table = of_match_ptr(usb3_of_match),
- 	},
- };
+         req = pykms.AtomicReq(self.card)
+         req.add(connector, 'CRTC_ID', crtc.id)
+-        req.add(crtc, { 'ACTIVE': 1, 'MODE_ID': mode_blob.id })
++        req.add(crtc, {'ACTIVE': 1, 'MODE_ID': mode_blob.id})
+         if fb:
+             req.add(crtc.primary_plane, {
+                         'FB_ID': fb.id,
+@@ -238,7 +238,7 @@ class KMSTest(object):
+     def atomic_planes_disable(self, sync=True):
+         req = pykms.AtomicReq(self.card)
+         for plane in self.card.planes:
+-            req.add(plane, { "FB_ID": 0, 'CRTC_ID': 0 })
++            req.add(plane, {"FB_ID": 0, 'CRTC_ID': 0})
+ 
+         if sync:
+             return req.commit_sync()
 -- 
-1.9.1
+2.7.4
