@@ -1,47 +1,78 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:36115 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751707AbdIUVrS (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 21 Sep 2017 17:47:18 -0400
-From: Magnus Damm <magnus.damm@gmail.com>
-To: devicetree@vger.kernel.org
-Cc: mark.rutland@arm.com, laurent.pinchart+renesas@ideasonboard.com,
-        geert+renesas@glider.be, joro@8bytes.org,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Mon, 18 Sep 2017 09:39:46 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
-        iommu@lists.linux-foundation.org, robh+dt@kernel.org,
-        horms+renesas@verge.net.au, Magnus Damm <magnus.damm@gmail.com>,
-        robin.murphy@arm.com
-Date: Fri, 22 Sep 2017 06:44:54 +0900
-Message-Id: <150603029494.9664.3785539947602559695.sendpatchset@little-apple>
-Subject: [PATCH 0/3] iommu/ipmmu-vmsa: R-Car Gen3 IPMMU DT binding update
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Russell King <linux@armlinux.org.uk>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Juri Lelli <juri.lelli@arm.com>
+Subject: Re: [PATCH 4/4] arm: dts: r8a7790: add cpu capacity-dmips-mhz
+ information
+Message-ID: <20170918073946.GA9156@verge.net.au>
+References: <20170830144120.9312-1-dietmar.eggemann@arm.com>
+ <20170830144120.9312-5-dietmar.eggemann@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20170830144120.9312-5-dietmar.eggemann@arm.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-iommu/ipmmu-vmsa: R-Car Gen3 IPMMU DT binding update
+On Wed, Aug 30, 2017 at 03:41:20PM +0100, Dietmar Eggemann wrote:
+> The following 'capacity-dmips-mhz' dt property values are used:
+> 
+> Cortex-A15: 1024, Cortex-A7: 539
+> 
+> They have been derived form the cpu_efficiency values:
+> 
+> Cortex-A15: 3891, Cortex-A7: 2048
+> 
+> by scaling them so that the Cortex-A15s (big cores) use 1024.
+> 
+> The cpu_efficiency values were originally derived from the "Big.LITTLE
+> Processing with ARM Cortex™-A15 & Cortex-A7" white paper
+> (http://www.cl.cam.ac.uk/~rdm34/big.LITTLE.pdf). Table 1 lists 1.9x
+> (3891/2048) as the Cortex-A15 vs Cortex-A7 performance ratio for the
+> Dhrystone benchmark.
+> 
+> The following platform is affected once cpu-invariant accounting
+> support is re-connected to the task scheduler:
 
-[PATCH 1/3] iommu/ipmmu-vmsa: Document R-Car M3-W IPMMU DT bindings
-[PATCH 2/3] iommu/ipmmu-vmsa: Document R-Car V3M IPMMU DT bindings
-[PATCH 3/3] iommu/ipmmu-vmsa: Document R-Car D3 IPMMU DT bindings
+Thanks, applied for v4.15.
 
-This series documents IPMMU DT bindings for the following SoCs:
- - R-Car M3-W - R8A7796
- - R-Car V3M - R8A77970
- - R-Car D3 - R8A77995
+My understanding from the following comment in the cover letter is that not
+currently the case and this there is no behavioural change in applying this
+patch.
 
-Patch 1/3 is ready for upstream merge and includes the following tags:
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Acked-by: Simon Horman <horms+renesas@verge.net.au>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+For the record I observed the following with and without this patch
+applied. I believe this is the expected result.
 
-Patch 2/3 and 3/3 are quite trivial but have no acked-by so far.
+v4.14-rc1
+# cat /sys/devices/system/cpu/cpu*/cpu_capacity
+1535
+1535
+1535
+1535
+1024
+1024
+1024
+1024
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
-
- Developed on top of v4.14-rc1
-
- Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt |    3 +++
- 1 file changed, 3 insertions(+)
+v4.14-rc1 + patch
+# cat /sys/devices/system/cpu/cpu*/cpu_capacity
+1024
+1024
+1024
+1024
+539
+539
+539
+539
