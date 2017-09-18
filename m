@@ -1,108 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:57102 "EHLO
-        smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751021AbdIFHFN (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:49210 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755250AbdIRNsh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Sep 2017 03:05:13 -0400
-From: Dirk Behme <dirk.behme@de.bosch.com>
-To: <linux-renesas-soc@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        Mon, 18 Sep 2017 09:48:37 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Magnus Damm <damm+renesas@opensource.se>,
         Geert Uytterhoeven <geert+renesas@glider.be>
-CC: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
-        Dirk Behme <dirk.behme@de.bosch.com>
-Subject: [PATCH 1/8] spi: sh-msiof: Add sleep before master transfer for test
-Date: Wed, 6 Sep 2017 09:05:00 +0200
-Message-ID: <20170906070507.26223-2-dirk.behme@de.bosch.com>
-In-Reply-To: <20170906070507.26223-1-dirk.behme@de.bosch.com>
-References: <20170906070507.26223-1-dirk.behme@de.bosch.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Subject: [PATCH v3 05/12] ARM: dts: r8a7794: Update CMT compat strings
+Date: Mon, 18 Sep 2017 15:48:28 +0200
+Message-Id: <1505742515-31727-6-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1505742515-31727-1-git-send-email-geert+renesas@glider.be>
+References: <1505742515-31727-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+From: Magnus Damm <damm+renesas@opensource.se>
 
-This patch is for debug of transfer between master and slave.
-Since the slave needs to complete a preparation in data transfer
-before the master working, the sleep wait is put before
-the data transfer of the master.
+Use recently updated R-Car Gen2 CMT0 and CMT1 compat strings.
 
-Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
-Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+With this change in place we can keep device-specific configuration in
+the driver and the driver can be able to support CMT1 specific features.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/spi/Kconfig        | 20 ++++++++++++++++++++
- drivers/spi/spi-sh-msiof.c | 15 +++++++++++++++
- 2 files changed, 35 insertions(+)
+v3:
+  - Take over from Magnus,
+  - Update compatible values,
+  - Split in per-SoC patches,
 
-diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
-index a75f2a2cf780..0139ecf8f42e 100644
---- a/drivers/spi/Kconfig
-+++ b/drivers/spi/Kconfig
-@@ -600,6 +600,26 @@ config SPI_SH_MSIOF
- 	help
- 	  SPI driver for SuperH and SH Mobile MSIOF blocks.
+v2:
+  - Added Acked-by and Tested-by from Geert,
+  - Added Acked-by from Laurent.
+---
+ arch/arm/boot/dts/r8a7794.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index 035c33715b65a6b7..fd223607ef81075f 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -180,7 +180,7 @@
+ 	};
  
-+config SPI_SH_MSIOF_TRANSFER_SYNC_DEBUG
-+	bool "Transfer Synchronization Debug support for MSIOF"
-+	depends on SPI_SH_MSIOF
-+	default n
-+	help
-+	  In data transfer, the slave needs to have completed
-+	  a transfer preparation before the master.
-+	  As a test environment, it was to be able to put a sleep wait
-+	  before the data transfer of the master.
-+
-+config SPI_SH_MSIOF_TRANSFER_SYNC_DEBUG_MSLEEP
-+	int "Master of sleep latency (msec time)"
-+	default 1
-+	depends on SPI_SH_MSIOF && SPI_SH_MSIOF_TRANSFER_SYNC_DEBUG
-+	help
-+	  Select Sleep latency of the previous data transfer
-+	  at the time of master mode.
-+	  Examples:
-+	    N => N msec
-+
- config SPI_SH
- 	tristate "SuperH SPI controller"
- 	depends on SUPERH || COMPILE_TEST
-diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
-index 0eb1e9583485..2b4d3a520176 100644
---- a/drivers/spi/spi-sh-msiof.c
-+++ b/drivers/spi/spi-sh-msiof.c
-@@ -41,6 +41,10 @@ struct sh_msiof_chipdata {
- 	u16 min_div;
- };
+ 	cmt0: timer@ffca0000 {
+-		compatible = "renesas,cmt-48-gen2";
++		compatible = "renesas,r8a7794-cmt0", "renesas,rcar-gen2-cmt0";
+ 		reg = <0 0xffca0000 0 0x1004>;
+ 		interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
+@@ -195,7 +195,7 @@
+ 	};
  
-+#ifdef CONFIG_SPI_SH_MSIOF_TRANSFER_SYNC_DEBUG
-+#define TRANSFAR_SYNC_DELAY (CONFIG_SPI_SH_MSIOF_TRANSFER_SYNC_DEBUG_MSLEEP)
-+#endif /* CONFIG_SPI_SH_MSIOF_TRANSFER_SYNC_DEBUG */
-+
- struct sh_msiof_spi_priv {
- 	struct spi_master *master;
- 	void __iomem *mapbase;
-@@ -910,6 +914,11 @@ static int sh_msiof_transfer_one(struct spi_master *master,
- 		if (tx_buf)
- 			copy32(p->tx_dma_page, tx_buf, l / 4);
- 
-+#ifdef CONFIG_SPI_SH_MSIOF_TRANSFER_SYNC_DEBUG
-+		if (p->mode == SPI_MSIOF_MASTER)
-+			msleep(TRANSFAR_SYNC_DELAY);
-+#endif /* CONFIG_SPI_SH_MSIOF_TRANSFER_SYNC_DEBUG */
-+
- 		ret = sh_msiof_dma_once(p, tx_buf, rx_buf, l);
- 		if (ret == -EAGAIN) {
- 			pr_warn_once("%s %s: DMA not available, falling back to PIO\n",
-@@ -983,6 +992,12 @@ static int sh_msiof_transfer_one(struct spi_master *master,
- 	words = len / bytes_per_word;
- 
- 	while (words > 0) {
-+
-+#ifdef CONFIG_SPI_SH_MSIOF_TRANSFER_SYNC_DEBUG
-+		if (p->mode == SPI_MSIOF_MASTER)
-+			msleep(TRANSFAR_SYNC_DELAY);
-+#endif /* CONFIG_SPI_SH_MSIOF_TRANSFER_SYNC_DEBUG */
-+
- 		n = sh_msiof_spi_txrx_once(p, tx_fifo, rx_fifo, tx_buf, rx_buf,
- 					   words, bits);
- 		if (n < 0)
+ 	cmt1: timer@e6130000 {
+-		compatible = "renesas,cmt-48-gen2";
++		compatible = "renesas,r8a7794-cmt1", "renesas,rcar-gen2-cmt1";
+ 		reg = <0 0xe6130000 0 0x1004>;
+ 		interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
 -- 
-2.14.1
+2.7.4
