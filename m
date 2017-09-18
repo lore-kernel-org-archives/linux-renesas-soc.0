@@ -1,49 +1,67 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from laurent.telenet-ops.be ([195.130.137.89]:40506 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755306AbdIRNsh (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 18 Sep 2017 09:48:37 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         linux-renesas-soc@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 2/2] dt-bindings: spi: sh-msiof: Add r8a774[35] to the compatible list
-Date: Mon, 25 Sep 2017 09:54:20 +0100
-Message-Id: <1506329660-4064-3-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1506329660-4064-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1506329660-4064-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+        Magnus Damm <damm+renesas@opensource.se>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 11/12] ARM: dts: r8a7794: Remove CMT renesas,channels-mask
+Date: Mon, 18 Sep 2017 15:48:34 +0200
+Message-Id: <1505742515-31727-12-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1505742515-31727-1-git-send-email-geert+renesas@glider.be>
+References: <1505742515-31727-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
- Documentation/devicetree/bindings/spi/sh-msiof.txt | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+From: Magnus Damm <damm+renesas@opensource.se>
 
-diff --git a/Documentation/devicetree/bindings/spi/sh-msiof.txt b/Documentation/devicetree/bindings/spi/sh-msiof.txt
-index e865855..bdd8395 100644
---- a/Documentation/devicetree/bindings/spi/sh-msiof.txt
-+++ b/Documentation/devicetree/bindings/spi/sh-msiof.txt
-@@ -1,7 +1,9 @@
- Renesas MSIOF spi controller
+Update the DTS to remove the now deprecated "renesas,channels-mask"
+property.
+
+The channel information is now kept in the device driver and can easily
+be determined based on the compat string.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v3:
+  - Take over from Magnus,
+  - Split in per-SoC patches,
+
+v2:
+  - Rebased on top of power-domain changes,
+  - Added Acked-by and Tested-by from Geert.
+---
+ arch/arm/boot/dts/r8a7794.dtsi | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index fd223607ef81075f..e57335de50880587 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -189,8 +189,6 @@
+ 		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
+ 		resets = <&cpg 124>;
  
- Required properties:
--- compatible           : "renesas,msiof-r8a7790" (R-Car H2)
-+- compatible           : "renesas,msiof-r8a7743" (RZ/G1M)
-+			 "renesas,msiof-r8a7745" (RZ/G1E)
-+			 "renesas,msiof-r8a7790" (R-Car H2)
- 			 "renesas,msiof-r8a7791" (R-Car M2-W)
- 			 "renesas,msiof-r8a7792" (R-Car V2H)
- 			 "renesas,msiof-r8a7793" (R-Car M2-N)
-@@ -10,7 +12,7 @@ Required properties:
- 			 "renesas,msiof-r8a7796" (R-Car M3-W)
- 			 "renesas,msiof-sh73a0" (SH-Mobile AG5)
- 			 "renesas,sh-mobile-msiof" (generic SH-Mobile compatibile device)
--			 "renesas,rcar-gen2-msiof" (generic R-Car Gen2 compatible device)
-+			 "renesas,rcar-gen2-msiof" (generic R-Car Gen2 and RZ/G1 compatible device)
- 			 "renesas,rcar-gen3-msiof" (generic R-Car Gen3 compatible device)
- 			 "renesas,sh-msiof"      (deprecated)
+-		renesas,channels-mask = <0x60>;
+-
+ 		status = "disabled";
+ 	};
+ 
+@@ -210,8 +208,6 @@
+ 		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
+ 		resets = <&cpg 329>;
+ 
+-		renesas,channels-mask = <0xff>;
+-
+ 		status = "disabled";
+ 	};
  
 -- 
 2.7.4
-
