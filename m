@@ -1,63 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f48.google.com ([209.85.215.48]:34336 "EHLO
-        mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932323AbdIFWec (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:49202 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755101AbdIRNsh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Sep 2017 18:34:32 -0400
-Received: by mail-lf0-f48.google.com with SMTP id l196so20807254lfl.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 06 Sep 2017 15:34:31 -0700 (PDT)
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+        Mon, 18 Sep 2017 09:48:37 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH 0/18] arm64: renesas: add ULCB Kingfisher board
-Date: Thu,  7 Sep 2017 01:34:27 +0300
-Message-Id: <1504737267-22829-1-git-send-email-vladimir.barinov@cogentembedded.com>
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 09/12] ARM: dts: r8a7791: Remove CMT renesas,channels-mask
+Date: Mon, 18 Sep 2017 15:48:32 +0200
+Message-Id: <1505742515-31727-10-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1505742515-31727-1-git-send-email-geert+renesas@glider.be>
+References: <1505742515-31727-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+From: Magnus Damm <damm+renesas@opensource.se>
 
-This adds the folowing:
-- ULCB Kingfisher infotainment board device tree
-- Document DT bindings
+Update the DTS to remove the now deprecated "renesas,channels-mask"
+property.
 
-Vladimir Barinov (18):
-[01/18] dt: arm: shmobile: add M3ULCB Kingfisher board DT
-[02/18] dt: arm: shmobile: add H3ULCB Kingfisher board DT
-[03/18] arm64: dts: ulcb-kf: initial device tree
-[04/18] arm64: dts: m3ulcb-kf: initial device tree
-[05/18] arm64: dts: h3ulcb-kf: ES1.x SoC initial device tree
-[06/18] arm64: dts: h3ulcb-kf: ES2.0+ SoC initial device tree
-[07/18] arm64: dts: ulcb-kf: enable SCIF1
-[08/18] arm64: dts: ulcb-kf: enable CAN0/1
-[09/18] arm64: dts: ulcb-kf: enable USB2 PHY of channel 0
-[10/18] arm64: dts: ulcb-kf: enable HSUSB
-[11/18] arm64: dts: ulcb-kf: enable USB2.0 Host channel 0
-[12/18] arm64: dts: ulcb-kf: enable PCIE0/1
-[13/18] arm64: dts: ulcb-kf: enable USB3.0 Host
-[14/18] arm64: dts: ulcb-kf: enable PCA9539 on I2C2
-[15/18] arm64: dts: ulcb-kf: enable PCA9539 on I2C4
-[16/18] arm64: dts: ulcb-kf: enable PCA9548 on I2C2
-[17/18] arm64: dts: ulcb-kf: enable PCA9548 on I2C4
-[18/18] arm64: dts: ulcb-kf: hog USB3 hub control gpios
+The channel information is now kept in the device driver and can easily
+be determined based on the compat string.
 
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-This patchset is against the 'kernel/git/horms/renesas.git' repo.
+v3:
+  - Take over from Magnus,
+  - Split in per-SoC patches,
 
- Documentation/devicetree/bindings/arm/shmobile.txt    |    2 
- arch/arm64/boot/dts/renesas/Makefile                  |    3 
- arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb-kf.dts |   17 +
- arch/arm64/boot/dts/renesas/r8a7795-h3ulcb-kf.dts     |   17 +
- arch/arm64/boot/dts/renesas/r8a7796-m3ulcb-kf.dts     |   17 +
- arch/arm64/boot/dts/renesas/ulcb-kf.dtsi              |  185 ++++++++++++++++++
- 6 files changed, 241 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb-kf.dts
- create mode 100644 arch/arm64/boot/dts/renesas/r8a7795-h3ulcb-kf.dts
- create mode 100644 arch/arm64/boot/dts/renesas/r8a7796-m3ulcb-kf.dts
- create mode 100644 arch/arm64/boot/dts/renesas/ulcb-kf.dts
+v2:
+  - Rebased on top of power-domain changes,
+  - Added Acked-by and Tested-by from Geert.
+---
+ arch/arm/boot/dts/r8a7791.dtsi | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index 09a9a213f90d445b..9b17800f36b1fde0 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -265,8 +265,6 @@
+ 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+ 		resets = <&cpg 124>;
+ 
+-		renesas,channels-mask = <0x60>;
+-
+ 		status = "disabled";
+ 	};
+ 
+@@ -286,8 +284,6 @@
+ 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+ 		resets = <&cpg 329>;
+ 
+-		renesas,channels-mask = <0xff>;
+-
+ 		status = "disabled";
+ 	};
+ 
+-- 
+2.7.4
