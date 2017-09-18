@@ -1,52 +1,40 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:50607 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750791AbdIRHsY (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 18 Sep 2017 03:48:24 -0400
+Date: Mon, 18 Sep 2017 09:48:03 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
         Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <damm+renesas@opensource.se>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 5/7] clocksource: sh_cmt: Mark "renesas,cmt-48-gen2" deprecated
-Date: Mon, 18 Sep 2017 15:46:45 +0200
-Message-Id: <1505742407-31576-6-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1505742407-31576-1-git-send-email-geert+renesas@glider.be>
-References: <1505742407-31576-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+        Magnus Damm <magnus.damm@gmail.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 1/8] soc: renesas: rcar-sysc: add R8A77970 support
+Message-ID: <20170918074803.GA4644@verge.net.au>
+References: <20170915194421.403764714@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170915194421.403764714@cogentembedded.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document in the driver that "renesas,cmt-48-gen2" is deprecated, but
-still supported for backward compatibility with old DTBs, cfr. commit
-4e18111ff38f0664 ("devicetree: bindings: Remove deprecated
-properties").
+On Fri, Sep 15, 2017 at 10:43:19PM +0300, Sergei Shtylyov wrote:
+> Add support for R-Car V3M (R8A77970) SoC power areas to the R-Car SYSC
+> driver.
+> 
+> Based on the original (and large) patch by Daisuke Matsushita
+> <daisuke.matsushita.ns@hitachi.com>.
+> 
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3:
-  - New.
----
- drivers/clocksource/sh_cmt.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clocksource/sh_cmt.c b/drivers/clocksource/sh_cmt.c
-index 8546736e3bc8e961..61a9225097065cc4 100644
---- a/drivers/clocksource/sh_cmt.c
-+++ b/drivers/clocksource/sh_cmt.c
-@@ -935,7 +935,11 @@ MODULE_DEVICE_TABLE(platform, sh_cmt_id_table);
- 
- static const struct of_device_id sh_cmt_of_table[] __maybe_unused = {
- 	{ .compatible = "renesas,cmt-48", .data = &sh_cmt_info[SH_CMT_48BIT] },
--	{ .compatible = "renesas,cmt-48-gen2", .data = &sh_cmt_info[SH_CMT0_RCAR_GEN2] },
-+	{
-+		/* deprecated, preserved for backward compatibility */
-+		.compatible = "renesas,cmt-48-gen2",
-+		.data = &sh_cmt_info[SH_CMT0_RCAR_GEN2]
-+	},
- 	{ .compatible = "renesas,rcar-gen2-cmt0", .data = &sh_cmt_info[SH_CMT0_RCAR_GEN2] },
- 	{ .compatible = "renesas,rcar-gen2-cmt1", .data = &sh_cmt_info[SH_CMT1_RCAR_GEN2] },
- 	{ }
--- 
-2.7.4
+Thanks, applied.
