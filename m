@@ -1,61 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-co1nam03on0082.outbound.protection.outlook.com ([104.47.40.82]:61056
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750886AbdISAnJ (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:40514 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755289AbdIRNsh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Sep 2017 20:43:09 -0400
-From: "Jasty, Ananth" <Ananth.Jasty@cavium.com>
-To: "magnus.damm@gmail.com" <magnus.damm@gmail.com>
-CC: "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "robin.murphy@arm.com" <robin.murphy@arm.com>,
-        dann frazier <dann.frazier@canonical.com>,
-        "laurent.pinchart+renesas@ideasonboard.com"
-        <laurent.pinchart+renesas@ideasonboard.com>,
-        "geert+renesas@glider.be" <geert+renesas@glider.be>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
-Subject: Seeing conflict with IPMMU driver under ACPI
-Date: Tue, 19 Sep 2017 00:43:05 +0000
-Message-ID: <CAA01098-8301-4703-84CE-5CFA8A68AF13@caviumnetworks.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <2886555FEDEEB144A3FEF4A7903EAB9D@namprd07.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        Mon, 18 Sep 2017 09:48:37 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 04/12] ARM: dts: r8a7793: Update CMT compat strings
+Date: Mon, 18 Sep 2017 15:48:27 +0200
+Message-Id: <1505742515-31727-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1505742515-31727-1-git-send-email-geert+renesas@glider.be>
+References: <1505742515-31727-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGksIHdpdGggeW91ciBJUE1NVSBkcml2ZXIgZW5hYmxlZCB1bmRlciA0LjEzIHdl4oCZcmUgc2Vl
-aW5nIGEgY3Jhc2ggb24gYm9vdDoNCg0KWyAxMy43ODUxNjRdIFVuYWJsZSB0byBoYW5kbGUga2Vy
-bmVsIE5VTEwgcG9pbnRlciBkZXJlZmVyZW5jZSBhdCB2aXJ0dWFsIGFkZHJlc3MgMDAwMDAwMTgN
-ClsgMTMuNzkzMjU0XSBbMDAwMDAwMDAwMDAwMDAxOF0gdXNlciBhZGRyZXNzIGJ1dCBhY3RpdmVf
-bW0gaXMgc3dhcHBlcg0KWyAxMy43OTk2MDBdIEludGVybmFsIGVycm9yOiBPb3BzOiA5NjAwMDAw
-NCBbIzFdIFNNUA0KWyAxMy44MDQ0NjZdIE1vZHVsZXMgbGlua2VkIGluOiBhZXNfbmVvbl9icyBh
-ZXNfbmVvbl9ibGsgY3J5cHRvX3NpbWQgY3J5cHRkDQpbIDEzLjgxMTMzNF0gQ1BVOiAxNTIgUElE
-OiAxNTI5IENvbW06IGt3b3JrZXIvMTUyOjEgTm90IHRhaW50ZWQgNC4xMy4wLTktZ2VuZXJpYyAj
-MTAtVWJ1bnR1DQpbIDEzLjgxOTU4NF0gSGFyZHdhcmUgbmFtZTogRGVmYXVsdCBzdHJpbmcgQ2F2
-aXVtIFRodW5kZXJYMi9EZWZhdWx0IHN0cmluZywgQklPUyA1LjEzIDA3LzIwLzIwMTcNClsgMTMu
-ODI4Mjg1XSBXb3JrcXVldWU6IGV2ZW50cyBkZWZlcnJlZF9wcm9iZV93b3JrX2Z1bmMNClsgMTMu
-ODMzNDEwXSB0YXNrOiBmZmZmODBiZWU5M2QwMDAwIHRhc2suc3RhY2s6IGZmZmY4MGJlZTkzZGMw
-MDANClsgMTMuODM5MzMwXSBQQyBpcyBhdCBpb21tdV9vcHNfZnJvbV9md25vZGUrMHg0Yy8weDkw
-DQpbIDEzLjg0NDI4Ml0gTFIgaXMgYXQgaW9tbXVfb3BzX2Zyb21fZndub2RlKzB4MjgvMHg5MA0K
-DQpUaGUgQVJNIFNNTVV2MyBkcml2ZXIgKHdoaWNoIG91ciBwbGF0Zm9ybSBpbXBsZW1lbnRzKSBz
-ZWVtcyB0byBiZSBsb3NpbmcgaW9tbXVfb3BzIHRvIHRoZSBJUE1NVSBkcml2ZXIuDQoNCk5vdGU6
-IG91ciBwbGF0Zm9ybSB1c2VzIEFDUEkgZm9yIGRldmljZSBlbnVtZXJhdGlvbi4NCg0KSSBoYXZl
-IG5vIHdheSB0byB0ZXN0IHRoaXMsIGJ1dCBpcyB0aGVyZSBhIHJlYXNvbiB0aGUgc2V0X2lvbW11
-IGlzbuKAmXQgaW4gX3Byb2JlPw0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9pb21tdS9pcG1tdS12
-bXNhLmMgYi9kcml2ZXJzL2lvbW11L2lwbW11LXZtc2EuYw0KaW5kZXggMmEzOGFhMS4uZDRjNzJk
-YSAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvaW9tbXUvaXBtbXUtdm1zYS5jDQorKysgYi9kcml2ZXJz
-L2lvbW11L2lwbW11LXZtc2EuYw0KQEAgLTEwNjYsNiArMTA2Niw5IEBAIHN0YXRpYyBpbnQgaXBt
-bXVfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikNCg0KICAgICAgICBwbGF0Zm9y
-bV9zZXRfZHJ2ZGF0YShwZGV2LCBtbXUpOw0KDQorICAgICAgIGlmICghaW9tbXVfcHJlc2VudCgm
-cGxhdGZvcm1fYnVzX3R5cGUpKQ0KKyAgICAgICAgICAgICAgIGJ1c19zZXRfaW9tbXUoJnBsYXRm
-b3JtX2J1c190eXBlLCAmaXBtbXVfb3BzKTsNCisNCiAgICAgICAgcmV0dXJuIDA7DQogfQ0KDQpA
-QCAtMTEwOCw5ICsxMTExLDYgQEAgc3RhdGljIGludCBfX2luaXQgaXBtbXVfaW5pdCh2b2lkKQ0K
-ICAgICAgICBpZiAocmV0IDwgMCkNCiAgICAgICAgICAgICAgICByZXR1cm4gcmV0Ow0KDQotICAg
-ICAgIGlmICghaW9tbXVfcHJlc2VudCgmcGxhdGZvcm1fYnVzX3R5cGUpKQ0KLSAgICAgICAgICAg
-ICAgIGJ1c19zZXRfaW9tbXUoJnBsYXRmb3JtX2J1c190eXBlLCAmaXBtbXVfb3BzKTsNCi0NCiAg
-ICAgICAgcmV0dXJuIDA7DQogfQ0KDQoNCklmIEnigJltIHdyb25nLCBteSBhcG9sb2dpZXMuDQoN
-ClRoYW5rIHlvdSwNCg0KQW5hbnRoIEphc3R5DQpMZWFkIFNvZnR3YXJlIEVuZ2luZWVyDQpDYXZp
-dW0NCg0K
+From: Magnus Damm <damm+renesas@opensource.se>
+
+Use recently updated R-Car Gen2 CMT0 and CMT1 compat strings.
+
+With this change in place we can keep device-specific configuration in
+the driver and the driver can be able to support CMT1 specific features.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v3:
+  - Take over from Magnus,
+  - Update compatible values,
+  - Split in per-SoC patches,
+
+v2:
+  - Added Acked-by and Tested-by from Geert,
+  - Added Acked-by from Laurent.
+---
+ arch/arm/boot/dts/r8a7793.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index aa19b93494bfaab0..41b66bb0747a339e 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -247,7 +247,7 @@
+ 	};
+ 
+ 	cmt0: timer@ffca0000 {
+-		compatible = "renesas,cmt-48-r8a7793", "renesas,cmt-48-gen2";
++		compatible = "renesas,r8a7793-cmt0", "renesas,rcar-gen2-cmt0";
+ 		reg = <0 0xffca0000 0 0x1004>;
+ 		interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
+@@ -262,7 +262,7 @@
+ 	};
+ 
+ 	cmt1: timer@e6130000 {
+-		compatible = "renesas,cmt-48-r8a7793", "renesas,cmt-48-gen2";
++		compatible = "renesas,r8a7793-cmt1", "renesas,rcar-gen2-cmt1";
+ 		reg = <0 0xe6130000 0 0x1004>;
+ 		interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
+-- 
+2.7.4
