@@ -1,82 +1,89 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:42682 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750865AbdIOQmR (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Sep 2017 12:42:17 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: laurent.pinchart@ideasonboard.com,
-        linux-renesas-soc@vger.kernel.org
-Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v1 3/3] drm: rcar-du: Remove unused CRTC suspend/resume functions
-Date: Fri, 15 Sep 2017 17:42:07 +0100
-Message-Id: <588e2797c3b8c0b966afb549e658e3cd0652a734.1505493461.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.3bc8f413af3b3a9548574c3591aad0bf5b10e181.1505493461.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.3bc8f413af3b3a9548574c3591aad0bf5b10e181.1505493461.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.3bc8f413af3b3a9548574c3591aad0bf5b10e181.1505493461.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.3bc8f413af3b3a9548574c3591aad0bf5b10e181.1505493461.git-series.kieran.bingham+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <damm+renesas@opensource.se>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 4/7] clocksource: sh_cmt: Remove support for "renesas,cmt-32*"
+Date: Mon, 18 Sep 2017 15:46:44 +0200
+Message-Id: <1505742407-31576-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1505742407-31576-1-git-send-email-geert+renesas@glider.be>
+References: <1505742407-31576-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-An early implementation of suspend-resume helpers are available in the
-CRTC module, however they are unused and no longer needed.
+Remove driver matching support for the unused "renesas,cmt-32" and
+"renesas,cmt-32-fast" compatible values, cfr. commit 203bb3479958c48a
+("devicetree: bindings: Remove unused 32-bit CMT bindings").
 
-With suspend and resume handled by the core DRM atomic helpers, we can
-remove the unused functions.
+As this removes the last user of SH_CMT_32BIT_FAST, all support for this
+variant is removed from the driver.
 
-CC: dri-devel@lists.freedesktop.org
-
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 35 +---------------------------
- 1 file changed, 35 deletions(-)
+v3:
+  - New.
+---
+ drivers/clocksource/sh_cmt.c | 20 --------------------
+ 1 file changed, 20 deletions(-)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index 301ea1a8018e..b492063a6e1f 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -557,41 +557,6 @@ static void rcar_du_crtc_stop(struct rcar_du_crtc *rcrtc)
- 	rcar_du_group_start_stop(rcrtc->group, false);
- }
+diff --git a/drivers/clocksource/sh_cmt.c b/drivers/clocksource/sh_cmt.c
+index 45af436483f39cb0..8546736e3bc8e961 100644
+--- a/drivers/clocksource/sh_cmt.c
++++ b/drivers/clocksource/sh_cmt.c
+@@ -66,7 +66,6 @@ struct sh_cmt_device;
+ enum sh_cmt_model {
+ 	SH_CMT_16BIT,
+ 	SH_CMT_32BIT,
+-	SH_CMT_32BIT_FAST,
+ 	SH_CMT_48BIT,
+ 	SH_CMT0_RCAR_GEN2,
+ 	SH_CMT1_RCAR_GEN2,
+@@ -203,16 +202,6 @@ static const struct sh_cmt_info sh_cmt_info[] = {
+ 		.read_count = sh_cmt_read32,
+ 		.write_count = sh_cmt_write32,
+ 	},
+-	[SH_CMT_32BIT_FAST] = {
+-		.model = SH_CMT_32BIT_FAST,
+-		.width = 32,
+-		.overflow_bit = SH_CMT32_CMCSR_CMF,
+-		.clear_bits = ~(SH_CMT32_CMCSR_CMF | SH_CMT32_CMCSR_OVF),
+-		.read_control = sh_cmt_read16,
+-		.write_control = sh_cmt_write16,
+-		.read_count = sh_cmt_read32,
+-		.write_count = sh_cmt_write32,
+-	},
+ 	[SH_CMT_48BIT] = {
+ 		.model = SH_CMT_48BIT,
+ 		.channels_mask = 0x3f,
+@@ -890,13 +879,6 @@ static int sh_cmt_setup_channel(struct sh_cmt_channel *ch, unsigned int index,
+ 	case SH_CMT_48BIT:
+ 		ch->ioctrl = cmt->mapbase + 0x10 + ch->hwidx * 0x10;
+ 		break;
+-	case SH_CMT_32BIT_FAST:
+-		/*
+-		 * The 32-bit "fast" timer has a single channel at hwidx 5 but
+-		 * is located at offset 0x40 instead of 0x60 for some reason.
+-		 */
+-		ch->ioctrl = cmt->mapbase + 0x40;
+-		break;
+ 	case SH_CMT0_RCAR_GEN2:
+ 	case SH_CMT1_RCAR_GEN2:
+ 		ch->iostart = cmt->mapbase + ch->hwidx * 0x100;
+@@ -952,8 +934,6 @@ static const struct platform_device_id sh_cmt_id_table[] = {
+ MODULE_DEVICE_TABLE(platform, sh_cmt_id_table);
  
--void rcar_du_crtc_suspend(struct rcar_du_crtc *rcrtc)
--{
--	if (rcar_du_has(rcrtc->group->dev, RCAR_DU_FEATURE_VSP1_SOURCE))
--		rcar_du_vsp_disable(rcrtc);
--
--	rcar_du_crtc_stop(rcrtc);
--	rcar_du_crtc_put(rcrtc);
--}
--
--void rcar_du_crtc_resume(struct rcar_du_crtc *rcrtc)
--{
--	unsigned int i;
--
--	if (!rcrtc->crtc.state->active)
--		return;
--
--	rcar_du_crtc_get(rcrtc);
--	rcar_du_crtc_setup(rcrtc);
--
--	/* Commit the planes state. */
--	if (!rcar_du_has(rcrtc->group->dev, RCAR_DU_FEATURE_VSP1_SOURCE)) {
--		for (i = 0; i < rcrtc->group->num_planes; ++i) {
--			struct rcar_du_plane *plane = &rcrtc->group->planes[i];
--
--			if (plane->plane.state->crtc != &rcrtc->crtc)
--				continue;
--
--			rcar_du_plane_setup(plane);
--		}
--	}
--
--	rcar_du_crtc_update_planes(rcrtc);
--	rcar_du_crtc_start(rcrtc);
--}
--
- /* -----------------------------------------------------------------------------
-  * CRTC Functions
-  */
+ static const struct of_device_id sh_cmt_of_table[] __maybe_unused = {
+-	{ .compatible = "renesas,cmt-32", .data = &sh_cmt_info[SH_CMT_32BIT] },
+-	{ .compatible = "renesas,cmt-32-fast", .data = &sh_cmt_info[SH_CMT_32BIT_FAST] },
+ 	{ .compatible = "renesas,cmt-48", .data = &sh_cmt_info[SH_CMT_48BIT] },
+ 	{ .compatible = "renesas,cmt-48-gen2", .data = &sh_cmt_info[SH_CMT0_RCAR_GEN2] },
+ 	{ .compatible = "renesas,rcar-gen2-cmt0", .data = &sh_cmt_info[SH_CMT0_RCAR_GEN2] },
 -- 
-git-series 0.9.1
+2.7.4
