@@ -1,109 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:44746 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750823AbdISM4Q (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:40554 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755034AbdIRNsh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Sep 2017 08:56:16 -0400
-Received: from ramsan.of.borg ([192.168.97.29] helo=ramsan)
-        by ayla.of.borg with esmtp (Exim 4.86_2)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1duI4Q-0001fU-VG
-        for linux-renesas-soc@vger.kernel.org; Tue, 19 Sep 2017 14:56:10 +0200
-Received: from geert by ramsan with local (Exim 4.86_2)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1duI4U-00066f-K4
-        for linux-renesas-soc@vger.kernel.org; Tue, 19 Sep 2017 14:56:14 +0200
+        Mon, 18 Sep 2017 09:48:37 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: linux-renesas-soc@vger.kernel.org
-Subject: renesas-drivers-2017-09-19-v4.14-rc1
-Date: Tue, 19 Sep 2017 14:56:14 +0200
-Message-Id: <1505825774-23434-1-git-send-email-geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 03/12] ARM: dts: r8a7791: Update CMT compat strings
+Date: Mon, 18 Sep 2017 15:48:26 +0200
+Message-Id: <1505742515-31727-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1505742515-31727-1-git-send-email-geert+renesas@glider.be>
+References: <1505742515-31727-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I have pushed renesas-drivers-2017-09-19-v4.14-rc1 to
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
+From: Magnus Damm <damm+renesas@opensource.se>
 
-This tree is meant to ease development of platform support and drivers
-for Renesas ARM SoCs. It is created by merging (a) the for-next branches
-of various subsystem trees and (b) branches with driver code submitted
-or planned for submission to maintainers into the development branch of
-Simon Horman's renesas.git tree.
+Use recently updated R-Car Gen2 CMT0 and CMT1 compat strings.
 
-Today's version is based on renesas-devel-20170918-v4.14-rc1.
+With this change in place we can keep device-specific configuration in
+the driver and the driver can be able to support CMT1 specific features.
 
-Included branches with driver code:
-  - clk-renesas
-  - sh-pfc
-  - topic/suspend-to-idle-v1-rebased1
-  - topic/sh-sh7722-sh7757-sh7264-sh7269-fix-pinctrl-v2
-  - topic/r8a77995-integration
-  - topic/r8a77970-integration
-  - topic/r8a7794-smp-v3
-  - topic/cmt-binding-rework-driver-v3
-  - topic/cmt-binding-rework-dt-v3
-  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/rcar-gen3-z-clk
-  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/cpufreq-automatic
-  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/rcar-gen3-cpufreq-dts
-  - git://git.ragnatech.se/linux#for-renesas-drivers
-  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#renesas/topic/i2c-fault-injection
-  - topic/vsp1/tlb-optimise-v2-rebased1
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#tags/vsp-du/du-suspend-resume/v1
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v3:
+  - Take over from Magnus,
+  - Update compatible values,
+  - Split in per-SoC patches,
 
-Included fixes:
-  - rcar-vin: Fix section mismatch from rcar_vin_probe()
-  - media: rcar-csi2: Fix section mismatch from rcar_csi2_probe()
-  - of_mdio: Fix broken PHY IRQ in case of probe deferral
-  - mtd: spi-nor: fix DMA unsafe buffer issue in spi_nor_read_sfdp()
-  - mtd: spi-nor: Check consistency of the memory size extracted from the SFDP
-  - [LOCAL] arm64: defconfig: Add renesas_defconfig
+v2:
+  - Added Acked-by and Tested-by from Geert,
+  - Added Acked-by from Laurent.
+---
+ arch/arm/boot/dts/r8a7791.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Included subsystem trees:
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
-  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
-  - git://people.freedesktop.org/~airlied/linux#drm-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
-  - git://linuxtv.org/mchehab/media-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
-  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
-  - git://git.infradead.org/users/vkoul/slave-dma.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
-  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
-  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
-  - git://github.com/bzolnier/linux.git#fbdev-for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
-  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
-  - git://anongit.freedesktop.org/drm/drm-misc#for-linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index 5a8a158470765d89..09a9a213f90d445b 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -256,7 +256,7 @@
+ 	};
+ 
+ 	cmt0: timer@ffca0000 {
+-		compatible = "renesas,cmt-48-r8a7791", "renesas,cmt-48-gen2";
++		compatible = "renesas,r8a7791-cmt0", "renesas,rcar-gen2-cmt0";
+ 		reg = <0 0xffca0000 0 0x1004>;
+ 		interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
+@@ -271,7 +271,7 @@
+ 	};
+ 
+ 	cmt1: timer@e6130000 {
+-		compatible = "renesas,cmt-48-r8a7791", "renesas,cmt-48-gen2";
++		compatible = "renesas,r8a7791-cmt1", "renesas,rcar-gen2-cmt1";
+ 		reg = <0 0xe6130000 0 0x1004>;
+ 		interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
+-- 
+2.7.4
