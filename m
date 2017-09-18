@@ -1,57 +1,36 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Wed, 20 Sep 2017 15:52:58 -0500
-From: Rob Herring <robh@kernel.org>
-To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
+Date: Mon, 18 Sep 2017 11:13:15 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
         Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
+        Will Deacon <will.deacon@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Subject: Re: [PATCH v3 01/18] arm: shmobile: Document Kingfisher board DT
  bindings
-Message-ID: <20170920133945.6yfeio56lohduvvi@rob-hp-laptop>
+Message-ID: <20170918091314.GH4644@verge.net.au>
 References: <1505587727-15543-1-git-send-email-vladimir.barinov@cogentembedded.com>
+ <CAMuHMdUEZC1NwCn47Du-e7fQen366s0PXr+a=jdoDijYUqb0kw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1505587727-15543-1-git-send-email-vladimir.barinov@cogentembedded.com>
+In-Reply-To: <CAMuHMdUEZC1NwCn47Du-e7fQen366s0PXr+a=jdoDijYUqb0kw@mail.gmail.com>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sat, Sep 16, 2017 at 09:48:47PM +0300, Vladimir Barinov wrote:
-> Add Kingfisher Device tree bindings Documentation, listing it as a
-> supported board.
-> Kingfisher is the H3ULCB/M3ULCB extension board.
+On Mon, Sep 18, 2017 at 10:51:39AM +0200, Geert Uytterhoeven wrote:
+> On Sat, Sep 16, 2017 at 8:48 PM, Vladimir Barinov
+> <vladimir.barinov@cogentembedded.com> wrote:
+> > Add Kingfisher Device tree bindings Documentation, listing it as a
+> > supported board.
+> > Kingfisher is the H3ULCB/M3ULCB extension board.
+> >
+> > Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 > 
-> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-> ---
-> Changes in version 2:
-> - added own compatible value "shimafuji,kingfisher"
-> Changes in version 3:
-> - seperate Kingfisher entry from H3ULCB/M3ULCB
-> 
->  Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-> index ae75cb3..5921ac2 100644
-> --- a/Documentation/devicetree/bindings/arm/shmobile.txt
-> +++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-> @@ -76,6 +76,8 @@ Boards:
->      compatible = "iwave,g20d", "iwave,g20m", "renesas,r8a7743"
->    - iWave Systems RZ/G1M Qseven System On Module (iW-RainboW-G20M-Qseven)
->      compatible = "iwave,g20m", "renesas,r8a7743"
-> +  - Kingfisher (SBEV-RCAR-KF-M03)
-> +    compatible = "shimafuji,kingfisher";
+> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Not consistent with the ';'. Otherwise,
-
-Acked-by: Rob Herring <robh@kernel.org>
-
->    - Koelsch (RTP0RC7791SEB00010S)
->      compatible = "renesas,koelsch", "renesas,r8a7791"
->    - Kyoto Microcomputer Co. KZM-A9-Dual
-> -- 
-> 1.9.1
-> 
+Thanks, applied.
