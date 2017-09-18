@@ -1,95 +1,73 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20170915194438.796666987@cogentembedded.com>
-Date: Fri, 15 Sep 2017 22:43:23 +0300
-To: Rob Herring <robh+dt@kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <damm+renesas@opensource.se>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 5/8] arm64: dts: renesas: r8a77970: add EtherAVB support
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=arm64-dts-renesas-r8a77970-add-EtherAVB-support-v2.patch
-Sender: devicetree-owner@vger.kernel.org
+Subject: [PATCH v3 6/7] clocksource: sh_cmt: Remove unused "renesas,channels-mask" handling
+Date: Mon, 18 Sep 2017 15:46:46 +0200
+Message-Id: <1505742407-31576-7-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1505742407-31576-1-git-send-email-geert+renesas@glider.be>
+References: <1505742407-31576-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Define the generic R8A77970 part of the EtherAVB device node.
+The in-driver channel configuration in sh_cmt_info.channels_mask is now
+always set for all CMT devices instantiated from DT.
 
-Based on the original (and large) patch by Daisuke Matsushita
-<daisuke.matsushita.ns@hitachi.com>.
+Hence the "renesas,channels-mask" property is no longer checked, and its
+handling can be removed, cfr. commit 4e18111ff38f0664 ("devicetree:
+bindings: Remove deprecated properties").
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Changes in version 2:
-- replaced  the use of the SYSC power domain #define with a bare number;
-- refreshed the patch;
-- added Geert's tag.
+v3:
+  - New.
+---
+ drivers/clocksource/sh_cmt.c | 18 +-----------------
+ 1 file changed, 1 insertion(+), 17 deletions(-)
 
- arch/arm64/boot/dts/renesas/r8a77970.dtsi |   44 ++++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
-
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -318,5 +318,49 @@
- 			resets = <&cpg 203>;
- 			status = "disabled";
- 		};
-+
-+		avb: ethernet@e6800000 {
-+			compatible = "renesas,etheravb-r8a77970",
-+				     "renesas,etheravb-rcar-gen3";
-+			reg = <0 0xe6800000 0 0x800>, <0 0xe6a00000 0 0x10000>;
-+			interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "ch0", "ch1", "ch2", "ch3",
-+					  "ch4", "ch5", "ch6", "ch7",
-+					  "ch8", "ch9", "ch10", "ch11",
-+					  "ch12", "ch13", "ch14", "ch15",
-+					  "ch16", "ch17", "ch18", "ch19",
-+					  "ch20", "ch21", "ch22", "ch23",
-+					  "ch24";
-+			clocks = <&cpg CPG_MOD 812>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 812>;
-+			phy-mode = "rgmii-id";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
- 	};
+diff --git a/drivers/clocksource/sh_cmt.c b/drivers/clocksource/sh_cmt.c
+index 61a9225097065cc4..89c514cf59a44e48 100644
+--- a/drivers/clocksource/sh_cmt.c
++++ b/drivers/clocksource/sh_cmt.c
+@@ -946,14 +946,6 @@ static const struct of_device_id sh_cmt_of_table[] __maybe_unused = {
  };
-
+ MODULE_DEVICE_TABLE(of, sh_cmt_of_table);
+ 
+-static int sh_cmt_parse_dt(struct sh_cmt_device *cmt)
+-{
+-	struct device_node *np = cmt->pdev->dev.of_node;
+-
+-	return of_property_read_u32(np, "renesas,channels-mask",
+-				    &cmt->hw_channels);
+-}
+-
+ static int sh_cmt_setup(struct sh_cmt_device *cmt, struct platform_device *pdev)
+ {
+ 	unsigned int mask;
+@@ -968,15 +960,7 @@ static int sh_cmt_setup(struct sh_cmt_device *cmt, struct platform_device *pdev)
+ 
+ 		id = of_match_node(sh_cmt_of_table, pdev->dev.of_node);
+ 		cmt->info = id->data;
+-
+-		/* prefer in-driver channel configuration over DT */
+-		if (cmt->info->channels_mask) {
+-			cmt->hw_channels = cmt->info->channels_mask;
+-		} else {
+-			ret = sh_cmt_parse_dt(cmt);
+-			if (ret < 0)
+-				return ret;
+-		}
++		cmt->hw_channels = cmt->info->channels_mask;
+ 	} else if (pdev->dev.platform_data) {
+ 		struct sh_timer_config *cfg = pdev->dev.platform_data;
+ 		const struct platform_device_id *id = pdev->id_entry;
+-- 
+2.7.4
