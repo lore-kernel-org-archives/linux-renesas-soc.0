@@ -1,57 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:34311 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754222AbdIRP4U (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:51702 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752539AbdIRJJd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Sep 2017 11:56:20 -0400
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org
-Cc: linux-pwm@vger.kernel.org, magnus.damm@gmail.com,
-        laurent.pinchart@ideasonboard.com, horms@verge.net.au,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH] arm64: dts: salvator-common: add 12V regulator to backlight
-Date: Mon, 18 Sep 2017 17:56:14 +0200
-Message-Id: <1505750174-29888-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Mon, 18 Sep 2017 05:09:33 -0400
+Date: Mon, 18 Sep 2017 11:09:12 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/4] arm64: dts: renesas: Add Support for R-Car D3 and
+ Draak
+Message-ID: <20170918090909.GF4644@verge.net.au>
+References: <1500555277-22921-1-git-send-email-geert+renesas@glider.be>
+ <20170727151622.GG16143@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170727151622.GG16143@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This fixes the warning "pwm-backlight backlight: backlight supply power
-not found, using dummy regulator".
+On Thu, Jul 27, 2017 at 05:16:23PM +0200, Simon Horman wrote:
+> On Thu, Jul 20, 2017 at 02:54:33PM +0200, Geert Uytterhoeven wrote:
+> > 	Hi Simon, Magnus,
+> > 
+> > This patch series adds minimal support for the R-Car D3 SoC and the
+> > Draak development board, allowing to boot from a ramdisk using a serial
+> > console.
+> > 
+> >   - The first two patches add DT sources for R-Car D3 and Draak.
+> >     Due to the use of hardcoded constants, they have no further (build)
+> >     dependencies (obviously there is a runtime dependency).
+> >   - The last two patches replace the hardcoded constants by symbols from
+> >     DT binding headers, and thus depend on those headers.  Hence it
+> >     should be postponed to v4.15.
+> > 
+> > For proper operation, this depends on the 3 series I have just sent:
+> >   - [PATCH 0/3] arm64: renesas: Base R-Car D3 support,
+> 
+> I have applied the above patchset for v4.14.
+> 
+> >   - [PATCH 0/4] soc: renesas: Add R-Car D3 support,
+> 
+> And this one too.
+> 
+> >   - [PATCH 0/4] clk: renesas: Add R-Car D3 support.
+> 
+> And this one seems to have been acked, so I assume you will
+> apply it once you are back from holidays.
+> 
+> So I have applied the first two patches for v4.14.
+> Please repost the remaining two after v4.13-rc6 at which time I should
+> be able to queue them up for v4.15.
 
-Fixes: b33be33670217533 ("arm64: dts: salvator-x: Add panel backlight support")
-Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
----
- arch/arm64/boot/dts/renesas/salvator-common.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-index e3d8310..fa2a1f7 100644
---- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-@@ -63,6 +63,7 @@
- 		brightness-levels = <256 128 64 16 8 4 0>;
- 		default-brightness-level = <6>;
- 
-+		power-supply = <&reg_12v>;
- 		enable-gpios = <&gpio6 7 GPIO_ACTIVE_HIGH>;
- 	};
- 
-@@ -107,6 +108,15 @@
- 		regulator-always-on;
- 	};
- 
-+	reg_12v: regulator2 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-12V";
-+		regulator-min-microvolt = <12000000>;
-+		regulator-max-microvolt = <12000000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
- 	rsnd_ak4613: sound {
- 		compatible = "simple-audio-card";
- 
--- 
-2.7.4
+I have now done so.
