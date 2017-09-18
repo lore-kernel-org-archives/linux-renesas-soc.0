@@ -1,66 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52446 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:51777 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751592AbdIEIIE (ORCPT
+        with ESMTP id S1754370AbdIRJPW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Sep 2017 04:08:04 -0400
+        Mon, 18 Sep 2017 05:15:22 -0400
+Date: Mon, 18 Sep 2017 11:15:03 +0200
 From: Simon Horman <horms@verge.net.au>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: ltsi-dev@lists.linuxfoundation.org,
-        linux-renesas-soc@vger.kernel.org,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: [PATCH 06/13] thermal: rcar_gen3_thermal: record and check number of TSCs found
-Date: Tue,  5 Sep 2017 10:06:41 +0200
-Message-Id: <1504598808-19810-7-git-send-email-horms@verge.net.au>
-In-Reply-To: <1504598808-19810-1-git-send-email-horms@verge.net.au>
-References: <1504598808-19810-1-git-send-email-horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Subject: Re: [PATCH v2 4/8] arm64: dts: renesas: r8a77970: add [H]SCIF support
+Message-ID: <20170918091502.GI4644@verge.net.au>
+References: <20170915194433.872217806@cogentembedded.com>
+ <CAMuHMdVTrZdi7CKUX9vrD14TvawVotsxvqM43J61FDHsS6OsnA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVTrZdi7CKUX9vrD14TvawVotsxvqM43J61FDHsS6OsnA@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+On Mon, Sep 18, 2017 at 10:49:46AM +0200, Geert Uytterhoeven wrote:
+> On Fri, Sep 15, 2017 at 9:43 PM, Sergei Shtylyov
+> <sergei.shtylyov@cogentembedded.com> wrote:
+> > Describe [H]SCIF ports in the R8A77970 device tree.
+> >
+> > Based on the original (and large) patch by Daisuke Matsushita
+> > <daisuke.matsushita.ns@hitachi.com>.
+> >
+> > Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Record how many TSCs are found in struct rcar_gen3_thermal_priv, this is
-needed to be able to add hardware interrupts for trip points later. Also
-add a check to make sure at least one TSC is found.
-
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
-(cherry picked from commit 97dad1f1d2b3f2a2a77551849357b7ac38b0b6ff)
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- drivers/thermal/rcar_gen3_thermal.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
-index 9b6bc03dd142..4a08b35533dc 100644
---- a/drivers/thermal/rcar_gen3_thermal.c
-+++ b/drivers/thermal/rcar_gen3_thermal.c
-@@ -75,6 +75,7 @@ struct rcar_gen3_thermal_tsc {
- 
- struct rcar_gen3_thermal_priv {
- 	struct rcar_gen3_thermal_tsc *tscs[TSC_MAX_NUM];
-+	unsigned int num_tscs;
- };
- 
- struct rcar_gen3_thermal_data {
-@@ -307,6 +308,13 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
- 		tsc->zone = zone;
- 	}
- 
-+	priv->num_tscs = i;
-+
-+	if (!priv->num_tscs) {
-+		ret = -ENODEV;
-+		goto error_unregister;
-+	}
-+
- 	return 0;
- 
- error_unregister:
--- 
-2.1.4
+Thanks, applied.
