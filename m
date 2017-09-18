@@ -1,45 +1,90 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Thu, 21 Sep 2017 18:10:20 -0500
-From: Rob Herring <robh@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Magnus Damm <damm+renesas@opensource.se>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/7] dt-bindings: timer: renesas,cmt: Fix SoC-specific
- compatible values
-Message-ID: <20170921231020.jehitdqvlpkxw6dp@rob-hp-laptop>
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 1/7] dt-bindings: timer: renesas,cmt: Fix SoC-specific compatible values
+Date: Mon, 18 Sep 2017 15:46:41 +0200
+Message-Id: <1505742407-31576-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1505742407-31576-1-git-send-email-geert+renesas@glider.be>
 References: <1505742407-31576-1-git-send-email-geert+renesas@glider.be>
- <1505742407-31576-2-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1505742407-31576-2-git-send-email-geert+renesas@glider.be>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Sep 18, 2017 at 03:46:41PM +0200, Geert Uytterhoeven wrote:
-> While the new family-specific compatible values introduced by commit
-> 6f54cc1adcc8957f ("devicetree: bindings: R-Car Gen2 CMT0 and CMT1
-> bindings") use the recommended order "<vendor>,<family>-<device>", the
-> new SoC-specific compatible values still use the old and deprecated
-> order "<vendor>,<device>-<soc>".
-> 
-> Switch the SoC-specific compatible values to the recommended order while
-> there are no upstream users of these compatible values yet.
-> 
-> Fixes: 7f03a0ecfdc786c1 ("devicetree: bindings: r8a73a4 and R-Car Gen2 CMT bindings")
-> Fixes: 63d9e8ca0dd4bfa4 ("devicetree: bindings: Deprecate property, update example")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v3:
->   - New.
-> ---
->  .../devicetree/bindings/timer/renesas,cmt.txt      | 24 +++++++++++-----------
->  1 file changed, 12 insertions(+), 12 deletions(-)
+While the new family-specific compatible values introduced by commit
+6f54cc1adcc8957f ("devicetree: bindings: R-Car Gen2 CMT0 and CMT1
+bindings") use the recommended order "<vendor>,<family>-<device>", the
+new SoC-specific compatible values still use the old and deprecated
+order "<vendor>,<device>-<soc>".
 
-Acked-by: Rob Herring <robh@kernel.org>
+Switch the SoC-specific compatible values to the recommended order while
+there are no upstream users of these compatible values yet.
+
+Fixes: 7f03a0ecfdc786c1 ("devicetree: bindings: r8a73a4 and R-Car Gen2 CMT bindings")
+Fixes: 63d9e8ca0dd4bfa4 ("devicetree: bindings: Deprecate property, update example")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v3:
+  - New.
+---
+ .../devicetree/bindings/timer/renesas,cmt.txt      | 24 +++++++++++-----------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/timer/renesas,cmt.txt b/Documentation/devicetree/bindings/timer/renesas,cmt.txt
+index 6ca6b9e582a0e803..d740989eb56981cb 100644
+--- a/Documentation/devicetree/bindings/timer/renesas,cmt.txt
++++ b/Documentation/devicetree/bindings/timer/renesas,cmt.txt
+@@ -20,16 +20,16 @@ Required Properties:
+ 		(CMT1 on sh73a0 and r8a7740)
+ 		This is a fallback for the above renesas,cmt-48-* entries.
+ 
+-    - "renesas,cmt0-r8a73a4" for the 32-bit CMT0 device included in r8a73a4.
+-    - "renesas,cmt1-r8a73a4" for the 48-bit CMT1 device included in r8a73a4.
+-    - "renesas,cmt0-r8a7790" for the 32-bit CMT0 device included in r8a7790.
+-    - "renesas,cmt1-r8a7790" for the 48-bit CMT1 device included in r8a7790.
+-    - "renesas,cmt0-r8a7791" for the 32-bit CMT0 device included in r8a7791.
+-    - "renesas,cmt1-r8a7791" for the 48-bit CMT1 device included in r8a7791.
+-    - "renesas,cmt0-r8a7793" for the 32-bit CMT0 device included in r8a7793.
+-    - "renesas,cmt1-r8a7793" for the 48-bit CMT1 device included in r8a7793.
+-    - "renesas,cmt0-r8a7794" for the 32-bit CMT0 device included in r8a7794.
+-    - "renesas,cmt1-r8a7794" for the 48-bit CMT1 device included in r8a7794.
++    - "renesas,r8a73a4-cmt0" for the 32-bit CMT0 device included in r8a73a4.
++    - "renesas,r8a73a4-cmt1" for the 48-bit CMT1 device included in r8a73a4.
++    - "renesas,r8a7790-cmt0" for the 32-bit CMT0 device included in r8a7790.
++    - "renesas,r8a7790-cmt1" for the 48-bit CMT1 device included in r8a7790.
++    - "renesas,r8a7791-cmt0" for the 32-bit CMT0 device included in r8a7791.
++    - "renesas,r8a7791-cmt1" for the 48-bit CMT1 device included in r8a7791.
++    - "renesas,r8a7793-cmt0" for the 32-bit CMT0 device included in r8a7793.
++    - "renesas,r8a7793-cmt1" for the 48-bit CMT1 device included in r8a7793.
++    - "renesas,r8a7794-cmt0" for the 32-bit CMT0 device included in r8a7794.
++    - "renesas,r8a7794-cmt1" for the 48-bit CMT1 device included in r8a7794.
+ 
+     - "renesas,rcar-gen2-cmt0" for 32-bit CMT0 devices included in R-Car Gen2.
+     - "renesas,rcar-gen2-cmt1" for 48-bit CMT1 devices included in R-Car Gen2.
+@@ -46,7 +46,7 @@ Required Properties:
+ Example: R8A7790 (R-Car H2) CMT0 and CMT1 nodes
+ 
+ 	cmt0: timer@ffca0000 {
+-		compatible = "renesas,cmt0-r8a7790", "renesas,rcar-gen2-cmt0";
++		compatible = "renesas,r8a7790-cmt0", "renesas,rcar-gen2-cmt0";
+ 		reg = <0 0xffca0000 0 0x1004>;
+ 		interrupts = <0 142 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <0 142 IRQ_TYPE_LEVEL_HIGH>;
+@@ -55,7 +55,7 @@ Example: R8A7790 (R-Car H2) CMT0 and CMT1 nodes
+ 	};
+ 
+ 	cmt1: timer@e6130000 {
+-		compatible = "renesas,cmt1-r8a7790", "renesas,rcar-gen2-cmt1";
++		compatible = "renesas,r8a7790-cmt1", "renesas,rcar-gen2-cmt1";
+ 		reg = <0 0xe6130000 0 0x1004>;
+ 		interrupts = <0 120 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <0 121 IRQ_TYPE_LEVEL_HIGH>,
+-- 
+2.7.4
