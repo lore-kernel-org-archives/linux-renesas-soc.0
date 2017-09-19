@@ -1,129 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:39590 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751661AbdIMK4F (ORCPT
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:33768 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751283AbdISOI1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Sep 2017 06:56:05 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: linux-pm@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH] thermal: rcar_gen3_thermal: fix initialization sequence for H3 ES2.0
-Date: Wed, 13 Sep 2017 12:55:22 +0200
-Message-Id: <20170913105522.12880-1-niklas.soderlund+renesas@ragnatech.se>
+        Tue, 19 Sep 2017 10:08:27 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1505346762-3666-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1505346762-3666-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 19 Sep 2017 16:08:25 +0200
+Message-ID: <CAMuHMdXiu0UiH1U__zPJYA-dRs6Ym0JdAcvEq=xwpMJn9i7afQ@mail.gmail.com>
+Subject: Re: [PATCH v2] pinctrl: sh-pfc: r8a77995: Add EthernetAVB pins,
+ groups and functions
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The initialization sequence for H3 (r8a7795) ES1.x and ES2.0 is
-different. H3 ES2.0 and later uses the same sequence as M3 (r8a7796)
-ES1.0. Fix this by swapping place of the two initialization functions
-and calling the r8a7796 init function from the r8a7795 init function if
-the ES version is not "ES1.*".
+Hi Shimoda-san,
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/thermal/rcar_gen3_thermal.c | 54 ++++++++++++++++++++++---------------
- 1 file changed, 33 insertions(+), 21 deletions(-)
+On Thu, Sep 14, 2017 at 1:52 AM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> ---
+>  About AVB'0', I don't get any feedback from HW team... So, I'd like to follow
+>  the current PFC section in the manual.
+>
+>  Changes from v1:
+>   - Changes the groups like other SoCs (r8a7795 and r8a7796).
 
-diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
-index 203aca44a2bb4bdf..528a65b05b304ca3 100644
---- a/drivers/thermal/rcar_gen3_thermal.c
-+++ b/drivers/thermal/rcar_gen3_thermal.c
-@@ -24,6 +24,7 @@
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/spinlock.h>
-+#include <linux/sys_soc.h>
- #include <linux/thermal.h>
- 
- #include "thermal_core.h"
-@@ -278,48 +279,59 @@ static irqreturn_t rcar_gen3_thermal_irq_thread(int irq, void *data)
- 	return IRQ_HANDLED;
- }
- 
--static void r8a7795_thermal_init(struct rcar_gen3_thermal_tsc *tsc)
-+static const struct soc_device_attribute r8a7795es1[] = {
-+	{ .soc_id = "r8a7795", .revision = "ES1.*" },
-+	{ /* sentinel */ }
-+};
-+
-+static void r8a7796_thermal_init(struct rcar_gen3_thermal_tsc *tsc)
- {
--	rcar_gen3_thermal_write(tsc, REG_GEN3_CTSR,  CTSR_THBGR);
--	rcar_gen3_thermal_write(tsc, REG_GEN3_CTSR,  0x0);
-+	u32 reg_val;
- 
--	usleep_range(1000, 2000);
-+	reg_val = rcar_gen3_thermal_read(tsc, REG_GEN3_THCTR);
-+	reg_val &= ~THCTR_PONM;
-+	rcar_gen3_thermal_write(tsc, REG_GEN3_THCTR, reg_val);
- 
--	rcar_gen3_thermal_write(tsc, REG_GEN3_CTSR, CTSR_PONM);
-+	usleep_range(1000, 2000);
- 
- 	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQCTL, 0x3F);
- 	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQMSK, 0);
- 	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQEN, IRQ_TEMPD1 | IRQ_TEMP2);
- 
--	rcar_gen3_thermal_write(tsc, REG_GEN3_CTSR,
--				CTSR_PONM | CTSR_AOUT | CTSR_THBGR | CTSR_VMEN);
--
--	usleep_range(100, 200);
--
--	rcar_gen3_thermal_write(tsc, REG_GEN3_CTSR,
--				CTSR_PONM | CTSR_AOUT | CTSR_THBGR | CTSR_VMEN |
--				CTSR_VMST | CTSR_THSST);
-+	reg_val = rcar_gen3_thermal_read(tsc, REG_GEN3_THCTR);
-+	reg_val |= THCTR_THSST;
-+	rcar_gen3_thermal_write(tsc, REG_GEN3_THCTR, reg_val);
- 
- 	usleep_range(1000, 2000);
- }
- 
--static void r8a7796_thermal_init(struct rcar_gen3_thermal_tsc *tsc)
-+static void r8a7795_thermal_init(struct rcar_gen3_thermal_tsc *tsc)
- {
--	u32 reg_val;
-+	/* H3 ES2.0 and later uses same initialization sequence as M3 ES1.0 */
-+	if (!soc_device_match(r8a7795es1)) {
-+		r8a7796_thermal_init(tsc);
-+		return;
-+	}
- 
--	reg_val = rcar_gen3_thermal_read(tsc, REG_GEN3_THCTR);
--	reg_val &= ~THCTR_PONM;
--	rcar_gen3_thermal_write(tsc, REG_GEN3_THCTR, reg_val);
-+	rcar_gen3_thermal_write(tsc, REG_GEN3_CTSR,  CTSR_THBGR);
-+	rcar_gen3_thermal_write(tsc, REG_GEN3_CTSR,  0x0);
- 
- 	usleep_range(1000, 2000);
- 
-+	rcar_gen3_thermal_write(tsc, REG_GEN3_CTSR, CTSR_PONM);
-+
- 	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQCTL, 0x3F);
- 	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQMSK, 0);
- 	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQEN, IRQ_TEMPD1 | IRQ_TEMP2);
- 
--	reg_val = rcar_gen3_thermal_read(tsc, REG_GEN3_THCTR);
--	reg_val |= THCTR_THSST;
--	rcar_gen3_thermal_write(tsc, REG_GEN3_THCTR, reg_val);
-+	rcar_gen3_thermal_write(tsc, REG_GEN3_CTSR,
-+				CTSR_PONM | CTSR_AOUT | CTSR_THBGR | CTSR_VMEN);
-+
-+	usleep_range(100, 200);
-+
-+	rcar_gen3_thermal_write(tsc, REG_GEN3_CTSR,
-+				CTSR_PONM | CTSR_AOUT | CTSR_THBGR | CTSR_VMEN |
-+				CTSR_VMST | CTSR_THSST);
- 
- 	usleep_range(1000, 2000);
- }
--- 
-2.14.1
+Thanks for the update!
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in sh-pfc-for-v4.15...
+
+> --- a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
+> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
+> @@ -936,6 +936,99 @@ enum {
+
+> +static const unsigned int avb0_mdc_pins[] = {
+> +       /* AVB0_MDC, AVB_MDIO */
+
+... with s/AVB_MDIO/AVB0_MDIO/.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
