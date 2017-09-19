@@ -1,63 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f45.google.com ([209.85.215.45]:34613 "EHLO
-        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933018AbdIFWgD (ORCPT
+Received: from mail-pf0-f182.google.com ([209.85.192.182]:55547 "EHLO
+        mail-pf0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751353AbdISPXs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Sep 2017 18:36:03 -0400
-Received: by mail-lf0-f45.google.com with SMTP id l196so20812658lfl.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 06 Sep 2017 15:36:02 -0700 (PDT)
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH 07/18] arm64: dts: ulcb-kf: enable SCIF1
-Date: Thu,  7 Sep 2017 01:35:58 +0300
-Message-Id: <1504737358-23113-1-git-send-email-vladimir.barinov@cogentembedded.com>
-In-Reply-To: <1504737267-22829-1-git-send-email-vladimir.barinov@cogentembedded.com>
-References: <1504737267-22829-1-git-send-email-vladimir.barinov@cogentembedded.com>
+        Tue, 19 Sep 2017 11:23:48 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170919073331.29007-1-hverkuil@xs4all.nl>
+References: <20170919073331.29007-1-hverkuil@xs4all.nl>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 19 Sep 2017 17:23:46 +0200
+Message-ID: <CAMuHMdXTxLBNeBnnT2x95kdORFu1ya0QyqGChXKh5eK33ALYQg@mail.gmail.com>
+Subject: Re: [PATCHv2 0/2] drm/bridge/adv7511: add CEC support
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Linux Media Mailing List <linux-media@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This supports SCIF1 on ULCB Kingfisher board
+Hi Hans,
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
----
- arch/arm64/boot/dts/renesas/ulcb-kf.dtsi | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+On Tue, Sep 19, 2017 at 9:33 AM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
+> From: Hans Verkuil <hans.verkuil@cisco.com>
+>
+> I should have posted this a month ago, but I completely forgot about
+> it. Apologies for that.
+>
+> This patch series adds CEC support to the drm adv7511/adv7533 drivers.
+>
+> I have tested this with the Qualcomm Dragonboard C410 (adv7533 based)
+> and the Renesas R-Car Koelsch board (adv7511 based).
+>
+> I only have the Koelsch board to test with, but it looks like other
+> R-Car boards use the same adv7511. It would be nice if someone can
+> add CEC support to the other R-Car boards as well. The main thing
+> to check is if they all use the same 12 MHz fixed CEC clock source.
 
-diff --git a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-index 849f8b1..2449915 100644
---- a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-+++ b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-@@ -12,6 +12,7 @@
- / {
- 	aliases {
- 		serial1 = &hscif0;
-+		serial2 = &scif1;
- 	};
- };
- 
-@@ -28,4 +29,16 @@
- 		groups = "hscif0_data", "hscif0_ctrl";
- 		function = "hscif0";
- 	};
-+
-+	scif1_pins: scif1 {
-+		groups = "scif1_data_b";
-+		function = "scif1";
-+	};
-+};
-+
-+&scif1 {
-+	pinctrl-0 = <&scif1_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
- };
--- 
-1.9.1
+Have a 12 MHz fixed CEC clock source connected to the CEC_CLK pin
+on ADV7511:
+  - r8a7790/lager
+  - r8a7791/koelsch
+  - r8a7791/porter
+  - r8a7792/blanche
+  - r8a7793/gose
+  - r8a7794/alt
+  - r8a7794/silk
+
+I don't know about r8a7792/wheat. But according to its .dts file, it has two
+instances of the ADV7513, not ADV7511.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
