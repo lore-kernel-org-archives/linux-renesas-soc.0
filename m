@@ -1,273 +1,106 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52431 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751344AbdIEIHr (ORCPT
+Received: from mail-lf0-f48.google.com ([209.85.215.48]:43637 "EHLO
+        mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751521AbdISM1N (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Sep 2017 04:07:47 -0400
-From: Simon Horman <horms@verge.net.au>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: ltsi-dev@lists.linuxfoundation.org,
+        Tue, 19 Sep 2017 08:27:13 -0400
+Received: by mail-lf0-f48.google.com with SMTP id c80so3518458lfh.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 19 Sep 2017 05:27:12 -0700 (PDT)
+Subject: Re: [PATCHv2 1/2] dt-bindings: adi,adv7511.txt: document cec clock
+To: Hans Verkuil <hansverk@cisco.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        Archit Taneja <architt@codeaurora.org>,
         linux-renesas-soc@vger.kernel.org,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: [PATCH 07/13] thermal: rcar_gen3_thermal: enable hardware interrupts for trip points
-Date: Tue,  5 Sep 2017 10:06:42 +0200
-Message-Id: <1504598808-19810-8-git-send-email-horms@verge.net.au>
-In-Reply-To: <1504598808-19810-1-git-send-email-horms@verge.net.au>
-References: <1504598808-19810-1-git-send-email-horms@verge.net.au>
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        devicetree@vger.kernel.org
+References: <20170919073331.29007-1-hverkuil@xs4all.nl>
+ <20170919073331.29007-2-hverkuil@xs4all.nl>
+ <505bc74f-6563-ab1d-9aab-7893410aef7e@cogentembedded.com>
+ <74b252c8-c1eb-8498-7b9b-54604fe2806a@cisco.com>
+ <e68cffb1-346c-2018-9048-3f8523903809@cogentembedded.com>
+ <7bfcd125-db23-61e3-2bc9-67e5c11f27fa@xs4all.nl>
+ <ce0588ed-eb3f-0008-0608-b54aefeee704@cogentembedded.com>
+ <82f72432-51fa-722b-b1c7-d6f7ea6ae758@xs4all.nl>
+ <5c8f3625-26f3-8c6e-d42a-def8251a9ac6@cogentembedded.com>
+ <aa9c5c0e-c2c8-7913-0e6c-4b150ff09a9b@cisco.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <f977c9ce-6258-7ec9-ef2b-45ad02e5ada6@cogentembedded.com>
+Date: Tue, 19 Sep 2017 15:27:09 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <aa9c5c0e-c2c8-7913-0e6c-4b150ff09a9b@cisco.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+On 09/19/2017 01:59 PM, Hans Verkuil wrote:
 
-Enable hardware trip points by implementing the set_trips callback. The
-thermal core will take care of setting the initial trip point window and
-to update it once the driver reports a TSC has moved outside it.
+>>>>>>>>> From: Hans Verkuil <hans.verkuil@cisco.com>
+>>>>>>>>>
+>>>>>>>>> Document the cec clock binding.
+>>>>>>>>>
+>>>>>>>>> Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+>>>>>>>>> Acked-by: Rob Herring <robh@kernel.org>
+>>>>>>>>> ---
+>>>>>>>>>       Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt | 4 ++++
+>>>>>>>>>       1 file changed, 4 insertions(+)
+>>>>>>>>>
+>>>>>>>>> diff --git a/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt b/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
+>>>>>>>>> index 06668bca7ffc..4497ae054d49 100644
+>>>>>>>>> --- a/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
+>>>>>>>>> +++ b/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
+>>>>>>>>> @@ -68,6 +68,8 @@ Optional properties:
+>>>>>>>>>       - adi,disable-timing-generator: Only for ADV7533. Disables the internal timing
+>>>>>>>>>         generator. The chip will rely on the sync signals in the DSI data lanes,
+>>>>>>>>>         rather than generate its own timings for HDMI output.
+>>>>>>>>> +- clocks: from common clock binding: handle to CEC clock.
+>>>>>>>>
+>>>>>>>>         It's called "phandle" in the DT speak. :-)
+>>>>>>>>         Are you sure the clock specifier would always be absent?
+>>>>>>>
+>>>>>>> Sorry? I don't understand the question. Did you mean: "can be absent?"?
+>>>>>>
+>>>>>>        No, you only say that there'll be the clock phandle only. The clock
+>>>>>> specifier may follow the phandle for the clock devices that have
+>>>>>> "#clock-cells" prop != 0.
+>>>>>
+>>>>> I have to say that I just copy-and-pasted this from other bindings.
+>>>>
+>>>>       :-)
+>>>>
+>>>>> Would this be better?
+>>>>>
+>>>>> - clocks: list of clock specifiers, corresponding to entries in
+>>>>>      the clock-names property;
+>>>>
+>>>>       Didn't you say that there'll be only one clock, "cec"? If so, there's
+>>>> gonna  be a single clock phandle+specifier pair. They always go in pairs. :-)
+>>>>
+>>>>> - clock-names: from common clock binding: must be "cec".
+>>>
+>>> - clocks: cec clock phandle, corresponding to the clock-names entry.
+>>
+>>      The clock phandle and specifier.
+>>
+>>> - clock-names: from common clock binding: must be "cec".
+>>>
+>>> This OK?
+>>
+>>      Well, you seem to be going in circles, the above was almost the same as
+>> the original prop description...
+> 
+> - clocks: from common clock binding: reference to the CEC clock.
+> - clock-names: from common clock binding: must be "cec".
+> 
+> This avoids the whole issue of having just a phandle or a phandle + specifier.
 
-The interrupt structure for this device is a bit odd. There is not a
-dedicated IRQ for each TSC, instead the interrupts are shared between
-all TSCs. IRQn is fired if the temp monitored in IRQTEMPn is reached in
-any of the TSCs, example IRQ3 is fired if temperature in IRQTEMP3 is
-reached in either TSC0, TSC1 or TSC2.
+    OK, let's go with this one. Thank you!
 
-For this reason the usage of interrupts in this driver is an all-on or
-all-off design. When an interrupt happens all TSCs are checked and all
-thermal zones are updated. This could be refined to be more fine grained
-but the thermal core takes care of only updating the thermal zones that
-have left their trip point window.
+> Regards,
+> 
+> 	Hans
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
-(cherry picked from commit 7d4b269776ec67c1b7d83c6c727a2771e5f39d12)
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- drivers/thermal/rcar_gen3_thermal.c | 132 +++++++++++++++++++++++++++++++++++-
- 1 file changed, 131 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
-index 4a08b35533dc..d37c7d8f8fcd 100644
---- a/drivers/thermal/rcar_gen3_thermal.c
-+++ b/drivers/thermal/rcar_gen3_thermal.c
-@@ -23,8 +23,11 @@
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
-+#include <linux/spinlock.h>
- #include <linux/thermal.h>
- 
-+#include "thermal_core.h"
-+
- /* Register offsets */
- #define REG_GEN3_IRQSTR		0x04
- #define REG_GEN3_IRQMSK		0x08
-@@ -40,6 +43,14 @@
- #define REG_GEN3_THCODE2	0x54
- #define REG_GEN3_THCODE3	0x58
- 
-+/* IRQ{STR,MSK,EN} bits */
-+#define IRQ_TEMP1		BIT(0)
-+#define IRQ_TEMP2		BIT(1)
-+#define IRQ_TEMP3		BIT(2)
-+#define IRQ_TEMPD1		BIT(3)
-+#define IRQ_TEMPD2		BIT(4)
-+#define IRQ_TEMPD3		BIT(5)
-+
- /* CTSR bits */
- #define CTSR_PONM	BIT(8)
- #define CTSR_AOUT	BIT(7)
-@@ -76,6 +87,7 @@ struct rcar_gen3_thermal_tsc {
- struct rcar_gen3_thermal_priv {
- 	struct rcar_gen3_thermal_tsc *tscs[TSC_MAX_NUM];
- 	unsigned int num_tscs;
-+	spinlock_t lock; /* Protect interrupts on and off */
- };
- 
- struct rcar_gen3_thermal_data {
-@@ -113,6 +125,7 @@ static inline void rcar_gen3_thermal_write(struct rcar_gen3_thermal_tsc *tsc,
- 
- #define FIXPT_SHIFT 7
- #define FIXPT_INT(_x) ((_x) << FIXPT_SHIFT)
-+#define INT_FIXPT(_x) ((_x) >> FIXPT_SHIFT)
- #define FIXPT_DIV(_a, _b) DIV_ROUND_CLOSEST(((_a) << FIXPT_SHIFT), (_b))
- #define FIXPT_TO_MCELSIUS(_x) ((_x) * 1000 >> FIXPT_SHIFT)
- 
-@@ -178,10 +191,87 @@ static int rcar_gen3_thermal_get_temp(void *devdata, int *temp)
- 	return 0;
- }
- 
-+static int rcar_gen3_thermal_mcelsius_to_temp(struct rcar_gen3_thermal_tsc *tsc,
-+					      int mcelsius)
-+{
-+	int celsius, val1, val2;
-+
-+	celsius = DIV_ROUND_CLOSEST(mcelsius, 1000);
-+	val1 = celsius * tsc->coef.a1 + tsc->coef.b1;
-+	val2 = celsius * tsc->coef.a2 + tsc->coef.b2;
-+
-+	return INT_FIXPT((val1 + val2) / 2);
-+}
-+
-+static int rcar_gen3_thermal_set_trips(void *devdata, int low, int high)
-+{
-+	struct rcar_gen3_thermal_tsc *tsc = devdata;
-+
-+	low = clamp_val(low, -40000, 125000);
-+	high = clamp_val(high, -40000, 125000);
-+
-+	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQTEMP1,
-+				rcar_gen3_thermal_mcelsius_to_temp(tsc, low));
-+
-+	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQTEMP2,
-+				rcar_gen3_thermal_mcelsius_to_temp(tsc, high));
-+
-+	return 0;
-+}
-+
- static struct thermal_zone_of_device_ops rcar_gen3_tz_of_ops = {
- 	.get_temp	= rcar_gen3_thermal_get_temp,
-+	.set_trips	= rcar_gen3_thermal_set_trips,
- };
- 
-+static void rcar_thermal_irq_set(struct rcar_gen3_thermal_priv *priv, bool on)
-+{
-+	unsigned int i;
-+	u32 val = on ? IRQ_TEMPD1 | IRQ_TEMP2 : 0;
-+
-+	for (i = 0; i < priv->num_tscs; i++)
-+		rcar_gen3_thermal_write(priv->tscs[i], REG_GEN3_IRQMSK, val);
-+}
-+
-+static irqreturn_t rcar_gen3_thermal_irq(int irq, void *data)
-+{
-+	struct rcar_gen3_thermal_priv *priv = data;
-+	u32 status;
-+	int i, ret = IRQ_HANDLED;
-+
-+	spin_lock(&priv->lock);
-+	for (i = 0; i < priv->num_tscs; i++) {
-+		status = rcar_gen3_thermal_read(priv->tscs[i], REG_GEN3_IRQSTR);
-+		rcar_gen3_thermal_write(priv->tscs[i], REG_GEN3_IRQSTR, 0);
-+		if (status)
-+			ret = IRQ_WAKE_THREAD;
-+	}
-+
-+	if (ret == IRQ_WAKE_THREAD)
-+		rcar_thermal_irq_set(priv, false);
-+
-+	spin_unlock(&priv->lock);
-+
-+	return ret;
-+}
-+
-+static irqreturn_t rcar_gen3_thermal_irq_thread(int irq, void *data)
-+{
-+	struct rcar_gen3_thermal_priv *priv = data;
-+	unsigned long flags;
-+	int i;
-+
-+	for (i = 0; i < priv->num_tscs; i++)
-+		thermal_zone_device_update(priv->tscs[i]->zone,
-+					   THERMAL_EVENT_UNSPECIFIED);
-+
-+	spin_lock_irqsave(&priv->lock, flags);
-+	rcar_thermal_irq_set(priv, true);
-+	spin_unlock_irqrestore(&priv->lock, flags);
-+
-+	return IRQ_HANDLED;
-+}
-+
- static void r8a7795_thermal_init(struct rcar_gen3_thermal_tsc *tsc)
- {
- 	rcar_gen3_thermal_write(tsc, REG_GEN3_CTSR,  CTSR_THBGR);
-@@ -190,7 +280,11 @@ static void r8a7795_thermal_init(struct rcar_gen3_thermal_tsc *tsc)
- 	usleep_range(1000, 2000);
- 
- 	rcar_gen3_thermal_write(tsc, REG_GEN3_CTSR, CTSR_PONM);
-+
- 	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQCTL, 0x3F);
-+	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQMSK, 0);
-+	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQEN, IRQ_TEMPD1 | IRQ_TEMP2);
-+
- 	rcar_gen3_thermal_write(tsc, REG_GEN3_CTSR,
- 				CTSR_PONM | CTSR_AOUT | CTSR_THBGR | CTSR_VMEN);
- 
-@@ -214,6 +308,9 @@ static void r8a7796_thermal_init(struct rcar_gen3_thermal_tsc *tsc)
- 	usleep_range(1000, 2000);
- 
- 	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQCTL, 0x3F);
-+	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQMSK, 0);
-+	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQEN, IRQ_TEMPD1 | IRQ_TEMP2);
-+
- 	reg_val = rcar_gen3_thermal_read(tsc, REG_GEN3_THCTR);
- 	reg_val |= THCTR_THSST;
- 	rcar_gen3_thermal_write(tsc, REG_GEN3_THCTR, reg_val);
-@@ -252,7 +349,8 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct resource *res;
- 	struct thermal_zone_device *zone;
--	int ret, i;
-+	int ret, irq, i;
-+	char *irqname;
- 	const struct rcar_gen3_thermal_data *match_data =
- 		of_device_get_match_data(dev);
- 
-@@ -269,8 +367,32 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
- 	if (!priv)
- 		return -ENOMEM;
- 
-+	spin_lock_init(&priv->lock);
-+
- 	platform_set_drvdata(pdev, priv);
- 
-+	/*
-+	 * Request 2 (of the 3 possible) IRQs, the driver only needs to
-+	 * to trigger on the low and high trip points of the current
-+	 * temp window at this point.
-+	 */
-+	for (i = 0; i < 2; i++) {
-+		irq = platform_get_irq(pdev, i);
-+		if (irq < 0)
-+			return irq;
-+
-+		irqname = devm_kasprintf(dev, GFP_KERNEL, "%s:ch%d",
-+					 dev_name(dev), i);
-+		if (!irqname)
-+			return -ENOMEM;
-+
-+		ret = devm_request_threaded_irq(dev, irq, rcar_gen3_thermal_irq,
-+						rcar_gen3_thermal_irq_thread,
-+						IRQF_SHARED, irqname, priv);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	pm_runtime_enable(dev);
- 	pm_runtime_get_sync(dev);
- 
-@@ -306,6 +428,12 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
- 			goto error_unregister;
- 		}
- 		tsc->zone = zone;
-+
-+		ret = of_thermal_get_ntrips(tsc->zone);
-+		if (ret < 0)
-+			goto error_unregister;
-+
-+		dev_info(dev, "TSC%d: Loaded %d trip points\n", i, ret);
- 	}
- 
- 	priv->num_tscs = i;
-@@ -315,6 +443,8 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
- 		goto error_unregister;
- 	}
- 
-+	rcar_thermal_irq_set(priv, true);
-+
- 	return 0;
- 
- error_unregister:
--- 
-2.1.4
+MBR, Sergei
