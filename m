@@ -1,141 +1,45 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 1/2] arm64: dts: r8a7795: add thermal cooling management
-Date: Wed, 13 Sep 2017 12:59:08 +0200
-Message-Id: <20170913105909.13230-2-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170913105909.13230-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170913105909.13230-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1505322341-9480-2-git-send-email-chris.paterson2@renesas.com>
+References: <1505322341-9480-1-git-send-email-chris.paterson2@renesas.com> <1505322341-9480-2-git-send-email-chris.paterson2@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 19 Sep 2017 17:03:12 +0200
+Message-ID: <CAMuHMdXsseoHtkmZAPTqXw5fKAhKuLjFN+R4ODuGaqBVbUq-vQ@mail.gmail.com>
+Subject: Re: [PATCH 1/8] ARM: dts: r8a7745: Add APMU node and second CPU core
+To: Chris Paterson <chris.paterson2@renesas.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add nodes and properties for thermal cooling management support.
+On Wed, Sep 13, 2017 at 7:05 PM, Chris Paterson
+<chris.paterson2@renesas.com> wrote:
+> From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+>
+> Add DT node for the Advanced Power Management Unit (APMU), add the
+> second CPU core, and use "renesas,apmu" as "enable-method".
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 40 ++++++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 0ccac86bccc6b6f0..1818fd20660d0315 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -53,6 +53,7 @@
- 				<&cluster0_opp_tb3>, <&cluster0_opp_tb4>,
- 				<&cluster0_opp_tb5>, <&cluster0_opp_tb6>,
- 				<&cluster0_opp_tb7>;
-+			#cooling-cells = <2>;
- 		};
- 
- 		a57_1: cpu@1 {
-@@ -67,6 +68,7 @@
- 				<&cluster0_opp_tb3>, <&cluster0_opp_tb4>,
- 				<&cluster0_opp_tb5>, <&cluster0_opp_tb6>,
- 				<&cluster0_opp_tb7>;
-+			#cooling-cells = <2>;
- 		};
- 
- 		a57_2: cpu@2 {
-@@ -81,6 +83,7 @@
- 				<&cluster0_opp_tb3>, <&cluster0_opp_tb4>,
- 				<&cluster0_opp_tb5>, <&cluster0_opp_tb6>,
- 				<&cluster0_opp_tb7>;
-+			#cooling-cells = <2>;
- 		};
- 
- 		a57_3: cpu@3 {
-@@ -95,6 +98,7 @@
- 				<&cluster0_opp_tb3>, <&cluster0_opp_tb4>,
- 				<&cluster0_opp_tb5>, <&cluster0_opp_tb6>,
- 				<&cluster0_opp_tb7>;
-+			#cooling-cells = <2>;
- 		};
- 
- 		a53_0: cpu@100 {
-@@ -2821,12 +2825,24 @@
- 				thermal-sensors = <&tsc 0>;
- 
- 				trips {
-+					sensor1_passive: sensor1-passive {
-+						temperature = <95000>;
-+						hysteresis = <2000>;
-+						type = "passive";
-+					};
- 					sensor1_crit: sensor1-crit {
- 						temperature = <120000>;
- 						hysteresis = <2000>;
- 						type = "critical";
- 					};
- 				};
-+
-+				cooling-maps {
-+					map0 {
-+						trip = <&sensor1_passive>;
-+						cooling-device = <&a57_0 4 4>;
-+					};
-+				};
- 			};
- 
- 			sensor_thermal2: sensor-thermal2 {
-@@ -2835,12 +2851,24 @@
- 				thermal-sensors = <&tsc 1>;
- 
- 				trips {
-+					sensor2_passive: sensor2-passive {
-+						temperature = <95000>;
-+						hysteresis = <2000>;
-+						type = "passive";
-+					};
- 					sensor2_crit: sensor2-crit {
- 						temperature = <120000>;
- 						hysteresis = <2000>;
- 						type = "critical";
- 					};
- 				};
-+
-+				cooling-maps {
-+					map0 {
-+						trip = <&sensor2_passive>;
-+						cooling-device = <&a57_0 4 4>;
-+					};
-+				};
- 			};
- 
- 			sensor_thermal3: sensor-thermal3 {
-@@ -2849,12 +2877,24 @@
- 				thermal-sensors = <&tsc 2>;
- 
- 				trips {
-+					sensor3_passive: sensor3-passive {
-+						temperature = <95000>;
-+						hysteresis = <2000>;
-+						type = "passive";
-+					};
- 					sensor3_crit: sensor3-crit {
- 						temperature = <120000>;
- 						hysteresis = <2000>;
- 						type = "critical";
- 					};
- 				};
-+
-+				cooling-maps {
-+					map0 {
-+						trip = <&sensor3_passive>;
-+						cooling-device = <&a57_0 4 4>;
-+					};
-+				};
- 			};
- 		};
- 	};
--- 
-2.14.1
+Gr{oetje,eeting}s,
 
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
