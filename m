@@ -1,64 +1,72 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f181.google.com ([209.85.223.181]:34617 "EHLO
-        mail-io0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752232AbdIANcg (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 1 Sep 2017 09:32:36 -0400
-Received: by mail-io0-f181.google.com with SMTP id i200so1413244ioa.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 01 Sep 2017 06:32:36 -0700 (PDT)
+Return-Path: <devicetree-owner@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <1504014726-17288-1-git-send-email-biju.das@bp.renesas.com>
-References: <1504014726-17288-1-git-send-email-biju.das@bp.renesas.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 1 Sep 2017 15:32:35 +0200
-Message-ID: <CAPDyKFoPyhGUVwjXHQ-1HcTN-p-3RaOE1zT+9w+GdeBeWbc1kg@mail.gmail.com>
-Subject: Re: [PATCH RESEND] mmc: renesas_sdhi: Add r8a7743/5 support
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+In-Reply-To: <CACRpkdZqEXJBZbOOVy0jNrDX=ayeiquAdXHyMMnNKmFqwELEuw@mail.gmail.com>
+References: <1503566474-5335-1-git-send-email-geert+renesas@glider.be>
+ <1503566474-5335-2-git-send-email-geert+renesas@glider.be>
+ <20170831175529.vuchpgvi2aigz2r5@rob-hp-laptop> <CAMuHMdXGm0XuuihG=L_JRBV_WHt2QPtZgdsMFT0PeyDH3ejsNg@mail.gmail.com>
+ <CAL_JsqKS++33tOr6PVzX1Fifmn5teaZVYeY0UWeNiAfi=nHetA@mail.gmail.com> <CACRpkdZqEXJBZbOOVy0jNrDX=ayeiquAdXHyMMnNKmFqwELEuw@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 19 Sep 2017 15:23:39 -0500
+Message-ID: <CAL_JsqLagjVaPgBJmOOFS6yw5axnZaCNbBafJd=r8dtQj-E9Qw@mail.gmail.com>
+Subject: Re: [PATCH/RFC 1/3] dt-bindings: i2c: i2c-gpio: Add support for named gpios
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Haavard Skinnemoen <hskinnemoen@gmail.com>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 29 August 2017 at 15:52, Biju Das <biju.das@bp.renesas.com> wrote:
-> Add support for r8a7743/5 SoC.Renesas RZ/G1[ME] (R8A7743/5) SDHI
-> is identical to the R-Car Gen2 family.
+On Mon, Sep 18, 2017 at 2:45 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Mon, Sep 18, 2017 at 6:52 PM, Rob Herring <robh@kernel.org> wrote:
 >
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+>> In theory yes, but reality is pretty much everyone follows it. There's
+>> no other way to specify active high vs. low for example. Furthermore,
+>> if someone wanted to do flags in their own custom way, that would
+>> still work. It is still the controller (or GPIO core) that interprets
+>> the flags, not the client.
+>>
+>> This is a new binding, so only new DT will have it and we can apply
+>> new standards.
+>
+> I'd like to get a picture of any one-cell GPIO DTS:es and/or drivers
+> still around.
 
-Thanks, applied for next!
+$ git grep '#gpio-cells.*1'
+Documentation/devicetree/bindings/gpio/gpio.txt:
+#gpio-cells = <1>;
+Documentation/devicetree/bindings/gpio/spear_spics.txt:  *
+#gpio-cells: should be 1 and will mention chip select number
+Documentation/devicetree/bindings/interrupt-controller/interrupts.txt:
+                 #gpio-cells = <1>;
+Documentation/devicetree/bindings/mfd/twl6040.txt:- #gpio-cells = <1>:
+twl6040 provides GPO lines.
+arch/mips/boot/dts/xilfpga/nexys4ddr.dts:               #gpio-cells = <1>;
 
-Kind regards
-Uffe
+...and this one may be out of date. All other instances for Xilinx
+gpio use 2 cells.
 
-> ---
-> DT binding patch for r8a7743/5 SoC is applied for mmc next. But the driver patch
-> is still not applied for mmc next.So resending the driver patch.
+We also have to look for custom translate functions of which there are
+a handful, but they all use standard flags.
+
 >
-> This patch is compiled and tested against mmc/next.
->
->  drivers/mmc/host/renesas_sdhi_sys_dmac.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-> index 160fbb2..df44654 100644
-> --- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-> +++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-> @@ -98,6 +98,8 @@
->         { .compatible = "renesas,sdhi-r7s72100", .data = &of_rz_compatible, },
->         { .compatible = "renesas,sdhi-r8a7778", .data = &of_rcar_gen1_compatible, },
->         { .compatible = "renesas,sdhi-r8a7779", .data = &of_rcar_gen1_compatible, },
-> +       { .compatible = "renesas,sdhi-r8a7743", .data = &of_rcar_gen2_compatible, },
-> +       { .compatible = "renesas,sdhi-r8a7745", .data = &of_rcar_gen2_compatible, },
->         { .compatible = "renesas,sdhi-r8a7790", .data = &of_rcar_gen2_compatible, },
->         { .compatible = "renesas,sdhi-r8a7791", .data = &of_rcar_gen2_compatible, },
->         { .compatible = "renesas,sdhi-r8a7792", .data = &of_rcar_gen2_compatible, },
-> --
-> 1.9.1
->
+> I would like to deal with them somehow.
+
+Looks like we already warn in the kernel if <2. Might be worth adding
+this to dtc, then I can get the warning without booting a kernel on
+platforms I don't have.
+
+> When we started the big DT migration this was one of the areas
+> we made some screwups in, admittedly, but someone just has to
+> go first, and that was incidentally GPIO controllers.
+
+The move to standardize flags started before the Great ARM Conversion,
+so I would have expected some old PPC DTs. But it looks like we are
+good.
+
+Rob
