@@ -1,183 +1,109 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:42882 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751279AbdIMX4V (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:44746 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750823AbdISM4Q (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Sep 2017 19:56:21 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
-        linus.walleij@linaro.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2] pinctrl: sh-pfc: r8a77995: Add EthernetAVB pins, groups and functions
-Date: Thu, 14 Sep 2017 08:52:42 +0900
-Message-Id: <1505346762-3666-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Tue, 19 Sep 2017 08:56:16 -0400
+Received: from ramsan.of.borg ([192.168.97.29] helo=ramsan)
+        by ayla.of.borg with esmtp (Exim 4.86_2)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1duI4Q-0001fU-VG
+        for linux-renesas-soc@vger.kernel.org; Tue, 19 Sep 2017 14:56:10 +0200
+Received: from geert by ramsan with local (Exim 4.86_2)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1duI4U-00066f-K4
+        for linux-renesas-soc@vger.kernel.org; Tue, 19 Sep 2017 14:56:14 +0200
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: linux-renesas-soc@vger.kernel.org
+Subject: renesas-drivers-2017-09-19-v4.14-rc1
+Date: Tue, 19 Sep 2017 14:56:14 +0200
+Message-Id: <1505825774-23434-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- About AVB'0', I don't get any feedback from HW team... So, I'd like to follow
- the current PFC section in the manual.
+I have pushed renesas-drivers-2017-09-19-v4.14-rc1 to
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
 
- Changes from v1:
-  - Changes the groups like other SoCs (r8a7795 and r8a7796).
+This tree is meant to ease development of platform support and drivers
+for Renesas ARM SoCs. It is created by merging (a) the for-next branches
+of various subsystem trees and (b) branches with driver code submitted
+or planned for submission to maintainers into the development branch of
+Simon Horman's renesas.git tree.
 
- drivers/pinctrl/sh-pfc/pfc-r8a77995.c | 119 ++++++++++++++++++++++++++++++++++
- 1 file changed, 119 insertions(+)
+Today's version is based on renesas-devel-20170918-v4.14-rc1.
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
-index 4f5ee1d..0e803e9 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
-@@ -936,6 +936,99 @@ enum {
- 	PINMUX_GPIO_GP_ALL(),
- };
- 
-+/* - EtherAVB --------------------------------------------------------------- */
-+static const unsigned int avb0_link_pins[] = {
-+	/* AVB0_LINK */
-+	RCAR_GP_PIN(5, 20),
-+};
-+static const unsigned int avb0_link_mux[] = {
-+	AVB0_LINK_MARK,
-+};
-+static const unsigned int avb0_magic_pins[] = {
-+	/* AVB0_MAGIC */
-+	RCAR_GP_PIN(5, 18),
-+};
-+static const unsigned int avb0_magic_mux[] = {
-+	AVB0_MAGIC_MARK,
-+};
-+static const unsigned int avb0_phy_int_pins[] = {
-+	/* AVB0_PHY_INT */
-+	RCAR_GP_PIN(5, 19),
-+};
-+static const unsigned int avb0_phy_int_mux[] = {
-+	AVB0_PHY_INT_MARK,
-+};
-+static const unsigned int avb0_mdc_pins[] = {
-+	/* AVB0_MDC, AVB_MDIO */
-+	RCAR_GP_PIN(5, 17), RCAR_GP_PIN(5, 16),
-+};
-+static const unsigned int avb0_mdc_mux[] = {
-+	AVB0_MDC_MARK, AVB0_MDIO_MARK,
-+};
-+static const unsigned int avb0_mii_pins[] = {
-+	/*
-+	 * AVB0_TX_CTL, AVB0_TXC, AVB0_TD0,
-+	 * AVB0_TD1, AVB0_TD2, AVB0_TD3,
-+	 * AVB0_RX_CTL, AVB0_RXC, AVB0_RD0,
-+	 * AVB0_RD1, AVB0_RD2, AVB0_RD3,
-+	 * AVB0_TXCREFCLK
-+	 */
-+	RCAR_GP_PIN(5, 9), RCAR_GP_PIN(5, 10), RCAR_GP_PIN(5, 11),
-+	RCAR_GP_PIN(5, 12), RCAR_GP_PIN(5, 13), RCAR_GP_PIN(5, 14),
-+	RCAR_GP_PIN(5, 3), RCAR_GP_PIN(5, 4), RCAR_GP_PIN(5, 5),
-+	RCAR_GP_PIN(5, 6), RCAR_GP_PIN(5, 7), RCAR_GP_PIN(5, 8),
-+	RCAR_GP_PIN(5, 15),
-+};
-+static const unsigned int avb0_mii_mux[] = {
-+	AVB0_TX_CTL_MARK, AVB0_TXC_MARK, AVB0_TD0_MARK,
-+	AVB0_TD1_MARK, AVB0_TD2_MARK, AVB0_TD3_MARK,
-+	AVB0_RX_CTL_MARK, AVB0_RXC_MARK, AVB0_RD0_MARK,
-+	AVB0_RD1_MARK, AVB0_RD2_MARK, AVB0_RD3_MARK,
-+	AVB0_TXCREFCLK_MARK,
-+};
-+static const unsigned int avb0_avtp_pps_a_pins[] = {
-+	/* AVB0_AVTP_PPS_A */
-+	RCAR_GP_PIN(5, 2),
-+};
-+static const unsigned int avb0_avtp_pps_a_mux[] = {
-+	AVB0_AVTP_PPS_A_MARK,
-+};
-+static const unsigned int avb0_avtp_match_a_pins[] = {
-+	/* AVB0_AVTP_MATCH_A */
-+	RCAR_GP_PIN(5, 1),
-+};
-+static const unsigned int avb0_avtp_match_a_mux[] = {
-+	AVB0_AVTP_MATCH_A_MARK,
-+};
-+static const unsigned int avb0_avtp_capture_a_pins[] = {
-+	/* AVB0_AVTP_CAPTURE_A */
-+	RCAR_GP_PIN(5, 0),
-+};
-+static const unsigned int avb0_avtp_capture_a_mux[] = {
-+	AVB0_AVTP_CAPTURE_A_MARK,
-+};
-+static const unsigned int avb0_avtp_pps_b_pins[] = {
-+	/* AVB0_AVTP_PPS_B */
-+	RCAR_GP_PIN(4, 16),
-+};
-+static const unsigned int avb0_avtp_pps_b_mux[] = {
-+	AVB0_AVTP_PPS_B_MARK,
-+};
-+static const unsigned int avb0_avtp_match_b_pins[] = {
-+	/*  AVB0_AVTP_MATCH_B */
-+	RCAR_GP_PIN(4, 18),
-+};
-+static const unsigned int avb0_avtp_match_b_mux[] = {
-+	AVB0_AVTP_MATCH_B_MARK,
-+};
-+static const unsigned int avb0_avtp_capture_b_pins[] = {
-+	/* AVB0_AVTP_CAPTURE_B */
-+	RCAR_GP_PIN(4, 17),
-+};
-+static const unsigned int avb0_avtp_capture_b_mux[] = {
-+	AVB0_AVTP_CAPTURE_B_MARK,
-+};
-+
- /* - I2C -------------------------------------------------------------------- */
- static const unsigned int i2c0_pins[] = {
- 	/* SCL, SDA */
-@@ -1203,6 +1296,17 @@ enum {
- };
- 
- static const struct sh_pfc_pin_group pinmux_groups[] = {
-+	SH_PFC_PIN_GROUP(avb0_link),
-+	SH_PFC_PIN_GROUP(avb0_magic),
-+	SH_PFC_PIN_GROUP(avb0_phy_int),
-+	SH_PFC_PIN_GROUP(avb0_mdc),
-+	SH_PFC_PIN_GROUP(avb0_mii),
-+	SH_PFC_PIN_GROUP(avb0_avtp_pps_a),
-+	SH_PFC_PIN_GROUP(avb0_avtp_match_a),
-+	SH_PFC_PIN_GROUP(avb0_avtp_capture_a),
-+	SH_PFC_PIN_GROUP(avb0_avtp_pps_b),
-+	SH_PFC_PIN_GROUP(avb0_avtp_match_b),
-+	SH_PFC_PIN_GROUP(avb0_avtp_capture_b),
- 	SH_PFC_PIN_GROUP(i2c0),
- 	SH_PFC_PIN_GROUP(i2c1),
- 	SH_PFC_PIN_GROUP(i2c2_a),
-@@ -1240,6 +1344,20 @@ enum {
- 	SH_PFC_PIN_GROUP(scif_clk),
- };
- 
-+static const char * const avb0_groups[] = {
-+	"avb0_link",
-+	"avb0_magic",
-+	"avb0_phy_int",
-+	"avb0_mdc",
-+	"avb0_mii",
-+	"avb0_avtp_pps_a",
-+	"avb0_avtp_match_a",
-+	"avb0_avtp_capture_a",
-+	"avb0_avtp_pps_b",
-+	"avb0_avtp_match_b",
-+	"avb0_avtp_capture_b",
-+};
-+
- static const char * const i2c0_groups[] = {
- 	"i2c0",
- };
-@@ -1311,6 +1429,7 @@ enum {
- };
- 
- static const struct sh_pfc_function pinmux_functions[] = {
-+	SH_PFC_FUNCTION(avb0),
- 	SH_PFC_FUNCTION(i2c0),
- 	SH_PFC_FUNCTION(i2c1),
- 	SH_PFC_FUNCTION(i2c2),
--- 
-1.9.1
+Included branches with driver code:
+  - clk-renesas
+  - sh-pfc
+  - topic/suspend-to-idle-v1-rebased1
+  - topic/sh-sh7722-sh7757-sh7264-sh7269-fix-pinctrl-v2
+  - topic/r8a77995-integration
+  - topic/r8a77970-integration
+  - topic/r8a7794-smp-v3
+  - topic/cmt-binding-rework-driver-v3
+  - topic/cmt-binding-rework-dt-v3
+  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/rcar-gen3-z-clk
+  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/cpufreq-automatic
+  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/rcar-gen3-cpufreq-dts
+  - git://git.ragnatech.se/linux#for-renesas-drivers
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#renesas/topic/i2c-fault-injection
+  - topic/vsp1/tlb-optimise-v2-rebased1
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#tags/vsp-du/du-suspend-resume/v1
+
+Included fixes:
+  - rcar-vin: Fix section mismatch from rcar_vin_probe()
+  - media: rcar-csi2: Fix section mismatch from rcar_csi2_probe()
+  - of_mdio: Fix broken PHY IRQ in case of probe deferral
+  - mtd: spi-nor: fix DMA unsafe buffer issue in spi_nor_read_sfdp()
+  - mtd: spi-nor: Check consistency of the memory size extracted from the SFDP
+  - [LOCAL] arm64: defconfig: Add renesas_defconfig
+
+Included subsystem trees:
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
+  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
+  - git://people.freedesktop.org/~airlied/linux#drm-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
+  - git://linuxtv.org/mchehab/media-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
+  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
+  - git://git.infradead.org/users/vkoul/slave-dma.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
+  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
+  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
+  - git://github.com/bzolnier/linux.git#fbdev-for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
+  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
+  - git://anongit.freedesktop.org/drm/drm-misc#for-linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
