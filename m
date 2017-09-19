@@ -1,11 +1,13 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from lb2-smtp-cloud9.xs4all.net ([194.109.24.26]:59212 "EHLO
-        lb2-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751205AbdISKgC (ORCPT
+Received: from mail-lf0-f44.google.com ([209.85.215.44]:46185 "EHLO
+        mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751284AbdISKPU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Sep 2017 06:36:02 -0400
+        Tue, 19 Sep 2017 06:15:20 -0400
+Received: by mail-lf0-f44.google.com with SMTP id m199so3187455lfe.3
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 19 Sep 2017 03:15:20 -0700 (PDT)
 Subject: Re: [PATCHv2 1/2] dt-bindings: adi,adv7511.txt: document cec clock
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+To: Hans Verkuil <hverkuil@xs4all.nl>,
         Hans Verkuil <hansverk@cisco.com>, linux-media@vger.kernel.org
 Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
         Archit Taneja <architt@codeaurora.org>,
@@ -19,69 +21,64 @@ References: <20170919073331.29007-1-hverkuil@xs4all.nl>
  <74b252c8-c1eb-8498-7b9b-54604fe2806a@cisco.com>
  <e68cffb1-346c-2018-9048-3f8523903809@cogentembedded.com>
  <7bfcd125-db23-61e3-2bc9-67e5c11f27fa@xs4all.nl>
- <ce0588ed-eb3f-0008-0608-b54aefeee704@cogentembedded.com>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <82f72432-51fa-722b-b1c7-d6f7ea6ae758@xs4all.nl>
-Date: Tue, 19 Sep 2017 12:35:55 +0200
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <ce0588ed-eb3f-0008-0608-b54aefeee704@cogentembedded.com>
+Date: Tue, 19 Sep 2017 13:15:18 +0300
 MIME-Version: 1.0
-In-Reply-To: <ce0588ed-eb3f-0008-0608-b54aefeee704@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <7bfcd125-db23-61e3-2bc9-67e5c11f27fa@xs4all.nl>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 09/19/17 12:15, Sergei Shtylyov wrote:
-> On 9/19/2017 1:07 PM, Hans Verkuil wrote:
-> 
->>>>>> From: Hans Verkuil <hans.verkuil@cisco.com>
->>>>>>
->>>>>> Document the cec clock binding.
->>>>>>
->>>>>> Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
->>>>>> Acked-by: Rob Herring <robh@kernel.org>
->>>>>> ---
->>>>>>     Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt | 4 ++++
->>>>>>     1 file changed, 4 insertions(+)
->>>>>>
->>>>>> diff --git a/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt b/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
->>>>>> index 06668bca7ffc..4497ae054d49 100644
->>>>>> --- a/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
->>>>>> +++ b/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
->>>>>> @@ -68,6 +68,8 @@ Optional properties:
->>>>>>     - adi,disable-timing-generator: Only for ADV7533. Disables the internal timing
->>>>>>       generator. The chip will rely on the sync signals in the DSI data lanes,
->>>>>>       rather than generate its own timings for HDMI output.
->>>>>> +- clocks: from common clock binding: handle to CEC clock.
+On 9/19/2017 1:07 PM, Hans Verkuil wrote:
+
+>>>>> From: Hans Verkuil <hans.verkuil@cisco.com>
 >>>>>
->>>>>       It's called "phandle" in the DT speak. :-)
->>>>>       Are you sure the clock specifier would always be absent?
+>>>>> Document the cec clock binding.
+>>>>>
+>>>>> Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+>>>>> Acked-by: Rob Herring <robh@kernel.org>
+>>>>> ---
+>>>>>     Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt | 4 ++++
+>>>>>     1 file changed, 4 insertions(+)
+>>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt b/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
+>>>>> index 06668bca7ffc..4497ae054d49 100644
+>>>>> --- a/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
+>>>>> +++ b/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
+>>>>> @@ -68,6 +68,8 @@ Optional properties:
+>>>>>     - adi,disable-timing-generator: Only for ADV7533. Disables the internal timing
+>>>>>       generator. The chip will rely on the sync signals in the DSI data lanes,
+>>>>>       rather than generate its own timings for HDMI output.
+>>>>> +- clocks: from common clock binding: handle to CEC clock.
 >>>>
->>>> Sorry? I don't understand the question. Did you mean: "can be absent?"?
+>>>>       It's called "phandle" in the DT speak. :-)
+>>>>       Are you sure the clock specifier would always be absent?
 >>>
->>>      No, you only say that there'll be the clock phandle only. The clock
->>> specifier may follow the phandle for the clock devices that have
->>> "#clock-cells" prop != 0.
+>>> Sorry? I don't understand the question. Did you mean: "can be absent?"?
 >>
->> I have to say that I just copy-and-pasted this from other bindings.
+>>      No, you only say that there'll be the clock phandle only. The clock
+>> specifier may follow the phandle for the clock devices that have
+>> "#clock-cells" prop != 0.
 > 
->     :-)
+> I have to say that I just copy-and-pasted this from other bindings.
+
+    :-)
+
+> Would this be better?
 > 
->> Would this be better?
->>
->> - clocks: list of clock specifiers, corresponding to entries in
->>    the clock-names property;
+> - clocks: list of clock specifiers, corresponding to entries in
+>    the clock-names property;
+
+    Didn't you say that there'll be only one clock, "cec"? If so, there's 
+gonna  be a single clock phandle+specifier pair. They always go in pairs. :-)
+
+> - clock-names: from common clock binding: must be "cec".
 > 
->     Didn't you say that there'll be only one clock, "cec"? If so, there's 
-> gonna  be a single clock phandle+specifier pair. They always go in pairs. :-)
+> Regards,
 > 
->> - clock-names: from common clock binding: must be "cec".
+> 	Hans
 
-- clocks: cec clock phandle, corresponding to the clock-names entry.
-- clock-names: from common clock binding: must be "cec".
-
-This OK?
-
-Regards,
-
-	Hans
+MBR, Sergei
