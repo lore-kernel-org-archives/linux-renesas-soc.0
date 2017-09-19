@@ -1,73 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f54.google.com ([209.85.215.54]:32933 "EHLO
-        mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751499AbdILVFv (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:45608 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751661AbdISL16 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Sep 2017 17:05:51 -0400
-Received: by mail-lf0-f54.google.com with SMTP id c80so29573675lfh.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Sep 2017 14:05:51 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20170912210547.471712392@cogentembedded.com>
-Date: Tue, 12 Sep 2017 23:37:27 +0300
-To: Rob Herring <robh+dt@kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH 11/11] arm64: dts: renesas: eagle: add EtherAVB support
+        Tue, 19 Sep 2017 07:27:58 -0400
+Date: Tue, 19 Sep 2017 13:27:38 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 00/12] ARM: dts: renesas: Update DTS for CMT DT
+ binding rework
+Message-ID: <20170919112737.GF7933@verge.net.au>
+References: <1505742515-31727-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=arm64-dts-renesas-eagle-add-EtherAVB-support.patch
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1505742515-31727-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Define the Eagle board  dependent part of the EtherAVB device node.
-Enable DHCP  and NFS root for the kernel booting.
+On Mon, Sep 18, 2017 at 03:48:23PM +0200, Geert Uytterhoeven wrote:
+> 	Hi Simon, Magnus,
+> 
+> This patch series updates the CMT device nodes in the various Renesas DTS
+> files sh_cmt clocksource driver for the recent DT binding rework that was
+> merged in v4.14-rc1.
+> 
+> This series is an evolutionary improvement of Magnus Damm's series "[PATCH
+> v2 00/11] clocksource: sh_cmt: DT binding rework V2".
+> It complements Magnus' series "[PATCH v3 00/06] clocksource: sh_cmt: DT 
+> binding rework V3" and "[PATCH v4 00/06] clocksource: sh_cmt: DT binding 
+> rework V4", which included DT binding updates only.
+> 
+>   - Patches 1-5 update the compatible values for the CMT0 and CMT1 device
+>     nodes on R-Mobile APE6 and R-Car Gen2,
+>   - Patches 6-12 remove the now obsolete "renesas,channels-mask" properties
+>     from the CMT device nodes on all affected SoCs.
+> 
+> Changes compared to v2:
+>   - Take over from Magnus,
+>   - Update compatible values,
+>   - Split in per-SoC patches,
+> 
+> Dependencies:
+>   - This patch series has a runtime dependency on "[PATCH v3 0/7]
+>     clocksource: sh_cmt: Update driver for DT binding rework", and thus
+>     must not be applied yet,
+>   - Patches were created against renesas-devel-20170918-v4.14-rc1.
 
-Based  on the original (and large) patch by Vladimir Barinov.
-
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
----
- arch/arm64/boot/dts/renesas/r8a77970-eagle.dts |   15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
-
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-@@ -18,10 +18,11 @@
- 
- 	aliases {
- 		serial0 = &scif0;
-+		ethernet0 = &avb;
- 	};
- 
- 	chosen {
--		bootargs = "ignore_loglevel";
-+		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-@@ -43,3 +44,15 @@
- &scif0 {
- 	status = "okay";
- };
-+
-+&avb {
-+//	renesas,no-ether-link;
-+	phy-handle = <&phy0>;
-+	status = "okay";
-+
-+	phy0: ethernet-phy@0 {
-+		rxc-skew-ps = <1500>;
-+		reg = <0>;
-+		max-speed = <1000>;
-+	};
-+};
+Thanks, I have marked these as deferred pending acceptance of that
+dependency. Please ping me once that is in place. I guess that will be
+v4.16 timing.
