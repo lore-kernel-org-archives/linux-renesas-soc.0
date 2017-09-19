@@ -1,66 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:55536 "EHLO
-        smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751566AbdIFHFN (ORCPT
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:34529 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750974AbdISORQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Sep 2017 03:05:13 -0400
-From: Dirk Behme <dirk.behme@de.bosch.com>
-To: <linux-renesas-soc@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-CC: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
-        Dirk Behme <dirk.behme@de.bosch.com>
-Subject: [PATCH 5/8] spi: sh-msiof: Wait for Tx FIFO empty after DMA
-Date: Wed, 6 Sep 2017 09:05:04 +0200
-Message-ID: <20170906070507.26223-6-dirk.behme@de.bosch.com>
-In-Reply-To: <20170906070507.26223-1-dirk.behme@de.bosch.com>
-References: <20170906070507.26223-1-dirk.behme@de.bosch.com>
+        Tue, 19 Sep 2017 10:17:16 -0400
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1505384961-1445-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1505384961-1445-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 19 Sep 2017 16:17:15 +0200
+Message-ID: <CAMuHMdXYpsm9qJKCd5Pxt0aiV1t18pr3E6u8jhrVq08306SJjQ@mail.gmail.com>
+Subject: Re: [PATCH v2] pinctrl: sh-pfc: r8a77995: Add USB2.0 host support
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+On Thu, Sep 14, 2017 at 12:29 PM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-When Tx DMA is only used, Tx FIFO is still not empty after DMA callback.
-This patch waits for sweeping data out of the Tx FIFO.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in sh-pfc-for-v4.15...
 
-Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
-[adjust context]
-Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
----
- drivers/spi/spi-sh-msiof.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
-index 660b03ed6770..a960e8da123d 100644
---- a/drivers/spi/spi-sh-msiof.c
-+++ b/drivers/spi/spi-sh-msiof.c
-@@ -638,6 +638,17 @@ static int sh_msiof_wait_for_completion(struct sh_msiof_spi_priv *p,
- 				dev_err(&p->pdev->dev, "Tx DMA timeout\n");
- 				return -ETIMEDOUT;
- 			}
-+			if (!rx) {
-+				sh_msiof_write(p, IER, IER_TEOFE);
-+
-+				/* wait for tx fifo to be emptied */
-+				if (!wait_for_completion_timeout(&p->done,
-+								 HZ)) {
-+					dev_err(&p->pdev->dev,
-+					"Tx fifo to be emptied timeout\n");
-+					return -ETIMEDOUT;
-+				}
-+			}
- 		}
- 		if (rx) {
- 			if (!wait_for_completion_timeout(&p->done_dma_rx,
-@@ -805,7 +816,7 @@ static int sh_msiof_dma_once(struct sh_msiof_spi_priv *p, const void *tx,
- 		goto stop_dma;
- 	}
- 
--	/* wait for tx fifo to be emptied / rx fifo to be filled */
-+	/* wait for Tx/Rx DMA completion */
- 	ret = sh_msiof_wait_for_completion(p, tx, rx);
- 	if (ret)
- 		goto stop_reset;
--- 
-2.14.1
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
