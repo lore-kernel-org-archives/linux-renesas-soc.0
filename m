@@ -1,72 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:45258 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751537AbdIQXsv (ORCPT
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:35954 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750774AbdISIbC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 17 Sep 2017 19:48:51 -0400
-From: Kieran Bingham <kbingham@kernel.org>
-To: laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH 3/5] kmstest: Provide a Kernel log validator
-Date: Mon, 18 Sep 2017 00:48:42 +0100
-Message-Id: <1505692124-12167-4-git-send-email-kbingham@kernel.org>
-In-Reply-To: <1505692124-12167-1-git-send-email-kbingham@kernel.org>
-References: <1505692124-12167-1-git-send-email-kbingham@kernel.org>
+        Tue, 19 Sep 2017 04:31:02 -0400
+MIME-Version: 1.0
+In-Reply-To: <CACRpkdYfbUvpLSZnTan+P5pBYKomEK0gEaQor8YjtxE9Y2riSg@mail.gmail.com>
+References: <1505205657-18012-1-git-send-email-geert+renesas@glider.be> <CACRpkdYfbUvpLSZnTan+P5pBYKomEK0gEaQor8YjtxE9Y2riSg@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 19 Sep 2017 10:31:01 +0200
+Message-ID: <CAMuHMdXwq_X2iqQHQRxzHVf+prAkDELjm2RzH_NS6h6-HcqFOA@mail.gmail.com>
+Subject: Re: [PATCH v2 resend 0/4] sh: sh7722/sh7757i/sh7264/sh7269: Fix
+ pinctrl registration
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Hi Linus,
 
-Implement a Kernel log validator as a decorator to run before and after
-test execution.
+On Tue, Sep 19, 2017 at 10:19 AM, Linus Walleij
+<linus.walleij@linaro.org> wrote:
+> On Tue, Sep 12, 2017 at 10:40 AM, Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
+>> I'm resending this to you due to unresponsiveness from the SuperH
+>> maintainers (v2 sent before on May 11, pinged on June 30 and August 14).
+>
+> I'm happy to take this into the pinctrl tree if need be.
+>
+> It is pinctrl related so it makes sense to carry it there if SH
+> maintainers are not responding.
+>
+> Just send a separate pull request and indicate if it needs to
+> go in for fixes or devel.
 
-This validator will look for keywords in the kernel log buffer, and
-report a test failure if a match is discovered.
+In the mean time, Andrew took it (thanks!), so it's now in linux-next.
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- tests/kmstest.py | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+Gr{oetje,eeting}s,
 
-diff --git a/tests/kmstest.py b/tests/kmstest.py
-index 0cf69f44703e..94067a502abd 100755
---- a/tests/kmstest.py
-+++ b/tests/kmstest.py
-@@ -109,6 +109,26 @@ class KernelLogReader(object):
-         return msgs
- 
- 
-+def KernelLogValidator(test_function):
-+    kernel_fault_strings = ("Kernel panic", "Oops", "WARNING:")
-+
-+    def kernel_log_validator(self):
-+        klog = KernelLogReader()
-+        fault = False
-+
-+        test_function(self)
-+
-+        kmsgs = klog.read()
-+        for msg in kmsgs:
-+            if any(s in msg.msg for s in kernel_fault_strings):
-+                fault = True
-+
-+        if fault:
-+            self.fail("Post Test Kernel Fault Found")
-+
-+    return kernel_log_validator
-+
-+
- class Logger(object):
-     def __init__(self, name):
-         self.logfile = open("%s.log" % name, "w")
-@@ -265,6 +285,7 @@ class KMSTest(object):
-         sys.stdin.readline()
-         self.loop.stop()
- 
-+    @KernelLogValidator
-     def execute(self):
-         """Execute the test by running the main function."""
-         self.main()
--- 
-2.7.4
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
