@@ -1,51 +1,87 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:54386 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967955AbdIZKGQ (ORCPT
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45012 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751034AbdISNro (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 26 Sep 2017 06:06:16 -0400
-Received: from avalon.guest.par1.mozilla.com (unknown [IPv6:2a00:8c40:243:232:120b:a9ff:fe3c:7148])
-        by galahad.ideasonboard.com (Postfix) with ESMTPSA id 4DEFA21471
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 26 Sep 2017 12:06:05 +0200 (CEST)
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Subject: [RFC 03/13] dt-bindings: media: renesas-fcp: Add memory-region property
-Date: Tue, 26 Sep 2017 13:05:55 +0300
-Message-Id: <20170926100605.2313-6-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170926100605.2313-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170926100605.2313-1-laurent.pinchart+renesas@ideasonboard.com>
+        Tue, 19 Sep 2017 09:47:44 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Rob Herring <robh@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>, linux-spi@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org
+Subject: Applied "spi: rspi: Add r8a7743/5 to the compatible list" to the spi tree
+In-Reply-To: <1504858035-3568-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-Id: <E1duIs5-0008U8-I2@debutante>
+Date: Tue, 19 Sep 2017 14:47:29 +0100
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The FCP can't perform lossy decompression by itself, but relies instead
-on the DDR controller to provide that feature. To do so, it needs to
-allocate buffers from a special lossy decompression reserved memory
-area. This DT property references that memory area.
+The patch
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+   spi: rspi: Add r8a7743/5 to the compatible list
+
+has been applied to the spi tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 10c1705eced11d6ad710fddcdb57aaa9f85a6f98 Mon Sep 17 00:00:00 2001
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Date: Fri, 8 Sep 2017 09:07:15 +0100
+Subject: [PATCH] spi: rspi: Add r8a7743/5 to the compatible list
+
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- Documentation/devicetree/bindings/media/renesas,fcp.txt | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/spi/spi-rspi.txt | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/media/renesas,fcp.txt b/Documentation/devicetree/bindings/media/renesas,fcp.txt
-index c1f28736e2d6..489b026c4016 100644
---- a/Documentation/devicetree/bindings/media/renesas,fcp.txt
-+++ b/Documentation/devicetree/bindings/media/renesas,fcp.txt
-@@ -19,8 +19,11 @@ are paired with. These DT bindings currently support the FCPV and FCPF.
-  - clocks: Reference to the functional clock
- 
- Optional properties:
-- - power-domains : power-domain property defined with a power domain specifier
--		   to respective power domain.
-+ - memory-region: list of phandles referencing the lossy decompression reserved
-+ 		  memory regions associated with the FCP, if any. Valid for FCPV
-+		  and FCPVI instances only.
-+ - power-domains: power-domain property defined with a power domain specifier
-+		  to respective power domain.
- 
- 
- Device node example
+diff --git a/Documentation/devicetree/bindings/spi/spi-rspi.txt b/Documentation/devicetree/bindings/spi/spi-rspi.txt
+index 8f4169f63936..3b02b3a7cfb2 100644
+--- a/Documentation/devicetree/bindings/spi/spi-rspi.txt
++++ b/Documentation/devicetree/bindings/spi/spi-rspi.txt
+@@ -5,11 +5,14 @@ Required properties:
+ 		     "renesas,rspi-<soctype>", "renesas,rspi" as fallback.
+ 		     For Renesas Serial Peripheral Interface on RZ/A1H:
+ 		     "renesas,rspi-<soctype>", "renesas,rspi-rz" as fallback.
+-		     For Quad Serial Peripheral Interface on R-Car Gen2:
++		     For Quad Serial Peripheral Interface on R-Car Gen2 and
++		     RZ/G1 devices:
+ 		     "renesas,qspi-<soctype>", "renesas,qspi" as fallback.
+ 		     Examples with soctypes are:
+ 		        - "renesas,rspi-sh7757" (SH)
+ 			- "renesas,rspi-r7s72100" (RZ/A1H)
++			- "renesas,qspi-r8a7743" (RZ/G1M)
++			- "renesas,qspi-r8a7745" (RZ/G1E)
+ 			- "renesas,qspi-r8a7790" (R-Car H2)
+ 			- "renesas,qspi-r8a7791" (R-Car M2-W)
+ 			- "renesas,qspi-r8a7792" (R-Car V2H)
 -- 
-Regards,
-
-Laurent Pinchart
+2.14.1
