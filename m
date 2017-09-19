@@ -1,88 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34495 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:45439 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752279AbdI2Lxe (ORCPT
+        with ESMTP id S1751237AbdISLUt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Sep 2017 07:53:34 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Tue, 19 Sep 2017 07:20:49 -0400
+Date: Tue, 19 Sep 2017 13:20:31 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 07/22] arm64: dts: renesas: r8a77995: Use r8a7795-sysc binding definitions
-Date: Fri, 29 Sep 2017 13:52:16 +0200
-Message-Id: <9066b042b4502f711c5207662ec0d26be1732aff.1506678250.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1506678250.git.horms+renesas@verge.net.au>
-References: <cover.1506678250.git.horms+renesas@verge.net.au>
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] arm64: dts: draak: Add serial console pins
+Message-ID: <20170919112028.GD7933@verge.net.au>
+References: <1503912370-20180-1-git-send-email-geert+renesas@glider.be>
+ <20170830064402.GB10398@verge.net.au>
+ <CAMuHMdVCUcy48qDvDSDZ9MAgCLiSUd4zgFD2iu5eWkTVinN1Jw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVCUcy48qDvDSDZ9MAgCLiSUd4zgFD2iu5eWkTVinN1Jw@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+On Tue, Sep 19, 2017 at 11:13:25AM +0200, Geert Uytterhoeven wrote:
+> On Wed, Aug 30, 2017 at 8:44 AM, Simon Horman <horms@verge.net.au> wrote:
+> > On Mon, Aug 28, 2017 at 11:26:10AM +0200, Geert Uytterhoeven wrote:
+> >> Add pin control for SCIF2.
+> >>
+> >> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >> ---
+> >> To be applied after v4.14-rc1, when commit 794a6711764658a1 ("pinctrl:
+> >> sh-pfc: Initial R8A77995 PFC support") has hit mainline.
+> >>
+> >> Else the serial console will fail, reporting (on earlycon):
+> >>
+> >>     sh-sci e6e88000.serial: could not find pctldev for node /soc/pin-controller@e6060000/scif2, deferring probe
+> >
+> > Thanks, please ping me once that has happened.
+> > In the meantime I have marked this patch as deferred.
+> 
+> Ping...
 
-Replace the hardcoded power domain indices by R8A77995_PD_* symbols.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index 72c303362b16..a5b769b840e9 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -11,6 +11,7 @@
- 
- #include <dt-bindings/clock/renesas-cpg-mssr.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/power/r8a77995-sysc.h>
- 
- / {
- 	compatible = "renesas,r8a77995";
-@@ -30,14 +31,14 @@
- 			compatible = "arm,cortex-a53", "arm,armv8";
- 			reg = <0x0>;
- 			device_type = "cpu";
--			power-domains = <&sysc 5>;
-+			power-domains = <&sysc R8A77995_PD_CA53_CPU0>;
- 			next-level-cache = <&L2_CA53>;
- 			enable-method = "psci";
- 		};
- 
- 		L2_CA53: cache-controller-1 {
- 			compatible = "cache";
--			power-domains = <&sysc 21>;
-+			power-domains = <&sysc R8A77995_PD_CA53_SCU>;
- 			cache-unified;
- 			cache-level = <2>;
- 		};
-@@ -76,7 +77,7 @@
- 					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_HIGH)>;
- 			clocks = <&cpg CPG_MOD 408>;
- 			clock-names = "clk";
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
- 			resets = <&cpg 408>;
- 		};
- 
-@@ -97,7 +98,7 @@
- 				     "renesas,rcar-gen3-wdt";
- 			reg = <0 0xe6020000 0 0x0c>;
- 			clocks = <&cpg CPG_MOD 402>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
- 			resets = <&cpg 402>;
- 			status = "disabled";
- 		};
-@@ -147,7 +148,7 @@
- 				 <&cpg CPG_CORE 16>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
- 			resets = <&cpg 310>;
- 			status = "disabled";
- 		};
--- 
-2.1.4
+Thanks, applied.
