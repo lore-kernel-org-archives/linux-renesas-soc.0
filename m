@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:35245 "EHLO
+Received: from galahad.ideasonboard.com ([185.26.127.97]:35156 "EHLO
         galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750918AbdISHNc (ORCPT
+        with ESMTP id S1750713AbdISGtS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Sep 2017 03:13:32 -0400
+        Tue, 19 Sep 2017 02:49:18 -0400
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To: "Jasty, Ananth" <Ananth.Jasty@cavium.com>
 Cc: "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
@@ -16,49 +16,81 @@ Cc: "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
         "geert+renesas@glider.be" <geert+renesas@glider.be>,
         "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
 Subject: Re: Seeing conflict with IPMMU driver under ACPI
-Date: Tue, 19 Sep 2017 10:13:36 +0300
-Message-ID: <3844394.PedeR4fNcQ@avalon>
-In-Reply-To: <49EA67E4-A526-4F47-9D3A-18E458850E03@caviumnetworks.com>
-References: <CAA01098-8301-4703-84CE-5CFA8A68AF13@caviumnetworks.com> <2844194.3pNGIKcM4n@avalon> <49EA67E4-A526-4F47-9D3A-18E458850E03@caviumnetworks.com>
+Date: Tue, 19 Sep 2017 09:49:21 +0300
+Message-ID: <2844194.3pNGIKcM4n@avalon>
+In-Reply-To: <CAA01098-8301-4703-84CE-5CFA8A68AF13@caviumnetworks.com>
+References: <CAA01098-8301-4703-84CE-5CFA8A68AF13@caviumnetworks.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgQW5hbnRoLAoKT24gVHVlc2RheSwgMTkgU2VwdGVtYmVyIDIwMTcgMDk6NTQ6NDkgRUVTVCBK
-YXN0eSwgQW5hbnRoIHdyb3RlOgo+IE9uIFNlcCAxOCwgMjAxNywgYXQgMTE6NDkgUE0sIExhdXJl
-bnQgUGluY2hhcnQgd3JvdGU6Cj4gPiBPbiBUdWVzZGF5LCAxOSBTZXB0ZW1iZXIgMjAxNyAwMzo0
-MzowNSBFRVNUIEphc3R5LCBBbmFudGggd3JvdGU6Cj4gPj4gSGksIHdpdGggeW91ciBJUE1NVSBk
-cml2ZXIgZW5hYmxlZCB1bmRlciA0LjEzIHdl4oCZcmUgc2VlaW5nIGEgY3Jhc2ggb24KPiA+PiBi
-b290Ogo+ID4+IAo+ID4+IFsgMTMuNzg1MTY0XSBVbmFibGUgdG8gaGFuZGxlIGtlcm5lbCBOVUxM
-IHBvaW50ZXIgZGVyZWZlcmVuY2UgYXQgdmlydHVhbAo+ID4+IGFkZHJlc3MgMDAwMDAwMTgKPiA+
-PiBbIDEzLjc5MzI1NF0gWzAwMDAwMDAwMDAwMDAwMThdIHVzZXIgYWRkcmVzcyBidXQgYWN0aXZl
-X21tIGlzIHN3YXBwZXIKPiA+PiBbIDEzLjc5OTYwMF0gSW50ZXJuYWwgZXJyb3I6IE9vcHM6IDk2
-MDAwMDA0IFsjMV0gU01QCj4gPj4gWyAxMy44MDQ0NjZdIE1vZHVsZXMgbGlua2VkIGluOiBhZXNf
-bmVvbl9icyBhZXNfbmVvbl9ibGsgY3J5cHRvX3NpbWQKPiA+PiBjcnlwdGQKPiA+PiBbIDEzLjgx
-MTMzNF0gQ1BVOiAxNTIgUElEOiAxNTI5IENvbW06IGt3b3JrZXIvMTUyOjEgTm90IHRhaW50ZWQK
-PiA+PiA0LjEzLjAtOS1nZW5lcmljICMxMC1VYnVudHUKPiA+PiBbIDEzLjgxOTU4NF0gSGFyZHdh
-cmUgbmFtZTogRGVmYXVsdCBzdHJpbmcgQ2F2aXVtIFRodW5kZXJYMi9EZWZhdWx0Cj4gPj4gc3Ry
-aW5nLCBCSU9TIDUuMTMgMDcvMjAvMjAxNwo+ID4+IFsgMTMuODI4Mjg1XSBXb3JrcXVldWU6IGV2
-ZW50cyBkZWZlcnJlZF9wcm9iZV93b3JrX2Z1bmMKPiA+PiBbIDEzLjgzMzQxMF0gdGFzazogZmZm
-ZjgwYmVlOTNkMDAwMCB0YXNrLnN0YWNrOiBmZmZmODBiZWU5M2RjMDAwCj4gPj4gWyAxMy44Mzkz
-MzBdIFBDIGlzIGF0IGlvbW11X29wc19mcm9tX2Z3bm9kZSsweDRjLzB4OTAKPiA+PiBbIDEzLjg0
-NDI4Ml0gTFIgaXMgYXQgaW9tbXVfb3BzX2Zyb21fZndub2RlKzB4MjgvMHg5MAo+ID4+IAo+ID4+
-IFRoZSBBUk0gU01NVXYzIGRyaXZlciAod2hpY2ggb3VyIHBsYXRmb3JtIGltcGxlbWVudHMpIHNl
-ZW1zIHRvIGJlIGxvc2luZwo+ID4+IGlvbW11X29wcyB0byB0aGUgSVBNTVUgZHJpdmVyLgo+ID4g
-Cj4gPiBZb3Ugc2VlbSBub3QgdG8gYmUgdGhlIGZpcnN0IG9uZSB0byBub3RpY2U6Cj4gPiAKPiA+
-IGh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcGF0Y2gvOTk1NjQ0OS8ACj4gCj4gV293LCBo
-ZSBkaWQgbm90IGJlYXQgbWUgYnkgbXVjaC4KPiAKPiA+PiBOb3RlOiBvdXIgcGxhdGZvcm0gdXNl
-cyBBQ1BJIGZvciBkZXZpY2UgZW51bWVyYXRpb24uCj4gPj4gCj4gPj4gSSBoYXZlIG5vIHdheSB0
-byB0ZXN0IHRoaXMsIGJ1dCBpcyB0aGVyZSBhIHJlYXNvbiB0aGUgc2V0X2lvbW11IGlzbuKAmXQg
-aW4KPiA+PiBfcHJvYmU/Cj4gPiAKPiA+IEkgY2FuJ3QgcmVjYWxsIHdoYXQgdGhlIHJlYXNvbiB3
-YXMgSSdtIGFmcmFpZC4KPiAKPiBhcm0tc21tdS12My5jIGRvZXMgZG8gdGhlIHNldF9pb21tdSBp
-biBwcm9iZSwgYW5kIHRodXMgZmFyIHRoZXJlIGhhdmUgYmVlbgo+IG5vIGNvbmZpcm1lZCBmYXRh
-bGl0aWVzLCBidXQgSSBjYW4ndCBzcGVhayBhdXRob3JpdGF0aXZlbHkuCj4gCj4gSSdsbCBsZWF2
-ZSB5b3UgYWxsIHRvIGl0IHRoZW4uCgpBZnRlciBkaWdnaW5nIGEgYml0IEkgcmVhbGl6ZWQgdGhh
-dCBjYWxsaW5nIGJ1c19zZXRfaW9tbXUoKSBmcm9tIHRoZSBpbml0IApmdW5jdGlvbiBpcyBuZWVk
-ZWQgdG8gc3VwcG9ydCBBUk0zMiAodGhlIHNhbWUgZHJpdmVyIHN1cHBvcnRzIGJvdGggQVJNMzIg
-YW5kIApBUk02NCkuIExldCdzIGRpc2N1c3MgdGhlIG1hdHRlciBpbiBhIHJlcGx5IHRvIGh0dHBz
-Oi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvCnBhdGNoLzk5NTY0NDkvAC4KCi0tIApSZWdhcmRzLAoK
-TGF1cmVudCBQaW5jaGFydAo=
+Hi Ananth,
+
+On Tuesday, 19 September 2017 03:43:05 EEST Jasty, Ananth wrote:
+> Hi, with your IPMMU driver enabled under 4.13 we=E2=80=99re seeing a cras=
+h on boot:
+>=20
+> [ 13.785164] Unable to handle kernel NULL pointer dereference at virtual
+> address 00000018
+> [ 13.793254] [0000000000000018] user address but active_mm is swapper
+> [ 13.799600] Internal error: Oops: 96000004 [#1] SMP
+> [ 13.804466] Modules linked in: aes_neon_bs aes_neon_blk crypto_simd cryp=
+td
+> [ 13.811334] CPU: 152 PID: 1529 Comm: kworker/152:1 Not tainted
+> 4.13.0-9-generic #10-Ubuntu
+> [ 13.819584] Hardware name: Default string Cavium ThunderX2/Default strin=
+g,
+> BIOS 5.13 07/20/2017
+> [ 13.828285] Workqueue: events deferred_probe_work_func
+> [ 13.833410] task: ffff80bee93d0000 task.stack: ffff80bee93dc000
+> [ 13.839330] PC is at iommu_ops_from_fwnode+0x4c/0x90
+> [ 13.844282] LR is at iommu_ops_from_fwnode+0x28/0x90
+>=20
+> The ARM SMMUv3 driver (which our platform implements) seems to be losing
+> iommu_ops to the IPMMU driver.
+
+You seem not to be the first one to notice:
+
+https://patchwork.kernel.org/patch/9956449/
+
+> Note: our platform uses ACPI for device enumeration.
+>=20
+> I have no way to test this, but is there a reason the set_iommu isn=E2=80=
+=99t in
+> _probe?
+
+I can't recall what the reason was I'm afraid.
+
+> diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
+> index 2a38aa1..d4c72da 100644
+> --- a/drivers/iommu/ipmmu-vmsa.c
+> +++ b/drivers/iommu/ipmmu-vmsa.c
+> @@ -1066,6 +1066,9 @@ static int ipmmu_probe(struct platform_device *pdev)
+>=20
+>         platform_set_drvdata(pdev, mmu);
+>=20
+> +       if (!iommu_present(&platform_bus_type))
+> +               bus_set_iommu(&platform_bus_type, &ipmmu_ops);
+> +
+>         return 0;
+>  }
+>=20
+> @@ -1108,9 +1111,6 @@ static int __init ipmmu_init(void)
+>         if (ret < 0)
+>                 return ret;
+>=20
+> -       if (!iommu_present(&platform_bus_type))
+> -               bus_set_iommu(&platform_bus_type, &ipmmu_ops);
+> -
+>         return 0;
+>  }
+>=20
+>=20
+> If I=E2=80=99m wrong, my apologies.
+
+=2D-=20
+Regards,
+
+Laurent Pinchart
