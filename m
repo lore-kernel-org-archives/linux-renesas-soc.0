@@ -1,13 +1,6 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f53.google.com ([209.85.215.53]:49597 "EHLO
-        mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750823AbdISJfc (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Sep 2017 05:35:32 -0400
-Received: by mail-lf0-f53.google.com with SMTP id r17so3094031lff.6
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 19 Sep 2017 02:35:32 -0700 (PDT)
+Return-Path: <linux-media-owner@vger.kernel.org>
 Subject: Re: [PATCHv2 1/2] dt-bindings: adi,adv7511.txt: document cec clock
-To: Hans Verkuil <hansverk@cisco.com>,
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
 Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
         Archit Taneja <architt@codeaurora.org>,
@@ -17,52 +10,57 @@ Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
 References: <20170919073331.29007-1-hverkuil@xs4all.nl>
  <20170919073331.29007-2-hverkuil@xs4all.nl>
  <505bc74f-6563-ab1d-9aab-7893410aef7e@cogentembedded.com>
- <74b252c8-c1eb-8498-7b9b-54604fe2806a@cisco.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <e68cffb1-346c-2018-9048-3f8523903809@cogentembedded.com>
-Date: Tue, 19 Sep 2017 12:35:29 +0300
+From: Hans Verkuil <hansverk@cisco.com>
+Message-ID: <74b252c8-c1eb-8498-7b9b-54604fe2806a@cisco.com>
+Date: Tue, 19 Sep 2017 11:29:34 +0200
 MIME-Version: 1.0
-In-Reply-To: <74b252c8-c1eb-8498-7b9b-54604fe2806a@cisco.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <505bc74f-6563-ab1d-9aab-7893410aef7e@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 9/19/2017 12:29 PM, Hans Verkuil wrote:
-
->>> From: Hans Verkuil <hans.verkuil@cisco.com>
->>>
->>> Document the cec clock binding.
->>>
->>> Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
->>> Acked-by: Rob Herring <robh@kernel.org>
->>> ---
->>>    Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt | 4 ++++
->>>    1 file changed, 4 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt b/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
->>> index 06668bca7ffc..4497ae054d49 100644
->>> --- a/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
->>> +++ b/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
->>> @@ -68,6 +68,8 @@ Optional properties:
->>>    - adi,disable-timing-generator: Only for ADV7533. Disables the internal timing
->>>      generator. The chip will rely on the sync signals in the DSI data lanes,
->>>      rather than generate its own timings for HDMI output.
->>> +- clocks: from common clock binding: handle to CEC clock.
+On 09/19/17 11:20, Sergei Shtylyov wrote:
+> Hello!
+> 
+> On 9/19/2017 10:33 AM, Hans Verkuil wrote:
+> 
+>> From: Hans Verkuil <hans.verkuil@cisco.com>
 >>
->>      It's called "phandle" in the DT speak. :-)
->>      Are you sure the clock specifier would always be absent?
+>> Document the cec clock binding.
+>>
+>> Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+>> Acked-by: Rob Herring <robh@kernel.org>
+>> ---
+>>   Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt | 4 ++++
+>>   1 file changed, 4 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt b/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
+>> index 06668bca7ffc..4497ae054d49 100644
+>> --- a/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
+>> +++ b/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
+>> @@ -68,6 +68,8 @@ Optional properties:
+>>   - adi,disable-timing-generator: Only for ADV7533. Disables the internal timing
+>>     generator. The chip will rely on the sync signals in the DSI data lanes,
+>>     rather than generate its own timings for HDMI output.
+>> +- clocks: from common clock binding: handle to CEC clock.
 > 
-> Sorry? I don't understand the question. Did you mean: "can be absent?"?
+>     It's called "phandle" in the DT speak. :-)
+>     Are you sure the clock specifier would always be absent?
 
-    No, you only say that there'll be the clock phandle only. The clock 
-specifier may follow the phandle for the clock devices that have 
-"#clock-cells" prop != 0.
+Sorry? I don't understand the question. Did you mean: "can be absent?"?
 
-> Regards,
+Regards,
+
+        Hans
+
 > 
->          Hans
-[...]
-
-MBR, Sergei
+>> +- clock-names: from common clock binding: must be "cec".
+>>   
+>>   Required nodes:
+>>   
+> [...]
+> 
+> MBR, Sergei
+> 
