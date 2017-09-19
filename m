@@ -1,68 +1,34 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:48598 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751177AbdIORXR (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Sep 2017 13:23:17 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org, Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH 2/2] drm: rcar-du: Don't set connector DPMS property
-Date: Fri, 15 Sep 2017 20:23:19 +0300
-Message-ID: <4050000.DqEiLjPiul@avalon>
-In-Reply-To: <20170815130545.2225-2-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170815130545.2225-1-laurent.pinchart+renesas@ideasonboard.com> <20170815130545.2225-2-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Tue, 19 Sep 2017 11:31:59 -0500
+From: Rob Herring <robh@kernel.org>
+To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 02/18] dt: arm: shmobile: add H3ULCB Kingfisher board
+ DT bindings
+Message-ID: <20170919163159.ewuqxypqu6mmpvzk@rob-hp-laptop>
+References: <1505398726-4575-1-git-send-email-vladimir.barinov@cogentembedded.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1505398726-4575-1-git-send-email-vladimir.barinov@cogentembedded.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Gentle review ping.
-
-On Tuesday, 15 August 2017 16:05:45 EEST Laurent Pinchart wrote:
-> Since commit 4a97a3da420b ("drm: Don't update property values for atomic
-> drivers") atomic drivers must not update property values as properties
-> are read from the state instead. To catch remaining users, the
-> drm_object_property_set_value() function now throws a warning when
-> called by atomic drivers on non-immutable properties, and we hit that
-> warning when creating connectors.
+On Thu, Sep 14, 2017 at 05:18:46PM +0300, Vladimir Barinov wrote:
+> Add H3ULCB Kingfisher Device tree bindings Documentation, listing it as a
+> supported board.
 > 
-> The easy fix is to just remove the drm_object_property_set_value() as it
-> is used here to set the initial value of the connector's DPMS property
-> to OFF. The DPMS property applies on top of the connector's state crtc
-> pointer (initialized to NULL) that is the main connector on/off control,
-> and should thus default to ON.
-> 
-> Fixes: 4a97a3da420b ("drm: Don't update property values for atomic drivers")
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 > ---
->  drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c | 4 ----
->  1 file changed, 4 deletions(-)
+> Changes in version 2:
+> - added own compatible value "shimafuji,kingfisher"
 > 
-> This patch fixes a regression in drm-next and should be merged in v4.14-rc1.
-> 
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c
-> b/drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c index
-> b373ad48ef5f..e96f2df0c305 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c
-> @@ -79,10 +79,6 @@ int rcar_du_lvds_connector_init(struct rcar_du_device
-> *rcdu,
-> 
->  	drm_connector_helper_add(connector, &connector_helper_funcs);
-> 
-> -	connector->dpms = DRM_MODE_DPMS_OFF;
-> -	drm_object_property_set_value(&connector->base,
-> -		rcdu->ddev->mode_config.dpms_property, DRM_MODE_DPMS_OFF);
-> -
->  	ret = drm_mode_connector_attach_encoder(connector, encoder);
->  	if (ret < 0)
->  		return ret;
+>  Documentation/devicetree/bindings/arm/shmobile.txt | 1 +
+>  1 file changed, 1 insertion(+)
 
-
--- 
-Regards,
-
-Laurent Pinchart
+Acked-by: Rob Herring <robh@kernel.org>
