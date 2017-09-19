@@ -1,13 +1,18 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33229 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750912AbdIUIp1 (ORCPT
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:36095 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750948AbdISPKH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 21 Sep 2017 04:45:27 -0400
-Date: Thu, 21 Sep 2017 10:45:06 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Chris Paterson <chris.paterson2@renesas.com>,
+        Tue, 19 Sep 2017 11:10:07 -0400
+MIME-Version: 1.0
+In-Reply-To: <1505322341-9480-8-git-send-email-chris.paterson2@renesas.com>
+References: <1505322341-9480-1-git-send-email-chris.paterson2@renesas.com> <1505322341-9480-8-git-send-email-chris.paterson2@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 19 Sep 2017 17:10:06 +0200
+Message-ID: <CAMuHMdXbOYHh9x5HtCtNRuS3qrE_mkUVwbxgOs6eAD=Ju38DMw@mail.gmail.com>
+Subject: Re: [PATCH 7/8] ARM: dts: r8a7745: Add QSPI support
+To: Chris Paterson <chris.paterson2@renesas.com>
+Cc: Simon Horman <horms@verge.net.au>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
@@ -17,28 +22,28 @@ Cc: Chris Paterson <chris.paterson2@renesas.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 7/8] ARM: dts: r8a7745: Add QSPI support
-Message-ID: <20170921084505.GL15749@verge.net.au>
-References: <1505322341-9480-1-git-send-email-chris.paterson2@renesas.com>
- <1505322341-9480-8-git-send-email-chris.paterson2@renesas.com>
- <CAMuHMdXbOYHh9x5HtCtNRuS3qrE_mkUVwbxgOs6eAD=Ju38DMw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdXbOYHh9x5HtCtNRuS3qrE_mkUVwbxgOs6eAD=Ju38DMw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Sep 19, 2017 at 05:10:06PM +0200, Geert Uytterhoeven wrote:
-> On Wed, Sep 13, 2017 at 7:05 PM, Chris Paterson
-> <chris.paterson2@renesas.com> wrote:
-> > From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> >
-> > Add the DT node for the QSPI interface to the SoC dtsi.
-> >
-> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-> 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Wed, Sep 13, 2017 at 7:05 PM, Chris Paterson
+<chris.paterson2@renesas.com> wrote:
+> From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+>
+> Add the DT node for the QSPI interface to the SoC dtsi.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
 
-Thanks, applied.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
