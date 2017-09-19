@@ -1,89 +1,64 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH v5 0/6] i2c: document DMA handling and add helpers for it
-Date: Wed, 20 Sep 2017 20:59:50 +0200
-Message-Id: <20170920185956.13874-1-wsa+renesas@sang-engineering.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:35245 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750918AbdISHNc (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 19 Sep 2017 03:13:32 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: "Jasty, Ananth" <Ananth.Jasty@cavium.com>
+Cc: "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "robin.murphy@arm.com" <robin.murphy@arm.com>,
+        dann frazier <dann.frazier@canonical.com>,
+        "laurent.pinchart+renesas@ideasonboard.com"
+        <laurent.pinchart+renesas@ideasonboard.com>,
+        "geert+renesas@glider.be" <geert+renesas@glider.be>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
+Subject: Re: Seeing conflict with IPMMU driver under ACPI
+Date: Tue, 19 Sep 2017 10:13:36 +0300
+Message-ID: <3844394.PedeR4fNcQ@avalon>
+In-Reply-To: <49EA67E4-A526-4F47-9D3A-18E458850E03@caviumnetworks.com>
+References: <CAA01098-8301-4703-84CE-5CFA8A68AF13@caviumnetworks.com> <2844194.3pNGIKcM4n@avalon> <49EA67E4-A526-4F47-9D3A-18E458850E03@caviumnetworks.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-So, after revisiting old mail threads, taking part in a similar discussion on
-the USB list, and implementing a not-convincing solution before, here is what I
-cooked up to document and ease DMA handling for I2C within Linux. Please have a
-look at the documentation introduced in patch 3 for details. And to make it
-clear again: The stuff below is opt-in. If host drivers are not updated, they
-will continue to work like before.
-
-While the previous versions tried to magically apply bounce buffers when
-needed, it became clear that detecting DMA safe buffers is too fragile. This
-approach is now opt-in, a DMA_SAFE flag needs to be set on an i2c_msg. The
-outcome so far is very convincing IMO. The core additions are simple and easy
-to understand (makes me even think of inlining them again?). The driver changes
-for the Renesas IP cores became easier to understand, too. While only a tad for
-the i2c-sh_mobile driver, the situation became a LOT better for the i2c-rcar
-driver. No more DMA disabling for the whole transfer in case of unsafe buffers,
-we are back to per-msg handling. And the code fix is now an easy to understand
-one line change. Yay!
-
-Of course, we must now whitelist DMA safe buffers. An example for I2C_RDWR case
-is in this series. It makes the i2ctransfer utility have DMA_SAFE buffers,
-which is nice for testing as i2cdump will (currently) not use DMA_SAFE buffers.
-My plan is to add two new calls: i2c_master_{send|receive}_dma_safe which can
-be used if DMA_SAFE buffers are provided. So, drivers can simply switch to
-them. Also, the buffers used within i2c_smbus_xfer_emulated() need to be
-converted to be DMA_SAFE which will cover a huge bunch of use cases. The rest
-is then updating drivers which can be done when needed.
-
-As these conversions are not done yet, this patch series has RFC status. But I
-already would like to get opinions on this approach, so I'll cc mailing lists
-of the heavier I2C users. Please let me know what you think.
-
-All patches have been tested with a Renesas Salvator-X board (r8a7796/M3-W).
-
-The branch can be found here:
-
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/i2c-core-dma-rfc-v5
-
-And big kudos to Renesas Electronics for funding this work, thank you very much!
-
-Regards,
-
-   Wolfram
-
-Changes since v4:
-	* rebased to v4.14-rc1
-	* (hopefully) improved the docs to be more clear
-	* added basic RST syntax to the docs
-
-This is mainly an update to agree on the docs. Missing code is still missing
-and will be added in v6.
-
-Changes since v3:
-	* completely redesigned
-
-
-Wolfram Sang (6):
-  i2c: add a message flag for DMA safe buffers
-  i2c: add helpers to ease DMA handling
-  i2c: add docs to clarify DMA handling
-  i2c: sh_mobile: use helper to decide if DMA is useful
-  i2c: rcar: skip DMA if buffer is not safe
-  i2c: dev: mark RDWR buffers as DMA_SAFE
-
- Documentation/i2c/DMA-considerations | 58 ++++++++++++++++++++++++++++++++++++
- drivers/i2c/busses/i2c-rcar.c        |  2 +-
- drivers/i2c/busses/i2c-sh_mobile.c   |  8 +++--
- drivers/i2c/i2c-core-base.c          | 45 ++++++++++++++++++++++++++++
- drivers/i2c/i2c-dev.c                |  2 ++
- include/linux/i2c.h                  |  3 ++
- include/uapi/linux/i2c.h             |  3 ++
- 7 files changed, 118 insertions(+), 3 deletions(-)
- create mode 100644 Documentation/i2c/DMA-considerations
-
--- 
-2.11.0
+SGkgQW5hbnRoLAoKT24gVHVlc2RheSwgMTkgU2VwdGVtYmVyIDIwMTcgMDk6NTQ6NDkgRUVTVCBK
+YXN0eSwgQW5hbnRoIHdyb3RlOgo+IE9uIFNlcCAxOCwgMjAxNywgYXQgMTE6NDkgUE0sIExhdXJl
+bnQgUGluY2hhcnQgd3JvdGU6Cj4gPiBPbiBUdWVzZGF5LCAxOSBTZXB0ZW1iZXIgMjAxNyAwMzo0
+MzowNSBFRVNUIEphc3R5LCBBbmFudGggd3JvdGU6Cj4gPj4gSGksIHdpdGggeW91ciBJUE1NVSBk
+cml2ZXIgZW5hYmxlZCB1bmRlciA0LjEzIHdl4oCZcmUgc2VlaW5nIGEgY3Jhc2ggb24KPiA+PiBi
+b290Ogo+ID4+IAo+ID4+IFsgMTMuNzg1MTY0XSBVbmFibGUgdG8gaGFuZGxlIGtlcm5lbCBOVUxM
+IHBvaW50ZXIgZGVyZWZlcmVuY2UgYXQgdmlydHVhbAo+ID4+IGFkZHJlc3MgMDAwMDAwMTgKPiA+
+PiBbIDEzLjc5MzI1NF0gWzAwMDAwMDAwMDAwMDAwMThdIHVzZXIgYWRkcmVzcyBidXQgYWN0aXZl
+X21tIGlzIHN3YXBwZXIKPiA+PiBbIDEzLjc5OTYwMF0gSW50ZXJuYWwgZXJyb3I6IE9vcHM6IDk2
+MDAwMDA0IFsjMV0gU01QCj4gPj4gWyAxMy44MDQ0NjZdIE1vZHVsZXMgbGlua2VkIGluOiBhZXNf
+bmVvbl9icyBhZXNfbmVvbl9ibGsgY3J5cHRvX3NpbWQKPiA+PiBjcnlwdGQKPiA+PiBbIDEzLjgx
+MTMzNF0gQ1BVOiAxNTIgUElEOiAxNTI5IENvbW06IGt3b3JrZXIvMTUyOjEgTm90IHRhaW50ZWQK
+PiA+PiA0LjEzLjAtOS1nZW5lcmljICMxMC1VYnVudHUKPiA+PiBbIDEzLjgxOTU4NF0gSGFyZHdh
+cmUgbmFtZTogRGVmYXVsdCBzdHJpbmcgQ2F2aXVtIFRodW5kZXJYMi9EZWZhdWx0Cj4gPj4gc3Ry
+aW5nLCBCSU9TIDUuMTMgMDcvMjAvMjAxNwo+ID4+IFsgMTMuODI4Mjg1XSBXb3JrcXVldWU6IGV2
+ZW50cyBkZWZlcnJlZF9wcm9iZV93b3JrX2Z1bmMKPiA+PiBbIDEzLjgzMzQxMF0gdGFzazogZmZm
+ZjgwYmVlOTNkMDAwMCB0YXNrLnN0YWNrOiBmZmZmODBiZWU5M2RjMDAwCj4gPj4gWyAxMy44Mzkz
+MzBdIFBDIGlzIGF0IGlvbW11X29wc19mcm9tX2Z3bm9kZSsweDRjLzB4OTAKPiA+PiBbIDEzLjg0
+NDI4Ml0gTFIgaXMgYXQgaW9tbXVfb3BzX2Zyb21fZndub2RlKzB4MjgvMHg5MAo+ID4+IAo+ID4+
+IFRoZSBBUk0gU01NVXYzIGRyaXZlciAod2hpY2ggb3VyIHBsYXRmb3JtIGltcGxlbWVudHMpIHNl
+ZW1zIHRvIGJlIGxvc2luZwo+ID4+IGlvbW11X29wcyB0byB0aGUgSVBNTVUgZHJpdmVyLgo+ID4g
+Cj4gPiBZb3Ugc2VlbSBub3QgdG8gYmUgdGhlIGZpcnN0IG9uZSB0byBub3RpY2U6Cj4gPiAKPiA+
+IGh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcGF0Y2gvOTk1NjQ0OS8ACj4gCj4gV293LCBo
+ZSBkaWQgbm90IGJlYXQgbWUgYnkgbXVjaC4KPiAKPiA+PiBOb3RlOiBvdXIgcGxhdGZvcm0gdXNl
+cyBBQ1BJIGZvciBkZXZpY2UgZW51bWVyYXRpb24uCj4gPj4gCj4gPj4gSSBoYXZlIG5vIHdheSB0
+byB0ZXN0IHRoaXMsIGJ1dCBpcyB0aGVyZSBhIHJlYXNvbiB0aGUgc2V0X2lvbW11IGlzbuKAmXQg
+aW4KPiA+PiBfcHJvYmU/Cj4gPiAKPiA+IEkgY2FuJ3QgcmVjYWxsIHdoYXQgdGhlIHJlYXNvbiB3
+YXMgSSdtIGFmcmFpZC4KPiAKPiBhcm0tc21tdS12My5jIGRvZXMgZG8gdGhlIHNldF9pb21tdSBp
+biBwcm9iZSwgYW5kIHRodXMgZmFyIHRoZXJlIGhhdmUgYmVlbgo+IG5vIGNvbmZpcm1lZCBmYXRh
+bGl0aWVzLCBidXQgSSBjYW4ndCBzcGVhayBhdXRob3JpdGF0aXZlbHkuCj4gCj4gSSdsbCBsZWF2
+ZSB5b3UgYWxsIHRvIGl0IHRoZW4uCgpBZnRlciBkaWdnaW5nIGEgYml0IEkgcmVhbGl6ZWQgdGhh
+dCBjYWxsaW5nIGJ1c19zZXRfaW9tbXUoKSBmcm9tIHRoZSBpbml0IApmdW5jdGlvbiBpcyBuZWVk
+ZWQgdG8gc3VwcG9ydCBBUk0zMiAodGhlIHNhbWUgZHJpdmVyIHN1cHBvcnRzIGJvdGggQVJNMzIg
+YW5kIApBUk02NCkuIExldCdzIGRpc2N1c3MgdGhlIG1hdHRlciBpbiBhIHJlcGx5IHRvIGh0dHBz
+Oi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvCnBhdGNoLzk5NTY0NDkvAC4KCi0tIApSZWdhcmRzLAoK
+TGF1cmVudCBQaW5jaGFydAo=
