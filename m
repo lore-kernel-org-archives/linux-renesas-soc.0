@@ -1,13 +1,13 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:35156 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750713AbdISGtS (ORCPT
+Received: from mail-co1nam03on0082.outbound.protection.outlook.com ([104.47.40.82]:61056
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750886AbdISAnJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Sep 2017 02:49:18 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: "Jasty, Ananth" <Ananth.Jasty@cavium.com>
-Cc: "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
-        "linux-renesas-soc@vger.kernel.org"
+        Mon, 18 Sep 2017 20:43:09 -0400
+From: "Jasty, Ananth" <Ananth.Jasty@cavium.com>
+To: "magnus.damm@gmail.com" <magnus.damm@gmail.com>
+CC: "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>,
         "robin.murphy@arm.com" <robin.murphy@arm.com>,
         dann frazier <dann.frazier@canonical.com>,
@@ -15,82 +15,47 @@ Cc: "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
         <laurent.pinchart+renesas@ideasonboard.com>,
         "geert+renesas@glider.be" <geert+renesas@glider.be>,
         "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
-Subject: Re: Seeing conflict with IPMMU driver under ACPI
-Date: Tue, 19 Sep 2017 09:49:21 +0300
-Message-ID: <2844194.3pNGIKcM4n@avalon>
-In-Reply-To: <CAA01098-8301-4703-84CE-5CFA8A68AF13@caviumnetworks.com>
-References: <CAA01098-8301-4703-84CE-5CFA8A68AF13@caviumnetworks.com>
+Subject: Seeing conflict with IPMMU driver under ACPI
+Date: Tue, 19 Sep 2017 00:43:05 +0000
+Message-ID: <CAA01098-8301-4703-84CE-5CFA8A68AF13@caviumnetworks.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <2886555FEDEEB144A3FEF4A7903EAB9D@namprd07.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Ananth,
-
-On Tuesday, 19 September 2017 03:43:05 EEST Jasty, Ananth wrote:
-> Hi, with your IPMMU driver enabled under 4.13 we=E2=80=99re seeing a cras=
-h on boot:
->=20
-> [ 13.785164] Unable to handle kernel NULL pointer dereference at virtual
-> address 00000018
-> [ 13.793254] [0000000000000018] user address but active_mm is swapper
-> [ 13.799600] Internal error: Oops: 96000004 [#1] SMP
-> [ 13.804466] Modules linked in: aes_neon_bs aes_neon_blk crypto_simd cryp=
-td
-> [ 13.811334] CPU: 152 PID: 1529 Comm: kworker/152:1 Not tainted
-> 4.13.0-9-generic #10-Ubuntu
-> [ 13.819584] Hardware name: Default string Cavium ThunderX2/Default strin=
-g,
-> BIOS 5.13 07/20/2017
-> [ 13.828285] Workqueue: events deferred_probe_work_func
-> [ 13.833410] task: ffff80bee93d0000 task.stack: ffff80bee93dc000
-> [ 13.839330] PC is at iommu_ops_from_fwnode+0x4c/0x90
-> [ 13.844282] LR is at iommu_ops_from_fwnode+0x28/0x90
->=20
-> The ARM SMMUv3 driver (which our platform implements) seems to be losing
-> iommu_ops to the IPMMU driver.
-
-You seem not to be the first one to notice:
-
-https://patchwork.kernel.org/patch/9956449/
-
-> Note: our platform uses ACPI for device enumeration.
->=20
-> I have no way to test this, but is there a reason the set_iommu isn=E2=80=
-=99t in
-> _probe?
-
-I can't recall what the reason was I'm afraid.
-
-> diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-> index 2a38aa1..d4c72da 100644
-> --- a/drivers/iommu/ipmmu-vmsa.c
-> +++ b/drivers/iommu/ipmmu-vmsa.c
-> @@ -1066,6 +1066,9 @@ static int ipmmu_probe(struct platform_device *pdev)
->=20
->         platform_set_drvdata(pdev, mmu);
->=20
-> +       if (!iommu_present(&platform_bus_type))
-> +               bus_set_iommu(&platform_bus_type, &ipmmu_ops);
-> +
->         return 0;
->  }
->=20
-> @@ -1108,9 +1111,6 @@ static int __init ipmmu_init(void)
->         if (ret < 0)
->                 return ret;
->=20
-> -       if (!iommu_present(&platform_bus_type))
-> -               bus_set_iommu(&platform_bus_type, &ipmmu_ops);
-> -
->         return 0;
->  }
->=20
->=20
-> If I=E2=80=99m wrong, my apologies.
-
-=2D-=20
-Regards,
-
-Laurent Pinchart
+SGksIHdpdGggeW91ciBJUE1NVSBkcml2ZXIgZW5hYmxlZCB1bmRlciA0LjEzIHdl4oCZcmUgc2Vl
+aW5nIGEgY3Jhc2ggb24gYm9vdDoNCg0KWyAxMy43ODUxNjRdIFVuYWJsZSB0byBoYW5kbGUga2Vy
+bmVsIE5VTEwgcG9pbnRlciBkZXJlZmVyZW5jZSBhdCB2aXJ0dWFsIGFkZHJlc3MgMDAwMDAwMTgN
+ClsgMTMuNzkzMjU0XSBbMDAwMDAwMDAwMDAwMDAxOF0gdXNlciBhZGRyZXNzIGJ1dCBhY3RpdmVf
+bW0gaXMgc3dhcHBlcg0KWyAxMy43OTk2MDBdIEludGVybmFsIGVycm9yOiBPb3BzOiA5NjAwMDAw
+NCBbIzFdIFNNUA0KWyAxMy44MDQ0NjZdIE1vZHVsZXMgbGlua2VkIGluOiBhZXNfbmVvbl9icyBh
+ZXNfbmVvbl9ibGsgY3J5cHRvX3NpbWQgY3J5cHRkDQpbIDEzLjgxMTMzNF0gQ1BVOiAxNTIgUElE
+OiAxNTI5IENvbW06IGt3b3JrZXIvMTUyOjEgTm90IHRhaW50ZWQgNC4xMy4wLTktZ2VuZXJpYyAj
+MTAtVWJ1bnR1DQpbIDEzLjgxOTU4NF0gSGFyZHdhcmUgbmFtZTogRGVmYXVsdCBzdHJpbmcgQ2F2
+aXVtIFRodW5kZXJYMi9EZWZhdWx0IHN0cmluZywgQklPUyA1LjEzIDA3LzIwLzIwMTcNClsgMTMu
+ODI4Mjg1XSBXb3JrcXVldWU6IGV2ZW50cyBkZWZlcnJlZF9wcm9iZV93b3JrX2Z1bmMNClsgMTMu
+ODMzNDEwXSB0YXNrOiBmZmZmODBiZWU5M2QwMDAwIHRhc2suc3RhY2s6IGZmZmY4MGJlZTkzZGMw
+MDANClsgMTMuODM5MzMwXSBQQyBpcyBhdCBpb21tdV9vcHNfZnJvbV9md25vZGUrMHg0Yy8weDkw
+DQpbIDEzLjg0NDI4Ml0gTFIgaXMgYXQgaW9tbXVfb3BzX2Zyb21fZndub2RlKzB4MjgvMHg5MA0K
+DQpUaGUgQVJNIFNNTVV2MyBkcml2ZXIgKHdoaWNoIG91ciBwbGF0Zm9ybSBpbXBsZW1lbnRzKSBz
+ZWVtcyB0byBiZSBsb3NpbmcgaW9tbXVfb3BzIHRvIHRoZSBJUE1NVSBkcml2ZXIuDQoNCk5vdGU6
+IG91ciBwbGF0Zm9ybSB1c2VzIEFDUEkgZm9yIGRldmljZSBlbnVtZXJhdGlvbi4NCg0KSSBoYXZl
+IG5vIHdheSB0byB0ZXN0IHRoaXMsIGJ1dCBpcyB0aGVyZSBhIHJlYXNvbiB0aGUgc2V0X2lvbW11
+IGlzbuKAmXQgaW4gX3Byb2JlPw0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9pb21tdS9pcG1tdS12
+bXNhLmMgYi9kcml2ZXJzL2lvbW11L2lwbW11LXZtc2EuYw0KaW5kZXggMmEzOGFhMS4uZDRjNzJk
+YSAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvaW9tbXUvaXBtbXUtdm1zYS5jDQorKysgYi9kcml2ZXJz
+L2lvbW11L2lwbW11LXZtc2EuYw0KQEAgLTEwNjYsNiArMTA2Niw5IEBAIHN0YXRpYyBpbnQgaXBt
+bXVfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikNCg0KICAgICAgICBwbGF0Zm9y
+bV9zZXRfZHJ2ZGF0YShwZGV2LCBtbXUpOw0KDQorICAgICAgIGlmICghaW9tbXVfcHJlc2VudCgm
+cGxhdGZvcm1fYnVzX3R5cGUpKQ0KKyAgICAgICAgICAgICAgIGJ1c19zZXRfaW9tbXUoJnBsYXRm
+b3JtX2J1c190eXBlLCAmaXBtbXVfb3BzKTsNCisNCiAgICAgICAgcmV0dXJuIDA7DQogfQ0KDQpA
+QCAtMTEwOCw5ICsxMTExLDYgQEAgc3RhdGljIGludCBfX2luaXQgaXBtbXVfaW5pdCh2b2lkKQ0K
+ICAgICAgICBpZiAocmV0IDwgMCkNCiAgICAgICAgICAgICAgICByZXR1cm4gcmV0Ow0KDQotICAg
+ICAgIGlmICghaW9tbXVfcHJlc2VudCgmcGxhdGZvcm1fYnVzX3R5cGUpKQ0KLSAgICAgICAgICAg
+ICAgIGJ1c19zZXRfaW9tbXUoJnBsYXRmb3JtX2J1c190eXBlLCAmaXBtbXVfb3BzKTsNCi0NCiAg
+ICAgICAgcmV0dXJuIDA7DQogfQ0KDQoNCklmIEnigJltIHdyb25nLCBteSBhcG9sb2dpZXMuDQoN
+ClRoYW5rIHlvdSwNCg0KQW5hbnRoIEphc3R5DQpMZWFkIFNvZnR3YXJlIEVuZ2luZWVyDQpDYXZp
+dW0NCg0K
