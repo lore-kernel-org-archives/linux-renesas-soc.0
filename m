@@ -1,418 +1,161 @@
-Return-Path: <linux-arm-kernel-bounces+geert=linux-m68k.org@lists.infradead.org>
-From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-To: Linux Media Mailing List <linux-media@vger.kernel.org>,
- Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH v2 13/17] media: v4l2-async: simplify v4l2_async_subdev
- structure
-Date: Wed, 27 Sep 2017 18:46:56 -0300
-Message-Id: <cd089c6dac22c8ea2194c47c48386e52bb6e561f.1506548682.git.mchehab@s-opensource.com>
-In-Reply-To: <cover.1506548682.git.mchehab@s-opensource.com>
-References: <cover.1506548682.git.mchehab@s-opensource.com>
-In-Reply-To: <cover.1506548682.git.mchehab@s-opensource.com>
-References: <cover.1506548682.git.mchehab@s-opensource.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
- Songjun Wu <songjun.wu@microchip.com>, "Lad,
- Prabhakar" <prabhakar.csengg@gmail.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Javi Merino <javi.merino@kernel.org>, Robert Jarzmik <robert.jarzmik@free.fr>,
- Markus Elfring <elfring@users.sourceforge.net>, devel@driverdev.osuosl.org,
- Yannick Fertre <yannick.fertre@st.com>, linux-samsung-soc@vger.kernel.org,
- Michal Simek <michal.simek@xilinx.com>, Krzysztof Kozlowski <krzk@kernel.org>,
- Mauro Carvalho Chehab <mchehab@s-opensource.com>,
- Ludovic Desroches <ludovic.desroches@microchip.com>,
- Kukjin Kim <kgene@kernel.org>, Hans Verkuil <hans.verkuil@cisco.com>,
- Tuukka Toivonen <tuukka.toivonen@intel.com>,
- Steve Longerbeam <slongerbeam@gmail.com>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
- Alexandre Torgue <alexandre.torgue@st.com>, Rob Herring <robh@kernel.org>,
- linux-renesas-soc@vger.kernel.org,
- Mauro Carvalho Chehab <mchehab@infradead.org>, Benoit Parrot <bparrot@ti.com>,
- Julia Lawall <Julia.Lawall@lip6.fr>, Hugues Fruchet <hugues.fruchet@st.com>,
- Petr Cvek <petr.cvek@tul.cz>,
- =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>,
- linux-arm-kernel@lists.infradead.org, Hyun Kwon <hyun.kwon@xilinx.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Tomasz Figa <tfiga@chromium.org>, Todor Tomov <todor.tomov@linaro.org>,
- Kyungmin Park <kyungmin.park@samsung.com>, Sakari Ailus <sakari.ailus@iki.fi>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
- Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
- Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+Return-Path: <Ananth.Jasty@cavium.com>
+From: "Jasty, Ananth" <Ananth.Jasty@cavium.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+CC: "Jasty, Ananth" <Ananth.Jasty@cavium.com>, "magnus.damm@gmail.com"
+	<magnus.damm@gmail.com>, "linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>, "robin.murphy@arm.com"
+	<robin.murphy@arm.com>, dann frazier <dann.frazier@canonical.com>,
+	"laurent.pinchart+renesas@ideasonboard.com"
+	<laurent.pinchart+renesas@ideasonboard.com>, "geert+renesas@glider.be"
+	<geert+renesas@glider.be>, "iommu@lists.linux-foundation.org"
+	<iommu@lists.linux-foundation.org>
+Subject: Re: Seeing conflict with IPMMU driver under ACPI
+Date: Tue, 19 Sep 2017 06:54:49 +0000
+Message-ID: <49EA67E4-A526-4F47-9D3A-18E458850E03@caviumnetworks.com>
+References: <CAA01098-8301-4703-84CE-5CFA8A68AF13@caviumnetworks.com>
+ <2844194.3pNGIKcM4n@avalon>
+In-Reply-To: <2844194.3pNGIKcM4n@avalon>
+Content-Language: en-US
+Content-Type: multipart/alternative;
+	boundary="_000_49EA67E4A5264F479D3A18E458850E03caviumnetworkscom_"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+geert=linux-m68k.org@lists.infradead.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The V4L2_ASYNC_MATCH_FWNODE match criteria requires just one
-struct to be filled (struct fwnode_handle). The V4L2_ASYNC_MATCH_DEVNAME
-match criteria requires just a device name.
+--_000_49EA67E4A5264F479D3A18E458850E03caviumnetworkscom_
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 
-So, it doesn't make sense to enclose those into structs,
-as the criteria can go directly into the union.
+T24gU2VwIDE4LCAyMDE3LCBhdCAxMTo0OSBQTSwgTGF1cmVudCBQaW5jaGFydCA8bGF1cmVudC5w
+aW5jaGFydEBpZGVhc29uYm9hcmQuY29tPG1haWx0bzpsYXVyZW50LnBpbmNoYXJ0QGlkZWFzb25i
+b2FyZC5jb20+PiB3cm90ZToNCg0KSGkgQW5hbnRoLA0KDQpPbiBUdWVzZGF5LCAxOSBTZXB0ZW1i
+ZXIgMjAxNyAwMzo0MzowNSBFRVNUIEphc3R5LCBBbmFudGggd3JvdGU6DQpIaSwgd2l0aCB5b3Vy
+IElQTU1VIGRyaXZlciBlbmFibGVkIHVuZGVyIDQuMTMgd2XigJlyZSBzZWVpbmcgYSBjcmFzaCBv
+biBib290Og0KDQpbIDEzLjc4NTE2NF0gVW5hYmxlIHRvIGhhbmRsZSBrZXJuZWwgTlVMTCBwb2lu
+dGVyIGRlcmVmZXJlbmNlIGF0IHZpcnR1YWwNCmFkZHJlc3MgMDAwMDAwMTgNClsgMTMuNzkzMjU0
+XSBbMDAwMDAwMDAwMDAwMDAxOF0gdXNlciBhZGRyZXNzIGJ1dCBhY3RpdmVfbW0gaXMgc3dhcHBl
+cg0KWyAxMy43OTk2MDBdIEludGVybmFsIGVycm9yOiBPb3BzOiA5NjAwMDAwNCBbIzFdIFNNUA0K
+WyAxMy44MDQ0NjZdIE1vZHVsZXMgbGlua2VkIGluOiBhZXNfbmVvbl9icyBhZXNfbmVvbl9ibGsg
+Y3J5cHRvX3NpbWQgY3J5cHRkDQpbIDEzLjgxMTMzNF0gQ1BVOiAxNTIgUElEOiAxNTI5IENvbW06
+IGt3b3JrZXIvMTUyOjEgTm90IHRhaW50ZWQNCjQuMTMuMC05LWdlbmVyaWMgIzEwLVVidW50dQ0K
+WyAxMy44MTk1ODRdIEhhcmR3YXJlIG5hbWU6IERlZmF1bHQgc3RyaW5nIENhdml1bSBUaHVuZGVy
+WDIvRGVmYXVsdCBzdHJpbmcsDQpCSU9TIDUuMTMgMDcvMjAvMjAxNw0KWyAxMy44MjgyODVdIFdv
+cmtxdWV1ZTogZXZlbnRzIGRlZmVycmVkX3Byb2JlX3dvcmtfZnVuYw0KWyAxMy44MzM0MTBdIHRh
+c2s6IGZmZmY4MGJlZTkzZDAwMDAgdGFzay5zdGFjazogZmZmZjgwYmVlOTNkYzAwMA0KWyAxMy44
+MzkzMzBdIFBDIGlzIGF0IGlvbW11X29wc19mcm9tX2Z3bm9kZSsweDRjLzB4OTANClsgMTMuODQ0
+MjgyXSBMUiBpcyBhdCBpb21tdV9vcHNfZnJvbV9md25vZGUrMHgyOC8weDkwDQoNClRoZSBBUk0g
+U01NVXYzIGRyaXZlciAod2hpY2ggb3VyIHBsYXRmb3JtIGltcGxlbWVudHMpIHNlZW1zIHRvIGJl
+IGxvc2luZw0KaW9tbXVfb3BzIHRvIHRoZSBJUE1NVSBkcml2ZXIuDQoNCllvdSBzZWVtIG5vdCB0
+byBiZSB0aGUgZmlyc3Qgb25lIHRvIG5vdGljZToNCg0KaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVs
+Lm9yZy9wYXRjaC85OTU2NDQ5Lw0KDQpXb3csIGhlIGRpZCBub3QgYmVhdCBtZSBieSBtdWNoLg0K
+DQpOb3RlOiBvdXIgcGxhdGZvcm0gdXNlcyBBQ1BJIGZvciBkZXZpY2UgZW51bWVyYXRpb24uDQoN
+CkkgaGF2ZSBubyB3YXkgdG8gdGVzdCB0aGlzLCBidXQgaXMgdGhlcmUgYSByZWFzb24gdGhlIHNl
+dF9pb21tdSBpc27igJl0IGluDQpfcHJvYmU/DQoNCkkgY2FuJ3QgcmVjYWxsIHdoYXQgdGhlIHJl
+YXNvbiB3YXMgSSdtIGFmcmFpZC4NCg0KYXJtLXNtbXUtdjMuYyBkb2VzIGRvIHRoZSBzZXRfaW9t
+bXUgaW4gcHJvYmUsIGFuZCB0aHVzIGZhciB0aGVyZSBoYXZlIGJlZW4gbm8gY29uZmlybWVkIGZh
+dGFsaXRpZXMsIGJ1dCBJIGNhbid0IHNwZWFrIGF1dGhvcml0YXRpdmVseS4NCg0KSSdsbCBsZWF2
+ZSB5b3UgYWxsIHRvIGl0IHRoZW4uDQoNClRoYW5rcywNCg0KQW5hbnRoDQoNCg0KZGlmZiAtLWdp
+dCBhL2RyaXZlcnMvaW9tbXUvaXBtbXUtdm1zYS5jIGIvZHJpdmVycy9pb21tdS9pcG1tdS12bXNh
+LmMNCmluZGV4IDJhMzhhYTEuLmQ0YzcyZGEgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL2lvbW11L2lw
+bW11LXZtc2EuYw0KKysrIGIvZHJpdmVycy9pb21tdS9pcG1tdS12bXNhLmMNCkBAIC0xMDY2LDYg
+KzEwNjYsOSBAQCBzdGF0aWMgaW50IGlwbW11X3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2Ug
+KnBkZXYpDQoNCiAgICAgICBwbGF0Zm9ybV9zZXRfZHJ2ZGF0YShwZGV2LCBtbXUpOw0KDQorICAg
+ICAgIGlmICghaW9tbXVfcHJlc2VudCgmcGxhdGZvcm1fYnVzX3R5cGUpKQ0KKyAgICAgICAgICAg
+ICAgIGJ1c19zZXRfaW9tbXUoJnBsYXRmb3JtX2J1c190eXBlLCAmaXBtbXVfb3BzKTsNCisNCiAg
+ICAgICByZXR1cm4gMDsNCn0NCg0KQEAgLTExMDgsOSArMTExMSw2IEBAIHN0YXRpYyBpbnQgX19p
+bml0IGlwbW11X2luaXQodm9pZCkNCiAgICAgICBpZiAocmV0IDwgMCkNCiAgICAgICAgICAgICAg
+IHJldHVybiByZXQ7DQoNCi0gICAgICAgaWYgKCFpb21tdV9wcmVzZW50KCZwbGF0Zm9ybV9idXNf
+dHlwZSkpDQotICAgICAgICAgICAgICAgYnVzX3NldF9pb21tdSgmcGxhdGZvcm1fYnVzX3R5cGUs
+ICZpcG1tdV9vcHMpOw0KLQ0KICAgICAgIHJldHVybiAwOw0KfQ0KDQoNCklmIEnigJltIHdyb25n
+LCBteSBhcG9sb2dpZXMuDQoNCi0tDQpSZWdhcmRzLA0KDQpMYXVyZW50IFBpbmNoYXJ0DQoNCg0K
 
-That makes easier to document it, as we don't need to document
-weird senseless structs.
+--_000_49EA67E4A5264F479D3A18E458850E03caviumnetworkscom_
+Content-Type: text/html; charset="utf-8"
+Content-ID: <97D88308BF1ECC4C87C4388413729616@namprd07.prod.outlook.com>
+Content-Transfer-Encoding: base64
 
-At drivers, this makes even clearer about the match criteria.
+PGh0bWw+DQo8aGVhZD4NCjxtZXRhIGh0dHAtZXF1aXY9IkNvbnRlbnQtVHlwZSIgY29udGVudD0i
+dGV4dC9odG1sOyBjaGFyc2V0PXV0Zi04Ij4NCjwvaGVhZD4NCjxib2R5IHN0eWxlPSJ3b3JkLXdy
+YXA6IGJyZWFrLXdvcmQ7IC13ZWJraXQtbmJzcC1tb2RlOiBzcGFjZTsgLXdlYmtpdC1saW5lLWJy
+ZWFrOiBhZnRlci13aGl0ZS1zcGFjZTsiIGNsYXNzPSIiPg0KT24gU2VwIDE4LCAyMDE3LCBhdCAx
+MTo0OSBQTSwgTGF1cmVudCBQaW5jaGFydCAmbHQ7PGEgaHJlZj0ibWFpbHRvOmxhdXJlbnQucGlu
+Y2hhcnRAaWRlYXNvbmJvYXJkLmNvbSIgY2xhc3M9IiI+bGF1cmVudC5waW5jaGFydEBpZGVhc29u
+Ym9hcmQuY29tPC9hPiZndDsgd3JvdGU6PGJyIGNsYXNzPSIiPg0KPGRpdj4NCjxibG9ja3F1b3Rl
+IHR5cGU9ImNpdGUiIGNsYXNzPSIiPjxiciBjbGFzcz0iQXBwbGUtaW50ZXJjaGFuZ2UtbmV3bGlu
+ZSI+DQo8ZGl2IGNsYXNzPSIiPg0KPGRpdiBjbGFzcz0iIj5IaSBBbmFudGgsPGJyIGNsYXNzPSIi
+Pg0KPGJyIGNsYXNzPSIiPg0KT24gVHVlc2RheSwgMTkgU2VwdGVtYmVyIDIwMTcgMDM6NDM6MDUg
+RUVTVCBKYXN0eSwgQW5hbnRoIHdyb3RlOjxiciBjbGFzcz0iIj4NCjxibG9ja3F1b3RlIHR5cGU9
+ImNpdGUiIGNsYXNzPSIiPkhpLCB3aXRoIHlvdXIgSVBNTVUgZHJpdmVyIGVuYWJsZWQgdW5kZXIg
+NC4xMyB3ZeKAmXJlIHNlZWluZyBhIGNyYXNoIG9uIGJvb3Q6PGJyIGNsYXNzPSIiPg0KPGJyIGNs
+YXNzPSIiPg0KWyAxMy43ODUxNjRdIFVuYWJsZSB0byBoYW5kbGUga2VybmVsIE5VTEwgcG9pbnRl
+ciBkZXJlZmVyZW5jZSBhdCB2aXJ0dWFsPGJyIGNsYXNzPSIiPg0KYWRkcmVzcyAwMDAwMDAxODxi
+ciBjbGFzcz0iIj4NClsgMTMuNzkzMjU0XSBbMDAwMDAwMDAwMDAwMDAxOF0gdXNlciBhZGRyZXNz
+IGJ1dCBhY3RpdmVfbW0gaXMgc3dhcHBlcjxiciBjbGFzcz0iIj4NClsgMTMuNzk5NjAwXSBJbnRl
+cm5hbCBlcnJvcjogT29wczogOTYwMDAwMDQgWyMxXSBTTVA8YnIgY2xhc3M9IiI+DQpbIDEzLjgw
+NDQ2Nl0gTW9kdWxlcyBsaW5rZWQgaW46IGFlc19uZW9uX2JzIGFlc19uZW9uX2JsayBjcnlwdG9f
+c2ltZCBjcnlwdGQ8YnIgY2xhc3M9IiI+DQpbIDEzLjgxMTMzNF0gQ1BVOiAxNTIgUElEOiAxNTI5
+IENvbW06IGt3b3JrZXIvMTUyOjEgTm90IHRhaW50ZWQ8YnIgY2xhc3M9IiI+DQo0LjEzLjAtOS1n
+ZW5lcmljICMxMC1VYnVudHU8YnIgY2xhc3M9IiI+DQpbIDEzLjgxOTU4NF0gSGFyZHdhcmUgbmFt
+ZTogRGVmYXVsdCBzdHJpbmcgQ2F2aXVtIFRodW5kZXJYMi9EZWZhdWx0IHN0cmluZyw8YnIgY2xh
+c3M9IiI+DQpCSU9TIDUuMTMgMDcvMjAvMjAxNzxiciBjbGFzcz0iIj4NClsgMTMuODI4Mjg1XSBX
+b3JrcXVldWU6IGV2ZW50cyBkZWZlcnJlZF9wcm9iZV93b3JrX2Z1bmM8YnIgY2xhc3M9IiI+DQpb
+IDEzLjgzMzQxMF0gdGFzazogZmZmZjgwYmVlOTNkMDAwMCB0YXNrLnN0YWNrOiBmZmZmODBiZWU5
+M2RjMDAwPGJyIGNsYXNzPSIiPg0KWyAxMy44MzkzMzBdIFBDIGlzIGF0IGlvbW11X29wc19mcm9t
+X2Z3bm9kZSYjNDM7MHg0Yy8weDkwPGJyIGNsYXNzPSIiPg0KWyAxMy44NDQyODJdIExSIGlzIGF0
+IGlvbW11X29wc19mcm9tX2Z3bm9kZSYjNDM7MHgyOC8weDkwPGJyIGNsYXNzPSIiPg0KPGJyIGNs
+YXNzPSIiPg0KVGhlIEFSTSBTTU1VdjMgZHJpdmVyICh3aGljaCBvdXIgcGxhdGZvcm0gaW1wbGVt
+ZW50cykgc2VlbXMgdG8gYmUgbG9zaW5nPGJyIGNsYXNzPSIiPg0KaW9tbXVfb3BzIHRvIHRoZSBJ
+UE1NVSBkcml2ZXIuPGJyIGNsYXNzPSIiPg0KPC9ibG9ja3F1b3RlPg0KPGJyIGNsYXNzPSIiPg0K
+WW91IHNlZW0gbm90IHRvIGJlIHRoZSBmaXJzdCBvbmUgdG8gbm90aWNlOjxiciBjbGFzcz0iIj4N
+CjxiciBjbGFzcz0iIj4NCjxhIGhyZWY9Imh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcGF0
+Y2gvOTk1NjQ0OS8iIGNsYXNzPSIiPmh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcGF0Y2gv
+OTk1NjQ0OS88L2E+PGJyIGNsYXNzPSIiPg0KPC9kaXY+DQo8L2Rpdj4NCjwvYmxvY2txdW90ZT4N
+CjxkaXY+PGJyIGNsYXNzPSIiPg0KPC9kaXY+DQpXb3csIGhlIGRpZCBub3QgYmVhdCBtZSBieSBt
+dWNoLjxiciBjbGFzcz0iIj4NCjxibG9ja3F1b3RlIHR5cGU9ImNpdGUiIGNsYXNzPSIiPg0KPGRp
+diBjbGFzcz0iIj4NCjxkaXYgY2xhc3M9IiI+PGJyIGNsYXNzPSIiPg0KPGJsb2NrcXVvdGUgdHlw
+ZT0iY2l0ZSIgY2xhc3M9IiI+Tm90ZTogb3VyIHBsYXRmb3JtIHVzZXMgQUNQSSBmb3IgZGV2aWNl
+IGVudW1lcmF0aW9uLjxiciBjbGFzcz0iIj4NCjxiciBjbGFzcz0iIj4NCkkgaGF2ZSBubyB3YXkg
+dG8gdGVzdCB0aGlzLCBidXQgaXMgdGhlcmUgYSByZWFzb24gdGhlIHNldF9pb21tdSBpc27igJl0
+IGluPGJyIGNsYXNzPSIiPg0KX3Byb2JlPzxiciBjbGFzcz0iIj4NCjwvYmxvY2txdW90ZT4NCjxi
+ciBjbGFzcz0iIj4NCkkgY2FuJ3QgcmVjYWxsIHdoYXQgdGhlIHJlYXNvbiB3YXMgSSdtIGFmcmFp
+ZC48YnIgY2xhc3M9IiI+DQo8L2Rpdj4NCjwvZGl2Pg0KPC9ibG9ja3F1b3RlPg0KPGRpdj48YnIg
+Y2xhc3M9IiI+DQo8L2Rpdj4NCmFybS1zbW11LXYzLmMgZG9lcyBkbyB0aGUgc2V0X2lvbW11IGlu
+IHByb2JlLCBhbmQgdGh1cyBmYXIgdGhlcmUgaGF2ZSBiZWVuIG5vIGNvbmZpcm1lZCBmYXRhbGl0
+aWVzLCBidXQgSSBjYW4ndCBzcGVhayBhdXRob3JpdGF0aXZlbHkuPC9kaXY+DQo8ZGl2PjxiciBj
+bGFzcz0iIj4NCjwvZGl2Pg0KPGRpdj5JJ2xsIGxlYXZlIHlvdSBhbGwgdG8gaXQgdGhlbi48L2Rp
+dj4NCjxkaXY+PGJyIGNsYXNzPSIiPg0KPC9kaXY+DQo8ZGl2PlRoYW5rcyw8L2Rpdj4NCjxkaXY+
+PGJyIGNsYXNzPSIiPg0KPC9kaXY+DQo8ZGl2PkFuYW50aDwvZGl2Pg0KPGRpdj48YnIgY2xhc3M9
+IiI+DQo8L2Rpdj4NCjxkaXY+DQo8YmxvY2txdW90ZSB0eXBlPSJjaXRlIiBjbGFzcz0iIj4NCjxk
+aXYgY2xhc3M9IiI+DQo8ZGl2IGNsYXNzPSIiPjxiciBjbGFzcz0iIj4NCjxibG9ja3F1b3RlIHR5
+cGU9ImNpdGUiIGNsYXNzPSIiPmRpZmYgLS1naXQgYS9kcml2ZXJzL2lvbW11L2lwbW11LXZtc2Eu
+YyBiL2RyaXZlcnMvaW9tbXUvaXBtbXUtdm1zYS5jPGJyIGNsYXNzPSIiPg0KaW5kZXggMmEzOGFh
+MS4uZDRjNzJkYSAxMDA2NDQ8YnIgY2xhc3M9IiI+DQotLS0gYS9kcml2ZXJzL2lvbW11L2lwbW11
+LXZtc2EuYzxiciBjbGFzcz0iIj4NCiYjNDM7JiM0MzsmIzQzOyBiL2RyaXZlcnMvaW9tbXUvaXBt
+bXUtdm1zYS5jPGJyIGNsYXNzPSIiPg0KQEAgLTEwNjYsNiAmIzQzOzEwNjYsOSBAQCBzdGF0aWMg
+aW50IGlwbW11X3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpPGJyIGNsYXNzPSIi
+Pg0KPGJyIGNsYXNzPSIiPg0KJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
+c3A7cGxhdGZvcm1fc2V0X2RydmRhdGEocGRldiwgbW11KTs8YnIgY2xhc3M9IiI+DQo8YnIgY2xh
+c3M9IiI+DQomIzQzOyAmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDtpZiAoIWlv
+bW11X3ByZXNlbnQoJmFtcDtwbGF0Zm9ybV9idXNfdHlwZSkpPGJyIGNsYXNzPSIiPg0KJiM0Mzsg
+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
+c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7YnVzX3NldF9pb21tdSgmYW1wO3BsYXRmb3JtX2J1
+c190eXBlLCAmYW1wO2lwbW11X29wcyk7PGJyIGNsYXNzPSIiPg0KJiM0Mzs8YnIgY2xhc3M9IiI+
+DQombmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDtyZXR1cm4gMDs8YnIg
+Y2xhc3M9IiI+DQp9PGJyIGNsYXNzPSIiPg0KPGJyIGNsYXNzPSIiPg0KQEAgLTExMDgsOSAmIzQz
+OzExMTEsNiBAQCBzdGF0aWMgaW50IF9faW5pdCBpcG1tdV9pbml0KHZvaWQpPGJyIGNsYXNzPSIi
+Pg0KJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7aWYgKHJldCAmbHQ7
+IDApPGJyIGNsYXNzPSIiPg0KJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
+c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7cmV0dXJu
+IHJldDs8YnIgY2xhc3M9IiI+DQo8YnIgY2xhc3M9IiI+DQotICZuYnNwOyZuYnNwOyZuYnNwOyZu
+YnNwOyZuYnNwOyZuYnNwO2lmICghaW9tbXVfcHJlc2VudCgmYW1wO3BsYXRmb3JtX2J1c190eXBl
+KSk8YnIgY2xhc3M9IiI+DQotICZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
+YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO2J1c19zZXRfaW9t
+bXUoJmFtcDtwbGF0Zm9ybV9idXNfdHlwZSwgJmFtcDtpcG1tdV9vcHMpOzxiciBjbGFzcz0iIj4N
+Ci08YnIgY2xhc3M9IiI+DQombmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
+cDtyZXR1cm4gMDs8YnIgY2xhc3M9IiI+DQp9PGJyIGNsYXNzPSIiPg0KPGJyIGNsYXNzPSIiPg0K
+PGJyIGNsYXNzPSIiPg0KSWYgSeKAmW0gd3JvbmcsIG15IGFwb2xvZ2llcy48YnIgY2xhc3M9IiI+
+DQo8L2Jsb2NrcXVvdGU+DQo8YnIgY2xhc3M9IiI+DQotLSA8YnIgY2xhc3M9IiI+DQpSZWdhcmRz
+LDxiciBjbGFzcz0iIj4NCjxiciBjbGFzcz0iIj4NCkxhdXJlbnQgUGluY2hhcnQ8YnIgY2xhc3M9
+IiI+DQo8YnIgY2xhc3M9IiI+DQo8L2Rpdj4NCjwvZGl2Pg0KPC9ibG9ja3F1b3RlPg0KPC9kaXY+
+DQo8YnIgY2xhc3M9IiI+DQo8L2JvZHk+DQo8L2h0bWw+DQo=
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
----
- drivers/media/platform/am437x/am437x-vpfe.c    | 6 +++---
- drivers/media/platform/atmel/atmel-isc.c       | 2 +-
- drivers/media/platform/atmel/atmel-isi.c       | 2 +-
- drivers/media/platform/davinci/vpif_capture.c  | 4 ++--
- drivers/media/platform/exynos4-is/media-dev.c  | 4 ++--
- drivers/media/platform/omap3isp/isp.c          | 4 ++--
- drivers/media/platform/pxa_camera.c            | 2 +-
- drivers/media/platform/qcom/camss-8x16/camss.c | 2 +-
- drivers/media/platform/rcar-vin/rcar-core.c    | 8 ++++----
- drivers/media/platform/rcar_drif.c             | 4 ++--
- drivers/media/platform/soc_camera/soc_camera.c | 2 +-
- drivers/media/platform/stm32/stm32-dcmi.c      | 2 +-
- drivers/media/platform/ti-vpe/cal.c            | 2 +-
- drivers/media/platform/xilinx/xilinx-vipp.c    | 2 +-
- drivers/media/v4l2-core/v4l2-async.c           | 4 ++--
- drivers/staging/media/imx/imx-media-dev.c      | 8 ++++----
- include/media/v4l2-async.h                     | 8 ++------
- 17 files changed, 31 insertions(+), 35 deletions(-)
-
-diff --git a/drivers/media/platform/am437x/am437x-vpfe.c b/drivers/media/platform/am437x/am437x-vpfe.c
-index dfcc484cab89..f87e8f9467e9 100644
---- a/drivers/media/platform/am437x/am437x-vpfe.c
-+++ b/drivers/media/platform/am437x/am437x-vpfe.c
-@@ -2304,8 +2304,8 @@ vpfe_async_bound(struct v4l2_async_notifier *notifier,
- 	vpfe_dbg(1, vpfe, "vpfe_async_bound\n");
- 
- 	for (i = 0; i < ARRAY_SIZE(vpfe->cfg->asd); i++) {
--		if (vpfe->cfg->asd[i]->match.fwnode.fwnode ==
--		    asd[i].match.fwnode.fwnode) {
-+		if (vpfe->cfg->asd[i]->match.fwnode ==
-+		    asd[i].match.fwnode) {
- 			sdinfo = &vpfe->cfg->sub_devs[i];
- 			vpfe->sd[i] = subdev;
- 			vpfe->sd[i]->grp_id = sdinfo->grp_id;
-@@ -2505,7 +2505,7 @@ vpfe_get_pdata(struct platform_device *pdev)
- 		}
- 
- 		pdata->asd[i]->match_type = V4L2_ASYNC_MATCH_FWNODE;
--		pdata->asd[i]->match.fwnode.fwnode = of_fwnode_handle(rem);
-+		pdata->asd[i]->match.fwnode = of_fwnode_handle(rem);
- 		of_node_put(rem);
- 	}
- 
-diff --git a/drivers/media/platform/atmel/atmel-isc.c b/drivers/media/platform/atmel/atmel-isc.c
-index d7103c5f92c3..c04d9a4dbfac 100644
---- a/drivers/media/platform/atmel/atmel-isc.c
-+++ b/drivers/media/platform/atmel/atmel-isc.c
-@@ -1742,7 +1742,7 @@ static int isc_parse_dt(struct device *dev, struct isc_device *isc)
- 			subdev_entity->pfe_cfg0 |= ISC_PFE_CFG0_PPOL_LOW;
- 
- 		subdev_entity->asd->match_type = V4L2_ASYNC_MATCH_FWNODE;
--		subdev_entity->asd->match.fwnode.fwnode =
-+		subdev_entity->asd->match.fwnode =
- 			of_fwnode_handle(rem);
- 		list_add_tail(&subdev_entity->list, &isc->subdev_entities);
- 	}
-diff --git a/drivers/media/platform/atmel/atmel-isi.c b/drivers/media/platform/atmel/atmel-isi.c
-index 891fa2505efa..8c52f9f5f2db 100644
---- a/drivers/media/platform/atmel/atmel-isi.c
-+++ b/drivers/media/platform/atmel/atmel-isi.c
-@@ -1124,7 +1124,7 @@ static int isi_graph_parse(struct atmel_isi *isi, struct device_node *node)
- 		/* Remote node to connect */
- 		isi->entity.node = remote;
- 		isi->entity.asd.match_type = V4L2_ASYNC_MATCH_FWNODE;
--		isi->entity.asd.match.fwnode.fwnode = of_fwnode_handle(remote);
-+		isi->entity.asd.match.fwnode = of_fwnode_handle(remote);
- 		return 0;
- 	}
- }
-diff --git a/drivers/media/platform/davinci/vpif_capture.c b/drivers/media/platform/davinci/vpif_capture.c
-index 0ef36cec21d1..0cf141635cbc 100644
---- a/drivers/media/platform/davinci/vpif_capture.c
-+++ b/drivers/media/platform/davinci/vpif_capture.c
-@@ -1390,7 +1390,7 @@ static int vpif_async_bound(struct v4l2_async_notifier *notifier,
- 
- 	for (i = 0; i < vpif_obj.config->asd_sizes[0]; i++) {
- 		struct v4l2_async_subdev *_asd = vpif_obj.config->asd[i];
--		const struct fwnode_handle *fwnode = _asd->match.fwnode.fwnode;
-+		const struct fwnode_handle *fwnode = _asd->match.fwnode;
- 
- 		if (fwnode == subdev->fwnode) {
- 			vpif_obj.sd[i] = subdev;
-@@ -1588,7 +1588,7 @@ vpif_capture_get_pdata(struct platform_device *pdev)
- 		}
- 
- 		pdata->asd[i]->match_type = V4L2_ASYNC_MATCH_FWNODE;
--		pdata->asd[i]->match.fwnode.fwnode = of_fwnode_handle(rem);
-+		pdata->asd[i]->match.fwnode = of_fwnode_handle(rem);
- 		of_node_put(rem);
- 	}
- 
-diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
-index d4656d5175d7..d4d97d7e9684 100644
---- a/drivers/media/platform/exynos4-is/media-dev.c
-+++ b/drivers/media/platform/exynos4-is/media-dev.c
-@@ -454,7 +454,7 @@ static int fimc_md_parse_port_node(struct fimc_md *fmd,
- 	}
- 
- 	fmd->sensor[index].asd.match_type = V4L2_ASYNC_MATCH_FWNODE;
--	fmd->sensor[index].asd.match.fwnode.fwnode = of_fwnode_handle(rem);
-+	fmd->sensor[index].asd.match.fwnode = of_fwnode_handle(rem);
- 	fmd->async_subdevs[index] = &fmd->sensor[index].asd;
- 
- 	fmd->num_sensors++;
-@@ -1361,7 +1361,7 @@ static int subdev_notifier_bound(struct v4l2_async_notifier *notifier,
- 
- 	/* Find platform data for this sensor subdev */
- 	for (i = 0; i < ARRAY_SIZE(fmd->sensor); i++)
--		if (fmd->sensor[i].asd.match.fwnode.fwnode ==
-+		if (fmd->sensor[i].asd.match.fwnode ==
- 		    of_fwnode_handle(subdev->dev->of_node))
- 			si = &fmd->sensor[i];
- 
-diff --git a/drivers/media/platform/omap3isp/isp.c b/drivers/media/platform/omap3isp/isp.c
-index 1a428fe9f070..bbb402a5fcf0 100644
---- a/drivers/media/platform/omap3isp/isp.c
-+++ b/drivers/media/platform/omap3isp/isp.c
-@@ -2170,9 +2170,9 @@ static int isp_fwnodes_parse(struct device *dev,
- 
- 		notifier->subdevs[notifier->num_subdevs] = &isd->asd;
- 
--		isd->asd.match.fwnode.fwnode =
-+		isd->asd.match.fwnode =
- 			fwnode_graph_get_remote_port_parent(fwnode);
--		if (!isd->asd.match.fwnode.fwnode) {
-+		if (!isd->asd.match.fwnode) {
- 			dev_warn(dev, "bad remote port parent\n");
- 			goto error;
- 		}
-diff --git a/drivers/media/platform/pxa_camera.c b/drivers/media/platform/pxa_camera.c
-index edca993c2b1f..4a23a60f3418 100644
---- a/drivers/media/platform/pxa_camera.c
-+++ b/drivers/media/platform/pxa_camera.c
-@@ -2328,7 +2328,7 @@ static int pxa_camera_pdata_from_dt(struct device *dev,
- 	asd->match_type = V4L2_ASYNC_MATCH_FWNODE;
- 	remote = of_graph_get_remote_port(np);
- 	if (remote) {
--		asd->match.fwnode.fwnode = of_fwnode_handle(remote);
-+		asd->match.fwnode = of_fwnode_handle(remote);
- 		of_node_put(remote);
- 	} else {
- 		dev_notice(dev, "no remote for %pOF\n", np);
-diff --git a/drivers/media/platform/qcom/camss-8x16/camss.c b/drivers/media/platform/qcom/camss-8x16/camss.c
-index a3760b5dd1d1..7d7bca09473a 100644
---- a/drivers/media/platform/qcom/camss-8x16/camss.c
-+++ b/drivers/media/platform/qcom/camss-8x16/camss.c
-@@ -341,7 +341,7 @@ static int camss_of_parse_ports(struct device *dev,
- 		}
- 
- 		csd->asd.match_type = V4L2_ASYNC_MATCH_FWNODE;
--		csd->asd.match.fwnode.fwnode = of_fwnode_handle(remote);
-+		csd->asd.match.fwnode = of_fwnode_handle(remote);
- 	}
- 
- 	return notifier->num_subdevs;
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 142de447aaaa..3835a2fa0cb7 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -171,7 +171,7 @@ static int rvin_digital_graph_parse(struct rvin_dev *vin)
- 	struct device_node *ep, *np;
- 	int ret;
- 
--	vin->digital.asd.match.fwnode.fwnode = NULL;
-+	vin->digital.asd.match.fwnode = NULL;
- 	vin->digital.subdev = NULL;
- 
- 	/*
-@@ -195,7 +195,7 @@ static int rvin_digital_graph_parse(struct rvin_dev *vin)
- 	if (ret)
- 		return ret;
- 
--	vin->digital.asd.match.fwnode.fwnode = of_fwnode_handle(np);
-+	vin->digital.asd.match.fwnode = of_fwnode_handle(np);
- 	vin->digital.asd.match_type = V4L2_ASYNC_MATCH_FWNODE;
- 
- 	return 0;
-@@ -210,7 +210,7 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
- 	if (ret)
- 		return ret;
- 
--	if (!vin->digital.asd.match.fwnode.fwnode) {
-+	if (!vin->digital.asd.match.fwnode) {
- 		vin_dbg(vin, "No digital subdevice found\n");
- 		return -ENODEV;
- 	}
-@@ -223,7 +223,7 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
- 	subdevs[0] = &vin->digital.asd;
- 
- 	vin_dbg(vin, "Found digital subdevice %pOF\n",
--		to_of_node(subdevs[0]->match.fwnode.fwnode));
-+		to_of_node(subdevs[0]->match.fwnode));
- 
- 	vin->notifier.num_subdevs = 1;
- 	vin->notifier.subdevs = subdevs;
-diff --git a/drivers/media/platform/rcar_drif.c b/drivers/media/platform/rcar_drif.c
-index 522364ff0d5d..ae7927305231 100644
---- a/drivers/media/platform/rcar_drif.c
-+++ b/drivers/media/platform/rcar_drif.c
-@@ -1107,7 +1107,7 @@ static int rcar_drif_notify_bound(struct v4l2_async_notifier *notifier,
- 	struct rcar_drif_sdr *sdr =
- 		container_of(notifier, struct rcar_drif_sdr, notifier);
- 
--	if (sdr->ep.asd.match.fwnode.fwnode !=
-+	if (sdr->ep.asd.match.fwnode !=
- 	    of_fwnode_handle(subdev->dev->of_node)) {
- 		rdrif_err(sdr, "subdev %s cannot bind\n", subdev->name);
- 		return -EINVAL;
-@@ -1229,7 +1229,7 @@ static int rcar_drif_parse_subdevs(struct rcar_drif_sdr *sdr)
- 		return -EINVAL;
- 	}
- 
--	sdr->ep.asd.match.fwnode.fwnode = fwnode;
-+	sdr->ep.asd.match.fwnode = fwnode;
- 	sdr->ep.asd.match_type = V4L2_ASYNC_MATCH_FWNODE;
- 	notifier->num_subdevs++;
- 
-diff --git a/drivers/media/platform/soc_camera/soc_camera.c b/drivers/media/platform/soc_camera/soc_camera.c
-index 1f3c450c7a69..1bef3ebb49ee 100644
---- a/drivers/media/platform/soc_camera/soc_camera.c
-+++ b/drivers/media/platform/soc_camera/soc_camera.c
-@@ -1513,7 +1513,7 @@ static int soc_of_bind(struct soc_camera_host *ici,
- 	if (!info)
- 		return -ENOMEM;
- 
--	info->sasd.asd.match.fwnode.fwnode = of_fwnode_handle(remote);
-+	info->sasd.asd.match.fwnode = of_fwnode_handle(remote);
- 	info->sasd.asd.match_type = V4L2_ASYNC_MATCH_FWNODE;
- 	info->subdev = &info->sasd.asd;
- 
-diff --git a/drivers/media/platform/stm32/stm32-dcmi.c b/drivers/media/platform/stm32/stm32-dcmi.c
-index 35ba6f211b79..4c8bd77842f6 100644
---- a/drivers/media/platform/stm32/stm32-dcmi.c
-+++ b/drivers/media/platform/stm32/stm32-dcmi.c
-@@ -1514,7 +1514,7 @@ static int dcmi_graph_parse(struct stm32_dcmi *dcmi, struct device_node *node)
- 		/* Remote node to connect */
- 		dcmi->entity.node = remote;
- 		dcmi->entity.asd.match_type = V4L2_ASYNC_MATCH_FWNODE;
--		dcmi->entity.asd.match.fwnode.fwnode = of_fwnode_handle(remote);
-+		dcmi->entity.asd.match.fwnode = of_fwnode_handle(remote);
- 		return 0;
- 	}
- }
-diff --git a/drivers/media/platform/ti-vpe/cal.c b/drivers/media/platform/ti-vpe/cal.c
-index 42e383a48ffe..7491425eed77 100644
---- a/drivers/media/platform/ti-vpe/cal.c
-+++ b/drivers/media/platform/ti-vpe/cal.c
-@@ -1700,7 +1700,7 @@ static int of_cal_create_instance(struct cal_ctx *ctx, int inst)
- 		goto cleanup_exit;
- 	}
- 	asd->match_type = V4L2_ASYNC_MATCH_FWNODE;
--	asd->match.fwnode.fwnode = of_fwnode_handle(sensor_node);
-+	asd->match.fwnode = of_fwnode_handle(sensor_node);
- 
- 	remote_ep = of_graph_get_remote_endpoint(ep_node);
- 	if (!remote_ep) {
-diff --git a/drivers/media/platform/xilinx/xilinx-vipp.c b/drivers/media/platform/xilinx/xilinx-vipp.c
-index ebfdf334d99c..3fdb0f365538 100644
---- a/drivers/media/platform/xilinx/xilinx-vipp.c
-+++ b/drivers/media/platform/xilinx/xilinx-vipp.c
-@@ -390,7 +390,7 @@ static int xvip_graph_parse_one(struct xvip_composite_device *xdev,
- 
- 		entity->node = remote;
- 		entity->asd.match_type = V4L2_ASYNC_MATCH_FWNODE;
--		entity->asd.match.fwnode.fwnode = of_fwnode_handle(remote);
-+		entity->asd.match.fwnode = of_fwnode_handle(remote);
- 		list_add_tail(&entity->list, &xdev->entities);
- 		xdev->num_subdevs++;
- 	}
-diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
-index d741a8e0fdac..e087857d02d6 100644
---- a/drivers/media/v4l2-core/v4l2-async.c
-+++ b/drivers/media/v4l2-core/v4l2-async.c
-@@ -39,12 +39,12 @@ static bool match_i2c(struct v4l2_subdev *sd, struct v4l2_async_subdev *asd)
- static bool match_devname(struct v4l2_subdev *sd,
- 			  struct v4l2_async_subdev *asd)
- {
--	return !strcmp(asd->match.device_name.name, dev_name(sd->dev));
-+	return !strcmp(asd->match.device_name, dev_name(sd->dev));
- }
- 
- static bool match_fwnode(struct v4l2_subdev *sd, struct v4l2_async_subdev *asd)
- {
--	return sd->fwnode == asd->match.fwnode.fwnode;
-+	return sd->fwnode == asd->match.fwnode;
- }
- 
- static bool match_custom(struct v4l2_subdev *sd, struct v4l2_async_subdev *asd)
-diff --git a/drivers/staging/media/imx/imx-media-dev.c b/drivers/staging/media/imx/imx-media-dev.c
-index d96f4512224f..858088570684 100644
---- a/drivers/staging/media/imx/imx-media-dev.c
-+++ b/drivers/staging/media/imx/imx-media-dev.c
-@@ -48,12 +48,12 @@ imx_media_find_async_subdev(struct imx_media_dev *imxmd,
- 		imxsd = &imxmd->subdev[i];
- 		switch (imxsd->asd.match_type) {
- 		case V4L2_ASYNC_MATCH_FWNODE:
--			if (fwnode && imxsd->asd.match.fwnode.fwnode == fwnode)
-+			if (fwnode && imxsd->asd.match.fwnode == fwnode)
- 				return imxsd;
- 			break;
- 		case V4L2_ASYNC_MATCH_DEVNAME:
- 			if (devname &&
--			    !strcmp(imxsd->asd.match.device_name.name, devname))
-+			    !strcmp(imxsd->asd.match.device_name, devname))
- 				return imxsd;
- 			break;
- 		default:
-@@ -108,11 +108,11 @@ imx_media_add_async_subdev(struct imx_media_dev *imxmd,
- 	asd = &imxsd->asd;
- 	if (np) {
- 		asd->match_type = V4L2_ASYNC_MATCH_FWNODE;
--		asd->match.fwnode.fwnode = of_fwnode_handle(np);
-+		asd->match.fwnode = of_fwnode_handle(np);
- 	} else {
- 		asd->match_type = V4L2_ASYNC_MATCH_DEVNAME;
- 		strncpy(imxsd->devname, devname, sizeof(imxsd->devname));
--		asd->match.device_name.name = imxsd->devname;
-+		asd->match.device_name = imxsd->devname;
- 		imxsd->pdev = pdev;
- 	}
- 
-diff --git a/include/media/v4l2-async.h b/include/media/v4l2-async.h
-index c69d8c8a66d0..e66a3521596f 100644
---- a/include/media/v4l2-async.h
-+++ b/include/media/v4l2-async.h
-@@ -54,12 +54,8 @@ enum v4l2_async_match_type {
- struct v4l2_async_subdev {
- 	enum v4l2_async_match_type match_type;
- 	union {
--		struct {
--			struct fwnode_handle *fwnode;
--		} fwnode;
--		struct {
--			const char *name;
--		} device_name;
-+		struct fwnode_handle *fwnode;
-+		const char *device_name;
- 		struct {
- 			int adapter_id;
- 			unsigned short address;
--- 
-2.13.5
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+--_000_49EA67E4A5264F479D3A18E458850E03caviumnetworkscom_--
