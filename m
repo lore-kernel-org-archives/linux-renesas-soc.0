@@ -1,43 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:41135 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751907AbdINKeX (ORCPT
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:37686 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751554AbdITMqh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Sep 2017 06:34:23 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 0/4] arm64: dts: renesas: r8a77995 and draak: add USB2.0 Host
-Date: Thu, 14 Sep 2017 19:30:39 +0900
-Message-Id: <1505385043-1554-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Wed, 20 Sep 2017 08:46:37 -0400
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1505398753-4735-1-git-send-email-vladimir.barinov@cogentembedded.com>
+References: <1505398753-4735-1-git-send-email-vladimir.barinov@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 20 Sep 2017 14:46:36 +0200
+Message-ID: <CAMuHMdWex=xpufPxB8KccOAt60ofOawmZ7ArXLiBhgxQ1OH2qw@mail.gmail.com>
+Subject: Re: [PATCH v2 08/18] arm64: dts: ulcb-kf: enable CAN0/1
+To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch set is based on the renesas-drivers.git /
-renesas-drivers-2017-09-05-v4.13 tag.
+On Thu, Sep 14, 2017 at 4:19 PM, Vladimir Barinov
+<vladimir.barinov@cogentembedded.com> wrote:
+> This supports CAN0/1 on ULCB Kingfisher board
+>
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 
-The R-Car D3 USB2.0 PHY binding patch is not merged yet. But, this driver
-can be probed and work by using fallback compatible value.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This patch set needs the following pinctrl patch:
- "[PATCH v2] pinctrl: sh-pfc: r8a77995: Add USB2.0 host support"
+Gr{oetje,eeting}s,
 
-Otherwise, USB2.0 PHY driver cannot be probed.
+                        Geert
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Yoshihiro Shimoda (4):
-  arm64: dts: renesas: r8a77995: Add USB2.0 PHY device node
-  arm64: dts: renesas: r8a77995: add USB2.0 Host (EHCI/OHCI) device node
-  arm64: dts: renesas: r8a77995: draak: enable USB2.0 PHY
-  arm64: dts: renesas: r8a77995: draak: enable USB2.0 Host (EHCI/OHCI)
-
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 19 +++++++++++++
- arch/arm64/boot/dts/renesas/r8a77995.dtsi      | 37 ++++++++++++++++++++++++++
- 2 files changed, 56 insertions(+)
-
--- 
-1.9.1
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
