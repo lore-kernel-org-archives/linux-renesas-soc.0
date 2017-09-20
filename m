@@ -1,51 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52446 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751355AbdIEIIA (ORCPT
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:33296 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751192AbdITN24 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Sep 2017 04:08:00 -0400
-From: Simon Horman <horms@verge.net.au>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: ltsi-dev@lists.linuxfoundation.org,
-        linux-renesas-soc@vger.kernel.org,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: [PATCH 12/13] usb: host: ohci-platform: set hcd->phy to avoid phy_get() in usb_add_hcd()
-Date: Tue,  5 Sep 2017 10:06:47 +0200
-Message-Id: <1504598808-19810-13-git-send-email-horms@verge.net.au>
-In-Reply-To: <1504598808-19810-1-git-send-email-horms@verge.net.au>
-References: <1504598808-19810-1-git-send-email-horms@verge.net.au>
+        Wed, 20 Sep 2017 09:28:56 -0400
+MIME-Version: 1.0
+In-Reply-To: <1505398788-4892-1-git-send-email-vladimir.barinov@cogentembedded.com>
+References: <1505398788-4892-1-git-send-email-vladimir.barinov@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 20 Sep 2017 15:28:55 +0200
+Message-ID: <CAMuHMdVgOCHe6AXqKbtK0Za5iujYYsP80N7yFGTf2hnUY8GPxg@mail.gmail.com>
+Subject: Re: [PATCH v2 17/18] arm64: dts: ulcb-kf: enable PCA9548 on I2C4
+To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+On Thu, Sep 14, 2017 at 4:19 PM, Vladimir Barinov
+<vladimir.barinov@cogentembedded.com> wrote:
+> This supports PCA9548 I2C switch on I2C4 bus on ULCB Kingfisher board
+>
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 
-This patch sets hcd->phy from own phy context to avoid phy_get()
-in usb_add_hcd(). Since core/hcd.c manages the phy only in
-usb_add_hcd() and usb_remove_hcd(), there is difficult to manage
-the phy in suspend/resume.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-(cherry picked from commit d3d6ef1fb908b286a610fe063613e519bc50178b)
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- drivers/usb/host/ohci-platform.c | 3 +++
- 1 file changed, 3 insertions(+)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/usb/host/ohci-platform.c b/drivers/usb/host/ohci-platform.c
-index 898b74086c12..6368fce43197 100644
---- a/drivers/usb/host/ohci-platform.c
-+++ b/drivers/usb/host/ohci-platform.c
-@@ -183,6 +183,9 @@ static int ohci_platform_probe(struct platform_device *dev)
- 			if (IS_ERR(priv->phys[phy_num])) {
- 				err = PTR_ERR(priv->phys[phy_num]);
- 				goto err_put_hcd;
-+			} else if (!hcd->phy) {
-+				/* Avoiding phy_get() in usb_add_hcd() */
-+				hcd->phy = priv->phys[phy_num];
- 			}
- 		}
- 
--- 
-2.1.4
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
