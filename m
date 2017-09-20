@@ -1,78 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:30773 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751653AbdITNFM (ORCPT
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:37614 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751585AbdITLQ7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 20 Sep 2017 09:05:12 -0400
-From: Chris Paterson <Chris.Paterson2@renesas.com>
+        Wed, 20 Sep 2017 07:16:59 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170915081144.GI3924@verge.net.au>
+References: <1505322341-9480-1-git-send-email-chris.paterson2@renesas.com>
+ <1505322341-9480-4-git-send-email-chris.paterson2@renesas.com> <20170915081144.GI3924@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 20 Sep 2017 13:16:58 +0200
+Message-ID: <CAMuHMdVLXauMA_cbFJafHNdX_XHVGccO00vm6mdvgB7-7xh3RA@mail.gmail.com>
+Subject: Re: [PATCH 3/8] ARM: dts: iwg22m: Enable SDHI1 controller
 To: Simon Horman <horms@verge.net.au>
-CC: Rob Herring <robh+dt@kernel.org>,
+Cc: Chris Paterson <chris.paterson2@renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH 3/8] ARM: dts: iwg22m: Enable SDHI1 controller
-Date: Wed, 20 Sep 2017 13:05:07 +0000
-Message-ID: <TY1PR06MB07026CA91F110214FF170FA3B7610@TY1PR06MB0702.apcprd06.prod.outlook.com>
-References: <1505322341-9480-1-git-send-email-chris.paterson2@renesas.com>
- <1505322341-9480-4-git-send-email-chris.paterson2@renesas.com>
- <20170915081144.GI3924@verge.net.au>
-In-Reply-To: <20170915081144.GI3924@verge.net.au>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGVsbG8gU2ltb24sDQoNCj4gRnJvbTogZGV2aWNldHJlZS1vd25lckB2Z2VyLmtlcm5lbC5vcmcg
-W21haWx0bzpkZXZpY2V0cmVlLQ0KPiBvd25lckB2Z2VyLmtlcm5lbC5vcmddIE9uIEJlaGFsZiBP
-ZiBTaW1vbiBIb3JtYW4NCj4gU2VudDogMTUgU2VwdGVtYmVyIDIwMTcgMDk6MTINCj4gVG86IENo
-cmlzIFBhdGVyc29uIDxDaHJpcy5QYXRlcnNvbjJAcmVuZXNhcy5jb20+DQo+IA0KPiBPbiBXZWQs
-IFNlcCAxMywgMjAxNyBhdCAwNjowNTozNlBNICswMTAwLCBDaHJpcyBQYXRlcnNvbiB3cm90ZToN
-Cj4gPiBGcm9tOiBGYWJyaXppbyBDYXN0cm8gPGZhYnJpemlvLmNhc3Ryb0BicC5yZW5lc2FzLmNv
-bT4NCj4gPg0KPiA+IEVuYWJsZSB0aGUgU0RISTEgY29udHJvbGxlciBvbiBpV2F2ZSBSWi9HMUUg
-U29NLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogRmFicml6aW8gQ2FzdHJvIDxmYWJyaXppby5j
-YXN0cm9AYnAucmVuZXNhcy5jb20+DQo+ID4gU2lnbmVkLW9mZi1ieTogQ2hyaXMgUGF0ZXJzb24g
-PGNocmlzLnBhdGVyc29uMkByZW5lc2FzLmNvbT4NCj4gPiAtLS0NCj4gPiBUaGlzIHBhdGNoIGlz
-IGJhc2VkIG9uIHJlbmVzYXMtZGV2ZWwtMjAxNzA5MTMtdjQuMTMuDQo+ID4NCj4gPg0KPiA+ICBh
-cmNoL2FybS9ib290L2R0cy9yOGE3NzQ1LWl3ZzIybS5kdHNpIHwgMTcgKysrKysrKysrKysrKysr
-KysNCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDE3IGluc2VydGlvbnMoKykNCj4gPg0KPiA+IGRpZmYg
-LS1naXQgYS9hcmNoL2FybS9ib290L2R0cy9yOGE3NzQ1LWl3ZzIybS5kdHNpDQo+ID4gYi9hcmNo
-L2FybS9ib290L2R0cy9yOGE3NzQ1LWl3ZzIybS5kdHNpDQo+ID4gaW5kZXggZTMwNmU3Yy4uZjdm
-OWNlZiAxMDA2NDQNCj4gPiAtLS0gYS9hcmNoL2FybS9ib290L2R0cy9yOGE3NzQ1LWl3ZzIybS5k
-dHNpDQo+ID4gKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvcjhhNzc0NS1pd2cyMm0uZHRzaQ0KPiA+
-IEBAIC05LDYgKzksNyBAQA0KPiA+ICAgKi8NCj4gPg0KPiA+ICAjaW5jbHVkZSAicjhhNzc0NS5k
-dHNpIg0KPiA+ICsjaW5jbHVkZSA8ZHQtYmluZGluZ3MvZ3Bpby9ncGlvLmg+DQo+ID4NCj4gPiAg
-LyB7DQo+ID4gIAljb21wYXRpYmxlID0gIml3YXZlLGcyMm0iLCAicmVuZXNhcyxyOGE3NzQ1Ijsg
-QEAgLTM4LDYgKzM5LDEyDQo+IEBADQo+ID4gIAkJZnVuY3Rpb24gPSAibW1jIjsNCj4gPiAgCX07
-DQo+ID4NCj4gPiArCXNkaGkxX3BpbnM6IHNkMSB7DQo+ID4gKwkJZ3JvdXBzID0gInNkaGkxX2Rh
-dGE0IiwgInNkaGkxX2N0cmwiOw0KPiA+ICsJCWZ1bmN0aW9uID0gInNkaGkxIjsNCj4gPiArCQlw
-b3dlci1zb3VyY2UgPSA8MzMwMD47DQo+ID4gKwl9Ow0KPiA+ICsNCj4gPiAgCWkyYzNfcGluczog
-aTJjMyB7DQo+ID4gIAkJZ3JvdXBzID0gImkyYzNfYiI7DQo+ID4gIAkJZnVuY3Rpb24gPSAiaTJj
-MyI7DQo+ID4gQEAgLTU0LDYgKzYxLDE2IEBADQo+ID4gIAlzdGF0dXMgPSAib2theSI7DQo+ID4g
-IH07DQo+ID4NCj4gPiArJnNkaGkxIHsNCj4gPiArCXBpbmN0cmwtMCA9IDwmc2RoaTFfcGlucz47
-DQo+ID4gKwlwaW5jdHJsLW5hbWVzID0gImRlZmF1bHQiOw0KPiA+ICsNCj4gPiArCXZtbWMtc3Vw
-cGx5ID0gPCZyZWdfM3Azdj47DQo+ID4gKwl2cW1tYy1zdXBwbHkgPSA8JnJlZ18zcDN2PjsNCj4g
-PiArCWNkLWdwaW9zID0gPCZncGlvMyAzMSBHUElPX0FDVElWRV9MT1c+Ow0KPiANCj4gTm8gd3At
-Z3Bpb3MgcHJvcGVydHkgbWVhbnMgdGhpcyBpcyBhIMK1U0Qgc2xvdCwgcmlnaHQ/DQoNCkNvcnJl
-Y3QNCg0KPiANCj4gRG8geW91IGhhdmUgYW55IHBsYW5zIHRvIGVuYWJsZSBzZHItNTAgYW5kIHNk
-ci0xMDQ/DQo+IElzIGl0IG5vdCBzdXBwb3J0ZWQgZm9yIHNvbWUgcmVhc29uPw0KDQpOb3BlICh1
-bmxlc3MgdGhlIGhhcmR3YXJlIGNoYW5nZXMgZG93biB0aGUgbGluZSkuDQpCb3RoIHZtbWMgYW5k
-IHZxbW1jIGFyZSBmaXhlZCB0byAzVjMgb24gdGhlIGlXYXZlLUUgU09NIG1vZHVsZS4NCg0KS2lu
-ZCByZWdhcmRzLCBDaHJpcw0KDQoNCj4gDQo+IEkgZG9uJ3QgbWluZCBpZiBpdHMgbm90IGVuYWJs
-ZWQgaW4gdGhpcyBwYXRjaCBidXQgSSB3b3VsZCBsaWtlIHRvIGtub3cgaWYgaXQgY2FuIGJlDQo+
-IGVuYWJsZWQgb3Igbm90IGFuZCByZWZsZWN0IHRoYXQgaW5mb3JtYXRpb24gaW4gdGhlIHdpa2ku
-DQo+IA0KPiBodHRwOi8vZWxpbnV4Lm9yZy9pbmRleC5waHA/dGl0bGU9UmVuZXNhcy1NTUMtRW5h
-YmxlZC1TcGVlZHMNCj4gDQo+ID4gKwlzdGF0dXMgPSAib2theSI7DQo+ID4gK307DQo+ID4gKw0K
-PiA+ICAmaTJjMyB7DQo+ID4gIAlwaW5jdHJsLTAgPSA8JmkyYzNfcGlucz47DQo+ID4gIAlwaW5j
-dHJsLW5hbWVzID0gImRlZmF1bHQiOw0KPiA+IC0tDQo+ID4gMS45LjENCj4gPg0KPiAtLQ0KPiBU
-byB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUg
-ZGV2aWNldHJlZSIgaW4gdGhlDQo+IGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2Vy
-Lmtlcm5lbC5vcmcgTW9yZSBtYWpvcmRvbW8gaW5mbyBhdA0KPiBodHRwOi8vdmdlci5rZXJuZWwu
-b3JnL21ham9yZG9tby1pbmZvLmh0bWwNCg==
+On Fri, Sep 15, 2017 at 10:11 AM, Simon Horman <horms@verge.net.au> wrote:
+> On Wed, Sep 13, 2017 at 06:05:36PM +0100, Chris Paterson wrote:
+>> From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+>>
+>> Enable the SDHI1 controller on iWave RZ/G1E SoM.
+>>
+>> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+>> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+>> --- a/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
+>> +++ b/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
+
+>> @@ -54,6 +61,16 @@
+>>       status =3D "okay";
+>>  };
+>>
+>> +&sdhi1 {
+>> +     pinctrl-0 =3D <&sdhi1_pins>;
+>> +     pinctrl-names =3D "default";
+>> +
+>> +     vmmc-supply =3D <&reg_3p3v>;
+>> +     vqmmc-supply =3D <&reg_3p3v>;
+>> +     cd-gpios =3D <&gpio3 31 GPIO_ACTIVE_LOW>;
+>
+> No wp-gpios property means this is a =C2=B5SD slot, right?
+
+Correct.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
