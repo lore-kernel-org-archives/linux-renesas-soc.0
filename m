@@ -1,114 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:31179 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751787AbdI0J5l (ORCPT
+Received: from mail-vk0-f48.google.com ([209.85.213.48]:43062 "EHLO
+        mail-vk0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751554AbdITOn2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 27 Sep 2017 05:57:41 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>
+        Wed, 20 Sep 2017 10:43:28 -0400
+Received: by mail-vk0-f48.google.com with SMTP id h4so1568748vkg.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 20 Sep 2017 07:43:28 -0700 (PDT)
+Subject: Re: [PATCH 03/18] arm64: dts: ulcb-kf: initial device tree
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+References: <1504737267-22829-1-git-send-email-vladimir.barinov@cogentembedded.com>
+ <1504737322-22954-1-git-send-email-vladimir.barinov@cogentembedded.com>
+ <CAMuHMdXyWV52_kZNFGQzPpnAYowa0KZYodMAWusCX5Opj3a1iQ@mail.gmail.com>
 Cc: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Chris Paterson <chris.paterson2@renesas.com>
-Subject: [PATCH] ARM: dts: r8a7745: Add MSIOF[012] support
-Date: Wed, 27 Sep 2017 10:57:05 +0100
-Message-Id: <1506506225-5015-2-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1506506225-5015-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1506506225-5015-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Message-ID: <95e3fe73-3c14-aa58-393e-62b41b568db1@cogentembedded.com>
+Date: Wed, 20 Sep 2017 17:43:25 +0300
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdXyWV52_kZNFGQzPpnAYowa0KZYodMAWusCX5Opj3a1iQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the DT nodes needed by MSIOF[012] interfaces to the SoC dtsi.
-Also, define aliases for spi[123].
+Hi Geert,
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
----
+Thank you for the review.
 
-This patch depends on the corresponding dt-bindings patch:
-* spi: sh-msiof: Add r8a774[35] to the compatible list
-which has been applied to linux-next already.
+On 20.09.2017 15:20, Geert Uytterhoeven wrote:
+> +};
+>> +
+>> +&hscif0 {
+>> +       pinctrl-0 = <&hscif0_pins>;
+>> +       pinctrl-names = "default";
+>> +       uart-has-rtscts;
+>> +
+>> +       status = "okay";
+> This serial port is driving Bluetooth and WiFi, right?
+Yes.
+> So I expect this node to gain a child node for that in the future, cfr.
+> Documentation/devicetree/bindings/serial/slave-device.txt.
+Got it.
 
-Best regards,
-Fabrizio
-
- arch/arm/boot/dts/r8a7745.dtsi | 51 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 51 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index b819ec5..4d41da4 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -26,6 +26,9 @@
- 		i2c4 = &i2c4;
- 		i2c5 = &i2c5;
- 		spi0 = &qspi;
-+		spi1 = &msiof0;
-+		spi2 = &msiof1;
-+		spi3 = &msiof2;
- 	};
- 
- 	cpus {
-@@ -769,6 +772,54 @@
- 			status = "disabled";
- 		};
- 
-+		msiof0: spi@e6e20000 {
-+			compatible = "renesas,msiof-r8a7745",
-+				     "renesas,rcar-gen2-msiof";
-+			reg = <0 0xe6e20000 0 0x0064>;
-+			interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 000>;
-+			dmas = <&dmac0 0x51>, <&dmac0 0x52>,
-+			       <&dmac1 0x51>, <&dmac1 0x52>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			resets = <&cpg 000>;
-+			status = "disabled";
-+		};
-+
-+		msiof1: spi@e6e10000 {
-+			compatible = "renesas,msiof-r8a7745",
-+				     "renesas,rcar-gen2-msiof";
-+			reg = <0 0xe6e10000 0 0x0064>;
-+			interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 208>;
-+			dmas = <&dmac0 0x55>, <&dmac0 0x56>,
-+			       <&dmac1 0x55>, <&dmac1 0x56>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			resets = <&cpg 208>;
-+			status = "disabled";
-+		};
-+
-+		msiof2: spi@e6e00000 {
-+			compatible = "renesas,msiof-r8a7745",
-+				     "renesas,rcar-gen2-msiof";
-+			reg = <0 0xe6e00000 0 0x0064>;
-+			interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 205>;
-+			dmas = <&dmac0 0x41>, <&dmac0 0x42>,
-+			       <&dmac1 0x41>, <&dmac1 0x42>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			resets = <&cpg 205>;
-+			status = "disabled";
-+		};
-+
- 		sdhi0: sd@ee100000 {
- 			compatible = "renesas,sdhi-r8a7745";
- 			reg = <0 0xee100000 0 0x328>;
 -- 
-2.7.4
+Regards,
+Vladimir
