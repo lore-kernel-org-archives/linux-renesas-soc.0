@@ -1,71 +1,44 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:53290 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751785AbdITRRv (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 20 Sep 2017 13:17:51 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Rob Herring <robh+dt@kernel.org>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <1505322341-9480-5-git-send-email-chris.paterson2@renesas.com>
+References: <1505322341-9480-1-git-send-email-chris.paterson2@renesas.com> <1505322341-9480-5-git-send-email-chris.paterson2@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 20 Sep 2017 13:40:20 +0200
+Message-ID: <CAMuHMdVFPiXe9trwprNfX=p8-OKbrcgVSrwmveYhXGm=kd2bfQ@mail.gmail.com>
+Subject: Re: [PATCH 4/8] ARM: dts: iwg22d: Enable SDHI0 controller
+To: Chris Paterson <chris.paterson2@renesas.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: RE: [PATCH 4/8] ARM: dts: iwg22d: Enable SDHI0 controller
-Date: Wed, 20 Sep 2017 17:17:44 +0000
-Message-ID: <TY1PR06MB0895D8F201C57A65EBE5F5D2C0610@TY1PR06MB0895.apcprd06.prod.outlook.com>
-References: <1505322341-9480-1-git-send-email-chris.paterson2@renesas.com>
- <1505322341-9480-5-git-send-email-chris.paterson2@renesas.com>
- <20170915080530.GH3924@verge.net.au>
-In-Reply-To: <20170915080530.GH3924@verge.net.au>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGVsbG8gU2ltb24sIEdlZXJ0DQoNCnRoYW5rIHlvdSBmb3IgeW91ciBwYXRpZW5jZSBvbiB0aGlz
-IG9uZS4gV2UgZm91bmQgb3V0IHRoYXQgdGhlcmUgaXMgYW4gSFcgaXNzdWUgb24gU0RISTAgLCBT
-REhDX0NEIyBhbmQgU0RIQ19DTUQgKG9uIHRoZSBjYXJyaWVyIGJvYXJkKSBhcmUgcHVsbGVkIHVw
-IHRvIDMuM1YsIHRoZXJlZm9yZSB3ZSBhcmUgZHJvcHBpbmcgVUhTIG9uIHRoaXMgaW50ZXJmYWNl
-LCBhbmQgYXMgcmVzdWx0IHdlIGFyZSBkcm9wcGluZyB0aGlzIHBhdGNoLiBXZSB3aWxsIHNlbmQg
-YSBWMiBzaG9ydGx5Lg0KDQpUaGFua3MsDQpGYWJyaXppbw0KDQo+IC0tLS0tT3JpZ2luYWwgTWVz
-c2FnZS0tLS0tDQo+IEZyb206IFNpbW9uIEhvcm1hbiBbbWFpbHRvOmhvcm1zQHZlcmdlLm5ldC5h
-dV0NCj4gU2VudDogMTUgU2VwdGVtYmVyIDIwMTcgMDk6MDYNCj4gVG86IENocmlzIFBhdGVyc29u
-IDxDaHJpcy5QYXRlcnNvbjJAcmVuZXNhcy5jb20+DQo+IENjOiBSb2IgSGVycmluZyA8cm9iaCtk
-dEBrZXJuZWwub3JnPjsgTWFyayBSdXRsYW5kIDxtYXJrLnJ1dGxhbmRAYXJtLmNvbT47IE1hZ251
-cyBEYW1tIDxtYWdudXMuZGFtbUBnbWFpbC5jb20+Ow0KPiBSdXNzZWxsIEtpbmcgPGxpbnV4QGFy
-bWxpbnV4Lm9yZy51az47IEZhYnJpemlvIENhc3RybyA8ZmFicml6aW8uY2FzdHJvQGJwLnJlbmVz
-YXMuY29tPjsgZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LXJlbmVzYXMtDQo+IHNv
-Y0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZw0K
-PiBTdWJqZWN0OiBSZTogW1BBVENIIDQvOF0gQVJNOiBkdHM6IGl3ZzIyZDogRW5hYmxlIFNESEkw
-IGNvbnRyb2xsZXINCj4NCj4gT24gV2VkLCBTZXAgMTMsIDIwMTcgYXQgMDY6MDU6MzdQTSArMDEw
-MCwgQ2hyaXMgUGF0ZXJzb24gd3JvdGU6DQo+ID4gRnJvbTogRmFicml6aW8gQ2FzdHJvIDxmYWJy
-aXppby5jYXN0cm9AYnAucmVuZXNhcy5jb20+DQo+ID4NCj4gPiBFbmFibGUgdGhlIFNESEkwIGNv
-bnRyb2xsZXIgb24gaVdhdmUgUlovRzFFIGNhcnJpZXIgYm9hcmQuDQo+DQo+IC4uLg0KPg0KPiA+
-IEBAIC02MywzICs4OCwxNSBAQA0KPiA+ICBtaWNyZWwsbGVkLW1vZGUgPSA8MT47DQo+ID4gIH07
-DQo+ID4gIH07DQo+ID4gKw0KPiA+ICsmc2RoaTAgew0KPiA+ICtwaW5jdHJsLTAgPSA8JnNkaGkw
-X3BpbnM+Ow0KPiA+ICtwaW5jdHJsLTEgPSA8JnNkaGkwX3BpbnNfdWhzPjsNCj4gPiArcGluY3Ry
-bC1uYW1lcyA9ICJkZWZhdWx0IiwgInN0YXRlX3VocyI7DQo+ID4gKw0KPiA+ICt2bW1jLXN1cHBs
-eSA9IDwmcmVnXzNwM3Y+Ow0KPiA+ICt2cW1tYy1zdXBwbHkgPSA8JnZjY3Ffc2RoaTA+Ow0KPiA+
-ICtjZC1ncGlvcyA9IDwmZ3BpbzYgNiBHUElPX0FDVElWRV9MT1c+Ow0KPg0KPiBJIHRha2UgdGhh
-dCB0aGUgYWJzZW5jZSBvZiBhIHdwLWdwaW8gbWVhbnMgdGhhdCB0aGF0IHRoaXMgaXMgYSDCtVNE
-IHNsb3QuDQo+IENvdWxkIHlvdSBoZWxwIG1lIGJ5IGRvY3VtZW50aW5nIHRoaXMgY29ycmVjdGx5
-IG9uDQo+IGh0dHA6Ly9lbGludXgub3JnL2luZGV4LnBocD90aXRsZT1SZW5lc2FzLU1NQy1FbmFi
-bGVkLVNwZWVkcyA/DQo+DQo+IEZvciBzb21lIHJlYXNvbiBJIHRob3VnaHQgdGhhdCBTREhJMCB3
-YXNuJ3QgZXhwb3NlZCBhdCBhbGwsIHNvIEkgZ3Vlc3MNCj4gbXkgcmVhZGluZyBvZiB0aGUgZG9j
-dW1lbnRhdGlvbiB3YXMgaW5jb3JyZWN0Lg0KPg0KPg0KPiBJIHRoaW5rIHlvdSBhbHNvIHdhbnQg
-c2QtdWhzLXNkcjUwIGhlcmUgdG9vLg0KPiBZb3UgY2FuIHRlc3QgaXQgYnkgcmVtb3ZpbmcgdGhl
-IHNkLXVocy1zZHIxMDQgcHJvcGVydHkuDQo+DQo+ID4gK3NkLXVocy1zZHIxMDQ7DQo+ID4gK3N0
-YXR1cyA9ICJva2F5IjsNCj4gPiArfTsNCj4gPiAtLQ0KPiA+IDEuOS4xDQo+ID4NCg0KDQoNClJl
-bmVzYXMgRWxlY3Ryb25pY3MgRXVyb3BlIEx0ZCwgRHVrZXMgTWVhZG93LCBNaWxsYm9hcmQgUm9h
-ZCwgQm91cm5lIEVuZCwgQnVja2luZ2hhbXNoaXJlLCBTTDggNUZILCBVSy4gUmVnaXN0ZXJlZCBp
-biBFbmdsYW5kICYgV2FsZXMgdW5kZXIgUmVnaXN0ZXJlZCBOby4gMDQ1ODY3MDkuDQo=
+On Wed, Sep 13, 2017 at 7:05 PM, Chris Paterson
+<chris.paterson2@renesas.com> wrote:
+> From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+>
+> Enable the SDHI0 controller on iWave RZ/G1E carrier board.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
