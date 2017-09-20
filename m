@@ -1,54 +1,67 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 0/2] arm64: dts: r8a7795: r8a7796: add thermal cooling management
-Date: Wed, 13 Sep 2017 12:59:07 +0200
-Message-Id: <20170913105909.13230-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-i2c@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [RFC PATCH v5 4/6] i2c: sh_mobile: use helper to decide if DMA is useful
+Date: Wed, 20 Sep 2017 20:59:54 +0200
+Message-Id: <20170920185956.13874-5-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20170920185956.13874-1-wsa+renesas@sang-engineering.com>
+References: <20170920185956.13874-1-wsa+renesas@sang-engineering.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+This ensures that we fall back to PIO if the message length is too small
+for DMA being useful. Otherwise, we use DMA. A bounce buffer might be
+applied by the helper if the original message buffer is not DMA safe.
 
-This series adds support for for using CPUFreq as a cooling device for 
-the A57 CUP:s on Renesas H3 and M3-W SoC:s. It depends on Simon Horman's 
-topic/rcar-gen3-cpufreq branch [1] and is tested on-top the latest 
-renesas-drivers on H3 and M3-W. For test results and test procedure 
-please see:
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/i2c/busses/i2c-sh_mobile.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-   http://elinux.org/R-Car/Tests:rcar_gen3_thermal
-
-Few notes on the specific values used in this series and why they might 
-need to be changed.
-
-- The trip point temperature of 95000 used is the most conservative one 
-  from the BSP and maybe should be set at 110000 which is the most 
-  aggressive one in the BSP.
-
-- The cooling states described in all cooling-maps nodes might be 
-  subject to change depending on the out-come of the ongoing review 
-  process of Simon's work. It should use the highest possible cooling 
-  state so if the number of states change due review of his work this 
-  should be reflected in this series.
-
-1.  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git
-
-Niklas Söderlund (2):
-  arm64: dts: r8a7795: add thermal cooling management
-  arm64: dts: r8a7796: add thermal cooling management
-
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 40 ++++++++++++++++++++++++++++++++
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 38 ++++++++++++++++++++++++++++++
- 2 files changed, 78 insertions(+)
-
+diff --git a/drivers/i2c/busses/i2c-sh_mobile.c b/drivers/i2c/busses/i2c-sh_mobile.c
+index 6f2aaeb7c4fa15..b76399d8a3abd3 100644
+--- a/drivers/i2c/busses/i2c-sh_mobile.c
++++ b/drivers/i2c/busses/i2c-sh_mobile.c
+@@ -145,6 +145,7 @@ struct sh_mobile_i2c_data {
+ 	struct dma_chan *dma_rx;
+ 	struct scatterlist sg;
+ 	enum dma_data_direction dma_direction;
++	u8 *dma_buf;
+ };
+ 
+ struct sh_mobile_dt_config {
+@@ -548,6 +549,8 @@ static void sh_mobile_i2c_dma_callback(void *data)
+ 	pd->pos = pd->msg->len;
+ 	pd->stop_after_dma = true;
+ 
++	i2c_release_dma_safe_msg_buf(pd->msg, pd->dma_buf);
++
+ 	iic_set_clr(pd, ICIC, 0, ICIC_TDMAE | ICIC_RDMAE);
+ }
+ 
+@@ -608,7 +611,7 @@ static void sh_mobile_i2c_xfer_dma(struct sh_mobile_i2c_data *pd)
+ 	if (IS_ERR(chan))
+ 		return;
+ 
+-	dma_addr = dma_map_single(chan->device->dev, pd->msg->buf, pd->msg->len, dir);
++	dma_addr = dma_map_single(chan->device->dev, pd->dma_buf, pd->msg->len, dir);
+ 	if (dma_mapping_error(chan->device->dev, dma_addr)) {
+ 		dev_dbg(pd->dev, "dma map failed, using PIO\n");
+ 		return;
+@@ -665,7 +668,8 @@ static int start_ch(struct sh_mobile_i2c_data *pd, struct i2c_msg *usr_msg,
+ 	pd->pos = -1;
+ 	pd->sr = 0;
+ 
+-	if (pd->msg->len > 8)
++	pd->dma_buf = i2c_get_dma_safe_msg_buf(pd->msg, 8);
++	if (pd->dma_buf)
+ 		sh_mobile_i2c_xfer_dma(pd);
+ 
+ 	/* Enable all interrupts to begin with */
 -- 
-2.14.1
-
+2.11.0
