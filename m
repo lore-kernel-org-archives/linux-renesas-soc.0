@@ -1,77 +1,41 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:64134 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751054AbdIMRGJ (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Sep 2017 13:06:09 -0400
-From: Chris Paterson <chris.paterson2@renesas.com>
-To: Simon Horman <horms@verge.net.au>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Chris Paterson <chris.paterson2@renesas.com>
-Subject: [PATCH 5/8] ARM: dts: r8a7743: Add QSPI support
-Date: Wed, 13 Sep 2017 18:05:38 +0100
-Message-Id: <1505322341-9480-6-git-send-email-chris.paterson2@renesas.com>
-In-Reply-To: <1505322341-9480-1-git-send-email-chris.paterson2@renesas.com>
-References: <1505322341-9480-1-git-send-email-chris.paterson2@renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-i2c@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [RFC PATCH v5 1/6] i2c: add a message flag for DMA safe buffers
+Date: Wed, 20 Sep 2017 20:59:51 +0200
+Message-Id: <20170920185956.13874-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20170920185956.13874-1-wsa+renesas@sang-engineering.com>
+References: <20170920185956.13874-1-wsa+renesas@sang-engineering.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+I2C has no requirement that the buffer of a message needs to be DMA
+safe. In case it is, it can now be flagged, so drivers wishing to
+do DMA can use the buffer directly.
 
-Add the DT node for the QSPI interface to the SoC dtsi.
-
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
-This patch is based on renesas-devel-20170913-v4.13.
+ include/uapi/linux/i2c.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-This patch is dependant on:
-- "dt-bindings: qspi: Add r8a7743/5 to the compatible list"
-
-
- arch/arm/boot/dts/r8a7743.dtsi | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 266c5ec..454f980 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -28,6 +28,7 @@
- 		i2c6 = &iic0;
- 		i2c7 = &iic1;
- 		i2c8 = &iic3;
-+		spi0 = &qspi;
- 	};
- 
- 	cpus {
-@@ -835,6 +836,22 @@
- 			status = "disabled";
- 		};
- 
-+		qspi: spi@e6b10000 {
-+			compatible = "renesas,qspi-r8a7743", "renesas,qspi";
-+			reg = <0 0xe6b10000 0 0x2c>;
-+			interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 917>;
-+			dmas = <&dmac0 0x17>, <&dmac0 0x18>,
-+			       <&dmac1 0x17>, <&dmac1 0x18>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			num-cs = <1>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			resets = <&cpg 917>;
-+			status = "disabled";
-+		};
-+
- 		sdhi0: sd@ee100000 {
- 			compatible = "renesas,sdhi-r8a7743";
- 			reg = <0 0xee100000 0 0x328>;
+diff --git a/include/uapi/linux/i2c.h b/include/uapi/linux/i2c.h
+index 009e27bb9abe19..1c683cb319e4b7 100644
+--- a/include/uapi/linux/i2c.h
++++ b/include/uapi/linux/i2c.h
+@@ -71,6 +71,9 @@ struct i2c_msg {
+ #define I2C_M_RD		0x0001	/* read data, from slave to master */
+ 					/* I2C_M_RD is guaranteed to be 0x0001! */
+ #define I2C_M_TEN		0x0010	/* this is a ten bit chip address */
++#define I2C_M_DMA_SAFE		0x0200	/* the buffer of this message is DMA safe */
++					/* makes only sense in kernelspace */
++					/* userspace buffers are copied anyway */
+ #define I2C_M_RECV_LEN		0x0400	/* length will be first received byte */
+ #define I2C_M_NO_RD_ACK		0x0800	/* if I2C_FUNC_PROTOCOL_MANGLING */
+ #define I2C_M_IGNORE_NAK	0x1000	/* if I2C_FUNC_PROTOCOL_MANGLING */
 -- 
-1.9.1
+2.11.0
