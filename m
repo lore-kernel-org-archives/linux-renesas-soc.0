@@ -1,44 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f50.google.com ([209.85.215.50]:34693 "EHLO
-        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751020AbdILVFI (ORCPT
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:38737 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751554AbdITNqu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Sep 2017 17:05:08 -0400
-Received: by mail-lf0-f50.google.com with SMTP id l196so29504938lfl.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Sep 2017 14:05:07 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20170912203716.238067587@cogentembedded.com>
-Date: Tue, 12 Sep 2017 23:37:16 +0300
-To: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-To: Catalin Marinas <catalin.marinas@arm.com>
-To: Will Deacon <will.deacon@arm.com>
-To: Simon Horman <horms@verge.net.au>
-Cc: Magnus Damm <magnus.damm@gmail.com>
-To: devicetree@vger.kernel.org
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 00/11] Add R8A77970/Eagle board support
+        Wed, 20 Sep 2017 09:46:50 -0400
+MIME-Version: 1.0
+In-Reply-To: <1505398766-4813-1-git-send-email-vladimir.barinov@cogentembedded.com>
+References: <1505398766-4813-1-git-send-email-vladimir.barinov@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 20 Sep 2017 15:46:49 +0200
+Message-ID: <CAMuHMdX2DHeO1b78kWdSe3M6EsQ3DANjS_HHM45aD0Ad9onzkw@mail.gmail.com>
+Subject: Re: [PATCH v2 15/18] arm64: dts: ulcb-kf: enable PCA9539 on I2C4
+To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello.
+On Thu, Sep 14, 2017 at 4:19 PM, Vladimir Barinov
+<vladimir.barinov@cogentembedded.com> wrote:
+> This supports PCA9539 gpio expanders on I2C4 bus on ULCB Kingfisher board
+>
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 
-   Here's the set of 11 patches against Simon Horman's 'renesas.git' repo's
-'renesas-devel-20170911v2-v4.13' tag. I'm adding the device tree support for
-the R8A77970-based Eagle board. The necessary SYS-DMAC, [H]SCIF, and EtherAVB
-bindings updates have been posted earlier.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[01/11] soc: renesas: identify R-Car V3M
-[02/11] soc: renesas: rcar-rst: add R8A77970 support
-[03/11] dt-bindings: power: add R8A77970 SYSC power domain definitions
-[04/11] soc: renesas: rcar-sysc: add R8A77970 support
-[05/11] arm64: dts: renesas: initial R8A77970 SoC device tree
-[06/11] arm64: dts: renesas: r8a77970: add SYS-DMAC support
-[07/11] arm64: dts: renesas: r8a77970: add [H]SCIF support
-[08/11] arm64: dts: renesas: r8a77970: add EtherAVB support
-[09/11] arm64: renesas: document Eagle board
-[11/11] arm64: dts: renesas: initial Eagle board device tree
-[11/11] arm64: dts: renesas: eagle: add EtherAVB support
+> --- a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
+> @@ -70,6 +70,28 @@
+>         };
+>  };
+>
+> +&i2c4 {
+> +       gpio_exp_76: gpio@76 {
+> +               compatible = "nxp,pca9539";
 
-WBR, Sergei
+Same comment about the compatible values as for [14/18].
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
