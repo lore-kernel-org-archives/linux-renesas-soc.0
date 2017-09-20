@@ -1,87 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45012 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751034AbdISNro (ORCPT
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:38360 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751192AbdITN2i (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Sep 2017 09:47:44 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Rob Herring <robh@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
+        Wed, 20 Sep 2017 09:28:38 -0400
+MIME-Version: 1.0
+In-Reply-To: <1505398774-4852-1-git-send-email-vladimir.barinov@cogentembedded.com>
+References: <1505398774-4852-1-git-send-email-vladimir.barinov@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 20 Sep 2017 15:28:37 +0200
+Message-ID: <CAMuHMdVxVzhKnO=JXQpyCipfqgtrWA+rOA3jGAaC7OVpTVGyrQ@mail.gmail.com>
+Subject: Re: [PATCH v2 16/18] arm64: dts: ulcb-kf: enable PCA9548 on I2C2
+To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>, linux-spi@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org
-Subject: Applied "spi: rspi: Add r8a7743/5 to the compatible list" to the spi tree
-In-Reply-To: <1504858035-3568-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-Id: <E1duIs5-0008U8-I2@debutante>
-Date: Tue, 19 Sep 2017 14:47:29 +0100
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+On Thu, Sep 14, 2017 at 4:19 PM, Vladimir Barinov
+<vladimir.barinov@cogentembedded.com> wrote:
+> This supports PCA9548 I2C switch on I2C2 bus on ULCB Kingfisher board
+>
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 
-   spi: rspi: Add r8a7743/5 to the compatible list
-
-has been applied to the spi tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 10c1705eced11d6ad710fddcdb57aaa9f85a6f98 Mon Sep 17 00:00:00 2001
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Date: Fri, 8 Sep 2017 09:07:15 +0100
-Subject: [PATCH] spi: rspi: Add r8a7743/5 to the compatible list
-
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- Documentation/devicetree/bindings/spi/spi-rspi.txt | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/spi/spi-rspi.txt b/Documentation/devicetree/bindings/spi/spi-rspi.txt
-index 8f4169f63936..3b02b3a7cfb2 100644
---- a/Documentation/devicetree/bindings/spi/spi-rspi.txt
-+++ b/Documentation/devicetree/bindings/spi/spi-rspi.txt
-@@ -5,11 +5,14 @@ Required properties:
- 		     "renesas,rspi-<soctype>", "renesas,rspi" as fallback.
- 		     For Renesas Serial Peripheral Interface on RZ/A1H:
- 		     "renesas,rspi-<soctype>", "renesas,rspi-rz" as fallback.
--		     For Quad Serial Peripheral Interface on R-Car Gen2:
-+		     For Quad Serial Peripheral Interface on R-Car Gen2 and
-+		     RZ/G1 devices:
- 		     "renesas,qspi-<soctype>", "renesas,qspi" as fallback.
- 		     Examples with soctypes are:
- 		        - "renesas,rspi-sh7757" (SH)
- 			- "renesas,rspi-r7s72100" (RZ/A1H)
-+			- "renesas,qspi-r8a7743" (RZ/G1M)
-+			- "renesas,qspi-r8a7745" (RZ/G1E)
- 			- "renesas,qspi-r8a7790" (R-Car H2)
- 			- "renesas,qspi-r8a7791" (R-Car M2-W)
- 			- "renesas,qspi-r8a7792" (R-Car V2H)
--- 
-2.14.1
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
