@@ -1,116 +1,61 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Chris Paterson <chris.paterson2@renesas.com>
-To: Simon Horman <horms@verge.net.au>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:33642 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751609AbdIUJIS (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 21 Sep 2017 05:08:18 -0400
+Date: Thu, 21 Sep 2017 11:07:58 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Rob Herring <robh@kernel.org>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
         Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Chris Paterson <chris.paterson2@renesas.com>
-Subject: [PATCH v3] ARM: dts: r8a7743: Add IIC cores to dtsi
-Date: Wed,  6 Sep 2017 14:52:06 +0100
-Message-Id: <1504705926-31625-1-git-send-email-chris.paterson2@renesas.com>
-In-Reply-To: <1502704398-28378-1-git-send-email-biju.das@bp.renesas.com>
-References: <1502704398-28378-1-git-send-email-biju.das@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 6/8] arm64: renesas: document Eagle board bindings
+Message-ID: <20170921090754.GT15749@verge.net.au>
+References: <20170915194442.464361390@cogentembedded.com>
+ <20170920205233.jjncu7fzi6cmoggq@rob-hp-laptop>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170920205233.jjncu7fzi6cmoggq@rob-hp-laptop>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+On Wed, Sep 20, 2017 at 03:52:33PM -0500, Rob Herring wrote:
+> On Fri, Sep 15, 2017 at 10:43:24PM +0300, Sergei Shtylyov wrote:
+> > Document the Eagle device tree bindings, listing it as a supported board.
+> > 
+> > This allows to use checkpatch.pl to validate .dts files referring to the
+> > Eagle board.
+> > 
+> > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> > 
+> > ---
+> > Changes in version 2:
+> > - renamed the patch.
+> > 
+> >  Documentation/devicetree/bindings/arm/shmobile.txt |    2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > Index: renesas/Documentation/devicetree/bindings/arm/shmobile.txt
+> > ===================================================================
+> > --- renesas.orig/Documentation/devicetree/bindings/arm/shmobile.txt
+> > +++ renesas/Documentation/devicetree/bindings/arm/shmobile.txt
+> > @@ -59,6 +59,8 @@ Boards:
+> >      compatible = "renesas,bockw", "renesas,r8a7778"
+> >    - Draak (RTP0RC77995SEB0010S)
+> >      compatible = "renesas,draak", "renesas,r8a77995"
+> > +  - Eagle (RTP0RC77970SEB0010S)
+> > +    compatible = "renesas,eagle", "renesas,r8a77970";
+> 
+> You're not consistent here with the ';'.
+> 
+> Otherwise,
+> 
+> Acked-by: Rob Herring <robh@kernel.org>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
----
-v2->v3
-- Renamed lables to use iic instead of i2c.
-
-v1->v2
-- Corrected the resets property for i2c6 device node.
-
-This patch is based on renesas-devel tag renesas-devel-20170905-v4.13.
-
-DT bindings has been accepted by Wolfram:
-https://patchwork.kernel.org/patch/9888119
-
-
- arch/arm/boot/dts/r8a7743.dtsi | 55 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 665a515..266c5ec 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -25,6 +25,9 @@
- 		i2c3 = &i2c3;
- 		i2c4 = &i2c4;
- 		i2c5 = &i2c5;
-+		i2c6 = &iic0;
-+		i2c7 = &iic1;
-+		i2c8 = &iic3;
- 	};
- 
- 	cpus {
-@@ -436,6 +439,58 @@
- 			status = "disabled";
- 		};
- 
-+		iic0: i2c@e6500000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,iic-r8a7743",
-+				     "renesas,rcar-gen2-iic",
-+				     "renesas,rmobile-iic";
-+			reg = <0 0xe6500000 0 0x425>;
-+			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 318>;
-+			dmas = <&dmac0 0x61>, <&dmac0 0x62>,
-+			       <&dmac1 0x61>, <&dmac1 0x62>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 318>;
-+			status = "disabled";
-+		};
-+
-+		iic1: i2c@e6510000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,iic-r8a7743",
-+				     "renesas,rcar-gen2-iic",
-+				     "renesas,rmobile-iic";
-+			reg = <0 0xe6510000 0 0x425>;
-+			interrupts = <GIC_SPI 175 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 323>;
-+			dmas = <&dmac0 0x65>, <&dmac0 0x66>,
-+			       <&dmac1 0x65>, <&dmac1 0x66>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 323>;
-+			status = "disabled";
-+		};
-+
-+		iic3: i2c@e60b0000 {
-+			/* doesn't need pinmux */
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,iic-r8a7743",
-+				     "renesas,rcar-gen2-iic",
-+				     "renesas,rmobile-iic";
-+			reg = <0 0xe60b0000 0 0x425>;
-+			interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 926>;
-+			dmas = <&dmac0 0x77>, <&dmac0 0x78>,
-+			       <&dmac1 0x77>, <&dmac1 0x78>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 926>;
-+			status = "disabled";
-+		};
-+
- 		scifa0: serial@e6c40000 {
- 			compatible = "renesas,scifa-r8a7743",
- 				     "renesas,rcar-gen2-scifa", "renesas,scifa";
--- 
-1.9.1
-
+Thanks, applied with Rob and Geert's tags and without the ';'.
