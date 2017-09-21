@@ -1,95 +1,64 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:35870 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751054AbdIMRGB (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Sep 2017 13:06:01 -0400
-From: Chris Paterson <chris.paterson2@renesas.com>
-To: Simon Horman <horms@verge.net.au>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Chris Paterson <chris.paterson2@renesas.com>
-Subject: [PATCH 2/8] ARM: dts: r8a7745: Add SDHI controllers
-Date: Wed, 13 Sep 2017 18:05:35 +0100
-Message-Id: <1505322341-9480-3-git-send-email-chris.paterson2@renesas.com>
-In-Reply-To: <1505322341-9480-1-git-send-email-chris.paterson2@renesas.com>
-References: <1505322341-9480-1-git-send-email-chris.paterson2@renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Thu, 21 Sep 2017 15:36:29 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Wolfram Sang <wsa@the-dreams.de>
+CC: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>, <linux-iio@vger.kernel.org>,
+        <linux-input@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>
+Subject: Re: [RFC PATCH v5 2/6] i2c: add helpers to ease DMA handling
+Message-ID: <20170921153629.00001aae@huawei.com>
+In-Reply-To: <20170921141528.xre53zpxwk355uih@ninjato>
+References: <20170920185956.13874-1-wsa+renesas@sang-engineering.com>
+        <20170920185956.13874-3-wsa+renesas@sang-engineering.com>
+        <20170921145922.000017b5@huawei.com>
+        <20170921150554.0000273b@huawei.com>
+        <20170921141528.xre53zpxwk355uih@ninjato>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+On Thu, 21 Sep 2017 16:15:28 +0200
+Wolfram Sang <wsa@the-dreams.de> wrote:
 
-Add the SDHI controllers to the r8a7745 device tree.
+> > > > +/**
+> > > > + * i2c_release_dma_safe_msg_buf - release DMA safe buffer and sync with i2c_msg
+> > > > + * @msg: the message to be synced with
+> > > > + * @buf: the buffer obtained from i2c_get_dma_safe_msg_buf(). May be NULL.
+> > > > + */
+> > > > +void i2c_release_dma_safe_msg_buf(struct i2c_msg *msg, u8 *buf)
+> > > > +{
+> > > > +	if (!buf || buf == msg->buf)
+> > > > +		return;
+> > > > +
+> > > > +	if (msg->flags & I2C_M_RD)
+> > > > +		memcpy(msg->buf, buf, msg->len);
+> > > > +
+> > > > +	kfree(buf);  
+> > 
+> > Only free when you actually allocated it.  Seems to me like you need
+> > to check if (!(msg->flags & I2C_M_DMA_SAFE)) before kfree.
+> > 
+> > Otherwise the logic to do this will be needed in every driver
+> > which will get irritating fast.  
+> 
+> Well, I return early if (buf == msg->buf) which is only true for
+> I2C_M_DMA_SAFE. If not, I allocated the buffer. Am I missing something?
+> It would be very strange to call this function if the caller allocated
+> the buffer manually.
+> 
+> Thanks for the review!
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
----
-This patch is based on renesas-devel-20170913-v4.13.
+Doh missed that check and my comment was bonkers even if it hadn't been there.
+I come back to the claim of insufficient caffeine.
 
-This patch is dependant on:
-- "dt-bindings: mmc: sh_mmcif: Document r8a7745 DT bindings"
+You are quite correct.  Please ignore previous comment - the code is
+fine as is. 
 
-
- arch/arm/boot/dts/r8a7745.dtsi | 42 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index 8ed2ac5..37c0fac 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -751,6 +751,48 @@
- 			max-frequency = <97500000>;
- 			status = "disabled";
- 		};
-+
-+		sdhi0: sd@ee100000 {
-+			compatible = "renesas,sdhi-r8a7745";
-+			reg = <0 0xee100000 0 0x328>;
-+			interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 314>;
-+			dmas = <&dmac0 0xcd>, <&dmac0 0xce>,
-+			       <&dmac1 0xcd>, <&dmac1 0xce>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			max-frequency = <195000000>;
-+			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 314>;
-+			status = "disabled";
-+		};
-+
-+		sdhi1: sd@ee140000 {
-+			compatible = "renesas,sdhi-r8a7745";
-+			reg = <0 0xee140000 0 0x100>;
-+			interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 312>;
-+			dmas = <&dmac0 0xc1>, <&dmac0 0xc2>,
-+			       <&dmac1 0xc1>, <&dmac1 0xc2>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			max-frequency = <97500000>;
-+			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 312>;
-+			status = "disabled";
-+		};
-+
-+		sdhi2: sd@ee160000 {
-+			compatible = "renesas,sdhi-r8a7745";
-+			reg = <0 0xee160000 0 0x100>;
-+			interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 311>;
-+			dmas = <&dmac0 0xd3>, <&dmac0 0xd4>,
-+			       <&dmac1 0xd3>, <&dmac1 0xd4>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			max-frequency = <97500000>;
-+			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 311>;
-+			status = "disabled";
-+		};
- 	};
- 
- 	/* External root clock */
--- 
-1.9.1
+Jonathan
+> 
+> 
