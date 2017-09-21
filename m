@@ -1,5 +1,5 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Thu, 21 Sep 2017 10:38:17 +0200
+Date: Thu, 21 Sep 2017 10:37:41 +0200
 From: Simon Horman <horms@verge.net.au>
 To: Chris Paterson <Chris.Paterson2@renesas.com>
 Cc: Rob Herring <robh+dt@kernel.org>,
@@ -13,92 +13,30 @@ Cc: Rob Herring <robh+dt@kernel.org>,
         "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>
 Subject: Re: [PATCH 3/8] ARM: dts: iwg22m: Enable SDHI1 controller
-Message-ID: <20170921083816.GG15749@verge.net.au>
+Message-ID: <20170921083741.GF15749@verge.net.au>
 References: <1505322341-9480-1-git-send-email-chris.paterson2@renesas.com>
  <1505322341-9480-4-git-send-email-chris.paterson2@renesas.com>
  <20170915081144.GI3924@verge.net.au>
- <TY1PR06MB07026CA91F110214FF170FA3B7610@TY1PR06MB0702.apcprd06.prod.outlook.com>
- <20170921083116.GE15749@verge.net.au>
+ <TY1PR06MB07024A3CACDC8399EE8F6C62B7610@TY1PR06MB0702.apcprd06.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20170921083116.GE15749@verge.net.au>
+In-Reply-To: <TY1PR06MB07024A3CACDC8399EE8F6C62B7610@TY1PR06MB0702.apcprd06.prod.outlook.com>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Sep 21, 2017 at 10:31:16AM +0200, Simon Horman wrote:
-> On Wed, Sep 20, 2017 at 01:05:07PM +0000, Chris Paterson wrote:
-> > Hello Simon,
-> > 
-> > > From: devicetree-owner@vger.kernel.org [mailto:devicetree-
-> > > owner@vger.kernel.org] On Behalf Of Simon Horman
-> > > Sent: 15 September 2017 09:12
-> > > To: Chris Paterson <Chris.Paterson2@renesas.com>
-> > > 
-> > > On Wed, Sep 13, 2017 at 06:05:36PM +0100, Chris Paterson wrote:
-> > > > From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > > >
-> > > > Enable the SDHI1 controller on iWave RZ/G1E SoM.
-> > > >
-> > > > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > > > Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-> > > > ---
-> > > > This patch is based on renesas-devel-20170913-v4.13.
-> > > >
-> > > >
-> > > >  arch/arm/boot/dts/r8a7745-iwg22m.dtsi | 17 +++++++++++++++++
-> > > >  1 file changed, 17 insertions(+)
-> > > >
-> > > > diff --git a/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
-> > > > b/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
-> > > > index e306e7c..f7f9cef 100644
-> > > > --- a/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
-> > > > +++ b/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
-> > > > @@ -9,6 +9,7 @@
-> > > >   */
-> > > >
-> > > >  #include "r8a7745.dtsi"
-> > > > +#include <dt-bindings/gpio/gpio.h>
-> > > >
-> > > >  / {
-> > > >  	compatible = "iwave,g22m", "renesas,r8a7745"; @@ -38,6 +39,12
-> > > @@
-> > > >  		function = "mmc";
-> > > >  	};
-> > > >
-> > > > +	sdhi1_pins: sd1 {
-> > > > +		groups = "sdhi1_data4", "sdhi1_ctrl";
-> > > > +		function = "sdhi1";
-> > > > +		power-source = <3300>;
-> > > > +	};
-> > > > +
-> > > >  	i2c3_pins: i2c3 {
-> > > >  		groups = "i2c3_b";
-> > > >  		function = "i2c3";
-> > > > @@ -54,6 +61,16 @@
-> > > >  	status = "okay";
-> > > >  };
-> > > >
-> > > > +&sdhi1 {
-> > > > +	pinctrl-0 = <&sdhi1_pins>;
-> > > > +	pinctrl-names = "default";
-> > > > +
-> > > > +	vmmc-supply = <&reg_3p3v>;
-> > > > +	vqmmc-supply = <&reg_3p3v>;
-> > > > +	cd-gpios = <&gpio3 31 GPIO_ACTIVE_LOW>;
-> > > 
-> > > No wp-gpios property means this is a µSD slot, right?
-> > 
-> > Correct
-> > 
-> > > 
-> > > Do you have any plans to enable sdr-50 and sdr-104?
-> > > Is it not supported for some reason?
-> > 
-> > Nope (unless the hardware changes down the line).
-> > Both vmmc and vqmmc are fixed to 3V3 on the iWave-E SOM module.
+On Wed, Sep 20, 2017 at 01:06:30PM +0000, Chris Paterson wrote:
 > 
-> Thanks, got it.
+> > From: Chris Paterson
+> > Sent: 20 September 2017 14:05
+> 
+> > 
+> > >
+> > > I don't mind if its not enabled in this patch but I would like to know
+> > > if it can be enabled or not and reflect that information in the wiki.
+> > >
+> > > http://elinux.org/index.php?title=Renesas-MMC-Enabled-Speeds
+> 
+> Will do.
 
-Thanks for the clarification above, I have applied this patch.
+Thanks.
