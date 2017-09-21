@@ -1,107 +1,39 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:54385 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967963AbdIZKGS (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 26 Sep 2017 06:06:18 -0400
-Received: from avalon.guest.par1.mozilla.com (unknown [IPv6:2a00:8c40:243:232:120b:a9ff:fe3c:7148])
-        by galahad.ideasonboard.com (Postfix) with ESMTPSA id E982921480
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 26 Sep 2017 12:06:05 +0200 (CEST)
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Subject: [RFC 06/13] arm64: dts: r8a7795: Reference the lossy memory region from the FCPss
-Date: Tue, 26 Sep 2017 13:05:58 +0300
-Message-Id: <20170926100605.2313-9-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170926100605.2313-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170926100605.2313-1-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Thu, 21 Sep 2017 10:39:21 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Chris Paterson <chris.paterson2@renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 5/8] ARM: dts: r8a7743: Add QSPI support
+Message-ID: <20170921083920.GI15749@verge.net.au>
+References: <1505322341-9480-1-git-send-email-chris.paterson2@renesas.com>
+ <1505322341-9480-6-git-send-email-chris.paterson2@renesas.com>
+ <CAMuHMdXpxnuP2eY-J+Va8xK1C9cAeJfpRhAfMBCin_yVXiuCUw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXpxnuP2eY-J+Va8xK1C9cAeJfpRhAfMBCin_yVXiuCUw@mail.gmail.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The FCPV instances can perform transparent near-lossless compression
-internally but need the DDR controller to perform decompression.
-Reference the DDR controller lossy decompression memory region to model
-that relationship.
+On Tue, Sep 19, 2017 at 05:09:47PM +0200, Geert Uytterhoeven wrote:
+> On Wed, Sep 13, 2017 at 7:05 PM, Chris Paterson
+> <chris.paterson2@renesas.com> wrote:
+> > From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> >
+> > Add the DT node for the QSPI interface to the SoC dtsi.
+> >
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 1320ec3b6a5e..c55003563f61 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1901,6 +1901,9 @@
- 
- 		fcpvb1: fcp@fe92f000 {
- 			compatible = "renesas,fcpv";
-+			memory-region = <&lossy_decompression_0
-+					 &lossy_decompression_1
-+					 &lossy_decompression_2>;
- 			reg = <0 0xfe92f000 0 0x200>;
- 			clocks = <&cpg CPG_MOD 606>;
- 			power-domains = <&sysc R8A7795_PD_A3VP>;
-@@ -1936,6 +1939,9 @@
- 
- 		fcpvb0: fcp@fe96f000 {
- 			compatible = "renesas,fcpv";
-+			memory-region = <&lossy_decompression_0
-+					 &lossy_decompression_1
-+					 &lossy_decompression_2>;
- 			reg = <0 0xfe96f000 0 0x200>;
- 			clocks = <&cpg CPG_MOD 607>;
- 			power-domains = <&sysc R8A7795_PD_A3VP>;
-@@ -1955,6 +1961,9 @@
- 
- 		fcpvi0: fcp@fe9af000 {
- 			compatible = "renesas,fcpvi", "renesas,fcpv";
-+			memory-region = <&lossy_decompression_0
-+					 &lossy_decompression_1
-+					 &lossy_decompression_2>;
- 			reg = <0 0xfe9af000 0 0x200>;
- 			clocks = <&cpg CPG_MOD 611>;
- 			power-domains = <&sysc R8A7795_PD_A3VP>;
-@@ -1974,6 +1983,9 @@
- 
- 		fcpvi1: fcp@fe9bf000 {
- 			compatible = "renesas,fcpvi", "renesas,fcpv";
-+			memory-region = <&lossy_decompression_0
-+					 &lossy_decompression_1
-+					 &lossy_decompression_2>;
- 			reg = <0 0xfe9bf000 0 0x200>;
- 			clocks = <&cpg CPG_MOD 610>;
- 			power-domains = <&sysc R8A7795_PD_A3VP>;
-@@ -1993,6 +2005,9 @@
- 
- 		fcpvd0: fcp@fea27000 {
- 			compatible = "renesas,fcpv";
-+			memory-region = <&lossy_decompression_0
-+					 &lossy_decompression_1
-+					 &lossy_decompression_2>;
- 			reg = <0 0xfea27000 0 0x200>;
- 			clocks = <&cpg CPG_MOD 603>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-@@ -2012,6 +2027,9 @@
- 
- 		fcpvd1: fcp@fea2f000 {
- 			compatible = "renesas,fcpv";
-+			memory-region = <&lossy_decompression_0
-+					 &lossy_decompression_1
-+					 &lossy_decompression_2>;
- 			reg = <0 0xfea2f000 0 0x200>;
- 			clocks = <&cpg CPG_MOD 602>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-@@ -2031,6 +2049,9 @@
- 
- 		fcpvd2: fcp@fea37000 {
- 			compatible = "renesas,fcpv";
-+			memory-region = <&lossy_decompression_0
-+					 &lossy_decompression_1
-+					 &lossy_decompression_2>;
- 			reg = <0 0xfea37000 0 0x200>;
- 			clocks = <&cpg CPG_MOD 601>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
--- 
-Regards,
-
-Laurent Pinchart
+Thanks, applied.
