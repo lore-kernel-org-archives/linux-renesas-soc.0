@@ -1,39 +1,52 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1505971886-14916-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor3.renesas.com ([210.160.252.173]:64601 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751436AbdIUFfH (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 21 Sep 2017 01:35:07 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 2/2] arm64: dts: renesas: r8a7796: add USB3.0 peripheral device node
+Date: Thu, 21 Sep 2017 14:31:26 +0900
+Message-Id: <1505971886-14916-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1505971886-14916-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 References: <1505971886-14916-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1505971886-14916-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 21 Sep 2017 14:46:37 +0200
-Message-ID: <CAMuHMdWJ=cH6=1Lq3wNebpyZmSSKHRHGBU1KCqyEX=LJuUo-1w@mail.gmail.com>
-Subject: Re: [PATCH 2/2] arm64: dts: renesas: r8a7796: add USB3.0 peripheral
- device node
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: devicetree-owner@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Sep 21, 2017 at 7:31 AM, Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> This patch adds USB3.0 peripheral channel 0 device node for r8a7796.
->
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+This patch adds USB3.0 peripheral channel 0 device node for r8a7796.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 2905a3b..d9c928f 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -1977,6 +1977,17 @@
+ 			status = "disabled";
+ 		};
+ 
++		usb3_peri0: usb@ee020000 {
++			compatible = "renesas,r8a7796-usb3-peri",
++				     "renesas,rcar-gen3-usb3-peri";
++			reg = <0 0xee020000 0 0x400>;
++			interrupts = <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 328>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			resets = <&cpg 328>;
++			status = "disabled";
++		};
++
+ 		ohci0: usb@ee080000 {
+ 			compatible = "generic-ohci";
+ 			reg = <0 0xee080000 0 0x100>;
+-- 
+1.9.1
