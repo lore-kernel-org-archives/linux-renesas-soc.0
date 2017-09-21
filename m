@@ -1,5 +1,10 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Thu, 21 Sep 2017 10:42:20 +0200
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:33051 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751635AbdIUIjA (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 21 Sep 2017 04:39:00 -0400
+Date: Thu, 21 Sep 2017 10:38:40 +0200
 From: Simon Horman <horms@verge.net.au>
 To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Chris Paterson <chris.paterson2@renesas.com>,
@@ -13,32 +18,27 @@ Cc: Chris Paterson <chris.paterson2@renesas.com>,
         "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>
 Subject: Re: [PATCH 4/8] ARM: dts: iwg22d: Enable SDHI0 controller
-Message-ID: <20170921084219.GK15749@verge.net.au>
+Message-ID: <20170921083839.GH15749@verge.net.au>
 References: <1505322341-9480-1-git-send-email-chris.paterson2@renesas.com>
  <1505322341-9480-5-git-send-email-chris.paterson2@renesas.com>
  <CAMuHMdVFPiXe9trwprNfX=p8-OKbrcgVSrwmveYhXGm=kd2bfQ@mail.gmail.com>
- <20170921083839.GH15749@verge.net.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20170921083839.GH15749@verge.net.au>
-Sender: devicetree-owner@vger.kernel.org
+In-Reply-To: <CAMuHMdVFPiXe9trwprNfX=p8-OKbrcgVSrwmveYhXGm=kd2bfQ@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Sep 21, 2017 at 10:38:40AM +0200, Simon Horman wrote:
-> On Wed, Sep 20, 2017 at 01:40:20PM +0200, Geert Uytterhoeven wrote:
-> > On Wed, Sep 13, 2017 at 7:05 PM, Chris Paterson
-> > <chris.paterson2@renesas.com> wrote:
-> > > From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > >
-> > > Enable the SDHI0 controller on iWave RZ/G1E carrier board.
-> > >
-> > > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > > Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-> > 
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Wed, Sep 20, 2017 at 01:40:20PM +0200, Geert Uytterhoeven wrote:
+> On Wed, Sep 13, 2017 at 7:05 PM, Chris Paterson
+> <chris.paterson2@renesas.com> wrote:
+> > From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> >
+> > Enable the SDHI0 controller on iWave RZ/G1E carrier board.
+> >
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
 > 
-> Thanks, applied.
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Sorry, I somehow overlooked Fabrizio's comments.
-I have dropped this patch for now.
+Thanks, applied.
