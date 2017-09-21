@@ -1,54 +1,104 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f45.google.com ([209.85.215.45]:52522 "EHLO
-        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751778AbdIOToq (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Sep 2017 15:44:46 -0400
-Received: by mail-lf0-f45.google.com with SMTP id b127so3395702lfe.9
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 15 Sep 2017 12:44:46 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20170915194442.464361390@cogentembedded.com>
-Date: Fri, 15 Sep 2017 22:43:24 +0300
-To: Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        linux-renesas-soc@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Thu, 21 Sep 2017 10:38:17 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Chris Paterson <Chris.Paterson2@renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: Catalin Marinas <catalin.marinas@arm.com>
-To: Will Deacon <will.deacon@arm.com>
-Subject: [PATCH v2 6/8] arm64: renesas: document Eagle board bindings
+        Russell King <linux@armlinux.org.uk>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 3/8] ARM: dts: iwg22m: Enable SDHI1 controller
+Message-ID: <20170921083816.GG15749@verge.net.au>
+References: <1505322341-9480-1-git-send-email-chris.paterson2@renesas.com>
+ <1505322341-9480-4-git-send-email-chris.paterson2@renesas.com>
+ <20170915081144.GI3924@verge.net.au>
+ <TY1PR06MB07026CA91F110214FF170FA3B7610@TY1PR06MB0702.apcprd06.prod.outlook.com>
+ <20170921083116.GE15749@verge.net.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=arm64-renesas-document-Eagle-board-bindings-v2.patch
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20170921083116.GE15749@verge.net.au>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document the Eagle device tree bindings, listing it as a supported board.
+On Thu, Sep 21, 2017 at 10:31:16AM +0200, Simon Horman wrote:
+> On Wed, Sep 20, 2017 at 01:05:07PM +0000, Chris Paterson wrote:
+> > Hello Simon,
+> > 
+> > > From: devicetree-owner@vger.kernel.org [mailto:devicetree-
+> > > owner@vger.kernel.org] On Behalf Of Simon Horman
+> > > Sent: 15 September 2017 09:12
+> > > To: Chris Paterson <Chris.Paterson2@renesas.com>
+> > > 
+> > > On Wed, Sep 13, 2017 at 06:05:36PM +0100, Chris Paterson wrote:
+> > > > From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > > >
+> > > > Enable the SDHI1 controller on iWave RZ/G1E SoM.
+> > > >
+> > > > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > > > Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+> > > > ---
+> > > > This patch is based on renesas-devel-20170913-v4.13.
+> > > >
+> > > >
+> > > >  arch/arm/boot/dts/r8a7745-iwg22m.dtsi | 17 +++++++++++++++++
+> > > >  1 file changed, 17 insertions(+)
+> > > >
+> > > > diff --git a/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
+> > > > b/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
+> > > > index e306e7c..f7f9cef 100644
+> > > > --- a/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
+> > > > +++ b/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
+> > > > @@ -9,6 +9,7 @@
+> > > >   */
+> > > >
+> > > >  #include "r8a7745.dtsi"
+> > > > +#include <dt-bindings/gpio/gpio.h>
+> > > >
+> > > >  / {
+> > > >  	compatible = "iwave,g22m", "renesas,r8a7745"; @@ -38,6 +39,12
+> > > @@
+> > > >  		function = "mmc";
+> > > >  	};
+> > > >
+> > > > +	sdhi1_pins: sd1 {
+> > > > +		groups = "sdhi1_data4", "sdhi1_ctrl";
+> > > > +		function = "sdhi1";
+> > > > +		power-source = <3300>;
+> > > > +	};
+> > > > +
+> > > >  	i2c3_pins: i2c3 {
+> > > >  		groups = "i2c3_b";
+> > > >  		function = "i2c3";
+> > > > @@ -54,6 +61,16 @@
+> > > >  	status = "okay";
+> > > >  };
+> > > >
+> > > > +&sdhi1 {
+> > > > +	pinctrl-0 = <&sdhi1_pins>;
+> > > > +	pinctrl-names = "default";
+> > > > +
+> > > > +	vmmc-supply = <&reg_3p3v>;
+> > > > +	vqmmc-supply = <&reg_3p3v>;
+> > > > +	cd-gpios = <&gpio3 31 GPIO_ACTIVE_LOW>;
+> > > 
+> > > No wp-gpios property means this is a µSD slot, right?
+> > 
+> > Correct
+> > 
+> > > 
+> > > Do you have any plans to enable sdr-50 and sdr-104?
+> > > Is it not supported for some reason?
+> > 
+> > Nope (unless the hardware changes down the line).
+> > Both vmmc and vqmmc are fixed to 3V3 on the iWave-E SOM module.
+> 
+> Thanks, got it.
 
-This allows to use checkpatch.pl to validate .dts files referring to the
-Eagle board.
-
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
----
-Changes in version 2:
-- renamed the patch.
-
- Documentation/devicetree/bindings/arm/shmobile.txt |    2 ++
- 1 file changed, 2 insertions(+)
-
-Index: renesas/Documentation/devicetree/bindings/arm/shmobile.txt
-===================================================================
---- renesas.orig/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ renesas/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -59,6 +59,8 @@ Boards:
-     compatible = "renesas,bockw", "renesas,r8a7778"
-   - Draak (RTP0RC77995SEB0010S)
-     compatible = "renesas,draak", "renesas,r8a77995"
-+  - Eagle (RTP0RC77970SEB0010S)
-+    compatible = "renesas,eagle", "renesas,r8a77970";
-   - Genmai (RTK772100BC00000BR)
-     compatible = "renesas,genmai", "renesas,r7s72100"
-   - GR-Peach (X28A-M01-E/F)
+Thanks for the clarification above, I have applied this patch.
