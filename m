@@ -1,75 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:46582 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752025AbdI1Px5 (ORCPT
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:36115 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751707AbdIUVrS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 28 Sep 2017 11:53:57 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: "David S . Miller" <davem@davemloft.net>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/4] ravb: Add optional PHY reset during system resume
-Date: Thu, 28 Sep 2017 17:53:32 +0200
-Message-Id: <1506614014-4398-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1506614014-4398-1-git-send-email-geert+renesas@glider.be>
-References: <1506614014-4398-1-git-send-email-geert+renesas@glider.be>
+        Thu, 21 Sep 2017 17:47:18 -0400
+From: Magnus Damm <magnus.damm@gmail.com>
+To: devicetree@vger.kernel.org
+Cc: mark.rutland@arm.com, laurent.pinchart+renesas@ideasonboard.com,
+        geert+renesas@glider.be, joro@8bytes.org,
+        linux-renesas-soc@vger.kernel.org,
+        iommu@lists.linux-foundation.org, robh+dt@kernel.org,
+        horms+renesas@verge.net.au, Magnus Damm <magnus.damm@gmail.com>,
+        robin.murphy@arm.com
+Date: Fri, 22 Sep 2017 06:44:54 +0900
+Message-Id: <150603029494.9664.3785539947602559695.sendpatchset@little-apple>
+Subject: [PATCH 0/3] iommu/ipmmu-vmsa: R-Car Gen3 IPMMU DT binding update
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If the optional "reset-gpios" property is specified in DT, the generic
-MDIO bus code takes care of resetting the PHY during device probe.
-However, the PHY may still have to be reset explicitly after system
-resume.
+iommu/ipmmu-vmsa: R-Car Gen3 IPMMU DT binding update
 
-This allows to restore Ethernet operation after resume from s2ram on
-Salvator-XS, where the enable pin of the regulator providing PHY power
-is connected to PRESETn, and PSCI suspend powers down the SoC.
+[PATCH 1/3] iommu/ipmmu-vmsa: Document R-Car M3-W IPMMU DT bindings
+[PATCH 2/3] iommu/ipmmu-vmsa: Document R-Car V3M IPMMU DT bindings
+[PATCH 3/3] iommu/ipmmu-vmsa: Document R-Car D3 IPMMU DT bindings
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This series documents IPMMU DT bindings for the following SoCs:
+ - R-Car M3-W - R8A7796
+ - R-Car V3M - R8A77970
+ - R-Car D3 - R8A77995
+
+Patch 1/3 is ready for upstream merge and includes the following tags:
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Patch 2/3 and 3/3 are quite trivial but have no acked-by so far.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
- drivers/net/ethernet/renesas/ravb_main.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index fdf30bfa403bf416..96d1d48e302f8c9a 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -19,6 +19,7 @@
- #include <linux/etherdevice.h>
- #include <linux/ethtool.h>
- #include <linux/if_vlan.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/kernel.h>
- #include <linux/list.h>
- #include <linux/module.h>
-@@ -2268,6 +2269,7 @@ static int __maybe_unused ravb_resume(struct device *dev)
- {
- 	struct net_device *ndev = dev_get_drvdata(dev);
- 	struct ravb_private *priv = netdev_priv(ndev);
-+	struct mii_bus *bus = priv->mii_bus;
- 	int ret = 0;
- 
- 	if (priv->wol_enabled) {
-@@ -2302,6 +2304,13 @@ static int __maybe_unused ravb_resume(struct device *dev)
- 	 * reopen device if it was running before system suspended.
- 	 */
- 
-+	/* PHY reset */
-+	if (bus->reset_gpiod) {
-+		gpiod_set_value_cansleep(bus->reset_gpiod, 1);
-+		udelay(bus->reset_delay_us);
-+		gpiod_set_value_cansleep(bus->reset_gpiod, 0);
-+	}
-+
- 	/* Set AVB config mode */
- 	ravb_set_config_mode(ndev);
- 
--- 
-2.7.4
+ Developed on top of v4.14-rc1
+
+ Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt |    3 +++
+ 1 file changed, 3 insertions(+)
