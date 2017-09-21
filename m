@@ -1,106 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from lb2-smtp-cloud7.xs4all.net ([194.109.24.28]:53070 "EHLO
-        lb2-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932627AbdIYKEe (ORCPT
+Received: from sauhun.de ([88.99.104.3]:41943 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751387AbdIUOXP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Sep 2017 06:04:34 -0400
-Subject: Re: [PATCH v6 15/25] rcar-vin: add flag to switch to media controller
- mode
-To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-References: <20170822232640.26147-1-niklas.soderlund+renesas@ragnatech.se>
- <20170822232640.26147-16-niklas.soderlund+renesas@ragnatech.se>
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        tomoharu.fukawa.eb@renesas.com, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <75410683-4bd5-54e4-7d17-0b5378af10b2@xs4all.nl>
-Date: Mon, 25 Sep 2017 12:04:31 +0200
+        Thu, 21 Sep 2017 10:23:15 -0400
+Date: Thu, 21 Sep 2017 16:23:13 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-input@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [RFC PATCH v5 6/6] i2c: dev: mark RDWR buffers as DMA_SAFE
+Message-ID: <20170921142313.ghshkvl7o26gkfyp@ninjato>
+References: <20170920185956.13874-1-wsa+renesas@sang-engineering.com>
+ <20170920185956.13874-7-wsa+renesas@sang-engineering.com>
+ <20170921151744.000054d0@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20170822232640.26147-16-niklas.soderlund+renesas@ragnatech.se>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="qdfqet27rre5b7op"
+Content-Disposition: inline
+In-Reply-To: <20170921151744.000054d0@huawei.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 23/08/17 01:26, Niklas Söderlund wrote:
-> On Gen3 a media controller API needs to be used to allow userspace to
-> configure the subdevices in the pipeline instead of directly controlling
-> a single source subdevice, which is and will continue to be the mode of
-> operation on Gen2.
-> 
-> Prepare for these two modes of operation by adding a flag to struct
-> rvin_graph_entity which will control which mode to use.
-> 
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+--qdfqet27rre5b7op
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Regards,
+On Thu, Sep 21, 2017 at 03:17:44PM +0100, Jonathan Cameron wrote:
+> On Wed, 20 Sep 2017 20:59:56 +0200
+> Wolfram Sang <wsa+renesas@sang-engineering.com> wrote:
+>=20
+> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>=20
+> Makes sense as do the other drivers.
+>=20
+> Feel free to add
+>=20
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+>=20
+> to all of them (though they hardly took a lot of reviewing given how simp=
+le
+> the patches were :)
 
-	Hans
+Well, bugs can slip in everywhere, so thanks for the review!
 
 
-> ---
->  drivers/media/platform/rcar-vin/rcar-core.c | 6 +++++-
->  drivers/media/platform/rcar-vin/rcar-vin.h  | 2 ++
->  2 files changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-> index 65f01b6781c0aefd..fbbb22924cf3a045 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-core.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
-> @@ -279,18 +279,21 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
->  
->  static const struct rvin_info rcar_info_h1 = {
->  	.chip = RCAR_H1,
-> +	.use_mc = false,
->  	.max_width = 2048,
->  	.max_height = 2048,
->  };
->  
->  static const struct rvin_info rcar_info_m1 = {
->  	.chip = RCAR_M1,
-> +	.use_mc = false,
->  	.max_width = 2048,
->  	.max_height = 2048,
->  };
->  
->  static const struct rvin_info rcar_info_gen2 = {
->  	.chip = RCAR_GEN2,
-> +	.use_mc = false,
->  	.max_width = 2048,
->  	.max_height = 2048,
->  };
-> @@ -387,7 +390,8 @@ static int rcar_vin_remove(struct platform_device *pdev)
->  	v4l2_async_notifier_unregister(&vin->notifier);
->  
->  	/* Checks internaly if handlers have been init or not */
-> -	v4l2_ctrl_handler_free(&vin->ctrl_handler);
-> +	if (!vin->info->use_mc)
-> +		v4l2_ctrl_handler_free(&vin->ctrl_handler);
->  
->  	rvin_v4l2_remove(vin);
->  
-> diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-> index 94c606f2b8f2f246..819d9c04ed8ffb36 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-vin.h
-> +++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-> @@ -77,12 +77,14 @@ struct rvin_graph_entity {
->  /**
->   * struct rvin_info - Information about the particular VIN implementation
->   * @chip:		type of VIN chip
-> + * @use_mc:		use media controller instead of controlling subdevice
->   *
->   * max_width:		max input width the VIN supports
->   * max_height:		max input height the VIN supports
->   */
->  struct rvin_info {
->  	enum chip_id chip;
-> +	bool use_mc;
->  
->  	unsigned int max_width;
->  	unsigned int max_height;
-> 
+--qdfqet27rre5b7op
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlnDy1EACgkQFA3kzBSg
+KbbFsg//SgQ6W7+mzuA3sfUHggU3dmkPw+A9tdkOIlZ1S0DFStQzCAnmb0H18P1S
+uy4CId++58u4B6ly9kFNtBgvoxZykTkCMTkdvPW9uLbbLbU+IPiFleZ9rZXBsI80
+qA927leTNzC/oA7wXJtUQRQ1mXU5H3oGFrCCmBISGjIQ5pHoHO3kQx6iRODrrkP4
+R05WXfKRO0JkMS/JvxQNnBwwsAYkLmcNV996rS0OkPT6UIHuEycMSAPkGFSUdHRe
+9ZjMspsUbvr5YGufyY43aFgCvLG9Zh6OP6d8s1NDro3RAnbATm56C2x4dU0ImxpC
+VXj5uEASAUym8qSUXme8Mlcl+yCjnYxwnlaaYAx34X0JpWflZVk/W5Py2FM97Zjj
+1Ljuf2uf/E8XpC6D0KeMRhfMBvPUoj2R6bJ6ptbrN0p422LC+Msbqj5GzOgPxIFn
++kn4kwXbGsozvTtIZ9LYhGLxS6fQH++BbZI1Ip8+pO44tWbSmcHInDdYwYZjvqf6
++lOH8iFR+siqjuXLXCKkrRjfo3+JlHGRpIuJOIQI70WEdCJyOE++1fqWfJBlOwLc
+9iXmZlxs21bCfBJ8973mIJ8P6Pag6VSHqRkhAaHz5ouSibLsWVBc1T6io1YSEuFX
+SkDC7twSW4X4IvqCwTnYdvg42xeJ9eljf9diu8BPkouxwrpMUfA=
+=mndP
+-----END PGP SIGNATURE-----
+
+--qdfqet27rre5b7op--
