@@ -1,52 +1,38 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-yw0-f170.google.com ([209.85.161.170]:52860 "EHLO
-        mail-yw0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751272AbdIPSsu (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33389 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751068AbdIUIyA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 16 Sep 2017 14:48:50 -0400
-Received: by mail-yw0-f170.google.com with SMTP id i6so3106685ywc.9
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 16 Sep 2017 11:48:50 -0700 (PDT)
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
+        Thu, 21 Sep 2017 04:54:00 -0400
+Date: Thu, 21 Sep 2017 10:53:41 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH v3 01/18] arm: shmobile: Document Kingfisher board DT bindings
-Date: Sat, 16 Sep 2017 21:48:47 +0300
-Message-Id: <1505587727-15543-1-git-send-email-vladimir.barinov@cogentembedded.com>
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 2/4] arm64: dts: renesas: r8a77995: add USB2.0 Host
+ (EHCI/OHCI) device node
+Message-ID: <20170921085340.GO15749@verge.net.au>
+References: <1505385043-1554-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1505385043-1554-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <CAMuHMdUT39W2ZsOiCFvfA9hB6v3_fPPY8tjVfq0NqtMeADXcqw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUT39W2ZsOiCFvfA9hB6v3_fPPY8tjVfq0NqtMeADXcqw@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add Kingfisher Device tree bindings Documentation, listing it as a
-supported board.
-Kingfisher is the H3ULCB/M3ULCB extension board.
+On Tue, Sep 19, 2017 at 04:22:33PM +0200, Geert Uytterhoeven wrote:
+> On Thu, Sep 14, 2017 at 12:30 PM, Yoshihiro Shimoda
+> <yoshihiro.shimoda.uh@renesas.com> wrote:
+> > This patch adds USB2.0 Host (EHCI/OHCI) device node for r8a77995.
+> >
+> > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
----
-Changes in version 2:
-- added own compatible value "shimafuji,kingfisher"
-Changes in version 3:
-- seperate Kingfisher entry from H3ULCB/M3ULCB
-
- Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index ae75cb3..5921ac2 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -76,6 +76,8 @@ Boards:
-     compatible = "iwave,g20d", "iwave,g20m", "renesas,r8a7743"
-   - iWave Systems RZ/G1M Qseven System On Module (iW-RainboW-G20M-Qseven)
-     compatible = "iwave,g20m", "renesas,r8a7743"
-+  - Kingfisher (SBEV-RCAR-KF-M03)
-+    compatible = "shimafuji,kingfisher";
-   - Koelsch (RTP0RC7791SEB00010S)
-     compatible = "renesas,koelsch", "renesas,r8a7791"
-   - Kyoto Microcomputer Co. KZM-A9-Dual
--- 
-1.9.1
+Thanks, applied.
