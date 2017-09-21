@@ -1,47 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:34712 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751826AbdIVJ7s (ORCPT
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:32794 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751728AbdIUVrt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Sep 2017 05:59:48 -0400
-MIME-Version: 1.0
-In-Reply-To: <150603032614.9664.3191963173399472802.sendpatchset@little-apple>
-References: <150603029494.9664.3785539947602559695.sendpatchset@little-apple> <150603032614.9664.3191963173399472802.sendpatchset@little-apple>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 22 Sep 2017 11:59:46 +0200
-Message-ID: <CAMuHMdVvhmOje3-aKO2tcygBgGrRuPXxjiAP=p-WmvL7Nt8u=Q@mail.gmail.com>
-Subject: Re: [PATCH 3/3] iommu/ipmmu-vmsa: Document R-Car D3 IPMMU DT bindings
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Joerg Roedel <joro@8bytes.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        iommu@lists.linux-foundation.org, Rob Herring <robh+dt@kernel.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Robin Murphy <robin.murphy@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 21 Sep 2017 17:47:49 -0400
+From: Magnus Damm <magnus.damm@gmail.com>
+To: devicetree@vger.kernel.org
+Cc: mark.rutland@arm.com, laurent.pinchart+renesas@ideasonboard.com,
+        geert+renesas@glider.be, joro@8bytes.org,
+        linux-renesas-soc@vger.kernel.org,
+        iommu@lists.linux-foundation.org, robh+dt@kernel.org,
+        horms+renesas@verge.net.au, Magnus Damm <magnus.damm@gmail.com>,
+        robin.murphy@arm.com
+Date: Fri, 22 Sep 2017 06:45:26 +0900
+Message-Id: <150603032614.9664.3191963173399472802.sendpatchset@little-apple>
+In-Reply-To: <150603029494.9664.3785539947602559695.sendpatchset@little-apple>
+References: <150603029494.9664.3785539947602559695.sendpatchset@little-apple>
+Subject: [PATCH 3/3] iommu/ipmmu-vmsa: Document R-Car D3 IPMMU DT bindings
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Sep 21, 2017 at 11:45 PM, Magnus Damm <magnus.damm@gmail.com> wrote:
-> From: Magnus Damm <damm+renesas@opensource.se>
->
-> Update the IPMMU DT binding documentation to include the r8a77995 compat
-> string for the IPMMU devices included in the R-Car D3 SoC.
->
-> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Update the IPMMU DT binding documentation to include the r8a77995 compat
+string for the IPMMU devices included in the R-Car D3 SoC.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+---
 
-                        Geert
+ Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt |    1 +
+ 1 file changed, 1 insertion(+)
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--- 0003/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
++++ work/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt	2017-09-22 06:21:25.640607110 +0900
+@@ -18,6 +18,7 @@ Required Properties:
+     - "renesas,ipmmu-r8a7795" for the R8A7795 (R-Car H3) IPMMU.
+     - "renesas,ipmmu-r8a7796" for the R8A7796 (R-Car M3-W) IPMMU.
+     - "renesas,ipmmu-r8a77970" for the R8A77970 (R-Car V3M) IPMMU.
++    - "renesas,ipmmu-r8a77995" for the R8A77995 (R-Car D3) IPMMU.
+     - "renesas,ipmmu-vmsa" for generic R-Car Gen2 VMSA-compatible IPMMU.
+ 
+   - reg: Base address and size of the IPMMU registers.
