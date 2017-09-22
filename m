@@ -1,36 +1,112 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH v5 6/6] i2c: dev: mark RDWR buffers as DMA_SAFE
-Date: Wed, 20 Sep 2017 20:59:56 +0200
-Message-Id: <20170920185956.13874-7-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170920185956.13874-1-wsa+renesas@sang-engineering.com>
-References: <20170920185956.13874-1-wsa+renesas@sang-engineering.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-io0-f178.google.com ([209.85.223.178]:50748 "EHLO
+        mail-io0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751938AbdIVJp1 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 22 Sep 2017 05:45:27 -0400
+Received: by mail-io0-f178.google.com with SMTP id w94so1815452ioi.7
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 22 Sep 2017 02:45:26 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <20170914123043.21451-1-wsa+renesas@sang-engineering.com>
+References: <20170914123043.21451-1-wsa+renesas@sang-engineering.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 22 Sep 2017 11:45:25 +0200
+Message-ID: <CAPDyKFokU_SVGyHH8ipsRA=dTffR99DsczHY194HoX0mckbucQ@mail.gmail.com>
+Subject: Re: [PATCH] mmc: tmio: remove broken and noisy debug macro
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/i2c/i2c-dev.c | 2 ++
- 1 file changed, 2 insertions(+)
+On 14 September 2017 at 14:30, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> Some change for v4.14 broke the debug output for TMIO. But since it was
+> not helpful to me and too noisy for my taste anyhow, let's just remove
+> it instead of fixing it. We'll find something better if we'd need it...
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-diff --git a/drivers/i2c/i2c-dev.c b/drivers/i2c/i2c-dev.c
-index 6f638bbc922db4..bbc7aadb4c899d 100644
---- a/drivers/i2c/i2c-dev.c
-+++ b/drivers/i2c/i2c-dev.c
-@@ -280,6 +280,8 @@ static noinline int i2cdev_ioctl_rdwr(struct i2c_client *client,
- 			res = PTR_ERR(rdwr_pa[i].buf);
- 			break;
- 		}
-+		/* memdup_user allocates with GFP_KERNEL, so DMA is ok */
-+		rdwr_pa[i].flags |= I2C_M_DMA_SAFE;
- 
- 		/*
- 		 * If the message length is received from the slave (similar
--- 
-2.11.0
+Thanks, applied for fixes!
+
+Kind regards
+Uffe
+
+> ---
+>  drivers/mmc/host/tmio_mmc_core.c | 47 ----------------------------------------
+>  1 file changed, 47 deletions(-)
+>
+> diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+> index 12cf8288d6635e..a7293e186e03fc 100644
+> --- a/drivers/mmc/host/tmio_mmc_core.c
+> +++ b/drivers/mmc/host/tmio_mmc_core.c
+> @@ -129,50 +129,6 @@ static int tmio_mmc_next_sg(struct tmio_mmc_host *host)
+>
+>  #define CMDREQ_TIMEOUT 5000
+>
+> -#ifdef CONFIG_MMC_DEBUG
+> -
+> -#define STATUS_TO_TEXT(a, status, i) \
+> -       do { \
+> -               if ((status) & TMIO_STAT_##a) { \
+> -                       if ((i)++) \
+> -                               printk(KERN_DEBUG " | "); \
+> -                       printk(KERN_DEBUG #a); \
+> -               } \
+> -       } while (0)
+> -
+> -static void pr_debug_status(u32 status)
+> -{
+> -       int i = 0;
+> -
+> -       pr_debug("status: %08x = ", status);
+> -       STATUS_TO_TEXT(CARD_REMOVE, status, i);
+> -       STATUS_TO_TEXT(CARD_INSERT, status, i);
+> -       STATUS_TO_TEXT(SIGSTATE, status, i);
+> -       STATUS_TO_TEXT(WRPROTECT, status, i);
+> -       STATUS_TO_TEXT(CARD_REMOVE_A, status, i);
+> -       STATUS_TO_TEXT(CARD_INSERT_A, status, i);
+> -       STATUS_TO_TEXT(SIGSTATE_A, status, i);
+> -       STATUS_TO_TEXT(CMD_IDX_ERR, status, i);
+> -       STATUS_TO_TEXT(STOPBIT_ERR, status, i);
+> -       STATUS_TO_TEXT(ILL_FUNC, status, i);
+> -       STATUS_TO_TEXT(CMD_BUSY, status, i);
+> -       STATUS_TO_TEXT(CMDRESPEND, status, i);
+> -       STATUS_TO_TEXT(DATAEND, status, i);
+> -       STATUS_TO_TEXT(CRCFAIL, status, i);
+> -       STATUS_TO_TEXT(DATATIMEOUT, status, i);
+> -       STATUS_TO_TEXT(CMDTIMEOUT, status, i);
+> -       STATUS_TO_TEXT(RXOVERFLOW, status, i);
+> -       STATUS_TO_TEXT(TXUNDERRUN, status, i);
+> -       STATUS_TO_TEXT(RXRDY, status, i);
+> -       STATUS_TO_TEXT(TXRQ, status, i);
+> -       STATUS_TO_TEXT(ILL_ACCESS, status, i);
+> -       printk("\n");
+> -}
+> -
+> -#else
+> -#define pr_debug_status(s)  do { } while (0)
+> -#endif
+> -
+>  static void tmio_mmc_enable_sdio_irq(struct mmc_host *mmc, int enable)
+>  {
+>         struct tmio_mmc_host *host = mmc_priv(mmc);
+> @@ -762,9 +718,6 @@ irqreturn_t tmio_mmc_irq(int irq, void *devid)
+>         status = sd_ctrl_read16_and_16_as_32(host, CTL_STATUS);
+>         ireg = status & TMIO_MASK_IRQ & ~host->sdcard_irq_mask;
+>
+> -       pr_debug_status(status);
+> -       pr_debug_status(ireg);
+> -
+>         /* Clear the status except the interrupt status */
+>         sd_ctrl_write32_as_16_and_16(host, CTL_STATUS, TMIO_MASK_IRQ);
+>
+> --
+> 2.11.0
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
