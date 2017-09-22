@@ -1,168 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34722 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751964AbdI2LyW (ORCPT
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:36340 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752030AbdIVJ7u (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Sep 2017 07:54:22 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
+        Fri, 22 Sep 2017 05:59:50 -0400
+MIME-Version: 1.0
+In-Reply-To: <150603031620.9664.13111068977966766494.sendpatchset@little-apple>
+References: <150603029494.9664.3785539947602559695.sendpatchset@little-apple> <150603031620.9664.13111068977966766494.sendpatchset@little-apple>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 22 Sep 2017 11:59:48 +0200
+Message-ID: <CAMuHMdUMjZ5p2ZkUTk6wJa3c1XudZJ6VzcZeU-nHpc4Op7OBAw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] iommu/ipmmu-vmsa: Document R-Car V3M IPMMU DT bindings
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 07/48] ARM: dts: r8a7794: Stop grouping clocks under a "clocks" subnode
-Date: Fri, 29 Sep 2017 13:52:59 +0200
-Message-Id: <9fb1c8ff4ca36a13fdeb7e4161687eaf4685dc7a.1506683482.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1506683482.git.horms+renesas@verge.net.au>
-References: <cover.1506683482.git.horms+renesas@verge.net.au>
+        Joerg Roedel <joro@8bytes.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        iommu@lists.linux-foundation.org, Rob Herring <robh+dt@kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Robin Murphy <robin.murphy@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+On Thu, Sep 21, 2017 at 11:45 PM, Magnus Damm <magnus.damm@gmail.com> wrote:
+> From: Magnus Damm <damm+renesas@opensource.se>
+>
+> Update the IPMMU DT binding documentation to include the r8a77970 compat
+> string for the IPMMU devices included in the R-Car V3M SoC.
+>
+> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 
-The current practice is to not group clocks under a "clocks" subnode,
-but just put them together with the other on-SoC devices.
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7794.dtsi | 124 ++++++++++++++++++++---------------------
- 1 file changed, 59 insertions(+), 65 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index ebd44d9982be..a4c35d29f77c 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -982,71 +982,65 @@
- 		status = "disabled";
- 	};
- 
--	clocks {
--		#address-cells = <2>;
--		#size-cells = <2>;
--		ranges;
--
--		/* External root clock */
--		extal_clk: extal {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			/* This value must be overriden by the board. */
--			clock-frequency = <0>;
--		};
--
--		/* External USB clock - can be overridden by the board */
--		usb_extal_clk: usb_extal {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			clock-frequency = <48000000>;
--		};
--
--		/* External CAN clock */
--		can_clk: can {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			/* This value must be overridden by the board. */
--			clock-frequency = <0>;
--		};
--
--		/* External SCIF clock */
--		scif_clk: scif {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			/* This value must be overridden by the board. */
--			clock-frequency = <0>;
--		};
--
--		/*
--		 * The external audio clocks are configured  as 0 Hz fixed
--		 * frequency clocks by default.  Boards that provide audio
--		 * clocks should override them.
--		 */
--		audio_clka: audio_clka {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			clock-frequency = <0>;
--		};
--		audio_clkb: audio_clkb {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			clock-frequency = <0>;
--		};
--		audio_clkc: audio_clkc {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			clock-frequency = <0>;
--		};
--
--		cpg: clock-controller@e6150000 {
--			compatible = "renesas,r8a7794-cpg-mssr";
--			reg = <0 0xe6150000 0 0x1000>;
--			clocks = <&extal_clk>, <&usb_extal_clk>;
--			clock-names = "extal", "usb_extal";
--			#clock-cells = <2>;
--			#power-domain-cells = <0>;
--		};
-+	/* External root clock */
-+	extal_clk: extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External USB clock - can be overridden by the board */
-+	usb_extal_clk: usb_extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <48000000>;
-+	};
-+
-+	/* External CAN clock */
-+	can_clk: can {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External SCIF clock */
-+	scif_clk: scif {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
-+	/*
-+	 * The external audio clocks are configured  as 0 Hz fixed
-+	 * frequency clocks by default.  Boards that provide audio
-+	 * clocks should override them.
-+	 */
-+	audio_clka: audio_clka {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+	audio_clkb: audio_clkb {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+	audio_clkc: audio_clkc {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	cpg: clock-controller@e6150000 {
-+		compatible = "renesas,r8a7794-cpg-mssr";
-+		reg = <0 0xe6150000 0 0x1000>;
-+		clocks = <&extal_clk>, <&usb_extal_clk>;
-+		clock-names = "extal", "usb_extal";
-+		#clock-cells = <2>;
-+		#power-domain-cells = <0>;
- 	};
- 
- 	rst: reset-controller@e6160000 {
--- 
-2.1.4
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
