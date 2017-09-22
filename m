@@ -1,204 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34495 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752481AbdI2Lxl (ORCPT
+Received: from www.zeus03.de ([194.117.254.33]:36246 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752013AbdIVQEI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Sep 2017 07:53:41 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 13/22] arm64: dts: renesas: r8a77970: add [H]SCIF support
-Date: Fri, 29 Sep 2017 13:52:22 +0200
-Message-Id: <38dbb6fc972e53110f0bc308057822d73c063903.1506678250.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1506678250.git.horms+renesas@verge.net.au>
-References: <cover.1506678250.git.horms+renesas@verge.net.au>
+        Fri, 22 Sep 2017 12:04:08 -0400
+Date: Fri, 22 Sep 2017 18:04:05 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Shawn Lin <shawn.lin@rock-chips.com>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        kuninori.morimoto.gx@renesas.com,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [RFC PATCH] mmc: tmio: check mmc_regulator_get_supply return
+ value
+Message-ID: <20170922160405.wfpi4fyziz3sxtmh@katana>
+References: <1506079337-12882-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <7e1bdda1-d790-0db2-540c-69fabe22850a@rock-chips.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="jekopwxvvvlwokjg"
+Content-Disposition: inline
+In-Reply-To: <7e1bdda1-d790-0db2-540c-69fabe22850a@rock-chips.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Describe [H]SCIF ports in the R8A77970 device tree.
+--jekopwxvvvlwokjg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Based on the original (and large) patch by Daisuke Matsushita
-<daisuke.matsushita.ns@hitachi.com>.
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77970.dtsi | 149 ++++++++++++++++++++++++++++++
- 1 file changed, 149 insertions(+)
+> > However, there are side effects to it as the mmc devices will be enumer=
+ated
+> > in a different order (due to -EPROBE_DEFER), this means this patch woul=
+d likely
+> > break existing platforms.
+>=20
+> However this doesn't. The user daemon should never relies on the
+> sequency of probing the mmc block part. We neither support to provide
+> alias for the device id, nor guarantee the first probed controller get
+> the first block id. Please use PARTUUID for rootfs, etc. So this
+> shouldn't be a big deal.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-index a2a438a91b3f..04ec0e459686 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -59,6 +59,13 @@
- 		clock-frequency = <0>;
- 	};
- 
-+	/* External SCIF clock - to be overridden by boards that provide it */
-+	scif_clk: scif {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
- 	soc {
- 		compatible = "simple-bus";
- 		interrupt-parent = <&gic>;
-@@ -169,5 +176,147 @@
- 			#dma-cells = <1>;
- 			dma-channels = <8>;
- 		};
-+
-+		hscif0: serial@e6540000 {
-+			compatible = "renesas,hscif-r8a77970",
-+				     "renesas,rcar-gen3-hscif",
-+				     "renesas,hscif";
-+			reg = <0 0xe6540000 0 96>;
-+			interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 520>,
-+				 <&cpg CPG_CORE 9>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x31>, <&dmac1 0x30>,
-+			       <&dmac2 0x31>, <&dmac2 0x30>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 520>;
-+			status = "disabled";
-+		};
-+
-+		hscif1: serial@e6550000 {
-+			compatible = "renesas,hscif-r8a77970",
-+				     "renesas,rcar-gen3-hscif",
-+				     "renesas,hscif";
-+			reg = <0 0xe6550000 0 96>;
-+			interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 519>,
-+				 <&cpg CPG_CORE 9>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x33>, <&dmac1 0x32>,
-+			       <&dmac2 0x33>, <&dmac2 0x32>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 519>;
-+			status = "disabled";
-+		};
-+
-+		hscif2: serial@e6560000 {
-+			compatible = "renesas,hscif-r8a77970",
-+				     "renesas,rcar-gen3-hscif",
-+				     "renesas,hscif";
-+			reg = <0 0xe6560000 0 96>;
-+			interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 518>,
-+				 <&cpg CPG_CORE 9>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x35>, <&dmac1 0x34>,
-+			       <&dmac2 0x35>, <&dmac2 0x34>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 518>;
-+			status = "disabled";
-+		};
-+
-+		hscif3: serial@e66a0000 {
-+			compatible = "renesas,hscif-r8a77970",
-+				     "renesas,rcar-gen3-hscif", "renesas,hscif";
-+			reg = <0 0xe66a0000 0 96>;
-+			interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 517>,
-+				 <&cpg CPG_CORE 9>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x37>, <&dmac1 0x36>,
-+			       <&dmac2 0x37>, <&dmac2 0x36>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 517>;
-+			status = "disabled";
-+		};
-+
-+		scif0: serial@e6e60000 {
-+			compatible = "renesas,scif-r8a77970",
-+				     "renesas,rcar-gen3-scif",
-+				     "renesas,scif";
-+			reg = <0 0xe6e60000 0 64>;
-+			interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 207>,
-+				 <&cpg CPG_CORE 9>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x51>, <&dmac1 0x50>,
-+			       <&dmac2 0x51>, <&dmac2 0x50>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 207>;
-+			status = "disabled";
-+		};
-+
-+		scif1: serial@e6e68000 {
-+			compatible = "renesas,scif-r8a77970",
-+				     "renesas,rcar-gen3-scif",
-+				     "renesas,scif";
-+			reg = <0 0xe6e68000 0 64>;
-+			interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 206>,
-+				 <&cpg CPG_CORE 9>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x53>, <&dmac1 0x52>,
-+			       <&dmac2 0x53>, <&dmac2 0x52>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 206>;
-+			status = "disabled";
-+		};
-+
-+		scif3: serial@e6c50000 {
-+			compatible = "renesas,scif-r8a77970",
-+				     "renesas,rcar-gen3-scif",
-+				     "renesas,scif";
-+			reg = <0 0xe6c50000 0 64>;
-+			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 204>,
-+				 <&cpg CPG_CORE 9>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x57>, <&dmac1 0x56>,
-+			       <&dmac2 0x57>, <&dmac2 0x56>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 204>;
-+			status = "disabled";
-+		};
-+
-+		scif4: serial@e6c40000 {
-+			compatible = "renesas,scif-r8a77970",
-+				     "renesas,rcar-gen3-scif", "renesas,scif";
-+			reg = <0 0xe6c40000 0 64>;
-+			interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 203>,
-+				 <&cpg CPG_CORE 9>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x59>, <&dmac1 0x58>,
-+			       <&dmac2 0x59>, <&dmac2 0x58>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 203>;
-+			status = "disabled";
-+		};
- 	};
- };
--- 
-2.1.4
+That's exactly what I thought as well...
+
+Thanks for the patch! Will test it the next days, but it looks good
+already.
+
+
+--jekopwxvvvlwokjg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlnFNHEACgkQFA3kzBSg
+KbZFig//f1anLbMK6oF12jSfwFotNeV8+B1bmjnRIWk7y8Up09CLb3uwpStiOE+1
+gtHwdl2guAAIdKhiUyl7d4jp0ThtuUUn0Id1pNSrpnQd/PPXLyGcgkzr5xpY32kL
+SIpgZy4QJNTfJdPmmDY5prPl6R9LFfy0lngGIDPU7Al9neADBUMmfJkhw3CE414w
+cYphJUgGq4Kj3oWFGjyucPfcXWGTITatnDJhTYhcClCccowwzwAYZjqS0Ct0a5+T
+sQ9wiW0KUqY7lct+6QzTtBTWzGFzWjNEyarjBjYJGqIz5//F8LSjQFeiJcJuDmtY
+i9SUAToam/tFsc9Wj3MwdlUjtnSA/oHsCdu+s6BnTOsDEgZ7zgPo6gPLBrAiecXG
+eq50EfKPb7B6DA2736kN5i9CVYwK7VKR+7wYkcOnNULVgKTnaRd0TOPRsE8HjKsi
+MigvMcD1B4LxzZ/w6w5Sl3s4kWcBoRg0jpLjJVP24Ma3oYAwCqwGP+W9AyTrUWHc
+fLmdNNP3vNcmLBlB7ncEIIHAXwCvcHgIo4AmKp396F6y35/rEIBm7TiCvPv1WrZm
+JlhJ+kgf14gH6tsrcsl3CsOiMIQdNHTCV6fpF/gtxa339//pMNeyF9536AHZt0T5
+mlKVdu851MXEDTq5y5fzIeoHopEhuT83LlipiqmTxNocTa1SrDs=
+=T4+j
+-----END PGP SIGNATURE-----
+
+--jekopwxvvvlwokjg--
