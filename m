@@ -1,148 +1,188 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:54386 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965047AbdIZKGP (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:46236 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933359AbdIYHzK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 26 Sep 2017 06:06:15 -0400
-Received: from avalon.guest.par1.mozilla.com (unknown [IPv6:2a00:8c40:243:232:120b:a9ff:fe3c:7148])
-        by galahad.ideasonboard.com (Postfix) with ESMTPSA id EAF8921457
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 26 Sep 2017 12:06:04 +0200 (CEST)
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 25 Sep 2017 03:55:10 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Subject: [RFC 01/13] dt-bindings: reserved-memory: Add binding for the Renesas lossy decompression area
-Date: Tue, 26 Sep 2017 13:05:53 +0300
-Message-Id: <20170926100605.2313-4-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170926100605.2313-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170926100605.2313-1-laurent.pinchart+renesas@ideasonboard.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 3/3] ARM: shmobile: rcar-gen2: Make sure CNTVOFF is initialized on CA7/15
+Date: Mon, 25 Sep 2017 09:54:44 +0200
+Message-Id: <3fd45a136ff61bb54deab70fb2d534a85e40481f.1506325834.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1506325834.git.horms+renesas@verge.net.au>
+References: <cover.1506325834.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Renesas R-Car Gen3 DDR3/4 controller supports transparent
-decompression of data stored in the Renesas near-lossless image
-compression format (FCNL). Decompression is controlled based on system
-memory ranges configured by the secure mode boot loader. As any data
-located within those memory ranges will be automatically decompressed
-when read, those ranges are not usable as normal system memory.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-The memory ranges for lossy decompression are system-specific and fixed
-from a non-secure software point of view. These bindings describe the
-ranges in the form of a reserved memory node.
+On Cortex-A7, the arch timer CNTVOFF register is uninitialized.
+Ideally it should be initialized by the boot loader, but it isn't.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+For the boot CPU, CNTVOFF is initialized by Linux since commit
+9ce3fa6816c2fb59 ("ARM: shmobile: rcar-gen2: Add CA7 arch_timer
+initialization for r8a7794").
+For secondary CPU cores, no such initialization is done.
+
+Hence when enabling SMP on r8a7794, the kernel log is spammed with:
+
+    WARNING: Underflow in clocksource 'arch_sys_counter' observed, time update ignored.
+	     Please report this, consider using a different clocksource, if possible.
+	     Your kernel is probably still fine.
+
+As Marc Zyngier pointed out that Cortex-A15 and Cortex-A7 are similar with
+respect to CNTVOFF, we have been very lucky this just worked on R-Car
+Gen2 SoCs with Cortex-A15 cores.
+
+To fix this:
+  - Move the existing inline asm code to initialize CNTVOFF to an
+    assembler source file (adding comments and replacing hardcoded
+    constants by definitions in the process), so it can be reused,
+  - Perform the initialization of CNTVOFF on the boot CPU (Cortex-A15 or
+    Cortex-A7) on all R-Car Gen2 and RZ/G1 parts,
+  - Wrap the standard secondary_startup() routine inside a routine which
+    initializes CNTVOFF.
+
+Based on patches by Hisashi Nakamura in the BSP.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- .../renesas,lossy-decompression.txt                | 102 +++++++++++++++++++++
- 1 file changed, 102 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/reserved-memory/renesas,lossy-decompression.txt
+ arch/arm/mach-shmobile/Makefile          |  1 +
+ arch/arm/mach-shmobile/common.h          |  2 ++
+ arch/arm/mach-shmobile/headsmp-apmu.S    | 37 ++++++++++++++++++++++++++++++++
+ arch/arm/mach-shmobile/platsmp-apmu.c    |  2 +-
+ arch/arm/mach-shmobile/setup-rcar-gen2.c | 20 ++---------------
+ 5 files changed, 43 insertions(+), 19 deletions(-)
+ create mode 100644 arch/arm/mach-shmobile/headsmp-apmu.S
 
-diff --git a/Documentation/devicetree/bindings/reserved-memory/renesas,lossy-decompression.txt b/Documentation/devicetree/bindings/reserved-memory/renesas,lossy-decompression.txt
+diff --git a/arch/arm/mach-shmobile/Makefile b/arch/arm/mach-shmobile/Makefile
+index 64611a1b4276..32176a00c664 100644
+--- a/arch/arm/mach-shmobile/Makefile
++++ b/arch/arm/mach-shmobile/Makefile
+@@ -22,6 +22,7 @@ cpu-y				:= platsmp.o headsmp.o
+ # Shared SoC family objects
+ obj-$(CONFIG_ARCH_RCAR_GEN2)	+= setup-rcar-gen2.o platsmp-apmu.o $(cpu-y)
+ CFLAGS_setup-rcar-gen2.o	+= -march=armv7-a
++obj-$(CONFIG_ARCH_RCAR_GEN2)	+= headsmp-apmu.o
+ obj-$(CONFIG_ARCH_R8A7790)	+= regulator-quirk-rcar-gen2.o
+ obj-$(CONFIG_ARCH_R8A7791)	+= regulator-quirk-rcar-gen2.o
+ obj-$(CONFIG_ARCH_R8A7793)	+= regulator-quirk-rcar-gen2.o
+diff --git a/arch/arm/mach-shmobile/common.h b/arch/arm/mach-shmobile/common.h
+index 1a8f7b3ab449..ea6e9e2be3f7 100644
+--- a/arch/arm/mach-shmobile/common.h
++++ b/arch/arm/mach-shmobile/common.h
+@@ -1,6 +1,7 @@
+ #ifndef __ARCH_MACH_COMMON_H
+ #define __ARCH_MACH_COMMON_H
+ 
++extern void shmobile_init_cntvoff(void);
+ extern void shmobile_init_delay(void);
+ extern void shmobile_boot_vector(void);
+ extern unsigned long shmobile_boot_fn;
+@@ -11,6 +12,7 @@ extern void shmobile_smp_hook(unsigned int cpu, unsigned long fn,
+ 			      unsigned long arg);
+ extern bool shmobile_smp_cpu_can_disable(unsigned int cpu);
+ extern bool shmobile_smp_init_fallback_ops(void);
++extern void shmobile_boot_apmu(void);
+ extern void shmobile_boot_scu(void);
+ extern void shmobile_smp_scu_prepare_cpus(phys_addr_t scu_base_phys,
+ 					  unsigned int max_cpus);
+diff --git a/arch/arm/mach-shmobile/headsmp-apmu.S b/arch/arm/mach-shmobile/headsmp-apmu.S
 new file mode 100644
-index 000000000000..a70f84ae7b4a
+index 000000000000..db4743d2bf91
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/reserved-memory/renesas,lossy-decompression.txt
-@@ -0,0 +1,102 @@
-+Renesas Lossy Decompression Reserved Memory Area
-+------------------------------------------------
++++ b/arch/arm/mach-shmobile/headsmp-apmu.S
+@@ -0,0 +1,37 @@
++/*
++ * SMP support for APMU based systems with Cortex A7/A15
++ *
++ * Copyright (C) 2014  Renesas Electronics Corporation
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
 +
-+The Renesas R-Car Gen3 DDR3/4 controller supports transparent decompression of
-+data stored in the Renesas near-lossless image compression format (FCNL).
-+Decompression is controlled based on system memory ranges configured by the
-+secure mode boot loader. As any data located within those memory ranges will
-+be automatically decompressed when read, those ranges are not usable as normal
-+system memory.
++#include <linux/linkage.h>
++#include <asm/assembler.h>
 +
-+The memory ranges for lossy decompression are system-specific and fixed from a
-+non-secure software point of view. These bindings describe the ranges in the
-+form of a reserved memory node.
++ENTRY(shmobile_init_cntvoff)
++	/*
++	 * CNTVOFF has to be initialized either from non-secure Hypervisor
++	 * mode or secure Monitor mode with SCR.NS==1. If TrustZone is enabled
++	 * then it should be handled by the secure code
++	 */
++	cps	#MON_MODE
++	mrc	p15, 0, r1, c1, c1, 0		/* Get Secure Config */
++	orr	r0, r1, #1
++	mcr	p15, 0, r0, c1, c1, 0		/* Set Non Secure bit */
++	instr_sync
++	mov	r0, #0
++	mcrr	p15, 4, r0, r0, c14		/* CNTVOFF = 0 */
++	instr_sync
++	mcr	p15, 0, r1, c1, c1, 0		/* Set Secure bit */
++	instr_sync
++	cps	#SVC_MODE
++	ret	lr
++ENDPROC(shmobile_init_cntvoff)
 +
-+Required properties:
++ENTRY(shmobile_boot_apmu)
++	bl	shmobile_init_cntvoff
++	b	secondary_startup
++ENDPROC(shmobile_boot_apmu)
+diff --git a/arch/arm/mach-shmobile/platsmp-apmu.c b/arch/arm/mach-shmobile/platsmp-apmu.c
+index 3ca2c13346f0..4422b615a6ee 100644
+--- a/arch/arm/mach-shmobile/platsmp-apmu.c
++++ b/arch/arm/mach-shmobile/platsmp-apmu.c
+@@ -204,7 +204,7 @@ void __init shmobile_smp_apmu_prepare_cpus(unsigned int max_cpus,
+ int shmobile_smp_apmu_boot_secondary(unsigned int cpu, struct task_struct *idle)
+ {
+ 	/* For this particular CPU register boot vector */
+-	shmobile_smp_hook(cpu, __pa_symbol(secondary_startup), 0);
++	shmobile_smp_hook(cpu, __pa_symbol(shmobile_boot_apmu), 0);
+ 
+ 	return apmu_wrap(cpu, apmu_power_on);
+ }
+diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
+index 7ab1690fab82..5561dbed7a33 100644
+--- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
++++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
+@@ -70,28 +70,12 @@ void __init rcar_gen2_timer_init(void)
+ 	void __iomem *base;
+ 	u32 freq;
+ 
++	shmobile_init_cntvoff();
 +
-+- compatible: Shall be "renesas,lossy-decompression", "shared-dma-pool".
-+- reg: Reserved memory ranges for the lossy decompression (up to 16).
-+- no-map: Shall be set.
-+- renesas,format: The image format used for the memory range. Valid formats
-+  are:
-+
-+  - 0: YUV planar
-+  - 1: YUV422 interleaved
-+  - 2: ARGB8888
-+
-+The Lossy Decompression nodes must be located as direct children of the
-+/reserved-memory node. See reserved-memory.txt for more information.
-+
-+In order to allow references to those reserved memory nodes (through
-+memory-region properties) in device tree sources, they are meant to be
-+included without a reg property, and later updated in the device tree blob by
-+the boot loader before passing control to the operating system.
-+
-+Without a reg property in the device tree source the Lossy Decompression nodes
-+can't have a unit address, and would thus all have the same name, which isn't
-+valid. To solve that problem the device tree sources should name the nodes
-+lossy-decompression-<format> where format is the value of the renesas,format
-+property. The boot loader is expected to rename the nodes to
-+lossy-decompression@<unit-address>.
-+
-+
-+Example: R8A7795 (R-Car H3) Lossy Decompression Nodes
-+
-+- Original device tree source
-+
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+
-+		lossy-decompression-0 {
-+			compatible = "renesas,lossy-decompression",
-+				     "shared-dma-pool";
-+			no-map;
-+			renesas,formats = <0>;
-+		};
-+
-+		lossy-decompression-1 {
-+			compatible = "renesas,lossy-decompression",
-+				     "shared-dma-pool";
-+			no-map;
-+			renesas,formats = <1>;
-+		};
-+
-+		lossy-decompression-2 {
-+			compatible = "renesas,lossy-decompression",
-+				     "shared-dma-pool";
-+			no-map;
-+			renesas,formats = <2>;
-+		};
-+	};
-+
-+- Device tree after being patched by the boot loader
-+
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+
-+		lossy-decompression@54000000 {
-+			compatible = "renesas,lossy-decompression",
-+				     "shared-dma-pool";
-+			reg = <0 0x54000000 0 0x03000000>;
-+			no-map;
-+			renesas,formats = <2>;
-+		};
-+
-+		lossy-decompression@57000000 {
-+			compatible = "renesas,lossy-decompression",
-+				     "shared-dma-pool";
-+			reg = <0 0x57000000 0 0x03000000>;
-+			no-map;
-+			renesas,formats = <0>;
-+		};
-+
-+		lossy-decompression@5a000000 {
-+			compatible = "renesas,lossy-decompression",
-+				     "shared-dma-pool";
-+			reg = <0 0x5a000000 0 0x03000000>;
-+			no-map;
-+			renesas,formats = <1>;
-+		};
-+	};
+ 	if (of_machine_is_compatible("renesas,r8a7745") ||
+ 	    of_machine_is_compatible("renesas,r8a7792") ||
+ 	    of_machine_is_compatible("renesas,r8a7794")) {
+ 		freq = 260000000 / 8;	/* ZS / 8 */
+-		/* CNTVOFF has to be initialized either from non-secure
+-		 * Hypervisor mode or secure Monitor mode with SCR.NS==1.
+-		 * If TrustZone is enabled then it should be handled by the
+-		 * secure code.
+-		 */
+-		asm volatile(
+-		"	cps	0x16\n"
+-		"	mrc	p15, 0, r1, c1, c1, 0\n"
+-		"	orr	r0, r1, #1\n"
+-		"	mcr	p15, 0, r0, c1, c1, 0\n"
+-		"	isb\n"
+-		"	mov	r0, #0\n"
+-		"	mcrr	p15, 4, r0, r0, c14\n"
+-		"	isb\n"
+-		"	mcr	p15, 0, r1, c1, c1, 0\n"
+-		"	isb\n"
+-		"	cps	0x13\n"
+-			: : : "r0", "r1");
+ 	} else {
+ 		/* At Linux boot time the r8a7790 arch timer comes up
+ 		 * with the counter disabled. Moreover, it may also report
 -- 
-Regards,
-
-Laurent Pinchart
+2.1.4
