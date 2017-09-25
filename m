@@ -1,95 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:50095 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934514AbdIYRsq (ORCPT
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46132 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965298AbdIYQRi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Sep 2017 13:48:46 -0400
-MIME-Version: 1.0
-In-Reply-To: <20170925161637.D7471440058@finisterre.ee.mobilebroadband>
-References: <1506329660-4064-2-git-send-email-fabrizio.castro@bp.renesas.com> <20170925161637.D7471440058@finisterre.ee.mobilebroadband>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 25 Sep 2017 19:48:44 +0200
-Message-ID: <CAMuHMdVsRwW+10ERyTJAa8XhhkPMn4ruymUwPKot+kmczBwbcA@mail.gmail.com>
-Subject: Re: Applied "spi: sh-msiof: Add compatible strings for r8a774[35]" to
- the spi tree
-To: Mark Brown <broonie@kernel.org>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Mon, 25 Sep 2017 12:17:38 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-spi@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+        Biju Das <biju.das@bp.renesas.com>, linux-spi@vger.kernel.org
+Subject: Applied "spi: sh-msiof: Add compatible strings for r8a774[35]" to the spi tree
+In-Reply-To: <1506329660-4064-2-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-Id: <20170925161637.D7471440058@finisterre.ee.mobilebroadband>
+Date: Mon, 25 Sep 2017 17:16:37 +0100 (BST)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Mark,
+The patch
 
-On Mon, Sep 25, 2017 at 6:16 PM, Mark Brown <broonie@kernel.org> wrote:
-> The patch
->
->    spi: sh-msiof: Add compatible strings for r8a774[35]
->
-> has been applied to the spi tree at
->
->    git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git
->
-> All being well this means that it will be integrated into the linux-next
-> tree (usually sometime in the next 24 hours) and sent to Linus during
-> the next merge window (or sooner if it is a bug fix), however if
-> problems are discovered then the patch may be dropped or reverted.
->
-> You may get further e-mails resulting from automated or manual testing
-> and review of the tree, please engage with people reporting problems and
-> send followup patches addressing any issues that are reported if needed.
->
-> If any updates are required or you are submitting further changes they
-> should be sent as incremental updates against current git, existing
-> patches will not be replaced.
->
-> Please add any relevant lists and maintainers to the CCs when replying
-> to this mail.
+   spi: sh-msiof: Add compatible strings for r8a774[35]
 
-Please drop this patch, as there's no need to add explicit matching for these
-compatible values. The family-specific compatible values (which the driver
-already matches against) are sufficient.
+has been applied to the spi tree at
 
-Thanks!
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
 
-> From bdacfc7b6216dd30d07c10732fd4c0a660c62853 Mon Sep 17 00:00:00 2001
-> From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Date: Mon, 25 Sep 2017 09:54:19 +0100
-> Subject: [PATCH] spi: sh-msiof: Add compatible strings for r8a774[35]
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Mark Brown <broonie@kernel.org>
-> ---
->  drivers/spi/spi-sh-msiof.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
-> index 0eb1e9583485..00808448cf35 100644
-> --- a/drivers/spi/spi-sh-msiof.c
-> +++ b/drivers/spi/spi-sh-msiof.c
-> @@ -1021,6 +1021,8 @@ static const struct sh_msiof_chipdata rcar_gen3_data = {
->
->  static const struct of_device_id sh_msiof_match[] = {
->         { .compatible = "renesas,sh-mobile-msiof", .data = &sh_data },
-> +       { .compatible = "renesas,msiof-r8a7743",   .data = &rcar_gen2_data },
-> +       { .compatible = "renesas,msiof-r8a7745",   .data = &rcar_gen2_data },
->         { .compatible = "renesas,msiof-r8a7790",   .data = &rcar_gen2_data },
->         { .compatible = "renesas,msiof-r8a7791",   .data = &rcar_gen2_data },
->         { .compatible = "renesas,msiof-r8a7792",   .data = &rcar_gen2_data },
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Gr{oetje,eeting}s,
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-                        Geert
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks,
+Mark
+
+>From bdacfc7b6216dd30d07c10732fd4c0a660c62853 Mon Sep 17 00:00:00 2001
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Date: Mon, 25 Sep 2017 09:54:19 +0100
+Subject: [PATCH] spi: sh-msiof: Add compatible strings for r8a774[35]
+
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/spi/spi-sh-msiof.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
+index 0eb1e9583485..00808448cf35 100644
+--- a/drivers/spi/spi-sh-msiof.c
++++ b/drivers/spi/spi-sh-msiof.c
+@@ -1021,6 +1021,8 @@ static const struct sh_msiof_chipdata rcar_gen3_data = {
+ 
+ static const struct of_device_id sh_msiof_match[] = {
+ 	{ .compatible = "renesas,sh-mobile-msiof", .data = &sh_data },
++	{ .compatible = "renesas,msiof-r8a7743",   .data = &rcar_gen2_data },
++	{ .compatible = "renesas,msiof-r8a7745",   .data = &rcar_gen2_data },
+ 	{ .compatible = "renesas,msiof-r8a7790",   .data = &rcar_gen2_data },
+ 	{ .compatible = "renesas,msiof-r8a7791",   .data = &rcar_gen2_data },
+ 	{ .compatible = "renesas,msiof-r8a7792",   .data = &rcar_gen2_data },
+-- 
+2.14.1
