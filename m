@@ -1,84 +1,144 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Chris Paterson <chris.paterson2@renesas.com>
-To: Simon Horman <horms@verge.net.au>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Chris Paterson <chris.paterson2@renesas.com>
-Subject: [PATCH 8/8] ARM: drs: iwg22m: Add SPI NOR support
-Date: Wed, 13 Sep 2017 18:05:41 +0100
-Message-Id: <1505322341-9480-9-git-send-email-chris.paterson2@renesas.com>
-In-Reply-To: <1505322341-9480-1-git-send-email-chris.paterson2@renesas.com>
-References: <1505322341-9480-1-git-send-email-chris.paterson2@renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <kieranbingham@gmail.com>
+Subject: Re: [PATCH 1/3] drm: rcar-du: Share plane atomic check code between
+ Gen2 and Gen3
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+ dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org
+References: <20170815230338.14913-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20170815230338.14913-2-laurent.pinchart+renesas@ideasonboard.com>
+From: Kieran Bingham <kieranbingham@gmail.com>
+Message-ID: <9eff3a67-e071-09df-409f-429aa369563a@gmail.com>
+Date: Mon, 25 Sep 2017 18:39:55 +0100
+MIME-Version: 1.0
+In-Reply-To: <20170815230338.14913-2-laurent.pinchart+renesas@ideasonboard.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Hi Laurent,
 
-Add support for the SPI NOR device used to boot up the system
-to the System on Module DT.
+On 16/08/17 00:03, Laurent Pinchart wrote:
+> The plane atomic check implementation is identical on Gen2 (DU planes)
+> and Gen3 (VSP planes), but two separate functions exist as they operate
+> on different data structures. Refactor the code to share the
+> implementation.
+> 
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
----
-This patch is based on renesas-devel-20170913-v4.13.
+This looks good to me.
 
-This patch is dependant on:
-- "of: add vendor prefix for Silicon Storage Technology Inc."
-- "doc: dt: mtd: Add sst25vf016b to the list of supported chip names"
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-
- arch/arm/boot/dts/r8a7745-iwg22m.dtsi | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7745-iwg22m.dtsi b/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
-index f7f9cef..ed9a8cf 100644
---- a/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
-+++ b/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
-@@ -39,6 +39,11 @@
- 		function = "mmc";
- 	};
- 
-+	qspi_pins: qspi {
-+		groups = "qspi_ctrl", "qspi_data2";
-+		function = "qspi";
-+	};
-+
- 	sdhi1_pins: sd1 {
- 		groups = "sdhi1_data4", "sdhi1_ctrl";
- 		function = "sdhi1";
-@@ -61,6 +66,27 @@
- 	status = "okay";
- };
- 
-+&qspi {
-+	pinctrl-0 = <&qspi_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+
-+	/* WARNING - This device contains the bootloader. Handle with care. */
-+	flash: flash@0 {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		compatible = "sst,sst25vf016b", "jedec,spi-nor";
-+		reg = <0>;
-+		spi-max-frequency = <50000000>;
-+		spi-tx-bus-width = <1>;
-+		spi-rx-bus-width = <1>;
-+		m25p,fast-read;
-+		spi-cpol;
-+		spi-cpha;
-+	};
-+};
-+
- &sdhi1 {
- 	pinctrl-0 = <&sdhi1_pins>;
- 	pinctrl-names = "default";
--- 
-1.9.1
-
+> ---
+>  drivers/gpu/drm/rcar-du/rcar_du_plane.c | 27 +++++++++++++++++----------
+>  drivers/gpu/drm/rcar-du/rcar_du_plane.h |  4 ++++
+>  drivers/gpu/drm/rcar-du/rcar_du_vsp.c   | 22 +---------------------
+>  3 files changed, 22 insertions(+), 31 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.c b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
+> index 61833cc1c699..4f076c364f25 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
+> @@ -565,27 +565,26 @@ void __rcar_du_plane_setup(struct rcar_du_group *rgrp,
+>  	}
+>  }
+>  
+> -static int rcar_du_plane_atomic_check(struct drm_plane *plane,
+> -				      struct drm_plane_state *state)
+> +int __rcar_du_plane_atomic_check(struct drm_plane *plane,
+> +				 struct drm_plane_state *state,
+> +				 const struct rcar_du_format_info **format)
+>  {
+> -	struct rcar_du_plane_state *rstate = to_rcar_plane_state(state);
+> -	struct rcar_du_plane *rplane = to_rcar_plane(plane);
+> -	struct rcar_du_device *rcdu = rplane->group->dev;
+> +	struct drm_device *dev = plane->dev;
+>  
+>  	if (!state->fb || !state->crtc) {
+> -		rstate->format = NULL;
+> +		*format = NULL;
+>  		return 0;
+>  	}
+>  
+>  	if (state->src_w >> 16 != state->crtc_w ||
+>  	    state->src_h >> 16 != state->crtc_h) {
+> -		dev_dbg(rcdu->dev, "%s: scaling not supported\n", __func__);
+> +		dev_dbg(dev->dev, "%s: scaling not supported\n", __func__);
+>  		return -EINVAL;
+>  	}
+>  
+> -	rstate->format = rcar_du_format_info(state->fb->format->format);
+> -	if (rstate->format == NULL) {
+> -		dev_dbg(rcdu->dev, "%s: unsupported format %08x\n", __func__,
+> +	*format = rcar_du_format_info(state->fb->format->format);
+> +	if (*format == NULL) {
+> +		dev_dbg(dev->dev, "%s: unsupported format %08x\n", __func__,
+>  			state->fb->format->format);
+>  		return -EINVAL;
+>  	}
+> @@ -593,6 +592,14 @@ static int rcar_du_plane_atomic_check(struct drm_plane *plane,
+>  	return 0;
+>  }
+>  
+> +static int rcar_du_plane_atomic_check(struct drm_plane *plane,
+> +				      struct drm_plane_state *state)
+> +{
+> +	struct rcar_du_plane_state *rstate = to_rcar_plane_state(state);
+> +
+> +	return __rcar_du_plane_atomic_check(plane, state, &rstate->format);
+> +}
+> +
+>  static void rcar_du_plane_atomic_update(struct drm_plane *plane,
+>  					struct drm_plane_state *old_state)
+>  {
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.h b/drivers/gpu/drm/rcar-du/rcar_du_plane.h
+> index f62e09f195de..890321b4665d 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_plane.h
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.h
+> @@ -73,6 +73,10 @@ to_rcar_plane_state(struct drm_plane_state *state)
+>  int rcar_du_atomic_check_planes(struct drm_device *dev,
+>  				struct drm_atomic_state *state);
+>  
+> +int __rcar_du_plane_atomic_check(struct drm_plane *plane,
+> +				 struct drm_plane_state *state,
+> +				 const struct rcar_du_format_info **format);
+> +
+>  int rcar_du_planes_init(struct rcar_du_group *rgrp);
+>  
+>  void __rcar_du_plane_setup(struct rcar_du_group *rgrp,
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+> index 2c96147bc444..dd66dcb8da23 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+> @@ -268,28 +268,8 @@ static int rcar_du_vsp_plane_atomic_check(struct drm_plane *plane,
+>  					  struct drm_plane_state *state)
+>  {
+>  	struct rcar_du_vsp_plane_state *rstate = to_rcar_vsp_plane_state(state);
+> -	struct rcar_du_vsp_plane *rplane = to_rcar_vsp_plane(plane);
+> -	struct rcar_du_device *rcdu = rplane->vsp->dev;
+> -
+> -	if (!state->fb || !state->crtc) {
+> -		rstate->format = NULL;
+> -		return 0;
+> -	}
+>  
+> -	if (state->src_w >> 16 != state->crtc_w ||
+> -	    state->src_h >> 16 != state->crtc_h) {
+> -		dev_dbg(rcdu->dev, "%s: scaling not supported\n", __func__);
+> -		return -EINVAL;
+> -	}
+> -
+> -	rstate->format = rcar_du_format_info(state->fb->format->format);
+> -	if (rstate->format == NULL) {
+> -		dev_dbg(rcdu->dev, "%s: unsupported format %08x\n", __func__,
+> -			state->fb->format->format);
+> -		return -EINVAL;
+> -	}
+> -
+> -	return 0;
+> +	return __rcar_du_plane_atomic_check(plane, state, &rstate->format);
+>  }
+>  
+>  static void rcar_du_vsp_plane_atomic_update(struct drm_plane *plane,
+> 
