@@ -1,49 +1,68 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:42058 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751661AbdIMLCA (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Sep 2017 07:02:00 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: linux-pm@vger.kernel.org, Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [RFC 3/3] arm64: dts: r8a7796: update register size for thermal
-Date: Wed, 13 Sep 2017 13:01:37 +0200
-Message-Id: <20170913110137.13490-4-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170913110137.13490-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170913110137.13490-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Chris Paterson <Chris.Paterson2@renesas.com>
+To: Simon Horman <horms@verge.net.au>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+CC: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Biju Das <biju.das@bp.renesas.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH v2] ARM: dts: iwg22d: Enable SDHI0 controller
+Date: Mon, 25 Sep 2017 07:25:00 +0000
+Message-ID: <TY1PR06MB07025B6A19C90C354EA23775B77A0@TY1PR06MB0702.apcprd06.prod.outlook.com>
+References: <TY1PR06MB0702E99A48352C055705E3A9B7670@TY1PR06MB0702.apcprd06.prod.outlook.com>
+ <1506085262-13639-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <TY1PR06MB08955E235768A72D33FE2AD3C0670@TY1PR06MB0895.apcprd06.prod.outlook.com>
+ <20170925071800.GF1019@verge.net.au>
+In-Reply-To: <20170925071800.GF1019@verge.net.au>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-To be able to read fused calibration values from hardware the size of
-the register resource of TSC1 needs to be incremented to cover one more
-register which holds the information if the calibration values have been
-fused or not.
+Hello Simon,
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> From: Simon Horman [mailto:horms@verge.net.au]
+> Sent: 25 September 2017 08:18
+>=20
+> On Fri, Sep 22, 2017 at 01:33:39PM +0000, Fabrizio Castro wrote:
+> > Hello Simon,
+> >
+> > just to clarify the changes between v1 and v2, we can't use SDR50 and
+> SDR104 (due to an HW issue) therefore the pinctrl for UHS has been
+> removed and we dropped property "sd-uhs-sdr104". High Speed has been
+> tested, therefore if you are happy with the patch I guess you can update =
+the
+> following page accordingly:
+> > http://elinux.org/index.php?title=3DRenesas-MMC-Enabled-
+> Speeds&type=3Drevi
+> > sion&diff=3D451426&oldid=3D451421
+> >
+> > Although (due to a bug) sdhi0 may not hold a reference to "vccq_sdhi0",
+> the gpio regulator will initialize "SDHI0 VccQ" at 3.3V.
+> > I have sent another patch (mmc: tmio: check mmc_regulator_get_supply
+> return value) to start a discussion about a possible fix for the bug.
+> >
+> > Let me know if you need more information.
+>=20
+> Thanks again for following up on this.
+>=20
+> I have applied the patch with Geert's tag.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 0b805dc30925e9be..b1428c10e703b37c 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -2098,7 +2098,7 @@
- 
- 		tsc: thermal@e6198000 {
- 			compatible = "renesas,r8a7796-thermal";
--			reg = <0 0xe6198000 0 0x68>,
-+			reg = <0 0xe6198000 0 0x6c>,
- 			      <0 0xe61a0000 0 0x5c>,
- 			      <0 0xe61a8000 0 0x5c>;
- 			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
--- 
-2.14.1
+Thanks
+
+>=20
+> I have also updated the Wiki at the URL above, feel free to make any furt=
+her
+> updates there as appropriate.
+
+Thanks, looks okay to me.
+
+Kind regards, Chris
