@@ -1,49 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:54386 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965482AbdIZKGS (ORCPT
+Received: from lb3-smtp-cloud7.xs4all.net ([194.109.24.31]:55172 "EHLO
+        lb3-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S934239AbdIYJqM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 26 Sep 2017 06:06:18 -0400
-Received: from avalon.guest.par1.mozilla.com (unknown [IPv6:2a00:8c40:243:232:120b:a9ff:fe3c:7148])
-        by galahad.ideasonboard.com (Postfix) with ESMTPSA id 1E9A621481
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 26 Sep 2017 12:06:06 +0200 (CEST)
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Subject: [RFC 07/13] arm64: dts: r8a7795: Add dma-ranges property in the /soc node
-Date: Tue, 26 Sep 2017 13:05:59 +0300
-Message-Id: <20170926100605.2313-10-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170926100605.2313-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170926100605.2313-1-laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 25 Sep 2017 05:46:12 -0400
+Subject: Re: [PATCH v6 05/25] rcar-vin: change name of video device
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+References: <20170822232640.26147-1-niklas.soderlund+renesas@ragnatech.se>
+ <20170822232640.26147-6-niklas.soderlund+renesas@ragnatech.se>
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        tomoharu.fukawa.eb@renesas.com, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <201fba0d-5cea-e1a6-bc7b-b19850e92a1d@xs4all.nl>
+Date: Mon, 25 Sep 2017 11:46:09 +0200
+MIME-Version: 1.0
+In-Reply-To: <20170822232640.26147-6-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-DMA address translation requires a dma-ranges property in bus nodes.
-While some operating systems work around the absence of such property in
-an attempt to implement compatibility with incorrect DT, the property is
-nonetheless required.
+On 23/08/17 01:26, Niklas Söderlund wrote:
+> The rcar-vin driver needs to be part of a media controller to support
+> Gen3. Give each VIN instance a unique name so it can be referenced from
+> userspace.
+> 
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Add the dma-ranges property to the /soc node that contains all on-SoC
-peripherals. The bus supports 40-bit DMA addressing without any address
-translation.
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index c55003563f61..e6a008d9d5f8 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -222,6 +222,7 @@
- 
- 		#address-cells = <2>;
- 		#size-cells = <2>;
-+		dma-ranges = <0 0x00000000 0 0x00000000 0x100 0x00000000>;
- 		ranges;
- 
- 		gic: interrupt-controller@f1010000 {
--- 
 Regards,
 
-Laurent Pinchart
+	Hans
+
+> ---
+>  drivers/media/platform/rcar-vin/rcar-v4l2.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> index 3c4dd08261a0d3f5..ba88774bd5379a98 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> @@ -878,7 +878,8 @@ int rvin_v4l2_probe(struct rvin_dev *vin)
+>  	vdev->fops = &rvin_fops;
+>  	vdev->v4l2_dev = &vin->v4l2_dev;
+>  	vdev->queue = &vin->queue;
+> -	strlcpy(vdev->name, KBUILD_MODNAME, sizeof(vdev->name));
+> +	snprintf(vdev->name, sizeof(vdev->name), "%s %s", KBUILD_MODNAME,
+> +		 dev_name(vin->dev));
+>  	vdev->release = video_device_release_empty;
+>  	vdev->ioctl_ops = &rvin_ioctl_ops;
+>  	vdev->lock = &vin->lock;
+> 
