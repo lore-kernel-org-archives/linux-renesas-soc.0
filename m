@@ -1,34 +1,38 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:50829 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751787AbdI0JvR (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:45581 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932578AbdIYHLw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 27 Sep 2017 05:51:17 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: balbi@kernel.org
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, stable@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 0/2] usb: renesas_usbhs: bugfix for v4.14
-Date: Wed, 27 Sep 2017 18:47:11 +0900
-Message-Id: <1506505633-4688-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Mon, 25 Sep 2017 03:11:52 -0400
+Date: Mon, 25 Sep 2017 09:11:32 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 1/2] arm64: dts: renesas: r8a7795: add USB3.0 peripheral
+ device node
+Message-ID: <20170925071132.GD1019@verge.net.au>
+References: <1505971886-14916-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1505971886-14916-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <CAMuHMdUGztJO3zchzR4msJvFPFuTHPMCV4ENqBn1EL5QPR7joQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUGztJO3zchzR4msJvFPFuTHPMCV4ENqBn1EL5QPR7joQ@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
- This patch set is based on the Felipe's usb.git / testing/fixes branch
- (The commit is 7661ca09b2ff98f48693f431bb01fed62830e433).
+On Thu, Sep 21, 2017 at 02:46:18PM +0200, Geert Uytterhoeven wrote:
+> On Thu, Sep 21, 2017 at 7:31 AM, Yoshihiro Shimoda
+> <yoshihiro.shimoda.uh@renesas.com> wrote:
+> > This patch adds USB3.0 peripheral channel 0 device node for r8a7795.
+> >
+> > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Changes from v1:
- - Devides two fix things in a patch to two patches.
-
-Yoshihiro Shimoda (2):
-  usb: renesas_usbhs: fix the BCLR setting condition for non-DCP pipe
-  usb: renesas_usbhs: fix usbhsf_fifo_clear() for RX direction
-
- drivers/usb/renesas_usbhs/fifo.c | 21 ++++++++++++++++++---
- 1 file changed, 18 insertions(+), 3 deletions(-)
-
--- 
-1.9.1
+Thanks, applied.
