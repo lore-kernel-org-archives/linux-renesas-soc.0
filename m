@@ -1,129 +1,166 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:54385 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965482AbdIZKGV (ORCPT
+Received: from lb2-smtp-cloud7.xs4all.net ([194.109.24.28]:53571 "EHLO
+        lb2-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933315AbdIYJor (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 26 Sep 2017 06:06:21 -0400
-Received: from avalon.guest.par1.mozilla.com (unknown [IPv6:2a00:8c40:243:232:120b:a9ff:fe3c:7148])
-        by galahad.ideasonboard.com (Postfix) with ESMTPSA id A5EE92150A
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 26 Sep 2017 12:06:06 +0200 (CEST)
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Subject: [RFC 10/13] v4l: rcar-fcp: Prepare driver API for FCNL support
-Date: Tue, 26 Sep 2017 13:06:02 +0300
-Message-Id: <20170926100605.2313-13-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170926100605.2313-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170926100605.2313-1-laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 25 Sep 2017 05:44:47 -0400
+Subject: Re: [PATCH v6 03/25] rcar-vin: move chip information to own struct
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+References: <20170822232640.26147-1-niklas.soderlund+renesas@ragnatech.se>
+ <20170822232640.26147-4-niklas.soderlund+renesas@ragnatech.se>
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        tomoharu.fukawa.eb@renesas.com, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <2fe2125c-0fa9-3113-dd49-05a4dd5f17d8@xs4all.nl>
+Date: Mon, 25 Sep 2017 11:44:41 +0200
+MIME-Version: 1.0
+In-Reply-To: <20170822232640.26147-4-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-To support transparent FCNL decompression the FCP users will need to use
-different bus master devices for compressed and uncompressed formats.
-Rename the rcar_fcp_get_device() function to rcar_fcp_get_bus_master()
-and add a new argument to select the bus master in order to prepare for
-that change.
+On 23/08/17 01:26, Niklas Söderlund wrote:
+> When Gen3 support is added to the driver more then chip id will be
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/media/platform/rcar-fcp.c      | 29 +++++++++++++++++++++++++++--
- drivers/media/platform/vsp1/vsp1_drv.c |  4 +++-
- include/media/rcar-fcp.h               | 14 ++++++++++++--
- 3 files changed, 42 insertions(+), 5 deletions(-)
+then -> than
 
-diff --git a/drivers/media/platform/rcar-fcp.c b/drivers/media/platform/rcar-fcp.c
-index e93e9c4227d9..ca5e1dddba03 100644
---- a/drivers/media/platform/rcar-fcp.c
-+++ b/drivers/media/platform/rcar-fcp.c
-@@ -145,11 +145,36 @@ void rcar_fcp_put(struct rcar_fcp_device *fcp)
- }
- EXPORT_SYMBOL_GPL(rcar_fcp_put);
- 
--struct device *rcar_fcp_get_device(struct rcar_fcp_device *fcp)
-+/**
-+ * rcar_fcp_get_bus_master - Get the FCP bus master device
-+ * @fcp: the FCP device
-+ * @format: the data format handled by the bus master
-+ *
-+ * The FCP performs read and write bus mastering operations for image data and
-+ * display lists. This function returns a &struct device that the FCP user can
-+ * use for DMA memory allocation.
-+ *
-+ * When @format is RCAR_FCP_UNCOMPRESSED, the returned bus master will perform
-+ * normal read accesses. This bus master is guaranteed to always be available.
-+ *
-+ * Otherwise, the returned bus master will perform transparent FCNL
-+ * decompression of data on read accesses for the specified @format. It must
-+ * thus be used for FCNL-compressed image data only. Not all FCP instances
-+ * support FCNL decompression, this function may return NULL in that case.
-+ *
-+ * The returned device borrows a reference from the FCP device. The borrowed
-+ * reference doesn't need to be released, and shall not be accessed once the
-+ * caller releases its reference to the FCP with rcar_fcp_put().
-+ *
-+ * Return the bus master &struct device for the given purpose, or NULL if no bus
-+ * master is available.
-+ */
-+struct device *rcar_fcp_get_bus_master(struct rcar_fcp_device *fcp,
-+				       enum rcar_fcp_data_format format)
- {
- 	return fcp->dev;
- }
--EXPORT_SYMBOL_GPL(rcar_fcp_get_device);
-+EXPORT_SYMBOL_GPL(rcar_fcp_get_bus_master);
- 
- /**
-  * rcar_fcp_enable - Enable an FCP
-diff --git a/drivers/media/platform/vsp1/vsp1_drv.c b/drivers/media/platform/vsp1/vsp1_drv.c
-index 962e4c304076..4253a76cc484 100644
---- a/drivers/media/platform/vsp1/vsp1_drv.c
-+++ b/drivers/media/platform/vsp1/vsp1_drv.c
-@@ -809,7 +809,9 @@ static int vsp1_probe(struct platform_device *pdev)
- 		 * for the VSP and must thus be used in place of the VSP device
- 		 * to map DMA buffers.
- 		 */
--		vsp1->bus_master = rcar_fcp_get_device(vsp1->fcp);
-+		vsp1->bus_master =
-+			rcar_fcp_get_bus_master(vsp1->fcp,
-+						RCAR_FCP_UNCOMPRESSED);
- 	} else {
- 		vsp1->bus_master = vsp1->dev;
- 	}
-diff --git a/include/media/rcar-fcp.h b/include/media/rcar-fcp.h
-index b60a7b176c37..dffffddf8ff3 100644
---- a/include/media/rcar-fcp.h
-+++ b/include/media/rcar-fcp.h
-@@ -16,10 +16,18 @@
- struct device_node;
- struct rcar_fcp_device;
- 
-+enum rcar_fcp_data_format {
-+	RCAR_FCP_UNCOMPRESSED,
-+	RCAR_FCP_FCNL_YUV_PLANAR,
-+	RCAR_FCP_FCNL_YUV_PACKED,
-+	RCAR_FCP_FCNL_RGB,
-+};
-+
- #if IS_ENABLED(CONFIG_VIDEO_RENESAS_FCP)
- struct rcar_fcp_device *rcar_fcp_get(const struct device_node *np);
- void rcar_fcp_put(struct rcar_fcp_device *fcp);
--struct device *rcar_fcp_get_device(struct rcar_fcp_device *fcp);
-+struct device *rcar_fcp_get_bus_master(struct rcar_fcp_device *fcp,
-+				       enum rcar_fcp_data_format format);
- int rcar_fcp_enable(struct rcar_fcp_device *fcp);
- void rcar_fcp_disable(struct rcar_fcp_device *fcp);
- #else
-@@ -28,7 +36,9 @@ static inline struct rcar_fcp_device *rcar_fcp_get(const struct device_node *np)
- 	return ERR_PTR(-ENOENT);
- }
- static inline void rcar_fcp_put(struct rcar_fcp_device *fcp) { }
--static inline struct device *rcar_fcp_get_device(struct rcar_fcp_device *fcp)
-+static inline struct device *
-+rcar_fcp_get_bus_master(struct rcar_fcp_device *fcp,
-+			enum rcar_fcp_data_format format)
- {
- 	return NULL;
- }
--- 
+> different for the different Soc. To avoid a lot of if statements in the
+> code create a struct chip_info to contain this information.
+> 
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+
 Regards,
 
-Laurent Pinchart
+	Hans
+
+> ---
+>  drivers/media/platform/rcar-vin/rcar-core.c | 49 ++++++++++++++++++++++++-----
+>  drivers/media/platform/rcar-vin/rcar-v4l2.c |  3 +-
+>  drivers/media/platform/rcar-vin/rcar-vin.h  | 12 +++++--
+>  3 files changed, 53 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+> index aefbe8e3ccddb3e4..dae38de706b66b64 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-core.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
+> @@ -277,14 +277,47 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
+>   * Platform Device Driver
+>   */
+>  
+> +static const struct rvin_info rcar_info_h1 = {
+> +	.chip = RCAR_H1,
+> +};
+> +
+> +static const struct rvin_info rcar_info_m1 = {
+> +	.chip = RCAR_M1,
+> +};
+> +
+> +static const struct rvin_info rcar_info_gen2 = {
+> +	.chip = RCAR_GEN2,
+> +};
+> +
+>  static const struct of_device_id rvin_of_id_table[] = {
+> -	{ .compatible = "renesas,vin-r8a7794", .data = (void *)RCAR_GEN2 },
+> -	{ .compatible = "renesas,vin-r8a7793", .data = (void *)RCAR_GEN2 },
+> -	{ .compatible = "renesas,vin-r8a7791", .data = (void *)RCAR_GEN2 },
+> -	{ .compatible = "renesas,vin-r8a7790", .data = (void *)RCAR_GEN2 },
+> -	{ .compatible = "renesas,vin-r8a7779", .data = (void *)RCAR_H1 },
+> -	{ .compatible = "renesas,vin-r8a7778", .data = (void *)RCAR_M1 },
+> -	{ .compatible = "renesas,rcar-gen2-vin", .data = (void *)RCAR_GEN2 },
+> +	{
+> +		.compatible = "renesas,vin-r8a7794",
+> +		.data = &rcar_info_gen2,
+> +	},
+> +	{
+> +		.compatible = "renesas,vin-r8a7793",
+> +		.data = &rcar_info_gen2,
+> +	},
+> +	{
+> +		.compatible = "renesas,vin-r8a7791",
+> +		.data = &rcar_info_gen2,
+> +	},
+> +	{
+> +		.compatible = "renesas,vin-r8a7790",
+> +		.data = &rcar_info_gen2,
+> +	},
+> +	{
+> +		.compatible = "renesas,vin-r8a7779",
+> +		.data = &rcar_info_h1,
+> +	},
+> +	{
+> +		.compatible = "renesas,vin-r8a7778",
+> +		.data = &rcar_info_m1,
+> +	},
+> +	{
+> +		.compatible = "renesas,rcar-gen2-vin",
+> +		.data = &rcar_info_gen2,
+> +	},
+>  	{ },
+>  };
+>  MODULE_DEVICE_TABLE(of, rvin_of_id_table);
+> @@ -305,7 +338,7 @@ static int rcar_vin_probe(struct platform_device *pdev)
+>  		return -ENODEV;
+>  
+>  	vin->dev = &pdev->dev;
+> -	vin->chip = (enum chip_id)match->data;
+> +	vin->info = match->data;
+>  
+>  	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>  	if (mem == NULL)
+> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> index 81ff59c3b4744075..02a08cf5acfce1ce 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> @@ -266,7 +266,8 @@ static int __rvin_try_format(struct rvin_dev *vin,
+>  	pix->sizeimage = max_t(u32, pix->sizeimage,
+>  			       rvin_format_sizeimage(pix));
+>  
+> -	if (vin->chip == RCAR_M1 && pix->pixelformat == V4L2_PIX_FMT_XBGR32) {
+> +	if (vin->info->chip == RCAR_M1 &&
+> +	    pix->pixelformat == V4L2_PIX_FMT_XBGR32) {
+>  		vin_err(vin, "pixel format XBGR32 not supported on M1\n");
+>  		return -EINVAL;
+>  	}
+> diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+> index 9d0d4a5001b6ccd8..13466dfd72292fc0 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-vin.h
+> +++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+> @@ -88,11 +88,19 @@ struct rvin_graph_entity {
+>  	unsigned int sink_pad;
+>  };
+>  
+> +/**
+> + * struct rvin_info - Information about the particular VIN implementation
+> + * @chip:		type of VIN chip
+> + */
+> +struct rvin_info {
+> +	enum chip_id chip;
+> +};
+> +
+>  /**
+>   * struct rvin_dev - Renesas VIN device structure
+>   * @dev:		(OF) device
+>   * @base:		device I/O register space remapped to virtual memory
+> - * @chip:		type of VIN chip
+> + * @info:		info about VIN instance
+>   *
+>   * @vdev:		V4L2 video device associated with VIN
+>   * @v4l2_dev:		V4L2 device
+> @@ -120,7 +128,7 @@ struct rvin_graph_entity {
+>  struct rvin_dev {
+>  	struct device *dev;
+>  	void __iomem *base;
+> -	enum chip_id chip;
+> +	const struct rvin_info *info;
+>  
+>  	struct video_device vdev;
+>  	struct v4l2_device v4l2_dev;
+> 
