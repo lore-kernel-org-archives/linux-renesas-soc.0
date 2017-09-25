@@ -1,497 +1,440 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:35012 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751876AbdIKNKD (ORCPT
+Received: from lb1-smtp-cloud7.xs4all.net ([194.109.24.24]:44063 "EHLO
+        lb1-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933621AbdIYKgX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Sep 2017 09:10:03 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4/5] ARM: dts: r8a7793: Add reset control properties
-Date: Mon, 11 Sep 2017 15:09:58 +0200
-Message-Id: <1505135399-24840-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1505135399-24840-1-git-send-email-geert+renesas@glider.be>
-References: <1505135399-24840-1-git-send-email-geert+renesas@glider.be>
+        Mon, 25 Sep 2017 06:36:23 -0400
+Subject: Re: [PATCH v6 21/25] rcar-vin: parse Gen3 OF and setup media graph
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+References: <20170822232640.26147-1-niklas.soderlund+renesas@ragnatech.se>
+ <20170822232640.26147-22-niklas.soderlund+renesas@ragnatech.se>
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        tomoharu.fukawa.eb@renesas.com, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <7c2617b7-e6e3-25f6-7b24-a6f9cafd8e5a@xs4all.nl>
+Date: Mon, 25 Sep 2017 12:36:20 +0200
+MIME-Version: 1.0
+In-Reply-To: <20170822232640.26147-22-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add properties to describe the reset topology for on-SoC devices:
-  - Add the "#reset-cells" property to the CPG/MSSR device node,
-  - Add resets and reset-names properties to the various device nodes.
+On 23/08/17 01:26, Niklas Söderlund wrote:
+> Parse the VIN Gen3 OF graph and register all CSI-2 devices in the VIN
+> group common media device. Once all CSI-2 subdevice is added to the
 
-This allows to reset SoC devices using the Reset Controller API.
+subdevice is -> subdevices are
 
-Note that resets usually match the corresponding module clocks.
-Exceptions are:
-  - The audio module has resets for the Serial Sound Interfaces only,
-  - The display module has only a single reset for all DU channels, but
-    adding reset properties for the display is postponed.
+> common media device create links between them.
+> 
+> The parsing and registering CSI-2 subdevices with the v4l2 async
+> framework is a collaborative effort shared between the VIN instances
+> which are part of the group. The fist rcar-vin instance parses OF and
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7793.dtsi | 62 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 62 insertions(+)
+fist -> first
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index d48b97c853cdc4d2..aa19b93494bfaab0 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -111,6 +111,7 @@
- 		clocks = <&cpg CPG_MOD 408>;
- 		clock-names = "clk";
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 408>;
- 	};
- 
- 	gpio0: gpio@e6050000 {
-@@ -124,6 +125,7 @@
- 		interrupt-controller;
- 		clocks = <&cpg CPG_MOD 912>;
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 912>;
- 	};
- 
- 	gpio1: gpio@e6051000 {
-@@ -137,6 +139,7 @@
- 		interrupt-controller;
- 		clocks = <&cpg CPG_MOD 911>;
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 911>;
- 	};
- 
- 	gpio2: gpio@e6052000 {
-@@ -150,6 +153,7 @@
- 		interrupt-controller;
- 		clocks = <&cpg CPG_MOD 910>;
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 910>;
- 	};
- 
- 	gpio3: gpio@e6053000 {
-@@ -163,6 +167,7 @@
- 		interrupt-controller;
- 		clocks = <&cpg CPG_MOD 909>;
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 909>;
- 	};
- 
- 	gpio4: gpio@e6054000 {
-@@ -176,6 +181,7 @@
- 		interrupt-controller;
- 		clocks = <&cpg CPG_MOD 908>;
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 908>;
- 	};
- 
- 	gpio5: gpio@e6055000 {
-@@ -189,6 +195,7 @@
- 		interrupt-controller;
- 		clocks = <&cpg CPG_MOD 907>;
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 907>;
- 	};
- 
- 	gpio6: gpio@e6055400 {
-@@ -202,6 +209,7 @@
- 		interrupt-controller;
- 		clocks = <&cpg CPG_MOD 905>;
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 905>;
- 	};
- 
- 	gpio7: gpio@e6055800 {
-@@ -215,6 +223,7 @@
- 		interrupt-controller;
- 		clocks = <&cpg CPG_MOD 904>;
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 904>;
- 	};
- 
- 	thermal: thermal@e61f0000 {
-@@ -225,6 +234,7 @@
- 		interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 522>;
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 522>;
- 		#thermal-sensor-cells = <0>;
- 	};
- 
-@@ -244,6 +254,7 @@
- 		clocks = <&cpg CPG_MOD 124>;
- 		clock-names = "fck";
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 124>;
- 
- 		renesas,channels-mask = <0x60>;
- 
-@@ -264,6 +275,7 @@
- 		clocks = <&cpg CPG_MOD 329>;
- 		clock-names = "fck";
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 329>;
- 
- 		renesas,channels-mask = <0xff>;
- 
-@@ -287,6 +299,7 @@
- 			     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 407>;
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 407>;
- 	};
- 
- 	dmac0: dma-controller@e6700000 {
-@@ -316,6 +329,7 @@
- 		clocks = <&cpg CPG_MOD 219>;
- 		clock-names = "fck";
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 219>;
- 		#dma-cells = <1>;
- 		dma-channels = <15>;
- 	};
-@@ -347,6 +361,7 @@
- 		clocks = <&cpg CPG_MOD 218>;
- 		clock-names = "fck";
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 218>;
- 		#dma-cells = <1>;
- 		dma-channels = <15>;
- 	};
-@@ -376,6 +391,7 @@
- 		clocks = <&cpg CPG_MOD 502>;
- 		clock-names = "fck";
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 502>;
- 		#dma-cells = <1>;
- 		dma-channels = <13>;
- 	};
-@@ -405,6 +421,7 @@
- 		clocks = <&cpg CPG_MOD 501>;
- 		clock-names = "fck";
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 501>;
- 		#dma-cells = <1>;
- 		dma-channels = <13>;
- 	};
-@@ -418,6 +435,7 @@
- 		interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 931>;
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 931>;
- 		i2c-scl-internal-delay-ns = <6>;
- 		status = "disabled";
- 	};
-@@ -430,6 +448,7 @@
- 		interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 930>;
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 930>;
- 		i2c-scl-internal-delay-ns = <6>;
- 		status = "disabled";
- 	};
-@@ -442,6 +461,7 @@
- 		interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 929>;
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 929>;
- 		i2c-scl-internal-delay-ns = <6>;
- 		status = "disabled";
- 	};
-@@ -454,6 +474,7 @@
- 		interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 928>;
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 928>;
- 		i2c-scl-internal-delay-ns = <6>;
- 		status = "disabled";
- 	};
-@@ -466,6 +487,7 @@
- 		interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 927>;
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 927>;
- 		i2c-scl-internal-delay-ns = <6>;
- 		status = "disabled";
- 	};
-@@ -479,6 +501,7 @@
- 		interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 925>;
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 925>;
- 		i2c-scl-internal-delay-ns = <110>;
- 		status = "disabled";
- 	};
-@@ -496,6 +519,7 @@
- 		       <&dmac1 0x77>, <&dmac1 0x78>;
- 		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 926>;
- 		status = "disabled";
- 	};
- 
-@@ -511,6 +535,7 @@
- 		       <&dmac1 0x61>, <&dmac1 0x62>;
- 		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 318>;
- 		status = "disabled";
- 	};
- 
-@@ -526,6 +551,7 @@
- 		       <&dmac1 0x65>, <&dmac1 0x66>;
- 		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 323>;
- 		status = "disabled";
- 	};
- 
-@@ -544,6 +570,7 @@
- 		dma-names = "tx", "rx", "tx", "rx";
- 		max-frequency = <195000000>;
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 314>;
- 		status = "disabled";
- 	};
- 
-@@ -557,6 +584,7 @@
- 		dma-names = "tx", "rx", "tx", "rx";
- 		max-frequency = <97500000>;
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 312>;
- 		status = "disabled";
- 	};
- 
-@@ -570,6 +598,7 @@
- 		dma-names = "tx", "rx", "tx", "rx";
- 		max-frequency = <97500000>;
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 311>;
- 		status = "disabled";
- 	};
- 
-@@ -582,6 +611,7 @@
- 		       <&dmac1 0xd1>, <&dmac1 0xd2>;
- 		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 315>;
- 		reg-io-width = <4>;
- 		status = "disabled";
- 		max-frequency = <97500000>;
-@@ -598,6 +628,7 @@
- 		       <&dmac1 0x21>, <&dmac1 0x22>;
- 		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 204>;
- 		status = "disabled";
- 	};
- 
-@@ -612,6 +643,7 @@
- 		       <&dmac1 0x25>, <&dmac1 0x26>;
- 		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 203>;
- 		status = "disabled";
- 	};
- 
-@@ -626,6 +658,7 @@
- 		       <&dmac1 0x27>, <&dmac1 0x28>;
- 		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 202>;
- 		status = "disabled";
- 	};
- 
-@@ -640,6 +673,7 @@
- 		       <&dmac1 0x1b>, <&dmac1 0x1c>;
- 		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 1106>;
- 		status = "disabled";
- 	};
- 
-@@ -654,6 +688,7 @@
- 		       <&dmac1 0x1f>, <&dmac1 0x20>;
- 		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 1107>;
- 		status = "disabled";
- 	};
- 
-@@ -668,6 +703,7 @@
- 		       <&dmac1 0x23>, <&dmac1 0x24>;
- 		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 1108>;
- 		status = "disabled";
- 	};
- 
-@@ -682,6 +718,7 @@
- 		       <&dmac1 0x3d>, <&dmac1 0x3e>;
- 		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 206>;
- 		status = "disabled";
- 	};
- 
-@@ -696,6 +733,7 @@
- 		       <&dmac1 0x19>, <&dmac1 0x1a>;
- 		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 207>;
- 		status = "disabled";
- 	};
- 
-@@ -710,6 +748,7 @@
- 		       <&dmac1 0x1d>, <&dmac1 0x1e>;
- 		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 216>;
- 		status = "disabled";
- 	};
- 
-@@ -725,6 +764,7 @@
- 		       <&dmac1 0x29>, <&dmac1 0x2a>;
- 		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 721>;
- 		status = "disabled";
- 	};
- 
-@@ -740,6 +780,7 @@
- 		       <&dmac1 0x2d>, <&dmac1 0x2e>;
- 		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 720>;
- 		status = "disabled";
- 	};
- 
-@@ -755,6 +796,7 @@
- 		       <&dmac1 0x2b>, <&dmac1 0x2c>;
- 		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 719>;
- 		status = "disabled";
- 	};
- 
-@@ -770,6 +812,7 @@
- 		       <&dmac1 0x2f>, <&dmac1 0x30>;
- 		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 718>;
- 		status = "disabled";
- 	};
- 
-@@ -785,6 +828,7 @@
- 		       <&dmac1 0xfb>, <&dmac1 0xfc>;
- 		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 715>;
- 		status = "disabled";
- 	};
- 
-@@ -800,6 +844,7 @@
- 		       <&dmac1 0xfd>, <&dmac1 0xfe>;
- 		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 714>;
- 		status = "disabled";
- 	};
- 
-@@ -815,6 +860,7 @@
- 		       <&dmac1 0x39>, <&dmac1 0x3a>;
- 		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 717>;
- 		status = "disabled";
- 	};
- 
-@@ -830,6 +876,7 @@
- 		       <&dmac1 0x4d>, <&dmac1 0x4e>;
- 		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 716>;
- 		status = "disabled";
- 	};
- 
-@@ -845,6 +892,7 @@
- 		       <&dmac1 0x3b>, <&dmac1 0x3c>;
- 		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 713>;
- 		status = "disabled";
- 	};
- 
-@@ -872,6 +920,7 @@
- 		interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 813>;
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 813>;
- 		phy-mode = "rmii";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -884,6 +933,7 @@
- 		interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 811>;
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 811>;
- 		status = "disabled";
- 	};
- 
-@@ -893,6 +943,7 @@
- 		interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 810>;
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 810>;
- 		status = "disabled";
- 	};
- 
-@@ -902,6 +953,7 @@
- 		interrupts = <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 809>;
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 809>;
- 		status = "disabled";
- 	};
- 
-@@ -914,6 +966,7 @@
- 		       <&dmac1 0x17>, <&dmac1 0x18>;
- 		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 917>;
- 		num-cs = <1>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -958,6 +1011,7 @@
- 			 <&can_clk>;
- 		clock-names = "clkp1", "clkp2", "can_clk";
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 916>;
- 		status = "disabled";
- 	};
- 
-@@ -969,6 +1023,7 @@
- 			 <&can_clk>;
- 		clock-names = "clkp1", "clkp2", "can_clk";
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 915>;
- 		status = "disabled";
- 	};
- 
-@@ -1147,6 +1202,13 @@
- 				"dvc.0", "dvc.1",
- 				"clk_a", "clk_b", "clk_c", "clk_i";
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		resets = <&cpg 1005>,
-+			 <&cpg 1006>, <&cpg 1007>, <&cpg 1008>, <&cpg 1009>,
-+			 <&cpg 1010>, <&cpg 1011>, <&cpg 1012>, <&cpg 1013>,
-+			 <&cpg 1014>, <&cpg 1015>;
-+		reset-names = "ssi-all",
-+			      "ssi.9", "ssi.8", "ssi.7", "ssi.6", "ssi.5",
-+			      "ssi.4", "ssi.3", "ssi.2", "ssi.1", "ssi.0";
- 
- 		status = "disabled";
- 
--- 
-2.7.4
+> finds all other VIN and CSI-2 nodes which are part of the graph. It
+> stores a bit mask of all VIN instances found and handles to all CSI-2
+> nodes.
+> 
+> The bit mask is used to figure out when all VIN instances have been
+> probed. Once the last VIN instance is probed this is detected and this
+> instance registers all CSI-2 subdevices in its private async notifier.
+> Once the .complete() callback of this notifier is called it creates the
+> media controller links between all entities in the graph.
+> 
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+
+See comments below for several typo/naming issues.
+
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+
+Regards,
+
+	Hans
+
+> ---
+>  drivers/media/platform/rcar-vin/rcar-core.c | 296 +++++++++++++++++++++++++++-
+>  drivers/media/platform/rcar-vin/rcar-vin.h  |   7 +-
+>  2 files changed, 301 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+> index 4218a73eb6885486..2aba442a0750e91a 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-core.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
+> @@ -440,10 +440,268 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
+>   * Group async notifier
+>   */
+>  
+> -static int rvin_group_init(struct rvin_dev *vin)
+> +/* group lock should be held when calling this function */
+> +static int rvin_group_add_link(struct rvin_dev *vin,
+> +			       struct media_entity *source,
+> +			       unsigned int source_idx,
+> +			       struct media_entity *sink,
+> +			       unsigned int sink_idx,
+> +			       u32 flags)
+> +{
+> +	struct media_pad *source_pad, *sink_pad;
+> +	int ret = 0;
+> +
+> +	source_pad = &source->pads[source_idx];
+> +	sink_pad = &sink->pads[sink_idx];
+> +
+> +	if (!media_entity_find_link(source_pad, sink_pad))
+> +		ret = media_create_pad_link(source, source_idx,
+> +					    sink, sink_idx, flags);
+> +
+> +	if (ret)
+> +		vin_err(vin, "Error adding link from %s to %s\n",
+> +			source->name, sink->name);
+> +
+> +	return ret;
+> +}
+> +
+> +static int rvin_group_update_links(struct rvin_dev *vin)
+>  {
+> +	struct media_entity *source, *sink;
+> +	struct rvin_dev *master;
+> +	unsigned int i, n, idx, chsel, csi;
+> +	u32 flags;
+>  	int ret;
+>  
+> +	mutex_lock(&vin->group->lock);
+> +
+> +	for (n = 0; n < RCAR_VIN_NUM; n++) {
+> +
+> +		/* Check that VIN is part of the group */
+> +		if (!vin->group->vin[n])
+> +			continue;
+> +
+> +		/* Check that subgroup master is part of the group */
+> +		master = vin->group->vin[n < 4 ? 0 : 4];
+> +		if (!master)
+> +			continue;
+> +
+> +		chsel = rvin_get_chsel(master);
+> +
+> +		for (i = 0; i < vin->info->num_chsels; i++) {
+> +			csi = vin->info->chsels[n][i].csi;
+> +
+> +			/* If the CSI-2 is out of bounds it's a noop, skip */
+> +			if (csi >= RVIN_CSI_MAX)
+> +				continue;
+> +
+> +			/* Check that CSI-2 are part of the group */
+> +			if (!vin->group->csi[csi].subdev)
+> +				continue;
+> +
+> +			source = &vin->group->csi[csi].subdev->entity;
+> +			sink = &vin->group->vin[n]->vdev.entity;
+> +			idx = vin->info->chsels[n][i].chan + 1;
+> +			flags = i == chsel ? MEDIA_LNK_FL_ENABLED : 0;
+> +
+> +			ret = rvin_group_add_link(vin, source, idx, sink, 0,
+> +						  flags);
+> +			if (ret)
+> +				goto out;
+> +		}
+> +	}
+> +out:
+> +	mutex_unlock(&vin->group->lock);
+> +
+> +	return ret;
+> +}
+> +
+> +static int rvin_group_notify_complete(struct v4l2_async_notifier *notifier)
+> +{
+> +	struct rvin_dev *vin = notifier_to_vin(notifier);
+> +	int ret;
+> +
+> +	ret = v4l2_device_register_subdev_nodes(&vin->v4l2_dev);
+> +	if (ret) {
+> +		vin_err(vin, "Failed to register subdev nodes\n");
+> +		return ret;
+> +	}
+> +
+> +	return rvin_group_update_links(vin);
+> +}
+> +
+> +static void rvin_group_notify_unbind(struct v4l2_async_notifier *notifier,
+> +				     struct v4l2_subdev *subdev,
+> +				     struct v4l2_async_subdev *asd)
+> +{
+> +	struct rvin_dev *vin = notifier_to_vin(notifier);
+> +	struct rvin_graph_entity *csi = to_rvin_graph_entity(asd);
+> +
+> +	mutex_lock(&vin->group->lock);
+> +	csi->subdev = NULL;
+> +	mutex_unlock(&vin->group->lock);
+> +}
+> +
+> +static int rvin_group_notify_bound(struct v4l2_async_notifier *notifier,
+> +				   struct v4l2_subdev *subdev,
+> +				   struct v4l2_async_subdev *asd)
+> +{
+> +	struct rvin_dev *vin = notifier_to_vin(notifier);
+> +	struct rvin_graph_entity *csi = to_rvin_graph_entity(asd);
+> +
+> +	v4l2_set_subdev_hostdata(subdev, vin);
+> +
+> +	mutex_lock(&vin->group->lock);
+> +	vin_dbg(vin, "Bound CSI-2 %s\n", subdev->name);
+> +	csi->subdev = subdev;
+> +	mutex_unlock(&vin->group->lock);
+> +
+> +	return 0;
+> +}
+> +
+> +static struct device_node *rvin_group_get_remote(struct rvin_dev *vin,
+> +						 struct device_node *node)
+> +{
+> +	struct device_node *np;
+> +
+> +	np = of_graph_get_remote_port_parent(node);
+> +	if (!np) {
+> +		vin_err(vin, "Remote not found %s\n", of_node_full_name(node));
+
+I prefer 'Remote port' instead of just 'Remote'.
+
+> +		return NULL;
+> +	}
+> +
+> +	/* Not all remotes are available, this is OK */
+
+Ditto
+
+> +	if (!of_device_is_available(np)) {
+> +		vin_dbg(vin, "Remote %s is not available\n",
+
+Ditto
+
+I won't repeat this. Please check the patch series for similar occurrences.
+
+> +			of_node_full_name(np));
+> +		of_node_put(np);
+> +		return NULL;
+> +	}
+> +
+> +	return np;
+> +}
+> +
+> +/* group lock should be held when calling this function */
+> +static int rvin_group_graph_parse(struct rvin_dev *vin, struct device_node *np)
+> +{
+> +	int i, id, ret;
+> +
+> +	/* Read VIN id from DT */
+> +	id = rvin_group_read_id(vin, np);
+> +	if (id < 0)
+> +		return id;
+> +
+> +	/* Check if VIN is already handled */
+> +	if (vin->group->mask & BIT(id))
+> +		return 0;
+> +
+> +	vin->group->mask |= BIT(id);
+> +
+> +	vin_dbg(vin, "Handling VIN%d\n", id);
+> +
+> +	/* Parse all enpoints for CSI-2 and VIN nodes */
+
+enpoints -> endpoints
+
+> +	for (i = 0; i < RVIN_CSI_MAX; i++) {
+> +		struct device_node *ep, *csi, *remote;
+> +
+> +		/* Check if instance is connected to the CSI-2 */
+> +		ep = of_graph_get_endpoint_by_regs(np, 1, i);
+> +		if (!ep) {
+> +			vin_dbg(vin, "VIN%d: ep %d not connected\n", id, i);
+> +			continue;
+> +		}
+> +
+> +		if (vin->group->csi[i].asd.match.fwnode.fwnode) {
+> +			of_node_put(ep);
+> +			vin_dbg(vin, "VIN%d: ep %d already handled\n", id, i);
+> +			continue;
+> +		}
+> +
+> +		csi = rvin_group_get_remote(vin, ep);
+> +		of_node_put(ep);
+> +		if (!csi)
+> +			continue;
+> +
+> +		vin->group->csi[i].asd.match.fwnode.fwnode =
+> +			of_fwnode_handle(csi);
+> +		vin->group->csi[i].asd.match_type = V4L2_ASYNC_MATCH_FWNODE;
+> +
+> +		vin_dbg(vin, "VIN%d ep: %d handled CSI-2 %s\n", id, i,
+> +			of_node_full_name(csi));
+> +
+> +		/* Parse the CSI-2 for all VIN nodes connected to it */
+> +		ep = NULL;
+> +		while (1) {
+> +			ep = of_graph_get_next_endpoint(csi, ep);
+> +			if (!ep)
+> +				break;
+> +
+> +			remote = rvin_group_get_remote(vin, ep);
+> +			if (!remote)
+> +				continue;
+> +
+> +			if (of_match_node(vin->dev->driver->of_match_table,
+> +					  remote)) {
+> +				ret = rvin_group_graph_parse(vin, remote);
+> +				if (ret)
+> +					return ret;
+> +
+> +			}
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int rvin_group_graph_register(struct rvin_dev *vin)
+> +{
+> +	struct v4l2_async_subdev **subdevs = NULL;
+> +	int i, n, ret, count = 0;
+> +
+> +	mutex_lock(&vin->group->lock);
+> +
+> +	/* Count how many CSI-2 nodes found */
+> +	for (i = 0; i < RVIN_CSI_MAX; i++)
+> +		if (vin->group->csi[i].asd.match.fwnode.fwnode)
+> +			count++;
+> +
+> +	if (!count) {
+> +		mutex_unlock(&vin->group->lock);
+> +		return 0;
+> +	}
+> +
+> +	/* Allocate and setup list of subdevices for the notifier */
+> +	subdevs = devm_kzalloc(vin->dev, sizeof(*subdevs) * count, GFP_KERNEL);
+> +	if (subdevs == NULL) {
+> +		mutex_unlock(&vin->group->lock);
+> +		return -ENOMEM;
+> +	}
+> +
+> +	n = 0;
+> +	for (i = 0; i < RVIN_CSI_MAX; i++)
+> +		if (vin->group->csi[i].asd.match.fwnode.fwnode)
+> +			subdevs[n++] = &vin->group->csi[i].asd;
+> +
+> +	vin_dbg(vin, "Claimed %d subdevices for group\n", count);
+> +
+> +	vin->notifier.num_subdevs = count;
+> +	vin->notifier.subdevs = subdevs;
+> +	vin->notifier.bound = rvin_group_notify_bound;
+> +	vin->notifier.unbind = rvin_group_notify_unbind;
+> +	vin->notifier.complete = rvin_group_notify_complete;
+> +
+> +	mutex_unlock(&vin->group->lock);
+> +
+> +	ret = v4l2_async_notifier_register(&vin->v4l2_dev, &vin->notifier);
+> +	if (ret < 0)
+> +		vin_err(vin, "Notifier registration failed\n");
+> +
+> +	return ret;
+> +}
+> +
+> +static int rvin_group_init(struct rvin_dev *vin)
+> +{
+> +	int i, ret, count_mask, count_vin = 0;
+> +
+>  	ret = rvin_group_allocate(vin);
+>  	if (ret)
+>  		return ret;
+> @@ -457,8 +715,44 @@ static int rvin_group_init(struct rvin_dev *vin)
+>  	if (ret)
+>  		goto error_group;
+>  
+> +	/*
+> +	 * Check number of registered VIN in group against the group mask.
+
+VIN -> VINs
+
+> +	 * If the mask is empty DT have not yet been parsed and if the
+
+have -> has
+
+> +	 * count match all VINs are registered and it's safe to register
+
+match -> matches
+
+> +	 * the async notifier
+> +	 */
+> +	mutex_lock(&vin->group->lock);
+> +
+> +	if (!vin->group->mask) {
+> +		ret = rvin_group_graph_parse(vin, vin->dev->of_node);
+> +		if (ret) {
+> +			mutex_unlock(&vin->group->lock);
+> +			goto error_group;
+> +		}
+> +	}
+> +
+> +	for (i = 0; i < RCAR_VIN_NUM; i++)
+> +		if (vin->group->vin[i])
+> +			count_vin++;
+> +
+> +	count_mask = hweight_long(vin->group->mask);
+> +
+> +	mutex_unlock(&vin->group->lock);
+> +
+> +	ret = rvin_v4l2_probe(vin);
+> +	if (ret)
+> +		goto error_group;
+> +
+> +	if (count_vin == count_mask) {
+> +		ret = rvin_group_graph_register(vin);
+> +		if (ret)
+> +			goto error_vdev;
+> +	}
+> +
+>  	return 0;
+>  
+> +error_vdev:
+> +	rvin_v4l2_remove(vin);
+>  error_group:
+>  	rvin_group_delete(vin);
+>  
+> diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+> index 617f254b52fe106d..a41301833221c750 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-vin.h
+> +++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+> @@ -92,6 +92,9 @@ struct rvin_graph_entity {
+>  	unsigned int sink_pad;
+>  };
+>  
+> +#define to_rvin_graph_entity(asd) \
+> +	container_of(asd, struct rvin_graph_entity, asd)
+> +
+>  struct rvin_group;
+>  
+>  
+> @@ -208,7 +211,8 @@ struct rvin_dev {
+>   *
+>   * @mdev:		media device which represents the group
+>   *
+> - * @lock:		protects the vin and csi members
+> + * @lock:		protects the mask, vin and csi members
+> + * @mask:		Mask of VIN instances found in DT
+>   * @vin:		VIN instances which are part of the group
+>   * @csi:		CSI-2 entities that are part of the group
+>   */
+> @@ -218,6 +222,7 @@ struct rvin_group {
+>  	struct media_device mdev;
+>  
+>  	struct mutex lock;
+> +	unsigned long mask;
+>  	struct rvin_dev *vin[RCAR_VIN_NUM];
+>  	struct rvin_graph_entity csi[RVIN_CSI_MAX];
+>  };
+> 
