@@ -1,81 +1,163 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:46374 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751425AbdIAIhw (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:46136 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933608AbdIYHy3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 1 Sep 2017 04:37:52 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
+        Mon, 25 Sep 2017 03:54:29 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 0/3] ARM: renesas: Enable SMP on R-Car E2
-Date: Fri,  1 Sep 2017 10:37:43 +0200
-Message-Id: <1504255066-5103-1-git-send-email-geert+renesas@glider.be>
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 3/3] soc: renesas: rcar-sysc: add R8A77970 support
+Date: Mon, 25 Sep 2017 09:53:58 +0200
+Message-Id: <bab9b2a74fe9da96e895e0919f625679a0a8c964.1506325468.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1506325468.git.horms+renesas@verge.net.au>
+References: <cover.1506325468.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-        Hi all,
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-This patch series enables SMP on R-Car E2 (r8a7794).
-The main hurdle here is that R-Car Gen2 boot loaders do not initialize the
-arch_timer CNTVOFF register, which thus needs workarounds on Linux.
+Add support for R-Car V3M (R8A77970) SoC power areas to the R-Car SYSC
+driver.
 
-  - The first patch adds a definition for MON_MODE, as suggested by Marc
-    Zyngier,
-  - The second patch makes sure CNTVOFF is initialized for boot and
-    secondary Cortex-A15 and Cortex-A7 CPU cores, like is already done
-    for the boot Cortex-A7 CPU core.  Without this, the ARM arch timer
-    does not work on secondary CPU cores.
-    This patch depends on "[PATCH v2] ARM: shmobile: rcar-gen2: Correct
-    arch timer frequency on RZ/G1E".
-  - The third patch adds the required infrastructure (APMU device node
-    and corresponding enable-method) to DT.
-    Obviously this must not be applied on a branch that does not contain
-    the first two patches!
+Based on the original (and large) patch by Daisuke Matsushita
+<daisuke.matsushita.ns@hitachi.com>.
 
-Due to dependencies, I think it is easiest if the ARM maintainers provide
-their Acked-by for patch 1, so the whole series can go in through Simon's
-Renesas tree.
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ .../bindings/power/renesas,rcar-sysc.txt           |  1 +
+ drivers/soc/renesas/Kconfig                        |  5 +++
+ drivers/soc/renesas/Makefile                       |  1 +
+ drivers/soc/renesas/r8a77970-sysc.c                | 39 ++++++++++++++++++++++
+ drivers/soc/renesas/rcar-sysc.c                    |  3 ++
+ drivers/soc/renesas/rcar-sysc.h                    |  1 +
+ 6 files changed, 50 insertions(+)
+ create mode 100644 drivers/soc/renesas/r8a77970-sysc.c
 
-Changes compared to v2:
-  - Replace "isb" by "instr_sync" to fix the arm v6 build (e.g.
-    allmodconfig),
-
-Changes compared to v1:
-  - New patch "[PATCH v2 1/3] ARM: Add definition for monitor mode",
-  - Initialize CNTVOFF on Cortex-A15, too,
-  - Use *_MODE definitions instead of hardcoded values,
-  - Reduce duplication by calling the asm version from C,
-  - Always build headsmp-apmu.o on R-Car Gen2.
-
-This has been tested on r8a7794/alt (dual Cortex-A7), and regression-tested
-on r8a7790/lager (quad Cortex-A15), and r8a7791/koelsch, r8a7791/porter,
-r8a7792/blanche, and r8a7793/gose (dual Cortex-A15).
-
-Thanks!
-
-Geert Uytterhoeven (2):
-  ARM: Add definition for monitor mode
-  ARM: shmobile: rcar-gen2: Make sure CNTVOFF is initialized on CA7/15
-
-Sergei Shtylyov (1):
-  ARM: dts: r8a7794: Add SMP support
-
- arch/arm/boot/dts/r8a7794.dtsi           |  7 ++++++
- arch/arm/include/uapi/asm/ptrace.h       |  1 +
- arch/arm/mach-shmobile/Makefile          |  1 +
- arch/arm/mach-shmobile/common.h          |  2 ++
- arch/arm/mach-shmobile/headsmp-apmu.S    | 37 ++++++++++++++++++++++++++++++++
- arch/arm/mach-shmobile/platsmp-apmu.c    |  2 +-
- arch/arm/mach-shmobile/setup-rcar-gen2.c | 20 ++---------------
- 7 files changed, 51 insertions(+), 19 deletions(-)
- create mode 100644 arch/arm/mach-shmobile/headsmp-apmu.S
-
+diff --git a/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt b/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
+index 98cc8c09d02d..8690f10426a3 100644
+--- a/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
++++ b/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
+@@ -17,6 +17,7 @@ Required properties:
+       - "renesas,r8a7794-sysc" (R-Car E2)
+       - "renesas,r8a7795-sysc" (R-Car H3)
+       - "renesas,r8a7796-sysc" (R-Car M3-W)
++      - "renesas,r8a77970-sysc" (R-Car V3M)
+       - "renesas,r8a77995-sysc" (R-Car D3)
+   - reg: Address start and address range for the device.
+   - #power-domain-cells: Must be 1.
+diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
+index f0d562a7c4d3..09550b1da56d 100644
+--- a/drivers/soc/renesas/Kconfig
++++ b/drivers/soc/renesas/Kconfig
+@@ -14,6 +14,7 @@ config SOC_RENESAS
+ 	select SYSC_R8A7794 if ARCH_R8A7794
+ 	select SYSC_R8A7795 if ARCH_R8A7795
+ 	select SYSC_R8A7796 if ARCH_R8A7796
++	select SYSC_R8A77970 if ARCH_R8A77970
+ 	select SYSC_R8A77995 if ARCH_R8A77995
+ 
+ if SOC_RENESAS
+@@ -55,6 +56,10 @@ config SYSC_R8A7796
+ 	bool "R-Car M3-W System Controller support" if COMPILE_TEST
+ 	select SYSC_RCAR
+ 
++config SYSC_R8A77970
++	bool "R-Car V3M System Controller support" if COMPILE_TEST
++	select SYSC_RCAR
++
+ config SYSC_R8A77995
+ 	bool "R-Car D3 System Controller support" if COMPILE_TEST
+ 	select SYSC_RCAR
+diff --git a/drivers/soc/renesas/Makefile b/drivers/soc/renesas/Makefile
+index 6b6e7f16104c..8334af1d231b 100644
+--- a/drivers/soc/renesas/Makefile
++++ b/drivers/soc/renesas/Makefile
+@@ -11,6 +11,7 @@ obj-$(CONFIG_SYSC_R8A7792)	+= r8a7792-sysc.o
+ obj-$(CONFIG_SYSC_R8A7794)	+= r8a7794-sysc.o
+ obj-$(CONFIG_SYSC_R8A7795)	+= r8a7795-sysc.o
+ obj-$(CONFIG_SYSC_R8A7796)	+= r8a7796-sysc.o
++obj-$(CONFIG_SYSC_R8A77970)	+= r8a77970-sysc.o
+ obj-$(CONFIG_SYSC_R8A77995)	+= r8a77995-sysc.o
+ 
+ # Family
+diff --git a/drivers/soc/renesas/r8a77970-sysc.c b/drivers/soc/renesas/r8a77970-sysc.c
+new file mode 100644
+index 000000000000..8c614164718e
+--- /dev/null
++++ b/drivers/soc/renesas/r8a77970-sysc.c
+@@ -0,0 +1,39 @@
++/*
++ * Renesas R-Car V3M System Controller
++ *
++ * Copyright (C) 2017 Cogent Embedded Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include <linux/bug.h>
++#include <linux/kernel.h>
++
++#include <dt-bindings/power/r8a77970-sysc.h>
++
++#include "rcar-sysc.h"
++
++static const struct rcar_sysc_area r8a77970_areas[] __initconst = {
++	{ "always-on",	    0, 0, R8A77970_PD_ALWAYS_ON, -1, PD_ALWAYS_ON },
++	{ "ca53-scu",	0x140, 0, R8A77970_PD_CA53_SCU,	R8A77970_PD_ALWAYS_ON,
++	  PD_SCU },
++	{ "ca53-cpu0",	0x200, 0, R8A77970_PD_CA53_CPU0, R8A77970_PD_CA53_SCU,
++	  PD_CPU_NOCR },
++	{ "ca53-cpu1",	0x200, 1, R8A77970_PD_CA53_CPU1, R8A77970_PD_CA53_SCU,
++	  PD_CPU_NOCR },
++	{ "cr7",	0x240, 0, R8A77970_PD_CR7,	R8A77970_PD_ALWAYS_ON },
++	{ "a3ir",	0x180, 0, R8A77970_PD_A3IR,	R8A77970_PD_ALWAYS_ON },
++	{ "a2ir0",	0x400, 0, R8A77970_PD_A2IR0,	R8A77970_PD_ALWAYS_ON },
++	{ "a2ir1",	0x400, 1, R8A77970_PD_A2IR1,	R8A77970_PD_A2IR0 },
++	{ "a2ir2",	0x400, 2, R8A77970_PD_A2IR2,	R8A77970_PD_A2IR0 },
++	{ "a2ir3",	0x400, 3, R8A77970_PD_A2IR3,	R8A77970_PD_A2IR0 },
++	{ "a2sc0",	0x400, 4, R8A77970_PD_A2SC0,	R8A77970_PD_ALWAYS_ON },
++	{ "a2sc1",	0x400, 5, R8A77970_PD_A2SC1,	R8A77970_PD_A2SC0 },
++};
++
++const struct rcar_sysc_info r8a77970_sysc_info __initconst = {
++	.areas = r8a77970_areas,
++	.num_areas = ARRAY_SIZE(r8a77970_areas),
++};
+diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
+index c8406e81640f..55a47e509e49 100644
+--- a/drivers/soc/renesas/rcar-sysc.c
++++ b/drivers/soc/renesas/rcar-sysc.c
+@@ -284,6 +284,9 @@ static const struct of_device_id rcar_sysc_matches[] = {
+ #ifdef CONFIG_SYSC_R8A7796
+ 	{ .compatible = "renesas,r8a7796-sysc", .data = &r8a7796_sysc_info },
+ #endif
++#ifdef CONFIG_SYSC_R8A77970
++	{ .compatible = "renesas,r8a77970-sysc", .data = &r8a77970_sysc_info },
++#endif
+ #ifdef CONFIG_SYSC_R8A77995
+ 	{ .compatible = "renesas,r8a77995-sysc", .data = &r8a77995_sysc_info },
+ #endif
+diff --git a/drivers/soc/renesas/rcar-sysc.h b/drivers/soc/renesas/rcar-sysc.h
+index 2f524922c4d2..9d9daf9eb91b 100644
+--- a/drivers/soc/renesas/rcar-sysc.h
++++ b/drivers/soc/renesas/rcar-sysc.h
+@@ -58,6 +58,7 @@ extern const struct rcar_sysc_info r8a7792_sysc_info;
+ extern const struct rcar_sysc_info r8a7794_sysc_info;
+ extern const struct rcar_sysc_info r8a7795_sysc_info;
+ extern const struct rcar_sysc_info r8a7796_sysc_info;
++extern const struct rcar_sysc_info r8a77970_sysc_info;
+ extern const struct rcar_sysc_info r8a77995_sysc_info;
+ 
+ 
 -- 
-2.7.4
+2.1.4
