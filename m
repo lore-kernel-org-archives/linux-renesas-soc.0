@@ -1,102 +1,122 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52446 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751149AbdIEIH7 (ORCPT
+Received: from lb3-smtp-cloud7.xs4all.net ([194.109.24.31]:36710 "EHLO
+        lb3-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932627AbdIYKED (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Sep 2017 04:07:59 -0400
-From: Simon Horman <horms@verge.net.au>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: ltsi-dev@lists.linuxfoundation.org,
-        linux-renesas-soc@vger.kernel.org,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: [PATCH 09/13] thermal: rcar_gen3_thermal: add suspend and resume support
-Date: Tue,  5 Sep 2017 10:06:44 +0200
-Message-Id: <1504598808-19810-10-git-send-email-horms@verge.net.au>
-In-Reply-To: <1504598808-19810-1-git-send-email-horms@verge.net.au>
-References: <1504598808-19810-1-git-send-email-horms@verge.net.au>
+        Mon, 25 Sep 2017 06:04:03 -0400
+Subject: Re: [PATCH v6 14/25] rcar-vin: add functions to manipulate Gen3 CHSEL
+ value
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+References: <20170822232640.26147-1-niklas.soderlund+renesas@ragnatech.se>
+ <20170822232640.26147-15-niklas.soderlund+renesas@ragnatech.se>
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        tomoharu.fukawa.eb@renesas.com, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <c2734425-0bf4-87ae-4894-54e072a47dbd@xs4all.nl>
+Date: Mon, 25 Sep 2017 12:04:01 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20170822232640.26147-15-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+On 23/08/17 01:26, Niklas Söderlund wrote:
+> On Gen3 the CSI-2 routing is controlled by the VnCSI_IFMD register. One
+> feature of this register is that it's only present in the VIN0 and VIN4
+> instances. The register in VIN0 controls the routing for VIN0-3 and the
+> register in VIN4 controls routing for VIN4-7.
+> 
+> To be able to control routing from a media device these functions need
+> to control runtime PM for the subgroup master (VIN0 and VIN4). The
+> subgroup master must be switched on before the register is manipulated,
+> once the operation is complete it's safe to switch the master off and
+> the new routing will still be in effect.
+> 
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-To restore operation it's easiest to reinitialise all TSCs. In order to
-do this the current trip window needs to be stored in the TSC structure
-so that it can be restored upon resume.
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
-(cherry picked from commit 75f78d6d9eb793d141affaa5a76f20ce1d6ae5c9)
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- drivers/thermal/rcar_gen3_thermal.c | 35 +++++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+Regards,
 
-diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
-index f259a995c66c..37fcefd06d9f 100644
---- a/drivers/thermal/rcar_gen3_thermal.c
-+++ b/drivers/thermal/rcar_gen3_thermal.c
-@@ -82,6 +82,8 @@ struct rcar_gen3_thermal_tsc {
- 	void __iomem *base;
- 	struct thermal_zone_device *zone;
- 	struct equation_coefs coef;
-+	int low;
-+	int high;
- };
- 
- struct rcar_gen3_thermal_priv {
-@@ -217,6 +219,9 @@ static int rcar_gen3_thermal_set_trips(void *devdata, int low, int high)
- 	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQTEMP2,
- 				rcar_gen3_thermal_mcelsius_to_temp(tsc, high));
- 
-+	tsc->low = low;
-+	tsc->high = high;
-+
- 	return 0;
- }
- 
-@@ -454,9 +459,39 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
- 	return ret;
- }
- 
-+static int __maybe_unused rcar_gen3_thermal_suspend(struct device *dev)
-+{
-+	struct rcar_gen3_thermal_priv *priv = dev_get_drvdata(dev);
-+
-+	rcar_thermal_irq_set(priv, false);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused rcar_gen3_thermal_resume(struct device *dev)
-+{
-+	struct rcar_gen3_thermal_priv *priv = dev_get_drvdata(dev);
-+	unsigned int i;
-+
-+	for (i = 0; i < priv->num_tscs; i++) {
-+		struct rcar_gen3_thermal_tsc *tsc = priv->tscs[i];
-+
-+		priv->data->thermal_init(tsc);
-+		rcar_gen3_thermal_set_trips(tsc, tsc->low, tsc->high);
-+	}
-+
-+	rcar_thermal_irq_set(priv, true);
-+
-+	return 0;
-+}
-+
-+static SIMPLE_DEV_PM_OPS(rcar_gen3_thermal_pm_ops, rcar_gen3_thermal_suspend,
-+			 rcar_gen3_thermal_resume);
-+
- static struct platform_driver rcar_gen3_thermal_driver = {
- 	.driver	= {
- 		.name	= "rcar_gen3_thermal",
-+		.pm = &rcar_gen3_thermal_pm_ops,
- 		.of_match_table = rcar_gen3_thermal_dt_ids,
- 	},
- 	.probe		= rcar_gen3_thermal_probe,
--- 
-2.1.4
+	Hans
+
+
+> ---
+>  drivers/media/platform/rcar-vin/rcar-dma.c | 41 ++++++++++++++++++++++++++++++
+>  drivers/media/platform/rcar-vin/rcar-vin.h |  3 +++
+>  2 files changed, 44 insertions(+)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+> index c4f8e81e88c99e28..6206fab7b6cdc55a 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-dma.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+> @@ -16,6 +16,7 @@
+>  
+>  #include <linux/delay.h>
+>  #include <linux/interrupt.h>
+> +#include <linux/pm_runtime.h>
+>  
+>  #include <media/videobuf2-dma-contig.h>
+>  
+> @@ -1228,3 +1229,43 @@ int rvin_dma_probe(struct rvin_dev *vin, int irq)
+>  
+>  	return ret;
+>  }
+> +
+> +/* -----------------------------------------------------------------------------
+> + * Gen3 CHSEL manipulation
+> + */
+> +
+> +void rvin_set_chsel(struct rvin_dev *vin, u8 chsel)
+> +{
+> +	u32 ifmd;
+> +
+> +	pm_runtime_get_sync(vin->dev);
+> +
+> +	/*
+> +	 * Undocumented feature: Writing to VNCSI_IFMD_REG will go
+> +	 * through and on read back look correct but won't have
+> +	 * any effect if VNMC_REG is not first set to 0.
+> +	 */
+> +	rvin_write(vin, 0, VNMC_REG);
+> +
+> +	ifmd = VNCSI_IFMD_DES2 | VNCSI_IFMD_DES1 | VNCSI_IFMD_DES0 |
+> +		VNCSI_IFMD_CSI_CHSEL(chsel);
+> +
+> +	rvin_write(vin, ifmd, VNCSI_IFMD_REG);
+> +
+> +	vin_dbg(vin, "Set IFMD 0x%x\n", ifmd);
+> +
+> +	pm_runtime_put(vin->dev);
+> +}
+> +
+> +int rvin_get_chsel(struct rvin_dev *vin)
+> +{
+> +	int chsel;
+> +
+> +	pm_runtime_get_sync(vin->dev);
+> +
+> +	chsel = rvin_read(vin, VNCSI_IFMD_REG) & VNCSI_IFMD_CSI_CHSEL_MASK;
+> +
+> +	pm_runtime_put(vin->dev);
+> +
+> +	return chsel;
+> +}
+> diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+> index c4608686666d2d81..94c606f2b8f2f246 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-vin.h
+> +++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+> @@ -164,4 +164,7 @@ int rvin_reset_format(struct rvin_dev *vin);
+>  
+>  const struct rvin_video_format *rvin_format_from_pixel(u32 pixelformat);
+>  
+> +void rvin_set_chsel(struct rvin_dev *vin, u8 chsel);
+> +int rvin_get_chsel(struct rvin_dev *vin);
+> +
+>  #endif
+> 
