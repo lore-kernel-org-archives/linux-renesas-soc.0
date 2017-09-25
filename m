@@ -1,93 +1,274 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:54380 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965047AbdIZKGN (ORCPT
+Received: from lb1-smtp-cloud7.xs4all.net ([194.109.24.24]:43497 "EHLO
+        lb1-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S934432AbdIYKLO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 26 Sep 2017 06:06:13 -0400
-Received: from avalon.guest.par1.mozilla.com (unknown [IPv6:2a00:8c40:243:232:120b:a9ff:fe3c:7148])
-        by galahad.ideasonboard.com (Postfix) with ESMTPSA id 5A28D20218
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 26 Sep 2017 12:06:04 +0200 (CEST)
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Subject: [RFC 00/13] R-Car: Enable lossy compression in VSP video pipelines
-Date: Tue, 26 Sep 2017 13:05:50 +0300
-Message-Id: <20170926100605.2313-1-laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 25 Sep 2017 06:11:14 -0400
+Subject: Re: [PATCH v6 17/25] rcar-vin: use different v4l2 operations in media
+ controller mode
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+References: <20170822232640.26147-1-niklas.soderlund+renesas@ragnatech.se>
+ <20170822232640.26147-18-niklas.soderlund+renesas@ragnatech.se>
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        tomoharu.fukawa.eb@renesas.com, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <b0ef1ac1-d036-787c-c6ee-e83ddcb1e6c5@xs4all.nl>
+Date: Mon, 25 Sep 2017 12:11:11 +0200
+MIME-Version: 1.0
+In-Reply-To: <20170822232640.26147-18-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+On 23/08/17 01:26, Niklas Söderlund wrote:
+> When the driver runs in media controller mode it should not directly
+> control the subdevice instead userspace will be responsible for
+> configuring the pipeline. To be able to run in this mode a different set
+> of v4l2 operations needs to be used.
+> 
+> Add a new set of v4l2 operations to support the running without directly
+> interacting with the source subdevice.
+> 
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-These patches are a proof-of-concept implementation of lossy compression and
-decompression support for the VSP driver.
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
 
-Patches for the whole stack are needed, in the ARM trusted firmware BL2, U-Boot
-and the Linux kernel. For convenience, and because this is an RFC, I've included
-them all in a single series.
-
-The ARM trusted firmware and U-Boot patches are based on the Renesas firmware
-v2.16.0, which contains
-
-	git://github.com/renesas-rcar/arm-trusted-firmware.git#c040be5a757a945da75cf97d3a3e1db3a43168f9
-
-	git://github.com/renesas-rcar/u-boot.git#rcar-3.5.0
-
-The kernel patches are based on v4.14-rc2, which contains the following required
-v4.14-rc1 regression fix.
-
-commit 6d57339890c9a9dfcd4ba4f8931b911b962968e3
-Author: Arnd Bergmann <arnd@arndb.de>
-Date:   Fri Sep 15 17:08:16 2017 +0200
-
-    dma-coherent: fix rmem_dma_device_init regression
-
-The DT bindings and userspace APIs are really work in progress. In particular
-allocation of lossy decompression memory (implemented in the VSP driver in
-13/13) should probably not be specific to the VSP.
-
-A preliminary test that exercices the compression and decompression is available
-from
-
-	git://git.ideasonboard.com/renesas/vsp-tests.git#fcnl
-
-The test currently passes unconditionally without attempting to check whether
-the results are correct.
-
-Laurent Pinchart (13):
-  dt-bindings: reserved-memory: Add binding for the Renesas lossy
-    decompression area
-  dt-bindings: media: renesas-fcp: Add a compatible string for VSPI FCP
-  dt-bindings: media: renesas-fcp: Add memory-region property
-  arm64: dts: renesas: Use renesas,fcpvi compatible string
-  arm64: dts: r8a7795: Add lossy decompression reserved memory nodes
-  arm64: dts: r8a7795: Reference the lossy memory region from the FCPss
-  arm64: dts: r8a7795: Add dma-ranges property in the /soc node
-  v4l: rcar-fcp: Check device revision at probe time
-  v4l: rcar-fcp: Configure the number of outstanding read transactions
-  v4l: rcar-fcp: Prepare driver API for FCNL support
-  v4l: rcar-fcp: Support FCNL decompression
-  v4l: vsp1: Add support for near-lossless compression (FCNL) in the WPF
-  v4l: vsp1: Add support for near-lossless compression (FCNL) in the RPF
-
- .../devicetree/bindings/media/renesas,fcp.txt      |  10 +-
- .../renesas,lossy-decompression.txt                | 102 ++++++
- arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi       |   2 +-
- arch/arm64/boot/dts/renesas/r8a7795.dtsi           |  58 +++-
- arch/arm64/boot/dts/renesas/r8a7796.dtsi           |   2 +-
- drivers/media/platform/rcar-fcp.c                  | 358 ++++++++++++++++++++-
- drivers/media/platform/vsp1/vsp1.h                 |   1 +
- drivers/media/platform/vsp1/vsp1_drv.c             |  10 +-
- drivers/media/platform/vsp1/vsp1_pipe.c            |  57 ++--
- drivers/media/platform/vsp1/vsp1_pipe.h            |   2 +
- drivers/media/platform/vsp1/vsp1_regs.h            |   1 +
- drivers/media/platform/vsp1/vsp1_rwpf.c            |  50 +++
- drivers/media/platform/vsp1/vsp1_rwpf.h            |   1 +
- drivers/media/platform/vsp1/vsp1_video.c           |  22 +-
- drivers/media/platform/vsp1/vsp1_wpf.c             |  17 +-
- include/media/rcar-fcp.h                           |  14 +-
- 16 files changed, 650 insertions(+), 57 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/reserved-memory/renesas,lossy-decompression.txt
-
--- 
 Regards,
 
-Laurent Pinchart
+	Hans
+
+> ---
+>  drivers/media/platform/rcar-vin/rcar-dma.c  |   3 +-
+>  drivers/media/platform/rcar-vin/rcar-v4l2.c | 155 +++++++++++++++++++++++++++-
+>  drivers/media/platform/rcar-vin/rcar-vin.h  |   1 +
+>  3 files changed, 155 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+> index 6206fab7b6cdc55a..de1486ee2786b499 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-dma.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+> @@ -628,7 +628,8 @@ static int rvin_setup(struct rvin_dev *vin)
+>  		/* Default to TB */
+>  		vnmc = VNMC_IM_FULL;
+>  		/* Use BT if video standard can be read and is 60 Hz format */
+> -		if (!v4l2_subdev_call(vin_to_source(vin), video, g_std, &std)) {
+> +		if (!vin->info->use_mc &&
+> +		    !v4l2_subdev_call(vin_to_source(vin), video, g_std, &std)) {
+>  			if (std & V4L2_STD_525_60)
+>  				vnmc = VNMC_IM_FULL | VNMC_FOC;
+>  		}
+> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> index f71dea8d5d40323a..9d540644bbe446f6 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> @@ -23,6 +23,9 @@
+>  #include "rcar-vin.h"
+>  
+>  #define RVIN_DEFAULT_FORMAT	V4L2_PIX_FMT_YUYV
+> +#define RVIN_DEFAULT_WIDTH	800
+> +#define RVIN_DEFAULT_HEIGHT	600
+> +#define RVIN_DEFAULT_COLORSPACE	V4L2_COLORSPACE_SRGB
+>  
+>  /* -----------------------------------------------------------------------------
+>   * Format Conversions
+> @@ -671,6 +674,84 @@ static const struct v4l2_ioctl_ops rvin_ioctl_ops = {
+>  	.vidioc_unsubscribe_event	= v4l2_event_unsubscribe,
+>  };
+>  
+> +/* -----------------------------------------------------------------------------
+> + * V4L2 Media Controller
+> + */
+> +
+> +static int __rvin_mc_try_format(struct rvin_dev *vin,
+> +				struct v4l2_pix_format *pix)
+> +{
+> +	/* Keep current field if no specific one is asked for */
+> +	if (pix->field == V4L2_FIELD_ANY)
+> +		pix->field = vin->format.field;
+> +
+> +	return rvin_format_align(vin, pix);
+> +}
+> +
+> +static int rvin_mc_try_fmt_vid_cap(struct file *file, void *priv,
+> +				   struct v4l2_format *f)
+> +{
+> +	struct rvin_dev *vin = video_drvdata(file);
+> +
+> +	return __rvin_mc_try_format(vin, &f->fmt.pix);
+> +}
+> +
+> +static int rvin_mc_s_fmt_vid_cap(struct file *file, void *priv,
+> +				 struct v4l2_format *f)
+> +{
+> +	struct rvin_dev *vin = video_drvdata(file);
+> +	int ret;
+> +
+> +	if (vb2_is_busy(&vin->queue))
+> +		return -EBUSY;
+> +
+> +	ret = __rvin_mc_try_format(vin, &f->fmt.pix);
+> +	if (ret)
+> +		return ret;
+> +
+> +	vin->format = f->fmt.pix;
+> +
+> +	return 0;
+> +}
+> +
+> +static int rvin_mc_enum_input(struct file *file, void *priv,
+> +			      struct v4l2_input *i)
+> +{
+> +	if (i->index != 0)
+> +		return -EINVAL;
+> +
+> +	i->type = V4L2_INPUT_TYPE_CAMERA;
+> +	strlcpy(i->name, "Camera", sizeof(i->name));
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct v4l2_ioctl_ops rvin_mc_ioctl_ops = {
+> +	.vidioc_querycap		= rvin_querycap,
+> +	.vidioc_try_fmt_vid_cap		= rvin_mc_try_fmt_vid_cap,
+> +	.vidioc_g_fmt_vid_cap		= rvin_g_fmt_vid_cap,
+> +	.vidioc_s_fmt_vid_cap		= rvin_mc_s_fmt_vid_cap,
+> +	.vidioc_enum_fmt_vid_cap	= rvin_enum_fmt_vid_cap,
+> +
+> +	.vidioc_enum_input		= rvin_mc_enum_input,
+> +	.vidioc_g_input			= rvin_g_input,
+> +	.vidioc_s_input			= rvin_s_input,
+> +
+> +	.vidioc_reqbufs			= vb2_ioctl_reqbufs,
+> +	.vidioc_create_bufs		= vb2_ioctl_create_bufs,
+> +	.vidioc_querybuf		= vb2_ioctl_querybuf,
+> +	.vidioc_qbuf			= vb2_ioctl_qbuf,
+> +	.vidioc_dqbuf			= vb2_ioctl_dqbuf,
+> +	.vidioc_expbuf			= vb2_ioctl_expbuf,
+> +	.vidioc_prepare_buf		= vb2_ioctl_prepare_buf,
+> +	.vidioc_streamon		= vb2_ioctl_streamon,
+> +	.vidioc_streamoff		= vb2_ioctl_streamoff,
+> +
+> +	.vidioc_log_status		= v4l2_ctrl_log_status,
+> +	.vidioc_subscribe_event		= rvin_subscribe_event,
+> +	.vidioc_unsubscribe_event	= v4l2_event_unsubscribe,
+> +};
+> +
+>  /* -----------------------------------------------------------------------------
+>   * File Operations
+>   */
+> @@ -819,6 +900,60 @@ static const struct v4l2_file_operations rvin_fops = {
+>  	.read		= vb2_fop_read,
+>  };
+>  
+> +/* -----------------------------------------------------------------------------
+> + * Media controller file Operations
+> + */
+> +
+> +static int rvin_mc_open(struct file *file)
+> +{
+> +	struct rvin_dev *vin = video_drvdata(file);
+> +	int ret;
+> +
+> +	mutex_lock(&vin->lock);
+> +
+> +	file->private_data = vin;
+> +
+> +	ret = v4l2_fh_open(file);
+> +	if (ret)
+> +		goto unlock;
+> +
+> +	pm_runtime_get_sync(vin->dev);
+> +	v4l2_pipeline_pm_use(&vin->vdev.entity, 1);
+> +
+> +unlock:
+> +	mutex_unlock(&vin->lock);
+> +
+> +	return ret;
+> +}
+> +
+> +static int rvin_mc_release(struct file *file)
+> +{
+> +	struct rvin_dev *vin = video_drvdata(file);
+> +	int ret;
+> +
+> +	mutex_lock(&vin->lock);
+> +
+> +	/* the release helper will cleanup any on-going streaming */
+> +	ret = _vb2_fop_release(file, NULL);
+> +
+> +	v4l2_pipeline_pm_use(&vin->vdev.entity, 0);
+> +	pm_runtime_put(vin->dev);
+> +
+> +	mutex_unlock(&vin->lock);
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct v4l2_file_operations rvin_mc_fops = {
+> +	.owner		= THIS_MODULE,
+> +	.unlocked_ioctl	= video_ioctl2,
+> +	.open		= rvin_mc_open,
+> +	.release	= rvin_mc_release,
+> +	.poll		= vb2_fop_poll,
+> +	.mmap		= vb2_fop_mmap,
+> +	.read		= vb2_fop_read,
+> +};
+> +
+>  void rvin_v4l2_remove(struct rvin_dev *vin)
+>  {
+>  	v4l2_info(&vin->v4l2_dev, "Removing %s\n",
+> @@ -851,19 +986,33 @@ int rvin_v4l2_probe(struct rvin_dev *vin)
+>  	vin->v4l2_dev.notify = rvin_notify;
+>  
+>  	/* video node */
+> -	vdev->fops = &rvin_fops;
+>  	vdev->v4l2_dev = &vin->v4l2_dev;
+>  	vdev->queue = &vin->queue;
+>  	snprintf(vdev->name, sizeof(vdev->name), "%s %s", KBUILD_MODNAME,
+>  		 dev_name(vin->dev));
+>  	vdev->release = video_device_release_empty;
+> -	vdev->ioctl_ops = &rvin_ioctl_ops;
+>  	vdev->lock = &vin->lock;
+> -	vdev->ctrl_handler = &vin->ctrl_handler;
+>  	vdev->device_caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING |
+>  		V4L2_CAP_READWRITE;
+>  
+> +	/* Set some form of default format */
+>  	vin->format.pixelformat	= RVIN_DEFAULT_FORMAT;
+> +	vin->format.width = RVIN_DEFAULT_WIDTH;
+> +	vin->format.height = RVIN_DEFAULT_HEIGHT;
+> +	vin->format.colorspace = RVIN_DEFAULT_COLORSPACE;
+> +
+> +	ret = rvin_format_align(vin, &vin->format);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (vin->info->use_mc) {
+> +		vdev->fops = &rvin_mc_fops;
+> +		vdev->ioctl_ops = &rvin_mc_ioctl_ops;
+> +	} else {
+> +		vdev->fops = &rvin_fops;
+> +		vdev->ioctl_ops = &rvin_ioctl_ops;
+> +		vdev->ctrl_handler = &vin->ctrl_handler;
+> +	}
+>  
+>  	ret = video_register_device(&vin->vdev, VFL_TYPE_GRABBER, -1);
+>  	if (ret) {
+> diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+> index 819d9c04ed8ffb36..12daff804bb6f77f 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-vin.h
+> +++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+> @@ -21,6 +21,7 @@
+>  #include <media/v4l2-ctrls.h>
+>  #include <media/v4l2-dev.h>
+>  #include <media/v4l2-device.h>
+> +#include <media/v4l2-mc.h>
+>  #include <media/videobuf2-v4l2.h>
+>  
+>  /* Number of HW buffers */
+> 
