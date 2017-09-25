@@ -1,51 +1,117 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f49.google.com ([209.85.215.49]:34792 "EHLO
-        mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751329AbdIDVQh (ORCPT
+Received: from lb1-smtp-cloud7.xs4all.net ([194.109.24.24]:49679 "EHLO
+        lb1-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933186AbdIYKLu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Sep 2017 17:16:37 -0400
-Received: by mail-lf0-f49.google.com with SMTP id l196so5129993lfl.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 04 Sep 2017 14:16:36 -0700 (PDT)
-Subject: Re: [PATCH] arm64: dts: ulcb: Enable display output
-To: Simon Horman <horms@verge.net.au>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-References: <20170822142326.9652-1-laurent.pinchart+renesas@ideasonboard.com>
- <20170830072850.GJ10398@verge.net.au>
-Cc: linux-renesas-soc@vger.kernel.org
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Message-ID: <0178cc2f-13ef-e6df-b8cc-46f51c8a93f6@cogentembedded.com>
-Date: Tue, 5 Sep 2017 00:16:33 +0300
+        Mon, 25 Sep 2017 06:11:50 -0400
+Subject: Re: [PATCH v6 18/25] rcar-vin: prepare for media controller mode
+ initialization
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+References: <20170822232640.26147-1-niklas.soderlund+renesas@ragnatech.se>
+ <20170822232640.26147-19-niklas.soderlund+renesas@ragnatech.se>
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        tomoharu.fukawa.eb@renesas.com, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <5bd4faf5-a325-3cd3-8f3b-2e3ef6e99fc1@xs4all.nl>
+Date: Mon, 25 Sep 2017 12:11:48 +0200
 MIME-Version: 1.0
-In-Reply-To: <20170830072850.GJ10398@verge.net.au>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20170822232640.26147-19-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+On 23/08/17 01:26, Niklas Söderlund wrote:
+> When running in media controller mode a media pad is needed, register
+> one. Also set the media bus format to CSI-2.
+> 
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-On 30.08.2017 10:28, Simon Horman wrote:
-> On Tue, Aug 22, 2017 at 05:23:26PM +0300, Laurent Pinchart wrote:
->> The DU is already wired up to the HDMI encoder, all we need to do is
->> enable it.
->>
->> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
->> ---
->>   arch/arm64/boot/dts/renesas/ulcb.dtsi | 4 ++++
->>   1 file changed, 4 insertions(+)
->>
->> This patch has been tested on the M3-W ULCB in Magnus' board farm. As no
->> display is connected to the HDMI output testing was limited, to probing the
->> device and verifying that it can be accessed from userspace.
->>
->> Tests on the H3 ES1.1 and H3 ES2.0 ULCBs were less successful as I couldn't
->> get the boards to boot properly, but they failed without this patch as well,
->> so I don't think it should be a blocker.
-> Thanks, applied.
-Sorry for late reply.
 
-This patch was verified with HDMI display on M3W and H3 ULCB boards with 
-following patches applied:
-https://patchwork.kernel.org/patch/9688551/
-https://patchwork.kernel.org/patch/9831835/
-https://patchwork.kernel.org/patch/9801239/
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+
+Regards,
+
+	Hans
+
+
+> ---
+>  drivers/media/platform/rcar-vin/rcar-core.c | 23 ++++++++++++++++++++++-
+>  drivers/media/platform/rcar-vin/rcar-vin.h  |  4 ++++
+>  2 files changed, 26 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+> index fbbb22924cf3a045..dd0525f2ba336bc2 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-core.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
+> @@ -45,6 +45,10 @@ static int rvin_find_pad(struct v4l2_subdev *sd, int direction)
+>  	return -EINVAL;
+>  }
+>  
+> +/* -----------------------------------------------------------------------------
+> + * Digital async notifier
+> + */
+> +
+>  static bool rvin_mbus_supported(struct rvin_dev *vin)
+>  {
+>  	struct v4l2_subdev *sd = vin->digital.subdev;
+> @@ -273,6 +277,20 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
+>  	return 0;
+>  }
+>  
+> +/* -----------------------------------------------------------------------------
+> + * Group async notifier
+> + */
+> +
+> +static int rvin_group_init(struct rvin_dev *vin)
+> +{
+> +	/* All our sources are CSI-2 */
+> +	vin->mbus_cfg.type = V4L2_MBUS_CSI2;
+> +	vin->mbus_cfg.flags = 0;
+> +
+> +	vin->pad.flags = MEDIA_PAD_FL_SINK;
+> +	return media_entity_pads_init(&vin->vdev.entity, 1, &vin->pad);
+> +}
+> +
+>  /* -----------------------------------------------------------------------------
+>   * Platform Device Driver
+>   */
+> @@ -365,7 +383,10 @@ static int rcar_vin_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		return ret;
+>  
+> -	ret = rvin_digital_graph_init(vin);
+> +	if (vin->info->use_mc)
+> +		ret = rvin_group_init(vin);
+> +	else
+> +		ret = rvin_digital_graph_init(vin);
+>  	if (ret < 0)
+>  		goto error;
+>  
+> diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+> index 12daff804bb6f77f..9c47669669c0469c 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-vin.h
+> +++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+> @@ -103,6 +103,8 @@ struct rvin_info {
+>   * @notifier:		V4L2 asynchronous subdevs notifier
+>   * @digital:		entity in the DT for local digital subdevice
+>   *
+> + * @pad:		pad for media controller
+> + *
+>   * @lock:		protects @queue
+>   * @queue:		vb2 buffers queue
+>   *
+> @@ -132,6 +134,8 @@ struct rvin_dev {
+>  	struct v4l2_async_notifier notifier;
+>  	struct rvin_graph_entity digital;
+>  
+> +	struct media_pad pad;
+> +
+>  	struct mutex lock;
+>  	struct vb2_queue queue;
+>  
+> 
