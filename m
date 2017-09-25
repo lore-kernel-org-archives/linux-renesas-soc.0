@@ -1,7 +1,18 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Mon, 25 Sep 2017 11:45:45 -0700
-From: Mark Brown <broonie@kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:50095 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934514AbdIYRsq (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 25 Sep 2017 13:48:46 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170925161637.D7471440058@finisterre.ee.mobilebroadband>
+References: <1506329660-4064-2-git-send-email-fabrizio.castro@bp.renesas.com> <20170925161637.D7471440058@finisterre.ee.mobilebroadband>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 25 Sep 2017 19:48:44 +0200
+Message-ID: <CAMuHMdVsRwW+10ERyTJAa8XhhkPMn4ruymUwPKot+kmczBwbcA@mail.gmail.com>
+Subject: Re: Applied "spi: sh-msiof: Add compatible strings for r8a774[35]" to
+ the spi tree
+To: Mark Brown <broonie@kernel.org>
 Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -10,49 +21,75 @@ Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>
-Subject: Re: Applied "spi: sh-msiof: Add compatible strings for r8a774[35]"
- to the spi tree
-Message-ID: <20170925184545.5k4nke27rgud3uwp@sirena.org.uk>
-References: <1506329660-4064-2-git-send-email-fabrizio.castro@bp.renesas.com>
- <20170925161637.D7471440058@finisterre.ee.mobilebroadband>
- <CAMuHMdVsRwW+10ERyTJAa8XhhkPMn4ruymUwPKot+kmczBwbcA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="dsaqr4lnrmkz2tik"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdVsRwW+10ERyTJAa8XhhkPMn4ruymUwPKot+kmczBwbcA@mail.gmail.com>
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Mark,
 
---dsaqr4lnrmkz2tik
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Mon, Sep 25, 2017 at 6:16 PM, Mark Brown <broonie@kernel.org> wrote:
+> The patch
+>
+>    spi: sh-msiof: Add compatible strings for r8a774[35]
+>
+> has been applied to the spi tree at
+>
+>    git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git
+>
+> All being well this means that it will be integrated into the linux-next
+> tree (usually sometime in the next 24 hours) and sent to Linus during
+> the next merge window (or sooner if it is a bug fix), however if
+> problems are discovered then the patch may be dropped or reverted.
+>
+> You may get further e-mails resulting from automated or manual testing
+> and review of the tree, please engage with people reporting problems and
+> send followup patches addressing any issues that are reported if needed.
+>
+> If any updates are required or you are submitting further changes they
+> should be sent as incremental updates against current git, existing
+> patches will not be replaced.
+>
+> Please add any relevant lists and maintainers to the CCs when replying
+> to this mail.
 
-On Mon, Sep 25, 2017 at 07:48:44PM +0200, Geert Uytterhoeven wrote:
+Please drop this patch, as there's no need to add explicit matching for these
+compatible values. The family-specific compatible values (which the driver
+already matches against) are sufficient.
 
-> Please drop this patch, as there's no need to add explicit matching for these
-> compatible values. The family-specific compatible values (which the driver
-> already matches against) are sufficient.
+Thanks!
 
-While the patch is not needed if people list the fallback property it
-also does no harm and provides a marginal documentation benefit in
-saying that someone has considered if any special handling is useful and
-decided that it isn't.
+> From bdacfc7b6216dd30d07c10732fd4c0a660c62853 Mon Sep 17 00:00:00 2001
+> From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Date: Mon, 25 Sep 2017 09:54:19 +0100
+> Subject: [PATCH] spi: sh-msiof: Add compatible strings for r8a774[35]
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> ---
+>  drivers/spi/spi-sh-msiof.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
+> index 0eb1e9583485..00808448cf35 100644
+> --- a/drivers/spi/spi-sh-msiof.c
+> +++ b/drivers/spi/spi-sh-msiof.c
+> @@ -1021,6 +1021,8 @@ static const struct sh_msiof_chipdata rcar_gen3_data = {
+>
+>  static const struct of_device_id sh_msiof_match[] = {
+>         { .compatible = "renesas,sh-mobile-msiof", .data = &sh_data },
+> +       { .compatible = "renesas,msiof-r8a7743",   .data = &rcar_gen2_data },
+> +       { .compatible = "renesas,msiof-r8a7745",   .data = &rcar_gen2_data },
+>         { .compatible = "renesas,msiof-r8a7790",   .data = &rcar_gen2_data },
+>         { .compatible = "renesas,msiof-r8a7791",   .data = &rcar_gen2_data },
+>         { .compatible = "renesas,msiof-r8a7792",   .data = &rcar_gen2_data },
 
---dsaqr4lnrmkz2tik
-Content-Type: application/pgp-signature; name="signature.asc"
+Gr{oetje,eeting}s,
 
------BEGIN PGP SIGNATURE-----
+                        Geert
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlnJTtYACgkQJNaLcl1U
-h9D+zQf9H+eHZt3G9Ts391WXqEIE0MvIkpN6hFrNq8CMmQoB59GMDb4hXJY1MUyR
-omEoy4eeWKixmvZWxcZOpXWaHuDc9pxM9rAgjd8dns2wANydt5pvk9Aw7oFyZnmT
-g6zt+ZZ6oHQFHmO34ucHMx7FEYg41Im2hWkAOQupnnDK8TbmmFOxsnC/MXHyU/Su
-b30pVzjKxIsYxeOM6xA5noY6LO+VVW1cwZSPb6yxJXnKT4cQiBKYgFVgvrIY3thI
-n7lGDp8Mbaa/XrryFjSl/JgND5R0dEjiotYs8Gpfe+1OjVUVIvn5ow3ko3siC69k
-j8+W39myoqf519iCvp9oXDII+KYbnA==
-=Qu7o
------END PGP SIGNATURE-----
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
---dsaqr4lnrmkz2tik--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
