@@ -1,184 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from lb1-smtp-cloud7.xs4all.net ([194.109.24.24]:42336 "EHLO
-        lb1-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934055AbdIYKIH (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:46143 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933608AbdIYHyb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Sep 2017 06:08:07 -0400
-Subject: Re: [PATCH v6 16/25] rcar-vin: break out format alignment and
- checking
-To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-References: <20170822232640.26147-1-niklas.soderlund+renesas@ragnatech.se>
- <20170822232640.26147-17-niklas.soderlund+renesas@ragnatech.se>
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        tomoharu.fukawa.eb@renesas.com, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <34d03f81-ff25-3fe0-8dee-33496ff9b46e@xs4all.nl>
-Date: Mon, 25 Sep 2017 12:08:04 +0200
-MIME-Version: 1.0
-In-Reply-To: <20170822232640.26147-17-niklas.soderlund+renesas@ragnatech.se>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+        Mon, 25 Sep 2017 03:54:31 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 2/3] soc: renesas: identify R-Car V3M
+Date: Mon, 25 Sep 2017 09:53:57 +0200
+Message-Id: <bb0030752f288a2e2d27cc110d6d4139fe7a948d.1506325468.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1506325468.git.horms+renesas@verge.net.au>
+References: <cover.1506325468.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 23/08/17 01:26, Niklas Söderlund wrote:
-> Part of the format aliment and checking can be shared with the Gen3
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-aliment -> alignment
+Add support for identifying the R-Car V3M (R8A77970) SoC.
 
-> format handling. Break that part out to it's own function. While doing
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ drivers/soc/renesas/renesas-soc.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-it's -> its
-
-> this clean up the checking and add more checks.
-> 
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
-
-Please note the small typo in a comment below.
-
-Regards,
-
-	Hans
-
-
-> ---
->  drivers/media/platform/rcar-vin/rcar-v4l2.c | 98 +++++++++++++++--------------
->  1 file changed, 51 insertions(+), 47 deletions(-)
-> 
-> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> index fb9f802e553e9b80..f71dea8d5d40323a 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> @@ -86,6 +86,56 @@ static u32 rvin_format_sizeimage(struct v4l2_pix_format *pix)
->  	return pix->bytesperline * pix->height;
->  }
->  
-> +static int rvin_format_align(struct rvin_dev *vin, struct v4l2_pix_format *pix)
-> +{
-> +	u32 walign;
-> +
-> +	/* If requested format is not supported fallback to the default */
-> +	if (!rvin_format_from_pixel(pix->pixelformat)) {
-> +		vin_dbg(vin, "Format 0x%x not found, using default 0x%x\n",
-> +			pix->pixelformat, RVIN_DEFAULT_FORMAT);
-> +		pix->pixelformat = RVIN_DEFAULT_FORMAT;
-> +	}
-> +
-> +	switch (pix->field) {
-> +	case V4L2_FIELD_TOP:
-> +	case V4L2_FIELD_BOTTOM:
-> +	case V4L2_FIELD_NONE:
-> +	case V4L2_FIELD_INTERLACED_TB:
-> +	case V4L2_FIELD_INTERLACED_BT:
-> +	case V4L2_FIELD_INTERLACED:
-> +		break;
-> +	default:
-> +		pix->field = V4L2_FIELD_NONE;
-> +		break;
-> +	}
-> +
-> +	/* Check that colorspace is resonable, if not keep current */
-
-resonable -> reasonable
-
-> +	if (!pix->colorspace || pix->colorspace >= 0xff)
-> +		pix->colorspace = vin->format.colorspace;
-> +
-> +	/* HW limit width to a multiple of 32 (2^5) for NV16 else 2 (2^1) */
-> +	walign = vin->format.pixelformat == V4L2_PIX_FMT_NV16 ? 5 : 1;
-> +
-> +	/* Limit to VIN capabilities */
-> +	v4l_bound_align_image(&pix->width, 2, vin->info->max_width, walign,
-> +			      &pix->height, 4, vin->info->max_height, 2, 0);
-> +
-> +	pix->bytesperline = rvin_format_bytesperline(pix);
-> +	pix->sizeimage = rvin_format_sizeimage(pix);
-> +
-> +	if (vin->info->chip == RCAR_M1 &&
-> +	    pix->pixelformat == V4L2_PIX_FMT_XBGR32) {
-> +		vin_err(vin, "pixel format XBGR32 not supported on M1\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	vin_dbg(vin, "Format %ux%u bpl: %d size: %d\n",
-> +		pix->width, pix->height, pix->bytesperline, pix->sizeimage);
-> +
-> +	return 0;
-> +}
-> +
->  /* -----------------------------------------------------------------------------
->   * V4L2
->   */
-> @@ -191,64 +241,18 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
->  static int __rvin_try_format(struct rvin_dev *vin,
->  			     u32 which, struct v4l2_pix_format *pix)
->  {
-> -	u32 walign;
->  	int ret;
->  
->  	/* Keep current field if no specific one is asked for */
->  	if (pix->field == V4L2_FIELD_ANY)
->  		pix->field = vin->format.field;
->  
-> -	/* If requested format is not supported fallback to the default */
-> -	if (!rvin_format_from_pixel(pix->pixelformat)) {
-> -		vin_dbg(vin, "Format 0x%x not found, using default 0x%x\n",
-> -			pix->pixelformat, RVIN_DEFAULT_FORMAT);
-> -		pix->pixelformat = RVIN_DEFAULT_FORMAT;
-> -	}
-> -
-> -	/* Always recalculate */
-> -	pix->bytesperline = 0;
-> -	pix->sizeimage = 0;
-> -
->  	/* Limit to source capabilities */
->  	ret = __rvin_try_format_source(vin, which, pix);
->  	if (ret)
->  		return ret;
->  
-> -	switch (pix->field) {
-> -	case V4L2_FIELD_TOP:
-> -	case V4L2_FIELD_BOTTOM:
-> -	case V4L2_FIELD_NONE:
-> -	case V4L2_FIELD_INTERLACED_TB:
-> -	case V4L2_FIELD_INTERLACED_BT:
-> -	case V4L2_FIELD_INTERLACED:
-> -		break;
-> -	default:
-> -		pix->field = V4L2_FIELD_NONE;
-> -		break;
-> -	}
-> -
-> -	/* HW limit width to a multiple of 32 (2^5) for NV16 else 2 (2^1) */
-> -	walign = vin->format.pixelformat == V4L2_PIX_FMT_NV16 ? 5 : 1;
-> -
-> -	/* Limit to VIN capabilities */
-> -	v4l_bound_align_image(&pix->width, 2, vin->info->max_width, walign,
-> -			      &pix->height, 4, vin->info->max_height, 2, 0);
-> -
-> -	pix->bytesperline = max_t(u32, pix->bytesperline,
-> -				  rvin_format_bytesperline(pix));
-> -	pix->sizeimage = max_t(u32, pix->sizeimage,
-> -			       rvin_format_sizeimage(pix));
-> -
-> -	if (vin->info->chip == RCAR_M1 &&
-> -	    pix->pixelformat == V4L2_PIX_FMT_XBGR32) {
-> -		vin_err(vin, "pixel format XBGR32 not supported on M1\n");
-> -		return -EINVAL;
-> -	}
-> -
-> -	vin_dbg(vin, "Format %ux%u bpl: %d size: %d\n",
-> -		pix->width, pix->height, pix->bytesperline, pix->sizeimage);
-> -
-> -	return 0;
-> +	return rvin_format_align(vin, pix);
->  }
->  
->  static int rvin_querycap(struct file *file, void *priv,
-> 
+diff --git a/drivers/soc/renesas/renesas-soc.c b/drivers/soc/renesas/renesas-soc.c
+index 90d6b7a4340a..9f4ee2567c72 100644
+--- a/drivers/soc/renesas/renesas-soc.c
++++ b/drivers/soc/renesas/renesas-soc.c
+@@ -144,6 +144,11 @@ static const struct renesas_soc soc_rcar_m3_w __initconst __maybe_unused = {
+ 	.id	= 0x52,
+ };
+ 
++static const struct renesas_soc soc_rcar_v3m __initconst __maybe_unused = {
++	.family	= &fam_rcar_gen3,
++	.id	= 0x54,
++};
++
+ static const struct renesas_soc soc_rcar_d3 __initconst __maybe_unused = {
+ 	.family	= &fam_rcar_gen3,
+ 	.id	= 0x58,
+@@ -204,6 +209,9 @@ static const struct of_device_id renesas_socs[] __initconst = {
+ #ifdef CONFIG_ARCH_R8A7796
+ 	{ .compatible = "renesas,r8a7796",	.data = &soc_rcar_m3_w },
+ #endif
++#ifdef CONFIG_ARCH_R8A77970
++	{ .compatible = "renesas,r8a77970",	.data = &soc_rcar_v3m },
++#endif
+ #ifdef CONFIG_ARCH_R8A77995
+ 	{ .compatible = "renesas,r8a77995",	.data = &soc_rcar_d3 },
+ #endif
+-- 
+2.1.4
