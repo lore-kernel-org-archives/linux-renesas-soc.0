@@ -1,70 +1,181 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34793 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751906AbdI2LzK (ORCPT
+Received: from lb2-smtp-cloud7.xs4all.net ([194.109.24.28]:38755 "EHLO
+        lb2-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751408AbdIYJ6V (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Sep 2017 07:55:10 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 42/48] ARM: dts: r8a7743: Add QSPI support
-Date: Fri, 29 Sep 2017 13:53:34 +0200
-Message-Id: <450c03718e971880ae067dc5f94a86f961acd6c3.1506683482.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1506683482.git.horms+renesas@verge.net.au>
-References: <cover.1506683482.git.horms+renesas@verge.net.au>
+        Mon, 25 Sep 2017 05:58:21 -0400
+Subject: Re: [PATCH v6 11/25] rcar-vin: fix handling of single field frames
+ (top, bottom and alternate fields)
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+References: <20170822232640.26147-1-niklas.soderlund+renesas@ragnatech.se>
+ <20170822232640.26147-12-niklas.soderlund+renesas@ragnatech.se>
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        tomoharu.fukawa.eb@renesas.com, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <bb277c99-b662-31df-4b4b-83b9e437a374@xs4all.nl>
+Date: Mon, 25 Sep 2017 11:58:19 +0200
+MIME-Version: 1.0
+In-Reply-To: <20170822232640.26147-12-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+On 23/08/17 01:26, Niklas Söderlund wrote:
+> It was never proper support in the VIN driver to deliver ALTERNATING
 
-Add the DT node for the QSPI interface to the SoC dtsi.
+It -> There
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7743.dtsi | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+> field format to user-space, remove this field option. For sources using
+> this field format instead use the VIN hardware feature of combining the
+> fields to an interlaced format. This mode of operation was previously
+> the default behavior and ALTERNATING was only delivered to user-space if
+> explicitly requested. Allowing this to be explicitly requested was a
+> mistake and was never properly tested and never worked due to the
+> constrains put on the field format when it comes to sequence numbers and
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 266c5eca9f74..454f98060d6f 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -28,6 +28,7 @@
- 		i2c6 = &iic0;
- 		i2c7 = &iic1;
- 		i2c8 = &iic3;
-+		spi0 = &qspi;
- 	};
- 
- 	cpus {
-@@ -835,6 +836,22 @@
- 			status = "disabled";
- 		};
- 
-+		qspi: spi@e6b10000 {
-+			compatible = "renesas,qspi-r8a7743", "renesas,qspi";
-+			reg = <0 0xe6b10000 0 0x2c>;
-+			interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 917>;
-+			dmas = <&dmac0 0x17>, <&dmac0 0x18>,
-+			       <&dmac1 0x17>, <&dmac1 0x18>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			num-cs = <1>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			resets = <&cpg 917>;
-+			status = "disabled";
-+		};
-+
- 		sdhi0: sd@ee100000 {
- 			compatible = "renesas,sdhi-r8a7743";
- 			reg = <0 0xee100000 0 0x328>;
--- 
-2.1.4
+contrains -> constraints
+
+> timestamps etc.
+> 
+> The height should not be cut in half for the format for TOP or BOTTOM
+> fields settings. This was a mistake and it was made visible by the
+> scaling refactoring. Correct behavior is that the user should request a
+> frame size that fits the half height frame reflected in the field
+> setting. If not the VIN will do it's best to scale the top or bottom to
+
+it's -> its
+
+> the requested format and cropping and scaling do not work as expected.
+> 
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+
+Regards,
+
+	Hans
+
+> ---
+>  drivers/media/platform/rcar-vin/rcar-dma.c  | 15 +--------
+>  drivers/media/platform/rcar-vin/rcar-v4l2.c | 48 +++++++++++------------------
+>  2 files changed, 19 insertions(+), 44 deletions(-)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+> index 6cc880e5ef7e0718..f22bec062db31772 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-dma.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+> @@ -617,7 +617,6 @@ static int rvin_setup(struct rvin_dev *vin)
+>  	case V4L2_FIELD_INTERLACED_BT:
+>  		vnmc = VNMC_IM_FULL | VNMC_FOC;
+>  		break;
+> -	case V4L2_FIELD_ALTERNATE:
+>  	case V4L2_FIELD_NONE:
+>  		if (vin->continuous) {
+>  			vnmc = VNMC_IM_ODD_EVEN;
+> @@ -757,18 +756,6 @@ static int rvin_get_active_slot(struct rvin_dev *vin, u32 vnms)
+>  	return 0;
+>  }
+>  
+> -static enum v4l2_field rvin_get_active_field(struct rvin_dev *vin, u32 vnms)
+> -{
+> -	if (vin->format.field == V4L2_FIELD_ALTERNATE) {
+> -		/* If FS is set it's a Even field */
+> -		if (vnms & VNMS_FS)
+> -			return V4L2_FIELD_BOTTOM;
+> -		return V4L2_FIELD_TOP;
+> -	}
+> -
+> -	return vin->format.field;
+> -}
+> -
+>  static void rvin_set_slot_addr(struct rvin_dev *vin, int slot, dma_addr_t addr)
+>  {
+>  	const struct rvin_video_format *fmt;
+> @@ -941,7 +928,7 @@ static irqreturn_t rvin_irq(int irq, void *data)
+>  		goto done;
+>  
+>  	/* Capture frame */
+> -	vin->queue_buf[slot]->field = rvin_get_active_field(vin, vnms);
+> +	vin->queue_buf[slot]->field = vin->format.field;
+>  	vin->queue_buf[slot]->sequence = sequence;
+>  	vin->queue_buf[slot]->vb2_buf.timestamp = ktime_get_ns();
+>  	vb2_buffer_done(&vin->queue_buf[slot]->vb2_buf, VB2_BUF_STATE_DONE);
+> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> index c8c764188b85a926..9f0aac9c3398d613 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> @@ -102,6 +102,24 @@ static int rvin_get_sd_format(struct rvin_dev *vin, struct v4l2_pix_format *pix)
+>  	if (ret)
+>  		return ret;
+>  
+> +	switch (fmt.format.field) {
+> +	case V4L2_FIELD_TOP:
+> +	case V4L2_FIELD_BOTTOM:
+> +	case V4L2_FIELD_NONE:
+> +	case V4L2_FIELD_INTERLACED_TB:
+> +	case V4L2_FIELD_INTERLACED_BT:
+> +	case V4L2_FIELD_INTERLACED:
+> +		break;
+> +	case V4L2_FIELD_ALTERNATE:
+> +		/* Use VIN hardware to combine the two fields */
+> +		fmt.format.field = V4L2_FIELD_INTERLACED;
+> +		fmt.format.height *= 2;
+> +		break;
+> +	default:
+> +		vin->format.field = V4L2_FIELD_NONE;
+> +		break;
+> +	}
+> +
+>  	v4l2_fill_pix_format(pix, &fmt.format);
+>  
+>  	return 0;
+> @@ -115,33 +133,6 @@ int rvin_reset_format(struct rvin_dev *vin)
+>  	if (ret)
+>  		return ret;
+>  
+> -	/*
+> -	 * If the subdevice uses ALTERNATE field mode and G_STD is
+> -	 * implemented use the VIN HW to combine the two fields to
+> -	 * one INTERLACED frame. The ALTERNATE field mode can still
+> -	 * be requested in S_FMT and be respected, this is just the
+> -	 * default which is applied at probing or when S_STD is called.
+> -	 */
+> -	if (vin->format.field == V4L2_FIELD_ALTERNATE &&
+> -	    v4l2_subdev_has_op(vin_to_source(vin), video, g_std))
+> -		vin->format.field = V4L2_FIELD_INTERLACED;
+> -
+> -	switch (vin->format.field) {
+> -	case V4L2_FIELD_TOP:
+> -	case V4L2_FIELD_BOTTOM:
+> -	case V4L2_FIELD_ALTERNATE:
+> -		vin->format.height /= 2;
+> -		break;
+> -	case V4L2_FIELD_NONE:
+> -	case V4L2_FIELD_INTERLACED_TB:
+> -	case V4L2_FIELD_INTERLACED_BT:
+> -	case V4L2_FIELD_INTERLACED:
+> -		break;
+> -	default:
+> -		vin->format.field = V4L2_FIELD_NONE;
+> -		break;
+> -	}
+> -
+>  	vin->crop.top = vin->crop.left = 0;
+>  	vin->crop.width = vin->format.width;
+>  	vin->crop.height = vin->format.height;
+> @@ -226,9 +217,6 @@ static int __rvin_try_format(struct rvin_dev *vin,
+>  	switch (pix->field) {
+>  	case V4L2_FIELD_TOP:
+>  	case V4L2_FIELD_BOTTOM:
+> -	case V4L2_FIELD_ALTERNATE:
+> -		pix->height /= 2;
+> -		break;
+>  	case V4L2_FIELD_NONE:
+>  	case V4L2_FIELD_INTERLACED_TB:
+>  	case V4L2_FIELD_INTERLACED_BT:
+> 
