@@ -1,86 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:54385 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965482AbdIZKGR (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:56102 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S933586AbdIYIFJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 26 Sep 2017 06:06:17 -0400
-Received: from avalon.guest.par1.mozilla.com (unknown [IPv6:2a00:8c40:243:232:120b:a9ff:fe3c:7148])
-        by galahad.ideasonboard.com (Postfix) with ESMTPSA id 8ACEC21475
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 26 Sep 2017 12:06:05 +0200 (CEST)
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Subject: [RFC 04/13] arm64: dts: renesas: Use renesas,fcpvi compatible string
-Date: Tue, 26 Sep 2017 13:05:56 +0300
-Message-Id: <20170926100605.2313-7-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170926100605.2313-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170926100605.2313-1-laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 25 Sep 2017 04:05:09 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: balbi@kernel.org
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, stable@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 2/3] usb: gadget: udc: renesas_usb3: fix Pn_RAMMAP.Pn_MPKT value
+Date: Mon, 25 Sep 2017 17:01:24 +0900
+Message-Id: <1506326485-26254-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1506326485-26254-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1506326485-26254-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The FCP instances associated with a VSPI must be treated differently
-than the ones associated with another type of VSP. Use the appropriate
-compatible string.
+According to the datasheet of R-Car Gen3, the Pn_RAMMAP.Pn_MPKT should
+be set to one of 8, 16, 32, 64, 512 and 1024. Otherwise, when a gadget
+driver uses an interrupt endpoint, unexpected behavior happens. So,
+this patch fixes it.
 
-The fallback renesas,fcpv compatible string allows for backward
-compatibility with platforms that don't recognize the new compatible
-string yet.
-
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Fixes: 746bfe63bba3 ("usb: gadget: renesas_usb3: add support for Renesas USB3.0 peripheral controller")
+Cc: <stable@vger.kernel.org> # v4.5+
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi | 2 +-
- arch/arm64/boot/dts/renesas/r8a7795.dtsi     | 4 ++--
- arch/arm64/boot/dts/renesas/r8a7796.dtsi     | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/usb/gadget/udc/renesas_usb3.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-index 655dd30639c5..0fe4093434a5 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-@@ -49,7 +49,7 @@
- 	};
+diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
+index 555c105..7e0c534 100644
+--- a/drivers/usb/gadget/udc/renesas_usb3.c
++++ b/drivers/usb/gadget/udc/renesas_usb3.c
+@@ -2054,7 +2054,16 @@ static u32 usb3_calc_ramarea(int ram_size)
+ static u32 usb3_calc_rammap_val(struct renesas_usb3_ep *usb3_ep,
+ 				const struct usb_endpoint_descriptor *desc)
+ {
+-	return usb3_ep->rammap_val | PN_RAMMAP_MPKT(usb_endpoint_maxp(desc));
++	int i;
++	const u32 max_packet_array[] = {8, 16, 32, 64, 512};
++	u32 mpkt = PN_RAMMAP_MPKT(1024);
++
++	for (i = 0; i < ARRAY_SIZE(max_packet_array); i++) {
++		if (usb_endpoint_maxp(desc) <= max_packet_array[i])
++			mpkt = PN_RAMMAP_MPKT(max_packet_array[i]);
++	}
++
++	return usb3_ep->rammap_val | mpkt;
+ }
  
- 	fcpvi2: fcp@fe9cf000 {
--		compatible = "renesas,fcpv";
-+		compatible = "renesas,fcpvi", "renesas,fcpv";
- 		reg = <0 0xfe9cf000 0 0x200>;
- 		clocks = <&cpg CPG_MOD 609>;
- 		power-domains = <&sysc R8A7795_PD_A3VP>;
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index d5cfd1a1c539..ce2a59361a82 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1922,7 +1922,7 @@
- 		};
- 
- 		fcpvi0: fcp@fe9af000 {
--			compatible = "renesas,fcpv";
-+			compatible = "renesas,fcpvi", "renesas,fcpv";
- 			reg = <0 0xfe9af000 0 0x200>;
- 			clocks = <&cpg CPG_MOD 611>;
- 			power-domains = <&sysc R8A7795_PD_A3VP>;
-@@ -1941,7 +1941,7 @@
- 		};
- 
- 		fcpvi1: fcp@fe9bf000 {
--			compatible = "renesas,fcpv";
-+			compatible = "renesas,fcpvi", "renesas,fcpv";
- 			reg = <0 0xfe9bf000 0 0x200>;
- 			clocks = <&cpg CPG_MOD 610>;
- 			power-domains = <&sysc R8A7795_PD_A3VP>;
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 57ac5ca6ed98..38b3d8f9c9d2 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -1719,7 +1719,7 @@
- 		};
- 
- 		fcpvi0: fcp@fe9af000 {
--			compatible = "renesas,fcpv";
-+			compatible = "renesas,fcpvi", "renesas,fcpv";
- 			reg = <0 0xfe9af000 0 0x200>;
- 			clocks = <&cpg CPG_MOD 611>;
- 			power-domains = <&sysc R8A7796_PD_A3VC>;
+ static int usb3_enable_pipe_n(struct renesas_usb3_ep *usb3_ep,
 -- 
-Regards,
-
-Laurent Pinchart
+1.9.1
