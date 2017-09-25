@@ -1,43 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:43806 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750838AbdIORCL (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:45442 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932120AbdIYHB0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Sep 2017 13:02:11 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org, geert@glider.be
-Subject: [PULL REQUEST] vsp-du: Updates for the R-Car VSP1/DU drivers
-Date: Fri, 15 Sep 2017 18:02:08 +0100
-Message-Id: <1505494928-5616-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+        Mon, 25 Sep 2017 03:01:26 -0400
+Date: Mon, 25 Sep 2017 09:01:06 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 4/4] arm64: dts: renesas: r8a77995: draak: enable USB2.0
+ Host (EHCI/OHCI)
+Message-ID: <20170925070105.GA1019@verge.net.au>
+References: <1505385043-1554-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1505385043-1554-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <20170921085803.GQ15749@verge.net.au>
+ <CAMuHMdUxerxm0BUzXjmQniDsgE2gxEEScCF=rBMdEVcET3EmFg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUxerxm0BUzXjmQniDsgE2gxEEScCF=rBMdEVcET3EmFg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The following changes since commit ac74d019be78a24c610f9fb1f007bb46dbcf6fba:
+On Thu, Sep 21, 2017 at 11:12:12AM +0200, Geert Uytterhoeven wrote:
+> On Thu, Sep 21, 2017 at 10:58 AM, Simon Horman <horms@verge.net.au> wrote:
+> > [CC Geert]
+> >
+> > On Thu, Sep 14, 2017 at 07:30:43PM +0900, Yoshihiro Shimoda wrote:
+> >> This patch enables USB2.0 Host (EHCI/OHCI) for r8a77995.
+> >>
+> >> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> >
+> > Hi Geert,
+> >
+> > thanks for reviewing patches 1-3 of this series.
+> > I think you missed this one.
+> 
+> Oops, this time with Reply-to-all:
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-  Merge remote-tracking branch 'airlied-drm/drm-next' into vsp1/next (2017-09-15 14:40:32 +0100)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git tags/vsp-du/du-suspend-resume/v1
-
-for you to fetch changes up to 29952c78e7fa4533f18bbf629dd01a95abdfd61f:
-
-  drm: rcar-du: Remove unused CRTC suspend/resume functions (2017-09-15 14:45:31 +0100)
-
-----------------------------------------------------------------
-VSP1 and DU Suspend Resume v1
-
-Support DU suspend and resume, with a bug fix in VSP1 and (re-)implementation
-in rcar-du of the suspend handlers
-
-----------------------------------------------------------------
-Kieran Bingham (3):
-      media: vsp1: Prevent resuming DRM pipelines
-      drm: rcar-du: Add suspend resume helpers
-      drm: rcar-du: Remove unused CRTC suspend/resume functions
-
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 35 ----------------------------------
- drivers/gpu/drm/rcar-du/rcar_du_drv.c  | 18 ++++++++++++++---
- drivers/gpu/drm/rcar-du/rcar_du_drv.h  |  1 +
- drivers/media/platform/vsp1/vsp1_drv.c |  8 +++++++-
- 4 files changed, 23 insertions(+), 39 deletions(-)
+Thanks, applied.
