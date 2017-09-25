@@ -1,171 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34495 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:46196 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752479AbdI2Lxk (ORCPT
+        with ESMTP id S933608AbdIYHyx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Sep 2017 07:53:40 -0400
+        Mon, 25 Sep 2017 03:54:53 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 11/22] arm64: dts: renesas: initial R8A77970 SoC device tree
-Date: Fri, 29 Sep 2017 13:52:20 +0200
-Message-Id: <41f4345a6111056341346742942df3f5d5be535d.1506678250.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1506678250.git.horms+renesas@verge.net.au>
-References: <cover.1506678250.git.horms+renesas@verge.net.au>
+Subject: [PATCH] arm64: dts: salvator-common: add 12V regulator to backlight
+Date: Mon, 25 Sep 2017 09:54:32 +0200
+Message-Id: <829e4887b8676255778e162efc57e4a0f18f8bb3.1506324907.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1506324907.git.horms+renesas@verge.net.au>
+References: <cover.1506324907.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-The initial R8A77970 SoC device tree including Cortex-A53 CPU, GIC, timer,
-CPG, RST, and SYSC.
+This fixes the warning "pwm-backlight backlight: backlight supply power
+not found, using dummy regulator".
 
-Based on the original (and large) patch by Daisuke Matsushita
-<daisuke.matsushita.ns@hitachi.com>.
-
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Fixes: b33be33670217533 ("arm64: dts: salvator-x: Add panel backlight support")
+Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a77970.dtsi | 125 ++++++++++++++++++++++++++++++
- 1 file changed, 125 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a77970.dtsi
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-new file mode 100644
-index 000000000000..dec3492cd7dc
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -0,0 +1,125 @@
-+/*
-+ * Device Tree Source for the r8a77970 SoC
-+ *
-+ * Copyright (C) 2016-2017 Renesas Electronics Corp.
-+ * Copyright (C) 2017 Cogent Embedded, Inc.
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2.  This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
-+
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/renesas-cpg-mssr.h>
-+
-+/ {
-+	compatible = "renesas,r8a77970";
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	psci {
-+		compatible = "arm,psci-1.0", "arm,psci-0.2";
-+		method = "smc";
+diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+index 4786c67b5e65..d9d885006a8e 100644
+--- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+@@ -62,6 +62,7 @@
+ 		brightness-levels = <256 128 64 16 8 4 0>;
+ 		default-brightness-level = <6>;
+ 
++		power-supply = <&reg_12v>;
+ 		enable-gpios = <&gpio6 7 GPIO_ACTIVE_HIGH>;
+ 	};
+ 
+@@ -83,6 +84,15 @@
+ 		regulator-always-on;
+ 	};
+ 
++	reg_12v: regulator2 {
++		compatible = "regulator-fixed";
++		regulator-name = "fixed-12V";
++		regulator-min-microvolt = <12000000>;
++		regulator-max-microvolt = <12000000>;
++		regulator-boot-on;
++		regulator-always-on;
 +	};
 +
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		a53_0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			reg = <0>;
-+			clocks = <&cpg CPG_CORE 0>;
-+			power-domains = <&sysc 5>;
-+			next-level-cache = <&L2_CA53>;
-+			enable-method = "psci";
-+		};
-+
-+		L2_CA53: cache-controller {
-+			compatible = "cache";
-+			power-domains = <&sysc 21>;
-+			cache-unified;
-+			cache-level = <2>;
-+		};
-+	};
-+
-+	extal_clk: extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board */
-+		clock-frequency = <0>;
-+	};
-+
-+	extalr_clk: extalr {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board */
-+		clock-frequency = <0>;
-+	};
-+
-+	soc {
-+		compatible = "simple-bus";
-+		interrupt-parent = <&gic>;
-+
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		gic: interrupt-controller@f1010000 {
-+			compatible = "arm,gic-400";
-+			#interrupt-cells = <3>;
-+			#address-cells = <0>;
-+			interrupt-controller;
-+			reg = <0 0xf1010000 0 0x1000>,
-+			      <0 0xf1020000 0 0x20000>,
-+			      <0 0xf1040000 0 0x20000>,
-+			      <0 0xf1060000 0 0x20000>;
-+			interrupts = <GIC_PPI 9	(GIC_CPU_MASK_SIMPLE(1) |
-+				      IRQ_TYPE_LEVEL_HIGH)>;
-+			clocks = <&cpg CPG_MOD 408>;
-+			clock-names = "clk";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 408>;
-+		};
-+
-+		timer {
-+			compatible = "arm,armv8-timer";
-+			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(1) |
-+						  IRQ_TYPE_LEVEL_LOW)>,
-+				     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(1) |
-+						  IRQ_TYPE_LEVEL_LOW)>,
-+				     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(1) |
-+						  IRQ_TYPE_LEVEL_LOW)>,
-+				     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(1) |
-+						  IRQ_TYPE_LEVEL_LOW)>;
-+		};
-+
-+		cpg: clock-controller@e6150000 {
-+			compatible = "renesas,r8a77970-cpg-mssr";
-+			reg = <0 0xe6150000 0 0x1000>;
-+			clocks = <&extal_clk>, <&extalr_clk>;
-+			clock-names = "extal", "extalr";
-+			#clock-cells = <2>;
-+			#power-domain-cells = <0>;
-+			#reset-cells = <1>;
-+		};
-+
-+		rst: reset-controller@e6160000 {
-+			compatible = "renesas,r8a77970-rst";
-+			reg = <0 0xe6160000 0 0x200>;
-+		};
-+
-+		sysc: system-controller@e6180000 {
-+			compatible = "renesas,r8a77970-sysc";
-+			reg = <0 0xe6180000 0 0x440>;
-+			#power-domain-cells = <1>;
-+		};
-+
-+		prr: chipid@fff00044 {
-+			compatible = "renesas,prr";
-+			reg = <0 0xfff00044 0 4>;
-+		};
-+	};
-+};
+ 	rsnd_ak4613: sound {
+ 		compatible = "simple-audio-card";
+ 
 -- 
 2.1.4
