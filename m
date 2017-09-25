@@ -6,8 +6,8 @@ Cc: linux-renesas-soc@vger.kernel.org
 References: <20170815230338.14913-1-laurent.pinchart+renesas@ideasonboard.com>
  <20170815230338.14913-2-laurent.pinchart+renesas@ideasonboard.com>
 From: Kieran Bingham <kieranbingham@gmail.com>
-Message-ID: <1da2b51a-1eb2-f058-250e-01ff85e6138d@gmail.com>
-Date: Mon, 25 Sep 2017 18:37:43 +0100
+Message-ID: <9ee296ab-443a-dc67-e926-89894fb5058f@gmail.com>
+Date: Mon, 25 Sep 2017 18:32:43 +0100
 MIME-Version: 1.0
 In-Reply-To: <20170815230338.14913-2-laurent.pinchart+renesas@ideasonboard.com>
 Content-Type: text/plain; charset=utf-8
@@ -24,11 +24,6 @@ On 16/08/17 00:03, Laurent Pinchart wrote:
 > implementation.
 > 
 > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-
-This looks good to me.
-
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
 > ---
 >  drivers/gpu/drm/rcar-du/rcar_du_plane.c | 27 +++++++++++++++++----------
 >  drivers/gpu/drm/rcar-du/rcar_du_plane.h |  4 ++++
