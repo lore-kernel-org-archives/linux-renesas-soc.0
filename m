@@ -1,4 +1,3 @@
-Return-Path: <kieranbingham@gmail.com>
 Subject: Re: [PATCH 1/3] drm: rcar-du: Share plane atomic check code between
  Gen2 and Gen3
 To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
@@ -7,8 +6,8 @@ Cc: linux-renesas-soc@vger.kernel.org
 References: <20170815230338.14913-1-laurent.pinchart+renesas@ideasonboard.com>
  <20170815230338.14913-2-laurent.pinchart+renesas@ideasonboard.com>
 From: Kieran Bingham <kieranbingham@gmail.com>
-Message-ID: <9eff3a67-e071-09df-409f-429aa369563a@gmail.com>
-Date: Mon, 25 Sep 2017 18:39:55 +0100
+Message-ID: <1da2b51a-1eb2-f058-250e-01ff85e6138d@gmail.com>
+Date: Mon, 25 Sep 2017 18:37:43 +0100
 MIME-Version: 1.0
 In-Reply-To: <20170815230338.14913-2-laurent.pinchart+renesas@ideasonboard.com>
 Content-Type: text/plain; charset=utf-8
