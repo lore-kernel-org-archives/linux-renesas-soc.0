@@ -1,90 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34495 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752242AbdI2Lxr (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:15523 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S933619AbdIYIFK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Sep 2017 07:53:47 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 20/22] arm64: dts: renesas: r8a77995: draak: enable EthernetAVB
-Date: Fri, 29 Sep 2017 13:52:29 +0200
-Message-Id: <4503b50eac08f472e8690ec61f4d144e62cbdc55.1506678250.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1506678250.git.horms+renesas@verge.net.au>
-References: <cover.1506678250.git.horms+renesas@verge.net.au>
+        Mon, 25 Sep 2017 04:05:10 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: balbi@kernel.org
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, stable@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 3/3] usb: gadget: udc: renesas_usb3: Fix return value of usb3_write_pipe()
+Date: Mon, 25 Sep 2017 17:01:25 +0900
+Message-Id: <1506326485-26254-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1506326485-26254-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1506326485-26254-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+This patch fixes an issue that this driver cannot go status stage
+in control read when the req.zero is set to 1 and the len in
+usb3_write_pipe() is set to 0. Otherwise, if we use g_ncm driver,
+usb enumeration takes long time (5 seconds or more).
 
-This patch enables EthernetAVB for R-Car D3 draak board.
-
+Fixes: 746bfe63bba3 ("usb: gadget: renesas_usb3: add support for Renesas USB3.0 peripheral controller")
+Cc: <stable@vger.kernel.org> # v4.5+
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ drivers/usb/gadget/udc/renesas_usb3.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-index 7b776cb7e928..96b7ff5cc321 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-@@ -11,6 +11,7 @@
+diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
+index 7e0c534..63a2061 100644
+--- a/drivers/usb/gadget/udc/renesas_usb3.c
++++ b/drivers/usb/gadget/udc/renesas_usb3.c
+@@ -1038,7 +1038,7 @@ static int usb3_write_pipe(struct renesas_usb3_ep *usb3_ep,
+ 			usb3_ep->ep.maxpacket);
+ 	u8 *buf = usb3_req->req.buf + usb3_req->req.actual;
+ 	u32 tmp = 0;
+-	bool is_last;
++	bool is_last = !len ? true : false;
  
- /dts-v1/;
- #include "r8a77995.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
+ 	if (usb3_wait_pipe_status(usb3_ep, PX_STA_BUFSTS) < 0)
+ 		return -EBUSY;
+@@ -1059,7 +1059,8 @@ static int usb3_write_pipe(struct renesas_usb3_ep *usb3_ep,
+ 		usb3_write(usb3, tmp, fifo_reg);
+ 	}
  
- / {
- 	model = "Renesas Draak board based on r8a77995";
-@@ -18,6 +19,7 @@
+-	is_last = usb3_is_transfer_complete(usb3_ep, usb3_req);
++	if (!is_last)
++		is_last = usb3_is_transfer_complete(usb3_ep, usb3_req);
+ 	/* Send the data */
+ 	usb3_set_px_con_send(usb3_ep, len, is_last);
  
- 	aliases {
- 		serial0 = &scif2;
-+		ethernet0 = &avb;
- 	};
- 
- 	chosen {
-@@ -37,6 +39,14 @@
- };
- 
- &pfc {
-+	avb0_pins: avb {
-+		mux {
-+			groups = "avb0_link", "avb0_phy_int", "avb0_mdc",
-+				 "avb0_mii";
-+			function = "avb0";
-+		};
-+	};
-+
- 	scif2_pins: scif2 {
- 		groups = "scif2_data";
- 		function = "scif2";
-@@ -56,6 +66,21 @@
- 	status = "okay";
- };
- 
-+&avb {
-+	pinctrl-0 = <&avb0_pins>;
-+	pinctrl-names = "default";
-+	renesas,no-ether-link;
-+	phy-handle = <&phy0>;
-+	status = "okay";
-+
-+	phy0: ethernet-phy@0 {
-+		rxc-skew-ps = <1500>;
-+		reg = <0>;
-+		interrupt-parent = <&gpio5>;
-+		interrupts = <19 IRQ_TYPE_LEVEL_LOW>;
-+	};
-+};
-+
- &scif2 {
- 	pinctrl-0 = <&scif2_pins>;
- 	pinctrl-names = "default";
 -- 
-2.1.4
+1.9.1
