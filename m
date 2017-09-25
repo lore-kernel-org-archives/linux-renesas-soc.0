@@ -1,72 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:26385 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751362AbdI0IH7 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:46225 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933359AbdIYHzG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 27 Sep 2017 04:07:59 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: balbi@kernel.org
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, stable@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH] usb: renesas_usbhs: fix usbhsf_fifo_clear() behavior
-Date: Wed, 27 Sep 2017 17:04:05 +0900
-Message-Id: <1506499445-14826-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Mon, 25 Sep 2017 03:55:06 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 2/3] ARM: Add definition for monitor mode
+Date: Mon, 25 Sep 2017 09:54:43 +0200
+Message-Id: <c5d43be52e0c7380f985585ef72dac1a6a89b59d.1506325834.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1506325834.git.horms+renesas@verge.net.au>
+References: <cover.1506325834.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch fixes two issues:
- - the usbhsf_fifo_clear() is possible to cause 10 msec delay if
-   the pipe is RX direction and empty because the FRDY bit will never
-   be set to 1 in such case.
- - sets the BCLR of {C,Dn}FIFOCTR to 1 even when it's non-DCP pipe and
-   the FRDY bit sets to 0.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Fixes: e8d548d54968 ("usb: renesas_usbhs: fifo became independent from pipe.")
-Cc: <stable@vger.kernel.org> # v3.1+
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+<asm/ptrace.h> provides *_MODE definitions for the various processor
+modes, but monitor mode was missing.
+
+Add MON_MODE to avoid code using the hardcoded value.
+
+Suggested-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- This patch set is based on the Felipe's usb.git / testing/fixes branch
- (The commit is 7661ca09b2ff98f48693f431bb01fed62830e433).
+ arch/arm/include/uapi/asm/ptrace.h | 1 +
+ 1 file changed, 1 insertion(+)
 
- drivers/usb/renesas_usbhs/fifo.c | 21 ++++++++++++++++++---
- 1 file changed, 18 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/usb/renesas_usbhs/fifo.c b/drivers/usb/renesas_usbhs/fifo.c
-index d1af831..68f2690 100644
---- a/drivers/usb/renesas_usbhs/fifo.c
-+++ b/drivers/usb/renesas_usbhs/fifo.c
-@@ -282,11 +282,26 @@ static void usbhsf_fifo_clear(struct usbhs_pipe *pipe,
- 			      struct usbhs_fifo *fifo)
- {
- 	struct usbhs_priv *priv = usbhs_pipe_to_priv(pipe);
-+	int ret = 0;
- 
--	if (!usbhs_pipe_is_dcp(pipe))
--		usbhsf_fifo_barrier(priv, fifo);
-+	if (!usbhs_pipe_is_dcp(pipe)) {
-+		/*
-+		 * This driver checks the pipe condition first to avoid -EBUSY
-+		 * from usbhsf_fifo_barrier() with about 10 msec delay in
-+		 * the interrupt handler if the pipe is RX direction and empty.
-+		 */
-+		if (usbhs_pipe_is_dir_in(pipe))
-+			ret = usbhs_pipe_is_accessible(pipe);
-+		if (!ret)
-+			ret = usbhsf_fifo_barrier(priv, fifo);
-+	}
- 
--	usbhs_write(priv, fifo->ctr, BCLR);
-+	/*
-+	 * if non-DCP pipe, this driver should set BCLR when
-+	 * usbhsf_fifo_barrier() returns 0.
-+	 */
-+	if (!ret)
-+		usbhs_write(priv, fifo->ctr, BCLR);
- }
- 
- static int usbhsf_fifo_rcv_len(struct usbhs_priv *priv,
+diff --git a/arch/arm/include/uapi/asm/ptrace.h b/arch/arm/include/uapi/asm/ptrace.h
+index 5af0ed1b825a..70ff6bf489f3 100644
+--- a/arch/arm/include/uapi/asm/ptrace.h
++++ b/arch/arm/include/uapi/asm/ptrace.h
+@@ -53,6 +53,7 @@
+ #endif
+ #define FIQ_MODE	0x00000011
+ #define IRQ_MODE	0x00000012
++#define MON_MODE	0x00000016
+ #define ABT_MODE	0x00000017
+ #define HYP_MODE	0x0000001a
+ #define UND_MODE	0x0000001b
 -- 
-1.9.1
+2.1.4
