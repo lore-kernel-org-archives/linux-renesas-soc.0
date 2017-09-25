@@ -1,96 +1,33 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:54386 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967968AbdIZKGU (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:64843 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932395AbdIYIyk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 26 Sep 2017 06:06:20 -0400
-Received: from avalon.guest.par1.mozilla.com (unknown [IPv6:2a00:8c40:243:232:120b:a9ff:fe3c:7148])
-        by galahad.ideasonboard.com (Postfix) with ESMTPSA id 7831121508
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 26 Sep 2017 12:06:06 +0200 (CEST)
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Subject: [RFC 09/13] v4l: rcar-fcp: Configure the number of outstanding read transactions
-Date: Tue, 26 Sep 2017 13:06:01 +0300
-Message-Id: <20170926100605.2313-12-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170926100605.2313-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170926100605.2313-1-laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 25 Sep 2017 04:54:40 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH 0/2] spi: sh-msiof: Add r8a774[35] bindings
+Date: Mon, 25 Sep 2017 09:54:18 +0100
+Message-Id: <1506329660-4064-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The FCPV has a selectable number of outstanding read transactions.
-According to the documentation the value must be set based on the type
-of the VSP the FCPV is connected to. Set the register accordingly at
-probe time.
+This series adds compatible strings and device tree bindings in order to enable
+msiof support for r8a7743 and r8a7745.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/media/platform/rcar-fcp.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+Fabrizio Castro (2):
+  spi: sh-msiof: Add compatible strings for r8a774[35]
+  dt-bindings: spi: sh-msiof: Add r8a774[35] to the compatible list
 
-diff --git a/drivers/media/platform/rcar-fcp.c b/drivers/media/platform/rcar-fcp.c
-index ddbc960f8458..e93e9c4227d9 100644
---- a/drivers/media/platform/rcar-fcp.c
-+++ b/drivers/media/platform/rcar-fcp.c
-@@ -67,6 +67,7 @@
- enum rcar_fcp_type {
- 	RCAR_FCPF,
- 	RCAR_FCPV,
-+	RCAR_FCPVI,
- };
- 
- struct rcar_fcp_device {
-@@ -89,6 +90,12 @@ static u32 rcar_fcp_read(struct rcar_fcp_device *fcp, unsigned int reg)
- 	return ioread32(fcp->mmio + reg);
- }
- 
-+static void rcar_fcp_write(struct rcar_fcp_device *fcp, unsigned int reg,
-+			   u32 value)
-+{
-+	iowrite32(value, fcp->mmio + reg);
-+}
-+
- /* -----------------------------------------------------------------------------
-  * Public API
-  */
-@@ -194,6 +201,7 @@ static int rcar_fcp_setup(struct rcar_fcp_device *fcp)
- 	static const char * const models[] = {
- 		[RCAR_FCPF] = "FCPF",
- 		[RCAR_FCPV] = "FCPV",
-+		[RCAR_FCPVI] = "FCPVI",
- 	};
- 	static struct {
- 		u32 version;
-@@ -228,12 +236,29 @@ static int rcar_fcp_setup(struct rcar_fcp_device *fcp)
- 	dev_dbg(fcp->dev, "%s %s device found\n", models[fcp->type],
- 		versions[i].name);
- 
-+	/* Set the processing mode (needed for FCPV only). */
-+	switch (fcp->type) {
-+	case RCAR_FCPV:
-+		/* 64 outstanding read transactions */
-+		rcar_fcp_write(fcp, FCP_CFG0, 0);
-+		break;
-+
-+	case RCAR_FCPVI:
-+		/* 16 outstanding read transactions */
-+		rcar_fcp_write(fcp, FCP_CFG0, FCP_CFG0_FCPVSEL);
-+		break;
-+
-+	default:
-+		break;
-+	}
-+
- 	return 0;
- }
- 
- static const struct of_device_id rcar_fcp_of_match[] = {
- 	{ .compatible = "renesas,fcpf", .data = (void *)RCAR_FCPF },
- 	{ .compatible = "renesas,fcpv", .data = (void *)RCAR_FCPV },
-+	{ .compatible = "renesas,fcpvi", .data = (void *)RCAR_FCPVI },
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, rcar_fcp_of_match);
+ Documentation/devicetree/bindings/spi/sh-msiof.txt | 6 ++++--
+ drivers/spi/spi-sh-msiof.c                         | 2 ++
+ 2 files changed, 6 insertions(+), 2 deletions(-)
+
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.4
