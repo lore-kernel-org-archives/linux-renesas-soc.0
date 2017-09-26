@@ -1,77 +1,86 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:16636 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751167AbdIMRGQ (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:54385 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965482AbdIZKGR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Sep 2017 13:06:16 -0400
-From: Chris Paterson <chris.paterson2@renesas.com>
-To: Simon Horman <horms@verge.net.au>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Chris Paterson <chris.paterson2@renesas.com>
-Subject: [PATCH 7/8] ARM: dts: r8a7745: Add QSPI support
-Date: Wed, 13 Sep 2017 18:05:40 +0100
-Message-Id: <1505322341-9480-8-git-send-email-chris.paterson2@renesas.com>
-In-Reply-To: <1505322341-9480-1-git-send-email-chris.paterson2@renesas.com>
-References: <1505322341-9480-1-git-send-email-chris.paterson2@renesas.com>
+        Tue, 26 Sep 2017 06:06:17 -0400
+Received: from avalon.guest.par1.mozilla.com (unknown [IPv6:2a00:8c40:243:232:120b:a9ff:fe3c:7148])
+        by galahad.ideasonboard.com (Postfix) with ESMTPSA id 8ACEC21475
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 26 Sep 2017 12:06:05 +0200 (CEST)
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org
+Subject: [RFC 04/13] arm64: dts: renesas: Use renesas,fcpvi compatible string
+Date: Tue, 26 Sep 2017 13:05:56 +0300
+Message-Id: <20170926100605.2313-7-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170926100605.2313-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170926100605.2313-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+The FCP instances associated with a VSPI must be treated differently
+than the ones associated with another type of VSP. Use the appropriate
+compatible string.
 
-Add the DT node for the QSPI interface to the SoC dtsi.
+The fallback renesas,fcpv compatible string allows for backward
+compatibility with platforms that don't recognize the new compatible
+string yet.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
-This patch is based on renesas-devel-20170913-v4.13.
+ arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi | 2 +-
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi     | 4 ++--
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi     | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
-This patch is dependant on:
-- "dt-bindings: qspi: Add r8a7743/5 to the compatible list"
-
-
- arch/arm/boot/dts/r8a7745.dtsi | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index 37c0fac..b819ec5 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -25,6 +25,7 @@
- 		i2c3 = &i2c3;
- 		i2c4 = &i2c4;
- 		i2c5 = &i2c5;
-+		spi0 = &qspi;
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+index 655dd30639c5..0fe4093434a5 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+@@ -49,7 +49,7 @@
  	};
  
- 	cpus {
-@@ -752,6 +753,22 @@
- 			status = "disabled";
+ 	fcpvi2: fcp@fe9cf000 {
+-		compatible = "renesas,fcpv";
++		compatible = "renesas,fcpvi", "renesas,fcpv";
+ 		reg = <0 0xfe9cf000 0 0x200>;
+ 		clocks = <&cpg CPG_MOD 609>;
+ 		power-domains = <&sysc R8A7795_PD_A3VP>;
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index d5cfd1a1c539..ce2a59361a82 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -1922,7 +1922,7 @@
  		};
  
-+		qspi: spi@e6b10000 {
-+			compatible = "renesas,qspi-r8a7745", "renesas,qspi";
-+			reg = <0 0xe6b10000 0 0x2c>;
-+			interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 917>;
-+			dmas = <&dmac0 0x17>, <&dmac0 0x18>,
-+			       <&dmac1 0x17>, <&dmac1 0x18>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			num-cs = <1>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			resets = <&cpg 917>;
-+			status = "disabled";
-+		};
-+
- 		sdhi0: sd@ee100000 {
- 			compatible = "renesas,sdhi-r8a7745";
- 			reg = <0 0xee100000 0 0x328>;
+ 		fcpvi0: fcp@fe9af000 {
+-			compatible = "renesas,fcpv";
++			compatible = "renesas,fcpvi", "renesas,fcpv";
+ 			reg = <0 0xfe9af000 0 0x200>;
+ 			clocks = <&cpg CPG_MOD 611>;
+ 			power-domains = <&sysc R8A7795_PD_A3VP>;
+@@ -1941,7 +1941,7 @@
+ 		};
+ 
+ 		fcpvi1: fcp@fe9bf000 {
+-			compatible = "renesas,fcpv";
++			compatible = "renesas,fcpvi", "renesas,fcpv";
+ 			reg = <0 0xfe9bf000 0 0x200>;
+ 			clocks = <&cpg CPG_MOD 610>;
+ 			power-domains = <&sysc R8A7795_PD_A3VP>;
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 57ac5ca6ed98..38b3d8f9c9d2 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -1719,7 +1719,7 @@
+ 		};
+ 
+ 		fcpvi0: fcp@fe9af000 {
+-			compatible = "renesas,fcpv";
++			compatible = "renesas,fcpvi", "renesas,fcpv";
+ 			reg = <0 0xfe9af000 0 0x200>;
+ 			clocks = <&cpg CPG_MOD 611>;
+ 			power-domains = <&sysc R8A7796_PD_A3VC>;
 -- 
-1.9.1
+Regards,
+
+Laurent Pinchart
