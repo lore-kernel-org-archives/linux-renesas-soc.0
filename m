@@ -1,80 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34793 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751906AbdI2LzG (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:54386 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965482AbdIZKGS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Sep 2017 07:55:06 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
+        Tue, 26 Sep 2017 06:06:18 -0400
+Received: from avalon.guest.par1.mozilla.com (unknown [IPv6:2a00:8c40:243:232:120b:a9ff:fe3c:7148])
+        by galahad.ideasonboard.com (Postfix) with ESMTPSA id 1E9A621481
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 26 Sep 2017 12:06:06 +0200 (CEST)
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 43/48] ARM: dts: iwg20m: Add SPI NOR support
-Date: Fri, 29 Sep 2017 13:53:35 +0200
-Message-Id: <781e923a5fe4751d3aaa740ca3de0f9d179c34ef.1506683482.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1506683482.git.horms+renesas@verge.net.au>
-References: <cover.1506683482.git.horms+renesas@verge.net.au>
+Subject: [RFC 07/13] arm64: dts: r8a7795: Add dma-ranges property in the /soc node
+Date: Tue, 26 Sep 2017 13:05:59 +0300
+Message-Id: <20170926100605.2313-10-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170926100605.2313-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170926100605.2313-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+DMA address translation requires a dma-ranges property in bus nodes.
+While some operating systems work around the absence of such property in
+an attempt to implement compatibility with incorrect DT, the property is
+nonetheless required.
 
-Add support for the SPI NOR device used to boot up the system
-to the System on Module DT.
+Add the dma-ranges property to the /soc node that contains all on-SoC
+peripherals. The bus supports 40-bit DMA addressing without any address
+translation.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- arch/arm/boot/dts/r8a7743-iwg20m.dtsi | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/r8a7743-iwg20m.dtsi b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
-index 4119737cb883..75a8ca571846 100644
---- a/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
-+++ b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
-@@ -44,6 +44,11 @@
- 		function = "mmc";
- 	};
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index c55003563f61..e6a008d9d5f8 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -222,6 +222,7 @@
  
-+	qspi_pins: qspi {
-+		groups = "qspi_ctrl", "qspi_data2";
-+		function = "qspi";
-+	};
-+
- 	sdhi0_pins: sd0 {
- 		groups = "sdhi0_data4", "sdhi0_ctrl";
- 		function = "sdhi0";
-@@ -61,6 +66,27 @@
- 	status = "okay";
- };
+ 		#address-cells = <2>;
+ 		#size-cells = <2>;
++		dma-ranges = <0 0x00000000 0 0x00000000 0x100 0x00000000>;
+ 		ranges;
  
-+&qspi {
-+	pinctrl-0 = <&qspi_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+
-+	/* WARNING - This device contains the bootloader. Handle with care. */
-+	flash: flash@0 {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		compatible = "sst,sst25vf016b", "jedec,spi-nor";
-+		reg = <0>;
-+		spi-max-frequency = <50000000>;
-+		spi-tx-bus-width = <1>;
-+		spi-rx-bus-width = <1>;
-+		m25p,fast-read;
-+		spi-cpol;
-+		spi-cpha;
-+	};
-+};
-+
- &sdhi0 {
- 	pinctrl-0 = <&sdhi0_pins>;
- 	pinctrl-names = "default";
+ 		gic: interrupt-controller@f1010000 {
 -- 
-2.1.4
+Regards,
+
+Laurent Pinchart
