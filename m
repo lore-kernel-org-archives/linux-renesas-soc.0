@@ -1,52 +1,85 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:41135 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751902AbdINKeZ (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:54665 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966976AbdIZMxw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Sep 2017 06:34:25 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 1/4] arm64: dts: renesas: r8a77995: Add USB2.0 PHY device node
-Date: Thu, 14 Sep 2017 19:30:40 +0900
-Message-Id: <1505385043-1554-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1505385043-1554-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1505385043-1554-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Tue, 26 Sep 2017 08:53:52 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [RFC 02/13] dt-bindings: media: renesas-fcp: Add a compatible string for VSPI FCP
+Date: Tue, 26 Sep 2017 15:53:50 +0300
+Message-ID: <12769881.yQpPk7Z5dn@avalon>
+In-Reply-To: <CAMuHMdXYMHA_URc=3vhcLRvKdysrQmuvSZwGCy_wkW2yn_Jbng@mail.gmail.com>
+References: <20170926100605.2313-1-laurent.pinchart+renesas@ideasonboard.com> <1739039.foeTIo5Y36@avalon> <CAMuHMdXYMHA_URc=3vhcLRvKdysrQmuvSZwGCy_wkW2yn_Jbng@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds USB2.0 PHY device node for r8a77995.
+Hi Geert,
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+On Tuesday, 26 September 2017 15:46:59 EEST Geert Uytterhoeven wrote:
+> On Tue, Sep 26, 2017 at 2:39 PM, Laurent Pinchart wrote:
+> > On Tuesday, 26 September 2017 14:47:35 EEST Geert Uytterhoeven wrote:
+> >> On Tue, Sep 26, 2017 at 12:05 PM, Laurent Pinchart wrote:
+> >> > The FCP instances associated with a VSPI must be treated differently
+> >> > than the ones associated with another type of VSP. Add a new compatible
+> >> > string to allow telling them apart.
+> >> > 
+> >> > Signed-off-by: Laurent Pinchart
+> >> > <laurent.pinchart+renesas@ideasonboard.com>
+> >> > ---
+> >> > 
+> >> >  Documentation/devicetree/bindings/media/renesas,fcp.txt | 3 ++-
+> >> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> >> > 
+> >> > diff --git a/Documentation/devicetree/bindings/media/renesas,fcp.txt
+> >> > b/Documentation/devicetree/bindings/media/renesas,fcp.txt index
+> >> > 3ec91803ba58..c1f28736e2d6 100644
+> >> > --- a/Documentation/devicetree/bindings/media/renesas,fcp.txt
+> >> > +++ b/Documentation/devicetree/bindings/media/renesas,fcp.txt
+> >> > @@ -11,7 +11,8 @@ are paired with. These DT bindings currently support
+> >> > the FCPV and FCPF.
+> >> > 
+> >> >     - compatible: Must be one or more of the following
+> >> > -   - "renesas,fcpv" for generic compatible 'FCP for VSP'
+> >> > +   - "renesas,fcpvi" for generic compatible 'FCP for VSPI'
+> >> > +   - "renesas,fcpv" for generic compatible 'FCP for VSP' (all other
+> >> > VSPs)
+> >> >     - "renesas,fcpf" for generic compatible 'FCP for FDP'
+> >> 
+> >> You may want to update the paragraph before that, referring to three
+> >> types of FCP.
+> > 
+> > As far as I know the FCP-VSPI and FCP-VSP[^I] are the same type of device,
+> > with different SoC integration.
+> 
+> OK. So they should use the same compatible value?
+> 
+> >> Just wondering: as FCPVI vs. FCPV is programmable through the FCPVSEL
+> >> bit, can you deduce the type using the renesas,fcp link in the
+> >> corresponding VSP node in DT?
+> > 
+> > You could possibly, if you had a link from the FCP to the VSP in DT. As
+> > there's none, the type can't be currently inferred from DT at probe time.
+> > We could pass the type from the VSP driver to the FCP driver, but I'm not
+> > sure I want to go that way. If the FCP-VSPI and VSP[^I] are identicaly
+> > and need different software configuration due to being used by different
+> > types of VSPs it would make sense, but if there are hardware differences
+> > between the FCPs then I think they should be described in DT.
+> 
+> Given the FCPVSEL bit, it looks like there's no difference, and software is
+> supposed to specify configuration.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index 72d04d7..59ed130 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -309,5 +309,17 @@
- 			resets = <&cpg 310>;
- 			status = "disabled";
- 		};
-+
-+		usb2_phy0: usb-phy@ee080200 {
-+			compatible = "renesas,usb2-phy-r8a77995",
-+				     "renesas,rcar-gen3-usb2-phy";
-+			reg = <0 0xee080200 0 0x700>;
-+			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 703>;
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 703>;
-+			#phy-cells = <0>;
-+			status = "disabled";
-+		};
- 	};
- };
+That's hard to tell for sure, it could be that there are hardware differences 
+that require a different software configuration. I'll keep your comment in 
+mind for the next version though, and will try to get more information from 
+Renesas.
+
 -- 
-1.9.1
+Regards,
+
+Laurent Pinchart
