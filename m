@@ -1,158 +1,261 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:45262 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751551AbdIQXsw (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:54385 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965482AbdIZKGP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 17 Sep 2017 19:48:52 -0400
-From: Kieran Bingham <kbingham@kernel.org>
-To: laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH 4/5] tests: Test the log validator with fake faults
-Date: Mon, 18 Sep 2017 00:48:43 +0100
-Message-Id: <1505692124-12167-5-git-send-email-kbingham@kernel.org>
-In-Reply-To: <1505692124-12167-1-git-send-email-kbingham@kernel.org>
-References: <1505692124-12167-1-git-send-email-kbingham@kernel.org>
+        Tue, 26 Sep 2017 06:06:15 -0400
+Received: from avalon.guest.par1.mozilla.com (unknown [IPv6:2a00:8c40:243:232:120b:a9ff:fe3c:7148])
+        by galahad.ideasonboard.com (Postfix) with ESMTPSA id B0BA42075A
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 26 Sep 2017 12:06:04 +0200 (CEST)
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org
+Subject: [RFC] [U-BOOT] board: salvator-x: Add reserved lossy decompression areas to DT
+Date: Tue, 26 Sep 2017 13:05:52 +0300
+Message-Id: <20170926100605.2313-3-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170926100605.2313-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170926100605.2313-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Provide a couple of example kernel faults, to exercise the kernel log
-validator functionality.
+Lossy decompression memory areas can't be used as normal system memory
+as reading from them will automatically perform lossy decompression.
 
-The tests inject fake kernel faults into the kernel log buffer which
-should be parsed by the validator.
+The decompression areas are configured by the BL2 in registers that are
+accessible from secure mode only, and thus can't be read by U-boot.
+Fortunately BL2 stores a copy of these registers at a fixed address in
+SRAM, where the values can be read.
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Parse the SRAM registers copy to add all lossy decompression memory
+areas to DT in reserved-memory nodes.
 
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
-This test exercises the log validator of the test suite rather than
-the kms subsystem itself.
+ board/renesas/salvator-x/salvator-x.c | 192 ++++++++++++++++++++++++++++++++++
+ include/configs/rcar-gen3-common.h    |   1 +
+ 2 files changed, 193 insertions(+)
 
-As such - it is unlikely to be appropriate for integration as is, but
-could be adapted as part of a test suite for the test suite.
----
- tests/kms-test-log-validator.py | 111 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 111 insertions(+)
- create mode 100755 tests/kms-test-log-validator.py
-
-diff --git a/tests/kms-test-log-validator.py b/tests/kms-test-log-validator.py
-new file mode 100755
-index 000000000000..5b42897f9775
---- /dev/null
-+++ b/tests/kms-test-log-validator.py
-@@ -0,0 +1,111 @@
-+#!/usr/bin/python3
+diff --git a/board/renesas/salvator-x/salvator-x.c b/board/renesas/salvator-x/salvator-x.c
+index 8af0e1080022..0d052ba5ed88 100644
+--- a/board/renesas/salvator-x/salvator-x.c
++++ b/board/renesas/salvator-x/salvator-x.c
+@@ -25,6 +25,7 @@
+ #include <asm/arch/sh_sdhi.h>
+ #include <i2c.h>
+ #include <mmc.h>
++#include <fdt_support.h>
+ 
+ DECLARE_GLOBAL_DATA_PTR;
+ 
+@@ -475,3 +476,194 @@ int checkboard(void)
+ 	return 0;
+ }
+ #endif
 +
-+import kmstest
++#if defined(CONFIG_OF_BOARD_SETUP)
++struct bl2_lossy_info {
++	u32 magic;
++	u32 a0;
++	u32 b0;
++};
 +
++#define BL2_LOSSY_INFO_ADDRESS		0x47fd7000
++#define BL2_LOSSY_INFO_ENTRIES		16
++#define BL2_LOSSY_INFO_MAGIC		0x12345678
 +
-+v4l2_warning = """
-+buildroot login: [ 1192.247238] ------------[ cut here ]------------
-+[ 1192.253245] WARNING: CPU: 1 PID: 4059 at /home/linuxembedded/iob/fdp1/kbuild-rcar/sources/linux/drivers/media/v4l2-core/videobuf2-core.c:1458 vb2_start_streaming+0xd4/0x150
-+[ 1192.271226] Modules linked in:
-+[ 1192.275575]
-+[ 1192.278328] CPU: 1 PID: 4059 Comm: yavta Tainted: G        W       4.7.0-rc3-00001-g9f21437be9ed-dirty #523
-+[ 1192.289384] Hardware name: Renesas Salvator-X board based on r8a7795 (DT)
-+[ 1192.297496] task: ffffffc02eba0000 ti: ffffffc02f3d8000 task.ti: ffffffc02f3d8000
-+[ 1192.306323] PC is at vb2_start_streaming+0xd4/0x150
-+[ 1192.312548] LR is at vb2_start_streaming+0x64/0x150
-+[ 1192.318763] pc : [<ffffff800866e8ec>] lr : [<ffffff800866e87c>] pstate: 60000145
-+[ 1192.327507] sp : ffffffc02f3dbb10
-+[ 1192.332149] x29: ffffffc02f3dbb10 x28: ffffffc02fb58780
-+[ 1192.338801] x27: ffffffc0317d6500 x26: 0000000000000001
-+[ 1192.345444] x25: ffffffc02f3dbd40 x24: 0000000000000000
-+[ 1192.352068] x23: 000000000000000a x22: 00000000fffffff4
-+[ 1192.358684] x21: ffffffc031d935f8 x20: ffffffc031d93780
-+[ 1192.365294] x19: ffffffc031d935d8 x18: 0000000000000001
-+[ 1192.371905] x17: 0000007f94cde3f0 x16: ffffff80081d5450
-+[ 1192.378506] x15: 003b9aca00000000 x14: 000000c8000000c8
-+[ 1192.385102] x13: 000000c8000000c8 x12: 000000c8000000c8
-+[ 1192.391675] x11: 000000c8000000c8 x10: 000000c8000000c8
-+[ 1192.398232] x9 : 0000000000000200 x8 : 0000000000000001
-+[ 1192.404778] x7 : 0000000000084084 x6 : ffffffc02f666108
-+[ 1192.411322] x5 : 0000000000000000 x4 : 0000000000000000
-+[ 1192.417858] x3 : 0000000000000000 x2 : 0000000000000001
-+[ 1192.424376] x1 : 0000000000000000 x0 : 0000000000000004
-+[ 1192.430861]
-+[ 1192.433481] ---[ end trace fab78d8be5167327 ]---
-+[ 1192.439239] Call trace:
-+[ 1192.442817] Exception stack(0xffffffc02f3db950 to 0xffffffc02f3dba70)
-+[ 1192.450420] b940:                                   ffffffc031d935d8 ffffffc031d93780
-+[ 1192.459430] b960: ffffffc02f3dbb10 ffffff800866e8ec ffffffbf00b69c80 ffffffbf00b69c80
-+[ 1192.468446] b980: ffffffc03100ed80 0000000000000000 ffffffc02f3db9b0 ffffff8008184c8c
-+[ 1192.477449] b9a0: 0000007f93fe0000 0000000108184b70 ffffffc02f3dba90 ffffff800809492c
-+[ 1192.486468] b9c0: ffffffc02eba0000 ffffffc02f3dbba0 ffffffc03100ed80 0000007f93fe000f
-+[ 1192.495477] b9e0: 0000000096000047 0000000000000015 0000000000000004 0000000000000000
-+[ 1192.504484] ba00: 0000000000000001 0000000000000000 0000000000000000 0000000000000000
-+[ 1192.513477] ba20: ffffffc02f666108 0000000000084084 0000000000000001 0000000000000200
-+[ 1192.522448] ba40: 000000c8000000c8 000000c8000000c8 000000c8000000c8 000000c8000000c8
-+[ 1192.531407] ba60: 000000c8000000c8 003b9aca00000000
-+[ 1192.537388] [<ffffff800866e8ec>] vb2_start_streaming+0xd4/0x150
-+[ 1192.544415] [<ffffff800867073c>] vb2_core_streamon+0x16c/0x1a0
-+[ 1192.551330] [<ffffff8008672eb4>] vb2_streamon+0x3c/0x60
-+[ 1192.557647] [<ffffff8008697d74>] vsp1_video_streamon+0x164/0x250
-+[ 1192.564753] [<ffffff8008657e60>] v4l_streamon+0x20/0x28
-+[ 1192.571077] [<ffffff800865bc0c>] __video_do_ioctl+0x25c/0x2c8
-+[ 1192.577907] [<ffffff800865b7d4>] video_usercopy+0x28c/0x448
-+[ 1192.584538] [<ffffff800865b9a4>] video_ioctl2+0x14/0x20
-+[ 1192.590781] [<ffffff8008656b20>] v4l2_ioctl+0xe8/0x118
-+[ 1192.596902] [<ffffff80081d4dac>] do_vfs_ioctl+0xa4/0x748
-+[ 1192.603187] [<ffffff80081d54dc>] SyS_ioctl+0x8c/0xa0
-+[ 1192.609136] [<ffffff8008084ecc>] __sys_trace_return+0x0/0x4
-+"""
++#define DCMPAREACRA_EN			(1UL << 31)
++#define DCMPAREACRA_FMT_GET(reg)	(((reg) >> 29) & 3)
++#define DCMPAREACRA_SADDR_MASK		(0x3ffff << 0)
++#define DCMPAREACRB_EADDR_MASK		(0x3ffff << 0)
 +
++#define LOSSY_DECOMPRESSION_COMPAT	"renesas,lossy-decompression\0shared-dma-pool"
++#define LOSSY_MAX_FORMATS		3
 +
-+zynqpanic = """
-+Kernel panic - not syncing: zynqmp_plat_init power management API version error. Expected: v0.3 - Found: v0.2
++static int ft_get_lossy_region(void *fdt, int parent, u64 unit_address,
++			       unsigned int format)
++{
++	char name[35];
++	int node;
++	int ret;
 +
-+CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.9.0-00012-g98d93a7db7a0-dirty #2
-+Hardware name: ZynqMP ZCU102 RevB (DT)
-+Call trace:
-+[<ffffff8008087908>] dump_backtrace+0x0/0x1a0
-+[<ffffff8008087abc>] show_stack+0x14/0x20
-+[<ffffff80083d1c88>] dump_stack+0x94/0xb4
-+[<ffffff800812a384>] panic+0x114/0x25c
-+[<ffffff8008b4fa28>] zynqmp_plat_init+0x148/0x170
-+[<ffffff80080828b8>] do_one_initcall+0x38/0x128
-+[<ffffff8008b30be4>] kernel_init_freeable+0x84/0x1e0
-+[<ffffff800888bd18>] kernel_init+0x10/0x100
-+[<ffffff8008082680>] ret_from_fork+0x10/0x50
-+---[ end Kernel panic - not syncing: zynqmp_plat_init power management API version error. Expected: v0.3 - Found: v0.2
-+"""
++	/*
++	 * Find the lossy-decompression reserved-memory node. The node name in
++	 * the DTB is "lossy-decompression-<format>" without a unit address to
++	 * allow referencing it through phandles in the DTS. We will rename it
++	 * with a unit address later.
++	 */
++	snprintf(name, sizeof(name), "lossy-decompression-%u", format);
++	node = fdt_subnode_offset(fdt, parent, name);
++	if (node >= 0)
++		return node;
 +
++	/*
++	 * If the node can't be found, create it and set the required
++	 * properties. The DTB is expected to have those properties set if the
++	 * node exists.
++	 */
++	node = fdt_add_subnode(fdt, parent, name);
++	if (node < 0)
++		return node;
 +
-+def printk(msg):
-+    with open('/dev/kmsg', 'a') as log_buffer:
-+        log_buffer.write("<0>" + msg)
++	ret = fdt_setprop(fdt, node, "compatible", LOSSY_DECOMPRESSION_COMPAT,
++			  sizeof(LOSSY_DECOMPRESSION_COMPAT));
++	if (ret < 0)
++		return ret;
 +
++	ret = fdt_setprop(fdt, node, "reg", NULL, 0);
++	if (ret < 0)
++		return ret;
 +
-+class FakeWarningLog(kmstest.KMSTest):
-+    """Generate a fake Kernel WARN_ON as part of a test."""
++	ret = fdt_setprop(fdt, node, "no-map", NULL, 0);
++	if (ret < 0)
++		return ret;
 +
-+    def main(self):
-+        self.start("log validator recognition of a warning")
++	ret = fdt_setprop_u32(fdt, node, "renesas,format", format);
++	if (ret < 0)
++		return ret;
 +
-+        for line in v4l2_warning.splitlines():
-+            printk(line)
++	return node;
++}
 +
-+        self.success()
++int ft_board_setup(void *fdt, bd_t *bd)
++{
++	struct bl2_lossy_info *lossy_info =
++		(struct bl2_lossy_info *)BL2_LOSSY_INFO_ADDRESS;
++	u64 unit_addresses[LOSSY_MAX_FORMATS] = { 0, };
++	const void *prop;
++	unsigned int i;
++	int rsv_node;
++	int len;
++	int ret;
 +
-+FakeWarningLog().execute()
++	/* Return immediately if no enabled lossy info entry exists. */
++	for (i = 0; i < BL2_LOSSY_INFO_ENTRIES; ++i) {
++		if (lossy_info[i].magic == BL2_LOSSY_INFO_MAGIC &&
++		    lossy_info[i].a0 & DCMPAREACRA_EN)
++			break;
++	}
 +
++	if (i == BL2_LOSSY_INFO_ENTRIES)
++		return 0;
 +
-+class FakePanicLog(kmstest.KMSTest):
-+    """Generate a fake Kernel Panic as part of a test."""
++	/*
++	 * Find the /reserved-memory node, create it if needed. Add or validate
++	 * the #address-cells and #size-cells properties.
++	 */
++	rsv_node = fdt_find_or_add_subnode(fdt, 0, "reserved-memory");
++	if (rsv_node < 0)
++		return rsv_node;
 +
-+    def main(self):
-+        self.start("log validator recognition of a panic")
++	prop = fdt_getprop(fdt, rsv_node, "#address-cells", &len);
++	if (!prop) {
++		ret = fdt_setprop_u32(fdt, rsv_node, "#address-cells", 2);
++		if (ret)
++			return ret;
++	} else {
++		if (len != 4 || fdt32_to_cpu(*(fdt32_t *)prop) != 2)
++			return -FDT_ERR_BADNCELLS;
++	}
 +
-+        for line in zynqpanic.splitlines():
-+            printk(line)
++	prop = fdt_getprop(fdt, rsv_node, "#size-cells", &len);
++	if (!prop) {
++		ret = fdt_setprop_u32(fdt, rsv_node, "#size-cells", 2);
++		if (ret)
++			return ret;
++	} else {
++		if (len != 4 || fdt32_to_cpu(*(fdt32_t *)prop) != 2)
++			return -FDT_ERR_BADNCELLS;
++	}
 +
-+        self.success()
++	prop = fdt_getprop(fdt, rsv_node, "ranges", &len);
++	if (!prop) {
++		ret = fdt_setprop(fdt, rsv_node, "ranges", NULL, 0);
++		if (ret)
++			return ret;
++	}
 +
-+FakePanicLog().execute()
++	/* Add the reserved memory entries. */
++	for (i = 0; i < BL2_LOSSY_INFO_ENTRIES; ++i) {
++		struct fdt_reserve_entry rsv_mem;
++		int node;
++		u32 format;
++		u64 start;
++		u64 end;
++
++		/* Skip disabled entries and invalid formats. */
++		if (lossy_info[i].magic != BL2_LOSSY_INFO_MAGIC ||
++		    !(lossy_info[i].a0 & DCMPAREACRA_EN))
++			continue;
++
++		format = DCMPAREACRA_FMT_GET(lossy_info[i].a0);
++		if (format >= LOSSY_MAX_FORMATS)
++			continue;
++
++		/*
++		 * Get the lossy region node offset. We can't cache the value
++		 * as we're modifying properties, which could result in offset
++		 * changes.
++		 */
++		start = (u64)(lossy_info[i].a0 & DCMPAREACRA_SADDR_MASK) << 20;
++		end = (u64)(lossy_info[i].b0 & DCMPAREACRB_EADDR_MASK) << 20;
++		if (!unit_addresses[format])
++			unit_addresses[format] = start;
++
++		node = ft_get_lossy_region(fdt, rsv_node, start, format);
++		if (node < 0)
++			return node;
++
++		rsv_mem.address = cpu_to_fdt64(start);
++		rsv_mem.size = cpu_to_fdt64(end - start);
++		ret = fdt_appendprop(fdt, node, "reg", &rsv_mem,
++				     sizeof(rsv_mem));
++		if (ret < 0)
++			return ret;
++	}
++
++	/*
++	 * Now that we're done rename all the lossy decompression nodes with
++	 * a unit address or remove them if they are empty.
++	 */
++	for (i = 0; i < LOSSY_MAX_FORMATS; ++i) {
++		char name[35];
++		int node;
++
++		snprintf(name, sizeof(name), "lossy-decompression-%u", i);
++		node = fdt_subnode_offset(fdt, rsv_node, name);
++		if (node < 0)
++			continue;
++
++		if (unit_addresses[i]) {
++			snprintf(name, sizeof(name), "lossy-decompression@%llx",
++				 unit_addresses[i]);
++			ret = fdt_set_name(fdt, node, name);
++			if (ret < 0)
++				return ret;
++		} else {
++			ret = fdt_del_node(fdt, node);
++			if (ret < 0)
++				return ret;
++		}
++	}
++
++	return 0;
++}
++#endif
+diff --git a/include/configs/rcar-gen3-common.h b/include/configs/rcar-gen3-common.h
+index 7217a66def70..c0ad2c8b21d5 100644
+--- a/include/configs/rcar-gen3-common.h
++++ b/include/configs/rcar-gen3-common.h
+@@ -52,6 +52,7 @@
+ #define CONFIG_INITRD_TAG
+ #define CONFIG_CMDLINE_EDITING
+ #define CONFIG_OF_LIBFDT
++#define CONFIG_OF_BOARD_SETUP
+ 
+ #define CONFIG_BAUDRATE		115200
+ #define CONFIG_BOOTDELAY	3
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
