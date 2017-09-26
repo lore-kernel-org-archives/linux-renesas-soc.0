@@ -1,166 +1,148 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from lb2-smtp-cloud7.xs4all.net ([194.109.24.28]:53571 "EHLO
-        lb2-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933315AbdIYJor (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:54386 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965047AbdIZKGP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Sep 2017 05:44:47 -0400
-Subject: Re: [PATCH v6 03/25] rcar-vin: move chip information to own struct
-To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-References: <20170822232640.26147-1-niklas.soderlund+renesas@ragnatech.se>
- <20170822232640.26147-4-niklas.soderlund+renesas@ragnatech.se>
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        tomoharu.fukawa.eb@renesas.com, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <2fe2125c-0fa9-3113-dd49-05a4dd5f17d8@xs4all.nl>
-Date: Mon, 25 Sep 2017 11:44:41 +0200
-MIME-Version: 1.0
-In-Reply-To: <20170822232640.26147-4-niklas.soderlund+renesas@ragnatech.se>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+        Tue, 26 Sep 2017 06:06:15 -0400
+Received: from avalon.guest.par1.mozilla.com (unknown [IPv6:2a00:8c40:243:232:120b:a9ff:fe3c:7148])
+        by galahad.ideasonboard.com (Postfix) with ESMTPSA id EAF8921457
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 26 Sep 2017 12:06:04 +0200 (CEST)
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org
+Subject: [RFC 01/13] dt-bindings: reserved-memory: Add binding for the Renesas lossy decompression area
+Date: Tue, 26 Sep 2017 13:05:53 +0300
+Message-Id: <20170926100605.2313-4-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170926100605.2313-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170926100605.2313-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 23/08/17 01:26, Niklas Söderlund wrote:
-> When Gen3 support is added to the driver more then chip id will be
+The Renesas R-Car Gen3 DDR3/4 controller supports transparent
+decompression of data stored in the Renesas near-lossless image
+compression format (FCNL). Decompression is controlled based on system
+memory ranges configured by the secure mode boot loader. As any data
+located within those memory ranges will be automatically decompressed
+when read, those ranges are not usable as normal system memory.
 
-then -> than
+The memory ranges for lossy decompression are system-specific and fixed
+from a non-secure software point of view. These bindings describe the
+ranges in the form of a reserved memory node.
 
-> different for the different Soc. To avoid a lot of if statements in the
-> code create a struct chip_info to contain this information.
-> 
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ .../renesas,lossy-decompression.txt                | 102 +++++++++++++++++++++
+ 1 file changed, 102 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/reserved-memory/renesas,lossy-decompression.txt
 
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
-
+diff --git a/Documentation/devicetree/bindings/reserved-memory/renesas,lossy-decompression.txt b/Documentation/devicetree/bindings/reserved-memory/renesas,lossy-decompression.txt
+new file mode 100644
+index 000000000000..a70f84ae7b4a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/reserved-memory/renesas,lossy-decompression.txt
+@@ -0,0 +1,102 @@
++Renesas Lossy Decompression Reserved Memory Area
++------------------------------------------------
++
++The Renesas R-Car Gen3 DDR3/4 controller supports transparent decompression of
++data stored in the Renesas near-lossless image compression format (FCNL).
++Decompression is controlled based on system memory ranges configured by the
++secure mode boot loader. As any data located within those memory ranges will
++be automatically decompressed when read, those ranges are not usable as normal
++system memory.
++
++The memory ranges for lossy decompression are system-specific and fixed from a
++non-secure software point of view. These bindings describe the ranges in the
++form of a reserved memory node.
++
++Required properties:
++
++- compatible: Shall be "renesas,lossy-decompression", "shared-dma-pool".
++- reg: Reserved memory ranges for the lossy decompression (up to 16).
++- no-map: Shall be set.
++- renesas,format: The image format used for the memory range. Valid formats
++  are:
++
++  - 0: YUV planar
++  - 1: YUV422 interleaved
++  - 2: ARGB8888
++
++The Lossy Decompression nodes must be located as direct children of the
++/reserved-memory node. See reserved-memory.txt for more information.
++
++In order to allow references to those reserved memory nodes (through
++memory-region properties) in device tree sources, they are meant to be
++included without a reg property, and later updated in the device tree blob by
++the boot loader before passing control to the operating system.
++
++Without a reg property in the device tree source the Lossy Decompression nodes
++can't have a unit address, and would thus all have the same name, which isn't
++valid. To solve that problem the device tree sources should name the nodes
++lossy-decompression-<format> where format is the value of the renesas,format
++property. The boot loader is expected to rename the nodes to
++lossy-decompression@<unit-address>.
++
++
++Example: R8A7795 (R-Car H3) Lossy Decompression Nodes
++
++- Original device tree source
++
++	reserved-memory {
++		#address-cells = <2>;
++		#size-cells = <2>;
++
++		lossy-decompression-0 {
++			compatible = "renesas,lossy-decompression",
++				     "shared-dma-pool";
++			no-map;
++			renesas,formats = <0>;
++		};
++
++		lossy-decompression-1 {
++			compatible = "renesas,lossy-decompression",
++				     "shared-dma-pool";
++			no-map;
++			renesas,formats = <1>;
++		};
++
++		lossy-decompression-2 {
++			compatible = "renesas,lossy-decompression",
++				     "shared-dma-pool";
++			no-map;
++			renesas,formats = <2>;
++		};
++	};
++
++- Device tree after being patched by the boot loader
++
++	reserved-memory {
++		#address-cells = <2>;
++		#size-cells = <2>;
++
++		lossy-decompression@54000000 {
++			compatible = "renesas,lossy-decompression",
++				     "shared-dma-pool";
++			reg = <0 0x54000000 0 0x03000000>;
++			no-map;
++			renesas,formats = <2>;
++		};
++
++		lossy-decompression@57000000 {
++			compatible = "renesas,lossy-decompression",
++				     "shared-dma-pool";
++			reg = <0 0x57000000 0 0x03000000>;
++			no-map;
++			renesas,formats = <0>;
++		};
++
++		lossy-decompression@5a000000 {
++			compatible = "renesas,lossy-decompression",
++				     "shared-dma-pool";
++			reg = <0 0x5a000000 0 0x03000000>;
++			no-map;
++			renesas,formats = <1>;
++		};
++	};
+-- 
 Regards,
 
-	Hans
-
-> ---
->  drivers/media/platform/rcar-vin/rcar-core.c | 49 ++++++++++++++++++++++++-----
->  drivers/media/platform/rcar-vin/rcar-v4l2.c |  3 +-
->  drivers/media/platform/rcar-vin/rcar-vin.h  | 12 +++++--
->  3 files changed, 53 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-> index aefbe8e3ccddb3e4..dae38de706b66b64 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-core.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
-> @@ -277,14 +277,47 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
->   * Platform Device Driver
->   */
->  
-> +static const struct rvin_info rcar_info_h1 = {
-> +	.chip = RCAR_H1,
-> +};
-> +
-> +static const struct rvin_info rcar_info_m1 = {
-> +	.chip = RCAR_M1,
-> +};
-> +
-> +static const struct rvin_info rcar_info_gen2 = {
-> +	.chip = RCAR_GEN2,
-> +};
-> +
->  static const struct of_device_id rvin_of_id_table[] = {
-> -	{ .compatible = "renesas,vin-r8a7794", .data = (void *)RCAR_GEN2 },
-> -	{ .compatible = "renesas,vin-r8a7793", .data = (void *)RCAR_GEN2 },
-> -	{ .compatible = "renesas,vin-r8a7791", .data = (void *)RCAR_GEN2 },
-> -	{ .compatible = "renesas,vin-r8a7790", .data = (void *)RCAR_GEN2 },
-> -	{ .compatible = "renesas,vin-r8a7779", .data = (void *)RCAR_H1 },
-> -	{ .compatible = "renesas,vin-r8a7778", .data = (void *)RCAR_M1 },
-> -	{ .compatible = "renesas,rcar-gen2-vin", .data = (void *)RCAR_GEN2 },
-> +	{
-> +		.compatible = "renesas,vin-r8a7794",
-> +		.data = &rcar_info_gen2,
-> +	},
-> +	{
-> +		.compatible = "renesas,vin-r8a7793",
-> +		.data = &rcar_info_gen2,
-> +	},
-> +	{
-> +		.compatible = "renesas,vin-r8a7791",
-> +		.data = &rcar_info_gen2,
-> +	},
-> +	{
-> +		.compatible = "renesas,vin-r8a7790",
-> +		.data = &rcar_info_gen2,
-> +	},
-> +	{
-> +		.compatible = "renesas,vin-r8a7779",
-> +		.data = &rcar_info_h1,
-> +	},
-> +	{
-> +		.compatible = "renesas,vin-r8a7778",
-> +		.data = &rcar_info_m1,
-> +	},
-> +	{
-> +		.compatible = "renesas,rcar-gen2-vin",
-> +		.data = &rcar_info_gen2,
-> +	},
->  	{ },
->  };
->  MODULE_DEVICE_TABLE(of, rvin_of_id_table);
-> @@ -305,7 +338,7 @@ static int rcar_vin_probe(struct platform_device *pdev)
->  		return -ENODEV;
->  
->  	vin->dev = &pdev->dev;
-> -	vin->chip = (enum chip_id)match->data;
-> +	vin->info = match->data;
->  
->  	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->  	if (mem == NULL)
-> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> index 81ff59c3b4744075..02a08cf5acfce1ce 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> @@ -266,7 +266,8 @@ static int __rvin_try_format(struct rvin_dev *vin,
->  	pix->sizeimage = max_t(u32, pix->sizeimage,
->  			       rvin_format_sizeimage(pix));
->  
-> -	if (vin->chip == RCAR_M1 && pix->pixelformat == V4L2_PIX_FMT_XBGR32) {
-> +	if (vin->info->chip == RCAR_M1 &&
-> +	    pix->pixelformat == V4L2_PIX_FMT_XBGR32) {
->  		vin_err(vin, "pixel format XBGR32 not supported on M1\n");
->  		return -EINVAL;
->  	}
-> diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-> index 9d0d4a5001b6ccd8..13466dfd72292fc0 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-vin.h
-> +++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-> @@ -88,11 +88,19 @@ struct rvin_graph_entity {
->  	unsigned int sink_pad;
->  };
->  
-> +/**
-> + * struct rvin_info - Information about the particular VIN implementation
-> + * @chip:		type of VIN chip
-> + */
-> +struct rvin_info {
-> +	enum chip_id chip;
-> +};
-> +
->  /**
->   * struct rvin_dev - Renesas VIN device structure
->   * @dev:		(OF) device
->   * @base:		device I/O register space remapped to virtual memory
-> - * @chip:		type of VIN chip
-> + * @info:		info about VIN instance
->   *
->   * @vdev:		V4L2 video device associated with VIN
->   * @v4l2_dev:		V4L2 device
-> @@ -120,7 +128,7 @@ struct rvin_graph_entity {
->  struct rvin_dev {
->  	struct device *dev;
->  	void __iomem *base;
-> -	enum chip_id chip;
-> +	const struct rvin_info *info;
->  
->  	struct video_device vdev;
->  	struct v4l2_device v4l2_dev;
-> 
+Laurent Pinchart
