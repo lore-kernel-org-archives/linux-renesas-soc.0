@@ -1,59 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from lb3-smtp-cloud7.xs4all.net ([194.109.24.31]:55172 "EHLO
-        lb3-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934239AbdIYJqM (ORCPT
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:33927 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966345AbdIZNHR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Sep 2017 05:46:12 -0400
-Subject: Re: [PATCH v6 05/25] rcar-vin: change name of video device
-To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-References: <20170822232640.26147-1-niklas.soderlund+renesas@ragnatech.se>
- <20170822232640.26147-6-niklas.soderlund+renesas@ragnatech.se>
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        tomoharu.fukawa.eb@renesas.com, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <201fba0d-5cea-e1a6-bc7b-b19850e92a1d@xs4all.nl>
-Date: Mon, 25 Sep 2017 11:46:09 +0200
+        Tue, 26 Sep 2017 09:07:17 -0400
+Received: by mail-wm0-f67.google.com with SMTP id i131so9237595wma.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 26 Sep 2017 06:07:16 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20170822232640.26147-6-niklas.soderlund+renesas@ragnatech.se>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <3351146.sONqpoGtve@avalon>
+References: <20170926100605.2313-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20170926100605.2313-12-laurent.pinchart+renesas@ideasonboard.com>
+ <CAMuHMdXQ8J1cfGMnyAwhkxNQKCvR95gHESzxZswKrwoKMG_U9g@mail.gmail.com> <3351146.sONqpoGtve@avalon>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 26 Sep 2017 15:07:15 +0200
+Message-ID: <CAMuHMdWD5qb-R7sWphmguxgBKxL99+XeZXhZoCGh+QeOvvUxnA@mail.gmail.com>
+Subject: Re: [RFC 09/13] v4l: rcar-fcp: Configure the number of outstanding
+ read transactions
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 23/08/17 01:26, Niklas Söderlund wrote:
-> The rcar-vin driver needs to be part of a media controller to support
-> Gen3. Give each VIN instance a unique name so it can be referenced from
-> userspace.
-> 
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Hi Laurent,
 
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+On Tue, Sep 26, 2017 at 3:01 PM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Tuesday, 26 September 2017 14:50:46 EEST Geert Uytterhoeven wrote:
+>> On Tue, Sep 26, 2017 at 12:06 PM, Laurent Pinchart wrote:
+>> >  static const struct of_device_id rcar_fcp_of_match[] = {
+>> >         { .compatible = "renesas,fcpf", .data = (void *)RCAR_FCPF },
+>> >         { .compatible = "renesas,fcpv", .data = (void *)RCAR_FCPV },
+>> > +       { .compatible = "renesas,fcpvi", .data = (void *)RCAR_FCPVI },
+>> >         { },
+>>
+>> As you use "renesas,fcpv" as a fallback value, you may want to insert
+>> the new and more specific "renesas,fvpci" handling above it, for clarity.
+>
+> Good point, I'll do that.
+>
+>> I believe it will return the RCAR_FCPVI match data anyway, based on
+>> a higher match score for the more specific compatible value?
+>
+> I don't think this is related to a match score, but to the fact the compatible
+> strings from DT are tried in the left to right direction.
 
-Regards,
+JTR, see the use scores in __of_match_node() and __of_device_is_compatible().
 
-	Hans
+Gr{oetje,eeting}s,
 
-> ---
->  drivers/media/platform/rcar-vin/rcar-v4l2.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> index 3c4dd08261a0d3f5..ba88774bd5379a98 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> @@ -878,7 +878,8 @@ int rvin_v4l2_probe(struct rvin_dev *vin)
->  	vdev->fops = &rvin_fops;
->  	vdev->v4l2_dev = &vin->v4l2_dev;
->  	vdev->queue = &vin->queue;
-> -	strlcpy(vdev->name, KBUILD_MODNAME, sizeof(vdev->name));
-> +	snprintf(vdev->name, sizeof(vdev->name), "%s %s", KBUILD_MODNAME,
-> +		 dev_name(vin->dev));
->  	vdev->release = video_device_release_empty;
->  	vdev->ioctl_ops = &rvin_ioctl_ops;
->  	vdev->lock = &vin->lock;
-> 
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
