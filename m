@@ -1,77 +1,93 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34793 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751906AbdI2LzM (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:54380 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965047AbdIZKGN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Sep 2017 07:55:12 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
+        Tue, 26 Sep 2017 06:06:13 -0400
+Received: from avalon.guest.par1.mozilla.com (unknown [IPv6:2a00:8c40:243:232:120b:a9ff:fe3c:7148])
+        by galahad.ideasonboard.com (Postfix) with ESMTPSA id 5A28D20218
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 26 Sep 2017 12:06:04 +0200 (CEST)
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 41/48] ARM: dts: iwg22m: Enable SDHI1 controller
-Date: Fri, 29 Sep 2017 13:53:33 +0200
-Message-Id: <599114ee21057040c058043fdc1367878350d5e4.1506683482.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1506683482.git.horms+renesas@verge.net.au>
-References: <cover.1506683482.git.horms+renesas@verge.net.au>
+Subject: [RFC 00/13] R-Car: Enable lossy compression in VSP video pipelines
+Date: Tue, 26 Sep 2017 13:05:50 +0300
+Message-Id: <20170926100605.2313-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Hello,
 
-Enable the SDHI1 controller on iWave RZ/G1E SoM.
+These patches are a proof-of-concept implementation of lossy compression and
+decompression support for the VSP driver.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7745-iwg22m.dtsi | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+Patches for the whole stack are needed, in the ARM trusted firmware BL2, U-Boot
+and the Linux kernel. For convenience, and because this is an RFC, I've included
+them all in a single series.
 
-diff --git a/arch/arm/boot/dts/r8a7745-iwg22m.dtsi b/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
-index e306e7c5b644..f7f9ceff35a6 100644
---- a/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
-+++ b/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
-@@ -9,6 +9,7 @@
-  */
- 
- #include "r8a7745.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
- 
- / {
- 	compatible = "iwave,g22m", "renesas,r8a7745";
-@@ -38,6 +39,12 @@
- 		function = "mmc";
- 	};
- 
-+	sdhi1_pins: sd1 {
-+		groups = "sdhi1_data4", "sdhi1_ctrl";
-+		function = "sdhi1";
-+		power-source = <3300>;
-+	};
-+
- 	i2c3_pins: i2c3 {
- 		groups = "i2c3_b";
- 		function = "i2c3";
-@@ -54,6 +61,16 @@
- 	status = "okay";
- };
- 
-+&sdhi1 {
-+	pinctrl-0 = <&sdhi1_pins>;
-+	pinctrl-names = "default";
-+
-+	vmmc-supply = <&reg_3p3v>;
-+	vqmmc-supply = <&reg_3p3v>;
-+	cd-gpios = <&gpio3 31 GPIO_ACTIVE_LOW>;
-+	status = "okay";
-+};
-+
- &i2c3 {
- 	pinctrl-0 = <&i2c3_pins>;
- 	pinctrl-names = "default";
+The ARM trusted firmware and U-Boot patches are based on the Renesas firmware
+v2.16.0, which contains
+
+	git://github.com/renesas-rcar/arm-trusted-firmware.git#c040be5a757a945da75cf97d3a3e1db3a43168f9
+
+	git://github.com/renesas-rcar/u-boot.git#rcar-3.5.0
+
+The kernel patches are based on v4.14-rc2, which contains the following required
+v4.14-rc1 regression fix.
+
+commit 6d57339890c9a9dfcd4ba4f8931b911b962968e3
+Author: Arnd Bergmann <arnd@arndb.de>
+Date:   Fri Sep 15 17:08:16 2017 +0200
+
+    dma-coherent: fix rmem_dma_device_init regression
+
+The DT bindings and userspace APIs are really work in progress. In particular
+allocation of lossy decompression memory (implemented in the VSP driver in
+13/13) should probably not be specific to the VSP.
+
+A preliminary test that exercices the compression and decompression is available
+from
+
+	git://git.ideasonboard.com/renesas/vsp-tests.git#fcnl
+
+The test currently passes unconditionally without attempting to check whether
+the results are correct.
+
+Laurent Pinchart (13):
+  dt-bindings: reserved-memory: Add binding for the Renesas lossy
+    decompression area
+  dt-bindings: media: renesas-fcp: Add a compatible string for VSPI FCP
+  dt-bindings: media: renesas-fcp: Add memory-region property
+  arm64: dts: renesas: Use renesas,fcpvi compatible string
+  arm64: dts: r8a7795: Add lossy decompression reserved memory nodes
+  arm64: dts: r8a7795: Reference the lossy memory region from the FCPss
+  arm64: dts: r8a7795: Add dma-ranges property in the /soc node
+  v4l: rcar-fcp: Check device revision at probe time
+  v4l: rcar-fcp: Configure the number of outstanding read transactions
+  v4l: rcar-fcp: Prepare driver API for FCNL support
+  v4l: rcar-fcp: Support FCNL decompression
+  v4l: vsp1: Add support for near-lossless compression (FCNL) in the WPF
+  v4l: vsp1: Add support for near-lossless compression (FCNL) in the RPF
+
+ .../devicetree/bindings/media/renesas,fcp.txt      |  10 +-
+ .../renesas,lossy-decompression.txt                | 102 ++++++
+ arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi       |   2 +-
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi           |  58 +++-
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi           |   2 +-
+ drivers/media/platform/rcar-fcp.c                  | 358 ++++++++++++++++++++-
+ drivers/media/platform/vsp1/vsp1.h                 |   1 +
+ drivers/media/platform/vsp1/vsp1_drv.c             |  10 +-
+ drivers/media/platform/vsp1/vsp1_pipe.c            |  57 ++--
+ drivers/media/platform/vsp1/vsp1_pipe.h            |   2 +
+ drivers/media/platform/vsp1/vsp1_regs.h            |   1 +
+ drivers/media/platform/vsp1/vsp1_rwpf.c            |  50 +++
+ drivers/media/platform/vsp1/vsp1_rwpf.h            |   1 +
+ drivers/media/platform/vsp1/vsp1_video.c           |  22 +-
+ drivers/media/platform/vsp1/vsp1_wpf.c             |  17 +-
+ include/media/rcar-fcp.h                           |  14 +-
+ 16 files changed, 650 insertions(+), 57 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/reserved-memory/renesas,lossy-decompression.txt
+
 -- 
-2.1.4
+Regards,
+
+Laurent Pinchart
