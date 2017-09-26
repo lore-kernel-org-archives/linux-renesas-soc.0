@@ -1,19 +1,13 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <20170926173009.xdw6mtvcyixpenr7@sirena.org.uk>
-References: <1506329660-4064-2-git-send-email-fabrizio.castro@bp.renesas.com>
- <20170925161637.D7471440058@finisterre.ee.mobilebroadband>
- <CAMuHMdVsRwW+10ERyTJAa8XhhkPMn4ruymUwPKot+kmczBwbcA@mail.gmail.com>
- <20170925184545.5k4nke27rgud3uwp@sirena.org.uk> <CAMuHMdUv-5COUuzJOWx=BTb5oJ7tFOi1BpocuJ7+VuCZ3fEuPg@mail.gmail.com>
- <20170926173009.xdw6mtvcyixpenr7@sirena.org.uk>
-From: Magnus Damm <magnus.damm@gmail.com>
-Date: Wed, 27 Sep 2017 14:36:01 +0900
-Message-ID: <CANqRtoQjvkm4rMXt6jEaVWBeieEzqzT-yw_oARV7sj-SpTxB6g@mail.gmail.com>
-Subject: Re: Applied "spi: sh-msiof: Add compatible strings for r8a774[35]" to
- the spi tree
-To: Mark Brown <broonie@kernel.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:43534 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030980AbdIZRau (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 26 Sep 2017 13:30:50 -0400
+Date: Tue, 26 Sep 2017 10:30:09 -0700
+From: Mark Brown <broonie@kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-spi <linux-spi@vger.kernel.org>,
@@ -21,50 +15,63 @@ Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: devicetree-owner@vger.kernel.org
+Subject: Re: Applied "spi: sh-msiof: Add compatible strings for r8a774[35]"
+ to the spi tree
+Message-ID: <20170926173009.xdw6mtvcyixpenr7@sirena.org.uk>
+References: <1506329660-4064-2-git-send-email-fabrizio.castro@bp.renesas.com>
+ <20170925161637.D7471440058@finisterre.ee.mobilebroadband>
+ <CAMuHMdVsRwW+10ERyTJAa8XhhkPMn4ruymUwPKot+kmczBwbcA@mail.gmail.com>
+ <20170925184545.5k4nke27rgud3uwp@sirena.org.uk>
+ <CAMuHMdUv-5COUuzJOWx=BTb5oJ7tFOi1BpocuJ7+VuCZ3fEuPg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="flc5unealuztpgbg"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUv-5COUuzJOWx=BTb5oJ7tFOi1BpocuJ7+VuCZ3fEuPg@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Mark, Geert, everyone,
 
-On Wed, Sep 27, 2017 at 2:30 AM, Mark Brown <broonie@kernel.org> wrote:
-> On Mon, Sep 25, 2017 at 09:15:53PM +0200, Geert Uytterhoeven wrote:
->
->> My rebuttal is threefold:
->>   1. Listing the fallback property is mandatory for new SoCs. We only keep
->>      the per-SoC compatible values in the driver for older SoCs that predate
->>      the introduction of fallback properties.
->
-> So good practice is always good practice, but I'd argue that it's not
-> bad practice to also explicitly enumerate all the documented compatibles
-> in the driver.  Being liberal in what you accept and all that.
->
->>   2. Some harm is involved, in the form of increased kernel image size.
->
-> Is this really a meaningful impact?
->
->>   3. When updating DT bindings for new SoCs, we usually add "No driver
->>      update is needed" to the patch description to clarify. Unfortunately
->>      that was missed here.
->
-> That's basically the same good practice thing, it's just documenting
-> what you're trying to do here with not putting things in code but
-> writing things in changelogs doesn't make them so!
+--flc5unealuztpgbg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-My opinion that good practice is to document the per-driver supported
-hardware by explicitly listing the per-SoC compat strings in the DT
-binding document.
+On Mon, Sep 25, 2017 at 09:15:53PM +0200, Geert Uytterhoeven wrote:
 
-Then exactly which compat strings the driver matches on is really part
-of the software implementation and it will most likely vary over time.
+> My rebuttal is threefold:
+>   1. Listing the fallback property is mandatory for new SoCs. We only keep
+>      the per-SoC compatible values in the driver for older SoCs that predate
+>      the introduction of fallback properties.
 
-So my view is that only updating the DT binding document should be
-enough in most cases when fall-back compat strings are used. I guess
-other people see it differently?
+So good practice is always good practice, but I'd argue that it's not
+bad practice to also explicitly enumerate all the documented compatibles
+in the driver.  Being liberal in what you accept and all that.
 
-Is it too much detail to let the MAINTAINERS file point out both
-driver files and the DT binding files?
+>   2. Some harm is involved, in the form of increased kernel image size.
 
-Cheers,
+Is this really a meaningful impact?
 
-/ magnus
+>   3. When updating DT bindings for new SoCs, we usually add "No driver
+>      update is needed" to the patch description to clarify. Unfortunately
+>      that was missed here.
+
+That's basically the same good practice thing, it's just documenting
+what you're trying to do here with not putting things in code but
+writing things in changelogs doesn't make them so!
+
+--flc5unealuztpgbg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlnKjp4ACgkQJNaLcl1U
+h9CyOQf+KF7TH4e1LUiEusbvfDIIFdd+l5LEKQIJqQP/5OoKznc7+7vQKftJuqqM
+Wobnz0aQOhA1AMgXh0YnKyxx8CJIiEFq3DA+W3eLt6BABkRTPTkfSGjP/kYPa31w
+Px/pPoPFiNK3ldlhKAa2HkPoYA8MjlhcrX0U+fCa129JDFm8EKEmS6e6ThEnL5bW
+E48g6EGj8uImSSYnz+vBRnZ+GxkGuMkz41h+3735uXYUqvj9om6gIGSgSetH2l1y
+Mf6YW9h4YPybdui9n1ROLjZH8ELKCtLMhexyyDWZGlgmUOMkMEfSVfpXStb1hwRh
+C0eLU6+cRxHyjbStxq+Hacz2c2W/9A==
+=2Ur+
+-----END PGP SIGNATURE-----
+
+--flc5unealuztpgbg--
