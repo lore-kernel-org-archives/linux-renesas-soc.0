@@ -1,47 +1,44 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34495 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752454AbdI2Lx4 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Sep 2017 07:53:56 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+Return-Path: <devicetree-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <1506506225-5015-2-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1506506225-5015-1-git-send-email-fabrizio.castro@bp.renesas.com> <1506506225-5015-2-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 27 Sep 2017 14:03:08 +0200
+Message-ID: <CAMuHMdU4dnWnGfMEQnCFnU-sNsU-kzJjKVYR9ysxF8Eh6N8jXQ@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: r8a7745: Add MSIOF[012] support
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/8] dt-bindings: display: renesas: dw-hdmi: Drop bogus node name suffix
-Date: Fri, 29 Sep 2017 13:52:49 +0200
-Message-Id: <8ac491a5d0934bf1a77db155d759c682ab790c45.1506676368.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1506676368.git.horms+renesas@verge.net.au>
-References: <cover.1506676368.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+On Wed, Sep 27, 2017 at 11:57 AM, Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> Add the DT nodes needed by MSIOF[012] interfaces to the SoC dtsi.
+> Also, define aliases for spi[123].
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
 
-Node names should not use numerical suffixes if the nodes can be
-distinguished by unit-address.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Gr{oetje,eeting}s,
 
-diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt b/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
-index b1a8929c2536..3a72a103a18a 100644
---- a/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
-+++ b/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
-@@ -37,7 +37,7 @@ Optional properties:
- 
- Example:
- 
--	hdmi0: hdmi0@fead0000 {
-+	hdmi0: hdmi@fead0000 {
- 		compatible = "renesas,r8a7795-dw-hdmi";
- 		reg = <0 0xfead0000 0 0x10000>;
- 		interrupts = <0 389 IRQ_TYPE_LEVEL_HIGH>;
--- 
-2.1.4
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
