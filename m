@@ -1,51 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34495 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752454AbdI2Lx6 (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:64005 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752311AbdI0IkQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Sep 2017 07:53:58 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 4/8] MAINTAINERS: Add Renesas SoC DT bindings doc to Renesas ARM sections
-Date: Fri, 29 Sep 2017 13:52:51 +0200
-Message-Id: <964ca6feefb7136b30597f29bd51447fe9657590.1506676368.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1506676368.git.horms+renesas@verge.net.au>
-References: <cover.1506676368.git.horms+renesas@verge.net.au>
+        Wed, 27 Sep 2017 04:40:16 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+CC: "balbi@kernel.org" <balbi@kernel.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: RE: [PATCH] usb: renesas_usbhs: fix usbhsf_fifo_clear() behavior
+Date: Wed, 27 Sep 2017 08:40:12 +0000
+Message-ID: <TY1PR06MB09922530F46716588B066A2DD8780@TY1PR06MB0992.apcprd06.prod.outlook.com>
+References: <1506499445-14826-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <20170927083648.GA20317@kroah.com>
+In-Reply-To: <20170927083648.GA20317@kroah.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi Greg,
 
-Suggested-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+> -----Original Message-----
+> From: Greg KH
+> Sent: Wednesday, September 27, 2017 5:37 PM
+>=20
+> On Wed, Sep 27, 2017 at 05:04:05PM +0900, Yoshihiro Shimoda wrote:
+> > This patch fixes two issues:
+> >  - the usbhsf_fifo_clear() is possible to cause 10 msec delay if
+> >    the pipe is RX direction and empty because the FRDY bit will never
+> >    be set to 1 in such case.
+> >  - sets the BCLR of {C,Dn}FIFOCTR to 1 even when it's non-DCP pipe and
+> >    the FRDY bit sets to 0.
+>=20
+> Should this be two different patches because of this?
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 2281af4b41b6..638a9d62177f 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1756,6 +1756,7 @@ Q:	http://patchwork.kernel.org/project/linux-renesas-soc/list/
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git next
- S:	Supported
- F:	arch/arm64/boot/dts/renesas/
-+F:	Documentation/devicetree/bindings/arm/shmobile.txt
- F:	drivers/soc/renesas/
- F:	include/linux/soc/renesas/
- 
-@@ -1875,6 +1876,7 @@ F:	arch/arm/boot/dts/sh*
- F:	arch/arm/configs/shmobile_defconfig
- F:	arch/arm/include/debug/renesas-scif.S
- F:	arch/arm/mach-shmobile/
-+F:	Documentation/devicetree/bindings/arm/shmobile.txt
- F:	drivers/soc/renesas/
- F:	include/linux/soc/renesas/
- 
--- 
-2.1.4
+I got it. I will make two patches from this patch.
+
+Best regards,
+Yoshihiro Shimoda
+
+> thanks,
+>=20
+> greg k-h
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
