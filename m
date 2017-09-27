@@ -1,49 +1,112 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:49613 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752196AbdI0MCy (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:31941 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751787AbdI0J5b (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 27 Sep 2017 08:02:54 -0400
-MIME-Version: 1.0
-In-Reply-To: <1506506225-5015-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1506506225-5015-1-git-send-email-fabrizio.castro@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 27 Sep 2017 14:02:53 +0200
-Message-ID: <CAMuHMdXMC0iYa0nB3nd4zkKAMBHppeLq+HPVu6cH-vrXwD1wew@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: r8a7743: Add MSIOF[012] support
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
+        Wed, 27 Sep 2017 05:57:31 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Simon Horman <horms@verge.net.au>,
+        Russell King <linux@armlinux.org.uk>
+Cc: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+        Biju Das <biju.das@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Chris Paterson <chris.paterson2@renesas.com>
+Subject: [PATCH] ARM: dts: r8a7743: Add MSIOF[012] support
+Date: Wed, 27 Sep 2017 10:57:04 +0100
+Message-Id: <1506506225-5015-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Sep 27, 2017 at 11:57 AM, Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
-> Add the DT nodes needed by MSIOF[012] interfaces to the SoC dtsi.
-> Also, define aliases for spi[123].
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+Add the DT nodes needed by MSIOF[012] interfaces to the SoC dtsi.
+Also, define aliases for spi[123].
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+---
 
-Gr{oetje,eeting}s,
+This patch depends on the corresponding dt-bindings patch:
+* spi: sh-msiof: Add r8a774[35] to the compatible list
+which has been applied to linux-next already.
 
-                        Geert
+Best regards,
+Fabrizio
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+ arch/arm/boot/dts/r8a7743.dtsi | 51 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 51 insertions(+)
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index 454f980..d541fd9 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -29,6 +29,9 @@
+ 		i2c7 = &iic1;
+ 		i2c8 = &iic3;
+ 		spi0 = &qspi;
++		spi1 = &msiof0;
++		spi2 = &msiof1;
++		spi3 = &msiof2;
+ 	};
+ 
+ 	cpus {
+@@ -852,6 +855,54 @@
+ 			status = "disabled";
+ 		};
+ 
++		msiof0: spi@e6e20000 {
++			compatible = "renesas,msiof-r8a7743",
++				     "renesas,rcar-gen2-msiof";
++			reg = <0 0xe6e20000 0 0x0064>;
++			interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 000>;
++			dmas = <&dmac0 0x51>, <&dmac0 0x52>,
++			       <&dmac1 0x51>, <&dmac1 0x52>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			resets = <&cpg 000>;
++			status = "disabled";
++		};
++
++		msiof1: spi@e6e10000 {
++			compatible = "renesas,msiof-r8a7743",
++				     "renesas,rcar-gen2-msiof";
++			reg = <0 0xe6e10000 0 0x0064>;
++			interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 208>;
++			dmas = <&dmac0 0x55>, <&dmac0 0x56>,
++			       <&dmac1 0x55>, <&dmac1 0x56>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			resets = <&cpg 208>;
++			status = "disabled";
++		};
++
++		msiof2: spi@e6e00000 {
++			compatible = "renesas,msiof-r8a7743",
++				     "renesas,rcar-gen2-msiof";
++			reg = <0 0xe6e00000 0 0x0064>;
++			interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 205>;
++			dmas = <&dmac0 0x41>, <&dmac0 0x42>,
++			       <&dmac1 0x41>, <&dmac1 0x42>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			resets = <&cpg 205>;
++			status = "disabled";
++		};
++
+ 		sdhi0: sd@ee100000 {
+ 			compatible = "renesas,sdhi-r8a7743";
+ 			reg = <0 0xee100000 0 0x328>;
+-- 
+2.7.4
