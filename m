@@ -1,12 +1,17 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:39584 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751016AbdI0RC2 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 27 Sep 2017 13:02:28 -0400
-Date: Wed, 27 Sep 2017 10:01:45 -0700
-From: Mark Brown <broonie@kernel.org>
-To: Magnus Damm <magnus.damm@gmail.com>
+Return-Path: <devicetree-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <20170926173009.xdw6mtvcyixpenr7@sirena.org.uk>
+References: <1506329660-4064-2-git-send-email-fabrizio.castro@bp.renesas.com>
+ <20170925161637.D7471440058@finisterre.ee.mobilebroadband>
+ <CAMuHMdVsRwW+10ERyTJAa8XhhkPMn4ruymUwPKot+kmczBwbcA@mail.gmail.com>
+ <20170925184545.5k4nke27rgud3uwp@sirena.org.uk> <CAMuHMdUv-5COUuzJOWx=BTb5oJ7tFOi1BpocuJ7+VuCZ3fEuPg@mail.gmail.com>
+ <20170926173009.xdw6mtvcyixpenr7@sirena.org.uk>
+From: Magnus Damm <magnus.damm@gmail.com>
+Date: Wed, 27 Sep 2017 14:36:01 +0900
+Message-ID: <CANqRtoQjvkm4rMXt6jEaVWBeieEzqzT-yw_oARV7sj-SpTxB6g@mail.gmail.com>
+Subject: Re: Applied "spi: sh-msiof: Add compatible strings for r8a774[35]" to
+ the spi tree
+To: Mark Brown <broonie@kernel.org>
 Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -16,66 +21,50 @@ Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>
-Subject: Re: Applied "spi: sh-msiof: Add compatible strings for r8a774[35]"
- to the spi tree
-Message-ID: <20170927170145.lseodaywmmuqvmcj@sirena.org.uk>
-References: <CANqRtoQjvkm4rMXt6jEaVWBeieEzqzT-yw_oARV7sj-SpTxB6g@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="a5edrn7wvgq2h4m4"
-Content-Disposition: inline
-In-Reply-To: <CANqRtoQjvkm4rMXt6jEaVWBeieEzqzT-yw_oARV7sj-SpTxB6g@mail.gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Mark, Geert, everyone,
 
---a5edrn7wvgq2h4m4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Wed, Sep 27, 2017 at 2:30 AM, Mark Brown <broonie@kernel.org> wrote:
+> On Mon, Sep 25, 2017 at 09:15:53PM +0200, Geert Uytterhoeven wrote:
+>
+>> My rebuttal is threefold:
+>>   1. Listing the fallback property is mandatory for new SoCs. We only keep
+>>      the per-SoC compatible values in the driver for older SoCs that predate
+>>      the introduction of fallback properties.
+>
+> So good practice is always good practice, but I'd argue that it's not
+> bad practice to also explicitly enumerate all the documented compatibles
+> in the driver.  Being liberal in what you accept and all that.
+>
+>>   2. Some harm is involved, in the form of increased kernel image size.
+>
+> Is this really a meaningful impact?
+>
+>>   3. When updating DT bindings for new SoCs, we usually add "No driver
+>>      update is needed" to the patch description to clarify. Unfortunately
+>>      that was missed here.
+>
+> That's basically the same good practice thing, it's just documenting
+> what you're trying to do here with not putting things in code but
+> writing things in changelogs doesn't make them so!
 
-On Wed, Sep 27, 2017 at 02:36:01PM +0900, Magnus Damm wrote:
-> On Wed, Sep 27, 2017 at 2:30 AM, Mark Brown <broonie@kernel.org> wrote:
-> > On Mon, Sep 25, 2017 at 09:15:53PM +0200, Geert Uytterhoeven wrote:
+My opinion that good practice is to document the per-driver supported
+hardware by explicitly listing the per-SoC compat strings in the DT
+binding document.
 
-> >>   3. When updating DT bindings for new SoCs, we usually add "No driver
-> >>      update is needed" to the patch description to clarify. Unfortunately
-> >>      that was missed here.
+Then exactly which compat strings the driver matches on is really part
+of the software implementation and it will most likely vary over time.
 
-> > That's basically the same good practice thing, it's just documenting
-> > what you're trying to do here with not putting things in code but
-> > writing things in changelogs doesn't make them so!
+So my view is that only updating the DT binding document should be
+enough in most cases when fall-back compat strings are used. I guess
+other people see it differently?
 
-> My opinion that good practice is to document the per-driver supported
-> hardware by explicitly listing the per-SoC compat strings in the DT
-> binding document.
+Is it too much detail to let the MAINTAINERS file point out both
+driver files and the DT binding files?
 
-> Then exactly which compat strings the driver matches on is really part
-> of the software implementation and it will most likely vary over time.
+Cheers,
 
-> So my view is that only updating the DT binding document should be
-> enough in most cases when fall-back compat strings are used. I guess
-> other people see it differently?
-
-> Is it too much detail to let the MAINTAINERS file point out both
-> driver files and the DT binding files?
-
-It's supposed to do that already.  All I'm saying here is that the patch
-doesn't seem like something that needs actively reverting since it's a
-perfectly valid and even potentially useful change to make.
-
---a5edrn7wvgq2h4m4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlnL2XcACgkQJNaLcl1U
-h9DUqAgAgkT1Xp+tlFdsb0/54yD236svgkfMMwj4kEpa/CDnohJuKLfMUr8djN2s
-pNFGJW2kGg7GyXNw3ESXy9gK82XdwDprHsfaICt3ozwLFs2xkOfmh9M9XZ6Wfl8S
-/OFwgr/3RsdfW7pGJT/5uqVNz1jOM9ZJPsS/rPLcN7XQmlItbTh3FafUZhTDhh1B
-sosIYtuRLL8/LsMSvDzkG3GH8ztrjWckYAk6JK+Tn0sMsCy8g6+ZLVTgptyhU3P8
-/qYVcrT5UQXySstGb2/8PwQlu+2hgc8Ky9LJd6SCHP8SJ2xwDGQDBWMwUXbyFEub
-TcdBaIPcKtwXW+M5a6VVwMWzxWC4ew==
-=PVud
------END PGP SIGNATURE-----
-
---a5edrn7wvgq2h4m4--
+/ magnus
