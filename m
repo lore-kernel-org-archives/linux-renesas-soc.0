@@ -1,90 +1,71 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from andre.telenet-ops.be ([195.130.132.53]:49732 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751467AbdI1Pxw (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 28 Sep 2017 11:53:52 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <damm+renesas@opensource.se>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+To: "David S . Miller" <davem@davemloft.net>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 1/7] dt-bindings: timer: renesas,cmt: Fix SoC-specific compatible values
-Date: Mon, 18 Sep 2017 15:46:41 +0200
-Message-Id: <1505742407-31576-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1505742407-31576-1-git-send-email-geert+renesas@glider.be>
-References: <1505742407-31576-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: [PATCH 0/4] ravb: Add PHY reset support
+Date: Thu, 28 Sep 2017 17:53:30 +0200
+Message-Id: <1506614014-4398-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-While the new family-specific compatible values introduced by commit
-6f54cc1adcc8957f ("devicetree: bindings: R-Car Gen2 CMT0 and CMT1
-bindings") use the recommended order "<vendor>,<family>-<device>", the
-new SoC-specific compatible values still use the old and deprecated
-order "<vendor>,<device>-<soc>".
+	Hi all,
 
-Switch the SoC-specific compatible values to the recommended order while
-there are no upstream users of these compatible values yet.
+This patch series adds optional PHY reset support during EthernetAVB driver
+probe and system resume on the Renesas Salvator-X/XS development boards.
 
-Fixes: 7f03a0ecfdc786c1 ("devicetree: bindings: r8a73a4 and R-Car Gen2 CMT bindings")
-Fixes: 63d9e8ca0dd4bfa4 ("devicetree: bindings: Deprecate property, update example")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3:
-  - New.
----
- .../devicetree/bindings/timer/renesas,cmt.txt      | 24 +++++++++++-----------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+The rationale behind this is twofold:
+  1. On Salvator-XS, the enable pin of the regulator providing PHY power
+     is connected to PRESETn, and PSCI powers down the SoC during system
+     suspend.  Hence a PHY reset is needed to restore network functionality
+     after resume.
+  2. Linux should not rely on the boot loader having reset the PHY, but
+     should reset the PHY during driver probe.
 
-diff --git a/Documentation/devicetree/bindings/timer/renesas,cmt.txt b/Documentation/devicetree/bindings/timer/renesas,cmt.txt
-index 6ca6b9e582a0e803..d740989eb56981cb 100644
---- a/Documentation/devicetree/bindings/timer/renesas,cmt.txt
-+++ b/Documentation/devicetree/bindings/timer/renesas,cmt.txt
-@@ -20,16 +20,16 @@ Required Properties:
- 		(CMT1 on sh73a0 and r8a7740)
- 		This is a fallback for the above renesas,cmt-48-* entries.
- 
--    - "renesas,cmt0-r8a73a4" for the 32-bit CMT0 device included in r8a73a4.
--    - "renesas,cmt1-r8a73a4" for the 48-bit CMT1 device included in r8a73a4.
--    - "renesas,cmt0-r8a7790" for the 32-bit CMT0 device included in r8a7790.
--    - "renesas,cmt1-r8a7790" for the 48-bit CMT1 device included in r8a7790.
--    - "renesas,cmt0-r8a7791" for the 32-bit CMT0 device included in r8a7791.
--    - "renesas,cmt1-r8a7791" for the 48-bit CMT1 device included in r8a7791.
--    - "renesas,cmt0-r8a7793" for the 32-bit CMT0 device included in r8a7793.
--    - "renesas,cmt1-r8a7793" for the 48-bit CMT1 device included in r8a7793.
--    - "renesas,cmt0-r8a7794" for the 32-bit CMT0 device included in r8a7794.
--    - "renesas,cmt1-r8a7794" for the 48-bit CMT1 device included in r8a7794.
-+    - "renesas,r8a73a4-cmt0" for the 32-bit CMT0 device included in r8a73a4.
-+    - "renesas,r8a73a4-cmt1" for the 48-bit CMT1 device included in r8a73a4.
-+    - "renesas,r8a7790-cmt0" for the 32-bit CMT0 device included in r8a7790.
-+    - "renesas,r8a7790-cmt1" for the 48-bit CMT1 device included in r8a7790.
-+    - "renesas,r8a7791-cmt0" for the 32-bit CMT0 device included in r8a7791.
-+    - "renesas,r8a7791-cmt1" for the 48-bit CMT1 device included in r8a7791.
-+    - "renesas,r8a7793-cmt0" for the 32-bit CMT0 device included in r8a7793.
-+    - "renesas,r8a7793-cmt1" for the 48-bit CMT1 device included in r8a7793.
-+    - "renesas,r8a7794-cmt0" for the 32-bit CMT0 device included in r8a7794.
-+    - "renesas,r8a7794-cmt1" for the 48-bit CMT1 device included in r8a7794.
- 
-     - "renesas,rcar-gen2-cmt0" for 32-bit CMT0 devices included in R-Car Gen2.
-     - "renesas,rcar-gen2-cmt1" for 48-bit CMT1 devices included in R-Car Gen2.
-@@ -46,7 +46,7 @@ Required Properties:
- Example: R8A7790 (R-Car H2) CMT0 and CMT1 nodes
- 
- 	cmt0: timer@ffca0000 {
--		compatible = "renesas,cmt0-r8a7790", "renesas,rcar-gen2-cmt0";
-+		compatible = "renesas,r8a7790-cmt0", "renesas,rcar-gen2-cmt0";
- 		reg = <0 0xffca0000 0 0x1004>;
- 		interrupts = <0 142 IRQ_TYPE_LEVEL_HIGH>,
- 			     <0 142 IRQ_TYPE_LEVEL_HIGH>;
-@@ -55,7 +55,7 @@ Example: R8A7790 (R-Car H2) CMT0 and CMT1 nodes
- 	};
- 
- 	cmt1: timer@e6130000 {
--		compatible = "renesas,cmt1-r8a7790", "renesas,rcar-gen2-cmt1";
-+		compatible = "renesas,r8a7790-cmt1", "renesas,rcar-gen2-cmt1";
- 		reg = <0 0xe6130000 0 0x1004>;
- 		interrupts = <0 120 IRQ_TYPE_LEVEL_HIGH>,
- 			     <0 121 IRQ_TYPE_LEVEL_HIGH>,
+The first two patches are destined for David's net-next tree. They update
+the EthernetAVB DT bindings, and add support for resetting the PHY during
+system resume.
+
+The last two patches are destined for Simon's renesas tree.  They add
+properties to describe the EthernetAVB PHY reset topology to the common
+Salvator-X/XS and ULCB DTS files.
+
+Thanks!
+
+Geert Uytterhoeven (4):
+  dt-bindings: net: ravb: Document optional reset-gpios property
+  ravb: Add optional PHY reset during system resume
+  arm64: dts: renesas: salvator-common: Add EthernetAVB PHY reset
+  arm64: dts: renesas: ulcb: Add EthernetAVB PHY reset
+
+ Documentation/devicetree/bindings/net/renesas,ravb.txt | 2 ++
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi       | 1 +
+ arch/arm64/boot/dts/renesas/ulcb.dtsi                  | 1 +
+ drivers/net/ethernet/renesas/ravb_main.c               | 9 +++++++++
+ 4 files changed, 13 insertions(+)
+
 -- 
 2.7.4
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
