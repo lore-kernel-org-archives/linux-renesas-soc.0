@@ -1,41 +1,75 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH v5 1/6] i2c: add a message flag for DMA safe buffers
-Date: Wed, 20 Sep 2017 20:59:51 +0200
-Message-Id: <20170920185956.13874-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170920185956.13874-1-wsa+renesas@sang-engineering.com>
-References: <20170920185956.13874-1-wsa+renesas@sang-engineering.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-io0-f194.google.com ([209.85.223.194]:33204 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751920AbdI1J13 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 28 Sep 2017 05:27:29 -0400
+Received: by mail-io0-f194.google.com with SMTP id j26so688994iod.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 28 Sep 2017 02:27:28 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <37669611.vtIjLgZvls@avalon>
+References: <20170815230338.14913-1-laurent.pinchart+renesas@ideasonboard.com>
+ <b2179a21-51aa-e973-73de-fd657ecfedb5@ideasonboard.com> <20170928071034.ovxweoxdp3sb3ij2@phenom.ffwll.local>
+ <37669611.vtIjLgZvls@avalon>
+From: Daniel Vetter <daniel@ffwll.ch>
+Date: Thu, 28 Sep 2017 11:27:27 +0200
+Message-ID: <CAKMK7uFRL_q=fsQfFrnBqyRRpbNt3Csc5vrLkUvm27Bz+QtNMQ@mail.gmail.com>
+Subject: Re: [PATCH 2/3] drm: rcar-du: Reject planes located fully off-screen
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        "open list:DRM DRIVERS FOR RENESAS"
+        <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I2C has no requirement that the buffer of a message needs to be DMA
-safe. In case it is, it can now be flagged, so drivers wishing to
-do DMA can use the buffer directly.
+On Thu, Sep 28, 2017 at 11:16 AM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> Hi Daniel,
+>
+> On Thursday, 28 September 2017 10:10:34 EEST Daniel Vetter wrote:
+>> On Wed, Sep 27, 2017 at 07:58:42PM +0100, Kieran Bingham wrote:
+>> > Hi Laurent,
+>> >
+>> > Thankyou for the patch,
+>> >
+>> > This looks good, and passes the tests.
+>> >
+>> > On 16/08/17 00:03, Laurent Pinchart wrote:
+>> > > There is no point in accepting fully off-screen planes as they won't be
+>> > > displayed. Reject them in the atomic check.
+>> > >
+>> > > Signed-off-by: Laurent Pinchart
+>> > > <laurent.pinchart+renesas@ideasonboard.com>
+>> >
+>> > Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+>>
+>> Just a note, this is different from what i915 does. Not sure you want to
+>> intentionally be incompatible with i915 and hence defacto make this part
+>> of atomic undefined (or break some apps, depending upon how this pans
+>> out). I think X loves to put the cursor offscreen at least.
+>>
+>> I think we even have igts to test this properly.
+>
+> If you update the documentation I'll submit a v2 that allows fully off-screen
+> planes :-)
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- include/uapi/linux/i2c.h | 3 +++
- 1 file changed, 3 insertions(+)
+Quoting them:
 
-diff --git a/include/uapi/linux/i2c.h b/include/uapi/linux/i2c.h
-index 009e27bb9abe19..1c683cb319e4b7 100644
---- a/include/uapi/linux/i2c.h
-+++ b/include/uapi/linux/i2c.h
-@@ -71,6 +71,9 @@ struct i2c_msg {
- #define I2C_M_RD		0x0001	/* read data, from slave to master */
- 					/* I2C_M_RD is guaranteed to be 0x0001! */
- #define I2C_M_TEN		0x0010	/* this is a ten bit chip address */
-+#define I2C_M_DMA_SAFE		0x0200	/* the buffer of this message is DMA safe */
-+					/* makes only sense in kernelspace */
-+					/* userspace buffers are copied anyway */
- #define I2C_M_RECV_LEN		0x0400	/* length will be first received byte */
- #define I2C_M_NO_RD_ACK		0x0800	/* if I2C_FUNC_PROTOCOL_MANGLING */
- #define I2C_M_IGNORE_NAK	0x1000	/* if I2C_FUNC_PROTOCOL_MANGLING */
+"The destination rectangle can lie outside of the visible area of the
+current mode of the CRTC."
+
+This shit is better than I thought!
+
+https://dri.freedesktop.org/docs/drm/gpu/drm-kms.html#plane-composition-properties
+
+Now can I raise you one and challenge you to run the kms tests in igt
+and see how non-compliant your driver is :-)
+
+Cheers, Daniel
 -- 
-2.11.0
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
