@@ -1,65 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:51118 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750926AbdIKW06 (ORCPT
+Received: from mail-wr0-f172.google.com ([209.85.128.172]:45368 "EHLO
+        mail-wr0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751717AbdI1UHm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Sep 2017 18:26:58 -0400
-From: Kieran Bingham <kbingham@kernel.org>
-To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        mchehab@kernel.org
-Cc: niklas.soderlund@ragnatech.se, Simon Yuan <simon.yuan@navico.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH] media: i2c: adv748x: Map v4l2_std_id to the internal reg value
-Date: Mon, 11 Sep 2017 23:26:53 +0100
-Message-Id: <1505168813-13529-1-git-send-email-kbingham@kernel.org>
+        Thu, 28 Sep 2017 16:07:42 -0400
+Received: by mail-wr0-f172.google.com with SMTP id m18so4705594wrm.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 28 Sep 2017 13:07:41 -0700 (PDT)
+Subject: Re: [PATCH 1/4] dt-bindings: net: ravb: Document optional reset-gpios
+ property
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        "David S . Miller" <davem@davemloft.net>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+References: <1506614014-4398-1-git-send-email-geert+renesas@glider.be>
+ <1506614014-4398-2-git-send-email-geert+renesas@glider.be>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <fefd2be3-d47a-f035-5078-090df0fc6318@cogentembedded.com>
+Date: Thu, 28 Sep 2017 23:07:38 +0300
+MIME-Version: 1.0
+In-Reply-To: <1506614014-4398-2-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Simon Yuan <simon.yuan@navico.com>
+Hello!
 
-The video standard was not mapped to the corresponding value of the
-internal video standard in adv748x_afe_querystd, causing the wrong
-video standard to be selected.
+On 09/28/2017 06:53 PM, Geert Uytterhoeven wrote:
 
-Fixes: 3e89586a64df ("media: i2c: adv748x: add adv748x driver")
-Signed-off-by: Simon Yuan <simon.yuan@navico.com>
-[Kieran: Obtain the std from the afe->curr_norm]
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> The optional "reset-gpios" property (part of the generic MDIO bus
+> properties) lets us describe the GPIO used for resetting the Ethernet
+> PHY.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>   Documentation/devicetree/bindings/net/renesas,ravb.txt | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/net/renesas,ravb.txt b/Documentation/devicetree/bindings/net/renesas,ravb.txt
+> index c902261893b913f5..4a6ec1ba32d0bf16 100644
+> --- a/Documentation/devicetree/bindings/net/renesas,ravb.txt
+> +++ b/Documentation/devicetree/bindings/net/renesas,ravb.txt
+> @@ -52,6 +52,7 @@ Optional properties:
+>   			 AVB_LINK signal.
+>   - renesas,ether-link-active-low: boolean, specify when the AVB_LINK signal is
+>   				 active-low instead of normal active-high.
+> +- reset-gpios: see mdio.txt in the same directory.
 
----
-Simon,
+    Sigh, I can only repeat that was a terrible prop name choice -- when 
+applied to a MAC node... what reset does it mean? MAC?
 
-I've added your implicit Signed-off-by tag as part of resubmitting this
-patch. Please confirm your agreement to this!
-
- drivers/media/i2c/adv748x/adv748x-afe.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/media/i2c/adv748x/adv748x-afe.c b/drivers/media/i2c/adv748x/adv748x-afe.c
-index 134d981d69d3..5188178588c9 100644
---- a/drivers/media/i2c/adv748x/adv748x-afe.c
-+++ b/drivers/media/i2c/adv748x/adv748x-afe.c
-@@ -217,6 +217,7 @@ static int adv748x_afe_querystd(struct v4l2_subdev *sd, v4l2_std_id *std)
- {
- 	struct adv748x_afe *afe = adv748x_sd_to_afe(sd);
- 	struct adv748x_state *state = adv748x_afe_to_state(afe);
-+	int afe_std;
- 	int ret;
- 
- 	mutex_lock(&state->mutex);
-@@ -235,8 +236,12 @@ static int adv748x_afe_querystd(struct v4l2_subdev *sd, v4l2_std_id *std)
- 	/* Read detected standard */
- 	ret = adv748x_afe_status(afe, NULL, std);
- 
-+	afe_std = adv748x_afe_std(afe->curr_norm);
-+	if (afe_std < 0)
-+		goto unlock;
-+
- 	/* Restore original state */
--	adv748x_afe_set_video_standard(state, afe->curr_norm);
-+	adv748x_afe_set_video_standard(state, afe_std);
- 
- unlock:
- 	mutex_unlock(&state->mutex);
--- 
-2.7.4
+MBR, Sergei
