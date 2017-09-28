@@ -1,59 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f172.google.com ([209.85.128.172]:45368 "EHLO
-        mail-wr0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751717AbdI1UHm (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:49730 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751710AbdI1Pxy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 28 Sep 2017 16:07:42 -0400
-Received: by mail-wr0-f172.google.com with SMTP id m18so4705594wrm.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 28 Sep 2017 13:07:41 -0700 (PDT)
-Subject: Re: [PATCH 1/4] dt-bindings: net: ravb: Document optional reset-gpios
- property
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        "David S . Miller" <davem@davemloft.net>,
+        Thu, 28 Sep 2017 11:53:54 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: "David S . Miller" <davem@davemloft.net>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>,
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Andrew Lunn <andrew@lunn.ch>,
         Florian Fainelli <f.fainelli@gmail.com>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/4] dt-bindings: net: ravb: Document optional reset-gpios property
+Date: Thu, 28 Sep 2017 17:53:31 +0200
+Message-Id: <1506614014-4398-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1506614014-4398-1-git-send-email-geert+renesas@glider.be>
 References: <1506614014-4398-1-git-send-email-geert+renesas@glider.be>
- <1506614014-4398-2-git-send-email-geert+renesas@glider.be>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <fefd2be3-d47a-f035-5078-090df0fc6318@cogentembedded.com>
-Date: Thu, 28 Sep 2017 23:07:38 +0300
-MIME-Version: 1.0
-In-Reply-To: <1506614014-4398-2-git-send-email-geert+renesas@glider.be>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+The optional "reset-gpios" property (part of the generic MDIO bus
+properties) lets us describe the GPIO used for resetting the Ethernet
+PHY.
 
-On 09/28/2017 06:53 PM, Geert Uytterhoeven wrote:
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ Documentation/devicetree/bindings/net/renesas,ravb.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> The optional "reset-gpios" property (part of the generic MDIO bus
-> properties) lets us describe the GPIO used for resetting the Ethernet
-> PHY.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->   Documentation/devicetree/bindings/net/renesas,ravb.txt | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/renesas,ravb.txt b/Documentation/devicetree/bindings/net/renesas,ravb.txt
-> index c902261893b913f5..4a6ec1ba32d0bf16 100644
-> --- a/Documentation/devicetree/bindings/net/renesas,ravb.txt
-> +++ b/Documentation/devicetree/bindings/net/renesas,ravb.txt
-> @@ -52,6 +52,7 @@ Optional properties:
->   			 AVB_LINK signal.
->   - renesas,ether-link-active-low: boolean, specify when the AVB_LINK signal is
->   				 active-low instead of normal active-high.
-> +- reset-gpios: see mdio.txt in the same directory.
-
-    Sigh, I can only repeat that was a terrible prop name choice -- when 
-applied to a MAC node... what reset does it mean? MAC?
-
-MBR, Sergei
+diff --git a/Documentation/devicetree/bindings/net/renesas,ravb.txt b/Documentation/devicetree/bindings/net/renesas,ravb.txt
+index c902261893b913f5..4a6ec1ba32d0bf16 100644
+--- a/Documentation/devicetree/bindings/net/renesas,ravb.txt
++++ b/Documentation/devicetree/bindings/net/renesas,ravb.txt
+@@ -52,6 +52,7 @@ Optional properties:
+ 			 AVB_LINK signal.
+ - renesas,ether-link-active-low: boolean, specify when the AVB_LINK signal is
+ 				 active-low instead of normal active-high.
++- reset-gpios: see mdio.txt in the same directory.
+ 
+ Example:
+ 
+@@ -99,6 +100,7 @@ Example:
+ 		pinctrl-0 = <&ether_pins>;
+ 		pinctrl-names = "default";
+ 		renesas,no-ether-link;
++		reset-gpios = <&gpio2 10 GPIO_ACTIVE_LOW>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
+-- 
+2.7.4
