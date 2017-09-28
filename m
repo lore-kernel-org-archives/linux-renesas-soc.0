@@ -1,49 +1,127 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:46225 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933359AbdIYHzG (ORCPT
+Received: from mail-wr0-f174.google.com ([209.85.128.174]:46129 "EHLO
+        mail-wr0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750832AbdI1T4i (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Sep 2017 03:55:06 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/3] ARM: Add definition for monitor mode
-Date: Mon, 25 Sep 2017 09:54:43 +0200
-Message-Id: <c5d43be52e0c7380f985585ef72dac1a6a89b59d.1506325834.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1506325834.git.horms+renesas@verge.net.au>
-References: <cover.1506325834.git.horms+renesas@verge.net.au>
+        Thu, 28 Sep 2017 15:56:38 -0400
+Received: by mail-wr0-f174.google.com with SMTP id o42so4655571wrb.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 28 Sep 2017 12:56:37 -0700 (PDT)
+Subject: Re: [PATCH/RFC net-next] ravb: RX checksum offload
+To: Simon Horman <horms@verge.net.au>
+Cc: David Miller <davem@davemloft.net>,
+        Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+References: <1505221489-12870-1-git-send-email-horms+renesas@verge.net.au>
+ <9dcbc418-128b-2eff-970f-b586b9a3cee6@cogentembedded.com>
+ <20170928104918.GA11212@verge.net.au>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <cc6f731d-2192-995f-4194-5dd6600c4d5b@cogentembedded.com>
+Date: Thu, 28 Sep 2017 22:56:32 +0300
+MIME-Version: 1.0
+In-Reply-To: <20170928104918.GA11212@verge.net.au>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Hello!
 
-<asm/ptrace.h> provides *_MODE definitions for the various processor
-modes, but monitor mode was missing.
+On 09/28/2017 01:49 PM, Simon Horman wrote:
 
-Add MON_MODE to avoid code using the hardcoded value.
+>>> Add support for RX checksum offload. This is enabled by default and
+>>> may be disabled and re-enabled using ethtool:
+>>>
+>>>   # ethtool -K eth0 rx off
+>>>   # ethtool -K eth0 rx on
+>>>
+>>> The RAVB provides a simple checksumming scheme which appears to be
+>>> completely compatible with CHECKSUM_COMPLETE: a 1's complement sum of
+>>
+>>     Hm, the gen2/3 manuals say calculation doesn't involve bit inversion...
+> 
+> Yes, I believe that matches my observation of the values supplied by
+> the hardware. Empirically this appears to be what the kernel expects.
 
-Suggested-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/include/uapi/asm/ptrace.h | 1 +
- 1 file changed, 1 insertion(+)
+    Then why you talk of 1's complement here?
 
-diff --git a/arch/arm/include/uapi/asm/ptrace.h b/arch/arm/include/uapi/asm/ptrace.h
-index 5af0ed1b825a..70ff6bf489f3 100644
---- a/arch/arm/include/uapi/asm/ptrace.h
-+++ b/arch/arm/include/uapi/asm/ptrace.h
-@@ -53,6 +53,7 @@
- #endif
- #define FIQ_MODE	0x00000011
- #define IRQ_MODE	0x00000012
-+#define MON_MODE	0x00000016
- #define ABT_MODE	0x00000017
- #define HYP_MODE	0x0000001a
- #define UND_MODE	0x0000001b
--- 
-2.1.4
+>>> all packet data after the L2 header is appended to packet data; this may
+>>> be trivially read by the driver and used to update the skb accordingly.
+>>>
+>>> In terms of performance throughput is close to gigabit line-rate both with
+>>> and without RX checksum offload enabled. Perf output, however, appears to
+>>> indicate that significantly less time is spent in do_csum(). This is as
+>>> expected.
+>>
+>> [...]
+>>
+>>> By inspection this also appears to be compatible with the ravb found
+>>> on R-Car Gen 2 SoCs, however, this patch is currently untested on such
+>>> hardware.
+>>
+>>     I probably won't be able to test it on gen2 too...
+>>
+>>> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+>>
+>>     I'm generally OK with the patch but have some questions/comments below...
+> 
+> Thanks, I will try to address them.
+> 
+>>> ---
+>>>   drivers/net/ethernet/renesas/ravb_main.c | 58 +++++++++++++++++++++++++++++++-
+>>>   1 file changed, 57 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+>>> index fdf30bfa403b..7c6438cd7de7 100644
+>>> --- a/drivers/net/ethernet/renesas/ravb_main.c
+>>> +++ b/drivers/net/ethernet/renesas/ravb_main.c
+>> [...]
+>>> @@ -1842,6 +1859,41 @@ static int ravb_do_ioctl(struct net_device *ndev, struct ifreq *req, int cmd)
+>>>   	return phy_mii_ioctl(phydev, req, cmd);
+>>>   }
+>>> +static void ravb_set_rx_csum(struct net_device *ndev, bool enable)
+>>> +{
+>>> +	struct ravb_private *priv = netdev_priv(ndev);
+>>> +	unsigned long flags;
+>>> +
+>>> +	spin_lock_irqsave(&priv->lock, flags);
+>>> +
+>>> +	/* Disable TX and RX */
+>>> +	ravb_rcv_snd_disable(ndev);
+>>> +
+>>> +	/* Modify RX Checksum setting */
+>>> +	if (enable)
+>>> +		ravb_modify(ndev, ECMR, 0, ECMR_RCSC);
+>>
+>>     Please use ECMR_RCSC as the 3rd argument too to conform the common driver
+>> style.
+>>
+>>> +	else
+>>> +		ravb_modify(ndev, ECMR, ECMR_RCSC, 0);
+>>
+>>     This *if* can easily be folded into a single ravb_modify() call...
+> 
+> Thanks, something like this?
+> 
+> 	ravb_modify(ndev, ECMR, ECMR_RCSC, enable ? ECMR_RCSC : 0);
+
+    Yes, exactly! :-)
+
+>> [...]
+>>> @@ -2004,6 +2057,9 @@ static int ravb_probe(struct platform_device *pdev)
+>>>   	if (!ndev)
+>>>   		return -ENOMEM;
+>>> +	ndev->features |= NETIF_F_RXCSUM;
+>>> +	ndev->hw_features |= ndev->features;
+>>
+>>     Hum, both fields are 0 before this? Then why not use '=' instead of '|='?
+>> Even if not, why not just use the same value as both the rvalues?
+> 
+> I don't feel strongly about this, how about?
+> 
+> 	ndev->features = NETIF_F_RXCSUM;
+> 	ndev->hw_features = NETIF_F_RXCSUM;
+
+    Yes, I think it should work...
+
+MBR, Sergei
