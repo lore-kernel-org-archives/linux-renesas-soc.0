@@ -1,105 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f48.google.com ([209.85.215.48]:55842 "EHLO
-        mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751828AbdIOToe (ORCPT
+Received: from mail-wm0-f49.google.com ([74.125.82.49]:44121 "EHLO
+        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750946AbdI1Flt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Sep 2017 15:44:34 -0400
-Received: by mail-lf0-f48.google.com with SMTP id u21so3377807lfk.12
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 15 Sep 2017 12:44:34 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20170915194429.260616486@cogentembedded.com>
-Date: Fri, 15 Sep 2017 22:43:21 +0300
-To: Rob Herring <robh+dt@kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 3/8] arm64: dts: renesas: r8a77970: add SYS-DMAC support
+        Thu, 28 Sep 2017 01:41:49 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=arm64-dts-renesas-r8a77970-add-SYS-DMAC-support-v2.patch
+In-Reply-To: <20170927170145.lseodaywmmuqvmcj@sirena.org.uk>
+References: <CANqRtoQjvkm4rMXt6jEaVWBeieEzqzT-yw_oARV7sj-SpTxB6g@mail.gmail.com>
+ <20170927170145.lseodaywmmuqvmcj@sirena.org.uk>
+From: Magnus Damm <magnus.damm@gmail.com>
+Date: Thu, 28 Sep 2017 14:41:47 +0900
+Message-ID: <CANqRtoQ7Q2xw5Z+mdhk8pJhx_d_PQFr-==4_YTWPK9sFfLKFuw@mail.gmail.com>
+Subject: Re: Applied "spi: sh-msiof: Add compatible strings for r8a774[35]" to
+ the spi tree
+To: Mark Brown <broonie@kernel.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe SYS-DMAC1/2 in the R8A77970 device tree.
+Hi Mark,
 
-Based on the original (and large) patch by Daisuke Matsushita
-<daisuke.matsushita.ns@hitachi.com>.
+On Thu, Sep 28, 2017 at 2:01 AM, Mark Brown <broonie@kernel.org> wrote:
+> On Wed, Sep 27, 2017 at 02:36:01PM +0900, Magnus Damm wrote:
+>> On Wed, Sep 27, 2017 at 2:30 AM, Mark Brown <broonie@kernel.org> wrote:
+>> > On Mon, Sep 25, 2017 at 09:15:53PM +0200, Geert Uytterhoeven wrote:
+>
+>> >>   3. When updating DT bindings for new SoCs, we usually add "No driver
+>> >>      update is needed" to the patch description to clarify. Unfortunately
+>> >>      that was missed here.
+>
+>> > That's basically the same good practice thing, it's just documenting
+>> > what you're trying to do here with not putting things in code but
+>> > writing things in changelogs doesn't make them so!
+>
+>> My opinion that good practice is to document the per-driver supported
+>> hardware by explicitly listing the per-SoC compat strings in the DT
+>> binding document.
+>
+>> Then exactly which compat strings the driver matches on is really part
+>> of the software implementation and it will most likely vary over time.
+>
+>> So my view is that only updating the DT binding document should be
+>> enough in most cases when fall-back compat strings are used. I guess
+>> other people see it differently?
+>
+>> Is it too much detail to let the MAINTAINERS file point out both
+>> driver files and the DT binding files?
+>
+> It's supposed to do that already.  All I'm saying here is that the patch
+> doesn't seem like something that needs actively reverting since it's a
+> perfectly valid and even potentially useful change to make.
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Thanks for clarifying the inclusion of DT bindings in the MAINTAINER
+file. To escape any sort of conflict I will happily let you and Geert
+discuss what is potentially useful or not! =)
 
----
-Changes in version 2:
-- replaced  the use of the SYSC power domain #define's with the bare numbers;
-- refreshed the patch;
-- added Geert's tag.
+Nevertheless I agree that reverting this rather harmless change seems
+a bit overly aggressive.
 
- arch/arm64/boot/dts/renesas/r8a77970.dtsi |   48 ++++++++++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
+Cheers,
 
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -121,5 +121,53 @@
- 			compatible = "renesas,prr";
- 			reg = <0 0xfff00044 0 4>;
- 		};
-+
-+		dmac1: dma-controller@e7300000 {
-+			compatible = "renesas,dmac-r8a77970",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xe7300000 0 0x10000>;
-+			interrupts = <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 217 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 309 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 311 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					  "ch0", "ch1", "ch2", "ch3",
-+					  "ch4", "ch5", "ch6", "ch7";
-+			clocks = <&cpg CPG_MOD 218>;
-+			clock-names = "fck";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 218>;
-+			#dma-cells = <1>;
-+			dma-channels = <8>;
-+		};
-+
-+		dmac2: dma-controller@e7310000 {
-+			compatible = "renesas,dmac-r8a77970",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xe7310000 0 0x10000>;
-+			interrupts = <GIC_SPI 307 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 312 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 313 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 314 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 315 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 317 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 318 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 319 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					  "ch0", "ch1", "ch2", "ch3",
-+					  "ch4", "ch5", "ch6", "ch7";
-+			clocks = <&cpg CPG_MOD 217>;
-+			clock-names = "fck";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 217>;
-+			#dma-cells = <1>;
-+			dma-channels = <8>;
-+		};
- 	};
- };
+/ magnus
