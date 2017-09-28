@@ -1,243 +1,146 @@
-Subject: Re: [PATCH 3/3] drm: rcar-du: Clip planes to screen boundaries
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org
-References: <20170815230338.14913-1-laurent.pinchart+renesas@ideasonboard.com>
- <20170815230338.14913-4-laurent.pinchart+renesas@ideasonboard.com>
-Reply-To: kieran.bingham@ideasonboard.com
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Message-ID: <d06c0c6e-6f50-fe94-da31-e9aeef2ba25c@ideasonboard.com>
-Date: Wed, 27 Sep 2017 19:58:44 +0100
+Return-Path: <SRS0=Sa5c=A5=vger.kernel.org=linux-renesas-soc-owner@vergenet.net>
+Received: from 240.251.37.191.neorede.com.br ([191.37.251.240]:47286 "HELO
+        neorede.com.br" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with SMTP id S1750819AbdI1SXy (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 28 Sep 2017 14:23:54 -0400
+Message-ID: <150662302935.18527.18198492324035982189@neorede.com.br>
+To: <linux-renesas-soc@vger.kernel.org>
+From: <mary.lester09@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20170815230338.14913-4-laurent.pinchart+renesas@ideasonboard.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: application/zip; name="420470229.zip"
+Content-Disposition: attachment
+Subject: 
+Content-Transfer-Encoding: base64
+Date: Thu, 28 Sep 2017 18:23:49 -0000
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Laurent,
-
-Thanks for the patch,
-
-On 16/08/17 00:03, Laurent Pinchart wrote:
-> Unlike the KMS API, the hardware doesn't support planes exceeding the
-> screen boundaries. Clip plane coordinates to support the use case.
-> 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
-> ---
->  drivers/gpu/drm/rcar-du/rcar_du_plane.c | 66 +++++++++++++++++++++++++--------
->  drivers/gpu/drm/rcar-du/rcar_du_plane.h |  4 ++
->  drivers/gpu/drm/rcar-du/rcar_du_vsp.c   | 21 +++++++----
->  3 files changed, 67 insertions(+), 24 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.c b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-> index 714e02960635..7944790bac25 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-> @@ -19,6 +19,7 @@
->  #include <drm/drm_fb_cma_helper.h>
->  #include <drm/drm_gem_cma_helper.h>
->  #include <drm/drm_plane_helper.h>
-> +#include <drm/drm_rect.h>
->  
->  #include "rcar_du_drv.h"
->  #include "rcar_du_group.h"
-> @@ -329,11 +330,39 @@ static void rcar_du_plane_write(struct rcar_du_group *rgrp,
->  		      data);
->  }
->  
-> +void rcar_du_plane_clip(const struct drm_plane_state *state,
-> +			struct drm_rect *src, struct drm_rect *dst)
-> +{
-> +	const struct drm_display_mode *mode;
-> +
-> +	/*
-> +	 * The hardware requires all planes to be fully contained in the output
-> +	 * rectangle. Crop the destination rectangle to fit in the CRTC.
-> +	 */
-> +	mode = &state->crtc->state->adjusted_mode;
-> +
-> +	dst->x1 = max(0, state->crtc_x);
-> +	dst->y1 = max(0, state->crtc_y);
-> +	dst->x2 = min_t(unsigned int, mode->hdisplay,
-> +			state->crtc_x + state->crtc_w);
-> +	dst->y2 = min_t(unsigned int, mode->vdisplay,
-> +			state->crtc_y + state->crtc_h);
-> +
-> +	/*
-> +	 * Offset the left and top source coordinates by the same displacement
-> +	 * we have applied to the destination rectangle. Copy the width and
-> +	 * height as the hardware can't scale.
-> +	 */
-> +	src->x1 = (state->src_x >> 16) + (dst->x1 - state->crtc_x);
-> +	src->y1 = (state->src_y >> 16) + (dst->y1 - state->crtc_y);
-
-I had to look up why we do a >> 16 here. I guess this is for sub-pixel
-positioning. That might be obvious to DRM developers, but was new to me.
-
-Probably not worth a comment though - as I know what it is now :)
-Do we have any macros to make this 16.16 -> int conversion more explicit?
-(I think this comes under the same category as using BIT() to which we differ on
-opinion anyway though)
-
-
-> +	src->x2 = src->x1 + (dst->x2 - dst->x1);
-> +	src->y2 = src->y1 + (dst->y2 - dst->y1);
-> +}
-> +
->  static void rcar_du_plane_setup_scanout(struct rcar_du_group *rgrp,
-> -					const struct rcar_du_plane_state *state)
-> +					const struct rcar_du_plane_state *state,
-> +					const struct drm_rect *src)
->  {
-> -	unsigned int src_x = state->state.src_x >> 16;
-> -	unsigned int src_y = state->state.src_y >> 16;
->  	unsigned int index = state->hwindex;
->  	unsigned int pitch;
->  	bool interlaced;
-> @@ -357,7 +386,7 @@ static void rcar_du_plane_setup_scanout(struct rcar_du_group *rgrp,
->  			dma[i] = gem->paddr + fb->offsets[i];
->  		}
->  	} else {
-> -		pitch = state->state.src_w >> 16;
-> +		pitch = drm_rect_width(&state->state.src);
->  		dma[0] = 0;
->  		dma[1] = 0;
->  	}
-> @@ -383,8 +412,8 @@ static void rcar_du_plane_setup_scanout(struct rcar_du_group *rgrp,
->  	 * require a halved Y position value, in both progressive and interlaced
->  	 * modes.
->  	 */
-> -	rcar_du_plane_write(rgrp, index, PnSPXR, src_x);
-> -	rcar_du_plane_write(rgrp, index, PnSPYR, src_y *
-> +	rcar_du_plane_write(rgrp, index, PnSPXR, src->x1);
-> +	rcar_du_plane_write(rgrp, index, PnSPYR, src->y1 *
->  			    (!interlaced && state->format->bpp == 32 ? 2 : 1));
->  
->  	rcar_du_plane_write(rgrp, index, PnDSA0R, dma[0]);
-> @@ -394,8 +423,8 @@ static void rcar_du_plane_setup_scanout(struct rcar_du_group *rgrp,
->  
->  		rcar_du_plane_write(rgrp, index, PnMWR, pitch);
->  
-> -		rcar_du_plane_write(rgrp, index, PnSPXR, src_x);
-> -		rcar_du_plane_write(rgrp, index, PnSPYR, src_y *
-> +		rcar_du_plane_write(rgrp, index, PnSPXR, src->x1);
-> +		rcar_du_plane_write(rgrp, index, PnSPYR, src->y1 *
->  				    (state->format->bpp == 16 ? 2 : 1) / 2);
->  
->  		rcar_du_plane_write(rgrp, index, PnDSA0R, dma[1]);
-> @@ -518,7 +547,8 @@ static void rcar_du_plane_setup_format_gen3(struct rcar_du_group *rgrp,
->  
->  static void rcar_du_plane_setup_format(struct rcar_du_group *rgrp,
->  				       unsigned int index,
-> -				       const struct rcar_du_plane_state *state)
-> +				       const struct rcar_du_plane_state *state,
-> +				       const struct drm_rect *dst)
->  {
->  	struct rcar_du_device *rcdu = rgrp->dev;
->  
-> @@ -528,10 +558,10 @@ static void rcar_du_plane_setup_format(struct rcar_du_group *rgrp,
->  		rcar_du_plane_setup_format_gen3(rgrp, index, state);
->  
->  	/* Destination position and size */
-> -	rcar_du_plane_write(rgrp, index, PnDSXR, state->state.crtc_w);
-> -	rcar_du_plane_write(rgrp, index, PnDSYR, state->state.crtc_h);
-> -	rcar_du_plane_write(rgrp, index, PnDPXR, state->state.crtc_x);
-> -	rcar_du_plane_write(rgrp, index, PnDPYR, state->state.crtc_y);
-> +	rcar_du_plane_write(rgrp, index, PnDSXR, drm_rect_width(dst));
-> +	rcar_du_plane_write(rgrp, index, PnDSYR, drm_rect_height(dst));
-> +	rcar_du_plane_write(rgrp, index, PnDPXR, dst->x1);
-> +	rcar_du_plane_write(rgrp, index, PnDPYR, dst->y1);
->  
->  	if (rcdu->info->gen < 3) {
->  		/* Wrap-around and blinking, disabled */
-> @@ -546,14 +576,18 @@ void __rcar_du_plane_setup(struct rcar_du_group *rgrp,
->  			   const struct rcar_du_plane_state *state)
->  {
->  	struct rcar_du_device *rcdu = rgrp->dev;
-> +	struct drm_rect src;
-> +	struct drm_rect dst;
-> +
-> +	rcar_du_plane_clip(&state->state, &src, &dst);
->  
-> -	rcar_du_plane_setup_format(rgrp, state->hwindex, state);
-> +	rcar_du_plane_setup_format(rgrp, state->hwindex, state, &dst);
->  	if (state->format->planes == 2)
->  		rcar_du_plane_setup_format(rgrp, (state->hwindex + 1) % 8,
-> -					   state);
-> +					   state, &dst);
->  
->  	if (rcdu->info->gen < 3)
-> -		rcar_du_plane_setup_scanout(rgrp, state);
-> +		rcar_du_plane_setup_scanout(rgrp, state, &src);
->  
->  	if (state->source == RCAR_DU_PLANE_VSPD1) {
->  		unsigned int vspd1_sink = rgrp->index ? 2 : 0;
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.h b/drivers/gpu/drm/rcar-du/rcar_du_plane.h
-> index 890321b4665d..ec52a2af7cd4 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_plane.h
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.h
-> @@ -17,6 +17,7 @@
->  #include <drm/drmP.h>
->  #include <drm/drm_crtc.h>
->  
-> +struct drm_rect;
->  struct rcar_du_format_info;
->  struct rcar_du_group;
->  
-> @@ -79,6 +80,9 @@ int __rcar_du_plane_atomic_check(struct drm_plane *plane,
->  
->  int rcar_du_planes_init(struct rcar_du_group *rgrp);
->  
-> +void rcar_du_plane_clip(const struct drm_plane_state *state,
-> +			struct drm_rect *src, struct drm_rect *dst);
-> +
->  void __rcar_du_plane_setup(struct rcar_du_group *rgrp,
->  			   const struct rcar_du_plane_state *state);
->  
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-> index dd66dcb8da23..e62a8d7ee0c5 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-> @@ -18,6 +18,7 @@
->  #include <drm/drm_fb_cma_helper.h>
->  #include <drm/drm_gem_cma_helper.h>
->  #include <drm/drm_plane_helper.h>
-> +#include <drm/drm_rect.h>
->  
->  #include <linux/bitops.h>
->  #include <linux/dma-mapping.h>
-> @@ -176,17 +177,21 @@ static void rcar_du_vsp_plane_setup(struct rcar_du_vsp_plane *plane)
->  		.alpha = state->alpha,
->  		.zpos = state->state.zpos,
->  	};
-> +	struct drm_rect src;
-> +	struct drm_rect dst;
->  	unsigned int i;
->  
-> -	cfg.src.left = state->state.src_x >> 16;
-> -	cfg.src.top = state->state.src_y >> 16;
-> -	cfg.src.width = state->state.src_w >> 16;
-> -	cfg.src.height = state->state.src_h >> 16;
-> +	rcar_du_plane_clip(&state->state, &src, &dst);
->  
-> -	cfg.dst.left = state->state.crtc_x;
-> -	cfg.dst.top = state->state.crtc_y;
-> -	cfg.dst.width = state->state.crtc_w;
-> -	cfg.dst.height = state->state.crtc_h;
-> +	cfg.src.left = src.x1;
-> +	cfg.src.top = src.y1;
-> +	cfg.src.width = drm_rect_width(&src);
-> +	cfg.src.height = drm_rect_height(&src);
-> +
-> +	cfg.dst.left = dst.x1;
-> +	cfg.dst.top = dst.y1;
-> +	cfg.dst.width = drm_rect_width(&dst);
-> +	cfg.dst.height = drm_rect_height(&dst);
->  
->  	for (i = 0; i < state->format->planes; ++i)
->  		cfg.mem[i] = sg_dma_address(state->sg_tables[i].sgl)
-> 
+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
