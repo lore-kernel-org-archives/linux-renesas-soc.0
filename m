@@ -1,48 +1,41 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:45250 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751242AbdIQXst (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 17 Sep 2017 19:48:49 -0400
-From: Kieran Bingham <kbingham@kernel.org>
-To: laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH 1/5] kmstest: Repair pep8 line formatting
-Date: Mon, 18 Sep 2017 00:48:40 +0100
-Message-Id: <1505692124-12167-2-git-send-email-kbingham@kernel.org>
-In-Reply-To: <1505692124-12167-1-git-send-email-kbingham@kernel.org>
-References: <1505692124-12167-1-git-send-email-kbingham@kernel.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Thu, 28 Sep 2017 08:04:05 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: Re: [PATCH] ARM: dts: r8a7743: Add MSIOF[012] support
+Message-ID: <20170928060405.GC5562@verge.net.au>
+References: <1506506225-5015-1-git-send-email-fabrizio.castro@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1506506225-5015-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+On Wed, Sep 27, 2017 at 10:57:04AM +0100, Fabrizio Castro wrote:
+> Add the DT nodes needed by MSIOF[012] interfaces to the SoC dtsi.
+> Also, define aliases for spi[123].
+> 
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+> ---
+> 
+> This patch depends on the corresponding dt-bindings patch:
+> * spi: sh-msiof: Add r8a774[35] to the compatible list
+> which has been applied to linux-next already.
 
-PEP8 reports issues with blank lines, both at the start and end of the module.
+Thanks, applied for v4.15 with Geert's tags.
 
-Fix them.
+Thanks for providing a cover letter and threading the
+patches a reply to the cover letter. This is very helpful.
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- tests/kmstest.py | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tests/kmstest.py b/tests/kmstest.py
-index 5938dc4a4da2..e8e3c3a0305b 100755
---- a/tests/kmstest.py
-+++ b/tests/kmstest.py
-@@ -8,6 +8,7 @@ import selectors
- import sys
- import time
- 
-+
- class Timer(object):
-     def __init__(self, timeout, callback):
-         self.timeout = time.clock_gettime(time.CLOCK_MONOTONIC) + timeout
-@@ -327,4 +328,3 @@ class KMSTest(object):
-         sys.stdout.write("\rTesting %s: SUCCESS\n" % self.test_name)
-         sys.stdout.flush()
-         return self.success
--
--- 
-2.7.4
+Please consider enumerating patches in a series. In this case it would be
+0/2 for the cover then 1/2 and 2/2 for the patches themselves.
