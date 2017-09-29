@@ -1,70 +1,82 @@
-Subject: Re: [PATCH 2/3] drm: rcar-du: Reject planes located fully off-screen
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org
-References: <20170815230338.14913-1-laurent.pinchart+renesas@ideasonboard.com>
- <20170815230338.14913-3-laurent.pinchart+renesas@ideasonboard.com>
-Reply-To: kieran.bingham@ideasonboard.com
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Message-ID: <b2179a21-51aa-e973-73de-fd657ecfedb5@ideasonboard.com>
-Date: Wed, 27 Sep 2017 19:58:42 +0100
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor4.renesas.com ([210.160.252.174]:23727 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752155AbdI2Lst (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 29 Sep 2017 07:48:49 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: balbi@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 2/3] usb: gadget: udc: renesas_usb3: Add suspend/resume functions
+Date: Fri, 29 Sep 2017 20:45:00 +0900
+Message-Id: <1506685501-24988-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1506685501-24988-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1506685501-24988-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-In-Reply-To: <20170815230338.14913-3-laurent.pinchart+renesas@ideasonboard.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Laurent,
+This patch adds support suspend/resume functions
 
-Thankyou for the patch,
+Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+[shimoda: add the commit log]
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ drivers/usb/gadget/udc/renesas_usb3.c | 34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
-This looks good, and passes the tests.
-
-On 16/08/17 00:03, Laurent Pinchart wrote:
-> There is no point in accepting fully off-screen planes as they won't be
-> displayed. Reject them in the atomic check.
-> 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
-> ---
->  drivers/gpu/drm/rcar-du/rcar_du_plane.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.c b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-> index 4f076c364f25..714e02960635 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-> @@ -569,6 +569,8 @@ int __rcar_du_plane_atomic_check(struct drm_plane *plane,
->  				 struct drm_plane_state *state,
->  				 const struct rcar_du_format_info **format)
->  {
-> +	const struct drm_display_mode *mode;
-> +	struct drm_crtc_state *crtc_state;
->  	struct drm_device *dev = plane->dev;
->  
->  	if (!state->fb || !state->crtc) {
-> @@ -582,6 +584,20 @@ int __rcar_du_plane_atomic_check(struct drm_plane *plane,
->  		return -EINVAL;
->  	}
->  
-> +	crtc_state = drm_atomic_get_crtc_state(state->state, state->crtc);
-> +	if (IS_ERR(crtc_state))
-> +		return PTR_ERR(crtc_state);
-> +
-> +	mode = &crtc_state->adjusted_mode;
-> +	if (state->crtc_x >= mode->hdisplay ||
-> +	    state->crtc_y >= mode->vdisplay ||
-> +	    state->crtc_x + (int)state->crtc_w <= 0 ||
-> +	    state->crtc_y + (int)state->crtc_h <= 0) {
-> +		dev_dbg(dev->dev, "%s: plane can't be fully off-screen\n",
-> +			__func__);
-> +		return -EINVAL;
-> +	}
-> +
->  	*format = rcar_du_format_info(state->fb->format->format);
->  	if (*format == NULL) {
->  		dev_dbg(dev->dev, "%s: unsupported format %08x\n", __func__,
-> 
+diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
+index 7d99774..d55a06b 100644
+--- a/drivers/usb/gadget/udc/renesas_usb3.c
++++ b/drivers/usb/gadget/udc/renesas_usb3.c
+@@ -2644,11 +2644,45 @@ static int renesas_usb3_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
++#ifdef CONFIG_PM_SLEEP
++static int renesas_usb3_suspend(struct device *dev)
++{
++	struct renesas_usb3 *usb3 = dev_get_drvdata(dev);
++
++	/* Not started */
++	if (!usb3->driver)
++		return 0;
++
++	renesas_usb3_stop_controller(usb3);
++	pm_runtime_put(dev);
++
++	return 0;
++}
++
++static int renesas_usb3_resume(struct device *dev)
++{
++	struct renesas_usb3 *usb3 = dev_get_drvdata(dev);
++
++	/* Not started */
++	if (!usb3->driver)
++		return 0;
++
++	pm_runtime_get_sync(dev);
++	renesas_usb3_init_controller(usb3);
++
++	return 0;
++}
++#endif
++
++static SIMPLE_DEV_PM_OPS(renesas_usb3_pm_ops, renesas_usb3_suspend,
++			renesas_usb3_resume);
++
+ static struct platform_driver renesas_usb3_driver = {
+ 	.probe		= renesas_usb3_probe,
+ 	.remove		= renesas_usb3_remove,
+ 	.driver		= {
+ 		.name =	(char *)udc_name,
++		.pm		= &renesas_usb3_pm_ops,
+ 		.of_match_table = of_match_ptr(usb3_of_match),
+ 	},
+ };
+-- 
+1.9.1
