@@ -1,40 +1,35 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:36027 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751456AbdI2NJD (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:23727 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751906AbdI2Lsr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Sep 2017 09:09:03 -0400
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org
-Cc: wsa@the-dreams.de, linux-serial@vger.kernel.org,
-        magnus.damm@gmail.com,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 0/2] HSCIF tweaks support
-Date: Fri, 29 Sep 2017 15:08:52 +0200
-Message-Id: <1506690534-27302-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Fri, 29 Sep 2017 07:48:47 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: balbi@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 0/3] usb: gadget: udc: renesas_usb3: add suspend/resume and generic phy
+Date: Fri, 29 Sep 2017 20:44:58 +0900
+Message-Id: <1506685501-24988-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi!
+This patch set is based on the latest Felipe's usb.git / testing/next branch
+(commit id = af846d7ab55c846af6d6f150e9af96295101e068)
 
-These patches enable tweaking of the HSCIF RX FIFO timeout and sampling
-point via sysfs. I have put them in one series because they have textual
-dependencies and implement similar functionality.
+Kazuya Mizuguchi (1):
+  usb: gadget: udc: renesas_usb3: move pm_runtime_{en,dis}able()
 
-"serial: sh-sci: Support for variable HSCIF hardware RX timeout" includes
-minor touch-ups suggested in Geert's review of the standalone version.
+Yoshihiro Shimoda (2):
+  usb: gadget: udc: renesas_usb3: Add suspend/resume functions
+  usb: gadget: udc: renesas_usb3: add support for generic phy
 
-CU
-Uli
-
-
-Ulrich Hecht (2):
-  serial: sh-sci: Support for variable HSCIF hardware RX timeout
-  serial: sh-sci: Support for HSCIF RX sampling point adjustment
-
- drivers/tty/serial/sh-sci.c | 114 +++++++++++++++++++++++++++++++++++++-------
- drivers/tty/serial/sh-sci.h |   7 +++
- 2 files changed, 104 insertions(+), 17 deletions(-)
+ .../devicetree/bindings/usb/renesas_usb3.txt       |  4 ++
+ drivers/usb/gadget/udc/renesas_usb3.c              | 64 ++++++++++++++++++++--
+ 2 files changed, 64 insertions(+), 4 deletions(-)
 
 -- 
-2.7.4
+1.9.1
