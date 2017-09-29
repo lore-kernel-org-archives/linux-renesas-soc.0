@@ -1,125 +1,165 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 2/2] arm64: dts: r8a7796: add thermal cooling management
-Date: Wed, 13 Sep 2017 12:59:09 +0200
-Message-Id: <20170913105909.13230-3-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170913105909.13230-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170913105909.13230-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:55777 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751456AbdI2NJG (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 29 Sep 2017 09:09:06 -0400
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org
+Cc: wsa@the-dreams.de, linux-serial@vger.kernel.org,
+        magnus.damm@gmail.com,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH 2/2] serial: sh-sci: Support for HSCIF RX sampling point adjustment
+Date: Fri, 29 Sep 2017 15:08:54 +0200
+Message-Id: <1506690534-27302-3-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <1506690534-27302-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1506690534-27302-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add nodes and properties for thermal cooling management support.
+HSCIF has facilities that allow moving the RX sampling point by between
+-8 and 7 sampling cycles (one sampling cycles equals 1/15 of a bit
+by default) to improve the error margin in case of slightly mismatched
+bit rates between sender and receiver.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+This patch allows changing the default (0, meaning center) using the
+sysfs attribute "rx_sampling_point".
+
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 ---
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 38 ++++++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
+ drivers/tty/serial/sh-sci.c | 62 +++++++++++++++++++++++++++++++++++++++++++--
+ drivers/tty/serial/sh-sci.h |  4 +++
+ 2 files changed, 64 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 2905a3b953aab145..0b805dc30925e9be 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -53,6 +53,7 @@
- 				<&cluster0_opp_tb3>, <&cluster0_opp_tb4>,
- 				<&cluster0_opp_tb5>, <&cluster0_opp_tb6>,
- 				<&cluster0_opp_tb7>;
-+			#cooling-cells = <2>;
- 		};
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 41bf910..924a393 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -153,6 +153,7 @@ struct sci_port {
+ 	struct timer_list		rx_fifo_timer;
+ 	int				rx_fifo_timeout;
+ 	u16				hscif_tot;
++	u16				hscif_srhp;
  
- 		a57_1: cpu@1 {
-@@ -67,6 +68,7 @@
- 				<&cluster0_opp_tb3>, <&cluster0_opp_tb4>,
- 				<&cluster0_opp_tb5>, <&cluster0_opp_tb6>,
- 				<&cluster0_opp_tb7>;
-+			#cooling-cells = <2>;
- 		};
+ 	bool has_rtscts;
+ 	bool autorts;
+@@ -992,6 +993,42 @@ static int sci_handle_breaks(struct uart_port *port)
+ 	return copied;
+ }
  
- 		a53_0: cpu@100 {
-@@ -2116,12 +2118,24 @@
- 				thermal-sensors = <&tsc 0>;
- 
- 				trips {
-+					sensor1_passive: sensor1-passive {
-+						temperature = <95000>;
-+						hysteresis = <2000>;
-+						type = "passive";
-+					};
- 					sensor1_crit: sensor1-crit {
- 						temperature = <120000>;
- 						hysteresis = <2000>;
- 						type = "critical";
- 					};
- 				};
++static ssize_t rx_sampling_point_show(struct device *dev,
++			       struct device_attribute *attr,
++			       char *buf)
++{
++	struct uart_port *port = dev_get_drvdata(dev);
++	struct sci_port *sci = to_sci_port(port);
 +
-+				cooling-maps {
-+					map0 {
-+						trip = <&sensor1_passive>;
-+						cooling-device = <&a57_0 5 5>;
-+					};
-+				};
- 			};
- 
- 			sensor_thermal2: sensor-thermal2 {
-@@ -2130,12 +2144,24 @@
- 				thermal-sensors = <&tsc 1>;
- 
- 				trips {
-+					sensor2_passive: sensor2-passive {
-+						temperature = <95000>;
-+						hysteresis = <2000>;
-+						type = "passive";
-+					};
- 					sensor2_crit: sensor2-crit {
- 						temperature = <120000>;
- 						hysteresis = <2000>;
- 						type = "critical";
- 					};
- 				};
++	return sprintf(buf, "%d\n", sci->hscif_srhp);
++}
 +
-+				cooling-maps {
-+					map0 {
-+						trip = <&sensor2_passive>;
-+						cooling-device = <&a57_0 5 5>;
-+					};
-+				};
- 			};
- 
- 			sensor_thermal3: sensor-thermal3 {
-@@ -2144,12 +2170,24 @@
- 				thermal-sensors = <&tsc 2>;
- 
- 				trips {
-+					sensor3_passive: sensor3-passive {
-+						temperature = <95000>;
-+						hysteresis = <2000>;
-+						type = "passive";
-+					};
- 					sensor3_crit: sensor3-crit {
- 						temperature = <120000>;
- 						hysteresis = <2000>;
- 						type = "critical";
- 					};
- 				};
++static ssize_t rx_sampling_point_store(struct device *dev,
++				struct device_attribute *attr,
++				const char *buf,
++				size_t count)
++{
++	struct uart_port *port = dev_get_drvdata(dev);
++	struct sci_port *sci = to_sci_port(port);
++	int ret;
++	long r;
 +
-+				cooling-maps {
-+					map0 {
-+						trip = <&sensor3_passive>;
-+						cooling-device = <&a57_0 5 5>;
-+					};
-+				};
- 			};
- 		};
++	ret = kstrtol(buf, 0, &r);
++	if (ret)
++		return ret;
++
++	if (r < -8 || r > 7)
++		return -EINVAL;
++
++	sci->hscif_srhp = r;
++
++	return count;
++}
++
++static DEVICE_ATTR(rx_sampling_point, 0644,
++		   rx_sampling_point_show,
++		   rx_sampling_point_store);
++
+ static int scif_set_rtrg(struct uart_port *port, int rx_trig)
+ {
+ 	unsigned int bits;
+@@ -2378,8 +2415,6 @@ static void sci_set_termios(struct uart_port *port, struct ktermios *termios,
+ 		serial_port_out(port, SCSCR, scr_val | s->hscif_tot);
+ 		serial_port_out(port, SCSMR, smr_val);
+ 		serial_port_out(port, SCBRR, brr);
+-		if (sci_getreg(port, HSSRR)->size)
+-			serial_port_out(port, HSSRR, srr | HSCIF_SRE);
  
+ 		/* Wait one bit interval */
+ 		udelay((1000000 + (baud - 1)) / baud);
+@@ -2393,6 +2428,18 @@ static void sci_set_termios(struct uart_port *port, struct ktermios *termios,
+ 		serial_port_out(port, SCSMR, smr_val);
+ 	}
+ 
++	if (sci_getreg(port, HSSRR)->size) {
++		u16 hssrr = srr | HSCIF_SRE;
++
++		if (s->hscif_srhp) {
++			u16 srhp = (s->hscif_srhp << HSCIF_SRHP_SHIFT) &
++				   HSCIF_SRHP_MASK;
++
++			hssrr |= HSCIF_SRDE | srhp;
++		}
++		serial_port_out(port, HSSRR, hssrr);
++	}
++
+ 	sci_init_pins(port, termios->c_cflag);
+ 
+ 	port->status &= ~UPSTAT_AUTOCTS;
+@@ -2793,6 +2840,7 @@ static int sci_init_single(struct platform_device *dev,
+ 
+ 	sci_port->rx_fifo_timeout = 0;
+ 	sci_port->hscif_tot = 0;
++	sci_port->hscif_shrp = 0;
+ 
+ 	/* SCIFA on sh7723 and sh7724 need a custom sampling rate that doesn't
+ 	 * match the SoC datasheet, this should be investigated. Let platform
+@@ -3013,6 +3061,10 @@ static int sci_remove(struct platform_device *dev)
+ 		sysfs_remove_file(&dev->dev.kobj,
+ 				  &dev_attr_rx_fifo_timeout.attr);
+ 	}
++	if (port->port.type == PORT_HSCIF) {
++		sysfs_remove_file(&dev->dev.kobj,
++				  &dev_attr_rx_sampling_point.attr);
++	}
+ 
+ 	return 0;
+ }
+@@ -3206,6 +3258,12 @@ static int sci_probe(struct platform_device *dev)
+ 			return ret;
+ 		}
+ 	}
++	if (sp->port.type == PORT_HSCIF) {
++		ret = sysfs_create_file(&dev->dev.kobj,
++				&dev_attr_rx_sampling_point.attr);
++		if (ret)
++			return ret;
++	}
+ 
+ #ifdef CONFIG_SH_STANDARD_BIOS
+ 	sh_bios_gdb_detach();
+diff --git a/drivers/tty/serial/sh-sci.h b/drivers/tty/serial/sh-sci.h
+index 2b708cc..80958b2 100644
+--- a/drivers/tty/serial/sh-sci.h
++++ b/drivers/tty/serial/sh-sci.h
+@@ -129,6 +129,10 @@ enum {
+ 
+ /* HSSRR HSCIF */
+ #define HSCIF_SRE	BIT(15)	/* Sampling Rate Register Enable */
++#define HSCIF_SRDE	BIT(14)	/* Sampling Point Register Enable */
++
++#define HSCIF_SRHP_SHIFT	8
++#define HSCIF_SRHP_MASK		0x0f00
+ 
+ /* SCPCR (Serial Port Control Register), SCIFA/SCIFB only */
+ #define SCPCR_RTSC	BIT(4)	/* Serial Port RTS# Pin / Output Pin */
 -- 
-2.14.1
-
+2.7.4
