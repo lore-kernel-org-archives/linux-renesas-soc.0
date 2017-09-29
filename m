@@ -1,84 +1,59 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Chris Paterson <chris.paterson2@renesas.com>
-To: Simon Horman <horms@verge.net.au>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:34783 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752162AbdI2Lyi (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 29 Sep 2017 07:54:38 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Chris Paterson <chris.paterson2@renesas.com>
-Subject: [PATCH 6/8] ARM: dts: iwg20m: Add SPI NOR support
-Date: Wed, 13 Sep 2017 18:05:39 +0100
-Message-Id: <1505322341-9480-7-git-send-email-chris.paterson2@renesas.com>
-In-Reply-To: <1505322341-9480-1-git-send-email-chris.paterson2@renesas.com>
-References: <1505322341-9480-1-git-send-email-chris.paterson2@renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 15/48] ARM: dts: r8a7745: Add MMC interface support
+Date: Fri, 29 Sep 2017 13:53:07 +0200
+Message-Id: <933b16efb7be16e98a6bcd04ed59c5e91371afef.1506683482.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1506683482.git.horms+renesas@verge.net.au>
+References: <cover.1506683482.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Add support for the SPI NOR device used to boot up the system
-to the System on Module DT.
+Add MMC interface support for r8a7745 SoC.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-This patch is based on renesas-devel-20170913-v4.13.
+ arch/arm/boot/dts/r8a7745.dtsi | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-This patch is dependant on:
-- "of: add vendor prefix for Silicon Storage Technology Inc."
-- "doc: dt: mtd: Add sst25vf016b to the list of supported chip names"
-
-
- arch/arm/boot/dts/r8a7743-iwg20m.dtsi | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7743-iwg20m.dtsi b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
-index 4119737..75a8ca5 100644
---- a/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
-+++ b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
-@@ -44,6 +44,11 @@
- 		function = "mmc";
+diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+index 2fa989f631a9..7fd2967b1f42 100644
+--- a/arch/arm/boot/dts/r8a7745.dtsi
++++ b/arch/arm/boot/dts/r8a7745.dtsi
+@@ -706,6 +706,22 @@
+ 			i2c-scl-internal-delay-ns = <6>;
+ 			status = "disabled";
+ 		};
++
++		mmcif0: mmc@ee200000 {
++			compatible = "renesas,mmcif-r8a7745",
++				     "renesas,sh-mmcif";
++			reg = <0 0xee200000 0 0x80>;
++			interrupts = <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 315>;
++			dmas = <&dmac0 0xd1>, <&dmac0 0xd2>,
++			       <&dmac1 0xd1>, <&dmac1 0xd2>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
++			resets = <&cpg 315>;
++			reg-io-width = <4>;
++			max-frequency = <97500000>;
++			status = "disabled";
++		};
  	};
  
-+	qspi_pins: qspi {
-+		groups = "qspi_ctrl", "qspi_data2";
-+		function = "qspi";
-+	};
-+
- 	sdhi0_pins: sd0 {
- 		groups = "sdhi0_data4", "sdhi0_ctrl";
- 		function = "sdhi0";
-@@ -61,6 +66,27 @@
- 	status = "okay";
- };
- 
-+&qspi {
-+	pinctrl-0 = <&qspi_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+
-+	/* WARNING - This device contains the bootloader. Handle with care. */
-+	flash: flash@0 {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		compatible = "sst,sst25vf016b", "jedec,spi-nor";
-+		reg = <0>;
-+		spi-max-frequency = <50000000>;
-+		spi-tx-bus-width = <1>;
-+		spi-rx-bus-width = <1>;
-+		m25p,fast-read;
-+		spi-cpol;
-+		spi-cpha;
-+	};
-+};
-+
- &sdhi0 {
- 	pinctrl-0 = <&sdhi0_pins>;
- 	pinctrl-names = "default";
+ 	/* External root clock */
 -- 
-1.9.1
-
+2.1.4
