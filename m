@@ -1,234 +1,96 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from lb3-smtp-cloud7.xs4all.net ([194.109.24.31]:58827 "EHLO
-        lb3-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933162AbdIYKre (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34495 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752181AbdI2Lxv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Sep 2017 06:47:34 -0400
-Subject: Re: [PATCH v6 24/25] rcar-vin: enable support for r8a7795
-To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-References: <20170822232640.26147-1-niklas.soderlund+renesas@ragnatech.se>
- <20170822232640.26147-25-niklas.soderlund+renesas@ragnatech.se>
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        tomoharu.fukawa.eb@renesas.com, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <c69e22ea-f407-a34f-01db-0fe88c69c8c3@xs4all.nl>
-Date: Mon, 25 Sep 2017 12:47:31 +0200
-MIME-Version: 1.0
-In-Reply-To: <20170822232640.26147-25-niklas.soderlund+renesas@ragnatech.se>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+        Fri, 29 Sep 2017 07:53:51 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 12/22] arm64: dts: renesas: r8a77970: add SYS-DMAC support
+Date: Fri, 29 Sep 2017 13:52:21 +0200
+Message-Id: <bd746e70d3fce2cb1719fd2c085cd57a872575fe.1506678250.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1506678250.git.horms+renesas@verge.net.au>
+References: <cover.1506678250.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 23/08/17 01:26, Niklas Söderlund wrote:
-> Add the SoC specific information for Renesas r8a7795.
-> 
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+Describe SYS-DMAC1/2 in the R8A77970 device tree.
 
-Regards,
+Based on the original (and large) patch by Daisuke Matsushita
+<daisuke.matsushita.ns@hitachi.com>.
 
-	Hans
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a77970.dtsi | 48 +++++++++++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
 
-> ---
->  drivers/media/platform/rcar-vin/Kconfig     |   2 +-
->  drivers/media/platform/rcar-vin/rcar-core.c | 145 ++++++++++++++++++++++++++++
->  2 files changed, 146 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/rcar-vin/Kconfig b/drivers/media/platform/rcar-vin/Kconfig
-> index af4c98b44d2e22cb..8fa7ee468c63afb9 100644
-> --- a/drivers/media/platform/rcar-vin/Kconfig
-> +++ b/drivers/media/platform/rcar-vin/Kconfig
-> @@ -6,7 +6,7 @@ config VIDEO_RCAR_VIN
->  	select V4L2_FWNODE
->  	---help---
->  	  Support for Renesas R-Car Video Input (VIN) driver.
-> -	  Supports R-Car Gen2 SoCs.
-> +	  Supports R-Car Gen2 and Gen3 SoCs.
->  
->  	  To compile this driver as a module, choose M here: the
->  	  module will be called rcar-vin.
-> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-> index dec91e2f3ccdbd93..58d903ab9fb83faf 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-core.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
-> @@ -21,6 +21,7 @@
->  #include <linux/platform_device.h>
->  #include <linux/pm_runtime.h>
->  #include <linux/slab.h>
-> +#include <linux/sys_soc.h>
->  
->  #include <media/v4l2-fwnode.h>
->  
-> @@ -987,7 +988,139 @@ static const struct rvin_info rcar_info_gen2 = {
->  	.max_height = 2048,
->  };
->  
-> +static const struct rvin_info rcar_info_r8a7795 = {
-> +	.chip = RCAR_GEN3,
-> +	.use_mc = true,
-> +	.max_width = 4096,
-> +	.max_height = 4096,
-> +
-> +	.num_chsels = 5,
-> +	.chsels = {
-> +		{
-> +			{ .csi = RVIN_CSI40, .chan = 0 },
-> +			{ .csi = RVIN_CSI20, .chan = 0 },
-> +			{ .csi = RVIN_CSI40, .chan = 1 },
-> +			{ .csi = RVIN_CSI40, .chan = 0 },
-> +			{ .csi = RVIN_CSI20, .chan = 0 },
-> +		}, {
-> +			{ .csi = RVIN_CSI20, .chan = 0 },
-> +			{ .csi = RVIN_CSI40, .chan = 1 },
-> +			{ .csi = RVIN_CSI40, .chan = 0 },
-> +			{ .csi = RVIN_CSI40, .chan = 1 },
-> +			{ .csi = RVIN_CSI20, .chan = 1 },
-> +		}, {
-> +			{ .csi = RVIN_CSI20, .chan = 1 },
-> +			{ .csi = RVIN_CSI40, .chan = 0 },
-> +			{ .csi = RVIN_CSI20, .chan = 0 },
-> +			{ .csi = RVIN_CSI40, .chan = 2 },
-> +			{ .csi = RVIN_CSI20, .chan = 2 },
-> +		}, {
-> +			{ .csi = RVIN_CSI40, .chan = 1 },
-> +			{ .csi = RVIN_CSI20, .chan = 1 },
-> +			{ .csi = RVIN_CSI20, .chan = 1 },
-> +			{ .csi = RVIN_CSI40, .chan = 3 },
-> +			{ .csi = RVIN_CSI20, .chan = 3 },
-> +		}, {
-> +			{ .csi = RVIN_CSI41, .chan = 0 },
-> +			{ .csi = RVIN_CSI20, .chan = 0 },
-> +			{ .csi = RVIN_CSI41, .chan = 1 },
-> +			{ .csi = RVIN_CSI41, .chan = 0 },
-> +			{ .csi = RVIN_CSI20, .chan = 0 },
-> +		}, {
-> +			{ .csi = RVIN_CSI20, .chan = 0 },
-> +			{ .csi = RVIN_CSI41, .chan = 1 },
-> +			{ .csi = RVIN_CSI41, .chan = 0 },
-> +			{ .csi = RVIN_CSI41, .chan = 1 },
-> +			{ .csi = RVIN_CSI20, .chan = 1 },
-> +		}, {
-> +			{ .csi = RVIN_CSI20, .chan = 1 },
-> +			{ .csi = RVIN_CSI41, .chan = 0 },
-> +			{ .csi = RVIN_CSI20, .chan = 0 },
-> +			{ .csi = RVIN_CSI41, .chan = 2 },
-> +			{ .csi = RVIN_CSI20, .chan = 2 },
-> +		}, {
-> +			{ .csi = RVIN_CSI41, .chan = 1 },
-> +			{ .csi = RVIN_CSI20, .chan = 1 },
-> +			{ .csi = RVIN_CSI20, .chan = 1 },
-> +			{ .csi = RVIN_CSI41, .chan = 3 },
-> +			{ .csi = RVIN_CSI20, .chan = 3 },
-> +		},
-> +	},
-> +};
-> +
-> +static const struct rvin_info rcar_info_r8a7795es1 = {
-> +	.chip = RCAR_GEN3,
-> +	.use_mc = true,
-> +	.max_width = 4096,
-> +	.max_height = 4096,
-> +
-> +	.num_chsels = 6,
-> +	.chsels = {
-> +		{
-> +			{ .csi = RVIN_CSI40, .chan = 0 },
-> +			{ .csi = RVIN_CSI20, .chan = 0 },
-> +			{ .csi = RVIN_CSI21, .chan = 0 },
-> +			{ .csi = RVIN_CSI40, .chan = 0 },
-> +			{ .csi = RVIN_CSI20, .chan = 0 },
-> +			{ .csi = RVIN_CSI21, .chan = 0 },
-> +		}, {
-> +			{ .csi = RVIN_CSI20, .chan = 0 },
-> +			{ .csi = RVIN_CSI21, .chan = 0 },
-> +			{ .csi = RVIN_CSI40, .chan = 0 },
-> +			{ .csi = RVIN_CSI40, .chan = 1 },
-> +			{ .csi = RVIN_CSI20, .chan = 1 },
-> +			{ .csi = RVIN_CSI21, .chan = 1 },
-> +		}, {
-> +			{ .csi = RVIN_CSI21, .chan = 0 },
-> +			{ .csi = RVIN_CSI40, .chan = 0 },
-> +			{ .csi = RVIN_CSI20, .chan = 0 },
-> +			{ .csi = RVIN_CSI40, .chan = 2 },
-> +			{ .csi = RVIN_CSI20, .chan = 2 },
-> +			{ .csi = RVIN_CSI21, .chan = 2 },
-> +		}, {
-> +			{ .csi = RVIN_CSI40, .chan = 1 },
-> +			{ .csi = RVIN_CSI20, .chan = 1 },
-> +			{ .csi = RVIN_CSI21, .chan = 1 },
-> +			{ .csi = RVIN_CSI40, .chan = 3 },
-> +			{ .csi = RVIN_CSI20, .chan = 3 },
-> +			{ .csi = RVIN_CSI21, .chan = 3 },
-> +		}, {
-> +			{ .csi = RVIN_CSI41, .chan = 0 },
-> +			{ .csi = RVIN_CSI20, .chan = 0 },
-> +			{ .csi = RVIN_CSI21, .chan = 0 },
-> +			{ .csi = RVIN_CSI41, .chan = 0 },
-> +			{ .csi = RVIN_CSI20, .chan = 0 },
-> +			{ .csi = RVIN_CSI21, .chan = 0 },
-> +		}, {
-> +			{ .csi = RVIN_CSI20, .chan = 0 },
-> +			{ .csi = RVIN_CSI21, .chan = 0 },
-> +			{ .csi = RVIN_CSI41, .chan = 0 },
-> +			{ .csi = RVIN_CSI41, .chan = 1 },
-> +			{ .csi = RVIN_CSI20, .chan = 1 },
-> +			{ .csi = RVIN_CSI21, .chan = 1 },
-> +		}, {
-> +			{ .csi = RVIN_CSI21, .chan = 0 },
-> +			{ .csi = RVIN_CSI41, .chan = 0 },
-> +			{ .csi = RVIN_CSI20, .chan = 0 },
-> +			{ .csi = RVIN_CSI41, .chan = 2 },
-> +			{ .csi = RVIN_CSI20, .chan = 2 },
-> +			{ .csi = RVIN_CSI21, .chan = 2 },
-> +		}, {
-> +			{ .csi = RVIN_CSI41, .chan = 1 },
-> +			{ .csi = RVIN_CSI20, .chan = 1 },
-> +			{ .csi = RVIN_CSI21, .chan = 1 },
-> +			{ .csi = RVIN_CSI41, .chan = 3 },
-> +			{ .csi = RVIN_CSI20, .chan = 3 },
-> +			{ .csi = RVIN_CSI21, .chan = 3 },
-> +		},
-> +	},
-> +};
-> +
->  static const struct of_device_id rvin_of_id_table[] = {
-> +	{
-> +		.compatible = "renesas,vin-r8a7795",
-> +		.data = &rcar_info_r8a7795,
-> +	},
->  	{
->  		.compatible = "renesas,vin-r8a7794",
->  		.data = &rcar_info_gen2,
-> @@ -1020,6 +1153,11 @@ static const struct of_device_id rvin_of_id_table[] = {
->  };
->  MODULE_DEVICE_TABLE(of, rvin_of_id_table);
->  
-> +static const struct soc_device_attribute r8a7795es1[] = {
-> +	{ .soc_id = "r8a7795", .revision = "ES1.*" },
-> +	{ /* sentinel */ }
-> +};
-> +
->  static int rcar_vin_probe(struct platform_device *pdev)
->  {
->  	const struct of_device_id *match;
-> @@ -1038,6 +1176,13 @@ static int rcar_vin_probe(struct platform_device *pdev)
->  	vin->dev = &pdev->dev;
->  	vin->info = match->data;
->  
-> +	/*
-> +	 * Special care is needed on r8a7795 ES1.x since it
-> +	 * uses different routing then r8a7795 ES2.0.
-> +	 */
-> +	if (vin->info == &rcar_info_r8a7795 && soc_device_match(r8a7795es1))
-> +		vin->info = &rcar_info_r8a7795es1;
-> +
->  	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->  	if (mem == NULL)
->  		return -EINVAL;
-> 
+diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+index dec3492cd7dc..a2a438a91b3f 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+@@ -121,5 +121,53 @@
+ 			compatible = "renesas,prr";
+ 			reg = <0 0xfff00044 0 4>;
+ 		};
++
++		dmac1: dma-controller@e7300000 {
++			compatible = "renesas,dmac-r8a77970",
++				     "renesas,rcar-dmac";
++			reg = <0 0xe7300000 0 0x10000>;
++			interrupts = <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 217 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 309 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 311 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "error",
++					  "ch0", "ch1", "ch2", "ch3",
++					  "ch4", "ch5", "ch6", "ch7";
++			clocks = <&cpg CPG_MOD 218>;
++			clock-names = "fck";
++			power-domains = <&sysc 32>;
++			resets = <&cpg 218>;
++			#dma-cells = <1>;
++			dma-channels = <8>;
++		};
++
++		dmac2: dma-controller@e7310000 {
++			compatible = "renesas,dmac-r8a77970",
++				     "renesas,rcar-dmac";
++			reg = <0 0xe7310000 0 0x10000>;
++			interrupts = <GIC_SPI 307 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 312 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 313 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 314 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 315 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 317 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 318 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 319 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "error",
++					  "ch0", "ch1", "ch2", "ch3",
++					  "ch4", "ch5", "ch6", "ch7";
++			clocks = <&cpg CPG_MOD 217>;
++			clock-names = "fck";
++			power-domains = <&sysc 32>;
++			resets = <&cpg 217>;
++			#dma-cells = <1>;
++			dma-channels = <8>;
++		};
+ 	};
+ };
+-- 
+2.1.4
