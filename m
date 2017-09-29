@@ -1,77 +1,105 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:46212 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:34793 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933359AbdIYHzE (ORCPT
+        with ESMTP id S1752162AbdI2Lyp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Sep 2017 03:55:04 -0400
+        Fri, 29 Sep 2017 07:54:45 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Renesas ARM Based SoC Updates for v4.15
-Date: Mon, 25 Sep 2017 09:54:43 +0200
-Message-Id: <cover.1506325834.git.horms+renesas@verge.net.au>
+Subject: [PATCH 34/48] ARM: dts: r8a7743: Add IIC cores to dtsi
+Date: Fri, 29 Sep 2017 13:53:26 +0200
+Message-Id: <f523405f2a22cc0c30701ea0cb3671dc0abbcda1.1506683482.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1506683482.git.horms+renesas@verge.net.au>
+References: <cover.1506683482.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+From: Biju Das <biju.das@bp.renesas.com>
 
-Please consider these Renesas ARM based SoC updates for v4.15.
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7743.dtsi | 55 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 55 insertions(+)
 
-
-The following changes since commit 2bd6bf03f4c1c59381d62c61d03f6cc3fe71f66e:
-
-  Linux 4.14-rc1 (2017-09-16 15:47:51 -0700)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-soc-for-v4.15
-
-for you to fetch changes up to 3fd45a136ff61bb54deab70fb2d534a85e40481f:
-
-  ARM: shmobile: rcar-gen2: Make sure CNTVOFF is initialized on CA7/15 (2017-09-18 08:10:44 +0200)
-
-----------------------------------------------------------------
-Renesas ARM Based SoC Updates for v4.15
-
-* Prepare to enable SMP on R-Car E2 (r8a7794).
-
-  Geert Uytterhoeven says:
-  "The main hurdle here is that R-Car Gen2 boot loaders do not initialize
-   the arch_timer CNTVOFF register, which thus needs workarounds on Linux.
-
-   - The first patch adds a definition for MON_MODE, as suggested by Marc
-     Zyngier,
-   - The second patch makes sure CNTVOFF is initialized for boot and
-     secondary Cortex-A15 and Cortex-A7 CPU cores, like is already done for
-     the boot Cortex-A7 CPU core.  Without this, the ARM arch timer does
-     not work on secondary CPU cores."
-
-   A follow-up patch to enable SMP in DT on R-Car E2 (r8a7794) is currently
-   deferred unto v4.16 as it depends on the above.
-
-* Enable low-level debugging support for RZ/G1E (r8a7745).
-
-  Fabrizio Castro says, "RZ/G1E uses SCIF4 for the debug console."
-
-----------------------------------------------------------------
-Fabrizio Castro (1):
-      ARM: debug-ll: Add support for r8a7745
-
-Geert Uytterhoeven (2):
-      ARM: Add definition for monitor mode
-      ARM: shmobile: rcar-gen2: Make sure CNTVOFF is initialized on CA7/15
-
- arch/arm/Kconfig.debug                   | 10 +++++++++
- arch/arm/include/uapi/asm/ptrace.h       |  1 +
- arch/arm/mach-shmobile/Makefile          |  1 +
- arch/arm/mach-shmobile/common.h          |  2 ++
- arch/arm/mach-shmobile/headsmp-apmu.S    | 37 ++++++++++++++++++++++++++++++++
- arch/arm/mach-shmobile/platsmp-apmu.c    |  2 +-
- arch/arm/mach-shmobile/setup-rcar-gen2.c | 20 ++---------------
- 7 files changed, 54 insertions(+), 19 deletions(-)
- create mode 100644 arch/arm/mach-shmobile/headsmp-apmu.S
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index 665a5152951f..266c5eca9f74 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -25,6 +25,9 @@
+ 		i2c3 = &i2c3;
+ 		i2c4 = &i2c4;
+ 		i2c5 = &i2c5;
++		i2c6 = &iic0;
++		i2c7 = &iic1;
++		i2c8 = &iic3;
+ 	};
+ 
+ 	cpus {
+@@ -436,6 +439,58 @@
+ 			status = "disabled";
+ 		};
+ 
++		iic0: i2c@e6500000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "renesas,iic-r8a7743",
++				     "renesas,rcar-gen2-iic",
++				     "renesas,rmobile-iic";
++			reg = <0 0xe6500000 0 0x425>;
++			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 318>;
++			dmas = <&dmac0 0x61>, <&dmac0 0x62>,
++			       <&dmac1 0x61>, <&dmac1 0x62>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			resets = <&cpg 318>;
++			status = "disabled";
++		};
++
++		iic1: i2c@e6510000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "renesas,iic-r8a7743",
++				     "renesas,rcar-gen2-iic",
++				     "renesas,rmobile-iic";
++			reg = <0 0xe6510000 0 0x425>;
++			interrupts = <GIC_SPI 175 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 323>;
++			dmas = <&dmac0 0x65>, <&dmac0 0x66>,
++			       <&dmac1 0x65>, <&dmac1 0x66>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			resets = <&cpg 323>;
++			status = "disabled";
++		};
++
++		iic3: i2c@e60b0000 {
++			/* doesn't need pinmux */
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "renesas,iic-r8a7743",
++				     "renesas,rcar-gen2-iic",
++				     "renesas,rmobile-iic";
++			reg = <0 0xe60b0000 0 0x425>;
++			interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 926>;
++			dmas = <&dmac0 0x77>, <&dmac0 0x78>,
++			       <&dmac1 0x77>, <&dmac1 0x78>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			resets = <&cpg 926>;
++			status = "disabled";
++		};
++
+ 		scifa0: serial@e6c40000 {
+ 			compatible = "renesas,scifa-r8a7743",
+ 				     "renesas,rcar-gen2-scifa", "renesas,scifa";
+-- 
+2.1.4
