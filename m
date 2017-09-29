@@ -1,535 +1,407 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:54385 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967968AbdIZKGX (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34793 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752181AbdI2LzD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 26 Sep 2017 06:06:23 -0400
-Received: from avalon.guest.par1.mozilla.com (unknown [IPv6:2a00:8c40:243:232:120b:a9ff:fe3c:7148])
-        by galahad.ideasonboard.com (Postfix) with ESMTPSA id 119902150B
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 26 Sep 2017 12:06:07 +0200 (CEST)
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+        Fri, 29 Sep 2017 07:55:03 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Subject: [RFC 12/13] v4l: vsp1: Add support for near-lossless compression (FCNL) in the WPF
-Date: Tue, 26 Sep 2017 13:06:04 +0300
-Message-Id: <20170926100605.2313-15-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170926100605.2313-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170926100605.2313-1-laurent.pinchart+renesas@ideasonboard.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 37/48] ARM: dts: r8a7792: Add reset control properties
+Date: Fri, 29 Sep 2017 13:53:29 +0200
+Message-Id: <6e11a322f1d7505d3a1db4ae26c6c0e46082f4ae.1506683482.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1506683482.git.horms+renesas@verge.net.au>
+References: <cover.1506683482.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Visual near-lossless compression is a technique used to lower the memory
-bandwidth consumption by transparently (de)compressing frames when
-reading them from or writing them to memory.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-When writing frames to memory the VSPI, VSPBC and VSPBD (through their
-connnected FCP) can transparently compress them using FCNL. Implement
-support for it.
+Add properties to describe the reset topology for on-SoC devices:
+  - Add the "#reset-cells" property to the CPG/MSSR device node,
+  - Add resets and reset-names properties to the various device nodes.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+This allows to reset SoC devices using the Reset Controller API.
+
+Note that resets usually match the corresponding module clocks.
+Exceptions are:
+  - The audio module has resets for the Serial Sound Interfaces only,
+    but audio is not yet enabled in r8a7792.dtsi,
+  - The display module has only a single reset for all DU channels, but
+    adding reset properties for the display is postponed.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/media/platform/vsp1/vsp1.h      |   1 +
- drivers/media/platform/vsp1/vsp1_drv.c  |   6 +-
- drivers/media/platform/vsp1/vsp1_pipe.c |  57 ++++++------
- drivers/media/platform/vsp1/vsp1_pipe.h |   2 +
- drivers/media/platform/vsp1/vsp1_regs.h |   1 +
- drivers/media/platform/vsp1/vsp1_rwpf.h |   1 +
- drivers/media/platform/vsp1/vsp1_wpf.c  | 157 ++++++++++++++++++++++----------
- 7 files changed, 147 insertions(+), 78 deletions(-)
+ arch/arm/boot/dts/r8a7792.dtsi | 45 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
 
-diff --git a/drivers/media/platform/vsp1/vsp1.h b/drivers/media/platform/vsp1/vsp1.h
-index 78ef838416b3..1295accca011 100644
---- a/drivers/media/platform/vsp1/vsp1.h
-+++ b/drivers/media/platform/vsp1/vsp1.h
-@@ -55,6 +55,7 @@ struct vsp1_uds;
- #define VSP1_HAS_HGO		(1 << 7)
- #define VSP1_HAS_HGT		(1 << 8)
- #define VSP1_HAS_BRS		(1 << 9)
-+#define VSP1_HAS_FCNL		(1 << 10)
+diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
+index a209787d899a..c332f77ebb6b 100644
+--- a/arch/arm/boot/dts/r8a7792.dtsi
++++ b/arch/arm/boot/dts/r8a7792.dtsi
+@@ -95,6 +95,7 @@
+ 			clocks = <&cpg CPG_MOD 408>;
+ 			clock-names = "clk";
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 408>;
+ 		};
  
- struct vsp1_device_info {
- 	u32 version;
-diff --git a/drivers/media/platform/vsp1/vsp1_drv.c b/drivers/media/platform/vsp1/vsp1_drv.c
-index 4253a76cc484..d74a2cd37a52 100644
---- a/drivers/media/platform/vsp1/vsp1_drv.c
-+++ b/drivers/media/platform/vsp1/vsp1_drv.c
-@@ -693,7 +693,7 @@ static const struct vsp1_device_info vsp1_device_infos[] = {
- 		.gen = 3,
- 		.features = VSP1_HAS_CLU | VSP1_HAS_HGO | VSP1_HAS_HGT
- 			  | VSP1_HAS_LUT | VSP1_HAS_SRU | VSP1_HAS_WPF_HFLIP
--			  | VSP1_HAS_WPF_VFLIP,
-+			  | VSP1_HAS_WPF_VFLIP | VSP1_HAS_FCNL,
- 		.rpf_count = 1,
- 		.uds_count = 1,
- 		.wpf_count = 1,
-@@ -702,7 +702,7 @@ static const struct vsp1_device_info vsp1_device_infos[] = {
- 		.version = VI6_IP_VERSION_MODEL_VSPBD_GEN3,
- 		.model = "VSP2-BD",
- 		.gen = 3,
--		.features = VSP1_HAS_BRU | VSP1_HAS_WPF_VFLIP,
-+		.features = VSP1_HAS_BRU | VSP1_HAS_WPF_VFLIP | VSP1_HAS_FCNL,
- 		.rpf_count = 5,
- 		.wpf_count = 1,
- 		.num_bru_inputs = 5,
-@@ -712,7 +712,7 @@ static const struct vsp1_device_info vsp1_device_infos[] = {
- 		.model = "VSP2-BC",
- 		.gen = 3,
- 		.features = VSP1_HAS_BRU | VSP1_HAS_CLU | VSP1_HAS_HGO
--			  | VSP1_HAS_LUT | VSP1_HAS_WPF_VFLIP,
-+			  | VSP1_HAS_LUT | VSP1_HAS_WPF_VFLIP | VSP1_HAS_FCNL,
- 		.rpf_count = 5,
- 		.wpf_count = 1,
- 		.num_bru_inputs = 5,
-diff --git a/drivers/media/platform/vsp1/vsp1_pipe.c b/drivers/media/platform/vsp1/vsp1_pipe.c
-index 44944ac86d9b..a2414266815c 100644
---- a/drivers/media/platform/vsp1/vsp1_pipe.c
-+++ b/drivers/media/platform/vsp1/vsp1_pipe.c
-@@ -17,6 +17,7 @@
- #include <linux/wait.h>
+ 		irqc: interrupt-controller@e61c0000 {
+@@ -108,6 +109,7 @@
+ 				     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 407>;
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 407>;
+ 		};
  
- #include <media/media-entity.h>
-+#include <media/rcar-fcp.h>
- #include <media/v4l2-subdev.h>
+ 		timer {
+@@ -155,6 +157,7 @@
+ 			interrupt-controller;
+ 			clocks = <&cpg CPG_MOD 912>;
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 912>;
+ 		};
  
- #include "vsp1.h"
-@@ -37,113 +38,113 @@ static const struct vsp1_format_info vsp1_video_formats[] = {
- 	{ V4L2_PIX_FMT_RGB332, MEDIA_BUS_FMT_ARGB8888_1X32,
- 	  VI6_FMT_RGB_332, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
- 	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
--	  1, { 8, 0, 0 }, false, false, 1, 1, false },
-+	  1, { 8, 0, 0 }, false, false, 1, 1, false, RCAR_FCP_UNCOMPRESSED },
- 	{ V4L2_PIX_FMT_ARGB444, MEDIA_BUS_FMT_ARGB8888_1X32,
- 	  VI6_FMT_ARGB_4444, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
- 	  VI6_RPF_DSWAP_P_WDS,
--	  1, { 16, 0, 0 }, false, false, 1, 1, true },
-+	  1, { 16, 0, 0 }, false, false, 1, 1, true, RCAR_FCP_UNCOMPRESSED },
- 	{ V4L2_PIX_FMT_XRGB444, MEDIA_BUS_FMT_ARGB8888_1X32,
- 	  VI6_FMT_XRGB_4444, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
- 	  VI6_RPF_DSWAP_P_WDS,
--	  1, { 16, 0, 0 }, false, false, 1, 1, false },
-+	  1, { 16, 0, 0 }, false, false, 1, 1, false, RCAR_FCP_UNCOMPRESSED },
- 	{ V4L2_PIX_FMT_ARGB555, MEDIA_BUS_FMT_ARGB8888_1X32,
- 	  VI6_FMT_ARGB_1555, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
- 	  VI6_RPF_DSWAP_P_WDS,
--	  1, { 16, 0, 0 }, false, false, 1, 1, true },
-+	  1, { 16, 0, 0 }, false, false, 1, 1, true, RCAR_FCP_UNCOMPRESSED },
- 	{ V4L2_PIX_FMT_XRGB555, MEDIA_BUS_FMT_ARGB8888_1X32,
- 	  VI6_FMT_XRGB_1555, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
- 	  VI6_RPF_DSWAP_P_WDS,
--	  1, { 16, 0, 0 }, false, false, 1, 1, false },
-+	  1, { 16, 0, 0 }, false, false, 1, 1, false, RCAR_FCP_UNCOMPRESSED },
- 	{ V4L2_PIX_FMT_RGB565, MEDIA_BUS_FMT_ARGB8888_1X32,
- 	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
- 	  VI6_RPF_DSWAP_P_WDS,
--	  1, { 16, 0, 0 }, false, false, 1, 1, false },
-+	  1, { 16, 0, 0 }, false, false, 1, 1, false, RCAR_FCP_UNCOMPRESSED },
- 	{ V4L2_PIX_FMT_BGR24, MEDIA_BUS_FMT_ARGB8888_1X32,
- 	  VI6_FMT_BGR_888, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
- 	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
--	  1, { 24, 0, 0 }, false, false, 1, 1, false },
-+	  1, { 24, 0, 0 }, false, false, 1, 1, false, RCAR_FCP_UNCOMPRESSED },
- 	{ V4L2_PIX_FMT_RGB24, MEDIA_BUS_FMT_ARGB8888_1X32,
- 	  VI6_FMT_RGB_888, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
- 	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
--	  1, { 24, 0, 0 }, false, false, 1, 1, false },
-+	  1, { 24, 0, 0 }, false, false, 1, 1, false, RCAR_FCP_UNCOMPRESSED },
- 	{ V4L2_PIX_FMT_ABGR32, MEDIA_BUS_FMT_ARGB8888_1X32,
- 	  VI6_FMT_ARGB_8888, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS,
--	  1, { 32, 0, 0 }, false, false, 1, 1, true },
-+	  1, { 32, 0, 0 }, false, false, 1, 1, true, RCAR_FCP_UNCOMPRESSED },
- 	{ V4L2_PIX_FMT_XBGR32, MEDIA_BUS_FMT_ARGB8888_1X32,
- 	  VI6_FMT_ARGB_8888, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS,
--	  1, { 32, 0, 0 }, false, false, 1, 1, false },
-+	  1, { 32, 0, 0 }, false, false, 1, 1, false, RCAR_FCP_UNCOMPRESSED },
- 	{ V4L2_PIX_FMT_ARGB32, MEDIA_BUS_FMT_ARGB8888_1X32,
- 	  VI6_FMT_ARGB_8888, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
- 	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
--	  1, { 32, 0, 0 }, false, false, 1, 1, true },
-+	  1, { 32, 0, 0 }, false, false, 1, 1, true, RCAR_FCP_FCNL_RGB },
- 	{ V4L2_PIX_FMT_XRGB32, MEDIA_BUS_FMT_ARGB8888_1X32,
- 	  VI6_FMT_ARGB_8888, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
- 	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
--	  1, { 32, 0, 0 }, false, false, 1, 1, false },
-+	  1, { 32, 0, 0 }, false, false, 1, 1, false, RCAR_FCP_FCNL_RGB },
- 	{ V4L2_PIX_FMT_HSV24, MEDIA_BUS_FMT_AHSV8888_1X32,
- 	  VI6_FMT_RGB_888, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
- 	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
--	  1, { 24, 0, 0 }, false, false, 1, 1, false },
-+	  1, { 24, 0, 0 }, false, false, 1, 1, false, RCAR_FCP_UNCOMPRESSED },
- 	{ V4L2_PIX_FMT_HSV32, MEDIA_BUS_FMT_AHSV8888_1X32,
- 	  VI6_FMT_ARGB_8888, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
- 	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
--	  1, { 32, 0, 0 }, false, false, 1, 1, false },
-+	  1, { 32, 0, 0 }, false, false, 1, 1, false, RCAR_FCP_UNCOMPRESSED },
- 	{ V4L2_PIX_FMT_UYVY, MEDIA_BUS_FMT_AYUV8_1X32,
- 	  VI6_FMT_YUYV_422, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
- 	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
--	  1, { 16, 0, 0 }, false, false, 2, 1, false },
-+	  1, { 16, 0, 0 }, false, false, 2, 1, false, RCAR_FCP_UNCOMPRESSED },
- 	{ V4L2_PIX_FMT_VYUY, MEDIA_BUS_FMT_AYUV8_1X32,
- 	  VI6_FMT_YUYV_422, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
- 	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
--	  1, { 16, 0, 0 }, false, true, 2, 1, false },
-+	  1, { 16, 0, 0 }, false, true, 2, 1, false, RCAR_FCP_UNCOMPRESSED },
- 	{ V4L2_PIX_FMT_YUYV, MEDIA_BUS_FMT_AYUV8_1X32,
- 	  VI6_FMT_YUYV_422, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
- 	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
--	  1, { 16, 0, 0 }, true, false, 2, 1, false },
-+	  1, { 16, 0, 0 }, true, false, 2, 1, false, RCAR_FCP_FCNL_YUV_PACKED },
- 	{ V4L2_PIX_FMT_YVYU, MEDIA_BUS_FMT_AYUV8_1X32,
- 	  VI6_FMT_YUYV_422, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
- 	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
--	  1, { 16, 0, 0 }, true, true, 2, 1, false },
-+	  1, { 16, 0, 0 }, true, true, 2, 1, false, RCAR_FCP_UNCOMPRESSED },
- 	{ V4L2_PIX_FMT_NV12M, MEDIA_BUS_FMT_AYUV8_1X32,
- 	  VI6_FMT_Y_UV_420, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
- 	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
--	  2, { 8, 16, 0 }, false, false, 2, 2, false },
-+	  2, { 8, 16, 0 }, false, false, 2, 2, false, RCAR_FCP_UNCOMPRESSED },
- 	{ V4L2_PIX_FMT_NV21M, MEDIA_BUS_FMT_AYUV8_1X32,
- 	  VI6_FMT_Y_UV_420, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
- 	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
--	  2, { 8, 16, 0 }, false, true, 2, 2, false },
-+	  2, { 8, 16, 0 }, false, true, 2, 2, false, RCAR_FCP_UNCOMPRESSED },
- 	{ V4L2_PIX_FMT_NV16M, MEDIA_BUS_FMT_AYUV8_1X32,
- 	  VI6_FMT_Y_UV_422, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
- 	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
--	  2, { 8, 16, 0 }, false, false, 2, 1, false },
-+	  2, { 8, 16, 0 }, false, false, 2, 1, false, RCAR_FCP_UNCOMPRESSED },
- 	{ V4L2_PIX_FMT_NV61M, MEDIA_BUS_FMT_AYUV8_1X32,
- 	  VI6_FMT_Y_UV_422, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
- 	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
--	  2, { 8, 16, 0 }, false, true, 2, 1, false },
-+	  2, { 8, 16, 0 }, false, true, 2, 1, false, RCAR_FCP_UNCOMPRESSED },
- 	{ V4L2_PIX_FMT_YUV420M, MEDIA_BUS_FMT_AYUV8_1X32,
- 	  VI6_FMT_Y_U_V_420, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
- 	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
--	  3, { 8, 8, 8 }, false, false, 2, 2, false },
-+	  3, { 8, 8, 8 }, false, false, 2, 2, false, RCAR_FCP_FCNL_YUV_PLANAR },
- 	{ V4L2_PIX_FMT_YVU420M, MEDIA_BUS_FMT_AYUV8_1X32,
- 	  VI6_FMT_Y_U_V_420, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
- 	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
--	  3, { 8, 8, 8 }, false, true, 2, 2, false },
-+	  3, { 8, 8, 8 }, false, true, 2, 2, false, RCAR_FCP_FCNL_YUV_PLANAR },
- 	{ V4L2_PIX_FMT_YUV422M, MEDIA_BUS_FMT_AYUV8_1X32,
- 	  VI6_FMT_Y_U_V_422, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
- 	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
--	  3, { 8, 8, 8 }, false, false, 2, 1, false },
-+	  3, { 8, 8, 8 }, false, false, 2, 1, false, RCAR_FCP_FCNL_YUV_PLANAR },
- 	{ V4L2_PIX_FMT_YVU422M, MEDIA_BUS_FMT_AYUV8_1X32,
- 	  VI6_FMT_Y_U_V_422, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
- 	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
--	  3, { 8, 8, 8 }, false, true, 2, 1, false },
-+	  3, { 8, 8, 8 }, false, true, 2, 1, false, RCAR_FCP_FCNL_YUV_PLANAR },
- 	{ V4L2_PIX_FMT_YUV444M, MEDIA_BUS_FMT_AYUV8_1X32,
- 	  VI6_FMT_Y_U_V_444, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
- 	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
--	  3, { 8, 8, 8 }, false, false, 1, 1, false },
-+	  3, { 8, 8, 8 }, false, false, 1, 1, false, RCAR_FCP_FCNL_YUV_PLANAR },
- 	{ V4L2_PIX_FMT_YVU444M, MEDIA_BUS_FMT_AYUV8_1X32,
- 	  VI6_FMT_Y_U_V_444, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
- 	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
--	  3, { 8, 8, 8 }, false, true, 1, 1, false },
-+	  3, { 8, 8, 8 }, false, true, 1, 1, false, RCAR_FCP_FCNL_YUV_PLANAR },
- };
+ 		gpio1: gpio@e6051000 {
+@@ -169,6 +172,7 @@
+ 			interrupt-controller;
+ 			clocks = <&cpg CPG_MOD 911>;
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 911>;
+ 		};
  
- /**
-diff --git a/drivers/media/platform/vsp1/vsp1_pipe.h b/drivers/media/platform/vsp1/vsp1_pipe.h
-index dfff9b5685fe..2665579a70d3 100644
---- a/drivers/media/platform/vsp1/vsp1_pipe.h
-+++ b/drivers/media/platform/vsp1/vsp1_pipe.h
-@@ -36,6 +36,7 @@ struct vsp1_rwpf;
-  * @hsub: horizontal subsampling factor
-  * @vsub: vertical subsampling factor
-  * @alpha: has an alpha channel
-+ * @fcnl: the FCNL compression method, UNCOMPRESSED if not supported
-  */
- struct vsp1_format_info {
- 	u32 fourcc;
-@@ -49,6 +50,7 @@ struct vsp1_format_info {
- 	unsigned int hsub;
- 	unsigned int vsub;
- 	bool alpha;
-+	unsigned int fcnl;
- };
+ 		gpio2: gpio@e6052000 {
+@@ -183,6 +187,7 @@
+ 			interrupt-controller;
+ 			clocks = <&cpg CPG_MOD 910>;
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 910>;
+ 		};
  
- enum vsp1_pipeline_state {
-diff --git a/drivers/media/platform/vsp1/vsp1_regs.h b/drivers/media/platform/vsp1/vsp1_regs.h
-index 26c4ffad2f46..4fd01d6ae813 100644
---- a/drivers/media/platform/vsp1/vsp1_regs.h
-+++ b/drivers/media/platform/vsp1/vsp1_regs.h
-@@ -260,6 +260,7 @@
- #define VI6_WPF_OUTFMT_PDV_MASK		(0xff << 24)
- #define VI6_WPF_OUTFMT_PDV_SHIFT	24
- #define VI6_WPF_OUTFMT_PXA		(1 << 23)
-+#define VI6_WPF_OUTFMT_FCNL		(1 << 20)
- #define VI6_WPF_OUTFMT_ROT		(1 << 18)
- #define VI6_WPF_OUTFMT_HFLP		(1 << 17)
- #define VI6_WPF_OUTFMT_FLP		(1 << 16)
-diff --git a/drivers/media/platform/vsp1/vsp1_rwpf.h b/drivers/media/platform/vsp1/vsp1_rwpf.h
-index 58215a7ab631..c6cbb731c036 100644
---- a/drivers/media/platform/vsp1/vsp1_rwpf.h
-+++ b/drivers/media/platform/vsp1/vsp1_rwpf.h
-@@ -50,6 +50,7 @@ struct vsp1_rwpf {
- 	unsigned int bru_input;
+ 		gpio3: gpio@e6053000 {
+@@ -197,6 +202,7 @@
+ 			interrupt-controller;
+ 			clocks = <&cpg CPG_MOD 909>;
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 909>;
+ 		};
  
- 	unsigned int alpha;
-+	bool fcnl;
+ 		gpio4: gpio@e6054000 {
+@@ -211,6 +217,7 @@
+ 			interrupt-controller;
+ 			clocks = <&cpg CPG_MOD 908>;
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 908>;
+ 		};
  
- 	u32 mult_alpha;
- 	u32 outfmt;
-diff --git a/drivers/media/platform/vsp1/vsp1_wpf.c b/drivers/media/platform/vsp1/vsp1_wpf.c
-index f7f3b4b2c2de..fafb11ceaf3f 100644
---- a/drivers/media/platform/vsp1/vsp1_wpf.c
-+++ b/drivers/media/platform/vsp1/vsp1_wpf.c
-@@ -40,23 +40,53 @@ static inline void vsp1_wpf_write(struct vsp1_rwpf *wpf,
-  * Controls
-  */
+ 		gpio5: gpio@e6055000 {
+@@ -225,6 +232,7 @@
+ 			interrupt-controller;
+ 			clocks = <&cpg CPG_MOD 907>;
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 907>;
+ 		};
  
-+#define V4L2_CID_VSP1_FCNL			(V4L2_CID_USER_BASE | 0x1001)
-+
- enum wpf_flip_ctrl {
- 	WPF_CTRL_VFLIP = 0,
- 	WPF_CTRL_HFLIP = 1,
- };
+ 		gpio6: gpio@e6055100 {
+@@ -239,6 +247,7 @@
+ 			interrupt-controller;
+ 			clocks = <&cpg CPG_MOD 905>;
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 905>;
+ 		};
  
--static int vsp1_wpf_set_rotation(struct vsp1_rwpf *wpf, unsigned int rotation)
-+static int vsp1_wpf_set_compression(struct vsp1_rwpf *wpf, bool fcnl)
-+{
-+	struct vsp1_video *video = wpf->video;
-+	int ret = 0;
-+
-+	if (fcnl == wpf->fcnl)
-+		return 0;
-+
-+	/* FCNL can't be changed when buffers are allocated. */
-+	mutex_lock(&video->lock);
-+
-+	if (vb2_is_busy(&video->queue)) {
-+		ret = -EBUSY;
-+		goto done;
-+	}
-+
-+	mutex_lock(&wpf->entity.lock);
-+	wpf->fcnl = fcnl;
-+	mutex_unlock(&wpf->entity.lock);
-+
-+done:
-+	mutex_unlock(&video->lock);
-+	return ret;
-+}
-+
-+static int vsp1_wpf_set_rotation(struct vsp1_rwpf *wpf)
- {
- 	struct vsp1_video *video = wpf->video;
- 	struct v4l2_mbus_framefmt *sink_format;
- 	struct v4l2_mbus_framefmt *source_format;
-+	unsigned int rotation;
- 	bool rotate;
--	int ret = 0;
-+	u32 flip = 0;
+ 		gpio7: gpio@e6055200 {
+@@ -253,6 +262,7 @@
+ 			interrupt-controller;
+ 			clocks = <&cpg CPG_MOD 904>;
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 904>;
+ 		};
  
- 	/*
--	 * Only consider the 0°/180° from/to 90°/270° modifications, the rest
--	 * is taken care of by the flipping configuration.
-+	 * Update the rotation. Only consider the 0°/180° from/to 90°/270°
-+	 * modifications, the rest is taken care of by the flipping
-+	 * configuration.
- 	 */
-+	rotation = wpf->flip.ctrls.rotate ? wpf->flip.ctrls.rotate->val : 0;
- 	rotate = rotation == 90 || rotation == 270;
- 	if (rotate == wpf->flip.rotate)
- 		return 0;
-@@ -65,8 +95,8 @@ static int vsp1_wpf_set_rotation(struct vsp1_rwpf *wpf, unsigned int rotation)
- 	mutex_lock(&video->lock);
+ 		gpio8: gpio@e6055300 {
+@@ -267,6 +277,7 @@
+ 			interrupt-controller;
+ 			clocks = <&cpg CPG_MOD 921>;
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 921>;
+ 		};
  
- 	if (vb2_is_busy(&video->queue)) {
--		ret = -EBUSY;
--		goto done;
-+		mutex_unlock(&video->lock);
-+		return -EBUSY;
- 	}
+ 		gpio9: gpio@e6055400 {
+@@ -281,6 +292,7 @@
+ 			interrupt-controller;
+ 			clocks = <&cpg CPG_MOD 919>;
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 919>;
+ 		};
  
- 	sink_format = vsp1_entity_get_pad_format(&wpf->entity,
-@@ -89,25 +119,7 @@ static int vsp1_wpf_set_rotation(struct vsp1_rwpf *wpf, unsigned int rotation)
- 	wpf->flip.rotate = rotate;
+ 		gpio10: gpio@e6055500 {
+@@ -295,6 +307,7 @@
+ 			interrupt-controller;
+ 			clocks = <&cpg CPG_MOD 914>;
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 914>;
+ 		};
  
- 	mutex_unlock(&wpf->entity.lock);
--
--done:
- 	mutex_unlock(&video->lock);
--	return ret;
--}
--
--static int vsp1_wpf_s_ctrl(struct v4l2_ctrl *ctrl)
--{
--	struct vsp1_rwpf *wpf =
--		container_of(ctrl->handler, struct vsp1_rwpf, ctrls);
--	unsigned int rotation;
--	u32 flip = 0;
--	int ret;
--
--	/* Update the rotation. */
--	rotation = wpf->flip.ctrls.rotate ? wpf->flip.ctrls.rotate->val : 0;
--	ret = vsp1_wpf_set_rotation(wpf, rotation);
--	if (ret < 0)
--		return ret;
+ 		gpio11: gpio@e6055600 {
+@@ -309,6 +322,7 @@
+ 			interrupt-controller;
+ 			clocks = <&cpg CPG_MOD 913>;
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 913>;
+ 		};
  
- 	/*
- 	 * Compute the flip value resulting from all three controls, with
-@@ -131,46 +143,86 @@ static int vsp1_wpf_s_ctrl(struct v4l2_ctrl *ctrl)
- 	return 0;
- }
+ 		dmac0: dma-controller@e6700000 {
+@@ -339,6 +353,7 @@
+ 			clocks = <&cpg CPG_MOD 219>;
+ 			clock-names = "fck";
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 219>;
+ 			#dma-cells = <1>;
+ 			dma-channels = <15>;
+ 		};
+@@ -371,6 +386,7 @@
+ 			clocks = <&cpg CPG_MOD 218>;
+ 			clock-names = "fck";
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 218>;
+ 			#dma-cells = <1>;
+ 			dma-channels = <15>;
+ 		};
+@@ -387,6 +403,7 @@
+ 			       <&dmac1 0x29>, <&dmac1 0x2a>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 721>;
+ 			status = "disabled";
+ 		};
  
-+static int vsp1_wpf_s_ctrl(struct v4l2_ctrl *ctrl)
-+{
-+	struct vsp1_rwpf *wpf =
-+		container_of(ctrl->handler, struct vsp1_rwpf, ctrls);
-+
-+	/*
-+	 * TODO: Handle the interactions between rotation and FCNL, when FCNL
-+	 * and rotation are both enabled the output format is restricted to
-+	 * ARGB888.
-+	 */
-+	switch (ctrl->id) {
-+	case V4L2_CID_VSP1_FCNL:
-+		return vsp1_wpf_set_compression(wpf, ctrl->val);
-+
-+	case V4L2_CID_VFLIP:
-+	case V4L2_CID_HFLIP:
-+	case V4L2_CID_ROTATE:
-+	default:
-+		return vsp1_wpf_set_rotation(wpf);
-+	}
-+}
-+
- static const struct v4l2_ctrl_ops vsp1_wpf_ctrl_ops = {
- 	.s_ctrl = vsp1_wpf_s_ctrl,
- };
+@@ -402,6 +419,7 @@
+ 			       <&dmac1 0x2d>, <&dmac1 0x2e>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 720>;
+ 			status = "disabled";
+ 		};
  
-+static const struct v4l2_ctrl_config vsp1_wpf_fcnl_ctrl = {
-+	.ops = &vsp1_wpf_ctrl_ops,
-+	.id = V4L2_CID_VSP1_FCNL,
-+	.name = "Near-Lossless Compression",
-+	.type = V4L2_CTRL_TYPE_BOOLEAN,
-+	.min = 0,
-+	.max = 1,
-+	.step = 1,
-+	.def = 0,
-+};
-+
- static int wpf_init_controls(struct vsp1_rwpf *wpf)
- {
- 	struct vsp1_device *vsp1 = wpf->entity.vsp1;
--	unsigned int num_flip_ctrls;
-+	unsigned int num_ctrls = 0;
-+	bool vflip = false;
-+	bool hflip = false;
+@@ -417,6 +435,7 @@
+ 			       <&dmac1 0x2b>, <&dmac1 0x2c>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 719>;
+ 			status = "disabled";
+ 		};
  
- 	spin_lock_init(&wpf->flip.lock);
+@@ -432,6 +451,7 @@
+ 			       <&dmac1 0x2f>, <&dmac1 0x30>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 718>;
+ 			status = "disabled";
+ 		};
  
--	if (wpf->entity.index != 0) {
-+	if (wpf->entity.index == 0) {
- 		/* Only WPF0 supports flipping. */
--		num_flip_ctrls = 0;
--	} else if (vsp1->info->features & VSP1_HAS_WPF_HFLIP) {
--		/*
--		 * When horizontal flip is supported the WPF implements three
--		 * controls (horizontal flip, vertical flip and rotation).
--		 */
--		num_flip_ctrls = 3;
--	} else if (vsp1->info->features & VSP1_HAS_WPF_VFLIP) {
--		/*
--		 * When only vertical flip is supported the WPF implements a
--		 * single control (vertical flip).
--		 */
--		num_flip_ctrls = 1;
--	} else {
--		/* Otherwise flipping is not supported. */
--		num_flip_ctrls = 0;
-+		if (vsp1->info->features & VSP1_HAS_WPF_HFLIP) {
-+			/*
-+			 * When horizontal flip is supported the WPF implements
-+			 * three controls (horizontal flip, vertical flip and
-+			 * rotation).
-+			 */
-+			vflip = true;
-+			hflip = true;
-+			num_ctrls += 3;
-+		} else if (vsp1->info->features & VSP1_HAS_WPF_VFLIP) {
-+			/*
-+			 * When only vertical flip is supported the WPF
-+			 * implements a single control (vertical flip).
-+			 */
-+			vflip = true;
-+			hflip = false;
-+			num_ctrls += 1;
-+		}
- 	}
+@@ -447,6 +467,7 @@
+ 			       <&dmac1 0x39>, <&dmac1 0x3a>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 717>;
+ 			status = "disabled";
+ 		};
  
--	vsp1_rwpf_init_ctrls(wpf, num_flip_ctrls);
-+	if (vsp1->info->features & VSP1_HAS_FCNL)
-+		num_ctrls++;
-+
-+	vsp1_rwpf_init_ctrls(wpf, num_ctrls);
+@@ -462,6 +483,7 @@
+ 			       <&dmac1 0x4d>, <&dmac1 0x4e>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 716>;
+ 			status = "disabled";
+ 		};
  
--	if (num_flip_ctrls >= 1) {
-+	if (vflip) {
- 		wpf->flip.ctrls.vflip =
- 			v4l2_ctrl_new_std(&wpf->ctrls, &vsp1_wpf_ctrl_ops,
- 					  V4L2_CID_VFLIP, 0, 1, 1, 0);
- 	}
+@@ -492,6 +514,7 @@
+ 			dma-names = "tx", "rx", "tx", "rx";
+ 			clocks = <&cpg CPG_MOD 314>;
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 314>;
+ 			status = "disabled";
+ 		};
  
--	if (num_flip_ctrls == 3) {
-+	if (hflip) {
- 		wpf->flip.ctrls.hflip =
- 			v4l2_ctrl_new_std(&wpf->ctrls, &vsp1_wpf_ctrl_ops,
- 					  V4L2_CID_HFLIP, 0, 1, 1, 0);
-@@ -180,6 +232,9 @@ static int wpf_init_controls(struct vsp1_rwpf *wpf)
- 		v4l2_ctrl_cluster(3, &wpf->flip.ctrls.vflip);
- 	}
+@@ -502,6 +525,7 @@
+ 			interrupts = <GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 106>;
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 106>;
+ 		};
  
-+	if (vsp1->info->features & VSP1_HAS_FCNL)
-+		v4l2_ctrl_new_custom(&wpf->ctrls, &vsp1_wpf_fcnl_ctrl, NULL);
-+
- 	if (wpf->ctrls.error) {
- 		dev_err(vsp1->dev, "wpf%u: failed to initialize controls\n",
- 			wpf->entity.index);
-@@ -402,6 +457,9 @@ static void wpf_configure(struct vsp1_entity *entity,
- 		if (wpf->flip.rotate)
- 			outfmt |= VI6_WPF_OUTFMT_ROT;
+ 		avb: ethernet@e6800000 {
+@@ -511,6 +535,7 @@
+ 			interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 812>;
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 812>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			status = "disabled";
+@@ -524,6 +549,7 @@
+ 			interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 931>;
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 931>;
+ 			i2c-scl-internal-delay-ns = <6>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -537,6 +563,7 @@
+ 			interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 930>;
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 930>;
+ 			i2c-scl-internal-delay-ns = <6>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -550,6 +577,7 @@
+ 			interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 929>;
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 929>;
+ 			i2c-scl-internal-delay-ns = <6>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -563,6 +591,7 @@
+ 			interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 928>;
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 928>;
+ 			i2c-scl-internal-delay-ns = <6>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -576,6 +605,7 @@
+ 			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 927>;
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 927>;
+ 			i2c-scl-internal-delay-ns = <6>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -589,6 +619,7 @@
+ 			interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 925>;
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 925>;
+ 			i2c-scl-internal-delay-ns = <110>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -604,6 +635,7 @@
+ 			       <&dmac1 0x17>, <&dmac1 0x18>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 917>;
+ 			num-cs = <1>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -620,6 +652,7 @@
+ 			       <&dmac1 0x51>, <&dmac1 0x52>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 000>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			status = "disabled";
+@@ -635,6 +668,7 @@
+ 			       <&dmac1 0x55>, <&dmac1 0x56>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 208>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			status = "disabled";
+@@ -677,6 +711,7 @@
+ 				 <&cpg CPG_CORE R8A7792_CLK_RCAN>, <&can_clk>;
+ 			clock-names = "clkp1", "clkp2", "can_clk";
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 916>;
+ 			status = "disabled";
+ 		};
  
-+		if (wpf->fcnl && fmtinfo->fcnl)
-+			outfmt |= VI6_WPF_OUTFMT_FCNL;
-+
- 		if (fmtinfo->alpha)
- 			outfmt |= VI6_WPF_OUTFMT_PXA;
- 		if (fmtinfo->swap_yc)
-@@ -409,14 +467,19 @@ static void wpf_configure(struct vsp1_entity *entity,
- 		if (fmtinfo->swap_uv)
- 			outfmt |= VI6_WPF_OUTFMT_SPUVS;
+@@ -689,6 +724,7 @@
+ 				 <&cpg CPG_CORE R8A7792_CLK_RCAN>, <&can_clk>;
+ 			clock-names = "clkp1", "clkp2", "can_clk";
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 915>;
+ 			status = "disabled";
+ 		};
  
--		/* Destination stride and byte swapping. */
-+		/*
-+		 * Destination stride and byte swapping. When FCNL is enabled
-+		 * data swapping must be hardcoded to VI6_RPF_DSWAP_P_LLS.
-+		 */
- 		vsp1_wpf_write(wpf, dl, VI6_WPF_DSTM_STRIDE_Y,
- 			       format->plane_fmt[0].bytesperline);
- 		if (format->num_planes > 1)
- 			vsp1_wpf_write(wpf, dl, VI6_WPF_DSTM_STRIDE_C,
- 				       format->plane_fmt[1].bytesperline);
+@@ -699,6 +735,7 @@
+ 			interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 811>;
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 811>;
+ 			status = "disabled";
+ 		};
  
--		vsp1_wpf_write(wpf, dl, VI6_WPF_DSWAP, fmtinfo->swap);
-+		vsp1_wpf_write(wpf, dl, VI6_WPF_DSWAP,
-+			       wpf->fcnl && fmtinfo->fcnl ?
-+			       VI6_RPF_DSWAP_P_LLS : fmtinfo->swap);
+@@ -709,6 +746,7 @@
+ 			interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 810>;
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 810>;
+ 			status = "disabled";
+ 		};
  
- 		if (vsp1->info->features & VSP1_HAS_WPF_HFLIP &&
- 		    wpf->entity.index == 0)
+@@ -719,6 +757,7 @@
+ 			interrupts = <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 809>;
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 809>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -729,6 +768,7 @@
+ 			interrupts = <GIC_SPI 191 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 808>;
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 808>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -739,6 +779,7 @@
+ 			interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 805>;
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 805>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -749,6 +790,7 @@
+ 			interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 804>;
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 804>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -758,6 +800,7 @@
+ 			interrupts = <GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 131>;
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 131>;
+ 		};
+ 
+ 		vsp1@fe930000 {
+@@ -766,6 +809,7 @@
+ 			interrupts = <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 128>;
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 128>;
+ 		};
+ 
+ 		vsp1@fe938000 {
+@@ -774,6 +818,7 @@
+ 			interrupts = <GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 127>;
+ 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 127>;
+ 		};
+ 
+ 		cpg: clock-controller@e6150000 {
 -- 
-Regards,
-
-Laurent Pinchart
+2.1.4
