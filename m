@@ -1,50 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:41659 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752123AbdI2PeH (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34793 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752162AbdI2Lyq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Sep 2017 11:34:07 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH] i2c: riic: remove fixed clock restriction
-Date: Fri, 29 Sep 2017 10:32:59 -0500
-Message-Id: <20170929153259.105408-1-chris.brandt@renesas.com>
+        Fri, 29 Sep 2017 07:54:46 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 31/48] ARM: dts: iwg20d-q7: Enable internal PCI
+Date: Fri, 29 Sep 2017 13:53:23 +0200
+Message-Id: <35a8eeeac89c56435277fa76f8d557bf00530320.1506683482.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1506683482.git.horms+renesas@verge.net.au>
+References: <cover.1506683482.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Most systems with this i2c are going to have a clock of either 33.3MHz or
-32MHz. That 4% difference is not reason enough to warrant that the driver
-to completely fail.
+From: Biju Das <biju.das@bp.renesas.com>
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Enable internal AHB-PCI bridges for the USB EHCI/OHCI controllers
+attached to them.
+
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/i2c/busses/i2c-riic.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/r8a7743-iwg20d-q7.dts | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/drivers/i2c/busses/i2c-riic.c b/drivers/i2c/busses/i2c-riic.c
-index c811af4c8d81..0a61beeb384a 100644
---- a/drivers/i2c/busses/i2c-riic.c
-+++ b/drivers/i2c/busses/i2c-riic.c
-@@ -299,12 +299,13 @@ static int riic_init_hw(struct riic_dev *riic, u32 spd)
+diff --git a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
+index 2b58b53aa171..63166f9bdb65 100644
+--- a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
++++ b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
+@@ -76,6 +76,16 @@
+ 		function = "sdhi1";
+ 		power-source = <1800>;
+ 	};
++
++	usb0_pins: usb0 {
++		groups = "usb0";
++		function = "usb0";
++	};
++
++	usb1_pins: usb1 {
++		groups = "usb1";
++		function = "usb1";
++	};
+ };
  
- 	/*
- 	 * TODO: Implement formula to calculate the timing values depending on
--	 * variable parent clock rate and arbitrary bus speed
-+	 * variable parent clock rate and arbitrary bus speed.
-+	 * For now, just use calculations based on a 33325000Hz clock.
- 	 */
- 	rate = clk_get_rate(riic->clk);
--	if (rate != 33325000) {
-+	if (!rate) {
- 		dev_err(&riic->adapter.dev,
--			"invalid parent clk (%lu). Must be 33325000Hz\n", rate);
-+			"invalid parent clk (%lu)\n", rate);
- 		clk_disable_unprepare(riic->clk);
- 		return -EINVAL;
- 	}
+ &scif0 {
+@@ -125,3 +135,15 @@
+ 		reg = <0x68>;
+ 	};
+ };
++
++&pci0 {
++	status = "okay";
++	pinctrl-0 = <&usb0_pins>;
++	pinctrl-names = "default";
++};
++
++&pci1 {
++	status = "okay";
++	pinctrl-0 = <&usb1_pins>;
++	pinctrl-names = "default";
++};
 -- 
-2.14.1
+2.1.4
