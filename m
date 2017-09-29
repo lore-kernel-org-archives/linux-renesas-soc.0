@@ -1,98 +1,85 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Fri, 29 Sep 2017 15:44:27 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: balbi@kernel.org, kishon@ti.com, gregkh@linuxfoundation.org,
-        lee.jones@linaro.org, heiko@sntech.de,
-        yoshihiro.shimoda.uh@renesas.com, krzk@kernel.org,
-        b.zolnierkie@samsung.com, maxime.ripard@free-electrons.com,
-        wens@csie.org, chanwoo@kernel.org, myungjoo.ham@samsung.com,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-pm@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org
+MIME-version: 1.0
+Content-transfer-encoding: 8BIT
+Content-type: text/plain; charset="UTF-8"
+Message-id: <59CDD25E.9050202@samsung.com>
+Date: Fri, 29 Sep 2017 13:55:58 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        "balbi@kernel.org" <balbi@kernel.org>,
+        "kishon@ti.com" <kishon@ti.com>, "sre@kernel.org" <sre@kernel.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "lee.jones@linaro.org" <lee.jones@linaro.org>
+Cc: "heiko@sntech.de" <heiko@sntech.de>,
+        "krzk@kernel.org" <krzk@kernel.org>,
+        "b.zolnierkie@samsung.com" <b.zolnierkie@samsung.com>,
+        "maxime.ripard@free-electrons.com" <maxime.ripard@free-electrons.com>,
+        "wens@csie.org" <wens@csie.org>,
+        "chanwoo@kernel.org" <chanwoo@kernel.org>,
+        "myungjoo.ham@samsung.com" <myungjoo.ham@samsung.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-rockchip@lists.infradead.org"
+        <linux-rockchip@lists.infradead.org>
 Subject: Re: [PATCH] extcon: Split out extcon header file for consumer and
  provider device
-Message-ID: <20170929134427.wcsne3pf6qobw6ra@earth>
+In-reply-to: <TY1PR06MB0992097F0FBBE04CD282EEE7D87E0@TY1PR06MB0992.apcprd06.prod.outlook.com>
 References: <CGME20170929000148epcas2p200e56186b067ec626a033c7ae2d4bbdb@epcas2p2.samsung.com>
- <1506643305-4581-1-git-send-email-cw00.choi@samsung.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="3xpqingb6v2gf6lh"
-Content-Disposition: inline
-In-Reply-To: <1506643305-4581-1-git-send-email-cw00.choi@samsung.com>
+        <1506643305-4581-1-git-send-email-cw00.choi@samsung.com>
+        <TY1PR06MB0992097F0FBBE04CD282EEE7D87E0@TY1PR06MB0992.apcprd06.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-
---3xpqingb6v2gf6lh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
 Hi,
 
-On Fri, Sep 29, 2017 at 09:01:45AM +0900, Chanwoo Choi wrote:
-> The extcon has two type of extcon devices as following.
-> - 'extcon provider deivce' adds new extcon device and detect the
->    state/properties of external connector. Also, it notifies the
->    state/properties to the extcon consumer device.
-> - 'extcon consumer device' gets the change state/properties
->    from extcon provider device.
-> Prior to that, include/linux/extcon.h contains all exported API for
-> both provider and consumer device driver. To clarify the meaning of
-> header file and to remove the wrong use-case on consumer device,
-> this patch separates into extcon.h and extcon-provider.h.
->=20
-> [Description for include/linux/{extcon.h|extcon-provider.h}]
-> - extcon.h includes the extcon API and data structure for extcon consumer
->   device driver. This header file contains the following APIs:
->   : Register/unregister the notifier to catch the change of extcon device
->   : Get the extcon device instance
->   : Get the extcon device name
->   : Get the state of each external connector
->   : Get the property value of each external connector
->   : Get the property capability of each external connector
->=20
-> - extcon-provider.h includes the extcon API and data structure for extcon
->   provider device driver. This header file contains the following APIs:
->   : Include 'include/linux/extcon.h'
->   : Allocate the memory for extcon device instance
->   : Register/unregister extcon device
->   : Set the state of each external connector
->   : Set the property value of each external connector
->   : Set the property capability of each external connector
->=20
+On 2017년 09월 29일 11:03, Yoshihiro Shimoda wrote:
+> Hi,
+> 
+>> From: Chanwoo Choi
+>> Sent: Friday, September 29, 2017 9:02 AM
+>>
+> < snip >
+>>  drivers/phy/renesas/phy-rcar-gen3-usb2.c      |   2 +-
+> < snip >
+>>  drivers/usb/gadget/udc/renesas_usb3.c         |   2 +-
+> 
+> These two drivers need the modification.
+> But...
+> 
+> < snip >
+>> diff --git a/drivers/usb/renesas_usbhs/common.h b/drivers/usb/renesas_usbhs/common.h
+>> index 8c5fc12ad778..a78764bc23eb 100644
+>> --- a/drivers/usb/renesas_usbhs/common.h
+>> +++ b/drivers/usb/renesas_usbhs/common.h
+>> @@ -17,7 +17,7 @@
+>>  #ifndef RENESAS_USB_DRIVER_H
+>>  #define RENESAS_USB_DRIVER_H
+>>
+>> -#include <linux/extcon.h>
+>> +#include <linux/extcon-provider.h>
+> 
+> Since this driver doesn't use any extcon-provider APIs for now,
+> we doesn't need the modification, IIUC.
 
-[...]
+I don't modify 'drivers/usb/renesas_usbhs/common.h'
+on v2 patch. Thanks for your comment.
 
->  drivers/power/supply/qcom_smbb.c              |   2 +-
+> 
+> Best regards,
+> Yoshihiro Shimoda
+> 
+> 
+> 
+> 
 
-[...]
 
-Acked-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-
--- Sebastian
-
---3xpqingb6v2gf6lh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlnOTjgACgkQ2O7X88g7
-+pqyRw//UB2CmgweYLhikRFPftmhHfk+jzWgv2K5wULvqM0HS77+mBmHAMDLU6L4
-PAF8LzVMe3iI9qdw4EX8A5FCLQVA7HRi5NWeCnVjK8iUspO0Y86EPDEnohjN6HTC
-CAzQ/FclbXa6jqD2xDjh3G/ESoFgs7LRoPtnxQ27xbPm0YrdmxR6/OfmV0J3b7+V
-a2ObOGlT2qQw8FiCfq1B2PBqRNG1sPUIg1Ob298X5sb8a4NR5mw30hOwOVJGQpbn
-KJ0d8LD80E3DeuL09YmCpjX+kWOftuSj65fef7CYtCCZxbYhp7+znUw9/HPdqBiO
-vCKsIRk08M9M0Kzvg7u0l20TyCkzrVrFckdtt2f66mcL4s8ujAA1ydNO0/icZc5j
-lvDK2jjZeAykIqDZ/us0F5Atw+Q/GMOJOG1bGv4TKVDwJMkXLUc0/PjAfxUkSfIc
-DXFpqLCOZQRgKT8ZYrbu9ZeDSJVVIUxMGG0HMvNt0JBfkrNmiZ8qznwBiIDvdqqj
-hgHFHgJgj1XK7bt2S48PPqzdnrYF0GaXtVAddXovLYHL66k9Sy/iIhoaAizTE1Cb
-+zDOq3Kq2F3rVX5ZTJWwilJWO/Y92OvMJpr2821TJOeMkGipHxYz/sjU2Xl1k2sw
-HdBO4QZqYw1ea/wAwFqQ3zovuNTcvvfAHG1LR6sLhEXdIL8WqjY=
-=DjCE
------END PGP SIGNATURE-----
-
---3xpqingb6v2gf6lh--
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
