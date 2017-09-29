@@ -1,73 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:60252 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:34495 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751742AbdIAI7c (ORCPT
+        with ESMTP id S1752453AbdI2Lx3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 1 Sep 2017 04:59:32 -0400
-Date: Fri, 1 Sep 2017 10:59:02 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Fri, 29 Sep 2017 07:53:29 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 0/2] arm64: renesas: Add support for R-Car V3M
-Message-ID: <20170901085901.GE14918@verge.net.au>
-References: <1503665810-13945-1-git-send-email-geert+renesas@glider.be>
- <20170828074453.GA22421@verge.net.au>
- <20170830072644.GI10398@verge.net.au>
- <CAMuHMdWvRBH8ZNgQKDGS3Z41BN7_o_H=hN5aGdbK44YT8rusXw@mail.gmail.com>
- <20170830092838.GC5183@verge.net.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20170830092838.GC5183@verge.net.au>
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 01/22] arm64: dts: renesas: r8a7795-es1: Drop extra zero from usb unit address
+Date: Fri, 29 Sep 2017 13:52:10 +0200
+Message-Id: <0e0f4d47288a8e56ed2586699b89573afcb1bf72.1506678250.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1506678250.git.horms+renesas@verge.net.au>
+References: <cover.1506678250.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Aug 30, 2017 at 11:28:39AM +0200, Simon Horman wrote:
-> On Wed, Aug 30, 2017 at 10:21:46AM +0200, Geert Uytterhoeven wrote:
-> > Hi Simon,
-> > 
-> > On Wed, Aug 30, 2017 at 9:26 AM, Simon Horman <horms@verge.net.au> wrote:
-> > > On Mon, Aug 28, 2017 at 09:44:54AM +0200, Simon Horman wrote:
-> > >> On Fri, Aug 25, 2017 at 02:56:48PM +0200, Geert Uytterhoeven wrote:
-> > >> > This patch series adds initial R-Car V3M infrastructure:
-> > >> >   1. SoC DT bindings,
-> > >> >   2. Main Kconfig symbol.
-> > >> >
-> > >> > Both follow the example set by R-Car D3 aka r8a77995, using 5-digit instead
-> > >> > of 4-digit part numbers.
-> > >> > Alternatively, we could stick to 4-digit part numbers if the fifth digit is
-> > >> > a zero.
-> > >> >
-> > >> > For your convenience, a branch with more preliminary work (thanks Sergei,
-> > >> > for posting the clock driver!) for testing on v3m/eagle is also available
-> > >> > in the topic/r8a77970-integration branch of my renesas-drivers git
-> > >> > repository at
-> > >> > git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
-> > >> >
-> > >> > Thanks for your comments!
-> > >>
-> > >> This looks good to me.
-> > >>
-> > >> I am in favour of using the 5-digit scheme for all new R-Car Gen 3 SoCs
-> > >> as it seems the safest option with regards to as yet unknown (to me) part
-> > >> numbers.
-> > >
-> > > Geert, any objections to me applying these?
-> > > I'm happy to wait longer if you prefer.
-> > 
-> > It would be good to have an ack from Rob.
-> > No need to hurry.
-> 
-> Understood, I will wait.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Rob has acked the DT binding patch and I have applied the series.
+With W=1:
+
+    arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dtb: Warning (simple_bus_reg): Node /soc/usb@ee0400000 simple-bus unit address format error, expected "ee040000"
+    arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb.dtb: Warning (simple_bus_reg): Node /soc/usb@ee0400000 simple-bus unit address format error, expected "ee040000"
+
+Fixes: 291e0c4994d0813f ("arm64: dts: r8a7795: Add support for R-Car H3 ES2.0")
+Fixes: 171f2ef82284f61b ("arm64: dts: r8a7795: Add USB3.0 host device nodes")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+index aaa5e67a963e..655dd30639c5 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+@@ -11,7 +11,7 @@
+ #include "r8a7795.dtsi"
+ 
+ &soc {
+-	xhci1: usb@ee0400000 {
++	xhci1: usb@ee040000 {
+ 		compatible = "renesas,xhci-r8a7795", "renesas,rcar-gen3-xhci";
+ 		reg = <0 0xee040000 0 0xc00>;
+ 		interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
+-- 
+2.1.4
