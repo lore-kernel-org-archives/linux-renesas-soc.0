@@ -1,92 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from lb1-smtp-cloud7.xs4all.net ([194.109.24.24]:52735 "EHLO
-        lb1-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932879AbdIYJtl (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34793 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751906AbdI2LzM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Sep 2017 05:49:41 -0400
-Subject: Re: [PATCH v6 08/25] rcar-vin: do not reset crop and compose when
- setting format
-To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-References: <20170822232640.26147-1-niklas.soderlund+renesas@ragnatech.se>
- <20170822232640.26147-9-niklas.soderlund+renesas@ragnatech.se>
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        tomoharu.fukawa.eb@renesas.com, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <b45ac262-4e81-01b7-441c-20936a02b36d@xs4all.nl>
-Date: Mon, 25 Sep 2017 11:49:38 +0200
-MIME-Version: 1.0
-In-Reply-To: <20170822232640.26147-9-niklas.soderlund+renesas@ragnatech.se>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+        Fri, 29 Sep 2017 07:55:12 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 41/48] ARM: dts: iwg22m: Enable SDHI1 controller
+Date: Fri, 29 Sep 2017 13:53:33 +0200
+Message-Id: <599114ee21057040c058043fdc1367878350d5e4.1506683482.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1506683482.git.horms+renesas@verge.net.au>
+References: <cover.1506683482.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 23/08/17 01:26, Niklas Söderlund wrote:
-> It was a bad idea to reset the crop and compose settings when a new
-> format is set. This would overwrite any crop/compose set by s_select and
-> cause unexpected behaviors, remove it. Also fold the reset helper in to
-> the only remaining caller.
-> 
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+Enable the SDHI1 controller on iWave RZ/G1E SoM.
 
-Regards,
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7745-iwg22m.dtsi | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-	Hans
-
-> ---
->  drivers/media/platform/rcar-vin/rcar-v4l2.c | 21 +++++++--------------
->  1 file changed, 7 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> index affdc128a75e502e..421820caf275b066 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> @@ -90,17 +90,6 @@ static u32 rvin_format_sizeimage(struct v4l2_pix_format *pix)
->   * V4L2
->   */
->  
-> -static void rvin_reset_crop_compose(struct rvin_dev *vin)
-> -{
-> -	vin->crop.top = vin->crop.left = 0;
-> -	vin->crop.width = vin->source.width;
-> -	vin->crop.height = vin->source.height;
-> -
-> -	vin->compose.top = vin->compose.left = 0;
-> -	vin->compose.width = vin->format.width;
-> -	vin->compose.height = vin->format.height;
-> -}
-> -
->  int rvin_reset_format(struct rvin_dev *vin)
->  {
->  	struct v4l2_subdev_format fmt = {
-> @@ -147,7 +136,13 @@ int rvin_reset_format(struct rvin_dev *vin)
->  		break;
->  	}
->  
-> -	rvin_reset_crop_compose(vin);
-> +	vin->crop.top = vin->crop.left = 0;
-> +	vin->crop.width = mf->width;
-> +	vin->crop.height = mf->height;
-> +
-> +	vin->compose.top = vin->compose.left = 0;
-> +	vin->compose.width = mf->width;
-> +	vin->compose.height = mf->height;
->  
->  	vin->format.bytesperline = rvin_format_bytesperline(&vin->format);
->  	vin->format.sizeimage = rvin_format_sizeimage(&vin->format);
-> @@ -317,8 +312,6 @@ static int rvin_s_fmt_vid_cap(struct file *file, void *priv,
->  
->  	vin->format = f->fmt.pix;
->  
-> -	rvin_reset_crop_compose(vin);
-> -
->  	return 0;
->  }
->  
-> 
+diff --git a/arch/arm/boot/dts/r8a7745-iwg22m.dtsi b/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
+index e306e7c5b644..f7f9ceff35a6 100644
+--- a/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
++++ b/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
+@@ -9,6 +9,7 @@
+  */
+ 
+ #include "r8a7745.dtsi"
++#include <dt-bindings/gpio/gpio.h>
+ 
+ / {
+ 	compatible = "iwave,g22m", "renesas,r8a7745";
+@@ -38,6 +39,12 @@
+ 		function = "mmc";
+ 	};
+ 
++	sdhi1_pins: sd1 {
++		groups = "sdhi1_data4", "sdhi1_ctrl";
++		function = "sdhi1";
++		power-source = <3300>;
++	};
++
+ 	i2c3_pins: i2c3 {
+ 		groups = "i2c3_b";
+ 		function = "i2c3";
+@@ -54,6 +61,16 @@
+ 	status = "okay";
+ };
+ 
++&sdhi1 {
++	pinctrl-0 = <&sdhi1_pins>;
++	pinctrl-names = "default";
++
++	vmmc-supply = <&reg_3p3v>;
++	vqmmc-supply = <&reg_3p3v>;
++	cd-gpios = <&gpio3 31 GPIO_ACTIVE_LOW>;
++	status = "okay";
++};
++
+ &i2c3 {
+ 	pinctrl-0 = <&i2c3_pins>;
+ 	pinctrl-names = "default";
+-- 
+2.1.4
