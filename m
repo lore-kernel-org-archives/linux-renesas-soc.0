@@ -1,68 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:40514 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755289AbdIRNsh (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34793 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752162AbdI2Lyj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Sep 2017 09:48:37 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 04/12] ARM: dts: r8a7793: Update CMT compat strings
-Date: Mon, 18 Sep 2017 15:48:27 +0200
-Message-Id: <1505742515-31727-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1505742515-31727-1-git-send-email-geert+renesas@glider.be>
-References: <1505742515-31727-1-git-send-email-geert+renesas@glider.be>
+        Fri, 29 Sep 2017 07:54:39 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 16/48] ARM: dts: iwg22m: Add eMMC support
+Date: Fri, 29 Sep 2017 13:53:08 +0200
+Message-Id: <3350ed907182049b806992f228021e7997183dda.1506683482.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1506683482.git.horms+renesas@verge.net.au>
+References: <cover.1506683482.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Use recently updated R-Car Gen2 CMT0 and CMT1 compat strings.
+Add eMMC support for iW-RainboW-G22M-SM.
 
-With this change in place we can keep device-specific configuration in
-the driver and the driver can be able to support CMT1 specific features.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-v3:
-  - Take over from Magnus,
-  - Update compatible values,
-  - Split in per-SoC patches,
+ arch/arm/boot/dts/r8a7745-iwg22m.dtsi | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-v2:
-  - Added Acked-by and Tested-by from Geert,
-  - Added Acked-by from Laurent.
----
- arch/arm/boot/dts/r8a7793.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index aa19b93494bfaab0..41b66bb0747a339e 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -247,7 +247,7 @@
+diff --git a/arch/arm/boot/dts/r8a7745-iwg22m.dtsi b/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
+index 9dbd854aacf8..afb1148baa2f 100644
+--- a/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
++++ b/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
+@@ -17,8 +17,34 @@
+ 		device_type = "memory";
+ 		reg = <0 0x40000000 0 0x20000000>;
  	};
++
++	reg_3p3v: 3p3v {
++		compatible = "regulator-fixed";
++		regulator-name = "3P3V";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-always-on;
++		regulator-boot-on;
++	};
+ };
  
- 	cmt0: timer@ffca0000 {
--		compatible = "renesas,cmt-48-r8a7793", "renesas,cmt-48-gen2";
-+		compatible = "renesas,r8a7793-cmt0", "renesas,rcar-gen2-cmt0";
- 		reg = <0 0xffca0000 0 0x1004>;
- 		interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
-@@ -262,7 +262,7 @@
- 	};
- 
- 	cmt1: timer@e6130000 {
--		compatible = "renesas,cmt-48-r8a7793", "renesas,cmt-48-gen2";
-+		compatible = "renesas,r8a7793-cmt1", "renesas,rcar-gen2-cmt1";
- 		reg = <0 0xe6130000 0 0x1004>;
- 		interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
+ &extal_clk {
+ 	clock-frequency = <20000000>;
+ };
++
++&pfc {
++	mmcif0_pins: mmc {
++		groups = "mmc_data8", "mmc_ctrl";
++		function = "mmc";
++	};
++};
++
++&mmcif0 {
++	pinctrl-0 = <&mmcif0_pins>;
++	pinctrl-names = "default";
++
++	vmmc-supply = <&reg_3p3v>;
++	bus-width = <8>;
++	non-removable;
++	status = "okay";
++};
 -- 
-2.7.4
+2.1.4
