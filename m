@@ -1,146 +1,171 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <damm+renesas@opensource.se>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 3/7] clocksource: sh_cmt: Support separate R-Car Gen2 CMT0/1
-Date: Mon, 18 Sep 2017 15:46:43 +0200
-Message-Id: <1505742407-31576-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1505742407-31576-1-git-send-email-geert+renesas@glider.be>
-References: <1505742407-31576-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:34495 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752479AbdI2Lxk (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 29 Sep 2017 07:53:40 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 11/22] arm64: dts: renesas: initial R8A77970 SoC device tree
+Date: Fri, 29 Sep 2017 13:52:20 +0200
+Message-Id: <41f4345a6111056341346742942df3f5d5be535d.1506678250.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1506678250.git.horms+renesas@verge.net.au>
+References: <cover.1506678250.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Add support for the new R-Car Gen2 CMT0 and CMT1 bindings. Support
-for the old DT binding is still kept around, however devices using
-such binding will be treated as a low-feature CMT0 device. If users
-want to make use of CMT1-specific features then they need to update
-their DTBs. No special CMT1-specific features are however implemented
-by his patch, only DT bindings are redone as groundwork for future
-feature patches.
+The initial R8A77970 SoC device tree including Cortex-A53 CPU, GIC, timer,
+CPG, RST, and SYSC.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Based on the original (and large) patch by Daisuke Matsushita
+<daisuke.matsushita.ns@hitachi.com>.
+
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-v3:
-  - Take over from Magnus,
-  - Update compatible values,
+ arch/arm64/boot/dts/renesas/r8a77970.dtsi | 125 ++++++++++++++++++++++++++++++
+ 1 file changed, 125 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a77970.dtsi
 
-v2:
-  - Added Acked-by and Tested-by from Geert,
-  - Added Acked-by from Laurent.
----
- drivers/clocksource/sh_cmt.c | 38 +++++++++++++++++++++++++++-----------
- 1 file changed, 27 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/clocksource/sh_cmt.c b/drivers/clocksource/sh_cmt.c
-index c104c80424c88f08..45af436483f39cb0 100644
---- a/drivers/clocksource/sh_cmt.c
-+++ b/drivers/clocksource/sh_cmt.c
-@@ -39,16 +39,16 @@ struct sh_cmt_device;
-  * SoC but also on the particular instance. The following table lists the main
-  * characteristics of those flavours.
-  *
-- *			16B	32B	32B-F	48B	48B-2
-+ *			16B	32B	32B-F	48B	R-Car Gen2
-  * -----------------------------------------------------------------------------
-  * Channels		2	1/4	1	6	2/8
-  * Control Width	16	16	16	16	32
-  * Counter Width	16	32	32	32/48	32/48
-  * Shared Start/Stop	Y	Y	Y	Y	N
-  *
-- * The 48-bit gen2 version has a per-channel start/stop register located in the
-- * channel registers block. All other versions have a shared start/stop register
-- * located in the global space.
-+ * The r8a73a4 / R-Car Gen2 version has a per-channel start/stop register
-+ * located in the channel registers block. All other versions have a shared
-+ * start/stop register located in the global space.
-  *
-  * Channels are indexed from 0 to N-1 in the documentation. The channel index
-  * infers the start/stop bit position in the control register and the channel
-@@ -68,7 +68,8 @@ enum sh_cmt_model {
- 	SH_CMT_32BIT,
- 	SH_CMT_32BIT_FAST,
- 	SH_CMT_48BIT,
--	SH_CMT_48BIT_GEN2,
-+	SH_CMT0_RCAR_GEN2,
-+	SH_CMT1_RCAR_GEN2,
- };
- 
- struct sh_cmt_info {
-@@ -223,8 +224,20 @@ static const struct sh_cmt_info sh_cmt_info[] = {
- 		.read_count = sh_cmt_read32,
- 		.write_count = sh_cmt_write32,
- 	},
--	[SH_CMT_48BIT_GEN2] = {
--		.model = SH_CMT_48BIT_GEN2,
-+	[SH_CMT0_RCAR_GEN2] = {
-+		.model = SH_CMT0_RCAR_GEN2,
-+		.channels_mask = 0x60,
-+		.width = 32,
-+		.overflow_bit = SH_CMT32_CMCSR_CMF,
-+		.clear_bits = ~(SH_CMT32_CMCSR_CMF | SH_CMT32_CMCSR_OVF),
-+		.read_control = sh_cmt_read32,
-+		.write_control = sh_cmt_write32,
-+		.read_count = sh_cmt_read32,
-+		.write_count = sh_cmt_write32,
-+	},
-+	[SH_CMT1_RCAR_GEN2] = {
-+		.model = SH_CMT1_RCAR_GEN2,
-+		.channels_mask = 0xff,
- 		.width = 32,
- 		.overflow_bit = SH_CMT32_CMCSR_CMF,
- 		.clear_bits = ~(SH_CMT32_CMCSR_CMF | SH_CMT32_CMCSR_OVF),
-@@ -862,6 +875,7 @@ static int sh_cmt_setup_channel(struct sh_cmt_channel *ch, unsigned int index,
- 	ch->cmt = cmt;
- 	ch->index = index;
- 	ch->hwidx = hwidx;
-+	ch->timer_bit = hwidx;
- 
- 	/*
- 	 * Compute the address of the channel control register block. For the
-@@ -883,9 +897,11 @@ static int sh_cmt_setup_channel(struct sh_cmt_channel *ch, unsigned int index,
- 		 */
- 		ch->ioctrl = cmt->mapbase + 0x40;
- 		break;
--	case SH_CMT_48BIT_GEN2:
-+	case SH_CMT0_RCAR_GEN2:
-+	case SH_CMT1_RCAR_GEN2:
- 		ch->iostart = cmt->mapbase + ch->hwidx * 0x100;
- 		ch->ioctrl = ch->iostart + 0x10;
-+		ch->timer_bit = 0;
- 		break;
- 	}
- 
-@@ -897,8 +913,6 @@ static int sh_cmt_setup_channel(struct sh_cmt_channel *ch, unsigned int index,
- 	ch->match_value = ch->max_match_value;
- 	raw_spin_lock_init(&ch->lock);
- 
--	ch->timer_bit = cmt->info->model == SH_CMT_48BIT_GEN2 ? 0 : ch->hwidx;
--
- 	ret = sh_cmt_register(ch, dev_name(&cmt->pdev->dev),
- 			      clockevent, clocksource);
- 	if (ret) {
-@@ -941,7 +955,9 @@ static const struct of_device_id sh_cmt_of_table[] __maybe_unused = {
- 	{ .compatible = "renesas,cmt-32", .data = &sh_cmt_info[SH_CMT_32BIT] },
- 	{ .compatible = "renesas,cmt-32-fast", .data = &sh_cmt_info[SH_CMT_32BIT_FAST] },
- 	{ .compatible = "renesas,cmt-48", .data = &sh_cmt_info[SH_CMT_48BIT] },
--	{ .compatible = "renesas,cmt-48-gen2", .data = &sh_cmt_info[SH_CMT_48BIT_GEN2] },
-+	{ .compatible = "renesas,cmt-48-gen2", .data = &sh_cmt_info[SH_CMT0_RCAR_GEN2] },
-+	{ .compatible = "renesas,rcar-gen2-cmt0", .data = &sh_cmt_info[SH_CMT0_RCAR_GEN2] },
-+	{ .compatible = "renesas,rcar-gen2-cmt1", .data = &sh_cmt_info[SH_CMT1_RCAR_GEN2] },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, sh_cmt_of_table);
+diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+new file mode 100644
+index 000000000000..dec3492cd7dc
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+@@ -0,0 +1,125 @@
++/*
++ * Device Tree Source for the r8a77970 SoC
++ *
++ * Copyright (C) 2016-2017 Renesas Electronics Corp.
++ * Copyright (C) 2017 Cogent Embedded, Inc.
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++#include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
++
++/ {
++	compatible = "renesas,r8a77970";
++	#address-cells = <2>;
++	#size-cells = <2>;
++
++	psci {
++		compatible = "arm,psci-1.0", "arm,psci-0.2";
++		method = "smc";
++	};
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		a53_0: cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53", "arm,armv8";
++			reg = <0>;
++			clocks = <&cpg CPG_CORE 0>;
++			power-domains = <&sysc 5>;
++			next-level-cache = <&L2_CA53>;
++			enable-method = "psci";
++		};
++
++		L2_CA53: cache-controller {
++			compatible = "cache";
++			power-domains = <&sysc 21>;
++			cache-unified;
++			cache-level = <2>;
++		};
++	};
++
++	extal_clk: extal {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board */
++		clock-frequency = <0>;
++	};
++
++	extalr_clk: extalr {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board */
++		clock-frequency = <0>;
++	};
++
++	soc {
++		compatible = "simple-bus";
++		interrupt-parent = <&gic>;
++
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		gic: interrupt-controller@f1010000 {
++			compatible = "arm,gic-400";
++			#interrupt-cells = <3>;
++			#address-cells = <0>;
++			interrupt-controller;
++			reg = <0 0xf1010000 0 0x1000>,
++			      <0 0xf1020000 0 0x20000>,
++			      <0 0xf1040000 0 0x20000>,
++			      <0 0xf1060000 0 0x20000>;
++			interrupts = <GIC_PPI 9	(GIC_CPU_MASK_SIMPLE(1) |
++				      IRQ_TYPE_LEVEL_HIGH)>;
++			clocks = <&cpg CPG_MOD 408>;
++			clock-names = "clk";
++			power-domains = <&sysc 32>;
++			resets = <&cpg 408>;
++		};
++
++		timer {
++			compatible = "arm,armv8-timer";
++			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(1) |
++						  IRQ_TYPE_LEVEL_LOW)>,
++				     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(1) |
++						  IRQ_TYPE_LEVEL_LOW)>,
++				     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(1) |
++						  IRQ_TYPE_LEVEL_LOW)>,
++				     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(1) |
++						  IRQ_TYPE_LEVEL_LOW)>;
++		};
++
++		cpg: clock-controller@e6150000 {
++			compatible = "renesas,r8a77970-cpg-mssr";
++			reg = <0 0xe6150000 0 0x1000>;
++			clocks = <&extal_clk>, <&extalr_clk>;
++			clock-names = "extal", "extalr";
++			#clock-cells = <2>;
++			#power-domain-cells = <0>;
++			#reset-cells = <1>;
++		};
++
++		rst: reset-controller@e6160000 {
++			compatible = "renesas,r8a77970-rst";
++			reg = <0 0xe6160000 0 0x200>;
++		};
++
++		sysc: system-controller@e6180000 {
++			compatible = "renesas,r8a77970-sysc";
++			reg = <0 0xe6180000 0 0x440>;
++			#power-domain-cells = <1>;
++		};
++
++		prr: chipid@fff00044 {
++			compatible = "renesas,prr";
++			reg = <0 0xfff00044 0 4>;
++		};
++	};
++};
 -- 
-2.7.4
+2.1.4
