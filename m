@@ -1,60 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f48.google.com ([209.85.215.48]:37276 "EHLO
-        mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755333AbdIFWh1 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34793 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752209AbdI2Ly5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Sep 2017 18:37:27 -0400
-Received: by mail-lf0-f48.google.com with SMTP id 80so15995358lfy.4
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 06 Sep 2017 15:37:26 -0700 (PDT)
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
+        Fri, 29 Sep 2017 07:54:57 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH 18/18] arm64: dts: ulcb-kf: hog USB3 hub control gpios
-Date: Thu,  7 Sep 2017 01:37:24 +0300
-Message-Id: <1504737444-23544-1-git-send-email-vladimir.barinov@cogentembedded.com>
-In-Reply-To: <1504737267-22829-1-git-send-email-vladimir.barinov@cogentembedded.com>
-References: <1504737267-22829-1-git-send-email-vladimir.barinov@cogentembedded.com>
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 21/48] ARM: dts: gr-peach: Add SCIF2 pin group
+Date: Fri, 29 Sep 2017 13:53:13 +0200
+Message-Id: <2f8be2d1dadb2b73a1c1ce244c88c509791f5cf2.1506683482.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1506683482.git.horms+renesas@verge.net.au>
+References: <cover.1506683482.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This adds gpio hogs for USB3 hub on ULCB Kingfisher board to power up and
-remove from reset the hub
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Add pin configuration subnode for SCIF2 serial debug interface.
+
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/ulcb-kf.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ arch/arm/boot/dts/r7s72100-gr-peach.dts | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-index 0c3844f..7bb9793 100644
---- a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-+++ b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-@@ -57,6 +57,20 @@
- 		interrupt-controller;
- 		interrupt-parent = <&gpio6>;
- 		interrupts = <8 IRQ_TYPE_EDGE_FALLING>;
-+
-+		hub_pwen {
-+			gpio-hog;
-+			gpios = <6 GPIO_ACTIVE_HIGH>;
-+			output-high;
-+			line-name = "HUB pwen";
-+		};
-+
-+		hub_rst {
-+			gpio-hog;
-+			gpios = <7 GPIO_ACTIVE_HIGH>;
-+			output-high;
-+			line-name = "HUB rst";
-+		};
- 	};
+diff --git a/arch/arm/boot/dts/r7s72100-gr-peach.dts b/arch/arm/boot/dts/r7s72100-gr-peach.dts
+index 1c40a1afbd8e..bcfa6445bbaa 100644
+--- a/arch/arm/boot/dts/r7s72100-gr-peach.dts
++++ b/arch/arm/boot/dts/r7s72100-gr-peach.dts
+@@ -11,6 +11,7 @@
  
- 	gpio_exp_75: pca9539@75 {
+ /dts-v1/;
+ #include "r7s72100.dtsi"
++#include <dt-bindings/pinctrl/r7s72100-pinctrl.h>
+ 
+ / {
+ 	model = "GR-Peach";
+@@ -52,6 +53,13 @@
+ 	};
+ };
+ 
++&pinctrl {
++	scif2_pins: serial2 {
++		/* P6_2 as RxD2; P6_3 as TxD2 */
++		pinmux = <RZA1_PINMUX(6, 2, 7)>, <RZA1_PINMUX(6, 3, 7)>;
++	};
++};
++
+ &extal_clk {
+ 	clock-frequency = <13333000>;
+ };
+@@ -61,5 +69,8 @@
+ };
+ 
+ &scif2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&scif2_pins>;
++
+ 	status = "okay";
+ };
 -- 
-1.9.1
+2.1.4
