@@ -1,55 +1,88 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from lb3-smtp-cloud8.xs4all.net ([194.109.24.29]:48071 "EHLO
-        lb3-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750998AbdISHdi (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34495 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752279AbdI2Lxe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Sep 2017 03:33:38 -0400
-From: Hans Verkuil <hverkuil@xs4all.nl>
-To: linux-media@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        Archit Taneja <architt@codeaurora.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Hans Verkuil <hans.verkuil@cisco.com>
-Subject: [PATCHv2 1/2] dt-bindings: adi,adv7511.txt: document cec clock
-Date: Tue, 19 Sep 2017 09:33:30 +0200
-Message-Id: <20170919073331.29007-2-hverkuil@xs4all.nl>
-In-Reply-To: <20170919073331.29007-1-hverkuil@xs4all.nl>
-References: <20170919073331.29007-1-hverkuil@xs4all.nl>
+        Fri, 29 Sep 2017 07:53:34 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 07/22] arm64: dts: renesas: r8a77995: Use r8a7795-sysc binding definitions
+Date: Fri, 29 Sep 2017 13:52:16 +0200
+Message-Id: <9066b042b4502f711c5207662ec0d26be1732aff.1506678250.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1506678250.git.horms+renesas@verge.net.au>
+References: <cover.1506678250.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Hans Verkuil <hans.verkuil@cisco.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Document the cec clock binding.
+Replace the hardcoded power domain indices by R8A77995_PD_* symbols.
 
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a77995.dtsi | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt b/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
-index 06668bca7ffc..4497ae054d49 100644
---- a/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
-+++ b/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
-@@ -68,6 +68,8 @@ Optional properties:
- - adi,disable-timing-generator: Only for ADV7533. Disables the internal timing
-   generator. The chip will rely on the sync signals in the DSI data lanes,
-   rather than generate its own timings for HDMI output.
-+- clocks: from common clock binding: handle to CEC clock.
-+- clock-names: from common clock binding: must be "cec".
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+index 72c303362b16..a5b769b840e9 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+@@ -11,6 +11,7 @@
  
- Required nodes:
+ #include <dt-bindings/clock/renesas-cpg-mssr.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/power/r8a77995-sysc.h>
  
-@@ -89,6 +91,8 @@ Example
- 		reg = <39>;
- 		interrupt-parent = <&gpio3>;
- 		interrupts = <29 IRQ_TYPE_EDGE_FALLING>;
-+		clocks = <&cec_clock>;
-+		clock-names = "cec";
+ / {
+ 	compatible = "renesas,r8a77995";
+@@ -30,14 +31,14 @@
+ 			compatible = "arm,cortex-a53", "arm,armv8";
+ 			reg = <0x0>;
+ 			device_type = "cpu";
+-			power-domains = <&sysc 5>;
++			power-domains = <&sysc R8A77995_PD_CA53_CPU0>;
+ 			next-level-cache = <&L2_CA53>;
+ 			enable-method = "psci";
+ 		};
  
- 		adi,input-depth = <8>;
- 		adi,input-colorspace = "rgb";
+ 		L2_CA53: cache-controller-1 {
+ 			compatible = "cache";
+-			power-domains = <&sysc 21>;
++			power-domains = <&sysc R8A77995_PD_CA53_SCU>;
+ 			cache-unified;
+ 			cache-level = <2>;
+ 		};
+@@ -76,7 +77,7 @@
+ 					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_HIGH)>;
+ 			clocks = <&cpg CPG_MOD 408>;
+ 			clock-names = "clk";
+-			power-domains = <&sysc 32>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+ 			resets = <&cpg 408>;
+ 		};
+ 
+@@ -97,7 +98,7 @@
+ 				     "renesas,rcar-gen3-wdt";
+ 			reg = <0 0xe6020000 0 0x0c>;
+ 			clocks = <&cpg CPG_MOD 402>;
+-			power-domains = <&sysc 32>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+ 			resets = <&cpg 402>;
+ 			status = "disabled";
+ 		};
+@@ -147,7 +148,7 @@
+ 				 <&cpg CPG_CORE 16>,
+ 				 <&scif_clk>;
+ 			clock-names = "fck", "brg_int", "scif_clk";
+-			power-domains = <&sysc 32>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+ 			resets = <&cpg 310>;
+ 			status = "disabled";
+ 		};
 -- 
-2.14.1
+2.1.4
