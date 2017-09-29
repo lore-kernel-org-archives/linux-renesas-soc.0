@@ -1,73 +1,49 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <damm+renesas@opensource.se>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 6/7] clocksource: sh_cmt: Remove unused "renesas,channels-mask" handling
-Date: Mon, 18 Sep 2017 15:46:46 +0200
-Message-Id: <1505742407-31576-7-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1505742407-31576-1-git-send-email-geert+renesas@glider.be>
-References: <1505742407-31576-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:34495 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752477AbdI2Lxf (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 29 Sep 2017 07:53:35 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 06/22] arm64: renesas: Add Renesas R8A77970 Kconfig support
+Date: Fri, 29 Sep 2017 13:52:15 +0200
+Message-Id: <a6d21c0940490a343c6894bd78601be9e0e36f45.1506678250.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1506678250.git.horms+renesas@verge.net.au>
+References: <cover.1506678250.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The in-driver channel configuration in sh_cmt_info.channels_mask is now
-always set for all CMT devices instantiated from DT.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Hence the "renesas,channels-mask" property is no longer checked, and its
-handling can be removed, cfr. commit 4e18111ff38f0664 ("devicetree:
-bindings: Remove deprecated properties").
+Add a configuration option for the R-Car V3M SoC.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-v3:
-  - New.
----
- drivers/clocksource/sh_cmt.c | 18 +-----------------
- 1 file changed, 1 insertion(+), 17 deletions(-)
+ arch/arm64/Kconfig.platforms | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/clocksource/sh_cmt.c b/drivers/clocksource/sh_cmt.c
-index 61a9225097065cc4..89c514cf59a44e48 100644
---- a/drivers/clocksource/sh_cmt.c
-+++ b/drivers/clocksource/sh_cmt.c
-@@ -946,14 +946,6 @@ static const struct of_device_id sh_cmt_of_table[] __maybe_unused = {
- };
- MODULE_DEVICE_TABLE(of, sh_cmt_of_table);
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index 6b54ee8c1262..a07f9b5a4f82 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -184,6 +184,12 @@ config ARCH_R8A7796
+ 	help
+ 	  This enables support for the Renesas R-Car M3-W SoC.
  
--static int sh_cmt_parse_dt(struct sh_cmt_device *cmt)
--{
--	struct device_node *np = cmt->pdev->dev.of_node;
--
--	return of_property_read_u32(np, "renesas,channels-mask",
--				    &cmt->hw_channels);
--}
--
- static int sh_cmt_setup(struct sh_cmt_device *cmt, struct platform_device *pdev)
- {
- 	unsigned int mask;
-@@ -968,15 +960,7 @@ static int sh_cmt_setup(struct sh_cmt_device *cmt, struct platform_device *pdev)
- 
- 		id = of_match_node(sh_cmt_of_table, pdev->dev.of_node);
- 		cmt->info = id->data;
--
--		/* prefer in-driver channel configuration over DT */
--		if (cmt->info->channels_mask) {
--			cmt->hw_channels = cmt->info->channels_mask;
--		} else {
--			ret = sh_cmt_parse_dt(cmt);
--			if (ret < 0)
--				return ret;
--		}
-+		cmt->hw_channels = cmt->info->channels_mask;
- 	} else if (pdev->dev.platform_data) {
- 		struct sh_timer_config *cfg = pdev->dev.platform_data;
- 		const struct platform_device_id *id = pdev->id_entry;
++config ARCH_R8A77970
++	bool "Renesas R-Car V3M SoC Platform"
++	depends on ARCH_RENESAS
++	help
++	  This enables support for the Renesas R-Car V3M SoC.
++
+ config ARCH_R8A77995
+ 	bool "Renesas R-Car D3 SoC Platform"
+ 	depends on ARCH_RENESAS
 -- 
-2.7.4
+2.1.4
