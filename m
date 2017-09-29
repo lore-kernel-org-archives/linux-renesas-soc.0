@@ -1,76 +1,149 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: laurent.pinchart@ideasonboard.com,
-        linux-renesas-soc@vger.kernel.org
-Cc: linux-media@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v3 2/9] v4l: vsp1: Protect bodies against overflow
-Date: Wed, 13 Sep 2017 12:18:41 +0100
-Message-Id: <0b4c1b3d8b0e56e736540855b91894bd9a43242e.1505299165.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.fd1ad59f0229dc110549eecc18b11ad441997b3a.1505299165.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.fd1ad59f0229dc110549eecc18b11ad441997b3a.1505299165.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.fd1ad59f0229dc110549eecc18b11ad441997b3a.1505299165.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.fd1ad59f0229dc110549eecc18b11ad441997b3a.1505299165.git-series.kieran.bingham+renesas@ideasonboard.com>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:43548 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752320AbdI2WF2 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 29 Sep 2017 18:05:28 -0400
+Date: Sat, 30 Sep 2017 01:05:24 +0300
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devel@driverdev.osuosl.org
+Subject: Re: [PATCH v2 13/17] media: v4l2-async: simplify v4l2_async_subdev
+ structure
+Message-ID: <20170929220524.gsx3tmirdni2mhpx@valkosipuli.retiisi.org.uk>
+References: <cover.1506548682.git.mchehab@s-opensource.com>
+ <cd089c6dac22c8ea2194c47c48386e52bb6e561f.1506548682.git.mchehab@s-opensource.com>
+ <20170928120920.ywgbtikkrts25qlj@valkosipuli.retiisi.org.uk>
+ <20170929062119.192e4fd1@vento.lan>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170929062119.192e4fd1@vento.lan>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The body write function relies on the code never asking it to write more
-than the entries available in the list.
+Hi Mauro,
 
-Currently with each list body containing 256 entries, this is fine, but
-we can reduce this number greatly saving memory. In preparation of this
-add a level of protection to catch any buffer overflows.
+(Removing the non-list recipients.)
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+On Fri, Sep 29, 2017 at 06:27:13AM -0300, Mauro Carvalho Chehab wrote:
+> Em Thu, 28 Sep 2017 15:09:21 +0300
+> Sakari Ailus <sakari.ailus@iki.fi> escreveu:
+> 
+> > Hi Mauro,
+> > 
+> > On Wed, Sep 27, 2017 at 06:46:56PM -0300, Mauro Carvalho Chehab wrote:
+> > > The V4L2_ASYNC_MATCH_FWNODE match criteria requires just one
+> > > struct to be filled (struct fwnode_handle). The V4L2_ASYNC_MATCH_DEVNAME
+> > > match criteria requires just a device name.
+> > > 
+> > > So, it doesn't make sense to enclose those into structs,
+> > > as the criteria can go directly into the union.
+> > > 
+> > > That makes easier to document it, as we don't need to document
+> > > weird senseless structs.  
+> > 
+> > The idea is that in the union, there's a struct which is specific to the
+> > match_type field. I wouldn't call it senseless.
+> 
+> Why a struct for each specific match_type is **needed**? It it is not
+> needed, then it is senseless per definition :-) 
+> 
+> In the specific case of fwnode, there's already a named struct
+> for fwnode_handle. The only thing is that it is declared outside
+> enum v4l2_async_match_type. So, I don't see any reason to do things
+> like:
+> 
+> 		struct {
+> 			struct fwnode_handle *fwnode;
+> 		} fwnode;
+> 
+> If you're in doubt about that, think on how would you document
+> both fwnode structs. Both fwnode structs specify the match
+> criteria if %V4L2_ASYNC_MATCH_FWNODE.
+> 
+> The same applies to this:
+> 
+> 		struct {
+> 			const char *name;
+> 		} device_name;
+> 
+> Both device_name and name specifies the match criteria if
+> %V4L2_ASYNC_MATCH_DEVNAME.
+> 
+> > 
+> > In the two cases there's just a single field in the containing struct. You
+> > could remove the struct in that case as you do in this patch, and just use
+> > the field. But I think the result is less clean and so I wouldn't make this
+> > change.
+> 
+> It is actually cleaner without the stucts.
+> 
+> Without the useless struct, if one wants to match a firmware node, it
+> should be doing:
+> 
+>  		pdata->asd[i]->match_type = V4L2_ASYNC_MATCH_FWNODE;
+> 		pdata->asd[i]->match.fwnode = of_fwnode_handle(rem);
 
----
+This code should be and will be moved out of drivers. See:
 
-v3:
- - adapt for new 'body' terminology
- - simplify WARN_ON macro usage
----
- drivers/media/platform/vsp1/vsp1_dl.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+<URL:http://www.spinics.net/lists/linux-media/msg122688.html>
 
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
-index 643f7ea3af24..a45d35aa676e 100644
---- a/drivers/media/platform/vsp1/vsp1_dl.c
-+++ b/drivers/media/platform/vsp1/vsp1_dl.c
-@@ -50,6 +50,7 @@ struct vsp1_dl_entry {
-  * @dma: DMA address of the entries
-  * @size: size of the DMA memory in bytes
-  * @num_entries: number of stored entries
-+ * @max_entries: number of entries available
-  */
- struct vsp1_dl_body {
- 	struct list_head list;
-@@ -60,6 +61,7 @@ struct vsp1_dl_body {
- 	size_t size;
- 
- 	unsigned int num_entries;
-+	unsigned int max_entries;
- };
- 
- /**
-@@ -138,6 +140,7 @@ static int vsp1_dl_body_init(struct vsp1_device *vsp1,
- 
- 	dlb->vsp1 = vsp1;
- 	dlb->size = size;
-+	dlb->max_entries = num_entries;
- 
- 	dlb->entries = dma_alloc_wc(vsp1->bus_master, dlb->size, &dlb->dma,
- 				    GFP_KERNEL);
-@@ -219,6 +222,10 @@ void vsp1_dl_body_free(struct vsp1_dl_body *dlb)
-  */
- void vsp1_dl_body_write(struct vsp1_dl_body *dlb, u32 reg, u32 data)
- {
-+	if (WARN_ONCE(dlb->num_entries >= dlb->max_entries,
-+		      "DLB size exceeded (max %u)", dlb->max_entries))
-+		return;
-+
- 	dlb->entries[dlb->num_entries].addr = reg;
- 	dlb->entries[dlb->num_entries].data = data;
- 	dlb->num_entries++;
+So there are going to be quite a bit fewer instances of it, and none should
+remain in drivers. I frankly don't have a strong opinion on this; there are
+arguments for and against. I just don't see a reason to change it.
+
+It'd be nice to have Hans's and Laurent's opinion though.
+
+> 
+> And that' it. For anyone that reads the above code, even not knowing
+> all details of "match", is clear that the match criteria is whatever
+> of_fwnode_handle() returns.
+> 
+> Now, on this:
+> 
+>  		pdata->asd[i]->match_type = V4L2_ASYNC_MATCH_FWNODE;
+> 		pdata->asd[i]->match.fwnode.fwnode = of_fwnode_handle(rem);
+> 
+> It sounds that something is missing, as only one field of match.fwnode
+> was specified. Anyone not familiar with that non-conventional usage of
+> a struct with just one struct field inside would need to seek for the
+> header file declaring the struct. That would consume a lot of time for
+> code reviewers for no good reason.
+> 
+> The same apply for devname search:
+> 
+> In this case:
+> 		asd->match_type = V4L2_ASYNC_MATCH_DEVNAME;
+> 		asd->match.device_name.name = imxsd->devname;
+> 
+> I would be expecting something else to be filled at device_name's
+> struct, for example to specify a case sensitive or case insensitive
+> match criteria, to allow seeking for a device's substring, or to
+> allow using other struct device fields to narrow the seek.
+> 
+> With this:
+> 
+> 		asd->match_type = V4L2_ASYNC_MATCH_DEVNAME;
+> 		asd->match.device_name = imxsd->devname;
+> 
+> It is clear that the match criteria is fully specified.
+> 
+> > The confusion comes possibly from the fact that the struct is named the
+> > same as the field in the struct. These used to be called of and node, but
+> > with the fwnode property framework the references to the fwnode are, well,
+> > typically similarly called "fwnode". There's no underlying firmware
+> > interface with that name, fwnode property API is just an API.
+> 
+> The duplicated "fwnode" name only made it more evident that we don't
+> need to enclose a single match criteria field inside a struct.
+
 -- 
-git-series 0.9.1
+Kind regards,
+
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi
