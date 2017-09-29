@@ -1,49 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk0-f52.google.com ([209.85.213.52]:44163 "EHLO
-        mail-vk0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751131AbdINOSn (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34793 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752162AbdI2Lyo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Sep 2017 10:18:43 -0400
-Received: by mail-vk0-f52.google.com with SMTP id o22so3290304vke.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Sep 2017 07:18:42 -0700 (PDT)
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
+        Fri, 29 Sep 2017 07:54:44 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH v2 01/18] dt: arm: shmobile: add M3ULCB Kingfisher board DT bindings
-Date: Thu, 14 Sep 2017 17:18:40 +0300
-Message-Id: <1505398720-4535-1-git-send-email-vladimir.barinov@cogentembedded.com>
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 23/48] ARM: dts: r8a7745: Add Ethernet AVB support
+Date: Fri, 29 Sep 2017 13:53:15 +0200
+Message-Id: <372b01369fed699c417789ad94344847e09b7a43.1506683482.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1506683482.git.horms+renesas@verge.net.au>
+References: <cover.1506683482.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add M3ULCB Kingfisher Device tree bindings Documentation, listing it as a
-supported board.
+From: Biju Das <biju.das@bp.renesas.com>
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Add Ethernet AVB support for r8a7745 SoC.
+
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-Changes in version 2:
-- added own compatible value "shimafuji,kingfisher"
+ arch/arm/boot/dts/r8a7745.dtsi | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
- Documentation/devicetree/bindings/arm/shmobile.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index ae75cb3..89bd3a6 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -85,6 +85,8 @@ Boards:
-     compatible = "renesas,lager", "renesas,r8a7790"
-   - M3ULCB (R-Car Starter Kit Pro, RTP0RC7796SKBX0010SA09 (M3 ES1.0))
-     compatible = "renesas,m3ulcb", "renesas,r8a7796";
-+  - M3ULCB Kingfisher (SBEV-RCAR-KF-M03)
-+    compatible = "shimafuji,kingfisher", "renesas,m3ulcb", "renesas,r8a7796";
-   - Marzen (R0P7779A00010S)
-     compatible = "renesas,marzen", "renesas,r8a7779"
-   - Porter (M2-LCDP)
+diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+index 7fd2967b1f42..6e82991b7997 100644
+--- a/arch/arm/boot/dts/r8a7745.dtsi
++++ b/arch/arm/boot/dts/r8a7745.dtsi
+@@ -623,6 +623,19 @@
+ 			status = "disabled";
+ 		};
+ 
++		avb: ethernet@e6800000 {
++			compatible = "renesas,etheravb-r8a7745",
++				     "renesas,etheravb-rcar-gen2";
++			reg = <0 0xe6800000 0 0x800>, <0 0xee0e8000 0 0x4000>;
++			interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 812>;
++			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
++			resets = <&cpg 812>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
+ 		i2c0: i2c@e6508000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
 -- 
-1.9.1
+2.1.4
