@@ -1,68 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:44204 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751311AbdILIlD (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34793 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752181AbdI2LzA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Sep 2017 04:41:03 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
+        Fri, 29 Sep 2017 07:55:00 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-sh@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 resend 4/4] sh: sh7269: Remove nonexistent GPIO_PH[0-7] to fix pinctrl registration
-Date: Tue, 12 Sep 2017 10:40:57 +0200
-Message-Id: <1505205657-18012-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1505205657-18012-1-git-send-email-geert+renesas@glider.be>
-References: <1505205657-18012-1-git-send-email-geert+renesas@glider.be>
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 44/48] ARM: dts: r8a7745: Add QSPI support
+Date: Fri, 29 Sep 2017 13:53:36 +0200
+Message-Id: <2391d0269a85c3a7942cb7e2bbac5751a7191e10.1506683482.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1506683482.git.horms+renesas@verge.net.au>
+References: <cover.1506683482.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Pinmux_pins[] is initialized through PINMUX_GPIO(), using designated
-array initializers, where the GPIO_* enums serve as indices.
-If enum values are defined, but never used, pinmux_pins[] contains
-(zero-filled) holes.  Such entries are treated as pin zero, which was
-registered before, thus leading to pinctrl registration failures, as
-seen on sh7722:
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-    sh-pfc pfc-sh7722: pin 0 already registered
-    sh-pfc pfc-sh7722: error during pin registration
-    sh-pfc pfc-sh7722: could not register: -22
-    sh-pfc: probe of pfc-sh7722 failed with error -22
+Add the DT node for the QSPI interface to the SoC dtsi.
 
-Remove GPIO_PH[0-7] from the enum to fix this.
-
-Fixes: ef0fa5331a73e479 ("sh: Add pinmux for sh7269")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-Untested due to lack of hardware.
+ arch/arm/boot/dts/r8a7745.dtsi | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-v2:
-  - Replace fake error messages by reference to sh7722,
-  - Add Reviewed-by.
----
- arch/sh/include/cpu-sh2a/cpu/sh7269.h | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/arch/sh/include/cpu-sh2a/cpu/sh7269.h b/arch/sh/include/cpu-sh2a/cpu/sh7269.h
-index 2a0ca8780f0d8c34..13c495a9fc0007b4 100644
---- a/arch/sh/include/cpu-sh2a/cpu/sh7269.h
-+++ b/arch/sh/include/cpu-sh2a/cpu/sh7269.h
-@@ -45,9 +45,7 @@ enum {
- 	GPIO_PG7, GPIO_PG6, GPIO_PG5, GPIO_PG4,
- 	GPIO_PG3, GPIO_PG2, GPIO_PG1, GPIO_PG0,
+diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+index adf30890cb07..5cc4009c4265 100644
+--- a/arch/arm/boot/dts/r8a7745.dtsi
++++ b/arch/arm/boot/dts/r8a7745.dtsi
+@@ -25,6 +25,7 @@
+ 		i2c3 = &i2c3;
+ 		i2c4 = &i2c4;
+ 		i2c5 = &i2c5;
++		spi0 = &qspi;
+ 	};
  
--	/* Port H */
--	GPIO_PH7, GPIO_PH6, GPIO_PH5, GPIO_PH4,
--	GPIO_PH3, GPIO_PH2, GPIO_PH1, GPIO_PH0,
-+	/* Port H - Port H does not have a Data Register */
+ 	cpus {
+@@ -736,6 +737,22 @@
+ 			status = "disabled";
+ 		};
  
- 	/* Port I - not on device */
- 
++		qspi: spi@e6b10000 {
++			compatible = "renesas,qspi-r8a7745", "renesas,qspi";
++			reg = <0 0xe6b10000 0 0x2c>;
++			interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 917>;
++			dmas = <&dmac0 0x17>, <&dmac0 0x18>,
++			       <&dmac1 0x17>, <&dmac1 0x18>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
++			num-cs = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			resets = <&cpg 917>;
++			status = "disabled";
++		};
++
+ 		sdhi0: sd@ee100000 {
+ 			compatible = "renesas,sdhi-r8a7745";
+ 			reg = <0 0xee100000 0 0x328>;
 -- 
-2.7.4
+2.1.4
