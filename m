@@ -1,47 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f41.google.com ([209.85.215.41]:36451 "EHLO
-        mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932872AbdIFWfH (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34495 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752181AbdI2Lxu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Sep 2017 18:35:07 -0400
-Received: by mail-lf0-f41.google.com with SMTP id m199so20741780lfe.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 06 Sep 2017 15:35:06 -0700 (PDT)
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
+        Fri, 29 Sep 2017 07:53:50 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH 01/18] dt: arm: shmobile: add M3ULCB Kingfisher board DT bindings
-Date: Thu,  7 Sep 2017 01:35:03 +0300
-Message-Id: <1504737303-22874-1-git-send-email-vladimir.barinov@cogentembedded.com>
-In-Reply-To: <1504737267-22829-1-git-send-email-vladimir.barinov@cogentembedded.com>
-References: <1504737267-22829-1-git-send-email-vladimir.barinov@cogentembedded.com>
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 16/22] arm64: dts: renesas: r8a77995: Add USB2.0 PHY device node
+Date: Fri, 29 Sep 2017 13:52:25 +0200
+Message-Id: <a0ea7fe8d34cbede9928b44e9a6b1dcd3f0150d1.1506678250.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1506678250.git.horms+renesas@verge.net.au>
+References: <cover.1506678250.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add M3ULCB Kingfisher Device tree bindings Documentation, listing it as a
-supported board.
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+This patch adds USB2.0 PHY device node for r8a77995.
+
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- Documentation/devicetree/bindings/arm/shmobile.txt | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/renesas/r8a77995.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index ae75cb3..89bd3a6 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -85,6 +85,7 @@ Boards:
-   - Lager (RTP0RC7790SEB00010S)
-     compatible = "renesas,lager", "renesas,r8a7790"
-   - M3ULCB (R-Car Starter Kit Pro, RTP0RC7796SKBX0010SA09 (M3 ES1.0))
-+    M3ULCB Kingfisher (SBEV-RCAR-KF-M03)
-     compatible = "renesas,m3ulcb", "renesas,r8a7796";
-   - Marzen (R0P7779A00010S)
-     compatible = "renesas,marzen", "renesas,r8a7779"
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+index 72d04d7337be..59ed1303bd93 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+@@ -309,5 +309,17 @@
+ 			resets = <&cpg 310>;
+ 			status = "disabled";
+ 		};
++
++		usb2_phy0: usb-phy@ee080200 {
++			compatible = "renesas,usb2-phy-r8a77995",
++				     "renesas,rcar-gen3-usb2-phy";
++			reg = <0 0xee080200 0 0x700>;
++			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 703>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 703>;
++			#phy-cells = <0>;
++			status = "disabled";
++		};
+ 	};
+ };
 -- 
-1.9.1
+2.1.4
