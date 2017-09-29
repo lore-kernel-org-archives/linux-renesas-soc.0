@@ -1,46 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from esa5.dell-outbound.iphmx.com ([68.232.153.95]:33471 "EHLO
-        esa5.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751476AbdILWB0 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34793 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752162AbdI2Lys (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Sep 2017 18:01:26 -0400
-From: <Prashanth.Giri@dell.com>
-To: <linux-renesas-soc@vger.kernel.org>
-Subject: sh: sh7758 User land programs crash with SIGBUS.
-Date: Tue, 12 Sep 2017 22:00:28 +0000
-Message-ID: <bac7196cecbb43159feaaf1fc1605767@AUSX13MPC101.AMER.DELL.COM>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
+        Fri, 29 Sep 2017 07:54:48 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 33/48] ARM: dts: alt: use correct logic for SD WP pins
+Date: Fri, 29 Sep 2017 13:53:25 +0200
+Message-Id: <a2f74d0e655eac78dbbd4ade88ee08b1f8ec7ec1.1506683482.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1506683482.git.horms+renesas@verge.net.au>
+References: <cover.1506683482.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-I am trying to port from 3.4.11 kernel to 3.10.107 based on my sh7757/58 pr=
-ocessor hardware and running into some odd behavior with user land applicat=
-ions. I pretty much got the kernel up and running but some of the applicati=
-ons in user land won't launch and are crashing with the below messages in d=
-mesg.
+The WP pins are ACTIVE_HIGH, fix it in the DTS.
 
-<5>Fixing up unaligned userspace access in "aim" pid=3D28533 pc=3D0x3b14249=
-2 ins=3D0x6252
-<5>Sending SIGBUS to "aim" pid=3D28533 due to unaligned access (PC 3b142492=
- PR 296167e4) ins=3D0x6252
-<5>Sending SIGBUS to "pm" pid=3D28741 due to unaligned access (PC 58b2e409 =
-PR 297b0118) ins=3D0x8dc1
-<5>Sending SIGBUS to "pm" pid=3D28741 due to unaligned access (PC 3b142492 =
-PR 296ce7e4) ins=3D0x6252
+Fixes: 2b41091b896b ("ARM: dts: alt: add SDHI0 and 1 support")
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7794-alt.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Some of the older posts in the mailing lists pointed out to I/D cache issue=
-s, I tried disabling the cache altogether in a hope to root cause the issue=
-, but still got the same responses. For some reason I believe the loader is=
- loading these programs into odd addresses. I am clueless as to where to lo=
-ok for the possible issue. Is there any obvious settings that I am missing =
-from the board/cpu setup ?=20
-
-Any expert help and guidance is really appreciated.
-
-Thanks,
-Prashanth
+diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
+index e45f92b5eb11..bd98790d964e 100644
+--- a/arch/arm/boot/dts/r8a7794-alt.dts
++++ b/arch/arm/boot/dts/r8a7794-alt.dts
+@@ -304,7 +304,7 @@
+ 	vmmc-supply = <&vcc_sdhi0>;
+ 	vqmmc-supply = <&vccq_sdhi0>;
+ 	cd-gpios = <&gpio6 6 GPIO_ACTIVE_LOW>;
+-	wp-gpios = <&gpio6 7 GPIO_ACTIVE_LOW>;
++	wp-gpios = <&gpio6 7 GPIO_ACTIVE_HIGH>;
+ 	sd-uhs-sdr50;
+ 	sd-uhs-sdr104;
+ 	status = "okay";
+@@ -318,7 +318,7 @@
+ 	vmmc-supply = <&vcc_sdhi1>;
+ 	vqmmc-supply = <&vccq_sdhi1>;
+ 	cd-gpios = <&gpio6 14 GPIO_ACTIVE_LOW>;
+-	wp-gpios = <&gpio6 15 GPIO_ACTIVE_LOW>;
++	wp-gpios = <&gpio6 15 GPIO_ACTIVE_HIGH>;
+ 	sd-uhs-sdr50;
+ 	status = "okay";
+ };
+-- 
+2.1.4
