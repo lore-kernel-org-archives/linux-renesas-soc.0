@@ -1,49 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk0-f54.google.com ([209.85.213.54]:47021 "EHLO
-        mail-vk0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751363AbdINOSs (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34495 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752279AbdI2Lxb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Sep 2017 10:18:48 -0400
-Received: by mail-vk0-f54.google.com with SMTP id v203so3266186vkv.3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Sep 2017 07:18:48 -0700 (PDT)
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
+        Fri, 29 Sep 2017 07:53:31 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH v2 02/18] dt: arm: shmobile: add H3ULCB Kingfisher board DT bindings
-Date: Thu, 14 Sep 2017 17:18:46 +0300
-Message-Id: <1505398726-4575-1-git-send-email-vladimir.barinov@cogentembedded.com>
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 04/22] arm64: dts: renesas: ulcb: Enable display output
+Date: Fri, 29 Sep 2017 13:52:13 +0200
+Message-Id: <7da2ed12da2c81b782ee4c3b4b0b87098048aae8.1506678250.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1506678250.git.horms+renesas@verge.net.au>
+References: <cover.1506678250.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add H3ULCB Kingfisher Device tree bindings Documentation, listing it as a
-supported board.
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+The DU is already wired up to the HDMI encoder, all we need to do is
+enable it.
+
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-Changes in version 2:
-- added own compatible value "shimafuji,kingfisher"
+ arch/arm64/boot/dts/renesas/ulcb.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
 
- Documentation/devicetree/bindings/arm/shmobile.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index 89bd3a6..b313fe2 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -65,6 +65,8 @@ Boards:
-   - H3ULCB (R-Car Starter Kit Premier, RTP0RC7795SKBX0010SA00 (H3 ES1.1))
-     H3ULCB (R-Car Starter Kit Premier, RTP0RC77951SKBX010SA00 (H3 ES2.0))
-     compatible = "renesas,h3ulcb", "renesas,r8a7795";
-+  - H3ULCB Kingfisher (SBEV-RCAR-KF-M03)
-+    compatible = "shimafuji,kingfisher", "renesas,h3ulcb", "renesas,r8a7795";
-   - Henninger
-     compatible = "renesas,henninger", "renesas,r8a7791"
-   - iWave Systems RZ/G1E SODIMM SOM Development Platform (iW-RainboW-G22D)
+diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+index 1b868df2393f..dfec9072718b 100644
+--- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
++++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+@@ -157,6 +157,10 @@
+ 	};
+ };
+ 
++&du {
++	status = "okay";
++};
++
+ &ehci1 {
+ 	status = "okay";
+ };
 -- 
-1.9.1
+2.1.4
