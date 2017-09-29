@@ -1,131 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from lb2-smtp-cloud7.xs4all.net ([194.109.24.28]:43964 "EHLO
-        lb2-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934750AbdIYKr6 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34495 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752454AbdI2Lx6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Sep 2017 06:47:58 -0400
-Subject: Re: [PATCH v6 25/25] rcar-vin: enable support for r8a7796
-To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-References: <20170822232640.26147-1-niklas.soderlund+renesas@ragnatech.se>
- <20170822232640.26147-26-niklas.soderlund+renesas@ragnatech.se>
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        tomoharu.fukawa.eb@renesas.com, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <e36ddd1e-6809-fc09-9b1c-a0b5c85e5c4a@xs4all.nl>
-Date: Mon, 25 Sep 2017 12:47:56 +0200
-MIME-Version: 1.0
-In-Reply-To: <20170822232640.26147-26-niklas.soderlund+renesas@ragnatech.se>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+        Fri, 29 Sep 2017 07:53:58 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 4/8] MAINTAINERS: Add Renesas SoC DT bindings doc to Renesas ARM sections
+Date: Fri, 29 Sep 2017 13:52:51 +0200
+Message-Id: <964ca6feefb7136b30597f29bd51447fe9657590.1506676368.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1506676368.git.horms+renesas@verge.net.au>
+References: <cover.1506676368.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 23/08/17 01:26, Niklas Söderlund wrote:
-> Add the SoC specific information for Renesas r8a7796.
-> 
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+Suggested-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ MAINTAINERS | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Regards,
-
-	Hans
-
-> ---
->  .../devicetree/bindings/media/rcar_vin.txt         |  1 +
->  drivers/media/platform/rcar-vin/rcar-core.c        | 64 ++++++++++++++++++++++
->  2 files changed, 65 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/rcar_vin.txt
-> index be38ad89d71ad05d..767358f39512aa17 100644
-> --- a/Documentation/devicetree/bindings/media/rcar_vin.txt
-> +++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
-> @@ -10,6 +10,7 @@ always slaves and support multiple input channels which can be either RGB,
->  YUVU, BT656 or CSI-2.
->  
->   - compatible: Must be one or more of the following
-> +   - "renesas,vin-r8a7796" for the R8A7796 device
->     - "renesas,vin-r8a7795" for the R8A7795 device
->     - "renesas,vin-r8a7794" for the R8A7794 device
->     - "renesas,vin-r8a7793" for the R8A7793 device
-> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-> index 58d903ab9fb83faf..e01edd5f5925d26c 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-core.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
-> @@ -1116,7 +1116,71 @@ static const struct rvin_info rcar_info_r8a7795es1 = {
->  	},
->  };
->  
-> +static const struct rvin_info rcar_info_r8a7796 = {
-> +	.chip = RCAR_GEN3,
-> +	.use_mc = true,
-> +	.max_width = 4096,
-> +	.max_height = 4096,
-> +
-> +	.num_chsels = 5,
-> +	.chsels = {
-> +		{
-> +			{ .csi = RVIN_CSI40, .chan = 0 },
-> +			{ .csi = RVIN_CSI20, .chan = 0 },
-> +			{ .csi = RVIN_NC, .chan = 0 },
-> +			{ .csi = RVIN_CSI40, .chan = 0 },
-> +			{ .csi = RVIN_CSI20, .chan = 0 },
-> +		}, {
-> +			{ .csi = RVIN_CSI20, .chan = 0 },
-> +			{ .csi = RVIN_NC, .chan = 0 },
-> +			{ .csi = RVIN_CSI40, .chan = 0 },
-> +			{ .csi = RVIN_CSI40, .chan = 1 },
-> +			{ .csi = RVIN_CSI20, .chan = 1 },
-> +		}, {
-> +			{ .csi = RVIN_NC, .chan = 0 },
-> +			{ .csi = RVIN_CSI40, .chan = 0 },
-> +			{ .csi = RVIN_CSI20, .chan = 0 },
-> +			{ .csi = RVIN_CSI40, .chan = 2 },
-> +			{ .csi = RVIN_CSI20, .chan = 2 },
-> +		}, {
-> +			{ .csi = RVIN_CSI40, .chan = 1 },
-> +			{ .csi = RVIN_CSI20, .chan = 1 },
-> +			{ .csi = RVIN_NC, .chan = 1 },
-> +			{ .csi = RVIN_CSI40, .chan = 3 },
-> +			{ .csi = RVIN_CSI20, .chan = 3 },
-> +		}, {
-> +			{ .csi = RVIN_CSI40, .chan = 0 },
-> +			{ .csi = RVIN_CSI20, .chan = 0 },
-> +			{ .csi = RVIN_NC, .chan = 0 },
-> +			{ .csi = RVIN_CSI40, .chan = 0 },
-> +			{ .csi = RVIN_CSI20, .chan = 0 },
-> +		}, {
-> +			{ .csi = RVIN_CSI20, .chan = 0 },
-> +			{ .csi = RVIN_NC, .chan = 0 },
-> +			{ .csi = RVIN_CSI40, .chan = 0 },
-> +			{ .csi = RVIN_CSI40, .chan = 1 },
-> +			{ .csi = RVIN_CSI20, .chan = 1 },
-> +		}, {
-> +			{ .csi = RVIN_NC, .chan = 0 },
-> +			{ .csi = RVIN_CSI40, .chan = 0 },
-> +			{ .csi = RVIN_CSI20, .chan = 0 },
-> +			{ .csi = RVIN_CSI40, .chan = 2 },
-> +			{ .csi = RVIN_CSI20, .chan = 2 },
-> +		}, {
-> +			{ .csi = RVIN_CSI40, .chan = 1 },
-> +			{ .csi = RVIN_CSI20, .chan = 1 },
-> +			{ .csi = RVIN_NC, .chan = 1 },
-> +			{ .csi = RVIN_CSI40, .chan = 3 },
-> +			{ .csi = RVIN_CSI20, .chan = 3 },
-> +		},
-> +	},
-> +};
-> +
->  static const struct of_device_id rvin_of_id_table[] = {
-> +	{
-> +		.compatible = "renesas,vin-r8a7796",
-> +		.data = &rcar_info_r8a7796,
-> +	},
->  	{
->  		.compatible = "renesas,vin-r8a7795",
->  		.data = &rcar_info_r8a7795,
-> 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 2281af4b41b6..638a9d62177f 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1756,6 +1756,7 @@ Q:	http://patchwork.kernel.org/project/linux-renesas-soc/list/
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git next
+ S:	Supported
+ F:	arch/arm64/boot/dts/renesas/
++F:	Documentation/devicetree/bindings/arm/shmobile.txt
+ F:	drivers/soc/renesas/
+ F:	include/linux/soc/renesas/
+ 
+@@ -1875,6 +1876,7 @@ F:	arch/arm/boot/dts/sh*
+ F:	arch/arm/configs/shmobile_defconfig
+ F:	arch/arm/include/debug/renesas-scif.S
+ F:	arch/arm/mach-shmobile/
++F:	Documentation/devicetree/bindings/arm/shmobile.txt
+ F:	drivers/soc/renesas/
+ F:	include/linux/soc/renesas/
+ 
+-- 
+2.1.4
