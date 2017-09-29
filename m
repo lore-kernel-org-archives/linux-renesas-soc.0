@@ -1,45 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:34495 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752181AbdI2Lxx (ORCPT
+        with ESMTP id S1752465AbdI2Lxg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Sep 2017 07:53:53 -0400
+        Fri, 29 Sep 2017 07:53:36 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 1/8] dt-bindings: apmu: Document r8a7745 support
-Date: Fri, 29 Sep 2017 13:52:48 +0200
-Message-Id: <055fb568157c3a6754228138b3ca51247cb4f466.1506676368.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1506676368.git.horms+renesas@verge.net.au>
-References: <cover.1506676368.git.horms+renesas@verge.net.au>
+Subject: [PATCH 05/22] arm64: dts: renesas: r8a7795: Drop bogus HDMI node names suffixes
+Date: Fri, 29 Sep 2017 13:52:14 +0200
+Message-Id: <6b5ac2f1cb1162679662f3be891978d32b345b6f.1506678250.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1506678250.git.horms+renesas@verge.net.au>
+References: <cover.1506678250.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Document APMU and SMP enable method for RZ/G1E (also known as
-r8a7745) SoC.
+Node names should not use numerical suffixes if the nodes can be
+distinguished by unit-address.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- Documentation/devicetree/bindings/power/renesas,apmu.txt | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/power/renesas,apmu.txt b/Documentation/devicetree/bindings/power/renesas,apmu.txt
-index af21502e939c..f747f95eee58 100644
---- a/Documentation/devicetree/bindings/power/renesas,apmu.txt
-+++ b/Documentation/devicetree/bindings/power/renesas,apmu.txt
-@@ -8,6 +8,7 @@ Required properties:
- - compatible: Should be "renesas,<soctype>-apmu", "renesas,apmu" as fallback.
- 	      Examples with soctypes are:
- 		- "renesas,r8a7743-apmu" (RZ/G1M)
-+		- "renesas,r8a7745-apmu" (RZ/G1E)
- 		- "renesas,r8a7790-apmu" (R-Car H2)
- 		- "renesas,r8a7791-apmu" (R-Car M2-W)
- 		- "renesas,r8a7792-apmu" (R-Car V2H)
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 2938195b9571..5d5174d8635d 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -2014,7 +2014,7 @@
+ 			renesas,fcp = <&fcpf1>;
+ 		};
+ 
+-		hdmi0: hdmi0@fead0000 {
++		hdmi0: hdmi@fead0000 {
+ 			compatible = "renesas,r8a7795-hdmi", "renesas,rcar-gen3-hdmi";
+ 			reg = <0 0xfead0000 0 0x10000>;
+ 			interrupts = <GIC_SPI 389 IRQ_TYPE_LEVEL_HIGH>;
+@@ -2039,7 +2039,7 @@
+ 			};
+ 		};
+ 
+-		hdmi1: hdmi1@feae0000 {
++		hdmi1: hdmi@feae0000 {
+ 			compatible = "renesas,r8a7795-hdmi", "renesas,rcar-gen3-hdmi";
+ 			reg = <0 0xfeae0000 0 0x10000>;
+ 			interrupts = <GIC_SPI 436 IRQ_TYPE_LEVEL_HIGH>;
 -- 
 2.1.4
