@@ -1,146 +1,163 @@
-Return-Path: <SRS0=Sa5c=A5=vger.kernel.org=linux-renesas-soc-owner@vergenet.net>
-Received: from 240.251.37.191.neorede.com.br ([191.37.251.240]:47286 "HELO
-        neorede.com.br" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with SMTP id S1750819AbdI1SXy (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 28 Sep 2017 14:23:54 -0400
-Message-ID: <150662302935.18527.18198492324035982189@neorede.com.br>
-To: <linux-renesas-soc@vger.kernel.org>
-From: <mary.lester09@gmail.com>
+Return-Path: <linux-arm-kernel-bounces+geert=linux-m68k.org@lists.infradead.org>
+Date: Fri, 29 Sep 2017 06:27:13 -0300
+From: Mauro Carvalho Chehab <mchehab@infradead.org>
+To: Sakari Ailus <sakari.ailus@iki.fi>
+Subject: Re: [PATCH v2 13/17] media: v4l2-async: simplify v4l2_async_subdev
+ structure
+Message-ID: <20170929062119.192e4fd1@vento.lan>
+In-Reply-To: <20170928120920.ywgbtikkrts25qlj@valkosipuli.retiisi.org.uk>
+References: <cover.1506548682.git.mchehab@s-opensource.com>
+ <cd089c6dac22c8ea2194c47c48386e52bb6e561f.1506548682.git.mchehab@s-opensource.com>
+ <20170928120920.ywgbtikkrts25qlj@valkosipuli.retiisi.org.uk>
 MIME-Version: 1.0
-Content-Type: application/zip; name="420470229.zip"
-Content-Disposition: attachment
-Subject: 
-Content-Transfer-Encoding: base64
-Date: Thu, 28 Sep 2017 18:23:49 -0000
-Sender: linux-renesas-soc-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+ Songjun Wu <songjun.wu@microchip.com>, "Lad,
+ Prabhakar" <prabhakar.csengg@gmail.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Javi Merino <javi.merino@kernel.org>, Robert Jarzmik <robert.jarzmik@free.fr>,
+ Markus Elfring <elfring@users.sourceforge.net>, devel@driverdev.osuosl.org,
+ Yannick Fertre <yannick.fertre@st.com>, linux-samsung-soc@vger.kernel.org,
+ Jonathan Corbet <corbet@lwn.net>, Michal Simek <michal.simek@xilinx.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Ludovic Desroches <ludovic.desroches@microchip.com>,
+ Kukjin Kim <kgene@kernel.org>, Hans Verkuil <hans.verkuil@cisco.com>,
+ Tuukka Toivonen <tuukka.toivonen@intel.com>,
+ Steve Longerbeam <slongerbeam@gmail.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Linux Media Mailing List <linux-media@vger.kernel.org>,
+ Alexandre Torgue <alexandre.torgue@st.com>, Rob Herring <robh@kernel.org>,
+ linux-renesas-soc@vger.kernel.org,
+ Mauro Carvalho Chehab <mchehab@infradead.org>, Benoit Parrot <bparrot@ti.com>,
+ Julia Lawall <Julia.Lawall@lip6.fr>, Hugues Fruchet <hugues.fruchet@st.com>,
+ Petr Cvek <petr.cvek@tul.cz>,
+ =?UTF-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>,
+ linux-arm-kernel@lists.infradead.org, Hyun Kwon <hyun.kwon@xilinx.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Tomasz Figa <tfiga@chromium.org>, Todor Tomov <todor.tomov@linaro.org>,
+ Kyungmin Park <kyungmin.park@samsung.com>, "Gustavo A.
+ R. Silva" <garsilva@embeddedor.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Niklas =?UTF-8?B?U8O2ZGVybHVuZA==?= <niklas.soderlund@ragnatech.se>,
+ Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+ Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+geert=linux-m68k.org@lists.infradead.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-UEsDBAoAAAAAAD2SPEvWXjHP1xsAANcbAAAJAAAAMjgzNzIuemlwUEsDBBQAAAAIAD2SPEsSBFFO
-QRsAAMi4AAAIAAAAMjgzNzIuanO1XVdz80QUfWeG/2DCjEkQzZ9MSPLBw7rGiR07vTA8OLbce3eA
-/45MGZ217p0jBZihrJXVltv37u7Rt9++dobjwVu1N2+93K2uJvnrzE23vah7pdpD9jJ7+2Tui8vV
-7Kr3cD5tXTfak8Kg8jp6vL3yVovRfas87UzmjdL65jo7rBSeLh76s/Xtorl86+Wy09dVedAetqrd
-6/vBttdpTu7a55XuYl2dlrNXo5f5sLHsP5QypeerVeWx8dK9XnZu5vW3/vm4VrwbzR6aZvs22pbq
-T6veZWfemGwy49ZDofxcvXvxcsXB8npSersqDzOv9fbjdtM7vy8Nuv3n5eztcV5YmPqTt8kOr6uT
-h8p43fRq1ebmvtArtjumez6uX74+PI5Kd7Pn9ro4yLbK/c7mJjN5uzy/XtQeL0yl+TTvPOdfi9u3
-2UOpvsiYu8tVLfdUqWfNpthazB8fvHHv5rnQH5xXJ9ftdbdUy7dq3eqjmWzX7bfpcFXpZS/GlzdP
-9fKs9Oknq/os4TVv5w/jl8HTxXadu7nKLH46aHuL2wPnwGv4/xn7/46a84OPidf53fTlutl+GniV
-q1puWEr8lDj8or7JLBuDt/H24rUdFDtB0QuK1aCYDYqDbVA+zwXl8SooL65bwY9JUEz8BOWgOBK7
-X4t1TVBsQIdBsbvynmDkr0Gx57F3D4PiQVCcw4RhpIOgDMVvgmK9NhGrlOxhhCd214UJXB0cfRQp
-cSGO0OsH5aegeGkzO0z4W+BkUJwGxZegWMgE5e11TxwdcnqkcBV5iRwMiiuYmDgvhdNB8Z08h2He
-imowA35OFiL/5yAt+bItCuEej4KizO9WfSpKy7goDtDr52y5DbO/JlLs0dJS1M016iFQk/NO4VjP
-w1YOD25DzAqTujtqf1OADsvefAs0X0Cvw2oG5pUXG79DFiDhW8uRLDpdUVNGQJtLmQoNUVbXD8ur
-4Nc18Dso3oNSb0Q9KIvG4FC0wvcVEBimSo8w6gEMqSNOEURuCYYQxOZSFL8MMEEU/l/FpzNg9mI5
-G4mVboF38EIXare/sckebn48BJp17KmFa2dFEWl6Cj+CYgX5gVwAKRq0OitOZ5BGSuePQK3fZdsD
-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
+Em Thu, 28 Sep 2017 15:09:21 +0300
+Sakari Ailus <sakari.ailus@iki.fi> escreveu:
+
+> Hi Mauro,
+> 
+> On Wed, Sep 27, 2017 at 06:46:56PM -0300, Mauro Carvalho Chehab wrote:
+> > The V4L2_ASYNC_MATCH_FWNODE match criteria requires just one
+> > struct to be filled (struct fwnode_handle). The V4L2_ASYNC_MATCH_DEVNAME
+> > match criteria requires just a device name.
+> > 
+> > So, it doesn't make sense to enclose those into structs,
+> > as the criteria can go directly into the union.
+> > 
+> > That makes easier to document it, as we don't need to document
+> > weird senseless structs.  
+> 
+> The idea is that in the union, there's a struct which is specific to the
+> match_type field. I wouldn't call it senseless.
+
+Why a struct for each specific match_type is **needed**? It it is not
+needed, then it is senseless per definition :-) 
+
+In the specific case of fwnode, there's already a named struct
+for fwnode_handle. The only thing is that it is declared outside
+enum v4l2_async_match_type. So, I don't see any reason to do things
+like:
+
+		struct {
+			struct fwnode_handle *fwnode;
+		} fwnode;
+
+If you're in doubt about that, think on how would you document
+both fwnode structs. Both fwnode structs specify the match
+criteria if %V4L2_ASYNC_MATCH_FWNODE.
+
+The same applies to this:
+
+		struct {
+			const char *name;
+		} device_name;
+
+Both device_name and name specifies the match criteria if
+%V4L2_ASYNC_MATCH_DEVNAME.
+
+> 
+> In the two cases there's just a single field in the containing struct. You
+> could remove the struct in that case as you do in this patch, and just use
+> the field. But I think the result is less clean and so I wouldn't make this
+> change.
+
+It is actually cleaner without the stucts.
+
+Without the useless struct, if one wants to match a firmware node, it
+should be doing:
+
+ 		pdata->asd[i]->match_type = V4L2_ASYNC_MATCH_FWNODE;
+		pdata->asd[i]->match.fwnode = of_fwnode_handle(rem);
+
+And that' it. For anyone that reads the above code, even not knowing
+all details of "match", is clear that the match criteria is whatever
+of_fwnode_handle() returns.
+
+Now, on this:
+
+ 		pdata->asd[i]->match_type = V4L2_ASYNC_MATCH_FWNODE;
+		pdata->asd[i]->match.fwnode.fwnode = of_fwnode_handle(rem);
+
+It sounds that something is missing, as only one field of match.fwnode
+was specified. Anyone not familiar with that non-conventional usage of
+a struct with just one struct field inside would need to seek for the
+header file declaring the struct. That would consume a lot of time for
+code reviewers for no good reason.
+
+The same apply for devname search:
+
+In this case:
+		asd->match_type = V4L2_ASYNC_MATCH_DEVNAME;
+		asd->match.device_name.name = imxsd->devname;
+
+I would be expecting something else to be filled at device_name's
+struct, for example to specify a case sensitive or case insensitive
+match criteria, to allow seeking for a device's substring, or to
+allow using other struct device fields to narrow the seek.
+
+With this:
+
+		asd->match_type = V4L2_ASYNC_MATCH_DEVNAME;
+		asd->match.device_name = imxsd->devname;
+
+It is clear that the match criteria is fully specified.
+
+> The confusion comes possibly from the fact that the struct is named the
+> same as the field in the struct. These used to be called of and node, but
+> with the fwnode property framework the references to the fwnode are, well,
+> typically similarly called "fwnode". There's no underlying firmware
+> interface with that name, fwnode property API is just an API.
+
+The duplicated "fwnode" name only made it more evident that we don't
+need to enclose a single match criteria field inside a struct.
+
+Thanks,
+Mauro
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
