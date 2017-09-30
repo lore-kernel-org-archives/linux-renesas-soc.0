@@ -1,123 +1,68 @@
-Subject: Re: [PATCH] v4l: vsp1: Start and stop DRM pipeline independently of
- planes
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-References: <20170815225744.14730-1-laurent.pinchart+renesas@ideasonboard.com>
-Reply-To: kieran.bingham@ideasonboard.com
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Message-ID: <5b2b812b-f0ba-257b-ac71-13f21d0635ec@ideasonboard.com>
-Date: Mon, 25 Sep 2017 18:25:14 +0100
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f42.google.com ([209.85.215.42]:43267 "EHLO
+        mail-lf0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750933AbdI3KgU (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sat, 30 Sep 2017 06:36:20 -0400
+Received: by mail-lf0-f42.google.com with SMTP id 93so1447948lft.0
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 30 Sep 2017 03:36:20 -0700 (PDT)
+Subject: Re: [PATCH 22/48] ARM: dts: gr-peach: Add user led device nodes
+To: Simon Horman <horms+renesas@verge.net.au>,
+        linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>
+References: <cover.1506683482.git.horms+renesas@verge.net.au>
+ <cfce5ac1aaf08fc0920d6572779360f80e8f3489.1506683482.git.horms+renesas@verge.net.au>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <e2e2b3a5-23b2-7f11-4fb3-2f835fdbc11a@cogentembedded.com>
+Date: Sat, 30 Sep 2017 13:36:18 +0300
 MIME-Version: 1.0
-In-Reply-To: <20170815225744.14730-1-laurent.pinchart+renesas@ideasonboard.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+In-Reply-To: <cfce5ac1aaf08fc0920d6572779360f80e8f3489.1506683482.git.horms+renesas@verge.net.au>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Laurent,
+Hello!
 
-Thankyou for the patch.
+On 9/29/2017 2:53 PM, Simon Horman wrote:
 
-On 15/08/17 23:57, Laurent Pinchart wrote:
-> The KMS API supports enabling a CRTC without any plane. To enable that
-> use case, we need to start the pipeline when configuring the LIF,
-> instead of when enabling the first plane.
-
-Tested and verified on Salvator-X ES1.0 using the KMS Test suite, including
-suspend/resume, in combination with the "[PATCH 0/3] R-Car DU: Clip planes to
-screen boundaries" series.
-
-Tested-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
+> From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> 
+> Add device nodes for user leds on gr-peach board.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 > ---
->  drivers/media/platform/vsp1/vsp1_drm.c | 37 +++++++++++++++++++++++++---------
->  1 file changed, 27 insertions(+), 10 deletions(-)
+>   arch/arm/boot/dts/r7s72100-gr-peach.dts | 10 ++++++++++
+>   1 file changed, 10 insertions(+)
 > 
-> This patch is based on top of the VSP+DU large patch series queued through
-> Dave's DRM tree for v4.14-rc1. It doesn't can't be merged independently
-> through the linux-media tree for the same kernel version. As the change is not
-> urgent, it can be delayed until v4.15-rc1.
-> 
-> diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
-> index 4dfbeac8f42c..7ce69f23f50a 100644
-> --- a/drivers/media/platform/vsp1/vsp1_drm.c
-> +++ b/drivers/media/platform/vsp1/vsp1_drm.c
-> @@ -84,8 +84,12 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
->  	struct vsp1_drm_pipeline *drm_pipe;
->  	struct vsp1_pipeline *pipe;
->  	struct vsp1_bru *bru;
-> +	struct vsp1_entity *entity;
-> +	struct vsp1_entity *next;
-> +	struct vsp1_dl_list *dl;
->  	struct v4l2_subdev_format format;
->  	const char *bru_name;
-> +	unsigned long flags;
->  	unsigned int i;
->  	int ret;
->  
-> @@ -250,6 +254,29 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
->  	vsp1_write(vsp1, VI6_DISP_IRQ_STA, 0);
->  	vsp1_write(vsp1, VI6_DISP_IRQ_ENB, 0);
->  
-> +	/* Configure all entities in the pipeline. */
-> +	dl = vsp1_dl_list_get(pipe->output->dlm);
+> diff --git a/arch/arm/boot/dts/r7s72100-gr-peach.dts b/arch/arm/boot/dts/r7s72100-gr-peach.dts
+> index bcfa6445bbaa..13d745bb56a5 100644
+> --- a/arch/arm/boot/dts/r7s72100-gr-peach.dts
+> +++ b/arch/arm/boot/dts/r7s72100-gr-peach.dts
+[...]
+> @@ -51,6 +52,15 @@
+>   			reg = <0x00600000 0x00200000>;
+>   		};
+>   	};
 > +
-> +	list_for_each_entry_safe(entity, next, &pipe->entities, list_pipe) {
-> +		vsp1_entity_route_setup(entity, pipe, dl);
-> +
-> +		if (entity->ops->configure) {
-> +			entity->ops->configure(entity, pipe, dl,
-> +					       VSP1_ENTITY_PARAMS_INIT);
-> +			entity->ops->configure(entity, pipe, dl,
-> +					       VSP1_ENTITY_PARAMS_RUNTIME);
-> +			entity->ops->configure(entity, pipe, dl,
-> +					       VSP1_ENTITY_PARAMS_PARTITION);
-> +		}
+> +leds {
 
-Hrm ... this configure section now has quite a lot duplicated from the
-vsp1_du_atomic_flush(). Perhaps we could abstract that part out to a common
-function - but I don't think that's essential.
+    Not indented properly...
 
+> +		status = "okay";
+> +		compatible = "gpio-leds";
+> +
+> +		led1 {
+> +			gpios = <&port6 12 GPIO_ACTIVE_HIGH>;
+> +		};
+> +	};
+>   };
+>   
+>   &pinctrl {
 
-> +	}
-> +
-> +	vsp1_dl_list_commit(dl);
-> +
-> +	/* Start the pipeline. */
-> +	spin_lock_irqsave(&pipe->irqlock, flags);
-> +	vsp1_pipeline_run(pipe);
-> +	spin_unlock_irqrestore(&pipe->irqlock, flags);
-> +
->  	dev_dbg(vsp1->dev, "%s: pipeline enabled\n", __func__);
->  
->  	return 0;
-> @@ -488,7 +515,6 @@ void vsp1_du_atomic_flush(struct device *dev, unsigned int pipe_index)
->  	struct vsp1_entity *next;
->  	struct vsp1_dl_list *dl;
->  	const char *bru_name;
-> -	unsigned long flags;
->  	unsigned int i;
->  	int ret;
->  
-> @@ -570,15 +596,6 @@ void vsp1_du_atomic_flush(struct device *dev, unsigned int pipe_index)
->  	}
->  
->  	vsp1_dl_list_commit(dl);
-> -
-> -	/* Start or stop the pipeline if needed. */
-> -	if (!drm_pipe->enabled && pipe->num_inputs) {
-> -		spin_lock_irqsave(&pipe->irqlock, flags);
-> -		vsp1_pipeline_run(pipe);
-> -		spin_unlock_irqrestore(&pipe->irqlock, flags);
-> -	} else if (drm_pipe->enabled && !pipe->num_inputs) {
-> -		vsp1_pipeline_stop(pipe);
-> -	}
->  }
->  EXPORT_SYMBOL_GPL(vsp1_du_atomic_flush);
->  
-> 
+MBR, Sergei
