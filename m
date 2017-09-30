@@ -1,46 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:37552 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751622AbdISO6Q (ORCPT
+Received: from mail-lf0-f51.google.com ([209.85.215.51]:55458 "EHLO
+        mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750991AbdI3KCM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Sep 2017 10:58:16 -0400
+        Sat, 30 Sep 2017 06:02:12 -0400
+Received: by mail-lf0-f51.google.com with SMTP id p184so1492673lfe.12
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 30 Sep 2017 03:02:11 -0700 (PDT)
+Subject: Re: [PATCH 3/6] ASoC: rsnd: DVC kctrl sets once
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Mark Brown <broonie@kernel.org>
+Cc: Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>, linux-renesas-soc@vger.kernel.org,
+        Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+References: <87tvzmgyqv.wl%kuninori.morimoto.gx@renesas.com>
+ <87poaagynr.wl%kuninori.morimoto.gx@renesas.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <dcf8fa7d-a23e-6dbd-3234-73e1aea69363@cogentembedded.com>
+Date: Sat, 30 Sep 2017 13:02:09 +0300
 MIME-Version: 1.0
-In-Reply-To: <1503568773-41410-1-git-send-email-biju.das@bp.renesas.com>
-References: <1503568773-41410-1-git-send-email-biju.das@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 19 Sep 2017 16:58:14 +0200
-Message-ID: <CAMuHMdW8x-7LVGgJr1GQfMJurfW=0Ky71K18zc+x5_XHMC6VxA@mail.gmail.com>
-Subject: Re: [PATCH ] phy: rcar-gen2: Add r8a7743/5 support
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <87poaagynr.wl%kuninori.morimoto.gx@renesas.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Aug 24, 2017 at 11:59 AM, Biju Das <biju.das@bp.renesas.com> wrote:
-> Add USB PHY support for r8a7743/5 SoC. Renesas RZ/G1[ME] (R8A7743/5)
-> USB PHY is identical to the R-Car Gen2 family.
->
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Hello!
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On 9/29/2017 3:09 AM, Kuninori Morimoto wrote:
 
-Gr{oetje,eeting}s,
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> 
+> Same DVC might be used few times if system/platform is using MIX.
+> For example below case.
+> 
+> 	DAI0 playback = <&src0 &ctu02 &mix0 &dvc0 &ssi0>;
+> 	DAI1 playback = <&src2 &ctu03 &mix0 &dvc0 &ssi0>;
+> 
+> This case, ALSA will have DVC,0 and DVC,1 kcontrol interfaces,
+> but these are same DVC. This is confusable.
 
-                        Geert
+    Confusing.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> This patch adds new flags and avoid such case.
+> 
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> Tested-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+> ---
+>   sound/soc/sh/rcar/dvc.c | 8 ++++++++
+>   1 file changed, 8 insertions(+)
+> 
+> diff --git a/sound/soc/sh/rcar/dvc.c b/sound/soc/sh/rcar/dvc.c
+> index 1743ade..b4c4ff2 100644
+> --- a/sound/soc/sh/rcar/dvc.c
+> +++ b/sound/soc/sh/rcar/dvc.c
+> @@ -44,8 +44,11 @@ struct rsnd_dvc {
+>   	struct rsnd_kctrl_cfg_s ren;	/* Ramp Enable */
+>   	struct rsnd_kctrl_cfg_s rup;	/* Ramp Rate Up */
+>   	struct rsnd_kctrl_cfg_s rdown;	/* Ramp Rate Down */
+> +	u32 flags;
+>   };
+>   
+> +#define KCTRL_INITIALIZEED	(1 << 0)
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+    One E is enough. :-)
+
+[...]
+
+MBR, Sergei
