@@ -1,69 +1,96 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:46113 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933608AbdIYHyT (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Sep 2017 03:54:19 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
+Return-Path: <devicetree-owner@vger.kernel.org>
+Subject: Re: [PATCH 2/4] ravb: Add optional PHY reset during system resume
+To: Florian Fainelli <f.fainelli@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        "David S . Miller" <davem@davemloft.net>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Renesas ARM Based SoC Drivers Updates for v4.15
-Date: Mon, 25 Sep 2017 09:53:49 +0200
-Message-Id: <cover.1506325468.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Andrew Lunn <andrew@lunn.ch>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+References: <1506614014-4398-1-git-send-email-geert+renesas@glider.be>
+ <1506614014-4398-3-git-send-email-geert+renesas@glider.be>
+ <406f7aff-e386-31f3-39d3-17523443c265@gmail.com>
+ <CAMuHMdWOAnT3xONPfU8pJi9fbAgtWL2GyRbooAxrfGDb=bsB_A@mail.gmail.com>
+ <1a474c45-29ea-82fa-1ab0-0febfdc38bcb@gmail.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <47456e34-2c2f-ec19-fcda-e3132a8037b3@cogentembedded.com>
+Date: Sat, 30 Sep 2017 23:23:42 +0300
+MIME-Version: 1.0
+In-Reply-To: <1a474c45-29ea-82fa-1ab0-0febfdc38bcb@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+Hello!
 
-Please consider these Renesas ARM based SoC drivers updates for v4.15.
+On 09/28/2017 10:21 PM, Florian Fainelli wrote:
 
+>>>> If the optional "reset-gpios" property is specified in DT, the generic
+>>>> MDIO bus code takes care of resetting the PHY during device probe.
+>>>> However, the PHY may still have to be reset explicitly after system
+>>>> resume.
+>>>>
+>>>> This allows to restore Ethernet operation after resume from s2ram on
+>>>> Salvator-XS, where the enable pin of the regulator providing PHY power
+>>>> is connected to PRESETn, and PSCI suspend powers down the SoC.
+>>>>
+>>>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>>>> ---
+>>>>   drivers/net/ethernet/renesas/ravb_main.c | 9 +++++++++
+>>>>   1 file changed, 9 insertions(+)
+>>>>
+>>>> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+>>>> index fdf30bfa403bf416..96d1d48e302f8c9a 100644
+>>>> --- a/drivers/net/ethernet/renesas/ravb_main.c
+>>>> +++ b/drivers/net/ethernet/renesas/ravb_main.c
+[...]
+>>>> @@ -2302,6 +2304,13 @@ static int __maybe_unused ravb_resume(struct device *dev)
+>>>>         * reopen device if it was running before system suspended.
+>>>>         */
+>>>>
+>>>> +     /* PHY reset */
+>>>> +     if (bus->reset_gpiod) {
+>>>> +             gpiod_set_value_cansleep(bus->reset_gpiod, 1);
+>>>> +             udelay(bus->reset_delay_us);
+>>>> +             gpiod_set_value_cansleep(bus->reset_gpiod, 0);
+>>>> +     }
+>>>
+>>> This is a clever hack, but unfortunately this is also misusing the MDIO
+>>> bus reset line into a PHY reset line. As commented in patch 3, if this
+>>> reset line is tied to the PHY, then this should be a PHY property and
+>>
+>> OK.
+>>
+>>> you cannot (ab)use the MDIO bus GPIO reset logic anymore...
+>>
+>> And then I should add reset-gpios support to drivers/net/phy/micrel.c?
+>> Or is there already generic code to handle per-PHY reset? I couldn't find it.
+> 
+> There is not such a thing unfortunately, but it would presumably be
 
-The following changes since commit 2bd6bf03f4c1c59381d62c61d03f6cc3fe71f66e:
+    It's strange you don't remember about my (abandoned) patches to handle 
+per=PHY reset GPIOs -- perhaps it's time to unearth them. Here they are:
 
-  Linux 4.14-rc1 (2017-09-16 15:47:51 -0700)
+http://patchwork.ozlabs.org/patch/616495/
+http://patchwork.ozlabs.org/patch/616501/
 
-are available in the git repository at:
+    I had v3 in the works before abandoning this series -- it doesn't apply now.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-drivers-for-v4.15
+> called within drivers/net/phy/mdio_bus.c during bus->reset() time
+> because you need the PHY reset to be deasserted before you can
+> successfully read/write from the PHY, and if you can't read/write from
+> the PHY, the MDIO bus layer cannot read the PHY ID, and therefore cannot
+> match a PHY device with its driver, so things don't work.
 
-for you to fetch changes up to bab9b2a74fe9da96e895e0919f625679a0a8c964:
+    I did this a bit differently...
 
-  soc: renesas: rcar-sysc: add R8A77970 support (2017-09-18 09:46:50 +0200)
+[...]
 
-----------------------------------------------------------------
-Renesas ARM Based SoC Drivers Updates for v4.15
-
-Add basic support for R-Car V3M (R8A77970) SoC.
-
-Sergei Shtylyov says:
-
-* Add support for R-Car V3M (R8A77970) SoC power areas to the R-Car SYSC
-  driver
-
-* Add support for identifying the R-Car V3M (R8A77970) SoC
-
-* Add support for R-Car V3M (R8A77970) to the R-Car RST driver -- this
-  driver is  needed  for the clock driver to work
-
-----------------------------------------------------------------
-Sergei Shtylyov (3):
-      soc: renesas: rcar-rst: add R8A77970 support
-      soc: renesas: identify R-Car V3M
-      soc: renesas: rcar-sysc: add R8A77970 support
-
- .../bindings/power/renesas,rcar-sysc.txt           |  1 +
- .../devicetree/bindings/reset/renesas,rst.txt      |  1 +
- drivers/soc/renesas/Kconfig                        |  8 ++++-
- drivers/soc/renesas/Makefile                       |  1 +
- drivers/soc/renesas/r8a77970-sysc.c                | 39 ++++++++++++++++++++++
- drivers/soc/renesas/rcar-rst.c                     |  1 +
- drivers/soc/renesas/rcar-sysc.c                    |  3 ++
- drivers/soc/renesas/rcar-sysc.h                    |  1 +
- drivers/soc/renesas/renesas-soc.c                  |  8 +++++
- 9 files changed, 62 insertions(+), 1 deletion(-)
- create mode 100644 drivers/soc/renesas/r8a77970-sysc.c
+MBR, Sergei
