@@ -1,86 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34435 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750798AbdJBHQR (ORCPT
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:54976 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751742AbdJARgT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 2 Oct 2017 03:16:17 -0400
-Date: Mon, 2 Oct 2017 09:15:59 +0200
-From: Simon Horman <horms@verge.net.au>
-To: jacopo mondi <jacopo@jmondi.org>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Sun, 1 Oct 2017 13:36:19 -0400
+Date: Sun, 1 Oct 2017 19:36:14 +0200
+From: jacopo mondi <jacopo@jmondi.org>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
         linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
         Jacopo Mondi <jacopo+renesas@jmondi.org>
 Subject: Re: [PATCH 22/48] ARM: dts: gr-peach: Add user led device nodes
-Message-ID: <20171002071559.GB10579@verge.net.au>
+Message-ID: <20171001173614.GB4037@w540>
 References: <cover.1506683482.git.horms+renesas@verge.net.au>
  <cfce5ac1aaf08fc0920d6572779360f80e8f3489.1506683482.git.horms+renesas@verge.net.au>
  <e2e2b3a5-23b2-7f11-4fb3-2f835fdbc11a@cogentembedded.com>
- <20171001173614.GB4037@w540>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20171001173614.GB4037@w540>
+In-Reply-To: <e2e2b3a5-23b2-7f11-4fb3-2f835fdbc11a@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sun, Oct 01, 2017 at 07:36:14PM +0200, jacopo mondi wrote:
-> Hi Seregei,
-> 
-> On Sat, Sep 30, 2017 at 01:36:18PM +0300, Sergei Shtylyov wrote:
-> > Hello!
-> >
-> > On 9/29/2017 2:53 PM, Simon Horman wrote:
-> >
-> > >From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > >
-> > >Add device nodes for user leds on gr-peach board.
-> > >
-> > >Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > >Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > >Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> > >---
-> > >  arch/arm/boot/dts/r7s72100-gr-peach.dts | 10 ++++++++++
-> > >  1 file changed, 10 insertions(+)
-> > >
-> > >diff --git a/arch/arm/boot/dts/r7s72100-gr-peach.dts b/arch/arm/boot/dts/r7s72100-gr-peach.dts
-> > >index bcfa6445bbaa..13d745bb56a5 100644
-> > >--- a/arch/arm/boot/dts/r7s72100-gr-peach.dts
-> > >+++ b/arch/arm/boot/dts/r7s72100-gr-peach.dts
-> > [...]
-> > >@@ -51,6 +52,15 @@
-> > >  			reg = <0x00600000 0x00200000>;
-> > >  		};
-> > >  	};
-> > >+
-> > >+leds {
-> >
-> >    Not indented properly...
-> 
-> Thanks!
-> 
-> Simon, as you sent pull request already, will we need a patch on top
-> of this to fix it?
+Hi Seregei,
 
-Thanks, please do.
-
-I don't think we need to re-spin the pull-request to correct this,
-rather, a follow-up patch can be provided in a follow-up pull-request.
-
-> 
-> Thanks
->   j
+On Sat, Sep 30, 2017 at 01:36:18PM +0300, Sergei Shtylyov wrote:
+> Hello!
+>
+> On 9/29/2017 2:53 PM, Simon Horman wrote:
+>
+> >From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 > >
-> > >+		status = "okay";
-> > >+		compatible = "gpio-leds";
-> > >+
-> > >+		led1 {
-> > >+			gpios = <&port6 12 GPIO_ACTIVE_HIGH>;
-> > >+		};
-> > >+	};
-> > >  };
-> > >  &pinctrl {
+> >Add device nodes for user leds on gr-peach board.
 > >
-> > MBR, Sergei
-> 
+> >Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> >Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> >---
+> >  arch/arm/boot/dts/r7s72100-gr-peach.dts | 10 ++++++++++
+> >  1 file changed, 10 insertions(+)
+> >
+> >diff --git a/arch/arm/boot/dts/r7s72100-gr-peach.dts b/arch/arm/boot/dts/r7s72100-gr-peach.dts
+> >index bcfa6445bbaa..13d745bb56a5 100644
+> >--- a/arch/arm/boot/dts/r7s72100-gr-peach.dts
+> >+++ b/arch/arm/boot/dts/r7s72100-gr-peach.dts
+> [...]
+> >@@ -51,6 +52,15 @@
+> >  			reg = <0x00600000 0x00200000>;
+> >  		};
+> >  	};
+> >+
+> >+leds {
+>
+>    Not indented properly...
+
+Thanks!
+
+Simon, as you sent pull request already, will we need a patch on top
+of this to fix it?
+
+Thanks
+  j
+>
+> >+		status = "okay";
+> >+		compatible = "gpio-leds";
+> >+
+> >+		led1 {
+> >+			gpios = <&port6 12 GPIO_ACTIVE_HIGH>;
+> >+		};
+> >+	};
+> >  };
+> >  &pinctrl {
+>
+> MBR, Sergei
