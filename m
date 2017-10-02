@@ -1,42 +1,37 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47729 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751180AbdJIHPz (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:60394 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750983AbdJBJtK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 Oct 2017 03:15:55 -0400
-Date: Mon, 9 Oct 2017 09:15:36 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH 18/18] arm64: dts: ulcb-kf: hog USB3 hub control gpios
-Message-ID: <20171009071535.GB17360@verge.net.au>
-References: <1504737267-22829-1-git-send-email-vladimir.barinov@cogentembedded.com>
- <1504737444-23544-1-git-send-email-vladimir.barinov@cogentembedded.com>
- <CAMuHMdUqvdQZXrsf_p0rTUfKicvWBNPjk+Dt-ke_tSwmU1O=7A@mail.gmail.com>
+        Mon, 2 Oct 2017 05:49:10 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
+        linus.walleij@linaro.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 0/2] pinctrl: sh-pfc: r8a7795{-es1}: Add USB3.0 host support
+Date: Mon,  2 Oct 2017 18:45:23 +0900
+Message-Id: <1506937525-16965-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdUqvdQZXrsf_p0rTUfKicvWBNPjk+Dt-ke_tSwmU1O=7A@mail.gmail.com>
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Sep 20, 2017 at 03:50:15PM +0200, Geert Uytterhoeven wrote:
-> On Thu, Sep 7, 2017 at 12:37 AM, Vladimir Barinov
-> <vladimir.barinov@cogentembedded.com> wrote:
-> > This adds gpio hogs for USB3 hub on ULCB Kingfisher board to power up and
-> > remove from reset the hub
-> >
-> > Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-> 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This patch set is based on the renesas-drivers.git /
+renesas-drivers-2017-09-19-v4.14-rc1 tag.
 
-Thanks, applied. There was some fuzz when doing so. Please check that what
-I have applied is correct after I have pushed the next branch of the
-renesas tree later today.
+After this patch set is applied, I will submit integration patch for
+salvator-common.dtsi. Since the bootloader of Salvator-X[S] enables
+the USB3 pins, usb3.0 host works correctly. But, we should enable
+the pins by linux kernel.
+
+Takeshi Kihara (2):
+  pinctrl: sh-pfc: r8a7795-es1: Add USB3.0 host support
+  pinctrl: sh-pfc: r8a7795: Add USB3.0 host support
+
+ drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c | 29 +++++++++++++++++++++++++++++
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c     | 16 ++++++++++++++++
+ 2 files changed, 45 insertions(+)
+
+-- 
+1.9.1
