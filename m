@@ -1,65 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:48970 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753034AbdJPNz2 (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:40257 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750760AbdJBGdm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Oct 2017 09:55:28 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>, linux-clk@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 05/10] [RFC] ARM: shmobile: pm-rmobile: Use GENPD_FLAG_ACTIVE_WAKEUP
-Date: Mon, 16 Oct 2017 15:55:11 +0200
-Message-Id: <1508162116-5043-6-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
-References: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
+        Mon, 2 Oct 2017 02:33:42 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 2/3] arm64: dts: renesas: r8a7795: salvator-xs: enable USB2.0 Host channel 3
+Date: Mon,  2 Oct 2017 15:29:48 +0900
+Message-Id: <1506925789-19392-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1506925789-19392-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1506925789-19392-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Set the newly introduced GENPD_FLAG_ACTIVE_WAKEUP, which allows to
-remove the driver's own "always true" callback.
+This patch enables USB2.0 Host (EHCI/OHCI) channel 3. R-Car H3 ES2.0
+has this channel and we can use it on the Salvator-XS.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
-This must not be applied before "PM / Domain: Enable genpd users to
-specify default active wakeup behavior" has landed upstream, hence the
-"RFC".
----
- arch/arm/mach-shmobile/pm-rmobile.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/arm/mach-shmobile/pm-rmobile.c b/arch/arm/mach-shmobile/pm-rmobile.c
-index 3a4ed4c33a68e51e..e348bcfe389da51b 100644
---- a/arch/arm/mach-shmobile/pm-rmobile.c
-+++ b/arch/arm/mach-shmobile/pm-rmobile.c
-@@ -120,18 +120,12 @@ static int rmobile_pd_power_up(struct generic_pm_domain *genpd)
- 	return __rmobile_pd_power_up(to_rmobile_pd(genpd), true);
- }
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
+index e18bf4f..365c8df 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
+@@ -56,6 +56,10 @@
+ 	status = "okay";
+ };
  
--static bool rmobile_pd_active_wakeup(struct device *dev)
--{
--	return true;
--}
--
- static void rmobile_init_pm_domain(struct rmobile_pm_domain *rmobile_pd)
- {
- 	struct generic_pm_domain *genpd = &rmobile_pd->genpd;
- 	struct dev_power_governor *gov = rmobile_pd->gov;
++&ehci3 {
++	status = "okay";
++};
++
+ &hdmi0 {
+ 	status = "okay";
  
--	genpd->flags |= GENPD_FLAG_PM_CLK;
--	genpd->dev_ops.active_wakeup	= rmobile_pd_active_wakeup;
-+	genpd->flags |= GENPD_FLAG_PM_CLK | GENPD_FLAG_ACTIVE_WAKEUP;
- 	genpd->power_off		= rmobile_pd_power_down;
- 	genpd->power_on			= rmobile_pd_power_up;
- 	genpd->attach_dev		= cpg_mstp_attach_dev;
+@@ -94,6 +98,10 @@
+ 	status = "okay";
+ };
+ 
++&ohci3 {
++	status = "okay";
++};
++
+ &pfc {
+ 	usb2_pins: usb2 {
+ 		groups = "usb2";
 -- 
-2.7.4
+1.9.1
