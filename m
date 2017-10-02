@@ -1,109 +1,94 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:37501 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750878AbdJBJUC (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:6713 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751757AbdJBJOR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 2 Oct 2017 05:20:02 -0400
-MIME-Version: 1.0
-In-Reply-To: <TY1PR06MB09920BDFB00D2BDA4840877AD87D0@TY1PR06MB0992.apcprd06.prod.outlook.com>
-References: <1506925789-19392-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1506925789-19392-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <CAMuHMdUGU-6c=QoekksFfpoP1x15vUmFu272wd5YqqnQe-RwmA@mail.gmail.com>
- <8642690f-a37b-2de3-7f59-9f0be99ef170@ideasonboard.com> <TY1PR06MB09920BDFB00D2BDA4840877AD87D0@TY1PR06MB0992.apcprd06.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 2 Oct 2017 11:20:00 +0200
-Message-ID: <CAMuHMdVJ1Z8mn14Q5j=2iG1w9b267YS_8EV5QuTmBMcog2-8Ww@mail.gmail.com>
-Subject: Re: [PATCH 1/3] arm64: dts: renesas: r8a7795: salvator-xs: enable
- USB2.0 phy channel 3
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Simon Horman <horms@verge.net.au>,
+        Mon, 2 Oct 2017 05:14:17 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Kieran Bingham <kieran@ksquared.org.uk>,
-        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-Content-Type: text/plain; charset="UTF-8"
+        =?utf-8?B?TmlrbGFzIFPDtmRlcmx1bmQ=?=
+        <niklas.soderlund@ragnatech.se>
+Subject: RE: [PATCH 1/3] arm64: dts: renesas: r8a7795: salvator-xs: enable
+ USB2.0 phy channel 3
+Date: Mon, 2 Oct 2017 09:14:12 +0000
+Message-ID: <TY1PR06MB09920BDFB00D2BDA4840877AD87D0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+References: <1506925789-19392-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1506925789-19392-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <CAMuHMdUGU-6c=QoekksFfpoP1x15vUmFu272wd5YqqnQe-RwmA@mail.gmail.com>
+ <8642690f-a37b-2de3-7f59-9f0be99ef170@ideasonboard.com>
+In-Reply-To: <8642690f-a37b-2de3-7f59-9f0be99ef170@ideasonboard.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Shimoda-san,
-
-On Mon, Oct 2, 2017 at 11:14 AM, Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
->> -----Original Message-----
->> From: Kieran Bingham
->> Sent: Monday, October 2, 2017 5:45 PM
->> On 02/10/17 09:20, Geert Uytterhoeven wrote:
->> > On Mon, Oct 2, 2017 at 8:29 AM, Yoshihiro Shimoda
->> > <yoshihiro.shimoda.uh@renesas.com> wrote:
->> >> This patch enables the USB2.0 phy channel 3. R-Car H3 ES2.0 has
->> >> this channel and we can use it on the Salvator-XS.
->> >>
->> >> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
->> >
->> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> >
->> >> --- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
->> >> +++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
->> >> @@ -99,6 +99,11 @@
->> >>                 groups = "usb2";
->> >>                 function = "usb2";
->> >>         };
->> >> +
->> >> +       usb2_ch3_pins: usb2_ch3 {
->> >> +               groups = "usb2_ch3";
->> >> +               function = "usb2_ch3";
->> >> +       };
->> >>  };
->> >
->> > Using these pins requires changing SW31, disabling the interrupt capabilities
->> > of the ADV7482? Does the ADV7482 still work after that?
->
-> Oops, I missed the usb2.0 pins are connected to ADV7482's interruption pins.
-> But,
->
->> The ADV7482 is currently working without interrupts at the moment. However, I do
->> have hotplug and interrupt handling on my todo list, and infact I have already
->> started a patch adding interrupt support.
->>
->>
->> The DT currently specifies the following interrupts for the ADV7482,
->>
->> +     video-receiver@70 {
->> +             compatible = "adi,adv7482";
->> +             interrupt-parent = <&gpio6>;
->> +             interrupt-names = "intrq1", "intrq2";
->> +             interrupts = <30 IRQ_TYPE_LEVEL_LOW>,
->> +                          <31 IRQ_TYPE_LEVEL_LOW>;
->
-> It seems Kieran-san is using non-conflict pins with usb2.0 ch3 :)
-> According to the board datasheet, GP6_30 and GP6_31 are initial setting for ADV7482 and
-> it doesn't conflict with USB 2.0 ch3 (USB2.0 ch3 pins are GP6_04 and GP6_21).
-
-Can the USB2.0 driver use GPIOs for PWEN and OVC?
-
-> So, I think we can use both usb 2.0 ch3 and ADV7482 if we don't change the SW31 from initial setting.
-
-OK. But in that case, DT should not configure pinctrl for "usb2_ch3",
-but instead
-describe that it uses GP6_04 and GP6_21.
-
-> However, to avoid any trouble, should we explain this SW31 setting in the dts file?
-
-Yes, it would be good to document that.
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+SGkgR2VlcnQtc2FuLCBLaWVyYW4tc2FuLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0t
+DQo+IEZyb206IEtpZXJhbiBCaW5naGFtDQo+IFNlbnQ6IE1vbmRheSwgT2N0b2JlciAyLCAyMDE3
+IDU6NDUgUE0NCj4gDQo+IEhpIEdlZXJ0LCBTaGltb2RhLXNhbiwNCj4gDQo+IE9uIDAyLzEwLzE3
+IDA5OjIwLCBHZWVydCBVeXR0ZXJob2V2ZW4gd3JvdGU6DQo+ID4gSGkgU2hpbW9kYS1zYW4sDQo+
+ID4NCj4gPiBPbiBNb24sIE9jdCAyLCAyMDE3IGF0IDg6MjkgQU0sIFlvc2hpaGlybyBTaGltb2Rh
+DQo+ID4gPHlvc2hpaGlyby5zaGltb2RhLnVoQHJlbmVzYXMuY29tPiB3cm90ZToNCj4gPj4gVGhp
+cyBwYXRjaCBlbmFibGVzIHRoZSBVU0IyLjAgcGh5IGNoYW5uZWwgMy4gUi1DYXIgSDMgRVMyLjAg
+aGFzDQo+ID4+IHRoaXMgY2hhbm5lbCBhbmQgd2UgY2FuIHVzZSBpdCBvbiB0aGUgU2FsdmF0b3It
+WFMuDQo+ID4+DQo+ID4+IFNpZ25lZC1vZmYtYnk6IFlvc2hpaGlybyBTaGltb2RhIDx5b3NoaWhp
+cm8uc2hpbW9kYS51aEByZW5lc2FzLmNvbT4NCj4gPg0KPiA+IFJldmlld2VkLWJ5OiBHZWVydCBV
+eXR0ZXJob2V2ZW4gPGdlZXJ0K3JlbmVzYXNAZ2xpZGVyLmJlPg0KPiA+DQo+ID4+IC0tLSBhL2Fy
+Y2gvYXJtNjQvYm9vdC9kdHMvcmVuZXNhcy9yOGE3Nzk1LXNhbHZhdG9yLXhzLmR0cw0KPiA+PiAr
+KysgYi9hcmNoL2FybTY0L2Jvb3QvZHRzL3JlbmVzYXMvcjhhNzc5NS1zYWx2YXRvci14cy5kdHMN
+Cj4gPj4gQEAgLTk5LDYgKzk5LDExIEBADQo+ID4+ICAgICAgICAgICAgICAgICBncm91cHMgPSAi
+dXNiMiI7DQo+ID4+ICAgICAgICAgICAgICAgICBmdW5jdGlvbiA9ICJ1c2IyIjsNCj4gPj4gICAg
+ICAgICB9Ow0KPiA+PiArDQo+ID4+ICsgICAgICAgdXNiMl9jaDNfcGluczogdXNiMl9jaDMgew0K
+PiA+PiArICAgICAgICAgICAgICAgZ3JvdXBzID0gInVzYjJfY2gzIjsNCj4gPj4gKyAgICAgICAg
+ICAgICAgIGZ1bmN0aW9uID0gInVzYjJfY2gzIjsNCj4gPj4gKyAgICAgICB9Ow0KPiA+PiAgfTsN
+Cj4gPg0KPiA+IFVzaW5nIHRoZXNlIHBpbnMgcmVxdWlyZXMgY2hhbmdpbmcgU1czMSwgZGlzYWJs
+aW5nIHRoZSBpbnRlcnJ1cHQgY2FwYWJpbGl0aWVzDQo+ID4gb2YgdGhlIEFEVjc0ODI/IERvZXMg
+dGhlIEFEVjc0ODIgc3RpbGwgd29yayBhZnRlciB0aGF0Pw0KDQpPb3BzLCBJIG1pc3NlZCB0aGUg
+dXNiMi4wIHBpbnMgYXJlIGNvbm5lY3RlZCB0byBBRFY3NDgyJ3MgaW50ZXJydXB0aW9uIHBpbnMu
+DQpCdXQsDQoNCj4gVGhlIEFEVjc0ODIgaXMgY3VycmVudGx5IHdvcmtpbmcgd2l0aG91dCBpbnRl
+cnJ1cHRzIGF0IHRoZSBtb21lbnQuIEhvd2V2ZXIsIEkgZG8NCj4gaGF2ZSBob3RwbHVnIGFuZCBp
+bnRlcnJ1cHQgaGFuZGxpbmcgb24gbXkgdG9kbyBsaXN0LCBhbmQgaW5mYWN0IEkgaGF2ZSBhbHJl
+YWR5DQo+IHN0YXJ0ZWQgYSBwYXRjaCBhZGRpbmcgaW50ZXJydXB0IHN1cHBvcnQuDQo+IA0KPiAN
+Cj4gVGhlIERUIGN1cnJlbnRseSBzcGVjaWZpZXMgdGhlIGZvbGxvd2luZyBpbnRlcnJ1cHRzIGZv
+ciB0aGUgQURWNzQ4MiwNCj4gDQo+ICsJdmlkZW8tcmVjZWl2ZXJANzAgew0KPiArCQljb21wYXRp
+YmxlID0gImFkaSxhZHY3NDgyIjsNCj4gKwkJaW50ZXJydXB0LXBhcmVudCA9IDwmZ3BpbzY+Ow0K
+PiArCQlpbnRlcnJ1cHQtbmFtZXMgPSAiaW50cnExIiwgImludHJxMiI7DQo+ICsJCWludGVycnVw
+dHMgPSA8MzAgSVJRX1RZUEVfTEVWRUxfTE9XPiwNCj4gKwkJCSAgICAgPDMxIElSUV9UWVBFX0xF
+VkVMX0xPVz47DQoNCkl0IHNlZW1zIEtpZXJhbi1zYW4gaXMgdXNpbmcgbm9uLWNvbmZsaWN0IHBp
+bnMgd2l0aCB1c2IyLjAgY2gzIDopDQpBY2NvcmRpbmcgdG8gdGhlIGJvYXJkIGRhdGFzaGVldCwg
+R1A2XzMwIGFuZCBHUDZfMzEgYXJlIGluaXRpYWwgc2V0dGluZyBmb3IgQURWNzQ4MiBhbmQNCml0
+IGRvZXNuJ3QgY29uZmxpY3Qgd2l0aCBVU0IgMi4wIGNoMyAoVVNCMi4wIGNoMyBwaW5zIGFyZSBH
+UDZfMDQgYW5kIEdQNl8yMSkuDQpTbywgSSB0aGluayB3ZSBjYW4gdXNlIGJvdGggdXNiIDIuMCBj
+aDMgYW5kIEFEVjc0ODIgaWYgd2UgZG9uJ3QgY2hhbmdlIHRoZSBTVzMxIGZyb20gaW5pdGlhbCBz
+ZXR0aW5nLg0KSG93ZXZlciwgdG8gYXZvaWQgYW55IHRyb3VibGUsIHNob3VsZCB3ZSBleHBsYWlu
+IHRoaXMgU1czMSBzZXR0aW5nIGluIHRoZSBkdHMgZmlsZT8NCg0KQmVzdCByZWdhcmRzLA0KWW9z
+aGloaXJvIFNoaW1vZGENCg0KPiBBbmQgdGhlIHN0YXJ0IG9mIGludGVycnVwdCBoYW5kbGluZyBs
+b29rcyBsaWtlOiAodGhpcyBpcyBub3QgaW50ZWdyYXRlZCwgbm9yDQo+IGZpbmlzaGVkKToNCj4g
+DQo+IGh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L2tiaW5n
+aGFtL3JjYXIuZ2l0L2NvbW1pdC8/aD1hZHY3NDh4L2RldiZpZD04MmM3ZDAxMDBlZGQyOGZhNDI5
+YzM4MTFjDQo+IDU3NWJhZDdhNGQ5MmNmZA0KPiANCj4gVGhpcyBwdXJlbHkgcmVnaXN0ZXJzIHRo
+ZSBpbnRlcnJ1cHRzIGN1cnJlbnRseTsgc28gaWYgSSBuZWVkIHRvIGRvIGFueXRoaW5nDQo+IGRp
+ZmZlcmVudGx5IHRvIGhhbmRsZSB0aGUgVVNCMiBjb25mbGljdCwgcGxlYXNlIGxldCBtZSBrbm93
+Lg0KDQoNCj4gQXMgZm9yIGdvaW5nIGZvcndhcmRzLCBJIGJlbGlldmUgdGhhdCB0aGUgQURWNzQ4
+MiBjYW4gYWN0dWFsbHkgY29uZmlndXJlIHdoYXQNCj4gaW50ZXJydXB0cyBhcmUgdHJpZ2dlcmVk
+IG9uIGVpdGhlciBpbnRlcnJ1cHQgc291cmNlLCAoSU5UUlExL0lOVFJRMikgYW5kDQo+IHRoZXJl
+Zm9yZSB3ZSBjb3VsZCBwb3RlbnRpYWxseSBnZXQgYnkgd2l0aCBvbmx5IElOVFJRMSwgKElOVCAz
+MCkgaWYgd2UgbmVlZGVkDQo+IHRvOyBob3dldmVyIGl0IHdvdWxkIGJlIGdvb2QgdG8gaGFuZGxl
+IHRoaXMgY29uZmxpY3QgaW4gYSBnZW5lcmljIHdheS4NCj4gDQo+IA0KPiBSZWdhcmRzDQo+IA0K
+PiBLaWVyYW4NCj4gDQo+ID4gR3J7b2V0amUsZWV0aW5nfXMsDQo+ID4NCj4gPiAgICAgICAgICAg
+ICAgICAgICAgICAgICBHZWVydA0KPiA+DQo+ID4gLS0NCj4gPiBHZWVydCBVeXR0ZXJob2V2ZW4g
+LS0gVGhlcmUncyBsb3RzIG9mIExpbnV4IGJleW9uZCBpYTMyIC0tIGdlZXJ0QGxpbnV4LW02OGsu
+b3JnDQo+ID4NCj4gPiBJbiBwZXJzb25hbCBjb252ZXJzYXRpb25zIHdpdGggdGVjaG5pY2FsIHBl
+b3BsZSwgSSBjYWxsIG15c2VsZiBhIGhhY2tlci4gQnV0DQo+ID4gd2hlbiBJJ20gdGFsa2luZyB0
+byBqb3VybmFsaXN0cyBJIGp1c3Qgc2F5ICJwcm9ncmFtbWVyIiBvciBzb21ldGhpbmcgbGlrZSB0
+aGF0Lg0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLS0gTGludXMgVG9ydmFs
+ZHMNCj4gPg0K
