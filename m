@@ -1,32 +1,31 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Wed, 4 Oct 2017 11:48:50 +0100
-From: Lee Jones <lee.jones@linaro.org>
+Date: Tue, 3 Oct 2017 09:58:48 +0100
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
 To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: balbi@kernel.org, kishon@ti.com, sre@kernel.org,
-        gregkh@linuxfoundation.org, heiko@sntech.de,
-        yoshihiro.shimoda.uh@renesas.com, krzk@kernel.org,
-        b.zolnierkie@samsung.com, maxime.ripard@free-electrons.com,
-        wens@csie.org, chanwoo@kernel.org, myungjoo.ham@samsung.com,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-pm@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org
+CC: <balbi@kernel.org>, <kishon@ti.com>, <sre@kernel.org>,
+        <gregkh@linuxfoundation.org>, <lee.jones@linaro.org>,
+        <heiko@sntech.de>, <yoshihiro.shimoda.uh@renesas.com>,
+        <krzk@kernel.org>, <b.zolnierkie@samsung.com>,
+        <maxime.ripard@free-electrons.com>, <wens@csie.org>,
+        <chanwoo@kernel.org>, <myungjoo.ham@samsung.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+        <linux-rockchip@lists.infradead.org>
 Subject: Re: [PATCH] extcon: Split out extcon header file for consumer and
  provider device
-Message-ID: <20171004104850.aeedla2bkns36iw7@dell>
+Message-ID: <20171003085848.tma5l5lq4yavddli@localhost.localdomain>
 References: <CGME20170929000148epcas2p200e56186b067ec626a033c7ae2d4bbdb@epcas2p2.samsung.com>
  <1506643305-4581-1-git-send-email-cw00.choi@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
 In-Reply-To: <1506643305-4581-1-git-send-email-cw00.choi@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, 29 Sep 2017, Chanwoo Choi wrote:
-
+On Fri, Sep 29, 2017 at 09:01:45AM +0900, Chanwoo Choi wrote:
 > The extcon has two type of extcon devices as following.
 > - 'extcon provider deivce' adds new extcon device and detect the
 >    state/properties of external connector. Also, it notifies the
@@ -64,40 +63,9 @@ On Fri, 29 Sep 2017, Chanwoo Choi wrote:
 > Cc: Lee Jones <lee.jones@linaro.org>
 > Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 > ---
->  drivers/extcon/extcon-adc-jack.c              |   2 +-
 >  drivers/extcon/extcon-arizona.c               |   2 +-
->  drivers/extcon/extcon-axp288.c                |   2 +-
->  drivers/extcon/extcon-gpio.c                  |   2 +-
->  drivers/extcon/extcon-intel-cht-wc.c          |   2 +-
->  drivers/extcon/extcon-intel-int3496.c         |   2 +-
->  drivers/extcon/extcon-max14577.c              |   2 +-
->  drivers/extcon/extcon-max3355.c               |   2 +-
->  drivers/extcon/extcon-max77693.c              |   2 +-
->  drivers/extcon/extcon-max77843.c              |   2 +-
->  drivers/extcon/extcon-max8997.c               |   2 +-
->  drivers/extcon/extcon-qcom-spmi-misc.c        |   2 +-
->  drivers/extcon/extcon-rt8973a.c               |   2 +-
->  drivers/extcon/extcon-sm5502.c                |   2 +-
->  drivers/extcon/extcon-usb-gpio.c              |   2 +-
->  drivers/extcon/extcon-usbc-cros-ec.c          |   2 +-
->  drivers/extcon/extcon.h                       |   2 +-
->  drivers/phy/allwinner/phy-sun4i-usb.c         |   2 +-
->  drivers/phy/broadcom/phy-bcm-ns2-usbdrd.c     |   2 +-
->  drivers/phy/renesas/phy-rcar-gen3-usb2.c      |   2 +-
->  drivers/phy/rockchip/phy-rockchip-inno-usb2.c |   2 +-
->  drivers/power/supply/qcom_smbb.c              |   2 +-
->  drivers/usb/gadget/udc/renesas_usb3.c         |   2 +-
->  drivers/usb/phy/phy-tahvo.c                   |   2 +-
->  drivers/usb/renesas_usbhs/common.h            |   2 +-
->  include/linux/extcon-provider.h               | 142 ++++++++++++++++++++++++++
->  include/linux/extcon.h                        | 109 +-------------------
 
->  include/linux/mfd/palmas.h                    |   2 +-
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-Acked-by: Lee Jones <lee.jones@linaro.org>
-
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Thanks,
+Charles
