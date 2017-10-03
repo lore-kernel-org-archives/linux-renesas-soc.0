@@ -1,13 +1,16 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:36893 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751084AbdJCSPM (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 3 Oct 2017 14:15:12 -0400
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdXpPfipmEdW0Dap6Pjwhz3QxLcrcbtU0RhCu721k-sBpA@mail.gmail.com>
+In-Reply-To: <CAMuHMdWJKQb5JY+diH=7dqNuypkPUqBeOEPSLOrfrnbfh2siRQ@mail.gmail.com>
 References: <1507044184-27152-1-git-send-email-geert+renesas@glider.be>
  <nycvar.YSQ.7.76.1710031134140.5407@knanqh.ubzr> <CAMuHMdWJKQb5JY+diH=7dqNuypkPUqBeOEPSLOrfrnbfh2siRQ@mail.gmail.com>
- <CAMuHMdXpPfipmEdW0Dap6Pjwhz3QxLcrcbtU0RhCu721k-sBpA@mail.gmail.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 3 Oct 2017 20:15:58 +0200
-Message-ID: <CAMuHMdWH_pebSYAp04gmVceu3qqPczGaXS36R8CtzAYHo-CNog@mail.gmail.com>
+Date: Tue, 3 Oct 2017 20:15:10 +0200
+Message-ID: <CAMuHMdXpPfipmEdW0Dap6Pjwhz3QxLcrcbtU0RhCu721k-sBpA@mail.gmail.com>
 Subject: Re: [PATCH] ARM: head-common.S: Clear lr before jumping to start_kernel()
 To: Nicolas Pitre <nicolas.pitre@linaro.org>
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -20,22 +23,17 @@ Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Oct 3, 2017 at 8:15 PM, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> On Tue, Oct 3, 2017 at 8:11 PM, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->> On Tue, Oct 3, 2017 at 5:37 PM, Nicolas Pitre <nicolas.pitre@linaro.org> wrote:
->>> On Tue, 3 Oct 2017, Geert Uytterhoeven wrote:
->>> Please send it to RMK's patch system.
->>
->> Done (I hope so ;-)
+On Tue, Oct 3, 2017 at 8:11 PM, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> On Tue, Oct 3, 2017 at 5:37 PM, Nicolas Pitre <nicolas.pitre@linaro.org> wrote:
+>> On Tue, 3 Oct 2017, Geert Uytterhoeven wrote:
+>> Please send it to RMK's patch system.
 >
-> Failed. Retrying.
+> Done (I hope so ;-)
 
-Yiha ;-)
-
-http://www.armlinux.org.uk/developer/patches/viewpatch.php?id=8702/1
+Failed. Retrying.
 
 Gr{oetje,eeting}s,
 
