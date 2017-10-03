@@ -1,8 +1,12 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Tue, 3 Oct 2017 18:17:38 +0200
-From: jacopo mondi <jacopo@jmondi.org>
-To: Chris Brandt <Chris.Brandt@renesas.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor3.renesas.com ([210.160.252.173]:51063 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751989AbdJCPk6 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 3 Oct 2017 11:40:58 -0400
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: jacopo mondi <jacopo@jmondi.org>
+CC: Linus Walleij <linus.walleij@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -12,62 +16,57 @@ Cc: Linus Walleij <linus.walleij@linaro.org>,
         <linux-renesas-soc@vger.kernel.org>,
         Simon Horman <horms+renesas@verge.net.au>,
         Jacopo Mondi <jacopo+renesas@jmondi.org>
-Subject: Re: [PATCH 1/2] pinctrl: rza1: add support for RZ/A1L
-Message-ID: <20171003161738.GK4037@w540>
+Subject: RE: [PATCH 1/2] pinctrl: rza1: add support for RZ/A1L
+Date: Tue, 3 Oct 2017 15:40:51 +0000
+Message-ID: <SG2PR06MB1165669027CDC7F76808EADB8A720@SG2PR06MB1165.apcprd06.prod.outlook.com>
 References: <20171003073334.18917-1-chris.brandt@renesas.com>
  <20171003073334.18917-2-chris.brandt@renesas.com>
  <20171003083148.GG4037@w540>
  <SG2PR06MB1165EE1D21AFC1D3005308538A720@SG2PR06MB1165.apcprd06.prod.outlook.com>
  <20171003150412.GI4037@w540>
- <SG2PR06MB1165669027CDC7F76808EADB8A720@SG2PR06MB1165.apcprd06.prod.outlook.com>
+In-Reply-To: <20171003150412.GI4037@w540>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <SG2PR06MB1165669027CDC7F76808EADB8A720@SG2PR06MB1165.apcprd06.prod.outlook.com>
-Sender: devicetree-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Chris,
-
-On Tue, Oct 03, 2017 at 03:40:51PM +0000, Chris Brandt wrote:
-> Hi Jacopo,
->
->
-> Yes, that 'are' listed in the table. But for a good reason.
->
-> The TIOC pins can be uses as an output (PWM for example) or as a input
-> (input capture for example), so they are not really a fixed direction.
-> That is why the user needs to specify how they plan to use them in the DT.
-> And...that's also why it doesn't make sense to put them in the
-> rza1l_swio_pins[] array (we have no idea how they want to use them).
->
-> So, the hardware manual has the TIOC pins in the SWIO table to tell the
-> user 'hey, you have to manually set these pins to either input or output
-> yourself because we can't magically know what you want to use them for.
->
-> But...
-> The reason for the rza1l_swio_pins[] array is for weird pin
-> configurations that are fixed (like LCD LVDS output pins need to be configured as
-> inputs).
->
->
-> > Thanks for double checking. Your source from Japan is more
-> > authoritative than manuals and defintely more accurate than me ;)
->
-> So, after all that, I don't think we found any issues with my patch.
-> Correct???
-
-Correct! :)
-After your clarification above, for both patches:
-
-Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-
-Thanks
-   j
-
->
->
-> Thanks!
->
-> Chris
->
+SGkgSmFjb3BvLA0KDQpPbiBUdWVzZGF5LCBPY3RvYmVyIDAzLCAyMDE3IDEsIGphY29wbyBtb25k
+aSB3cm90ZToNCj4gPiBBcyBmb3IgU1NJLCB0aGUgbWFudWFsIHNheXMgb25seSB0aGUgU1NJVHgg
+cGlucyBuZWVkIGJpLWRpciwgbm90IHRoZQ0KPiA+IFNTSVJ4IHBpbnMuDQo+IA0KPiBMb29raW5n
+IGF0IFJaL0ExSCB0YWJsZXMgeW91J3JlIHJpZ2h0LiBJIHdvbmRlciB3aHkgaW4gUlovQTFMIFNT
+SSBwaW5zDQo+IGFyZSBsaXN0ZWQgYXMgYmlkaXIgYW5kIGluIFJaL0ExSCB0aGV5J3JlIG5vdC4N
+Cg0KU29ycnksIHRvIGJlIGNsZWFyLCBTU0lUeCBwaW5zIGhhdmUgbm90aGluZyB0byBkbyB3aXRo
+ICJiaS1kaXIiLg0KDQpUaG9zZSB3ZXJlIHBpbnMgdGhhdCB5b3UgaGF2ZSB0byBhZGQgdG8gdGhl
+IHJ6YTFsX3N3aW9fcGluc1tdIGFycmF5IA0KYmVjYXVzZSB0aGV5IG11c3QgaGF2ZSB0byBoYXZl
+IGJvdGggUElQQ24uUElQQyBhbmQgUE0gYml0cyBzZXQgdG8gJzAnIChpZSwgDQpmb3JjZWQgdG8g
+b3V0cHV0KS4NCg0KSG93ZXZlciwgdGhlcmUgaXMgbm8gU1NJVHhENSBwaW4gaW4gUlovQTFMLg0K
+DQogIFJaL0ExSDogU1NJVHhEMCwgU1NJVHhEMSwgU1NJVHhEMywgU1NJVHhENQ0KICBSWi9BMUw6
+IFNTSVR4RDAsIFNTSVR4RDEsIFNTSVR4RDMNCg0KDQoNCj4gPiBJIHRob3VnaHQgd2Ugc2FpZCBU
+SU9DIGRpZG4ndCBuZWVkIHRvIGJlIGluIGEgdGFibGUgYmVjYXVzZSB0aGUgdXNlciBoYXMNCj4g
+PiB0byBzcGVjaWZ5IHRoZW0gYW55d2F5IGJlY2F1c2UgdGhlIHVzZXIgaGFzIHRvIGNob29zZSBp
+ZiBoZSB3YW50cyB0aGVtDQo+ID4gYXMgaW5wdXQgb3Igb3V0cHV0LCBzbyBpZiBoZSBkb2VzIHRo
+YXQsIHRoZW4gd2UgYXV0b21hdGljYWxseSBrbm93IGl0J3MNCj4gPiBhIHN3aW8gcGluLiBIbW0s
+IG1heWJlIEkgaGF2ZSB0byBnbyBiYWNrIGFuZCBsb29rIGF0IHdoYXQgdGhlIGRyaXZlcg0KPiA+
+IGVuZGVkIHVwIGltcGxlbWVudGluZy4NCj4gPg0KPiANCj4gQ2FuIGNvbmZpcm0gVElPQyBwaW5z
+IGFyZSBub3QgbGlzdGVkIGluIFNXSU8gdGFibGUgaW4gUlovQTFILg0KDQpZZXMsIHRoYXQgJ2Fy
+ZScgbGlzdGVkIGluIHRoZSB0YWJsZS4gQnV0IGZvciBhIGdvb2QgcmVhc29uLg0KDQpUaGUgVElP
+QyBwaW5zIGNhbiBiZSB1c2VzIGFzIGFuIG91dHB1dCAoUFdNIGZvciBleGFtcGxlKSBvciBhcyBh
+IGlucHV0IA0KKGlucHV0IGNhcHR1cmUgZm9yIGV4YW1wbGUpLCBzbyB0aGV5IGFyZSBub3QgcmVh
+bGx5IGEgZml4ZWQgZGlyZWN0aW9uLiANClRoYXQgaXMgd2h5IHRoZSB1c2VyIG5lZWRzIHRvIHNw
+ZWNpZnkgaG93IHRoZXkgcGxhbiB0byB1c2UgdGhlbSBpbiB0aGUgRFQuDQpBbmQuLi50aGF0J3Mg
+YWxzbyB3aHkgaXQgZG9lc24ndCBtYWtlIHNlbnNlIHRvIHB1dCB0aGVtIGluIHRoZSANCnJ6YTFs
+X3N3aW9fcGluc1tdIGFycmF5ICh3ZSBoYXZlIG5vIGlkZWEgaG93IHRoZXkgd2FudCB0byB1c2Ug
+dGhlbSkuDQoNClNvLCB0aGUgaGFyZHdhcmUgbWFudWFsIGhhcyB0aGUgVElPQyBwaW5zIGluIHRo
+ZSBTV0lPIHRhYmxlIHRvIHRlbGwgdGhlIA0KdXNlciAnaGV5LCB5b3UgaGF2ZSB0byBtYW51YWxs
+eSBzZXQgdGhlc2UgcGlucyB0byBlaXRoZXIgaW5wdXQgb3Igb3V0cHV0DQp5b3Vyc2VsZiBiZWNh
+dXNlIHdlIGNhbid0IG1hZ2ljYWxseSBrbm93IHdoYXQgeW91IHdhbnQgdG8gdXNlIHRoZW0gZm9y
+Lg0KDQpCdXQuLi4NClRoZSByZWFzb24gZm9yIHRoZSByemExbF9zd2lvX3BpbnNbXSBhcnJheSBp
+cyBmb3Igd2VpcmQgcGluIA0KY29uZmlndXJhdGlvbnMgdGhhdCBhcmUgZml4ZWQgKGxpa2UgTENE
+IExWRFMgb3V0cHV0IHBpbnMgbmVlZCB0byBiZSBjb25maWd1cmVkIGFzIA0KaW5wdXRzKS4NCg0K
+DQo+IFRoYW5rcyBmb3IgZG91YmxlIGNoZWNraW5nLiBZb3VyIHNvdXJjZSBmcm9tIEphcGFuIGlz
+IG1vcmUNCj4gYXV0aG9yaXRhdGl2ZSB0aGFuIG1hbnVhbHMgYW5kIGRlZmludGVseSBtb3JlIGFj
+Y3VyYXRlIHRoYW4gbWUgOykNCg0KU28sIGFmdGVyIGFsbCB0aGF0LCBJIGRvbid0IHRoaW5rIHdl
+IGZvdW5kIGFueSBpc3N1ZXMgd2l0aCBteSBwYXRjaC4NCkNvcnJlY3Q/Pz8NCg0KDQpUaGFua3Mh
+DQoNCkNocmlzDQoNCg==
