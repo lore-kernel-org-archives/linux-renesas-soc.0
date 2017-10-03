@@ -1,16 +1,11 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:36893 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751084AbdJCSPM (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Oct 2017 14:15:12 -0400
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdWJKQb5JY+diH=7dqNuypkPUqBeOEPSLOrfrnbfh2siRQ@mail.gmail.com>
-References: <1507044184-27152-1-git-send-email-geert+renesas@glider.be>
- <nycvar.YSQ.7.76.1710031134140.5407@knanqh.ubzr> <CAMuHMdWJKQb5JY+diH=7dqNuypkPUqBeOEPSLOrfrnbfh2siRQ@mail.gmail.com>
+In-Reply-To: <nycvar.YSQ.7.76.1710031134140.5407@knanqh.ubzr>
+References: <1507044184-27152-1-git-send-email-geert+renesas@glider.be> <nycvar.YSQ.7.76.1710031134140.5407@knanqh.ubzr>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 3 Oct 2017 20:15:10 +0200
-Message-ID: <CAMuHMdXpPfipmEdW0Dap6Pjwhz3QxLcrcbtU0RhCu721k-sBpA@mail.gmail.com>
+Date: Tue, 3 Oct 2017 20:11:59 +0200
+Message-ID: <CAMuHMdWJKQb5JY+diH=7dqNuypkPUqBeOEPSLOrfrnbfh2siRQ@mail.gmail.com>
 Subject: Re: [PATCH] ARM: head-common.S: Clear lr before jumping to start_kernel()
 To: Nicolas Pitre <nicolas.pitre@linaro.org>
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -23,17 +18,39 @@ Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Oct 3, 2017 at 8:11 PM, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> On Tue, Oct 3, 2017 at 5:37 PM, Nicolas Pitre <nicolas.pitre@linaro.org> wrote:
->> On Tue, 3 Oct 2017, Geert Uytterhoeven wrote:
->> Please send it to RMK's patch system.
+On Tue, Oct 3, 2017 at 5:37 PM, Nicolas Pitre <nicolas.pitre@linaro.org> wrote:
+> On Tue, 3 Oct 2017, Geert Uytterhoeven wrote:
 >
-> Done (I hope so ;-)
+>> If CONFIG_DEBUG_LOCK_ALLOC=y, the kernel log is spammed with a few
+>> hundred identical messages:
+>>
+>>     unwind: Unknown symbol address c0800300
+>>     unwind: Index not found c0800300
+>>
+>> c0800300 is the return address from the last subroutine call (to
+>> __memzero()) in __mmap_switched().  Apparently having this address in
+>> the link register confuses the unwinder.
+>>
+>> To fix this, reset the link register to zero before jumping to
+>> start_kernel().
+>>
+>> Fixes: 9520b1a1b5f7a348 ("ARM: head-common.S: speed up startup code")
+>> Suggested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> Good! This fixes another similar case I had but I didn't come around to
+> look at closely yet.
+>
+> Acked-by: Nicolas Pitre <nico@linaro.org>
 
-Failed. Retrying.
+Thanks!
+
+> Please send it to RMK's patch system.
+
+Done (I hope so ;-)
 
 Gr{oetje,eeting}s,
 
