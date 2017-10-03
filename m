@@ -1,114 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57269 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932290AbdJRHBE (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:60942 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750837AbdJCFBB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Oct 2017 03:01:04 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v4 2/3] dt-bindings: mmc: renesas_sdhi: add R-Car Gen[123] fallback compatibility strings
-Date: Wed, 18 Oct 2017 09:00:22 +0200
-Message-Id: <20171018070023.3878-3-horms+renesas@verge.net.au>
-In-Reply-To: <20171018070023.3878-1-horms+renesas@verge.net.au>
-References: <20171018070023.3878-1-horms+renesas@verge.net.au>
+        Tue, 3 Oct 2017 01:01:01 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 1/3] arm64: dts: renesas: salvator-common: drop "avb_phy_int" from avb_pins
+Date: Tue,  3 Oct 2017 13:57:11 +0900
+Message-Id: <1507006633-28258-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1507006633-28258-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1507006633-28258-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add fallback compatibility strings for R-Car Gen 1, 2 and 3.
+Since the Ethernet AVB driver doesn't support AVB_PHY_INT handling
+and it will be handled by a phy driver as a gpio pin, this patch
+removes the "avb_phy_int" from the avb_pins node.
 
-In the case of Renesas R-Car hardware we know that there are generations of
-SoCs, f.e. Gen 1 and 2. But beyond that its not clear what the relationship
-between IP blocks might be. For example, I believe that r8a7790 is older
-than r8a7791 but that doesn't imply that the latter is a descendant of the
-former or vice versa.
-
-We can, however, by examining the documentation and behaviour of the
-hardware at run-time observe that the current driver implementation appears
-to be compatible with the IP blocks on SoCs within a given generation.
-
-For the above reasons and convenience when enabling new SoCs a
-per-generation fallback compatibility string scheme is being adopted for
-drivers for Renesas SoCs.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Fixes: 7d73a4da2681 ("arm64: dts: r8a7795: salvator-x: Set drive-strength for ravb pins")
+Fixes: 4903987033be ("arm64: dts: r8a7796: salvator-x: Set drive-strength for ravb pins")
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
-v4
-* Corrected typo in changelog
-* Added comma to "When compatible with the generic version, nodes must list"
----
- Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 20 +++++++++++++++-----
- 1 file changed, 15 insertions(+), 5 deletions(-)
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-index b63392d9cc47..3c6762430fd9 100644
---- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-+++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-@@ -10,7 +10,7 @@ described in mmc.txt, can be used. Additionally the following tmio_mmc-specific
- optional bindings can be used.
+diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+index d9d8850..e41e53b 100644
+--- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+@@ -381,8 +381,7 @@
  
- Required properties:
--- compatible:	"renesas,sdhi-shmobile" - a generic sh-mobile SDHI unit
-+- compatible: should contain one or more of the following:
- 		"renesas,sdhi-sh73a0" - SDHI IP on SH73A0 SoC
- 		"renesas,sdhi-r7s72100" - SDHI IP on R7S72100 SoC
- 		"renesas,sdhi-r8a73a4" - SDHI IP on R8A73A4 SoC
-@@ -26,6 +26,16 @@ Required properties:
- 		"renesas,sdhi-r8a7794" - SDHI IP on R8A7794 SoC
- 		"renesas,sdhi-r8a7795" - SDHI IP on R8A7795 SoC
- 		"renesas,sdhi-r8a7796" - SDHI IP on R8A7796 SoC
-+		"renesas,sdhi-shmobile" - a generic sh-mobile SDHI controller
-+		"renesas,rcar-gen1-sdhi" - a generic R-Car Gen1 SDHI controller
-+		"renesas,rcar-gen2-sdhi" - a generic R-Car Gen2 or RZ/G1
-+					   SDHI controller
-+		"renesas,rcar-gen3-sdhi" - a generic R-Car Gen3 SDHI controller
-+
-+
-+		When compatible with the generic version, nodes must list
-+		the SoC-specific version corresponding to the platform
-+		first followed by the generic version.
+ 	avb_pins: avb {
+ 		mux {
+-			groups = "avb_link", "avb_phy_int", "avb_mdc",
+-				 "avb_mii";
++			groups = "avb_link", "avb_mdc", "avb_mii";
+ 			function = "avb";
+ 		};
  
- - clocks: Most controllers only have 1 clock source per channel. However, on
- 	  some variations of this controller, the internal card detection
-@@ -47,7 +57,7 @@ Optional properties:
- Example: R8A7790 (R-Car H2) SDHI controller nodes
- 
- 	sdhi0: sd@ee100000 {
--		compatible = "renesas,sdhi-r8a7790";
-+		compatible = "renesas,sdhi-r8a7790", "renesas,rcar-gen2-sdhi";
- 		reg = <0 0xee100000 0 0x328>;
- 		interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 314>;
-@@ -61,7 +71,7 @@ Example: R8A7790 (R-Car H2) SDHI controller nodes
- 	};
- 
- 	sdhi1: sd@ee120000 {
--		compatible = "renesas,sdhi-r8a7790";
-+		compatible = "renesas,sdhi-r8a7790", "renesas,rcar-gen2-sdhi";
- 		reg = <0 0xee120000 0 0x328>;
- 		interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 313>;
-@@ -75,7 +85,7 @@ Example: R8A7790 (R-Car H2) SDHI controller nodes
- 	};
- 
- 	sdhi2: sd@ee140000 {
--		compatible = "renesas,sdhi-r8a7790";
-+		compatible = "renesas,sdhi-r8a7790", "renesas,rcar-gen2-sdhi";
- 		reg = <0 0xee140000 0 0x100>;
- 		interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 312>;
-@@ -89,7 +99,7 @@ Example: R8A7790 (R-Car H2) SDHI controller nodes
- 	};
- 
- 	sdhi3: sd@ee160000 {
--		compatible = "renesas,sdhi-r8a7790";
-+		compatible = "renesas,sdhi-r8a7790", "renesas,rcar-gen2-sdhi";
- 		reg = <0 0xee160000 0 0x100>;
- 		interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 311>;
 -- 
-2.11.0
+1.9.1
