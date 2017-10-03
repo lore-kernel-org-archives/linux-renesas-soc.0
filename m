@@ -1,86 +1,73 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:40126 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752738AbdJTLYo (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Oct 2017 07:24:44 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [git pull] clk: renesas: Updates for v4.15 (take two)
-Date: Fri, 20 Oct 2017 13:23:10 +0200
-Message-Id: <1508498590-10566-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Tue, 3 Oct 2017 18:17:38 +0200
+From: jacopo mondi <jacopo@jmondi.org>
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>
+Subject: Re: [PATCH 1/2] pinctrl: rza1: add support for RZ/A1L
+Message-ID: <20171003161738.GK4037@w540>
+References: <20171003073334.18917-1-chris.brandt@renesas.com>
+ <20171003073334.18917-2-chris.brandt@renesas.com>
+ <20171003083148.GG4037@w540>
+ <SG2PR06MB1165EE1D21AFC1D3005308538A720@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <20171003150412.GI4037@w540>
+ <SG2PR06MB1165669027CDC7F76808EADB8A720@SG2PR06MB1165.apcprd06.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <SG2PR06MB1165669027CDC7F76808EADB8A720@SG2PR06MB1165.apcprd06.prod.outlook.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Mike, Stephen,
+Hi Chris,
 
-The following changes since commit b4021bbe10017d994e5a96ebfd2677bbaf2b37e0:
+On Tue, Oct 03, 2017 at 03:40:51PM +0000, Chris Brandt wrote:
+> Hi Jacopo,
+>
+>
+> Yes, that 'are' listed in the table. But for a good reason.
+>
+> The TIOC pins can be uses as an output (PWM for example) or as a input
+> (input capture for example), so they are not really a fixed direction.
+> That is why the user needs to specify how they plan to use them in the DT.
+> And...that's also why it doesn't make sense to put them in the
+> rza1l_swio_pins[] array (we have no idea how they want to use them).
+>
+> So, the hardware manual has the TIOC pins in the SWIO table to tell the
+> user 'hey, you have to manually set these pins to either input or output
+> yourself because we can't magically know what you want to use them for.
+>
+> But...
+> The reason for the rza1l_swio_pins[] array is for weird pin
+> configurations that are fixed (like LCD LVDS output pins need to be configured as
+> inputs).
+>
+>
+> > Thanks for double checking. Your source from Japan is more
+> > authoritative than manuals and defintely more accurate than me ;)
+>
+> So, after all that, I don't think we found any issues with my patch.
+> Correct???
 
-  clk: renesas: rcar-gen2: Delete error message for failed memory allocation (2017-09-28 17:57:34 +0200)
+Correct! :)
+After your clarification above, for both patches:
 
-are available in the git repository at:
+Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.15-tag2
+Thanks
+   j
 
-for you to fetch changes up to 3f7a4d084159c52513d1ff77f3b3b880bcf517d9:
-
-  clk: renesas: rcar-gen3: Restore R clock during resume (2017-10-20 11:16:09 +0200)
-
-----------------------------------------------------------------
-clk: renesas: Updates for v4.15 (take two)
-
-  - Add support for the second display unit clock on RZ/G1E,
-  - Add git repository to MAINTAINERS,
-  - Add suspend/resume support for R-Car Gen3 CPG/MSSR,
-  - Small fixes and cleanups.
-
-Note: this is on top of my previous pull request, for
-tags/clk-renesas-for-v4.15-tag1, which you haven't pulled yet.
-
-Thanks for pulling!
-----------------------------------------------------------------
-Fabrizio Castro (1):
-      clk: renesas: cpg-mssr: Add du1 clock to R8A7745
-
-Geert Uytterhoeven (10):
-      clk: renesas: r8a7795: Correct parent clock of INTC-AP
-      clk: renesas: r8a7796: Correct parent clock of INTC-AP
-      clk: renesas: r8a77995: Correct parent clock of INTC-AP
-      clk: renesas: rz: clk-rz is meant for RZ/A1
-      MAINTAINERS: Add git repository to Renesas clock driver section
-      clk: renesas: cpg-mssr: Restore module clocks during resume
-      clk: renesas: cpg-mssr: Add support to restore core clocks during resume
-      clk: renesas: div6: Restore clock state during resume
-      clk: renesas: rcar-gen3: Restore SDHI clocks during resume
-      clk: renesas: rcar-gen3: Restore R clock during resume
-
- .../bindings/clock/renesas,rz-cpg-clocks.txt       |  4 +-
- MAINTAINERS                                        |  1 +
- drivers/clk/renesas/clk-div6.c                     | 38 ++++++++-
- drivers/clk/renesas/clk-div6.h                     |  3 +-
- drivers/clk/renesas/clk-rz.c                       |  2 +-
- drivers/clk/renesas/r8a7745-cpg-mssr.c             |  1 +
- drivers/clk/renesas/r8a7795-cpg-mssr.c             |  3 +-
- drivers/clk/renesas/r8a7796-cpg-mssr.c             |  2 +-
- drivers/clk/renesas/r8a77995-cpg-mssr.c            |  2 +-
- drivers/clk/renesas/rcar-gen2-cpg.c                |  7 +-
- drivers/clk/renesas/rcar-gen2-cpg.h                |  6 +-
- drivers/clk/renesas/rcar-gen3-cpg.c                | 79 +++++++++++++----
- drivers/clk/renesas/rcar-gen3-cpg.h                |  3 +-
- drivers/clk/renesas/renesas-cpg-mssr.c             | 99 +++++++++++++++++++++-
- drivers/clk/renesas/renesas-cpg-mssr.h             |  3 +-
- 15 files changed, 217 insertions(+), 36 deletions(-)
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+>
+>
+> Thanks!
+>
+> Chris
+>
