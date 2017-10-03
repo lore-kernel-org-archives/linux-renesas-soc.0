@@ -1,23 +1,7 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:56060 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750787AbdJCHNB (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Oct 2017 03:13:01 -0400
-MIME-Version: 1.0
-In-Reply-To: <TY1PR06MB09920874E5560AE204941018D8720@TY1PR06MB0992.apcprd06.prod.outlook.com>
-References: <1506925789-19392-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1506925789-19392-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <CAMuHMdUGU-6c=QoekksFfpoP1x15vUmFu272wd5YqqnQe-RwmA@mail.gmail.com>
- <8642690f-a37b-2de3-7f59-9f0be99ef170@ideasonboard.com> <TY1PR06MB09920BDFB00D2BDA4840877AD87D0@TY1PR06MB0992.apcprd06.prod.outlook.com>
- <CAMuHMdVJ1Z8mn14Q5j=2iG1w9b267YS_8EV5QuTmBMcog2-8Ww@mail.gmail.com> <TY1PR06MB09920874E5560AE204941018D8720@TY1PR06MB0992.apcprd06.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 3 Oct 2017 09:12:59 +0200
-Message-ID: <CAMuHMdWJ67rMF5_O4o2EPORQFdWYsW8Mc0eVcnH6a-v8UnaU8Q@mail.gmail.com>
-Subject: Re: [PATCH 1/3] arm64: dts: renesas: r8a7795: salvator-xs: enable
- USB2.0 phy channel 3
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Kieran Bingham <kieran.bingham@ideasonboard.com>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -25,143 +9,91 @@ Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Kieran Bingham <kieran@ksquared.org.uk>,
-        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        =?utf-8?B?TmlrbGFzIFPDtmRlcmx1bmQ=?=
+        <niklas.soderlund@ragnatech.se>
+Subject: RE: [PATCH 1/3] arm64: dts: renesas: r8a7795: salvator-xs: enable
+ USB2.0 phy channel 3
+Date: Tue, 3 Oct 2017 03:13:06 +0000
+Message-ID: <TY1PR06MB09920874E5560AE204941018D8720@TY1PR06MB0992.apcprd06.prod.outlook.com>
+References: <1506925789-19392-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1506925789-19392-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <CAMuHMdUGU-6c=QoekksFfpoP1x15vUmFu272wd5YqqnQe-RwmA@mail.gmail.com>
+ <8642690f-a37b-2de3-7f59-9f0be99ef170@ideasonboard.com>
+ <TY1PR06MB09920BDFB00D2BDA4840877AD87D0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+ <CAMuHMdVJ1Z8mn14Q5j=2iG1w9b267YS_8EV5QuTmBMcog2-8Ww@mail.gmail.com>
+In-Reply-To: <CAMuHMdVJ1Z8mn14Q5j=2iG1w9b267YS_8EV5QuTmBMcog2-8Ww@mail.gmail.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Shimoda-san,
-
-On Tue, Oct 3, 2017 at 5:13 AM, Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
->> -----Original Message-----
->> From: Geert Uytterhoeven
->> Sent: Monday, October 2, 2017 6:20 PM
->> On Mon, Oct 2, 2017 at 11:14 AM, Yoshihiro Shimoda
->> <yoshihiro.shimoda.uh@renesas.com> wrote:
->> >> -----Original Message-----
->> >> From: Kieran Bingham
->> >> Sent: Monday, October 2, 2017 5:45 PM
->> >> On 02/10/17 09:20, Geert Uytterhoeven wrote:
->> >> > On Mon, Oct 2, 2017 at 8:29 AM, Yoshihiro Shimoda
->> >> > <yoshihiro.shimoda.uh@renesas.com> wrote:
->> >> >> This patch enables the USB2.0 phy channel 3. R-Car H3 ES2.0 has
->> >> >> this channel and we can use it on the Salvator-XS.
->> >> >>
->> >> >> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
->> >> >
->> >> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> >> >
->> >> >> --- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
->> >> >> +++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
->> >> >> @@ -99,6 +99,11 @@
->> >> >>                 groups = "usb2";
->> >> >>                 function = "usb2";
->> >> >>         };
->> >> >> +
->> >> >> +       usb2_ch3_pins: usb2_ch3 {
->> >> >> +               groups = "usb2_ch3";
->> >> >> +               function = "usb2_ch3";
->> >> >> +       };
->> >> >>  };
->> >> >
->> >> > Using these pins requires changing SW31, disabling the interrupt capabilities
->> >> > of the ADV7482? Does the ADV7482 still work after that?
->> >
->> > Oops, I missed the usb2.0 pins are connected to ADV7482's interruption pins.
->> > But,
->> >
->> >> The ADV7482 is currently working without interrupts at the moment. However, I do
->> >> have hotplug and interrupt handling on my todo list, and infact I have already
->> >> started a patch adding interrupt support.
->> >>
->> >> The DT currently specifies the following interrupts for the ADV7482,
->> >>
->> >> +     video-receiver@70 {
->> >> +             compatible = "adi,adv7482";
->> >> +             interrupt-parent = <&gpio6>;
->> >> +             interrupt-names = "intrq1", "intrq2";
->> >> +             interrupts = <30 IRQ_TYPE_LEVEL_LOW>,
->> >> +                          <31 IRQ_TYPE_LEVEL_LOW>;
->> >
->> > It seems Kieran-san is using non-conflict pins with usb2.0 ch3 :)
->> > According to the board datasheet, GP6_30 and GP6_31 are initial setting for ADV7482 and
->> > it doesn't conflict with USB 2.0 ch3 (USB2.0 ch3 pins are GP6_04 and GP6_21).
->>
->> Can the USB2.0 driver use GPIOs for PWEN and OVC?
->>
->> > So, I think we can use both usb 2.0 ch3 and ADV7482 if we don't change the SW31 from initial setting.
->>
->> OK. But in that case, DT should not configure pinctrl for "usb2_ch3",
->> but instead
->> describe that it uses GP6_04 and GP6_21.
->
-> I'm afraid but I completely misunderstood the pin configurations on the Salvator-XS.
-> I wrote right things below:
-> - USB2.0 ch3 pins are GP6_30 and GP6_31.
-
-OK.
-
->  - So, initial setting of the board will be conflict with the adv7482's interrupt pins.
-
-Initial setting of SW31 is ON-ON-OFF-OFF-OFF-OFF, cfr. Section 2.1.22
-("SW31 (Selects GPIO/USB Connection) Specifications") of the
-Salvator-XS setup manual,
-which is meant to accommodate the ADV7482 on both H3 and M3-W, like
-was done on Salvator-X.
-
-> - If we change the SW31 as alternative setting for usb, the adv7482's interrupt pins connect
->   to GP6_04 and GP6_21.
-
-OK.
-
-> And, I wrote my opinions below:
-> - The adv7482 point of view:
->  - On both Salvator-X and Salvator-XS, adv7482's interrupt pins connected to GP6_30 and GP6_31.
->   - On Salvator-XS, adv7482's interrupt pins can be changed by SW31 and they connected to GP6_04 and GP6_21.
-
-OK.
-
-> - The usb2 ch3 point of view:
->  - It can be used on H3 ES2.0 only. (In other words, M3 cannot use the usb2 ch3.)
-
-OK.
-
-> - Summary
->  - We describe the adv7482's interrupt pins into both salvator-x.dtsi and salvator-xs.dtsi.
->   - In salvator-x.dtsi, adv7482 node uses GP6_30 and GP6_31.
->   - In salvator-xs.dtsi, adv7482 node uses GP6_04 and GP6_21.
-
-While you could do this in salvator-xs.dtsi, doing so would mean users of
-Salvator-X with M3-W have to change SW31 from the default configuration to
-OFF-OFF-OFF-OFF-ON-ON (Note: we don't have r8a7796-salvator-xs.dts in
-mainline yet).
-
->  - We describe the usb2 ch3 pfc node into r8a7795-salvator-xs.dtsi with "usb2_ch3" groups/function and
->     describe the SW31 configuration.
->
-> What do you think?
-
-I would keep the ADV7482 in salvator-common.dtsi using the GP6_3[01]
-interrupts, like is done now.
-
-In r8a7795-salvator-xs.dtsi, you can override the interrupts property to
-GP6_{04,21}, with a comment saying:
-  1. This is done to support the "usb2_ch3" pin group, and,
-  2. This requires changing SW31 to OFF-OFF-ON-ON-ON-ON.
-
-Users of Salvator-XS with M3-W don't have to change anything.
-
-Does this sound OK?
-Simon?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+SGkgR2VlcnQtc2FuLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IEdl
+ZXJ0IFV5dHRlcmhvZXZlbg0KPiBTZW50OiBNb25kYXksIE9jdG9iZXIgMiwgMjAxNyA2OjIwIFBN
+DQo+IA0KPiBIaSBTaGltb2RhLXNhbiwNCj4gDQo+IE9uIE1vbiwgT2N0IDIsIDIwMTcgYXQgMTE6
+MTQgQU0sIFlvc2hpaGlybyBTaGltb2RhDQo+IDx5b3NoaWhpcm8uc2hpbW9kYS51aEByZW5lc2Fz
+LmNvbT4gd3JvdGU6DQo+ID4+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+ID4+IEZyb206
+IEtpZXJhbiBCaW5naGFtDQo+ID4+IFNlbnQ6IE1vbmRheSwgT2N0b2JlciAyLCAyMDE3IDU6NDUg
+UE0NCj4gPj4gT24gMDIvMTAvMTcgMDk6MjAsIEdlZXJ0IFV5dHRlcmhvZXZlbiB3cm90ZToNCj4g
+Pj4gPiBPbiBNb24sIE9jdCAyLCAyMDE3IGF0IDg6MjkgQU0sIFlvc2hpaGlybyBTaGltb2RhDQo+
+ID4+ID4gPHlvc2hpaGlyby5zaGltb2RhLnVoQHJlbmVzYXMuY29tPiB3cm90ZToNCj4gPj4gPj4g
+VGhpcyBwYXRjaCBlbmFibGVzIHRoZSBVU0IyLjAgcGh5IGNoYW5uZWwgMy4gUi1DYXIgSDMgRVMy
+LjAgaGFzDQo+ID4+ID4+IHRoaXMgY2hhbm5lbCBhbmQgd2UgY2FuIHVzZSBpdCBvbiB0aGUgU2Fs
+dmF0b3ItWFMuDQo+ID4+ID4+DQo+ID4+ID4+IFNpZ25lZC1vZmYtYnk6IFlvc2hpaGlybyBTaGlt
+b2RhIDx5b3NoaWhpcm8uc2hpbW9kYS51aEByZW5lc2FzLmNvbT4NCj4gPj4gPg0KPiA+PiA+IFJl
+dmlld2VkLWJ5OiBHZWVydCBVeXR0ZXJob2V2ZW4gPGdlZXJ0K3JlbmVzYXNAZ2xpZGVyLmJlPg0K
+PiA+PiA+DQo+ID4+ID4+IC0tLSBhL2FyY2gvYXJtNjQvYm9vdC9kdHMvcmVuZXNhcy9yOGE3Nzk1
+LXNhbHZhdG9yLXhzLmR0cw0KPiA+PiA+PiArKysgYi9hcmNoL2FybTY0L2Jvb3QvZHRzL3JlbmVz
+YXMvcjhhNzc5NS1zYWx2YXRvci14cy5kdHMNCj4gPj4gPj4gQEAgLTk5LDYgKzk5LDExIEBADQo+
+ID4+ID4+ICAgICAgICAgICAgICAgICBncm91cHMgPSAidXNiMiI7DQo+ID4+ID4+ICAgICAgICAg
+ICAgICAgICBmdW5jdGlvbiA9ICJ1c2IyIjsNCj4gPj4gPj4gICAgICAgICB9Ow0KPiA+PiA+PiAr
+DQo+ID4+ID4+ICsgICAgICAgdXNiMl9jaDNfcGluczogdXNiMl9jaDMgew0KPiA+PiA+PiArICAg
+ICAgICAgICAgICAgZ3JvdXBzID0gInVzYjJfY2gzIjsNCj4gPj4gPj4gKyAgICAgICAgICAgICAg
+IGZ1bmN0aW9uID0gInVzYjJfY2gzIjsNCj4gPj4gPj4gKyAgICAgICB9Ow0KPiA+PiA+PiAgfTsN
+Cj4gPj4gPg0KPiA+PiA+IFVzaW5nIHRoZXNlIHBpbnMgcmVxdWlyZXMgY2hhbmdpbmcgU1czMSwg
+ZGlzYWJsaW5nIHRoZSBpbnRlcnJ1cHQgY2FwYWJpbGl0aWVzDQo+ID4+ID4gb2YgdGhlIEFEVjc0
+ODI/IERvZXMgdGhlIEFEVjc0ODIgc3RpbGwgd29yayBhZnRlciB0aGF0Pw0KPiA+DQo+ID4gT29w
+cywgSSBtaXNzZWQgdGhlIHVzYjIuMCBwaW5zIGFyZSBjb25uZWN0ZWQgdG8gQURWNzQ4MidzIGlu
+dGVycnVwdGlvbiBwaW5zLg0KPiA+IEJ1dCwNCj4gPg0KPiA+PiBUaGUgQURWNzQ4MiBpcyBjdXJy
+ZW50bHkgd29ya2luZyB3aXRob3V0IGludGVycnVwdHMgYXQgdGhlIG1vbWVudC4gSG93ZXZlciwg
+SSBkbw0KPiA+PiBoYXZlIGhvdHBsdWcgYW5kIGludGVycnVwdCBoYW5kbGluZyBvbiBteSB0b2Rv
+IGxpc3QsIGFuZCBpbmZhY3QgSSBoYXZlIGFscmVhZHkNCj4gPj4gc3RhcnRlZCBhIHBhdGNoIGFk
+ZGluZyBpbnRlcnJ1cHQgc3VwcG9ydC4NCj4gPj4NCj4gPj4NCj4gPj4gVGhlIERUIGN1cnJlbnRs
+eSBzcGVjaWZpZXMgdGhlIGZvbGxvd2luZyBpbnRlcnJ1cHRzIGZvciB0aGUgQURWNzQ4MiwNCj4g
+Pj4NCj4gPj4gKyAgICAgdmlkZW8tcmVjZWl2ZXJANzAgew0KPiA+PiArICAgICAgICAgICAgIGNv
+bXBhdGlibGUgPSAiYWRpLGFkdjc0ODIiOw0KPiA+PiArICAgICAgICAgICAgIGludGVycnVwdC1w
+YXJlbnQgPSA8JmdwaW82PjsNCj4gPj4gKyAgICAgICAgICAgICBpbnRlcnJ1cHQtbmFtZXMgPSAi
+aW50cnExIiwgImludHJxMiI7DQo+ID4+ICsgICAgICAgICAgICAgaW50ZXJydXB0cyA9IDwzMCBJ
+UlFfVFlQRV9MRVZFTF9MT1c+LA0KPiA+PiArICAgICAgICAgICAgICAgICAgICAgICAgICA8MzEg
+SVJRX1RZUEVfTEVWRUxfTE9XPjsNCj4gPg0KPiA+IEl0IHNlZW1zIEtpZXJhbi1zYW4gaXMgdXNp
+bmcgbm9uLWNvbmZsaWN0IHBpbnMgd2l0aCB1c2IyLjAgY2gzIDopDQo+ID4gQWNjb3JkaW5nIHRv
+IHRoZSBib2FyZCBkYXRhc2hlZXQsIEdQNl8zMCBhbmQgR1A2XzMxIGFyZSBpbml0aWFsIHNldHRp
+bmcgZm9yIEFEVjc0ODIgYW5kDQo+ID4gaXQgZG9lc24ndCBjb25mbGljdCB3aXRoIFVTQiAyLjAg
+Y2gzIChVU0IyLjAgY2gzIHBpbnMgYXJlIEdQNl8wNCBhbmQgR1A2XzIxKS4NCj4gDQo+IENhbiB0
+aGUgVVNCMi4wIGRyaXZlciB1c2UgR1BJT3MgZm9yIFBXRU4gYW5kIE9WQz8NCj4gDQo+ID4gU28s
+IEkgdGhpbmsgd2UgY2FuIHVzZSBib3RoIHVzYiAyLjAgY2gzIGFuZCBBRFY3NDgyIGlmIHdlIGRv
+bid0IGNoYW5nZSB0aGUgU1czMSBmcm9tIGluaXRpYWwgc2V0dGluZy4NCj4gDQo+IE9LLiBCdXQg
+aW4gdGhhdCBjYXNlLCBEVCBzaG91bGQgbm90IGNvbmZpZ3VyZSBwaW5jdHJsIGZvciAidXNiMl9j
+aDMiLA0KPiBidXQgaW5zdGVhZA0KPiBkZXNjcmliZSB0aGF0IGl0IHVzZXMgR1A2XzA0IGFuZCBH
+UDZfMjEuDQoNCkknbSBhZnJhaWQgYnV0IEkgY29tcGxldGVseSBtaXN1bmRlcnN0b29kIHRoZSBw
+aW4gY29uZmlndXJhdGlvbnMgb24gdGhlIFNhbHZhdG9yLVhTLg0KSSB3cm90ZSByaWdodCB0aGlu
+Z3MgYmVsb3c6DQotIFVTQjIuMCBjaDMgcGlucyBhcmUgR1A2XzMwIGFuZCBHUDZfMzEuDQogLSBT
+bywgaW5pdGlhbCBzZXR0aW5nIG9mIHRoZSBib2FyZCB3aWxsIGJlIGNvbmZsaWN0IHdpdGggdGhl
+IGFkdjc0ODIncyBpbnRlcnJ1cHQgcGlucy4NCi0gSWYgd2UgY2hhbmdlIHRoZSBTVzMxIGFzIGFs
+dGVybmF0aXZlIHNldHRpbmcgZm9yIHVzYiwgdGhlIGFkdjc0ODIncyBpbnRlcnJ1cHQgcGlucyBj
+b25uZWN0DQogIHRvIEdQNl8wNCBhbmQgR1A2XzIxLg0KDQpBbmQsIEkgd3JvdGUgbXkgb3Bpbmlv
+bnMgYmVsb3c6DQotIFRoZSBhZHY3NDgyIHBvaW50IG9mIHZpZXc6DQogLSBPbiBib3RoIFNhbHZh
+dG9yLVggYW5kIFNhbHZhdG9yLVhTLCBhZHY3NDgyJ3MgaW50ZXJydXB0IHBpbnMgY29ubmVjdGVk
+IHRvIEdQNl8zMCBhbmQgR1A2XzMxLg0KICAtIE9uIFNhbHZhdG9yLVhTLCBhZHY3NDgyJ3MgaW50
+ZXJydXB0IHBpbnMgY2FuIGJlIGNoYW5nZWQgYnkgU1czMSBhbmQgdGhleSBjb25uZWN0ZWQgdG8g
+R1A2XzA0IGFuZCBHUDZfMjEuDQotIFRoZSB1c2IyIGNoMyBwb2ludCBvZiB2aWV3Og0KIC0gSXQg
+Y2FuIGJlIHVzZWQgb24gSDMgRVMyLjAgb25seS4gKEluIG90aGVyIHdvcmRzLCBNMyBjYW5ub3Qg
+dXNlIHRoZSB1c2IyIGNoMy4pDQotIFN1bW1hcnkNCiAtIFdlIGRlc2NyaWJlIHRoZSBhZHY3NDgy
+J3MgaW50ZXJydXB0IHBpbnMgaW50byBib3RoIHNhbHZhdG9yLXguZHRzaSBhbmQgc2FsdmF0b3It
+eHMuZHRzaS4NCiAgLSBJbiBzYWx2YXRvci14LmR0c2ksIGFkdjc0ODIgbm9kZSB1c2VzIEdQNl8z
+MCBhbmQgR1A2XzMxLg0KICAtIEluIHNhbHZhdG9yLXhzLmR0c2ksIGFkdjc0ODIgbm9kZSB1c2Vz
+IEdQNl8wNCBhbmQgR1A2XzIxLg0KIC0gV2UgZGVzY3JpYmUgdGhlIHVzYjIgY2gzIHBmYyBub2Rl
+IGludG8gcjhhNzc5NS1zYWx2YXRvci14cy5kdHNpIHdpdGggInVzYjJfY2gzIiBncm91cHMvZnVu
+Y3Rpb24gYW5kDQogICAgZGVzY3JpYmUgdGhlIFNXMzEgY29uZmlndXJhdGlvbi4NCg0KV2hhdCBk
+byB5b3UgdGhpbms/DQoNCkJlc3QgcmVnYXJkcywNCllvc2hpaGlybyBTaGltb2RhDQoNCg==
