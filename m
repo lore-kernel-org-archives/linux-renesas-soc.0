@@ -1,46 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:36387 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752281AbdJDNxi (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:44930 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751062AbdJCIE6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Oct 2017 09:53:38 -0400
+        Tue, 3 Oct 2017 04:04:58 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH] arm64: dts: renesas: salvator-common: add pfc node for USB3.0 channel 0
+Date: Tue,  3 Oct 2017 17:01:12 +0900
+Message-Id: <1507017672-21493-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-In-Reply-To: <1507017672-21493-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1507017672-21493-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 4 Oct 2017 15:53:36 +0200
-Message-ID: <CAMuHMdUz78BmySULe_wizFEhFAtiBiQLZ9Ov++S94+yb4YpxDg@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: renesas: salvator-common: add pfc node for
- USB3.0 channel 0
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Oct 3, 2017 at 10:01 AM, Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> Since a R-Car Gen3 bootloader enables the PFC of USB3.0 channel 0,
-> the USB3.0 host controller works without this setting on the kernel.
-> But, this setting should have salvator-common.dtsi. So, this patch
-> adds the pfc node for USB3.0 channel 0.
->
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Since a R-Car Gen3 bootloader enables the PFC of USB3.0 channel 0,
+the USB3.0 host controller works without this setting on the kernel.
+But, this setting should have salvator-common.dtsi. So, this patch
+adds the pfc node for USB3.0 channel 0.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ This patch is based on the renesas.git / renesas-devel-20171002-v4.14-rc3 tag.
 
-Gr{oetje,eeting}s,
+ Since related patches are already merged into renesas-drivers.git / 
+ sh-pfc-for-v4.15, this patch is possible to apply for v4.15, I think.
 
-                        Geert
+  https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/commit/?h=sh-pfc-for-v4.15&id=3627126ce39d8c7d35a9251b074fedd2edf9f743
+  https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/commit/?h=sh-pfc-for-v4.15&id=5ec8a41a36715cf543cb7c109097fb3b4cdfb427
+  https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/commit/?h=sh-pfc-for-v4.15&id=656285a892ce3ea9b9397826562789c0de1f5fc0
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+index e41e53b..3dcb26b 100644
+--- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+@@ -495,6 +495,11 @@
+ 			bias-pull-down;
+ 		};
+ 	};
++
++	usb30_pins: usb30 {
++		groups = "usb30";
++		function = "usb30";
++	};
+ };
+ 
+ &pwm1 {
+@@ -630,5 +635,8 @@
+ };
+ 
+ &xhci0 {
++	pinctrl-0 = <&usb30_pins>;
++	pinctrl-names = "default";
++
+ 	status = "okay";
+ };
+-- 
+1.9.1
