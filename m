@@ -1,187 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42244 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751922AbdJDL2b (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:59870 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750735AbdJCFBE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Oct 2017 07:28:31 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
-        Mark Brown <broonie@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>,
-        Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: rsnd: add generic rsnd_flags_xxx() macro" to the asoc tree
-In-Reply-To: <871smmo2st.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dzhqo-0004Lt-0K@debutante>
-Date: Wed, 04 Oct 2017 12:28:30 +0100
+        Tue, 3 Oct 2017 01:01:04 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 2/3] arm64: dts: renesas: ulcb: drop "avb_phy_int" from avb_pins
+Date: Tue,  3 Oct 2017 13:57:12 +0900
+Message-Id: <1507006633-28258-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1507006633-28258-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1507006633-28258-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+Since the Ethernet AVB driver doesn't support AVB_PHY_INT handling
+and it will be handled by a phy driver as a gpio pin, this patch
+removes the "avb_phy_int" from the avb_pins node.
 
-   ASoC: rsnd: add generic rsnd_flags_xxx() macro
-
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 429919890e22431bc350ecf47b31866bb27631b2 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Sun, 1 Oct 2017 23:47:50 +0000
-Subject: [PATCH] ASoC: rsnd: add generic rsnd_flags_xxx() macro
-
-SSI is using rsnd_ssi_flags_xxx() macro to control flags.
-But it is useful macro not only for SSI. This patch replace it
-to more generic rsnd_flags_xxx().
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Tested-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Fixes: 133ace3f3804 ("arm64: dts: ulcb: Set drive-strength for ravb pins")
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- sound/soc/sh/rcar/rsnd.h |  4 ++++
- sound/soc/sh/rcar/ssi.c  | 27 ++++++++++++---------------
- 2 files changed, 16 insertions(+), 15 deletions(-)
+ arch/arm64/boot/dts/renesas/ulcb.dtsi | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/sound/soc/sh/rcar/rsnd.h b/sound/soc/sh/rcar/rsnd.h
-index c5de71f2dc8c..beffbec42404 100644
---- a/sound/soc/sh/rcar/rsnd.h
-+++ b/sound/soc/sh/rcar/rsnd.h
-@@ -601,6 +601,10 @@ struct rsnd_priv {
- #define rsnd_is_gen1(priv)	(((priv)->flags & RSND_GEN_MASK) == RSND_GEN1)
- #define rsnd_is_gen2(priv)	(((priv)->flags & RSND_GEN_MASK) == RSND_GEN2)
+diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+index dfec907..1a5f15a 100644
+--- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
++++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+@@ -254,8 +254,7 @@
  
-+#define rsnd_flags_has(p, f) ((p)->flags & (f))
-+#define rsnd_flags_set(p, f) ((p)->flags |= (f))
-+#define rsnd_flags_del(p, f) ((p)->flags &= ~(f))
-+
- /*
-  *	rsnd_kctrl
-  */
-diff --git a/sound/soc/sh/rcar/ssi.c b/sound/soc/sh/rcar/ssi.c
-index fffc07e72627..61b4ce20ee2b 100644
---- a/sound/soc/sh/rcar/ssi.c
-+++ b/sound/soc/sh/rcar/ssi.c
-@@ -101,9 +101,6 @@ struct rsnd_ssi {
- #define rsnd_ssi_get(priv, id) ((struct rsnd_ssi *)(priv->ssi) + id)
- #define rsnd_ssi_nr(priv) ((priv)->ssi_nr)
- #define rsnd_mod_to_ssi(_mod) container_of((_mod), struct rsnd_ssi, mod)
--#define rsnd_ssi_flags_has(p, f) ((p)->flags & f)
--#define rsnd_ssi_flags_set(p, f) ((p)->flags |= f)
--#define rsnd_ssi_flags_del(p, f) ((p)->flags = ((p)->flags & ~f))
- #define rsnd_ssi_is_parent(ssi, io) ((ssi) == rsnd_io_to_mod_ssip(io))
- #define rsnd_ssi_is_multi_slave(mod, io) \
- 	(rsnd_ssi_multi_slaves(io) & (1 << rsnd_mod_id(mod)))
-@@ -116,10 +113,10 @@ int rsnd_ssi_hdmi_port(struct rsnd_dai_stream *io)
- 	struct rsnd_mod *mod = rsnd_io_to_mod_ssi(io);
- 	struct rsnd_ssi *ssi = rsnd_mod_to_ssi(mod);
+ 	avb_pins: avb {
+ 		mux {
+-			groups = "avb_link", "avb_phy_int", "avb_mdc",
+-				 "avb_mii";
++			groups = "avb_link", "avb_mdc", "avb_mii";
+ 			function = "avb";
+ 		};
  
--	if (rsnd_ssi_flags_has(ssi, RSND_SSI_HDMI0))
-+	if (rsnd_flags_has(ssi, RSND_SSI_HDMI0))
- 		return RSND_SSI_HDMI_PORT0;
- 
--	if (rsnd_ssi_flags_has(ssi, RSND_SSI_HDMI1))
-+	if (rsnd_flags_has(ssi, RSND_SSI_HDMI1))
- 		return RSND_SSI_HDMI_PORT1;
- 
- 	return 0;
-@@ -134,7 +131,7 @@ int rsnd_ssi_use_busif(struct rsnd_dai_stream *io)
- 	if (!rsnd_ssi_is_dma_mode(mod))
- 		return 0;
- 
--	if (!(rsnd_ssi_flags_has(ssi, RSND_SSI_NO_BUSIF)))
-+	if (!(rsnd_flags_has(ssi, RSND_SSI_NO_BUSIF)))
- 		use_busif = 1;
- 	if (rsnd_io_to_mod_src(io))
- 		use_busif = 1;
-@@ -793,13 +790,13 @@ static int rsnd_ssi_common_probe(struct rsnd_mod *mod,
- 	 * But it don't need to call request_irq() many times.
- 	 * Let's control it by RSND_SSI_PROBED flag.
- 	 */
--	if (!rsnd_ssi_flags_has(ssi, RSND_SSI_PROBED)) {
-+	if (!rsnd_flags_has(ssi, RSND_SSI_PROBED)) {
- 		ret = request_irq(ssi->irq,
- 				  rsnd_ssi_interrupt,
- 				  IRQF_SHARED,
- 				  dev_name(dev), mod);
- 
--		rsnd_ssi_flags_set(ssi, RSND_SSI_PROBED);
-+		rsnd_flags_set(ssi, RSND_SSI_PROBED);
- 	}
- 
- 	return ret;
-@@ -817,10 +814,10 @@ static int rsnd_ssi_common_remove(struct rsnd_mod *mod,
- 		return 0;
- 
- 	/* PIO will request IRQ again */
--	if (rsnd_ssi_flags_has(ssi, RSND_SSI_PROBED)) {
-+	if (rsnd_flags_has(ssi, RSND_SSI_PROBED)) {
- 		free_irq(ssi->irq, mod);
- 
--		rsnd_ssi_flags_del(ssi, RSND_SSI_PROBED);
-+		rsnd_flags_del(ssi, RSND_SSI_PROBED);
- 	}
- 
- 	return 0;
-@@ -1003,13 +1000,13 @@ static void __rsnd_ssi_parse_hdmi_connection(struct rsnd_priv *priv,
- 	ssi  = rsnd_mod_to_ssi(mod);
- 
- 	if (strstr(remote_ep->full_name, "hdmi0")) {
--		rsnd_ssi_flags_set(ssi, RSND_SSI_HDMI0);
-+		rsnd_flags_set(ssi, RSND_SSI_HDMI0);
- 		dev_dbg(dev, "%s[%d] connected to HDMI0\n",
- 			 rsnd_mod_name(mod), rsnd_mod_id(mod));
- 	}
- 
- 	if (strstr(remote_ep->full_name, "hdmi1")) {
--		rsnd_ssi_flags_set(ssi, RSND_SSI_HDMI1);
-+		rsnd_flags_set(ssi, RSND_SSI_HDMI1);
- 		dev_dbg(dev, "%s[%d] connected to HDMI1\n",
- 			rsnd_mod_name(mod), rsnd_mod_id(mod));
- 	}
-@@ -1042,7 +1039,7 @@ int __rsnd_ssi_is_pin_sharing(struct rsnd_mod *mod)
- {
- 	struct rsnd_ssi *ssi = rsnd_mod_to_ssi(mod);
- 
--	return !!(rsnd_ssi_flags_has(ssi, RSND_SSI_CLK_PIN_SHARE));
-+	return !!(rsnd_flags_has(ssi, RSND_SSI_CLK_PIN_SHARE));
- }
- 
- static u32 *rsnd_ssi_get_status(struct rsnd_dai_stream *io,
-@@ -1125,10 +1122,10 @@ int rsnd_ssi_probe(struct rsnd_priv *priv)
- 		}
- 
- 		if (of_get_property(np, "shared-pin", NULL))
--			rsnd_ssi_flags_set(ssi, RSND_SSI_CLK_PIN_SHARE);
-+			rsnd_flags_set(ssi, RSND_SSI_CLK_PIN_SHARE);
- 
- 		if (of_get_property(np, "no-busif", NULL))
--			rsnd_ssi_flags_set(ssi, RSND_SSI_NO_BUSIF);
-+			rsnd_flags_set(ssi, RSND_SSI_NO_BUSIF);
- 
- 		ssi->irq = irq_of_parse_and_map(np, 0);
- 		if (!ssi->irq) {
 -- 
-2.14.1
+1.9.1
