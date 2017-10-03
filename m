@@ -1,70 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:43852 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751699AbdJDMWE (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:25469 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750873AbdJCFBF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Oct 2017 08:22:04 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] serial: sh-sci: Use of_device_get_match_data() helper
-Date: Wed,  4 Oct 2017 14:21:56 +0200
-Message-Id: <1507119716-12958-1-git-send-email-geert+renesas@glider.be>
+        Tue, 3 Oct 2017 01:01:05 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 3/3] arm64: dts: renesas: r8a77995: draak: drop "avb_phy_int" from avb_pins
+Date: Tue,  3 Oct 2017 13:57:13 +0900
+Message-Id: <1507006633-28258-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1507006633-28258-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1507006633-28258-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use the of_device_get_match_data() helper instead of open coding.
-Note that when used with DT, there's always a valid match.
+Since the Ethernet AVB driver doesn't support AVB_PHY_INT handling
+and it will be handled by a phy driver as a gpio pin, this patch
+removes the "avb_phy_int" from the avb_pins node.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reported-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Fixes: 4503b50eac08 ("arm64: dts: renesas: r8a77995: draak: enable EthernetAVB")
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- drivers/tty/serial/sh-sci.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 784dd42002eadbeb..95b12eefcb7ae906 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -40,6 +40,7 @@
- #include <linux/module.h>
- #include <linux/mm.h>
- #include <linux/of.h>
-+#include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/scatterlist.h>
-@@ -3044,17 +3045,15 @@ static struct plat_sci_port *sci_parse_dt(struct platform_device *pdev,
- 					  unsigned int *dev_id)
- {
- 	struct device_node *np = pdev->dev.of_node;
--	const struct of_device_id *match;
- 	struct plat_sci_port *p;
- 	struct sci_port *sp;
-+	const void *data;
- 	int id;
- 
- 	if (!IS_ENABLED(CONFIG_OF) || !np)
- 		return NULL;
- 
--	match = of_match_node(of_sci_match, np);
--	if (!match)
--		return NULL;
-+	data = of_device_get_match_data(&pdev->dev);
- 
- 	p = devm_kzalloc(&pdev->dev, sizeof(struct plat_sci_port), GFP_KERNEL);
- 	if (!p)
-@@ -3070,8 +3069,8 @@ static struct plat_sci_port *sci_parse_dt(struct platform_device *pdev,
- 	sp = &sci_ports[id];
- 	*dev_id = id;
- 
--	p->type = SCI_OF_TYPE(match->data);
--	p->regtype = SCI_OF_REGTYPE(match->data);
-+	p->type = SCI_OF_TYPE(data);
-+	p->regtype = SCI_OF_REGTYPE(data);
- 
- 	sp->has_rtscts = of_property_read_bool(np, "uart-has-rtscts");
- 
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+index 96b7ff5..fac58be 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+@@ -41,8 +41,7 @@
+ &pfc {
+ 	avb0_pins: avb {
+ 		mux {
+-			groups = "avb0_link", "avb0_phy_int", "avb0_mdc",
+-				 "avb0_mii";
++			groups = "avb0_link", "avb0_mdc", "avb0_mii";
+ 			function = "avb0";
+ 		};
+ 	};
 -- 
-2.7.4
+1.9.1
