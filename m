@@ -1,95 +1,96 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Fri, 6 Oct 2017 11:14:28 +0200
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:40360 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750720AbdJCHp0 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 3 Oct 2017 03:45:26 -0400
+Date: Tue, 3 Oct 2017 09:45:08 +0200
 From: Simon Horman <horms@verge.net.au>
 To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: kishon@ti.com, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3 3/4] phy: rcar-gen3-usb2: add SoC-specific parameter
- for dedicated pins
-Message-ID: <20171006091425.GB7734@verge.net.au>
-References: <1504233685-17947-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1504233685-17947-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 20/22] arm64: dts: renesas: r8a77995: draak: enable
+ EthernetAVB
+Message-ID: <20171003074508.GA29129@verge.net.au>
+References: <cover.1506678250.git.horms+renesas@verge.net.au>
+ <4503b50eac08f472e8690ec61f4d144e62cbdc55.1506678250.git.horms+renesas@verge.net.au>
+ <29d4573f-4127-225c-1abc-7f341734d7d7@cogentembedded.com>
+ <TY1PR06MB09924F9B2BE2CA1C5F1CF318D87D0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+ <20171002071433.GA10579@verge.net.au>
+ <TY1PR06MB099289399914401B22232C67D87D0@TY1PR06MB0992.apcprd06.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1504233685-17947-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <TY1PR06MB099289399914401B22232C67D87D0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Sep 01, 2017 at 11:41:24AM +0900, Yoshihiro Shimoda wrote:
-> This patch adds SoC-specific parameter to avoid reading/writing
-> specific registers wrongly if this driver runs on a SoC which doesn't
-> have dedicated pins (e.g. R-Car D3).
+On Mon, Oct 02, 2017 at 09:16:56AM +0000, Yoshihiro Shimoda wrote:
+> Hi Simon-san,
 > 
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-
-> ---
->  drivers/phy/renesas/phy-rcar-gen3-usb2.c | 24 +++++++++++++++++++-----
->  1 file changed, 19 insertions(+), 5 deletions(-)
+> > -----Original Message-----
+> > From: Simon Horman
+> > Sent: Monday, October 2, 2017 4:15 PM
+> > 
+> > On Mon, Oct 02, 2017 at 01:18:49AM +0000, Yoshihiro Shimoda wrote:
+> > > Hello,
+> > >
+> > > > -----Original Message-----
+> > > > From: Sergei Shtylyov
+> > > > Sent: Saturday, September 30, 2017 7:24 PM
+> > > >
+> > > > Hello!
+> > > >
+> > > > On 9/29/2017 2:52 PM, Simon Horman wrote:
+> > > >
+> > > > > From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> > > > >
+> > > > > This patch enables EthernetAVB for R-Car D3 draak board.
+> > > > >
+> > > > > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> > > > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > > > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> > > > > ---
+> > > > >   arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 25 +++++++++++++++++++++++++
+> > > > >   1 file changed, 25 insertions(+)
+> > > > >
+> > > > > diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+> > > > > index 7b776cb7e928..96b7ff5cc321 100644
+> > > > > --- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+> > > > > +++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+> > > > [...]
+> > > > > @@ -37,6 +39,14 @@
+> > > > >   };
+> > > > >
+> > > > >   &pfc {
+> > > > > +	avb0_pins: avb {
+> > > > > +		mux {
+> > > > > +			groups = "avb0_link", "avb0_phy_int", "avb0_mdc",
+> > > >                                                ^^^^^^^^^^^^^^
+> > > >     Hum, I don't think it's compatible with routing the PHY interrupt via
+> > > > GPIO5_19 below. The driver doesn't support signalling via AVB_PHY_INT anyway.
+> > >
+> > > Oops! You're correct. I should drop "avb0_phy_int".
+> > >
+> > > Simon-san, may I send a follow-up patch to fix this?
+> > 
+> > Thanks Sergei, thanks Shimoda-san,
+> > 
+> > yes, please provide a follow-up patch.
+> > 
+> > At this stage I don't think we need to re-spin this pull-request
+> > to fix this, rather a follow-up patch can be included
+> > in a follow-up pull request.
 > 
-> diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-> index 4ea9902..15e095e 100644
-> --- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-> +++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-> @@ -18,6 +18,7 @@
->  #include <linux/module.h>
->  #include <linux/of.h>
->  #include <linux/of_address.h>
-> +#include <linux/of_device.h>
->  #include <linux/phy/phy.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm_runtime.h>
-> @@ -80,6 +81,8 @@
->  #define USB2_ADPCTRL_IDPULLUP		BIT(5)	/* 1 = ID sampling is enabled */
->  #define USB2_ADPCTRL_DRVVBUS		BIT(4)
->  
-> +#define RCAR_GEN3_PHY_HAS_DEDICATED_PINS	1
-> +
->  struct rcar_gen3_chan {
->  	void __iomem *base;
->  	struct extcon_dev *extcon;
-> @@ -400,9 +403,17 @@ static irqreturn_t rcar_gen3_phy_usb2_irq(int irq, void *_ch)
->  }
->  
->  static const struct of_device_id rcar_gen3_phy_usb2_match_table[] = {
-> -	{ .compatible = "renesas,usb2-phy-r8a7795" },
-> -	{ .compatible = "renesas,usb2-phy-r8a7796" },
-> -	{ .compatible = "renesas,rcar-gen3-usb2-phy" },
-> +	{
-> +		.compatible = "renesas,usb2-phy-r8a7795",
-> +		.data = (void *)RCAR_GEN3_PHY_HAS_DEDICATED_PINS,
-> +	},
-> +	{
-> +		.compatible = "renesas,usb2-phy-r8a7796",
-> +		.data = (void *)RCAR_GEN3_PHY_HAS_DEDICATED_PINS,
-> +	},
-> +	{
-> +		.compatible = "renesas,rcar-gen3-usb2-phy",
-> +	},
->  	{ }
->  };
->  MODULE_DEVICE_TABLE(of, rcar_gen3_phy_usb2_match_table);
-> @@ -446,9 +457,12 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
->  	}
->  
->  	if (of_usb_get_dr_mode_by_phy(dev->of_node, 0) == USB_DR_MODE_OTG) {
-> -		int ret;
-> +		int ret, dedicated_pins;
-> +		const struct of_device_id *of_id =
-> +			of_match_device(rcar_gen3_phy_usb2_match_table, dev);
->  
-> -		channel->has_otg = true;
-> +		dedicated_pins = of_id ? (uintptr_t)of_id->data : 0;
+> I got it. I will send it. Also, should I send salvator-common and ulcb patches
+> about Geert-san's comment (These dtsi files also enable "avb_phy_int" for now)?
 
-Nit: I think you could use of_device_get_match_data() here.
+Hi Shimoda-san,
 
-> +		channel->has_otg = !!dedicated_pins;
->  		channel->can_role_swap = true;
->  		channel->extcon = devm_extcon_dev_allocate(dev,
->  							rcar_gen3_phy_cable);
-> -- 
-> 1.9.1
-> 
+yes, I think that would be best.
+
+Please include Fixes tags.
