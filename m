@@ -1,31 +1,42 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Tue, 3 Oct 2017 09:58:48 +0100
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-To: Chanwoo Choi <cw00.choi@samsung.com>
-CC: <balbi@kernel.org>, <kishon@ti.com>, <sre@kernel.org>,
-        <gregkh@linuxfoundation.org>, <lee.jones@linaro.org>,
-        <heiko@sntech.de>, <yoshihiro.shimoda.uh@renesas.com>,
-        <krzk@kernel.org>, <b.zolnierkie@samsung.com>,
-        <maxime.ripard@free-electrons.com>, <wens@csie.org>,
-        <chanwoo@kernel.org>, <myungjoo.ham@samsung.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-        <linux-rockchip@lists.infradead.org>
-Subject: Re: [PATCH] extcon: Split out extcon header file for consumer and
- provider device
-Message-ID: <20171003085848.tma5l5lq4yavddli@localhost.localdomain>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:51630 "EHLO
+        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751072AbdJCCca (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 2 Oct 2017 22:32:30 -0400
+MIME-Version: 1.0
+In-Reply-To: <1506643305-4581-1-git-send-email-cw00.choi@samsung.com>
 References: <CGME20170929000148epcas2p200e56186b067ec626a033c7ae2d4bbdb@epcas2p2.samsung.com>
  <1506643305-4581-1-git-send-email-cw00.choi@samsung.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <1506643305-4581-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Tue, 3 Oct 2017 10:32:04 +0800
+Message-ID: <CAGb2v641HBJ0MPZMx0YhOMWZeNKNiUJ48r-2Gh3WE7x41wJy4g@mail.gmail.com>
+Subject: Re: [PATCH] extcon: Split out extcon header file for consumer and
+ provider device
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Felipe Balbi <balbi@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        yoshihiro.shimoda.uh@renesas.com,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, chanwoo@kernel.org,
+        myungjoo.ham@samsung.com,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        linux-usb <linux-usb@vger.kernel.org>,
+        "open list:ARM/SHMOBILE ARM..." <linux-renesas-soc@vger.kernel.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Sep 29, 2017 at 09:01:45AM +0900, Chanwoo Choi wrote:
+On Fri, Sep 29, 2017 at 8:01 AM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
 > The extcon has two type of extcon devices as following.
 > - 'extcon provider deivce' adds new extcon device and detect the
 >    state/properties of external connector. Also, it notifies the
@@ -36,7 +47,7 @@ On Fri, Sep 29, 2017 at 09:01:45AM +0900, Chanwoo Choi wrote:
 > both provider and consumer device driver. To clarify the meaning of
 > header file and to remove the wrong use-case on consumer device,
 > this patch separates into extcon.h and extcon-provider.h.
-> 
+>
 > [Description for include/linux/{extcon.h|extcon-provider.h}]
 > - extcon.h includes the extcon API and data structure for extcon consumer
 >   device driver. This header file contains the following APIs:
@@ -46,7 +57,7 @@ On Fri, Sep 29, 2017 at 09:01:45AM +0900, Chanwoo Choi wrote:
 >   : Get the state of each external connector
 >   : Get the property value of each external connector
 >   : Get the property capability of each external connector
-> 
+>
 > - extcon-provider.h includes the extcon API and data structure for extcon
 >   provider device driver. This header file contains the following APIs:
 >   : Include 'include/linux/extcon.h'
@@ -55,7 +66,7 @@ On Fri, Sep 29, 2017 at 09:01:45AM +0900, Chanwoo Choi wrote:
 >   : Set the state of each external connector
 >   : Set the property value of each external connector
 >   : Set the property capability of each external connector
-> 
+>
 > Cc: Felipe Balbi <balbi@kernel.org>
 > Cc: Kishon Vijay Abraham I <kishon@ti.com>
 > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
@@ -63,9 +74,13 @@ On Fri, Sep 29, 2017 at 09:01:45AM +0900, Chanwoo Choi wrote:
 > Cc: Lee Jones <lee.jones@linaro.org>
 > Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 > ---
->  drivers/extcon/extcon-arizona.c               |   2 +-
 
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+For
 
-Thanks,
-Charles
+>  drivers/extcon/extcon-axp288.c                |   2 +-
+
+and
+
+>  drivers/phy/allwinner/phy-sun4i-usb.c         |   2 +-
+
+Acked-by: Chen-Yu Tsai <wens@csie.org>
