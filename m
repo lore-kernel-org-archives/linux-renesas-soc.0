@@ -1,77 +1,228 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:55851 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751204AbdJCNhC (ORCPT
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:47737 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751059AbdJCIbz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Oct 2017 09:37:02 -0400
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: jacopo mondi <jacopo@jmondi.org>
-CC: Linus Walleij <linus.walleij@linaro.org>,
+        Tue, 3 Oct 2017 04:31:55 -0400
+Date: Tue, 3 Oct 2017 10:31:48 +0200
+From: jacopo mondi <jacopo@jmondi.org>
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
         Simon Horman <horms+renesas@verge.net.au>,
         Jacopo Mondi <jacopo+renesas@jmondi.org>
-Subject: RE: [PATCH 1/2] pinctrl: rza1: add support for RZ/A1L
-Date: Tue, 3 Oct 2017 13:36:57 +0000
-Message-ID: <SG2PR06MB1165EE1D21AFC1D3005308538A720@SG2PR06MB1165.apcprd06.prod.outlook.com>
+Subject: Re: [PATCH 1/2] pinctrl: rza1: add support for RZ/A1L
+Message-ID: <20171003083148.GG4037@w540>
 References: <20171003073334.18917-1-chris.brandt@renesas.com>
  <20171003073334.18917-2-chris.brandt@renesas.com>
- <20171003083148.GG4037@w540>
-In-Reply-To: <20171003083148.GG4037@w540>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20171003073334.18917-2-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgSmFjb3BvLA0KDQpPbiBUdWVzZGF5LCBPY3RvYmVyIDAzLCAyMDE3LCBqYWNvcG8gbW9uZGkg
-d3JvdGU6DQo+IERvIHlvdSBoYXZlIG90aGVyIGF1dGhvcml0YXRpdmUgc291cmNlcyBmb3IgcGlu
-J3MgYmlkaXIgc2V0dGluZ3M/DQo+IEFjY29yZGluZyB0byB0aGUgcHVibGljbHkgYXZhaWxhYmxl
-IG1hbnVhbCwgdGhlcmUgYXJlIG90aGVyIHBpbnMgdGhhdA0KPiBuZWVkcyBiaWRpciBub3QgbGlz
-dGVkIGhlcmUuDQo+IEFzIHRoZSBzYW1lIGhhcHBlbmVkIHdpdGggUlovQTFIIEknbSBub3QgdG9v
-IGNvbmNlcm5lZCwgYnV0IEknbQ0KPiBsaXN0aW5nIHNvbWUgb2YgdGhlcmUgaGVyZSBub25ldGhl
-bGVzcw0KDQpCYWNrIHdoZW4geW91IHdlcmUgd29ya2luZyBvbiB0aGlzLCBJIGRpc2N1c3NlZCB3
-aXRoIHRoZSBndXlzIGJhY2sgaW4gDQpKYXBhbi4gV2hpbGUgaW4gdGhlIHRhYmxlIHRoZXJlIGFy
-ZSBtdWx0aXBsZSBwaW5zIHRoYXQgc2hvdyANCidiaS1kaXJlY3Rpb25hbCBjYXBhYmxlJywgdGhl
-eSBkb24ndCBhbGwgbmVlZCB0aGUgYmktZGlyIGJpdCBzZXQuIFRoaXMgd2FzIHRoZSBsaXN0IG9m
-DQpwZXJpcGhlcmFsOg0KIEkyQywgTURJTyAoRVRIKSwgTU1DLCBTREhJLCBRU1BJLCBEYXRhIChE
-MC1EMzEpDQoNCg0KPiBQMiBoYXMgc2V2ZXJhbCBUSU9DIHBpbnMgaW4gbW9kZSA0IGFuZCBTU0kg
-aW4gbW9kZSAyDQoNClBvcnQgMj8/Pw0KUG9ydCAyLCBtb2RlIDQgaW4gdGhlIFJaL0ExTCBtYW51
-YWwgb25seSBoYXMgSVJRNyw2LDUsMiwxDQoNCg0KSSB0aG91Z2h0IHdlIGRlY2lkZWQgb24gdGhh
-dCBUSU9DIHBpbnMgYXJlIG9uZXMgdGhhdCBhcmUgbWFudWFsbHkgc2V0IHRvDQplaXRoZXIgaW5w
-dXQgKGlucHV0LWVuYWJsZSwgb3V0cHV0LWVuYWJsZSkgYnkgdGhlIHVzZXJzIERldmljZSBUcmVl
-LCBzbw0KdGhleSBkb24ndCBuZWVkIHRvIGJlIHB1dCBpbnRvIGEgdGFibGUuIElmIGlucHV0LWVu
-YWJsZSBvciANCm91dHB1dC1lbmFibGUgaXMgc3BlY2lmaWVkLCB0aGVuIHlvdSBtYW51YWxseSBz
-ZXQgaXQgdG8gdGhhdCBkaXJlY3Rpb24uDQoNCkFzIGZvciBTU0ksIHRoZSBtYW51YWwgc2F5cyBv
-bmx5IHRoZSBTU0lUeCBwaW5zIG5lZWQgYmktZGlyLCBub3QgdGhlIA0KU1NJUnggcGlucy4NCg0K
-DQo+IFRJT0MgaW4gbW9kZTMsIFNLQzMgYW5kIFNDSzEgaW4gbW9kZSA1DQo+ID4gKw0KPiA+ICtz
-dGF0aWMgY29uc3Qgc3RydWN0IHJ6YTFfYmlkaXJfcGluIHJ6YTFsX2JpZGlyX3BpbnNfcDRbXSA9
-IHsNCj4gPiArCXsgLnBpbiA9IDEsIC5mdW5jID0gNCB9LA0KPiA+ICsJeyAucGluID0gMiwgLmZ1
-bmMgPSAyIH0sDQo+ID4gKwl7IC5waW4gPSAzLCAuZnVuYyA9IDIgfSwNCj4gPiArCXsgLnBpbiA9
-IDYsIC5mdW5jID0gMiB9LA0KPiA+ICsJeyAucGluID0gNywgLmZ1bmMgPSAyIH0sDQo+ID4gK307
-DQo+IA0KPiBDb25mdXNlZCwgeW91J3JlIGhlcmUgbGlzdGluZyBUSU9DMkIgcGluIChwaW4gMSBt
-b2RlICM0KSBidXQgbm90IFRJT0MxQg0KPiAocGluIDAgbW9kZSAjNCkNCj4gRVRfTURJTyBpbiBt
-b2RlIDQsIHdoaWNoIHdlIGxpc3QgYXMgYmlkaXIgaW4gUlovQTFIDQoNClA0XzEgbW9kZSA0IGlz
-IEVUX01ESU8uDQoNClRJT0MxQiBpcyBQNF8wIG1vZGUgMy4NClRJT0MyQiBpcyBQNF8xIE1vZGUg
-Mw0KDQpBcmUgeW91IGxvb2tpbmcgYXQgVGFibGUgNDEuMTkgaW4gdGhlIFJldi4zLjAwIHZlcnNp
-b24gb2YgdGhlIFJaL0ExTCANCkhhcmR3YXJlIE1hbnVhbD8NCg0KPiA+ICtzdGF0aWMgY29uc3Qg
-c3RydWN0IHJ6YTFfc3dpb19waW4gcnphMWxfc3dpb19waW5zW10gPSB7DQo+ID4gKwl7IC5wb3J0
-ID0gMiwgLnBpbiA9IDgsIC5mdW5jID0gMiwgLmlucHV0ID0gMCB9LA0KPiA+ICsJeyAucG9ydCA9
-IDUsIC5waW4gPSA2LCAuZnVuYyA9IDMsIC5pbnB1dCA9IDAgfSwNCj4gPiArCXsgLnBvcnQgPSA2
-LCAucGluID0gNiwgLmZ1bmMgPSAzLCAuaW5wdXQgPSAwIH0sDQo+ID4gKwl7IC5wb3J0ID0gNiwg
-LnBpbiA9IDEwLCAuZnVuYyA9IDMsIC5pbnB1dCA9IDAgfSwNCj4gPiArCXsgLnBvcnQgPSA3LCAu
-cGluID0gMTAsIC5mdW5jID0gMiwgLmlucHV0ID0gMCB9LA0KPiA+ICsJeyAucG9ydCA9IDgsIC5w
-aW4gPSAyLCAuZnVuYyA9IDMsIC5pbnB1dCA9IDAgfSwNCj4gPiArfTsNCj4gDQo+IEkgY291bnQg
-MjAgU1dJTyBwaW5zDQo+IA0KPiBUSU9DWzAtNF1bQS1EXQ0KPiBTU0lUeFswLTNdDQo+IFdEVE9W
-Rg0KDQpJIHRob3VnaHQgd2Ugc2FpZCBUSU9DIGRpZG4ndCBuZWVkIHRvIGJlIGluIGEgdGFibGUg
-YmVjYXVzZSB0aGUgdXNlciBoYXMNCnRvIHNwZWNpZnkgdGhlbSBhbnl3YXkgYmVjYXVzZSB0aGUg
-dXNlciBoYXMgdG8gY2hvb3NlIGlmIGhlIHdhbnRzIHRoZW0gDQphcyBpbnB1dCBvciBvdXRwdXQs
-IHNvIGlmIGhlIGRvZXMgdGhhdCwgdGhlbiB3ZSBhdXRvbWF0aWNhbGx5IGtub3cgaXQncyANCmEg
-c3dpbyBwaW4uIEhtbSwgbWF5YmUgSSBoYXZlIHRvIGdvIGJhY2sgYW5kIGxvb2sgYXQgd2hhdCB0
-aGUgZHJpdmVyIA0KZW5kZWQgdXAgaW1wbGVtZW50aW5nLg0KDQoNCkNocmlzDQo=
+Hi Chris,
+   thanks for the patches
+
+On Tue, Oct 03, 2017 at 02:33:33AM -0500, Chris Brandt wrote:
+> Aspects like the number of ports and the location where peripherals are
+> brought out differ between the RZ/A1H and RZ/A1L.
+>
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> ---
+>  drivers/pinctrl/pinctrl-rza1.c | 134 +++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 134 insertions(+)
+>
+> diff --git a/drivers/pinctrl/pinctrl-rza1.c b/drivers/pinctrl/pinctrl-rza1.c
+> index 04d058706b80..717c0f4449a0 100644
+> --- a/drivers/pinctrl/pinctrl-rza1.c
+> +++ b/drivers/pinctrl/pinctrl-rza1.c
+> @@ -302,6 +302,134 @@ static const struct rza1_pinmux_conf rza1h_pmx_conf = {
+>  	.swio_entries	= rza1h_swio_entries,
+>  };
+>
+> +/* ----------------------------------------------------------------------------
+> + * RZ/A1L (r7s72102) pinmux flags
+> + */
+
+Do you have other authoritative sources for pin's bidir settings?
+According to the publicly available manual, there are other pins that
+needs bidir not listed here.
+As the same happened with RZ/A1H I'm not too concerned, but I'm
+listing some of there here nonetheless
+
+> +
+> +static const struct rza1_bidir_pin rza1l_bidir_pins_p1[] = {
+> +	{ .pin = 0, .func = 1 },
+> +	{ .pin = 1, .func = 1 },
+> +	{ .pin = 2, .func = 1 },
+> +	{ .pin = 3, .func = 1 },
+> +	{ .pin = 4, .func = 1 },
+> +	{ .pin = 5, .func = 1 },
+> +	{ .pin = 6, .func = 1 },
+> +	{ .pin = 7, .func = 1 },
+> +};
+> +
+
+P2 has several TIOC pins in mode 4 and SSI in mode 2
+
+> +static const struct rza1_bidir_pin rza1l_bidir_pins_p3[] = {
+> +	{ .pin = 0, .func = 2 },
+> +	{ .pin = 1, .func = 2 },
+> +	{ .pin = 2, .func = 2 },
+> +	{ .pin = 4, .func = 2 },
+> +	{ .pin = 5, .func = 2 },
+> +	{ .pin = 10, .func = 2 },
+> +	{ .pin = 11, .func = 2 },
+> +	{ .pin = 12, .func = 2 },
+> +	{ .pin = 13, .func = 2 },
+> +};
+
+TIOC in mode3, SKC3 and SCK1 in mode 5
+> +
+> +static const struct rza1_bidir_pin rza1l_bidir_pins_p4[] = {
+> +	{ .pin = 1, .func = 4 },
+> +	{ .pin = 2, .func = 2 },
+> +	{ .pin = 3, .func = 2 },
+> +	{ .pin = 6, .func = 2 },
+> +	{ .pin = 7, .func = 2 },
+> +};
+
+Confused, you're here listing TIOC2B pin (pin 1 mode #4) but not TIOC1B (pin 0 mode #4)
+ET_MDIO in mode 4, which we list as bidir in RZ/A1H
+
+> +
+> +static const struct rza1_bidir_pin rza1l_bidir_pins_p5[] = {
+> +	{ .pin = 0, .func = 1 },
+> +	{ .pin = 1, .func = 1 },
+> +	{ .pin = 2, .func = 1 },
+> +	{ .pin = 3, .func = 1 },
+> +	{ .pin = 4, .func = 1 },
+> +	{ .pin = 5, .func = 1 },
+> +	{ .pin = 6, .func = 1 },
+> +	{ .pin = 7, .func = 1 },
+> +	{ .pin = 8, .func = 1 },
+> +	{ .pin = 9, .func = 1 },
+> +	{ .pin = 10, .func = 1 },
+> +	{ .pin = 11, .func = 1 },
+> +	{ .pin = 12, .func = 1 },
+> +	{ .pin = 13, .func = 1 },
+> +	{ .pin = 14, .func = 1 },
+> +	{ .pin = 15, .func = 1 },
+> +	{ .pin = 0, .func = 2 },
+> +	{ .pin = 1, .func = 2 },
+> +	{ .pin = 2, .func = 2 },
+> +	{ .pin = 3, .func = 2 },
+> +};
+
+I'll stop here with bidir as I guess we're following different documents, as
+it happened for RZ/A1H you may have another source of informations
+
+> +
+> +static const struct rza1_bidir_pin rza1l_bidir_pins_p6[] = {
+> +	{ .pin = 0, .func = 1 },
+> +	{ .pin = 1, .func = 1 },
+> +	{ .pin = 2, .func = 1 },
+> +	{ .pin = 3, .func = 1 },
+> +	{ .pin = 4, .func = 1 },
+> +	{ .pin = 5, .func = 1 },
+> +	{ .pin = 6, .func = 1 },
+> +	{ .pin = 7, .func = 1 },
+> +	{ .pin = 8, .func = 1 },
+> +	{ .pin = 9, .func = 1 },
+> +	{ .pin = 10, .func = 1 },
+> +	{ .pin = 11, .func = 1 },
+> +	{ .pin = 12, .func = 1 },
+> +	{ .pin = 13, .func = 1 },
+> +	{ .pin = 14, .func = 1 },
+> +	{ .pin = 15, .func = 1 },
+> +};
+> +
+> +static const struct rza1_bidir_pin rza1l_bidir_pins_p7[] = {
+> +	{ .pin = 2, .func = 2 },
+> +	{ .pin = 3, .func = 2 },
+> +	{ .pin = 5, .func = 2 },
+> +	{ .pin = 6, .func = 2 },
+> +	{ .pin = 7, .func = 2 },
+> +	{ .pin = 2, .func = 3 },
+> +	{ .pin = 3, .func = 3 },
+> +	{ .pin = 5, .func = 3 },
+> +	{ .pin = 6, .func = 3 },
+> +	{ .pin = 7, .func = 3 },
+> +};
+> +
+> +static const struct rza1_bidir_pin rza1l_bidir_pins_p9[] = {
+> +	{ .pin = 1, .func = 2 },
+> +	{ .pin = 0, .func = 3 },
+> +	{ .pin = 1, .func = 3 },
+> +	{ .pin = 3, .func = 3 },
+> +	{ .pin = 4, .func = 3 },
+> +	{ .pin = 5, .func = 3 },
+> +};
+> +
+> +static const struct rza1_swio_pin rza1l_swio_pins[] = {
+> +	{ .port = 2, .pin = 8, .func = 2, .input = 0 },
+> +	{ .port = 5, .pin = 6, .func = 3, .input = 0 },
+> +	{ .port = 6, .pin = 6, .func = 3, .input = 0 },
+> +	{ .port = 6, .pin = 10, .func = 3, .input = 0 },
+> +	{ .port = 7, .pin = 10, .func = 2, .input = 0 },
+> +	{ .port = 8, .pin = 2, .func = 3, .input = 0 },
+> +};
+
+I count 20 SWIO pins
+
+TIOC[0-4][A-D]
+SSITx[0-3]
+WDTOVF
+
+Thanks
+   j
+> +
+> +static const struct rza1_bidir_entry rza1l_bidir_entries[RZA1_NPORTS] = {
+> +	[1] = { ARRAY_SIZE(rza1l_bidir_pins_p1), rza1l_bidir_pins_p1 },
+> +	[3] = { ARRAY_SIZE(rza1l_bidir_pins_p3), rza1l_bidir_pins_p3 },
+> +	[4] = { ARRAY_SIZE(rza1l_bidir_pins_p4), rza1l_bidir_pins_p4 },
+> +	[5] = { ARRAY_SIZE(rza1l_bidir_pins_p4), rza1l_bidir_pins_p5 },
+> +	[6] = { ARRAY_SIZE(rza1l_bidir_pins_p6), rza1l_bidir_pins_p6 },
+> +	[7] = { ARRAY_SIZE(rza1l_bidir_pins_p7), rza1l_bidir_pins_p7 },
+> +	[9] = { ARRAY_SIZE(rza1l_bidir_pins_p9), rza1l_bidir_pins_p9 },
+> +};
+> +
+> +static const struct rza1_swio_entry rza1l_swio_entries[] = {
+> +	[0] = { ARRAY_SIZE(rza1h_swio_pins), rza1h_swio_pins },
+> +};
+> +
+> +/* RZ/A1L (r7s72102x) pinmux flags table */
+> +static const struct rza1_pinmux_conf rza1l_pmx_conf = {
+> +	.bidir_entries	= rza1l_bidir_entries,
+> +	.swio_entries	= rza1l_swio_entries,
+> +};
+> +
+>  /* ----------------------------------------------------------------------------
+>   * RZ/A1 types
+>   */
+> @@ -1283,9 +1411,15 @@ static int rza1_pinctrl_probe(struct platform_device *pdev)
+>
+>  static const struct of_device_id rza1_pinctrl_of_match[] = {
+>  	{
+> +		/* RZ/A1H, RZ/A1M */
+>  		.compatible	= "renesas,r7s72100-ports",
+>  		.data		= &rza1h_pmx_conf,
+>  	},
+> +	{
+> +		/* RZ/A1L */
+> +		.compatible	= "renesas,r7s72102-ports",
+> +		.data		= &rza1l_pmx_conf,
+> +	},
+>  	{ }
+>  };
+>
+> --
+> 2.14.1
+>
+>
