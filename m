@@ -1,60 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:39129 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751485AbdJQGBN (ORCPT
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:38378 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751059AbdJCIaK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Oct 2017 02:01:13 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v3 0/3] mmc: renesas_sdhi: add R-Car Gen[123] fallback compatibility strings
-Date: Tue, 17 Oct 2017 08:01:01 +0200
-Message-Id: <20171017060104.11039-1-horms+renesas@verge.net.au>
+        Tue, 3 Oct 2017 04:30:10 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170822232640.26147-25-niklas.soderlund+renesas@ragnatech.se>
+References: <20170822232640.26147-1-niklas.soderlund+renesas@ragnatech.se> <20170822232640.26147-25-niklas.soderlund+renesas@ragnatech.se>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 3 Oct 2017 10:30:08 +0200
+Message-ID: <CAMuHMdUih6ymX+Hv0C0AH3o5pTGWaEQq4kXXxoKYv-grNkcsgw@mail.gmail.com>
+Subject: Re: [PATCH v6 24/25] rcar-vin: enable support for r8a7795
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Fukawa <tomoharu.fukawa.eb@renesas.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add fallback compatibility strings for R-Car Gen 1, 2 and 3 to the SDHI
-bindings and driver.
+On Wed, Aug 23, 2017 at 1:26 AM, Niklas S=C3=B6derlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
+> Add the SoC specific information for Renesas r8a7795.
+>
+> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
+se>
 
-In the case of Renesas R-Car hardware we know that there are generations of
-SoCs, f.e. Gen 1 and 2. But beyond that its not clear what the relationship
-between IP blocks might be. For example, I believe that r8a7790 is older
-than r8a7791 but that doesn't imply that the latter is a descendant of the
-former or vice versa.
+> --- a/drivers/media/platform/rcar-vin/rcar-core.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
 
-We can, however, by examining the documentation and behaviour of the
-hardware at run-time observe that the current driver implementation appears
-to be compatible with the IP blocks on SoCs within a given generation.
+> @@ -1038,6 +1176,13 @@ static int rcar_vin_probe(struct platform_device *=
+pdev)
+>         vin->dev =3D &pdev->dev;
+>         vin->info =3D match->data;
+>
+> +       /*
+> +        * Special care is needed on r8a7795 ES1.x since it
+> +        * uses different routing then r8a7795 ES2.0.
 
-For the above reasons and convenience when enabling new SoCs a
-per-generation fallback compatibility string scheme being adopted for
-drivers for Renesas SoCs.
+than
 
-Based on mmc/next
+> +        */
+> +       if (vin->info =3D=3D &rcar_info_r8a7795 && soc_device_match(r8a77=
+95es1))
+> +               vin->info =3D &rcar_info_r8a7795es1;
+> +
+>         mem =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>         if (mem =3D=3D NULL)
+>                 return -EINVAL;
 
-Changes since v2:
-* Update example to current upstream using newer CPG/MSSR bindings
+Gr{oetje,eeting}s,
 
-Changes since v1:
-* Describe example in patch one as being for the r8a7790 (R-Car H2) rather
-  than the r8a7779 (R-Car H1)
-* Accumulate review tags from Geert Uytterhoeven
+                        Geert
 
-Simon Horman (3):
-  dt-bindings: mmc: renesas_sdhi: provide example in bindings
-    documentation
-  dt-bindings: mmc: renesas_sdhi: add R-Car Gen[123] fallback
-    compatibility strings
-  mmc: renesas_sdhi: implement R-Car Gen[123] fallback compatibility
-    strings
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
- Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 70 +++++++++++++++++++++-
- drivers/mmc/host/renesas_sdhi_internal_dmac.c      |  1 +
- drivers/mmc/host/renesas_sdhi_sys_dmac.c           |  5 +-
- 3 files changed, 74 insertions(+), 2 deletions(-)
-
--- 
-2.11.0
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
