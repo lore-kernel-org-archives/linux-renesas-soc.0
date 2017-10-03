@@ -1,77 +1,85 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:42151 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751637AbdJLGio (ORCPT
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:36777 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752335AbdJCPYI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 12 Oct 2017 02:38:44 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v6 1/4] phy: rcar-gen3-usb2: check dr_mode for otg mode
-Date: Thu, 12 Oct 2017 15:34:45 +0900
-Message-Id: <1507790088-26010-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1507790088-26010-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1507790088-26010-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Tue, 3 Oct 2017 11:24:08 -0400
+Received: by mail-wr0-f193.google.com with SMTP id k10so6124546wrk.3
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 03 Oct 2017 08:24:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <CAKv+Gu8BSnn3XhUALM-CfPqw2zNxovvup4uHf1F4qYZZ5oVUaA@mail.gmail.com>
+References: <20170830025547.30347-1-nicolas.pitre@linaro.org>
+ <20170830025547.30347-2-nicolas.pitre@linaro.org> <CAMuHMdXnYysiDURyztXv3bhBMyk0o1EN=JzwqwvUifzw5fFYAw@mail.gmail.com>
+ <CAKv+Gu8BSnn3XhUALM-CfPqw2zNxovvup4uHf1F4qYZZ5oVUaA@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 3 Oct 2017 17:24:06 +0200
+Message-ID: <CAMuHMdXXZ6Z694VU+PByucG76NxEjiiq-+GV3uVhgBU_0f_ONA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] ARM: head-common.S: speed up startup code
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Nicolas Pitre <nicolas.pitre@linaro.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Chris Brandt <Chris.Brandt@renesas.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The previous code assumed a channel has otg capability if a channel
-has interrupt property. But, it is not good because:
- - Battery charging feature also needs interrupt property.
- - Some R-Car Gen3 SoCs (e.g. R-Car D3) don't have OTG capability.
+Hoi Ard,
 
-So, this patch checks whether usb 2.0 host node has dr_mode property or
-not. If it has 'dr_mode = "otg";', this driver enables otg capability.
+On Tue, Oct 3, 2017 at 3:15 PM, Ard Biesheuvel
+<ard.biesheuvel@linaro.org> wrote:
+> On 3 October 2017 at 13:41, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>> On Wed, Aug 30, 2017 at 4:55 AM, Nicolas Pitre <nicolas.pitre@linaro.org> wrote:
+>>> Let's use optimized routines such as memcpy to copy .data and memzero
+>>> to clear .bss in the startup code instead of doing it one word at a
+>>> time. Those routines don't use any global data so they're safe to use
+>>> even if .data and .bss segments are not initialized.
+>>>
+>>> In the .data copy case a temporary stack is installed in the .bss area
+>>> as the actual kernel stack is located within the copied data area. The
+>>> XIP kernel linker script ensures a 8 byte alignment for that purpose.
+>>>
+>>> Finally, make the .data copy and related pointers surrounded by
+>>> CONFIG_XIP_KERNEL to make it obvious what it is all about. This will
+>>> allow for further cleanups in the non-XIP linker script.
+>>>
+>>> Signed-off-by: Nicolas Pitre <nico@linaro.org>
+>>> Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+>>
+>> This is now commit 9520b1a1b5f7a348 ("ARM: head-common.S: speed up startup
+>> code") in arm/for-next.
+>>
+>> If CONFIG_DEBUG_LOCK_ALLOC=y, the kernel log is spammed with a few hundred
+>> identical messages on various Renesas systems:
+>>
+>>     unwind: Unknown symbol address c0800300
+>>     unwind: Index not found c0800300
+>>
+>> I've bisected this to the aforementioned commit.
+>>
+>> c0800300 points to the instruction just after the __memzero call, cfr. below.
+>>
+>> Do you have a clue? Thanks!
+>
+> It looks like this patch results in start_kernel() being entered with
+> a different value for lr than before. Could you please try setting it
+> to zero instead, right before the jump to start_kernel() ?
+>
+> I don't think the patch itself is to blame here, it simply triggers an
+> existing issue in the unwinder (if my analysis is correct, of course)
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
----
- drivers/phy/renesas/phy-rcar-gen3-usb2.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+Your analysis looks correct to me, thanks! Patch sent.
 
-diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-index 54c3429..e00e99a 100644
---- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-@@ -1,7 +1,7 @@
- /*
-  * Renesas R-Car Gen3 for USB2.0 PHY driver
-  *
-- * Copyright (C) 2015 Renesas Electronics Corporation
-+ * Copyright (C) 2015-2017 Renesas Electronics Corporation
-  *
-  * This is based on the phy-rcar-gen2 driver:
-  * Copyright (C) 2014 Renesas Solutions Corp.
-@@ -22,6 +22,7 @@
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/regulator/consumer.h>
-+#include <linux/usb/of.h>
- #include <linux/workqueue.h>
- 
- /******* USB2.0 Host registers (original offset is +0x200) *******/
-@@ -415,13 +416,16 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 	/* call request_irq for OTG */
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq >= 0) {
--		int ret;
--
- 		INIT_WORK(&channel->work, rcar_gen3_phy_usb2_work);
- 		irq = devm_request_irq(dev, irq, rcar_gen3_phy_usb2_irq,
- 				       IRQF_SHARED, dev_name(dev), channel);
- 		if (irq < 0)
- 			dev_err(dev, "No irq handler (%d)\n", irq);
-+	}
-+
-+	if (of_usb_get_dr_mode_by_phy(dev->of_node, 0) == USB_DR_MODE_OTG) {
-+		int ret;
-+
- 		channel->has_otg = true;
- 		channel->extcon = devm_extcon_dev_allocate(dev,
- 							rcar_gen3_phy_cable);
--- 
-1.9.1
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
