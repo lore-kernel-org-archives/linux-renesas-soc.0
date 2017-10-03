@@ -1,8 +1,12 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Tue, 3 Oct 2017 17:04:12 +0200
-From: jacopo mondi <jacopo@jmondi.org>
-To: Chris Brandt <Chris.Brandt@renesas.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor4.renesas.com ([210.160.252.174]:55851 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751204AbdJCNhC (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 3 Oct 2017 09:37:02 -0400
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: jacopo mondi <jacopo@jmondi.org>
+CC: Linus Walleij <linus.walleij@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -12,122 +16,62 @@ Cc: Linus Walleij <linus.walleij@linaro.org>,
         <linux-renesas-soc@vger.kernel.org>,
         Simon Horman <horms+renesas@verge.net.au>,
         Jacopo Mondi <jacopo+renesas@jmondi.org>
-Subject: Re: [PATCH 1/2] pinctrl: rza1: add support for RZ/A1L
-Message-ID: <20171003150412.GI4037@w540>
+Subject: RE: [PATCH 1/2] pinctrl: rza1: add support for RZ/A1L
+Date: Tue, 3 Oct 2017 13:36:57 +0000
+Message-ID: <SG2PR06MB1165EE1D21AFC1D3005308538A720@SG2PR06MB1165.apcprd06.prod.outlook.com>
 References: <20171003073334.18917-1-chris.brandt@renesas.com>
  <20171003073334.18917-2-chris.brandt@renesas.com>
  <20171003083148.GG4037@w540>
- <SG2PR06MB1165EE1D21AFC1D3005308538A720@SG2PR06MB1165.apcprd06.prod.outlook.com>
+In-Reply-To: <20171003083148.GG4037@w540>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <SG2PR06MB1165EE1D21AFC1D3005308538A720@SG2PR06MB1165.apcprd06.prod.outlook.com>
-Sender: devicetree-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Chris,
-
-On Tue, Oct 03, 2017 at 01:36:57PM +0000, Chris Brandt wrote:
-> Hi Jacopo,
->
-> On Tuesday, October 03, 2017, jacopo mondi wrote:
-> > Do you have other authoritative sources for pin's bidir settings?
-> > According to the publicly available manual, there are other pins that
-> > needs bidir not listed here.
-> > As the same happened with RZ/A1H I'm not too concerned, but I'm
-> > listing some of there here nonetheless
->
-> Back when you were working on this, I discussed with the guys back in
-> Japan. While in the table there are multiple pins that show
-> 'bi-directional capable', they don't all need the bi-dir bit set. This was the list of
-> peripheral:
->  I2C, MDIO (ETH), MMC, SDHI, QSPI, Data (D0-D31)
-
-Oh, I just received the list of pin in txt format iirc and didn't
-noted down which peripherals where actually bi-dir
-
->
->
-> > P2 has several TIOC pins in mode 4 and SSI in mode 2
->
-> Port 2???
-> Port 2, mode 4 in the RZ/A1L manual only has IRQ7,6,5,2,1
-
-That was mode #3, sorry about this.
->
->
-> I thought we decided on that TIOC pins are ones that are manually set to
-> either input (input-enable, output-enable) by the users Device Tree, so
-> they don't need to be put into a table. If input-enable or
-> output-enable is specified, then you manually set it to that direction.
->
-
-Correct
-
-> As for SSI, the manual says only the SSITx pins need bi-dir, not the
-> SSIRx pins.
-
-Looking at RZ/A1H tables you're right. I wonder why in RZ/A1L SSI pins
-are listed as bidir and in RZ/A1H they're not.
->
->
-> > TIOC in mode3, SKC3 and SCK1 in mode 5
-> > > +
-> > > +static const struct rza1_bidir_pin rza1l_bidir_pins_p4[] = {
-> > > +	{ .pin = 1, .func = 4 },
-> > > +	{ .pin = 2, .func = 2 },
-> > > +	{ .pin = 3, .func = 2 },
-> > > +	{ .pin = 6, .func = 2 },
-> > > +	{ .pin = 7, .func = 2 },
-> > > +};
-> >
-> > Confused, you're here listing TIOC2B pin (pin 1 mode #4) but not TIOC1B
-> > (pin 0 mode #4)
-> > ET_MDIO in mode 4, which we list as bidir in RZ/A1H
->
-> P4_1 mode 4 is ET_MDIO.
-
-And I keep counting modes from 0...
-
->
-> TIOC1B is P4_0 mode 3.
-> TIOC2B is P4_1 Mode 3
-
-So it's fine to leave TIOC out from this table.
-
->
-> Are you looking at Table 41.19 in the Rev.3.00 version of the RZ/A1L
-> Hardware Manual?
->
-> > > +static const struct rza1_swio_pin rza1l_swio_pins[] = {
-> > > +	{ .port = 2, .pin = 8, .func = 2, .input = 0 },
-> > > +	{ .port = 5, .pin = 6, .func = 3, .input = 0 },
-> > > +	{ .port = 6, .pin = 6, .func = 3, .input = 0 },
-> > > +	{ .port = 6, .pin = 10, .func = 3, .input = 0 },
-> > > +	{ .port = 7, .pin = 10, .func = 2, .input = 0 },
-> > > +	{ .port = 8, .pin = 2, .func = 3, .input = 0 },
-> > > +};
-> >
-> > I count 20 SWIO pins
-> >
-> > TIOC[0-4][A-D]
-> > SSITx[0-3]
-> > WDTOVF
->
-> I thought we said TIOC didn't need to be in a table because the user has
-> to specify them anyway because the user has to choose if he wants them
-> as input or output, so if he does that, then we automatically know it's
-> a swio pin. Hmm, maybe I have to go back and look at what the driver
-> ended up implementing.
->
-
-Can confirm TIOC pins are not listed in SWIO table in RZ/A1H.
-
-Thanks for double checking. Your source from Japan is more
-authoritative than manuals and defintely more accurate than me ;)
-
-Thanks
-   j
-
->
-> Chris
+SGkgSmFjb3BvLA0KDQpPbiBUdWVzZGF5LCBPY3RvYmVyIDAzLCAyMDE3LCBqYWNvcG8gbW9uZGkg
+d3JvdGU6DQo+IERvIHlvdSBoYXZlIG90aGVyIGF1dGhvcml0YXRpdmUgc291cmNlcyBmb3IgcGlu
+J3MgYmlkaXIgc2V0dGluZ3M/DQo+IEFjY29yZGluZyB0byB0aGUgcHVibGljbHkgYXZhaWxhYmxl
+IG1hbnVhbCwgdGhlcmUgYXJlIG90aGVyIHBpbnMgdGhhdA0KPiBuZWVkcyBiaWRpciBub3QgbGlz
+dGVkIGhlcmUuDQo+IEFzIHRoZSBzYW1lIGhhcHBlbmVkIHdpdGggUlovQTFIIEknbSBub3QgdG9v
+IGNvbmNlcm5lZCwgYnV0IEknbQ0KPiBsaXN0aW5nIHNvbWUgb2YgdGhlcmUgaGVyZSBub25ldGhl
+bGVzcw0KDQpCYWNrIHdoZW4geW91IHdlcmUgd29ya2luZyBvbiB0aGlzLCBJIGRpc2N1c3NlZCB3
+aXRoIHRoZSBndXlzIGJhY2sgaW4gDQpKYXBhbi4gV2hpbGUgaW4gdGhlIHRhYmxlIHRoZXJlIGFy
+ZSBtdWx0aXBsZSBwaW5zIHRoYXQgc2hvdyANCidiaS1kaXJlY3Rpb25hbCBjYXBhYmxlJywgdGhl
+eSBkb24ndCBhbGwgbmVlZCB0aGUgYmktZGlyIGJpdCBzZXQuIFRoaXMgd2FzIHRoZSBsaXN0IG9m
+DQpwZXJpcGhlcmFsOg0KIEkyQywgTURJTyAoRVRIKSwgTU1DLCBTREhJLCBRU1BJLCBEYXRhIChE
+MC1EMzEpDQoNCg0KPiBQMiBoYXMgc2V2ZXJhbCBUSU9DIHBpbnMgaW4gbW9kZSA0IGFuZCBTU0kg
+aW4gbW9kZSAyDQoNClBvcnQgMj8/Pw0KUG9ydCAyLCBtb2RlIDQgaW4gdGhlIFJaL0ExTCBtYW51
+YWwgb25seSBoYXMgSVJRNyw2LDUsMiwxDQoNCg0KSSB0aG91Z2h0IHdlIGRlY2lkZWQgb24gdGhh
+dCBUSU9DIHBpbnMgYXJlIG9uZXMgdGhhdCBhcmUgbWFudWFsbHkgc2V0IHRvDQplaXRoZXIgaW5w
+dXQgKGlucHV0LWVuYWJsZSwgb3V0cHV0LWVuYWJsZSkgYnkgdGhlIHVzZXJzIERldmljZSBUcmVl
+LCBzbw0KdGhleSBkb24ndCBuZWVkIHRvIGJlIHB1dCBpbnRvIGEgdGFibGUuIElmIGlucHV0LWVu
+YWJsZSBvciANCm91dHB1dC1lbmFibGUgaXMgc3BlY2lmaWVkLCB0aGVuIHlvdSBtYW51YWxseSBz
+ZXQgaXQgdG8gdGhhdCBkaXJlY3Rpb24uDQoNCkFzIGZvciBTU0ksIHRoZSBtYW51YWwgc2F5cyBv
+bmx5IHRoZSBTU0lUeCBwaW5zIG5lZWQgYmktZGlyLCBub3QgdGhlIA0KU1NJUnggcGlucy4NCg0K
+DQo+IFRJT0MgaW4gbW9kZTMsIFNLQzMgYW5kIFNDSzEgaW4gbW9kZSA1DQo+ID4gKw0KPiA+ICtz
+dGF0aWMgY29uc3Qgc3RydWN0IHJ6YTFfYmlkaXJfcGluIHJ6YTFsX2JpZGlyX3BpbnNfcDRbXSA9
+IHsNCj4gPiArCXsgLnBpbiA9IDEsIC5mdW5jID0gNCB9LA0KPiA+ICsJeyAucGluID0gMiwgLmZ1
+bmMgPSAyIH0sDQo+ID4gKwl7IC5waW4gPSAzLCAuZnVuYyA9IDIgfSwNCj4gPiArCXsgLnBpbiA9
+IDYsIC5mdW5jID0gMiB9LA0KPiA+ICsJeyAucGluID0gNywgLmZ1bmMgPSAyIH0sDQo+ID4gK307
+DQo+IA0KPiBDb25mdXNlZCwgeW91J3JlIGhlcmUgbGlzdGluZyBUSU9DMkIgcGluIChwaW4gMSBt
+b2RlICM0KSBidXQgbm90IFRJT0MxQg0KPiAocGluIDAgbW9kZSAjNCkNCj4gRVRfTURJTyBpbiBt
+b2RlIDQsIHdoaWNoIHdlIGxpc3QgYXMgYmlkaXIgaW4gUlovQTFIDQoNClA0XzEgbW9kZSA0IGlz
+IEVUX01ESU8uDQoNClRJT0MxQiBpcyBQNF8wIG1vZGUgMy4NClRJT0MyQiBpcyBQNF8xIE1vZGUg
+Mw0KDQpBcmUgeW91IGxvb2tpbmcgYXQgVGFibGUgNDEuMTkgaW4gdGhlIFJldi4zLjAwIHZlcnNp
+b24gb2YgdGhlIFJaL0ExTCANCkhhcmR3YXJlIE1hbnVhbD8NCg0KPiA+ICtzdGF0aWMgY29uc3Qg
+c3RydWN0IHJ6YTFfc3dpb19waW4gcnphMWxfc3dpb19waW5zW10gPSB7DQo+ID4gKwl7IC5wb3J0
+ID0gMiwgLnBpbiA9IDgsIC5mdW5jID0gMiwgLmlucHV0ID0gMCB9LA0KPiA+ICsJeyAucG9ydCA9
+IDUsIC5waW4gPSA2LCAuZnVuYyA9IDMsIC5pbnB1dCA9IDAgfSwNCj4gPiArCXsgLnBvcnQgPSA2
+LCAucGluID0gNiwgLmZ1bmMgPSAzLCAuaW5wdXQgPSAwIH0sDQo+ID4gKwl7IC5wb3J0ID0gNiwg
+LnBpbiA9IDEwLCAuZnVuYyA9IDMsIC5pbnB1dCA9IDAgfSwNCj4gPiArCXsgLnBvcnQgPSA3LCAu
+cGluID0gMTAsIC5mdW5jID0gMiwgLmlucHV0ID0gMCB9LA0KPiA+ICsJeyAucG9ydCA9IDgsIC5w
+aW4gPSAyLCAuZnVuYyA9IDMsIC5pbnB1dCA9IDAgfSwNCj4gPiArfTsNCj4gDQo+IEkgY291bnQg
+MjAgU1dJTyBwaW5zDQo+IA0KPiBUSU9DWzAtNF1bQS1EXQ0KPiBTU0lUeFswLTNdDQo+IFdEVE9W
+Rg0KDQpJIHRob3VnaHQgd2Ugc2FpZCBUSU9DIGRpZG4ndCBuZWVkIHRvIGJlIGluIGEgdGFibGUg
+YmVjYXVzZSB0aGUgdXNlciBoYXMNCnRvIHNwZWNpZnkgdGhlbSBhbnl3YXkgYmVjYXVzZSB0aGUg
+dXNlciBoYXMgdG8gY2hvb3NlIGlmIGhlIHdhbnRzIHRoZW0gDQphcyBpbnB1dCBvciBvdXRwdXQs
+IHNvIGlmIGhlIGRvZXMgdGhhdCwgdGhlbiB3ZSBhdXRvbWF0aWNhbGx5IGtub3cgaXQncyANCmEg
+c3dpbyBwaW4uIEhtbSwgbWF5YmUgSSBoYXZlIHRvIGdvIGJhY2sgYW5kIGxvb2sgYXQgd2hhdCB0
+aGUgZHJpdmVyIA0KZW5kZWQgdXAgaW1wbGVtZW50aW5nLg0KDQoNCkNocmlzDQo=
