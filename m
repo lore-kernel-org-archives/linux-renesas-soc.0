@@ -1,78 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:41714 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753474AbdJaSLo (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:37026 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751996AbdJDMhA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 31 Oct 2017 14:11:44 -0400
+        Wed, 4 Oct 2017 08:37:00 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Kevin Hilman <khilman@kernel.org>
-Cc: Simon Horman <horms@verge.net.au>,
+To: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>, linux-pm@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 4/5] [RFC] soc: rockchip: power-domain: Use GENPD_FLAG_ACTIVE_WAKEUP
-Date: Tue, 31 Oct 2017 19:11:33 +0100
-Message-Id: <1509473494-19740-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1509473494-19740-1-git-send-email-geert+renesas@glider.be>
-References: <1509473494-19740-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH 1/4] ARM: dts: r8a7790: Use generic node name for VSP1 nodes
+Date: Wed,  4 Oct 2017 14:36:46 +0200
+Message-Id: <1507120609-14501-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1507120609-14501-1-git-send-email-geert+renesas@glider.be>
+References: <1507120609-14501-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Set the newly introduced GENPD_FLAG_ACTIVE_WAKEUP, which allows to
-remove the driver's own flag-based callback.
+Use the preferred generic node name instead of the specific name.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-This must not be applied before "PM / Domain: Enable genpd users to
-specify default active wakeup behavior" has landed upstream, hence the
-"RFC".
+ arch/arm/boot/dts/r8a7790.dtsi | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Compile-tested only.
-
-v2:
-  - New.
----
- drivers/soc/rockchip/pm_domains.c | 14 ++------------
- 1 file changed, 2 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/soc/rockchip/pm_domains.c b/drivers/soc/rockchip/pm_domains.c
-index 40b75748835f552c..5c342167b9db7a16 100644
---- a/drivers/soc/rockchip/pm_domains.c
-+++ b/drivers/soc/rockchip/pm_domains.c
-@@ -358,17 +358,6 @@ static void rockchip_pd_detach_dev(struct generic_pm_domain *genpd,
- 	pm_clk_destroy(dev);
- }
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 252c9664d0836838..ffa57bfe4873415c 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -1010,7 +1010,7 @@
+ 		status = "disabled";
+ 	};
  
--static bool rockchip_active_wakeup(struct device *dev)
--{
--	struct generic_pm_domain *genpd;
--	struct rockchip_pm_domain *pd;
--
--	genpd = pd_to_genpd(dev->pm_domain);
--	pd = container_of(genpd, struct rockchip_pm_domain, genpd);
--
--	return pd->info->active_wakeup;
--}
--
- static int rockchip_pm_add_one_domain(struct rockchip_pmu *pmu,
- 				      struct device_node *node)
- {
-@@ -489,8 +478,9 @@ static int rockchip_pm_add_one_domain(struct rockchip_pmu *pmu,
- 	pd->genpd.power_on = rockchip_pd_power_on;
- 	pd->genpd.attach_dev = rockchip_pd_attach_dev;
- 	pd->genpd.detach_dev = rockchip_pd_detach_dev;
--	pd->genpd.dev_ops.active_wakeup = rockchip_active_wakeup;
- 	pd->genpd.flags = GENPD_FLAG_PM_CLK;
-+	if (pd_info->active_wakeup)
-+		pd->genpd.flags |= GENPD_FLAG_ACTIVE_WAKEUP;
- 	pm_genpd_init(&pd->genpd, NULL, false);
+-	vsp1@fe920000 {
++	vsp@fe920000 {
+ 		compatible = "renesas,vsp1";
+ 		reg = <0 0xfe920000 0 0x8000>;
+ 		interrupts = <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>;
+@@ -1019,7 +1019,7 @@
+ 		resets = <&cpg 130>;
+ 	};
  
- 	pmu->genpd_data.domains[id] = &pd->genpd;
+-	vsp1@fe928000 {
++	vsp@fe928000 {
+ 		compatible = "renesas,vsp1";
+ 		reg = <0 0xfe928000 0 0x8000>;
+ 		interrupts = <GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>;
+@@ -1028,7 +1028,7 @@
+ 		resets = <&cpg 131>;
+ 	};
+ 
+-	vsp1@fe930000 {
++	vsp@fe930000 {
+ 		compatible = "renesas,vsp1";
+ 		reg = <0 0xfe930000 0 0x8000>;
+ 		interrupts = <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
+@@ -1037,7 +1037,7 @@
+ 		resets = <&cpg 128>;
+ 	};
+ 
+-	vsp1@fe938000 {
++	vsp@fe938000 {
+ 		compatible = "renesas,vsp1";
+ 		reg = <0 0xfe938000 0 0x8000>;
+ 		interrupts = <GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>;
 -- 
 2.7.4
