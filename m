@@ -1,71 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:55278 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753158AbdJSQBT (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:57308 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751114AbdJDK0D (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 Oct 2017 12:01:19 -0400
-Received: by mail-oi0-f65.google.com with SMTP id a132so15675565oih.11
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 19 Oct 2017 09:01:18 -0700 (PDT)
+        Wed, 4 Oct 2017 06:26:03 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>, linux-renesas-soc@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH 03/14] pinctrl: sh-pfc: Add generic bias register description
+Date: Wed, 04 Oct 2017 13:26:05 +0300
+Message-ID: <2239854.HOEZ61P5Ok@avalon>
+In-Reply-To: <1507108033-8606-4-git-send-email-geert+renesas@glider.be>
+References: <1507108033-8606-1-git-send-email-geert+renesas@glider.be> <1507108033-8606-4-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-In-Reply-To: <cover.1506325834.git.horms+renesas@verge.net.au>
-References: <cover.1506325834.git.horms+renesas@verge.net.au>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Thu, 19 Oct 2017 18:01:17 +0200
-Message-ID: <CAK8P3a32rCXame_ERzefy+va+40gL7NB-8Ff6XaqmXsLQpxGZA@mail.gmail.com>
-Subject: Re: [GIT PULL] Renesas ARM Based SoC Updates for v4.15
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: arm-soc <arm@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Sep 25, 2017 at 9:54 AM, Simon Horman
-<horms+renesas@verge.net.au> wrote:
-> Hi Olof, Hi Kevin, Hi Arnd,
->
-> Please consider these Renesas ARM based SoC updates for v4.15.
->
->
-> The following changes since commit 2bd6bf03f4c1c59381d62c61d03f6cc3fe71f66e:
->
->   Linux 4.14-rc1 (2017-09-16 15:47:51 -0700)
->
-> are available in the git repository at:
->
->   https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-soc-for-v4.15
->
-> for you to fetch changes up to 3fd45a136ff61bb54deab70fb2d534a85e40481f:
->
->   ARM: shmobile: rcar-gen2: Make sure CNTVOFF is initialized on CA7/15 (2017-09-18 08:10:44 +0200)
->
-> ----------------------------------------------------------------
-> Renesas ARM Based SoC Updates for v4.15
->
-> * Prepare to enable SMP on R-Car E2 (r8a7794).
->
->   Geert Uytterhoeven says:
->   "The main hurdle here is that R-Car Gen2 boot loaders do not initialize
->    the arch_timer CNTVOFF register, which thus needs workarounds on Linux.
->
->    - The first patch adds a definition for MON_MODE, as suggested by Marc
->      Zyngier,
->    - The second patch makes sure CNTVOFF is initialized for boot and
->      secondary Cortex-A15 and Cortex-A7 CPU cores, like is already done for
->      the boot Cortex-A7 CPU core.  Without this, the ARM arch timer does
->      not work on secondary CPU cores."
->
->    A follow-up patch to enable SMP in DT on R-Car E2 (r8a7794) is currently
->    deferred unto v4.16 as it depends on the above.
->
-> * Enable low-level debugging support for RZ/G1E (r8a7745).
->
->   Fabrizio Castro says, "RZ/G1E uses SCIF4 for the debug console."
+Hi Geert,
 
-Pulled into next/soc, thanks!
+Thank you for the patch.
 
-       Arnd
+On Wednesday, 4 October 2017 12:07:02 EEST Geert Uytterhoeven wrote:
+> Add a generic way to describe bias registers (for pull-up/down control),
+> like is already done for config and drive registers.
+> 
+> This makes the sh-pfc core code aware of these registers, which will
+> ease introducing suspend/resume support later.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  drivers/pinctrl/sh-pfc/sh_pfc.h | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h
+> b/drivers/pinctrl/sh-pfc/sh_pfc.h index 8688b405e0813ad7..1914f4b5fef569b3
+> 100644
+> --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
+> +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+> @@ -148,6 +148,17 @@ struct pinmux_drive_reg {
+>  	.reg = r, \
+>  	.fields =
+> 
+> +struct pinmux_bias_reg {
+> +	u32 puen;		/* Pull-enable or pull-up control register */
+> +	u32 pud;		/* Pull-up/down control register (optional) */
+> +	const u16 pins[32];
+> +};
+> +
+> +#define PINMUX_BIAS_REG(name1, r1, name2, r2) \
+> +	.puen = r1,	\
+> +	.pud = r2,	\
+> +	.pins =
+> +
+>  struct pinmux_data_reg {
+>  	u32 reg;
+>  	u8 reg_width;
+> @@ -245,6 +256,7 @@ struct sh_pfc_soc_info {
+> 
+>  	const struct pinmux_cfg_reg *cfg_regs;
+>  	const struct pinmux_drive_reg *drive_regs;
+> +	const struct pinmux_bias_reg *bias_regs;
+>  	const struct pinmux_data_reg *data_regs;
+> 
+>  	const u16 *pinmux_data;
+
+
+-- 
+Regards,
+
+Laurent Pinchart
