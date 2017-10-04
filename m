@@ -1,12 +1,13 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:27881 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752210AbdJDOQa (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Oct 2017 10:16:30 -0400
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Linus Walleij <linus.walleij@linaro.org>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <20171003073334.18917-3-chris.brandt@renesas.com>
+References: <20171003073334.18917-1-chris.brandt@renesas.com> <20171003073334.18917-3-chris.brandt@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 4 Oct 2017 15:58:12 +0200
+Message-ID: <CAMuHMdVU_dmMvfSNQXOON1doW98EjRY9p8XT6XP7ccxa7414bw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] dt-bindings: pinctrl: add support for RZ/A1L
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -15,43 +16,45 @@ CC: Linus Walleij <linus.walleij@linaro.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Simon Horman <horms+renesas@verge.net.au>,
         Jacopo Mondi <jacopo+renesas@jmondi.org>
-Subject: RE: [PATCH 2/2] dt-bindings: pinctrl: add support for RZ/A1L
-Date: Wed, 4 Oct 2017 14:16:25 +0000
-Message-ID: <SG2PR06MB1165B7C76F5E5528FDF7B7408A730@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <20171003073334.18917-1-chris.brandt@renesas.com>
- <20171003073334.18917-3-chris.brandt@renesas.com>
- <CAMuHMdVU_dmMvfSNQXOON1doW98EjRY9p8XT6XP7ccxa7414bw@mail.gmail.com>
-In-Reply-To: <CAMuHMdVU_dmMvfSNQXOON1doW98EjRY9p8XT6XP7ccxa7414bw@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCk9uIFdlZG5lc2RheSwgT2N0b2JlciAwNCwgMjAxNywgR2VlcnQgVXl0dGVy
-aG9ldmVuIHdyb3RlOg0KPiA+ICBSZXF1aXJlZCBwcm9wZXJ0aWVzOg0KPiA+ICAgIC0gY29tcGF0
-aWJsZQ0KPiA+IC0gICAgdGhpcyBzaGFsbCBiZSAicmVuZXNhcyxyN3M3MjEwMC1wb3J0cyIuDQo+
-ID4gKyAgICB0aGlzIHNoYWxsIGJlICJyZW5lc2FzLHI3czcyMTAwLXBvcnRzIiBmb3IgUlovQTFI
-IGFuZCBSWi9BMU0gb3INCj4gPiArICAgICJyZW5lc2FzLHI3czcyMTAyLXBvcnRzIiBmb3IgUlov
-QTFMDQo+IA0KPiBTaG91bGRuJ3QgeW91IGFsc28gZG9jdW1lbnQgInJlbmVzYXMscjdzNzIxMDEt
-cG9ydHMiIGZvciBSWi9BMU0/DQoNCkkgd2FzIHdvbmRlcmluZyBpZiB5b3Ugd2VyZSBnb2luZyB0
-byBhc2sgZm9yIHRoYXQuDQoNCkkgcHV0ICJmb3IgUlovQTFIIGFuZCBSWi9BMU0iIGluIHRoZSBE
-VCBkb2N1bWVudGF0aW9uLCBidXQgaWYgeW91IA0KcHJlZmVyLCBJIGNhbiBhbHNvIGp1c3QgYWRk
-IHRvIHBpbmN0cmwtcnphMS5jOg0KDQpzdGF0aWMgY29uc3Qgc3RydWN0IG9mX2RldmljZV9pZCBy
-emExX3BpbmN0cmxfb2ZfbWF0Y2hbXSA9IHsNCgl7DQoJCS8qIFJaL0ExSCAqLw0KCQkuY29tcGF0
-aWJsZQk9ICJyZW5lc2FzLHI3czcyMTAwLXBvcnRzIiwNCgkJLmRhdGEJCT0gJnJ6YTFoX3BteF9j
-b25mLA0KCX0sDQorCXsNCisJCS8qIFJaL0ExTSAqLw0KKwkJLmNvbXBhdGlibGUJPSAicmVuZXNh
-cyxyN3M3MjEwMS1wb3J0cyIsDQorCQkuZGF0YQkJPSAmcnphMWhfcG14X2NvbmYsDQorCX0sCXsN
-CgkJLyogUlovQTFMICovDQoJCS5jb21wYXRpYmxlCT0gInJlbmVzYXMscjdzNzIxMDItcG9ydHMi
-LA0KCQkuZGF0YQkJPSAmcnphMWxfcG14X2NvbmYsDQoJfSwNCgl7IH0NCn07DQoNCg0KDQo+IFlv
-dSBjb3VsZCB1c2UgInJlbmVzYXMscjdzNzIxMDAtcG9ydHMiIGFzIGEgZmFsbGJhY2sgcHJvcGVy
-dHkgZm9yIFJaL0ExTSwNCj4gdGhvdWdoLg0KDQpEbyB5b3UgbWVhbiBpbiB0aGUgRFQ/IE9yIGlu
-IHBpbmN0cmwtcnphMS5jPw0KDQo+IEJUVywgaXMgdGhlcmUgYSB3YXkgdG8gZGlzdGluZ3Vpc2gg
-dGhlIHZhcmlvdXMgUlovQTEgU29DcyBhdCBydW50aW1lPw0KDQpTYWRseSB0aGVyZSBpcyBub3Qu
-DQoNClRoZXJlIGlzIGEgdW5pcXVlIElEIG51bWJlciwgYnV0IGl0IGlzIG9ubHkgYWNjZXNzaWJs
-ZSB2aWEgSlRBRyANCmV4dGVybmFsbHkuDQoNCkludGVybmFsbHksIHlvdSB3b3VsZCBoYXZlIHRv
-IGxvb2sgZm9yIHJlZ2lzdGVycyB0aGF0IGRvbid0IGV4aXN0IChmb3IgDQp0aGUgUlovQTFMKS4g
-QnV0IGZvciBSWi9BMUggdnMgUlovQTFNLCB0aGUgb25seSBhY3R1YWwgZGlmZmVyZW5jZSBpcyB0
-aGUgDQphbW91bnQgb2YgUkFNLCBzbyB5b3Ugd291bGQgaGF2ZSB0byBkbyBhIHNldC1hbmQtdGVz
-dCBtZXRob2Qgb24gUkFNLg0KDQoNCkNocmlzDQoNCg==
+Hi Chris,
+
+On Tue, Oct 3, 2017 at 9:33 AM, Chris Brandt <chris.brandt@renesas.com> wrote:
+> Compatible "r7s72102-ports" was added for RZ/A1L devices
+>
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> ---
+>  Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
+> index 43e21474528a..2a3366cee848 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
+> +++ b/Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
+> @@ -13,7 +13,8 @@ Pin controller node
+>
+>  Required properties:
+>    - compatible
+> -    this shall be "renesas,r7s72100-ports".
+> +    this shall be "renesas,r7s72100-ports" for RZ/A1H and RZ/A1M or
+> +    "renesas,r7s72102-ports" for RZ/A1L
+
+Shouldn't you also document "renesas,r7s72101-ports" for RZ/A1M?
+You could use "renesas,r7s72100-ports" as a fallback property for RZ/A1M,
+though.
+
+BTW, is there a way to distinguish the various RZ/A1 SoCs at runtime?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
