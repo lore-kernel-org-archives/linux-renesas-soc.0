@@ -1,29 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33892 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751278AbdJEJVs (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:56268 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751916AbdJDMdM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 Oct 2017 05:21:48 -0400
-Date: Thu, 5 Oct 2017 11:21:29 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Joerg Roedel <joro@8bytes.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: iommu: ipmmu-vmsa: Use generic node name
-Message-ID: <20171005092128.GT26369@verge.net.au>
-References: <1507120388-14179-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1507120388-14179-1-git-send-email-geert+renesas@glider.be>
+        Wed, 4 Oct 2017 08:33:12 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Joerg Roedel <joro@8bytes.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] dt-bindings: iommu: ipmmu-vmsa: Use generic node name
+Date: Wed,  4 Oct 2017 14:33:08 +0200
+Message-Id: <1507120388-14179-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Oct 04, 2017 at 02:33:08PM +0200, Geert Uytterhoeven wrote:
-> Use the preferred generic node name in the example.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Use the preferred generic node name in the example.
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt b/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
+index 3ed027cfca95cc98..857df929a6542157 100644
+--- a/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
++++ b/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
+@@ -53,7 +53,7 @@ Example: R8A7791 IPMMU-MX and VSP1-D0 bus master
+ 		#iommu-cells = <1>;
+ 	};
+ 
+-	vsp1@fe928000 {
++	vsp@fe928000 {
+ 		...
+ 		iommus = <&ipmmu_mx 13>;
+ 		...
+-- 
+2.7.4
