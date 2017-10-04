@@ -1,16 +1,7 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <SG2PR06MB1165243813B8D662AE93911E8A730@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <20171003073334.18917-1-chris.brandt@renesas.com>
- <20171003073334.18917-3-chris.brandt@renesas.com> <CAMuHMdVU_dmMvfSNQXOON1doW98EjRY9p8XT6XP7ccxa7414bw@mail.gmail.com>
- <SG2PR06MB1165B7C76F5E5528FDF7B7408A730@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CAMuHMdUh05qyi3eoao0KbahGD1NfEnGm03JpcZuFHVrEBSBU1Q@mail.gmail.com> <SG2PR06MB1165243813B8D662AE93911E8A730@SG2PR06MB1165.apcprd06.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 4 Oct 2017 16:49:45 +0200
-Message-ID: <CAMuHMdVmFNyE0QfdWZ5X6fRp4xJy9k+uN7h+zi5_WAG1dcJV5g@mail.gmail.com>
-Subject: Re: [PATCH 2/2] dt-bindings: pinctrl: add support for RZ/A1L
-To: Chris Brandt <Chris.Brandt@renesas.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Linus Walleij <linus.walleij@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -19,59 +10,38 @@ Cc: Linus Walleij <linus.walleij@linaro.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Simon Horman <horms+renesas@verge.net.au>,
         Jacopo Mondi <jacopo+renesas@jmondi.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: RE: [PATCH 2/2] dt-bindings: pinctrl: add support for RZ/A1L
+Date: Wed, 4 Oct 2017 14:43:32 +0000
+Message-ID: <SG2PR06MB1165243813B8D662AE93911E8A730@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20171003073334.18917-1-chris.brandt@renesas.com>
+ <20171003073334.18917-3-chris.brandt@renesas.com>
+ <CAMuHMdVU_dmMvfSNQXOON1doW98EjRY9p8XT6XP7ccxa7414bw@mail.gmail.com>
+ <SG2PR06MB1165B7C76F5E5528FDF7B7408A730@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <CAMuHMdUh05qyi3eoao0KbahGD1NfEnGm03JpcZuFHVrEBSBU1Q@mail.gmail.com>
+In-Reply-To: <CAMuHMdUh05qyi3eoao0KbahGD1NfEnGm03JpcZuFHVrEBSBU1Q@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Chris,
-
-On Wed, Oct 4, 2017 at 4:43 PM, Chris Brandt <Chris.Brandt@renesas.com> wrote:
-> To be clear:
->
-> On Wednesday, October 04, 2017 1, Geert Uytterhoeven wrote:
->> >> You could use "renesas,r7s72100-ports" as a fallback property for
->> RZ/A1M,
->> >> though.
->> >
->> > Do you mean in the DT? Or in pinctrl-rza1.c?
->>
->> I mean in DT, i.e.:
->>
->>         pinctrl: pin-controller@fcfe3000 {
->>                 compatible = "renesas,r7s72101-ports", "renesas,r7s72100-
->> ports";
->>                 ...
->>
->> That way you don't have to extend the pinctrl driver.
->
-> I will submit a v2 with:
->
-> [ renesas,rza1-pinctrl.txt ]
->
-> Required properties:
->   - compatible
->     this shall be "renesas,r7s72100-ports" for RZ/A1H,
->     "renesas,r7s72101-ports" for RZ/M or
-
-... with a fallback for "renesas,r7s72100-ports, as RZ/A1M is compatible
-with RZ/A1H (and I assume RZ/A1H is the predecessor?).
-
->     "renesas,r7s72102-ports" for RZ/A1L
->
->
-> [ r7s72100.dtsi ]
->         pinctrl: pin-controller@fcfe3000 {
->                 compatible = "renesas,r7s72101-ports", "renesas,r7s72100-ports";
-
-I meant in r7s72101.dtsi (which we don't have!).
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+SGkgR2VlcnQsDQoNClRvIGJlIGNsZWFyOg0KDQpPbiBXZWRuZXNkYXksIE9jdG9iZXIgMDQsIDIw
+MTcgMSwgR2VlcnQgVXl0dGVyaG9ldmVuIHdyb3RlOg0KPiA+PiBZb3UgY291bGQgdXNlICJyZW5l
+c2FzLHI3czcyMTAwLXBvcnRzIiBhcyBhIGZhbGxiYWNrIHByb3BlcnR5IGZvcg0KPiBSWi9BMU0s
+DQo+ID4+IHRob3VnaC4NCj4gPg0KPiA+IERvIHlvdSBtZWFuIGluIHRoZSBEVD8gT3IgaW4gcGlu
+Y3RybC1yemExLmM/DQo+IA0KPiBJIG1lYW4gaW4gRFQsIGkuZS46DQo+IA0KPiAgICAgICAgIHBp
+bmN0cmw6IHBpbi1jb250cm9sbGVyQGZjZmUzMDAwIHsNCj4gICAgICAgICAgICAgICAgIGNvbXBh
+dGlibGUgPSAicmVuZXNhcyxyN3M3MjEwMS1wb3J0cyIsICJyZW5lc2FzLHI3czcyMTAwLQ0KPiBw
+b3J0cyI7DQo+ICAgICAgICAgICAgICAgICAuLi4NCj4gDQo+IFRoYXQgd2F5IHlvdSBkb24ndCBo
+YXZlIHRvIGV4dGVuZCB0aGUgcGluY3RybCBkcml2ZXIuDQoNCkkgd2lsbCBzdWJtaXQgYSB2MiB3
+aXRoOg0KDQpbIHJlbmVzYXMscnphMS1waW5jdHJsLnR4dCBdDQoNClJlcXVpcmVkIHByb3BlcnRp
+ZXM6DQogIC0gY29tcGF0aWJsZQ0KICAgIHRoaXMgc2hhbGwgYmUgInJlbmVzYXMscjdzNzIxMDAt
+cG9ydHMiIGZvciBSWi9BMUgsIA0KICAgICJyZW5lc2FzLHI3czcyMTAxLXBvcnRzIiBmb3IgUlov
+TSBvcg0KICAgICJyZW5lc2FzLHI3czcyMTAyLXBvcnRzIiBmb3IgUlovQTFMDQoNCg0KWyByN3M3
+MjEwMC5kdHNpIF0NCglwaW5jdHJsOiBwaW4tY29udHJvbGxlckBmY2ZlMzAwMCB7DQoJCWNvbXBh
+dGlibGUgPSAicmVuZXNhcyxyN3M3MjEwMS1wb3J0cyIsICJyZW5lc2FzLHI3czcyMTAwLXBvcnRz
+IjsNCg0KDQpbIHBpbmN0cmwtcnphMS5jIF0gDQogIE5vIGNoYW5nZSBmcm9tIFYxDQoNCg0KDQpV
+bmxlc3MgeW91IHNheSBzb21ldGhpbmcgZGlmZmVyZW50LCBJIHdpbGwgc3VibWl0IGEgVjIgaW4g
+YSBsaXR0bGUgDQp3aGlsZS4NCg0KQXMgYWx3YXlzLCB0aGFuayB5b3UgZm9yIHlvdXIgZ3VpZGFu
+Y2UhDQoNCkNocmlzDQoNCg==
