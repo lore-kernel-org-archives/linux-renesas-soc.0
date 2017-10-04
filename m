@@ -1,352 +1,109 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:42768 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752079AbdJFKhM (ORCPT
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42052 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751710AbdJDL2Z (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Oct 2017 06:37:12 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-gpio@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH] pinctrl: sh-pfc: r8a7795: Add HSCIF pins, groups, and functions
-Date: Fri,  6 Oct 2017 12:37:04 +0200
-Message-Id: <20171006103704.13708-1-wsa+renesas@sang-engineering.com>
+        Wed, 4 Oct 2017 07:28:25 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
+        Mark Brown <broonie@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>,
+        Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
+        alsa-devel@alsa-project.org
+Subject: Applied "ASoC: rsnd: DVC kctrl sets once" to the asoc tree
+In-Reply-To: <87y3oumo79.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1dzhqh-0004Jz-Sl@debutante>
+Date: Wed, 04 Oct 2017 12:28:23 +0100
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+The patch
+
+   ASoC: rsnd: DVC kctrl sets once
+
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From b918f1bc7f1ce463d6fbb6ebf3db36bd302bded8 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Sun, 1 Oct 2017 23:48:29 +0000
+Subject: [PATCH] ASoC: rsnd: DVC kctrl sets once
+
+Same DVC might be used few times if system/platform is using MIX.
+For example below case.
+
+	DAI0 playback = <&src0 &ctu02 &mix0 &dvc0 &ssi0>;
+	DAI1 playback = <&src2 &ctu03 &mix0 &dvc0 &ssi0>;
+
+This case, ALSA will have DVC,0 and DVC,1 kcontrol interfaces,
+but these are same DVC. This is confusing.
+This patch adds new flags and avoid such case.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Tested-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
+ sound/soc/sh/rcar/dvc.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Tested on a Salvator-XS with HSCIF1 mapped to debug1 connector with this
-snipplet in salvator-common.dtsi:
-
-@@ -36,7 +36,7 @@
- / {
- 	aliases {
- 		serial0 = &scif2;
--		serial1 = &scif1;
-+		serial1 = &hscif1;
- 		ethernet0 = &avb;
- 	};
- 
-@@ -403,9 +403,9 @@
- 		function = "pwm1";
- 	};
- 
--	scif1_pins: scif1 {
--		groups = "scif1_data_a", "scif1_ctrl";
--		function = "scif1";
-+	hscif1_pins: hscif1 {
-+		groups = "hscif1_data_a", "hscif1_ctrl_a";
-+		function = "hscif1";
- 	};
- 
- 	scif2_pins: scif2 {
-@@ -535,8 +535,8 @@
- 	};
+diff --git a/sound/soc/sh/rcar/dvc.c b/sound/soc/sh/rcar/dvc.c
+index 1743ade3cc55..bb22850e8fe6 100644
+--- a/sound/soc/sh/rcar/dvc.c
++++ b/sound/soc/sh/rcar/dvc.c
+@@ -44,8 +44,11 @@ struct rsnd_dvc {
+ 	struct rsnd_kctrl_cfg_s ren;	/* Ramp Enable */
+ 	struct rsnd_kctrl_cfg_s rup;	/* Ramp Rate Up */
+ 	struct rsnd_kctrl_cfg_s rdown;	/* Ramp Rate Down */
++	u32 flags;
  };
  
--&scif1 {
--	pinctrl-0 = <&scif1_pins>;
-+&hscif1 {
-+	pinctrl-0 = <&hscif1_pins>;
- 	pinctrl-names = "default";
++#define KCTRL_INITIALIZED	(1 << 0)
++
+ #define rsnd_dvc_get(priv, id) ((struct rsnd_dvc *)(priv->dvc) + id)
+ #define rsnd_dvc_nr(priv) ((priv)->dvc_nr)
  
- 	uart-has-rtscts;
-
-I verified to the best of my knowledge that all the other settings are equal to
-r8a7795-es1.
-
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 255 +++++++++++++++++++++++++++++++++++
- 1 file changed, 255 insertions(+)
-
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index 9772a6c7b303b5..ccfc96c4d28c3d 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -2076,6 +2076,191 @@ static const unsigned int du_disp_mux[] = {
- 	DU_DISP_MARK,
- };
+@@ -254,6 +257,9 @@ static int rsnd_dvc_pcm_new(struct rsnd_mod *mod,
+ 	int channels = rsnd_rdai_channels_get(rdai);
+ 	int ret;
  
-+/* - HSCIF0 ----------------------------------------------------------------- */
-+static const unsigned int hscif0_data_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(5, 13), RCAR_GP_PIN(5, 14),
-+};
-+static const unsigned int hscif0_data_mux[] = {
-+	HRX0_MARK, HTX0_MARK,
-+};
-+static const unsigned int hscif0_clk_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(5, 12),
-+};
-+static const unsigned int hscif0_clk_mux[] = {
-+	HSCK0_MARK,
-+};
-+static const unsigned int hscif0_ctrl_pins[] = {
-+	/* RTS, CTS */
-+	RCAR_GP_PIN(5, 16), RCAR_GP_PIN(5, 15),
-+};
-+static const unsigned int hscif0_ctrl_mux[] = {
-+	HRTS0_N_MARK, HCTS0_N_MARK,
-+};
-+/* - HSCIF1 ----------------------------------------------------------------- */
-+static const unsigned int hscif1_data_a_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(5, 5), RCAR_GP_PIN(5, 6),
-+};
-+static const unsigned int hscif1_data_a_mux[] = {
-+	HRX1_A_MARK, HTX1_A_MARK,
-+};
-+static const unsigned int hscif1_clk_a_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(6, 21),
-+};
-+static const unsigned int hscif1_clk_a_mux[] = {
-+	HSCK1_A_MARK,
-+};
-+static const unsigned int hscif1_ctrl_a_pins[] = {
-+	/* RTS, CTS */
-+	RCAR_GP_PIN(5, 8), RCAR_GP_PIN(5, 7),
-+};
-+static const unsigned int hscif1_ctrl_a_mux[] = {
-+	HRTS1_N_A_MARK, HCTS1_N_A_MARK,
-+};
++	if (rsnd_flags_has(dvc, KCTRL_INITIALIZED))
++		return 0;
 +
-+static const unsigned int hscif1_data_b_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(5, 1), RCAR_GP_PIN(5, 2),
-+};
-+static const unsigned int hscif1_data_b_mux[] = {
-+	HRX1_B_MARK, HTX1_B_MARK,
-+};
-+static const unsigned int hscif1_clk_b_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(5, 0),
-+};
-+static const unsigned int hscif1_clk_b_mux[] = {
-+	HSCK1_B_MARK,
-+};
-+static const unsigned int hscif1_ctrl_b_pins[] = {
-+	/* RTS, CTS */
-+	RCAR_GP_PIN(5, 4), RCAR_GP_PIN(5, 3),
-+};
-+static const unsigned int hscif1_ctrl_b_mux[] = {
-+	HRTS1_N_B_MARK, HCTS1_N_B_MARK,
-+};
-+/* - HSCIF2 ----------------------------------------------------------------- */
-+static const unsigned int hscif2_data_a_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(6, 8), RCAR_GP_PIN(6, 9),
-+};
-+static const unsigned int hscif2_data_a_mux[] = {
-+	HRX2_A_MARK, HTX2_A_MARK,
-+};
-+static const unsigned int hscif2_clk_a_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(6, 10),
-+};
-+static const unsigned int hscif2_clk_a_mux[] = {
-+	HSCK2_A_MARK,
-+};
-+static const unsigned int hscif2_ctrl_a_pins[] = {
-+	/* RTS, CTS */
-+	RCAR_GP_PIN(6, 7), RCAR_GP_PIN(6, 6),
-+};
-+static const unsigned int hscif2_ctrl_a_mux[] = {
-+	HRTS2_N_A_MARK, HCTS2_N_A_MARK,
-+};
-+
-+static const unsigned int hscif2_data_b_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(6, 17), RCAR_GP_PIN(6, 18),
-+};
-+static const unsigned int hscif2_data_b_mux[] = {
-+	HRX2_B_MARK, HTX2_B_MARK,
-+};
-+static const unsigned int hscif2_clk_b_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(6, 21),
-+};
-+static const unsigned int hscif2_clk_b_mux[] = {
-+	HSCK2_B_MARK,
-+};
-+static const unsigned int hscif2_ctrl_b_pins[] = {
-+	/* RTS, CTS */
-+	RCAR_GP_PIN(6, 20), RCAR_GP_PIN(6, 19),
-+};
-+static const unsigned int hscif2_ctrl_b_mux[] = {
-+	HRTS2_N_B_MARK, HCTS2_N_B_MARK,
-+};
-+/* - HSCIF3 ----------------------------------------------------------------- */
-+static const unsigned int hscif3_data_a_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(1, 23), RCAR_GP_PIN(1, 24),
-+};
-+static const unsigned int hscif3_data_a_mux[] = {
-+	HRX3_A_MARK, HTX3_A_MARK,
-+};
-+static const unsigned int hscif3_clk_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(1, 22),
-+};
-+static const unsigned int hscif3_clk_mux[] = {
-+	HSCK3_MARK,
-+};
-+static const unsigned int hscif3_ctrl_pins[] = {
-+	/* RTS, CTS */
-+	RCAR_GP_PIN(1, 26), RCAR_GP_PIN(1, 25),
-+};
-+static const unsigned int hscif3_ctrl_mux[] = {
-+	HRTS3_N_MARK, HCTS3_N_MARK,
-+};
-+
-+static const unsigned int hscif3_data_b_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(0, 10), RCAR_GP_PIN(0, 11),
-+};
-+static const unsigned int hscif3_data_b_mux[] = {
-+	HRX3_B_MARK, HTX3_B_MARK,
-+};
-+static const unsigned int hscif3_data_c_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(0, 14), RCAR_GP_PIN(0, 15),
-+};
-+static const unsigned int hscif3_data_c_mux[] = {
-+	HRX3_C_MARK, HTX3_C_MARK,
-+};
-+static const unsigned int hscif3_data_d_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(2, 7), RCAR_GP_PIN(2, 8),
-+};
-+static const unsigned int hscif3_data_d_mux[] = {
-+	HRX3_D_MARK, HTX3_D_MARK,
-+};
-+/* - HSCIF4 ----------------------------------------------------------------- */
-+static const unsigned int hscif4_data_a_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(1, 12), RCAR_GP_PIN(1, 13),
-+};
-+static const unsigned int hscif4_data_a_mux[] = {
-+	HRX4_A_MARK, HTX4_A_MARK,
-+};
-+static const unsigned int hscif4_clk_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(1, 11),
-+};
-+static const unsigned int hscif4_clk_mux[] = {
-+	HSCK4_MARK,
-+};
-+static const unsigned int hscif4_ctrl_pins[] = {
-+	/* RTS, CTS */
-+	RCAR_GP_PIN(1, 15), RCAR_GP_PIN(1, 14),
-+};
-+static const unsigned int hscif4_ctrl_mux[] = {
-+	HRTS4_N_MARK, HCTS4_N_MARK,
-+};
-+
-+static const unsigned int hscif4_data_b_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(1, 8), RCAR_GP_PIN(1, 11),
-+};
-+static const unsigned int hscif4_data_b_mux[] = {
-+	HRX4_B_MARK, HTX4_B_MARK,
-+};
-+
- /* - I2C -------------------------------------------------------------------- */
- static const unsigned int i2c1_a_pins[] = {
- 	/* SDA, SCL */
-@@ -3629,6 +3814,31 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(du_oddf),
- 	SH_PFC_PIN_GROUP(du_cde),
- 	SH_PFC_PIN_GROUP(du_disp),
-+	SH_PFC_PIN_GROUP(hscif0_data),
-+	SH_PFC_PIN_GROUP(hscif0_clk),
-+	SH_PFC_PIN_GROUP(hscif0_ctrl),
-+	SH_PFC_PIN_GROUP(hscif1_data_a),
-+	SH_PFC_PIN_GROUP(hscif1_clk_a),
-+	SH_PFC_PIN_GROUP(hscif1_ctrl_a),
-+	SH_PFC_PIN_GROUP(hscif1_data_b),
-+	SH_PFC_PIN_GROUP(hscif1_clk_b),
-+	SH_PFC_PIN_GROUP(hscif1_ctrl_b),
-+	SH_PFC_PIN_GROUP(hscif2_data_a),
-+	SH_PFC_PIN_GROUP(hscif2_clk_a),
-+	SH_PFC_PIN_GROUP(hscif2_ctrl_a),
-+	SH_PFC_PIN_GROUP(hscif2_data_b),
-+	SH_PFC_PIN_GROUP(hscif2_clk_b),
-+	SH_PFC_PIN_GROUP(hscif2_ctrl_b),
-+	SH_PFC_PIN_GROUP(hscif3_data_a),
-+	SH_PFC_PIN_GROUP(hscif3_clk),
-+	SH_PFC_PIN_GROUP(hscif3_ctrl),
-+	SH_PFC_PIN_GROUP(hscif3_data_b),
-+	SH_PFC_PIN_GROUP(hscif3_data_c),
-+	SH_PFC_PIN_GROUP(hscif3_data_d),
-+	SH_PFC_PIN_GROUP(hscif4_data_a),
-+	SH_PFC_PIN_GROUP(hscif4_clk),
-+	SH_PFC_PIN_GROUP(hscif4_ctrl),
-+	SH_PFC_PIN_GROUP(hscif4_data_b),
- 	SH_PFC_PIN_GROUP(i2c1_a),
- 	SH_PFC_PIN_GROUP(i2c1_b),
- 	SH_PFC_PIN_GROUP(i2c2_a),
-@@ -3921,6 +4131,46 @@ static const char * const du_groups[] = {
- 	"du_disp",
- };
+ 	/* Volume */
+ 	ret = rsnd_kctrl_new_m(mod, io, rtd,
+ 			is_play ?
+@@ -307,6 +313,8 @@ static int rsnd_dvc_pcm_new(struct rsnd_mod *mod,
+ 	if (ret < 0)
+ 		return ret;
  
-+static const char * const hscif0_groups[] = {
-+	"hscif0_data",
-+	"hscif0_clk",
-+	"hscif0_ctrl",
-+};
++	rsnd_flags_set(dvc, KCTRL_INITIALIZED);
 +
-+static const char * const hscif1_groups[] = {
-+	"hscif1_data_a",
-+	"hscif1_clk_a",
-+	"hscif1_ctrl_a",
-+	"hscif1_data_b",
-+	"hscif1_clk_b",
-+	"hscif1_ctrl_b",
-+};
-+
-+static const char * const hscif2_groups[] = {
-+	"hscif2_data_a",
-+	"hscif2_clk_a",
-+	"hscif2_ctrl_a",
-+	"hscif2_data_b",
-+	"hscif2_clk_b",
-+	"hscif2_ctrl_b",
-+};
-+
-+static const char * const hscif3_groups[] = {
-+	"hscif3_data_a",
-+	"hscif3_clk",
-+	"hscif3_ctrl",
-+	"hscif3_data_b",
-+	"hscif3_data_c",
-+	"hscif3_data_d",
-+};
-+
-+static const char * const hscif4_groups[] = {
-+	"hscif4_data_a",
-+	"hscif4_clk",
-+	"hscif4_ctrl",
-+	"hscif4_data_b",
-+};
-+
- static const char * const i2c1_groups[] = {
- 	"i2c1_a",
- 	"i2c1_b",
-@@ -4226,6 +4476,11 @@ static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(drif2),
- 	SH_PFC_FUNCTION(drif3),
- 	SH_PFC_FUNCTION(du),
-+	SH_PFC_FUNCTION(hscif0),
-+	SH_PFC_FUNCTION(hscif1),
-+	SH_PFC_FUNCTION(hscif2),
-+	SH_PFC_FUNCTION(hscif3),
-+	SH_PFC_FUNCTION(hscif4),
- 	SH_PFC_FUNCTION(i2c1),
- 	SH_PFC_FUNCTION(i2c2),
- 	SH_PFC_FUNCTION(i2c6),
+ 	return 0;
+ }
+ 
 -- 
-2.11.0
+2.14.1
