@@ -1,66 +1,49 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from laurent.telenet-ops.be ([195.130.137.89]:36784 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751915AbdJDMT7 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 4 Oct 2017 08:19:59 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: "David S . Miller" <davem@davemloft.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 3/4] arm64: dts: renesas: salvator-common: Add EthernetAVB PHY reset
-Date: Fri, 20 Oct 2017 10:14:20 +0200
-Message-Id: <1508487261-18524-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1508487261-18524-1-git-send-email-geert+renesas@glider.be>
-References: <1508487261-18524-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Subject: [PATCH] spi: rspi: Use of_device_get_match_data() helper
+Date: Wed,  4 Oct 2017 14:19:53 +0200
+Message-Id: <1507119593-12789-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe the GPIO used to reset the Ethernet PHY for EthernetAVB.
-This allows the driver to reset the PHY during probe and after system
-resume.
-
-This fixes Ethernet operation after resume from s2ram on Salvator-XS,
-where the enable pin of the regulator providing PHY power is connected
-to PRESETn, and PSCI powers down the SoC during system suspend.
-
-On Salvator-X, the enable pin is always pulled high, but the driver may
-still need to reset the PHY if this wasn't done by the bootloader
-before.
-
-Inspired by patches in the BSP for the individual Salvator-X/XS boards
-by Kazuya Mizuguchi.
+Use the of_device_get_match_data() helper instead of open coding.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-For proper PHY reset operation during system resume, this depends on
-"[PATCH v3 2/4] phylib: Add device reset GPIO support".
-However, this patch can be applied independently.
+ drivers/spi/spi-rspi.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-v3:
-  - Extract from series "[PATCH 0/4] ravb: Add PHY reset support", and
-    incorporate in this series,
-  - Move reset-gpios from the ethernet to the ethernet-phy node.
----
- arch/arm64/boot/dts/renesas/salvator-common.dtsi | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-index a028cf577ae1d185..78dcb83f59c76333 100644
---- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-@@ -313,6 +313,7 @@
- 		reg = <0>;
- 		interrupt-parent = <&gpio2>;
- 		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-+		reset-gpios = <&gpio2 10 GPIO_ACTIVE_LOW>;
- 	};
- };
+diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
+index a76e0cacc23b4dcb..c96eab723fd3fdb7 100644
+--- a/drivers/spi/spi-rspi.c
++++ b/drivers/spi/spi-rspi.c
+@@ -1221,7 +1221,6 @@ static int rspi_probe(struct platform_device *pdev)
+ 	struct spi_master *master;
+ 	struct rspi_data *rspi;
+ 	int ret;
+-	const struct of_device_id *of_id;
+ 	const struct rspi_plat_data *rspi_pd;
+ 	const struct spi_ops *ops;
  
+@@ -1229,9 +1228,8 @@ static int rspi_probe(struct platform_device *pdev)
+ 	if (master == NULL)
+ 		return -ENOMEM;
+ 
+-	of_id = of_match_device(rspi_of_match, &pdev->dev);
+-	if (of_id) {
+-		ops = of_id->data;
++	ops = of_device_get_match_data(&pdev->dev);
++	if (ops) {
+ 		ret = rspi_parse_dt(&pdev->dev, master);
+ 		if (ret)
+ 			goto error1;
 -- 
 2.7.4
-
