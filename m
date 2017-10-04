@@ -1,110 +1,118 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38914 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752787AbdJTK3t (ORCPT
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42148 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751710AbdJDL22 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Oct 2017 06:29:49 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 29/31] arm64: dts: r8a7795: Use R-Car GPIO Gen3 fallback compat string
-Date: Fri, 20 Oct 2017 12:28:32 +0200
-Message-Id: <d6d7037cb2f8d33cae5384eeaea9b5248fb383ae.1508495040.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1508495040.git.horms+renesas@verge.net.au>
-References: <cover.1508495040.git.horms+renesas@verge.net.au>
+        Wed, 4 Oct 2017 07:28:28 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
+        Mark Brown <broonie@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>,
+        Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
+        alsa-devel@alsa-project.org
+Subject: Applied "ASoC: rsnd: use generic rsnd_flags_xxx() macro on ADG" to the asoc tree
+In-Reply-To: <87r2uqgyog.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1dzhqk-0004Ku-Ui@debutante>
+Date: Wed, 04 Oct 2017 12:28:26 +0100
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use newly added R-Car GPIO Gen3 fallback compat string
-in place of now deprecated non-generation specific
-R-Car GPIO fallback compat string in the DT of the r8a7795 SoC.
+The patch
 
-This should have no run-time effect as the driver matches against
-the per-SoC compat string before considering the fallback compat string.
+   ASoC: rsnd: use generic rsnd_flags_xxx() macro on ADG
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From d0cf7fc948159a3eab9ad2e959cce7f06f2333df Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Sun, 1 Oct 2017 23:48:12 +0000
+Subject: [PATCH] ASoC: rsnd: use generic rsnd_flags_xxx() macro on ADG
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Tested-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ sound/soc/sh/rcar/adg.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index d5cfd1a1c539..15ef292a8d9f 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -220,7 +220,7 @@
+diff --git a/sound/soc/sh/rcar/adg.c b/sound/soc/sh/rcar/adg.c
+index e11ce5036bcf..1921307780de 100644
+--- a/sound/soc/sh/rcar/adg.c
++++ b/sound/soc/sh/rcar/adg.c
+@@ -44,7 +44,6 @@ struct rsnd_adg {
  
- 		gpio0: gpio@e6050000 {
- 			compatible = "renesas,gpio-r8a7795",
--				     "renesas,gpio-rcar";
-+				     "renesas,rcar-gen3-gpio";
- 			reg = <0 0xe6050000 0 0x50>;
- 			interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
- 			#gpio-cells = <2>;
-@@ -235,7 +235,7 @@
+ #define LRCLK_ASYNC	(1 << 0)
+ #define AUDIO_OUT_48	(1 << 1)
+-#define adg_mode_flags(adg)	(adg->flags)
  
- 		gpio1: gpio@e6051000 {
- 			compatible = "renesas,gpio-r8a7795",
--				     "renesas,gpio-rcar";
-+				     "renesas,rcar-gen3-gpio";
- 			reg = <0 0xe6051000 0 0x50>;
- 			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
- 			#gpio-cells = <2>;
-@@ -250,7 +250,7 @@
+ #define for_each_rsnd_clk(pos, adg, i)		\
+ 	for (i = 0;				\
+@@ -366,8 +365,8 @@ int rsnd_adg_ssi_clk_try_start(struct rsnd_mod *ssi_mod, unsigned int rate)
  
- 		gpio2: gpio@e6052000 {
- 			compatible = "renesas,gpio-r8a7795",
--				     "renesas,gpio-rcar";
-+				     "renesas,rcar-gen3-gpio";
- 			reg = <0 0xe6052000 0 0x50>;
- 			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
- 			#gpio-cells = <2>;
-@@ -265,7 +265,7 @@
+ 	rsnd_adg_set_ssi_clk(ssi_mod, data);
  
- 		gpio3: gpio@e6053000 {
- 			compatible = "renesas,gpio-r8a7795",
--				     "renesas,gpio-rcar";
-+				     "renesas,rcar-gen3-gpio";
- 			reg = <0 0xe6053000 0 0x50>;
- 			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
- 			#gpio-cells = <2>;
-@@ -280,7 +280,7 @@
+-	if (adg_mode_flags(adg) & LRCLK_ASYNC) {
+-		if (adg_mode_flags(adg) & AUDIO_OUT_48)
++	if (rsnd_flags_has(adg, LRCLK_ASYNC)) {
++		if (rsnd_flags_has(adg, AUDIO_OUT_48))
+ 			ckr = 0x80000000;
+ 	} else {
+ 		if (0 == (rate % 8000))
+@@ -479,10 +478,10 @@ static void rsnd_adg_get_clkout(struct rsnd_priv *priv,
+ 	}
  
- 		gpio4: gpio@e6054000 {
- 			compatible = "renesas,gpio-r8a7795",
--				     "renesas,gpio-rcar";
-+				     "renesas,rcar-gen3-gpio";
- 			reg = <0 0xe6054000 0 0x50>;
- 			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
- 			#gpio-cells = <2>;
-@@ -295,7 +295,7 @@
+ 	if (req_rate[0] % 48000 == 0)
+-		adg->flags |= AUDIO_OUT_48;
++		rsnd_flags_set(adg, AUDIO_OUT_48);
  
- 		gpio5: gpio@e6055000 {
- 			compatible = "renesas,gpio-r8a7795",
--				     "renesas,gpio-rcar";
-+				     "renesas,rcar-gen3-gpio";
- 			reg = <0 0xe6055000 0 0x50>;
- 			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
- 			#gpio-cells = <2>;
-@@ -310,7 +310,7 @@
+ 	if (of_get_property(np, "clkout-lr-asynchronous", NULL))
+-		adg->flags |= LRCLK_ASYNC;
++		rsnd_flags_set(adg, LRCLK_ASYNC);
  
- 		gpio6: gpio@e6055400 {
- 			compatible = "renesas,gpio-r8a7795",
--				     "renesas,gpio-rcar";
-+				     "renesas,rcar-gen3-gpio";
- 			reg = <0 0xe6055400 0 0x50>;
- 			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
- 			#gpio-cells = <2>;
-@@ -325,7 +325,7 @@
- 
- 		gpio7: gpio@e6055800 {
- 			compatible = "renesas,gpio-r8a7795",
--				     "renesas,gpio-rcar";
-+				     "renesas,rcar-gen3-gpio";
- 			reg = <0 0xe6055800 0 0x50>;
- 			interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
- 			#gpio-cells = <2>;
+ 	/*
+ 	 * This driver is assuming that AUDIO_CLKA/AUDIO_CLKB/AUDIO_CLKC
+@@ -512,7 +511,7 @@ static void rsnd_adg_get_clkout(struct rsnd_priv *priv,
+ 				adg->rbga_rate_for_441khz = rate / div;
+ 				ckr |= brg_table[i] << 20;
+ 				if (req_441kHz_rate &&
+-				    !(adg_mode_flags(adg) & AUDIO_OUT_48))
++				    !rsnd_flags_has(adg, AUDIO_OUT_48))
+ 					parent_clk_name = __clk_get_name(clk);
+ 			}
+ 		}
+@@ -528,7 +527,7 @@ static void rsnd_adg_get_clkout(struct rsnd_priv *priv,
+ 				adg->rbgb_rate_for_48khz = rate / div;
+ 				ckr |= brg_table[i] << 16;
+ 				if (req_48kHz_rate &&
+-				    (adg_mode_flags(adg) & AUDIO_OUT_48))
++				    rsnd_flags_has(adg, AUDIO_OUT_48))
+ 					parent_clk_name = __clk_get_name(clk);
+ 			}
+ 		}
 -- 
-2.11.0
+2.14.1
