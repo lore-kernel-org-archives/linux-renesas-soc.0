@@ -1,42 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:38256 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752040AbdJDN7f (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:54337 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751268AbdJDKO1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Oct 2017 09:59:35 -0400
+        Wed, 4 Oct 2017 06:14:27 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: thierry.reding@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH] dt-bindings: pwm: Add R-Car D3 device tree bindings
+Date: Wed,  4 Oct 2017 19:10:38 +0900
+Message-Id: <1507111838-9647-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-In-Reply-To: <1507111838-9647-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1507111838-9647-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 4 Oct 2017 15:59:33 +0200
-Message-ID: <CAMuHMdUkuzd52YNk9kzUakFFOmJnD6vt6XquJ7Rypf91BVdN9w@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: pwm: Add R-Car D3 device tree bindings
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux PWM List <linux-pwm@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Oct 4, 2017 at 12:10 PM, Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> Add device tree bindings for the PWM controller found on R-Car D3 SoCs.
->
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Add device tree bindings for the PWM controller found on R-Car D3 SoCs.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt b/Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt
+index 7e94b80..74c1180 100644
+--- a/Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt
++++ b/Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt
+@@ -9,6 +9,7 @@ Required Properties:
+  - "renesas,pwm-r8a7794": for R-Car E2
+  - "renesas,pwm-r8a7795": for R-Car H3
+  - "renesas,pwm-r8a7796": for R-Car M3-W
++ - "renesas,pwm-r8a77995": for R-Car D3
+ - reg: base address and length of the registers block for the PWM.
+ - #pwm-cells: should be 2. See pwm.txt in this directory for a description of
+   the cells format.
+-- 
+1.9.1
