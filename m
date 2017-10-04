@@ -1,78 +1,70 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Arnd Bergmann <arnd@arndb.de>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: dts: r8a779x: add '#reset-cells' in cpg-mssr
-Date: Tue, 10 Oct 2017 10:45:51 +0200
-Message-Id: <20171010084611.968735-1-arnd@arndb.de>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:36320 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751226AbdJDJoZ (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 4 Oct 2017 05:44:25 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [git pull] clk: renesas: Updates for v4.15
+Date: Wed,  4 Oct 2017 11:44:18 +0200
+Message-Id: <1507110258-11714-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-With the latest dtc, we get many warnings about the missing
-'#reset-cells' property in these controllers, e.g.:
+	Hi Mike, Stephen,
 
-arch/arm/boot/dts/r8a7790-lager.dtb: Warning (resets_property): Missing property '#reset-cells' in node /clock-controller@e6150000 or bad phandle (referred from /can@e6e80000:resets[0])
-arch/arm/boot/dts/r8a7792-blanche.dtb: Warning (resets_property): Missing property '#reset-cells' in node /soc/clock-controller@e6150000 or bad phandle (referred from /soc/dma-controller@e6700000:resets[0])
-arch/arm/boot/dts/r8a7792-wheat.dtb: Warning (resets_property): Missing property '#reset-cells' in node /soc/clock-controller@e6150000 or bad phandle (referred from /soc/ethernet@e6800000:resets[0])
-arch/arm/boot/dts/r8a7793-gose.dtb: Warning (resets_property): Missing property '#reset-cells' in node /clock-controller@e6150000 or bad phandle (referred from /gpio@e6050000:resets[0])
-arch/arm/boot/dts/r8a7794-alt.dtb: Warning (resets_property): Missing property '#reset-cells' in node /clock-controller@e6150000 or bad phandle (referred from /i2c@e6500000:resets[0])
-arch/arm/boot/dts/r8a7794-silk.dtb: Warning (resets_property): Missing property '#reset-cells' in node /clock-controller@e6150000 or bad phandle (referred from /interrupt-controller@e61c0000:resets[0])
+The following changes since commit 2bd6bf03f4c1c59381d62c61d03f6cc3fe71f66e:
 
-This adds it for the three r8a779x chips that were lacking it. The
-binding mandates this as <1>, so this is the value I use.
+  Linux 4.14-rc1 (2017-09-16 15:47:51 -0700)
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/arm/boot/dts/r8a7790.dtsi | 1 +
- arch/arm/boot/dts/r8a7792.dtsi | 1 +
- arch/arm/boot/dts/r8a7794.dtsi | 1 +
- 3 files changed, 3 insertions(+)
+are available in the git repository at:
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 17a48199b7a9..8215a971cf17 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -1186,6 +1186,7 @@
- 		clock-names = "extal", "usb_extal";
- 		#clock-cells = <2>;
- 		#power-domain-cells = <0>;
-+		#reset-cells = <1>;
- 	};
- 
- 	prr: chipid@ff000044 {
-diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
-index 549eafe8ff12..cde709e3a916 100644
---- a/arch/arm/boot/dts/r8a7792.dtsi
-+++ b/arch/arm/boot/dts/r8a7792.dtsi
-@@ -828,6 +828,7 @@
- 			clock-names = "extal";
- 			#clock-cells = <2>;
- 			#power-domain-cells = <0>;
-+			#reset-cells = <1>;
- 		};
- 	};
- 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 19cff0dd90cf..a406d56234ba 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -1098,6 +1098,7 @@
- 		clock-names = "extal", "usb_extal";
- 		#clock-cells = <2>;
- 		#power-domain-cells = <0>;
-+		#reset-cells = <1>;
- 	};
- 
- 	rst: reset-controller@e6160000 {
--- 
-2.9.0
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.15-tag1
 
+for you to fetch changes up to b4021bbe10017d994e5a96ebfd2677bbaf2b37e0:
+
+  clk: renesas: rcar-gen2: Delete error message for failed memory allocation (2017-09-28 17:57:34 +0200)
+
+----------------------------------------------------------------
+clk: renesas: Updates for v4.15
+
+  - Add support for the new R-Car V3M SoC,
+  - Small fixes and cleanups.
+
+Thanks for pulling!
+----------------------------------------------------------------
+Markus Elfring (2):
+      clk: renesas: mstp: Delete error messages for failed memory allocations
+      clk: renesas: rcar-gen2: Delete error message for failed memory allocation
+
+Sergei Shtylyov (2):
+      dt-bindings: clock: Add R8A77970 CPG core clock definitions
+      clk: renesas: cpg-mssr: Add R8A77970 support
+
+ .../devicetree/bindings/clock/renesas,cpg-mssr.txt |   5 +-
+ drivers/clk/renesas/Kconfig                        |   5 +
+ drivers/clk/renesas/Makefile                       |   1 +
+ drivers/clk/renesas/clk-mstp.c                     |   5 +-
+ drivers/clk/renesas/clk-rcar-gen2.c                |   1 -
+ drivers/clk/renesas/r8a77970-cpg-mssr.c            | 199 +++++++++++++++++++++
+ drivers/clk/renesas/renesas-cpg-mssr.c             |   6 +
+ drivers/clk/renesas/renesas-cpg-mssr.h             |   1 +
+ include/dt-bindings/clock/r8a77970-cpg-mssr.h      |  48 +++++
+ 9 files changed, 264 insertions(+), 7 deletions(-)
+ create mode 100644 drivers/clk/renesas/r8a77970-cpg-mssr.c
+ create mode 100644 include/dt-bindings/clock/r8a77970-cpg-mssr.h
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
