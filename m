@@ -1,58 +1,95 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:38570 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750760AbdJBFFo (ORCPT
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:33685 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750797AbdJDTTX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 2 Oct 2017 01:05:44 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: balbi@kernel.org
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, stable@vger.kernel.org,
-        Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH] usb: renesas_usbhs: Fix DMAC sequence for receiving zero-length packet
-Date: Mon,  2 Oct 2017 14:01:41 +0900
-Message-Id: <1506920501-24149-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Wed, 4 Oct 2017 15:19:23 -0400
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1507108033-8606-1-git-send-email-geert+renesas@glider.be>
+References: <1507108033-8606-1-git-send-email-geert+renesas@glider.be>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 4 Oct 2017 21:19:21 +0200
+Message-ID: <CAMuHMdVx7w7NvY2U66ODx=_GkouPrAaqFSHD_C3xyyYjhm+qVQ@mail.gmail.com>
+Subject: Re: [PATCH 00/14] pinctrl: sh-pfc: Add suspend/resume support
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+On Wed, Oct 4, 2017 at 11:06 AM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> During PSCI system suspend, R-Car Gen3 SoCs are powered down, and their
+> pinctrl register state is lost.  Note that as the boot loader skips most
+> initialization after system resume, pinctrl register state differs from
+> the state encountered during normal system boot, too.
+>
+> To fix this, save all GPIO and peripheral function select, module
+> select, drive strength control, bias, and other I/O control registers
+> during system suspend, and restore them during resume.
+>
+> This series consists of 4 parts:
+>   - Patches 1-2 are cleanups,
+>   - Patches 3-9 introduce a generic way to describe bias (pull-up/down)
+>     registers, and converts the R-Car Gen3 and R-Car M1A bias support
+>     over,
+>   - Patches 10-13 introduce a generic way to describe various IOCTRL
+>     registers, and converts the R-Car Gen3 I/O voltage support over,
+>   - Patch 14 implements the actual suspend/resume code, using the
+>     generic bias and IOCTRL support introduced earlier.
+>
+> To avoid overhead on platforms not needing it, the suspend/resume code
+> has a build time dependency on sleep and PSCI support, and a runtime
+> dependency on PSCI.
+>
+> Due to the more compact description of bias registers, this series
+> actually decreases kernel size (by ca. 112 bytes for renesas_defconfig,
+> and ca. 60 bytes for shmobile_defconfig).
+>
+> Thanks for your comments!
+>
+> Geert Uytterhoeven (14):
+>   pinctrl: sh-pfc: Remove matching on plain sh-pfc platform device
+>   pinctrl: sh-pfc: Drop width parameter of sh_pfc_{read,write}_reg()
+>   pinctrl: sh-pfc: Add generic bias register description
+>   pinctrl: sh-pfc: Add sh_pfc_pin_to_bias_reg() helper
+>   pinctrl: sh-pfc: r8a7795-es1: Use generic bias register description
+>   pinctrl: sh-pfc: r8a7795: Use generic bias register description
+>   pinctrl: sh-pfc: r8a7796: Use generic bias register description
+>   pinctrl: sh-pfc: r8a7778: Use generic bias register description
+>   pinctrl: sh-pfc: Remove obsolete sh_pfc_pin_to_bias_info()
+>   pinctrl: sh-pfc: Add generic IOCTRL register description
+>   pinctrl: sh-pfc: r8a7795-es1: Use generic IOCTRL register description
+>   pinctrl: sh-pfc: r8a7795: Use generic IOCTRL register description
+>   pinctrl: sh-pfc: r8a7796: Use generic IOCTRL register description
+>   pinctrl: sh-pfc: Save/restore registers for PSCI system suspend
+>
+>  drivers/pinctrl/sh-pfc/core.c            | 129 +++++++-
+>  drivers/pinctrl/sh-pfc/core.h            |  11 +-
+>  drivers/pinctrl/sh-pfc/pfc-r8a7778.c     | 403 +++++++++++++-----------
+>  drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c | 511 ++++++++++++++++---------------
+>  drivers/pinctrl/sh-pfc/pfc-r8a7795.c     | 511 ++++++++++++++++---------------
+>  drivers/pinctrl/sh-pfc/pfc-r8a7796.c     | 511 ++++++++++++++++---------------
+>  drivers/pinctrl/sh-pfc/pinctrl.c         |  12 +-
+>  drivers/pinctrl/sh-pfc/sh_pfc.h          |  24 +-
+>  8 files changed, 1170 insertions(+), 942 deletions(-)
 
-The DREQE bit of the DnFIFOSEL should be set to 1 after the DE bit of
-USB-DMAC on R-Car SoCs is set to 1 after the USB-DMAC received a
-zero-length packet. Otherwise, a transfer completion interruption
-of USB-DMAC doesn't happen. Even if the driver changes the sequence,
-normal operations (transmit/receive without zero-length packet) will
-not cause any side-effects. So, this patch fixes the sequence anyway.
+For testers: please check the topic/sh-pfc-suspend-resume-v1 branch of
+my renesas-drivers git repository at
+git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
 
-Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-[shimoda: revise the commit log]
-Fixes: e73a9891b3a1 ("usb: renesas_usbhs: add DMAEngine support")
-Cc: <stable@vger.kernel.org> # v3.1+
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- This patch is based on the lastest Felipe's usb.git / testing/fixes branch
-(commit id = c3cdce45f8d3dfa5c3467894aa89798314920328).
+Gr{oetje,eeting}s,
 
- drivers/usb/renesas_usbhs/fifo.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+                        Geert
 
-diff --git a/drivers/usb/renesas_usbhs/fifo.c b/drivers/usb/renesas_usbhs/fifo.c
-index 68f2690..50285b0 100644
---- a/drivers/usb/renesas_usbhs/fifo.c
-+++ b/drivers/usb/renesas_usbhs/fifo.c
-@@ -857,9 +857,9 @@ static void xfer_work(struct work_struct *work)
- 		fifo->name, usbhs_pipe_number(pipe), pkt->length, pkt->zero);
- 
- 	usbhs_pipe_running(pipe, 1);
--	usbhsf_dma_start(pipe, fifo);
- 	usbhs_pipe_set_trans_count_if_bulk(pipe, pkt->trans);
- 	dma_async_issue_pending(chan);
-+	usbhsf_dma_start(pipe, fifo);
- 	usbhs_pipe_enable(pipe);
- 
- xfer_work_end:
--- 
-1.9.1
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
