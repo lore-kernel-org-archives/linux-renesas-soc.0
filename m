@@ -1,27 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33741 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751672AbdJEJQc (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:33392 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751910AbdJDMRK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 Oct 2017 05:16:32 -0400
-Date: Thu, 5 Oct 2017 11:16:08 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] i2c: sh_mobile: Use of_device_get_match_data() helper
-Message-ID: <20171005091607.GN26369@verge.net.au>
-References: <1507119425-12566-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1507119425-12566-1-git-send-email-geert+renesas@glider.be>
+        Wed, 4 Oct 2017 08:17:10 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] i2c: sh_mobile: Use of_device_get_match_data() helper
+Date: Wed,  4 Oct 2017 14:17:05 +0200
+Message-Id: <1507119425-12566-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Oct 04, 2017 at 02:17:05PM +0200, Geert Uytterhoeven wrote:
-> Use the of_device_get_match_data() helper instead of open coding.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Use the of_device_get_match_data() helper instead of open coding.
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/i2c/busses/i2c-sh_mobile.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-sh_mobile.c b/drivers/i2c/busses/i2c-sh_mobile.c
+index 6f2aaeb7c4fa156d..c03acdf713972677 100644
+--- a/drivers/i2c/busses/i2c-sh_mobile.c
++++ b/drivers/i2c/busses/i2c-sh_mobile.c
+@@ -881,7 +881,7 @@ static int sh_mobile_i2c_probe(struct platform_device *dev)
+ 	struct sh_mobile_i2c_data *pd;
+ 	struct i2c_adapter *adap;
+ 	struct resource *res;
+-	const struct of_device_id *match;
++	const struct sh_mobile_dt_config *config;
+ 	int ret;
+ 	u32 bus_speed;
+ 
+@@ -913,10 +913,8 @@ static int sh_mobile_i2c_probe(struct platform_device *dev)
+ 	pd->bus_speed = ret ? STANDARD_MODE : bus_speed;
+ 	pd->clks_per_count = 1;
+ 
+-	match = of_match_device(sh_mobile_i2c_dt_ids, &dev->dev);
+-	if (match) {
+-		const struct sh_mobile_dt_config *config = match->data;
+-
++	config = of_device_get_match_data(&dev->dev);
++	if (config) {
+ 		pd->clks_per_count = config->clks_per_count;
+ 
+ 		if (config->setup)
+-- 
+2.7.4
