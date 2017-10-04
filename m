@@ -1,29 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33784 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751888AbdJEJSZ (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:43852 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751699AbdJDMWE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 Oct 2017 05:18:25 -0400
-Date: Thu, 5 Oct 2017 11:17:53 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] serial: sh-sci: Use of_device_get_match_data() helper
-Message-ID: <20171005091752.GP26369@verge.net.au>
-References: <1507119716-12958-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1507119716-12958-1-git-send-email-geert+renesas@glider.be>
+        Wed, 4 Oct 2017 08:22:04 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] serial: sh-sci: Use of_device_get_match_data() helper
+Date: Wed,  4 Oct 2017 14:21:56 +0200
+Message-Id: <1507119716-12958-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Oct 04, 2017 at 02:21:56PM +0200, Geert Uytterhoeven wrote:
-> Use the of_device_get_match_data() helper instead of open coding.
-> Note that when used with DT, there's always a valid match.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Use the of_device_get_match_data() helper instead of open coding.
+Note that when used with DT, there's always a valid match.
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/tty/serial/sh-sci.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 784dd42002eadbeb..95b12eefcb7ae906 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -40,6 +40,7 @@
+ #include <linux/module.h>
+ #include <linux/mm.h>
+ #include <linux/of.h>
++#include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/scatterlist.h>
+@@ -3044,17 +3045,15 @@ static struct plat_sci_port *sci_parse_dt(struct platform_device *pdev,
+ 					  unsigned int *dev_id)
+ {
+ 	struct device_node *np = pdev->dev.of_node;
+-	const struct of_device_id *match;
+ 	struct plat_sci_port *p;
+ 	struct sci_port *sp;
++	const void *data;
+ 	int id;
+ 
+ 	if (!IS_ENABLED(CONFIG_OF) || !np)
+ 		return NULL;
+ 
+-	match = of_match_node(of_sci_match, np);
+-	if (!match)
+-		return NULL;
++	data = of_device_get_match_data(&pdev->dev);
+ 
+ 	p = devm_kzalloc(&pdev->dev, sizeof(struct plat_sci_port), GFP_KERNEL);
+ 	if (!p)
+@@ -3070,8 +3069,8 @@ static struct plat_sci_port *sci_parse_dt(struct platform_device *pdev,
+ 	sp = &sci_ports[id];
+ 	*dev_id = id;
+ 
+-	p->type = SCI_OF_TYPE(match->data);
+-	p->regtype = SCI_OF_REGTYPE(match->data);
++	p->type = SCI_OF_TYPE(data);
++	p->regtype = SCI_OF_REGTYPE(data);
+ 
+ 	sp->has_rtscts = of_property_read_bool(np, "uart-has-rtscts");
+ 
+-- 
+2.7.4
