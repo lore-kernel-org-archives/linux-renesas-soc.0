@@ -1,86 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:51630 "EHLO
-        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751072AbdJCCca (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:47592 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752077AbdJDJHV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 2 Oct 2017 22:32:30 -0400
-MIME-Version: 1.0
-In-Reply-To: <1506643305-4581-1-git-send-email-cw00.choi@samsung.com>
-References: <CGME20170929000148epcas2p200e56186b067ec626a033c7ae2d4bbdb@epcas2p2.samsung.com>
- <1506643305-4581-1-git-send-email-cw00.choi@samsung.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 3 Oct 2017 10:32:04 +0800
-Message-ID: <CAGb2v641HBJ0MPZMx0YhOMWZeNKNiUJ48r-2Gh3WE7x41wJy4g@mail.gmail.com>
-Subject: Re: [PATCH] extcon: Split out extcon header file for consumer and
- provider device
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Felipe Balbi <balbi@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        yoshihiro.shimoda.uh@renesas.com,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, chanwoo@kernel.org,
-        myungjoo.ham@samsung.com,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        linux-usb <linux-usb@vger.kernel.org>,
-        "open list:ARM/SHMOBILE ARM..." <linux-renesas-soc@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 4 Oct 2017 05:07:21 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-pm@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 10/14] pinctrl: sh-pfc: Add generic IOCTRL register description
+Date: Wed,  4 Oct 2017 11:07:09 +0200
+Message-Id: <1507108033-8606-11-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1507108033-8606-1-git-send-email-geert+renesas@glider.be>
+References: <1507108033-8606-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Sep 29, 2017 at 8:01 AM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
-> The extcon has two type of extcon devices as following.
-> - 'extcon provider deivce' adds new extcon device and detect the
->    state/properties of external connector. Also, it notifies the
->    state/properties to the extcon consumer device.
-> - 'extcon consumer device' gets the change state/properties
->    from extcon provider device.
-> Prior to that, include/linux/extcon.h contains all exported API for
-> both provider and consumer device driver. To clarify the meaning of
-> header file and to remove the wrong use-case on consumer device,
-> this patch separates into extcon.h and extcon-provider.h.
->
-> [Description for include/linux/{extcon.h|extcon-provider.h}]
-> - extcon.h includes the extcon API and data structure for extcon consumer
->   device driver. This header file contains the following APIs:
->   : Register/unregister the notifier to catch the change of extcon device
->   : Get the extcon device instance
->   : Get the extcon device name
->   : Get the state of each external connector
->   : Get the property value of each external connector
->   : Get the property capability of each external connector
->
-> - extcon-provider.h includes the extcon API and data structure for extcon
->   provider device driver. This header file contains the following APIs:
->   : Include 'include/linux/extcon.h'
->   : Allocate the memory for extcon device instance
->   : Register/unregister extcon device
->   : Set the state of each external connector
->   : Set the property value of each external connector
->   : Set the property capability of each external connector
->
-> Cc: Felipe Balbi <balbi@kernel.org>
-> Cc: Kishon Vijay Abraham I <kishon@ti.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Sebastian Reichel <sre@kernel.org>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> ---
+Add a generic way to describe IOCTRL registers (for e.g. SD I/O voltage
+and time delay control), like is already done for config, drive, and
+bias registers.
 
-For
+This makes the sh-pfc core code aware of these registers, which will
+ease introducing suspend/resume support later.
 
->  drivers/extcon/extcon-axp288.c                |   2 +-
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/pinctrl/sh-pfc/sh_pfc.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-and
-
->  drivers/phy/allwinner/phy-sun4i-usb.c         |   2 +-
-
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
+index 18fd878266297dc2..b9bb56c91b6fdaf3 100644
+--- a/drivers/pinctrl/sh-pfc/sh_pfc.h
++++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+@@ -159,6 +159,10 @@ struct pinmux_bias_reg {
+ 	.pud = r2,	\
+ 	.pins =
+ 
++struct pinmux_ioctrl_reg {
++	u32 reg;
++};
++
+ struct pinmux_data_reg {
+ 	u32 reg;
+ 	u8 reg_width;
+@@ -251,6 +255,7 @@ struct sh_pfc_soc_info {
+ 	const struct pinmux_cfg_reg *cfg_regs;
+ 	const struct pinmux_drive_reg *drive_regs;
+ 	const struct pinmux_bias_reg *bias_regs;
++	const struct pinmux_ioctrl_reg *ioctrl_regs;
+ 	const struct pinmux_data_reg *data_regs;
+ 
+ 	const u16 *pinmux_data;
+-- 
+2.7.4
