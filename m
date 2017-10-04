@@ -1,132 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:45216 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751663AbdJFL5m (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:55516 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751922AbdJDMIb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Oct 2017 07:57:42 -0400
+        Wed, 4 Oct 2017 08:08:31 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+To: Jonathan Cameron <jic23@kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] pinctrl: sh-pfc: r8a7796: Add support for INTC-EX IRQ pins
-Date: Fri,  6 Oct 2017 13:57:37 +0200
-Message-Id: <1507291057-23678-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH 0/3] iio: adc: rcar-gyroadc: Misc improvements
+Date: Wed,  4 Oct 2017 14:08:23 +0200
+Message-Id: <1507118906-8946-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+	Hi Jonathan, Marek,
 
-Most pins on the r8a7796 SoC can be configured in GPIO mode for
-interrupt and GPIO functionality, while a couple of them can also
-be routed to the INTC-EX hardware block (formerly known as IRQC).
+This patch series contains a few improvements for the driver for the
+R-Car GyroADC block, which can be found on R-Car Gen2 (arm32) and Gen3
+(arm64) SoCs.
 
-On r8a7795 the INTC-EX hardware handles pins IRQ0 -> IRQ5 and
-this patch adds support for them to the PFC driver as "intc_ex_irqN".
+Thanks!
 
-[takeshi.kihara.df: Ported from commit bb46f6f3f3bf ("pinctrl: sh-pfc:
- r8a7795: Add support for INTC-EX IRQ pins")
- to drivers/pinctrl/sh-pfc/pfc-r8a7796.c]
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-To be queued in sh-pfc-for-v4.15.
+Geert Uytterhoeven (3):
+  iio: adc: rcar-gyroadc: Cast pointer to uintptr_t to fix warning on
+    64-bit
+  iio: adc: rcar-gyroadc: Enable compile-testing on non-ARM
+  iio: adc: rcar-gyroadc: Use of_device_get_match_data() helper
 
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 60 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
+ drivers/iio/adc/Kconfig        | 2 +-
+ drivers/iio/adc/rcar-gyroadc.c | 7 +++----
+ 2 files changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-index 34fc7f7dbd4c1a40..aaf8cc2c157bff1a 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-@@ -2393,6 +2393,50 @@ static const unsigned int i2c6_c_mux[] = {
- 	SDA6_C_MARK, SCL6_C_MARK,
- };
- 
-+/* - INTC-EX ---------------------------------------------------------------- */
-+static const unsigned int intc_ex_irq0_pins[] = {
-+	/* IRQ0 */
-+	RCAR_GP_PIN(2, 0),
-+};
-+static const unsigned int intc_ex_irq0_mux[] = {
-+	IRQ0_MARK,
-+};
-+static const unsigned int intc_ex_irq1_pins[] = {
-+	/* IRQ1 */
-+	RCAR_GP_PIN(2, 1),
-+};
-+static const unsigned int intc_ex_irq1_mux[] = {
-+	IRQ1_MARK,
-+};
-+static const unsigned int intc_ex_irq2_pins[] = {
-+	/* IRQ2 */
-+	RCAR_GP_PIN(2, 2),
-+};
-+static const unsigned int intc_ex_irq2_mux[] = {
-+	IRQ2_MARK,
-+};
-+static const unsigned int intc_ex_irq3_pins[] = {
-+	/* IRQ3 */
-+	RCAR_GP_PIN(2, 3),
-+};
-+static const unsigned int intc_ex_irq3_mux[] = {
-+	IRQ3_MARK,
-+};
-+static const unsigned int intc_ex_irq4_pins[] = {
-+	/* IRQ4 */
-+	RCAR_GP_PIN(2, 4),
-+};
-+static const unsigned int intc_ex_irq4_mux[] = {
-+	IRQ4_MARK,
-+};
-+static const unsigned int intc_ex_irq5_pins[] = {
-+	/* IRQ5 */
-+	RCAR_GP_PIN(2, 5),
-+};
-+static const unsigned int intc_ex_irq5_mux[] = {
-+	IRQ5_MARK,
-+};
-+
- /* - MSIOF0 ----------------------------------------------------------------- */
- static const unsigned int msiof0_clk_pins[] = {
- 	/* SCK */
-@@ -3923,6 +3967,12 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(i2c6_a),
- 	SH_PFC_PIN_GROUP(i2c6_b),
- 	SH_PFC_PIN_GROUP(i2c6_c),
-+	SH_PFC_PIN_GROUP(intc_ex_irq0),
-+	SH_PFC_PIN_GROUP(intc_ex_irq1),
-+	SH_PFC_PIN_GROUP(intc_ex_irq2),
-+	SH_PFC_PIN_GROUP(intc_ex_irq3),
-+	SH_PFC_PIN_GROUP(intc_ex_irq4),
-+	SH_PFC_PIN_GROUP(intc_ex_irq5),
- 	SH_PFC_PIN_GROUP(msiof0_clk),
- 	SH_PFC_PIN_GROUP(msiof0_sync),
- 	SH_PFC_PIN_GROUP(msiof0_ss1),
-@@ -4287,6 +4337,15 @@ static const char * const i2c6_groups[] = {
- 	"i2c6_c",
- };
- 
-+static const char * const intc_ex_groups[] = {
-+	"intc_ex_irq0",
-+	"intc_ex_irq1",
-+	"intc_ex_irq2",
-+	"intc_ex_irq3",
-+	"intc_ex_irq4",
-+	"intc_ex_irq5",
-+};
-+
- static const char * const msiof0_groups[] = {
- 	"msiof0_clk",
- 	"msiof0_sync",
-@@ -4581,6 +4640,7 @@ static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(i2c1),
- 	SH_PFC_FUNCTION(i2c2),
- 	SH_PFC_FUNCTION(i2c6),
-+	SH_PFC_FUNCTION(intc_ex),
- 	SH_PFC_FUNCTION(msiof0),
- 	SH_PFC_FUNCTION(msiof1),
- 	SH_PFC_FUNCTION(msiof2),
 -- 
 2.7.4
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
