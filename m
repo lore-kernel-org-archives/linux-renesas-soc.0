@@ -1,46 +1,86 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38914 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752665AbdJTKaX (ORCPT
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44046 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752368AbdJDOvg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Oct 2017 06:30:23 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 35/42] ARM: dts: r8a7791: Add missing clock for secondary CA15 CPU core
-Date: Fri, 20 Oct 2017 12:29:02 +0200
-Message-Id: <60b672fe7e28358c1cffdab4724b203f6cf2901b.1508493785.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1508493785.git.horms+renesas@verge.net.au>
-References: <cover.1508493785.git.horms+renesas@verge.net.au>
+        Wed, 4 Oct 2017 10:51:36 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, alsa-devel@alsa-project.org,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: fsi: Use of_device_get_match_data() helper" to the asoc tree
+In-Reply-To: <1507120110-13336-1-git-send-email-geert+renesas@glider.be>
+Message-Id: <E1dzl1G-0008Qy-DO@debutante>
+Date: Wed, 04 Oct 2017 15:51:30 +0100
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+The patch
 
-Currently only the primary CPU in the CA15 cluster has a clocks
-property, while the secondary CPU core is driven by the same clock.
-Add the missing clocks property to fix this.
+   ASoC: fsi: Use of_device_get_match_data() helper
+
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From b48cc1d9c3a93b239700198f69b1a49b23d95b83 Mon Sep 17 00:00:00 2001
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Date: Wed, 4 Oct 2017 14:28:30 +0200
+Subject: [PATCH] ASoC: fsi: Use of_device_get_match_data() helper
+
+Use the of_device_get_match_data() helper instead of open coding.
+Note that when used with DT, there's always a valid match.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm/boot/dts/r8a7791.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ sound/soc/sh/fsi.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index 3c7b919efa48..67831d0405f3 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -70,6 +70,7 @@
- 			compatible = "arm,cortex-a15";
- 			reg = <1>;
- 			clock-frequency = <1500000000>;
-+			clocks = <&cpg CPG_CORE R8A7791_CLK_Z>;
- 			power-domains = <&sysc R8A7791_PD_CA15_CPU1>;
- 			next-level-cache = <&L2_CA15>;
- 		};
+diff --git a/sound/soc/sh/fsi.c b/sound/soc/sh/fsi.c
+index 6d3c7706d93f..c3aaf4788557 100644
+--- a/sound/soc/sh/fsi.c
++++ b/sound/soc/sh/fsi.c
+@@ -1932,14 +1932,9 @@ static int fsi_probe(struct platform_device *pdev)
+ 
+ 	core = NULL;
+ 	if (np) {
+-		const struct of_device_id *of_id;
+-
+-		of_id = of_match_device(fsi_of_match, &pdev->dev);
+-		if (of_id) {
+-			core = of_id->data;
+-			fsi_of_parse("fsia", np, &info.port_a, &pdev->dev);
+-			fsi_of_parse("fsib", np, &info.port_b, &pdev->dev);
+-		}
++		core = of_device_get_match_data(&pdev->dev);
++		fsi_of_parse("fsia", np, &info.port_a, &pdev->dev);
++		fsi_of_parse("fsib", np, &info.port_b, &pdev->dev);
+ 	} else {
+ 		const struct platform_device_id	*id_entry = pdev->id_entry;
+ 		if (id_entry)
 -- 
-2.11.0
+2.14.1
