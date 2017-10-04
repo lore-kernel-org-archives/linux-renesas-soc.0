@@ -1,44 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f176.google.com ([209.85.223.176]:55059 "EHLO
-        mail-io0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750948AbdJGLNa (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:32940 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751322AbdJDJoo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 7 Oct 2017 07:13:30 -0400
-Received: by mail-io0-f176.google.com with SMTP id h66so17964200ioh.11
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 07 Oct 2017 04:13:30 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1507110277-11785-1-git-send-email-geert+renesas@glider.be>
-References: <1507110277-11785-1-git-send-email-geert+renesas@glider.be>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Sat, 7 Oct 2017 13:13:29 +0200
-Message-ID: <CACRpkdazgKfNEA4ZtHQ=EywJ3n1O_PAZUHygOXDD21YqkH3LkA@mail.gmail.com>
-Subject: Re: [git pull] pinctrl: sh-pfc: Updates for v4.15
-To: Geert Uytterhoeven <geert+renesas@glider.be>
+        Wed, 4 Oct 2017 05:44:44 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Linus Walleij <linus.walleij@linaro.org>
 Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [git pull] pinctrl: sh-pfc: Updates for v4.15
+Date: Wed,  4 Oct 2017 11:44:37 +0200
+Message-Id: <1507110277-11785-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Oct 4, 2017 at 11:44 AM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+	Hi Linus,
 
->         Hi Linus,
->
-> The following changes since commit 2bd6bf03f4c1c59381d62c61d03f6cc3fe71f66e:
->
->   Linux 4.14-rc1 (2017-09-16 15:47:51 -0700)
->
-> are available in the git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.15-tag1
->
-> for you to fetch changes up to 5ec8a41a36715cf543cb7c109097fb3b4cdfb427:
->
->   pinctrl: sh-pfc: r8a7795: Add USB3.0 host support (2017-10-02 13:23:44 +0200)
+The following changes since commit 2bd6bf03f4c1c59381d62c61d03f6cc3fe71f66e:
 
-Pulled into my devel branch, thanks!
+  Linux 4.14-rc1 (2017-09-16 15:47:51 -0700)
 
-Yours,
-Linus Walleij
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.15-tag1
+
+for you to fetch changes up to 5ec8a41a36715cf543cb7c109097fb3b4cdfb427:
+
+  pinctrl: sh-pfc: r8a7795: Add USB3.0 host support (2017-10-02 13:23:44 +0200)
+
+----------------------------------------------------------------
+pinctrl: sh-pfc: Updates for v4.15
+
+  - Add SDHI and DRIF pin groups on R-Car H3 ES2.0,
+  - Add USB3.0 host pin groups on R-Car H3 (ES1.x and ES2.0),
+  - Add EthernetAVB and USB2.0 host pin groups on R-Car D3.
+
+Thanks for pulling!
+----------------------------------------------------------------
+Dirk Behme (1):
+      pinctrl: sh-pfc: r8a7795: Re-add DRIF support
+
+Takeshi Kihara (4):
+      pinctrl: sh-pfc: r8a7795: Add SDHI0-3 support
+      pinctrl: sh-pfc: r8a77995: Add USB2.0 host support
+      pinctrl: sh-pfc: r8a7795-es1: Add USB3.0 host support
+      pinctrl: sh-pfc: r8a7795: Add USB3.0 host support
+
+Yoshihiro Shimoda (1):
+      pinctrl: sh-pfc: r8a77995: Add EthernetAVB pins, groups and functions
+
+ drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c |  29 ++
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c     | 581 +++++++++++++++++++++++++++++++
+ drivers/pinctrl/sh-pfc/pfc-r8a77995.c    | 134 +++++++
+ 3 files changed, 744 insertions(+)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
