@@ -1,34 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33640 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751830AbdJEJMv (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:41040 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751916AbdJDMIa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 Oct 2017 05:12:51 -0400
-Date: Thu, 5 Oct 2017 11:12:21 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Hartmut Knaack <knaack.h@gmx.de>,
+        Wed, 4 Oct 2017 08:08:30 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Jonathan Cameron <jic23@kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Hartmut Knaack <knaack.h@gmx.de>,
         Lars-Peter Clausen <lars@metafoo.de>,
         Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 2/3] iio: adc: rcar-gyroadc: Enable compile-testing on
- non-ARM
-Message-ID: <20171005091219.GJ26369@verge.net.au>
+        linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/3] iio: adc: rcar-gyroadc: Enable compile-testing on non-ARM
+Date: Wed,  4 Oct 2017 14:08:25 +0200
+Message-Id: <1507118906-8946-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1507118906-8946-1-git-send-email-geert+renesas@glider.be>
 References: <1507118906-8946-1-git-send-email-geert+renesas@glider.be>
- <1507118906-8946-3-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1507118906-8946-3-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Oct 04, 2017 at 02:08:25PM +0200, Geert Uytterhoeven wrote:
-> The rcar-gyroadc driver compiles fine on other platforms, hence increase
-> compile coverage.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+The rcar-gyroadc driver compiles fine on other platforms, hence increase
+compile coverage.
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/iio/adc/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+index 57625653fcb6da69..383400b678c8c692 100644
+--- a/drivers/iio/adc/Kconfig
++++ b/drivers/iio/adc/Kconfig
+@@ -593,7 +593,7 @@ config QCOM_SPMI_VADC
+ 
+ config RCAR_GYRO_ADC
+ 	tristate "Renesas R-Car GyroADC driver"
+-	depends on ARCH_RCAR_GEN2 || (ARM && COMPILE_TEST)
++	depends on ARCH_RCAR_GEN2 || COMPILE_TEST
+ 	help
+ 	  Say yes here to build support for the GyroADC found in Renesas
+ 	  R-Car Gen2 SoCs. This block is a simple SPI offload engine for
+-- 
+2.7.4
