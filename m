@@ -1,33 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33824 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751335AbdJEJTN (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:35664 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751916AbdJDMXj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 Oct 2017 05:19:13 -0400
-Date: Thu, 5 Oct 2017 11:18:48 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Felipe Balbi <balbi@kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] usb: gadget: udc: renesas_usb3: Use
- of_device_get_match_data() helper
-Message-ID: <20171005091847.GQ26369@verge.net.au>
-References: <1507119811-13053-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1507119811-13053-1-git-send-email-geert+renesas@glider.be>
+        Wed, 4 Oct 2017 08:23:39 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Felipe Balbi <balbi@kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] usb: gadget: udc: renesas_usb3: Use of_device_get_match_data() helper
+Date: Wed,  4 Oct 2017 14:23:31 +0200
+Message-Id: <1507119811-13053-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Oct 04, 2017 at 02:23:31PM +0200, Geert Uytterhoeven wrote:
-> Use the of_device_get_match_data() helper instead of open coding,
-> postponing the matching until when it's really needed.
-> Note that the renesas_usb3 driver is used with DT only, so there's
-> always a valid match.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Use the of_device_get_match_data() helper instead of open coding,
+postponing the matching until when it's really needed.
+Note that the renesas_usb3 driver is used with DT only, so there's
+always a valid match.
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/usb/gadget/udc/renesas_usb3.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
+
+diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
+index df37c1e6e9d5cc3e..acbf0feb47c85942 100644
+--- a/drivers/usb/gadget/udc/renesas_usb3.c
++++ b/drivers/usb/gadget/udc/renesas_usb3.c
+@@ -2549,20 +2549,15 @@ static int renesas_usb3_probe(struct platform_device *pdev)
+ {
+ 	struct renesas_usb3 *usb3;
+ 	struct resource *res;
+-	const struct of_device_id *match;
+ 	int irq, ret;
+ 	const struct renesas_usb3_priv *priv;
+ 	const struct soc_device_attribute *attr;
+ 
+-	match = of_match_node(usb3_of_match, pdev->dev.of_node);
+-	if (!match)
+-		return -ENODEV;
+-
+ 	attr = soc_device_match(renesas_usb3_quirks_match);
+ 	if (attr)
+ 		priv = attr->data;
+ 	else
+-		priv = match->data;
++		priv = of_device_get_match_data(&pdev->dev);
+ 
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq < 0) {
+-- 
+2.7.4
