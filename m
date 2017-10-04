@@ -1,110 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38914 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752665AbdJTKaN (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:57365 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751114AbdJDKoM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Oct 2017 06:30:13 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 23/42] ARM: dts: r8a7743: Use R-Car GPIO Gen2 fallback compat string
-Date: Fri, 20 Oct 2017 12:28:50 +0200
-Message-Id: <936e7d7472547294fa305f60546afad232896fdc.1508493785.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1508493785.git.horms+renesas@verge.net.au>
-References: <cover.1508493785.git.horms+renesas@verge.net.au>
+        Wed, 4 Oct 2017 06:44:12 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>, linux-renesas-soc@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH 05/14] pinctrl: sh-pfc: r8a7795-es1: Use generic bias register description
+Date: Wed, 04 Oct 2017 13:44:12 +0300
+Message-ID: <2599940.LmqJT7CgZ2@avalon>
+In-Reply-To: <1744705.qyxHaYEude@avalon>
+References: <1507108033-8606-1-git-send-email-geert+renesas@glider.be> <1507108033-8606-6-git-send-email-geert+renesas@glider.be> <1744705.qyxHaYEude@avalon>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use newly added R-Car GPIO Gen2 fallback compat string
-in place of now deprecated non-generation specific
-R-Car GPIO fallback compat string in the DT of the r8a7743 SoC.
+Hi Geert,
 
-This should have no run-time effect as the driver matches against
-the per-SoC compat string before considering the fallback compat string.
+On Wednesday, 4 October 2017 13:40:13 EEST Laurent Pinchart wrote:
+> On Wednesday, 4 October 2017 12:07:04 EEST Geert Uytterhoeven wrote:
+> > Move R-Car H3 ES1.x bias support over to the generic way to describe
+> > bias registers, which will be needed for suspend/resume support.
+> > 
+> > As the new description is more compact, this decreases kernel size by
+> > ca. 304 bytes.
+> > 
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7743.dtsi | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+One additional comment, please see below.
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 699c04003eac..f29f15d4d659 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -108,7 +108,7 @@
- 
- 		gpio0: gpio@e6050000 {
- 			compatible = "renesas,gpio-r8a7743",
--				     "renesas,gpio-rcar";
-+				     "renesas,rcar-gen2-gpio";
- 			reg = <0 0xe6050000 0 0x50>;
- 			interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
- 			#gpio-cells = <2>;
-@@ -123,7 +123,7 @@
- 
- 		gpio1: gpio@e6051000 {
- 			compatible = "renesas,gpio-r8a7743",
--				     "renesas,gpio-rcar";
-+				     "renesas,rcar-gen2-gpio";
- 			reg = <0 0xe6051000 0 0x50>;
- 			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
- 			#gpio-cells = <2>;
-@@ -138,7 +138,7 @@
- 
- 		gpio2: gpio@e6052000 {
- 			compatible = "renesas,gpio-r8a7743",
--				     "renesas,gpio-rcar";
-+				     "renesas,rcar-gen2-gpio";
- 			reg = <0 0xe6052000 0 0x50>;
- 			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
- 			#gpio-cells = <2>;
-@@ -153,7 +153,7 @@
- 
- 		gpio3: gpio@e6053000 {
- 			compatible = "renesas,gpio-r8a7743",
--				     "renesas,gpio-rcar";
-+				     "renesas,rcar-gen2-gpio";
- 			reg = <0 0xe6053000 0 0x50>;
- 			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
- 			#gpio-cells = <2>;
-@@ -168,7 +168,7 @@
- 
- 		gpio4: gpio@e6054000 {
- 			compatible = "renesas,gpio-r8a7743",
--				     "renesas,gpio-rcar";
-+				     "renesas,rcar-gen2-gpio";
- 			reg = <0 0xe6054000 0 0x50>;
- 			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
- 			#gpio-cells = <2>;
-@@ -183,7 +183,7 @@
- 
- 		gpio5: gpio@e6055000 {
- 			compatible = "renesas,gpio-r8a7743",
--				     "renesas,gpio-rcar";
-+				     "renesas,rcar-gen2-gpio";
- 			reg = <0 0xe6055000 0 0x50>;
- 			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
- 			#gpio-cells = <2>;
-@@ -198,7 +198,7 @@
- 
- 		gpio6: gpio@e6055400 {
- 			compatible = "renesas,gpio-r8a7743",
--				     "renesas,gpio-rcar";
-+				     "renesas,rcar-gen2-gpio";
- 			reg = <0 0xe6055400 0 0x50>;
- 			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
- 			#gpio-cells = <2>;
-@@ -213,7 +213,7 @@
- 
- 		gpio7: gpio@e6055800 {
- 			compatible = "renesas,gpio-r8a7743",
--				     "renesas,gpio-rcar";
-+				     "renesas,rcar-gen2-gpio";
- 			reg = <0 0xe6055800 0 0x50>;
- 			interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
- 			#gpio-cells = <2>;
+> > ---
+> > 
+> >  drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c | 499 ++++++++++++-------------
+> >  1 file changed, 258 insertions(+), 241 deletions(-)
+> > 
+> > diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
+> > b/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c index
+> > 246d0de915feaffe..229192cf8e7430af 100644
+> > --- a/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
+> > +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
+
+[snip]
+
+> > +static const struct pinmux_bias_reg pinmux_bias_regs[] = {
+
+[snip]
+
+> > +	{ },
+
+I would write it as { /* Sentinel */ } to make it more explicit that a last 
+zero entry is required.
+
+> >  };
+
+[snip]
+
 -- 
-2.11.0
+Regards,
+
+Laurent Pinchart
