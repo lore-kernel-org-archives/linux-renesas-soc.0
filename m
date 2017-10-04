@@ -1,46 +1,219 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:49165 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752168AbdJDOFG (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:39346 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751114AbdJDK0a (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Oct 2017 10:05:06 -0400
+        Wed, 4 Oct 2017 06:26:30 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
+        linus.walleij@linaro.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH] pinctrl: sh-pfc: r8a77995: Add PWM pins, groups and functions
+Date: Wed,  4 Oct 2017 19:22:39 +0900
+Message-Id: <1507112560-9802-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-In-Reply-To: <1507112560-9802-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1507112560-9802-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 4 Oct 2017 16:05:04 +0200
-Message-ID: <CAMuHMdWGjMqZE_--KH+TcEJ1A-6k+TkLybp3nqjpCdAc=t1CbA@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: sh-pfc: r8a77995: Add PWM pins, groups and functions
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Oct 4, 2017 at 12:22 PM, Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->
-> This patch adds support for PWM on r8a77995.
->
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in sh-pfc-for-v4.15.
+This patch adds support for PWM on r8a77995.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ This patch is based on the renesas-drivers.git /
+renesas-drivers-2017-10-03-v4.14-rc3 tag.
 
-                        Geert
+ drivers/pinctrl/sh-pfc/pfc-r8a77995.c | 152 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 152 insertions(+)
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
+index 442ff0f..3f67b8d 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
+@@ -1111,6 +1111,118 @@ enum {
+ 	MMC_CLK_MARK, MMC_CMD_MARK,
+ };
+ 
++/* - PWM0 ------------------------------------------------------------------ */
++static const unsigned int pwm0_a_pins[] = {
++	/* PWM */
++	RCAR_GP_PIN(2, 1),
++};
++
++static const unsigned int pwm0_a_mux[] = {
++	PWM0_A_MARK,
++};
++
++static const unsigned int pwm0_b_pins[] = {
++	/* PWM */
++	RCAR_GP_PIN(1, 18),
++};
++
++static const unsigned int pwm0_b_mux[] = {
++	PWM0_B_MARK,
++};
++
++static const unsigned int pwm0_c_pins[] = {
++	/* PWM */
++	RCAR_GP_PIN(2, 29),
++};
++
++static const unsigned int pwm0_c_mux[] = {
++	PWM0_C_MARK,
++};
++
++/* - PWM1 ------------------------------------------------------------------ */
++static const unsigned int pwm1_a_pins[] = {
++	/* PWM */
++	RCAR_GP_PIN(2, 2),
++};
++
++static const unsigned int pwm1_a_mux[] = {
++	PWM1_A_MARK,
++};
++
++static const unsigned int pwm1_b_pins[] = {
++	/* PWM */
++	RCAR_GP_PIN(1, 19),
++};
++
++static const unsigned int pwm1_b_mux[] = {
++	PWM1_B_MARK,
++};
++
++static const unsigned int pwm1_c_pins[] = {
++	/* PWM */
++	RCAR_GP_PIN(2, 30),
++};
++
++static const unsigned int pwm1_c_mux[] = {
++	PWM1_C_MARK,
++};
++
++/* - PWM2 ------------------------------------------------------------------ */
++static const unsigned int pwm2_a_pins[] = {
++	/* PWM */
++	RCAR_GP_PIN(2, 3),
++};
++
++static const unsigned int pwm2_a_mux[] = {
++	PWM2_A_MARK,
++};
++
++static const unsigned int pwm2_b_pins[] = {
++	/* PWM */
++	RCAR_GP_PIN(1, 22),
++};
++
++static const unsigned int pwm2_b_mux[] = {
++	PWM2_B_MARK,
++};
++
++static const unsigned int pwm2_c_pins[] = {
++	/* PWM */
++	RCAR_GP_PIN(2, 31),
++};
++
++static const unsigned int pwm2_c_mux[] = {
++	PWM2_C_MARK,
++};
++
++/* - PWM3 ------------------------------------------------------------------ */
++static const unsigned int pwm3_a_pins[] = {
++	/* PWM */
++	RCAR_GP_PIN(2, 4),
++};
++
++static const unsigned int pwm3_a_mux[] = {
++	PWM3_A_MARK,
++};
++
++static const unsigned int pwm3_b_pins[] = {
++	/* PWM */
++	RCAR_GP_PIN(1, 27),
++};
++
++static const unsigned int pwm3_b_mux[] = {
++	PWM3_B_MARK,
++};
++
++static const unsigned int pwm3_c_pins[] = {
++	/* PWM */
++	RCAR_GP_PIN(4, 0),
++};
++
++static const unsigned int pwm3_c_mux[] = {
++	PWM3_C_MARK,
++};
++
+ /* - SCIF0 ------------------------------------------------------------------ */
+ static const unsigned int scif0_data_a_pins[] = {
+ 	/* RX, TX */
+@@ -1326,6 +1438,18 @@ enum {
+ 	SH_PFC_PIN_GROUP(mmc_data4),
+ 	SH_PFC_PIN_GROUP(mmc_data8),
+ 	SH_PFC_PIN_GROUP(mmc_ctrl),
++	SH_PFC_PIN_GROUP(pwm0_a),
++	SH_PFC_PIN_GROUP(pwm0_b),
++	SH_PFC_PIN_GROUP(pwm0_c),
++	SH_PFC_PIN_GROUP(pwm1_a),
++	SH_PFC_PIN_GROUP(pwm1_b),
++	SH_PFC_PIN_GROUP(pwm1_c),
++	SH_PFC_PIN_GROUP(pwm2_a),
++	SH_PFC_PIN_GROUP(pwm2_b),
++	SH_PFC_PIN_GROUP(pwm2_c),
++	SH_PFC_PIN_GROUP(pwm3_a),
++	SH_PFC_PIN_GROUP(pwm3_b),
++	SH_PFC_PIN_GROUP(pwm3_c),
+ 	SH_PFC_PIN_GROUP(scif0_data_a),
+ 	SH_PFC_PIN_GROUP(scif0_clk_a),
+ 	SH_PFC_PIN_GROUP(scif0_data_b),
+@@ -1392,6 +1516,30 @@ enum {
+ 	"mmc_ctrl",
+ };
+ 
++static const char * const pwm0_groups[] = {
++	"pwm0_a",
++	"pwm0_b",
++	"pwm0_c",
++};
++
++static const char * const pwm1_groups[] = {
++	"pwm1_a",
++	"pwm1_b",
++	"pwm1_c",
++};
++
++static const char * const pwm2_groups[] = {
++	"pwm2_a",
++	"pwm2_b",
++	"pwm2_c",
++};
++
++static const char * const pwm3_groups[] = {
++	"pwm3_a",
++	"pwm3_b",
++	"pwm3_c",
++};
++
+ static const char * const scif0_groups[] = {
+ 	"scif0_data_a",
+ 	"scif0_clk_a",
+@@ -1449,6 +1597,10 @@ enum {
+ 	SH_PFC_FUNCTION(i2c2),
+ 	SH_PFC_FUNCTION(i2c3),
+ 	SH_PFC_FUNCTION(mmc),
++	SH_PFC_FUNCTION(pwm0),
++	SH_PFC_FUNCTION(pwm1),
++	SH_PFC_FUNCTION(pwm2),
++	SH_PFC_FUNCTION(pwm3),
+ 	SH_PFC_FUNCTION(scif0),
+ 	SH_PFC_FUNCTION(scif1),
+ 	SH_PFC_FUNCTION(scif2),
+-- 
+1.9.1
