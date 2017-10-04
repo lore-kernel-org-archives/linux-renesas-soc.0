@@ -1,47 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:13935 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751075AbdJCHe5 (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:33950 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751988AbdJDMhA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Oct 2017 03:34:57 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+        Wed, 4 Oct 2017 08:37:00 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH 2/2] dt-bindings: pinctrl: add support for RZ/A1L
-Date: Tue,  3 Oct 2017 02:33:34 -0500
-Message-Id: <20171003073334.18917-3-chris.brandt@renesas.com>
-In-Reply-To: <20171003073334.18917-1-chris.brandt@renesas.com>
-References: <20171003073334.18917-1-chris.brandt@renesas.com>
+Subject: [PATCH 3/4] ARM: dts: r8a7792: Use generic node name for VSP1 nodes
+Date: Wed,  4 Oct 2017 14:36:48 +0200
+Message-Id: <1507120609-14501-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1507120609-14501-1-git-send-email-geert+renesas@glider.be>
+References: <1507120609-14501-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Compatible "r7s72102-ports" was added for RZ/A1L devices
+Use the preferred generic node name instead of the specific name.
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a7792.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
-index 43e21474528a..2a3366cee848 100644
---- a/Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
-@@ -13,7 +13,8 @@ Pin controller node
+diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
+index c332f77ebb6b9349..549eafe8ff129edc 100644
+--- a/arch/arm/boot/dts/r8a7792.dtsi
++++ b/arch/arm/boot/dts/r8a7792.dtsi
+@@ -794,7 +794,7 @@
+ 			status = "disabled";
+ 		};
  
- Required properties:
-   - compatible
--    this shall be "renesas,r7s72100-ports".
-+    this shall be "renesas,r7s72100-ports" for RZ/A1H and RZ/A1M or
-+    "renesas,r7s72102-ports" for RZ/A1L
+-		vsp1@fe928000 {
++		vsp@fe928000 {
+ 			compatible = "renesas,vsp1";
+ 			reg = <0 0xfe928000 0 0x8000>;
+ 			interrupts = <GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>;
+@@ -803,7 +803,7 @@
+ 			resets = <&cpg 131>;
+ 		};
  
-   - reg
-     address base and length of the memory area where the pin controller
+-		vsp1@fe930000 {
++		vsp@fe930000 {
+ 			compatible = "renesas,vsp1";
+ 			reg = <0 0xfe930000 0 0x8000>;
+ 			interrupts = <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
+@@ -812,7 +812,7 @@
+ 			resets = <&cpg 128>;
+ 		};
+ 
+-		vsp1@fe938000 {
++		vsp@fe938000 {
+ 			compatible = "renesas,vsp1";
+ 			reg = <0 0xfe938000 0 0x8000>;
+ 			interrupts = <GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>;
 -- 
-2.14.1
+2.7.4
