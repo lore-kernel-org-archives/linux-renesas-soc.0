@@ -1,64 +1,41 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH v3 14/18] arm64: dts: ulcb-kf: enable TCA9539 on I2C2
-Date: Fri,  6 Oct 2017 05:44:05 +0300
-Message-Id: <1507257845-12106-1-git-send-email-vladimir.barinov@cogentembedded.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:43493 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750945AbdJDH3H (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 4 Oct 2017 03:29:07 -0400
+Date: Wed, 4 Oct 2017 09:28:46 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: magnus.damm@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 0/3] arm64: dts: renesas: r8a7795: salvator-xs: enable
+ USB2.0 host channel 3
+Message-ID: <20171004072846.GD28959@verge.net.au>
+References: <1506925789-19392-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1506925789-19392-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This supports TCA9539 gpio expanders on I2C2 bus on ULCB Kingfisher board
+On Mon, Oct 02, 2017 at 03:29:46PM +0900, Yoshihiro Shimoda wrote:
+> This patch set is based on the latest renesas.git /
+> renesas-devel-20170928-v4.14-rc2 tag.
+> 
+> Yoshihiro Shimoda (3):
+>   arm64: dts: renesas: r8a7795: salvator-xs: enable USB2.0 phy channel 3
+>   arm64: dts: renesas: r8a7795: salvator-xs: enable USB2.0 Host channel
+>     3
+>   arm64: dts: renesas: r8a7795: salvator-xs: enable HS-USB channel 3
+> 
+>  .../arm64/boot/dts/renesas/r8a7795-salvator-xs.dts | 24 ++++++++++++++++++++++
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
----
-Changes in version 2:
-- use generic node name "gpio"
-Changes in version 3:
-- changed pca9539 to tca9539
+Hi Shimoda-san,
 
- arch/arm64/boot/dts/renesas/ulcb-kf.dtsi | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+there was some discussion of patch 1/3.
+At this point I'm waiting for a repost of the patchset with
+a revised patch 1/3.
 
-diff --git a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-index 71dee77..40885e7 100644
---- a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-+++ b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-@@ -48,6 +48,28 @@
- 	status = "okay";
- };
- 
-+&i2c2 {
-+	gpio_exp_74: gpio@74 {
-+		compatible = "ti,tca9539";
-+		reg = <0x74>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		interrupt-controller;
-+		interrupt-parent = <&gpio6>;
-+		interrupts = <8 IRQ_TYPE_EDGE_FALLING>;
-+	};
-+
-+	gpio_exp_75: gpio@75 {
-+		compatible = "ti,tca9539";
-+		reg = <0x75>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		interrupt-controller;
-+		interrupt-parent = <&gpio6>;
-+		interrupts = <4 IRQ_TYPE_EDGE_FALLING>;
-+	};
-+};
-+
- &ohci0 {
- 	status = "okay";
- };
--- 
-1.9.1
-
+Thanks
