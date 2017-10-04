@@ -1,73 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:51916 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751366AbdJDKbY (ORCPT
+Received: from sauhun.de ([88.99.104.3]:35982 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750866AbdJDRjf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Oct 2017 06:31:24 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 2/2] arm64: dts: renesas: r8a77995: draak: enable PWM channel 0 and 1
-Date: Wed,  4 Oct 2017 19:27:31 +0900
-Message-Id: <1507112851-10042-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1507112851-10042-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1507112851-10042-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Wed, 4 Oct 2017 13:39:35 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH v2 0/3] mmc: support eMMC driver type selection with DT
+Date: Wed,  4 Oct 2017 19:39:17 +0200
+Message-Id: <20171004173920.15232-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch enables PWM channel 0 and 1 on the draak. Each channel
-connects to LTC2644 for brightness control.
+Some of the Renesas R-Car boards need to set the eMMC driver type to type 1 to
+get stable HS200/400 speeds (HS400 support not upstream yet). Because the eMMC
+memories are fixed (and thus the drive type), I decided to implement the DT
+setup in a similar fashion to ACPI [1]. While implementing, I realized that all
+I did was not Renesas specific but generic, so I ended up putting it into the
+core.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+So, whenever the new property (introduced in patch 1) is used, and there is no
+host driver specific select_drive_strength callback, then the generic callback
+(introduced in patch 2) is used. An example usage can be found in patch 3.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-index 96b7ff5..ebd472d 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-@@ -47,6 +47,16 @@
- 		};
- 	};
- 
-+	pwm0_pins: pwm0 {
-+		groups = "pwm0_c";
-+		function = "pwm0";
-+	};
-+
-+	pwm1_pins: pwm1 {
-+		groups = "pwm1_c";
-+		function = "pwm1";
-+	};
-+
- 	scif2_pins: scif2 {
- 		groups = "scif2_data";
- 		function = "scif2";
-@@ -95,6 +105,20 @@
- 	status = "okay";
- };
- 
-+&pwm0 {
-+	pinctrl-0 = <&pwm0_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
-+&pwm1 {
-+	pinctrl-0 = <&pwm1_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
- &rwdt {
- 	timeout-sec = <60>;
- 	status = "okay";
+Note that currently only eMMC is handled, but the code is designed for easy SD
+addition if that ever becomes necessary.
+
+A branch for the Salvator-X(S) boards can be found here:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/emmc-drive-strength
+
+A wiki page describing my test procedure can be found here:
+
+http://elinux.org/Tests:eMMC-fixed-drive-strength
+
+Changes since RFC v1 are described per patch. It is mainly a rebase to mmc/next
+and addressing Rob's comments. Tested on Salvator-X (R-Car H3 ES1.0) and
+Salvator-XS (R-Car H3 ES2.0).
+
+I know that patch 3 needs to go via Simon, but I still include it here for
+completeness.
+
+Thanks,
+
+   Wolfram
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=51ced59cc02e0d08f61772c888480b9b1749cef1
+
+
+Wolfram Sang (3):
+  dt-bindings: mmc: describe new eMMC binding for fixed driver type
+  mmc: parse new binding for eMMC fixed driver type
+  arm64: renesas: salvator: set driver type for eMMC
+
+ Documentation/devicetree/bindings/mmc/mmc.txt    |  3 +++
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi |  1 +
+ drivers/mmc/core/core.c                          | 28 +++++++++++++++++++-----
+ drivers/mmc/core/host.c                          | 11 +++++++++-
+ include/linux/mmc/host.h                         |  2 ++
+ 5 files changed, 39 insertions(+), 6 deletions(-)
+
 -- 
-1.9.1
+2.11.0
