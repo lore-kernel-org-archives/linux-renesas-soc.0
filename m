@@ -1,61 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f54.google.com ([209.85.215.54]:52156 "EHLO
-        mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751423AbdJFCk6 (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:47022 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751947AbdJDM2t (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 Oct 2017 22:40:58 -0400
-Received: by mail-lf0-f54.google.com with SMTP id m142so15080634lfg.8
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 05 Oct 2017 19:40:58 -0700 (PDT)
-Subject: Re: [PATCH v2 14/18] arm64: dts: ulcb-kf: enable PCA9539 on I2C2
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-References: <1505398760-4774-1-git-send-email-vladimir.barinov@cogentembedded.com>
- <CAMuHMdWvhm_bbLz8cBqPWC-nXrTr6jw4cBV1A_WAsvi6DzsR0w@mail.gmail.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Message-ID: <377d7b16-15be-a488-6187-4c57b8b57d6e@cogentembedded.com>
-Date: Fri, 6 Oct 2017 05:40:55 +0300
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdWvhm_bbLz8cBqPWC-nXrTr6jw4cBV1A_WAsvi6DzsR0w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Wed, 4 Oct 2017 08:28:49 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] ASoC: fsi: Use of_device_get_match_data() helper
+Date: Wed,  4 Oct 2017 14:28:30 +0200
+Message-Id: <1507120110-13336-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+Use the of_device_get_match_data() helper instead of open coding.
+Note that when used with DT, there's always a valid match.
 
-On 20.09.2017 16:44, Geert Uytterhoeven wrote:
-> Hi Vladimir,
->
-> On Thu, Sep 14, 2017 at 4:19 PM, Vladimir Barinov
-> <vladimir.barinov@cogentembedded.com> wrote:
->> This supports PCA9539 gpio expanders on I2C2 bus on ULCB Kingfisher board
->>
->> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
->> --- a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
->> +++ b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
->> @@ -48,6 +48,28 @@
->>          status = "okay";
->>   };
->>
->> +&i2c2 {
->> +       gpio_exp_74: gpio@74 {
->> +               compatible = "nxp,pca9539";
-> According to the schematics, this is the TI TCA9539, an enhanced version
-> of the NXP PCA9539. So I'd expect "ti,tca9539".
->
-> However, using the latter may not work (I didn't try), as pca953x_id[]
-> lists both parts, while pca953x_dt_ids[] lists only the NXP part number.
-It works with "ti,tca9539"
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ sound/soc/sh/fsi.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
+diff --git a/sound/soc/sh/fsi.c b/sound/soc/sh/fsi.c
+index 6d3c7706d93fbc10..c3aaf4788557c4e1 100644
+--- a/sound/soc/sh/fsi.c
++++ b/sound/soc/sh/fsi.c
+@@ -1932,14 +1932,9 @@ static int fsi_probe(struct platform_device *pdev)
+ 
+ 	core = NULL;
+ 	if (np) {
+-		const struct of_device_id *of_id;
+-
+-		of_id = of_match_device(fsi_of_match, &pdev->dev);
+-		if (of_id) {
+-			core = of_id->data;
+-			fsi_of_parse("fsia", np, &info.port_a, &pdev->dev);
+-			fsi_of_parse("fsib", np, &info.port_b, &pdev->dev);
+-		}
++		core = of_device_get_match_data(&pdev->dev);
++		fsi_of_parse("fsia", np, &info.port_a, &pdev->dev);
++		fsi_of_parse("fsib", np, &info.port_b, &pdev->dev);
+ 	} else {
+ 		const struct platform_device_id	*id_entry = pdev->id_entry;
+ 		if (id_entry)
 -- 
-Regards,
-Vladimir
+2.7.4
