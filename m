@@ -1,80 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from lb2-smtp-cloud9.xs4all.net ([194.109.24.26]:35118 "EHLO
-        lb2-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750948AbdJGKrD (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:33412 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752204AbdJDJHW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 7 Oct 2017 06:47:03 -0400
-From: Hans Verkuil <hverkuil@xs4all.nl>
-To: linux-media@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org,
-        Archit Taneja <architt@codeaurora.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCHv3 0/2] drm/bridge/adv7511: add CEC support
-Date: Sat,  7 Oct 2017 12:46:56 +0200
-Message-Id: <20171007104658.14528-1-hverkuil@xs4all.nl>
+        Wed, 4 Oct 2017 05:07:22 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-pm@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 13/14] pinctrl: sh-pfc: r8a7796: Use generic IOCTRL register description
+Date: Wed,  4 Oct 2017 11:07:12 +0200
+Message-Id: <1507108033-8606-14-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1507108033-8606-1-git-send-email-geert+renesas@glider.be>
+References: <1507108033-8606-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Hans Verkuil <hans.verkuil@cisco.com>
+Move R-Car M3-W I/O voltage support over to the generic way to describe
+IOCTRL registers, which will be needed for suspend/resume support.
 
-This patch series adds CEC support to the drm adv7511/adv7533 drivers.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-I have tested this with the Qualcomm Dragonboard C410 (adv7533 based)
-and the Renesas R-Car Koelsch board (adv7511 based).
-
-I only have the Koelsch board to test with, but it looks like other
-R-Car boards use the same adv7511. It would be nice if someone can
-add CEC support to the other R-Car boards as well. The main thing
-to check is if they all use the same 12 MHz fixed CEC clock source.
-
-Anyone who wants to test this will need the CEC utilities that
-are part of the v4l-utils git repository:
-
-git clone git://linuxtv.org/v4l-utils.git
-cd v4l-utils
-./bootstrap.sh
-./configure
-make
-sudo make install
-
-Now configure the CEC adapter as a Playback device:
-
-cec-ctl --playback
-
-Discover other CEC devices:
-
-cec-ctl -S
-
-Regards,
-
-	Hans
-
-Changes since v2:
-- A small rewording of the 'clocks' property description in the bindings
-  as per Sergei's comment.
-
-Changes since v1:
-- Incorporate Archit's comments:
-	use defines for irq masks
-	combine the adv7511/33 regmap_configs
-	adv7511_cec_init now handles dt parsing & CEC registration
-- Use the new (4.14) CEC_CAP_DEFAULTS define
-
-Hans Verkuil (2):
-  dt-bindings: adi,adv7511.txt: document cec clock
-  drm: adv7511/33: add HDMI CEC support
-
- .../bindings/display/bridge/adi,adv7511.txt        |   4 +
- drivers/gpu/drm/bridge/adv7511/Kconfig             |   8 +
- drivers/gpu/drm/bridge/adv7511/Makefile            |   1 +
- drivers/gpu/drm/bridge/adv7511/adv7511.h           |  43 ++-
- drivers/gpu/drm/bridge/adv7511/adv7511_cec.c       | 337 +++++++++++++++++++++
- drivers/gpu/drm/bridge/adv7511/adv7511_drv.c       | 116 ++++++-
- drivers/gpu/drm/bridge/adv7511/adv7533.c           |  38 +--
- 7 files changed, 489 insertions(+), 58 deletions(-)
- create mode 100644 drivers/gpu/drm/bridge/adv7511/adv7511_cec.c
-
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+index 6f65719beebf1ee6..8c63266e8543bbd1 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+@@ -5417,11 +5417,20 @@ static const struct pinmux_drive_reg pinmux_drive_regs[] = {
+ 	{ },
+ };
+ 
++enum ioctrl_regs {
++	POCCTRL,
++};
++
++static const struct pinmux_ioctrl_reg pinmux_ioctrl_regs[] = {
++	[POCCTRL] = { 0xe6060380, },
++	{ },
++};
++
+ static int r8a7796_pin_to_pocctrl(struct sh_pfc *pfc, unsigned int pin, u32 *pocctrl)
+ {
+ 	int bit = -EINVAL;
+ 
+-	*pocctrl = 0xe6060380;
++	*pocctrl = pinmux_ioctrl_regs[POCCTRL].reg;
+ 
+ 	if (pin >= RCAR_GP_PIN(3, 0) && pin <= RCAR_GP_PIN(3, 11))
+ 		bit = pin & 0x1f;
+@@ -5738,6 +5747,7 @@ const struct sh_pfc_soc_info r8a7796_pinmux_info = {
+ 	.cfg_regs = pinmux_config_regs,
+ 	.drive_regs = pinmux_drive_regs,
+ 	.bias_regs = pinmux_bias_regs,
++	.ioctrl_regs = pinmux_ioctrl_regs,
+ 
+ 	.pinmux_data = pinmux_data,
+ 	.pinmux_data_size = ARRAY_SIZE(pinmux_data),
 -- 
-2.14.1
+2.7.4
