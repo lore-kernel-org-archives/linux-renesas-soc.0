@@ -1,77 +1,67 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: [PATCH 1/2] drm/rcar-du: Use common error handling code in
- rcar_du_encoders_init()
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-To: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        David Airlie <airlied@linux.ie>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-References: <7d5e68c7-2d64-0131-1a08-eeb4e03cc113@users.sourceforge.net>
-Message-ID: <9fafa688-f699-c587-ef77-840efa71bf76@users.sourceforge.net>
-Date: Tue, 24 Oct 2017 18:01:21 +0200
-MIME-Version: 1.0
-In-Reply-To: <7d5e68c7-2d64-0131-1a08-eeb4e03cc113@users.sourceforge.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from andre.telenet-ops.be ([195.130.132.53]:51618 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752180AbdJDJHW (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 4 Oct 2017 05:07:22 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-pm@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 11/14] pinctrl: sh-pfc: r8a7795-es1: Use generic IOCTRL register description
+Date: Wed,  4 Oct 2017 11:07:10 +0200
+Message-Id: <1507108033-8606-12-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1507108033-8606-1-git-send-email-geert+renesas@glider.be>
+References: <1507108033-8606-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 24 Oct 2017 17:16:09 +0200
+Move R-Car H3 ES1.x I/O voltage support over to the generic way to
+describe IOCTRL registers, which will be needed for suspend/resume
+support.
 
-Add a jump target so that a bit of exception handling can be better reused
-at the end of this function.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_kms.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-index 566d1a948c8f..d2c80cc9f8ee 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-@@ -377,10 +377,8 @@ static int rcar_du_encoders_init(struct rcar_du_device *rcdu)
- 		int ret;
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
+index 229192cf8e7430af..c864b0e52d93575b 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
+@@ -5423,12 +5423,21 @@ static const struct pinmux_drive_reg pinmux_drive_regs[] = {
+ 	{ },
+ };
  
- 		ret = of_graph_parse_endpoint(ep_node, &ep);
--		if (ret < 0) {
--			of_node_put(ep_node);
--			return ret;
--		}
-+		if (ret < 0)
-+			goto put_node;
- 
- 		/* Find the output route corresponding to the port number. */
- 		for (i = 0; i < RCAR_DU_OUTPUT_MAX; ++i) {
-@@ -401,10 +399,8 @@ static int rcar_du_encoders_init(struct rcar_du_device *rcdu)
- 		/* Process the output pipeline. */
- 		ret = rcar_du_encoders_init_one(rcdu, output, &ep);
- 		if (ret < 0) {
--			if (ret == -EPROBE_DEFER) {
--				of_node_put(ep_node);
--				return ret;
--			}
-+			if (ret == -EPROBE_DEFER)
-+				goto put_node;
- 
- 			continue;
- 		}
-@@ -413,6 +409,10 @@ static int rcar_du_encoders_init(struct rcar_du_device *rcdu)
- 	}
- 
- 	return num_encoders;
++enum ioctrl_regs {
++	POCCTRL,
++};
 +
-+put_node:
-+	of_node_put(ep_node);
-+	return ret;
- }
++static const struct pinmux_ioctrl_reg pinmux_ioctrl_regs[] = {
++	[POCCTRL] = { 0xe6060380, },
++	{ },
++};
++
+ static int r8a7795es1_pin_to_pocctrl(struct sh_pfc *pfc, unsigned int pin,
+ 				     u32 *pocctrl)
+ {
+ 	int bit = -EINVAL;
  
- static int rcar_du_properties_init(struct rcar_du_device *rcdu)
+-	*pocctrl = 0xe6060380;
++	*pocctrl = pinmux_ioctrl_regs[POCCTRL].reg;
+ 
+ 	if (pin >= RCAR_GP_PIN(3, 0) && pin <= RCAR_GP_PIN(3, 11))
+ 		bit = pin & 0x1f;
+@@ -5745,6 +5754,7 @@ const struct sh_pfc_soc_info r8a7795es1_pinmux_info = {
+ 	.cfg_regs = pinmux_config_regs,
+ 	.drive_regs = pinmux_drive_regs,
+ 	.bias_regs = pinmux_bias_regs,
++	.ioctrl_regs = pinmux_ioctrl_regs,
+ 
+ 	.pinmux_data = pinmux_data,
+ 	.pinmux_data_size = ARRAY_SIZE(pinmux_data),
 -- 
-2.14.3
+2.7.4
