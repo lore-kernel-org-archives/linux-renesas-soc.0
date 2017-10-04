@@ -1,35 +1,32 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f52.google.com ([209.85.215.52]:50688 "EHLO
-        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751114AbdJDSxO (ORCPT
+Received: from shards.monkeyblade.net ([184.105.139.130]:48262 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750779AbdJDR0g (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Oct 2017 14:53:14 -0400
-Received: by mail-lf0-f52.google.com with SMTP id a132so6341274lfa.7
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 04 Oct 2017 11:53:13 -0700 (PDT)
+        Wed, 4 Oct 2017 13:26:36 -0400
+Date: Wed, 04 Oct 2017 10:26:34 -0700 (PDT)
+Message-Id: <20171004.102634.1443361093432796779.davem@davemloft.net>
+To: horms+renesas@verge.net.au
+Cc: sergei.shtylyov@cogentembedded.com, magnus.damm@gmail.com,
+        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH v2 net-next] ravb: RX checksum offload
-To: Simon Horman <horms+renesas@verge.net.au>,
-        David Miller <davem@davemloft.net>
-Cc: Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-References: <1507103667-6084-1-git-send-email-horms+renesas@verge.net.au>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <58512067-ed8a-d9d1-1f29-0351c87c02b7@cogentembedded.com>
-Date: Wed, 4 Oct 2017 21:53:09 +0300
-MIME-Version: 1.0
+From: David Miller <davem@davemloft.net>
 In-Reply-To: <1507103667-6084-1-git-send-email-horms+renesas@verge.net.au>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-MW
+References: <1507103667-6084-1-git-send-email-horms+renesas@verge.net.au>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 10/04/2017 10:54 AM, Simon Horman wrote:
+From: Simon Horman <horms+renesas@verge.net.au>
+Date: Wed,  4 Oct 2017 09:54:27 +0200
 
 > Add support for RX checksum offload. This is enabled by default and
 > may be disabled and re-enabled using ethtool:
 > 
->   # ethtool -K eth0 rx off
->   # ethtool -K eth0 rx on
+>  # ethtool -K eth0 rx off
+>  # ethtool -K eth0 rx on
 > 
 > The RAVB provides a simple checksumming scheme which appears to be
 > completely compatible with CHECKSUM_COMPLETE: sum of all packet data after
@@ -40,74 +37,7 @@ On 10/04/2017 10:54 AM, Simon Horman wrote:
 > and without RX checksum offload enabled. Perf output, however, appears to
 > indicate that significantly less time is spent in do_csum(). This is as
 > expected.
-> 
-> Test results with RX checksum offload enabled:
->   # /usr/bin/perf_3.16 record -o /run/perf.data -a netperf -t TCP_MAERTS -H 10.4.3.162
->   MIGRATED TCP MAERTS TEST from 0.0.0.0 (0.0.0.0) port 0 AF_INET to 10.4.3.162 () port 0 AF_INET : demo
->   enable_enobufs failed: getprotobyname
->   Recv   Send    Send
->   Socket Socket  Message  Elapsed
->   Size   Size    Size     Time     Throughput
->   bytes  bytes   bytes    secs.    10^6bits/sec
-> 
->    87380  16384  16384    10.00     937.54
-> 
->   Summary of output of perf report:
->      18.28%      ksoftirqd/0  [kernel.kallsyms]  [k] _raw_spin_unlock_irqrestore
->      10.34%      ksoftirqd/0  [kernel.kallsyms]  [k] __pi_memcpy
->       9.83%      ksoftirqd/0  [kernel.kallsyms]  [k] ravb_poll
->       7.89%      ksoftirqd/0  [kernel.kallsyms]  [k] skb_put
->       4.01%      ksoftirqd/0  [kernel.kallsyms]  [k] dev_gro_receive
->       3.37%          netperf  [kernel.kallsyms]  [k] __arch_copy_to_user
->       3.17%          swapper  [kernel.kallsyms]  [k] arch_cpu_idle
->       2.55%          swapper  [kernel.kallsyms]  [k] tick_nohz_idle_enter
->       2.04%      ksoftirqd/0  [kernel.kallsyms]  [k] __pi___inval_dcache_area
->       2.03%          swapper  [kernel.kallsyms]  [k] _raw_spin_unlock_irq
->       1.96%      ksoftirqd/0  [kernel.kallsyms]  [k] __netdev_alloc_skb
->       1.59%      ksoftirqd/0  [kernel.kallsyms]  [k] __slab_alloc.isra.83
-> 
-> Test results without RX checksum offload enabled:
->   # /usr/bin/perf_3.16 record -o /run/perf.data -a netperf -t TCP_MAERTS -H 10.4.3.162
->   MIGRATED TCP MAERTS TEST from 0.0.0.0 (0.0.0.0) port 0 AF_INET to 10.4.3.162 () port 0 AF_INET : demo
->   enable_enobufs failed: getprotobyname
->   Recv   Send    Send
->   Socket Socket  Message  Elapsed
->   Size   Size    Size     Time     Throughput
->   bytes  bytes   bytes    secs.    10^6bits/sec
-> 
->    87380  16384  16384    10.00     940.20
-> 
->   Summary of output of perf report:
->      17.10%    ksoftirqd/0  [kernel.kallsyms]  [k] _raw_spin_unlock_irqrestore
->      10.99%    ksoftirqd/0  [kernel.kallsyms]  [k] __pi_memcpy
->       8.87%    ksoftirqd/0  [kernel.kallsyms]  [k] ravb_poll
->       8.16%    ksoftirqd/0  [kernel.kallsyms]  [k] skb_put
->       7.42%    ksoftirqd/0  [kernel.kallsyms]  [k] do_csum
->       3.91%    ksoftirqd/0  [kernel.kallsyms]  [k] dev_gro_receive
->       2.31%        swapper  [kernel.kallsyms]  [k] arch_cpu_idle
->       2.16%    ksoftirqd/0  [kernel.kallsyms]  [k] __pi___inval_dcache_area
->       2.14%    ksoftirqd/0  [kernel.kallsyms]  [k] __netdev_alloc_skb
->       1.93%        netperf  [kernel.kallsyms]  [k] __arch_copy_to_user
->       1.79%        swapper  [kernel.kallsyms]  [k] tick_nohz_idle_enter
->       1.63%    ksoftirqd/0  [kernel.kallsyms]  [k] __slab_alloc.isra.83
-> 
-> Above results collected on an R-Car Gen 3 Salvator-X/r8a7796 ES1.0.
-> Also tested on a R-Car Gen 3 Salvator-X/r8a7795 ES1.0.
-> 
-> By inspection this also appears to be compatible with the ravb found
-> on R-Car Gen 2 SoCs, however, this patch is currently untested on such
-> hardware.
-> 
+ ...
 > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> 
-> ---
-> v2
-> Address review of v1 by Sergei Shtylyov
-> * set features rather than oring them with (zero) existing values:
-> * Set/unset using a single call to ravb_modify()
 
-   Already belated but still:
-
-Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
-MBR, Sergei
+Applied, thanks Simon.
