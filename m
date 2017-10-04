@@ -1,35 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:63719 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751366AbdJDKbU (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:42068 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751998AbdJDJHV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Oct 2017 06:31:20 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 0/2] arm64: dts: renesas: r8a77995 and draak: enable PWM channels
-Date: Wed,  4 Oct 2017 19:27:29 +0900
-Message-Id: <1507112851-10042-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Wed, 4 Oct 2017 05:07:21 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-pm@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 12/14] pinctrl: sh-pfc: r8a7795: Use generic IOCTRL register description
+Date: Wed,  4 Oct 2017 11:07:11 +0200
+Message-Id: <1507108033-8606-13-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1507108033-8606-1-git-send-email-geert+renesas@glider.be>
+References: <1507108033-8606-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch set is based on the renesas-drivers.git /
-renesas-drivers-2017-10-03-v4.14-rc3 tag.
+Move R-Car H3 ES2.0 I/O voltage support over to the generic way to
+describe IOCTRL registers, which will be needed for suspend/resume
+support.
 
-This patch needs the pfc of PWM patch for r8a77995:
-https://patchwork.kernel.org/patch/9984151/
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-Yoshihiro Shimoda (2):
-  arm64: dts: renesas: r8a77995: add PWM device nodes
-  arm64: dts: renesas: r8a77995: draak: enable PWM channel 0 and 1
-
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 24 ++++++++++++++++
- arch/arm64/boot/dts/renesas/r8a77995.dtsi      | 40 ++++++++++++++++++++++++++
- 2 files changed, 64 insertions(+)
-
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+index 5e204337079618e6..5edbe8cac76cfaea 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+@@ -4603,11 +4603,20 @@ static const struct pinmux_drive_reg pinmux_drive_regs[] = {
+ 	{ },
+ };
+ 
++enum ioctrl_regs {
++	POCCTRL,
++};
++
++static const struct pinmux_ioctrl_reg pinmux_ioctrl_regs[] = {
++	[POCCTRL] = { 0xe6060380, },
++	{ },
++};
++
+ static int r8a7795_pin_to_pocctrl(struct sh_pfc *pfc, unsigned int pin, u32 *pocctrl)
+ {
+ 	int bit = -EINVAL;
+ 
+-	*pocctrl = 0xe6060380;
++	*pocctrl = pinmux_ioctrl_regs[POCCTRL].reg;
+ 
+ 	if (pin >= RCAR_GP_PIN(3, 0) && pin <= RCAR_GP_PIN(3, 11))
+ 		bit = pin & 0x1f;
+@@ -4938,6 +4947,7 @@ const struct sh_pfc_soc_info r8a7795_pinmux_info = {
+ 	.cfg_regs = pinmux_config_regs,
+ 	.drive_regs = pinmux_drive_regs,
+ 	.bias_regs = pinmux_bias_regs,
++	.ioctrl_regs = pinmux_ioctrl_regs,
+ 
+ 	.pinmux_data = pinmux_data,
+ 	.pinmux_data_size = ARRAY_SIZE(pinmux_data),
 -- 
-1.9.1
+2.7.4
