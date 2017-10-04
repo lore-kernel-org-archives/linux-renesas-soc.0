@@ -1,37 +1,193 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <20171004210724.59797-2-chris.brandt@renesas.com>
-References: <20171004210724.59797-1-chris.brandt@renesas.com> <20171004210724.59797-2-chris.brandt@renesas.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Sat, 7 Oct 2017 13:19:52 +0200
-Message-ID: <CACRpkdaQf=O19op+0kWHtsfHps80JQZbXT+ajVxQMtHZ_Te7bQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] pinctrl: rza1: add support for RZ/A1L
-To: Chris Brandt <chris.brandt@renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor4.renesas.com ([210.160.252.174]:61859 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751047AbdJDVIm (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 4 Oct 2017 17:08:42 -0400
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
         Simon Horman <horms+renesas@verge.net.au>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: devicetree-owner@vger.kernel.org
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v3 1/2] pinctrl: rza1: add support for RZ/A1L
+Date: Wed,  4 Oct 2017 16:07:23 -0500
+Message-Id: <20171004210724.59797-2-chris.brandt@renesas.com>
+In-Reply-To: <20171004210724.59797-1-chris.brandt@renesas.com>
+References: <20171004210724.59797-1-chris.brandt@renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Oct 4, 2017 at 11:07 PM, Chris Brandt <chris.brandt@renesas.com> wrote:
+Aspects like the number of ports and the location where peripherals are
+brought out differ between the RZ/A1H and RZ/A1L.
 
-> Aspects like the number of ports and the location where peripherals are
-> brought out differ between the RZ/A1H and RZ/A1L.
->
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-> Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> ---
-> v2:
->  * added Reviewed-by
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+---
+v2:
+ * added Reviewed-by
+---
+ drivers/pinctrl/pinctrl-rza1.c | 134 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 134 insertions(+)
 
-Looks good, I expect Geert to queue this for me with a pull
-request like with other Renesas stuff.
-
-Yours,
-Linus Walleij
+diff --git a/drivers/pinctrl/pinctrl-rza1.c b/drivers/pinctrl/pinctrl-rza1.c
+index 04d058706b80..717c0f4449a0 100644
+--- a/drivers/pinctrl/pinctrl-rza1.c
++++ b/drivers/pinctrl/pinctrl-rza1.c
+@@ -302,6 +302,134 @@ static const struct rza1_pinmux_conf rza1h_pmx_conf = {
+ 	.swio_entries	= rza1h_swio_entries,
+ };
+ 
++/* ----------------------------------------------------------------------------
++ * RZ/A1L (r7s72102) pinmux flags
++ */
++
++static const struct rza1_bidir_pin rza1l_bidir_pins_p1[] = {
++	{ .pin = 0, .func = 1 },
++	{ .pin = 1, .func = 1 },
++	{ .pin = 2, .func = 1 },
++	{ .pin = 3, .func = 1 },
++	{ .pin = 4, .func = 1 },
++	{ .pin = 5, .func = 1 },
++	{ .pin = 6, .func = 1 },
++	{ .pin = 7, .func = 1 },
++};
++
++static const struct rza1_bidir_pin rza1l_bidir_pins_p3[] = {
++	{ .pin = 0, .func = 2 },
++	{ .pin = 1, .func = 2 },
++	{ .pin = 2, .func = 2 },
++	{ .pin = 4, .func = 2 },
++	{ .pin = 5, .func = 2 },
++	{ .pin = 10, .func = 2 },
++	{ .pin = 11, .func = 2 },
++	{ .pin = 12, .func = 2 },
++	{ .pin = 13, .func = 2 },
++};
++
++static const struct rza1_bidir_pin rza1l_bidir_pins_p4[] = {
++	{ .pin = 1, .func = 4 },
++	{ .pin = 2, .func = 2 },
++	{ .pin = 3, .func = 2 },
++	{ .pin = 6, .func = 2 },
++	{ .pin = 7, .func = 2 },
++};
++
++static const struct rza1_bidir_pin rza1l_bidir_pins_p5[] = {
++	{ .pin = 0, .func = 1 },
++	{ .pin = 1, .func = 1 },
++	{ .pin = 2, .func = 1 },
++	{ .pin = 3, .func = 1 },
++	{ .pin = 4, .func = 1 },
++	{ .pin = 5, .func = 1 },
++	{ .pin = 6, .func = 1 },
++	{ .pin = 7, .func = 1 },
++	{ .pin = 8, .func = 1 },
++	{ .pin = 9, .func = 1 },
++	{ .pin = 10, .func = 1 },
++	{ .pin = 11, .func = 1 },
++	{ .pin = 12, .func = 1 },
++	{ .pin = 13, .func = 1 },
++	{ .pin = 14, .func = 1 },
++	{ .pin = 15, .func = 1 },
++	{ .pin = 0, .func = 2 },
++	{ .pin = 1, .func = 2 },
++	{ .pin = 2, .func = 2 },
++	{ .pin = 3, .func = 2 },
++};
++
++static const struct rza1_bidir_pin rza1l_bidir_pins_p6[] = {
++	{ .pin = 0, .func = 1 },
++	{ .pin = 1, .func = 1 },
++	{ .pin = 2, .func = 1 },
++	{ .pin = 3, .func = 1 },
++	{ .pin = 4, .func = 1 },
++	{ .pin = 5, .func = 1 },
++	{ .pin = 6, .func = 1 },
++	{ .pin = 7, .func = 1 },
++	{ .pin = 8, .func = 1 },
++	{ .pin = 9, .func = 1 },
++	{ .pin = 10, .func = 1 },
++	{ .pin = 11, .func = 1 },
++	{ .pin = 12, .func = 1 },
++	{ .pin = 13, .func = 1 },
++	{ .pin = 14, .func = 1 },
++	{ .pin = 15, .func = 1 },
++};
++
++static const struct rza1_bidir_pin rza1l_bidir_pins_p7[] = {
++	{ .pin = 2, .func = 2 },
++	{ .pin = 3, .func = 2 },
++	{ .pin = 5, .func = 2 },
++	{ .pin = 6, .func = 2 },
++	{ .pin = 7, .func = 2 },
++	{ .pin = 2, .func = 3 },
++	{ .pin = 3, .func = 3 },
++	{ .pin = 5, .func = 3 },
++	{ .pin = 6, .func = 3 },
++	{ .pin = 7, .func = 3 },
++};
++
++static const struct rza1_bidir_pin rza1l_bidir_pins_p9[] = {
++	{ .pin = 1, .func = 2 },
++	{ .pin = 0, .func = 3 },
++	{ .pin = 1, .func = 3 },
++	{ .pin = 3, .func = 3 },
++	{ .pin = 4, .func = 3 },
++	{ .pin = 5, .func = 3 },
++};
++
++static const struct rza1_swio_pin rza1l_swio_pins[] = {
++	{ .port = 2, .pin = 8, .func = 2, .input = 0 },
++	{ .port = 5, .pin = 6, .func = 3, .input = 0 },
++	{ .port = 6, .pin = 6, .func = 3, .input = 0 },
++	{ .port = 6, .pin = 10, .func = 3, .input = 0 },
++	{ .port = 7, .pin = 10, .func = 2, .input = 0 },
++	{ .port = 8, .pin = 2, .func = 3, .input = 0 },
++};
++
++static const struct rza1_bidir_entry rza1l_bidir_entries[RZA1_NPORTS] = {
++	[1] = { ARRAY_SIZE(rza1l_bidir_pins_p1), rza1l_bidir_pins_p1 },
++	[3] = { ARRAY_SIZE(rza1l_bidir_pins_p3), rza1l_bidir_pins_p3 },
++	[4] = { ARRAY_SIZE(rza1l_bidir_pins_p4), rza1l_bidir_pins_p4 },
++	[5] = { ARRAY_SIZE(rza1l_bidir_pins_p4), rza1l_bidir_pins_p5 },
++	[6] = { ARRAY_SIZE(rza1l_bidir_pins_p6), rza1l_bidir_pins_p6 },
++	[7] = { ARRAY_SIZE(rza1l_bidir_pins_p7), rza1l_bidir_pins_p7 },
++	[9] = { ARRAY_SIZE(rza1l_bidir_pins_p9), rza1l_bidir_pins_p9 },
++};
++
++static const struct rza1_swio_entry rza1l_swio_entries[] = {
++	[0] = { ARRAY_SIZE(rza1h_swio_pins), rza1h_swio_pins },
++};
++
++/* RZ/A1L (r7s72102x) pinmux flags table */
++static const struct rza1_pinmux_conf rza1l_pmx_conf = {
++	.bidir_entries	= rza1l_bidir_entries,
++	.swio_entries	= rza1l_swio_entries,
++};
++
+ /* ----------------------------------------------------------------------------
+  * RZ/A1 types
+  */
+@@ -1283,9 +1411,15 @@ static int rza1_pinctrl_probe(struct platform_device *pdev)
+ 
+ static const struct of_device_id rza1_pinctrl_of_match[] = {
+ 	{
++		/* RZ/A1H, RZ/A1M */
+ 		.compatible	= "renesas,r7s72100-ports",
+ 		.data		= &rza1h_pmx_conf,
+ 	},
++	{
++		/* RZ/A1L */
++		.compatible	= "renesas,r7s72102-ports",
++		.data		= &rza1l_pmx_conf,
++	},
+ 	{ }
+ };
+ 
+-- 
+2.14.1
