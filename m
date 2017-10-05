@@ -1,77 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:7789 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754738AbdJIN7p (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:37178 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751415AbdJEN1K (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 Oct 2017 09:59:45 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH  3/5] ARM: dts: r8a7745: Link PCI USB devices to USB PHY
-Date: Mon,  9 Oct 2017 14:58:59 +0100
-Message-Id: <1507557541-46560-4-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1507557541-46560-1-git-send-email-biju.das@bp.renesas.com>
-References: <1507557541-46560-1-git-send-email-biju.das@bp.renesas.com>
+        Thu, 5 Oct 2017 09:27:10 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: [PATCH v2 0/2] arm64: dts: r8a779[56]: Add OPPs table for cpu devices
+Date: Thu,  5 Oct 2017 15:26:22 +0200
+Message-Id: <1507209984-17123-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe the PCI USB devices that are behind the PCI bridges, adding
-necessary links to the USB PHY device.
+These are dependencies for supporting CPUFreq. The remainder of that
+work is being posted separately and can be found at:
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
----
- arch/arm/boot/dts/r8a7745.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/rcar-gen3-cpufreq-v3
 
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index 17cfa53..3a50f70 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -867,6 +867,18 @@
- 			interrupt-map = <0x0000 0 0 1 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH
- 					 0x0800 0 0 1 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH
- 					 0x1000 0 0 2 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			usb@1,0 {
-+				reg = <0x800 0 0 0 0>;
-+				phys = <&usb0 0>;
-+				phy-names = "usb";
-+			};
-+
-+			usb@2,0 {
-+				reg = <0x1000 0 0 0 0>;
-+				phys = <&usb0 0>;
-+				phy-names = "usb";
-+			};
- 		};
- 
- 		pci1: pci@ee0d0000 {
-@@ -890,6 +902,18 @@
- 			interrupt-map = <0x0000 0 0 1 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH
- 					 0x0800 0 0 1 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH
- 					 0x1000 0 0 2 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			usb@1,0 {
-+				reg = <0x10800 0 0 0 0>;
-+				phys = <&usb2 0>;
-+				phy-names = "usb";
-+			};
-+
-+			usb@2,0 {
-+				reg = <0x11000 0 0 0 0>;
-+				phys = <&usb2 0>;
-+				phy-names = "usb";
-+			};
- 		};
- 
- 		usbphy: usb-phy@e6590100 {
+
+A description of steps taken to lightly exercise the same feature for the
+r8a7795 the above can be found at the link below. The results are the same
+for the r8a7796 with the exception that it has two active CPU cores rather
+than four.
+
+http://elinux.org/Tests:R-CAR-GEN3-CPUFreq
+
+
+Dien Pham (2):
+  arm64: dts: r8a7795: Add OPPs table for cpu devices
+  arm64: dts: r8a7796: Add OPPs table for cpu devices
+
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 55 ++++++++++++++++++++++++++++++
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 58 ++++++++++++++++++++++++++++++++
+ 2 files changed, 113 insertions(+)
+
 -- 
-1.9.1
+2.1.4
