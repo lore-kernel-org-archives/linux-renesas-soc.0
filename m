@@ -1,52 +1,40 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] irqchip/renesas-intc-irqpin: Use of_device_get_match_data() helper
-Date: Wed,  4 Oct 2017 14:17:58 +0200
-Message-Id: <1507119478-12641-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] ARM: dts: gr-peach: Mix DTS fixes/updates
+Date: Thu,  5 Oct 2017 10:58:17 +0200
+Message-Id: <1507193900-23801-1-git-send-email-jacopo+renesas@jmondi.org>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use the of_device_get_match_data() helper instead of open coding.
+Hello,
+   this series includes three patches for GR-Peach DTS.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/irqchip/irq-renesas-intc-irqpin.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+The first, very trivial one is the re-proposal of the already sent patch, with
+the commit message updated as suggested by Sergei.
 
-diff --git a/drivers/irqchip/irq-renesas-intc-irqpin.c b/drivers/irqchip/irq-renesas-intc-irqpin.c
-index 713177d97c7aa0b6..06f29cf5018a151f 100644
---- a/drivers/irqchip/irq-renesas-intc-irqpin.c
-+++ b/drivers/irqchip/irq-renesas-intc-irqpin.c
-@@ -389,9 +389,8 @@ MODULE_DEVICE_TABLE(of, intc_irqpin_dt_ids);
- 
- static int intc_irqpin_probe(struct platform_device *pdev)
- {
--	const struct intc_irqpin_config *config = NULL;
-+	const struct intc_irqpin_config *config;
- 	struct device *dev = &pdev->dev;
--	const struct of_device_id *of_id;
- 	struct intc_irqpin_priv *p;
- 	struct intc_irqpin_iomem *i;
- 	struct resource *io[INTC_IRQPIN_REG_NR];
-@@ -422,11 +421,9 @@ static int intc_irqpin_probe(struct platform_device *pdev)
- 	p->pdev = pdev;
- 	platform_set_drvdata(pdev, p);
- 
--	of_id = of_match_device(intc_irqpin_dt_ids, dev);
--	if (of_id && of_id->data) {
--		config = of_id->data;
-+	config = of_device_get_match_data(dev);
-+	if (config)
- 		p->needs_clk = config->needs_clk;
--	}
- 
- 	p->clk = devm_clk_get(dev, NULL);
- 	if (IS_ERR(p->clk)) {
--- 
+The second just enables the Multi-function timer/counter unit which was
+disabled and is actually used for timer event generations and wake-ups.
+
+After enabling the MTU unit, ETHER is now working properly, so I am re-proposing
+this patch, which had been left out from previous gr-peach DTS series because
+the interface was not working correctly.
+
+Thanks
+   j
+
+Jacopo Mondi (3):
+  ARM: dts: gr-peach: Fix 'leds' node name indent
+  ARM: dts: gr-peach: Enable MTU2 timer pulse unit
+  ARM: dts: gr-peach: Add ETHER pin group
+
+ arch/arm/boot/dts/r7s72100-gr-peach.dts | 44 ++++++++++++++++++++++++++++++++-
+ 1 file changed, 43 insertions(+), 1 deletion(-)
+
+--
 2.7.4
+
