@@ -1,39 +1,29 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:45417 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751318AbdJEKjp (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33875 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751278AbdJEJU7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 Oct 2017 06:39:45 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH] usb: renesas_usbhs: Use of_device_get_match_data() helper
-Date: Thu, 5 Oct 2017 10:39:41 +0000
-Message-ID: <TY1PR06MB0992C07959B4A440C401825CD8700@TY1PR06MB0992.apcprd06.prod.outlook.com>
+        Thu, 5 Oct 2017 05:20:59 -0400
+Date: Thu, 5 Oct 2017 11:20:30 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] usb: renesas_usbhs: Use of_device_get_match_data() helper
+Message-ID: <20171005092029.GS26369@verge.net.au>
 References: <1507120008-13238-1-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1507120008-13238-1-git-send-email-geert+renesas@glider.be>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1507120008-13238-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
-
-> From: Geert Uytterhoeven, Sent: Wednesday, October 4, 2017 9:27 PM
->=20
+On Wed, Oct 04, 2017 at 02:26:48PM +0200, Geert Uytterhoeven wrote:
 > Use the of_device_get_match_data() helper instead of open coding.
->=20
+> 
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Thank you for the patch!
-
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-
-Best regards,
-Yoshihiro Shimoda
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
