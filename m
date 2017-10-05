@@ -1,46 +1,82 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:46637 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750990AbdJGKhI (ORCPT
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:52002 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751890AbdJEIcK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 7 Oct 2017 06:37:08 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 02/11] mmc: cavium: catch all errors when getting regulators
-Date: Sat,  7 Oct 2017 12:36:49 +0200
-Message-Id: <20171007103658.16868-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20171007103658.16868-1-wsa+renesas@sang-engineering.com>
-References: <20171007103658.16868-1-wsa+renesas@sang-engineering.com>
+        Thu, 5 Oct 2017 04:32:10 -0400
+MIME-Version: 1.0
+In-Reply-To: <20171005074859.GN4037@w540>
+References: <1507131657-6414-1-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdXOJ6V_p26ozzwzUh5a9mvH-Aeiz2MavEf22v3iB6GiKQ@mail.gmail.com> <20171005074859.GN4037@w540>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 5 Oct 2017 10:32:08 +0200
+Message-ID: <CAMuHMdUy1BTv7rCSrJ+REpe9RWqc8A3BNhzD=HmimpyuuFb-ag@mail.gmail.com>
+Subject: Re: [PATCH] arm: dts: gr-peach: Reduce extal_clk resolution
+To: jacopo mondi <jacopo@jmondi.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Chris Brandt <Chris.Brandt@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Bail out everytime when mmc_regulator_get_supply() returns an errno, not only
-when probing gets deferred. This is currently a no-op, because this function
-only returns -EPROBE_DEFER or 0 right now. But if it will throw another error
-somewhen, it will be for a reason. (This still doesn't change that getting
-regulators is optional, so 0 can still mean no regulators found). So, let us a)
-be future proof and b) have driver code which is easier to understand.
+Hi Jacopo,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/mmc/host/cavium.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Thu, Oct 5, 2017 at 9:48 AM, jacopo mondi <jacopo@jmondi.org> wrote:
+> On Wed, Oct 04, 2017 at 05:54:46PM +0200, Geert Uytterhoeven wrote:
+>> On Wed, Oct 4, 2017 at 5:40 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+>> > The system clock described by extal_clk is reported to have a frequency
+>> > of 13.333 Mhz and is correctly described by gr-peach device tree.
+>> >
+>> > However, when enabling a RIIC device the following error is reported by
+>> > drivers/i2c/busses/i2c-riic.c
+>> >
+>> > "invalid parent clk (33332500). Must be 33325000Hz"
+>> >
+>> > As RIIC devices have a clock source obtained by dividing by 12 the
+>> > system clock, the resulting value is not accepted by the driver
+>> > (which clearly states not to support any frequency except the reported
+>> > 33325000Hz one).
+>> >
+>> > Hence, reduce the system clock accuracy to a value which makes
+>> > frequencies obtained through division accepted by RIIC driver.
+>> >
+>> > Please note that other r7s72100 boards, such as Genmai, report the same
+>> > "reduced accuracy" frequency, even if their external clock sources are
+>> > effectively 13.333Mhz as gr-peach one.
+>> >
+>> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+>>
+>> There's no need to do this, Chris already proposed a fix, cfr.
+>> "[PATCH v2] i2c: riic: remove fixed clock restriction"
+>> (https://www.spinics.net/lists/linux-renesas-soc/msg18573.html).
+>
+> Oh that's even better!
+> Do you see any value in augmenting the frequency resolution in Genmai
+> DTS then?
 
-diff --git a/drivers/mmc/host/cavium.c b/drivers/mmc/host/cavium.c
-index fbd29f00fca05e..ed5cefb8376838 100644
---- a/drivers/mmc/host/cavium.c
-+++ b/drivers/mmc/host/cavium.c
-@@ -967,7 +967,7 @@ static int cvm_mmc_of_parse(struct device *dev, struct cvm_mmc_slot *slot)
- 	}
- 
- 	ret = mmc_regulator_get_supply(mmc);
--	if (ret == -EPROBE_DEFER)
-+	if (ret)
- 		return ret;
- 	/*
- 	 * Legacy Octeon firmware has no regulator entry, fall-back to
--- 
-2.11.0
+The Genmai documentation says EXTAL is 13.33 MHz (which matches
+r7s72100-genmai.dts) everywhere, except in the schematics, where it says
+13.3333 MHz. Sigh...
+
+The difference is slightly larger than 100 ppm, so still insignificant, I think.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
