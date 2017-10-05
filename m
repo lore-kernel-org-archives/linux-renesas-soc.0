@@ -1,67 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:33237 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751068AbdJIL4T (ORCPT
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47356 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751280AbdJEPEu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 Oct 2017 07:56:19 -0400
-Received: by mail-wm0-f66.google.com with SMTP id u138so19956160wmu.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 09 Oct 2017 04:56:19 -0700 (PDT)
+        Thu, 5 Oct 2017 11:04:50 -0400
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 2/2] arm64: dts: r8a7796: Add OPPs table for cpu
+ devices
+To: Simon Horman <horms+renesas@verge.net.au>,
+        linux-renesas-soc@vger.kernel.org
+References: <1507209984-17123-1-git-send-email-horms+renesas@verge.net.au>
+ <1507209984-17123-3-git-send-email-horms+renesas@verge.net.au>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Message-ID: <e2e31fd8-b5f8-40a8-df3d-e7726bb8a8e1@arm.com>
+Date: Thu, 5 Oct 2017 16:04:47 +0100
 MIME-Version: 1.0
 In-Reply-To: <1507209984-17123-3-git-send-email-horms+renesas@verge.net.au>
-References: <1507209984-17123-1-git-send-email-horms+renesas@verge.net.au> <1507209984-17123-3-git-send-email-horms+renesas@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 9 Oct 2017 13:56:17 +0200
-Message-ID: <CAMuHMdWnpx4UUSgWv5oPyqPBb2EHtGH8BpZ_zxtv+BdWwgmNaw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] arm64: dts: r8a7796: Add OPPs table for cpu devices
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
 
-On Thu, Oct 5, 2017 at 3:26 PM, Simon Horman <horms+renesas@verge.net.au> wrote:
+
+On 05/10/17 14:26, Simon Horman wrote:
 > From: Dien Pham <dien.pham.ry@rvc.renesas.com>
->
+> 
 > Current, OPP tables are defined temporary,
 > they are being evaluated and adjust in future.
->
-> Based in part on work by Hien Dang.
+> 
 
+I assume these OPPs will continue to work in future but just not optimal.
+
+> Based in part on work by Hien Dang.
+> 
+> Signed-off-by: Dien Pham <dien.pham.ry@rvc.renesas.com>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> ---
+> v2 [Simon Horman]
+> - Only provide one operating points node for each operating-points-v2 node
+>   as per the binding; other nodes were unused and have been removed
+> 
+> v1 [Simon Horman]
+> - consolidated several patches into one
+> 
+> v0 [Dien Pham]
+> ---
+>  arch/arm64/boot/dts/renesas/r8a7796.dtsi | 58 ++++++++++++++++++++++++++++++++
+>  1 file changed, 58 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> index 57ac5ca6ed98..2d9edc61437c 100644
 > --- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
 > +++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> @@ -46,6 +46,8 @@
+>  			power-domains = <&sysc R8A7796_PD_CA57_CPU0>;
+>  			next-level-cache = <&L2_CA57>;
+>  			enable-method = "psci";
+> +			clocks =<&cpg CPG_CORE R8A7796_CLK_Z>;
+> +			operating-points-v2 = <&cluster0_opp>;
+>  		};
+>  
+>  		a57_1: cpu@1 {
+> @@ -55,6 +57,7 @@
+>  			power-domains = <&sysc R8A7796_PD_CA57_CPU1>;
+>  			next-level-cache = <&L2_CA57>;
+>  			enable-method = "psci";
 
-> @@ -108,6 +116,56 @@
->                 };
->         };
->
-> +       cluster0_opp: opp_table0 {
-> +               compatible = "operating-points-v2";
-> +               opp-shared;
-> +
-> +               opp@500000000 {
+Just curious why clocks are not specified in secondaries ?
+Does this continue work if I hotplug out CPUs in ascending order and
+then hotplug back in descending order ? Also the current driver or OS
+may deal with that but not a good assumption when write DT
 
-As reported before, with "make dtbs W=1":
-
-arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dtb: Warning
-(unit_address_vs_reg): Node /opp_table0/opp@500000000 has a unit name,
-but no reg property
-
-etc.
-
-opp-500000000
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Regards,
+Sudeep
