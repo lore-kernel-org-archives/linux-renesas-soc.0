@@ -1,40 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52502 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751518AbdJFJ0Q (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:15372 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751418AbdJEKn4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Oct 2017 05:26:16 -0400
-Date: Fri, 6 Oct 2017 11:26:06 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Mathias Nyman <mathias.nyman@intel.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] usb: host: xhci-plat: Use of_device_get_match_data()
+        Thu, 5 Oct 2017 06:43:56 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH] usb: host: xhci-plat: Use of_device_get_match_data()
  helper
-Message-ID: <20171006092606.GH7734@verge.net.au>
+Date: Thu, 5 Oct 2017 10:38:50 +0000
+Message-ID: <TY1PR06MB0992A55B59D6052760CC29E1D8700@TY1PR06MB0992.apcprd06.prod.outlook.com>
 References: <1507119903-13148-1-git-send-email-geert+renesas@glider.be>
- <20171005091916.GR26369@verge.net.au>
- <59D60571.40101@intel.com>
+In-Reply-To: <1507119903-13148-1-git-send-email-geert+renesas@glider.be>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <59D60571.40101@intel.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Oct 05, 2017 at 01:12:01PM +0300, Mathias Nyman wrote:
-> On 05.10.2017 12:19, Simon Horman wrote:
-> >On Wed, Oct 04, 2017 at 02:25:03PM +0200, Geert Uytterhoeven wrote:
-> >>Use the of_device_get_match_data() helper instead of open coding.
-> >>
-> >>Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> >
-> >Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-> >
-> >
-> 
-> Thanks, I already applied and sent forward before this new reviewed-by tag
+Hi,
 
-Thanks, sorry for not noticing that.
+> From: Geert Uytterhoeven, Sent: Wednesday, October 4, 2017 9:25 PM
+>=20
+> Use the of_device_get_match_data() helper instead of open coding.
+>=20
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Thank you for the patch!
+
+Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+
+But, it seems too late about this Reviewed-by though...
+https://marc.info/?l=3Dlinux-usb&m=3D150719811907415&w=3D2
+
+Best regards,
+Yoshihiro Shimoda
