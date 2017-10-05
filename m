@@ -1,66 +1,122 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:35603 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753864AbdJIICt (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:37079 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751319AbdJENY0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 Oct 2017 04:02:49 -0400
-Received: by mail-wm0-f65.google.com with SMTP id b189so19729014wmd.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 09 Oct 2017 01:02:49 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1507209837-16938-3-git-send-email-horms+renesas@verge.net.au>
-References: <1507209837-16938-1-git-send-email-horms+renesas@verge.net.au> <1507209837-16938-3-git-send-email-horms+renesas@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 9 Oct 2017 10:02:48 +0200
-Message-ID: <CAMuHMdWpbZ5r5s2+29rLBcPABUaN0BBXEZreryoCSriDcqqdkQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/6] clk: renesas: rcar-gen3: Add Z2 clock divider support
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
+        Thu, 5 Oct 2017 09:24:26 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: [PATCH v3 2/6] clk: renesas: rcar-gen3: Add Z2 clock divider support
+Date: Thu,  5 Oct 2017 15:23:53 +0200
+Message-Id: <1507209837-16938-3-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1507209837-16938-1-git-send-email-horms+renesas@verge.net.au>
+References: <1507209837-16938-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-On Thu, Oct 5, 2017 at 3:23 PM, Simon Horman <horms+renesas@verge.net.au> wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->
-> This patch adds Z2 clock divider support for R-Car Gen3 SoC.
->
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> ---
-> v2 [Simon Horman]
-> * Consolidate Z and Z2 clock ops
-> * Allow setting of Z2 clock
+This patch adds Z2 clock divider support for R-Car Gen3 SoC.
 
-Thanks for the update!
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+v2 [Simon Horman]
+* Consolidate Z and Z2 clock ops
+* Allow setting of Z2 clock
 
-> --- a/drivers/clk/renesas/rcar-gen3-cpg.c
-> +++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+v1 [Simon Horman]
+* Provide __cpg_z_clk_recalc_rate() helper
+* Use GENMASK
 
-> @@ -88,8 +90,8 @@ static int cpg_z_clk_set_rate(struct clk_hw *hw, unsigned long rate,
->         if (clk_readl(zclk->kick_reg) & CPG_FRQCRB_KICK)
->                 return -EBUSY;
->
-> -       val = clk_readl(zclk->reg) & ~CPG_FRQCRC_ZFC_MASK;
-> -       val |= FIELD_PREP(CPG_FRQCRC_ZFC_MASK, 32 - mult);
-> +       val = clk_readl(zclk->reg) & ~zclk->mask;
-> +       val |= ((32 - mult) << __bf_shf(zclk->mask)) & zclk->mask;
+v0 [Takeshi Kihara]
+---
+ drivers/clk/renesas/rcar-gen3-cpg.c | 18 +++++++++++++-----
+ drivers/clk/renesas/rcar-gen3-cpg.h |  1 +
+ 2 files changed, 14 insertions(+), 5 deletions(-)
 
-Any special reason you're now open coding FIELD_PREP()?
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
+index d98272a6075f..e794e7b9c40a 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.c
++++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+@@ -31,7 +31,7 @@
+ #define CPG_PLL4CR		0x01f4
+ 
+ /*
+- * Z Clock
++ * Z Clock & Z2 Clock
+  *
+  * Traits of this clock:
+  * prepare - clk_prepare only ensures that parents are prepared
+@@ -43,11 +43,13 @@
+ #define CPG_FRQCRB_KICK			BIT(31)
+ #define CPG_FRQCRC			0x000000e0
+ #define CPG_FRQCRC_ZFC_MASK		GENMASK(12, 8)
++#define CPG_FRQCRC_Z2FC_MASK		GENMASK(4, 0)
+ 
+ struct cpg_z_clk {
+ 	struct clk_hw hw;
+ 	void __iomem *reg;
+ 	void __iomem *kick_reg;
++	unsigned long mask;
+ };
+ 
+ #define to_z_clk(_hw)	container_of(_hw, struct cpg_z_clk, hw)
+@@ -88,8 +90,8 @@ static int cpg_z_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (clk_readl(zclk->kick_reg) & CPG_FRQCRB_KICK)
+ 		return -EBUSY;
+ 
+-	val = clk_readl(zclk->reg) & ~CPG_FRQCRC_ZFC_MASK;
+-	val |= FIELD_PREP(CPG_FRQCRC_ZFC_MASK, 32 - mult);
++	val = clk_readl(zclk->reg) & ~zclk->mask;
++	val |= ((32 - mult) << __bf_shf(zclk->mask)) & zclk->mask;
+ 	clk_writel(val, zclk->reg);
+ 
+ 	/*
+@@ -127,7 +129,8 @@ static const struct clk_ops cpg_z_clk_ops = {
+ 
+ static struct clk * __init cpg_z_clk_register(const char *name,
+ 					      const char *parent_name,
+-					      void __iomem *reg)
++					      void __iomem *reg,
++					      unsigned long mask)
+ {
+ 	struct clk_init_data init;
+ 	struct cpg_z_clk *zclk;
+@@ -146,6 +149,7 @@ static struct clk * __init cpg_z_clk_register(const char *name,
+ 	zclk->reg = reg + CPG_FRQCRC;
+ 	zclk->kick_reg = reg + CPG_FRQCRB;
+ 	zclk->hw.init = &init;
++	zclk->mask = mask;
+ 
+ 	clk = clk_register(NULL, &zclk->hw);
+ 	if (IS_ERR(clk))
+@@ -499,7 +503,11 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+ 
+ 	case CLK_TYPE_GEN3_Z:
+ 		return cpg_z_clk_register(core->name, __clk_get_name(parent),
+-					  base);
++					  base, CPG_FRQCRC_ZFC_MASK);
++
++	case CLK_TYPE_GEN3_Z2:
++		return cpg_z_clk_register(core->name, __clk_get_name(parent),
++					  base, CPG_FRQCRC_Z2FC_MASK);
+ 
+ 	default:
+ 		return ERR_PTR(-EINVAL);
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
+index 89da28f6f71b..c03fd498c96b 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.h
++++ b/drivers/clk/renesas/rcar-gen3-cpg.h
+@@ -22,6 +22,7 @@ enum rcar_gen3_clk_types {
+ 	CLK_TYPE_GEN3_R,
+ 	CLK_TYPE_GEN3_PE,
+ 	CLK_TYPE_GEN3_Z,
++	CLK_TYPE_GEN3_Z2,
+ };
+ 
+ #define DEF_GEN3_SD(_name, _id, _parent, _offset)	\
+-- 
+2.1.4
