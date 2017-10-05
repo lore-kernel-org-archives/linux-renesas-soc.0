@@ -1,73 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38835 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:37061 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752092AbdJTK3O (ORCPT
+        with ESMTP id S1751372AbdJENYS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Oct 2017 06:29:14 -0400
+        Thu, 5 Oct 2017 09:24:18 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 09/31] arm64: dts: m3ulcb-kf: initial device tree
-Date: Fri, 20 Oct 2017 12:28:12 +0200
-Message-Id: <eded6a4d16c40879540e1073581e0679e9684bdb.1508495040.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1508495040.git.horms+renesas@verge.net.au>
-References: <cover.1508495040.git.horms+renesas@verge.net.au>
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: [PATCH v3 4/6] clk: renesas: r8a7795: Add Z2 clock
+Date: Thu,  5 Oct 2017 15:23:55 +0200
+Message-Id: <1507209837-16938-5-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1507209837-16938-1-git-send-email-horms+renesas@verge.net.au>
+References: <1507209837-16938-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Add the initial device tree for the M3ULCB with Kingfisher extension
-infotainment board.
+This patch adds Z2 clock for r8a7795 SoC.
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/Makefile              |  1 +
- arch/arm64/boot/dts/renesas/r8a7796-m3ulcb-kf.dts | 19 +++++++++++++++++++
- 2 files changed, 20 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a7796-m3ulcb-kf.dts
+ drivers/clk/renesas/r8a7795-cpg-mssr.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index 96a3b29dce68..fd1164f2d7d7 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -2,6 +2,7 @@ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-x.dtb r8a7795-h3ulcb.dtb
- dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-xs.dtb
- dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-es1-salvator-x.dtb r8a7795-es1-h3ulcb.dtb
- dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-x.dtb r8a7796-m3ulcb.dtb
-+dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-m3ulcb-kf.dtb
- dtb-$(CONFIG_ARCH_R8A77970) += r8a77970-eagle.dtb
- dtb-$(CONFIG_ARCH_R8A77995) += r8a77995-draak.dtb
+diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+index 2a0546fd47dc..1c931d8ec0cc 100644
+--- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+@@ -75,6 +75,7 @@ static struct cpg_core_clk r8a7795_core_clks[] __initdata = {
  
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb-kf.dts b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb-kf.dts
-new file mode 100644
-index 000000000000..de2390f009e7
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb-kf.dts
-@@ -0,0 +1,19 @@
-+/*
-+ * Device Tree Source for the M3ULCB Kingfisher board
-+ *
-+ * Copyright (C) 2017 Renesas Electronics Corp.
-+ * Copyright (C) 2017 Cogent Embedded, Inc.
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2.  This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
-+
-+#include "r8a7796-m3ulcb.dts"
-+#include "ulcb-kf.dtsi"
-+
-+/ {
-+	model = "Renesas M3ULCB Kingfisher board based on r8a7796";
-+	compatible = "shimafuji,kingfisher", "renesas,m3ulcb",
-+		     "renesas,r8a7796";
-+};
+ 	/* Core Clock Outputs */
+ 	DEF_BASE("z",           R8A7795_CLK_Z,     CLK_TYPE_GEN3_Z, CLK_PLL0),
++	DEF_BASE("z2",          R8A7795_CLK_Z2,    CLK_TYPE_GEN3_Z2, CLK_PLL2),
+ 	DEF_FIXED("ztr",        R8A7795_CLK_ZTR,   CLK_PLL1_DIV2,  6, 1),
+ 	DEF_FIXED("ztrd2",      R8A7795_CLK_ZTRD2, CLK_PLL1_DIV2, 12, 1),
+ 	DEF_FIXED("zt",         R8A7795_CLK_ZT,    CLK_PLL1_DIV2,  4, 1),
 -- 
-2.11.0
+2.1.4
