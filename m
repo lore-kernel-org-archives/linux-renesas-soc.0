@@ -1,24 +1,13 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f176.google.com ([209.85.223.176]:53126 "EHLO
-        mail-io0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751625AbdJELHk (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:44816 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751388AbdJEJtZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 Oct 2017 07:07:40 -0400
-Received: by mail-io0-f176.google.com with SMTP id i197so13046331ioe.9
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 05 Oct 2017 04:07:40 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <TY1PR06MB08956748EF3D3A4A530903C0C0700@TY1PR06MB0895.apcprd06.prod.outlook.com>
-References: <1506079337-12882-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <7e1bdda1-d790-0db2-540c-69fabe22850a@rock-chips.com> <20170922160405.wfpi4fyziz3sxtmh@katana>
- <TY1PR06MB089584E681911E2C49953F29C0730@TY1PR06MB0895.apcprd06.prod.outlook.com>
- <20171004183024.zv6oir7bc4te4k24@ninjato> <TY1PR06MB08956748EF3D3A4A530903C0C0700@TY1PR06MB0895.apcprd06.prod.outlook.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 5 Oct 2017 13:07:38 +0200
-Message-ID: <CAPDyKFokf_5eOOGf2kzVQtqSLCwpV9bf8Jp=1P63A4fnz6Bf7g@mail.gmail.com>
-Subject: Re: [RFC PATCH] mmc: tmio: check mmc_regulator_get_supply return value
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
+        Thu, 5 Oct 2017 05:49:25 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Wolfram Sang <wsa@the-dreams.de>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+CC: Shawn Lin <shawn.lin@rock-chips.com>,
         Simon Horman <horms+renesas@verge.net.au>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
@@ -27,62 +16,101 @@ Cc: Wolfram Sang <wsa@the-dreams.de>,
         "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
         "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: RE: [RFC PATCH] mmc: tmio: check mmc_regulator_get_supply return
+ value
+Date: Thu, 5 Oct 2017 09:44:17 +0000
+Message-ID: <TY1PR06MB08956748EF3D3A4A530903C0C0700@TY1PR06MB0895.apcprd06.prod.outlook.com>
+References: <1506079337-12882-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <7e1bdda1-d790-0db2-540c-69fabe22850a@rock-chips.com>
+ <20170922160405.wfpi4fyziz3sxtmh@katana>
+ <TY1PR06MB089584E681911E2C49953F29C0730@TY1PR06MB0895.apcprd06.prod.outlook.com>
+ <20171004183024.zv6oir7bc4te4k24@ninjato>
+In-Reply-To: <20171004183024.zv6oir7bc4te4k24@ninjato>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-[...]
+Hi Wolfram, Ulf
 
->>
->> Well, the good news is that it didn't cause a regression for me on R-Car
->> E2 (Alt board) and H3 (Salvator X board).
->>
->> Sadly, it doesn't also fix the SDR104 problems on Alt. I had a little
->> hope this could be the culprit, but sadly it is not. But this is not a
->> problem with this patch. It still fixes a valid issue.
->>
->> Looking how other drivers deal with the issue, though, I noticed they
->> only bail out on -EPROBE_DEFER and would continue on other errors (if
->> mmc_regulator_get_supply would throw them, but it doesn't). So some
->> digging why other drivers do it that way seems to be apropriate to me.
+> Hi Fabrizio,
 >
-> Good point!
-> Maybe if this patch explicitly tested for -EPROBE_DEFER the maintenance
-> of mmc_regulator_get_supply would be easier as all of the drivers behaved
-> similarly.
-> On the other hand, both "vmmc" and "vqmmc" are considered optional by
-> mmc_regulator_get_supply, therefore their absence is tolerated (0 is
-> returned), and as you said the only other possible value returned by
-> mmc_regulator_get_supply is -EPROBE_DEFER.
-> If in the future the logic of mmc_regulator_get_supply changes, I guess
-> even the driver needs to adapt as there may be something wrong with the
-> regulators, therefore I personally rather the driver to bail out whatever
-> the error returned by mmc_regulator_get_supply. Looking at the history
-> of the other drivers I couldn't spot any meaningful comment connected
-> to the return value of mmc_regulator_get_supply.
+> On Wed, Oct 04, 2017 at 10:50:54AM +0000, Fabrizio Castro wrote:
+> > Thank you guys for your comments!
+> >
+> > > > > However, there are side effects to it as the mmc devices will be =
+enumerated
+> > > > > in a different order (due to -EPROBE_DEFER), this means this patc=
+h would likely
+> > > > > break existing platforms.
+> > > >
+> > > > However this doesn't. The user daemon should never relies on the
+> > > > sequency of probing the mmc block part. We neither support to provi=
+de
+> > > > alias for the device id, nor guarantee the first probed controller =
+get
+> > > > the first block id. Please use PARTUUID for rootfs, etc. So this
+> > > > shouldn't be a big deal.
+> > >
+> > > That's exactly what I thought as well...
+> > >
+> > > Thanks for the patch! Will test it the next days, but it looks good
+> > > already.
+> >
+> > How is the testing going? Any problem with the patch?
+>
+> Sorry for the delay, there were some other things in the queue...
 
-It has been a bit tricky to deal with these regulators in *one* common
-way. For some platforms a regulator are optional, while for other it
-isn't.
-
-In the end we decided to pick the "optional" way for both vmmc and
-vqmmc, and then leave the details in the error path to be sorted out
-by each an every mmc host driver.
+No worries at all!
+And thank you for getting back to me.
 
 >
->> Or asking Ulf :)
+> Well, the good news is that it didn't cause a regression for me on R-Car
+> E2 (Alt board) and H3 (Salvator X board).
 >
-> I guess you are right! ;)
+> Sadly, it doesn't also fix the SDR104 problems on Alt. I had a little
+> hope this could be the culprit, but sadly it is not. But this is not a
+> problem with this patch. It still fixes a valid issue.
 >
-> Ulf, what's the best option here?
+> Looking how other drivers deal with the issue, though, I noticed they
+> only bail out on -EPROBE_DEFER and would continue on other errors (if
+> mmc_regulator_get_supply would throw them, but it doesn't). So some
+> digging why other drivers do it that way seems to be apropriate to me.
 
-I think it's perfectly okay to return an error if
-mmc_regulator_get_supply() propagates that. That's likely what all
-host driver should be doing, instead of explicitly check for
--EPROBE_DEFER.
+Good point!
+Maybe if this patch explicitly tested for -EPROBE_DEFER the maintenance
+of mmc_regulator_get_supply would be easier as all of the drivers behaved
+similarly.
+On the other hand, both "vmmc" and "vqmmc" are considered optional by
+mmc_regulator_get_supply, therefore their absence is tolerated (0 is
+returned), and as you said the only other possible value returned by
+mmc_regulator_get_supply is -EPROBE_DEFER.
+If in the future the logic of mmc_regulator_get_supply changes, I guess
+even the driver needs to adapt as there may be something wrong with the
+regulators, therefore I personally rather the driver to bail out whatever
+the error returned by mmc_regulator_get_supply. Looking at the history
+of the other drivers I couldn't spot any meaningful comment connected
+to the return value of mmc_regulator_get_supply.
 
-Of course, even when mmc_regulator_get_supply() returns 0, that's not
-a guarantee that the regulator(s) was actually hooked up.
+> Or asking Ulf :)
 
-Kind regards
-Uffe
+I guess you are right! ;)
+
+Ulf, what's the best option here?
+
+Kind regards,
+Fabrizio
+
+>
+> Kind regards,
+>
+>    Wolfram
+
+
+
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
