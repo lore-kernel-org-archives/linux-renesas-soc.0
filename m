@@ -1,78 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f48.google.com ([209.85.215.48]:55147 "EHLO
-        mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752449AbdJFR4B (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33981 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751278AbdJEJ0z (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Oct 2017 13:56:01 -0400
-Received: by mail-lf0-f48.google.com with SMTP id d10so18902699lfg.11
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 06 Oct 2017 10:56:01 -0700 (PDT)
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
+        Thu, 5 Oct 2017 05:26:55 -0400
+Date: Thu, 5 Oct 2017 11:26:25 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH v2 03/18] arm64: dts: ulcb-kf: initial device tree
-Date: Fri,  6 Oct 2017 20:55:56 +0300
-Message-Id: <1507312556-23900-1-git-send-email-vladimir.barinov@cogentembedded.com>
+        Russell King <linux@armlinux.org.uk>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/3] ARM: dts: gr-peach: Enable MTU2 timer pulse unit
+Message-ID: <20171005092624.GW26369@verge.net.au>
+References: <1507193900-23801-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1507193900-23801-3-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdV+eXxXE-oa5mQ9h0SQg+a8hMkx+SD0HVzNhKd4sBm1cA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdV+eXxXE-oa5mQ9h0SQg+a8hMkx+SD0HVzNhKd4sBm1cA@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the initial common dtsi file for Kingfisher infotainment board (R-Car
-Starter Kit extension)
+On Thu, Oct 05, 2017 at 11:02:30AM +0200, Geert Uytterhoeven wrote:
+> On Thu, Oct 5, 2017 at 10:58 AM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> > MTU2 multi-function/multi-channel timer/counter is not enabled for
+> > GR-Peach board. The timer is used as clock event source to schedule
+> > wake-ups, and without this enabled all sleeps not performed through busy
+> > waiting hang the board.
+> >
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> 
+> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This commit supports the following peripherals:
-- HSCIF0
-
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Changes in version 2:
-- none
-
- arch/arm64/boot/dts/renesas/ulcb-kf.dtsi | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-
-diff --git a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-new file mode 100644
-index 0000000..849f8b1
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-@@ -0,0 +1,31 @@
-+/*
-+ * Device Tree Source for the Kingfisher (ULCB extension) board
-+ *
-+ * Copyright (C) 2017 Renesas Electronics Corp.
-+ * Copyright (C) 2017 Cogent Embedded, Inc.
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2.  This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
-+
-+/ {
-+	aliases {
-+		serial1 = &hscif0;
-+	};
-+};
-+
-+&hscif0 {
-+	pinctrl-0 = <&hscif0_pins>;
-+	pinctrl-names = "default";
-+	uart-has-rtscts;
-+
-+	status = "okay";
-+};
-+
-+&pfc {
-+	hscif0_pins: hscif0 {
-+		groups = "hscif0_data", "hscif0_ctrl";
-+		function = "hscif0";
-+	};
-+};
--- 
-1.9.1
+Thanks, applied.
