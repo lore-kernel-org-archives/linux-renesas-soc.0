@@ -1,47 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:44320 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751660AbdJNTRk (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:45417 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751318AbdJEKjp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 14 Oct 2017 15:17:40 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2 07/11] mmc: mtk-sd: catch all errors when getting regulators
-Date: Sat, 14 Oct 2017 21:17:15 +0200
-Message-Id: <20171014191719.2129-8-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20171014191719.2129-1-wsa+renesas@sang-engineering.com>
-References: <20171014191719.2129-1-wsa+renesas@sang-engineering.com>
+        Thu, 5 Oct 2017 06:39:45 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH] usb: renesas_usbhs: Use of_device_get_match_data() helper
+Date: Thu, 5 Oct 2017 10:39:41 +0000
+Message-ID: <TY1PR06MB0992C07959B4A440C401825CD8700@TY1PR06MB0992.apcprd06.prod.outlook.com>
+References: <1507120008-13238-1-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1507120008-13238-1-git-send-email-geert+renesas@glider.be>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Bail out everytime when mmc_regulator_get_supply() returns an errno, not
-only when probing gets deferred. This is currently a no-op, because this
-function only returns -EPROBE_DEFER or 0 right now. But if it will throw
-another error somewhen, it will be for a reason. (This still doesn't change
-that getting regulators is optional, so 0 can still mean no regulators
-found). So, let us a) be future proof and b) have driver code which is
-easier to understand.
+Hi,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/mmc/host/mtk-sd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> From: Geert Uytterhoeven, Sent: Wednesday, October 4, 2017 9:27 PM
+>=20
+> Use the of_device_get_match_data() helper instead of open coding.
+>=20
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
-index 267f7ab08420eb..7c518a560089ce 100644
---- a/drivers/mmc/host/mtk-sd.c
-+++ b/drivers/mmc/host/mtk-sd.c
-@@ -1641,7 +1641,7 @@ static int msdc_drv_probe(struct platform_device *pdev)
- 	}
- 
- 	ret = mmc_regulator_get_supply(mmc);
--	if (ret == -EPROBE_DEFER)
-+	if (ret)
- 		goto host_free;
- 
- 	host->src_clk = devm_clk_get(&pdev->dev, "source");
--- 
-2.11.0
+Thank you for the patch!
+
+Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+
+Best regards,
+Yoshihiro Shimoda
