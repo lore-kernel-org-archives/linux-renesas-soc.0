@@ -1,55 +1,66 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, Chris.Brandt@renesas.com,
-        andrew@lunn.ch, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] ARM: dts: gr-peach: Enable ostm0 and ostm1 timers
-Date: Mon,  9 Oct 2017 10:48:35 +0200
-Message-Id: <1507538915-16566-3-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1507538915-16566-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1507538915-16566-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail.free-electrons.com ([62.4.15.54]:33930 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751278AbdJEHYo (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 5 Oct 2017 03:24:44 -0400
+Date: Thu, 5 Oct 2017 09:24:42 +0200
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        linux-mtd@lists.infradead.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] mtd: nand: sh_flctl: Use of_device_get_match_data()
+ helper
+Message-ID: <20171005092442.5126afcb@bbrezillon>
+In-Reply-To: <1507119543-12723-1-git-send-email-geert+renesas@glider.be>
+References: <1507119543-12723-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable ostm0 and ostm1 timers to be used as clock source and clockevent
-source. The timers provides greater accuracy than the already enabled
-mtu2 one.
+On Wed,  4 Oct 2017 14:19:03 +0200
+Geert Uytterhoeven <geert+renesas@glider.be> wrote:
 
-With these enabled:
+> Use the of_device_get_match_data() helper instead of open coding.
+> While at it, make config const so the cast can be dropped.
+> 
 
-clocksource: ostm: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 57352151442 ns
-sched_clock: 32 bits at 33MHz, resolution 30ns, wraps every 64440619504ns
-ostm: used for clocksource
-ostm: used for clock events
+Applied.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Suggested-by: Chris Brandt <chris.brandt@renesas.com>
----
- arch/arm/boot/dts/r7s72100-gr-peach.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Thanks,
 
-diff --git a/arch/arm/boot/dts/r7s72100-gr-peach.dts b/arch/arm/boot/dts/r7s72100-gr-peach.dts
-index 990435c..9e9e890 100644
---- a/arch/arm/boot/dts/r7s72100-gr-peach.dts
-+++ b/arch/arm/boot/dts/r7s72100-gr-peach.dts
-@@ -104,6 +104,14 @@
- 	status = "okay";
- };
- 
-+&ostm0 {
-+	status = "okay";
-+};
-+
-+&ostm1 {
-+	status = "okay";
-+};
-+
- &scif2 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&scif2_pins>;
--- 
-2.7.4
+Boris
+
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  drivers/mtd/nand/sh_flctl.c | 9 +++------
+>  1 file changed, 3 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/mtd/nand/sh_flctl.c b/drivers/mtd/nand/sh_flctl.c
+> index e7f3c98487e620bc..3c5008a4f5f33acc 100644
+> --- a/drivers/mtd/nand/sh_flctl.c
+> +++ b/drivers/mtd/nand/sh_flctl.c
+> @@ -1094,14 +1094,11 @@ MODULE_DEVICE_TABLE(of, of_flctl_match);
+>  
+>  static struct sh_flctl_platform_data *flctl_parse_dt(struct device *dev)
+>  {
+> -	const struct of_device_id *match;
+> -	struct flctl_soc_config *config;
+> +	const struct flctl_soc_config *config;
+>  	struct sh_flctl_platform_data *pdata;
+>  
+> -	match = of_match_device(of_flctl_match, dev);
+> -	if (match)
+> -		config = (struct flctl_soc_config *)match->data;
+> -	else {
+> +	config = of_device_get_match_data(dev);
+> +	if (!config) {
+>  		dev_err(dev, "%s: no OF configuration attached\n", __func__);
+>  		return NULL;
+>  	}
