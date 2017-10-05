@@ -1,13 +1,24 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:9142 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751239AbdJEMaP (ORCPT
+Received: from mail-io0-f176.google.com ([209.85.223.176]:53126 "EHLO
+        mail-io0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751625AbdJELHk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 Oct 2017 08:30:15 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Wolfram Sang <wsa@the-dreams.de>
-CC: Shawn Lin <shawn.lin@rock-chips.com>,
+        Thu, 5 Oct 2017 07:07:40 -0400
+Received: by mail-io0-f176.google.com with SMTP id i197so13046331ioe.9
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 05 Oct 2017 04:07:40 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <TY1PR06MB08956748EF3D3A4A530903C0C0700@TY1PR06MB0895.apcprd06.prod.outlook.com>
+References: <1506079337-12882-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <7e1bdda1-d790-0db2-540c-69fabe22850a@rock-chips.com> <20170922160405.wfpi4fyziz3sxtmh@katana>
+ <TY1PR06MB089584E681911E2C49953F29C0730@TY1PR06MB0895.apcprd06.prod.outlook.com>
+ <20171004183024.zv6oir7bc4te4k24@ninjato> <TY1PR06MB08956748EF3D3A4A530903C0C0700@TY1PR06MB0895.apcprd06.prod.outlook.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 5 Oct 2017 13:07:38 +0200
+Message-ID: <CAPDyKFokf_5eOOGf2kzVQtqSLCwpV9bf8Jp=1P63A4fnz6Bf7g@mail.gmail.com>
+Subject: Re: [RFC PATCH] mmc: tmio: check mmc_regulator_get_supply return value
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
         Simon Horman <horms+renesas@verge.net.au>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
@@ -16,70 +27,62 @@ CC: Shawn Lin <shawn.lin@rock-chips.com>,
         "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
         "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [RFC PATCH] mmc: tmio: check mmc_regulator_get_supply return
- value
-Date: Thu, 5 Oct 2017 12:30:07 +0000
-Message-ID: <TY1PR06MB089531502611698D9F02F563C0700@TY1PR06MB0895.apcprd06.prod.outlook.com>
-References: <1506079337-12882-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <7e1bdda1-d790-0db2-540c-69fabe22850a@rock-chips.com>
- <20170922160405.wfpi4fyziz3sxtmh@katana>
- <TY1PR06MB089584E681911E2C49953F29C0730@TY1PR06MB0895.apcprd06.prod.outlook.com>
- <20171004183024.zv6oir7bc4te4k24@ninjato>
- <TY1PR06MB08956748EF3D3A4A530903C0C0700@TY1PR06MB0895.apcprd06.prod.outlook.com>
- <CAPDyKFokf_5eOOGf2kzVQtqSLCwpV9bf8Jp=1P63A4fnz6Bf7g@mail.gmail.com>
-In-Reply-To: <CAPDyKFokf_5eOOGf2kzVQtqSLCwpV9bf8Jp=1P63A4fnz6Bf7g@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-DQo+IFsuLi5dDQo+DQo+ID4+DQo+ID4+IFdlbGwsIHRoZSBnb29kIG5ld3MgaXMgdGhhdCBpdCBk
-aWRuJ3QgY2F1c2UgYSByZWdyZXNzaW9uIGZvciBtZSBvbiBSLUNhcg0KPiA+PiBFMiAoQWx0IGJv
-YXJkKSBhbmQgSDMgKFNhbHZhdG9yIFggYm9hcmQpLg0KPiA+Pg0KPiA+PiBTYWRseSwgaXQgZG9l
-c24ndCBhbHNvIGZpeCB0aGUgU0RSMTA0IHByb2JsZW1zIG9uIEFsdC4gSSBoYWQgYSBsaXR0bGUN
-Cj4gPj4gaG9wZSB0aGlzIGNvdWxkIGJlIHRoZSBjdWxwcml0LCBidXQgc2FkbHkgaXQgaXMgbm90
-LiBCdXQgdGhpcyBpcyBub3QgYQ0KPiA+PiBwcm9ibGVtIHdpdGggdGhpcyBwYXRjaC4gSXQgc3Rp
-bGwgZml4ZXMgYSB2YWxpZCBpc3N1ZS4NCj4gPj4NCj4gPj4gTG9va2luZyBob3cgb3RoZXIgZHJp
-dmVycyBkZWFsIHdpdGggdGhlIGlzc3VlLCB0aG91Z2gsIEkgbm90aWNlZCB0aGV5DQo+ID4+IG9u
-bHkgYmFpbCBvdXQgb24gLUVQUk9CRV9ERUZFUiBhbmQgd291bGQgY29udGludWUgb24gb3RoZXIg
-ZXJyb3JzIChpZg0KPiA+PiBtbWNfcmVndWxhdG9yX2dldF9zdXBwbHkgd291bGQgdGhyb3cgdGhl
-bSwgYnV0IGl0IGRvZXNuJ3QpLiBTbyBzb21lDQo+ID4+IGRpZ2dpbmcgd2h5IG90aGVyIGRyaXZl
-cnMgZG8gaXQgdGhhdCB3YXkgc2VlbXMgdG8gYmUgYXByb3ByaWF0ZSB0byBtZS4NCj4gPg0KPiA+
-IEdvb2QgcG9pbnQhDQo+ID4gTWF5YmUgaWYgdGhpcyBwYXRjaCBleHBsaWNpdGx5IHRlc3RlZCBm
-b3IgLUVQUk9CRV9ERUZFUiB0aGUgbWFpbnRlbmFuY2UNCj4gPiBvZiBtbWNfcmVndWxhdG9yX2dl
-dF9zdXBwbHkgd291bGQgYmUgZWFzaWVyIGFzIGFsbCBvZiB0aGUgZHJpdmVycyBiZWhhdmVkDQo+
-ID4gc2ltaWxhcmx5Lg0KPiA+IE9uIHRoZSBvdGhlciBoYW5kLCBib3RoICJ2bW1jIiBhbmQgInZx
-bW1jIiBhcmUgY29uc2lkZXJlZCBvcHRpb25hbCBieQ0KPiA+IG1tY19yZWd1bGF0b3JfZ2V0X3N1
-cHBseSwgdGhlcmVmb3JlIHRoZWlyIGFic2VuY2UgaXMgdG9sZXJhdGVkICgwIGlzDQo+ID4gcmV0
-dXJuZWQpLCBhbmQgYXMgeW91IHNhaWQgdGhlIG9ubHkgb3RoZXIgcG9zc2libGUgdmFsdWUgcmV0
-dXJuZWQgYnkNCj4gPiBtbWNfcmVndWxhdG9yX2dldF9zdXBwbHkgaXMgLUVQUk9CRV9ERUZFUi4N
-Cj4gPiBJZiBpbiB0aGUgZnV0dXJlIHRoZSBsb2dpYyBvZiBtbWNfcmVndWxhdG9yX2dldF9zdXBw
-bHkgY2hhbmdlcywgSSBndWVzcw0KPiA+IGV2ZW4gdGhlIGRyaXZlciBuZWVkcyB0byBhZGFwdCBh
-cyB0aGVyZSBtYXkgYmUgc29tZXRoaW5nIHdyb25nIHdpdGggdGhlDQo+ID4gcmVndWxhdG9ycywg
-dGhlcmVmb3JlIEkgcGVyc29uYWxseSByYXRoZXIgdGhlIGRyaXZlciB0byBiYWlsIG91dCB3aGF0
-ZXZlcg0KPiA+IHRoZSBlcnJvciByZXR1cm5lZCBieSBtbWNfcmVndWxhdG9yX2dldF9zdXBwbHku
-IExvb2tpbmcgYXQgdGhlIGhpc3RvcnkNCj4gPiBvZiB0aGUgb3RoZXIgZHJpdmVycyBJIGNvdWxk
-bid0IHNwb3QgYW55IG1lYW5pbmdmdWwgY29tbWVudCBjb25uZWN0ZWQNCj4gPiB0byB0aGUgcmV0
-dXJuIHZhbHVlIG9mIG1tY19yZWd1bGF0b3JfZ2V0X3N1cHBseS4NCj4NCj4gSXQgaGFzIGJlZW4g
-YSBiaXQgdHJpY2t5IHRvIGRlYWwgd2l0aCB0aGVzZSByZWd1bGF0b3JzIGluICpvbmUqIGNvbW1v
-bg0KPiB3YXkuIEZvciBzb21lIHBsYXRmb3JtcyBhIHJlZ3VsYXRvciBhcmUgb3B0aW9uYWwsIHdo
-aWxlIGZvciBvdGhlciBpdA0KPiBpc24ndC4NCj4NCj4gSW4gdGhlIGVuZCB3ZSBkZWNpZGVkIHRv
-IHBpY2sgdGhlICJvcHRpb25hbCIgd2F5IGZvciBib3RoIHZtbWMgYW5kDQo+IHZxbW1jLCBhbmQg
-dGhlbiBsZWF2ZSB0aGUgZGV0YWlscyBpbiB0aGUgZXJyb3IgcGF0aCB0byBiZSBzb3J0ZWQgb3V0
-DQo+IGJ5IGVhY2ggYW4gZXZlcnkgbW1jIGhvc3QgZHJpdmVyLg0KPg0KPiA+DQo+ID4+IE9yIGFz
-a2luZyBVbGYgOikNCj4gPg0KPiA+IEkgZ3Vlc3MgeW91IGFyZSByaWdodCEgOykNCj4gPg0KPiA+
-IFVsZiwgd2hhdCdzIHRoZSBiZXN0IG9wdGlvbiBoZXJlPw0KPg0KPiBJIHRoaW5rIGl0J3MgcGVy
-ZmVjdGx5IG9rYXkgdG8gcmV0dXJuIGFuIGVycm9yIGlmDQo+IG1tY19yZWd1bGF0b3JfZ2V0X3N1
-cHBseSgpIHByb3BhZ2F0ZXMgdGhhdC4gVGhhdCdzIGxpa2VseSB3aGF0IGFsbA0KPiBob3N0IGRy
-aXZlciBzaG91bGQgYmUgZG9pbmcsIGluc3RlYWQgb2YgZXhwbGljaXRseSBjaGVjayBmb3INCj4g
-LUVQUk9CRV9ERUZFUi4NCg0KVGhhbmsgeW91IFVmZmUuIEkgZ3Vlc3MgdGhlIHBhdGNoIGlzIGFs
-cmlnaHQgdGhlbi4NCg0KV29sZnJhbSwgZG8geW91IHdhbnQgdG8gYWRkIGEgVGVzdGVkLWJ5Pw0K
-DQpLaW5kIHJlZ2FyZHMsDQpGYWJyaXppbw0KDQo+DQo+IE9mIGNvdXJzZSwgZXZlbiB3aGVuIG1t
-Y19yZWd1bGF0b3JfZ2V0X3N1cHBseSgpIHJldHVybnMgMCwgdGhhdCdzIG5vdA0KPiBhIGd1YXJh
-bnRlZSB0aGF0IHRoZSByZWd1bGF0b3Iocykgd2FzIGFjdHVhbGx5IGhvb2tlZCB1cC4NCj4NCj4g
-S2luZCByZWdhcmRzDQo+IFVmZmUNCg0KDQoNClJlbmVzYXMgRWxlY3Ryb25pY3MgRXVyb3BlIEx0
-ZCwgRHVrZXMgTWVhZG93LCBNaWxsYm9hcmQgUm9hZCwgQm91cm5lIEVuZCwgQnVja2luZ2hhbXNo
-aXJlLCBTTDggNUZILCBVSy4gUmVnaXN0ZXJlZCBpbiBFbmdsYW5kICYgV2FsZXMgdW5kZXIgUmVn
-aXN0ZXJlZCBOby4gMDQ1ODY3MDkuDQo=
+[...]
+
+>>
+>> Well, the good news is that it didn't cause a regression for me on R-Car
+>> E2 (Alt board) and H3 (Salvator X board).
+>>
+>> Sadly, it doesn't also fix the SDR104 problems on Alt. I had a little
+>> hope this could be the culprit, but sadly it is not. But this is not a
+>> problem with this patch. It still fixes a valid issue.
+>>
+>> Looking how other drivers deal with the issue, though, I noticed they
+>> only bail out on -EPROBE_DEFER and would continue on other errors (if
+>> mmc_regulator_get_supply would throw them, but it doesn't). So some
+>> digging why other drivers do it that way seems to be apropriate to me.
+>
+> Good point!
+> Maybe if this patch explicitly tested for -EPROBE_DEFER the maintenance
+> of mmc_regulator_get_supply would be easier as all of the drivers behaved
+> similarly.
+> On the other hand, both "vmmc" and "vqmmc" are considered optional by
+> mmc_regulator_get_supply, therefore their absence is tolerated (0 is
+> returned), and as you said the only other possible value returned by
+> mmc_regulator_get_supply is -EPROBE_DEFER.
+> If in the future the logic of mmc_regulator_get_supply changes, I guess
+> even the driver needs to adapt as there may be something wrong with the
+> regulators, therefore I personally rather the driver to bail out whatever
+> the error returned by mmc_regulator_get_supply. Looking at the history
+> of the other drivers I couldn't spot any meaningful comment connected
+> to the return value of mmc_regulator_get_supply.
+
+It has been a bit tricky to deal with these regulators in *one* common
+way. For some platforms a regulator are optional, while for other it
+isn't.
+
+In the end we decided to pick the "optional" way for both vmmc and
+vqmmc, and then leave the details in the error path to be sorted out
+by each an every mmc host driver.
+
+>
+>> Or asking Ulf :)
+>
+> I guess you are right! ;)
+>
+> Ulf, what's the best option here?
+
+I think it's perfectly okay to return an error if
+mmc_regulator_get_supply() propagates that. That's likely what all
+host driver should be doing, instead of explicitly check for
+-EPROBE_DEFER.
+
+Of course, even when mmc_regulator_get_supply() returns 0, that's not
+a guarantee that the regulator(s) was actually hooked up.
+
+Kind regards
+Uffe
