@@ -1,50 +1,65 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 2/5] mfd: bd9571mwv: Add DDR Backup Power register bit definitions
-Date: Tue, 10 Oct 2017 17:26:15 +0200
-Message-Id: <1507649178-31473-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1507649178-31473-1-git-send-email-geert+renesas@glider.be>
-References: <1507649178-31473-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([88.99.104.3]:40713 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751446AbdJEUsz (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 5 Oct 2017 16:48:55 -0400
+Date: Thu, 5 Oct 2017 22:48:52 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Simon <horms@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Magnus <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [RFC][PATCH 0/4] Audio/SSI pin supprt for r8a7795/r8a77995
+Message-ID: <20171005204852.y2efkudzpxgibooh@ninjato>
+References: <87efqlou4w.wl%kuninori.morimoto.gx@renesas.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="liwdhhu3uxj7gj37"
+Content-Disposition: inline
+In-Reply-To: <87efqlou4w.wl%kuninori.morimoto.gx@renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add definitions for the KEEPON_* bits in the "BKUP Mode Cnt" register,
-which control the DDR rails to be kept powered when backup mode is
-enabled.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- include/linux/mfd/bd9571mwv.h | 5 +++++
- 1 file changed, 5 insertions(+)
+--liwdhhu3uxj7gj37
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/include/linux/mfd/bd9571mwv.h b/include/linux/mfd/bd9571mwv.h
-index f0708ba4cbbae2dc..eb05569f752bb089 100644
---- a/include/linux/mfd/bd9571mwv.h
-+++ b/include/linux/mfd/bd9571mwv.h
-@@ -33,6 +33,11 @@
- #define BD9571MWV_I2C_MD2_E1_BIT_2		0x12
- 
- #define BD9571MWV_BKUP_MODE_CNT			0x20
-+#define BD9571MWV_BKUP_MODE_CNT_KEEPON_MASK	GENMASK(3, 0)
-+#define BD9571MWV_BKUP_MODE_CNT_KEEPON_DDR0	BIT(0)
-+#define BD9571MWV_BKUP_MODE_CNT_KEEPON_DDR1	BIT(1)
-+#define BD9571MWV_BKUP_MODE_CNT_KEEPON_DDR0C	BIT(2)
-+#define BD9571MWV_BKUP_MODE_CNT_KEEPON_DDR1C	BIT(3)
- #define BD9571MWV_BKUP_MODE_STATUS		0x21
- #define BD9571MWV_BKUP_RECOVERY_CNT		0x22
- #define BD9571MWV_BKUP_CTRL_TIM_CNT		0x23
--- 
-2.7.4
+Morimoto-san,
+
+> But, I2C is not yet supported on H3 ES2.0 "PFC",
+
+This is out now:
+
+[PATCH] pinctrl: sh-pfc: r8a7795: add I2C pin support
+
+and Geert already picked it up.
+
+Regards,
+
+   Wolfram
+
+
+--liwdhhu3uxj7gj37
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlnWmrAACgkQFA3kzBSg
+KbZYJg//cwVIM53EG6NcUbug4jDzZRdtq12jDDOknAnAhxfgGIfu8D7BeHSwsuSc
+2laU8iPteXxEAmee0CeHWv3mE9TkvA+l7qRRvzL0LhLh+xe9GSe18jNJY9irP3XL
+MELxRwHNTvVIr56NAuProxcuE5XHtpQKSoX0FUtQJkbgR+kS4fQm/qAzAv8tMP7o
+XKkLiDQJkPu7JRVOVL7LfSmT1SHQD/skqzB4qOVSRhwJxaOW64LoUmCJf5AKN6jP
+jbc5Hm525YWAsNY1eaISQeyLQq9bk+Oki/P/vsmrYDOsrghI5aZwxLmHwEo4r6dZ
+19PDWHX4+RS76PVqY+4uUyuXuoC6lE3yVPa7S0TuRDEVDYjED+0LEsnXDyjATyU7
+U1hj5gGyTi0IbdwQivOAXMUrN8JXideehEYW7MMfgCOCfjIbYZSUc8MAbb4cR2QT
+1bGdJ64p7fv6PwdGora25g99jhLwasrwR4i3Iv8ssUlBWP59IoVQpuQrihgq5+Kp
+18xYNEfdUSVlELLwe2ZkAx8HmxHQwNY6izcA/QzhxmHvea0DzB5bjr+/hBViFNDt
+3uDYMRrb26noCiMkkYqkn9Yg33cZ7Ry+8Dj+gKxLpJsryE/V1zk5w9ZO0tmFVCjv
+DZ5ONLZe5xvlMZZvONqpi6SOV+cktVo8rnvItZlGPiuST24IDQs=
+=L0uY
+-----END PGP SIGNATURE-----
+
+--liwdhhu3uxj7gj37--
