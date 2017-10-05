@@ -1,78 +1,63 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:41900 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751310AbdJEMu3 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 Oct 2017 08:50:29 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/2] pinctrl: sh-pfc: r8a7795: Restore sort order
-Date: Thu,  5 Oct 2017 12:20:30 +0200
-Message-Id: <1507198830-26128-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1507198830-26128-1-git-send-email-geert+renesas@glider.be>
-References: <1507198830-26128-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Thu, 5 Oct 2017 11:03:49 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Subject: Re: [PATCH v2 7/8] arm64: dts: renesas: initial Eagle board device
+ tree
+Message-ID: <20171005090348.GB26369@verge.net.au>
+References: <20170915194445.950496886@cogentembedded.com>
+ <CAMuHMdUX+RW9H-p5n_JB-SkW8k5g_i0bg-i9LD59b5MLvFm3YQ@mail.gmail.com>
+ <9ad9bd62-300c-cc78-a8f3-bbdd9eed6bed@cogentembedded.com>
+ <CAMuHMdUfRr-X_+pZhmWw28SDwa5=7daSefjVaT9y5cFB9VoO6Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUfRr-X_+pZhmWw28SDwa5=7daSefjVaT9y5cFB9VoO6Q@mail.gmail.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Move the SCIF_CLK pins where they belong.
+On Wed, Oct 04, 2017 at 01:10:26PM +0200, Geert Uytterhoeven wrote:
+> Hi Sergei,
+> 
+> On Wed, Oct 4, 2017 at 1:03 PM, Sergei Shtylyov
+> <sergei.shtylyov@cogentembedded.com> wrote:
+> > On 9/21/2017 4:18 PM, Geert Uytterhoeven wrote:
+> >>> Add the initial device  tree for  the R8A77970 SoC based Eagle board.
+> >>> The board has 1 debug serial port (SCIF0); include support for it,
+> >>> so that the serial console can work.
+> >>>
+> >>> Based on the original (and large) patch by Vladimir Barinov
+> >>> <vladimir.barinov@cogentembedded.com>.
+> >>>
+> >>> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> >>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> >>
+> >> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >>
+> >>> --- /dev/null
+> >>> +++ renesas/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+> 
+> >>> +&extal_clk {
+> >>> +       clock-frequency = <16666666>;
+> >>
+> >>
+> >> Nitpicking: the schematics say 16.6666 MHz
+> >> At 100 ppm accuracy that's the same, though.
+> >
+> >    So, you still want me to change this freq?
+> 
+> I don't think that's really needed, as the difference is smaller than the
+> accuracy anyway.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 32 ++++++++++++++++----------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index df6a95bce4f8061a..9772a6c7b303b5b7 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -3121,6 +3121,22 @@ static const unsigned int scif5_clk_b_mux[] = {
- 	SCK5_B_MARK,
- };
- 
-+/* - SCIF Clock ------------------------------------------------------------- */
-+static const unsigned int scif_clk_a_pins[] = {
-+	/* SCIF_CLK */
-+	RCAR_GP_PIN(6, 23),
-+};
-+static const unsigned int scif_clk_a_mux[] = {
-+	SCIF_CLK_A_MARK,
-+};
-+static const unsigned int scif_clk_b_pins[] = {
-+	/* SCIF_CLK */
-+	RCAR_GP_PIN(5, 9),
-+};
-+static const unsigned int scif_clk_b_mux[] = {
-+	SCIF_CLK_B_MARK,
-+};
-+
- /* - SDHI0 ------------------------------------------------------------------ */
- static const unsigned int sdhi0_data1_pins[] = {
- 	/* D0 */
-@@ -3505,22 +3521,6 @@ static const unsigned int ssi9_ctrl_b_mux[] = {
- 	SSI_SCK9_B_MARK, SSI_WS9_B_MARK,
- };
- 
--/* - SCIF Clock ------------------------------------------------------------- */
--static const unsigned int scif_clk_a_pins[] = {
--	/* SCIF_CLK */
--	RCAR_GP_PIN(6, 23),
--};
--static const unsigned int scif_clk_a_mux[] = {
--	SCIF_CLK_A_MARK,
--};
--static const unsigned int scif_clk_b_pins[] = {
--	/* SCIF_CLK */
--	RCAR_GP_PIN(5, 9),
--};
--static const unsigned int scif_clk_b_mux[] = {
--	SCIF_CLK_B_MARK,
--};
--
- /* - USB0 ------------------------------------------------------------------- */
- static const unsigned int usb0_pins[] = {
- 	/* PWEN, OVC */
--- 
-2.7.4
+Thanks, I have applied this patch for v4.15.
