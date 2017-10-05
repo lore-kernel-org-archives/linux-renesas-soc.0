@@ -1,131 +1,29 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:46511 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751198AbdJDJTY (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33687 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751691AbdJEJOX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Oct 2017 05:19:24 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc: Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Chris Paterson <chris.paterson2@renesas.com>
-Subject: [PATCH 2/2] ARM: dts: iwg20d-q7-dbcm-ca: Add device trees for camera DB
-Date: Wed,  4 Oct 2017 10:18:33 +0100
-Message-Id: <1507108713-10686-3-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1507108713-10686-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1507108713-10686-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Thu, 5 Oct 2017 05:14:23 -0400
+Date: Thu, 5 Oct 2017 11:13:56 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Tejun Heo <tj@kernel.org>, linux-ide@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] ata: sata_rcar: Use of_device_get_match_data() helper
+Message-ID: <20171005091355.GL26369@verge.net.au>
+References: <1507119187-12297-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1507119187-12297-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds a .dtsi that describes the camera daughter board
-and a .dts to describe the HW made of iWave's RZ/G1M SoM, iWave's
-RZ/G1M/G1N Qseven carrier board, and the camera daughter board.
-The camera daughter board .dtsi adds support for ttySC[14].
+On Wed, Oct 04, 2017 at 02:13:07PM +0200, Geert Uytterhoeven wrote:
+> Use the of_device_get_match_data() helper instead of open coding.
+> Note that the sata_rcar driver is used with DT only, so there's always a
+> valid match.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
----
- arch/arm/boot/dts/Makefile                      |  1 +
- arch/arm/boot/dts/iwg20d-q7-dbcm-ca.dtsi        | 44 +++++++++++++++++++++++++
- arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dts | 19 +++++++++++
- 3 files changed, 64 insertions(+)
- create mode 100644 arch/arm/boot/dts/iwg20d-q7-dbcm-ca.dtsi
- create mode 100644 arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dts
-
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index e87f311..8c34d06 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -724,6 +724,7 @@ dtb-$(CONFIG_ARCH_RENESAS) += \
- 	r8a73a4-ape6evm.dtb \
- 	r8a7740-armadillo800eva.dtb \
- 	r8a7743-iwg20d-q7.dtb \
-+	r8a7743-iwg20d-q7-dbcm-ca.dtb \
- 	r8a7743-sk-rzg1m.dtb \
- 	r8a7745-iwg22d-sodimm.dtb \
- 	r8a7745-sk-rzg1e.dtb \
-diff --git a/arch/arm/boot/dts/iwg20d-q7-dbcm-ca.dtsi b/arch/arm/boot/dts/iwg20d-q7-dbcm-ca.dtsi
-new file mode 100644
-index 0000000..ea8ac96
---- /dev/null
-+++ b/arch/arm/boot/dts/iwg20d-q7-dbcm-ca.dtsi
-@@ -0,0 +1,44 @@
-+/*
-+ * Device Tree Source for the iWave-RZ-G1M/N Daughter Board Camera Module
-+ *
-+ * Copyright (C) 2017 Renesas Electronics Corp.
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2.  This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
-+
-+/ {
-+	aliases {
-+		serial1 = &scif1;
-+		serial4 = &hscif1;
-+	};
-+
-+};
-+
-+&pfc {
-+	scif1_pins: scif1 {
-+		groups = "scif1_data_d";
-+		function = "scif1";
-+	};
-+
-+	hscif1_pins: hscif1 {
-+		groups = "hscif1_data_c", "hscif1_ctrl_c";
-+		function = "hscif1";
-+	};
-+};
-+
-+&scif1 {
-+	pinctrl-0 = <&scif1_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
-+&hscif1 {
-+	pinctrl-0 = <&hscif1_pins>;
-+	pinctrl-names = "default";
-+
-+	uart-has-rtscts;
-+	status = "okay";
-+};
-diff --git a/arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dts b/arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dts
-new file mode 100644
-index 0000000..d90eb84
---- /dev/null
-+++ b/arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dts
-@@ -0,0 +1,19 @@
-+/*
-+ * Device Tree Source for the iWave-RZ/G1M Qseven board + camera daughter board
-+ *
-+ * Copyright (C) 2017 Renesas Electronics Corp.
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2.  This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
-+
-+/dts-v1/;
-+#include "r8a7743-iwg20m.dtsi"
-+#include "iwg20d-q7-common.dtsi"
-+#include "iwg20d-q7-dbcm-ca.dtsi"
-+
-+/ {
-+	model = "iW-RainboW-G20D-Q7 RZ/G1M based plus camera daughter board";
-+	compatible = "iwave,g20d", "iwave,g20m", "renesas,r8a7743";
-+};
--- 
-2.7.4
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
