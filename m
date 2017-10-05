@@ -1,79 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f182.google.com ([209.85.223.182]:47727 "EHLO
-        mail-io0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754126AbdJJHkb (ORCPT
+Received: from sauhun.de ([88.99.104.3]:39263 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751295AbdJEMnC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Oct 2017 03:40:31 -0400
-Received: by mail-io0-f182.google.com with SMTP id h70so4413948ioi.4
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 10 Oct 2017 00:40:31 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1506079337-12882-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1506079337-12882-1-git-send-email-fabrizio.castro@bp.renesas.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 10 Oct 2017 09:40:30 +0200
-Message-ID: <CAPDyKFqXBrKThAcvWijwsaAXo4=20p4KuCe+APGxKvfYwoa3jA@mail.gmail.com>
-Subject: Re: [RFC PATCH] mmc: tmio: check mmc_regulator_get_supply return value
+        Thu, 5 Oct 2017 08:43:02 -0400
+Date: Thu, 5 Oct 2017 14:43:00 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
 To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [RFC PATCH] mmc: tmio: check mmc_regulator_get_supply return
+ value
+Message-ID: <20171005124300.wpm7qvba4hgoclz3@ninjato>
+References: <1506079337-12882-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <7e1bdda1-d790-0db2-540c-69fabe22850a@rock-chips.com>
+ <20170922160405.wfpi4fyziz3sxtmh@katana>
+ <TY1PR06MB089584E681911E2C49953F29C0730@TY1PR06MB0895.apcprd06.prod.outlook.com>
+ <20171004183024.zv6oir7bc4te4k24@ninjato>
+ <TY1PR06MB08956748EF3D3A4A530903C0C0700@TY1PR06MB0895.apcprd06.prod.outlook.com>
+ <CAPDyKFokf_5eOOGf2kzVQtqSLCwpV9bf8Jp=1P63A4fnz6Bf7g@mail.gmail.com>
+ <TY1PR06MB089531502611698D9F02F563C0700@TY1PR06MB0895.apcprd06.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="s7unmqd6zkvw34tb"
+Content-Disposition: inline
+In-Reply-To: <TY1PR06MB089531502611698D9F02F563C0700@TY1PR06MB0895.apcprd06.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 22 September 2017 at 13:22, Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
-> mmc_regulator_get_supply returns -EPROBE_DEFER if either vmmc or
-> vqmmc regulators had their probing deferred.
-> vqmmc regulator is needed by UHS to work properly, therefore this
-> patch checks the value returned by mmc_regulator_get_supply to
-> make sure we have a reference to both vmmc and vqmmc (if found in
-> the DT).
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Thanks, applied for next!
+--s7unmqd6zkvw34tb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Kind regards
-Uffe
 
-> ---
->
-> I believe this patch is in order for UHS to work properly on the RZ/G1 platforms
-> as the signal voltage needs to be switched from 3.3V to 1.8V, and therefore we
-> need to make sure we hold a reference to vqmmc. Without this patch there is a
-> chance that the regulator driver gets probed later on and therefore we end up
-> without control over the power regulator. I have seen an RZ/G1E based platform
-> failing the transition to UHS because of this.
-> However, there are side effects to it as the mmc devices will be enumerated
-> in a different order (due to -EPROBE_DEFER), this means this patch would likely
-> break existing platforms.
-> Please, let me know your comments.
->
->  drivers/mmc/host/tmio_mmc_core.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-> index 88a9435..3df0413 100644
-> --- a/drivers/mmc/host/tmio_mmc_core.c
-> +++ b/drivers/mmc/host/tmio_mmc_core.c
-> @@ -1153,8 +1153,11 @@ static int tmio_mmc_init_ocr(struct tmio_mmc_host *host)
->  {
->         struct tmio_mmc_data *pdata = host->pdata;
->         struct mmc_host *mmc = host->mmc;
-> +       int err;
->
-> -       mmc_regulator_get_supply(mmc);
-> +       err = mmc_regulator_get_supply(mmc);
-> +       if (err)
-> +               return err;
->
->         /* use ocr_mask if no regulator */
->         if (!mmc->ocr_avail)
-> --
-> 2.7.4
->
+> Thank you Uffe. I guess the patch is alright then.
+>=20
+> Wolfram, do you want to add a Tested-by?
+
+Sure:
+
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+
+--s7unmqd6zkvw34tb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlnWKNQACgkQFA3kzBSg
+KbZqlQ/9Gyw/UB4SJYvcgqdT8VUqgfVCyRlZWdvL4MezoP4bem/6zG2sVihaKK02
+eo5LE3SGWrseU+5FG1kAxnyfkXkAdjRszQOupNSzj5tU+t13EWJz7BeWjtjqML5j
+3g0670t4Sj7RIHeAonhI8kRv+Ez5ET/aAUgJjB3PXDTQLpH7pza9C+Ha8dManS53
+TvonH9jRgzWmyJWQjrvol4lJD8rXZiBDhpLkv2IhJtLpgffmBO/NHJ8WDgUgAUcG
+z0nLjjIF9xecGZ6PlwMaDFh9sG5t+h2ogdzVshDt63hgvE+Jq3nwqw2b3wPh2CO8
+pjoDRtD4KndZ9v9apbBeqswtEEQ784OiAJzWq5XtRNb554fHz1qLv0Dsz7xx22dp
+FY8UV5XR/DSaN0GaTkZI7OBp5rlV5v+4+8KYEQLUVx+gSGK56M8eshMz7cn8WIvq
+vYTiOJWun14BExkVzoXWKSzcRvPLCW4Ez3j50+MqeNdhiYdjAHdKYXKz5xS6rQuw
+vnDdF1JkejI6w9b2lCSuqw1oIadN/w77TYFkO04FgOPBSIjAhgFtletE0MdTSuk3
+3LOqqCdAIOC3qvUloDiRyqCCzLgqwv6egqTOvFOpJZ+unk/CntUr52BgIUCNrozd
+Aeomo+aIAvRjRDUhlaFBMGYDfxqlf5DXbitdkUQlaqGOOElkBo0=
+=4evJ
+-----END PGP SIGNATURE-----
+
+--s7unmqd6zkvw34tb--
