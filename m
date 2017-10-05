@@ -1,115 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:54154 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753231AbdJMLGb (ORCPT
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:32932 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751363AbdJEXYx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Oct 2017 07:06:31 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Thu, 5 Oct 2017 19:24:53 -0400
+Date: Thu, 5 Oct 2017 18:24:51 -0500
+From: Rob Herring <robh@kernel.org>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        "David S . Miller" <davem@davemloft.net>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 02/10] ARM: dts: r8a7779: Use R-Car GPIO Gen1 fallback compat string
-Date: Fri, 13 Oct 2017 13:05:52 +0200
-Message-Id: <20171013110600.6858-3-horms+renesas@verge.net.au>
-In-Reply-To: <20171013110600.6858-1-horms+renesas@verge.net.au>
-References: <20171013110600.6858-1-horms+renesas@verge.net.au>
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/4] dt-bindings: net: ravb: Document optional
+ reset-gpios property
+Message-ID: <20171005232451.loogqlkmar6pdrdd@rob-hp-laptop>
+References: <1506614014-4398-1-git-send-email-geert+renesas@glider.be>
+ <1506614014-4398-2-git-send-email-geert+renesas@glider.be>
+ <fefd2be3-d47a-f035-5078-090df0fc6318@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fefd2be3-d47a-f035-5078-090df0fc6318@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use newly added R-Car GPIO Gen1 fallback compat string
-in place of now deprecated non-generation specific
-R-Car GPIO fallback compat string in DT of r8a7779 SoC.
+On Thu, Sep 28, 2017 at 11:07:38PM +0300, Sergei Shtylyov wrote:
+> Hello!
+> 
+> On 09/28/2017 06:53 PM, Geert Uytterhoeven wrote:
+> 
+> > The optional "reset-gpios" property (part of the generic MDIO bus
+> > properties) lets us describe the GPIO used for resetting the Ethernet
+> > PHY.
+> > 
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> >   Documentation/devicetree/bindings/net/renesas,ravb.txt | 2 ++
+> >   1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/net/renesas,ravb.txt b/Documentation/devicetree/bindings/net/renesas,ravb.txt
+> > index c902261893b913f5..4a6ec1ba32d0bf16 100644
+> > --- a/Documentation/devicetree/bindings/net/renesas,ravb.txt
+> > +++ b/Documentation/devicetree/bindings/net/renesas,ravb.txt
+> > @@ -52,6 +52,7 @@ Optional properties:
+> >   			 AVB_LINK signal.
+> >   - renesas,ether-link-active-low: boolean, specify when the AVB_LINK signal is
+> >   				 active-low instead of normal active-high.
+> > +- reset-gpios: see mdio.txt in the same directory.
+> 
+>    Sigh, I can only repeat that was a terrible prop name choice -- when
+> applied to a MAC node... what reset does it mean? MAC?
 
-As the driver does not match on "renesas,gpio-r8a7779" there
-are some run-time considerations for this patch:
-
-* When a resulting DTB is used with kernels newer than v4.14 this should
-  not have any run-time effect as renesas,rcar-gen2-gpio is matched by the
-  driver since commit dbd1dad2ab8f ("gpio: rcar: add gen[123] fallback
-  compatibility strings")
-
-* However, when used with older kernels GPIO will be disabled as
-  no compat string match will be made by the driver.
-
-The regression documented above for the new DTB with old kernel case
-is acceptable in my opinion.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
-v2
-* Note run-time considerations in changelog as pointed out by
-  Geert Uytterhoeven
----
- arch/arm/boot/dts/r8a7779.dtsi | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
-
-diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
-index 8ee0b2ca5d39..ccef2cfab6e0 100644
---- a/arch/arm/boot/dts/r8a7779.dtsi
-+++ b/arch/arm/boot/dts/r8a7779.dtsi
-@@ -76,7 +76,7 @@
- 	};
- 
- 	gpio0: gpio@ffc40000 {
--		compatible = "renesas,gpio-r8a7779", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7779", "renesas,rcar-gen1-gpio";
- 		reg = <0xffc40000 0x2c>;
- 		interrupts = <GIC_SPI 141 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -87,7 +87,7 @@
- 	};
- 
- 	gpio1: gpio@ffc41000 {
--		compatible = "renesas,gpio-r8a7779", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7779", "renesas,rcar-gen1-gpio";
- 		reg = <0xffc41000 0x2c>;
- 		interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -98,7 +98,7 @@
- 	};
- 
- 	gpio2: gpio@ffc42000 {
--		compatible = "renesas,gpio-r8a7779", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7779", "renesas,rcar-gen1-gpio";
- 		reg = <0xffc42000 0x2c>;
- 		interrupts = <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -109,7 +109,7 @@
- 	};
- 
- 	gpio3: gpio@ffc43000 {
--		compatible = "renesas,gpio-r8a7779", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7779", "renesas,rcar-gen1-gpio";
- 		reg = <0xffc43000 0x2c>;
- 		interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -120,7 +120,7 @@
- 	};
- 
- 	gpio4: gpio@ffc44000 {
--		compatible = "renesas,gpio-r8a7779", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7779", "renesas,rcar-gen1-gpio";
- 		reg = <0xffc44000 0x2c>;
- 		interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -131,7 +131,7 @@
- 	};
- 
- 	gpio5: gpio@ffc45000 {
--		compatible = "renesas,gpio-r8a7779", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7779", "renesas,rcar-gen1-gpio";
- 		reg = <0xffc45000 0x2c>;
- 		interrupts = <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -142,7 +142,7 @@
- 	};
- 
- 	gpio6: gpio@ffc46000 {
--		compatible = "renesas,gpio-r8a7779", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7779", "renesas,rcar-gen1-gpio";
- 		reg = <0xffc46000 0x2c>;
- 		interrupts = <GIC_SPI 147 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
--- 
-2.11.0
+Agreed. This should be in the phy node. Or MDIO at least.
