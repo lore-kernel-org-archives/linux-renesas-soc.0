@@ -1,87 +1,44 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH  1/5] ARM: dts: r8a7745: Add internal PCI bridge nodes
-Date: Mon,  9 Oct 2017 14:58:57 +0100
-Message-Id: <1507557541-46560-2-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1507557541-46560-1-git-send-email-biju.das@bp.renesas.com>
-References: <1507557541-46560-1-git-send-email-biju.das@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:41896 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751280AbdJEMu3 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 5 Oct 2017 08:50:29 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/2] pinctrl: sh-pfc: Restore sort order
+Date: Thu,  5 Oct 2017 12:20:28 +0200
+Message-Id: <1507198830-26128-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add device nodes for the r8a7745 internal PCI bridge devices.
+	Hi,
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
----
- arch/arm/boot/dts/r8a7745.dtsi | 46 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+This patch series restores sort order in the R-Car H3 pinctrl files.
 
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index 6ba3b8b..b4e9536 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -845,6 +845,52 @@
- 			resets = <&cpg 311>;
- 			status = "disabled";
- 		};
-+
-+		pci0: pci@ee090000 {
-+			compatible = "renesas,pci-r8a7745",
-+				     "renesas,pci-rcar-gen2";
-+			device_type = "pci";
-+			reg = <0 0xee090000 0 0xc00>,
-+			      <0 0xee080000 0 0x1100>;
-+			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 703>;
-+			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 703>;
-+			status = "disabled";
-+
-+			bus-range = <0 0>;
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			#interrupt-cells = <1>;
-+			ranges = <0x02000000 0 0xee080000 0 0xee080000 0 0x00010000>;
-+			interrupt-map-mask = <0xff00 0 0 0x7>;
-+			interrupt-map = <0x0000 0 0 1 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH
-+					 0x0800 0 0 1 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH
-+					 0x1000 0 0 2 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+
-+		pci1: pci@ee0d0000 {
-+			compatible = "renesas,pci-r8a7745",
-+				     "renesas,pci-rcar-gen2";
-+			device_type = "pci";
-+			reg = <0 0xee0d0000 0 0xc00>,
-+			      <0 0xee0c0000 0 0x1100>;
-+			interrupts = <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 703>;
-+			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 703>;
-+			status = "disabled";
-+
-+			bus-range = <1 1>;
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			#interrupt-cells = <1>;
-+			ranges = <0x02000000 0 0xee0c0000 0 0xee0c0000 0 0x00010000>;
-+			interrupt-map-mask = <0xff00 0 0 0x7>;
-+			interrupt-map = <0x0000 0 0 1 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH
-+					 0x0800 0 0 1 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH
-+					 0x1000 0 0 2 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
-+		};
- 	};
- 
- 	/* External root clock */
+Queuing up in sh-pfc-for-v4.15, as usual.
+
+Geert Uytterhoeven (2):
+  pinctrl: sh-pfc: r8a7795-es1: Restore sort order
+  pinctrl: sh-pfc: r8a7795: Restore sort order
+
+ drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c | 34 ++++++++++++++++----------------
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c     | 32 +++++++++++++++---------------
+ 2 files changed, 33 insertions(+), 33 deletions(-)
+
 -- 
-1.9.1
+2.7.4
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
