@@ -1,12 +1,18 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:43003 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753767AbdJFJB7 (ORCPT
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:38474 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750882AbdJFH5X (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Oct 2017 05:01:59 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Rob Herring <robh+dt@kernel.org>,
+        Fri, 6 Oct 2017 03:57:23 -0400
+MIME-Version: 1.0
+In-Reply-To: <1507108713-10686-2-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1507108713-10686-1-git-send-email-fabrizio.castro@bp.renesas.com> <1507108713-10686-2-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 6 Oct 2017 09:57:21 +0200
+Message-ID: <CAMuHMdW-Y7tK28YAGBRMqdgZK7vVqnUcud1FtzQd6wLrKii_AA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] ARM: dts: iwg20d-q7: Rework DT architecture
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Russell King <linux@armlinux.org.uk>,
         Simon Horman <horms@verge.net.au>,
@@ -17,66 +23,86 @@ CC: Rob Herring <robh+dt@kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>
-Subject: RE: [PATCH 1/2] ARM: dts: iwg20d-q7: Rework DT architecture
-Date: Fri, 6 Oct 2017 09:01:55 +0000
-Message-ID: <TY1PR06MB0895158D1245B1DF150DC9DAC0710@TY1PR06MB0895.apcprd06.prod.outlook.com>
-References: <1507108713-10686-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1507108713-10686-2-git-send-email-fabrizio.castro@bp.renesas.com>
- <CAMuHMdW-Y7tK28YAGBRMqdgZK7vVqnUcud1FtzQd6wLrKii_AA@mail.gmail.com>
-In-Reply-To: <CAMuHMdW-Y7tK28YAGBRMqdgZK7vVqnUcud1FtzQd6wLrKii_AA@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGVsbG8gR2VlcnQsDQoNCj4NCj4gSGkgRmFicml6aW8sDQo+DQo+IE9uIFdlZCwgT2N0IDQsIDIw
-MTcgYXQgMTE6MTggQU0sIEZhYnJpemlvIENhc3Rybw0KPiA8ZmFicml6aW8uY2FzdHJvQGJwLnJl
-bmVzYXMuY29tPiB3cm90ZToNCj4gPiBTaW5jZSB0aGUgc2FtZSBjYXJyaWVyIGJvYXJkIG1heSBo
-b3N0IFJaL0cxTSBhbmQgUlovRzFOIGJhc2VkDQo+ID4gU3lzdGVtcyBvbiBNb2R1bGUsIHRoZSBE
-VCBhcmNoaXRlY3R1cmUgZm9yIGl3ZzIwZC1xNyBuZWVkcw0KPiA+IGJldHRlciBkZWNvdXBsaW5n
-LiBUaGlzIHBhdGNoIHByb3ZpZGVzOg0KPiA+ICogaXdnMjBkLXE3LWNvbW1vbi5kdHNpIC0gaXRz
-IHB1cnBvc2UgaXMgdG8gZGVmaW5lIHRoZSBjYXJyaWVyDQo+ID4gICBib2FyZCBkZWZpbml0aW9u
-cywgYW5kIGl0cyBjb250ZW50IGlzIGJhc2ljYWxseSB0aGUgc2FtZQ0KPiA+ICAgYXMgdGhlIHBy
-ZXZpb3VzIHZlcnNpb24gb2YgcjhhNzc0My1pd2cyMGQtcTcuZHRzLCBvbmx5IGl0DQo+ID4gICBo
-YXMgbm8gcmVmZXJlbmNlIHRvIHRoZSBTb00gLmR0c2ksIGFuZCB0aGF0J3Mgd2h5IHRoZQ0KPiA+
-ICAgZmlsZW5hbWUgZG9lc24ndCBtZW50aW9uIHRoZSBTb0MgbmFtZSBhbnkgbW9yZS4NCj4gPiAq
-IHI4YTc3NDMtaXdnMjBkLXE3LmR0cyAtIGl0cyBuZXcgcHVycG9zZSBpcyB0byBwdXQgdG9nZXRo
-ZXINCj4gPiAgIHRoZSBTb00gLmR0c2kgKHI4YTc3NDMtaXdnMjBtLmR0c2kpIGFuZCB0aGUgY2Fy
-cmllciBib2FyZA0KPiA+ICAgLmR0c2kgZGVmaW5lZCBieSB0aGlzIHZlcnkgcGF0Y2gsIGFsb25n
-IHdpdGggIm1vZGVsIiBhbmQNCj4gPiAgICJjb21wYXRpYmxlIiBwcm9wZXJ0aWVzLg0KPiA+IFRo
-ZSBmaW5hbCBEVCBhcmNoaXRlY3R1cmUgdG8gZGVzY3JpYmUgdGhlIGJvYXJkIGlzIG5vdzoNCj4g
-PiByOGE3NzQzLWl3ZzIwZC1xNy5kdHMgICAgICAgICAgICMgQ2FycmllciBCb2FyZCArIFNvTQ0K
-PiA+IOKUnOKUgOKUgCByOGE3NzQzLWl3ZzIwbS5kdHNpICAgICAgICAgIyBTb00NCj4gPiDilIIg
-ICDilJTilIDilIAgcjhhNzc0My5kdHNpICAgICAgICAgICAgIyBTb0MNCj4gPiDilJTilIDilIAg
-aXdnMjBkLXE3LWNvbW1vbi5kdHNpICAgICAgICMgQ2FycmllciBCb2FyZA0KPiA+IGFuZCBtYXhp
-bWl6ZXMgdGhlIHJldXNlIG9mIHRoZSBkZWZpbml0aW9ucyBmb3IgdGhlIGNhcnJpZXIgYm9hcmQN
-Cj4gPiBhbmQgZm9yIHRoZSBTb00uDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBGYWJyaXppbyBD
-YXN0cm8gPGZhYnJpemlvLmNhc3Ryb0BicC5yZW5lc2FzLmNvbT4NCj4gPiBTaWduZWQtb2ZmLWJ5
-OiBDaHJpcyBQYXRlcnNvbiA8Y2hyaXMucGF0ZXJzb24yQHJlbmVzYXMuY29tPg0KPg0KPiBUaGFu
-a3MgZm9yIHlvdXIgcGF0Y2ghDQo+DQo+IFJldmlld2VkLWJ5OiBHZWVydCBVeXR0ZXJob2V2ZW4g
-PGdlZXJ0K3JlbmVzYXNAZ2xpZGVyLmJlPg0KPg0KPiA+IC0tLSAvZGV2L251bGwNCj4gPiArKysg
-Yi9hcmNoL2FybS9ib290L2R0cy9pd2cyMGQtcTctY29tbW9uLmR0c2kNCj4NCj4gPiArJnBmYyB7
-DQo+ID4gKyAgICAgICBpMmMyX3BpbnM6IGkyYzIgew0KPiA+ICsgICAgICAgICAgICAgICBncm91
-cHMgPSAiaTJjMiI7DQo+ID4gKyAgICAgICAgICAgICAgIGZ1bmN0aW9uID0gImkyYzIiOw0KPiA+
-ICsgICAgICAgfTsNCj4gPiArDQo+ID4gKyAgICAgICBzY2lmMF9waW5zOiBzY2lmMCB7DQo+ID4g
-KyAgICAgICAgICAgICAgIGdyb3VwcyA9ICJzY2lmMF9kYXRhX2QiOw0KPiA+ICsgICAgICAgICAg
-ICAgICBmdW5jdGlvbiA9ICJzY2lmMCI7DQo+ID4gKyAgICAgICB9Ow0KPiA+ICsNCj4gPiArICAg
-ICAgIGF2Yl9waW5zOiBhdmIgew0KPiA+ICsgICAgICAgICAgICAgICBncm91cHMgPSAiYXZiX21k
-aW8iLCAiYXZiX2dtaWkiOw0KPiA+ICsgICAgICAgICAgICAgICBmdW5jdGlvbiA9ICJhdmIiOw0K
-PiA+ICsgICAgICAgfTsNCj4NCj4gUGVyaGFwcyB5b3Ugd2FudCB0byB1c2UgdGhpcyBvcHBvcnR1
-bml0eSB0byByZXN0b3JlIGFscGhhYmV0aWNhbCBzb3J0IG9yZGVyPw0KDQpnb29kIGlkZWENCg0K
-Pg0KPiA+ICsmc2NpZjAgew0KPg0KPiBbLi4uXQ0KPg0KPiA+ICt9Ow0KPiA+ICsNCj4gPiArJmF2
-YiB7DQo+DQo+IExpa2V3aXNlLg0KPg0KPiBDYW4gYmUgYSBzZXBhcmF0ZSBwYXRjaCwgdGhvdWdo
-Lg0KDQpJJ2xsIHNlbmQgYSBWMiBmb3IgdGhpcy4NCg0KVGhhbmtzLA0KRmFiDQoNCj4NCj4gR3J7
-b2V0amUsZWV0aW5nfXMsDQo+DQo+ICAgICAgICAgICAgICAgICAgICAgICAgIEdlZXJ0DQo+DQo+
-IC0tDQo+IEdlZXJ0IFV5dHRlcmhvZXZlbiAtLSBUaGVyZSdzIGxvdHMgb2YgTGludXggYmV5b25k
-IGlhMzIgLS0gZ2VlcnRAbGludXgtbTY4ay5vcmcNCj4NCj4gSW4gcGVyc29uYWwgY29udmVyc2F0
-aW9ucyB3aXRoIHRlY2huaWNhbCBwZW9wbGUsIEkgY2FsbCBteXNlbGYgYSBoYWNrZXIuIEJ1dA0K
-PiB3aGVuIEknbSB0YWxraW5nIHRvIGpvdXJuYWxpc3RzIEkganVzdCBzYXkgInByb2dyYW1tZXIi
-IG9yIHNvbWV0aGluZyBsaWtlIHRoYXQuDQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgLS0gTGludXMgVG9ydmFsZHMNCg0KDQoNClJlbmVzYXMgRWxlY3Ryb25pY3MgRXVyb3BlIEx0
-ZCwgRHVrZXMgTWVhZG93LCBNaWxsYm9hcmQgUm9hZCwgQm91cm5lIEVuZCwgQnVja2luZ2hhbXNo
-aXJlLCBTTDggNUZILCBVSy4gUmVnaXN0ZXJlZCBpbiBFbmdsYW5kICYgV2FsZXMgdW5kZXIgUmVn
-aXN0ZXJlZCBOby4gMDQ1ODY3MDkuDQo=
+Hi Fabrizio,
+
+On Wed, Oct 4, 2017 at 11:18 AM, Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> Since the same carrier board may host RZ/G1M and RZ/G1N based
+> Systems on Module, the DT architecture for iwg20d-q7 needs
+> better decoupling. This patch provides:
+> * iwg20d-q7-common.dtsi - its purpose is to define the carrier
+>   board definitions, and its content is basically the same
+>   as the previous version of r8a7743-iwg20d-q7.dts, only it
+>   has no reference to the SoM .dtsi, and that's why the
+>   filename doesn't mention the SoC name any more.
+> * r8a7743-iwg20d-q7.dts - its new purpose is to put together
+>   the SoM .dtsi (r8a7743-iwg20m.dtsi) and the carrier board
+>   .dtsi defined by this very patch, along with "model" and
+>   "compatible" properties.
+> The final DT architecture to describe the board is now:
+> r8a7743-iwg20d-q7.dts           # Carrier Board + SoM
+> =E2=94=9C=E2=94=80=E2=94=80 r8a7743-iwg20m.dtsi         # SoM
+> =E2=94=82   =E2=94=94=E2=94=80=E2=94=80 r8a7743.dtsi            # SoC
+> =E2=94=94=E2=94=80=E2=94=80 iwg20d-q7-common.dtsi       # Carrier Board
+> and maximizes the reuse of the definitions for the carrier board
+> and for the SoM.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+
+Thanks for your patch!
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
+
+> +&pfc {
+> +       i2c2_pins: i2c2 {
+> +               groups =3D "i2c2";
+> +               function =3D "i2c2";
+> +       };
+> +
+> +       scif0_pins: scif0 {
+> +               groups =3D "scif0_data_d";
+> +               function =3D "scif0";
+> +       };
+> +
+> +       avb_pins: avb {
+> +               groups =3D "avb_mdio", "avb_gmii";
+> +               function =3D "avb";
+> +       };
+
+Perhaps you want to use this opportunity to restore alphabetical sort order=
+?
+
+> +&scif0 {
+
+[...]
+
+> +};
+> +
+> +&avb {
+
+Likewise.
+
+Can be a separate patch, though.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
