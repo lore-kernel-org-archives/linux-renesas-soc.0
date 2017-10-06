@@ -1,135 +1,58 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:11910 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752536AbdJFSAJ (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Oct 2017 14:00:09 -0400
+Return-Path: <devicetree-owner@vger.kernel.org>
 From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc: Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Chris Paterson <chris.paterson2@renesas.com>
-Subject: [PATCH v2 2/2] ARM: dts: iwg20d-q7-dbcm-ca: Add device trees for camera DB
-Date: Fri,  6 Oct 2017 18:59:53 +0100
-Message-Id: <1507312793-6877-3-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1507312793-6877-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <CAMuHMdW-Y7tK28YAGBRMqdgZK7vVqnUcud1FtzQd6wLrKii_AA@mail.gmail.com>
- <1507312793-6877-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Biju Das <biju.das@bp.renesas.com>
+Subject: RE: [PATCH 2/2] ARM: dts: iwg20d-q7-dbcm-ca: Add device trees for
+ camera DB
+Date: Fri, 6 Oct 2017 09:06:14 +0000
+Message-ID: <TY1PR06MB0895E77A6CC9BF8B042E9553C0710@TY1PR06MB0895.apcprd06.prod.outlook.com>
+References: <1507108713-10686-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1507108713-10686-3-git-send-email-fabrizio.castro@bp.renesas.com>
+ <CAMuHMdU-zOogwOKS_s8-r_fsUfXxu38WKkaoryuuuGGJzmBkSw@mail.gmail.com>
+In-Reply-To: <CAMuHMdU-zOogwOKS_s8-r_fsUfXxu38WKkaoryuuuGGJzmBkSw@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds a .dtsi that describes the camera daughter board
-and a .dts to describe the HW made of iWave's RZ/G1M SoM, iWave's
-RZ/G1M/G1N Qseven carrier board, and the camera daughter board.
-The camera daughter board .dtsi adds support for ttySC[14].
-
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-* Reodered nodes alphabetically
-
- arch/arm/boot/dts/Makefile                      |  1 +
- arch/arm/boot/dts/iwg20d-q7-dbcm-ca.dtsi        | 43 +++++++++++++++++++++++++
- arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dts | 19 +++++++++++
- 3 files changed, 63 insertions(+)
- create mode 100644 arch/arm/boot/dts/iwg20d-q7-dbcm-ca.dtsi
- create mode 100644 arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dts
-
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index e87f311..8c34d06 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -724,6 +724,7 @@ dtb-$(CONFIG_ARCH_RENESAS) += \
- 	r8a73a4-ape6evm.dtb \
- 	r8a7740-armadillo800eva.dtb \
- 	r8a7743-iwg20d-q7.dtb \
-+	r8a7743-iwg20d-q7-dbcm-ca.dtb \
- 	r8a7743-sk-rzg1m.dtb \
- 	r8a7745-iwg22d-sodimm.dtb \
- 	r8a7745-sk-rzg1e.dtb \
-diff --git a/arch/arm/boot/dts/iwg20d-q7-dbcm-ca.dtsi b/arch/arm/boot/dts/iwg20d-q7-dbcm-ca.dtsi
-new file mode 100644
-index 0000000..31fab5f
---- /dev/null
-+++ b/arch/arm/boot/dts/iwg20d-q7-dbcm-ca.dtsi
-@@ -0,0 +1,43 @@
-+/*
-+ * Device Tree Source for the iWave-RZ-G1M/N Daughter Board Camera Module
-+ *
-+ * Copyright (C) 2017 Renesas Electronics Corp.
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2.  This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
-+
-+/ {
-+	aliases {
-+		serial1 = &scif1;
-+		serial4 = &hscif1;
-+	};
-+};
-+
-+&hscif1 {
-+	pinctrl-0 = <&hscif1_pins>;
-+	pinctrl-names = "default";
-+
-+	uart-has-rtscts;
-+	status = "okay";
-+};
-+
-+&pfc {
-+	hscif1_pins: hscif1 {
-+		groups = "hscif1_data_c", "hscif1_ctrl_c";
-+		function = "hscif1";
-+	};
-+
-+	scif1_pins: scif1 {
-+		groups = "scif1_data_d";
-+		function = "scif1";
-+	};
-+};
-+
-+&scif1 {
-+	pinctrl-0 = <&scif1_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-diff --git a/arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dts b/arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dts
-new file mode 100644
-index 0000000..d90eb84
---- /dev/null
-+++ b/arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dts
-@@ -0,0 +1,19 @@
-+/*
-+ * Device Tree Source for the iWave-RZ/G1M Qseven board + camera daughter board
-+ *
-+ * Copyright (C) 2017 Renesas Electronics Corp.
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2.  This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
-+
-+/dts-v1/;
-+#include "r8a7743-iwg20m.dtsi"
-+#include "iwg20d-q7-common.dtsi"
-+#include "iwg20d-q7-dbcm-ca.dtsi"
-+
-+/ {
-+	model = "iW-RainboW-G20D-Q7 RZ/G1M based plus camera daughter board";
-+	compatible = "iwave,g20d", "iwave,g20m", "renesas,r8a7743";
-+};
--- 
-2.7.4
+SGkgR2VlcnQsDQoNCj4gSGkgRmFicml6aW8sDQo+DQo+IE9uIFdlZCwgT2N0IDQsIDIwMTcgYXQg
+MTE6MTggQU0sIEZhYnJpemlvIENhc3Rybw0KPiA8ZmFicml6aW8uY2FzdHJvQGJwLnJlbmVzYXMu
+Y29tPiB3cm90ZToNCj4gPiBUaGlzIHBhdGNoIGFkZHMgYSAuZHRzaSB0aGF0IGRlc2NyaWJlcyB0
+aGUgY2FtZXJhIGRhdWdodGVyIGJvYXJkDQo+ID4gYW5kIGEgLmR0cyB0byBkZXNjcmliZSB0aGUg
+SFcgbWFkZSBvZiBpV2F2ZSdzIFJaL0cxTSBTb00sIGlXYXZlJ3MNCj4gPiBSWi9HMU0vRzFOIFFz
+ZXZlbiBjYXJyaWVyIGJvYXJkLCBhbmQgdGhlIGNhbWVyYSBkYXVnaHRlciBib2FyZC4NCj4gPiBU
+aGUgY2FtZXJhIGRhdWdodGVyIGJvYXJkIC5kdHNpIGFkZHMgc3VwcG9ydCBmb3IgdHR5U0NbMTRd
+Lg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogRmFicml6aW8gQ2FzdHJvIDxmYWJyaXppby5jYXN0
+cm9AYnAucmVuZXNhcy5jb20+DQo+ID4gU2lnbmVkLW9mZi1ieTogQ2hyaXMgUGF0ZXJzb24gPGNo
+cmlzLnBhdGVyc29uMkByZW5lc2FzLmNvbT4NCj4NCj4gUmV2aWV3ZWQtYnk6IEdlZXJ0IFV5dHRl
+cmhvZXZlbiA8Z2VlcnQrcmVuZXNhc0BnbGlkZXIuYmU+DQo+DQo+ID4gLS0tIC9kZXYvbnVsbA0K
+PiA+ICsrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL2l3ZzIwZC1xNy1kYmNtLWNhLmR0c2kNCj4NCj4g
+PiArLyB7DQo+ID4gKyAgICAgICBhbGlhc2VzIHsNCj4gPiArICAgICAgICAgICAgICAgc2VyaWFs
+MSA9ICZzY2lmMTsNCj4gPiArICAgICAgICAgICAgICAgc2VyaWFsNCA9ICZoc2NpZjE7DQo+DQo+
+IEJUVywgd2hhdCdzIHRoZSByZWFzb24geW91IHBpY2tlZCBzZXJpYWw0IGZvciB0aGUgdGhpcmQg
+c2VyaWFsIHBvcnQ/DQoNCkJlY2F1c2UgaXQgbWF0Y2hlcyB0aGUgY29uZmlndXJhdGlvbiBpV2F2
+ZSBoYWQgaW4gdGhlaXIgb2ZmaWNpYWwgcmVsZWFzZSBiYXNlZCBvbg0Ka2VybmVsIDMuMTAuIFdl
+IGRlY2lkZWQgdG8ga2VlcCB0aGUgc2FtZSBudW1iZXJpbmcgc2NoZW1lIGFzIGEgcHJlY2F1dGlv
+biB0bw0KYXZvaWQgYnJlYWtpbmcgZXhpc3RpbmcgY29kZS4NCg0KVGhhbmtzLA0KRmFiDQoNCj4N
+Cj4gR3J7b2V0amUsZWV0aW5nfXMsDQo+DQo+ICAgICAgICAgICAgICAgICAgICAgICAgIEdlZXJ0
+DQo+DQo+IC0tDQo+IEdlZXJ0IFV5dHRlcmhvZXZlbiAtLSBUaGVyZSdzIGxvdHMgb2YgTGludXgg
+YmV5b25kIGlhMzIgLS0gZ2VlcnRAbGludXgtbTY4ay5vcmcNCj4NCj4gSW4gcGVyc29uYWwgY29u
+dmVyc2F0aW9ucyB3aXRoIHRlY2huaWNhbCBwZW9wbGUsIEkgY2FsbCBteXNlbGYgYSBoYWNrZXIu
+IEJ1dA0KPiB3aGVuIEknbSB0YWxraW5nIHRvIGpvdXJuYWxpc3RzIEkganVzdCBzYXkgInByb2dy
+YW1tZXIiIG9yIHNvbWV0aGluZyBsaWtlIHRoYXQuDQo+ICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgLS0gTGludXMgVG9ydmFsZHMNCg0KDQoNClJlbmVzYXMgRWxlY3Ryb25pY3MgRXVy
+b3BlIEx0ZCwgRHVrZXMgTWVhZG93LCBNaWxsYm9hcmQgUm9hZCwgQm91cm5lIEVuZCwgQnVja2lu
+Z2hhbXNoaXJlLCBTTDggNUZILCBVSy4gUmVnaXN0ZXJlZCBpbiBFbmdsYW5kICYgV2FsZXMgdW5k
+ZXIgUmVnaXN0ZXJlZCBOby4gMDQ1ODY3MDkuDQo=
