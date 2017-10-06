@@ -1,57 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:20302 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S933031AbdJQHeU (ORCPT
+Received: from mail-wr0-f172.google.com ([209.85.128.172]:55018 "EHLO
+        mail-wr0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750967AbdJFLYK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Oct 2017 03:34:20 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: wsa+renesas@sang-engineering.com, ulf.hansson@linaro.org
-Cc: linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 1/2] mmc: renesas_sdhi: fix swiotlb buffer is full
-Date: Tue, 17 Oct 2017 16:30:20 +0900
-Message-Id: <1508225421-25405-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1508225421-25405-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1508225421-25405-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Fri, 6 Oct 2017 07:24:10 -0400
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20171006103704.13708-1-wsa+renesas@sang-engineering.com>
+References: <20171006103704.13708-1-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 6 Oct 2017 13:24:08 +0200
+Message-ID: <CAMuHMdV2x00e275zFNM-H-gGrK1u4fzZpO6=cwDQKpGZZi=8Xw@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7795: Add HSCIF pins, groups, and functions
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Since the commit de3ee99b097d ("mmc: Delete bounce buffer handling")
-deletes the bounce buffer handling, a request data size will be referred
-to max_{req,seg}_size instead of MMC_QUEUE_BOUNCESZ (64k bytes).
+Hi Wolfram,
 
-In other hand, renesas_sdhi_internal_dmac.c will set very big value of
-max_{req,seg}_size because the max_blk_count is set to 0xffffffff.
-And then, "swiotlb buffer is full" happens because swiotlb can handle
-a memory size up to 256k bytes only (IO_TLB_SEGSIZE = 128 and
-IO_TLB_SHIFT = 11).
+On Fri, Oct 6, 2017 at 12:37 PM, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>
+> Tested on a Salvator-XS with HSCIF1 mapped to debug1 connector with this
+> snipplet in salvator-common.dtsi:
 
-So, this patch fixes the issue to set max_blk_count to 512. Then,
-the max_{req,seg}_size will be set to 256k bytes.
+Thanks for your patch (and for testing ;-)!
 
-Reported-by: Dirk Behme <dirk.behme@de.bosch.com>
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+> I verified to the best of my knowledge that all the other settings are equal to
+> r8a7795-es1.
 
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index f905f23..6c9b4b2 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -80,8 +80,9 @@
- 	.scc_offset	= 0x1000,
- 	.taps		= rcar_gen3_scc_taps,
- 	.taps_num	= ARRAY_SIZE(rcar_gen3_scc_taps),
--	/* Gen3 SDHI DMAC can handle 0xffffffff blk count, but seg = 1 */
--	.max_blk_count	= 0xffffffff,
-+	/* The swiotlb can handle memory size up to 256 kbytes for now. */
-+	.max_blk_count	= 512,
-+	/* Gen3 SDHI DMAC cannot handle scatter-gather. So, max_segs = 1 */
- 	.max_segs	= 1,
- };
- 
--- 
-1.9.1
+Unfortunately you missed that ES2.0 has a third set of pins for HSCIF2.
+Can you please add these, too?
+The rest looks fine to me.
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
