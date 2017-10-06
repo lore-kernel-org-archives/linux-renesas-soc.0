@@ -1,35 +1,30 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:36072 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751112AbdJTDQm (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 Oct 2017 23:16:42 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: wsa+renesas@sang-engineering.com, ulf.hansson@linaro.org
-Cc: linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 0/2] mmc: renesas_sdhi and tmio: bugfixes for v4.14
-Date: Fri, 20 Oct 2017 12:12:40 +0900
-Message-Id: <1508469162-12322-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Fri, 6 Oct 2017 11:15:50 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: kishon@ti.com, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 1/4] phy: rcar-gen3-usb2: check dr_mode for otg mode
+Message-ID: <20171006091550.GE7734@verge.net.au>
+References: <1504233685-17947-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1504233685-17947-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1504233685-17947-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch set is based on mainline v4.14-rc5.
+On Fri, Sep 01, 2017 at 11:41:22AM +0900, Yoshihiro Shimoda wrote:
+> The previous code assumed a channel has otg capability if a channel
+> has interrupt property. But, it is not good because:
+>  - Battery charging feature also needs interrupt property.
+>  - Some R-Car Gen3 SoCs (e.g. R-Car D3) don't have OTG capability.
+> 
+> So, this patch checks whether usb 2.0 host node has dr_mode property or
+> not. If it has 'dr_mode = "otg";', this driver enables otg capability.
+> 
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-Changes from v1:
- - Calculate the max size of swiotlb memory instead of hardcoded value
-   in patch 1.
- - Add Reviewed-by from Geert-san in patch 2. (Geert-san, thanks!)
-
-Yoshihiro Shimoda (2):
-  mmc: tmio: fix swiotlb buffer is full
-  mmc: renesas_sdhi: fix kernel panic in _internal_dmac.c
-
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 17 ++++++++++-------
- drivers/mmc/host/tmio_mmc_core.c              | 13 +++++++++++++
- 2 files changed, 23 insertions(+), 7 deletions(-)
-
--- 
-1.9.1
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
