@@ -1,375 +1,82 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:11910 "EHLO
+Received: from relmlor1.renesas.com ([210.160.252.171]:43003 "EHLO
         relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751862AbdJFSAF (ORCPT
+        by vger.kernel.org with ESMTP id S1753767AbdJFJB7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Oct 2017 14:00:05 -0400
+        Fri, 6 Oct 2017 05:01:59 -0400
 From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc: Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Chris Paterson <chris.paterson2@renesas.com>
-Subject: [PATCH v2 1/2] ARM: dts: iwg20d-q7: Rework DT architecture
-Date: Fri,  6 Oct 2017 18:59:52 +0100
-Message-Id: <1507312793-6877-2-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1507312793-6877-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <CAMuHMdW-Y7tK28YAGBRMqdgZK7vVqnUcud1FtzQd6wLrKii_AA@mail.gmail.com>
- <1507312793-6877-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Biju Das <biju.das@bp.renesas.com>
+Subject: RE: [PATCH 1/2] ARM: dts: iwg20d-q7: Rework DT architecture
+Date: Fri, 6 Oct 2017 09:01:55 +0000
+Message-ID: <TY1PR06MB0895158D1245B1DF150DC9DAC0710@TY1PR06MB0895.apcprd06.prod.outlook.com>
+References: <1507108713-10686-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1507108713-10686-2-git-send-email-fabrizio.castro@bp.renesas.com>
+ <CAMuHMdW-Y7tK28YAGBRMqdgZK7vVqnUcud1FtzQd6wLrKii_AA@mail.gmail.com>
+In-Reply-To: <CAMuHMdW-Y7tK28YAGBRMqdgZK7vVqnUcud1FtzQd6wLrKii_AA@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Since the same carrier board may host RZ/G1M and RZ/G1N based
-Systems on Module, the DT architecture for iwg20d-q7 needs
-better decoupling. This patch provides:
-* iwg20d-q7-common.dtsi - its purpose is to define the carrier
-  board definitions, and its content is basically the same
-  as the previous version of r8a7743-iwg20d-q7.dts, only it
-  has no reference to the SoM .dtsi, and that's why the
-  filename doesn't mention the SoC name any more.
-* r8a7743-iwg20d-q7.dts - its new purpose is to put together
-  the SoM .dtsi (r8a7743-iwg20m.dtsi) and the carrier board
-  .dtsi defined by this very patch, along with "model" and
-  "compatible" properties.
-The final DT architecture to describe the board is now:
-r8a7743-iwg20d-q7.dts           # Carrier Board + SoM
-├── r8a7743-iwg20m.dtsi         # SoM
-│   └── r8a7743.dtsi            # SoC
-└── iwg20d-q7-common.dtsi       # Carrier Board
-and maximizes the reuse of the definitions for the carrier board
-and for the SoM.
-
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-* Reodered nodes alphabetically
-
- arch/arm/boot/dts/iwg20d-q7-common.dtsi | 147 ++++++++++++++++++++++++++++++++
- arch/arm/boot/dts/r8a7743-iwg20d-q7.dts | 139 +-----------------------------
- 2 files changed, 149 insertions(+), 137 deletions(-)
- create mode 100644 arch/arm/boot/dts/iwg20d-q7-common.dtsi
-
-diff --git a/arch/arm/boot/dts/iwg20d-q7-common.dtsi b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-new file mode 100644
-index 0000000..1c072c0
---- /dev/null
-+++ b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-@@ -0,0 +1,147 @@
-+/*
-+ * Device Tree Source for the iWave-RZ/G1M/G1N Qseven carrier board
-+ *
-+ * Copyright (C) 2017 Renesas Electronics Corp.
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2.  This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
-+
-+/ {
-+	aliases {
-+		serial0 = &scif0;
-+		ethernet0 = &avb;
-+	};
-+
-+	chosen {
-+		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	vcc_sdhi1: regulator-vcc-sdhi1 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "SDHI1 Vcc";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&gpio1 16 GPIO_ACTIVE_LOW>;
-+	};
-+
-+	vccq_sdhi1: regulator-vccq-sdhi1 {
-+		compatible = "regulator-gpio";
-+
-+		regulator-name = "SDHI1 VccQ";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpios = <&gpio2 30 GPIO_ACTIVE_LOW>;
-+		gpios-states = <1>;
-+		states = <3300000 1
-+			  1800000 0>;
-+	};
-+};
-+
-+&avb {
-+	pinctrl-0 = <&avb_pins>;
-+	pinctrl-names = "default";
-+
-+	phy-handle = <&phy3>;
-+	phy-mode = "gmii";
-+	renesas,no-ether-link;
-+	status = "okay";
-+
-+	phy3: ethernet-phy@3 {
-+		reg = <3>;
-+		micrel,led-mode = <1>;
-+	};
-+};
-+
-+&i2c2 {
-+	pinctrl-0 = <&i2c2_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+	clock-frequency = <400000>;
-+
-+	rtc@68 {
-+		compatible = "ti,bq32000";
-+		reg = <0x68>;
-+	};
-+};
-+
-+&pci0 {
-+	status = "okay";
-+	pinctrl-0 = <&usb0_pins>;
-+	pinctrl-names = "default";
-+};
-+
-+&pci1 {
-+	status = "okay";
-+	pinctrl-0 = <&usb1_pins>;
-+	pinctrl-names = "default";
-+};
-+
-+&pfc {
-+	avb_pins: avb {
-+		groups = "avb_mdio", "avb_gmii";
-+		function = "avb";
-+	};
-+
-+	i2c2_pins: i2c2 {
-+		groups = "i2c2";
-+		function = "i2c2";
-+	};
-+
-+	scif0_pins: scif0 {
-+		groups = "scif0_data_d";
-+		function = "scif0";
-+	};
-+
-+	sdhi1_pins: sd1 {
-+		groups = "sdhi1_data4", "sdhi1_ctrl";
-+		function = "sdhi1";
-+		power-source = <3300>;
-+	};
-+
-+	sdhi1_pins_uhs: sd1_uhs {
-+		groups = "sdhi1_data4", "sdhi1_ctrl";
-+		function = "sdhi1";
-+		power-source = <1800>;
-+	};
-+
-+	usb0_pins: usb0 {
-+		groups = "usb0";
-+		function = "usb0";
-+	};
-+
-+	usb1_pins: usb1 {
-+		groups = "usb1";
-+		function = "usb1";
-+	};
-+};
-+
-+&scif0 {
-+	pinctrl-0 = <&scif0_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
-+&sdhi1 {
-+	pinctrl-0 = <&sdhi1_pins>;
-+	pinctrl-1 = <&sdhi1_pins_uhs>;
-+	pinctrl-names = "default", "state_uhs";
-+
-+	vmmc-supply = <&vcc_sdhi1>;
-+	vqmmc-supply = <&vccq_sdhi1>;
-+	cd-gpios = <&gpio6 14 GPIO_ACTIVE_LOW>;
-+	wp-gpios = <&gpio6 15 GPIO_ACTIVE_HIGH>;
-+	sd-uhs-sdr50;
-+	status = "okay";
-+};
-+
-+&usbphy {
-+	status = "okay";
-+};
-diff --git a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-index 0136864..6aa6b74 100644
---- a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-+++ b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-@@ -1,5 +1,5 @@
- /*
-- * Device Tree Source for the iWave-RZG1M Qseven carrier board
-+ * Device Tree Source for the iWave-RZ/G1M Qseven board
-  *
-  * Copyright (C) 2017 Renesas Electronics Corp.
-  *
-@@ -10,144 +10,9 @@
- 
- /dts-v1/;
- #include "r8a7743-iwg20m.dtsi"
-+#include "iwg20d-q7-common.dtsi"
- 
- / {
- 	model = "iWave Systems RainboW-G20D-Qseven board based on RZ/G1M";
- 	compatible = "iwave,g20d", "iwave,g20m", "renesas,r8a7743";
--
--	aliases {
--		serial0 = &scif0;
--		ethernet0 = &avb;
--	};
--
--	chosen {
--		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
--		stdout-path = "serial0:115200n8";
--	};
--
--	vcc_sdhi1: regulator-vcc-sdhi1 {
--		compatible = "regulator-fixed";
--
--		regulator-name = "SDHI1 Vcc";
--		regulator-min-microvolt = <3300000>;
--		regulator-max-microvolt = <3300000>;
--
--		gpio = <&gpio1 16 GPIO_ACTIVE_LOW>;
--	};
--
--	vccq_sdhi1: regulator-vccq-sdhi1 {
--		compatible = "regulator-gpio";
--
--		regulator-name = "SDHI1 VccQ";
--		regulator-min-microvolt = <1800000>;
--		regulator-max-microvolt = <3300000>;
--
--		gpios = <&gpio2 30 GPIO_ACTIVE_LOW>;
--		gpios-states = <1>;
--		states = <3300000 1
--			  1800000 0>;
--	};
--};
--
--&pfc {
--	i2c2_pins: i2c2 {
--		groups = "i2c2";
--		function = "i2c2";
--	};
--
--	scif0_pins: scif0 {
--		groups = "scif0_data_d";
--		function = "scif0";
--	};
--
--	avb_pins: avb {
--		groups = "avb_mdio", "avb_gmii";
--		function = "avb";
--	};
--
--	sdhi1_pins: sd1 {
--		groups = "sdhi1_data4", "sdhi1_ctrl";
--		function = "sdhi1";
--		power-source = <3300>;
--	};
--
--	sdhi1_pins_uhs: sd1_uhs {
--		groups = "sdhi1_data4", "sdhi1_ctrl";
--		function = "sdhi1";
--		power-source = <1800>;
--	};
--
--	usb0_pins: usb0 {
--		groups = "usb0";
--		function = "usb0";
--	};
--
--	usb1_pins: usb1 {
--		groups = "usb1";
--		function = "usb1";
--	};
--};
--
--&scif0 {
--	pinctrl-0 = <&scif0_pins>;
--	pinctrl-names = "default";
--
--	status = "okay";
--};
--
--&avb {
--	pinctrl-0 = <&avb_pins>;
--	pinctrl-names = "default";
--
--	phy-handle = <&phy3>;
--	phy-mode = "gmii";
--	renesas,no-ether-link;
--	status = "okay";
--
--	phy3: ethernet-phy@3 {
--		reg = <3>;
--		micrel,led-mode = <1>;
--	};
--};
--
--&sdhi1 {
--	pinctrl-0 = <&sdhi1_pins>;
--	pinctrl-1 = <&sdhi1_pins_uhs>;
--	pinctrl-names = "default", "state_uhs";
--
--	vmmc-supply = <&vcc_sdhi1>;
--	vqmmc-supply = <&vccq_sdhi1>;
--	cd-gpios = <&gpio6 14 GPIO_ACTIVE_LOW>;
--	wp-gpios = <&gpio6 15 GPIO_ACTIVE_HIGH>;
--	sd-uhs-sdr50;
--	status = "okay";
--};
--
--&i2c2 {
--	pinctrl-0 = <&i2c2_pins>;
--	pinctrl-names = "default";
--
--	status = "okay";
--	clock-frequency = <400000>;
--
--	rtc@68 {
--		compatible = "ti,bq32000";
--		reg = <0x68>;
--	};
--};
--
--&pci0 {
--	status = "okay";
--	pinctrl-0 = <&usb0_pins>;
--	pinctrl-names = "default";
--};
--
--&pci1 {
--	status = "okay";
--	pinctrl-0 = <&usb1_pins>;
--	pinctrl-names = "default";
--};
--
--&usbphy {
--	status = "okay";
- };
--- 
-2.7.4
+SGVsbG8gR2VlcnQsDQoNCj4NCj4gSGkgRmFicml6aW8sDQo+DQo+IE9uIFdlZCwgT2N0IDQsIDIw
+MTcgYXQgMTE6MTggQU0sIEZhYnJpemlvIENhc3Rybw0KPiA8ZmFicml6aW8uY2FzdHJvQGJwLnJl
+bmVzYXMuY29tPiB3cm90ZToNCj4gPiBTaW5jZSB0aGUgc2FtZSBjYXJyaWVyIGJvYXJkIG1heSBo
+b3N0IFJaL0cxTSBhbmQgUlovRzFOIGJhc2VkDQo+ID4gU3lzdGVtcyBvbiBNb2R1bGUsIHRoZSBE
+VCBhcmNoaXRlY3R1cmUgZm9yIGl3ZzIwZC1xNyBuZWVkcw0KPiA+IGJldHRlciBkZWNvdXBsaW5n
+LiBUaGlzIHBhdGNoIHByb3ZpZGVzOg0KPiA+ICogaXdnMjBkLXE3LWNvbW1vbi5kdHNpIC0gaXRz
+IHB1cnBvc2UgaXMgdG8gZGVmaW5lIHRoZSBjYXJyaWVyDQo+ID4gICBib2FyZCBkZWZpbml0aW9u
+cywgYW5kIGl0cyBjb250ZW50IGlzIGJhc2ljYWxseSB0aGUgc2FtZQ0KPiA+ICAgYXMgdGhlIHBy
+ZXZpb3VzIHZlcnNpb24gb2YgcjhhNzc0My1pd2cyMGQtcTcuZHRzLCBvbmx5IGl0DQo+ID4gICBo
+YXMgbm8gcmVmZXJlbmNlIHRvIHRoZSBTb00gLmR0c2ksIGFuZCB0aGF0J3Mgd2h5IHRoZQ0KPiA+
+ICAgZmlsZW5hbWUgZG9lc24ndCBtZW50aW9uIHRoZSBTb0MgbmFtZSBhbnkgbW9yZS4NCj4gPiAq
+IHI4YTc3NDMtaXdnMjBkLXE3LmR0cyAtIGl0cyBuZXcgcHVycG9zZSBpcyB0byBwdXQgdG9nZXRo
+ZXINCj4gPiAgIHRoZSBTb00gLmR0c2kgKHI4YTc3NDMtaXdnMjBtLmR0c2kpIGFuZCB0aGUgY2Fy
+cmllciBib2FyZA0KPiA+ICAgLmR0c2kgZGVmaW5lZCBieSB0aGlzIHZlcnkgcGF0Y2gsIGFsb25n
+IHdpdGggIm1vZGVsIiBhbmQNCj4gPiAgICJjb21wYXRpYmxlIiBwcm9wZXJ0aWVzLg0KPiA+IFRo
+ZSBmaW5hbCBEVCBhcmNoaXRlY3R1cmUgdG8gZGVzY3JpYmUgdGhlIGJvYXJkIGlzIG5vdzoNCj4g
+PiByOGE3NzQzLWl3ZzIwZC1xNy5kdHMgICAgICAgICAgICMgQ2FycmllciBCb2FyZCArIFNvTQ0K
+PiA+IOKUnOKUgOKUgCByOGE3NzQzLWl3ZzIwbS5kdHNpICAgICAgICAgIyBTb00NCj4gPiDilIIg
+ICDilJTilIDilIAgcjhhNzc0My5kdHNpICAgICAgICAgICAgIyBTb0MNCj4gPiDilJTilIDilIAg
+aXdnMjBkLXE3LWNvbW1vbi5kdHNpICAgICAgICMgQ2FycmllciBCb2FyZA0KPiA+IGFuZCBtYXhp
+bWl6ZXMgdGhlIHJldXNlIG9mIHRoZSBkZWZpbml0aW9ucyBmb3IgdGhlIGNhcnJpZXIgYm9hcmQN
+Cj4gPiBhbmQgZm9yIHRoZSBTb00uDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBGYWJyaXppbyBD
+YXN0cm8gPGZhYnJpemlvLmNhc3Ryb0BicC5yZW5lc2FzLmNvbT4NCj4gPiBTaWduZWQtb2ZmLWJ5
+OiBDaHJpcyBQYXRlcnNvbiA8Y2hyaXMucGF0ZXJzb24yQHJlbmVzYXMuY29tPg0KPg0KPiBUaGFu
+a3MgZm9yIHlvdXIgcGF0Y2ghDQo+DQo+IFJldmlld2VkLWJ5OiBHZWVydCBVeXR0ZXJob2V2ZW4g
+PGdlZXJ0K3JlbmVzYXNAZ2xpZGVyLmJlPg0KPg0KPiA+IC0tLSAvZGV2L251bGwNCj4gPiArKysg
+Yi9hcmNoL2FybS9ib290L2R0cy9pd2cyMGQtcTctY29tbW9uLmR0c2kNCj4NCj4gPiArJnBmYyB7
+DQo+ID4gKyAgICAgICBpMmMyX3BpbnM6IGkyYzIgew0KPiA+ICsgICAgICAgICAgICAgICBncm91
+cHMgPSAiaTJjMiI7DQo+ID4gKyAgICAgICAgICAgICAgIGZ1bmN0aW9uID0gImkyYzIiOw0KPiA+
+ICsgICAgICAgfTsNCj4gPiArDQo+ID4gKyAgICAgICBzY2lmMF9waW5zOiBzY2lmMCB7DQo+ID4g
+KyAgICAgICAgICAgICAgIGdyb3VwcyA9ICJzY2lmMF9kYXRhX2QiOw0KPiA+ICsgICAgICAgICAg
+ICAgICBmdW5jdGlvbiA9ICJzY2lmMCI7DQo+ID4gKyAgICAgICB9Ow0KPiA+ICsNCj4gPiArICAg
+ICAgIGF2Yl9waW5zOiBhdmIgew0KPiA+ICsgICAgICAgICAgICAgICBncm91cHMgPSAiYXZiX21k
+aW8iLCAiYXZiX2dtaWkiOw0KPiA+ICsgICAgICAgICAgICAgICBmdW5jdGlvbiA9ICJhdmIiOw0K
+PiA+ICsgICAgICAgfTsNCj4NCj4gUGVyaGFwcyB5b3Ugd2FudCB0byB1c2UgdGhpcyBvcHBvcnR1
+bml0eSB0byByZXN0b3JlIGFscGhhYmV0aWNhbCBzb3J0IG9yZGVyPw0KDQpnb29kIGlkZWENCg0K
+Pg0KPiA+ICsmc2NpZjAgew0KPg0KPiBbLi4uXQ0KPg0KPiA+ICt9Ow0KPiA+ICsNCj4gPiArJmF2
+YiB7DQo+DQo+IExpa2V3aXNlLg0KPg0KPiBDYW4gYmUgYSBzZXBhcmF0ZSBwYXRjaCwgdGhvdWdo
+Lg0KDQpJJ2xsIHNlbmQgYSBWMiBmb3IgdGhpcy4NCg0KVGhhbmtzLA0KRmFiDQoNCj4NCj4gR3J7
+b2V0amUsZWV0aW5nfXMsDQo+DQo+ICAgICAgICAgICAgICAgICAgICAgICAgIEdlZXJ0DQo+DQo+
+IC0tDQo+IEdlZXJ0IFV5dHRlcmhvZXZlbiAtLSBUaGVyZSdzIGxvdHMgb2YgTGludXggYmV5b25k
+IGlhMzIgLS0gZ2VlcnRAbGludXgtbTY4ay5vcmcNCj4NCj4gSW4gcGVyc29uYWwgY29udmVyc2F0
+aW9ucyB3aXRoIHRlY2huaWNhbCBwZW9wbGUsIEkgY2FsbCBteXNlbGYgYSBoYWNrZXIuIEJ1dA0K
+PiB3aGVuIEknbSB0YWxraW5nIHRvIGpvdXJuYWxpc3RzIEkganVzdCBzYXkgInByb2dyYW1tZXIi
+IG9yIHNvbWV0aGluZyBsaWtlIHRoYXQuDQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgLS0gTGludXMgVG9ydmFsZHMNCg0KDQoNClJlbmVzYXMgRWxlY3Ryb25pY3MgRXVyb3BlIEx0
+ZCwgRHVrZXMgTWVhZG93LCBNaWxsYm9hcmQgUm9hZCwgQm91cm5lIEVuZCwgQnVja2luZ2hhbXNo
+aXJlLCBTTDggNUZILCBVSy4gUmVnaXN0ZXJlZCBpbiBFbmdsYW5kICYgV2FsZXMgdW5kZXIgUmVn
+aXN0ZXJlZCBOby4gMDQ1ODY3MDkuDQo=
