@@ -1,46 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:13935 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751075AbdJCHey (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52493 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752813AbdJFJZ2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Oct 2017 03:34:54 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH 0/2] pinctrl: rza1: add support for RZ/A1L
-Date: Tue,  3 Oct 2017 02:33:32 -0500
-Message-Id: <20171003073334.18917-1-chris.brandt@renesas.com>
+        Fri, 6 Oct 2017 05:25:28 -0400
+Date: Fri, 6 Oct 2017 11:25:25 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 0/4] ARM: dts: rcar-gen2: Use generic node name for VSP1
+ nodes
+Message-ID: <20171006092523.GG7734@verge.net.au>
+References: <1507120609-14501-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1507120609-14501-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The RZ/A series has 3 main device: RZ/A1L, RZ/A1M, RZ/A1H.
+On Wed, Oct 04, 2017 at 02:36:45PM +0200, Geert Uytterhoeven wrote:
+> 	Hi Simon, Magnus, Laurent,
+> 
+> This patch series replaces the specific node names used for the VSP1
+> nodes by the preferred generic node names, cfr. commit 0e1bfb72b076b07d
+> ("v4l: vsp1: Use generic node name").
+> 
+> Thanks!
+> 
+> Geert Uytterhoeven (4):
+>   ARM: dts: r8a7790: Use generic node name for VSP1 nodes
+>   ARM: dts: r8a7791: Use generic node name for VSP1 nodes
+>   ARM: dts: r8a7792: Use generic node name for VSP1 nodes
+>   ARM: dts: r8a7794: Use generic node name for VSP1 nodes
 
-In terms of pinctrl, RZ/A1H and RZ/A1M are exactly the same.
-
-Aspects like the number of ports and the location where peripherals are
-brought out differ between the RZ/A1H and RZ/A1L.
-
-Basically this series adds a new set of tables for RZ/A1L and a new
-compatible "renesas,r7s72102-ports"
-
-This was tested on a Renesas Stream it board which contains an RZ/A1L and
-external SDRAM.
-
-
-Chris Brandt (2):
-  pinctrl: rza1: add support for RZ/A1L
-  dt-bindings: pinctrl: add support for RZ/A1L
-
- .../bindings/pinctrl/renesas,rza1-pinctrl.txt      |   3 +-
- drivers/pinctrl/pinctrl-rza1.c                     | 134 +++++++++++++++++++++
- 2 files changed, 136 insertions(+), 1 deletion(-)
-
--- 
-2.14.1
+Thanks, applied.
