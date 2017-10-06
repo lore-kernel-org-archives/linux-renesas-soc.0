@@ -1,90 +1,91 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:43092 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751524AbdJSVjq (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:36770 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751901AbdJFMF6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 Oct 2017 17:39:46 -0400
-Received: by mail-oi0-f66.google.com with SMTP id c77so17233410oig.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 19 Oct 2017 14:39:46 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <cover.1506678250.git.horms+renesas@verge.net.au>
-References: <cover.1506678250.git.horms+renesas@verge.net.au>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Thu, 19 Oct 2017 23:39:45 +0200
-Message-ID: <CAK8P3a0-c+HvugOmrRr+7sbEe8MOw2wz+s=Q899j42vd8jSBPA@mail.gmail.com>
-Subject: Re: [GIT PULL] Renesas ARM64 Based SoC DT Updates for v4.15
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: arm-soc <arm@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Fri, 6 Oct 2017 08:05:58 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/3] arm64: dts: r8a7796: Add INTC-EX device node
+Date: Fri,  6 Oct 2017 14:05:51 +0200
+Message-Id: <1507291553-24396-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1507291553-24396-1-git-send-email-geert+renesas@glider.be>
+References: <1507291553-24396-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Sep 29, 2017 at 1:52 PM, Simon Horman
-<horms+renesas@verge.net.au> wrote:
-> ----------------------------------------------------------------
-> Renesas ARM64 Based SoC DT Updates for v4.15
->
-> * r8a7795 (H3)
->   - Use r8a7795-cpg-mssr and r8a7795-sysc bindings
->     Hardcoded indicies are replaced with symbols now that they are available
->
->   - Drop bogus HDMI node name suffixes
->     Laurent Pinchart says: Node names should not use numerical suffixes if
->     the nodes can be distinguished by unit-address
->
->   - Update PFC node name to pin-controller
->     Shimoda-san says the PFC node name is changed "from e6060000.pfc and
->     pfc@e6060000 to e6060000.pin-controller and pin-controller@e6060000
->     like other Renesas SoCs."
->
-> * r8a7795 (H3) ES1.0
->   - Drop extra zero from XHCI unit address
->     This corrects a typo were ee0400000 rather than ee040000 was used
->     as the unit address.
->
-> * r8a7796 (M3-W)
->   - Add FDP1 instance
->     Laurent Pinchart says: The r8a7796 has a single FDP1 instance.
->
-> * r8a7795 (H3) and r8a7796 (M3-W) SoCs
->   - Add USB3.0 peripheral device nodes
->     Shimoda-san says that this is not enabled on the Salvator-X/XS boards
->     for now as:
->      + we need a special cable (USB type-A to A cross cable).
->      + we can swap the role by renesas_usb3 driver even if we use a normal
->         cable and after usb3.0 host is running, but I think it's a special
->         use case.
->
-> * r8a7795 (H3) and r8a7796 (M3-W) ULCB boards
->   - Enable display output
->     Laurent Pinchart says: The DU is already wired up to the HDMI encoder,
->     all we need to do is enable it.
->
-> * r8a77995 (D3) Draak board
->   - Enable EthernetAVB and , USB2.0 Host and PHY
->
->   - Add serial console pins.
->     This is safe to do now that r8a77995 PFC driver support is present
->
-> * r8a77970 (V3M)
->   - Add basic support for SoC and EtherAVB, [H]SCIF and SYS-DMAC nodes
->     This is a step towards enabling EtherAVB and [H]SCIF with SYS-DMAC
->     in the Eagle board support for which is under review
+Add a device node for the Interrupt Controller for External Devices
+(INTC-EX) on R-Car M3-W, which serves external IRQ pins IRQ[0-5].
 
-Thanks for the detailed changelog!
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Tested on Salvator-X by:
+  1) Enabling pinctrl and pull-up for IRQ1/GP2_01 in
+     salvator-common.dtsi:
 
-> ----------------------------------------------------------------
-> Geert Uytterhoeven (6):
->       arm64: dts: renesas: r8a7795-es1: Drop extra zero from usb unit address
->       arm64: dts: renesas: r8a7795: Drop bogus HDMI node names suffixes
->       arm64: renesas: Add Renesas R8A77970 Kconfig support
+	@@ -376,7 +376,7 @@
+	 };
 
-That one last commit doesn't seem to belong in here, but I've pulled
-it anyway, thanks!
+	 &pfc {
+	-	pinctrl-0 = <&scif_clk_pins>;
+	+	pinctrl-0 = <&scif_clk_pins &irq1_pins &keyboard_pins>;
+		pinctrl-names = "default";
 
-        Arnd
+		avb_pins: avb {
+	@@ -407,6 +407,16 @@
+			function = "i2c2";
+		};
+
+	+	irq1_pins: irq1 {
+	+		groups = "intc_ex_irq1";
+	+		function = "intc_ex";
+	+	};
+	+
+	+	keyboard_pins: keyboard {
+	+		pins = "GP_2_1";
+	+		bias-pull-up;
+	+	};
+	+
+		pwm1_pins: pwm1 {
+			groups = "pwm1_a";
+			function = "pwm1";
+
+  2) Triggering IRQ1 by tying EXIO-D pin 50 to GND,
+  3) Verifying that the IRQC_MONITOR register contents change due to
+     triggering.
+---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index d9c928f9d224015d..afee3360cb4f0f56 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -725,6 +725,22 @@
+ 			#power-domain-cells = <1>;
+ 		};
+ 
++		intc_ex: interrupt-controller@e61c0000 {
++			compatible = "renesas,intc-ex-r8a7796", "renesas,irqc";
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			reg = <0 0xe61c0000 0 0x200>;
++			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 407>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			resets = <&cpg 407>;
++		};
++
+ 		i2c_dvfs: i2c@e60b0000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+-- 
+2.7.4
