@@ -1,65 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:44930 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751062AbdJCIE6 (ORCPT
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:34455 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751901AbdJFLfI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Oct 2017 04:04:58 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH] arm64: dts: renesas: salvator-common: add pfc node for USB3.0 channel 0
-Date: Tue,  3 Oct 2017 17:01:12 +0900
-Message-Id: <1507017672-21493-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Fri, 6 Oct 2017 07:35:08 -0400
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20171006103725.13804-1-wsa+renesas@sang-engineering.com>
+References: <20171006103725.13804-1-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 6 Oct 2017 13:35:06 +0200
+Message-ID: <CAMuHMdVLCX_sjyOC+-bJoEF6O9jRZqM2WQ1-u2Lq6ictcNuyeg@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7795: add newlines for better diff view
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Since a R-Car Gen3 bootloader enables the PFC of USB3.0 channel 0,
-the USB3.0 host controller works without this setting on the kernel.
-But, this setting should have salvator-common.dtsi. So, this patch
-adds the pfc node for USB3.0 channel 0.
+Hi Wolfram,
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- This patch is based on the renesas.git / renesas-devel-20171002-v4.14-rc3 tag.
+On Fri, Oct 6, 2017 at 12:37 PM, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> Be consistent with the newlines after structs. This makes diffs a lot
+> easier to parse when comparing with other SoCs/versions.
 
- Since related patches are already merged into renesas-drivers.git / 
- sh-pfc-for-v4.15, this patch is possible to apply for v4.15, I think.
+I'm all for consistency, but...
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/commit/?h=sh-pfc-for-v4.15&id=3627126ce39d8c7d35a9251b074fedd2edf9f743
-  https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/commit/?h=sh-pfc-for-v4.15&id=5ec8a41a36715cf543cb7c109097fb3b4cdfb427
-  https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/commit/?h=sh-pfc-for-v4.15&id=656285a892ce3ea9b9397826562789c0de1f5fc0
+> --- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+> @@ -1678,6 +1678,7 @@ static const unsigned int audio_clkout2_b_pins[] = {
+>  static const unsigned int audio_clkout2_b_mux[] = {
+>         AUDIO_CLKOUT2_B_MARK,
+>  };
+> +
 
- arch/arm64/boot/dts/renesas/salvator-common.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+That's a stray newline in both drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c and
+drivers/pinctrl/sh-pfc/pfc-r8a7796.c, which should be removed from the latter
+instead.
 
-diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-index e41e53b..3dcb26b 100644
---- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-@@ -495,6 +495,11 @@
- 			bias-pull-down;
- 		};
- 	};
-+
-+	usb30_pins: usb30 {
-+		groups = "usb30";
-+		function = "usb30";
-+	};
- };
- 
- &pwm1 {
-@@ -630,5 +635,8 @@
- };
- 
- &xhci0 {
-+	pinctrl-0 = <&usb30_pins>;
-+	pinctrl-names = "default";
-+
- 	status = "okay";
- };
--- 
-1.9.1
+>  static const unsigned int audio_clkout3_a_pins[] = {
+>         /* CLKOUT3 */
+>         RCAR_GP_PIN(5, 19),
+> @@ -2967,6 +2968,7 @@ static const unsigned int msiof3_rxd_d_pins[] = {
+>  static const unsigned int msiof3_rxd_d_mux[] = {
+>         MSIOF3_RXD_D_MARK,
+>  };
+> +
+
+drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c has a newline here because H3 ES1.x
+doesn't have the fifth set of MSIOF pins, thus msiof3_rxd_d_mux() is the
+last entry of the MSIOF section.
+
+>  static const unsigned int msiof3_clk_e_pins[] = {
+>         /* SCK */
+>         RCAR_GP_PIN(2, 3),
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
