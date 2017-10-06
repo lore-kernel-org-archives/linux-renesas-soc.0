@@ -1,37 +1,99 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Mon, 9 Oct 2017 07:57:49 +0200
-From: Simon Horman <horms@verge.net.au>
-To: jacopo mondi <jacopo@jmondi.org>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, geert@linux-m68k.org,
-        magnus.damm@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
+Date: Fri, 6 Oct 2017 14:25:23 +0200
+From: jacopo mondi <jacopo@jmondi.org>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH 3/3] ARM: dts: gr-peach: Add ETHER pin group
-Message-ID: <20171009055749.GD31804@verge.net.au>
+Message-ID: <20171006122523.GD19008@w540>
 References: <1507193900-23801-1-git-send-email-jacopo+renesas@jmondi.org>
  <1507193900-23801-4-git-send-email-jacopo+renesas@jmondi.org>
- <20171006122523.GD19008@w540>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20171006122523.GD19008@w540>
+In-Reply-To: <1507193900-23801-4-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Oct 06, 2017 at 02:25:23PM +0200, jacopo mondi wrote:
-> Hi Simon,
-> 
-> On Thu, Oct 05, 2017 at 10:58:20AM +0200, Jacopo Mondi wrote:
-> > Add pin configuration subnode for ETHER pin group and enable the interface.
-> >
-> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > ---
-> >  arch/arm/boot/dts/r7s72100-gr-peach.dts | 38 +++++++++++++++++++++++++++++++++
-> >  1 file changed, 38 insertions(+)
-> >
-> 
-> Can you confirm you have not applied this yet?
+Hi Simon,
 
-Confirmed.
+On Thu, Oct 05, 2017 at 10:58:20AM +0200, Jacopo Mondi wrote:
+> Add pin configuration subnode for ETHER pin group and enable the interface.
+>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+>  arch/arm/boot/dts/r7s72100-gr-peach.dts | 38 +++++++++++++++++++++++++++++++++
+>  1 file changed, 38 insertions(+)
+>
+
+Can you confirm you have not applied this yet?
+
+I have received indications from netdev people to change location of
+the reset pin properties, as they belong to PHY node, and also to
+change the node layout.
+
+If you have applied the first 2 but not this one, I will re-submit this one only
+
+Thanks
+   j
+
+
+> diff --git a/arch/arm/boot/dts/r7s72100-gr-peach.dts b/arch/arm/boot/dts/r7s72100-gr-peach.dts
+> index ad6a627..8b5a2c5 100644
+> --- a/arch/arm/boot/dts/r7s72100-gr-peach.dts
+> +++ b/arch/arm/boot/dts/r7s72100-gr-peach.dts
+> @@ -68,6 +68,28 @@
+>  		/* P6_2 as RxD2; P6_3 as TxD2 */
+>  		pinmux = <RZA1_PINMUX(6, 2, 7)>, <RZA1_PINMUX(6, 3, 7)>;
+>  	};
+> +
+> +	ether_pins: ether {
+> +		/* Ethernet on Ports 1,3,5,10 */
+> +		pinmux = <RZA1_PINMUX(1, 14, 4)>, /* P1_14 = ET_COL   */
+> +			 <RZA1_PINMUX(3, 0, 2)>,  /* P3_0 = ET_TXCLK  */
+> +			 <RZA1_PINMUX(3, 3, 2)>,  /* P3_3 = ET_MDIO   */
+> +			 <RZA1_PINMUX(3, 4, 2)>,  /* P3_4 = ET_RXCLK  */
+> +			 <RZA1_PINMUX(3, 5, 2)>,  /* P3_5 = ET_RXER   */
+> +			 <RZA1_PINMUX(3, 6, 2)>,  /* P3_6 = ET_RXDV   */
+> +			 <RZA1_PINMUX(5, 9, 2)>,  /* P5_9 = ET_MDC    */
+> +			 <RZA1_PINMUX(10, 1, 4)>, /* P10_1 = ET_TXER  */
+> +			 <RZA1_PINMUX(10, 2, 4)>, /* P10_2 = ET_TXEN  */
+> +			 <RZA1_PINMUX(10, 3, 4)>, /* P10_3 = ET_CRS   */
+> +			 <RZA1_PINMUX(10, 4, 4)>, /* P10_4 = ET_TXD0  */
+> +			 <RZA1_PINMUX(10, 5, 4)>, /* P10_5 = ET_TXD1  */
+> +			 <RZA1_PINMUX(10, 6, 4)>, /* P10_6 = ET_TXD2  */
+> +			 <RZA1_PINMUX(10, 7, 4)>, /* P10_7 = ET_TXD3  */
+> +			 <RZA1_PINMUX(10, 8, 4)>, /* P10_8 = ET_RXD0  */
+> +			 <RZA1_PINMUX(10, 9, 4)>, /* P10_9 = ET_RXD1  */
+> +			 <RZA1_PINMUX(10, 10, 4)>,/* P10_10 = ET_RXD2 */
+> +			 <RZA1_PINMUX(10, 11, 4)>;/* P10_11 = ET_RXD3 */
+> +	};
+>  };
+>
+>  &extal_clk {
+> @@ -88,3 +110,19 @@
+>
+>  	status = "okay";
+>  };
+> +
+> +&ether {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&ether_pins>;
+> +
+> +	status = "okay";
+> +
+> +	reset-gpios = <&port4 2 GPIO_ACTIVE_LOW>;
+> +	reset-delay-us = <5>;
+> +
+> +	renesas,no-ether-link;
+> +	phy-handle = <&phy0>;
+> +	phy0: ethernet-phy@0 {
+> +		reg = <0>;
+> +	};
+> +};
+> --
+> 2.7.4
+>
