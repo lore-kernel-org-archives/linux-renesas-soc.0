@@ -1,48 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:36001 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751148AbdJDRjg (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:37802 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751925AbdJFMF6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Oct 2017 13:39:36 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2 3/3] arm64: renesas: salvator: set driver type for eMMC
-Date: Wed,  4 Oct 2017 19:39:20 +0200
-Message-Id: <20171004173920.15232-4-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20171004173920.15232-1-wsa+renesas@sang-engineering.com>
-References: <20171004173920.15232-1-wsa+renesas@sang-engineering.com>
+        Fri, 6 Oct 2017 08:05:58 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 3/3] arm64: dts: r8a77995: Add INTC-EX device node
+Date: Fri,  6 Oct 2017 14:05:53 +0200
+Message-Id: <1507291553-24396-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1507291553-24396-1-git-send-email-geert+renesas@glider.be>
+References: <1507291553-24396-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-These boards are known to have eMMC issues with the default driver type.
-Specify a working one.
+Add a device node for the Interrupt Controller for External Devices
+(INTC-EX) on R-Car D3, which serves external IRQ pins IRQ[0-5].
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Changes since RFC v1:
-* rebased to mmc/next based on 4.14-rc3
-* moved the property to salvator common because the BSP applies this property
-  to all Salvator variants, too
+ arch/arm64/boot/dts/renesas/r8a77995.dtsi | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
- arch/arm64/boot/dts/renesas/salvator-common.dtsi | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-index 4786c67b5e6527..215e2d11a0490a 100644
---- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-@@ -579,6 +579,7 @@
- 	bus-width = <8>;
- 	mmc-hs200-1_8v;
- 	non-removable;
-+	fixed-emmc-driver-type = <1>;
- 	status = "okay";
- };
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+index 56e42921e879673d..b2411a4d1debc62c 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+@@ -139,6 +139,22 @@
+ 			#power-domain-cells = <1>;
+ 		};
  
++		intc_ex: interrupt-controller@e61c0000 {
++			compatible = "renesas,intc-ex-r8a77995", "renesas,irqc";
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			reg = <0 0xe61c0000 0 0x200>;
++			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 407>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 407>;
++		};
++
+ 		gpio0: gpio@e6050000 {
+ 			compatible = "renesas,gpio-r8a77995",
+ 				     "renesas,rcar-gen3-gpio",
 -- 
-2.11.0
+2.7.4
