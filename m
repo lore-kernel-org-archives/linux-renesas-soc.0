@@ -1,7 +1,19 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Rob Herring <robh+dt@kernel.org>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:34420 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750815AbdJFH5N (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 6 Oct 2017 03:57:13 -0400
+MIME-Version: 1.0
+In-Reply-To: <1507108713-10686-3-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1507108713-10686-1-git-send-email-fabrizio.castro@bp.renesas.com> <1507108713-10686-3-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 6 Oct 2017 09:57:11 +0200
+Message-ID: <CAMuHMdU-zOogwOKS_s8-r_fsUfXxu38WKkaoryuuuGGJzmBkSw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] ARM: dts: iwg20d-q7-dbcm-ca: Add device trees for
+ camera DB
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Russell King <linux@armlinux.org.uk>,
         Simon Horman <horms@verge.net.au>,
@@ -12,47 +24,41 @@ CC: Rob Herring <robh+dt@kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>
-Subject: RE: [PATCH 2/2] ARM: dts: iwg20d-q7-dbcm-ca: Add device trees for
- camera DB
-Date: Fri, 6 Oct 2017 09:06:14 +0000
-Message-ID: <TY1PR06MB0895E77A6CC9BF8B042E9553C0710@TY1PR06MB0895.apcprd06.prod.outlook.com>
-References: <1507108713-10686-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1507108713-10686-3-git-send-email-fabrizio.castro@bp.renesas.com>
- <CAMuHMdU-zOogwOKS_s8-r_fsUfXxu38WKkaoryuuuGGJzmBkSw@mail.gmail.com>
-In-Reply-To: <CAMuHMdU-zOogwOKS_s8-r_fsUfXxu38WKkaoryuuuGGJzmBkSw@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCj4gSGkgRmFicml6aW8sDQo+DQo+IE9uIFdlZCwgT2N0IDQsIDIwMTcgYXQg
-MTE6MTggQU0sIEZhYnJpemlvIENhc3Rybw0KPiA8ZmFicml6aW8uY2FzdHJvQGJwLnJlbmVzYXMu
-Y29tPiB3cm90ZToNCj4gPiBUaGlzIHBhdGNoIGFkZHMgYSAuZHRzaSB0aGF0IGRlc2NyaWJlcyB0
-aGUgY2FtZXJhIGRhdWdodGVyIGJvYXJkDQo+ID4gYW5kIGEgLmR0cyB0byBkZXNjcmliZSB0aGUg
-SFcgbWFkZSBvZiBpV2F2ZSdzIFJaL0cxTSBTb00sIGlXYXZlJ3MNCj4gPiBSWi9HMU0vRzFOIFFz
-ZXZlbiBjYXJyaWVyIGJvYXJkLCBhbmQgdGhlIGNhbWVyYSBkYXVnaHRlciBib2FyZC4NCj4gPiBU
-aGUgY2FtZXJhIGRhdWdodGVyIGJvYXJkIC5kdHNpIGFkZHMgc3VwcG9ydCBmb3IgdHR5U0NbMTRd
-Lg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogRmFicml6aW8gQ2FzdHJvIDxmYWJyaXppby5jYXN0
-cm9AYnAucmVuZXNhcy5jb20+DQo+ID4gU2lnbmVkLW9mZi1ieTogQ2hyaXMgUGF0ZXJzb24gPGNo
-cmlzLnBhdGVyc29uMkByZW5lc2FzLmNvbT4NCj4NCj4gUmV2aWV3ZWQtYnk6IEdlZXJ0IFV5dHRl
-cmhvZXZlbiA8Z2VlcnQrcmVuZXNhc0BnbGlkZXIuYmU+DQo+DQo+ID4gLS0tIC9kZXYvbnVsbA0K
-PiA+ICsrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL2l3ZzIwZC1xNy1kYmNtLWNhLmR0c2kNCj4NCj4g
-PiArLyB7DQo+ID4gKyAgICAgICBhbGlhc2VzIHsNCj4gPiArICAgICAgICAgICAgICAgc2VyaWFs
-MSA9ICZzY2lmMTsNCj4gPiArICAgICAgICAgICAgICAgc2VyaWFsNCA9ICZoc2NpZjE7DQo+DQo+
-IEJUVywgd2hhdCdzIHRoZSByZWFzb24geW91IHBpY2tlZCBzZXJpYWw0IGZvciB0aGUgdGhpcmQg
-c2VyaWFsIHBvcnQ/DQoNCkJlY2F1c2UgaXQgbWF0Y2hlcyB0aGUgY29uZmlndXJhdGlvbiBpV2F2
-ZSBoYWQgaW4gdGhlaXIgb2ZmaWNpYWwgcmVsZWFzZSBiYXNlZCBvbg0Ka2VybmVsIDMuMTAuIFdl
-IGRlY2lkZWQgdG8ga2VlcCB0aGUgc2FtZSBudW1iZXJpbmcgc2NoZW1lIGFzIGEgcHJlY2F1dGlv
-biB0bw0KYXZvaWQgYnJlYWtpbmcgZXhpc3RpbmcgY29kZS4NCg0KVGhhbmtzLA0KRmFiDQoNCj4N
-Cj4gR3J7b2V0amUsZWV0aW5nfXMsDQo+DQo+ICAgICAgICAgICAgICAgICAgICAgICAgIEdlZXJ0
-DQo+DQo+IC0tDQo+IEdlZXJ0IFV5dHRlcmhvZXZlbiAtLSBUaGVyZSdzIGxvdHMgb2YgTGludXgg
-YmV5b25kIGlhMzIgLS0gZ2VlcnRAbGludXgtbTY4ay5vcmcNCj4NCj4gSW4gcGVyc29uYWwgY29u
-dmVyc2F0aW9ucyB3aXRoIHRlY2huaWNhbCBwZW9wbGUsIEkgY2FsbCBteXNlbGYgYSBoYWNrZXIu
-IEJ1dA0KPiB3aGVuIEknbSB0YWxraW5nIHRvIGpvdXJuYWxpc3RzIEkganVzdCBzYXkgInByb2dy
-YW1tZXIiIG9yIHNvbWV0aGluZyBsaWtlIHRoYXQuDQo+ICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgLS0gTGludXMgVG9ydmFsZHMNCg0KDQoNClJlbmVzYXMgRWxlY3Ryb25pY3MgRXVy
-b3BlIEx0ZCwgRHVrZXMgTWVhZG93LCBNaWxsYm9hcmQgUm9hZCwgQm91cm5lIEVuZCwgQnVja2lu
-Z2hhbXNoaXJlLCBTTDggNUZILCBVSy4gUmVnaXN0ZXJlZCBpbiBFbmdsYW5kICYgV2FsZXMgdW5k
-ZXIgUmVnaXN0ZXJlZCBOby4gMDQ1ODY3MDkuDQo=
+Hi Fabrizio,
+
+On Wed, Oct 4, 2017 at 11:18 AM, Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> This patch adds a .dtsi that describes the camera daughter board
+> and a .dts to describe the HW made of iWave's RZ/G1M SoM, iWave's
+> RZ/G1M/G1N Qseven carrier board, and the camera daughter board.
+> The camera daughter board .dtsi adds support for ttySC[14].
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/iwg20d-q7-dbcm-ca.dtsi
+
+> +/ {
+> +       aliases {
+> +               serial1 = &scif1;
+> +               serial4 = &hscif1;
+
+BTW, what's the reason you picked serial4 for the third serial port?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
