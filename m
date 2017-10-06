@@ -1,36 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47954 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753890AbdJIHSm (ORCPT
+Received: from mail-lf0-f48.google.com ([209.85.215.48]:55147 "EHLO
+        mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752449AbdJFR4B (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 Oct 2017 03:18:42 -0400
-Date: Mon, 9 Oct 2017 09:18:22 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Fri, 6 Oct 2017 13:56:01 -0400
+Received: by mail-lf0-f48.google.com with SMTP id d10so18902699lfg.11
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 06 Oct 2017 10:56:01 -0700 (PDT)
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 03/18] arm64: dts: ulcb-kf: initial device tree
-Message-ID: <20171009071821.GP17360@verge.net.au>
-References: <1507312556-23900-1-git-send-email-vladimir.barinov@cogentembedded.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1507312556-23900-1-git-send-email-vladimir.barinov@cogentembedded.com>
+        Will Deacon <will.deacon@arm.com>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Subject: [PATCH v2 03/18] arm64: dts: ulcb-kf: initial device tree
+Date: Fri,  6 Oct 2017 20:55:56 +0300
+Message-Id: <1507312556-23900-1-git-send-email-vladimir.barinov@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Oct 06, 2017 at 08:55:56PM +0300, Vladimir Barinov wrote:
-> Add the initial common dtsi file for Kingfisher infotainment board (R-Car
-> Starter Kit extension)
-> 
-> This commit supports the following peripherals:
-> - HSCIF0
-> 
-> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Add the initial common dtsi file for Kingfisher infotainment board (R-Car
+Starter Kit extension)
 
-Thanks, applied.
+This commit supports the following peripherals:
+- HSCIF0
+
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Changes in version 2:
+- none
+
+ arch/arm64/boot/dts/renesas/ulcb-kf.dtsi | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
+
+diff --git a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
+new file mode 100644
+index 0000000..849f8b1
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
+@@ -0,0 +1,31 @@
++/*
++ * Device Tree Source for the Kingfisher (ULCB extension) board
++ *
++ * Copyright (C) 2017 Renesas Electronics Corp.
++ * Copyright (C) 2017 Cogent Embedded, Inc.
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++/ {
++	aliases {
++		serial1 = &hscif0;
++	};
++};
++
++&hscif0 {
++	pinctrl-0 = <&hscif0_pins>;
++	pinctrl-names = "default";
++	uart-has-rtscts;
++
++	status = "okay";
++};
++
++&pfc {
++	hscif0_pins: hscif0 {
++		groups = "hscif0_data", "hscif0_ctrl";
++		function = "hscif0";
++	};
++};
+-- 
+1.9.1
