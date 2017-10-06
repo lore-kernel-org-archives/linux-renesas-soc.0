@@ -1,46 +1,37 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57793 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965010AbdJRH14 (ORCPT
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:34169 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751862AbdJFRbl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Oct 2017 03:27:56 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 3/7] ARM: dts: r8a7778: Use R-Car Gen1 Ether fallback compat string
-Date: Wed, 18 Oct 2017 09:27:24 +0200
-Message-Id: <20171018072728.14681-4-horms+renesas@verge.net.au>
-In-Reply-To: <20171018072728.14681-1-horms+renesas@verge.net.au>
-References: <20171018072728.14681-1-horms+renesas@verge.net.au>
+        Fri, 6 Oct 2017 13:31:41 -0400
+Date: Fri, 6 Oct 2017 12:31:34 -0500
+From: Rob Herring <robh@kernel.org>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: balbi@kernel.org, mark.rutland@arm.com, gregkh@linuxfoundation.org,
+        linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 3/3] usb: gadget: udc: renesas_usb3: add support for
+ generic phy
+Message-ID: <20171006173134.p47olvf3d3odndi4@rob-hp-laptop>
+References: <1506685501-24988-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1506685501-24988-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1506685501-24988-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use newly added R-Car Gen1 Ether fallback compat string
-in the DT of the r8a7778 SoC.
+On Fri, Sep 29, 2017 at 08:45:01PM +0900, Yoshihiro Shimoda wrote:
+> This patch adds support for generic phy as an optional. If you want
+> to use a generic phy (e.g. phy-rcar-gen3-usb3 driver) on this driver,
+> you have to do "insmod phy-rcar-gen3-usb3.ko" first for now.
+> 
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> ---
+>  .../devicetree/bindings/usb/renesas_usb3.txt       |  4 ++++
 
-This should have no run-time effect as the driver matches against
-the per-SoC compat string before considering the fallback compat string.
+Acked-by: Rob Herring <robh@kernel.org>
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7778.dtsi | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/r8a7778.dtsi b/arch/arm/boot/dts/r8a7778.dtsi
-index a39472aab867..d6e3c0400ec3 100644
---- a/arch/arm/boot/dts/r8a7778.dtsi
-+++ b/arch/arm/boot/dts/r8a7778.dtsi
-@@ -51,7 +51,8 @@
- 	};
- 
- 	ether: ethernet@fde00000 {
--		compatible = "renesas,ether-r8a7778";
-+		compatible = "renesas,ether-r8a7778",
-+			     "renesas,rcar-gen1-ether";
- 		reg = <0xfde00000 0x400>;
- 		interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp1_clks R8A7778_CLK_ETHER>;
--- 
-2.11.0
+>  drivers/usb/gadget/udc/renesas_usb3.c              | 26 ++++++++++++++++++++--
+>  2 files changed, 28 insertions(+), 2 deletions(-)
