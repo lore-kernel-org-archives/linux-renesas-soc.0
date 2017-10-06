@@ -1,64 +1,95 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57269 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932346AbdJRHBF (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Oct 2017 03:01:05 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v4 0/3] mmc: renesas_sdhi: add R-Car Gen[123] fallback compatibility strings
-Date: Wed, 18 Oct 2017 09:00:20 +0200
-Message-Id: <20171018070023.3878-1-horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Fri, 6 Oct 2017 11:14:28 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: kishon@ti.com, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 3/4] phy: rcar-gen3-usb2: add SoC-specific parameter
+ for dedicated pins
+Message-ID: <20171006091425.GB7734@verge.net.au>
+References: <1504233685-17947-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1504233685-17947-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1504233685-17947-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add fallback compatibility strings for R-Car Gen 1, 2 and 3 to the SDHI
-bindings and driver.
+On Fri, Sep 01, 2017 at 11:41:24AM +0900, Yoshihiro Shimoda wrote:
+> This patch adds SoC-specific parameter to avoid reading/writing
+> specific registers wrongly if this driver runs on a SoC which doesn't
+> have dedicated pins (e.g. R-Car D3).
+> 
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-In the case of Renesas R-Car hardware we know that there are generations of
-SoCs, f.e. Gen 1 and 2. But beyond that its not clear what the relationship
-between IP blocks might be. For example, I believe that r8a7790 is older
-than r8a7791 but that doesn't imply that the latter is a descendant of the
-former or vice versa.
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-We can, however, by examining the documentation and behaviour of the
-hardware at run-time observe that the current driver implementation appears
-to be compatible with the IP blocks on SoCs within a given generation.
+> ---
+>  drivers/phy/renesas/phy-rcar-gen3-usb2.c | 24 +++++++++++++++++++-----
+>  1 file changed, 19 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+> index 4ea9902..15e095e 100644
+> --- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+> +++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+>  #include <linux/of_address.h>
+> +#include <linux/of_device.h>
+>  #include <linux/phy/phy.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/pm_runtime.h>
+> @@ -80,6 +81,8 @@
+>  #define USB2_ADPCTRL_IDPULLUP		BIT(5)	/* 1 = ID sampling is enabled */
+>  #define USB2_ADPCTRL_DRVVBUS		BIT(4)
+>  
+> +#define RCAR_GEN3_PHY_HAS_DEDICATED_PINS	1
+> +
+>  struct rcar_gen3_chan {
+>  	void __iomem *base;
+>  	struct extcon_dev *extcon;
+> @@ -400,9 +403,17 @@ static irqreturn_t rcar_gen3_phy_usb2_irq(int irq, void *_ch)
+>  }
+>  
+>  static const struct of_device_id rcar_gen3_phy_usb2_match_table[] = {
+> -	{ .compatible = "renesas,usb2-phy-r8a7795" },
+> -	{ .compatible = "renesas,usb2-phy-r8a7796" },
+> -	{ .compatible = "renesas,rcar-gen3-usb2-phy" },
+> +	{
+> +		.compatible = "renesas,usb2-phy-r8a7795",
+> +		.data = (void *)RCAR_GEN3_PHY_HAS_DEDICATED_PINS,
+> +	},
+> +	{
+> +		.compatible = "renesas,usb2-phy-r8a7796",
+> +		.data = (void *)RCAR_GEN3_PHY_HAS_DEDICATED_PINS,
+> +	},
+> +	{
+> +		.compatible = "renesas,rcar-gen3-usb2-phy",
+> +	},
+>  	{ }
+>  };
+>  MODULE_DEVICE_TABLE(of, rcar_gen3_phy_usb2_match_table);
+> @@ -446,9 +457,12 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
+>  	}
+>  
+>  	if (of_usb_get_dr_mode_by_phy(dev->of_node, 0) == USB_DR_MODE_OTG) {
+> -		int ret;
+> +		int ret, dedicated_pins;
+> +		const struct of_device_id *of_id =
+> +			of_match_device(rcar_gen3_phy_usb2_match_table, dev);
+>  
+> -		channel->has_otg = true;
+> +		dedicated_pins = of_id ? (uintptr_t)of_id->data : 0;
 
-For the above reasons and convenience when enabling new SoCs a
-per-generation fallback compatibility string scheme is being adopted for
-drivers for Renesas SoCs.
+Nit: I think you could use of_device_get_match_data() here.
 
-Based on mmc/next
-
-Changes since v3:
-* Corrected typos in changelogs
-* Enhanced grammar in comatibility string usage text
-
-Changes since v2:
-* Update example to current upstream using newer CPG/MSSR bindings
-
-Changes since v1:
-* Describe example in patch one as being for the r8a7790 (R-Car H2) rather
-  than the r8a7779 (R-Car H1)
-* Accumulate review tags from Geert Uytterhoeven
-
-Simon Horman (3):
-  dt-bindings: mmc: renesas_sdhi: provide example in bindings
-    documentation
-  dt-bindings: mmc: renesas_sdhi: add R-Car Gen[123] fallback
-    compatibility strings
-  mmc: renesas_sdhi: implement R-Car Gen[123] fallback compatibility
-    strings
-
- Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 70 +++++++++++++++++++++-
- drivers/mmc/host/renesas_sdhi_internal_dmac.c      |  1 +
- drivers/mmc/host/renesas_sdhi_sys_dmac.c           |  5 +-
- 3 files changed, 74 insertions(+), 2 deletions(-)
-
--- 
-2.11.0
+> +		channel->has_otg = !!dedicated_pins;
+>  		channel->can_role_swap = true;
+>  		channel->extcon = devm_extcon_dev_allocate(dev,
+>  							rcar_gen3_phy_cable);
+> -- 
+> 1.9.1
+> 
