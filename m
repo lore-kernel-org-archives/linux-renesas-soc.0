@@ -1,77 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:54976 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751742AbdJARgT (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:15997 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751363AbdJFCN4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 1 Oct 2017 13:36:19 -0400
-Date: Sun, 1 Oct 2017 19:36:14 +0200
-From: jacopo mondi <jacopo@jmondi.org>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>
-Subject: Re: [PATCH 22/48] ARM: dts: gr-peach: Add user led device nodes
-Message-ID: <20171001173614.GB4037@w540>
-References: <cover.1506683482.git.horms+renesas@verge.net.au>
- <cfce5ac1aaf08fc0920d6572779360f80e8f3489.1506683482.git.horms+renesas@verge.net.au>
- <e2e2b3a5-23b2-7f11-4fb3-2f835fdbc11a@cogentembedded.com>
+        Thu, 5 Oct 2017 22:13:56 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: "kishon@ti.com" <kishon@ti.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH v3 0/4] phy: rcar-gen3-usb2: add support for r8a77995
+Date: Fri, 6 Oct 2017 02:13:52 +0000
+Message-ID: <TY1PR06MB099287B2AD911D64C62BD5CBD8710@TY1PR06MB0992.apcprd06.prod.outlook.com>
+References: <1504233685-17947-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1504233685-17947-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <e2e2b3a5-23b2-7f11-4fb3-2f835fdbc11a@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Seregei,
+Hi Kishon,
 
-On Sat, Sep 30, 2017 at 01:36:18PM +0300, Sergei Shtylyov wrote:
-> Hello!
->
-> On 9/29/2017 2:53 PM, Simon Horman wrote:
->
-> >From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> >
-> >Add device nodes for user leds on gr-peach board.
-> >
-> >Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> >Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> >Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> >---
-> >  arch/arm/boot/dts/r7s72100-gr-peach.dts | 10 ++++++++++
-> >  1 file changed, 10 insertions(+)
-> >
-> >diff --git a/arch/arm/boot/dts/r7s72100-gr-peach.dts b/arch/arm/boot/dts/r7s72100-gr-peach.dts
-> >index bcfa6445bbaa..13d745bb56a5 100644
-> >--- a/arch/arm/boot/dts/r7s72100-gr-peach.dts
-> >+++ b/arch/arm/boot/dts/r7s72100-gr-peach.dts
-> [...]
-> >@@ -51,6 +52,15 @@
-> >  			reg = <0x00600000 0x00200000>;
-> >  		};
-> >  	};
-> >+
-> >+leds {
->
->    Not indented properly...
+Would you review this patch set?
+I checked this can apply your latest linux-phy.git / next branch (the commi=
+t id =3D 415060b21f31).
 
-Thanks!
+Best regards,
+Yoshihiro Shimoda
 
-Simon, as you sent pull request already, will we need a patch on top
-of this to fix it?
-
-Thanks
-  j
->
-> >+		status = "okay";
-> >+		compatible = "gpio-leds";
-> >+
-> >+		led1 {
-> >+			gpios = <&port6 12 GPIO_ACTIVE_HIGH>;
-> >+		};
-> >+	};
-> >  };
-> >  &pinctrl {
->
-> MBR, Sergei
+> -----Original Message-----
+> From: Yoshihiro Shimoda
+> Sent: Friday, September 1, 2017 11:41 AM
+> To: kishon@ti.com
+> Cc: linux-kernel@vger.kernel.org; linux-renesas-soc@vger.kernel.org; Yosh=
+ihiro Shimoda
+> <yoshihiro.shimoda.uh@renesas.com>
+> Subject: [PATCH v3 0/4] phy: rcar-gen3-usb2: add support for r8a77995
+>=20
+> This patch set is based on the latest phy.git / next branch
+> (the commit id =3D d9c51f4c53ae2af03aa8bd001d46f21b0adcdab8).
+>=20
+> After this patch set is applied, a usb 2.0 host node that is combined
+> with usb 2.0 peripheral needs 'dr_mode =3D "otg";' property.
+>=20
+> Changes from v2:
+>  - Revise the commit log ("SoCs" is not third-person singular present).
+>=20
+> Changes from v1:
+>  - Revise typo "wronly" to "wrongly".
+>  - Remove RCAR_GEN3_PHY_HAS_DEDICATED_PINS from generic gen3 entry in
+>    patch 3/4
+>  - Remove the driver change from patch 4/4.
+>  - Revise the commit log of patch 4/4.
+>=20
+> Yoshihiro Shimoda (4):
+>   phy: rcar-gen3-usb2: check dr_mode for otg mode
+>   phy: rcar-gen3-usb2: split the two meaning of "has_otg"
+>   phy: rcar-gen3-usb2: add SoC-specific parameter for dedicated pins
+>   phy: rcar-gen3-usb2: add binding for r8a77995
+>=20
+>  .../devicetree/bindings/phy/rcar-gen3-phy-usb2.txt |  2 +
+>  drivers/phy/renesas/phy-rcar-gen3-usb2.c           | 93 ++++++++++++++++=
+------
+>  2 files changed, 69 insertions(+), 26 deletions(-)
+>=20
+> --
+> 1.9.1
