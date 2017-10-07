@@ -1,20 +1,13 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:44770 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752063AbdJKJgF (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Oct 2017 05:36:05 -0400
+Return-Path: <devicetree-owner@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CACRpkdaQf=O19op+0kWHtsfHps80JQZbXT+ajVxQMtHZ_Te7bQ@mail.gmail.com>
-References: <20171004210724.59797-1-chris.brandt@renesas.com>
- <20171004210724.59797-2-chris.brandt@renesas.com> <CACRpkdaQf=O19op+0kWHtsfHps80JQZbXT+ajVxQMtHZ_Te7bQ@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 11 Oct 2017 11:36:03 +0200
-Message-ID: <CAMuHMdWPKm2PxrbZGrZcVXxC4=nUaB_s1U4zH=5WBRkPjO9Mfw@mail.gmail.com>
+In-Reply-To: <20171004210724.59797-2-chris.brandt@renesas.com>
+References: <20171004210724.59797-1-chris.brandt@renesas.com> <20171004210724.59797-2-chris.brandt@renesas.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Sat, 7 Oct 2017 13:19:52 +0200
+Message-ID: <CACRpkdaQf=O19op+0kWHtsfHps80JQZbXT+ajVxQMtHZ_Te7bQ@mail.gmail.com>
 Subject: Re: [PATCH v3 1/2] pinctrl: rza1: add support for RZ/A1L
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Chris Brandt <chris.brandt@renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
@@ -23,34 +16,22 @@ Cc: Chris Brandt <chris.brandt@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>,
         Jacopo Mondi <jacopo+renesas@jmondi.org>
 Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Linus,
+On Wed, Oct 4, 2017 at 11:07 PM, Chris Brandt <chris.brandt@renesas.com> wrote:
 
-On Sat, Oct 7, 2017 at 1:19 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Wed, Oct 4, 2017 at 11:07 PM, Chris Brandt <chris.brandt@renesas.com> wrote:
->> Aspects like the number of ports and the location where peripherals are
->> brought out differ between the RZ/A1H and RZ/A1L.
->>
->> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
->> Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
->> ---
->> v2:
->>  * added Reviewed-by
+> Aspects like the number of ports and the location where peripherals are
+> brought out differ between the RZ/A1H and RZ/A1L.
 >
-> Looks good, I expect Geert to queue this for me with a pull
-> request like with other Renesas stuff.
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+> v2:
+>  * added Reviewed-by
 
-Thank you, your wish my command.
+Looks good, I expect Geert to queue this for me with a pull
+request like with other Renesas stuff.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Yours,
+Linus Walleij
