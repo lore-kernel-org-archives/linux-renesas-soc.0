@@ -1,51 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:11238 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751280AbdJEPUC (ORCPT
+Received: from sauhun.de ([88.99.104.3]:46652 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751600AbdJGKhL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 Oct 2017 11:20:02 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Vinod Koul <vinod.koul@intel.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Chris Paterson <chris.paterson2@renesas.com>,
+        Sat, 7 Oct 2017 06:37:11 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        dmaengine@vger.kernel.org, Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH] dmaengine: usb-dmac: Add compatible string for r8a7743/5
-Date: Thu,  5 Oct 2017 16:19:31 +0100
-Message-Id: <1507216771-8957-1-git-send-email-biju.das@bp.renesas.com>
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 07/11] mmc: mtk-sd: catch all errors when getting regulators
+Date: Sat,  7 Oct 2017 12:36:54 +0200
+Message-Id: <20171007103658.16868-8-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20171007103658.16868-1-wsa+renesas@sang-engineering.com>
+References: <20171007103658.16868-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds support for r8a7743/5 SoC. The Renesas RZ/G1[ME]
-(R8A7743/5) usbdmac engine is identical to the R-Car Gen2 family.
+Bail out everytime when mmc_regulator_get_supply() returns an errno, not only
+when probing gets deferred. This is currently a no-op, because this function
+only returns -EPROBE_DEFER or 0 right now. But if it will throw another error
+somewhen, it will be for a reason. (This still doesn't change that getting
+regulators is optional, so 0 can still mean no regulators found). So, let us a)
+be future proof and b) have driver code which is easier to understand.
 
-This doesn't change the driver, so it does nothing by itself.  But it does
-mean that checkpatch won't complain about a future patch that adds
-"renesas,r8a7743-usb-dmac" or "renesas,r8a7745-usb-dmac" to a DT,
-which helps ensure that shipped DTs use documented compatibility strings.
-
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
-This patch is tested against Linux next tag next-20170929 
+ drivers/mmc/host/mtk-sd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt b/Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt
-index 1be6941..f3d1f15 100644
---- a/Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt
-+++ b/Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt
-@@ -3,6 +3,8 @@
- Required Properties:
- -compatible: "renesas,<soctype>-usb-dmac", "renesas,usb-dmac" as fallback.
- 	Examples with soctypes are:
-+	  - "renesas,r8a7743-usb-dmac" (RZ/G1M)
-+	  - "renesas,r8a7745-usb-dmac" (RZ/G1E)
- 	  - "renesas,r8a7790-usb-dmac" (R-Car H2)
- 	  - "renesas,r8a7791-usb-dmac" (R-Car M2-W)
- 	  - "renesas,r8a7793-usb-dmac" (R-Car M2-N)
+diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
+index 267f7ab08420eb..7c518a560089ce 100644
+--- a/drivers/mmc/host/mtk-sd.c
++++ b/drivers/mmc/host/mtk-sd.c
+@@ -1641,7 +1641,7 @@ static int msdc_drv_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	ret = mmc_regulator_get_supply(mmc);
+-	if (ret == -EPROBE_DEFER)
++	if (ret)
+ 		goto host_free;
+ 
+ 	host->src_clk = devm_clk_get(&pdev->dev, "source");
 -- 
-1.9.1
+2.11.0
