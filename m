@@ -1,51 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:47022 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751947AbdJDM2t (ORCPT
+Received: from sauhun.de ([88.99.104.3]:46646 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751513AbdJGKhJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Oct 2017 08:28:49 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] ASoC: fsi: Use of_device_get_match_data() helper
-Date: Wed,  4 Oct 2017 14:28:30 +0200
-Message-Id: <1507120110-13336-1-git-send-email-geert+renesas@glider.be>
+        Sat, 7 Oct 2017 06:37:09 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 04/11] mmc: meson-gx-mmc: catch all errors when getting regulators
+Date: Sat,  7 Oct 2017 12:36:51 +0200
+Message-Id: <20171007103658.16868-5-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20171007103658.16868-1-wsa+renesas@sang-engineering.com>
+References: <20171007103658.16868-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use the of_device_get_match_data() helper instead of open coding.
-Note that when used with DT, there's always a valid match.
+Bail out everytime when mmc_regulator_get_supply() returns an errno, not only
+when probing gets deferred. This is currently a no-op, because this function
+only returns -EPROBE_DEFER or 0 right now. But if it will throw another error
+somewhen, it will be for a reason. (This still doesn't change that getting
+regulators is optional, so 0 can still mean no regulators found). So, let us a)
+be future proof and b) have driver code which is easier to understand.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- sound/soc/sh/fsi.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+ drivers/mmc/host/meson-gx-mmc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/sh/fsi.c b/sound/soc/sh/fsi.c
-index 6d3c7706d93fbc10..c3aaf4788557c4e1 100644
---- a/sound/soc/sh/fsi.c
-+++ b/sound/soc/sh/fsi.c
-@@ -1932,14 +1932,9 @@ static int fsi_probe(struct platform_device *pdev)
+diff --git a/drivers/mmc/host/meson-gx-mmc.c b/drivers/mmc/host/meson-gx-mmc.c
+index 85745ef179e22b..e0862d3f65b346 100644
+--- a/drivers/mmc/host/meson-gx-mmc.c
++++ b/drivers/mmc/host/meson-gx-mmc.c
+@@ -1190,7 +1190,7 @@ static int meson_mmc_probe(struct platform_device *pdev)
+ 	/* Get regulators and the supported OCR mask */
+ 	host->vqmmc_enabled = false;
+ 	ret = mmc_regulator_get_supply(mmc);
+-	if (ret == -EPROBE_DEFER)
++	if (ret)
+ 		goto free_host;
  
- 	core = NULL;
- 	if (np) {
--		const struct of_device_id *of_id;
--
--		of_id = of_match_device(fsi_of_match, &pdev->dev);
--		if (of_id) {
--			core = of_id->data;
--			fsi_of_parse("fsia", np, &info.port_a, &pdev->dev);
--			fsi_of_parse("fsib", np, &info.port_b, &pdev->dev);
--		}
-+		core = of_device_get_match_data(&pdev->dev);
-+		fsi_of_parse("fsia", np, &info.port_a, &pdev->dev);
-+		fsi_of_parse("fsib", np, &info.port_b, &pdev->dev);
- 	} else {
- 		const struct platform_device_id	*id_entry = pdev->id_entry;
- 		if (id_entry)
+ 	ret = mmc_of_parse(mmc);
 -- 
-2.7.4
+2.11.0
