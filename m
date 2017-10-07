@@ -1,60 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:56314 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751952AbdJDMhA (ORCPT
+Received: from sauhun.de ([88.99.104.3]:46634 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750974AbdJGKhI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Oct 2017 08:37:00 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/4] ARM: dts: r8a7791: Use generic node name for VSP1 nodes
-Date: Wed,  4 Oct 2017 14:36:47 +0200
-Message-Id: <1507120609-14501-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1507120609-14501-1-git-send-email-geert+renesas@glider.be>
-References: <1507120609-14501-1-git-send-email-geert+renesas@glider.be>
+        Sat, 7 Oct 2017 06:37:08 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 01/11] mmc: add kerneldoc to mmc_regulator_get_supply()
+Date: Sat,  7 Oct 2017 12:36:48 +0200
+Message-Id: <20171007103658.16868-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20171007103658.16868-1-wsa+renesas@sang-engineering.com>
+References: <20171007103658.16868-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use the preferred generic node name instead of the specific name.
+Especially, make clear what the return value means.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm/boot/dts/r8a7791.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/mmc/core/core.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index 9b17800f36b1fde0..842592f12f428399 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -1069,7 +1069,7 @@
- 		status = "disabled";
- 	};
+diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
+index c287d297710aa4..7859bb617a2f60 100644
+--- a/drivers/mmc/core/core.c
++++ b/drivers/mmc/core/core.c
+@@ -1595,6 +1595,16 @@ EXPORT_SYMBOL_GPL(mmc_regulator_set_vqmmc);
  
--	vsp1@fe928000 {
-+	vsp@fe928000 {
- 		compatible = "renesas,vsp1";
- 		reg = <0 0xfe928000 0 0x8000>;
- 		interrupts = <GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>;
-@@ -1078,7 +1078,7 @@
- 		resets = <&cpg 131>;
- 	};
+ #endif /* CONFIG_REGULATOR */
  
--	vsp1@fe930000 {
-+	vsp@fe930000 {
- 		compatible = "renesas,vsp1";
- 		reg = <0 0xfe930000 0 0x8000>;
- 		interrupts = <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
-@@ -1087,7 +1087,7 @@
- 		resets = <&cpg 128>;
- 	};
- 
--	vsp1@fe938000 {
-+	vsp@fe938000 {
- 		compatible = "renesas,vsp1";
- 		reg = <0 0xfe938000 0 0x8000>;
- 		interrupts = <GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>;
++/**
++ * mmc_regulator_get_supply - try to get VMMC and VQMMC regulators for a host
++ * @mmc: the host to regulate
++ *
++ * Returns 0 or errno. errno should be handled, it is either a critical error
++ * or -EPROBE_DEFER. 0 means no critical error but it does not mean all
++ * regulators have been found because they all are optional. If you require
++ * certain regulators, you need to check seperately in your driver if they got
++ * populated after calling this function.
++ */
+ int mmc_regulator_get_supply(struct mmc_host *mmc)
+ {
+ 	struct device *dev = mmc_dev(mmc);
 -- 
-2.7.4
+2.11.0
