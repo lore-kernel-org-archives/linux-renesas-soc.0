@@ -1,58 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:51376 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751853AbdJJGCf (ORCPT
+Received: from sauhun.de ([88.99.104.3]:46643 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751027AbdJGKhJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Oct 2017 02:02:35 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v4 0/4] phy: rcar-gen3-usb2: add support for r8a77995
-Date: Tue, 10 Oct 2017 14:58:26 +0900
-Message-Id: <1507615110-26206-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Sat, 7 Oct 2017 06:37:09 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 03/11] mmc: dw_mmc: catch all errors when getting regulators
+Date: Sat,  7 Oct 2017 12:36:50 +0200
+Message-Id: <20171007103658.16868-4-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20171007103658.16868-1-wsa+renesas@sang-engineering.com>
+References: <20171007103658.16868-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch set is based on the latest phy.git / next branch
-(the commit id = 415060b21f318e009d865b4bcbf8f220ebc36964)
+Bail out everytime when mmc_regulator_get_supply() returns an errno, not only
+when probing gets deferred. This is currently a no-op, because this function
+only returns -EPROBE_DEFER or 0 right now. But if it will throw another error
+somewhen, it will be for a reason. (This still doesn't change that getting
+regulators is optional, so 0 can still mean no regulators found). So, let us a)
+be future proof and b) have driver code which is easier to understand.
 
-After this patch set is applied, a usb 2.0 host node that is combined
-with usb 2.0 peripheral needs 'dr_mode = "otg";' property.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/mmc/host/dw_mmc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changes from v3:
- - Use enum phy_mode in patch 2.
- - Remove "can_role_swap" parameter and revise the commit log in patch 2
-   because a case of "can_role_swap = true" and "has_otg = false" is
-   not supported for role swap at the moment.
- - Changes the name of "has_otg" to "has_otg_pins" in patch 3.
- - Use of_device_get_match_data() instead of of_match_device()
- - Add "Reviewed-by:" into patch No.1, 2 and 4. (Simon-san, Thanks!)
-  - Since patch No.3 is changed in big at v4, I dropped his "Reviewed-by".
-
-Changes from v2:
- - Revise the commit log ("SoCs" is not third-person singular present).
-
-Changes from v1:
- - Revise typo "wronly" to "wrongly".
- - Remove RCAR_GEN3_PHY_HAS_DEDICATED_PINS from generic gen3 entry in
-   patch 3/4
- - Remove the driver change from patch 4/4.
- - Revise the commit log of patch 4/4.
-
-
-Yoshihiro Shimoda (4):
-  phy: rcar-gen3-usb2: check dr_mode for otg mode
-  phy: rcar-gen3-usb2: cleanup the role_{store,show}()
-  phy: rcar-gen3-usb2: add SoC-specific parameter for dedicated pins
-  phy: rcar-gen3-usb2: add binding for r8a77995
-
- .../devicetree/bindings/phy/rcar-gen3-phy-usb2.txt |  2 +
- drivers/phy/renesas/phy-rcar-gen3-usb2.c           | 95 +++++++++++++++-------
- 2 files changed, 68 insertions(+), 29 deletions(-)
-
+diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+index 45289c5e0295d2..20d66f8189090d 100644
+--- a/drivers/mmc/host/dw_mmc.c
++++ b/drivers/mmc/host/dw_mmc.c
+@@ -2741,7 +2741,7 @@ static int dw_mci_init_slot(struct dw_mci *host)
+ 
+ 	/*if there are external regulators, get them*/
+ 	ret = mmc_regulator_get_supply(mmc);
+-	if (ret == -EPROBE_DEFER)
++	if (ret)
+ 		goto err_host_allocated;
+ 
+ 	if (!mmc->ocr_avail)
 -- 
-1.9.1
+2.11.0
