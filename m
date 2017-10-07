@@ -1,43 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:59998 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752761AbdJLJfU (ORCPT
+Received: from lb3-smtp-cloud9.xs4all.net ([194.109.24.30]:36607 "EHLO
+        lb3-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750974AbdJGKrD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 12 Oct 2017 05:35:20 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 11/13] ARM: dts: r8a7793: Add missing clock for secondary CA15 CPU core
-Date: Thu, 12 Oct 2017 11:35:14 +0200
-Message-Id: <1507800916-11509-12-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1507800916-11509-1-git-send-email-geert+renesas@glider.be>
-References: <1507800916-11509-1-git-send-email-geert+renesas@glider.be>
+        Sat, 7 Oct 2017 06:47:03 -0400
+From: Hans Verkuil <hverkuil@xs4all.nl>
+To: linux-media@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org,
+        Archit Taneja <architt@codeaurora.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>
+Subject: [PATCHv3 1/2] dt-bindings: adi,adv7511.txt: document cec clock
+Date: Sat,  7 Oct 2017 12:46:57 +0200
+Message-Id: <20171007104658.14528-2-hverkuil@xs4all.nl>
+In-Reply-To: <20171007104658.14528-1-hverkuil@xs4all.nl>
+References: <20171007104658.14528-1-hverkuil@xs4all.nl>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Currently only the primary CPU in the CA15 cluster has a clocks
-property, while the secondary CPU core is driven by the same clock.
-Add the missing clocks property to fix this.
+From: Hans Verkuil <hans.verkuil@cisco.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Document the cec clock binding.
+
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- arch/arm/boot/dts/r8a7793.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index af91c88e3b5b2482..33a1b79f9b25f30c 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -62,6 +62,7 @@
- 			compatible = "arm,cortex-a15";
- 			reg = <1>;
- 			clock-frequency = <1500000000>;
-+			clocks = <&cpg CPG_CORE R8A7793_CLK_Z>;
- 			power-domains = <&sysc R8A7793_PD_CA15_CPU1>;
- 		};
+diff --git a/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt b/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
+index 06668bca7ffc..0047b1394c70 100644
+--- a/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
++++ b/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
+@@ -68,6 +68,8 @@ Optional properties:
+ - adi,disable-timing-generator: Only for ADV7533. Disables the internal timing
+   generator. The chip will rely on the sync signals in the DSI data lanes,
+   rather than generate its own timings for HDMI output.
++- clocks: from common clock binding: reference to the CEC clock.
++- clock-names: from common clock binding: must be "cec".
  
+ Required nodes:
+ 
+@@ -89,6 +91,8 @@ Example
+ 		reg = <39>;
+ 		interrupt-parent = <&gpio3>;
+ 		interrupts = <29 IRQ_TYPE_EDGE_FALLING>;
++		clocks = <&cec_clock>;
++		clock-names = "cec";
+ 
+ 		adi,input-depth = <8>;
+ 		adi,input-colorspace = "rgb";
 -- 
-2.7.4
+2.14.1
