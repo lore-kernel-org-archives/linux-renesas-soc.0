@@ -1,43 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:37061 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751372AbdJENYS (ORCPT
+Received: from mail.kernel.org ([198.145.29.99]:37410 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750931AbdJGLVD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 Oct 2017 09:24:18 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: [PATCH v3 4/6] clk: renesas: r8a7795: Add Z2 clock
-Date: Thu,  5 Oct 2017 15:23:55 +0200
-Message-Id: <1507209837-16938-5-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1507209837-16938-1-git-send-email-horms+renesas@verge.net.au>
-References: <1507209837-16938-1-git-send-email-horms+renesas@verge.net.au>
+        Sat, 7 Oct 2017 07:21:03 -0400
+Date: Sat, 7 Oct 2017 12:20:58 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Simon Horman <horms@verge.net.au>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 3/3] iio: adc: rcar-gyroadc: Use
+ of_device_get_match_data() helper
+Message-ID: <20171007122058.64daf7e6@archlinux>
+In-Reply-To: <20171005091258.GK26369@verge.net.au>
+References: <1507118906-8946-1-git-send-email-geert+renesas@glider.be>
+        <1507118906-8946-4-git-send-email-geert+renesas@glider.be>
+        <20171005091258.GK26369@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+On Thu, 5 Oct 2017 11:12:59 +0200
+Simon Horman <horms@verge.net.au> wrote:
 
-This patch adds Z2 clock for r8a7795 SoC.
+> On Wed, Oct 04, 2017 at 02:08:26PM +0200, Geert Uytterhoeven wrote:
+> > Use the of_device_get_match_data() helper instead of open coding.
+> > Note that the rcar-gyroadc driver is used with DT only, so there's
+> > always a valid match.
+> > 
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>  
+> 
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> 
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/renesas/r8a7795-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
+Applied to the togreg branch of iio.git and pushed out
+as testing for the autobuilders to play with it.
 
-diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-index 2a0546fd47dc..1c931d8ec0cc 100644
---- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-@@ -75,6 +75,7 @@ static struct cpg_core_clk r8a7795_core_clks[] __initdata = {
- 
- 	/* Core Clock Outputs */
- 	DEF_BASE("z",           R8A7795_CLK_Z,     CLK_TYPE_GEN3_Z, CLK_PLL0),
-+	DEF_BASE("z2",          R8A7795_CLK_Z2,    CLK_TYPE_GEN3_Z2, CLK_PLL2),
- 	DEF_FIXED("ztr",        R8A7795_CLK_ZTR,   CLK_PLL1_DIV2,  6, 1),
- 	DEF_FIXED("ztrd2",      R8A7795_CLK_ZTRD2, CLK_PLL1_DIV2, 12, 1),
- 	DEF_FIXED("zt",         R8A7795_CLK_ZT,    CLK_PLL1_DIV2,  4, 1),
--- 
-2.1.4
+Thanks,
+
+Jonathan
