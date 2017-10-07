@@ -1,33 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:49327 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750760AbdJBGdj (ORCPT
+Received: from sauhun.de ([88.99.104.3]:46650 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752867AbdJGKhL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 2 Oct 2017 02:33:39 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 0/3] arm64: dts: renesas: r8a7795: salvator-xs: enable USB2.0 host channel 3
-Date: Mon,  2 Oct 2017 15:29:46 +0900
-Message-Id: <1506925789-19392-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Sat, 7 Oct 2017 06:37:11 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 05/11] mmc: meson-mx-sdio: catch all errors when getting regulators
+Date: Sat,  7 Oct 2017 12:36:52 +0200
+Message-Id: <20171007103658.16868-6-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20171007103658.16868-1-wsa+renesas@sang-engineering.com>
+References: <20171007103658.16868-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch set is based on the latest renesas.git /
-renesas-devel-20170928-v4.14-rc2 tag.
+Bail out everytime when mmc_regulator_get_supply() returns an errno, not only
+when probing gets deferred. This is currently a no-op, because this function
+only returns -EPROBE_DEFER or 0 right now. But if it will throw another error
+somewhen, it will be for a reason. (This still doesn't change that getting
+regulators is optional, so 0 can still mean no regulators found). So, let us a)
+be future proof and b) have driver code which is easier to understand.
 
-Yoshihiro Shimoda (3):
-  arm64: dts: renesas: r8a7795: salvator-xs: enable USB2.0 phy channel 3
-  arm64: dts: renesas: r8a7795: salvator-xs: enable USB2.0 Host channel
-    3
-  arm64: dts: renesas: r8a7795: salvator-xs: enable HS-USB channel 3
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/mmc/host/meson-mx-sdio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- .../arm64/boot/dts/renesas/r8a7795-salvator-xs.dts | 24 ++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
-
+diff --git a/drivers/mmc/host/meson-mx-sdio.c b/drivers/mmc/host/meson-mx-sdio.c
+index 19b499bbe6912f..fcbc469a5b0e74 100644
+--- a/drivers/mmc/host/meson-mx-sdio.c
++++ b/drivers/mmc/host/meson-mx-sdio.c
+@@ -551,7 +551,7 @@ static int meson_mx_mmc_add_host(struct meson_mx_mmc_host *host)
+ 
+ 	/* Get regulators and the supported OCR mask */
+ 	ret = mmc_regulator_get_supply(mmc);
+-	if (ret == -EPROBE_DEFER)
++	if (ret)
+ 		return ret;
+ 
+ 	mmc->max_req_size = MESON_MX_SDIO_BOUNCE_REQ_SIZE;
 -- 
-1.9.1
+2.11.0
