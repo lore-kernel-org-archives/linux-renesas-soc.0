@@ -1,91 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:36770 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751901AbdJFMF6 (ORCPT
+Received: from mail-io0-f176.google.com ([209.85.223.176]:55059 "EHLO
+        mail-io0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750948AbdJGLNa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Oct 2017 08:05:58 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/3] arm64: dts: r8a7796: Add INTC-EX device node
-Date: Fri,  6 Oct 2017 14:05:51 +0200
-Message-Id: <1507291553-24396-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1507291553-24396-1-git-send-email-geert+renesas@glider.be>
-References: <1507291553-24396-1-git-send-email-geert+renesas@glider.be>
+        Sat, 7 Oct 2017 07:13:30 -0400
+Received: by mail-io0-f176.google.com with SMTP id h66so17964200ioh.11
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 07 Oct 2017 04:13:30 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1507110277-11785-1-git-send-email-geert+renesas@glider.be>
+References: <1507110277-11785-1-git-send-email-geert+renesas@glider.be>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Sat, 7 Oct 2017 13:13:29 +0200
+Message-ID: <CACRpkdazgKfNEA4ZtHQ=EywJ3n1O_PAZUHygOXDD21YqkH3LkA@mail.gmail.com>
+Subject: Re: [git pull] pinctrl: sh-pfc: Updates for v4.15
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a device node for the Interrupt Controller for External Devices
-(INTC-EX) on R-Car M3-W, which serves external IRQ pins IRQ[0-5].
+On Wed, Oct 4, 2017 at 11:44 AM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Tested on Salvator-X by:
-  1) Enabling pinctrl and pull-up for IRQ1/GP2_01 in
-     salvator-common.dtsi:
+>         Hi Linus,
+>
+> The following changes since commit 2bd6bf03f4c1c59381d62c61d03f6cc3fe71f66e:
+>
+>   Linux 4.14-rc1 (2017-09-16 15:47:51 -0700)
+>
+> are available in the git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.15-tag1
+>
+> for you to fetch changes up to 5ec8a41a36715cf543cb7c109097fb3b4cdfb427:
+>
+>   pinctrl: sh-pfc: r8a7795: Add USB3.0 host support (2017-10-02 13:23:44 +0200)
 
-	@@ -376,7 +376,7 @@
-	 };
+Pulled into my devel branch, thanks!
 
-	 &pfc {
-	-	pinctrl-0 = <&scif_clk_pins>;
-	+	pinctrl-0 = <&scif_clk_pins &irq1_pins &keyboard_pins>;
-		pinctrl-names = "default";
-
-		avb_pins: avb {
-	@@ -407,6 +407,16 @@
-			function = "i2c2";
-		};
-
-	+	irq1_pins: irq1 {
-	+		groups = "intc_ex_irq1";
-	+		function = "intc_ex";
-	+	};
-	+
-	+	keyboard_pins: keyboard {
-	+		pins = "GP_2_1";
-	+		bias-pull-up;
-	+	};
-	+
-		pwm1_pins: pwm1 {
-			groups = "pwm1_a";
-			function = "pwm1";
-
-  2) Triggering IRQ1 by tying EXIO-D pin 50 to GND,
-  3) Verifying that the IRQC_MONITOR register contents change due to
-     triggering.
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index d9c928f9d224015d..afee3360cb4f0f56 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -725,6 +725,22 @@
- 			#power-domain-cells = <1>;
- 		};
- 
-+		intc_ex: interrupt-controller@e61c0000 {
-+			compatible = "renesas,intc-ex-r8a7796", "renesas,irqc";
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			reg = <0 0xe61c0000 0 0x200>;
-+			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 407>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 407>;
-+		};
-+
- 		i2c_dvfs: i2c@e60b0000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--- 
-2.7.4
+Yours,
+Linus Walleij
