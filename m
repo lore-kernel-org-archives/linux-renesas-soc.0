@@ -1,41 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:13483 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750914AbdJPKNf (ORCPT
+Received: from mail.kernel.org ([198.145.29.99]:37242 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750948AbdJGLRj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Oct 2017 06:13:35 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Felipe Balbi <balbi@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-usb@vger.kernel.org, Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH  0/2] Add XHCI support
-Date: Mon, 16 Oct 2017 11:12:47 +0100
-Message-Id: <1508148769-47488-1-git-send-email-biju.das@bp.renesas.com>
+        Sat, 7 Oct 2017 07:17:39 -0400
+Date: Sat, 7 Oct 2017 12:17:34 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Simon Horman <horms@verge.net.au>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 1/3] iio: adc: rcar-gyroadc: Cast pointer to uintptr_t
+ to fix warning on 64-bit
+Message-ID: <20171007121734.0328cf9d@archlinux>
+In-Reply-To: <20171005091150.GI26369@verge.net.au>
+References: <1507118906-8946-1-git-send-email-geert+renesas@glider.be>
+        <1507118906-8946-2-git-send-email-geert+renesas@glider.be>
+        <20171005091150.GI26369@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+On Thu, 5 Oct 2017 11:11:51 +0200
+Simon Horman <horms@verge.net.au> wrote:
 
-This series aims to add USB XHCI support for iWave RZ/G1M (R8A7743) board.
-This series has been tested against renesas-dev tag 20171013-v4.14-rc4.
+> On Wed, Oct 04, 2017 at 02:08:24PM +0200, Geert Uytterhoeven wrote:
+> > On 64-bit:
+> > 
+> >     drivers/iio/adc/rcar-gyroadc.c: In function 'rcar_gyroadc_parse_subdevs':
+> >     drivers/iio/adc/rcar-gyroadc.c:352:15: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+> >        childmode = (unsigned int)of_id->data;
+> > 		   ^
+> > 
+> > Cast the pointer to uintptr_t instead of unsigned int to fix this.
+> > 
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>  
+> 
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-Regards,
+Applied to the togreg branch of iio.git and pushed out as testing for the
+autobuilders to play with it.
 
-Fabrizio Castro (2):
-  dt-bindings: usb-xhci: Document r8a7743 support
-  ARM: dts: r8a7743: Add xhci support to SoC dtsi
+Thanks,
 
- Documentation/devicetree/bindings/usb/usb-xhci.txt |  4 +++-
- arch/arm/boot/dts/r8a7743.dtsi                     | 20 ++++++++++++++++++++
- 2 files changed, 23 insertions(+), 1 deletion(-)
+Jonathan
 
--- 
-1.9.1
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
