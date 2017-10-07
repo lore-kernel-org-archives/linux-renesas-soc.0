@@ -1,47 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:53010 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751696AbdJDMUf (ORCPT
+Received: from sauhun.de ([88.99.104.3]:46661 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752838AbdJGKhL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Oct 2017 08:20:35 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] spi: sh-msiof: Use of_device_get_match_data() helper
-Date: Wed,  4 Oct 2017 14:20:27 +0200
-Message-Id: <1507119627-12865-1-git-send-email-geert+renesas@glider.be>
+        Sat, 7 Oct 2017 06:37:11 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 09/11] mmc: omap_hsmmc: catch all errors when getting regulators
+Date: Sat,  7 Oct 2017 12:36:56 +0200
+Message-Id: <20171007103658.16868-10-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20171007103658.16868-1-wsa+renesas@sang-engineering.com>
+References: <20171007103658.16868-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use the of_device_get_match_data() helper instead of open coding.
+Bail out everytime when mmc_regulator_get_supply() returns an errno, not only
+when probing gets deferred. This is currently a no-op, because this function
+only returns -EPROBE_DEFER or 0 right now. But if it will throw another error
+somewhen, it will be for a reason. (This still doesn't change that getting
+regulators is optional, so 0 can still mean no regulators found). So, let us a)
+be future proof and b) have driver code which is easier to understand.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/spi/spi-sh-msiof.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/mmc/host/omap_hsmmc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
-index 00808448cf35b87c..2c5ea4c57508d2b5 100644
---- a/drivers/spi/spi-sh-msiof.c
-+++ b/drivers/spi/spi-sh-msiof.c
-@@ -1211,15 +1211,13 @@ static int sh_msiof_spi_probe(struct platform_device *pdev)
- 	struct resource	*r;
- 	struct spi_master *master;
- 	const struct sh_msiof_chipdata *chipdata;
--	const struct of_device_id *of_id;
- 	struct sh_msiof_spi_info *info;
- 	struct sh_msiof_spi_priv *p;
- 	int i;
- 	int ret;
+diff --git a/drivers/mmc/host/omap_hsmmc.c b/drivers/mmc/host/omap_hsmmc.c
+index f2a1137be8bc4b..071693ebfe1891 100644
+--- a/drivers/mmc/host/omap_hsmmc.c
++++ b/drivers/mmc/host/omap_hsmmc.c
+@@ -445,7 +445,7 @@ static int omap_hsmmc_reg_get(struct omap_hsmmc_host *host)
  
--	of_id = of_match_device(sh_msiof_match, &pdev->dev);
--	if (of_id) {
--		chipdata = of_id->data;
-+	chipdata = of_device_get_match_data(&pdev->dev);
-+	if (chipdata) {
- 		info = sh_msiof_spi_parse_dt(&pdev->dev);
- 	} else {
- 		chipdata = (const void *)pdev->id_entry->driver_data;
+ 
+ 	ret = mmc_regulator_get_supply(mmc);
+-	if (ret == -EPROBE_DEFER)
++	if (ret)
+ 		return ret;
+ 
+ 	/* Allow an aux regulator */
 -- 
-2.7.4
+2.11.0
