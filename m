@@ -1,66 +1,46 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([88.99.104.3]:46654 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752877AbdJGKhL (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sat, 7 Oct 2017 06:37:11 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH  2/4] ARM: dts: r8a7745: Add USB-DMAC device nodes
-Date: Fri, 13 Oct 2017 16:50:41 +0100
-Message-Id: <1507909843-52034-3-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1507909843-52034-1-git-send-email-biju.das@bp.renesas.com>
-References: <1507909843-52034-1-git-send-email-biju.das@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 08/11] mmc: mxcmmc: catch all errors when getting regulators
+Date: Sat,  7 Oct 2017 12:36:55 +0200
+Message-Id: <20171007103658.16868-9-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20171007103658.16868-1-wsa+renesas@sang-engineering.com>
+References: <20171007103658.16868-1-wsa+renesas@sang-engineering.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Bail out everytime when mmc_regulator_get_supply() returns an errno, not only
+when probing gets deferred. This is currently a no-op, because this function
+only returns -EPROBE_DEFER or 0 right now. But if it will throw another error
+somewhen, it will be for a reason. (This still doesn't change that getting
+regulators is optional, so 0 can still mean no regulators found). So, let us a)
+be future proof and b) have driver code which is easier to understand.
+
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm/boot/dts/r8a7745.dtsi | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+ drivers/mmc/host/mxcmmc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index 40048da..9733ac5 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -312,6 +312,34 @@
- 			dma-channels = <15>;
- 		};
+diff --git a/drivers/mmc/host/mxcmmc.c b/drivers/mmc/host/mxcmmc.c
+index 328484b96620e8..8bd9f060be2ae0 100644
+--- a/drivers/mmc/host/mxcmmc.c
++++ b/drivers/mmc/host/mxcmmc.c
+@@ -1075,7 +1075,7 @@ static int mxcmci_probe(struct platform_device *pdev)
+ 		dat3_card_detect = true;
  
-+		usb_dmac0: dma-controller@e65a0000 {
-+			compatible = "renesas,r8a7745-usb-dmac",
-+				     "renesas,usb-dmac";
-+			reg = <0 0xe65a0000 0 0x100>;
-+			interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "ch0", "ch1";
-+			clocks = <&cpg CPG_MOD 330>;
-+			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 330>;
-+			#dma-cells = <1>;
-+			dma-channels = <2>;
-+		};
-+
-+		usb_dmac1: dma-controller@e65b0000 {
-+			compatible = "renesas,r8a7745-usb-dmac",
-+				     "renesas,usb-dmac";
-+			reg = <0 0xe65b0000 0 0x100>;
-+			interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "ch0", "ch1";
-+			clocks = <&cpg CPG_MOD 331>;
-+			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 331>;
-+			#dma-cells = <1>;
-+			dma-channels = <2>;
-+		};
-+
- 		scifa0: serial@e6c40000 {
- 			compatible = "renesas,scifa-r8a7745",
- 				     "renesas,rcar-gen2-scifa", "renesas,scifa";
+ 	ret = mmc_regulator_get_supply(mmc);
+-	if (ret == -EPROBE_DEFER)
++	if (ret)
+ 		goto out_free;
+ 
+ 	if (!mmc->ocr_avail) {
 -- 
-1.9.1
-
+2.11.0
