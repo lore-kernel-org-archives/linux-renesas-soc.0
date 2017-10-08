@@ -1,69 +1,35 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:12102 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751288AbdJWRKs (ORCPT
+Received: from mail-io0-f180.google.com ([209.85.223.180]:53578 "EHLO
+        mail-io0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753111AbdJHARi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Oct 2017 13:10:48 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 8/9] ARM: dts: iwg22d-sodimm: Enable HS-USB
-Date: Mon, 23 Oct 2017 18:09:29 +0100
-Message-Id: <1508778570-28795-9-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1508778570-28795-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1508778570-28795-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Sat, 7 Oct 2017 20:17:38 -0400
+Received: by mail-io0-f180.google.com with SMTP id q11so18711900ioe.10
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 07 Oct 2017 17:17:38 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1507119376-12491-1-git-send-email-geert+renesas@glider.be>
+References: <1507119376-12491-1-git-send-email-geert+renesas@glider.be>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Sun, 8 Oct 2017 02:17:37 +0200
+Message-ID: <CACRpkdaeQ9e=p2jFw-b_5SBWSRTsTLk3TFU_XTQeOYsA_Wv9=g@mail.gmail.com>
+Subject: Re: [PATCH] gpio: rcar: Use of_device_get_match_data() helper
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+On Wed, Oct 4, 2017 at 2:16 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-From: Biju Das <biju.das@bp.renesas.com>
+> Use the of_device_get_match_data() helper instead of open coding.
+> Note that the gpio-rcar driver is used with DT only, so there's always a
+> valid match.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Enable HS-USB on iWave RZ/G1E carrier board.
+Patch applied with Simon's tag.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
-Changes in v2:
-* rebased
-
- arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-index 3eb4f83..80c82aa 100644
---- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-+++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-@@ -67,6 +67,12 @@
- 	status = "okay";
- };
- 
-+&hsusb {
-+	status = "okay";
-+	pinctrl-0 = <&usb0_pins>;
-+	pinctrl-names = "default";
-+};
-+
- &pci1 {
- 	status = "okay";
- 	pinctrl-0 = <&usb1_pins>;
-@@ -95,6 +101,11 @@
- 		power-source = <3300>;
- 	};
- 
-+	usb0_pins: usb0 {
-+		groups = "usb0";
-+		function = "usb0";
-+	};
-+
- 	usb1_pins: usb1 {
- 		groups = "usb1";
- 		function = "usb1";
--- 
-2.7.4
+Yours,
+Linus Walleij
