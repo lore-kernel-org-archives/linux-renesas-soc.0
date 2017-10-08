@@ -1,75 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:20302 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S933027AbdJQHeW (ORCPT
+Received: from mga06.intel.com ([134.134.136.31]:13066 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751533AbdJHKrG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Oct 2017 03:34:22 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: wsa+renesas@sang-engineering.com, ulf.hansson@linaro.org
-Cc: linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 2/2] mmc: renesas_sdhi: fix kernel panic in _internal_dmac.c
-Date: Tue, 17 Oct 2017 16:30:21 +0900
-Message-Id: <1508225421-25405-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1508225421-25405-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1508225421-25405-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Sun, 8 Oct 2017 06:47:06 -0400
+Date: Sun, 8 Oct 2017 16:21:11 +0530
+From: Vinod Koul <vinod.koul@intel.com>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        dmaengine@vger.kernel.org
+Subject: Re: [PATCH v2] dmaengine: usb-dmac: Add compatible string for
+ r8a7743/5
+Message-ID: <20171008105111.GN30097@localhost>
+References: <1507310117-9436-1-git-send-email-biju.das@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1507310117-9436-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Since this driver checks if the return value of dma_map_sg() is minus
-or not and keeps to enable the DMAC, it may cause kernel panic when
-the dma_map_sg() returns 0. So, this patch fixes the issue.
+On Fri, Oct 06, 2017 at 06:15:17PM +0100, Biju Das wrote:
+> This patch adds support for r8a7743/5 SoCs. The Renesas RZ/G1[ME]
+> (R8A7743/5) usbdmac engine is identical to the R-Car Gen2 family.
+> 
+> No driver change is needed due to the fallback compatible value
+> "renesas,r8a7743-usb-dmac".
+> Adding the SoC-specific compatible values here has two purposes:
+>   1. Document which SoCs have this hardware module,
+>   2. Allow checkpatch to validate compatible values.
 
-Reported-by: Dirk Behme <dirk.behme@de.bosch.com>
-Fixes: 2a68ea7896e3 ("mmc: renesas-sdhi: add support for R-Car Gen3 SDHI DMAC")
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+Applied, thanks
 
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index 6c9b4b2..378fe88 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -147,11 +147,8 @@
- 	WARN_ON(host->sg_len > 1);
- 
- 	/* This DMAC cannot handle if buffer is not 8-bytes alignment */
--	if (!IS_ALIGNED(sg->offset, 8)) {
--		host->force_pio = true;
--		renesas_sdhi_internal_dmac_enable_dma(host, false);
--		return;
--	}
-+	if (!IS_ALIGNED(sg->offset, 8))
-+		goto force_pio;
- 
- 	if (data->flags & MMC_DATA_READ) {
- 		dtran_mode |= DTRAN_MODE_CH_NUM_CH1;
-@@ -164,8 +161,8 @@
- 	}
- 
- 	ret = dma_map_sg(&host->pdev->dev, sg, host->sg_len, dir);
--	if (ret < 0)
--		return;
-+	if (ret == 0)
-+		goto force_pio;
- 
- 	renesas_sdhi_internal_dmac_enable_dma(host, true);
- 
-@@ -177,6 +174,12 @@
- 					    dtran_mode);
- 	renesas_sdhi_internal_dmac_dm_write(host, DM_DTRAN_ADDR,
- 					    sg->dma_address);
-+
-+	return;
-+
-+force_pio:
-+	host->force_pio = true;
-+	renesas_sdhi_internal_dmac_enable_dma(host, false);
- }
- 
- static void renesas_sdhi_internal_dmac_issue_tasklet_fn(unsigned long arg)
 -- 
-1.9.1
+~Vinod
