@@ -1,15 +1,12 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:38887 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751401AbdJIJru (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:48851 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751598AbdJIItj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 Oct 2017 05:47:50 -0400
-Subject: Re: [PATCH ] phy: rcar-gen2: Add r8a7743/5 support
-To: Biju Das <biju.das@bp.renesas.com>,
+        Mon, 9 Oct 2017 04:49:39 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: "kishon@ti.com" <kishon@ti.com>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-References: <1503568773-41410-1-git-send-email-biju.das@bp.renesas.com>
- <CAMuHMdW8x-7LVGgJr1GQfMJurfW=0Ky71K18zc+x5_XHMC6VxA@mail.gmail.com>
- <KL1PR06MB17020EBD5992AFA4F6E3F6C7B8740@KL1PR06MB1702.apcprd06.prod.outlook.com>
 CC: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Simon Horman <horms@verge.net.au>,
@@ -21,69 +18,48 @@ CC: Rob Herring <robh+dt@kernel.org>,
         "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>,
         Geert Uytterhoeven <geert@linux-m68k.org>
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <535bd74a-ca7d-31bf-e7df-f2bda31be1a6@ti.com>
-Date: Mon, 9 Oct 2017 15:16:56 +0530
-MIME-Version: 1.0
-In-Reply-To: <KL1PR06MB17020EBD5992AFA4F6E3F6C7B8740@KL1PR06MB1702.apcprd06.prod.outlook.com>
+Subject: RE: [PATCH ] phy: rcar-gen2: Add r8a7743/5 support
+Date: Mon, 9 Oct 2017 08:49:32 +0000
+Message-ID: <KL1PR06MB17020EBD5992AFA4F6E3F6C7B8740@KL1PR06MB1702.apcprd06.prod.outlook.com>
+References: <1503568773-41410-1-git-send-email-biju.das@bp.renesas.com>
+ <CAMuHMdW8x-7LVGgJr1GQfMJurfW=0Ky71K18zc+x5_XHMC6VxA@mail.gmail.com>
+In-Reply-To: <CAMuHMdW8x-7LVGgJr1GQfMJurfW=0Ky71K18zc+x5_XHMC6VxA@mail.gmail.com>
+Content-Language: en-US
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
-
-On Monday 09 October 2017 02:19 PM, Biju Das wrote:
-> Hi Kishon,
-> 
-> Looks like the below patch is not merged into linux-next.  Somehow I missed your mail ID, when I submitted the patch(scripts/get_maintainer.pl  script  didn't show your mail address for this patch)
-> 
-> https://patchwork.kernel.org/patch/9919727/
-
-Can you resend the patch with all the Ack's you got?
-
-Thanks
-Kishon
-> 
-> Regards,
-> Biju
-> 
-> 
->> -----Original Message-----
->> From: geert.uytterhoeven@gmail.com [mailto:geert.uytterhoeven@gmail.com]
->> On Behalf Of Geert Uytterhoeven
->> Sent: 19 September 2017 15:58
->> To: Biju Das <biju.das@bp.renesas.com>
->> Cc: Rob Herring <robh+dt@kernel.org>; Mark Rutland
->> <mark.rutland@arm.com>; Simon Horman <horms@verge.net.au>; Magnus
->> Damm <magnus.damm@gmail.com>; Russell King <linux@armlinux.org.uk>;
->> Chris Paterson <Chris.Paterson2@renesas.com>; devicetree@vger.kernel.org;
->> Linux-Renesas <linux-renesas-soc@vger.kernel.org>; linux-arm-
->> kernel@lists.infradead.org
->> Subject: Re: [PATCH ] phy: rcar-gen2: Add r8a7743/5 support
->>
->> On Thu, Aug 24, 2017 at 11:59 AM, Biju Das <biju.das@bp.renesas.com>
->> wrote:
->>> Add USB PHY support for r8a7743/5 SoC. Renesas RZ/G1[ME] (R8A7743/5)
->>> USB PHY is identical to the R-Car Gen2 family.
->>>
->>> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
->>
->> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->>
->> Gr{oetje,eeting}s,
->>
->>                         Geert
->>
->> --
->> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-
->> m68k.org
->>
->> In personal conversations with technical people, I call myself a hacker. But when
->> I'm talking to journalists I just say "programmer" or something like that.
->>                                 -- Linus Torvalds
-> 
-> 
-> 
-> Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, Buckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered No. 04586709.
-> 
+SGkgS2lzaG9uLA0KDQpMb29rcyBsaWtlIHRoZSBiZWxvdyBwYXRjaCBpcyBub3QgbWVyZ2VkIGlu
+dG8gbGludXgtbmV4dC4gIFNvbWVob3cgSSBtaXNzZWQgeW91ciBtYWlsIElELCB3aGVuIEkgc3Vi
+bWl0dGVkIHRoZSBwYXRjaChzY3JpcHRzL2dldF9tYWludGFpbmVyLnBsICBzY3JpcHQgIGRpZG4n
+dCBzaG93IHlvdXIgbWFpbCBhZGRyZXNzIGZvciB0aGlzIHBhdGNoKQ0KDQpodHRwczovL3BhdGNo
+d29yay5rZXJuZWwub3JnL3BhdGNoLzk5MTk3MjcvDQoNClJlZ2FyZHMsDQpCaWp1DQoNCg0KPiAt
+LS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBnZWVydC51eXR0ZXJob2V2ZW5AZ21h
+aWwuY29tIFttYWlsdG86Z2VlcnQudXl0dGVyaG9ldmVuQGdtYWlsLmNvbV0NCj4gT24gQmVoYWxm
+IE9mIEdlZXJ0IFV5dHRlcmhvZXZlbg0KPiBTZW50OiAxOSBTZXB0ZW1iZXIgMjAxNyAxNTo1OA0K
+PiBUbzogQmlqdSBEYXMgPGJpanUuZGFzQGJwLnJlbmVzYXMuY29tPg0KPiBDYzogUm9iIEhlcnJp
+bmcgPHJvYmgrZHRAa2VybmVsLm9yZz47IE1hcmsgUnV0bGFuZA0KPiA8bWFyay5ydXRsYW5kQGFy
+bS5jb20+OyBTaW1vbiBIb3JtYW4gPGhvcm1zQHZlcmdlLm5ldC5hdT47IE1hZ251cw0KPiBEYW1t
+IDxtYWdudXMuZGFtbUBnbWFpbC5jb20+OyBSdXNzZWxsIEtpbmcgPGxpbnV4QGFybWxpbnV4Lm9y
+Zy51az47DQo+IENocmlzIFBhdGVyc29uIDxDaHJpcy5QYXRlcnNvbjJAcmVuZXNhcy5jb20+OyBk
+ZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsNCj4gTGludXgtUmVuZXNhcyA8bGludXgtcmVuZXNh
+cy1zb2NAdmdlci5rZXJuZWwub3JnPjsgbGludXgtYXJtLQ0KPiBrZXJuZWxAbGlzdHMuaW5mcmFk
+ZWFkLm9yZw0KPiBTdWJqZWN0OiBSZTogW1BBVENIIF0gcGh5OiByY2FyLWdlbjI6IEFkZCByOGE3
+NzQzLzUgc3VwcG9ydA0KPg0KPiBPbiBUaHUsIEF1ZyAyNCwgMjAxNyBhdCAxMTo1OSBBTSwgQmlq
+dSBEYXMgPGJpanUuZGFzQGJwLnJlbmVzYXMuY29tPg0KPiB3cm90ZToNCj4gPiBBZGQgVVNCIFBI
+WSBzdXBwb3J0IGZvciByOGE3NzQzLzUgU29DLiBSZW5lc2FzIFJaL0cxW01FXSAoUjhBNzc0My81
+KQ0KPiA+IFVTQiBQSFkgaXMgaWRlbnRpY2FsIHRvIHRoZSBSLUNhciBHZW4yIGZhbWlseS4NCj4g
+Pg0KPiA+IFNpZ25lZC1vZmYtYnk6IEJpanUgRGFzIDxiaWp1LmRhc0BicC5yZW5lc2FzLmNvbT4N
+Cj4NCj4gUmV2aWV3ZWQtYnk6IEdlZXJ0IFV5dHRlcmhvZXZlbiA8Z2VlcnQrcmVuZXNhc0BnbGlk
+ZXIuYmU+DQo+DQo+IEdye29ldGplLGVldGluZ31zLA0KPg0KPiAgICAgICAgICAgICAgICAgICAg
+ICAgICBHZWVydA0KPg0KPiAtLQ0KPiBHZWVydCBVeXR0ZXJob2V2ZW4gLS0gVGhlcmUncyBsb3Rz
+IG9mIExpbnV4IGJleW9uZCBpYTMyIC0tIGdlZXJ0QGxpbnV4LQ0KPiBtNjhrLm9yZw0KPg0KPiBJ
+biBwZXJzb25hbCBjb252ZXJzYXRpb25zIHdpdGggdGVjaG5pY2FsIHBlb3BsZSwgSSBjYWxsIG15
+c2VsZiBhIGhhY2tlci4gQnV0IHdoZW4NCj4gSSdtIHRhbGtpbmcgdG8gam91cm5hbGlzdHMgSSBq
+dXN0IHNheSAicHJvZ3JhbW1lciIgb3Igc29tZXRoaW5nIGxpa2UgdGhhdC4NCj4gICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAtLSBMaW51cyBUb3J2YWxkcw0KDQoNCg0KUmVuZXNhcyBF
+bGVjdHJvbmljcyBFdXJvcGUgTHRkLCBEdWtlcyBNZWFkb3csIE1pbGxib2FyZCBSb2FkLCBCb3Vy
+bmUgRW5kLCBCdWNraW5naGFtc2hpcmUsIFNMOCA1RkgsIFVLLiBSZWdpc3RlcmVkIGluIEVuZ2xh
+bmQgJiBXYWxlcyB1bmRlciBSZWdpc3RlcmVkIE5vLiAwNDU4NjcwOS4NCg==
