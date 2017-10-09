@@ -1,45 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:46851 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757377AbdJKM5B (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:35574 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1755263AbdJINWO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Oct 2017 08:57:01 -0400
-MIME-Version: 1.0
-In-Reply-To: <1507555281-57845-5-git-send-email-biju.das@bp.renesas.com>
-References: <1507555281-57845-1-git-send-email-biju.das@bp.renesas.com> <1507555281-57845-5-git-send-email-biju.das@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 11 Oct 2017 14:56:59 +0200
-Message-ID: <CAMuHMdWQeH7tBJ22=+BdWdbuL8w1ZjqtFzvksCxaHhY9woHQbA@mail.gmail.com>
-Subject: Re: [PATCH 4/4] ARM: dts: r8a7743: Enable DMA for HSUSB
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
+        Mon, 9 Oct 2017 09:22:14 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Simon Horman <horms@verge.net.au>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         Chris Paterson <chris.paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH  4/4] ARM: dts: r8a7743: Enable DMA for HSUSB
+Date: Mon,  9 Oct 2017 14:21:21 +0100
+Message-Id: <1507555281-57845-5-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1507555281-57845-1-git-send-email-biju.das@bp.renesas.com>
+References: <1507555281-57845-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Oct 9, 2017 at 3:21 PM, Biju Das <biju.das@bp.renesas.com> wrote:
-> This patch adds DMA properties to the HSUSB node.
->
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+This patch adds DMA properties to the HSUSB node.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+---
+ arch/arm/boot/dts/r8a7743.dtsi | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index de89295..699c040 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -979,6 +979,9 @@
+ 			reg = <0 0xe6590000 0 0x100>;
+ 			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 704>;
++			dmas = <&usb_dmac0 0>, <&usb_dmac0 1>,
++			       <&usb_dmac1 0>, <&usb_dmac1 1>;
++			dma-names = "ch0", "ch1", "ch2", "ch3";
+ 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
+ 			resets = <&cpg 704>;
+ 			renesas,buswait = <4>;
+-- 
+1.9.1
