@@ -1,165 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:37175 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:47889 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751310AbdJEN1G (ORCPT
+        with ESMTP id S1753778AbdJIHSK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 Oct 2017 09:27:06 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: [PATCH v2 1/2] arm64: dts: r8a7795: Add OPPs table for cpu devices
-Date: Thu,  5 Oct 2017 15:26:23 +0200
-Message-Id: <1507209984-17123-2-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1507209984-17123-1-git-send-email-horms+renesas@verge.net.au>
-References: <1507209984-17123-1-git-send-email-horms+renesas@verge.net.au>
+        Mon, 9 Oct 2017 03:18:10 -0400
+Date: Mon, 9 Oct 2017 09:17:50 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 10/18] arm64: dts: ulcb-kf: enable HSUSB
+Message-ID: <20171009071749.GK17360@verge.net.au>
+References: <1504737267-22829-1-git-send-email-vladimir.barinov@cogentembedded.com>
+ <1504737385-23230-1-git-send-email-vladimir.barinov@cogentembedded.com>
+ <CAMuHMdVVCBUgOrFrTQgVpwkShr8SgE9C7agEov5u5PE2F=h8ng@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVVCBUgOrFrTQgVpwkShr8SgE9C7agEov5u5PE2F=h8ng@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Dien Pham <dien.pham.ry@rvc.renesas.com>
+On Wed, Sep 20, 2017 at 02:51:54PM +0200, Geert Uytterhoeven wrote:
+> On Thu, Sep 7, 2017 at 12:36 AM, Vladimir Barinov
+> <vladimir.barinov@cogentembedded.com> wrote:
+> > This supports HSUSB on ULCB Kingfisher board
+> >
+> > Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Current, OPP tables are defined temporary,
-they are being evaluated and adjust in future.
-
-Based in part on work by Hien Dang.
-
-Signed-off-by: Dien Pham <dien.pham.ry@rvc.renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
-v2 [Simon Horman]
-- Only provide one operating points node for each operating-points-v2 node
-  as per the binding; other nodes were unused and have been removed
-
-v1 [Simon Horman]
-- consolidated several patches into one
-
-v0 [Dien Pham]
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 55 ++++++++++++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index d5cfd1a1c539..9cf63a1f0c35 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -46,6 +46,8 @@
- 			power-domains = <&sysc R8A7795_PD_CA57_CPU0>;
- 			next-level-cache = <&L2_CA57>;
- 			enable-method = "psci";
-+			clocks =<&cpg CPG_CORE R8A7795_CLK_Z>;
-+			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
- 		a57_1: cpu@1 {
-@@ -55,6 +57,7 @@
- 			power-domains = <&sysc R8A7795_PD_CA57_CPU1>;
- 			next-level-cache = <&L2_CA57>;
- 			enable-method = "psci";
-+			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
- 		a57_2: cpu@2 {
-@@ -64,6 +67,7 @@
- 			power-domains = <&sysc R8A7795_PD_CA57_CPU2>;
- 			next-level-cache = <&L2_CA57>;
- 			enable-method = "psci";
-+			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
- 		a57_3: cpu@3 {
-@@ -73,6 +77,7 @@
- 			power-domains = <&sysc R8A7795_PD_CA57_CPU3>;
- 			next-level-cache = <&L2_CA57>;
- 			enable-method = "psci";
-+			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
- 		a53_0: cpu@100 {
-@@ -82,6 +87,8 @@
- 			power-domains = <&sysc R8A7795_PD_CA53_CPU0>;
- 			next-level-cache = <&L2_CA53>;
- 			enable-method = "psci";
-+			clocks =<&cpg CPG_CORE R8A7795_CLK_Z2>;
-+			operating-points-v2 = <&cluster1_opp>;
- 		};
- 
- 		a53_1: cpu@101 {
-@@ -91,6 +98,7 @@
- 			power-domains = <&sysc R8A7795_PD_CA53_CPU1>;
- 			next-level-cache = <&L2_CA53>;
- 			enable-method = "psci";
-+			operating-points-v2 = <&cluster1_opp>;
- 		};
- 
- 		a53_2: cpu@102 {
-@@ -100,6 +108,7 @@
- 			power-domains = <&sysc R8A7795_PD_CA53_CPU2>;
- 			next-level-cache = <&L2_CA53>;
- 			enable-method = "psci";
-+			operating-points-v2 = <&cluster1_opp>;
- 		};
- 
- 		a53_3: cpu@103 {
-@@ -109,6 +118,7 @@
- 			power-domains = <&sysc R8A7795_PD_CA53_CPU3>;
- 			next-level-cache = <&L2_CA53>;
- 			enable-method = "psci";
-+			operating-points-v2 = <&cluster1_opp>;
- 		};
- 
- 		L2_CA57: cache-controller-0 {
-@@ -126,6 +136,51 @@
- 		};
- 	};
- 
-+	cluster0_opp: opp_table0 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp@500000000 {
-+			opp-hz = /bits/ 64 <500000000>;
-+			opp-microvolt = <830000>;
-+			clock-latency-ns = <300000>;
-+		};
-+		opp@1000000000 {
-+			opp-hz = /bits/ 64 <1000000000>;
-+			opp-microvolt = <830000>;
-+			clock-latency-ns = <300000>;
-+		};
-+		opp@1500000000 {
-+			opp-hz = /bits/ 64 <1500000000>;
-+			opp-microvolt = <830000>;
-+			clock-latency-ns = <300000>;
-+			opp-suspend;
-+		};
-+		opp@1600000000 {
-+			opp-hz = /bits/ 64 <1600000000>;
-+			opp-microvolt = <900000>;
-+			clock-latency-ns = <300000>;
-+			turbo-mode;
-+		};
-+		opp@1700000000 {
-+			opp-hz = /bits/ 64 <1700000000>;
-+			opp-microvolt = <960000>;
-+			clock-latency-ns = <300000>;
-+			turbo-mode;
-+		};
-+	};
-+
-+	cluster1_opp: opp_table1 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp@1200000000 {
-+			opp-hz = /bits/ 64 <1200000000>;
-+			opp-microvolt = <820000>;
-+			clock-latency-ns = <300000>;
-+		};
-+	};
-+
- 	extal_clk: extal {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
--- 
-2.1.4
+Thanks, applied.
