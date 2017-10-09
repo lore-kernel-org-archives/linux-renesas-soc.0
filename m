@@ -1,41 +1,77 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1507557541-46560-4-git-send-email-biju.das@bp.renesas.com>
-References: <1507557541-46560-1-git-send-email-biju.das@bp.renesas.com> <1507557541-46560-4-git-send-email-biju.das@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 11 Oct 2017 15:12:54 +0200
-Message-ID: <CAMuHMdX+pZMnXi_CNYzVfnzTUNkYDrKcr-E1Qn7J43-uT=ThgA@mail.gmail.com>
-Subject: Re: [PATCH 3/5] ARM: dts: r8a7745: Link PCI USB devices to USB PHY
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor3.renesas.com ([210.160.252.173]:7789 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754738AbdJIN7p (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 9 Oct 2017 09:59:45 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Simon Horman <horms@verge.net.au>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         Chris Paterson <chris.paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: devicetree-owner@vger.kernel.org
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH  3/5] ARM: dts: r8a7745: Link PCI USB devices to USB PHY
+Date: Mon,  9 Oct 2017 14:58:59 +0100
+Message-Id: <1507557541-46560-4-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1507557541-46560-1-git-send-email-biju.das@bp.renesas.com>
+References: <1507557541-46560-1-git-send-email-biju.das@bp.renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Oct 9, 2017 at 3:58 PM, Biju Das <biju.das@bp.renesas.com> wrote:
-> Describe the PCI USB devices that are behind the PCI bridges, adding
-> necessary links to the USB PHY device.
->
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+Describe the PCI USB devices that are behind the PCI bridges, adding
+necessary links to the USB PHY device.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+---
+ arch/arm/boot/dts/r8a7745.dtsi | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+index 17cfa53..3a50f70 100644
+--- a/arch/arm/boot/dts/r8a7745.dtsi
++++ b/arch/arm/boot/dts/r8a7745.dtsi
+@@ -867,6 +867,18 @@
+ 			interrupt-map = <0x0000 0 0 1 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH
+ 					 0x0800 0 0 1 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH
+ 					 0x1000 0 0 2 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
++
++			usb@1,0 {
++				reg = <0x800 0 0 0 0>;
++				phys = <&usb0 0>;
++				phy-names = "usb";
++			};
++
++			usb@2,0 {
++				reg = <0x1000 0 0 0 0>;
++				phys = <&usb0 0>;
++				phy-names = "usb";
++			};
+ 		};
+ 
+ 		pci1: pci@ee0d0000 {
+@@ -890,6 +902,18 @@
+ 			interrupt-map = <0x0000 0 0 1 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH
+ 					 0x0800 0 0 1 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH
+ 					 0x1000 0 0 2 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
++
++			usb@1,0 {
++				reg = <0x10800 0 0 0 0>;
++				phys = <&usb2 0>;
++				phy-names = "usb";
++			};
++
++			usb@2,0 {
++				reg = <0x11000 0 0 0 0>;
++				phys = <&usb2 0>;
++				phy-names = "usb";
++			};
+ 		};
+ 
+ 		usbphy: usb-phy@e6590100 {
+-- 
+1.9.1
