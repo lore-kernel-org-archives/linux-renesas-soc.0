@@ -1,38 +1,40 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1507557541-46560-6-git-send-email-biju.das@bp.renesas.com>
-References: <1507557541-46560-1-git-send-email-biju.das@bp.renesas.com> <1507557541-46560-6-git-send-email-biju.das@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 11 Oct 2017 15:16:49 +0200
-Message-ID: <CAMuHMdVrukW9oNnxRQw4=VEs2_QOf9bSqh5AsvEsvNX11BE2EQ@mail.gmail.com>
-Subject: Re: [PATCH 5/5] ARM: dts: iwg22d-sodimm: Enable USB PHY
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Simon Horman <horms@verge.net.au>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         Chris Paterson <chris.paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH  5/5] ARM: dts: iwg22d-sodimm: Enable USB PHY
+Date: Mon,  9 Oct 2017 14:59:01 +0100
+Message-Id: <1507557541-46560-6-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1507557541-46560-1-git-send-email-biju.das@bp.renesas.com>
+References: <1507557541-46560-1-git-send-email-biju.das@bp.renesas.com>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Oct 9, 2017 at 3:59 PM, Biju Das <biju.das@bp.renesas.com> wrote:
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+---
+ arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
+index e378e5e..52153ec 100644
+--- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
++++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
+@@ -103,3 +103,7 @@
+ 	pinctrl-0 = <&usb1_pins>;
+ 	pinctrl-names = "default";
+ };
++
++&usbphy {
++	status = "okay";
++};
+-- 
+1.9.1
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
