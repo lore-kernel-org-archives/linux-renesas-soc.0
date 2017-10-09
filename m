@@ -1,65 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:38216 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751184AbdJIMIx (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:44844 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752504AbdJIJGa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 Oct 2017 08:08:53 -0400
-MIME-Version: 1.0
-In-Reply-To: <1507539981-4193-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1507539981-4193-1-git-send-email-fabrizio.castro@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 9 Oct 2017 14:08:51 +0200
-Message-ID: <CAMuHMdUprE7QuXF_sX47JyrvuZXhXnQFufy4OHeJ5ExwwoogKw@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: iwg20d-q7: Add support for ttySC3
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Chris Paterson <Chris.Paterson2@renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
+        Mon, 9 Oct 2017 05:06:30 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Simon Horman <horms@verge.net.au>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Biju Das <biju.das@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+        Russell King <linux@armlinux.org.uk>
+Cc: Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Chris Paterson <chris.paterson2@renesas.com>
+Subject: [PATCH] ARM: dts: iwg20d-q7: Add support for ttySC3
+Date: Mon,  9 Oct 2017 10:06:21 +0100
+Message-Id: <1507539981-4193-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Fabrizio, Chris,
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+---
+ arch/arm/boot/dts/iwg20d-q7-common.dtsi | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-On Mon, Oct 9, 2017 at 11:06 AM, Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-
-Thanks for your patch!
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-> --- a/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-> +++ b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-> @@ -11,6 +11,7 @@
->  / {
->         aliases {
->                 serial0 = &scif0;
-> +               serial3 = &scifb1;
-
-Given this port is not labeled "serial3", but called "data uart", you may want
-to add a comment to avoid confusion:
-
-    serial3 = &scifb1; /* data uart */
-
->                 ethernet0 = &avb;
->         };
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/iwg20d-q7-common.dtsi b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
+index 1c072c0..8c852d1 100644
+--- a/arch/arm/boot/dts/iwg20d-q7-common.dtsi
++++ b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
+@@ -11,6 +11,7 @@
+ / {
+ 	aliases {
+ 		serial0 = &scif0;
++		serial3 = &scifb1;
+ 		ethernet0 = &avb;
+ 	};
+ 
+@@ -99,6 +100,11 @@
+ 		function = "scif0";
+ 	};
+ 
++	scifb1_pins: scifb1 {
++		groups = "scifb1_data_d", "scifb1_ctrl";
++		function = "scifb1";
++	};
++
+ 	sdhi1_pins: sd1 {
+ 		groups = "sdhi1_data4", "sdhi1_ctrl";
+ 		function = "sdhi1";
+@@ -129,6 +135,14 @@
+ 	status = "okay";
+ };
+ 
++&scifb1 {
++	pinctrl-0 = <&scifb1_pins>;
++	pinctrl-names = "default";
++
++	uart-has-rtscts;
++	status = "okay";
++};
++
+ &sdhi1 {
+ 	pinctrl-0 = <&sdhi1_pins>;
+ 	pinctrl-1 = <&sdhi1_pins_uhs>;
+-- 
+2.7.4
