@@ -1,50 +1,38 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f47.google.com ([74.125.82.47]:48993 "EHLO
-        mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751398AbdJJKIF (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47766 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751588AbdJIHQT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Oct 2017 06:08:05 -0400
+        Mon, 9 Oct 2017 03:16:19 -0400
+Date: Mon, 9 Oct 2017 09:15:58 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v3 15/18] arm64: dts: ulcb-kf: enable TCA9539 on I2C4
+Message-ID: <20171009071557.GE17360@verge.net.au>
+References: <1507257851-12145-1-git-send-email-vladimir.barinov@cogentembedded.com>
+ <CAMuHMdWV6VnPfymyZ9ff5niL6MpSM0=K2E0SGiOOCn+s3qtFGA@mail.gmail.com>
 MIME-Version: 1.0
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 10 Oct 2017 12:08:03 +0200
-Message-ID: <CAMuHMdUGwTRsJdfkG90hY6kvCr6qknRGv5V66qBPfUY1x+MciQ@mail.gmail.com>
-Subject: mmc: exceeding card's volts
-To: Linux MMC List <linux-mmc@vger.kernel.org>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWV6VnPfymyZ9ff5niL6MpSM0=K2E0SGiOOCn+s3qtFGA@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi all,
+On Fri, Oct 06, 2017 at 09:18:48AM +0200, Geert Uytterhoeven wrote:
+> On Fri, Oct 6, 2017 at 4:44 AM, Vladimir Barinov
+> <vladimir.barinov@cogentembedded.com> wrote:
+> > This supports TCA9539 gpio expanders on I2C4 bus on ULCB Kingfisher board
+> >
+> > Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-For the first time ever, I saw a dangerous looking "exceeding card's volts"
-on Salvator-X with R-Car M3-W ES1.0:
-
- NET: Registered protocol family 15
- can: controller area network core (rev 20170425 abi 9)
- NET: Registered protocol family 29
-+renesas_sdhi_internal_dmac ee140000.sd: Tuning procedure failed
-+mmc0: tuning execution failed: -5
-+mmc0: error -5 whilst initialising MMC card
- can: raw protocol (rev 20170425)
- can: broadcast manager protocol (rev 20170425 t)
- can: netlink gateway (rev 20170425) max_hops=1
-+renesas_sdhi_internal_dmac ee140000.sd: exceeding card's volts
- renesas_irqc e61c0000.interrupt-controller: adding to PM domain always-on
-+mmc0: error -110 whilst initialising MMC card
- renesas_irqc e61c0000.interrupt-controller: driving 6 irqs
-
-During next boot, everything was back to normal again...
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks, applied.
