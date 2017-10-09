@@ -1,21 +1,17 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:60248 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750718AbdJKV0q (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Oct 2017 17:26:46 -0400
-Date: Wed, 11 Oct 2017 23:26:44 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Cc: Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
+Return-Path: <linux-media-owner@vger.kernel.org>
+Subject: Re: [PATCH 04/24] media: v4l2-mediabus: convert flags to enums and
+ document them
+To: Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>
+References: <cover.1507544011.git.mchehab@s-opensource.com>
+ <8d351f92fb18148b4d53acdc7f7c8fb0e9f537d9.1507544011.git.mchehab@s-opensource.com>
+Cc: Mauro Carvalho Chehab <mchehab@infradead.org>,
         Linux Doc Mailing List <linux-doc@vger.kernel.org>,
         Lars-Peter Clausen <lars@metafoo.de>,
         Guennadi Liakhovetski <g.liakhovetski@gmx.de>,
         Mats Randgaard <matrandg@cisco.com>,
-        Niklas =?iso-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund@ragnatech.se>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
         Bhumika Goyal <bhumirks@gmail.com>,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
         Julia Lawall <Julia.Lawall@lip6.fr>,
@@ -29,81 +25,47 @@ Cc: Linux Media Mailing List <linux-media@vger.kernel.org>,
         Robert Jarzmik <robert.jarzmik@free.fr>,
         Rob Herring <robh@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
         Sebastian Reichel <sre@kernel.org>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 04/24] media: v4l2-mediabus: convert flags to enums and
- document them
-Message-ID: <20171011212644.GB32314@amd>
-References: <cover.1507544011.git.mchehab@s-opensource.com>
- <8d351f92fb18148b4d53acdc7f7c8fb0e9f537d9.1507544011.git.mchehab@s-opensource.com>
+        Pavel Machek <pavel@ucw.cz>, linux-renesas-soc@vger.kernel.org
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <6c1bdfed-9d23-1cd0-eb71-0b35206e5521@xs4all.nl>
+Date: Mon, 9 Oct 2017 12:56:48 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="0eh6TmSyL6TZE2Uz"
-Content-Disposition: inline
 In-Reply-To: <8d351f92fb18148b4d53acdc7f7c8fb0e9f537d9.1507544011.git.mchehab@s-opensource.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-
---0eh6TmSyL6TZE2Uz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon 2017-10-09 07:19:10, Mauro Carvalho Chehab wrote:
+On 09/10/17 12:19, Mauro Carvalho Chehab wrote:
 > There is a mess with media bus flags: there are two sets of
 > flags, one used by parallel and ITU-R BT.656 outputs,
 > and another one for CSI2.
->=20
+> 
 > Depending on the type, the same bit has different meanings.
->=20
+> 
+> That's very confusing, and counter-intuitive. So, split them
+> into two sets of flags, inside an enum.
+> 
+> This way, it becomes clearer that there are two separate sets
+> of flags. It also makes easier if CSI1, CSP, CSI3, etc. would
+> need a different set of flags.
+> 
+> As a side effect, enums can be documented via kernel-docs,
+> so there will be an improvement at flags documentation.
+> 
+> Unfortunately, soc_camera and pxa_camera do a mess with
+> the flags, using either one set of flags without proper
+> checks about the type. That could be fixed, but, as both drivers
+> are obsolete and in the process of cleanings, I opted to just
+> keep the behavior, using an unsigned int inside those two
+> drivers.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 
-> @@ -86,11 +125,22 @@ enum v4l2_mbus_type {
->  /**
->   * struct v4l2_mbus_config - media bus configuration
->   * @type:	in: interface type
-> - * @flags:	in / out: configuration flags, depending on @type
-> + * @pb_flags:	in / out: configuration flags, if @type is
-> + *		%V4L2_MBUS_PARALLEL or %V4L2_MBUS_BT656.
-> + * @csi2_flags:	in / out: configuration flags, if @type is
-> + *		%V4L2_MBUS_CSI2.
-> + * @flag:	access flags, no matter the @type.
-> + *		Used just to avoid needing to rewrite the logic inside
-> + *		soc_camera and pxa_camera drivers. Don't use on newer
-> + * 		drivers!
->   */
->  struct v4l2_mbus_config {
->  	enum v4l2_mbus_type type;
-> -	unsigned int flags;
-> +	union {
-> +		enum v4l2_mbus_parallel_and_bt656_flags	pb_flags;
-> +		enum v4l2_mbus_csi2_flags		csi2_flags;
-> +		unsigned int				flag;
-> +	};
->  };
-> =20
->  static inline void v4l2_fill_pix_format(struct v4l2_pix_format
->  *pix_fmt,
+Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
 
-The flags->flag conversion is quite subtle, and "flag" is confusing
-because there is more than one inside. What about something like
-__legacy_flags?
+Nice cleanup.
 
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+Regards,
 
---0eh6TmSyL6TZE2Uz
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlnejJQACgkQMOfwapXb+vL1ngCfSJfjpkYdLKbCx9x4YXgpGmoX
-nLQAn3G4E0g7OK73fDvk/torTdpsYPBp
-=i6Pt
------END PGP SIGNATURE-----
-
---0eh6TmSyL6TZE2Uz--
+	Hans
