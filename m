@@ -1,47 +1,38 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:45806 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1762366AbdJRHhU (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47788 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751068AbdJIHQd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Oct 2017 03:37:20 -0400
-Received: by mail-wr0-f195.google.com with SMTP id k7so4000679wre.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 18 Oct 2017 00:37:19 -0700 (PDT)
+        Mon, 9 Oct 2017 03:16:33 -0400
+Date: Mon, 9 Oct 2017 09:16:14 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v3 14/18] arm64: dts: ulcb-kf: enable TCA9539 on I2C2
+Message-ID: <20171009071613.GF17360@verge.net.au>
+References: <1507257845-12106-1-git-send-email-vladimir.barinov@cogentembedded.com>
+ <CAMuHMdWBy6FZ7Ha5d_gc=r27N-mHMMK9shNDzRLRM3NnUXY-wQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20171018072728.14681-8-horms+renesas@verge.net.au>
-References: <20171018072728.14681-1-horms+renesas@verge.net.au> <20171018072728.14681-8-horms+renesas@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 18 Oct 2017 09:37:18 +0200
-Message-ID: <CAMuHMdX1bJxOYJ5m=MmtC7u6dR0BnbxWjoXTd9kz-2gTTRyDDQ@mail.gmail.com>
-Subject: Re: [PATCH 7/7] ARM: dts: r8a7794: Use R-Car Gen2 Ether fallback
- compat string
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWBy6FZ7Ha5d_gc=r27N-mHMMK9shNDzRLRM3NnUXY-wQ@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Oct 18, 2017 at 9:27 AM, Simon Horman
-<horms+renesas@verge.net.au> wrote:
-> Use newly added R-Car Gen2 Ether fallback compat string
-> in the DT of the r8a7794 SoC.
->
-> This should have no run-time effect as the driver matches against
-> the per-SoC compat string before considering the fallback compat string.
->
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+On Fri, Oct 06, 2017 at 09:17:45AM +0200, Geert Uytterhoeven wrote:
+> On Fri, Oct 6, 2017 at 4:44 AM, Vladimir Barinov
+> <vladimir.barinov@cogentembedded.com> wrote:
+> > This supports TCA9539 gpio expanders on I2C2 bus on ULCB Kingfisher board
+> >
+> > Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks, applied.
