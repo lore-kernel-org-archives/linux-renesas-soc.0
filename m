@@ -1,37 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:32908 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752063AbdJKJf5 (ORCPT
+Received: from sauhun.de ([88.99.104.3]:54253 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751779AbdJIIhc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Oct 2017 05:35:57 -0400
-MIME-Version: 1.0
-In-Reply-To: <20171009083725.6474-2-wsa+renesas@sang-engineering.com>
-References: <20171009083725.6474-1-wsa+renesas@sang-engineering.com> <20171009083725.6474-2-wsa+renesas@sang-engineering.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 11 Oct 2017 11:35:55 +0200
-Message-ID: <CAMuHMdW=iLSAoEWr6suO33tFskNwi88Fi8dQZ4bdv8K1tMp1aQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] pinctrl: sh-pfc: r8a7796: fix trivial typo in comment
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 9 Oct 2017 04:37:32 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-gpio@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH v2 2/2] pinctrl: sh-pfc: r8a7796: fix trivial typo in comment
+Date: Mon,  9 Oct 2017 10:37:25 +0200
+Message-Id: <20171009083725.6474-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20171009083725.6474-1-wsa+renesas@sang-engineering.com>
+References: <20171009083725.6474-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Oct 9, 2017 at 10:37 AM, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in sh-pfc-for-v4.15.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+index 200e1f4f6db92b..81d5ef3744fbdb 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+@@ -495,7 +495,7 @@ FM(IP16_31_28)	IP16_31_28	FM(IP17_31_28)	IP17_31_28
+ #define MOD_SEL1_1		FM(SEL_PWM2_0)		FM(SEL_PWM2_1)
+ #define MOD_SEL1_0		FM(SEL_PWM1_0)		FM(SEL_PWM1_1)
+ 
+-/* MOD_SEL1 */			/* 0 */			/* 1 */			/* 2 */			/* 3 */			/* 4 */			/* 5 */			/* 6 */			/* 7 */
++/* MOD_SEL2 */			/* 0 */			/* 1 */			/* 2 */			/* 3 */			/* 4 */			/* 5 */			/* 6 */			/* 7 */
+ #define MOD_SEL2_31		FM(I2C_SEL_5_0)		FM(I2C_SEL_5_1)
+ #define MOD_SEL2_30		FM(I2C_SEL_3_0)		FM(I2C_SEL_3_1)
+ #define MOD_SEL2_29		FM(I2C_SEL_0_0)		FM(I2C_SEL_0_1)
+-- 
+2.11.0
