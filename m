@@ -1,53 +1,55 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1507538915-16566-3-git-send-email-jacopo+renesas@jmondi.org>
-References: <1507538915-16566-1-git-send-email-jacopo+renesas@jmondi.org> <1507538915-16566-3-git-send-email-jacopo+renesas@jmondi.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 11 Oct 2017 14:45:16 +0200
-Message-ID: <CAMuHMdXPiO1iZMABAZRfKv0HwYcVtZ_BkEa=dKFczx-3s84_Gg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] ARM: dts: gr-peach: Enable ostm0 and ostm1 timers
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Chris Brandt <Chris.Brandt@renesas.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, Chris.Brandt@renesas.com,
+        andrew@lunn.ch, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] ARM: dts: gr-peach: Enable ostm0 and ostm1 timers
+Date: Mon,  9 Oct 2017 10:48:35 +0200
+Message-Id: <1507538915-16566-3-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1507538915-16566-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1507538915-16566-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Oct 9, 2017 at 10:48 AM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
-> Enable ostm0 and ostm1 timers to be used as clock source and clockevent
-> source. The timers provides greater accuracy than the already enabled
-> mtu2 one.
->
-> With these enabled:
->
-> clocksource: ostm: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 57352151442 ns
-> sched_clock: 32 bits at 33MHz, resolution 30ns, wraps every 64440619504ns
-> ostm: used for clocksource
-> ostm: used for clock events
->
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> Suggested-by: Chris Brandt <chris.brandt@renesas.com>
+Enable ostm0 and ostm1 timers to be used as clock source and clockevent
+source. The timers provides greater accuracy than the already enabled
+mtu2 one.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+With these enabled:
 
-Gr{oetje,eeting}s,
+clocksource: ostm: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 57352151442 ns
+sched_clock: 32 bits at 33MHz, resolution 30ns, wraps every 64440619504ns
+ostm: used for clocksource
+ostm: used for clock events
 
-                        Geert
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Suggested-by: Chris Brandt <chris.brandt@renesas.com>
+---
+ arch/arm/boot/dts/r7s72100-gr-peach.dts | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/r7s72100-gr-peach.dts b/arch/arm/boot/dts/r7s72100-gr-peach.dts
+index 990435c..9e9e890 100644
+--- a/arch/arm/boot/dts/r7s72100-gr-peach.dts
++++ b/arch/arm/boot/dts/r7s72100-gr-peach.dts
+@@ -104,6 +104,14 @@
+ 	status = "okay";
+ };
+ 
++&ostm0 {
++	status = "okay";
++};
++
++&ostm1 {
++	status = "okay";
++};
++
+ &scif2 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&scif2_pins>;
+-- 
+2.7.4
