@@ -1,59 +1,89 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:17863 "EHLO
+Received: from relmlor2.renesas.com ([210.160.252.172]:31100 "EHLO
         relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750828AbdJIKW6 (ORCPT
+        by vger.kernel.org with ESMTP id S1751401AbdJIKQR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 Oct 2017 06:22:58 -0400
+        Mon, 9 Oct 2017 06:16:17 -0400
 From: Biju Das <biju.das@bp.renesas.com>
 To: Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+CC: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Simon Horman <horms@verge.net.au>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH RESEND] phy: rcar-gen2: Add r8a7743/5 support
-Date: Mon,  9 Oct 2017 11:22:23 +0100
-Message-Id: <1507544543-28654-1-git-send-email-biju.das@bp.renesas.com>
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: RE: [PATCH ] phy: rcar-gen2: Add r8a7743/5 support
+Date: Mon, 9 Oct 2017 10:16:10 +0000
+Message-ID: <KL1PR06MB170203142C33A1733B89D3A5B8740@KL1PR06MB1702.apcprd06.prod.outlook.com>
+References: <1503568773-41410-1-git-send-email-biju.das@bp.renesas.com>
+ <CAMuHMdW8x-7LVGgJr1GQfMJurfW=0Ky71K18zc+x5_XHMC6VxA@mail.gmail.com>
+ <KL1PR06MB17020EBD5992AFA4F6E3F6C7B8740@KL1PR06MB1702.apcprd06.prod.outlook.com>
+ <535bd74a-ca7d-31bf-e7df-f2bda31be1a6@ti.com>
+In-Reply-To: <535bd74a-ca7d-31bf-e7df-f2bda31be1a6@ti.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add USB PHY support for r8a7743/5 SoC. Renesas RZ/G1[ME] (R8A7743/5)
-USB PHY is identical to the R-Car Gen2 family.
-
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Acked-by: Simon Horman <horms+renesas@verge.net.au>
-Acked-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-This patch is tested against Linux next tag next-20170929.
-
- Documentation/devicetree/bindings/phy/rcar-gen2-phy.txt | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/phy/rcar-gen2-phy.txt b/Documentation/devicetree/bindings/phy/rcar-gen2-phy.txt
-index 91da947..eeb9e18 100644
---- a/Documentation/devicetree/bindings/phy/rcar-gen2-phy.txt
-+++ b/Documentation/devicetree/bindings/phy/rcar-gen2-phy.txt
-@@ -4,10 +4,13 @@ This file provides information on what the device node for the R-Car generation
- 2 USB PHY contains.
- 
- Required properties:
--- compatible: "renesas,usb-phy-r8a7790" if the device is a part of R8A7790 SoC.
-+- compatible: "renesas,usb-phy-r8a7743" if the device is a part of R8A7743 SoC.
-+	      "renesas,usb-phy-r8a7745" if the device is a part of R8A7745 SoC.
-+	      "renesas,usb-phy-r8a7790" if the device is a part of R8A7790 SoC.
- 	      "renesas,usb-phy-r8a7791" if the device is a part of R8A7791 SoC.
- 	      "renesas,usb-phy-r8a7794" if the device is a part of R8A7794 SoC.
--	      "renesas,rcar-gen2-usb-phy" for a generic R-Car Gen2 compatible device.
-+	      "renesas,rcar-gen2-usb-phy" for a generic R-Car Gen2 or
-+					  RZ/G1 compatible device.
- 
- 	      When compatible with the generic version, nodes must list the
- 	      SoC-specific version corresponding to the platform first
--- 
-1.9.1
+VGhhbmtzLiBJIHdpbGwgcmVzZW5kIHRoZSBwYXRjaC4NCg0KUmVnYXJkcywNCkJpanUNCg0KDQo+
+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IEtpc2hvbiBWaWpheSBBYnJhaGFt
+IEkgW21haWx0bzpraXNob25AdGkuY29tXQ0KPiBTZW50OiAwOSBPY3RvYmVyIDIwMTcgMTA6NDcN
+Cj4gVG86IEJpanUgRGFzIDxiaWp1LmRhc0BicC5yZW5lc2FzLmNvbT47IFlvc2hpaGlybyBTaGlt
+b2RhDQo+IDx5b3NoaWhpcm8uc2hpbW9kYS51aEByZW5lc2FzLmNvbT4NCj4gQ2M6IFJvYiBIZXJy
+aW5nIDxyb2JoK2R0QGtlcm5lbC5vcmc+OyBNYXJrIFJ1dGxhbmQNCj4gPG1hcmsucnV0bGFuZEBh
+cm0uY29tPjsgU2ltb24gSG9ybWFuIDxob3Jtc0B2ZXJnZS5uZXQuYXU+OyBNYWdudXMNCj4gRGFt
+bSA8bWFnbnVzLmRhbW1AZ21haWwuY29tPjsgUnVzc2VsbCBLaW5nIDxsaW51eEBhcm1saW51eC5v
+cmcudWs+Ow0KPiBDaHJpcyBQYXRlcnNvbiA8Q2hyaXMuUGF0ZXJzb24yQHJlbmVzYXMuY29tPjsg
+ZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc7DQo+IExpbnV4LVJlbmVzYXMgPGxpbnV4LXJlbmVz
+YXMtc29jQHZnZXIua2VybmVsLm9yZz47IGxpbnV4LWFybS0NCj4ga2VybmVsQGxpc3RzLmluZnJh
+ZGVhZC5vcmc7IEdlZXJ0IFV5dHRlcmhvZXZlbiA8Z2VlcnRAbGludXgtbTY4ay5vcmc+DQo+IFN1
+YmplY3Q6IFJlOiBbUEFUQ0ggXSBwaHk6IHJjYXItZ2VuMjogQWRkIHI4YTc3NDMvNSBzdXBwb3J0
+DQo+DQo+IEhpLA0KPg0KPiBPbiBNb25kYXkgMDkgT2N0b2JlciAyMDE3IDAyOjE5IFBNLCBCaWp1
+IERhcyB3cm90ZToNCj4gPiBIaSBLaXNob24sDQo+ID4NCj4gPiBMb29rcyBsaWtlIHRoZSBiZWxv
+dyBwYXRjaCBpcyBub3QgbWVyZ2VkIGludG8gbGludXgtbmV4dC4gIFNvbWVob3cgSQ0KPiA+IG1p
+c3NlZCB5b3VyIG1haWwgSUQsIHdoZW4gSSBzdWJtaXR0ZWQgdGhlDQo+ID4gcGF0Y2goc2NyaXB0
+cy9nZXRfbWFpbnRhaW5lci5wbCAgc2NyaXB0ICBkaWRuJ3Qgc2hvdyB5b3VyIG1haWwgYWRkcmVz
+cw0KPiA+IGZvciB0aGlzIHBhdGNoKQ0KPiA+DQo+ID4gaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVs
+Lm9yZy9wYXRjaC85OTE5NzI3Lw0KPg0KPiBDYW4geW91IHJlc2VuZCB0aGUgcGF0Y2ggd2l0aCBh
+bGwgdGhlIEFjaydzIHlvdSBnb3Q/DQo+DQo+IFRoYW5rcw0KPiBLaXNob24NCj4gPg0KPiA+IFJl
+Z2FyZHMsDQo+ID4gQmlqdQ0KPiA+DQo+ID4NCj4gPj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0t
+LS0NCj4gPj4gRnJvbTogZ2VlcnQudXl0dGVyaG9ldmVuQGdtYWlsLmNvbQ0KPiA+PiBbbWFpbHRv
+OmdlZXJ0LnV5dHRlcmhvZXZlbkBnbWFpbC5jb21dDQo+ID4+IE9uIEJlaGFsZiBPZiBHZWVydCBV
+eXR0ZXJob2V2ZW4NCj4gPj4gU2VudDogMTkgU2VwdGVtYmVyIDIwMTcgMTU6NTgNCj4gPj4gVG86
+IEJpanUgRGFzIDxiaWp1LmRhc0BicC5yZW5lc2FzLmNvbT4NCj4gPj4gQ2M6IFJvYiBIZXJyaW5n
+IDxyb2JoK2R0QGtlcm5lbC5vcmc+OyBNYXJrIFJ1dGxhbmQNCj4gPj4gPG1hcmsucnV0bGFuZEBh
+cm0uY29tPjsgU2ltb24gSG9ybWFuIDxob3Jtc0B2ZXJnZS5uZXQuYXU+OyBNYWdudXMNCj4gPj4g
+RGFtbSA8bWFnbnVzLmRhbW1AZ21haWwuY29tPjsgUnVzc2VsbCBLaW5nIDxsaW51eEBhcm1saW51
+eC5vcmcudWs+Ow0KPiA+PiBDaHJpcyBQYXRlcnNvbiA8Q2hyaXMuUGF0ZXJzb24yQHJlbmVzYXMu
+Y29tPjsNCj4gPj4gZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc7IExpbnV4LVJlbmVzYXMNCj4g
+Pj4gPGxpbnV4LXJlbmVzYXMtc29jQHZnZXIua2VybmVsLm9yZz47IGxpbnV4LWFybS0NCj4gPj4g
+a2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcNCj4gPj4gU3ViamVjdDogUmU6IFtQQVRDSCBdIHBo
+eTogcmNhci1nZW4yOiBBZGQgcjhhNzc0My81IHN1cHBvcnQNCj4gPj4NCj4gPj4gT24gVGh1LCBB
+dWcgMjQsIDIwMTcgYXQgMTE6NTkgQU0sIEJpanUgRGFzIDxiaWp1LmRhc0BicC5yZW5lc2FzLmNv
+bT4NCj4gPj4gd3JvdGU6DQo+ID4+PiBBZGQgVVNCIFBIWSBzdXBwb3J0IGZvciByOGE3NzQzLzUg
+U29DLiBSZW5lc2FzIFJaL0cxW01FXSAoUjhBNzc0My81KQ0KPiA+Pj4gVVNCIFBIWSBpcyBpZGVu
+dGljYWwgdG8gdGhlIFItQ2FyIEdlbjIgZmFtaWx5Lg0KPiA+Pj4NCj4gPj4+IFNpZ25lZC1vZmYt
+Ynk6IEJpanUgRGFzIDxiaWp1LmRhc0BicC5yZW5lc2FzLmNvbT4NCj4gPj4NCj4gPj4gUmV2aWV3
+ZWQtYnk6IEdlZXJ0IFV5dHRlcmhvZXZlbiA8Z2VlcnQrcmVuZXNhc0BnbGlkZXIuYmU+DQo+ID4+
+DQo+ID4+IEdye29ldGplLGVldGluZ31zLA0KPiA+Pg0KPiA+PiAgICAgICAgICAgICAgICAgICAg
+ICAgICBHZWVydA0KPiA+Pg0KPiA+PiAtLQ0KPiA+PiBHZWVydCBVeXR0ZXJob2V2ZW4gLS0gVGhl
+cmUncyBsb3RzIG9mIExpbnV4IGJleW9uZCBpYTMyIC0tDQo+ID4+IGdlZXJ0QGxpbnV4LSBtNjhr
+Lm9yZw0KPiA+Pg0KPiA+PiBJbiBwZXJzb25hbCBjb252ZXJzYXRpb25zIHdpdGggdGVjaG5pY2Fs
+IHBlb3BsZSwgSSBjYWxsIG15c2VsZiBhDQo+ID4+IGhhY2tlci4gQnV0IHdoZW4gSSdtIHRhbGtp
+bmcgdG8gam91cm5hbGlzdHMgSSBqdXN0IHNheSAicHJvZ3JhbW1lciIgb3INCj4gc29tZXRoaW5n
+IGxpa2UgdGhhdC4NCj4gPj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAtLSBMaW51
+cyBUb3J2YWxkcw0KPiA+DQo+ID4NCj4gPg0KPiA+IFJlbmVzYXMgRWxlY3Ryb25pY3MgRXVyb3Bl
+IEx0ZCwgRHVrZXMgTWVhZG93LCBNaWxsYm9hcmQgUm9hZCwgQm91cm5lIEVuZCwNCj4gQnVja2lu
+Z2hhbXNoaXJlLCBTTDggNUZILCBVSy4gUmVnaXN0ZXJlZCBpbiBFbmdsYW5kICYgV2FsZXMgdW5k
+ZXIgUmVnaXN0ZXJlZA0KPiBOby4gMDQ1ODY3MDkuDQo+ID4NCg0KDQoNClJlbmVzYXMgRWxlY3Ry
+b25pY3MgRXVyb3BlIEx0ZCwgRHVrZXMgTWVhZG93LCBNaWxsYm9hcmQgUm9hZCwgQm91cm5lIEVu
+ZCwgQnVja2luZ2hhbXNoaXJlLCBTTDggNUZILCBVSy4gUmVnaXN0ZXJlZCBpbiBFbmdsYW5kICYg
+V2FsZXMgdW5kZXIgUmVnaXN0ZXJlZCBOby4gMDQ1ODY3MDkuDQo=
