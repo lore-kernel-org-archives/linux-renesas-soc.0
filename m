@@ -1,160 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:51066 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751116AbdJCMlb (ORCPT
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:35972 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754185AbdJINFC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Oct 2017 08:41:31 -0400
-Received: by mail-wm0-f65.google.com with SMTP id u138so16340589wmu.5
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 03 Oct 2017 05:41:30 -0700 (PDT)
+        Mon, 9 Oct 2017 09:05:02 -0400
+Received: by mail-wm0-f67.google.com with SMTP id 131so14374791wmk.3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 09 Oct 2017 06:05:02 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20170830025547.30347-2-nicolas.pitre@linaro.org>
-References: <20170830025547.30347-1-nicolas.pitre@linaro.org> <20170830025547.30347-2-nicolas.pitre@linaro.org>
+In-Reply-To: <1507209837-16938-1-git-send-email-horms+renesas@verge.net.au>
+References: <1507209837-16938-1-git-send-email-horms+renesas@verge.net.au>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 3 Oct 2017 14:41:29 +0200
-Message-ID: <CAMuHMdXnYysiDURyztXv3bhBMyk0o1EN=JzwqwvUifzw5fFYAw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] ARM: head-common.S: speed up startup code
-To: Nicolas Pitre <nicolas.pitre@linaro.org>
-Cc: "linux-arm-kernel@lists.infradead.org"
+Date: Mon, 9 Oct 2017 15:05:00 +0200
+Message-ID: <CAMuHMdW83Wv1d9oKCcHRUh+kSnxxDrgFvfgT=f5t9nq0C8Jq6Q@mail.gmail.com>
+Subject: Re: [PATCH v3 0/6] clk: renesas: r8a779[56]: Add Z and Z2 clock support
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>,
-        Chris Brandt <Chris.Brandt@renesas.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+        Magnus Damm <magnus.damm@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Nicolas,
+Hi Simon,
 
-On Wed, Aug 30, 2017 at 4:55 AM, Nicolas Pitre <nicolas.pitre@linaro.org> wrote:
-> Let's use optimized routines such as memcpy to copy .data and memzero
-> to clear .bss in the startup code instead of doing it one word at a
-> time. Those routines don't use any global data so they're safe to use
-> even if .data and .bss segments are not initialized.
+On Thu, Oct 5, 2017 at 3:23 PM, Simon Horman <horms+renesas@verge.net.au> wrote:
+> this patch-set adds Z and Z2 clock support.
 >
-> In the .data copy case a temporary stack is installed in the .bss area
-> as the actual kernel stack is located within the copied data area. The
-> XIP kernel linker script ensures a 8 byte alignment for that purpose.
+> These are dependencies for supporting CPUFreq. The remainder of that
+> work is being posted separately and can be found at:
 >
-> Finally, make the .data copy and related pointers surrounded by
-> CONFIG_XIP_KERNEL to make it obvious what it is all about. This will
-> allow for further cleanups in the non-XIP linker script.
+> https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/rcar-gen3-cpufreq
 >
-> Signed-off-by: Nicolas Pitre <nico@linaro.org>
-> Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-
-This is now commit 9520b1a1b5f7a348 ("ARM: head-common.S: speed up startup
-code") in arm/for-next.
-
-If CONFIG_DEBUG_LOCK_ALLOC=y, the kernel log is spammed with a few hundred
-identical messages on various Renesas systems:
-
-    unwind: Unknown symbol address c0800300
-    unwind: Index not found c0800300
-
-I've bisected this to the aforementioned commit.
-
-c0800300 points to the instruction just after the __memzero call, cfr. below.
-
-Do you have a clue? Thanks!
-
-> --- a/arch/arm/kernel/head-common.S
-> +++ b/arch/arm/kernel/head-common.S
-> @@ -79,47 +79,59 @@ ENDPROC(__vet_atags)
->   */
->         __INIT
->  __mmap_switched:
-> -       adr     r3, __mmap_switched_data
-> -
-> -       ldmia   r3!, {r4, r5, r6, r7}
-> -       cmp     r4, r5                          @ Copy data segment if needed
-> -1:     cmpne   r5, r6
-> -       ldrne   fp, [r4], #4
-> -       strne   fp, [r5], #4
-> -       bne     1b
-> -
-> -       mov     fp, #0                          @ Clear BSS (and zero fp)
-> -1:     cmp     r6, r7
-> -       strcc   fp, [r6],#4
-> -       bcc     1b
-> -
-> - ARM(  ldmia   r3, {r4, r5, r6, r7, sp})
-> - THUMB(        ldmia   r3, {r4, r5, r6, r7}    )
-> - THUMB(        ldr     sp, [r3, #16]           )
-> -       str     r9, [r4]                        @ Save processor ID
-> -       str     r1, [r5]                        @ Save machine type
-> -       str     r2, [r6]                        @ Save atags pointer
-> -       cmp     r7, #0
-> -       strne   r0, [r7]                        @ Save control register values
-> +
-> +       mov     r7, r1
-> +       mov     r8, r2
-> +       mov     r10, r0
-> +
-> +       adr     r4, __mmap_switched_data
-> +       mov     fp, #0
-> +
-> +#ifdef CONFIG_XIP_KERNEL
-> +   ARM(        ldmia   r4!, {r0, r1, r2, sp} )
-> + THUMB(        ldmia   r4!, {r0, r1, r2, r3} )
-> + THUMB(        mov     sp, r3 )
-> +       sub     r2, r2, r1
-> +       bl      memcpy                          @ copy .data to RAM
-> +#endif
-> +
-> +   ARM(        ldmia   r4!, {r0, r1, sp} )
-> + THUMB(        ldmia   r4!, {r0, r1, r3} )
-> + THUMB(        mov     sp, r3 )
-> +       sub     r1, r1, r0
-> +       bl      __memzero                       @ clear .bss
-> +
-
-c0800300 is the address of the next instruction:
-
-> +       ldmia   r4, {r0, r1, r2, r3}
-> +       str     r9, [r0]                        @ Save processor ID
-> +       str     r7, [r1]                        @ Save machine type
-> +       str     r8, [r2]                        @ Save atags pointer
-> +       cmp     r3, #0
-> +       strne   r10, [r3]                       @ Save control register values
->         b       start_kernel
->  ENDPROC(__mmap_switched)
 >
->         .align  2
->         .type   __mmap_switched_data, %object
->  __mmap_switched_data:
-> -       .long   __data_loc                      @ r4
-> -       .long   _sdata                          @ r5
-> -       .long   __bss_start                     @ r6
-> -       .long   _end                            @ r7
-> -       .long   processor_id                    @ r4
-> -       .long   __machine_arch_type             @ r5
-> -       .long   __atags_pointer                 @ r6
-> +#ifdef CONFIG_XIP_KERNEL
-> +       .long   _sdata                          @ r0
-> +       .long   __data_loc                      @ r1
-> +       .long   _edata_loc                      @ r2
-> +       .long   __bss_stop                      @ sp (temporary stack in .bss)
-> +#endif
-> +
-> +       .long   __bss_start                     @ r0
-> +       .long   __bss_stop                      @ r1
-> +       .long   init_thread_union + THREAD_START_SP @ sp
-> +
-> +       .long   processor_id                    @ r0
-> +       .long   __machine_arch_type             @ r1
-> +       .long   __atags_pointer                 @ r2
->  #ifdef CONFIG_CPU_CP15
-> -       .long   cr_alignment                    @ r7
-> +       .long   cr_alignment                    @ r3
->  #else
-> -       .long   0                               @ r7
-> +       .long   0                               @ r3
->  #endif
-> -       .long   init_thread_union + THREAD_START_SP @ sp
->         .size   __mmap_switched_data, . - __mmap_switched_data
+> A description of steps taken to lightly exercise the same feature for the
+> r88a7795 the above can be found at the link below. The results are the same
+> for the r8a7796 with the exception that it has two active CPU cores rather
+> than four.
 >
+> http://elinux.org/Tests:R-CAR-GEN3-CPUFreq
+
+Thanks for your patches!
+
+I see the following anomalies on Salvator-X (R-Car H3 ES1.0 and M3-W ES1.0)
+and Salvator-XS (R-Car H3 ES2.0):
+
+1. dmesg:
+
+    cpufreq: cpufreq_online: CPU0: Running at unlisted freq: 2999999 KHz
+    cpu cpu0: dev_pm_opp_set_rate: failed to find current OPP for freq
+2999999880 (-34)
+    cpufreq: cpufreq_online: CPU0: Unlisted initial frequency changed
+to: 1500000 KHz
+
+2. Z2 clock frequency:
+
+    grep -wE "(z|z2)" /sys/kernel/debug/clk/clk_summary
+          z2                              0            0  2399999904
+       0 0
+          z                               0            0  1499999940
+       0 0
+
+So Linux is off by a factor of two for the initial Z and Z2 clock frequencies.
+Which means it's probably off by a factor of two all the time, and thus running
+the CA57 CPU cores at 750 MHz instead of 1.5 GHz?
+
+<looking at the PMU cycle counter>
+
+Yes, it's only running at 750 MHz.
 
 Gr{oetje,eeting}s,
 
