@@ -1,81 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41353 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751903AbdJJHZH (ORCPT
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:37683 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751184AbdJIL5F (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Oct 2017 03:25:07 -0400
-Date: Tue, 10 Oct 2017 09:25:02 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 2/2] arm64: dts: r8a7796: Add OPPs table for cpu
- devices
-Message-ID: <20171010072501.GI2518@verge.net.au>
-References: <1507209984-17123-1-git-send-email-horms+renesas@verge.net.au>
- <1507209984-17123-3-git-send-email-horms+renesas@verge.net.au>
- <e2e31fd8-b5f8-40a8-df3d-e7726bb8a8e1@arm.com>
+        Mon, 9 Oct 2017 07:57:05 -0400
+Received: by mail-wm0-f66.google.com with SMTP id r68so8273988wmr.4
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 09 Oct 2017 04:57:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <e2e31fd8-b5f8-40a8-df3d-e7726bb8a8e1@arm.com>
+References: <1507209984-17123-1-git-send-email-horms+renesas@verge.net.au>
+ <1507209984-17123-3-git-send-email-horms+renesas@verge.net.au> <e2e31fd8-b5f8-40a8-df3d-e7726bb8a8e1@arm.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 9 Oct 2017 13:57:03 +0200
+Message-ID: <CAMuHMdVbQMGG92sAnWUDzBisSHEdedoSNLWxokv_BTj4eER64Q@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] arm64: dts: r8a7796: Add OPPs table for cpu devices
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Oct 05, 2017 at 04:04:47PM +0100, Sudeep Holla wrote:
-> 
-> 
+Hi Sudeep,
+
+On Thu, Oct 5, 2017 at 5:04 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
 > On 05/10/17 14:26, Simon Horman wrote:
-> > From: Dien Pham <dien.pham.ry@rvc.renesas.com>
-> > 
-> > Current, OPP tables are defined temporary,
-> > they are being evaluated and adjust in future.
-> > 
-> 
-> I assume these OPPs will continue to work in future but just not optimal.
+>> From: Dien Pham <dien.pham.ry@rvc.renesas.com>
+>>
+>> Current, OPP tables are defined temporary,
+>> they are being evaluated and adjust in future.
 
-Yes, that is my understanding.
-
-> > Based in part on work by Hien Dang.
-> > 
-> > Signed-off-by: Dien Pham <dien.pham.ry@rvc.renesas.com>
-> > Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> > ---
-> > v2 [Simon Horman]
-> > - Only provide one operating points node for each operating-points-v2 node
-> >   as per the binding; other nodes were unused and have been removed
-> > 
-> > v1 [Simon Horman]
-> > - consolidated several patches into one
-> > 
-> > v0 [Dien Pham]
-> > ---
-> >  arch/arm64/boot/dts/renesas/r8a7796.dtsi | 58 ++++++++++++++++++++++++++++++++
-> >  1 file changed, 58 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-> > index 57ac5ca6ed98..2d9edc61437c 100644
-> > --- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-> > +++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-> > @@ -46,6 +46,8 @@
-> >  			power-domains = <&sysc R8A7796_PD_CA57_CPU0>;
-> >  			next-level-cache = <&L2_CA57>;
-> >  			enable-method = "psci";
-> > +			clocks =<&cpg CPG_CORE R8A7796_CLK_Z>;
-> > +			operating-points-v2 = <&cluster0_opp>;
-> >  		};
-> >  
-> >  		a57_1: cpu@1 {
-> > @@ -55,6 +57,7 @@
-> >  			power-domains = <&sysc R8A7796_PD_CA57_CPU1>;
-> >  			next-level-cache = <&L2_CA57>;
-> >  			enable-method = "psci";
-> 
+>> --- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+>> +++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+>> @@ -46,6 +46,8 @@
+>>                       power-domains = <&sysc R8A7796_PD_CA57_CPU0>;
+>>                       next-level-cache = <&L2_CA57>;
+>>                       enable-method = "psci";
+>> +                     clocks =<&cpg CPG_CORE R8A7796_CLK_Z>;
+>> +                     operating-points-v2 = <&cluster0_opp>;
+>>               };
+>>
+>>               a57_1: cpu@1 {
+>> @@ -55,6 +57,7 @@
+>>                       power-domains = <&sysc R8A7796_PD_CA57_CPU1>;
+>>                       next-level-cache = <&L2_CA57>;
+>>                       enable-method = "psci";
+>
 > Just curious why clocks are not specified in secondaries ?
+
+Thanks for noticing, it would indeed be good to describe the clock dependency
+for all CPU cores.
+
 > Does this continue work if I hotplug out CPUs in ascending order and
 > then hotplug back in descending order ? Also the current driver or OS
 > may deal with that but not a good assumption when write DT
 
-Good point. I expect that this is an oversight.
+Yes that works, as Linux doesn't handle CPU hotplug details.
+CPU hotplug is controlled by PSCI, i.e. out of control of the Linux kernel.
+So it doesn't matter at all what is described here ;-)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
