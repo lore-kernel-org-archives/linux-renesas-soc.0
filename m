@@ -1,46 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:46654 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752877AbdJGKhL (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:48088 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750930AbdJIHab (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 7 Oct 2017 06:37:11 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 08/11] mmc: mxcmmc: catch all errors when getting regulators
-Date: Sat,  7 Oct 2017 12:36:55 +0200
-Message-Id: <20171007103658.16868-9-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20171007103658.16868-1-wsa+renesas@sang-engineering.com>
-References: <20171007103658.16868-1-wsa+renesas@sang-engineering.com>
+        Mon, 9 Oct 2017 03:30:31 -0400
+Date: Mon, 9 Oct 2017 09:30:11 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: Re: [PATCH v2 0/2] ARM: dts: iwg20d-q7: New DT architecture
+Message-ID: <20171009073011.GR17360@verge.net.au>
+References: <CAMuHMdW-Y7tK28YAGBRMqdgZK7vVqnUcud1FtzQd6wLrKii_AA@mail.gmail.com>
+ <1507312793-6877-1-git-send-email-fabrizio.castro@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1507312793-6877-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Bail out everytime when mmc_regulator_get_supply() returns an errno, not only
-when probing gets deferred. This is currently a no-op, because this function
-only returns -EPROBE_DEFER or 0 right now. But if it will throw another error
-somewhen, it will be for a reason. (This still doesn't change that getting
-regulators is optional, so 0 can still mean no regulators found). So, let us a)
-be future proof and b) have driver code which is easier to understand.
+On Fri, Oct 06, 2017 at 06:59:51PM +0100, Fabrizio Castro wrote:
+> Some of the serial interfaces are exposed on the camera daughter board.
+> The camera daughter board can be connected to the carrier board
+> by means of expansion connectors 1, 2 and 3. The carrier board may host
+> an RZ/G1M or an RZ/G1N based SoM.
+> While adding support for the serial interfaces on the camera daughter
+> board we faced the dilemma of how to properly describe all of the
+> possible HW configurations and how to maximize code reuse.
+> The best option would be to use device tree overlays, however there is
+> still some work to be done on that front before actually using them,
+> therefore for the time being we decided to provide .dtsi files to
+> describe the carrier board and the camera daughter board, and provide
+> .dts files to describe the HW configurations we need to support.
+> 
+> Best regards,
+> 
+> Fabrizio Castro (2):
+>   ARM: dts: iwg20d-q7: Rework DT architecture
+>   ARM: dts: iwg20d-q7-dbcm-ca: Add device trees for camera DB
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/mmc/host/mxcmmc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/mmc/host/mxcmmc.c b/drivers/mmc/host/mxcmmc.c
-index 328484b96620e8..8bd9f060be2ae0 100644
---- a/drivers/mmc/host/mxcmmc.c
-+++ b/drivers/mmc/host/mxcmmc.c
-@@ -1075,7 +1075,7 @@ static int mxcmci_probe(struct platform_device *pdev)
- 		dat3_card_detect = true;
- 
- 	ret = mmc_regulator_get_supply(mmc);
--	if (ret == -EPROBE_DEFER)
-+	if (ret)
- 		goto out_free;
- 
- 	if (!mmc->ocr_avail) {
--- 
-2.11.0
+Thanks, applied.
