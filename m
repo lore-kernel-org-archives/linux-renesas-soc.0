@@ -1,41 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f174.google.com ([209.85.223.174]:45088 "EHLO
-        mail-io0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752146AbdJJHEA (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:17714 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753964AbdJIKeZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Oct 2017 03:04:00 -0400
-Received: by mail-io0-f174.google.com with SMTP id i38so10703533iod.2
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 10 Oct 2017 00:04:00 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <20171007103658.16868-1-wsa+renesas@sang-engineering.com>
+        Mon, 9 Oct 2017 06:34:25 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
+CC: "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH 00/11] mmc: document mmc_regulator_get_supply and fix
+ users
+Date: Mon, 9 Oct 2017 10:34:20 +0000
+Message-ID: <TY1PR06MB089514378005B338B7FEF16FC0740@TY1PR06MB0895.apcprd06.prod.outlook.com>
 References: <20171007103658.16868-1-wsa+renesas@sang-engineering.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 10 Oct 2017 09:03:59 +0200
-Message-ID: <CAPDyKFoAZri8N79eZMFJeT6bN19XZPCvCD6oBmr5EXCj_KSTVQ@mail.gmail.com>
-Subject: Re: [PATCH 00/11] mmc: document mmc_regulator_get_supply and fix users
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20171007103658.16868-1-wsa+renesas@sang-engineering.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 7 October 2017 at 12:36, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> Fix the drivers and add some docs according to the outcome of this discussion
+Hi Wolfram,
+
+thank you for putting me in CC, and of course I agree with the changes you =
+are
+suggesting. Have you tried running ./scripts/checkpatch.pl?
+
+Thanks,
+Fab
+
+>
+> Fix the drivers and add some docs according to the outcome of this discus=
+sion
 > [1] we had recently. The motivation from the patch description:
 >
-> Bail out everytime when mmc_regulator_get_supply() returns an errno, not only
-> when probing gets deferred. This is currently a no-op, because this function
-> only returns -EPROBE_DEFER or 0 right now. But if it will throw another error
-> somewhen, it will be for a reason. (This still doesn't change that getting
-> regulators is optional, so 0 can still mean no regulators found). So, let us a)
+> Bail out everytime when mmc_regulator_get_supply() returns an errno, not =
+only
+> when probing gets deferred. This is currently a no-op, because this funct=
+ion
+> only returns -EPROBE_DEFER or 0 right now. But if it will throw another e=
+rror
+> somewhen, it will be for a reason. (This still doesn't change that gettin=
+g
+> regulators is optional, so 0 can still mean no regulators found). So, let=
+ us a)
 > be future proof and b) have driver code which is easier to understand.
 >
-> The patches have been created with coccinelle. A branch can be found here:
+> The patches have been created with coccinelle. A branch can be found here=
+:
 >
-> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/mmc-get-supply-docs
+> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/mmc-g=
+et-supply-docs
 >
 > Looking forward to comments!
 >
@@ -72,12 +89,11 @@ On 7 October 2017 at 12:36, Wolfram Sang
 >  11 files changed, 20 insertions(+), 10 deletions(-)
 >
 > --
+> 2.11.0
 
-Looks good to me, however as pointed out by Fabrizio, you could run a
-round of checkpatch (mainly about commit message format).
 
-Or perhaps even coccinelle needs an update to be adopted to
-requirement from checkpatch?
 
-Kind regards
-Uffe
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
