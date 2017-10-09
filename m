@@ -1,23 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:54253 "EHLO pokefinder.org"
+Received: from sauhun.de ([88.99.104.3]:54235 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751779AbdJIIhc (ORCPT
+        id S1751598AbdJIIfZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 Oct 2017 04:37:32 -0400
+        Mon, 9 Oct 2017 04:35:25 -0400
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-gpio@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert@linux-m68k.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2 2/2] pinctrl: sh-pfc: r8a7796: fix trivial typo in comment
-Date: Mon,  9 Oct 2017 10:37:25 +0200
-Message-Id: <20171009083725.6474-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20171009083725.6474-1-wsa+renesas@sang-engineering.com>
-References: <20171009083725.6474-1-wsa+renesas@sang-engineering.com>
+        Wolfram Sang <wsa@the-dreams.de>
+Subject: [PATCH 2/2] pinctrl: sh-pfc: r8a7796: fix trivial typo in comment
+Date: Mon,  9 Oct 2017 10:35:16 +0200
+Message-Id: <20171009083516.6220-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20171009083516.6220-1-wsa+renesas@sang-engineering.com>
+References: <20171009083516.6220-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 ---
  drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
