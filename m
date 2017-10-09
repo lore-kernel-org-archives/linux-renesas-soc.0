@@ -1,46 +1,38 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:46652 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751600AbdJGKhL (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47757 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751588AbdJIHQR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 7 Oct 2017 06:37:11 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 07/11] mmc: mtk-sd: catch all errors when getting regulators
-Date: Sat,  7 Oct 2017 12:36:54 +0200
-Message-Id: <20171007103658.16868-8-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20171007103658.16868-1-wsa+renesas@sang-engineering.com>
-References: <20171007103658.16868-1-wsa+renesas@sang-engineering.com>
+        Mon, 9 Oct 2017 03:16:17 -0400
+Date: Mon, 9 Oct 2017 09:15:43 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v2 17/18] arm64: dts: ulcb-kf: enable PCA9548 on I2C4
+Message-ID: <20171009071541.GC17360@verge.net.au>
+References: <1505398788-4892-1-git-send-email-vladimir.barinov@cogentembedded.com>
+ <CAMuHMdVgOCHe6AXqKbtK0Za5iujYYsP80N7yFGTf2hnUY8GPxg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVgOCHe6AXqKbtK0Za5iujYYsP80N7yFGTf2hnUY8GPxg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Bail out everytime when mmc_regulator_get_supply() returns an errno, not only
-when probing gets deferred. This is currently a no-op, because this function
-only returns -EPROBE_DEFER or 0 right now. But if it will throw another error
-somewhen, it will be for a reason. (This still doesn't change that getting
-regulators is optional, so 0 can still mean no regulators found). So, let us a)
-be future proof and b) have driver code which is easier to understand.
+On Wed, Sep 20, 2017 at 03:28:55PM +0200, Geert Uytterhoeven wrote:
+> On Thu, Sep 14, 2017 at 4:19 PM, Vladimir Barinov
+> <vladimir.barinov@cogentembedded.com> wrote:
+> > This supports PCA9548 I2C switch on I2C4 bus on ULCB Kingfisher board
+> >
+> > Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/mmc/host/mtk-sd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
-index 267f7ab08420eb..7c518a560089ce 100644
---- a/drivers/mmc/host/mtk-sd.c
-+++ b/drivers/mmc/host/mtk-sd.c
-@@ -1641,7 +1641,7 @@ static int msdc_drv_probe(struct platform_device *pdev)
- 	}
- 
- 	ret = mmc_regulator_get_supply(mmc);
--	if (ret == -EPROBE_DEFER)
-+	if (ret)
- 		goto host_free;
- 
- 	host->src_clk = devm_clk_get(&pdev->dev, "source");
--- 
-2.11.0
+Thanks, applied.
