@@ -1,54 +1,38 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] arm: dts: gr-peach: Reduce extal_clk resolution
-Date: Wed,  4 Oct 2017 17:40:57 +0200
-Message-Id: <1507131657-6414-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:47494 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751636AbdJIGyb (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 9 Oct 2017 02:54:31 -0400
+Date: Mon, 9 Oct 2017 08:54:11 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 05/18] arm64: dts: h3ulcb-kf: ES1.x SoC initial device
+ tree
+Message-ID: <20171009065411.GA17360@verge.net.au>
+References: <1505398738-4656-1-git-send-email-vladimir.barinov@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1505398738-4656-1-git-send-email-vladimir.barinov@cogentembedded.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The system clock described by extal_clk is reported to have a frequency
-of 13.333 Mhz and is correctly described by gr-peach device tree.
+On Thu, Sep 14, 2017 at 05:18:58PM +0300, Vladimir Barinov wrote:
+> Add the initial device tree for the H3ULCB ES1.x SoC with Kingfisher
+> extension infotainment board.
+> 
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> ---
+> Changes in version 2:
+> - added own compatible value "shimafuji,kingfisher"
 
-However, when enabling a RIIC device the following error is reported by
-drivers/i2c/busses/i2c-riic.c
-
-"invalid parent clk (33332500). Must be 33325000Hz"
-
-As RIIC devices have a clock source obtained by dividing by 12 the
-system clock, the resulting value is not accepted by the driver
-(which clearly states not to support any frequency except the reported
-33325000Hz one).
-
-Hence, reduce the system clock accuracy to a value which makes
-frequencies obtained through division accepted by RIIC driver.
-
-Please note that other r7s72100 boards, such as Genmai, report the same
-"reduced accuracy" frequency, even if their external clock sources are
-effectively 13.333Mhz as gr-peach one.
-
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- arch/arm/boot/dts/r7s72100-gr-peach.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/r7s72100-gr-peach.dts b/arch/arm/boot/dts/r7s72100-gr-peach.dts
-index a1c5e88..20309ac 100644
---- a/arch/arm/boot/dts/r7s72100-gr-peach.dts
-+++ b/arch/arm/boot/dts/r7s72100-gr-peach.dts
-@@ -71,7 +71,7 @@
- };
-
- &extal_clk {
--	clock-frequency = <13333000>;
-+	clock-frequency = <13330000>;
- };
-
- &usb_x1_clk {
---
-2.7.4
+Thanks, I have applied. There was some fuzz when doing so.
+Please check that what I have applied is correct when I push
+the next branch pf the renesas tree later today.
