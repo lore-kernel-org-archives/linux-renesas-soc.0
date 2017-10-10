@@ -1,76 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:39254 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932784AbdJQGKR (ORCPT
+Received: from mail-it0-f51.google.com ([209.85.214.51]:45715 "EHLO
+        mail-it0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755513AbdJJHdf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Oct 2017 02:10:17 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 07/11] ARM: dts: r8a7790: Use R-Car SDHI Gen2 fallback compat string
-Date: Tue, 17 Oct 2017 08:09:55 +0200
-Message-Id: <20171017060959.16702-8-horms+renesas@verge.net.au>
-In-Reply-To: <20171017060959.16702-1-horms+renesas@verge.net.au>
-References: <20171017060959.16702-1-horms+renesas@verge.net.au>
+        Tue, 10 Oct 2017 03:33:35 -0400
+Received: by mail-it0-f51.google.com with SMTP id n195so860242itg.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 10 Oct 2017 00:33:35 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <20171008145009.17550-1-wsa+renesas@sang-engineering.com>
+References: <20171008145009.17550-1-wsa+renesas@sang-engineering.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 10 Oct 2017 09:33:34 +0200
+Message-ID: <CAPDyKFoT=La2LHhT6SvjZ=FtLYEYbisJ2RZD0REmhpO3MK8WVQ@mail.gmail.com>
+Subject: Re: [RFC PATCH] mmc: sunxi: drop superfluous error message
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use newly added R-Car SDHI Gen2 fallback compat string
-in the DT of the r8a7790 SoC.
+On 8 October 2017 at 16:50, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> This error message can go because a) currently nothing else than
+> EPROBE_DEFER is returned and b) if this is going to change a much more
+> detailed error message should come from mmc_regulator_get_supply()
+> anyhow.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-This should have no run-time effect as the driver matches against
-the per-SoC compat string before considering the fallback compat string.
+Thanks, applied for next!
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7790.dtsi | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+Kind regards
+Uffe
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 2f017fee4009..ef4e144a01a1 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -662,7 +662,8 @@
- 	};
- 
- 	sdhi0: sd@ee100000 {
--		compatible = "renesas,sdhi-r8a7790";
-+		compatible = "renesas,sdhi-r8a7790",
-+			     "renesas,rcar-gen2-sdhi";
- 		reg = <0 0xee100000 0 0x328>;
- 		interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 314>;
-@@ -676,7 +677,8 @@
- 	};
- 
- 	sdhi1: sd@ee120000 {
--		compatible = "renesas,sdhi-r8a7790";
-+		compatible = "renesas,sdhi-r8a7790",
-+			     "renesas,rcar-gen2-sdhi";
- 		reg = <0 0xee120000 0 0x328>;
- 		interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 313>;
-@@ -690,7 +692,8 @@
- 	};
- 
- 	sdhi2: sd@ee140000 {
--		compatible = "renesas,sdhi-r8a7790";
-+		compatible = "renesas,sdhi-r8a7790",
-+			     "renesas,rcar-gen2-sdhi";
- 		reg = <0 0xee140000 0 0x100>;
- 		interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 312>;
-@@ -704,7 +707,8 @@
- 	};
- 
- 	sdhi3: sd@ee160000 {
--		compatible = "renesas,sdhi-r8a7790";
-+		compatible = "renesas,sdhi-r8a7790",
-+			     "renesas,rcar-gen2-sdhi";
- 		reg = <0 0xee160000 0 0x100>;
- 		interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 311>;
--- 
-2.11.0
+> ---
+>
+> While I think this patch is correct as is (because of this discussion [1]), I
+> still wonder about the intention of the now removed message. Because a not
+> supplied vmmc is not determined by the return value of *_get_supply(), but by a
+> check if mmc->supply.vmmc is populated afterwards. So, if this was the original
+> intention such a check would need to be implemented on top of this patch.
+>
+> [1] https://patchwork.kernel.org/patch/9965823/
+>
+>  drivers/mmc/host/sunxi-mmc.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
+>
+> diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc.c
+> index 53c970fe087397..cc98355dbdb9cc 100644
+> --- a/drivers/mmc/host/sunxi-mmc.c
+> +++ b/drivers/mmc/host/sunxi-mmc.c
+> @@ -1175,11 +1175,8 @@ static int sunxi_mmc_resource_request(struct sunxi_mmc_host *host,
+>                 return -EINVAL;
+>
+>         ret = mmc_regulator_get_supply(host->mmc);
+> -       if (ret) {
+> -               if (ret != -EPROBE_DEFER)
+> -                       dev_err(&pdev->dev, "Could not get vmmc supply\n");
+> +       if (ret)
+>                 return ret;
+> -       }
+>
+>         host->reg_base = devm_ioremap_resource(&pdev->dev,
+>                               platform_get_resource(pdev, IORESOURCE_MEM, 0));
+> --
+> 2.11.0
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
