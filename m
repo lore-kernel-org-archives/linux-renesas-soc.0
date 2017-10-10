@@ -1,48 +1,34 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:59870 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750735AbdJCFBE (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Oct 2017 01:01:04 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 2/3] arm64: dts: renesas: ulcb: drop "avb_phy_int" from avb_pins
-Date: Tue,  3 Oct 2017 13:57:12 +0900
-Message-Id: <1507006633-28258-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1507006633-28258-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1507006633-28258-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Tue, 10 Oct 2017 14:02:40 -0500
+From: Rob Herring <robh@kernel.org>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: balbi@kernel.org, mark.rutland@arm.com, gregkh@linuxfoundation.org,
+        linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/2] usb: renesas_usbhs: add support for R-Car D3
+Message-ID: <20171010190240.jrjzlfaiebhron6r@rob-hp-laptop>
+References: <1507028954-15738-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1507028954-15738-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1507028954-15738-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Since the Ethernet AVB driver doesn't support AVB_PHY_INT handling
-and it will be handled by a phy driver as a gpio pin, this patch
-removes the "avb_phy_int" from the avb_pins node.
+On Tue, Oct 03, 2017 at 08:09:14PM +0900, Yoshihiro Shimoda wrote:
+> This patch adds support for R-Car D3. This SoC needs to release
+> the PLL reset by the UGCTRL register. So, since this is not the same
+> as other R-Car Gen3 SoCs, this patch adds a new type as
+> "USBHS_TYPE_RCAR_GEN3_WITH_PLL".
+> 
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> ---
+>  .../devicetree/bindings/usb/renesas_usbhs.txt      |  1 +
+>  drivers/usb/renesas_usbhs/common.c                 | 10 ++++-
+>  drivers/usb/renesas_usbhs/rcar3.c                  | 48 ++++++++++++++++++++++
+>  drivers/usb/renesas_usbhs/rcar3.h                  |  1 +
+>  include/linux/usb/renesas_usbhs.h                  |  5 ++-
+>  5 files changed, 62 insertions(+), 3 deletions(-)
 
-Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Fixes: 133ace3f3804 ("arm64: dts: ulcb: Set drive-strength for ravb pins")
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- arch/arm64/boot/dts/renesas/ulcb.dtsi | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-index dfec907..1a5f15a 100644
---- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
-+++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-@@ -254,8 +254,7 @@
- 
- 	avb_pins: avb {
- 		mux {
--			groups = "avb_link", "avb_phy_int", "avb_mdc",
--				 "avb_mii";
-+			groups = "avb_link", "avb_mdc", "avb_mii";
- 			function = "avb";
- 		};
- 
--- 
-1.9.1
+Acked-by: Rob Herring <robh@kernel.org>
