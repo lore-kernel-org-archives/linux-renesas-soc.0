@@ -1,62 +1,215 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Wed, 18 Oct 2017 12:02:38 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Marek Vasut <marek.vasut+renesas@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
-        Simon Horman <horms@verge.net.au>,
+        Mark Brown <broonie@kernel.org>
+Cc: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Lee Jones <lee.jones@linaro.org>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH/RFC 4/5] regulator: bd9571mwv: Add support for backup mode
-Message-ID: <20171018110238.hjv7huiievhr5obs@sirena.co.uk>
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC 4/5] regulator: bd9571mwv: Add support for backup mode
+Date: Tue, 10 Oct 2017 17:26:17 +0200
+Message-Id: <1507649178-31473-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1507649178-31473-1-git-send-email-geert+renesas@glider.be>
 References: <1507649178-31473-1-git-send-email-geert+renesas@glider.be>
- <1507649178-31473-5-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="zapjcrzcces6oi4c"
-Content-Disposition: inline
-In-Reply-To: <1507649178-31473-5-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+The BD9571MWV PMIC supports backup mode, which keeps one or more DDR
+rails powered while the main SoC is powered down.
 
---zapjcrzcces6oi4c
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Which DDR rails are to be kept powered is board-specific, and controlled
+using the optional "rohm,ddr-backup-power" DT property.  In the absence
+of this property, backup mode is not available.
 
-On Tue, Oct 10, 2017 at 05:26:17PM +0200, Geert Uytterhoeven wrote:
+Backup mode is not enabled automatically, as e.g. on Renesas
+Salvator-X(S) boards enabling backup mode changes the role of the ACC
+switch from a power switch to a wake-up switch.  Hence enabling it
+prevents the board from being powered off using the ACC switch, which
+may confuse the user.
 
-> Backup mode is not enabled automatically, as e.g. on Renesas
-> Salvator-X(S) boards enabling backup mode changes the role of the ACC
-> switch from a power switch to a wake-up switch.  Hence enabling it
-> prevents the board from being powered off using the ACC switch, which
-> may confuse the user.
+Backup mode can be enabled or disabled by the user using the
+"backup_mode" sysfs file, e.g.
 
-This sounds an awful lot like the standard power/wakeup, though the
-power change is a bit unexpected there.  I'm also wondering if it makes
-sense to just only enable the wakeup mode when suspending which
-preserves the power off functionality while also keeping the wakeup
-support.
+    echo on > /sys/devices/platform/soc/e60b0000.i2c/i2c-7/7-0030/bd9571mwv-regulator.3.auto/backup_mode
 
---zapjcrzcces6oi4c
-Content-Type: application/pgp-signature; name="signature.asc"
+If enabled by the boot loader, initial backup mode state is retained.
+As state is lost by PSCI system suspend, it is restored during system
+resume.
 
------BEGIN PGP SIGNATURE-----
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+What's the right place to document regulator sysfs files?
+---
+ drivers/regulator/bd9571mwv-regulator.c | 121 +++++++++++++++++++++++++++++++-
+ 1 file changed, 119 insertions(+), 2 deletions(-)
 
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlnnNM0ACgkQJNaLcl1U
-h9DF1gf/Y+ciNkMOKMiwWYRyVf3P/Uud6ZaqmTpZ9HSnGSxCClelttJ83ycD5apN
-qKCt8WT9yn08Sko5sKLjVIWe9vRR/iRyKQQ4nl2XgEiNLdmIVJxVc2gH79BirhsT
-nf23fFI9D9nLTroAjLDFH6FV9uZKHYqwQIWjQzrkmBF+OVXuDg/LnBPmLdyYNxcn
-QKw9VFFcOLmiEBvyL6fV6HPaHDd9QK01fzcTWfqeT88dxJM5Xf6dHbfXgGe+QagP
-u3lgtYW711xrIqMbLVsz5Fc7o1w1aiDa61u/+genCPGo9PJEk3LbQCNEhbUNNEnf
-Hn9WeU6Hlg5609xD/TX9qXsEftTMlA==
-=1+yz
------END PGP SIGNATURE-----
+diff --git a/drivers/regulator/bd9571mwv-regulator.c b/drivers/regulator/bd9571mwv-regulator.c
+index c67a83d53c4cb76b..c7ff67938c3eb48a 100644
+--- a/drivers/regulator/bd9571mwv-regulator.c
++++ b/drivers/regulator/bd9571mwv-regulator.c
+@@ -24,6 +24,14 @@
+ 
+ #include <linux/mfd/bd9571mwv.h>
+ 
++struct bd9571mwv_reg {
++	struct bd9571mwv *bd;
++
++	/* DDR Backup Power */
++	u8 bkup_mode_cnt_keepon;	/* from "rohm,ddr-backup-power" */
++	u8 bkup_mode_cnt_shadow;
++};
++
+ enum bd9571mwv_regulators { VD09, VD18, VD25, VD33, DVFS };
+ 
+ #define BD9571MWV_REG(_name, _of, _id, _ops, _vr, _vm, _nv, _min, _step, _lmin)\
+@@ -131,14 +139,99 @@ static struct regulator_desc regulators[] = {
+ 		      0x80, 600000, 10000, 0x3c),
+ };
+ 
++static int bd9571mwv_bkup_mode_set(struct bd9571mwv_reg *bdreg, u8 mode)
++{
++	int ret;
++
++	ret = regmap_write(bdreg->bd->regmap, BD9571MWV_BKUP_MODE_CNT, mode);
++	if (ret) {
++		dev_err(bdreg->bd->dev,
++			"Failed to configure backup mode 0x%x (ret=%i)\n",
++			mode, ret);
++		return ret;
++	}
++
++	bdreg->bkup_mode_cnt_shadow = mode;
++	return 0;
++}
++
++static ssize_t backup_mode_show(struct device *dev,
++				struct device_attribute *attr, char *buf)
++{
++	struct bd9571mwv_reg *bdreg = dev_get_drvdata(dev);
++	int enabled = bdreg->bkup_mode_cnt_shadow &
++		      BD9571MWV_BKUP_MODE_CNT_KEEPON_MASK;
++
++	return sprintf(buf, "%s\n", enabled ? "on" : "off");
++}
++
++static ssize_t backup_mode_store(struct device *dev,
++				  struct device_attribute *attr,
++				  const char *buf,
++				  size_t count)
++{
++	struct bd9571mwv_reg *bdreg = dev_get_drvdata(dev);
++	bool enable;
++	ssize_t ret;
++	u8 mode;
++
++	if (!count)
++		return 0;
++
++	ret = kstrtobool(buf, &enable);
++	if (ret)
++		return ret;
++
++	mode = bdreg->bkup_mode_cnt_shadow &
++	       ~BD9571MWV_BKUP_MODE_CNT_KEEPON_MASK;
++	if (enable)
++		mode |= bdreg->bkup_mode_cnt_keepon;
++
++	if (mode == bdreg->bkup_mode_cnt_shadow)
++		return count;
++
++	ret = bd9571mwv_bkup_mode_set(bdreg, mode);
++	if (ret)
++		return ret;
++
++	return count;
++}
++
++DEVICE_ATTR_RW(backup_mode);
++
++#ifdef CONFIG_PM_SLEEP
++static int bd9571mwv_resume(struct device *dev)
++{
++	struct bd9571mwv_reg *bdreg = dev_get_drvdata(dev);
++
++	return bd9571mwv_bkup_mode_set(bdreg, bdreg->bkup_mode_cnt_shadow);
++}
++
++static const struct dev_pm_ops bd9571mwv_pm  = {
++	SET_SYSTEM_SLEEP_PM_OPS(NULL, bd9571mwv_resume)
++};
++
++#define DEV_PM_OPS	&bd9571mwv_pm
++#else
++#define DEV_PM_OPS	NULL
++#endif /* CONFIG_PM_SLEEP */
++
+ static int bd9571mwv_regulator_probe(struct platform_device *pdev)
+ {
+ 	struct bd9571mwv *bd = dev_get_drvdata(pdev->dev.parent);
+ 	struct regulator_config config = { };
++	struct bd9571mwv_reg *bdreg;
+ 	struct regulator_dev *rdev;
+-	int i;
++	unsigned int val;
++	int i, ret;
++
++	bdreg = devm_kzalloc(&pdev->dev, sizeof(*bdreg), GFP_KERNEL);
++	if (!bdreg)
++		return -ENOMEM;
++
++	bdreg->bd = bd;
+ 
+-	platform_set_drvdata(pdev, bd);
++	platform_set_drvdata(pdev, bdreg);
+ 
+ 	config.dev = &pdev->dev;
+ 	config.dev->of_node = bd->dev->of_node;
+@@ -155,6 +248,28 @@ static int bd9571mwv_regulator_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
++	val = 0;
++	of_property_read_u32(bd->dev->of_node, "rohm,ddr-backup-power", &val);
++	if (val & ~BD9571MWV_BKUP_MODE_CNT_KEEPON_MASK) {
++		dev_err(bd->dev, "invalid %s mode %u\n",
++			"rohm,ddr-backup-power", val);
++		return -EINVAL;
++	}
++	bdreg->bkup_mode_cnt_keepon = val;
++
++	ret = regmap_read(bd->regmap, BD9571MWV_BKUP_MODE_CNT, &val);
++	if (ret) {
++		dev_err(bd->dev, "Failed to read backup mode (ret=%i)\n", ret);
++		return ret;
++	}
++	bdreg->bkup_mode_cnt_shadow = val;
++
++	return device_create_file(&pdev->dev, &dev_attr_backup_mode);
++}
++
++static int bd9571mwv_regulator_remove(struct platform_device *pdev)
++{
++	device_remove_file(&pdev->dev, &dev_attr_backup_mode);
+ 	return 0;
+ }
+ 
+@@ -167,8 +282,10 @@ MODULE_DEVICE_TABLE(platform, bd9571mwv_regulator_id_table);
+ static struct platform_driver bd9571mwv_regulator_driver = {
+ 	.driver = {
+ 		.name = "bd9571mwv-regulator",
++		.pm = DEV_PM_OPS,
+ 	},
+ 	.probe = bd9571mwv_regulator_probe,
++	.remove = bd9571mwv_regulator_remove,
+ 	.id_table = bd9571mwv_regulator_id_table,
+ };
+ module_platform_driver(bd9571mwv_regulator_driver);
+-- 
+2.7.4
 
---zapjcrzcces6oi4c--
