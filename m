@@ -1,97 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:54150 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753231AbdJMLG3 (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:11790 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754894AbdJJJpa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Oct 2017 07:06:29 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 01/10] ARM: dts: r8a7778: Use R-Car GPIO Gen1 fallback compat string
-Date: Fri, 13 Oct 2017 13:05:51 +0200
-Message-Id: <20171013110600.6858-2-horms+renesas@verge.net.au>
-In-Reply-To: <20171013110600.6858-1-horms+renesas@verge.net.au>
-References: <20171013110600.6858-1-horms+renesas@verge.net.au>
+        Tue, 10 Oct 2017 05:45:30 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v5 0/4] phy: rcar-gen3-usb2: add support for r8a77995
+Date: Tue, 10 Oct 2017 18:41:26 +0900
+Message-Id: <1507628490-7944-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use newly added R-Car GPIO Gen1 fallback compat string
-in place of now deprecated non-generation specific
-R-Car GPIO fallback compat string in DT of r8a7778 SoC.
+This patch set is based on the latest phy.git / next branch
+(the commit id = 415060b21f318e009d865b4bcbf8f220ebc36964)
 
-As the driver does not match on "renesas,gpio-r8a7778" there
-are some run-time considerations for this patch:
+After this patch set is applied, a usb 2.0 host node that is combined
+with usb 2.0 peripheral needs 'dr_mode = "otg";' property.
 
-* When a resulting DTB is used with kernels newer than v4.14 this should
-  not have any run-time effect as renesas,rcar-gen2-gpio is matched by the
-  driver since commit dbd1dad2ab8f ("gpio: rcar: add gen[123] fallback
-  compatibility strings")
+Changes from v4:
+ - Remove the role_show() modification in patch 2.
+ - Remove a new function rcar_gen3_otg_change_role() in patch 2 because adding
+   this will be complecated patch code and this is unnecessary for now.
+ - Add a new function rcar_gen3_get_phy_mode() to get current phy mode
+   for comparing the new mode into a line in patch 2.
+ - Rebase patch 3.
 
-* However, when used with older kernels GPIO will be disabled as
-  no compat string match will be made by the driver.
+Changes from v3:
+ - Use enum phy_mode in patch 2.
+ - Remove "can_role_swap" parameter and revise the commit log in patch 2
+   because a case of "can_role_swap = true" and "has_otg = false" is
+   not supported for role swap at the moment.
+ - Changes the name of "has_otg" to "has_otg_pins" in patch 3.
+ - Use of_device_get_match_data() instead of of_match_device()
+ - Add "Reviewed-by:" into patch No.1, 2 and 4. (Simon-san, Thanks!)
+  - Since patch No.3 is changed in big at v4, I dropped his "Reviewed-by".
 
-The regression documented above for the new DTB with old kernel case
-is acceptable in my opinion.
+Changes from v2:
+ - Revise the commit log ("SoCs" is not third-person singular present).
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
-v2
-* Note run-time considerations in changelog as pointed out by
-  Geert Uytterhoeven
----
- arch/arm/boot/dts/r8a7778.dtsi | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+Changes from v1:
+ - Revise typo "wronly" to "wrongly".
+ - Remove RCAR_GEN3_PHY_HAS_DEDICATED_PINS from generic gen3 entry in
+   patch 3/4
+ - Remove the driver change from patch 4/4.
+ - Revise the commit log of patch 4/4.
 
-diff --git a/arch/arm/boot/dts/r8a7778.dtsi b/arch/arm/boot/dts/r8a7778.dtsi
-index 8f3156c0e575..b3975e4c75dd 100644
---- a/arch/arm/boot/dts/r8a7778.dtsi
-+++ b/arch/arm/boot/dts/r8a7778.dtsi
-@@ -88,7 +88,7 @@
- 	};
- 
- 	gpio0: gpio@ffc40000 {
--		compatible = "renesas,gpio-r8a7778", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7778", "renesas,rcar-gen2-gpio";
- 		reg = <0xffc40000 0x2c>;
- 		interrupts = <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -99,7 +99,7 @@
- 	};
- 
- 	gpio1: gpio@ffc41000 {
--		compatible = "renesas,gpio-r8a7778", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7778", "renesas,rcar-gen1-gpio";
- 		reg = <0xffc41000 0x2c>;
- 		interrupts = <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -110,7 +110,7 @@
- 	};
- 
- 	gpio2: gpio@ffc42000 {
--		compatible = "renesas,gpio-r8a7778", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7778", "renesas,rcar-gen1-gpio";
- 		reg = <0xffc42000 0x2c>;
- 		interrupts = <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -121,7 +121,7 @@
- 	};
- 
- 	gpio3: gpio@ffc43000 {
--		compatible = "renesas,gpio-r8a7778", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7778", "renesas,rcar-gen1-gpio";
- 		reg = <0xffc43000 0x2c>;
- 		interrupts = <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -132,7 +132,7 @@
- 	};
- 
- 	gpio4: gpio@ffc44000 {
--		compatible = "renesas,gpio-r8a7778", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7778", "renesas,rcar-gen1-gpio";
- 		reg = <0xffc44000 0x2c>;
- 		interrupts = <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
+Yoshihiro Shimoda (4):
+  phy: rcar-gen3-usb2: check dr_mode for otg mode
+  phy: rcar-gen3-usb2: use enum phy_mode in the role_store()
+  phy: rcar-gen3-usb2: add SoC-specific parameter for dedicated pins
+  phy: rcar-gen3-usb2: add binding for r8a77995
+
+ .../devicetree/bindings/phy/rcar-gen3-phy-usb2.txt |  2 +
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c           | 70 ++++++++++++++--------
+ 2 files changed, 48 insertions(+), 24 deletions(-)
+
 -- 
-2.11.0
+1.9.1
