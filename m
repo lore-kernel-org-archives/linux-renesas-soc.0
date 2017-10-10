@@ -1,17 +1,17 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:11790 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754894AbdJJJpa (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:51376 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751853AbdJJGCf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Oct 2017 05:45:30 -0400
+        Tue, 10 Oct 2017 02:02:35 -0400
 From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To: kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com
 Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v5 0/4] phy: rcar-gen3-usb2: add support for r8a77995
-Date: Tue, 10 Oct 2017 18:41:26 +0900
-Message-Id: <1507628490-7944-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v4 0/4] phy: rcar-gen3-usb2: add support for r8a77995
+Date: Tue, 10 Oct 2017 14:58:26 +0900
+Message-Id: <1507615110-26206-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -22,14 +22,6 @@ This patch set is based on the latest phy.git / next branch
 
 After this patch set is applied, a usb 2.0 host node that is combined
 with usb 2.0 peripheral needs 'dr_mode = "otg";' property.
-
-Changes from v4:
- - Remove the role_show() modification in patch 2.
- - Remove a new function rcar_gen3_otg_change_role() in patch 2 because adding
-   this will be complecated patch code and this is unnecessary for now.
- - Add a new function rcar_gen3_get_phy_mode() to get current phy mode
-   for comparing the new mode into a line in patch 2.
- - Rebase patch 3.
 
 Changes from v3:
  - Use enum phy_mode in patch 2.
@@ -51,15 +43,16 @@ Changes from v1:
  - Remove the driver change from patch 4/4.
  - Revise the commit log of patch 4/4.
 
+
 Yoshihiro Shimoda (4):
   phy: rcar-gen3-usb2: check dr_mode for otg mode
-  phy: rcar-gen3-usb2: use enum phy_mode in the role_store()
+  phy: rcar-gen3-usb2: cleanup the role_{store,show}()
   phy: rcar-gen3-usb2: add SoC-specific parameter for dedicated pins
   phy: rcar-gen3-usb2: add binding for r8a77995
 
  .../devicetree/bindings/phy/rcar-gen3-phy-usb2.txt |  2 +
- drivers/phy/renesas/phy-rcar-gen3-usb2.c           | 70 ++++++++++++++--------
- 2 files changed, 48 insertions(+), 24 deletions(-)
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c           | 95 +++++++++++++++-------
+ 2 files changed, 68 insertions(+), 29 deletions(-)
 
 -- 
 1.9.1
