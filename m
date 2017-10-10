@@ -1,60 +1,136 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:46500 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751947AbdJDMZI (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Oct 2017 08:25:08 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Mathias Nyman <mathias.nyman@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] usb: host: xhci-plat: Use of_device_get_match_data() helper
-Date: Wed,  4 Oct 2017 14:25:03 +0200
-Message-Id: <1507119903-13148-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Subject: [PATCH v5 3/4] phy: rcar-gen3-usb2: add SoC-specific parameter for dedicated pins
+Date: Tue, 10 Oct 2017 18:41:29 +0900
+Message-Id: <1507628490-7944-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1507628490-7944-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1507628490-7944-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use the of_device_get_match_data() helper instead of open coding.
+This patch adds SoC-specific parameter to avoid reading/writing
+specific registers wrongly if this driver runs on a SoC which doesn't
+have dedicated pins (e.g. R-Car D3). This patch also changes the
+value "has_otg" to "has_otg_pins" for slightly easier reading of
+the code.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/usb/host/xhci-plat.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c | 31 +++++++++++++++++++++----------
+ 1 file changed, 21 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
-index 163bafde709f79bf..a1b42348e0c8c6c8 100644
---- a/drivers/usb/host/xhci-plat.c
-+++ b/drivers/usb/host/xhci-plat.c
-@@ -16,6 +16,7 @@
+diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+index 7314b49..eb9786e 100644
+--- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
++++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+@@ -18,6 +18,7 @@
  #include <linux/module.h>
- #include <linux/pci.h>
  #include <linux/of.h>
+ #include <linux/of_address.h>
 +#include <linux/of_device.h>
+ #include <linux/phy/phy.h>
  #include <linux/platform_device.h>
- #include <linux/usb/phy.h>
- #include <linux/slab.h>
-@@ -152,7 +153,7 @@ MODULE_DEVICE_TABLE(of, usb_xhci_of_match);
+ #include <linux/pm_runtime.h>
+@@ -80,6 +81,8 @@
+ #define USB2_ADPCTRL_IDPULLUP		BIT(5)	/* 1 = ID sampling is enabled */
+ #define USB2_ADPCTRL_DRVVBUS		BIT(4)
  
- static int xhci_plat_probe(struct platform_device *pdev)
++#define RCAR_GEN3_PHY_HAS_DEDICATED_PINS	1
++
+ struct rcar_gen3_chan {
+ 	void __iomem *base;
+ 	struct extcon_dev *extcon;
+@@ -87,7 +90,7 @@ struct rcar_gen3_chan {
+ 	struct regulator *vbus;
+ 	struct work_struct work;
+ 	bool extcon_host;
+-	bool has_otg;
++	bool has_otg_pins;
+ };
+ 
+ static void rcar_gen3_phy_usb2_work(struct work_struct *work)
+@@ -234,7 +237,7 @@ static ssize_t role_store(struct device *dev, struct device_attribute *attr,
+ 	bool is_b_device;
+ 	enum phy_mode cur_mode, new_mode;
+ 
+-	if (!ch->has_otg || !ch->phy->init_count)
++	if (!ch->has_otg_pins || !ch->phy->init_count)
+ 		return -EIO;
+ 
+ 	if (!strncmp(buf, "host", strlen("host")))
+@@ -272,7 +275,7 @@ static ssize_t role_show(struct device *dev, struct device_attribute *attr,
  {
--	const struct of_device_id *match;
-+	const struct xhci_plat_priv *priv_match;
- 	const struct hc_driver	*driver;
- 	struct device		*sysdev;
- 	struct xhci_hcd		*xhci;
-@@ -238,9 +239,8 @@ static int xhci_plat_probe(struct platform_device *pdev)
- 	}
+ 	struct rcar_gen3_chan *ch = dev_get_drvdata(dev);
  
- 	xhci = hcd_to_xhci(hcd);
--	match = of_match_node(usb_xhci_of_match, pdev->dev.of_node);
--	if (match) {
--		const struct xhci_plat_priv *priv_match = match->data;
-+	priv_match = of_device_get_match_data(&pdev->dev);
-+	if (priv_match) {
- 		struct xhci_plat_priv *priv = hcd_to_xhci_priv(hcd);
+-	if (!ch->has_otg || !ch->phy->init_count)
++	if (!ch->has_otg_pins || !ch->phy->init_count)
+ 		return -EIO;
  
- 		/* Just copy data for now */
+ 	return sprintf(buf, "%s\n", rcar_gen3_is_host(ch) ? "host" :
+@@ -311,7 +314,7 @@ static int rcar_gen3_phy_usb2_init(struct phy *p)
+ 	writel(USB2_OC_TIMSET_INIT, usb2_base + USB2_OC_TIMSET);
+ 
+ 	/* Initialize otg part */
+-	if (channel->has_otg)
++	if (channel->has_otg_pins)
+ 		rcar_gen3_init_otg(channel);
+ 
+ 	return 0;
+@@ -385,9 +388,17 @@ static irqreturn_t rcar_gen3_phy_usb2_irq(int irq, void *_ch)
+ }
+ 
+ static const struct of_device_id rcar_gen3_phy_usb2_match_table[] = {
+-	{ .compatible = "renesas,usb2-phy-r8a7795" },
+-	{ .compatible = "renesas,usb2-phy-r8a7796" },
+-	{ .compatible = "renesas,rcar-gen3-usb2-phy" },
++	{
++		.compatible = "renesas,usb2-phy-r8a7795",
++		.data = (void *)RCAR_GEN3_PHY_HAS_DEDICATED_PINS,
++	},
++	{
++		.compatible = "renesas,usb2-phy-r8a7796",
++		.data = (void *)RCAR_GEN3_PHY_HAS_DEDICATED_PINS,
++	},
++	{
++		.compatible = "renesas,rcar-gen3-usb2-phy",
++	},
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, rcar_gen3_phy_usb2_match_table);
+@@ -433,7 +444,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
+ 	if (of_usb_get_dr_mode_by_phy(dev->of_node, 0) == USB_DR_MODE_OTG) {
+ 		int ret;
+ 
+-		channel->has_otg = true;
++		channel->has_otg_pins = (uintptr_t)of_device_get_match_data(dev);
+ 		channel->extcon = devm_extcon_dev_allocate(dev,
+ 							rcar_gen3_phy_cable);
+ 		if (IS_ERR(channel->extcon))
+@@ -475,7 +486,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
+ 		dev_err(dev, "Failed to register PHY provider\n");
+ 		ret = PTR_ERR(provider);
+ 		goto error;
+-	} else if (channel->has_otg) {
++	} else if (channel->has_otg_pins) {
+ 		int ret;
+ 
+ 		ret = device_create_file(dev, &dev_attr_role);
+@@ -495,7 +506,7 @@ static int rcar_gen3_phy_usb2_remove(struct platform_device *pdev)
+ {
+ 	struct rcar_gen3_chan *channel = platform_get_drvdata(pdev);
+ 
+-	if (channel->has_otg)
++	if (channel->has_otg_pins)
+ 		device_remove_file(&pdev->dev, &dev_attr_role);
+ 
+ 	pm_runtime_disable(&pdev->dev);
 -- 
-2.7.4
+1.9.1
