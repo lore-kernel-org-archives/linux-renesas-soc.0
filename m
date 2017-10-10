@@ -1,62 +1,83 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:44270 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751660AbdJNTP1 (ORCPT
+Received: from mail-io0-f174.google.com ([209.85.223.174]:45088 "EHLO
+        mail-io0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752146AbdJJHEA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 14 Oct 2017 15:15:27 -0400
-Date: Sat, 14 Oct 2017 21:15:24 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Tue, 10 Oct 2017 03:04:00 -0400
+Received: by mail-io0-f174.google.com with SMTP id i38so10703533iod.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 10 Oct 2017 00:04:00 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <20171007103658.16868-1-wsa+renesas@sang-engineering.com>
+References: <20171007103658.16868-1-wsa+renesas@sang-engineering.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 10 Oct 2017 09:03:59 +0200
+Message-ID: <CAPDyKFoAZri8N79eZMFJeT6bN19XZPCvCD6oBmr5EXCj_KSTVQ@mail.gmail.com>
+Subject: Re: [PATCH 00/11] mmc: document mmc_regulator_get_supply and fix users
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: Re: [PATCH 00/11] mmc: document mmc_regulator_get_supply and fix
- users
-Message-ID: <20171014191524.uwvtueyctyozzjzx@ninjato>
-References: <20171007103658.16868-1-wsa+renesas@sang-engineering.com>
- <CAPDyKFoAZri8N79eZMFJeT6bN19XZPCvCD6oBmr5EXCj_KSTVQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="25h4426ancotwraq"
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFoAZri8N79eZMFJeT6bN19XZPCvCD6oBmr5EXCj_KSTVQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On 7 October 2017 at 12:36, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> Fix the drivers and add some docs according to the outcome of this discussion
+> [1] we had recently. The motivation from the patch description:
+>
+> Bail out everytime when mmc_regulator_get_supply() returns an errno, not only
+> when probing gets deferred. This is currently a no-op, because this function
+> only returns -EPROBE_DEFER or 0 right now. But if it will throw another error
+> somewhen, it will be for a reason. (This still doesn't change that getting
+> regulators is optional, so 0 can still mean no regulators found). So, let us a)
+> be future proof and b) have driver code which is easier to understand.
+>
+> The patches have been created with coccinelle. A branch can be found here:
+>
+> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/mmc-get-supply-docs
+>
+> Looking forward to comments!
+>
+> Kind regards,
+>
+>    Wolfram
+>
+> [1] https://patchwork.kernel.org/patch/9965823/
+>
+> Wolfram Sang (11):
+>   mmc: add kerneldoc to mmc_regulator_get_supply()
+>   mmc: cavium: catch all errors when getting regulators
+>   mmc: dw_mmc: catch all errors when getting regulators
+>   mmc: meson-gx-mmc: catch all errors when getting regulators
+>   mmc: meson-mx-sdio: catch all errors when getting regulators
+>   mmc: mmci: catch all errors when getting regulators
+>   mmc: mtk-sd: catch all errors when getting regulators
+>   mmc: mxcmmc: catch all errors when getting regulators
+>   mmc: omap_hsmmc: catch all errors when getting regulators
+>   mmc: sdhci: catch all errors when getting regulators
+>   mmc: usdhi6rol0: catch all errors when getting regulators
+>
+>  drivers/mmc/core/core.c          | 10 ++++++++++
+>  drivers/mmc/host/cavium.c        |  2 +-
+>  drivers/mmc/host/dw_mmc.c        |  2 +-
+>  drivers/mmc/host/meson-gx-mmc.c  |  2 +-
+>  drivers/mmc/host/meson-mx-sdio.c |  2 +-
+>  drivers/mmc/host/mmci.c          |  2 +-
+>  drivers/mmc/host/mtk-sd.c        |  2 +-
+>  drivers/mmc/host/mxcmmc.c        |  2 +-
+>  drivers/mmc/host/omap_hsmmc.c    |  2 +-
+>  drivers/mmc/host/sdhci.c         |  2 +-
+>  drivers/mmc/host/usdhi6rol0.c    |  2 +-
+>  11 files changed, 20 insertions(+), 10 deletions(-)
+>
+> --
 
---25h4426ancotwraq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Looks good to me, however as pointed out by Fabrizio, you could run a
+round of checkpatch (mainly about commit message format).
 
+Or perhaps even coccinelle needs an update to be adopted to
+requirement from checkpatch?
 
-> Or perhaps even coccinelle needs an update to be adopted to
-> requirement from checkpatch?
-
-No, it was my scripts. I missed to set the gitcommit filetype when
-editing the message template. I fixed that in my scripts and will resend
-in a minute. And I missed to set the flag for checkpatch checking. It is
-now default. Thanks!
-
-
---25h4426ancotwraq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlniYkgACgkQFA3kzBSg
-Kbbk4A/+NJwHDnqrxTmRhbQRTV+tgECBJPs5Pefg7l5kKL9DudLufB19cvjFPUa/
-XgOpAVnuxFliOmf+Nm7IS+vDFzWwuuoJydAKANTpk1PDsBZADp05i2Qqi/y7ASGX
-L5AL3PN0nNRIcQuG2KAIr5UI2S8J33Vod5hfCBqg+jhqEWQ6AV6jf5Ca8RUcHG80
-yvULX4SutQcI/Mt8sjkAjLe4hoF2F7DMrAkyFt0pat+v3KtqtfMPALB95glSsOzb
-7jdjL8qwZpHWiz3drfcBNJoA0ZrAwc++dEPyiiNy5O+fA3V4a72AJ4UwUmC4Ox0r
-5kS5ik7rJ4966H7QVRxI1oyR2rXZCQDXG9f4IjE3Lo8A683+NfGeJG65yo5hlx3a
-wjIOpBFyo4Qlsyc81Jrq3qOUa5SSFO6tC1w9WFgPABd9BkkzOMNSlSdg1xKX4R0/
-lVBwxfCaY1fF9hbqsyOaMHpu4C2WfKatW6AAIdgxIVQAT4esmbziYtPS2JrjbomT
-lGMcQQNMilwypQkwSDBpP99xPbWS1m6pKHvLHETu39gdFEV3ACYcT2neluc/WJDx
-nuSio1bX+Zzy/pLzWAZgM5xa1OUOc7i855OZOtkwryT5dA2BzLUDD3OGBkGFZ845
-pbBn463WSNsdJjz5m4HurAuGzKQ0xpge1N/DhF/T+wsYuLzUUKY=
-=/NXv
------END PGP SIGNATURE-----
-
---25h4426ancotwraq--
+Kind regards
+Uffe
