@@ -1,33 +1,83 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33261 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751030AbdJKH3d (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Oct 2017 03:29:33 -0400
-Date: Wed, 11 Oct 2017 09:29:24 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v5 2/4] phy: rcar-gen3-usb2: use enum phy_mode in the
- role_store()
-Message-ID: <20171011072924.GD9661@verge.net.au>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v5 2/4] phy: rcar-gen3-usb2: use enum phy_mode in the role_store()
+Date: Tue, 10 Oct 2017 18:41:28 +0900
+Message-Id: <1507628490-7944-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1507628490-7944-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 References: <1507628490-7944-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1507628490-7944-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1507628490-7944-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Oct 10, 2017 at 06:41:28PM +0900, Yoshihiro Shimoda wrote:
-> This patch modifies the role_store() to use "enum phy_mode" instead
-> of the local "bool" for host/device mode selection.
-> 
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+This patch modifies the role_store() to use "enum phy_mode" instead
+of the local "bool" for host/device mode selection.
 
-Thanks for the updates, this looks nice to me.
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c | 29 ++++++++++++++++++-----------
+ 1 file changed, 18 insertions(+), 11 deletions(-)
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+index e00e99a..7314b49 100644
+--- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
++++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+@@ -219,33 +219,40 @@ static bool rcar_gen3_is_host(struct rcar_gen3_chan *ch)
+ 	return !(readl(ch->base + USB2_COMMCTRL) & USB2_COMMCTRL_OTG_PERI);
+ }
+ 
++static enum phy_mode rcar_gen3_get_phy_mode(struct rcar_gen3_chan *ch)
++{
++	if (rcar_gen3_is_host(ch))
++		return PHY_MODE_USB_HOST;
++	else
++		return PHY_MODE_USB_DEVICE;
++}
++
+ static ssize_t role_store(struct device *dev, struct device_attribute *attr,
+ 			  const char *buf, size_t count)
+ {
+ 	struct rcar_gen3_chan *ch = dev_get_drvdata(dev);
+-	bool is_b_device, is_host, new_mode_is_host;
++	bool is_b_device;
++	enum phy_mode cur_mode, new_mode;
+ 
+ 	if (!ch->has_otg || !ch->phy->init_count)
+ 		return -EIO;
+ 
+-	/*
+-	 * is_b_device: true is B-Device. false is A-Device.
+-	 * If {new_mode_}is_host: true is Host mode. false is Peripheral mode.
+-	 */
+-	is_b_device = rcar_gen3_check_id(ch);
+-	is_host = rcar_gen3_is_host(ch);
+ 	if (!strncmp(buf, "host", strlen("host")))
+-		new_mode_is_host = true;
++		new_mode = PHY_MODE_USB_HOST;
+ 	else if (!strncmp(buf, "peripheral", strlen("peripheral")))
+-		new_mode_is_host = false;
++		new_mode = PHY_MODE_USB_DEVICE;
+ 	else
+ 		return -EINVAL;
+ 
++	/* is_b_device: true is B-Device. false is A-Device. */
++	is_b_device = rcar_gen3_check_id(ch);
++	cur_mode = rcar_gen3_get_phy_mode(ch);
++
+ 	/* If current and new mode is the same, this returns the error */
+-	if (is_host == new_mode_is_host)
++	if (cur_mode == new_mode)
+ 		return -EINVAL;
+ 
+-	if (new_mode_is_host) {		/* And is_host must be false */
++	if (new_mode == PHY_MODE_USB_HOST) { /* And is_host must be false */
+ 		if (!is_b_device)	/* A-Peripheral */
+ 			rcar_gen3_init_from_a_peri_to_a_host(ch);
+ 		else			/* B-Peripheral */
+-- 
+1.9.1
