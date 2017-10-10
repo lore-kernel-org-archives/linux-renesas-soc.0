@@ -1,70 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:59278 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753013AbdJPNz2 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:41284 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752305AbdJJHWa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Oct 2017 09:55:28 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>, linux-clk@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 02/10] clk: renesas: cpg-mssr: Keep wakeup sources active during system suspend
-Date: Mon, 16 Oct 2017 15:55:08 +0200
-Message-Id: <1508162116-5043-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
-References: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
+        Tue, 10 Oct 2017 03:22:30 -0400
+Date: Tue, 10 Oct 2017 09:22:25 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH v3 2/6] clk: renesas: rcar-gen3: Add Z2 clock divider
+ support
+Message-ID: <20171010072224.GG2518@verge.net.au>
+References: <1507209837-16938-1-git-send-email-horms+renesas@verge.net.au>
+ <1507209837-16938-3-git-send-email-horms+renesas@verge.net.au>
+ <CAMuHMdWpbZ5r5s2+29rLBcPABUaN0BBXEZreryoCSriDcqqdkQ@mail.gmail.com>
+ <CAMuHMdVg4sFkZvqfv0SZkefSy1UN=eBtwQrii7OtbYqyjfmC=Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVg4sFkZvqfv0SZkefSy1UN=eBtwQrii7OtbYqyjfmC=Q@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If a device is part of the CPG/MSSR Clock Domain and to be used as a
-wakeup source, it must be kept active during system suspend.
+On Tue, Oct 10, 2017 at 08:56:35AM +0200, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Mon, Oct 9, 2017 at 10:02 AM, Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+> > On Thu, Oct 5, 2017 at 3:23 PM, Simon Horman <horms+renesas@verge.net.au> wrote:
+> >> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> >>
+> >> This patch adds Z2 clock divider support for R-Car Gen3 SoC.
+> >>
+> >> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> >> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> >> ---
+> >> v2 [Simon Horman]
+> >> * Consolidate Z and Z2 clock ops
+> >> * Allow setting of Z2 clock
+> >
+> > Thanks for the update!
+> >
+> >> --- a/drivers/clk/renesas/rcar-gen3-cpg.c
+> >> +++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+> >
+> >> @@ -88,8 +90,8 @@ static int cpg_z_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+> >>         if (clk_readl(zclk->kick_reg) & CPG_FRQCRB_KICK)
+> >>                 return -EBUSY;
+> >>
+> >> -       val = clk_readl(zclk->reg) & ~CPG_FRQCRC_ZFC_MASK;
+> >> -       val |= FIELD_PREP(CPG_FRQCRC_ZFC_MASK, 32 - mult);
+> >> +       val = clk_readl(zclk->reg) & ~zclk->mask;
+> >> +       val |= ((32 - mult) << __bf_shf(zclk->mask)) & zclk->mask;
+> >
+> > Any special reason you're now open coding FIELD_PREP()?
+> 
+> Now I know: to circumvent the
+> BUILD_BUG_ON_MSG(!__builtin_constant_p(_mask), ...) in
+> __BF_FIELD_CHECK(), called from FIELD_PREP().
 
-Currently this is handled in device-specific drivers by explicitly
-increasing the use count of the module clock when the device is
-configured as a wakeup source.  However, the proper way to prevent the
-device from being stopped is to inform this requirement to the genpd
-core.
+Yes, that is correct.
+A comment is probably in order.
 
-Hence provide an .active_wakeup() callback that always returns true.
-Note that this will only affect devices configured as wakeup sources.
+> Given <linux/bitfield.h> is intended to work with constant masks
+> only, I think it's best to not use it, and replace __bf_shf() by __ffs().
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/renesas/renesas-cpg-mssr.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+I see there has been some discussion of this elsewhere.
+Perhaps its best to let that cool down before I repost.
 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index e580a5e6346c2533..de534896f596168c 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -481,6 +481,11 @@ void cpg_mssr_detach_dev(struct generic_pm_domain *unused, struct device *dev)
- 		pm_clk_destroy(dev);
- }
- 
-+static bool cpg_mssr_active_wakeup(struct device *dev)
-+{
-+	return true;
-+}
-+
- static int __init cpg_mssr_add_clk_domain(struct device *dev,
- 					  const unsigned int *core_pm_clks,
- 					  unsigned int num_core_pm_clks)
-@@ -501,6 +506,7 @@ static int __init cpg_mssr_add_clk_domain(struct device *dev,
- 	genpd = &pd->genpd;
- 	genpd->name = np->name;
- 	genpd->flags = GENPD_FLAG_PM_CLK;
-+	genpd->dev_ops.active_wakeup = cpg_mssr_active_wakeup;
- 	genpd->attach_dev = cpg_mssr_attach_dev;
- 	genpd->detach_dev = cpg_mssr_detach_dev;
- 	pm_genpd_init(genpd, &pm_domain_always_on_gov, false);
--- 
-2.7.4
+> 
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> Oops, looks like you forgot to replace CPG_FRQCRC_ZFC_MASK in
+> cpg_z_clk_recalc_rate() by zclk->mask.
+> Sorry for missing that.
+
+Thanks, will fix.
