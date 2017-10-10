@@ -5,11 +5,11 @@ To: kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com
 Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v5 3/4] phy: rcar-gen3-usb2: add SoC-specific parameter for dedicated pins
-Date: Tue, 10 Oct 2017 18:41:29 +0900
-Message-Id: <1507628490-7944-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1507628490-7944-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1507628490-7944-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v4 3/4] phy: rcar-gen3-usb2: add SoC-specific parameter for dedicated pins
+Date: Tue, 10 Oct 2017 14:58:29 +0900
+Message-Id: <1507615110-26206-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1507615110-26206-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1507615110-26206-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
@@ -28,7 +28,7 @@ Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
  1 file changed, 21 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-index 7314b49..eb9786e 100644
+index 7619468..d097539 100644
 --- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
 +++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
 @@ -18,6 +18,7 @@
@@ -57,25 +57,25 @@ index 7314b49..eb9786e 100644
  };
  
  static void rcar_gen3_phy_usb2_work(struct work_struct *work)
-@@ -234,7 +237,7 @@ static ssize_t role_store(struct device *dev, struct device_attribute *attr,
- 	bool is_b_device;
- 	enum phy_mode cur_mode, new_mode;
+@@ -268,7 +271,7 @@ static ssize_t role_store(struct device *dev, struct device_attribute *attr,
+ 	else
+ 		return -EINVAL;
  
--	if (!ch->has_otg || !ch->phy->init_count)
-+	if (!ch->has_otg_pins || !ch->phy->init_count)
+-	if (ch->has_otg)
++	if (ch->has_otg_pins)
+ 		ret = rcar_gen3_otg_change_role(ch, mode);
+ 
+ 	if (ret < 0)
+@@ -286,7 +289,7 @@ static ssize_t role_show(struct device *dev, struct device_attribute *attr,
+ 	if (!ch->phy->init_count)
  		return -EIO;
  
- 	if (!strncmp(buf, "host", strlen("host")))
-@@ -272,7 +275,7 @@ static ssize_t role_show(struct device *dev, struct device_attribute *attr,
- {
- 	struct rcar_gen3_chan *ch = dev_get_drvdata(dev);
- 
--	if (!ch->has_otg || !ch->phy->init_count)
-+	if (!ch->has_otg_pins || !ch->phy->init_count)
+-	if (ch->has_otg)
++	if (ch->has_otg_pins)
+ 		is_host = rcar_gen3_is_host(ch);
+ 	else
  		return -EIO;
- 
- 	return sprintf(buf, "%s\n", rcar_gen3_is_host(ch) ? "host" :
-@@ -311,7 +314,7 @@ static int rcar_gen3_phy_usb2_init(struct phy *p)
+@@ -326,7 +329,7 @@ static int rcar_gen3_phy_usb2_init(struct phy *p)
  	writel(USB2_OC_TIMSET_INIT, usb2_base + USB2_OC_TIMSET);
  
  	/* Initialize otg part */
@@ -84,7 +84,7 @@ index 7314b49..eb9786e 100644
  		rcar_gen3_init_otg(channel);
  
  	return 0;
-@@ -385,9 +388,17 @@ static irqreturn_t rcar_gen3_phy_usb2_irq(int irq, void *_ch)
+@@ -400,9 +403,17 @@ static irqreturn_t rcar_gen3_phy_usb2_irq(int irq, void *_ch)
  }
  
  static const struct of_device_id rcar_gen3_phy_usb2_match_table[] = {
@@ -105,7 +105,7 @@ index 7314b49..eb9786e 100644
  	{ }
  };
  MODULE_DEVICE_TABLE(of, rcar_gen3_phy_usb2_match_table);
-@@ -433,7 +444,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
+@@ -448,7 +459,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
  	if (of_usb_get_dr_mode_by_phy(dev->of_node, 0) == USB_DR_MODE_OTG) {
  		int ret;
  
@@ -114,7 +114,7 @@ index 7314b49..eb9786e 100644
  		channel->extcon = devm_extcon_dev_allocate(dev,
  							rcar_gen3_phy_cable);
  		if (IS_ERR(channel->extcon))
-@@ -475,7 +486,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
+@@ -490,7 +501,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
  		dev_err(dev, "Failed to register PHY provider\n");
  		ret = PTR_ERR(provider);
  		goto error;
@@ -123,7 +123,7 @@ index 7314b49..eb9786e 100644
  		int ret;
  
  		ret = device_create_file(dev, &dev_attr_role);
-@@ -495,7 +506,7 @@ static int rcar_gen3_phy_usb2_remove(struct platform_device *pdev)
+@@ -510,7 +521,7 @@ static int rcar_gen3_phy_usb2_remove(struct platform_device *pdev)
  {
  	struct rcar_gen3_chan *channel = platform_get_drvdata(pdev);
  
