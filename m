@@ -1,46 +1,96 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38914 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:42073 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752665AbdJTKaS (ORCPT
+        with ESMTP id S1754894AbdJJIDn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Oct 2017 06:30:18 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Tue, 10 Oct 2017 04:03:43 -0400
+Date: Tue, 10 Oct 2017 10:03:37 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 29/42] ARM: dts: r8a73a4: Add clock for CA15 CPU0 core
-Date: Fri, 20 Oct 2017 12:28:56 +0200
-Message-Id: <a7869a5bc82682ac31452e178b4b3e9f8b48e7df.1508493785.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1508493785.git.horms+renesas@verge.net.au>
-References: <cover.1508493785.git.horms+renesas@verge.net.au>
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Subject: Re: [PATCH v2 8/8] arm64: dts: renesas: eagle: add EtherAVB support
+Message-ID: <20171010080337.GO2518@verge.net.au>
+References: <20170915194449.538504992@cogentembedded.com>
+ <CAMuHMdXQXFuVzwW7G-U7XWZUEj8qFRjtfDQF1+TgyzO0Xb+eYg@mail.gmail.com>
+ <c0390fc1-7da4-ac60-afee-97126d1fd372@cogentembedded.com>
+ <CAMuHMdVCTORpfKN+GTka_6pT1VWjOneV2GBhGo7Y8DsZYSxdvw@mail.gmail.com>
+ <20171005090500.GC26369@verge.net.au>
+ <d5940a12-3823-eebb-50d9-c0fd0fcf0fd1@cogentembedded.com>
+ <20171010073346.GL2518@verge.net.au>
+ <20171010074842.GN2518@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20171010074842.GN2518@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+On Tue, Oct 10, 2017 at 09:48:42AM +0200, Simon Horman wrote:
+> On Tue, Oct 10, 2017 at 09:33:46AM +0200, Simon Horman wrote:
+> > On Mon, Oct 09, 2017 at 08:57:42PM +0300, Sergei Shtylyov wrote:
+> > > On 10/05/2017 12:05 PM, Simon Horman wrote:
+> > > 
+> > > >>>On 9/21/2017 4:08 PM, Geert Uytterhoeven wrote:
+> > > >>>>>Define the Eagle board  dependent part of the EtherAVB device node.
+> > > >>>>>Enable DHCP  and NFS root for the kernel booting.
+> > > >>>>>
+> > > >>>>>Based  on the original (and large) patch by Vladimir Barinov.
+> > > >>>>>
+> > > >>>>>Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> > > >>>>>Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> > > >>>>
+> > > >>>>
+> > > >>>>>--- renesas.orig/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+> > > >>>>>+++ renesas/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+> > > >>>
+> > > >>>[...]
+> > > >>>>>
+> > > >>>>>@@ -43,3 +44,14 @@
+> > > >>>>>   &scif0 {
+> > > >>>>>          status = "okay";
+> > > >>>>>   };
+> > > >>>>>+
+> > > >>>>>+&avb {
+> > > >>>>>+       renesas,no-ether-link;
+> > > >>>>>+       phy-handle = <&phy0>;
+> > > >>>>>+       status = "okay";
+> > > >>>>>+
+> > > >>>>>+       phy0: ethernet-phy@0 {
+> > > >>>>>+               rxc-skew-ps = <1500>;
+> > > >>>>>+               reg = <0>;
+> > > >>>>
+> > > >>>>
+> > > >>>>Any specific reason why you don't want to wire up the interrupt?
+> > > >>>>
+> > > >>>>                  interrupt-parent = <&gpio2>;
+> > > >>>
+> > > >>>
+> > > >>>    I thought it's quite obvious -- we don't have GPIOs yet, and GPIOs seem
+> > > >>>to require PFC.
+> > > >>
+> > > >>Of course. And these can be added later.
+> > > >>
+> > > >>Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > >
+> > > >Thanks, applied.
+> > > 
+> > >    Unfortunately, you applied an outdated version of this patch. :-(
+> > 
+> > Sorry, I think patchwork has been playing up of late - or my use of it!
+> > 
+> > Could you repost the correct patch so I am sure to get the right one
+> > the second time around?
+> 
+> Please ignore that request. I'll go ahead and apply v2.
 
-Improve hardware description by adding a clocks property to the device
-node corresponding to the primary CA15 CPU core, which is for now the
-only one described.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a73a4.dtsi | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm/boot/dts/r8a73a4.dtsi b/arch/arm/boot/dts/r8a73a4.dtsi
-index 310222634570..dd4d09712a2a 100644
---- a/arch/arm/boot/dts/r8a73a4.dtsi
-+++ b/arch/arm/boot/dts/r8a73a4.dtsi
-@@ -27,6 +27,7 @@
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a15";
- 			reg = <0>;
-+			clocks = <&cpg_clocks R8A73A4_CLK_Z>;
- 			clock-frequency = <1500000000>;
- 			power-domains = <&pd_a2sl>;
- 			next-level-cache = <&L2_CA15>;
--- 
-2.11.0
+Done, please check renesas-next-20171010-v4.14-rc1
