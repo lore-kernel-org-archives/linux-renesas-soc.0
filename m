@@ -1,91 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:33322 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753921AbdJIRzL (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:34933 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751435AbdJJLCa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 Oct 2017 13:55:11 -0400
-Subject: Re: [PATCH 4/4] arm: dts: r8a7790: add cpu capacity-dmips-mhz
- information
-To: Simon Horman <horms@verge.net.au>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Russell King <linux@armlinux.org.uk>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Juri Lelli <juri.lelli@arm.com>
-References: <20170830144120.9312-1-dietmar.eggemann@arm.com>
- <20170830144120.9312-5-dietmar.eggemann@arm.com>
- <20170918073946.GA9156@verge.net.au>
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Message-ID: <a0099e02-096c-f8e0-0380-ecb9549f20b4@arm.com>
-Date: Mon, 9 Oct 2017 18:55:07 +0100
+        Tue, 10 Oct 2017 07:02:30 -0400
 MIME-Version: 1.0
-In-Reply-To: <20170918073946.GA9156@verge.net.au>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20171010103217.ankuf25uxkudamht@katana>
+References: <CAMuHMdUGwTRsJdfkG90hY6kvCr6qknRGv5V66qBPfUY1x+MciQ@mail.gmail.com>
+ <20171010103217.ankuf25uxkudamht@katana>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 10 Oct 2017 13:02:28 +0200
+Message-ID: <CAMuHMdUV22YS2d4UwJ2Wfj2nqgTcf6wiZR4n9yz9tOXVGD_iqg@mail.gmail.com>
+Subject: Re: mmc: exceeding card's volts
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Linux MMC List <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 18/09/17 08:39, Simon Horman wrote:
-> On Wed, Aug 30, 2017 at 03:41:20PM +0100, Dietmar Eggemann wrote:
->> The following 'capacity-dmips-mhz' dt property values are used:
->>
->> Cortex-A15: 1024, Cortex-A7: 539
->>
->> They have been derived form the cpu_efficiency values:
->>
->> Cortex-A15: 3891, Cortex-A7: 2048
->>
->> by scaling them so that the Cortex-A15s (big cores) use 1024.
->>
->> The cpu_efficiency values were originally derived from the "Big.LITTLE
->> Processing with ARM Cortex™-A15 & Cortex-A7" white paper
->> (http://www.cl.cam.ac.uk/~rdm34/big.LITTLE.pdf). Table 1 lists 1.9x
->> (3891/2048) as the Cortex-A15 vs Cortex-A7 performance ratio for the
->> Dhrystone benchmark.
->>
->> The following platform is affected once cpu-invariant accounting
->> support is re-connected to the task scheduler:
-> 
-> Thanks, applied for v4.15.
-> 
-> My understanding from the following comment in the cover letter is that not
-> currently the case and this there is no behavioural change in applying this
-> patch.
-> 
-> For the record I observed the following with and without this patch
-> applied. I believe this is the expected result.
-> 
-> v4.14-rc1
-> # cat /sys/devices/system/cpu/cpu*/cpu_capacity
-> 1535
-> 1535
-> 1535
-> 1535
-> 1024
-> 1024
-> 1024
-> 1024
-> 
-> v4.14-rc1 + patch
-> # cat /sys/devices/system/cpu/cpu*/cpu_capacity
-> 1024
-> 1024
-> 1024
-> 1024
-> 539
-> 539
-> 539
-> 539
+Hi Wolfram,
 
-Thanks Simon! Yes, that is the expected behaviour. And sorry for not
-responding earlier!
+On Tue, Oct 10, 2017 at 12:32 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
+>> During next boot, everything was back to normal again...
+>
+> Double-checking: Normal means also no tuning error?
 
-With exynos542{0,2} and r8a7790 switching to the 'capacity-dmips-mhz'
-based solution in v4.15, I can push for removal of the cpu_efficency
-code [patch 1/4].
+Correct.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
