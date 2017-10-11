@@ -1,66 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:35071 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751642AbdJCLNK (ORCPT
+Received: from szxga05-in.huawei.com ([45.249.212.191]:8000 "EHLO
+        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750831AbdJKLeQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Oct 2017 07:13:10 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: balbi@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 1/2] usb: renesas_usbhs: unify Gen2/3 pipe_config setting
-Date: Tue,  3 Oct 2017 20:09:13 +0900
-Message-Id: <1507028954-15738-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1507028954-15738-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1507028954-15738-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Wed, 11 Oct 2017 07:34:16 -0400
+From: Wei Yongjun <weiyongjun1@huawei.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>
+CC: Wei Yongjun <weiyongjun1@huawei.com>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-renesas-soc@vger.kernel.org>
+Subject: [PATCH] drm/shmob: Fix return value check in shmob_drm_probe()
+Date: Wed, 11 Oct 2017 11:38:37 +0000
+Message-ID: <1507721917-146379-1-git-send-email-weiyongjun1@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch unifies the Gen2 and Gen3 pipe_config setting on
-usbhs_parse_dt().
+In case of error, the function devm_ioremap_resource() returns ERR_PTR()
+and never returns NULL. The NULL test in the return value check should
+be replaced with IS_ERR().
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/usb/renesas_usbhs/common.c | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
+ drivers/gpu/drm/shmobile/shmob_drm_drv.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/usb/renesas_usbhs/common.c b/drivers/usb/renesas_usbhs/common.c
-index f0ce304..2a860e4 100644
---- a/drivers/usb/renesas_usbhs/common.c
-+++ b/drivers/usb/renesas_usbhs/common.c
-@@ -519,8 +519,11 @@ static struct renesas_usbhs_platform_info *usbhs_parse_dt(struct device *dev)
- 		dparam->enable_gpio = gpio;
+diff --git a/drivers/gpu/drm/shmobile/shmob_drm_drv.c b/drivers/gpu/drm/shmobile/shmob_drm_drv.c
+index 5925725..58d8a98 100644
+--- a/drivers/gpu/drm/shmobile/shmob_drm_drv.c
++++ b/drivers/gpu/drm/shmobile/shmob_drm_drv.c
+@@ -233,8 +233,8 @@ static int shmob_drm_probe(struct platform_device *pdev)
  
- 	if (dparam->type == USBHS_TYPE_RCAR_GEN2 ||
--	    dparam->type == USBHS_TYPE_RCAR_GEN3)
-+	    dparam->type == USBHS_TYPE_RCAR_GEN3) {
- 		dparam->has_usb_dmac = 1;
-+		dparam->pipe_configs = usbhsc_new_pipe;
-+		dparam->pipe_size = ARRAY_SIZE(usbhsc_new_pipe);
-+	}
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	sdev->mmio = devm_ioremap_resource(&pdev->dev, res);
+-	if (sdev->mmio == NULL)
+-		return -ENOMEM;
++	if (IS_ERR(sdev->mmio))
++		return PTR_ERR(sdev->mmio);
  
- 	return info;
- }
-@@ -577,17 +580,9 @@ static int usbhs_probe(struct platform_device *pdev)
- 	switch (priv->dparam.type) {
- 	case USBHS_TYPE_RCAR_GEN2:
- 		priv->pfunc = usbhs_rcar2_ops;
--		if (!priv->dparam.pipe_configs) {
--			priv->dparam.pipe_configs = usbhsc_new_pipe;
--			priv->dparam.pipe_size = ARRAY_SIZE(usbhsc_new_pipe);
--		}
- 		break;
- 	case USBHS_TYPE_RCAR_GEN3:
- 		priv->pfunc = usbhs_rcar3_ops;
--		if (!priv->dparam.pipe_configs) {
--			priv->dparam.pipe_configs = usbhsc_new_pipe;
--			priv->dparam.pipe_size = ARRAY_SIZE(usbhsc_new_pipe);
--		}
- 		break;
- 	default:
- 		if (!info->platform_callback.get_id) {
--- 
-1.9.1
+ 	ret = shmob_drm_setup_clocks(sdev, pdata->clk_source);
+ 	if (ret < 0)
