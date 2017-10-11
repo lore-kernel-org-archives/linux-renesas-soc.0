@@ -1,145 +1,45 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:46851 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757377AbdJKM5B (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 11 Oct 2017 08:57:01 -0400
+MIME-Version: 1.0
+In-Reply-To: <1507555281-57845-5-git-send-email-biju.das@bp.renesas.com>
+References: <1507555281-57845-1-git-send-email-biju.das@bp.renesas.com> <1507555281-57845-5-git-send-email-biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 11 Oct 2017 14:56:59 +0200
+Message-ID: <CAMuHMdWQeH7tBJ22=+BdWdbuL8w1ZjqtFzvksCxaHhY9woHQbA@mail.gmail.com>
+Subject: Re: [PATCH 4/4] ARM: dts: r8a7743: Enable DMA for HSUSB
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc: Simon Horman <horms@verge.net.au>,
+        Simon Horman <horms@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Chris Paterson <chris.paterson2@renesas.com>
-Subject: [PATCH 4/4] ARM: dts: iwg22d-sodimm: sort dt nodes
-Date: Fri, 13 Oct 2017 14:03:16 +0100
-Message-Id: <1507899796-7941-5-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1507899796-7941-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1507899796-7941-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Improve the layout of r8a7745-iwg22d-sodimm.dts by sorting the
-nodes alphabetically.
+On Mon, Oct 9, 2017 at 3:21 PM, Biju Das <biju.das@bp.renesas.com> wrote:
+> This patch adds DMA properties to the HSUSB node.
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
----
- arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts | 62 ++++++++++++++---------------
- 1 file changed, 31 insertions(+), 31 deletions(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-index 5d5bb2f..5003a8f 100644
---- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-+++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-@@ -16,9 +16,9 @@
- 	compatible = "iwave,g22d", "iwave,g22m", "renesas,r8a7745";
- 
- 	aliases {
-+		ethernet0 = &avb;
- 		serial3 = &scif4;
- 		serial5 = &hscif1;
--		ethernet0 = &avb;
- 	};
- 
- 	chosen {
-@@ -40,6 +40,25 @@
- 	};
- };
- 
-+&avb {
-+	pinctrl-0 = <&avb_pins>;
-+	pinctrl-names = "default";
-+
-+	phy-handle = <&phy3>;
-+	phy-mode = "gmii";
-+	renesas,no-ether-link;
-+	status = "okay";
-+
-+	phy3: ethernet-phy@3 {
-+	/*
-+	 * On some older versions of the platform (before R4.0) the phy address
-+	 * may be 1 or 3. The address is fixed to 3 for R4.0 onwards.
-+	 */
-+		reg = <3>;
-+		micrel,led-mode = <1>;
-+	};
-+};
-+
- &hscif1 {
- 	pinctrl-0 = <&hscif1_pins>;
- 	pinctrl-names = "default";
-@@ -48,7 +67,18 @@
- 	status = "okay";
- };
- 
-+&pci1 {
-+	status = "okay";
-+	pinctrl-0 = <&usb1_pins>;
-+	pinctrl-names = "default";
-+};
-+
- &pfc {
-+	avb_pins: avb {
-+		groups = "avb_mdio", "avb_gmii";
-+		function = "avb";
-+	};
-+
- 	hscif1_pins: hscif1 {
- 		groups = "hscif1_data", "hscif1_ctrl";
- 		function = "hscif1";
-@@ -59,11 +89,6 @@
- 		function = "scif4";
- 	};
- 
--	avb_pins: avb {
--		groups = "avb_mdio", "avb_gmii";
--		function = "avb";
--	};
--
- 	sdhi0_pins: sd0 {
- 		groups = "sdhi0_data4", "sdhi0_ctrl";
- 		function = "sdhi0";
-@@ -83,25 +108,6 @@
- 	status = "okay";
- };
- 
--&avb {
--	pinctrl-0 = <&avb_pins>;
--	pinctrl-names = "default";
--
--	phy-handle = <&phy3>;
--	phy-mode = "gmii";
--	renesas,no-ether-link;
--	status = "okay";
--
--	phy3: ethernet-phy@3 {
--	/*
--	 * On some older versions of the platform (before R4.0) the phy address
--	 * may be 1 or 3. The address is fixed to 3 for R4.0 onwards.
--	 */
--		reg = <3>;
--		micrel,led-mode = <1>;
--	};
--};
--
- &sdhi0 {
- 	pinctrl-0 = <&sdhi0_pins>;
- 	pinctrl-names = "default";
-@@ -112,12 +118,6 @@
- 	status = "okay";
- };
- 
--&pci1 {
--	status = "okay";
--	pinctrl-0 = <&usb1_pins>;
--	pinctrl-names = "default";
--};
--
- &usbphy {
- 	status = "okay";
- };
--- 
-2.7.4
+Gr{oetje,eeting}s,
 
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
