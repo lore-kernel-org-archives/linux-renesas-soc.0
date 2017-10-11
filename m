@@ -1,7 +1,7 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:40454 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752218AbdJKLu3 (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:57464 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752033AbdJKLu3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Wed, 11 Oct 2017 07:50:29 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
@@ -9,45 +9,44 @@ To: Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@codeaurora.org>
 Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/3] clk: renesas: r8a7795: Correct parent clock of INTC-AP
-Date: Wed, 11 Oct 2017 10:29:50 +0200
-Message-Id: <1507710592-13740-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1507710592-13740-1-git-send-email-geert+renesas@glider.be>
-References: <1507710592-13740-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH 0/3] clk: renesas: rcar-gen3: Correct parent clock of INTC-AP
+Date: Wed, 11 Oct 2017 10:29:49 +0200
+Message-Id: <1507710592-13740-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-According to the R-Car Gen3 Hardware Manual Errata for Rev 0.55 of
-September 8, 2017, the parent clock of the INTC-AP module clock on R-Car
-H3 ES2.0 is S0D3.
+	Hi Mike, Stephen,
 
-This change has no functional impact.
+This patch series corrects the parent clock of the INTC-AP module clock
+on R-Car H3 ES2.0, M3-W, and D3 SoCs, cfr. R-Car Gen3 Hardware Manual
+Errata for Rev 0.55 of September 8, 2017.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/renesas/r8a7795-cpg-mssr.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+These changes have no functional impact.
 
-diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-index 1c931d8ec0ccba24..775b0ceaa3378a83 100644
---- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-@@ -151,7 +151,7 @@ static struct mssr_mod_clk r8a7795_mod_clks[] __initdata = {
- 	DEF_MOD("usb-dmac1",		 331,	R8A7795_CLK_S3D1),
- 	DEF_MOD("rwdt",			 402,	R8A7795_CLK_R),
- 	DEF_MOD("intc-ex",		 407,	R8A7795_CLK_CP),
--	DEF_MOD("intc-ap",		 408,	R8A7795_CLK_S3D1),
-+	DEF_MOD("intc-ap",		 408,	R8A7795_CLK_S0D3),
- 	DEF_MOD("audmac1",		 501,	R8A7795_CLK_S0D3),
- 	DEF_MOD("audmac0",		 502,	R8A7795_CLK_S0D3),
- 	DEF_MOD("drif7",		 508,	R8A7795_CLK_S3D2),
-@@ -350,6 +350,7 @@ static const struct mssr_mod_reparent r8a7795es1_mod_reparent[] __initconst = {
- 	{ MOD_CLK_ID(217), R8A7795_CLK_S3D1 },	/* SYS-DMAC2 */
- 	{ MOD_CLK_ID(218), R8A7795_CLK_S3D1 },	/* SYS-DMAC1 */
- 	{ MOD_CLK_ID(219), R8A7795_CLK_S3D1 },	/* SYS-DMAC0 */
-+	{ MOD_CLK_ID(408), R8A7795_CLK_S3D1 },	/* INTC-AP */
- 	{ MOD_CLK_ID(501), R8A7795_CLK_S3D1 },	/* AUDMAC1 */
- 	{ MOD_CLK_ID(502), R8A7795_CLK_S3D1 },	/* AUDMAC0 */
- 	{ MOD_CLK_ID(523), R8A7795_CLK_S3D4 },	/* PWM */
+As usual, I plan to queue these up in clk-renesas-for-v4.15.
+
+Thanks!
+
+Geert Uytterhoeven (3):
+  clk: renesas: r8a7795: Correct parent clock of INTC-AP
+  clk: renesas: r8a7796: Correct parent clock of INTC-AP
+  clk: renesas: r8a77995: Correct parent clock of INTC-AP
+
+ drivers/clk/renesas/r8a7795-cpg-mssr.c  | 3 ++-
+ drivers/clk/renesas/r8a7796-cpg-mssr.c  | 2 +-
+ drivers/clk/renesas/r8a77995-cpg-mssr.c | 2 +-
+ 3 files changed, 4 insertions(+), 3 deletions(-)
+
 -- 
 2.7.4
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
