@@ -1,52 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:56102 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751915AbdJDMNJ (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33525 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756560AbdJKHmd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Oct 2017 08:13:09 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Tejun Heo <tj@kernel.org>
-Cc: linux-ide@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] ata: sata_rcar: Use of_device_get_match_data() helper
-Date: Wed,  4 Oct 2017 14:13:07 +0200
-Message-Id: <1507119187-12297-1-git-send-email-geert+renesas@glider.be>
+        Wed, 11 Oct 2017 03:42:33 -0400
+Date: Wed, 11 Oct 2017 09:42:27 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] ARM: shmobile: rcar-gen2: fix non-SMP build
+Message-ID: <20171011074226.GH9661@verge.net.au>
+References: <cover.1507623048.git.horms+renesas@verge.net.au>
+ <dc15ca962757ca72a4492b2e13be2eecc6dcd716.1507623048.git.horms+renesas@verge.net.au>
+ <44e29d14-b0f7-9454-4cf9-ee175fa078dd@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <44e29d14-b0f7-9454-4cf9-ee175fa078dd@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use the of_device_get_match_data() helper instead of open coding.
-Note that the sata_rcar driver is used with DT only, so there's always a
-valid match.
+On Tue, Oct 10, 2017 at 12:25:42PM +0300, Sergei Shtylyov wrote:
+> Hello!
+> 
+> On 10/10/2017 11:12 AM, Simon Horman wrote:
+> 
+> >From: Arnd Bergmann <arnd@arndb.de>
+> >
+> >A bugfix for the SMP case broke the build for the UP case:
+> >
+> >arch/arm/mach-shmobile/headsmp-apmu.o: In function `shmobile_boot_apmu':
+> >(.text+0x34): undefined reference to `secondary_startup'
+> >
+> >The assembler file mixes code that is used for SMP with code
+> >that we also need on a single-CPU build, so I'm leaving it
+> >always enabled in the Makefile, but enclose the SMP code
+> >in an #ifdef.
+> >
+> >3fd45a136ff6 ("ARM: shmobile: rcar-gen2: Make sure CNTVOFF is initialized on CA7/15")
+> 
+>    "Fixes:"?
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/ata/sata_rcar.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
-
-diff --git a/drivers/ata/sata_rcar.c b/drivers/ata/sata_rcar.c
-index 537d11869069aae7..80ee2f2a50d02872 100644
---- a/drivers/ata/sata_rcar.c
-+++ b/drivers/ata/sata_rcar.c
-@@ -872,7 +872,6 @@ MODULE_DEVICE_TABLE(of, sata_rcar_match);
- 
- static int sata_rcar_probe(struct platform_device *pdev)
- {
--	const struct of_device_id *of_id;
- 	struct ata_host *host;
- 	struct sata_rcar_priv *priv;
- 	struct resource *mem;
-@@ -888,11 +887,7 @@ static int sata_rcar_probe(struct platform_device *pdev)
- 	if (!priv)
- 		return -ENOMEM;
- 
--	of_id = of_match_device(sata_rcar_match, &pdev->dev);
--	if (!of_id)
--		return -ENODEV;
--
--	priv->type = (enum sata_rcar_type)of_id->data;
-+	priv->type = (enum sata_rcar_type)of_device_get_match_data(&pdev->dev);
- 	priv->clk = devm_clk_get(&pdev->dev, NULL);
- 	if (IS_ERR(priv->clk)) {
- 		dev_err(&pdev->dev, "failed to get access to sata clock\n");
--- 
-2.7.4
+Thanks, I will fix and repost.
