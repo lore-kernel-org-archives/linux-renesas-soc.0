@@ -1,47 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:44299 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751529AbdJNTRj (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:44761 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751991AbdJKMwP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 14 Oct 2017 15:17:39 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
+        Wed, 11 Oct 2017 08:52:15 -0400
+MIME-Version: 1.0
+In-Reply-To: <1507712673-57370-1-git-send-email-biju.das@bp.renesas.com>
+References: <20171010073057.GK2518@verge.net.au> <1507712673-57370-1-git-send-email-biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 11 Oct 2017 14:52:13 +0200
+Message-ID: <CAMuHMdV=TD8-YsnNB4=qT4MBN2YgxPvwGeGj=s_FKTkwDuLjGw@mail.gmail.com>
+Subject: Re: [PATCH v2] ARM: dts: iwg20d-q7: Enable HS-USB
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2 02/11] mmc: cavium: catch all errors when getting regulators
-Date: Sat, 14 Oct 2017 21:17:10 +0200
-Message-Id: <20171014191719.2129-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20171014191719.2129-1-wsa+renesas@sang-engineering.com>
-References: <20171014191719.2129-1-wsa+renesas@sang-engineering.com>
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Bail out everytime when mmc_regulator_get_supply() returns an errno, not
-only when probing gets deferred. This is currently a no-op, because this
-function only returns -EPROBE_DEFER or 0 right now. But if it will throw
-another error somewhen, it will be for a reason. (This still doesn't change
-that getting regulators is optional, so 0 can still mean no regulators
-found). So, let us a) be future proof and b) have driver code which is
-easier to understand.
+On Wed, Oct 11, 2017 at 11:04 AM, Biju Das <biju.das@bp.renesas.com> wrote:
+> Enable HS-USB device for the iWave G20D-Q7 carrier board based on
+> RZ/G1M.
+> Also disable the host mode support on usb otg port by default to avoid
+> pin conflicts.
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/mmc/host/cavium.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/mmc/host/cavium.c b/drivers/mmc/host/cavium.c
-index fbd29f00fca05e..ed5cefb8376838 100644
---- a/drivers/mmc/host/cavium.c
-+++ b/drivers/mmc/host/cavium.c
-@@ -967,7 +967,7 @@ static int cvm_mmc_of_parse(struct device *dev, struct cvm_mmc_slot *slot)
- 	}
- 
- 	ret = mmc_regulator_get_supply(mmc);
--	if (ret == -EPROBE_DEFER)
-+	if (ret)
- 		return ret;
- 	/*
- 	 * Legacy Octeon firmware has no regulator entry, fall-back to
--- 
-2.11.0
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
