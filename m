@@ -1,65 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:48851 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751598AbdJIItj (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:40450 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752846AbdJKLua (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 Oct 2017 04:49:39 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: "kishon@ti.com" <kishon@ti.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-CC: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: RE: [PATCH ] phy: rcar-gen2: Add r8a7743/5 support
-Date: Mon, 9 Oct 2017 08:49:32 +0000
-Message-ID: <KL1PR06MB17020EBD5992AFA4F6E3F6C7B8740@KL1PR06MB1702.apcprd06.prod.outlook.com>
-References: <1503568773-41410-1-git-send-email-biju.das@bp.renesas.com>
- <CAMuHMdW8x-7LVGgJr1GQfMJurfW=0Ky71K18zc+x5_XHMC6VxA@mail.gmail.com>
-In-Reply-To: <CAMuHMdW8x-7LVGgJr1GQfMJurfW=0Ky71K18zc+x5_XHMC6VxA@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        Wed, 11 Oct 2017 07:50:30 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/3] clk: renesas: r8a7796: Correct parent clock of INTC-AP
+Date: Wed, 11 Oct 2017 10:29:51 +0200
+Message-Id: <1507710592-13740-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1507710592-13740-1-git-send-email-geert+renesas@glider.be>
+References: <1507710592-13740-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgS2lzaG9uLA0KDQpMb29rcyBsaWtlIHRoZSBiZWxvdyBwYXRjaCBpcyBub3QgbWVyZ2VkIGlu
-dG8gbGludXgtbmV4dC4gIFNvbWVob3cgSSBtaXNzZWQgeW91ciBtYWlsIElELCB3aGVuIEkgc3Vi
-bWl0dGVkIHRoZSBwYXRjaChzY3JpcHRzL2dldF9tYWludGFpbmVyLnBsICBzY3JpcHQgIGRpZG4n
-dCBzaG93IHlvdXIgbWFpbCBhZGRyZXNzIGZvciB0aGlzIHBhdGNoKQ0KDQpodHRwczovL3BhdGNo
-d29yay5rZXJuZWwub3JnL3BhdGNoLzk5MTk3MjcvDQoNClJlZ2FyZHMsDQpCaWp1DQoNCg0KPiAt
-LS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBnZWVydC51eXR0ZXJob2V2ZW5AZ21h
-aWwuY29tIFttYWlsdG86Z2VlcnQudXl0dGVyaG9ldmVuQGdtYWlsLmNvbV0NCj4gT24gQmVoYWxm
-IE9mIEdlZXJ0IFV5dHRlcmhvZXZlbg0KPiBTZW50OiAxOSBTZXB0ZW1iZXIgMjAxNyAxNTo1OA0K
-PiBUbzogQmlqdSBEYXMgPGJpanUuZGFzQGJwLnJlbmVzYXMuY29tPg0KPiBDYzogUm9iIEhlcnJp
-bmcgPHJvYmgrZHRAa2VybmVsLm9yZz47IE1hcmsgUnV0bGFuZA0KPiA8bWFyay5ydXRsYW5kQGFy
-bS5jb20+OyBTaW1vbiBIb3JtYW4gPGhvcm1zQHZlcmdlLm5ldC5hdT47IE1hZ251cw0KPiBEYW1t
-IDxtYWdudXMuZGFtbUBnbWFpbC5jb20+OyBSdXNzZWxsIEtpbmcgPGxpbnV4QGFybWxpbnV4Lm9y
-Zy51az47DQo+IENocmlzIFBhdGVyc29uIDxDaHJpcy5QYXRlcnNvbjJAcmVuZXNhcy5jb20+OyBk
-ZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsNCj4gTGludXgtUmVuZXNhcyA8bGludXgtcmVuZXNh
-cy1zb2NAdmdlci5rZXJuZWwub3JnPjsgbGludXgtYXJtLQ0KPiBrZXJuZWxAbGlzdHMuaW5mcmFk
-ZWFkLm9yZw0KPiBTdWJqZWN0OiBSZTogW1BBVENIIF0gcGh5OiByY2FyLWdlbjI6IEFkZCByOGE3
-NzQzLzUgc3VwcG9ydA0KPg0KPiBPbiBUaHUsIEF1ZyAyNCwgMjAxNyBhdCAxMTo1OSBBTSwgQmlq
-dSBEYXMgPGJpanUuZGFzQGJwLnJlbmVzYXMuY29tPg0KPiB3cm90ZToNCj4gPiBBZGQgVVNCIFBI
-WSBzdXBwb3J0IGZvciByOGE3NzQzLzUgU29DLiBSZW5lc2FzIFJaL0cxW01FXSAoUjhBNzc0My81
-KQ0KPiA+IFVTQiBQSFkgaXMgaWRlbnRpY2FsIHRvIHRoZSBSLUNhciBHZW4yIGZhbWlseS4NCj4g
-Pg0KPiA+IFNpZ25lZC1vZmYtYnk6IEJpanUgRGFzIDxiaWp1LmRhc0BicC5yZW5lc2FzLmNvbT4N
-Cj4NCj4gUmV2aWV3ZWQtYnk6IEdlZXJ0IFV5dHRlcmhvZXZlbiA8Z2VlcnQrcmVuZXNhc0BnbGlk
-ZXIuYmU+DQo+DQo+IEdye29ldGplLGVldGluZ31zLA0KPg0KPiAgICAgICAgICAgICAgICAgICAg
-ICAgICBHZWVydA0KPg0KPiAtLQ0KPiBHZWVydCBVeXR0ZXJob2V2ZW4gLS0gVGhlcmUncyBsb3Rz
-IG9mIExpbnV4IGJleW9uZCBpYTMyIC0tIGdlZXJ0QGxpbnV4LQ0KPiBtNjhrLm9yZw0KPg0KPiBJ
-biBwZXJzb25hbCBjb252ZXJzYXRpb25zIHdpdGggdGVjaG5pY2FsIHBlb3BsZSwgSSBjYWxsIG15
-c2VsZiBhIGhhY2tlci4gQnV0IHdoZW4NCj4gSSdtIHRhbGtpbmcgdG8gam91cm5hbGlzdHMgSSBq
-dXN0IHNheSAicHJvZ3JhbW1lciIgb3Igc29tZXRoaW5nIGxpa2UgdGhhdC4NCj4gICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAtLSBMaW51cyBUb3J2YWxkcw0KDQoNCg0KUmVuZXNhcyBF
-bGVjdHJvbmljcyBFdXJvcGUgTHRkLCBEdWtlcyBNZWFkb3csIE1pbGxib2FyZCBSb2FkLCBCb3Vy
-bmUgRW5kLCBCdWNraW5naGFtc2hpcmUsIFNMOCA1RkgsIFVLLiBSZWdpc3RlcmVkIGluIEVuZ2xh
-bmQgJiBXYWxlcyB1bmRlciBSZWdpc3RlcmVkIE5vLiAwNDU4NjcwOS4NCg==
+According to the R-Car Gen3 Hardware Manual Errata for Rev 0.55 of
+September 8, 2017, the parent clock of the INTC-AP module clock on R-Car
+M3-W is S0D3.
+
+This change has no functional impact.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index 48731741b59e0c89..83a68e51e4ec1d12 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -145,7 +145,7 @@ static const struct mssr_mod_clk r8a7796_mod_clks[] __initconst = {
+ 	DEF_MOD("usb-dmac1",		 331,	R8A7796_CLK_S3D1),
+ 	DEF_MOD("rwdt",			 402,	R8A7796_CLK_R),
+ 	DEF_MOD("intc-ex",		 407,	R8A7796_CLK_CP),
+-	DEF_MOD("intc-ap",		 408,	R8A7796_CLK_S3D1),
++	DEF_MOD("intc-ap",		 408,	R8A7796_CLK_S0D3),
+ 	DEF_MOD("audmac1",		 501,	R8A7796_CLK_S0D3),
+ 	DEF_MOD("audmac0",		 502,	R8A7796_CLK_S0D3),
+ 	DEF_MOD("drif7",		 508,	R8A7796_CLK_S3D2),
+-- 
+2.7.4
