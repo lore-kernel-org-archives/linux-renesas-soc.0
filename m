@@ -1,46 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:61926 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753468AbdJMPWm (ORCPT
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:37920 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751991AbdJKMsD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Oct 2017 11:22:42 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Wed, 11 Oct 2017 08:48:03 -0400
+MIME-Version: 1.0
+In-Reply-To: <1507555281-57845-2-git-send-email-biju.das@bp.renesas.com>
+References: <1507555281-57845-1-git-send-email-biju.das@bp.renesas.com> <1507555281-57845-2-git-send-email-biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 11 Oct 2017 14:48:01 +0200
+Message-ID: <CAMuHMdU02Yvx-2=zU-Z4wHP4Meo_GvKojwovqaYN8y6o0x9HYQ@mail.gmail.com>
+Subject: Re: [PATCH 1/4] ARM: dts: r8a7743: Add HS-USB device node
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms@verge.net.au>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 0/4] rcar-du: add R8A774[35] DU driver(s) support
-Date: Fri, 13 Oct 2017 16:22:18 +0100
-Message-Id: <1507908142-13142-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-In order to be able to define du nodes in r8a7743 and r8a7745 device
-trees, we need to define data structures, compatible strings, missing
-clock, and update the dt-bindings.
-I'll send out the patches to add the du nodes in r8a774[35] device trees
-once the patches in this series get accepted.
+On Mon, Oct 9, 2017 at 3:21 PM, Biju Das <biju.das@bp.renesas.com> wrote:
+> Define the R8A7743 generic part of the HS-USB device node. It is up to the
+> board file to enable the device.
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
 
-Best regards,
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Fabrizio Castro (4):
-  dt-bindings: display: rcar-du: Document R8A774[35] DU
-  drm: rcar-du: Add R8A7743 support
-  clk: renesas: cpg-mssr: Add du1 clock to R8A7745
-  drm: rcar-du: Add R8A7745 support
+Gr{oetje,eeting}s,
 
- .../devicetree/bindings/display/renesas,du.txt     | 30 ++++++++-------
- drivers/clk/renesas/r8a7745-cpg-mssr.c             |  1 +
- drivers/gpu/drm/rcar-du/rcar_du_drv.c              | 44 ++++++++++++++++++++++
- 3 files changed, 62 insertions(+), 13 deletions(-)
+                        Geert
 
--- 
-2.7.4
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
