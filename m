@@ -1,66 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57629 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935401AbdJRHVu (ORCPT
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:52382 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752393AbdJKNP7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Oct 2017 03:21:50 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: David Miller <davem@davemloft.net>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH net-next v2 3/3] net: sh_eth: implement R-Car Gen[12] fallback compatibility strings
-Date: Wed, 18 Oct 2017 09:21:28 +0200
-Message-Id: <20171018072128.11857-4-horms+renesas@verge.net.au>
-In-Reply-To: <20171018072128.11857-1-horms+renesas@verge.net.au>
-References: <20171018072128.11857-1-horms+renesas@verge.net.au>
+        Wed, 11 Oct 2017 09:15:59 -0400
+MIME-Version: 1.0
+In-Reply-To: <1507557541-46560-5-git-send-email-biju.das@bp.renesas.com>
+References: <1507557541-46560-1-git-send-email-biju.das@bp.renesas.com> <1507557541-46560-5-git-send-email-biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 11 Oct 2017 15:15:57 +0200
+Message-ID: <CAMuHMdWTSP5PVakNgJfaSHZ70EJ4aaRts-qqLWjx7MmpDic8bw@mail.gmail.com>
+Subject: Re: [PATCH 4/5] ARM: dts: iwg22d-sodimm: Enable internal PCI
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Implement fallback compatibility strings for R-Car Gen 1 and 2.
+On Mon, Oct 9, 2017 at 3:59 PM, Biju Das <biju.das@bp.renesas.com> wrote:
+> Enable internal AHB-PCI bridges for the USB EHCI/OHCI controllers
+> attached to them.
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
 
-In the case of Renesas R-Car hardware we know that there are generations of
-SoCs, f.e. Gen 1 and 2. But beyond that its not clear what the relationship
-between IP blocks might be. For example, I believe that r8a7790 is older
-than r8a7791 but that doesn't imply that the latter is a descendant of the
-former or vice versa.
-
-We can, however, by examining the documentation and behaviour of the
-hardware at run-time observe that the current driver implementation appears
-to be compatible with the IP blocks on SoCs within a given generation.
-
-For the above reasons and convenience when enabling new SoCs a
-per-generation fallback compatibility string scheme is being adopted for
-drivers for Renesas SoCs.
-
-Note that R-Car Gen2 and RZ/G1 have many compatible IP blocks.  The
-approach that has been consistently taken for other IP blocks is to name
-common code, compatibility strings and so on after R-Car Gen2.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
----
-v2
-* Corrected typos in changelog
-* Collected review tags
----
- drivers/net/ethernet/renesas/sh_eth.c | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
-index c9f92fc8555e..7e060aa9fbed 100644
---- a/drivers/net/ethernet/renesas/sh_eth.c
-+++ b/drivers/net/ethernet/renesas/sh_eth.c
-@@ -3095,6 +3095,8 @@ static const struct of_device_id sh_eth_match_table[] = {
- 	{ .compatible = "renesas,ether-r8a7793", .data = &rcar_gen2_data },
- 	{ .compatible = "renesas,ether-r8a7794", .data = &rcar_gen2_data },
- 	{ .compatible = "renesas,ether-r7s72100", .data = &r7s72100_data },
-+	{ .compatible = "renesas,rcar-gen1-ether", .data = &rcar_gen1_data },
-+	{ .compatible = "renesas,rcar-gen2-ether", .data = &rcar_gen2_data },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, sh_eth_match_table);
--- 
-2.11.0
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
