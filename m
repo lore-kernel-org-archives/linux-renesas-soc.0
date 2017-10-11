@@ -1,87 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:31269 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750967AbdJ0VLo (ORCPT
+Received: from sauhun.de ([88.99.104.3]:33681 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753822AbdJKHIp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Oct 2017 17:11:44 -0400
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Wolfram Sang <wsa@the-dreams.de>
-CC: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Wed, 11 Oct 2017 03:08:45 -0400
+Date: Wed, 11 Oct 2017 09:08:43 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>,
         "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
-Subject: RE: renesas sdhi driver and DMA
-Date: Fri, 27 Oct 2017 21:11:39 +0000
-Message-ID: <SG2PR06MB11658C446725E77967BF22598A5A0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+Subject: Re: renesas sdhi driver and DMA
+Message-ID: <20171011070843.nxmcx7wotjlbtzzd@ninjato>
 References: <SG2PR06MB1165F16A63D6793DBEC419688A750@SG2PR06MB1165.apcprd06.prod.outlook.com>
  <20171010203229.rrwxkrczuk7piqh6@tetsubishi>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ <SG2PR06MB1165529F4559C7D6CD23CA9C8A4A0@SG2PR06MB1165.apcprd06.prod.outlook.com>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="i3oyzcl5gch43egf"
+Content-Disposition: inline
+In-Reply-To: <SG2PR06MB1165529F4559C7D6CD23CA9C8A4A0@SG2PR06MB1165.apcprd06.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Wolfram,
 
-Sorry, back on this subject...
+--i3oyzcl5gch43egf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > > [<bf9921e7>] (tmio_mmc_dma_callback) from [<bf908e1b>]
-> > (rzadma_tasklet+0x23/0x98)
-> >
-> > For SYS-DMAC, this is a callback called by the dmaengine core once the
-> > DMA is completed. My guess is you call it directly from an interrupt
-> > handler? It would be easier to talk over code here, I guess.
-> >
-> > > Is it now a requirement that I have to register my DMA channel
-> > > interrupts as devm_request_threaded_irq?
-> > >
-> > > Will that fix my issue?
-> >
-> > I can't say yet if this alone will do. Likely not. Can you share the
-> > code already?
+
+> > Isn't it SYS-DMAC compatible (sigh)?
 >=20
-> The interrupt handler is starting a tasklet, and then the tasklet calls
-> the callback. I thought tasklets didn't run in an interrupt context?????
+> And to answer your question, it's a completely different IP than the=20
+> SYS-DMAC. It's still a multi-channel linked-list descriptor based system=
+=20
+> like SYS-DMAC, but a complete different set of registers.
+>=20
+> However, it's a nice piece of IP so we'll probably continue to use it=20
+> for future RZ/A devices.
+
+When asking the question, I mixed up RZ/A with RZ/G, so I wondered why
+the latter has something different. For RZ/A, it is obvious to me that
+DMA has a different controller. Sorry about the fuzz!
 
 
-So here's what I found.
+--i3oyzcl5gch43egf
+Content-Type: application/pgp-signature; name="signature.asc"
 
-According to:
+-----BEGIN PGP SIGNATURE-----
 
-https://www.kernel.org/doc/Documentation/dmaengine/client.txt
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlndw3sACgkQFA3kzBSg
+Kba+og//ZBotQeCxHltp5YXkrzgxGHmBoIXb+bwxzwyGqb+vO0rgcH/trVGauYUn
+EVdaGIxwfpvT0u0ZyTIkO3zPxUeZJNlPMTjhW1+IzJMuMoEvKPJ4YMLnyt9KuZa8
+d6wQ+JVhIuR2SGU5i7f7+6wm4GsBXanuR2Wv+Aj3m4PIm/ZJCzMGPeWl6htJ14Qu
+qqoMwUSIQsPUXfNuBroC/GbUgFn0fYNSdQuEeaD7BT4CwRIJe5lntcyYr6pPRx7N
+TgdniPaaYXHzUQWO/TmMeuMtNJTjPH2feTqZenXBuwu3QBjXq4Npy3lH36kaONb3
+ERFN3y8HtpnMHVQ8rVE4Pa0g1ZcVLvivL8MPE0cgDi2TPrCEPg4uphppoG4wE96V
+lb6wO1B92RNZuOGLpIdgFTlvwpVtggGPZMoZwSNPi+xKT09Oa9haG8ZXywa1w3Ap
+IX13pONTgR3Vf7OniGCOaufwn78D4OfjXItHkX5qJtGKunGTe8JJ0MzNeh33AS1h
+2uRdMtW3GwDreSRrEB7L6Im0BGMdokrl1NASiTuwiMd/vvEI4pThhkcKQMUFK2t0
+fLW3o6KUmhFbv3C7SAYmbSXTgIXXekdZfSrLTEWHNO7uhifSf25zg7zXgEwI6qNT
+RG9os7g9DOq8gggLB7jRBgo510Yh8XJSmhVO7wNBlgzhs+rUH5E=
+=dmfY
+-----END PGP SIGNATURE-----
 
-It says:
-"Note that callbacks will always be invoked from the DMA engines=20
-tasklet, never from interrupt context."
-
-
-My DMA driver was calling the SDHI callback from within a tasklet (ie,=20
-softirq). Almost all the other DMA drivers doing the same thing.
-
-All was fine until that patch you submitted (52ad9a8e854c) that now adds
-a wait_for_completion() in the SDHI callback.
-
-Now I get the "BUG: scheduling while atomic".
-
-The R-Car driver uses a threaded irq to call the callbacks, not a=20
-tasklet.
-
-So I hacked my code to also call the callbacks from a threaded irq like=20
-rcar-dma.c.
-And....that works (no more scheduling while atomic).
-
-So, the question is, which of these statements are correct?
-
-  1. wait_for_completion should not be called in a DMA callback
-
-  2. DMA engine drivers should use threaded IRQs instead of tasklets
-
-
-The issue with #2 is that mic_x100_dma.c, sh/rcar-dmac.c and=20
-sh/shdma-base.c are the only ones calling request_threaded_irq,
-so you would think that tasklets are the correct method.
-
-
-Thanks,
-Chris
+--i3oyzcl5gch43egf--
