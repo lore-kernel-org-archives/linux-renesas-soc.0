@@ -1,42 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:56872 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756138AbdJLJfV (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:40436 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752288AbdJKLua (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 12 Oct 2017 05:35:21 -0400
+        Wed, 11 Oct 2017 07:50:30 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 05/13] ARM: dts: r8a7778: Add clock for CA9 CPU core
-Date: Thu, 12 Oct 2017 11:35:08 +0200
-Message-Id: <1507800916-11509-6-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1507800916-11509-1-git-send-email-geert+renesas@glider.be>
-References: <1507800916-11509-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH 3/3] clk: renesas: r8a77995: Correct parent clock of INTC-AP
+Date: Wed, 11 Oct 2017 10:29:52 +0200
+Message-Id: <1507710592-13740-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1507710592-13740-1-git-send-email-geert+renesas@glider.be>
+References: <1507710592-13740-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Improve hardware description by adding a clock property to the device
-node corresponding to the CA9 CPU core.
+According to the R-Car Gen3 Hardware Manual Errata for Rev 0.55 of
+September 8, 2017, the parent clock of the INTC-AP module clock on R-Car
+D3 is S1D2.
+
+This change has no functional impact.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7778.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/renesas/r8a77995-cpg-mssr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r8a7778.dtsi b/arch/arm/boot/dts/r8a7778.dtsi
-index 8f3156c0e5754b09..0f98629a730f6b4f 100644
---- a/arch/arm/boot/dts/r8a7778.dtsi
-+++ b/arch/arm/boot/dts/r8a7778.dtsi
-@@ -33,6 +33,7 @@
- 			compatible = "arm,cortex-a9";
- 			reg = <0>;
- 			clock-frequency = <800000000>;
-+			clocks = <&z_clk>;
- 		};
- 	};
- 
+diff --git a/drivers/clk/renesas/r8a77995-cpg-mssr.c b/drivers/clk/renesas/r8a77995-cpg-mssr.c
+index e594cf8ee63b64e0..ea4cafbe6e851aca 100644
+--- a/drivers/clk/renesas/r8a77995-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a77995-cpg-mssr.c
+@@ -127,7 +127,7 @@ static const struct mssr_mod_clk r8a77995_mod_clks[] __initconst = {
+ 	DEF_MOD("usb-dmac1",		 331,	R8A77995_CLK_S3D1),
+ 	DEF_MOD("rwdt",			 402,	R8A77995_CLK_R),
+ 	DEF_MOD("intc-ex",		 407,	R8A77995_CLK_CP),
+-	DEF_MOD("intc-ap",		 408,	R8A77995_CLK_S3D1),
++	DEF_MOD("intc-ap",		 408,	R8A77995_CLK_S1D2),
+ 	DEF_MOD("audmac0",		 502,	R8A77995_CLK_S3D1),
+ 	DEF_MOD("hscif3",		 517,	R8A77995_CLK_S3D1C),
+ 	DEF_MOD("hscif0",		 520,	R8A77995_CLK_S3D1C),
 -- 
 2.7.4
