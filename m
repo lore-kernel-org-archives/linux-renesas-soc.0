@@ -1,151 +1,109 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:39380 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751948AbdJKMb5 (ORCPT
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:60248 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750718AbdJKV0q (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Oct 2017 08:31:57 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Chris Brandt <chris.brandt@renesas.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC] clocksource/drivers/ostm: Use unique device name instead of ostm
-Date: Wed, 11 Oct 2017 14:31:53 +0200
-Message-Id: <1507725113-18070-1-git-send-email-geert+renesas@glider.be>
+        Wed, 11 Oct 2017 17:26:46 -0400
+Date: Wed, 11 Oct 2017 23:26:44 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Cc: Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Guennadi Liakhovetski <g.liakhovetski@gmx.de>,
+        Mats Randgaard <matrandg@cisco.com>,
+        Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>,
+        Bhumika Goyal <bhumirks@gmail.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Julia Lawall <Julia.Lawall@lip6.fr>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Benoit Parrot <bparrot@ti.com>,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
+        Petr Cvek <petr.cvek@tul.cz>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Rob Herring <robh@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Sebastian Reichel <sre@kernel.org>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 04/24] media: v4l2-mediabus: convert flags to enums and
+ document them
+Message-ID: <20171011212644.GB32314@amd>
+References: <cover.1507544011.git.mchehab@s-opensource.com>
+ <8d351f92fb18148b4d53acdc7f7c8fb0e9f537d9.1507544011.git.mchehab@s-opensource.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="0eh6TmSyL6TZE2Uz"
+Content-Disposition: inline
+In-Reply-To: <8d351f92fb18148b4d53acdc7f7c8fb0e9f537d9.1507544011.git.mchehab@s-opensource.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Currently all OSTM devices are called "ostm", also in kernel messages.
 
-As there can be multiple instances in an SoC, this can confuse the user.
-Hence construct a unique name from the DT node name, like is done for
-platform devices.
+--0eh6TmSyL6TZE2Uz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On GR-Peach, the boot log changes like:
+On Mon 2017-10-09 07:19:10, Mauro Carvalho Chehab wrote:
+> There is a mess with media bus flags: there are two sets of
+> flags, one used by parallel and ITU-R BT.656 outputs,
+> and another one for CSI2.
+>=20
+> Depending on the type, the same bit has different meanings.
+>=20
 
-    -clocksource: ostm: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 57352151442 ns
-    +clocksource: ostm timer@fcfec000: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 57352151442 ns
-     sched_clock: 32 bits at 33MHz, resolution 30ns, wraps every 64440619504ns
-    -ostm: used for clocksource
-    -ostm: used for clock events
-    +ostm timer@fcfec000: used for clocksource
-    +ostm timer@fcfec400: used for clock events
+> @@ -86,11 +125,22 @@ enum v4l2_mbus_type {
+>  /**
+>   * struct v4l2_mbus_config - media bus configuration
+>   * @type:	in: interface type
+> - * @flags:	in / out: configuration flags, depending on @type
+> + * @pb_flags:	in / out: configuration flags, if @type is
+> + *		%V4L2_MBUS_PARALLEL or %V4L2_MBUS_BT656.
+> + * @csi2_flags:	in / out: configuration flags, if @type is
+> + *		%V4L2_MBUS_CSI2.
+> + * @flag:	access flags, no matter the @type.
+> + *		Used just to avoid needing to rewrite the logic inside
+> + *		soc_camera and pxa_camera drivers. Don't use on newer
+> + * 		drivers!
+>   */
+>  struct v4l2_mbus_config {
+>  	enum v4l2_mbus_type type;
+> -	unsigned int flags;
+> +	union {
+> +		enum v4l2_mbus_parallel_and_bt656_flags	pb_flags;
+> +		enum v4l2_mbus_csi2_flags		csi2_flags;
+> +		unsigned int				flag;
+> +	};
+>  };
+> =20
+>  static inline void v4l2_fill_pix_format(struct v4l2_pix_format
+>  *pix_fmt,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Untested due to lack of hardware (I even made up the boot log ;-), hence
-sent to a limited audience.
----
- drivers/clocksource/renesas-ostm.c | 32 +++++++++++++++++---------------
- 1 file changed, 17 insertions(+), 15 deletions(-)
+The flags->flag conversion is quite subtle, and "flag" is confusing
+because there is more than one inside. What about something like
+__legacy_flags?
 
-diff --git a/drivers/clocksource/renesas-ostm.c b/drivers/clocksource/renesas-ostm.c
-index 6cffd7c6001a6961..f9080de0a63c5f60 100644
---- a/drivers/clocksource/renesas-ostm.c
-+++ b/drivers/clocksource/renesas-ostm.c
-@@ -37,6 +37,7 @@ struct ostm_device {
- 	void __iomem *base;
- 	unsigned long ticks_per_jiffy;
- 	struct clock_event_device ced;
-+	char name[0];
- };
- 
- static void __iomem *system_clock;	/* For sched_clock() */
-@@ -88,9 +89,8 @@ static int __init ostm_init_clksrc(struct ostm_device *ostm, unsigned long rate)
- 	writeb(CTL_FREERUN, ostm->base + OSTM_CTL);
- 	writeb(TS, ostm->base + OSTM_TS);
- 
--	return clocksource_mmio_init(ostm->base + OSTM_CNT,
--			"ostm", rate,
--			300, 32, clocksource_mmio_readl_up);
-+	return clocksource_mmio_init(ostm->base + OSTM_CNT, ostm->name, rate,
-+				     300, 32, clocksource_mmio_readl_up);
- }
- 
- static u64 notrace ostm_read_sched_clock(void)
-@@ -170,15 +170,14 @@ static int __init ostm_init_clkevt(struct ostm_device *ostm, int irq,
- 	struct clock_event_device *ced = &ostm->ced;
- 	int ret = -ENXIO;
- 
--	ret = request_irq(irq, ostm_timer_interrupt,
--			  IRQF_TIMER | IRQF_IRQPOLL,
--			  "ostm", ostm);
-+	ret = request_irq(irq, ostm_timer_interrupt, IRQF_TIMER | IRQF_IRQPOLL,
-+			  ostm->name, ostm);
- 	if (ret) {
--		pr_err("ostm: failed to request irq\n");
-+		pr_err("%s: failed to request irq\n", ostm->name);
- 		return ret;
- 	}
- 
--	ced->name = "ostm";
-+	ced->name = ostm->name;
- 	ced->features = CLOCK_EVT_FEAT_ONESHOT | CLOCK_EVT_FEAT_PERIODIC;
- 	ced->set_state_shutdown = ostm_shutdown;
- 	ced->set_state_periodic = ostm_set_periodic;
-@@ -194,38 +193,41 @@ static int __init ostm_init_clkevt(struct ostm_device *ostm, int irq,
- 
- static int __init ostm_init(struct device_node *np)
- {
-+	unsigned int n = sizeof("ostm ") + strlen(np->name);
- 	struct ostm_device *ostm;
- 	int ret = -EFAULT;
- 	struct clk *ostm_clk = NULL;
- 	int irq;
- 	unsigned long rate;
- 
--	ostm = kzalloc(sizeof(*ostm), GFP_KERNEL);
-+	ostm = kzalloc(sizeof(*ostm) + n, GFP_KERNEL);
- 	if (!ostm)
- 		return -ENOMEM;
- 
-+	snprintf(ostm->name, n, "ostm %s", np->name);
-+
- 	ostm->base = of_iomap(np, 0);
- 	if (!ostm->base) {
--		pr_err("ostm: failed to remap I/O memory\n");
-+		pr_err("%s: failed to remap I/O memory\n", ostm->name);
- 		goto err;
- 	}
- 
- 	irq = irq_of_parse_and_map(np, 0);
- 	if (irq < 0) {
--		pr_err("ostm: Failed to get irq\n");
-+		pr_err("%s: Failed to get irq\n", ostm->name);
- 		goto err;
- 	}
- 
- 	ostm_clk = of_clk_get(np, 0);
- 	if (IS_ERR(ostm_clk)) {
--		pr_err("ostm: Failed to get clock\n");
-+		pr_err("%s: Failed to get clock\n", ostm->name);
- 		ostm_clk = NULL;
- 		goto err;
- 	}
- 
- 	ret = clk_prepare_enable(ostm_clk);
- 	if (ret) {
--		pr_err("ostm: Failed to enable clock\n");
-+		pr_err("%s: Failed to enable clock\n", ostm->name);
- 		goto err;
- 	}
- 
-@@ -241,14 +243,14 @@ static int __init ostm_init(struct device_node *np)
- 
- 		if (!ret) {
- 			ostm_init_sched_clock(ostm, rate);
--			pr_info("ostm: used for clocksource\n");
-+			pr_info("%s: used for clocksource\n", ostm->name);
- 		}
- 
- 	} else {
- 		ret = ostm_init_clkevt(ostm, irq, rate);
- 
- 		if (!ret)
--			pr_info("ostm: used for clock events\n");
-+			pr_info("%s: used for clock events\n", ostm->name);
- 	}
- 
- err:
--- 
-2.7.4
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--0eh6TmSyL6TZE2Uz
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlnejJQACgkQMOfwapXb+vL1ngCfSJfjpkYdLKbCx9x4YXgpGmoX
+nLQAn3G4E0g7OK73fDvk/torTdpsYPBp
+=i6Pt
+-----END PGP SIGNATURE-----
+
+--0eh6TmSyL6TZE2Uz--
