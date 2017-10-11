@@ -1,92 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:54154 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753231AbdJMLGa (ORCPT
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:38232 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752011AbdJKJOp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Oct 2017 07:06:30 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 04/10] ARM: dts: r8a7790: Use R-Car GPIO Gen2 fallback compat string
-Date: Fri, 13 Oct 2017 13:05:54 +0200
-Message-Id: <20171013110600.6858-5-horms+renesas@verge.net.au>
-In-Reply-To: <20171013110600.6858-1-horms+renesas@verge.net.au>
-References: <20171013110600.6858-1-horms+renesas@verge.net.au>
+        Wed, 11 Oct 2017 05:14:45 -0400
+Received: by mail-wr0-f195.google.com with SMTP id f12so704281wra.5
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Oct 2017 02:14:44 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <87lgkjzbl6.wl%kuninori.morimoto.gx@renesas.com>
+References: <87o9pfzbmw.wl%kuninori.morimoto.gx@renesas.com> <87lgkjzbl6.wl%kuninori.morimoto.gx@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 11 Oct 2017 11:14:43 +0200
+Message-ID: <CAMuHMdVnDNorpTa4r8oHoQgfn0fhqzKs-F7T-yTWjM2v38Dc5g@mail.gmail.com>
+Subject: Re: [PATCH 2/2 v2] pinctrl: sh-pfc: r8a77995: add Audio SSI pin support
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Simon <horms@verge.net.au>, Magnus <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use newly added R-Car GPIO Gen2 fallback compat string
-in place of now deprecated non-generation specific
-R-Car GPIO fallback compat string in the DT of the r8a7790 SoC.
+Hi Morimoto-san,
 
-This should have no run-time effect as the driver matches against
-the per-SoC compat string before considering the fallback compat string.
+On Tue, Oct 10, 2017 at 9:57 AM, Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7790.dtsi | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+i.e. will queue in sh-pfc-for-v4.15, after ...
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 92b7f3bd8b69..f247beb3863f 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -200,7 +200,7 @@
- 	};
- 
- 	gpio0: gpio@e6050000 {
--		compatible = "renesas,gpio-r8a7790", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7790", "renesas,rcar-gen2-gpio";
- 		reg = <0 0xe6050000 0 0x50>;
- 		interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -214,7 +214,7 @@
- 	};
- 
- 	gpio1: gpio@e6051000 {
--		compatible = "renesas,gpio-r8a7790", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7790", "renesas,rcar-gen2-gpio";
- 		reg = <0 0xe6051000 0 0x50>;
- 		interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -228,7 +228,7 @@
- 	};
- 
- 	gpio2: gpio@e6052000 {
--		compatible = "renesas,gpio-r8a7790", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7790", "renesas,rcar-gen2-gpio";
- 		reg = <0 0xe6052000 0 0x50>;
- 		interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -242,7 +242,7 @@
- 	};
- 
- 	gpio3: gpio@e6053000 {
--		compatible = "renesas,gpio-r8a7790", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7790", "renesas,rcar-gen2-gpio";
- 		reg = <0 0xe6053000 0 0x50>;
- 		interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -256,7 +256,7 @@
- 	};
- 
- 	gpio4: gpio@e6054000 {
--		compatible = "renesas,gpio-r8a7790", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7790", "renesas,rcar-gen2-gpio";
- 		reg = <0 0xe6054000 0 0x50>;
- 		interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -270,7 +270,7 @@
- 	};
- 
- 	gpio5: gpio@e6055000 {
--		compatible = "renesas,gpio-r8a7790", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7790", "renesas,rcar-gen2-gpio";
- 		reg = <0 0xe6055000 0 0x50>;
- 		interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
--- 
-2.11.0
+> --- a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
+> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
+> @@ -1325,6 +1325,50 @@ enum {
+>         SCIF_CLK_MARK,
+>  };
+>
+> +/* - SSI ---------------------------------------------------------------*/
+> +static const unsigned int ssi3_data_pins[] = {
+> +       /* SDATA3 */
+
+... changing these comments to e.g. SDATA, as per Sergei's feedback.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
