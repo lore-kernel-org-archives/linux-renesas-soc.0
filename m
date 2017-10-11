@@ -1,89 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:37444 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752171AbdJDJHV (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33376 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932145AbdJKHdm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Oct 2017 05:07:21 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 00/14] pinctrl: sh-pfc: Add suspend/resume support
-Date: Wed,  4 Oct 2017 11:06:59 +0200
-Message-Id: <1507108033-8606-1-git-send-email-geert+renesas@glider.be>
+        Wed, 11 Oct 2017 03:33:42 -0400
+Date: Wed, 11 Oct 2017 09:33:36 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+Subject: Re: [PATCH v2 04/18] arm64: dts: m3ulcb-kf: initial device tree
+Message-ID: <20171011073336.GE9661@verge.net.au>
+References: <1505398732-4614-1-git-send-email-vladimir.barinov@cogentembedded.com>
+ <CAMuHMdX-7MG2fCzJ-K5iQLnJcmZBaWjqMhmOhCxEemmWTh9pvw@mail.gmail.com>
+ <9635bb2d-8695-a168-d49e-0bd51807cc19@cogentembedded.com>
+ <20171006091759.GF7734@verge.net.au>
+ <20171009071814.GO17360@verge.net.au>
+ <00c273d8-ab80-4509-5cc7-15f7b3d60568@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <00c273d8-ab80-4509-5cc7-15f7b3d60568@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi all,
+On Tue, Oct 10, 2017 at 07:16:38PM +0300, Vladimir Barinov wrote:
+> Hi Simon,
+> 
+> On 09.10.2017 10:18, Simon Horman wrote:
+> >On Fri, Oct 06, 2017 at 11:18:00AM +0200, Simon Horman wrote:
+> >>On Fri, Oct 06, 2017 at 05:47:25AM +0300, Vladimir Barinov wrote:
+> >>>Hi Simon, Geert,
+> >>>
+> >>>Do you need extra actions from my side to accept this patch?
+> >>Yes, I need patch 3/18.
+> >>Could you repost it?
+> >I see you have done so, thanks.
+> >
+> >I have applied this patch with Geert's tag.  I had to apply the patch
+> >manually so please check that I did so correctly once I have pushed the
+> >next branch to the renesas tree a little later today.
+> I've verified that all is correct.
+> Thank you.
 
-During PSCI system suspend, R-Car Gen3 SoCs are powered down, and their
-pinctrl register state is lost.  Note that as the boot loader skips most
-initialization after system resume, pinctrl register state differs from
-the state encountered during normal system boot, too.
-
-To fix this, save all GPIO and peripheral function select, module
-select, drive strength control, bias, and other I/O control registers
-during system suspend, and restore them during resume.
-
-This series consists of 4 parts:
-  - Patches 1-2 are cleanups,
-  - Patches 3-9 introduce a generic way to describe bias (pull-up/down)
-    registers, and converts the R-Car Gen3 and R-Car M1A bias support
-    over,
-  - Patches 10-13 introduce a generic way to describe various IOCTRL
-    registers, and converts the R-Car Gen3 I/O voltage support over,
-  - Patch 14 implements the actual suspend/resume code, using the
-    generic bias and IOCTRL support introduced earlier.
-
-To avoid overhead on platforms not needing it, the suspend/resume code
-has a build time dependency on sleep and PSCI support, and a runtime
-dependency on PSCI.
-
-Due to the more compact description of bias registers, this series
-actually decreases kernel size (by ca. 112 bytes for renesas_defconfig,
-and ca. 60 bytes for shmobile_defconfig).
-
-Thanks for your comments!
-
-Geert Uytterhoeven (14):
-  pinctrl: sh-pfc: Remove matching on plain sh-pfc platform device
-  pinctrl: sh-pfc: Drop width parameter of sh_pfc_{read,write}_reg()
-  pinctrl: sh-pfc: Add generic bias register description
-  pinctrl: sh-pfc: Add sh_pfc_pin_to_bias_reg() helper
-  pinctrl: sh-pfc: r8a7795-es1: Use generic bias register description
-  pinctrl: sh-pfc: r8a7795: Use generic bias register description
-  pinctrl: sh-pfc: r8a7796: Use generic bias register description
-  pinctrl: sh-pfc: r8a7778: Use generic bias register description
-  pinctrl: sh-pfc: Remove obsolete sh_pfc_pin_to_bias_info()
-  pinctrl: sh-pfc: Add generic IOCTRL register description
-  pinctrl: sh-pfc: r8a7795-es1: Use generic IOCTRL register description
-  pinctrl: sh-pfc: r8a7795: Use generic IOCTRL register description
-  pinctrl: sh-pfc: r8a7796: Use generic IOCTRL register description
-  pinctrl: sh-pfc: Save/restore registers for PSCI system suspend
-
- drivers/pinctrl/sh-pfc/core.c            | 129 +++++++-
- drivers/pinctrl/sh-pfc/core.h            |  11 +-
- drivers/pinctrl/sh-pfc/pfc-r8a7778.c     | 403 +++++++++++++-----------
- drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c | 511 ++++++++++++++++---------------
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c     | 511 ++++++++++++++++---------------
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c     | 511 ++++++++++++++++---------------
- drivers/pinctrl/sh-pfc/pinctrl.c         |  12 +-
- drivers/pinctrl/sh-pfc/sh_pfc.h          |  24 +-
- 8 files changed, 1170 insertions(+), 942 deletions(-)
-
--- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Thanks for confirming.
