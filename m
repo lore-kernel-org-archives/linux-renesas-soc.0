@@ -1,136 +1,74 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v4 3/4] phy: rcar-gen3-usb2: add SoC-specific parameter for dedicated pins
-Date: Tue, 10 Oct 2017 14:58:29 +0900
-Message-Id: <1507615110-26206-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1507615110-26206-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1507615110-26206-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([88.99.104.3]:34555 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751996AbdJKMNZ (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 11 Oct 2017 08:13:25 -0400
+Date: Wed, 11 Oct 2017 14:13:24 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v2 1/2] pinctrl: sh-pfc: r8a7795: fix trivial typo in
+ comment
+Message-ID: <20171011121324.l42huohthvonceco@ninjato>
+References: <20171009083725.6474-1-wsa+renesas@sang-engineering.com>
+ <CAMuHMdVEiCvkd25yx2V8Pud+x7F4hP+2EUEVqvZLdFkcvSKPHg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="3srp7xlsa4dzyqcu"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVEiCvkd25yx2V8Pud+x7F4hP+2EUEVqvZLdFkcvSKPHg@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds SoC-specific parameter to avoid reading/writing
-specific registers wrongly if this driver runs on a SoC which doesn't
-have dedicated pins (e.g. R-Car D3). This patch also changes the
-value "has_otg" to "has_otg_pins" for slightly easier reading of
-the code.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
----
- drivers/phy/renesas/phy-rcar-gen3-usb2.c | 31 +++++++++++++++++++++----------
- 1 file changed, 21 insertions(+), 10 deletions(-)
+--3srp7xlsa4dzyqcu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-index 7619468..d097539 100644
---- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-@@ -18,6 +18,7 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-+#include <linux/of_device.h>
- #include <linux/phy/phy.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
-@@ -80,6 +81,8 @@
- #define USB2_ADPCTRL_IDPULLUP		BIT(5)	/* 1 = ID sampling is enabled */
- #define USB2_ADPCTRL_DRVVBUS		BIT(4)
- 
-+#define RCAR_GEN3_PHY_HAS_DEDICATED_PINS	1
-+
- struct rcar_gen3_chan {
- 	void __iomem *base;
- 	struct extcon_dev *extcon;
-@@ -87,7 +90,7 @@ struct rcar_gen3_chan {
- 	struct regulator *vbus;
- 	struct work_struct work;
- 	bool extcon_host;
--	bool has_otg;
-+	bool has_otg_pins;
- };
- 
- static void rcar_gen3_phy_usb2_work(struct work_struct *work)
-@@ -268,7 +271,7 @@ static ssize_t role_store(struct device *dev, struct device_attribute *attr,
- 	else
- 		return -EINVAL;
- 
--	if (ch->has_otg)
-+	if (ch->has_otg_pins)
- 		ret = rcar_gen3_otg_change_role(ch, mode);
- 
- 	if (ret < 0)
-@@ -286,7 +289,7 @@ static ssize_t role_show(struct device *dev, struct device_attribute *attr,
- 	if (!ch->phy->init_count)
- 		return -EIO;
- 
--	if (ch->has_otg)
-+	if (ch->has_otg_pins)
- 		is_host = rcar_gen3_is_host(ch);
- 	else
- 		return -EIO;
-@@ -326,7 +329,7 @@ static int rcar_gen3_phy_usb2_init(struct phy *p)
- 	writel(USB2_OC_TIMSET_INIT, usb2_base + USB2_OC_TIMSET);
- 
- 	/* Initialize otg part */
--	if (channel->has_otg)
-+	if (channel->has_otg_pins)
- 		rcar_gen3_init_otg(channel);
- 
- 	return 0;
-@@ -400,9 +403,17 @@ static irqreturn_t rcar_gen3_phy_usb2_irq(int irq, void *_ch)
- }
- 
- static const struct of_device_id rcar_gen3_phy_usb2_match_table[] = {
--	{ .compatible = "renesas,usb2-phy-r8a7795" },
--	{ .compatible = "renesas,usb2-phy-r8a7796" },
--	{ .compatible = "renesas,rcar-gen3-usb2-phy" },
-+	{
-+		.compatible = "renesas,usb2-phy-r8a7795",
-+		.data = (void *)RCAR_GEN3_PHY_HAS_DEDICATED_PINS,
-+	},
-+	{
-+		.compatible = "renesas,usb2-phy-r8a7796",
-+		.data = (void *)RCAR_GEN3_PHY_HAS_DEDICATED_PINS,
-+	},
-+	{
-+		.compatible = "renesas,rcar-gen3-usb2-phy",
-+	},
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, rcar_gen3_phy_usb2_match_table);
-@@ -448,7 +459,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 	if (of_usb_get_dr_mode_by_phy(dev->of_node, 0) == USB_DR_MODE_OTG) {
- 		int ret;
- 
--		channel->has_otg = true;
-+		channel->has_otg_pins = (uintptr_t)of_device_get_match_data(dev);
- 		channel->extcon = devm_extcon_dev_allocate(dev,
- 							rcar_gen3_phy_cable);
- 		if (IS_ERR(channel->extcon))
-@@ -490,7 +501,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 		dev_err(dev, "Failed to register PHY provider\n");
- 		ret = PTR_ERR(provider);
- 		goto error;
--	} else if (channel->has_otg) {
-+	} else if (channel->has_otg_pins) {
- 		int ret;
- 
- 		ret = device_create_file(dev, &dev_attr_role);
-@@ -510,7 +521,7 @@ static int rcar_gen3_phy_usb2_remove(struct platform_device *pdev)
- {
- 	struct rcar_gen3_chan *channel = platform_get_drvdata(pdev);
- 
--	if (channel->has_otg)
-+	if (channel->has_otg_pins)
- 		device_remove_file(&pdev->dev, &dev_attr_role);
- 
- 	pm_runtime_disable(&pdev->dev);
--- 
-1.9.1
+
+> > - * R8A7795 has 8 banks with 32 PGIOS in each =3D> 256 GPIOs.
+> > + * R8A7795 has 8 banks with 32 GPIOs IN EACH =3D> 256 GPIOs.
+>=20
+> I don't think the capitalization of "in each" had to be changed?
+> (overzealous use of vim ~?)
+
+Huh, how did this slip through? Sorry, Geert, and thanks for updating
+it.
+
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> i.e. will queue in sh-pfc-for-v4.15 with the above fixed, and once more
+> after filtering through s/r8a7795/r8a7795-es1/g.
+
+Good. I got the idea of checking es1 yesterday on the train, too, but
+didn't come around to do it yet.
+
+Thanks,
+
+   Wolfram
+
+
+--3srp7xlsa4dzyqcu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlneCt8ACgkQFA3kzBSg
+KbZ37A/9FCMsNGzKXtKIcPKkBtrvwkH0Js2T4K7hzgVIryc+d/ugFlBiASybnBp0
+VuQVvGrUJYRF71qjvoqRMCiJCBWlD7lrUzOzZ2I/bB7PRaZv8ZmPIo72FEUi384U
+2CySlB5dWxXSwqwnwTkBi6E4RQ0JdD3d1UOgDEdvrW2vS4VjrMSdJyOWZuVxTQUz
+/ezlFdLbJFXYZ7lZRFSc4/58/4tPH4YBagJ6ZJgRrOfET6Zm6MV/5ER0Ckg6KnkV
+dLEYAhTj3DLB0KrPeZ+S7dESW/KE7ASglrcoWR0ZCyJKDtKgHS7HW5EDrvnof5kF
+qfbfrOO4lHHlpp/ggig+n8YfOWRlCeA3ydx5zAYcOvyBXIzACskNsICd15Pr14aR
+TkwJZ95ZwBBj7ybb8VF0MGm0m0AdMhFl3T47LkF0mzDxblh9CMqbdKZqoXOflBEC
+huYL/2TIInJ1zGJKa+WclWhfAaW+UH6msNJh2vU5pcZAO3+RyJh8PmjAKWHJMDYH
+mXfgTVT/ybCkjHN4m7j1sgbRT7lHqG8GTU/Aop3X+72abjqkvEBNG+KbRcP+apIT
+PM8ZtvLDKvVkSy8LV9MEIvn5kNNoHGcUT/1au41Z/gig4OdCTWlxrQqeVyvJwvg9
+8VQ3jTYwvHZ9Na/bFkQusMzUln4X6Ph19LzxZXOY/6UcSG/QeGc=
+=9o7G
+-----END PGP SIGNATURE-----
+
+--3srp7xlsa4dzyqcu--
