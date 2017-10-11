@@ -1,60 +1,40 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:33950 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751988AbdJDMhA (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Oct 2017 08:37:00 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <1507557541-46560-2-git-send-email-biju.das@bp.renesas.com>
+References: <1507557541-46560-1-git-send-email-biju.das@bp.renesas.com> <1507557541-46560-2-git-send-email-biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 11 Oct 2017 15:03:01 +0200
+Message-ID: <CAMuHMdVB-ExANTwd2po53sKj9dvRQPTA4KWf955NqhXdq+37pg@mail.gmail.com>
+Subject: Re: [PATCH 1/5] ARM: dts: r8a7745: Add internal PCI bridge nodes
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/4] ARM: dts: r8a7792: Use generic node name for VSP1 nodes
-Date: Wed,  4 Oct 2017 14:36:48 +0200
-Message-Id: <1507120609-14501-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1507120609-14501-1-git-send-email-geert+renesas@glider.be>
-References: <1507120609-14501-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use the preferred generic node name instead of the specific name.
+On Mon, Oct 9, 2017 at 3:58 PM, Biju Das <biju.das@bp.renesas.com> wrote:
+> Add device nodes for the r8a7745 internal PCI bridge devices.
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7792.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
-index c332f77ebb6b9349..549eafe8ff129edc 100644
---- a/arch/arm/boot/dts/r8a7792.dtsi
-+++ b/arch/arm/boot/dts/r8a7792.dtsi
-@@ -794,7 +794,7 @@
- 			status = "disabled";
- 		};
- 
--		vsp1@fe928000 {
-+		vsp@fe928000 {
- 			compatible = "renesas,vsp1";
- 			reg = <0 0xfe928000 0 0x8000>;
- 			interrupts = <GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>;
-@@ -803,7 +803,7 @@
- 			resets = <&cpg 131>;
- 		};
- 
--		vsp1@fe930000 {
-+		vsp@fe930000 {
- 			compatible = "renesas,vsp1";
- 			reg = <0 0xfe930000 0 0x8000>;
- 			interrupts = <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
-@@ -812,7 +812,7 @@
- 			resets = <&cpg 128>;
- 		};
- 
--		vsp1@fe938000 {
-+		vsp@fe938000 {
- 			compatible = "renesas,vsp1";
- 			reg = <0 0xfe938000 0 0x8000>;
- 			interrupts = <GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>;
--- 
-2.7.4
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
