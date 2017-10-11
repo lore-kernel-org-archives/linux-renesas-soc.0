@@ -1,41 +1,39 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47800 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750790AbdJIHQm (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 Oct 2017 03:16:42 -0400
-Date: Mon, 9 Oct 2017 09:16:24 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH 13/18] arm64: dts: ulcb-kf: enable USB3.0 Host
-Message-ID: <20171009071622.GG17360@verge.net.au>
-References: <1504737267-22829-1-git-send-email-vladimir.barinov@cogentembedded.com>
- <1504737408-23347-1-git-send-email-vladimir.barinov@cogentembedded.com>
- <CAMuHMdV0qcjzm0vz9KPCeOo3gN7QW9QMpK3EUmr_BtGarjt4kw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdV0qcjzm0vz9KPCeOo3gN7QW9QMpK3EUmr_BtGarjt4kw@mail.gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Mark Rutland <mark.rutland@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/2] drivers: firmware: psci: checker: Use psci_is_available()
+Date: Wed, 11 Oct 2017 10:03:02 +0200
+Message-Id: <1507708982-12336-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1507708982-12336-1-git-send-email-geert+renesas@glider.be>
+References: <1507708982-12336-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Sep 20, 2017 at 03:07:31PM +0200, Geert Uytterhoeven wrote:
-> On Thu, Sep 7, 2017 at 12:36 AM, Vladimir Barinov
-> <vladimir.barinov@cogentembedded.com> wrote:
-> > This supports USB3.0 Host on ULCB Kingfisher board
-> >
-> > Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-> 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> 
-> Gr{oetje,eeting}s,
+Use the psci_is_available() helper instead of direct accesses to
+psci_ops internals.
 
-Thanks, applied.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/firmware/psci_checker.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/firmware/psci_checker.c b/drivers/firmware/psci_checker.c
+index 6523ce9628659755..72b40ed2dcce7cf4 100644
+--- a/drivers/firmware/psci_checker.c
++++ b/drivers/firmware/psci_checker.c
+@@ -54,7 +54,7 @@ static int psci_ops_check(void)
+ 	int migrate_type = -1;
+ 	int cpu;
+ 
+-	if (!(psci_ops.cpu_off && psci_ops.cpu_on && psci_ops.cpu_suspend)) {
++	if (!psci_is_available()) {
+ 		pr_warn("Missing PSCI operations, aborting tests\n");
+ 		return -EOPNOTSUPP;
+ 	}
+-- 
+2.7.4
