@@ -1,72 +1,93 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:13075 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752306AbdJKNbw (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:46416 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752050AbdJKN0n (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Oct 2017 09:31:52 -0400
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        "geert+renesas@glider.be" <geert+renesas@glider.be>
-CC: "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH v2] clocksource/drivers/ostm: Use unique device name
- instead of ostm
-Date: Wed, 11 Oct 2017 13:30:33 +0000
-Message-ID: <SG2PR06MB11657F97DA41FCA032C472A58A4A0@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <1507725113-18070-1-git-send-email-geert+renesas@glider.be>
- <1507727130-17641-1-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1507727130-17641-1-git-send-email-jacopo+renesas@jmondi.org>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 11 Oct 2017 09:26:43 -0400
+Received: by mail-wm0-f68.google.com with SMTP id m72so4764005wmc.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Oct 2017 06:26:43 -0700 (PDT)
 MIME-Version: 1.0
+In-Reply-To: <1507727130-17641-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1507725113-18070-1-git-send-email-geert+renesas@glider.be> <1507727130-17641-1-git-send-email-jacopo+renesas@jmondi.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 11 Oct 2017 15:26:42 +0200
+Message-ID: <CAMuHMdVq9W3egZh7k0-m3X2hs8TLwCdg5ma9-n6=6fG_rro=zQ@mail.gmail.com>
+Subject: Re: [PATCH v2] clocksource/drivers/ostm: Use unique device name
+ instead of ostm
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wednesday, October 11, 2017, Jacopo Mondi wrote:
+Hi Jacopo,
+
+On Wed, Oct 11, 2017 at 3:05 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
 > From: Geert Uytterhoeven <geert+renesas@glider.be>
->=20
+>
 > Currently all OSTM devices are called "ostm", also in kernel messages.
->=20
+>
 > As there can be multiple instances in an SoC, this can confuse the user.
 > Hence construct a unique name from the DT node name, like is done for
 > platform devices.
->=20
+>
 > On GR-Peach, the boot log changes like:
->=20
->     -clocksource: ostm: mask: 0xffffffff max_cycles: 0xffffffff,
-> max_idle_ns: 57352151442 ns
->     +clocksource: ostm /timer@fcfec000: mask: 0xffffffff max_cycles:
-> 0xffffffff, max_idle_ns: 57352151442 ns
->      sched_clock: 32 bits at 33MHz, resolution 30ns, wraps every
-> 64440619504ns
+>
+>     -clocksource: ostm: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 57352151442 ns
+>     +clocksource: ostm /timer@fcfec000: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 57352151442 ns
+>      sched_clock: 32 bits at 33MHz, resolution 30ns, wraps every 64440619504ns
 >     -ostm: used for clocksource
 >     -ostm: used for clock events
 >     +ostm /timer@fcfec000: used for clocksource
 >     +ostm /timer@fcfec400: used for clock events
->=20
+>
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 > Tested-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+
+Thanks for testing!
+
 > ---
+> Hi Geert,
+>    with your original patch boot log looks like:
+>
+>  clocksource: ostm timer: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 57339246898 ns
+>  ostm timer: used for clocksource
+>  ostm timer: used for clock events
+>  clocksource: Switched to clocksource ostm timer
+>
+> Using "np->name" to sprintf the ostm name is not that useful as all ostm
+> instances will appear as "ostm timer".
+>
+> With this v2 I am using "np->full_name" and custom print modifier "%pOF" to
+> sprintf the node name, and now boot log looks like what I have reported in the
+> change log (*)
+>
+> Thanks
+>    j
+>
+> (*) Using %pOF results in "/timer@fcfec000" with the "/" at beginning of
+>     timer name. I used %pOF as it has been recently introduced, but if you
+>     feel like it's better to get rid of the "/" I can fall back to
+>     ("%s", np->full_name)
 
+Right, I forgot the unit address is not included.
 
-My results on the RZ/A1H RSK board:
+What I really intended was to print "fcfec000.timer", cfr.
+of_device_make_bus_id()
+for platform devices.
 
-$ dmesg | grep timer
-[    0.000000] clocksource: ostm /timer@fcfec000: mask: 0xffffffff max_cycl=
-es: 0xffffffff, max_idle_ns: 57352151442 ns
-[    0.008267] ostm /timer@fcfec000: used for clocksource
-[    0.014085] ostm /timer@fcfec400: used for clock events
-[    0.452022] sh_mtu2 fcff0000.timer: ch0: used for clock events
-[    0.475358] sh_mtu2 fcff0000.timer: PM domain cpg_clocks will not be pow=
-ered off
-[    0.486528] clocksource: Switched to clocksource ostm /timer@fcfec000
+IMHO the full name is a bit long.
 
+Gr{oetje,eeting}s,
 
-$ cat /proc/interrupts | grep timer
- 17:      18721     GIC-0 135 Edge      ostm /timer@fcfec400
- 40:          0     GIC-0 139 Level     fcff0000.timer
+                        Geert
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Chris
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
