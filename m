@@ -1,66 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:42170 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755650AbdJJIMV (ORCPT
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:34679 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755552AbdJKI5e (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Oct 2017 04:12:21 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Second Round of Renesas ARM Based SoC Updates for v4.15
-Date: Tue, 10 Oct 2017 10:12:07 +0200
-Message-Id: <cover.1507623048.git.horms+renesas@verge.net.au>
+        Wed, 11 Oct 2017 04:57:34 -0400
+Received: by mail-wr0-f195.google.com with SMTP id l1so673752wrc.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Oct 2017 01:57:34 -0700 (PDT)
+MIME-Version: 1.0
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 11 Oct 2017 10:57:33 +0200
+Message-ID: <CAMuHMdW+CG5meJzD+9xeC-kwgOn9JLKNEgUwVm++O+RhvZ0nfg@mail.gmail.com>
+Subject: Re: [PATCH 1/2 v2] pinctrl: sh-pfc: r8a77995: add Audio clock pin support
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Simon <horms@verge.net.au>, Magnus <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+Hi Morimoto-san,
 
-Please consider these second round of Renesas ARM based SoC updates for v4.15.
+On Tue, Oct 10, 2017 at 9:57 AM, Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-This pull request is based on the previous round of
-such requests, tagged as renesas-soc-for-v4.15,
-which I have already sent a pull-request for.
+Thanks for the update!
 
-This pull request fixes a bug introduced in renesas-soc-for-v4.15.
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in sh-pfc-for-v4.15.
 
-The following changes since commit 3fd45a136ff61bb54deab70fb2d534a85e40481f:
+Gr{oetje,eeting}s,
 
-  ARM: shmobile: rcar-gen2: Make sure CNTVOFF is initialized on CA7/15 (2017-09-18 08:10:44 +0200)
+                        Geert
 
-are available in the git repository at:
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-soc2-for-v4.15
-
-for you to fetch changes up to dc15ca962757ca72a4492b2e13be2eecc6dcd716:
-
-  ARM: shmobile: rcar-gen2: fix non-SMP build (2017-10-06 11:35:34 +0200)
-
-----------------------------------------------------------------
-Second Round of Renesas ARM Based SoC Updates for v4.15
-
-Fix to allow UP build of shmobile.
-
-Arnd Bergmann says:
-
-  A bugfix for the SMP case broke the build for the UP case:
-
-  arch/arm/mach-shmobile/headsmp-apmu.o: In function `shmobile_boot_apmu':
-  (.text+0x34): undefined reference to `secondary_startup'
-
-  The assembler file mixes code that is used for SMP with code
-  that we also need on a single-CPU build, so I'm leaving it
-  always enabled in the Makefile, but enclose the SMP code
-  in an #ifdef.
-
-----------------------------------------------------------------
-Arnd Bergmann (1):
-      ARM: shmobile: rcar-gen2: fix non-SMP build
-
- arch/arm/mach-shmobile/headsmp-apmu.S | 2 ++
- 1 file changed, 2 insertions(+)
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
