@@ -1,77 +1,36 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:41601 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751057AbdJMS4f (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Oct 2017 14:56:35 -0400
-Date: Fri, 13 Oct 2017 20:56:34 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Chris Brandt <Chris.Brandt@renesas.com>
-Cc: "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+Return-Path: <linux-i2c-owner@vger.kernel.org>
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Wolfram Sang <wsa@the-dreams.de>
+CC: "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
         "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>,
         Simon Horman <horms+renesas@verge.net.au>,
         Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v2] i2c: riic: remove fixed clock restriction
-Message-ID: <20171013185633.lakiw4cu5o22cwjf@ninjato>
+Subject: RE: [PATCH v2] i2c: riic: remove fixed clock restriction
+Date: Wed, 11 Oct 2017 15:20:29 +0000
+Message-ID: <SG2PR06MB11656505D83C3D552B2CAC2D8A4A0@SG2PR06MB1165.apcprd06.prod.outlook.com>
 References: <20170929171637.121262-1-chris.brandt@renesas.com>
- <SG2PR06MB11656505D83C3D552B2CAC2D8A4A0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+In-Reply-To: <20170929171637.121262-1-chris.brandt@renesas.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="bwea6al3qep7ue4c"
-Content-Disposition: inline
-In-Reply-To: <SG2PR06MB11656505D83C3D552B2CAC2D8A4A0@SG2PR06MB1165.apcprd06.prod.outlook.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-
---bwea6al3qep7ue4c
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Oct 11, 2017 at 03:20:29PM +0000, Chris Brandt wrote:
-> On Friday, September 29, 2017, Chris Brandt wrote:
-> > Most systems with this i2c are going to have a clock of either 33.3MHz =
-or
-> > 32MHz. That 4% difference is not reason enough to warrant that the driv=
-er
-> > to completely fail.
-> >=20
-> > Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-> > ---
-> > v2:
-> >  * simplified error message.
-> > ---
+On Friday, September 29, 2017, Chris Brandt wrote:
+> Most systems with this i2c are going to have a clock of either 33.3MHz or
+> 32MHz. That 4% difference is not reason enough to warrant that the driver
+> to completely fail.
 >=20
-> What ever happened to this patch?
-> Was there any objection?
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> ---
+> v2:
+>  * simplified error message.
+> ---
 
-In deed, I'd prefer to limit the settings to the two known frequencies.
-We shouldn't use the settings if someone is using it with e.g. 16MHz?
+What ever happened to this patch?
+Was there any objection?
 
-Of course, my most favorite option would be implementing the formula
-instead of fixed settings, but I am not forcing that on you.
-
-
---bwea6al3qep7ue4c
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlnhDGEACgkQFA3kzBSg
-KbaqixAAjE1TnemRJ29cKe44+kuu9x8af8nMMMwH/giZOVOaAQ/x1cFxxBIdW4/O
-Mc07g47VjtCZMSnWP4A0rR0oMtasRemBm+o4x7+tlp7lP55cY+yIEFU/E3+MXNz6
-gQQToTCbf+I4ufb5f4WHT+d01M0UTjiIuZ8WgDeMxZXCmTfNHHBnlh9rwozMpVIO
-pjOTcpRjCNfkUDeaCSSkR1FUHJQG1TqmFMc9UkvStQqFD5oQkco830GZdUsqtQKx
-BC5+XZcGCVjlcUVv7sWoZVUI6lHx0NYvRfWXhpCe0jSZr+FW7SBhYfznHPn6bF3L
-wVqfzhU7Ndjf+jWbD5fqFWVzAnA0cyuTWu44SaLvSRLOKMr/xkVr058pKkSpM4B4
-JG4I37hnWEB3kFCM2jKGvDHoI7V+MjBUp0rSs0FnZAZw6gv4lb/B0pLD5LVzud8A
-lEj94Qgl2jnC2mlsU8XRybv7Zpy0eRngpI8y46F+c8mBiQgqbtQ1/D2tnZTI5vDH
-IDK8cBQ1DlOix43zuSZOsb+oK9XhTQjVm9WgBczJTg1zUErAgqJHqBTY/e7OJaM1
-09TfbQaBoPMDntGkBzCu9kmoKc3jSh+NYatdvk5YeKs88NOrYPm31OzQ24IEHjn2
-aE5IHJLoYIGdqxrNM8LG9VZiUWBgJzbktrDXcbIdLScduAJiYQc=
-=aUCw
------END PGP SIGNATURE-----
-
---bwea6al3qep7ue4c--
+Thanks,
+Chris
