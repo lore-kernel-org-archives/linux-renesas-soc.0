@@ -1,48 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:44761 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751991AbdJKMwP (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:33572 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752011AbdJKJFM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Oct 2017 08:52:15 -0400
-MIME-Version: 1.0
-In-Reply-To: <1507712673-57370-1-git-send-email-biju.das@bp.renesas.com>
-References: <20171010073057.GK2518@verge.net.au> <1507712673-57370-1-git-send-email-biju.das@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 11 Oct 2017 14:52:13 +0200
-Message-ID: <CAMuHMdV=TD8-YsnNB4=qT4MBN2YgxPvwGeGj=s_FKTkwDuLjGw@mail.gmail.com>
-Subject: Re: [PATCH v2] ARM: dts: iwg20d-q7: Enable HS-USB
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
+        Wed, 11 Oct 2017 05:05:12 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Simon Horman <horms@verge.net.au>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         Chris Paterson <chris.paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH v2] ARM: dts: iwg20d-q7: Enable HS-USB
+Date: Wed, 11 Oct 2017 10:04:33 +0100
+Message-Id: <1507712673-57370-1-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <20171010073057.GK2518@verge.net.au>
+References: <20171010073057.GK2518@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Oct 11, 2017 at 11:04 AM, Biju Das <biju.das@bp.renesas.com> wrote:
-> Enable HS-USB device for the iWave G20D-Q7 carrier board based on
-> RZ/G1M.
-> Also disable the host mode support on usb otg port by default to avoid
-> pin conflicts.
->
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+Enable HS-USB device for the iWave G20D-Q7 carrier board based on
+RZ/G1M.
+Also disable the host mode support on usb otg port by default to avoid
+pin conflicts.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+---
+v1-->v2 
+    * Dropped "status" property,to disable host mode support on USB otg 
+      port by default.
 
-Gr{oetje,eeting}s,
+This patch has been tested against renesas-dev tag 20171011-v4.14-rc4.
 
-                        Geert
+ arch/arm/boot/dts/iwg20d-q7-common.dtsi | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/iwg20d-q7-common.dtsi b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
+index 1c072c0..efd8af9 100644
+--- a/arch/arm/boot/dts/iwg20d-q7-common.dtsi
++++ b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
+@@ -58,6 +58,12 @@
+ 	};
+ };
+ 
++&hsusb {
++	status = "okay";
++	pinctrl-0 = <&usb0_pins>;
++	pinctrl-names = "default";
++};
++
+ &i2c2 {
+ 	pinctrl-0 = <&i2c2_pins>;
+ 	pinctrl-names = "default";
+@@ -72,7 +78,6 @@
+ };
+ 
+ &pci0 {
+-	status = "okay";
+ 	pinctrl-0 = <&usb0_pins>;
+ 	pinctrl-names = "default";
+ };
+-- 
+1.9.1
