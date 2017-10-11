@@ -1,57 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:53966 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932212AbdJJP0f (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:50936 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751910AbdJKLu3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Oct 2017 11:26:35 -0400
+        Wed, 11 Oct 2017 07:50:29 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 3/5] mfd: bd9571mwv: Allow DDR Backup Power register access
-Date: Tue, 10 Oct 2017 17:26:16 +0200
-Message-Id: <1507649178-31473-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1507649178-31473-1-git-send-email-geert+renesas@glider.be>
-References: <1507649178-31473-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH] pinctrl: sh-pfc: r8a77995: Remove USB0_IDIN and USB0_IDPU pins
+Date: Wed, 11 Oct 2017 10:32:31 +0200
+Message-Id: <1507710751-14138-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable read/write access to the BD9571MWV_BKUP_MODE_CNT register, which
-is a.o. used to configure DDR Backup Power.
+R-Car Gen3 Hardware Manual Errata for Rev 0.55 of September 8, 2017
+removed the USB0_IDIN and USB0_IDPU pins on R-Car D3.
+
+This change has no functional impact, as these definitions were unused.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/mfd/bd9571mwv.c | 2 ++
- 1 file changed, 2 insertions(+)
+To be queued up in sh-pfc-for-v4.15.
 
-diff --git a/drivers/mfd/bd9571mwv.c b/drivers/mfd/bd9571mwv.c
-index 64e088dfe7b05b5b..503979c81dae11bb 100644
---- a/drivers/mfd/bd9571mwv.c
-+++ b/drivers/mfd/bd9571mwv.c
-@@ -29,6 +29,7 @@ static const struct mfd_cell bd9571mwv_cells[] = {
+ drivers/pinctrl/sh-pfc/pfc-r8a77995.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
+index 3f67b8d4f05085ce..b151fc15d8e8d2a7 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
+@@ -198,8 +198,8 @@
+ #define GPSR6_0		FM(QSPI0_SPCLK)
  
- static const struct regmap_range bd9571mwv_readable_yes_ranges[] = {
- 	regmap_reg_range(BD9571MWV_VENDOR_CODE, BD9571MWV_PRODUCT_REVISION),
-+	regmap_reg_range(BD9571MWV_BKUP_MODE_CNT, BD9571MWV_BKUP_MODE_CNT),
- 	regmap_reg_range(BD9571MWV_AVS_SET_MONI, BD9571MWV_AVS_DVFS_VID(3)),
- 	regmap_reg_range(BD9571MWV_VD18_VID, BD9571MWV_VD33_VID),
- 	regmap_reg_range(BD9571MWV_DVFS_VINIT, BD9571MWV_DVFS_VINIT),
-@@ -44,6 +45,7 @@ static const struct regmap_access_table bd9571mwv_readable_table = {
- };
+ /* IPSRx */		/* 0 */			/* 1 */			/* 2 */			/* 3 */		/* 4 */			/* 5 */		/* 6  - F */
+-#define IP0_3_0		FM(IRQ0_A)		FM(MSIOF2_SYNC_B)	FM(USB0_IDIN)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP0_7_4		FM(MSIOF2_SCK)		F_(0, 0)		FM(USB0_IDPU)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP0_3_0		FM(IRQ0_A)		FM(MSIOF2_SYNC_B)	F_(0, 0)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP0_7_4		FM(MSIOF2_SCK)		F_(0, 0)		F_(0, 0)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP0_11_8	FM(MSIOF2_TXD)		FM(SCL3_A)		F_(0, 0)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP0_15_12	FM(MSIOF2_RXD)		FM(SDA3_A)		F_(0, 0)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP0_19_16	FM(MLB_CLK)		FM(MSIOF2_SYNC_A)	FM(SCK5_A)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+@@ -522,10 +522,8 @@ static const u16 pinmux_data[] = {
+ 	/* IPSR0 */
+ 	PINMUX_IPSR_MSEL(IP0_3_0,	IRQ0_A, SEL_IRQ_0_0),
+ 	PINMUX_IPSR_MSEL(IP0_3_0,	MSIOF2_SYNC_B, SEL_MSIOF2_1),
+-	PINMUX_IPSR_GPSR(IP0_3_0,	USB0_IDIN),
  
- static const struct regmap_range bd9571mwv_writable_yes_ranges[] = {
-+	regmap_reg_range(BD9571MWV_BKUP_MODE_CNT, BD9571MWV_BKUP_MODE_CNT),
- 	regmap_reg_range(BD9571MWV_AVS_VD09_VID(0), BD9571MWV_AVS_VD09_VID(3)),
- 	regmap_reg_range(BD9571MWV_DVFS_SETVID, BD9571MWV_DVFS_SETVID),
- 	regmap_reg_range(BD9571MWV_GPIO_DIR, BD9571MWV_GPIO_OUT),
+ 	PINMUX_IPSR_GPSR(IP0_7_4,	MSIOF2_SCK),
+-	PINMUX_IPSR_GPSR(IP0_7_4,	USB0_IDPU),
+ 
+ 	PINMUX_IPSR_GPSR(IP0_11_8,	MSIOF2_TXD),
+ 	PINMUX_IPSR_MSEL(IP0_11_8,	SCL3_A, SEL_I2C3_0),
 -- 
 2.7.4
