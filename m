@@ -1,66 +1,67 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-cys01nam02on0040.outbound.protection.outlook.com ([104.47.37.40]:9488
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752539AbdJLC6W (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Oct 2017 22:58:22 -0400
-Date: Thu, 12 Oct 2017 10:58:01 +0800
-From: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Mark Rutland <mark.rutland@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/2] drivers: firmware: psci: Add psci_is_available()
-Message-ID: <20171012105801.0bb643eb@xhacker.debian>
-In-Reply-To: <1507708982-12336-2-git-send-email-geert+renesas@glider.be>
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/2] drivers: firmware: psci: Add psci_is_available()
+Date: Wed, 11 Oct 2017 10:03:01 +0200
+Message-Id: <1507708982-12336-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1507708982-12336-1-git-send-email-geert+renesas@glider.be>
 References: <1507708982-12336-1-git-send-email-geert+renesas@glider.be>
-        <1507708982-12336-2-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, 11 Oct 2017 10:03:01 +0200 Geert Uytterhoeven wrote:
+PSCI support may be disabled at build time (by configuration) or at
+run-time (PSCI firmware not present).  While CONFIG_ARM_PSCI_FW can be
+used to check for build time enablement, there is currently no simple
+way to check if PSCI is actually available and used.
 
-> PSCI support may be disabled at build time (by configuration) or at
-> run-time (PSCI firmware not present).  While CONFIG_ARM_PSCI_FW can be
-> used to check for build time enablement, there is currently no simple
-> way to check if PSCI is actually available and used.
-> 
-> Hence add a helper function to check if PSCI is available.
-> 
-> This is useful for e.g. drivers that are used on platforms with and
-> without PSCI.  Such drivers may need to take provisions for proper
-> operation when PSCI is used, and/or to implement functionality that is
-> usually provided by PSCI.
+Hence add a helper function to check if PSCI is available.
 
-the psci_ops is a global var, why not check psci_ops.mmnn members
-individually in each drivers? check IS_ENABLED(CONFIG_ARM_PSCI_FW) for
-building time ennoblement.
+This is useful for e.g. drivers that are used on platforms with and
+without PSCI.  Such drivers may need to take provisions for proper
+operation when PSCI is used, and/or to implement functionality that is
+usually provided by PSCI.
 
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  drivers/firmware/psci.c | 5 +++++
->  include/linux/psci.h    | 2 ++
->  2 files changed, 7 insertions(+)
-> 
-> diff --git a/drivers/firmware/psci.c b/drivers/firmware/psci.c
-> index da469c972b503f83..a3a11e2d8ffffaaa 100644
-> --- a/drivers/firmware/psci.c
-> +++ b/drivers/firmware/psci.c
-> @@ -670,6 +670,11 @@ int __init psci_dt_init(void)
->  	return init_fn(np);
->  }
->  
-> +bool psci_is_available(void)
-> +{
-> +	return psci_ops.cpu_off && psci_ops.cpu_on && psci_ops.cpu_suspend;
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/firmware/psci.c | 5 +++++
+ include/linux/psci.h    | 2 ++
+ 2 files changed, 7 insertions(+)
 
-IIRC, for PSCI 0.1, cpu_suspend is optional, we can't say the PSCI isn't
-available if cpu_suspend is missing.
-
-Thanks
+diff --git a/drivers/firmware/psci.c b/drivers/firmware/psci.c
+index da469c972b503f83..a3a11e2d8ffffaaa 100644
+--- a/drivers/firmware/psci.c
++++ b/drivers/firmware/psci.c
+@@ -670,6 +670,11 @@ int __init psci_dt_init(void)
+ 	return init_fn(np);
+ }
+ 
++bool psci_is_available(void)
++{
++	return psci_ops.cpu_off && psci_ops.cpu_on && psci_ops.cpu_suspend;
++}
++
+ #ifdef CONFIG_ACPI
+ /*
+  * We use PSCI 0.2+ when ACPI is deployed on ARM64 and it's
+diff --git a/include/linux/psci.h b/include/linux/psci.h
+index bdea1cb5e1db142b..2bdee325aeb80cf6 100644
+--- a/include/linux/psci.h
++++ b/include/linux/psci.h
+@@ -39,8 +39,10 @@ extern struct psci_operations psci_ops;
+ 
+ #if defined(CONFIG_ARM_PSCI_FW)
+ int __init psci_dt_init(void);
++bool psci_is_available(void);
+ #else
+ static inline int psci_dt_init(void) { return 0; }
++static inline bool psci_is_available(void) { return false; }
+ #endif
+ 
+ #if defined(CONFIG_ARM_PSCI_FW) && defined(CONFIG_ACPI)
+-- 
+2.7.4
