@@ -1,65 +1,136 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:46241 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750854AbdJOMq1 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 15 Oct 2017 08:46:27 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v3 0/3] mmc: support eMMC driver type selection with DT
-Date: Sun, 15 Oct 2017 14:46:12 +0200
-Message-Id: <20171015124615.31391-1-wsa+renesas@sang-engineering.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v6 3/4] phy: rcar-gen3-usb2: add SoC-specific parameter for dedicated pins
+Date: Thu, 12 Oct 2017 15:34:47 +0900
+Message-Id: <1507790088-26010-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1507790088-26010-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1507790088-26010-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Some of the Renesas R-Car boards need to set the eMMC driver type to type 1 to
-get stable HS200/400 speeds (HS400 support not upstream yet). Because the eMMC
-memories are fixed (and thus the drive type), I decided to implement the DT
-setup in a similar fashion to ACPI [1]. While implementing, I realized that all
-I did was not Renesas specific but generic, so I ended up putting it into the
-core.
+This patch adds SoC-specific parameter to avoid reading/writing
+specific registers wrongly if this driver runs on a SoC which doesn't
+have dedicated pins (e.g. R-Car D3). This patch also changes the
+value "has_otg" to "has_otg_pins" for slightly easier reading of
+the code.
 
-So, whenever the new property (introduced in patch 1) is used, its value will
-be used regardless of a potentially implemented host driver specific
-select_drive_strength callback (patch 2). An example usage can be found in
-patch 3. Note that currently only eMMC is handled
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c | 31 +++++++++++++++++++++----------
+ 1 file changed, 21 insertions(+), 10 deletions(-)
 
-A branch for the Salvator-X(S) boards can be found here:
-
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/emmc-drive-strength
-
-A wiki page describing my test procedure can be found here:
-
-http://elinux.org/Tests:eMMC-fixed-drive-strength
-
-Changes since RFC v2 are described per patch. It is mainly a rebase to mmc/next
-and addressing Ulf's comments. Tested on Salvator-X (R-Car H3 ES1.0) and
-Salvator-XS (R-Car H3 ES2.0).
-
-I know that patch 3 needs to go via Simon, but I still include it here for
-completeness.
-
-Thanks,
-
-   Wolfram
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=51ced59cc02e0d08f61772c888480b9b1749cef1
-
-
-Wolfram Sang (3):
-  dt-bindings: mmc: describe new eMMC binding for fixed driver type
-  mmc: parse new binding for eMMC fixed driver type
-  arm64: renesas: salvator: set driver type for eMMC
-
- Documentation/devicetree/bindings/mmc/mmc.txt    |  3 +++
- arch/arm64/boot/dts/renesas/salvator-common.dtsi |  1 +
- drivers/mmc/core/host.c                          | 13 ++++++++++++-
- drivers/mmc/core/mmc.c                           | 11 ++++++++---
- include/linux/mmc/host.h                         |  2 ++
- 5 files changed, 26 insertions(+), 4 deletions(-)
-
+diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+index 00a8303..479ae94 100644
+--- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
++++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+@@ -18,6 +18,7 @@
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
++#include <linux/of_device.h>
+ #include <linux/phy/phy.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+@@ -80,6 +81,8 @@
+ #define USB2_ADPCTRL_IDPULLUP		BIT(5)	/* 1 = ID sampling is enabled */
+ #define USB2_ADPCTRL_DRVVBUS		BIT(4)
+ 
++#define RCAR_GEN3_PHY_HAS_DEDICATED_PINS	1
++
+ struct rcar_gen3_chan {
+ 	void __iomem *base;
+ 	struct extcon_dev *extcon;
+@@ -87,7 +90,7 @@ struct rcar_gen3_chan {
+ 	struct regulator *vbus;
+ 	struct work_struct work;
+ 	bool extcon_host;
+-	bool has_otg;
++	bool has_otg_pins;
+ };
+ 
+ static void rcar_gen3_phy_usb2_work(struct work_struct *work)
+@@ -234,7 +237,7 @@ static ssize_t role_store(struct device *dev, struct device_attribute *attr,
+ 	bool is_b_device;
+ 	enum phy_mode cur_mode, new_mode;
+ 
+-	if (!ch->has_otg || !ch->phy->init_count)
++	if (!ch->has_otg_pins || !ch->phy->init_count)
+ 		return -EIO;
+ 
+ 	if (!strncmp(buf, "host", strlen("host")))
+@@ -272,7 +275,7 @@ static ssize_t role_show(struct device *dev, struct device_attribute *attr,
+ {
+ 	struct rcar_gen3_chan *ch = dev_get_drvdata(dev);
+ 
+-	if (!ch->has_otg || !ch->phy->init_count)
++	if (!ch->has_otg_pins || !ch->phy->init_count)
+ 		return -EIO;
+ 
+ 	return sprintf(buf, "%s\n", rcar_gen3_is_host(ch) ? "host" :
+@@ -311,7 +314,7 @@ static int rcar_gen3_phy_usb2_init(struct phy *p)
+ 	writel(USB2_OC_TIMSET_INIT, usb2_base + USB2_OC_TIMSET);
+ 
+ 	/* Initialize otg part */
+-	if (channel->has_otg)
++	if (channel->has_otg_pins)
+ 		rcar_gen3_init_otg(channel);
+ 
+ 	return 0;
+@@ -385,9 +388,17 @@ static irqreturn_t rcar_gen3_phy_usb2_irq(int irq, void *_ch)
+ }
+ 
+ static const struct of_device_id rcar_gen3_phy_usb2_match_table[] = {
+-	{ .compatible = "renesas,usb2-phy-r8a7795" },
+-	{ .compatible = "renesas,usb2-phy-r8a7796" },
+-	{ .compatible = "renesas,rcar-gen3-usb2-phy" },
++	{
++		.compatible = "renesas,usb2-phy-r8a7795",
++		.data = (void *)RCAR_GEN3_PHY_HAS_DEDICATED_PINS,
++	},
++	{
++		.compatible = "renesas,usb2-phy-r8a7796",
++		.data = (void *)RCAR_GEN3_PHY_HAS_DEDICATED_PINS,
++	},
++	{
++		.compatible = "renesas,rcar-gen3-usb2-phy",
++	},
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, rcar_gen3_phy_usb2_match_table);
+@@ -433,7 +444,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
+ 	if (of_usb_get_dr_mode_by_phy(dev->of_node, 0) == USB_DR_MODE_OTG) {
+ 		int ret;
+ 
+-		channel->has_otg = true;
++		channel->has_otg_pins = (uintptr_t)of_device_get_match_data(dev);
+ 		channel->extcon = devm_extcon_dev_allocate(dev,
+ 							rcar_gen3_phy_cable);
+ 		if (IS_ERR(channel->extcon))
+@@ -475,7 +486,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
+ 		dev_err(dev, "Failed to register PHY provider\n");
+ 		ret = PTR_ERR(provider);
+ 		goto error;
+-	} else if (channel->has_otg) {
++	} else if (channel->has_otg_pins) {
+ 		int ret;
+ 
+ 		ret = device_create_file(dev, &dev_attr_role);
+@@ -495,7 +506,7 @@ static int rcar_gen3_phy_usb2_remove(struct platform_device *pdev)
+ {
+ 	struct rcar_gen3_chan *channel = platform_get_drvdata(pdev);
+ 
+-	if (channel->has_otg)
++	if (channel->has_otg_pins)
+ 		device_remove_file(&pdev->dev, &dev_attr_role);
+ 
+ 	pm_runtime_disable(&pdev->dev);
 -- 
-2.11.0
+1.9.1
