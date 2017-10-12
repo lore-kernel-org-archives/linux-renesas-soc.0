@@ -1,370 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:46781 "EHLO
+Received: from relmlor2.renesas.com ([210.160.252.172]:42151 "EHLO
         relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751198AbdJDJTQ (ORCPT
+        by vger.kernel.org with ESMTP id S1751637AbdJLGio (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Oct 2017 05:19:16 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc: Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Thu, 12 Oct 2017 02:38:44 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Chris Paterson <chris.paterson2@renesas.com>
-Subject: [PATCH 1/2] ARM: dts: iwg20d-q7: Rework DT architecture
-Date: Wed,  4 Oct 2017 10:18:32 +0100
-Message-Id: <1507108713-10686-2-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1507108713-10686-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1507108713-10686-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v6 1/4] phy: rcar-gen3-usb2: check dr_mode for otg mode
+Date: Thu, 12 Oct 2017 15:34:45 +0900
+Message-Id: <1507790088-26010-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1507790088-26010-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1507790088-26010-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Since the same carrier board may host RZ/G1M and RZ/G1N based
-Systems on Module, the DT architecture for iwg20d-q7 needs
-better decoupling. This patch provides:
-* iwg20d-q7-common.dtsi - its purpose is to define the carrier
-  board definitions, and its content is basically the same
-  as the previous version of r8a7743-iwg20d-q7.dts, only it
-  has no reference to the SoM .dtsi, and that's why the
-  filename doesn't mention the SoC name any more.
-* r8a7743-iwg20d-q7.dts - its new purpose is to put together
-  the SoM .dtsi (r8a7743-iwg20m.dtsi) and the carrier board
-  .dtsi defined by this very patch, along with "model" and
-  "compatible" properties.
-The final DT architecture to describe the board is now:
-r8a7743-iwg20d-q7.dts           # Carrier Board + SoM
-├── r8a7743-iwg20m.dtsi         # SoM
-│   └── r8a7743.dtsi            # SoC
-└── iwg20d-q7-common.dtsi       # Carrier Board
-and maximizes the reuse of the definitions for the carrier board
-and for the SoM.
+The previous code assumed a channel has otg capability if a channel
+has interrupt property. But, it is not good because:
+ - Battery charging feature also needs interrupt property.
+ - Some R-Car Gen3 SoCs (e.g. R-Car D3) don't have OTG capability.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+So, this patch checks whether usb 2.0 host node has dr_mode property or
+not. If it has 'dr_mode = "otg";', this driver enables otg capability.
+
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/iwg20d-q7-common.dtsi | 147 ++++++++++++++++++++++++++++++++
- arch/arm/boot/dts/r8a7743-iwg20d-q7.dts | 139 +-----------------------------
- 2 files changed, 149 insertions(+), 137 deletions(-)
- create mode 100644 arch/arm/boot/dts/iwg20d-q7-common.dtsi
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/iwg20d-q7-common.dtsi b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-new file mode 100644
-index 0000000..f9d153c
---- /dev/null
-+++ b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-@@ -0,0 +1,147 @@
-+/*
-+ * Device Tree Source for the iWave-RZ/G1M/G1N Qseven carrier board
-+ *
-+ * Copyright (C) 2017 Renesas Electronics Corp.
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2.  This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
-+
-+/ {
-+	aliases {
-+		serial0 = &scif0;
-+		ethernet0 = &avb;
-+	};
-+
-+	chosen {
-+		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	vcc_sdhi1: regulator-vcc-sdhi1 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "SDHI1 Vcc";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&gpio1 16 GPIO_ACTIVE_LOW>;
-+	};
-+
-+	vccq_sdhi1: regulator-vccq-sdhi1 {
-+		compatible = "regulator-gpio";
-+
-+		regulator-name = "SDHI1 VccQ";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpios = <&gpio2 30 GPIO_ACTIVE_LOW>;
-+		gpios-states = <1>;
-+		states = <3300000 1
-+			  1800000 0>;
-+	};
-+};
-+
-+&pfc {
-+	i2c2_pins: i2c2 {
-+		groups = "i2c2";
-+		function = "i2c2";
-+	};
-+
-+	scif0_pins: scif0 {
-+		groups = "scif0_data_d";
-+		function = "scif0";
-+	};
-+
-+	avb_pins: avb {
-+		groups = "avb_mdio", "avb_gmii";
-+		function = "avb";
-+	};
-+
-+	sdhi1_pins: sd1 {
-+		groups = "sdhi1_data4", "sdhi1_ctrl";
-+		function = "sdhi1";
-+		power-source = <3300>;
-+	};
-+
-+	sdhi1_pins_uhs: sd1_uhs {
-+		groups = "sdhi1_data4", "sdhi1_ctrl";
-+		function = "sdhi1";
-+		power-source = <1800>;
-+	};
-+
-+	usb0_pins: usb0 {
-+		groups = "usb0";
-+		function = "usb0";
-+	};
-+
-+	usb1_pins: usb1 {
-+		groups = "usb1";
-+		function = "usb1";
-+	};
-+};
-+
-+&scif0 {
-+	pinctrl-0 = <&scif0_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
-+&avb {
-+	pinctrl-0 = <&avb_pins>;
-+	pinctrl-names = "default";
-+
-+	phy-handle = <&phy3>;
-+	phy-mode = "gmii";
-+	renesas,no-ether-link;
-+	status = "okay";
-+
-+	phy3: ethernet-phy@3 {
-+		reg = <3>;
-+		micrel,led-mode = <1>;
-+	};
-+};
-+
-+&sdhi1 {
-+	pinctrl-0 = <&sdhi1_pins>;
-+	pinctrl-1 = <&sdhi1_pins_uhs>;
-+	pinctrl-names = "default", "state_uhs";
-+
-+	vmmc-supply = <&vcc_sdhi1>;
-+	vqmmc-supply = <&vccq_sdhi1>;
-+	cd-gpios = <&gpio6 14 GPIO_ACTIVE_LOW>;
-+	wp-gpios = <&gpio6 15 GPIO_ACTIVE_HIGH>;
-+	sd-uhs-sdr50;
-+	status = "okay";
-+};
-+
-+&i2c2 {
-+	pinctrl-0 = <&i2c2_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+	clock-frequency = <400000>;
-+
-+	rtc@68 {
-+		compatible = "ti,bq32000";
-+		reg = <0x68>;
-+	};
-+};
-+
-+&pci0 {
-+	status = "okay";
-+	pinctrl-0 = <&usb0_pins>;
-+	pinctrl-names = "default";
-+};
-+
-+&pci1 {
-+	status = "okay";
-+	pinctrl-0 = <&usb1_pins>;
-+	pinctrl-names = "default";
-+};
-+
-+&usbphy {
-+	status = "okay";
-+};
-diff --git a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-index 0136864..6aa6b74 100644
---- a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-+++ b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-@@ -1,5 +1,5 @@
+diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+index 54c3429..e00e99a 100644
+--- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
++++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+@@ -1,7 +1,7 @@
  /*
-- * Device Tree Source for the iWave-RZG1M Qseven carrier board
-+ * Device Tree Source for the iWave-RZ/G1M Qseven board
+  * Renesas R-Car Gen3 for USB2.0 PHY driver
   *
-  * Copyright (C) 2017 Renesas Electronics Corp.
+- * Copyright (C) 2015 Renesas Electronics Corporation
++ * Copyright (C) 2015-2017 Renesas Electronics Corporation
   *
-@@ -10,144 +10,9 @@
+  * This is based on the phy-rcar-gen2 driver:
+  * Copyright (C) 2014 Renesas Solutions Corp.
+@@ -22,6 +22,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/regulator/consumer.h>
++#include <linux/usb/of.h>
+ #include <linux/workqueue.h>
  
- /dts-v1/;
- #include "r8a7743-iwg20m.dtsi"
-+#include "iwg20d-q7-common.dtsi"
- 
- / {
- 	model = "iWave Systems RainboW-G20D-Qseven board based on RZ/G1M";
- 	compatible = "iwave,g20d", "iwave,g20m", "renesas,r8a7743";
+ /******* USB2.0 Host registers (original offset is +0x200) *******/
+@@ -415,13 +416,16 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
+ 	/* call request_irq for OTG */
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq >= 0) {
+-		int ret;
 -
--	aliases {
--		serial0 = &scif0;
--		ethernet0 = &avb;
--	};
--
--	chosen {
--		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
--		stdout-path = "serial0:115200n8";
--	};
--
--	vcc_sdhi1: regulator-vcc-sdhi1 {
--		compatible = "regulator-fixed";
--
--		regulator-name = "SDHI1 Vcc";
--		regulator-min-microvolt = <3300000>;
--		regulator-max-microvolt = <3300000>;
--
--		gpio = <&gpio1 16 GPIO_ACTIVE_LOW>;
--	};
--
--	vccq_sdhi1: regulator-vccq-sdhi1 {
--		compatible = "regulator-gpio";
--
--		regulator-name = "SDHI1 VccQ";
--		regulator-min-microvolt = <1800000>;
--		regulator-max-microvolt = <3300000>;
--
--		gpios = <&gpio2 30 GPIO_ACTIVE_LOW>;
--		gpios-states = <1>;
--		states = <3300000 1
--			  1800000 0>;
--	};
--};
--
--&pfc {
--	i2c2_pins: i2c2 {
--		groups = "i2c2";
--		function = "i2c2";
--	};
--
--	scif0_pins: scif0 {
--		groups = "scif0_data_d";
--		function = "scif0";
--	};
--
--	avb_pins: avb {
--		groups = "avb_mdio", "avb_gmii";
--		function = "avb";
--	};
--
--	sdhi1_pins: sd1 {
--		groups = "sdhi1_data4", "sdhi1_ctrl";
--		function = "sdhi1";
--		power-source = <3300>;
--	};
--
--	sdhi1_pins_uhs: sd1_uhs {
--		groups = "sdhi1_data4", "sdhi1_ctrl";
--		function = "sdhi1";
--		power-source = <1800>;
--	};
--
--	usb0_pins: usb0 {
--		groups = "usb0";
--		function = "usb0";
--	};
--
--	usb1_pins: usb1 {
--		groups = "usb1";
--		function = "usb1";
--	};
--};
--
--&scif0 {
--	pinctrl-0 = <&scif0_pins>;
--	pinctrl-names = "default";
--
--	status = "okay";
--};
--
--&avb {
--	pinctrl-0 = <&avb_pins>;
--	pinctrl-names = "default";
--
--	phy-handle = <&phy3>;
--	phy-mode = "gmii";
--	renesas,no-ether-link;
--	status = "okay";
--
--	phy3: ethernet-phy@3 {
--		reg = <3>;
--		micrel,led-mode = <1>;
--	};
--};
--
--&sdhi1 {
--	pinctrl-0 = <&sdhi1_pins>;
--	pinctrl-1 = <&sdhi1_pins_uhs>;
--	pinctrl-names = "default", "state_uhs";
--
--	vmmc-supply = <&vcc_sdhi1>;
--	vqmmc-supply = <&vccq_sdhi1>;
--	cd-gpios = <&gpio6 14 GPIO_ACTIVE_LOW>;
--	wp-gpios = <&gpio6 15 GPIO_ACTIVE_HIGH>;
--	sd-uhs-sdr50;
--	status = "okay";
--};
--
--&i2c2 {
--	pinctrl-0 = <&i2c2_pins>;
--	pinctrl-names = "default";
--
--	status = "okay";
--	clock-frequency = <400000>;
--
--	rtc@68 {
--		compatible = "ti,bq32000";
--		reg = <0x68>;
--	};
--};
--
--&pci0 {
--	status = "okay";
--	pinctrl-0 = <&usb0_pins>;
--	pinctrl-names = "default";
--};
--
--&pci1 {
--	status = "okay";
--	pinctrl-0 = <&usb1_pins>;
--	pinctrl-names = "default";
--};
--
--&usbphy {
--	status = "okay";
- };
+ 		INIT_WORK(&channel->work, rcar_gen3_phy_usb2_work);
+ 		irq = devm_request_irq(dev, irq, rcar_gen3_phy_usb2_irq,
+ 				       IRQF_SHARED, dev_name(dev), channel);
+ 		if (irq < 0)
+ 			dev_err(dev, "No irq handler (%d)\n", irq);
++	}
++
++	if (of_usb_get_dr_mode_by_phy(dev->of_node, 0) == USB_DR_MODE_OTG) {
++		int ret;
++
+ 		channel->has_otg = true;
+ 		channel->extcon = devm_extcon_dev_allocate(dev,
+ 							rcar_gen3_phy_cable);
 -- 
-2.7.4
+1.9.1
