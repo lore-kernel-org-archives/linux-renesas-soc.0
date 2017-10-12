@@ -1,23 +1,13 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:33871 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756875AbdJLM1E (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:19290 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751492AbdJLLlo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 12 Oct 2017 08:27:04 -0400
-MIME-Version: 1.0
-In-Reply-To: <TY1PR06MB09924AF4CBC4D1F39FD38926D84B0@TY1PR06MB0992.apcprd06.prod.outlook.com>
-References: <1504737267-22829-1-git-send-email-vladimir.barinov@cogentembedded.com>
- <1504737377-23191-1-git-send-email-vladimir.barinov@cogentembedded.com>
- <CAMuHMdX1FZ3_iKCMRkDozsn7QzEmmvuUzkjq5Hn9+L42F=X7sQ@mail.gmail.com>
- <806c5e8e-af85-e73b-a7a4-44ebf82dee7e@cogentembedded.com> <CAMuHMdXL1P5vhoBU9W+S1qX8maXLRmyg88cjgbYpCGZSQ1FBtQ@mail.gmail.com>
- <1c5fc090-af98-0041-be8b-b06dc81d4670@cogentembedded.com> <TY1PR06MB09924AF4CBC4D1F39FD38926D84B0@TY1PR06MB0992.apcprd06.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 12 Oct 2017 14:27:01 +0200
-Message-ID: <CAMuHMdWSa2tOoSxnc+4gY3gnmQ8s-w=4UEVF3Z+F3DekBbJ2Ow@mail.gmail.com>
-Subject: Re: [PATCH 09/18] arm64: dts: ulcb-kf: enable USB2 PHY of channel 0
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: batareich batareich <vladimir.barinov@cogentembedded.com>,
-        Simon Horman <horms@verge.net.au>,
+        Thu, 12 Oct 2017 07:41:44 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: batareich batareich <vladimir.barinov@cogentembedded.com>,
+        "Geert Uytterhoeven" <geert@linux-m68k.org>
+CC: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -25,97 +15,74 @@ Cc: batareich batareich <vladimir.barinov@cogentembedded.com>,
         Will Deacon <will.deacon@arm.com>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: RE: [PATCH 09/18] arm64: dts: ulcb-kf: enable USB2 PHY of channel 0
+Date: Thu, 12 Oct 2017 11:41:35 +0000
+Message-ID: <TY1PR06MB09924AF4CBC4D1F39FD38926D84B0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+References: <1504737267-22829-1-git-send-email-vladimir.barinov@cogentembedded.com>
+ <1504737377-23191-1-git-send-email-vladimir.barinov@cogentembedded.com>
+ <CAMuHMdX1FZ3_iKCMRkDozsn7QzEmmvuUzkjq5Hn9+L42F=X7sQ@mail.gmail.com>
+ <806c5e8e-af85-e73b-a7a4-44ebf82dee7e@cogentembedded.com>
+ <CAMuHMdXL1P5vhoBU9W+S1qX8maXLRmyg88cjgbYpCGZSQ1FBtQ@mail.gmail.com>
+ <1c5fc090-af98-0041-be8b-b06dc81d4670@cogentembedded.com>
+In-Reply-To: <1c5fc090-af98-0041-be8b-b06dc81d4670@cogentembedded.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Shimoda-san,
-
-On Thu, Oct 12, 2017 at 1:41 PM, Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
->> From: Vladimir Barinov, Sent: Saturday, October 7, 2017 2:29 AM
->> On 06.10.2017 10:15, Geert Uytterhoeven wrote:
->> > CC Shimoda-san
->> >
->> > On Fri, Oct 6, 2017 at 4:38 AM, Vladimir Barinov
->> > <vladimir.barinov@cogentembedded.com> wrote:
->> >> On 20.09.2017 15:59, Geert Uytterhoeven wrote:
->> >>> On Thu, Sep 7, 2017 at 12:36 AM, Vladimir Barinov
->> >>> <vladimir.barinov@cogentembedded.com> wrote:
->> >>>> This supports USB2 PHY channel #0 on ULCB Kingfisher board
->> >>>>
->> >>>> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
->> >>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> >>>
->> >>>> index ca8de1a..0854600 100644
->> >>>> --- a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
->> >>>> +++ b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
->> >>>> @@ -60,6 +60,11 @@
->> >>>>                   groups = "scif1_data_b";
->> >>>>                   function = "scif1";
->> >>>>           };
->> >>>> +
->> >>>> +       usb0_pins: usb0 {
->> >>>> +               groups = "usb0";
->> >>>> +               function = "usb0";
->> >>>> +       };
->> >>>>    };
->> >>>>
->> >>>>    &scif1 {
->> >>>> @@ -68,3 +73,10 @@
->> >>>>
->> >>>>           status = "okay";
->> >>>>    };
->> >>>> +
->> >>>> +&usb2_phy0 {
->> >>>> +       pinctrl-0 = <&usb0_pins>;
->> >>>> +       pinctrl-names = "default";
->> >>>> +
->> >>> Don't you need
->> >>>
->> >>>       vbus-supply = <&vbus0_usb2>;
->> >>>
->> >>> with vbus0_usb2 a fixed regulator controlled by GPIO P11 (OTG_EXTLPn) from
->> >>> GPIO expander U11 (TCA9539)?
->> >>> May be optional, though. salvator-common.dtsi has it.
->> >> Yes, I need this gpio.
->> >> I need both OTG_EXTLPn and OTG_OFFVBUSn from the same gpio expander.
->> >>
->> >> I've been considering to use either vbus-supply + gpio hog or use gpio hog
->> >> for both of them for consistency.
->> >> What do you think about this?
->> > For OTG_EXTLPn you don't really need a hog, as it will be controlled by the
->> > USB driver/subsystem, like on Salvator-X(S), right?
->> Agreed.
->> >
->> > For OTG_OFFVBUSn, which is (optionally) driven from USB0_PWEN on
->> > Salvator-X(S) I don't know if you need a GPIO hog or not. I have to defer your
->> > question to Shimoda-san.
->
-> I'm sorry for the delayed response.
-> I think OTG_OFFVBUSn should be low level to avoid conflict 5V supply from U13's OUT pins.
->
->> This pin should be tied permanently low to disable internal MAX3355
->> internal VBUS charge pump.
->
-> I agree.
-
-OK.
-
->> Hence probably gpio hog is enough for OTG_OFFVBUSn.
->
-> I'm afraid but I don't understand this "gpio hog" means.
-
-"gpio hog" is a means to tie a GPIO to a specific level, cfr.
-Documentation/devicetree/bindings/gpio/gpio.txt.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+SGkgR2VlcnQtc2FuLCBWbGFkaW1pci1zYW4sDQoNCj4gRnJvbTogVmxhZGltaXIgQmFyaW5vdiwg
+U2VudDogU2F0dXJkYXksIE9jdG9iZXIgNywgMjAxNyAyOjI5IEFNDQo+IA0KPiBIaSBHZWVydCwN
+Cj4gDQo+IE9uIDA2LjEwLjIwMTcgMTA6MTUsIEdlZXJ0IFV5dHRlcmhvZXZlbiB3cm90ZToNCj4g
+PiBIaSBWbGFkaW1pciwNCj4gPg0KPiA+IENDIFNoaW1vZGEtc2FuDQo+ID4NCj4gPiBPbiBGcmks
+IE9jdCA2LCAyMDE3IGF0IDQ6MzggQU0sIFZsYWRpbWlyIEJhcmlub3YNCj4gPiA8dmxhZGltaXIu
+YmFyaW5vdkBjb2dlbnRlbWJlZGRlZC5jb20+IHdyb3RlOg0KPiA+PiBPbiAyMC4wOS4yMDE3IDE1
+OjU5LCBHZWVydCBVeXR0ZXJob2V2ZW4gd3JvdGU6DQo+ID4+PiBPbiBUaHUsIFNlcCA3LCAyMDE3
+IGF0IDEyOjM2IEFNLCBWbGFkaW1pciBCYXJpbm92DQo+ID4+PiA8dmxhZGltaXIuYmFyaW5vdkBj
+b2dlbnRlbWJlZGRlZC5jb20+IHdyb3RlOg0KPiA+Pj4+IFRoaXMgc3VwcG9ydHMgVVNCMiBQSFkg
+Y2hhbm5lbCAjMCBvbiBVTENCIEtpbmdmaXNoZXIgYm9hcmQNCj4gPj4+Pg0KPiA+Pj4+IFNpZ25l
+ZC1vZmYtYnk6IFZsYWRpbWlyIEJhcmlub3YgPHZsYWRpbWlyLmJhcmlub3ZAY29nZW50ZW1iZWRk
+ZWQuY29tPg0KPiA+Pj4gUmV2aWV3ZWQtYnk6IEdlZXJ0IFV5dHRlcmhvZXZlbiA8Z2VlcnQrcmVu
+ZXNhc0BnbGlkZXIuYmU+DQo+ID4+Pg0KPiA+Pj4+IGluZGV4IGNhOGRlMWEuLjA4NTQ2MDAgMTAw
+NjQ0DQo+ID4+Pj4gLS0tIGEvYXJjaC9hcm02NC9ib290L2R0cy9yZW5lc2FzL3VsY2Ita2YuZHRz
+aQ0KPiA+Pj4+ICsrKyBiL2FyY2gvYXJtNjQvYm9vdC9kdHMvcmVuZXNhcy91bGNiLWtmLmR0c2kN
+Cj4gPj4+PiBAQCAtNjAsNiArNjAsMTEgQEANCj4gPj4+PiAgICAgICAgICAgICAgICAgICBncm91
+cHMgPSAic2NpZjFfZGF0YV9iIjsNCj4gPj4+PiAgICAgICAgICAgICAgICAgICBmdW5jdGlvbiA9
+ICJzY2lmMSI7DQo+ID4+Pj4gICAgICAgICAgIH07DQo+ID4+Pj4gKw0KPiA+Pj4+ICsgICAgICAg
+dXNiMF9waW5zOiB1c2IwIHsNCj4gPj4+PiArICAgICAgICAgICAgICAgZ3JvdXBzID0gInVzYjAi
+Ow0KPiA+Pj4+ICsgICAgICAgICAgICAgICBmdW5jdGlvbiA9ICJ1c2IwIjsNCj4gPj4+PiArICAg
+ICAgIH07DQo+ID4+Pj4gICAgfTsNCj4gPj4+Pg0KPiA+Pj4+ICAgICZzY2lmMSB7DQo+ID4+Pj4g
+QEAgLTY4LDMgKzczLDEwIEBADQo+ID4+Pj4NCj4gPj4+PiAgICAgICAgICAgc3RhdHVzID0gIm9r
+YXkiOw0KPiA+Pj4+ICAgIH07DQo+ID4+Pj4gKw0KPiA+Pj4+ICsmdXNiMl9waHkwIHsNCj4gPj4+
+PiArICAgICAgIHBpbmN0cmwtMCA9IDwmdXNiMF9waW5zPjsNCj4gPj4+PiArICAgICAgIHBpbmN0
+cmwtbmFtZXMgPSAiZGVmYXVsdCI7DQo+ID4+Pj4gKw0KPiA+Pj4gRG9uJ3QgeW91IG5lZWQNCj4g
+Pj4+DQo+ID4+PiAgICAgICB2YnVzLXN1cHBseSA9IDwmdmJ1czBfdXNiMj47DQo+ID4+Pg0KPiA+
+Pj4gd2l0aCB2YnVzMF91c2IyIGEgZml4ZWQgcmVndWxhdG9yIGNvbnRyb2xsZWQgYnkgR1BJTyBQ
+MTEgKE9UR19FWFRMUG4pIGZyb20NCj4gPj4+IEdQSU8gZXhwYW5kZXIgVTExIChUQ0E5NTM5KT8N
+Cj4gPj4+IE1heSBiZSBvcHRpb25hbCwgdGhvdWdoLiBzYWx2YXRvci1jb21tb24uZHRzaSBoYXMg
+aXQuDQo+ID4+IFllcywgSSBuZWVkIHRoaXMgZ3Bpby4NCj4gPj4gSSBuZWVkIGJvdGggT1RHX0VY
+VExQbiBhbmQgT1RHX09GRlZCVVNuIGZyb20gdGhlIHNhbWUgZ3BpbyBleHBhbmRlci4NCj4gPj4N
+Cj4gPj4gSSd2ZSBiZWVuIGNvbnNpZGVyaW5nIHRvIHVzZSBlaXRoZXIgdmJ1cy1zdXBwbHkgKyBn
+cGlvIGhvZyBvciB1c2UgZ3BpbyBob2cNCj4gPj4gZm9yIGJvdGggb2YgdGhlbSBmb3IgY29uc2lz
+dGVuY3kuDQo+ID4+IFdoYXQgZG8geW91IHRoaW5rIGFib3V0IHRoaXM/DQo+ID4gRm9yIE9UR19F
+WFRMUG4geW91IGRvbid0IHJlYWxseSBuZWVkIGEgaG9nLCBhcyBpdCB3aWxsIGJlIGNvbnRyb2xs
+ZWQgYnkgdGhlDQo+ID4gVVNCIGRyaXZlci9zdWJzeXN0ZW0sIGxpa2Ugb24gU2FsdmF0b3ItWChT
+KSwgcmlnaHQ/DQo+IEFncmVlZC4NCj4gPg0KPiA+IEZvciBPVEdfT0ZGVkJVU24sIHdoaWNoIGlz
+IChvcHRpb25hbGx5KSBkcml2ZW4gZnJvbSBVU0IwX1BXRU4gb24NCj4gPiBTYWx2YXRvci1YKFMp
+IEkgZG9uJ3Qga25vdyBpZiB5b3UgbmVlZCBhIEdQSU8gaG9nIG9yIG5vdC4gSSBoYXZlIHRvIGRl
+ZmVyIHlvdXINCj4gPiBxdWVzdGlvbiB0byBTaGltb2RhLXNhbi4NCg0KSSdtIHNvcnJ5IGZvciB0
+aGUgZGVsYXllZCByZXNwb25zZS4NCkkgdGhpbmsgT1RHX09GRlZCVVNuIHNob3VsZCBiZSBsb3cg
+bGV2ZWwgdG8gYXZvaWQgY29uZmxpY3QgNVYgc3VwcGx5IGZyb20gVTEzJ3MgT1VUIHBpbnMuDQoN
+Cj4gVGhpcyBwaW4gc2hvdWxkIGJlIHRpZWQgcGVybWFuZW50bHkgbG93IHRvIGRpc2FibGUgaW50
+ZXJuYWwgTUFYMzM1NQ0KPiBpbnRlcm5hbCBWQlVTIGNoYXJnZSBwdW1wLg0KDQpJIGFncmVlLg0K
+DQo+IEhlbmNlIHByb2JhYmx5IGdwaW8gaG9nIGlzIGVub3VnaCBmb3IgT1RHX09GRlZCVVNuLg0K
+DQpJJ20gYWZyYWlkIGJ1dCBJIGRvbid0IHVuZGVyc3RhbmQgdGhpcyAiZ3BpbyBob2ciIG1lYW5z
+Lg0KDQo+IEtGIGhhcyBkZWRpY2F0ZWQgVkJVUyBwb3dlciBzdXBwbHkgY29udHJvbGxlZCBieSBV
+U0IwX1BXRU4uDQoNCkkgYWdyZWUuDQpJIGRvbuKAmXQgd3JpdGUgYW55IGRvY3VtZW50YXRpb25z
+IHRob3VnaCwgYnV0IEkgYXNzdW1lZCBTVzE1IGlzIHBpbiAzIHNpZGUNCnRvIHVzZSBNQVgzMzU1
+J3MgY2hhcmdlIHB1bXAuIFNvLCBJIGFkZGVkICJ2YnVzLXN1cHBseSIgdG8gZGlzYWJsZSBTSERO
+IyBvZiBNQVgzMzU1Lg0KQnV0LCB3ZSBjYW4gYWxzbyB1c2UgVTEzIGZvciBwb3dlciBzdXBwbHkg
+b24gdGhlIFNhbHZhdG9yLVhbU10gd2l0aG91dCAidmJ1cy1zdXBwbHkiLg0KDQpCZXN0IHJlZ2Fy
+ZHMsDQpZb3NoaWhpcm8gU2hpbW9kYQ0KDQo+IA0KPiAtLQ0KPiBSZWdhcmRzLA0KPiBWbGFkaW1p
+cg0KDQo=
