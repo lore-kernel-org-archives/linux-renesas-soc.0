@@ -1,40 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:56268 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751916AbdJDMdM (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55958 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751140AbdJLKP1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Oct 2017 08:33:12 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Joerg Roedel <joro@8bytes.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] dt-bindings: iommu: ipmmu-vmsa: Use generic node name
-Date: Wed,  4 Oct 2017 14:33:08 +0200
-Message-Id: <1507120388-14179-1-git-send-email-geert+renesas@glider.be>
+        Thu, 12 Oct 2017 06:15:27 -0400
+Date: Thu, 12 Oct 2017 12:15:23 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH  0/5] Add USB2.0 Host support
+Message-ID: <20171012101522.bbfst7qegni6vlvc@verge.net.au>
+References: <1507557541-46560-1-git-send-email-biju.das@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1507557541-46560-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use the preferred generic node name in the example.
+On Mon, Oct 09, 2017 at 02:58:56PM +0100, Biju Das wrote:
+> Hello,
+> 
+> This series aims to add USB2.0 Host support on iWave RZ/G1E(r8a7745) based board.
+> 
+> This series has been tested against renesas-dev tag 20171009-v4.14-rc4
+> 
+> This patch has documentation dependency on below patch
+>  * [RESEND] phy: rcar-gen2: Add r8a7743/5 support
+> https://patchwork.kernel.org/patch/9992587/
+> 
+> Biju Das (5):
+>   ARM: dts: r8a7745: Add internal PCI bridge nodes
+>   ARM: dts: r8a7745: Add USB PHY DT support
+>   ARM: dts: r8a7745: Link PCI USB devices to USB PHY
+>   ARM: dts: iwg22d-sodimm: Enable internal PCI
+>   ARM: dts: iwg22d-sodimm: Enable USB PHY
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt b/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
-index 3ed027cfca95cc98..857df929a6542157 100644
---- a/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
-+++ b/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
-@@ -53,7 +53,7 @@ Example: R8A7791 IPMMU-MX and VSP1-D0 bus master
- 		#iommu-cells = <1>;
- 	};
- 
--	vsp1@fe928000 {
-+	vsp@fe928000 {
- 		...
- 		iommus = <&ipmmu_mx 13>;
- 		...
--- 
-2.7.4
+Thanks, applied with Geert's review tags.
