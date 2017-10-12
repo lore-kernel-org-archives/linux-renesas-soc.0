@@ -1,52 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:20485 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751340AbdJLMBP (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:58128 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753000AbdJLLrz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 12 Oct 2017 08:01:15 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Simon Horman <horms@verge.net.au>
-CC: Rob Herring <robh+dt@kernel.org>,
+        Thu, 12 Oct 2017 07:47:55 -0400
+Date: Thu, 12 Oct 2017 13:47:51 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH  0/4] ARM: dts: Add USB function support
-Date: Thu, 12 Oct 2017 12:01:10 +0000
-Message-ID: <KL1PR06MB1702B059DA4DCFD9C0309CB0B84B0@KL1PR06MB1702.apcprd06.prod.outlook.com>
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH  0/4] ARM: dts: Add USB function support
+Message-ID: <20171012114751.lyx7jrgjbhy2d47j@verge.net.au>
 References: <1507555281-57845-1-git-send-email-biju.das@bp.renesas.com>
- <20171012114751.lyx7jrgjbhy2d47j@verge.net.au>
-In-Reply-To: <20171012114751.lyx7jrgjbhy2d47j@verge.net.au>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1507555281-57845-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-> > Biju Das (4):
-> >   ARM: dts: r8a7743: Add HS-USB device node
-> >   ARM: dts: iwg20d-q7: Enable HS-USB
-> >   ARM: dts: r8a7743: Add USB-DMAC device nodes
-> >   ARM: dts: r8a7743: Enable DMA for HSUSB
->
-> Thanks, applied v1 of patches 1, 3 and 4, and v2 of patch 2.
->
-> In future when reposting a patch of a series please repost the entire ser=
-ies anew,
-> in this case it would have been v2 for the whole series.
+On Mon, Oct 09, 2017 at 02:21:17PM +0100, Biju Das wrote:
+> Hello,
+> 
+> This series aims to add USB function support for iWave RZ/G1M (R8A7743) board.
+> This series has been tested against renesas-dev tag 201710109-v4.14-rc4.
+> 
+> This patch has documentation dependency on below patches
+> 
+> * [v2] usb: renesas_usbhs: Add compatible string for r8a7743/5
+> https://patchwork.kernel.org/patch/9990063/
+> * [v2] dmaengine: usb-dmac: Add compatible string for r8a7743/5
+> https://patchwork.kernel.org/patch/9990113/
+> 
+> Regards,
+> 
+> Biju Das (4):
+>   ARM: dts: r8a7743: Add HS-USB device node
+>   ARM: dts: iwg20d-q7: Enable HS-USB
+>   ARM: dts: r8a7743: Add USB-DMAC device nodes
+>   ARM: dts: r8a7743: Enable DMA for HSUSB
 
-Thanks. I will take care this in future.
+Thanks, applied v1 of patches 1, 3 and 4, and v2 of patch 2.
 
-Regards,
-Biju
+In future when reposting a patch of a series please repost the
+entire series anew, in this case it would have been v2 for the whole
+series.
 
-
-
-Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
-uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
- No. 04586709.
+Thanks!
