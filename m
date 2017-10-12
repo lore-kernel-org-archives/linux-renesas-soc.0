@@ -1,48 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:35574 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755263AbdJINWO (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:12628 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1755670AbdJLKrc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 Oct 2017 09:22:14 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH  4/4] ARM: dts: r8a7743: Enable DMA for HSUSB
-Date: Mon,  9 Oct 2017 14:21:21 +0100
-Message-Id: <1507555281-57845-5-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1507555281-57845-1-git-send-email-biju.das@bp.renesas.com>
-References: <1507555281-57845-1-git-send-email-biju.das@bp.renesas.com>
+        Thu, 12 Oct 2017 06:47:32 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Kishon Vijay Abraham I <kishon@ti.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH v5 2/4] phy: rcar-gen3-usb2: use enum phy_mode in the
+ role_store()
+Date: Thu, 12 Oct 2017 10:47:27 +0000
+Message-ID: <TY1PR06MB0992CD58C946C8C78191ACA1D84B0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+References: <1507628490-7944-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1507628490-7944-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <743b1a5b-7c5b-1974-b5d3-a75a17d6b27a@ti.com>
+In-Reply-To: <743b1a5b-7c5b-1974-b5d3-a75a17d6b27a@ti.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds DMA properties to the HSUSB node.
+Hi,
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
----
- arch/arm/boot/dts/r8a7743.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
+> From: Kishon Vijay Abraham I [mailto:kishon@ti.com], Sent: Wednesday, Oct=
+ober 11, 2017 5:28 PM
+>=20
+> Hi,
+>=20
+> On Tuesday 10 October 2017 03:11 PM, Yoshihiro Shimoda wrote:
+> > This patch modifies the role_store() to use "enum phy_mode" instead
+> > of the local "bool" for host/device mode selection.
+>=20
+> looks good except for one minor comment..
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index de89295..699c040 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -979,6 +979,9 @@
- 			reg = <0 0xe6590000 0 0x100>;
- 			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 704>;
-+			dmas = <&usb_dmac0 0>, <&usb_dmac0 1>,
-+			       <&usb_dmac1 0>, <&usb_dmac1 1>;
-+			dma-names = "ch0", "ch1", "ch2", "ch3";
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
- 			resets = <&cpg 704>;
- 			renesas,buswait = <4>;
--- 
-1.9.1
+Thank you for your review!
+
+> > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> > ---
+> >  drivers/phy/renesas/phy-rcar-gen3-usb2.c | 29 ++++++++++++++++++------=
+-----
+> >  1 file changed, 18 insertions(+), 11 deletions(-)
+> >
+> > diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/ren=
+esas/phy-rcar-gen3-usb2.c
+> > index e00e99a..7314b49 100644
+> > --- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+> > +++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+> > @@ -219,33 +219,40 @@ static bool rcar_gen3_is_host(struct rcar_gen3_ch=
+an *ch)
+> >  	return !(readl(ch->base + USB2_COMMCTRL) & USB2_COMMCTRL_OTG_PERI);
+> >  }
+> >
+> > +static enum phy_mode rcar_gen3_get_phy_mode(struct rcar_gen3_chan *ch)
+> > +{
+> > +	if (rcar_gen3_is_host(ch))
+> > +		return PHY_MODE_USB_HOST;
+> > +	else
+>=20
+> the else here is not required.
+
+I got it. I sent v6 patch set a few hour ago.
+
+Best regards,
+Yoshihiro Shimoda
+
+> Thanks
+> Kishon
