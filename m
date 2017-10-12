@@ -1,47 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:44320 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751704AbdJNTRm (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:54050 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755738AbdJLJfW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 14 Oct 2017 15:17:42 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2 11/11] mmc: usdhi6rol0: catch all errors when getting regulators
-Date: Sat, 14 Oct 2017 21:17:19 +0200
-Message-Id: <20171014191719.2129-12-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20171014191719.2129-1-wsa+renesas@sang-engineering.com>
-References: <20171014191719.2129-1-wsa+renesas@sang-engineering.com>
+        Thu, 12 Oct 2017 05:35:22 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 13/13] ARM: dts: sh73a0: Add clocks for CA9 CPU cores
+Date: Thu, 12 Oct 2017 11:35:16 +0200
+Message-Id: <1507800916-11509-14-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1507800916-11509-1-git-send-email-geert+renesas@glider.be>
+References: <1507800916-11509-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Bail out everytime when mmc_regulator_get_supply() returns an errno, not
-only when probing gets deferred. This is currently a no-op, because this
-function only returns -EPROBE_DEFER or 0 right now. But if it will throw
-another error somewhen, it will be for a reason. (This still doesn't change
-that getting regulators is optional, so 0 can still mean no regulators
-found). So, let us a) be future proof and b) have driver code which is
-easier to understand.
+Improve hardware description by adding clocks properties to the device
+nodes corresponding to the CA9 CPU cores.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/mmc/host/usdhi6rol0.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/sh73a0.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/mmc/host/usdhi6rol0.c b/drivers/mmc/host/usdhi6rol0.c
-index 64da6a88cfb90e..cdfeb15b6f0511 100644
---- a/drivers/mmc/host/usdhi6rol0.c
-+++ b/drivers/mmc/host/usdhi6rol0.c
-@@ -1757,7 +1757,7 @@ static int usdhi6_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	ret = mmc_regulator_get_supply(mmc);
--	if (ret == -EPROBE_DEFER)
-+	if (ret)
- 		goto e_free_mmc;
- 
- 	ret = mmc_of_parse(mmc);
+diff --git a/arch/arm/boot/dts/sh73a0.dtsi b/arch/arm/boot/dts/sh73a0.dtsi
+index f841895e5adc615a..a074106839a62e37 100644
+--- a/arch/arm/boot/dts/sh73a0.dtsi
++++ b/arch/arm/boot/dts/sh73a0.dtsi
+@@ -27,6 +27,7 @@
+ 			compatible = "arm,cortex-a9";
+ 			reg = <0>;
+ 			clock-frequency = <1196000000>;
++			clocks = <&cpg_clocks SH73A0_CLK_Z>;
+ 			power-domains = <&pd_a2sl>;
+ 			next-level-cache = <&L2>;
+ 		};
+@@ -35,6 +36,7 @@
+ 			compatible = "arm,cortex-a9";
+ 			reg = <1>;
+ 			clock-frequency = <1196000000>;
++			clocks = <&cpg_clocks SH73A0_CLK_Z>;
+ 			power-domains = <&pd_a2sl>;
+ 			next-level-cache = <&L2>;
+ 		};
 -- 
-2.11.0
+2.7.4
