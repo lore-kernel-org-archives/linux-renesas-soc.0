@@ -1,41 +1,61 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH  0/5] Add USB2.0 Host support
-Date: Mon,  9 Oct 2017 14:58:56 +0100
-Message-Id: <1507557541-46560-1-git-send-email-biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 06/13] ARM: dts: r8a7779: Add clocks for CA9 CPU cores
+Date: Thu, 12 Oct 2017 11:35:09 +0200
+Message-Id: <1507800916-11509-7-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1507800916-11509-1-git-send-email-geert+renesas@glider.be>
+References: <1507800916-11509-1-git-send-email-geert+renesas@glider.be>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+Improve hardware description by adding clocks properties to the device
+nodes corresponding to the CA9 CPU cores.
 
-This series aims to add USB2.0 Host support on iWave RZ/G1E(r8a7745) based board.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/boot/dts/r8a7779.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-This series has been tested against renesas-dev tag 20171009-v4.14-rc4
-
-This patch has documentation dependency on below patch
- * [RESEND] phy: rcar-gen2: Add r8a7743/5 support
-https://patchwork.kernel.org/patch/9992587/
-
-Biju Das (5):
-  ARM: dts: r8a7745: Add internal PCI bridge nodes
-  ARM: dts: r8a7745: Add USB PHY DT support
-  ARM: dts: r8a7745: Link PCI USB devices to USB PHY
-  ARM: dts: iwg22d-sodimm: Enable internal PCI
-  ARM: dts: iwg22d-sodimm: Enable USB PHY
-
- arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts | 15 +++++
- arch/arm/boot/dts/r8a7745.dtsi              | 92 +++++++++++++++++++++++++++++
- 2 files changed, 107 insertions(+)
-
+diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
+index 8ee0b2ca5d39a265..2cc9be4c13cda333 100644
+--- a/arch/arm/boot/dts/r8a7779.dtsi
++++ b/arch/arm/boot/dts/r8a7779.dtsi
+@@ -29,12 +29,14 @@
+ 			compatible = "arm,cortex-a9";
+ 			reg = <0>;
+ 			clock-frequency = <1000000000>;
++			clocks = <&cpg_clocks R8A7779_CLK_Z>;
+ 		};
+ 		cpu@1 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a9";
+ 			reg = <1>;
+ 			clock-frequency = <1000000000>;
++			clocks = <&cpg_clocks R8A7779_CLK_Z>;
+ 			power-domains = <&sysc R8A7779_PD_ARM1>;
+ 		};
+ 		cpu@2 {
+@@ -42,6 +44,7 @@
+ 			compatible = "arm,cortex-a9";
+ 			reg = <2>;
+ 			clock-frequency = <1000000000>;
++			clocks = <&cpg_clocks R8A7779_CLK_Z>;
+ 			power-domains = <&sysc R8A7779_PD_ARM2>;
+ 		};
+ 		cpu@3 {
+@@ -49,6 +52,7 @@
+ 			compatible = "arm,cortex-a9";
+ 			reg = <3>;
+ 			clock-frequency = <1000000000>;
++			clocks = <&cpg_clocks R8A7779_CLK_Z>;
+ 			power-domains = <&sysc R8A7779_PD_ARM3>;
+ 		};
+ 	};
 -- 
-1.9.1
+2.7.4
 
