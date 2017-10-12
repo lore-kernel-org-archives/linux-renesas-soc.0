@@ -1,113 +1,84 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:35368 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751637AbdJLIZA (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 12 Oct 2017 04:25:00 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: "David S . Miller" <davem@davemloft.net>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] ravb: Consolidate clock handling
-Date: Thu, 12 Oct 2017 10:24:53 +0200
-Message-Id: <1507796693-14268-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v6 2/4] phy: rcar-gen3-usb2: use enum phy_mode in the role_store()
+Date: Thu, 12 Oct 2017 15:34:46 +0900
+Message-Id: <1507790088-26010-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1507790088-26010-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1507790088-26010-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The module clock is used for two purposes:
-  - Wake-on-LAN (WoL), which is optional,
-  - gPTP Timer Increment (GTI) configuration, which is mandatory.
+This patch modifies the role_store() to use "enum phy_mode" instead
+of the local "bool" for host/device mode selection.
 
-As the clock is needed for GTI configuration anyway, WoL is always
-available.  Hence remove duplication and repeated obtaining of the clock
-by making GTI use the stored clock for WoL use.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/net/ethernet/renesas/ravb_main.c | 35 +++++++++-----------------------
- 1 file changed, 10 insertions(+), 25 deletions(-)
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c | 29 ++++++++++++++++++-----------
+ 1 file changed, 18 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index fdf30bfa403bf416..8fad62f08e85e3ac 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -1337,20 +1337,15 @@ static void ravb_get_wol(struct net_device *ndev, struct ethtool_wolinfo *wol)
- {
- 	struct ravb_private *priv = netdev_priv(ndev);
- 
--	wol->supported = 0;
--	wol->wolopts = 0;
--
--	if (priv->clk) {
--		wol->supported = WAKE_MAGIC;
--		wol->wolopts = priv->wol_enabled ? WAKE_MAGIC : 0;
--	}
-+	wol->supported = WAKE_MAGIC;
-+	wol->wolopts = priv->wol_enabled ? WAKE_MAGIC : 0;
+diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+index e00e99a..00a8303 100644
+--- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
++++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+@@ -219,33 +219,40 @@ static bool rcar_gen3_is_host(struct rcar_gen3_chan *ch)
+ 	return !(readl(ch->base + USB2_COMMCTRL) & USB2_COMMCTRL_OTG_PERI);
  }
  
- static int ravb_set_wol(struct net_device *ndev, struct ethtool_wolinfo *wol)
++static enum phy_mode rcar_gen3_get_phy_mode(struct rcar_gen3_chan *ch)
++{
++	if (rcar_gen3_is_host(ch))
++		return PHY_MODE_USB_HOST;
++
++	return PHY_MODE_USB_DEVICE;
++}
++
+ static ssize_t role_store(struct device *dev, struct device_attribute *attr,
+ 			  const char *buf, size_t count)
  {
- 	struct ravb_private *priv = netdev_priv(ndev);
+ 	struct rcar_gen3_chan *ch = dev_get_drvdata(dev);
+-	bool is_b_device, is_host, new_mode_is_host;
++	bool is_b_device;
++	enum phy_mode cur_mode, new_mode;
  
--	if (!priv->clk || wol->wolopts & ~WAKE_MAGIC)
-+	if (wol->wolopts & ~WAKE_MAGIC)
- 		return -EOPNOTSUPP;
+ 	if (!ch->has_otg || !ch->phy->init_count)
+ 		return -EIO;
  
- 	priv->wol_enabled = !!(wol->wolopts & WAKE_MAGIC);
-@@ -1912,22 +1907,12 @@ MODULE_DEVICE_TABLE(of, ravb_match_table);
- 
- static int ravb_set_gti(struct net_device *ndev)
- {
--
-+	struct ravb_private *priv = netdev_priv(ndev);
- 	struct device *dev = ndev->dev.parent;
--	struct device_node *np = dev->of_node;
- 	unsigned long rate;
--	struct clk *clk;
- 	uint64_t inc;
- 
--	clk = of_clk_get(np, 0);
--	if (IS_ERR(clk)) {
--		dev_err(dev, "could not get clock\n");
--		return PTR_ERR(clk);
--	}
--
--	rate = clk_get_rate(clk);
--	clk_put(clk);
--
-+	rate = clk_get_rate(priv->clk);
- 	if (!rate)
+-	/*
+-	 * is_b_device: true is B-Device. false is A-Device.
+-	 * If {new_mode_}is_host: true is Host mode. false is Peripheral mode.
+-	 */
+-	is_b_device = rcar_gen3_check_id(ch);
+-	is_host = rcar_gen3_is_host(ch);
+ 	if (!strncmp(buf, "host", strlen("host")))
+-		new_mode_is_host = true;
++		new_mode = PHY_MODE_USB_HOST;
+ 	else if (!strncmp(buf, "peripheral", strlen("peripheral")))
+-		new_mode_is_host = false;
++		new_mode = PHY_MODE_USB_DEVICE;
+ 	else
  		return -EINVAL;
  
-@@ -2073,10 +2058,11 @@ static int ravb_probe(struct platform_device *pdev)
++	/* is_b_device: true is B-Device. false is A-Device. */
++	is_b_device = rcar_gen3_check_id(ch);
++	cur_mode = rcar_gen3_get_phy_mode(ch);
++
+ 	/* If current and new mode is the same, this returns the error */
+-	if (is_host == new_mode_is_host)
++	if (cur_mode == new_mode)
+ 		return -EINVAL;
  
- 	priv->chip_id = chip_id;
- 
--	/* Get clock, if not found that's OK but Wake-On-Lan is unavailable */
- 	priv->clk = devm_clk_get(&pdev->dev, NULL);
--	if (IS_ERR(priv->clk))
--		priv->clk = NULL;
-+	if (IS_ERR(priv->clk)) {
-+		error = PTR_ERR(priv->clk);
-+		goto out_release;
-+	}
- 
- 	/* Set function */
- 	ndev->netdev_ops = &ravb_netdev_ops;
-@@ -2144,8 +2130,7 @@ static int ravb_probe(struct platform_device *pdev)
- 	if (error)
- 		goto out_napi_del;
- 
--	if (priv->clk)
--		device_set_wakeup_capable(&pdev->dev, 1);
-+	device_set_wakeup_capable(&pdev->dev, 1);
- 
- 	/* Print device information */
- 	netdev_info(ndev, "Base address at %#x, %pM, IRQ %d.\n",
+-	if (new_mode_is_host) {		/* And is_host must be false */
++	if (new_mode == PHY_MODE_USB_HOST) { /* And is_host must be false */
+ 		if (!is_b_device)	/* A-Peripheral */
+ 			rcar_gen3_init_from_a_peri_to_a_host(ch);
+ 		else			/* B-Peripheral */
 -- 
-2.7.4
+1.9.1
