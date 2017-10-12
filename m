@@ -1,72 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:53763 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751458AbdJLMUr (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55773 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750918AbdJLJz0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 12 Oct 2017 08:20:47 -0400
-MIME-Version: 1.0
-In-Reply-To: <20171012095508.vjpqvq37474qp2cb@verge.net.au>
-References: <1507796693-14268-1-git-send-email-geert+renesas@glider.be> <20171012095508.vjpqvq37474qp2cb@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 12 Oct 2017 14:20:45 +0200
-Message-ID: <CAMuHMdUpvrWpyiAo2qT=5JWHU+jpbDgV8LuvF0-+pC825XQMeg@mail.gmail.com>
-Subject: Re: [PATCH] ravb: Consolidate clock handling
-To: Simon Horman <horms@verge.net.au>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        "David S . Miller" <davem@davemloft.net>,
+        Thu, 12 Oct 2017 05:55:26 -0400
+Date: Thu, 12 Oct 2017 11:55:21 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: "David S . Miller" <davem@davemloft.net>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        =?UTF-8?Q?Niklas_S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Niklas =?utf-8?Q?S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] ravb: Consolidate clock handling
+Message-ID: <20171012095508.vjpqvq37474qp2cb@verge.net.au>
+References: <1507796693-14268-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1507796693-14268-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
+On Thu, Oct 12, 2017 at 10:24:53AM +0200, Geert Uytterhoeven wrote:
+> The module clock is used for two purposes:
+>   - Wake-on-LAN (WoL), which is optional,
+>   - gPTP Timer Increment (GTI) configuration, which is mandatory.
+> 
+> As the clock is needed for GTI configuration anyway, WoL is always
+> available.  Hence remove duplication and repeated obtaining of the clock
+> by making GTI use the stored clock for WoL use.
 
-On Thu, Oct 12, 2017 at 11:55 AM, Simon Horman <horms@verge.net.au> wrote:
-> On Thu, Oct 12, 2017 at 10:24:53AM +0200, Geert Uytterhoeven wrote:
->> The module clock is used for two purposes:
->>   - Wake-on-LAN (WoL), which is optional,
->>   - gPTP Timer Increment (GTI) configuration, which is mandatory.
->>
->> As the clock is needed for GTI configuration anyway, WoL is always
->> available.  Hence remove duplication and repeated obtaining of the clock
->> by making GTI use the stored clock for WoL use.
->
-> Hi Geert,
->
-> I understand from the statements above that the clock must be present,
-> but I'm most sure that I understand why that means that WoL is always
-> available.
+Hi Geert,
 
-That refers to the part below: WoL was considered available iff the clock
-is available.
+I understand from the statements above that the clock must be present,
+but I'm most sure that I understand why that means that WoL is always
+available.
 
-@@ -2073,10 +2058,11 @@ static int ravb_probe(struct platform_device *pdev)
-
-        priv->chip_id = chip_id;
-
--       /* Get clock, if not found that's OK but Wake-On-Lan is unavailable */
-        priv->clk = devm_clk_get(&pdev->dev, NULL);
--       if (IS_ERR(priv->clk))
--               priv->clk = NULL;
-+       if (IS_ERR(priv->clk)) {
-+               error = PTR_ERR(priv->clk);
-+               goto out_release;
-+       }
-
-But the clock must always be available, else GTI configuration
-would fail, and ravb initialization would return with an error.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Assuming your assertion that WoL is correct the code changes look good to me.
