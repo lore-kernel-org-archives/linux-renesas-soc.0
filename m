@@ -1,20 +1,20 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f50.google.com ([209.85.215.50]:46095 "EHLO
-        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751496AbdJLVIX (ORCPT
+Received: from mail-lf0-f52.google.com ([209.85.215.52]:48745 "EHLO
+        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752246AbdJLUPl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 12 Oct 2017 17:08:23 -0400
-Received: by mail-lf0-f50.google.com with SMTP id g70so7364973lfl.3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Oct 2017 14:08:23 -0700 (PDT)
+        Thu, 12 Oct 2017 16:15:41 -0400
+Received: by mail-lf0-f52.google.com with SMTP id a69so7232951lfe.5
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Oct 2017 13:15:41 -0700 (PDT)
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20171012210818.806395567@cogentembedded.com>
-Date: Fri, 13 Oct 2017 00:08:14 +0300
+Message-Id: <20171012201537.102610518@cogentembedded.com>
+Date: Thu, 12 Oct 2017 23:15:30 +0300
 To: Linus Walleij <linus.walleij@linaro.org>,
         linux-gpio@vger.kernel.org
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         linux-renesas-soc@vger.kernel.org,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH 1/1] gpio-rcar: use devm_ioremap_resource()
+Subject: [PATCH] gpio-rcar: use devm_ioremap_resource()
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
 Content-Disposition: inline; filename=gpio-rcar-use-devm_ioremap_resource.patch
