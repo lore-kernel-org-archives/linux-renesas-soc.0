@@ -1,56 +1,39 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:54752 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751566AbdJDMIc (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Oct 2017 08:08:32 -0400
+Return-Path: <devicetree-owner@vger.kernel.org>
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Jonathan Cameron <jic23@kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/3] iio: adc: rcar-gyroadc: Use of_device_get_match_data() helper
-Date: Wed,  4 Oct 2017 14:08:26 +0200
-Message-Id: <1507118906-8946-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1507118906-8946-1-git-send-email-geert+renesas@glider.be>
-References: <1507118906-8946-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Subject: [PATCH 03/13] ARM: dts: r8a73a4: Add clock for CA15 CPU0 core
+Date: Thu, 12 Oct 2017 11:35:06 +0200
+Message-Id: <1507800916-11509-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1507800916-11509-1-git-send-email-geert+renesas@glider.be>
+References: <1507800916-11509-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use the of_device_get_match_data() helper instead of open coding.
-Note that the rcar-gyroadc driver is used with DT only, so there's
-always a valid match.
+Improve hardware description by adding a clocks property to the device
+node corresponding to the primary CA15 CPU core, which is for now the
+only one described.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/iio/adc/rcar-gyroadc.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/r8a73a4.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/iio/adc/rcar-gyroadc.c b/drivers/iio/adc/rcar-gyroadc.c
-index 0098c66a19572400..dcb50172186f49ab 100644
---- a/drivers/iio/adc/rcar-gyroadc.c
-+++ b/drivers/iio/adc/rcar-gyroadc.c
-@@ -487,8 +487,6 @@ static int rcar_gyroadc_init_supplies(struct iio_dev *indio_dev)
- 
- static int rcar_gyroadc_probe(struct platform_device *pdev)
- {
--	const struct of_device_id *of_id =
--		of_match_device(rcar_gyroadc_match, &pdev->dev);
- 	struct device *dev = &pdev->dev;
- 	struct rcar_gyroadc *priv;
- 	struct iio_dev *indio_dev;
-@@ -525,7 +523,8 @@ static int rcar_gyroadc_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	priv->model = (enum rcar_gyroadc_model)of_id->data;
-+	priv->model = (enum rcar_gyroadc_model)
-+		of_device_get_match_data(&pdev->dev);
- 
- 	platform_set_drvdata(pdev, indio_dev);
- 
+diff --git a/arch/arm/boot/dts/r8a73a4.dtsi b/arch/arm/boot/dts/r8a73a4.dtsi
+index f39a94fb36664906..8e48090e4fdc1412 100644
+--- a/arch/arm/boot/dts/r8a73a4.dtsi
++++ b/arch/arm/boot/dts/r8a73a4.dtsi
+@@ -27,6 +27,7 @@
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a15";
+ 			reg = <0>;
++			clocks = <&cpg_clocks R8A73A4_CLK_Z>;
+ 			clock-frequency = <1500000000>;
+ 			power-domains = <&pd_a2sl>;
+ 			next-level-cache = <&L2_CA15>;
 -- 
 2.7.4
+
