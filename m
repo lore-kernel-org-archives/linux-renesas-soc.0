@@ -1,30 +1,27 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55836 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753231AbdJMM2a (ORCPT
+Received: from mail-lf0-f43.google.com ([209.85.215.43]:53420 "EHLO
+        mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756900AbdJMMZm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Oct 2017 08:28:30 -0400
-Date: Fri, 13 Oct 2017 14:28:00 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>,
-        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-renesas-soc@vger.kernel.org
+        Fri, 13 Oct 2017 08:25:42 -0400
+Received: by mail-lf0-f43.google.com with SMTP id l23so9397424lfk.10
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 13 Oct 2017 05:25:41 -0700 (PDT)
 Subject: Re: [PATCH] i2c: rcar: document R8A77970 bindings
-Message-ID: <20171013122800.xyog4scbsp6m2aot@verge.net.au>
+To: Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>,
+        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        linux-renesas-soc@vger.kernel.org
 References: <20171013122401.540656908@cogentembedded.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <9ee707bf-04bc-6bc3-827b-02b501877a6d@cogentembedded.com>
+Date: Fri, 13 Oct 2017 15:25:38 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <20171013122401.540656908@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Oct 13, 2017 at 03:23:55PM +0300, Sergei Shtylyov wrote:
-> R-Car V3M (R8A77970) SoC also has the R-Car gen3 compatible I2C controller,
-> so document  the SoC specific bindings.
-> 
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Oops, forgot to mention that the patch is against Wolfram Sang's 'linux.git' 
+repo's 'i2c/for-next' branch...
