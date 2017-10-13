@@ -1,43 +1,119 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:37556 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755928AbdJLJfU (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55945 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758112AbdJMMdh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 12 Oct 2017 05:35:20 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 04/13] ARM: dts: r8a7743: Add missing clock for secondary CA15 CPU core
-Date: Thu, 12 Oct 2017 11:35:07 +0200
-Message-Id: <1507800916-11509-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1507800916-11509-1-git-send-email-geert+renesas@glider.be>
-References: <1507800916-11509-1-git-send-email-geert+renesas@glider.be>
+        Fri, 13 Oct 2017 08:33:37 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v3 02/10] ARM: dts: r8a7779: Use R-Car GPIO Gen1 fallback compat string
+Date: Fri, 13 Oct 2017 14:33:03 +0200
+Message-Id: <20171013123311.15278-3-horms+renesas@verge.net.au>
+In-Reply-To: <20171013123311.15278-1-horms+renesas@verge.net.au>
+References: <20171013123311.15278-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Currently only the primary CPU in the CA15 cluster has a clocks
-property, while the secondary CPU core is driven by the same clock.
-Add the missing clocks property to fix this.
+Use newly added R-Car GPIO Gen1 fallback compat string
+in place of now deprecated non-generation specific
+R-Car GPIO fallback compat string in DT of r8a7779 SoC.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+As the driver does not match on "renesas,gpio-r8a7779" there
+are some run-time considerations for this patch:
+
+* When a resulting DTB is used with kernels newer than v4.14 this should
+  not have any run-time effect as renesas,rcar-gen1-gpio is matched by the
+  driver since commit dbd1dad2ab8f ("gpio: rcar: add gen[123] fallback
+  compatibility strings")
+
+* However, when used with older kernels GPIO will be disabled as
+  no compat string match will be made by the driver.
+
+The regression documented above for the new DTB with old kernel case
+is acceptable in my opinion.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7743.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+v3
+* Consistently refer to gen1 rather than gen2 binding in changelog
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index d541fd9ffafb34ce..e09517bce30db2e8 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -63,6 +63,7 @@
- 			compatible = "arm,cortex-a15";
- 			reg = <1>;
- 			clock-frequency = <1500000000>;
-+			clocks = <&cpg CPG_CORE R8A7743_CLK_Z>;
- 			power-domains = <&sysc R8A7743_PD_CA15_CPU1>;
- 			next-level-cache = <&L2_CA15>;
- 		};
+v2
+* Note run-time considerations in changelog as pointed out by
+  Geert Uytterhoeven
+---
+ arch/arm/boot/dts/r8a7779.dtsi | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
+index 8ee0b2ca5d39..ccef2cfab6e0 100644
+--- a/arch/arm/boot/dts/r8a7779.dtsi
++++ b/arch/arm/boot/dts/r8a7779.dtsi
+@@ -76,7 +76,7 @@
+ 	};
+ 
+ 	gpio0: gpio@ffc40000 {
+-		compatible = "renesas,gpio-r8a7779", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7779", "renesas,rcar-gen1-gpio";
+ 		reg = <0xffc40000 0x2c>;
+ 		interrupts = <GIC_SPI 141 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -87,7 +87,7 @@
+ 	};
+ 
+ 	gpio1: gpio@ffc41000 {
+-		compatible = "renesas,gpio-r8a7779", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7779", "renesas,rcar-gen1-gpio";
+ 		reg = <0xffc41000 0x2c>;
+ 		interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -98,7 +98,7 @@
+ 	};
+ 
+ 	gpio2: gpio@ffc42000 {
+-		compatible = "renesas,gpio-r8a7779", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7779", "renesas,rcar-gen1-gpio";
+ 		reg = <0xffc42000 0x2c>;
+ 		interrupts = <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -109,7 +109,7 @@
+ 	};
+ 
+ 	gpio3: gpio@ffc43000 {
+-		compatible = "renesas,gpio-r8a7779", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7779", "renesas,rcar-gen1-gpio";
+ 		reg = <0xffc43000 0x2c>;
+ 		interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -120,7 +120,7 @@
+ 	};
+ 
+ 	gpio4: gpio@ffc44000 {
+-		compatible = "renesas,gpio-r8a7779", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7779", "renesas,rcar-gen1-gpio";
+ 		reg = <0xffc44000 0x2c>;
+ 		interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -131,7 +131,7 @@
+ 	};
+ 
+ 	gpio5: gpio@ffc45000 {
+-		compatible = "renesas,gpio-r8a7779", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7779", "renesas,rcar-gen1-gpio";
+ 		reg = <0xffc45000 0x2c>;
+ 		interrupts = <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -142,7 +142,7 @@
+ 	};
+ 
+ 	gpio6: gpio@ffc46000 {
+-		compatible = "renesas,gpio-r8a7779", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7779", "renesas,rcar-gen1-gpio";
+ 		reg = <0xffc46000 0x2c>;
+ 		interrupts = <GIC_SPI 147 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
 -- 
-2.7.4
+2.11.0
