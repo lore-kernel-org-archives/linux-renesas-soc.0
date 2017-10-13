@@ -1,46 +1,61 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:46643 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751027AbdJGKhJ (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 7 Oct 2017 06:37:09 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 03/11] mmc: dw_mmc: catch all errors when getting regulators
-Date: Sat,  7 Oct 2017 12:36:50 +0200
-Message-Id: <20171007103658.16868-4-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20171007103658.16868-1-wsa+renesas@sang-engineering.com>
-References: <20171007103658.16868-1-wsa+renesas@sang-engineering.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH  4/4] ARM: dts: iwg22d-sodimm: Enable HS-USB
+Date: Fri, 13 Oct 2017 16:50:43 +0100
+Message-Id: <1507909843-52034-5-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1507909843-52034-1-git-send-email-biju.das@bp.renesas.com>
+References: <1507909843-52034-1-git-send-email-biju.das@bp.renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Bail out everytime when mmc_regulator_get_supply() returns an errno, not only
-when probing gets deferred. This is currently a no-op, because this function
-only returns -EPROBE_DEFER or 0 right now. But if it will throw another error
-somewhen, it will be for a reason. (This still doesn't change that getting
-regulators is optional, so 0 can still mean no regulators found). So, let us a)
-be future proof and b) have driver code which is easier to understand.
+Enable HS-USB on iWave RZ/G1E carrier board.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/mmc/host/dw_mmc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This patch depend upon the below patch
+https://patchwork.kernel.org/patch/10004691/
 
-diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-index 45289c5e0295d2..20d66f8189090d 100644
---- a/drivers/mmc/host/dw_mmc.c
-+++ b/drivers/mmc/host/dw_mmc.c
-@@ -2741,7 +2741,7 @@ static int dw_mci_init_slot(struct dw_mci *host)
+ arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
+index 5003a8f..847c719 100644
+--- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
++++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
+@@ -67,6 +67,12 @@
+ 	status = "okay";
+ };
  
- 	/*if there are external regulators, get them*/
- 	ret = mmc_regulator_get_supply(mmc);
--	if (ret == -EPROBE_DEFER)
-+	if (ret)
- 		goto err_host_allocated;
++&hsusb {
++	status = "okay";
++	pinctrl-0 = <&usb0_pins>;
++	pinctrl-names = "default";
++};
++
+ &pci1 {
+ 	status = "okay";
+ 	pinctrl-0 = <&usb1_pins>;
+@@ -95,6 +101,11 @@
+ 		power-source = <3300>;
+ 	};
  
- 	if (!mmc->ocr_avail)
++	usb0_pins: usb0 {
++		groups = "usb0";
++		function = "usb0";
++	};
++
+ 	usb1_pins: usb1 {
+ 		groups = "usb1";
+ 		function = "usb1";
 -- 
-2.11.0
+1.9.1
+
