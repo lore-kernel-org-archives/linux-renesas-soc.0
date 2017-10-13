@@ -1,19 +1,19 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55952 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:54131 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758110AbdJMMdk (ORCPT
+        with ESMTP id S1751529AbdJMLGZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Oct 2017 08:33:40 -0400
+        Fri, 13 Oct 2017 07:06:25 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v3 03/10] ARM: dts: r8a7743: Use R-Car GPIO Gen2 fallback compat string
-Date: Fri, 13 Oct 2017 14:33:04 +0200
-Message-Id: <20171013123311.15278-4-horms+renesas@verge.net.au>
-In-Reply-To: <20171013123311.15278-1-horms+renesas@verge.net.au>
-References: <20171013123311.15278-1-horms+renesas@verge.net.au>
+Subject: [PATCH v2 03/10] ARM: dts: r8a7743: Use R-Car GPIO Gen2 fallback compat string
+Date: Fri, 13 Oct 2017 13:05:53 +0200
+Message-Id: <20171013110600.6858-4-horms+renesas@verge.net.au>
+In-Reply-To: <20171013110600.6858-1-horms+renesas@verge.net.au>
+References: <20171013110600.6858-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
