@@ -1,51 +1,48 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <20171013085851.ljvgmyd6ei2tv5fw@dell>
-References: <1507649178-31473-1-git-send-email-geert+renesas@glider.be>
- <1507649178-31473-4-git-send-email-geert+renesas@glider.be> <20171013085851.ljvgmyd6ei2tv5fw@dell>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 13 Oct 2017 11:06:13 +0200
-Message-ID: <CAMuHMdVZiaq40r0Su01n9C7oXR7i_QWmNhZtY7Udhy9gdYHVRA@mail.gmail.com>
-Subject: Re: [PATCH/RFC 3/5] mfd: bd9571mwv: Allow DDR Backup Power register access
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
+Date: Fri, 13 Oct 2017 09:58:51 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH/RFC 3/5] mfd: bd9571mwv: Allow DDR Backup Power register
+ access
+Message-ID: <20171013085851.ljvgmyd6ei2tv5fw@dell>
+References: <1507649178-31473-1-git-send-email-geert+renesas@glider.be>
+ <1507649178-31473-4-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1507649178-31473-4-git-send-email-geert+renesas@glider.be>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Lee,
+On Tue, 10 Oct 2017, Geert Uytterhoeven wrote:
 
-On Fri, Oct 13, 2017 at 10:58 AM, Lee Jones <lee.jones@linaro.org> wrote:
-> On Tue, 10 Oct 2017, Geert Uytterhoeven wrote:
->
->> Enable read/write access to the BD9571MWV_BKUP_MODE_CNT register, which
->> is a.o. used to configure DDR Backup Power.
->
-> a.o.?  That's a new one on me.
+> Enable read/write access to the BD9571MWV_BKUP_MODE_CNT register, which
+> is a.o. used to configure DDR Backup Power.
 
-among(st) others
+a.o.?  That's a new one on me.
 
-Gr{oetje,eeting}s,
+Please ensure commit logs are clear for *everyone* to read/understand
+by using descriptive and expanded (rather than shorten) terms.
 
-                        Geert
+Code looks fine though, so once fixed:
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+For my own reference:
+  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
