@@ -1,103 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55952 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758110AbdJMMdj (ORCPT
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:34139 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751564AbdJMLYL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Oct 2017 08:33:39 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Fri, 13 Oct 2017 07:24:11 -0400
+MIME-Version: 1.0
+In-Reply-To: <20171013103812.30826-4-horms+renesas@verge.net.au>
+References: <20171013103812.30826-1-horms+renesas@verge.net.au> <20171013103812.30826-4-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 13 Oct 2017 13:24:09 +0200
+Message-ID: <CAMuHMdVtObaF6w1OVzo6XeX1oKb0WxzWomPCpGm5sx4PuSZiNQ@mail.gmail.com>
+Subject: Re: [PATCH 3/3] mmc: renesas_sdhi: implement R-Car Gen[123] fallback
+ compatibility strings
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v3 01/10] ARM: dts: r8a7778: Use R-Car GPIO Gen1 fallback compat string
-Date: Fri, 13 Oct 2017 14:33:02 +0200
-Message-Id: <20171013123311.15278-2-horms+renesas@verge.net.au>
-In-Reply-To: <20171013123311.15278-1-horms+renesas@verge.net.au>
-References: <20171013123311.15278-1-horms+renesas@verge.net.au>
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use newly added R-Car GPIO Gen1 fallback compat string
-in place of now deprecated non-generation specific
-R-Car GPIO fallback compat string in DT of r8a7778 SoC.
+On Fri, Oct 13, 2017 at 12:38 PM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> Implement fallback compatibility strings for R-Car Gen 1, 2 and 3.
+>
+> In the case of Renesas R-Car hardware we know that there are generations of
+> SoCs, f.e. Gen 1 and 2. But beyond that its not clear what the relationship
+> between IP blocks might be. For example, I believe that r8a7790 is older
+> than r8a7791 but that doesn't imply that the latter is a descendant of the
+> former or vice versa.
+>
+> We can, however, by examining the documentation and behaviour of the
+> hardware at run-time observe that the current driver implementation appears
+> to be compatible with the IP blocks on SoCs within a given generation.
+>
+> For the above reasons and convenience when enabling new SoCs a
+> per-generation fallback compatibility string scheme being adopted for
+> drivers for Renesas SoCs.
+>
+> Also, improve readability by listing the shmobile fallback compatibility
+> string after the more-specific compatibility strings they provide a
+> fallback for.
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-As the driver does not match on "renesas,gpio-r8a7778" there
-are some run-time considerations for this patch:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-* When a resulting DTB is used with kernels newer than v4.14 this should
-  not have any run-time effect as renesas,rcar-gen1-gpio is matched by the
-  driver since commit dbd1dad2ab8f ("gpio: rcar: add gen[123] fallback
-  compatibility strings")
+Gr{oetje,eeting}s,
 
-* However, when used with older kernels GPIO will be disabled as
-  no compat string match will be made by the driver.
+                        Geert
 
-The regression documented above for the new DTB with old kernel case
-is acceptable in my opinion.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
-v3
-* Consistently use gen1 rather than gen2 binding in patch and refer to it
-  in changelog.
-
-v2
-* Note run-time considerations in changelog as pointed out by
-  Geert Uytterhoeven
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7778.dtsi | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/arch/arm/boot/dts/r8a7778.dtsi b/arch/arm/boot/dts/r8a7778.dtsi
-index 8f3156c0e575..a31817b2dda7 100644
---- a/arch/arm/boot/dts/r8a7778.dtsi
-+++ b/arch/arm/boot/dts/r8a7778.dtsi
-@@ -88,7 +88,7 @@
- 	};
- 
- 	gpio0: gpio@ffc40000 {
--		compatible = "renesas,gpio-r8a7778", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7778", "renesas,rcar-gen1-gpio";
- 		reg = <0xffc40000 0x2c>;
- 		interrupts = <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -99,7 +99,7 @@
- 	};
- 
- 	gpio1: gpio@ffc41000 {
--		compatible = "renesas,gpio-r8a7778", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7778", "renesas,rcar-gen1-gpio";
- 		reg = <0xffc41000 0x2c>;
- 		interrupts = <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -110,7 +110,7 @@
- 	};
- 
- 	gpio2: gpio@ffc42000 {
--		compatible = "renesas,gpio-r8a7778", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7778", "renesas,rcar-gen1-gpio";
- 		reg = <0xffc42000 0x2c>;
- 		interrupts = <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -121,7 +121,7 @@
- 	};
- 
- 	gpio3: gpio@ffc43000 {
--		compatible = "renesas,gpio-r8a7778", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7778", "renesas,rcar-gen1-gpio";
- 		reg = <0xffc43000 0x2c>;
- 		interrupts = <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -132,7 +132,7 @@
- 	};
- 
- 	gpio4: gpio@ffc44000 {
--		compatible = "renesas,gpio-r8a7778", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7778", "renesas,rcar-gen1-gpio";
- 		reg = <0xffc44000 0x2c>;
- 		interrupts = <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
--- 
-2.11.0
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
