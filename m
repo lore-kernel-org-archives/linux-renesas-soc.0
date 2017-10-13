@@ -1,44 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f49.google.com ([209.85.215.49]:46621 "EHLO
-        mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757807AbdJMMYG (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:53157 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751619AbdJMKii (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Oct 2017 08:24:06 -0400
-Received: by mail-lf0-f49.google.com with SMTP id g70so9407655lfl.3
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 13 Oct 2017 05:24:06 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20171013122401.540656908@cogentembedded.com>
-Date: Fri, 13 Oct 2017 15:23:55 +0300
-To: Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>,
-        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>,
+        Fri, 13 Oct 2017 06:38:38 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] i2c: rcar: document R8A77970 bindings
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=i2c-rcar-document-R8A77970-bindings.patch
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 0/3] mmc: renesas_sdhi: add R-Car Gen[123] fallback compatibility strings
+Date: Fri, 13 Oct 2017 12:38:09 +0200
+Message-Id: <20171013103812.30826-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car V3M (R8A77970) SoC also has the R-Car gen3 compatible I2C controller,
-so document  the SoC specific bindings.
+Add fallback compatibility strings for R-Car Gen 1, 2 and 3 to the SDHI
+bindings and driver.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+In the case of Renesas R-Car hardware we know that there are generations of
+SoCs, f.e. Gen 1 and 2. But beyond that its not clear what the relationship
+between IP blocks might be. For example, I believe that r8a7790 is older
+than r8a7791 but that doesn't imply that the latter is a descendant of the
+former or vice versa.
 
----
- Documentation/devicetree/bindings/i2c/i2c-rcar.txt |    1 +
- 1 file changed, 1 insertion(+)
+We can, however, by examining the documentation and behaviour of the
+hardware at run-time observe that the current driver implementation appears
+to be compatible with the IP blocks on SoCs within a given generation.
 
-Index: linux/Documentation/devicetree/bindings/i2c/i2c-rcar.txt
-===================================================================
---- linux.orig/Documentation/devicetree/bindings/i2c/i2c-rcar.txt
-+++ linux/Documentation/devicetree/bindings/i2c/i2c-rcar.txt
-@@ -13,6 +13,7 @@ Required properties:
- 	"renesas,i2c-r8a7794" if the device is a part of a R8A7794 SoC.
- 	"renesas,i2c-r8a7795" if the device is a part of a R8A7795 SoC.
- 	"renesas,i2c-r8a7796" if the device is a part of a R8A7796 SoC.
-+	"renesas,i2c-r8a77970" if the device is a part of a R8A77970 SoC.
- 	"renesas,rcar-gen1-i2c" for a generic R-Car Gen1 compatible device.
- 	"renesas,rcar-gen2-i2c" for a generic R-Car Gen2 or RZ/G1 compatible
- 				device.
+For the above reasons and convenience when enabling new SoCs a
+per-generation fallback compatibility string scheme being adopted for
+drivers for Renesas SoCs.
+
+Based on mmc/next
+
+Simon Horman (3):
+  dt-bindings: mmc: renesas_sdhi: provide example in bindings
+    documentation
+  dt-bindings: mmc: renesas_sdhi: add R-Car Gen[123] fallback
+    compatibility strings
+  mmc: renesas_sdhi: implement R-Car Gen[123] fallback compatibility
+    strings
+
+ Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 66 +++++++++++++++++++++-
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c      |  1 +
+ drivers/mmc/host/renesas_sdhi_sys_dmac.c           |  5 +-
+ 3 files changed, 70 insertions(+), 2 deletions(-)
+
+-- 
+2.11.0
