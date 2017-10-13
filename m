@@ -1,60 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:51050 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932428AbdJPWSE (ORCPT
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:35612 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753348AbdJMLWW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Oct 2017 18:18:04 -0400
-Date: Tue, 17 Oct 2017 00:18:03 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
+        Fri, 13 Oct 2017 07:22:22 -0400
+MIME-Version: 1.0
+In-Reply-To: <20171013103812.30826-3-horms+renesas@verge.net.au>
+References: <20171013103812.30826-1-horms+renesas@verge.net.au> <20171013103812.30826-3-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 13 Oct 2017 13:22:20 +0200
+Message-ID: <CAMuHMdUwD-fc7bsGiHkP=3G+D=pFziELMNK7rheipCKQ43aHug@mail.gmail.com>
+Subject: Re: [PATCH 2/3] dt-bindings: mmc: renesas_sdhi: add R-Car Gen[123]
+ fallback compatibility strings
 To: Simon Horman <horms+renesas@verge.net.au>
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Ulf Hansson <ulf.hansson@linaro.org>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 2/3] dt-bindings: mmc: renesas_sdhi: add R-Car Gen[123]
- fallback compatibility strings
-Message-ID: <20171016221802.j5awpzoautty62gr@ninjato>
-References: <20171013103812.30826-1-horms+renesas@verge.net.au>
- <20171013103812.30826-3-horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="yma6x7b7eaxncstx"
-Content-Disposition: inline
-In-Reply-To: <20171013103812.30826-3-horms+renesas@verge.net.au>
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On Fri, Oct 13, 2017 at 12:38 PM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> Add fallback compatibility strings for R-Car Gen 1, 2 and 3.
+>
+> In the case of Renesas R-Car hardware we know that there are generations of
+> SoCs, f.e. Gen 1 and 2. But beyond that its not clear what the relationship
+> between IP blocks might be. For example, I believe that r8a7790 is older
+> than r8a7791 but that doesn't imply that the latter is a descendant of the
+> former or vice versa.
+>
+> We can, however, by examining the documentation and behaviour of the
+> hardware at run-time observe that the current driver implementation appears
+> to be compatible with the IP blocks on SoCs within a given generation.
+>
+> For the above reasons and convenience when enabling new SoCs a
+> per-generation fallback compatibility string scheme being adopted for
+> drivers for Renesas SoCs.
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
---yma6x7b7eaxncstx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> +		When compatible with the generic version nodes must list
+> --- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+> +++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
 
-comma after "version"? I had to read it multiple times until I got it :)
+> @@ -47,7 +57,7 @@ Optional properties:
+>  Example: R8A7779 (R-Car H1) SDHI controller nodes
 
-> +		the SoC-specific version corresponding to the platform
-> +		first followed by the generic version.
+Ah, so "R8A7790 (R-Car H2)" was intended in the previous patch...
 
+>
+>         sdhi0: sd@ee100000 {
+> -               compatible = "renesas,sdhi-r8a7790";
+> +               compatible = "renesas,sdhi-r8a7790", "renesas,rcar-gen2-sdhi";
+>                 reg = <0 0xee100000 0 0x328>;
+>                 interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
+>                 clocks = <&mstp3_clks R8A7790_CLK_SDHI0>;
 
---yma6x7b7eaxncstx
-Content-Type: application/pgp-signature; name="signature.asc"
+Gr{oetje,eeting}s,
 
------BEGIN PGP SIGNATURE-----
+                        Geert
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlnlMBoACgkQFA3kzBSg
-KbZFaw//a4LY50XQEGyak3i5CYayv7m+/QXxO+Z9uE4mcA5mHvPJfNlX/8QiwP9D
-XYXkkFCPh771TSenEwIgHFqSHvCRCHdK4clIBKeOBAYw2BmXVLA+si7emhY4wmCR
-QA/oKbrrfULGOERCBPeQMyWeXD5CU1CydLMPJBRtuGFTWzzgV1LE52405aKiSycy
-aPjUqyFaxMeboBQO/oAdg3lDq5tCY3bRKjoLxPgx+DHs1YLP66ZlsrGXao44gpHZ
-Q7806KeqgssaPeDmd8BdbXZ8toWRUSpw+9c+l1WVOvaIg+hA2yUV6VxOcYRrqz10
-WbrBCd1lMasfnNRJwkWQGNTBIlmgZQUyHqi1pswm05hAcYLO8Y0BTqq58Dn0lEOd
-k43Ih7N1Nkl2ps+qK5dLDTvCPLpufhzm14SDVMSrmUjbX/zKNt5kRZX0LELn1JUT
-+VlnWMnSbMM8S0PK9VkrP+icnn1ZcK61fTvhaWojtNl/aX4JMLIsZuvBZ2ZAsmFH
-jo2t7rS5MH+0ulzprKpmcBn/TCwVF1FHrCn/D1n2Nv4kAHGCC7Lu89dVQFAEsuJz
-cLHTtPAa97/E+p1y/RnbXMzg+pnP1M1L0PPatosS0saqp8aHaWDTW6WD78L3ulrq
-RWXwBrSIhocZU2O9e3Tu354G8DOZ/Xv55NF1/daJCG8wmtkEsOY=
-=UAGX
------END PGP SIGNATURE-----
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
---yma6x7b7eaxncstx--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
