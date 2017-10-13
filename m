@@ -1,65 +1,115 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:35974 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757900AbdJML1v (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:54154 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753231AbdJMLGb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Oct 2017 07:27:51 -0400
-Received: by mail-wm0-f66.google.com with SMTP id 131so5556449wmk.3
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 13 Oct 2017 04:27:50 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <20171013110600.6858-3-horms+renesas@verge.net.au>
-References: <20171013110600.6858-1-horms+renesas@verge.net.au> <20171013110600.6858-3-horms+renesas@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 13 Oct 2017 13:27:49 +0200
-Message-ID: <CAMuHMdUCQNO+_Y1SXA0F+_OSdZcsfyH9on0eQ_tKgehM_Ph-Sw@mail.gmail.com>
-Subject: Re: [PATCH v2 02/10] ARM: dts: r8a7779: Use R-Car GPIO Gen1 fallback
- compat string
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 13 Oct 2017 07:06:31 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v2 02/10] ARM: dts: r8a7779: Use R-Car GPIO Gen1 fallback compat string
+Date: Fri, 13 Oct 2017 13:05:52 +0200
+Message-Id: <20171013110600.6858-3-horms+renesas@verge.net.au>
+In-Reply-To: <20171013110600.6858-1-horms+renesas@verge.net.au>
+References: <20171013110600.6858-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
+Use newly added R-Car GPIO Gen1 fallback compat string
+in place of now deprecated non-generation specific
+R-Car GPIO fallback compat string in DT of r8a7779 SoC.
 
-On Fri, Oct 13, 2017 at 1:05 PM, Simon Horman
-<horms+renesas@verge.net.au> wrote:
-> Use newly added R-Car GPIO Gen1 fallback compat string
-> in place of now deprecated non-generation specific
-> R-Car GPIO fallback compat string in DT of r8a7779 SoC.
->
-> As the driver does not match on "renesas,gpio-r8a7779" there
-> are some run-time considerations for this patch:
->
-> * When a resulting DTB is used with kernels newer than v4.14 this should
->   not have any run-time effect as renesas,rcar-gen2-gpio is matched by the
+As the driver does not match on "renesas,gpio-r8a7779" there
+are some run-time considerations for this patch:
 
-gen1
+* When a resulting DTB is used with kernels newer than v4.14 this should
+  not have any run-time effect as renesas,rcar-gen2-gpio is matched by the
+  driver since commit dbd1dad2ab8f ("gpio: rcar: add gen[123] fallback
+  compatibility strings")
 
->   driver since commit dbd1dad2ab8f ("gpio: rcar: add gen[123] fallback
->   compatibility strings")
->
-> * However, when used with older kernels GPIO will be disabled as
->   no compat string match will be made by the driver.
->
-> The regression documented above for the new DTB with old kernel case
-> is acceptable in my opinion.
->
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+* However, when used with older kernels GPIO will be disabled as
+  no compat string match will be made by the driver.
 
-Apart from that:
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+The regression documented above for the new DTB with old kernel case
+is acceptable in my opinion.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+v2
+* Note run-time considerations in changelog as pointed out by
+  Geert Uytterhoeven
+---
+ arch/arm/boot/dts/r8a7779.dtsi | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
+index 8ee0b2ca5d39..ccef2cfab6e0 100644
+--- a/arch/arm/boot/dts/r8a7779.dtsi
++++ b/arch/arm/boot/dts/r8a7779.dtsi
+@@ -76,7 +76,7 @@
+ 	};
+ 
+ 	gpio0: gpio@ffc40000 {
+-		compatible = "renesas,gpio-r8a7779", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7779", "renesas,rcar-gen1-gpio";
+ 		reg = <0xffc40000 0x2c>;
+ 		interrupts = <GIC_SPI 141 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -87,7 +87,7 @@
+ 	};
+ 
+ 	gpio1: gpio@ffc41000 {
+-		compatible = "renesas,gpio-r8a7779", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7779", "renesas,rcar-gen1-gpio";
+ 		reg = <0xffc41000 0x2c>;
+ 		interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -98,7 +98,7 @@
+ 	};
+ 
+ 	gpio2: gpio@ffc42000 {
+-		compatible = "renesas,gpio-r8a7779", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7779", "renesas,rcar-gen1-gpio";
+ 		reg = <0xffc42000 0x2c>;
+ 		interrupts = <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -109,7 +109,7 @@
+ 	};
+ 
+ 	gpio3: gpio@ffc43000 {
+-		compatible = "renesas,gpio-r8a7779", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7779", "renesas,rcar-gen1-gpio";
+ 		reg = <0xffc43000 0x2c>;
+ 		interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -120,7 +120,7 @@
+ 	};
+ 
+ 	gpio4: gpio@ffc44000 {
+-		compatible = "renesas,gpio-r8a7779", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7779", "renesas,rcar-gen1-gpio";
+ 		reg = <0xffc44000 0x2c>;
+ 		interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -131,7 +131,7 @@
+ 	};
+ 
+ 	gpio5: gpio@ffc45000 {
+-		compatible = "renesas,gpio-r8a7779", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7779", "renesas,rcar-gen1-gpio";
+ 		reg = <0xffc45000 0x2c>;
+ 		interrupts = <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -142,7 +142,7 @@
+ 	};
+ 
+ 	gpio6: gpio@ffc46000 {
+-		compatible = "renesas,gpio-r8a7779", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7779", "renesas,rcar-gen1-gpio";
+ 		reg = <0xffc46000 0x2c>;
+ 		interrupts = <GIC_SPI 147 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+-- 
+2.11.0
