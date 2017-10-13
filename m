@@ -1,213 +1,183 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:37085 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751319AbdJENY2 (ORCPT
+Received: from foss.arm.com ([217.140.101.70]:37876 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752590AbdJMSXz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 Oct 2017 09:24:28 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: [PATCH v3 1/6] clk: renesas: rcar-gen3: Add Z clock divider support
-Date: Thu,  5 Oct 2017 15:23:52 +0200
-Message-Id: <1507209837-16938-2-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1507209837-16938-1-git-send-email-horms+renesas@verge.net.au>
-References: <1507209837-16938-1-git-send-email-horms+renesas@verge.net.au>
+        Fri, 13 Oct 2017 14:23:55 -0400
+From: Robin Murphy <robin.murphy@arm.com>
+To: joro@8bytes.org
+Cc: iommu@lists.linux-foundation.org, arnd@arndb.de,
+        laurent.pinchart+renesas@ideasonboard.com, magnus.damm@gmail.com,
+        geert+renesas@glider.be, linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 4/4] iommu/ipmmu-vmsa: Unify ipmmu_ops
+Date: Fri, 13 Oct 2017 19:23:42 +0100
+Message-Id: <449928aa04c858ca906bbdd1bcd2060bfd9cb0c5.1507918320.git.robin.murphy@arm.com>
+In-Reply-To: <cover.1507918320.git.robin.murphy@arm.com>
+References: <cover.1507918320.git.robin.murphy@arm.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+The remaining difference between the ARM-specific and iommu-dma ops is
+in the {add,remove}_device implementations, but even those have some
+overlap and duplication. By stubbing out the few arm_iommu_*() calls,
+we can get rid of the rest of the inline #ifdeffery to both simplify the
+code and improve build coverage.
 
-This patch adds Z clock divider support for R-Car Gen3 SoC.
-
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Robin Murphy <robin.murphy@arm.com>
 ---
+ drivers/iommu/ipmmu-vmsa.c | 69 +++++++++++++---------------------------------
+ 1 file changed, 19 insertions(+), 50 deletions(-)
 
-v2 [Simon Horman]
-* Use DIV_ROUND_CLOSEST_ULL instead of open-coding the same behaviour
-  using div_u64()
-* Do not round rate to 100MHz in cpg_z_clk_recalc_rate
-* Remove calculation for PLL post-divider, this is bogus.
-  Instead do not round to closest in cpg_z_clk_round_rate()
-* Drop check for !prate in cpg_z_clk_round_rate
-
-v1 [Simon Horman]
-* Divide parent clock by 2 to give correct rate
-* Use GENMASK, FIELD_{GET,PREP}
-* Correct whitespace
-* Arrange local variables in reverse Christmas tree order
-
-v0 [Takeshi Kihara]
----
- drivers/clk/renesas/rcar-gen3-cpg.c | 128 ++++++++++++++++++++++++++++++++++++
- drivers/clk/renesas/rcar-gen3-cpg.h |   1 +
- 2 files changed, 129 insertions(+)
-
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index 951105816547..d98272a6075f 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -13,6 +13,7 @@
-  */
+diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
+index 4d69c08145a1..2005aad09f2f 100644
+--- a/drivers/iommu/ipmmu-vmsa.c
++++ b/drivers/iommu/ipmmu-vmsa.c
+@@ -27,6 +27,11 @@
+ #if defined(CONFIG_ARM) && !defined(CONFIG_IOMMU_DMA)
+ #include <asm/dma-iommu.h>
+ #include <asm/pgalloc.h>
++#else
++#define arm_iommu_create_mapping(...)	NULL
++#define arm_iommu_attach_device(...)	-ENODEV
++#define arm_iommu_release_mapping(...)	do {} while (0)
++#define arm_iommu_detach_device(...)	do {} while (0)
+ #endif
  
- #include <linux/bug.h>
-+#include <linux/bitfield.h>
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/device.h>
-@@ -29,6 +30,129 @@
- #define CPG_PLL2CR		0x002c
- #define CPG_PLL4CR		0x01f4
+ #include "io-pgtable.h"
+@@ -678,26 +683,17 @@ static int ipmmu_of_xlate(struct device *dev,
+ 	return ipmmu_init_platform_device(dev, spec);
+ }
  
-+/*
-+ * Z Clock
-+ *
-+ * Traits of this clock:
-+ * prepare - clk_prepare only ensures that parents are prepared
-+ * enable - clk_enable only ensures that parents are enabled
-+ * rate - rate is adjustable.  clk->rate = (parent->rate * mult / 32 ) / 2
-+ * parent - fixed parent.  No clk_set_parent support
-+ */
-+#define CPG_FRQCRB			0x00000004
-+#define CPG_FRQCRB_KICK			BIT(31)
-+#define CPG_FRQCRC			0x000000e0
-+#define CPG_FRQCRC_ZFC_MASK		GENMASK(12, 8)
-+
-+struct cpg_z_clk {
-+	struct clk_hw hw;
-+	void __iomem *reg;
-+	void __iomem *kick_reg;
-+};
-+
-+#define to_z_clk(_hw)	container_of(_hw, struct cpg_z_clk, hw)
-+
-+static unsigned long cpg_z_clk_recalc_rate(struct clk_hw *hw,
-+					   unsigned long parent_rate)
-+{
-+	struct cpg_z_clk *zclk = to_z_clk(hw);
-+	unsigned int mult;
-+
-+	mult = 32 - FIELD_GET(CPG_FRQCRC_ZFC_MASK, clk_readl(zclk->reg));
-+	return DIV_ROUND_CLOSEST_ULL(parent_rate * mult, 32);
-+}
-+
-+static long cpg_z_clk_round_rate(struct clk_hw *hw, unsigned long rate,
-+				 unsigned long *parent_rate)
-+{
-+	unsigned long prate = *parent_rate;
-+	unsigned int mult;
-+
-+	mult = div_u64((u64)rate * 32, prate);
-+	mult = clamp(mult, 1U, 32U);
-+
-+	return *parent_rate * mult / 32;
-+}
-+
-+static int cpg_z_clk_set_rate(struct clk_hw *hw, unsigned long rate,
-+			      unsigned long parent_rate)
-+{
-+	struct cpg_z_clk *zclk = to_z_clk(hw);
-+	unsigned int mult;
-+	unsigned int i;
-+	u32 val, kick;
-+
-+	mult = DIV_ROUND_CLOSEST_ULL(rate * 32ULL, parent_rate);
-+	mult = clamp(mult, 1U, 32U);
-+
-+	if (clk_readl(zclk->kick_reg) & CPG_FRQCRB_KICK)
-+		return -EBUSY;
-+
-+	val = clk_readl(zclk->reg) & ~CPG_FRQCRC_ZFC_MASK;
-+	val |= FIELD_PREP(CPG_FRQCRC_ZFC_MASK, 32 - mult);
-+	clk_writel(val, zclk->reg);
-+
-+	/*
-+	 * Set KICK bit in FRQCRB to update hardware setting and wait for
-+	 * clock change completion.
-+	 */
-+	kick = clk_readl(zclk->kick_reg);
-+	kick |= CPG_FRQCRB_KICK;
-+	clk_writel(kick, zclk->kick_reg);
-+
-+	/*
-+	 * Note: There is no HW information about the worst case latency.
-+	 *
-+	 * Using experimental measurements, it seems that no more than
-+	 * ~10 iterations are needed, independently of the CPU rate.
-+	 * Since this value might be dependent of external xtal rate, pll1
-+	 * rate or even the other emulation clocks rate, use 1000 as a
-+	 * "super" safe value.
-+	 */
-+	for (i = 1000; i; i--) {
-+		if (!(clk_readl(zclk->kick_reg) & CPG_FRQCRB_KICK))
-+			return 0;
-+
-+		cpu_relax();
-+	}
-+
-+	return -ETIMEDOUT;
-+}
-+
-+static const struct clk_ops cpg_z_clk_ops = {
-+	.recalc_rate = cpg_z_clk_recalc_rate,
-+	.round_rate = cpg_z_clk_round_rate,
-+	.set_rate = cpg_z_clk_set_rate,
-+};
-+
-+static struct clk * __init cpg_z_clk_register(const char *name,
-+					      const char *parent_name,
-+					      void __iomem *reg)
-+{
-+	struct clk_init_data init;
-+	struct cpg_z_clk *zclk;
-+	struct clk *clk;
-+
-+	zclk = kzalloc(sizeof(*zclk), GFP_KERNEL);
-+	if (!zclk)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = name;
-+	init.ops = &cpg_z_clk_ops;
-+	init.flags = 0;
-+	init.parent_names = &parent_name;
-+	init.num_parents = 1;
-+
-+	zclk->reg = reg + CPG_FRQCRC;
-+	zclk->kick_reg = reg + CPG_FRQCRB;
-+	zclk->hw.init = &init;
-+
-+	clk = clk_register(NULL, &zclk->hw);
-+	if (IS_ERR(clk))
-+		kfree(zclk);
-+
-+	return clk;
-+}
+-#if defined(CONFIG_ARM) && !defined(CONFIG_IOMMU_DMA)
+-
+-static int ipmmu_add_device(struct device *dev)
++static int ipmmu_init_arm_mapping(struct device *dev)
+ {
+ 	struct ipmmu_vmsa_device *mmu = to_ipmmu(dev);
+ 	struct iommu_group *group;
+ 	int ret;
  
- /*
-  * SDn Clock
-@@ -373,6 +497,10 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
- 		mult = 1;
- 		break;
- 
-+	case CLK_TYPE_GEN3_Z:
-+		return cpg_z_clk_register(core->name, __clk_get_name(parent),
-+					  base);
-+
- 	default:
- 		return ERR_PTR(-EINVAL);
+-	/*
+-	 * Only let through devices that have been verified in xlate()
+-	 */
+-	if (!mmu)
+-		return -ENODEV;
+-
+ 	/* Create a device group and add the device to it. */
+ 	group = iommu_group_alloc();
+ 	if (IS_ERR(group)) {
+ 		dev_err(dev, "Failed to allocate IOMMU group\n");
+-		ret = PTR_ERR(group);
+-		goto error;
++		return PTR_ERR(group);
  	}
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
-index d756ef8b78eb..89da28f6f71b 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.h
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.h
-@@ -21,6 +21,7 @@ enum rcar_gen3_clk_types {
- 	CLK_TYPE_GEN3_SD,
- 	CLK_TYPE_GEN3_R,
- 	CLK_TYPE_GEN3_PE,
-+	CLK_TYPE_GEN3_Z,
+ 
+ 	ret = iommu_group_add_device(group, dev);
+@@ -705,8 +701,7 @@ static int ipmmu_add_device(struct device *dev)
+ 
+ 	if (ret < 0) {
+ 		dev_err(dev, "Failed to add device to IPMMU group\n");
+-		group = NULL;
+-		goto error;
++		return ret;
+ 	}
+ 
+ 	/*
+@@ -742,41 +737,14 @@ static int ipmmu_add_device(struct device *dev)
+ 	return 0;
+ 
+ error:
+-	if (mmu)
++	iommu_group_remove_device(dev);
++	if (mmu->mapping)
+ 		arm_iommu_release_mapping(mmu->mapping);
+ 
+-	if (!IS_ERR_OR_NULL(group))
+-		iommu_group_remove_device(dev);
+-
+ 	return ret;
+ }
+ 
+-static void ipmmu_remove_device(struct device *dev)
+-{
+-	arm_iommu_detach_device(dev);
+-	iommu_group_remove_device(dev);
+-}
+-
+-static const struct iommu_ops ipmmu_ops = {
+-	.domain_alloc = ipmmu_domain_alloc,
+-	.domain_free = ipmmu_domain_free,
+-	.attach_dev = ipmmu_attach_device,
+-	.detach_dev = ipmmu_detach_device,
+-	.map = ipmmu_map,
+-	.unmap = ipmmu_unmap,
+-	.map_sg = default_iommu_map_sg,
+-	.iova_to_phys = ipmmu_iova_to_phys,
+-	.add_device = ipmmu_add_device,
+-	.remove_device = ipmmu_remove_device,
+-	.pgsize_bitmap = SZ_1G | SZ_2M | SZ_4K,
+-	.of_xlate = ipmmu_of_xlate,
+-};
+-
+-#endif /* !CONFIG_ARM && CONFIG_IOMMU_DMA */
+-
+-#ifdef CONFIG_IOMMU_DMA
+-
+-static int ipmmu_add_device_dma(struct device *dev)
++static int ipmmu_add_device(struct device *dev)
+ {
+ 	struct iommu_group *group;
+ 
+@@ -786,15 +754,20 @@ static int ipmmu_add_device_dma(struct device *dev)
+ 	if (!to_ipmmu(dev))
+ 		return -ENODEV;
+ 
++	if (IS_ENABLED(CONFIG_ARM) && !IS_ENABLED(CONFIG_IOMMU_DMA))
++		return ipmmu_init_arm_mapping(dev);
++
+ 	group = iommu_group_get_for_dev(dev);
+ 	if (IS_ERR(group))
+ 		return PTR_ERR(group);
+ 
++	iommu_group_put(group);
+ 	return 0;
+ }
+ 
+-static void ipmmu_remove_device_dma(struct device *dev)
++static void ipmmu_remove_device(struct device *dev)
+ {
++	arm_iommu_detach_device(dev);
+ 	iommu_group_remove_device(dev);
+ }
+ 
+@@ -824,15 +797,13 @@ static const struct iommu_ops ipmmu_ops = {
+ 	.iotlb_sync = ipmmu_iotlb_sync,
+ 	.map_sg = default_iommu_map_sg,
+ 	.iova_to_phys = ipmmu_iova_to_phys,
+-	.add_device = ipmmu_add_device_dma,
+-	.remove_device = ipmmu_remove_device_dma,
++	.add_device = ipmmu_add_device,
++	.remove_device = ipmmu_remove_device,
+ 	.device_group = ipmmu_find_group,
+ 	.pgsize_bitmap = SZ_1G | SZ_2M | SZ_4K,
+ 	.of_xlate = ipmmu_of_xlate,
  };
  
- #define DEF_GEN3_SD(_name, _id, _parent, _offset)	\
+-#endif /* CONFIG_IOMMU_DMA */
+-
+ /* -----------------------------------------------------------------------------
+  * Probe/remove and init
+  */
+@@ -929,9 +900,7 @@ static int ipmmu_remove(struct platform_device *pdev)
+ 	iommu_device_sysfs_remove(&mmu->iommu);
+ 	iommu_device_unregister(&mmu->iommu);
+ 
+-#if defined(CONFIG_ARM) && !defined(CONFIG_IOMMU_DMA)
+ 	arm_iommu_release_mapping(mmu->mapping);
+-#endif
+ 
+ 	ipmmu_device_reset(mmu);
+ 
 -- 
-2.1.4
+2.13.4.dirty
