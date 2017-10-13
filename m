@@ -1,70 +1,47 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor3.renesas.com ([210.160.252.173]:62399 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1758110AbdJMPvf (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 13 Oct 2017 11:51:35 -0400
 From: Biju Das <biju.das@bp.renesas.com>
 To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+        Mark Rutland <mark.rutland@arm.com>
 Cc: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Chris Paterson <chris.paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH  1/2] ARM: dts: r8a7743: Add DU support
-Date: Wed, 18 Oct 2017 10:33:46 +0100
-Message-Id: <1508319227-19679-2-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1508319227-19679-1-git-send-email-biju.das@bp.renesas.com>
-References: <1508319227-19679-1-git-send-email-biju.das@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH  3/4] ARM: dts: r8a7745: Enable DMA for HSUSB
+Date: Fri, 13 Oct 2017 16:50:42 +0100
+Message-Id: <1507909843-52034-4-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1507909843-52034-1-git-send-email-biju.das@bp.renesas.com>
+References: <1507909843-52034-1-git-send-email-biju.das@bp.renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+This patch adds DMA properties to the HSUSB node.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- arch/arm/boot/dts/r8a7743.dtsi | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ arch/arm/boot/dts/r8a7745.dtsi | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 7bbba4a..fafb10e 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -1033,6 +1033,36 @@
- 			};
- 		};
- 
-+		du: display@feb00000 {
-+			compatible = "renesas,du-r8a7743";
-+			reg = <0 0xfeb00000 0 0x40000>,
-+			      <0 0xfeb90000 0 0x1c>;
-+			reg-names = "du", "lvds.0";
-+			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 724>,
-+				 <&cpg CPG_MOD 723>,
-+				 <&cpg CPG_MOD 726>;
-+			clock-names = "du.0", "du.1", "lvds.0";
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					du_out_rgb: endpoint {
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+					du_out_lvds0: endpoint {
-+					};
-+				};
-+			};
-+		};
-+
- 		pci0: pci@ee090000 {
- 			compatible = "renesas,pci-r8a7743",
- 				     "renesas,pci-rcar-gen2";
+diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+index 9733ac5..6c9a0d6 100644
+--- a/arch/arm/boot/dts/r8a7745.dtsi
++++ b/arch/arm/boot/dts/r8a7745.dtsi
+@@ -950,6 +950,9 @@
+ 			reg = <0 0xe6590000 0 0x100>;
+ 			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 704>;
++			dmas = <&usb_dmac0 0>, <&usb_dmac0 1>,
++			       <&usb_dmac1 0>, <&usb_dmac1 1>;
++			dma-names = "ch0", "ch1", "ch2", "ch3";
+ 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
+ 			resets = <&cpg 704>;
+ 			renesas,buswait = <4>;
 -- 
 1.9.1
-
