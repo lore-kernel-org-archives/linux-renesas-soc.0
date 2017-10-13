@@ -1,84 +1,101 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44426 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752085AbdJDOvs (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:56047 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753231AbdJMMeG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Oct 2017 10:51:48 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-spi@vger.kernel.org
-Subject: Applied "spi: rspi: Use of_device_get_match_data() helper" to the spi tree
-In-Reply-To: <1507119593-12789-1-git-send-email-geert+renesas@glider.be>
-Message-Id: <E1dzl1W-0008Vl-PM@debutante>
-Date: Wed, 04 Oct 2017 15:51:46 +0100
+        Fri, 13 Oct 2017 08:34:06 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v3 08/10] ARM: dts: r8a7794: Use R-Car GPIO Gen2 fallback compat string
+Date: Fri, 13 Oct 2017 14:33:09 +0200
+Message-Id: <20171013123311.15278-9-horms+renesas@verge.net.au>
+In-Reply-To: <20171013123311.15278-1-horms+renesas@verge.net.au>
+References: <20171013123311.15278-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+Use newly added R-Car GPIO Gen2 fallback compat string
+in place of now deprecated non-generation specific
+R-Car GPIO fallback compat string in the DT of the r8a7794 SoC.
 
-   spi: rspi: Use of_device_get_match_data() helper
+This should have no run-time effect as the driver matches against
+the per-SoC compat string before considering the fallback compat string.
 
-has been applied to the spi tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 219a7bc577e6024cd6f84571d93d939b3517aafe Mon Sep 17 00:00:00 2001
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Date: Wed, 4 Oct 2017 14:19:53 +0200
-Subject: [PATCH] spi: rspi: Use of_device_get_match_data() helper
-
-Use the of_device_get_match_data() helper instead of open coding.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/spi/spi-rspi.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/r8a7794.dtsi | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
-index 2a10b3f94ff7..2ce875764ca6 100644
---- a/drivers/spi/spi-rspi.c
-+++ b/drivers/spi/spi-rspi.c
-@@ -1221,7 +1221,6 @@ static int rspi_probe(struct platform_device *pdev)
- 	struct spi_master *master;
- 	struct rspi_data *rspi;
- 	int ret;
--	const struct of_device_id *of_id;
- 	const struct rspi_plat_data *rspi_pd;
- 	const struct spi_ops *ops;
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index 19cff0dd90cf..7720a6ca8702 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -82,7 +82,7 @@
+ 	};
  
-@@ -1229,9 +1228,8 @@ static int rspi_probe(struct platform_device *pdev)
- 	if (master == NULL)
- 		return -ENOMEM;
+ 	gpio0: gpio@e6050000 {
+-		compatible = "renesas,gpio-r8a7794", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7794", "renesas,rcar-gen2-gpio";
+ 		reg = <0 0xe6050000 0 0x50>;
+ 		interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -96,7 +96,7 @@
+ 	};
  
--	of_id = of_match_device(rspi_of_match, &pdev->dev);
--	if (of_id) {
--		ops = of_id->data;
-+	ops = of_device_get_match_data(&pdev->dev);
-+	if (ops) {
- 		ret = rspi_parse_dt(&pdev->dev, master);
- 		if (ret)
- 			goto error1;
+ 	gpio1: gpio@e6051000 {
+-		compatible = "renesas,gpio-r8a7794", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7794", "renesas,rcar-gen2-gpio";
+ 		reg = <0 0xe6051000 0 0x50>;
+ 		interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -110,7 +110,7 @@
+ 	};
+ 
+ 	gpio2: gpio@e6052000 {
+-		compatible = "renesas,gpio-r8a7794", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7794", "renesas,rcar-gen2-gpio";
+ 		reg = <0 0xe6052000 0 0x50>;
+ 		interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -124,7 +124,7 @@
+ 	};
+ 
+ 	gpio3: gpio@e6053000 {
+-		compatible = "renesas,gpio-r8a7794", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7794", "renesas,rcar-gen2-gpio";
+ 		reg = <0 0xe6053000 0 0x50>;
+ 		interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -138,7 +138,7 @@
+ 	};
+ 
+ 	gpio4: gpio@e6054000 {
+-		compatible = "renesas,gpio-r8a7794", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7794", "renesas,rcar-gen2-gpio";
+ 		reg = <0 0xe6054000 0 0x50>;
+ 		interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -152,7 +152,7 @@
+ 	};
+ 
+ 	gpio5: gpio@e6055000 {
+-		compatible = "renesas,gpio-r8a7794", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7794", "renesas,rcar-gen2-gpio";
+ 		reg = <0 0xe6055000 0 0x50>;
+ 		interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -166,7 +166,7 @@
+ 	};
+ 
+ 	gpio6: gpio@e6055400 {
+-		compatible = "renesas,gpio-r8a7794", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7794", "renesas,rcar-gen2-gpio";
+ 		reg = <0 0xe6055400 0 0x50>;
+ 		interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
 -- 
-2.14.1
+2.11.0
