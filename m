@@ -1,67 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:59318 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753028AbdJPNz2 (ORCPT
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:33295 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751373AbdJMGZd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Oct 2017 09:55:28 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>, linux-clk@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 07/10] [RFC] clk: renesas: cpg-mssr: Use GENPD_FLAG_ACTIVE_WAKEUP
-Date: Mon, 16 Oct 2017 15:55:13 +0200
-Message-Id: <1508162116-5043-8-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
-References: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
+        Fri, 13 Oct 2017 02:25:33 -0400
+MIME-Version: 1.0
+In-Reply-To: <20171012222954.GD18706@codeaurora.org>
+References: <1507116864-17219-1-git-send-email-geert+renesas@glider.be> <20171012222954.GD18706@codeaurora.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 13 Oct 2017 08:25:31 +0200
+Message-ID: <CAMuHMdWEUpFM=jCU_P3UHbsQyrApdWZiUN9FV+0t4qBKrRHurw@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: Add git repository to Renesas clock driver section
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Set the newly introduced GENPD_FLAG_ACTIVE_WAKEUP, which allows to
-remove the driver's own "always true" callback.
+Hi Stephen,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-This must not be applied before "PM / Domain: Enable genpd users to
-specify default active wakeup behavior" has landed upstream, hence the
-"RFC".
----
- drivers/clk/renesas/renesas-cpg-mssr.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+On Fri, Oct 13, 2017 at 12:29 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 10/04, Geert Uytterhoeven wrote:
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> ---
+>
+> Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index de534896f596168c..99699b715d7cf2de 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -481,11 +481,6 @@ void cpg_mssr_detach_dev(struct generic_pm_domain *unused, struct device *dev)
- 		pm_clk_destroy(dev);
- }
- 
--static bool cpg_mssr_active_wakeup(struct device *dev)
--{
--	return true;
--}
--
- static int __init cpg_mssr_add_clk_domain(struct device *dev,
- 					  const unsigned int *core_pm_clks,
- 					  unsigned int num_core_pm_clks)
-@@ -505,8 +500,7 @@ static int __init cpg_mssr_add_clk_domain(struct device *dev,
- 
- 	genpd = &pd->genpd;
- 	genpd->name = np->name;
--	genpd->flags = GENPD_FLAG_PM_CLK;
--	genpd->dev_ops.active_wakeup = cpg_mssr_active_wakeup;
-+	genpd->flags = GENPD_FLAG_PM_CLK | GENPD_FLAG_ACTIVE_WAKEUP;
- 	genpd->attach_dev = cpg_mssr_attach_dev;
- 	genpd->detach_dev = cpg_mssr_detach_dev;
- 	pm_genpd_init(genpd, &pm_domain_always_on_gov, false);
--- 
-2.7.4
+Thanks!
+
+> I take it this will come through some PR?
+
+OK, I will queue it for the second pull request for v4.15.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
