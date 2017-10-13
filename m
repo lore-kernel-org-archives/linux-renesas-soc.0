@@ -1,29 +1,27 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:53745 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751455AbdJaIxS (ORCPT
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:36202 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751024AbdJMGua (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 31 Oct 2017 04:53:18 -0400
-Received: by mail-io0-f195.google.com with SMTP id 189so33361179iow.10
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 31 Oct 2017 01:53:18 -0700 (PDT)
+        Fri, 13 Oct 2017 02:50:30 -0400
 MIME-Version: 1.0
-In-Reply-To: <20171012210818.806395567@cogentembedded.com>
-References: <20171012210818.806395567@cogentembedded.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 31 Oct 2017 09:53:17 +0100
-Message-ID: <CACRpkdYnF4Groyqchi--3deyxVcak5uRFegWChF4ANbPAD-0rA@mail.gmail.com>
-Subject: Re: [PATCH 1/1] gpio-rcar: use devm_ioremap_resource()
+In-Reply-To: <20171012201537.102610518@cogentembedded.com>
+References: <20171012201537.102610518@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 13 Oct 2017 08:50:29 +0200
+Message-ID: <CAMuHMdXy=kz1tK_vdEN7cyjAACa6Cd_D8BFWcqotqcP5rEVnSg@mail.gmail.com>
+Subject: Re: [PATCH] gpio-rcar: use devm_ioremap_resource()
 To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Oct 12, 2017 at 11:08 PM, Sergei Shtylyov
+On Thu, Oct 12, 2017 at 10:15 PM, Sergei Shtylyov
 <sergei.shtylyov@cogentembedded.com> wrote:
-
 > Using devm_ioremap_resource() has several advantages over devm_ioremap():
 > - it checks the passed resource's validity;
 > - it calls devm_request_mem_region() to check for the resource overlap;
@@ -35,9 +33,15 @@ On Thu, Oct 12, 2017 at 11:08 PM, Sergei Shtylyov
 >
 > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Patch applied with Geert's review tag.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Sorry for delay, too busy as always.
+Gr{oetje,eeting}s,
 
-Yours,
-Linus Walleij
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
