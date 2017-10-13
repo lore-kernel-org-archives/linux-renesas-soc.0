@@ -1,61 +1,37 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:54780 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966345AbdJQWBR (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Oct 2017 18:01:17 -0400
-Date: Wed, 18 Oct 2017 00:01:16 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Rob Herring <robh+dt@kernel.org>, linux-i2c@vger.kernel.org,
-        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] i2c: rcar: document R8A77970 bindings
-Message-ID: <20171017220115.a5i5unwgyydxxtvt@ninjato>
-References: <20171013122401.540656908@cogentembedded.com>
+Return-Path: <devicetree-owner@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="z3mm5rvfiyxeka2k"
-Content-Disposition: inline
 In-Reply-To: <20171013122401.540656908@cogentembedded.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+References: <20171013122401.540656908@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 13 Oct 2017 14:30:00 +0200
+Message-ID: <CAMuHMdVdXSKoSjJ1qsP+6Fh34VhQH2zutgRuAcBrhpgNCT-NbA@mail.gmail.com>
+Subject: Re: [PATCH] i2c: rcar: document R8A77970 bindings
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-
---z3mm5rvfiyxeka2k
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Oct 13, 2017 at 03:23:55PM +0300, Sergei Shtylyov wrote:
-> R-Car V3M (R8A77970) SoC also has the R-Car gen3 compatible I2C controlle=
-r,
+On Fri, Oct 13, 2017 at 2:23 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> R-Car V3M (R8A77970) SoC also has the R-Car gen3 compatible I2C controller,
 > so document  the SoC specific bindings.
->=20
+>
 > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->=20
 
-Applied to for-next, thanks!
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
+Gr{oetje,eeting}s,
 
---z3mm5rvfiyxeka2k
-Content-Type: application/pgp-signature; name="signature.asc"
+                        Geert
 
------BEGIN PGP SIGNATURE-----
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlnmfasACgkQFA3kzBSg
-KbYsKg/+Kjl2W5ZhUSqAn68sth/BDbkqJSan0689nfoaq4SlEBtOfaz+OLGKxZBB
-hZkOVpkCgRRI3SKci8L6pLCY9vHncy5aiFjTcNSSL30nb3B4qPZ4lbCzQ2WcvP4l
-4AQxPwQLOdySza7kxse8K+F0GKyaAvE0Eo7GCoYa/ASNZTwFgOeZYOOhRjeuZ3t9
-Pliq8o8LOFyY7WpQvnie9rILZ1QKLGX74+88VW+pudMuLwe2pf40mv3V1UVQQdsc
-D32kp06loHTXH2OkREwUbWcSL9eYVo+Z/blOCEpCxNgaV6+wv9QPFo+L/oYFM6Zd
-2tOvQDKniNkg+XY5SCKLd66ktqW1H6YAN3L4qeM+moRKiLGOabFVGrR9gu1IjCqN
-SKaYMYrM38pH6w42hqBnMTQwvzMtZZAjDMIPH77tfH/N1JizgKQMENQmGBml90pE
-kEHmqk+lEeSOVm3OjQ/q578dz9C2AmGBlhQzMuZ8jymCJ0rX3uTP8AhBGVBho2To
-Naic3S99rY2HP5+OSw0+7EJw5WAV/mgbWE4wK8/WI6tULHNSvnnTIyL4JRn9AeYr
-K9V3dSIs/P1ZsVkbmQRaeHL8oUzXbMTIUBaU634fsM4ZHJAya2N4hjB55W1Qc4CT
-jyS7CYCPtHjGDjSezHECawd3HcOOOYIXPrdjBtSlH8mF97tlUCY=
-=hjg8
------END PGP SIGNATURE-----
-
---z3mm5rvfiyxeka2k--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
