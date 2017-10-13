@@ -1,51 +1,86 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:24823 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750966AbdJDQba (ORCPT
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:33997 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751373AbdJMGYB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Oct 2017 12:31:30 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2 2/2] dt-bindings: pinctrl: add support for RZ/A1M and RZ/A1L
-Date: Wed,  4 Oct 2017 11:31:11 -0500
-Message-Id: <20171004163111.54600-3-chris.brandt@renesas.com>
-In-Reply-To: <20171004163111.54600-1-chris.brandt@renesas.com>
-References: <20171004163111.54600-1-chris.brandt@renesas.com>
+        Fri, 13 Oct 2017 02:24:01 -0400
+Received: by mail-wm0-f66.google.com with SMTP id l10so5100219wmg.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Oct 2017 23:24:01 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <CANqRtoTvqzRVqj6ViGN-t7EBRTXJ-8UQzXmPUa3g22MQL6TGDw@mail.gmail.com>
+References: <1507647516-28993-1-git-send-email-geert+renesas@glider.be>
+ <6bd27673-84c7-2cc0-8090-aee903c53240@gmail.com> <CAMuHMdUrem469jQHMS5wQ8W8ES6fmqnyWufVhP76w3Of2OU_XQ@mail.gmail.com>
+ <CANqRtoTvqzRVqj6ViGN-t7EBRTXJ-8UQzXmPUa3g22MQL6TGDw@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 13 Oct 2017 08:24:00 +0200
+Message-ID: <CAMuHMdX0rd6pMrAjFYR36=cD73d6cN0zqYkM9Ox1tc0iJ9Ow5Q@mail.gmail.com>
+Subject: Re: [PATCH/RFC] arm64: dts: renesas: salvator-common: Add BD9571 PMIC
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: Marek Vasut <marek.vasut@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe how to specify RZ/A1M and RZ/A1L devices.
+Hi Magnus,
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
-v2:
- * Added description for RZ/A1M
----
- Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+On Fri, Oct 13, 2017 at 4:30 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
+> On Thu, Oct 12, 2017 at 3:56 PM, Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+>> On Wed, Oct 11, 2017 at 11:39 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+>>> On 10/10/2017 04:58 PM, Geert Uytterhoeven wrote:
+>>>> Add a device node for the ROHM BD9571MWV PMIC, based on the example in
+>>>> the DT binding documentation, but using INTC-EX instead.
+>>>>
+>>>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
-index 43e21474528a..f2fc86f8dbab 100644
---- a/Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
-@@ -13,7 +13,9 @@ Pin controller node
- 
- Required properties:
-   - compatible
--    this shall be "renesas,r7s72100-ports".
-+    this shall be "renesas,r7s72100-ports" for RZ/A1H, "renesas,r7s72101-ports"
-+    with a fallback of "renesas,r7s72100-ports" for RZ/A1M (as A1M is compatible
-+    with A1H), or "renesas,r7s72102-ports" for RZ/A1L
- 
-   - reg
-     address base and length of the memory area where the pin controller
--- 
-2.14.1
+>>>> --- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+>>>> +++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+>>>> @@ -353,6 +353,30 @@
+>>>>
+>>>>  &i2c_dvfs {
+>>>>       status = "okay";
+>>>> +
+>>>> +     pmic: pmic@30 {
+>>>> +             pinctrl-0 = <&irq0_pins>;
+>>>> +             pinctrl-names = "default";
+>>>> +
+>>>> +             compatible = "rohm,bd9571mwv";
+>>>> +             reg = <0x30>;
+>>>> +             interrupt-parent = <&intc_ex>;
+>>>
+>>> Shouldn't this be gpio2 ? Why intc-ex ?
+>>
+>> Because we now have INTC-EX support ;-)
+>>
+>> Serious: if a pin used for interrupt signalling can be configured for both
+>> GPIO and INTC-EX aka IRQC, we typically configure it for INTC-EX. Probably
+>> because the latter is a simpler block, and thus consumes less power?
+>
+> I agree with your decision to use INTC-EX over GPIO, however I do
+> think that this discussion smells like software policy...
+>
+> Isn't DT supposed to describe the hardware? =)
+>
+> It's almost like we want to DT to point out the pin, not the function....
+
+Then we should describe all INTC-EX pins using the (not yet upstream?)
+DT connector framework, which can describe the pins can be served by
+both INTC-EX and GPIO2. I'm afraid it's too early for that.
+
+Note that lots of functionality can be served by General Purpose I/O instead
+of dedicated hardware. That doesn't mean it's always a good idea to do so....
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
