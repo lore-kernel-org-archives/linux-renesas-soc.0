@@ -1,49 +1,40 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:44294 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751337AbdJNTRi (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 14 Oct 2017 15:17:38 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Fri, 13 Oct 2017 10:04:27 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2 01/11] mmc: add kerneldoc to mmc_regulator_get_supply()
-Date: Sat, 14 Oct 2017 21:17:09 +0200
-Message-Id: <20171014191719.2129-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20171014191719.2129-1-wsa+renesas@sang-engineering.com>
-References: <20171014191719.2129-1-wsa+renesas@sang-engineering.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH  0/4] ARM: dts: Add USB function support
+Message-ID: <20171013080426.czlqrfcfufv7mlqd@verge.net.au>
+References: <1507555281-57845-1-git-send-email-biju.das@bp.renesas.com>
+ <20171012114751.lyx7jrgjbhy2d47j@verge.net.au>
+ <KL1PR06MB1702B059DA4DCFD9C0309CB0B84B0@KL1PR06MB1702.apcprd06.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <KL1PR06MB1702B059DA4DCFD9C0309CB0B84B0@KL1PR06MB1702.apcprd06.prod.outlook.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Especially, make clear what the return value means.
+On Thu, Oct 12, 2017 at 12:01:10PM +0000, Biju Das wrote:
+> > > Biju Das (4):
+> > >   ARM: dts: r8a7743: Add HS-USB device node
+> > >   ARM: dts: iwg20d-q7: Enable HS-USB
+> > >   ARM: dts: r8a7743: Add USB-DMAC device nodes
+> > >   ARM: dts: r8a7743: Enable DMA for HSUSB
+> >
+> > Thanks, applied v1 of patches 1, 3 and 4, and v2 of patch 2.
+> >
+> > In future when reposting a patch of a series please repost the entire series anew,
+> > in this case it would have been v2 for the whole series.
+> 
+> Thanks. I will take care this in future.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/mmc/core/core.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
-index c287d297710aa4..7859bb617a2f60 100644
---- a/drivers/mmc/core/core.c
-+++ b/drivers/mmc/core/core.c
-@@ -1595,6 +1595,16 @@ EXPORT_SYMBOL_GPL(mmc_regulator_set_vqmmc);
- 
- #endif /* CONFIG_REGULATOR */
- 
-+/**
-+ * mmc_regulator_get_supply - try to get VMMC and VQMMC regulators for a host
-+ * @mmc: the host to regulate
-+ *
-+ * Returns 0 or errno. errno should be handled, it is either a critical error
-+ * or -EPROBE_DEFER. 0 means no critical error but it does not mean all
-+ * regulators have been found because they all are optional. If you require
-+ * certain regulators, you need to check separately in your driver if they got
-+ * populated after calling this function.
-+ */
- int mmc_regulator_get_supply(struct mmc_host *mmc)
- {
- 	struct device *dev = mmc_dev(mmc);
--- 
-2.11.0
+Thanks, much appreciated.
