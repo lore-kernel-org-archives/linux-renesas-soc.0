@@ -1,45 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:46576 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751637AbdJPOg7 (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:53034 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753231AbdJMOt4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Oct 2017 10:36:59 -0400
-MIME-Version: 1.0
-In-Reply-To: <1507906155-9712-1-git-send-email-biju.das@bp.renesas.com>
-References: <1507906155-9712-1-git-send-email-biju.das@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 16 Oct 2017 16:36:57 +0200
-Message-ID: <CAMuHMdWY=1EBrdGgaBkDZqvScc=85shrqsWh27y=Yx5myrLjKA@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7745: Implement voltage switching for SDHI
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Fri, 13 Oct 2017 10:49:56 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Simon Horman <horms@verge.net.au>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Chris Paterson <chris.paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH] pinctrl: sh-pfc: r8a7745: Implement voltage switching for SDHI
+Date: Fri, 13 Oct 2017 15:49:15 +0100
+Message-Id: <1507906155-9712-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Oct 13, 2017 at 4:49 PM, Biju Das <biju.das@bp.renesas.com> wrote:
-> Voltage switching is the same as on the r8a7794.
->
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Voltage switching is the same as on the r8a7794.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in sh-pfc-for-v4.15.
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+---
+This patch has been tested against sh-pfc-for-v-4.14 as well as
+Linux next tag next-20171012.
 
-Gr{oetje,eeting}s,
+ drivers/pinctrl/sh-pfc/pfc-r8a7794.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
+index a0ed220..333a3470 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
+@@ -5097,6 +5097,7 @@ static int r8a7794_pin_to_pocctrl(struct sh_pfc *pfc, unsigned int pin, u32 *poc
+ #ifdef CONFIG_PINCTRL_PFC_R8A7745
+ const struct sh_pfc_soc_info r8a7745_pinmux_info = {
+ 	.name = "r8a77450_pfc",
++	.ops = &r8a7794_pinmux_ops,
+ 	.unlock_reg = 0xe6060000, /* PMMR */
+ 
+ 	.function = { PINMUX_FUNCTION_BEGIN, PINMUX_FUNCTION_END },
+-- 
+1.9.1
