@@ -1,71 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:41770 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754096AbdJPP2D (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:61926 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753468AbdJMPWm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Oct 2017 11:28:03 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 12/14] pinctrl: sh-pfc: r8a7795: Use generic IOCTRL register description
-Date: Mon, 16 Oct 2017 17:27:57 +0200
-Message-Id: <1508167679-21155-13-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1508167679-21155-1-git-send-email-geert+renesas@glider.be>
-References: <1508167679-21155-1-git-send-email-geert+renesas@glider.be>
+        Fri, 13 Oct 2017 11:22:42 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH 0/4] rcar-du: add R8A774[35] DU driver(s) support
+Date: Fri, 13 Oct 2017 16:22:18 +0100
+Message-Id: <1507908142-13142-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Move R-Car H3 ES2.0 I/O voltage support over to the generic way to
-describe IOCTRL registers, which will be needed for suspend/resume
-support.
+In order to be able to define du nodes in r8a7743 and r8a7745 device
+trees, we need to define data structures, compatible strings, missing
+clock, and update the dt-bindings.
+I'll send out the patches to add the du nodes in r8a774[35] device trees
+once the patches in this series get accepted.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - Add a sentinel comment, to make it more explicit that a last zero
-    entry is required.
----
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+Best regards,
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index 0a16dea0dace628a..d1cec6d12e818cb9 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -5413,11 +5413,20 @@ static const struct pinmux_drive_reg pinmux_drive_regs[] = {
- 	{ },
- };
- 
-+enum ioctrl_regs {
-+	POCCTRL,
-+};
-+
-+static const struct pinmux_ioctrl_reg pinmux_ioctrl_regs[] = {
-+	[POCCTRL] = { 0xe6060380, },
-+	{ /* sentinel */ },
-+};
-+
- static int r8a7795_pin_to_pocctrl(struct sh_pfc *pfc, unsigned int pin, u32 *pocctrl)
- {
- 	int bit = -EINVAL;
- 
--	*pocctrl = 0xe6060380;
-+	*pocctrl = pinmux_ioctrl_regs[POCCTRL].reg;
- 
- 	if (pin >= RCAR_GP_PIN(3, 0) && pin <= RCAR_GP_PIN(3, 11))
- 		bit = pin & 0x1f;
-@@ -5748,6 +5757,7 @@ const struct sh_pfc_soc_info r8a7795_pinmux_info = {
- 	.cfg_regs = pinmux_config_regs,
- 	.drive_regs = pinmux_drive_regs,
- 	.bias_regs = pinmux_bias_regs,
-+	.ioctrl_regs = pinmux_ioctrl_regs,
- 
- 	.pinmux_data = pinmux_data,
- 	.pinmux_data_size = ARRAY_SIZE(pinmux_data),
+Fabrizio Castro (4):
+  dt-bindings: display: rcar-du: Document R8A774[35] DU
+  drm: rcar-du: Add R8A7743 support
+  clk: renesas: cpg-mssr: Add du1 clock to R8A7745
+  drm: rcar-du: Add R8A7745 support
+
+ .../devicetree/bindings/display/renesas,du.txt     | 30 ++++++++-------
+ drivers/clk/renesas/r8a7745-cpg-mssr.c             |  1 +
+ drivers/gpu/drm/rcar-du/rcar_du_drv.c              | 44 ++++++++++++++++++++++
+ 3 files changed, 62 insertions(+), 13 deletions(-)
+
 -- 
 2.7.4
