@@ -1,47 +1,145 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:44323 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751636AbdJNTRl (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 14 Oct 2017 15:17:41 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2 08/11] mmc: mxcmmc: catch all errors when getting regulators
-Date: Sat, 14 Oct 2017 21:17:16 +0200
-Message-Id: <20171014191719.2129-9-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20171014191719.2129-1-wsa+renesas@sang-engineering.com>
-References: <20171014191719.2129-1-wsa+renesas@sang-engineering.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Chris Paterson <chris.paterson2@renesas.com>
+Subject: [PATCH 4/4] ARM: dts: iwg22d-sodimm: sort dt nodes
+Date: Fri, 13 Oct 2017 14:03:16 +0100
+Message-Id: <1507899796-7941-5-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1507899796-7941-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1507899796-7941-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Bail out everytime when mmc_regulator_get_supply() returns an errno, not
-only when probing gets deferred. This is currently a no-op, because this
-function only returns -EPROBE_DEFER or 0 right now. But if it will throw
-another error somewhen, it will be for a reason. (This still doesn't change
-that getting regulators is optional, so 0 can still mean no regulators
-found). So, let us a) be future proof and b) have driver code which is
-easier to understand.
+Improve the layout of r8a7745-iwg22d-sodimm.dts by sorting the
+nodes alphabetically.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
 ---
- drivers/mmc/host/mxcmmc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts | 62 ++++++++++++++---------------
+ 1 file changed, 31 insertions(+), 31 deletions(-)
 
-diff --git a/drivers/mmc/host/mxcmmc.c b/drivers/mmc/host/mxcmmc.c
-index 328484b96620e8..8bd9f060be2ae0 100644
---- a/drivers/mmc/host/mxcmmc.c
-+++ b/drivers/mmc/host/mxcmmc.c
-@@ -1075,7 +1075,7 @@ static int mxcmci_probe(struct platform_device *pdev)
- 		dat3_card_detect = true;
+diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
+index 5d5bb2f..5003a8f 100644
+--- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
++++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
+@@ -16,9 +16,9 @@
+ 	compatible = "iwave,g22d", "iwave,g22m", "renesas,r8a7745";
  
- 	ret = mmc_regulator_get_supply(mmc);
--	if (ret == -EPROBE_DEFER)
-+	if (ret)
- 		goto out_free;
+ 	aliases {
++		ethernet0 = &avb;
+ 		serial3 = &scif4;
+ 		serial5 = &hscif1;
+-		ethernet0 = &avb;
+ 	};
  
- 	if (!mmc->ocr_avail) {
+ 	chosen {
+@@ -40,6 +40,25 @@
+ 	};
+ };
+ 
++&avb {
++	pinctrl-0 = <&avb_pins>;
++	pinctrl-names = "default";
++
++	phy-handle = <&phy3>;
++	phy-mode = "gmii";
++	renesas,no-ether-link;
++	status = "okay";
++
++	phy3: ethernet-phy@3 {
++	/*
++	 * On some older versions of the platform (before R4.0) the phy address
++	 * may be 1 or 3. The address is fixed to 3 for R4.0 onwards.
++	 */
++		reg = <3>;
++		micrel,led-mode = <1>;
++	};
++};
++
+ &hscif1 {
+ 	pinctrl-0 = <&hscif1_pins>;
+ 	pinctrl-names = "default";
+@@ -48,7 +67,18 @@
+ 	status = "okay";
+ };
+ 
++&pci1 {
++	status = "okay";
++	pinctrl-0 = <&usb1_pins>;
++	pinctrl-names = "default";
++};
++
+ &pfc {
++	avb_pins: avb {
++		groups = "avb_mdio", "avb_gmii";
++		function = "avb";
++	};
++
+ 	hscif1_pins: hscif1 {
+ 		groups = "hscif1_data", "hscif1_ctrl";
+ 		function = "hscif1";
+@@ -59,11 +89,6 @@
+ 		function = "scif4";
+ 	};
+ 
+-	avb_pins: avb {
+-		groups = "avb_mdio", "avb_gmii";
+-		function = "avb";
+-	};
+-
+ 	sdhi0_pins: sd0 {
+ 		groups = "sdhi0_data4", "sdhi0_ctrl";
+ 		function = "sdhi0";
+@@ -83,25 +108,6 @@
+ 	status = "okay";
+ };
+ 
+-&avb {
+-	pinctrl-0 = <&avb_pins>;
+-	pinctrl-names = "default";
+-
+-	phy-handle = <&phy3>;
+-	phy-mode = "gmii";
+-	renesas,no-ether-link;
+-	status = "okay";
+-
+-	phy3: ethernet-phy@3 {
+-	/*
+-	 * On some older versions of the platform (before R4.0) the phy address
+-	 * may be 1 or 3. The address is fixed to 3 for R4.0 onwards.
+-	 */
+-		reg = <3>;
+-		micrel,led-mode = <1>;
+-	};
+-};
+-
+ &sdhi0 {
+ 	pinctrl-0 = <&sdhi0_pins>;
+ 	pinctrl-names = "default";
+@@ -112,12 +118,6 @@
+ 	status = "okay";
+ };
+ 
+-&pci1 {
+-	status = "okay";
+-	pinctrl-0 = <&usb1_pins>;
+-	pinctrl-names = "default";
+-};
+-
+ &usbphy {
+ 	status = "okay";
+ };
 -- 
-2.11.0
+2.7.4
+
