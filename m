@@ -1,54 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:47934 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751566AbdJDMIa (ORCPT
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:35524 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753460AbdJMNkw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Oct 2017 08:08:30 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Jonathan Cameron <jic23@kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/3] iio: adc: rcar-gyroadc: Cast pointer to uintptr_t to fix warning on 64-bit
-Date: Wed,  4 Oct 2017 14:08:24 +0200
-Message-Id: <1507118906-8946-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1507118906-8946-1-git-send-email-geert+renesas@glider.be>
-References: <1507118906-8946-1-git-send-email-geert+renesas@glider.be>
+        Fri, 13 Oct 2017 09:40:52 -0400
+Date: Fri, 13 Oct 2017 08:40:51 -0500
+From: Rob Herring <robh@kernel.org>
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>
+Subject: Re: [PATCH v3 2/2] dt-bindings: pinctrl: add support for RZ/A1M and
+ RZ/A1L
+Message-ID: <20171013134051.woy6347khrhapkyh@rob-hp-laptop>
+References: <20171004210724.59797-1-chris.brandt@renesas.com>
+ <20171004210724.59797-3-chris.brandt@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20171004210724.59797-3-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 64-bit:
+On Wed, Oct 04, 2017 at 04:07:24PM -0500, Chris Brandt wrote:
+> Describe how to specify RZ/A1M and RZ/A1L devices.
+> 
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v3:
+>  * Reworded
+>  * Added Reviewed-by
+> v2:
+>  * Added description for RZ/A1M
+> ---
+>  Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 
-    drivers/iio/adc/rcar-gyroadc.c: In function 'rcar_gyroadc_parse_subdevs':
-    drivers/iio/adc/rcar-gyroadc.c:352:15: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-       childmode = (unsigned int)of_id->data;
-		   ^
-
-Cast the pointer to uintptr_t instead of unsigned int to fix this.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Currently this driver can be enabled on arm32 only, but the hardware
-block can be found in some R-Car Gen3 SoCs, which are arm64.
----
- drivers/iio/adc/rcar-gyroadc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/iio/adc/rcar-gyroadc.c b/drivers/iio/adc/rcar-gyroadc.c
-index 2cb5397ceeea9ff4..0098c66a19572400 100644
---- a/drivers/iio/adc/rcar-gyroadc.c
-+++ b/drivers/iio/adc/rcar-gyroadc.c
-@@ -348,7 +348,7 @@ static int rcar_gyroadc_parse_subdevs(struct iio_dev *indio_dev)
- 			continue;
- 		}
- 
--		childmode = (unsigned int)of_id->data;
-+		childmode = (uintptr_t)of_id->data;
- 		switch (childmode) {
- 		case RCAR_GYROADC_MODE_SELECT_1_MB88101A:
- 			sample_width = 12;
--- 
-2.7.4
+Acked-by: Rob Herring <robh@kernel.org>
