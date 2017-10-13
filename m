@@ -1,99 +1,92 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:42048 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751516AbdJMVvL (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:43366 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752684AbdJMThz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Oct 2017 17:51:11 -0400
-Date: Fri, 13 Oct 2017 23:51:09 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Chris Brandt <Chris.Brandt@renesas.com>
-Cc: "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        Fri, 13 Oct 2017 15:37:55 -0400
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Wolfram Sang <wsa@the-dreams.de>
+CC: "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
         "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>,
         Simon Horman <horms+renesas@verge.net.au>,
         Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v2] i2c: riic: remove fixed clock restriction
-Message-ID: <20171013215109.l35j652amscnrsfe@ninjato>
+Subject: RE: [PATCH v2] i2c: riic: remove fixed clock restriction
+Date: Fri, 13 Oct 2017 19:37:50 +0000
+Message-ID: <SG2PR06MB11658FE2DCDC2A50FA5ED7258A480@SG2PR06MB1165.apcprd06.prod.outlook.com>
 References: <20170929171637.121262-1-chris.brandt@renesas.com>
  <SG2PR06MB11656505D83C3D552B2CAC2D8A4A0@SG2PR06MB1165.apcprd06.prod.outlook.com>
  <20171013185633.lakiw4cu5o22cwjf@ninjato>
- <SG2PR06MB11658FE2DCDC2A50FA5ED7258A480@SG2PR06MB1165.apcprd06.prod.outlook.com>
+In-Reply-To: <20171013185633.lakiw4cu5o22cwjf@ninjato>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="76dla3w63pp2a7qz"
-Content-Disposition: inline
-In-Reply-To: <SG2PR06MB11658FE2DCDC2A50FA5ED7258A480@SG2PR06MB1165.apcprd06.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On Friday, October 13, 2017, Wolfram Sang wrote:
+> On Wed, Oct 11, 2017 at 03:20:29PM +0000, Chris Brandt wrote:
+> > On Friday, September 29, 2017, Chris Brandt wrote:
+> > > Most systems with this i2c are going to have a clock of either 33.3MH=
+z
+> or
+> > > 32MHz. That 4% difference is not reason enough to warrant that the
+> driver
+> > > to completely fail.
+> > >
+> > > Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> > > ---
+> > > v2:
+> > >  * simplified error message.
+> > > ---
+> >
+> > What ever happened to this patch?
+> > Was there any objection?
+>=20
+> In deed, I'd prefer to limit the settings to the two known frequencies.
+> We shouldn't use the settings if someone is using it with e.g. 16MHz?
 
---76dla3w63pp2a7qz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Chris,
-
-> How about a range of -4% to +2% ?
-
-I am fine with a range in general, but I don't like +x% because we should n=
-ever
-be faster than requested. Clients may have problems with that.
-
-> Technically, to do it right, to calculate the ACTUAL I2C baud rate, you=
-=20
-> have to take into effect the load resistance and capacitance of the=20
-> lines in order to factor in the rise and fall times correctly. Of course=
-=20
-
-We have those generic bindings upstream:
-
-- i2c-scl-falling-time-ns
-        Number of nanoseconds the SCL signal takes to fall; t(f) in the I2C
-        specification.
-
-- i2c-scl-internal-delay-ns
-        Number of nanoseconds the IP core additionally needs to setup SCL.
-
-- i2c-scl-rising-time-ns
-        Number of nanoseconds the SCL signal takes to rise; t(r) in the I2C
-        specification.
-
-- i2c-sda-falling-time-ns
-        Number of nanoseconds the SDA signal takes to fall; t(f) in the I2C
-        specification.
-
-So far, that was all that is needed, however...
-
-> Just live with the fact that the speed might be off by 4%.
-
-=2E.. as I said before, I won't force it on you for the frequencies you wan=
-t to
-support.
-
-Regards,
-
-   Wolfram
+How about a range of -4% to +2% ?
 
 
---76dla3w63pp2a7qz
-Content-Type: application/pgp-signature; name="signature.asc"
+	/*
+	 * TODO: Implement formula to calculate the timing values depending on
+	 * variable parent clock rate and arbitrary bus speed.
+	 * For now, just use calculations based on a 33325000Hz clock.
+	 */
+	rate =3D clk_get_rate(riic->clk);
+	if ((rate < 32000000) || (rate > 34000000)) {
+		dev_err(&riic->adapter.dev,
+			"invalid parent clk (%lu). Must be 32MHz-34MHz\n",
+			rate);
+		clk_disable_unprepare(riic->clk);
+		return -EINVAL;
+	}
 
------BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlnhNU0ACgkQFA3kzBSg
-KbYlDQ//ZCXJ/eak9SC3zPg4tPBDatqoZtSmalFz8LqPHZPMUd+KpEsdtSkUnDO7
-WsTIor51WWeOJJaBMdlbTqp+g0kwlmA67X9By54VuVJ7xiCTGh4/fI+2sHBSQEv4
-c3Re2cmrc8ZFErOuZyPZzrk8unkc/y7L0WL1cXHFfQrmRcSvFimXPu/ImleKMKKz
-NKTn7IqgV71qvR5cTxaI50UmfbW1dkF2GM6sT1CAjoRf1xBcDmaffg3dTrnsj4is
-RWYO1dq0uAJKGFz62FNlGo7ulafkLHGcIhFHdAJ0gMMkqBjCIN2/1w/9jxaTjnD/
-AOAjlTjXKwZhdZB/E+Z4AXvR4KstpoI5H6IoR8nN9dfISBpNAYn9a2+Kes2lG6ED
-KM+NZFC9xovBQJOW4/GKXM2uB8Eadu2RGCoP/mpRD2ufzIpIHSqcxt6WaYipj3mI
-IIEjM6/DZsflBswQz5TkvGWtDNnT7H9t0dAALfnMzxmvnpKl+w1MSbTLVlmnKC5i
-tfftPFlh7sXrOOewbBK7BLszGkP92LO6HQA5Rehu99dTI1QgXA1p8zGB1PXaEGCR
-Qp6vOPs2N0NhIRG3MkSRhMzK8EFihnNcdJwDK1w8RR1YGm59LKiW68FcWEFKwvfj
-mRvTfRay7kIBZ0M7zoHlhjMnQ44bhEXfGvd0FzvOOmkPe/JNbpY=
-=QmTK
------END PGP SIGNATURE-----
 
---76dla3w63pp2a7qz--
+> Of course, my most favorite option would be implementing the formula
+> instead of fixed settings, but I am not forcing that on you.
+
+So I looked at that.
+
+However...
+
+Technically, to do it right, to calculate the ACTUAL I2C baud rate, you=20
+have to take into effect the load resistance and capacitance of the=20
+lines in order to factor in the rise and fall times correctly. Of course=20
+that varies board to board. And then, 100kHz (standard-mode) and 400kHz=20
+(fast-mode) have different minimum HIGH/LOW times and duty cycle=20
+restrictions, so that has to be taken into account when coming up with a fo=
+rmula.
+
+   --or--
+
+Just live with the fact that the speed might be off by 4%.
+
+
+   (I decided on option #2)
+
+
+Chris
