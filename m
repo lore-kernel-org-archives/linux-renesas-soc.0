@@ -1,146 +1,64 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: joro@8bytes.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
-        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
-        m.szyprowski@samsung.com
-Date: Mon, 16 Oct 2017 21:29:46 +0900
-Message-Id: <150815698669.32763.16753019201670130250.sendpatchset@little-apple>
-In-Reply-To: <150815695455.32763.1660214306749693609.sendpatchset@little-apple>
-References: <150815695455.32763.1660214306749693609.sendpatchset@little-apple>
-Subject: [PATCH v5 03/09] iommu/ipmmu-vmsa: Enable multi context support
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor1.renesas.com ([210.160.252.171]:37404 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751373AbdJMGXF (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 13 Oct 2017 02:23:05 -0400
+From: Chris Paterson <Chris.Paterson2@renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+CC: "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH 04/13] ARM: dts: r8a7743: Add missing clock for secondary
+ CA15 CPU core
+Date: Fri, 13 Oct 2017 06:23:01 +0000
+Message-ID: <TY1PR06MB0702D56DCCEA688E8F643F5FB7480@TY1PR06MB0702.apcprd06.prod.outlook.com>
+References: <1507800916-11509-1-git-send-email-geert+renesas@glider.be>
+ <1507800916-11509-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1507800916-11509-5-git-send-email-geert+renesas@glider.be>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Hello Geert,
 
-Add support for up to 8 contexts. Each context is mapped to one
-domain. One domain is assigned one or more slave devices. Contexts
-are allocated dynamically and slave devices are grouped together
-based on which IPMMU device they are connected to. This makes slave
-devices tied to the same IPMMU device share the same IOVA space.
+> From: linux-renesas-soc-owner@vger.kernel.org [mailto:linux-renesas-soc-
+> owner@vger.kernel.org] On Behalf Of Geert Uytterhoeven
+> Sent: 12 October 2017 10:35
+>=20
+> Currently only the primary CPU in the CA15 cluster has a clocks property,
+> while the secondary CPU core is driven by the same clock.
+> Add the missing clocks property to fix this.
+>=20
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
+Looks okay to me, thanks.
 
- Changes since V4:
- - None
+Reviewed-by: Chris Paterson <chris.paterson2@renesas.com
 
- Changes since V3:
- - Use number_of_contexts unsigned int, drop WARN_ON() - Thanks Robin!
-
- Changes since V2:
- - Updated patch description to reflect code included in:
-   [PATCH v7 00/07] iommu/ipmmu-vmsa: IPMMU multi-arch update V7
-
- Changes since V1:
- - Support up to 8 contexts instead of 4
- - Use feature flag and runtime handling
- - Default to single context
-
- drivers/iommu/ipmmu-vmsa.c |   30 ++++++++++++++++++++++--------
- 1 file changed, 22 insertions(+), 8 deletions(-)
-
---- 0011/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2017-10-16 19:46:09.900607110 +0900
-@@ -32,11 +32,12 @@
- 
- #include "io-pgtable.h"
- 
--#define IPMMU_CTX_MAX 1
-+#define IPMMU_CTX_MAX 8
- 
- struct ipmmu_features {
- 	bool use_ns_alias_offset;
- 	bool has_cache_leaf_nodes;
-+	unsigned int number_of_contexts;
- };
- 
- struct ipmmu_vmsa_device {
-@@ -46,6 +47,7 @@ struct ipmmu_vmsa_device {
- 	struct ipmmu_vmsa_device *root;
- 	const struct ipmmu_features *features;
- 	unsigned int num_utlbs;
-+	unsigned int num_ctx;
- 	spinlock_t lock;			/* Protects ctx and domains[] */
- 	DECLARE_BITMAP(ctx, IPMMU_CTX_MAX);
- 	struct ipmmu_vmsa_domain *domains[IPMMU_CTX_MAX];
-@@ -352,11 +354,12 @@ static int ipmmu_domain_allocate_context
- 
- 	spin_lock_irqsave(&mmu->lock, flags);
- 
--	ret = find_first_zero_bit(mmu->ctx, IPMMU_CTX_MAX);
--	if (ret != IPMMU_CTX_MAX) {
-+	ret = find_first_zero_bit(mmu->ctx, mmu->num_ctx);
-+	if (ret != mmu->num_ctx) {
- 		mmu->domains[ret] = domain;
- 		set_bit(ret, mmu->ctx);
--	}
-+	} else
-+		ret = -EBUSY;
- 
- 	spin_unlock_irqrestore(&mmu->lock, flags);
- 
-@@ -409,8 +412,8 @@ static int ipmmu_domain_init_context(str
- 	 * Find an unused context.
- 	 */
- 	ret = ipmmu_domain_allocate_context(domain->mmu->root, domain);
--	if (ret == IPMMU_CTX_MAX)
--		return -EBUSY;
-+	if (ret < 0)
-+		return ret;
- 
- 	domain->context_id = ret;
- 
-@@ -539,7 +542,7 @@ static irqreturn_t ipmmu_irq(int irq, vo
- 	/*
- 	 * Check interrupts for all active contexts.
- 	 */
--	for (i = 0; i < IPMMU_CTX_MAX; i++) {
-+	for (i = 0; i < mmu->num_ctx; i++) {
- 		if (!mmu->domains[i])
- 			continue;
- 		if (ipmmu_domain_irq(mmu->domains[i]) == IRQ_HANDLED)
-@@ -603,6 +606,13 @@ static int ipmmu_attach_device(struct io
- 		/* The domain hasn't been used yet, initialize it. */
- 		domain->mmu = mmu;
- 		ret = ipmmu_domain_init_context(domain);
-+		if (ret < 0) {
-+			dev_err(dev, "Unable to initialize IPMMU context\n");
-+			domain->mmu = NULL;
-+		} else {
-+			dev_info(dev, "Using IPMMU context %u\n",
-+				 domain->context_id);
-+		}
- 	} else if (domain->mmu != mmu) {
- 		/*
- 		 * Something is wrong, we can't attach two devices using
-@@ -946,13 +956,14 @@ static void ipmmu_device_reset(struct ip
- 	unsigned int i;
- 
- 	/* Disable all contexts. */
--	for (i = 0; i < 4; ++i)
-+	for (i = 0; i < mmu->num_ctx; ++i)
- 		ipmmu_write(mmu, i * IM_CTX_SIZE + IMCTR, 0);
- }
- 
- static const struct ipmmu_features ipmmu_features_default = {
- 	.use_ns_alias_offset = true,
- 	.has_cache_leaf_nodes = false,
-+	.number_of_contexts = 1, /* software only tested with one context */
- };
- 
- static const struct of_device_id ipmmu_of_ids[] = {
-@@ -1006,6 +1017,9 @@ static int ipmmu_probe(struct platform_d
- 	if (mmu->features->use_ns_alias_offset)
- 		mmu->base += IM_NS_ALIAS_OFFSET;
- 
-+	mmu->num_ctx = min_t(unsigned int, IPMMU_CTX_MAX,
-+			     mmu->features->number_of_contexts);
-+
- 	irq = platform_get_irq(pdev, 0);
- 
- 	/*
+> ---
+>  arch/arm/boot/dts/r8a7743.dtsi | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/arch/arm/boot/dts/r8a7743.dtsi
+> b/arch/arm/boot/dts/r8a7743.dtsi index
+> d541fd9ffafb34ce..e09517bce30db2e8 100644
+> --- a/arch/arm/boot/dts/r8a7743.dtsi
+> +++ b/arch/arm/boot/dts/r8a7743.dtsi
+> @@ -63,6 +63,7 @@
+>  			compatible =3D "arm,cortex-a15";
+>  			reg =3D <1>;
+>  			clock-frequency =3D <1500000000>;
+> +			clocks =3D <&cpg CPG_CORE R8A7743_CLK_Z>;
+>  			power-domains =3D <&sysc R8A7743_PD_CA15_CPU1>;
+>  			next-level-cache =3D <&L2_CA15>;
+>  		};
+> --
+> 2.7.4
