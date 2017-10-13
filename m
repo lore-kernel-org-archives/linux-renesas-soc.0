@@ -1,49 +1,92 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:24823 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750966AbdJDQb2 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55952 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758110AbdJMMdi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Oct 2017 12:31:28 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2 0/2] pinctrl: rza1: add support for RZ/A1L
-Date: Wed,  4 Oct 2017 11:31:09 -0500
-Message-Id: <20171004163111.54600-1-chris.brandt@renesas.com>
+        Fri, 13 Oct 2017 08:33:38 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v3 04/10] ARM: dts: r8a7790: Use R-Car GPIO Gen2 fallback compat string
+Date: Fri, 13 Oct 2017 14:33:05 +0200
+Message-Id: <20171013123311.15278-5-horms+renesas@verge.net.au>
+In-Reply-To: <20171013123311.15278-1-horms+renesas@verge.net.au>
+References: <20171013123311.15278-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The RZ/A series has 3 main device: RZ/A1L, RZ/A1M, RZ/A1H.
+Use newly added R-Car GPIO Gen2 fallback compat string
+in place of now deprecated non-generation specific
+R-Car GPIO fallback compat string in the DT of the r8a7790 SoC.
 
-In terms of pinctrl, RZ/A1H and RZ/A1M are exactly the same.
+This should have no run-time effect as the driver matches against
+the per-SoC compat string before considering the fallback compat string.
 
-Aspects like the number of ports and the location where peripherals are
-brought out differ between the RZ/A1H and RZ/A1L.
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/boot/dts/r8a7790.dtsi | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-Basically this series adds a new set of tables for RZ/A1L and a new
-compatible "renesas,r7s72102-ports"
-
-This was tested on a Renesas Stream it board which contains an RZ/A1L and
-external SDRAM.
-
-v2:
- * Added RZ/A1M to DT documentation
- * Added Reviewed-by for pinctrl-rza1.c
-
-Chris Brandt (2):
-  pinctrl: rza1: add support for RZ/A1L
-  dt-bindings: pinctrl: add support for RZ/A1M and RZ/A1L
-
- .../bindings/pinctrl/renesas,rza1-pinctrl.txt      |   4 +-
- drivers/pinctrl/pinctrl-rza1.c                     | 134 +++++++++++++++++++++
- 2 files changed, 137 insertions(+), 1 deletion(-)
-
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 92b7f3bd8b69..f247beb3863f 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -200,7 +200,7 @@
+ 	};
+ 
+ 	gpio0: gpio@e6050000 {
+-		compatible = "renesas,gpio-r8a7790", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7790", "renesas,rcar-gen2-gpio";
+ 		reg = <0 0xe6050000 0 0x50>;
+ 		interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -214,7 +214,7 @@
+ 	};
+ 
+ 	gpio1: gpio@e6051000 {
+-		compatible = "renesas,gpio-r8a7790", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7790", "renesas,rcar-gen2-gpio";
+ 		reg = <0 0xe6051000 0 0x50>;
+ 		interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -228,7 +228,7 @@
+ 	};
+ 
+ 	gpio2: gpio@e6052000 {
+-		compatible = "renesas,gpio-r8a7790", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7790", "renesas,rcar-gen2-gpio";
+ 		reg = <0 0xe6052000 0 0x50>;
+ 		interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -242,7 +242,7 @@
+ 	};
+ 
+ 	gpio3: gpio@e6053000 {
+-		compatible = "renesas,gpio-r8a7790", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7790", "renesas,rcar-gen2-gpio";
+ 		reg = <0 0xe6053000 0 0x50>;
+ 		interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -256,7 +256,7 @@
+ 	};
+ 
+ 	gpio4: gpio@e6054000 {
+-		compatible = "renesas,gpio-r8a7790", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7790", "renesas,rcar-gen2-gpio";
+ 		reg = <0 0xe6054000 0 0x50>;
+ 		interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -270,7 +270,7 @@
+ 	};
+ 
+ 	gpio5: gpio@e6055000 {
+-		compatible = "renesas,gpio-r8a7790", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7790", "renesas,rcar-gen2-gpio";
+ 		reg = <0 0xe6055000 0 0x50>;
+ 		interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
 -- 
-2.14.1
+2.11.0
