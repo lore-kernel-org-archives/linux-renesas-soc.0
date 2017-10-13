@@ -1,44 +1,47 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1507908142-13142-4-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1507908142-13142-1-git-send-email-fabrizio.castro@bp.renesas.com> <1507908142-13142-4-git-send-email-fabrizio.castro@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 16 Oct 2017 09:36:15 +0200
-Message-ID: <CAMuHMdU+Rr+imy4=DFo39rFdr+dwN75EELBpDz3BdxSco7VqWQ@mail.gmail.com>
-Subject: Re: [PATCH 3/4] clk: renesas: cpg-mssr: Add du1 clock to R8A7745
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor3.renesas.com ([210.160.252.173]:37006 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1757973AbdJMPXI (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 13 Oct 2017 11:23:08 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms@verge.net.au>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: devicetree-owner@vger.kernel.org
+        Biju Das <biju.das@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH 3/4] clk: renesas: cpg-mssr: Add du1 clock to R8A7745
+Date: Fri, 13 Oct 2017 16:22:21 +0100
+Message-Id: <1507908142-13142-4-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1507908142-13142-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1507908142-13142-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Oct 13, 2017 at 5:22 PM, Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+---
+ drivers/clk/renesas/r8a7745-cpg-mssr.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in clk-renesas-for-v4.15.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/clk/renesas/r8a7745-cpg-mssr.c b/drivers/clk/renesas/r8a7745-cpg-mssr.c
+index 9e2360a..2859504 100644
+--- a/drivers/clk/renesas/r8a7745-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7745-cpg-mssr.c
+@@ -129,6 +129,7 @@ static const struct mssr_mod_clk r8a7745_mod_clks[] __initconst = {
+ 	DEF_MOD("scif2",		 719,	R8A7745_CLK_P),
+ 	DEF_MOD("scif1",		 720,	R8A7745_CLK_P),
+ 	DEF_MOD("scif0",		 721,	R8A7745_CLK_P),
++	DEF_MOD("du1",			 723,	R8A7745_CLK_ZX),
+ 	DEF_MOD("du0",			 724,	R8A7745_CLK_ZX),
+ 	DEF_MOD("ipmmu-sgx",		 800,	R8A7745_CLK_ZX),
+ 	DEF_MOD("vin1",			 810,	R8A7745_CLK_ZG),
+-- 
+2.7.4
