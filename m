@@ -1,66 +1,145 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:39254 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753185AbdJQGKK (ORCPT
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37840 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752590AbdJMSXv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Oct 2017 02:10:10 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 03/11] ARM: dts: r8a7743: Use R-Car SDHI Gen2 fallback compat string
-Date: Tue, 17 Oct 2017 08:09:51 +0200
-Message-Id: <20171017060959.16702-4-horms+renesas@verge.net.au>
-In-Reply-To: <20171017060959.16702-1-horms+renesas@verge.net.au>
-References: <20171017060959.16702-1-horms+renesas@verge.net.au>
+        Fri, 13 Oct 2017 14:23:51 -0400
+From: Robin Murphy <robin.murphy@arm.com>
+To: joro@8bytes.org
+Cc: iommu@lists.linux-foundation.org, arnd@arndb.de,
+        laurent.pinchart+renesas@ideasonboard.com, magnus.damm@gmail.com,
+        geert+renesas@glider.be, linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 2/4] iommu/ipmmu-vmsa: Simplify group allocation
+Date: Fri, 13 Oct 2017 19:23:40 +0100
+Message-Id: <c3abc3bea25735556b5c24aaf29edf919d52fc75.1507918320.git.robin.murphy@arm.com>
+In-Reply-To: <cover.1507918320.git.robin.murphy@arm.com>
+References: <cover.1507918320.git.robin.murphy@arm.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use newly added R-Car SDHI Gen2 fallback compat string
-in the DT of the r8a7743 SoC.
+We go through quite the merry dance in order to find masters behind the
+same IPMMU instance, so that we can ensure they are grouped together.
+None of which is really necessary, since the master's private data
+already points to the particular IPMMU it is associated with, and that
+IPMMU instance data is the perfect place to keep track of a per-instance
+group directly.
 
-This should have no run-time effect as the driver matches against
-the per-SoC compat string before considering the fallback compat string.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Robin Murphy <robin.murphy@arm.com>
 ---
- arch/arm/boot/dts/r8a7743.dtsi | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/iommu/ipmmu-vmsa.c | 53 ++++++++--------------------------------------
+ 1 file changed, 9 insertions(+), 44 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 4db4f61be25a..3bbcf6649d7e 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -933,7 +933,8 @@
- 		};
+diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
+index dedb386fa81d..d8c9bd4dc657 100644
+--- a/drivers/iommu/ipmmu-vmsa.c
++++ b/drivers/iommu/ipmmu-vmsa.c
+@@ -43,6 +43,7 @@ struct ipmmu_vmsa_device {
+ 	DECLARE_BITMAP(ctx, IPMMU_CTX_MAX);
+ 	struct ipmmu_vmsa_domain *domains[IPMMU_CTX_MAX];
  
- 		sdhi0: sd@ee100000 {
--			compatible = "renesas,sdhi-r8a7743";
-+			compatible = "renesas,sdhi-r8a7743",
-+				     "renesas,rcar-gen2-sdhi";
- 			reg = <0 0xee100000 0 0x328>;
- 			interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 314>;
-@@ -947,7 +948,8 @@
- 		};
++	struct iommu_group *group;
+ 	struct dma_iommu_mapping *mapping;
+ };
  
- 		sdhi1: sd@ee140000 {
--			compatible = "renesas,sdhi-r8a7743";
-+			compatible = "renesas,sdhi-r8a7743",
-+				     "renesas,rcar-gen2-sdhi";
- 			reg = <0 0xee140000 0 0x100>;
- 			interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 312>;
-@@ -961,7 +963,8 @@
- 		};
+@@ -59,8 +60,6 @@ struct ipmmu_vmsa_domain {
  
- 		sdhi2: sd@ee160000 {
--			compatible = "renesas,sdhi-r8a7743";
-+			compatible = "renesas,sdhi-r8a7743",
-+				     "renesas,rcar-gen2-sdhi";
- 			reg = <0 0xee160000 0 0x100>;
- 			interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 311>;
+ struct ipmmu_vmsa_iommu_priv {
+ 	struct ipmmu_vmsa_device *mmu;
+-	struct device *dev;
+-	struct list_head list;
+ };
+ 
+ static struct ipmmu_vmsa_domain *to_vmsa_domain(struct iommu_domain *dom)
+@@ -674,7 +673,6 @@ static int ipmmu_init_platform_device(struct device *dev,
+ 		return -ENOMEM;
+ 
+ 	priv->mmu = platform_get_drvdata(ipmmu_pdev);
+-	priv->dev = dev;
+ 	dev->iommu_fwspec->iommu_priv = priv;
+ 	return 0;
+ }
+@@ -790,9 +788,6 @@ static const struct iommu_ops ipmmu_ops = {
+ 
+ #ifdef CONFIG_IOMMU_DMA
+ 
+-static DEFINE_SPINLOCK(ipmmu_slave_devices_lock);
+-static LIST_HEAD(ipmmu_slave_devices);
+-
+ static int ipmmu_add_device_dma(struct device *dev)
+ {
+ 	struct iommu_group *group;
+@@ -807,55 +802,25 @@ static int ipmmu_add_device_dma(struct device *dev)
+ 	if (IS_ERR(group))
+ 		return PTR_ERR(group);
+ 
+-	spin_lock(&ipmmu_slave_devices_lock);
+-	list_add(&to_priv(dev)->list, &ipmmu_slave_devices);
+-	spin_unlock(&ipmmu_slave_devices_lock);
+ 	return 0;
+ }
+ 
+ static void ipmmu_remove_device_dma(struct device *dev)
+ {
+-	struct ipmmu_vmsa_iommu_priv *priv = to_priv(dev);
+-
+-	spin_lock(&ipmmu_slave_devices_lock);
+-	list_del(&priv->list);
+-	spin_unlock(&ipmmu_slave_devices_lock);
+-
+ 	iommu_group_remove_device(dev);
+ }
+ 
+-static struct device *ipmmu_find_sibling_device(struct device *dev)
++static struct iommu_group *ipmmu_find_group(struct device *dev)
+ {
+ 	struct ipmmu_vmsa_iommu_priv *priv = to_priv(dev);
+-	struct ipmmu_vmsa_iommu_priv *sibling_priv = NULL;
+-	bool found = false;
+-
+-	spin_lock(&ipmmu_slave_devices_lock);
+-
+-	list_for_each_entry(sibling_priv, &ipmmu_slave_devices, list) {
+-		if (priv == sibling_priv)
+-			continue;
+-		if (sibling_priv->mmu == priv->mmu) {
+-			found = true;
+-			break;
+-		}
+-	}
+-
+-	spin_unlock(&ipmmu_slave_devices_lock);
+-
+-	return found ? sibling_priv->dev : NULL;
+-}
+-
+-static struct iommu_group *ipmmu_find_group_dma(struct device *dev)
+-{
+ 	struct iommu_group *group;
+-	struct device *sibling;
+ 
+-	sibling = ipmmu_find_sibling_device(dev);
+-	if (sibling)
+-		group = iommu_group_get(sibling);
+-	if (!sibling || IS_ERR(group))
+-		group = generic_device_group(dev);
++	if (priv->mmu->group)
++		return iommu_group_ref_get(priv->mmu->group);
++
++	group = iommu_group_alloc();
++	if (!IS_ERR(group))
++		priv->mmu->group = group;
+ 
+ 	return group;
+ }
+@@ -873,7 +838,7 @@ static const struct iommu_ops ipmmu_ops = {
+ 	.iova_to_phys = ipmmu_iova_to_phys,
+ 	.add_device = ipmmu_add_device_dma,
+ 	.remove_device = ipmmu_remove_device_dma,
+-	.device_group = ipmmu_find_group_dma,
++	.device_group = ipmmu_find_group,
+ 	.pgsize_bitmap = SZ_1G | SZ_2M | SZ_4K,
+ 	.of_xlate = ipmmu_of_xlate,
+ };
 -- 
-2.11.0
+2.13.4.dirty
