@@ -1,72 +1,109 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:35612 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753348AbdJMLWW (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:53147 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751619AbdJMKig (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Oct 2017 07:22:22 -0400
-MIME-Version: 1.0
-In-Reply-To: <20171013103812.30826-3-horms+renesas@verge.net.au>
-References: <20171013103812.30826-1-horms+renesas@verge.net.au> <20171013103812.30826-3-horms+renesas@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 13 Oct 2017 13:22:20 +0200
-Message-ID: <CAMuHMdUwD-fc7bsGiHkP=3G+D=pFziELMNK7rheipCKQ43aHug@mail.gmail.com>
-Subject: Re: [PATCH 2/3] dt-bindings: mmc: renesas_sdhi: add R-Car Gen[123]
- fallback compatibility strings
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux MMC List <linux-mmc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 13 Oct 2017 06:38:36 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 2/3] dt-bindings: mmc: renesas_sdhi: add R-Car Gen[123] fallback compatibility strings
+Date: Fri, 13 Oct 2017 12:38:11 +0200
+Message-Id: <20171013103812.30826-3-horms+renesas@verge.net.au>
+In-Reply-To: <20171013103812.30826-1-horms+renesas@verge.net.au>
+References: <20171013103812.30826-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Oct 13, 2017 at 12:38 PM, Simon Horman
-<horms+renesas@verge.net.au> wrote:
-> Add fallback compatibility strings for R-Car Gen 1, 2 and 3.
->
-> In the case of Renesas R-Car hardware we know that there are generations of
-> SoCs, f.e. Gen 1 and 2. But beyond that its not clear what the relationship
-> between IP blocks might be. For example, I believe that r8a7790 is older
-> than r8a7791 but that doesn't imply that the latter is a descendant of the
-> former or vice versa.
->
-> We can, however, by examining the documentation and behaviour of the
-> hardware at run-time observe that the current driver implementation appears
-> to be compatible with the IP blocks on SoCs within a given generation.
->
-> For the above reasons and convenience when enabling new SoCs a
-> per-generation fallback compatibility string scheme being adopted for
-> drivers for Renesas SoCs.
->
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Add fallback compatibility strings for R-Car Gen 1, 2 and 3.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+In the case of Renesas R-Car hardware we know that there are generations of
+SoCs, f.e. Gen 1 and 2. But beyond that its not clear what the relationship
+between IP blocks might be. For example, I believe that r8a7790 is older
+than r8a7791 but that doesn't imply that the latter is a descendant of the
+former or vice versa.
 
-> --- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-> +++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+We can, however, by examining the documentation and behaviour of the
+hardware at run-time observe that the current driver implementation appears
+to be compatible with the IP blocks on SoCs within a given generation.
 
-> @@ -47,7 +57,7 @@ Optional properties:
->  Example: R8A7779 (R-Car H1) SDHI controller nodes
+For the above reasons and convenience when enabling new SoCs a
+per-generation fallback compatibility string scheme being adopted for
+drivers for Renesas SoCs.
 
-Ah, so "R8A7790 (R-Car H2)" was intended in the previous patch...
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 20 +++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
 
->
->         sdhi0: sd@ee100000 {
-> -               compatible = "renesas,sdhi-r8a7790";
-> +               compatible = "renesas,sdhi-r8a7790", "renesas,rcar-gen2-sdhi";
->                 reg = <0 0xee100000 0 0x328>;
->                 interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
->                 clocks = <&mstp3_clks R8A7790_CLK_SDHI0>;
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+index 99be4e7e7391..672cfc37aadf 100644
+--- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
++++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+@@ -10,7 +10,7 @@ described in mmc.txt, can be used. Additionally the following tmio_mmc-specific
+ optional bindings can be used.
+ 
+ Required properties:
+-- compatible:	"renesas,sdhi-shmobile" - a generic sh-mobile SDHI unit
++- compatible: should contain one or more of the following:
+ 		"renesas,sdhi-sh73a0" - SDHI IP on SH73A0 SoC
+ 		"renesas,sdhi-r7s72100" - SDHI IP on R7S72100 SoC
+ 		"renesas,sdhi-r8a73a4" - SDHI IP on R8A73A4 SoC
+@@ -26,6 +26,16 @@ Required properties:
+ 		"renesas,sdhi-r8a7794" - SDHI IP on R8A7794 SoC
+ 		"renesas,sdhi-r8a7795" - SDHI IP on R8A7795 SoC
+ 		"renesas,sdhi-r8a7796" - SDHI IP on R8A7796 SoC
++		"renesas,sdhi-shmobile" - a generic sh-mobile SDHI controller
++		"renesas,rcar-gen1-sdhi" - a generic R-Car Gen1 SDHI controller
++		"renesas,rcar-gen2-sdhi" - a generic R-Car Gen2 or RZ/G1
++					   SDHI controller
++		"renesas,rcar-gen3-sdhi" - a generic R-Car Gen3 SDHI controller
++
++
++		When compatible with the generic version nodes must list
++		the SoC-specific version corresponding to the platform
++		first followed by the generic version.
+ 
+ - clocks: Most controllers only have 1 clock source per channel. However, on
+ 	  some variations of this controller, the internal card detection
+@@ -47,7 +57,7 @@ Optional properties:
+ Example: R8A7779 (R-Car H1) SDHI controller nodes
+ 
+ 	sdhi0: sd@ee100000 {
+-		compatible = "renesas,sdhi-r8a7790";
++		compatible = "renesas,sdhi-r8a7790", "renesas,rcar-gen2-sdhi";
+ 		reg = <0 0xee100000 0 0x328>;
+ 		interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7790_CLK_SDHI0>;
+@@ -60,7 +70,7 @@ Example: R8A7779 (R-Car H1) SDHI controller nodes
+ 	};
+ 
+ 	sdhi1: sd@ee120000 {
+-		compatible = "renesas,sdhi-r8a7790";
++		compatible = "renesas,sdhi-r8a7790", "renesas,rcar-gen2-sdhi";
+ 		reg = <0 0xee120000 0 0x328>;
+ 		interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7790_CLK_SDHI1>;
+@@ -73,7 +83,7 @@ Example: R8A7779 (R-Car H1) SDHI controller nodes
+ 	};
+ 
+ 	sdhi2: sd@ee140000 {
+-		compatible = "renesas,sdhi-r8a7790";
++		compatible = "renesas,sdhi-r8a7790", "renesas,rcar-gen2-sdhi";
+ 		reg = <0 0xee140000 0 0x100>;
+ 		interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7790_CLK_SDHI2>;
+@@ -86,7 +96,7 @@ Example: R8A7779 (R-Car H1) SDHI controller nodes
+ 	};
+ 
+ 	sdhi3: sd@ee160000 {
+-		compatible = "renesas,sdhi-r8a7790";
++		compatible = "renesas,sdhi-r8a7790", "renesas,rcar-gen2-sdhi";
+ 		reg = <0 0xee160000 0 0x100>;
+ 		interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7790_CLK_SDHI3>;
+-- 
+2.11.0
