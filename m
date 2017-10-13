@@ -1,49 +1,69 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Fri, 6 Oct 2017 11:14:41 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: kishon@ti.com, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3 4/4] phy: rcar-gen3-usb2: add binding for r8a77995
-Message-ID: <20171006091440.GC7734@verge.net.au>
-References: <1504233685-17947-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1504233685-17947-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:49749 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758346AbdJMMwd (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 13 Oct 2017 08:52:33 -0400
+Received: by mail-wm0-f67.google.com with SMTP id b189so21153212wmd.4
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 13 Oct 2017 05:52:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1504233685-17947-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20171013123311.15278-2-horms+renesas@verge.net.au>
+References: <20171013123311.15278-1-horms+renesas@verge.net.au> <20171013123311.15278-2-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 13 Oct 2017 14:52:31 +0200
+Message-ID: <CAMuHMdV+8=xDW+AxJkXBfB7EkrNCKErjg7Exv8BFR1m0otSWqA@mail.gmail.com>
+Subject: Re: [PATCH v3 01/10] ARM: dts: r8a7778: Use R-Car GPIO Gen1 fallback
+ compat string
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Sep 01, 2017 at 11:41:25AM +0900, Yoshihiro Shimoda wrote:
-> This patch adds binding for r8a77995 (R-Car D3). Since r8a77995 doesn't
-> have dedicated pins (ID, VBUS), this will match against the generic
-> fallback on R-Car D3.
-> 
-> For now, this driver doesn't support usb role swap for r8a77995.
-> 
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-
+On Fri, Oct 13, 2017 at 2:33 PM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> Use newly added R-Car GPIO Gen1 fallback compat string
+> in place of now deprecated non-generation specific
+> R-Car GPIO fallback compat string in DT of r8a7778 SoC.
+>
+> As the driver does not match on "renesas,gpio-r8a7778" there
+> are some run-time considerations for this patch:
+>
+> * When a resulting DTB is used with kernels newer than v4.14 this should
+>   not have any run-time effect as renesas,rcar-gen1-gpio is matched by the
+>   driver since commit dbd1dad2ab8f ("gpio: rcar: add gen[123] fallback
+>   compatibility strings")
+>
+> * However, when used with older kernels GPIO will be disabled as
+>   no compat string match will be made by the driver.
+>
+> The regression documented above for the new DTB with old kernel case
+> is acceptable in my opinion.
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 > ---
->  Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
-> index ace9cce..99b651b 100644
-> --- a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
-> +++ b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
-> @@ -8,6 +8,8 @@ Required properties:
->  	      SoC.
->  	      "renesas,usb2-phy-r8a7796" if the device is a part of an R8A7796
->  	      SoC.
-> +	      "renesas,usb2-phy-r8a77995" if the device is a part of an
-> +	      R8A77995 SoC.
->  	      "renesas,rcar-gen3-usb2-phy" for a generic R-Car Gen3 compatible device.
->  
->  	      When compatible with the generic version, nodes must list the
-> -- 
-> 1.9.1
-> 
+> v3
+> * Consistently use gen1 rather than gen2 binding in patch and refer to it
+>   in changelog.
+>
+> v2
+> * Note run-time considerations in changelog as pointed out by
+>   Geert Uytterhoeven
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
