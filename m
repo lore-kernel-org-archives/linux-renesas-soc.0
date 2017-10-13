@@ -1,47 +1,110 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:44326 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751700AbdJNTRm (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:56015 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753231AbdJMMdz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 14 Oct 2017 15:17:42 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2 09/11] mmc: omap_hsmmc: catch all errors when getting regulators
-Date: Sat, 14 Oct 2017 21:17:17 +0200
-Message-Id: <20171014191719.2129-10-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20171014191719.2129-1-wsa+renesas@sang-engineering.com>
-References: <20171014191719.2129-1-wsa+renesas@sang-engineering.com>
+        Fri, 13 Oct 2017 08:33:55 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v3 05/10] ARM: dts: r8a7791: Use R-Car GPIO Gen2 fallback compat string
+Date: Fri, 13 Oct 2017 14:33:06 +0200
+Message-Id: <20171013123311.15278-6-horms+renesas@verge.net.au>
+In-Reply-To: <20171013123311.15278-1-horms+renesas@verge.net.au>
+References: <20171013123311.15278-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Bail out everytime when mmc_regulator_get_supply() returns an errno, not
-only when probing gets deferred. This is currently a no-op, because this
-function only returns -EPROBE_DEFER or 0 right now. But if it will throw
-another error somewhen, it will be for a reason. (This still doesn't change
-that getting regulators is optional, so 0 can still mean no regulators
-found). So, let us a) be future proof and b) have driver code which is
-easier to understand.
+Use newly added R-Car GPIO Gen2 fallback compat string
+in place of now deprecated non-generation specific
+R-Car GPIO fallback compat string in the DT of the r8a7791 SoC.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+This should have no run-time effect as the driver matches against
+the per-SoC compat string before considering the fallback compat string.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/mmc/host/omap_hsmmc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a7791.dtsi | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/mmc/host/omap_hsmmc.c b/drivers/mmc/host/omap_hsmmc.c
-index f2a1137be8bc4b..071693ebfe1891 100644
---- a/drivers/mmc/host/omap_hsmmc.c
-+++ b/drivers/mmc/host/omap_hsmmc.c
-@@ -445,7 +445,7 @@ static int omap_hsmmc_reg_get(struct omap_hsmmc_host *host)
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index 97bed8253bc3..3c7b919efa48 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -124,7 +124,7 @@
+ 	};
  
+ 	gpio0: gpio@e6050000 {
+-		compatible = "renesas,gpio-r8a7791", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7791", "renesas,rcar-gen2-gpio";
+ 		reg = <0 0xe6050000 0 0x50>;
+ 		interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -138,7 +138,7 @@
+ 	};
  
- 	ret = mmc_regulator_get_supply(mmc);
--	if (ret == -EPROBE_DEFER)
-+	if (ret)
- 		return ret;
+ 	gpio1: gpio@e6051000 {
+-		compatible = "renesas,gpio-r8a7791", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7791", "renesas,rcar-gen2-gpio";
+ 		reg = <0 0xe6051000 0 0x50>;
+ 		interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -152,7 +152,7 @@
+ 	};
  
- 	/* Allow an aux regulator */
+ 	gpio2: gpio@e6052000 {
+-		compatible = "renesas,gpio-r8a7791", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7791", "renesas,rcar-gen2-gpio";
+ 		reg = <0 0xe6052000 0 0x50>;
+ 		interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -166,7 +166,7 @@
+ 	};
+ 
+ 	gpio3: gpio@e6053000 {
+-		compatible = "renesas,gpio-r8a7791", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7791", "renesas,rcar-gen2-gpio";
+ 		reg = <0 0xe6053000 0 0x50>;
+ 		interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -180,7 +180,7 @@
+ 	};
+ 
+ 	gpio4: gpio@e6054000 {
+-		compatible = "renesas,gpio-r8a7791", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7791", "renesas,rcar-gen2-gpio";
+ 		reg = <0 0xe6054000 0 0x50>;
+ 		interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -194,7 +194,7 @@
+ 	};
+ 
+ 	gpio5: gpio@e6055000 {
+-		compatible = "renesas,gpio-r8a7791", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7791", "renesas,rcar-gen2-gpio";
+ 		reg = <0 0xe6055000 0 0x50>;
+ 		interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -208,7 +208,7 @@
+ 	};
+ 
+ 	gpio6: gpio@e6055400 {
+-		compatible = "renesas,gpio-r8a7791", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7791", "renesas,rcar-gen2-gpio";
+ 		reg = <0 0xe6055400 0 0x50>;
+ 		interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -222,7 +222,7 @@
+ 	};
+ 
+ 	gpio7: gpio@e6055800 {
+-		compatible = "renesas,gpio-r8a7791", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7791", "renesas,rcar-gen2-gpio";
+ 		reg = <0 0xe6055800 0 0x50>;
+ 		interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
 -- 
 2.11.0
