@@ -1,141 +1,55 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:37832 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752590AbdJMSXu (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Oct 2017 14:23:50 -0400
-From: Robin Murphy <robin.murphy@arm.com>
-To: joro@8bytes.org
-Cc: iommu@lists.linux-foundation.org, arnd@arndb.de,
-        laurent.pinchart+renesas@ideasonboard.com, magnus.damm@gmail.com,
-        geert+renesas@glider.be, linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 1/4] iommu/ipmmu-vmsa: Unify domain alloc/free
-Date: Fri, 13 Oct 2017 19:23:39 +0100
-Message-Id: <764101fdd58e798686186e094e7574c41379c942.1507918320.git.robin.murphy@arm.com>
-In-Reply-To: <cover.1507918320.git.robin.murphy@arm.com>
-References: <cover.1507918320.git.robin.murphy@arm.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Fri, 13 Oct 2017 10:56:09 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH/RFC 3/5] mfd: bd9571mwv: Allow DDR Backup Power register
+ access
+Message-ID: <20171013095609.7ievqlwa2e4pnuge@dell>
+References: <1507649178-31473-1-git-send-email-geert+renesas@glider.be>
+ <1507649178-31473-4-git-send-email-geert+renesas@glider.be>
+ <20171013085851.ljvgmyd6ei2tv5fw@dell>
+ <CAMuHMdVZiaq40r0Su01n9C7oXR7i_QWmNhZtY7Udhy9gdYHVRA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdVZiaq40r0Su01n9C7oXR7i_QWmNhZtY7Udhy9gdYHVRA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We have two implementations for ipmmu_ops->alloc depending on
-CONFIG_IOMMU_DMA, the difference being whether they accept the
-IOMMU_DOMAIN_DMA type or not. However, iommu_dma_get_cookie() is
-guaranteed to return an error when !CONFIG_IOMMU_DMA, so if
-ipmmu_domain_alloc_dma() was actually checking and handling the return
-value correctly, it would behave the same as ipmmu_domain_alloc()
-anyway.
+On Fri, 13 Oct 2017, Geert Uytterhoeven wrote:
 
-Similarly for freeing; iommu_put_dma_cookie() is robust by design.
+> Hi Lee,
+> 
+> On Fri, Oct 13, 2017 at 10:58 AM, Lee Jones <lee.jones@linaro.org> wrote:
+> > On Tue, 10 Oct 2017, Geert Uytterhoeven wrote:
+> >
+> >> Enable read/write access to the BD9571MWV_BKUP_MODE_CNT register, which
+> >> is a.o. used to configure DDR Backup Power.
+> >
+> > a.o.?  That's a new one on me.
+> 
+> among(st) others
 
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
----
- drivers/iommu/ipmmu-vmsa.c | 65 +++++++++++++++++-----------------------------
- 1 file changed, 24 insertions(+), 41 deletions(-)
+Please just write that instead. :)
 
-diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-index 0bef160de7dd..dedb386fa81d 100644
---- a/drivers/iommu/ipmmu-vmsa.c
-+++ b/drivers/iommu/ipmmu-vmsa.c
-@@ -528,6 +528,27 @@ static struct iommu_domain *__ipmmu_domain_alloc(unsigned type)
- 	return &domain->io_domain;
- }
- 
-+static struct iommu_domain *ipmmu_domain_alloc(unsigned type)
-+{
-+	struct iommu_domain *io_domain = NULL;
-+
-+	switch (type) {
-+	case IOMMU_DOMAIN_UNMANAGED:
-+		io_domain = __ipmmu_domain_alloc(type);
-+		break;
-+
-+	case IOMMU_DOMAIN_DMA:
-+		io_domain = __ipmmu_domain_alloc(type);
-+		if (io_domain && iommu_get_dma_cookie(io_domain)) {
-+			kfree(io_domain);
-+			io_domain = NULL;
-+		}
-+		break;
-+	}
-+
-+	return io_domain;
-+}
-+
- static void ipmmu_domain_free(struct iommu_domain *io_domain)
- {
- 	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
-@@ -536,6 +557,7 @@ static void ipmmu_domain_free(struct iommu_domain *io_domain)
- 	 * Free the domain resources. We assume that all devices have already
- 	 * been detached.
- 	 */
-+	iommu_put_dma_cookie(io_domain);
- 	ipmmu_domain_destroy_context(domain);
- 	free_io_pgtable_ops(domain->iop);
- 	kfree(domain);
-@@ -671,14 +693,6 @@ static int ipmmu_of_xlate(struct device *dev,
- 
- #if defined(CONFIG_ARM) && !defined(CONFIG_IOMMU_DMA)
- 
--static struct iommu_domain *ipmmu_domain_alloc(unsigned type)
--{
--	if (type != IOMMU_DOMAIN_UNMANAGED)
--		return NULL;
--
--	return __ipmmu_domain_alloc(type);
--}
--
- static int ipmmu_add_device(struct device *dev)
- {
- 	struct ipmmu_vmsa_device *mmu = NULL;
-@@ -779,37 +793,6 @@ static const struct iommu_ops ipmmu_ops = {
- static DEFINE_SPINLOCK(ipmmu_slave_devices_lock);
- static LIST_HEAD(ipmmu_slave_devices);
- 
--static struct iommu_domain *ipmmu_domain_alloc_dma(unsigned type)
--{
--	struct iommu_domain *io_domain = NULL;
--
--	switch (type) {
--	case IOMMU_DOMAIN_UNMANAGED:
--		io_domain = __ipmmu_domain_alloc(type);
--		break;
--
--	case IOMMU_DOMAIN_DMA:
--		io_domain = __ipmmu_domain_alloc(type);
--		if (io_domain)
--			iommu_get_dma_cookie(io_domain);
--		break;
--	}
--
--	return io_domain;
--}
--
--static void ipmmu_domain_free_dma(struct iommu_domain *io_domain)
--{
--	switch (io_domain->type) {
--	case IOMMU_DOMAIN_DMA:
--		iommu_put_dma_cookie(io_domain);
--		/* fall-through */
--	default:
--		ipmmu_domain_free(io_domain);
--		break;
--	}
--}
--
- static int ipmmu_add_device_dma(struct device *dev)
- {
- 	struct iommu_group *group;
-@@ -878,8 +861,8 @@ static struct iommu_group *ipmmu_find_group_dma(struct device *dev)
- }
- 
- static const struct iommu_ops ipmmu_ops = {
--	.domain_alloc = ipmmu_domain_alloc_dma,
--	.domain_free = ipmmu_domain_free_dma,
-+	.domain_alloc = ipmmu_domain_alloc,
-+	.domain_free = ipmmu_domain_free,
- 	.attach_dev = ipmmu_attach_device,
- 	.detach_dev = ipmmu_detach_device,
- 	.map = ipmmu_map,
 -- 
-2.13.4.dirty
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
