@@ -1,17 +1,17 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55983 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:54140 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757869AbdJMMdr (ORCPT
+        with ESMTP id S1751529AbdJMLG0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Oct 2017 08:33:47 -0400
+        Fri, 13 Oct 2017 07:06:26 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v3 00/10] arm64: dts: renesas: Use R-Car GPIO Gen[123] fallback compat strings
-Date: Fri, 13 Oct 2017 14:33:01 +0200
-Message-Id: <20171013123311.15278-1-horms+renesas@verge.net.au>
+Subject: [PATCH v2 00/10] arm64: dts: renesas: Use R-Car GPIO Gen[123] fallback compat strings
+Date: Fri, 13 Oct 2017 13:05:50 +0200
+Message-Id: <20171013110600.6858-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -24,10 +24,6 @@ an incompatibility with pre-v4.14 kernels used with new DTBs. There is
 no run-time effect for other SoCs updated by this changeset.
 
 Based on renesas-devel-20171013-v4.14-rc4
-
-Changes since v2:
-* Consistently use and refer to gen1 rather than gen2 binding
-  in patches for gen1 SoCs
 
 Changes since v1:
 * Accumulate review tags
