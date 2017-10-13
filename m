@@ -1,62 +1,141 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38914 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752764AbdJTKaA (ORCPT
+Received: from foss.arm.com ([217.140.101.70]:37832 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752590AbdJMSXu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Oct 2017 06:30:00 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 13/42] ARM: dts: iwg22d-sodimm: Enable internal PCI
-Date: Fri, 20 Oct 2017 12:28:40 +0200
-Message-Id: <bc058f6f03e47610c994a97ecf3bf8a3ea44efee.1508493785.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1508493785.git.horms+renesas@verge.net.au>
-References: <cover.1508493785.git.horms+renesas@verge.net.au>
+        Fri, 13 Oct 2017 14:23:50 -0400
+From: Robin Murphy <robin.murphy@arm.com>
+To: joro@8bytes.org
+Cc: iommu@lists.linux-foundation.org, arnd@arndb.de,
+        laurent.pinchart+renesas@ideasonboard.com, magnus.damm@gmail.com,
+        geert+renesas@glider.be, linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 1/4] iommu/ipmmu-vmsa: Unify domain alloc/free
+Date: Fri, 13 Oct 2017 19:23:39 +0100
+Message-Id: <764101fdd58e798686186e094e7574c41379c942.1507918320.git.robin.murphy@arm.com>
+In-Reply-To: <cover.1507918320.git.robin.murphy@arm.com>
+References: <cover.1507918320.git.robin.murphy@arm.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+We have two implementations for ipmmu_ops->alloc depending on
+CONFIG_IOMMU_DMA, the difference being whether they accept the
+IOMMU_DOMAIN_DMA type or not. However, iommu_dma_get_cookie() is
+guaranteed to return an error when !CONFIG_IOMMU_DMA, so if
+ipmmu_domain_alloc_dma() was actually checking and handling the return
+value correctly, it would behave the same as ipmmu_domain_alloc()
+anyway.
 
-Enable internal AHB-PCI bridges for the USB EHCI/OHCI controllers
-attached to them.
+Similarly for freeing; iommu_put_dma_cookie() is robust by design.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Robin Murphy <robin.murphy@arm.com>
 ---
- arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/iommu/ipmmu-vmsa.c | 65 +++++++++++++++++-----------------------------
+ 1 file changed, 24 insertions(+), 41 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-index 8772c561e3a8..e378e5ecfcac 100644
---- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-+++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-@@ -55,6 +55,11 @@
- 		function = "sdhi0";
- 		power-source = <3300>;
- 	};
-+
-+	usb1_pins: usb1 {
-+		groups = "usb1";
-+		function = "usb1";
-+	};
- };
+diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
+index 0bef160de7dd..dedb386fa81d 100644
+--- a/drivers/iommu/ipmmu-vmsa.c
++++ b/drivers/iommu/ipmmu-vmsa.c
+@@ -528,6 +528,27 @@ static struct iommu_domain *__ipmmu_domain_alloc(unsigned type)
+ 	return &domain->io_domain;
+ }
  
- &scif4 {
-@@ -92,3 +97,9 @@
- 	cd-gpios = <&gpio6 6 GPIO_ACTIVE_LOW>;
- 	status = "okay";
- };
++static struct iommu_domain *ipmmu_domain_alloc(unsigned type)
++{
++	struct iommu_domain *io_domain = NULL;
 +
-+&pci1 {
-+	status = "okay";
-+	pinctrl-0 = <&usb1_pins>;
-+	pinctrl-names = "default";
-+};
++	switch (type) {
++	case IOMMU_DOMAIN_UNMANAGED:
++		io_domain = __ipmmu_domain_alloc(type);
++		break;
++
++	case IOMMU_DOMAIN_DMA:
++		io_domain = __ipmmu_domain_alloc(type);
++		if (io_domain && iommu_get_dma_cookie(io_domain)) {
++			kfree(io_domain);
++			io_domain = NULL;
++		}
++		break;
++	}
++
++	return io_domain;
++}
++
+ static void ipmmu_domain_free(struct iommu_domain *io_domain)
+ {
+ 	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
+@@ -536,6 +557,7 @@ static void ipmmu_domain_free(struct iommu_domain *io_domain)
+ 	 * Free the domain resources. We assume that all devices have already
+ 	 * been detached.
+ 	 */
++	iommu_put_dma_cookie(io_domain);
+ 	ipmmu_domain_destroy_context(domain);
+ 	free_io_pgtable_ops(domain->iop);
+ 	kfree(domain);
+@@ -671,14 +693,6 @@ static int ipmmu_of_xlate(struct device *dev,
+ 
+ #if defined(CONFIG_ARM) && !defined(CONFIG_IOMMU_DMA)
+ 
+-static struct iommu_domain *ipmmu_domain_alloc(unsigned type)
+-{
+-	if (type != IOMMU_DOMAIN_UNMANAGED)
+-		return NULL;
+-
+-	return __ipmmu_domain_alloc(type);
+-}
+-
+ static int ipmmu_add_device(struct device *dev)
+ {
+ 	struct ipmmu_vmsa_device *mmu = NULL;
+@@ -779,37 +793,6 @@ static const struct iommu_ops ipmmu_ops = {
+ static DEFINE_SPINLOCK(ipmmu_slave_devices_lock);
+ static LIST_HEAD(ipmmu_slave_devices);
+ 
+-static struct iommu_domain *ipmmu_domain_alloc_dma(unsigned type)
+-{
+-	struct iommu_domain *io_domain = NULL;
+-
+-	switch (type) {
+-	case IOMMU_DOMAIN_UNMANAGED:
+-		io_domain = __ipmmu_domain_alloc(type);
+-		break;
+-
+-	case IOMMU_DOMAIN_DMA:
+-		io_domain = __ipmmu_domain_alloc(type);
+-		if (io_domain)
+-			iommu_get_dma_cookie(io_domain);
+-		break;
+-	}
+-
+-	return io_domain;
+-}
+-
+-static void ipmmu_domain_free_dma(struct iommu_domain *io_domain)
+-{
+-	switch (io_domain->type) {
+-	case IOMMU_DOMAIN_DMA:
+-		iommu_put_dma_cookie(io_domain);
+-		/* fall-through */
+-	default:
+-		ipmmu_domain_free(io_domain);
+-		break;
+-	}
+-}
+-
+ static int ipmmu_add_device_dma(struct device *dev)
+ {
+ 	struct iommu_group *group;
+@@ -878,8 +861,8 @@ static struct iommu_group *ipmmu_find_group_dma(struct device *dev)
+ }
+ 
+ static const struct iommu_ops ipmmu_ops = {
+-	.domain_alloc = ipmmu_domain_alloc_dma,
+-	.domain_free = ipmmu_domain_free_dma,
++	.domain_alloc = ipmmu_domain_alloc,
++	.domain_free = ipmmu_domain_free,
+ 	.attach_dev = ipmmu_attach_device,
+ 	.detach_dev = ipmmu_detach_device,
+ 	.map = ipmmu_map,
 -- 
-2.11.0
+2.13.4.dirty
