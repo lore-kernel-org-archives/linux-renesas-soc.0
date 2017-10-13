@@ -1,155 +1,154 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:59864 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751291AbdJCNkc (ORCPT
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37858 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752590AbdJMSXx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Oct 2017 09:40:32 -0400
-MIME-Version: 1.0
-In-Reply-To: <20170827224033.2ubrkzp33g5supab@kekkonen.localdomain>
-References: <20170822001912.27638-1-niklas.soderlund+renesas@ragnatech.se>
- <CAL_Jsq+ABipq+YCpSwu_vhjk0rkZQimCD2vG1x5GL91wi6dzKw@mail.gmail.com>
- <20170822150050.GD14873@bigcity.dyn.berto.se> <CAL_JsqJOZPrOwy1Hi7zdHb-+X69rV2M5ZZd=X8aoWjvjqt+NNg@mail.gmail.com>
- <20170827224033.2ubrkzp33g5supab@kekkonen.localdomain>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 3 Oct 2017 08:40:10 -0500
-Message-ID: <CAL_JsqLoROoJYB38Hx76yFrPd8J=6+KOr6EgzMd-g5yLYi8Okw@mail.gmail.com>
-Subject: Re: [PATCH v2] device property: preserve usecount for node passed to of_fwnode_graph_get_port_parent()
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        "open list:MEDIA DRIVERS FOR RENESAS - FCP"
-        <linux-renesas-soc@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+        Fri, 13 Oct 2017 14:23:53 -0400
+From: Robin Murphy <robin.murphy@arm.com>
+To: joro@8bytes.org
+Cc: iommu@lists.linux-foundation.org, arnd@arndb.de,
+        laurent.pinchart+renesas@ideasonboard.com, magnus.damm@gmail.com,
+        geert+renesas@glider.be, linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 3/4] iommu/ipmmu-vmsa: Clean up struct ipmmu_vmsa_iommu_priv
+Date: Fri, 13 Oct 2017 19:23:41 +0100
+Message-Id: <59687825d12d00452aff0f4608a060e57130afdb.1507918320.git.robin.murphy@arm.com>
+In-Reply-To: <cover.1507918320.git.robin.murphy@arm.com>
+References: <cover.1507918320.git.robin.murphy@arm.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sun, Aug 27, 2017 at 5:40 PM, Sakari Ailus
-<sakari.ailus@linux.intel.com> wrote:
-> Hi Rob,
->
-> On Tue, Aug 22, 2017 at 02:42:10PM -0500, Rob Herring wrote:
->> On Tue, Aug 22, 2017 at 10:00 AM, Niklas Söderlund
->> <niklas.soderlund@ragnatech.se> wrote:
->> > Hi Rob,
->> >
->> > On 2017-08-22 09:49:35 -0500, Rob Herring wrote:
->> >> On Mon, Aug 21, 2017 at 7:19 PM, Niklas Söderlund
->> >> <niklas.soderlund+renesas@ragnatech.se> wrote:
->> >> > Using CONFIG_OF_DYNAMIC=y uncovered an imbalance in the usecount of the
->> >> > node being passed to of_fwnode_graph_get_port_parent(). Preserve the
->> >> > usecount by using of_get_parent() instead of of_get_next_parent() which
->> >> > don't decrement the usecount of the node passed to it.
->> >> >
->> >> > Fixes: 3b27d00e7b6d7c88 ("device property: Move fwnode graph ops to firmware specific locations")
->> >> > Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
->> >> > Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
->> >> > ---
->> >> >  drivers/of/property.c | 2 +-
->> >> >  1 file changed, 1 insertion(+), 1 deletion(-)
->> >>
->> >> Isn't this already fixed with this fix:
->> >>
->> >> commit c0a480d1acf7dc184f9f3e7cf724483b0d28dc2e
->> >> Author: Tony Lindgren <tony@atomide.com>
->> >> Date:   Fri Jul 28 01:23:15 2017 -0700
->> >>
->> >> device property: Fix usecount for of_graph_get_port_parent()
->> >
->> > No, that commit fixes it for of_graph_get_port_parent() while this
->> > commit fixes it for of_fwnode_graph_get_port_parent(). But in essence it
->> > is the same issue but needs two separate fixes.
->>
->> Ah, because one takes the port node and one takes the endpoint node.
->> That won't confuse anyone.
->
-> Yes, I think we've had this for some time in naming of a few graph
-> functions and increasingly so lately. It began with
-> of_graph_get_remote_port_parent(), which likely was named so to avoid the
-> name getting really long. The function itself gets a remove of the endpoint
-> given as an argument, then the port related to the entpoint and finally the
-> parent node of the port node (which is not the "ports" node). That's a lot
-> of work for a single interface function.
+Now that the IPMMU instance pointer is the only thing remaining in the
+private data structure, we no longer need the extra level of indirection
+and can simply stash that directlty in the fwspec.
 
-That's because returning the "ports" node would be pointless. The
-remote device could have:
+Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+---
+ drivers/iommu/ipmmu-vmsa.c | 36 ++++++++++++------------------------
+ 1 file changed, 12 insertions(+), 24 deletions(-)
 
-ports {
-    port {
-        endpoint {
-        };
-    };
-};
-
-Or no ports node. Both are valid and should be treated equivalently.
-
->
-> What comes to of_fwnode_graph_get_port_parent() --- it's the OF callback
-> function for the fwnode graph API that, as the name suggests, gets the
-> parent of the port node, no more, no less. The function is used in the
-> fwnode graph API implementation and is not available in the API as such.
-
-If this operates on the local node, then you should already have the
-relevant parent. If you are walking the remote node, then the exact
-port structure should be opaque. If you need the remote endpoint and
-its properties, that's fine. Otherwise, you should really only need
-the remote parent device because the remote's graph structure is
-specific to the remote device and any parsing should be done within
-the remote's driver.
-
-> The fwnode graph API itself only implements functionality already available
-> in the OF graph API under the corresponding name.
-
-There are graph APIs I want to get rid of, but since there are still
-users I haven't. Adding those APIs to the fwnode API will just make it
-harder.
-
->> Can we please align this mess. I've tried to make the graph parsing
->> not a free for all, open coded mess. There's no reason to have the
->> port node handle and then need the parent device. Either you started
->> with the parent device to parse local ports and endpoints or you got
->> the remote endpoint with .graph_get_remote_endpoint(). Most of the
->> time you don't even need the endpoint node handles. You really just
->> need to know what is the remote device connected to port X, endpoint Y
->> of my local device.
->
-> Perhaps most of the time, yes. V4L2 devices store bus (e.g. MIPI CSI-2)
-> specific information in the endpoint nodes.
->
-> The current OF graph API is geared towards providing convenience functions
-> to the extent that a single function performs actions a driver would
-> typically need. More recently functions implementing a single operation has
-> been added; the primitives that just perform a single operation would
-> likely be easier to manage.
-
-Then we have each driver open coding walking the graph.
-
-> The convenience functions have been, well, convenient as getting and
-> putting nodes could have been somewhat ignored in drivers. If the OF graph
-> API usage can be moved out of the drivers we'll likely have way fewer users
-> and thus there's no real need for convenience functions. That has other
-> benefits, too, such as parsing the graph correctly: most V4L2 drivers have
-> issues in this area.
->
-> The OF graph API (or the fwnode equivalent) is used effectively in all V4L2
-> drivers that support OF (there are about 20 of them); we're moving these to
-> the V4L2 framework but it'll take some time. That should make it easier for
-> cleaning things up. Based on a quick look V4L2 and V4L2 drivers together
-> represent a large proportion of all users in the kernel.
-
-I certainly will care less when there's only subsystems using the API
-versus each driver.
-
-I'd guess it is more equal because most of the DRM drivers are
-converted to not use the graph API directly.
-
->
-> What do you think?
-
-I'll apply this fix, but please keep the above in mind when reworking
-the V4L2 drivers.
-
-Rob
+diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
+index d8c9bd4dc657..4d69c08145a1 100644
+--- a/drivers/iommu/ipmmu-vmsa.c
++++ b/drivers/iommu/ipmmu-vmsa.c
+@@ -58,16 +58,12 @@ struct ipmmu_vmsa_domain {
+ 	spinlock_t lock;			/* Protects mappings */
+ };
+ 
+-struct ipmmu_vmsa_iommu_priv {
+-	struct ipmmu_vmsa_device *mmu;
+-};
+-
+ static struct ipmmu_vmsa_domain *to_vmsa_domain(struct iommu_domain *dom)
+ {
+ 	return container_of(dom, struct ipmmu_vmsa_domain, io_domain);
+ }
+ 
+-static struct ipmmu_vmsa_iommu_priv *to_priv(struct device *dev)
++static struct ipmmu_vmsa_device *to_ipmmu(struct device *dev)
+ {
+ 	return dev->iommu_fwspec ? dev->iommu_fwspec->iommu_priv : NULL;
+ }
+@@ -565,15 +561,14 @@ static void ipmmu_domain_free(struct iommu_domain *io_domain)
+ static int ipmmu_attach_device(struct iommu_domain *io_domain,
+ 			       struct device *dev)
+ {
+-	struct ipmmu_vmsa_iommu_priv *priv = to_priv(dev);
+ 	struct iommu_fwspec *fwspec = dev->iommu_fwspec;
+-	struct ipmmu_vmsa_device *mmu = priv->mmu;
++	struct ipmmu_vmsa_device *mmu = to_ipmmu(dev);
+ 	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
+ 	unsigned long flags;
+ 	unsigned int i;
+ 	int ret = 0;
+ 
+-	if (!priv || !priv->mmu) {
++	if (!mmu) {
+ 		dev_err(dev, "Cannot attach to IPMMU\n");
+ 		return -ENXIO;
+ 	}
+@@ -662,18 +657,12 @@ static int ipmmu_init_platform_device(struct device *dev,
+ 				      struct of_phandle_args *args)
+ {
+ 	struct platform_device *ipmmu_pdev;
+-	struct ipmmu_vmsa_iommu_priv *priv;
+ 
+ 	ipmmu_pdev = of_find_device_by_node(args->np);
+ 	if (!ipmmu_pdev)
+ 		return -ENODEV;
+ 
+-	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
+-	if (!priv)
+-		return -ENOMEM;
+-
+-	priv->mmu = platform_get_drvdata(ipmmu_pdev);
+-	dev->iommu_fwspec->iommu_priv = priv;
++	dev->iommu_fwspec->iommu_priv = platform_get_drvdata(ipmmu_pdev);
+ 	return 0;
+ }
+ 
+@@ -683,7 +672,7 @@ static int ipmmu_of_xlate(struct device *dev,
+ 	iommu_fwspec_add_ids(dev, spec->args, 1);
+ 
+ 	/* Initialize once - xlate() will call multiple times */
+-	if (to_priv(dev))
++	if (to_ipmmu(dev))
+ 		return 0;
+ 
+ 	return ipmmu_init_platform_device(dev, spec);
+@@ -693,14 +682,14 @@ static int ipmmu_of_xlate(struct device *dev,
+ 
+ static int ipmmu_add_device(struct device *dev)
+ {
+-	struct ipmmu_vmsa_device *mmu = NULL;
++	struct ipmmu_vmsa_device *mmu = to_ipmmu(dev);
+ 	struct iommu_group *group;
+ 	int ret;
+ 
+ 	/*
+ 	 * Only let through devices that have been verified in xlate()
+ 	 */
+-	if (!to_priv(dev))
++	if (!mmu)
+ 		return -ENODEV;
+ 
+ 	/* Create a device group and add the device to it. */
+@@ -729,7 +718,6 @@ static int ipmmu_add_device(struct device *dev)
+ 	 * - Make the mapping size configurable ? We currently use a 2GB mapping
+ 	 *   at a 1GB offset to ensure that NULL VAs will fault.
+ 	 */
+-	mmu = to_priv(dev)->mmu;
+ 	if (!mmu->mapping) {
+ 		struct dma_iommu_mapping *mapping;
+ 
+@@ -795,7 +783,7 @@ static int ipmmu_add_device_dma(struct device *dev)
+ 	/*
+ 	 * Only let through devices that have been verified in xlate()
+ 	 */
+-	if (!to_priv(dev))
++	if (!to_ipmmu(dev))
+ 		return -ENODEV;
+ 
+ 	group = iommu_group_get_for_dev(dev);
+@@ -812,15 +800,15 @@ static void ipmmu_remove_device_dma(struct device *dev)
+ 
+ static struct iommu_group *ipmmu_find_group(struct device *dev)
+ {
+-	struct ipmmu_vmsa_iommu_priv *priv = to_priv(dev);
++	struct ipmmu_vmsa_device *mmu = to_ipmmu(dev);
+ 	struct iommu_group *group;
+ 
+-	if (priv->mmu->group)
+-		return iommu_group_ref_get(priv->mmu->group);
++	if (mmu->group)
++		return iommu_group_ref_get(mmu->group);
+ 
+ 	group = iommu_group_alloc();
+ 	if (!IS_ERR(group))
+-		priv->mmu->group = group;
++		mmu->group = group;
+ 
+ 	return group;
+ }
+-- 
+2.13.4.dirty
