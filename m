@@ -1,66 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:39254 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932795AbdJQGKS (ORCPT
+Received: from sauhun.de ([88.99.104.3]:44323 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751636AbdJNTRl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Oct 2017 02:10:18 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 11/11] ARM: dts: r8a7794: Use R-Car SDHI Gen2 fallback compat string
-Date: Tue, 17 Oct 2017 08:09:59 +0200
-Message-Id: <20171017060959.16702-12-horms+renesas@verge.net.au>
-In-Reply-To: <20171017060959.16702-1-horms+renesas@verge.net.au>
-References: <20171017060959.16702-1-horms+renesas@verge.net.au>
+        Sat, 14 Oct 2017 15:17:41 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH v2 08/11] mmc: mxcmmc: catch all errors when getting regulators
+Date: Sat, 14 Oct 2017 21:17:16 +0200
+Message-Id: <20171014191719.2129-9-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20171014191719.2129-1-wsa+renesas@sang-engineering.com>
+References: <20171014191719.2129-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use newly added R-Car SDHI Gen2 fallback compat string
-in the DT of the r8a7794 SoC.
+Bail out everytime when mmc_regulator_get_supply() returns an errno, not
+only when probing gets deferred. This is currently a no-op, because this
+function only returns -EPROBE_DEFER or 0 right now. But if it will throw
+another error somewhen, it will be for a reason. (This still doesn't change
+that getting regulators is optional, so 0 can still mean no regulators
+found). So, let us a) be future proof and b) have driver code which is
+easier to understand.
 
-This should have no run-time effect as the driver matches against
-the per-SoC compat string before considering the fallback compat string.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm/boot/dts/r8a7794.dtsi | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/mmc/host/mxcmmc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 905e50c9b524..01f6326ae736 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -791,7 +791,8 @@
- 	};
+diff --git a/drivers/mmc/host/mxcmmc.c b/drivers/mmc/host/mxcmmc.c
+index 328484b96620e8..8bd9f060be2ae0 100644
+--- a/drivers/mmc/host/mxcmmc.c
++++ b/drivers/mmc/host/mxcmmc.c
+@@ -1075,7 +1075,7 @@ static int mxcmci_probe(struct platform_device *pdev)
+ 		dat3_card_detect = true;
  
- 	sdhi0: sd@ee100000 {
--		compatible = "renesas,sdhi-r8a7794";
-+		compatible = "renesas,sdhi-r8a7794",
-+			     "renesas,rcar-gen2-sdhi";
- 		reg = <0 0xee100000 0 0x328>;
- 		interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 314>;
-@@ -805,7 +806,8 @@
- 	};
+ 	ret = mmc_regulator_get_supply(mmc);
+-	if (ret == -EPROBE_DEFER)
++	if (ret)
+ 		goto out_free;
  
- 	sdhi1: sd@ee140000 {
--		compatible = "renesas,sdhi-r8a7794";
-+		compatible = "renesas,sdhi-r8a7794",
-+			     "renesas,rcar-gen2-sdhi";
- 		reg = <0 0xee140000 0 0x100>;
- 		interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 312>;
-@@ -819,7 +821,8 @@
- 	};
- 
- 	sdhi2: sd@ee160000 {
--		compatible = "renesas,sdhi-r8a7794";
-+		compatible = "renesas,sdhi-r8a7794",
-+			     "renesas,rcar-gen2-sdhi";
- 		reg = <0 0xee160000 0 0x100>;
- 		interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 311>;
+ 	if (!mmc->ocr_avail) {
 -- 
 2.11.0
