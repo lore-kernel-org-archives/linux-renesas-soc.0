@@ -1,33 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47928 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753890AbdJIHS2 (ORCPT
+Received: from sauhun.de ([88.99.104.3]:44311 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751576AbdJNTRj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 Oct 2017 03:18:28 -0400
-Date: Mon, 9 Oct 2017 09:18:08 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 06/18] arm64: dts: h3ulcb-kf: ES2.0+ SoC initial
- device tree
-Message-ID: <20171009071808.GN17360@verge.net.au>
-References: <1505398746-4696-1-git-send-email-vladimir.barinov@cogentembedded.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1505398746-4696-1-git-send-email-vladimir.barinov@cogentembedded.com>
+        Sat, 14 Oct 2017 15:17:39 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH v2 04/11] mmc: meson-gx-mmc: catch all errors when getting regulators
+Date: Sat, 14 Oct 2017 21:17:12 +0200
+Message-Id: <20171014191719.2129-5-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20171014191719.2129-1-wsa+renesas@sang-engineering.com>
+References: <20171014191719.2129-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Sep 14, 2017 at 05:19:06PM +0300, Vladimir Barinov wrote:
-> Add the initial device tree for the H3ULCB ES2.0+ SoC with Kingfisher
-> extension infotainment board.
-> 
-> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Bail out everytime when mmc_regulator_get_supply() returns an errno, not
+only when probing gets deferred. This is currently a no-op, because this
+function only returns -EPROBE_DEFER or 0 right now. But if it will throw
+another error somewhen, it will be for a reason. (This still doesn't change
+that getting regulators is optional, so 0 can still mean no regulators
+found). So, let us a) be future proof and b) have driver code which is
+easier to understand.
 
-Thanks, applied.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/mmc/host/meson-gx-mmc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mmc/host/meson-gx-mmc.c b/drivers/mmc/host/meson-gx-mmc.c
+index 85745ef179e22b..e0862d3f65b346 100644
+--- a/drivers/mmc/host/meson-gx-mmc.c
++++ b/drivers/mmc/host/meson-gx-mmc.c
+@@ -1190,7 +1190,7 @@ static int meson_mmc_probe(struct platform_device *pdev)
+ 	/* Get regulators and the supported OCR mask */
+ 	host->vqmmc_enabled = false;
+ 	ret = mmc_regulator_get_supply(mmc);
+-	if (ret == -EPROBE_DEFER)
++	if (ret)
+ 		goto free_host;
+ 
+ 	ret = mmc_of_parse(mmc);
+-- 
+2.11.0
