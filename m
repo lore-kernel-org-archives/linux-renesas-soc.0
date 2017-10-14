@@ -1,40 +1,47 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/3] ARM: dts: gr-peach: Mix DTS fixes/updates
-Date: Thu,  5 Oct 2017 10:58:17 +0200
-Message-Id: <1507193900-23801-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([88.99.104.3]:44320 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751660AbdJNTRk (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sat, 14 Oct 2017 15:17:40 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH v2 07/11] mmc: mtk-sd: catch all errors when getting regulators
+Date: Sat, 14 Oct 2017 21:17:15 +0200
+Message-Id: <20171014191719.2129-8-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20171014191719.2129-1-wsa+renesas@sang-engineering.com>
+References: <20171014191719.2129-1-wsa+renesas@sang-engineering.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
-   this series includes three patches for GR-Peach DTS.
+Bail out everytime when mmc_regulator_get_supply() returns an errno, not
+only when probing gets deferred. This is currently a no-op, because this
+function only returns -EPROBE_DEFER or 0 right now. But if it will throw
+another error somewhen, it will be for a reason. (This still doesn't change
+that getting regulators is optional, so 0 can still mean no regulators
+found). So, let us a) be future proof and b) have driver code which is
+easier to understand.
 
-The first, very trivial one is the re-proposal of the already sent patch, with
-the commit message updated as suggested by Sergei.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/mmc/host/mtk-sd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The second just enables the Multi-function timer/counter unit which was
-disabled and is actually used for timer event generations and wake-ups.
-
-After enabling the MTU unit, ETHER is now working properly, so I am re-proposing
-this patch, which had been left out from previous gr-peach DTS series because
-the interface was not working correctly.
-
-Thanks
-   j
-
-Jacopo Mondi (3):
-  ARM: dts: gr-peach: Fix 'leds' node name indent
-  ARM: dts: gr-peach: Enable MTU2 timer pulse unit
-  ARM: dts: gr-peach: Add ETHER pin group
-
- arch/arm/boot/dts/r7s72100-gr-peach.dts | 44 ++++++++++++++++++++++++++++++++-
- 1 file changed, 43 insertions(+), 1 deletion(-)
-
---
-2.7.4
-
+diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
+index 267f7ab08420eb..7c518a560089ce 100644
+--- a/drivers/mmc/host/mtk-sd.c
++++ b/drivers/mmc/host/mtk-sd.c
+@@ -1641,7 +1641,7 @@ static int msdc_drv_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	ret = mmc_regulator_get_supply(mmc);
+-	if (ret == -EPROBE_DEFER)
++	if (ret)
+ 		goto host_free;
+ 
+ 	host->src_clk = devm_clk_get(&pdev->dev, "source");
+-- 
+2.11.0
