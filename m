@@ -1,43 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:37546 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755944AbdJLJfU (ORCPT
+Received: from sauhun.de ([88.99.104.3]:44299 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751529AbdJNTRj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 12 Oct 2017 05:35:20 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 12/13] ARM: dts: r8a7794: Add missing clock for secondary CA7 CPU core
-Date: Thu, 12 Oct 2017 11:35:15 +0200
-Message-Id: <1507800916-11509-13-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1507800916-11509-1-git-send-email-geert+renesas@glider.be>
-References: <1507800916-11509-1-git-send-email-geert+renesas@glider.be>
+        Sat, 14 Oct 2017 15:17:39 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH v2 02/11] mmc: cavium: catch all errors when getting regulators
+Date: Sat, 14 Oct 2017 21:17:10 +0200
+Message-Id: <20171014191719.2129-3-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20171014191719.2129-1-wsa+renesas@sang-engineering.com>
+References: <20171014191719.2129-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Currently only the primary CPU in the CA7 cluster has a clocks property,
-while the secondary CPU core is driven by the same clock.
-Add the missing clocks property to fix this.
+Bail out everytime when mmc_regulator_get_supply() returns an errno, not
+only when probing gets deferred. This is currently a no-op, because this
+function only returns -EPROBE_DEFER or 0 right now. But if it will throw
+another error somewhen, it will be for a reason. (This still doesn't change
+that getting regulators is optional, so 0 can still mean no regulators
+found). So, let us a) be future proof and b) have driver code which is
+easier to understand.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm/boot/dts/r8a7794.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/mmc/host/cavium.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 4fd92e989e227270..b588029ae9db8957 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -54,6 +54,7 @@
- 			compatible = "arm,cortex-a7";
- 			reg = <1>;
- 			clock-frequency = <1000000000>;
-+			clocks = <&cpg CPG_CORE R8A7794_CLK_Z2>;
- 			power-domains = <&sysc R8A7794_PD_CA7_CPU1>;
- 			next-level-cache = <&L2_CA7>;
- 		};
+diff --git a/drivers/mmc/host/cavium.c b/drivers/mmc/host/cavium.c
+index fbd29f00fca05e..ed5cefb8376838 100644
+--- a/drivers/mmc/host/cavium.c
++++ b/drivers/mmc/host/cavium.c
+@@ -967,7 +967,7 @@ static int cvm_mmc_of_parse(struct device *dev, struct cvm_mmc_slot *slot)
+ 	}
+ 
+ 	ret = mmc_regulator_get_supply(mmc);
+-	if (ret == -EPROBE_DEFER)
++	if (ret)
+ 		return ret;
+ 	/*
+ 	 * Legacy Octeon firmware has no regulator entry, fall-back to
 -- 
-2.7.4
+2.11.0
