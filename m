@@ -1,47 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:62399 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1758110AbdJMPvf (ORCPT
+Received: from sauhun.de ([88.99.104.3]:44314 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750907AbdJNTRk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Oct 2017 11:51:35 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
+        Sat, 14 Oct 2017 15:17:40 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH  3/4] ARM: dts: r8a7745: Enable DMA for HSUSB
-Date: Fri, 13 Oct 2017 16:50:42 +0100
-Message-Id: <1507909843-52034-4-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1507909843-52034-1-git-send-email-biju.das@bp.renesas.com>
-References: <1507909843-52034-1-git-send-email-biju.das@bp.renesas.com>
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH v2 05/11] mmc: meson-mx-sdio: catch all errors when getting regulators
+Date: Sat, 14 Oct 2017 21:17:13 +0200
+Message-Id: <20171014191719.2129-6-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20171014191719.2129-1-wsa+renesas@sang-engineering.com>
+References: <20171014191719.2129-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds DMA properties to the HSUSB node.
+Bail out everytime when mmc_regulator_get_supply() returns an errno, not
+only when probing gets deferred. This is currently a no-op, because this
+function only returns -EPROBE_DEFER or 0 right now. But if it will throw
+another error somewhen, it will be for a reason. (This still doesn't change
+that getting regulators is optional, so 0 can still mean no regulators
+found). So, let us a) be future proof and b) have driver code which is
+easier to understand.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm/boot/dts/r8a7745.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/mmc/host/meson-mx-sdio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index 9733ac5..6c9a0d6 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -950,6 +950,9 @@
- 			reg = <0 0xe6590000 0 0x100>;
- 			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 704>;
-+			dmas = <&usb_dmac0 0>, <&usb_dmac0 1>,
-+			       <&usb_dmac1 0>, <&usb_dmac1 1>;
-+			dma-names = "ch0", "ch1", "ch2", "ch3";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
- 			resets = <&cpg 704>;
- 			renesas,buswait = <4>;
+diff --git a/drivers/mmc/host/meson-mx-sdio.c b/drivers/mmc/host/meson-mx-sdio.c
+index 19b499bbe6912f..fcbc469a5b0e74 100644
+--- a/drivers/mmc/host/meson-mx-sdio.c
++++ b/drivers/mmc/host/meson-mx-sdio.c
+@@ -551,7 +551,7 @@ static int meson_mx_mmc_add_host(struct meson_mx_mmc_host *host)
+ 
+ 	/* Get regulators and the supported OCR mask */
+ 	ret = mmc_regulator_get_supply(mmc);
+-	if (ret == -EPROBE_DEFER)
++	if (ret)
+ 		return ret;
+ 
+ 	mmc->max_req_size = MESON_MX_SDIO_BOUNCE_REQ_SIZE;
 -- 
-1.9.1
+2.11.0
