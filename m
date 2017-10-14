@@ -1,52 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:39448 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751699AbdJDMP3 (ORCPT
+Received: from sauhun.de ([88.99.104.3]:44326 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751700AbdJNTRm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Oct 2017 08:15:29 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: Dan Williams <dan.j.williams@intel.com>, dmaengine@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] dmaengine: nbpfaxi: Use of_device_get_match_data() helper
-Date: Wed,  4 Oct 2017 14:15:23 +0200
-Message-Id: <1507119323-12421-1-git-send-email-geert+renesas@glider.be>
+        Sat, 14 Oct 2017 15:17:42 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH v2 09/11] mmc: omap_hsmmc: catch all errors when getting regulators
+Date: Sat, 14 Oct 2017 21:17:17 +0200
+Message-Id: <20171014191719.2129-10-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20171014191719.2129-1-wsa+renesas@sang-engineering.com>
+References: <20171014191719.2129-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use the of_device_get_match_data() helper instead of open coding.
-Note that when used with DT, there's always a valid match.
+Bail out everytime when mmc_regulator_get_supply() returns an errno, not
+only when probing gets deferred. This is currently a no-op, because this
+function only returns -EPROBE_DEFER or 0 right now. But if it will throw
+another error somewhen, it will be for a reason. (This still doesn't change
+that getting regulators is optional, so 0 can still mean no regulators
+found). So, let us a) be future proof and b) have driver code which is
+easier to understand.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/dma/nbpfaxi.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/mmc/host/omap_hsmmc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/dma/nbpfaxi.c b/drivers/dma/nbpfaxi.c
-index d3f918a9ee7627ae..50559338239b6ec5 100644
---- a/drivers/dma/nbpfaxi.c
-+++ b/drivers/dma/nbpfaxi.c
-@@ -1286,7 +1286,6 @@ MODULE_DEVICE_TABLE(of, nbpf_match);
- static int nbpf_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
--	const struct of_device_id *of_id = of_match_device(nbpf_match, dev);
- 	struct device_node *np = dev->of_node;
- 	struct nbpf_device *nbpf;
- 	struct dma_device *dma_dev;
-@@ -1300,10 +1299,10 @@ static int nbpf_probe(struct platform_device *pdev)
- 	BUILD_BUG_ON(sizeof(struct nbpf_desc_page) > PAGE_SIZE);
+diff --git a/drivers/mmc/host/omap_hsmmc.c b/drivers/mmc/host/omap_hsmmc.c
+index f2a1137be8bc4b..071693ebfe1891 100644
+--- a/drivers/mmc/host/omap_hsmmc.c
++++ b/drivers/mmc/host/omap_hsmmc.c
+@@ -445,7 +445,7 @@ static int omap_hsmmc_reg_get(struct omap_hsmmc_host *host)
  
- 	/* DT only */
--	if (!np || !of_id || !of_id->data)
-+	if (!np)
- 		return -ENODEV;
  
--	cfg = of_id->data;
-+	cfg = of_device_get_match_data(dev);
- 	num_channels = cfg->num_channels;
+ 	ret = mmc_regulator_get_supply(mmc);
+-	if (ret == -EPROBE_DEFER)
++	if (ret)
+ 		return ret;
  
- 	nbpf = devm_kzalloc(dev, sizeof(*nbpf) + num_channels *
+ 	/* Allow an aux regulator */
 -- 
-2.7.4
+2.11.0
