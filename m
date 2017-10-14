@@ -1,84 +1,47 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v6 2/4] phy: rcar-gen3-usb2: use enum phy_mode in the role_store()
-Date: Thu, 12 Oct 2017 15:34:46 +0900
-Message-Id: <1507790088-26010-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1507790088-26010-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1507790088-26010-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([88.99.104.3]:44307 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751512AbdJNTRj (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sat, 14 Oct 2017 15:17:39 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH v2 03/11] mmc: dw_mmc: catch all errors when getting regulators
+Date: Sat, 14 Oct 2017 21:17:11 +0200
+Message-Id: <20171014191719.2129-4-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20171014191719.2129-1-wsa+renesas@sang-engineering.com>
+References: <20171014191719.2129-1-wsa+renesas@sang-engineering.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch modifies the role_store() to use "enum phy_mode" instead
-of the local "bool" for host/device mode selection.
+Bail out everytime when mmc_regulator_get_supply() returns an errno, not
+only when probing gets deferred. This is currently a no-op, because this
+function only returns -EPROBE_DEFER or 0 right now. But if it will throw
+another error somewhen, it will be for a reason. (This still doesn't change
+that getting regulators is optional, so 0 can still mean no regulators
+found). So, let us a) be future proof and b) have driver code which is
+easier to understand.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/phy/renesas/phy-rcar-gen3-usb2.c | 29 ++++++++++++++++++-----------
- 1 file changed, 18 insertions(+), 11 deletions(-)
+ drivers/mmc/host/dw_mmc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-index e00e99a..00a8303 100644
---- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-@@ -219,33 +219,40 @@ static bool rcar_gen3_is_host(struct rcar_gen3_chan *ch)
- 	return !(readl(ch->base + USB2_COMMCTRL) & USB2_COMMCTRL_OTG_PERI);
- }
+diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+index 45289c5e0295d2..20d66f8189090d 100644
+--- a/drivers/mmc/host/dw_mmc.c
++++ b/drivers/mmc/host/dw_mmc.c
+@@ -2741,7 +2741,7 @@ static int dw_mci_init_slot(struct dw_mci *host)
  
-+static enum phy_mode rcar_gen3_get_phy_mode(struct rcar_gen3_chan *ch)
-+{
-+	if (rcar_gen3_is_host(ch))
-+		return PHY_MODE_USB_HOST;
-+
-+	return PHY_MODE_USB_DEVICE;
-+}
-+
- static ssize_t role_store(struct device *dev, struct device_attribute *attr,
- 			  const char *buf, size_t count)
- {
- 	struct rcar_gen3_chan *ch = dev_get_drvdata(dev);
--	bool is_b_device, is_host, new_mode_is_host;
-+	bool is_b_device;
-+	enum phy_mode cur_mode, new_mode;
+ 	/*if there are external regulators, get them*/
+ 	ret = mmc_regulator_get_supply(mmc);
+-	if (ret == -EPROBE_DEFER)
++	if (ret)
+ 		goto err_host_allocated;
  
- 	if (!ch->has_otg || !ch->phy->init_count)
- 		return -EIO;
- 
--	/*
--	 * is_b_device: true is B-Device. false is A-Device.
--	 * If {new_mode_}is_host: true is Host mode. false is Peripheral mode.
--	 */
--	is_b_device = rcar_gen3_check_id(ch);
--	is_host = rcar_gen3_is_host(ch);
- 	if (!strncmp(buf, "host", strlen("host")))
--		new_mode_is_host = true;
-+		new_mode = PHY_MODE_USB_HOST;
- 	else if (!strncmp(buf, "peripheral", strlen("peripheral")))
--		new_mode_is_host = false;
-+		new_mode = PHY_MODE_USB_DEVICE;
- 	else
- 		return -EINVAL;
- 
-+	/* is_b_device: true is B-Device. false is A-Device. */
-+	is_b_device = rcar_gen3_check_id(ch);
-+	cur_mode = rcar_gen3_get_phy_mode(ch);
-+
- 	/* If current and new mode is the same, this returns the error */
--	if (is_host == new_mode_is_host)
-+	if (cur_mode == new_mode)
- 		return -EINVAL;
- 
--	if (new_mode_is_host) {		/* And is_host must be false */
-+	if (new_mode == PHY_MODE_USB_HOST) { /* And is_host must be false */
- 		if (!is_b_device)	/* A-Peripheral */
- 			rcar_gen3_init_from_a_peri_to_a_host(ch);
- 		else			/* B-Peripheral */
+ 	if (!mmc->ocr_avail)
 -- 
-1.9.1
+2.11.0
