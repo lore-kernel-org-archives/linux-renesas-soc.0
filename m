@@ -1,47 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:44314 "EHLO pokefinder.org"
+Received: from sauhun.de ([88.99.104.3]:44294 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751693AbdJNTRl (ORCPT
+        id S1751337AbdJNTRi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 14 Oct 2017 15:17:41 -0400
+        Sat, 14 Oct 2017 15:17:38 -0400
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-mmc@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2 10/11] mmc: sdhci: catch all errors when getting regulators
-Date: Sat, 14 Oct 2017 21:17:18 +0200
-Message-Id: <20171014191719.2129-11-wsa+renesas@sang-engineering.com>
+Subject: [PATCH v2 01/11] mmc: add kerneldoc to mmc_regulator_get_supply()
+Date: Sat, 14 Oct 2017 21:17:09 +0200
+Message-Id: <20171014191719.2129-2-wsa+renesas@sang-engineering.com>
 In-Reply-To: <20171014191719.2129-1-wsa+renesas@sang-engineering.com>
 References: <20171014191719.2129-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Bail out everytime when mmc_regulator_get_supply() returns an errno, not
-only when probing gets deferred. This is currently a no-op, because this
-function only returns -EPROBE_DEFER or 0 right now. But if it will throw
-another error somewhen, it will be for a reason. (This still doesn't change
-that getting regulators is optional, so 0 can still mean no regulators
-found). So, let us a) be future proof and b) have driver code which is
-easier to understand.
+Especially, make clear what the return value means.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/mmc/host/sdhci.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mmc/core/core.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index 0d5fcca18c9ec1..1052b52045b190 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -3238,7 +3238,7 @@ int sdhci_setup_host(struct sdhci_host *host)
- 	 * available.
- 	 */
- 	ret = mmc_regulator_get_supply(mmc);
--	if (ret == -EPROBE_DEFER)
-+	if (ret)
- 		return ret;
+diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
+index c287d297710aa4..7859bb617a2f60 100644
+--- a/drivers/mmc/core/core.c
++++ b/drivers/mmc/core/core.c
+@@ -1595,6 +1595,16 @@ EXPORT_SYMBOL_GPL(mmc_regulator_set_vqmmc);
  
- 	DBG("Version:   0x%08x | Present:  0x%08x\n",
+ #endif /* CONFIG_REGULATOR */
+ 
++/**
++ * mmc_regulator_get_supply - try to get VMMC and VQMMC regulators for a host
++ * @mmc: the host to regulate
++ *
++ * Returns 0 or errno. errno should be handled, it is either a critical error
++ * or -EPROBE_DEFER. 0 means no critical error but it does not mean all
++ * regulators have been found because they all are optional. If you require
++ * certain regulators, you need to check separately in your driver if they got
++ * populated after calling this function.
++ */
+ int mmc_regulator_get_supply(struct mmc_host *mmc)
+ {
+ 	struct device *dev = mmc_dev(mmc);
 -- 
 2.11.0
