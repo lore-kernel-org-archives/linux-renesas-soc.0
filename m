@@ -1,315 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41514 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752066AbdJDL2I (ORCPT
+Received: from sauhun.de ([88.99.104.3]:46241 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750854AbdJOMq1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Oct 2017 07:28:08 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
-        Mark Brown <broonie@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>,
-        Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: rsnd: add MIX Volume Ramp support" to the asoc tree
-In-Reply-To: <87tvzimo5w.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dzhqQ-0004Gq-4Z@debutante>
-Date: Wed, 04 Oct 2017 12:28:06 +0100
+        Sun, 15 Oct 2017 08:46:27 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH v3 0/3] mmc: support eMMC driver type selection with DT
+Date: Sun, 15 Oct 2017 14:46:12 +0200
+Message-Id: <20171015124615.31391-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+Some of the Renesas R-Car boards need to set the eMMC driver type to type 1 to
+get stable HS200/400 speeds (HS400 support not upstream yet). Because the eMMC
+memories are fixed (and thus the drive type), I decided to implement the DT
+setup in a similar fashion to ACPI [1]. While implementing, I realized that all
+I did was not Renesas specific but generic, so I ended up putting it into the
+core.
 
-   ASoC: rsnd: add MIX Volume Ramp support
+So, whenever the new property (introduced in patch 1) is used, its value will
+be used regardless of a potentially implemented host driver specific
+select_drive_strength callback (patch 2). An example usage can be found in
+patch 3. Note that currently only eMMC is handled
 
-has been applied to the asoc tree at
+A branch for the Salvator-X(S) boards can be found here:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/emmc-drive-strength
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+A wiki page describing my test procedure can be found here:
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+http://elinux.org/Tests:eMMC-fixed-drive-strength
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+Changes since RFC v2 are described per patch. It is mainly a rebase to mmc/next
+and addressing Ulf's comments. Tested on Salvator-X (R-Car H3 ES1.0) and
+Salvator-XS (R-Car H3 ES2.0).
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+I know that patch 3 needs to go via Simon, but I still include it here for
+completeness.
 
 Thanks,
-Mark
 
->From 3e3c9ee1e4b3d0ef1f68f2037752196e7260bad9 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Sun, 1 Oct 2017 23:49:18 +0000
-Subject: [PATCH] ASoC: rsnd: add MIX Volume Ramp support
+   Wolfram
 
-Both DVC/MIX have Volume Ramp Control. This patch supprts MIX
-Volume Ramp. One note is that main purpose of MIX Volume Ramp
-is to reduce noise, thus, MIX Ramp range is very few if you
-compare to DVC Volume Ramp (DVC = 5bit, MIX = 4bit).
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=51ced59cc02e0d08f61772c888480b9b1749cef1
 
-You can use MIX Volume Ranp like below
-	amixer set "MIX Ramp Up Rate"   "0.125 dB/1 step"
-	amixer set "MIX Ramp Down Rate" "0.125 dB/1 step"
-	amixer set "MIX Ramp" on
-	aplay xxx.wav &
-	amixer set "MIX",0  80%  // DAI0 Volume Down
-	amixer set "MIX",1 100%  // DAI1 Volume Up
 
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Tested-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/sh/rcar/core.c |   2 +-
- sound/soc/sh/rcar/mix.c  | 158 +++++++++++++++++++++++++++++++++++++++++++++--
- sound/soc/sh/rcar/rsnd.h |   1 +
- 3 files changed, 154 insertions(+), 7 deletions(-)
+Wolfram Sang (3):
+  dt-bindings: mmc: describe new eMMC binding for fixed driver type
+  mmc: parse new binding for eMMC fixed driver type
+  arm64: renesas: salvator: set driver type for eMMC
 
-diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
-index 2d94b3d4519c..e9b0b0f5f0ee 100644
---- a/sound/soc/sh/rcar/core.c
-+++ b/sound/soc/sh/rcar/core.c
-@@ -1253,7 +1253,7 @@ const char * const volume_ramp_rate[] = {
- 	"1 dB/1 step",		 /* 00111 */
- 	"0.5 dB/1 step",	 /* 01000 */
- 	"0.25 dB/1 step",	 /* 01001 */
--	"0.125 dB/1 step",	 /* 01010 */
-+	"0.125 dB/1 step",	 /* 01010 = VOLUME_RAMP_MAX_MIX */
- 	"0.125 dB/2 steps",	 /* 01011 */
- 	"0.125 dB/4 steps",	 /* 01100 */
- 	"0.125 dB/8 steps",	 /* 01101 */
-diff --git a/sound/soc/sh/rcar/mix.c b/sound/soc/sh/rcar/mix.c
-index 6c4826c189a4..912cfec49038 100644
---- a/sound/soc/sh/rcar/mix.c
-+++ b/sound/soc/sh/rcar/mix.c
-@@ -7,6 +7,33 @@
-  * it under the terms of the GNU General Public License version 2 as
-  * published by the Free Software Foundation.
-  */
-+
-+/*
-+ *		    CTUn	MIXn
-+ *		    +------+	+------+
-+ * [SRC3 / SRC6] -> |CTU n0| ->	[MIX n0| ->
-+ * [SRC4 / SRC9] -> |CTU n1| ->	[MIX n1| ->
-+ * [SRC0 / SRC1] -> |CTU n2| ->	[MIX n2| ->
-+ * [SRC2 / SRC5] -> |CTU n3| ->	[MIX n3| ->
-+ *		    +------+	+------+
-+ *
-+ * ex)
-+ *	DAI0 : playback = <&src0 &ctu02 &mix0 &dvc0 &ssi0>;
-+ *	DAI1 : playback = <&src2 &ctu03 &mix0 &dvc0 &ssi0>;
-+ *
-+ * MIX Volume
-+ *	amixer set "MIX",0  100%  // DAI0 Volume
-+ *	amixer set "MIX",1  100%  // DAI1 Volume
-+ *
-+ * Volume Ramp
-+ *	amixer set "MIX Ramp Up Rate"   "0.125 dB/1 step"
-+ *	amixer set "MIX Ramp Down Rate" "4 dB/1 step"
-+ *	amixer set "MIX Ramp" on
-+ *	aplay xxx.wav &
-+ *	amixer set "MIX",0  80%  // DAI0 Volume Down
-+ *	amixer set "MIX",1 100%  // DAI1 Volume Up
-+ */
-+
- #include "rsnd.h"
- 
- #define MIX_NAME_SIZE	16
-@@ -14,8 +41,27 @@
- 
- struct rsnd_mix {
- 	struct rsnd_mod mod;
-+	struct rsnd_kctrl_cfg_s volumeA; /* MDBAR */
-+	struct rsnd_kctrl_cfg_s volumeB; /* MDBBR */
-+	struct rsnd_kctrl_cfg_s volumeC; /* MDBCR */
-+	struct rsnd_kctrl_cfg_s volumeD; /* MDBDR */
-+	struct rsnd_kctrl_cfg_s ren;	/* Ramp Enable */
-+	struct rsnd_kctrl_cfg_s rup;	/* Ramp Rate Up */
-+	struct rsnd_kctrl_cfg_s rdw;	/* Ramp Rate Down */
-+	u32 flags;
- };
- 
-+#define ONCE_KCTRL_INITIALIZED		(1 << 0)
-+#define HAS_VOLA			(1 << 1)
-+#define HAS_VOLB			(1 << 2)
-+#define HAS_VOLC			(1 << 3)
-+#define HAS_VOLD			(1 << 4)
-+
-+#define VOL_MAX				0x3ff
-+
-+#define rsnd_mod_to_mix(_mod)	\
-+	container_of((_mod), struct rsnd_mix, mod)
-+
- #define rsnd_mix_get(priv, id) ((struct rsnd_mix *)(priv->mix) + id)
- #define rsnd_mix_nr(priv) ((priv)->mix_nr)
- #define for_each_rsnd_mix(pos, priv, i)					\
-@@ -36,26 +82,43 @@ static void rsnd_mix_halt(struct rsnd_mod *mod)
- 	rsnd_mod_write(mod, MIX_SWRSR, 0);
- }
- 
-+#define rsnd_mix_get_vol(mix, X) \
-+	rsnd_flags_has(mix, HAS_VOL##X) ? \
-+		(VOL_MAX - mix->volume##X.cfg.val[0]) : 0
- static void rsnd_mix_volume_parameter(struct rsnd_dai_stream *io,
- 				      struct rsnd_mod *mod)
- {
--	rsnd_mod_write(mod, MIX_MDBAR, 0);
--	rsnd_mod_write(mod, MIX_MDBBR, 0);
--	rsnd_mod_write(mod, MIX_MDBCR, 0);
--	rsnd_mod_write(mod, MIX_MDBDR, 0);
-+	struct rsnd_priv *priv = rsnd_mod_to_priv(mod);
-+	struct device *dev = rsnd_priv_to_dev(priv);
-+	struct rsnd_mix *mix = rsnd_mod_to_mix(mod);
-+	u32 volA = rsnd_mix_get_vol(mix, A);
-+	u32 volB = rsnd_mix_get_vol(mix, B);
-+	u32 volC = rsnd_mix_get_vol(mix, C);
-+	u32 volD = rsnd_mix_get_vol(mix, D);
-+
-+	dev_dbg(dev, "MIX A/B/C/D = %02x/%02x/%02x/%02x\n",
-+		volA, volB, volC, volD);
-+
-+	rsnd_mod_write(mod, MIX_MDBAR, volA);
-+	rsnd_mod_write(mod, MIX_MDBBR, volB);
-+	rsnd_mod_write(mod, MIX_MDBCR, volC);
-+	rsnd_mod_write(mod, MIX_MDBDR, volD);
- }
- 
- static void rsnd_mix_volume_init(struct rsnd_dai_stream *io,
- 				 struct rsnd_mod *mod)
- {
-+	struct rsnd_mix *mix = rsnd_mod_to_mix(mod);
-+
- 	rsnd_mod_write(mod, MIX_MIXIR, 1);
- 
- 	/* General Information */
- 	rsnd_mod_write(mod, MIX_ADINR, rsnd_runtime_channel_after_ctu(io));
- 
- 	/* volume step */
--	rsnd_mod_write(mod, MIX_MIXMR, 0);
--	rsnd_mod_write(mod, MIX_MVPDR, 0);
-+	rsnd_mod_write(mod, MIX_MIXMR, mix->ren.cfg.val[0]);
-+	rsnd_mod_write(mod, MIX_MVPDR, mix->rup.cfg.val[0] << 8 |
-+				       mix->rdw.cfg.val[0]);
- 
- 	/* common volume parameter */
- 	rsnd_mix_volume_parameter(io, mod);
-@@ -109,11 +172,94 @@ static int rsnd_mix_quit(struct rsnd_mod *mod,
- 	return 0;
- }
- 
-+static int rsnd_mix_pcm_new(struct rsnd_mod *mod,
-+			    struct rsnd_dai_stream *io,
-+			    struct snd_soc_pcm_runtime *rtd)
-+{
-+	struct rsnd_priv *priv = rsnd_mod_to_priv(mod);
-+	struct device *dev = rsnd_priv_to_dev(priv);
-+	struct rsnd_mix *mix = rsnd_mod_to_mix(mod);
-+	struct rsnd_mod *src_mod = rsnd_io_to_mod_src(io);
-+	struct rsnd_kctrl_cfg_s *volume;
-+	int ret;
-+
-+	switch (rsnd_mod_id(src_mod)) {
-+	case 3:
-+	case 6:	/* MDBAR */
-+		volume = &mix->volumeA;
-+		rsnd_flags_set(mix, HAS_VOLA);
-+		break;
-+	case 4:
-+	case 9:	/* MDBBR */
-+		volume = &mix->volumeB;
-+		rsnd_flags_set(mix, HAS_VOLB);
-+		break;
-+	case 0:
-+	case 1:	/* MDBCR */
-+		volume = &mix->volumeC;
-+		rsnd_flags_set(mix, HAS_VOLC);
-+		break;
-+	case 2:
-+	case 5:	/* MDBDR */
-+		volume = &mix->volumeD;
-+		rsnd_flags_set(mix, HAS_VOLD);
-+		break;
-+	default:
-+		dev_err(dev, "unknown SRC is connected\n");
-+		return -EINVAL;
-+	}
-+
-+	/* Volume */
-+	ret = rsnd_kctrl_new_s(mod, io, rtd,
-+			       "MIX Playback Volume",
-+			       rsnd_kctrl_accept_anytime,
-+			       rsnd_mix_volume_update,
-+			       volume, VOL_MAX);
-+	if (ret < 0)
-+		return ret;
-+	volume->cfg.val[0] = VOL_MAX;
-+
-+	if (rsnd_flags_has(mix, ONCE_KCTRL_INITIALIZED))
-+		return ret;
-+
-+	/* Ramp */
-+	ret = rsnd_kctrl_new_s(mod, io, rtd,
-+			       "MIX Ramp Switch",
-+			       rsnd_kctrl_accept_anytime,
-+			       rsnd_mix_volume_update,
-+			       &mix->ren, 1);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = rsnd_kctrl_new_e(mod, io, rtd,
-+			       "MIX Ramp Up Rate",
-+			       rsnd_kctrl_accept_anytime,
-+			       rsnd_mix_volume_update,
-+			       &mix->rup,
-+			       volume_ramp_rate,
-+			       VOLUME_RAMP_MAX_MIX);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = rsnd_kctrl_new_e(mod, io, rtd,
-+			       "MIX Ramp Down Rate",
-+			       rsnd_kctrl_accept_anytime,
-+			       rsnd_mix_volume_update,
-+			       &mix->rdw,
-+			       volume_ramp_rate,
-+			       VOLUME_RAMP_MAX_MIX);
-+
-+	rsnd_flags_set(mix, ONCE_KCTRL_INITIALIZED);
-+
-+	return ret;
-+}
-+
- static struct rsnd_mod_ops rsnd_mix_ops = {
- 	.name		= MIX_NAME,
- 	.probe		= rsnd_mix_probe_,
- 	.init		= rsnd_mix_init,
- 	.quit		= rsnd_mix_quit,
-+	.pcm_new	= rsnd_mix_pcm_new,
- };
- 
- struct rsnd_mod *rsnd_mix_mod_get(struct rsnd_priv *priv, int id)
-diff --git a/sound/soc/sh/rcar/rsnd.h b/sound/soc/sh/rcar/rsnd.h
-index 9d66a15000fa..0d9f9c3343da 100644
---- a/sound/soc/sh/rcar/rsnd.h
-+++ b/sound/soc/sh/rcar/rsnd.h
-@@ -662,6 +662,7 @@ int rsnd_kctrl_new(struct rsnd_mod *mod,
- 
- extern const char * const volume_ramp_rate[];
- #define VOLUME_RAMP_MAX_DVC	(0x17 + 1)
-+#define VOLUME_RAMP_MAX_MIX	(0x0a + 1)
- 
- /*
-  *	R-Car SSI
+ Documentation/devicetree/bindings/mmc/mmc.txt    |  3 +++
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi |  1 +
+ drivers/mmc/core/host.c                          | 13 ++++++++++++-
+ drivers/mmc/core/mmc.c                           | 11 ++++++++---
+ include/linux/mmc/host.h                         |  2 ++
+ 5 files changed, 26 insertions(+), 4 deletions(-)
+
 -- 
-2.14.1
+2.11.0
