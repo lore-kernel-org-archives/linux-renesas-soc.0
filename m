@@ -1,8 +1,18 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Mon, 16 Oct 2017 13:29:09 +0100
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+MIME-Version: 1.0
+In-Reply-To: <20171014141405.GG23750@n2100.armlinux.org.uk>
+References: <1507044184-27152-1-git-send-email-geert+renesas@glider.be>
+ <nycvar.YSQ.7.76.1710031134140.5407@knanqh.ubzr> <CAMuHMdWJKQb5JY+diH=7dqNuypkPUqBeOEPSLOrfrnbfh2siRQ@mail.gmail.com>
+ <CAMuHMdXpPfipmEdW0Dap6Pjwhz3QxLcrcbtU0RhCu721k-sBpA@mail.gmail.com>
+ <CAMuHMdWH_pebSYAp04gmVceu3qqPczGaXS36R8CtzAYHo-CNog@mail.gmail.com>
+ <20171010203324.GX4394@atomide.com> <20171012102341.GF23750@n2100.armlinux.org.uk>
+ <nycvar.YSQ.7.76.1710121123530.1718@knanqh.ubzr> <20171014141405.GG23750@n2100.armlinux.org.uk>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Sun, 15 Oct 2017 10:04:16 +0200
+Message-ID: <CAMuHMdX7Z0D2unRqC9z04f0MVsxLuVxouvquyYBHKavnycfh=w@mail.gmail.com>
+Subject: Re: [PATCH] ARM: head-common.S: Clear lr before jumping to start_kernel()
+To: Russell King - ARM Linux <linux@armlinux.org.uk>
 Cc: Nicolas Pitre <nicolas.pitre@linaro.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Arnd Bergmann <arnd@arndb.de>,
@@ -14,69 +24,73 @@ Cc: Nicolas Pitre <nicolas.pitre@linaro.org>,
         "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
         "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] ARM: head-common.S: Clear lr before jumping to
- start_kernel()
-Message-ID: <20171016122908.GJ23750@n2100.armlinux.org.uk>
-References: <1507044184-27152-1-git-send-email-geert+renesas@glider.be>
- <nycvar.YSQ.7.76.1710031134140.5407@knanqh.ubzr>
- <CAMuHMdWJKQb5JY+diH=7dqNuypkPUqBeOEPSLOrfrnbfh2siRQ@mail.gmail.com>
- <CAMuHMdXpPfipmEdW0Dap6Pjwhz3QxLcrcbtU0RhCu721k-sBpA@mail.gmail.com>
- <CAMuHMdWH_pebSYAp04gmVceu3qqPczGaXS36R8CtzAYHo-CNog@mail.gmail.com>
- <20171010203324.GX4394@atomide.com>
- <20171012102341.GF23750@n2100.armlinux.org.uk>
- <nycvar.YSQ.7.76.1710121123530.1718@knanqh.ubzr>
- <20171014141405.GG23750@n2100.armlinux.org.uk>
- <CAMuHMdX7Z0D2unRqC9z04f0MVsxLuVxouvquyYBHKavnycfh=w@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdX7Z0D2unRqC9z04f0MVsxLuVxouvquyYBHKavnycfh=w@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sun, Oct 15, 2017 at 10:04:16AM +0200, Geert Uytterhoeven wrote:
-> On Sat, Oct 14, 2017 at 4:14 PM, Russell King - ARM Linux
-> <linux@armlinux.org.uk> wrote:
-> > Thanks, it would've been good to have known that ahead of time.
-> >
-> > It's why the patch system has the KernelVersion: tag:
-> >
-> >  6. Kernel version.
-> >     On a separate line, add a tag "KernelVersion: " followed by the kernel
-> >     version that the patch was generated against. This should be formatted
-> >     as "KernelVersion: 2.6.0-rmk1"
-> >
-> > This is because that information is relevant for knowing where it should
-> > be applied, and to which branch.  Having it be something else means I
-> > have to guess, and that can result in the patch being discarded in this
-> > manner if I don't find where it's supposed to be applied.
-> 
-> That's why we have the standard Fixes tag, which was included
-> Fixes: 9520b1a1b5f7a348 ("ARM: head-common.S: speed up startup code")
+On Sat, Oct 14, 2017 at 4:14 PM, Russell King - ARM Linux
+<linux@armlinux.org.uk> wrote:
+> On Thu, Oct 12, 2017 at 11:25:50AM -0400, Nicolas Pitre wrote:
+>> On Thu, 12 Oct 2017, Russell King - ARM Linux wrote:
+>>
+>> > On Tue, Oct 10, 2017 at 01:33:25PM -0700, Tony Lindgren wrote:
+>> > > * Geert Uytterhoeven <geert@linux-m68k.org> [171003 11:32]:
+>> > > > On Tue, Oct 3, 2017 at 8:15 PM, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>> > > > > On Tue, Oct 3, 2017 at 8:11 PM, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>> > > > >> On Tue, Oct 3, 2017 at 5:37 PM, Nicolas Pitre <nicolas.pitre@linaro.org> wrote:
+>> > > > >>> On Tue, 3 Oct 2017, Geert Uytterhoeven wrote:
+>> > > > >>> Please send it to RMK's patch system.
+>> > > > >>
+>> > > > >> Done (I hope so ;-)
+>> > > > >
+>> > > > > Failed. Retrying.
+>> > > >
+>> > > > Yiha ;-)
+>> > > >
+>> > > > http://www.armlinux.org.uk/developer/patches/viewpatch.php?id=8702/1
+>> > >
+>> > > This also fixes the spamming I started seeing with next-20171009:
+>> > >
+>> > > Tested-by: Tony Lindgren <tony@atomide.com>
+>> >
+>> > It's all nice and good that people are testing this patch, but I can't
+>> > apply it to -rc1, nor my "misc" branch.  It appears that this is due
+>> > to patches going through other trees.
+>> >
+>> > Sorry, I can't take this patch.
+>>
+>> It should go into your devel-testing branch as this must be applied on
+>> top of my xip_zdata branch that you merged there.
+>
+> Thanks, it would've been good to have known that ahead of time.
+>
+> It's why the patch system has the KernelVersion: tag:
+>
+>  6. Kernel version.
+>     On a separate line, add a tag "KernelVersion: " followed by the kernel
+>     version that the patch was generated against. This should be formatted
+>     as "KernelVersion: 2.6.0-rmk1"
+>
+> This is because that information is relevant for knowing where it should
+> be applied, and to which branch.  Having it be something else means I
+> have to guess, and that can result in the patch being discarded in this
+> manner if I don't find where it's supposed to be applied.
 
-Wrong.  You're confusing two different things.
+That's why we have the standard Fixes tag, which was included
+Fixes: 9520b1a1b5f7a348 ("ARM: head-common.S: speed up startup code")
 
-The fixes tag identifies the commit to which the FIX applies.  That's
-not what the kernelversion tag described above is for.  That's to
-describe where the patch was GENERATED, so that it's easier to know
-where it should be applied.
+It's trivial for the repo maintainer to know which branch the fix to apply to,
+given the Fixes tag.
+It's non-trivial to know the branch for the patch submitter, who is forced to
+use a non-standard patch submission system.
 
-> It's trivial for the repo maintainer to know which branch the fix to
-> apply to, given the Fixes tag.
-> It's non-trivial to know the branch for the patch submitter, who is
-> forced to use a non-standard patch submission system.
+Gr{oetje,eeting}s,
 
-So what you're telling me is that you're unable to describe what commit
-or the kernel version that the patch was GENERATED against.
+                        Geert
 
-I /really/ don't buy such an argument one bit.  If you don't have that
-information, by definition you can't generate a git patch.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-If it was trivial, then don't you think the patch would've been applied
-without all this crap?  The proof is here in this thread, it's not as
-trivial as you think it is.
-
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
-According to speedtest.net: 8.21Mbps down 510kbps up
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
