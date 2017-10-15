@@ -1,31 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:49622 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751196AbdJPHqU (ORCPT
+Received: from sauhun.de ([88.99.104.3]:46263 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750971AbdJOMq1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Oct 2017 03:46:20 -0400
-Date: Mon, 16 Oct 2017 09:46:02 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] arm64: renesas: salvator: set driver type for eMMC
-Message-ID: <20171016074601.jrcvxxm6minuq7u3@verge.net.au>
+        Sun, 15 Oct 2017 08:46:27 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH v3 3/3] arm64: renesas: salvator: set driver type for eMMC
+Date: Sun, 15 Oct 2017 14:46:15 +0200
+Message-Id: <20171015124615.31391-4-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20171015124615.31391-1-wsa+renesas@sang-engineering.com>
 References: <20171015124615.31391-1-wsa+renesas@sang-engineering.com>
- <20171015124615.31391-4-wsa+renesas@sang-engineering.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20171015124615.31391-4-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sun, Oct 15, 2017 at 02:46:15PM +0200, Wolfram Sang wrote:
-> These boards are known to have eMMC issues with the default driver type.
-> Specify a working one.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+These boards are known to have eMMC issues with the default driver type.
+Specify a working one.
 
-Hi,
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-I have marked this as deferred pending acceptance of the bindings.
-Please repost or otherwise ping me once that dependency has been accepted.
+no changes since v2
+
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+index 4786c67b5e6527..215e2d11a0490a 100644
+--- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+@@ -579,6 +579,7 @@
+ 	bus-width = <8>;
+ 	mmc-hs200-1_8v;
+ 	non-removable;
++	fixed-emmc-driver-type = <1>;
+ 	status = "okay";
+ };
+ 
+-- 
+2.11.0
