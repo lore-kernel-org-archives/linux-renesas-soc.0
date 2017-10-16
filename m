@@ -1,51 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:55516 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751922AbdJDMIb (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:48970 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753034AbdJPNz2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Oct 2017 08:08:31 -0400
+        Mon, 16 Oct 2017 09:55:28 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Jonathan Cameron <jic23@kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>, linux-clk@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/3] iio: adc: rcar-gyroadc: Misc improvements
-Date: Wed,  4 Oct 2017 14:08:23 +0200
-Message-Id: <1507118906-8946-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH 05/10] [RFC] ARM: shmobile: pm-rmobile: Use GENPD_FLAG_ACTIVE_WAKEUP
+Date: Mon, 16 Oct 2017 15:55:11 +0200
+Message-Id: <1508162116-5043-6-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
+References: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Jonathan, Marek,
+Set the newly introduced GENPD_FLAG_ACTIVE_WAKEUP, which allows to
+remove the driver's own "always true" callback.
 
-This patch series contains a few improvements for the driver for the
-R-Car GyroADC block, which can be found on R-Car Gen2 (arm32) and Gen3
-(arm64) SoCs.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+This must not be applied before "PM / Domain: Enable genpd users to
+specify default active wakeup behavior" has landed upstream, hence the
+"RFC".
+---
+ arch/arm/mach-shmobile/pm-rmobile.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-Thanks!
-
-Geert Uytterhoeven (3):
-  iio: adc: rcar-gyroadc: Cast pointer to uintptr_t to fix warning on
-    64-bit
-  iio: adc: rcar-gyroadc: Enable compile-testing on non-ARM
-  iio: adc: rcar-gyroadc: Use of_device_get_match_data() helper
-
- drivers/iio/adc/Kconfig        | 2 +-
- drivers/iio/adc/rcar-gyroadc.c | 7 +++----
- 2 files changed, 4 insertions(+), 5 deletions(-)
-
+diff --git a/arch/arm/mach-shmobile/pm-rmobile.c b/arch/arm/mach-shmobile/pm-rmobile.c
+index 3a4ed4c33a68e51e..e348bcfe389da51b 100644
+--- a/arch/arm/mach-shmobile/pm-rmobile.c
++++ b/arch/arm/mach-shmobile/pm-rmobile.c
+@@ -120,18 +120,12 @@ static int rmobile_pd_power_up(struct generic_pm_domain *genpd)
+ 	return __rmobile_pd_power_up(to_rmobile_pd(genpd), true);
+ }
+ 
+-static bool rmobile_pd_active_wakeup(struct device *dev)
+-{
+-	return true;
+-}
+-
+ static void rmobile_init_pm_domain(struct rmobile_pm_domain *rmobile_pd)
+ {
+ 	struct generic_pm_domain *genpd = &rmobile_pd->genpd;
+ 	struct dev_power_governor *gov = rmobile_pd->gov;
+ 
+-	genpd->flags |= GENPD_FLAG_PM_CLK;
+-	genpd->dev_ops.active_wakeup	= rmobile_pd_active_wakeup;
++	genpd->flags |= GENPD_FLAG_PM_CLK | GENPD_FLAG_ACTIVE_WAKEUP;
+ 	genpd->power_off		= rmobile_pd_power_down;
+ 	genpd->power_on			= rmobile_pd_power_up;
+ 	genpd->attach_dev		= cpg_mstp_attach_dev;
 -- 
 2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
