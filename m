@@ -1,70 +1,83 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:62858 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751420AbdJLJ10 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:49736 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750914AbdJPH6o (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 12 Oct 2017 05:27:26 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH] arm64: dts: renesas: salvator-common: add dr_mode property for USB2.0 channel 0
-Date: Thu, 12 Oct 2017 18:23:30 +0900
-Message-Id: <1507800210-13403-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Mon, 16 Oct 2017 03:58:44 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v2 3/3] mmc: renesas_sdhi: implement R-Car Gen[123] fallback compatibility strings
+Date: Mon, 16 Oct 2017 09:58:22 +0200
+Message-Id: <20171016075822.18177-4-horms+renesas@verge.net.au>
+In-Reply-To: <20171016075822.18177-1-horms+renesas@verge.net.au>
+References: <20171016075822.18177-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Since Salvator-X[S] have a USB2.0 dual-role channel (CN9), this patch
-adds dr_mode property for USB2.0 channel 0 (EHCI/OHCI and HS-USB)
-as "otg".
+Implement fallback compatibility strings for R-Car Gen 1, 2 and 3.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+In the case of Renesas R-Car hardware we know that there are generations of
+SoCs, f.e. Gen 1 and 2. But beyond that its not clear what the relationship
+between IP blocks might be. For example, I believe that r8a7790 is older
+than r8a7791 but that doesn't imply that the latter is a descendant of the
+former or vice versa.
+
+We can, however, by examining the documentation and behaviour of the
+hardware at run-time observe that the current driver implementation appears
+to be compatible with the IP blocks on SoCs within a given generation.
+
+For the above reasons and convenience when enabling new SoCs a
+per-generation fallback compatibility string scheme being adopted for
+drivers for Renesas SoCs.
+
+Also, improve readability by listing the shmobile fallback compatibility
+string after the more-specific compatibility strings they provide a
+fallback for.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- This patch based on the renesas.git / renesas-devel-20171011-v4.14-rc4 tag.
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c | 1 +
+ drivers/mmc/host/renesas_sdhi_sys_dmac.c      | 5 ++++-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
- Using dual-role channel (or not) is related to the type of USB receptor on
- board specification. So, I added the property into the salvator-common.dtsi.
-
- This property will be used by phy-rcar-gen3-usb2 driver in the future [1].
- However, adding this property without the [1] patch will not cause any
- side-effects.
-
- [1] : https://patchwork.kernel.org/patch/10001113/
-
-
- arch/arm64/boot/dts/renesas/salvator-common.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-index 3dcb26b..9bd409b 100644
---- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-@@ -282,6 +282,7 @@
+diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+index f905f2361d12..637c27057ac2 100644
+--- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+@@ -88,6 +88,7 @@ static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
+ static const struct of_device_id renesas_sdhi_internal_dmac_of_match[] = {
+ 	{ .compatible = "renesas,sdhi-r8a7795", .data = &of_rcar_gen3_compatible, },
+ 	{ .compatible = "renesas,sdhi-r8a7796", .data = &of_rcar_gen3_compatible, },
++	{ .compatible = "renesas,rcar-gen3-sdhi", .data = &of_rcar_gen3_compatible, },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, renesas_sdhi_internal_dmac_of_match);
+diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+index df4465439e13..9ab10436e4b8 100644
+--- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+@@ -91,7 +91,6 @@ static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
  };
  
- &ehci0 {
-+	dr_mode = "otg";
- 	status = "okay";
+ static const struct of_device_id renesas_sdhi_sys_dmac_of_match[] = {
+-	{ .compatible = "renesas,sdhi-shmobile" },
+ 	{ .compatible = "renesas,sdhi-sh73a0", .data = &of_default_cfg, },
+ 	{ .compatible = "renesas,sdhi-r8a73a4", .data = &of_default_cfg, },
+ 	{ .compatible = "renesas,sdhi-r8a7740", .data = &of_default_cfg, },
+@@ -107,6 +106,10 @@ static const struct of_device_id renesas_sdhi_sys_dmac_of_match[] = {
+ 	{ .compatible = "renesas,sdhi-r8a7794", .data = &of_rcar_gen2_compatible, },
+ 	{ .compatible = "renesas,sdhi-r8a7795", .data = &of_rcar_gen3_compatible, },
+ 	{ .compatible = "renesas,sdhi-r8a7796", .data = &of_rcar_gen3_compatible, },
++	{ .compatible = "renesas,rcar-gen1-sdhi", .data = &of_rcar_gen1_compatible, },
++	{ .compatible = "renesas,rcar-gen2-sdhi", .data = &of_rcar_gen2_compatible, },
++	{ .compatible = "renesas,rcar-gen3-sdhi", .data = &of_rcar_gen3_compatible, },
++	{ .compatible = "renesas,sdhi-shmobile" },
+ 	{},
  };
- 
-@@ -294,6 +295,7 @@
- };
- 
- &hsusb {
-+	dr_mode = "otg";
- 	status = "okay";
- };
- 
-@@ -356,6 +358,7 @@
- };
- 
- &ohci0 {
-+	dr_mode = "otg";
- 	status = "okay";
- };
- 
+ MODULE_DEVICE_TABLE(of, renesas_sdhi_sys_dmac_of_match);
 -- 
-1.9.1
+2.11.0
