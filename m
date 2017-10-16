@@ -1,69 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:50984 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753432AbdJPWHY (ORCPT
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:47569 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755417AbdJPQfa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Oct 2017 18:07:24 -0400
-Date: Tue, 17 Oct 2017 00:07:22 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Niklas =?utf-8?Q?S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc: linux-pm@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
+        Mon, 16 Oct 2017 12:35:30 -0400
+MIME-Version: 1.0
+In-Reply-To: <20171016145259.27897-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20171016145259.27897-1-niklas.soderlund+renesas@ragnatech.se>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 16 Oct 2017 18:35:28 +0200
+Message-ID: <CAMuHMdUW6HG5on0yKjqw=SrrdRucyoFWGebXjogjQAo+sM1Few@mail.gmail.com>
 Subject: Re: [PATCH v2] thermal: rcar_gen3_thermal: fix initialization
  sequence for H3 ES2.0
-Message-ID: <20171016220722.2szoquhmznzhqlwk@ninjato>
-References: <20171016145259.27897-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="qtjylg4i2vqxkb42"
-Content-Disposition: inline
-In-Reply-To: <20171016145259.27897-1-niklas.soderlund+renesas@ragnatech.se>
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Linux PM list <linux-pm@vger.kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Niklas,
 
---qtjylg4i2vqxkb42
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Oct 16, 2017 at 04:52:59PM +0200, Niklas S=C3=B6derlund wrote:
+On Mon, Oct 16, 2017 at 4:52 PM, Niklas S=C3=B6derlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
 > The initialization sequence for H3 (r8a7795) ES1.x and ES2.0 is
 > different. H3 ES2.0 and later uses the same sequence as M3 (r8a7796)
 > ES1.0. Fix this by not looking at compatible strings and instead
 > defaulting to the r8a7796 initialization sequence and use
 > soc_device_match() to check for H3 ES1.x.
->=20
+>
 > Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
 se>
 
-Looks good to me, and what Geert said :)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> --- a/drivers/thermal/rcar_gen3_thermal.c
+> +++ b/drivers/thermal/rcar_gen3_thermal.c
 
+> @@ -371,7 +365,9 @@ static int rcar_gen3_thermal_probe(struct platform_de=
+vice *pdev)
+>         if (!priv)
+>                 return -ENOMEM;
+>
+> -       priv->data =3D of_device_get_match_data(dev);
+> +       priv->thermal_init =3D &rcar_gen3_thermal_init;
 
---qtjylg4i2vqxkb42
-Content-Type: application/pgp-signature; name="signature.asc"
+You can drop the "&".
 
------BEGIN PGP SIGNATURE-----
+> +       if (soc_device_match(r8a7795es1))
+> +               priv->thermal_init =3D &rcar_gen3_thermal_init_r8a7795es1=
+;
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlnlLZQACgkQFA3kzBSg
-KbYriQ/8C77EyVpsIHaZ/IK/UFo/s/U67fBd13rrqbIC71RN5xKYKro/2V938i4Z
-U5WBUlnRl0jgB6YseU2MbTfFLA7KOP/QBnw1o2oYEMhEIVdlfQaIBbw/lQqaQ7r+
-kTGOU1EX8/CTRHOo1SZF97GAITINpi6QJkf1255sA/+6nehUiHWRASLxIwD5jA7h
-ln4QKXlkXumeo+1XEpdvrdU7hwQ1QFc5zd4/7tBSQVSpB2n7MwWpFJ1HXzJYoLAj
-+PQyONxMJRm1WwLze6MX2hYu7EyGP2/0+wVGZtBfZszuxponxIYRV3CTHhkOctsG
-VNuYYfJhvu5yf0Wk2eeOMExjCgcMUI1NlDjAzFTlREgTAXXU3NstarUPV9VFJipM
-CxBZR+XxjI5dLwwLZCBdlGhjtkM+Nsjt9QknClhoSwG0PpYcmVU1m6HtFDOvuqjD
-Et9SuUIgNpqzs+xep7cT/cQBUf6cQR+xwflUfxnp6UhpVvMLH1Ixm5MjAwdmo/fq
-li6i6/9yTJBXo6BLA1Jl3p7wHe1DO0mTSrE3/q2VR+S1VdZmh0kQmwdisT1GSOuv
-qtj4LVwJtPE2+hVpXqJ4ujvpHoEkk2TG5vrqU7ComkF0GB0GnpwYwmFG00LAHK41
-p6pN4+xMR+/kqDBCEyGF21cnQr6ToIMeGuUeDMyQ7fzqRlLHJHs=
-=OfJp
------END PGP SIGNATURE-----
+Likewise.
 
---qtjylg4i2vqxkb42--
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
