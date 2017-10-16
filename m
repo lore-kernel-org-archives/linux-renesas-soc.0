@@ -1,78 +1,44 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:59324 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753023AbdJPNz2 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Oct 2017 09:55:28 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <1507908142-13142-4-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1507908142-13142-1-git-send-email-fabrizio.castro@bp.renesas.com> <1507908142-13142-4-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 16 Oct 2017 09:36:15 +0200
+Message-ID: <CAMuHMdU+Rr+imy4=DFo39rFdr+dwN75EELBpDz3BdxSco7VqWQ@mail.gmail.com>
+Subject: Re: [PATCH 3/4] clk: renesas: cpg-mssr: Add du1 clock to R8A7745
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>, linux-clk@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 09/10] [RFC] ravb: Remove obsolete explicit clock handling for WoL
-Date: Mon, 16 Oct 2017 15:55:15 +0200
-Message-Id: <1508162116-5043-10-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
-References: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Currently, if Wake-on-LAN is enabled, the EtherAVB device's module clock
-is manually kept running during system suspend, to make sure the device
-stays active.
+On Fri, Oct 13, 2017 at 5:22 PM, Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 
-Since "soc: renesas: rcar-sysc: Keep wakeup sources active during system
-suspend", this workaround is no longer needed.  Hence remove all
-explicit clock handling to keep the device active.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in clk-renesas-for-v4.15.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-This must not be applied before the dependency has landed upstream,
-hence the "RFC"!
----
- drivers/net/ethernet/renesas/ravb_main.c | 8 --------
- 1 file changed, 8 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index fdf30bfa403bf416..11ffccca11d56df5 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -2218,9 +2218,6 @@ static int ravb_wol_setup(struct net_device *ndev)
- 	/* Enable MagicPacket */
- 	ravb_modify(ndev, ECMR, ECMR_MPDE, ECMR_MPDE);
- 
--	/* Increased clock usage so device won't be suspended */
--	clk_enable(priv->clk);
--
- 	return enable_irq_wake(priv->emac_irq);
- }
- 
-@@ -2239,9 +2236,6 @@ static int ravb_wol_restore(struct net_device *ndev)
- 	if (ret < 0)
- 		return ret;
- 
--	/* Restore clock usage count */
--	clk_disable(priv->clk);
--
- 	return disable_irq_wake(priv->emac_irq);
- }
- 
-@@ -2289,8 +2283,6 @@ static int __maybe_unused ravb_resume(struct device *dev)
- 		 *       this clock dance should be removed.
- 		 */
- 		clk_disable(priv->clk);
--		clk_disable(priv->clk);
--		clk_enable(priv->clk);
- 		clk_enable(priv->clk);
- 
- 		/* Set reset mode to rearm the WoL logic */
--- 
-2.7.4
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
