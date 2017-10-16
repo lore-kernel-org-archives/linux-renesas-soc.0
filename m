@@ -1,96 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f48.google.com ([209.85.215.48]:53923 "EHLO
-        mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753602AbdJPPON (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:59324 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753023AbdJPNz2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Oct 2017 11:14:13 -0400
-Received: by mail-lf0-f48.google.com with SMTP id l23so17395119lfk.10
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 16 Oct 2017 08:14:12 -0700 (PDT)
-From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
-Date: Mon, 16 Oct 2017 17:14:08 +0200
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>,
+        Mon, 16 Oct 2017 09:55:28 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH 09/10] [RFC] ravb: Remove obsolete explicit clock
- handling for WoL
-Message-ID: <20171016151408.GD19910@bigcity.dyn.berto.se>
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>, linux-clk@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 09/10] [RFC] ravb: Remove obsolete explicit clock handling for WoL
+Date: Mon, 16 Oct 2017 15:55:15 +0200
+Message-Id: <1508162116-5043-10-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
 References: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
- <1508162116-5043-10-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1508162116-5043-10-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+Currently, if Wake-on-LAN is enabled, the EtherAVB device's module clock
+is manually kept running during system suspend, to make sure the device
+stays active.
 
-On 2017-10-16 15:55:15 +0200, Geert Uytterhoeven wrote:
-> Currently, if Wake-on-LAN is enabled, the EtherAVB device's module clock
-> is manually kept running during system suspend, to make sure the device
-> stays active.
-> 
-> Since "soc: renesas: rcar-sysc: Keep wakeup sources active during system
-> suspend", this workaround is no longer needed.  Hence remove all
-> explicit clock handling to keep the device active.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Since "soc: renesas: rcar-sysc: Keep wakeup sources active during system
+suspend", this workaround is no longer needed.  Hence remove all
+explicit clock handling to keep the device active.
 
-Reviewed-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+This must not be applied before the dependency has landed upstream,
+hence the "RFC"!
+---
+ drivers/net/ethernet/renesas/ravb_main.c | 8 --------
+ 1 file changed, 8 deletions(-)
 
-> ---
-> This must not be applied before the dependency has landed upstream,
-> hence the "RFC"!
-> ---
->  drivers/net/ethernet/renesas/ravb_main.c | 8 --------
->  1 file changed, 8 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-> index fdf30bfa403bf416..11ffccca11d56df5 100644
-> --- a/drivers/net/ethernet/renesas/ravb_main.c
-> +++ b/drivers/net/ethernet/renesas/ravb_main.c
-> @@ -2218,9 +2218,6 @@ static int ravb_wol_setup(struct net_device *ndev)
->  	/* Enable MagicPacket */
->  	ravb_modify(ndev, ECMR, ECMR_MPDE, ECMR_MPDE);
->  
-> -	/* Increased clock usage so device won't be suspended */
-> -	clk_enable(priv->clk);
-> -
->  	return enable_irq_wake(priv->emac_irq);
->  }
->  
-> @@ -2239,9 +2236,6 @@ static int ravb_wol_restore(struct net_device *ndev)
->  	if (ret < 0)
->  		return ret;
->  
-> -	/* Restore clock usage count */
-> -	clk_disable(priv->clk);
-> -
->  	return disable_irq_wake(priv->emac_irq);
->  }
->  
-> @@ -2289,8 +2283,6 @@ static int __maybe_unused ravb_resume(struct device *dev)
->  		 *       this clock dance should be removed.
->  		 */
->  		clk_disable(priv->clk);
-> -		clk_disable(priv->clk);
-> -		clk_enable(priv->clk);
->  		clk_enable(priv->clk);
->  
->  		/* Set reset mode to rearm the WoL logic */
-> -- 
-> 2.7.4
-> 
-
+diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+index fdf30bfa403bf416..11ffccca11d56df5 100644
+--- a/drivers/net/ethernet/renesas/ravb_main.c
++++ b/drivers/net/ethernet/renesas/ravb_main.c
+@@ -2218,9 +2218,6 @@ static int ravb_wol_setup(struct net_device *ndev)
+ 	/* Enable MagicPacket */
+ 	ravb_modify(ndev, ECMR, ECMR_MPDE, ECMR_MPDE);
+ 
+-	/* Increased clock usage so device won't be suspended */
+-	clk_enable(priv->clk);
+-
+ 	return enable_irq_wake(priv->emac_irq);
+ }
+ 
+@@ -2239,9 +2236,6 @@ static int ravb_wol_restore(struct net_device *ndev)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	/* Restore clock usage count */
+-	clk_disable(priv->clk);
+-
+ 	return disable_irq_wake(priv->emac_irq);
+ }
+ 
+@@ -2289,8 +2283,6 @@ static int __maybe_unused ravb_resume(struct device *dev)
+ 		 *       this clock dance should be removed.
+ 		 */
+ 		clk_disable(priv->clk);
+-		clk_disable(priv->clk);
+-		clk_enable(priv->clk);
+ 		clk_enable(priv->clk);
+ 
+ 		/* Set reset mode to rearm the WoL logic */
 -- 
-Regards,
-Niklas S�derlund
+2.7.4
