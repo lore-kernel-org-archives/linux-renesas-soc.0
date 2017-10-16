@@ -1,47 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:51937 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932293AbdJRHfy (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:49756 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750914AbdJPH6r (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Oct 2017 03:35:54 -0400
-Received: by mail-wm0-f66.google.com with SMTP id f4so8258896wme.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 18 Oct 2017 00:35:54 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <20171018072728.14681-5-horms+renesas@verge.net.au>
-References: <20171018072728.14681-1-horms+renesas@verge.net.au> <20171018072728.14681-5-horms+renesas@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 18 Oct 2017 09:35:53 +0200
-Message-ID: <CAMuHMdWca-ZZ-nLFk8EEab8V642MJzrv3E+vdHCKKds4ouwGfw@mail.gmail.com>
-Subject: Re: [PATCH 4/7] ARM: dts: r8a7790: Use R-Car Gen2 Ether fallback
- compat string
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 16 Oct 2017 03:58:47 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v2 0/3] mmc: renesas_sdhi: add R-Car Gen[123] fallback compatibility strings
+Date: Mon, 16 Oct 2017 09:58:19 +0200
+Message-Id: <20171016075822.18177-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Oct 18, 2017 at 9:27 AM, Simon Horman
-<horms+renesas@verge.net.au> wrote:
-> Use newly added R-Car Gen2 Ether fallback compat string
-> in the DT of the r8a7790 SoC.
->
-> This should have no run-time effect as the driver matches against
-> the per-SoC compat string before considering the fallback compat string.
->
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Add fallback compatibility strings for R-Car Gen 1, 2 and 3 to the SDHI
+bindings and driver.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+In the case of Renesas R-Car hardware we know that there are generations of
+SoCs, f.e. Gen 1 and 2. But beyond that its not clear what the relationship
+between IP blocks might be. For example, I believe that r8a7790 is older
+than r8a7791 but that doesn't imply that the latter is a descendant of the
+former or vice versa.
 
-Gr{oetje,eeting}s,
+We can, however, by examining the documentation and behaviour of the
+hardware at run-time observe that the current driver implementation appears
+to be compatible with the IP blocks on SoCs within a given generation.
 
-                        Geert
+For the above reasons and convenience when enabling new SoCs a
+per-generation fallback compatibility string scheme being adopted for
+drivers for Renesas SoCs.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Based on mmc/next
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Changes since v1:
+* Describe example in patch one as being for the r8a7790 (R-Car H2) rather
+  than the r8a7779 (R-Car H1)
+* Accumulate review tags from Geert Uytterhoeven
+
+Simon Horman (3):
+  dt-bindings: mmc: renesas_sdhi: provide example in bindings
+    documentation
+  dt-bindings: mmc: renesas_sdhi: add R-Car Gen[123] fallback
+    compatibility strings
+  mmc: renesas_sdhi: implement R-Car Gen[123] fallback compatibility
+    strings
+
+ Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 66 +++++++++++++++++++++-
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c      |  1 +
+ drivers/mmc/host/renesas_sdhi_sys_dmac.c           |  5 +-
+ 3 files changed, 70 insertions(+), 2 deletions(-)
+
+-- 
+2.11.0
