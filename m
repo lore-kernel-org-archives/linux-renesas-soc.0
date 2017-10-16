@@ -1,82 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:34990 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756278AbdJLJfX (ORCPT
+Received: from mail-lf0-f42.google.com ([209.85.215.42]:46372 "EHLO
+        mail-lf0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754102AbdJPTYj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 12 Oct 2017 05:35:23 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 00/13] ARM: dts: renesas: Add missing clocks for ARM CPU cores
-Date: Thu, 12 Oct 2017 11:35:03 +0200
-Message-Id: <1507800916-11509-1-git-send-email-geert+renesas@glider.be>
+        Mon, 16 Oct 2017 15:24:39 -0400
+Received: by mail-lf0-f42.google.com with SMTP id g70so18220482lfl.3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 16 Oct 2017 12:24:38 -0700 (PDT)
+Subject: Re: [PATCH 10/10] [RFC] sh_eth: Remove obsolete explicit clock
+ handling for WoL
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>, linux-clk@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org
+References: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
+ <1508162116-5043-11-git-send-email-geert+renesas@glider.be>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <3a3fafd0-5421-5dda-35af-173f6764098b@cogentembedded.com>
+Date: Mon, 16 Oct 2017 22:24:35 +0300
+MIME-Version: 1.0
+In-Reply-To: <1508162116-5043-11-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Simon, Magnus,
+Hello!
 
-This series improves DT hardware descriptions for Renesas arm32 SoCs by
-adding missing clocks properties to the device nodes corresponding to
-ARM CPU cores.
+On 10/16/2017 04:55 PM, Geert Uytterhoeven wrote:
 
-Notes:
-  - This series should have no functional impact, except perhaps on
-    big.LITTLE SoCs, when using a firmware that enables both big and
-    little CPU cores (see also Sudeep Holla's comments for R-Car Gen3 in
-    "Re: [PATCH v2 2/2] arm64: dts: r8a7796: Add OPPs table for cpu
-    devices" (https://www.spinics.net/lists/arm-kernel/msg610489.html),
-  - The clocks for CA9 CPU cores on R-Mobile A1 and EMMA Mobile EV2 are
-    still missing, as these clocks are not supported by the DT bindings
-    and drivers, and cannot be referenced yet.
+> Currently, if Wake-on-LAN is enabled, the SH-ETH device's module clock
 
-Tested on r8a73a4/ape6evm, r8a7791/koelsch, and sh73a0/kzm9g.
+    It's called Ether (or GEther) in all the manuals I have. Never saw SH-ETH, 
+I think it's Nobuhiro's invention... :-)
 
-Testing on r8a7790/lager would be appreciated.
+> is manually kept running during system suspend, to make sure the device
+> stays active.
+> 
+> Since "soc: renesas: rcar-sysc: Keep wakeup sources active during system
+> suspend" and "clk: renesas: mstp: Keep wakeup sources active during
+> system suspend", this workaround is no longer needed.  Hence remove all
+> explicit clock handling to keep the device active.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[...]
 
-Thanks for your comments!
+Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Geert Uytterhoeven (13):
-  dt-bindings: clk: r7s72100: Add missing I and G clocks
-  ARM: dts: r7s72100: Add clock for CA9 CPU core
-  ARM: dts: r8a73a4: Add clock for CA15 CPU0 core
-  ARM: dts: r8a7743: Add missing clock for secondary CA15 CPU core
-  ARM: dts: r8a7778: Add clock for CA9 CPU core
-  ARM: dts: r8a7779: Add clocks for CA9 CPU cores
-  ARM: dts: r8a7790: Add missing clocks for secondary CA15 CPU cores
-  ARM: dts: r8a7790: Add clocks for CA7 CPU cores
-  ARM: dts: r8a7791: Add missing clock for secondary CA15 CPU core
-  ARM: dts: r8a7792: Add missing clock for secondary CA15 CPU core
-  ARM: dts: r8a7793: Add missing clock for secondary CA15 CPU core
-  ARM: dts: r8a7794: Add missing clock for secondary CA7 CPU core
-  ARM: dts: sh73a0: Add clocks for CA9 CPU cores
-
- arch/arm/boot/dts/r7s72100.dtsi            | 1 +
- arch/arm/boot/dts/r8a73a4.dtsi             | 1 +
- arch/arm/boot/dts/r8a7743.dtsi             | 1 +
- arch/arm/boot/dts/r8a7778.dtsi             | 1 +
- arch/arm/boot/dts/r8a7779.dtsi             | 4 ++++
- arch/arm/boot/dts/r8a7790.dtsi             | 7 +++++++
- arch/arm/boot/dts/r8a7791.dtsi             | 1 +
- arch/arm/boot/dts/r8a7792.dtsi             | 1 +
- arch/arm/boot/dts/r8a7793.dtsi             | 1 +
- arch/arm/boot/dts/r8a7794.dtsi             | 1 +
- arch/arm/boot/dts/sh73a0.dtsi              | 2 ++
- include/dt-bindings/clock/r7s72100-clock.h | 2 ++
- 12 files changed, 23 insertions(+)
-
--- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+MBR, Sergei
