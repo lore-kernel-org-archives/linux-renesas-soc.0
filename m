@@ -1,152 +1,98 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:41141 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751705AbdJWRKq (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:58698 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752972AbdJPNz2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Oct 2017 13:10:46 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Mon, 16 Oct 2017 09:55:28 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Chris Paterson <chris.paterson2@renesas.com>
-Subject: [PATCH v2 4/9] ARM: dts: iwg22d-sodimm: sort dt nodes
-Date: Mon, 23 Oct 2017 18:09:25 +0100
-Message-Id: <1508778570-28795-5-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1508778570-28795-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1508778570-28795-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>, linux-clk@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 04/10] PM / Domain: Allow genpd users to specify default active wakeup behavior
+Date: Mon, 16 Oct 2017 15:55:10 +0200
+Message-Id: <1508162116-5043-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
+References: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Improve the layout of r8a7745-iwg22d-sodimm.dts by sorting the
-nodes alphabetically.
+It is quite common for PM Domains to require slave devices to be kept
+active during system suspend if they are to be used as wakeup sources.
+To enable this, currently each PM Domain or driver has to provide its
+own gpd_dev_ops.active_wakeup() callback.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+Introduce a new flag GENPD_FLAG_ACTIVE_WAKEUP to consolidate this.
+If specified, a default callback that always returns true will be
+installed in gpd_dev_ops.active_wakeup().
+
+PM Domains that need more fine-grained controls can still provide their
+own callbacks, as before.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Changes in v2:
-* rebased
+ drivers/base/power/domain.c | 8 ++++++++
+ include/linux/pm_domain.h   | 7 ++++---
+ 2 files changed, 12 insertions(+), 3 deletions(-)
 
- arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts | 62 ++++++++++++++---------------
- 1 file changed, 31 insertions(+), 31 deletions(-)
-
-diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-index 82587d7..3eb4f83 100644
---- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-+++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-@@ -16,9 +16,9 @@
- 	compatible = "iwave,g22d", "iwave,g22m", "renesas,r8a7745";
+diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+index e8ca5e2cf1e51e5a..d9670e7752e92994 100644
+--- a/drivers/base/power/domain.c
++++ b/drivers/base/power/domain.c
+@@ -1168,6 +1168,11 @@ static void pm_genpd_complete(struct device *dev)
+ 	genpd_unlock(genpd);
+ }
  
- 	aliases {
-+		ethernet0 = &avb;
- 		serial3 = &scif4;
- 		serial5 = &hscif1;
--		ethernet0 = &avb;
- 	};
- 
- 	chosen {
-@@ -40,6 +40,25 @@
- 	};
- };
- 
-+&avb {
-+	pinctrl-0 = <&avb_pins>;
-+	pinctrl-names = "default";
++static bool pm_genpd_active_wakeup_true(struct device *dev)
++{
++	return true;
++}
 +
-+	phy-handle = <&phy3>;
-+	phy-mode = "gmii";
-+	renesas,no-ether-link;
-+	status = "okay";
-+
-+	phy3: ethernet-phy@3 {
-+	/*
-+	 * On some older versions of the platform (before R4.0) the phy address
-+	 * may be 1 or 3. The address is fixed to 3 for R4.0 onwards.
-+	 */
-+		reg = <3>;
-+		micrel,led-mode = <1>;
-+	};
-+};
-+
- &hscif1 {
- 	pinctrl-0 = <&hscif1_pins>;
- 	pinctrl-names = "default";
-@@ -48,7 +67,18 @@
- 	status = "okay";
- };
+ /**
+  * genpd_syscore_switch - Switch power during system core suspend or resume.
+  * @dev: Device that normally is marked as "always on" to switch power for.
+@@ -1214,6 +1219,7 @@ EXPORT_SYMBOL_GPL(pm_genpd_syscore_poweron);
+ #define pm_genpd_poweroff_noirq		NULL
+ #define pm_genpd_restore_noirq		NULL
+ #define pm_genpd_complete		NULL
++#define pm_genpd_active_wakeup_true	NULL
  
-+&pci1 {
-+	status = "okay";
-+	pinctrl-0 = <&usb1_pins>;
-+	pinctrl-names = "default";
-+};
-+
- &pfc {
-+	avb_pins: avb {
-+		groups = "avb_mdio", "avb_gmii";
-+		function = "avb";
-+	};
-+
- 	hscif1_pins: hscif1 {
- 		groups = "hscif1_data", "hscif1_ctrl";
- 		function = "hscif1";
-@@ -59,11 +89,6 @@
- 		function = "scif4";
- 	};
+ #endif /* CONFIG_PM_SLEEP */
  
--	avb_pins: avb {
--		groups = "avb_mdio", "avb_gmii";
--		function = "avb";
--	};
--
- 	sdhi0_pins: sd0 {
- 		groups = "sdhi0_data4", "sdhi0_ctrl";
- 		function = "sdhi0";
-@@ -83,25 +108,6 @@
- 	status = "okay";
- };
+@@ -1587,6 +1593,8 @@ int pm_genpd_init(struct generic_pm_domain *genpd,
+ 		genpd->dev_ops.stop = pm_clk_suspend;
+ 		genpd->dev_ops.start = pm_clk_resume;
+ 	}
++	if (genpd->flags & GENPD_FLAG_ACTIVE_WAKEUP)
++		genpd->dev_ops.active_wakeup = pm_genpd_active_wakeup_true;
  
--&avb {
--	pinctrl-0 = <&avb_pins>;
--	pinctrl-names = "default";
--
--	phy-handle = <&phy3>;
--	phy-mode = "gmii";
--	renesas,no-ether-link;
--	status = "okay";
--
--	phy3: ethernet-phy@3 {
--	/*
--	 * On some older versions of the platform (before R4.0) the phy address
--	 * may be 1 or 3. The address is fixed to 3 for R4.0 onwards.
--	 */
--		reg = <3>;
--		micrel,led-mode = <1>;
--	};
--};
--
- &sdhi0 {
- 	pinctrl-0 = <&sdhi0_pins>;
- 	pinctrl-names = "default";
-@@ -112,12 +118,6 @@
- 	status = "okay";
- };
+ 	/* Always-on domains must be powered on at initialization. */
+ 	if (genpd_is_always_on(genpd) && !genpd_status_on(genpd))
+diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+index 84f423d5633ee996..a6688efb29ee5406 100644
+--- a/include/linux/pm_domain.h
++++ b/include/linux/pm_domain.h
+@@ -18,9 +18,10 @@
+ #include <linux/spinlock.h>
  
--&pci1 {
--	status = "okay";
--	pinctrl-0 = <&usb1_pins>;
--	pinctrl-names = "default";
--};
--
- &usbphy {
- 	status = "okay";
- };
+ /* Defines used for the flags field in the struct generic_pm_domain */
+-#define GENPD_FLAG_PM_CLK	(1U << 0) /* PM domain uses PM clk */
+-#define GENPD_FLAG_IRQ_SAFE	(1U << 1) /* PM domain operates in atomic */
+-#define GENPD_FLAG_ALWAYS_ON	(1U << 2) /* PM domain is always powered on */
++#define GENPD_FLAG_PM_CLK	 (1U << 0) /* PM domain uses PM clk */
++#define GENPD_FLAG_IRQ_SAFE	 (1U << 1) /* PM domain operates in atomic */
++#define GENPD_FLAG_ALWAYS_ON	 (1U << 2) /* PM domain is always powered on */
++#define GENPD_FLAG_ACTIVE_WAKEUP (1U << 3) /* Keep devices active if wakeup */
+ 
+ enum gpd_status {
+ 	GPD_STATE_ACTIVE = 0,	/* PM domain is active */
 -- 
 2.7.4
