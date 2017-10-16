@@ -1,46 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:39254 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932784AbdJQGKO (ORCPT
+Received: from sauhun.de ([88.99.104.3]:51050 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932428AbdJPWSE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Oct 2017 02:10:14 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 09/11] ARM: dts: r8a7792: Use R-Car SDHI Gen2 fallback compat string
-Date: Tue, 17 Oct 2017 08:09:57 +0200
-Message-Id: <20171017060959.16702-10-horms+renesas@verge.net.au>
-In-Reply-To: <20171017060959.16702-1-horms+renesas@verge.net.au>
-References: <20171017060959.16702-1-horms+renesas@verge.net.au>
+        Mon, 16 Oct 2017 18:18:04 -0400
+Date: Tue, 17 Oct 2017 00:18:03 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 2/3] dt-bindings: mmc: renesas_sdhi: add R-Car Gen[123]
+ fallback compatibility strings
+Message-ID: <20171016221802.j5awpzoautty62gr@ninjato>
+References: <20171013103812.30826-1-horms+renesas@verge.net.au>
+ <20171013103812.30826-3-horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="yma6x7b7eaxncstx"
+Content-Disposition: inline
+In-Reply-To: <20171013103812.30826-3-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use newly added R-Car SDHI Gen2 fallback compat string
-in the DT of the r8a7792 SoC.
 
-This should have no run-time effect as the driver matches against
-the per-SoC compat string before considering the fallback compat string.
+--yma6x7b7eaxncstx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7792.dtsi | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> +		When compatible with the generic version nodes must list
 
-diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
-index 131f65b0426e..7b394273031e 100644
---- a/arch/arm/boot/dts/r8a7792.dtsi
-+++ b/arch/arm/boot/dts/r8a7792.dtsi
-@@ -507,7 +507,8 @@
- 		};
- 
- 		sdhi0: sd@ee100000 {
--			compatible = "renesas,sdhi-r8a7792";
-+			compatible = "renesas,sdhi-r8a7792",
-+				     "renesas,rcar-gen2-sdhi";
- 			reg = <0 0xee100000 0 0x328>;
- 			interrupts = <0 165 IRQ_TYPE_LEVEL_HIGH>;
- 			dmas = <&dmac0 0xcd>, <&dmac0 0xce>,
--- 
-2.11.0
+comma after "version"? I had to read it multiple times until I got it :)
+
+> +		the SoC-specific version corresponding to the platform
+> +		first followed by the generic version.
+
+
+--yma6x7b7eaxncstx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlnlMBoACgkQFA3kzBSg
+KbZFaw//a4LY50XQEGyak3i5CYayv7m+/QXxO+Z9uE4mcA5mHvPJfNlX/8QiwP9D
+XYXkkFCPh771TSenEwIgHFqSHvCRCHdK4clIBKeOBAYw2BmXVLA+si7emhY4wmCR
+QA/oKbrrfULGOERCBPeQMyWeXD5CU1CydLMPJBRtuGFTWzzgV1LE52405aKiSycy
+aPjUqyFaxMeboBQO/oAdg3lDq5tCY3bRKjoLxPgx+DHs1YLP66ZlsrGXao44gpHZ
+Q7806KeqgssaPeDmd8BdbXZ8toWRUSpw+9c+l1WVOvaIg+hA2yUV6VxOcYRrqz10
+WbrBCd1lMasfnNRJwkWQGNTBIlmgZQUyHqi1pswm05hAcYLO8Y0BTqq58Dn0lEOd
+k43Ih7N1Nkl2ps+qK5dLDTvCPLpufhzm14SDVMSrmUjbX/zKNt5kRZX0LELn1JUT
++VlnWMnSbMM8S0PK9VkrP+icnn1ZcK61fTvhaWojtNl/aX4JMLIsZuvBZ2ZAsmFH
+jo2t7rS5MH+0ulzprKpmcBn/TCwVF1FHrCn/D1n2Nv4kAHGCC7Lu89dVQFAEsuJz
+cLHTtPAa97/E+p1y/RnbXMzg+pnP1M1L0PPatosS0saqp8aHaWDTW6WD78L3ulrq
+RWXwBrSIhocZU2O9e3Tu354G8DOZ/Xv55NF1/daJCG8wmtkEsOY=
+=UAGX
+-----END PGP SIGNATURE-----
+
+--yma6x7b7eaxncstx--
