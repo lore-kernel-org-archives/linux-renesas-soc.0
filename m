@@ -1,46 +1,74 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:46649 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752845AbdJGKhK (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 7 Oct 2017 06:37:10 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 06/11] mmc: mmci: catch all errors when getting regulators
-Date: Sat,  7 Oct 2017 12:36:53 +0200
-Message-Id: <20171007103658.16868-7-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20171007103658.16868-1-wsa+renesas@sang-engineering.com>
-References: <20171007103658.16868-1-wsa+renesas@sang-engineering.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: joro@8bytes.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
+        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
+        m.szyprowski@samsung.com
+Date: Mon, 16 Oct 2017 21:30:28 +0900
+Message-Id: <150815702889.32763.12033574748131141829.sendpatchset@little-apple>
+In-Reply-To: <150815695455.32763.1660214306749693609.sendpatchset@little-apple>
+References: <150815695455.32763.1660214306749693609.sendpatchset@little-apple>
+Subject: [PATCH v5 07/09] iommu/ipmmu-vmsa: Make IMBUSCTR setup optional
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Bail out everytime when mmc_regulator_get_supply() returns an errno, not only
-when probing gets deferred. This is currently a no-op, because this function
-only returns -EPROBE_DEFER or 0 right now. But if it will throw another error
-somewhen, it will be for a reason. (This still doesn't change that getting
-regulators is optional, so 0 can still mean no regulators found). So, let us a)
-be future proof and b) have driver code which is easier to understand.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Introduce a feature to allow opt-out of setting up
+IMBUSCR. The default case is unchanged.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
- drivers/mmc/host/mmci.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
-index f1f54a81848951..e8a1bb1ae69423 100644
---- a/drivers/mmc/host/mmci.c
-+++ b/drivers/mmc/host/mmci.c
-@@ -1658,7 +1658,7 @@ static int mmci_probe(struct amba_device *dev,
+ Changes since V4:
+ - Use leaf node mmu instead of root
+
+ Changes since V3:
+ - None
+
+ Changes since V2:
+ - None
+
+ Changes since V1:
+ - Updated the commit message
+ - Reworked patch to coexist with the multi context feature
+
+
+ drivers/iommu/ipmmu-vmsa.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+--- 0018/drivers/iommu/ipmmu-vmsa.c
++++ work/drivers/iommu/ipmmu-vmsa.c	2017-10-16 20:20:30.860607110 +0900
+@@ -39,6 +39,7 @@ struct ipmmu_features {
+ 	bool use_ns_alias_offset;
+ 	bool has_cache_leaf_nodes;
+ 	unsigned int number_of_contexts;
++	bool setup_imbuscr;
+ };
  
- 	/* Get regulators and the supported OCR mask */
- 	ret = mmc_regulator_get_supply(mmc);
--	if (ret == -EPROBE_DEFER)
-+	if (ret)
- 		goto clk_disable;
+ struct ipmmu_vmsa_device {
+@@ -457,9 +458,10 @@ static int ipmmu_domain_init_context(str
+ 			     domain->cfg.arm_lpae_s1_cfg.mair[0]);
  
- 	if (!mmc->ocr_avail)
--- 
-2.11.0
+ 	/* IMBUSCR */
+-	ipmmu_ctx_write_root(domain, IMBUSCR,
+-			     ipmmu_ctx_read_root(domain, IMBUSCR) &
+-			     ~(IMBUSCR_DVM | IMBUSCR_BUSSEL_MASK));
++	if (domain->mmu->features->setup_imbuscr)
++		ipmmu_ctx_write_root(domain, IMBUSCR,
++				     ipmmu_ctx_read_root(domain, IMBUSCR) &
++				     ~(IMBUSCR_DVM | IMBUSCR_BUSSEL_MASK));
+ 
+ 	/*
+ 	 * IMSTR
+@@ -979,6 +981,7 @@ static const struct ipmmu_features ipmmu
+ 	.use_ns_alias_offset = true,
+ 	.has_cache_leaf_nodes = false,
+ 	.number_of_contexts = 1, /* software only tested with one context */
++	.setup_imbuscr = true,
+ };
+ 
+ static const struct of_device_id ipmmu_of_ids[] = {
