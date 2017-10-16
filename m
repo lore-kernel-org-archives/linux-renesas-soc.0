@@ -1,253 +1,204 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:52244 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754180AbdJPP2E (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:36046 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751550AbdJPJIu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Oct 2017 11:28:04 -0400
+        Mon, 16 Oct 2017 05:08:50 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-pm@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 02/14] pinctrl: sh-pfc: Drop width parameter of sh_pfc_{read,write}_reg()
-Date: Mon, 16 Oct 2017 17:27:47 +0200
-Message-Id: <1508167679-21155-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1508167679-21155-1-git-send-email-geert+renesas@glider.be>
-References: <1508167679-21155-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v3 4/5] clk: renesas: rcar-gen3: Restore SDHI clocks during resume
+Date: Mon, 16 Oct 2017 10:36:53 +0200
+Message-Id: <1508143014-11795-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1508143014-11795-1-git-send-email-geert+renesas@glider.be>
+References: <1508143014-11795-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On modern Renesas SoCs, all PFC registers are 32-bit, and all callers of
-sh_pfc_{read,write}_reg() already operate on 32-bit registers only.
-Hence make the 32-bit width implicit, and rename the functions to
-sh_pfc_{read,write}() to shorten lines.
+On R-Car Gen3 systems, PSCI system suspend powers down the SoC, losing
+clock configuration.  Register a notifier to save/restore SDHI clock
+registers during system suspend/resume.
 
-All accesses to 8-bit or 16-bit registers are still done using
-sh_pfc_{read,write}_raw_reg().
+This is implemented using the cpg_simple_notifier abstraction, which can
+be reused for others clocks that just need to save/restore a single
+register.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Tested-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
-v2:
-  - Add Reviewed-by,
-  - Shorten the function names.
----
- drivers/pinctrl/sh-pfc/core.c            |  8 ++++----
- drivers/pinctrl/sh-pfc/core.h            |  5 ++---
- drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c | 12 ++++++------
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c     | 12 ++++++------
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c     | 12 ++++++------
- drivers/pinctrl/sh-pfc/pinctrl.c         | 12 ++++++------
- 6 files changed, 30 insertions(+), 31 deletions(-)
+v3:
+  - Drop RFC state,
+  - Add Tested-by,
+  - Rebased,
 
-diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
-index 9cdbaeab2cf10d46..8b422ac07e57263b 100644
---- a/drivers/pinctrl/sh-pfc/core.c
-+++ b/drivers/pinctrl/sh-pfc/core.c
-@@ -175,19 +175,19 @@ void sh_pfc_write_raw_reg(void __iomem *mapped_reg, unsigned int reg_width,
- 	BUG();
- }
+v2:
+  - New.
+---
+ drivers/clk/renesas/rcar-gen3-cpg.c | 63 +++++++++++++++++++++++++++++--------
+ 1 file changed, 50 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
+index 139985257003bfad..267b5629e3bdb173 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.c
++++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+@@ -19,6 +19,7 @@
+ #include <linux/err.h>
+ #include <linux/init.h>
+ #include <linux/io.h>
++#include <linux/pm.h>
+ #include <linux/slab.h>
+ #include <linux/sys_soc.h>
  
--u32 sh_pfc_read_reg(struct sh_pfc *pfc, u32 reg, unsigned int width)
-+u32 sh_pfc_read(struct sh_pfc *pfc, u32 reg)
+@@ -29,6 +30,36 @@
+ #define CPG_PLL2CR		0x002c
+ #define CPG_PLL4CR		0x01f4
+ 
++struct cpg_simple_notifier {
++	struct notifier_block nb;
++	void __iomem *reg;
++	u32 saved;
++};
++
++static int cpg_simple_notifier_call(struct notifier_block *nb,
++				    unsigned long action, void *data)
++{
++	struct cpg_simple_notifier *csn =
++		container_of(nb, struct cpg_simple_notifier, nb);
++
++	switch (action) {
++	case PM_EVENT_SUSPEND:
++		csn->saved = readl(csn->reg);
++		return NOTIFY_OK;
++
++	case PM_EVENT_RESUME:
++		writel(csn->saved, csn->reg);
++		return NOTIFY_OK;
++	}
++	return NOTIFY_DONE;
++}
++
++static void cpg_simple_notifier_register(struct raw_notifier_head *notifiers,
++					 struct cpg_simple_notifier *csn)
++{
++	csn->nb.notifier_call = cpg_simple_notifier_call;
++	raw_notifier_chain_register(notifiers, &csn->nb);
++}
+ 
+ /*
+  * SDn Clock
+@@ -55,8 +86,8 @@ struct sd_div_table {
+ 
+ struct sd_clock {
+ 	struct clk_hw hw;
+-	void __iomem *reg;
+ 	const struct sd_div_table *div_table;
++	struct cpg_simple_notifier csn;
+ 	unsigned int div_num;
+ 	unsigned int div_min;
+ 	unsigned int div_max;
+@@ -97,12 +128,12 @@ static const struct sd_div_table cpg_sd_div_table[] = {
+ static int cpg_sd_clock_enable(struct clk_hw *hw)
  {
--	return sh_pfc_read_raw_reg(sh_pfc_phys_to_virt(pfc, reg), width);
-+	return sh_pfc_read_raw_reg(sh_pfc_phys_to_virt(pfc, reg), 32);
- }
+ 	struct sd_clock *clock = to_sd_clock(hw);
+-	u32 val = readl(clock->reg);
++	u32 val = readl(clock->csn.reg);
  
--void sh_pfc_write_reg(struct sh_pfc *pfc, u32 reg, unsigned int width, u32 data)
-+void sh_pfc_write(struct sh_pfc *pfc, u32 reg, u32 data)
+ 	val &= ~(CPG_SD_STP_MASK);
+ 	val |= clock->div_table[clock->cur_div_idx].val & CPG_SD_STP_MASK;
+ 
+-	writel(val, clock->reg);
++	writel(val, clock->csn.reg);
+ 
+ 	return 0;
+ }
+@@ -111,14 +142,14 @@ static void cpg_sd_clock_disable(struct clk_hw *hw)
  {
- 	if (pfc->info->unlock_reg)
- 		sh_pfc_write_raw_reg(
- 			sh_pfc_phys_to_virt(pfc, pfc->info->unlock_reg), 32,
- 			~data);
+ 	struct sd_clock *clock = to_sd_clock(hw);
  
--	sh_pfc_write_raw_reg(sh_pfc_phys_to_virt(pfc, reg), width, data);
-+	sh_pfc_write_raw_reg(sh_pfc_phys_to_virt(pfc, reg), 32, data);
+-	writel(readl(clock->reg) | CPG_SD_STP_MASK, clock->reg);
++	writel(readl(clock->csn.reg) | CPG_SD_STP_MASK, clock->csn.reg);
  }
  
- static void sh_pfc_config_reg_helper(struct sh_pfc *pfc,
-diff --git a/drivers/pinctrl/sh-pfc/core.h b/drivers/pinctrl/sh-pfc/core.h
-index 6d598dd637208567..dd215d36dcc82f8a 100644
---- a/drivers/pinctrl/sh-pfc/core.h
-+++ b/drivers/pinctrl/sh-pfc/core.h
-@@ -26,9 +26,8 @@ int sh_pfc_register_pinctrl(struct sh_pfc *pfc);
- u32 sh_pfc_read_raw_reg(void __iomem *mapped_reg, unsigned int reg_width);
- void sh_pfc_write_raw_reg(void __iomem *mapped_reg, unsigned int reg_width,
- 			  u32 data);
--u32 sh_pfc_read_reg(struct sh_pfc *pfc, u32 reg, unsigned int width);
--void sh_pfc_write_reg(struct sh_pfc *pfc, u32 reg, unsigned int width,
--		      u32 data);
-+u32 sh_pfc_read(struct sh_pfc *pfc, u32 reg);
-+void sh_pfc_write(struct sh_pfc *pfc, u32 reg, u32 data);
+ static int cpg_sd_clock_is_enabled(struct clk_hw *hw)
+ {
+ 	struct sd_clock *clock = to_sd_clock(hw);
  
- int sh_pfc_get_pin_index(struct sh_pfc *pfc, unsigned int pin);
- int sh_pfc_config_mux(struct sh_pfc *pfc, unsigned mark, int pinmux_type);
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
-index 0adca6a2b08b4ccd..bd0687ad4fd81bc8 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
-@@ -5671,9 +5671,9 @@ static unsigned int r8a7795es1_pinmux_get_bias(struct sh_pfc *pfc,
- 	reg = info->reg;
- 	bit = BIT(info->bit);
- 
--	if (!(sh_pfc_read_reg(pfc, PUEN + reg, 32) & bit))
-+	if (!(sh_pfc_read(pfc, PUEN + reg) & bit))
- 		return PIN_CONFIG_BIAS_DISABLE;
--	else if (sh_pfc_read_reg(pfc, PUD + reg, 32) & bit)
-+	else if (sh_pfc_read(pfc, PUD + reg) & bit)
- 		return PIN_CONFIG_BIAS_PULL_UP;
- 	else
- 		return PIN_CONFIG_BIAS_PULL_DOWN;
-@@ -5694,16 +5694,16 @@ static void r8a7795es1_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
- 	reg = info->reg;
- 	bit = BIT(info->bit);
- 
--	enable = sh_pfc_read_reg(pfc, PUEN + reg, 32) & ~bit;
-+	enable = sh_pfc_read(pfc, PUEN + reg) & ~bit;
- 	if (bias != PIN_CONFIG_BIAS_DISABLE)
- 		enable |= bit;
- 
--	updown = sh_pfc_read_reg(pfc, PUD + reg, 32) & ~bit;
-+	updown = sh_pfc_read(pfc, PUD + reg) & ~bit;
- 	if (bias == PIN_CONFIG_BIAS_PULL_UP)
- 		updown |= bit;
- 
--	sh_pfc_write_reg(pfc, PUD + reg, 32, updown);
--	sh_pfc_write_reg(pfc, PUEN + reg, 32, enable);
-+	sh_pfc_write(pfc, PUD + reg, updown);
-+	sh_pfc_write(pfc, PUEN + reg, enable);
+-	return !(readl(clock->reg) & CPG_SD_STP_MASK);
++	return !(readl(clock->csn.reg) & CPG_SD_STP_MASK);
  }
  
- static const struct sh_pfc_soc_operations r8a7795es1_pinmux_ops = {
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index e9ee6642a53caacd..eea29ef65ec49b83 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -5660,9 +5660,9 @@ static unsigned int r8a7795_pinmux_get_bias(struct sh_pfc *pfc,
- 	reg = info->reg;
- 	bit = BIT(info->bit);
+ static unsigned long cpg_sd_clock_recalc_rate(struct clk_hw *hw,
+@@ -170,10 +201,10 @@ static int cpg_sd_clock_set_rate(struct clk_hw *hw, unsigned long rate,
  
--	if (!(sh_pfc_read_reg(pfc, PUEN + reg, 32) & bit))
-+	if (!(sh_pfc_read(pfc, PUEN + reg) & bit))
- 		return PIN_CONFIG_BIAS_DISABLE;
--	else if (sh_pfc_read_reg(pfc, PUD + reg, 32) & bit)
-+	else if (sh_pfc_read(pfc, PUD + reg) & bit)
- 		return PIN_CONFIG_BIAS_PULL_UP;
- 	else
- 		return PIN_CONFIG_BIAS_PULL_DOWN;
-@@ -5683,16 +5683,16 @@ static void r8a7795_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
- 	reg = info->reg;
- 	bit = BIT(info->bit);
+ 	clock->cur_div_idx = i;
  
--	enable = sh_pfc_read_reg(pfc, PUEN + reg, 32) & ~bit;
-+	enable = sh_pfc_read(pfc, PUEN + reg) & ~bit;
- 	if (bias != PIN_CONFIG_BIAS_DISABLE)
- 		enable |= bit;
+-	val = readl(clock->reg);
++	val = readl(clock->csn.reg);
+ 	val &= ~(CPG_SD_STP_MASK | CPG_SD_FC_MASK);
+ 	val |= clock->div_table[i].val & (CPG_SD_STP_MASK | CPG_SD_FC_MASK);
+-	writel(val, clock->reg);
++	writel(val, clock->csn.reg);
  
--	updown = sh_pfc_read_reg(pfc, PUD + reg, 32) & ~bit;
-+	updown = sh_pfc_read(pfc, PUD + reg) & ~bit;
- 	if (bias == PIN_CONFIG_BIAS_PULL_UP)
- 		updown |= bit;
- 
--	sh_pfc_write_reg(pfc, PUD + reg, 32, updown);
--	sh_pfc_write_reg(pfc, PUEN + reg, 32, enable);
-+	sh_pfc_write(pfc, PUD + reg, updown);
-+	sh_pfc_write(pfc, PUEN + reg, enable);
+ 	return 0;
  }
+@@ -188,8 +219,8 @@ static const struct clk_ops cpg_sd_clock_ops = {
+ };
  
- static const struct soc_device_attribute r8a7795es1[] = {
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-index 2de5c9d5e631d64c..53c5ca721e35f78f 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-@@ -5724,9 +5724,9 @@ static unsigned int r8a7796_pinmux_get_bias(struct sh_pfc *pfc,
- 	reg = info->reg;
- 	bit = BIT(info->bit);
+ static struct clk * __init cpg_sd_clk_register(const struct cpg_core_clk *core,
+-					       void __iomem *base,
+-					       const char *parent_name)
++	void __iomem *base, const char *parent_name,
++	struct raw_notifier_head *notifiers)
+ {
+ 	struct clk_init_data init;
+ 	struct sd_clock *clock;
+@@ -207,12 +238,12 @@ static struct clk * __init cpg_sd_clk_register(const struct cpg_core_clk *core,
+ 	init.parent_names = &parent_name;
+ 	init.num_parents = 1;
  
--	if (!(sh_pfc_read_reg(pfc, PUEN + reg, 32) & bit))
-+	if (!(sh_pfc_read(pfc, PUEN + reg) & bit))
- 		return PIN_CONFIG_BIAS_DISABLE;
--	else if (sh_pfc_read_reg(pfc, PUD + reg, 32) & bit)
-+	else if (sh_pfc_read(pfc, PUD + reg) & bit)
- 		return PIN_CONFIG_BIAS_PULL_UP;
- 	else
- 		return PIN_CONFIG_BIAS_PULL_DOWN;
-@@ -5747,16 +5747,16 @@ static void r8a7796_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
- 	reg = info->reg;
- 	bit = BIT(info->bit);
+-	clock->reg = base + core->offset;
++	clock->csn.reg = base + core->offset;
+ 	clock->hw.init = &init;
+ 	clock->div_table = cpg_sd_div_table;
+ 	clock->div_num = ARRAY_SIZE(cpg_sd_div_table);
  
--	enable = sh_pfc_read_reg(pfc, PUEN + reg, 32) & ~bit;
-+	enable = sh_pfc_read(pfc, PUEN + reg) & ~bit;
- 	if (bias != PIN_CONFIG_BIAS_DISABLE)
- 		enable |= bit;
- 
--	updown = sh_pfc_read_reg(pfc, PUD + reg, 32) & ~bit;
-+	updown = sh_pfc_read(pfc, PUD + reg) & ~bit;
- 	if (bias == PIN_CONFIG_BIAS_PULL_UP)
- 		updown |= bit;
- 
--	sh_pfc_write_reg(pfc, PUD + reg, 32, updown);
--	sh_pfc_write_reg(pfc, PUEN + reg, 32, enable);
-+	sh_pfc_write(pfc, PUD + reg, updown);
-+	sh_pfc_write(pfc, PUEN + reg, enable);
- }
- 
- static const struct sh_pfc_soc_operations r8a7796_pinmux_ops = {
-diff --git a/drivers/pinctrl/sh-pfc/pinctrl.c b/drivers/pinctrl/sh-pfc/pinctrl.c
-index 5c9d79981e6d40e8..736634aee500e924 100644
---- a/drivers/pinctrl/sh-pfc/pinctrl.c
-+++ b/drivers/pinctrl/sh-pfc/pinctrl.c
-@@ -513,7 +513,7 @@ static int sh_pfc_pinconf_get_drive_strength(struct sh_pfc *pfc,
- 		return -EINVAL;
- 
- 	spin_lock_irqsave(&pfc->lock, flags);
--	val = sh_pfc_read_reg(pfc, reg, 32);
-+	val = sh_pfc_read(pfc, reg);
- 	spin_unlock_irqrestore(&pfc->lock, flags);
- 
- 	val = (val >> offset) & GENMASK(size - 1, 0);
-@@ -550,11 +550,11 @@ static int sh_pfc_pinconf_set_drive_strength(struct sh_pfc *pfc,
- 
- 	spin_lock_irqsave(&pfc->lock, flags);
- 
--	val = sh_pfc_read_reg(pfc, reg, 32);
-+	val = sh_pfc_read(pfc, reg);
- 	val &= ~GENMASK(offset + size - 1, offset);
- 	val |= strength << offset;
- 
--	sh_pfc_write_reg(pfc, reg, 32, val);
-+	sh_pfc_write(pfc, reg, val);
- 
- 	spin_unlock_irqrestore(&pfc->lock, flags);
- 
-@@ -645,7 +645,7 @@ static int sh_pfc_pinconf_get(struct pinctrl_dev *pctldev, unsigned _pin,
- 			return bit;
- 
- 		spin_lock_irqsave(&pfc->lock, flags);
--		val = sh_pfc_read_reg(pfc, pocctrl, 32);
-+		val = sh_pfc_read(pfc, pocctrl);
- 		spin_unlock_irqrestore(&pfc->lock, flags);
- 
- 		arg = (val & BIT(bit)) ? 3300 : 1800;
-@@ -716,12 +716,12 @@ static int sh_pfc_pinconf_set(struct pinctrl_dev *pctldev, unsigned _pin,
- 				return -EINVAL;
- 
- 			spin_lock_irqsave(&pfc->lock, flags);
--			val = sh_pfc_read_reg(pfc, pocctrl, 32);
-+			val = sh_pfc_read(pfc, pocctrl);
- 			if (mV == 3300)
- 				val |= BIT(bit);
- 			else
- 				val &= ~BIT(bit);
--			sh_pfc_write_reg(pfc, pocctrl, 32, val);
-+			sh_pfc_write(pfc, pocctrl, val);
- 			spin_unlock_irqrestore(&pfc->lock, flags);
- 
+-	sd_fc = readl(clock->reg) & CPG_SD_FC_MASK;
++	sd_fc = readl(clock->csn.reg) & CPG_SD_FC_MASK;
+ 	for (i = 0; i < clock->div_num; i++)
+ 		if (sd_fc == (clock->div_table[i].val & CPG_SD_FC_MASK))
  			break;
+@@ -233,8 +264,13 @@ static struct clk * __init cpg_sd_clk_register(const struct cpg_core_clk *core,
+ 
+ 	clk = clk_register(NULL, &clock->hw);
+ 	if (IS_ERR(clk))
+-		kfree(clock);
++		goto free_clock;
++
++	cpg_simple_notifier_register(notifiers, &clock->csn);
++	return clk;
+ 
++free_clock:
++	kfree(clock);
+ 	return clk;
+ }
+ 
+@@ -332,7 +368,8 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+ 		break;
+ 
+ 	case CLK_TYPE_GEN3_SD:
+-		return cpg_sd_clk_register(core, base, __clk_get_name(parent));
++		return cpg_sd_clk_register(core, base, __clk_get_name(parent),
++					   notifiers);
+ 
+ 	case CLK_TYPE_GEN3_R:
+ 		if (cpg_quirks & RCKCR_CKSEL) {
 -- 
 2.7.4
