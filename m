@@ -1,73 +1,90 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:64749 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751288AbdJWRJv (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Oct 2017 13:09:51 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH v2 0/9] r8a7745/iwg22d DT rework + serial + HS-USB + IIC
-Date: Mon, 23 Oct 2017 18:09:21 +0100
-Message-Id: <1508778570-28795-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Subject: Re: [PATCH 4/4] drm: rcar-du: Add R8A7745 support
+Date: Mon, 16 Oct 2017 15:36:40 +0300
+Message-ID: <2922323.urz8JTfWKj@avalon>
+In-Reply-To: <1507908142-13142-5-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1507908142-13142-1-git-send-email-fabrizio.castro@bp.renesas.com> <1507908142-13142-5-git-send-email-fabrizio.castro@bp.renesas.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This series brings under the same roof a few patches that needed a v2
-and that are related to either r8a7745 or iwg22d, with the goal of making
-the merge process as smooth as possible.
+Hi Fabrizio,
 
-Patches [1-4] define a new DT architecture for the iW-RainboW-G22D SODIMM
-Development Platform to include the configuration with the HDMI daughter
-board and to define the serial interfaces.
+Thank you for the patch.
 
-Patches [5-8] add USB function support to the r8a7745 SoC and to the
-iwg22d board. The patches providing the definition of compatible strings:
-* "renesas,r8a7745-usb-dmac", and
-* "renesas,usbhs-r8a7745"
-(on which these USB patches depend on) have been accepted by the
-respective maintainers already, but it will take a little bit for the
-definitions to appear on a renesas-devel tag. For reference:
-https://patchwork.kernel.org/patch/9990063/
-https://patchwork.kernel.org/patch/9987411/
-https://patchwork.kernel.org/patch/9990113/
+On Friday, 13 October 2017 18:22:22 EEST Fabrizio Castro wrote:
+> Add support for the R8A7745 DU (which is very similar to the R8A7794 DU);
+> it has 2 RGB outputs.
+> 
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 
-Patch 9 adds IIC cores to the r8a7745 SoC.
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-The patches of this series apply smoothly on top of tag:
-"renesas-devel-20171018-v4.14-rc5".
+and taken in my tree.
 
-Best regards,
-Fab
-
-Biju Das (4):
-  ARM: dts: r8a7745: Add HS-USB device node
-  ARM: dts: r8a7745: Add USB-DMAC device nodes
-  ARM: dts: r8a7745: Enable DMA for HSUSB
-  ARM: dts: iwg22d-sodimm: Enable HS-USB
-
-Fabrizio Castro (5):
-  ARM: dts: iwg22d: Use /dev/ttySC3 as debug console
-  ARM: dts: iwg22d: Add /dev/ttySC5 support
-  ARM: dts: iwg22d-sodimm-dbhd-ca: Add device tree for HDMI DB
-  ARM: dts: iwg22d-sodimm: sort dt nodes
-  ARM: dts: r8a7745: Add IIC cores to dtsi
-
- arch/arm/boot/dts/Makefile                         |  1 +
- .../arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts | 61 +++++++++++++++
- arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts        | 87 ++++++++++++++--------
- arch/arm/boot/dts/r8a7745.dtsi                     | 81 ++++++++++++++++++++
- 4 files changed, 199 insertions(+), 31 deletions(-)
- create mode 100644 arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts
+> ---
+>  drivers/gpu/drm/rcar-du/rcar_du_drv.c | 22 ++++++++++++++++++++++
+>  1 file changed, 22 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> b/drivers/gpu/drm/rcar-du/rcar_du_drv.c index 3db5e8d..faa5b32 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> @@ -55,6 +55,27 @@ static const struct rcar_du_device_info
+> rzg1_du_r8a7743_info = { .num_lvds = 1,
+>  };
+> 
+> +static const struct rcar_du_device_info rzg1_du_r8a7745_info = {
+> +	.gen = 2,
+> +	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+> +		  | RCAR_DU_FEATURE_EXT_CTRL_REGS,
+> +	.num_crtcs = 2,
+> +	.routes = {
+> +		/*
+> +		 * R8A7745 has two RGB outputs
+> +		 */
+> +		[RCAR_DU_OUTPUT_DPAD0] = {
+> +			.possible_crtcs = BIT(0),
+> +			.port = 0,
+> +		},
+> +		[RCAR_DU_OUTPUT_DPAD1] = {
+> +			.possible_crtcs = BIT(1),
+> +			.port = 1,
+> +		},
+> +	},
+> +	.num_lvds = 0,
+> +};
+> +
+>  static const struct rcar_du_device_info rcar_du_r8a7779_info = {
+>  	.gen = 2,
+>  	.features = 0,
+> @@ -229,6 +250,7 @@ static const struct rcar_du_device_info
+> rcar_du_r8a7796_info = {
+> 
+>  static const struct of_device_id rcar_du_of_table[] = {
+>  	{ .compatible = "renesas,du-r8a7743", .data = &rzg1_du_r8a7743_info },
+> +	{ .compatible = "renesas,du-r8a7745", .data = &rzg1_du_r8a7745_info },
+>  	{ .compatible = "renesas,du-r8a7779", .data = &rcar_du_r8a7779_info },
+>  	{ .compatible = "renesas,du-r8a7790", .data = &rcar_du_r8a7790_info },
+>  	{ .compatible = "renesas,du-r8a7791", .data = &rcar_du_r8a7791_info },
 
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
+
