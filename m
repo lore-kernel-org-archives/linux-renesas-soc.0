@@ -1,49 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38914 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752665AbdJTKaF (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:45736 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752968AbdJPNz2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Oct 2017 06:30:05 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Mon, 16 Oct 2017 09:55:28 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 18/42] ARM: dts: r8a7743: Enable DMA for HSUSB
-Date: Fri, 20 Oct 2017 12:28:45 +0200
-Message-Id: <e0a10e7b070624965f20205c59fb2a0c0b465782.1508493785.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1508493785.git.horms+renesas@verge.net.au>
-References: <cover.1508493785.git.horms+renesas@verge.net.au>
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>, linux-clk@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 01/10] clk: renesas: mstp: Keep wakeup sources active during system suspend
+Date: Mon, 16 Oct 2017 15:55:07 +0200
+Message-Id: <1508162116-5043-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
+References: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+If a device is part of the CPG/MSTP Clock Domain and to be used as a
+wakeup source, it must be kept active during system suspend.
 
-This patch adds DMA properties to the HSUSB node.
+Currently this is handled in device-specific drivers by explicitly
+increasing the use count of the module clock when the device is
+configured as a wakeup source.  However, the proper way to prevent the
+device from being stopped is to inform this requirement to the genpd
+core.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Hence provide an .active_wakeup() callback that always returns true.
+Note that this will only affect devices configured as wakeup sources.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7743.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/clk/renesas/clk-mstp.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index de89295ce63a..699c04003eac 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -979,6 +979,9 @@
- 			reg = <0 0xe6590000 0 0x100>;
- 			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 704>;
-+			dmas = <&usb_dmac0 0>, <&usb_dmac0 1>,
-+			       <&usb_dmac1 0>, <&usb_dmac1 1>;
-+			dma-names = "ch0", "ch1", "ch2", "ch3";
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
- 			resets = <&cpg 704>;
- 			renesas,buswait = <4>;
+diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
+index 500a9e4e03c48957..912e4745d8011fe8 100644
+--- a/drivers/clk/renesas/clk-mstp.c
++++ b/drivers/clk/renesas/clk-mstp.c
+@@ -329,6 +329,11 @@ void cpg_mstp_detach_dev(struct generic_pm_domain *unused, struct device *dev)
+ 		pm_clk_destroy(dev);
+ }
+ 
++static bool cpg_mstp_active_wakeup(struct device *dev)
++{
++	return true;
++}
++
+ void __init cpg_mstp_add_clk_domain(struct device_node *np)
+ {
+ 	struct generic_pm_domain *pd;
+@@ -345,6 +350,7 @@ void __init cpg_mstp_add_clk_domain(struct device_node *np)
+ 
+ 	pd->name = np->name;
+ 	pd->flags = GENPD_FLAG_PM_CLK;
++	pd->dev_ops.active_wakeup = cpg_mstp_active_wakeup;
+ 	pd->attach_dev = cpg_mstp_attach_dev;
+ 	pd->detach_dev = cpg_mstp_detach_dev;
+ 	pm_genpd_init(pd, &pm_domain_always_on_gov, false);
 -- 
-2.11.0
+2.7.4
