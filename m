@@ -1,70 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:38378 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751059AbdJCIaK (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:59318 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753028AbdJPNz2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Oct 2017 04:30:10 -0400
-MIME-Version: 1.0
-In-Reply-To: <20170822232640.26147-25-niklas.soderlund+renesas@ragnatech.se>
-References: <20170822232640.26147-1-niklas.soderlund+renesas@ragnatech.se> <20170822232640.26147-25-niklas.soderlund+renesas@ragnatech.se>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 3 Oct 2017 10:30:08 +0200
-Message-ID: <CAMuHMdUih6ymX+Hv0C0AH3o5pTGWaEQq4kXXxoKYv-grNkcsgw@mail.gmail.com>
-Subject: Re: [PATCH v6 24/25] rcar-vin: enable support for r8a7795
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Fukawa <tomoharu.fukawa.eb@renesas.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 16 Oct 2017 09:55:28 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>, linux-clk@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 07/10] [RFC] clk: renesas: cpg-mssr: Use GENPD_FLAG_ACTIVE_WAKEUP
+Date: Mon, 16 Oct 2017 15:55:13 +0200
+Message-Id: <1508162116-5043-8-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
+References: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Aug 23, 2017 at 1:26 AM, Niklas S=C3=B6derlund
-<niklas.soderlund+renesas@ragnatech.se> wrote:
-> Add the SoC specific information for Renesas r8a7795.
->
-> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
-se>
+Set the newly introduced GENPD_FLAG_ACTIVE_WAKEUP, which allows to
+remove the driver's own "always true" callback.
 
-> --- a/drivers/media/platform/rcar-vin/rcar-core.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+This must not be applied before "PM / Domain: Enable genpd users to
+specify default active wakeup behavior" has landed upstream, hence the
+"RFC".
+---
+ drivers/clk/renesas/renesas-cpg-mssr.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-> @@ -1038,6 +1176,13 @@ static int rcar_vin_probe(struct platform_device *=
-pdev)
->         vin->dev =3D &pdev->dev;
->         vin->info =3D match->data;
->
-> +       /*
-> +        * Special care is needed on r8a7795 ES1.x since it
-> +        * uses different routing then r8a7795 ES2.0.
-
-than
-
-> +        */
-> +       if (vin->info =3D=3D &rcar_info_r8a7795 && soc_device_match(r8a77=
-95es1))
-> +               vin->info =3D &rcar_info_r8a7795es1;
-> +
->         mem =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
->         if (mem =3D=3D NULL)
->                 return -EINVAL;
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index de534896f596168c..99699b715d7cf2de 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -481,11 +481,6 @@ void cpg_mssr_detach_dev(struct generic_pm_domain *unused, struct device *dev)
+ 		pm_clk_destroy(dev);
+ }
+ 
+-static bool cpg_mssr_active_wakeup(struct device *dev)
+-{
+-	return true;
+-}
+-
+ static int __init cpg_mssr_add_clk_domain(struct device *dev,
+ 					  const unsigned int *core_pm_clks,
+ 					  unsigned int num_core_pm_clks)
+@@ -505,8 +500,7 @@ static int __init cpg_mssr_add_clk_domain(struct device *dev,
+ 
+ 	genpd = &pd->genpd;
+ 	genpd->name = np->name;
+-	genpd->flags = GENPD_FLAG_PM_CLK;
+-	genpd->dev_ops.active_wakeup = cpg_mssr_active_wakeup;
++	genpd->flags = GENPD_FLAG_PM_CLK | GENPD_FLAG_ACTIVE_WAKEUP;
+ 	genpd->attach_dev = cpg_mssr_attach_dev;
+ 	genpd->detach_dev = cpg_mssr_detach_dev;
+ 	pm_genpd_init(genpd, &pm_domain_always_on_gov, false);
+-- 
+2.7.4
