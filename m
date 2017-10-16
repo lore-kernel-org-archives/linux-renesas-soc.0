@@ -1,96 +1,52 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:52250 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754176AbdJPP2E (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Oct 2017 11:28:04 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 09/14] pinctrl: sh-pfc: Remove obsolete sh_pfc_pin_to_bias_info()
-Date: Mon, 16 Oct 2017 17:27:54 +0200
-Message-Id: <1508167679-21155-10-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1508167679-21155-1-git-send-email-geert+renesas@glider.be>
-References: <1508167679-21155-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: joro@8bytes.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
+        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
+        m.szyprowski@samsung.com
+Date: Mon, 16 Oct 2017 21:30:07 +0900
+Message-Id: <150815700766.32763.4264924157922538405.sendpatchset@little-apple>
+In-Reply-To: <150815695455.32763.1660214306749693609.sendpatchset@little-apple>
+References: <150815695455.32763.1660214306749693609.sendpatchset@little-apple>
+Subject: [PATCH v5 05/09] iommu/ipmmu-vmsa: IPMMU device is 40-bit bus master
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-All users of sh_pfc_pin_to_bias_info() and the related data structures
-have been converted to sh_pfc_pin_to_bias_reg(), so those can be
-removed.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
-v2:
-  - Add Reviewed-by.
----
- drivers/pinctrl/sh-pfc/core.c   | 15 ---------------
- drivers/pinctrl/sh-pfc/core.h   |  3 ---
- drivers/pinctrl/sh-pfc/sh_pfc.h |  6 ------
- 3 files changed, 24 deletions(-)
+The r8a7795 IPMMU supports 40-bit bus mastering. Both
+the coherent DMA mask and the streaming DMA mask are
+set to unlock the 40-bit address space for coherent
+allocations and streaming operations.
 
-diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
-index 01c408a3dee478f2..2fe5fd6c5d17adc5 100644
---- a/drivers/pinctrl/sh-pfc/core.c
-+++ b/drivers/pinctrl/sh-pfc/core.c
-@@ -389,21 +389,6 @@ int sh_pfc_config_mux(struct sh_pfc *pfc, unsigned mark, int pinmux_type)
- 	return 0;
- }
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+---
+
+ Changes since V4:
+ - None
+
+ Changes since V3:
+ - None
+
+ Changes since V2:
+ - Updated the code and commit message to use 40 bits instead of 64 bits
+
+ Changes since V1:
+ - Updated the commit message
+
+ drivers/iommu/ipmmu-vmsa.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- 0012/drivers/iommu/ipmmu-vmsa.c
++++ work/drivers/iommu/ipmmu-vmsa.c	2017-10-16 20:37:31.480607110 +0900
+@@ -996,6 +996,7 @@ static int ipmmu_probe(struct platform_d
+ 	spin_lock_init(&mmu->lock);
+ 	bitmap_zero(mmu->ctx, IPMMU_CTX_MAX);
+ 	mmu->features = of_device_get_match_data(&pdev->dev);
++	dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(40));
  
--const struct sh_pfc_bias_info *
--sh_pfc_pin_to_bias_info(const struct sh_pfc_bias_info *info,
--			unsigned int num, unsigned int pin)
--{
--	unsigned int i;
--
--	for (i = 0; i < num; i++)
--		if (info[i].pin == pin)
--			return &info[i];
--
--	WARN_ONCE(1, "Pin %u is not in bias info list\n", pin);
--
--	return NULL;
--}
--
- const struct pinmux_bias_reg *
- sh_pfc_pin_to_bias_reg(const struct sh_pfc *pfc, unsigned int pin,
- 		       unsigned int *bit)
-diff --git a/drivers/pinctrl/sh-pfc/core.h b/drivers/pinctrl/sh-pfc/core.h
-index 460d996513acea26..5af8ee26c03ea139 100644
---- a/drivers/pinctrl/sh-pfc/core.h
-+++ b/drivers/pinctrl/sh-pfc/core.h
-@@ -32,9 +32,6 @@ void sh_pfc_write(struct sh_pfc *pfc, u32 reg, u32 data);
- int sh_pfc_get_pin_index(struct sh_pfc *pfc, unsigned int pin);
- int sh_pfc_config_mux(struct sh_pfc *pfc, unsigned mark, int pinmux_type);
- 
--const struct sh_pfc_bias_info *
--sh_pfc_pin_to_bias_info(const struct sh_pfc_bias_info *info,
--			unsigned int num, unsigned int pin);
- const struct pinmux_bias_reg *
- sh_pfc_pin_to_bias_reg(const struct sh_pfc *pfc, unsigned int pin,
- 		       unsigned int *bit);
-diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
-index 1914f4b5fef569b3..18fd878266297dc2 100644
---- a/drivers/pinctrl/sh-pfc/sh_pfc.h
-+++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-@@ -200,12 +200,6 @@ struct sh_pfc_window {
- 	unsigned long size;
- };
- 
--struct sh_pfc_bias_info {
--	u16 pin;
--	u16 reg : 11;
--	u16 bit : 5;
--};
--
- struct sh_pfc_pin_range;
- 
- struct sh_pfc {
--- 
-2.7.4
+ 	/* Map I/O memory and request IRQ. */
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
