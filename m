@@ -1,87 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57269 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932290AbdJRHBG (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:56536 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753771AbdJPP2D (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Oct 2017 03:01:06 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v4 3/3] mmc: renesas_sdhi: implement R-Car Gen[123] fallback compatibility strings
-Date: Wed, 18 Oct 2017 09:00:23 +0200
-Message-Id: <20171018070023.3878-4-horms+renesas@verge.net.au>
-In-Reply-To: <20171018070023.3878-1-horms+renesas@verge.net.au>
-References: <20171018070023.3878-1-horms+renesas@verge.net.au>
+        Mon, 16 Oct 2017 11:28:03 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-pm@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 01/14] pinctrl: sh-pfc: Remove matching on plain sh-pfc platform device
+Date: Mon, 16 Oct 2017 17:27:46 +0200
+Message-Id: <1508167679-21155-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1508167679-21155-1-git-send-email-geert+renesas@glider.be>
+References: <1508167679-21155-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Implement fallback compatibility strings for R-Car Gen 1, 2 and 3.
+As of commit 8682b3c522c639f3 ("sh-pfc: Remove platform device
+registration"), plain "sh-pfc" platform devices are no longer created.
+Hence remove their match entry, and the now obsolete checks for missing
+device IDs and driver data.
 
-In the case of Renesas R-Car hardware we know that there are generations of
-SoCs, f.e. Gen 1 and 2. But beyond that its not clear what the relationship
-between IP blocks might be. For example, I believe that r8a7790 is older
-than r8a7791 but that doesn't imply that the latter is a descendant of the
-former or vice versa.
-
-We can, however, by examining the documentation and behaviour of the
-hardware at run-time observe that the current driver implementation appears
-to be compatible with the IP blocks on SoCs within a given generation.
-
-For the above reasons and convenience when enabling new SoCs a
-per-generation fallback compatibility string scheme is being adopted for
-drivers for Renesas SoCs.
-
-Also, improve readability by listing the shmobile fallback compatibility
-string after the more-specific compatibility strings they provide a
-fallback for.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
-v4
-* Corrected typo in changelog
+v2:
+  - Add Reviewed-by.
 ---
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 1 +
- drivers/mmc/host/renesas_sdhi_sys_dmac.c      | 5 ++++-
- 2 files changed, 5 insertions(+), 1 deletion(-)
+ drivers/pinctrl/sh-pfc/core.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index f905f2361d12..637c27057ac2 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -88,6 +88,7 @@ static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
- static const struct of_device_id renesas_sdhi_internal_dmac_of_match[] = {
- 	{ .compatible = "renesas,sdhi-r8a7795", .data = &of_rcar_gen3_compatible, },
- 	{ .compatible = "renesas,sdhi-r8a7796", .data = &of_rcar_gen3_compatible, },
-+	{ .compatible = "renesas,rcar-gen3-sdhi", .data = &of_rcar_gen3_compatible, },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, renesas_sdhi_internal_dmac_of_match);
-diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-index df4465439e13..9ab10436e4b8 100644
---- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-@@ -91,7 +91,6 @@ static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
+diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
+index 0c5e952461fdf7c6..9cdbaeab2cf10d46 100644
+--- a/drivers/pinctrl/sh-pfc/core.c
++++ b/drivers/pinctrl/sh-pfc/core.c
+@@ -569,7 +569,6 @@ static const struct of_device_id sh_pfc_of_table[] = {
+ 
+ static int sh_pfc_probe(struct platform_device *pdev)
+ {
+-	const struct platform_device_id *platid = platform_get_device_id(pdev);
+ #ifdef CONFIG_OF
+ 	struct device_node *np = pdev->dev.of_node;
+ #endif
+@@ -582,10 +581,7 @@ static int sh_pfc_probe(struct platform_device *pdev)
+ 		info = of_device_get_match_data(&pdev->dev);
+ 	else
+ #endif
+-		info = platid ? (const void *)platid->driver_data : NULL;
+-
+-	if (info == NULL)
+-		return -ENODEV;
++		info = (const void *)platform_get_device_id(pdev)->driver_data;
+ 
+ 	pfc = devm_kzalloc(&pdev->dev, sizeof(*pfc), GFP_KERNEL);
+ 	if (pfc == NULL)
+@@ -683,7 +679,6 @@ static const struct platform_device_id sh_pfc_id_table[] = {
+ #ifdef CONFIG_PINCTRL_PFC_SHX3
+ 	{ "pfc-shx3", (kernel_ulong_t)&shx3_pinmux_info },
+ #endif
+-	{ "sh-pfc", 0 },
+ 	{ },
  };
  
- static const struct of_device_id renesas_sdhi_sys_dmac_of_match[] = {
--	{ .compatible = "renesas,sdhi-shmobile" },
- 	{ .compatible = "renesas,sdhi-sh73a0", .data = &of_default_cfg, },
- 	{ .compatible = "renesas,sdhi-r8a73a4", .data = &of_default_cfg, },
- 	{ .compatible = "renesas,sdhi-r8a7740", .data = &of_default_cfg, },
-@@ -107,6 +106,10 @@ static const struct of_device_id renesas_sdhi_sys_dmac_of_match[] = {
- 	{ .compatible = "renesas,sdhi-r8a7794", .data = &of_rcar_gen2_compatible, },
- 	{ .compatible = "renesas,sdhi-r8a7795", .data = &of_rcar_gen3_compatible, },
- 	{ .compatible = "renesas,sdhi-r8a7796", .data = &of_rcar_gen3_compatible, },
-+	{ .compatible = "renesas,rcar-gen1-sdhi", .data = &of_rcar_gen1_compatible, },
-+	{ .compatible = "renesas,rcar-gen2-sdhi", .data = &of_rcar_gen2_compatible, },
-+	{ .compatible = "renesas,rcar-gen3-sdhi", .data = &of_rcar_gen3_compatible, },
-+	{ .compatible = "renesas,sdhi-shmobile" },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, renesas_sdhi_sys_dmac_of_match);
 -- 
-2.11.0
+2.7.4
