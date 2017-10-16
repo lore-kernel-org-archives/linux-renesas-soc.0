@@ -1,54 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38914 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752735AbdJTK3x (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:52256 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754175AbdJPP2E (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Oct 2017 06:29:53 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 06/42] ARM: dts: r8a7794: Use generic node name for VSP1 nodes
-Date: Fri, 20 Oct 2017 12:28:33 +0200
-Message-Id: <8b40ea19233cc53f9d5d33a44d6fc833a765bab2.1508493785.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1508493785.git.horms+renesas@verge.net.au>
-References: <cover.1508493785.git.horms+renesas@verge.net.au>
+        Mon, 16 Oct 2017 11:28:04 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-pm@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 11/14] pinctrl: sh-pfc: r8a7795-es1: Use generic IOCTRL register description
+Date: Mon, 16 Oct 2017 17:27:56 +0200
+Message-Id: <1508167679-21155-12-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1508167679-21155-1-git-send-email-geert+renesas@glider.be>
+References: <1508167679-21155-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Use the preferred generic node name instead of the specific name.
+Move R-Car H3 ES1.x I/O voltage support over to the generic way to
+describe IOCTRL registers, which will be needed for suspend/resume
+support.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7794.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+v2:
+  - Add a sentinel comment, to make it more explicit that a last zero
+    entry is required.
+---
+ drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 035c33715b65..19cff0dd90cf 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -970,7 +970,7 @@
- 		};
- 	};
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
+index 714bb3749a27ec99..1d4d84f34d6043d0 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
+@@ -5423,12 +5423,21 @@ static const struct pinmux_drive_reg pinmux_drive_regs[] = {
+ 	{ },
+ };
  
--	vsp1@fe928000 {
-+	vsp@fe928000 {
- 		compatible = "renesas,vsp1";
- 		reg = <0 0xfe928000 0 0x8000>;
- 		interrupts = <GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>;
-@@ -979,7 +979,7 @@
- 		resets = <&cpg 131>;
- 	};
++enum ioctrl_regs {
++	POCCTRL,
++};
++
++static const struct pinmux_ioctrl_reg pinmux_ioctrl_regs[] = {
++	[POCCTRL] = { 0xe6060380, },
++	{ /* sentinel */ },
++};
++
+ static int r8a7795es1_pin_to_pocctrl(struct sh_pfc *pfc, unsigned int pin,
+ 				     u32 *pocctrl)
+ {
+ 	int bit = -EINVAL;
  
--	vsp1@fe930000 {
-+	vsp@fe930000 {
- 		compatible = "renesas,vsp1";
- 		reg = <0 0xfe930000 0 0x8000>;
- 		interrupts = <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
+-	*pocctrl = 0xe6060380;
++	*pocctrl = pinmux_ioctrl_regs[POCCTRL].reg;
+ 
+ 	if (pin >= RCAR_GP_PIN(3, 0) && pin <= RCAR_GP_PIN(3, 11))
+ 		bit = pin & 0x1f;
+@@ -5745,6 +5754,7 @@ const struct sh_pfc_soc_info r8a7795es1_pinmux_info = {
+ 	.cfg_regs = pinmux_config_regs,
+ 	.drive_regs = pinmux_drive_regs,
+ 	.bias_regs = pinmux_bias_regs,
++	.ioctrl_regs = pinmux_ioctrl_regs,
+ 
+ 	.pinmux_data = pinmux_data,
+ 	.pinmux_data_size = ARRAY_SIZE(pinmux_data),
 -- 
-2.11.0
+2.7.4
