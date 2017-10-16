@@ -1,87 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:49223 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933744AbdJQHKX (ORCPT
+Received: from mail-lf0-f41.google.com ([209.85.215.41]:49117 "EHLO
+        mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757296AbdJPURW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Oct 2017 03:10:23 -0400
-MIME-Version: 1.0
-In-Reply-To: <b3825de9-16e8-94a4-0b23-bf0caf87a343@cogentembedded.com>
-References: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
- <1508162116-5043-10-git-send-email-geert+renesas@glider.be> <b3825de9-16e8-94a4-0b23-bf0caf87a343@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 17 Oct 2017 09:10:21 +0200
-Message-ID: <CAMuHMdWtYrhU9RstX2ajasfD-psUK2zdUQcXWTa3FjnrwEFfJw@mail.gmail.com>
+        Mon, 16 Oct 2017 16:17:22 -0400
+Received: by mail-lf0-f41.google.com with SMTP id a69so18372210lfe.5
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 16 Oct 2017 13:17:22 -0700 (PDT)
 Subject: Re: [PATCH 09/10] [RFC] ravb: Remove obsolete explicit clock handling
  for WoL
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        =?UTF-8?Q?Niklas_S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>, linux-clk@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org
+References: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
+ <1508162116-5043-10-git-send-email-geert+renesas@glider.be>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <b3825de9-16e8-94a4-0b23-bf0caf87a343@cogentembedded.com>
+Date: Mon, 16 Oct 2017 23:17:17 +0300
+MIME-Version: 1.0
+In-Reply-To: <1508162116-5043-10-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sergei,
+On 10/16/2017 04:55 PM, Geert Uytterhoeven wrote:
 
-On Mon, Oct 16, 2017 at 10:17 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> On 10/16/2017 04:55 PM, Geert Uytterhoeven wrote:
->> Currently, if Wake-on-LAN is enabled, the EtherAVB device's module clock
->> is manually kept running during system suspend, to make sure the device
->> stays active.
->>
->> Since "soc: renesas: rcar-sysc: Keep wakeup sources active during system
->> suspend", this workaround is no longer needed.  Hence remove all
->> explicit clock handling to keep the device active.
->>
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> [...]
->
-> Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->
->> diff --git a/drivers/net/ethernet/renesas/ravb_main.c
->> b/drivers/net/ethernet/renesas/ravb_main.c
->> index fdf30bfa403bf416..11ffccca11d56df5 100644
->> --- a/drivers/net/ethernet/renesas/ravb_main.c
->> +++ b/drivers/net/ethernet/renesas/ravb_main.c
->
-> [...]
->>
->> @@ -2289,8 +2283,6 @@ static int __maybe_unused ravb_resume(struct device
->> *dev)
->>                  *       this clock dance should be removed.
->>                  */
->>                 clk_disable(priv->clk);
->> -               clk_disable(priv->clk);
->> -               clk_enable(priv->clk);
->>                 clk_enable(priv->clk);
->
->
->    I thought the entire clock dance could be removed now? Not yet?
+> Currently, if Wake-on-LAN is enabled, the EtherAVB device's module clock
+> is manually kept running during system suspend, to make sure the device
+> stays active.
+> 
+> Since "soc: renesas: rcar-sysc: Keep wakeup sources active during system
+> suspend", this workaround is no longer needed.  Hence remove all
+> explicit clock handling to keep the device active.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[...]
 
-The remaining clock dance steps work around PSCI powering down the SoC,
-after which the hardware and Linux disagree about the clock state.
-They can be removed after "[PATCH v3 0/5] clk: renesas: rcar-gen3: Restore
-clocks during resume" has hit upstream.
+Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Gr{oetje,eeting}s,
+> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+> index fdf30bfa403bf416..11ffccca11d56df5 100644
+> --- a/drivers/net/ethernet/renesas/ravb_main.c
+> +++ b/drivers/net/ethernet/renesas/ravb_main.c
+[...]
+> @@ -2289,8 +2283,6 @@ static int __maybe_unused ravb_resume(struct device *dev)
+>   		 *       this clock dance should be removed.
+>   		 */
+>   		clk_disable(priv->clk);
+> -		clk_disable(priv->clk);
+> -		clk_enable(priv->clk);
+>   		clk_enable(priv->clk);
 
-                        Geert
+    I thought the entire clock dance could be removed now? Not yet?
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+[...]
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+MBR, Sergei
