@@ -1,81 +1,31 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33486 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:51254 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751296AbdJEJFn (ORCPT
+        with ESMTP id S1751438AbdJPJmo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 Oct 2017 05:05:43 -0400
-Date: Thu, 5 Oct 2017 11:05:01 +0200
+        Mon, 16 Oct 2017 05:42:44 -0400
+Date: Mon, 16 Oct 2017 11:42:35 +0200
 From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: Re: [PATCH v2 8/8] arm64: dts: renesas: eagle: add EtherAVB support
-Message-ID: <20171005090500.GC26369@verge.net.au>
-References: <20170915194449.538504992@cogentembedded.com>
- <CAMuHMdXQXFuVzwW7G-U7XWZUEj8qFRjtfDQF1+TgyzO0Xb+eYg@mail.gmail.com>
- <c0390fc1-7da4-ac60-afee-97126d1fd372@cogentembedded.com>
- <CAMuHMdVCTORpfKN+GTka_6pT1VWjOneV2GBhGo7Y8DsZYSxdvw@mail.gmail.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 08/13] ARM: dts: r8a7790: Add clocks for CA7 CPU cores
+Message-ID: <20171016094234.i3jzpo6nern3h6nr@verge.net.au>
+References: <1507800916-11509-1-git-send-email-geert+renesas@glider.be>
+ <1507800916-11509-9-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdVCTORpfKN+GTka_6pT1VWjOneV2GBhGo7Y8DsZYSxdvw@mail.gmail.com>
+In-Reply-To: <1507800916-11509-9-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Sep 21, 2017 at 06:09:34PM +0200, Geert Uytterhoeven wrote:
-> Hi Sergei,
+On Thu, Oct 12, 2017 at 11:35:11AM +0200, Geert Uytterhoeven wrote:
+> Currently only the CPU cores in the CA15 cluster have clocks properties.
+> Add the missing clocks properties for the CPU cores in the CA7 cluster
+> to fix this.
 > 
-> On Thu, Sep 21, 2017 at 6:03 PM, Sergei Shtylyov
-> <sergei.shtylyov@cogentembedded.com> wrote:
-> > On 9/21/2017 4:08 PM, Geert Uytterhoeven wrote:
-> >>> Define the Eagle board  dependent part of the EtherAVB device node.
-> >>> Enable DHCP  and NFS root for the kernel booting.
-> >>>
-> >>> Based  on the original (and large) patch by Vladimir Barinov.
-> >>>
-> >>> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-> >>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> >>
-> >>
-> >>> --- renesas.orig/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-> >>> +++ renesas/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-> >
-> > [...]
-> >>>
-> >>> @@ -43,3 +44,14 @@
-> >>>   &scif0 {
-> >>>          status = "okay";
-> >>>   };
-> >>> +
-> >>> +&avb {
-> >>> +       renesas,no-ether-link;
-> >>> +       phy-handle = <&phy0>;
-> >>> +       status = "okay";
-> >>> +
-> >>> +       phy0: ethernet-phy@0 {
-> >>> +               rxc-skew-ps = <1500>;
-> >>> +               reg = <0>;
-> >>
-> >>
-> >> Any specific reason why you don't want to wire up the interrupt?
-> >>
-> >>                  interrupt-parent = <&gpio2>;
-> >
-> >
-> >    I thought it's quite obvious -- we don't have GPIOs yet, and GPIOs seem
-> > to require PFC.
-> 
-> Of course. And these can be added later.
-> 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Thanks, applied.
+Tested-by: Simon Horman <horms+renesas@verge.net.au>
