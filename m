@@ -1,62 +1,189 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38914 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752665AbdJTKaH (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:56630 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754170AbdJPP2E (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Oct 2017 06:30:07 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 20/42] ARM: dts: gr-peach: Enable ostm0 and ostm1 timers
-Date: Fri, 20 Oct 2017 12:28:47 +0200
-Message-Id: <1126e108a3ad8ae92a0532259e3da4b14072355f.1508493785.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1508493785.git.horms+renesas@verge.net.au>
-References: <cover.1508493785.git.horms+renesas@verge.net.au>
+        Mon, 16 Oct 2017 11:28:04 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-pm@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 14/14] pinctrl: sh-pfc: Save/restore registers for PSCI system suspend
+Date: Mon, 16 Oct 2017 17:27:59 +0200
+Message-Id: <1508167679-21155-15-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1508167679-21155-1-git-send-email-geert+renesas@glider.be>
+References: <1508167679-21155-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+During PSCI system suspend, R-Car Gen3 SoCs are powered down, and their
+pinctrl register state is lost.  Note that as the boot loader skips most
+initialization after system resume, pinctrl register state differs from
+the state encountered during normal system boot, too.
 
-Enable ostm0 and ostm1 timers to be used as clock source and clockevent
-source. The timers provides greater accuracy than the already enabled
-mtu2 one.
+To fix this, save all GPIO and peripheral function select, module
+select, drive strength control, bias, and other I/O control registers
+during system suspend, and restore them during system resume.
 
-With these enabled:
+Note that to avoid overhead on platforms not needing it, the
+suspend/resume code has a build time dependency on sleep and PSCI
+support, and a runtime dependency on PSCI.
 
-clocksource: ostm: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 57352151442 ns
-sched_clock: 32 bits at 33MHz, resolution 30ns, wraps every 64440619504ns
-ostm: used for clocksource
-ostm: used for clock events
+Inspired by a patch in the BSP by Hien Dang.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Suggested-by: Chris Brandt <chris.brandt@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r7s72100-gr-peach.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
+v2:
+  - Rebased.
+---
+ drivers/pinctrl/sh-pfc/core.c   | 97 +++++++++++++++++++++++++++++++++++++++++
+ drivers/pinctrl/sh-pfc/sh_pfc.h |  1 +
+ 2 files changed, 98 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r7s72100-gr-peach.dts b/arch/arm/boot/dts/r7s72100-gr-peach.dts
-index eca14e3801ec..779f724b4531 100644
---- a/arch/arm/boot/dts/r7s72100-gr-peach.dts
-+++ b/arch/arm/boot/dts/r7s72100-gr-peach.dts
-@@ -104,6 +104,14 @@
- 	status = "okay";
+diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
+index 2fe5fd6c5d17adc5..cf4ae4bc91156991 100644
+--- a/drivers/pinctrl/sh-pfc/core.c
++++ b/drivers/pinctrl/sh-pfc/core.c
+@@ -24,6 +24,7 @@
+ #include <linux/of_device.h>
+ #include <linux/pinctrl/machine.h>
+ #include <linux/platform_device.h>
++#include <linux/psci.h>
+ #include <linux/slab.h>
+ 
+ #include "core.h"
+@@ -572,6 +573,97 @@ static const struct of_device_id sh_pfc_of_table[] = {
+ };
+ #endif
+ 
++#if defined(CONFIG_PM_SLEEP) && defined(CONFIG_ARM_PSCI_FW)
++static void sh_pfc_nop_reg(struct sh_pfc *pfc, u32 reg, unsigned int idx)
++{
++}
++
++static void sh_pfc_save_reg(struct sh_pfc *pfc, u32 reg, unsigned int idx)
++{
++	pfc->saved_regs[idx] = sh_pfc_read(pfc, reg);
++}
++
++static void sh_pfc_restore_reg(struct sh_pfc *pfc, u32 reg, unsigned int idx)
++{
++	sh_pfc_write(pfc, reg, pfc->saved_regs[idx]);
++}
++
++static unsigned int sh_pfc_walk_regs(struct sh_pfc *pfc,
++	void (*do_reg)(struct sh_pfc *pfc, u32 reg, unsigned int idx))
++{
++	unsigned int i, n = 0;
++
++	if (pfc->info->cfg_regs)
++		for (i = 0; pfc->info->cfg_regs[i].reg; i++)
++			do_reg(pfc, pfc->info->cfg_regs[i].reg, n++);
++
++	if (pfc->info->drive_regs)
++		for (i = 0; pfc->info->drive_regs[i].reg; i++)
++			do_reg(pfc, pfc->info->drive_regs[i].reg, n++);
++
++	if (pfc->info->bias_regs)
++		for (i = 0; pfc->info->bias_regs[i].puen; i++) {
++			do_reg(pfc, pfc->info->bias_regs[i].puen, n++);
++			if (pfc->info->bias_regs[i].pud)
++				do_reg(pfc, pfc->info->bias_regs[i].pud, n++);
++		}
++
++	if (pfc->info->ioctrl_regs)
++		for (i = 0; pfc->info->ioctrl_regs[i].reg; i++)
++			do_reg(pfc, pfc->info->ioctrl_regs[i].reg, n++);
++
++	return n;
++}
++
++static int sh_pfc_suspend_init(struct sh_pfc *pfc)
++{
++	unsigned int n;
++
++	/* This is the best we can do to check for the presence of PSCI */
++	if (!psci_ops.cpu_suspend)
++		return 0;
++
++	n = sh_pfc_walk_regs(pfc, sh_pfc_nop_reg);
++	if (!n)
++		return 0;
++
++	pfc->saved_regs = devm_kmalloc_array(pfc->dev, n,
++					     sizeof(*pfc->saved_regs),
++					     GFP_KERNEL);
++	if (!pfc->saved_regs)
++		return -ENOMEM;
++
++	dev_dbg(pfc->dev, "Allocated space to save %u regs\n", n);
++	return 0;
++}
++
++static int sh_pfc_suspend_noirq(struct device *dev)
++{
++	struct sh_pfc *pfc = dev_get_drvdata(dev);
++
++	if (pfc->saved_regs)
++		sh_pfc_walk_regs(pfc, sh_pfc_save_reg);
++	return 0;
++}
++
++static int sh_pfc_resume_noirq(struct device *dev)
++{
++	struct sh_pfc *pfc = dev_get_drvdata(dev);
++
++	if (pfc->saved_regs)
++		sh_pfc_walk_regs(pfc, sh_pfc_restore_reg);
++	return 0;
++}
++
++static const struct dev_pm_ops sh_pfc_pm  = {
++	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(sh_pfc_suspend_noirq, sh_pfc_resume_noirq)
++};
++#define DEV_PM_OPS	&sh_pfc_pm
++#else
++static int sh_pfc_suspend_init(struct sh_pfc *pfc) { return 0; }
++#define DEV_PM_OPS	NULL
++#endif /* CONFIG_PM_SLEEP && CONFIG_ARM_PSCI_FW */
++
+ static int sh_pfc_probe(struct platform_device *pdev)
+ {
+ #ifdef CONFIG_OF
+@@ -610,6 +702,10 @@ static int sh_pfc_probe(struct platform_device *pdev)
+ 		info = pfc->info;
+ 	}
+ 
++	ret = sh_pfc_suspend_init(pfc);
++	if (ret)
++		return ret;
++
+ 	/* Enable dummy states for those platforms without pinctrl support */
+ 	if (!of_have_populated_dt())
+ 		pinctrl_provide_dummies();
+@@ -693,6 +789,7 @@ static struct platform_driver sh_pfc_driver = {
+ 	.driver		= {
+ 		.name	= DRV_NAME,
+ 		.of_match_table = of_match_ptr(sh_pfc_of_table),
++		.pm     = DEV_PM_OPS,
+ 	},
  };
  
-+&ostm0 {
-+	status = "okay";
-+};
-+
-+&ostm1 {
-+	status = "okay";
-+};
-+
- &scif2 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&scif2_pins>;
+diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
+index b9bb56c91b6fdaf3..213108a058feefb0 100644
+--- a/drivers/pinctrl/sh-pfc/sh_pfc.h
++++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+@@ -222,6 +222,7 @@ struct sh_pfc {
+ 	unsigned int nr_gpio_pins;
+ 
+ 	struct sh_pfc_chip *gpio;
++	u32 *saved_regs;
+ };
+ 
+ struct sh_pfc_soc_operations {
 -- 
-2.11.0
+2.7.4
