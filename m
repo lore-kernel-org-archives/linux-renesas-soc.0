@@ -1,70 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:56536 "EHLO
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:35988 "EHLO
         baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753771AbdJPP2D (ORCPT
+        with ESMTP id S1751768AbdJPJIu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Oct 2017 11:28:03 -0400
+        Mon, 16 Oct 2017 05:08:50 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-pm@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 01/14] pinctrl: sh-pfc: Remove matching on plain sh-pfc platform device
-Date: Mon, 16 Oct 2017 17:27:46 +0200
-Message-Id: <1508167679-21155-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1508167679-21155-1-git-send-email-geert+renesas@glider.be>
-References: <1508167679-21155-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v3 5/5] clk: renesas: rcar-gen3: Restore R clock during resume
+Date: Mon, 16 Oct 2017 10:36:54 +0200
+Message-Id: <1508143014-11795-6-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1508143014-11795-1-git-send-email-geert+renesas@glider.be>
+References: <1508143014-11795-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-As of commit 8682b3c522c639f3 ("sh-pfc: Remove platform device
-registration"), plain "sh-pfc" platform devices are no longer created.
-Hence remove their match entry, and the now obsolete checks for missing
-device IDs and driver data.
+On R-Car Gen3 systems, PSCI system suspend powers down the SoC, losing
+clock configuration.  Register a notifier to save/restore the RCKCR
+register during system suspend/resume.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Tested-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
-v2:
-  - Add Reviewed-by.
----
- drivers/pinctrl/sh-pfc/core.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+v3:
+  - Drop RFC state,
+  - Add Tested-by,
 
-diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
-index 0c5e952461fdf7c6..9cdbaeab2cf10d46 100644
---- a/drivers/pinctrl/sh-pfc/core.c
-+++ b/drivers/pinctrl/sh-pfc/core.c
-@@ -569,7 +569,6 @@ static const struct of_device_id sh_pfc_of_table[] = {
+v2:
+  - New.
+---
+ drivers/clk/renesas/rcar-gen3-cpg.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
+index 267b5629e3bdb173..0904886f55015a3b 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.c
++++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+@@ -373,18 +373,27 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
  
- static int sh_pfc_probe(struct platform_device *pdev)
- {
--	const struct platform_device_id *platid = platform_get_device_id(pdev);
- #ifdef CONFIG_OF
- 	struct device_node *np = pdev->dev.of_node;
- #endif
-@@ -582,10 +581,7 @@ static int sh_pfc_probe(struct platform_device *pdev)
- 		info = of_device_get_match_data(&pdev->dev);
- 	else
- #endif
--		info = platid ? (const void *)platid->driver_data : NULL;
--
--	if (info == NULL)
--		return -ENODEV;
-+		info = (const void *)platform_get_device_id(pdev)->driver_data;
+ 	case CLK_TYPE_GEN3_R:
+ 		if (cpg_quirks & RCKCR_CKSEL) {
++			struct cpg_simple_notifier *csn;
++
++			csn = kzalloc(sizeof(*csn), GFP_KERNEL);
++			if (!csn)
++				return ERR_PTR(-ENOMEM);
++
++			csn->reg = base + CPG_RCKCR;
++
+ 			/*
+ 			 * RINT is default.
+ 			 * Only if EXTALR is populated, we switch to it.
+ 			 */
+-			value = readl(base + CPG_RCKCR) & 0x3f;
++			value = readl(csn->reg) & 0x3f;
  
- 	pfc = devm_kzalloc(&pdev->dev, sizeof(*pfc), GFP_KERNEL);
- 	if (pfc == NULL)
-@@ -683,7 +679,6 @@ static const struct platform_device_id sh_pfc_id_table[] = {
- #ifdef CONFIG_PINCTRL_PFC_SHX3
- 	{ "pfc-shx3", (kernel_ulong_t)&shx3_pinmux_info },
- #endif
--	{ "sh-pfc", 0 },
- 	{ },
- };
+ 			if (clk_get_rate(clks[cpg_clk_extalr])) {
+ 				parent = clks[cpg_clk_extalr];
+ 				value |= BIT(15);
+ 			}
+ 
+-			writel(value, base + CPG_RCKCR);
++			writel(value, csn->reg);
++			cpg_simple_notifier_register(notifiers, csn);
+ 			break;
+ 		}
  
 -- 
 2.7.4
