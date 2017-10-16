@@ -1,46 +1,93 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:46650 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752867AbdJGKhL (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 7 Oct 2017 06:37:11 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 05/11] mmc: meson-mx-sdio: catch all errors when getting regulators
-Date: Sat,  7 Oct 2017 12:36:52 +0200
-Message-Id: <20171007103658.16868-6-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20171007103658.16868-1-wsa+renesas@sang-engineering.com>
-References: <20171007103658.16868-1-wsa+renesas@sang-engineering.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: joro@8bytes.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
+        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
+        m.szyprowski@samsung.com
+Date: Mon, 16 Oct 2017 21:30:39 +0900
+Message-Id: <150815703970.32763.17061177544172383217.sendpatchset@little-apple>
+In-Reply-To: <150815695455.32763.1660214306749693609.sendpatchset@little-apple>
+References: <150815695455.32763.1660214306749693609.sendpatchset@little-apple>
+Subject: [PATCH v5 08/09] iommu/ipmmu-vmsa: Allow two bit SL0
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Bail out everytime when mmc_regulator_get_supply() returns an errno, not only
-when probing gets deferred. This is currently a no-op, because this function
-only returns -EPROBE_DEFER or 0 right now. But if it will throw another error
-somewhen, it will be for a reason. (This still doesn't change that getting
-regulators is optional, so 0 can still mean no regulators found). So, let us a)
-be future proof and b) have driver code which is easier to understand.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Introduce support for two bit SL0 bitfield in IMTTBCR
+by using a separate feature flag.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
- drivers/mmc/host/meson-mx-sdio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/meson-mx-sdio.c b/drivers/mmc/host/meson-mx-sdio.c
-index 19b499bbe6912f..fcbc469a5b0e74 100644
---- a/drivers/mmc/host/meson-mx-sdio.c
-+++ b/drivers/mmc/host/meson-mx-sdio.c
-@@ -551,7 +551,7 @@ static int meson_mx_mmc_add_host(struct meson_mx_mmc_host *host)
+ Changes since V4:
+ - Use leaf node mmu instead of root
+
+ Changes since V3:
+ - None
+
+ Changes since V2:
+ - None
+
+ Changes since V1:
+ - None
+
+ drivers/iommu/ipmmu-vmsa.c |   14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
+
+--- 0019/drivers/iommu/ipmmu-vmsa.c
++++ work/drivers/iommu/ipmmu-vmsa.c	2017-10-16 20:24:22.990607110 +0900
+@@ -40,6 +40,7 @@ struct ipmmu_features {
+ 	bool has_cache_leaf_nodes;
+ 	unsigned int number_of_contexts;
+ 	bool setup_imbuscr;
++	bool twobit_imttbcr_sl0;
+ };
  
- 	/* Get regulators and the supported OCR mask */
- 	ret = mmc_regulator_get_supply(mmc);
--	if (ret == -EPROBE_DEFER)
-+	if (ret)
- 		return ret;
+ struct ipmmu_vmsa_device {
+@@ -144,6 +145,10 @@ static struct ipmmu_vmsa_iommu_priv *to_
+ #define IMTTBCR_TSZ0_MASK		(7 << 0)
+ #define IMTTBCR_TSZ0_SHIFT		O
  
- 	mmc->max_req_size = MESON_MX_SDIO_BOUNCE_REQ_SIZE;
--- 
-2.11.0
++#define IMTTBCR_SL0_TWOBIT_LVL_3	(0 << 6)
++#define IMTTBCR_SL0_TWOBIT_LVL_2	(1 << 6)
++#define IMTTBCR_SL0_TWOBIT_LVL_1	(2 << 6)
++
+ #define IMBUSCR				0x000c
+ #define IMBUSCR_DVM			(1 << 2)
+ #define IMBUSCR_BUSSEL_SYS		(0 << 0)
+@@ -396,6 +401,7 @@ static void ipmmu_domain_free_context(st
+ static int ipmmu_domain_init_context(struct ipmmu_vmsa_domain *domain)
+ {
+ 	u64 ttbr;
++	u32 tmp;
+ 	int ret;
+ 
+ 	/*
+@@ -449,9 +455,14 @@ static int ipmmu_domain_init_context(str
+ 	 * We use long descriptors with inner-shareable WBWA tables and allocate
+ 	 * the whole 32-bit VA space to TTBR0.
+ 	 */
++	if (domain->mmu->features->twobit_imttbcr_sl0)
++		tmp = IMTTBCR_SL0_TWOBIT_LVL_1;
++	else
++		tmp = IMTTBCR_SL0_LVL_1;
++
+ 	ipmmu_ctx_write_root(domain, IMTTBCR, IMTTBCR_EAE |
+ 			     IMTTBCR_SH0_INNER_SHAREABLE | IMTTBCR_ORGN0_WB_WA |
+-			     IMTTBCR_IRGN0_WB_WA | IMTTBCR_SL0_LVL_1);
++			     IMTTBCR_IRGN0_WB_WA | tmp);
+ 
+ 	/* MAIR0 */
+ 	ipmmu_ctx_write_root(domain, IMMAIR0,
+@@ -982,6 +993,7 @@ static const struct ipmmu_features ipmmu
+ 	.has_cache_leaf_nodes = false,
+ 	.number_of_contexts = 1, /* software only tested with one context */
+ 	.setup_imbuscr = true,
++	.twobit_imttbcr_sl0 = false,
+ };
+ 
+ static const struct of_device_id ipmmu_of_ids[] = {
