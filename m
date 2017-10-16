@@ -1,55 +1,69 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 0/4] ARM: dts: iwg22d: DT architecture rework and UART
-Date: Fri, 13 Oct 2017 14:03:12 +0100
-Message-Id: <1507899796-7941-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([88.99.104.3]:50984 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753432AbdJPWHY (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 16 Oct 2017 18:07:24 -0400
+Date: Tue, 17 Oct 2017 00:07:22 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: linux-pm@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v2] thermal: rcar_gen3_thermal: fix initialization
+ sequence for H3 ES2.0
+Message-ID: <20171016220722.2szoquhmznzhqlwk@ninjato>
+References: <20171016145259.27897-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="qtjylg4i2vqxkb42"
+Content-Disposition: inline
+In-Reply-To: <20171016145259.27897-1-niklas.soderlund+renesas@ragnatech.se>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-iWave's iW-RainboW-G22D SODIMM SOM Development Platform exposes three
-serial interfaces on the HDMI daughter board, adding support for them
-has triggered the creation of an additional device tree, file
-r8a7745-iwg22d-sodimm-dbhd-ca.dts. Since the RZ/G1E based SoM is the
-only RZ/G1 based module that can be put on the carrier board, there is
-no need to make the new DT architecture that describes the configuration
-with the daughter board on highly modular, as it can't be reused by SoM
-with chip from manufacturers other than Renesas. Therefore, file
-r8a7745-iwg22d-sodimm-dbhd-ca.dts includes file r8a7745-iwg22d-sodimm.dts
-straight away. The user will take advantage of r8a7745-iwg22d-sodimm.dtb
-when the daughter board is not connected to the carrier board, and he/she
-will use r8a7745-iwg22d-sodimm-dbhd-ca.dtb to boot up the HW configuration
-with the HDMI daughter board plugged in.
-This series also adds support for hscif1 exposed on the carrier board, and
-takes into account comments made on the similar rework of the DT
-architecture for iWave's iW-RainboW-G22D SODIMM SOM Development Platform:
-https://www.spinics.net/lists/arm-kernel/msg609681.html
-by reordering the nodes in the carrier board DT.
 
-Best regards,
+--qtjylg4i2vqxkb42
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fabrizio Castro (4):
-  ARM: dts: iwg22d: Use /dev/ttySC3 as debug console
-  ARM: dts: iwg22d: Add /dev/ttySC5 support
-  ARM: dts: iwg22d-sodimm-dbhd-ca: Add device tree for HDMI DB
-  ARM: dts: iwg22d-sodimm: sort dt nodes
+On Mon, Oct 16, 2017 at 04:52:59PM +0200, Niklas S=C3=B6derlund wrote:
+> The initialization sequence for H3 (r8a7795) ES1.x and ES2.0 is
+> different. H3 ES2.0 and later uses the same sequence as M3 (r8a7796)
+> ES1.0. Fix this by not looking at compatible strings and instead
+> defaulting to the r8a7796 initialization sequence and use
+> soc_device_match() to check for H3 ES1.x.
+>=20
+> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
+se>
 
- arch/arm/boot/dts/Makefile                         |  1 +
- .../arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts | 61 ++++++++++++++++++
- arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts        | 74 +++++++++++++---------
- 3 files changed, 106 insertions(+), 30 deletions(-)
- create mode 100644 arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts
+Looks good to me, and what Geert said :)
 
--- 
-2.7.4
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
+
+--qtjylg4i2vqxkb42
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlnlLZQACgkQFA3kzBSg
+KbYriQ/8C77EyVpsIHaZ/IK/UFo/s/U67fBd13rrqbIC71RN5xKYKro/2V938i4Z
+U5WBUlnRl0jgB6YseU2MbTfFLA7KOP/QBnw1o2oYEMhEIVdlfQaIBbw/lQqaQ7r+
+kTGOU1EX8/CTRHOo1SZF97GAITINpi6QJkf1255sA/+6nehUiHWRASLxIwD5jA7h
+ln4QKXlkXumeo+1XEpdvrdU7hwQ1QFc5zd4/7tBSQVSpB2n7MwWpFJ1HXzJYoLAj
++PQyONxMJRm1WwLze6MX2hYu7EyGP2/0+wVGZtBfZszuxponxIYRV3CTHhkOctsG
+VNuYYfJhvu5yf0Wk2eeOMExjCgcMUI1NlDjAzFTlREgTAXXU3NstarUPV9VFJipM
+CxBZR+XxjI5dLwwLZCBdlGhjtkM+Nsjt9QknClhoSwG0PpYcmVU1m6HtFDOvuqjD
+Et9SuUIgNpqzs+xep7cT/cQBUf6cQR+xwflUfxnp6UhpVvMLH1Ixm5MjAwdmo/fq
+li6i6/9yTJBXo6BLA1Jl3p7wHe1DO0mTSrE3/q2VR+S1VdZmh0kQmwdisT1GSOuv
+qtj4LVwJtPE2+hVpXqJ4ujvpHoEkk2TG5vrqU7ComkF0GB0GnpwYwmFG00LAHK41
+p6pN4+xMR+/kqDBCEyGF21cnQr6ToIMeGuUeDMyQ7fzqRlLHJHs=
+=OfJp
+-----END PGP SIGNATURE-----
+
+--qtjylg4i2vqxkb42--
