@@ -1,78 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:35988 "EHLO
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:56572 "EHLO
         baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751768AbdJPJIu (ORCPT
+        with ESMTP id S1753736AbdJPP2D (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Oct 2017 05:08:50 -0400
+        Mon, 16 Oct 2017 11:28:03 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-pm@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 5/5] clk: renesas: rcar-gen3: Restore R clock during resume
-Date: Mon, 16 Oct 2017 10:36:54 +0200
-Message-Id: <1508143014-11795-6-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1508143014-11795-1-git-send-email-geert+renesas@glider.be>
-References: <1508143014-11795-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Subject: [PATCH v2 03/14] pinctrl: sh-pfc: Add generic bias register description
+Date: Mon, 16 Oct 2017 17:27:48 +0200
+Message-Id: <1508167679-21155-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1508167679-21155-1-git-send-email-geert+renesas@glider.be>
+References: <1508167679-21155-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On R-Car Gen3 systems, PSCI system suspend powers down the SoC, losing
-clock configuration.  Register a notifier to save/restore the RCKCR
-register during system suspend/resume.
+Add a generic way to describe bias registers (for pull-up/down control),
+like is already done for config and drive registers.
+
+This makes the sh-pfc core code aware of these registers, which will
+ease introducing suspend/resume support later.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
-v3:
-  - Drop RFC state,
-  - Add Tested-by,
-
 v2:
-  - New.
+  - Add Reviewed-by.
 ---
- drivers/clk/renesas/rcar-gen3-cpg.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ drivers/pinctrl/sh-pfc/sh_pfc.h | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index 267b5629e3bdb173..0904886f55015a3b 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -373,18 +373,27 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
+index 8688b405e0813ad7..1914f4b5fef569b3 100644
+--- a/drivers/pinctrl/sh-pfc/sh_pfc.h
++++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+@@ -148,6 +148,17 @@ struct pinmux_drive_reg {
+ 	.reg = r, \
+ 	.fields =
  
- 	case CLK_TYPE_GEN3_R:
- 		if (cpg_quirks & RCKCR_CKSEL) {
-+			struct cpg_simple_notifier *csn;
++struct pinmux_bias_reg {
++	u32 puen;		/* Pull-enable or pull-up control register */
++	u32 pud;		/* Pull-up/down control register (optional) */
++	const u16 pins[32];
++};
 +
-+			csn = kzalloc(sizeof(*csn), GFP_KERNEL);
-+			if (!csn)
-+				return ERR_PTR(-ENOMEM);
++#define PINMUX_BIAS_REG(name1, r1, name2, r2) \
++	.puen = r1,	\
++	.pud = r2,	\
++	.pins =
 +
-+			csn->reg = base + CPG_RCKCR;
-+
- 			/*
- 			 * RINT is default.
- 			 * Only if EXTALR is populated, we switch to it.
- 			 */
--			value = readl(base + CPG_RCKCR) & 0x3f;
-+			value = readl(csn->reg) & 0x3f;
+ struct pinmux_data_reg {
+ 	u32 reg;
+ 	u8 reg_width;
+@@ -245,6 +256,7 @@ struct sh_pfc_soc_info {
  
- 			if (clk_get_rate(clks[cpg_clk_extalr])) {
- 				parent = clks[cpg_clk_extalr];
- 				value |= BIT(15);
- 			}
+ 	const struct pinmux_cfg_reg *cfg_regs;
+ 	const struct pinmux_drive_reg *drive_regs;
++	const struct pinmux_bias_reg *bias_regs;
+ 	const struct pinmux_data_reg *data_regs;
  
--			writel(value, base + CPG_RCKCR);
-+			writel(value, csn->reg);
-+			cpg_simple_notifier_register(notifiers, csn);
- 			break;
- 		}
- 
+ 	const u16 *pinmux_data;
 -- 
 2.7.4
