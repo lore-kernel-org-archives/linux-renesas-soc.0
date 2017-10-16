@@ -1,70 +1,82 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38835 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752092AbdJTK3Q (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Oct 2017 06:29:16 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 11/31] arm64: dts: h3ulcb-kf: ES2.0+ SoC initial device tree
-Date: Fri, 20 Oct 2017 12:28:14 +0200
-Message-Id: <20913f7e923ca87921f9ef9ee3dea65de0bc6a18.1508495040.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1508495040.git.horms+renesas@verge.net.au>
-References: <cover.1508495040.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Mon, 16 Oct 2017 13:29:09 +0100
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Nicolas Pitre <nicolas.pitre@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Tony Lindgren <tony@atomide.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Chris Brandt <Chris.Brandt@renesas.com>,
+        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] ARM: head-common.S: Clear lr before jumping to
+ start_kernel()
+Message-ID: <20171016122908.GJ23750@n2100.armlinux.org.uk>
+References: <1507044184-27152-1-git-send-email-geert+renesas@glider.be>
+ <nycvar.YSQ.7.76.1710031134140.5407@knanqh.ubzr>
+ <CAMuHMdWJKQb5JY+diH=7dqNuypkPUqBeOEPSLOrfrnbfh2siRQ@mail.gmail.com>
+ <CAMuHMdXpPfipmEdW0Dap6Pjwhz3QxLcrcbtU0RhCu721k-sBpA@mail.gmail.com>
+ <CAMuHMdWH_pebSYAp04gmVceu3qqPczGaXS36R8CtzAYHo-CNog@mail.gmail.com>
+ <20171010203324.GX4394@atomide.com>
+ <20171012102341.GF23750@n2100.armlinux.org.uk>
+ <nycvar.YSQ.7.76.1710121123530.1718@knanqh.ubzr>
+ <20171014141405.GG23750@n2100.armlinux.org.uk>
+ <CAMuHMdX7Z0D2unRqC9z04f0MVsxLuVxouvquyYBHKavnycfh=w@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdX7Z0D2unRqC9z04f0MVsxLuVxouvquyYBHKavnycfh=w@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+On Sun, Oct 15, 2017 at 10:04:16AM +0200, Geert Uytterhoeven wrote:
+> On Sat, Oct 14, 2017 at 4:14 PM, Russell King - ARM Linux
+> <linux@armlinux.org.uk> wrote:
+> > Thanks, it would've been good to have known that ahead of time.
+> >
+> > It's why the patch system has the KernelVersion: tag:
+> >
+> >  6. Kernel version.
+> >     On a separate line, add a tag "KernelVersion: " followed by the kernel
+> >     version that the patch was generated against. This should be formatted
+> >     as "KernelVersion: 2.6.0-rmk1"
+> >
+> > This is because that information is relevant for knowing where it should
+> > be applied, and to which branch.  Having it be something else means I
+> > have to guess, and that can result in the patch being discarded in this
+> > manner if I don't find where it's supposed to be applied.
+> 
+> That's why we have the standard Fixes tag, which was included
+> Fixes: 9520b1a1b5f7a348 ("ARM: head-common.S: speed up startup code")
 
-Add the initial device tree for the H3ULCB ES2.0+ SoC with Kingfisher
-extension infotainment board.
+Wrong.  You're confusing two different things.
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/Makefile              |  1 +
- arch/arm64/boot/dts/renesas/r8a7795-h3ulcb-kf.dts | 19 +++++++++++++++++++
- 2 files changed, 20 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a7795-h3ulcb-kf.dts
+The fixes tag identifies the commit to which the FIX applies.  That's
+not what the kernelversion tag described above is for.  That's to
+describe where the patch was GENERATED, so that it's easier to know
+where it should be applied.
 
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index c5fcdbb24b10..53a91225ec06 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -1,4 +1,5 @@
- dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-x.dtb r8a7795-h3ulcb.dtb
-+dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-h3ulcb-kf.dtb
- dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-xs.dtb
- dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-es1-salvator-x.dtb r8a7795-es1-h3ulcb.dtb
- dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-es1-h3ulcb-kf.dtb
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb-kf.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb-kf.dts
-new file mode 100644
-index 000000000000..4403227c0f97
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb-kf.dts
-@@ -0,0 +1,19 @@
-+/*
-+ * Device Tree Source for the H3ULCB Kingfisher board
-+ *
-+ * Copyright (C) 2017 Renesas Electronics Corp.
-+ * Copyright (C) 2017 Cogent Embedded, Inc.
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2.  This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
-+
-+#include "r8a7795-h3ulcb.dts"
-+#include "ulcb-kf.dtsi"
-+
-+/ {
-+	model = "Renesas H3ULCB Kingfisher board based on r8a7795 ES2.0+";
-+	compatible = "shimafuji,kingfisher", "renesas,h3ulcb",
-+		     "renesas,r8a7795";
-+};
+> It's trivial for the repo maintainer to know which branch the fix to
+> apply to, given the Fixes tag.
+> It's non-trivial to know the branch for the patch submitter, who is
+> forced to use a non-standard patch submission system.
+
+So what you're telling me is that you're unable to describe what commit
+or the kernel version that the patch was GENERATED against.
+
+I /really/ don't buy such an argument one bit.  If you don't have that
+information, by definition you can't generate a git patch.
+
+If it was trivial, then don't you think the patch would've been applied
+without all this crap?  The proof is here in this thread, it's not as
+trivial as you think it is.
+
 -- 
-2.11.0
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
+According to speedtest.net: 8.21Mbps down 510kbps up
