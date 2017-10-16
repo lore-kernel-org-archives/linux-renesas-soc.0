@@ -1,77 +1,100 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:54116 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752937AbdJTJ4x (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:42864 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754077AbdJPP2D (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Oct 2017 05:56:53 -0400
-MIME-Version: 1.0
-In-Reply-To: <1508167679-21155-1-git-send-email-geert+renesas@glider.be>
-References: <1508167679-21155-1-git-send-email-geert+renesas@glider.be>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 20 Oct 2017 11:56:50 +0200
-Message-ID: <CAMuHMdU3FjCv6va8yeNVOhnOD00FDo618JDtyu6gZFO=rd=bUQ@mail.gmail.com>
-Subject: Re: [PATCH v2 00/14] pinctrl: sh-pfc: Add suspend/resume support
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        Mon, 16 Oct 2017 11:28:03 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-pm@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 00/14] pinctrl: sh-pfc: Add suspend/resume support
+Date: Mon, 16 Oct 2017 17:27:45 +0200
+Message-Id: <1508167679-21155-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Oct 16, 2017 at 5:27 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> During PSCI system suspend, R-Car Gen3 SoCs are powered down, and their
-> pinctrl register state is lost.  Note that as the boot loader skips most
-> initialization after system resume, pinctrl register state differs from
-> the state encountered during normal system boot, too.
->
-> To fix this, save all GPIO and peripheral function select, module
-> select, drive strength control, bias, and other I/O control registers
-> during system suspend, and restore them during resume.
->
-> This series consists of 4 parts:
->   - Patches 1-2 are cleanups,
->   - Patches 3-9 introduce a generic way to describe bias (pull-up/down)
->     registers, and converts the R-Car Gen3 and R-Car M1A bias support
->     over,
->   - Patches 10-13 introduce a generic way to describe various IOCTRL
->     registers, and converts the R-Car Gen3 I/O voltage support over,
->   - Patch 14 implements the actual suspend/resume code, using the
->     generic bias and IOCTRL support introduced earlier.
->
-> To avoid overhead on platforms not needing it, the suspend/resume code
-> has a build time dependency on sleep and PSCI support, and a runtime
-> dependency on PSCI.
->
-> Due to the more compact description of bias registers, this series
-> actually decreases kernel size (by ca. 112 bytes for renesas_defconfig,
-> and ca. 60 bytes for shmobile_defconfig).
->
-> Changes compared to v1:
->   - Add Reviewed-by,
->   - Shorten sh_pfc_{read,write}_reg() function names to
->     sh_pfc_{read,write}(),
->   - Use ARRAY_SIZE() instead of hardcoded constant 32,
->   - Add curly braces to nested for statements,
->   - Add a sentinel comment, to make it more explicit that a last zero
->     entry is required in sh_pfc_soc_info.bias_regs[] arrays,
->
-> I plan to queue this in sh-pfc-for-v4.15.
+	Hi all,
 
-Done.
+During PSCI system suspend, R-Car Gen3 SoCs are powered down, and their
+pinctrl register state is lost.  Note that as the boot loader skips most
+initialization after system resume, pinctrl register state differs from
+the state encountered during normal system boot, too.
+
+To fix this, save all GPIO and peripheral function select, module
+select, drive strength control, bias, and other I/O control registers
+during system suspend, and restore them during resume.
+
+This series consists of 4 parts:
+  - Patches 1-2 are cleanups,
+  - Patches 3-9 introduce a generic way to describe bias (pull-up/down)
+    registers, and converts the R-Car Gen3 and R-Car M1A bias support
+    over,
+  - Patches 10-13 introduce a generic way to describe various IOCTRL
+    registers, and converts the R-Car Gen3 I/O voltage support over,
+  - Patch 14 implements the actual suspend/resume code, using the
+    generic bias and IOCTRL support introduced earlier.
+
+To avoid overhead on platforms not needing it, the suspend/resume code
+has a build time dependency on sleep and PSCI support, and a runtime
+dependency on PSCI.
+
+Due to the more compact description of bias registers, this series
+actually decreases kernel size (by ca. 112 bytes for renesas_defconfig,
+and ca. 60 bytes for shmobile_defconfig).
+
+Changes compared to v1:
+  - Add Reviewed-by,
+  - Shorten sh_pfc_{read,write}_reg() function names to
+    sh_pfc_{read,write}(),
+  - Use ARRAY_SIZE() instead of hardcoded constant 32,
+  - Add curly braces to nested for statements,
+  - Add a sentinel comment, to make it more explicit that a last zero
+    entry is required in sh_pfc_soc_info.bias_regs[] arrays,
+
+I plan to queue this in sh-pfc-for-v4.15.
+Thanks!
+
+Geert Uytterhoeven (14):
+  pinctrl: sh-pfc: Remove matching on plain sh-pfc platform device
+  pinctrl: sh-pfc: Drop width parameter of sh_pfc_{read,write}_reg()
+  pinctrl: sh-pfc: Add generic bias register description
+  pinctrl: sh-pfc: Add sh_pfc_pin_to_bias_reg() helper
+  pinctrl: sh-pfc: r8a7795-es1: Use generic bias register description
+  pinctrl: sh-pfc: r8a7795: Use generic bias register description
+  pinctrl: sh-pfc: r8a7796: Use generic bias register description
+  pinctrl: sh-pfc: r8a7778: Use generic bias register description
+  pinctrl: sh-pfc: Remove obsolete sh_pfc_pin_to_bias_info()
+  pinctrl: sh-pfc: Add generic IOCTRL register description
+  pinctrl: sh-pfc: r8a7795-es1: Use generic IOCTRL register description
+  pinctrl: sh-pfc: r8a7795: Use generic IOCTRL register description
+  pinctrl: sh-pfc: r8a7796: Use generic IOCTRL register description
+  pinctrl: sh-pfc: Save/restore registers for PSCI system suspend
+
+ drivers/pinctrl/sh-pfc/core.c            | 131 +++++++-
+ drivers/pinctrl/sh-pfc/core.h            |  11 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7778.c     | 403 +++++++++++++-----------
+ drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c | 511 ++++++++++++++++---------------
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c     | 511 ++++++++++++++++---------------
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c     | 511 ++++++++++++++++---------------
+ drivers/pinctrl/sh-pfc/pinctrl.c         |  12 +-
+ drivers/pinctrl/sh-pfc/sh_pfc.h          |  24 +-
+ 8 files changed, 1172 insertions(+), 942 deletions(-)
+
+-- 
+2.7.4
 
 Gr{oetje,eeting}s,
 
-                        Geert
+						Geert
 
 --
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
 when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+							    -- Linus Torvalds
