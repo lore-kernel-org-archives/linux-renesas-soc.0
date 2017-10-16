@@ -1,47 +1,96 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:44317 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751529AbdJNTRl (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:52250 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754176AbdJPP2E (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 14 Oct 2017 15:17:41 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2 06/11] mmc: mmci: catch all errors when getting regulators
-Date: Sat, 14 Oct 2017 21:17:14 +0200
-Message-Id: <20171014191719.2129-7-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20171014191719.2129-1-wsa+renesas@sang-engineering.com>
-References: <20171014191719.2129-1-wsa+renesas@sang-engineering.com>
+        Mon, 16 Oct 2017 11:28:04 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-pm@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 09/14] pinctrl: sh-pfc: Remove obsolete sh_pfc_pin_to_bias_info()
+Date: Mon, 16 Oct 2017 17:27:54 +0200
+Message-Id: <1508167679-21155-10-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1508167679-21155-1-git-send-email-geert+renesas@glider.be>
+References: <1508167679-21155-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Bail out everytime when mmc_regulator_get_supply() returns an errno, not
-only when probing gets deferred. This is currently a no-op, because this
-function only returns -EPROBE_DEFER or 0 right now. But if it will throw
-another error somewhen, it will be for a reason. (This still doesn't change
-that getting regulators is optional, so 0 can still mean no regulators
-found). So, let us a) be future proof and b) have driver code which is
-easier to understand.
+All users of sh_pfc_pin_to_bias_info() and the related data structures
+have been converted to sh_pfc_pin_to_bias_reg(), so those can be
+removed.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- drivers/mmc/host/mmci.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v2:
+  - Add Reviewed-by.
+---
+ drivers/pinctrl/sh-pfc/core.c   | 15 ---------------
+ drivers/pinctrl/sh-pfc/core.h   |  3 ---
+ drivers/pinctrl/sh-pfc/sh_pfc.h |  6 ------
+ 3 files changed, 24 deletions(-)
 
-diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
-index f1f54a81848951..e8a1bb1ae69423 100644
---- a/drivers/mmc/host/mmci.c
-+++ b/drivers/mmc/host/mmci.c
-@@ -1658,7 +1658,7 @@ static int mmci_probe(struct amba_device *dev,
+diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
+index 01c408a3dee478f2..2fe5fd6c5d17adc5 100644
+--- a/drivers/pinctrl/sh-pfc/core.c
++++ b/drivers/pinctrl/sh-pfc/core.c
+@@ -389,21 +389,6 @@ int sh_pfc_config_mux(struct sh_pfc *pfc, unsigned mark, int pinmux_type)
+ 	return 0;
+ }
  
- 	/* Get regulators and the supported OCR mask */
- 	ret = mmc_regulator_get_supply(mmc);
--	if (ret == -EPROBE_DEFER)
-+	if (ret)
- 		goto clk_disable;
+-const struct sh_pfc_bias_info *
+-sh_pfc_pin_to_bias_info(const struct sh_pfc_bias_info *info,
+-			unsigned int num, unsigned int pin)
+-{
+-	unsigned int i;
+-
+-	for (i = 0; i < num; i++)
+-		if (info[i].pin == pin)
+-			return &info[i];
+-
+-	WARN_ONCE(1, "Pin %u is not in bias info list\n", pin);
+-
+-	return NULL;
+-}
+-
+ const struct pinmux_bias_reg *
+ sh_pfc_pin_to_bias_reg(const struct sh_pfc *pfc, unsigned int pin,
+ 		       unsigned int *bit)
+diff --git a/drivers/pinctrl/sh-pfc/core.h b/drivers/pinctrl/sh-pfc/core.h
+index 460d996513acea26..5af8ee26c03ea139 100644
+--- a/drivers/pinctrl/sh-pfc/core.h
++++ b/drivers/pinctrl/sh-pfc/core.h
+@@ -32,9 +32,6 @@ void sh_pfc_write(struct sh_pfc *pfc, u32 reg, u32 data);
+ int sh_pfc_get_pin_index(struct sh_pfc *pfc, unsigned int pin);
+ int sh_pfc_config_mux(struct sh_pfc *pfc, unsigned mark, int pinmux_type);
  
- 	if (!mmc->ocr_avail)
+-const struct sh_pfc_bias_info *
+-sh_pfc_pin_to_bias_info(const struct sh_pfc_bias_info *info,
+-			unsigned int num, unsigned int pin);
+ const struct pinmux_bias_reg *
+ sh_pfc_pin_to_bias_reg(const struct sh_pfc *pfc, unsigned int pin,
+ 		       unsigned int *bit);
+diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
+index 1914f4b5fef569b3..18fd878266297dc2 100644
+--- a/drivers/pinctrl/sh-pfc/sh_pfc.h
++++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+@@ -200,12 +200,6 @@ struct sh_pfc_window {
+ 	unsigned long size;
+ };
+ 
+-struct sh_pfc_bias_info {
+-	u16 pin;
+-	u16 reg : 11;
+-	u16 bit : 5;
+-};
+-
+ struct sh_pfc_pin_range;
+ 
+ struct sh_pfc {
 -- 
-2.11.0
+2.7.4
