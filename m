@@ -1,46 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57844 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966644AbdJRH2Q (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:58706 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752971AbdJPNz2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Oct 2017 03:28:16 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Mon, 16 Oct 2017 09:55:28 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 5/7] ARM: dts: r8a7791: Use R-Car Gen2 Ether fallback compat string
-Date: Wed, 18 Oct 2017 09:27:26 +0200
-Message-Id: <20171018072728.14681-6-horms+renesas@verge.net.au>
-In-Reply-To: <20171018072728.14681-1-horms+renesas@verge.net.au>
-References: <20171018072728.14681-1-horms+renesas@verge.net.au>
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>, linux-clk@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 08/10] [RFC] soc: renesas: rcar-sysc: Use GENPD_FLAG_ACTIVE_WAKEUP
+Date: Mon, 16 Oct 2017 15:55:14 +0200
+Message-Id: <1508162116-5043-9-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
+References: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use newly added R-Car Gen2 Ether fallback compat string
-in the DT of the r8a7791 SoC.
+Set the newly introduced GENPD_FLAG_ACTIVE_WAKEUP, which allows to
+remove the driver's own "always true" callback.
 
-This should have no run-time effect as the driver matches against
-the per-SoC compat string before considering the fallback compat string.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7791.dtsi | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+This must not be applied before "PM / Domain: Enable genpd users to
+specify default active wakeup behavior" has landed upstream, hence the
+"RFC".
+---
+ drivers/soc/renesas/rcar-sysc.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index 67831d0405f3..9815a933e4cc 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -961,7 +961,8 @@
- 	};
+diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
+index beb8b483a62abaca..ac4df1c43b2fbdbe 100644
+--- a/drivers/soc/renesas/rcar-sysc.c
++++ b/drivers/soc/renesas/rcar-sysc.c
+@@ -194,11 +194,6 @@ static int rcar_sysc_pd_power_on(struct generic_pm_domain *genpd)
  
- 	ether: ethernet@ee700000 {
--		compatible = "renesas,ether-r8a7791";
-+		compatible = "renesas,ether-r8a7791",
-+			     "renesas,rcar-gen2-ether";
- 		reg = <0 0xee700000 0 0x400>;
- 		interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 813>;
+ static bool has_cpg_mstp;
+ 
+-static bool rcar_sysc_pd_active_wakeup(struct device *dev)
+-{
+-	return true;
+-}
+-
+ static void __init rcar_sysc_pd_setup(struct rcar_sysc_pd *pd)
+ {
+ 	struct generic_pm_domain *genpd = &pd->genpd;
+@@ -229,8 +224,7 @@ static void __init rcar_sysc_pd_setup(struct rcar_sysc_pd *pd)
+ 
+ 	if (!(pd->flags & (PD_CPU | PD_SCU))) {
+ 		/* Enable Clock Domain for I/O devices */
+-		genpd->flags |= GENPD_FLAG_PM_CLK;
+-		genpd->dev_ops.active_wakeup = rcar_sysc_pd_active_wakeup;
++		genpd->flags |= GENPD_FLAG_PM_CLK | GENPD_FLAG_ACTIVE_WAKEUP;
+ 		if (has_cpg_mstp) {
+ 			genpd->attach_dev = cpg_mstp_attach_dev;
+ 			genpd->detach_dev = cpg_mstp_detach_dev;
 -- 
-2.11.0
+2.7.4
