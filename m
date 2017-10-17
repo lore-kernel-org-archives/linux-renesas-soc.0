@@ -1,71 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38914 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752665AbdJTKaZ (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:45859 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759234AbdJQILQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Oct 2017 06:30:25 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 34/42] ARM: dts: r8a7790: Add clocks for CA7 CPU cores
-Date: Fri, 20 Oct 2017 12:29:01 +0200
-Message-Id: <aea0089ae8058a9bf4c9766f3208809fc28c99f0.1508493785.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1508493785.git.horms+renesas@verge.net.au>
-References: <cover.1508493785.git.horms+renesas@verge.net.au>
+        Tue, 17 Oct 2017 04:11:16 -0400
+MIME-Version: 1.0
+In-Reply-To: <1508225421-25405-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1508225421-25405-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1508225421-25405-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 17 Oct 2017 10:11:14 +0200
+Message-ID: <CAMuHMdUx+4PpZ6vzRjqV0gtknMBT7VHV=dW4wqt=8s8HZRrkuw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] mmc: renesas_sdhi: fix kernel panic in _internal_dmac.c
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi Shimoda-san,
 
-Currently only the CPU cores in the CA15 cluster have clocks properties.
-Add the missing clocks properties for the CPU cores in the CA7 cluster
-to fix this.
+On Tue, Oct 17, 2017 at 9:30 AM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> Since this driver checks if the return value of dma_map_sg() is minus
+> or not and keeps to enable the DMAC, it may cause kernel panic when
+> the dma_map_sg() returns 0. So, this patch fixes the issue.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7790.dtsi | 4 ++++
- 1 file changed, 4 insertions(+)
+Thanks for your patch!
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index e85eb42f97e8..2f017fee4009 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -105,6 +105,7 @@
- 			compatible = "arm,cortex-a7";
- 			reg = <0x100>;
- 			clock-frequency = <780000000>;
-+			clocks = <&cpg CPG_CORE R8A7790_CLK_Z2>;
- 			power-domains = <&sysc R8A7790_PD_CA7_CPU0>;
- 			next-level-cache = <&L2_CA7>;
- 			capacity-dmips-mhz = <539>;
-@@ -115,6 +116,7 @@
- 			compatible = "arm,cortex-a7";
- 			reg = <0x101>;
- 			clock-frequency = <780000000>;
-+			clocks = <&cpg CPG_CORE R8A7790_CLK_Z2>;
- 			power-domains = <&sysc R8A7790_PD_CA7_CPU1>;
- 			next-level-cache = <&L2_CA7>;
- 			capacity-dmips-mhz = <539>;
-@@ -125,6 +127,7 @@
- 			compatible = "arm,cortex-a7";
- 			reg = <0x102>;
- 			clock-frequency = <780000000>;
-+			clocks = <&cpg CPG_CORE R8A7790_CLK_Z2>;
- 			power-domains = <&sysc R8A7790_PD_CA7_CPU2>;
- 			next-level-cache = <&L2_CA7>;
- 			capacity-dmips-mhz = <539>;
-@@ -135,6 +138,7 @@
- 			compatible = "arm,cortex-a7";
- 			reg = <0x103>;
- 			clock-frequency = <780000000>;
-+			clocks = <&cpg CPG_CORE R8A7790_CLK_Z2>;
- 			power-domains = <&sysc R8A7790_PD_CA7_CPU3>;
- 			next-level-cache = <&L2_CA7>;
- 			capacity-dmips-mhz = <539>;
--- 
-2.11.0
+Indeed:
+
+ * dma_maps_sg_attrs returns 0 on error and > 0 on success.
+ * It should never return a value < 0.
+
+A quick grep shows there are 4 more offenders:
+
+  - drivers/crypto/qce/ablkcipher.c
+  - drivers/crypto/qce/sha.c
+  - drivers/hsi/controllers/omap_ssi_port.c
+  - drivers/mailbox/bcm-flexrm-mailbox.c
+
+> Reported-by: Dirk Behme <dirk.behme@de.bosch.com>
+> Fixes: 2a68ea7896e3 ("mmc: renesas-sdhi: add support for R-Car Gen3 SDHI DMAC")
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
