@@ -1,11 +1,11 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f48.google.com ([209.85.215.48]:49072 "EHLO
-        mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935073AbdJQKSn (ORCPT
+Received: from mail-lf0-f43.google.com ([209.85.215.43]:51808 "EHLO
+        mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757662AbdJQKOy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Oct 2017 06:18:43 -0400
-Received: by mail-lf0-f48.google.com with SMTP id a69so1373627lfe.5
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Oct 2017 03:18:43 -0700 (PDT)
+        Tue, 17 Oct 2017 06:14:54 -0400
+Received: by mail-lf0-f43.google.com with SMTP id r129so1358699lff.8
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Oct 2017 03:14:53 -0700 (PDT)
 Subject: Re: [PATCH net-next 1/3] dt-bindings: net: sh_eth: add R-Car Gen[12]
  fallback compatibility strings
 To: Simon Horman <horms+renesas@verge.net.au>,
@@ -15,8 +15,8 @@ Cc: Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
 References: <20171017074747.24159-1-horms+renesas@verge.net.au>
  <20171017074747.24159-2-horms+renesas@verge.net.au>
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <c0abee19-cb52-5835-30ae-d52149ab1680@cogentembedded.com>
-Date: Tue, 17 Oct 2017 13:18:41 +0300
+Message-ID: <337f227a-3019-4e82-a0cb-1328d7036df7@cogentembedded.com>
+Date: Tue, 17 Oct 2017 13:14:51 +0300
 MIME-Version: 1.0
 In-Reply-To: <20171017074747.24159-2-horms+renesas@verge.net.au>
 Content-Type: text/plain; charset=utf-8; format=flowed
@@ -24,6 +24,8 @@ Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
+
+Hello!
 
 On 10/17/2017 10:47 AM, Simon Horman wrote:
 
@@ -46,9 +48,61 @@ On 10/17/2017 10:47 AM, Simon Horman wrote:
 > Note that R-Car Gen2 and RZ/G1 have many compatible IP blocks.  The
 > approach that has been consistently taken for other IP blocks is to name
 > common code, compatibility strings and so on after Rcar Gen2.
-
-    R-Car here too. :-)
-
+> 
 > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+
+Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
+> ---
+>   Documentation/devicetree/bindings/net/sh_eth.txt | 14 ++++++++++++--
+>   1 file changed, 12 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/net/sh_eth.txt b/Documentation/devicetree/bindings/net/sh_eth.txt
+> index 0115c85a2425..48cab94dd056 100644
+> --- a/Documentation/devicetree/bindings/net/sh_eth.txt
+> +++ b/Documentation/devicetree/bindings/net/sh_eth.txt
+> @@ -4,7 +4,8 @@ This file provides information on what the device node for the SH EtherMAC
+>   interface contains.
+>   
+>   Required properties:
+> -- compatible: "renesas,gether-r8a7740" if the device is a part of R8A7740 SoC.
+> +- compatible: Must contain one or more of the following:
+> +	      "renesas,gether-r8a7740" if the device is a part of R8A7740 SoC.
+>   	      "renesas,ether-r8a7743"  if the device is a part of R8A7743 SoC.
+>   	      "renesas,ether-r8a7745"  if the device is a part of R8A7745 SoC.
+>   	      "renesas,ether-r8a7778"  if the device is a part of R8A7778 SoC.
+> @@ -14,6 +15,14 @@ Required properties:
+>   	      "renesas,ether-r8a7793"  if the device is a part of R8A7793 SoC.
+>   	      "renesas,ether-r8a7794"  if the device is a part of R8A7794 SoC.
+>   	      "renesas,ether-r7s72100" if the device is a part of R7S72100 SoC.
+> +              "renesas,rcar-gen1-ether" for a generic R-Car Gen1 device.
+> +              "renesas,rcar-gen2-ether" for a generic R-Car Gen2 or RZ/G1
+> +	                                device.
+> +
+> +	      When compatible with the generic version nodes must list
+> +	      the SoC-specific version corresponding to the platform
+> +	      first followed by the generic version.
+> +
+
+    The original text uses the different indentation, tab and then spaces), 
+while you use only spaces here (but not above).
+
+>   - reg: offset and length of (1) the E-DMAC/feLic register block (required),
+>          (2) the TSU register block (optional).
+>   - interrupts: interrupt specifier for the sole interrupt.
+> @@ -36,7 +45,8 @@ Optional properties:
+>   Example (Lager board):
+>   
+>   	ethernet@ee700000 {
+> -		compatible = "renesas,ether-r8a7790";
+> +		compatible = "renesas,ether-r8a7790",
+> +		             "renesas,rcar-gen2-ether";
+
+    Again, using one more tab seems possible here...
+
+>   		reg = <0 0xee700000 0 0x400>;
+>   		interrupt-parent = <&gic>;
+>   		interrupts = <0 162 IRQ_TYPE_LEVEL_HIGH>;
+> 
 
 MBR, Sergei
