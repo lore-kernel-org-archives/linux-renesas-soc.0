@@ -1,87 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38914 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:39254 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752665AbdJTKaK (ORCPT
+        with ESMTP id S932729AbdJQGKQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Oct 2017 06:30:10 -0400
+        Tue, 17 Oct 2017 02:10:16 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 19/42] ARM: dts: gr-peach: Add ETHER pin group
-Date: Fri, 20 Oct 2017 12:28:46 +0200
-Message-Id: <349adfbf27269bad4fa6915e77c97a06487266a5.1508493785.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1508493785.git.horms+renesas@verge.net.au>
-References: <cover.1508493785.git.horms+renesas@verge.net.au>
+Subject: [PATCH 05/11] ARM: dts: r8a7778: Use R-Car SDHI Gen1 fallback compat string
+Date: Tue, 17 Oct 2017 08:09:53 +0200
+Message-Id: <20171017060959.16702-6-horms+renesas@verge.net.au>
+In-Reply-To: <20171017060959.16702-1-horms+renesas@verge.net.au>
+References: <20171017060959.16702-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Use newly added R-Car SDHI Gen1 fallback compat string
+in the DT of the r8a7778 SoC.
 
-Add pin configuration subnode for ETHER pin group.
+This should have no run-time effect as the driver matches against
+the per-SoC compat string before considering the fallback compat string.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r7s72100-gr-peach.dts | 39 +++++++++++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
+ arch/arm/boot/dts/r8a7778.dtsi | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r7s72100-gr-peach.dts b/arch/arm/boot/dts/r7s72100-gr-peach.dts
-index 9661d43f5236..eca14e3801ec 100644
---- a/arch/arm/boot/dts/r7s72100-gr-peach.dts
-+++ b/arch/arm/boot/dts/r7s72100-gr-peach.dts
-@@ -68,6 +68,28 @@
- 		/* P6_2 as RxD2; P6_3 as TxD2 */
- 		pinmux = <RZA1_PINMUX(6, 2, 7)>, <RZA1_PINMUX(6, 3, 7)>;
+diff --git a/arch/arm/boot/dts/r8a7778.dtsi b/arch/arm/boot/dts/r8a7778.dtsi
+index a39472aab867..9fe1c3d6e3d6 100644
+--- a/arch/arm/boot/dts/r8a7778.dtsi
++++ b/arch/arm/boot/dts/r8a7778.dtsi
+@@ -379,7 +379,8 @@
  	};
-+
-+	ether_pins: ether {
-+		/* Ethernet on Ports 1,3,5,10 */
-+		pinmux = <RZA1_PINMUX(1, 14, 4)>, /* P1_14 = ET_COL   */
-+			 <RZA1_PINMUX(3, 0, 2)>,  /* P3_0 = ET_TXCLK  */
-+			 <RZA1_PINMUX(3, 3, 2)>,  /* P3_3 = ET_MDIO   */
-+			 <RZA1_PINMUX(3, 4, 2)>,  /* P3_4 = ET_RXCLK  */
-+			 <RZA1_PINMUX(3, 5, 2)>,  /* P3_5 = ET_RXER   */
-+			 <RZA1_PINMUX(3, 6, 2)>,  /* P3_6 = ET_RXDV   */
-+			 <RZA1_PINMUX(5, 9, 2)>,  /* P5_9 = ET_MDC    */
-+			 <RZA1_PINMUX(10, 1, 4)>, /* P10_1 = ET_TXER  */
-+			 <RZA1_PINMUX(10, 2, 4)>, /* P10_2 = ET_TXEN  */
-+			 <RZA1_PINMUX(10, 3, 4)>, /* P10_3 = ET_CRS   */
-+			 <RZA1_PINMUX(10, 4, 4)>, /* P10_4 = ET_TXD0  */
-+			 <RZA1_PINMUX(10, 5, 4)>, /* P10_5 = ET_TXD1  */
-+			 <RZA1_PINMUX(10, 6, 4)>, /* P10_6 = ET_TXD2  */
-+			 <RZA1_PINMUX(10, 7, 4)>, /* P10_7 = ET_TXD3  */
-+			 <RZA1_PINMUX(10, 8, 4)>, /* P10_8 = ET_RXD0  */
-+			 <RZA1_PINMUX(10, 9, 4)>, /* P10_9 = ET_RXD1  */
-+			 <RZA1_PINMUX(10, 10, 4)>,/* P10_10 = ET_RXD2 */
-+			 <RZA1_PINMUX(10, 11, 4)>;/* P10_11 = ET_RXD3 */
-+	};
- };
  
- &extal_clk {
-@@ -88,3 +110,20 @@
+ 	sdhi0: sd@ffe4c000 {
+-		compatible = "renesas,sdhi-r8a7778";
++		compatible = "renesas,sdhi-r8a7778",
++			     "renesas,rcar-gen1-sdhi";
+ 		reg = <0xffe4c000 0x100>;
+ 		interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7778_CLK_SDHI0>;
+@@ -388,7 +389,8 @@
+ 	};
  
- 	status = "okay";
- };
-+
-+&ether {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&ether_pins>;
-+
-+	status = "okay";
-+
-+	renesas,no-ether-link;
-+	phy-handle = <&phy0>;
-+
-+	phy0: ethernet-phy@0 {
-+		reg = <0>;
-+
-+		reset-gpios = <&port4 2 GPIO_ACTIVE_LOW>;
-+		reset-delay-us = <5>;
-+	};
-+};
+ 	sdhi1: sd@ffe4d000 {
+-		compatible = "renesas,sdhi-r8a7778";
++		compatible = "renesas,sdhi-r8a7778",
++			     "renesas,rcar-gen1-sdhi";
+ 		reg = <0xffe4d000 0x100>;
+ 		interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7778_CLK_SDHI1>;
+@@ -397,7 +399,8 @@
+ 	};
+ 
+ 	sdhi2: sd@ffe4f000 {
+-		compatible = "renesas,sdhi-r8a7778";
++		compatible = "renesas,sdhi-r8a7778",
++			     "renesas,rcar-gen1-sdhi";
+ 		reg = <0xffe4f000 0x100>;
+ 		interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7778_CLK_SDHI2>;
 -- 
 2.11.0
