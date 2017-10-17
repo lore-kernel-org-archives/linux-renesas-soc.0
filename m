@@ -1,33 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:37611 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:39239 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750988AbdJTJSG (ORCPT
+        with ESMTP id S1753185AbdJQGKG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Oct 2017 05:18:06 -0400
-Date: Fri, 20 Oct 2017 11:17:47 +0200
-From: Simon Horman <horms@verge.net.au>
+        Tue, 17 Oct 2017 02:10:06 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: [PATCH 00/11] arm64: dts: renesas: Use R-Car SDHI Gen[123]
- fallback compat strings
-Message-ID: <20171020091747.iep6diy3ymp47qip@verge.net.au>
-References: <20171017060959.16702-1-horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20171017060959.16702-1-horms+renesas@verge.net.au>
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 00/11] arm64: dts: renesas: Use R-Car SDHI Gen[123] fallback compat strings
+Date: Tue, 17 Oct 2017 08:09:48 +0200
+Message-Id: <20171017060959.16702-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Oct 17, 2017 at 08:09:48AM +0200, Simon Horman wrote:
-> Use recently posted R-Car SDHI Gen 1, 2 and 3 fallback compat strings
-> in the DT of Renesas ARM and arm64 based SoCs.
-> 
-> Based on renesas-devel-20171016-v4.14-rc5
-> 
-> Has a binding documentation but no run-time dependency on
-> "[PATCH v3 0/3] mmc: renesas_sdhi: add R-Car Gen[123] fallback
-> compatibility strings"
+Use recently posted R-Car SDHI Gen 1, 2 and 3 fallback compat strings
+in the DT of Renesas ARM and arm64 based SoCs.
 
-I have marked these as deferred pending acceptance of the above dependency.
+Based on renesas-devel-20171016-v4.14-rc5
+
+Has a binding documentation but no run-time dependency on
+"[PATCH v3 0/3] mmc: renesas_sdhi: add R-Car Gen[123] fallback
+compatibility strings"
+
+Simon Horman (11):
+  arm64: dts: renesas: r8a7795: Use R-Car SDHI Gen3 fallback compat
+    string
+  arm64: dts: renesas: r8a7796: Use R-Car SDHI Gen3 fallback compat
+    string
+  ARM: dts: r8a7743: Use R-Car SDHI Gen2 fallback compat string
+  ARM: dts: r8a7745: Use R-Car SDHI Gen2 fallback compat string
+  ARM: dts: r8a7778: Use R-Car SDHI Gen1 fallback compat string
+  ARM: dts: r8a7779: Use R-Car SDHI Gen1 fallback compat string
+  ARM: dts: r8a7790: Use R-Car SDHI Gen2 fallback compat string
+  ARM: dts: r8a7791: Use R-Car SDHI Gen2 fallback compat string
+  ARM: dts: r8a7792: Use R-Car SDHI Gen2 fallback compat string
+  ARM: dts: r8a7793: Use R-Car SDHI Gen2 fallback compat string
+  ARM: dts: r8a7794: Use R-Car SDHI Gen2 fallback compat string
+
+ arch/arm/boot/dts/r8a7743.dtsi           |  9 ++++++---
+ arch/arm/boot/dts/r8a7745.dtsi           |  9 ++++++---
+ arch/arm/boot/dts/r8a7778.dtsi           |  9 ++++++---
+ arch/arm/boot/dts/r8a7779.dtsi           | 12 ++++++++----
+ arch/arm/boot/dts/r8a7790.dtsi           | 12 ++++++++----
+ arch/arm/boot/dts/r8a7791.dtsi           |  9 ++++++---
+ arch/arm/boot/dts/r8a7792.dtsi           |  3 ++-
+ arch/arm/boot/dts/r8a7793.dtsi           |  9 ++++++---
+ arch/arm/boot/dts/r8a7794.dtsi           |  9 ++++++---
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 12 ++++++++----
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 12 ++++++++----
+ 11 files changed, 70 insertions(+), 35 deletions(-)
+
+-- 
+2.11.0
