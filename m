@@ -1,61 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:45859 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759234AbdJQILQ (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:20302 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S933027AbdJQHeW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Oct 2017 04:11:16 -0400
-MIME-Version: 1.0
-In-Reply-To: <1508225421-25405-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Tue, 17 Oct 2017 03:34:22 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: wsa+renesas@sang-engineering.com, ulf.hansson@linaro.org
+Cc: linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 2/2] mmc: renesas_sdhi: fix kernel panic in _internal_dmac.c
+Date: Tue, 17 Oct 2017 16:30:21 +0900
+Message-Id: <1508225421-25405-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1508225421-25405-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 References: <1508225421-25405-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1508225421-25405-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 17 Oct 2017 10:11:14 +0200
-Message-ID: <CAMuHMdUx+4PpZ6vzRjqV0gtknMBT7VHV=dW4wqt=8s8HZRrkuw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] mmc: renesas_sdhi: fix kernel panic in _internal_dmac.c
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Linux MMC List <linux-mmc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Shimoda-san,
+Since this driver checks if the return value of dma_map_sg() is minus
+or not and keeps to enable the DMAC, it may cause kernel panic when
+the dma_map_sg() returns 0. So, this patch fixes the issue.
 
-On Tue, Oct 17, 2017 at 9:30 AM, Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> Since this driver checks if the return value of dma_map_sg() is minus
-> or not and keeps to enable the DMAC, it may cause kernel panic when
-> the dma_map_sg() returns 0. So, this patch fixes the issue.
+Reported-by: Dirk Behme <dirk.behme@de.bosch.com>
+Fixes: 2a68ea7896e3 ("mmc: renesas-sdhi: add support for R-Car Gen3 SDHI DMAC")
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c | 17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
 
-Thanks for your patch!
-
-Indeed:
-
- * dma_maps_sg_attrs returns 0 on error and > 0 on success.
- * It should never return a value < 0.
-
-A quick grep shows there are 4 more offenders:
-
-  - drivers/crypto/qce/ablkcipher.c
-  - drivers/crypto/qce/sha.c
-  - drivers/hsi/controllers/omap_ssi_port.c
-  - drivers/mailbox/bcm-flexrm-mailbox.c
-
-> Reported-by: Dirk Behme <dirk.behme@de.bosch.com>
-> Fixes: 2a68ea7896e3 ("mmc: renesas-sdhi: add support for R-Car Gen3 SDHI DMAC")
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+index 6c9b4b2..378fe88 100644
+--- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+@@ -147,11 +147,8 @@
+ 	WARN_ON(host->sg_len > 1);
+ 
+ 	/* This DMAC cannot handle if buffer is not 8-bytes alignment */
+-	if (!IS_ALIGNED(sg->offset, 8)) {
+-		host->force_pio = true;
+-		renesas_sdhi_internal_dmac_enable_dma(host, false);
+-		return;
+-	}
++	if (!IS_ALIGNED(sg->offset, 8))
++		goto force_pio;
+ 
+ 	if (data->flags & MMC_DATA_READ) {
+ 		dtran_mode |= DTRAN_MODE_CH_NUM_CH1;
+@@ -164,8 +161,8 @@
+ 	}
+ 
+ 	ret = dma_map_sg(&host->pdev->dev, sg, host->sg_len, dir);
+-	if (ret < 0)
+-		return;
++	if (ret == 0)
++		goto force_pio;
+ 
+ 	renesas_sdhi_internal_dmac_enable_dma(host, true);
+ 
+@@ -177,6 +174,12 @@
+ 					    dtran_mode);
+ 	renesas_sdhi_internal_dmac_dm_write(host, DM_DTRAN_ADDR,
+ 					    sg->dma_address);
++
++	return;
++
++force_pio:
++	host->force_pio = true;
++	renesas_sdhi_internal_dmac_enable_dma(host, false);
+ }
+ 
+ static void renesas_sdhi_internal_dmac_issue_tasklet_fn(unsigned long arg)
+-- 
+1.9.1
