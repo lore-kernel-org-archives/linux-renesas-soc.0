@@ -1,17 +1,14 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:18031 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755416AbdJQGGG (ORCPT
+Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:55429 "EHLO
+        smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752381AbdJQFIB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Oct 2017 02:06:06 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: "REE dirk.behme@de.bosch.com" <dirk.behme@de.bosch.com>,
-        "Geert Uytterhoeven" <geert@linux-m68k.org>
-CC: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: mainline 4.14-rc4: renesas_sdhi_internal_dmac ee100000.sd:
+        Tue, 17 Oct 2017 01:08:01 -0400
+Subject: Re: mainline 4.14-rc4: renesas_sdhi_internal_dmac ee100000.sd:
  swiotlb buffer is full?
-Date: Tue, 17 Oct 2017 06:06:02 +0000
-Message-ID: <TY1PR06MB09928F5969EEAB4AA9CE8B21D84C0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 References: <50d1a9ac-fe5f-d0a1-62bc-ff3e252e99da@de.bosch.com>
  <CAMuHMdXPYyi_pXcdtNJkT737dSXnwG88vqETN0Kbe-3AAJ0zOg@mail.gmail.com>
  <f7596566-2f98-d4a1-612c-77caa51b892e@de.bosch.com>
@@ -24,86 +21,111 @@ References: <50d1a9ac-fe5f-d0a1-62bc-ff3e252e99da@de.bosch.com>
  <CAMuHMdVdfZT-X1bNSBfzBOS=BWgi3d6XySUAJvfz+tvh1=twwQ@mail.gmail.com>
  <CACRpkdZoXpMt7+5_-aEyA4V06cc-ofuA_BQVhYOuVoZDDn_Kbw@mail.gmail.com>
  <TY1PR06MB09924402AE9EAA79CCD9E194D84C0@TY1PR06MB0992.apcprd06.prod.outlook.com>
- <85b9aac9-a12c-a102-a029-1960e12013b0@de.bosch.com>
-In-Reply-To: <85b9aac9-a12c-a102-a029-1960e12013b0@de.bosch.com>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+From: Dirk Behme <dirk.behme@de.bosch.com>
+Message-ID: <85b9aac9-a12c-a102-a029-1960e12013b0@de.bosch.com>
+Date: Tue, 17 Oct 2017 07:07:58 +0200
 MIME-Version: 1.0
+In-Reply-To: <TY1PR06MB09924402AE9EAA79CCD9E194D84C0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgRGlyay1zYW4sDQoNCj4gRnJvbTogRGlyayBCZWhtZSwgU2VudDogVHVlc2RheSwgT2N0b2Jl
-ciAxNywgMjAxNyAyOjA4IFBNDQo+IA0KPiBMaW1pdGluZyB0aGUgdGhyZWFkIHRvIFJlbmVzYXMg
-b25seSwgYWdhaW4sIHRvIGRpc2N1c3MgdGhlIG90aGVyIGlzc3VlOg0KPiANCj4gT24gMTcuMTAu
-MjAxNyAwNjo1MSwgWW9zaGloaXJvIFNoaW1vZGEgd3JvdGU6DQo+ID4gSGkgTGludXMtc2FuLA0K
-PiA+DQo+ID4+IEZyb206IExpbnVzIFdhbGxlaWosIFNlbnQ6IE1vbmRheSwgT2N0b2JlciAxNiwg
-MjAxNyA5OjIyIFBNDQo+ID4+DQo+ID4+IE9uIE1vbiwgT2N0IDE2LCAyMDE3IGF0IDI6MDcgUE0s
-IEdlZXJ0IFV5dHRlcmhvZXZlbg0KPiA+PiA8Z2VlcnRAbGludXgtbTY4ay5vcmc+IHdyb3RlOg0K
-PiA+Pj4gT24gTW9uLCBPY3QgMTYsIDIwMTcgYXQgMTo0MSBQTSwgTGludXMgV2FsbGVpaiA8bGlu
-dXMud2FsbGVpakBsaW5hcm8ub3JnPiB3cm90ZToNCj4gPj4+PiBPbiBNb24sIE9jdCAxNiwgMjAx
-NyBhdCAxMTowMiBBTSwgR2VlcnQgVXl0dGVyaG9ldmVuDQo+ID4+Pj4gPGdlZXJ0QGxpbnV4LW02
-OGsub3JnPiB3cm90ZToNCj4gPj4+Pj4+IElJVUMsDQo+ID4+Pj4+PiAtIFNpbmNlIHRoZSBNTUNf
-Qk9VTkNFIGRpc2FwcGVhcmVkIGluIHY0LjE0LXJjMSwgdGhlIE1NQyBjb3JlIHdpbGwgcmVxdWVz
-dCBhIGNvbW1hbmQgd2l0aCA2NGtieXRlKyBzaXplLg0KPiA+Pj4+Pj4gICAtIFNvLCBzd2lvdGxi
-IHdpbGwgZ290IHJlcXVlc3QgNjRrYnl0ZSsgc2l6ZS4gVGhpcyBpcyBkaWZmZXJlbnQgd2l0aCBw
-cmV2aW91cyB2ZXJzaW9uLg0KPiA+Pj4+DQo+ID4+Pj4gT3RoZXIgcGVvcGxlIHJlcG9ydGVkIHBy
-b2JsZW1zIHdpdGggdGhhdC4gU29ycnkgYWJvdXQgdGhpcy4uLg0KPiA+Pj4+DQo+ID4+Pj4gVGhp
-cyBwcm9ibGVtIHNob3VsZCBiZSBzb2x2ZWQgYnkgdXBzdHJlYW0NCj4gPj4+PiBjb21taXQgZGUz
-ZWU5OWIwOTdkZDUxOTM4Mjc2ZTNhZjM4OGNkNGFkMGYyNzUwYQ0KPiA+Pj4+ICJtbWM6IERlbGV0
-ZSBib3VuY2UgYnVmZmVyIGhhbmRsaW5nIg0KPiA+Pj4+DQo+ID4+Pj4gSSBqdXN0IGtpbGxlZCBv
-ZmYgdGhlIGJvdW5jZSBidWZmZXJzIHNvIHRoZXkgY2FuJ3QgaHVydCBhbnlvbmUgYW55bW9yZS4N
-Cj4gPj4+Pg0KPiA+Pj4+IENhbiB5b3UgY2hlY2sgdGhhdCB5b3UgaGF2ZSB0aGlzIHBhdGNoIGlu
-IHlvdXIgdHJlZT8NCj4gPj4+DQo+ID4+PiBHaXZlbiBEaXJrIHNhdyB0aGUgaXNzdWUgd2l0aCB2
-NC4xNC1yYzQsIEknbSBhZnJhaWQgdGhhdCBwYXRjaCBpcyBhbHJlYWR5DQo+ID4+PiBpbmNsdWRl
-ZCA6LSgNCj4gPj4NCj4gPj4gU28gdGhlIGZpcnN0IGlzc3VlIGlzIGRlZmluYXRlbHkgZ29uZS4N
-Cj4gPj4NCj4gPj4gVGhlbiBpdCBzZWVtcyB0aGUgZHJpdmVyIGlzIHNwZWNpZnlpbmcgdG8gaGln
-aCAtPm1heF9zZWdfc2l6ZQ0KPiA+PiBzaW5jZSB0aGUgYnVmZmVyIGNhbm5vdCBiZSBtYXBwZWQ/
-DQo+ID4+DQo+ID4+IFVubGVzcyB5b3UncmUgdXNpbmcgQURNQSBkcml2ZXJzL21tYy9ob3N0L3Nk
-aGNpLmMgc2V0cyBpdCBhczoNCj4gPj4gbW1jLT5tYXhfc2VnX3NpemUgPSBtbWMtPm1heF9yZXFf
-c2l6ZTsNCj4gPg0KPiA+IFRoYW5rIHlvdSBmb3IgdGhlIGNvbW1lbnQhDQo+ID4gT24gUi1DYXIg
-R2VuMywgaXQncyB1c2luZyBkcml2ZXJzL21tYy9ob3N0L3JlbmVzYXNfc2RoaV9pbnRlcm5hbF9k
-bWFjLmMsDQo+ID4gYW5kIHNldHMgdGhlIG1heF9zZWdfc2l6ZSB0byB2ZXJ5IGJpZyBzaXplICgw
-eGZmZmZmZmZmICogNTEyKSBub3cuLi4NCj4gPg0KPiA+IFNvLCBJIG1vZGlmaWVkIHRoZSB2YWx1
-ZSB0byAyNjIxNDQgYW5kIHJlYmFzZSB0aGUga2VybmVsIHRvIHY0LjE0LXJjNQ0KPiA+ICgtcmM0
-IHNlZW1zIGhhdmUgb3RoZXIgaXNzdWUgaW4gYmxvY2sgZHJpdmVyLiksIHRoZSAic3dpb3RsYiBi
-dWZmZXIgaXMgZnVsbCIgaXNzdWUgZGlzYXBwZWFyZWQuDQo+ID4NCj4gPj4gQW5kOg0KPiA+PiBt
-bWMtPm1heF9yZXFfc2l6ZSA9IDUyNDI4ODsNCj4gPj4NCj4gPj4+PiByZW5lc2FzX3NkaGlfaW50
-ZXJuYWxfZG1hYyBlZTEwMDAwMC5zZDogc3dpb3RsYl90YmxfbWFwX3NpbmdsZTogdGVzdDoNCj4g
-Pj4+PiBzaXplIG1vZGlmaWVkIHRvIDUyNDI4OCBieXRlcw0KPiA+Pj4+IHJlbmVzYXNfc2RoaV9p
-bnRlcm5hbF9kbWFjIGVlMTAwMDAwLnNkOiBzd2lvdGxiIGJ1ZmZlciBpcyBmdWxsIChzejoNCj4g
-Pj4+PiA1MjQyODggYnl0ZXMpDQo+ID4+DQo+ID4+IFNvIGlmIHlvdXIgZHJpdmVyIGNhbm5vdCBo
-YW5kbGUgNTI0Mjg4IGJ5dGVzLCB3aHkgaXMgaXQgc2F5aW5nIGl0IGNhbg0KPiA+PiBoYW5kbGUg
-NTI0Mjg4IGJ5dGVzPw0KPiA+DQo+ID4gSSB0aGluayB0aGUgInN3aW90bGIgYnVmZmVyIGlzIGZ1
-bGwiIGNhbWUgZnJvbSBsaWIvc3dpb3RsYi5jLg0KPiA+IEknbSBub3Qgc3VyZSB0aGUgZGV0YWls
-IG9mIHN3aW90bGIuYywgYnV0IElJVUMsIGl0IGhhcyBhIG1lbW9yeSBzaXplIGxpbWl0YXRpb24u
-DQo+ID4NCj4gPiAtIEluIGxpYi9zd2lvdGxiLmMsIGl0IGNhbGN1bGF0ZXMgbnNsb3RzLg0KPiA+
-ICAgLSBUaGUgc2l6ZSBvZiBvbmUgc2xvdCBpcyAyMDQ4IGJ5dGVzIGJlY2F1c2UgSU9fVExCX1NI
-SUZUIGluIGluY2x1ZGUvbGludXgvc3dpb3RsYi5oIGlzIHNldCB0byAxMS4NCj4gPiAtIElPX1RM
-Ql9TRUdTSVpFIGlzIHNldCB0byAxMjggaW4gaW5jbHVkZS9saW51eC9zd2lvdGxiLmguDQo+ID4g
-ICAtIFRoaXMgdmFsdWUgaXMgbnVtYmVyIG9mIG1heGltdW0gc2xvdHMuDQo+ID4gICAgLSBTbywg
-bWF4aW11bSBzaXplIGZvciBhIHNpbmdsZSBtYXAgb2Ygc3dpb3RsYiBpcyAyNTZrYnl0ZXMgKDIw
-NDggKiAxMjgpLg0KPiA+DQo+ID4gU28sIEkgd2lsbCBzdWJtaXQgYSBwYXRjaCB0byBzZXQgdGhl
-IG1heF9yZXFfc2l6ZSB0byAyNTZrYnl0ZXMgdG9kYXkuDQo+IA0KPiANCj4gR3JlYXQsIG1hbnkg
-dGhhbmtzISBJJ2xsIHRyeSB0byB0ZXN0IHRoYXQgaW4gdGhlIG5leHQgZGF5cywgdGhlbi4NCj4g
-DQo+IFdoaWxlIGFib3ZlIGZpeGVzIHRoZSBzd2lvdGxiIGZ1bGwgaXNzdWUsIHdlIHN0aWxsIGhh
-dmUgdGhlIGlzc3VlIHRoYXQNCj4gaXQgbG9va3MgbGlrZSB0aGUgZHJpdmVyIGRvZXNuJ3QgaGFu
-ZGxlIHRoYXQgaXNzdWUgY29ycmVjdGx5IGFuZA0KPiBjcmFzaGVzLCB0aGVuOg0KPiANCj4gcmVu
-ZXNhc19zZGhpX2ludGVybmFsX2RtYWMgZWUxMDAwMDAuc2Q6IERNQTogT3V0IG9mIFNXLUlPTU1V
-IHNwYWNlIGZvcg0KPiA1MjQyODggYnl0ZXMNCj4gLT4gVW5hYmxlIHRvIGhhbmRsZSBrZXJuZWwg
-cGFnaW5nIHJlcXVlc3QgYXQgdmlydHVhbCBhZGRyZXNzDQo+IGZmZmZmZmZmYzAwMDAwMDAgPC0N
-Cj4gDQo+IEknZCBwcm9wb3NlIHRvIGZpeCB0aGF0LCB0b28uIEhhdmUgeW91IGxvb2tlZCBpbnRv
-IHRoYXQgaXNzdWUsIHRvbz8NCj4gDQo+IEknbSBubyBleHBlcnQgb24gdGhpcywgYnV0IGl0IGxv
-b2tzIHRvIG1lIHRoYXQgb3RoZXIgZHJpdmVycyBhcmUNCj4gY2hlY2tpbmcgdGhlIHJldHVybiB2
-YWx1ZSBvZiBkbWFfbWFwX3NnKCkgZGlmZmVyZW50bHk/DQo+IA0KPiByZXQgPSBkbWFfbWFwX3Nn
-KCZob3N0LT5wZGV2LT5kZXYsIHNnLCBob3N0LT5zZ19sZW4sIGRpcik7DQo+IAlpZiAocmV0IDwg
-MCkNCj4gCQlyZXR1cm47DQo+IA0KPiBodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGlu
-dXgva2VybmVsL2dpdC90b3J2YWxkcy9saW51eC5naXQvdHJlZS9kcml2ZXJzL21tYy9ob3N0L3Jl
-bmVzYXNfc2RoaV9pbnRlcm5hbF9kbWFjLg0KPiBjI24xNjUNCj4gDQo+IFRoZXkgY2hlY2sgZm9y
-IChyZXQgPT0gMCk/DQo+IA0KPiBTb3JyeSBpZiBJJ20gd3Jvbmcgb24gdGhhdCA7KQ0KDQpUaGFu
-ayB5b3UgZm9yIHRoZSBjb21tZW50cyEgWW91J3JlIGNvcnJlY3QuIFdlIHNob3VsZCBjaGVjayBm
-b3IgKHJldCA9PSAwKSBhdCBsZWFzdC4NCkkgYWxzbyB0aGluayB3ZSBzaG91bGQgc2V0IGhvc3Qt
-PmZvcmNlX3BpbyA9IHRydWUgYW5kDQpjYWxsIHJlbmVzYXNfc2RoaV9pbnRlcm5hbF9kbWFjX2Vu
-YWJsZV9kbWEoaG9zdCwgZmFsc2UpIHRvIGRvIFBJTyBpZiAicmV0ID09IDAiLg0KDQpJIHdpbGwg
-bWFrZSBzdWNoIGEgcGF0Y2ggYW5kIHN1Ym1pdCBpdC4NCg0KQmVzdCByZWdhcmRzLA0KWW9zaGlo
-aXJvIFNoaW1vZGENCg0KPiBCZXN0IHJlZ2FyZHMNCj4gDQo+IERpcmsNCg==
+
+Limiting the thread to Renesas only, again, to discuss the other issue:
+
+On 17.10.2017 06:51, Yoshihiro Shimoda wrote:
+> Hi Linus-san,
+> 
+>> From: Linus Walleij, Sent: Monday, October 16, 2017 9:22 PM
+>>
+>> On Mon, Oct 16, 2017 at 2:07 PM, Geert Uytterhoeven
+>> <geert@linux-m68k.org> wrote:
+>>> On Mon, Oct 16, 2017 at 1:41 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+>>>> On Mon, Oct 16, 2017 at 11:02 AM, Geert Uytterhoeven
+>>>> <geert@linux-m68k.org> wrote:
+>>>>>> IIUC,
+>>>>>> - Since the MMC_BOUNCE disappeared in v4.14-rc1, the MMC core will request a command with 64kbyte+ size.
+>>>>>>   - So, swiotlb will got request 64kbyte+ size. This is different with previous version.
+>>>>
+>>>> Other people reported problems with that. Sorry about this...
+>>>>
+>>>> This problem should be solved by upstream
+>>>> commit de3ee99b097dd51938276e3af388cd4ad0f2750a
+>>>> "mmc: Delete bounce buffer handling"
+>>>>
+>>>> I just killed off the bounce buffers so they can't hurt anyone anymore.
+>>>>
+>>>> Can you check that you have this patch in your tree?
+>>>
+>>> Given Dirk saw the issue with v4.14-rc4, I'm afraid that patch is already
+>>> included :-(
+>>
+>> So the first issue is definately gone.
+>>
+>> Then it seems the driver is specifying to high ->max_seg_size
+>> since the buffer cannot be mapped?
+>>
+>> Unless you're using ADMA drivers/mmc/host/sdhci.c sets it as:
+>> mmc->max_seg_size = mmc->max_req_size;
+> 
+> Thank you for the comment!
+> On R-Car Gen3, it's using drivers/mmc/host/renesas_sdhi_internal_dmac.c,
+> and sets the max_seg_size to very big size (0xffffffff * 512) now...
+> 
+> So, I modified the value to 262144 and rebase the kernel to v4.14-rc5
+> (-rc4 seems have other issue in block driver.), the "swiotlb buffer is full" issue disappeared.
+> 
+>> And:
+>> mmc->max_req_size = 524288;
+>>
+>>>> renesas_sdhi_internal_dmac ee100000.sd: swiotlb_tbl_map_single: test:
+>>>> size modified to 524288 bytes
+>>>> renesas_sdhi_internal_dmac ee100000.sd: swiotlb buffer is full (sz:
+>>>> 524288 bytes)
+>>
+>> So if your driver cannot handle 524288 bytes, why is it saying it can
+>> handle 524288 bytes?
+> 
+> I think the "swiotlb buffer is full" came from lib/swiotlb.c.
+> I'm not sure the detail of swiotlb.c, but IIUC, it has a memory size limitation.
+> 
+> - In lib/swiotlb.c, it calculates nslots.
+>   - The size of one slot is 2048 bytes because IO_TLB_SHIFT in include/linux/swiotlb.h is set to 11.
+> - IO_TLB_SEGSIZE is set to 128 in include/linux/swiotlb.h.
+>   - This value is number of maximum slots.
+>    - So, maximum size for a single map of swiotlb is 256kbytes (2048 * 128).
+> 
+> So, I will submit a patch to set the max_req_size to 256kbytes today.
+
+
+Great, many thanks! I'll try to test that in the next days, then.
+
+While above fixes the swiotlb full issue, we still have the issue that 
+it looks like the driver doesn't handle that issue correctly and 
+crashes, then:
+
+renesas_sdhi_internal_dmac ee100000.sd: DMA: Out of SW-IOMMU space for 
+524288 bytes
+-> Unable to handle kernel paging request at virtual address 
+ffffffffc0000000 <-
+
+I'd propose to fix that, too. Have you looked into that issue, too?
+
+I'm no expert on this, but it looks to me that other drivers are 
+checking the return value of dma_map_sg() differently?
+
+ret = dma_map_sg(&host->pdev->dev, sg, host->sg_len, dir);
+	if (ret < 0)
+		return;
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/mmc/host/renesas_sdhi_internal_dmac.c#n165
+
+They check for (ret == 0)?
+
+Sorry if I'm wrong on that ;)
+
+Best regards
+
+Dirk
