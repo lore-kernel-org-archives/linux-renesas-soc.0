@@ -1,56 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f52.google.com ([209.85.215.52]:47777 "EHLO
-        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753601AbdJQKUt (ORCPT
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:51118 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934291AbdJQIVX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Oct 2017 06:20:49 -0400
-Received: by mail-lf0-f52.google.com with SMTP id k40so1383175lfi.4
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Oct 2017 03:20:48 -0700 (PDT)
-Subject: Re: [PATCH net-next 3/3] net: sh_eth: implement R-Car Gen[12]
- fallback compatibility strings
-To: Simon Horman <horms+renesas@verge.net.au>,
-        David Miller <davem@davemloft.net>
-Cc: Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-References: <20171017074747.24159-1-horms+renesas@verge.net.au>
- <20171017074747.24159-4-horms+renesas@verge.net.au>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <2874aea5-c012-82cd-2fc6-74ee63ac3d11@cogentembedded.com>
-Date: Tue, 17 Oct 2017 13:20:47 +0300
+        Tue, 17 Oct 2017 04:21:23 -0400
 MIME-Version: 1.0
 In-Reply-To: <20171017074747.24159-4-horms+renesas@verge.net.au>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20171017074747.24159-1-horms+renesas@verge.net.au> <20171017074747.24159-4-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 17 Oct 2017 10:21:21 +0200
+Message-ID: <CAMuHMdXPOAKvoo+gGM6T00z5BC04ZzLoR4-0sJJuaxbM4gQLQg@mail.gmail.com>
+Subject: Re: [PATCH net-next 3/3] net: sh_eth: implement R-Car Gen[12]
+ fallback compatibility strings
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: David Miller <davem@davemloft.net>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 10/17/2017 10:47 AM, Simon Horman wrote:
-
+On Tue, Oct 17, 2017 at 9:47 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
 > Implement fallback compatibility strings for R-Car Gen 1 and 2.
-> 
+>
 > In the case of Renesas R-Car hardware we know that there are generations of
 > SoCs, f.e. Gen 1 and 2. But beyond that its not clear what the relationship
 > between IP blocks might be. For example, I believe that r8a7790 is older
 > than r8a7791 but that doesn't imply that the latter is a descendant of the
 > former or vice versa.
-> 
+>
 > We can, however, by examining the documentation and behaviour of the
 > hardware at run-time observe that the current driver implementation appears
 > to be compatible with the IP blocks on SoCs within a given generation.
-> 
+>
 > For the above reasons and convenience when enabling new SoCs a
 > per-generation fallback compatibility string scheme being adopted for
+
+is being adopted?
+
 > drivers for Renesas SoCs.
-> 
+>
 > Note that R-Car Gen2 and RZ/G1 have many compatible IP blocks.  The
 > approach that has been consistently taken for other IP blocks is to name
 > common code, compatibility strings and so on after Rcar Gen2.
-
-     R-Car again. :-)
-
+>
 > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-MBR, Sergei
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
