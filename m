@@ -1,108 +1,89 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mga05.intel.com ([192.55.52.43]:54261 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934791AbdJQJj6 (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:19394 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1759902AbdJQJJ4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Oct 2017 05:39:58 -0400
-From: Felipe Balbi <felipe.balbi@linux.intel.com>
-To: Biju Das <biju.das@bp.renesas.com>,
+        Tue, 17 Oct 2017 05:09:56 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Felipe Balbi <felipe.balbi@linux.intel.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
+CC: Simon Horman <horms@verge.net.au>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        "devicetree\@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-renesas-soc\@vger.kernel.org"
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>,
-        "linux-usb\@vger.kernel.org" <linux-usb@vger.kernel.org>
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>
 Subject: RE: [PATCH] usb: renesas_usbhs: Add compatible string for r8a7743/5
-In-Reply-To: <KL1PR06MB170284D41F8517AD9A96E8A0B84C0@KL1PR06MB1702.apcprd06.prod.outlook.com>
-References: <1507216358-917-1-git-send-email-biju.das@bp.renesas.com> <87wp3uji3x.fsf@linux.intel.com> <KL1PR06MB170284D41F8517AD9A96E8A0B84C0@KL1PR06MB1702.apcprd06.prod.outlook.com>
-Date: Tue, 17 Oct 2017 12:39:49 +0300
-Message-ID: <87fuaijeoq.fsf@linux.intel.com>
+Date: Tue, 17 Oct 2017 09:09:50 +0000
+Message-ID: <KL1PR06MB170284D41F8517AD9A96E8A0B84C0@KL1PR06MB1702.apcprd06.prod.outlook.com>
+References: <1507216358-917-1-git-send-email-biju.das@bp.renesas.com>
+ <87wp3uji3x.fsf@linux.intel.com>
+In-Reply-To: <87wp3uji3x.fsf@linux.intel.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-
-
 Hi,
 
-Biju Das <biju.das@bp.renesas.com> writes:
+> -----Original Message-----
+> From: devicetree-owner@vger.kernel.org [mailto:devicetree-
+> owner@vger.kernel.org] On Behalf Of Felipe Balbi
+> Sent: 17 October 2017 09:26
+> To: Biju Das <biju.das@bp.renesas.com>; Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org>; Rob Herring <robh+dt@kernel.org>; Mark
+> Rutland <mark.rutland@arm.com>
+> Cc: Simon Horman <horms@verge.net.au>; Chris Paterson
+> <Chris.Paterson2@renesas.com>; Fabrizio Castro
+> <fabrizio.castro@bp.renesas.com>; devicetree@vger.kernel.org; linux-renes=
+as-
+> soc@vger.kernel.org; linux-usb@vger.kernel.org; Biju Das
+> <biju.das@bp.renesas.com>
+> Subject: Re: [PATCH] usb: renesas_usbhs: Add compatible string for r8a774=
+3/5
+>
+>
 > Hi,
 >
->> -----Original Message-----
->> From: devicetree-owner@vger.kernel.org [mailto:devicetree-
->> owner@vger.kernel.org] On Behalf Of Felipe Balbi
->> Sent: 17 October 2017 09:26
->> To: Biju Das <biju.das@bp.renesas.com>; Greg Kroah-Hartman
->> <gregkh@linuxfoundation.org>; Rob Herring <robh+dt@kernel.org>; Mark
->> Rutland <mark.rutland@arm.com>
->> Cc: Simon Horman <horms@verge.net.au>; Chris Paterson
->> <Chris.Paterson2@renesas.com>; Fabrizio Castro
->> <fabrizio.castro@bp.renesas.com>; devicetree@vger.kernel.org; linux-rene=
-sas-
->> soc@vger.kernel.org; linux-usb@vger.kernel.org; Biju Das
->> <biju.das@bp.renesas.com>
->> Subject: Re: [PATCH] usb: renesas_usbhs: Add compatible string for r8a77=
-43/5
->>
->>
->> Hi,
->>
->> Biju Das <biju.das@bp.renesas.com> writes:
->> > This patch adds support for r8a7743/5 SoC.  The Renesas RZ/G1[ME]
->> > (R8A7743/5) usbhs is identical to the R-Car Gen2 family.
->> >
->> > This doesn't change the driver, so it does nothing by itself.  But it
->> > does mean that checkpatch won't complain about a future patch that
->> > adds "renesas,usbhs-r8a7743" or "renesas,usbhs-r8a7745" to a DT, which
->> > helps ensure that shipped DTs use documented compatibility strings.
->> >
->> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
->> > ---
->> > This patch is tested against Linux next tag next-20170929
->
->> care to rebase on my testing/next? It fails to apply.
->
-> Sorry for the trouble.
->
-> I have already send a V2 for fixing this.
->
-> [v2] usb: renesas_usbhs: Add compatible string for r8a7743/5
-> https://patchwork.kernel.org/patch/9990063/
->
-> I have rebased this patch on my testing/next and confirms it apply cleanl=
-y.
+> Biju Das <biju.das@bp.renesas.com> writes:
+> > This patch adds support for r8a7743/5 SoC.  The Renesas RZ/G1[ME]
+> > (R8A7743/5) usbhs is identical to the R-Car Gen2 family.
+> >
+> > This doesn't change the driver, so it does nothing by itself.  But it
+> > does mean that checkpatch won't complain about a future patch that
+> > adds "renesas,usbhs-r8a7743" or "renesas,usbhs-r8a7745" to a DT, which
+> > helps ensure that shipped DTs use documented compatibility strings.
+> >
+> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > ---
+> > This patch is tested against Linux next tag next-20170929
 
-thank you, now applied :-)
+> care to rebase on my testing/next? It fails to apply.
 
-=2D-=20
-balbi
+Sorry for the trouble.
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+I have already send a V2 for fixing this.
 
------BEGIN PGP SIGNATURE-----
+[v2] usb: renesas_usbhs: Add compatible string for r8a7743/5
+https://patchwork.kernel.org/patch/9990063/
 
-iQIzBAEBCgAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlnlz+UACgkQzL64meEa
-mQZ18g/+NO2I4ekLK3bAPaNPOW9nLXNpIfrhssSUeCeSiB/kbkXqhNMpfBEoRTbq
-1J1vpbnuiUXVjSAYWECYqRsWiQniNpwOmJEMWgQlK5hr1n5YrSKKvbe1DmXQa6mR
-idtNS99CLpK018tZHv9NDoiJ7WEvtlP1ZisSmHyXWwhwv70DOkJWr34imC8YcxMz
-O1GbrxV42I6FbaGT2doxpryniAVQe3sn+omjyLa2TNRVf2gqp/TDexWryn/cQOhX
-E/Vi6pbbYdcQ7Tl/ZLRU+On4f1ZDDm1abbndBdXyve8L4yrIZBZhb/h9ZHPeWOtJ
-tjp9ynvMYDHVHQvL6sExYdbWlwKPxi5QDxALMkwiREWyWkKkbJODt26esKKaHGIf
-nDsxUAQEgy3dxWOAo6p+G6ydG91nmhbeAyLrEKuDfr8+5MOFdkPI7RE9TysTAEzJ
-NuCwwwyQHe+uL6/yOuuXWwxz8WWjqwGXlQgrKnWlzQwFCQcsBLMGWnwzdLoSZ91i
-jQYTr43XFvCnFo4Gj5JilkOIsT/RSYSrJN/fVFcsmA3ySZICH1nmj6/Nu6LJuYuv
-nzqDIDMaPa3ciDaAVjWYb+h0CVkpClCrvJstmbwVu9OhxKxdmVGHR8kxr2smGwQW
-oGqO5ig61EF0UGIWo6yh3NhhGnK5VY6HxL/+fBpybNdU0g7GjSc=
-=3+jM
------END PGP SIGNATURE-----
---=-=-=--
+I have rebased this patch on my testing/next and confirms it apply cleanly.
+
+Regds,
+Biju
+
+
+
+
+
+
+
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
