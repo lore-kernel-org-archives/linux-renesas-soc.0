@@ -1,40 +1,56 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH  0/2] Add HDMI support
-Date: Wed, 18 Oct 2017 10:33:45 +0100
-Message-Id: <1508319227-19679-1-git-send-email-biju.das@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f52.google.com ([209.85.215.52]:47777 "EHLO
+        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753601AbdJQKUt (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 17 Oct 2017 06:20:49 -0400
+Received: by mail-lf0-f52.google.com with SMTP id k40so1383175lfi.4
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Oct 2017 03:20:48 -0700 (PDT)
+Subject: Re: [PATCH net-next 3/3] net: sh_eth: implement R-Car Gen[12]
+ fallback compatibility strings
+To: Simon Horman <horms+renesas@verge.net.au>,
+        David Miller <davem@davemloft.net>
+Cc: Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+References: <20171017074747.24159-1-horms+renesas@verge.net.au>
+ <20171017074747.24159-4-horms+renesas@verge.net.au>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <2874aea5-c012-82cd-2fc6-74ee63ac3d11@cogentembedded.com>
+Date: Tue, 17 Oct 2017 13:20:47 +0300
+MIME-Version: 1.0
+In-Reply-To: <20171017074747.24159-4-horms+renesas@verge.net.au>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+On 10/17/2017 10:47 AM, Simon Horman wrote:
 
-This series aims to add HDMI support for iWave RZ/G1M (R8A7743) board.
-This series has been tested against renesas-dev tag 20171018-v4.14-rc5.
+> Implement fallback compatibility strings for R-Car Gen 1 and 2.
+> 
+> In the case of Renesas R-Car hardware we know that there are generations of
+> SoCs, f.e. Gen 1 and 2. But beyond that its not clear what the relationship
+> between IP blocks might be. For example, I believe that r8a7790 is older
+> than r8a7791 but that doesn't imply that the latter is a descendant of the
+> former or vice versa.
+> 
+> We can, however, by examining the documentation and behaviour of the
+> hardware at run-time observe that the current driver implementation appears
+> to be compatible with the IP blocks on SoCs within a given generation.
+> 
+> For the above reasons and convenience when enabling new SoCs a
+> per-generation fallback compatibility string scheme being adopted for
+> drivers for Renesas SoCs.
+> 
+> Note that R-Car Gen2 and RZ/G1 have many compatible IP blocks.  The
+> approach that has been consistently taken for other IP blocks is to name
+> common code, compatibility strings and so on after Rcar Gen2.
 
-This patch dependency on below patches
+     R-Car again. :-)
 
-[1] dt-bindings: display: rcar-du: Document R8A774[35]DU
-    https://patchwork.kernel.org/patch/10005091/
-[2] drm: rcar-du: Add R8A7743 support
-    https://patchwork.kernel.org/patch/10005093/
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-Fabrizio Castro (2):
-  ARM: dts: r8a7743: Add DU support
-  ARM: dts: iwg20d-q7-dbcm-ca: Add HDMI video output
+Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
- arch/arm/boot/dts/iwg20d-q7-dbcm-ca.dtsi | 75 ++++++++++++++++++++++++++++++++
- arch/arm/boot/dts/r8a7743.dtsi           | 30 +++++++++++++
- 2 files changed, 105 insertions(+)
-
--- 
-1.9.1
-
+MBR, Sergei
