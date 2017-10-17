@@ -1,67 +1,87 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:48996 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753037AbdJPNz2 (ORCPT
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:49223 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933744AbdJQHKX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Oct 2017 09:55:28 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
+        Tue, 17 Oct 2017 03:10:23 -0400
+MIME-Version: 1.0
+In-Reply-To: <b3825de9-16e8-94a4-0b23-bf0caf87a343@cogentembedded.com>
+References: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
+ <1508162116-5043-10-git-send-email-geert+renesas@glider.be> <b3825de9-16e8-94a4-0b23-bf0caf87a343@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 17 Oct 2017 09:10:21 +0200
+Message-ID: <CAMuHMdWtYrhU9RstX2ajasfD-psUK2zdUQcXWTa3FjnrwEFfJw@mail.gmail.com>
+Subject: Re: [PATCH 09/10] [RFC] ravb: Remove obsolete explicit clock handling
+ for WoL
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>, linux-clk@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 06/10] [RFC] clk: renesas: mstp: Use GENPD_FLAG_ACTIVE_WAKEUP
-Date: Mon, 16 Oct 2017 15:55:12 +0200
-Message-Id: <1508162116-5043-7-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
-References: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Set the newly introduced GENPD_FLAG_ACTIVE_WAKEUP, which allows to
-remove the driver's own "always true" callback.
+Hi Sergei,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-This must not be applied before "PM / Domain: Enable genpd users to
-specify default active wakeup behavior" has landed upstream, hence the
-"RFC".
----
- drivers/clk/renesas/clk-mstp.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+On Mon, Oct 16, 2017 at 10:17 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> On 10/16/2017 04:55 PM, Geert Uytterhoeven wrote:
+>> Currently, if Wake-on-LAN is enabled, the EtherAVB device's module clock
+>> is manually kept running during system suspend, to make sure the device
+>> stays active.
+>>
+>> Since "soc: renesas: rcar-sysc: Keep wakeup sources active during system
+>> suspend", this workaround is no longer needed.  Hence remove all
+>> explicit clock handling to keep the device active.
+>>
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> [...]
+>
+> Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>
+>> diff --git a/drivers/net/ethernet/renesas/ravb_main.c
+>> b/drivers/net/ethernet/renesas/ravb_main.c
+>> index fdf30bfa403bf416..11ffccca11d56df5 100644
+>> --- a/drivers/net/ethernet/renesas/ravb_main.c
+>> +++ b/drivers/net/ethernet/renesas/ravb_main.c
+>
+> [...]
+>>
+>> @@ -2289,8 +2283,6 @@ static int __maybe_unused ravb_resume(struct device
+>> *dev)
+>>                  *       this clock dance should be removed.
+>>                  */
+>>                 clk_disable(priv->clk);
+>> -               clk_disable(priv->clk);
+>> -               clk_enable(priv->clk);
+>>                 clk_enable(priv->clk);
+>
+>
+>    I thought the entire clock dance could be removed now? Not yet?
 
-diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
-index 912e4745d8011fe8..0b222197a4576fd7 100644
---- a/drivers/clk/renesas/clk-mstp.c
-+++ b/drivers/clk/renesas/clk-mstp.c
-@@ -329,11 +329,6 @@ void cpg_mstp_detach_dev(struct generic_pm_domain *unused, struct device *dev)
- 		pm_clk_destroy(dev);
- }
- 
--static bool cpg_mstp_active_wakeup(struct device *dev)
--{
--	return true;
--}
--
- void __init cpg_mstp_add_clk_domain(struct device_node *np)
- {
- 	struct generic_pm_domain *pd;
-@@ -349,8 +344,7 @@ void __init cpg_mstp_add_clk_domain(struct device_node *np)
- 		return;
- 
- 	pd->name = np->name;
--	pd->flags = GENPD_FLAG_PM_CLK;
--	pd->dev_ops.active_wakeup = cpg_mstp_active_wakeup;
-+	pd->flags = GENPD_FLAG_PM_CLK | GENPD_FLAG_ACTIVE_WAKEUP;
- 	pd->attach_dev = cpg_mstp_attach_dev;
- 	pd->detach_dev = cpg_mstp_detach_dev;
- 	pm_genpd_init(pd, &pm_domain_always_on_gov, false);
--- 
-2.7.4
+The remaining clock dance steps work around PSCI powering down the SoC,
+after which the hardware and Linux disagree about the clock state.
+They can be removed after "[PATCH v3 0/5] clk: renesas: rcar-gen3: Restore
+clocks during resume" has hit upstream.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
