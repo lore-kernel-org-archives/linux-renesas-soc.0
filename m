@@ -1,70 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f52.google.com ([209.85.215.52]:48485 "EHLO
-        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751625AbdJFCoO (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:39254 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753185AbdJQGKJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 Oct 2017 22:44:14 -0400
-Received: by mail-lf0-f52.google.com with SMTP id q132so18884647lfe.5
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 05 Oct 2017 19:44:13 -0700 (PDT)
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
+        Tue, 17 Oct 2017 02:10:09 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH v3 15/18] arm64: dts: ulcb-kf: enable TCA9539 on I2C4
-Date: Fri,  6 Oct 2017 05:44:11 +0300
-Message-Id: <1507257851-12145-1-git-send-email-vladimir.barinov@cogentembedded.com>
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 02/11] arm64: dts: renesas: r8a7796: Use R-Car SDHI Gen3 fallback compat string
+Date: Tue, 17 Oct 2017 08:09:50 +0200
+Message-Id: <20171017060959.16702-3-horms+renesas@verge.net.au>
+In-Reply-To: <20171017060959.16702-1-horms+renesas@verge.net.au>
+References: <20171017060959.16702-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This supports TCA9539 gpio expanders on I2C4 bus on ULCB Kingfisher board
+Use newly added R-Car SDHI Gen3 fallback compat string
+in the DT of the r8a7796 SoC.
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+This should have no run-time effect as the driver matches against
+the per-SoC compat string before considering the fallback compat string.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-Changes in version 2:
-- use generic node name "gpio"
-Changes in version 3:
-- changed pca9539 to tca9539
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
- arch/arm64/boot/dts/renesas/ulcb-kf.dtsi | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-index 40885e7..1cf8466 100644
---- a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-+++ b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-@@ -70,6 +70,28 @@
- 	};
- };
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index f2b2e40c655e..8c94a313d9e1 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -1380,7 +1380,8 @@
+ 		};
  
-+&i2c4 {
-+	gpio_exp_76: gpio@76 {
-+		compatible = "ti,tca9539";
-+		reg = <0x76>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		interrupt-controller;
-+		interrupt-parent = <&gpio7>;
-+		interrupts = <3 IRQ_TYPE_EDGE_FALLING>;
-+	};
-+
-+	gpio_exp_77: gpio@77 {
-+		compatible = "ti,tca9539";
-+		reg = <0x77>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		interrupt-controller;
-+		interrupt-parent = <&gpio5>;
-+		interrupts = <9 IRQ_TYPE_EDGE_FALLING>;
-+	};
-+};
-+
- &ohci0 {
- 	status = "okay";
- };
+ 		sdhi0: sd@ee100000 {
+-			compatible = "renesas,sdhi-r8a7796";
++			compatible = "renesas,sdhi-r8a7796",
++				     "renesas,rcar-gen3-sdhi";
+ 			reg = <0 0xee100000 0 0x2000>;
+ 			interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 314>;
+@@ -1391,7 +1392,8 @@
+ 		};
+ 
+ 		sdhi1: sd@ee120000 {
+-			compatible = "renesas,sdhi-r8a7796";
++			compatible = "renesas,sdhi-r8a7796",
++				     "renesas,rcar-gen3-sdhi";
+ 			reg = <0 0xee120000 0 0x2000>;
+ 			interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 313>;
+@@ -1402,7 +1404,8 @@
+ 		};
+ 
+ 		sdhi2: sd@ee140000 {
+-			compatible = "renesas,sdhi-r8a7796";
++			compatible = "renesas,sdhi-r8a7796",
++				     "renesas,rcar-gen3-sdhi";
+ 			reg = <0 0xee140000 0 0x2000>;
+ 			interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 312>;
+@@ -1413,7 +1416,8 @@
+ 		};
+ 
+ 		sdhi3: sd@ee160000 {
+-			compatible = "renesas,sdhi-r8a7796";
++			compatible = "renesas,sdhi-r8a7796",
++				     "renesas,rcar-gen3-sdhi";
+ 			reg = <0 0xee160000 0 0x2000>;
+ 			interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 311>;
 -- 
-1.9.1
+2.11.0
