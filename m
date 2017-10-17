@@ -1,138 +1,29 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: joro@8bytes.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
-        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
-        m.szyprowski@samsung.com
-Date: Mon, 16 Oct 2017 21:29:57 +0900
-Message-Id: <150815699719.32763.12935676055004739612.sendpatchset@little-apple>
-In-Reply-To: <150815695455.32763.1660214306749693609.sendpatchset@little-apple>
-References: <150815695455.32763.1660214306749693609.sendpatchset@little-apple>
-Subject: [PATCH v5 04/09] iommu/ipmmu-vmsa: Make use of IOMMU_OF_DECLARE()
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor1.renesas.com ([210.160.252.171]:39500 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S933010AbdJQHeR (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 17 Oct 2017 03:34:17 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: wsa+renesas@sang-engineering.com, ulf.hansson@linaro.org
+Cc: linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 0/2] mmc: renesas_sdhi: bugfixes for v4.14
+Date: Tue, 17 Oct 2017 16:30:19 +0900
+Message-Id: <1508225421-25405-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+This patch set is based on mainline v4.14-rc5.
 
-Hook up IOMMU_OF_DECLARE() support in case CONFIG_IOMMU_DMA
-is enabled. The only current supported case for 32-bit ARM
-is disabled, however for 64-bit ARM usage of OF is required.
+Yoshihiro Shimoda (2):
+  mmc: renesas_sdhi: fix swiotlb buffer is full
+  mmc: renesas_sdhi: fix kernel panic in _internal_dmac.c
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c | 22 +++++++++++++---------
+ 1 file changed, 13 insertions(+), 9 deletions(-)
 
- Changes since V4:
- - Use ipmmu_is_root() instead of now removed is_leaf flag
-
- Changes since V3:
- - Reworked to fit on top of
-   [PATCH 00/04] iommu/ipmmu-vmsa: 32-bit ARM update
-
- Changes since V2:
- - Reworked registration code to make use of recently introduced:
-     iommu_device_register()
-     iommu_device_set_ops()
-     iommu_device_set_fwnode()
-
- Changes since V1:
- - Reworked slightly to fit updated patch order and
-   [PATCH v3 00/06] iommu/ipmmu-vmsa: IPMMU multi-arch update V3
-
-
- drivers/iommu/ipmmu-vmsa.c |   50 ++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 41 insertions(+), 9 deletions(-)
-
---- 0014/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2017-10-16 19:59:42.700607110 +0900
-@@ -20,6 +20,7 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
-+#include <linux/of_iommu.h>
- #include <linux/of_platform.h>
- #include <linux/platform_device.h>
- #include <linux/sizes.h>
-@@ -1055,17 +1056,30 @@ static int ipmmu_probe(struct platform_d
- 		ipmmu_device_reset(mmu);
- 	}
- 
--	ret = iommu_device_sysfs_add(&mmu->iommu, &pdev->dev, NULL,
--				     dev_name(&pdev->dev));
--	if (ret)
--		return ret;
-+	/*
-+	 * Register the IPMMU to the IOMMU subsystem in the following cases:
-+	 * - R-Car Gen2 IPMMU (all devices registered)
-+	 * - R-Car Gen3 IPMMU (leaf devices only - skip root IPMMU-MM device)
-+	 */
-+	if (!mmu->features->has_cache_leaf_nodes || !ipmmu_is_root(mmu)) {
-+		ret = iommu_device_sysfs_add(&mmu->iommu, &pdev->dev, NULL,
-+					     dev_name(&pdev->dev));
-+		if (ret)
-+			return ret;
- 
--	iommu_device_set_ops(&mmu->iommu, &ipmmu_ops);
--	iommu_device_set_fwnode(&mmu->iommu, &pdev->dev.of_node->fwnode);
-+		iommu_device_set_ops(&mmu->iommu, &ipmmu_ops);
-+		iommu_device_set_fwnode(&mmu->iommu,
-+					&pdev->dev.of_node->fwnode);
- 
--	ret = iommu_device_register(&mmu->iommu);
--	if (ret)
--		return ret;
-+		ret = iommu_device_register(&mmu->iommu);
-+		if (ret)
-+			return ret;
-+
-+#if defined(CONFIG_IOMMU_DMA)
-+		if (!iommu_present(&platform_bus_type))
-+			bus_set_iommu(&platform_bus_type, &ipmmu_ops);
-+#endif
-+	}
- 
- 	/*
- 	 * We can't create the ARM mapping here as it requires the bus to have
-@@ -1105,15 +1119,22 @@ static struct platform_driver ipmmu_driv
- 
- static int __init ipmmu_init(void)
- {
-+	static bool setup_done;
- 	int ret;
- 
-+	if (setup_done)
-+		return 0;
-+
- 	ret = platform_driver_register(&ipmmu_driver);
- 	if (ret < 0)
- 		return ret;
- 
-+#if defined(CONFIG_ARM) && !defined(CONFIG_IOMMU_DMA)
- 	if (!iommu_present(&platform_bus_type))
- 		bus_set_iommu(&platform_bus_type, &ipmmu_ops);
-+#endif
- 
-+	setup_done = true;
- 	return 0;
- }
- 
-@@ -1125,6 +1146,17 @@ static void __exit ipmmu_exit(void)
- subsys_initcall(ipmmu_init);
- module_exit(ipmmu_exit);
- 
-+#ifdef CONFIG_IOMMU_DMA
-+static int __init ipmmu_vmsa_iommu_of_setup(struct device_node *np)
-+{
-+	ipmmu_init();
-+	return 0;
-+}
-+
-+IOMMU_OF_DECLARE(ipmmu_vmsa_iommu_of, "renesas,ipmmu-vmsa",
-+		 ipmmu_vmsa_iommu_of_setup);
-+#endif
-+
- MODULE_DESCRIPTION("IOMMU API for Renesas VMSA-compatible IPMMU");
- MODULE_AUTHOR("Laurent Pinchart <laurent.pinchart@ideasonboard.com>");
- MODULE_LICENSE("GPL v2");
+-- 
+1.9.1
