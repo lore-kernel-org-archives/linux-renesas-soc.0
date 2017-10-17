@@ -1,95 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:35723 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753468AbdJMPWv (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:39254 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932730AbdJQGKN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Oct 2017 11:22:51 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 1/4] dt-bindings: display: rcar-du: Document R8A774[35] DU
-Date: Fri, 13 Oct 2017 16:22:19 +0100
-Message-Id: <1507908142-13142-2-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1507908142-13142-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1507908142-13142-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Tue, 17 Oct 2017 02:10:13 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 08/11] ARM: dts: r8a7791: Use R-Car SDHI Gen2 fallback compat string
+Date: Tue, 17 Oct 2017 08:09:56 +0200
+Message-Id: <20171017060959.16702-9-horms+renesas@verge.net.au>
+In-Reply-To: <20171017060959.16702-1-horms+renesas@verge.net.au>
+References: <20171017060959.16702-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add device tree bindings for r8a7743 and r8a7745 DUs.
-r8a7743 DU is similar to the one from r8a7791, r8a7745 DU is similar
-to the one from r8a7794.
+Use newly added R-Car SDHI Gen2 fallback compat string
+in the DT of the r8a7791 SoC.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+This should have no run-time effect as the driver matches against
+the per-SoC compat string before considering the fallback compat string.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- .../devicetree/bindings/display/renesas,du.txt     | 30 ++++++++++++----------
- 1 file changed, 17 insertions(+), 13 deletions(-)
+ arch/arm/boot/dts/r8a7791.dtsi | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/display/renesas,du.txt b/Documentation/devicetree/bindings/display/renesas,du.txt
-index 4bbd1e9..c520226 100644
---- a/Documentation/devicetree/bindings/display/renesas,du.txt
-+++ b/Documentation/devicetree/bindings/display/renesas,du.txt
-@@ -3,6 +3,8 @@
- Required Properties:
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index 67831d0405f3..767702fe6d45 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -612,7 +612,8 @@
+ 	};
  
-   - compatible: must be one of the following.
-+    - "renesas,du-r8a7743" for R8A7743 (RZ/G1M) compatible DU
-+    - "renesas,du-r8a7745" for R8A7745 (RZ/G1E) compatible DU
-     - "renesas,du-r8a7779" for R8A7779 (R-Car H1) compatible DU
-     - "renesas,du-r8a7790" for R8A7790 (R-Car H2) compatible DU
-     - "renesas,du-r8a7791" for R8A7791 (R-Car M2-W) compatible DU
-@@ -27,10 +29,10 @@ Required Properties:
-   - clock-names: Name of the clocks. This property is model-dependent.
-     - R8A7779 uses a single functional clock. The clock doesn't need to be
-       named.
--    - R8A779[0123456] use one functional clock per channel and one clock per
--      LVDS encoder (if available). The functional clocks must be named "du.x"
--      with "x" being the channel numerical index. The LVDS clocks must be
--      named "lvds.x" with "x" being the LVDS encoder numerical index.
-+    - R8A779[0123456] and R8A774[35] use one functional clock per channel and
-+      one clock per LVDS encoder (if available). The functional clocks must be
-+      named "du.x" with "x" being the channel numerical index. The LVDS clocks
-+      must be named "lvds.x" with "x" being the LVDS encoder numerical index.
-     - In addition to the functional and encoder clocks, all DU versions also
-       support externally supplied pixel clocks. Those clocks are optional.
-       When supplied they must be named "dclkin.x" with "x" being the input
-@@ -49,16 +51,18 @@ bindings specified in Documentation/devicetree/bindings/graph.txt.
- The following table lists for each supported model the port number
- corresponding to each DU output.
+ 	sdhi0: sd@ee100000 {
+-		compatible = "renesas,sdhi-r8a7791";
++		compatible = "renesas,sdhi-r8a7791",
++			     "renesas,rcar-gen2-sdhi";
+ 		reg = <0 0xee100000 0 0x328>;
+ 		interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cpg CPG_MOD 314>;
+@@ -626,7 +627,8 @@
+ 	};
  
--		Port 0		Port1		Port2		Port3
-+                      Port0          Port1          Port2          Port3
- -----------------------------------------------------------------------------
-- R8A7779 (H1)	DPAD 0		DPAD 1		-		-
-- R8A7790 (H2)	DPAD		LVDS 0		LVDS 1		-
-- R8A7791 (M2-W)	DPAD		LVDS 0		-		-
-- R8A7792 (V2H)	DPAD 0		DPAD 1		-		-
-- R8A7793 (M2-N)	DPAD		LVDS 0		-		-
-- R8A7794 (E2)	DPAD 0		DPAD 1		-		-
-- R8A7795 (H3)	DPAD		HDMI 0		HDMI 1		LVDS
-- R8A7796 (M3-W)	DPAD		HDMI		LVDS		-
-+ R8A7743 (RZ/G1M)     DPAD 0         LVDS 0         -              -
-+ R8A7745 (RZ/G1E)     DPAD 0         DPAD 1         -              -
-+ R8A7779 (R-Car H1)   DPAD 0         DPAD 1         -              -
-+ R8A7790 (R-Car H2)   DPAD           LVDS 0         LVDS 1         -
-+ R8A7791 (R-Car M2-W) DPAD           LVDS 0         -              -
-+ R8A7792 (R-Car V2H)  DPAD 0         DPAD 1         -              -
-+ R8A7793 (R-Car M2-N) DPAD           LVDS 0         -              -
-+ R8A7794 (R-Car E2)   DPAD 0         DPAD 1         -              -
-+ R8A7795 (R-Car H3)   DPAD           HDMI 0         HDMI 1         LVDS
-+ R8A7796 (R-Car M3-W) DPAD           HDMI           LVDS           -
+ 	sdhi1: sd@ee140000 {
+-		compatible = "renesas,sdhi-r8a7791";
++		compatible = "renesas,sdhi-r8a7791",
++			     "renesas,rcar-gen2-sdhi";
+ 		reg = <0 0xee140000 0 0x100>;
+ 		interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cpg CPG_MOD 312>;
+@@ -640,7 +642,8 @@
+ 	};
  
- 
- Example: R8A7795 (R-Car H3) ES2.0 DU
+ 	sdhi2: sd@ee160000 {
+-		compatible = "renesas,sdhi-r8a7791";
++		compatible = "renesas,sdhi-r8a7791",
++			     "renesas,rcar-gen2-sdhi";
+ 		reg = <0 0xee160000 0 0x100>;
+ 		interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cpg CPG_MOD 311>;
 -- 
-2.7.4
+2.11.0
