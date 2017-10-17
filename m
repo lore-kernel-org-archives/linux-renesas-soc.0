@@ -1,46 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57783 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:39254 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964969AbdJRH1y (ORCPT
+        with ESMTP id S932784AbdJQGKR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Oct 2017 03:27:54 -0400
+        Tue, 17 Oct 2017 02:10:17 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 0/7] ARM: dts: renesas: Use R-Car SDHI Gen[12] fallback compat strings
-Date: Wed, 18 Oct 2017 09:27:21 +0200
-Message-Id: <20171018072728.14681-1-horms+renesas@verge.net.au>
+Subject: [PATCH 07/11] ARM: dts: r8a7790: Use R-Car SDHI Gen2 fallback compat string
+Date: Tue, 17 Oct 2017 08:09:55 +0200
+Message-Id: <20171017060959.16702-8-horms+renesas@verge.net.au>
+In-Reply-To: <20171017060959.16702-1-horms+renesas@verge.net.au>
+References: <20171017060959.16702-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use recently posted R-Car Gen 1 and 2 Ether fallback compat strings
-in the DT of Renesas ARM based SoCs.
+Use newly added R-Car SDHI Gen2 fallback compat string
+in the DT of the r8a7790 SoC.
 
-Based on renesas-devel-20171018-v4.14-rc5
+This should have no run-time effect as the driver matches against
+the per-SoC compat string before considering the fallback compat string.
 
-Has a binding documentation but no run-time dependency on
-"[PATCH net-next 0/3] net: sh_eth: add R-Car Gen[12] fallback compatibility
-strings"
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7790.dtsi | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-Simon Horman (7):
-  ARM: dts: r8a7743: Use R-Car Gen2 Ether fallback compat string
-  ARM: dts: r8a7745: Use R-Car Gen2 Ether fallback compat string
-  ARM: dts: r8a7778: Use R-Car Gen1 Ether fallback compat string
-  ARM: dts: r8a7790: Use R-Car Gen2 Ether fallback compat string
-  ARM: dts: r8a7791: Use R-Car Gen2 Ether fallback compat string
-  ARM: dts: r8a7793: Use R-Car Gen2 Ether fallback compat string
-  ARM: dts: r8a7794: Use R-Car Gen2 Ether fallback compat string
-
- arch/arm/boot/dts/r8a7743.dtsi | 3 ++-
- arch/arm/boot/dts/r8a7745.dtsi | 3 ++-
- arch/arm/boot/dts/r8a7778.dtsi | 3 ++-
- arch/arm/boot/dts/r8a7790.dtsi | 3 ++-
- arch/arm/boot/dts/r8a7791.dtsi | 3 ++-
- arch/arm/boot/dts/r8a7793.dtsi | 3 ++-
- arch/arm/boot/dts/r8a7794.dtsi | 3 ++-
- 7 files changed, 14 insertions(+), 7 deletions(-)
-
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 2f017fee4009..ef4e144a01a1 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -662,7 +662,8 @@
+ 	};
+ 
+ 	sdhi0: sd@ee100000 {
+-		compatible = "renesas,sdhi-r8a7790";
++		compatible = "renesas,sdhi-r8a7790",
++			     "renesas,rcar-gen2-sdhi";
+ 		reg = <0 0xee100000 0 0x328>;
+ 		interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cpg CPG_MOD 314>;
+@@ -676,7 +677,8 @@
+ 	};
+ 
+ 	sdhi1: sd@ee120000 {
+-		compatible = "renesas,sdhi-r8a7790";
++		compatible = "renesas,sdhi-r8a7790",
++			     "renesas,rcar-gen2-sdhi";
+ 		reg = <0 0xee120000 0 0x328>;
+ 		interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cpg CPG_MOD 313>;
+@@ -690,7 +692,8 @@
+ 	};
+ 
+ 	sdhi2: sd@ee140000 {
+-		compatible = "renesas,sdhi-r8a7790";
++		compatible = "renesas,sdhi-r8a7790",
++			     "renesas,rcar-gen2-sdhi";
+ 		reg = <0 0xee140000 0 0x100>;
+ 		interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cpg CPG_MOD 312>;
+@@ -704,7 +707,8 @@
+ 	};
+ 
+ 	sdhi3: sd@ee160000 {
+-		compatible = "renesas,sdhi-r8a7790";
++		compatible = "renesas,sdhi-r8a7790",
++			     "renesas,rcar-gen2-sdhi";
+ 		reg = <0 0xee160000 0 0x100>;
+ 		interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cpg CPG_MOD 311>;
 -- 
 2.11.0
