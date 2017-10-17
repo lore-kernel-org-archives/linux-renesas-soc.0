@@ -1,109 +1,109 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.17.11]:64150 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751230AbdJ1RTx (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:18031 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1755416AbdJQGGG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 28 Oct 2017 13:19:53 -0400
-To: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>,
-        Masaru Nagai <masaru.nagai.vx@renesas.com>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Yuval Shaia <yuval.shaia@oracle.com>
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH] ravb: Use common error handling code in ravb_probe()
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Message-ID: <2839c3c2-0116-7549-6ff4-a49eb0a52298@users.sourceforge.net>
-Date: Sat, 28 Oct 2017 19:19:19 +0200
+        Tue, 17 Oct 2017 02:06:06 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: "REE dirk.behme@de.bosch.com" <dirk.behme@de.bosch.com>,
+        "Geert Uytterhoeven" <geert@linux-m68k.org>
+CC: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: RE: mainline 4.14-rc4: renesas_sdhi_internal_dmac ee100000.sd:
+ swiotlb buffer is full?
+Date: Tue, 17 Oct 2017 06:06:02 +0000
+Message-ID: <TY1PR06MB09928F5969EEAB4AA9CE8B21D84C0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+References: <50d1a9ac-fe5f-d0a1-62bc-ff3e252e99da@de.bosch.com>
+ <CAMuHMdXPYyi_pXcdtNJkT737dSXnwG88vqETN0Kbe-3AAJ0zOg@mail.gmail.com>
+ <f7596566-2f98-d4a1-612c-77caa51b892e@de.bosch.com>
+ <CAMuHMdXEXwwdNPmoFa+peivR_8Bv06r39bg1pAsL7498xrod6A@mail.gmail.com>
+ <5ccf4c75-6dd5-0818-54de-2a99a786a5c4@de.bosch.com>
+ <aecf1ec0-7172-ec41-1759-be261f3e0dd2@de.bosch.com>
+ <TY1PR06MB0992FAD2C2CD90FFF71E1807D84F0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+ <CAMuHMdV=3_9af-aTGnWBLemg3Hrh-D4im1Vxk0mTXstiz0vVUA@mail.gmail.com>
+ <CACRpkdZbdhAbFUa9Dh9j8WtY7iYNhB27Ar4XzTZLrTz=gPPsvQ@mail.gmail.com>
+ <CAMuHMdVdfZT-X1bNSBfzBOS=BWgi3d6XySUAJvfz+tvh1=twwQ@mail.gmail.com>
+ <CACRpkdZoXpMt7+5_-aEyA4V06cc-ofuA_BQVhYOuVoZDDn_Kbw@mail.gmail.com>
+ <TY1PR06MB09924402AE9EAA79CCD9E194D84C0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+ <85b9aac9-a12c-a102-a029-1960e12013b0@de.bosch.com>
+In-Reply-To: <85b9aac9-a12c-a102-a029-1960e12013b0@de.bosch.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 28 Oct 2017 19:10:08 +0200
-
-Add a jump target so that a bit of exception handling can be better reused
-at the end of this function.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/net/ethernet/renesas/ravb_main.c | 32 ++++++++++++++++----------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index a8822a756e08..62dbdf7de6cd 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -2069,10 +2069,9 @@ static int ravb_probe(struct platform_device *pdev)
- 		irq = platform_get_irq_byname(pdev, "ch22");
- 	else
- 		irq = platform_get_irq(pdev, 0);
--	if (irq < 0) {
--		error = irq;
--		goto out_release;
--	}
-+	if (irq < 0)
-+		goto failure_indication;
-+
- 	ndev->irq = irq;
- 
- 	SET_NETDEV_DEV(ndev, &pdev->dev);
-@@ -2101,25 +2100,22 @@ static int ravb_probe(struct platform_device *pdev)
- 
- 	if (chip_id == RCAR_GEN3) {
- 		irq = platform_get_irq_byname(pdev, "ch24");
--		if (irq < 0) {
--			error = irq;
--			goto out_release;
--		}
-+		if (irq < 0)
-+			goto failure_indication;
-+
- 		priv->emac_irq = irq;
- 		for (i = 0; i < NUM_RX_QUEUE; i++) {
- 			irq = platform_get_irq_byname(pdev, ravb_rx_irqs[i]);
--			if (irq < 0) {
--				error = irq;
--				goto out_release;
--			}
-+			if (irq < 0)
-+				goto failure_indication;
-+
- 			priv->rx_irqs[i] = irq;
- 		}
- 		for (i = 0; i < NUM_TX_QUEUE; i++) {
- 			irq = platform_get_irq_byname(pdev, ravb_tx_irqs[i]);
--			if (irq < 0) {
--				error = irq;
--				goto out_release;
--			}
-+			if (irq < 0)
-+				goto failure_indication;
-+
- 			priv->tx_irqs[i] = irq;
- 		}
- 	}
-@@ -2226,6 +2222,10 @@ static int ravb_probe(struct platform_device *pdev)
- 	pm_runtime_put(&pdev->dev);
- 	pm_runtime_disable(&pdev->dev);
- 	return error;
-+
-+failure_indication:
-+	error = irq;
-+	goto out_release;
- }
- 
- static int ravb_remove(struct platform_device *pdev)
--- 
-2.14.3
+SGkgRGlyay1zYW4sDQoNCj4gRnJvbTogRGlyayBCZWhtZSwgU2VudDogVHVlc2RheSwgT2N0b2Jl
+ciAxNywgMjAxNyAyOjA4IFBNDQo+IA0KPiBMaW1pdGluZyB0aGUgdGhyZWFkIHRvIFJlbmVzYXMg
+b25seSwgYWdhaW4sIHRvIGRpc2N1c3MgdGhlIG90aGVyIGlzc3VlOg0KPiANCj4gT24gMTcuMTAu
+MjAxNyAwNjo1MSwgWW9zaGloaXJvIFNoaW1vZGEgd3JvdGU6DQo+ID4gSGkgTGludXMtc2FuLA0K
+PiA+DQo+ID4+IEZyb206IExpbnVzIFdhbGxlaWosIFNlbnQ6IE1vbmRheSwgT2N0b2JlciAxNiwg
+MjAxNyA5OjIyIFBNDQo+ID4+DQo+ID4+IE9uIE1vbiwgT2N0IDE2LCAyMDE3IGF0IDI6MDcgUE0s
+IEdlZXJ0IFV5dHRlcmhvZXZlbg0KPiA+PiA8Z2VlcnRAbGludXgtbTY4ay5vcmc+IHdyb3RlOg0K
+PiA+Pj4gT24gTW9uLCBPY3QgMTYsIDIwMTcgYXQgMTo0MSBQTSwgTGludXMgV2FsbGVpaiA8bGlu
+dXMud2FsbGVpakBsaW5hcm8ub3JnPiB3cm90ZToNCj4gPj4+PiBPbiBNb24sIE9jdCAxNiwgMjAx
+NyBhdCAxMTowMiBBTSwgR2VlcnQgVXl0dGVyaG9ldmVuDQo+ID4+Pj4gPGdlZXJ0QGxpbnV4LW02
+OGsub3JnPiB3cm90ZToNCj4gPj4+Pj4+IElJVUMsDQo+ID4+Pj4+PiAtIFNpbmNlIHRoZSBNTUNf
+Qk9VTkNFIGRpc2FwcGVhcmVkIGluIHY0LjE0LXJjMSwgdGhlIE1NQyBjb3JlIHdpbGwgcmVxdWVz
+dCBhIGNvbW1hbmQgd2l0aCA2NGtieXRlKyBzaXplLg0KPiA+Pj4+Pj4gICAtIFNvLCBzd2lvdGxi
+IHdpbGwgZ290IHJlcXVlc3QgNjRrYnl0ZSsgc2l6ZS4gVGhpcyBpcyBkaWZmZXJlbnQgd2l0aCBw
+cmV2aW91cyB2ZXJzaW9uLg0KPiA+Pj4+DQo+ID4+Pj4gT3RoZXIgcGVvcGxlIHJlcG9ydGVkIHBy
+b2JsZW1zIHdpdGggdGhhdC4gU29ycnkgYWJvdXQgdGhpcy4uLg0KPiA+Pj4+DQo+ID4+Pj4gVGhp
+cyBwcm9ibGVtIHNob3VsZCBiZSBzb2x2ZWQgYnkgdXBzdHJlYW0NCj4gPj4+PiBjb21taXQgZGUz
+ZWU5OWIwOTdkZDUxOTM4Mjc2ZTNhZjM4OGNkNGFkMGYyNzUwYQ0KPiA+Pj4+ICJtbWM6IERlbGV0
+ZSBib3VuY2UgYnVmZmVyIGhhbmRsaW5nIg0KPiA+Pj4+DQo+ID4+Pj4gSSBqdXN0IGtpbGxlZCBv
+ZmYgdGhlIGJvdW5jZSBidWZmZXJzIHNvIHRoZXkgY2FuJ3QgaHVydCBhbnlvbmUgYW55bW9yZS4N
+Cj4gPj4+Pg0KPiA+Pj4+IENhbiB5b3UgY2hlY2sgdGhhdCB5b3UgaGF2ZSB0aGlzIHBhdGNoIGlu
+IHlvdXIgdHJlZT8NCj4gPj4+DQo+ID4+PiBHaXZlbiBEaXJrIHNhdyB0aGUgaXNzdWUgd2l0aCB2
+NC4xNC1yYzQsIEknbSBhZnJhaWQgdGhhdCBwYXRjaCBpcyBhbHJlYWR5DQo+ID4+PiBpbmNsdWRl
+ZCA6LSgNCj4gPj4NCj4gPj4gU28gdGhlIGZpcnN0IGlzc3VlIGlzIGRlZmluYXRlbHkgZ29uZS4N
+Cj4gPj4NCj4gPj4gVGhlbiBpdCBzZWVtcyB0aGUgZHJpdmVyIGlzIHNwZWNpZnlpbmcgdG8gaGln
+aCAtPm1heF9zZWdfc2l6ZQ0KPiA+PiBzaW5jZSB0aGUgYnVmZmVyIGNhbm5vdCBiZSBtYXBwZWQ/
+DQo+ID4+DQo+ID4+IFVubGVzcyB5b3UncmUgdXNpbmcgQURNQSBkcml2ZXJzL21tYy9ob3N0L3Nk
+aGNpLmMgc2V0cyBpdCBhczoNCj4gPj4gbW1jLT5tYXhfc2VnX3NpemUgPSBtbWMtPm1heF9yZXFf
+c2l6ZTsNCj4gPg0KPiA+IFRoYW5rIHlvdSBmb3IgdGhlIGNvbW1lbnQhDQo+ID4gT24gUi1DYXIg
+R2VuMywgaXQncyB1c2luZyBkcml2ZXJzL21tYy9ob3N0L3JlbmVzYXNfc2RoaV9pbnRlcm5hbF9k
+bWFjLmMsDQo+ID4gYW5kIHNldHMgdGhlIG1heF9zZWdfc2l6ZSB0byB2ZXJ5IGJpZyBzaXplICgw
+eGZmZmZmZmZmICogNTEyKSBub3cuLi4NCj4gPg0KPiA+IFNvLCBJIG1vZGlmaWVkIHRoZSB2YWx1
+ZSB0byAyNjIxNDQgYW5kIHJlYmFzZSB0aGUga2VybmVsIHRvIHY0LjE0LXJjNQ0KPiA+ICgtcmM0
+IHNlZW1zIGhhdmUgb3RoZXIgaXNzdWUgaW4gYmxvY2sgZHJpdmVyLiksIHRoZSAic3dpb3RsYiBi
+dWZmZXIgaXMgZnVsbCIgaXNzdWUgZGlzYXBwZWFyZWQuDQo+ID4NCj4gPj4gQW5kOg0KPiA+PiBt
+bWMtPm1heF9yZXFfc2l6ZSA9IDUyNDI4ODsNCj4gPj4NCj4gPj4+PiByZW5lc2FzX3NkaGlfaW50
+ZXJuYWxfZG1hYyBlZTEwMDAwMC5zZDogc3dpb3RsYl90YmxfbWFwX3NpbmdsZTogdGVzdDoNCj4g
+Pj4+PiBzaXplIG1vZGlmaWVkIHRvIDUyNDI4OCBieXRlcw0KPiA+Pj4+IHJlbmVzYXNfc2RoaV9p
+bnRlcm5hbF9kbWFjIGVlMTAwMDAwLnNkOiBzd2lvdGxiIGJ1ZmZlciBpcyBmdWxsIChzejoNCj4g
+Pj4+PiA1MjQyODggYnl0ZXMpDQo+ID4+DQo+ID4+IFNvIGlmIHlvdXIgZHJpdmVyIGNhbm5vdCBo
+YW5kbGUgNTI0Mjg4IGJ5dGVzLCB3aHkgaXMgaXQgc2F5aW5nIGl0IGNhbg0KPiA+PiBoYW5kbGUg
+NTI0Mjg4IGJ5dGVzPw0KPiA+DQo+ID4gSSB0aGluayB0aGUgInN3aW90bGIgYnVmZmVyIGlzIGZ1
+bGwiIGNhbWUgZnJvbSBsaWIvc3dpb3RsYi5jLg0KPiA+IEknbSBub3Qgc3VyZSB0aGUgZGV0YWls
+IG9mIHN3aW90bGIuYywgYnV0IElJVUMsIGl0IGhhcyBhIG1lbW9yeSBzaXplIGxpbWl0YXRpb24u
+DQo+ID4NCj4gPiAtIEluIGxpYi9zd2lvdGxiLmMsIGl0IGNhbGN1bGF0ZXMgbnNsb3RzLg0KPiA+
+ICAgLSBUaGUgc2l6ZSBvZiBvbmUgc2xvdCBpcyAyMDQ4IGJ5dGVzIGJlY2F1c2UgSU9fVExCX1NI
+SUZUIGluIGluY2x1ZGUvbGludXgvc3dpb3RsYi5oIGlzIHNldCB0byAxMS4NCj4gPiAtIElPX1RM
+Ql9TRUdTSVpFIGlzIHNldCB0byAxMjggaW4gaW5jbHVkZS9saW51eC9zd2lvdGxiLmguDQo+ID4g
+ICAtIFRoaXMgdmFsdWUgaXMgbnVtYmVyIG9mIG1heGltdW0gc2xvdHMuDQo+ID4gICAgLSBTbywg
+bWF4aW11bSBzaXplIGZvciBhIHNpbmdsZSBtYXAgb2Ygc3dpb3RsYiBpcyAyNTZrYnl0ZXMgKDIw
+NDggKiAxMjgpLg0KPiA+DQo+ID4gU28sIEkgd2lsbCBzdWJtaXQgYSBwYXRjaCB0byBzZXQgdGhl
+IG1heF9yZXFfc2l6ZSB0byAyNTZrYnl0ZXMgdG9kYXkuDQo+IA0KPiANCj4gR3JlYXQsIG1hbnkg
+dGhhbmtzISBJJ2xsIHRyeSB0byB0ZXN0IHRoYXQgaW4gdGhlIG5leHQgZGF5cywgdGhlbi4NCj4g
+DQo+IFdoaWxlIGFib3ZlIGZpeGVzIHRoZSBzd2lvdGxiIGZ1bGwgaXNzdWUsIHdlIHN0aWxsIGhh
+dmUgdGhlIGlzc3VlIHRoYXQNCj4gaXQgbG9va3MgbGlrZSB0aGUgZHJpdmVyIGRvZXNuJ3QgaGFu
+ZGxlIHRoYXQgaXNzdWUgY29ycmVjdGx5IGFuZA0KPiBjcmFzaGVzLCB0aGVuOg0KPiANCj4gcmVu
+ZXNhc19zZGhpX2ludGVybmFsX2RtYWMgZWUxMDAwMDAuc2Q6IERNQTogT3V0IG9mIFNXLUlPTU1V
+IHNwYWNlIGZvcg0KPiA1MjQyODggYnl0ZXMNCj4gLT4gVW5hYmxlIHRvIGhhbmRsZSBrZXJuZWwg
+cGFnaW5nIHJlcXVlc3QgYXQgdmlydHVhbCBhZGRyZXNzDQo+IGZmZmZmZmZmYzAwMDAwMDAgPC0N
+Cj4gDQo+IEknZCBwcm9wb3NlIHRvIGZpeCB0aGF0LCB0b28uIEhhdmUgeW91IGxvb2tlZCBpbnRv
+IHRoYXQgaXNzdWUsIHRvbz8NCj4gDQo+IEknbSBubyBleHBlcnQgb24gdGhpcywgYnV0IGl0IGxv
+b2tzIHRvIG1lIHRoYXQgb3RoZXIgZHJpdmVycyBhcmUNCj4gY2hlY2tpbmcgdGhlIHJldHVybiB2
+YWx1ZSBvZiBkbWFfbWFwX3NnKCkgZGlmZmVyZW50bHk/DQo+IA0KPiByZXQgPSBkbWFfbWFwX3Nn
+KCZob3N0LT5wZGV2LT5kZXYsIHNnLCBob3N0LT5zZ19sZW4sIGRpcik7DQo+IAlpZiAocmV0IDwg
+MCkNCj4gCQlyZXR1cm47DQo+IA0KPiBodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGlu
+dXgva2VybmVsL2dpdC90b3J2YWxkcy9saW51eC5naXQvdHJlZS9kcml2ZXJzL21tYy9ob3N0L3Jl
+bmVzYXNfc2RoaV9pbnRlcm5hbF9kbWFjLg0KPiBjI24xNjUNCj4gDQo+IFRoZXkgY2hlY2sgZm9y
+IChyZXQgPT0gMCk/DQo+IA0KPiBTb3JyeSBpZiBJJ20gd3Jvbmcgb24gdGhhdCA7KQ0KDQpUaGFu
+ayB5b3UgZm9yIHRoZSBjb21tZW50cyEgWW91J3JlIGNvcnJlY3QuIFdlIHNob3VsZCBjaGVjayBm
+b3IgKHJldCA9PSAwKSBhdCBsZWFzdC4NCkkgYWxzbyB0aGluayB3ZSBzaG91bGQgc2V0IGhvc3Qt
+PmZvcmNlX3BpbyA9IHRydWUgYW5kDQpjYWxsIHJlbmVzYXNfc2RoaV9pbnRlcm5hbF9kbWFjX2Vu
+YWJsZV9kbWEoaG9zdCwgZmFsc2UpIHRvIGRvIFBJTyBpZiAicmV0ID09IDAiLg0KDQpJIHdpbGwg
+bWFrZSBzdWNoIGEgcGF0Y2ggYW5kIHN1Ym1pdCBpdC4NCg0KQmVzdCByZWdhcmRzLA0KWW9zaGlo
+aXJvIFNoaW1vZGENCg0KPiBCZXN0IHJlZ2FyZHMNCj4gDQo+IERpcmsNCg==
