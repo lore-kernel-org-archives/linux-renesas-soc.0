@@ -1,66 +1,58 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:42068 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751998AbdJDJHV (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Oct 2017 05:07:21 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 12/14] pinctrl: sh-pfc: r8a7795: Use generic IOCTRL register description
-Date: Wed,  4 Oct 2017 11:07:11 +0200
-Message-Id: <1507108033-8606-13-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1507108033-8606-1-git-send-email-geert+renesas@glider.be>
-References: <1507108033-8606-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-i2c-owner@vger.kernel.org>
+Date: Wed, 18 Oct 2017 00:03:06 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v3] i2c: riic: remove fixed clock restriction
+Message-ID: <20171017220306.p4h3wbp5c3uaexh4@ninjato>
+References: <20171016183253.2291-1-chris.brandt@renesas.com>
+ <SG2PR06MB11652F2C132728B93232119C8A4C0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="riace2bgkydzteqi"
+Content-Disposition: inline
+In-Reply-To: <SG2PR06MB11652F2C132728B93232119C8A4C0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Move R-Car H3 ES2.0 I/O voltage support over to the generic way to
-describe IOCTRL registers, which will be needed for suspend/resume
-support.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+--riace2bgkydzteqi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index 5e204337079618e6..5edbe8cac76cfaea 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -4603,11 +4603,20 @@ static const struct pinmux_drive_reg pinmux_drive_regs[] = {
- 	{ },
- };
- 
-+enum ioctrl_regs {
-+	POCCTRL,
-+};
-+
-+static const struct pinmux_ioctrl_reg pinmux_ioctrl_regs[] = {
-+	[POCCTRL] = { 0xe6060380, },
-+	{ },
-+};
-+
- static int r8a7795_pin_to_pocctrl(struct sh_pfc *pfc, unsigned int pin, u32 *pocctrl)
- {
- 	int bit = -EINVAL;
- 
--	*pocctrl = 0xe6060380;
-+	*pocctrl = pinmux_ioctrl_regs[POCCTRL].reg;
- 
- 	if (pin >= RCAR_GP_PIN(3, 0) && pin <= RCAR_GP_PIN(3, 11))
- 		bit = pin & 0x1f;
-@@ -4938,6 +4947,7 @@ const struct sh_pfc_soc_info r8a7795_pinmux_info = {
- 	.cfg_regs = pinmux_config_regs,
- 	.drive_regs = pinmux_drive_regs,
- 	.bias_regs = pinmux_bias_regs,
-+	.ioctrl_regs = pinmux_ioctrl_regs,
- 
- 	.pinmux_data = pinmux_data,
- 	.pinmux_data_size = ARRAY_SIZE(pinmux_data),
--- 
-2.7.4
+
+> Actually, if you want to hold off on this patch, I'm almost done with a=
+=20
+> real fix which is to calculate any frequency based on current parent=20
+> clock and rise/fall timings specified in the DT as you suggested.
+
+Sounds awesome! So, I'll wait a little how the formula goes. We can
+always fall back to this patch if all fails... Thanks!
+
+
+--riace2bgkydzteqi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlnmfhoACgkQFA3kzBSg
+KbYOYA/+L9uhdrzFLdkzV3PQqsBI2hKqjgWCvnPzOvi/0WXNvZ2AGV8MLS4Cv0Go
+d2KWzUsOJooIyjC3YxaKIJQU4O9HYQgiMYbUPI7/s/VccWVkNDDliWjtc75rlMiP
+FVtrf+ArK7JJ7zRtuZvozWUkmz2M5qIJ8g28FeAYRPgQDnUz64SU5AubAByYeBXI
+0y6lbF5NKK/sMLaCLLT/Ulbhabte8CSpG/2eOH+nl/UR75VmBo6dBAeFeCr7T76H
+1jJ8mB3cUHRtX3B8YoONMU1c3HSakSyR1cWPz/sHsxrk+btmKpBFOAMJIeTbJAtE
+FyNxpEzp641dLzMM33ouEaLUAySuCiX2cAaoqc3ZwFkDdQgwjUIbKk8U7L5pKf4C
+IHxPCKfzUlW4xOJzzptf9qPjkK1xn9iYv9+mkBWuIEZXf5mLdq5VR/3rn0ytBSAt
+0bG0ZgJNA5b6xARXB3RtWfvUql9SOA69pQnL8/uelyyie0lQsJK+3ck1kRtJXT/F
+UZSAb6Cp2uyg13b5xvhGCwcO+HmYeOYbiSonqMKyTNsqdgAuapQe2tKurzeEZXtI
+OeH5SZNk4a4Yy3818UnsfyQiz6llBoz5onmnRWChbPGmSIPLdOOVrYadHJyYqEQW
+B1mjUhjpbvVwIBVLA+Tp3QQZsY3DQUtTyppRjvm7KDVVNGaEZeQ=
+=IP1J
+-----END PGP SIGNATURE-----
+
+--riace2bgkydzteqi--
