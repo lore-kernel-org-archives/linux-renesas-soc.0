@@ -1,177 +1,110 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:36012 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751410AbdJPJIu (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:39137 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751485AbdJQGBO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Oct 2017 05:08:50 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 3/5] clk: renesas: div6: Restore clock state during resume
-Date: Mon, 16 Oct 2017 10:36:52 +0200
-Message-Id: <1508143014-11795-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1508143014-11795-1-git-send-email-geert+renesas@glider.be>
-References: <1508143014-11795-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Tue, 17 Oct 2017 02:01:14 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v3 2/3] dt-bindings: mmc: renesas_sdhi: add R-Car Gen[123] fallback compatibility strings
+Date: Tue, 17 Oct 2017 08:01:03 +0200
+Message-Id: <20171017060104.11039-3-horms+renesas@verge.net.au>
+In-Reply-To: <20171017060104.11039-1-horms+renesas@verge.net.au>
+References: <20171017060104.11039-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On R-Car Gen3 systems, PSCI system suspend powers down the SoC, losing
-clock configuration.  Register an (optional) notifier to restore the
-DIV6 clock state during system resume.
+Add fallback compatibility strings for R-Car Gen 1, 2 and 3.
 
-As DIV6 clocks can be picky w.r.t. modifying multiple register fields at
-once, restore is not implemented by blindly restoring the register
-value, but by using the existing cpg_div6_clock_{en,dis}able() helpers.
+In the case of Renesas R-Car hardware we know that there are generations of
+SoCs, f.e. Gen 1 and 2. But beyond that its not clear what the relationship
+between IP blocks might be. For example, I believe that r8a7790 is older
+than r8a7791 but that doesn't imply that the latter is a descendant of the
+former or vice versa.
 
-Note that this does not yet support DIV6 clocks with multiple parents,
-which do not exist on R-Car Gen3 SoCs.
+We can, however, by examining the documentation and behaviour of the
+hardware at run-time observe that the current driver implementation appears
+to be compatible with the IP blocks on SoCs within a given generation.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+For the above reasons and convenience when enabling new SoCs a
+per-generation fallback compatibility string scheme being adopted for
+drivers for Renesas SoCs.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-v3:
-  - Drop RFC state,
-  - Add Tested-by,
+ Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 20 +++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
 
-v2:
-  - New.
----
- drivers/clk/renesas/clk-div6.c         | 38 ++++++++++++++++++++++++++++++++--
- drivers/clk/renesas/clk-div6.h         |  3 ++-
- drivers/clk/renesas/renesas-cpg-mssr.c |  3 ++-
- 3 files changed, 40 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/clk/renesas/clk-div6.c b/drivers/clk/renesas/clk-div6.c
-index 3e0040c0ac87a14b..151336d2ba59e689 100644
---- a/drivers/clk/renesas/clk-div6.c
-+++ b/drivers/clk/renesas/clk-div6.c
-@@ -14,8 +14,10 @@
- #include <linux/init.h>
- #include <linux/io.h>
- #include <linux/kernel.h>
-+#include <linux/notifier.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-+#include <linux/pm.h>
- #include <linux/slab.h>
+diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+index b63392d9cc47..d9cd69ea5b86 100644
+--- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
++++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+@@ -10,7 +10,7 @@ described in mmc.txt, can be used. Additionally the following tmio_mmc-specific
+ optional bindings can be used.
  
- #include "clk-div6.h"
-@@ -32,6 +34,7 @@
-  * @src_shift: Shift to access the register bits to select the parent clock
-  * @src_width: Number of register bits to select the parent clock (may be 0)
-  * @parents: Array to map from valid parent clocks indices to hardware indices
-+ * @nb: Notifier block to save/restore clock state for system resume
-  */
- struct div6_clock {
- 	struct clk_hw hw;
-@@ -40,6 +43,7 @@ struct div6_clock {
- 	u32 src_shift;
- 	u32 src_width;
- 	u8 *parents;
-+	struct notifier_block nb;
- };
- 
- #define to_div6_clock(_hw) container_of(_hw, struct div6_clock, hw)
-@@ -176,6 +180,29 @@ static const struct clk_ops cpg_div6_clock_ops = {
- 	.set_rate = cpg_div6_clock_set_rate,
- };
- 
-+static int cpg_div6_clock_notifier_call(struct notifier_block *nb,
-+					unsigned long action, void *data)
-+{
-+	struct div6_clock *clock = container_of(nb, struct div6_clock, nb);
+ Required properties:
+-- compatible:	"renesas,sdhi-shmobile" - a generic sh-mobile SDHI unit
++- compatible: should contain one or more of the following:
+ 		"renesas,sdhi-sh73a0" - SDHI IP on SH73A0 SoC
+ 		"renesas,sdhi-r7s72100" - SDHI IP on R7S72100 SoC
+ 		"renesas,sdhi-r8a73a4" - SDHI IP on R8A73A4 SoC
+@@ -26,6 +26,16 @@ Required properties:
+ 		"renesas,sdhi-r8a7794" - SDHI IP on R8A7794 SoC
+ 		"renesas,sdhi-r8a7795" - SDHI IP on R8A7795 SoC
+ 		"renesas,sdhi-r8a7796" - SDHI IP on R8A7796 SoC
++		"renesas,sdhi-shmobile" - a generic sh-mobile SDHI controller
++		"renesas,rcar-gen1-sdhi" - a generic R-Car Gen1 SDHI controller
++		"renesas,rcar-gen2-sdhi" - a generic R-Car Gen2 or RZ/G1
++					   SDHI controller
++		"renesas,rcar-gen3-sdhi" - a generic R-Car Gen3 SDHI controller
 +
-+	switch (action) {
-+	case PM_EVENT_RESUME:
-+		/*
-+		 * TODO: This does not yet support DIV6 clocks with multiple
-+		 * parents, as the parent selection bits are not restored.
-+		 * Fortunately so far such DIV6 clocks are found only on
-+		 * R/SH-Mobile SoCs, while the resume functionality is only
-+		 * needed on R-Car Gen3.
-+		 */
-+		if (__clk_get_enable_count(clock->hw.clk))
-+			cpg_div6_clock_enable(&clock->hw);
-+		else
-+			cpg_div6_clock_disable(&clock->hw);
-+		return NOTIFY_OK;
-+	}
 +
-+	return NOTIFY_DONE;
-+}
++		When compatible with the generic version nodes must list
++		the SoC-specific version corresponding to the platform
++		first followed by the generic version.
  
- /**
-  * cpg_div6_register - Register a DIV6 clock
-@@ -183,11 +210,13 @@ static const struct clk_ops cpg_div6_clock_ops = {
-  * @num_parents: Number of parent clocks of the DIV6 clock (1, 4, or 8)
-  * @parent_names: Array containing the names of the parent clocks
-  * @reg: Mapped register used to control the DIV6 clock
-+ * @notifiers: Optional notifier chain to save/restore state for system resume
-  */
- struct clk * __init cpg_div6_register(const char *name,
- 				      unsigned int num_parents,
- 				      const char **parent_names,
--				      void __iomem *reg)
-+				      void __iomem *reg,
-+				      struct raw_notifier_head *notifiers)
- {
- 	unsigned int valid_parents;
- 	struct clk_init_data init;
-@@ -258,6 +287,11 @@ struct clk * __init cpg_div6_register(const char *name,
- 	if (IS_ERR(clk))
- 		goto free_parents;
+ - clocks: Most controllers only have 1 clock source per channel. However, on
+ 	  some variations of this controller, the internal card detection
+@@ -47,7 +57,7 @@ Optional properties:
+ Example: R8A7790 (R-Car H2) SDHI controller nodes
  
-+	if (notifiers) {
-+		clock->nb.notifier_call = cpg_div6_clock_notifier_call;
-+		raw_notifier_chain_register(notifiers, &clock->nb);
-+	}
-+
- 	return clk;
+ 	sdhi0: sd@ee100000 {
+-		compatible = "renesas,sdhi-r8a7790";
++		compatible = "renesas,sdhi-r8a7790", "renesas,rcar-gen2-sdhi";
+ 		reg = <0 0xee100000 0 0x328>;
+ 		interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cpg CPG_MOD 314>;
+@@ -61,7 +71,7 @@ Example: R8A7790 (R-Car H2) SDHI controller nodes
+ 	};
  
- free_parents:
-@@ -301,7 +335,7 @@ static void __init cpg_div6_clock_init(struct device_node *np)
- 	for (i = 0; i < num_parents; i++)
- 		parent_names[i] = of_clk_get_parent_name(np, i);
+ 	sdhi1: sd@ee120000 {
+-		compatible = "renesas,sdhi-r8a7790";
++		compatible = "renesas,sdhi-r8a7790", "renesas,rcar-gen2-sdhi";
+ 		reg = <0 0xee120000 0 0x328>;
+ 		interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cpg CPG_MOD 313>;
+@@ -75,7 +85,7 @@ Example: R8A7790 (R-Car H2) SDHI controller nodes
+ 	};
  
--	clk = cpg_div6_register(clk_name, num_parents, parent_names, reg);
-+	clk = cpg_div6_register(clk_name, num_parents, parent_names, reg, NULL);
- 	if (IS_ERR(clk)) {
- 		pr_err("%s: failed to register %s DIV6 clock (%ld)\n",
- 		       __func__, np->name, PTR_ERR(clk));
-diff --git a/drivers/clk/renesas/clk-div6.h b/drivers/clk/renesas/clk-div6.h
-index 567b31d2bfa5269c..da4807299dda735b 100644
---- a/drivers/clk/renesas/clk-div6.h
-+++ b/drivers/clk/renesas/clk-div6.h
-@@ -2,6 +2,7 @@
- #define __RENESAS_CLK_DIV6_H__
+ 	sdhi2: sd@ee140000 {
+-		compatible = "renesas,sdhi-r8a7790";
++		compatible = "renesas,sdhi-r8a7790", "renesas,rcar-gen2-sdhi";
+ 		reg = <0 0xee140000 0 0x100>;
+ 		interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cpg CPG_MOD 312>;
+@@ -89,7 +99,7 @@ Example: R8A7790 (R-Car H2) SDHI controller nodes
+ 	};
  
- struct clk *cpg_div6_register(const char *name, unsigned int num_parents,
--			      const char **parent_names, void __iomem *reg);
-+			      const char **parent_names, void __iomem *reg,
-+			      struct raw_notifier_head *notifiers);
- 
- #endif
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index 485dce00a562d919..e3d03ffea4bc2fd6 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -303,7 +303,8 @@ static void __init cpg_mssr_register_core_clk(const struct cpg_core_clk *core,
- 
- 		if (core->type == CLK_TYPE_DIV6P1) {
- 			clk = cpg_div6_register(core->name, 1, &parent_name,
--						priv->base + core->offset);
-+						priv->base + core->offset,
-+						&priv->notifiers);
- 		} else {
- 			clk = clk_register_fixed_factor(NULL, core->name,
- 							parent_name, 0,
+ 	sdhi3: sd@ee160000 {
+-		compatible = "renesas,sdhi-r8a7790";
++		compatible = "renesas,sdhi-r8a7790", "renesas,rcar-gen2-sdhi";
+ 		reg = <0 0xee160000 0 0x100>;
+ 		interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cpg CPG_MOD 311>;
 -- 
-2.7.4
+2.11.0
