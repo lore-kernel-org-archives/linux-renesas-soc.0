@@ -1,88 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:52725 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751701AbdJSHlF (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:39254 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932784AbdJQGKO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 Oct 2017 03:41:05 -0400
-MIME-Version: 1.0
-In-Reply-To: <87bml4c5e0.wl%kuninori.morimoto.gx@renesas.com>
-References: <87bml4c5e0.wl%kuninori.morimoto.gx@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 19 Oct 2017 09:41:03 +0200
-Message-ID: <CAMuHMdWnFwwmCVsCAee9Fk2BrPwULgE1z_OYe+=jUcys9nc3Gw@mail.gmail.com>
-Subject: Re: [PATCH v3] dmaengine: rcar-dmac: use TCRB instead of TCR for residue
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vinod Koul <vinod.koul@intel.com>,
-        =?UTF-8?Q?Niklas_S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>, dmaengine@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 17 Oct 2017 02:10:14 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 09/11] ARM: dts: r8a7792: Use R-Car SDHI Gen2 fallback compat string
+Date: Tue, 17 Oct 2017 08:09:57 +0200
+Message-Id: <20171017060959.16702-10-horms+renesas@verge.net.au>
+In-Reply-To: <20171017060959.16702-1-horms+renesas@verge.net.au>
+References: <20171017060959.16702-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Oct 19, 2017 at 3:15 AM, Kuninori Morimoto
-<kuninori.morimoto.gx@renesas.com> wrote:
-> From: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
->
-> SYS/RT/Audio DMAC includes independent data buffers for reading
-> and writing. Therefore, the read transfer counter and write transfer
-> counter have different values.
-> TCR indicates read counter, and TCRB indicates write counter.
-> The relationship is like below.
->
->         TCR       TCRB
-> [SOURCE] -> [DMAC] -> [SINK]
->
-> In the MEM_TO_DEV direction, what really matters is how much data has
-> been written to the device. If the DMA is interrupted between read and
-> write, then, the data doesn't end up in the destination, so shouldn't
-> be counted. TCRB is thus the register we should use in this cases.
->
-> In the DEV_TO_MEM direction, the situation is more complex. Both the
-> read and write side are important. What matters from a data consumer
-> point of view is how much data has been written to memory.
-> On the other hand, if the transfer is interrupted between read and
-> write, we'll end up losing data. It can also be important to report.
->
-> In the MEM_TO_MEM direction, what matters is of course how much data
-> has been written to memory from data consumer point of view.
-> Here, because read and write have independent data buffers, it will
-> take a while for TCR and TCRB to become equal. Thus we should check
-> TCRB in this case, too.
->
-> Thus, all cases we should check TCRB instead of TCR.
->
-> Without this patch, Sound Capture has noise after PluseAudio support
-> (= 07b7acb51d2 ("ASoC: rsnd: update pointer more accurate")), because
-> the recorder will use wrong residue counter which indicates transferred
-> from sound device, but in reality the data was not yet put to memory
-> and recorder will record it.
->
-> Signed-off-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
-> [Kuninori: added detail information in log]
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> ---
-> v2 -> v3
->
->  - Code is back to same as v1
->  - log has more detail explanation
->  - From: is back to Yokoyama-san again
+Use newly added R-Car SDHI Gen2 fallback compat string
+in the DT of the r8a7792 SoC.
 
-Thanks for the update!
+This should have no run-time effect as the driver matches against
+the per-SoC compat string before considering the fallback compat string.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7792.dtsi | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
+index 131f65b0426e..7b394273031e 100644
+--- a/arch/arm/boot/dts/r8a7792.dtsi
++++ b/arch/arm/boot/dts/r8a7792.dtsi
+@@ -507,7 +507,8 @@
+ 		};
+ 
+ 		sdhi0: sd@ee100000 {
+-			compatible = "renesas,sdhi-r8a7792";
++			compatible = "renesas,sdhi-r8a7792",
++				     "renesas,rcar-gen2-sdhi";
+ 			reg = <0 0xee100000 0 0x328>;
+ 			interrupts = <0 165 IRQ_TYPE_LEVEL_HIGH>;
+ 			dmas = <&dmac0 0xcd>, <&dmac0 0xce>,
+-- 
+2.11.0
