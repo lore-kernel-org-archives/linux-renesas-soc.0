@@ -1,46 +1,84 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57793 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:39137 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966537AbdJRH15 (ORCPT
+        with ESMTP id S933558AbdJQGBQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Oct 2017 03:27:57 -0400
+        Tue, 17 Oct 2017 02:01:16 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 1/7] ARM: dts: r8a7743: Use R-Car Gen2 Ether fallback compat string
-Date: Wed, 18 Oct 2017 09:27:22 +0200
-Message-Id: <20171018072728.14681-2-horms+renesas@verge.net.au>
-In-Reply-To: <20171018072728.14681-1-horms+renesas@verge.net.au>
-References: <20171018072728.14681-1-horms+renesas@verge.net.au>
+Subject: [PATCH v3 3/3] mmc: renesas_sdhi: implement R-Car Gen[123] fallback compatibility strings
+Date: Tue, 17 Oct 2017 08:01:04 +0200
+Message-Id: <20171017060104.11039-4-horms+renesas@verge.net.au>
+In-Reply-To: <20171017060104.11039-1-horms+renesas@verge.net.au>
+References: <20171017060104.11039-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use newly added R-Car Gen2 Ether fallback compat string
-in the DT of the r8a7743 SoC.
+Implement fallback compatibility strings for R-Car Gen 1, 2 and 3.
 
-This should have no run-time effect as the driver matches against
-the per-SoC compat string before considering the fallback compat string.
+In the case of Renesas R-Car hardware we know that there are generations of
+SoCs, f.e. Gen 1 and 2. But beyond that its not clear what the relationship
+between IP blocks might be. For example, I believe that r8a7790 is older
+than r8a7791 but that doesn't imply that the latter is a descendant of the
+former or vice versa.
+
+We can, however, by examining the documentation and behaviour of the
+hardware at run-time observe that the current driver implementation appears
+to be compatible with the IP blocks on SoCs within a given generation.
+
+For the above reasons and convenience when enabling new SoCs a
+per-generation fallback compatibility string scheme being adopted for
+drivers for Renesas SoCs.
+
+Also, improve readability by listing the shmobile fallback compatibility
+string after the more-specific compatibility strings they provide a
+fallback for.
 
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7743.dtsi | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c | 1 +
+ drivers/mmc/host/renesas_sdhi_sys_dmac.c      | 5 ++++-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 7bbba4a36f31..0bfb6248f255 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -827,7 +827,8 @@
- 		};
+diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+index f905f2361d12..637c27057ac2 100644
+--- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+@@ -88,6 +88,7 @@ static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
+ static const struct of_device_id renesas_sdhi_internal_dmac_of_match[] = {
+ 	{ .compatible = "renesas,sdhi-r8a7795", .data = &of_rcar_gen3_compatible, },
+ 	{ .compatible = "renesas,sdhi-r8a7796", .data = &of_rcar_gen3_compatible, },
++	{ .compatible = "renesas,rcar-gen3-sdhi", .data = &of_rcar_gen3_compatible, },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, renesas_sdhi_internal_dmac_of_match);
+diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+index df4465439e13..9ab10436e4b8 100644
+--- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+@@ -91,7 +91,6 @@ static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
+ };
  
- 		ether: ethernet@ee700000 {
--			compatible = "renesas,ether-r8a7743";
-+			compatible = "renesas,ether-r8a7743",
-+			             "renesas,rcar-gen2-ether";
- 			reg = <0 0xee700000 0 0x400>;
- 			interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 813>;
+ static const struct of_device_id renesas_sdhi_sys_dmac_of_match[] = {
+-	{ .compatible = "renesas,sdhi-shmobile" },
+ 	{ .compatible = "renesas,sdhi-sh73a0", .data = &of_default_cfg, },
+ 	{ .compatible = "renesas,sdhi-r8a73a4", .data = &of_default_cfg, },
+ 	{ .compatible = "renesas,sdhi-r8a7740", .data = &of_default_cfg, },
+@@ -107,6 +106,10 @@ static const struct of_device_id renesas_sdhi_sys_dmac_of_match[] = {
+ 	{ .compatible = "renesas,sdhi-r8a7794", .data = &of_rcar_gen2_compatible, },
+ 	{ .compatible = "renesas,sdhi-r8a7795", .data = &of_rcar_gen3_compatible, },
+ 	{ .compatible = "renesas,sdhi-r8a7796", .data = &of_rcar_gen3_compatible, },
++	{ .compatible = "renesas,rcar-gen1-sdhi", .data = &of_rcar_gen1_compatible, },
++	{ .compatible = "renesas,rcar-gen2-sdhi", .data = &of_rcar_gen2_compatible, },
++	{ .compatible = "renesas,rcar-gen3-sdhi", .data = &of_rcar_gen3_compatible, },
++	{ .compatible = "renesas,sdhi-shmobile" },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, renesas_sdhi_sys_dmac_of_match);
 -- 
 2.11.0
