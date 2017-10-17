@@ -1,70 +1,104 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:45736 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752968AbdJPNz2 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:39137 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755277AbdJQGBR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Oct 2017 09:55:28 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
+        Tue, 17 Oct 2017 02:01:17 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>, linux-clk@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 01/10] clk: renesas: mstp: Keep wakeup sources active during system suspend
-Date: Mon, 16 Oct 2017 15:55:07 +0200
-Message-Id: <1508162116-5043-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
-References: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v3 1/3] dt-bindings: mmc: renesas_sdhi: provide example in bindings documentation
+Date: Tue, 17 Oct 2017 08:01:02 +0200
+Message-Id: <20171017060104.11039-2-horms+renesas@verge.net.au>
+In-Reply-To: <20171017060104.11039-1-horms+renesas@verge.net.au>
+References: <20171017060104.11039-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If a device is part of the CPG/MSTP Clock Domain and to be used as a
-wakeup source, it must be kept active during system suspend.
+Provide an example of the usage of the DT bindings for TMIO
+in their documentation. The example given is for the r8a7790 (R-Car H2).
 
-Currently this is handled in device-specific drivers by explicitly
-increasing the use count of the module clock when the device is
-configured as a wakeup source.  However, the proper way to prevent the
-device from being stopped is to inform this requirement to the genpd
-core.
-
-Hence provide an .active_wakeup() callback that always returns true.
-Note that this will only affect devices configured as wakeup sources.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/renesas/clk-mstp.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+v3
+* Updated example to newer upstream DTS which uses newer CPG/MSSR bindings.
 
-diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
-index 500a9e4e03c48957..912e4745d8011fe8 100644
---- a/drivers/clk/renesas/clk-mstp.c
-+++ b/drivers/clk/renesas/clk-mstp.c
-@@ -329,6 +329,11 @@ void cpg_mstp_detach_dev(struct generic_pm_domain *unused, struct device *dev)
- 		pm_clk_destroy(dev);
- }
- 
-+static bool cpg_mstp_active_wakeup(struct device *dev)
-+{
-+	return true;
-+}
+v2
+* Correct description of example, it is for the r8a7790 (R-Car H2)
+  rather than the r8a7779 (R-Car H1)
+---
+ Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 58 ++++++++++++++++++++++
+ 1 file changed, 58 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+index 54ef642f23a0..b63392d9cc47 100644
+--- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
++++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+@@ -43,3 +43,61 @@ Optional properties:
+ - pinctrl-names: should be "default", "state_uhs"
+ - pinctrl-0: should contain default/high speed pin ctrl
+ - pinctrl-1: should contain uhs mode pin ctrl
 +
- void __init cpg_mstp_add_clk_domain(struct device_node *np)
- {
- 	struct generic_pm_domain *pd;
-@@ -345,6 +350,7 @@ void __init cpg_mstp_add_clk_domain(struct device_node *np)
- 
- 	pd->name = np->name;
- 	pd->flags = GENPD_FLAG_PM_CLK;
-+	pd->dev_ops.active_wakeup = cpg_mstp_active_wakeup;
- 	pd->attach_dev = cpg_mstp_attach_dev;
- 	pd->detach_dev = cpg_mstp_detach_dev;
- 	pm_genpd_init(pd, &pm_domain_always_on_gov, false);
++Example: R8A7790 (R-Car H2) SDHI controller nodes
++
++	sdhi0: sd@ee100000 {
++		compatible = "renesas,sdhi-r8a7790";
++		reg = <0 0xee100000 0 0x328>;
++		interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cpg CPG_MOD 314>;
++		dmas = <&dmac0 0xcd>, <&dmac0 0xce>,
++		       <&dmac1 0xcd>, <&dmac1 0xce>;
++		dma-names = "tx", "rx", "tx", "rx";
++		max-frequency = <195000000>;
++		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
++		resets = <&cpg 314>;
++		status = "disabled";
++	};
++
++	sdhi1: sd@ee120000 {
++		compatible = "renesas,sdhi-r8a7790";
++		reg = <0 0xee120000 0 0x328>;
++		interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cpg CPG_MOD 313>;
++		dmas = <&dmac0 0xc9>, <&dmac0 0xca>,
++		       <&dmac1 0xc9>, <&dmac1 0xca>;
++		dma-names = "tx", "rx", "tx", "rx";
++		max-frequency = <195000000>;
++		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
++		resets = <&cpg 313>;
++		status = "disabled";
++	};
++
++	sdhi2: sd@ee140000 {
++		compatible = "renesas,sdhi-r8a7790";
++		reg = <0 0xee140000 0 0x100>;
++		interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cpg CPG_MOD 312>;
++		dmas = <&dmac0 0xc1>, <&dmac0 0xc2>,
++		       <&dmac1 0xc1>, <&dmac1 0xc2>;
++		dma-names = "tx", "rx", "tx", "rx";
++		max-frequency = <97500000>;
++		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
++		resets = <&cpg 312>;
++		status = "disabled";
++	};
++
++	sdhi3: sd@ee160000 {
++		compatible = "renesas,sdhi-r8a7790";
++		reg = <0 0xee160000 0 0x100>;
++		interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cpg CPG_MOD 311>;
++		dmas = <&dmac0 0xd3>, <&dmac0 0xd4>,
++		       <&dmac1 0xd3>, <&dmac1 0xd4>;
++		dma-names = "tx", "rx", "tx", "rx";
++		max-frequency = <97500000>;
++		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
++		resets = <&cpg 311>;
++		status = "disabled";
++	};
 -- 
-2.7.4
+2.11.0
