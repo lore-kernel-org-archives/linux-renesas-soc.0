@@ -1,78 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38914 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:39254 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752665AbdJTKaB (ORCPT
+        with ESMTP id S932684AbdJQGKM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Oct 2017 06:30:01 -0400
+        Tue, 17 Oct 2017 02:10:12 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 12/42] ARM: dts: r8a7745: Link PCI USB devices to USB PHY
-Date: Fri, 20 Oct 2017 12:28:39 +0200
-Message-Id: <c3e35873e37b77581be942b7284e705e997014fc.1508493785.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1508493785.git.horms+renesas@verge.net.au>
-References: <cover.1508493785.git.horms+renesas@verge.net.au>
+Subject: [PATCH 06/11] ARM: dts: r8a7779: Use R-Car SDHI Gen1 fallback compat string
+Date: Tue, 17 Oct 2017 08:09:54 +0200
+Message-Id: <20171017060959.16702-7-horms+renesas@verge.net.au>
+In-Reply-To: <20171017060959.16702-1-horms+renesas@verge.net.au>
+References: <20171017060959.16702-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+Use newly added R-Car SDHI Gen1 fallback compat string
+in the DT of the r8a7779 SoC.
 
-Describe the PCI USB devices that are behind the PCI bridges, adding
-necessary links to the USB PHY device.
+This should have no run-time effect as the driver matches against
+the per-SoC compat string before considering the fallback compat string.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7745.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ arch/arm/boot/dts/r8a7779.dtsi | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index 17cfa53f3c76..3a50f703601c 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -867,6 +867,18 @@
- 			interrupt-map = <0x0000 0 0 1 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH
- 					 0x0800 0 0 1 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH
- 					 0x1000 0 0 2 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			usb@1,0 {
-+				reg = <0x800 0 0 0 0>;
-+				phys = <&usb0 0>;
-+				phy-names = "usb";
-+			};
-+
-+			usb@2,0 {
-+				reg = <0x1000 0 0 0 0>;
-+				phys = <&usb0 0>;
-+				phy-names = "usb";
-+			};
- 		};
+diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
+index e8eb94748b27..e79ae306eedd 100644
+--- a/arch/arm/boot/dts/r8a7779.dtsi
++++ b/arch/arm/boot/dts/r8a7779.dtsi
+@@ -355,7 +355,8 @@
+ 	};
  
- 		pci1: pci@ee0d0000 {
-@@ -890,6 +902,18 @@
- 			interrupt-map = <0x0000 0 0 1 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH
- 					 0x0800 0 0 1 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH
- 					 0x1000 0 0 2 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			usb@1,0 {
-+				reg = <0x10800 0 0 0 0>;
-+				phys = <&usb2 0>;
-+				phy-names = "usb";
-+			};
-+
-+			usb@2,0 {
-+				reg = <0x11000 0 0 0 0>;
-+				phys = <&usb2 0>;
-+				phy-names = "usb";
-+			};
- 		};
+ 	sdhi0: sd@ffe4c000 {
+-		compatible = "renesas,sdhi-r8a7779";
++		compatible = "renesas,sdhi-r8a7779",
++			     "renesas,rcar-gen1-sdhi";
+ 		reg = <0xffe4c000 0x100>;
+ 		interrupts = <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7779_CLK_SDHI0>;
+@@ -364,7 +365,8 @@
+ 	};
  
- 		usbphy: usb-phy@e6590100 {
+ 	sdhi1: sd@ffe4d000 {
+-		compatible = "renesas,sdhi-r8a7779";
++		compatible = "renesas,sdhi-r8a7779",
++			     "renesas,rcar-gen1-sdhi";
+ 		reg = <0xffe4d000 0x100>;
+ 		interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7779_CLK_SDHI1>;
+@@ -373,7 +375,8 @@
+ 	};
+ 
+ 	sdhi2: sd@ffe4e000 {
+-		compatible = "renesas,sdhi-r8a7779";
++		compatible = "renesas,sdhi-r8a7779",
++			     "renesas,rcar-gen1-sdhi";
+ 		reg = <0xffe4e000 0x100>;
+ 		interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7779_CLK_SDHI2>;
+@@ -382,7 +385,8 @@
+ 	};
+ 
+ 	sdhi3: sd@ffe4f000 {
+-		compatible = "renesas,sdhi-r8a7779";
++		compatible = "renesas,sdhi-r8a7779",
++			     "renesas,rcar-gen1-sdhi";
+ 		reg = <0xffe4f000 0x100>;
+ 		interrupts = <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7779_CLK_SDHI3>;
 -- 
 2.11.0
