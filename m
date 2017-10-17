@@ -1,40 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:37178 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:39254 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751415AbdJEN1K (ORCPT
+        with ESMTP id S1753185AbdJQGKK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 Oct 2017 09:27:10 -0400
+        Tue, 17 Oct 2017 02:10:10 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: [PATCH v2 0/2] arm64: dts: r8a779[56]: Add OPPs table for cpu devices
-Date: Thu,  5 Oct 2017 15:26:22 +0200
-Message-Id: <1507209984-17123-1-git-send-email-horms+renesas@verge.net.au>
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 03/11] ARM: dts: r8a7743: Use R-Car SDHI Gen2 fallback compat string
+Date: Tue, 17 Oct 2017 08:09:51 +0200
+Message-Id: <20171017060959.16702-4-horms+renesas@verge.net.au>
+In-Reply-To: <20171017060959.16702-1-horms+renesas@verge.net.au>
+References: <20171017060959.16702-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-These are dependencies for supporting CPUFreq. The remainder of that
-work is being posted separately and can be found at:
+Use newly added R-Car SDHI Gen2 fallback compat string
+in the DT of the r8a7743 SoC.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/rcar-gen3-cpufreq-v3
+This should have no run-time effect as the driver matches against
+the per-SoC compat string before considering the fallback compat string.
 
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7743.dtsi | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-A description of steps taken to lightly exercise the same feature for the
-r8a7795 the above can be found at the link below. The results are the same
-for the r8a7796 with the exception that it has two active CPU cores rather
-than four.
-
-http://elinux.org/Tests:R-CAR-GEN3-CPUFreq
-
-
-Dien Pham (2):
-  arm64: dts: r8a7795: Add OPPs table for cpu devices
-  arm64: dts: r8a7796: Add OPPs table for cpu devices
-
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 55 ++++++++++++++++++++++++++++++
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 58 ++++++++++++++++++++++++++++++++
- 2 files changed, 113 insertions(+)
-
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index 4db4f61be25a..3bbcf6649d7e 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -933,7 +933,8 @@
+ 		};
+ 
+ 		sdhi0: sd@ee100000 {
+-			compatible = "renesas,sdhi-r8a7743";
++			compatible = "renesas,sdhi-r8a7743",
++				     "renesas,rcar-gen2-sdhi";
+ 			reg = <0 0xee100000 0 0x328>;
+ 			interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 314>;
+@@ -947,7 +948,8 @@
+ 		};
+ 
+ 		sdhi1: sd@ee140000 {
+-			compatible = "renesas,sdhi-r8a7743";
++			compatible = "renesas,sdhi-r8a7743",
++				     "renesas,rcar-gen2-sdhi";
+ 			reg = <0 0xee140000 0 0x100>;
+ 			interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 312>;
+@@ -961,7 +963,8 @@
+ 		};
+ 
+ 		sdhi2: sd@ee160000 {
+-			compatible = "renesas,sdhi-r8a7743";
++			compatible = "renesas,sdhi-r8a7743",
++				     "renesas,rcar-gen2-sdhi";
+ 			reg = <0 0xee160000 0 0x100>;
+ 			interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 311>;
 -- 
-2.1.4
+2.11.0
