@@ -1,42 +1,85 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:63198 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752442AbdJRPKT (ORCPT
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:55182 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751872AbdJROZD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Oct 2017 11:10:19 -0400
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Wolfram Sang <wsa@the-dreams.de>,
+        Wed, 18 Oct 2017 10:25:03 -0400
+MIME-Version: 1.0
+In-Reply-To: <20171018140459.104351-1-chris.brandt@renesas.com>
+References: <20171018140459.104351-1-chris.brandt@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 18 Oct 2017 16:25:01 +0200
+Message-ID: <CAMuHMdWLh=4mETrwXHZ0LSfx9mtBewaDV6dhHKhvhGJ=ii-Vxg@mail.gmail.com>
+Subject: Re: [PATCH] i2c: riic: remove clock and frequency restrictions
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>,
         Linux I2C <linux-i2c@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: RE: [PATCH] i2c: riic: remove clock and frequency restrictions
-Date: Wed, 18 Oct 2017 15:10:15 +0000
-Message-ID: <SG2PR06MB116572EFA9E1BD8C7BB47AB78A4D0@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <20171018140459.104351-1-chris.brandt@renesas.com>
- <CAMuHMdWLh=4mETrwXHZ0LSfx9mtBewaDV6dhHKhvhGJ=ii-Vxg@mail.gmail.com>
-In-Reply-To: <CAMuHMdWLh=4mETrwXHZ0LSfx9mtBewaDV6dhHKhvhGJ=ii-Vxg@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNClRoYW5rIHlvdSBmb3IgeW91ciByZXZpZXcuDQoNCk9uIFdlZG5lc2RheSwg
-T2N0b2JlciAxOCwgMjAxNyAxLCBHZWVydCBVeXR0ZXJob2V2ZW4gd3JvdGU6DQo+ID4gKyAgICAg
-ICAvKg0KPiA+ICsgICAgICAgICogUmVtb3ZlIGNsb2NrIHRpY2tzIGZvciByaXNlIGFuZCBmYWxs
-IHRpbWVzLiBDb252ZXJ0IG5zIHRvDQo+IGNsb2NrDQo+ID4gKyAgICAgICAgKiB0aWNrcy4NCj4g
-PiArICAgICAgICAqLw0KPiA+ICsgICAgICAgYnJsIC09IHQtPnNjbF9mYWxsX25zIC8gKDEwMDAw
-MDAwMDAvcmF0ZSk7DQo+ID4gKyAgICAgICBicmggLT0gdC0+c2NsX3Jpc2VfbnMgLyAoMTAwMDAw
-MDAwMC9yYXRlKTsNCj4gDQo+IFRvIGF2b2lkIGxvc2luZyB0b28gbXVjaCBwcmVjaXNpb24gYnkg
-dGhlIGRpdmlzaW9uLCB5b3UgY2FuIHJld3JpdGUgdGhpcw0KPiBhcw0KPiBlLmcuDQo+IA0KPiAg
-ICAgYnJsIC09IHQtPnNjbF9mYWxsX25zICogcmF0ZSAvIDEwMDAwMDAwMDA7DQo+IA0KPiAoInNj
-bF9mYWxsX25zICogcmF0ZSIgc2hvdWxkIG5vdCBvdmVyZmxvdykuDQo+IFBlcmhhcHMgRElWX1JP
-VU5EX1VQKCksIHRvbz8NCg0KVW5mb3J0dW5hdGVseSwgSSBkbyBub3QgZ2V0IHRoZSBjb3JyZWN0
-IG51bWJlciBldmVyeSB0aW1lLg0KDQpTb21ldGltZXMgSSBnZXQgdGhlIGNvcnJlY3QgbnVtYmVy
-LCBidXQgbW9zdCBvZiB0aGUgdGltZSBJIGdldCAwLg0KDQpOb3RlLCBpZiByYXRlPTMzLDMzMCww
-MDAgYW5kIHQtPnNjbF9mYWxsX25zPTMwMCwgdGhlbiANCg0KdC0+c2NsX2ZhbGxfbnMgKiByYXRl
-ICA9IDksOTk5LDAwMCwwMDAgKDB4MjUzRkNBMUMwKSBhIDM0LWJpdCBudW1iZXIuDQoNClNvLCBJ
-J2QgcmF0aGVyIGp1c3Qgc3RpY2sgd2l0aCB0aGUgbGVzcyBwcmVjaXNpb24gYmVjYXVzZSBpdCdz
-IG5vdCB0aGF0IA0KbXVjaCBvZiBhIGJpdCBkZWFsLg0KDQoNCkNocmlzDQo=
+Hi Chris,
+
+On Wed, Oct 18, 2017 at 4:04 PM, Chris Brandt <chris.brandt@renesas.com> wrote:
+> Remove the restriction that the parent clock has to be a specific frequency
+> and also allow any speed to be supported.
+>
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+
+Thanks for your patch!
+
+> --- a/drivers/i2c/busses/i2c-riic.c
+> +++ b/drivers/i2c/busses/i2c-riic.c
+> @@ -288,48 +283,101 @@ static const struct i2c_algorithm riic_algo = {
+>         .functionality  = riic_func,
+>  };
+>
+> -static int riic_init_hw(struct riic_dev *riic, u32 spd)
+> +static int riic_init_hw(struct riic_dev *riic, struct i2c_timings *t)
+>  {
+
+> +       /*
+> +        * Determine reference clock rate. We must be able to get the desired
+> +        * frequency with only 62 clock ticks max (31 high, 31 low).
+> +        * Aim for a duty of 60% LOW, 40% HIGH.
+> +        */
+> +       total_ticks = rate / t->bus_freq_hz;
+> +       if (rate % t->bus_freq_hz)              /* round up */
+> +               total_ticks++;
+
+DIV_ROUND_UP()
+
+> +       /*
+> +        * Remove clock ticks for rise and fall times. Convert ns to clock
+> +        * ticks.
+> +        */
+> +       brl -= t->scl_fall_ns / (1000000000/rate);
+> +       brh -= t->scl_rise_ns / (1000000000/rate);
+
+To avoid losing too much precision by the division, you can rewrite this as
+e.g.
+
+    brl -= t->scl_fall_ns * rate / 1000000000;
+
+("scl_fall_ns * rate" should not overflow).
+Perhaps DIV_ROUND_UP(), too?
+
+> +       pr_debug("i2c-riic: freq=%lu, duty=%d, fall=%lu, rise=%lu, cks=%d, brl=%d, brh=%d\n",
+> +                rate/total_ticks, ((brl+3)*100)/(brl+brh+6),
+> +                t->scl_fall_ns / (1000000000/rate),
+> +                t->scl_rise_ns / (1000000000/rate), cks, brl, brh);
+
+Likewise (or: reuse the values from above?).
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
