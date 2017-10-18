@@ -1,58 +1,73 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:7183 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751198AbdJDJTH (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Oct 2017 05:19:07 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc: Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 0/2] ARM: dts: iwg20d-q7: New DT architecture
-Date: Wed,  4 Oct 2017 10:18:31 +0100
-Message-Id: <1507108713-10686-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH v6 0/4] phy: rcar-gen3-usb2: add support for r8a77995
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>
+References: <1507790088-26010-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <4e2d9189-911b-8cb9-13ea-7caf7ff4bf8d@ti.com>
+Date: Wed, 18 Oct 2017 17:28:46 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <1507790088-26010-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Some of the serial interfaces are exposed on the camera daughter board.
-The camera daughter board can be connected to the carrier board
-by means of expansion connectors 1, 2 and 3. The carrier board may host
-an RZ/G1M or an RZ/G1N based SoM.
-While adding support for the serial interfaces on the camera daughter
-board we faced the dilemma of how to properly describe all of the
-possible HW configurations and how to maximize code reuse.
-The best option would be to use device tree overlays, however there is
-still some work to be done on that front before actually using them,
-therefore for the time being we decided to provide .dtsi files to
-describe the carrier board and the camera daughter board, and provide
-.dts files to describe the HW configurations we need to support.
 
-Best regards,
 
-Fabrizio Castro (2):
-  ARM: dts: iwg20d-q7: Rework DT architecture
-  ARM: dts: iwg20d-q7-dbcm-ca: Add device trees for camera DB
+On Thursday 12 October 2017 12:04 PM, Yoshihiro Shimoda wrote:
+> This patch set is based on the latest phy.git / next branch
+> (the commit id = 415060b21f318e009d865b4bcbf8f220ebc36964)
+> 
+> After this patch set is applied, a usb 2.0 host node that is combined
+> with usb 2.0 peripheral needs 'dr_mode = "otg";' property.
 
- arch/arm/boot/dts/Makefile                      |   1 +
- arch/arm/boot/dts/iwg20d-q7-common.dtsi         | 147 ++++++++++++++++++++++++
- arch/arm/boot/dts/iwg20d-q7-dbcm-ca.dtsi        |  44 +++++++
- arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dts |  19 +++
- arch/arm/boot/dts/r8a7743-iwg20d-q7.dts         | 139 +---------------------
- 5 files changed, 213 insertions(+), 137 deletions(-)
- create mode 100644 arch/arm/boot/dts/iwg20d-q7-common.dtsi
- create mode 100644 arch/arm/boot/dts/iwg20d-q7-dbcm-ca.dtsi
- create mode 100644 arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dts
+merged, thanks!
 
--- 
-2.7.4
+-Kishon
+> 
+> Changes from v5:
+>  - Add "Reviewed-by:" into patch 2. (Simon-san, Thanks!)
+>  - Remove unnecessary "else" in rcar_gen3_get_phy_mode() in patch 2.
+> 
+> Changes from v4:
+>  - Remove the role_show() modification in patch 2.
+>  - Remove a new function rcar_gen3_otg_change_role() in patch 2 because adding
+>    this will be complecated patch code and this is unnecessary for now.
+>  - Add a new function rcar_gen3_get_phy_mode() to get current phy mode
+>    for comparing the new mode into a line in patch 2.
+>  - Rebase patch 3.
+> 
+> Changes from v3:
+>  - Use enum phy_mode in patch 2.
+>  - Remove "can_role_swap" parameter and revise the commit log in patch 2
+>    because a case of "can_role_swap = true" and "has_otg = false" is
+>    not supported for role swap at the moment.
+>  - Changes the name of "has_otg" to "has_otg_pins" in patch 3.
+>  - Use of_device_get_match_data() instead of of_match_device()
+>  - Add "Reviewed-by:" into patch No.1, 3 and 4. (Simon-san, Thanks!)
+>   - Since patch No.2 is changed in big at v4, I dropped his "Reviewed-by".
+> 
+> Changes from v2:
+>  - Revise the commit log ("SoCs" is not third-person singular present).
+> 
+> Changes from v1:
+>  - Revise typo "wronly" to "wrongly".
+>  - Remove RCAR_GEN3_PHY_HAS_DEDICATED_PINS from generic gen3 entry in
+>    patch 3/4
+>  - Remove the driver change from patch 4/4.
+>  - Revise the commit log of patch 4/4.
+> 
+> Yoshihiro Shimoda (4):
+>   phy: rcar-gen3-usb2: check dr_mode for otg mode
+>   phy: rcar-gen3-usb2: use enum phy_mode in the role_store()
+>   phy: rcar-gen3-usb2: add SoC-specific parameter for dedicated pins
+>   phy: rcar-gen3-usb2: add binding for r8a77995
+> 
+>  .../devicetree/bindings/phy/rcar-gen3-phy-usb2.txt |  2 +
+>  drivers/phy/renesas/phy-rcar-gen3-usb2.c           | 70 ++++++++++++++--------
+>  2 files changed, 48 insertions(+), 24 deletions(-)
+> 
