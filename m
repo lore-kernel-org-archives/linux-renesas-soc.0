@@ -1,63 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38914 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752787AbdJTK3u (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:49342 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1762362AbdJRHg5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Oct 2017 06:29:50 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 04/42] ARM: dts: r8a7791: Use generic node name for VSP1 nodes
-Date: Fri, 20 Oct 2017 12:28:31 +0200
-Message-Id: <18e5500c1510c844d5c3071f06089b638326bc52.1508493785.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1508493785.git.horms+renesas@verge.net.au>
-References: <cover.1508493785.git.horms+renesas@verge.net.au>
+        Wed, 18 Oct 2017 03:36:57 -0400
+Received: by mail-wm0-f68.google.com with SMTP id b189so8035419wmd.4
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 18 Oct 2017 00:36:57 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <20171018072728.14681-6-horms+renesas@verge.net.au>
+References: <20171018072728.14681-1-horms+renesas@verge.net.au> <20171018072728.14681-6-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 18 Oct 2017 09:36:56 +0200
+Message-ID: <CAMuHMdUTUy61UvujB9XnUus5N2zcfsyNsbyUOPt8-v8c+ZukQg@mail.gmail.com>
+Subject: Re: [PATCH 5/7] ARM: dts: r8a7791: Use R-Car Gen2 Ether fallback
+ compat string
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+On Wed, Oct 18, 2017 at 9:27 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> Use newly added R-Car Gen2 Ether fallback compat string
+> in the DT of the r8a7791 SoC.
+>
+> This should have no run-time effect as the driver matches against
+> the per-SoC compat string before considering the fallback compat string.
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-Use the preferred generic node name instead of the specific name.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7791.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index 5a8a15847076..97bed8253bc3 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -1073,7 +1073,7 @@
- 		status = "disabled";
- 	};
- 
--	vsp1@fe928000 {
-+	vsp@fe928000 {
- 		compatible = "renesas,vsp1";
- 		reg = <0 0xfe928000 0 0x8000>;
- 		interrupts = <GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>;
-@@ -1082,7 +1082,7 @@
- 		resets = <&cpg 131>;
- 	};
- 
--	vsp1@fe930000 {
-+	vsp@fe930000 {
- 		compatible = "renesas,vsp1";
- 		reg = <0 0xfe930000 0 0x8000>;
- 		interrupts = <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
-@@ -1091,7 +1091,7 @@
- 		resets = <&cpg 128>;
- 	};
- 
--	vsp1@fe938000 {
-+	vsp@fe938000 {
- 		compatible = "renesas,vsp1";
- 		reg = <0 0xfe938000 0 0x8000>;
- 		interrupts = <GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>;
--- 
-2.11.0
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
