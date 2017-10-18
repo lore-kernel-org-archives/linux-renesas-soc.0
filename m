@@ -1,52 +1,40 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38765 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752092AbdJTK2y (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Oct 2017 06:28:54 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 01/31] arm64: dts: renesas: salvator-common: drop "avb_phy_int" from avb_pins
-Date: Fri, 20 Oct 2017 12:28:04 +0200
-Message-Id: <86b93a2dff65ab6e22ffd28bb132a2c3970b6e68.1508495040.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1508495040.git.horms+renesas@verge.net.au>
-References: <cover.1508495040.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH  0/2] Add HDMI support
+Date: Wed, 18 Oct 2017 10:33:45 +0100
+Message-Id: <1508319227-19679-1-git-send-email-biju.das@bp.renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Hello,
 
-Since the Ethernet AVB driver doesn't support AVB_PHY_INT handling
-and it will be handled by a phy driver as a gpio pin, this patch
-removes the "avb_phy_int" from the avb_pins node.
+This series aims to add HDMI support for iWave RZ/G1M (R8A7743) board.
+This series has been tested against renesas-dev tag 20171018-v4.14-rc5.
 
-Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Fixes: 7d73a4da2681 ("arm64: dts: r8a7795: salvator-x: Set drive-strength for ravb pins")
-Fixes: 4903987033be ("arm64: dts: r8a7796: salvator-x: Set drive-strength for ravb pins")
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/salvator-common.dtsi | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+This patch dependency on below patches
 
-diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-index 4786c67b5e65..99d8180c71f7 100644
---- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-@@ -371,8 +371,7 @@
- 
- 	avb_pins: avb {
- 		mux {
--			groups = "avb_link", "avb_phy_int", "avb_mdc",
--				 "avb_mii";
-+			groups = "avb_link", "avb_mdc", "avb_mii";
- 			function = "avb";
- 		};
- 
+[1] dt-bindings: display: rcar-du: Document R8A774[35]DU
+    https://patchwork.kernel.org/patch/10005091/
+[2] drm: rcar-du: Add R8A7743 support
+    https://patchwork.kernel.org/patch/10005093/
+
+Fabrizio Castro (2):
+  ARM: dts: r8a7743: Add DU support
+  ARM: dts: iwg20d-q7-dbcm-ca: Add HDMI video output
+
+ arch/arm/boot/dts/iwg20d-q7-dbcm-ca.dtsi | 75 ++++++++++++++++++++++++++++++++
+ arch/arm/boot/dts/r8a7743.dtsi           | 30 +++++++++++++
+ 2 files changed, 105 insertions(+)
+
 -- 
-2.11.0
+1.9.1
+
