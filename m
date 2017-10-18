@@ -1,104 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57261 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752107AbdJRHBC (ORCPT
+Received: from sauhun.de ([88.99.104.3]:56103 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752387AbdJRHYq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Oct 2017 03:01:02 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v4 1/3] dt-bindings: mmc: renesas_sdhi: provide example in bindings documentation
-Date: Wed, 18 Oct 2017 09:00:21 +0200
-Message-Id: <20171018070023.3878-2-horms+renesas@verge.net.au>
-In-Reply-To: <20171018070023.3878-1-horms+renesas@verge.net.au>
+        Wed, 18 Oct 2017 03:24:46 -0400
+Date: Wed, 18 Oct 2017 09:24:43 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v4 1/3] dt-bindings: mmc: renesas_sdhi: provide example
+ in bindings documentation
+Message-ID: <20171018072443.uccran7syhlfcjfl@ninjato>
 References: <20171018070023.3878-1-horms+renesas@verge.net.au>
+ <20171018070023.3878-2-horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="scovxudyx3fa3crw"
+Content-Disposition: inline
+In-Reply-To: <20171018070023.3878-2-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Provide an example of the usage of the DT bindings for TMIO
-in their documentation. The example given is for the r8a7790 (R-Car H2).
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3
-* Updated example to newer upstream DTS which uses newer CPG/MSSR bindings.
+--scovxudyx3fa3crw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-v2
-* Correct description of example, it is for the r8a7790 (R-Car H2)
-  rather than the r8a7779 (R-Car H1)
----
- Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 58 ++++++++++++++++++++++
- 1 file changed, 58 insertions(+)
+On Wed, Oct 18, 2017 at 09:00:21AM +0200, Simon Horman wrote:
+> Provide an example of the usage of the DT bindings for TMIO
+> in their documentation. The example given is for the r8a7790 (R-Car H2).
+>=20
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-index 54ef642f23a0..b63392d9cc47 100644
---- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-+++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-@@ -43,3 +43,61 @@ Optional properties:
- - pinctrl-names: should be "default", "state_uhs"
- - pinctrl-0: should contain default/high speed pin ctrl
- - pinctrl-1: should contain uhs mode pin ctrl
-+
-+Example: R8A7790 (R-Car H2) SDHI controller nodes
-+
-+	sdhi0: sd@ee100000 {
-+		compatible = "renesas,sdhi-r8a7790";
-+		reg = <0 0xee100000 0 0x328>;
-+		interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&cpg CPG_MOD 314>;
-+		dmas = <&dmac0 0xcd>, <&dmac0 0xce>,
-+		       <&dmac1 0xcd>, <&dmac1 0xce>;
-+		dma-names = "tx", "rx", "tx", "rx";
-+		max-frequency = <195000000>;
-+		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
-+		resets = <&cpg 314>;
-+		status = "disabled";
-+	};
-+
-+	sdhi1: sd@ee120000 {
-+		compatible = "renesas,sdhi-r8a7790";
-+		reg = <0 0xee120000 0 0x328>;
-+		interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&cpg CPG_MOD 313>;
-+		dmas = <&dmac0 0xc9>, <&dmac0 0xca>,
-+		       <&dmac1 0xc9>, <&dmac1 0xca>;
-+		dma-names = "tx", "rx", "tx", "rx";
-+		max-frequency = <195000000>;
-+		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
-+		resets = <&cpg 313>;
-+		status = "disabled";
-+	};
-+
-+	sdhi2: sd@ee140000 {
-+		compatible = "renesas,sdhi-r8a7790";
-+		reg = <0 0xee140000 0 0x100>;
-+		interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&cpg CPG_MOD 312>;
-+		dmas = <&dmac0 0xc1>, <&dmac0 0xc2>,
-+		       <&dmac1 0xc1>, <&dmac1 0xc2>;
-+		dma-names = "tx", "rx", "tx", "rx";
-+		max-frequency = <97500000>;
-+		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
-+		resets = <&cpg 312>;
-+		status = "disabled";
-+	};
-+
-+	sdhi3: sd@ee160000 {
-+		compatible = "renesas,sdhi-r8a7790";
-+		reg = <0 0xee160000 0 0x100>;
-+		interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&cpg CPG_MOD 311>;
-+		dmas = <&dmac0 0xd3>, <&dmac0 0xd4>,
-+		       <&dmac1 0xd3>, <&dmac1 0xd4>;
-+		dma-names = "tx", "rx", "tx", "rx";
-+		max-frequency = <97500000>;
-+		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
-+		resets = <&cpg 311>;
-+		status = "disabled";
-+	};
--- 
-2.11.0
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+
+--scovxudyx3fa3crw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlnnAbcACgkQFA3kzBSg
+KbZ1TQ//Y+hfw7Ny+vAPIlf76f7ZCvDHZRMLalGwhFaXWjbw8PyCoKrVPjP2NglR
+s4bz5CYN0+gbh8ZVI0vu5w2pVUPHmfZbabruLqObnKg7YGZ53Amk1QX1+K/wNoXV
+LnqoSxd/dixcjNh2zcp8X2OoFXY9/EIUSLrhun+NiWX5bfZv4DdRC/m9xLjgIBuv
+L2iEww0m4Kvvl7V7wvL6IFsoMF8cauYQYsWg/1eGd13SOamg22uZCoFTKs7NMgal
+EizkzL98BkaPncW6nT/obW1OgRCaFBcm9vtKkoyYdVeR6GyCLPrzIxJ7+d07Jcvg
+Yn1ZrexQ6Vh1zyFE0ev4QgnWNVUbEajAPc1stX56RKTJFhpyzqaRn9GvbnbE7nmD
+bED5+0pmFU09Iy5JLrtKTh6x28dO8aIOxTIamSBlXEs3hAp2QV88gydMw3FAd1Pl
+QaDzKVLYxOL5qEvUUyXWhkJDe1JnmfX9IqVdoN8CAc22E2XjHuICjl7uSw9KEUeu
+WNC/pYlUpidLgCT16TnJjmLstQ05Z970puvFyWA5pJQRsXwBYk+QopvSuSBXpZbo
+KGN6nXRSVeteNO0Hvhb1rx2rvgq7x67VmyBeLNpgqncNWfdHCNMgy8u/iqm5/lmD
+jgLx2Nq1+6SGKrAXAonhzBvPeeA7bNKtfKiEKAUn+Ztki+ljgDU=
+=go1s
+-----END PGP SIGNATURE-----
+
+--scovxudyx3fa3crw--
