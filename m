@@ -1,57 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:50936 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753154AbdJKLua (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:57835 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756832AbdJRH2N (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Oct 2017 07:50:30 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+        Wed, 18 Oct 2017 03:28:13 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/2] drivers: firmware: psci: Extract psci_is_available() helper
-Date: Wed, 11 Oct 2017 10:03:00 +0200
-Message-Id: <1507708982-12336-1-git-send-email-geert+renesas@glider.be>
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 7/7] ARM: dts: r8a7794: Use R-Car Gen2 Ether fallback compat string
+Date: Wed, 18 Oct 2017 09:27:28 +0200
+Message-Id: <20171018072728.14681-8-horms+renesas@verge.net.au>
+In-Reply-To: <20171018072728.14681-1-horms+renesas@verge.net.au>
+References: <20171018072728.14681-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Mark, Lorenzo,
+Use newly added R-Car Gen2 Ether fallback compat string
+in the DT of the r8a7794 SoC.
 
-PSCI support may be disabled at build time (by configuration) or at
-run-time (PSCI firmware not present).  While CONFIG_ARM_PSCI_FW can be
-used to check for build time enablement, there is currently no simple
-way to check if PSCI is actually available and used.
+This should have no run-time effect as the driver matches against
+the per-SoC compat string before considering the fallback compat string.
 
-The first patch adds a helper function to check if PSCI is available.
-This is useful for e.g. drivers that are used on platforms with and
-without PSCI.  Such drivers may need to take provisions for proper
-operation when PSCI is used, and/or to implement functionality that is
-usually provided by PSCI.
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7794.dtsi | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-The second patch makes the PSCI checker use the new helper.
-
-Thanks for your comments!
-
-Geert Uytterhoeven (2):
-  drivers: firmware: psci: Add psci_is_available()
-  drivers: psci: checker: Use psci_is_available()
-
- drivers/firmware/psci.c         | 5 +++++
- drivers/firmware/psci_checker.c | 2 +-
- include/linux/psci.h            | 2 ++
- 3 files changed, 8 insertions(+), 1 deletion(-)
-
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index 905e50c9b524..148c2567a6ce 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -640,7 +640,8 @@
+ 	};
+ 
+ 	ether: ethernet@ee700000 {
+-		compatible = "renesas,ether-r8a7794";
++		compatible = "renesas,ether-r8a7794",
++			     "renesas,rcar-gen2-ether";
+ 		reg = <0 0xee700000 0 0x400>;
+ 		interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cpg CPG_MOD 813>;
 -- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+2.11.0
