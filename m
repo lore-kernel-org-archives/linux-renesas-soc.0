@@ -1,215 +1,104 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 4/5] regulator: bd9571mwv: Add support for backup mode
-Date: Tue, 10 Oct 2017 17:26:17 +0200
-Message-Id: <1507649178-31473-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1507649178-31473-1-git-send-email-geert+renesas@glider.be>
-References: <1507649178-31473-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:57261 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752107AbdJRHBC (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 18 Oct 2017 03:01:02 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v4 1/3] dt-bindings: mmc: renesas_sdhi: provide example in bindings documentation
+Date: Wed, 18 Oct 2017 09:00:21 +0200
+Message-Id: <20171018070023.3878-2-horms+renesas@verge.net.au>
+In-Reply-To: <20171018070023.3878-1-horms+renesas@verge.net.au>
+References: <20171018070023.3878-1-horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The BD9571MWV PMIC supports backup mode, which keeps one or more DDR
-rails powered while the main SoC is powered down.
+Provide an example of the usage of the DT bindings for TMIO
+in their documentation. The example given is for the r8a7790 (R-Car H2).
 
-Which DDR rails are to be kept powered is board-specific, and controlled
-using the optional "rohm,ddr-backup-power" DT property.  In the absence
-of this property, backup mode is not available.
-
-Backup mode is not enabled automatically, as e.g. on Renesas
-Salvator-X(S) boards enabling backup mode changes the role of the ACC
-switch from a power switch to a wake-up switch.  Hence enabling it
-prevents the board from being powered off using the ACC switch, which
-may confuse the user.
-
-Backup mode can be enabled or disabled by the user using the
-"backup_mode" sysfs file, e.g.
-
-    echo on > /sys/devices/platform/soc/e60b0000.i2c/i2c-7/7-0030/bd9571mwv-regulator.3.auto/backup_mode
-
-If enabled by the boot loader, initial backup mode state is retained.
-As state is lost by PSCI system suspend, it is restored during system
-resume.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-What's the right place to document regulator sysfs files?
----
- drivers/regulator/bd9571mwv-regulator.c | 121 +++++++++++++++++++++++++++++++-
- 1 file changed, 119 insertions(+), 2 deletions(-)
+v3
+* Updated example to newer upstream DTS which uses newer CPG/MSSR bindings.
 
-diff --git a/drivers/regulator/bd9571mwv-regulator.c b/drivers/regulator/bd9571mwv-regulator.c
-index c67a83d53c4cb76b..c7ff67938c3eb48a 100644
---- a/drivers/regulator/bd9571mwv-regulator.c
-+++ b/drivers/regulator/bd9571mwv-regulator.c
-@@ -24,6 +24,14 @@
- 
- #include <linux/mfd/bd9571mwv.h>
- 
-+struct bd9571mwv_reg {
-+	struct bd9571mwv *bd;
+v2
+* Correct description of example, it is for the r8a7790 (R-Car H2)
+  rather than the r8a7779 (R-Car H1)
+---
+ Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 58 ++++++++++++++++++++++
+ 1 file changed, 58 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+index 54ef642f23a0..b63392d9cc47 100644
+--- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
++++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+@@ -43,3 +43,61 @@ Optional properties:
+ - pinctrl-names: should be "default", "state_uhs"
+ - pinctrl-0: should contain default/high speed pin ctrl
+ - pinctrl-1: should contain uhs mode pin ctrl
 +
-+	/* DDR Backup Power */
-+	u8 bkup_mode_cnt_keepon;	/* from "rohm,ddr-backup-power" */
-+	u8 bkup_mode_cnt_shadow;
-+};
++Example: R8A7790 (R-Car H2) SDHI controller nodes
 +
- enum bd9571mwv_regulators { VD09, VD18, VD25, VD33, DVFS };
- 
- #define BD9571MWV_REG(_name, _of, _id, _ops, _vr, _vm, _nv, _min, _step, _lmin)\
-@@ -131,14 +139,99 @@ static struct regulator_desc regulators[] = {
- 		      0x80, 600000, 10000, 0x3c),
- };
- 
-+static int bd9571mwv_bkup_mode_set(struct bd9571mwv_reg *bdreg, u8 mode)
-+{
-+	int ret;
++	sdhi0: sd@ee100000 {
++		compatible = "renesas,sdhi-r8a7790";
++		reg = <0 0xee100000 0 0x328>;
++		interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cpg CPG_MOD 314>;
++		dmas = <&dmac0 0xcd>, <&dmac0 0xce>,
++		       <&dmac1 0xcd>, <&dmac1 0xce>;
++		dma-names = "tx", "rx", "tx", "rx";
++		max-frequency = <195000000>;
++		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
++		resets = <&cpg 314>;
++		status = "disabled";
++	};
 +
-+	ret = regmap_write(bdreg->bd->regmap, BD9571MWV_BKUP_MODE_CNT, mode);
-+	if (ret) {
-+		dev_err(bdreg->bd->dev,
-+			"Failed to configure backup mode 0x%x (ret=%i)\n",
-+			mode, ret);
-+		return ret;
-+	}
++	sdhi1: sd@ee120000 {
++		compatible = "renesas,sdhi-r8a7790";
++		reg = <0 0xee120000 0 0x328>;
++		interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cpg CPG_MOD 313>;
++		dmas = <&dmac0 0xc9>, <&dmac0 0xca>,
++		       <&dmac1 0xc9>, <&dmac1 0xca>;
++		dma-names = "tx", "rx", "tx", "rx";
++		max-frequency = <195000000>;
++		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
++		resets = <&cpg 313>;
++		status = "disabled";
++	};
 +
-+	bdreg->bkup_mode_cnt_shadow = mode;
-+	return 0;
-+}
++	sdhi2: sd@ee140000 {
++		compatible = "renesas,sdhi-r8a7790";
++		reg = <0 0xee140000 0 0x100>;
++		interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cpg CPG_MOD 312>;
++		dmas = <&dmac0 0xc1>, <&dmac0 0xc2>,
++		       <&dmac1 0xc1>, <&dmac1 0xc2>;
++		dma-names = "tx", "rx", "tx", "rx";
++		max-frequency = <97500000>;
++		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
++		resets = <&cpg 312>;
++		status = "disabled";
++	};
 +
-+static ssize_t backup_mode_show(struct device *dev,
-+				struct device_attribute *attr, char *buf)
-+{
-+	struct bd9571mwv_reg *bdreg = dev_get_drvdata(dev);
-+	int enabled = bdreg->bkup_mode_cnt_shadow &
-+		      BD9571MWV_BKUP_MODE_CNT_KEEPON_MASK;
-+
-+	return sprintf(buf, "%s\n", enabled ? "on" : "off");
-+}
-+
-+static ssize_t backup_mode_store(struct device *dev,
-+				  struct device_attribute *attr,
-+				  const char *buf,
-+				  size_t count)
-+{
-+	struct bd9571mwv_reg *bdreg = dev_get_drvdata(dev);
-+	bool enable;
-+	ssize_t ret;
-+	u8 mode;
-+
-+	if (!count)
-+		return 0;
-+
-+	ret = kstrtobool(buf, &enable);
-+	if (ret)
-+		return ret;
-+
-+	mode = bdreg->bkup_mode_cnt_shadow &
-+	       ~BD9571MWV_BKUP_MODE_CNT_KEEPON_MASK;
-+	if (enable)
-+		mode |= bdreg->bkup_mode_cnt_keepon;
-+
-+	if (mode == bdreg->bkup_mode_cnt_shadow)
-+		return count;
-+
-+	ret = bd9571mwv_bkup_mode_set(bdreg, mode);
-+	if (ret)
-+		return ret;
-+
-+	return count;
-+}
-+
-+DEVICE_ATTR_RW(backup_mode);
-+
-+#ifdef CONFIG_PM_SLEEP
-+static int bd9571mwv_resume(struct device *dev)
-+{
-+	struct bd9571mwv_reg *bdreg = dev_get_drvdata(dev);
-+
-+	return bd9571mwv_bkup_mode_set(bdreg, bdreg->bkup_mode_cnt_shadow);
-+}
-+
-+static const struct dev_pm_ops bd9571mwv_pm  = {
-+	SET_SYSTEM_SLEEP_PM_OPS(NULL, bd9571mwv_resume)
-+};
-+
-+#define DEV_PM_OPS	&bd9571mwv_pm
-+#else
-+#define DEV_PM_OPS	NULL
-+#endif /* CONFIG_PM_SLEEP */
-+
- static int bd9571mwv_regulator_probe(struct platform_device *pdev)
- {
- 	struct bd9571mwv *bd = dev_get_drvdata(pdev->dev.parent);
- 	struct regulator_config config = { };
-+	struct bd9571mwv_reg *bdreg;
- 	struct regulator_dev *rdev;
--	int i;
-+	unsigned int val;
-+	int i, ret;
-+
-+	bdreg = devm_kzalloc(&pdev->dev, sizeof(*bdreg), GFP_KERNEL);
-+	if (!bdreg)
-+		return -ENOMEM;
-+
-+	bdreg->bd = bd;
- 
--	platform_set_drvdata(pdev, bd);
-+	platform_set_drvdata(pdev, bdreg);
- 
- 	config.dev = &pdev->dev;
- 	config.dev->of_node = bd->dev->of_node;
-@@ -155,6 +248,28 @@ static int bd9571mwv_regulator_probe(struct platform_device *pdev)
- 		}
- 	}
- 
-+	val = 0;
-+	of_property_read_u32(bd->dev->of_node, "rohm,ddr-backup-power", &val);
-+	if (val & ~BD9571MWV_BKUP_MODE_CNT_KEEPON_MASK) {
-+		dev_err(bd->dev, "invalid %s mode %u\n",
-+			"rohm,ddr-backup-power", val);
-+		return -EINVAL;
-+	}
-+	bdreg->bkup_mode_cnt_keepon = val;
-+
-+	ret = regmap_read(bd->regmap, BD9571MWV_BKUP_MODE_CNT, &val);
-+	if (ret) {
-+		dev_err(bd->dev, "Failed to read backup mode (ret=%i)\n", ret);
-+		return ret;
-+	}
-+	bdreg->bkup_mode_cnt_shadow = val;
-+
-+	return device_create_file(&pdev->dev, &dev_attr_backup_mode);
-+}
-+
-+static int bd9571mwv_regulator_remove(struct platform_device *pdev)
-+{
-+	device_remove_file(&pdev->dev, &dev_attr_backup_mode);
- 	return 0;
- }
- 
-@@ -167,8 +282,10 @@ MODULE_DEVICE_TABLE(platform, bd9571mwv_regulator_id_table);
- static struct platform_driver bd9571mwv_regulator_driver = {
- 	.driver = {
- 		.name = "bd9571mwv-regulator",
-+		.pm = DEV_PM_OPS,
- 	},
- 	.probe = bd9571mwv_regulator_probe,
-+	.remove = bd9571mwv_regulator_remove,
- 	.id_table = bd9571mwv_regulator_id_table,
- };
- module_platform_driver(bd9571mwv_regulator_driver);
++	sdhi3: sd@ee160000 {
++		compatible = "renesas,sdhi-r8a7790";
++		reg = <0 0xee160000 0 0x100>;
++		interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cpg CPG_MOD 311>;
++		dmas = <&dmac0 0xd3>, <&dmac0 0xd4>,
++		       <&dmac1 0xd3>, <&dmac1 0xd4>;
++		dma-names = "tx", "rx", "tx", "rx";
++		max-frequency = <97500000>;
++		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
++		resets = <&cpg 311>;
++		status = "disabled";
++	};
 -- 
-2.7.4
-
+2.11.0
