@@ -1,7 +1,16 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Tue, 24 Oct 2017 10:34:32 +0200
-From: Mark Brown <broonie@kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <20171018112419.3eqz34epcshxas3f@sirena.co.uk>
+References: <1507649178-31473-1-git-send-email-geert+renesas@glider.be>
+ <1507649178-31473-5-git-send-email-geert+renesas@glider.be>
+ <20171018110238.hjv7huiievhr5obs@sirena.co.uk> <CAMuHMdU2PpiSftwnqHjb8uFpu5Huw7hpedk4cSzDY-eeKio_Dw@mail.gmail.com>
+ <20171018112419.3eqz34epcshxas3f@sirena.co.uk>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 18 Oct 2017 13:28:30 +0200
+Message-ID: <CAMuHMdWnJwMk5DrnAQebKB23X2WJGPQ2m-0OX8-AC2QYguTQ5w@mail.gmail.com>
+Subject: Re: [PATCH/RFC 4/5] regulator: bd9571mwv: Add support for backup mode
+To: Mark Brown <broonie@kernel.org>
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -16,66 +25,55 @@ Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         <linux-arm-kernel@lists.infradead.org>,
         Linux PM list <linux-pm@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH/RFC 4/5] regulator: bd9571mwv: Add support for backup mode
-Message-ID: <20171024083432.j3xqepkvprbvg2p4@sirena.org.uk>
-References: <1507649178-31473-1-git-send-email-geert+renesas@glider.be>
- <1507649178-31473-5-git-send-email-geert+renesas@glider.be>
- <20171018110238.hjv7huiievhr5obs@sirena.co.uk>
- <CAMuHMdU2PpiSftwnqHjb8uFpu5Huw7hpedk4cSzDY-eeKio_Dw@mail.gmail.com>
- <20171018112419.3eqz34epcshxas3f@sirena.co.uk>
- <CAMuHMdWnJwMk5DrnAQebKB23X2WJGPQ2m-0OX8-AC2QYguTQ5w@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="mz6i3b6at34h24x4"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdWnJwMk5DrnAQebKB23X2WJGPQ2m-0OX8-AC2QYguTQ5w@mail.gmail.com>
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Mark,
 
---mz6i3b6at34h24x4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Wed, Oct 18, 2017 at 1:24 PM, Mark Brown <broonie@kernel.org> wrote:
+> On Wed, Oct 18, 2017 at 01:19:08PM +0200, Geert Uytterhoeven wrote:
+>> On Wed, Oct 18, 2017 at 1:02 PM, Mark Brown <broonie@kernel.org> wrote:
+>> > On Tue, Oct 10, 2017 at 05:26:17PM +0200, Geert Uytterhoeven wrote:
+>> >> Backup mode is not enabled automatically, as e.g. on Renesas
+>> >> Salvator-X(S) boards enabling backup mode changes the role of the ACC
+>> >> switch from a power switch to a wake-up switch.  Hence enabling it
+>> >> prevents the board from being powered off using the ACC switch, which
+>> >> may confuse the user.
+>
+>> > This sounds an awful lot like the standard power/wakeup, though the
+>> > power change is a bit unexpected there.  I'm also wondering if it makes
+>> > sense to just only enable the wakeup mode when suspending which
+>> > preserves the power off functionality while also keeping the wakeup
+>> > support.
+>
+>> The ACC switch is not a momentary switch (push button), but a toggle
+>> switch with two positions.
+>> Hence you cannot enable wakeup mode while suspending, as the proper
+>> system suspend/resume procedure is:
+>>   1. Enable backup mode in the PMIC,
+>>   2. Switch ACC off (no-op as backup mode has been enabled),
+>>   3. Suspend to RAM (PSCI suspend) => system suspends,
+>>   4. Switch ACC on => system wakes up.
+>> If you would combine steps 1 and 3, you can no longer do step 2 in between.
+>
+>> Yes, it's complicated :-(
+>
+> I'm confused, I thought this was a physical switch but that's talking
+> about this as something software controlled (at least in step 2)?
 
-On Wed, Oct 18, 2017 at 01:28:30PM +0200, Geert Uytterhoeven wrote:
-> On Wed, Oct 18, 2017 at 1:24 PM, Mark Brown <broonie@kernel.org> wrote:
+The ACC switch is a physical switch.
+Steps 1 and 3 are performed by software running on the board's SoC.
+Steps 2 and 4 are performed by the external user (human or remote board
+farm control hookup).
 
-> >> Hence you cannot enable wakeup mode while suspending, as the proper
-> >> system suspend/resume procedure is:
-> >>   1. Enable backup mode in the PMIC,
-> >>   2. Switch ACC off (no-op as backup mode has been enabled),
-> >>   3. Suspend to RAM (PSCI suspend) => system suspends,
-> >>   4. Switch ACC on => system wakes up.
-> >> If you would combine steps 1 and 3, you can no longer do step 2 in between.
+Gr{oetje,eeting}s,
 
-> >> Yes, it's complicated :-(
+                        Geert
 
-> > I'm confused, I thought this was a physical switch but that's talking
-> > about this as something software controlled (at least in step 2)?
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-> The ACC switch is a physical switch.
-> Steps 1 and 3 are performed by software running on the board's SoC.
-> Steps 2 and 4 are performed by the external user (human or remote board
-> farm control hookup).
-
-That's horrible.  There's still the question about potentially using the
-existing wakeup file to manage if the device is a wakeup source but
-otherwise I guess the only other thing that'd make sense would be just
-having a property in the DT.
-
---mz6i3b6at34h24x4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlnu+xcACgkQJNaLcl1U
-h9D1lAf+I4hTwsFZI5IG+E3xe7XPLek8QNAOlBLzwp5/GZHnmQo+ZuMqCdNBrkbg
-i4roSkcOswqsXDkX/IGA+Fmc07DSEzS3wDdHNl/w/JbpAkn526RvumTeaKuOXhBs
-9dBh0Oar8RQfY8ow4C+zJ0QPp8HKLFu0aP3GTDfjGc0VJg3yB14v727+utOuB5Z/
-P/EqjPVnYUZCJ5pqqfrhA2u+RlsuukFOhlPNB+G9SqMuEyq5AxR4TkIeGrZwgsu+
-SUC0GeiTloDLQPOjJs8TqAxCuzLnRuR0l9USEGaVf8ZG3Snh7buihUBgg/t5SSGi
-5FP/mvdmjZ8U4htv6jawKr2crCzQLg==
-=4SeF
------END PGP SIGNATURE-----
-
---mz6i3b6at34h24x4--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
