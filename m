@@ -1,79 +1,114 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:56114 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752387AbdJRHY6 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:57269 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932290AbdJRHBE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Oct 2017 03:24:58 -0400
-Date: Wed, 18 Oct 2017 09:24:56 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] dt-bindings: mmc: renesas_sdhi: add R-Car
- Gen[123] fallback compatibility strings
-Message-ID: <20171018072456.tp3vdcuvkxpu7yd4@ninjato>
+        Wed, 18 Oct 2017 03:01:04 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v4 2/3] dt-bindings: mmc: renesas_sdhi: add R-Car Gen[123] fallback compatibility strings
+Date: Wed, 18 Oct 2017 09:00:22 +0200
+Message-Id: <20171018070023.3878-3-horms+renesas@verge.net.au>
+In-Reply-To: <20171018070023.3878-1-horms+renesas@verge.net.au>
 References: <20171018070023.3878-1-horms+renesas@verge.net.au>
- <20171018070023.3878-3-horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="jfajk7u4fn52bx2k"
-Content-Disposition: inline
-In-Reply-To: <20171018070023.3878-3-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Add fallback compatibility strings for R-Car Gen 1, 2 and 3.
 
---jfajk7u4fn52bx2k
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In the case of Renesas R-Car hardware we know that there are generations of
+SoCs, f.e. Gen 1 and 2. But beyond that its not clear what the relationship
+between IP blocks might be. For example, I believe that r8a7790 is older
+than r8a7791 but that doesn't imply that the latter is a descendant of the
+former or vice versa.
 
-On Wed, Oct 18, 2017 at 09:00:22AM +0200, Simon Horman wrote:
-> Add fallback compatibility strings for R-Car Gen 1, 2 and 3.
->=20
-> In the case of Renesas R-Car hardware we know that there are generations =
-of
-> SoCs, f.e. Gen 1 and 2. But beyond that its not clear what the relationsh=
-ip
-> between IP blocks might be. For example, I believe that r8a7790 is older
-> than r8a7791 but that doesn't imply that the latter is a descendant of the
-> former or vice versa.
->=20
-> We can, however, by examining the documentation and behaviour of the
-> hardware at run-time observe that the current driver implementation appea=
-rs
-> to be compatible with the IP blocks on SoCs within a given generation.
->=20
-> For the above reasons and convenience when enabling new SoCs a
-> per-generation fallback compatibility string scheme is being adopted for
-> drivers for Renesas SoCs.
->=20
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+We can, however, by examining the documentation and behaviour of the
+hardware at run-time observe that the current driver implementation appears
+to be compatible with the IP blocks on SoCs within a given generation.
 
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+For the above reasons and convenience when enabling new SoCs a
+per-generation fallback compatibility string scheme is being adopted for
+drivers for Renesas SoCs.
 
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v4
+* Corrected typo in changelog
+* Added comma to "When compatible with the generic version, nodes must list"
+---
+ Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 20 +++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
 
---jfajk7u4fn52bx2k
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlnnAcgACgkQFA3kzBSg
-KbYNYA//YKLWhob2dqpFBNEKYSF+Wu8k4qnBM7eQRcyRMd9VXtWoAY0z5dvCVLp5
-FlQWXohKTNJMLVj8fYP21hT80hndGTdqLspTcFeV4TM5cnZKNwjfz3Wxx8eUxK/2
-EB2leHzp7iQTh79bd7pbo7HyTRVInSREHRYX4VdTpkw/dcBI+MmSa4IwiSxcuIae
-XRuX1Behy4h9/jqwWFNdEJaR7UokBzP7N1ik7gGXr0sF7J8AGc35tp1NMI17cMcs
-Wfmw96hOTYhbphDPpHLiXm1yWKu2q8Xwnnn2JhKcKbFIK10L1XBzYyvhfhD2DXxQ
-RJNnb/v8DS78y+eChIxplQJ/5vpj21t4wI7gtsdA/t+zgtPMqFVkaCFxxZwddxMK
-Ogu4R8YYC/sz8KYLEA65G7EbNdMHNERGHXw7Nxb6Fs0bYeM5owtKn85SO5EKJLYr
-jjs16yHmtAAw9D7iXMt7szB3mQOAEImgj+PvhxV71KRFtwYGUkeBYoAN7xKeX7HN
-nGsHIPs4looLULPRPPphkVQYtyCT2gG8e/uJ5kf5IaXIu07ASoKJ9tpCONnNo41A
-fAHoOluZPB2RP307xJ+TF37Qc7Kw9h1Bv3PLkMeUnQEP5r71sC+rTkdWoDKMfKlO
-pzfMVbTQJ6paixTR/Ixc/GIFj7lEBWEA7fchIHnHd0wb3s1g6Rk=
-=nr0U
------END PGP SIGNATURE-----
-
---jfajk7u4fn52bx2k--
+diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+index b63392d9cc47..3c6762430fd9 100644
+--- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
++++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+@@ -10,7 +10,7 @@ described in mmc.txt, can be used. Additionally the following tmio_mmc-specific
+ optional bindings can be used.
+ 
+ Required properties:
+-- compatible:	"renesas,sdhi-shmobile" - a generic sh-mobile SDHI unit
++- compatible: should contain one or more of the following:
+ 		"renesas,sdhi-sh73a0" - SDHI IP on SH73A0 SoC
+ 		"renesas,sdhi-r7s72100" - SDHI IP on R7S72100 SoC
+ 		"renesas,sdhi-r8a73a4" - SDHI IP on R8A73A4 SoC
+@@ -26,6 +26,16 @@ Required properties:
+ 		"renesas,sdhi-r8a7794" - SDHI IP on R8A7794 SoC
+ 		"renesas,sdhi-r8a7795" - SDHI IP on R8A7795 SoC
+ 		"renesas,sdhi-r8a7796" - SDHI IP on R8A7796 SoC
++		"renesas,sdhi-shmobile" - a generic sh-mobile SDHI controller
++		"renesas,rcar-gen1-sdhi" - a generic R-Car Gen1 SDHI controller
++		"renesas,rcar-gen2-sdhi" - a generic R-Car Gen2 or RZ/G1
++					   SDHI controller
++		"renesas,rcar-gen3-sdhi" - a generic R-Car Gen3 SDHI controller
++
++
++		When compatible with the generic version, nodes must list
++		the SoC-specific version corresponding to the platform
++		first followed by the generic version.
+ 
+ - clocks: Most controllers only have 1 clock source per channel. However, on
+ 	  some variations of this controller, the internal card detection
+@@ -47,7 +57,7 @@ Optional properties:
+ Example: R8A7790 (R-Car H2) SDHI controller nodes
+ 
+ 	sdhi0: sd@ee100000 {
+-		compatible = "renesas,sdhi-r8a7790";
++		compatible = "renesas,sdhi-r8a7790", "renesas,rcar-gen2-sdhi";
+ 		reg = <0 0xee100000 0 0x328>;
+ 		interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cpg CPG_MOD 314>;
+@@ -61,7 +71,7 @@ Example: R8A7790 (R-Car H2) SDHI controller nodes
+ 	};
+ 
+ 	sdhi1: sd@ee120000 {
+-		compatible = "renesas,sdhi-r8a7790";
++		compatible = "renesas,sdhi-r8a7790", "renesas,rcar-gen2-sdhi";
+ 		reg = <0 0xee120000 0 0x328>;
+ 		interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cpg CPG_MOD 313>;
+@@ -75,7 +85,7 @@ Example: R8A7790 (R-Car H2) SDHI controller nodes
+ 	};
+ 
+ 	sdhi2: sd@ee140000 {
+-		compatible = "renesas,sdhi-r8a7790";
++		compatible = "renesas,sdhi-r8a7790", "renesas,rcar-gen2-sdhi";
+ 		reg = <0 0xee140000 0 0x100>;
+ 		interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cpg CPG_MOD 312>;
+@@ -89,7 +99,7 @@ Example: R8A7790 (R-Car H2) SDHI controller nodes
+ 	};
+ 
+ 	sdhi3: sd@ee160000 {
+-		compatible = "renesas,sdhi-r8a7790";
++		compatible = "renesas,sdhi-r8a7790", "renesas,rcar-gen2-sdhi";
+ 		reg = <0 0xee160000 0 0x100>;
+ 		interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cpg CPG_MOD 311>;
+-- 
+2.11.0
