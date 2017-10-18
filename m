@@ -1,56 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:41812 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755828AbdJLJhw (ORCPT
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:57146 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935629AbdJRHfe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 12 Oct 2017 05:37:52 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chris Brandt <chris.brandt@renesas.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: renesas: rz: clk-rz is meant for RZ/A1
-Date: Thu, 12 Oct 2017 11:37:48 +0200
-Message-Id: <1507801068-12024-1-git-send-email-geert+renesas@glider.be>
+        Wed, 18 Oct 2017 03:35:34 -0400
+Received: by mail-wm0-f67.google.com with SMTP id l68so8222935wmd.5
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 18 Oct 2017 00:35:34 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <20171018072728.14681-2-horms+renesas@verge.net.au>
+References: <20171018072728.14681-1-horms+renesas@verge.net.au> <20171018072728.14681-2-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 18 Oct 2017 09:35:33 +0200
+Message-ID: <CAMuHMdWFORA=LL_e8RGYL3hzhZsCaVLfROKTNE57m3oJUD=tbw@mail.gmail.com>
+Subject: Re: [PATCH 1/7] ARM: dts: r8a7743: Use R-Car Gen2 Ether fallback
+ compat string
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The RZ family of Renesas SoCs has several different subfamilies (RZ/A,
-RZ/G, RZ/N, and RZ/T).  Clarify that the renesas,rz-cpg-clocks DT
-bindings and clk-rz driver apply to RZ/A1 only.
+On Wed, Oct 18, 2017 at 9:27 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> Use newly added R-Car Gen2 Ether fallback compat string
+> in the DT of the r8a7743 SoC.
+>
+> This should have no run-time effect as the driver matches against
+> the per-SoC compat string before considering the fallback compat string.
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-To be queued in clk-renesas-for-v4.15.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
- Documentation/devicetree/bindings/clock/renesas,rz-cpg-clocks.txt | 4 ++--
- drivers/clk/renesas/clk-rz.c                                      | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,rz-cpg-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,rz-cpg-clocks.txt
-index bb5d942075fbf0bf..8ff3e2774ed8d1d0 100644
---- a/Documentation/devicetree/bindings/clock/renesas,rz-cpg-clocks.txt
-+++ b/Documentation/devicetree/bindings/clock/renesas,rz-cpg-clocks.txt
-@@ -1,6 +1,6 @@
--* Renesas RZ Clock Pulse Generator (CPG)
-+* Renesas RZ/A1 Clock Pulse Generator (CPG)
- 
--The CPG generates core clocks for the RZ SoCs. It includes the PLL, variable
-+The CPG generates core clocks for the RZ/A1 SoCs. It includes the PLL, variable
- CPU and GPU clocks, and several fixed ratio dividers.
- The CPG also provides a Clock Domain for SoC devices, in combination with the
- CPG Module Stop (MSTP) Clocks.
-diff --git a/drivers/clk/renesas/clk-rz.c b/drivers/clk/renesas/clk-rz.c
-index 5adb934326d1f5be..127c58135c8fec76 100644
---- a/drivers/clk/renesas/clk-rz.c
-+++ b/drivers/clk/renesas/clk-rz.c
-@@ -1,5 +1,5 @@
- /*
-- * rz Core CPG Clocks
-+ * RZ/A1 Core CPG Clocks
-  *
-  * Copyright (C) 2013 Ideas On Board SPRL
-  * Copyright (C) 2014 Wolfram Sang, Sang Engineering <wsa@sang-engineering.com>
--- 
-2.7.4
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
