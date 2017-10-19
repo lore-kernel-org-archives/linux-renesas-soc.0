@@ -1,98 +1,91 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:26041 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753060AbdJSLjN (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:48414 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751962AbdJSIeE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 Oct 2017 07:39:13 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Konrad Rzeszutek Wilk <konrad@darnok.org>
-CC: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Thu, 19 Oct 2017 04:34:04 -0400
+MIME-Version: 1.0
+In-Reply-To: <20171019002412.GA14493@localhost.localdomain>
+References: <1508225421-25405-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1508225421-25405-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <CAMuHMdXyY-gvQGn2UxhUDsdhdWUMmTA80z73PF14otvcKuTMaw@mail.gmail.com> <20171019002412.GA14493@localhost.localdomain>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 19 Oct 2017 10:34:02 +0200
+Message-ID: <CAMuHMdUs+dLq8LJTJoUQEUzJAKXCfD0JBtVnHPyN6XdppVy5qQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mmc: renesas_sdhi: fix swiotlb buffer is full
+To: Konrad Rzeszutek Wilk <konrad@darnok.org>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         Linux MMC List <linux-mmc@vger.kernel.org>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
-Subject: RE: [PATCH 1/2] mmc: renesas_sdhi: fix swiotlb buffer is full
-Date: Thu, 19 Oct 2017 11:39:08 +0000
-Message-ID: <TY1PR06MB09928E11C2AFFD55EF68961CD8420@TY1PR06MB0992.apcprd06.prod.outlook.com>
-References: <1508225421-25405-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1508225421-25405-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <CAMuHMdXyY-gvQGn2UxhUDsdhdWUMmTA80z73PF14otvcKuTMaw@mail.gmail.com>
- <20171019002412.GA14493@localhost.localdomain>
- <CAMuHMdUs+dLq8LJTJoUQEUzJAKXCfD0JBtVnHPyN6XdppVy5qQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdUs+dLq8LJTJoUQEUzJAKXCfD0JBtVnHPyN6XdppVy5qQ@mail.gmail.com>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        iommu@lists.linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQtc2FuLCBLb25yYWQtc2FuLA0KDQo+IEZyb206IEdlZXJ0IFV5dHRlcmhvZXZlbiwg
-U2VudDogVGh1cnNkYXksIE9jdG9iZXIgMTksIDIwMTcgNTozNCBQTQ0KPiANCj4gSGkgS29ucmFk
-LA0KPiANCj4gT24gVGh1LCBPY3QgMTksIDIwMTcgYXQgMjoyNCBBTSwgS29ucmFkIFJ6ZXN6dXRl
-ayBXaWxrDQo+IDxrb25yYWRAZGFybm9rLm9yZz4gd3JvdGU6DQo+ID4gT24gVHVlLCBPY3QgMTcs
-IDIwMTcgYXQgMTA6MDI6NTBBTSArMDIwMCwgR2VlcnQgVXl0dGVyaG9ldmVuIHdyb3RlOg0KPiA+
-PiBPbiBUdWUsIE9jdCAxNywgMjAxNyBhdCA5OjMwIEFNLCBZb3NoaWhpcm8gU2hpbW9kYQ0KPiA+
-PiA8eW9zaGloaXJvLnNoaW1vZGEudWhAcmVuZXNhcy5jb20+IHdyb3RlOg0KPiA+PiA+IFNpbmNl
-IHRoZSBjb21taXQgZGUzZWU5OWIwOTdkICgibW1jOiBEZWxldGUgYm91bmNlIGJ1ZmZlciBoYW5k
-bGluZyIpDQo+ID4+ID4gZGVsZXRlcyB0aGUgYm91bmNlIGJ1ZmZlciBoYW5kbGluZywgYSByZXF1
-ZXN0IGRhdGEgc2l6ZSB3aWxsIGJlIHJlZmVycmVkDQo+ID4+ID4gdG8gbWF4X3tyZXEsc2VnfV9z
-aXplIGluc3RlYWQgb2YgTU1DX1FVRVVFX0JPVU5DRVNaICg2NGsgYnl0ZXMpLg0KPiA+PiA+DQo+
-ID4+ID4gSW4gb3RoZXIgaGFuZCwgcmVuZXNhc19zZGhpX2ludGVybmFsX2RtYWMuYyB3aWxsIHNl
-dCB2ZXJ5IGJpZyB2YWx1ZSBvZg0KPiA+PiA+IG1heF97cmVxLHNlZ31fc2l6ZSBiZWNhdXNlIHRo
-ZSBtYXhfYmxrX2NvdW50IGlzIHNldCB0byAweGZmZmZmZmZmLg0KPiA+PiA+IEFuZCB0aGVuLCAi
-c3dpb3RsYiBidWZmZXIgaXMgZnVsbCIgaGFwcGVucyBiZWNhdXNlIHN3aW90bGIgY2FuIGhhbmRs
-ZQ0KPiA+PiA+IGEgbWVtb3J5IHNpemUgdXAgdG8gMjU2ayBieXRlcyBvbmx5IChJT19UTEJfU0VH
-U0laRSA9IDEyOCBhbmQNCj4gPj4gPiBJT19UTEJfU0hJRlQgPSAxMSkuDQo+ID4+ID4NCj4gPj4g
-PiBTbywgdGhpcyBwYXRjaCBmaXhlcyB0aGUgaXNzdWUgdG8gc2V0IG1heF9ibGtfY291bnQgdG8g
-NTEyLiBUaGVuLA0KPiA+PiA+IHRoZSBtYXhfe3JlcSxzZWd9X3NpemUgd2lsbCBiZSBzZXQgdG8g
-MjU2ayBieXRlcy4NCj4gPj4gPg0KPiA+PiA+IFJlcG9ydGVkLWJ5OiBEaXJrIEJlaG1lIDxkaXJr
-LmJlaG1lQGRlLmJvc2NoLmNvbT4NCj4gPj4gPiBTaWduZWQtb2ZmLWJ5OiBZb3NoaWhpcm8gU2hp
-bW9kYSA8eW9zaGloaXJvLnNoaW1vZGEudWhAcmVuZXNhcy5jb20+DQo+ID4+DQo+ID4+IFRoYW5r
-cyBmb3IgeW91ciBwYXRjaCENCj4gPj4NCj4gPj4gPiAtLS0NCj4gPj4gPiAgZHJpdmVycy9tbWMv
-aG9zdC9yZW5lc2FzX3NkaGlfaW50ZXJuYWxfZG1hYy5jIHwgNSArKystLQ0KPiA+PiA+ICAxIGZp
-bGUgY2hhbmdlZCwgMyBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQ0KPiA+PiA+DQo+ID4+
-ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbW1jL2hvc3QvcmVuZXNhc19zZGhpX2ludGVybmFsX2Rt
-YWMuYyBiL2RyaXZlcnMvbW1jL2hvc3QvcmVuZXNhc19zZGhpX2ludGVybmFsX2RtYWMuYw0KPiA+
-PiA+IGluZGV4IGY5MDVmMjMuLjZjOWI0YjIgMTAwNjQ0DQo+ID4+ID4gLS0tIGEvZHJpdmVycy9t
-bWMvaG9zdC9yZW5lc2FzX3NkaGlfaW50ZXJuYWxfZG1hYy5jDQo+ID4+ID4gKysrIGIvZHJpdmVy
-cy9tbWMvaG9zdC9yZW5lc2FzX3NkaGlfaW50ZXJuYWxfZG1hYy5jDQo+ID4+ID4gQEAgLTgwLDgg
-KzgwLDkgQEANCj4gPj4gPiAgICAgICAgIC5zY2Nfb2Zmc2V0ICAgICA9IDB4MTAwMCwNCj4gPj4g
-PiAgICAgICAgIC50YXBzICAgICAgICAgICA9IHJjYXJfZ2VuM19zY2NfdGFwcywNCj4gPj4gPiAg
-ICAgICAgIC50YXBzX251bSAgICAgICA9IEFSUkFZX1NJWkUocmNhcl9nZW4zX3NjY190YXBzKSwN
-Cj4gPj4gPiAtICAgICAgIC8qIEdlbjMgU0RISSBETUFDIGNhbiBoYW5kbGUgMHhmZmZmZmZmZiBi
-bGsgY291bnQsIGJ1dCBzZWcgPSAxICovDQo+ID4+ID4gLSAgICAgICAubWF4X2Jsa19jb3VudCAg
-PSAweGZmZmZmZmZmLA0KPiA+PiA+ICsgICAgICAgLyogVGhlIHN3aW90bGIgY2FuIGhhbmRsZSBt
-ZW1vcnkgc2l6ZSB1cCB0byAyNTYga2J5dGVzIGZvciBub3cuICovDQo+ID4+ID4gKyAgICAgICAu
-bWF4X2Jsa19jb3VudCAgPSA1MTIsDQo+ID4+DQo+ID4+IEZpeGluZyB0aGlzIGluIHRoZSBpbmRp
-dmlkdWFsIGRyaXZlcnMgZmVlbHMgbGlrZSB0aGUgd3Jvbmcgc29sdXRpb24gdG8gbWUuDQo+ID4+
-DQo+ID4+IGlvbW11OiBJcyB0aGVyZSBhIGJldHRlciAoZ2VuZXJpYykgd2F5IHRvIGhhbmRsZSB0
-aGlzPw0KPiA+DQo+ID4gWWVzLiBTZWUgNzQ1M2M1NDlmNWY2NDg1YzBkNzljYWQ3ODQ0ODcwZGNj
-N2QxYjM0ZCwgYWthIHN3aW90bGJfbWF4X3NlZ21lbnQNCj4gDQo+IFRoYW5rcyBmb3IgdGhlIHBv
-aW50ZXIhDQo+IA0KPiBXaGlsZSBJIGFncmVlIHRoaXMgY2FuIGJlIHVzZWQgdG8gYXZvaWQgdGhl
-IHN3aW90bGIgYnVmZmVyIGZ1bGwgaXNzdWUsDQo+IEkgYmVsaWV2ZSBpdCBpcyBhIHN1Ym9wdGlt
-YWwgc29sdXRpb24gaWYgdGhlIGRldmljZSBhY3R1YWxseSB1c2VzIGFuIElPTU1VLg0KPiBJdCBs
-aW1pdHMgdGhlIG1hcHBpbmcgc2l6ZSBpZiBDT05GSUdfU1dJT1RMQj15LCB3aGljaCBpcyBhbHdh
-eXMgdGhlDQo+IGNhc2UgZm9yIGFybS9hcm02NCB0aGVzZSBkYXlzLg0KDQpJJ20gYWZyYWlkIGJ1
-dCBJIG1pc3VuZGVyc3Rvb2QgdGhpcyBBUEkncyBzcGVjIHdoZW4gSSByZWFkIGl0IGF0IGZpcnN0
-Lg0KQWZ0ZXIgSSB0cmllZCB0byB1c2UgaXQsIEkgZm91bmQgdGhlIEFQSSBjYW5ub3QgYmUgdXNl
-ZCBmb3IgYSB3b3JrYXJvdW5kIGJlY2F1c2UNCnRoaXMgQVBJIHJldHVybnMgdG90YWwgc2l6ZSBv
-ZiBzd2lvdGxiLg0KDQpGb3IgZXhhbXBsZToNCiAtIFRoZSBzd2lvdGxiX21heF9zZWdtZW50KCkg
-cmV0dXJucyA2NE0gYnl0ZXMgZnJvbSB0aGUgQVBJIHdoZW4gYSBkZWZhdWx0IHNldHRpbmcuDQog
-IC0gSW4gdGhpcyBjYXNlLCB0aGUgbWF4aW11bSBzaXplIHBlciBhIG1hcCBpcyAyNTZrIGJ5dGVz
-Lg0KIC0gVGhlIHN3aW90bGJfbWF4X3NlZ21lbnQoKSByZXR1cm5zIDEyOE0gYnl0ZXMgZnJvbSB0
-aGUgQVBJIHdoZW4gSSBhZGRlZCBzd2lvdGxiPTY1NTM2DQogICBpbnRvIHRoZSBrZXJuZWwgcGFy
-YW1ldGVyIG9uIGFybTY0Lg0KICAtIEluIHRoaXMgY2FzZSwgdGhlIG1heGltdW0gc2l6ZSBwZXIg
-YSBtYXAgaXMgc3RpbGwgMjU2ayBieXRlcyBiZWNhdXNlDQogICAgdGhlIHN3aW90bGIgaGFzIGhh
-cmRjb2RlZCB0aGUgc2l6ZSBieSB0aGUgZm9sbG93aW5nIGNvZGU6DQogICAgIGh0dHBzOi8vZ2l0
-Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L3RvcnZhbGRzL2xpbnV4LmdpdC90
-cmVlL2xpYi9zd2lvdGxiLmM/aD12NC4xNC1yYzUjbjI1NA0KDQpTbywgaG93IGRvIHdlIGhhbmRs
-ZSB0byByZXNvbHZlIChvciBhdm9pZCkgdGhlIGlzc3VlPw0KDQpCZXN0IHJlZ2FyZHMsDQpZb3No
-aWhpcm8gU2hpbW9kYQ0KDQo+IEdye29ldGplLGVldGluZ31zLA0KPiANCj4gICAgICAgICAgICAg
-ICAgICAgICAgICAgR2VlcnQNCj4gDQo+IC0tDQo+IEdlZXJ0IFV5dHRlcmhvZXZlbiAtLSBUaGVy
-ZSdzIGxvdHMgb2YgTGludXggYmV5b25kIGlhMzIgLS0gZ2VlcnRAbGludXgtbTY4ay5vcmcNCj4g
-DQo+IEluIHBlcnNvbmFsIGNvbnZlcnNhdGlvbnMgd2l0aCB0ZWNobmljYWwgcGVvcGxlLCBJIGNh
-bGwgbXlzZWxmIGEgaGFja2VyLiBCdXQNCj4gd2hlbiBJJ20gdGFsa2luZyB0byBqb3VybmFsaXN0
-cyBJIGp1c3Qgc2F5ICJwcm9ncmFtbWVyIiBvciBzb21ldGhpbmcgbGlrZSB0aGF0Lg0KPiAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgIC0tIExpbnVzIFRvcnZhbGRzDQo=
+Hi Konrad,
+
+On Thu, Oct 19, 2017 at 2:24 AM, Konrad Rzeszutek Wilk
+<konrad@darnok.org> wrote:
+> On Tue, Oct 17, 2017 at 10:02:50AM +0200, Geert Uytterhoeven wrote:
+>> On Tue, Oct 17, 2017 at 9:30 AM, Yoshihiro Shimoda
+>> <yoshihiro.shimoda.uh@renesas.com> wrote:
+>> > Since the commit de3ee99b097d ("mmc: Delete bounce buffer handling")
+>> > deletes the bounce buffer handling, a request data size will be referred
+>> > to max_{req,seg}_size instead of MMC_QUEUE_BOUNCESZ (64k bytes).
+>> >
+>> > In other hand, renesas_sdhi_internal_dmac.c will set very big value of
+>> > max_{req,seg}_size because the max_blk_count is set to 0xffffffff.
+>> > And then, "swiotlb buffer is full" happens because swiotlb can handle
+>> > a memory size up to 256k bytes only (IO_TLB_SEGSIZE = 128 and
+>> > IO_TLB_SHIFT = 11).
+>> >
+>> > So, this patch fixes the issue to set max_blk_count to 512. Then,
+>> > the max_{req,seg}_size will be set to 256k bytes.
+>> >
+>> > Reported-by: Dirk Behme <dirk.behme@de.bosch.com>
+>> > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+>>
+>> Thanks for your patch!
+>>
+>> > ---
+>> >  drivers/mmc/host/renesas_sdhi_internal_dmac.c | 5 +++--
+>> >  1 file changed, 3 insertions(+), 2 deletions(-)
+>> >
+>> > diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+>> > index f905f23..6c9b4b2 100644
+>> > --- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+>> > +++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+>> > @@ -80,8 +80,9 @@
+>> >         .scc_offset     = 0x1000,
+>> >         .taps           = rcar_gen3_scc_taps,
+>> >         .taps_num       = ARRAY_SIZE(rcar_gen3_scc_taps),
+>> > -       /* Gen3 SDHI DMAC can handle 0xffffffff blk count, but seg = 1 */
+>> > -       .max_blk_count  = 0xffffffff,
+>> > +       /* The swiotlb can handle memory size up to 256 kbytes for now. */
+>> > +       .max_blk_count  = 512,
+>>
+>> Fixing this in the individual drivers feels like the wrong solution to me.
+>>
+>> iommu: Is there a better (generic) way to handle this?
+>
+> Yes. See 7453c549f5f6485c0d79cad7844870dcc7d1b34d, aka swiotlb_max_segment
+
+Thanks for the pointer!
+
+While I agree this can be used to avoid the swiotlb buffer full issue,
+I believe it is a suboptimal solution if the device actually uses an IOMMU.
+It limits the mapping size if CONFIG_SWIOTLB=y, which is always the
+case for arm/arm64 these days.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
