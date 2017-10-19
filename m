@@ -1,45 +1,96 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:40436 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752288AbdJKLua (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:9641 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750777AbdJSEg4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Oct 2017 07:50:30 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/3] clk: renesas: r8a77995: Correct parent clock of INTC-AP
-Date: Wed, 11 Oct 2017 10:29:52 +0200
-Message-Id: <1507710592-13740-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1507710592-13740-1-git-send-email-geert+renesas@glider.be>
-References: <1507710592-13740-1-git-send-email-geert+renesas@glider.be>
+        Thu, 19 Oct 2017 00:36:56 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: "horms@verge.net.au" <horms@verge.net.au>,
+        "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>
+CC: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH] arm64: dts: renesas: salvator-common: add dr_mode
+ property for USB2.0 channel 0
+Date: Thu, 19 Oct 2017 04:36:51 +0000
+Message-ID: <TY1PR06MB0992CA7C57C49DC0FB7B134BD8420@TY1PR06MB0992.apcprd06.prod.outlook.com>
+References: <1507800210-13403-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1507800210-13403-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-According to the R-Car Gen3 Hardware Manual Errata for Rev 0.55 of
-September 8, 2017, the parent clock of the INTC-AP module clock on R-Car
-D3 is S1D2.
+Hi Simon-san,
 
-This change has no functional impact.
+> From: Yoshihiro Shimoda, Sent: Thursday, October 12, 2017 6:24 PM
+>=20
+> Since Salvator-X[S] have a USB2.0 dual-role channel (CN9), this patch
+> adds dr_mode property for USB2.0 channel 0 (EHCI/OHCI and HS-USB)
+> as "otg".
+>=20
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> ---
+>  This patch based on the renesas.git / renesas-devel-20171011-v4.14-rc4 t=
+ag.
+>=20
+>  Using dual-role channel (or not) is related to the type of USB receptor =
+on
+>  board specification. So, I added the property into the salvator-common.d=
+tsi.
+>=20
+>  This property will be used by phy-rcar-gen3-usb2 driver in the future [1=
+].
+>  However, adding this property without the [1] patch will not cause any
+>  side-effects.
+>=20
+>  [1] : https://patchwork.kernel.org/patch/10001113/
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/renesas/r8a77995-cpg-mssr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Would you apply this patch for v4.15?
+I got ack from the PHY maintainer:
 
-diff --git a/drivers/clk/renesas/r8a77995-cpg-mssr.c b/drivers/clk/renesas/r8a77995-cpg-mssr.c
-index e594cf8ee63b64e0..ea4cafbe6e851aca 100644
---- a/drivers/clk/renesas/r8a77995-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a77995-cpg-mssr.c
-@@ -127,7 +127,7 @@ static const struct mssr_mod_clk r8a77995_mod_clks[] __initconst = {
- 	DEF_MOD("usb-dmac1",		 331,	R8A77995_CLK_S3D1),
- 	DEF_MOD("rwdt",			 402,	R8A77995_CLK_R),
- 	DEF_MOD("intc-ex",		 407,	R8A77995_CLK_CP),
--	DEF_MOD("intc-ap",		 408,	R8A77995_CLK_S3D1),
-+	DEF_MOD("intc-ap",		 408,	R8A77995_CLK_S1D2),
- 	DEF_MOD("audmac0",		 502,	R8A77995_CLK_S3D1),
- 	DEF_MOD("hscif3",		 517,	R8A77995_CLK_S3D1C),
- 	DEF_MOD("hscif0",		 520,	R8A77995_CLK_S3D1C),
--- 
-2.7.4
+https://www.mail-archive.com/linux-renesas-soc@vger.kernel.org/msg19494.htm=
+l
+
+Best regards,
+Yoshihiro Shimoda
+
+>=20
+>  arch/arm64/boot/dts/renesas/salvator-common.dtsi | 3 +++
+>  1 file changed, 3 insertions(+)
+>=20
+> diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm6=
+4/boot/dts/renesas/salvator-common.dtsi
+> index 3dcb26b..9bd409b 100644
+> --- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+> @@ -282,6 +282,7 @@
+>  };
+>=20
+>  &ehci0 {
+> +	dr_mode =3D "otg";
+>  	status =3D "okay";
+>  };
+>=20
+> @@ -294,6 +295,7 @@
+>  };
+>=20
+>  &hsusb {
+> +	dr_mode =3D "otg";
+>  	status =3D "okay";
+>  };
+>=20
+> @@ -356,6 +358,7 @@
+>  };
+>=20
+>  &ohci0 {
+> +	dr_mode =3D "otg";
+>  	status =3D "okay";
+>  };
+>=20
+> --
+> 1.9.1
