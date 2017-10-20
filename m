@@ -1,46 +1,92 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:38914 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752665AbdJTKa0 (ORCPT
+        with ESMTP id S1752665AbdJTKaL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Oct 2017 06:30:26 -0400
+        Fri, 20 Oct 2017 06:30:11 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 37/42] ARM: dts: r8a7793: Add missing clock for secondary CA15 CPU core
-Date: Fri, 20 Oct 2017 12:29:04 +0200
-Message-Id: <f359fd3bba71176a122939fe3db9c7f20000d3f0.1508493785.git.horms+renesas@verge.net.au>
+Subject: [PATCH 24/42] ARM: dts: r8a7790: Use R-Car GPIO Gen2 fallback compat string
+Date: Fri, 20 Oct 2017 12:28:51 +0200
+Message-Id: <26742a192c82cc28723c80dbecc5976db0508461.1508493785.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1508493785.git.horms+renesas@verge.net.au>
 References: <cover.1508493785.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Use newly added R-Car GPIO Gen2 fallback compat string
+in place of now deprecated non-generation specific
+R-Car GPIO fallback compat string in the DT of the r8a7790 SoC.
 
-Currently only the primary CPU in the CA15 cluster has a clocks
-property, while the secondary CPU core is driven by the same clock.
-Add the missing clocks property to fix this.
+This should have no run-time effect as the driver matches against
+the per-SoC compat string before considering the fallback compat string.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7793.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/r8a7790.dtsi | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index 76418c375a10..58eae569b4e0 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -62,6 +62,7 @@
- 			compatible = "arm,cortex-a15";
- 			reg = <1>;
- 			clock-frequency = <1500000000>;
-+			clocks = <&cpg CPG_CORE R8A7793_CLK_Z>;
- 			power-domains = <&sysc R8A7793_PD_CA15_CPU1>;
- 		};
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 92b7f3bd8b69..f247beb3863f 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -200,7 +200,7 @@
+ 	};
  
+ 	gpio0: gpio@e6050000 {
+-		compatible = "renesas,gpio-r8a7790", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7790", "renesas,rcar-gen2-gpio";
+ 		reg = <0 0xe6050000 0 0x50>;
+ 		interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -214,7 +214,7 @@
+ 	};
+ 
+ 	gpio1: gpio@e6051000 {
+-		compatible = "renesas,gpio-r8a7790", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7790", "renesas,rcar-gen2-gpio";
+ 		reg = <0 0xe6051000 0 0x50>;
+ 		interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -228,7 +228,7 @@
+ 	};
+ 
+ 	gpio2: gpio@e6052000 {
+-		compatible = "renesas,gpio-r8a7790", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7790", "renesas,rcar-gen2-gpio";
+ 		reg = <0 0xe6052000 0 0x50>;
+ 		interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -242,7 +242,7 @@
+ 	};
+ 
+ 	gpio3: gpio@e6053000 {
+-		compatible = "renesas,gpio-r8a7790", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7790", "renesas,rcar-gen2-gpio";
+ 		reg = <0 0xe6053000 0 0x50>;
+ 		interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -256,7 +256,7 @@
+ 	};
+ 
+ 	gpio4: gpio@e6054000 {
+-		compatible = "renesas,gpio-r8a7790", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7790", "renesas,rcar-gen2-gpio";
+ 		reg = <0 0xe6054000 0 0x50>;
+ 		interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -270,7 +270,7 @@
+ 	};
+ 
+ 	gpio5: gpio@e6055000 {
+-		compatible = "renesas,gpio-r8a7790", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7790", "renesas,rcar-gen2-gpio";
+ 		reg = <0 0xe6055000 0 0x50>;
+ 		interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
 -- 
 2.11.0
