@@ -1,69 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:37026 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751996AbdJDMhA (ORCPT
+Received: from mail-it0-f66.google.com ([209.85.214.66]:52136 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752499AbdJTKDt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Oct 2017 08:37:00 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/4] ARM: dts: r8a7790: Use generic node name for VSP1 nodes
-Date: Wed,  4 Oct 2017 14:36:46 +0200
-Message-Id: <1507120609-14501-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1507120609-14501-1-git-send-email-geert+renesas@glider.be>
-References: <1507120609-14501-1-git-send-email-geert+renesas@glider.be>
+        Fri, 20 Oct 2017 06:03:49 -0400
+Received: by mail-it0-f66.google.com with SMTP id o135so12867962itb.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Oct 2017 03:03:49 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1508469162-12322-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1508469162-12322-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 20 Oct 2017 12:03:48 +0200
+Message-ID: <CAPDyKFp5rtmNiQgkpiaBfnLP4ERePY8ckvF+MTPajbG6G+Rorg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] mmc: renesas_sdhi and tmio: bugfixes for v4.14
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use the preferred generic node name instead of the specific name.
+On 20 October 2017 at 05:12, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> This patch set is based on mainline v4.14-rc5.
+>
+> Changes from v1:
+>  - Calculate the max size of swiotlb memory instead of hardcoded value
+>    in patch 1.
+>  - Add Reviewed-by from Geert-san in patch 2. (Geert-san, thanks!)
+>
+> Yoshihiro Shimoda (2):
+>   mmc: tmio: fix swiotlb buffer is full
+>   mmc: renesas_sdhi: fix kernel panic in _internal_dmac.c
+>
+>  drivers/mmc/host/renesas_sdhi_internal_dmac.c | 17 ++++++++++-------
+>  drivers/mmc/host/tmio_mmc_core.c              | 13 +++++++++++++
+>  2 files changed, 23 insertions(+), 7 deletions(-)
+>
+> --
+> 1.9.1
+>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7790.dtsi | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Thanks, applied for fixes!
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 252c9664d0836838..ffa57bfe4873415c 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -1010,7 +1010,7 @@
- 		status = "disabled";
- 	};
- 
--	vsp1@fe920000 {
-+	vsp@fe920000 {
- 		compatible = "renesas,vsp1";
- 		reg = <0 0xfe920000 0 0x8000>;
- 		interrupts = <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>;
-@@ -1019,7 +1019,7 @@
- 		resets = <&cpg 130>;
- 	};
- 
--	vsp1@fe928000 {
-+	vsp@fe928000 {
- 		compatible = "renesas,vsp1";
- 		reg = <0 0xfe928000 0 0x8000>;
- 		interrupts = <GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>;
-@@ -1028,7 +1028,7 @@
- 		resets = <&cpg 131>;
- 	};
- 
--	vsp1@fe930000 {
-+	vsp@fe930000 {
- 		compatible = "renesas,vsp1";
- 		reg = <0 0xfe930000 0 0x8000>;
- 		interrupts = <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
-@@ -1037,7 +1037,7 @@
- 		resets = <&cpg 128>;
- 	};
- 
--	vsp1@fe938000 {
-+	vsp@fe938000 {
- 		compatible = "renesas,vsp1";
- 		reg = <0 0xfe938000 0 0x8000>;
- 		interrupts = <GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>;
--- 
-2.7.4
+Kind regards
+Uffe
