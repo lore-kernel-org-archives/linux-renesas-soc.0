@@ -1,75 +1,122 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38835 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:38914 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752092AbdJTK3N (ORCPT
+        with ESMTP id S1752507AbdJTK3z (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Oct 2017 06:29:13 -0400
+        Fri, 20 Oct 2017 06:29:55 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 08/31] arm64: dts: ulcb-kf: initial device tree
-Date: Fri, 20 Oct 2017 12:28:11 +0200
-Message-Id: <52cb66073d4358644f6adb83221e4432decb28bf.1508495040.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1508495040.git.horms+renesas@verge.net.au>
-References: <cover.1508495040.git.horms+renesas@verge.net.au>
+Subject: [PATCH 09/42] ARM: dts: r8a7790: add cpu capacity-dmips-mhz information
+Date: Fri, 20 Oct 2017 12:28:36 +0200
+Message-Id: <5bdc81259bb0efd5bd71820ef15757b70beae751.1508493785.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1508493785.git.horms+renesas@verge.net.au>
+References: <cover.1508493785.git.horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
 
-Add the initial common dtsi file for Kingfisher infotainment board (R-Car
-Starter Kit extension)
+The following 'capacity-dmips-mhz' dt property values are used:
 
-This commit supports the following peripherals:
-- HSCIF0
+Cortex-A15: 1024, Cortex-A7: 539
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+They have been derived form the cpu_efficiency values:
+
+Cortex-A15: 3891, Cortex-A7: 2048
+
+by scaling them so that the Cortex-A15s (big cores) use 1024.
+
+The cpu_efficiency values were originally derived from the "Big.LITTLE
+Processing with ARM Cortex™-A15 & Cortex-A7" white paper
+(http://www.cl.cam.ac.uk/~rdm34/big.LITTLE.pdf). Table 1 lists 1.9x
+(3891/2048) as the Cortex-A15 vs Cortex-A7 performance ratio for the
+Dhrystone benchmark.
+
+The following platform is affected once cpu-invariant accounting
+support is re-connected to the task scheduler:
+
+r8a7790-lager
+
+Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/ulcb-kf.dtsi | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
+ arch/arm/boot/dts/r8a7790.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-new file mode 100644
-index 000000000000..849f8b102c67
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-@@ -0,0 +1,31 @@
-+/*
-+ * Device Tree Source for the Kingfisher (ULCB extension) board
-+ *
-+ * Copyright (C) 2017 Renesas Electronics Corp.
-+ * Copyright (C) 2017 Cogent Embedded, Inc.
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2.  This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
-+
-+/ {
-+	aliases {
-+		serial1 = &hscif0;
-+	};
-+};
-+
-+&hscif0 {
-+	pinctrl-0 = <&hscif0_pins>;
-+	pinctrl-names = "default";
-+	uart-has-rtscts;
-+
-+	status = "okay";
-+};
-+
-+&pfc {
-+	hscif0_pins: hscif0 {
-+		groups = "hscif0_data", "hscif0_ctrl";
-+		function = "hscif0";
-+	};
-+};
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 17a48199b7a9..92b7f3bd8b69 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -56,6 +56,7 @@
+ 			clock-latency = <300000>; /* 300 us */
+ 			power-domains = <&sysc R8A7790_PD_CA15_CPU0>;
+ 			next-level-cache = <&L2_CA15>;
++			capacity-dmips-mhz = <1024>;
+ 
+ 			/* kHz - uV - OPPs unknown yet */
+ 			operating-points = <1400000 1000000>,
+@@ -73,6 +74,7 @@
+ 			clock-frequency = <1300000000>;
+ 			power-domains = <&sysc R8A7790_PD_CA15_CPU1>;
+ 			next-level-cache = <&L2_CA15>;
++			capacity-dmips-mhz = <1024>;
+ 		};
+ 
+ 		cpu2: cpu@2 {
+@@ -82,6 +84,7 @@
+ 			clock-frequency = <1300000000>;
+ 			power-domains = <&sysc R8A7790_PD_CA15_CPU2>;
+ 			next-level-cache = <&L2_CA15>;
++			capacity-dmips-mhz = <1024>;
+ 		};
+ 
+ 		cpu3: cpu@3 {
+@@ -91,6 +94,7 @@
+ 			clock-frequency = <1300000000>;
+ 			power-domains = <&sysc R8A7790_PD_CA15_CPU3>;
+ 			next-level-cache = <&L2_CA15>;
++			capacity-dmips-mhz = <1024>;
+ 		};
+ 
+ 		cpu4: cpu@100 {
+@@ -100,6 +104,7 @@
+ 			clock-frequency = <780000000>;
+ 			power-domains = <&sysc R8A7790_PD_CA7_CPU0>;
+ 			next-level-cache = <&L2_CA7>;
++			capacity-dmips-mhz = <539>;
+ 		};
+ 
+ 		cpu5: cpu@101 {
+@@ -109,6 +114,7 @@
+ 			clock-frequency = <780000000>;
+ 			power-domains = <&sysc R8A7790_PD_CA7_CPU1>;
+ 			next-level-cache = <&L2_CA7>;
++			capacity-dmips-mhz = <539>;
+ 		};
+ 
+ 		cpu6: cpu@102 {
+@@ -118,6 +124,7 @@
+ 			clock-frequency = <780000000>;
+ 			power-domains = <&sysc R8A7790_PD_CA7_CPU2>;
+ 			next-level-cache = <&L2_CA7>;
++			capacity-dmips-mhz = <539>;
+ 		};
+ 
+ 		cpu7: cpu@103 {
+@@ -127,6 +134,7 @@
+ 			clock-frequency = <780000000>;
+ 			power-domains = <&sysc R8A7790_PD_CA7_CPU3>;
+ 			next-level-cache = <&L2_CA7>;
++			capacity-dmips-mhz = <539>;
+ 		};
+ 
+ 		L2_CA15: cache-controller-0 {
 -- 
 2.11.0
