@@ -1,49 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:46634 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750974AbdJGKhI (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:38914 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752665AbdJTKa1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 7 Oct 2017 06:37:08 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 01/11] mmc: add kerneldoc to mmc_regulator_get_supply()
-Date: Sat,  7 Oct 2017 12:36:48 +0200
-Message-Id: <20171007103658.16868-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20171007103658.16868-1-wsa+renesas@sang-engineering.com>
-References: <20171007103658.16868-1-wsa+renesas@sang-engineering.com>
+        Fri, 20 Oct 2017 06:30:27 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 38/42] ARM: dts: r8a7794: Add missing clock for secondary CA7 CPU core
+Date: Fri, 20 Oct 2017 12:29:05 +0200
+Message-Id: <5614e69269232da1f378e5be92714b96cdb090ef.1508493785.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1508493785.git.horms+renesas@verge.net.au>
+References: <cover.1508493785.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Especially, make clear what the return value means.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Currently only the primary CPU in the CA7 cluster has a clocks property,
+while the secondary CPU core is driven by the same clock.
+Add the missing clocks property to fix this.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/mmc/core/core.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/arm/boot/dts/r8a7794.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
-index c287d297710aa4..7859bb617a2f60 100644
---- a/drivers/mmc/core/core.c
-+++ b/drivers/mmc/core/core.c
-@@ -1595,6 +1595,16 @@ EXPORT_SYMBOL_GPL(mmc_regulator_set_vqmmc);
- 
- #endif /* CONFIG_REGULATOR */
- 
-+/**
-+ * mmc_regulator_get_supply - try to get VMMC and VQMMC regulators for a host
-+ * @mmc: the host to regulate
-+ *
-+ * Returns 0 or errno. errno should be handled, it is either a critical error
-+ * or -EPROBE_DEFER. 0 means no critical error but it does not mean all
-+ * regulators have been found because they all are optional. If you require
-+ * certain regulators, you need to check seperately in your driver if they got
-+ * populated after calling this function.
-+ */
- int mmc_regulator_get_supply(struct mmc_host *mmc)
- {
- 	struct device *dev = mmc_dev(mmc);
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index 7720a6ca8702..905e50c9b524 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -53,6 +53,7 @@
+ 			compatible = "arm,cortex-a7";
+ 			reg = <1>;
+ 			clock-frequency = <1000000000>;
++			clocks = <&cpg CPG_CORE R8A7794_CLK_Z2>;
+ 			power-domains = <&sysc R8A7794_PD_CA7_CPU1>;
+ 			next-level-cache = <&L2_CA7>;
+ 		};
 -- 
 2.11.0
