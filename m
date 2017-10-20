@@ -1,204 +1,110 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: [PATCH 2/2] drm/rcar-du: Adjust 14 checks for null pointers
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-To: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        David Airlie <airlied@linux.ie>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-References: <7d5e68c7-2d64-0131-1a08-eeb4e03cc113@users.sourceforge.net>
-Message-ID: <2dd8c930-77e8-a2ee-6356-fc9c1d21384d@users.sourceforge.net>
-Date: Tue, 24 Oct 2017 18:02:30 +0200
-MIME-Version: 1.0
-In-Reply-To: <7d5e68c7-2d64-0131-1a08-eeb4e03cc113@users.sourceforge.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:38914 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752092AbdJTK3o (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 20 Oct 2017 06:29:44 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 30/31] arm64: dts: r8a7796: Use R-Car GPIO Gen3 fallback compat string
+Date: Fri, 20 Oct 2017 12:28:33 +0200
+Message-Id: <c8ee880415894e75b5289618dc2b8108bdd96a23.1508495040.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1508495040.git.horms+renesas@verge.net.au>
+References: <cover.1508495040.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 24 Oct 2017 17:47:37 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Use newly added R-Car GPIO Gen3 fallback compat string
+in place of now deprecated non-generation specific
+R-Car GPIO fallback compat string in the DT of the r8a7796 SoC.
 
-The script “checkpatch.pl” pointed information out like the following.
+This should have no run-time effect as the driver matches against
+the per-SoC compat string before considering the fallback compat string.
 
-Comparison to NULL could be written !…
-
-Thus fix the affected source code places.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c    | 2 +-
- drivers/gpu/drm/rcar-du/rcar_du_drv.c     | 2 +-
- drivers/gpu/drm/rcar-du/rcar_du_encoder.c | 2 +-
- drivers/gpu/drm/rcar-du/rcar_du_kms.c     | 6 +++---
- drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c | 2 +-
- drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c | 2 +-
- drivers/gpu/drm/rcar-du/rcar_du_plane.c   | 6 +++---
- drivers/gpu/drm/rcar-du/rcar_du_vsp.c     | 6 +++---
- 8 files changed, 14 insertions(+), 14 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index 301ea1a8018e..67567af6e348 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -410,7 +410,7 @@ void rcar_du_crtc_finish_page_flip(struct rcar_du_crtc *rcrtc)
- 	rcrtc->event = NULL;
- 	spin_unlock_irqrestore(&dev->event_lock, flags);
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 8085fd91811e..f2b2e40c655e 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -214,7 +214,7 @@
  
--	if (event == NULL)
-+	if (!event)
- 		return;
+ 		gpio0: gpio@e6050000 {
+ 			compatible = "renesas,gpio-r8a7796",
+-				     "renesas,gpio-rcar";
++				     "renesas,rcar-gen3-gpio";
+ 			reg = <0 0xe6050000 0 0x50>;
+ 			interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
+ 			#gpio-cells = <2>;
+@@ -229,7 +229,7 @@
  
- 	spin_lock_irqsave(&dev->event_lock, flags);
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-index d2f29e6b1112..cf80476783bf 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-@@ -318,7 +318,7 @@ static int rcar_du_probe(struct platform_device *pdev)
+ 		gpio1: gpio@e6051000 {
+ 			compatible = "renesas,gpio-r8a7796",
+-				     "renesas,gpio-rcar";
++				     "renesas,rcar-gen3-gpio";
+ 			reg = <0 0xe6051000 0 0x50>;
+ 			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
+ 			#gpio-cells = <2>;
+@@ -244,7 +244,7 @@
  
- 	/* Allocate and initialize the R-Car device structure. */
- 	rcdu = devm_kzalloc(&pdev->dev, sizeof(*rcdu), GFP_KERNEL);
--	if (rcdu == NULL)
-+	if (!rcdu)
- 		return -ENOMEM;
+ 		gpio2: gpio@e6052000 {
+ 			compatible = "renesas,gpio-r8a7796",
+-				     "renesas,gpio-rcar";
++				     "renesas,rcar-gen3-gpio";
+ 			reg = <0 0xe6052000 0 0x50>;
+ 			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
+ 			#gpio-cells = <2>;
+@@ -259,7 +259,7 @@
  
- 	rcdu->dev = &pdev->dev;
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-index ba8d2804c1d1..8a9f7fa69ecc 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-@@ -166,7 +166,7 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
- 	int ret;
+ 		gpio3: gpio@e6053000 {
+ 			compatible = "renesas,gpio-r8a7796",
+-				     "renesas,gpio-rcar";
++				     "renesas,rcar-gen3-gpio";
+ 			reg = <0 0xe6053000 0 0x50>;
+ 			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
+ 			#gpio-cells = <2>;
+@@ -274,7 +274,7 @@
  
- 	renc = devm_kzalloc(rcdu->dev, sizeof(*renc), GFP_KERNEL);
--	if (renc == NULL)
-+	if (!renc)
- 		return -ENOMEM;
+ 		gpio4: gpio@e6054000 {
+ 			compatible = "renesas,gpio-r8a7796",
+-				     "renesas,gpio-rcar";
++				     "renesas,rcar-gen3-gpio";
+ 			reg = <0 0xe6054000 0 0x50>;
+ 			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
+ 			#gpio-cells = <2>;
+@@ -289,7 +289,7 @@
  
- 	renc->output = output;
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-index d2c80cc9f8ee..f87c11a3df6c 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-@@ -181,7 +181,7 @@ rcar_du_fb_create(struct drm_device *dev, struct drm_file *file_priv,
- 	unsigned int i;
+ 		gpio5: gpio@e6055000 {
+ 			compatible = "renesas,gpio-r8a7796",
+-				     "renesas,gpio-rcar";
++				     "renesas,rcar-gen3-gpio";
+ 			reg = <0 0xe6055000 0 0x50>;
+ 			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
+ 			#gpio-cells = <2>;
+@@ -304,7 +304,7 @@
  
- 	format = rcar_du_format_info(mode_cmd->pixel_format);
--	if (format == NULL) {
-+	if (!format) {
- 		dev_dbg(dev->dev, "unsupported pixel format %08x\n",
- 			mode_cmd->pixel_format);
- 		return ERR_PTR(-EINVAL);
-@@ -419,7 +419,7 @@ static int rcar_du_properties_init(struct rcar_du_device *rcdu)
- {
- 	rcdu->props.alpha =
- 		drm_property_create_range(rcdu->ddev, 0, "alpha", 0, 255);
--	if (rcdu->props.alpha == NULL)
-+	if (!rcdu->props.alpha)
- 		return -ENOMEM;
+ 		gpio6: gpio@e6055400 {
+ 			compatible = "renesas,gpio-r8a7796",
+-				     "renesas,gpio-rcar";
++				     "renesas,rcar-gen3-gpio";
+ 			reg = <0 0xe6055400 0 0x50>;
+ 			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
+ 			#gpio-cells = <2>;
+@@ -319,7 +319,7 @@
  
- 	/*
-@@ -430,7 +430,7 @@ static int rcar_du_properties_init(struct rcar_du_device *rcdu)
- 	rcdu->props.colorkey =
- 		drm_property_create_range(rcdu->ddev, 0, "colorkey",
- 					  0, 0x01ffffff);
--	if (rcdu->props.colorkey == NULL)
-+	if (!rcdu->props.colorkey)
- 		return -ENOMEM;
- 
- 	return 0;
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c b/drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c
-index b373ad48ef5f..189e71b3d5d4 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c
-@@ -63,7 +63,7 @@ int rcar_du_lvds_connector_init(struct rcar_du_device *rcdu,
- 	int ret;
- 
- 	rcon = devm_kzalloc(rcdu->dev, sizeof(*rcon), GFP_KERNEL);
--	if (rcon == NULL)
-+	if (!rcon)
- 		return -ENOMEM;
- 
- 	connector = &rcon->connector;
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c b/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c
-index 12d22f3db1af..ab2576e5d700 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c
-@@ -253,7 +253,7 @@ int rcar_du_lvdsenc_init(struct rcar_du_device *rcdu)
- 
- 	for (i = 0; i < rcdu->info->num_lvds; ++i) {
- 		lvds = devm_kzalloc(&pdev->dev, sizeof(*lvds), GFP_KERNEL);
--		if (lvds == NULL)
-+		if (!lvds)
- 			return -ENOMEM;
- 
- 		lvds->dev = rcdu;
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.c b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-index 61833cc1c699..f48a990214ed 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-@@ -584,7 +584,7 @@ static int rcar_du_plane_atomic_check(struct drm_plane *plane,
- 	}
- 
- 	rstate->format = rcar_du_format_info(state->fb->format->format);
--	if (rstate->format == NULL) {
-+	if (!rstate->format) {
- 		dev_dbg(rcdu->dev, "%s: unsupported format %08x\n", __func__,
- 			state->fb->format->format);
- 		return -EINVAL;
-@@ -637,7 +637,7 @@ rcar_du_plane_atomic_duplicate_state(struct drm_plane *plane)
- 
- 	state = to_rcar_plane_state(plane->state);
- 	copy = kmemdup(state, sizeof(*state), GFP_KERNEL);
--	if (copy == NULL)
-+	if (!copy)
- 		return NULL;
- 
- 	__drm_atomic_helper_plane_duplicate_state(plane, &copy->state);
-@@ -662,7 +662,7 @@ static void rcar_du_plane_reset(struct drm_plane *plane)
- 	}
- 
- 	state = kzalloc(sizeof(*state), GFP_KERNEL);
--	if (state == NULL)
-+	if (!state)
- 		return;
- 
- 	state->hwindex = -1;
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-index 2c96147bc444..e8e261362d9a 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-@@ -283,7 +283,7 @@ static int rcar_du_vsp_plane_atomic_check(struct drm_plane *plane,
- 	}
- 
- 	rstate->format = rcar_du_format_info(state->fb->format->format);
--	if (rstate->format == NULL) {
-+	if (!rstate->format) {
- 		dev_dbg(rcdu->dev, "%s: unsupported format %08x\n", __func__,
- 			state->fb->format->format);
- 		return -EINVAL;
-@@ -323,7 +323,7 @@ rcar_du_vsp_plane_atomic_duplicate_state(struct drm_plane *plane)
- 
- 	state = to_rcar_vsp_plane_state(plane->state);
- 	copy = kmemdup(state, sizeof(*state), GFP_KERNEL);
--	if (copy == NULL)
-+	if (!copy)
- 		return NULL;
- 
- 	__drm_atomic_helper_plane_duplicate_state(plane, &copy->state);
-@@ -348,7 +348,7 @@ static void rcar_du_vsp_plane_reset(struct drm_plane *plane)
- 	}
- 
- 	state = kzalloc(sizeof(*state), GFP_KERNEL);
--	if (state == NULL)
-+	if (!state)
- 		return;
- 
- 	state->alpha = 255;
+ 		gpio7: gpio@e6055800 {
+ 			compatible = "renesas,gpio-r8a7796",
+-				     "renesas,gpio-rcar";
++				     "renesas,rcar-gen3-gpio";
+ 			reg = <0 0xe6055800 0 0x50>;
+ 			interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
+ 			#gpio-cells = <2>;
 -- 
-2.14.3
+2.11.0
