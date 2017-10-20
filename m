@@ -1,35 +1,87 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from 8bytes.org ([81.169.241.247]:54162 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751398AbdJJJjb (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:38914 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752665AbdJTKaK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Oct 2017 05:39:31 -0400
-Date: Tue, 10 Oct 2017 11:39:23 +0200
-From: Joerg Roedel <joro@8bytes.org>
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: devicetree@vger.kernel.org, mark.rutland@arm.com,
-        laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-        linux-renesas-soc@vger.kernel.org,
-        iommu@lists.linux-foundation.org, robh+dt@kernel.org,
-        horms+renesas@verge.net.au, robin.murphy@arm.com
-Subject: Re: [PATCH 0/3] iommu/ipmmu-vmsa: R-Car Gen3 IPMMU DT binding update
-Message-ID: <20171010093923.p2tu6fdfyzkkblxa@8bytes.org>
-References: <150603029494.9664.3785539947602559695.sendpatchset@little-apple>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <150603029494.9664.3785539947602559695.sendpatchset@little-apple>
+        Fri, 20 Oct 2017 06:30:10 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 19/42] ARM: dts: gr-peach: Add ETHER pin group
+Date: Fri, 20 Oct 2017 12:28:46 +0200
+Message-Id: <349adfbf27269bad4fa6915e77c97a06487266a5.1508493785.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1508493785.git.horms+renesas@verge.net.au>
+References: <cover.1508493785.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Sep 22, 2017 at 06:44:54AM +0900, Magnus Damm wrote:
-> iommu/ipmmu-vmsa: R-Car Gen3 IPMMU DT binding update
-> 
-> [PATCH 1/3] iommu/ipmmu-vmsa: Document R-Car M3-W IPMMU DT bindings
-> [PATCH 2/3] iommu/ipmmu-vmsa: Document R-Car V3M IPMMU DT bindings
-> [PATCH 3/3] iommu/ipmmu-vmsa: Document R-Car D3 IPMMU DT bindings
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-I guess this goes upstream through the devicetree repository?
+Add pin configuration subnode for ETHER pin group.
 
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r7s72100-gr-peach.dts | 39 +++++++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
 
-	Joerg
+diff --git a/arch/arm/boot/dts/r7s72100-gr-peach.dts b/arch/arm/boot/dts/r7s72100-gr-peach.dts
+index 9661d43f5236..eca14e3801ec 100644
+--- a/arch/arm/boot/dts/r7s72100-gr-peach.dts
++++ b/arch/arm/boot/dts/r7s72100-gr-peach.dts
+@@ -68,6 +68,28 @@
+ 		/* P6_2 as RxD2; P6_3 as TxD2 */
+ 		pinmux = <RZA1_PINMUX(6, 2, 7)>, <RZA1_PINMUX(6, 3, 7)>;
+ 	};
++
++	ether_pins: ether {
++		/* Ethernet on Ports 1,3,5,10 */
++		pinmux = <RZA1_PINMUX(1, 14, 4)>, /* P1_14 = ET_COL   */
++			 <RZA1_PINMUX(3, 0, 2)>,  /* P3_0 = ET_TXCLK  */
++			 <RZA1_PINMUX(3, 3, 2)>,  /* P3_3 = ET_MDIO   */
++			 <RZA1_PINMUX(3, 4, 2)>,  /* P3_4 = ET_RXCLK  */
++			 <RZA1_PINMUX(3, 5, 2)>,  /* P3_5 = ET_RXER   */
++			 <RZA1_PINMUX(3, 6, 2)>,  /* P3_6 = ET_RXDV   */
++			 <RZA1_PINMUX(5, 9, 2)>,  /* P5_9 = ET_MDC    */
++			 <RZA1_PINMUX(10, 1, 4)>, /* P10_1 = ET_TXER  */
++			 <RZA1_PINMUX(10, 2, 4)>, /* P10_2 = ET_TXEN  */
++			 <RZA1_PINMUX(10, 3, 4)>, /* P10_3 = ET_CRS   */
++			 <RZA1_PINMUX(10, 4, 4)>, /* P10_4 = ET_TXD0  */
++			 <RZA1_PINMUX(10, 5, 4)>, /* P10_5 = ET_TXD1  */
++			 <RZA1_PINMUX(10, 6, 4)>, /* P10_6 = ET_TXD2  */
++			 <RZA1_PINMUX(10, 7, 4)>, /* P10_7 = ET_TXD3  */
++			 <RZA1_PINMUX(10, 8, 4)>, /* P10_8 = ET_RXD0  */
++			 <RZA1_PINMUX(10, 9, 4)>, /* P10_9 = ET_RXD1  */
++			 <RZA1_PINMUX(10, 10, 4)>,/* P10_10 = ET_RXD2 */
++			 <RZA1_PINMUX(10, 11, 4)>;/* P10_11 = ET_RXD3 */
++	};
+ };
+ 
+ &extal_clk {
+@@ -88,3 +110,20 @@
+ 
+ 	status = "okay";
+ };
++
++&ether {
++	pinctrl-names = "default";
++	pinctrl-0 = <&ether_pins>;
++
++	status = "okay";
++
++	renesas,no-ether-link;
++	phy-handle = <&phy0>;
++
++	phy0: ethernet-phy@0 {
++		reg = <0>;
++
++		reset-gpios = <&port4 2 GPIO_ACTIVE_LOW>;
++		reset-delay-us = <5>;
++	};
++};
+-- 
+2.11.0
