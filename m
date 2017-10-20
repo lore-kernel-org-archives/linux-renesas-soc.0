@@ -1,77 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.17.12]:61447 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751221AbdJ3Hfs (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:38914 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752092AbdJTK3p (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 30 Oct 2017 03:35:48 -0400
-To: linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Simon Horman <horms@verge.net.au>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH] PCI: rcar: Use common error handling code in
- rcar_pcie_enable_msi()
-Message-ID: <c598933b-b14f-91a1-c7a3-f4a46ec98e77@users.sourceforge.net>
-Date: Mon, 30 Oct 2017 08:35:30 +0100
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        Fri, 20 Oct 2017 06:29:45 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 31/31] arm64: dts: renesas: salvator-common: add dr_mode property for USB2.0 channel 0
+Date: Fri, 20 Oct 2017 12:28:34 +0200
+Message-Id: <e9ce35386b215d3f5d0fbab3cc24b69b8d57d7e6.1508495040.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1508495040.git.horms+renesas@verge.net.au>
+References: <cover.1508495040.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 30 Oct 2017 08:28:06 +0100
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-Adjust a jump target so that a specific error message is stored only once
-at the end of this function implementation.
-Replace two calls of the function "dev_err" by goto statements.
+Since Salvator-X[S] have a USB2.0 dual-role channel (CN9), this patch
+adds dr_mode property for USB2.0 channel 0 (EHCI/OHCI and HS-USB)
+as "otg".
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/pci/host/pcie-rcar.c | 15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
-index 12796eccb2be..38101f8bebf1 100644
---- a/drivers/pci/host/pcie-rcar.c
-+++ b/drivers/pci/host/pcie-rcar.c
-@@ -873,18 +873,14 @@ static int rcar_pcie_enable_msi(struct rcar_pcie *pcie)
- 	err = devm_request_irq(dev, msi->irq1, rcar_pcie_msi_irq,
- 			       IRQF_SHARED | IRQF_NO_THREAD,
- 			       rcar_msi_irq_chip.name, pcie);
--	if (err < 0) {
--		dev_err(dev, "failed to request IRQ: %d\n", err);
--		goto err;
--	}
-+	if (err < 0)
-+		goto report_request_failure;
+diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+index c883e46c06ac..2fbb6e3b5dbe 100644
+--- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+@@ -272,6 +272,7 @@
+ };
  
- 	err = devm_request_irq(dev, msi->irq2, rcar_pcie_msi_irq,
- 			       IRQF_SHARED | IRQF_NO_THREAD,
- 			       rcar_msi_irq_chip.name, pcie);
--	if (err < 0) {
--		dev_err(dev, "failed to request IRQ: %d\n", err);
--		goto err;
--	}
-+	if (err < 0)
-+		goto report_request_failure;
+ &ehci0 {
++	dr_mode = "otg";
+ 	status = "okay";
+ };
  
- 	/* setup MSI data target */
- 	msi->pages = __get_free_pages(GFP_KERNEL, 0);
-@@ -898,7 +894,8 @@ static int rcar_pcie_enable_msi(struct rcar_pcie *pcie)
+@@ -284,6 +285,7 @@
+ };
  
- 	return 0;
+ &hsusb {
++	dr_mode = "otg";
+ 	status = "okay";
+ };
  
--err:
-+report_request_failure:
-+	dev_err(dev, "failed to request IRQ: %d\n", err);
- 	irq_domain_remove(msi->domain);
- 	return err;
- }
+@@ -346,6 +348,7 @@
+ };
+ 
+ &ohci0 {
++	dr_mode = "otg";
+ 	status = "okay";
+ };
+ 
 -- 
-2.14.3
+2.11.0
