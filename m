@@ -1,72 +1,92 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:30213 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751125AbdJTDQ6 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:38914 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752507AbdJTK34 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 Oct 2017 23:16:58 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: wsa+renesas@sang-engineering.com, ulf.hansson@linaro.org
-Cc: linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 1/2] mmc: tmio: fix swiotlb buffer is full
-Date: Fri, 20 Oct 2017 12:12:41 +0900
-Message-Id: <1508469162-12322-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1508469162-12322-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1508469162-12322-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Fri, 20 Oct 2017 06:29:56 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 10/42] ARM: dts: r8a7745: Add internal PCI bridge nodes
+Date: Fri, 20 Oct 2017 12:28:37 +0200
+Message-Id: <ab290a32925e6f7db9e71546098077b3e72cc617.1508493785.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1508493785.git.horms+renesas@verge.net.au>
+References: <cover.1508493785.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Since the commit de3ee99b097d ("mmc: Delete bounce buffer handling")
-deletes the bounce buffer handling, a request data size will be referred
-to max_{req,seg}_size instead of MMC_QUEUE_BOUNCESZ (64k bytes).
+From: Biju Das <biju.das@bp.renesas.com>
 
-In other hand, renesas_sdhi_internal_dmac.c will set very big value of
-max_{req,seg}_size because the max_blk_count is set to 0xffffffff.
-And then, "swiotlb buffer is full" happens because swiotlb can handle
-a memory size up to 256k bytes only (IO_TLB_SEGSIZE = 128 and
-IO_TLB_SHIFT = 11).
+Add device nodes for the r8a7745 internal PCI bridge devices.
 
-So, as a workaround, this patch avoids the issue by setting
-the max_{req,seg}_size up to 256k bytes if swiotlb is running.
-
-Reported-by: Dirk Behme <dirk.behme@de.bosch.com>
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/mmc/host/tmio_mmc_core.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ arch/arm/boot/dts/r8a7745.dtsi | 46 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
 
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index a7293e1..9c4e619 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -47,6 +47,7 @@
- #include <linux/mmc/sdio.h>
- #include <linux/scatterlist.h>
- #include <linux/spinlock.h>
-+#include <linux/swiotlb.h>
- #include <linux/workqueue.h>
- 
- #include "tmio_mmc.h"
-@@ -1215,6 +1216,18 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
- 	mmc->max_blk_count = pdata->max_blk_count ? :
- 		(PAGE_SIZE / mmc->max_blk_size) * mmc->max_segs;
- 	mmc->max_req_size = mmc->max_blk_size * mmc->max_blk_count;
-+	/*
-+	 * Since swiotlb has memory size limitation, this will calculate
-+	 * the maximum size locally (because we don't have any APIs for it now)
-+	 * and check the current max_req_size. And then, this will update
-+	 * the max_req_size if needed as a workaround.
-+	 */
-+	if (swiotlb_max_segment()) {
-+		unsigned int max_size = (1 << IO_TLB_SHIFT) * IO_TLB_SEGSIZE;
+diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+index 6ba3b8b04edb..b4e9536a84d6 100644
+--- a/arch/arm/boot/dts/r8a7745.dtsi
++++ b/arch/arm/boot/dts/r8a7745.dtsi
+@@ -845,6 +845,52 @@
+ 			resets = <&cpg 311>;
+ 			status = "disabled";
+ 		};
 +
-+		if (mmc->max_req_size > max_size)
-+			mmc->max_req_size = max_size;
-+	}
- 	mmc->max_seg_size = mmc->max_req_size;
++		pci0: pci@ee090000 {
++			compatible = "renesas,pci-r8a7745",
++				     "renesas,pci-rcar-gen2";
++			device_type = "pci";
++			reg = <0 0xee090000 0 0xc00>,
++			      <0 0xee080000 0 0x1100>;
++			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 703>;
++			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
++			resets = <&cpg 703>;
++			status = "disabled";
++
++			bus-range = <0 0>;
++			#address-cells = <3>;
++			#size-cells = <2>;
++			#interrupt-cells = <1>;
++			ranges = <0x02000000 0 0xee080000 0 0xee080000 0 0x00010000>;
++			interrupt-map-mask = <0xff00 0 0 0x7>;
++			interrupt-map = <0x0000 0 0 1 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH
++					 0x0800 0 0 1 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH
++					 0x1000 0 0 2 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
++		};
++
++		pci1: pci@ee0d0000 {
++			compatible = "renesas,pci-r8a7745",
++				     "renesas,pci-rcar-gen2";
++			device_type = "pci";
++			reg = <0 0xee0d0000 0 0xc00>,
++			      <0 0xee0c0000 0 0x1100>;
++			interrupts = <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 703>;
++			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
++			resets = <&cpg 703>;
++			status = "disabled";
++
++			bus-range = <1 1>;
++			#address-cells = <3>;
++			#size-cells = <2>;
++			#interrupt-cells = <1>;
++			ranges = <0x02000000 0 0xee0c0000 0 0xee0c0000 0 0x00010000>;
++			interrupt-map-mask = <0xff00 0 0 0x7>;
++			interrupt-map = <0x0000 0 0 1 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH
++					 0x0800 0 0 1 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH
++					 0x1000 0 0 2 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
++		};
+ 	};
  
- 	_host->native_hotplug = !(pdata->flags & TMIO_MMC_USE_GPIO_CD ||
+ 	/* External root clock */
 -- 
-1.9.1
+2.11.0
