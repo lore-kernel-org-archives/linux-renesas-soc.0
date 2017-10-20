@@ -1,204 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:36046 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751550AbdJPJIu (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:38914 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752787AbdJTK3u (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Oct 2017 05:08:50 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 4/5] clk: renesas: rcar-gen3: Restore SDHI clocks during resume
-Date: Mon, 16 Oct 2017 10:36:53 +0200
-Message-Id: <1508143014-11795-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1508143014-11795-1-git-send-email-geert+renesas@glider.be>
-References: <1508143014-11795-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Fri, 20 Oct 2017 06:29:50 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 04/42] ARM: dts: r8a7791: Use generic node name for VSP1 nodes
+Date: Fri, 20 Oct 2017 12:28:31 +0200
+Message-Id: <18e5500c1510c844d5c3071f06089b638326bc52.1508493785.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1508493785.git.horms+renesas@verge.net.au>
+References: <cover.1508493785.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On R-Car Gen3 systems, PSCI system suspend powers down the SoC, losing
-clock configuration.  Register a notifier to save/restore SDHI clock
-registers during system suspend/resume.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This is implemented using the cpg_simple_notifier abstraction, which can
-be reused for others clocks that just need to save/restore a single
-register.
+Use the preferred generic node name instead of the specific name.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-v3:
-  - Drop RFC state,
-  - Add Tested-by,
-  - Rebased,
+ arch/arm/boot/dts/r8a7791.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-v2:
-  - New.
----
- drivers/clk/renesas/rcar-gen3-cpg.c | 63 +++++++++++++++++++++++++++++--------
- 1 file changed, 50 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index 139985257003bfad..267b5629e3bdb173 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -19,6 +19,7 @@
- #include <linux/err.h>
- #include <linux/init.h>
- #include <linux/io.h>
-+#include <linux/pm.h>
- #include <linux/slab.h>
- #include <linux/sys_soc.h>
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index 5a8a15847076..97bed8253bc3 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -1073,7 +1073,7 @@
+ 		status = "disabled";
+ 	};
  
-@@ -29,6 +30,36 @@
- #define CPG_PLL2CR		0x002c
- #define CPG_PLL4CR		0x01f4
+-	vsp1@fe928000 {
++	vsp@fe928000 {
+ 		compatible = "renesas,vsp1";
+ 		reg = <0 0xfe928000 0 0x8000>;
+ 		interrupts = <GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>;
+@@ -1082,7 +1082,7 @@
+ 		resets = <&cpg 131>;
+ 	};
  
-+struct cpg_simple_notifier {
-+	struct notifier_block nb;
-+	void __iomem *reg;
-+	u32 saved;
-+};
-+
-+static int cpg_simple_notifier_call(struct notifier_block *nb,
-+				    unsigned long action, void *data)
-+{
-+	struct cpg_simple_notifier *csn =
-+		container_of(nb, struct cpg_simple_notifier, nb);
-+
-+	switch (action) {
-+	case PM_EVENT_SUSPEND:
-+		csn->saved = readl(csn->reg);
-+		return NOTIFY_OK;
-+
-+	case PM_EVENT_RESUME:
-+		writel(csn->saved, csn->reg);
-+		return NOTIFY_OK;
-+	}
-+	return NOTIFY_DONE;
-+}
-+
-+static void cpg_simple_notifier_register(struct raw_notifier_head *notifiers,
-+					 struct cpg_simple_notifier *csn)
-+{
-+	csn->nb.notifier_call = cpg_simple_notifier_call;
-+	raw_notifier_chain_register(notifiers, &csn->nb);
-+}
+-	vsp1@fe930000 {
++	vsp@fe930000 {
+ 		compatible = "renesas,vsp1";
+ 		reg = <0 0xfe930000 0 0x8000>;
+ 		interrupts = <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
+@@ -1091,7 +1091,7 @@
+ 		resets = <&cpg 128>;
+ 	};
  
- /*
-  * SDn Clock
-@@ -55,8 +86,8 @@ struct sd_div_table {
- 
- struct sd_clock {
- 	struct clk_hw hw;
--	void __iomem *reg;
- 	const struct sd_div_table *div_table;
-+	struct cpg_simple_notifier csn;
- 	unsigned int div_num;
- 	unsigned int div_min;
- 	unsigned int div_max;
-@@ -97,12 +128,12 @@ static const struct sd_div_table cpg_sd_div_table[] = {
- static int cpg_sd_clock_enable(struct clk_hw *hw)
- {
- 	struct sd_clock *clock = to_sd_clock(hw);
--	u32 val = readl(clock->reg);
-+	u32 val = readl(clock->csn.reg);
- 
- 	val &= ~(CPG_SD_STP_MASK);
- 	val |= clock->div_table[clock->cur_div_idx].val & CPG_SD_STP_MASK;
- 
--	writel(val, clock->reg);
-+	writel(val, clock->csn.reg);
- 
- 	return 0;
- }
-@@ -111,14 +142,14 @@ static void cpg_sd_clock_disable(struct clk_hw *hw)
- {
- 	struct sd_clock *clock = to_sd_clock(hw);
- 
--	writel(readl(clock->reg) | CPG_SD_STP_MASK, clock->reg);
-+	writel(readl(clock->csn.reg) | CPG_SD_STP_MASK, clock->csn.reg);
- }
- 
- static int cpg_sd_clock_is_enabled(struct clk_hw *hw)
- {
- 	struct sd_clock *clock = to_sd_clock(hw);
- 
--	return !(readl(clock->reg) & CPG_SD_STP_MASK);
-+	return !(readl(clock->csn.reg) & CPG_SD_STP_MASK);
- }
- 
- static unsigned long cpg_sd_clock_recalc_rate(struct clk_hw *hw,
-@@ -170,10 +201,10 @@ static int cpg_sd_clock_set_rate(struct clk_hw *hw, unsigned long rate,
- 
- 	clock->cur_div_idx = i;
- 
--	val = readl(clock->reg);
-+	val = readl(clock->csn.reg);
- 	val &= ~(CPG_SD_STP_MASK | CPG_SD_FC_MASK);
- 	val |= clock->div_table[i].val & (CPG_SD_STP_MASK | CPG_SD_FC_MASK);
--	writel(val, clock->reg);
-+	writel(val, clock->csn.reg);
- 
- 	return 0;
- }
-@@ -188,8 +219,8 @@ static const struct clk_ops cpg_sd_clock_ops = {
- };
- 
- static struct clk * __init cpg_sd_clk_register(const struct cpg_core_clk *core,
--					       void __iomem *base,
--					       const char *parent_name)
-+	void __iomem *base, const char *parent_name,
-+	struct raw_notifier_head *notifiers)
- {
- 	struct clk_init_data init;
- 	struct sd_clock *clock;
-@@ -207,12 +238,12 @@ static struct clk * __init cpg_sd_clk_register(const struct cpg_core_clk *core,
- 	init.parent_names = &parent_name;
- 	init.num_parents = 1;
- 
--	clock->reg = base + core->offset;
-+	clock->csn.reg = base + core->offset;
- 	clock->hw.init = &init;
- 	clock->div_table = cpg_sd_div_table;
- 	clock->div_num = ARRAY_SIZE(cpg_sd_div_table);
- 
--	sd_fc = readl(clock->reg) & CPG_SD_FC_MASK;
-+	sd_fc = readl(clock->csn.reg) & CPG_SD_FC_MASK;
- 	for (i = 0; i < clock->div_num; i++)
- 		if (sd_fc == (clock->div_table[i].val & CPG_SD_FC_MASK))
- 			break;
-@@ -233,8 +264,13 @@ static struct clk * __init cpg_sd_clk_register(const struct cpg_core_clk *core,
- 
- 	clk = clk_register(NULL, &clock->hw);
- 	if (IS_ERR(clk))
--		kfree(clock);
-+		goto free_clock;
-+
-+	cpg_simple_notifier_register(notifiers, &clock->csn);
-+	return clk;
- 
-+free_clock:
-+	kfree(clock);
- 	return clk;
- }
- 
-@@ -332,7 +368,8 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
- 		break;
- 
- 	case CLK_TYPE_GEN3_SD:
--		return cpg_sd_clk_register(core, base, __clk_get_name(parent));
-+		return cpg_sd_clk_register(core, base, __clk_get_name(parent),
-+					   notifiers);
- 
- 	case CLK_TYPE_GEN3_R:
- 		if (cpg_quirks & RCKCR_CKSEL) {
+-	vsp1@fe938000 {
++	vsp@fe938000 {
+ 		compatible = "renesas,vsp1";
+ 		reg = <0 0xfe938000 0 0x8000>;
+ 		interrupts = <GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>;
 -- 
-2.7.4
+2.11.0
