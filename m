@@ -1,61 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38818 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:38914 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752092AbdJTK3J (ORCPT
+        with ESMTP id S1752787AbdJTK3s (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Oct 2017 06:29:09 -0400
+        Fri, 20 Oct 2017 06:29:48 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 05/31] arm64: dts: renesas: salvator-common: add pfc node for USB3.0 channel 0
-Date: Fri, 20 Oct 2017 12:28:08 +0200
-Message-Id: <73de4b8847892fa7d6fffd14139c5083a3fd1580.1508495040.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1508495040.git.horms+renesas@verge.net.au>
-References: <cover.1508495040.git.horms+renesas@verge.net.au>
+Subject: [PATCH 01/42] ARM: dts: gr-peach: Fix 'leds' node name indent
+Date: Fri, 20 Oct 2017 12:28:28 +0200
+Message-Id: <4f049e09d833dd9b8c2b0cf7a609d9fc5f9d6348.1508493785.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1508493785.git.horms+renesas@verge.net.au>
+References: <cover.1508493785.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-Since a R-Car Gen3 bootloader enables the PFC of USB3.0 channel 0,
-the USB3.0 host controller works without this setting on the kernel.
-But, this setting should have salvator-common.dtsi. So, this patch
-adds the pfc node for USB3.0 channel 0.
+Fix 'leds' node name indent as it was wrongly aligned.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/salvator-common.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm/boot/dts/r7s72100-gr-peach.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-index 99d8180c71f7..af434dcd2197 100644
---- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-@@ -485,6 +485,11 @@
- 			bias-pull-down;
+diff --git a/arch/arm/boot/dts/r7s72100-gr-peach.dts b/arch/arm/boot/dts/r7s72100-gr-peach.dts
+index 13d745bb56a5..a1c5e8823d2b 100644
+--- a/arch/arm/boot/dts/r7s72100-gr-peach.dts
++++ b/arch/arm/boot/dts/r7s72100-gr-peach.dts
+@@ -53,7 +53,7 @@
  		};
  	};
-+
-+	usb30_pins: usb30 {
-+		groups = "usb30";
-+		function = "usb30";
-+	};
- };
  
- &pwm1 {
-@@ -620,5 +625,8 @@
- };
+-leds {
++	leds {
+ 		status = "okay";
+ 		compatible = "gpio-leds";
  
- &xhci0 {
-+	pinctrl-0 = <&usb30_pins>;
-+	pinctrl-names = "default";
-+
- 	status = "okay";
- };
 -- 
 2.11.0
