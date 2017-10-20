@@ -1,122 +1,146 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:55723 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1758227AbdJMNED (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:38914 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752665AbdJTKaO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Oct 2017 09:04:03 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc: Simon Horman <horms@verge.net.au>,
+        Fri, 20 Oct 2017 06:30:14 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Chris Paterson <chris.paterson2@renesas.com>
-Subject: [PATCH 3/4] ARM: dts: iwg22d-sodimm-dbhd-ca: Add device tree for HDMI DB
-Date: Fri, 13 Oct 2017 14:03:15 +0100
-Message-Id: <1507899796-7941-4-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1507899796-7941-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1507899796-7941-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 26/42] ARM: dts: r8a7792: Use R-Car GPIO Gen2 fallback compat string
+Date: Fri, 20 Oct 2017 12:28:53 +0200
+Message-Id: <7f4a16c4143a99ca4520c565abb07a4fffbae0ff.1508493785.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1508493785.git.horms+renesas@verge.net.au>
+References: <cover.1508493785.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add file r8a7745-iwg22d-sodimm-dbhd-ca.dts to provide support for
-iW-RainboW-G22D with HDMI daughter board plugged in.
+Use newly added R-Car GPIO Gen2 fallback compat string
+in place of now deprecated non-generation specific
+R-Car GPIO fallback compat string in the DT of the r8a7792 SoC.
 
-The interfaces defined in the new .dts file are: scif1, scif5,
-and hscif2.
+This should have no run-time effect as the driver matches against
+the per-SoC compat string before considering the fallback compat string.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/Makefile                         |  1 +
- .../arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts | 61 ++++++++++++++++++++++
- 2 files changed, 62 insertions(+)
- create mode 100644 arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts
+ arch/arm/boot/dts/r8a7792.dtsi | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 8c34d06..e27b194 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -727,6 +727,7 @@ dtb-$(CONFIG_ARCH_RENESAS) += \
- 	r8a7743-iwg20d-q7-dbcm-ca.dtb \
- 	r8a7743-sk-rzg1m.dtb \
- 	r8a7745-iwg22d-sodimm.dtb \
-+	r8a7745-iwg22d-sodimm-dbhd-ca.dtb \
- 	r8a7745-sk-rzg1e.dtb \
- 	r8a7778-bockw.dtb \
- 	r8a7779-marzen.dtb \
-diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts
-new file mode 100644
-index 0000000..f925388
---- /dev/null
-+++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts
-@@ -0,0 +1,61 @@
-+/*
-+ * Device Tree Source for the iWave-RZG1E SODIMM carrier board + HDMI daughter
-+ * board
-+ *
-+ * Copyright (C) 2017 Renesas Electronics Corp.
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2.  This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
-+
-+#include "r8a7745-iwg22d-sodimm.dts"
-+
-+/ {
-+	model = "iWave RainboW-G22D-SODIMM RZ/G1E based board with HDMI add-on";
-+	compatible = "iwave,g22d", "iwave,g22m", "renesas,r8a7745";
-+
-+	aliases {
-+		serial0 = &scif1;
-+		serial4 = &scif5;
-+		serial6 = &hscif2;
-+	};
-+};
-+
-+&hscif2 {
-+	pinctrl-0 = <&hscif2_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
-+&pfc {
-+	hscif2_pins: hscif2 {
-+		groups = "hscif2_data";
-+		function = "hscif2";
-+	};
-+
-+	scif1_pins: scif1 {
-+		groups = "scif1_data";
-+		function = "scif1";
-+	};
-+
-+	scif5_pins: scif5 {
-+		groups = "scif5_data_d";
-+		function = "scif5";
-+	};
-+};
-+
-+&scif1 {
-+	pinctrl-0 = <&scif1_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
-+&scif5 {
-+	pinctrl-0 = <&scif5_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
+diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
+index 549eafe8ff12..56570d1ce5f6 100644
+--- a/arch/arm/boot/dts/r8a7792.dtsi
++++ b/arch/arm/boot/dts/r8a7792.dtsi
+@@ -147,7 +147,7 @@
+ 
+ 		gpio0: gpio@e6050000 {
+ 			compatible = "renesas,gpio-r8a7792",
+-				     "renesas,gpio-rcar";
++				     "renesas,rcar-gen2-gpio";
+ 			reg = <0 0xe6050000 0 0x50>;
+ 			interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
+ 			#gpio-cells = <2>;
+@@ -162,7 +162,7 @@
+ 
+ 		gpio1: gpio@e6051000 {
+ 			compatible = "renesas,gpio-r8a7792",
+-				     "renesas,gpio-rcar";
++				     "renesas,rcar-gen2-gpio";
+ 			reg = <0 0xe6051000 0 0x50>;
+ 			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
+ 			#gpio-cells = <2>;
+@@ -177,7 +177,7 @@
+ 
+ 		gpio2: gpio@e6052000 {
+ 			compatible = "renesas,gpio-r8a7792",
+-				     "renesas,gpio-rcar";
++				     "renesas,rcar-gen2-gpio";
+ 			reg = <0 0xe6052000 0 0x50>;
+ 			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
+ 			#gpio-cells = <2>;
+@@ -192,7 +192,7 @@
+ 
+ 		gpio3: gpio@e6053000 {
+ 			compatible = "renesas,gpio-r8a7792",
+-				     "renesas,gpio-rcar";
++				     "renesas,rcar-gen2-gpio";
+ 			reg = <0 0xe6053000 0 0x50>;
+ 			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
+ 			#gpio-cells = <2>;
+@@ -207,7 +207,7 @@
+ 
+ 		gpio4: gpio@e6054000 {
+ 			compatible = "renesas,gpio-r8a7792",
+-				     "renesas,gpio-rcar";
++				     "renesas,rcar-gen2-gpio";
+ 			reg = <0 0xe6054000 0 0x50>;
+ 			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
+ 			#gpio-cells = <2>;
+@@ -222,7 +222,7 @@
+ 
+ 		gpio5: gpio@e6055000 {
+ 			compatible = "renesas,gpio-r8a7792",
+-				     "renesas,gpio-rcar";
++				     "renesas,rcar-gen2-gpio";
+ 			reg = <0 0xe6055000 0 0x50>;
+ 			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
+ 			#gpio-cells = <2>;
+@@ -237,7 +237,7 @@
+ 
+ 		gpio6: gpio@e6055100 {
+ 			compatible = "renesas,gpio-r8a7792",
+-				     "renesas,gpio-rcar";
++				     "renesas,rcar-gen2-gpio";
+ 			reg = <0 0xe6055100 0 0x50>;
+ 			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
+ 			#gpio-cells = <2>;
+@@ -252,7 +252,7 @@
+ 
+ 		gpio7: gpio@e6055200 {
+ 			compatible = "renesas,gpio-r8a7792",
+-				     "renesas,gpio-rcar";
++				     "renesas,rcar-gen2-gpio";
+ 			reg = <0 0xe6055200 0 0x50>;
+ 			interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
+ 			#gpio-cells = <2>;
+@@ -267,7 +267,7 @@
+ 
+ 		gpio8: gpio@e6055300 {
+ 			compatible = "renesas,gpio-r8a7792",
+-				     "renesas,gpio-rcar";
++				     "renesas,rcar-gen2-gpio";
+ 			reg = <0 0xe6055300 0 0x50>;
+ 			interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
+ 			#gpio-cells = <2>;
+@@ -282,7 +282,7 @@
+ 
+ 		gpio9: gpio@e6055400 {
+ 			compatible = "renesas,gpio-r8a7792",
+-				     "renesas,gpio-rcar";
++				     "renesas,rcar-gen2-gpio";
+ 			reg = <0 0xe6055400 0 0x50>;
+ 			interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
+ 			#gpio-cells = <2>;
+@@ -297,7 +297,7 @@
+ 
+ 		gpio10: gpio@e6055500 {
+ 			compatible = "renesas,gpio-r8a7792",
+-				     "renesas,gpio-rcar";
++				     "renesas,rcar-gen2-gpio";
+ 			reg = <0 0xe6055500 0 0x50>;
+ 			interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
+ 			#gpio-cells = <2>;
+@@ -312,7 +312,7 @@
+ 
+ 		gpio11: gpio@e6055600 {
+ 			compatible = "renesas,gpio-r8a7792",
+-				     "renesas,gpio-rcar";
++				     "renesas,rcar-gen2-gpio";
+ 			reg = <0 0xe6055600 0 0x50>;
+ 			interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
+ 			#gpio-cells = <2>;
 -- 
-2.7.4
+2.11.0
