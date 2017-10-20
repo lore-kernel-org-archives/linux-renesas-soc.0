@@ -1,67 +1,63 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:38914 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752735AbdJTK3v (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 20 Oct 2017 06:29:51 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/2] drivers: firmware: psci: Add psci_is_available()
-Date: Wed, 11 Oct 2017 10:03:01 +0200
-Message-Id: <1507708982-12336-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1507708982-12336-1-git-send-email-geert+renesas@glider.be>
-References: <1507708982-12336-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 05/42] ARM: dts: r8a7792: Use generic node name for VSP1 nodes
+Date: Fri, 20 Oct 2017 12:28:32 +0200
+Message-Id: <2ea2e06cdac491cf254ce6221371a6993e7a46fb.1508493785.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1508493785.git.horms+renesas@verge.net.au>
+References: <cover.1508493785.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-PSCI support may be disabled at build time (by configuration) or at
-run-time (PSCI firmware not present).  While CONFIG_ARM_PSCI_FW can be
-used to check for build time enablement, there is currently no simple
-way to check if PSCI is actually available and used.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Hence add a helper function to check if PSCI is available.
-
-This is useful for e.g. drivers that are used on platforms with and
-without PSCI.  Such drivers may need to take provisions for proper
-operation when PSCI is used, and/or to implement functionality that is
-usually provided by PSCI.
+Use the preferred generic node name instead of the specific name.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/firmware/psci.c | 5 +++++
- include/linux/psci.h    | 2 ++
- 2 files changed, 7 insertions(+)
+ arch/arm/boot/dts/r8a7792.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/firmware/psci.c b/drivers/firmware/psci.c
-index da469c972b503f83..a3a11e2d8ffffaaa 100644
---- a/drivers/firmware/psci.c
-+++ b/drivers/firmware/psci.c
-@@ -670,6 +670,11 @@ int __init psci_dt_init(void)
- 	return init_fn(np);
- }
+diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
+index c332f77ebb6b..549eafe8ff12 100644
+--- a/arch/arm/boot/dts/r8a7792.dtsi
++++ b/arch/arm/boot/dts/r8a7792.dtsi
+@@ -794,7 +794,7 @@
+ 			status = "disabled";
+ 		};
  
-+bool psci_is_available(void)
-+{
-+	return psci_ops.cpu_off && psci_ops.cpu_on && psci_ops.cpu_suspend;
-+}
-+
- #ifdef CONFIG_ACPI
- /*
-  * We use PSCI 0.2+ when ACPI is deployed on ARM64 and it's
-diff --git a/include/linux/psci.h b/include/linux/psci.h
-index bdea1cb5e1db142b..2bdee325aeb80cf6 100644
---- a/include/linux/psci.h
-+++ b/include/linux/psci.h
-@@ -39,8 +39,10 @@ extern struct psci_operations psci_ops;
+-		vsp1@fe928000 {
++		vsp@fe928000 {
+ 			compatible = "renesas,vsp1";
+ 			reg = <0 0xfe928000 0 0x8000>;
+ 			interrupts = <GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>;
+@@ -803,7 +803,7 @@
+ 			resets = <&cpg 131>;
+ 		};
  
- #if defined(CONFIG_ARM_PSCI_FW)
- int __init psci_dt_init(void);
-+bool psci_is_available(void);
- #else
- static inline int psci_dt_init(void) { return 0; }
-+static inline bool psci_is_available(void) { return false; }
- #endif
+-		vsp1@fe930000 {
++		vsp@fe930000 {
+ 			compatible = "renesas,vsp1";
+ 			reg = <0 0xfe930000 0 0x8000>;
+ 			interrupts = <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
+@@ -812,7 +812,7 @@
+ 			resets = <&cpg 128>;
+ 		};
  
- #if defined(CONFIG_ARM_PSCI_FW) && defined(CONFIG_ACPI)
+-		vsp1@fe938000 {
++		vsp@fe938000 {
+ 			compatible = "renesas,vsp1";
+ 			reg = <0 0xfe938000 0 0x8000>;
+ 			interrupts = <GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>;
 -- 
-2.7.4
+2.11.0
