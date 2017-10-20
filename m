@@ -1,54 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:12102 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751677AbdJWRKq (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:38835 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752092AbdJTK3M (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Oct 2017 13:10:46 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
+        Fri, 20 Oct 2017 06:29:12 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 7/9] ARM: dts: r8a7745: Enable DMA for HSUSB
-Date: Mon, 23 Oct 2017 18:09:28 +0100
-Message-Id: <1508778570-28795-8-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1508778570-28795-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1508778570-28795-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 10/31] arm64: dts: h3ulcb-kf: ES1.x SoC initial device tree
+Date: Fri, 20 Oct 2017 12:28:13 +0200
+Message-Id: <d90e97dfe16610542bb83590a81081a47018ba89.1508495040.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1508495040.git.horms+renesas@verge.net.au>
+References: <cover.1508495040.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 
-From: Biju Das <biju.das@bp.renesas.com>
+Add the initial device tree for the H3ULCB ES1.x SoC with Kingfisher
+extension infotainment board.
 
-This patch adds DMA properties to the HSUSB node.
-
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-Changes in v2:
-* rebased
+ arch/arm64/boot/dts/renesas/Makefile                  |  1 +
+ arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb-kf.dts | 19 +++++++++++++++++++
+ 2 files changed, 20 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb-kf.dts
 
- arch/arm/boot/dts/r8a7745.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index 9733ac5..6c9a0d6 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -950,6 +950,9 @@
- 			reg = <0 0xe6590000 0 0x100>;
- 			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 704>;
-+			dmas = <&usb_dmac0 0>, <&usb_dmac0 1>,
-+			       <&usb_dmac1 0>, <&usb_dmac1 1>;
-+			dma-names = "ch0", "ch1", "ch2", "ch3";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
- 			resets = <&cpg 704>;
- 			renesas,buswait = <4>;
+diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
+index fd1164f2d7d7..c5fcdbb24b10 100644
+--- a/arch/arm64/boot/dts/renesas/Makefile
++++ b/arch/arm64/boot/dts/renesas/Makefile
+@@ -1,6 +1,7 @@
+ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-x.dtb r8a7795-h3ulcb.dtb
+ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-xs.dtb
+ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-es1-salvator-x.dtb r8a7795-es1-h3ulcb.dtb
++dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-es1-h3ulcb-kf.dtb
+ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-x.dtb r8a7796-m3ulcb.dtb
+ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-m3ulcb-kf.dtb
+ dtb-$(CONFIG_ARCH_R8A77970) += r8a77970-eagle.dtb
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb-kf.dts b/arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb-kf.dts
+new file mode 100644
+index 000000000000..009cb1cb0dde
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb-kf.dts
+@@ -0,0 +1,19 @@
++/*
++ * Device Tree Source for the H3ULCB Kingfisher board
++ *
++ * Copyright (C) 2017 Renesas Electronics Corp.
++ * Copyright (C) 2017 Cogent Embedded, Inc.
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++#include "r8a7795-es1-h3ulcb.dts"
++#include "ulcb-kf.dtsi"
++
++/ {
++	model = "Renesas H3ULCB Kingfisher board based on r8a7795 ES1.x";
++	compatible = "shimafuji,kingfisher", "renesas,h3ulcb",
++		     "renesas,r8a7795";
++};
 -- 
-2.7.4
+2.11.0
