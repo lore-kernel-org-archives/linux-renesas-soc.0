@@ -1,56 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:39239 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753185AbdJQGKG (ORCPT
+Received: from sauhun.de ([88.99.104.3]:35371 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750715AbdJTEAu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Oct 2017 02:10:06 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 00/11] arm64: dts: renesas: Use R-Car SDHI Gen[123] fallback compat strings
-Date: Tue, 17 Oct 2017 08:09:48 +0200
-Message-Id: <20171017060959.16702-1-horms+renesas@verge.net.au>
+        Fri, 20 Oct 2017 00:00:50 -0400
+Date: Fri, 20 Oct 2017 06:00:48 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: wsa+renesas@sang-engineering.com, ulf.hansson@linaro.org,
+        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] mmc: renesas_sdhi: fix kernel panic in
+ _internal_dmac.c
+Message-ID: <20171020040048.earbuflcoeur2wo2@ninjato>
+References: <1508469162-12322-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1508469162-12322-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="b3lbnabjfzkklvvc"
+Content-Disposition: inline
+In-Reply-To: <1508469162-12322-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use recently posted R-Car SDHI Gen 1, 2 and 3 fallback compat strings
-in the DT of Renesas ARM and arm64 based SoCs.
 
-Based on renesas-devel-20171016-v4.14-rc5
+--b3lbnabjfzkklvvc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Has a binding documentation but no run-time dependency on
-"[PATCH v3 0/3] mmc: renesas_sdhi: add R-Car Gen[123] fallback
-compatibility strings"
+On Fri, Oct 20, 2017 at 12:12:42PM +0900, Yoshihiro Shimoda wrote:
+> Since this driver checks if the return value of dma_map_sg() is minus
+> or not and keeps to enable the DMAC, it may cause kernel panic when
+> the dma_map_sg() returns 0. So, this patch fixes the issue.
+>=20
+> Reported-by: Dirk Behme <dirk.behme@de.bosch.com>
+> Fixes: 2a68ea7896e3 ("mmc: renesas-sdhi: add support for R-Car Gen3 SDHI =
+DMAC")
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Simon Horman (11):
-  arm64: dts: renesas: r8a7795: Use R-Car SDHI Gen3 fallback compat
-    string
-  arm64: dts: renesas: r8a7796: Use R-Car SDHI Gen3 fallback compat
-    string
-  ARM: dts: r8a7743: Use R-Car SDHI Gen2 fallback compat string
-  ARM: dts: r8a7745: Use R-Car SDHI Gen2 fallback compat string
-  ARM: dts: r8a7778: Use R-Car SDHI Gen1 fallback compat string
-  ARM: dts: r8a7779: Use R-Car SDHI Gen1 fallback compat string
-  ARM: dts: r8a7790: Use R-Car SDHI Gen2 fallback compat string
-  ARM: dts: r8a7791: Use R-Car SDHI Gen2 fallback compat string
-  ARM: dts: r8a7792: Use R-Car SDHI Gen2 fallback compat string
-  ARM: dts: r8a7793: Use R-Car SDHI Gen2 fallback compat string
-  ARM: dts: r8a7794: Use R-Car SDHI Gen2 fallback compat string
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
- arch/arm/boot/dts/r8a7743.dtsi           |  9 ++++++---
- arch/arm/boot/dts/r8a7745.dtsi           |  9 ++++++---
- arch/arm/boot/dts/r8a7778.dtsi           |  9 ++++++---
- arch/arm/boot/dts/r8a7779.dtsi           | 12 ++++++++----
- arch/arm/boot/dts/r8a7790.dtsi           | 12 ++++++++----
- arch/arm/boot/dts/r8a7791.dtsi           |  9 ++++++---
- arch/arm/boot/dts/r8a7792.dtsi           |  3 ++-
- arch/arm/boot/dts/r8a7793.dtsi           |  9 ++++++---
- arch/arm/boot/dts/r8a7794.dtsi           |  9 ++++++---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 12 ++++++++----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 12 ++++++++----
- 11 files changed, 70 insertions(+), 35 deletions(-)
 
--- 
-2.11.0
+--b3lbnabjfzkklvvc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlnpdPAACgkQFA3kzBSg
+KbaynA/9GLbneaCd7U2CozMQH1LVW+o5GyWYOkaEl6LqUBebkAjJhcOPzuh8KOtR
+ZVxHMRRccLbAdix1Z4/eWK9I109tttAzg5WFvUFXkfwp2qJWrSMQAzb4xEYnAdjm
+yH88c6a8itdlZfd045AAG/dXy/9onl+7nXas+ppSnrqYDJA6cYB2q+xhxUuWHvXm
+5W1Nkh/waUESNyZBUkPp0uzUJKTerFlN7Xnl1pDDZLuRckvuik2/2T2ptouHG3C6
+eKuCfPUwqgNK/ZWzjWarthtNOKVzCFnTkqlxcSJBNfXJYahv1xl1jN5qY6IEz+yU
+Qkd6VpYDNcqNRn9ywxNEqZJ0NN5hZsQg08+LCVXGL5KEvPUWSp1/3INiw+OSdTaZ
+OwcuCcmseAvfyecBV2qQI7CIVDkM4NPiDL5sN+IOX7Z6iNWw4HKYqE4GC+MW1qtU
+39Zrl1quIM4SWjsc/l6bMlQ83YPyThLvgSdK5Zb/HA8HMOT1xuuhz0qdFA6ZHCOc
+H+RzmJyTeq273qXY4JuuceUANGuNsw39ZjlJy8oCcbNldfh1aTiuSf5sqx6pzNzf
+eXXus1P87gSoF6oEVx5OncUnsy3IsJzVRTE8TUTleBiGZ+qfF5gAD/RiPJv9K0xv
+mtuJ3e9Buano2OGPO/FaFhj86aZYps7sLclWsiTHJkyFhjxu9SU=
+=3t0X
+-----END PGP SIGNATURE-----
+
+--b3lbnabjfzkklvvc--
