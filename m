@@ -1,110 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38914 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752665AbdJTKaP (ORCPT
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:51754 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752581AbdJTH3p (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Oct 2017 06:30:15 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 27/42] ARM: dts: r8a7793: Use R-Car GPIO Gen2 fallback compat string
-Date: Fri, 20 Oct 2017 12:28:54 +0200
-Message-Id: <c37417dca041d76a66a78012f93e9a3c879706c4.1508493785.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1508493785.git.horms+renesas@verge.net.au>
-References: <cover.1508493785.git.horms+renesas@verge.net.au>
+        Fri, 20 Oct 2017 03:29:45 -0400
+MIME-Version: 1.0
+In-Reply-To: <1508469162-12322-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1508469162-12322-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1508469162-12322-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 20 Oct 2017 09:29:43 +0200
+Message-ID: <CAMuHMdUTty4-ogi=cFL51Gz7eaDC5QW2Tm+xQzXENQTs8re4rg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] mmc: tmio: fix swiotlb buffer is full
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use newly added R-Car GPIO Gen2 fallback compat string
-in place of now deprecated non-generation specific
-R-Car GPIO fallback compat string in the DT of the r8a7793 SoC.
+On Fri, Oct 20, 2017 at 5:12 AM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> Since the commit de3ee99b097d ("mmc: Delete bounce buffer handling")
+> deletes the bounce buffer handling, a request data size will be referred
+> to max_{req,seg}_size instead of MMC_QUEUE_BOUNCESZ (64k bytes).
+>
+> In other hand, renesas_sdhi_internal_dmac.c will set very big value of
+> max_{req,seg}_size because the max_blk_count is set to 0xffffffff.
+> And then, "swiotlb buffer is full" happens because swiotlb can handle
+> a memory size up to 256k bytes only (IO_TLB_SEGSIZE = 128 and
+> IO_TLB_SHIFT = 11).
+>
+> So, as a workaround, this patch avoids the issue by setting
+> the max_{req,seg}_size up to 256k bytes if swiotlb is running.
+>
+> Reported-by: Dirk Behme <dirk.behme@de.bosch.com>
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-This should have no run-time effect as the driver matches against
-the per-SoC compat string before considering the fallback compat string.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7793.dtsi | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index aa19b93494bf..76418c375a10 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -115,7 +115,7 @@
- 	};
- 
- 	gpio0: gpio@e6050000 {
--		compatible = "renesas,gpio-r8a7793", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7793", "renesas,rcar-gen2-gpio";
- 		reg = <0 0xe6050000 0 0x50>;
- 		interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -129,7 +129,7 @@
- 	};
- 
- 	gpio1: gpio@e6051000 {
--		compatible = "renesas,gpio-r8a7793", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7793", "renesas,rcar-gen2-gpio";
- 		reg = <0 0xe6051000 0 0x50>;
- 		interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -143,7 +143,7 @@
- 	};
- 
- 	gpio2: gpio@e6052000 {
--		compatible = "renesas,gpio-r8a7793", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7793", "renesas,rcar-gen2-gpio";
- 		reg = <0 0xe6052000 0 0x50>;
- 		interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -157,7 +157,7 @@
- 	};
- 
- 	gpio3: gpio@e6053000 {
--		compatible = "renesas,gpio-r8a7793", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7793", "renesas,rcar-gen2-gpio";
- 		reg = <0 0xe6053000 0 0x50>;
- 		interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -171,7 +171,7 @@
- 	};
- 
- 	gpio4: gpio@e6054000 {
--		compatible = "renesas,gpio-r8a7793", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7793", "renesas,rcar-gen2-gpio";
- 		reg = <0 0xe6054000 0 0x50>;
- 		interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -185,7 +185,7 @@
- 	};
- 
- 	gpio5: gpio@e6055000 {
--		compatible = "renesas,gpio-r8a7793", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7793", "renesas,rcar-gen2-gpio";
- 		reg = <0 0xe6055000 0 0x50>;
- 		interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -199,7 +199,7 @@
- 	};
- 
- 	gpio6: gpio@e6055400 {
--		compatible = "renesas,gpio-r8a7793", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7793", "renesas,rcar-gen2-gpio";
- 		reg = <0 0xe6055400 0 0x50>;
- 		interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -213,7 +213,7 @@
- 	};
- 
- 	gpio7: gpio@e6055800 {
--		compatible = "renesas,gpio-r8a7793", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7793", "renesas,rcar-gen2-gpio";
- 		reg = <0 0xe6055800 0 0x50>;
- 		interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
--- 
-2.11.0
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
