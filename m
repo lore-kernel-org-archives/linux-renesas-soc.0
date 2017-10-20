@@ -1,102 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:33102 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753540AbdJaSLp (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:38914 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752665AbdJTKaB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 31 Oct 2017 14:11:45 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Kevin Hilman <khilman@kernel.org>
-Cc: Simon Horman <horms@verge.net.au>,
+        Fri, 20 Oct 2017 06:30:01 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>, linux-pm@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 5/5] [RFC] PM / Domains: Remove gpd_dev_ops.active_wakeup() callback
-Date: Tue, 31 Oct 2017 19:11:34 +0100
-Message-Id: <1509473494-19740-6-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1509473494-19740-1-git-send-email-geert+renesas@glider.be>
-References: <1509473494-19740-1-git-send-email-geert+renesas@glider.be>
+        Biju Das <biju.das@bp.renesas.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 12/42] ARM: dts: r8a7745: Link PCI USB devices to USB PHY
+Date: Fri, 20 Oct 2017 12:28:39 +0200
+Message-Id: <c3e35873e37b77581be942b7284e705e997014fc.1508493785.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1508493785.git.horms+renesas@verge.net.au>
+References: <cover.1508493785.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-There are no more users left of the gpd_dev_ops.active_wakeup()
-callback.  All have been converted to GENPD_FLAG_ACTIVE_WAKEUP.
-Hence remove the callback.
+From: Biju Das <biju.das@bp.renesas.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Describe the PCI USB devices that are behind the PCI bridges, adding
+necessary links to the USB PHY device.
+
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-This must not be applied before all users of active_wakup have been
-converted, hence the "RFC".
+ arch/arm/boot/dts/r8a7745.dtsi | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-v2:
-  - New.
----
- drivers/base/power/domain.c | 14 +++-----------
- include/linux/pm_domain.h   |  1 -
- 2 files changed, 3 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-index c5172d70b742f288..8768e56ecf101203 100644
---- a/drivers/base/power/domain.c
-+++ b/drivers/base/power/domain.c
-@@ -864,14 +864,6 @@ static bool genpd_present(const struct generic_pm_domain *genpd)
+diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+index 17cfa53f3c76..3a50f703601c 100644
+--- a/arch/arm/boot/dts/r8a7745.dtsi
++++ b/arch/arm/boot/dts/r8a7745.dtsi
+@@ -867,6 +867,18 @@
+ 			interrupt-map = <0x0000 0 0 1 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH
+ 					 0x0800 0 0 1 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH
+ 					 0x1000 0 0 2 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
++
++			usb@1,0 {
++				reg = <0x800 0 0 0 0>;
++				phys = <&usb0 0>;
++				phy-names = "usb";
++			};
++
++			usb@2,0 {
++				reg = <0x1000 0 0 0 0>;
++				phys = <&usb0 0>;
++				phy-names = "usb";
++			};
+ 		};
  
- #ifdef CONFIG_PM_SLEEP
+ 		pci1: pci@ee0d0000 {
+@@ -890,6 +902,18 @@
+ 			interrupt-map = <0x0000 0 0 1 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH
+ 					 0x0800 0 0 1 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH
+ 					 0x1000 0 0 2 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
++
++			usb@1,0 {
++				reg = <0x10800 0 0 0 0>;
++				phys = <&usb2 0>;
++				phy-names = "usb";
++			};
++
++			usb@2,0 {
++				reg = <0x11000 0 0 0 0>;
++				phys = <&usb2 0>;
++				phy-names = "usb";
++			};
+ 		};
  
--static bool genpd_dev_active_wakeup(const struct generic_pm_domain *genpd,
--				    struct device *dev)
--{
--	if (genpd_is_active_wakeup(genpd))
--		return true;
--	return GENPD_DEV_CALLBACK(genpd, bool, active_wakeup, dev);
--}
--
- /**
-  * genpd_sync_power_off - Synchronously power off a PM domain and its masters.
-  * @genpd: PM domain to power off, if possible.
-@@ -976,7 +968,7 @@ static bool resume_needed(struct device *dev,
- 	if (!device_can_wakeup(dev))
- 		return false;
- 
--	active_wakeup = genpd_dev_active_wakeup(genpd, dev);
-+	active_wakeup = genpd_is_active_wakeup(genpd);
- 	return device_may_wakeup(dev) ? active_wakeup : !active_wakeup;
- }
- 
-@@ -1045,7 +1037,7 @@ static int genpd_finish_suspend(struct device *dev, bool poweroff)
- 	if (IS_ERR(genpd))
- 		return -EINVAL;
- 
--	if (dev->power.wakeup_path && genpd_dev_active_wakeup(genpd, dev))
-+	if (dev->power.wakeup_path && genpd_is_active_wakeup(genpd))
- 		return 0;
- 
- 	if (poweroff)
-@@ -1100,7 +1092,7 @@ static int genpd_resume_noirq(struct device *dev)
- 	if (IS_ERR(genpd))
- 		return -EINVAL;
- 
--	if (dev->power.wakeup_path && genpd_dev_active_wakeup(genpd, dev))
-+	if (dev->power.wakeup_path && genpd_is_active_wakeup(genpd))
- 		return 0;
- 
- 	genpd_lock(genpd);
-diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-index 28c24c58d479e3b4..04dbef9847d3ad3b 100644
---- a/include/linux/pm_domain.h
-+++ b/include/linux/pm_domain.h
-@@ -36,7 +36,6 @@ struct dev_power_governor {
- struct gpd_dev_ops {
- 	int (*start)(struct device *dev);
- 	int (*stop)(struct device *dev);
--	bool (*active_wakeup)(struct device *dev);
- };
- 
- struct genpd_power_state {
+ 		usbphy: usb-phy@e6590100 {
 -- 
-2.7.4
+2.11.0
