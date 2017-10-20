@@ -1,58 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:47592 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752077AbdJDJHV (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:38835 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752092AbdJTK3O (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Oct 2017 05:07:21 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 10/14] pinctrl: sh-pfc: Add generic IOCTRL register description
-Date: Wed,  4 Oct 2017 11:07:09 +0200
-Message-Id: <1507108033-8606-11-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1507108033-8606-1-git-send-email-geert+renesas@glider.be>
-References: <1507108033-8606-1-git-send-email-geert+renesas@glider.be>
+        Fri, 20 Oct 2017 06:29:14 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 09/31] arm64: dts: m3ulcb-kf: initial device tree
+Date: Fri, 20 Oct 2017 12:28:12 +0200
+Message-Id: <eded6a4d16c40879540e1073581e0679e9684bdb.1508495040.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1508495040.git.horms+renesas@verge.net.au>
+References: <cover.1508495040.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a generic way to describe IOCTRL registers (for e.g. SD I/O voltage
-and time delay control), like is already done for config, drive, and
-bias registers.
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 
-This makes the sh-pfc core code aware of these registers, which will
-ease introducing suspend/resume support later.
+Add the initial device tree for the M3ULCB with Kingfisher extension
+infotainment board.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/pinctrl/sh-pfc/sh_pfc.h | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm64/boot/dts/renesas/Makefile              |  1 +
+ arch/arm64/boot/dts/renesas/r8a7796-m3ulcb-kf.dts | 19 +++++++++++++++++++
+ 2 files changed, 20 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a7796-m3ulcb-kf.dts
 
-diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
-index 18fd878266297dc2..b9bb56c91b6fdaf3 100644
---- a/drivers/pinctrl/sh-pfc/sh_pfc.h
-+++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-@@ -159,6 +159,10 @@ struct pinmux_bias_reg {
- 	.pud = r2,	\
- 	.pins =
+diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
+index 96a3b29dce68..fd1164f2d7d7 100644
+--- a/arch/arm64/boot/dts/renesas/Makefile
++++ b/arch/arm64/boot/dts/renesas/Makefile
+@@ -2,6 +2,7 @@ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-x.dtb r8a7795-h3ulcb.dtb
+ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-xs.dtb
+ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-es1-salvator-x.dtb r8a7795-es1-h3ulcb.dtb
+ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-x.dtb r8a7796-m3ulcb.dtb
++dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-m3ulcb-kf.dtb
+ dtb-$(CONFIG_ARCH_R8A77970) += r8a77970-eagle.dtb
+ dtb-$(CONFIG_ARCH_R8A77995) += r8a77995-draak.dtb
  
-+struct pinmux_ioctrl_reg {
-+	u32 reg;
-+};
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb-kf.dts b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb-kf.dts
+new file mode 100644
+index 000000000000..de2390f009e7
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb-kf.dts
+@@ -0,0 +1,19 @@
++/*
++ * Device Tree Source for the M3ULCB Kingfisher board
++ *
++ * Copyright (C) 2017 Renesas Electronics Corp.
++ * Copyright (C) 2017 Cogent Embedded, Inc.
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
 +
- struct pinmux_data_reg {
- 	u32 reg;
- 	u8 reg_width;
-@@ -251,6 +255,7 @@ struct sh_pfc_soc_info {
- 	const struct pinmux_cfg_reg *cfg_regs;
- 	const struct pinmux_drive_reg *drive_regs;
- 	const struct pinmux_bias_reg *bias_regs;
-+	const struct pinmux_ioctrl_reg *ioctrl_regs;
- 	const struct pinmux_data_reg *data_regs;
- 
- 	const u16 *pinmux_data;
++#include "r8a7796-m3ulcb.dts"
++#include "ulcb-kf.dtsi"
++
++/ {
++	model = "Renesas M3ULCB Kingfisher board based on r8a7796";
++	compatible = "shimafuji,kingfisher", "renesas,m3ulcb",
++		     "renesas,r8a7796";
++};
 -- 
-2.7.4
+2.11.0
