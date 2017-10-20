@@ -1,96 +1,83 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:38459 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751036AbdJBJtM (ORCPT
+Received: from mail-it0-f65.google.com ([209.85.214.65]:46414 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752786AbdJTKC7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 2 Oct 2017 05:49:12 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
-        linus.walleij@linaro.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 1/2] pinctrl: sh-pfc: r8a7795-es1: Add USB3.0 host support
-Date: Mon,  2 Oct 2017 18:45:24 +0900
-Message-Id: <1506937525-16965-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1506937525-16965-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1506937525-16965-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Fri, 20 Oct 2017 06:02:59 -0400
+Received: by mail-it0-f65.google.com with SMTP id f187so13408753itb.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Oct 2017 03:02:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20171014191719.2129-1-wsa+renesas@sang-engineering.com>
+References: <20171014191719.2129-1-wsa+renesas@sang-engineering.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 20 Oct 2017 12:02:58 +0200
+Message-ID: <CAPDyKFqMu6u_0DSof+EHa1SwF6gtPPLxC7yS23xVoxemcBfPAw@mail.gmail.com>
+Subject: Re: [PATCH v2 00/11] mmc: document mmc_regulator_get_supply and fix users
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+On 14 October 2017 at 21:17, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> Fix the drivers and add some docs according to the outcome of this discussion
+> [1] we had recently. The motivation from the patch description:
+>
+> Bail out everytime when mmc_regulator_get_supply() returns an errno, not only
+> when probing gets deferred. This is currently a no-op, because this function
+> only returns -EPROBE_DEFER or 0 right now. But if it will throw another error
+> somewhen, it will be for a reason. (This still doesn't change that getting
+> regulators is optional, so 0 can still mean no regulators found). So, let us a)
+> be future proof and b) have driver code which is easier to understand.
+>
+> The patches have been created with coccinelle. A branch can be found here:
+>
+> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/mmc-get-supply-docs
+>
+> Looking forward to comments!
+>
+> Kind regards,
+>
+>    Wolfram
+>
+> [1] https://patchwork.kernel.org/patch/9965823/
+>
+> Changes since v1:
+>         * fix checkpatch warnings about too long commit message lines
+>         * fix a typo in patch 1 ('separately')
+>
+>
+> Wolfram Sang (11):
+>   mmc: add kerneldoc to mmc_regulator_get_supply()
+>   mmc: cavium: catch all errors when getting regulators
+>   mmc: dw_mmc: catch all errors when getting regulators
+>   mmc: meson-gx-mmc: catch all errors when getting regulators
+>   mmc: meson-mx-sdio: catch all errors when getting regulators
+>   mmc: mmci: catch all errors when getting regulators
+>   mmc: mtk-sd: catch all errors when getting regulators
+>   mmc: mxcmmc: catch all errors when getting regulators
+>   mmc: omap_hsmmc: catch all errors when getting regulators
+>   mmc: sdhci: catch all errors when getting regulators
+>   mmc: usdhi6rol0: catch all errors when getting regulators
+>
+>  drivers/mmc/core/core.c          | 10 ++++++++++
+>  drivers/mmc/host/cavium.c        |  2 +-
+>  drivers/mmc/host/dw_mmc.c        |  2 +-
+>  drivers/mmc/host/meson-gx-mmc.c  |  2 +-
+>  drivers/mmc/host/meson-mx-sdio.c |  2 +-
+>  drivers/mmc/host/mmci.c          |  2 +-
+>  drivers/mmc/host/mtk-sd.c        |  2 +-
+>  drivers/mmc/host/mxcmmc.c        |  2 +-
+>  drivers/mmc/host/omap_hsmmc.c    |  2 +-
+>  drivers/mmc/host/sdhci.c         |  2 +-
+>  drivers/mmc/host/usdhi6rol0.c    |  2 +-
+>  11 files changed, 20 insertions(+), 10 deletions(-)
+>
 
-This patch adds USB3{0,1} (USB3.0 host) pinmux support to R8A7795 ES1.x
-SoC.
+Thanks, applied for next!
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
-
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
-index 95fd099..78c1acf6 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
-@@ -3101,6 +3101,23 @@ enum {
- 	PWM6_B_MARK,
- };
- 
-+/* - USB30 ------------------------------------------------------------------ */
-+static const unsigned int usb30_pins[] = {
-+	/* PWEN, OVC */
-+	RCAR_GP_PIN(6, 28), RCAR_GP_PIN(6, 29),
-+};
-+static const unsigned int usb30_mux[] = {
-+	USB30_PWEN_MARK, USB30_OVC_MARK,
-+};
-+/* - USB31 ------------------------------------------------------------------ */
-+static const unsigned int usb31_pins[] = {
-+	/* PWEN, OVC */
-+	RCAR_GP_PIN(6, 30), RCAR_GP_PIN(6, 31),
-+};
-+static const unsigned int usb31_mux[] = {
-+	USB31_PWEN_MARK, USB31_OVC_MARK,
-+};
-+
- /* - QSPI0 ------------------------------------------------------------------ */
- static const unsigned int qspi0_ctrl_pins[] = {
- 	/* QSPI0_SPCLK, QSPI0_SSL */
-@@ -4080,6 +4097,8 @@ enum {
- 	SH_PFC_PIN_GROUP(usb0),
- 	SH_PFC_PIN_GROUP(usb1),
- 	SH_PFC_PIN_GROUP(usb2),
-+	SH_PFC_PIN_GROUP(usb30),
-+	SH_PFC_PIN_GROUP(usb31),
- };
- 
- static const char * const audio_clk_groups[] = {
-@@ -4537,6 +4556,14 @@ enum {
- 	"usb2",
- };
- 
-+static const char * const usb30_groups[] = {
-+	"usb30",
-+};
-+
-+static const char * const usb31_groups[] = {
-+	"usb31",
-+};
-+
- static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(audio_clk),
- 	SH_PFC_FUNCTION(avb),
-@@ -4588,6 +4615,8 @@ enum {
- 	SH_PFC_FUNCTION(usb0),
- 	SH_PFC_FUNCTION(usb1),
- 	SH_PFC_FUNCTION(usb2),
-+	SH_PFC_FUNCTION(usb30),
-+	SH_PFC_FUNCTION(usb31),
- };
- 
- static const struct pinmux_cfg_reg pinmux_config_regs[] = {
--- 
-1.9.1
+Kind regards
+Uffe
