@@ -1,77 +1,94 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:42142 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753858AbdJaSLq (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:51535 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752692AbdJTJcE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 31 Oct 2017 14:11:46 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Kevin Hilman <khilman@kernel.org>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>, linux-pm@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 3/5] [RFC] soc: mediatek: Use GENPD_FLAG_ACTIVE_WAKEUP
-Date: Tue, 31 Oct 2017 19:11:32 +0100
-Message-Id: <1509473494-19740-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1509473494-19740-1-git-send-email-geert+renesas@glider.be>
-References: <1509473494-19740-1-git-send-email-geert+renesas@glider.be>
+        Fri, 20 Oct 2017 05:32:04 -0400
+MIME-Version: 1.0
+In-Reply-To: <1508143014-11795-1-git-send-email-geert+renesas@glider.be>
+References: <1508143014-11795-1-git-send-email-geert+renesas@glider.be>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 20 Oct 2017 11:32:02 +0200
+Message-ID: <CAMuHMdWtT3oim2jb5j65FoL=EBwgysGThLvAU-F3DpC5ptz=1g@mail.gmail.com>
+Subject: Re: [PATCH v3 0/5] clk: renesas: rcar-gen3: Restore clocks during resume
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Set the newly introduced GENPD_FLAG_ACTIVE_WAKEUP, which allows to
-remove the driver's own flag-based callback.
+On Mon, Oct 16, 2017 at 10:36 AM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> During PSCI system suspend, R-Car Gen3 SoCs are powered down, and their
+> clock register state is lost.  Note that as the boot loader skips most
+> initialization after resume, clock register state differs from the state
+> encountered during normal system boot, too.
+>
+> Hence after s2ram, some operations may fail because module clocks are
+> disabled, while drivers expect them to be still enabled.  E.g. in the
+> absence of commit fbf3d034f2ff6264 ("ravb: add workaround for clock when
+> resuming with WoL enabled"), EtherAVB fails when Wake-on-LAN has been
+> enabled using "ethtool -s eth0 wol g":
+>
+>     ravb e6800000.ethernet eth0: failed to switch device to config mode
+>     ravb e6800000.ethernet eth0: device will be stopped after h/w processes are done.
+>     ravb e6800000.ethernet eth0: failed to switch device to config
+>     PM: Device e6800000.ethernet failed to resume: error -110
+>
+> In addition, some clocks that were disabled by clk_disable_unused() may
+> have been re-enabled, wasting power.
+>
+> This patch series fixes these issues by restoring clock registers during
+> system resume.  Note that while this fixes EtherAVB operation after
+> resume from s2ram, EtherAVB cannot be used as an actual wake-up source
+> from s2ram, only from s2idle, due to PSCI limitations.
+>
+> To avoid overhead on platforms not needing it, the suspend/resume code
+> has a build time dependency on sleep and PSCI support, and a runtime
+> dependency on PSCI.
+>
+> Changes compared to v2:
+>   - Drop RFC state,
+>   - Add Tested-by,
+>   - Add build and runtime dependencies on PM_SLEEP and PSCI.
+>
+> Changes compared to v1 (more details in the individual patches):
+>   - Save module clock registers in suspend_noirq instead of constantly
+>     updating shadow registers,
+>   - Restore all module clocks under our control, not just the ones we ever
+>     changed,
+>   - Also restore DIV6, SDHI, and R clocks, thus covering all supported
+>     programmable core clocks on R-Car Gen3.
+>
+> This series is against the clk-renesas branch of my renesas-drivers git
+> repository at
+> git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
+> For your convenience, this series is also available in the
+> topic/cpg-mssr-suspend-resume-v3 branch of the same repository.
+>
+> This has been tested on Salvator-X with R-Car H3 ES1.0 and M3-W ES1.0,
+> and on Salvator-XS with R-Car H3 ES2.0 (the latter also needs "[PATCH
+> 0/4] ravb: Add PHY reset support",
+> https://www.spinics.net/lists/netdev/msg457308.html), and
+> regression-tested on various other Renesas arm32 boards not using PSCI.
+>
+> I plan to queue this up in clk-renesas-for-v4.15.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-This must not be applied before "PM / Domain: Enable genpd users to
-specify default active wakeup behavior" has landed upstream, hence the
-"RFC".
+Done.
 
-Compile-tested only.
+Gr{oetje,eeting}s,
 
-v2:
-  - New.
----
- drivers/soc/mediatek/mtk-scpsys.c | 14 ++------------
- 1 file changed, 2 insertions(+), 12 deletions(-)
+                        Geert
 
-diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
-index e1ce8b1b5090aa0a..e570b6af2e6ffbdd 100644
---- a/drivers/soc/mediatek/mtk-scpsys.c
-+++ b/drivers/soc/mediatek/mtk-scpsys.c
-@@ -361,17 +361,6 @@ static int scpsys_power_off(struct generic_pm_domain *genpd)
- 	return ret;
- }
- 
--static bool scpsys_active_wakeup(struct device *dev)
--{
--	struct generic_pm_domain *genpd;
--	struct scp_domain *scpd;
--
--	genpd = pd_to_genpd(dev->pm_domain);
--	scpd = container_of(genpd, struct scp_domain, genpd);
--
--	return scpd->data->active_wakeup;
--}
--
- static void init_clks(struct platform_device *pdev, struct clk **clk)
- {
- 	int i;
-@@ -466,7 +455,8 @@ static struct scp *init_scp(struct platform_device *pdev,
- 		genpd->name = data->name;
- 		genpd->power_off = scpsys_power_off;
- 		genpd->power_on = scpsys_power_on;
--		genpd->dev_ops.active_wakeup = scpsys_active_wakeup;
-+		if (scpd->data->active_wakeup)
-+			genpd->flags |= GENPD_FLAG_ACTIVE_WAKEUP;
- 	}
- 
- 	return scp;
--- 
-2.7.4
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
