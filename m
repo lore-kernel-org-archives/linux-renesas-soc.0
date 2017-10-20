@@ -1,92 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38914 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:38835 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752665AbdJTKaL (ORCPT
+        with ESMTP id S1752092AbdJTK3R (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Oct 2017 06:30:11 -0400
+        Fri, 20 Oct 2017 06:29:17 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 24/42] ARM: dts: r8a7790: Use R-Car GPIO Gen2 fallback compat string
-Date: Fri, 20 Oct 2017 12:28:51 +0200
-Message-Id: <26742a192c82cc28723c80dbecc5976db0508461.1508493785.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1508493785.git.horms+renesas@verge.net.au>
-References: <cover.1508493785.git.horms+renesas@verge.net.au>
+Subject: [PATCH 07/31] arm64: dts: renesas: r8a77995: draak: enable PWM channel 0 and 1
+Date: Fri, 20 Oct 2017 12:28:10 +0200
+Message-Id: <b35334447513c14a4dd55a67c269a743d4a4824b.1508495040.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1508495040.git.horms+renesas@verge.net.au>
+References: <cover.1508495040.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use newly added R-Car GPIO Gen2 fallback compat string
-in place of now deprecated non-generation specific
-R-Car GPIO fallback compat string in the DT of the r8a7790 SoC.
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-This should have no run-time effect as the driver matches against
-the per-SoC compat string before considering the fallback compat string.
+This patch enables PWM channel 0 and 1 on the draak. Each channel
+connects to LTC2644 for brightness control.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7790.dtsi | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 92b7f3bd8b69..f247beb3863f 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -200,7 +200,7 @@
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+index fac58be83383..09de73b11db8 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+@@ -46,6 +46,16 @@
+ 		};
  	};
  
- 	gpio0: gpio@e6050000 {
--		compatible = "renesas,gpio-r8a7790", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7790", "renesas,rcar-gen2-gpio";
- 		reg = <0 0xe6050000 0 0x50>;
- 		interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -214,7 +214,7 @@
- 	};
++	pwm0_pins: pwm0 {
++		groups = "pwm0_c";
++		function = "pwm0";
++	};
++
++	pwm1_pins: pwm1 {
++		groups = "pwm1_c";
++		function = "pwm1";
++	};
++
+ 	scif2_pins: scif2 {
+ 		groups = "scif2_data";
+ 		function = "scif2";
+@@ -94,6 +104,20 @@
+ 	status = "okay";
+ };
  
- 	gpio1: gpio@e6051000 {
--		compatible = "renesas,gpio-r8a7790", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7790", "renesas,rcar-gen2-gpio";
- 		reg = <0 0xe6051000 0 0x50>;
- 		interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -228,7 +228,7 @@
- 	};
- 
- 	gpio2: gpio@e6052000 {
--		compatible = "renesas,gpio-r8a7790", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7790", "renesas,rcar-gen2-gpio";
- 		reg = <0 0xe6052000 0 0x50>;
- 		interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -242,7 +242,7 @@
- 	};
- 
- 	gpio3: gpio@e6053000 {
--		compatible = "renesas,gpio-r8a7790", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7790", "renesas,rcar-gen2-gpio";
- 		reg = <0 0xe6053000 0 0x50>;
- 		interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -256,7 +256,7 @@
- 	};
- 
- 	gpio4: gpio@e6054000 {
--		compatible = "renesas,gpio-r8a7790", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7790", "renesas,rcar-gen2-gpio";
- 		reg = <0 0xe6054000 0 0x50>;
- 		interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -270,7 +270,7 @@
- 	};
- 
- 	gpio5: gpio@e6055000 {
--		compatible = "renesas,gpio-r8a7790", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7790", "renesas,rcar-gen2-gpio";
- 		reg = <0 0xe6055000 0 0x50>;
- 		interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
++&pwm0 {
++	pinctrl-0 = <&pwm0_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
++
++&pwm1 {
++	pinctrl-0 = <&pwm1_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
++
+ &rwdt {
+ 	timeout-sec = <60>;
+ 	status = "okay";
 -- 
 2.11.0
