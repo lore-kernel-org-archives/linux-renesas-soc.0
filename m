@@ -1,9 +1,11 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Jeffy Chen <jeffy.chen@rock-chips.com>, seanpaul@chromium.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Fri, 20 Oct 2017 13:07:35 -0400
+From: Sean Paul <seanpaul@chromium.org>
+To: Jeffy Chen <jeffy.chen@rock-chips.com>
 Cc: linux-kernel@vger.kernel.org, briannorris@chromium.org,
-        dianders@chromium.org, tfiga@chromium.org,
-        Andrzej Hajda <a.hajda@samsung.com>,
+        seanpaul@chromium.org, dianders@chromium.org, heiko@sntech.de,
+        tfiga@chromium.org, Andrzej Hajda <a.hajda@samsung.com>,
         Arnd Bergmann <arnd@arndb.de>,
         Romain Perier <romain.perier@collabora.com>,
         Russell King <rmk+kernel@armlinux.org.uk>,
@@ -42,19 +44,16 @@ Cc: linux-kernel@vger.kernel.org, briannorris@chromium.org,
         Jose Abreu <Jose.Abreu@synopsys.com>,
         Mark Rutland <mark.rutland@arm.com>
 Subject: Re: [PATCH v6 00/10] rockchip: kevin: Enable edp display
-Date: Tue, 31 Oct 2017 00:01:08 +0100
-Message-ID: <2449324.8EdsLz1NaV@phil>
-In-Reply-To: <20171019034812.13768-1-jeffy.chen@rock-chips.com>
+Message-ID: <20171020170735.yahyoshwsewttjvy@art_vandelay>
 References: <20171019034812.13768-1-jeffy.chen@rock-chips.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20171019034812.13768-1-jeffy.chen@rock-chips.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Jeffy, Sean,
-
-Am Donnerstag, 19. Oktober 2017, 11:48:02 CET schrieb Jeffy Chen:
+On Thu, Oct 19, 2017 at 11:48:02AM +0800, Jeffy Chen wrote:
 > 
 > Make edp display works on chromebook kevin(at least for boot animation).
 > 
@@ -82,40 +81,34 @@ Am Donnerstag, 19. Oktober 2017, 11:48:02 CET schrieb Jeffy Chen:
 >   drm/bridge/synopsys: dw-hdmi: Do not use device's drvdata
 >   drm/rockchip: dw_hdmi: Fix error handling path
 
-As I was just looking at the edp dts change in patch1 again, does this
-series also contain a fix for the issue below [0] ?
+Hi Jeffy,
+I've pushed 2/10. Once you fix 3/10, I can push 3-7. I'd like someone familiar
+with synopsys to review 8-9 before pushing those. Since 10 depends on 9, it'll
+be blocked on synopsys review.
 
-I'm still seeing this on 4.14-rc6 with the most recent drm tree merged in.
+Sean
 
+> 
+>  arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts  | 29 +++++++
+>  arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi       | 16 ++++
+>  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 52 +++++-------
+>  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c          | 53 ++++++------
+>  drivers/gpu/drm/exynos/exynos_dp.c                 | 29 ++++---
+>  drivers/gpu/drm/imx/dw_hdmi-imx.c                  | 22 +++--
+>  drivers/gpu/drm/meson/meson_dw_hdmi.c              | 20 +++--
+>  drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c             | 14 +++-
+>  drivers/gpu/drm/rockchip/analogix_dp-rockchip.c    | 95 +++++++++++-----------
+>  drivers/gpu/drm/rockchip/dw-mipi-dsi.c             | 21 +++--
+>  drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c        | 39 +++++----
+>  drivers/gpu/drm/rockchip/inno_hdmi.c               | 22 +++--
+>  include/drm/bridge/analogix_dp.h                   | 19 +++--
+>  include/drm/bridge/dw_hdmi.h                       | 17 ++--
+>  14 files changed, 265 insertions(+), 183 deletions(-)
+> 
+> -- 
+> 2.11.0
+> 
+> 
 
-Heiko
-
-[0]
-
-[   27.960120] BUG: scheduling while atomic: kworker/1:1/68/0x00000002
-[   27.974429] Modules linked in: rockchipdrm dw_hdmi analogix_dp drm_kms_helper panel_simple crc32_ce drm crct10dif_ce rockchip_saradc pwm_bl pwm_cros_ec rockchip_thermal ip_tables x_tabl
-es ipv6 smsc95xx smsc75xx ax88179_178a asix usbnet phy_rockchip_pcie pcie_rockchip
-[   28.008769] CPU: 1 PID: 68 Comm: kworker/1:1 Tainted: G        W       4.14.0-rc7-03201-g12490811b353 #559
-[   28.008774] Hardware name: Google Kevin (DT)
-[   28.008825] Workqueue: events analogix_dp_psr_work [rockchipdrm]
-[   28.008828] Call trace:
-[   28.008838] [<ffff000008088d60>] dump_backtrace+0x0/0x378
-[   28.008842] [<ffff0000080890ec>] show_stack+0x14/0x20
-[   28.008847] [<ffff0000089b04d8>] dump_stack+0x9c/0xbc
-[   28.008852] [<ffff0000080ec4b4>] __schedule_bug+0x4c/0x70
-[   28.008856] [<ffff0000089c4828>] __schedule+0x558/0x5e8
-[   28.008859] [<ffff0000089c48f0>] schedule+0x38/0xa0
-[   28.008864] [<ffff0000089c8194>] schedule_hrtimeout_range_clock+0x84/0xe8
-[   28.008867] [<ffff0000089c8208>] schedule_hrtimeout_range+0x10/0x18
-[   28.008870] [<ffff0000089c7c74>] usleep_range+0x64/0x78
-[   28.008882] [<ffff000000ef56e4>] analogix_dp_transfer+0x16c/0xa88 [analogix_dp]
-[   28.008891] [<ffff000000ef2190>] analogix_dpaux_transfer+0x10/0x18 [analogix_dp]
-[   28.008950] [<ffff000000ddbb1c>] drm_dp_dpcd_access+0x4c/0xf8 [drm_kms_helper]
-[   28.008994] [<ffff000000ddbbe4>] drm_dp_dpcd_write+0x1c/0x28 [drm_kms_helper]
-[   28.009002] [<ffff000000ef2130>] analogix_dp_disable_psr+0x60/0xb0 [analogix_dp]
-[   28.009036] [<ffff000000f8398c>] analogix_dp_psr_work+0x4c/0xc0 [rockchipdrm]
-[   28.009040] [<ffff0000080dff44>] process_one_work+0x1d4/0x348
-[   28.009043] [<ffff0000080e0100>] worker_thread+0x48/0x470
-[   28.009048] [<ffff0000080e63d4>] kthread+0x12c/0x130
-[   28.009052] [<ffff000008084b88>] ret_from_fork+0x10/0x18
-
+-- 
+Sean Paul, Software Engineer, Google / Chromium OS
