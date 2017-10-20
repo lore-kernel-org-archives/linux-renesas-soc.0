@@ -1,69 +1,368 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:56572 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753736AbdJPP2D (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:38914 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752507AbdJTK35 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Oct 2017 11:28:03 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 03/14] pinctrl: sh-pfc: Add generic bias register description
-Date: Mon, 16 Oct 2017 17:27:48 +0200
-Message-Id: <1508167679-21155-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1508167679-21155-1-git-send-email-geert+renesas@glider.be>
-References: <1508167679-21155-1-git-send-email-geert+renesas@glider.be>
+        Fri, 20 Oct 2017 06:29:57 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 07/42] ARM: dts: iwg20d-q7: Rework DT architecture
+Date: Fri, 20 Oct 2017 12:28:34 +0200
+Message-Id: <4f0b2563c4c0c67fc5b5e2369d5f62f91abc42e7.1508493785.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1508493785.git.horms+renesas@verge.net.au>
+References: <cover.1508493785.git.horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a generic way to describe bias registers (for pull-up/down control),
-like is already done for config and drive registers.
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-This makes the sh-pfc core code aware of these registers, which will
-ease introducing suspend/resume support later.
+Since the same carrier board may host RZ/G1M and RZ/G1N based
+Systems on Module, the DT architecture for iwg20d-q7 needs
+better decoupling. This patch provides:
+* iwg20d-q7-common.dtsi - its purpose is to define the carrier
+  board definitions, and its content is basically the same
+  as the previous version of r8a7743-iwg20d-q7.dts, only it
+  has no reference to the SoM .dtsi, and that's why the
+  filename doesn't mention the SoC name any more.
+* r8a7743-iwg20d-q7.dts - its new purpose is to put together
+  the SoM .dtsi (r8a7743-iwg20m.dtsi) and the carrier board
+  .dtsi defined by this very patch, along with "model" and
+  "compatible" properties.
+The final DT architecture to describe the board is now:
+r8a7743-iwg20d-q7.dts           # Carrier Board + SoM
+├── r8a7743-iwg20m.dtsi         # SoM
+│   └── r8a7743.dtsi            # SoC
+└── iwg20d-q7-common.dtsi       # Carrier Board
+and maximizes the reuse of the definitions for the carrier board
+and for the SoM.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-v2:
-  - Add Reviewed-by.
----
- drivers/pinctrl/sh-pfc/sh_pfc.h | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ arch/arm/boot/dts/iwg20d-q7-common.dtsi | 147 ++++++++++++++++++++++++++++++++
+ arch/arm/boot/dts/r8a7743-iwg20d-q7.dts | 139 +-----------------------------
+ 2 files changed, 149 insertions(+), 137 deletions(-)
+ create mode 100644 arch/arm/boot/dts/iwg20d-q7-common.dtsi
 
-diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
-index 8688b405e0813ad7..1914f4b5fef569b3 100644
---- a/drivers/pinctrl/sh-pfc/sh_pfc.h
-+++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-@@ -148,6 +148,17 @@ struct pinmux_drive_reg {
- 	.reg = r, \
- 	.fields =
- 
-+struct pinmux_bias_reg {
-+	u32 puen;		/* Pull-enable or pull-up control register */
-+	u32 pud;		/* Pull-up/down control register (optional) */
-+	const u16 pins[32];
+diff --git a/arch/arm/boot/dts/iwg20d-q7-common.dtsi b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
+new file mode 100644
+index 000000000000..1c072c0a4888
+--- /dev/null
++++ b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
+@@ -0,0 +1,147 @@
++/*
++ * Device Tree Source for the iWave-RZ/G1M/G1N Qseven carrier board
++ *
++ * Copyright (C) 2017 Renesas Electronics Corp.
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++/ {
++	aliases {
++		serial0 = &scif0;
++		ethernet0 = &avb;
++	};
++
++	chosen {
++		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
++		stdout-path = "serial0:115200n8";
++	};
++
++	vcc_sdhi1: regulator-vcc-sdhi1 {
++		compatible = "regulator-fixed";
++
++		regulator-name = "SDHI1 Vcc";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++
++		gpio = <&gpio1 16 GPIO_ACTIVE_LOW>;
++	};
++
++	vccq_sdhi1: regulator-vccq-sdhi1 {
++		compatible = "regulator-gpio";
++
++		regulator-name = "SDHI1 VccQ";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <3300000>;
++
++		gpios = <&gpio2 30 GPIO_ACTIVE_LOW>;
++		gpios-states = <1>;
++		states = <3300000 1
++			  1800000 0>;
++	};
 +};
 +
-+#define PINMUX_BIAS_REG(name1, r1, name2, r2) \
-+	.puen = r1,	\
-+	.pud = r2,	\
-+	.pins =
++&avb {
++	pinctrl-0 = <&avb_pins>;
++	pinctrl-names = "default";
 +
- struct pinmux_data_reg {
- 	u32 reg;
- 	u8 reg_width;
-@@ -245,6 +256,7 @@ struct sh_pfc_soc_info {
++	phy-handle = <&phy3>;
++	phy-mode = "gmii";
++	renesas,no-ether-link;
++	status = "okay";
++
++	phy3: ethernet-phy@3 {
++		reg = <3>;
++		micrel,led-mode = <1>;
++	};
++};
++
++&i2c2 {
++	pinctrl-0 = <&i2c2_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++	clock-frequency = <400000>;
++
++	rtc@68 {
++		compatible = "ti,bq32000";
++		reg = <0x68>;
++	};
++};
++
++&pci0 {
++	status = "okay";
++	pinctrl-0 = <&usb0_pins>;
++	pinctrl-names = "default";
++};
++
++&pci1 {
++	status = "okay";
++	pinctrl-0 = <&usb1_pins>;
++	pinctrl-names = "default";
++};
++
++&pfc {
++	avb_pins: avb {
++		groups = "avb_mdio", "avb_gmii";
++		function = "avb";
++	};
++
++	i2c2_pins: i2c2 {
++		groups = "i2c2";
++		function = "i2c2";
++	};
++
++	scif0_pins: scif0 {
++		groups = "scif0_data_d";
++		function = "scif0";
++	};
++
++	sdhi1_pins: sd1 {
++		groups = "sdhi1_data4", "sdhi1_ctrl";
++		function = "sdhi1";
++		power-source = <3300>;
++	};
++
++	sdhi1_pins_uhs: sd1_uhs {
++		groups = "sdhi1_data4", "sdhi1_ctrl";
++		function = "sdhi1";
++		power-source = <1800>;
++	};
++
++	usb0_pins: usb0 {
++		groups = "usb0";
++		function = "usb0";
++	};
++
++	usb1_pins: usb1 {
++		groups = "usb1";
++		function = "usb1";
++	};
++};
++
++&scif0 {
++	pinctrl-0 = <&scif0_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
++
++&sdhi1 {
++	pinctrl-0 = <&sdhi1_pins>;
++	pinctrl-1 = <&sdhi1_pins_uhs>;
++	pinctrl-names = "default", "state_uhs";
++
++	vmmc-supply = <&vcc_sdhi1>;
++	vqmmc-supply = <&vccq_sdhi1>;
++	cd-gpios = <&gpio6 14 GPIO_ACTIVE_LOW>;
++	wp-gpios = <&gpio6 15 GPIO_ACTIVE_HIGH>;
++	sd-uhs-sdr50;
++	status = "okay";
++};
++
++&usbphy {
++	status = "okay";
++};
+diff --git a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
+index 0136864bc595..6aa6b7467704 100644
+--- a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
++++ b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
+@@ -1,5 +1,5 @@
+ /*
+- * Device Tree Source for the iWave-RZG1M Qseven carrier board
++ * Device Tree Source for the iWave-RZ/G1M Qseven board
+  *
+  * Copyright (C) 2017 Renesas Electronics Corp.
+  *
+@@ -10,144 +10,9 @@
  
- 	const struct pinmux_cfg_reg *cfg_regs;
- 	const struct pinmux_drive_reg *drive_regs;
-+	const struct pinmux_bias_reg *bias_regs;
- 	const struct pinmux_data_reg *data_regs;
+ /dts-v1/;
+ #include "r8a7743-iwg20m.dtsi"
++#include "iwg20d-q7-common.dtsi"
  
- 	const u16 *pinmux_data;
+ / {
+ 	model = "iWave Systems RainboW-G20D-Qseven board based on RZ/G1M";
+ 	compatible = "iwave,g20d", "iwave,g20m", "renesas,r8a7743";
+-
+-	aliases {
+-		serial0 = &scif0;
+-		ethernet0 = &avb;
+-	};
+-
+-	chosen {
+-		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
+-		stdout-path = "serial0:115200n8";
+-	};
+-
+-	vcc_sdhi1: regulator-vcc-sdhi1 {
+-		compatible = "regulator-fixed";
+-
+-		regulator-name = "SDHI1 Vcc";
+-		regulator-min-microvolt = <3300000>;
+-		regulator-max-microvolt = <3300000>;
+-
+-		gpio = <&gpio1 16 GPIO_ACTIVE_LOW>;
+-	};
+-
+-	vccq_sdhi1: regulator-vccq-sdhi1 {
+-		compatible = "regulator-gpio";
+-
+-		regulator-name = "SDHI1 VccQ";
+-		regulator-min-microvolt = <1800000>;
+-		regulator-max-microvolt = <3300000>;
+-
+-		gpios = <&gpio2 30 GPIO_ACTIVE_LOW>;
+-		gpios-states = <1>;
+-		states = <3300000 1
+-			  1800000 0>;
+-	};
+-};
+-
+-&pfc {
+-	i2c2_pins: i2c2 {
+-		groups = "i2c2";
+-		function = "i2c2";
+-	};
+-
+-	scif0_pins: scif0 {
+-		groups = "scif0_data_d";
+-		function = "scif0";
+-	};
+-
+-	avb_pins: avb {
+-		groups = "avb_mdio", "avb_gmii";
+-		function = "avb";
+-	};
+-
+-	sdhi1_pins: sd1 {
+-		groups = "sdhi1_data4", "sdhi1_ctrl";
+-		function = "sdhi1";
+-		power-source = <3300>;
+-	};
+-
+-	sdhi1_pins_uhs: sd1_uhs {
+-		groups = "sdhi1_data4", "sdhi1_ctrl";
+-		function = "sdhi1";
+-		power-source = <1800>;
+-	};
+-
+-	usb0_pins: usb0 {
+-		groups = "usb0";
+-		function = "usb0";
+-	};
+-
+-	usb1_pins: usb1 {
+-		groups = "usb1";
+-		function = "usb1";
+-	};
+-};
+-
+-&scif0 {
+-	pinctrl-0 = <&scif0_pins>;
+-	pinctrl-names = "default";
+-
+-	status = "okay";
+-};
+-
+-&avb {
+-	pinctrl-0 = <&avb_pins>;
+-	pinctrl-names = "default";
+-
+-	phy-handle = <&phy3>;
+-	phy-mode = "gmii";
+-	renesas,no-ether-link;
+-	status = "okay";
+-
+-	phy3: ethernet-phy@3 {
+-		reg = <3>;
+-		micrel,led-mode = <1>;
+-	};
+-};
+-
+-&sdhi1 {
+-	pinctrl-0 = <&sdhi1_pins>;
+-	pinctrl-1 = <&sdhi1_pins_uhs>;
+-	pinctrl-names = "default", "state_uhs";
+-
+-	vmmc-supply = <&vcc_sdhi1>;
+-	vqmmc-supply = <&vccq_sdhi1>;
+-	cd-gpios = <&gpio6 14 GPIO_ACTIVE_LOW>;
+-	wp-gpios = <&gpio6 15 GPIO_ACTIVE_HIGH>;
+-	sd-uhs-sdr50;
+-	status = "okay";
+-};
+-
+-&i2c2 {
+-	pinctrl-0 = <&i2c2_pins>;
+-	pinctrl-names = "default";
+-
+-	status = "okay";
+-	clock-frequency = <400000>;
+-
+-	rtc@68 {
+-		compatible = "ti,bq32000";
+-		reg = <0x68>;
+-	};
+-};
+-
+-&pci0 {
+-	status = "okay";
+-	pinctrl-0 = <&usb0_pins>;
+-	pinctrl-names = "default";
+-};
+-
+-&pci1 {
+-	status = "okay";
+-	pinctrl-0 = <&usb1_pins>;
+-	pinctrl-names = "default";
+-};
+-
+-&usbphy {
+-	status = "okay";
+ };
 -- 
-2.7.4
+2.11.0
