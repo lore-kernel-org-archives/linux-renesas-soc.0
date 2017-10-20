@@ -1,39 +1,45 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 03/13] ARM: dts: r8a73a4: Add clock for CA15 CPU0 core
-Date: Thu, 12 Oct 2017 11:35:06 +0200
-Message-Id: <1507800916-11509-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1507800916-11509-1-git-send-email-geert+renesas@glider.be>
-References: <1507800916-11509-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:38914 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752665AbdJTKaa (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 20 Oct 2017 06:30:30 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 41/42] ARM: dts: r7s72100: Add clock for CA9 CPU core
+Date: Fri, 20 Oct 2017 12:29:08 +0200
+Message-Id: <f20d89ac0fefad2465e6ce6d64e9ff82e33889dd.1508493785.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1508493785.git.horms+renesas@verge.net.au>
+References: <cover.1508493785.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Improve hardware description by adding a clocks property to the device
-node corresponding to the primary CA15 CPU core, which is for now the
-only one described.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Improve hardware description by adding a clock property to the device
+node corresponding to the CA9 CPU core.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a73a4.dtsi | 1 +
+ arch/arm/boot/dts/r7s72100.dtsi | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/r8a73a4.dtsi b/arch/arm/boot/dts/r8a73a4.dtsi
-index f39a94fb36664906..8e48090e4fdc1412 100644
---- a/arch/arm/boot/dts/r8a73a4.dtsi
-+++ b/arch/arm/boot/dts/r8a73a4.dtsi
-@@ -27,6 +27,7 @@
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a15";
+diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+index 4ed12a4d9d51..ab9645a42eca 100644
+--- a/arch/arm/boot/dts/r7s72100.dtsi
++++ b/arch/arm/boot/dts/r7s72100.dtsi
+@@ -203,6 +203,7 @@
+ 			compatible = "arm,cortex-a9";
  			reg = <0>;
-+			clocks = <&cpg_clocks R8A73A4_CLK_Z>;
- 			clock-frequency = <1500000000>;
- 			power-domains = <&pd_a2sl>;
- 			next-level-cache = <&L2_CA15>;
+ 			clock-frequency = <400000000>;
++			clocks = <&cpg_clocks R7S72100_CLK_I>;
+ 			next-level-cache = <&L2>;
+ 		};
+ 	};
 -- 
-2.7.4
-
+2.11.0
