@@ -1,132 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:58464 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752196AbdJPOxu (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:38914 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752665AbdJTKaD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Oct 2017 10:53:50 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: linux-pm@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2] thermal: rcar_gen3_thermal: fix initialization sequence for H3 ES2.0
-Date: Mon, 16 Oct 2017 16:52:59 +0200
-Message-Id: <20171016145259.27897-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Fri, 20 Oct 2017 06:30:03 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 15/42] ARM: dts: r8a7743: Add HS-USB device node
+Date: Fri, 20 Oct 2017 12:28:42 +0200
+Message-Id: <4b4a3b1c33b7a389d90624683d8f1a8d1dc2affa.1508493785.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1508493785.git.horms+renesas@verge.net.au>
+References: <cover.1508493785.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The initialization sequence for H3 (r8a7795) ES1.x and ES2.0 is
-different. H3 ES2.0 and later uses the same sequence as M3 (r8a7796)
-ES1.0. Fix this by not looking at compatible strings and instead
-defaulting to the r8a7796 initialization sequence and use
-soc_device_match() to check for H3 ES1.x.
+From: Biju Das <biju.das@bp.renesas.com>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Define the R8A7743 generic part of the HS-USB device node. It is up to the
+board file to enable the device.
+
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/thermal/rcar_gen3_thermal.c | 34 +++++++++++++++-------------------
- 1 file changed, 15 insertions(+), 19 deletions(-)
+ arch/arm/boot/dts/r8a7743.dtsi | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
-index 203aca44a2bb4bdf..288104440226d90f 100644
---- a/drivers/thermal/rcar_gen3_thermal.c
-+++ b/drivers/thermal/rcar_gen3_thermal.c
-@@ -24,6 +24,7 @@
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/spinlock.h>
-+#include <linux/sys_soc.h>
- #include <linux/thermal.h>
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index d541fd9ffafb..080eff9bb3c3 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -945,6 +945,20 @@
+ 			status = "disabled";
+ 		};
  
- #include "thermal_core.h"
-@@ -90,10 +91,6 @@ struct rcar_gen3_thermal_priv {
- 	struct rcar_gen3_thermal_tsc *tscs[TSC_MAX_NUM];
- 	unsigned int num_tscs;
- 	spinlock_t lock; /* Protect interrupts on and off */
--	const struct rcar_gen3_thermal_data *data;
--};
--
--struct rcar_gen3_thermal_data {
- 	void (*thermal_init)(struct rcar_gen3_thermal_tsc *tsc);
- };
- 
-@@ -278,7 +275,12 @@ static irqreturn_t rcar_gen3_thermal_irq_thread(int irq, void *data)
- 	return IRQ_HANDLED;
- }
- 
--static void r8a7795_thermal_init(struct rcar_gen3_thermal_tsc *tsc)
-+static const struct soc_device_attribute r8a7795es1[] = {
-+	{ .soc_id = "r8a7795", .revision = "ES1.*" },
-+	{ /* sentinel */ }
-+};
++		hsusb: usb@e6590000 {
++			compatible = "renesas,usbhs-r8a7743",
++				     "renesas,rcar-gen2-usbhs";
++			reg = <0 0xe6590000 0 0x100>;
++			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 704>;
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			resets = <&cpg 704>;
++			renesas,buswait = <4>;
++			phys = <&usb0 1>;
++			phy-names = "usb";
++			status = "disabled";
++		};
 +
-+static void rcar_gen3_thermal_init_r8a7795es1(struct rcar_gen3_thermal_tsc *tsc)
- {
- 	rcar_gen3_thermal_write(tsc, REG_GEN3_CTSR,  CTSR_THBGR);
- 	rcar_gen3_thermal_write(tsc, REG_GEN3_CTSR,  0x0);
-@@ -303,7 +305,7 @@ static void r8a7795_thermal_init(struct rcar_gen3_thermal_tsc *tsc)
- 	usleep_range(1000, 2000);
- }
- 
--static void r8a7796_thermal_init(struct rcar_gen3_thermal_tsc *tsc)
-+static void rcar_gen3_thermal_init(struct rcar_gen3_thermal_tsc *tsc)
- {
- 	u32 reg_val;
- 
-@@ -324,17 +326,9 @@ static void r8a7796_thermal_init(struct rcar_gen3_thermal_tsc *tsc)
- 	usleep_range(1000, 2000);
- }
- 
--static const struct rcar_gen3_thermal_data r8a7795_data = {
--	.thermal_init = r8a7795_thermal_init,
--};
--
--static const struct rcar_gen3_thermal_data r8a7796_data = {
--	.thermal_init = r8a7796_thermal_init,
--};
--
- static const struct of_device_id rcar_gen3_thermal_dt_ids[] = {
--	{ .compatible = "renesas,r8a7795-thermal", .data = &r8a7795_data},
--	{ .compatible = "renesas,r8a7796-thermal", .data = &r8a7796_data},
-+	{ .compatible = "renesas,r8a7795-thermal", },
-+	{ .compatible = "renesas,r8a7796-thermal", },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, rcar_gen3_thermal_dt_ids);
-@@ -371,7 +365,9 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
- 	if (!priv)
- 		return -ENOMEM;
- 
--	priv->data = of_device_get_match_data(dev);
-+	priv->thermal_init = &rcar_gen3_thermal_init;
-+	if (soc_device_match(r8a7795es1))
-+		priv->thermal_init = &rcar_gen3_thermal_init_r8a7795es1;
- 
- 	spin_lock_init(&priv->lock);
- 
-@@ -423,7 +419,7 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
- 
- 		priv->tscs[i] = tsc;
- 
--		priv->data->thermal_init(tsc);
-+		priv->thermal_init(tsc);
- 		rcar_gen3_thermal_calc_coefs(&tsc->coef, ptat, thcode[i]);
- 
- 		zone = devm_thermal_zone_of_sensor_register(dev, i, tsc,
-@@ -476,7 +472,7 @@ static int __maybe_unused rcar_gen3_thermal_resume(struct device *dev)
- 	for (i = 0; i < priv->num_tscs; i++) {
- 		struct rcar_gen3_thermal_tsc *tsc = priv->tscs[i];
- 
--		priv->data->thermal_init(tsc);
-+		priv->thermal_init(tsc);
- 		rcar_gen3_thermal_set_trips(tsc, tsc->low, tsc->high);
- 	}
- 
+ 		usbphy: usb-phy@e6590100 {
+ 			compatible = "renesas,usb-phy-r8a7743",
+ 				     "renesas,rcar-gen2-usb-phy";
 -- 
-2.14.2
+2.11.0
