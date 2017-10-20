@@ -1,78 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:61975 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1758299AbdJMPXQ (ORCPT
+Received: from mail.kernel.org ([198.145.29.99]:53728 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753269AbdJTRar (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Oct 2017 11:23:16 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Fri, 20 Oct 2017 13:30:47 -0400
+Date: Fri, 20 Oct 2017 12:30:44 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 4/4] drm: rcar-du: Add R8A7745 support
-Date: Fri, 13 Oct 2017 16:22:22 +0100
-Message-Id: <1507908142-13142-5-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1507908142-13142-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1507908142-13142-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Ben Dooks <ben.dooks@codethink.co.uk>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: PCI: rcar: Correct example to match reality
+Message-ID: <20171020173044.GJ6332@bhelgaas-glaptop.roam.corp.google.com>
+References: <1507729813-21501-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1507729813-21501-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for the R8A7745 DU (which is very similar to the R8A7794 DU);
-it has 2 RGB outputs.
+On Wed, Oct 11, 2017 at 03:50:13PM +0200, Geert Uytterhoeven wrote:
+> Correct the USB subnodes in the example, cfr. commit f7d569c1e6a6fa73
+> ("ARM: dts: r8a779x: Fix PCI bus dtc warnings"):
+>   1. Drop the bogus 'device_type = "pci"' properties,
+>   2. Correct the unit addresses.
+> 
+> Update other bits in the example to match real use:
+>   1. Rename the USB subnodes from "pci" to "usb",
+>   2. Update the "phys" property.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
----
- drivers/gpu/drm/rcar-du/rcar_du_drv.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+Applied with acks from Sergei and Rob to pci/host-rcar for v4.15, thanks!
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-index 3db5e8d..faa5b32 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-@@ -55,6 +55,27 @@ static const struct rcar_du_device_info rzg1_du_r8a7743_info = {
- 	.num_lvds = 1,
- };
- 
-+static const struct rcar_du_device_info rzg1_du_r8a7745_info = {
-+	.gen = 2,
-+	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
-+		  | RCAR_DU_FEATURE_EXT_CTRL_REGS,
-+	.num_crtcs = 2,
-+	.routes = {
-+		/*
-+		 * R8A7745 has two RGB outputs
-+		 */
-+		[RCAR_DU_OUTPUT_DPAD0] = {
-+			.possible_crtcs = BIT(0),
-+			.port = 0,
-+		},
-+		[RCAR_DU_OUTPUT_DPAD1] = {
-+			.possible_crtcs = BIT(1),
-+			.port = 1,
-+		},
-+	},
-+	.num_lvds = 0,
-+};
-+
- static const struct rcar_du_device_info rcar_du_r8a7779_info = {
- 	.gen = 2,
- 	.features = 0,
-@@ -229,6 +250,7 @@ static const struct rcar_du_device_info rcar_du_r8a7796_info = {
- 
- static const struct of_device_id rcar_du_of_table[] = {
- 	{ .compatible = "renesas,du-r8a7743", .data = &rzg1_du_r8a7743_info },
-+	{ .compatible = "renesas,du-r8a7745", .data = &rzg1_du_r8a7745_info },
- 	{ .compatible = "renesas,du-r8a7779", .data = &rcar_du_r8a7779_info },
- 	{ .compatible = "renesas,du-r8a7790", .data = &rcar_du_r8a7790_info },
- 	{ .compatible = "renesas,du-r8a7791", .data = &rcar_du_r8a7791_info },
--- 
-2.7.4
+> ---
+>  Documentation/devicetree/bindings/pci/pci-rcar-gen2.txt | 10 ++++------
+>  1 file changed, 4 insertions(+), 6 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/pci-rcar-gen2.txt b/Documentation/devicetree/bindings/pci/pci-rcar-gen2.txt
+> index 3d038638612b8ec2..9fe7e12a7bf37b7c 100644
+> --- a/Documentation/devicetree/bindings/pci/pci-rcar-gen2.txt
+> +++ b/Documentation/devicetree/bindings/pci/pci-rcar-gen2.txt
+> @@ -60,17 +60,15 @@ Example SoC configuration:
+>  				 0x0800 0 0 1 &gic 0 108 IRQ_TYPE_LEVEL_HIGH
+>  				 0x1000 0 0 2 &gic 0 108 IRQ_TYPE_LEVEL_HIGH>;
+>  
+> -		pci@0,1 {
+> +		usb@1,0 {
+>  			reg = <0x800 0 0 0 0>;
+> -			device_type = "pci";
+> -			phys = <&usbphy 0 0>;
+> +			phys = <&usb0 0>;
+>  			phy-names = "usb";
+>  		};
+>  
+> -		pci@0,2 {
+> +		usb@2,0 {
+>  			reg = <0x1000 0 0 0 0>;
+> -			device_type = "pci";
+> -			phys = <&usbphy 0 0>;
+> +			phys = <&usb0 0>;
+>  			phy-names = "usb";
+>  		};
+>  	};
+> -- 
+> 2.7.4
+> 
