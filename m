@@ -1,13 +1,13 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:45791 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751464AbdJTNDj (ORCPT
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:50895 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751879AbdJTJlx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Oct 2017 09:03:39 -0400
-Received: by mail-lf0-f67.google.com with SMTP id n69so13128249lfn.2
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Oct 2017 06:03:38 -0700 (PDT)
+        Fri, 20 Oct 2017 05:41:53 -0400
+Received: by mail-lf0-f65.google.com with SMTP id a132so12531562lfa.7
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Oct 2017 02:41:52 -0700 (PDT)
 From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
-Date: Fri, 20 Oct 2017 15:03:36 +0200
+Date: Fri, 20 Oct 2017 11:41:50 +0200
 To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: "David S. Miller" <davem@davemloft.net>,
         Florian Fainelli <f.fainelli@gmail.com>,
@@ -16,7 +16,7 @@ Cc: "David S. Miller" <davem@davemloft.net>,
         Renjith R V <renjith.rv@quest-global.com>
 Subject: Re: [PATCH] net: ethtool: remove error check for legacy setting
  transceiver type
-Message-ID: <20171020130335.GU19910@bigcity.dyn.berto.se>
+Message-ID: <20171020094150.GS19910@bigcity.dyn.berto.se>
 References: <20171019233208.15444-1-niklas.soderlund+renesas@ragnatech.se>
  <CAMuHMdUFHP-nmft72q7_ZGqqUzuOoj0q+6+fyfQF-XkfnFpLvA@mail.gmail.com>
 MIME-Version: 1.0
@@ -63,6 +63,9 @@ On 2017-10-20 09:15:50 +0200, Geert Uytterhoeven wrote:
 > Thanks for your patch!
 > 
 > Reported-by: Renjith R V <renjith.rv@quest-global.com>
+
+Thanks for adding Renjith as reporter, it slipped my mind.
+
 > 
 > > Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
 > 
@@ -72,12 +75,6 @@ On 2017-10-20 09:15:50 +0200, Geert Uytterhoeven wrote:
 > drivers call phy_ethtool_ksettings_set() while holding a driver-specific
 > spinlock, which leads to phy_start_aneg_priv() calling mutex_lock() with
 > interrupts disabled.
-
-This seems to be a old issue, I can reproduce it on v4.2, releases 
-earlier than that is problematic for me to compile using gcc7 so I gave 
-up. I don't know if this ever worked without triggering the BUG but it 
-is present at least from v4.2.
-
 > 
 > Backtrace for sh_eth:
 > 
