@@ -1,75 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:35358 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750715AbdJTEAO (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:30213 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751125AbdJTDQ6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Oct 2017 00:00:14 -0400
-Date: Fri, 20 Oct 2017 06:00:11 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: wsa+renesas@sang-engineering.com, ulf.hansson@linaro.org,
-        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] mmc: tmio: fix swiotlb buffer is full
-Message-ID: <20171020040011.pgq3nnuueooi7ljb@ninjato>
+        Thu, 19 Oct 2017 23:16:58 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: wsa+renesas@sang-engineering.com, ulf.hansson@linaro.org
+Cc: linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v2 1/2] mmc: tmio: fix swiotlb buffer is full
+Date: Fri, 20 Oct 2017 12:12:41 +0900
+Message-Id: <1508469162-12322-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1508469162-12322-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 References: <1508469162-12322-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1508469162-12322-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="pochndvk5mqcplwz"
-Content-Disposition: inline
-In-Reply-To: <1508469162-12322-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Since the commit de3ee99b097d ("mmc: Delete bounce buffer handling")
+deletes the bounce buffer handling, a request data size will be referred
+to max_{req,seg}_size instead of MMC_QUEUE_BOUNCESZ (64k bytes).
 
---pochndvk5mqcplwz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In other hand, renesas_sdhi_internal_dmac.c will set very big value of
+max_{req,seg}_size because the max_blk_count is set to 0xffffffff.
+And then, "swiotlb buffer is full" happens because swiotlb can handle
+a memory size up to 256k bytes only (IO_TLB_SEGSIZE = 128 and
+IO_TLB_SHIFT = 11).
 
-On Fri, Oct 20, 2017 at 12:12:41PM +0900, Yoshihiro Shimoda wrote:
-> Since the commit de3ee99b097d ("mmc: Delete bounce buffer handling")
-> deletes the bounce buffer handling, a request data size will be referred
-> to max_{req,seg}_size instead of MMC_QUEUE_BOUNCESZ (64k bytes).
->=20
-> In other hand, renesas_sdhi_internal_dmac.c will set very big value of
-> max_{req,seg}_size because the max_blk_count is set to 0xffffffff.
-> And then, "swiotlb buffer is full" happens because swiotlb can handle
-> a memory size up to 256k bytes only (IO_TLB_SEGSIZE =3D 128 and
-> IO_TLB_SHIFT =3D 11).
->=20
-> So, as a workaround, this patch avoids the issue by setting
-> the max_{req,seg}_size up to 256k bytes if swiotlb is running.
->=20
-> Reported-by: Dirk Behme <dirk.behme@de.bosch.com>
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+So, as a workaround, this patch avoids the issue by setting
+the max_{req,seg}_size up to 256k bytes if swiotlb is running.
 
-For the issues we are seeing with v4.14, I think this fix is good. We
-plan to fully fix this issue at a more generic level, then this addition
-can go again. But we are not there yet, and likely need some additional
-API, so:
+Reported-by: Dirk Behme <dirk.behme@de.bosch.com>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ drivers/mmc/host/tmio_mmc_core.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---pochndvk5mqcplwz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlnpdMcACgkQFA3kzBSg
-KbbNww//e4Gpso4avIhsdCRx9D8YUxdCbLgrCD2fuvrqFSLYEZxPJet0QroXAqt2
-Z0SPfQ5RcNXUCqm7n+YmY/PzuKTq7qx8z8YNvvycy+LIYGDrRSetYbageeZRm2Mb
-HNh/s24IqMLQdpgQqgrbQsYaqJgobHcDWTonEOea6sO2rawVrcJDmYATGfm3GS9F
-nf7Gtkx/wgbpUKeLO57vDpYbCuBbdkTNZ3+dM/DQuQq8mIUWdZV9R2OSWbzYENGi
-mL4VE5vPMPvnD4mamD2lb/jWUvtKZE7ziOakkST70ZutSc/sdXrorick+O9ixVUl
-jl2IEn4x7u/hlh6c4mjEkMigN+ph5SxJOBieCxB2asEqHG5CL+sEvmHLc/+tTGCp
-AKSGsGl1twQvCc/X6JQuPT5DIjXiGVIzQpHmrzUJqJ4F87q/GsXlPBFA9mrUDU5e
-k+Vs6GzQy9IDWLtmbh+hs7mvMN2QXglel3ApaUCkHkDTMua4wiVYZIcrk5P48kSy
-lwqKo6/yawps9C+5/beLbJjT1iCKeUco+LJWOKL7lXG1NzSHa+Q7rgpDhLvoajvO
-ML2IOf8Sasd0qqmUVMTYoBDt1GmEFovxNmhURJwrDfwPMrjdxbwO3L2Ey29/Cl6y
-U4+V9zc4OwqpokCn/LHTe47OTm3ka/e/POfSKTpxRlLA8g+B1QM=
-=4Ywg
------END PGP SIGNATURE-----
-
---pochndvk5mqcplwz--
+diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+index a7293e1..9c4e619 100644
+--- a/drivers/mmc/host/tmio_mmc_core.c
++++ b/drivers/mmc/host/tmio_mmc_core.c
+@@ -47,6 +47,7 @@
+ #include <linux/mmc/sdio.h>
+ #include <linux/scatterlist.h>
+ #include <linux/spinlock.h>
++#include <linux/swiotlb.h>
+ #include <linux/workqueue.h>
+ 
+ #include "tmio_mmc.h"
+@@ -1215,6 +1216,18 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
+ 	mmc->max_blk_count = pdata->max_blk_count ? :
+ 		(PAGE_SIZE / mmc->max_blk_size) * mmc->max_segs;
+ 	mmc->max_req_size = mmc->max_blk_size * mmc->max_blk_count;
++	/*
++	 * Since swiotlb has memory size limitation, this will calculate
++	 * the maximum size locally (because we don't have any APIs for it now)
++	 * and check the current max_req_size. And then, this will update
++	 * the max_req_size if needed as a workaround.
++	 */
++	if (swiotlb_max_segment()) {
++		unsigned int max_size = (1 << IO_TLB_SHIFT) * IO_TLB_SEGSIZE;
++
++		if (mmc->max_req_size > max_size)
++			mmc->max_req_size = max_size;
++	}
+ 	mmc->max_seg_size = mmc->max_req_size;
+ 
+ 	_host->native_hotplug = !(pdata->flags & TMIO_MMC_USE_GPIO_CD ||
+-- 
+1.9.1
