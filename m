@@ -1,50 +1,33 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:63956 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751275AbdJWNTk (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:37851 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751510AbdJTJdV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Oct 2017 09:19:40 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Simon Horman <horms@verge.net.au>
-CC: Rob Herring <robh+dt@kernel.org>,
+        Fri, 20 Oct 2017 05:33:21 -0400
+Date: Fri, 20 Oct 2017 11:33:02 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Russell King <linux@armlinux.org.uk>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>
-Subject: RE: [PATCH] ARM: dts: r8a7745: Add IIC cores to dtsi
-Date: Mon, 23 Oct 2017 13:19:35 +0000
-Message-ID: <TY1PR06MB0895D20B307ECD9862727533C0460@TY1PR06MB0895.apcprd06.prod.outlook.com>
+Subject: Re: [PATCH] ARM: dts: r8a7745: Add IIC cores to dtsi
+Message-ID: <20171020093302.o3jjjgu37gipqelj@verge.net.au>
 References: <1507910793-13919-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <20171020093302.o3jjjgu37gipqelj@verge.net.au>
-In-Reply-To: <20171020093302.o3jjjgu37gipqelj@verge.net.au>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1507910793-13919-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-> Please include some changelog text here, preferably motivating the change=
-.
+Please include some changelog text here, preferably motivating the change.
 
-Will do.
-
-Fab
-
->
-> On Fri, Oct 13, 2017 at 05:06:33PM +0100, Fabrizio Castro wrote:
-> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
-
-
-
-Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
-uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
- No. 04586709.
+On Fri, Oct 13, 2017 at 05:06:33PM +0100, Fabrizio Castro wrote:
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
