@@ -1,46 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38914 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:38895 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752665AbdJTKaY (ORCPT
+        with ESMTP id S1752092AbdJTK31 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Oct 2017 06:30:24 -0400
+        Fri, 20 Oct 2017 06:29:27 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 36/42] ARM: dts: r8a7792: Add missing clock for secondary CA15 CPU core
-Date: Fri, 20 Oct 2017 12:29:03 +0200
-Message-Id: <8684a24caa3d59d9ba03f1e6f9653b49ac78ec04.1508493785.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1508493785.git.horms+renesas@verge.net.au>
-References: <cover.1508493785.git.horms+renesas@verge.net.au>
+Subject: [PATCH 15/31] arm64: dts: ulcb-kf: enable USB2.0 Host channel 0
+Date: Fri, 20 Oct 2017 12:28:18 +0200
+Message-Id: <36bd8e3e34f2cd0b9a074df22327719d8d34b3a5.1508495040.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1508495040.git.horms+renesas@verge.net.au>
+References: <cover.1508495040.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 
-Currently only the primary CPU in the CA15 cluster has a clocks
-property, while the secondary CPU core is driven by the same clock.
-Add the missing clocks property to fix this.
+This supports USB2.0 Host channel 0 on ULCB Kingfisher board
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7792.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/renesas/ulcb-kf.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
-index 56570d1ce5f6..131f65b0426e 100644
---- a/arch/arm/boot/dts/r8a7792.dtsi
-+++ b/arch/arm/boot/dts/r8a7792.dtsi
-@@ -56,6 +56,7 @@
- 			compatible = "arm,cortex-a15";
- 			reg = <1>;
- 			clock-frequency = <1000000000>;
-+			clocks = <&cpg CPG_CORE R8A7792_CLK_Z>;
- 			power-domains = <&sysc R8A7792_PD_CA15_CPU1>;
- 			next-level-cache = <&L2_CA15>;
- 		};
+diff --git a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
+index aab51d0b9a50..83284eace174 100644
+--- a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
++++ b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
+@@ -28,6 +28,10 @@
+ 	status = "okay";
+ };
+ 
++&ehci0 {
++	status = "okay";
++};
++
+ &hscif0 {
+ 	pinctrl-0 = <&hscif0_pins>;
+ 	pinctrl-names = "default";
+@@ -40,6 +44,10 @@
+ 	status = "okay";
+ };
+ 
++&ohci0 {
++	status = "okay";
++};
++
+ &pfc {
+ 	can0_pins: can0 {
+ 		groups = "can0_data_a";
 -- 
 2.11.0
