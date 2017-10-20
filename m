@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:38914 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752665AbdJTKaE (ORCPT
+        with ESMTP id S1752665AbdJTKaG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Oct 2017 06:30:04 -0400
+        Fri, 20 Oct 2017 06:30:06 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
@@ -11,9 +11,9 @@ Cc: linux-arm-kernel@lists.infradead.org,
         Biju Das <biju.das@bp.renesas.com>,
         Chris Paterson <chris.paterson2@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 16/42] ARM: dts: iwg20d-q7: Enable HS-USB
-Date: Fri, 20 Oct 2017 12:28:43 +0200
-Message-Id: <405b580227ff1ae8fde82a666a2a5c0391a7e64a.1508493785.git.horms+renesas@verge.net.au>
+Subject: [PATCH 17/42] ARM: dts: r8a7743: Add USB-DMAC device nodes
+Date: Fri, 20 Oct 2017 12:28:44 +0200
+Message-Id: <310861003a0d59cb410538bcdf73a218157a111d.1508493785.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1508493785.git.horms+renesas@verge.net.au>
 References: <cover.1508493785.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -21,43 +21,52 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 
 From: Biju Das <biju.das@bp.renesas.com>
 
-Enable HS-USB device for the iWave G20D-Q7 carrier board based on
-RZ/G1M.
-Also disable the host mode support on usb otg port by default to avoid
-pin conflicts.
-
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/iwg20d-q7-common.dtsi | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a7743.dtsi | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-diff --git a/arch/arm/boot/dts/iwg20d-q7-common.dtsi b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-index 1c072c0a4888..efd8af9242d1 100644
---- a/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-+++ b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-@@ -58,6 +58,12 @@
- 	};
- };
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index 080eff9bb3c3..de89295ce63a 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -355,6 +355,34 @@
+ 			dma-channels = <15>;
+ 		};
  
-+&hsusb {
-+	status = "okay";
-+	pinctrl-0 = <&usb0_pins>;
-+	pinctrl-names = "default";
-+};
++		usb_dmac0: dma-controller@e65a0000 {
++			compatible = "renesas,r8a7743-usb-dmac",
++				     "renesas,usb-dmac";
++			reg = <0 0xe65a0000 0 0x100>;
++			interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1";
++			clocks = <&cpg CPG_MOD 330>;
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			resets = <&cpg 330>;
++			#dma-cells = <1>;
++			dma-channels = <2>;
++		};
 +
- &i2c2 {
- 	pinctrl-0 = <&i2c2_pins>;
- 	pinctrl-names = "default";
-@@ -72,7 +78,6 @@
- };
- 
- &pci0 {
--	status = "okay";
- 	pinctrl-0 = <&usb0_pins>;
- 	pinctrl-names = "default";
- };
++		usb_dmac1: dma-controller@e65b0000 {
++			compatible = "renesas,r8a7743-usb-dmac",
++				     "renesas,usb-dmac";
++			reg = <0 0xe65b0000 0 0x100>;
++			interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1";
++			clocks = <&cpg CPG_MOD 331>;
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			resets = <&cpg 331>;
++			#dma-cells = <1>;
++			dma-channels = <2>;
++		};
++
+ 		/* The memory map in the User's Manual maps the cores to bus
+ 		 *  numbers
+ 		 */
 -- 
 2.11.0
