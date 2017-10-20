@@ -1,56 +1,85 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:35664 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751916AbdJDMXj (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:42621 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750939AbdJTDTA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Oct 2017 08:23:39 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Felipe Balbi <balbi@kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] usb: gadget: udc: renesas_usb3: Use of_device_get_match_data() helper
-Date: Wed,  4 Oct 2017 14:23:31 +0200
-Message-Id: <1507119811-13053-1-git-send-email-geert+renesas@glider.be>
+        Thu, 19 Oct 2017 23:19:00 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Konrad Rzeszutek Wilk <konrad@darnok.org>
+CC: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
+Subject: RE: [PATCH 1/2] mmc: renesas_sdhi: fix swiotlb buffer is full
+Date: Fri, 20 Oct 2017 03:18:55 +0000
+Message-ID: <TY1PR06MB09929A4BF1E2A5DBD54845DED8430@TY1PR06MB0992.apcprd06.prod.outlook.com>
+References: <1508225421-25405-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1508225421-25405-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <CAMuHMdXyY-gvQGn2UxhUDsdhdWUMmTA80z73PF14otvcKuTMaw@mail.gmail.com>
+ <20171019002412.GA14493@localhost.localdomain>
+ <CAMuHMdUs+dLq8LJTJoUQEUzJAKXCfD0JBtVnHPyN6XdppVy5qQ@mail.gmail.com>
+ <TY1PR06MB09928E11C2AFFD55EF68961CD8420@TY1PR06MB0992.apcprd06.prod.outlook.com>
+In-Reply-To: <TY1PR06MB09928E11C2AFFD55EF68961CD8420@TY1PR06MB0992.apcprd06.prod.outlook.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use the of_device_get_match_data() helper instead of open coding,
-postponing the matching until when it's really needed.
-Note that the renesas_usb3 driver is used with DT only, so there's
-always a valid match.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/usb/gadget/udc/renesas_usb3.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
-
-diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
-index df37c1e6e9d5cc3e..acbf0feb47c85942 100644
---- a/drivers/usb/gadget/udc/renesas_usb3.c
-+++ b/drivers/usb/gadget/udc/renesas_usb3.c
-@@ -2549,20 +2549,15 @@ static int renesas_usb3_probe(struct platform_device *pdev)
- {
- 	struct renesas_usb3 *usb3;
- 	struct resource *res;
--	const struct of_device_id *match;
- 	int irq, ret;
- 	const struct renesas_usb3_priv *priv;
- 	const struct soc_device_attribute *attr;
- 
--	match = of_match_node(usb3_of_match, pdev->dev.of_node);
--	if (!match)
--		return -ENODEV;
--
- 	attr = soc_device_match(renesas_usb3_quirks_match);
- 	if (attr)
- 		priv = attr->data;
- 	else
--		priv = match->data;
-+		priv = of_device_get_match_data(&pdev->dev);
- 
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq < 0) {
--- 
-2.7.4
+SGkgYWdhaW4hDQoNCj4gRnJvbTogWW9zaGloaXJvIFNoaW1vZGEsIFNlbnQ6IFRodXJzZGF5LCBP
+Y3RvYmVyIDE5LCAyMDE3IDg6MzkgUE0NCj4gDQo+IEhpIEdlZXJ0LXNhbiwgS29ucmFkLXNhbiwN
+Cj4gDQo+ID4gRnJvbTogR2VlcnQgVXl0dGVyaG9ldmVuLCBTZW50OiBUaHVyc2RheSwgT2N0b2Jl
+ciAxOSwgMjAxNyA1OjM0IFBNDQo+ID4NCj4gPiBIaSBLb25yYWQsDQo+ID4NCj4gPiBPbiBUaHUs
+IE9jdCAxOSwgMjAxNyBhdCAyOjI0IEFNLCBLb25yYWQgUnplc3p1dGVrIFdpbGsNCj4gPiA8a29u
+cmFkQGRhcm5vay5vcmc+IHdyb3RlOg0KPCBzbmlwID4NCj4gPiA+PiA+IGRpZmYgLS1naXQgYS9k
+cml2ZXJzL21tYy9ob3N0L3JlbmVzYXNfc2RoaV9pbnRlcm5hbF9kbWFjLmMgYi9kcml2ZXJzL21t
+Yy9ob3N0L3JlbmVzYXNfc2RoaV9pbnRlcm5hbF9kbWFjLmMNCj4gPiA+PiA+IGluZGV4IGY5MDVm
+MjMuLjZjOWI0YjIgMTAwNjQ0DQo+ID4gPj4gPiAtLS0gYS9kcml2ZXJzL21tYy9ob3N0L3JlbmVz
+YXNfc2RoaV9pbnRlcm5hbF9kbWFjLmMNCj4gPiA+PiA+ICsrKyBiL2RyaXZlcnMvbW1jL2hvc3Qv
+cmVuZXNhc19zZGhpX2ludGVybmFsX2RtYWMuYw0KPiA+ID4+ID4gQEAgLTgwLDggKzgwLDkgQEAN
+Cj4gPiA+PiA+ICAgICAgICAgLnNjY19vZmZzZXQgICAgID0gMHgxMDAwLA0KPiA+ID4+ID4gICAg
+ICAgICAudGFwcyAgICAgICAgICAgPSByY2FyX2dlbjNfc2NjX3RhcHMsDQo+ID4gPj4gPiAgICAg
+ICAgIC50YXBzX251bSAgICAgICA9IEFSUkFZX1NJWkUocmNhcl9nZW4zX3NjY190YXBzKSwNCj4g
+PiA+PiA+IC0gICAgICAgLyogR2VuMyBTREhJIERNQUMgY2FuIGhhbmRsZSAweGZmZmZmZmZmIGJs
+ayBjb3VudCwgYnV0IHNlZyA9IDEgKi8NCj4gPiA+PiA+IC0gICAgICAgLm1heF9ibGtfY291bnQg
+ID0gMHhmZmZmZmZmZiwNCj4gPiA+PiA+ICsgICAgICAgLyogVGhlIHN3aW90bGIgY2FuIGhhbmRs
+ZSBtZW1vcnkgc2l6ZSB1cCB0byAyNTYga2J5dGVzIGZvciBub3cuICovDQo+ID4gPj4gPiArICAg
+ICAgIC5tYXhfYmxrX2NvdW50ICA9IDUxMiwNCj4gPiA+Pg0KPiA+ID4+IEZpeGluZyB0aGlzIGlu
+IHRoZSBpbmRpdmlkdWFsIGRyaXZlcnMgZmVlbHMgbGlrZSB0aGUgd3Jvbmcgc29sdXRpb24gdG8g
+bWUuDQo+ID4gPj4NCj4gPiA+PiBpb21tdTogSXMgdGhlcmUgYSBiZXR0ZXIgKGdlbmVyaWMpIHdh
+eSB0byBoYW5kbGUgdGhpcz8NCj4gPiA+DQo+ID4gPiBZZXMuIFNlZSA3NDUzYzU0OWY1ZjY0ODVj
+MGQ3OWNhZDc4NDQ4NzBkY2M3ZDFiMzRkLCBha2Egc3dpb3RsYl9tYXhfc2VnbWVudA0KPiA+DQo+
+ID4gVGhhbmtzIGZvciB0aGUgcG9pbnRlciENCj4gPg0KPiA+IFdoaWxlIEkgYWdyZWUgdGhpcyBj
+YW4gYmUgdXNlZCB0byBhdm9pZCB0aGUgc3dpb3RsYiBidWZmZXIgZnVsbCBpc3N1ZSwNCj4gPiBJ
+IGJlbGlldmUgaXQgaXMgYSBzdWJvcHRpbWFsIHNvbHV0aW9uIGlmIHRoZSBkZXZpY2UgYWN0dWFs
+bHkgdXNlcyBhbiBJT01NVS4NCj4gPiBJdCBsaW1pdHMgdGhlIG1hcHBpbmcgc2l6ZSBpZiBDT05G
+SUdfU1dJT1RMQj15LCB3aGljaCBpcyBhbHdheXMgdGhlDQo+ID4gY2FzZSBmb3IgYXJtL2FybTY0
+IHRoZXNlIGRheXMuDQo+IA0KPiBJJ20gYWZyYWlkIGJ1dCBJIG1pc3VuZGVyc3Rvb2QgdGhpcyBB
+UEkncyBzcGVjIHdoZW4gSSByZWFkIGl0IGF0IGZpcnN0Lg0KPiBBZnRlciBJIHRyaWVkIHRvIHVz
+ZSBpdCwgSSBmb3VuZCB0aGUgQVBJIGNhbm5vdCBiZSB1c2VkIGZvciBhIHdvcmthcm91bmQgYmVj
+YXVzZQ0KPiB0aGlzIEFQSSByZXR1cm5zIHRvdGFsIHNpemUgb2Ygc3dpb3RsYi4NCj4gDQo+IEZv
+ciBleGFtcGxlOg0KPiAgLSBUaGUgc3dpb3RsYl9tYXhfc2VnbWVudCgpIHJldHVybnMgNjRNIGJ5
+dGVzIGZyb20gdGhlIEFQSSB3aGVuIGEgZGVmYXVsdCBzZXR0aW5nLg0KPiAgIC0gSW4gdGhpcyBj
+YXNlLCB0aGUgbWF4aW11bSBzaXplIHBlciBhIG1hcCBpcyAyNTZrIGJ5dGVzLg0KPiAgLSBUaGUg
+c3dpb3RsYl9tYXhfc2VnbWVudCgpIHJldHVybnMgMTI4TSBieXRlcyBmcm9tIHRoZSBBUEkgd2hl
+biBJIGFkZGVkIHN3aW90bGI9NjU1MzYNCj4gICAgaW50byB0aGUga2VybmVsIHBhcmFtZXRlciBv
+biBhcm02NC4NCj4gICAtIEluIHRoaXMgY2FzZSwgdGhlIG1heGltdW0gc2l6ZSBwZXIgYSBtYXAg
+aXMgc3RpbGwgMjU2ayBieXRlcyBiZWNhdXNlDQo+ICAgICB0aGUgc3dpb3RsYiBoYXMgaGFyZGNv
+ZGVkIHRoZSBzaXplIGJ5IHRoZSBmb2xsb3dpbmcgY29kZToNCj4gICAgICBodHRwczovL2dpdC5r
+ZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC90b3J2YWxkcy9saW51eC5naXQvdHJl
+ZS9saWIvc3dpb3RsYi5jP2g9djQuMTQtcmM1I24yNTQNCj4gDQo+IFNvLCBob3cgZG8gd2UgaGFu
+ZGxlIHRvIHJlc29sdmUgKG9yIGF2b2lkKSB0aGUgaXNzdWU/DQoNCkFueXdheSwgSSBtYWRlIHYy
+IHBhdGNoZXMgYnkgdXNpbmcgc3dpb3RsYiByZWxhdGVkIGRlZmluaXRpb25zLiBXb3VsZCB5b3Ug
+Y2hlY2sgaXQ/DQpodHRwczovL3BhdGNod29yay5rZXJuZWwub3JnL3BhdGNoLzEwMDE4ODc5Lw0K
+DQpCZXN0IHJlZ2FyZHMsDQpZb3NoaWhpcm8gU2hpbW9kYQ0KDQo+IEJlc3QgcmVnYXJkcywNCj4g
+WW9zaGloaXJvIFNoaW1vZGENCj4gDQo+ID4gR3J7b2V0amUsZWV0aW5nfXMsDQo+ID4NCj4gPiAg
+ICAgICAgICAgICAgICAgICAgICAgICBHZWVydA0KPiA+DQo+ID4gLS0NCj4gPiBHZWVydCBVeXR0
+ZXJob2V2ZW4gLS0gVGhlcmUncyBsb3RzIG9mIExpbnV4IGJleW9uZCBpYTMyIC0tIGdlZXJ0QGxp
+bnV4LW02OGsub3JnDQo+ID4NCj4gPiBJbiBwZXJzb25hbCBjb252ZXJzYXRpb25zIHdpdGggdGVj
+aG5pY2FsIHBlb3BsZSwgSSBjYWxsIG15c2VsZiBhIGhhY2tlci4gQnV0DQo+ID4gd2hlbiBJJ20g
+dGFsa2luZyB0byBqb3VybmFsaXN0cyBJIGp1c3Qgc2F5ICJwcm9ncmFtbWVyIiBvciBzb21ldGhp
+bmcgbGlrZSB0aGF0Lg0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLS0gTGlu
+dXMgVG9ydmFsZHMNCg==
