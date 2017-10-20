@@ -1,94 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38914 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752665AbdJTKaJ (ORCPT
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:54116 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752937AbdJTJ4x (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Oct 2017 06:30:09 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 21/42] ARM: dts: r8a7778: Use R-Car GPIO Gen1 fallback compat string
-Date: Fri, 20 Oct 2017 12:28:48 +0200
-Message-Id: <9b43ba66f145127025cf82a35f47f228ea936935.1508493785.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1508493785.git.horms+renesas@verge.net.au>
-References: <cover.1508493785.git.horms+renesas@verge.net.au>
+        Fri, 20 Oct 2017 05:56:53 -0400
+MIME-Version: 1.0
+In-Reply-To: <1508167679-21155-1-git-send-email-geert+renesas@glider.be>
+References: <1508167679-21155-1-git-send-email-geert+renesas@glider.be>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 20 Oct 2017 11:56:50 +0200
+Message-ID: <CAMuHMdU3FjCv6va8yeNVOhnOD00FDo618JDtyu6gZFO=rd=bUQ@mail.gmail.com>
+Subject: Re: [PATCH v2 00/14] pinctrl: sh-pfc: Add suspend/resume support
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use newly added R-Car GPIO Gen1 fallback compat string
-in place of now deprecated non-generation specific
-R-Car GPIO fallback compat string in DT of r8a7778 SoC.
+On Mon, Oct 16, 2017 at 5:27 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> During PSCI system suspend, R-Car Gen3 SoCs are powered down, and their
+> pinctrl register state is lost.  Note that as the boot loader skips most
+> initialization after system resume, pinctrl register state differs from
+> the state encountered during normal system boot, too.
+>
+> To fix this, save all GPIO and peripheral function select, module
+> select, drive strength control, bias, and other I/O control registers
+> during system suspend, and restore them during resume.
+>
+> This series consists of 4 parts:
+>   - Patches 1-2 are cleanups,
+>   - Patches 3-9 introduce a generic way to describe bias (pull-up/down)
+>     registers, and converts the R-Car Gen3 and R-Car M1A bias support
+>     over,
+>   - Patches 10-13 introduce a generic way to describe various IOCTRL
+>     registers, and converts the R-Car Gen3 I/O voltage support over,
+>   - Patch 14 implements the actual suspend/resume code, using the
+>     generic bias and IOCTRL support introduced earlier.
+>
+> To avoid overhead on platforms not needing it, the suspend/resume code
+> has a build time dependency on sleep and PSCI support, and a runtime
+> dependency on PSCI.
+>
+> Due to the more compact description of bias registers, this series
+> actually decreases kernel size (by ca. 112 bytes for renesas_defconfig,
+> and ca. 60 bytes for shmobile_defconfig).
+>
+> Changes compared to v1:
+>   - Add Reviewed-by,
+>   - Shorten sh_pfc_{read,write}_reg() function names to
+>     sh_pfc_{read,write}(),
+>   - Use ARRAY_SIZE() instead of hardcoded constant 32,
+>   - Add curly braces to nested for statements,
+>   - Add a sentinel comment, to make it more explicit that a last zero
+>     entry is required in sh_pfc_soc_info.bias_regs[] arrays,
+>
+> I plan to queue this in sh-pfc-for-v4.15.
 
-As the driver does not match on "renesas,gpio-r8a7778" there
-are some run-time considerations for this patch:
+Done.
 
-* When a resulting DTB is used with kernels newer than v4.14 this should
-  not have any run-time effect as renesas,rcar-gen1-gpio is matched by the
-  driver since commit dbd1dad2ab8f ("gpio: rcar: add gen[123] fallback
-  compatibility strings")
+Gr{oetje,eeting}s,
 
-* However, when used with older kernels GPIO will be disabled as
-  no compat string match will be made by the driver.
+                        Geert
 
-The regression documented above for the new DTB with old kernel case
-is acceptable in my opinion.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7778.dtsi | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/arch/arm/boot/dts/r8a7778.dtsi b/arch/arm/boot/dts/r8a7778.dtsi
-index 8f3156c0e575..a31817b2dda7 100644
---- a/arch/arm/boot/dts/r8a7778.dtsi
-+++ b/arch/arm/boot/dts/r8a7778.dtsi
-@@ -88,7 +88,7 @@
- 	};
- 
- 	gpio0: gpio@ffc40000 {
--		compatible = "renesas,gpio-r8a7778", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7778", "renesas,rcar-gen1-gpio";
- 		reg = <0xffc40000 0x2c>;
- 		interrupts = <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -99,7 +99,7 @@
- 	};
- 
- 	gpio1: gpio@ffc41000 {
--		compatible = "renesas,gpio-r8a7778", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7778", "renesas,rcar-gen1-gpio";
- 		reg = <0xffc41000 0x2c>;
- 		interrupts = <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -110,7 +110,7 @@
- 	};
- 
- 	gpio2: gpio@ffc42000 {
--		compatible = "renesas,gpio-r8a7778", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7778", "renesas,rcar-gen1-gpio";
- 		reg = <0xffc42000 0x2c>;
- 		interrupts = <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -121,7 +121,7 @@
- 	};
- 
- 	gpio3: gpio@ffc43000 {
--		compatible = "renesas,gpio-r8a7778", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7778", "renesas,rcar-gen1-gpio";
- 		reg = <0xffc43000 0x2c>;
- 		interrupts = <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
-@@ -132,7 +132,7 @@
- 	};
- 
- 	gpio4: gpio@ffc44000 {
--		compatible = "renesas,gpio-r8a7778", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7778", "renesas,rcar-gen1-gpio";
- 		reg = <0xffc44000 0x2c>;
- 		interrupts = <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
--- 
-2.11.0
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
