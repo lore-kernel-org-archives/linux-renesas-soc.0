@@ -1,148 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:49634 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933861AbdJQLgu (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:38765 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752092AbdJTK2y (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Oct 2017 07:36:50 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: linux-pm@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v3] thermal: rcar_gen3_thermal: fix initialization sequence for H3 ES2.0
-Date: Tue, 17 Oct 2017 13:36:13 +0200
-Message-Id: <20171017113613.9788-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Fri, 20 Oct 2017 06:28:54 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 01/31] arm64: dts: renesas: salvator-common: drop "avb_phy_int" from avb_pins
+Date: Fri, 20 Oct 2017 12:28:04 +0200
+Message-Id: <86b93a2dff65ab6e22ffd28bb132a2c3970b6e68.1508495040.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1508495040.git.horms+renesas@verge.net.au>
+References: <cover.1508495040.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The initialization sequence for H3 (r8a7795) ES1.x and ES2.0 is
-different. H3 ES2.0 and later uses the same sequence as M3 (r8a7796)
-ES1.0. Fix this by not looking at compatible strings and instead
-defaulting to the r8a7796 initialization sequence and use
-soc_device_match() to check for H3 ES1.x.
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Since the Ethernet AVB driver doesn't support AVB_PHY_INT handling
+and it will be handled by a phy driver as a gpio pin, this patch
+removes the "avb_phy_int" from the avb_pins node.
+
+Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Fixes: 7d73a4da2681 ("arm64: dts: r8a7795: salvator-x: Set drive-strength for ravb pins")
+Fixes: 4903987033be ("arm64: dts: r8a7796: salvator-x: Set drive-strength for ravb pins")
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/thermal/rcar_gen3_thermal.c | 34 +++++++++++++++-------------------
- 1 file changed, 15 insertions(+), 19 deletions(-)
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-* Changes from v2
-- Removed & when assigning function pointers, thanks Geert.
-- Added Reviewed-by and Acked-by tags.
-
-* Changes since v1
-- Use positive test to check for pre-production SoCs as suggested by
-  Geert.
-- Renamed init functions as currently the only known odd init case is H3
-  ES1.x, other Gen3 SoC uses same init process.
-- Remove one layer of indirection by removing the struct
-  rcar_gen3_thermal_data and store the thermal_init function pointer
-  directly in struct rcar_gen3_thermal_priv.
-- Fix spelling mistakes.
-
-diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
-index 203aca44a2bb4bdf..561a0a332208504a 100644
---- a/drivers/thermal/rcar_gen3_thermal.c
-+++ b/drivers/thermal/rcar_gen3_thermal.c
-@@ -24,6 +24,7 @@
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/spinlock.h>
-+#include <linux/sys_soc.h>
- #include <linux/thermal.h>
+diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+index 4786c67b5e65..99d8180c71f7 100644
+--- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+@@ -371,8 +371,7 @@
  
- #include "thermal_core.h"
-@@ -90,10 +91,6 @@ struct rcar_gen3_thermal_priv {
- 	struct rcar_gen3_thermal_tsc *tscs[TSC_MAX_NUM];
- 	unsigned int num_tscs;
- 	spinlock_t lock; /* Protect interrupts on and off */
--	const struct rcar_gen3_thermal_data *data;
--};
--
--struct rcar_gen3_thermal_data {
- 	void (*thermal_init)(struct rcar_gen3_thermal_tsc *tsc);
- };
- 
-@@ -278,7 +275,12 @@ static irqreturn_t rcar_gen3_thermal_irq_thread(int irq, void *data)
- 	return IRQ_HANDLED;
- }
- 
--static void r8a7795_thermal_init(struct rcar_gen3_thermal_tsc *tsc)
-+static const struct soc_device_attribute r8a7795es1[] = {
-+	{ .soc_id = "r8a7795", .revision = "ES1.*" },
-+	{ /* sentinel */ }
-+};
-+
-+static void rcar_gen3_thermal_init_r8a7795es1(struct rcar_gen3_thermal_tsc *tsc)
- {
- 	rcar_gen3_thermal_write(tsc, REG_GEN3_CTSR,  CTSR_THBGR);
- 	rcar_gen3_thermal_write(tsc, REG_GEN3_CTSR,  0x0);
-@@ -303,7 +305,7 @@ static void r8a7795_thermal_init(struct rcar_gen3_thermal_tsc *tsc)
- 	usleep_range(1000, 2000);
- }
- 
--static void r8a7796_thermal_init(struct rcar_gen3_thermal_tsc *tsc)
-+static void rcar_gen3_thermal_init(struct rcar_gen3_thermal_tsc *tsc)
- {
- 	u32 reg_val;
- 
-@@ -324,17 +326,9 @@ static void r8a7796_thermal_init(struct rcar_gen3_thermal_tsc *tsc)
- 	usleep_range(1000, 2000);
- }
- 
--static const struct rcar_gen3_thermal_data r8a7795_data = {
--	.thermal_init = r8a7795_thermal_init,
--};
--
--static const struct rcar_gen3_thermal_data r8a7796_data = {
--	.thermal_init = r8a7796_thermal_init,
--};
--
- static const struct of_device_id rcar_gen3_thermal_dt_ids[] = {
--	{ .compatible = "renesas,r8a7795-thermal", .data = &r8a7795_data},
--	{ .compatible = "renesas,r8a7796-thermal", .data = &r8a7796_data},
-+	{ .compatible = "renesas,r8a7795-thermal", },
-+	{ .compatible = "renesas,r8a7796-thermal", },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, rcar_gen3_thermal_dt_ids);
-@@ -371,7 +365,9 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
- 	if (!priv)
- 		return -ENOMEM;
- 
--	priv->data = of_device_get_match_data(dev);
-+	priv->thermal_init = rcar_gen3_thermal_init;
-+	if (soc_device_match(r8a7795es1))
-+		priv->thermal_init = rcar_gen3_thermal_init_r8a7795es1;
- 
- 	spin_lock_init(&priv->lock);
- 
-@@ -423,7 +419,7 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
- 
- 		priv->tscs[i] = tsc;
- 
--		priv->data->thermal_init(tsc);
-+		priv->thermal_init(tsc);
- 		rcar_gen3_thermal_calc_coefs(&tsc->coef, ptat, thcode[i]);
- 
- 		zone = devm_thermal_zone_of_sensor_register(dev, i, tsc,
-@@ -476,7 +472,7 @@ static int __maybe_unused rcar_gen3_thermal_resume(struct device *dev)
- 	for (i = 0; i < priv->num_tscs; i++) {
- 		struct rcar_gen3_thermal_tsc *tsc = priv->tscs[i];
- 
--		priv->data->thermal_init(tsc);
-+		priv->thermal_init(tsc);
- 		rcar_gen3_thermal_set_trips(tsc, tsc->low, tsc->high);
- 	}
+ 	avb_pins: avb {
+ 		mux {
+-			groups = "avb_link", "avb_phy_int", "avb_mdc",
+-				 "avb_mii";
++			groups = "avb_link", "avb_mdc", "avb_mii";
+ 			function = "avb";
+ 		};
  
 -- 
-2.14.2
+2.11.0
