@@ -1,46 +1,66 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:46649 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752884AbdJGKhM (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 7 Oct 2017 06:37:12 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 11/11] mmc: usdhi6rol0: catch all errors when getting regulators
-Date: Sat,  7 Oct 2017 12:36:58 +0200
-Message-Id: <20171007103658.16868-12-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20171007103658.16868-1-wsa+renesas@sang-engineering.com>
-References: <20171007103658.16868-1-wsa+renesas@sang-engineering.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: "David S . Miller" <davem@davemloft.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 3/4] arm64: dts: renesas: salvator-common: Add EthernetAVB PHY reset
+Date: Fri, 20 Oct 2017 10:14:20 +0200
+Message-Id: <1508487261-18524-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1508487261-18524-1-git-send-email-geert+renesas@glider.be>
+References: <1508487261-18524-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Bail out everytime when mmc_regulator_get_supply() returns an errno, not only
-when probing gets deferred. This is currently a no-op, because this function
-only returns -EPROBE_DEFER or 0 right now. But if it will throw another error
-somewhen, it will be for a reason. (This still doesn't change that getting
-regulators is optional, so 0 can still mean no regulators found). So, let us a)
-be future proof and b) have driver code which is easier to understand.
+Describe the GPIO used to reset the Ethernet PHY for EthernetAVB.
+This allows the driver to reset the PHY during probe and after system
+resume.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+This fixes Ethernet operation after resume from s2ram on Salvator-XS,
+where the enable pin of the regulator providing PHY power is connected
+to PRESETn, and PSCI powers down the SoC during system suspend.
+
+On Salvator-X, the enable pin is always pulled high, but the driver may
+still need to reset the PHY if this wasn't done by the bootloader
+before.
+
+Inspired by patches in the BSP for the individual Salvator-X/XS boards
+by Kazuya Mizuguchi.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/mmc/host/usdhi6rol0.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+For proper PHY reset operation during system resume, this depends on
+"[PATCH v3 2/4] phylib: Add device reset GPIO support".
+However, this patch can be applied independently.
 
-diff --git a/drivers/mmc/host/usdhi6rol0.c b/drivers/mmc/host/usdhi6rol0.c
-index 64da6a88cfb90e..cdfeb15b6f0511 100644
---- a/drivers/mmc/host/usdhi6rol0.c
-+++ b/drivers/mmc/host/usdhi6rol0.c
-@@ -1757,7 +1757,7 @@ static int usdhi6_probe(struct platform_device *pdev)
- 		return -ENOMEM;
+v3:
+  - Extract from series "[PATCH 0/4] ravb: Add PHY reset support", and
+    incorporate in this series,
+  - Move reset-gpios from the ethernet to the ethernet-phy node.
+---
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+index a028cf577ae1d185..78dcb83f59c76333 100644
+--- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+@@ -313,6 +313,7 @@
+ 		reg = <0>;
+ 		interrupt-parent = <&gpio2>;
+ 		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
++		reset-gpios = <&gpio2 10 GPIO_ACTIVE_LOW>;
+ 	};
+ };
  
- 	ret = mmc_regulator_get_supply(mmc);
--	if (ret == -EPROBE_DEFER)
-+	if (ret)
- 		goto e_free_mmc;
- 
- 	ret = mmc_of_parse(mmc);
 -- 
-2.11.0
+2.7.4
+
