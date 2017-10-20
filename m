@@ -1,47 +1,104 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38914 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:38765 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752665AbdJTKaU (ORCPT
+        with ESMTP id S1752092AbdJTK26 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Oct 2017 06:30:20 -0400
+        Fri, 20 Oct 2017 06:28:58 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 30/42] ARM: dts: r8a7743: Add missing clock for secondary CA15 CPU core
-Date: Fri, 20 Oct 2017 12:28:57 +0200
-Message-Id: <a60ddf507dda0ede43b72d348283d8725a5a83c7.1508493785.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1508493785.git.horms+renesas@verge.net.au>
-References: <cover.1508493785.git.horms+renesas@verge.net.au>
+Subject: [PATCH 04/31] arm64: dts: renesas: initial Eagle board device tree
+Date: Fri, 20 Oct 2017 12:28:07 +0200
+Message-Id: <1a48290edf6f78962b1d96008aea954b7b3e5969.1508495040.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1508495040.git.horms+renesas@verge.net.au>
+References: <cover.1508495040.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Currently only the primary CPU in the CA15 cluster has a clocks
-property, while the secondary CPU core is driven by the same clock.
-Add the missing clocks property to fix this.
+Add the initial device  tree for  the R8A77970 SoC based Eagle board.
+The board has 1 debug serial port (SCIF0); include support for it,
+so that the serial console can work.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+Based on the original (and large) patch by Vladimir Barinov
+<vladimir.barinov@cogentembedded.com>.
+
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7743.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/renesas/Makefile           |  1 +
+ arch/arm64/boot/dts/renesas/r8a77970-eagle.dts | 45 ++++++++++++++++++++++++++
+ 2 files changed, 46 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index f29f15d4d659..4db4f61be25a 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -63,6 +63,7 @@
- 			compatible = "arm,cortex-a15";
- 			reg = <1>;
- 			clock-frequency = <1500000000>;
-+			clocks = <&cpg CPG_CORE R8A7743_CLK_Z>;
- 			power-domains = <&sysc R8A7743_PD_CA15_CPU1>;
- 			next-level-cache = <&L2_CA15>;
- 		};
+diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
+index 381928bc1358..96a3b29dce68 100644
+--- a/arch/arm64/boot/dts/renesas/Makefile
++++ b/arch/arm64/boot/dts/renesas/Makefile
+@@ -2,6 +2,7 @@ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-x.dtb r8a7795-h3ulcb.dtb
+ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-xs.dtb
+ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-es1-salvator-x.dtb r8a7795-es1-h3ulcb.dtb
+ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-x.dtb r8a7796-m3ulcb.dtb
++dtb-$(CONFIG_ARCH_R8A77970) += r8a77970-eagle.dtb
+ dtb-$(CONFIG_ARCH_R8A77995) += r8a77995-draak.dtb
+ 
+ always		:= $(dtb-y)
+diff --git a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+new file mode 100644
+index 000000000000..a4d1d4f24675
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+@@ -0,0 +1,45 @@
++/*
++ * Device Tree Source for the Eagle board
++ *
++ * Copyright (C) 2016-2017 Renesas Electronics Corp.
++ * Copyright (C) 2017 Cogent Embedded, Inc.
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++/dts-v1/;
++#include "r8a77970.dtsi"
++
++/ {
++	model = "Renesas Eagle board based on r8a77970";
++	compatible = "renesas,eagle", "renesas,r8a77970";
++
++	aliases {
++		serial0 = &scif0;
++	};
++
++	chosen {
++		bootargs = "ignore_loglevel";
++		stdout-path = "serial0:115200n8";
++	};
++
++	memory@48000000 {
++		device_type = "memory";
++		/* first 128MB is reserved for secure area. */
++		reg = <0x0 0x48000000 0x0 0x38000000>;
++	};
++};
++
++&extal_clk {
++	clock-frequency = <16666666>;
++};
++
++&extalr_clk {
++	clock-frequency = <32768>;
++};
++
++&scif0 {
++	status = "okay";
++};
 -- 
 2.11.0
