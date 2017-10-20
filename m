@@ -1,104 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38765 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:38914 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752092AbdJTK26 (ORCPT
+        with ESMTP id S1752092AbdJTK3r (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Oct 2017 06:28:58 -0400
+        Fri, 20 Oct 2017 06:29:47 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 04/31] arm64: dts: renesas: initial Eagle board device tree
-Date: Fri, 20 Oct 2017 12:28:07 +0200
-Message-Id: <1a48290edf6f78962b1d96008aea954b7b3e5969.1508495040.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1508495040.git.horms+renesas@verge.net.au>
-References: <cover.1508495040.git.horms+renesas@verge.net.au>
+Subject: [PATCH 02/42] ARM: dts: gr-peach: Enable MTU2 timer pulse unit
+Date: Fri, 20 Oct 2017 12:28:29 +0200
+Message-Id: <62cea6d2c6758d6a9513ecf3c70498623d5bf1d2.1508493785.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1508493785.git.horms+renesas@verge.net.au>
+References: <cover.1508493785.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-Add the initial device  tree for  the R8A77970 SoC based Eagle board.
-The board has 1 debug serial port (SCIF0); include support for it,
-so that the serial console can work.
+MTU2 multi-function/multi-channel timer/counter is not enabled for
+GR-Peach board. The timer is used as clock event source to schedule
+wake-ups, and without this enabled all sleeps not performed through busy
+waiting hang the board.
 
-Based on the original (and large) patch by Vladimir Barinov
-<vladimir.barinov@cogentembedded.com>.
-
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/Makefile           |  1 +
- arch/arm64/boot/dts/renesas/r8a77970-eagle.dts | 45 ++++++++++++++++++++++++++
- 2 files changed, 46 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+ arch/arm/boot/dts/r7s72100-gr-peach.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index 381928bc1358..96a3b29dce68 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -2,6 +2,7 @@ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-x.dtb r8a7795-h3ulcb.dtb
- dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-xs.dtb
- dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-es1-salvator-x.dtb r8a7795-es1-h3ulcb.dtb
- dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-x.dtb r8a7796-m3ulcb.dtb
-+dtb-$(CONFIG_ARCH_R8A77970) += r8a77970-eagle.dtb
- dtb-$(CONFIG_ARCH_R8A77995) += r8a77995-draak.dtb
+diff --git a/arch/arm/boot/dts/r7s72100-gr-peach.dts b/arch/arm/boot/dts/r7s72100-gr-peach.dts
+index a1c5e8823d2b..9661d43f5236 100644
+--- a/arch/arm/boot/dts/r7s72100-gr-peach.dts
++++ b/arch/arm/boot/dts/r7s72100-gr-peach.dts
+@@ -78,6 +78,10 @@
+ 	clock-frequency = <48000000>;
+ };
  
- always		:= $(dtb-y)
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-new file mode 100644
-index 000000000000..a4d1d4f24675
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-@@ -0,0 +1,45 @@
-+/*
-+ * Device Tree Source for the Eagle board
-+ *
-+ * Copyright (C) 2016-2017 Renesas Electronics Corp.
-+ * Copyright (C) 2017 Cogent Embedded, Inc.
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2.  This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
-+
-+/dts-v1/;
-+#include "r8a77970.dtsi"
-+
-+/ {
-+	model = "Renesas Eagle board based on r8a77970";
-+	compatible = "renesas,eagle", "renesas,r8a77970";
-+
-+	aliases {
-+		serial0 = &scif0;
-+	};
-+
-+	chosen {
-+		bootargs = "ignore_loglevel";
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	memory@48000000 {
-+		device_type = "memory";
-+		/* first 128MB is reserved for secure area. */
-+		reg = <0x0 0x48000000 0x0 0x38000000>;
-+	};
-+};
-+
-+&extal_clk {
-+	clock-frequency = <16666666>;
-+};
-+
-+&extalr_clk {
-+	clock-frequency = <32768>;
-+};
-+
-+&scif0 {
++&mtu2 {
 +	status = "okay";
 +};
++
+ &scif2 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&scif2_pins>;
 -- 
 2.11.0
