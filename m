@@ -1,109 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:53147 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:38914 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751619AbdJMKig (ORCPT
+        with ESMTP id S1752665AbdJTKa3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Oct 2017 06:38:36 -0400
+        Fri, 20 Oct 2017 06:30:29 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/3] dt-bindings: mmc: renesas_sdhi: add R-Car Gen[123] fallback compatibility strings
-Date: Fri, 13 Oct 2017 12:38:11 +0200
-Message-Id: <20171013103812.30826-3-horms+renesas@verge.net.au>
-In-Reply-To: <20171013103812.30826-1-horms+renesas@verge.net.au>
-References: <20171013103812.30826-1-horms+renesas@verge.net.au>
+Subject: [PATCH 40/42] dt-bindings: clk: r7s72100: Add missing I and G clocks
+Date: Fri, 20 Oct 2017 12:29:07 +0200
+Message-Id: <44842cc8a89aa7742bc47737aa75da5910aa5f33.1508493785.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1508493785.git.horms+renesas@verge.net.au>
+References: <cover.1508493785.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add fallback compatibility strings for R-Car Gen 1, 2 and 3.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-In the case of Renesas R-Car hardware we know that there are generations of
-SoCs, f.e. Gen 1 and 2. But beyond that its not clear what the relationship
-between IP blocks might be. For example, I believe that r8a7790 is older
-than r8a7791 but that doesn't imply that the latter is a descendant of the
-former or vice versa.
+Add the missing definitions for the I (CPU) and G (Image Processing)
+clocks, so these clocks can be referred to from device nodes in DT.
 
-We can, however, by examining the documentation and behaviour of the
-hardware at run-time observe that the current driver implementation appears
-to be compatible with the IP blocks on SoCs within a given generation.
+Note that these clocks are already fully supported otherwise (DT
+bindings, Linux driver, r7s72100.dtsi), they were just omitted from the
+header file.
 
-For the above reasons and convenience when enabling new SoCs a
-per-generation fallback compatibility string scheme being adopted for
-drivers for Renesas SoCs.
-
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 20 +++++++++++++++-----
- 1 file changed, 15 insertions(+), 5 deletions(-)
+ include/dt-bindings/clock/r7s72100-clock.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-index 99be4e7e7391..672cfc37aadf 100644
---- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-+++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-@@ -10,7 +10,7 @@ described in mmc.txt, can be used. Additionally the following tmio_mmc-specific
- optional bindings can be used.
+diff --git a/include/dt-bindings/clock/r7s72100-clock.h b/include/dt-bindings/clock/r7s72100-clock.h
+index 7dd8bc0c3cd0..0dcb3e87d44c 100644
+--- a/include/dt-bindings/clock/r7s72100-clock.h
++++ b/include/dt-bindings/clock/r7s72100-clock.h
+@@ -11,6 +11,8 @@
+ #define __DT_BINDINGS_CLOCK_R7S72100_H__
  
- Required properties:
--- compatible:	"renesas,sdhi-shmobile" - a generic sh-mobile SDHI unit
-+- compatible: should contain one or more of the following:
- 		"renesas,sdhi-sh73a0" - SDHI IP on SH73A0 SoC
- 		"renesas,sdhi-r7s72100" - SDHI IP on R7S72100 SoC
- 		"renesas,sdhi-r8a73a4" - SDHI IP on R8A73A4 SoC
-@@ -26,6 +26,16 @@ Required properties:
- 		"renesas,sdhi-r8a7794" - SDHI IP on R8A7794 SoC
- 		"renesas,sdhi-r8a7795" - SDHI IP on R8A7795 SoC
- 		"renesas,sdhi-r8a7796" - SDHI IP on R8A7796 SoC
-+		"renesas,sdhi-shmobile" - a generic sh-mobile SDHI controller
-+		"renesas,rcar-gen1-sdhi" - a generic R-Car Gen1 SDHI controller
-+		"renesas,rcar-gen2-sdhi" - a generic R-Car Gen2 or RZ/G1
-+					   SDHI controller
-+		"renesas,rcar-gen3-sdhi" - a generic R-Car Gen3 SDHI controller
-+
-+
-+		When compatible with the generic version nodes must list
-+		the SoC-specific version corresponding to the platform
-+		first followed by the generic version.
+ #define R7S72100_CLK_PLL	0
++#define R7S72100_CLK_I		1
++#define R7S72100_CLK_G		2
  
- - clocks: Most controllers only have 1 clock source per channel. However, on
- 	  some variations of this controller, the internal card detection
-@@ -47,7 +57,7 @@ Optional properties:
- Example: R8A7779 (R-Car H1) SDHI controller nodes
- 
- 	sdhi0: sd@ee100000 {
--		compatible = "renesas,sdhi-r8a7790";
-+		compatible = "renesas,sdhi-r8a7790", "renesas,rcar-gen2-sdhi";
- 		reg = <0 0xee100000 0 0x328>;
- 		interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7790_CLK_SDHI0>;
-@@ -60,7 +70,7 @@ Example: R8A7779 (R-Car H1) SDHI controller nodes
- 	};
- 
- 	sdhi1: sd@ee120000 {
--		compatible = "renesas,sdhi-r8a7790";
-+		compatible = "renesas,sdhi-r8a7790", "renesas,rcar-gen2-sdhi";
- 		reg = <0 0xee120000 0 0x328>;
- 		interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7790_CLK_SDHI1>;
-@@ -73,7 +83,7 @@ Example: R8A7779 (R-Car H1) SDHI controller nodes
- 	};
- 
- 	sdhi2: sd@ee140000 {
--		compatible = "renesas,sdhi-r8a7790";
-+		compatible = "renesas,sdhi-r8a7790", "renesas,rcar-gen2-sdhi";
- 		reg = <0 0xee140000 0 0x100>;
- 		interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7790_CLK_SDHI2>;
-@@ -86,7 +96,7 @@ Example: R8A7779 (R-Car H1) SDHI controller nodes
- 	};
- 
- 	sdhi3: sd@ee160000 {
--		compatible = "renesas,sdhi-r8a7790";
-+		compatible = "renesas,sdhi-r8a7790", "renesas,rcar-gen2-sdhi";
- 		reg = <0 0xee160000 0 0x100>;
- 		interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7790_CLK_SDHI3>;
+ /* MSTP2 */
+ #define R7S72100_CLK_CORESIGHT	0
 -- 
 2.11.0
