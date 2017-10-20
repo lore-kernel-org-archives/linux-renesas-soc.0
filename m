@@ -1,45 +1,86 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38914 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752665AbdJTKaa (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:40126 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752738AbdJTLYo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Oct 2017 06:30:30 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 41/42] ARM: dts: r7s72100: Add clock for CA9 CPU core
-Date: Fri, 20 Oct 2017 12:29:08 +0200
-Message-Id: <f20d89ac0fefad2465e6ce6d64e9ff82e33889dd.1508493785.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1508493785.git.horms+renesas@verge.net.au>
-References: <cover.1508493785.git.horms+renesas@verge.net.au>
+        Fri, 20 Oct 2017 07:24:44 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [git pull] clk: renesas: Updates for v4.15 (take two)
+Date: Fri, 20 Oct 2017 13:23:10 +0200
+Message-Id: <1508498590-10566-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+	Hi Mike, Stephen,
 
-Improve hardware description by adding a clock property to the device
-node corresponding to the CA9 CPU core.
+The following changes since commit b4021bbe10017d994e5a96ebfd2677bbaf2b37e0:
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r7s72100.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+  clk: renesas: rcar-gen2: Delete error message for failed memory allocation (2017-09-28 17:57:34 +0200)
 
-diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
-index 4ed12a4d9d51..ab9645a42eca 100644
---- a/arch/arm/boot/dts/r7s72100.dtsi
-+++ b/arch/arm/boot/dts/r7s72100.dtsi
-@@ -203,6 +203,7 @@
- 			compatible = "arm,cortex-a9";
- 			reg = <0>;
- 			clock-frequency = <400000000>;
-+			clocks = <&cpg_clocks R7S72100_CLK_I>;
- 			next-level-cache = <&L2>;
- 		};
- 	};
--- 
-2.11.0
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.15-tag2
+
+for you to fetch changes up to 3f7a4d084159c52513d1ff77f3b3b880bcf517d9:
+
+  clk: renesas: rcar-gen3: Restore R clock during resume (2017-10-20 11:16:09 +0200)
+
+----------------------------------------------------------------
+clk: renesas: Updates for v4.15 (take two)
+
+  - Add support for the second display unit clock on RZ/G1E,
+  - Add git repository to MAINTAINERS,
+  - Add suspend/resume support for R-Car Gen3 CPG/MSSR,
+  - Small fixes and cleanups.
+
+Note: this is on top of my previous pull request, for
+tags/clk-renesas-for-v4.15-tag1, which you haven't pulled yet.
+
+Thanks for pulling!
+----------------------------------------------------------------
+Fabrizio Castro (1):
+      clk: renesas: cpg-mssr: Add du1 clock to R8A7745
+
+Geert Uytterhoeven (10):
+      clk: renesas: r8a7795: Correct parent clock of INTC-AP
+      clk: renesas: r8a7796: Correct parent clock of INTC-AP
+      clk: renesas: r8a77995: Correct parent clock of INTC-AP
+      clk: renesas: rz: clk-rz is meant for RZ/A1
+      MAINTAINERS: Add git repository to Renesas clock driver section
+      clk: renesas: cpg-mssr: Restore module clocks during resume
+      clk: renesas: cpg-mssr: Add support to restore core clocks during resume
+      clk: renesas: div6: Restore clock state during resume
+      clk: renesas: rcar-gen3: Restore SDHI clocks during resume
+      clk: renesas: rcar-gen3: Restore R clock during resume
+
+ .../bindings/clock/renesas,rz-cpg-clocks.txt       |  4 +-
+ MAINTAINERS                                        |  1 +
+ drivers/clk/renesas/clk-div6.c                     | 38 ++++++++-
+ drivers/clk/renesas/clk-div6.h                     |  3 +-
+ drivers/clk/renesas/clk-rz.c                       |  2 +-
+ drivers/clk/renesas/r8a7745-cpg-mssr.c             |  1 +
+ drivers/clk/renesas/r8a7795-cpg-mssr.c             |  3 +-
+ drivers/clk/renesas/r8a7796-cpg-mssr.c             |  2 +-
+ drivers/clk/renesas/r8a77995-cpg-mssr.c            |  2 +-
+ drivers/clk/renesas/rcar-gen2-cpg.c                |  7 +-
+ drivers/clk/renesas/rcar-gen2-cpg.h                |  6 +-
+ drivers/clk/renesas/rcar-gen3-cpg.c                | 79 +++++++++++++----
+ drivers/clk/renesas/rcar-gen3-cpg.h                |  3 +-
+ drivers/clk/renesas/renesas-cpg-mssr.c             | 99 +++++++++++++++++++++-
+ drivers/clk/renesas/renesas-cpg-mssr.h             |  3 +-
+ 15 files changed, 217 insertions(+), 36 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
