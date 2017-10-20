@@ -1,48 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:46290 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751699AbdJDM04 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:38914 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752665AbdJTKa2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Oct 2017 08:26:56 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] usb: renesas_usbhs: Use of_device_get_match_data() helper
-Date: Wed,  4 Oct 2017 14:26:48 +0200
-Message-Id: <1507120008-13238-1-git-send-email-geert+renesas@glider.be>
+        Fri, 20 Oct 2017 06:30:28 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 39/42] ARM: dts: sh73a0: Add clocks for CA9 CPU cores
+Date: Fri, 20 Oct 2017 12:29:06 +0200
+Message-Id: <e5042d0b97be6a831f9f204f3574d73b3f947fa5.1508493785.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1508493785.git.horms+renesas@verge.net.au>
+References: <cover.1508493785.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use the of_device_get_match_data() helper instead of open coding.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Improve hardware description by adding clocks properties to the device
+nodes corresponding to the CA9 CPU cores.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/usb/renesas_usbhs/common.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/arm/boot/dts/sh73a0.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/usb/renesas_usbhs/common.c b/drivers/usb/renesas_usbhs/common.c
-index f0ce304c5aaf54f1..32f86935d59f6b09 100644
---- a/drivers/usb/renesas_usbhs/common.c
-+++ b/drivers/usb/renesas_usbhs/common.c
-@@ -501,7 +501,6 @@ static struct renesas_usbhs_platform_info *usbhs_parse_dt(struct device *dev)
- {
- 	struct renesas_usbhs_platform_info *info;
- 	struct renesas_usbhs_driver_param *dparam;
--	const struct of_device_id *of_id = of_match_device(usbhs_of_match, dev);
- 	u32 tmp;
- 	int gpio;
- 
-@@ -510,7 +509,7 @@ static struct renesas_usbhs_platform_info *usbhs_parse_dt(struct device *dev)
- 		return NULL;
- 
- 	dparam = &info->driver_param;
--	dparam->type = of_id ? (uintptr_t)of_id->data : 0;
-+	dparam->type = (uintptr_t)of_device_get_match_data(dev);
- 	if (!of_property_read_u32(dev->of_node, "renesas,buswait", &tmp))
- 		dparam->buswait_bwait = tmp;
- 	gpio = of_get_named_gpio_flags(dev->of_node, "renesas,enable-gpio", 0,
+diff --git a/arch/arm/boot/dts/sh73a0.dtsi b/arch/arm/boot/dts/sh73a0.dtsi
+index 4ea5c5a16c57..88d7e5631d34 100644
+--- a/arch/arm/boot/dts/sh73a0.dtsi
++++ b/arch/arm/boot/dts/sh73a0.dtsi
+@@ -27,6 +27,7 @@
+ 			compatible = "arm,cortex-a9";
+ 			reg = <0>;
+ 			clock-frequency = <1196000000>;
++			clocks = <&cpg_clocks SH73A0_CLK_Z>;
+ 			power-domains = <&pd_a2sl>;
+ 			next-level-cache = <&L2>;
+ 		};
+@@ -35,6 +36,7 @@
+ 			compatible = "arm,cortex-a9";
+ 			reg = <1>;
+ 			clock-frequency = <1196000000>;
++			clocks = <&cpg_clocks SH73A0_CLK_Z>;
+ 			power-domains = <&pd_a2sl>;
+ 			next-level-cache = <&L2>;
+ 		};
 -- 
-2.7.4
+2.11.0
