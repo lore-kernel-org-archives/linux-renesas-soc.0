@@ -1,82 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:38459 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751075AbdJBJtO (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:37539 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752279AbdJTJNM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 2 Oct 2017 05:49:14 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
-        linus.walleij@linaro.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 2/2] pinctrl: sh-pfc: r8a7795: Add USB3.0 host support
-Date: Mon,  2 Oct 2017 18:45:25 +0900
-Message-Id: <1506937525-16965-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1506937525-16965-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1506937525-16965-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Fri, 20 Oct 2017 05:13:12 -0400
+Date: Fri, 20 Oct 2017 11:12:53 +0200
+From: Simon Horman <horms@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [PATCH 0/7] ARM: dts: renesas: Use R-Car SDHI Gen[12] fallback
+ compat strings
+Message-ID: <20171020091253.tvvd3thgrg27svxb@verge.net.au>
+References: <20171018072728.14681-1-horms+renesas@verge.net.au>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20171018072728.14681-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+On Wed, Oct 18, 2017 at 09:27:21AM +0200, Simon Horman wrote:
+> Use recently posted R-Car Gen 1 and 2 Ether fallback compat strings
+> in the DT of Renesas ARM based SoCs.
+> 
+> Based on renesas-devel-20171018-v4.14-rc5
+> 
+> Has a binding documentation but no run-time dependency on
+> "[PATCH net-next 0/3] net: sh_eth: add R-Car Gen[12] fallback compatibility
+> strings"
 
-This patch adds USB3.0 ch0 pinmux support to R8A7795 SoC.
+The above dependency has been accepted into net-next.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+I have applied this series for v4.16 with Geert's review tags.
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index 9e420f7..39772ac 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -3205,6 +3205,16 @@ enum {
- 	USB2_CH3_PWEN_MARK, USB2_CH3_OVC_MARK,
- };
- 
-+/* - USB30 ------------------------------------------------------------------ */
-+static const unsigned int usb30_pins[] = {
-+	/* PWEN, OVC */
-+	RCAR_GP_PIN(6, 28), RCAR_GP_PIN(6, 29),
-+};
-+
-+static const unsigned int usb30_mux[] = {
-+	USB30_PWEN_MARK, USB30_OVC_MARK,
-+};
-+
- static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(avb_link),
- 	SH_PFC_PIN_GROUP(avb_magic),
-@@ -3425,6 +3435,7 @@ enum {
- 	SH_PFC_PIN_GROUP(usb1),
- 	SH_PFC_PIN_GROUP(usb2),
- 	SH_PFC_PIN_GROUP(usb2_ch3),
-+	SH_PFC_PIN_GROUP(usb30),
- };
- 
- static const char * const avb_groups[] = {
-@@ -3742,6 +3753,10 @@ enum {
- 	"usb2_ch3",
- };
- 
-+static const char * const usb30_groups[] = {
-+	"usb30",
-+};
-+
- static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(avb),
- 	SH_PFC_FUNCTION(drif0),
-@@ -3775,6 +3790,7 @@ enum {
- 	SH_PFC_FUNCTION(usb1),
- 	SH_PFC_FUNCTION(usb2),
- 	SH_PFC_FUNCTION(usb2_ch3),
-+	SH_PFC_FUNCTION(usb30),
- };
- 
- static const struct pinmux_cfg_reg pinmux_config_regs[] = {
--- 
-1.9.1
+> 
+> Simon Horman (7):
+>   ARM: dts: r8a7743: Use R-Car Gen2 Ether fallback compat string
+>   ARM: dts: r8a7745: Use R-Car Gen2 Ether fallback compat string
+
+The above used spaces instead of tabs for indentation,
+I fixed this when applying.
+
+>   ARM: dts: r8a7778: Use R-Car Gen1 Ether fallback compat string
+>   ARM: dts: r8a7790: Use R-Car Gen2 Ether fallback compat string
+>   ARM: dts: r8a7791: Use R-Car Gen2 Ether fallback compat string
+>   ARM: dts: r8a7793: Use R-Car Gen2 Ether fallback compat string
+>   ARM: dts: r8a7794: Use R-Car Gen2 Ether fallback compat string
+> 
+>  arch/arm/boot/dts/r8a7743.dtsi | 3 ++-
+>  arch/arm/boot/dts/r8a7745.dtsi | 3 ++-
+>  arch/arm/boot/dts/r8a7778.dtsi | 3 ++-
+>  arch/arm/boot/dts/r8a7790.dtsi | 3 ++-
+>  arch/arm/boot/dts/r8a7791.dtsi | 3 ++-
+>  arch/arm/boot/dts/r8a7793.dtsi | 3 ++-
+>  arch/arm/boot/dts/r8a7794.dtsi | 3 ++-
+>  7 files changed, 14 insertions(+), 7 deletions(-)
+> 
+> -- 
+> 2.11.0
+> 
