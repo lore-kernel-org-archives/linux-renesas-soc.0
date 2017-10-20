@@ -1,68 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:19671 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751358AbdJPKNk (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:38914 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752665AbdJTKaZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Oct 2017 06:13:40 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Felipe Balbi <balbi@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
+        Fri, 20 Oct 2017 06:30:25 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-usb@vger.kernel.org
-Subject: [PATCH  2/2] ARM: dts: r8a7743: Add xhci support to SoC dtsi
-Date: Mon, 16 Oct 2017 11:12:49 +0100
-Message-Id: <1508148769-47488-3-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1508148769-47488-1-git-send-email-biju.das@bp.renesas.com>
-References: <1508148769-47488-1-git-send-email-biju.das@bp.renesas.com>
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 34/42] ARM: dts: r8a7790: Add clocks for CA7 CPU cores
+Date: Fri, 20 Oct 2017 12:29:01 +0200
+Message-Id: <aea0089ae8058a9bf4c9766f3208809fc28c99f0.1508493785.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1508493785.git.horms+renesas@verge.net.au>
+References: <cover.1508493785.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Add node for xhci. Boards DT files will enable it if needed.
+Currently only the CPU cores in the CA15 cluster have clocks properties.
+Add the missing clocks properties for the CPU cores in the CA7 cluster
+to fix this.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7743.dtsi | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ arch/arm/boot/dts/r8a7790.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 699c040..386bf07 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -931,6 +931,26 @@
- 			status = "disabled";
- 		};
- 
-+		/*
-+		 * pci1 and xhci share the same phy, therefore only one of them
-+		 * can be active at any one time. If both of them are enabled,
-+		 * a race condition will determine who'll control the phy.
-+		 * A firmware file is needed by the xhci driver in order for
-+		 * USB 3.0 to work properly.
-+		 */
-+		xhci: usb@ee000000 {
-+			compatible = "renesas,xhci-r8a7743",
-+				     "renesas,rcar-gen2-xhci";
-+			reg = <0 0xee000000 0 0xc00>;
-+			interrupts = <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 328>;
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 328>;
-+			phys = <&usb2 1>;
-+			phy-names = "usb";
-+			status = "disabled";
-+		};
-+
- 		sdhi0: sd@ee100000 {
- 			compatible = "renesas,sdhi-r8a7743";
- 			reg = <0 0xee100000 0 0x328>;
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index e85eb42f97e8..2f017fee4009 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -105,6 +105,7 @@
+ 			compatible = "arm,cortex-a7";
+ 			reg = <0x100>;
+ 			clock-frequency = <780000000>;
++			clocks = <&cpg CPG_CORE R8A7790_CLK_Z2>;
+ 			power-domains = <&sysc R8A7790_PD_CA7_CPU0>;
+ 			next-level-cache = <&L2_CA7>;
+ 			capacity-dmips-mhz = <539>;
+@@ -115,6 +116,7 @@
+ 			compatible = "arm,cortex-a7";
+ 			reg = <0x101>;
+ 			clock-frequency = <780000000>;
++			clocks = <&cpg CPG_CORE R8A7790_CLK_Z2>;
+ 			power-domains = <&sysc R8A7790_PD_CA7_CPU1>;
+ 			next-level-cache = <&L2_CA7>;
+ 			capacity-dmips-mhz = <539>;
+@@ -125,6 +127,7 @@
+ 			compatible = "arm,cortex-a7";
+ 			reg = <0x102>;
+ 			clock-frequency = <780000000>;
++			clocks = <&cpg CPG_CORE R8A7790_CLK_Z2>;
+ 			power-domains = <&sysc R8A7790_PD_CA7_CPU2>;
+ 			next-level-cache = <&L2_CA7>;
+ 			capacity-dmips-mhz = <539>;
+@@ -135,6 +138,7 @@
+ 			compatible = "arm,cortex-a7";
+ 			reg = <0x103>;
+ 			clock-frequency = <780000000>;
++			clocks = <&cpg CPG_CORE R8A7790_CLK_Z2>;
+ 			power-domains = <&sysc R8A7790_PD_CA7_CPU3>;
+ 			next-level-cache = <&L2_CA7>;
+ 			capacity-dmips-mhz = <539>;
 -- 
-1.9.1
+2.11.0
