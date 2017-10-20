@@ -1,53 +1,110 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:38914 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752092AbdJTK3q (ORCPT
+        with ESMTP id S1752665AbdJTKaM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Oct 2017 06:29:46 -0400
+        Fri, 20 Oct 2017 06:30:12 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 28/31] arm64: renesas: ulcb: fixup audio_clkout
-Date: Fri, 20 Oct 2017 12:28:31 +0200
-Message-Id: <822cecb1bef2bf41663d6c4e7786d9e159f72674.1508495040.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1508495040.git.horms+renesas@verge.net.au>
-References: <cover.1508495040.git.horms+renesas@verge.net.au>
+Subject: [PATCH 25/42] ARM: dts: r8a7791: Use R-Car GPIO Gen2 fallback compat string
+Date: Fri, 20 Oct 2017 12:28:52 +0200
+Message-Id: <7140383d59fc590b9f52e4133e8454603c76bb78.1508493785.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1508493785.git.horms+renesas@verge.net.au>
+References: <cover.1508493785.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Use newly added R-Car GPIO Gen2 fallback compat string
+in place of now deprecated non-generation specific
+R-Car GPIO fallback compat string in the DT of the r8a7791 SoC.
 
-"audio_clkout" is dummy clock of <&rcar_sound 0> to avoid clock loop
-which invites probe conflict. Thus <&rcar_sound 0> and "audio_clkout"
-should be same value.
+This should have no run-time effect as the driver matches against
+the per-SoC compat string before considering the fallback compat string.
 
-On commit 2752660a37ae ("arm64: dts: renesas: ulcb: sound
-clock-frequency needs descending order") exchanged <&rcar_sound 0>,
-but it didn't modify "audio_clkout".
-This patch fixup it.
-
-Fixes: 2752660a37ae ("arm64: dts: renesas: ulcb: sound clock-frequency needs descending order")
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/ulcb.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a7791.dtsi | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-index 1a5f15ae531f..0d85b315ce71 100644
---- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
-+++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-@@ -31,7 +31,7 @@
- 		 */
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
--		clock-frequency = <11289600>;
-+		clock-frequency = <12288000>;
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index 97bed8253bc3..3c7b919efa48 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -124,7 +124,7 @@
  	};
  
- 	hdmi0-out {
+ 	gpio0: gpio@e6050000 {
+-		compatible = "renesas,gpio-r8a7791", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7791", "renesas,rcar-gen2-gpio";
+ 		reg = <0 0xe6050000 0 0x50>;
+ 		interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -138,7 +138,7 @@
+ 	};
+ 
+ 	gpio1: gpio@e6051000 {
+-		compatible = "renesas,gpio-r8a7791", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7791", "renesas,rcar-gen2-gpio";
+ 		reg = <0 0xe6051000 0 0x50>;
+ 		interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -152,7 +152,7 @@
+ 	};
+ 
+ 	gpio2: gpio@e6052000 {
+-		compatible = "renesas,gpio-r8a7791", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7791", "renesas,rcar-gen2-gpio";
+ 		reg = <0 0xe6052000 0 0x50>;
+ 		interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -166,7 +166,7 @@
+ 	};
+ 
+ 	gpio3: gpio@e6053000 {
+-		compatible = "renesas,gpio-r8a7791", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7791", "renesas,rcar-gen2-gpio";
+ 		reg = <0 0xe6053000 0 0x50>;
+ 		interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -180,7 +180,7 @@
+ 	};
+ 
+ 	gpio4: gpio@e6054000 {
+-		compatible = "renesas,gpio-r8a7791", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7791", "renesas,rcar-gen2-gpio";
+ 		reg = <0 0xe6054000 0 0x50>;
+ 		interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -194,7 +194,7 @@
+ 	};
+ 
+ 	gpio5: gpio@e6055000 {
+-		compatible = "renesas,gpio-r8a7791", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7791", "renesas,rcar-gen2-gpio";
+ 		reg = <0 0xe6055000 0 0x50>;
+ 		interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -208,7 +208,7 @@
+ 	};
+ 
+ 	gpio6: gpio@e6055400 {
+-		compatible = "renesas,gpio-r8a7791", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7791", "renesas,rcar-gen2-gpio";
+ 		reg = <0 0xe6055400 0 0x50>;
+ 		interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
+@@ -222,7 +222,7 @@
+ 	};
+ 
+ 	gpio7: gpio@e6055800 {
+-		compatible = "renesas,gpio-r8a7791", "renesas,gpio-rcar";
++		compatible = "renesas,gpio-r8a7791", "renesas,rcar-gen2-gpio";
+ 		reg = <0 0xe6055800 0 0x50>;
+ 		interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
+ 		#gpio-cells = <2>;
 -- 
 2.11.0
