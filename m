@@ -1,43 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:54046 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756089AbdJLJfW (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:38914 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752665AbdJTKab (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 12 Oct 2017 05:35:22 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 09/13] ARM: dts: r8a7791: Add missing clock for secondary CA15 CPU core
-Date: Thu, 12 Oct 2017 11:35:12 +0200
-Message-Id: <1507800916-11509-10-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1507800916-11509-1-git-send-email-geert+renesas@glider.be>
-References: <1507800916-11509-1-git-send-email-geert+renesas@glider.be>
+        Fri, 20 Oct 2017 06:30:31 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 42/42] ARM: dts: r8a7743: Add xhci support to SoC dtsi
+Date: Fri, 20 Oct 2017 12:29:09 +0200
+Message-Id: <b6d3b649441936621c87b79bff8dd436e2397e3c.1508493785.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1508493785.git.horms+renesas@verge.net.au>
+References: <cover.1508493785.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Currently only the primary CPU in the CA15 cluster has a clocks
-property, while the secondary CPU core is driven by the same clock.
-Add the missing clocks property to fix this.
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Add node for xhci. Boards DT files will enable it if needed.
+
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7791.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/r8a7743.dtsi | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index 842592f12f428399..af97792c9fddd970 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -70,6 +70,7 @@
- 			compatible = "arm,cortex-a15";
- 			reg = <1>;
- 			clock-frequency = <1500000000>;
-+			clocks = <&cpg CPG_CORE R8A7791_CLK_Z>;
- 			power-domains = <&sysc R8A7791_PD_CA15_CPU1>;
- 			next-level-cache = <&L2_CA15>;
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index 4db4f61be25a..7bbba4a36f31 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -932,6 +932,26 @@
+ 			status = "disabled";
  		};
+ 
++		/*
++		 * pci1 and xhci share the same phy, therefore only one of them
++		 * can be active at any one time. If both of them are enabled,
++		 * a race condition will determine who'll control the phy.
++		 * A firmware file is needed by the xhci driver in order for
++		 * USB 3.0 to work properly.
++		 */
++		xhci: usb@ee000000 {
++			compatible = "renesas,xhci-r8a7743",
++				     "renesas,rcar-gen2-xhci";
++			reg = <0 0xee000000 0 0xc00>;
++			interrupts = <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 328>;
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			resets = <&cpg 328>;
++			phys = <&usb2 1>;
++			phy-names = "usb";
++			status = "disabled";
++		};
++
+ 		sdhi0: sd@ee100000 {
+ 			compatible = "renesas,sdhi-r8a7743";
+ 			reg = <0 0xee100000 0 0x328>;
 -- 
-2.7.4
+2.11.0
