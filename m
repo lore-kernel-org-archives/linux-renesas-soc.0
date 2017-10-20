@@ -1,11 +1,7 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([184.105.139.130]:57260 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932295AbdJVBhn (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 21 Oct 2017 21:37:43 -0400
-Date: Sun, 22 Oct 2017 02:37:38 +0100 (WEST)
-Message-Id: <20171022.023738.2186250991838185660.davem@davemloft.net>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Fri, 20 Oct 2017 08:41:08 +0100 (WEST)
+Message-Id: <20171020.084108.365516696070119583.davem@davemloft.net>
 To: geert+renesas@glider.be
 Cc: andrew@lunn.ch, f.fainelli@gmail.com, robh+dt@kernel.org,
         frowand.list@gmail.com, netdev@vger.kernel.org,
@@ -19,12 +15,15 @@ References: <1508327643-3579-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Date: Wed, 18 Oct 2017 13:54:03 +0200
 
-Second ping, this patch needs a review ASAP.
+> The actual patch is unchanged since v1, sent on May 18.  Obviously I
+> still cannot test it on a system with multiple PHYs, just like v1.
+> 
+> How can we proceed?
 
-Geert's hard-resetting PHY changes depend upon this change.
-
-Thank you.
+Andrew and Florian, please review this.
