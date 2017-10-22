@@ -1,51 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38914 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752092AbdJTK3r (ORCPT
+Received: from shards.monkeyblade.net ([184.105.139.130]:56968 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932271AbdJVBPS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Oct 2017 06:29:47 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 02/42] ARM: dts: gr-peach: Enable MTU2 timer pulse unit
-Date: Fri, 20 Oct 2017 12:28:29 +0200
-Message-Id: <62cea6d2c6758d6a9513ecf3c70498623d5bf1d2.1508493785.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1508493785.git.horms+renesas@verge.net.au>
-References: <cover.1508493785.git.horms+renesas@verge.net.au>
+        Sat, 21 Oct 2017 21:15:18 -0400
+Date: Sun, 22 Oct 2017 02:15:14 +0100 (WEST)
+Message-Id: <20171022.021514.303896603307493322.davem@davemloft.net>
+To: niklas.soderlund+renesas@ragnatech.se
+Cc: f.fainelli@gmail.com, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org,
+        renjith.rv@quest-global.com
+Subject: Re: [PATCH] net: ethtool: remove error check for legacy setting
+ transceiver type
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20171019233208.15444-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20171019233208.15444-1-niklas.soderlund+renesas@ragnatech.se>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8BIT
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+From: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+Date: Fri, 20 Oct 2017 01:32:08 +0200
 
-MTU2 multi-function/multi-channel timer/counter is not enabled for
-GR-Peach board. The timer is used as clock event source to schedule
-wake-ups, and without this enabled all sleeps not performed through busy
-waiting hang the board.
+> Commit 9cab88726929605 ("net: ethtool: Add back transceiver type")
+> restores the transceiver type to struct ethtool_link_settings and
+> convert_link_ksettings_to_legacy_settings() but forgets to remove the
+> error check for the same in convert_legacy_settings_to_link_ksettings().
+> This prevents older versions of ethtool to change link settings.
+> 
+>     # ethtool --version
+>     ethtool version 3.16
+> 
+>     # ethtool -s eth0 autoneg on speed 100 duplex full
+>     Cannot set new settings: Invalid argument
+>       not setting speed
+>       not setting duplex
+>       not setting autoneg
+> 
+> While newer versions of ethtool works.
+> 
+>     # ethtool --version
+>     ethtool version 4.10
+> 
+>     # ethtool -s eth0 autoneg on speed 100 duplex full
+>     [   57.703268] sh-eth ee700000.ethernet eth0: Link is Down
+>     [   59.618227] sh-eth ee700000.ethernet eth0: Link is Up - 100Mbps/Full - flow control rx/tx
+> 
+> Fixes: 19cab88726929605 ("net: ethtool: Add back transceiver type")
+> Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r7s72100-gr-peach.dts | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r7s72100-gr-peach.dts b/arch/arm/boot/dts/r7s72100-gr-peach.dts
-index a1c5e8823d2b..9661d43f5236 100644
---- a/arch/arm/boot/dts/r7s72100-gr-peach.dts
-+++ b/arch/arm/boot/dts/r7s72100-gr-peach.dts
-@@ -78,6 +78,10 @@
- 	clock-frequency = <48000000>;
- };
- 
-+&mtu2 {
-+	status = "okay";
-+};
-+
- &scif2 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&scif2_pins>;
--- 
-2.11.0
+Applied.
