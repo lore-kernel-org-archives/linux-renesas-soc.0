@@ -1,54 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:58715 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751324AbdJ2PMI (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:64749 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751288AbdJWRJv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 29 Oct 2017 11:12:08 -0400
-Date: Sun, 29 Oct 2017 16:12:04 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
+        Mon, 23 Oct 2017 13:09:51 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
+        Russell King <linux@armlinux.org.uk>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>
-Subject: Re: [PATCH v2 0/9] r8a7745/iwg22d DT rework + serial + HS-USB + IIC
-Message-ID: <20171029151204.n2dem6j7t6o6ayhf@verge.net.au>
-References: <1508778570-28795-1-git-send-email-fabrizio.castro@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1508778570-28795-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Subject: [PATCH v2 0/9] r8a7745/iwg22d DT rework + serial + HS-USB + IIC
+Date: Mon, 23 Oct 2017 18:09:21 +0100
+Message-Id: <1508778570-28795-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Oct 23, 2017 at 06:09:21PM +0100, Fabrizio Castro wrote:
-> This series brings under the same roof a few patches that needed a v2
-> and that are related to either r8a7745 or iwg22d, with the goal of making
-> the merge process as smooth as possible.
-> 
-> Patches [1-4] define a new DT architecture for the iW-RainboW-G22D SODIMM
-> Development Platform to include the configuration with the HDMI daughter
-> board and to define the serial interfaces.
-> 
-> Patches [5-8] add USB function support to the r8a7745 SoC and to the
-> iwg22d board. The patches providing the definition of compatible strings:
-> * "renesas,r8a7745-usb-dmac", and
-> * "renesas,usbhs-r8a7745"
-> (on which these USB patches depend on) have been accepted by the
-> respective maintainers already, but it will take a little bit for the
-> definitions to appear on a renesas-devel tag. For reference:
-> https://patchwork.kernel.org/patch/9990063/
-> https://patchwork.kernel.org/patch/9987411/
-> https://patchwork.kernel.org/patch/9990113/
-> 
-> Patch 9 adds IIC cores to the r8a7745 SoC.
-> 
-> The patches of this series apply smoothly on top of tag:
-> "renesas-devel-20171018-v4.14-rc5".
+This series brings under the same roof a few patches that needed a v2
+and that are related to either r8a7745 or iwg22d, with the goal of making
+the merge process as smooth as possible.
 
-Thanks, applied.
+Patches [1-4] define a new DT architecture for the iW-RainboW-G22D SODIMM
+Development Platform to include the configuration with the HDMI daughter
+board and to define the serial interfaces.
+
+Patches [5-8] add USB function support to the r8a7745 SoC and to the
+iwg22d board. The patches providing the definition of compatible strings:
+* "renesas,r8a7745-usb-dmac", and
+* "renesas,usbhs-r8a7745"
+(on which these USB patches depend on) have been accepted by the
+respective maintainers already, but it will take a little bit for the
+definitions to appear on a renesas-devel tag. For reference:
+https://patchwork.kernel.org/patch/9990063/
+https://patchwork.kernel.org/patch/9987411/
+https://patchwork.kernel.org/patch/9990113/
+
+Patch 9 adds IIC cores to the r8a7745 SoC.
+
+The patches of this series apply smoothly on top of tag:
+"renesas-devel-20171018-v4.14-rc5".
+
+Best regards,
+Fab
+
+Biju Das (4):
+  ARM: dts: r8a7745: Add HS-USB device node
+  ARM: dts: r8a7745: Add USB-DMAC device nodes
+  ARM: dts: r8a7745: Enable DMA for HSUSB
+  ARM: dts: iwg22d-sodimm: Enable HS-USB
+
+Fabrizio Castro (5):
+  ARM: dts: iwg22d: Use /dev/ttySC3 as debug console
+  ARM: dts: iwg22d: Add /dev/ttySC5 support
+  ARM: dts: iwg22d-sodimm-dbhd-ca: Add device tree for HDMI DB
+  ARM: dts: iwg22d-sodimm: sort dt nodes
+  ARM: dts: r8a7745: Add IIC cores to dtsi
+
+ arch/arm/boot/dts/Makefile                         |  1 +
+ .../arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts | 61 +++++++++++++++
+ arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts        | 87 ++++++++++++++--------
+ arch/arm/boot/dts/r8a7745.dtsi                     | 81 ++++++++++++++++++++
+ 4 files changed, 199 insertions(+), 31 deletions(-)
+ create mode 100644 arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts
+
+-- 
+2.7.4
