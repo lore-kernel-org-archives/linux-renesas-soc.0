@@ -1,61 +1,51 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:19424 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751504AbdJWRJ6 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Oct 2017 13:09:58 -0400
+Return-Path: <devicetree-owner@vger.kernel.org>
 From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
+To: Simon Horman <horms@verge.net.au>,
+        Biju Das <biju.das@bp.renesas.com>
+CC: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
+        Russell King <linux@armlinux.org.uk>,
         Magnus Damm <magnus.damm@gmail.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Chris Paterson <chris.paterson2@renesas.com>
-Subject: [PATCH v2 1/9] ARM: dts: iwg22d: Use /dev/ttySC3 as debug console
-Date: Mon, 23 Oct 2017 18:09:22 +0100
-Message-Id: <1508778570-28795-2-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1508778570-28795-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1508778570-28795-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>
+Subject: RE: [PATCH 1/4] ARM: dts: iwg22d: Use /dev/ttySC3 as debug console
+Date: Mon, 23 Oct 2017 11:01:58 +0000
+Message-ID: <TY1PR06MB0895D9CA9E7B82B276EF3484C0460@TY1PR06MB0895.apcprd06.prod.outlook.com>
+References: <1507899796-7941-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1507899796-7941-2-git-send-email-fabrizio.castro@bp.renesas.com>
+ <KL1PR06MB1702D289BE9642F285CF9ED1B84F0@KL1PR06MB1702.apcprd06.prod.outlook.com>
+ <20171017075907.p2yr3tjq6nqx6uhb@verge.net.au>
+In-Reply-To: <20171017075907.p2yr3tjq6nqx6uhb@verge.net.au>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The BSP release from iWave uses /dev/ttySC3 as debug console, this patch
-renames the alias accordingly for compatibility.
+Hello Simon,
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
----
-Changes in v2:
-* replaced serial0 with serial3 in stdout-path
+> > Hi,
+> >
+> > Looks like the chosen node "stdout-path =3D "serial0:115200n8";" is not=
+ updated with this patch.
+> >
+> > So either drop the patch or fix the chosen node.
+>
+> Please repost this patch with the above resolved.
 
- arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I'll repost.
 
-diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-index 52153ec..edadeee 100644
---- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-+++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-@@ -16,13 +16,13 @@
- 	compatible = "iwave,g22d", "iwave,g22m", "renesas,r8a7745";
- 
- 	aliases {
--		serial0 = &scif4;
-+		serial3 = &scif4;
- 		ethernet0 = &avb;
- 	};
- 
- 	chosen {
- 		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
--		stdout-path = "serial0:115200n8";
-+		stdout-path = "serial3:115200n8";
- 	};
- 
- 	vccq_sdhi0: regulator-vccq-sdhi0 {
--- 
-2.7.4
+Best regards,
+Fab
+
+
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
