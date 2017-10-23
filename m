@@ -1,84 +1,152 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:39137 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933558AbdJQGBQ (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:41141 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751705AbdJWRKq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Oct 2017 02:01:16 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        Mon, 23 Oct 2017 13:10:46 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v3 3/3] mmc: renesas_sdhi: implement R-Car Gen[123] fallback compatibility strings
-Date: Tue, 17 Oct 2017 08:01:04 +0200
-Message-Id: <20171017060104.11039-4-horms+renesas@verge.net.au>
-In-Reply-To: <20171017060104.11039-1-horms+renesas@verge.net.au>
-References: <20171017060104.11039-1-horms+renesas@verge.net.au>
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Chris Paterson <chris.paterson2@renesas.com>
+Subject: [PATCH v2 4/9] ARM: dts: iwg22d-sodimm: sort dt nodes
+Date: Mon, 23 Oct 2017 18:09:25 +0100
+Message-Id: <1508778570-28795-5-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1508778570-28795-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1508778570-28795-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Implement fallback compatibility strings for R-Car Gen 1, 2 and 3.
+Improve the layout of r8a7745-iwg22d-sodimm.dts by sorting the
+nodes alphabetically.
 
-In the case of Renesas R-Car hardware we know that there are generations of
-SoCs, f.e. Gen 1 and 2. But beyond that its not clear what the relationship
-between IP blocks might be. For example, I believe that r8a7790 is older
-than r8a7791 but that doesn't imply that the latter is a descendant of the
-former or vice versa.
-
-We can, however, by examining the documentation and behaviour of the
-hardware at run-time observe that the current driver implementation appears
-to be compatible with the IP blocks on SoCs within a given generation.
-
-For the above reasons and convenience when enabling new SoCs a
-per-generation fallback compatibility string scheme being adopted for
-drivers for Renesas SoCs.
-
-Also, improve readability by listing the shmobile fallback compatibility
-string after the more-specific compatibility strings they provide a
-fallback for.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
 ---
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 1 +
- drivers/mmc/host/renesas_sdhi_sys_dmac.c      | 5 ++++-
- 2 files changed, 5 insertions(+), 1 deletion(-)
+Changes in v2:
+* rebased
 
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index f905f2361d12..637c27057ac2 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -88,6 +88,7 @@ static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
- static const struct of_device_id renesas_sdhi_internal_dmac_of_match[] = {
- 	{ .compatible = "renesas,sdhi-r8a7795", .data = &of_rcar_gen3_compatible, },
- 	{ .compatible = "renesas,sdhi-r8a7796", .data = &of_rcar_gen3_compatible, },
-+	{ .compatible = "renesas,rcar-gen3-sdhi", .data = &of_rcar_gen3_compatible, },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, renesas_sdhi_internal_dmac_of_match);
-diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-index df4465439e13..9ab10436e4b8 100644
---- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-@@ -91,7 +91,6 @@ static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
+ arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts | 62 ++++++++++++++---------------
+ 1 file changed, 31 insertions(+), 31 deletions(-)
+
+diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
+index 82587d7..3eb4f83 100644
+--- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
++++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
+@@ -16,9 +16,9 @@
+ 	compatible = "iwave,g22d", "iwave,g22m", "renesas,r8a7745";
+ 
+ 	aliases {
++		ethernet0 = &avb;
+ 		serial3 = &scif4;
+ 		serial5 = &hscif1;
+-		ethernet0 = &avb;
+ 	};
+ 
+ 	chosen {
+@@ -40,6 +40,25 @@
+ 	};
  };
  
- static const struct of_device_id renesas_sdhi_sys_dmac_of_match[] = {
--	{ .compatible = "renesas,sdhi-shmobile" },
- 	{ .compatible = "renesas,sdhi-sh73a0", .data = &of_default_cfg, },
- 	{ .compatible = "renesas,sdhi-r8a73a4", .data = &of_default_cfg, },
- 	{ .compatible = "renesas,sdhi-r8a7740", .data = &of_default_cfg, },
-@@ -107,6 +106,10 @@ static const struct of_device_id renesas_sdhi_sys_dmac_of_match[] = {
- 	{ .compatible = "renesas,sdhi-r8a7794", .data = &of_rcar_gen2_compatible, },
- 	{ .compatible = "renesas,sdhi-r8a7795", .data = &of_rcar_gen3_compatible, },
- 	{ .compatible = "renesas,sdhi-r8a7796", .data = &of_rcar_gen3_compatible, },
-+	{ .compatible = "renesas,rcar-gen1-sdhi", .data = &of_rcar_gen1_compatible, },
-+	{ .compatible = "renesas,rcar-gen2-sdhi", .data = &of_rcar_gen2_compatible, },
-+	{ .compatible = "renesas,rcar-gen3-sdhi", .data = &of_rcar_gen3_compatible, },
-+	{ .compatible = "renesas,sdhi-shmobile" },
- 	{},
++&avb {
++	pinctrl-0 = <&avb_pins>;
++	pinctrl-names = "default";
++
++	phy-handle = <&phy3>;
++	phy-mode = "gmii";
++	renesas,no-ether-link;
++	status = "okay";
++
++	phy3: ethernet-phy@3 {
++	/*
++	 * On some older versions of the platform (before R4.0) the phy address
++	 * may be 1 or 3. The address is fixed to 3 for R4.0 onwards.
++	 */
++		reg = <3>;
++		micrel,led-mode = <1>;
++	};
++};
++
+ &hscif1 {
+ 	pinctrl-0 = <&hscif1_pins>;
+ 	pinctrl-names = "default";
+@@ -48,7 +67,18 @@
+ 	status = "okay";
  };
- MODULE_DEVICE_TABLE(of, renesas_sdhi_sys_dmac_of_match);
+ 
++&pci1 {
++	status = "okay";
++	pinctrl-0 = <&usb1_pins>;
++	pinctrl-names = "default";
++};
++
+ &pfc {
++	avb_pins: avb {
++		groups = "avb_mdio", "avb_gmii";
++		function = "avb";
++	};
++
+ 	hscif1_pins: hscif1 {
+ 		groups = "hscif1_data", "hscif1_ctrl";
+ 		function = "hscif1";
+@@ -59,11 +89,6 @@
+ 		function = "scif4";
+ 	};
+ 
+-	avb_pins: avb {
+-		groups = "avb_mdio", "avb_gmii";
+-		function = "avb";
+-	};
+-
+ 	sdhi0_pins: sd0 {
+ 		groups = "sdhi0_data4", "sdhi0_ctrl";
+ 		function = "sdhi0";
+@@ -83,25 +108,6 @@
+ 	status = "okay";
+ };
+ 
+-&avb {
+-	pinctrl-0 = <&avb_pins>;
+-	pinctrl-names = "default";
+-
+-	phy-handle = <&phy3>;
+-	phy-mode = "gmii";
+-	renesas,no-ether-link;
+-	status = "okay";
+-
+-	phy3: ethernet-phy@3 {
+-	/*
+-	 * On some older versions of the platform (before R4.0) the phy address
+-	 * may be 1 or 3. The address is fixed to 3 for R4.0 onwards.
+-	 */
+-		reg = <3>;
+-		micrel,led-mode = <1>;
+-	};
+-};
+-
+ &sdhi0 {
+ 	pinctrl-0 = <&sdhi0_pins>;
+ 	pinctrl-names = "default";
+@@ -112,12 +118,6 @@
+ 	status = "okay";
+ };
+ 
+-&pci1 {
+-	status = "okay";
+-	pinctrl-0 = <&usb1_pins>;
+-	pinctrl-names = "default";
+-};
+-
+ &usbphy {
+ 	status = "okay";
+ };
 -- 
-2.11.0
+2.7.4
