@@ -1,48 +1,80 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:35322 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751906AbdJFLvh (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:41900 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751304AbdJWSJi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Oct 2017 07:51:37 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] dt-bindings: irqchip: renesas-irqc: Document R-Car M3-W, V3M, D3 support
-Date: Fri,  6 Oct 2017 13:51:32 +0200
-Message-Id: <1507290692-23062-1-git-send-email-geert+renesas@glider.be>
+        Mon, 23 Oct 2017 14:09:38 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH v2 1/2] ARM: dts: r8a7743: Add DU support
+Date: Mon, 23 Oct 2017 19:09:21 +0100
+Message-Id: <1508782162-31714-2-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1508782162-31714-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1508782162-31714-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document support for the Interrupt Controller for Externel Devices
-(INTC-EX) in the Renesas M3-W (r8a7796), V3M (r8a77970), and D3
-(r8a77995) SoCs.
+Add du node to r8a7743 SoC DT. Boards that want to enable the DU
+need to specify the output topology.
 
-No driver update is needed.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- .../devicetree/bindings/interrupt-controller/renesas,irqc.txt          | 3 +++
- 1 file changed, 3 insertions(+)
+Changes is v2:
+* added changelog
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt b/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
-index e3f052d8c11a24c3..33c9a10fdc91a1dc 100644
---- a/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
-+++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
-@@ -13,6 +13,9 @@ Required properties:
-     - "renesas,irqc-r8a7793" (R-Car M2-N)
-     - "renesas,irqc-r8a7794" (R-Car E2)
-     - "renesas,intc-ex-r8a7795" (R-Car H3)
-+    - "renesas,intc-ex-r8a7796" (R-Car M3-W)
-+    - "renesas,intc-ex-r8a77970" (R-Car V3M)
-+    - "renesas,intc-ex-r8a77995" (R-Car D3)
- - #interrupt-cells: has to be <2>: an interrupt index and flags, as defined in
-   interrupts.txt in this directory
- - clocks: Must contain a reference to the functional clock.
+ arch/arm/boot/dts/r8a7743.dtsi | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index 7bbba4a..fafb10e 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -1033,6 +1033,36 @@
+ 			};
+ 		};
+ 
++		du: display@feb00000 {
++			compatible = "renesas,du-r8a7743";
++			reg = <0 0xfeb00000 0 0x40000>,
++			      <0 0xfeb90000 0 0x1c>;
++			reg-names = "du", "lvds.0";
++			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 724>,
++				 <&cpg CPG_MOD 723>,
++				 <&cpg CPG_MOD 726>;
++			clock-names = "du.0", "du.1", "lvds.0";
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++					du_out_rgb: endpoint {
++					};
++				};
++				port@1 {
++					reg = <1>;
++					du_out_lvds0: endpoint {
++					};
++				};
++			};
++		};
++
+ 		pci0: pci@ee090000 {
+ 			compatible = "renesas,pci-r8a7743",
+ 				     "renesas,pci-rcar-gen2";
 -- 
 2.7.4
