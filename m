@@ -1,80 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:41900 "EHLO
+Received: from relmlor3.renesas.com ([210.160.252.173]:64783 "EHLO
         relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751304AbdJWSJi (ORCPT
+        by vger.kernel.org with ESMTP id S1751280AbdJWRb0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Oct 2017 14:09:38 -0400
+        Mon, 23 Oct 2017 13:31:26 -0400
 From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+To: Simon Horman <horms@verge.net.au>,
         Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH v2 1/2] ARM: dts: r8a7743: Add DU support
-Date: Mon, 23 Oct 2017 19:09:21 +0100
-Message-Id: <1508782162-31714-2-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1508782162-31714-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1508782162-31714-1-git-send-email-fabrizio.castro@bp.renesas.com>
+CC: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH  1/2] ARM: dts: r8a7743: Add DU support
+Date: Mon, 23 Oct 2017 17:31:20 +0000
+Message-ID: <TY1PR06MB089508BA2ABDA1EAD34D9FC3C0460@TY1PR06MB0895.apcprd06.prod.outlook.com>
+References: <1508319227-19679-1-git-send-email-biju.das@bp.renesas.com>
+ <1508319227-19679-2-git-send-email-biju.das@bp.renesas.com>
+ <20171020091436.fhmm5f7glv5mphxy@verge.net.au>
+In-Reply-To: <20171020091436.fhmm5f7glv5mphxy@verge.net.au>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add du node to r8a7743 SoC DT. Boards that want to enable the DU
-need to specify the output topology.
+Hello Simon,
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
-Changes is v2:
-* added changelog
+>
+> Please include some text, preferably motivating this change,
+> here.
 
- arch/arm/boot/dts/r8a7743.dtsi | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ Will do.
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 7bbba4a..fafb10e 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -1033,6 +1033,36 @@
- 			};
- 		};
- 
-+		du: display@feb00000 {
-+			compatible = "renesas,du-r8a7743";
-+			reg = <0 0xfeb00000 0 0x40000>,
-+			      <0 0xfeb90000 0 0x1c>;
-+			reg-names = "du", "lvds.0";
-+			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 724>,
-+				 <&cpg CPG_MOD 723>,
-+				 <&cpg CPG_MOD 726>;
-+			clock-names = "du.0", "du.1", "lvds.0";
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					du_out_rgb: endpoint {
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+					du_out_lvds0: endpoint {
-+					};
-+				};
-+			};
-+		};
-+
- 		pci0: pci@ee090000 {
- 			compatible = "renesas,pci-r8a7743",
- 				     "renesas,pci-rcar-gen2";
--- 
-2.7.4
+>
+> >
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+
+Thanks,
+Fab
+
+
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
