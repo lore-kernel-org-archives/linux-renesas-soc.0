@@ -1,44 +1,61 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor3.renesas.com ([210.160.252.173]:19424 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751504AbdJWRJ6 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 23 Oct 2017 13:09:58 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v6 4/4] phy: rcar-gen3-usb2: add binding for r8a77995
-Date: Thu, 12 Oct 2017 15:34:48 +0900
-Message-Id: <1507790088-26010-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1507790088-26010-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1507790088-26010-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Chris Paterson <chris.paterson2@renesas.com>
+Subject: [PATCH v2 1/9] ARM: dts: iwg22d: Use /dev/ttySC3 as debug console
+Date: Mon, 23 Oct 2017 18:09:22 +0100
+Message-Id: <1508778570-28795-2-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1508778570-28795-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1508778570-28795-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds binding for r8a77995 (R-Car D3). Since r8a77995 doesn't
-have dedicated pins (ID, VBUS), this will match against the generic
-fallback on R-Car D3.
+The BSP release from iWave uses /dev/ttySC3 as debug console, this patch
+renames the alias accordingly for compatibility.
 
-For now, this driver doesn't support usb role swap for r8a77995.
-
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
 ---
- Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt | 2 ++
- 1 file changed, 2 insertions(+)
+Changes in v2:
+* replaced serial0 with serial3 in stdout-path
 
-diff --git a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
-index ace9cce..99b651b 100644
---- a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
-+++ b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
-@@ -8,6 +8,8 @@ Required properties:
- 	      SoC.
- 	      "renesas,usb2-phy-r8a7796" if the device is a part of an R8A7796
- 	      SoC.
-+	      "renesas,usb2-phy-r8a77995" if the device is a part of an
-+	      R8A77995 SoC.
- 	      "renesas,rcar-gen3-usb2-phy" for a generic R-Car Gen3 compatible device.
+ arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
+index 52153ec..edadeee 100644
+--- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
++++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
+@@ -16,13 +16,13 @@
+ 	compatible = "iwave,g22d", "iwave,g22m", "renesas,r8a7745";
  
- 	      When compatible with the generic version, nodes must list the
+ 	aliases {
+-		serial0 = &scif4;
++		serial3 = &scif4;
+ 		ethernet0 = &avb;
+ 	};
+ 
+ 	chosen {
+ 		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
+-		stdout-path = "serial0:115200n8";
++		stdout-path = "serial3:115200n8";
+ 	};
+ 
+ 	vccq_sdhi0: regulator-vccq-sdhi0 {
 -- 
-1.9.1
+2.7.4
