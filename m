@@ -1,72 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:52256 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754175AbdJPP2E (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:12102 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751288AbdJWRKs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Oct 2017 11:28:04 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 11/14] pinctrl: sh-pfc: r8a7795-es1: Use generic IOCTRL register description
-Date: Mon, 16 Oct 2017 17:27:56 +0200
-Message-Id: <1508167679-21155-12-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1508167679-21155-1-git-send-email-geert+renesas@glider.be>
-References: <1508167679-21155-1-git-send-email-geert+renesas@glider.be>
+        Mon, 23 Oct 2017 13:10:48 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 8/9] ARM: dts: iwg22d-sodimm: Enable HS-USB
+Date: Mon, 23 Oct 2017 18:09:29 +0100
+Message-Id: <1508778570-28795-9-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1508778570-28795-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1508778570-28795-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Move R-Car H3 ES1.x I/O voltage support over to the generic way to
-describe IOCTRL registers, which will be needed for suspend/resume
-support.
+From: Biju Das <biju.das@bp.renesas.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - Add a sentinel comment, to make it more explicit that a last zero
-    entry is required.
----
- drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+From: Biju Das <biju.das@bp.renesas.com>
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
-index 714bb3749a27ec99..1d4d84f34d6043d0 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
-@@ -5423,12 +5423,21 @@ static const struct pinmux_drive_reg pinmux_drive_regs[] = {
- 	{ },
+Enable HS-USB on iWave RZ/G1E carrier board.
+
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+---
+Changes in v2:
+* rebased
+
+ arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
+index 3eb4f83..80c82aa 100644
+--- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
++++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
+@@ -67,6 +67,12 @@
+ 	status = "okay";
  };
  
-+enum ioctrl_regs {
-+	POCCTRL,
++&hsusb {
++	status = "okay";
++	pinctrl-0 = <&usb0_pins>;
++	pinctrl-names = "default";
 +};
 +
-+static const struct pinmux_ioctrl_reg pinmux_ioctrl_regs[] = {
-+	[POCCTRL] = { 0xe6060380, },
-+	{ /* sentinel */ },
-+};
+ &pci1 {
+ 	status = "okay";
+ 	pinctrl-0 = <&usb1_pins>;
+@@ -95,6 +101,11 @@
+ 		power-source = <3300>;
+ 	};
+ 
++	usb0_pins: usb0 {
++		groups = "usb0";
++		function = "usb0";
++	};
 +
- static int r8a7795es1_pin_to_pocctrl(struct sh_pfc *pfc, unsigned int pin,
- 				     u32 *pocctrl)
- {
- 	int bit = -EINVAL;
- 
--	*pocctrl = 0xe6060380;
-+	*pocctrl = pinmux_ioctrl_regs[POCCTRL].reg;
- 
- 	if (pin >= RCAR_GP_PIN(3, 0) && pin <= RCAR_GP_PIN(3, 11))
- 		bit = pin & 0x1f;
-@@ -5745,6 +5754,7 @@ const struct sh_pfc_soc_info r8a7795es1_pinmux_info = {
- 	.cfg_regs = pinmux_config_regs,
- 	.drive_regs = pinmux_drive_regs,
- 	.bias_regs = pinmux_bias_regs,
-+	.ioctrl_regs = pinmux_ioctrl_regs,
- 
- 	.pinmux_data = pinmux_data,
- 	.pinmux_data_size = ARRAY_SIZE(pinmux_data),
+ 	usb1_pins: usb1 {
+ 		groups = "usb1";
+ 		function = "usb1";
 -- 
 2.7.4
