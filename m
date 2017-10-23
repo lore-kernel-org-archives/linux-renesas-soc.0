@@ -1,112 +1,83 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:35996 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751382AbdJPJIu (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:25947 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932185AbdJWNfe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Oct 2017 05:08:50 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 0/5] clk: renesas: rcar-gen3: Restore clocks during resume
-Date: Mon, 16 Oct 2017 10:36:49 +0200
-Message-Id: <1508143014-11795-1-git-send-email-geert+renesas@glider.be>
+        Mon, 23 Oct 2017 09:35:34 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Biju Das <biju.das@bp.renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Mark Rutland" <mark.rutland@arm.com>
+CC: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: RE: [PATCH  0/4] Add USB function support
+Date: Mon, 23 Oct 2017 13:35:29 +0000
+Message-ID: <TY1PR06MB08958DB6829660A94EB93E2FC0460@TY1PR06MB0895.apcprd06.prod.outlook.com>
+References: <1507909843-52034-1-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1507909843-52034-1-git-send-email-biju.das@bp.renesas.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Mike, Stephen,
+Hello,
 
-During PSCI system suspend, R-Car Gen3 SoCs are powered down, and their
-clock register state is lost.  Note that as the boot loader skips most
-initialization after resume, clock register state differs from the state
-encountered during normal system boot, too.
+one of the dependencies of this series belongs to another series currently =
+being
+reworked, therefore I'll resend the all thing again or as part of a differe=
+nt/larger
+series.
 
-Hence after s2ram, some operations may fail because module clocks are
-disabled, while drivers expect them to be still enabled.  E.g. in the
-absence of commit fbf3d034f2ff6264 ("ravb: add workaround for clock when
-resuming with WoL enabled"), EtherAVB fails when Wake-on-LAN has been
-enabled using "ethtool -s eth0 wol g":
+Thanks,
+Fab
 
-    ravb e6800000.ethernet eth0: failed to switch device to config mode
-    ravb e6800000.ethernet eth0: device will be stopped after h/w processes are done.
-    ravb e6800000.ethernet eth0: failed to switch device to config
-    PM: Device e6800000.ethernet failed to resume: error -110
+> Subject: [PATCH 0/4] Add USB function support
+>
+> Hello,
+>
+> This series aims to add USB function support for iWave RZ/G1E (R8A7745) b=
+oard.
+> This series has been tested against renesas-dev tag 20171013-v4.14-rc4.
+>
+> The patch "ARM: dts: iwg22d-sodimm: Enable HS-USB" depend upon
+> the below patch
+>
+> * [4/4] ARM: dts: iwg22d-sodimm: sort dt nodes
+> https://patchwork.kernel.org/patch/10004691/
+>
+> This patch has documentation dependency on below patches
+>
+> * [v2] usb: renesas_usbhs: Add compatible string for r8a7743/5
+> https://patchwork.kernel.org/patch/9990063/
+> * [v2] dmaengine: usb-dmac: Add compatible string for r8a7743/5
+> https://patchwork.kernel.org/patch/9990113/
+>
+> Regards,
+>
+> Biju Das (4):
+>   ARM: dts: r8a7745: Add HS-USB device node
+>   ARM: dts: r8a7745: Add USB-DMAC device nodes
+>   ARM: dts: r8a7745: Enable DMA for HSUSB
+>   ARM: dts: iwg22d-sodimm: Enable HS-USB
+>
+>  arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts | 11 +++++++
+>  arch/arm/boot/dts/r8a7745.dtsi              | 45 +++++++++++++++++++++++=
+++++++
+>  2 files changed, 56 insertions(+)
+>
+> --
+> 1.9.1
 
-In addition, some clocks that were disabled by clk_disable_unused() may
-have been re-enabled, wasting power.
 
-This patch series fixes these issues by restoring clock registers during
-system resume.  Note that while this fixes EtherAVB operation after
-resume from s2ram, EtherAVB cannot be used as an actual wake-up source
-from s2ram, only from s2idle, due to PSCI limitations.
 
-To avoid overhead on platforms not needing it, the suspend/resume code
-has a build time dependency on sleep and PSCI support, and a runtime
-dependency on PSCI.
 
-Changes compared to v2:
-  - Drop RFC state,
-  - Add Tested-by,
-  - Add build and runtime dependencies on PM_SLEEP and PSCI.
-
-Changes compared to v1 (more details in the individual patches):
-  - Save module clock registers in suspend_noirq instead of constantly
-    updating shadow registers,
-  - Restore all module clocks under our control, not just the ones we ever
-    changed,
-  - Also restore DIV6, SDHI, and R clocks, thus covering all supported
-    programmable core clocks on R-Car Gen3.
-
-This series is against the clk-renesas branch of my renesas-drivers git
-repository at
-git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
-For your convenience, this series is also available in the
-topic/cpg-mssr-suspend-resume-v3 branch of the same repository.
-
-This has been tested on Salvator-X with R-Car H3 ES1.0 and M3-W ES1.0,
-and on Salvator-XS with R-Car H3 ES2.0 (the latter also needs "[PATCH
-0/4] ravb: Add PHY reset support",
-https://www.spinics.net/lists/netdev/msg457308.html), and
-regression-tested on various other Renesas arm32 boards not using PSCI.
-
-I plan to queue this up in clk-renesas-for-v4.15.
-Thanks!
-
-Geert Uytterhoeven (5):
-  clk: renesas: cpg-mssr: Restore module clocks during resume
-  clk: renesas: cpg-mssr: Add support to restore core clocks during
-    resume
-  clk: renesas: div6: Restore clock state during resume
-  clk: renesas: rcar-gen3: Restore SDHI clocks during resume
-  clk: renesas: rcar-gen3: Restore R clock during resume
-
- drivers/clk/renesas/clk-div6.c         | 38 ++++++++++++-
- drivers/clk/renesas/clk-div6.h         |  3 +-
- drivers/clk/renesas/rcar-gen2-cpg.c    |  7 ++-
- drivers/clk/renesas/rcar-gen2-cpg.h    |  6 +--
- drivers/clk/renesas/rcar-gen3-cpg.c    | 79 +++++++++++++++++++++------
- drivers/clk/renesas/rcar-gen3-cpg.h    |  3 +-
- drivers/clk/renesas/renesas-cpg-mssr.c | 99 +++++++++++++++++++++++++++++++++-
- drivers/clk/renesas/renesas-cpg-mssr.h |  3 +-
- 8 files changed, 208 insertions(+), 30 deletions(-)
-
--- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
