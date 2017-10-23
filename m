@@ -1,47 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:44314 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750907AbdJNTRk (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:41141 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751288AbdJWRKp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 14 Oct 2017 15:17:40 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
+        Mon, 23 Oct 2017 13:10:45 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2 05/11] mmc: meson-mx-sdio: catch all errors when getting regulators
-Date: Sat, 14 Oct 2017 21:17:13 +0200
-Message-Id: <20171014191719.2129-6-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20171014191719.2129-1-wsa+renesas@sang-engineering.com>
-References: <20171014191719.2129-1-wsa+renesas@sang-engineering.com>
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 6/9] ARM: dts: r8a7745: Add USB-DMAC device nodes
+Date: Mon, 23 Oct 2017 18:09:27 +0100
+Message-Id: <1508778570-28795-7-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1508778570-28795-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1508778570-28795-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Bail out everytime when mmc_regulator_get_supply() returns an errno, not
-only when probing gets deferred. This is currently a no-op, because this
-function only returns -EPROBE_DEFER or 0 right now. But if it will throw
-another error somewhen, it will be for a reason. (This still doesn't change
-that getting regulators is optional, so 0 can still mean no regulators
-found). So, let us a) be future proof and b) have driver code which is
-easier to understand.
+From: Biju Das <biju.das@bp.renesas.com>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Biju Das <biju.das@bp.renesas.com>
+
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/mmc/host/meson-mx-sdio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in v2:
+* rebased
 
-diff --git a/drivers/mmc/host/meson-mx-sdio.c b/drivers/mmc/host/meson-mx-sdio.c
-index 19b499bbe6912f..fcbc469a5b0e74 100644
---- a/drivers/mmc/host/meson-mx-sdio.c
-+++ b/drivers/mmc/host/meson-mx-sdio.c
-@@ -551,7 +551,7 @@ static int meson_mx_mmc_add_host(struct meson_mx_mmc_host *host)
+ arch/arm/boot/dts/r8a7745.dtsi | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+index 40048da1..9733ac5 100644
+--- a/arch/arm/boot/dts/r8a7745.dtsi
++++ b/arch/arm/boot/dts/r8a7745.dtsi
+@@ -312,6 +312,34 @@
+ 			dma-channels = <15>;
+ 		};
  
- 	/* Get regulators and the supported OCR mask */
- 	ret = mmc_regulator_get_supply(mmc);
--	if (ret == -EPROBE_DEFER)
-+	if (ret)
- 		return ret;
- 
- 	mmc->max_req_size = MESON_MX_SDIO_BOUNCE_REQ_SIZE;
++		usb_dmac0: dma-controller@e65a0000 {
++			compatible = "renesas,r8a7745-usb-dmac",
++				     "renesas,usb-dmac";
++			reg = <0 0xe65a0000 0 0x100>;
++			interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1";
++			clocks = <&cpg CPG_MOD 330>;
++			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
++			resets = <&cpg 330>;
++			#dma-cells = <1>;
++			dma-channels = <2>;
++		};
++
++		usb_dmac1: dma-controller@e65b0000 {
++			compatible = "renesas,r8a7745-usb-dmac",
++				     "renesas,usb-dmac";
++			reg = <0 0xe65b0000 0 0x100>;
++			interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1";
++			clocks = <&cpg CPG_MOD 331>;
++			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
++			resets = <&cpg 331>;
++			#dma-cells = <1>;
++			dma-channels = <2>;
++		};
++
+ 		scifa0: serial@e6c40000 {
+ 			compatible = "renesas,scifa-r8a7745",
+ 				     "renesas,rcar-gen2-scifa", "renesas,scifa";
 -- 
-2.11.0
+2.7.4
