@@ -1,56 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:42900 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752005AbdJ3QHV (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:39515 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751548AbdJWRKp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 30 Oct 2017 12:07:21 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/2] arm64: dts: renesas: r8a77970: Add SMP Support
-Date: Mon, 30 Oct 2017 17:07:11 +0100
-Message-Id: <1509379633-25823-1-git-send-email-geert+renesas@glider.be>
+        Mon, 23 Oct 2017 13:10:45 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 5/9] ARM: dts: r8a7745: Add HS-USB device node
+Date: Mon, 23 Oct 2017 18:09:26 +0100
+Message-Id: <1508778570-28795-6-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1508778570-28795-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1508778570-28795-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Simon, Magnus,
+From: Biju Das <biju.das@bp.renesas.com>
 
-This patch series enables SMP support on the R-Car V3M SoC, by adding
-the second Cortex-A53 CPU core.  It also adds the performance monitor
-unit, and links it to both CPU cores.
+From: Biju Das <biju.das@bp.renesas.com>
 
-Note that the PSCI implementation on Eagle may be a preliminary version
-with some familiar quirks:
-  - SMP bringup works, and both CPUs can be used,
-  - Offlining CPU0 crashes the system,
-  - CPU1 can be offlined, but trying to bring it online again crashes
-    the system, too.
+Define the R8A7745 generic part of the HS-USB device node. It is up to the
+board file to enable the device.
 
-I'm confident these will be fixed in future firmware versions, just like
-on H3/Salvator-X.
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+---
+Changes in v2:
+* rebased
 
-Thanks!
+ arch/arm/boot/dts/r8a7745.dtsi | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-Geert Uytterhoeven (2):
-  arm64: dts: renesas: r8a77970: Add secondary CA53 CPU core
-  arm64: dts: renesas: r8a77970: Add Cortex-A53 PMU node
-
- arch/arm64/boot/dts/renesas/r8a77970.dtsi | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
-
+diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+index 3a50f70..40048da1 100644
+--- a/arch/arm/boot/dts/r8a7745.dtsi
++++ b/arch/arm/boot/dts/r8a7745.dtsi
+@@ -916,6 +916,20 @@
+ 			};
+ 		};
+ 
++		hsusb: usb@e6590000 {
++			compatible = "renesas,usbhs-r8a7745",
++				     "renesas,rcar-gen2-usbhs";
++			reg = <0 0xe6590000 0 0x100>;
++			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 704>;
++			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
++			resets = <&cpg 704>;
++			renesas,buswait = <4>;
++			phys = <&usb0 1>;
++			phy-names = "usb";
++			status = "disabled";
++		};
++
+ 		usbphy: usb-phy@e6590100 {
+ 			compatible = "renesas,usb-phy-r8a7745",
+ 				     "renesas,rcar-gen2-usb-phy";
 -- 
 2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
