@@ -1,72 +1,95 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38835 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752092AbdJTK3M (ORCPT
+Received: from mail-wm0-f44.google.com ([74.125.82.44]:52353 "EHLO
+        mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751407AbdJYVj5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Oct 2017 06:29:12 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Wed, 25 Oct 2017 17:39:57 -0400
+MIME-Version: 1.0
+In-Reply-To: <CAPDyKFoUn18uAmSpOmCcjopNxunnNma4Cv2F9C2k+tE=xcuYMw@mail.gmail.com>
+References: <1508162116-5043-1-git-send-email-geert+renesas@glider.be> <CAPDyKFoUn18uAmSpOmCcjopNxunnNma4Cv2F9C2k+tE=xcuYMw@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 25 Oct 2017 23:39:55 +0200
+Message-ID: <CAMuHMdXH0mayb0jW2sEejoC1=DdPx06kbwJ9VgNN1F-ueQcCvQ@mail.gmail.com>
+Subject: Re: [PATCH 00/10] PM / Domain: renesas: Fix active wakeup behavior
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 10/31] arm64: dts: h3ulcb-kf: ES1.x SoC initial device tree
-Date: Fri, 20 Oct 2017 12:28:13 +0200
-Message-Id: <d90e97dfe16610542bb83590a81081a47018ba89.1508495040.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1508495040.git.horms+renesas@verge.net.au>
-References: <cover.1508495040.git.horms+renesas@verge.net.au>
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Hi Ulf,
 
-Add the initial device tree for the H3ULCB ES1.x SoC with Kingfisher
-extension infotainment board.
+On Wed, Oct 25, 2017 at 10:49 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> On 16 October 2017 at 15:55, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+>> If a device in a Renesas ARM SoC is part of a Clock Domain, and it is
+>> used as a wakeup source, it must be kept active during system suspend.
+>>
+>> Currently this is handled in device-specific drivers by explicitly
+>> increasing the use count of the module clock when the device is
+>> configured as a wakeup source.  However, the proper way to prevent the
+>> device from being stopped is to inform this requirement to the genpd
+>> core.  Hence this series does that, so the workarounds can be removed.
+>>
+>> This patch series consist of 4 parts:
+>>   1. Patches 1-3 fix the clk-renesas-mstp, clk-renesas-cpg-mssr, and
+>>      rcar-sysc Clock and/or PM Domain drivers by providing
+>>      gpd_dev_ops.active_wakeup() callbacks,
+>
+> As we spoked about at ELC yesterday, I think the genpd specific
+> callback for dealing with this is not really the proper solution.
+>
+> Instead I think this should be treated as a generic problem. In
+> principle I think we need a way for drivers to inform the
+> middle-layer/genpd about wakeup requirements during system-wide PM.
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/Makefile                  |  1 +
- arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb-kf.dts | 19 +++++++++++++++++++
- 2 files changed, 20 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb-kf.dts
+Note that the platform (through genpd?) also matters.
+The same device may need to be kept enabled on one platform to generate
+wakeup events, and may generate such events while disabled on another
+platform.
 
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index fd1164f2d7d7..c5fcdbb24b10 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -1,6 +1,7 @@
- dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-x.dtb r8a7795-h3ulcb.dtb
- dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-xs.dtb
- dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-es1-salvator-x.dtb r8a7795-es1-h3ulcb.dtb
-+dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-es1-h3ulcb-kf.dtb
- dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-x.dtb r8a7796-m3ulcb.dtb
- dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-m3ulcb-kf.dtb
- dtb-$(CONFIG_ARCH_R8A77970) += r8a77970-eagle.dtb
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb-kf.dts b/arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb-kf.dts
-new file mode 100644
-index 000000000000..009cb1cb0dde
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb-kf.dts
-@@ -0,0 +1,19 @@
-+/*
-+ * Device Tree Source for the H3ULCB Kingfisher board
-+ *
-+ * Copyright (C) 2017 Renesas Electronics Corp.
-+ * Copyright (C) 2017 Cogent Embedded, Inc.
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2.  This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
-+
-+#include "r8a7795-es1-h3ulcb.dts"
-+#include "ulcb-kf.dtsi"
-+
-+/ {
-+	model = "Renesas H3ULCB Kingfisher board based on r8a7795 ES1.x";
-+	compatible = "shimafuji,kingfisher", "renesas,h3ulcb",
-+		     "renesas,r8a7795";
-+};
--- 
-2.11.0
+> Allow me to post a patch showing what I had in mind, then we can see
+> what you think about it.
+
+OK. Looking forward to it...
+
+>>   2. Patch 4 adds a new GENPD_FLAG_ACTIVE_WAKEUP flag, to avoid various
+>>      PM Domain drivers that need similar behavior having to provide
+>>      their own identical .active_wakeup() callbacks,
+>
+> This makes sense, however I think it's sufficient to make genpd check
+> the flag, rather than assigning and using the ->active_wakeup()
+> callback.
+
+OK. That can definitely be done.
+
+> That would then make it possible to remove the callback altogether.
+> Can you do that instead?
+
+drivers/soc/mediatek/mtk-scpsys.c and drivers/soc/rockchip/pm_domains.c
+seem to use a more complex callback, but it looks like it can be simplified to
+a boolean flag, too.
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
