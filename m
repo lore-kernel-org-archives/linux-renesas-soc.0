@@ -1,19 +1,20 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f44.google.com ([74.125.82.44]:52353 "EHLO
-        mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751407AbdJYVj5 (ORCPT
+Received: from mail-io0-f176.google.com ([209.85.223.176]:45101 "EHLO
+        mail-io0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751945AbdJYUtN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 25 Oct 2017 17:39:57 -0400
+        Wed, 25 Oct 2017 16:49:13 -0400
+Received: by mail-io0-f176.google.com with SMTP id i38so2437644iod.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 25 Oct 2017 13:49:12 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFoUn18uAmSpOmCcjopNxunnNma4Cv2F9C2k+tE=xcuYMw@mail.gmail.com>
-References: <1508162116-5043-1-git-send-email-geert+renesas@glider.be> <CAPDyKFoUn18uAmSpOmCcjopNxunnNma4Cv2F9C2k+tE=xcuYMw@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 25 Oct 2017 23:39:55 +0200
-Message-ID: <CAMuHMdXH0mayb0jW2sEejoC1=DdPx06kbwJ9VgNN1F-ueQcCvQ@mail.gmail.com>
+In-Reply-To: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
+References: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 25 Oct 2017 22:49:11 +0200
+Message-ID: <CAPDyKFoUn18uAmSpOmCcjopNxunnNma4Cv2F9C2k+tE=xcuYMw@mail.gmail.com>
 Subject: Re: [PATCH 00/10] PM / Domain: renesas: Fix active wakeup behavior
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
@@ -29,67 +30,46 @@ Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Ulf,
-
-On Wed, Oct 25, 2017 at 10:49 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> On 16 October 2017 at 15:55, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
->> If a device in a Renesas ARM SoC is part of a Clock Domain, and it is
->> used as a wakeup source, it must be kept active during system suspend.
->>
->> Currently this is handled in device-specific drivers by explicitly
->> increasing the use count of the module clock when the device is
->> configured as a wakeup source.  However, the proper way to prevent the
->> device from being stopped is to inform this requirement to the genpd
->> core.  Hence this series does that, so the workarounds can be removed.
->>
->> This patch series consist of 4 parts:
->>   1. Patches 1-3 fix the clk-renesas-mstp, clk-renesas-cpg-mssr, and
->>      rcar-sysc Clock and/or PM Domain drivers by providing
->>      gpd_dev_ops.active_wakeup() callbacks,
+On 16 October 2017 at 15:55, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+>         Hi all,
 >
-> As we spoked about at ELC yesterday, I think the genpd specific
-> callback for dealing with this is not really the proper solution.
+> If a device in a Renesas ARM SoC is part of a Clock Domain, and it is
+> used as a wakeup source, it must be kept active during system suspend.
 >
-> Instead I think this should be treated as a generic problem. In
-> principle I think we need a way for drivers to inform the
-> middle-layer/genpd about wakeup requirements during system-wide PM.
-
-Note that the platform (through genpd?) also matters.
-The same device may need to be kept enabled on one platform to generate
-wakeup events, and may generate such events while disabled on another
-platform.
-
-> Allow me to post a patch showing what I had in mind, then we can see
-> what you think about it.
-
-OK. Looking forward to it...
-
->>   2. Patch 4 adds a new GENPD_FLAG_ACTIVE_WAKEUP flag, to avoid various
->>      PM Domain drivers that need similar behavior having to provide
->>      their own identical .active_wakeup() callbacks,
+> Currently this is handled in device-specific drivers by explicitly
+> increasing the use count of the module clock when the device is
+> configured as a wakeup source.  However, the proper way to prevent the
+> device from being stopped is to inform this requirement to the genpd
+> core.  Hence this series does that, so the workarounds can be removed.
 >
-> This makes sense, however I think it's sufficient to make genpd check
-> the flag, rather than assigning and using the ->active_wakeup()
-> callback.
+> This patch series consist of 4 parts:
+>   1. Patches 1-3 fix the clk-renesas-mstp, clk-renesas-cpg-mssr, and
+>      rcar-sysc Clock and/or PM Domain drivers by providing
+>      gpd_dev_ops.active_wakeup() callbacks,
 
-OK. That can definitely be done.
+As we spoked about at ELC yesterday, I think the genpd specific
+callback for dealing with this is not really the proper solution.
 
-> That would then make it possible to remove the callback altogether.
-> Can you do that instead?
+Instead I think this should be treated as a generic problem. In
+principle I think we need a way for drivers to inform the
+middle-layer/genpd about wakeup requirements during system-wide PM.
 
-drivers/soc/mediatek/mtk-scpsys.c and drivers/soc/rockchip/pm_domains.c
-seem to use a more complex callback, but it looks like it can be simplified to
-a boolean flag, too.
+Allow me to post a patch showing what I had in mind, then we can see
+what you think about it.
 
-Thanks!
+>
+>   2. Patch 4 adds a new GENPD_FLAG_ACTIVE_WAKEUP flag, to avoid various
+>      PM Domain drivers that need similar behavior having to provide
+>      their own identical .active_wakeup() callbacks,
 
-Gr{oetje,eeting}s,
+This makes sense, however I think it's sufficient to make genpd check
+the flag, rather than assigning and using the ->active_wakeup()
+callback.
 
-                        Geert
+That would then make it possible to remove the callback altogether.
+Can you do that instead?
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+[...]
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Kind regards
+Uffe
