@@ -1,136 +1,53 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v6 3/4] phy: rcar-gen3-usb2: add SoC-specific parameter for dedicated pins
-Date: Thu, 12 Oct 2017 15:34:47 +0900
-Message-Id: <1507790088-26010-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1507790088-26010-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1507790088-26010-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mout.web.de ([212.227.15.14]:58574 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932084AbdJYJQo (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 25 Oct 2017 05:16:44 -0400
+Subject: Re: Unicode characters in commit messages?
+To: Dan Carpenter <dan.carpenter@oracle.com>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+Cc: David Airlie <airlied@linux.ie>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+References: <7d5e68c7-2d64-0131-1a08-eeb4e03cc113@users.sourceforge.net>
+ <2dd8c930-77e8-a2ee-6356-fc9c1d21384d@users.sourceforge.net>
+ <20171025060209.pqtyqk4weduvmzxj@mwanda>
+ <2d491a67-184a-c03f-e6ee-da88066e97f0@users.sourceforge.net>
+ <20171025073250.i6v6jwijbkmybmtk@mwanda>
+ <4d93d77b-57f7-fac2-a6aa-314d05778e2d@users.sourceforge.net>
+ <20171025084346.dkaeutig7qy2byx4@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Message-ID: <88ad0486-7c55-74c3-062d-53b591b7b254@users.sourceforge.net>
+Date: Wed, 25 Oct 2017 11:16:32 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20171025084346.dkaeutig7qy2byx4@mwanda>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds SoC-specific parameter to avoid reading/writing
-specific registers wrongly if this driver runs on a SoC which doesn't
-have dedicated pins (e.g. R-Car D3). This patch also changes the
-value "has_otg" to "has_otg_pins" for slightly easier reading of
-the code.
+> These long email threads are a waste of time
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
----
- drivers/phy/renesas/phy-rcar-gen3-usb2.c | 31 +++++++++++++++++++++----------
- 1 file changed, 21 insertions(+), 10 deletions(-)
+They occur for different topics.
 
-diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-index 00a8303..479ae94 100644
---- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-@@ -18,6 +18,7 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-+#include <linux/of_device.h>
- #include <linux/phy/phy.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
-@@ -80,6 +81,8 @@
- #define USB2_ADPCTRL_IDPULLUP		BIT(5)	/* 1 = ID sampling is enabled */
- #define USB2_ADPCTRL_DRVVBUS		BIT(4)
- 
-+#define RCAR_GEN3_PHY_HAS_DEDICATED_PINS	1
-+
- struct rcar_gen3_chan {
- 	void __iomem *base;
- 	struct extcon_dev *extcon;
-@@ -87,7 +90,7 @@ struct rcar_gen3_chan {
- 	struct regulator *vbus;
- 	struct work_struct work;
- 	bool extcon_host;
--	bool has_otg;
-+	bool has_otg_pins;
- };
- 
- static void rcar_gen3_phy_usb2_work(struct work_struct *work)
-@@ -234,7 +237,7 @@ static ssize_t role_store(struct device *dev, struct device_attribute *attr,
- 	bool is_b_device;
- 	enum phy_mode cur_mode, new_mode;
- 
--	if (!ch->has_otg || !ch->phy->init_count)
-+	if (!ch->has_otg_pins || !ch->phy->init_count)
- 		return -EIO;
- 
- 	if (!strncmp(buf, "host", strlen("host")))
-@@ -272,7 +275,7 @@ static ssize_t role_show(struct device *dev, struct device_attribute *attr,
- {
- 	struct rcar_gen3_chan *ch = dev_get_drvdata(dev);
- 
--	if (!ch->has_otg || !ch->phy->init_count)
-+	if (!ch->has_otg_pins || !ch->phy->init_count)
- 		return -EIO;
- 
- 	return sprintf(buf, "%s\n", rcar_gen3_is_host(ch) ? "host" :
-@@ -311,7 +314,7 @@ static int rcar_gen3_phy_usb2_init(struct phy *p)
- 	writel(USB2_OC_TIMSET_INIT, usb2_base + USB2_OC_TIMSET);
- 
- 	/* Initialize otg part */
--	if (channel->has_otg)
-+	if (channel->has_otg_pins)
- 		rcar_gen3_init_otg(channel);
- 
- 	return 0;
-@@ -385,9 +388,17 @@ static irqreturn_t rcar_gen3_phy_usb2_irq(int irq, void *_ch)
- }
- 
- static const struct of_device_id rcar_gen3_phy_usb2_match_table[] = {
--	{ .compatible = "renesas,usb2-phy-r8a7795" },
--	{ .compatible = "renesas,usb2-phy-r8a7796" },
--	{ .compatible = "renesas,rcar-gen3-usb2-phy" },
-+	{
-+		.compatible = "renesas,usb2-phy-r8a7795",
-+		.data = (void *)RCAR_GEN3_PHY_HAS_DEDICATED_PINS,
-+	},
-+	{
-+		.compatible = "renesas,usb2-phy-r8a7796",
-+		.data = (void *)RCAR_GEN3_PHY_HAS_DEDICATED_PINS,
-+	},
-+	{
-+		.compatible = "renesas,rcar-gen3-usb2-phy",
-+	},
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, rcar_gen3_phy_usb2_match_table);
-@@ -433,7 +444,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 	if (of_usb_get_dr_mode_by_phy(dev->of_node, 0) == USB_DR_MODE_OTG) {
- 		int ret;
- 
--		channel->has_otg = true;
-+		channel->has_otg_pins = (uintptr_t)of_device_get_match_data(dev);
- 		channel->extcon = devm_extcon_dev_allocate(dev,
- 							rcar_gen3_phy_cable);
- 		if (IS_ERR(channel->extcon))
-@@ -475,7 +486,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 		dev_err(dev, "Failed to register PHY provider\n");
- 		ret = PTR_ERR(provider);
- 		goto error;
--	} else if (channel->has_otg) {
-+	} else if (channel->has_otg_pins) {
- 		int ret;
- 
- 		ret = device_create_file(dev, &dev_attr_role);
-@@ -495,7 +506,7 @@ static int rcar_gen3_phy_usb2_remove(struct platform_device *pdev)
- {
- 	struct rcar_gen3_chan *channel = platform_get_drvdata(pdev);
- 
--	if (channel->has_otg)
-+	if (channel->has_otg_pins)
- 		device_remove_file(&pdev->dev, &dev_attr_role);
- 
- 	pm_runtime_disable(&pdev->dev);
--- 
-1.9.1
+
+> when we already answered your questions completely
+
+There were some attempts for specific details.
+
+
+> and over and over.
+
+I hope that further useful adjustments can be achieved for
+involved information sources.
+
+
+> The feedback was clear.
+
+I disagree on some aspects.
+
+Regards,
+Markus
