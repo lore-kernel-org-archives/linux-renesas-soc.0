@@ -1,64 +1,83 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:51622 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752199AbdJDJHW (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Oct 2017 05:07:22 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 03/14] pinctrl: sh-pfc: Add generic bias register description
-Date: Wed,  4 Oct 2017 11:07:02 +0200
-Message-Id: <1507108033-8606-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1507108033-8606-1-git-send-email-geert+renesas@glider.be>
-References: <1507108033-8606-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <87211738-8d65-32c0-fb6b-dc2cd395016a@ti.com>
+References: <1507544543-28654-1-git-send-email-biju.das@bp.renesas.com>
+ <bcfa1e90-c497-ee29-687d-9f9a04ce2d4b@ti.com> <87211738-8d65-32c0-fb6b-dc2cd395016a@ti.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 25 Oct 2017 12:32:37 +0200
+Message-ID: <CAMuHMdUWtJvYsW3gaCr=Wh-tEauO6E=ue95MK0DXYJFb7c-OJw@mail.gmail.com>
+Subject: Re: [PATCH RESEND] phy: rcar-gen2: Add r8a7743/5 support
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Simon Horman <horms@verge.net.au>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a generic way to describe bias registers (for pull-up/down control),
-like is already done for config and drive registers.
+Hi KIshon,
 
-This makes the sh-pfc core code aware of these registers, which will
-ease introducing suspend/resume support later.
+On Wed, Oct 25, 2017 at 12:30 PM, Kishon Vijay Abraham I <kishon@ti.com> wrote:
+> On Wednesday 18 October 2017 05:10 PM, Kishon Vijay Abraham I wrote:
+>> On Monday 09 October 2017 03:52 PM, Biju Das wrote:
+>>> Add USB PHY support for r8a7743/5 SoC. Renesas RZ/G1[ME] (R8A7743/5)
+>>> USB PHY is identical to the R-Car Gen2 family.
+>>>
+>>> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+>>> Acked-by: Simon Horman <horms+renesas@verge.net.au>
+>>> Acked-by: Rob Herring <robh@kernel.org>
+>>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>>
+>> merged, thanks!
+>
+> just realized $subject is misleading since this is only dt-binding patch. Do
+> you plan to send the driver patch too?
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/pinctrl/sh-pfc/sh_pfc.h | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+There's no need to update the driver, as it matches against the generic fallback
+compatible value "renesas,rcar-gen2-usb-phy".
 
-diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
-index 8688b405e0813ad7..1914f4b5fef569b3 100644
---- a/drivers/pinctrl/sh-pfc/sh_pfc.h
-+++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-@@ -148,6 +148,17 @@ struct pinmux_drive_reg {
- 	.reg = r, \
- 	.fields =
- 
-+struct pinmux_bias_reg {
-+	u32 puen;		/* Pull-enable or pull-up control register */
-+	u32 pud;		/* Pull-up/down control register (optional) */
-+	const u16 pins[32];
-+};
-+
-+#define PINMUX_BIAS_REG(name1, r1, name2, r2) \
-+	.puen = r1,	\
-+	.pud = r2,	\
-+	.pins =
-+
- struct pinmux_data_reg {
- 	u32 reg;
- 	u8 reg_width;
-@@ -245,6 +256,7 @@ struct sh_pfc_soc_info {
- 
- 	const struct pinmux_cfg_reg *cfg_regs;
- 	const struct pinmux_drive_reg *drive_regs;
-+	const struct pinmux_bias_reg *bias_regs;
- 	const struct pinmux_data_reg *data_regs;
- 
- 	const u16 *pinmux_data;
--- 
-2.7.4
+>>> ---
+>>> This patch is tested against Linux next tag next-20170929.
+>>>
+>>>  Documentation/devicetree/bindings/phy/rcar-gen2-phy.txt | 7 +++++--
+>>>  1 file changed, 5 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/phy/rcar-gen2-phy.txt b/Documentation/devicetree/bindings/phy/rcar-gen2-phy.txt
+>>> index 91da947..eeb9e18 100644
+>>> --- a/Documentation/devicetree/bindings/phy/rcar-gen2-phy.txt
+>>> +++ b/Documentation/devicetree/bindings/phy/rcar-gen2-phy.txt
+>>> @@ -4,10 +4,13 @@ This file provides information on what the device node for the R-Car generation
+>>>  2 USB PHY contains.
+>>>
+>>>  Required properties:
+>>> -- compatible: "renesas,usb-phy-r8a7790" if the device is a part of R8A7790 SoC.
+>>> +- compatible: "renesas,usb-phy-r8a7743" if the device is a part of R8A7743 SoC.
+>>> +          "renesas,usb-phy-r8a7745" if the device is a part of R8A7745 SoC.
+>>> +          "renesas,usb-phy-r8a7790" if the device is a part of R8A7790 SoC.
+>>>            "renesas,usb-phy-r8a7791" if the device is a part of R8A7791 SoC.
+>>>            "renesas,usb-phy-r8a7794" if the device is a part of R8A7794 SoC.
+>>> -          "renesas,rcar-gen2-usb-phy" for a generic R-Car Gen2 compatible device.
+>>> +          "renesas,rcar-gen2-usb-phy" for a generic R-Car Gen2 or
+>>> +                                      RZ/G1 compatible device.
+>>>
+>>>            When compatible with the generic version, nodes must list the
+>>>            SoC-specific version corresponding to the platform first
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
