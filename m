@@ -1,45 +1,83 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38914 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752665AbdJTKaC (ORCPT
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38568 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751513AbdJYPpe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Oct 2017 06:30:02 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 14/42] ARM: dts: iwg22d-sodimm: Enable USB PHY
-Date: Fri, 20 Oct 2017 12:28:41 +0200
-Message-Id: <aea3c9d9726148331d874c2b91aeb663430099d7.1508493785.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1508493785.git.horms+renesas@verge.net.au>
-References: <cover.1508493785.git.horms+renesas@verge.net.au>
+        Wed, 25 Oct 2017 11:45:34 -0400
+Date: Wed, 25 Oct 2017 16:45:37 +0100
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [1/2] drivers: firmware: psci: Add psci_is_available()
+Message-ID: <20171025154537.GA7829@red-moon>
+References: <1507708982-12336-2-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1507708982-12336-2-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+On Wed, Oct 11, 2017 at 10:03:01AM +0200, Geert Uytterhoeven wrote:
+> PSCI support may be disabled at build time (by configuration) or at
+> run-time (PSCI firmware not present).  While CONFIG_ARM_PSCI_FW can be
+> used to check for build time enablement, there is currently no simple
+> way to check if PSCI is actually available and used.
+> 
+> Hence add a helper function to check if PSCI is available.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts | 4 ++++
- 1 file changed, 4 insertions(+)
+Hi Geert,
 
-diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-index e378e5ecfcac..52153ec3638c 100644
---- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-+++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-@@ -103,3 +103,7 @@
- 	pinctrl-0 = <&usb1_pins>;
- 	pinctrl-names = "default";
- };
-+
-+&usbphy {
-+	status = "okay";
-+};
--- 
-2.11.0
+excuse us the delay in responding. I think it would be better if the
+check just carries out a DT/ACPI matching check rather than being based
+on PSCI ops initialization but before doing that I would like first to
+understand what this function can be actually used for (ie I do not
+think the usage in the PSCI checker is relevant to this discussion).
+
+Thanks,
+Lorenzo
+
+> This is useful for e.g. drivers that are used on platforms with and
+> without PSCI.  Such drivers may need to take provisions for proper
+> operation when PSCI is used, and/or to implement functionality that is
+> usually provided by PSCI.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  drivers/firmware/psci.c | 5 +++++
+>  include/linux/psci.h    | 2 ++
+>  2 files changed, 7 insertions(+)
+> 
+> diff --git a/drivers/firmware/psci.c b/drivers/firmware/psci.c
+> index da469c972b503f83..a3a11e2d8ffffaaa 100644
+> --- a/drivers/firmware/psci.c
+> +++ b/drivers/firmware/psci.c
+> @@ -670,6 +670,11 @@ int __init psci_dt_init(void)
+>  	return init_fn(np);
+>  }
+>  
+> +bool psci_is_available(void)
+> +{
+> +	return psci_ops.cpu_off && psci_ops.cpu_on && psci_ops.cpu_suspend;
+> +}
+> +
+>  #ifdef CONFIG_ACPI
+>  /*
+>   * We use PSCI 0.2+ when ACPI is deployed on ARM64 and it's
+> diff --git a/include/linux/psci.h b/include/linux/psci.h
+> index bdea1cb5e1db142b..2bdee325aeb80cf6 100644
+> --- a/include/linux/psci.h
+> +++ b/include/linux/psci.h
+> @@ -39,8 +39,10 @@ extern struct psci_operations psci_ops;
+>  
+>  #if defined(CONFIG_ARM_PSCI_FW)
+>  int __init psci_dt_init(void);
+> +bool psci_is_available(void);
+>  #else
+>  static inline int psci_dt_init(void) { return 0; }
+> +static inline bool psci_is_available(void) { return false; }
+>  #endif
+>  
+>  #if defined(CONFIG_ARM_PSCI_FW) && defined(CONFIG_ACPI)
