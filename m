@@ -1,45 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:45441 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751609AbdJ0PhS (ORCPT
+Received: from sauhun.de ([88.99.104.3]:59734 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751228AbdJZUgZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Oct 2017 11:37:18 -0400
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Wolfram Sang <wsa@the-dreams.de>
-CC: "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        Thu, 26 Oct 2017 16:36:25 -0400
+Date: Thu, 26 Oct 2017 22:36:22 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
         "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>,
         Simon Horman <horms+renesas@verge.net.au>,
         Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: RE: [PATCH] i2c: riic: remove clock and frequency restrictions
-Date: Fri, 27 Oct 2017 15:37:14 +0000
-Message-ID: <SG2PR06MB116574A2F2C6B7535415957B8A5A0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+Subject: Re: [PATCH] i2c: riic: remove clock and frequency restrictions
+Message-ID: <20171026203622.hyala2lxsjpdshnh@ninjato>
 References: <20171018140459.104351-1-chris.brandt@renesas.com>
  <20171018163725.ik6ieofpd6ehilbo@ninjato>
  <SG2PR06MB1165C76C6B35511B21CC70668A4D0@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <20171026203622.hyala2lxsjpdshnh@ninjato>
-In-Reply-To: <20171026203622.hyala2lxsjpdshnh@ninjato>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="v7t3jkswcpvpypwj"
+Content-Disposition: inline
+In-Reply-To: <SG2PR06MB1165C76C6B35511B21CC70668A4D0@SG2PR06MB1165.apcprd06.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thursday, October 26, 2017, linux-renesas-soc-owner@vger.kernel.org wrot=
-e:
-> > I ran checkpatch and fixed everything it found, but it didn't flag that
-> one.
-> >
-> >
-> > $ scripts/checkpatch.pl z_patches/riic/S4V1/*
-> > total: 0 errors, 0 warnings, 169 lines checked
+
+--v7t3jkswcpvpypwj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+
+> I ran checkpatch and fixed everything it found, but it didn't flag that o=
+ne.
 >=20
-> with "--strict" it will find it.
+>=20
+> $ scripts/checkpatch.pl z_patches/riic/S4V1/*
+> total: 0 errors, 0 warnings, 169 lines checked
 
-Yes, then it finds other ones too that you missed.
-
-So for my v2 submission, it passes with --strict.
+with "--strict" it will find it.
 
 
-Chris
+--v7t3jkswcpvpypwj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlnyR0YACgkQFA3kzBSg
+KbY8/g//WDk2MzHV+LkVlr0Sk7wnw5k/9tXRczkGEwqCECLN3b1olxk5GYN48V72
+fjti7x9B4Fq2x7yYNPfA/7QCj1qyVHuWqE7Hgov2nFYwUsHGP10smotjH5MA90+3
+/ROdCUu5rk3v0YRRBByJPVzxGzNNxhNvJqGD4xAefwmk3y2nMdkJg3XxN3ncfqPy
+Wyy8YEI7yJpUbmWrvY9XFq14SI8jdkmOMRyrzgWjzWzFYR6WJlP/7LJPWEifzSCC
+4OwPUeh1kco5ePVsFoeve9EoUYahOYJ/uPyeTuAdIXmsdbqLNNMBdiLLqL75zK+P
+APbmtHGSwHqA+gkWlhoFoFJoHepjlbbhZo/+MYsYSoXADdshaSbsjE9O3LuFejyP
+pCjahaRkjfNopn3HVyCJMUcUSLJw2vB5vReG041PBh/nT7peeOmAg4QR3SDpxbma
+piGJj+B39/9kfFhGgSElKul9fge04bCl00QSGpXOEfmqSmXC8pV1WzaXjF+s8yFD
+h7CSxNLXHhGBf90ounrBmV/IQ60yDMu7jQj6XHkG4Go/rg56YWKKKjmWnTpydbi8
+tlAVoliiuSbnOhU+zKIQ2JiDWqSoanitG7BYXdDKxps3IIOpWa9QZaWDIdNGAYNO
+Iz/ms9tK0ILsP32FsN8fESEjal/NgPEiWWLr6QG9IhMw0SKaFvc=
+=qUBN
+-----END PGP SIGNATURE-----
+
+--v7t3jkswcpvpypwj--
