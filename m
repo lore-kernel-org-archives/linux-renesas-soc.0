@@ -1,80 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:34582 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751323AbdJEMua (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:46848 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751000AbdJ1LQw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 Oct 2017 08:50:30 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/2] pinctrl: sh-pfc: r8a7795-es1: Restore sort order
-Date: Thu,  5 Oct 2017 12:20:29 +0200
-Message-Id: <1507198830-26128-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1507198830-26128-1-git-send-email-geert+renesas@glider.be>
-References: <1507198830-26128-1-git-send-email-geert+renesas@glider.be>
+        Sat, 28 Oct 2017 07:16:52 -0400
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: =?iso-8859-1?Q?Niklas_S=F6derlund?= <niklas.soderlund@ragnatech.se>
+CC: Wolfram Sang <wsa@the-dreams.de>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
+Subject: RE: renesas sdhi driver and DMA
+Date: Sat, 28 Oct 2017 11:16:47 +0000
+Message-ID: <SG2PR06MB1165908BCD32615AA0A9CDBE8A5B0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <SG2PR06MB1165F16A63D6793DBEC419688A750@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <20171010203229.rrwxkrczuk7piqh6@tetsubishi>
+ <SG2PR06MB11658C446725E77967BF22598A5A0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <20171028080234.GB28431@bigcity.dyn.berto.se>
+In-Reply-To: <20171028080234.GB28431@bigcity.dyn.berto.se>
+Content-Language: en-US
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Move the USB30 pins where they belong.
+Hi Niklas,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c | 34 ++++++++++++++++----------------
- 1 file changed, 17 insertions(+), 17 deletions(-)
+On Saturday, October 28, 2017, Niklas S=F6derlund wrote:
+> > All was fine until that patch you submitted (52ad9a8e854c) that now add=
+s
+> > a wait_for_completion() in the SDHI callback.
+>=20
+> This is a interesting finding, I did some bisecting a while back to try
+> and understand why a known problematic SD card started to have more
+> issues then last time I tested it. That investigation also ended up
+> pointing to 52ad9a8e854c.
+>=20
+> >
+> > Now I get the "BUG: scheduling while atomic".
+> >
+> > The R-Car driver uses a threaded irq to call the callbacks, not a
+> > tasklet.
+> >
+> > So I hacked my code to also call the callbacks from a threaded irq like
+> > rcar-dma.c.
+> > And....that works (no more scheduling while atomic).
+>=20
+> Can you post that hack or just send it to me privately if it's to
+> hackish for a mailinglist :-) I'm still interested in my problematic SD
+> card and would just like to see what happens with your hack applied.
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
-index 78c1acf60445340e..20f34e675c60327a 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
-@@ -3101,23 +3101,6 @@ static const unsigned int pwm6_b_mux[] = {
- 	PWM6_B_MARK,
- };
- 
--/* - USB30 ------------------------------------------------------------------ */
--static const unsigned int usb30_pins[] = {
--	/* PWEN, OVC */
--	RCAR_GP_PIN(6, 28), RCAR_GP_PIN(6, 29),
--};
--static const unsigned int usb30_mux[] = {
--	USB30_PWEN_MARK, USB30_OVC_MARK,
--};
--/* - USB31 ------------------------------------------------------------------ */
--static const unsigned int usb31_pins[] = {
--	/* PWEN, OVC */
--	RCAR_GP_PIN(6, 30), RCAR_GP_PIN(6, 31),
--};
--static const unsigned int usb31_mux[] = {
--	USB31_PWEN_MARK, USB31_OVC_MARK,
--};
--
- /* - QSPI0 ------------------------------------------------------------------ */
- static const unsigned int qspi0_ctrl_pins[] = {
- 	/* QSPI0_SPCLK, QSPI0_SSL */
-@@ -3791,6 +3774,23 @@ static const unsigned int usb2_mux[] = {
- 	USB2_PWEN_MARK, USB2_OVC_MARK,
- };
- 
-+/* - USB30 ------------------------------------------------------------------ */
-+static const unsigned int usb30_pins[] = {
-+	/* PWEN, OVC */
-+	RCAR_GP_PIN(6, 28), RCAR_GP_PIN(6, 29),
-+};
-+static const unsigned int usb30_mux[] = {
-+	USB30_PWEN_MARK, USB30_OVC_MARK,
-+};
-+/* - USB31 ------------------------------------------------------------------ */
-+static const unsigned int usb31_pins[] = {
-+	/* PWEN, OVC */
-+	RCAR_GP_PIN(6, 30), RCAR_GP_PIN(6, 31),
-+};
-+static const unsigned int usb31_mux[] = {
-+	USB31_PWEN_MARK, USB31_OVC_MARK,
-+};
-+
- static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(audio_clk_a_a),
- 	SH_PFC_PIN_GROUP(audio_clk_a_b),
--- 
-2.7.4
+I hacked my RZ/A DMA driver, not the SDCARD driver. I assume you are=20
+using R-Car, so that driver already uses a threaded IRQ handler (not a
+tasklet).
+
+But, what I did not try yet was rewriting the patch for SDHI=20
+(52ad9a8e854c) so that instead of using wait_for_completion() in the callba=
+ck, it=20
+creates a kernel thread to do the waiting. In that case, the DMA tasklet=20
+would complete immediately and my DMA driver could remain using tasklets
+instead of threaded irqs.
+
+I am worried about the scheduling latencies of using a kernel thread for
+the SDHI callback, but, I guess that's no different than using a=20
+threaded irq handler.
+
+However...I'm wondering if I'm missing something obvious here and doing=20
+extra work for nothing.
+
+
+Chris
