@@ -1,48 +1,38 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:59122 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751475AbdJ3QHV (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:58994 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750959AbdJ2PYs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 30 Oct 2017 12:07:21 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
+        Sun, 29 Oct 2017 11:24:48 -0400
+Date: Sun, 29 Oct 2017 16:24:45 +0100
+From: Simon Horman <horms@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/2] arm64: dts: renesas: r8a77970: Add Cortex-A53 PMU node
-Date: Mon, 30 Oct 2017 17:07:13 +0100
-Message-Id: <1509379633-25823-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1509379633-25823-1-git-send-email-geert+renesas@glider.be>
-References: <1509379633-25823-1-git-send-email-geert+renesas@glider.be>
+Subject: Re: [PATCH 00/11] arm64: dts: renesas: Use R-Car SDHI Gen[123]
+ fallback compat strings
+Message-ID: <20171029152444.32xci4jtwlqsqpck@verge.net.au>
+References: <20171017060959.16702-1-horms+renesas@verge.net.au>
+ <20171020091747.iep6diy3ymp47qip@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20171020091747.iep6diy3ymp47qip@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable the performance monitor unit for the Cortex-A53 cores on the
-R-Car V3M (r8a77970) SoC.
+On Fri, Oct 20, 2017 at 11:17:47AM +0200, Simon Horman wrote:
+> On Tue, Oct 17, 2017 at 08:09:48AM +0200, Simon Horman wrote:
+> > Use recently posted R-Car SDHI Gen 1, 2 and 3 fallback compat strings
+> > in the DT of Renesas ARM and arm64 based SoCs.
+> > 
+> > Based on renesas-devel-20171016-v4.14-rc5
+> > 
+> > Has a binding documentation but no run-time dependency on
+> > "[PATCH v3 0/3] mmc: renesas_sdhi: add R-Car Gen[123] fallback
+> > compatibility strings"
+> 
+> I have marked these as deferred pending acceptance of the above dependency.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/boot/dts/renesas/r8a77970.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-index 583ebb4c5eac0bfe..449c221dfe9b4dcb 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -113,6 +113,13 @@
- 						  IRQ_TYPE_LEVEL_LOW)>;
- 		};
- 
-+		pmu_a53 {
-+			compatible = "arm,cortex-a53-pmu";
-+			interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-affinity = <&a53_0>, <&a53_1>;
-+		};
-+
- 		rwdt: watchdog@e6020000 {
- 			compatible = "renesas,r8a77970-wdt",
- 				     "renesas,rcar-gen3-wdt";
--- 
-2.7.4
+The dependency has subsequently been accepted and I have applied this
+series.
