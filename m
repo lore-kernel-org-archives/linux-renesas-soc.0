@@ -1,30 +1,54 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Fri, 6 Oct 2017 11:15:50 +0200
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:58715 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751324AbdJ2PMI (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sun, 29 Oct 2017 11:12:08 -0400
+Date: Sun, 29 Oct 2017 16:12:04 +0100
 From: Simon Horman <horms@verge.net.au>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: kishon@ti.com, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3 1/4] phy: rcar-gen3-usb2: check dr_mode for otg mode
-Message-ID: <20171006091550.GE7734@verge.net.au>
-References: <1504233685-17947-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1504233685-17947-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: Re: [PATCH v2 0/9] r8a7745/iwg22d DT rework + serial + HS-USB + IIC
+Message-ID: <20171029151204.n2dem6j7t6o6ayhf@verge.net.au>
+References: <1508778570-28795-1-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1504233685-17947-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <1508778570-28795-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Sep 01, 2017 at 11:41:22AM +0900, Yoshihiro Shimoda wrote:
-> The previous code assumed a channel has otg capability if a channel
-> has interrupt property. But, it is not good because:
->  - Battery charging feature also needs interrupt property.
->  - Some R-Car Gen3 SoCs (e.g. R-Car D3) don't have OTG capability.
+On Mon, Oct 23, 2017 at 06:09:21PM +0100, Fabrizio Castro wrote:
+> This series brings under the same roof a few patches that needed a v2
+> and that are related to either r8a7745 or iwg22d, with the goal of making
+> the merge process as smooth as possible.
 > 
-> So, this patch checks whether usb 2.0 host node has dr_mode property or
-> not. If it has 'dr_mode = "otg";', this driver enables otg capability.
+> Patches [1-4] define a new DT architecture for the iW-RainboW-G22D SODIMM
+> Development Platform to include the configuration with the HDMI daughter
+> board and to define the serial interfaces.
 > 
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Patches [5-8] add USB function support to the r8a7745 SoC and to the
+> iwg22d board. The patches providing the definition of compatible strings:
+> * "renesas,r8a7745-usb-dmac", and
+> * "renesas,usbhs-r8a7745"
+> (on which these USB patches depend on) have been accepted by the
+> respective maintainers already, but it will take a little bit for the
+> definitions to appear on a renesas-devel tag. For reference:
+> https://patchwork.kernel.org/patch/9990063/
+> https://patchwork.kernel.org/patch/9987411/
+> https://patchwork.kernel.org/patch/9990113/
+> 
+> Patch 9 adds IIC cores to the r8a7745 SoC.
+> 
+> The patches of this series apply smoothly on top of tag:
+> "renesas-devel-20171018-v4.14-rc5".
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Thanks, applied.
