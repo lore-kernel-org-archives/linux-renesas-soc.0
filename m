@@ -1,15 +1,16 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:43435 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751615AbdJ3VTF (ORCPT
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:49405 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752126AbdJ3VIt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 30 Oct 2017 17:19:05 -0400
-Received: by mail-lf0-f68.google.com with SMTP id a16so16634014lfk.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 30 Oct 2017 14:19:04 -0700 (PDT)
+        Mon, 30 Oct 2017 17:08:49 -0400
+Received: by mail-lf0-f66.google.com with SMTP id w21so16600450lfc.6
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 30 Oct 2017 14:08:48 -0700 (PDT)
 Subject: Re: [PATCH] ravb: Use common error handling code in ravb_probe()
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: SF Markus Elfring <elfring@users.sourceforge.net>,
-        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Dan Carpenter <dan.carpenter@oracle.com>,
         "David S. Miller" <davem@davemloft.net>,
         Eugeniu Rosca <erosca@de.adit-jv.com>,
@@ -18,46 +19,69 @@ To: SF Markus Elfring <elfring@users.sourceforge.net>,
         =?UTF-8?Q?Niklas_S=c3=b6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>,
         Simon Horman <horms+renesas@verge.net.au>,
-        Yuval Shaia <yuval.shaia@oracle.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
+        Yuval Shaia <yuval.shaia@oracle.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 References: <2839c3c2-0116-7549-6ff4-a49eb0a52298@users.sourceforge.net>
- <b45f9416-5b89-17e3-df0b-905dd01d5342@cogentembedded.com>
-Message-ID: <587725d6-2eeb-c95c-1cfe-0c6571a74c7c@cogentembedded.com>
-Date: Tue, 31 Oct 2017 00:19:01 +0300
+ <CAMuHMdXEWpryexcrN7OYcsGfyE3Y_-7Ej2CfgvYgUbZFTTHEWg@mail.gmail.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <161f4ef9-89b7-bfad-89e7-06bdeeb9ac31@cogentembedded.com>
+Date: Tue, 31 Oct 2017 00:08:44 +0300
 MIME-Version: 1.0
-In-Reply-To: <b45f9416-5b89-17e3-df0b-905dd01d5342@cogentembedded.com>
+In-Reply-To: <CAMuHMdXEWpryexcrN7OYcsGfyE3Y_-7Ej2CfgvYgUbZFTTHEWg@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-MW
 Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 10/30/2017 11:51 PM, Sergei Shtylyov wrote:
+On 10/29/2017 02:00 PM, Geert Uytterhoeven wrote:
 
 >> From: Markus Elfring <elfring@users.sourceforge.net>
 >> Date: Sat, 28 Oct 2017 19:10:08 +0200
 >>
 >> Add a jump target so that a bit of exception handling can be better reused
 >> at the end of this function.
-> 
->     Have you actually tried to see if there's any change in the resulting 
-> object code? I've looked at ARM gcc 4.8.5's output and it didn't really change 
-> -- gcc was able to optimize these repetitive assignments pretty well...
-> 
+>>
 >> This issue was detected by using the Coccinelle software.
 >>
 >> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 >> ---
->>   drivers/net/ethernet/renesas/ravb_main.c | 32 
->> ++++++++++++++++----------------
+>>   drivers/net/ethernet/renesas/ravb_main.c | 32 ++++++++++++++++----------------
 >>   1 file changed, 16 insertions(+), 16 deletions(-)
+>>
+>> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+>> index a8822a756e08..62dbdf7de6cd 100644
+>> --- a/drivers/net/ethernet/renesas/ravb_main.c
+>> +++ b/drivers/net/ethernet/renesas/ravb_main.c
+>> @@ -2069,10 +2069,9 @@ static int ravb_probe(struct platform_device *pdev)
+>>                  irq = platform_get_irq_byname(pdev, "ch22");
+>>          else
+>>                  irq = platform_get_irq(pdev, 0);
+>> -       if (irq < 0) {
+>> -               error = irq;
+>> -               goto out_release;
+>> -       }
+>> +       if (irq < 0)
+>> +               goto failure_indication;
 > 
->     Diffstat also speaks about the futility of this patch.
+> IMHO, it's really confusing that "irq" contains the error code, not "error".
 
-    Ah, you've added empty lines where there was none... Please don't do this.
-I'll ACK the v2 patch, given my comments are addressed.
+    I think it would have been equally confusing if 'error' was assigned to 
+'ndev->irq', etc. It's just the duality of the result of these functions that 
+makes them confusing...
 
-[...]
+> Especially when jumping to a meaningless label named "failure_indication"
+> ("irq_failure" would be more intuitive).
+
+    Yeah, the label sucks. :-)
+
+> So I prefer the original code, regardless of the label name.
+
+    On the 2nd thought, the patch can be fixed up and then merged.
+
+> Gr{oetje,eeting}s,
+> 
+>                          Geert
 
 MBR, Sergei
