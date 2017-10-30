@@ -1,68 +1,110 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38914 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752665AbdJTKaW (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:39756 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932560AbdJ3RaC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Oct 2017 06:30:22 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 32/42] ARM: dts: r8a7779: Add clocks for CA9 CPU cores
-Date: Fri, 20 Oct 2017 12:28:59 +0200
-Message-Id: <fa9f95a3d1bf827e7b83310e5e5c83f36382e25f.1508493785.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1508493785.git.horms+renesas@verge.net.au>
-References: <cover.1508493785.git.horms+renesas@verge.net.au>
+        Mon, 30 Oct 2017 13:30:02 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 3/3] arm64: dts: renesas: Add support for Salvator-XS with R-Car M3-W
+Date: Mon, 30 Oct 2017 18:29:59 +0100
+Message-Id: <1509384599-28953-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1509384599-28953-1-git-send-email-geert+renesas@glider.be>
+References: <1509384599-28953-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Add initial support for the Renesas Salvator-XS (Salvator-X 2nd version)
+development board equipped with an R-Car M3-W SiP.
 
-Improve hardware description by adding clocks properties to the device
-nodes corresponding to the CA9 CPU cores.
+Based on work for the Salvator-X and -XS boards with M3-W resp. H3 SiPs.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7779.dtsi | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm64/boot/dts/renesas/Makefile               |  1 +
+ .../arm64/boot/dts/renesas/r8a7796-salvator-xs.dts | 58 ++++++++++++++++++++++
+ 2 files changed, 59 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a7796-salvator-xs.dts
 
-diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
-index ccef2cfab6e0..e8eb94748b27 100644
---- a/arch/arm/boot/dts/r8a7779.dtsi
-+++ b/arch/arm/boot/dts/r8a7779.dtsi
-@@ -29,12 +29,14 @@
- 			compatible = "arm,cortex-a9";
- 			reg = <0>;
- 			clock-frequency = <1000000000>;
-+			clocks = <&cpg_clocks R8A7779_CLK_Z>;
- 		};
- 		cpu@1 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a9";
- 			reg = <1>;
- 			clock-frequency = <1000000000>;
-+			clocks = <&cpg_clocks R8A7779_CLK_Z>;
- 			power-domains = <&sysc R8A7779_PD_ARM1>;
- 		};
- 		cpu@2 {
-@@ -42,6 +44,7 @@
- 			compatible = "arm,cortex-a9";
- 			reg = <2>;
- 			clock-frequency = <1000000000>;
-+			clocks = <&cpg_clocks R8A7779_CLK_Z>;
- 			power-domains = <&sysc R8A7779_PD_ARM2>;
- 		};
- 		cpu@3 {
-@@ -49,6 +52,7 @@
- 			compatible = "arm,cortex-a9";
- 			reg = <3>;
- 			clock-frequency = <1000000000>;
-+			clocks = <&cpg_clocks R8A7779_CLK_Z>;
- 			power-domains = <&sysc R8A7779_PD_ARM3>;
- 		};
- 	};
+diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
+index b0d5af06e239206f..a78dafa81ea4bc41 100644
+--- a/arch/arm64/boot/dts/renesas/Makefile
++++ b/arch/arm64/boot/dts/renesas/Makefile
+@@ -5,6 +5,7 @@ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-es1-salvator-x.dtb r8a7795-es1-h3ulcb.dtb
+ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-es1-h3ulcb-kf.dtb
+ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-x.dtb r8a7796-m3ulcb.dtb
+ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-m3ulcb-kf.dtb
++dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-xs.dtb
+ dtb-$(CONFIG_ARCH_R8A77970) += r8a77970-eagle.dtb
+ dtb-$(CONFIG_ARCH_R8A77995) += r8a77995-draak.dtb
+ 
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-xs.dts
+new file mode 100644
+index 0000000000000000..2c37055efa94d3c3
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-xs.dts
+@@ -0,0 +1,58 @@
++/*
++ * Device Tree Source for the Salvator-X 2nd version board with R-Car M3-W
++ *
++ * Copyright (C) 2015-2017 Renesas Electronics Corp.
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++/dts-v1/;
++#include "r8a7796.dtsi"
++#include "salvator-xs.dtsi"
++
++/ {
++	model = "Renesas Salvator-X 2nd version board based on r8a7796";
++	compatible = "renesas,salvator-xs", "renesas,r8a7796";
++
++	memory@48000000 {
++		device_type = "memory";
++		/* first 128MB is reserved for secure area. */
++		reg = <0x0 0x48000000 0x0 0x78000000>;
++	};
++
++	memory@600000000 {
++		device_type = "memory";
++		reg = <0x6 0x00000000 0x0 0x80000000>;
++	};
++};
++
++&du {
++	clocks = <&cpg CPG_MOD 724>,
++		 <&cpg CPG_MOD 723>,
++		 <&cpg CPG_MOD 722>,
++		 <&cpg CPG_MOD 727>,
++		 <&versaclock6 1>,
++		 <&x21_clk>,
++		 <&versaclock6 2>;
++	clock-names = "du.0", "du.1", "du.2", "lvds.0",
++		      "dclkin.0", "dclkin.1", "dclkin.2";
++};
++
++&hdmi0 {
++	status = "okay";
++
++	ports {
++		port@1 {
++			reg = <1>;
++			rcar_dw_hdmi0_out: endpoint {
++				remote-endpoint = <&hdmi0_con>;
++			};
++		};
++	};
++};
++
++&hdmi0_con {
++	remote-endpoint = <&rcar_dw_hdmi0_out>;
++};
 -- 
-2.11.0
+2.7.4
