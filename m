@@ -1,62 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:62963 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752005AbdJDKvA (ORCPT
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:43435 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751615AbdJ3VTF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Oct 2017 06:51:00 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Wolfram Sang <wsa@the-dreams.de>,
-        Shawn Lin <shawn.lin@rock-chips.com>
-CC: Ulf Hansson <ulf.hansson@linaro.org>,
+        Mon, 30 Oct 2017 17:19:05 -0400
+Received: by mail-lf0-f68.google.com with SMTP id a16so16634014lfk.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 30 Oct 2017 14:19:04 -0700 (PDT)
+Subject: Re: [PATCH] ravb: Use common error handling code in ravb_probe()
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: SF Markus Elfring <elfring@users.sourceforge.net>,
+        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>,
+        Masaru Nagai <masaru.nagai.vx@renesas.com>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
         Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [RFC PATCH] mmc: tmio: check mmc_regulator_get_supply return
- value
-Date: Wed, 4 Oct 2017 10:50:54 +0000
-Message-ID: <TY1PR06MB089584E681911E2C49953F29C0730@TY1PR06MB0895.apcprd06.prod.outlook.com>
-References: <1506079337-12882-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <7e1bdda1-d790-0db2-540c-69fabe22850a@rock-chips.com>
- <20170922160405.wfpi4fyziz3sxtmh@katana>
-In-Reply-To: <20170922160405.wfpi4fyziz3sxtmh@katana>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Yuval Shaia <yuval.shaia@oracle.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+References: <2839c3c2-0116-7549-6ff4-a49eb0a52298@users.sourceforge.net>
+ <b45f9416-5b89-17e3-df0b-905dd01d5342@cogentembedded.com>
+Message-ID: <587725d6-2eeb-c95c-1cfe-0c6571a74c7c@cogentembedded.com>
+Date: Tue, 31 Oct 2017 00:19:01 +0300
 MIME-Version: 1.0
+In-Reply-To: <b45f9416-5b89-17e3-df0b-905dd01d5342@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Thank you guys for your comments!
+On 10/30/2017 11:51 PM, Sergei Shtylyov wrote:
 
-> > > However, there are side effects to it as the mmc devices will be enum=
-erated
-> > > in a different order (due to -EPROBE_DEFER), this means this patch wo=
-uld likely
-> > > break existing platforms.
-> >
-> > However this doesn't. The user daemon should never relies on the
-> > sequency of probing the mmc block part. We neither support to provide
-> > alias for the device id, nor guarantee the first probed controller get
-> > the first block id. Please use PARTUUID for rootfs, etc. So this
-> > shouldn't be a big deal.
->
-> That's exactly what I thought as well...
->
-> Thanks for the patch! Will test it the next days, but it looks good
-> already.
+>> From: Markus Elfring <elfring@users.sourceforge.net>
+>> Date: Sat, 28 Oct 2017 19:10:08 +0200
+>>
+>> Add a jump target so that a bit of exception handling can be better reused
+>> at the end of this function.
+> 
+>     Have you actually tried to see if there's any change in the resulting 
+> object code? I've looked at ARM gcc 4.8.5's output and it didn't really change 
+> -- gcc was able to optimize these repetitive assignments pretty well...
+> 
+>> This issue was detected by using the Coccinelle software.
+>>
+>> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+>> ---
+>>   drivers/net/ethernet/renesas/ravb_main.c | 32 
+>> ++++++++++++++++----------------
+>>   1 file changed, 16 insertions(+), 16 deletions(-)
+> 
+>     Diffstat also speaks about the futility of this patch.
 
-How is the testing going? Any problem with the patch?
+    Ah, you've added empty lines where there was none... Please don't do this.
+I'll ACK the v2 patch, given my comments are addressed.
 
-Thanks,
-Fabrizio
+[...]
 
-
-
-Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
-uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
- No. 04586709.
+MBR, Sergei
