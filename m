@@ -1,59 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:19671 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751376AbdJPKNi (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:41018 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932502AbdJ3RaC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Oct 2017 06:13:38 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Felipe Balbi <balbi@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-usb@vger.kernel.org
-Subject: [PATCH  1/2] dt-bindings: usb-xhci: Document r8a7743 support
-Date: Mon, 16 Oct 2017 11:12:48 +0100
-Message-Id: <1508148769-47488-2-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1508148769-47488-1-git-send-email-biju.das@bp.renesas.com>
-References: <1508148769-47488-1-git-send-email-biju.das@bp.renesas.com>
+        Mon, 30 Oct 2017 13:30:02 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/3] ARM: shmobile: Document Renesas M3-W-based Salvator-XS board DT bindings
+Date: Mon, 30 Oct 2017 18:29:57 +0100
+Message-Id: <1509384599-28953-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1509384599-28953-1-git-send-email-geert+renesas@glider.be>
+References: <1509384599-28953-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+The Renesas Salvator-XS (Salvator-X 2nd version) development board can
+be equipped with either an R-Car H3 ES2.0 or M3-W ES1.x SiP, which are
+pin-compatible.
 
-Document r8a7743 xhci support. The driver will use the fallback
-compatible string "renesas,rcar-gen2-xhci", therefore no driver
-change is needed.
+Document board part number and compatible values for the version with
+R-Car M3-W.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- Documentation/devicetree/bindings/usb/usb-xhci.txt | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/usb/usb-xhci.txt b/Documentation/devicetree/bindings/usb/usb-xhci.txt
-index 2d80b60..4125d02 100644
---- a/Documentation/devicetree/bindings/usb/usb-xhci.txt
-+++ b/Documentation/devicetree/bindings/usb/usb-xhci.txt
-@@ -7,12 +7,14 @@ Required properties:
-     - "marvell,armada3700-xhci" for Armada 37xx SoCs
-     - "marvell,armada-375-xhci" for Armada 375 SoCs
-     - "marvell,armada-380-xhci" for Armada 38x SoCs
-+    - "renesas,xhci-r8a7743" for r8a7743 SoC
-     - "renesas,xhci-r8a7790" for r8a7790 SoC
-     - "renesas,xhci-r8a7791" for r8a7791 SoC
-     - "renesas,xhci-r8a7793" for r8a7793 SoC
-     - "renesas,xhci-r8a7795" for r8a7795 SoC
-     - "renesas,xhci-r8a7796" for r8a7796 SoC
--    - "renesas,rcar-gen2-xhci" for a generic R-Car Gen2 compatible device
-+    - "renesas,rcar-gen2-xhci" for a generic R-Car Gen2 or RZ/G1 compatible
-+      device
-     - "renesas,rcar-gen3-xhci" for a generic R-Car Gen3 compatible device
-     - "xhci-platform" (deprecated)
- 
+diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+index 9d277e3b0e8d34d0..c69f93af2d143278 100644
+--- a/Documentation/devicetree/bindings/arm/shmobile.txt
++++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -126,6 +126,8 @@ Boards:
+     compatible = "renesas,salvator-x", "renesas,r8a7796"
+   - Salvator-XS (Salvator-X 2nd version, RTP0RC7795SIPB0012S)
+     compatible = "renesas,salvator-xs", "renesas,r8a7795"
++  - Salvator-XS (Salvator-X 2nd version, RTP0RC7796SIPB0012S)
++    compatible = "renesas,salvator-xs", "renesas,r8a7796"
+   - SILK (RTP0RC7794LCB00011S)
+     compatible = "renesas,silk", "renesas,r8a7794"
+   - SK-RZG1E (YR8A77450S000BE)
 -- 
-1.9.1
+2.7.4
