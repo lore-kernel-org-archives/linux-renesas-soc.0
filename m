@@ -1,59 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38914 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752092AbdJTK3e (ORCPT
+Received: from mout.web.de ([212.227.17.12]:61447 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751221AbdJ3Hfs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Oct 2017 06:29:34 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 22/31] arm64: dts: ulcb-kf: hog USB3 hub control gpios
-Date: Fri, 20 Oct 2017 12:28:25 +0200
-Message-Id: <4339306acef642af151ae9c7ec4c39d0cae28497.1508495040.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1508495040.git.horms+renesas@verge.net.au>
-References: <cover.1508495040.git.horms+renesas@verge.net.au>
+        Mon, 30 Oct 2017 03:35:48 -0400
+To: linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Simon Horman <horms@verge.net.au>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH] PCI: rcar: Use common error handling code in
+ rcar_pcie_enable_msi()
+Message-ID: <c598933b-b14f-91a1-c7a3-f4a46ec98e77@users.sourceforge.net>
+Date: Mon, 30 Oct 2017 08:35:30 +0100
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 30 Oct 2017 08:28:06 +0100
 
-This adds gpio hogs for USB3 hub on ULCB Kingfisher board to power up and
-remove from reset the hub
+Adjust a jump target so that a specific error message is stored only once
+at the end of this function implementation.
+Replace two calls of the function "dev_err" by goto statements.
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/arm64/boot/dts/renesas/ulcb-kf.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/pci/host/pcie-rcar.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-index 1923e5b8ee86..657ad1041965 100644
---- a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-+++ b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-@@ -53,6 +53,20 @@
- 		interrupt-controller;
- 		interrupt-parent = <&gpio6>;
- 		interrupts = <8 IRQ_TYPE_EDGE_FALLING>;
-+
-+		hub_pwen {
-+			gpio-hog;
-+			gpios = <6 GPIO_ACTIVE_HIGH>;
-+			output-high;
-+			line-name = "HUB pwen";
-+		};
-+
-+		hub_rst {
-+			gpio-hog;
-+			gpios = <7 GPIO_ACTIVE_HIGH>;
-+			output-high;
-+			line-name = "HUB rst";
-+		};
- 	};
+diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
+index 12796eccb2be..38101f8bebf1 100644
+--- a/drivers/pci/host/pcie-rcar.c
++++ b/drivers/pci/host/pcie-rcar.c
+@@ -873,18 +873,14 @@ static int rcar_pcie_enable_msi(struct rcar_pcie *pcie)
+ 	err = devm_request_irq(dev, msi->irq1, rcar_pcie_msi_irq,
+ 			       IRQF_SHARED | IRQF_NO_THREAD,
+ 			       rcar_msi_irq_chip.name, pcie);
+-	if (err < 0) {
+-		dev_err(dev, "failed to request IRQ: %d\n", err);
+-		goto err;
+-	}
++	if (err < 0)
++		goto report_request_failure;
  
- 	gpio_exp_75: gpio@75 {
+ 	err = devm_request_irq(dev, msi->irq2, rcar_pcie_msi_irq,
+ 			       IRQF_SHARED | IRQF_NO_THREAD,
+ 			       rcar_msi_irq_chip.name, pcie);
+-	if (err < 0) {
+-		dev_err(dev, "failed to request IRQ: %d\n", err);
+-		goto err;
+-	}
++	if (err < 0)
++		goto report_request_failure;
+ 
+ 	/* setup MSI data target */
+ 	msi->pages = __get_free_pages(GFP_KERNEL, 0);
+@@ -898,7 +894,8 @@ static int rcar_pcie_enable_msi(struct rcar_pcie *pcie)
+ 
+ 	return 0;
+ 
+-err:
++report_request_failure:
++	dev_err(dev, "failed to request IRQ: %d\n", err);
+ 	irq_domain_remove(msi->domain);
+ 	return err;
+ }
 -- 
-2.11.0
+2.14.3
