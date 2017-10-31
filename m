@@ -1,51 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:59120 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751941AbdJ3QHV (ORCPT
+Received: from mail-io0-f177.google.com ([209.85.223.177]:44099 "EHLO
+        mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753298AbdJaRBX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 30 Oct 2017 12:07:21 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/2] arm64: dts: renesas: r8a77970: Add secondary CA53 CPU core
-Date: Mon, 30 Oct 2017 17:07:12 +0100
-Message-Id: <1509379633-25823-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1509379633-25823-1-git-send-email-geert+renesas@glider.be>
-References: <1509379633-25823-1-git-send-email-geert+renesas@glider.be>
+        Tue, 31 Oct 2017 13:01:23 -0400
+Date: Tue, 31 Oct 2017 10:01:19 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-input@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] Input: st1232 - Remove obsolete platform device support
+Message-ID: <20171031170119.yz3trextrsdjb7ay@dtor-ws>
+References: <1507801275-12668-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1507801275-12668-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a device node for the second Cortex-A53 CPU core on the Renesas
-R-Car V3M (r8a77970) SoC.
+On Thu, Oct 12, 2017 at 11:41:15AM +0200, Geert Uytterhoeven wrote:
+> Commit 1fa59bda21c7fa36 ("ARM: shmobile: Remove legacy board code for
+> Armadillo-800 EVA"), removed the last user of st1232_pdata and the
+> "st1232-ts" platform device.  All remaining users use DT.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/boot/dts/renesas/r8a77970.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Sorry, this got stuck in gmail SPAM folder for some reason...
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-index 75d09f1724f02c1d..583ebb4c5eac0bfe 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -37,6 +37,16 @@
- 			enable-method = "psci";
- 		};
- 
-+		a53_1: cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			reg = <1>;
-+			clocks = <&cpg CPG_CORE 0>;
-+			power-domains = <&sysc 6>;
-+			next-level-cache = <&L2_CA53>;
-+			enable-method = "psci";
-+		};
-+
- 		L2_CA53: cache-controller {
- 			compatible = "cache";
- 			power-domains = <&sysc 21>;
+Applied, thank you.
+
+...
+
+> +	ts->reset_gpio = of_get_gpio(client->dev.of_node, 0);
+>  	if (gpio_is_valid(ts->reset_gpio)) {
+>  		error = devm_gpio_request(&client->dev, ts->reset_gpio, NULL);
+>  		if (error) {
+
+I wonder if we can convert it to gpiod API?
+
+Thanks.
+
 -- 
-2.7.4
+Dmitry
