@@ -1,42 +1,37 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mga04.intel.com ([192.55.52.120]:64647 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752216AbdJaPg0 (ORCPT
+Received: from mail-io0-f169.google.com ([209.85.223.169]:46989 "EHLO
+        mail-io0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751779AbdJaOEb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 31 Oct 2017 11:36:26 -0400
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Tue, 31 Oct 2017 10:04:31 -0400
+Received: by mail-io0-f169.google.com with SMTP id 101so35311670ioj.3
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 31 Oct 2017 07:04:30 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdX4WjXZQrP9QMGFV8sbntOUvfZ4y-uQSS4_4ArrCjsxWA@mail.gmail.com>
+References: <1509347446-26105-1-git-send-email-t-kristo@ti.com>
+ <CAJZ5v0i8HMDfV907QDTD54YPaFpoBLVt+R4oeQ704+9_C8APoA@mail.gmail.com>
+ <3227682.nATp9NGxKU@aspire.rjw.lan> <CAMuHMdVKh9n4aep+niyYYEA_4cNrB4+BfGWrJ3WLpej1me114w@mail.gmail.com>
+ <CAMuHMdW3AJFZQVDPTcpL-UMRxNThcOpQxNz6yTx9qDP7SQ-kLg@mail.gmail.com> <CAMuHMdX4WjXZQrP9QMGFV8sbntOUvfZ4y-uQSS4_4ArrCjsxWA@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 31 Oct 2017 15:04:29 +0100
+Message-ID: <CAPDyKFppGwA4K1Oe_Byc8qLo5-Wud1+1XErezWc9Rs8GgD5C0g@mail.gmail.com>
+Subject: Re: [PATCH] PM / QoS: Fix default runtime_pm device resume latency
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Tero Kristo <t-kristo@ti.com>,
         Linux PM <linux-pm@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Tero Kristo <t-kristo@ti.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        "Lofstedt\, Marta" <marta.lofstedt@intel.com>,
-        "Peres\, Martin" <martin.peres@intel.com>
-Subject: Re: [PATCH] PM / QoS: Fix default runtime_pm device resume latency
-In-Reply-To: <CAMuHMdX4WjXZQrP9QMGFV8sbntOUvfZ4y-uQSS4_4ArrCjsxWA@mail.gmail.com>
-References: <1509347446-26105-1-git-send-email-t-kristo@ti.com> <CAJZ5v0i8HMDfV907QDTD54YPaFpoBLVt+R4oeQ704+9_C8APoA@mail.gmail.com> <3227682.nATp9NGxKU@aspire.rjw.lan> <CAMuHMdVKh9n4aep+niyYYEA_4cNrB4+BfGWrJ3WLpej1me114w@mail.gmail.com> <CAMuHMdW3AJFZQVDPTcpL-UMRxNThcOpQxNz6yTx9qDP7SQ-kLg@mail.gmail.com> <CAMuHMdX4WjXZQrP9QMGFV8sbntOUvfZ4y-uQSS4_4ArrCjsxWA@mail.gmail.com>
-Date: Tue, 31 Oct 2017 17:37:50 +0200
-Message-ID: <87r2tje3ap.fsf@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        DRI Development <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, 31 Oct 2017, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+On 31 October 2017 at 14:55, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 > Hi Rafael, Tero,
 >
 > CC pinchartl, dri-devel
-
-Cc: Marta, Martin
-
-Our CI is hitting this too.
-
-BR,
-Jani.
-
 >
 > On Tue, Oct 31, 2017 at 2:10 PM, Geert Uytterhoeven
 > <geert@linux-m68k.org> wrote:
@@ -124,6 +119,14 @@ Jani.
 >>> Do you have a clue?
 >>> Thanks!
 
+As I didn't have the time to review the original commit, before it got
+pushed as a fix, I am planning to review it now instead.
 
--- 
-Jani Nikula, Intel Open Source Technology Center
+A vague guess is that the genpd governor prevents the device from
+being suspended. That was also the most tricky part of the changes
+from the original commit, which is causing problems.
+
+I get back to this when I have reviewed it more thoroughly.
+
+Kind regards
+Uffe
