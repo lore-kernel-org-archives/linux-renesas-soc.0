@@ -1,51 +1,88 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:60730 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932384AbdJ3P4f (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:52720 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932341AbdJaSLr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 30 Oct 2017 11:56:35 -0400
+        Tue, 31 Oct 2017 14:11:47 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Kevin Hilman <khilman@kernel.org>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>, linux-pm@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/3] arm64: dts: renesas: r8a77970: Add RWDT node
-Date: Mon, 30 Oct 2017 16:56:27 +0100
-Message-Id: <1509378989-25069-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1509378989-25069-1-git-send-email-geert+renesas@glider.be>
-References: <1509378989-25069-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v2 1/5] PM / Domains: Allow genpd users to specify default active wakeup behavior
+Date: Tue, 31 Oct 2017 19:11:30 +0100
+Message-Id: <1509473494-19740-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1509473494-19740-1-git-send-email-geert+renesas@glider.be>
+References: <1509473494-19740-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a device node for the Watchdog Timer (WDT) controller on the
-Renesas R-Car V3M (r8a77970) SoC.
+It is quite common for PM Domains to require slave devices to be kept
+active during system suspend if they are to be used as wakeup sources.
+To enable this, currently each PM Domain or driver has to provide its
+own gpd_dev_ops.active_wakeup() callback.
+
+Introduce a new flag GENPD_FLAG_ACTIVE_WAKEUP to consolidate this.
+If specified, all slave devices configured as wakeup sources will be
+kept active during system suspend.
+
+PM Domains that need more fine-grained controls, based on the slave
+device, can still provide their own callbacks, as before.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/r8a77970.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+v2:
+  - Use the flag in se instead of setting up an "always true" callback.
+---
+ drivers/base/power/domain.c | 3 +++
+ include/linux/pm_domain.h   | 7 ++++---
+ 2 files changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-index 97e6981938e7ff98..75d09f1724f02c1d 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -103,6 +103,16 @@
- 						  IRQ_TYPE_LEVEL_LOW)>;
- 		};
+diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+index 7eaee557aa615dbc..c5172d70b742f288 100644
+--- a/drivers/base/power/domain.c
++++ b/drivers/base/power/domain.c
+@@ -124,6 +124,7 @@ static const struct genpd_lock_ops genpd_spin_ops = {
+ #define genpd_status_on(genpd)		(genpd->status == GPD_STATE_ACTIVE)
+ #define genpd_is_irq_safe(genpd)	(genpd->flags & GENPD_FLAG_IRQ_SAFE)
+ #define genpd_is_always_on(genpd)	(genpd->flags & GENPD_FLAG_ALWAYS_ON)
++#define genpd_is_active_wakeup(genpd)	(genpd->flags & GENPD_FLAG_ACTIVE_WAKEUP)
  
-+		rwdt: watchdog@e6020000 {
-+			compatible = "renesas,r8a77970-wdt",
-+				     "renesas,rcar-gen3-wdt";
-+			reg = <0 0xe6020000 0 0x0c>;
-+			clocks = <&cpg CPG_MOD 402>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 402>;
-+			status = "disabled";
-+		};
-+
- 		cpg: clock-controller@e6150000 {
- 			compatible = "renesas,r8a77970-cpg-mssr";
- 			reg = <0 0xe6150000 0 0x1000>;
+ static inline bool irq_safe_dev_in_no_sleep_domain(struct device *dev,
+ 		const struct generic_pm_domain *genpd)
+@@ -866,6 +867,8 @@ static bool genpd_present(const struct generic_pm_domain *genpd)
+ static bool genpd_dev_active_wakeup(const struct generic_pm_domain *genpd,
+ 				    struct device *dev)
+ {
++	if (genpd_is_active_wakeup(genpd))
++		return true;
+ 	return GENPD_DEV_CALLBACK(genpd, bool, active_wakeup, dev);
+ }
+ 
+diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+index 9af0356bd69c1597..28c24c58d479e3b4 100644
+--- a/include/linux/pm_domain.h
++++ b/include/linux/pm_domain.h
+@@ -18,9 +18,10 @@
+ #include <linux/spinlock.h>
+ 
+ /* Defines used for the flags field in the struct generic_pm_domain */
+-#define GENPD_FLAG_PM_CLK	(1U << 0) /* PM domain uses PM clk */
+-#define GENPD_FLAG_IRQ_SAFE	(1U << 1) /* PM domain operates in atomic */
+-#define GENPD_FLAG_ALWAYS_ON	(1U << 2) /* PM domain is always powered on */
++#define GENPD_FLAG_PM_CLK	 (1U << 0) /* PM domain uses PM clk */
++#define GENPD_FLAG_IRQ_SAFE	 (1U << 1) /* PM domain operates in atomic */
++#define GENPD_FLAG_ALWAYS_ON	 (1U << 2) /* PM domain is always powered on */
++#define GENPD_FLAG_ACTIVE_WAKEUP (1U << 3) /* Keep devices active if wakeup */
+ 
+ enum gpd_status {
+ 	GPD_STATE_ACTIVE = 0,	/* PM domain is active */
 -- 
 2.7.4
