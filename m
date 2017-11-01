@@ -1,68 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:48396 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752449AbdKGJfZ (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55692 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752216AbdKAKgc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Nov 2017 04:35:25 -0500
-Received: by mail-qt0-f194.google.com with SMTP id f8so14398099qta.5
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 07 Nov 2017 01:35:25 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <20171101103452.7491-11-horms+renesas@verge.net.au>
-References: <20171101103452.7491-1-horms+renesas@verge.net.au> <20171101103452.7491-11-horms+renesas@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 7 Nov 2017 10:35:23 +0100
-Message-ID: <CAMuHMdWy7xK8GJSU7G_CrVob8PuVWB61TugGBtTYyugJ+M3Cfw@mail.gmail.com>
-Subject: Re: [PATCH v4 10/15] arm64: dts: renesas: r8a7795: Point VSPI via
- FCPVI to IPMMU-VP0/1
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
+        Wed, 1 Nov 2017 06:36:32 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Magnus Damm <damm+renesas@opensource.se>
-Content-Type: text/plain; charset="UTF-8"
+        Magnus Damm <damm+renesas@opensource.se>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v4 10/15] arm64: dts: renesas: r8a7795: Point VSPI via FCPVI to IPMMU-VP0/1
+Date: Wed,  1 Nov 2017 11:34:47 +0100
+Message-Id: <20171101103452.7491-11-horms+renesas@verge.net.au>
+In-Reply-To: <20171101103452.7491-1-horms+renesas@verge.net.au>
+References: <20171101103452.7491-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Nov 1, 2017 at 11:34 AM, Simon Horman
-<horms+renesas@verge.net.au> wrote:
-> From: Magnus Damm <damm+renesas@opensource.se>
->
-> Hook up the FCPVI devices to allow use of VSPI with
-> IPMMU-VP0 and IPMMU-VP1.
->
-> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Hook up the FCPVI devices to allow use of VSPI with
+IPMMU-VP0 and IPMMU-VP1.
 
-> --- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-> @@ -155,6 +155,10 @@
->         iommus = <&ipmmu_vp0 1>;
->  };
->
-> +&fcpvi1 {
-> +       iommus = <&ipmmu_vp0 9>;
-> +};
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+v4 [Simon Horman]
+* broke out of larger patch
+* Use IPMMU-VP1 for FCPVI1 on ES2.0
 
-Do we sort labels alphabetically?
-Or do we follow the order of the original targets?
+v1 - v3 [Magnus Damm]
+---
+ arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi | 4 ++++
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi     | 2 ++
+ 2 files changed, 6 insertions(+)
 
-(Random comment that may apply elsewhere, too)
-
-> +
->  &fcpvd2 {
->         iommus = <&ipmmu_vi0 10>;
->  };
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+index bfa2ad20a357..71cc74c54933 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+@@ -155,6 +155,10 @@
+ 	iommus = <&ipmmu_vp0 1>;
+ };
+ 
++&fcpvi1 {
++	iommus = <&ipmmu_vp0 9>;
++};
++
+ &fcpvd2 {
+ 	iommus = <&ipmmu_vi0 10>;
+ };
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index d5db080678de..ce6188a140b7 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -2102,6 +2102,7 @@
+ 			clocks = <&cpg CPG_MOD 611>;
+ 			power-domains = <&sysc R8A7795_PD_A3VP>;
+ 			resets = <&cpg 611>;
++			iommus = <&ipmmu_vp0 8>;
+ 		};
+ 
+ 		vspi1: vsp@fe9b0000 {
+@@ -2121,6 +2122,7 @@
+ 			clocks = <&cpg CPG_MOD 610>;
+ 			power-domains = <&sysc R8A7795_PD_A3VP>;
+ 			resets = <&cpg 610>;
++			iommus = <&ipmmu_vp1 9>;
+ 		};
+ 
+ 		vspd0: vsp@fea20000 {
+-- 
+2.11.0
