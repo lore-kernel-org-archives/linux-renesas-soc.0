@@ -1,64 +1,42 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-can@vger.kernel.org, devicetree@vger.kernel.org,
-        wsa@the-dreams.de, horms@verge.net.au, geert@linux-m68k.org,
-        magnus.damm@gmail.com, chris.paterson2@renesas.com,
-        ramesh.shanmugasundaram@bp.renesas.com,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 5/7] arm64: dts: r8a77995: Add CAN FD support
-Date: Fri, 17 Nov 2017 11:41:27 +0100
-Message-Id: <1510915289-15059-6-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1510915289-15059-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1510915289-15059-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:53925 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753995AbdKAIkg (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 1 Nov 2017 04:40:36 -0400
+Date: Wed, 1 Nov 2017 09:40:32 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/2] arm64: dts: renesas: r8a77970: Add SMP Support
+Message-ID: <20171101084031.w4lue2g3nh3iuvhx@verge.net.au>
+References: <1509379633-25823-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1509379633-25823-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Adds CAN FD controller node for r8a77995.
+On Mon, Oct 30, 2017 at 05:07:11PM +0100, Geert Uytterhoeven wrote:
+> 	Hi Simon, Magnus,
+> 
+> This patch series enables SMP support on the R-Car V3M SoC, by adding
+> the second Cortex-A53 CPU core.  It also adds the performance monitor
+> unit, and links it to both CPU cores.
+> 
+> Note that the PSCI implementation on Eagle may be a preliminary version
+> with some familiar quirks:
+>   - SMP bringup works, and both CPUs can be used,
+>   - Offlining CPU0 crashes the system,
+>   - CPU1 can be offlined, but trying to bring it online again crashes
+>     the system, too.
+> 
+> I'm confident these will be fixed in future firmware versions, just like
+> on H3/Salvator-X.
 
-Based on a patch for r8a7796 by Chris Paterson.
-
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
----
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index a611324..6648c9b 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -306,6 +306,31 @@
- 			status = "disabled";
- 		};
- 
-+		canfd: can@e66c0000 {
-+			compatible = "renesas,r8a77995-canfd",
-+				     "renesas,rcar-gen3-canfd";
-+			reg = <0 0xe66c0000 0 0x8000>;
-+			interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>,
-+				   <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 914>,
-+			       <&cpg CPG_CORE R8A77995_CLK_CANFD>,
-+			       <&can_clk>;
-+			clock-names = "fck", "canfd", "can_clk";
-+			assigned-clocks = <&cpg CPG_CORE R8A77995_CLK_CANFD>;
-+			assigned-clock-rates = <40000000>;
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 914>;
-+			status = "disabled";
-+
-+			channel0 {
-+				status = "disabled";
-+			};
-+
-+			channel1 {
-+				status = "disabled";
-+			};
-+		};
-+
- 		avb: ethernet@e6800000 {
- 			compatible = "renesas,etheravb-r8a77995",
- 				     "renesas,etheravb-rcar-gen3";
--- 
-2.7.4
-
+I'd like to understand how confident before applying this series.
+I have been burnt in the past by enabling SMP before the fw/hw/sw stack
+was ready (on H3 IIRC) and I'd rather not relive that experience.
