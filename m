@@ -1,44 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f179.google.com ([209.85.220.179]:43336 "EHLO
-        mail-qk0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933369AbdKGKFt (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55692 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752216AbdKAKg0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Nov 2017 05:05:49 -0500
-Received: by mail-qk0-f179.google.com with SMTP id 78so7547763qkz.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 07 Nov 2017 02:05:49 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <20171101103458.7582-6-horms+renesas@verge.net.au>
-References: <20171101103458.7582-1-horms+renesas@verge.net.au> <20171101103458.7582-6-horms+renesas@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 7 Nov 2017 11:05:47 +0100
-Message-ID: <CAMuHMdWEkwK=9YgYwKbH5y=9oy7+5dZ2Z3k-+jd0yJzgKshavg@mail.gmail.com>
-Subject: Re: [PATCH 5/7] arm64: dts: renesas: r8a7796: Point VSPI via FCPVI to IPMMU-VC0
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 1 Nov 2017 06:36:26 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 5/7] arm64: dts: renesas: r8a7796: Point VSPI via FCPVI to IPMMU-VC0
+Date: Wed,  1 Nov 2017 11:34:56 +0100
+Message-Id: <20171101103458.7582-6-horms+renesas@verge.net.au>
+In-Reply-To: <20171101103458.7582-1-horms+renesas@verge.net.au>
+References: <20171101103458.7582-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Nov 1, 2017 at 11:34 AM, Simon Horman
-<horms+renesas@verge.net.au> wrote:
-> Hook up the FCPVI devices to allow use of VSPI with IPMMU-VC0.
->
-> Based on work for the r8a7795 by Magnus Damm.
->
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Hook up the FCPVI devices to allow use of VSPI with IPMMU-VC0.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Based on work for the r8a7795 by Magnus Damm.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index d4c2e12daba7..c14ce1c47487 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -1873,6 +1873,7 @@
+ 			clocks = <&cpg CPG_MOD 611>;
+ 			power-domains = <&sysc R8A7796_PD_A3VC>;
+ 			resets = <&cpg 611>;
++			iommus = <&ipmmu_vc0 19>;
+ 		};
+ 
+ 		vspd0: vsp@fea20000 {
+-- 
+2.11.0
