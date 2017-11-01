@@ -1,43 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:43323 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751578AbdKBH64 (ORCPT
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:51541 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933654AbdKAVtF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 2 Nov 2017 03:58:56 -0400
-Date: Thu, 2 Nov 2017 08:58:25 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Rob Herring <robh@kernel.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wed, 1 Nov 2017 17:49:05 -0400
+Date: Wed, 1 Nov 2017 16:49:04 -0500
+From: Rob Herring <robh@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
 Subject: Re: [PATCH 1/3] ARM: shmobile: Document Renesas M3-W-based
  Salvator-XS board DT bindings
-Message-ID: <20171102075825.3hiqwfbxjpqmeayp@verge.net.au>
+Message-ID: <20171101214904.b5adavvirlmphnqn@rob-hp-laptop>
 References: <1509384599-28953-1-git-send-email-geert+renesas@glider.be>
  <1509384599-28953-2-git-send-email-geert+renesas@glider.be>
- <20171101214904.b5adavvirlmphnqn@rob-hp-laptop>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20171101214904.b5adavvirlmphnqn@rob-hp-laptop>
+In-Reply-To: <1509384599-28953-2-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Nov 01, 2017 at 04:49:04PM -0500, Rob Herring wrote:
-> On Mon, Oct 30, 2017 at 06:29:57PM +0100, Geert Uytterhoeven wrote:
-> > The Renesas Salvator-XS (Salvator-X 2nd version) development board can
-> > be equipped with either an R-Car H3 ES2.0 or M3-W ES1.x SiP, which are
-> > pin-compatible.
-> > 
-> > Document board part number and compatible values for the version with
-> > R-Car M3-W.
-> > 
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > ---
-> >  Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
-> >  1 file changed, 2 insertions(+)
+On Mon, Oct 30, 2017 at 06:29:57PM +0100, Geert Uytterhoeven wrote:
+> The Renesas Salvator-XS (Salvator-X 2nd version) development board can
+> be equipped with either an R-Car H3 ES2.0 or M3-W ES1.x SiP, which are
+> pin-compatible.
 > 
-> Acked-by: Rob Herring <robh@kernel.org>
+> Document board part number and compatible values for the version with
+> R-Car M3-W.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
+>  1 file changed, 2 insertions(+)
 
-Thanks, applied.
+Acked-by: Rob Herring <robh@kernel.org>
