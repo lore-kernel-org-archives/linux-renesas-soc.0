@@ -1,49 +1,86 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f172.google.com ([209.85.220.172]:49921 "EHLO
-        mail-qk0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933684AbdKGKGv (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55692 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752216AbdKAKgY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Nov 2017 05:06:51 -0500
-Received: by mail-qk0-f172.google.com with SMTP id q83so14502186qke.6
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 07 Nov 2017 02:06:50 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <20171101103458.7582-8-horms+renesas@verge.net.au>
-References: <20171101103458.7582-1-horms+renesas@verge.net.au> <20171101103458.7582-8-horms+renesas@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 7 Nov 2017 11:06:49 +0100
-Message-ID: <CAMuHMdVRsfoSqu1UfiOmMhGGH9JcizFEgnFj+O5YgbvPc3fsfQ@mail.gmail.com>
-Subject: Re: [PATCH 7/7] arm64: dts: renesas: r8a7796: Enable IPMMU-DS0, DS1,
- MP, VI0, VC0 and MM
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
+        Wed, 1 Nov 2017 06:36:24 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Magnus Damm <damm+renesas@opensource.se>
-Content-Type: text/plain; charset="UTF-8"
+        Magnus Damm <damm+renesas@opensource.se>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 7/7] arm64: dts: renesas: r8a7796: Enable IPMMU-DS0, DS1, MP, VI0, VC0 and MM
+Date: Wed,  1 Nov 2017 11:34:58 +0100
+Message-Id: <20171101103458.7582-8-horms+renesas@verge.net.au>
+In-Reply-To: <20171101103458.7582-1-horms+renesas@verge.net.au>
+References: <20171101103458.7582-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Nov 1, 2017 at 11:34 AM, Simon Horman
-<horms+renesas@verge.net.au> wrote:
-> From: Magnus Damm <damm+renesas@opensource.se>
->
-> Enable the r8a7795 device nodes for IPMMU-DS0, IPMMU-DS1, IPMMU-MP,
-> IPMMU-VI0, IPMMU-VC0 and the shared IPMMU-MM device.
->
-> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-> [simon: enable IPMMU-MP, VI0 and VC0]
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Enable the r8a7795 device nodes for IPMMU-DS0, IPMMU-DS1, IPMMU-MP,
+IPMMU-VI0, IPMMU-VC0 and the shared IPMMU-MM device.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+[simon: enable IPMMU-MP, VI0 and VC0]
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 6 ------
+ 1 file changed, 6 deletions(-)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 78160b4a380c..f0800f501116 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -362,7 +362,6 @@
+ 			reg = <0 0xfebd0000 0 0x1000>; /* IPMMU-VI0 */
+ 			renesas,ipmmu-main = <&ipmmu_mm 9>;
+ 			#iommu-cells = <1>;
+-			status = "disabled";
+ 		};
+ 
+ 		ipmmu_vc0: mmu@fe6b0000 {
+@@ -370,7 +369,6 @@
+ 			reg = <0 0xfe6b0000 0 0x1000>; /* IPMMU-VC0 */
+ 			renesas,ipmmu-main = <&ipmmu_mm 8>;
+ 			#iommu-cells = <1>;
+-			status = "disabled";
+ 		};
+ 
+ 		ipmmu_pv0: mmu@fd800000 {
+@@ -418,7 +416,6 @@
+ 			reg = <0 0xec670000 0 0x1000>; /* IPMMU-MP */
+ 			renesas,ipmmu-main = <&ipmmu_mm 4>;
+ 			#iommu-cells = <1>;
+-			status = "disabled";
+ 		};
+ 
+ 		ipmmu_ds0: mmu@e6740000 {
+@@ -426,7 +423,6 @@
+ 			reg = <0 0xe6740000 0 0x1000>; /* IPMMU-DS0 */
+ 			renesas,ipmmu-main = <&ipmmu_mm 0>;
+ 			#iommu-cells = <1>;
+-			status = "disabled";
+ 		};
+ 
+ 		ipmmu_ds1: mmu@e7740000 {
+@@ -434,7 +430,6 @@
+ 			reg = <0 0xe7740000 0 0x1000>; /* IPMMU-DS1 */
+ 			renesas,ipmmu-main = <&ipmmu_mm 1>;
+ 			#iommu-cells = <1>;
+-			status = "disabled";
+ 		};
+ 
+ 		ipmmu_mm: mmu@e67b0000 {
+@@ -443,7 +438,6 @@
+ 			interrupts = <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
+ 			#iommu-cells = <1>;
+-			status = "disabled";
+ 		};
+ 
+ 		cpg: clock-controller@e6150000 {
+-- 
+2.11.0
