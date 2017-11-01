@@ -1,69 +1,100 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:13677 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753211AbdKJRQl (ORCPT
+Received: from mail-io0-f195.google.com ([209.85.223.195]:44864 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754119AbdKAI6X (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Nov 2017 12:16:41 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Wed, 1 Nov 2017 04:58:23 -0400
+Received: by mail-io0-f195.google.com with SMTP id m16so4627224iod.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 01 Nov 2017 01:58:22 -0700 (PDT)
+Subject: Re: [PATCH 9/9] ARM: multi_v7_defconfig: Enable DMA for Renesas
+ serial ports
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Magnus Damm <magnus.damm@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: Simon Horman <horms@verge.net.au>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC PATCH 1/2] pinctrl: sh-pfc: r8a7794: Add can_clk function
-Date: Fri, 10 Nov 2017 17:16:28 +0000
-Message-Id: <1510334189-8942-2-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1510334189-8942-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <CAMuHMdV=8rAE5z2VmCjL-M_MXY6TsKM_+0c-bsqDsjDZYWU1FA@mail.gmail.com>
- <1510334189-8942-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Kevin Hilman <khilman@kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        Simon Horman <horms@verge.net.au>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        "moderated list:H8/300 ARCHITECTURE"
+        <uclinux-h8-devel@lists.sourceforge.jp>
+References: <1499693302-25120-1-git-send-email-geert+renesas@glider.be>
+ <1499693302-25120-10-git-send-email-geert+renesas@glider.be>
+ <CANqRtoSi8x7zqwV3Gp_n0dBe4Uw6LDRvC1Lheu+GrLZNYuxAHw@mail.gmail.com>
+ <CAMuHMdXb1yAgw4AVvheYhPV=V9HeDCW2NdvhJWzoSz8i-mM3TQ@mail.gmail.com>
+ <CAK8P3a3c68=L=h+nni39BmOb68wno7TuvXuBgOHrEMOrkhdx2g@mail.gmail.com>
+ <CAMuHMdUFnYSxF0grMQ6GB4h7svOeKa-SpPo_2TpTW9Hx+zvrEQ@mail.gmail.com>
+ <95cf2c11-c7db-bdff-7165-282586e08b19@landley.net>
+ <CAMuHMdWW7gbdDY0y2jUVn=ERG1JEWCX=UotQVeyVwhW3fqSHMQ@mail.gmail.com>
+From: Rob Landley <rob@landley.net>
+Message-ID: <4defc0d0-5e4b-42f7-3104-84f93e3baf47@landley.net>
+Date: Wed, 1 Nov 2017 03:58:02 -0500
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdWW7gbdDY0y2jUVn=ERG1JEWCX=UotQVeyVwhW3fqSHMQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds can_clk function to r8a7745/r8a7794 which is cleaner,
-as it reduces duplication, and allows for independent configuration.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7794.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-index e5b3d5f..73796aa 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-@@ -3858,10 +3858,6 @@ static const char * const can0_groups[] = {
- 	"can0_data_b",
- 	"can0_data_c",
- 	"can0_data_d",
--	"can_clk",
--	"can_clk_b",
--	"can_clk_c",
--	"can_clk_d",
- };
- 
- static const char * const can1_groups[] = {
-@@ -3869,6 +3865,9 @@ static const char * const can1_groups[] = {
- 	"can1_data_b",
- 	"can1_data_c",
- 	"can1_data_d",
-+};
-+
-+static const char * const can_clk_groups[] = {
- 	"can_clk",
- 	"can_clk_b",
- 	"can_clk_c",
-@@ -4248,6 +4247,7 @@ static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(avb),
- 	SH_PFC_FUNCTION(can0),
- 	SH_PFC_FUNCTION(can1),
-+	SH_PFC_FUNCTION(can_clk),
- 	SH_PFC_FUNCTION(du0),
- 	SH_PFC_FUNCTION(du1),
- 	SH_PFC_FUNCTION(eth),
--- 
-2.7.4
+On 07/11/2017 05:46 AM, Geert Uytterhoeven wrote:
+> Hi Rob,
+> 
+> On Tue, Jul 11, 2017 at 12:37 PM, Rob Landley <rob@landley.net> wrote:
+>> On 07/11/2017 03:59 AM, Geert Uytterhoeven wrote:
+>>> On Tue, Jul 11, 2017 at 10:42 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+>>>> On Tue, Jul 11, 2017 at 8:59 AM, Geert Uytterhoeven
+>>>> <geert@linux-m68k.org> wrote:
+>>>>> On Tue, Jul 11, 2017 at 5:38 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
+>>>>>> On Mon, Jul 10, 2017 at 10:28 PM, Geert Uytterhoeven
+>>>>>> Since enabling DMA Engine still keeps PIO support around I wonder why
+>>>>>> we need this Kconfig at all - other drivers seem to get by without
+>>>>>> this kind of thing?
+>>>>>> So in my opinion it would also be nice to get rid of SERIAL_SH_SCI_DMA
+>>>>>> completely and reducing the number of special per-driver Kconfig
+>>>>>> entries.
+>>>>>
+>>>>> In general, I would agree, and remove the option at the blimp of an eye.
+>>>>> However, this driver is shared with H8/300 and SuperH.  While both could use
+>>>>> DMA (but it's not supported by Linux yet), I don't know if they are willing to
+>>>>> live with the increased static and dynamic memory footprint of SH_SCI DMA
+>>>>> support.
+>>>>
+>>>> One more thing: enabling the DMA support in the console driver generally
+>>>> means you cannot use printk in the DMA driver anywhere that may be called
+>>>> during printk(). Not sure if that is a concern here.
+>>>
+>>> Not anymore, as all of these prints should have been removed/disabled already.
+>>
+>> Last I checked qemu-system-sh4 still doesn't work with current linux
+>> serial driver unless you do:
+>>
+>> --- a/drivers/tty/serial/sh-sci.c
+>> +++ b/drivers/tty/serial/sh-sci.c
+>> @@ -2193,7 +2193,7 @@ static void sci_reset(struct uart_port *port)
+>>                         setup_timer(&s->rx_fifo_timer, rx_fifo_timer_fn,
+>>                                     (unsigned long)s);
+>>                 } else {
+>> -                       if (port->type == PORT_SCIFA ||
+>> +                       if (1 || port->type == PORT_SCIFA ||
+>>                             port->type == PORT_SCIFB)
+>>                                 scif_set_rtrg(port, 1);
+>>                         else
+>>
+>> Does this DMA stuff make that situation worse?
+> 
+> No, SH-SCI DMA is not used on your platform.
+> 
+> Gr{oetje,eeting}s,
+
+This issue is still there. QEMU's serial output is borked with the last
+year's worth of vanilla superh kernels.
+
+Rob
