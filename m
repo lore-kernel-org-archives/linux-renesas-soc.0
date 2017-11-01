@@ -1,48 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f179.google.com ([209.85.128.179]:56921 "EHLO
-        mail-wr0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932196AbdKBN72 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:53797 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751840AbdKAIbH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 2 Nov 2017 09:59:28 -0400
-Received: by mail-wr0-f179.google.com with SMTP id r79so5092635wrb.13
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 02 Nov 2017 06:59:28 -0700 (PDT)
-From: Kevin Hilman <khilman@baylibre.com>
+        Wed, 1 Nov 2017 04:31:07 -0400
+Date: Wed, 1 Nov 2017 09:31:03 +0100
+From: Simon Horman <horms@verge.net.au>
 To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>, linux-pm@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] PM / Domains: Allow genpd users to specify default active wakeup behavior
-References: <1509473494-19740-1-git-send-email-geert+renesas@glider.be>
-        <1509473494-19740-2-git-send-email-geert+renesas@glider.be>
-Date: Thu, 02 Nov 2017 14:59:25 +0100
-In-Reply-To: <1509473494-19740-2-git-send-email-geert+renesas@glider.be>
-        (Geert Uytterhoeven's message of "Tue, 31 Oct 2017 19:11:30 +0100")
-Message-ID: <7ha804lr2a.fsf@baylibre.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/3] arm64: dts: renesas: eagle: Add watchdog timer
+ support
+Message-ID: <20171101083102.aaaylqkfid7wigov@verge.net.au>
+References: <1509378989-25069-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1509378989-25069-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Geert Uytterhoeven <geert+renesas@glider.be> writes:
+On Mon, Oct 30, 2017 at 04:56:26PM +0100, Geert Uytterhoeven wrote:
+> 	Hi Simon, Magnus,
+> 
+> This patch series adds support for the watchdog timer on R-Car V3M, and
+> enables it on the Eagle development board.
+> 
+> This allows to use the watchdog timer to reset the board, until PSCI is
+> enhanced to include such functionality.
+> 
+> Dependencies:
+>   - renesas-devel-20171030-v4.14-rc7,
+>   - "[PATCH] dt-bindings: watchdog: renesas-wdt: Add support for the
+>      r8a77970 wdt", which is a trivial addition.
 
-> It is quite common for PM Domains to require slave devices to be kept
-> active during system suspend if they are to be used as wakeup sources.
-> To enable this, currently each PM Domain or driver has to provide its
-> own gpd_dev_ops.active_wakeup() callback.
->
-> Introduce a new flag GENPD_FLAG_ACTIVE_WAKEUP to consolidate this.
-> If specified, all slave devices configured as wakeup sources will be
-> kept active during system suspend.
->
-> PM Domains that need more fine-grained controls, based on the slave
-> device, can still provide their own callbacks, as before.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+Thanks, I agree that binding change is trivial and furthermore I see
+that its been heavily Acked. I have gone ahead and applied this series.
