@@ -1,58 +1,84 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56175 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752806AbdKJN0C (ORCPT
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:56564 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751609AbdKAWgW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Nov 2017 08:26:02 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 0/5] arm64: dts: renesas: r8a77970: IPMMU upstream integration
-Date: Fri, 10 Nov 2017 14:25:48 +0100
-Message-Id: <20171110132553.1461-1-horms+renesas@verge.net.au>
+        Wed, 1 Nov 2017 18:36:22 -0400
+MIME-Version: 1.0
+In-Reply-To: <CAJZ5v0hW0iu3Yn+3YFk3EBOey+dtAQt=YbmU5dM2X4nirzbtSw@mail.gmail.com>
+References: <1509347446-26105-1-git-send-email-t-kristo@ti.com>
+ <CAJZ5v0i8HMDfV907QDTD54YPaFpoBLVt+R4oeQ704+9_C8APoA@mail.gmail.com>
+ <3227682.nATp9NGxKU@aspire.rjw.lan> <CAMuHMdVKh9n4aep+niyYYEA_4cNrB4+BfGWrJ3WLpej1me114w@mail.gmail.com>
+ <CAMuHMdW3AJFZQVDPTcpL-UMRxNThcOpQxNz6yTx9qDP7SQ-kLg@mail.gmail.com>
+ <CAMuHMdX4WjXZQrP9QMGFV8sbntOUvfZ4y-uQSS4_4ArrCjsxWA@mail.gmail.com>
+ <CAJZ5v0guHP=icMiRBZ1B4oWQVxrtN2Nt+aE_V1646PfpsKkiJg@mail.gmail.com>
+ <CAMuHMdWiwURQ2MAvpQu-=0AZ+O8Ej=VzPE7bCJ+FWxL3D2n_cg@mail.gmail.com>
+ <CAJZ5v0iHdSzAf2KSJ0r5-kVaa1eEohgoUhdOR9s-uLRFw7EC9w@mail.gmail.com>
+ <42ddd99a-e279-0d64-d000-e70f356998d0@ti.com> <CAJZ5v0hW0iu3Yn+3YFk3EBOey+dtAQt=YbmU5dM2X4nirzbtSw@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 1 Nov 2017 23:36:21 +0100
+Message-ID: <CAJZ5v0gLw2J=zU3fJxSnea_ua2AgP8bRoFQLi7_wyAzLJGizEg@mail.gmail.com>
+Subject: Re: [PATCH] PM / QoS: Fix default runtime_pm device resume latency
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Tero Kristo <t-kristo@ti.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        DRI Development <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This series adds DT nodes for IPMMU instances on r8a77970 together with
-connections to r8a77970 on-chip devices: SYS-DMAC and Ethernet-AVB.
+[cut]
 
-With these patches applied a white list enabled IPMMU driver may be used
-to check silicon revision and then enable IPMMU in the known working cases.
+>> It seems the default values for pm_qos have changed with the patch, and that
+>> breaks genpd at least. I only fixed PM runtime initially, but you could try
+>> this diff to fix the genpd part also:
+>>
+>> diff --git a/include/linux/pm_qos.h b/include/linux/pm_qos.h
+>> index d68b056..7c8f643 100644
+>> --- a/include/linux/pm_qos.h
+>> +++ b/include/linux/pm_qos.h
+>> @@ -34,9 +34,9 @@ enum pm_qos_flags_status {
+>>  #define PM_QOS_NETWORK_LAT_DEFAULT_VALUE       (2000 * USEC_PER_SEC)
+>>  #define PM_QOS_NETWORK_THROUGHPUT_DEFAULT_VALUE        0
+>>  #define PM_QOS_MEMORY_BANDWIDTH_DEFAULT_VALUE  0
+>> -#define PM_QOS_RESUME_LATENCY_DEFAULT_VALUE    0
+>> +#define PM_QOS_RESUME_LATENCY_DEFAULT_VALUE    PM_QOS_LATENCY_ANY
+>>  #define PM_QOS_RESUME_LATENCY_NO_CONSTRAINT    PM_QOS_LATENCY_ANY
+>> -#define PM_QOS_LATENCY_TOLERANCE_DEFAULT_VALUE 0
+>> +#define PM_QOS_LATENCY_TOLERANCE_DEFAULT_VALUE (-1)
+>>  #define PM_QOS_LATENCY_TOLERANCE_NO_CONSTRAINT (-1)
+>>
+>>  #define PM_QOS_FLAG_NO_POWER_OFF       (1 << 0)
+>
+> This is the original change in pm_qos.h (up to the GMail-induced
+> whitespace breakage):
+>
+> -#define PM_QOS_DEFAULT_VALUE -1
+> +#define PM_QOS_DEFAULT_VALUE (-1)
+> +#define PM_QOS_LATENCY_ANY S32_MAX
+>
+> #define PM_QOS_CPU_DMA_LAT_DEFAULT_VALUE (2000 * USEC_PER_SEC)
+> #define PM_QOS_NETWORK_LAT_DEFAULT_VALUE (2000 * USEC_PER_SEC)
+> #define PM_QOS_NETWORK_THROUGHPUT_DEFAULT_VALUE 0
+> #define PM_QOS_MEMORY_BANDWIDTH_DEFAULT_VALUE 0
+> #define PM_QOS_RESUME_LATENCY_DEFAULT_VALUE 0
+> +#define PM_QOS_RESUME_LATENCY_NO_CONSTRAINT PM_QOS_LATENCY_ANY
 
-The recommended test stack for this patchset is a merge of
-* The iommu/next branch of the vfio tree
-* renesas-devel-20171110-v4.14-rc8 tag of the renesas tree
+OK, so I should have changed PM_QOS_RESUME_LATENCY_DEFAULT_VALUE to
+PM_QOS_LATENCY_ANY too, so that the default is still "no restriction".
 
-With the following applied:
-* [PATCH v4 0/3] iommu/ipmmu-vmsa: r8a7796 support V4
-* [PATCH 0/2] iommu/ipmmu-vmsa: r8a779(70|95) support
+> #define PM_QOS_LATENCY_TOLERANCE_DEFAULT_VALUE 0
+> #define PM_QOS_LATENCY_TOLERANCE_NO_CONSTRAINT (-1)
+>
+> -#define PM_QOS_LATENCY_ANY ((s32)(~(__u32)0 >> 1))
+>
+> #define PM_QOS_FLAG_NO_POWER_OFF (1 << 0)
+> #define PM_QOS_FLAG_REMOTE_WAKEUP (1 << 1)
 
-The final patch in the series enable IPMMU support for all IPMMU
-instances on r8a77970 that are used by IPMMU devices listed above.
-
-The DT binding for r8a77970 are been submitted (as part of the
-r8a779(70|95) series noted above) in conjunction with this patchset.
-
-This is based on work by Magnus Damm.
-
-Based on renesas-devel-20171110-v4.14-rc8
-
-Changes since V1:
-* Drop mostly redundant comments from nodes
-* Add power domains
-* Correct compat string used for IPMMU-DS1
-
-Simon Horman (5):
-  arm64: dts: renesas: r8a77970: sort includes
-  arm64: dts: renesas: r8a77970: Add IPMMU device nodes
-  arm64: dts: renesas: r8a77970: Tie SYS-DMAC to IPMMU-DS1
-  arm64: dts: renesas: r8a77970: Connect Ethernet-AVB to IPMMU-RT
-  arm64: dts: renesas: r8a77970: Enable IPMMU-DS1, RT and MM
-
- arch/arm64/boot/dts/renesas/r8a77970.dtsi | 57 +++++++++++++++++++++++++++++--
- 1 file changed, 55 insertions(+), 2 deletions(-)
-
--- 
-2.11.0
+Thanks,
+Rafael
