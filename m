@@ -1,19 +1,20 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:49089 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752865AbdKBJOk (ORCPT
+Received: from mail-io0-f195.google.com ([209.85.223.195]:51257 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751976AbdKAKKX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 2 Nov 2017 05:14:40 -0400
+        Wed, 1 Nov 2017 06:10:23 -0400
+Received: by mail-io0-f195.google.com with SMTP id b186so4892635iof.8
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 01 Nov 2017 03:10:22 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFoVnWKSGncWD6fxNLgbpuz-weJhqjgptEset2S8F2A6AA@mail.gmail.com>
-References: <1509473494-19740-1-git-send-email-geert+renesas@glider.be> <CAPDyKFoVnWKSGncWD6fxNLgbpuz-weJhqjgptEset2S8F2A6AA@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 2 Nov 2017 10:14:37 +0100
-Message-ID: <CAMuHMdXiZvKj8eJw1p=x3EQbKoJc_Q2R+D8YKvBgOO8VY=qr2Q@mail.gmail.com>
+In-Reply-To: <1509473494-19740-1-git-send-email-geert+renesas@glider.be>
+References: <1509473494-19740-1-git-send-email-geert+renesas@glider.be>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 1 Nov 2017 11:10:21 +0100
+Message-ID: <CAPDyKFoVnWKSGncWD6fxNLgbpuz-weJhqjgptEset2S8F2A6AA@mail.gmail.com>
 Subject: Re: [PATCH v2 0/5] PM / Domains: Remove gpd_dev_ops.active_wakeup() callback
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Kevin Hilman <khilman@kernel.org>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
@@ -28,72 +29,79 @@ Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Ulf,
-
-On Wed, Nov 1, 2017 at 11:10 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> On 31 October 2017 at 19:11, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
->> It is quite common for PM Domains to require slave devices to be kept
->> active during system suspend if they are to be used as wakeup sources.
->> To enable this, currently each PM Domain or driver has to provide its
->> own gpd_dev_ops.active_wakeup() callback.
->>
->> All existing callbacks either return always true, or a fixed value
->> depending on the PM Domain.
->>
->> Hence this patch series simplifies active wakeup handling by replacing
->> the callback by a flag:
->>   - Patch 1 adds a new new flag GENPD_FLAG_ACTIVE_WAKEUP, to be set by
->>     PM Domain drivers that want to use the new handling,
->>   - Patches 2-4 convert all existing users of the callback to the new
->>     flag,
->>   - Patch 5 removes the callback.
->>
->> This series was extracted from "[PATCH 00/10] PM / Domain: renesas: Fix
->> active wakeup behavior", and retains only PM Domain changes to existing
->> drivers.
->> Changes compared to v1 (most suggested by Ulf):
->>   - Use the flag in se instead of setting up an "always true" callback,
->>   - Convert the mediatek and rockchip PM Domain drivers,
->>   - Remove the callback.
->>
->> If this idea is accepted, I think it would be good to still queue the first
->> patch for v4.15.  That would allow the changes to the PM Domain drivers
->> to go in through the respective platform trees in v4.16.
->> Then the final patch has to be postponed until v4.17.
->> Alternatively, everything can go in through the PM tree in one shot.
+On 31 October 2017 at 19:11, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+>         Hi Rafael, Ulf, Kevin,
 >
-> For the series:
+> It is quite common for PM Domains to require slave devices to be kept
+> active during system suspend if they are to be used as wakeup sources.
+> To enable this, currently each PM Domain or driver has to provide its
+> own gpd_dev_ops.active_wakeup() callback.
 >
-> Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
+> All existing callbacks either return always true, or a fixed value
+> depending on the PM Domain.
+>
+> Hence this patch series simplifies active wakeup handling by replacing
+> the callback by a flag:
+>   - Patch 1 adds a new new flag GENPD_FLAG_ACTIVE_WAKEUP, to be set by
+>     PM Domain drivers that want to use the new handling,
+>   - Patches 2-4 convert all existing users of the callback to the new
+>     flag,
+>   - Patch 5 removes the callback.
+>
+> This series was extracted from "[PATCH 00/10] PM / Domain: renesas: Fix
+> active wakeup behavior", and retains only PM Domain changes to existing
+> drivers.
+> Changes compared to v1 (most suggested by Ulf):
+>   - Use the flag in se instead of setting up an "always true" callback,
+>   - Convert the mediatek and rockchip PM Domain drivers,
+>   - Remove the callback.
+>
+> If this idea is accepted, I think it would be good to still queue the first
+> patch for v4.15.  That would allow the changes to the PM Domain drivers
+> to go in through the respective platform trees in v4.16.
+> Then the final patch has to be postponed until v4.17.
+> Alternatively, everything can go in through the PM tree in one shot.
 
-Thanks!
+For the series:
 
-> It's easier if everything goes via Rafael's PM tree. Moreover, this
-> series is to me rather trivial, so I would actually recommend to pick
-> it all for 4.15. Mainly because, moving too slowly forward, allows new
-> users to show up of the callback you remove in patch5.
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-Obviously, that's fine for me.
-Guess I've just became a bit too cautious with treewide changes ;-)
+It's easier if everything goes via Rafael's PM tree. Moreover, this
+series is to me rather trivial, so I would actually recommend to pick
+it all for 4.15. Mainly because, moving too slowly forward, allows new
+users to show up of the callback you remove in patch5.
 
->>   [RFC] ARM: shmobile: pm-rmobile: Use GENPD_FLAG_ACTIVE_WAKEUP
+Kind regards
+Uffe
 
-We already have an ack from Simon...
-
->>   [RFC] soc: mediatek: Use GENPD_FLAG_ACTIVE_WAKEUP
->>   [RFC] soc: rockchip: power-domain: Use GENPD_FLAG_ACTIVE_WAKEUP
-
-... we still need one for mediatek and rockchip?
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+>
+> Thanks for your comments!
+>
+> Geert Uytterhoeven (5):
+>   PM / Domains: Allow genpd users to specify default active wakeup
+>     behavior
+>   [RFC] ARM: shmobile: pm-rmobile: Use GENPD_FLAG_ACTIVE_WAKEUP
+>   [RFC] soc: mediatek: Use GENPD_FLAG_ACTIVE_WAKEUP
+>   [RFC] soc: rockchip: power-domain: Use GENPD_FLAG_ACTIVE_WAKEUP
+>   [RFC] PM / Domains: Remove gpd_dev_ops.active_wakeup() callback
+>
+>  arch/arm/mach-shmobile/pm-rmobile.c |  8 +-------
+>  drivers/base/power/domain.c         | 13 ++++---------
+>  drivers/soc/mediatek/mtk-scpsys.c   | 14 ++------------
+>  drivers/soc/rockchip/pm_domains.c   | 14 ++------------
+>  include/linux/pm_domain.h           |  8 ++++----
+>  5 files changed, 13 insertions(+), 44 deletions(-)
+>
+> --
+> 2.7.4
+>
+> Gr{oetje,eeting}s,
+>
+>                                                 Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                                             -- Linus Torvalds
