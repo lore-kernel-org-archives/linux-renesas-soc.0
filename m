@@ -1,53 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:59562 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752072AbdKZLaZ (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55692 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751366AbdKAKgL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 26 Nov 2017 06:30:25 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH v3 0/2] R-Car DU: Clip planes to screen boundaries
-Date: Sun, 26 Nov 2017 13:30:20 +0200
-Message-Id: <20171126113022.27808-1-laurent.pinchart+renesas@ideasonboard.com>
+        Wed, 1 Nov 2017 06:36:11 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 0/2] dts: renesas: r8a77995: IPMMU upstream integration
+Date: Wed,  1 Nov 2017 11:35:06 +0100
+Message-Id: <20171101103508.7721-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+This series adds DT nodes for IPMMU instances on r8a77995 together with
+connections to the r8a77995 on-chip device Ethernet-AVB.
 
-This patch series fixes support for planes that cross the screen boundaries.
-The KMS API supports such a configuration, but the DU and VSP hardware
-doesn't. This leads to different kind of dispay artifacts or hangs.
+With these patches applied a white list enabled IPMMU driver may be used
+to check silicon revision and then enable IPMMU in the known working cases.
 
-The series starts with a bit of refactoring to share existing code and make it
-easier to share new code. The second patch then clips planes that are either
-partially or fully off-screen, disabling planes that end up being completely
-invisible.
+The recommended IPMMU driver patch is iommu/next with the following applied:
+ [PATCH v5 00/09] iommu/ipmmu-vmsa: r8a7795 support V5
+ [PATCH v4 0/3] iommu/ipmmu-vmsa: r8a7796 support V4
+ [PATCH 0/2] iommu/ipmmu-vmsa: r8a779(70|95) support
 
-Compared to v2, the series has been rebased on top of the latest drm+drm-misc
-to benefit from Ville's rework of the plane state check helper, and now
-actually uses the clipped source and destination rectangles (and hence passes
-the tests).
+A patch to enable IPMMU devices is not included in this series
+as Ethernet-AVB, the only device to which IPMMU is hooked up to,
+is disabled.
 
-Compared to v1, fully off-screen planes are now accepted (but obviously not
-shown).
+The DT binding for r8a77995 has been submitted (as part of the
+r8a779(70|95) series noted above) in conjunction with this patchset.
 
-The patches are based on top of Dave's latest master branch.
+This is based on work by Magnus Damm.
 
-The series has been tested on a Salvator-XS board.
+Based on renesas-devel-20171101-v4.14-rc7
 
-Laurent Pinchart (2):
-  drm: rcar-du: Share plane atomic check code between Gen2 and Gen3
-  drm: rcar-du: Clip planes to screen boundaries
+Simon Horman (2):
+  arm64: dts: renesas: r8a77995: Add IPMMU device nodes
+  arm64: dts: renesas: r8a77995: Connect Ethernet-AVB to IPMMU-RT
 
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c  |  3 +-
- drivers/gpu/drm/rcar-du/rcar_du_plane.c | 75 +++++++++++++++++++++++----------
- drivers/gpu/drm/rcar-du/rcar_du_plane.h |  4 ++
- drivers/gpu/drm/rcar-du/rcar_du_vsp.c   | 64 +++++++++++-----------------
- 4 files changed, 83 insertions(+), 63 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a77995.dtsi | 83 +++++++++++++++++++++++++++++++
+ 1 file changed, 83 insertions(+)
 
 -- 
-Regards,
-
-Laurent Pinchart
+2.11.0
