@@ -1,132 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:49560 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755277AbdKIXoI (ORCPT
+Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:57335 "EHLO
+        smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932350AbdKBJg1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 9 Nov 2017 18:44:08 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v9 0/2] media: rcar-csi2: add Renesas R-Car MIPI CSI-2 support
-Date: Fri, 10 Nov 2017 00:43:18 +0100
-Message-Id: <20171109234320.13016-1-niklas.soderlund+renesas@ragnatech.se>
+        Thu, 2 Nov 2017 05:36:27 -0400
+Subject: Re: [PATCH] spi: sh-msiof: Fix DMA transfer size check
+To: Simon Horman <horms+renesas@verge.net.au>,
+        Mark Brown <broonie@kernel.org>
+CC: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        <linux-spi@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+References: <20171102093236.26082-1-horms+renesas@verge.net.au>
+From: Dirk Behme <dirk.behme@de.bosch.com>
+Message-ID: <4ffdafd2-e81a-5fc8-54eb-765d768c202d@de.bosch.com>
+Date: Thu, 2 Nov 2017 10:36:24 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20171102093236.26082-1-horms+renesas@verge.net.au>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+On 02.11.2017 10:32, Simon Horman wrote:
+> From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+> 
+> DMA supports 32-bit words only,
+> even if BITLEN1 of SITMDR2 register is 16bit.
+> 
+> Fixes: b0d0ce8b6b91 ("spi: sh-msiof: Add DMA support")
+> Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This is the latest incarnation of R-Car MIPI CSI-2 receiver driver. It's
-based on top of the media-tree and are tested on Renesas Salvator-X 
-together with the out-of-tree patches for rcar-vin to add support for 
-Gen3 VIN. If anyone is interested to test video grabbing using these out 
-of tree patches please see [1].
+Acked-by: Dirk Behme <dirk.behme@de.bosch.com>
 
-Changes since v8:
-- Updated bindings documentation, thanks Rob!
-- Make use of the now in media-tree sub-notifier V4L2 API
-- Add delay when resetting the IP to allow for a proper reset
-- Fix bug in s_stream error path where the usage count was off if an 
-  error was hit.
-- Add support for H3 ES2.0
+> ---
+> v2
+> * Added Geert's Ack
+> 
+> Sorry for letting this slip through the cracks, it appears
+> to have been on my todo list for 1 year less 5 days.
 
-Changes since v7:
-- Rebase on top of the latest incremental async patches.
-- Fix comments on DT documentation.
-- Use v4l2_ctrl_g_ctrl_int64() instead of v4l2_g_ext_ctrls().
-- Handle try formats in .set_fmt() and .get_fmt().
-- Don't call v4l2_device_register_subdev_nodes() as this is not needed
-  with the complete() callbacks synchronized.
-- Fix line over 80 chars.
-- Fix varies spelling mistakes.
 
-Changes since v6:
-- Rebased on top of Sakaris fwnode patches.
-- Changed of RCAR_CSI2_PAD_MAX to NR_OF_RCAR_CSI2_PAD.
-- Remove assumption about unknown media bus type, thanks Sakari for
-  pointing this out.
-- Created table for supported format information instead of scattering
-  this information around the driver, thanks Sakari!
-- Small newline fixes and reduce some indentation levels.
+Thanks for picking it :)
 
-Changes since v5:
-- Make use of the incremental async subnotifer and helper to map DT
-  endpoint to media pad number. This moves functionality which
-  previously in the Gen3 patches for R-Car VIN driver to this R-Car
-  CSI-2 driver. This is done in preparation to support the ADV7482
-  driver in development by Kieran which will register more then one
-  subdevice and the CSI-2 driver needs to cope wit this. Further more it
-  prepares the driver for another use-case where more then one subdevice
-  is present upstream for the CSI-2.
-- Small cleanups.
-- Add explicit include for linux/io.h, thanks Kieran.
+Best regards
 
-Changes since v4:
-- Match SoC part numbers and drop trailing space in documentation,
-  thanks Geert for pointing this out.
-- Clarify that the driver is a CSI-2 receiver by supervised
-  s/interface/receiver/, thanks Laurent.
-- Add entries in Kconfig and Makefile alphabetically instead of append.
-- Rename struct rcar_csi2 member swap to lane_swap.
-- Remove macros to wrap calls to dev_{dbg,info,warn,err}.
-- Add wrappers for ioread32 and iowrite32.
-- Remove unused interrupt handler, but keep checking in probe that there
-  are a interrupt define in DT.
-- Rework how to wait for LP-11 state, thanks Laurent for the great idea!
-- Remove unneeded delay in rcar_csi2_reset()
-- Remove check for duplicated lane id:s from DT parsing. Broken out to a
-  separate patch adding this check directly to v4l2_of_parse_endpoint().
-- Fixed rcar_csi2_start() to ask it's source subdevice for information
-  about pixel rate and frame format. With this change having
-  {set,get}_fmt operations became redundant, it was only used for
-  figuring out this out so dropped them.
-- Tabulated frequency settings map.
-- Dropped V4L2_SUBDEV_FL_HAS_DEVNODE it should never have been set.
-- Switched from MEDIA_ENT_F_ATV_DECODER to
-  MEDIA_ENT_F_PROC_VIDEO_PIXEL_FORMATTER as entity function. I can't
-  find a more suitable function, and what the hardware do is to fetch
-  video from an external chip and passes it on to a another SoC internal
-  IP it's sort of a formatter.
-- Break out DT documentation and code in two patches.
+Dirk
 
-Changes since v3:
-- Update DT binding documentation with input from Geert Uytterhoeven,
-  thanks!
+P.S.: The remaining msiof (DMA) patches are not forgotten, we are sill 
+working on them (with low priority, though).
 
-Changes since v2:
-- Added media control pads as this is needed by the new rcar-vin driver.
-- Update DT bindings after review comments and to add r8a7796 support.
-- Add get_fmt handler.
-- Fix media bus format error s/YUYV8/UYVY8/
 
-Changes since v1:
-- Drop dependency on a pad aware s_stream operation.
-- Use the DT bindings format "renesas,<soctype>-<device>", thanks Geert
-  for pointing this out.
-
-1. http://elinux.org/R-Car/Tests:rcar-vin
-
-Niklas Söderlund (2):
-  media: rcar-csi2: add Renesas R-Car MIPI CSI-2 receiver documentation
-  media: rcar-csi2: add Renesas R-Car MIPI CSI-2 receiver driver
-
- .../devicetree/bindings/media/rcar-csi2.txt        | 103 +++
- MAINTAINERS                                        |   1 +
- drivers/media/platform/rcar-vin/Kconfig            |  12 +
- drivers/media/platform/rcar-vin/Makefile           |   1 +
- drivers/media/platform/rcar-vin/rcar-csi2.c        | 933 +++++++++++++++++++++
- 5 files changed, 1050 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/rcar-csi2.txt
- create mode 100644 drivers/media/platform/rcar-vin/rcar-csi2.c
-
--- 
-2.15.0
+> ---
+>   drivers/spi/spi-sh-msiof.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
+> index 2c5ea4c57508..94d15ef0e4e6 100644
+> --- a/drivers/spi/spi-sh-msiof.c
+> +++ b/drivers/spi/spi-sh-msiof.c
+> @@ -900,7 +900,7 @@ static int sh_msiof_transfer_one(struct spi_master *master,
+>   				break;
+>   			copy32 = copy_bswap32;
+>   		} else if (bits <= 16) {
+> -			if (l & 1)
+> +			if (l & 3)
+>   				break;
+>   			copy32 = copy_wswap32;
+>   		} else {
+> 
