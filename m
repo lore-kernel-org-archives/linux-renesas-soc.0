@@ -1,141 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:36426 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751682AbdKMIrC (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:43323 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751578AbdKBH64 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Nov 2017 03:47:02 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH v2 1/2] drm: rcar-du: Share plane atomic check code between Gen2 and Gen3
-Date: Mon, 13 Nov 2017 10:46:59 +0200
-Message-Id: <20171113084700.12076-2-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20171113084700.12076-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20171113084700.12076-1-laurent.pinchart+renesas@ideasonboard.com>
+        Thu, 2 Nov 2017 03:58:56 -0400
+Date: Thu, 2 Nov 2017 08:58:25 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Rob Herring <robh@kernel.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/3] ARM: shmobile: Document Renesas M3-W-based
+ Salvator-XS board DT bindings
+Message-ID: <20171102075825.3hiqwfbxjpqmeayp@verge.net.au>
+References: <1509384599-28953-1-git-send-email-geert+renesas@glider.be>
+ <1509384599-28953-2-git-send-email-geert+renesas@glider.be>
+ <20171101214904.b5adavvirlmphnqn@rob-hp-laptop>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20171101214904.b5adavvirlmphnqn@rob-hp-laptop>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The plane atomic check implementation is identical on Gen2 (DU planes)
-and Gen3 (VSP planes), but two separate functions exist as they operate
-on different data structures. Refactor the code to share the
-implementation.
+On Wed, Nov 01, 2017 at 04:49:04PM -0500, Rob Herring wrote:
+> On Mon, Oct 30, 2017 at 06:29:57PM +0100, Geert Uytterhoeven wrote:
+> > The Renesas Salvator-XS (Salvator-X 2nd version) development board can
+> > be equipped with either an R-Car H3 ES2.0 or M3-W ES1.x SiP, which are
+> > pin-compatible.
+> > 
+> > Document board part number and compatible values for the version with
+> > R-Car M3-W.
+> > 
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> >  Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
+> >  1 file changed, 2 insertions(+)
+> 
+> Acked-by: Rob Herring <robh@kernel.org>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Tested-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- drivers/gpu/drm/rcar-du/rcar_du_plane.c | 27 +++++++++++++++++----------
- drivers/gpu/drm/rcar-du/rcar_du_plane.h |  4 ++++
- drivers/gpu/drm/rcar-du/rcar_du_vsp.c   | 22 +---------------------
- 3 files changed, 22 insertions(+), 31 deletions(-)
-
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.c b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-index 61833cc1c699..4f076c364f25 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-@@ -565,27 +565,26 @@ void __rcar_du_plane_setup(struct rcar_du_group *rgrp,
- 	}
- }
- 
--static int rcar_du_plane_atomic_check(struct drm_plane *plane,
--				      struct drm_plane_state *state)
-+int __rcar_du_plane_atomic_check(struct drm_plane *plane,
-+				 struct drm_plane_state *state,
-+				 const struct rcar_du_format_info **format)
- {
--	struct rcar_du_plane_state *rstate = to_rcar_plane_state(state);
--	struct rcar_du_plane *rplane = to_rcar_plane(plane);
--	struct rcar_du_device *rcdu = rplane->group->dev;
-+	struct drm_device *dev = plane->dev;
- 
- 	if (!state->fb || !state->crtc) {
--		rstate->format = NULL;
-+		*format = NULL;
- 		return 0;
- 	}
- 
- 	if (state->src_w >> 16 != state->crtc_w ||
- 	    state->src_h >> 16 != state->crtc_h) {
--		dev_dbg(rcdu->dev, "%s: scaling not supported\n", __func__);
-+		dev_dbg(dev->dev, "%s: scaling not supported\n", __func__);
- 		return -EINVAL;
- 	}
- 
--	rstate->format = rcar_du_format_info(state->fb->format->format);
--	if (rstate->format == NULL) {
--		dev_dbg(rcdu->dev, "%s: unsupported format %08x\n", __func__,
-+	*format = rcar_du_format_info(state->fb->format->format);
-+	if (*format == NULL) {
-+		dev_dbg(dev->dev, "%s: unsupported format %08x\n", __func__,
- 			state->fb->format->format);
- 		return -EINVAL;
- 	}
-@@ -593,6 +592,14 @@ static int rcar_du_plane_atomic_check(struct drm_plane *plane,
- 	return 0;
- }
- 
-+static int rcar_du_plane_atomic_check(struct drm_plane *plane,
-+				      struct drm_plane_state *state)
-+{
-+	struct rcar_du_plane_state *rstate = to_rcar_plane_state(state);
-+
-+	return __rcar_du_plane_atomic_check(plane, state, &rstate->format);
-+}
-+
- static void rcar_du_plane_atomic_update(struct drm_plane *plane,
- 					struct drm_plane_state *old_state)
- {
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.h b/drivers/gpu/drm/rcar-du/rcar_du_plane.h
-index f62e09f195de..890321b4665d 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_plane.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.h
-@@ -73,6 +73,10 @@ to_rcar_plane_state(struct drm_plane_state *state)
- int rcar_du_atomic_check_planes(struct drm_device *dev,
- 				struct drm_atomic_state *state);
- 
-+int __rcar_du_plane_atomic_check(struct drm_plane *plane,
-+				 struct drm_plane_state *state,
-+				 const struct rcar_du_format_info **format);
-+
- int rcar_du_planes_init(struct rcar_du_group *rgrp);
- 
- void __rcar_du_plane_setup(struct rcar_du_group *rgrp,
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-index 2c96147bc444..dd66dcb8da23 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-@@ -268,28 +268,8 @@ static int rcar_du_vsp_plane_atomic_check(struct drm_plane *plane,
- 					  struct drm_plane_state *state)
- {
- 	struct rcar_du_vsp_plane_state *rstate = to_rcar_vsp_plane_state(state);
--	struct rcar_du_vsp_plane *rplane = to_rcar_vsp_plane(plane);
--	struct rcar_du_device *rcdu = rplane->vsp->dev;
--
--	if (!state->fb || !state->crtc) {
--		rstate->format = NULL;
--		return 0;
--	}
- 
--	if (state->src_w >> 16 != state->crtc_w ||
--	    state->src_h >> 16 != state->crtc_h) {
--		dev_dbg(rcdu->dev, "%s: scaling not supported\n", __func__);
--		return -EINVAL;
--	}
--
--	rstate->format = rcar_du_format_info(state->fb->format->format);
--	if (rstate->format == NULL) {
--		dev_dbg(rcdu->dev, "%s: unsupported format %08x\n", __func__,
--			state->fb->format->format);
--		return -EINVAL;
--	}
--
--	return 0;
-+	return __rcar_du_plane_atomic_check(plane, state, &rstate->format);
- }
- 
- static void rcar_du_vsp_plane_atomic_update(struct drm_plane *plane,
--- 
-Regards,
-
-Laurent Pinchart
+Thanks, applied.
