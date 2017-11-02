@@ -1,44 +1,99 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:45782 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933113AbdKBOAP (ORCPT
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:49089 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752865AbdKBJOk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 2 Nov 2017 10:00:15 -0400
-Received: by mail-wm0-f67.google.com with SMTP id y80so11299438wmd.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 02 Nov 2017 07:00:14 -0700 (PDT)
-From: Kevin Hilman <khilman@baylibre.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+        Thu, 2 Nov 2017 05:14:40 -0400
+MIME-Version: 1.0
+In-Reply-To: <CAPDyKFoVnWKSGncWD6fxNLgbpuz-weJhqjgptEset2S8F2A6AA@mail.gmail.com>
+References: <1509473494-19740-1-git-send-email-geert+renesas@glider.be> <CAPDyKFoVnWKSGncWD6fxNLgbpuz-weJhqjgptEset2S8F2A6AA@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 2 Nov 2017 10:14:37 +0100
+Message-ID: <CAMuHMdXiZvKj8eJw1p=x3EQbKoJc_Q2R+D8YKvBgOO8VY=qr2Q@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] PM / Domains: Remove gpd_dev_ops.active_wakeup() callback
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Matthias Brugger <matthias.bgg@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>, linux-pm@vger.kernel.org,
+        Heiko Stuebner <heiko@sntech.de>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
         linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] [RFC] PM / Domains: Remove gpd_dev_ops.active_wakeup() callback
-References: <1509473494-19740-1-git-send-email-geert+renesas@glider.be>
-        <1509473494-19740-6-git-send-email-geert+renesas@glider.be>
-Date: Thu, 02 Nov 2017 15:00:12 +0100
-In-Reply-To: <1509473494-19740-6-git-send-email-geert+renesas@glider.be>
-        (Geert Uytterhoeven's message of "Tue, 31 Oct 2017 19:11:34 +0100")
-Message-ID: <7h60aslr0z.fsf@baylibre.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Geert Uytterhoeven <geert+renesas@glider.be> writes:
+Hi Ulf,
 
-> There are no more users left of the gpd_dev_ops.active_wakeup()
-> callback.  All have been converted to GENPD_FLAG_ACTIVE_WAKEUP.
-> Hence remove the callback.
+On Wed, Nov 1, 2017 at 11:10 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> On 31 October 2017 at 19:11, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+>> It is quite common for PM Domains to require slave devices to be kept
+>> active during system suspend if they are to be used as wakeup sources.
+>> To enable this, currently each PM Domain or driver has to provide its
+>> own gpd_dev_ops.active_wakeup() callback.
+>>
+>> All existing callbacks either return always true, or a fixed value
+>> depending on the PM Domain.
+>>
+>> Hence this patch series simplifies active wakeup handling by replacing
+>> the callback by a flag:
+>>   - Patch 1 adds a new new flag GENPD_FLAG_ACTIVE_WAKEUP, to be set by
+>>     PM Domain drivers that want to use the new handling,
+>>   - Patches 2-4 convert all existing users of the callback to the new
+>>     flag,
+>>   - Patch 5 removes the callback.
+>>
+>> This series was extracted from "[PATCH 00/10] PM / Domain: renesas: Fix
+>> active wakeup behavior", and retains only PM Domain changes to existing
+>> drivers.
+>> Changes compared to v1 (most suggested by Ulf):
+>>   - Use the flag in se instead of setting up an "always true" callback,
+>>   - Convert the mediatek and rockchip PM Domain drivers,
+>>   - Remove the callback.
+>>
+>> If this idea is accepted, I think it would be good to still queue the first
+>> patch for v4.15.  That would allow the changes to the PM Domain drivers
+>> to go in through the respective platform trees in v4.16.
+>> Then the final patch has to be postponed until v4.17.
+>> Alternatively, everything can go in through the PM tree in one shot.
 >
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> This must not be applied before all users of active_wakup have been
-> converted, hence the "RFC".
+> For the series:
+>
+> Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
 
+Thanks!
 
-Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+> It's easier if everything goes via Rafael's PM tree. Moreover, this
+> series is to me rather trivial, so I would actually recommend to pick
+> it all for 4.15. Mainly because, moving too slowly forward, allows new
+> users to show up of the callback you remove in patch5.
+
+Obviously, that's fine for me.
+Guess I've just became a bit too cautious with treewide changes ;-)
+
+>>   [RFC] ARM: shmobile: pm-rmobile: Use GENPD_FLAG_ACTIVE_WAKEUP
+
+We already have an ack from Simon...
+
+>>   [RFC] soc: mediatek: Use GENPD_FLAG_ACTIVE_WAKEUP
+>>   [RFC] soc: rockchip: power-domain: Use GENPD_FLAG_ACTIVE_WAKEUP
+
+... we still need one for mediatek and rockchip?
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
