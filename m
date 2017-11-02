@@ -1,97 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:33978 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758430AbdKOP0A (ORCPT
+Received: from sauhun.de ([88.99.104.3]:33864 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751974AbdKBMrm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Nov 2017 10:26:00 -0500
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, horms@verge.net.au,
-        wsa@the-dreams.de, geert@linux-m68k.org
-Cc: magnus.damm@gmail.com, linux-mmc@vger.kernel.org,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 3/4] arm64: dts: r8a77995: draak: enable SDHI2
-Date: Wed, 15 Nov 2017 16:25:48 +0100
-Message-Id: <1510759549-30404-4-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1510759549-30404-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1510759549-30404-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Thu, 2 Nov 2017 08:47:42 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-i2c@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH RFT 4/5] i2c: sh_mobile: use direct writes when accessing ICE bit
+Date: Thu,  2 Nov 2017 13:47:30 +0100
+Message-Id: <20171102124731.10484-5-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20171102124731.10484-1-wsa+renesas@sang-engineering.com>
+References: <20171102124731.10484-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The single SDHI controller is connected to eMMC.
+ICE bit is for resetting the module. Other bits don't matter then, so we
+don't need to use the iic_set_clr() function but can use iic_wr().
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 44 ++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+ drivers/i2c/busses/i2c-sh_mobile.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-index 91f247f..cd3823b 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-@@ -32,6 +32,24 @@
- 		/* first 128MB is reserved for secure area. */
- 		reg = <0x0 0x48000000 0x0 0x18000000>;
- 	};
-+
-+	reg_1p8v: regulator0 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-1.8V";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	reg_3p3v: regulator1 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-3.3V";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
- };
+diff --git a/drivers/i2c/busses/i2c-sh_mobile.c b/drivers/i2c/busses/i2c-sh_mobile.c
+index cdd7a746b9d1ed..1701f193d94acf 100644
+--- a/drivers/i2c/busses/i2c-sh_mobile.c
++++ b/drivers/i2c/busses/i2c-sh_mobile.c
+@@ -620,10 +620,10 @@ static int start_ch(struct sh_mobile_i2c_data *pd, struct i2c_msg *usr_msg,
  
- &extal_clk {
-@@ -71,6 +89,18 @@
- 		function = "scif2";
- 	};
+ 	if (do_init) {
+ 		/* Initialize channel registers */
+-		iic_set_clr(pd, ICCR, 0, ICCR_ICE);
++		iic_wr(pd, ICCR, 0);
  
-+	sdhi2_pins: sd2 {
-+		groups = "mmc_data8", "mmc_ctrl";
-+		function = "mmc";
-+		power-source = <3300>;
-+	};
-+
-+	sdhi2_pins_uhs: sd2_uhs {
-+		groups = "mmc_data8", "mmc_ctrl";
-+		function = "mmc";
-+		power-source = <1800>;
-+	};
-+
- 	usb0_pins: usb0 {
- 		groups = "usb0";
- 		function = "usb0";
-@@ -125,6 +155,20 @@
- 	status = "okay";
- };
+ 		/* Enable channel and configure rx ack */
+-		iic_set_clr(pd, ICCR, ICCR_ICE, 0);
++		iic_wr(pd, ICCR, ICCR_ICE);
  
-+&sdhi2 {
-+	/* used for on-board eMMC */
-+	pinctrl-0 = <&sdhi2_pins>;
-+	pinctrl-1 = <&sdhi2_pins_uhs>;
-+	pinctrl-names = "default", "state_uhs";
-+
-+	vmmc-supply = <&reg_3p3v>;
-+	vqmmc-supply = <&reg_1p8v>;
-+	bus-width = <8>;
-+	mmc-hs200-1_8v;
-+	non-removable;
-+	status = "okay";
-+};
-+
- &usb2_phy0 {
- 	pinctrl-0 = <&usb0_pins>;
- 	pinctrl-names = "default";
+ 		/* Set the clock */
+ 		iic_wr(pd, ICCL, pd->iccl & 0xff);
+@@ -740,7 +740,7 @@ static int sh_mobile_i2c_xfer(struct i2c_adapter *adapter,
+ 	}
+ 
+ 	/* Disable channel */
+-	iic_set_clr(pd, ICCR, 0, ICCR_ICE);
++	iic_wr(pd, ICCR, 0);
+ 
+ 	/* Disable clock and mark device as idle */
+ 	clk_disable_unprepare(pd->clk);
 -- 
-2.7.4
+2.11.0
