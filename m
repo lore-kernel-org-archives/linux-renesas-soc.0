@@ -1,57 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55692 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:45651 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752216AbdKAKgj (ORCPT
+        with ESMTP id S1752511AbdKBKKV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 1 Nov 2017 06:36:39 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Thu, 2 Nov 2017 06:10:21 -0400
+Date: Thu, 2 Nov 2017 11:10:17 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/4] arm64: dts: renesas: r8a77970: Tie SYS-DMAC to IPMMU-DS1
-Date: Wed,  1 Nov 2017 11:35:02 +0100
-Message-Id: <20171101103504.7658-3-horms+renesas@verge.net.au>
-In-Reply-To: <20171101103504.7658-1-horms+renesas@verge.net.au>
-References: <20171101103504.7658-1-horms+renesas@verge.net.au>
+        linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH/RFC] serial: sh-sci: Fix unlocked access to SCSCR register
+Message-ID: <20171102101012.ew224ai4zn3kh3ct@verge.net.au>
+References: <1478533373-10643-1-git-send-email-horms+renesas@verge.net.au>
+ <20161107155209.GC5140@katana>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20161107155209.GC5140@katana>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hook up r8a77970 DMAC nodes to the IPMMU. In particular
-SYS-DMAC1 and SYS-DMAC2 get tied to IPMMU-DS1.
+On Mon, Nov 07, 2016 at 04:52:09PM +0100, Wolfram Sang wrote:
+> On Mon, Nov 07, 2016 at 04:42:53PM +0100, Simon Horman wrote:
+> > From: Takatoshi Akiyama <takatoshi.akiyama.kj@ps.hitachi-solutions.com>
+> > 
+> > The SCSCR register access in sci_break_ctl() is not locked.
+> > 
+> > sci_start_tx() and sci_set_termios() changes the SCSCR register,
+> > but does not lock sci_port.
+> 
+> Maybe naive question: Shouldn't stop_tx and/or (start|stop)_rx be
+> protected, too? They change SCSCR as well?
 
-Based on work for the r8a7796 by Magnus Damm.
+In the case of stop_tx, this is installed as a callback where
+the caller takes the lock.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77970.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+In the case of start_rx, I think the lock should be taken in
+sci_rx_dma_release() as other callers already take the lock.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-index fbae43ff70b2..f60493872089 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -218,6 +218,10 @@
- 			resets = <&cpg 218>;
- 			#dma-cells = <1>;
- 			dma-channels = <8>;
-+			iommus = <&ipmmu_ds1 0>, <&ipmmu_ds1 1>,
-+			       <&ipmmu_ds1 2>, <&ipmmu_ds1 3>,
-+			       <&ipmmu_ds1 4>, <&ipmmu_ds1 5>,
-+			       <&ipmmu_ds1 6>, <&ipmmu_ds1 7>;
- 		};
- 
- 		dmac2: dma-controller@e7310000 {
-@@ -242,6 +246,10 @@
- 			resets = <&cpg 217>;
- 			#dma-cells = <1>;
- 			dma-channels = <8>;
-+			iommus = <&ipmmu_ds1 16>, <&ipmmu_ds1 17>,
-+			       <&ipmmu_ds1 18>, <&ipmmu_ds1 19>,
-+			       <&ipmmu_ds1 20>, <&ipmmu_ds1 21>,
-+			       <&ipmmu_ds1 22>, <&ipmmu_ds1 23>;
- 		};
- 
- 		hscif0: serial@e6540000 {
--- 
-2.11.0
+In the case of stop_rx, this is both installed as a callback and
+called directly. In both cases the caller takes the lock.
+
+> 
+> > Therefore, this patch adds lock during register access.
+> > 
+> > Also, remove the log output that leads to a double lock.
+> > 
+> > Signed-off-by: Takatoshi Akiyama <takatoshi.akiyama.kj@ps.hitachi-solutions.com>
+> > Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
