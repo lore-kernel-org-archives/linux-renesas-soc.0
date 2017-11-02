@@ -1,62 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:44820 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754859AbdKBJSK (ORCPT
+Received: from sauhun.de ([88.99.104.3]:33866 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755224AbdKBMrn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 2 Nov 2017 05:18:10 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH] ARM: dts: koelsch: Move cec_clock to root node
-Date: Thu,  2 Nov 2017 10:18:05 +0100
-Message-Id: <20171102091805.24967-1-horms+renesas@verge.net.au>
+        Thu, 2 Nov 2017 08:47:43 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-i2c@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH RFT 5/5] i2c: sh_mobile: shorten exit of xfer routine
+Date: Thu,  2 Nov 2017 13:47:31 +0100
+Message-Id: <20171102124731.10484-6-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20171102124731.10484-1-wsa+renesas@sang-engineering.com>
+References: <20171102124731.10484-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-cec-clock is a fixed clock generator that is not controlled by i2c5 and
-thus should not be a child of the i2c5 bus node. Rather, it should be
-a child of the root node of the DT.
+We can use the ternary operator for easier reading.
 
-Fixes: 02a5ab18d366 ("ARM: dts: koelsch: Add CEC clock for HDMI transmitter")
-Reported-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm/boot/dts/r8a7791-koelsch.dts | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/i2c/busses/i2c-sh_mobile.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
-index e164eda69baf..4126de417922 100644
---- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-@@ -278,6 +278,12 @@
- 		};
- 	};
+diff --git a/drivers/i2c/busses/i2c-sh_mobile.c b/drivers/i2c/busses/i2c-sh_mobile.c
+index 1701f193d94acf..39f0ee1cd78c74 100644
+--- a/drivers/i2c/busses/i2c-sh_mobile.c
++++ b/drivers/i2c/busses/i2c-sh_mobile.c
+@@ -746,9 +746,7 @@ static int sh_mobile_i2c_xfer(struct i2c_adapter *adapter,
+ 	clk_disable_unprepare(pd->clk);
+ 	pm_runtime_put_sync(pd->dev);
  
-+	cec_clock: cec-clock {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <12000000>;
-+	};
-+
- 	hdmi-out {
- 		compatible = "hdmi-connector";
- 		type = "a";
-@@ -640,12 +646,6 @@
- 		};
- 	};
+-	if (!err)
+-		err = num;
+-	return err;
++	return err ?: num;
+ }
  
--	cec_clock: cec-clock {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <12000000>;
--	};
--
- 	hdmi@39 {
- 		compatible = "adi,adv7511w";
- 		reg = <0x39>;
+ static u32 sh_mobile_i2c_func(struct i2c_adapter *adapter)
 -- 
 2.11.0
