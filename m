@@ -1,62 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56242 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752806AbdKJN0W (ORCPT
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:45782 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933113AbdKBOAP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Nov 2017 08:26:22 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Thu, 2 Nov 2017 10:00:15 -0400
+Received: by mail-wm0-f67.google.com with SMTP id y80so11299438wmd.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 02 Nov 2017 07:00:14 -0700 (PDT)
+From: Kevin Hilman <khilman@baylibre.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 4/7] arm64: dts: renesas: r8a7796: Point FDP1 via FCPF to IPMMU-VI0
-Date: Fri, 10 Nov 2017 14:26:09 +0100
-Message-Id: <20171110132612.1589-5-horms+renesas@verge.net.au>
-In-Reply-To: <20171110132612.1589-1-horms+renesas@verge.net.au>
-References: <20171110132612.1589-1-horms+renesas@verge.net.au>
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>, linux-pm@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 5/5] [RFC] PM / Domains: Remove gpd_dev_ops.active_wakeup() callback
+References: <1509473494-19740-1-git-send-email-geert+renesas@glider.be>
+        <1509473494-19740-6-git-send-email-geert+renesas@glider.be>
+Date: Thu, 02 Nov 2017 15:00:12 +0100
+In-Reply-To: <1509473494-19740-6-git-send-email-geert+renesas@glider.be>
+        (Geert Uytterhoeven's message of "Tue, 31 Oct 2017 19:11:34 +0100")
+Message-ID: <7h60aslr0z.fsf@baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hook up the FCPF devices to allow use of FDP1 with IPMMU-VI0.
+Geert Uytterhoeven <geert+renesas@glider.be> writes:
 
-Based on work by Magnus Damm for the r8a7795.
+> There are no more users left of the gpd_dev_ops.active_wakeup()
+> callback.  All have been converted to GENPD_FLAG_ACTIVE_WAKEUP.
+> Hence remove the callback.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> This must not be applied before all users of active_wakup have been
+> converted, hence the "RFC".
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2
-* Added reviewed by tag from Geert Uytterhoeven
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 8a67177cccd6..efb80c554ad6 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -1902,6 +1902,7 @@
- 			clocks = <&cpg CPG_MOD 603>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
- 			resets = <&cpg 603>;
-+			iommus = <&ipmmu_vi0 8>;
- 		};
- 
- 		vspd1: vsp@fea28000 {
-@@ -1921,6 +1922,7 @@
- 			clocks = <&cpg CPG_MOD 602>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
- 			resets = <&cpg 602>;
-+			iommus = <&ipmmu_vi0 9>;
- 		};
- 
- 		vspd2: vsp@fea30000 {
-@@ -1940,6 +1942,7 @@
- 			clocks = <&cpg CPG_MOD 601>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
- 			resets = <&cpg 601>;
-+			iommus = <&ipmmu_vi0 10>;
- 		};
- 
- 		hdmi0: hdmi@fead0000 {
--- 
-2.11.0
+Reviewed-by: Kevin Hilman <khilman@baylibre.com>
