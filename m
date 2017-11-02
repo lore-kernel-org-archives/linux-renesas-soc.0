@@ -1,140 +1,53 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 2/2] ARM: dts: iwg22d-sodimm-dbhd-ca: Add HDMI video output
-Date: Mon,  6 Nov 2017 18:26:54 +0000
-Message-Id: <1509992814-4543-3-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1509992814-4543-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1509992814-4543-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:35980 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751988AbdKBFgC (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 2 Nov 2017 01:36:02 -0400
+Date: Wed, 1 Nov 2017 22:36:00 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [git pull] clk: renesas: Updates for v4.15 (take two)
+Message-ID: <20171102053600.GN30645@codeaurora.org>
+References: <1508498590-10566-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1508498590-10566-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch enables the HDMI interface found on the expansion board.
+On 10/20, Geert Uytterhoeven wrote:
+> 	Hi Mike, Stephen,
+> 
+> The following changes since commit b4021bbe10017d994e5a96ebfd2677bbaf2b37e0:
+> 
+>   clk: renesas: rcar-gen2: Delete error message for failed memory allocation (2017-09-28 17:57:34 +0200)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.15-tag2
+> 
+> for you to fetch changes up to 3f7a4d084159c52513d1ff77f3b3b880bcf517d9:
+> 
+>   clk: renesas: rcar-gen3: Restore R clock during resume (2017-10-20 11:16:09 +0200)
+> 
+> ----------------------------------------------------------------
+> clk: renesas: Updates for v4.15 (take two)
+> 
+>   - Add support for the second display unit clock on RZ/G1E,
+>   - Add git repository to MAINTAINERS,
+>   - Add suspend/resume support for R-Car Gen3 CPG/MSSR,
+>   - Small fixes and cleanups.
+> 
+> Note: this is on top of my previous pull request, for
+> tags/clk-renesas-for-v4.15-tag1, which you haven't pulled yet.
+> 
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
----
- .../arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts | 85 ++++++++++++++++++++++
- 1 file changed, 85 insertions(+)
+Thanks. Pulled.
 
-diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts
-index f925388..a8a4ec8 100644
---- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts
-+++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts
-@@ -20,6 +20,38 @@
- 		serial4 = &scif5;
- 		serial6 = &hscif2;
- 	};
-+
-+	cec_clock: cec-clock {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <12000000>;
-+	};
-+
-+	hdmi-out {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con: endpoint {
-+				remote-endpoint = <&adv7511_out>;
-+			};
-+		};
-+	};
-+};
-+
-+&du {
-+	pinctrl-0 = <&du0_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+
-+	ports {
-+		port@0 {
-+			endpoint {
-+				remote-endpoint = <&adv7511_in>;
-+			};
-+		};
-+	};
- };
- 
- &hscif2 {
-@@ -29,12 +61,65 @@
- 	status = "okay";
- };
- 
-+&i2c1 {
-+	pinctrl-0 = <&i2c1_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+	clock-frequency = <400000>;
-+
-+	hdmi@39 {
-+		compatible = "adi,adv7511w";
-+		reg = <0x39>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-+		clocks = <&cec_clock>;
-+		clock-names = "cec";
-+		pd-gpios = <&gpio2 24 GPIO_ACTIVE_HIGH>;
-+
-+		adi,input-depth = <8>;
-+		adi,input-colorspace = "rgb";
-+		adi,input-clock = "1x";
-+		adi,input-style = <1>;
-+		adi,input-justification = "evenly";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				adv7511_in: endpoint {
-+					remote-endpoint = <&du_out_rgb0>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+				adv7511_out: endpoint {
-+					remote-endpoint = <&hdmi_con>;
-+				};
-+			};
-+		};
-+	};
-+};
-+
- &pfc {
-+	du0_pins: du0 {
-+		groups = "du0_rgb888", "du0_sync", "du0_disp", "du0_clk0_out";
-+		function = "du0";
-+	};
-+
- 	hscif2_pins: hscif2 {
- 		groups = "hscif2_data";
- 		function = "hscif2";
- 	};
- 
-+	i2c1_pins: i2c1 {
-+		groups = "i2c1_d";
-+		function = "i2c1";
-+	};
-+
- 	scif1_pins: scif1 {
- 		groups = "scif1_data";
- 		function = "scif1";
 -- 
-2.7.4
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
