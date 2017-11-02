@@ -1,62 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:38928 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751799AbdKWLkh (ORCPT
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:44534 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754785AbdKBIPs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 23 Nov 2017 06:40:37 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] arm64: dts: r8a7795: Increase the number of GPIO bank 1 ports to 29
-Date: Thu, 23 Nov 2017 11:58:50 +0100
-Message-Id: <1511434730-5723-1-git-send-email-geert+renesas@glider.be>
+        Thu, 2 Nov 2017 04:15:48 -0400
+Received: by mail-lf0-f66.google.com with SMTP id 75so5411932lfx.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 02 Nov 2017 01:15:48 -0700 (PDT)
+Date: Thu, 2 Nov 2017 09:15:45 +0100
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Cc: Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 13/26] media: rcar: fix a debug printk
+Message-ID: <20171102081545.GB24132@bigcity.dyn.berto.se>
+References: <c4389ab1c02bb08c1a55012fdb859c8b10bdc47e.1509569763.git.mchehab@s-opensource.com>
+ <ef0a1dc7f902c8ed9cc8aa454bd07a8fcda66dfa.1509569763.git.mchehab@s-opensource.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ef0a1dc7f902c8ed9cc8aa454bd07a8fcda66dfa.1509569763.git.mchehab@s-opensource.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Hi Mauro,
 
-This patch changes the number of GPIO bank 1 ports to 29 because GP-1-28
-port pin of R8A7795 ES2.0 SoC support was added.
+Thanks for your patch.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Fixes: 291e0c4994d0813f ("arm64: dts: r8a7795: Add support for R-Car H3 ES2.0")
-[geert: Keep 28 GPIOs on H3 ES1.x after r8a7795.dtsi sharing]
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi | 4 ++++
- arch/arm64/boot/dts/renesas/r8a7795.dtsi     | 2 +-
- 2 files changed, 5 insertions(+), 1 deletion(-)
+On 2017-11-01 17:05:50 -0400, Mauro Carvalho Chehab wrote:
+> Two orthogonal changesets caused a breakage at a printk
+> inside rcar. Changeset 859969b38e2e
+> ("[media] v4l: Switch from V4L2 OF not V4L2 fwnode API")
+> made davinci to use struct fwnode_handle instead of
+> struct device_node. Changeset 68d9c47b1679
+> ("media: Convert to using %pOF instead of full_name")
+> changed the printk to not use ->full_name, but, instead,
+> to rely on %pOF.
+> 
+> With both patches applied, the Kernel will do the wrong
+> thing, as warned by smatch:
+> 	drivers/media/platform/rcar-vin/rcar-core.c:189 rvin_digital_graph_init() error: '%pOF' expects argument of type 'struct device_node*', argument 4 has type 'void*'
+> 
+> So, change the logic to actually print the device name
+> that was obtained before the print logic.
+> 
+> Fixes: 68d9c47b1679 ("media: Convert to using %pOF instead of full_name")
+> Fixes: 859969b38e2e ("[media] v4l: Switch from V4L2 OF not V4L2 fwnode API")
+> Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+> ---
+>  drivers/media/platform/rcar-vin/rcar-core.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+> index 108d776f3265..ce5914f7a056 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-core.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
+> @@ -186,8 +186,8 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
+>  	if (!vin->digital)
+>  		return -ENODEV;
+>  
+> -	vin_dbg(vin, "Found digital subdevice %pOF\n",
+> -		to_of_node(vin->digital->asd.match.fwnode.fwnode));
+> +	vin_dbg(vin, "Found digital subdevice %s\n",
+> +		to_of_node(vin->digital->asd.match.fwnode.fwnode)->full_name);
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-index 73d884c0422e650e..c95191adb3484d3e 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-@@ -164,6 +164,10 @@
- 	};
- };
- 
-+&gpio1 {
-+	gpio-ranges = <&pfc 0 32 28>;
-+};
-+
- &ipmmu_vi0 {
- 	renesas,ipmmu-main = <&ipmmu_mm 11>;
- };
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index c9a8ec6d2e139e75..5d80f3d70a414365 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -295,7 +295,7 @@
- 			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
- 			#gpio-cells = <2>;
- 			gpio-controller;
--			gpio-ranges = <&pfc 0 32 28>;
-+			gpio-ranges = <&pfc 0 32 29>;
- 			#interrupt-cells = <2>;
- 			interrupt-controller;
- 			clocks = <&cpg CPG_MOD 911>;
+For the same reasons as Laurent brings up in patch 14/26 I'm a bit 
+sceptical to this change.
+
+>  
+>  	vin->notifier.ops = &rvin_digital_notify_ops;
+>  	ret = v4l2_async_notifier_register(&vin->v4l2_dev, &vin->notifier);
+> -- 
+> 2.13.6
+> 
+
 -- 
-2.7.4
+Regards,
+Niklas S�derlund
