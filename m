@@ -1,39 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:51541 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933654AbdKAVtF (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:43806 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752759AbdKBIS7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 1 Nov 2017 17:49:05 -0400
-Date: Wed, 1 Nov 2017 16:49:04 -0500
-From: Rob Herring <robh@kernel.org>
+        Thu, 2 Nov 2017 04:18:59 -0400
+Date: Thu, 2 Nov 2017 09:18:39 +0100
+From: Simon Horman <horms@verge.net.au>
 To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Simon Horman <horms@verge.net.au>,
+Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Kevin Hilman <khilman@kernel.org>,
         Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/3] ARM: shmobile: Document Renesas M3-W-based
- Salvator-XS board DT bindings
-Message-ID: <20171101214904.b5adavvirlmphnqn@rob-hp-laptop>
-References: <1509384599-28953-1-git-send-email-geert+renesas@glider.be>
- <1509384599-28953-2-git-send-email-geert+renesas@glider.be>
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>, linux-pm@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/5] [RFC] ARM: shmobile: pm-rmobile: Use
+ GENPD_FLAG_ACTIVE_WAKEUP
+Message-ID: <20171102081838.qfojh7wzmau4x63c@verge.net.au>
+References: <1509473494-19740-1-git-send-email-geert+renesas@glider.be>
+ <1509473494-19740-3-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1509384599-28953-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1509473494-19740-3-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Oct 30, 2017 at 06:29:57PM +0100, Geert Uytterhoeven wrote:
-> The Renesas Salvator-XS (Salvator-X 2nd version) development board can
-> be equipped with either an R-Car H3 ES2.0 or M3-W ES1.x SiP, which are
-> pin-compatible.
-> 
-> Document board part number and compatible values for the version with
-> R-Car M3-W.
+On Tue, Oct 31, 2017 at 07:11:31PM +0100, Geert Uytterhoeven wrote:
+> Set the newly introduced GENPD_FLAG_ACTIVE_WAKEUP, which allows to
+> remove the driver's own "always true" callback.
 > 
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
->  Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
->  1 file changed, 2 insertions(+)
+> This must not be applied before "PM / Domain: Enable genpd users to
+> specify default active wakeup behavior" has landed upstream, hence the
+> "RFC".
 
-Acked-by: Rob Herring <robh@kernel.org>
+Assuming you would like this to go through Rafael's tree rather than mine:
+
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
