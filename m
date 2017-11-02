@@ -1,133 +1,170 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55692 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:45787 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752310AbdKAKgR (ORCPT
+        with ESMTP id S933319AbdKBKPE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 1 Nov 2017 06:36:17 -0400
+        Thu, 2 Nov 2017 06:15:04 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-serial@vger.kernel.org
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 1/7] arm64: dts: renesas: r8a7796: Add IPMMU device nodes
-Date: Wed,  1 Nov 2017 11:34:52 +0100
-Message-Id: <20171101103458.7582-2-horms+renesas@verge.net.au>
-In-Reply-To: <20171101103458.7582-1-horms+renesas@verge.net.au>
-References: <20171101103458.7582-1-horms+renesas@verge.net.au>
+        linux-renesas-soc@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
+Subject: [PATCH] serial: sh-sci: Fix unlocked access to SCSCR register
+Date: Thu,  2 Nov 2017 11:14:55 +0100
+Message-Id: <20171102101455.28398-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+From: Takatoshi Akiyama <takatoshi.akiyama.kj@ps.hitachi-solutions.com>
 
-Add r8a7796 IPMMU nodes and keep all disabled by default.
+The SCSCR register access in sci_break_ctl() is not locked.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-[simon: update names]
+sci_start_tx() and sci_set_termios() changes the SCSCR register,
+but does not lock sci_port.
+
+Therefore, this patch adds lock during register access.
+
+Also, remove the log output that leads to a double lock.
+
+Some analysis of where locks are not taken is as follows.
+It appears that the lock is not taken in:
+  - sci_start_tx(), sci_stop_tx()  as this is installed as a callback.
+    And all callers of the callback take the lock.
+  - start_rx as callers take the lock.
+  - stop_rx. this is both installed as a callback and called directly.
+    In both cases the caller takes the lock.
+
+Signed-off-by: Takatoshi Akiyama <takatoshi.akiyama.kj@ps.hitachi-solutions.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 89 ++++++++++++++++++++++++++++++++
- 1 file changed, 89 insertions(+)
+v2 [Simon Horman]
+* Also take lock around call to sci_start_rx() in sci_rx_dma_release()
+* Enhanced changelog to describe where locks are not taken and why.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 8c94a313d9e1..cef1901736a8 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -357,6 +357,95 @@
- 					     <&a53_3>;
- 		};
+v1 [Takatoshi Akiyama]
+
+This is a patch from the Gen3 3.3.2 BSP.
+Geert, please consider it for mainline.
+---
+ drivers/tty/serial/sh-sci.c | 25 ++++++++++++++++---------
+ 1 file changed, 16 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index d5714deaaf92..d5e07ddae523 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -1226,8 +1226,11 @@ static void sci_rx_dma_release(struct sci_port *s, bool enable_pio)
+ 	dma_free_coherent(chan->device->dev, s->buf_len_rx * 2, s->rx_buf[0],
+ 			  sg_dma_address(&s->sg_rx[0]));
+ 	dma_release_channel(chan);
+-	if (enable_pio)
++	if (enable_pio) {
++		spin_lock_irqsave(&port->lock, flags);
+ 		sci_start_rx(port);
++		spin_unlock_irqrestore(&port->lock, flags);
++	}
+ }
  
-+		ipmmu_vi0: mmu@febd0000 {
-+			compatible = "renesas,ipmmu-r8a7796";
-+			reg = <0 0xfebd0000 0 0x1000>; /* IPMMU-VI0 */
-+			renesas,ipmmu-main = <&ipmmu_mm 9>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
+ static void sci_dma_rx_complete(void *arg)
+@@ -1294,8 +1297,11 @@ static void sci_tx_dma_release(struct sci_port *s, bool enable_pio)
+ 	dma_unmap_single(chan->device->dev, s->tx_dma_addr, UART_XMIT_SIZE,
+ 			 DMA_TO_DEVICE);
+ 	dma_release_channel(chan);
+-	if (enable_pio)
++	if (enable_pio) {
++		spin_lock_irqsave(&port->lock, flags);
+ 		sci_start_tx(port);
++		spin_unlock_irqrestore(&port->lock, flags);
++	}
+ }
+ 
+ static void sci_submit_rx(struct sci_port *s)
+@@ -2004,6 +2010,7 @@ static void sci_enable_ms(struct uart_port *port)
+ static void sci_break_ctl(struct uart_port *port, int break_state)
+ {
+ 	unsigned short scscr, scsptr;
++	unsigned long flags;
+ 
+ 	/* check wheter the port has SCSPTR */
+ 	if (!sci_getreg(port, SCSPTR)->size) {
+@@ -2014,6 +2021,7 @@ static void sci_break_ctl(struct uart_port *port, int break_state)
+ 		return;
+ 	}
+ 
++	spin_lock_irqsave(&port->lock, flags);
+ 	scsptr = serial_port_in(port, SCSPTR);
+ 	scscr = serial_port_in(port, SCSCR);
+ 
+@@ -2027,6 +2035,7 @@ static void sci_break_ctl(struct uart_port *port, int break_state)
+ 
+ 	serial_port_out(port, SCSPTR, scsptr);
+ 	serial_port_out(port, SCSCR, scscr);
++	spin_unlock_irqrestore(&port->lock, flags);
+ }
+ 
+ static int sci_startup(struct uart_port *port)
+@@ -2255,6 +2264,7 @@ static void sci_set_termios(struct uart_port *port, struct ktermios *termios,
+ 	int min_err = INT_MAX, err;
+ 	unsigned long max_freq = 0;
+ 	int best_clk = -1;
++	unsigned long flags;
+ 
+ 	if ((termios->c_cflag & CSIZE) == CS7)
+ 		smr_val |= SCSMR_CHR;
+@@ -2364,6 +2374,8 @@ static void sci_set_termios(struct uart_port *port, struct ktermios *termios,
+ 		serial_port_out(port, SCCKS, sccks);
+ 	}
+ 
++	spin_lock_irqsave(&port->lock, flags);
 +
-+		ipmmu_vc0: mmu@fe6b0000 {
-+			compatible = "renesas,ipmmu-r8a7796";
-+			reg = <0 0xfe6b0000 0 0x1000>; /* IPMMU-VC0 */
-+			renesas,ipmmu-main = <&ipmmu_mm 8>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
+ 	sci_reset(port);
+ 
+ 	uart_update_timeout(port, termios->c_cflag, baud);
+@@ -2381,9 +2393,6 @@ static void sci_set_termios(struct uart_port *port, struct ktermios *termios,
+ 			case 27: smr_val |= SCSMR_SRC_27; break;
+ 			}
+ 		smr_val |= cks;
+-		dev_dbg(port->dev,
+-			 "SCR 0x%x SMR 0x%x BRR %u CKS 0x%x DL %u SRR %u\n",
+-			 scr_val, smr_val, brr, sccks, dl, srr);
+ 		serial_port_out(port, SCSCR, scr_val | s->hscif_tot);
+ 		serial_port_out(port, SCSMR, smr_val);
+ 		serial_port_out(port, SCBRR, brr);
+@@ -2397,7 +2406,6 @@ static void sci_set_termios(struct uart_port *port, struct ktermios *termios,
+ 		scr_val = s->cfg->scscr & (SCSCR_CKE1 | SCSCR_CKE0);
+ 		smr_val |= serial_port_in(port, SCSMR) &
+ 			   (SCSMR_CKEDG | SCSMR_SRC_MASK | SCSMR_CKS);
+-		dev_dbg(port->dev, "SCR 0x%x SMR 0x%x\n", scr_val, smr_val);
+ 		serial_port_out(port, SCSCR, scr_val | s->hscif_tot);
+ 		serial_port_out(port, SCSMR, smr_val);
+ 	}
+@@ -2434,7 +2442,6 @@ static void sci_set_termios(struct uart_port *port, struct ktermios *termios,
+ 
+ 	scr_val |= SCSCR_RE | SCSCR_TE |
+ 		   (s->cfg->scscr & ~(SCSCR_CKE1 | SCSCR_CKE0));
+-	dev_dbg(port->dev, "SCSCR 0x%x\n", scr_val);
+ 	serial_port_out(port, SCSCR, scr_val | s->hscif_tot);
+ 	if ((srr + 1 == 5) &&
+ 	    (port->type == PORT_SCIFA || port->type == PORT_SCIFB)) {
+@@ -2481,8 +2488,6 @@ static void sci_set_termios(struct uart_port *port, struct ktermios *termios,
+ 	s->rx_frame = (100 * bits * HZ) / (baud / 10);
+ #ifdef CONFIG_SERIAL_SH_SCI_DMA
+ 	s->rx_timeout = DIV_ROUND_UP(s->buf_len_rx * 2 * s->rx_frame, 1000);
+-	dev_dbg(port->dev, "DMA Rx t-out %ums, tty t-out %u jiffies\n",
+-		s->rx_timeout * 1000 / HZ, port->timeout);
+ 	if (s->rx_timeout < msecs_to_jiffies(20))
+ 		s->rx_timeout = msecs_to_jiffies(20);
+ #endif
+@@ -2490,6 +2495,8 @@ static void sci_set_termios(struct uart_port *port, struct ktermios *termios,
+ 	if ((termios->c_cflag & CREAD) != 0)
+ 		sci_start_rx(port);
+ 
++	spin_unlock_irqrestore(&port->lock, flags);
 +
-+		ipmmu_pv0: mmu@fd800000 {
-+			compatible = "renesas,ipmmu-r8a7796";
-+			reg = <0 0xfd800000 0 0x1000>; /* IPMMU-PV0 */
-+			renesas,ipmmu-main = <&ipmmu_mm 5>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_pv1: mmu@fd950000 {
-+			compatible = "renesas,ipmmu-r8a7796";
-+			reg = <0 0xfd950000 0 0x1000>; /* IPMMU-PV1 */
-+			renesas,ipmmu-main = <&ipmmu_mm 6>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_ir: mmu@ff8b0000 {
-+			compatible = "renesas,ipmmu-r8a7796";
-+			reg = <0 0xff8b0000 0 0x1000>; /* IPMMU-IR */
-+			renesas,ipmmu-main = <&ipmmu_mm 3>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_hc: mmu@e6570000 {
-+			compatible = "renesas,ipmmu-r8a7796";
-+			reg = <0 0xe6570000 0 0x1000>; /* IPMMU-HC */
-+			renesas,ipmmu-main = <&ipmmu_mm 2>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_rt: mmu@ffc80000 {
-+			compatible = "renesas,ipmmu-r8a7796";
-+			reg = <0 0xffc80000 0 0x1000>; /* IPMMU-RT */
-+			renesas,ipmmu-main = <&ipmmu_mm 7>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_mp: mmu@ec670000 {
-+			compatible = "renesas,ipmmu-r8a7796";
-+			reg = <0 0xec670000 0 0x1000>; /* IPMMU-MP */
-+			renesas,ipmmu-main = <&ipmmu_mm 4>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_ds0: mmu@e6740000 {
-+			compatible = "renesas,ipmmu-r8a7796";
-+			reg = <0 0xe6740000 0 0x1000>; /* IPMMU-DS0 */
-+			renesas,ipmmu-main = <&ipmmu_mm 0>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_ds1: mmu@e7740000 {
-+			compatible = "renesas,ipmmu-r8a7796";
-+			reg = <0 0xe7740000 0 0x1000>; /* IPMMU-DS1 */
-+			renesas,ipmmu-main = <&ipmmu_mm 1>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_mm: mmu@e67b0000 {
-+			compatible = "renesas,ipmmu-r8a7796";
-+			reg = <0 0xe67b0000 0 0x1000>; /* IPMMU-MM */
-+			interrupts = <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
- 		cpg: clock-controller@e6150000 {
- 			compatible = "renesas,r8a7796-cpg-mssr";
- 			reg = <0 0xe6150000 0 0x1000>;
+ 	sci_port_disable(s);
+ 
+ 	if (UART_ENABLE_MS(port, termios->c_cflag))
 -- 
 2.11.0
