@@ -1,100 +1,106 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:44864 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754119AbdKAI6X (ORCPT
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:44300 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934009AbdKBTZw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 1 Nov 2017 04:58:23 -0400
-Received: by mail-io0-f195.google.com with SMTP id m16so4627224iod.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 01 Nov 2017 01:58:22 -0700 (PDT)
-Subject: Re: [PATCH 9/9] ARM: multi_v7_defconfig: Enable DMA for Renesas
- serial ports
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Kevin Hilman <khilman@kernel.org>,
-        Olof Johansson <olof@lixom.net>,
-        Simon Horman <horms@verge.net.au>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        "moderated list:H8/300 ARCHITECTURE"
-        <uclinux-h8-devel@lists.sourceforge.jp>
-References: <1499693302-25120-1-git-send-email-geert+renesas@glider.be>
- <1499693302-25120-10-git-send-email-geert+renesas@glider.be>
- <CANqRtoSi8x7zqwV3Gp_n0dBe4Uw6LDRvC1Lheu+GrLZNYuxAHw@mail.gmail.com>
- <CAMuHMdXb1yAgw4AVvheYhPV=V9HeDCW2NdvhJWzoSz8i-mM3TQ@mail.gmail.com>
- <CAK8P3a3c68=L=h+nni39BmOb68wno7TuvXuBgOHrEMOrkhdx2g@mail.gmail.com>
- <CAMuHMdUFnYSxF0grMQ6GB4h7svOeKa-SpPo_2TpTW9Hx+zvrEQ@mail.gmail.com>
- <95cf2c11-c7db-bdff-7165-282586e08b19@landley.net>
- <CAMuHMdWW7gbdDY0y2jUVn=ERG1JEWCX=UotQVeyVwhW3fqSHMQ@mail.gmail.com>
-From: Rob Landley <rob@landley.net>
-Message-ID: <4defc0d0-5e4b-42f7-3104-84f93e3baf47@landley.net>
-Date: Wed, 1 Nov 2017 03:58:02 -0500
+        Thu, 2 Nov 2017 15:25:52 -0400
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdWW7gbdDY0y2jUVn=ERG1JEWCX=UotQVeyVwhW3fqSHMQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <a55409b0-9839-d9b5-5c90-606c22d0c58b@users.sourceforge.net>
+References: <c598933b-b14f-91a1-c7a3-f4a46ec98e77@users.sourceforge.net>
+ <20171101081831.ssnuqp5b75lbfu5p@verge.net.au> <7047eb7a-cf93-6a56-08db-a5e8bedbfc57@users.sourceforge.net>
+ <20171102081239.bzaunax3uotejqja@verge.net.au> <a55409b0-9839-d9b5-5c90-606c22d0c58b@users.sourceforge.net>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 2 Nov 2017 20:25:50 +0100
+Message-ID: <CAMuHMdVgte--7gOnp9DFZCKUsneT-S9ttO3gninnfhv43BOyKQ@mail.gmail.com>
+Subject: Re: [PATCH v2] PCI: rcar: Use common error handling code in rcar_pcie_enable_msi()
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-pci <linux-pci@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Simon Horman <horms@verge.net.au>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On Thu, Nov 2, 2017 at 2:00 PM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 2 Nov 2017 13:35:17 +0100
+>
+> * Adjust a jump target so that a specific error message is stored only once
+>   at the end of this function implementation.
+>
+> * Replace two calls of the function "dev_err" by goto statements.
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Link: https://lkml.org/lkml/2017/11/2/140
+> Link: https://lkml.kernel.org/r/<20171102081239.bzaunax3uotejqja@verge.net.au>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>
+> v2:
+> An other jump label was requested by Simon Horman.
+>
+>  drivers/pci/host/pcie-rcar.c | 15 ++++++---------
+>  1 file changed, 6 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
+> index 12796eccb2be..f3c1ffdf8072 100644
+> --- a/drivers/pci/host/pcie-rcar.c
+> +++ b/drivers/pci/host/pcie-rcar.c
+> @@ -873,18 +873,14 @@ static int rcar_pcie_enable_msi(struct rcar_pcie *pcie)
+>         err = devm_request_irq(dev, msi->irq1, rcar_pcie_msi_irq,
+>                                IRQF_SHARED | IRQF_NO_THREAD,
+>                                rcar_msi_irq_chip.name, pcie);
+> -       if (err < 0) {
+> -               dev_err(dev, "failed to request IRQ: %d\n", err);
+> -               goto err;
+> -       }
+> +       if (err < 0)
+> +               goto err_remove_domain;
+>
+>         err = devm_request_irq(dev, msi->irq2, rcar_pcie_msi_irq,
+>                                IRQF_SHARED | IRQF_NO_THREAD,
+>                                rcar_msi_irq_chip.name, pcie);
+> -       if (err < 0) {
+> -               dev_err(dev, "failed to request IRQ: %d\n", err);
+> -               goto err;
+> -       }
+> +       if (err < 0)
+> +               goto err_remove_domain;
+>
+>         /* setup MSI data target */
+>         msi->pages = __get_free_pages(GFP_KERNEL, 0);
+> @@ -898,7 +894,8 @@ static int rcar_pcie_enable_msi(struct rcar_pcie *pcie)
+>
+>         return 0;
+>
+> -err:
+> +err_remove_domain:
+> +       dev_err(dev, "failed to request IRQ: %d\n", err);
 
+Moving the error message is confusing and counter-productive:
+if you need to add another error case + goto err_remove_domain
+later, you'll have to move it back to all the older cases.
 
-On 07/11/2017 05:46 AM, Geert Uytterhoeven wrote:
-> Hi Rob,
-> 
-> On Tue, Jul 11, 2017 at 12:37 PM, Rob Landley <rob@landley.net> wrote:
->> On 07/11/2017 03:59 AM, Geert Uytterhoeven wrote:
->>> On Tue, Jul 11, 2017 at 10:42 AM, Arnd Bergmann <arnd@arndb.de> wrote:
->>>> On Tue, Jul 11, 2017 at 8:59 AM, Geert Uytterhoeven
->>>> <geert@linux-m68k.org> wrote:
->>>>> On Tue, Jul 11, 2017 at 5:38 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
->>>>>> On Mon, Jul 10, 2017 at 10:28 PM, Geert Uytterhoeven
->>>>>> Since enabling DMA Engine still keeps PIO support around I wonder why
->>>>>> we need this Kconfig at all - other drivers seem to get by without
->>>>>> this kind of thing?
->>>>>> So in my opinion it would also be nice to get rid of SERIAL_SH_SCI_DMA
->>>>>> completely and reducing the number of special per-driver Kconfig
->>>>>> entries.
->>>>>
->>>>> In general, I would agree, and remove the option at the blimp of an eye.
->>>>> However, this driver is shared with H8/300 and SuperH.  While both could use
->>>>> DMA (but it's not supported by Linux yet), I don't know if they are willing to
->>>>> live with the increased static and dynamic memory footprint of SH_SCI DMA
->>>>> support.
->>>>
->>>> One more thing: enabling the DMA support in the console driver generally
->>>> means you cannot use printk in the DMA driver anywhere that may be called
->>>> during printk(). Not sure if that is a concern here.
->>>
->>> Not anymore, as all of these prints should have been removed/disabled already.
->>
->> Last I checked qemu-system-sh4 still doesn't work with current linux
->> serial driver unless you do:
->>
->> --- a/drivers/tty/serial/sh-sci.c
->> +++ b/drivers/tty/serial/sh-sci.c
->> @@ -2193,7 +2193,7 @@ static void sci_reset(struct uart_port *port)
->>                         setup_timer(&s->rx_fifo_timer, rx_fifo_timer_fn,
->>                                     (unsigned long)s);
->>                 } else {
->> -                       if (port->type == PORT_SCIFA ||
->> +                       if (1 || port->type == PORT_SCIFA ||
->>                             port->type == PORT_SCIFB)
->>                                 scif_set_rtrg(port, 1);
->>                         else
->>
->> Does this DMA stuff make that situation worse?
-> 
-> No, SH-SCI DMA is not used on your platform.
-> 
-> Gr{oetje,eeting}s,
+Hence
+NAKed-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-This issue is still there. QEMU's serial output is borked with the last
-year's worth of vanilla superh kernels.
+>         irq_domain_remove(msi->domain);
+>         return err;
+>  }
 
-Rob
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
