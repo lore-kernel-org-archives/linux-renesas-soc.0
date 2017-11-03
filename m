@@ -1,18 +1,16 @@
 Return-Path: <periperi-bounces@horms.net>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: periperi@horms.net
-Date: Sat, 04 Nov 2017 08:29:15 +0200
-Message-ID: <6567861.zR3rrpBUki@avalon>
-In-Reply-To: <d7086504-afc6-fcf8-fa9a-4e8c170acadc@ideasonboard.com>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
 References: <3e6fde3f-4197-366b-f3b0-d726d6d75165@linux.intel.com>
- <d7086504-afc6-fcf8-fa9a-4e8c170acadc@ideasonboard.com>
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Message-ID: <d7086504-afc6-fcf8-fa9a-4e8c170acadc@ideasonboard.com>
+Date: Fri, 3 Nov 2017 23:23:25 +0000
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <3e6fde3f-4197-366b-f3b0-d726d6d75165@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Cc: "open list:MEDIA DRIVERS FOR RENESAS - FCP"
- <linux-renesas-soc@vger.kernel.org>,
- Kieran Bingham <kieran.bingham@ideasonboard.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>
+ <linux-renesas-soc@vger.kernel.org>, "periperi@horms.net" <periperi@horms.net>
 Subject: Re: [periperi] v4l: async: Match parent devices
 List-Unsubscribe: <https://lists.vergenet.net/options/periperi>,
  <mailto:periperi-request@horms.net?subject=unsubscribe>
@@ -25,29 +23,33 @@ Errors-To: periperi-bounces@horms.net
 Sender: "periperi" <periperi-bounces@horms.net>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Kieran,
+Hi Niklas, Sakari,
 
-(Private reply)
 
-The periperi mailing list is private, could you please try to avoid cross-
-posting to public mailing lists, or even to non-members ?
+Niklas, the Match parent devices patch is in Sakari's fwnode-const branch as far
+as I know, but hasn't been updated since May ...
 
-On Saturday, 4 November 2017 01:23:25 EET Kieran Bingham wrote:
-> Hi Niklas, Sakari,
+Hi Sakari,
+
+Niklas was asking me about this patch, as it's required for our async work - and
+it bit him when he realised this patch wasn't in his tree after a rebase.
+
+Is this fwnode-const branch still the right place for this patch ? What's the
+progress on this series ?
+
+--
+Regards
+
+Kieran
+
+
+On 01/06/17 16:55, Sakari Ailus wrote:
+> It's here:
 > 
-> Niklas, the Match parent devices patch is in Sakari's fwnode-const branch as
-> far as I know, but hasn't been updated since May ...
+> <URL:https://git.linuxtv.org/sailus/media_tree.git/log/?h=fwnode-const>
 > 
-> Hi Sakari,
+> The reason is that it depends on the V4L2 fwnode patches as well as the
+> fwnode cleanup patches. It may well be possible to get it in earlier
+> than the fwnode const patches, but for practical reasons it's in the
+> same branch.
 > 
-> Niklas was asking me about this patch, as it's required for our async work -
-> and it bit him when he realised this patch wasn't in his tree after a
-> rebase.
-> 
-> Is this fwnode-const branch still the right place for this patch ? What's
-> the progress on this series ?
-
--- 
-Regards,
-
-Laurent Pinchart
