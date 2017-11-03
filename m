@@ -1,72 +1,109 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:47836 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753255AbdK0R4k (ORCPT
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:48635 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754612AbdKCJPh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 27 Nov 2017 12:56:40 -0500
-Date: Mon, 27 Nov 2017 18:56:37 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
+        Fri, 3 Nov 2017 05:15:37 -0400
+Date: Fri, 3 Nov 2017 10:15:33 +0100
+From: jacopo mondi <jacopo@jmondi.org>
 To: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Jacopo Mondi <jacopo@jmondi.org>
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 Subject: Re: [PATCH RFT 0/5] i2c: sh_mobile: refactor HW init/deinit
-Message-ID: <20171127175637.fmorzefw3bqfi56r@ninjato>
+Message-ID: <20171103091533.GE23381@w540>
 References: <20171102124731.10484-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="q76gsqptxkvxqlb7"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 In-Reply-To: <20171102124731.10484-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-
---q76gsqptxkvxqlb7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Wolfram,
 
 On Thu, Nov 02, 2017 at 01:47:26PM +0100, Wolfram Sang wrote:
-> When clearing the ICE bit, all registers fall back to their defaut value.=
- That
+> When clearing the ICE bit, all registers fall back to their defaut value. That
 > allows for some simplifications in the code.
->=20
+>
 > Tested on a Renesas Lager board (R-Car H2) doing a bunch of consecutive
 > commands. No spurious interrupts have been observed and the signals look
 > exactly the same when visualized with sigrok.
->=20
-> According to the docs, the ICE bit behaviour is the same since the beginn=
-ing of
+>
+> According to the docs, the ICE bit behaviour is the same since the beginning of
 > this driver (sh7722) for the migo-r board.
->=20
-> jacopo: can you please test this series while you work on migo-r anyhow? =
-Thank
+>
+> jacopo: can you please test this series while you work on migo-r anyhow? Thank
 > you a ton for that!
->=20
+
+I have applied your series on top of my developments on Migo-R
+
+------------------------------------------------------------
+57d007c i2c: sh_mobile: shorten exit of xfer routine
+67dfa18 i2c: sh_mobile: use direct writes when accessing ICE bit
+f44a2df i2c: sh_mobile: manually "inline" two short functions
+5d656b6 i2c: sh_mobile: remove redundant deinitialization
+9d2b8cc i2c: sh_mobile: remove redundant initialization
+cac9723 arch: sh: migor: Use new CEU camera driver
+...
+------------------------------------------------------------
+
+And I can successfully probe the camera sensor
+
+------------------------------------------------------------
+i2c i2c-0: master_xfer[0] W, addr=0x21, len=1
+i2c i2c-0: master_xfer[1] R, addr=0x21, len=1
+i2c i2c-0: master_xfer[0] W, addr=0x21, len=1
+i2c i2c-0: master_xfer[1] R, addr=0x21, len=1
+i2c i2c-0: master_xfer[0] W, addr=0x21, len=1
+i2c i2c-0: master_xfer[1] R, addr=0x21, len=1
+i2c i2c-0: master_xfer[0] W, addr=0x21, len=1
+i2c i2c-0: master_xfer[1] R, addr=0x21, len=1
+ov772x 0-0021: ov7725 Product ID 77:21 Manufacturer ID 7f:a2
+------------------------------------------------------------
+
+As well as set format on it without noticeable errors
+
+------------------------------------------------------------
+i2c i2c-0: master_xfer[0] W, addr=0x21, len=1
+i2c i2c-0: master_xfer[1] R, addr=0x21, len=1
+i2c i2c-0: master_xfer[0] W, addr=0x21, len=2
+i2c i2c-0: master_xfer[0] W, addr=0x21, len=2
+i2c i2c-0: master_xfer[0] W, addr=0x21, len=2
+i2c i2c-0: master_xfer[0] W, addr=0x21, len=2
+i2c i2c-0: master_xfer[0] W, addr=0x21, len=2
+i2c i2c-0: master_xfer[0] W, addr=0x21, len=2
+i2c i2c-0: master_xfer[0] W, addr=0x21, len=2
+i2c i2c-0: master_xfer[0] W, addr=0x21, len=2
+i2c i2c-0: master_xfer[0] W, addr=0x21, len=2
+i2c i2c-0: master_xfer[0] W, addr=0x21, len=1
+i2c i2c-0: master_xfer[1] R, addr=0x21, len=1
+i2c i2c-0: master_xfer[0] W, addr=0x21, len=2
+i2c i2c-0: master_xfer[0] W, addr=0x21, len=2
+------------------------------------------------------------
+
+I cannot try capture, as I currently have issues with mmap on SH4 :(
+
+If you want me to run some specific tests, let me know.
+Otherwise you can add my
+
+Tested-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+
+Cheers!
+   j
+>
 > Looking forward to other comments, as well...
-
-Whole series applied to i2c/for-next!
-
-
---q76gsqptxkvxqlb7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlocUdUACgkQFA3kzBSg
-KbZUSRAAk33kft9nsYlLNMRxhiZz4F3cZ8fNXWVw+YdKFX0QvOTUBcwEr9BD8M+n
-2eRkLvZWMgjSjdv7j9A25GZMNIkVyJksU/7WrpGL5XMyDwxtbh/SgKbvnjn4AJNW
-9V9o1HQ8vdxWthK3tJyfsFhztCe/vu7G7GC/SfZ5n9AkEA/CSj3r0G7es9N8JLSr
-KDG35vUEsFGtaX2wVj1uqiTbMm1/aA5UaBhePDoA+eJiZKqeqAGLbfSIidZQi9xp
-Ch55C6/IcEB9lj8vEWN8tJVEx1WYc7ZVliuTDoLpK+Nbg2Ne3nfhPvdRzrpdiEeh
-Y3yHl+bEuJtyWmfoO+3K6deDr7ycoNIPXlw39uGbNlFDzHcL/dR3uoyCk+Y7OY0o
-iQtUXNq0h2dL8ub0vORrj0Zf6Y9/y1n/wXivQmNgI216LUhlb0IcqN1IushOj8Fn
-Ws8T+hcSBIj42zThjhGJ6wJ4WM5n0UZOdKZquYoj1NTmZ7tnMB8MvX4x7JkTre1s
-/gndmfA5CSSjoR+QHn01hB/+fb4dKlvj59J9HVvwbiLUED4UAGH/FdNelxpwoiaI
-UAHRN48SdEmTneK9KcVYTJrxJuQMzed/LfV7rLQdgI6x35wuSMWADzB+0d7j/udj
-hmi+5YzJmk+qHVi66QLdUpOR4gR3Wo4/MFJFBry7y7a4OzNhgNQ=
-=9kG/
------END PGP SIGNATURE-----
-
---q76gsqptxkvxqlb7--
+>
+>
+> Wolfram Sang (5):
+>   i2c: sh_mobile: remove redundant initialization
+>   i2c: sh_mobile: remove redundant deinitialization
+>   i2c: sh_mobile: manually "inline" two short functions
+>   i2c: sh_mobile: use direct writes when accessing ICE bit
+>   i2c: sh_mobile: shorten exit of xfer routine
+>
+>  drivers/i2c/busses/i2c-sh_mobile.c | 50 +++++++++-----------------------------
+>  1 file changed, 12 insertions(+), 38 deletions(-)
+>
+> --
+> 2.11.0
+>
