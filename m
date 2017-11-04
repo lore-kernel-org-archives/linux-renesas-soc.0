@@ -1,67 +1,93 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-Date: Wed, 8 Nov 2017 22:50:37 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH v6 0/9] i2c: document DMA handling and add helpers for it
-Message-ID: <20171108225037.i4dx5iu5zxc542oq@sirena.co.uk>
-References: <20171104202009.3818-1-wsa+renesas@sang-engineering.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="7n4kimk7twrwe2wm"
-Content-Disposition: inline
-In-Reply-To: <20171104202009.3818-1-wsa+renesas@sang-engineering.com>
-Sender: linux-i2c-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([88.99.104.3]:44782 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751474AbdKDUUY (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sat, 4 Nov 2017 16:20:24 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-i2c@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-media@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH v6 0/9] i2c: document DMA handling and add helpers for it
+Date: Sat,  4 Nov 2017 21:20:00 +0100
+Message-Id: <20171104202009.3818-1-wsa+renesas@sang-engineering.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+So, after revisiting old mail threads, taking part in a similar discussion on
+the USB list, and implementing a not-convincing solution before, here is what I
+cooked up to document and ease DMA handling for I2C within Linux. Please have a
+look at the documentation introduced in patch 7 for details. And to make it
+clear again: The stuff below is opt-in. If host drivers are not updated, they
+will continue to work like before.
 
---7n4kimk7twrwe2wm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+While previous versions until v3 tried to magically apply bounce buffers when
+needed, it became clear that detecting DMA safe buffers is too fragile. This
+approach is now opt-in, a DMA_SAFE flag needs to be set on an i2c_msg. The
+outcome so far is very convincing IMO. The core additions are simple and easy
+to understand. The driver changes for the Renesas IP cores became easy to
+understand, too.
 
-On Sat, Nov 04, 2017 at 09:20:00PM +0100, Wolfram Sang wrote:
+Of course, we must now whitelist DMA safe buffers. This series implements it
+for core functionality:
 
-> While previous versions until v3 tried to magically apply bounce buffers when
-> needed, it became clear that detecting DMA safe buffers is too fragile. This
-> approach is now opt-in, a DMA_SAFE flag needs to be set on an i2c_msg. The
-> outcome so far is very convincing IMO. The core additions are simple and easy
-> to understand. The driver changes for the Renesas IP cores became easy to
-> understand, too.
+a) for the I2C_RDWR when messages come from userspace
+b) for i2c_smbus_xfer_emulated(), DMA safe buffers are now allocated for
+   block transfers
+c) i2c_master_{send|recv} have now a *_dmasafe variant
 
-It would really help a lot of things if there were a way to detect if a
-given memory block is DMA safe, having to pass the information around
-causes so much pain.  There's the fun with vmalloc() mappings too
-needing to be handled differently too though that's less likely to bite
-I2C.
+I am still not sure how we can teach regmap this new flag. regmap is a heavy
+user of I2C, so broonie's opinion here would be great to have. The rest should
+mostly be updating individual drivers which can be done when needed.
 
-> I am still not sure how we can teach regmap this new flag. regmap is a heavy
-> user of I2C, so broonie's opinion here would be great to have. The rest should
-> mostly be updating individual drivers which can be done when needed.
+All patches have been tested with a Renesas Salvator-X board (r8a7796/M3-W) and
+Renesas Lager board (r8a7790/H2). But more testing is really really welcome.
 
-We pretty much assume everything is DMA safe already, the majority of
-transfers go to/from kmalloc()ed scratch buffers so actually are DMA
-safe but for bulk transfers we use the caller buffer and there might be
-some problem users.  I can't really think of a particularly good way of
-handling it off the top of my head, obviously not setting the flag is
-easy but doesn't get the benefit while always using a bounce buffer
-would involve lots of unneeded memcpy().  Doing _dmasafe() isn't
-particularly appealing either but might be what we end up with.
+The branch can be found here:
 
---7n4kimk7twrwe2wm
-Content-Type: application/pgp-signature; name="signature.asc"
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/i2c-core-dma-v6
 
------BEGIN PGP SIGNATURE-----
+It is planned to land upstream in v4.16 and I want to push it to linux-next
+early after v4.15 to get lots of testing for the core changes.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAloDijwACgkQJNaLcl1U
-h9DAxgf/WmS2l1fy0LIY6tamV8LhAiBqI23y7IQSnDP9BaVFEcqc/W2FJDzbS+fi
-2DlKoGi4pRg+iHzvQlizoijoqq3njMrLP1dOm/zZ2dTE9NFCyOg1+pmcK2AyFfSs
-Jl7aXXN46p2ZJQp6H4d6lP4fmHz5YV16lEs/FRjGOQw/1najjj5Pu3erea7cNJcM
-f7wWkq3uUYYtmWnbSY3b0cz3x6N3XEK+wBbqiQyzQwNlS91d2US08ZYfkP1iUW7d
-M18obQUFr5Shz0B8x74dL6hSC8lD1IWVpWiUu3hlNu7viYIgSy6h6s8ocnWf0Nk7
-TXiSbEiuHFukUKkEFVLbc7Rmke3lTg==
-=2nyJ
------END PGP SIGNATURE-----
+Big kudos to Renesas Electronics for funding this work, thank you very much!
 
---7n4kimk7twrwe2wm--
+Regards,
+
+   Wolfram
+
+Change since V5:
+* i2c_master_{send|recv} have now a *_dmasafe variant
+* for i2c_smbus_xfer_emulated(), DMA safe buffers are now allocated for
+  block transfers
+* updated the documentation
+* merged some rewording suggestions from Jonathan Cameron (thanks!)
+* rebased the patches v4.14-rc6+i2c/for-next, reordered patches
+
+
+Wolfram Sang (9):
+  i2c: add a message flag for DMA safe buffers
+  i2c: add helpers to ease DMA handling
+  i2c: dev: mark RDWR buffers as DMA_SAFE
+  i2c: refactor i2c_master_{send_recv}
+  i2c: add i2c_master_{send|recv}_dmasafe
+  i2c: smbus: use DMA safe buffers for emulated SMBus transactions
+  i2c: add docs to clarify DMA handling
+  i2c: sh_mobile: use core helper to decide when to use DMA
+  i2c: rcar: skip DMA if buffer is not safe
+
+ Documentation/i2c/DMA-considerations |  67 +++++++++++++++++++++
+ drivers/i2c/busses/i2c-rcar.c        |   2 +-
+ drivers/i2c/busses/i2c-sh_mobile.c   |   8 ++-
+ drivers/i2c/i2c-core-base.c          | 110 ++++++++++++++++++++---------------
+ drivers/i2c/i2c-core-smbus.c         |  45 ++++++++++++--
+ drivers/i2c/i2c-dev.c                |   2 +
+ include/linux/i2c.h                  |  68 ++++++++++++++++++++--
+ include/uapi/linux/i2c.h             |   3 +
+ 8 files changed, 246 insertions(+), 59 deletions(-)
+ create mode 100644 Documentation/i2c/DMA-considerations
+
+-- 
+2.11.0
