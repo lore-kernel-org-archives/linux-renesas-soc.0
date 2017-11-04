@@ -1,76 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56098 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752619AbdKJNZv (ORCPT
+Received: from sauhun.de ([88.99.104.3]:44824 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752280AbdKDUU1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Nov 2017 08:25:51 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v5 09/15] arm64: dts: renesas: r8a7795: Point VSPBC/VSPBD via FCPVB to IPMMU-VP0/1
-Date: Fri, 10 Nov 2017 14:25:26 +0100
-Message-Id: <20171110132532.1202-10-horms+renesas@verge.net.au>
-In-Reply-To: <20171110132532.1202-1-horms+renesas@verge.net.au>
-References: <20171110132532.1202-1-horms+renesas@verge.net.au>
+        Sat, 4 Nov 2017 16:20:27 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-i2c@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-media@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH v6 9/9] i2c: rcar: skip DMA if buffer is not safe
+Date: Sat,  4 Nov 2017 21:20:09 +0100
+Message-Id: <20171104202009.3818-10-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20171104202009.3818-1-wsa+renesas@sang-engineering.com>
+References: <20171104202009.3818-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+This HW is prone to races, so it needs to setup new messages in irq
+context. That means we can't alloc bounce buffers if a message buffer is
+not DMA safe. So, in that case, simply fall back to PIO.
 
-Hook up the FCPVB devices to allow use of VSPBC/VSPBD with
-IPMMU-VP0 and IPMMU-VP1.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
-v5 [Simon Horman]
-* Added reviewed by tag from Geert Uytterhoeven
+ drivers/i2c/busses/i2c-rcar.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-v4 [Simon Horman]
-* Use IPMMU-VP1 for FCPVP1 on ES2.0
----
- arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi | 4 ++++
- arch/arm64/boot/dts/renesas/r8a7795.dtsi     | 2 ++
- 2 files changed, 6 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-index 736281335653..3d50627c0670 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-@@ -151,6 +151,10 @@
- 	       <&ipmmu_mp1 30>, <&ipmmu_mp1 31>;
- };
+diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
+index 15d764afec3b29..8a2ae3e6c561c4 100644
+--- a/drivers/i2c/busses/i2c-rcar.c
++++ b/drivers/i2c/busses/i2c-rcar.c
+@@ -359,7 +359,7 @@ static void rcar_i2c_dma(struct rcar_i2c_priv *priv)
+ 	int len;
  
-+&fcpvb1 {
-+	iommus = <&ipmmu_vp0 7>;
-+};
-+
- &fcpf1 {
- 	iommus = <&ipmmu_vp0 1>;
- };
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 1202b84104a0..cf9708ac46eb 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -2062,6 +2062,7 @@
- 			clocks = <&cpg CPG_MOD 606>;
- 			power-domains = <&sysc R8A7795_PD_A3VP>;
- 			resets = <&cpg 606>;
-+			iommus = <&ipmmu_vp1 7>;
- 		};
+ 	/* Do not use DMA if it's not available or for messages < 8 bytes */
+-	if (IS_ERR(chan) || msg->len < 8)
++	if (IS_ERR(chan) || msg->len < 8 || !(msg->flags & I2C_M_DMA_SAFE))
+ 		return;
  
- 		fcpf0: fcp@fe950000 {
-@@ -2099,6 +2100,7 @@
- 			clocks = <&cpg CPG_MOD 607>;
- 			power-domains = <&sysc R8A7795_PD_A3VP>;
- 			resets = <&cpg 607>;
-+			iommus = <&ipmmu_vp0 5>;
- 		};
- 
- 		vspi0: vsp@fe9a0000 {
+ 	if (read) {
 -- 
 2.11.0
