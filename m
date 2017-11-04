@@ -1,103 +1,42 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.15.14]:61920 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754692AbdKAPkR (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 1 Nov 2017 11:40:17 -0400
-Subject: [PATCH v2 1/2] drm/rcar-du: Use common error handling code in
- rcar_du_encoders_init()
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-To: kbuild test robot <lkp@intel.com>, dri-devel@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        David Airlie <airlied@linux.ie>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>, kbuild-all@01.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-References: <201710262044.165nsaJp%fengguang.wu@intel.com>
- <26b811dd-9dfa-cfd3-7d4d-e7f1c852b8ed@users.sourceforge.net>
-Message-ID: <56554dfd-6990-e104-ea70-e457f250fe5d@users.sourceforge.net>
-Date: Wed, 1 Nov 2017 16:39:54 +0100
-MIME-Version: 1.0
-In-Reply-To: <26b811dd-9dfa-cfd3-7d4d-e7f1c852b8ed@users.sourceforge.net>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-i2c@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-media@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH v6 1/9] i2c: add a message flag for DMA safe buffers
+Date: Sat,  4 Nov 2017 21:20:01 +0100
+Message-Id: <20171104202009.3818-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20171104202009.3818-1-wsa+renesas@sang-engineering.com>
+References: <20171104202009.3818-1-wsa+renesas@sang-engineering.com>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 1 Nov 2017 15:57:31 +0100
+I2C has no requirement that the buffer of a message needs to be DMA
+safe. In case it is, it can now be flagged, so drivers wishing to
+do DMA can use the buffer directly.
 
-* Add a jump target so that a bit of exception handling can be better
-  reused at the end of this function.
-
-* Increase the scope for the variable "ret".
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
+ include/uapi/linux/i2c.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-v2:
-The declaration for the variable "ret" was moved out of a loop.
-
- drivers/gpu/drm/rcar-du/rcar_du_kms.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-index 566d1a948c8f..b6b341164aab 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-@@ -365,6 +365,7 @@ static int rcar_du_encoders_init(struct rcar_du_device *rcdu)
- 	struct device_node *np = rcdu->dev->of_node;
- 	struct device_node *ep_node;
- 	unsigned int num_encoders = 0;
-+	int ret;
- 
- 	/*
- 	 * Iterate over the endpoints and create one encoder for each output
-@@ -374,13 +375,10 @@ static int rcar_du_encoders_init(struct rcar_du_device *rcdu)
- 		enum rcar_du_output output;
- 		struct of_endpoint ep;
- 		unsigned int i;
--		int ret;
- 
- 		ret = of_graph_parse_endpoint(ep_node, &ep);
--		if (ret < 0) {
--			of_node_put(ep_node);
--			return ret;
--		}
-+		if (ret < 0)
-+			goto put_node;
- 
- 		/* Find the output route corresponding to the port number. */
- 		for (i = 0; i < RCAR_DU_OUTPUT_MAX; ++i) {
-@@ -401,10 +399,8 @@ static int rcar_du_encoders_init(struct rcar_du_device *rcdu)
- 		/* Process the output pipeline. */
- 		ret = rcar_du_encoders_init_one(rcdu, output, &ep);
- 		if (ret < 0) {
--			if (ret == -EPROBE_DEFER) {
--				of_node_put(ep_node);
--				return ret;
--			}
-+			if (ret == -EPROBE_DEFER)
-+				goto put_node;
- 
- 			continue;
- 		}
-@@ -413,6 +409,10 @@ static int rcar_du_encoders_init(struct rcar_du_device *rcdu)
- 	}
- 
- 	return num_encoders;
-+
-+put_node:
-+	of_node_put(ep_node);
-+	return ret;
- }
- 
- static int rcar_du_properties_init(struct rcar_du_device *rcdu)
+diff --git a/include/uapi/linux/i2c.h b/include/uapi/linux/i2c.h
+index 009e27bb9abe19..1c683cb319e4b7 100644
+--- a/include/uapi/linux/i2c.h
++++ b/include/uapi/linux/i2c.h
+@@ -71,6 +71,9 @@ struct i2c_msg {
+ #define I2C_M_RD		0x0001	/* read data, from slave to master */
+ 					/* I2C_M_RD is guaranteed to be 0x0001! */
+ #define I2C_M_TEN		0x0010	/* this is a ten bit chip address */
++#define I2C_M_DMA_SAFE		0x0200	/* the buffer of this message is DMA safe */
++					/* makes only sense in kernelspace */
++					/* userspace buffers are copied anyway */
+ #define I2C_M_RECV_LEN		0x0400	/* length will be first received byte */
+ #define I2C_M_NO_RD_ACK		0x0800	/* if I2C_FUNC_PROTOCOL_MANGLING */
+ #define I2C_M_IGNORE_NAK	0x1000	/* if I2C_FUNC_PROTOCOL_MANGLING */
 -- 
-2.14.3
+2.11.0
