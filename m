@@ -1,39 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:60992 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752071AbdK1Nf4 (ORCPT
+Received: from sauhun.de ([88.99.104.3]:50333 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751140AbdKFIyX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Nov 2017 08:35:56 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms+renesas@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/LOCAL] arm64: defconfig: Refresh renesas_defconfig
-Date: Tue, 28 Nov 2017 14:35:45 +0100
-Message-Id: <1511876145-8355-1-git-send-email-geert+renesas@glider.be>
+        Mon, 6 Nov 2017 03:54:23 -0500
+Date: Mon, 6 Nov 2017 09:54:21 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Jacopo Mondi <jacopo@jmondi.org>
+Subject: Re: [PATCH RFT 3/5] i2c: sh_mobile: manually "inline" two short
+ functions
+Message-ID: <20171106085421.zgwz4dn5pmpjpodu@ninjato>
+References: <20171102124731.10484-1-wsa+renesas@sang-engineering.com>
+ <20171102124731.10484-4-wsa+renesas@sang-engineering.com>
+ <CAMuHMdXoSyauV1ikYzVBq85Qwm=iPBWvEWNCwd-JNUt32NYUOw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="2pjkuecogt7npvat"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXoSyauV1ikYzVBq85Qwm=iPBWvEWNCwd-JNUt32NYUOw@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-RC_CORE defaults to n again since commit 5573d124292a01af ("[media]
-media: default for RC_CORE should be n").
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/configs/renesas_defconfig | 1 -
- 1 file changed, 1 deletion(-)
+--2pjkuecogt7npvat
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm64/configs/renesas_defconfig b/arch/arm64/configs/renesas_defconfig
-index 68f5073ae4cbb505..88cbd4f769d15b1f 100644
---- a/arch/arm64/configs/renesas_defconfig
-+++ b/arch/arm64/configs/renesas_defconfig
-@@ -145,7 +145,6 @@ CONFIG_REGULATOR_FIXED_VOLTAGE=y
- CONFIG_REGULATOR_BD9571MWV=y
- CONFIG_REGULATOR_GPIO=y
- CONFIG_REGULATOR_PWM=y
--# CONFIG_RC_CORE is not set
- CONFIG_MEDIA_SUPPORT=y
- CONFIG_MEDIA_CAMERA_SUPPORT=y
- CONFIG_MEDIA_SDR_SUPPORT=y
--- 
-2.7.4
+> > -       activate_ch(pd);
+> > +       /* Wake up device and enable clock */
+> > +       pm_runtime_get_sync(pd->dev);
+> > +       clk_prepare_enable(pd->clk);
+>=20
+> Suggestion for further cleanup: the call to clk_prepare_enable() should
+> not be needed, due to Runtime PM taking care of that.
+> This is also the case on SH, which uses the legacy clock domain
+> (drivers/sh/pm_runtime.c).
+
+Ah, I didn't know that about SH. Thanks for the heads up!
+
+
+--2pjkuecogt7npvat
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAloAIzkACgkQFA3kzBSg
+KbbPXA/+Nr55ViplnwX/Uo+aDNw6SP/cCXd75uVEKVQJjOabQwhHlbKp3EACZrZT
+VlYezNGFqPzSUc68CqsVWiwkBlghL3DerBr1nn8aORDnVJNW3MUsd1ej3yqYAKus
+Q9gzKFM0pJucMHlqJgC07c2tMa+wlyXw9tMukVjOYZ2bXoWhXdvtVqSxRDKQTQ7o
+IOVZgGvpOW1dYmS9ay1AYZtyO0V5lKaMryUktWNGOF469MUyDWTGzYbexiupUvau
+TPuWXIlF09wM1zAvsyhKGlDCpHjKzdOcdkqWNgIemfmq1NiaorjIii4mtnZKpdVN
+3skdR1KXOyj2e0alLHpLb+yCBM8fQdCB37AWCgIEut24yIQZJ6smGhAEUdIudWqE
+Ajj/nKHsLClmKIB9/05bsaRQaM6qwmEycW0TH91EC7qustcoTZtf/WOgQop6JBok
+3tcIl5tuvYxFJh6Z/KE1FguOsLDV8G9jbIWK7Wu0pypO5HHAabalMYvgiPwTwled
+pkIOteroLJjBluCwZe5kuqHzSgskkJLnqO5KQUCGWGJhdeMiF0vE4Ke8oNGn0hZ/
+FcW4I6cXcEFdxAEzxOsiPyvicBRBAwvPHUGLPWd+wFuWPkcO++z7o6QSvsbVYnJn
+aX2NyKSNomKcSkzwX2j0pimgyTFYBMjb1mbnEC+blp4ZQ66VcCA=
+=pUT3
+-----END PGP SIGNATURE-----
+
+--2pjkuecogt7npvat--
