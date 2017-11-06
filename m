@@ -1,48 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55692 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751366AbdKAKgL (ORCPT
+Received: from mx1.redhat.com ([209.132.183.28]:53884 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750947AbdKFUGg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 1 Nov 2017 06:36:11 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 0/2] dts: renesas: r8a77995: IPMMU upstream integration
-Date: Wed,  1 Nov 2017 11:35:06 +0100
-Message-Id: <20171101103508.7721-1-horms+renesas@verge.net.au>
+        Mon, 6 Nov 2017 15:06:36 -0500
+Date: Mon, 6 Nov 2017 13:06:34 -0700
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: joro@8bytes.org, laurent.pinchart+renesas@ideasonboard.com,
+        arnd@arndb.de, geert+renesas@glider.be, magnus.damm@gmail.com,
+        linux-renesas-soc@vger.kernel.org,
+        iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/4] ipmmu-vmsa cleanup
+Message-ID: <20171106130634.4a42e18a@t450s.home>
+In-Reply-To: <cover.1507918320.git.robin.murphy@arm.com>
+References: <cover.1507918320.git.robin.murphy@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This series adds DT nodes for IPMMU instances on r8a77995 together with
-connections to the r8a77995 on-chip device Ethernet-AVB.
+On Fri, 13 Oct 2017 19:23:38 +0100
+Robin Murphy <robin.murphy@arm.com> wrote:
 
-With these patches applied a white list enabled IPMMU driver may be used
-to check silicon revision and then enable IPMMU in the known working cases.
+> Arnd reports a build warning[1] thanks to me missing ipmmu-vmsa's second
+> set of ops when converting io-pgtable-arm users to the new iommu_iotlb_*
+> callbacks. Rather than just treat the symptom with a point fix, this
+> seemed like a good excuse to clean up the messy #ifdeffery and
+> duplication in the driver that led to the oversight in the first place.
+> 
+> Build-tested successfully for arm64, ARM, and ARM + CONFIG_IOMMU_DMA.
+> 
+> Robin.
+> 
+> [1]:https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1510423.html
+> 
+> Robin Murphy (4):
+>   iommu/ipmmu-vmsa: Unify domain alloc/free
+>   iommu/ipmmu-vmsa: Simplify group allocation
+>   iommu/ipmmu-vmsa: Clean up struct ipmmu_vmsa_iommu_priv
+>   iommu/ipmmu-vmsa: Unify ipmmu_ops
+> 
+>  drivers/iommu/ipmmu-vmsa.c | 251 ++++++++++++++-------------------------------
+>  1 file changed, 78 insertions(+), 173 deletions(-)
+> 
 
-The recommended IPMMU driver patch is iommu/next with the following applied:
- [PATCH v5 00/09] iommu/ipmmu-vmsa: r8a7795 support V5
- [PATCH v4 0/3] iommu/ipmmu-vmsa: r8a7796 support V4
- [PATCH 0/2] iommu/ipmmu-vmsa: r8a779(70|95) support
+Applied to iommu/ipmmu-vmsa for v4.15.  Thanks,
 
-A patch to enable IPMMU devices is not included in this series
-as Ethernet-AVB, the only device to which IPMMU is hooked up to,
-is disabled.
-
-The DT binding for r8a77995 has been submitted (as part of the
-r8a779(70|95) series noted above) in conjunction with this patchset.
-
-This is based on work by Magnus Damm.
-
-Based on renesas-devel-20171101-v4.14-rc7
-
-Simon Horman (2):
-  arm64: dts: renesas: r8a77995: Add IPMMU device nodes
-  arm64: dts: renesas: r8a77995: Connect Ethernet-AVB to IPMMU-RT
-
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 83 +++++++++++++++++++++++++++++++
- 1 file changed, 83 insertions(+)
-
--- 
-2.11.0
+Alex
