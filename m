@@ -1,50 +1,82 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35600 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753185AbdKXK6g (ORCPT
+Received: from mx1.redhat.com ([209.132.183.28]:60842 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752448AbdKFUI0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 24 Nov 2017 05:58:36 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Alex Williamson <alex.williamson@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        iommu@lists.linux-foundation.org,
+        Mon, 6 Nov 2017 15:08:26 -0500
+Date: Mon, 6 Nov 2017 13:08:24 -0700
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: joro@8bytes.org, laurent.pinchart+renesas@ideasonboard.com,
+        geert+renesas@glider.be, linux-kernel@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Magnus Damm <damm+renesas@opensource.se>
-Subject: [PATCH v2 1/2] iommu/ipmmu-vmsa: Add r8a7796 DT binding
-Date: Fri, 24 Nov 2017 10:58:03 +0000
-Message-Id: <20171124105804.26924-2-horms+renesas@verge.net.au>
-In-Reply-To: <20171124105804.26924-1-horms+renesas@verge.net.au>
-References: <20171124105804.26924-1-horms+renesas@verge.net.au>
+        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au
+Subject: Re: [PATCH v5 00/09] iommu/ipmmu-vmsa: r8a7795 support V5
+Message-ID: <20171106130824.6e8ecde4@t450s.home>
+In-Reply-To: <150815695455.32763.1660214306749693609.sendpatchset@little-apple>
+References: <150815695455.32763.1660214306749693609.sendpatchset@little-apple>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On Mon, 16 Oct 2017 21:29:14 +0900
+Magnus Damm <magnus.damm@gmail.com> wrote:
 
-Update the IPMMU DT binding documentation to include the r8a7796 compat
-string for R-Car M3-W.
+> iommu/ipmmu-vmsa: r8a7795 support V5
+> 
+> [PATCH v5 01/09] iommu/ipmmu-vmsa: Introduce features, break out alias
+> [PATCH v5 02/09] iommu/ipmmu-vmsa: Add optional root device feature
+> [PATCH v5 03/09] iommu/ipmmu-vmsa: Enable multi context support
+> [PATCH v5 04/09] iommu/ipmmu-vmsa: Make use of IOMMU_OF_DECLARE()
+> [PATCH v5 05/09] iommu/ipmmu-vmsa: IPMMU device is 40-bit bus master
+> [PATCH v5 06/09] iommu/ipmmu-vmsa: Write IMCTR twice
+> [PATCH v5 07/09] iommu/ipmmu-vmsa: Make IMBUSCTR setup optional
+> [PATCH v5 08/09] iommu/ipmmu-vmsa: Allow two bit SL0
+> [PATCH v5 09/09] iommu/ipmmu-vmsa: Hook up r8a7795 DT matching code
+> 
+> This is V5 of r8a7795 IPMMU driver where the series has been rebased
+> and reworked to fit on next-20171013 that includes:
+> [PATCH v2 00/05] iommu/ipmmu-vmsa: 32-bit ARM update V2
+> [PATCH] iommu/ipmmu-vmsa: Use iommu_device_sysfs_add()/remove()
+> 
+> The major feature change is in patch 2/9 that now gets by without
+> using a local list of registered IPMMU devices and instead relies
+> on driver_for_each_device(). Thanks to Robin Murphy for his support.
+> 
+> The DT binding for r8a7795 has been accepted for upstream merge
+> and this series implements support following such format:
+> 
+> d4e42e7 iommu/ipmmu-vmsa: Add r8a7795 DT binding
+> 
+> The r8a7795 IPMMU is almost register compatible with earlier devices
+> like r8a7790-r8a7794, however some bitfields have been shifted
+> slightly. On a grander scale topology has been added and interrupts
+> have been reworked. So now there are several "cache" IPMMU units
+> without interrupt that somehow communicate with IPMMU-MM that
+> is the only instance that supports interrupts. The code refers to
+> IPMMU-MM as a "root" device and the other ones as "leaf" nodes.
+> 
+> Changes since V4:
+>  - Rebased on top of [PATCH v2 00/05] iommu/ipmmu-vmsa: 32-bit ARM update V2
+>  - Reworked root device handling to make use of driver_for_each_device()
+>  - Added deferred probing to make sure root device always is present
+> 
+> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+> ---
+> 
+>  Developed on top of next-20171013
+>  Also applies to renesas-drivers-2017-10-03-v4.14-rc3
+>  Tested on top of renesas-drivers on r8a7796-m3ulcb using /dev/ttySC1
+>   - [PATCH v4 0/3] iommu/ipmmu-vmsa: r8a7796 support V4
+>   - local /dev/ttySC1 enablement for testing purpose
+>   - local DTS changes to hook up SYS-DMAC and IPMMU DS0, DS1 and MM
+>   - local whitelist code to enable "e7310000.dma-controller"
+>  
+>  drivers/iommu/ipmmu-vmsa.c |  310 ++++++++++++++++++++++++++++++++++----------
+>  1 file changed, 244 insertions(+), 66 deletions(-)
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Acked-by: Simon Horman <horms+renesas@verge.net.au>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt | 1 +
- 1 file changed, 1 insertion(+)
+Applied to iommu/ipmmu-vmsa for v4.15.  Thanks,
 
-diff --git a/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt b/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
-index 3ed027cfca95..98ae900a7a76 100644
---- a/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
-+++ b/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
-@@ -16,6 +16,7 @@ Required Properties:
-     - "renesas,ipmmu-r8a7793" for the R8A7793 (R-Car M2-N) IPMMU.
-     - "renesas,ipmmu-r8a7794" for the R8A7794 (R-Car E2) IPMMU.
-     - "renesas,ipmmu-r8a7795" for the R8A7795 (R-Car H3) IPMMU.
-+    - "renesas,ipmmu-r8a7796" for the R8A7796 (R-Car M3-W) IPMMU.
-     - "renesas,ipmmu-vmsa" for generic R-Car Gen2 VMSA-compatible IPMMU.
- 
-   - reg: Base address and size of the IPMMU registers.
--- 
-2.11.0
+Alex
