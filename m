@@ -1,49 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55692 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752216AbdKAKgo (ORCPT
+Received: from mail-qt0-f177.google.com ([209.85.216.177]:50622 "EHLO
+        mail-qt0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752380AbdKGKK3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 1 Nov 2017 06:36:44 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v4 15/15] arm64: dts: renesas: r8a7795-es1: Enable IPMMU-MP1
-Date: Wed,  1 Nov 2017 11:34:52 +0100
-Message-Id: <20171101103452.7491-16-horms+renesas@verge.net.au>
-In-Reply-To: <20171101103452.7491-1-horms+renesas@verge.net.au>
-References: <20171101103452.7491-1-horms+renesas@verge.net.au>
+        Tue, 7 Nov 2017 05:10:29 -0500
+Received: by mail-qt0-f177.google.com with SMTP id d9so14497037qtd.7
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 07 Nov 2017 02:10:28 -0800 (PST)
+MIME-Version: 1.0
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 7 Nov 2017 11:10:27 +0100
+Message-ID: <CAMuHMdXYkR0fp2VM68SA89mSWq=YEYPJs=F_1L6_QWdKR4e5qQ@mail.gmail.com>
+Subject: Re: [PATCH 0/7] arm64: dts: renesas: r8a7795: IPMMU upstream integration
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On Wed, Nov 1, 2017 at 11:34 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> This series adds DT nodes for IPMMU instances on r8a7796 together with
+> connections to various r8a7796 on-chip devices such as Audio-DMAC, SYS-DMAC,
+> Ethernet-AVB and a bunch of multimedia devices that make use of FCP.
 
-Enable the r8a7795 ES1.x device node for IPMMU-MP1.
+Subject s/7795/7796/.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
-v4 [Simon Horman]
-* Broke out of larger patch
+Gr{oetje,eeting}s,
 
-v1 - v3 [Magnus Damm]
----
- arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi | 1 -
- 1 file changed, 1 deletion(-)
+                        Geert
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-index ae9334b25b31..78e990b7c6d1 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-@@ -31,7 +31,6 @@
- 		reg = <0 0xec680000 0 0x1000>; /* IPMMU-MP1 */
- 		renesas,ipmmu-main = <&ipmmu_mm 5>;
- 		#iommu-cells = <1>;
--		status = "disabled";
- 	};
- 
- 	ipmmu_sy: mmu@e7730000 {
--- 
-2.11.0
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
