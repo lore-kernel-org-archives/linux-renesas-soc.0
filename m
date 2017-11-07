@@ -1,86 +1,62 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:53407 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750722AbdKBLcQ (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 2 Nov 2017 07:32:16 -0400
-Subject: Re: [PATCH v2 3/5] [RFC] soc: mediatek: Use GENPD_FLAG_ACTIVE_WAKEUP
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Kevin Hilman <khilman@kernel.org>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>, linux-pm@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1509473494-19740-1-git-send-email-geert+renesas@glider.be>
- <1509473494-19740-4-git-send-email-geert+renesas@glider.be>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <81cf254c-66b9-a139-0344-81c5cb560f88@gmail.com>
-Date: Thu, 2 Nov 2017 12:32:10 +0100
-MIME-Version: 1.0
-In-Reply-To: <1509473494-19740-4-git-send-email-geert+renesas@glider.be>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH 7/8] ARM: dts: iwg20d-q7-common: Add can0 support to carrier board
+Date: Tue,  7 Nov 2017 15:10:48 +0000
+Message-Id: <1510067449-17017-8-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1510067449-17017-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1510067449-17017-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+This patch enables CAN0 interface exposed through connector J20 on the
+carrier board.
 
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+---
+ arch/arm/boot/dts/iwg20d-q7-common.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-On 10/31/2017 07:11 PM, Geert Uytterhoeven wrote:
-> Set the newly introduced GENPD_FLAG_ACTIVE_WAKEUP, which allows to
-> remove the driver's own flag-based callback.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> This must not be applied before "PM / Domain: Enable genpd users to
-> specify default active wakeup behavior" has landed upstream, hence the
-> "RFC".
-> 
-> Compile-tested only.
-> 
-> v2:
->   - New.
-> ---
->  drivers/soc/mediatek/mtk-scpsys.c | 14 ++------------
->  1 file changed, 2 insertions(+), 12 deletions(-)
-> 
+diff --git a/arch/arm/boot/dts/iwg20d-q7-common.dtsi b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
+index c865499..3e4bc4d 100644
+--- a/arch/arm/boot/dts/iwg20d-q7-common.dtsi
++++ b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
+@@ -59,6 +59,13 @@
+ 	};
+ };
+ 
++&can0 {
++	pinctrl-0 = <&can0_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
++
+ &hsusb {
+ 	status = "okay";
+ 	pinctrl-0 = <&usb0_pins>;
+@@ -90,6 +97,11 @@
+ };
+ 
+ &pfc {
++	can0_pins: can0 {
++		groups = "can0_data_d";
++		function = "can0";
++	};
++
+ 	avb_pins: avb {
+ 		groups = "avb_mdio", "avb_gmii";
+ 		function = "avb";
+-- 
+2.7.4
 
-Acked-by: Matthias Brugger <matthias.bgg@gmail.com>
-
-> diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
-> index e1ce8b1b5090aa0a..e570b6af2e6ffbdd 100644
-> --- a/drivers/soc/mediatek/mtk-scpsys.c
-> +++ b/drivers/soc/mediatek/mtk-scpsys.c
-> @@ -361,17 +361,6 @@ static int scpsys_power_off(struct generic_pm_domain *genpd)
->  	return ret;
->  }
->  
-> -static bool scpsys_active_wakeup(struct device *dev)
-> -{
-> -	struct generic_pm_domain *genpd;
-> -	struct scp_domain *scpd;
-> -
-> -	genpd = pd_to_genpd(dev->pm_domain);
-> -	scpd = container_of(genpd, struct scp_domain, genpd);
-> -
-> -	return scpd->data->active_wakeup;
-> -}
-> -
->  static void init_clks(struct platform_device *pdev, struct clk **clk)
->  {
->  	int i;
-> @@ -466,7 +455,8 @@ static struct scp *init_scp(struct platform_device *pdev,
->  		genpd->name = data->name;
->  		genpd->power_off = scpsys_power_off;
->  		genpd->power_on = scpsys_power_on;
-> -		genpd->dev_ops.active_wakeup = scpsys_active_wakeup;
-> +		if (scpd->data->active_wakeup)
-> +			genpd->flags |= GENPD_FLAG_ACTIVE_WAKEUP;
->  	}
->  
->  	return scp;
-> 
