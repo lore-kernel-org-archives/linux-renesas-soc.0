@@ -1,94 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:54540 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752716AbdK2ToN (ORCPT
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:53070 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752567AbdKGJUm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 29 Nov 2017 14:44:13 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v8 22/28] rcar-vin: add chsel information to rvin_info
-Date: Wed, 29 Nov 2017 20:43:36 +0100
-Message-Id: <20171129194342.26239-23-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20171129194342.26239-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20171129194342.26239-1-niklas.soderlund+renesas@ragnatech.se>
+        Tue, 7 Nov 2017 04:20:42 -0500
+Received: by mail-lf0-f65.google.com with SMTP id b190so13624966lfg.9
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 07 Nov 2017 01:20:42 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20171101103452.7491-6-horms+renesas@verge.net.au>
+References: <20171101103452.7491-1-horms+renesas@verge.net.au> <20171101103452.7491-6-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 7 Nov 2017 10:20:40 +0100
+Message-ID: <CAMuHMdWq4PCpVPoQb=jA9sbpJcnowDcfEM61bW6tijMoYdu5xg@mail.gmail.com>
+Subject: Re: [PATCH v4 05/15] arm64: dts: renesas: r8a7795: Point DU/VSPD via
+ FCPVD to IPMMU-VI0/1
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Magnus Damm <damm+renesas@opensource.se>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Each Gen3 SoC has a limited set of predefined routing possibilities for
-which CSI-2 device and virtual channel can be routed to which VIN
-instance. Prepare to store this information in the struct rvin_info.
+On Wed, Nov 1, 2017 at 11:34 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> From: Magnus Damm <damm+renesas@opensource.se>
+>
+> Hook up the FCPVD devices to allow use of the VSP and DU
+> together with IPMMU-VI1 and IPMMU-VI1.
+>
+> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
----
- drivers/media/platform/rcar-vin/rcar-vin.h | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 5f736a3500b6e10f..41bf24aa8a1a0aed 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -35,6 +35,9 @@
- /* Max number on VIN instances that can be in a system */
- #define RCAR_VIN_NUM 8
- 
-+/* Max number of CHSEL values for any Gen3 SoC */
-+#define RCAR_CHSEL_MAX 6
-+
- enum chip_id {
- 	RCAR_H1,
- 	RCAR_M1,
-@@ -91,6 +94,22 @@ struct rvin_graph_entity {
- 
- struct rvin_group;
- 
-+/** struct rvin_group_chsel - Map a CSI-2 receiver and channel to a CHSEL value
-+ * @csi:		VIN internal number for CSI-2 device
-+ * @chan:		Output channel of the CSI-2 receiver. Each R-Car CSI-2
-+ *			receiver has four output channels facing the VIN
-+ *			devices, each channel can carry one CSI-2 Virtual
-+ *			Channel (VC) and there are no correlation between
-+ *			output channel number and CSI-2 VC. It's up to the
-+ *			CSI-2 receiver driver to configure which VC is
-+ *			outputted on which channel, the VIN devices only
-+ *			cares about output channels.
-+ */
-+struct rvin_group_chsel {
-+	enum rvin_csi_id csi;
-+	unsigned int chan;
-+};
-+
- /**
-  * struct rvin_info - Information about the particular VIN implementation
-  * @chip:		type of VIN chip
-@@ -98,6 +117,9 @@ struct rvin_group;
-  *
-  * max_width:		max input width the VIN supports
-  * max_height:		max input height the VIN supports
-+ *
-+ * num_chsels:		number of possible chsel values for this VIN
-+ * chsels:		routing table VIN <-> CSI-2 for the chsel values
-  */
- struct rvin_info {
- 	enum chip_id chip;
-@@ -105,6 +127,9 @@ struct rvin_info {
- 
- 	unsigned int max_width;
- 	unsigned int max_height;
-+
-+	unsigned int num_chsels;
-+	struct rvin_group_chsel chsels[RCAR_VIN_NUM][RCAR_CHSEL_MAX];
- };
- 
- /**
--- 
-2.15.0
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
