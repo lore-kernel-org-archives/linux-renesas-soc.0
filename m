@@ -1,39 +1,80 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:43897 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752887AbdKNPl1 (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:54246 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753072AbdKGMsW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Nov 2017 10:41:27 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>
+        Tue, 7 Nov 2017 07:48:22 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
 Cc: Simon Horman <horms@verge.net.au>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH v2 0/2] Add can_clk function
-Date: Tue, 14 Nov 2017 15:41:15 +0000
-Message-Id: <1510674077-31136-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Magnus Damm <magnus.damm@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>, linux-pm@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 4/5] soc: rockchip: power-domain: Use GENPD_FLAG_ACTIVE_WAKEUP
+Date: Tue,  7 Nov 2017 13:48:14 +0100
+Message-Id: <1510058895-21712-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1510058895-21712-1-git-send-email-geert+renesas@glider.be>
+References: <1510058895-21712-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Dear Geert, All,
+Set the newly introduced GENPD_FLAG_ACTIVE_WAKEUP, which allows to
+remove the driver's own flag-based callback.
 
-this series adds can_clk function to r8a779[14] and r8a774[35] while keeping
-can_clk* pins inside can0_groups and can1_groups for backwards compatibility.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
+Acked-by: Heiko Stuebner <heiko@sntech.de>
+---
+Compile-tested only.
 
-Best regards,
+v3:
+  - Add Acked-by,
+  - Drop RFC status,
 
-Fabrizio Castro (2):
-  pinctrl: sh-pfc: r8a7794: Add can_clk function
-  pinctrl: sh-pfc: r8a7791: Add can_clk function
+v2:
+  - New.
+---
+ drivers/soc/rockchip/pm_domains.c | 14 ++------------
+ 1 file changed, 2 insertions(+), 12 deletions(-)
 
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 22 +++++++++++++++++++++-
- drivers/pinctrl/sh-pfc/pfc-r8a7794.c | 20 ++++++++++++++++++++
- 2 files changed, 41 insertions(+), 1 deletion(-)
-
+diff --git a/drivers/soc/rockchip/pm_domains.c b/drivers/soc/rockchip/pm_domains.c
+index 40b75748835f552c..5c342167b9db7a16 100644
+--- a/drivers/soc/rockchip/pm_domains.c
++++ b/drivers/soc/rockchip/pm_domains.c
+@@ -358,17 +358,6 @@ static void rockchip_pd_detach_dev(struct generic_pm_domain *genpd,
+ 	pm_clk_destroy(dev);
+ }
+ 
+-static bool rockchip_active_wakeup(struct device *dev)
+-{
+-	struct generic_pm_domain *genpd;
+-	struct rockchip_pm_domain *pd;
+-
+-	genpd = pd_to_genpd(dev->pm_domain);
+-	pd = container_of(genpd, struct rockchip_pm_domain, genpd);
+-
+-	return pd->info->active_wakeup;
+-}
+-
+ static int rockchip_pm_add_one_domain(struct rockchip_pmu *pmu,
+ 				      struct device_node *node)
+ {
+@@ -489,8 +478,9 @@ static int rockchip_pm_add_one_domain(struct rockchip_pmu *pmu,
+ 	pd->genpd.power_on = rockchip_pd_power_on;
+ 	pd->genpd.attach_dev = rockchip_pd_attach_dev;
+ 	pd->genpd.detach_dev = rockchip_pd_detach_dev;
+-	pd->genpd.dev_ops.active_wakeup = rockchip_active_wakeup;
+ 	pd->genpd.flags = GENPD_FLAG_PM_CLK;
++	if (pd_info->active_wakeup)
++		pd->genpd.flags |= GENPD_FLAG_ACTIVE_WAKEUP;
+ 	pm_genpd_init(&pd->genpd, NULL, false);
+ 
+ 	pmu->genpd_data.domains[id] = &pd->genpd;
 -- 
 2.7.4
