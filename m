@@ -1,84 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:54540 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752631AbdK2ToI (ORCPT
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:50680 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933095AbdKGKEy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 29 Nov 2017 14:44:08 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v8 10/28] rcar-vin: do not reset crop and compose when setting format
-Date: Wed, 29 Nov 2017 20:43:24 +0100
-Message-Id: <20171129194342.26239-11-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20171129194342.26239-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20171129194342.26239-1-niklas.soderlund+renesas@ragnatech.se>
+        Tue, 7 Nov 2017 05:04:54 -0500
+Received: by mail-lf0-f65.google.com with SMTP id a132so13763648lfa.7
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 07 Nov 2017 02:04:53 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20171101103458.7582-5-horms+renesas@verge.net.au>
+References: <20171101103458.7582-1-horms+renesas@verge.net.au> <20171101103458.7582-5-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 7 Nov 2017 11:04:52 +0100
+Message-ID: <CAMuHMdX+uvf=shN58dvxEj2UKx=qGHWRiSrqBm+U=1Fb-5Rp3g@mail.gmail.com>
+Subject: Re: [PATCH 4/7] arm64: dts: renesas: r8a7796: Point FDP1 via FCPF to IPMMU-VI0
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-It was a bad idea to reset the crop and compose settings when a new
-format is set. This would overwrite any crop/compose set by s_select and
-cause unexpected behaviors, remove it. Also fold the reset helper in to
-the only remaining caller.
+On Wed, Nov 1, 2017 at 11:34 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> Hook up the FCPF devices to allow use of FDP1 with IPMMU-VI0.
+>
+> Based on work by Magnus Damm for the r8a7795.
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
----
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 21 +++++++--------------
- 1 file changed, 7 insertions(+), 14 deletions(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 1c5e7f6d5b963740..254fa1c8770275a5 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -90,17 +90,6 @@ static u32 rvin_format_sizeimage(struct v4l2_pix_format *pix)
-  * V4L2
-  */
- 
--static void rvin_reset_crop_compose(struct rvin_dev *vin)
--{
--	vin->crop.top = vin->crop.left = 0;
--	vin->crop.width = vin->source.width;
--	vin->crop.height = vin->source.height;
--
--	vin->compose.top = vin->compose.left = 0;
--	vin->compose.width = vin->format.width;
--	vin->compose.height = vin->format.height;
--}
--
- static int rvin_reset_format(struct rvin_dev *vin)
- {
- 	struct v4l2_subdev_format fmt = {
-@@ -147,7 +136,13 @@ static int rvin_reset_format(struct rvin_dev *vin)
- 		break;
- 	}
- 
--	rvin_reset_crop_compose(vin);
-+	vin->crop.top = vin->crop.left = 0;
-+	vin->crop.width = mf->width;
-+	vin->crop.height = mf->height;
-+
-+	vin->compose.top = vin->compose.left = 0;
-+	vin->compose.width = mf->width;
-+	vin->compose.height = mf->height;
- 
- 	vin->format.bytesperline = rvin_format_bytesperline(&vin->format);
- 	vin->format.sizeimage = rvin_format_sizeimage(&vin->format);
-@@ -317,8 +312,6 @@ static int rvin_s_fmt_vid_cap(struct file *file, void *priv,
- 
- 	vin->format = f->fmt.pix;
- 
--	rvin_reset_crop_compose(vin);
--
- 	return 0;
- }
- 
--- 
-2.15.0
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
