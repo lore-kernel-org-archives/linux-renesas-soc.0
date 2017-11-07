@@ -1,57 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:24915 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754232AbdKMRol (ORCPT
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:50412 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964795AbdKGKIR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Nov 2017 12:44:41 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
+        Tue, 7 Nov 2017 05:08:17 -0500
+Received: by mail-qt0-f196.google.com with SMTP id d9so14490586qtd.7
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 07 Nov 2017 02:08:17 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <20171101103452.7491-16-horms+renesas@verge.net.au>
+References: <20171101103452.7491-1-horms+renesas@verge.net.au> <20171101103452.7491-16-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 7 Nov 2017 11:08:16 +0100
+Message-ID: <CAMuHMdX5hUzb1UZL6QxhaaHh-Og_7UxCcJ7CjnV87qf7=wvFaQ@mail.gmail.com>
+Subject: Re: [PATCH v4 15/15] arm64: dts: renesas: r8a7795-es1: Enable IPMMU-MP1
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH  3/3] ARM: dts: iwg20d-q7: Enable PCIe Controller
-Date: Mon, 13 Nov 2017 17:43:12 +0000
-Message-Id: <1510594992-63806-4-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1510594992-63806-1-git-send-email-biju.das@bp.renesas.com>
-References: <1510594992-63806-1-git-send-email-biju.das@bp.renesas.com>
+        Magnus Damm <damm+renesas@opensource.se>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable PCIe Controller & set PCIe bus clock frequency.
+On Wed, Nov 1, 2017 at 11:34 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> From: Magnus Damm <damm+renesas@opensource.se>
+>
+> Enable the r8a7795 ES1.x device node for IPMMU-MP1.
+>
+> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
-This patch has dependency on below patch
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-* ARM: dts: iwg20d-q7-common: Add can0 support to carrier board
-https://patchwork.kernel.org/patch/10046879/
+Gr{oetje,eeting}s,
 
- arch/arm/boot/dts/iwg20d-q7-common.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+                        Geert
 
-diff --git a/arch/arm/boot/dts/iwg20d-q7-common.dtsi b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-index 3e4bc4d..54470c6 100644
---- a/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-+++ b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-@@ -96,6 +96,14 @@
- 	pinctrl-names = "default";
- };
- 
-+&pcie_bus_clk {
-+	clock-frequency = <100000000>;
-+};
-+
-+&pciec {
-+	status = "okay";
-+};
-+
- &pfc {
- 	can0_pins: can0 {
- 		groups = "can0_data_d";
--- 
-1.9.1
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
