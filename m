@@ -1,51 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:33850 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752966AbdKBMrl (ORCPT
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:53321 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754768AbdKGI3u (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 2 Nov 2017 08:47:41 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH RFT 1/5] i2c: sh_mobile: remove redundant initialization
-Date: Thu,  2 Nov 2017 13:47:27 +0100
-Message-Id: <20171102124731.10484-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20171102124731.10484-1-wsa+renesas@sang-engineering.com>
-References: <20171102124731.10484-1-wsa+renesas@sang-engineering.com>
+        Tue, 7 Nov 2017 03:29:50 -0500
+Received: by mail-qk0-f195.google.com with SMTP id y23so14208964qkb.10
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 07 Nov 2017 00:29:49 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <20171101103423.7334-2-horms+renesas@verge.net.au>
+References: <20171101103423.7334-1-horms+renesas@verge.net.au> <20171101103423.7334-2-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 7 Nov 2017 09:29:48 +0100
+Message-ID: <CAMuHMdV90pcqiSfg-MvZ2=Z417rPOYcOMSy+XDKAV9OjiCZQ0A@mail.gmail.com>
+Subject: Re: [PATCH 1/2] iommu/ipmmu-vmsa: Add r8a779(70|95) DT bindings
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Joerg Roedel <joro@8bytes.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        iommu@lists.linux-foundation.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Following the documentation, we initialize the HW before each START in
-start_ch(). No need to do the same in activate_ch().
+On Wed, Nov 1, 2017 at 11:34 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> Update the IPMMU DT binding documentation to include the
+> r8a77970 (R-Car V3M) and r8a77995 (R-Car D3) compat strings.
+>
+> Based on work for r8a7796 by Magnus Damm.
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/i2c/busses/i2c-sh_mobile.c | 10 ----------
- 1 file changed, 10 deletions(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/i2c/busses/i2c-sh_mobile.c b/drivers/i2c/busses/i2c-sh_mobile.c
-index 6f2aaeb7c4fa15..9d073e99c7e72d 100644
---- a/drivers/i2c/busses/i2c-sh_mobile.c
-+++ b/drivers/i2c/busses/i2c-sh_mobile.c
-@@ -303,16 +303,6 @@ static void activate_ch(struct sh_mobile_i2c_data *pd)
- 	/* Wake up device and enable clock */
- 	pm_runtime_get_sync(pd->dev);
- 	clk_prepare_enable(pd->clk);
--
--	/* Enable channel and configure rx ack */
--	iic_set_clr(pd, ICCR, ICCR_ICE, 0);
--
--	/* Mask all interrupts */
--	iic_wr(pd, ICIC, 0);
--
--	/* Set the clock */
--	iic_wr(pd, ICCL, pd->iccl & 0xff);
--	iic_wr(pd, ICCH, pd->icch & 0xff);
- }
- 
- static void deactivate_ch(struct sh_mobile_i2c_data *pd)
--- 
-2.11.0
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
