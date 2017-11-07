@@ -1,40 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:53734 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935056AbdKPNoZ (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:54470 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753086AbdKGMsX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Nov 2017 08:44:25 -0500
+        Tue, 7 Nov 2017 07:48:23 -0500
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>, linux-pm@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4/4] arm64: dts: renesas: r8a7795-salvator-xs: Add SoC name to file header
-Date: Thu, 16 Nov 2017 14:44:21 +0100
-Message-Id: <1510839861-12303-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1510839861-12303-1-git-send-email-geert+renesas@glider.be>
-References: <1510839861-12303-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v3 3/5] soc: mediatek: Use GENPD_FLAG_ACTIVE_WAKEUP
+Date: Tue,  7 Nov 2017 13:48:13 +0100
+Message-Id: <1510058895-21712-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1510058895-21712-1-git-send-email-geert+renesas@glider.be>
+References: <1510058895-21712-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document clearly which SoC this DTS applies to, to distinguish from
-Salvator-XS boards equipped with other SoCs.
+Set the newly introduced GENPD_FLAG_ACTIVE_WAKEUP, which allows to
+remove the driver's own flag-based callback.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
+Acked-by: Matthias Brugger <matthias.bgg@gmail.com>
 ---
- arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Compile-tested only.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
-index 7675de5d4f2cb139..8b50ceb746e814f7 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
-@@ -1,5 +1,5 @@
- /*
-- * Device Tree Source for the Salvator-X 2nd version board
-+ * Device Tree Source for the Salvator-X 2nd version board with R-Car H3 ES2.0
-  *
-  * Copyright (C) 2015-2017 Renesas Electronics Corp.
-  *
+v3:
+  - Add Acked-by,
+  - Drop RFC status,
+
+v2:
+  - New.
+---
+ drivers/soc/mediatek/mtk-scpsys.c | 14 ++------------
+ 1 file changed, 2 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
+index e1ce8b1b5090aa0a..e570b6af2e6ffbdd 100644
+--- a/drivers/soc/mediatek/mtk-scpsys.c
++++ b/drivers/soc/mediatek/mtk-scpsys.c
+@@ -361,17 +361,6 @@ static int scpsys_power_off(struct generic_pm_domain *genpd)
+ 	return ret;
+ }
+ 
+-static bool scpsys_active_wakeup(struct device *dev)
+-{
+-	struct generic_pm_domain *genpd;
+-	struct scp_domain *scpd;
+-
+-	genpd = pd_to_genpd(dev->pm_domain);
+-	scpd = container_of(genpd, struct scp_domain, genpd);
+-
+-	return scpd->data->active_wakeup;
+-}
+-
+ static void init_clks(struct platform_device *pdev, struct clk **clk)
+ {
+ 	int i;
+@@ -466,7 +455,8 @@ static struct scp *init_scp(struct platform_device *pdev,
+ 		genpd->name = data->name;
+ 		genpd->power_off = scpsys_power_off;
+ 		genpd->power_on = scpsys_power_on;
+-		genpd->dev_ops.active_wakeup = scpsys_active_wakeup;
++		if (scpd->data->active_wakeup)
++			genpd->flags |= GENPD_FLAG_ACTIVE_WAKEUP;
+ 	}
+ 
+ 	return scp;
 -- 
 2.7.4
