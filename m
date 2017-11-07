@@ -1,46 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f177.google.com ([209.85.216.177]:34697 "EHLO
-        mail-qt0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751495AbdK1I56 (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:22075 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S965140AbdKGPLW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Nov 2017 03:57:58 -0500
-MIME-Version: 1.0
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 28 Nov 2017 09:57:56 +0100
-Message-ID: <CAMuHMdXf5BJR6rMEjyomKEJTx+fEV2c4XoPN-_tf91Zs_Eajdw@mail.gmail.com>
-Subject: [bbb-overlays] Fixing overlay configfs for v4.15-rc1
-To: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
-Cc: Frank Rowand <frowand.list@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 7 Nov 2017 10:11:22 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH 8/8] ARM: dts: iwg20d-q7-dbcm-ca: Add can1 support to camera DB
+Date: Tue,  7 Nov 2017 15:10:49 +0000
+Message-Id: <1510067449-17017-9-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1510067449-17017-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1510067449-17017-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Pantelis,
+CAN1 interface is exposed via connector J3 found on the camera daughter
+board. This patch enables can1 DT node from within the daughter board
+specific dtsi.
 
-Thanks to the rework of the overlay code in v4.15-rc1, the current overlay
-configfs code no longer applies cleanly (that's what I call an understatement
-;-).
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+---
+ arch/arm/boot/dts/iwg20d-q7-dbcm-ca.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-I have rebased my topic/overlays and topic/renesas-overlays branches on top
-of v4.15-rc1.  Feel free to have a look, it seems to work.
-
-The old versions (for v4.14) are still available in topic/overlays-v4.14
-resp. topic/renesas-overlays-v4.14.
-
-All topic branches mentioned above can be found in my repo at:
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/iwg20d-q7-dbcm-ca.dtsi b/arch/arm/boot/dts/iwg20d-q7-dbcm-ca.dtsi
+index 4db18f2..476273b 100644
+--- a/arch/arm/boot/dts/iwg20d-q7-dbcm-ca.dtsi
++++ b/arch/arm/boot/dts/iwg20d-q7-dbcm-ca.dtsi
+@@ -32,6 +32,13 @@
+ 	};
+ };
+ 
++&can1 {
++	pinctrl-0 = <&can1_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
++
+ &du {
+ 	pinctrl-0 = <&du_pins>;
+ 	pinctrl-names = "default";
+@@ -94,6 +101,11 @@
+ };
+ 
+ &pfc {
++	can1_pins: can1 {
++		groups = "can1_data_d";
++		function = "can1";
++	};
++
+ 	du_pins: du {
+ 		groups = "du_rgb888", "du_sync", "du_oddf", "du_clk_out_0";
+ 		function = "du";
+-- 
+2.7.4
