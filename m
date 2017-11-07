@@ -1,106 +1,212 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:48231 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751406AbdKJKAr (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:62803 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S934564AbdKGPLD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Nov 2017 05:00:47 -0500
-MIME-Version: 1.0
-In-Reply-To: <1510067449-17017-3-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1510067449-17017-1-git-send-email-fabrizio.castro@bp.renesas.com> <1510067449-17017-3-git-send-email-fabrizio.castro@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 10 Nov 2017 11:00:46 +0100
-Message-ID: <CAMuHMdV=8rAE5z2VmCjL-M_MXY6TsKM_+0c-bsqDsjDZYWU1FA@mail.gmail.com>
-Subject: Re: [PATCH 2/8] pinctrl: sh-pfc: r8a7745: Add CAN[01] support
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Tue, 7 Nov 2017 10:11:03 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Simon Horman <horms@verge.net.au>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: [PATCH 2/8] pinctrl: sh-pfc: r8a7745: Add CAN[01] support
+Date: Tue,  7 Nov 2017 15:10:43 +0000
+Message-Id: <1510067449-17017-3-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1510067449-17017-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1510067449-17017-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Fabrizio,
+This patch adds PFC CAN0 and CAN1 pin groups and functions, enabling CAN
+bus on the RZ/G1E.
 
-On Tue, Nov 7, 2017 at 4:10 PM, Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
-> This patch adds PFC CAN0 and CAN1 pin groups and functions, enabling CAN
-> bus on the RZ/G1E.
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+---
+ drivers/pinctrl/sh-pfc/pfc-r8a7794.c | 146 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 146 insertions(+)
 
-Thanks for your patch!
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in sh-pfc-for-v4.16.
-
-> +static const char * const can0_groups[] = {
-> +       "can0_data",
-> +       "can0_data_b",
-> +       "can0_data_c",
-> +       "can0_data_d",
-> +       "can_clk",
-> +       "can_clk_b",
-> +       "can_clk_c",
-> +       "can_clk_d",
-> +};
-> +
-> +static const char * const can1_groups[] = {
-> +       "can1_data",
-> +       "can1_data_b",
-> +       "can1_data_c",
-> +       "can1_data_d",
-> +       "can_clk",
-> +       "can_clk_b",
-> +       "can_clk_c",
-> +       "can_clk_d",
-> +};
-
-> @@ -4102,6 +4246,8 @@ static const char * const vin1_groups[] = {
->  static const struct sh_pfc_function pinmux_functions[] = {
->         SH_PFC_FUNCTION(audio_clk),
->         SH_PFC_FUNCTION(avb),
-> +       SH_PFC_FUNCTION(can0),
-> +       SH_PFC_FUNCTION(can1),
->         SH_PFC_FUNCTION(du0),
->         SH_PFC_FUNCTION(du1),
->         SH_PFC_FUNCTION(eth),
-
-One minor nit: on R-Car Gen3, there is a separate function for can_clk,
-which is cleaner, as it reduces duplication, and allows for independent
-configuration.
-
-Consider e.g. the case where you want to use both can0 and can1, which
-means you have to add "can_clk" to exactly one of the two pin nodes in DT:
-
-        can0_pins: can0 {
-                groups = "can0_data", "can_clk";
-                function = "can0";
-        };
-
-        can1_pins: can1 {
-                groups = "can0_data";
-                function = "can0";
-        };
-
-However, as can_clk is integrated in both the can0 and can1 groups on RZ/G1M
-(and R-Car M2-W/N, V2H, and M1A), I'll let this pass through.
-
-You may want to consider adding the separate group anyway (later), to
-provide a simpler upgrade path.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
+index 333a3470..e5b3d5f 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
+@@ -1608,6 +1608,116 @@ static const unsigned int avb_gmii_mux[] = {
+ 	AVB_TX_EN_MARK, AVB_TX_ER_MARK, AVB_TX_CLK_MARK,
+ 	AVB_COL_MARK,
+ };
++
++/* - CAN -------------------------------------------------------------------- */
++static const unsigned int can0_data_pins[] = {
++	/* TX, RX */
++	RCAR_GP_PIN(6, 15), RCAR_GP_PIN(6, 14),
++};
++
++static const unsigned int can0_data_mux[] = {
++	CAN0_TX_MARK, CAN0_RX_MARK,
++};
++
++static const unsigned int can0_data_b_pins[] = {
++	/* TX, RX */
++	RCAR_GP_PIN(3, 16), RCAR_GP_PIN(3, 15),
++};
++
++static const unsigned int can0_data_b_mux[] = {
++	CAN0_TX_B_MARK, CAN0_RX_B_MARK,
++};
++
++static const unsigned int can0_data_c_pins[] = {
++	/* TX, RX */
++	RCAR_GP_PIN(2, 17), RCAR_GP_PIN(2, 16),
++};
++
++static const unsigned int can0_data_c_mux[] = {
++	CAN0_TX_C_MARK, CAN0_RX_C_MARK,
++};
++
++static const unsigned int can0_data_d_pins[] = {
++	/* TX, RX */
++	RCAR_GP_PIN(5, 12), RCAR_GP_PIN(5, 11),
++};
++
++static const unsigned int can0_data_d_mux[] = {
++	CAN0_TX_D_MARK, CAN0_RX_D_MARK,
++};
++
++static const unsigned int can1_data_pins[] = {
++	/* TX, RX */
++	RCAR_GP_PIN(6, 25), RCAR_GP_PIN(6, 24),
++};
++
++static const unsigned int can1_data_mux[] = {
++	CAN1_TX_MARK, CAN1_RX_MARK,
++};
++
++static const unsigned int can1_data_b_pins[] = {
++	/* TX, RX */
++	RCAR_GP_PIN(1, 2), RCAR_GP_PIN(1, 1),
++};
++
++static const unsigned int can1_data_b_mux[] = {
++	CAN1_TX_B_MARK, CAN1_RX_B_MARK,
++};
++
++static const unsigned int can1_data_c_pins[] = {
++	/* TX, RX */
++	RCAR_GP_PIN(5, 6), RCAR_GP_PIN(5, 5),
++};
++
++static const unsigned int can1_data_c_mux[] = {
++	CAN1_TX_C_MARK, CAN1_RX_C_MARK,
++};
++
++static const unsigned int can1_data_d_pins[] = {
++	/* TX, RX */
++	RCAR_GP_PIN(3, 31), RCAR_GP_PIN(3, 30),
++};
++
++static const unsigned int can1_data_d_mux[] = {
++	CAN1_TX_D_MARK, CAN1_RX_D_MARK,
++};
++
++static const unsigned int can_clk_pins[] = {
++	/* CLK */
++	RCAR_GP_PIN(3, 31),
++};
++
++static const unsigned int can_clk_mux[] = {
++	CAN_CLK_MARK,
++};
++
++static const unsigned int can_clk_b_pins[] = {
++	/* CLK */
++	RCAR_GP_PIN(1, 23),
++};
++
++static const unsigned int can_clk_b_mux[] = {
++	CAN_CLK_B_MARK,
++};
++
++static const unsigned int can_clk_c_pins[] = {
++	/* CLK */
++	RCAR_GP_PIN(1, 0),
++};
++
++static const unsigned int can_clk_c_mux[] = {
++	CAN_CLK_C_MARK,
++};
++
++static const unsigned int can_clk_d_pins[] = {
++	/* CLK */
++	RCAR_GP_PIN(5, 0),
++};
++
++static const unsigned int can_clk_d_mux[] = {
++	CAN_CLK_D_MARK,
++};
++
+ /* - DU --------------------------------------------------------------------- */
+ static const unsigned int du0_rgb666_pins[] = {
+ 	/* R[7:2], G[7:2], B[7:2] */
+@@ -3459,6 +3569,18 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(avb_mdio),
+ 	SH_PFC_PIN_GROUP(avb_mii),
+ 	SH_PFC_PIN_GROUP(avb_gmii),
++	SH_PFC_PIN_GROUP(can0_data),
++	SH_PFC_PIN_GROUP(can0_data_b),
++	SH_PFC_PIN_GROUP(can0_data_c),
++	SH_PFC_PIN_GROUP(can0_data_d),
++	SH_PFC_PIN_GROUP(can1_data),
++	SH_PFC_PIN_GROUP(can1_data_b),
++	SH_PFC_PIN_GROUP(can1_data_c),
++	SH_PFC_PIN_GROUP(can1_data_d),
++	SH_PFC_PIN_GROUP(can_clk),
++	SH_PFC_PIN_GROUP(can_clk_b),
++	SH_PFC_PIN_GROUP(can_clk_c),
++	SH_PFC_PIN_GROUP(can_clk_d),
+ 	SH_PFC_PIN_GROUP(du0_rgb666),
+ 	SH_PFC_PIN_GROUP(du0_rgb888),
+ 	SH_PFC_PIN_GROUP(du0_clk0_out),
+@@ -3731,6 +3853,28 @@ static const char * const avb_groups[] = {
+ 	"avb_gmii",
+ };
+ 
++static const char * const can0_groups[] = {
++	"can0_data",
++	"can0_data_b",
++	"can0_data_c",
++	"can0_data_d",
++	"can_clk",
++	"can_clk_b",
++	"can_clk_c",
++	"can_clk_d",
++};
++
++static const char * const can1_groups[] = {
++	"can1_data",
++	"can1_data_b",
++	"can1_data_c",
++	"can1_data_d",
++	"can_clk",
++	"can_clk_b",
++	"can_clk_c",
++	"can_clk_d",
++};
++
+ static const char * const du0_groups[] = {
+ 	"du0_rgb666",
+ 	"du0_rgb888",
+@@ -4102,6 +4246,8 @@ static const char * const vin1_groups[] = {
+ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(audio_clk),
+ 	SH_PFC_FUNCTION(avb),
++	SH_PFC_FUNCTION(can0),
++	SH_PFC_FUNCTION(can1),
+ 	SH_PFC_FUNCTION(du0),
+ 	SH_PFC_FUNCTION(du1),
+ 	SH_PFC_FUNCTION(eth),
+-- 
+2.7.4
