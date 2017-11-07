@@ -1,54 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:44333 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753648AbdKPDQb (ORCPT
+Received: from mail-qt0-f180.google.com ([209.85.216.180]:43349 "EHLO
+        mail-qt0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755762AbdKGLJ3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Nov 2017 22:16:31 -0500
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Tue, 7 Nov 2017 06:09:29 -0500
+MIME-Version: 1.0
+In-Reply-To: <TY1PR06MB0895D27B9C7F2D3B3113654EC0460@TY1PR06MB0895.apcprd06.prod.outlook.com>
+References: <1507539981-4193-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <CAMuHMdUprE7QuXF_sX47JyrvuZXhXnQFufy4OHeJ5ExwwoogKw@mail.gmail.com> <TY1PR06MB0895D27B9C7F2D3B3113654EC0460@TY1PR06MB0895.apcprd06.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 7 Nov 2017 12:09:27 +0100
+Message-ID: <CAMuHMdXPSUmNiFF7gmkWng5OA_U4DUF+4uohjkjvuMPwgffj-g@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: iwg20d-q7: Add support for ttySC3
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Chris Paterson <Chris.Paterson2@renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
         Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] pinctrl: sh-pfc: r8a7795-es1: Fix MOD_SEL1 bit[25:24] to 0x3 when using STP_ISEN_1_D
-Date: Thu, 16 Nov 2017 12:16:00 +0900
-Message-Id: <1510802161-30646-1-git-send-email-ykaneko0929@gmail.com>
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Biju Das <biju.das@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Hi Fabrizio,
 
-This patch fixes the implementation incorrect of MOD_SEL1 bit[25:24]
-value when STP_ISEN_1_D pin function is selected for IPSR16 bit[27:24].
+On Mon, Oct 23, 2017 at 3:25 PM, Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+>> > > --- a/arch/arm/boot/dts/iwg20d-q7-common.dtsi
+>> > > +++ b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
+>> > > @@ -11,6 +11,7 @@
+>> > >  / {
+>> > >         aliases {
+>> > >                 serial0 = &scif0;
+>> > > +               serial3 = &scifb1;
+>> >
+>> > Given this port is not labeled "serial3", but called "data uart", you may want
+>> > to add a comment to avoid confusion:
+>>
+>> It's a little bit confusing, isn't it? The lines related to such interface are named as UART0_x on the carrier board schematic, the section
+>> of the schematic that contains the header is named "data uart header", and the board documentation names it explicitly as "UART 3 -
+>> /dev/ttySC3 (SCIFB1)".
 
-This is a correction to the incorrect implementation of MOD_SEL register
-pin assignment for R8A7795 SoC specification of R-Car Gen3 Hardware
-User's Manual Rev.0.51E or later.
+And you cannot use "serial0" (to match "UART0"), as that's already in use
+for the SOM...
 
-Fixes: 0b0ffc96dbe3 ("pinctrl: sh-pfc: Initial R8A7795 PFC support)
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
----
+>> I don't think there is anything we can do to make this easier for the user really, is there? :D
+>> If we decide to add a comment to serial 3, I guess we need to be consistent and add comments for the other serial interfaces too.
+>> If you still prefer having a comment there I'll send a v2 and patch(es) for adding comments to the other interfaces, just let me know.
+>
+> Any thoughts about this?
 
-This patch is based on the for-next branch of linux-pinctrl tree.
+Making life easier for the user is good.
+Consistency is also good.
 
- drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I have no strong feelings about this, so do as you please...
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
-index 1d4d84f..292e35d 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
-@@ -1397,7 +1397,7 @@ enum {
- 	PINMUX_IPSR_MSEL(IP16_27_24,	AUDIO_CLKOUT_B,		SEL_ADG_1),
- 	PINMUX_IPSR_MSEL(IP16_27_24,	SSI_SCK2_B,		SEL_SSI_1),
- 	PINMUX_IPSR_MSEL(IP16_27_24,	TS_SDEN1_D,		SEL_TSIF1_3),
--	PINMUX_IPSR_MSEL(IP16_27_24,	STP_ISEN_1_D,		SEL_SSP1_1_2),
-+	PINMUX_IPSR_MSEL(IP16_27_24,	STP_ISEN_1_D,		SEL_SSP1_1_3),
- 	PINMUX_IPSR_MSEL(IP16_27_24,	STP_OPWM_0_E,		SEL_SSP1_0_4),
- 	PINMUX_IPSR_MSEL(IP16_27_24,	RIF3_D0_B,		SEL_DRIF3_1),
- 	PINMUX_IPSR_MSEL(IP16_27_24,	TCLK2_B,		SEL_TIMER_TMU_1),
--- 
-1.9.1
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
