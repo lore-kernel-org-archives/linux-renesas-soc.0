@@ -1,66 +1,105 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from cloudserver094114.home.net.pl ([79.96.170.134]:60926 "EHLO
-        cloudserver094114.home.net.pl" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752358AbdKHARc (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:54482 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753091AbdKGMsX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Nov 2017 19:17:32 -0500
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Simon Horman <horms@verge.net.au>,
+        Tue, 7 Nov 2017 07:48:23 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Matthias Brugger <matthias.bgg@gmail.com>,
         Heiko Stuebner <heiko@sntech.de>, linux-pm@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
         linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/5] PM / Domains: Remove gpd_dev_ops.active_wakeup() callback
-Date: Wed, 08 Nov 2017 01:17:27 +0100
-Message-ID: <2130215.VAlC8oaDc3@aspire.rjw.lan>
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 5/5] PM / Domains: Remove gpd_dev_ops.active_wakeup() callback
+Date: Tue,  7 Nov 2017 13:48:15 +0100
+Message-Id: <1510058895-21712-6-git-send-email-geert+renesas@glider.be>
 In-Reply-To: <1510058895-21712-1-git-send-email-geert+renesas@glider.be>
 References: <1510058895-21712-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tuesday, November 7, 2017 1:48:10 PM CET Geert Uytterhoeven wrote:
-> 	Hi Rafael, Ulf, Kevin,
-> 
-> It is quite common for PM Domains to require slave devices to be kept
-> active during system suspend if they are to be used as wakeup sources.
-> To enable this, currently each PM Domain or driver has to provide its
-> own gpd_dev_ops.active_wakeup() callback.
-> 
-> All existing callbacks either return always true, or a fixed value
-> depending on the PM Domain.
-> 
-> Hence this patch series simplifies active wakeup handling by replacing
-> the callback by a flag:
->   - Patch 1 adds a new new flag GENPD_FLAG_ACTIVE_WAKEUP, to be set by
->     PM Domain drivers that want to use the new handling,
->   - Patches 2-4 convert all existing users of the callback to the new
->     flag,
->   - Patch 5 removes the callback.
-> 
-> This series was extracted from "[PATCH 00/10] PM / Domain: renesas: Fix
-> active wakeup behavior", and retains only PM Domain changes to existing
-> drivers.
-> 
-> Changes compared to v2:
->   - Add Acked-by, Reviewed-by,
->   - Drop RFC status from dependent patches, as everything can go in
->     through the pm tree.
-> 
-> Changes compared to v1 (most suggested by Ulf):
->   - Use the flag in se instead of setting up an "always true" callback,
->   - Convert the mediatek and rockchip PM Domain drivers,
->   - Remove the callback.
-> 
-> Thanks for applying for v4.15!
+There are no more users left of the gpd_dev_ops.active_wakeup()
+callback.  All have been converted to GENPD_FLAG_ACTIVE_WAKEUP.
+Hence remove the callback.
 
-Queued up for 4.15, thanks!
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
+Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+---
+v3:
+  - Add Acked-by, Reviewed-by,
+  - Drop RFC status,
 
-Rafael
+v2:
+  - New.
+---
+ drivers/base/power/domain.c | 14 +++-----------
+ include/linux/pm_domain.h   |  1 -
+ 2 files changed, 3 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+index c5172d70b742f288..8768e56ecf101203 100644
+--- a/drivers/base/power/domain.c
++++ b/drivers/base/power/domain.c
+@@ -864,14 +864,6 @@ static bool genpd_present(const struct generic_pm_domain *genpd)
+ 
+ #ifdef CONFIG_PM_SLEEP
+ 
+-static bool genpd_dev_active_wakeup(const struct generic_pm_domain *genpd,
+-				    struct device *dev)
+-{
+-	if (genpd_is_active_wakeup(genpd))
+-		return true;
+-	return GENPD_DEV_CALLBACK(genpd, bool, active_wakeup, dev);
+-}
+-
+ /**
+  * genpd_sync_power_off - Synchronously power off a PM domain and its masters.
+  * @genpd: PM domain to power off, if possible.
+@@ -976,7 +968,7 @@ static bool resume_needed(struct device *dev,
+ 	if (!device_can_wakeup(dev))
+ 		return false;
+ 
+-	active_wakeup = genpd_dev_active_wakeup(genpd, dev);
++	active_wakeup = genpd_is_active_wakeup(genpd);
+ 	return device_may_wakeup(dev) ? active_wakeup : !active_wakeup;
+ }
+ 
+@@ -1045,7 +1037,7 @@ static int genpd_finish_suspend(struct device *dev, bool poweroff)
+ 	if (IS_ERR(genpd))
+ 		return -EINVAL;
+ 
+-	if (dev->power.wakeup_path && genpd_dev_active_wakeup(genpd, dev))
++	if (dev->power.wakeup_path && genpd_is_active_wakeup(genpd))
+ 		return 0;
+ 
+ 	if (poweroff)
+@@ -1100,7 +1092,7 @@ static int genpd_resume_noirq(struct device *dev)
+ 	if (IS_ERR(genpd))
+ 		return -EINVAL;
+ 
+-	if (dev->power.wakeup_path && genpd_dev_active_wakeup(genpd, dev))
++	if (dev->power.wakeup_path && genpd_is_active_wakeup(genpd))
+ 		return 0;
+ 
+ 	genpd_lock(genpd);
+diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+index 28c24c58d479e3b4..04dbef9847d3ad3b 100644
+--- a/include/linux/pm_domain.h
++++ b/include/linux/pm_domain.h
+@@ -36,7 +36,6 @@ struct dev_power_governor {
+ struct gpd_dev_ops {
+ 	int (*start)(struct device *dev);
+ 	int (*stop)(struct device *dev);
+-	bool (*active_wakeup)(struct device *dev);
+ };
+ 
+ struct genpd_power_state {
+-- 
+2.7.4
