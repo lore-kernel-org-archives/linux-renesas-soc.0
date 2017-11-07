@@ -1,62 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:40276 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753376AbdKNJAe (ORCPT
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:48984 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752567AbdKGJV1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Nov 2017 04:00:34 -0500
-Date: Tue, 14 Nov 2017 10:00:14 +0100
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Geert Uytterhoeven <geert@glider.be>
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [GIT PULL FOR renesas-drivers] arm64: dts: renesas: r8a7795: IPMMU
- upstream integration
-Message-ID: <20171114090013.dqlmb56ib2tvqbyx@verge.net.au>
+        Tue, 7 Nov 2017 04:21:27 -0500
+Received: by mail-lf0-f66.google.com with SMTP id r135so13635586lfe.5
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 07 Nov 2017 01:21:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+In-Reply-To: <20171101103452.7491-7-horms+renesas@verge.net.au>
+References: <20171101103452.7491-1-horms+renesas@verge.net.au> <20171101103452.7491-7-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 7 Nov 2017 10:21:24 +0100
+Message-ID: <CAMuHMdVxdMGVDeb+yuWgUnOHfYBRgdeUo0Ehgnd=b+oDG+gkZA@mail.gmail.com>
+Subject: Re: [PATCH v4 06/15] arm64: dts: renesas: r8a7795-es1: Point DU/VSPD
+ via FCPVD to IPMMU-VI0
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Magnus Damm <damm+renesas@opensource.se>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+On Wed, Nov 1, 2017 at 11:34 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> From: Magnus Damm <damm+renesas@opensource.se>
+>
+> Hook up the FCPVD devices to allow use of the VSP and DU
+> together with IPMMU-VI0.
+>
+> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-please consider pulling this series which adds IPMMU support to the
-DT for the r8a7795 (R-Car H3) SoC.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This is v5 of these changes.
+Gr{oetje,eeting}s,
 
-They are based on renesas-devel-20171110-v4.14-rc8
+                        Geert
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-The following changes since commit ce17f313172b05ca21422a9b2c335808eef883cc:
-
-  Merge branches 'arm64-dt-for-v4.16', 'dt-for-v4.16' and 'soc-for-v4.16' into devel (2017-11-10 10:32:03 +0100)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/ipmmu-dt-r8a7795-v5
-
-for you to fetch changes up to 1589f342427ddd9cd4d0d11171c74ab9a1b31530:
-
-  arm64: dts: renesas: r8a7795-es1: Enable IPMMU-MP1 (2017-11-10 12:29:29 +0100)
-
-----------------------------------------------------------------
-Magnus Damm (15):
-      arm64: dts: renesas: r8a7795: Add IPMMU device nodes
-      arm64: dts: renesas: r8a7795-es1: Add IPMMU device nodes
-      arm64: dts: renesas: r8a7795: Tie SYS-DMAC to IPMMU-DS0/1
-      arm64: dts: renesas: r8a7795: Tie Audio-DMAC to IPMMU-MP0/1
-      arm64: dts: renesas: r8a7795: Point DU/VSPD via FCPVD to IPMMU-VI0/1
-      arm64: dts: renesas: r8a7795-es1: Point DU/VSPD via FCPVD to IPMMU-VI0
-      arm64: dts: renesas: r8a7795: Point FDP1 via FCPF to IPMMU-VP0/1
-      arm64: dts: renesas: r8a7795-es1: Point FDP1 via FCPF to IPMMU-VP0
-      arm64: dts: renesas: r8a7795: Point VSPBC/VSPBD via FCPVB to IPMMU-VP0/1
-      arm64: dts: renesas: r8a7795: Point VSPI via FCPVI to IPMMU-VP0/1
-      arm64: dts: renesas: r8a7795-es1: Point VSPI via FCPVI to IPMMU-VP
-      arm64: dts: renesas: r8a7795: Connect Ethernet-AVB to IPMMU-DS0
-      arm64: dts: renesas: r8a7795: Connect SATA to IPMMU-HC
-      arm64: dts: renesas: r8a7795: Enable IPMMU-VI0, VP1, DS0, DS1 and MM
-      arm64: dts: renesas: r8a7795-es1: Enable IPMMU-MP1
-
- arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi |  81 ++++++++++++
- arch/arm64/boot/dts/renesas/r8a7795.dtsi     | 191 +++++++++++++++++++++++++++
- 2 files changed, 272 insertions(+)
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
