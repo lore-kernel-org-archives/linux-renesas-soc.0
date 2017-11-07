@@ -1,67 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:53751 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753296AbdKMPqz (ORCPT
+Received: from mail-lf0-f48.google.com ([209.85.215.48]:47640 "EHLO
+        mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933865AbdKGKAx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Nov 2017 10:46:55 -0500
-Received: by mail-lf0-f66.google.com with SMTP id 73so4532730lfu.10
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Nov 2017 07:46:54 -0800 (PST)
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
-Cc: Kevin Hilman <khilman@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
-        linux-renesas-soc@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v2 3/3] PM / Domains: Take wakeup_path_in_band status flag into account
-Date: Mon, 13 Nov 2017 16:46:43 +0100
-Message-Id: <1510588003-16650-4-git-send-email-ulf.hansson@linaro.org>
-In-Reply-To: <1510588003-16650-1-git-send-email-ulf.hansson@linaro.org>
-References: <1510588003-16650-1-git-send-email-ulf.hansson@linaro.org>
+        Tue, 7 Nov 2017 05:00:53 -0500
+Received: by mail-lf0-f48.google.com with SMTP id k40so13757754lfi.4
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 07 Nov 2017 02:00:53 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <20171101103458.7582-3-horms+renesas@verge.net.au>
+References: <20171101103458.7582-1-horms+renesas@verge.net.au> <20171101103458.7582-3-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 7 Nov 2017 11:00:51 +0100
+Message-ID: <CAMuHMdXoMgeyB-dnSgNB88aC5h2g+OzcHPALXavtQAPhuZmv-g@mail.gmail.com>
+Subject: Re: [PATCH 2/7] arm64: dts: renesas: r8a7796: Tie SYS-DMAC to IPMMU-DS0/1
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Magnus Damm <damm+renesas@opensource.se>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Make genpd to take the wakeup_path_in_band status flag into account during
-system suspend/resume. More precisely, in case the flag has been set by the
-PM core, let's leave the device in full power state and prevent the PM
-domain from being powered off.
+On Wed, Nov 1, 2017 at 11:34 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> From: Magnus Damm <damm+renesas@opensource.se>
+>
+> Hook up r8a7796 DMAC nodes to the IPMMUs. In particular SYS-DMAC0
+> gets tied to IPMMU-DS0, and SYS-DMAC1 and SYS-DMAC2 get tied to IPMMU-DS1.
+>
+> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
 
-Changes in v2:
-	- Added Geert's Reviewed-by tag.
-	- Changed to look at status flag instead of driver flag.
----
- drivers/base/power/domain.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-index 24e39ce..21cbea0 100644
---- a/drivers/base/power/domain.c
-+++ b/drivers/base/power/domain.c
-@@ -1037,7 +1037,8 @@ static int genpd_finish_suspend(struct device *dev, bool poweroff)
- 	if (IS_ERR(genpd))
- 		return -EINVAL;
- 
--	if (dev->power.wakeup_path && genpd_is_active_wakeup(genpd))
-+	if (dev->power.wakeup_path &&
-+	    (dev->power.wakeup_path_in_band || genpd_is_active_wakeup(genpd)))
- 		return 0;
- 
- 	if (poweroff)
-@@ -1092,7 +1093,8 @@ static int genpd_resume_noirq(struct device *dev)
- 	if (IS_ERR(genpd))
- 		return -EINVAL;
- 
--	if (dev->power.wakeup_path && genpd_is_active_wakeup(genpd))
-+	if (dev->power.wakeup_path &&
-+	    (dev->power.wakeup_path_in_band || genpd_is_active_wakeup(genpd)))
- 		return 0;
- 
- 	genpd_lock(genpd);
--- 
-2.7.4
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
