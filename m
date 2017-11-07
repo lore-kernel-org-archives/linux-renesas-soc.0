@@ -1,48 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:40285 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753626AbdKNJA5 (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:62803 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S933939AbdKGPLM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Nov 2017 04:00:57 -0500
-Date: Tue, 14 Nov 2017 10:00:38 +0100
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Geert Uytterhoeven <geert@glider.be>
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [GIT PULL FOR renesas-drivers] arm64: dts: renesas: r8a77995: IPMMU
- upstream integration
-Message-ID: <20171114090037.bbwrsmm6dxv2e43z@verge.net.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+        Tue, 7 Nov 2017 10:11:12 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH 5/8] ARM: dts: iwg22d-sodimm-dbhd-ca: Add can1 support to HDMI DB
+Date: Tue,  7 Nov 2017 15:10:46 +0000
+Message-Id: <1510067449-17017-6-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1510067449-17017-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1510067449-17017-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+CAN1 interface is exposed via connector J1 found on the HDMI daughter
+board. This patch enables can1 DT node from within the daughter board
+specific device tree.
 
-please consider pulling this series which adds IPMMU support to the
-DT for the r8a77995 (R-Car D3) SoC.
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+---
+ arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-This is v5 of these changes.
-
-They are based on renesas-devel-20171110-v4.14-rc8
-
-
-The following changes since commit ce17f313172b05ca21422a9b2c335808eef883cc:
-
-  Merge branches 'arm64-dt-for-v4.16', 'dt-for-v4.16' and 'soc-for-v4.16' into devel (2017-11-10 10:32:03 +0100)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/ipmmu-dt-r8a77995-v2
-
-for you to fetch changes up to 4ad5f98e6e91d82a2df9b870e90a8e7e2d3c5a02:
-
-  arm64: dts: renesas: r8a77995: Connect Ethernet-AVB to IPMMU-RT (2017-11-10 13:07:18 +0100)
-
-----------------------------------------------------------------
-Simon Horman (2):
-      arm64: dts: renesas: r8a77995: Add IPMMU device nodes
-      arm64: dts: renesas: r8a77995: Connect Ethernet-AVB to IPMMU-RT
-
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 83 +++++++++++++++++++++++++++++++
- 1 file changed, 83 insertions(+)
+diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts
+index a8a4ec8..d34de82 100644
+--- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts
++++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts
+@@ -54,6 +54,13 @@
+ 	};
+ };
+ 
++&can1 {
++	pinctrl-0 = <&can1_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
++
+ &hscif2 {
+ 	pinctrl-0 = <&hscif2_pins>;
+ 	pinctrl-names = "default";
+@@ -105,6 +112,11 @@
+ };
+ 
+ &pfc {
++	can1_pins: can1 {
++		groups = "can1_data_b";
++		function = "can1";
++	};
++
+ 	du0_pins: du0 {
+ 		groups = "du0_rgb888", "du0_sync", "du0_disp", "du0_clk0_out";
+ 		function = "du0";
+-- 
+2.7.4
