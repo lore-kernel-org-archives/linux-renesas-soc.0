@@ -1,58 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:54012 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751361AbdKDC0r (ORCPT
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:50786 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756677AbdKGJkW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 3 Nov 2017 22:26:47 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH] media: v4l: async: fix unregister for implicitly registered sub-device notifiers
-Date: Sat,  4 Nov 2017 03:25:56 +0100
-Message-Id: <20171104022556.23153-1-niklas.soderlund+renesas@ragnatech.se>
+        Tue, 7 Nov 2017 04:40:22 -0500
+Received: by mail-lf0-f67.google.com with SMTP id a132so13683621lfa.7
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 07 Nov 2017 01:40:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20171101103452.7491-14-horms+renesas@verge.net.au>
+References: <20171101103452.7491-1-horms+renesas@verge.net.au> <20171101103452.7491-14-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 7 Nov 2017 10:40:19 +0100
+Message-ID: <CAMuHMdXY6ZAZTtccesp4drqihcYFXGTc_oZiAfFEESXdHUOPKA@mail.gmail.com>
+Subject: Re: [PATCH v4 13/15] arm64: dts: renesas: r8a7795: Connect SATA to IPMMU-HC
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Magnus Damm <damm+renesas@opensource.se>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The commit aef69d54755d45ed ("media: v4l: fwnode: Add a convenience
-function for registering sensors") adds the function
-v4l2_async_notifier_parse_fwnode_sensor_common() to parse and register a
-subdevice and a subdev-notifier by parsing firmware information. This
-new subdev-notifier is stored in the new field 'subdev_notifier' in
-struct v4l2_subdev.
+On Wed, Nov 1, 2017 at 11:34 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> From: Magnus Damm <damm+renesas@opensource.se>
+>
+> Add IPMMU-HC to the SATA device node.
+>
+> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-In v4l2_async_unregister_subdev() this field is used to unregister and
-cleanup the subdev-notifier. A check for if the subdev-notifier is
-initialized or not was forgotten leading to a NULL pointer dereference
-in v4l2_async_notifier_cleanup() if a subdevice do not use the optional
-convince function to initialize the field.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Fix this by checking in v4l2_async_notifier_cleanup() that it is
-provided whit a notifier making it safe to call with a NULL parameter.
+Gr{oetje,eeting}s,
 
-Fixes: aef69d54755d45ed ("media: v4l: fwnode: Add a convenience function for registering sensors")
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/v4l2-core/v4l2-async.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+                        Geert
 
-diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
-index 49f7eccc76dbbc3b..8684e002e72f280d 100644
---- a/drivers/media/v4l2-core/v4l2-async.c
-+++ b/drivers/media/v4l2-core/v4l2-async.c
-@@ -502,7 +502,7 @@ void v4l2_async_notifier_cleanup(struct v4l2_async_notifier *notifier)
- {
- 	unsigned int i;
- 
--	if (!notifier->max_subdevs)
-+	if (!notifier || !notifier->max_subdevs)
- 		return;
- 
- 	for (i = 0; i < notifier->num_subdevs; i++) {
--- 
-2.14.2
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
