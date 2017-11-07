@@ -1,47 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:49629 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751486AbdK3QSI (ORCPT
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:57123 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756026AbdKGKJm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 30 Nov 2017 11:18:08 -0500
-Date: Thu, 30 Nov 2017 17:18:03 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Possible regression due to "arm64: renesas: salvator: set driver
- type for eMMC"
-Message-ID: <20171130161759.47tjyfqefoffpus3@verge.net.au>
+        Tue, 7 Nov 2017 05:09:42 -0500
+Received: by mail-qk0-f195.google.com with SMTP id l194so14478214qke.13
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 07 Nov 2017 02:09:42 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+In-Reply-To: <20171101103504.7658-1-horms+renesas@verge.net.au>
+References: <20171101103504.7658-1-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 7 Nov 2017 11:09:41 +0100
+Message-ID: <CAMuHMdWSuk+rD16Ym19kMCYXb8n2YaGwSzAnZmfH_u8z_pTFcw@mail.gmail.com>
+Subject: Re: [PATCH 0/4] arm64: dts: renesas: r8a7796: IPMMU upstream integration
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Wolfram,
+On Wed, Nov 1, 2017 at 11:35 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> This series adds DT nodes for IPMMU instances on r8a77970 together with
+> connections to r8a77970 on-chip devices: SYS-DMAC and Ethernet-AVB.
 
-I have observed the following behaviour in renesas-devel-20171130-v4.15-rc1
-which I have bisected down to being caused by d3decc2c34c8 ("arm64: dts:
-renesas: salvator: set driver type for eMMC"). The patch in question is
-based on v4.15-rc1.
+Subject s/7796/77970/.
 
-I am compiling using renesas_defconfig
+Gr{oetje,eeting}s,
 
-The problem manifests on Salvator-X / H3 ES1.0.
+                        Geert
 
-[    2.567304] renesas_sdhi_internal_dmac ee140000.sd: mmc0 base at 0xee140000 max clock rate 200 MHz
-[    2.700110] mmc0: tuning execution failed: -5
-[    2.704591] mmc0: error -5 whilst initialising MMC card
-[    2.783042] mmc0: tuning execution failed: -5
-[    2.783057] mmc0: error -5 whilst initialising MMC card
-[    2.935219] mmc0: tuning execution failed: -5
-[    2.939676] mmc0: error -5 whilst initialising MMC card
-[    3.103876] renesas_sdhi_internal_dmac ee100000.sd: mmc1 base at 0xee100000 max clock rate 200 MHz
-[    3.174033] mmc0: tuning execution failed: -5
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-The behaviour on Salvator-XS / H3 ES2.0 seems inconsistent.
-
-And on Salvator-X / M3-W ES1.0 I do not see the problem regardless of
-the presence of the patch.
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
