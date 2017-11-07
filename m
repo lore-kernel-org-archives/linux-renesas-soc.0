@@ -1,56 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from condef-03.nifty.com ([202.248.20.68]:20884 "EHLO
-        condef-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753632AbdKXQhb (ORCPT
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:50984 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964791AbdKGKOW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 24 Nov 2017 11:37:31 -0500
-Received: from conuserg-11.nifty.com ([10.126.8.74])by condef-03.nifty.com with ESMTP id vAOGQ19I013750
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 25 Nov 2017 01:26:01 +0900
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-mmc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Simon Horman <simon.horman@netronome.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v2 11/22] mmc: renesas_sdhi: remove always false condition
-Date: Sat, 25 Nov 2017 01:24:46 +0900
-Message-Id: <1511540697-27387-12-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
+        Tue, 7 Nov 2017 05:14:22 -0500
+Received: by mail-qk0-f195.google.com with SMTP id p7so523996qkd.7
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 07 Nov 2017 02:14:21 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <20171101103508.7721-3-horms+renesas@verge.net.au>
+References: <20171101103508.7721-1-horms+renesas@verge.net.au> <20171101103508.7721-3-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 7 Nov 2017 11:14:20 +0100
+Message-ID: <CAMuHMdXzC=Aao91RbaDAq-mm8Wyniv+BmfCh6QibjQsGZO6snw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] arm64: dts: renesas: r8a77995: Connect Ethernet-AVB
+ to IPMMU-RT
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-renesas_sdhi_probe() always sets host->dma as follows:
+On Wed, Nov 1, 2017 at 11:35 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> Add IPMMU-RT to the Ethernet-AVB device node.
+>
+> Based on work by Magnus Damm for the r8a7795.
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-        host->dma               = dma_priv;
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-!host->dma is always false.
+Gr{oetje,eeting}s,
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+                        Geert
 
-Changes in v2:
-  - Newly added
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
- drivers/mmc/host/renesas_sdhi_sys_dmac.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-index 9ab1043..e210644 100644
---- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-@@ -360,8 +360,8 @@ static void renesas_sdhi_sys_dmac_request_dma(struct tmio_mmc_host *host,
- 					      struct tmio_mmc_data *pdata)
- {
- 	/* We can only either use DMA for both Tx and Rx or not use it at all */
--	if (!host->dma || (!host->pdev->dev.of_node &&
--			   (!pdata->chan_priv_tx || !pdata->chan_priv_rx)))
-+	if (!host->pdev->dev.of_node &&
-+	    (!pdata->chan_priv_tx || !pdata->chan_priv_rx))
- 		return;
- 
- 	if (!host->chan_tx && !host->chan_rx) {
--- 
-2.7.4
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
