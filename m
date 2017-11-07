@@ -1,40 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:54833 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752629AbdKOPZz (ORCPT
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:46699 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756537AbdKGIbQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Nov 2017 10:25:55 -0500
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, horms@verge.net.au,
-        wsa@the-dreams.de, geert@linux-m68k.org
-Cc: magnus.damm@gmail.com, linux-mmc@vger.kernel.org,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 0/4] R-Car D3 (r8a77995) SDHI (eMMC) integration
-Date: Wed, 15 Nov 2017 16:25:45 +0100
-Message-Id: <1510759549-30404-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Tue, 7 Nov 2017 03:31:16 -0500
+Received: by mail-qt0-f194.google.com with SMTP id 1so14254720qtn.3
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 07 Nov 2017 00:31:16 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <20171101103423.7334-3-horms+renesas@verge.net.au>
+References: <20171101103423.7334-1-horms+renesas@verge.net.au> <20171101103423.7334-3-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 7 Nov 2017 09:31:15 +0100
+Message-ID: <CAMuHMdWpSTh=dsVjUPdVsiKTPytb0HHjh_zCDSRjk+1t4uG4dA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] iommu/ipmmu-vmsa: Hook up r8a779(70|95) DT matching code
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Joerg Roedel <joro@8bytes.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        iommu@lists.linux-foundation.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi!
+On Wed, Nov 1, 2017 at 11:34 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> Support the r8a77970 (R-Car V3M) and r8a77995 (R-Car D3) IPMMUs by sharing
+> feature flags with r8a7795 (R-Car H3) and r8a7796 (R-Car M3-W). Also update
+> IOMMU_OF_DECLARE to hook up the compat strings.
+>
+> Based on work for the r8a7796 by Magnus Damm
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-This integrates the SDHI hardware on R-Car D3 and enables the Draak board's
-eMMC drive. Includes whitelisting the internal DMAC on D3.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-CU
-Uli
+Gr{oetje,eeting}s,
 
+                        Geert
 
-Ulrich Hecht (4):
-  mmc: renesas_sdhi: enable R-Car D3 (r8a77995) support
-  arm64: dts: r8a77995: Add SDHI (MMC) support
-  arm64: dts: r8a77995: draak: enable SDHI2
-  dt-bindings: mmc: renesas_sdhi: Add r8a77995 support
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
- Documentation/devicetree/bindings/mmc/tmio_mmc.txt |  1 +
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts     | 44 ++++++++++++++++++++++
- arch/arm64/boot/dts/renesas/r8a77995.dtsi          | 12 ++++++
- drivers/mmc/host/renesas_sdhi_internal_dmac.c      |  2 +
- 4 files changed, 59 insertions(+)
-
--- 
-2.7.4
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
