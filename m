@@ -1,80 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:54246 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753072AbdKGMsW (ORCPT
+Received: from mail-qt0-f176.google.com ([209.85.216.176]:56394 "EHLO
+        mail-qt0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964795AbdKGKIA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Nov 2017 07:48:22 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Simon Horman <horms@verge.net.au>,
+        Tue, 7 Nov 2017 05:08:00 -0500
+Received: by mail-qt0-f176.google.com with SMTP id z28so14458439qtz.13
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 07 Nov 2017 02:07:59 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <20171101103452.7491-15-horms+renesas@verge.net.au>
+References: <20171101103452.7491-1-horms+renesas@verge.net.au> <20171101103452.7491-15-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 7 Nov 2017 11:07:59 +0100
+Message-ID: <CAMuHMdV80LSM6YhRfbvsXQiSbDe6zqGqV51fdyeTFAmDDH06Jw@mail.gmail.com>
+Subject: Re: [PATCH v4 14/15] arm64: dts: renesas: r8a7795: Enable IPMMU-VI,
+ VP, DS0, DS1 and MM
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>, linux-pm@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 4/5] soc: rockchip: power-domain: Use GENPD_FLAG_ACTIVE_WAKEUP
-Date: Tue,  7 Nov 2017 13:48:14 +0100
-Message-Id: <1510058895-21712-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1510058895-21712-1-git-send-email-geert+renesas@glider.be>
-References: <1510058895-21712-1-git-send-email-geert+renesas@glider.be>
+        Magnus Damm <damm+renesas@opensource.se>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Set the newly introduced GENPD_FLAG_ACTIVE_WAKEUP, which allows to
-remove the driver's own flag-based callback.
+On Wed, Nov 1, 2017 at 11:34 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> From: Magnus Damm <damm+renesas@opensource.se>
+>
+> Enable the r8a7795 device nodes for IPMMU-VI, IPMMU-VP, IPMMU-DS0,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
-Acked-by: Heiko Stuebner <heiko@sntech.de>
----
-Compile-tested only.
+VI0, VP0
 
-v3:
-  - Add Acked-by,
-  - Drop RFC status,
+> IPMMU-DS1 and the shared IPMMU-MM device.
+>
+> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-v2:
-  - New.
----
- drivers/soc/rockchip/pm_domains.c | 14 ++------------
- 1 file changed, 2 insertions(+), 12 deletions(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/soc/rockchip/pm_domains.c b/drivers/soc/rockchip/pm_domains.c
-index 40b75748835f552c..5c342167b9db7a16 100644
---- a/drivers/soc/rockchip/pm_domains.c
-+++ b/drivers/soc/rockchip/pm_domains.c
-@@ -358,17 +358,6 @@ static void rockchip_pd_detach_dev(struct generic_pm_domain *genpd,
- 	pm_clk_destroy(dev);
- }
- 
--static bool rockchip_active_wakeup(struct device *dev)
--{
--	struct generic_pm_domain *genpd;
--	struct rockchip_pm_domain *pd;
--
--	genpd = pd_to_genpd(dev->pm_domain);
--	pd = container_of(genpd, struct rockchip_pm_domain, genpd);
--
--	return pd->info->active_wakeup;
--}
--
- static int rockchip_pm_add_one_domain(struct rockchip_pmu *pmu,
- 				      struct device_node *node)
- {
-@@ -489,8 +478,9 @@ static int rockchip_pm_add_one_domain(struct rockchip_pmu *pmu,
- 	pd->genpd.power_on = rockchip_pd_power_on;
- 	pd->genpd.attach_dev = rockchip_pd_attach_dev;
- 	pd->genpd.detach_dev = rockchip_pd_detach_dev;
--	pd->genpd.dev_ops.active_wakeup = rockchip_active_wakeup;
- 	pd->genpd.flags = GENPD_FLAG_PM_CLK;
-+	if (pd_info->active_wakeup)
-+		pd->genpd.flags |= GENPD_FLAG_ACTIVE_WAKEUP;
- 	pm_genpd_init(&pd->genpd, NULL, false);
- 
- 	pmu->genpd_data.domains[id] = &pd->genpd;
--- 
-2.7.4
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
