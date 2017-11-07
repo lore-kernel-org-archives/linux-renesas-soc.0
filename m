@@ -1,37 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f47.google.com ([209.85.215.47]:42088 "EHLO
-        mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754208AbdK1UVG (ORCPT
+Received: from mail-lf0-f54.google.com ([209.85.215.54]:44488 "EHLO
+        mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752581AbdKGJSK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Nov 2017 15:21:06 -0500
-Received: by mail-lf0-f47.google.com with SMTP id i2so1257217lfe.9
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 28 Nov 2017 12:21:06 -0800 (PST)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20171128201543.932798613@cogentembedded.com>
-Date: Tue, 28 Nov 2017 23:15:43 +0300
-To: Simon Horman <horms@verge.net.au>
-Cc: Magnus Damm <magnus.damm@gmail.com>
-To: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-To: Catalin Marinas <catalin.marinas@arm.com>
-To: Will Deacon <will.deacon@arm.com>
-To: linux-renesas-soc@vger.kernel.org
-To: devicetree@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH 0/2] Use R8A77970 CPG core clock and SYSC pwoer domain macros
+        Tue, 7 Nov 2017 04:18:10 -0500
+Received: by mail-lf0-f54.google.com with SMTP id 75so13634728lfx.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 07 Nov 2017 01:18:10 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <20171101103452.7491-5-horms+renesas@verge.net.au>
+References: <20171101103452.7491-1-horms+renesas@verge.net.au> <20171101103452.7491-5-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 7 Nov 2017 10:18:08 +0100
+Message-ID: <CAMuHMdUDUdgusRGEk_6ghqoifmioJ2xVmzsdL=Oz3Rq=r+RyFg@mail.gmail.com>
+Subject: Re: [PATCH v4 04/15] arm64: dts: renesas: r8a7795: Tie Audio-DMAC to IPMMU-MP0/1
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Magnus Damm <damm+renesas@opensource.se>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+On Wed, Nov 1, 2017 at 11:34 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> From: Magnus Damm <damm+renesas@opensource.se>
+>
+> Hook up r8a7795 ES2.0 Audio-DMAC nodes to the IPMMU-MP0.
+> Hook up r8a7795 ES1.x Audio-DMAC nodes to the IPMMU-MP1.
+>
+> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-Here's the set of 2 patches against Simon Horman's 'renesas.git' repo's
-'renesas-devel-20171128-v4.15-rc1' tag. Now that the R8A77970 CPG core clock
-and SYSC power domain #define's have hit Linus' tree, we can replace the bare
-numbers (we had to use to avoid a cross tree dependencies) with these #define's,
-at last...
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[1/2] arm64: dts: renesas: r8a77970: use CPG core clock macros
-[2/2] arm64: dts: renesas: r8a77970: use SYSC power domain macros
+Gr{oetje,eeting}s,
 
-WBR, Sergei
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
