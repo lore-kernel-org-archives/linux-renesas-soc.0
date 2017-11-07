@@ -1,139 +1,47 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-media@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v6 6/9] i2c: smbus: use DMA safe buffers for emulated SMBus transactions
-Date: Sat,  4 Nov 2017 21:20:06 +0100
-Message-Id: <20171104202009.3818-7-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20171104202009.3818-1-wsa+renesas@sang-engineering.com>
-References: <20171104202009.3818-1-wsa+renesas@sang-engineering.com>
-Sender: linux-i2c-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:43478 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933355AbdKGJ26 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 7 Nov 2017 04:28:58 -0500
+Received: by mail-lf0-f66.google.com with SMTP id a16so13675240lfk.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 07 Nov 2017 01:28:58 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <20171101103452.7491-8-horms+renesas@verge.net.au>
+References: <20171101103452.7491-1-horms+renesas@verge.net.au> <20171101103452.7491-8-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 7 Nov 2017 10:28:56 +0100
+Message-ID: <CAMuHMdUFre9d=voqYOomeJqVEnp1YYwUzEs0ms_q_vNTTwd45Q@mail.gmail.com>
+Subject: Re: [PATCH v4 07/15] arm64: dts: renesas: r8a7795: Point FDP1 via
+ FCPF to IPMMU-VP0/1
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Magnus Damm <damm+renesas@opensource.se>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-For all block commands, try to allocate a DMA safe buffer and mark it
-accordingly. Only use the stack, if the buffers cannot be allocated.
+On Wed, Nov 1, 2017 at 11:34 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> From: Magnus Damm <damm+renesas@opensource.se>
+>
+> Hook up the FCPF devices to allow use of FDP1 with IPMMU-VP.
+>
+> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/i2c/i2c-core-smbus.c | 45 ++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 39 insertions(+), 6 deletions(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/i2c/i2c-core-smbus.c b/drivers/i2c/i2c-core-smbus.c
-index 4bb9927afd0106..931c274fe26809 100644
---- a/drivers/i2c/i2c-core-smbus.c
-+++ b/drivers/i2c/i2c-core-smbus.c
-@@ -18,6 +18,7 @@
- #include <linux/err.h>
- #include <linux/i2c.h>
- #include <linux/i2c-smbus.h>
-+#include <linux/slab.h>
- 
- #define CREATE_TRACE_POINTS
- #include <trace/events/smbus.h>
-@@ -291,6 +292,22 @@ s32 i2c_smbus_write_i2c_block_data(const struct i2c_client *client, u8 command,
- }
- EXPORT_SYMBOL(i2c_smbus_write_i2c_block_data);
- 
-+static void i2c_smbus_try_get_dmabuf(struct i2c_msg *msg, u8 init_val)
-+{
-+	bool is_read = msg->flags & I2C_M_RD;
-+	unsigned char *dma_buf;
-+
-+	dma_buf = kzalloc(I2C_SMBUS_BLOCK_MAX + (is_read ? 2 : 3), GFP_KERNEL);
-+	if (!dma_buf)
-+		return;
-+
-+	msg->buf = dma_buf;
-+	msg->flags |= I2C_M_DMA_SAFE;
-+
-+	if (init_val)
-+		msg->buf[0] = init_val;
-+
-+}
- /* Simulate a SMBus command using the i2c protocol
-    No checking of parameters is done!  */
- static s32 i2c_smbus_xfer_emulated(struct i2c_adapter *adapter, u16 addr,
-@@ -368,6 +385,7 @@ static s32 i2c_smbus_xfer_emulated(struct i2c_adapter *adapter, u16 addr,
- 			msg[1].flags |= I2C_M_RECV_LEN;
- 			msg[1].len = 1; /* block length will be added by
- 					   the underlying bus driver */
-+			i2c_smbus_try_get_dmabuf(&msg[1], 0);
- 		} else {
- 			msg[0].len = data->block[0] + 2;
- 			if (msg[0].len > I2C_SMBUS_BLOCK_MAX + 2) {
-@@ -376,8 +394,10 @@ static s32 i2c_smbus_xfer_emulated(struct i2c_adapter *adapter, u16 addr,
- 					data->block[0]);
- 				return -EINVAL;
- 			}
-+
-+			i2c_smbus_try_get_dmabuf(&msg[0], command);
- 			for (i = 1; i < msg[0].len; i++)
--				msgbuf0[i] = data->block[i-1];
-+				msg[0].buf[i] = data->block[i-1];
- 		}
- 		break;
- 	case I2C_SMBUS_BLOCK_PROC_CALL:
-@@ -389,16 +409,21 @@ static s32 i2c_smbus_xfer_emulated(struct i2c_adapter *adapter, u16 addr,
- 				data->block[0]);
- 			return -EINVAL;
- 		}
-+
- 		msg[0].len = data->block[0] + 2;
-+		i2c_smbus_try_get_dmabuf(&msg[0], command);
- 		for (i = 1; i < msg[0].len; i++)
--			msgbuf0[i] = data->block[i-1];
-+			msg[0].buf[i] = data->block[i-1];
-+
- 		msg[1].flags |= I2C_M_RECV_LEN;
- 		msg[1].len = 1; /* block length will be added by
- 				   the underlying bus driver */
-+		i2c_smbus_try_get_dmabuf(&msg[1], 0);
- 		break;
- 	case I2C_SMBUS_I2C_BLOCK_DATA:
- 		if (read_write == I2C_SMBUS_READ) {
- 			msg[1].len = data->block[0];
-+			i2c_smbus_try_get_dmabuf(&msg[1], 0);
- 		} else {
- 			msg[0].len = data->block[0] + 1;
- 			if (msg[0].len > I2C_SMBUS_BLOCK_MAX + 1) {
-@@ -407,8 +432,10 @@ static s32 i2c_smbus_xfer_emulated(struct i2c_adapter *adapter, u16 addr,
- 					data->block[0]);
- 				return -EINVAL;
- 			}
-+
-+			i2c_smbus_try_get_dmabuf(&msg[0], command);
- 			for (i = 1; i <= data->block[0]; i++)
--				msgbuf0[i] = data->block[i];
-+				msg[0].buf[i] = data->block[i];
- 		}
- 		break;
- 	default:
-@@ -456,14 +483,20 @@ static s32 i2c_smbus_xfer_emulated(struct i2c_adapter *adapter, u16 addr,
- 			break;
- 		case I2C_SMBUS_I2C_BLOCK_DATA:
- 			for (i = 0; i < data->block[0]; i++)
--				data->block[i+1] = msgbuf1[i];
-+				data->block[i+1] = msg[1].buf[i];
- 			break;
- 		case I2C_SMBUS_BLOCK_DATA:
- 		case I2C_SMBUS_BLOCK_PROC_CALL:
--			for (i = 0; i < msgbuf1[0] + 1; i++)
--				data->block[i] = msgbuf1[i];
-+			for (i = 0; i < msg[1].buf[0] + 1; i++)
-+				data->block[i] = msg[1].buf[i];
- 			break;
- 		}
-+
-+	if (msg[0].flags & I2C_M_DMA_SAFE)
-+		kfree(msg[0].buf);
-+	if (msg[1].flags & I2C_M_DMA_SAFE)
-+		kfree(msg[1].buf);
-+
- 	return 0;
- }
- 
--- 
-2.11.0
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
