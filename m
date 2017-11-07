@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:54482 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753091AbdKGMsX (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:54256 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753080AbdKGMsW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Nov 2017 07:48:23 -0500
+        Tue, 7 Nov 2017 07:48:22 -0500
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Kevin Hilman <khilman@kernel.org>,
@@ -16,90 +16,71 @@ Cc: Simon Horman <horms@verge.net.au>,
         linux-mediatek@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 5/5] PM / Domains: Remove gpd_dev_ops.active_wakeup() callback
-Date: Tue,  7 Nov 2017 13:48:15 +0100
-Message-Id: <1510058895-21712-6-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1510058895-21712-1-git-send-email-geert+renesas@glider.be>
-References: <1510058895-21712-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v3 0/5] PM / Domains: Remove gpd_dev_ops.active_wakeup() callback
+Date: Tue,  7 Nov 2017 13:48:10 +0100
+Message-Id: <1510058895-21712-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-There are no more users left of the gpd_dev_ops.active_wakeup()
-callback.  All have been converted to GENPD_FLAG_ACTIVE_WAKEUP.
-Hence remove the callback.
+	Hi Rafael, Ulf, Kevin,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
-Reviewed-by: Kevin Hilman <khilman@baylibre.com>
----
-v3:
+It is quite common for PM Domains to require slave devices to be kept
+active during system suspend if they are to be used as wakeup sources.
+To enable this, currently each PM Domain or driver has to provide its
+own gpd_dev_ops.active_wakeup() callback.
+
+All existing callbacks either return always true, or a fixed value
+depending on the PM Domain.
+
+Hence this patch series simplifies active wakeup handling by replacing
+the callback by a flag:
+  - Patch 1 adds a new new flag GENPD_FLAG_ACTIVE_WAKEUP, to be set by
+    PM Domain drivers that want to use the new handling,
+  - Patches 2-4 convert all existing users of the callback to the new
+    flag,
+  - Patch 5 removes the callback.
+
+This series was extracted from "[PATCH 00/10] PM / Domain: renesas: Fix
+active wakeup behavior", and retains only PM Domain changes to existing
+drivers.
+
+Changes compared to v2:
   - Add Acked-by, Reviewed-by,
-  - Drop RFC status,
+  - Drop RFC status from dependent patches, as everything can go in
+    through the pm tree.
 
-v2:
-  - New.
----
- drivers/base/power/domain.c | 14 +++-----------
- include/linux/pm_domain.h   |  1 -
- 2 files changed, 3 insertions(+), 12 deletions(-)
+Changes compared to v1 (most suggested by Ulf):
+  - Use the flag in se instead of setting up an "always true" callback,
+  - Convert the mediatek and rockchip PM Domain drivers,
+  - Remove the callback.
 
-diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-index c5172d70b742f288..8768e56ecf101203 100644
---- a/drivers/base/power/domain.c
-+++ b/drivers/base/power/domain.c
-@@ -864,14 +864,6 @@ static bool genpd_present(const struct generic_pm_domain *genpd)
- 
- #ifdef CONFIG_PM_SLEEP
- 
--static bool genpd_dev_active_wakeup(const struct generic_pm_domain *genpd,
--				    struct device *dev)
--{
--	if (genpd_is_active_wakeup(genpd))
--		return true;
--	return GENPD_DEV_CALLBACK(genpd, bool, active_wakeup, dev);
--}
--
- /**
-  * genpd_sync_power_off - Synchronously power off a PM domain and its masters.
-  * @genpd: PM domain to power off, if possible.
-@@ -976,7 +968,7 @@ static bool resume_needed(struct device *dev,
- 	if (!device_can_wakeup(dev))
- 		return false;
- 
--	active_wakeup = genpd_dev_active_wakeup(genpd, dev);
-+	active_wakeup = genpd_is_active_wakeup(genpd);
- 	return device_may_wakeup(dev) ? active_wakeup : !active_wakeup;
- }
- 
-@@ -1045,7 +1037,7 @@ static int genpd_finish_suspend(struct device *dev, bool poweroff)
- 	if (IS_ERR(genpd))
- 		return -EINVAL;
- 
--	if (dev->power.wakeup_path && genpd_dev_active_wakeup(genpd, dev))
-+	if (dev->power.wakeup_path && genpd_is_active_wakeup(genpd))
- 		return 0;
- 
- 	if (poweroff)
-@@ -1100,7 +1092,7 @@ static int genpd_resume_noirq(struct device *dev)
- 	if (IS_ERR(genpd))
- 		return -EINVAL;
- 
--	if (dev->power.wakeup_path && genpd_dev_active_wakeup(genpd, dev))
-+	if (dev->power.wakeup_path && genpd_is_active_wakeup(genpd))
- 		return 0;
- 
- 	genpd_lock(genpd);
-diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-index 28c24c58d479e3b4..04dbef9847d3ad3b 100644
---- a/include/linux/pm_domain.h
-+++ b/include/linux/pm_domain.h
-@@ -36,7 +36,6 @@ struct dev_power_governor {
- struct gpd_dev_ops {
- 	int (*start)(struct device *dev);
- 	int (*stop)(struct device *dev);
--	bool (*active_wakeup)(struct device *dev);
- };
- 
- struct genpd_power_state {
+Thanks for applying for v4.15!
+
+Geert Uytterhoeven (5):
+  PM / Domains: Allow genpd users to specify default active wakeup
+    behavior
+  ARM: shmobile: pm-rmobile: Use GENPD_FLAG_ACTIVE_WAKEUP
+  soc: mediatek: Use GENPD_FLAG_ACTIVE_WAKEUP
+  soc: rockchip: power-domain: Use GENPD_FLAG_ACTIVE_WAKEUP
+  PM / Domains: Remove gpd_dev_ops.active_wakeup() callback
+
+ arch/arm/mach-shmobile/pm-rmobile.c |  8 +-------
+ drivers/base/power/domain.c         | 13 ++++---------
+ drivers/soc/mediatek/mtk-scpsys.c   | 14 ++------------
+ drivers/soc/rockchip/pm_domains.c   | 14 ++------------
+ include/linux/pm_domain.h           |  8 ++++----
+ 5 files changed, 13 insertions(+), 44 deletions(-)
+
 -- 
 2.7.4
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
