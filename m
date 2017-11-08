@@ -1,60 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:47844 "EHLO pokefinder.org"
+Received: from sauhun.de ([88.99.104.3]:34329 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753166AbdK0R4t (ORCPT
+        id S1752510AbdKHVHM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 27 Nov 2017 12:56:49 -0500
-Date: Mon, 27 Nov 2017 18:56:47 +0100
+        Wed, 8 Nov 2017 16:07:12 -0500
+Date: Wed, 8 Nov 2017 22:07:10 +0100
 From: Wolfram Sang <wsa@the-dreams.de>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Jacopo Mondi <jacopo@jmondi.org>,
+To: jacopo mondi <jacopo@jmondi.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>
 Subject: Re: [RFT] i2c: sh_mobile: let RuntimePM do the clock handling
-Message-ID: <20171127175647.hagan6opjco2jmyq@ninjato>
+Message-ID: <20171108210710.altvkeftp5peldh3@ninjato>
 References: <20171108085037.1318-1-wsa+renesas@sang-engineering.com>
+ <20171108184153.GC26922@w540>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ipqq442fl3bgy4tb"
+        protocol="application/pgp-signature"; boundary="5zkvkshqfroz2c3z"
 Content-Disposition: inline
-In-Reply-To: <20171108085037.1318-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20171108184153.GC26922@w540>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 
---ipqq442fl3bgy4tb
+--5zkvkshqfroz2c3z
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 08, 2017 at 09:50:37AM +0100, Wolfram Sang wrote:
-> No need to do it manually.
->=20
-> Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> For this one as well:
+> Tested-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-Applied to for-next, thanks!
+Thanks, Jacopo!
 
 
---ipqq442fl3bgy4tb
+--5zkvkshqfroz2c3z
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlocUd8ACgkQFA3kzBSg
-KbZugBAAlKxoplych0oUPSS0Bqsqd67ccFyUQh9G2OHbXAqPsOPr9r8SLHhtiGI1
-1b8a1yJc0jz6vTYDYuiK3cTn+O5/KIJH1yo2RGJmUYDkwWWwRoBX58BJGmGm2Uu9
-eEIs4BXnLrWmGXs0DAdsPu7uk2uiwrCtU4Ret9SDPVj0g7y87dhHU4VHsA6vpbd/
-RC/BUcznheEhcUN3Qmer1H2MXV8Ryby6s8XzE+sQN6S1BnnOhgHqICDd9zKT896M
-bph9duxKezBYh/6MTHbVckeoAjbnvFHgkWnBbAugJmszEwQirk/QUemSvdlAbApq
-8zmpnqsixju1KEgXi10vaa+aMaTnkoBrMAWkaGZK0ZIP/gdKEcUni+Qt3koqiQYV
-mjUKhcwHFA4hVnj9zdVzV1Zb1E3gWMuvL1DwPqjkX9nWP7LxKleXrxkqKWouMOGr
-PPu5lB304grhjXqmyOZkgd5xG69hdr5tjOgB592nu85PgZdLb8wJkmESTrVkV74B
-aYaAPUQ/3sR0jBrIKWp2cj58GWuYld7NbyACkyxoUM1JGjVUwbcl399UR0xEHGIL
-OLL12xVC/T+FI7NuL5l254/hlrP1Ik5EvYYZiLTI/YBNPtwJo1iOIeG7vnOBIPQ6
-aZjOzLGayMPZWiH1CeUgV6tgcYxZrYGkWoCfD1zS4TWpj1nrXxU=
-=zrPC
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAloDcfsACgkQFA3kzBSg
+KbYq0g//ePzD33LQ3mT9aRpZwU9gfdeYVfgCPzxj5ZEue7Y1V8faboV6n07GFIxY
+EyRhyh3zfF+1oGyseQEQ9b6bKfLFONqbFbUlQwYxsIv/eb0Xjq+taQnV+vPmwv0Y
+aiAArXw/Lc1rnZYcQyd1lZgNArrvmdQcYasDJ5VApYGL3AuPZARxI7FYqnP7WiVS
+Wqc7GjCimAnso7g243fa4qXknqFzvZKCa9CFkN/7mlCudSVWxPMUj2bb4mtR8cxD
++H5MzFP0+6/lNXhcQkcF9BMIc6HXzrXd+7P0H/qn5Xnykz7c4JoqF7DzaYy3byqH
+cv70ngtYnI9KsTfGk59yeCIoELbHdGd6k2et6PRXQgyXxtVUBcJORiP7JPNyhdtN
+1Ajjq++xry8WxbxGv7rXFw3jzT1eG+NxTmHq57LG2ZV5No+nR1FppOdEHNqxX1dp
+uCZAR92UecCAMBNIcrptgzVxv/MAymV64RylX0aW3ak4FIKT4JNEHoQtjFfO6VkZ
+KJgoZdHnuH/NbE/QG+UCJN7GBgdCvWhAI43gURZew/ldT5fg5Q/YcAsBopPAcLXl
+HX6BYH6aaV0Y9ZA91aiEfqH1GqPnkBJx/mPLxsV4PoR7QI9VCwFp552UYd9AYCw1
+WX6ebT/0RBpTXhk6dfEuUs5IFhw0Nf+nANlV7M0Y1kr7Xr65a9Y=
+=tAfa
 -----END PGP SIGNATURE-----
 
---ipqq442fl3bgy4tb--
+--5zkvkshqfroz2c3z--
