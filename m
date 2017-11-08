@@ -1,46 +1,84 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:48377 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752009AbdKHP0T (ORCPT
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:53708 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752648AbdKHPPq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 8 Nov 2017 10:26:19 -0500
-MIME-Version: 1.0
-In-Reply-To: <1510154134-1248-2-git-send-email-ulf.hansson@linaro.org>
-References: <1510154134-1248-1-git-send-email-ulf.hansson@linaro.org> <1510154134-1248-2-git-send-email-ulf.hansson@linaro.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 8 Nov 2017 16:26:18 +0100
-Message-ID: <CAMuHMdUhPTwXGD4ay34VxYoxuJPJDujy0CMMd5MNuR=HfESTZg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] PM / core: Re-factor some code dealing with parents
- in __device_suspend()
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
+        Wed, 8 Nov 2017 10:15:46 -0500
+Received: by mail-lf0-f65.google.com with SMTP id l23so3542739lfk.10
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 08 Nov 2017 07:15:45 -0800 (PST)
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
+Cc: Kevin Hilman <khilman@kernel.org>,
         Viresh Kumar <viresh.kumar@linaro.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms@verge.net.au>,
         Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-renesas-soc@vger.kernel.org,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 1/3] PM / core: Re-factor some code dealing with parents in __device_suspend()
+Date: Wed,  8 Nov 2017 16:15:32 +0100
+Message-Id: <1510154134-1248-2-git-send-email-ulf.hansson@linaro.org>
+In-Reply-To: <1510154134-1248-1-git-send-email-ulf.hansson@linaro.org>
+References: <1510154134-1248-1-git-send-email-ulf.hansson@linaro.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Nov 8, 2017 at 4:15 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> Let's make the code a bit more readable by moving some of the code, which
-> deals with adjustments for parent devices in __device_suspend(), into its
-> own function.
->
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Let's make the code a bit more readable by moving some of the code, which
+deals with adjustments for parent devices in __device_suspend(), into its
+own function.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+---
+ drivers/base/power/main.c | 29 +++++++++++++++++------------
+ 1 file changed, 17 insertions(+), 12 deletions(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+index 6c6f1c7..8089e72 100644
+--- a/drivers/base/power/main.c
++++ b/drivers/base/power/main.c
+@@ -1422,6 +1422,22 @@ static int legacy_suspend(struct device *dev, pm_message_t state,
+ 	return error;
+ }
+ 
++static void dpm_propagate_to_parent(struct device *dev)
++{
++	struct device *parent = dev->parent;
++
++	if (!parent)
++		return;
++
++	spin_lock_irq(&parent->power.lock);
++
++	parent->power.direct_complete = false;
++	if (dev->power.wakeup_path && !parent->power.ignore_children)
++		parent->power.wakeup_path = true;
++
++	spin_unlock_irq(&parent->power.lock);
++}
++
+ static void dpm_clear_suppliers_direct_complete(struct device *dev)
+ {
+ 	struct device_link *link;
+@@ -1530,19 +1546,8 @@ static int __device_suspend(struct device *dev, pm_message_t state, bool async)
+ 
+  End:
+ 	if (!error) {
+-		struct device *parent = dev->parent;
+-
+ 		dev->power.is_suspended = true;
+-		if (parent) {
+-			spin_lock_irq(&parent->power.lock);
+-
+-			dev->parent->power.direct_complete = false;
+-			if (dev->power.wakeup_path
+-			    && !dev->parent->power.ignore_children)
+-				dev->parent->power.wakeup_path = true;
+-
+-			spin_unlock_irq(&parent->power.lock);
+-		}
++		dpm_propagate_to_parent(dev);
+ 		dpm_clear_suppliers_direct_complete(dev);
+ 	}
+ 
+-- 
+2.7.4
