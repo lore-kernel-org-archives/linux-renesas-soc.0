@@ -1,46 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:51040 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752748AbdKHPcY (ORCPT
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:43306 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752680AbdKHPPt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 8 Nov 2017 10:32:24 -0500
-MIME-Version: 1.0
-In-Reply-To: <1510154134-1248-4-git-send-email-ulf.hansson@linaro.org>
-References: <1510154134-1248-1-git-send-email-ulf.hansson@linaro.org> <1510154134-1248-4-git-send-email-ulf.hansson@linaro.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 8 Nov 2017 16:32:23 +0100
-Message-ID: <CAMuHMdXW8JCzAA62iV=D-q4pc8pxdDKYC84hNs0BO_LfdBzUUA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] PM / Domains: Take WAKEUP_POWERED driver flag into account
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
+        Wed, 8 Nov 2017 10:15:49 -0500
+Received: by mail-lf0-f65.google.com with SMTP id a16so3576048lfk.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 08 Nov 2017 07:15:48 -0800 (PST)
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
+Cc: Kevin Hilman <khilman@kernel.org>,
         Viresh Kumar <viresh.kumar@linaro.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms@verge.net.au>,
         Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-renesas-soc@vger.kernel.org,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 3/3] PM / Domains: Take WAKEUP_POWERED driver flag into account
+Date: Wed,  8 Nov 2017 16:15:34 +0100
+Message-Id: <1510154134-1248-4-git-send-email-ulf.hansson@linaro.org>
+In-Reply-To: <1510154134-1248-1-git-send-email-ulf.hansson@linaro.org>
+References: <1510154134-1248-1-git-send-email-ulf.hansson@linaro.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Nov 8, 2017 at 4:15 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> Make genpd to take the WAKEUP_POWERED driver flag into account during
-> system suspend/resume. More precisely, in case the WAKEUP_POWERED flag is
-> set, let's leave the device in full power state and prevent the PM domain
-> from being powered off.
->
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Make genpd to take the WAKEUP_POWERED driver flag into account during
+system suspend/resume. More precisely, in case the WAKEUP_POWERED flag is
+set, let's leave the device in full power state and prevent the PM domain
+from being powered off.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+---
+ drivers/base/power/domain.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+index 24e39ce..dc18f88 100644
+--- a/drivers/base/power/domain.c
++++ b/drivers/base/power/domain.c
+@@ -1037,8 +1037,11 @@ static int genpd_finish_suspend(struct device *dev, bool poweroff)
+ 	if (IS_ERR(genpd))
+ 		return -EINVAL;
+ 
+-	if (dev->power.wakeup_path && genpd_is_active_wakeup(genpd))
+-		return 0;
++	if (dev->power.wakeup_path) {
++		if (dev_pm_test_driver_flags(dev, DPM_FLAG_WAKEUP_POWERED) ||
++		    genpd_is_active_wakeup(genpd))
++			return 0;
++	}
+ 
+ 	if (poweroff)
+ 		ret = pm_generic_poweroff_noirq(dev);
+@@ -1092,8 +1095,11 @@ static int genpd_resume_noirq(struct device *dev)
+ 	if (IS_ERR(genpd))
+ 		return -EINVAL;
+ 
+-	if (dev->power.wakeup_path && genpd_is_active_wakeup(genpd))
+-		return 0;
++	if (dev->power.wakeup_path) {
++		if (dev_pm_test_driver_flags(dev, DPM_FLAG_WAKEUP_POWERED) ||
++		    genpd_is_active_wakeup(genpd))
++			return 0;
++	}
+ 
+ 	genpd_lock(genpd);
+ 	genpd_sync_power_on(genpd, true, 0);
+-- 
+2.7.4
