@@ -1,42 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:44804 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751657AbdKDUUY (ORCPT
+Received: from cloudserver094114.home.net.pl ([79.96.170.134]:60926 "EHLO
+        cloudserver094114.home.net.pl" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752358AbdKHARc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 4 Nov 2017 16:20:24 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-media@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH v6 3/9] i2c: dev: mark RDWR buffers as DMA_SAFE
-Date: Sat,  4 Nov 2017 21:20:03 +0100
-Message-Id: <20171104202009.3818-4-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20171104202009.3818-1-wsa+renesas@sang-engineering.com>
-References: <20171104202009.3818-1-wsa+renesas@sang-engineering.com>
+        Tue, 7 Nov 2017 19:17:32 -0500
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>, linux-pm@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/5] PM / Domains: Remove gpd_dev_ops.active_wakeup() callback
+Date: Wed, 08 Nov 2017 01:17:27 +0100
+Message-ID: <2130215.VAlC8oaDc3@aspire.rjw.lan>
+In-Reply-To: <1510058895-21712-1-git-send-email-geert+renesas@glider.be>
+References: <1510058895-21712-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/i2c/i2c-dev.c | 2 ++
- 1 file changed, 2 insertions(+)
+On Tuesday, November 7, 2017 1:48:10 PM CET Geert Uytterhoeven wrote:
+> 	Hi Rafael, Ulf, Kevin,
+> 
+> It is quite common for PM Domains to require slave devices to be kept
+> active during system suspend if they are to be used as wakeup sources.
+> To enable this, currently each PM Domain or driver has to provide its
+> own gpd_dev_ops.active_wakeup() callback.
+> 
+> All existing callbacks either return always true, or a fixed value
+> depending on the PM Domain.
+> 
+> Hence this patch series simplifies active wakeup handling by replacing
+> the callback by a flag:
+>   - Patch 1 adds a new new flag GENPD_FLAG_ACTIVE_WAKEUP, to be set by
+>     PM Domain drivers that want to use the new handling,
+>   - Patches 2-4 convert all existing users of the callback to the new
+>     flag,
+>   - Patch 5 removes the callback.
+> 
+> This series was extracted from "[PATCH 00/10] PM / Domain: renesas: Fix
+> active wakeup behavior", and retains only PM Domain changes to existing
+> drivers.
+> 
+> Changes compared to v2:
+>   - Add Acked-by, Reviewed-by,
+>   - Drop RFC status from dependent patches, as everything can go in
+>     through the pm tree.
+> 
+> Changes compared to v1 (most suggested by Ulf):
+>   - Use the flag in se instead of setting up an "always true" callback,
+>   - Convert the mediatek and rockchip PM Domain drivers,
+>   - Remove the callback.
+> 
+> Thanks for applying for v4.15!
 
-diff --git a/drivers/i2c/i2c-dev.c b/drivers/i2c/i2c-dev.c
-index 6f638bbc922db4..bbc7aadb4c899d 100644
---- a/drivers/i2c/i2c-dev.c
-+++ b/drivers/i2c/i2c-dev.c
-@@ -280,6 +280,8 @@ static noinline int i2cdev_ioctl_rdwr(struct i2c_client *client,
- 			res = PTR_ERR(rdwr_pa[i].buf);
- 			break;
- 		}
-+		/* memdup_user allocates with GFP_KERNEL, so DMA is ok */
-+		rdwr_pa[i].flags |= I2C_M_DMA_SAFE;
- 
- 		/*
- 		 * If the message length is received from the slave (similar
--- 
-2.11.0
+Queued up for 4.15, thanks!
+
+Rafael
