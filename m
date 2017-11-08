@@ -1,52 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:53884 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750947AbdKFUGg (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:48248 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751181AbdKHJ7J (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 6 Nov 2017 15:06:36 -0500
-Date: Mon, 6 Nov 2017 13:06:34 -0700
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: joro@8bytes.org, laurent.pinchart+renesas@ideasonboard.com,
-        arnd@arndb.de, geert+renesas@glider.be, magnus.damm@gmail.com,
-        linux-renesas-soc@vger.kernel.org,
-        iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 0/4] ipmmu-vmsa cleanup
-Message-ID: <20171106130634.4a42e18a@t450s.home>
-In-Reply-To: <cover.1507918320.git.robin.murphy@arm.com>
-References: <cover.1507918320.git.robin.murphy@arm.com>
+        Wed, 8 Nov 2017 04:59:09 -0500
+Subject: Re: [PATCH] PCI: rcar: Add compatible string for r8a7796
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-pci <linux-pci@vger.kernel.org>,
+        Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+References: <20171108091521.8423-1-marek.vasut+renesas@gmail.com>
+ <CAMuHMdV=SHkjpBqCXPzcEnunhWRNLdw+1GwLAS7nbkfQQz3zyA@mail.gmail.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <b53e4694-3f5b-57f7-2b9b-45e780c4c65a@gmail.com>
+Date: Wed, 8 Nov 2017 10:31:52 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <CAMuHMdV=SHkjpBqCXPzcEnunhWRNLdw+1GwLAS7nbkfQQz3zyA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, 13 Oct 2017 19:23:38 +0100
-Robin Murphy <robin.murphy@arm.com> wrote:
+On 11/08/2017 10:29 AM, Geert Uytterhoeven wrote:
+> Hi Marek,
 
-> Arnd reports a build warning[1] thanks to me missing ipmmu-vmsa's second
-> set of ops when converting io-pgtable-arm users to the new iommu_iotlb_*
-> callbacks. Rather than just treat the symptom with a point fix, this
-> seemed like a good excuse to clean up the messy #ifdeffery and
-> duplication in the driver that led to the oversight in the first place.
+Hi,
+
+> On Wed, Nov 8, 2017 at 10:15 AM, Marek Vasut <marek.vasut@gmail.com> wrote:
+>> From: Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>
+>>
+>> Add compatible string for the RCar M3 R8A7796 SoC.
+>>
+>> Signed-off-by: Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>
+>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
 > 
-> Build-tested successfully for arm64, ARM, and ARM + CONFIG_IOMMU_DMA.
+> This patch is not needed, as the DT bindings specify that the DTS should use
+> both "renesas,pcie-r8a7796" and "renesas,pcie-rcar-gen3", and the driver
+> already matches against the latter.
+
+OK, then please just drop this one. I'll keep this in mind next time I
+add redundant bindings, thanks :)
+
+>> --- a/drivers/pci/host/pcie-rcar.c
+>> +++ b/drivers/pci/host/pcie-rcar.c
+>> @@ -1062,6 +1062,7 @@ static const struct of_device_id rcar_pcie_of_match[] = {
+>>         { .compatible = "renesas,pcie-rcar-gen2",
+>>           .data = rcar_pcie_hw_init_gen2 },
+>>         { .compatible = "renesas,pcie-r8a7795", .data = rcar_pcie_hw_init },
+>> +       { .compatible = "renesas,pcie-r8a7796", .data = rcar_pcie_hw_init },
+>>         { .compatible = "renesas,pcie-rcar-gen3", .data = rcar_pcie_hw_init },
 > 
-> Robin.
+> Gr{oetje,eeting}s,
 > 
-> [1]:https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1510423.html
+>                         Geert
 > 
-> Robin Murphy (4):
->   iommu/ipmmu-vmsa: Unify domain alloc/free
->   iommu/ipmmu-vmsa: Simplify group allocation
->   iommu/ipmmu-vmsa: Clean up struct ipmmu_vmsa_iommu_priv
->   iommu/ipmmu-vmsa: Unify ipmmu_ops
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 > 
->  drivers/iommu/ipmmu-vmsa.c | 251 ++++++++++++++-------------------------------
->  1 file changed, 78 insertions(+), 173 deletions(-)
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
 > 
 
-Applied to iommu/ipmmu-vmsa for v4.15.  Thanks,
 
-Alex
+-- 
+Best regards,
+Marek Vasut
