@@ -1,79 +1,58 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH RFT 3/5] i2c: sh_mobile: manually "inline" two short functions
-Date: Thu,  2 Nov 2017 13:47:29 +0100
-Message-Id: <20171102124731.10484-4-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20171102124731.10484-1-wsa+renesas@sang-engineering.com>
-References: <20171102124731.10484-1-wsa+renesas@sang-engineering.com>
-Sender: linux-i2c-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:57940 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754657AbdKIN1R (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 9 Nov 2017 08:27:17 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Kevin Hilman <khilman@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-pm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 1/3] clk: renesas: mstp: Keep wakeup sources active during system suspend
+Date: Thu,  9 Nov 2017 14:27:00 +0100
+Message-Id: <1510234022-29442-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1510234022-29442-1-git-send-email-geert+renesas@glider.be>
+References: <1510234022-29442-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Those two functions are very short and only called once. The code
-becomes easier to understand if the code is directly put into the main
-xfer function.
+If a device is part of the CPG/MSTP Clock Domain and to be used as a
+wakeup source, it must be kept active during system suspend.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Currently this is handled in device-specific drivers by explicitly
+increasing the use count of the module clock when the device is
+configured as a wakeup source.  However, the proper way to prevent the
+device from being stopped is to inform this requirement to the genpd
+core, by setting the GENPD_FLAG_ACTIVE_WAKEUP flag.
+
+Note that this will only affect devices configured as wakeup sources.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/i2c/busses/i2c-sh_mobile.c | 28 +++++++++-------------------
- 1 file changed, 9 insertions(+), 19 deletions(-)
+v2:
+  - Integrate "clk: renesas: mstp: Use GENPD_FLAG_ACTIVE_WAKEUP",
+---
+ drivers/clk/renesas/clk-mstp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/i2c/busses/i2c-sh_mobile.c b/drivers/i2c/busses/i2c-sh_mobile.c
-index a1253df9574594..cdd7a746b9d1ed 100644
---- a/drivers/i2c/busses/i2c-sh_mobile.c
-+++ b/drivers/i2c/busses/i2c-sh_mobile.c
-@@ -298,23 +298,6 @@ static int sh_mobile_i2c_init(struct sh_mobile_i2c_data *pd)
- 	return 0;
- }
+diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
+index 500a9e4e03c48957..0b222197a4576fd7 100644
+--- a/drivers/clk/renesas/clk-mstp.c
++++ b/drivers/clk/renesas/clk-mstp.c
+@@ -344,7 +344,7 @@ void __init cpg_mstp_add_clk_domain(struct device_node *np)
+ 		return;
  
--static void activate_ch(struct sh_mobile_i2c_data *pd)
--{
--	/* Wake up device and enable clock */
--	pm_runtime_get_sync(pd->dev);
--	clk_prepare_enable(pd->clk);
--}
--
--static void deactivate_ch(struct sh_mobile_i2c_data *pd)
--{
--	/* Disable channel */
--	iic_set_clr(pd, ICCR, 0, ICCR_ICE);
--
--	/* Disable clock and mark device as idle */
--	clk_disable_unprepare(pd->clk);
--	pm_runtime_put_sync(pd->dev);
--}
--
- static unsigned char i2c_op(struct sh_mobile_i2c_data *pd,
- 			    enum sh_mobile_i2c_op op, unsigned char data)
- {
-@@ -717,7 +700,9 @@ static int sh_mobile_i2c_xfer(struct i2c_adapter *adapter,
- 	int i;
- 	long timeout;
- 
--	activate_ch(pd);
-+	/* Wake up device and enable clock */
-+	pm_runtime_get_sync(pd->dev);
-+	clk_prepare_enable(pd->clk);
- 
- 	/* Process all messages */
- 	for (i = 0; i < num; i++) {
-@@ -754,7 +739,12 @@ static int sh_mobile_i2c_xfer(struct i2c_adapter *adapter,
- 			break;
- 	}
- 
--	deactivate_ch(pd);
-+	/* Disable channel */
-+	iic_set_clr(pd, ICCR, 0, ICCR_ICE);
-+
-+	/* Disable clock and mark device as idle */
-+	clk_disable_unprepare(pd->clk);
-+	pm_runtime_put_sync(pd->dev);
- 
- 	if (!err)
- 		err = num;
+ 	pd->name = np->name;
+-	pd->flags = GENPD_FLAG_PM_CLK;
++	pd->flags = GENPD_FLAG_PM_CLK | GENPD_FLAG_ACTIVE_WAKEUP;
+ 	pd->attach_dev = cpg_mstp_attach_dev;
+ 	pd->detach_dev = cpg_mstp_detach_dev;
+ 	pm_genpd_init(pd, &pm_domain_always_on_gov, false);
 -- 
-2.11.0
+2.7.4
