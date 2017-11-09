@@ -1,86 +1,144 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:54256 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753080AbdKGMsW (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:52042 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754683AbdKINsi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Nov 2017 07:48:22 -0500
+        Thu, 9 Nov 2017 08:48:38 -0500
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>, linux-pm@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Kevin Hilman <khilman@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-pm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 0/5] PM / Domains: Remove gpd_dev_ops.active_wakeup() callback
-Date: Tue,  7 Nov 2017 13:48:10 +0100
-Message-Id: <1510058895-21712-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH/RFC 2/3] irqchip/renesas-irqc: Use wakeup_path i.s.o. explicit clock handling
+Date: Thu,  9 Nov 2017 14:48:32 +0100
+Message-Id: <1510235313-32445-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1510235313-32445-1-git-send-email-geert+renesas@glider.be>
+References: <1510235313-32445-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Rafael, Ulf, Kevin,
+Since commit 6f46aedb9c85873b ("irqchip: renesas-irqc: Add wake-up
+support"), when an IRQ is used for wakeup, the INTC
+block's module clock is manually kept running during system suspend, to
+make sure the device stays active.
 
-It is quite common for PM Domains to require slave devices to be kept
-active during system suspend if they are to be used as wakeup sources.
-To enable this, currently each PM Domain or driver has to provide its
-own gpd_dev_ops.active_wakeup() callback.
+However, this explicit clock handling is merely a workaround for a
+failure to properly communicate wakeup information to the device core.
 
-All existing callbacks either return always true, or a fixed value
-depending on the PM Domain.
+Instead, set the device's power.wakeup_path field, to indicate this
+device is part of the wakeup path.  Depending on the PM Domain's
+active_wakeup configuration, the genpd core code will keep the device
+enabled (and the clock running) during system suspend when needed.
+This allows for the removal of all explicit clock handling code from the
+driver.
 
-Hence this patch series simplifies active wakeup handling by replacing
-the callback by a flag:
-  - Patch 1 adds a new new flag GENPD_FLAG_ACTIVE_WAKEUP, to be set by
-    PM Domain drivers that want to use the new handling,
-  - Patches 2-4 convert all existing users of the callback to the new
-    flag,
-  - Patch 5 removes the callback.
+Note that the dev_pm_info.wakeup_path field exists only if
+CONFIG_PM_SLEEP is enabled, hence the whole suspend infrastructure is
+protected by #ifdef CONFIG_PM_SLEEP.
 
-This series was extracted from "[PATCH 00/10] PM / Domain: renesas: Fix
-active wakeup behavior", and retains only PM Domain changes to existing
-drivers.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+To avoid regressions, this must not be applied before "soc: renesas:
+rcar-sysc: Keep wakeup sources active during system suspend" has landed
+upstream, hence the "RFC"!
 
-Changes compared to v2:
-  - Add Acked-by, Reviewed-by,
-  - Drop RFC status from dependent patches, as everything can go in
-    through the pm tree.
+This driver is used on Renesas R-Mobile, R-Car Gen2/3, and RZ/G1
+platforms.  While the pm-rmobile driver already keeps wakeup sources
+active during system suspend, this is not the case on R-Car Gen2/3 and
+RZ/G1 yet.
 
-Changes compared to v1 (most suggested by Ulf):
-  - Use the flag in se instead of setting up an "always true" callback,
-  - Convert the mediatek and rockchip PM Domain drivers,
-  - Remove the callback.
+v3:
+  - New.
+---
+ drivers/irqchip/irq-renesas-irqc.c | 35 ++++++++++++++++++-----------------
+ 1 file changed, 18 insertions(+), 17 deletions(-)
 
-Thanks for applying for v4.15!
-
-Geert Uytterhoeven (5):
-  PM / Domains: Allow genpd users to specify default active wakeup
-    behavior
-  ARM: shmobile: pm-rmobile: Use GENPD_FLAG_ACTIVE_WAKEUP
-  soc: mediatek: Use GENPD_FLAG_ACTIVE_WAKEUP
-  soc: rockchip: power-domain: Use GENPD_FLAG_ACTIVE_WAKEUP
-  PM / Domains: Remove gpd_dev_ops.active_wakeup() callback
-
- arch/arm/mach-shmobile/pm-rmobile.c |  8 +-------
- drivers/base/power/domain.c         | 13 ++++---------
- drivers/soc/mediatek/mtk-scpsys.c   | 14 ++------------
- drivers/soc/rockchip/pm_domains.c   | 14 ++------------
- include/linux/pm_domain.h           |  8 ++++----
- 5 files changed, 13 insertions(+), 44 deletions(-)
-
+diff --git a/drivers/irqchip/irq-renesas-irqc.c b/drivers/irqchip/irq-renesas-irqc.c
+index 52304b139aa46a60..d91dab43268f9d0a 100644
+--- a/drivers/irqchip/irq-renesas-irqc.c
++++ b/drivers/irqchip/irq-renesas-irqc.c
+@@ -17,7 +17,6 @@
+  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  */
+ 
+-#include <linux/clk.h>
+ #include <linux/init.h>
+ #include <linux/platform_device.h>
+ #include <linux/spinlock.h>
+@@ -64,7 +63,7 @@ struct irqc_priv {
+ 	struct platform_device *pdev;
+ 	struct irq_chip_generic *gc;
+ 	struct irq_domain *irq_domain;
+-	struct clk *clk;
++	unsigned wakeup_path:1;
+ };
+ 
+ static struct irqc_priv *irq_data_to_priv(struct irq_data *data)
+@@ -111,15 +110,7 @@ static int irqc_irq_set_wake(struct irq_data *d, unsigned int on)
+ 	int hw_irq = irqd_to_hwirq(d);
+ 
+ 	irq_set_irq_wake(p->irq[hw_irq].requested_irq, on);
+-
+-	if (!p->clk)
+-		return 0;
+-
+-	if (on)
+-		clk_enable(p->clk);
+-	else
+-		clk_disable(p->clk);
+-
++	p->wakeup_path = on;
+ 	return 0;
+ }
+ 
+@@ -159,12 +150,6 @@ static int irqc_probe(struct platform_device *pdev)
+ 	p->pdev = pdev;
+ 	platform_set_drvdata(pdev, p);
+ 
+-	p->clk = devm_clk_get(&pdev->dev, NULL);
+-	if (IS_ERR(p->clk)) {
+-		dev_warn(&pdev->dev, "unable to get clock\n");
+-		p->clk = NULL;
+-	}
+-
+ 	pm_runtime_enable(&pdev->dev);
+ 	pm_runtime_get_sync(&pdev->dev);
+ 
+@@ -276,6 +261,21 @@ static int irqc_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_PM_SLEEP
++static int irqc_suspend(struct device *dev)
++{
++	struct irqc_priv *p = dev_get_drvdata(dev);
++
++	dev->power.wakeup_path = p->wakeup_path;
++	return 0;
++}
++
++static SIMPLE_DEV_PM_OPS(irqc_pm_ops, irqc_suspend, NULL);
++#define DEV_PM_OPS	&irqc_pm_ops
++#else
++#define DEV_PM_OPS	NULL
++#endif
++
+ static const struct of_device_id irqc_dt_ids[] = {
+ 	{ .compatible = "renesas,irqc", },
+ 	{},
+@@ -288,6 +288,7 @@ static struct platform_driver irqc_device_driver = {
+ 	.driver		= {
+ 		.name	= "renesas_irqc",
+ 		.of_match_table	= irqc_dt_ids,
++		.pm	= DEV_PM_OPS,
+ 	}
+ };
+ 
 -- 
 2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
