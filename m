@@ -1,22 +1,23 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:49155 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755081AbdKIOlf (ORCPT
+Received: from mail-it0-f53.google.com ([209.85.214.53]:57228 "EHLO
+        mail-it0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754969AbdKIO25 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 9 Nov 2017 09:41:35 -0500
+        Thu, 9 Nov 2017 09:28:57 -0500
+Received: by mail-it0-f53.google.com with SMTP id r127so10914735itb.5
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 09 Nov 2017 06:28:57 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFp6FYX-dLZJV6oto8Uc8e8KzO18ScTO8SU+8=NGbs7cOg@mail.gmail.com>
+In-Reply-To: <CAMuHMdWJ5XXzP7wZ8NJjTaxHMARfcvCkVWev5Z29s077BGbYRA@mail.gmail.com>
 References: <1510154134-1248-1-git-send-email-ulf.hansson@linaro.org>
  <CAMuHMdUu6=zuCRBaON4K9ivG8bdV1xBuf4dCvPUr2JCL-=xC=w@mail.gmail.com>
  <CAPDyKFqeEZT631g=x_LTU+Dba=WAhM9YOHYfdsSYo+kJz7HtkQ@mail.gmail.com>
  <CAMuHMdX-MX-H0LKR68KLf4Ypp0ZBvV4sBEf8mv8DSNbe0VuGTg@mail.gmail.com>
- <CAPDyKFpY24tn7zZK8A+XzSvTXLa7s_o93sO+yH5Rkae8KmvrXA@mail.gmail.com>
- <CAMuHMdWJ5XXzP7wZ8NJjTaxHMARfcvCkVWev5Z29s077BGbYRA@mail.gmail.com> <CAPDyKFp6FYX-dLZJV6oto8Uc8e8KzO18ScTO8SU+8=NGbs7cOg@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 9 Nov 2017 15:41:33 +0100
-Message-ID: <CAMuHMdUTX+=SfzivXz5HkgmrxcKB0miYnisBuy3iMtZNABS5KA@mail.gmail.com>
+ <CAPDyKFpY24tn7zZK8A+XzSvTXLa7s_o93sO+yH5Rkae8KmvrXA@mail.gmail.com> <CAMuHMdWJ5XXzP7wZ8NJjTaxHMARfcvCkVWev5Z29s077BGbYRA@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 9 Nov 2017 15:28:55 +0100
+Message-ID: <CAPDyKFp6FYX-dLZJV6oto8Uc8e8KzO18ScTO8SU+8=NGbs7cOg@mail.gmail.com>
 Subject: Re: [PATCH 0/3] PM / core: Invent a WAKEUP_POWERED driver flag
-To: Ulf Hansson <ulf.hansson@linaro.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Linux PM list <linux-pm@vger.kernel.org>,
         Kevin Hilman <khilman@kernel.org>,
@@ -29,69 +30,55 @@ Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Ulf,
+[...]
 
-On Thu, Nov 9, 2017 at 3:28 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> [...]
->
->>>> The Ethernet driver can still call device_set_wakeup_enable(... , false)
->>>> to control this.  If WoL is disabled by the user (or deemed not usable, see
->>>> below), it already does so.
->>>
->>> I don't think that API is intended to be used like that and I wonder
->>> if it even works as expected.
->>>
->>> Quoting the doc:
->>> "If device wakeup mechanisms are enabled or disabled directly by
->>> drivers, they also should use :c:func:`device_may_wakeup()` to decide what to do
->>> during a system sleep transition.  Device drivers, however, are not expected to
->>> call :c:func:`device_set_wakeup_enable()` directly in any case."
->>>
->>> Rafael, can you comment on this?
+>>> The Ethernet driver can still call device_set_wakeup_enable(... , false)
+>>> to control this.  If WoL is disabled by the user (or deemed not usable, see
+>>> below), it already does so.
 >>
->> There are ca. 100 callers in drivers.
->
-> Yeah, but those doesn't normally use it to toggle the setting, but
-> instead only to set a default value during ->probe() or whatever
-> initialization code that runs.
->
-> I think that makes a big difference, doesn't it?
-
-The few Ethernet drivers I looked at change the state in their
-ethtool_ops.set_wol() callback, not during probe.
-This is to be configured from userspace using ethtool.
-
->>>> In addition, keeping WoL enabled for cases 1 and 2 may be desirable
->>>> (e.g allow wake-up if a cable is plugged in during system suspend and
->>>>  a magic packet is received afterwards), depending on the hardware.
->>>> But the driver can already control that through device_set_wakeup_enable().
->>>
->>> Ehh, that sounds weird. :-) If the Ethernet interface is down, how
->>> would such packet be received?
+>> I don't think that API is intended to be used like that and I wonder
+>> if it even works as expected.
 >>
->> It depends on your meaning of "up".  My interpretation is that "up" means
->> ready to handle packets between physical media and the Linux networking stack.
+>> Quoting the doc:
+>> "If device wakeup mechanisms are enabled or disabled directly by
+>> drivers, they also should use :c:func:`device_may_wakeup()` to decide what to do
+>> during a system sleep transition.  Device drivers, however, are not expected to
+>> call :c:func:`device_set_wakeup_enable()` directly in any case."
 >>
->> So even when "down", the actual Ethernet controller may still be able to
->> receive a magic packet if WoL is enabled.  The magic packet is really a
->> magic packet not intended to be transmitted to the networking stack, but
->> merely serves as a wakeup signal.
+>> Rafael, can you comment on this?
 >
-> I see! So, in the end this seems like a combination of what the HW
-> supports and what the user policy is set to.
+> There are ca. 100 callers in drivers.
+
+Yeah, but those doesn't normally use it to toggle the setting, but
+instead only to set a default value during ->probe() or whatever
+initialization code that runs.
+
+I think that makes a big difference, doesn't it?
+
 >
-> Out of curiosity, can you tell how those Renesas Ethernet devices
-> works in this regards?
+>>> In addition, keeping WoL enabled for cases 1 and 2 may be desirable
+>>> (e.g allow wake-up if a cable is plugged in during system suspend and
+>>>  a magic packet is received afterwards), depending on the hardware.
+>>> But the driver can already control that through device_set_wakeup_enable().
+>>
+>> Ehh, that sounds weird. :-) If the Ethernet interface is down, how
+>> would such packet be received?
+>
+> It depends on your meaning of "up".  My interpretation is that "up" means
+> ready to handle packets between physical media and the Linux networking stack.
+>
+> So even when "down", the actual Ethernet controller may still be able to
+> receive a magic packet if WoL is enabled.  The magic packet is really a
+> magic packet not intended to be transmitted to the networking stack, but
+> merely serves as a wakeup signal.
 
-I don't know, I was just playing the devil's advocate ;-)
+I see! So, in the end this seems like a combination of what the HW
+supports and what the user policy is set to.
 
-Gr{oetje,eeting}s,
+Out of curiosity, can you tell how those Renesas Ethernet devices
+works in this regards?
 
-                        Geert
+Anyway, thanks for clarifying!
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Kind regards
+Uffe
