@@ -1,67 +1,85 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f45.google.com ([209.85.214.45]:51547 "EHLO
-        mail-it0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751885AbdKJJ5v (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:57934 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754565AbdKIN1R (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Nov 2017 04:57:51 -0500
-Received: by mail-it0-f45.google.com with SMTP id o135so1044484itb.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 10 Nov 2017 01:57:51 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <1510234022-29442-1-git-send-email-geert+renesas@glider.be>
-References: <1510234022-29442-1-git-send-email-geert+renesas@glider.be>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 10 Nov 2017 10:57:50 +0100
-Message-ID: <CAPDyKFrJ67POYoB1PQUjWEWxgzcGuBRUMKSs5NmjoyLOFLuk4A@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] PM / Domain: renesas: Fix active wakeup behavior
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        Thu, 9 Nov 2017 08:27:17 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Kevin Hilman <khilman@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
         Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Magnus Damm <magnus.damm@gmail.com>, linux-pm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 0/3] PM / Domain: renesas: Fix active wakeup behavior
+Date: Thu,  9 Nov 2017 14:26:59 +0100
+Message-Id: <1510234022-29442-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 9 November 2017 at 14:26, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
->         Hi Rafael, Ulf, Kevin,
->
-> If a device in a Renesas ARM SoC is part of a Clock Domain, and it is
-> used as a wakeup source, it must be kept active during system suspend.
+	Hi Rafael, Ulf, Kevin,
 
-Geert, I think we discussed this a bit already. I wonder if the above
-is a correct statement for all devices in these PM domains, that has
-wakeups?
+If a device in a Renesas ARM SoC is part of a Clock Domain, and it is
+used as a wakeup source, it must be kept active during system suspend.
 
-Don't these SoCs make use of any external logic (out-of-band IRQ) to
-deal with the wakeup IRQs?
+Currently this is handled in device-specific drivers by explicitly
+increasing the use count of the module clock when the device is
+configured as a wakeup source, or if it is part of the wakeup path.
 
-For example, how is GPIO irqs dealt with in this regards?
+However, this is merely a workaround.  The proper way to prevent the
+device from being stopped is to inform this requirement to the genpd
+core, using the new GENPD_FLAG_ACTIVE_WAKEUP flag introduced in commit
+95a20ef6f7e54c6a ("PM / Domains: Allow genpd users to specify default
+active wakeup behavior").
 
-If that is the case, you should really avoid using the big hammer
-method of setting the GENPD_FLAG_ACTIVE_WAKEUP.
+Hence this series does that for PM Domain drivers used on R-Car, RZ/A1,
+RZ/G1 SoCs, mimicking what is already done succesfully on SH/R-Mobile
+SoCs.  This will allow for the workarounds can be removed later.
 
->
-> Currently this is handled in device-specific drivers by explicitly
-> increasing the use count of the module clock when the device is
-> configured as a wakeup source, or if it is part of the wakeup path.
->
-> However, this is merely a workaround.  The proper way to prevent the
-> device from being stopped is to inform this requirement to the genpd
-> core, using the new GENPD_FLAG_ACTIVE_WAKEUP flag introduced in commit
-> 95a20ef6f7e54c6a ("PM / Domains: Allow genpd users to specify default
-> active wakeup behavior").
->
-> Hence this series does that for PM Domain drivers used on R-Car, RZ/A1,
-> RZ/G1 SoCs, mimicking what is already done succesfully on SH/R-Mobile
-> SoCs.  This will allow for the workarounds can be removed later.
->
+This series was extracted from "[PATCH 00/10] PM / Domain: renesas: Fix
+active wakeup behavior", and retains only fixes for Renesas PM Domain
+drivers.
 
-[...]
+Changes compared to v1:
+  - Integrate follow-up patches to use GENPD_FLAG_ACTIVE_WAKEUP instead
+    of adding an "always true" callback.
 
-Kind regards
-Uffe
+As GENPD_FLAG_ACTIVE_WAKEUP exists in pm/linux-next only, and this
+series is a dependency for the removal of workarounds in drivers of
+multiple subsystems (net, irqchip, and gpio), I think it is a good idea
+to still queue this for v4.15 in the PM tree, if possible.
+
+This has been tested on r8a73a4/ape6evm, r8a7740/armadillo,
+r8a7791/koelsch, r8a7795/salvator-x and -xs, r8a7795/salvator-x, and
+sh73a0/kzm9g.
+
+Thanks for applying!
+
+Geert Uytterhoeven (3):
+  clk: renesas: mstp: Keep wakeup sources active during system suspend
+  clk: renesas: cpg-mssr: Keep wakeup sources active during system
+    suspend
+  soc: renesas: rcar-sysc: Keep wakeup sources active during system
+    suspend
+
+ drivers/clk/renesas/clk-mstp.c         | 2 +-
+ drivers/clk/renesas/renesas-cpg-mssr.c | 2 +-
+ drivers/soc/renesas/rcar-sysc.c        | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+-- 
+2.7.4
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
