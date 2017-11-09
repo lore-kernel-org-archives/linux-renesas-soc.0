@@ -1,87 +1,168 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56098 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753132AbdKJNZ6 (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:48652 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754852AbdKINsi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Nov 2017 08:25:58 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v5 14/15] arm64: dts: renesas: r8a7795: Enable IPMMU-VI0, VP1, DS0, DS1 and MM
-Date: Fri, 10 Nov 2017 14:25:31 +0100
-Message-Id: <20171110132532.1202-15-horms+renesas@verge.net.au>
-In-Reply-To: <20171110132532.1202-1-horms+renesas@verge.net.au>
-References: <20171110132532.1202-1-horms+renesas@verge.net.au>
+        Thu, 9 Nov 2017 08:48:38 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Kevin Hilman <khilman@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-pm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC 1/3] irqchip/renesas-intc-irqpin: Use wakeup_path i.s.o. explicit clock handling
+Date: Thu,  9 Nov 2017 14:48:31 +0100
+Message-Id: <1510235313-32445-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1510235313-32445-1-git-send-email-geert+renesas@glider.be>
+References: <1510235313-32445-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Since commit 705bc96c2c15313c ("irqchip: renesas-intc-irqpin: Add
+minimal runtime PM support"), when an IRQ is used for wakeup, the INTC
+block's module clock (if exists) is manually kept running during system
+suspend, to make sure the device stays active.
 
-Enable the r8a7795 device nodes for IPMMU-VI0, IPMMU-VP1, IPMMU-DS0,
-IPMMU-DS1 and the shared IPMMU-MM device.
+However, this explicit clock handling is merely a workaround for a
+failure to properly communicate wakeup information to the device core.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Instead, set the device's power.wakeup_path field, to indicate this
+device is part of the wakeup path.  Depending on the PM Domain's
+active_wakeup configuration, the genpd core code will keep the device
+enabled (and the clock running) during system suspend when needed.
+This allows for the removal of all explicit clock handling code from the
+driver.
+
+Note that the dev_pm_info.wakeup_path field exists only if
+CONFIG_PM_SLEEP is enabled, hence the whole suspend infrastructure is
+protected by #ifdef CONFIG_PM_SLEEP.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-v5 [Simon Horman]
-* Update changelog to reflect new IPMMU names
-* Added reviewed by tag from Geert Uytterhoeven
+This driver is used on Renesas R-Mobile and R-Car Gen1 platforms.
 
-v4 [Simon Horman]
-* Broke out of larger patch
+As (1) the pm-rmobile driver already keeps wakeup sources active during
+system suspend, and (2) the INTC block on R-Car Gen1 doesn't have a
+controllable module clock, this patch should be safe to apply.
 
-v1 - v3 [Magnus Damm]
+v3:
+  - New.
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 5 -----
- 1 file changed, 5 deletions(-)
+ drivers/irqchip/irq-renesas-intc-irqpin.c | 45 +++++++++++++------------------
+ 1 file changed, 18 insertions(+), 27 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index f42387473a9c..6aa00d9b1d50 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -427,7 +427,6 @@
- 			renesas,ipmmu-main = <&ipmmu_mm 14>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			#iommu-cells = <1>;
--			status = "disabled";
- 		};
+diff --git a/drivers/irqchip/irq-renesas-intc-irqpin.c b/drivers/irqchip/irq-renesas-intc-irqpin.c
+index 06f29cf5018a151f..85ed4c9b9fd5b90f 100644
+--- a/drivers/irqchip/irq-renesas-intc-irqpin.c
++++ b/drivers/irqchip/irq-renesas-intc-irqpin.c
+@@ -17,7 +17,6 @@
+  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  */
  
- 		ipmmu_vi1: mmu@febe0000 {
-@@ -454,7 +453,6 @@
- 			renesas,ipmmu-main = <&ipmmu_mm 17>;
- 			power-domains = <&sysc R8A7795_PD_A3VP>;
- 			#iommu-cells = <1>;
--			status = "disabled";
- 		};
+-#include <linux/clk.h>
+ #include <linux/init.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+@@ -78,16 +77,14 @@ struct intc_irqpin_priv {
+ 	struct platform_device *pdev;
+ 	struct irq_chip irq_chip;
+ 	struct irq_domain *irq_domain;
+-	struct clk *clk;
+ 	unsigned shared_irqs:1;
+-	unsigned needs_clk:1;
++	unsigned wakeup_path:1;
+ 	u8 shared_irq_mask;
+ };
  
- 		ipmmu_vc0: mmu@fe6b0000 {
-@@ -544,7 +542,6 @@
- 			renesas,ipmmu-main = <&ipmmu_mm 0>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			#iommu-cells = <1>;
--			status = "disabled";
- 		};
+ struct intc_irqpin_config {
+ 	unsigned int irlm_bit;
+ 	unsigned needs_irlm:1;
+-	unsigned needs_clk:1;
+ };
  
- 		ipmmu_ds1: mmu@e7740000 {
-@@ -553,7 +550,6 @@
- 			renesas,ipmmu-main = <&ipmmu_mm 1>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			#iommu-cells = <1>;
--			status = "disabled";
- 		};
+ static unsigned long intc_irqpin_read32(void __iomem *iomem)
+@@ -287,15 +284,7 @@ static int intc_irqpin_irq_set_wake(struct irq_data *d, unsigned int on)
+ 	int hw_irq = irqd_to_hwirq(d);
  
- 		ipmmu_mm: mmu@e67b0000 {
-@@ -563,7 +559,6 @@
- 				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			#iommu-cells = <1>;
--			status = "disabled";
- 		};
+ 	irq_set_irq_wake(p->irq[hw_irq].requested_irq, on);
+-
+-	if (!p->clk)
+-		return 0;
+-
+-	if (on)
+-		clk_enable(p->clk);
+-	else
+-		clk_disable(p->clk);
+-
++	p->wakeup_path = on;
+ 	return 0;
+ }
  
- 		dmac0: dma-controller@e6700000 {
+@@ -365,12 +354,10 @@ static const struct irq_domain_ops intc_irqpin_irq_domain_ops = {
+ static const struct intc_irqpin_config intc_irqpin_irlm_r8a777x = {
+ 	.irlm_bit = 23, /* ICR0.IRLM0 */
+ 	.needs_irlm = 1,
+-	.needs_clk = 0,
+ };
+ 
+ static const struct intc_irqpin_config intc_irqpin_rmobile = {
+ 	.needs_irlm = 0,
+-	.needs_clk = 1,
+ };
+ 
+ static const struct of_device_id intc_irqpin_dt_ids[] = {
+@@ -422,18 +409,6 @@ static int intc_irqpin_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, p);
+ 
+ 	config = of_device_get_match_data(dev);
+-	if (config)
+-		p->needs_clk = config->needs_clk;
+-
+-	p->clk = devm_clk_get(dev, NULL);
+-	if (IS_ERR(p->clk)) {
+-		if (p->needs_clk) {
+-			dev_err(dev, "unable to get clock\n");
+-			ret = PTR_ERR(p->clk);
+-			goto err0;
+-		}
+-		p->clk = NULL;
+-	}
+ 
+ 	pm_runtime_enable(dev);
+ 	pm_runtime_get_sync(dev);
+@@ -602,12 +577,28 @@ static int intc_irqpin_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_PM_SLEEP
++static int intc_irqpin_suspend(struct device *dev)
++{
++	struct intc_irqpin_priv *p = dev_get_drvdata(dev);
++
++	dev->power.wakeup_path = p->wakeup_path;
++	return 0;
++}
++
++static SIMPLE_DEV_PM_OPS(intc_irqpin_pm_ops, intc_irqpin_suspend, NULL);
++#define DEV_PM_OPS	&intc_irqpin_pm_ops
++#else
++#define DEV_PM_OPS	NULL
++#endif
++
+ static struct platform_driver intc_irqpin_device_driver = {
+ 	.probe		= intc_irqpin_probe,
+ 	.remove		= intc_irqpin_remove,
+ 	.driver		= {
+ 		.name	= "renesas_intc_irqpin",
+ 		.of_match_table = intc_irqpin_dt_ids,
++		.pm	= DEV_PM_OPS,
+ 	}
+ };
+ 
 -- 
-2.11.0
+2.7.4
