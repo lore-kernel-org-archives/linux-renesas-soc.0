@@ -1,25 +1,23 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:53012 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750909AbdKIQbL (ORCPT
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:49155 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755081AbdKIOlf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 9 Nov 2017 11:31:11 -0500
+        Thu, 9 Nov 2017 09:41:35 -0500
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdUTX+=SfzivXz5HkgmrxcKB0miYnisBuy3iMtZNABS5KA@mail.gmail.com>
+In-Reply-To: <CAPDyKFp6FYX-dLZJV6oto8Uc8e8KzO18ScTO8SU+8=NGbs7cOg@mail.gmail.com>
 References: <1510154134-1248-1-git-send-email-ulf.hansson@linaro.org>
  <CAMuHMdUu6=zuCRBaON4K9ivG8bdV1xBuf4dCvPUr2JCL-=xC=w@mail.gmail.com>
  <CAPDyKFqeEZT631g=x_LTU+Dba=WAhM9YOHYfdsSYo+kJz7HtkQ@mail.gmail.com>
  <CAMuHMdX-MX-H0LKR68KLf4Ypp0ZBvV4sBEf8mv8DSNbe0VuGTg@mail.gmail.com>
  <CAPDyKFpY24tn7zZK8A+XzSvTXLa7s_o93sO+yH5Rkae8KmvrXA@mail.gmail.com>
- <CAMuHMdWJ5XXzP7wZ8NJjTaxHMARfcvCkVWev5Z29s077BGbYRA@mail.gmail.com>
- <CAPDyKFp6FYX-dLZJV6oto8Uc8e8KzO18ScTO8SU+8=NGbs7cOg@mail.gmail.com> <CAMuHMdUTX+=SfzivXz5HkgmrxcKB0miYnisBuy3iMtZNABS5KA@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 9 Nov 2017 17:31:10 +0100
-Message-ID: <CAJZ5v0i9Qa4K-=UfC_zuZgWrP3=1r3pfdQ1e-AqNttze8utKFw@mail.gmail.com>
+ <CAMuHMdWJ5XXzP7wZ8NJjTaxHMARfcvCkVWev5Z29s077BGbYRA@mail.gmail.com> <CAPDyKFp6FYX-dLZJV6oto8Uc8e8KzO18ScTO8SU+8=NGbs7cOg@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 9 Nov 2017 15:41:33 +0100
+Message-ID: <CAMuHMdUTX+=SfzivXz5HkgmrxcKB0miYnisBuy3iMtZNABS5KA@mail.gmail.com>
 Subject: Re: [PATCH 0/3] PM / core: Invent a WAKEUP_POWERED driver flag
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Linux PM list <linux-pm@vger.kernel.org>,
         Kevin Hilman <khilman@kernel.org>,
         Viresh Kumar <viresh.kumar@linaro.org>,
@@ -31,48 +29,69 @@ Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Nov 9, 2017 at 3:41 PM, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> Hi Ulf,
+Hi Ulf,
+
+On Thu, Nov 9, 2017 at 3:28 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> [...]
 >
-> On Thu, Nov 9, 2017 at 3:28 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->> [...]
->>
->>>>> The Ethernet driver can still call device_set_wakeup_enable(... , false)
->>>>> to control this.  If WoL is disabled by the user (or deemed not usable, see
->>>>> below), it already does so.
->>>>
->>>> I don't think that API is intended to be used like that and I wonder
->>>> if it even works as expected.
->>>>
->>>> Quoting the doc:
->>>> "If device wakeup mechanisms are enabled or disabled directly by
->>>> drivers, they also should use :c:func:`device_may_wakeup()` to decide what to do
->>>> during a system sleep transition.  Device drivers, however, are not expected to
->>>> call :c:func:`device_set_wakeup_enable()` directly in any case."
->>>>
->>>> Rafael, can you comment on this?
+>>>> The Ethernet driver can still call device_set_wakeup_enable(... , false)
+>>>> to control this.  If WoL is disabled by the user (or deemed not usable, see
+>>>> below), it already does so.
 >>>
->>> There are ca. 100 callers in drivers.
+>>> I don't think that API is intended to be used like that and I wonder
+>>> if it even works as expected.
+>>>
+>>> Quoting the doc:
+>>> "If device wakeup mechanisms are enabled or disabled directly by
+>>> drivers, they also should use :c:func:`device_may_wakeup()` to decide what to do
+>>> during a system sleep transition.  Device drivers, however, are not expected to
+>>> call :c:func:`device_set_wakeup_enable()` directly in any case."
+>>>
+>>> Rafael, can you comment on this?
 >>
->> Yeah, but those doesn't normally use it to toggle the setting, but
->> instead only to set a default value during ->probe() or whatever
->> initialization code that runs.
->>
->> I think that makes a big difference, doesn't it?
+>> There are ca. 100 callers in drivers.
 >
-> The few Ethernet drivers I looked at change the state in their
-> ethtool_ops.set_wol() callback, not during probe.
-> This is to be configured from userspace using ethtool.
+> Yeah, but those doesn't normally use it to toggle the setting, but
+> instead only to set a default value during ->probe() or whatever
+> initialization code that runs.
+>
+> I think that makes a big difference, doesn't it?
 
-Which is the case I was talking about.
+The few Ethernet drivers I looked at change the state in their
+ethtool_ops.set_wol() callback, not during probe.
+This is to be configured from userspace using ethtool.
 
-Since changing the WoL setting via ethtool is expected to cause the
-sysfs knob to reflect its status, using device_set_wakeup_enable() in
-there is not actually confusing.
+>>>> In addition, keeping WoL enabled for cases 1 and 2 may be desirable
+>>>> (e.g allow wake-up if a cable is plugged in during system suspend and
+>>>>  a magic packet is received afterwards), depending on the hardware.
+>>>> But the driver can already control that through device_set_wakeup_enable().
+>>>
+>>> Ehh, that sounds weird. :-) If the Ethernet interface is down, how
+>>> would such packet be received?
+>>
+>> It depends on your meaning of "up".  My interpretation is that "up" means
+>> ready to handle packets between physical media and the Linux networking stack.
+>>
+>> So even when "down", the actual Ethernet controller may still be able to
+>> receive a magic packet if WoL is enabled.  The magic packet is really a
+>> magic packet not intended to be transmitted to the networking stack, but
+>> merely serves as a wakeup signal.
+>
+> I see! So, in the end this seems like a combination of what the HW
+> supports and what the user policy is set to.
+>
+> Out of curiosity, can you tell how those Renesas Ethernet devices
+> works in this regards?
 
-The same applies to setting the default from ->probe().
+I don't know, I was just playing the devil's advocate ;-)
 
-It will be confusing in all of the other cases, though.
+Gr{oetje,eeting}s,
 
-Thanks,
-Rafael
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
