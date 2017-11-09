@@ -1,36 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:39890 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755146AbdKBJvf (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:43870 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754862AbdKINsj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 2 Nov 2017 05:51:35 -0400
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Thu, 9 Nov 2017 08:48:39 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Ulf Hansson <ulf.hansson@linaro.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-pm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/5] [RFC] soc: rockchip: power-domain: Use GENPD_FLAG_ACTIVE_WAKEUP
-Date: Thu, 02 Nov 2017 10:51:27 +0100
-Message-ID: <1719851.1v65Il0leT@diego>
-In-Reply-To: <1509473494-19740-5-git-send-email-geert+renesas@glider.be>
-References: <1509473494-19740-1-git-send-email-geert+renesas@glider.be> <1509473494-19740-5-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Kevin Hilman <khilman@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-pm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC 0/3] renesas: irqchip: Use wakeup_path i.s.o. explicit clock handling
+Date: Thu,  9 Nov 2017 14:48:30 +0100
+Message-Id: <1510235313-32445-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Am Dienstag, 31. Oktober 2017, 19:11:33 CET schrieb Geert Uytterhoeven:
-> Set the newly introduced GENPD_FLAG_ACTIVE_WAKEUP, which allows to
-> remove the driver's own flag-based callback.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+	Hi all,
 
-looks ok, so
-Acked-by: Heiko Stuebner <heiko@sntech.de>
+If an interrupt controller in a Renesas ARM SoC is part of a Clock
+Domain, and it is part of the wakeup path, it must be kept active during
+system suspend.
+
+Currently this is handled in all interrupt controller drivers by
+explicitly increasing the use count of the module clock when the device
+is part of the wakeup path.  However, this explicit clock handling is
+merely a workaround for a failure to properly communicate wakeup
+information to the device core.
+
+Hence this series fixes the affected drivers by setting the devices'
+power.wakeup_path fields instead, to indicate they are part of the
+wakeup path.  Depending on the PM Domain's active_wakeup configuration,
+the genpd core code will keep the device enabled (and the clock running)
+during system suspend when needed.
+
+Note that most of these patches depend on the series "[PATCH v2 0/3] PM
+/ Domain: renesas: Fix active wakeup behavior", hence they should not be
+applied yet.
+
+This has been tested on r8a73a4/ape6evm, r8a7740/armadillo,
+r8a7791/koelsch, r8a7795/salvator-x and -xs, r8a7796/salvator-x, and
+sh73a0/kzm9g.
+
+Thanks for your comments!
+
+Geert Uytterhoeven (3):
+  irqchip/renesas-intc-irqpin: Use wakeup_path i.s.o. explicit clock
+    handling
+  irqchip/renesas-irqc: Use wakeup_path i.s.o. explicit clock handling
+  gpio: rcar: Use wakeup_path i.s.o. explicit clock handling
+
+ drivers/gpio/gpio-rcar.c                  | 43 +++++++++++++----------------
+ drivers/irqchip/irq-renesas-intc-irqpin.c | 45 +++++++++++++------------------
+ drivers/irqchip/irq-renesas-irqc.c        | 35 ++++++++++++------------
+ 3 files changed, 54 insertions(+), 69 deletions(-)
+
+-- 
+2.7.4
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
