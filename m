@@ -1,22 +1,21 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:54586 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752459AbdKIL7T (ORCPT
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:50889 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751311AbdKIKOT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 9 Nov 2017 06:59:19 -0500
+        Thu, 9 Nov 2017 05:14:19 -0500
 MIME-Version: 1.0
 In-Reply-To: <CAPDyKFpY24tn7zZK8A+XzSvTXLa7s_o93sO+yH5Rkae8KmvrXA@mail.gmail.com>
 References: <1510154134-1248-1-git-send-email-ulf.hansson@linaro.org>
  <CAMuHMdUu6=zuCRBaON4K9ivG8bdV1xBuf4dCvPUr2JCL-=xC=w@mail.gmail.com>
  <CAPDyKFqeEZT631g=x_LTU+Dba=WAhM9YOHYfdsSYo+kJz7HtkQ@mail.gmail.com>
  <CAMuHMdX-MX-H0LKR68KLf4Ypp0ZBvV4sBEf8mv8DSNbe0VuGTg@mail.gmail.com> <CAPDyKFpY24tn7zZK8A+XzSvTXLa7s_o93sO+yH5Rkae8KmvrXA@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 9 Nov 2017 12:59:18 +0100
-Message-ID: <CAJZ5v0geFEHje039bAgzTxGMfCcOutiZY4LWD+e7s+_7UasX6g@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 9 Nov 2017 11:14:17 +0100
+Message-ID: <CAMuHMdWJ5XXzP7wZ8NJjTaxHMARfcvCkVWev5Z29s077BGbYRA@mail.gmail.com>
 Subject: Re: [PATCH 0/3] PM / core: Invent a WAKEUP_POWERED driver flag
 To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Linux PM list <linux-pm@vger.kernel.org>,
         Kevin Hilman <khilman@kernel.org>,
         Viresh Kumar <viresh.kumar@linaro.org>,
@@ -28,10 +27,10 @@ Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Ulf,
+
 On Thu, Nov 9, 2017 at 11:08 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
 > On 9 November 2017 at 10:02, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->> Hi Ulf,
->>
 >> On Thu, Nov 9, 2017 at 9:28 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
 >>> On 8 November 2017 at 16:41, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 >>>> On Wed, Nov 8, 2017 at 4:15 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
@@ -104,26 +103,31 @@ On Thu, Nov 9, 2017 at 11:08 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
 >
 > Rafael, can you comment on this?
 
-Well, it means what it says.
+There are ca. 100 callers in drivers.
 
-If you call device_set_wakeup_enable() from a driver, user space will
-see a change in sysfs and may be confused by that and that's why doing
-so is not recommended.
-
-Not that people listen to recommendations too much, though. :-)
-
->>
 >> In addition, keeping WoL enabled for cases 1 and 2 may be desirable
 >> (e.g allow wake-up if a cable is plugged in during system suspend and
 >>  a magic packet is received afterwards), depending on the hardware.
 >> But the driver can already control that through device_set_wakeup_enable().
->>
 >
 > Ehh, that sounds weird. :-) If the Ethernet interface is down, how
 > would such packet be received?
 
-In PCI NICs, if wakeup power is provided, the NIC can detect activity
-on the port and generate a PCI PME even if the I/F is down otherwise.
+It depends on your meaning of "up".  My interpretation is that "up" means
+ready to handle packets between physical media and the Linux networking stack.
 
-Thanks,
-Rafael
+So even when "down", the actual Ethernet controller may still be able to
+receive a magic packet if WoL is enabled.  The magic packet is really a
+magic packet not intended to be transmitted to the networking stack, but
+merely serves as a wakeup signal.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
