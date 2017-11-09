@@ -1,15 +1,15 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ot0-f179.google.com ([74.125.82.179]:54568 "EHLO
-        mail-ot0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752510AbdKIAlj (ORCPT
+Received: from mail-ot0-f175.google.com ([74.125.82.175]:54504 "EHLO
+        mail-ot0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752745AbdKIAYx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 8 Nov 2017 19:41:39 -0500
+        Wed, 8 Nov 2017 19:24:53 -0500
 MIME-Version: 1.0
 In-Reply-To: <1510154134-1248-3-git-send-email-ulf.hansson@linaro.org>
 References: <1510154134-1248-1-git-send-email-ulf.hansson@linaro.org> <1510154134-1248-3-git-send-email-ulf.hansson@linaro.org>
 From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 9 Nov 2017 01:41:38 +0100
-Message-ID: <CAJZ5v0jOLvCW58K-RiHU+j90AX1H+D6p6D+wnxat3jYzJcQDew@mail.gmail.com>
+Date: Thu, 9 Nov 2017 01:24:52 +0100
+Message-ID: <CAJZ5v0jFLL2pBNPo=J3MdwfcA9C+nSMe_S6iBYLoEA8SjbOJ+A@mail.gmail.com>
 Subject: Re: [PATCH 2/3] PM / core: Add WAKEUP_POWERED driver flag
 To: Ulf Hansson <ulf.hansson@linaro.org>
 Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
@@ -66,6 +66,22 @@ On Wed, Nov 8, 2017 at 4:15 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
 > +:c:func:`dev_pm_set_driver_flags` helper. This instructs bus types and PM
 > +domains to leave the device in full power state, when wakeup signals are enabled
 > +for it.
+
+IMO this is a bit unclear.
+
+First off, how does the driver know that the device has to be in full
+power for wakeup to work?
+
+Second, this requirement sort of implies that the device cannot go
+into a low-power state during runtime suspend too, so it basically
+remains stays at full power even when runtime-suspended.
+
+Does it then mean that the middle layer is expected to simply avoid
+changing the power state of the device when enabled to wake up the
+system, or is there more to that?  In the former case, it may be
+better to rename the flag to something along the lines of "don't
+change power state if wakeup enabled".
+
 > +
 >  If any of these callbacks returns an error, the system won't enter the desired
 >  low-power state.  Instead, the PM core will unwind its actions by resuming all
@@ -84,13 +100,44 @@ On Wed, Nov 8, 2017 at 4:15 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
 >
 > +               if (dev_pm_test_driver_flags(dev, DPM_FLAG_WAKEUP_POWERED))
 > +                       parent->power.driver_flags |= DPM_FLAG_WAKEUP_POWERED;
+> +       }
+> +
+>         spin_unlock_irq(&parent->power.lock);
+>  }
+>
+> diff --git a/include/linux/pm.h b/include/linux/pm.h
+> index 65d3911..34c2404 100644
+> --- a/include/linux/pm.h
+> +++ b/include/linux/pm.h
+> @@ -559,6 +559,7 @@ struct pm_subsys_data {
+>   * NEVER_SKIP: Do not skip system suspend/resume callbacks for the device.
+>   * SMART_PREPARE: Check the return value of the driver's ->prepare callback.
+>   * SMART_SUSPEND: No need to resume the device from runtime suspend.
+> + * WAKEUP_POWERED: Keep the device powered if it has wakeup enabled.
+>   *
+>   * Setting SMART_PREPARE instructs bus types and PM domains which may want
+>   * system suspend/resume callbacks to be skipped for the device to return 0 from
+> @@ -572,10 +573,14 @@ struct pm_subsys_data {
+>   * necessary from the driver's perspective.  It also may cause them to skip
+>   * invocations of the ->suspend_late and ->suspend_noirq callbacks provided by
+>   * the driver if they decide to leave the device in runtime suspend.
+> + *
+> + * Setting WAKEUP_POWERED instructs bus types and PM domains that the device
+> + * needs to remain powered in system suspend, in case wakeup is enabled for it.
+>   */
+>  #define DPM_FLAG_NEVER_SKIP    BIT(0)
+>  #define DPM_FLAG_SMART_PREPARE BIT(1)
+>  #define DPM_FLAG_SMART_SUSPEND BIT(2)
+> +#define DPM_FLAG_WAKEUP_POWERED        BIT(3)
 
-No, sorry.
+I'd prefer this to be BIT(4).
 
-The flag cannot be propagated this way, because that effectively
-overrides the choices made by the parent driver and up.
-
-Besides, wakeup_path already had a similar purpose.  What has happened to that?
+>
+>  struct dev_pm_info {
+>         pm_message_t            power_state;
+> --
+> 2.7.4
+>
 
 Thanks,
 Rafael
