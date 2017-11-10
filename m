@@ -1,58 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55692 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:55199 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752216AbdKAKga (ORCPT
+        with ESMTP id S1750975AbdKJMHy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 1 Nov 2017 06:36:30 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 4/7] arm64: dts: renesas: r8a7796: Point FDP1 via FCPF to IPMMU-VI0
-Date: Wed,  1 Nov 2017 11:34:55 +0100
-Message-Id: <20171101103458.7582-5-horms+renesas@verge.net.au>
-In-Reply-To: <20171101103458.7582-1-horms+renesas@verge.net.au>
-References: <20171101103458.7582-1-horms+renesas@verge.net.au>
+        Fri, 10 Nov 2017 07:07:54 -0500
+Date: Fri, 10 Nov 2017 13:07:50 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH 1/2] arm64: dts: renesas: r8a77995: Add IPMMU device nodes
+Message-ID: <20171110120749.rbh7dzknbaatrqjb@verge.net.au>
+References: <20171101103508.7721-1-horms+renesas@verge.net.au>
+ <20171101103508.7721-2-horms+renesas@verge.net.au>
+ <CAMuHMdVS_5_iouNei_HvgUtWTVS_NuLcbpua_K_VUQqr7Pt_QA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVS_5_iouNei_HvgUtWTVS_NuLcbpua_K_VUQqr7Pt_QA@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hook up the FCPF devices to allow use of FDP1 with IPMMU-VI0.
+On Tue, Nov 07, 2017 at 11:13:36AM +0100, Geert Uytterhoeven wrote:
+> On Wed, Nov 1, 2017 at 11:35 AM, Simon Horman
+> <horms+renesas@verge.net.au> wrote:
+> > Add r8a77995 IPMMU nodes and keep all disabled by default.
+> >
+> > Based on work for the r8a7795 and r8a7796 by Magnus Damm
+> >
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> My comment for r8a7795.dtsi about IPMMU-* comments is applicable here, too.
 
-Based on work by Magnus Damm for the r8a7795.
+Thanks, I will drop those comments.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
+> My comment about power-domains properties probably isn't, as R-Car D3
+> doesn't have I/O power domains, which table 16.2 doesn't take into account.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index ce74a7ae47f4..d4c2e12daba7 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -1892,6 +1892,7 @@
- 			clocks = <&cpg CPG_MOD 603>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
- 			resets = <&cpg 603>;
-+			iommus = <&ipmmu_vi0 8>;
- 		};
- 
- 		vspd1: vsp@fea28000 {
-@@ -1911,6 +1912,7 @@
- 			clocks = <&cpg CPG_MOD 602>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
- 			resets = <&cpg 602>;
-+			iommus = <&ipmmu_vi0 9>;
- 		};
- 
- 		vspd2: vsp@fea30000 {
-@@ -1930,6 +1932,7 @@
- 			clocks = <&cpg CPG_MOD 601>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
- 			resets = <&cpg 601>;
-+			iommus = <&ipmmu_vi0 10>;
- 		};
- 
- 		hdmi0: hdmi@fead0000 {
--- 
-2.11.0
+Thanks, I will not add power domains at this time.
