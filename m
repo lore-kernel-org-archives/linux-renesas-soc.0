@@ -1,83 +1,106 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:37558 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751865AbdKMKcb (ORCPT
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:48231 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751406AbdKJKAr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Nov 2017 05:32:31 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Liviu Dudau <Liviu.Dudau@arm.com>,
-        Daniel Vetter <daniel.vetter@intel.com>
-Subject: [PATCH/RFC 1/2] drm: rcar-du: Set the DMA coherent mask for the DU device
-Date: Mon, 13 Nov 2017 12:32:27 +0200
-Message-Id: <20171113103228.23312-2-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20171113103228.23312-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20171113103228.23312-1-laurent.pinchart+renesas@ideasonboard.com>
+        Fri, 10 Nov 2017 05:00:47 -0500
+MIME-Version: 1.0
+In-Reply-To: <1510067449-17017-3-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1510067449-17017-1-git-send-email-fabrizio.castro@bp.renesas.com> <1510067449-17017-3-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 10 Nov 2017 11:00:46 +0100
+Message-ID: <CAMuHMdV=8rAE5z2VmCjL-M_MXY6TsKM_+0c-bsqDsjDZYWU1FA@mail.gmail.com>
+Subject: Re: [PATCH 2/8] pinctrl: sh-pfc: r8a7745: Add CAN[01] support
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Simon Horman <horms@verge.net.au>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The DU DMA address space is limited to 32 bits, so the DMA coherent mask
-should be set accordingly. The DMA mapping implementation will
-transparently map high memory buffers to 32-bit addresses through an
-IOMMU when present (or through bounce buffers otherwise, which isn't a
-supported use case as performances would be terrible).
+Hi Fabrizio,
 
-However, when sourcing frames from a VSP, the situation is more
-complicated. The DU delegates all memory accesses to the VSP and doesn't
-perform any DMA access by itself. Due to how the GEM CMA helpers are
-structured buffers are still mapped to the DU device. They are later
-mapped to the VSP as well to perform DMA access, through the IOMMU
-connected to the VSP.
+On Tue, Nov 7, 2017 at 4:10 PM, Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> This patch adds PFC CAN0 and CAN1 pin groups and functions, enabling CAN
+> bus on the RZ/G1E.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 
-Setting the DMA coherent mask to 32 bits for the DU when using a VSP can
-cause issues when importing a dma_buf. If the buffer is located above
-the 32-bit address space, the DMA mapping implementation will try to map
-it to the DU's DMA address space. As the DU has no IOMMU a bounce buffer
-will be allocated, which in the best case will waste memory and in the
-worst case will just fail.
+Thanks for your patch!
 
-To work around this issue, set the DMA coherent mask to the full 40-bit
-address space for the DU. All dma-buf instances will be imported without
-any restriction, and will be mapped to the VSP when preparing the
-associated framebuffer.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in sh-pfc-for-v4.16.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/gpu/drm/rcar-du/rcar_du_drv.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+> +static const char * const can0_groups[] = {
+> +       "can0_data",
+> +       "can0_data_b",
+> +       "can0_data_c",
+> +       "can0_data_d",
+> +       "can_clk",
+> +       "can_clk_b",
+> +       "can_clk_c",
+> +       "can_clk_d",
+> +};
+> +
+> +static const char * const can1_groups[] = {
+> +       "can1_data",
+> +       "can1_data_b",
+> +       "can1_data_c",
+> +       "can1_data_d",
+> +       "can_clk",
+> +       "can_clk_b",
+> +       "can_clk_c",
+> +       "can_clk_d",
+> +};
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-index 6e02c762a557..48c166f925a3 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-@@ -370,6 +370,7 @@ static int rcar_du_probe(struct platform_device *pdev)
- 	struct rcar_du_device *rcdu;
- 	struct drm_device *ddev;
- 	struct resource *mem;
-+	unsigned int mask;
- 	int ret;
- 
- 	/* Allocate and initialize the R-Car device structure. */
-@@ -388,6 +389,16 @@ static int rcar_du_probe(struct platform_device *pdev)
- 	if (IS_ERR(rcdu->mmio))
- 		return PTR_ERR(rcdu->mmio);
- 
-+	/*
-+	 * Set the DMA coherent mask to reflect the DU 32-bit DMA address space
-+	 * limitations. When sourcing frames from a VSP the DU doesn't perform
-+	 * any memory access so set the mask to 40 bits to accept all buffers.
-+	 */
-+	mask = rcar_du_has(rcdu, RCAR_DU_FEATURE_VSP1_SOURCE) ? 40 : 32;
-+	ret = dma_coerce_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(mask));
-+	if (ret)
-+		return ret;
-+
- 	/* DRM/KMS objects */
- 	ddev = drm_dev_alloc(&rcar_du_driver, &pdev->dev);
- 	if (IS_ERR(ddev))
--- 
-Regards,
+> @@ -4102,6 +4246,8 @@ static const char * const vin1_groups[] = {
+>  static const struct sh_pfc_function pinmux_functions[] = {
+>         SH_PFC_FUNCTION(audio_clk),
+>         SH_PFC_FUNCTION(avb),
+> +       SH_PFC_FUNCTION(can0),
+> +       SH_PFC_FUNCTION(can1),
+>         SH_PFC_FUNCTION(du0),
+>         SH_PFC_FUNCTION(du1),
+>         SH_PFC_FUNCTION(eth),
 
-Laurent Pinchart
+One minor nit: on R-Car Gen3, there is a separate function for can_clk,
+which is cleaner, as it reduces duplication, and allows for independent
+configuration.
+
+Consider e.g. the case where you want to use both can0 and can1, which
+means you have to add "can_clk" to exactly one of the two pin nodes in DT:
+
+        can0_pins: can0 {
+                groups = "can0_data", "can_clk";
+                function = "can0";
+        };
+
+        can1_pins: can1 {
+                groups = "can0_data";
+                function = "can0";
+        };
+
+However, as can_clk is integrated in both the can0 and can1 groups on RZ/G1M
+(and R-Car M2-W/N, V2H, and M1A), I'll let this pass through.
+
+You may want to consider adding the separate group anyway (later), to
+provide a simpler upgrade path.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
