@@ -1,142 +1,113 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v10 0/2] media: rcar-csi2: add Renesas R-Car MIPI CSI-2 
-Date: Fri, 10 Nov 2017 14:31:35 +0100
-Message-Id: <20171110133137.9137-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:56098 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752619AbdKJNZr (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 10 Nov 2017 08:25:47 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v5 04/15] arm64: dts: renesas: r8a7795: Tie Audio-DMAC to IPMMU-MP0/1
+Date: Fri, 10 Nov 2017 14:25:21 +0100
+Message-Id: <20171110132532.1202-5-horms+renesas@verge.net.au>
+In-Reply-To: <20171110132532.1202-1-horms+renesas@verge.net.au>
+References: <20171110132532.1202-1-horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+From: Magnus Damm <damm+renesas@opensource.se>
 
-This is the latest incarnation of R-Car MIPI CSI-2 receiver driver. It's
-based on top of the media-tree and are tested on Renesas Salvator-X
-together with the out-of-tree patches for rcar-vin to add support for
-Gen3 VIN. If anyone is interested to test video grabbing using these out
-of tree patches please see [1].
+Hook up r8a7795 ES2.0 Audio-DMAC nodes to the IPMMU-MP0.
+Hook up r8a7795 ES1.x Audio-DMAC nodes to the IPMMU-MP1.
 
-* Changes since v9
-- Add reset property to device tree example
-- Use BIT(x) instead of (1 << x)
-- Use u16 in struct phypll_hsfreqrange to pack struct better.
-- Use unsigned int type for loop variable in rcar_csi2_code_to_fmt
-- Move fields inside struct struct rcar_csi2_info and struct rcar_csi2 
-  to pack struct's tighter.
-- Use %u instead of %d when printing __u32.
-- Don't check return of platform_get_resource(), let 
-  devm_ioremap_resource() handle it.
-- Store quirk workaround for r8a7795 ES1.0 in the data field of struct 
-  soc_device_attribute.
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v5 [Simon Horman]
+* Added reviewed by tag from Geert Uytterhoeven
 
-Changes since v8:
-- Updated bindings documentation, thanks Rob!
-- Make use of the now in media-tree sub-notifier V4L2 API
-- Add delay when resetting the IP to allow for a proper reset
-- Fix bug in s_stream error path where the usage count was off if an
-  error was hit.
-- Add support for H3 ES2.0
+v4 [Simon Horman]
+* Broke out of larger patch
+* Use IPMMU-MP0 rather than IPMMU-MP1 for ES2.0
+* Added reviewed by tag from Laurent Pinchart
 
-Changes since v7:
-- Rebase on top of the latest incremental async patches.
-- Fix comments on DT documentation.
-- Use v4l2_ctrl_g_ctrl_int64() instead of v4l2_g_ext_ctrls().
-- Handle try formats in .set_fmt() and .get_fmt().
-- Don't call v4l2_device_register_subdev_nodes() as this is not needed
-  with the complete() callbacks synchronized.
-- Fix line over 80 chars.
-- Fix varies spelling mistakes.
+v1 - v3 [Magnus Damm]
+---
+ arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi | 22 ++++++++++++++++++++++
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi     | 16 ++++++++++++++++
+ 2 files changed, 38 insertions(+)
 
-Changes since v6:
-- Rebased on top of Sakaris fwnode patches.
-- Changed of RCAR_CSI2_PAD_MAX to NR_OF_RCAR_CSI2_PAD.
-- Remove assumption about unknown media bus type, thanks Sakari for
-  pointing this out.
-- Created table for supported format information instead of scattering
-  this information around the driver, thanks Sakari!
-- Small newline fixes and reduce some indentation levels.
-
-Changes since v5:
-- Make use of the incremental async subnotifer and helper to map DT
-  endpoint to media pad number. This moves functionality which
-  previously in the Gen3 patches for R-Car VIN driver to this R-Car
-  CSI-2 driver. This is done in preparation to support the ADV7482
-  driver in development by Kieran which will register more then one
-  subdevice and the CSI-2 driver needs to cope wit this. Further more it
-  prepares the driver for another use-case where more then one subdevice
-  is present upstream for the CSI-2.
-- Small cleanups.
-- Add explicit include for linux/io.h, thanks Kieran.
-
-Changes since v4:
-- Match SoC part numbers and drop trailing space in documentation,
-  thanks Geert for pointing this out.
-- Clarify that the driver is a CSI-2 receiver by supervised
-  s/interface/receiver/, thanks Laurent.
-- Add entries in Kconfig and Makefile alphabetically instead of append.
-- Rename struct rcar_csi2 member swap to lane_swap.
-- Remove macros to wrap calls to dev_{dbg,info,warn,err}.
-- Add wrappers for ioread32 and iowrite32.
-- Remove unused interrupt handler, but keep checking in probe that there
-  are a interrupt define in DT.
-- Rework how to wait for LP-11 state, thanks Laurent for the great idea!
-- Remove unneeded delay in rcar_csi2_reset()
-- Remove check for duplicated lane id:s from DT parsing. Broken out to a
-  separate patch adding this check directly to v4l2_of_parse_endpoint().
-- Fixed rcar_csi2_start() to ask it's source subdevice for information
-  about pixel rate and frame format. With this change having
-  {set,get}_fmt operations became redundant, it was only used for
-  figuring out this out so dropped them.
-- Tabulated frequency settings map.
-- Dropped V4L2_SUBDEV_FL_HAS_DEVNODE it should never have been set.
-- Switched from MEDIA_ENT_F_ATV_DECODER to
-  MEDIA_ENT_F_PROC_VIDEO_PIXEL_FORMATTER as entity function. I can't
-  find a more suitable function, and what the hardware do is to fetch
-  video from an external chip and passes it on to a another SoC internal
-  IP it's sort of a formatter.
-- Break out DT documentation and code in two patches.
-
-Changes since v3:
-- Update DT binding documentation with input from Geert Uytterhoeven,
-  thanks!
-
-Changes since v2:
-- Added media control pads as this is needed by the new rcar-vin driver.
-- Update DT bindings after review comments and to add r8a7796 support.
-- Add get_fmt handler.
-- Fix media bus format error s/YUYV8/UYVY8/
-
-Changes since v1:
-- Drop dependency on a pad aware s_stream operation.
-- Use the DT bindings format "renesas,<soctype>-<device>", thanks Geert
-  for pointing this out.
-
-1. http://elinux.org/R-Car/Tests:rcar-vin
-
-Niklas Söderlund (2):
-  media: rcar-csi2: add Renesas R-Car MIPI CSI-2 receiver documentation
-  media: rcar-csi2: add Renesas R-Car MIPI CSI-2 receiver driver
-
- .../devicetree/bindings/media/rcar-csi2.txt        | 104 +++
- MAINTAINERS                                        |   1 +
- drivers/media/platform/rcar-vin/Kconfig            |  12 +
- drivers/media/platform/rcar-vin/Makefile           |   1 +
- drivers/media/platform/rcar-vin/rcar-csi2.c        | 934 +++++++++++++++++++++
- 5 files changed, 1052 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/rcar-csi2.txt
- create mode 100644 drivers/media/platform/rcar-vin/rcar-csi2.c
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+index 38b7cfb3b428..2dfe8108072c 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+@@ -127,6 +127,28 @@
+ 	renesas,ipmmu-main = <&ipmmu_mm 7>;
+ };
+ 
++&audma0 {
++	iommus = <&ipmmu_mp1 0>, <&ipmmu_mp1 1>,
++	       <&ipmmu_mp1 2>, <&ipmmu_mp1 3>,
++	       <&ipmmu_mp1 4>, <&ipmmu_mp1 5>,
++	       <&ipmmu_mp1 6>, <&ipmmu_mp1 7>,
++	       <&ipmmu_mp1 8>, <&ipmmu_mp1 9>,
++	       <&ipmmu_mp1 10>, <&ipmmu_mp1 11>,
++	       <&ipmmu_mp1 12>, <&ipmmu_mp1 13>,
++	       <&ipmmu_mp1 14>, <&ipmmu_mp1 15>;
++};
++
++&audma1 {
++	iommus = <&ipmmu_mp1 16>, <&ipmmu_mp1 17>,
++	       <&ipmmu_mp1 18>, <&ipmmu_mp1 19>,
++	       <&ipmmu_mp1 20>, <&ipmmu_mp1 21>,
++	       <&ipmmu_mp1 22>, <&ipmmu_mp1 23>,
++	       <&ipmmu_mp1 24>, <&ipmmu_mp1 25>,
++	       <&ipmmu_mp1 26>, <&ipmmu_mp1 27>,
++	       <&ipmmu_mp1 28>, <&ipmmu_mp1 29>,
++	       <&ipmmu_mp1 30>, <&ipmmu_mp1 31>;
++};
++
+ &du {
+ 	vsps = <&vspd0 &vspd1 &vspd2 &vspd3>;
+ };
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index bff0e3a3e582..b13176feec89 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -724,6 +724,14 @@
+ 			resets = <&cpg 502>;
+ 			#dma-cells = <1>;
+ 			dma-channels = <16>;
++			iommus = <&ipmmu_mp0 0>, <&ipmmu_mp0 1>,
++			       <&ipmmu_mp0 2>, <&ipmmu_mp0 3>,
++			       <&ipmmu_mp0 4>, <&ipmmu_mp0 5>,
++			       <&ipmmu_mp0 6>, <&ipmmu_mp0 7>,
++			       <&ipmmu_mp0 8>, <&ipmmu_mp0 9>,
++			       <&ipmmu_mp0 10>, <&ipmmu_mp0 11>,
++			       <&ipmmu_mp0 12>, <&ipmmu_mp0 13>,
++			       <&ipmmu_mp0 14>, <&ipmmu_mp0 15>;
+ 		};
+ 
+ 		audma1: dma-controller@ec720000 {
+@@ -758,6 +766,14 @@
+ 			resets = <&cpg 501>;
+ 			#dma-cells = <1>;
+ 			dma-channels = <16>;
++			iommus = <&ipmmu_mp0 16>, <&ipmmu_mp0 17>,
++			       <&ipmmu_mp0 18>, <&ipmmu_mp0 19>,
++			       <&ipmmu_mp0 20>, <&ipmmu_mp0 21>,
++			       <&ipmmu_mp0 22>, <&ipmmu_mp0 23>,
++			       <&ipmmu_mp0 24>, <&ipmmu_mp0 25>,
++			       <&ipmmu_mp0 26>, <&ipmmu_mp0 27>,
++			       <&ipmmu_mp0 28>, <&ipmmu_mp0 29>,
++			       <&ipmmu_mp0 30>, <&ipmmu_mp0 31>;
+ 		};
+ 
+ 		avb: ethernet@e6800000 {
 -- 
-2.15.0
-
+2.11.0
