@@ -1,11 +1,16 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Mon, 20 Nov 2017 11:05:23 +0100
-From: Simon Horman <horms@verge.net.au>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:49622 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750896AbdKJVXC (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 10 Nov 2017 16:23:02 -0500
+Date: Fri, 10 Nov 2017 15:23:01 -0600
+From: Rob Herring <robh@kernel.org>
 To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Cc: Wolfgang Grandegger <wg@grandegger.com>,
         Marc Kleine-Budde <mkl@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         linux-can@vger.kernel.org, netdev@vger.kernel.org,
         devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
@@ -13,14 +18,14 @@ Cc: Wolfgang Grandegger <wg@grandegger.com>,
         Biju Das <biju.das@bp.renesas.com>
 Subject: Re: [PATCH 1/8] dt-bindings: can: rcar_can: document r8a774[35] can
  support
-Message-ID: <20171120100523.kfjthoyerpo4x46v@verge.net.au>
+Message-ID: <20171110212301.jbxti6n5ab5hs7xw@rob-hp-laptop>
 References: <1510067449-17017-1-git-send-email-fabrizio.castro@bp.renesas.com>
  <1510067449-17017-2-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <1510067449-17017-2-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 On Tue, Nov 07, 2017 at 03:10:42PM +0000, Fabrizio Castro wrote:
@@ -30,6 +35,8 @@ On Tue, Nov 07, 2017 at 03:10:42PM +0000, Fabrizio Castro wrote:
 > 
 > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 > Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+> ---
+>  Documentation/devicetree/bindings/net/can/rcar_can.txt | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-
+Acked-by: Rob Herring <robh@kernel.org>
