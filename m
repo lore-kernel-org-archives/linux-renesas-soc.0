@@ -1,79 +1,102 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:44820 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751733AbdKDUU1 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:56182 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752806AbdKJN0G (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 4 Nov 2017 16:20:27 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-media@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v6 5/9] i2c: add i2c_master_{send|recv}_dmasafe
-Date: Sat,  4 Nov 2017 21:20:05 +0100
-Message-Id: <20171104202009.3818-6-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20171104202009.3818-1-wsa+renesas@sang-engineering.com>
-References: <20171104202009.3818-1-wsa+renesas@sang-engineering.com>
+        Fri, 10 Nov 2017 08:26:06 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v2 2/5] arm64: dts: renesas: r8a77970: Add IPMMU device nodes
+Date: Fri, 10 Nov 2017 14:25:50 +0100
+Message-Id: <20171110132553.1461-3-horms+renesas@verge.net.au>
+In-Reply-To: <20171110132553.1461-1-horms+renesas@verge.net.au>
+References: <20171110132553.1461-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use the new helper to create variants of i2c_master_{send|recv} which
-mark their buffers as DMA safe.
+Add r8a77970 IPMMU nodes and keep all disabled by default.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Based on work for the r8a7796 by Magnus Damm
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- include/linux/i2c.h | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+v2
+* Drop mostly redundant comments from nodes
+* Add power domains
+* Correct compat string used for IPMMU-DS1
+* Added reviewed by tag from Geert Uytterhoeven
+---
+ arch/arm64/boot/dts/renesas/r8a77970.dtsi | 47 +++++++++++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
 
-diff --git a/include/linux/i2c.h b/include/linux/i2c.h
-index ef1a8791c1ae24..8c144e3cbfb261 100644
---- a/include/linux/i2c.h
-+++ b/include/linux/i2c.h
-@@ -81,6 +81,22 @@ static inline int i2c_master_recv(const struct i2c_client *client,
- };
+diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+index 8b97842aedb7..5f73ee2dfd6d 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+@@ -12,6 +12,7 @@
+ #include <dt-bindings/clock/renesas-cpg-mssr.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/power/r8a77970-sysc.h>
  
- /**
-+ * i2c_master_recv_dmasafe - issue a single I2C message in master receive mode
-+ *			     using a DMA safe buffer
-+ * @client: Handle to slave device
-+ * @buf: Where to store data read from slave, must be safe to use with DMA
-+ * @count: How many bytes to read, must be less than 64k since msg.len is u16
-+ *
-+ * Returns negative errno, or else the number of bytes read.
-+ */
-+static inline int i2c_master_recv_dmasafe(const struct i2c_client *client,
-+					  char *buf, int count)
-+{
-+	return i2c_transfer_buffer_flags(client, buf, count,
-+					 I2C_M_RD | I2C_M_DMA_SAFE);
-+};
+ / {
+ 	compatible = "renesas,r8a77970";
+@@ -134,6 +135,52 @@
+ 			#power-domain-cells = <1>;
+ 		};
+ 
++		ipmmu_vi0: mmu@febd0000 {
++			compatible = "renesas,ipmmu-r8a77970";
++			reg = <0 0xfebd0000 0 0x1000>;
++			renesas,ipmmu-main = <&ipmmu_mm 9>;
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
 +
-+/**
-  * i2c_master_send - issue a single I2C message in master transmit mode
-  * @client: Handle to slave device
-  * @buf: Data that will be written to the slave
-@@ -93,6 +109,21 @@ static inline int i2c_master_send(const struct i2c_client *client,
- {
- 	return i2c_transfer_buffer_flags(client, (char *)buf, count, 0);
- };
-+/**
-+ * i2c_master_send_dmasafe - issue a single I2C message in master transmit mode
-+ *			     using a DMA safe buffer
-+ * @client: Handle to slave device
-+ * @buf: Data that will be written to the slave, must be safe to use with DMA
-+ * @count: How many bytes to write, must be less than 64k since msg.len is u16
-+ *
-+ * Returns negative errno, or else the number of bytes written.
-+ */
-+static inline int i2c_master_send_dmasafe(const struct i2c_client *client,
-+					  const char *buf, int count)
-+{
-+	return i2c_transfer_buffer_flags(client, (char *)buf, count,
-+					 I2C_M_DMA_SAFE);
-+};
- 
- /* Transfer num messages.
-  */
++		ipmmu_ir: mmu@ff8b0000 {
++			compatible = "renesas,ipmmu-r8a77970";
++			reg = <0 0xff8b0000 0 0x1000>;
++			renesas,ipmmu-main = <&ipmmu_mm 3>;
++			power-domains = <&sysc R8A77970_PD_A3IR>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_rt: mmu@ffc80000 {
++			compatible = "renesas,ipmmu-r8a77970";
++			reg = <0 0xffc80000 0 0x1000>;
++			renesas,ipmmu-main = <&ipmmu_mm 7>;
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_ds1: mmu@e7740000 {
++			compatible = "renesas,ipmmu-r8a77970";
++			reg = <0 0xe7740000 0 0x1000>;
++			renesas,ipmmu-main = <&ipmmu_mm 1>;
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_mm: mmu@e67b0000 {
++			compatible = "renesas,ipmmu-r8a77970";
++			reg = <0 0xe67b0000 0 0x1000>;
++			interrupts = <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
+ 		intc_ex: interrupt-controller@e61c0000 {
+ 			compatible = "renesas,intc-ex-r8a77970", "renesas,irqc";
+ 			#interrupt-cells = <2>;
 -- 
 2.11.0
