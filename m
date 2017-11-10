@@ -1,42 +1,41 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-media@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH v6 1/9] i2c: add a message flag for DMA safe buffers
-Date: Sat,  4 Nov 2017 21:20:01 +0100
-Message-Id: <20171104202009.3818-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20171104202009.3818-1-wsa+renesas@sang-engineering.com>
-References: <20171104202009.3818-1-wsa+renesas@sang-engineering.com>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:55303 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751018AbdKJMPc (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 10 Nov 2017 07:15:32 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Alex Williamson <alex.williamson@redhat.com>,
+        Joerg Roedel <joro@8bytes.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        iommu@lists.linux-foundation.org,
+        linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 0/2] iommu/ipmmu-vmsa: Add r8a779(6|70|95) DT bindings
+Date: Fri, 10 Nov 2017 13:15:18 +0100
+Message-Id: <20171110121520.23437-1-horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I2C has no requirement that the buffer of a message needs to be DMA
-safe. In case it is, it can now be flagged, so drivers wishing to
-do DMA can use the buffer directly.
+Update the IPMMU DT binding documentation to include r8a7796 (R-Car M3-W),
+r8a77970 (R-Car V3M) and r8a77995 (R-Car D3) compat strings.
 
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- include/uapi/linux/i2c.h | 3 +++
+This patch-set is comprised of patches previously included in
+* [PATCH v4 0/3] iommu/ipmmu-vmsa: r8a7796 support V4
+* [PATCH 0/2] iommu/ipmmu-vmsa: r8a779(70|95) support
+
+Those series also include driver updates to implement the bindings,
+however, it while it is felt that the bindings themselves are ready
+to be merged we feel that the driver updates are not at that stage yet.
+
+Magnus Damm (1):
+  iommu/ipmmu-vmsa: Add r8a7796 DT binding
+
+Simon Horman (1):
+  iommu/ipmmu-vmsa: Add r8a779(70|95) DT bindings
+
+ Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt | 3 +++
  1 file changed, 3 insertions(+)
 
-diff --git a/include/uapi/linux/i2c.h b/include/uapi/linux/i2c.h
-index 009e27bb9abe19..1c683cb319e4b7 100644
---- a/include/uapi/linux/i2c.h
-+++ b/include/uapi/linux/i2c.h
-@@ -71,6 +71,9 @@ struct i2c_msg {
- #define I2C_M_RD		0x0001	/* read data, from slave to master */
- 					/* I2C_M_RD is guaranteed to be 0x0001! */
- #define I2C_M_TEN		0x0010	/* this is a ten bit chip address */
-+#define I2C_M_DMA_SAFE		0x0200	/* the buffer of this message is DMA safe */
-+					/* makes only sense in kernelspace */
-+					/* userspace buffers are copied anyway */
- #define I2C_M_RECV_LEN		0x0400	/* length will be first received byte */
- #define I2C_M_NO_RD_ACK		0x0800	/* if I2C_FUNC_PROTOCOL_MANGLING */
- #define I2C_M_IGNORE_NAK	0x1000	/* if I2C_FUNC_PROTOCOL_MANGLING */
 -- 
 2.11.0
