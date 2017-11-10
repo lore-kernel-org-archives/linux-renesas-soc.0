@@ -1,212 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:62803 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S934564AbdKGPLD (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:56242 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752619AbdKJN0X (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Nov 2017 10:11:03 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH 2/8] pinctrl: sh-pfc: r8a7745: Add CAN[01] support
-Date: Tue,  7 Nov 2017 15:10:43 +0000
-Message-Id: <1510067449-17017-3-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1510067449-17017-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1510067449-17017-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Fri, 10 Nov 2017 08:26:23 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v2 5/7] arm64: dts: renesas: r8a7796: Point VSPI via FCPVI to IPMMU-VC0
+Date: Fri, 10 Nov 2017 14:26:10 +0100
+Message-Id: <20171110132612.1589-6-horms+renesas@verge.net.au>
+In-Reply-To: <20171110132612.1589-1-horms+renesas@verge.net.au>
+References: <20171110132612.1589-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds PFC CAN0 and CAN1 pin groups and functions, enabling CAN
-bus on the RZ/G1E.
+Hook up the FCPVI devices to allow use of VSPI with IPMMU-VC0.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Based on work for the r8a7795 by Magnus Damm.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7794.c | 146 +++++++++++++++++++++++++++++++++++
- 1 file changed, 146 insertions(+)
+v2
+* Added reviewed by tag from Geert Uytterhoeven
+---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-index 333a3470..e5b3d5f 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-@@ -1608,6 +1608,116 @@ static const unsigned int avb_gmii_mux[] = {
- 	AVB_TX_EN_MARK, AVB_TX_ER_MARK, AVB_TX_CLK_MARK,
- 	AVB_COL_MARK,
- };
-+
-+/* - CAN -------------------------------------------------------------------- */
-+static const unsigned int can0_data_pins[] = {
-+	/* TX, RX */
-+	RCAR_GP_PIN(6, 15), RCAR_GP_PIN(6, 14),
-+};
-+
-+static const unsigned int can0_data_mux[] = {
-+	CAN0_TX_MARK, CAN0_RX_MARK,
-+};
-+
-+static const unsigned int can0_data_b_pins[] = {
-+	/* TX, RX */
-+	RCAR_GP_PIN(3, 16), RCAR_GP_PIN(3, 15),
-+};
-+
-+static const unsigned int can0_data_b_mux[] = {
-+	CAN0_TX_B_MARK, CAN0_RX_B_MARK,
-+};
-+
-+static const unsigned int can0_data_c_pins[] = {
-+	/* TX, RX */
-+	RCAR_GP_PIN(2, 17), RCAR_GP_PIN(2, 16),
-+};
-+
-+static const unsigned int can0_data_c_mux[] = {
-+	CAN0_TX_C_MARK, CAN0_RX_C_MARK,
-+};
-+
-+static const unsigned int can0_data_d_pins[] = {
-+	/* TX, RX */
-+	RCAR_GP_PIN(5, 12), RCAR_GP_PIN(5, 11),
-+};
-+
-+static const unsigned int can0_data_d_mux[] = {
-+	CAN0_TX_D_MARK, CAN0_RX_D_MARK,
-+};
-+
-+static const unsigned int can1_data_pins[] = {
-+	/* TX, RX */
-+	RCAR_GP_PIN(6, 25), RCAR_GP_PIN(6, 24),
-+};
-+
-+static const unsigned int can1_data_mux[] = {
-+	CAN1_TX_MARK, CAN1_RX_MARK,
-+};
-+
-+static const unsigned int can1_data_b_pins[] = {
-+	/* TX, RX */
-+	RCAR_GP_PIN(1, 2), RCAR_GP_PIN(1, 1),
-+};
-+
-+static const unsigned int can1_data_b_mux[] = {
-+	CAN1_TX_B_MARK, CAN1_RX_B_MARK,
-+};
-+
-+static const unsigned int can1_data_c_pins[] = {
-+	/* TX, RX */
-+	RCAR_GP_PIN(5, 6), RCAR_GP_PIN(5, 5),
-+};
-+
-+static const unsigned int can1_data_c_mux[] = {
-+	CAN1_TX_C_MARK, CAN1_RX_C_MARK,
-+};
-+
-+static const unsigned int can1_data_d_pins[] = {
-+	/* TX, RX */
-+	RCAR_GP_PIN(3, 31), RCAR_GP_PIN(3, 30),
-+};
-+
-+static const unsigned int can1_data_d_mux[] = {
-+	CAN1_TX_D_MARK, CAN1_RX_D_MARK,
-+};
-+
-+static const unsigned int can_clk_pins[] = {
-+	/* CLK */
-+	RCAR_GP_PIN(3, 31),
-+};
-+
-+static const unsigned int can_clk_mux[] = {
-+	CAN_CLK_MARK,
-+};
-+
-+static const unsigned int can_clk_b_pins[] = {
-+	/* CLK */
-+	RCAR_GP_PIN(1, 23),
-+};
-+
-+static const unsigned int can_clk_b_mux[] = {
-+	CAN_CLK_B_MARK,
-+};
-+
-+static const unsigned int can_clk_c_pins[] = {
-+	/* CLK */
-+	RCAR_GP_PIN(1, 0),
-+};
-+
-+static const unsigned int can_clk_c_mux[] = {
-+	CAN_CLK_C_MARK,
-+};
-+
-+static const unsigned int can_clk_d_pins[] = {
-+	/* CLK */
-+	RCAR_GP_PIN(5, 0),
-+};
-+
-+static const unsigned int can_clk_d_mux[] = {
-+	CAN_CLK_D_MARK,
-+};
-+
- /* - DU --------------------------------------------------------------------- */
- static const unsigned int du0_rgb666_pins[] = {
- 	/* R[7:2], G[7:2], B[7:2] */
-@@ -3459,6 +3569,18 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(avb_mdio),
- 	SH_PFC_PIN_GROUP(avb_mii),
- 	SH_PFC_PIN_GROUP(avb_gmii),
-+	SH_PFC_PIN_GROUP(can0_data),
-+	SH_PFC_PIN_GROUP(can0_data_b),
-+	SH_PFC_PIN_GROUP(can0_data_c),
-+	SH_PFC_PIN_GROUP(can0_data_d),
-+	SH_PFC_PIN_GROUP(can1_data),
-+	SH_PFC_PIN_GROUP(can1_data_b),
-+	SH_PFC_PIN_GROUP(can1_data_c),
-+	SH_PFC_PIN_GROUP(can1_data_d),
-+	SH_PFC_PIN_GROUP(can_clk),
-+	SH_PFC_PIN_GROUP(can_clk_b),
-+	SH_PFC_PIN_GROUP(can_clk_c),
-+	SH_PFC_PIN_GROUP(can_clk_d),
- 	SH_PFC_PIN_GROUP(du0_rgb666),
- 	SH_PFC_PIN_GROUP(du0_rgb888),
- 	SH_PFC_PIN_GROUP(du0_clk0_out),
-@@ -3731,6 +3853,28 @@ static const char * const avb_groups[] = {
- 	"avb_gmii",
- };
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index efb80c554ad6..47250b0c9ee9 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -1883,6 +1883,7 @@
+ 			clocks = <&cpg CPG_MOD 611>;
+ 			power-domains = <&sysc R8A7796_PD_A3VC>;
+ 			resets = <&cpg 611>;
++			iommus = <&ipmmu_vc0 19>;
+ 		};
  
-+static const char * const can0_groups[] = {
-+	"can0_data",
-+	"can0_data_b",
-+	"can0_data_c",
-+	"can0_data_d",
-+	"can_clk",
-+	"can_clk_b",
-+	"can_clk_c",
-+	"can_clk_d",
-+};
-+
-+static const char * const can1_groups[] = {
-+	"can1_data",
-+	"can1_data_b",
-+	"can1_data_c",
-+	"can1_data_d",
-+	"can_clk",
-+	"can_clk_b",
-+	"can_clk_c",
-+	"can_clk_d",
-+};
-+
- static const char * const du0_groups[] = {
- 	"du0_rgb666",
- 	"du0_rgb888",
-@@ -4102,6 +4246,8 @@ static const char * const vin1_groups[] = {
- static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(audio_clk),
- 	SH_PFC_FUNCTION(avb),
-+	SH_PFC_FUNCTION(can0),
-+	SH_PFC_FUNCTION(can1),
- 	SH_PFC_FUNCTION(du0),
- 	SH_PFC_FUNCTION(du1),
- 	SH_PFC_FUNCTION(eth),
+ 		vspd0: vsp@fea20000 {
 -- 
-2.7.4
+2.11.0
