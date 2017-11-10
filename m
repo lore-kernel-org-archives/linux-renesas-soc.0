@@ -1,51 +1,87 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:56098 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753132AbdKJNZ6 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 10 Nov 2017 08:25:58 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH] arm64: dts: renesas: ulcb-kf: add pfc node for USB3.0 channel 0
-Date: Wed,  8 Nov 2017 16:06:38 +0300
-Message-Id: <1510146398-31805-1-git-send-email-vladimir.barinov@cogentembedded.com>
-Sender: devicetree-owner@vger.kernel.org
+        Magnus Damm <damm+renesas@opensource.se>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v5 14/15] arm64: dts: renesas: r8a7795: Enable IPMMU-VI0, VP1, DS0, DS1 and MM
+Date: Fri, 10 Nov 2017 14:25:31 +0100
+Message-Id: <20171110132532.1202-15-horms+renesas@verge.net.au>
+In-Reply-To: <20171110132532.1202-1-horms+renesas@verge.net.au>
+References: <20171110132532.1202-1-horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Adds the pfc node for USB3.0 channel 0.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Enable the r8a7795 device nodes for IPMMU-VI0, IPMMU-VP1, IPMMU-DS0,
+IPMMU-DS1 and the shared IPMMU-MM device.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/ulcb-kf.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+v5 [Simon Horman]
+* Update changelog to reflect new IPMMU names
+* Added reviewed by tag from Geert Uytterhoeven
 
-diff --git a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-index 48a2e8f..2ecb6ac 100644
---- a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-+++ b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-@@ -173,6 +173,11 @@
- 		groups = "usb0";
- 		function = "usb0";
- 	};
-+
-+	usb30_pins: usb30 {
-+		groups = "usb30";
-+		function = "usb30";
-+	};
- };
+v4 [Simon Horman]
+* Broke out of larger patch
+
+v1 - v3 [Magnus Damm]
+---
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index f42387473a9c..6aa00d9b1d50 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -427,7 +427,6 @@
+ 			renesas,ipmmu-main = <&ipmmu_mm 14>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			#iommu-cells = <1>;
+-			status = "disabled";
+ 		};
  
- &scif1 {
-@@ -191,5 +196,8 @@
- };
+ 		ipmmu_vi1: mmu@febe0000 {
+@@ -454,7 +453,6 @@
+ 			renesas,ipmmu-main = <&ipmmu_mm 17>;
+ 			power-domains = <&sysc R8A7795_PD_A3VP>;
+ 			#iommu-cells = <1>;
+-			status = "disabled";
+ 		};
  
- &xhci0 {
-+	pinctrl-0 = <&usb30_pins>;
-+	pinctrl-names = "default";
-+
- 	status = "okay";
- };
+ 		ipmmu_vc0: mmu@fe6b0000 {
+@@ -544,7 +542,6 @@
+ 			renesas,ipmmu-main = <&ipmmu_mm 0>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			#iommu-cells = <1>;
+-			status = "disabled";
+ 		};
+ 
+ 		ipmmu_ds1: mmu@e7740000 {
+@@ -553,7 +550,6 @@
+ 			renesas,ipmmu-main = <&ipmmu_mm 1>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			#iommu-cells = <1>;
+-			status = "disabled";
+ 		};
+ 
+ 		ipmmu_mm: mmu@e67b0000 {
+@@ -563,7 +559,6 @@
+ 				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			#iommu-cells = <1>;
+-			status = "disabled";
+ 		};
+ 
+ 		dmac0: dma-controller@e6700000 {
 -- 
-1.9.1
-
+2.11.0
