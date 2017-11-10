@@ -1,42 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:53925 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:56098 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753995AbdKAIkg (ORCPT
+        with ESMTP id S1752619AbdKJNZt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 1 Nov 2017 04:40:36 -0400
-Date: Wed, 1 Nov 2017 09:40:32 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 0/2] arm64: dts: renesas: r8a77970: Add SMP Support
-Message-ID: <20171101084031.w4lue2g3nh3iuvhx@verge.net.au>
-References: <1509379633-25823-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1509379633-25823-1-git-send-email-geert+renesas@glider.be>
+        Fri, 10 Nov 2017 08:25:49 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v5 06/15] arm64: dts: renesas: r8a7795-es1: Point DU/VSPD via FCPVD to IPMMU-VI0
+Date: Fri, 10 Nov 2017 14:25:23 +0100
+Message-Id: <20171110132532.1202-7-horms+renesas@verge.net.au>
+In-Reply-To: <20171110132532.1202-1-horms+renesas@verge.net.au>
+References: <20171110132532.1202-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Oct 30, 2017 at 05:07:11PM +0100, Geert Uytterhoeven wrote:
-> 	Hi Simon, Magnus,
-> 
-> This patch series enables SMP support on the R-Car V3M SoC, by adding
-> the second Cortex-A53 CPU core.  It also adds the performance monitor
-> unit, and links it to both CPU cores.
-> 
-> Note that the PSCI implementation on Eagle may be a preliminary version
-> with some familiar quirks:
->   - SMP bringup works, and both CPUs can be used,
->   - Offlining CPU0 crashes the system,
->   - CPU1 can be offlined, but trying to bring it online again crashes
->     the system, too.
-> 
-> I'm confident these will be fixed in future firmware versions, just like
-> on H3/Salvator-X.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-I'd like to understand how confident before applying this series.
-I have been burnt in the past by enabling SMP before the fw/hw/sw stack
-was ready (on H3 IIRC) and I'd rather not relive that experience.
+Hook up the FCPVD devices to allow use of the VSP and DU
+together with IPMMU-VI0.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v5 [Simon Horman]
+* Added reviewed by tag from Geert Uytterhoeven
+
+v4 [Simon Horman]
+* broke out of a larger patch
+
+v1 - v3 [Magnus Damm]
+---
+ arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+index 71499d193ddb..1eafa5382e86 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+@@ -94,6 +94,7 @@
+ 		clocks = <&cpg CPG_MOD 600>;
+ 		power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 		resets = <&cpg 600>;
++		iommus = <&ipmmu_vi0 11>;
+ 	};
+ 
+ 	fdp1@fe948000 {
+-- 
+2.11.0
