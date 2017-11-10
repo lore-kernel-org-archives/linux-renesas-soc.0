@@ -1,67 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:22075 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S965140AbdKGPLW (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:56098 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753141AbdKJNZx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Nov 2017 10:11:22 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH 8/8] ARM: dts: iwg20d-q7-dbcm-ca: Add can1 support to camera DB
-Date: Tue,  7 Nov 2017 15:10:49 +0000
-Message-Id: <1510067449-17017-9-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1510067449-17017-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1510067449-17017-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Fri, 10 Nov 2017 08:25:53 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v5 07/15] arm64: dts: renesas: r8a7795: Point FDP1 via FCPF to IPMMU-VP0/1
+Date: Fri, 10 Nov 2017 14:25:24 +0100
+Message-Id: <20171110132532.1202-8-horms+renesas@verge.net.au>
+In-Reply-To: <20171110132532.1202-1-horms+renesas@verge.net.au>
+References: <20171110132532.1202-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-CAN1 interface is exposed via connector J3 found on the camera daughter
-board. This patch enables can1 DT node from within the daughter board
-specific dtsi.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Hook up the FCPF devices to allow use of FDP1 with IPMMU-VP.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/iwg20d-q7-dbcm-ca.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+v5 [Simon Horman]
+* Added reviewed by tag from Geert Uytterhoeven
 
-diff --git a/arch/arm/boot/dts/iwg20d-q7-dbcm-ca.dtsi b/arch/arm/boot/dts/iwg20d-q7-dbcm-ca.dtsi
-index 4db18f2..476273b 100644
---- a/arch/arm/boot/dts/iwg20d-q7-dbcm-ca.dtsi
-+++ b/arch/arm/boot/dts/iwg20d-q7-dbcm-ca.dtsi
-@@ -32,6 +32,13 @@
- 	};
+v4 [Simon Horman]
+* Broke out of larger patch
+* Use IPMMU-VP1 for FCPF1 on ES2.0
+
+v1 - v3 [Magnus Damm]
+---
+ arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi | 4 ++++
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi     | 2 ++
+ 2 files changed, 6 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+index 1eafa5382e86..6b4dfa42f5b2 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+@@ -150,6 +150,10 @@
+ 	       <&ipmmu_mp1 30>, <&ipmmu_mp1 31>;
  };
  
-+&can1 {
-+	pinctrl-0 = <&can1_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
++&fcpf1 {
++	iommus = <&ipmmu_vp0 1>;
 +};
 +
- &du {
- 	pinctrl-0 = <&du_pins>;
- 	pinctrl-names = "default";
-@@ -94,6 +101,11 @@
+ &fcpvd2 {
+ 	iommus = <&ipmmu_vi0 10>;
  };
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index d5e3d208bc37..1202b84104a0 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -2070,6 +2070,7 @@
+ 			clocks = <&cpg CPG_MOD 615>;
+ 			power-domains = <&sysc R8A7795_PD_A3VP>;
+ 			resets = <&cpg 615>;
++			iommus = <&ipmmu_vp0 0>;
+ 		};
  
- &pfc {
-+	can1_pins: can1 {
-+		groups = "can1_data_d";
-+		function = "can1";
-+	};
-+
- 	du_pins: du {
- 		groups = "du_rgb888", "du_sync", "du_oddf", "du_clk_out_0";
- 		function = "du";
+ 		fcpf1: fcp@fe951000 {
+@@ -2078,6 +2079,7 @@
+ 			clocks = <&cpg CPG_MOD 614>;
+ 			power-domains = <&sysc R8A7795_PD_A3VP>;
+ 			resets = <&cpg 614>;
++			iommus = <&ipmmu_vp1 1>;
+ 		};
+ 
+ 		vspbd: vsp@fe960000 {
 -- 
-2.7.4
+2.11.0
