@@ -1,43 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:37909 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751998AbdKWK2W (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:56182 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752806AbdKJN0E (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 23 Nov 2017 05:28:22 -0500
-Received: by mail-qk0-f195.google.com with SMTP id a142so20376140qkb.5
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Nov 2017 02:28:22 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <20171110132553.1461-2-horms+renesas@verge.net.au>
-References: <20171110132553.1461-1-horms+renesas@verge.net.au> <20171110132553.1461-2-horms+renesas@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 23 Nov 2017 11:28:21 +0100
-Message-ID: <CAMuHMdX-aHoysLr8XwyyOfikS5++ujuSHTg=atnzeYa0XpMuNg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] arm64: dts: renesas: r8a77970: sort includes
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 10 Nov 2017 08:26:04 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v2 1/5] arm64: dts: renesas: r8a77970: sort includes
+Date: Fri, 10 Nov 2017 14:25:49 +0100
+Message-Id: <20171110132553.1461-2-horms+renesas@verge.net.au>
+In-Reply-To: <20171110132553.1461-1-horms+renesas@verge.net.au>
+References: <20171110132553.1461-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Nov 10, 2017 at 2:25 PM, Simon Horman
-<horms+renesas@verge.net.au> wrote:
-> Sort includes used in r8a77970 DTS to improve maintainability
-> and for consistency with other R-Car DTS files.
->
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Sort includes used in r8a77970 DTS to improve maintainability
+and for consistency with other R-Car DTS files.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a77970.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+index 75d09f1724f0..8b97842aedb7 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+@@ -9,9 +9,9 @@
+  * kind, whether express or implied.
+  */
+ 
+-#include <dt-bindings/interrupt-controller/irq.h>
+-#include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/clock/renesas-cpg-mssr.h>
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/interrupt-controller/irq.h>
+ 
+ / {
+ 	compatible = "renesas,r8a77970";
+-- 
+2.11.0
