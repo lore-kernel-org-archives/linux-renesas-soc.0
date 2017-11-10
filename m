@@ -1,62 +1,111 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f41.google.com ([74.125.82.41]:35017 "EHLO
+        mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751097AbdKJV5t (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 10 Nov 2017 16:57:49 -0500
+Subject: Re: [PATCH V2] PCI: rcar: Use runtime PM to control controller clock
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-pci <linux-pci@vger.kernel.org>,
+        Dien Pham <dien.pham.ry@rvc.renesas.com>,
+        Hien Dang <hien.dang.eb@renesas.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH 7/8] ARM: dts: iwg20d-q7-common: Add can0 support to carrier board
-Date: Tue,  7 Nov 2017 15:10:48 +0000
-Message-Id: <1510067449-17017-8-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1510067449-17017-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1510067449-17017-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+References: <20171108095816.14192-1-marek.vasut+renesas@gmail.com>
+ <CAMuHMdVqkx-eVzW=0D8eOKZ2OGc-XTenYW8FHnKgBAvjKvv4tw@mail.gmail.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <e6bf9480-0b82-b5c1-484a-f7d852cf6a19@gmail.com>
+Date: Fri, 10 Nov 2017 21:34:24 +0100
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdVqkx-eVzW=0D8eOKZ2OGc-XTenYW8FHnKgBAvjKvv4tw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch enables CAN0 interface exposed through connector J20 on the
-carrier board.
+On 11/08/2017 11:08 AM, Geert Uytterhoeven wrote:
+> Hi Marek,
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
----
- arch/arm/boot/dts/iwg20d-q7-common.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Hi Geert,
 
-diff --git a/arch/arm/boot/dts/iwg20d-q7-common.dtsi b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-index c865499..3e4bc4d 100644
---- a/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-+++ b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-@@ -59,6 +59,13 @@
- 	};
- };
- 
-+&can0 {
-+	pinctrl-0 = <&can0_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
- &hsusb {
- 	status = "okay";
- 	pinctrl-0 = <&usb0_pins>;
-@@ -90,6 +97,11 @@
- };
- 
- &pfc {
-+	can0_pins: can0 {
-+		groups = "can0_data_d";
-+		function = "can0";
-+	};
-+
- 	avb_pins: avb {
- 		groups = "avb_mdio", "avb_gmii";
- 		function = "avb";
+> On Wed, Nov 8, 2017 at 10:58 AM, Marek Vasut <marek.vasut@gmail.com> wrote:
+>> From: Dien Pham <dien.pham.ry@rvc.renesas.com>
+>>
+>> The controller clock can be switched off during suspend/resume,
+>> let runtime PM take care of that.
+>>
+>> Signed-off-by: Dien Pham <dien.pham.ry@rvc.renesas.com>
+>> Signed-off-by: Hien Dang <hien.dang.eb@renesas.com>
+>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> 
+>> --- a/drivers/pci/host/pcie-rcar.c
+>> +++ b/drivers/pci/host/pcie-rcar.c
+>> @@ -1125,6 +1112,13 @@ static int rcar_pcie_probe(struct platform_device *pdev)
+>>
+>>         rcar_pcie_parse_request_of_pci_ranges(pcie);
+>>
+>> +       pm_runtime_enable(pcie->dev);
+>> +       err = pm_runtime_get_sync(pcie->dev);
+>> +       if (err < 0) {
+>> +               dev_err(pcie->dev, "pm_runtime_get_sync failed\n");
+>> +               goto err_pm_disable;
+>> +       }
+>> +
+>>         err = rcar_pcie_get_resources(pcie);
+>>         if (err < 0) {
+>>                 dev_err(dev, "failed to request resources: %d\n", err);
+> 
+> (out of context)
+>                  goto err_free_bridge;
+> 
+> But that should do pm_runtime_put(), too.
+> 
+>> @@ -1135,13 +1129,6 @@ static int rcar_pcie_probe(struct platform_device *pdev)
+>>         if (err)
+>>                 goto err_free_bridge;
+>>
+>> -       pm_runtime_enable(dev);
+>> -       err = pm_runtime_get_sync(dev);
+>> -       if (err < 0) {
+>> -               dev_err(dev, "pm_runtime_get_sync failed\n");
+>> -               goto err_pm_disable;
+>> -       }
+>> -
+>>         /* Failure to get a link might just be that no cards are inserted */
+>>         hw_init_fn = of_device_get_match_data(dev);
+>>         err = hw_init_fn(pcie);
+>> @@ -1173,13 +1160,13 @@ static int rcar_pcie_probe(struct platform_device *pdev)
+>>  err_pm_put:
+>>         pm_runtime_put(dev);
+> 
+> "err_pm_put" should be moved, too.
+
+ACK. I combed through the probe function one more time and I hope I'll
+have it right in V3.
+
+>> -err_pm_disable:
+>> -       pm_runtime_disable(dev);
+>> -
+>>  err_free_bridge:
+>>         pci_free_host_bridge(bridge);
+>>         pci_free_resource_list(&pcie->resources);
+
+^ IMO this should happen after pm_runtime_disable too , just to be
+consistent.
+
+>> +err_pm_disable:
+>> +       pm_runtime_disable(dev);
+>> +
+>>         return err;
+>>  }
+
+[...]
+
+
 -- 
-2.7.4
-
+Best regards,
+Marek Vasut
