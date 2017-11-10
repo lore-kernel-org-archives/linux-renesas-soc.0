@@ -1,238 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:54606 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752728AbdK2ToP (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55317 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751410AbdKJMPe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 29 Nov 2017 14:44:15 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-Subject: [PATCH v8 26/28] rcar-vin: enable support for r8a7795
-Date: Wed, 29 Nov 2017 20:43:40 +0100
-Message-Id: <20171129194342.26239-27-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20171129194342.26239-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20171129194342.26239-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Fri, 10 Nov 2017 07:15:34 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Alex Williamson <alex.williamson@redhat.com>,
+        Joerg Roedel <joro@8bytes.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        iommu@lists.linux-foundation.org,
+        linux-renesas-soc@vger.kernel.org,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 1/2] iommu/ipmmu-vmsa: Add r8a7796 DT binding
+Date: Fri, 10 Nov 2017 13:15:19 +0100
+Message-Id: <20171110121520.23437-2-horms+renesas@verge.net.au>
+In-Reply-To: <20171110121520.23437-1-horms+renesas@verge.net.au>
+References: <20171110121520.23437-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the SoC specific information for Renesas r8a7795 ES1.x and ES2.0.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+Update the IPMMU DT binding documentation to include the r8a7796 compat
+string for R-Car M3-W.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/media/platform/rcar-vin/Kconfig     |   2 +-
- drivers/media/platform/rcar-vin/rcar-core.c | 150 ++++++++++++++++++++++++++++
- 2 files changed, 151 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/media/platform/rcar-vin/Kconfig b/drivers/media/platform/rcar-vin/Kconfig
-index af4c98b44d2e22cb..8fa7ee468c63afb9 100644
---- a/drivers/media/platform/rcar-vin/Kconfig
-+++ b/drivers/media/platform/rcar-vin/Kconfig
-@@ -6,7 +6,7 @@ config VIDEO_RCAR_VIN
- 	select V4L2_FWNODE
- 	---help---
- 	  Support for Renesas R-Car Video Input (VIN) driver.
--	  Supports R-Car Gen2 SoCs.
-+	  Supports R-Car Gen2 and Gen3 SoCs.
+diff --git a/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt b/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
+index 3ed027cfca95..98ae900a7a76 100644
+--- a/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
++++ b/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
+@@ -16,6 +16,7 @@ Required Properties:
+     - "renesas,ipmmu-r8a7793" for the R8A7793 (R-Car M2-N) IPMMU.
+     - "renesas,ipmmu-r8a7794" for the R8A7794 (R-Car E2) IPMMU.
+     - "renesas,ipmmu-r8a7795" for the R8A7795 (R-Car H3) IPMMU.
++    - "renesas,ipmmu-r8a7796" for the R8A7796 (R-Car M3-W) IPMMU.
+     - "renesas,ipmmu-vmsa" for generic R-Car Gen2 VMSA-compatible IPMMU.
  
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called rcar-vin.
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 456f93d60b40fb80..9da5aff33fd224f2 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -21,6 +21,7 @@
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/slab.h>
-+#include <linux/sys_soc.h>
- 
- #include <media/v4l2-async.h>
- #include <media/v4l2-fwnode.h>
-@@ -956,6 +957,134 @@ static const struct rvin_info rcar_info_gen2 = {
- 	.max_height = 2048,
- };
- 
-+static const struct rvin_info rcar_info_r8a7795 = {
-+	.chip = RCAR_GEN3,
-+	.use_mc = true,
-+	.max_width = 4096,
-+	.max_height = 4096,
-+
-+	.num_chsels = 5,
-+	.chsels = {
-+		{
-+			{ .csi = RVIN_CSI40, .chan = 0 },
-+			{ .csi = RVIN_CSI20, .chan = 0 },
-+			{ .csi = RVIN_CSI40, .chan = 1 },
-+			{ .csi = RVIN_CSI40, .chan = 0 },
-+			{ .csi = RVIN_CSI20, .chan = 0 },
-+		}, {
-+			{ .csi = RVIN_CSI20, .chan = 0 },
-+			{ .csi = RVIN_CSI40, .chan = 1 },
-+			{ .csi = RVIN_CSI40, .chan = 0 },
-+			{ .csi = RVIN_CSI40, .chan = 1 },
-+			{ .csi = RVIN_CSI20, .chan = 1 },
-+		}, {
-+			{ .csi = RVIN_CSI20, .chan = 1 },
-+			{ .csi = RVIN_CSI40, .chan = 0 },
-+			{ .csi = RVIN_CSI20, .chan = 0 },
-+			{ .csi = RVIN_CSI40, .chan = 2 },
-+			{ .csi = RVIN_CSI20, .chan = 2 },
-+		}, {
-+			{ .csi = RVIN_CSI40, .chan = 1 },
-+			{ .csi = RVIN_CSI20, .chan = 1 },
-+			{ .csi = RVIN_CSI20, .chan = 1 },
-+			{ .csi = RVIN_CSI40, .chan = 3 },
-+			{ .csi = RVIN_CSI20, .chan = 3 },
-+		}, {
-+			{ .csi = RVIN_CSI41, .chan = 0 },
-+			{ .csi = RVIN_CSI20, .chan = 0 },
-+			{ .csi = RVIN_CSI41, .chan = 1 },
-+			{ .csi = RVIN_CSI41, .chan = 0 },
-+			{ .csi = RVIN_CSI20, .chan = 0 },
-+		}, {
-+			{ .csi = RVIN_CSI20, .chan = 0 },
-+			{ .csi = RVIN_CSI41, .chan = 1 },
-+			{ .csi = RVIN_CSI41, .chan = 0 },
-+			{ .csi = RVIN_CSI41, .chan = 1 },
-+			{ .csi = RVIN_CSI20, .chan = 1 },
-+		}, {
-+			{ .csi = RVIN_CSI20, .chan = 1 },
-+			{ .csi = RVIN_CSI41, .chan = 0 },
-+			{ .csi = RVIN_CSI20, .chan = 0 },
-+			{ .csi = RVIN_CSI41, .chan = 2 },
-+			{ .csi = RVIN_CSI20, .chan = 2 },
-+		}, {
-+			{ .csi = RVIN_CSI41, .chan = 1 },
-+			{ .csi = RVIN_CSI20, .chan = 1 },
-+			{ .csi = RVIN_CSI20, .chan = 1 },
-+			{ .csi = RVIN_CSI41, .chan = 3 },
-+			{ .csi = RVIN_CSI20, .chan = 3 },
-+		},
-+	},
-+};
-+
-+static const struct rvin_info rcar_info_r8a7795es1 = {
-+	.chip = RCAR_GEN3,
-+	.use_mc = true,
-+	.max_width = 4096,
-+	.max_height = 4096,
-+
-+	.num_chsels = 6,
-+	.chsels = {
-+		{
-+			{ .csi = RVIN_CSI40, .chan = 0 },
-+			{ .csi = RVIN_CSI20, .chan = 0 },
-+			{ .csi = RVIN_CSI21, .chan = 0 },
-+			{ .csi = RVIN_CSI40, .chan = 0 },
-+			{ .csi = RVIN_CSI20, .chan = 0 },
-+			{ .csi = RVIN_CSI21, .chan = 0 },
-+		}, {
-+			{ .csi = RVIN_CSI20, .chan = 0 },
-+			{ .csi = RVIN_CSI21, .chan = 0 },
-+			{ .csi = RVIN_CSI40, .chan = 0 },
-+			{ .csi = RVIN_CSI40, .chan = 1 },
-+			{ .csi = RVIN_CSI20, .chan = 1 },
-+			{ .csi = RVIN_CSI21, .chan = 1 },
-+		}, {
-+			{ .csi = RVIN_CSI21, .chan = 0 },
-+			{ .csi = RVIN_CSI40, .chan = 0 },
-+			{ .csi = RVIN_CSI20, .chan = 0 },
-+			{ .csi = RVIN_CSI40, .chan = 2 },
-+			{ .csi = RVIN_CSI20, .chan = 2 },
-+			{ .csi = RVIN_CSI21, .chan = 2 },
-+		}, {
-+			{ .csi = RVIN_CSI40, .chan = 1 },
-+			{ .csi = RVIN_CSI20, .chan = 1 },
-+			{ .csi = RVIN_CSI21, .chan = 1 },
-+			{ .csi = RVIN_CSI40, .chan = 3 },
-+			{ .csi = RVIN_CSI20, .chan = 3 },
-+			{ .csi = RVIN_CSI21, .chan = 3 },
-+		}, {
-+			{ .csi = RVIN_CSI41, .chan = 0 },
-+			{ .csi = RVIN_CSI20, .chan = 0 },
-+			{ .csi = RVIN_CSI21, .chan = 0 },
-+			{ .csi = RVIN_CSI41, .chan = 0 },
-+			{ .csi = RVIN_CSI20, .chan = 0 },
-+			{ .csi = RVIN_CSI21, .chan = 0 },
-+		}, {
-+			{ .csi = RVIN_CSI20, .chan = 0 },
-+			{ .csi = RVIN_CSI21, .chan = 0 },
-+			{ .csi = RVIN_CSI41, .chan = 0 },
-+			{ .csi = RVIN_CSI41, .chan = 1 },
-+			{ .csi = RVIN_CSI20, .chan = 1 },
-+			{ .csi = RVIN_CSI21, .chan = 1 },
-+		}, {
-+			{ .csi = RVIN_CSI21, .chan = 0 },
-+			{ .csi = RVIN_CSI41, .chan = 0 },
-+			{ .csi = RVIN_CSI20, .chan = 0 },
-+			{ .csi = RVIN_CSI41, .chan = 2 },
-+			{ .csi = RVIN_CSI20, .chan = 2 },
-+			{ .csi = RVIN_CSI21, .chan = 2 },
-+		}, {
-+			{ .csi = RVIN_CSI41, .chan = 1 },
-+			{ .csi = RVIN_CSI20, .chan = 1 },
-+			{ .csi = RVIN_CSI21, .chan = 1 },
-+			{ .csi = RVIN_CSI41, .chan = 3 },
-+			{ .csi = RVIN_CSI20, .chan = 3 },
-+			{ .csi = RVIN_CSI21, .chan = 3 },
-+		},
-+	},
-+};
-+
- static const struct of_device_id rvin_of_id_table[] = {
- 	{
- 		.compatible = "renesas,vin-r8a7778",
-@@ -985,12 +1114,25 @@ static const struct of_device_id rvin_of_id_table[] = {
- 		.compatible = "renesas,rcar-gen2-vin",
- 		.data = &rcar_info_gen2,
- 	},
-+	{
-+		.compatible = "renesas,vin-r8a7795",
-+		.data = &rcar_info_r8a7795,
-+	},
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, rvin_of_id_table);
- 
-+static const struct soc_device_attribute r8a7795es1[] = {
-+	{
-+		.soc_id = "r8a7795", .revision = "ES1.*",
-+		.data = &rcar_info_r8a7795es1,
-+	},
-+	{ /* sentinel */ }
-+};
-+
- static int rcar_vin_probe(struct platform_device *pdev)
- {
-+	const struct soc_device_attribute *attr;
- 	struct rvin_dev *vin;
- 	struct resource *mem;
- 	int irq, ret;
-@@ -1002,6 +1144,14 @@ static int rcar_vin_probe(struct platform_device *pdev)
- 	vin->dev = &pdev->dev;
- 	vin->info = of_device_get_match_data(&pdev->dev);
- 
-+	/*
-+	 * Special care is needed on r8a7795 ES1.x since it
-+	 * uses different routing than r8a7795 ES2.0.
-+	 */
-+	attr = soc_device_match(r8a7795es1);
-+	if (attr)
-+		vin->info = attr->data;
-+
- 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	if (mem == NULL)
- 		return -EINVAL;
+   - reg: Base address and size of the IPMMU registers.
 -- 
-2.15.0
+2.11.0
