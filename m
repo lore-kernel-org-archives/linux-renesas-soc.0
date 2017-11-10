@@ -1,60 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:45952 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:56175 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751350AbdK1I3u (ORCPT
+        with ESMTP id S1752806AbdKJN0C (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Nov 2017 03:29:50 -0500
-Date: Tue, 28 Nov 2017 09:29:45 +0100
-From: Simon Horman <horms@verge.net.au>
+        Fri, 10 Nov 2017 08:26:02 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: [PATCH v2 0/5] arm64: dts: renesas: r8a77970: IPMMU upstream
- integration
-Message-ID: <20171128082945.3aqjlyfktyokdhyk@verge.net.au>
-References: <20171110132553.1461-1-horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20171110132553.1461-1-horms+renesas@verge.net.au>
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v2 0/5] arm64: dts: renesas: r8a77970: IPMMU upstream integration
+Date: Fri, 10 Nov 2017 14:25:48 +0100
+Message-Id: <20171110132553.1461-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Nov 10, 2017 at 02:25:48PM +0100, Simon Horman wrote:
-> This series adds DT nodes for IPMMU instances on r8a77970 together with
-> connections to r8a77970 on-chip devices: SYS-DMAC and Ethernet-AVB.
-> 
-> With these patches applied a white list enabled IPMMU driver may be used
-> to check silicon revision and then enable IPMMU in the known working cases.
-> 
-> The recommended test stack for this patchset is a merge of
-> * The iommu/next branch of the vfio tree
-> * renesas-devel-20171110-v4.14-rc8 tag of the renesas tree
-> 
-> With the following applied:
-> * [PATCH v4 0/3] iommu/ipmmu-vmsa: r8a7796 support V4
-> * [PATCH 0/2] iommu/ipmmu-vmsa: r8a779(70|95) support
-> 
-> The final patch in the series enable IPMMU support for all IPMMU
-> instances on r8a77970 that are used by IPMMU devices listed above.
-> 
-> The DT binding for r8a77970 are been submitted (as part of the
-> r8a779(70|95) series noted above) in conjunction with this patchset.
-> 
-> This is based on work by Magnus Damm.
-> 
-> Based on renesas-devel-20171110-v4.14-rc8
-> 
-> Changes since V1:
-> * Drop mostly redundant comments from nodes
-> * Add power domains
-> * Correct compat string used for IPMMU-DS1
-> 
-> Simon Horman (5):
->   arm64: dts: renesas: r8a77970: sort includes
->   arm64: dts: renesas: r8a77970: Add IPMMU device nodes
->   arm64: dts: renesas: r8a77970: Tie SYS-DMAC to IPMMU-DS1
->   arm64: dts: renesas: r8a77970: Connect Ethernet-AVB to IPMMU-RT
->   arm64: dts: renesas: r8a77970: Enable IPMMU-DS1, RT and MM
+This series adds DT nodes for IPMMU instances on r8a77970 together with
+connections to r8a77970 on-chip devices: SYS-DMAC and Ethernet-AVB.
 
-This series has been applied for v4.16.
+With these patches applied a white list enabled IPMMU driver may be used
+to check silicon revision and then enable IPMMU in the known working cases.
+
+The recommended test stack for this patchset is a merge of
+* The iommu/next branch of the vfio tree
+* renesas-devel-20171110-v4.14-rc8 tag of the renesas tree
+
+With the following applied:
+* [PATCH v4 0/3] iommu/ipmmu-vmsa: r8a7796 support V4
+* [PATCH 0/2] iommu/ipmmu-vmsa: r8a779(70|95) support
+
+The final patch in the series enable IPMMU support for all IPMMU
+instances on r8a77970 that are used by IPMMU devices listed above.
+
+The DT binding for r8a77970 are been submitted (as part of the
+r8a779(70|95) series noted above) in conjunction with this patchset.
+
+This is based on work by Magnus Damm.
+
+Based on renesas-devel-20171110-v4.14-rc8
+
+Changes since V1:
+* Drop mostly redundant comments from nodes
+* Add power domains
+* Correct compat string used for IPMMU-DS1
+
+Simon Horman (5):
+  arm64: dts: renesas: r8a77970: sort includes
+  arm64: dts: renesas: r8a77970: Add IPMMU device nodes
+  arm64: dts: renesas: r8a77970: Tie SYS-DMAC to IPMMU-DS1
+  arm64: dts: renesas: r8a77970: Connect Ethernet-AVB to IPMMU-RT
+  arm64: dts: renesas: r8a77970: Enable IPMMU-DS1, RT and MM
+
+ arch/arm64/boot/dts/renesas/r8a77970.dtsi | 57 +++++++++++++++++++++++++++++--
+ 1 file changed, 55 insertions(+), 2 deletions(-)
+
+-- 
+2.11.0
