@@ -1,48 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from slow1-d.mail.gandi.net ([217.70.178.86]:55295 "EHLO
-        slow1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754122AbdKNJeN (ORCPT
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:51241 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751455AbdKJN31 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Nov 2017 04:34:13 -0500
-Date: Tue, 14 Nov 2017 10:10:16 +0100
-From: jacopo mondi <jacopo@jmondi.org>
+        Fri, 10 Nov 2017 08:29:27 -0500
+Received: by mail-lf0-f65.google.com with SMTP id f134so2763392lfg.8
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 10 Nov 2017 05:29:26 -0800 (PST)
+Date: Fri, 10 Nov 2017 14:29:24 +0100
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
 To: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Jacopo Mondi <jacopo@jmondi.org>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 Subject: Re: [PATCH] i2c: sh_mobile: send STOP according to datasheet
-Message-ID: <20171114091016.GF19070@w540>
+Message-ID: <20171110132924.GB5458@bigcity.dyn.berto.se>
 References: <20171110115210.21955-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 In-Reply-To: <20171110115210.21955-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hi Wolfram,
 
-On Fri, Nov 10, 2017 at 12:52:10PM +0100, Wolfram Sang wrote:
+On 2017-11-10 12:52:10 +0100, Wolfram Sang wrote:
 > We initiate STOP (or REP_START) on the second last WAIT interrupt
 > currently. This works fine but is not according to the datasheet which
 > says to do it on the last WAIT interrupt. This also simplifies the code
 > quite a lot, so let's do it.
->
+
+I like this change and I checked the flow diagrams in chapter '56.4
+Operation' of the Gen2 datasheet rev 2.0 and chapter '58.3 Operation' of 
+the Gen3 datasheet rev 0.80, and it makes sens for both.
+
+> 
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+For Gen2 and Gen3:
+
+Reviewed-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+
 > ---
->
+> 
 > Jacopo: another one to test, pretty please.
-
-No regressions on Migo-R during image capture.
-
-Tested-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-
-Thanks
-  j
-
->
+> 
 >  drivers/i2c/busses/i2c-sh_mobile.c | 29 ++++++-----------------------
 >  1 file changed, 6 insertions(+), 23 deletions(-)
->
+> 
 > diff --git a/drivers/i2c/busses/i2c-sh_mobile.c b/drivers/i2c/busses/i2c-sh_mobile.c
 > index 40a66d466c3c49..c904be631db302 100644
 > --- a/drivers/i2c/busses/i2c-sh_mobile.c
@@ -95,7 +102,7 @@ Thanks
 > @@ -356,11 +352,6 @@ static bool sh_mobile_i2c_is_first_byte(struct sh_mobile_i2c_data *pd)
 >  	return pd->pos == -1;
 >  }
->
+>  
 > -static bool sh_mobile_i2c_is_last_byte(struct sh_mobile_i2c_data *pd)
 > -{
 > -	return pd->pos == pd->msg->len - 1;
@@ -106,7 +113,7 @@ Thanks
 >  {
 > @@ -378,20 +369,12 @@ static int sh_mobile_i2c_isr_tx(struct sh_mobile_i2c_data *pd)
 >  	unsigned char data;
->
+>  
 >  	if (pd->pos == pd->msg->len) {
 > -		/* Send stop if we haven't yet (DMA case) */
 > -		if (pd->send_stop && pd->stop_after_dma)
@@ -114,7 +121,7 @@ Thanks
 > +		i2c_op(pd, OP_TX_STOP, 0);
 >  		return 1;
 >  	}
->
+>  
 >  	sh_mobile_i2c_get_data(pd, &data);
 > -
 > -	if (sh_mobile_i2c_is_last_byte(pd))
@@ -124,9 +131,13 @@ Thanks
 > -	else
 > -		i2c_op(pd, OP_TX, data);
 > +	i2c_op(pd, sh_mobile_i2c_is_first_byte(pd) ? OP_TX_FIRST : OP_TX, data);
->
+>  
 >  	pd->pos++;
 >  	return 0;
-> --
+> -- 
 > 2.11.0
->
+> 
+
+-- 
+Regards,
+Niklas S�derlund
