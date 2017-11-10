@@ -1,48 +1,94 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:49283 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752629AbdKOPZ5 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:56242 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752619AbdKJN0Z (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Nov 2017 10:25:57 -0500
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, horms@verge.net.au,
-        wsa@the-dreams.de, geert@linux-m68k.org
-Cc: magnus.damm@gmail.com, linux-mmc@vger.kernel.org,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 1/4] mmc: renesas_sdhi: enable R-Car D3 (r8a77995) support
-Date: Wed, 15 Nov 2017 16:25:46 +0100
-Message-Id: <1510759549-30404-2-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1510759549-30404-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1510759549-30404-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Fri, 10 Nov 2017 08:26:25 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v2 7/7] arm64: dts: renesas: r8a7796: Enable IPMMU-DS0, DS1, MP, VI0, VC0 and MM
+Date: Fri, 10 Nov 2017 14:26:12 +0100
+Message-Id: <20171110132612.1589-8-horms+renesas@verge.net.au>
+In-Reply-To: <20171110132612.1589-1-horms+renesas@verge.net.au>
+References: <20171110132612.1589-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Adds compatible string and whitelists for internal DMAC implementation.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Enable the r8a7795 device nodes for IPMMU-DS0, IPMMU-DS1, IPMMU-MP,
+IPMMU-VI0, IPMMU-VC0 and the shared IPMMU-MM device.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 2 ++
- 1 file changed, 2 insertions(+)
+v2 [Simon Horman]
+* Added reviewed by tag from Geert Uytterhoeven
 
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index 41cbe84..f16d8f4 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -88,6 +88,7 @@ static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
- static const struct of_device_id renesas_sdhi_internal_dmac_of_match[] = {
- 	{ .compatible = "renesas,sdhi-r8a7795", .data = &of_rcar_gen3_compatible, },
- 	{ .compatible = "renesas,sdhi-r8a7796", .data = &of_rcar_gen3_compatible, },
-+	{ .compatible = "renesas,sdhi-r8a77995", .data = &of_rcar_gen3_compatible, },
- 	{ .compatible = "renesas,rcar-gen3-sdhi", .data = &of_rcar_gen3_compatible, },
- 	{},
- };
-@@ -255,6 +256,7 @@ static const struct soc_device_attribute gen3_soc_whitelist[] = {
-         { .soc_id = "r8a7795", .revision = "ES1.*" },
-         { .soc_id = "r8a7795", .revision = "ES2.0" },
-         { .soc_id = "r8a7796", .revision = "ES1.0" },
-+        { .soc_id = "r8a77995", .revision = "*" },
-         { /* sentinel */ }
- };
+v1 [Simon Horman]
+* Enable IPMMU-MP, VI0 and VC0
+
+v0 [Magnus Damm]
+---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 530de7176a6f..0db69add3f74 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -363,7 +363,6 @@
+ 			renesas,ipmmu-main = <&ipmmu_mm 9>;
+ 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+ 			#iommu-cells = <1>;
+-			status = "disabled";
+ 		};
  
+ 		ipmmu_vc0: mmu@fe6b0000 {
+@@ -372,7 +371,6 @@
+ 			renesas,ipmmu-main = <&ipmmu_mm 8>;
+ 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+ 			#iommu-cells = <1>;
+-			status = "disabled";
+ 		};
+ 
+ 		ipmmu_pv0: mmu@fd800000 {
+@@ -426,7 +424,6 @@
+ 			renesas,ipmmu-main = <&ipmmu_mm 4>;
+ 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+ 			#iommu-cells = <1>;
+-			status = "disabled";
+ 		};
+ 
+ 		ipmmu_ds0: mmu@e6740000 {
+@@ -434,7 +431,6 @@
+ 			reg = <0 0xe6740000 0 0x1000>;
+ 			renesas,ipmmu-main = <&ipmmu_mm 0>;
+ 			#iommu-cells = <1>;
+-			status = "disabled";
+ 		};
+ 
+ 		ipmmu_ds1: mmu@e7740000 {
+@@ -443,7 +439,6 @@
+ 			renesas,ipmmu-main = <&ipmmu_mm 1>;
+ 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+ 			#iommu-cells = <1>;
+-			status = "disabled";
+ 		};
+ 
+ 		ipmmu_mm: mmu@e67b0000 {
+@@ -453,7 +448,6 @@
+ 				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
+ 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+ 			#iommu-cells = <1>;
+-			status = "disabled";
+ 		};
+ 
+ 		cpg: clock-controller@e6150000 {
 -- 
-2.7.4
+2.11.0
