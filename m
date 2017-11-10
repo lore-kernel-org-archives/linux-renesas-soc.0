@@ -1,145 +1,106 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:47690 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754799AbdKKAjF (ORCPT
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:54154 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751133AbdKJLUQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Nov 2017 19:39:05 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Fri, 10 Nov 2017 06:20:16 -0500
+Received: by mail-lf0-f66.google.com with SMTP id l23so10672189lfk.10
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 10 Nov 2017 03:20:15 -0800 (PST)
+From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
+Date: Fri, 10 Nov 2017 12:20:13 +0100
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Fukawa <tomoharu.fukawa.eb@renesas.com>,
         Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v7 07/25] rcar-vin: all Gen2 boards can scale simplify logic
-Date: Sat, 11 Nov 2017 01:38:17 +0100
-Message-Id: <20171111003835.4909-8-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20171111003835.4909-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20171111003835.4909-1-niklas.soderlund+renesas@ragnatech.se>
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+Subject: Re: [PATCH v9 1/2] media: rcar-csi2: add Renesas R-Car MIPI CSI-2
+ receiver documentation
+Message-ID: <20171110112013.GC30830@bigcity.dyn.berto.se>
+References: <20171109234320.13016-1-niklas.soderlund+renesas@ragnatech.se>
+ <20171109234320.13016-2-niklas.soderlund+renesas@ragnatech.se>
+ <CAMuHMdWDfxFQO8bwxHim=BXHtC37cWFgU-keDDNiLDtEhh7=Dw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdWDfxFQO8bwxHim=BXHtC37cWFgU-keDDNiLDtEhh7=Dw@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The logic to preserve the requested format width and height are too
-complex and come from a premature optimization for Gen3. All Gen2 SoC
-can scale and the Gen3 implementation will not use these functions at
-all so simply preserve the width and height when interacting with the
-subdevice much like the field is preserved simplifies the logic quite a
-bit.
+Hi Geert,
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
----
- drivers/media/platform/rcar-vin/rcar-dma.c  |  8 --------
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 22 ++++++++++------------
- drivers/media/platform/rcar-vin/rcar-vin.h  |  2 --
- 3 files changed, 10 insertions(+), 22 deletions(-)
+Thanks for your feedback.
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index b71259701d2da20f..daf01bb32b5fc3c2 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -585,14 +585,6 @@ void rvin_crop_scale_comp(struct rvin_dev *vin)
- 		0, 0);
- }
- 
--void rvin_scale_try(struct rvin_dev *vin, struct v4l2_pix_format *pix,
--		    u32 width, u32 height)
--{
--	/* All VIN channels on Gen2 have scalers */
--	pix->width = width;
--	pix->height = height;
--}
--
- /* -----------------------------------------------------------------------------
-  * Hardware setup
-  */
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index f501da9df48c288b..02b081d2d8826e90 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -166,6 +166,7 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
- 		.which = which,
- 	};
- 	enum v4l2_field field;
-+	u32 width, height;
- 	int ret;
- 
- 	sd = vin_to_source(vin);
-@@ -178,7 +179,10 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
- 
- 	format.pad = vin->digital->source_pad;
- 
-+	/* Allow the video device to override field and to scale */
- 	field = pix->field;
-+	width = pix->width;
-+	height = pix->height;
- 
- 	ret = v4l2_subdev_call(sd, pad, set_fmt, pad_cfg, &format);
- 	if (ret < 0 && ret != -ENOIOCTLCMD)
-@@ -191,6 +195,9 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
- 	source->width = pix->width;
- 	source->height = pix->height;
- 
-+	pix->width = width;
-+	pix->height = height;
-+
- 	vin_dbg(vin, "Source resolution: %ux%u\n", source->width,
- 		source->height);
- 
-@@ -204,13 +211,9 @@ static int __rvin_try_format(struct rvin_dev *vin,
- 			     struct v4l2_pix_format *pix,
- 			     struct rvin_source_fmt *source)
- {
--	u32 rwidth, rheight, walign;
-+	u32 walign;
- 	int ret;
- 
--	/* Requested */
--	rwidth = pix->width;
--	rheight = pix->height;
--
- 	/* Keep current field if no specific one is asked for */
- 	if (pix->field == V4L2_FIELD_ANY)
- 		pix->field = vin->format.field;
-@@ -248,10 +251,6 @@ static int __rvin_try_format(struct rvin_dev *vin,
- 		break;
- 	}
- 
--	/* If source can't match format try if VIN can scale */
--	if (source->width != rwidth || source->height != rheight)
--		rvin_scale_try(vin, pix, rwidth, rheight);
--
- 	/* HW limit width to a multiple of 32 (2^5) for NV16 else 2 (2^1) */
- 	walign = vin->format.pixelformat == V4L2_PIX_FMT_NV16 ? 5 : 1;
- 
-@@ -270,9 +269,8 @@ static int __rvin_try_format(struct rvin_dev *vin,
- 		return -EINVAL;
- 	}
- 
--	vin_dbg(vin, "Requested %ux%u Got %ux%u bpl: %d size: %d\n",
--		rwidth, rheight, pix->width, pix->height,
--		pix->bytesperline, pix->sizeimage);
-+	vin_dbg(vin, "Format %ux%u bpl: %d size: %d\n",
-+		pix->width, pix->height, pix->bytesperline, pix->sizeimage);
- 
- 	return 0;
- }
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index e41dc3bff7fdc649..80f38b89ed8d9992 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -177,8 +177,6 @@ int rvin_reset_format(struct rvin_dev *vin);
- const struct rvin_video_format *rvin_format_from_pixel(u32 pixelformat);
- 
- /* Cropping, composing and scaling */
--void rvin_scale_try(struct rvin_dev *vin, struct v4l2_pix_format *pix,
--		    u32 width, u32 height);
- void rvin_crop_scale_comp(struct rvin_dev *vin);
- 
- #endif
+On 2017-11-10 09:09:39 +0100, Geert Uytterhoeven wrote:
+> Hi Niklas,
+> 
+> On Fri, Nov 10, 2017 at 12:43 AM, Niklas S�derlund
+> <niklas.soderlund+renesas@ragnatech.se> wrote:
+> > Documentation for Renesas R-Car MIPI CSI-2 receiver. The CSI-2 receivers
+> > are located between the video sources (CSI-2 transmitters) and the video
+> > grabbers (VIN) on Gen3 of Renesas R-Car SoC.
+> >
+> > Each CSI-2 device is connected to more then one VIN device which
+> > simultaneously can receive video from the same CSI-2 device. Each VIN
+> > device can also be connected to more then one CSI-2 device. The routing
+> > of which link are used are controlled by the VIN devices. There are only
+> > a few possible routes which are set by hardware limitations, which are
+> > different for each SoC in the Gen3 family.
+> >
+> > To work with the limitations of routing possibilities it is necessary
+> > for the DT bindings to describe which VIN device is connected to which
+> > CSI-2 device. This is why port 1 needs to to assign reg numbers for each
+> > VIN device that be connected to it. To setup and to know which links are
+> > valid for each SoC is the responsibility of the VIN driver since the
+> > register to configure it belongs to the VIN hardware.
+> >
+> > Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+> > ---
+> >  .../devicetree/bindings/media/rcar-csi2.txt        | 103 +++++++++++++++++++++
+> >  MAINTAINERS                                        |   1 +
+> >  2 files changed, 104 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/media/rcar-csi2.txt
+> >
+> > diff --git a/Documentation/devicetree/bindings/media/rcar-csi2.txt b/Documentation/devicetree/bindings/media/rcar-csi2.txt
+> > new file mode 100644
+> > index 0000000000000000..39d41d82b71b60eb
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/media/rcar-csi2.txt
+> 
+> > +Example:
+> > +
+> > +       csi20: csi2@fea80000 {
+> > +               compatible = "renesas,r8a7796-csi2", "renesas,rcar-gen3-csi2";
+> > +               reg = <0 0xfea80000 0 0x10000>;
+> > +               interrupts = <0 184 IRQ_TYPE_LEVEL_HIGH>;
+> > +               clocks = <&cpg CPG_MOD 714>;
+> > +               power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+> 
+> resets?
+> 
+> I know this is just an example, but your prototype patches to add the
+> csi nodes to r8a7795.dtsi also don't have reset properties.
+
+Thanks for catching this, I had updated the DT series but forgot the 
+example.
+
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+
 -- 
-2.15.0
+Regards,
+Niklas S�derlund
