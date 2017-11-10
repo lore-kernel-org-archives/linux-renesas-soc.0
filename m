@@ -1,26 +1,22 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:43578 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754072AbdKKA0v (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Nov 2017 19:26:51 -0500
+Return-Path: <devicetree-owner@vger.kernel.org>
 From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
         Kieran Bingham <kieran.bingham@ideasonboard.com>,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v11 0/2] media: rcar-csi2: add Renesas R-Car MIPI CSI-2
-Date: Sat, 11 Nov 2017 01:25:24 +0100
-Message-Id: <20171111002526.2646-1-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v10 0/2] media: rcar-csi2: add Renesas R-Car MIPI CSI-2 
+Date: Fri, 10 Nov 2017 14:31:35 +0100
+Message-Id: <20171110133137.9137-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hi,
@@ -31,34 +27,17 @@ together with the out-of-tree patches for rcar-vin to add support for
 Gen3 VIN. If anyone is interested to test video grabbing using these out
 of tree patches please see [1].
 
-* Changes since v10
-- Renamed Documentation/devicetree/bindings/media/rcar-csi2.txt to 
-  Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt
-- Add extra newline in rcar_csi2_code_to_fmt()
-- Use locally stored format information instead of reading it from the 
-  remote subdevice, Sakari pointed out that the pipeline is validated 
-  before .s_stream() is called so this is safe.
-- Do not check return from media_entity_to_v4l2_subdev() in 
-  rcar_csi2_start(), Sakari pointed out it can't fail. Also move logic 
-  to find the remote subdevice is moved to the only user of it,
-  rcar_csi2_calc_phypll().
-- Move pm_runtime_get_sync() and pm_runtime_put() to 
-  rcar_csi2_s_stream() and remove rcar_csi2_s_power().
-- Add validation of pixel code to rcar_csi2_set_pad_format().
-- Remove static rcar_csi2_notify_unbind() as it only printed a debug 
-  message.
-
 * Changes since v9
 - Add reset property to device tree example
 - Use BIT(x) instead of (1 << x)
 - Use u16 in struct phypll_hsfreqrange to pack struct better.
 - Use unsigned int type for loop variable in rcar_csi2_code_to_fmt
-- Move fields inside struct struct rcar_csi2_info and struct rcar_csi2
+- Move fields inside struct struct rcar_csi2_info and struct rcar_csi2 
   to pack struct's tighter.
 - Use %u instead of %d when printing __u32.
-- Don't check return of platform_get_resource(), let
+- Don't check return of platform_get_resource(), let 
   devm_ioremap_resource() handle it.
-- Store quirk workaround for r8a7795 ES1.0 in the data field of struct
+- Store quirk workaround for r8a7795 ES1.0 in the data field of struct 
   soc_device_attribute.
 
 Changes since v8:
@@ -144,18 +123,20 @@ Changes since v1:
   for pointing this out.
 
 1. http://elinux.org/R-Car/Tests:rcar-vin
+
 Niklas Söderlund (2):
   media: rcar-csi2: add Renesas R-Car MIPI CSI-2 receiver documentation
   media: rcar-csi2: add Renesas R-Car MIPI CSI-2 receiver driver
 
- .../bindings/media/renesas,rcar-csi2.txt           | 104 +++
+ .../devicetree/bindings/media/rcar-csi2.txt        | 104 +++
  MAINTAINERS                                        |   1 +
  drivers/media/platform/rcar-vin/Kconfig            |  12 +
  drivers/media/platform/rcar-vin/Makefile           |   1 +
- drivers/media/platform/rcar-vin/rcar-csi2.c        | 896 +++++++++++++++++++++
- 5 files changed, 1014 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt
+ drivers/media/platform/rcar-vin/rcar-csi2.c        | 934 +++++++++++++++++++++
+ 5 files changed, 1052 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/rcar-csi2.txt
  create mode 100644 drivers/media/platform/rcar-vin/rcar-csi2.c
 
 -- 
 2.15.0
+
