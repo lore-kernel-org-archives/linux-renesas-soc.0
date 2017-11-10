@@ -1,80 +1,86 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from condef-01.nifty.com ([202.248.20.66]:51536 "EHLO
-        condef-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751018AbdKXQin (ORCPT
+Received: from mail-io0-f196.google.com ([209.85.223.196]:53875 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752196AbdKJJ2a (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 24 Nov 2017 11:38:43 -0500
-Received: from conuserg-11.nifty.com ([10.126.8.74])by condef-01.nifty.com with ESMTP id vAOGPtuN027449
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 25 Nov 2017 01:25:58 +0900
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-mmc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Simon Horman <simon.horman@netronome.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v2 00/22] mmc: tmio: various fixes and cleanups
-Date: Sat, 25 Nov 2017 01:24:35 +0900
-Message-Id: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
+        Fri, 10 Nov 2017 04:28:30 -0500
+Received: by mail-io0-f196.google.com with SMTP id 189so12912880iow.10
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 10 Nov 2017 01:28:30 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <CAJZ5v0i9Qa4K-=UfC_zuZgWrP3=1r3pfdQ1e-AqNttze8utKFw@mail.gmail.com>
+References: <1510154134-1248-1-git-send-email-ulf.hansson@linaro.org>
+ <CAMuHMdUu6=zuCRBaON4K9ivG8bdV1xBuf4dCvPUr2JCL-=xC=w@mail.gmail.com>
+ <CAPDyKFqeEZT631g=x_LTU+Dba=WAhM9YOHYfdsSYo+kJz7HtkQ@mail.gmail.com>
+ <CAMuHMdX-MX-H0LKR68KLf4Ypp0ZBvV4sBEf8mv8DSNbe0VuGTg@mail.gmail.com>
+ <CAPDyKFpY24tn7zZK8A+XzSvTXLa7s_o93sO+yH5Rkae8KmvrXA@mail.gmail.com>
+ <CAMuHMdWJ5XXzP7wZ8NJjTaxHMARfcvCkVWev5Z29s077BGbYRA@mail.gmail.com>
+ <CAPDyKFp6FYX-dLZJV6oto8Uc8e8KzO18ScTO8SU+8=NGbs7cOg@mail.gmail.com>
+ <CAMuHMdUTX+=SfzivXz5HkgmrxcKB0miYnisBuy3iMtZNABS5KA@mail.gmail.com> <CAJZ5v0i9Qa4K-=UfC_zuZgWrP3=1r3pfdQ1e-AqNttze8utKFw@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 10 Nov 2017 10:28:29 +0100
+Message-ID: <CAPDyKFpAxS9fp3NNnsmKyqedshNZgSzqcsqXTA9WA-4LE06i7A@mail.gmail.com>
+Subject: Re: [PATCH 0/3] PM / core: Invent a WAKEUP_POWERED driver flag
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On 9 November 2017 at 17:31, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> On Thu, Nov 9, 2017 at 3:41 PM, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>> Hi Ulf,
+>>
+>> On Thu, Nov 9, 2017 at 3:28 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>>> [...]
+>>>
+>>>>>> The Ethernet driver can still call device_set_wakeup_enable(... , false)
+>>>>>> to control this.  If WoL is disabled by the user (or deemed not usable, see
+>>>>>> below), it already does so.
+>>>>>
+>>>>> I don't think that API is intended to be used like that and I wonder
+>>>>> if it even works as expected.
+>>>>>
+>>>>> Quoting the doc:
+>>>>> "If device wakeup mechanisms are enabled or disabled directly by
+>>>>> drivers, they also should use :c:func:`device_may_wakeup()` to decide what to do
+>>>>> during a system sleep transition.  Device drivers, however, are not expected to
+>>>>> call :c:func:`device_set_wakeup_enable()` directly in any case."
+>>>>>
+>>>>> Rafael, can you comment on this?
+>>>>
+>>>> There are ca. 100 callers in drivers.
+>>>
+>>> Yeah, but those doesn't normally use it to toggle the setting, but
+>>> instead only to set a default value during ->probe() or whatever
+>>> initialization code that runs.
+>>>
+>>> I think that makes a big difference, doesn't it?
+>>
+>> The few Ethernet drivers I looked at change the state in their
+>> ethtool_ops.set_wol() callback, not during probe.
+>> This is to be configured from userspace using ethtool.
+>
+> Which is the case I was talking about.
+>
+> Since changing the WoL setting via ethtool is expected to cause the
+> sysfs knob to reflect its status, using device_set_wakeup_enable() in
+> there is not actually confusing.
+>
+> The same applies to setting the default from ->probe().
+>
+> It will be confusing in all of the other cases, though.
 
-I am working on this IP for Socionext SoCs.
+Agreed, so using it to enable/disable wakeups during suspend is a bad idea.
 
-I was hit by several issues, and noticed various
-clean-up candidates.
+I will re-spin my series, addressing your review comments.
 
- - Fix and clean-up Kconfig
- - Fix various card detection problems
- - Move Renesas private data out of TMIO core
- - Allow to perform platform-specific settings before MMC host starts
- - Fix weird IRQ handling
-
-I am getting more and more patches for TMIO.
-I put all in a single series to clarify the patch order.
-
-1, 2, 4, 5, 6, 7 were already acked or reviewed by Wolfram Sang.
-
-
-Masahiro Yamada (22):
-  mmc: renesas_sdhi: consolidate DMAC CONFIG options
-  mmc: renesas_sdhi: remove wrong depends on to enable compile test
-  mmc: renesas_sdhi: remove eprobe jump label
-  mmc: tmio: set tmio_mmc_host to driver data
-  mmc: tmio: use devm_ioremap_resource() instead of devm_ioremap()
-  mmc: tmio: move mmc_host_ops to struct tmio_mmc_host from static data
-  mmc: tmio, renesas_sdhi: set mmc_host_ops hooks directly
-  mmc: tmio: move mmc_gpio_request_cd() before mmc_add_host()
-  mmc: tmio: use mmc_can_gpio_cd() instead of checking
-    TMIO_MMC_USE_GPIO_CD
-  mmc: tmio: support IP-builtin card detection logic
-  mmc: renesas_sdhi: remove always false condition
-  mmc: tmio,renesas_sdhi: move struct tmio_mmc_dma to renesas_sdhi.h
-  mmc: tmio,renesas_sdhi: move Renesas-specific DMA data to
-    renesas_sdhi.h
-  mmc: tmio,renesas_sdhi: move ssc_tappos to renesas_sdhi.h
-  mmc: tmio: change bus_shift to unsigned int
-  mmc: tmio: fix never-detected card insertion bug
-  mmc: tmio: move TMIO_MASK_{READOP,WRITEOP} handling to correct place
-  mmc: tmio: remove useless TMIO_MASK_CMD handling in
-    tmio_mmc_host_probe()
-  mmc: tmio: ioremap memory resource in tmio_mmc_host_alloc()
-  mmc: tmio: move clk_enable/disable out of tmio_mmc_host_probe()
-  mmc: tmio: move {tmio_}mmc_of_parse() to tmio_mmc_host_alloc()
-  mmc: tmio: remove dma_ops from tmio_mmc_host_probe() argument
-
- drivers/mmc/host/Kconfig                      |   5 +-
- drivers/mmc/host/Makefile                     |   8 +-
- drivers/mmc/host/renesas_sdhi.h               |  22 ++++
- drivers/mmc/host/renesas_sdhi_core.c          |  49 ++++-----
- drivers/mmc/host/renesas_sdhi_internal_dmac.c |  14 ++-
- drivers/mmc/host/renesas_sdhi_sys_dmac.c      |  35 +++---
- drivers/mmc/host/tmio_mmc.c                   |  23 ++--
- drivers/mmc/host/tmio_mmc.h                   |  23 +---
- drivers/mmc/host/tmio_mmc_core.c              | 149 +++++++++++++-------------
- 9 files changed, 170 insertions(+), 158 deletions(-)
-
--- 
-2.7.4
+Kind regards
+Uffe
