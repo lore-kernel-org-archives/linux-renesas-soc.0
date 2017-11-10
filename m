@@ -1,14 +1,19 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:43031 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751142AbdKJNMH (ORCPT
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:47424 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751239AbdKJJa0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Nov 2017 08:12:07 -0500
-Received: by mail-lf0-f65.google.com with SMTP id o66so2792619lfg.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 10 Nov 2017 05:12:07 -0800 (PST)
-From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
-Date: Fri, 10 Nov 2017 14:12:04 +0100
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+        Fri, 10 Nov 2017 04:30:26 -0500
+MIME-Version: 1.0
+In-Reply-To: <20171109234320.13016-3-niklas.soderlund+renesas@ragnatech.se>
+References: <20171109234320.13016-1-niklas.soderlund+renesas@ragnatech.se> <20171109234320.13016-3-niklas.soderlund+renesas@ragnatech.se>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 10 Nov 2017 10:30:24 +0100
+Message-ID: <CAMuHMdWgUNeJPkORSKRQJfxkarRdSnzu2Q9cSB7E1nJzV2oFSQ@mail.gmail.com>
+Subject: Re: [PATCH v9 2/2] media: rcar-csi2: add Renesas R-Car MIPI CSI-2
+ receiver driver
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
 Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Hans Verkuil <hverkuil@xs4all.nl>,
         Linux Media Mailing List <linux-media@vger.kernel.org>,
@@ -18,190 +23,151 @@ Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Fukawa <tomoharu.fukawa.eb@renesas.com>,
         Kieran Bingham <kieran.bingham@ideasonboard.com>,
         Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: Re: [PATCH v9 2/2] media: rcar-csi2: add Renesas R-Car MIPI CSI-2
- receiver driver
-Message-ID: <20171110131204.GA5458@bigcity.dyn.berto.se>
-References: <20171109234320.13016-1-niklas.soderlund+renesas@ragnatech.se>
- <20171109234320.13016-3-niklas.soderlund+renesas@ragnatech.se>
- <CAMuHMdWgUNeJPkORSKRQJfxkarRdSnzu2Q9cSB7E1nJzV2oFSQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdWgUNeJPkORSKRQJfxkarRdSnzu2Q9cSB7E1nJzV2oFSQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+Hi Niklas,
 
-On 2017-11-10 10:30:24 +0100, Geert Uytterhoeven wrote:
-> Hi Niklas,
-> 
-> On Fri, Nov 10, 2017 at 12:43 AM, Niklas S�derlund
-> <niklas.soderlund+renesas@ragnatech.se> wrote:
-> > A V4L2 driver for Renesas R-Car MIPI CSI-2 receiver. The driver
-> > supports the rcar-vin driver on R-Car Gen3 SoCs where separate CSI-2
-> > hardware blocks are connected between the video sources and the video
-> > grabbers (VIN).
-> >
-> > Driver is based on a prototype by Koji Matsuoka in the Renesas BSP.
-> >
-> > Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
-> 
-> Thanks for your patch!
+On Fri, Nov 10, 2017 at 12:43 AM, Niklas S=C3=B6derlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
+> A V4L2 driver for Renesas R-Car MIPI CSI-2 receiver. The driver
+> supports the rcar-vin driver on R-Car Gen3 SoCs where separate CSI-2
+> hardware blocks are connected between the video sources and the video
+> grabbers (VIN).
+>
+> Driver is based on a prototype by Koji Matsuoka in the Renesas BSP.
+>
+> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
+se>
 
-Thanks for your feedback, much appreciated!
+Thanks for your patch!
 
-> 
-> > --- /dev/null
-> > +++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
-> > @@ -0,0 +1,933 @@
-> 
-> > +/* Control Timing Select */
-> > +#define TREF_REG                       0x00
-> > +#define TREF_TREF                      (1 << 0)
-> 
-> BIT(0)? (many more)
+> --- /dev/null
+> +++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
+> @@ -0,0 +1,933 @@
 
-Good idea.
+> +/* Control Timing Select */
+> +#define TREF_REG                       0x00
+> +#define TREF_TREF                      (1 << 0)
 
-> 
-> > +struct phypll_hsfreqrange {
-> > +       unsigned int    mbps;
-> > +       unsigned char   reg;
-> 
-> The "unsigned char" doesn't buy you much, due to alignment rules.
-> What about making both u16 instead?
+BIT(0)? (many more)
 
-Yes that would work, thanks.
+> +struct phypll_hsfreqrange {
+> +       unsigned int    mbps;
+> +       unsigned char   reg;
 
-> 
-> > +static const struct rcar_csi2_format *rcar_csi2_code_to_fmt(unsigned int code)
-> > +{
-> > +       int i;
-> 
-> unsigned int
+The "unsigned char" doesn't buy you much, due to alignment rules.
+What about making both u16 instead?
 
-Thanks.
+> +static const struct rcar_csi2_format *rcar_csi2_code_to_fmt(unsigned int=
+ code)
+> +{
+> +       int i;
 
-> 
-> > +
-> > +       for (i = 0; i < ARRAY_SIZE(rcar_csi2_formats); i++)
-> > +               if (rcar_csi2_formats[i].code == code)
-> > +                       return rcar_csi2_formats + i;
-> > +       return NULL;
-> > +}
-> 
-> > +struct rcar_csi2_info {
-> > +       const struct phypll_hsfreqrange *hsfreqrange;
-> > +       bool clear_ulps;
-> > +       bool have_phtw;
-> > +       unsigned int csi0clkfreqrange;
-> 
-> I'd sort by decreasing size/alignment, i.e. the bools last.
+unsigned int
 
-I had not consider packing of the struct, thanks for pointing this out.
+> +
+> +       for (i =3D 0; i < ARRAY_SIZE(rcar_csi2_formats); i++)
+> +               if (rcar_csi2_formats[i].code =3D=3D code)
+> +                       return rcar_csi2_formats + i;
+> +       return NULL;
+> +}
 
-> 
-> > +};
-> > +
-> > +struct rcar_csi2 {
-> > +       struct device *dev;
-> > +       void __iomem *base;
-> > +       const struct rcar_csi2_info *info;
-> > +
-> > +       unsigned short lanes;
-> > +       unsigned char lane_swap[4];
-> > +
-> > +       struct v4l2_subdev subdev;
-> > +       struct media_pad pads[NR_OF_RCAR_CSI2_PAD];
-> > +
-> > +       struct v4l2_mbus_framefmt mf;
-> > +
-> > +       struct mutex lock;
-> > +       int stream_count;
-> > +
-> > +       struct v4l2_async_notifier notifier;
-> > +       struct v4l2_async_subdev remote;
-> 
-> Likewise.
+> +struct rcar_csi2_info {
+> +       const struct phypll_hsfreqrange *hsfreqrange;
+> +       bool clear_ulps;
+> +       bool have_phtw;
+> +       unsigned int csi0clkfreqrange;
 
-Thanks for this, I learnt something new.
+I'd sort by decreasing size/alignment, i.e. the bools last.
 
-> 
-> > +static int rcar_csi2_start(struct rcar_csi2 *priv)
-> > +{
-> 
-> > +       dev_dbg(priv->dev, "Input size (%dx%d%c)\n", mf->width,
-> 
-> %u for __u32
+> +};
+> +
+> +struct rcar_csi2 {
+> +       struct device *dev;
+> +       void __iomem *base;
+> +       const struct rcar_csi2_info *info;
+> +
+> +       unsigned short lanes;
+> +       unsigned char lane_swap[4];
+> +
+> +       struct v4l2_subdev subdev;
+> +       struct media_pad pads[NR_OF_RCAR_CSI2_PAD];
+> +
+> +       struct v4l2_mbus_framefmt mf;
+> +
+> +       struct mutex lock;
+> +       int stream_count;
+> +
+> +       struct v4l2_async_notifier notifier;
+> +       struct v4l2_async_subdev remote;
 
-Good catch.
+Likewise.
 
-> 
-> > +               mf->height, mf->field == V4L2_FIELD_NONE ? 'p' : 'i');
-> 
-> > +static int rcar_csi2_probe_resources(struct rcar_csi2 *priv,
-> > +                                    struct platform_device *pdev)
-> > +{
-> > +       struct resource *mem;
-> > +       int irq;
-> > +
-> > +       mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > +       if (!mem)
-> 
-> No need to check mem, platform_get_resource() and devm_ioremap_resource()
-> are designed to be pipelined.
+> +static int rcar_csi2_start(struct rcar_csi2 *priv)
+> +{
 
-Did not know that, thanks.
+> +       dev_dbg(priv->dev, "Input size (%dx%d%c)\n", mf->width,
 
-> 
-> > +               return -ENODEV;
-> > +
-> > +       priv->base = devm_ioremap_resource(&pdev->dev, mem);
-> 
-> 
-> > +static const struct soc_device_attribute r8a7795es1[] = {
-> > +       { .soc_id = "r8a7795", .revision = "ES1.*" },
-> > +       { /* sentinel */ }
-> > +};
-> > +
-> > +static int rcar_csi2_probe(struct platform_device *pdev)
-> > +{
-> > +       struct rcar_csi2 *priv;
-> > +       unsigned int i;
-> > +       int ret;
-> > +
-> > +       priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
-> > +       if (!priv)
-> > +               return -ENOMEM;
-> > +
-> > +       priv->info = of_device_get_match_data(&pdev->dev);
-> > +
-> > +       /* r8a7795 ES1.x behaves different then ES2.0+ but no own compat */
-> > +       if (priv->info == &rcar_csi2_info_r8a7795 &&
-> > +           soc_device_match(r8a7795es1))
-> > +               priv->info = &rcar_csi2_info_r8a7795es1;
-> 
-> Please store &rcar_csi2_info_r8a7795es1 in r8a7795es1[0].data instead.
+%u for __u32
 
-Good idea.
+> +               mf->height, mf->field =3D=3D V4L2_FIELD_NONE ? 'p' : 'i')=
+;
 
-I will fix this and resend, thanks again for taking the time to review 
-this patch.
+> +static int rcar_csi2_probe_resources(struct rcar_csi2 *priv,
+> +                                    struct platform_device *pdev)
+> +{
+> +       struct resource *mem;
+> +       int irq;
+> +
+> +       mem =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +       if (!mem)
 
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+No need to check mem, platform_get_resource() and devm_ioremap_resource()
+are designed to be pipelined.
 
--- 
-Regards,
-Niklas S�derlund
+> +               return -ENODEV;
+> +
+> +       priv->base =3D devm_ioremap_resource(&pdev->dev, mem);
+
+
+> +static const struct soc_device_attribute r8a7795es1[] =3D {
+> +       { .soc_id =3D "r8a7795", .revision =3D "ES1.*" },
+> +       { /* sentinel */ }
+> +};
+> +
+> +static int rcar_csi2_probe(struct platform_device *pdev)
+> +{
+> +       struct rcar_csi2 *priv;
+> +       unsigned int i;
+> +       int ret;
+> +
+> +       priv =3D devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+> +       if (!priv)
+> +               return -ENOMEM;
+> +
+> +       priv->info =3D of_device_get_match_data(&pdev->dev);
+> +
+> +       /* r8a7795 ES1.x behaves different then ES2.0+ but no own compat =
+*/
+> +       if (priv->info =3D=3D &rcar_csi2_info_r8a7795 &&
+> +           soc_device_match(r8a7795es1))
+> +               priv->info =3D &rcar_csi2_info_r8a7795es1;
+
+Please store &rcar_csi2_info_r8a7795es1 in r8a7795es1[0].data instead.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
