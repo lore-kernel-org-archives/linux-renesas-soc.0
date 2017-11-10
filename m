@@ -1,42 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55692 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752310AbdKAKgN (ORCPT
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:48784 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750932AbdKJV67 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 1 Nov 2017 06:36:13 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/2] arm64: dts: renesas: r8a77995: Connect Ethernet-AVB to IPMMU-RT
-Date: Wed,  1 Nov 2017 11:35:08 +0100
-Message-Id: <20171101103508.7721-3-horms+renesas@verge.net.au>
-In-Reply-To: <20171101103508.7721-1-horms+renesas@verge.net.au>
-References: <20171101103508.7721-1-horms+renesas@verge.net.au>
+        Fri, 10 Nov 2017 16:58:59 -0500
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-pci@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH V2 0/5] PCI: rcar: Add suspend/resume support
+Date: Fri, 10 Nov 2017 22:58:38 +0100
+Message-Id: <20171110215843.432-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add IPMMU-RT to the Ethernet-AVB device node.
+This patchset adds support for suspend/resume on the Renesas RCar PCIe
+controller. First two patches clean the driver up a little, while the
+remaining three add the required suspend/resume functionality.
 
-Based on work by Magnus Damm for the r8a7795.
+Kazufumi Ikeda (2):
+  PCI: rcar: Add the initialization of PCIe link in resume_noirq
+  PCI: rcar: Add the suspend/resume for pcie-rcar driver
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+Marek Vasut (2):
+  PCI: rcar: Poll more often in rcar_pcie_wait_for_dl()
+  PCI: rcar: Clean up the macros
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index 641c4ddf0647..1f4532b2cf3e 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -389,6 +389,7 @@
- 			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
- 			resets = <&cpg 812>;
- 			phy-mode = "rgmii-txid";
-+			iommus = <&ipmmu_ds0 16>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			status = "disabled";
+Phil Edworthy (1):
+  PCI: rcar: Support runtime PM, link state L1 handling
+
+ drivers/pci/host/pcie-rcar.c | 182 ++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 146 insertions(+), 36 deletions(-)
+
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>
+Cc: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-renesas-soc@vger.kernel.org
 -- 
 2.11.0
