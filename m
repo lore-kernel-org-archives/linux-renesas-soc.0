@@ -1,85 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:57934 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754565AbdKIN1R (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:56098 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753132AbdKJNZy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 9 Nov 2017 08:27:17 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Kevin Hilman <khilman@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-pm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 0/3] PM / Domain: renesas: Fix active wakeup behavior
-Date: Thu,  9 Nov 2017 14:26:59 +0100
-Message-Id: <1510234022-29442-1-git-send-email-geert+renesas@glider.be>
+        Fri, 10 Nov 2017 08:25:54 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v5 12/15] arm64: dts: renesas: r8a7795: Connect Ethernet-AVB to IPMMU-DS0
+Date: Fri, 10 Nov 2017 14:25:29 +0100
+Message-Id: <20171110132532.1202-13-horms+renesas@verge.net.au>
+In-Reply-To: <20171110132532.1202-1-horms+renesas@verge.net.au>
+References: <20171110132532.1202-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Rafael, Ulf, Kevin,
+From: Magnus Damm <damm+renesas@opensource.se>
 
-If a device in a Renesas ARM SoC is part of a Clock Domain, and it is
-used as a wakeup source, it must be kept active during system suspend.
+Add IPMMU-DS0 to the Ethernet-AVB device node.
 
-Currently this is handled in device-specific drivers by explicitly
-increasing the use count of the module clock when the device is
-configured as a wakeup source, or if it is part of the wakeup path.
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v5 [Simon Horman]
+* Added reviewed by tag from Geert Uytterhoeven
 
-However, this is merely a workaround.  The proper way to prevent the
-device from being stopped is to inform this requirement to the genpd
-core, using the new GENPD_FLAG_ACTIVE_WAKEUP flag introduced in commit
-95a20ef6f7e54c6a ("PM / Domains: Allow genpd users to specify default
-active wakeup behavior").
+v4 [Simon Horman]
 
-Hence this series does that for PM Domain drivers used on R-Car, RZ/A1,
-RZ/G1 SoCs, mimicking what is already done succesfully on SH/R-Mobile
-SoCs.  This will allow for the workarounds can be removed later.
+v1 - v3 [Magnus Damm]
+---
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-This series was extracted from "[PATCH 00/10] PM / Domain: renesas: Fix
-active wakeup behavior", and retains only fixes for Renesas PM Domain
-drivers.
-
-Changes compared to v1:
-  - Integrate follow-up patches to use GENPD_FLAG_ACTIVE_WAKEUP instead
-    of adding an "always true" callback.
-
-As GENPD_FLAG_ACTIVE_WAKEUP exists in pm/linux-next only, and this
-series is a dependency for the removal of workarounds in drivers of
-multiple subsystems (net, irqchip, and gpio), I think it is a good idea
-to still queue this for v4.15 in the PM tree, if possible.
-
-This has been tested on r8a73a4/ape6evm, r8a7740/armadillo,
-r8a7791/koelsch, r8a7795/salvator-x and -xs, r8a7795/salvator-x, and
-sh73a0/kzm9g.
-
-Thanks for applying!
-
-Geert Uytterhoeven (3):
-  clk: renesas: mstp: Keep wakeup sources active during system suspend
-  clk: renesas: cpg-mssr: Keep wakeup sources active during system
-    suspend
-  soc: renesas: rcar-sysc: Keep wakeup sources active during system
-    suspend
-
- drivers/clk/renesas/clk-mstp.c         | 2 +-
- drivers/clk/renesas/renesas-cpg-mssr.c | 2 +-
- drivers/soc/renesas/rcar-sysc.c        | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 851324eac5ed..0fd1d1ab97d2 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -816,6 +816,7 @@
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			resets = <&cpg 812>;
+ 			phy-mode = "rgmii-txid";
++			iommus = <&ipmmu_ds0 16>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			status = "disabled";
 -- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+2.11.0
