@@ -1,115 +1,74 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:39544 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751301AbdKTPqn (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Nov 2017 10:46:43 -0500
-Received: by mail-wm0-f67.google.com with SMTP id x63so7002758wmf.4
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Nov 2017 07:46:42 -0800 (PST)
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, horms@verge.net.au,
-        geert@linux-m68k.org
-Cc: wsa@the-dreams.de, Chris.Paterson2@renesas.com,
-        magnus.damm@gmail.com,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH v2 1/3] arm64: dts: r8a77995: add SYS-DMAC nodes
-Date: Mon, 20 Nov 2017 16:46:34 +0100
-Message-Id: <1511192796-2268-2-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1511192796-2268-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1511192796-2268-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Fri, 10 Nov 2017 09:36:04 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 1/2] ARM: dts: r8a7745: Add DU support
+Message-ID: <20171110083603.y3ptoi6enhxlomp5@verge.net.au>
+References: <1509992814-4543-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <9872942.on8edmfvcY@avalon>
+ <20171108044822.ktnzzowzprqtdnsm@verge.net.au>
+ <12916864.hfKIdpMrll@avalon>
+ <20171110083248.3lurepyfmrvxejaa@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20171110083248.3lurepyfmrvxejaa@verge.net.au>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Differs from other Gen3 SoCs in that each controller only supports eight
-channels.
+On Fri, Nov 10, 2017 at 09:32:49AM +0100, Simon Horman wrote:
+> On Thu, Nov 09, 2017 at 11:31:25AM +0200, Laurent Pinchart wrote:
+> > Hi Simon,
+> > 
+> > On Wednesday, 8 November 2017 06:48:23 EET Simon Horman wrote:
+> > > On Tue, Nov 07, 2017 at 06:05:37AM +0200, Laurent Pinchart wrote:
+> > > > Hi Fabrizio,
+> > > > 
+> > > > Thank you for the patch.
+> > > > 
+> > > > On Monday, 6 November 2017 20:26:53 EET Fabrizio Castro wrote:
+> > > > > Add du node to r8a7745 SoC DT. Boards that want to enable the DU
+> > > > > need to specify the output topology.
+> > > > > 
+> > > > > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > > > > Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+> > > > 
+> > > > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > > > 
+> > > > > ---
+> > > > > 
+> > > > >  arch/arm/boot/dts/r8a7745.dtsi | 27 +++++++++++++++++++++++++++
+> > > > >  1 file changed, 27 insertions(+)
+> > > > > 
+> > > > > diff --git a/arch/arm/boot/dts/r8a7745.dtsi
+> > > > > b/arch/arm/boot/dts/r8a7745.dtsi index 846c27a..53eb1ce4 100644
+> > > > > --- a/arch/arm/boot/dts/r8a7745.dtsi
+> > > > > +++ b/arch/arm/boot/dts/r8a7745.dtsi
+> > > > > @@ -821,6 +821,33 @@
+> > > > > 
+> > > > >  			status = "disabled";
+> > > > >  		
+> > > > >  		};
+> > > > > 
+> > > > > +		du: display@feb00000 {
+> > > > > +			compatible = "renesas,du-r8a7745";
+> > > 
+> > > Hi,
+> > > 
+> > > could you provide some information on the status of upstreaming
+> > > the binding used above?
+> > 
+> > I'll send a pull request for v4.16, it's too late for v4.15.
+> 
+> Thanks, I'm happy with patches in that stage of being upstreamed
+> as the basis for accepting these patches. I'll see about doing so.
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
----
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 72 +++++++++++++++++++++++++++++++
- 1 file changed, 72 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index 788e3af..04a392a 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -155,6 +155,78 @@
- 			resets = <&cpg 407>;
- 		};
- 
-+		dmac0: dma-controller@e6700000 {
-+			compatible = "renesas,dmac-r8a77995",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xe6700000 0 0x10000>;
-+			interrupts = <GIC_SPI 199 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 202 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 203 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 205 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 206 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					"ch0", "ch1", "ch2", "ch3",
-+					"ch4", "ch5", "ch6", "ch7";
-+			clocks = <&cpg CPG_MOD 219>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 219>;
-+			#dma-cells = <1>;
-+			dma-channels = <8>;
-+		};
-+
-+		dmac1: dma-controller@e7300000 {
-+			compatible = "renesas,dmac-r8a77995",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xe7300000 0 0x10000>;
-+			interrupts = <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 217 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 309 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 311 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					"ch0", "ch1", "ch2", "ch3",
-+					"ch4", "ch5", "ch6", "ch7";
-+			clocks = <&cpg CPG_MOD 218>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 218>;
-+			#dma-cells = <1>;
-+			dma-channels = <8>;
-+		};
-+
-+		dmac2: dma-controller@e7310000 {
-+			compatible = "renesas,dmac-r8a77995",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xe7310000 0 0x10000>;
-+			interrupts = <GIC_SPI 416 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 417 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 418 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 419 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 420 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 421 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 422 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 423 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 424 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					"ch0", "ch1", "ch2", "ch3",
-+					"ch4", "ch5", "ch6", "ch7";
-+			clocks = <&cpg CPG_MOD 217>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 217>;
-+			#dma-cells = <1>;
-+			dma-channels = <8>;
-+		};
-+
- 		gpio0: gpio@e6050000 {
- 			compatible = "renesas,gpio-r8a77995",
- 				     "renesas,rcar-gen3-gpio",
--- 
-2.7.4
+Done, I have applied this for v4.16.
