@@ -1,93 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:54498 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753098AbdKGMsX (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52511 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751994AbdKJIiL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Nov 2017 07:48:23 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>, linux-pm@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 1/5] PM / Domains: Allow genpd users to specify default active wakeup behavior
-Date: Tue,  7 Nov 2017 13:48:11 +0100
-Message-Id: <1510058895-21712-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1510058895-21712-1-git-send-email-geert+renesas@glider.be>
-References: <1510058895-21712-1-git-send-email-geert+renesas@glider.be>
+        Fri, 10 Nov 2017 03:38:11 -0500
+Date: Fri, 10 Nov 2017 09:38:07 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Alex Williamson <alex.williamson@redhat.com>
+Cc: Joerg Roedel <joro@8bytes.org>, linux-renesas-soc@vger.kernel.org,
+        iommu@lists.linux-foundation.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH 0/2] iommu/ipmmu-vmsa: r8a779(70|95) support
+Message-ID: <20171110083807.biz6txghquop7lr2@verge.net.au>
+References: <20171101103423.7334-1-horms+renesas@verge.net.au>
+ <20171106122201.77d640e5@t450s.home>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20171106122201.77d640e5@t450s.home>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-It is quite common for PM Domains to require slave devices to be kept
-active during system suspend if they are to be used as wakeup sources.
-To enable this, currently each PM Domain or driver has to provide its
-own gpd_dev_ops.active_wakeup() callback.
+On Mon, Nov 06, 2017 at 12:22:01PM -0700, Alex Williamson wrote:
+> On Wed,  1 Nov 2017 11:34:21 +0100
+> Simon Horman <horms+renesas@verge.net.au> wrote:
+> 
+> > Update Update the IPMMU DT binding documentation and driver implementation
+> > to support the r8a77970 (R-Car V3M) and r8a77995 (R-Car D3).
+> > 
+> > Based on work for r8a7796 by Magnus Damm.
+> > 
+> > Patches based on:
+> > * iommu/next
+> > * [PATCH v5 00/09] iommu/ipmmu-vmsa: r8a7795 support V5
+> > * [PATCH v4 0/3] iommu/ipmmu-vmsa: r8a7796 support V4
+> >   (fuzz when applying 3/3)
+> 
+> This last dependent patch series hasn't had any comments or updates
+> since June.  Do I take it from Simon's new patches here that it's still
+> relevant and desired?  Perhaps it was simply missed and nobody bothered
+> to re-send it?  Thanks,
 
-Introduce a new flag GENPD_FLAG_ACTIVE_WAKEUP to consolidate this.
-If specified, all slave devices configured as wakeup sources will be
-kept active during system suspend.
+Hi Alex,
 
-PM Domains that need more fine-grained controls, based on the slave
-device, can still provide their own callbacks, as before.
+I spoke with Magnus about this and we feel that its a little early
+to merge the driver portion of both "[PATCH v4 0/3] iommu/ipmmu-vmsa:
+r8a7796 support V4" and this patchset.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
-Reviewed-by: Kevin Hilman <khilman@baylibre.com>
----
-v3:
-  - Add Acked-by, Reviewed-by,
-
-v2:
-  - Use the flag in se instead of setting up an "always true" callback.
----
- drivers/base/power/domain.c | 3 +++
- include/linux/pm_domain.h   | 7 ++++---
- 2 files changed, 7 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-index 7eaee557aa615dbc..c5172d70b742f288 100644
---- a/drivers/base/power/domain.c
-+++ b/drivers/base/power/domain.c
-@@ -124,6 +124,7 @@ static const struct genpd_lock_ops genpd_spin_ops = {
- #define genpd_status_on(genpd)		(genpd->status == GPD_STATE_ACTIVE)
- #define genpd_is_irq_safe(genpd)	(genpd->flags & GENPD_FLAG_IRQ_SAFE)
- #define genpd_is_always_on(genpd)	(genpd->flags & GENPD_FLAG_ALWAYS_ON)
-+#define genpd_is_active_wakeup(genpd)	(genpd->flags & GENPD_FLAG_ACTIVE_WAKEUP)
- 
- static inline bool irq_safe_dev_in_no_sleep_domain(struct device *dev,
- 		const struct generic_pm_domain *genpd)
-@@ -866,6 +867,8 @@ static bool genpd_present(const struct generic_pm_domain *genpd)
- static bool genpd_dev_active_wakeup(const struct generic_pm_domain *genpd,
- 				    struct device *dev)
- {
-+	if (genpd_is_active_wakeup(genpd))
-+		return true;
- 	return GENPD_DEV_CALLBACK(genpd, bool, active_wakeup, dev);
- }
- 
-diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-index 9af0356bd69c1597..28c24c58d479e3b4 100644
---- a/include/linux/pm_domain.h
-+++ b/include/linux/pm_domain.h
-@@ -18,9 +18,10 @@
- #include <linux/spinlock.h>
- 
- /* Defines used for the flags field in the struct generic_pm_domain */
--#define GENPD_FLAG_PM_CLK	(1U << 0) /* PM domain uses PM clk */
--#define GENPD_FLAG_IRQ_SAFE	(1U << 1) /* PM domain operates in atomic */
--#define GENPD_FLAG_ALWAYS_ON	(1U << 2) /* PM domain is always powered on */
-+#define GENPD_FLAG_PM_CLK	 (1U << 0) /* PM domain uses PM clk */
-+#define GENPD_FLAG_IRQ_SAFE	 (1U << 1) /* PM domain operates in atomic */
-+#define GENPD_FLAG_ALWAYS_ON	 (1U << 2) /* PM domain is always powered on */
-+#define GENPD_FLAG_ACTIVE_WAKEUP (1U << 3) /* Keep devices active if wakeup */
- 
- enum gpd_status {
- 	GPD_STATE_ACTIVE = 0,	/* PM domain is active */
--- 
-2.7.4
+We would, however, like to see the bindings updates merged as they seem
+ready. I will repost them separately as that should be easiest for you.
