@@ -1,47 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55317 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752102AbdKJMPg (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:13677 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750782AbdKJRQh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Nov 2017 07:15:36 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Alex Williamson <alex.williamson@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        iommu@lists.linux-foundation.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/2] iommu/ipmmu-vmsa: Add r8a779(70|95) DT bindings
-Date: Fri, 10 Nov 2017 13:15:20 +0100
-Message-Id: <20171110121520.23437-3-horms+renesas@verge.net.au>
-In-Reply-To: <20171110121520.23437-1-horms+renesas@verge.net.au>
-References: <20171110121520.23437-1-horms+renesas@verge.net.au>
+        Fri, 10 Nov 2017 12:16:37 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: Simon Horman <horms@verge.net.au>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [RFC PATCH 0/2] Add can_clk function
+Date: Fri, 10 Nov 2017 17:16:27 +0000
+Message-Id: <1510334189-8942-1-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <CAMuHMdV=8rAE5z2VmCjL-M_MXY6TsKM_+0c-bsqDsjDZYWU1FA@mail.gmail.com>
+References: <CAMuHMdV=8rAE5z2VmCjL-M_MXY6TsKM_+0c-bsqDsjDZYWU1FA@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Update the IPMMU DT binding documentation to include the
-r8a77970 (R-Car V3M) and r8a77995 (R-Car D3) compat strings.
+Hello Geert, All
 
-Based on work for r8a7796 by Magnus Damm.
+thank you for your comments on patch:
+"pinctrl: sh-pfc: r8a7745: Add CAN[01] support"
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt | 2 ++
- 1 file changed, 2 insertions(+)
+Looking at file drivers/pinctrl/sh-pfc/pfc-r8a7791.c, it looks like
+it could use the same enhancement.
+This series applies Geert's recommendation to both pfc-r8a7791.c and
+pfc-r8a7794.c.
+Unfortunately I wasn't able to actually test this patch set as I
+don't have access to HW providing can_clk.
 
-diff --git a/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt b/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
-index 98ae900a7a76..9efa87dbcfdc 100644
---- a/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
-+++ b/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
-@@ -17,6 +17,8 @@ Required Properties:
-     - "renesas,ipmmu-r8a7794" for the R8A7794 (R-Car E2) IPMMU.
-     - "renesas,ipmmu-r8a7795" for the R8A7795 (R-Car H3) IPMMU.
-     - "renesas,ipmmu-r8a7796" for the R8A7796 (R-Car M3-W) IPMMU.
-+    - "renesas,ipmmu-r8a77970" for the R8A7770 (R-Car V3M) IPMMU.
-+    - "renesas,ipmmu-r8a77995" for the R8A77995 (R-Car D3) IPMMU.
-     - "renesas,ipmmu-vmsa" for generic R-Car Gen2 VMSA-compatible IPMMU.
- 
-   - reg: Base address and size of the IPMMU registers.
+Best regards,
+
+Fabrizio Castro (2):
+  pinctrl: sh-pfc: r8a7745: Add can_clk function
+  pinctrl: sh-pfc: r8a7743: Add can_clk function
+
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 10 +++++-----
+ drivers/pinctrl/sh-pfc/pfc-r8a7794.c |  8 ++++----
+ 2 files changed, 9 insertions(+), 9 deletions(-)
+
 -- 
-2.11.0
+2.7.4
