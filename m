@@ -1,225 +1,108 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55692 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752310AbdKAKgM (ORCPT
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:47648 "EHLO
+        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754753AbdKKAjD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 1 Nov 2017 06:36:12 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v4 01/15] arm64: dts: renesas: r8a7795: Add IPMMU device nodes
-Date: Wed,  1 Nov 2017 11:34:38 +0100
-Message-Id: <20171101103452.7491-2-horms+renesas@verge.net.au>
-In-Reply-To: <20171101103452.7491-1-horms+renesas@verge.net.au>
-References: <20171101103452.7491-1-horms+renesas@verge.net.au>
+        Fri, 10 Nov 2017 19:39:03 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v7 04/25] rcar-vin: move max width and height information to chip information
+Date: Sat, 11 Nov 2017 01:38:14 +0100
+Message-Id: <20171111003835.4909-5-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20171111003835.4909-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20171111003835.4909-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On Gen3 the max supported width and height will be different from Gen2.
+Move the limits to the struct rvin_info to prepare for Gen3 support.
 
-Add r8a7795 IPMMU nodes and keep all disabled by default.
-
-This includes all IPMMU devices for r8a7795 ES2.0. Those
-not present in r8a7795 ES1.x are removed from the DT for those
-SoCs using delete-node. A follow-up patch will add IPMMU devices
-to ES1.x which are not also present in ES2.0.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
 ---
-v4 [Simon Horman]
-* Add IPMMU-VI1, IPMMU-VP1 IPMMU-PV2 and IPMMU-PV3
-* Rename IPMMU-VP as IPMMU-VP0 and IPMMU-VI as IPMMU-VI0
-  as per recent datasheet naming
-* Do not add IPMMU-MP1 or IPMMU-SY,
-  these will be added to ES1.x by follow-up patch
+ drivers/media/platform/rcar-vin/rcar-core.c | 6 ++++++
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 6 ++----
+ drivers/media/platform/rcar-vin/rcar-vin.h  | 6 ++++++
+ 3 files changed, 14 insertions(+), 4 deletions(-)
 
-v1 - v3 [Magnus Damm]
----
- arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi |  21 +++++
- arch/arm64/boot/dts/renesas/r8a7795.dtsi     | 127 +++++++++++++++++++++++++++
- 2 files changed, 148 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-index 655dd30639c5..02d505f2e0e5 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-@@ -21,6 +21,11 @@
- 		status = "disabled";
- 	};
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index e90e5d014e074d64..cb761057459caa3f 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -244,14 +244,20 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
  
-+	/delete-node/ mmu@febe0000;
-+	/delete-node/ mmu@fe980000;
-+	/delete-node/ mmu@fd960000;
-+	/delete-node/ mmu@fd970000;
-+
- 	/delete-node/ usb-phy@ee0e0200;
- 	/delete-node/ usb@ee0e0100;
- 	/delete-node/ usb@ee0e0000;
-@@ -86,6 +91,22 @@
- 	};
+ static const struct rvin_info rcar_info_h1 = {
+ 	.chip = RCAR_H1,
++	.max_width = 2048,
++	.max_height = 2048,
  };
  
-+&ipmmu_vi0 {
-+	renesas,ipmmu-main = <&ipmmu_mm 11>;
-+};
-+
-+&ipmmu_vp0 {
-+	renesas,ipmmu-main = <&ipmmu_mm 12>;
-+};
-+
-+&ipmmu_vc0 {
-+	renesas,ipmmu-main = <&ipmmu_mm 12>;
-+};
-+
-+&ipmmu_rt {
-+	renesas,ipmmu-main = <&ipmmu_mm 7>;
-+};
-+
- &du {
- 	vsps = <&vspd0 &vspd1 &vspd2 &vspd3>;
+ static const struct rvin_info rcar_info_m1 = {
+ 	.chip = RCAR_M1,
++	.max_width = 2048,
++	.max_height = 2048,
  };
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 42c51f2ec30b..9750881c90a6 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -421,6 +421,133 @@
- 			resets = <&cpg 407>;
- 		};
  
-+		ipmmu_vi0: mmu@febd0000 {
-+			compatible = "renesas,ipmmu-r8a7795";
-+			reg = <0 0xfebd0000 0 0x1000>; /* IPMMU-VI0 */
-+			renesas,ipmmu-main = <&ipmmu_mm 14>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
+ static const struct rvin_info rcar_info_gen2 = {
+ 	.chip = RCAR_GEN2,
++	.max_width = 2048,
++	.max_height = 2048,
+ };
+ 
+ static const struct of_device_id rvin_of_id_table[] = {
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index be00f4431493eb0a..76c0b8fa8602d08d 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -23,8 +23,6 @@
+ #include "rcar-vin.h"
+ 
+ #define RVIN_DEFAULT_FORMAT	V4L2_PIX_FMT_YUYV
+-#define RVIN_MAX_WIDTH		2048
+-#define RVIN_MAX_HEIGHT		2048
+ 
+ /* -----------------------------------------------------------------------------
+  * Format Conversions
+@@ -258,8 +256,8 @@ static int __rvin_try_format(struct rvin_dev *vin,
+ 	walign = vin->format.pixelformat == V4L2_PIX_FMT_NV16 ? 5 : 1;
+ 
+ 	/* Limit to VIN capabilities */
+-	v4l_bound_align_image(&pix->width, 2, RVIN_MAX_WIDTH, walign,
+-			      &pix->height, 4, RVIN_MAX_HEIGHT, 2, 0);
++	v4l_bound_align_image(&pix->width, 2, vin->info->max_width, walign,
++			      &pix->height, 4, vin->info->max_height, 2, 0);
+ 
+ 	pix->bytesperline = max_t(u32, pix->bytesperline,
+ 				  rvin_format_bytesperline(pix));
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index ab240eb4aad9176c..e41dc3bff7fdc649 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -91,9 +91,15 @@ struct rvin_graph_entity {
+ /**
+  * struct rvin_info - Information about the particular VIN implementation
+  * @chip:		type of VIN chip
++ *
++ * max_width:		max input width the VIN supports
++ * max_height:		max input height the VIN supports
+  */
+ struct rvin_info {
+ 	enum chip_id chip;
 +
-+		ipmmu_vi1: mmu@febe0000 {
-+			compatible = "renesas,ipmmu-r8a7795";
-+			reg = <0 0xfebe0000 0 0x1000>; /* IPMMU-VI1 */
-+			renesas,ipmmu-main = <&ipmmu_mm 15>;
-+			#iommu-cells = <1>;
-+		};
-+
-+		ipmmu_vp0: mmu@fe990000 {
-+			compatible = "renesas,ipmmu-r8a7795";
-+			reg = <0 0xfe990000 0 0x1000>; /* IPMMU-VP0 */
-+			renesas,ipmmu-main = <&ipmmu_mm 16>;
-+			#iommu-cells = <1>;
-+		};
-+
-+		ipmmu_vp1: mmu@fe980000 {
-+			compatible = "renesas,ipmmu-r8a7795";
-+			reg = <0 0xfe980000 0 0x1000>; /* IPMMU-VP1 */
-+			renesas,ipmmu-main = <&ipmmu_mm 17>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_vc0: mmu@fe6b0000 {
-+			compatible = "renesas,ipmmu-r8a7795";
-+			reg = <0 0xfe6b0000 0 0x1000>; /* IPMMU-VC0 */
-+			renesas,ipmmu-main = <&ipmmu_mm 12>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_vc1: mmu@fe6f0000 {
-+			compatible = "renesas,ipmmu-r8a7795";
-+			reg = <0 0xfe6f0000 0 0x1000>; /* IPMMU-VC1 */
-+			renesas,ipmmu-main = <&ipmmu_mm 13>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_pv0: mmu@fd800000 {
-+			compatible = "renesas,ipmmu-r8a7795";
-+			reg = <0 0xfd800000 0 0x1000>; /* IPMMU-PV0 */
-+			renesas,ipmmu-main = <&ipmmu_mm 6>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_pv2: mmu@fd960000 {
-+			compatible = "renesas,ipmmu-r8a7795";
-+			reg = <0 0xfd960000 0 0x1000>; /* IPMMU-PV2 */
-+			renesas,ipmmu-main = <&ipmmu_mm 8>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_pv3: mmu@fd970000 {
-+			compatible = "renesas,ipmmu-r8a7795";
-+			reg = <0 0xfd970000 0 0x1000>; /* IPMMU-PV3 */
-+			renesas,ipmmu-main = <&ipmmu_mm 9>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_ir: mmu@ff8b0000 {
-+			compatible = "renesas,ipmmu-r8a7795";
-+			reg = <0 0xff8b0000 0 0x1000>; /* IPMMU-IR */
-+			renesas,ipmmu-main = <&ipmmu_mm 3>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_hc: mmu@e6570000 {
-+			compatible = "renesas,ipmmu-r8a7795";
-+			reg = <0 0xe6570000 0 0x1000>; /* IPMMU-HC */
-+			renesas,ipmmu-main = <&ipmmu_mm 2>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_rt: mmu@ffc80000 {
-+			compatible = "renesas,ipmmu-r8a7795";
-+			reg = <0 0xffc80000 0 0x1000>; /* IPMMU-RT */
-+			renesas,ipmmu-main = <&ipmmu_mm 10>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_mp0: mmu@ec670000 {
-+			compatible = "renesas,ipmmu-r8a7795";
-+			reg = <0 0xec670000 0 0x1000>; /* IPMMU-MP0 */
-+			renesas,ipmmu-main = <&ipmmu_mm 4>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_ds0: mmu@e6740000 {
-+			compatible = "renesas,ipmmu-r8a7795";
-+			reg = <0 0xe6740000 0 0x1000>; /* IPMMU-DS0 */
-+			renesas,ipmmu-main = <&ipmmu_mm 0>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_ds1: mmu@e7740000 {
-+			compatible = "renesas,ipmmu-r8a7795";
-+			reg = <0 0xe7740000 0 0x1000>; /* IPMMU-DS1 */
-+			renesas,ipmmu-main = <&ipmmu_mm 1>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_mm: mmu@e67b0000 {
-+			compatible = "renesas,ipmmu-r8a7795";
-+			reg = <0 0xe67b0000 0 0x1000>; /* IPMMU-MM */
-+			interrupts = <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
- 		dmac0: dma-controller@e6700000 {
- 			compatible = "renesas,dmac-r8a7795",
- 				     "renesas,rcar-dmac";
++	unsigned int max_width;
++	unsigned int max_height;
+ };
+ 
+ /**
 -- 
-2.11.0
+2.15.0
