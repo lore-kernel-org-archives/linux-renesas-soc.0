@@ -1,43 +1,97 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:43806 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752759AbdKBIS7 (ORCPT
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:47708 "EHLO
+        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754754AbdKKAjH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 2 Nov 2017 04:18:59 -0400
-Date: Thu, 2 Nov 2017 09:18:39 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>, linux-pm@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/5] [RFC] ARM: shmobile: pm-rmobile: Use
- GENPD_FLAG_ACTIVE_WAKEUP
-Message-ID: <20171102081838.qfojh7wzmau4x63c@verge.net.au>
-References: <1509473494-19740-1-git-send-email-geert+renesas@glider.be>
- <1509473494-19740-3-git-send-email-geert+renesas@glider.be>
+        Fri, 10 Nov 2017 19:39:07 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v7 15/25] rcar-vin: add flag to switch to media controller mode
+Date: Sat, 11 Nov 2017 01:38:25 +0100
+Message-Id: <20171111003835.4909-16-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20171111003835.4909-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20171111003835.4909-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1509473494-19740-3-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Oct 31, 2017 at 07:11:31PM +0100, Geert Uytterhoeven wrote:
-> Set the newly introduced GENPD_FLAG_ACTIVE_WAKEUP, which allows to
-> remove the driver's own "always true" callback.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> This must not be applied before "PM / Domain: Enable genpd users to
-> specify default active wakeup behavior" has landed upstream, hence the
-> "RFC".
+On Gen3 a media controller API needs to be used to allow userspace to
+configure the subdevices in the pipeline instead of directly controlling
+a single source subdevice, which is and will continue to be the mode of
+operation on Gen2.
 
-Assuming you would like this to go through Rafael's tree rather than mine:
+Prepare for these two modes of operation by adding a flag to struct
+rvin_info which will control which mode to use.
 
-Acked-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+---
+ drivers/media/platform/rcar-vin/rcar-core.c | 6 +++++-
+ drivers/media/platform/rcar-vin/rcar-vin.h  | 2 ++
+ 2 files changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index fa76f494ec0c4bd2..071116eec284ba5f 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -244,18 +244,21 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
+ 
+ static const struct rvin_info rcar_info_h1 = {
+ 	.chip = RCAR_H1,
++	.use_mc = false,
+ 	.max_width = 2048,
+ 	.max_height = 2048,
+ };
+ 
+ static const struct rvin_info rcar_info_m1 = {
+ 	.chip = RCAR_M1,
++	.use_mc = false,
+ 	.max_width = 2048,
+ 	.max_height = 2048,
+ };
+ 
+ static const struct rvin_info rcar_info_gen2 = {
+ 	.chip = RCAR_GEN2,
++	.use_mc = false,
+ 	.max_width = 2048,
+ 	.max_height = 2048,
+ };
+@@ -349,7 +352,8 @@ static int rcar_vin_remove(struct platform_device *pdev)
+ 	v4l2_async_notifier_cleanup(&vin->notifier);
+ 
+ 	/* Checks internaly if handlers have been init or not */
+-	v4l2_ctrl_handler_free(&vin->ctrl_handler);
++	if (!vin->info->use_mc)
++		v4l2_ctrl_handler_free(&vin->ctrl_handler);
+ 
+ 	rvin_v4l2_unregister(vin);
+ 
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index 8a7c51724a90786c..de269764b00a2fa1 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -77,12 +77,14 @@ struct rvin_graph_entity {
+ /**
+  * struct rvin_info - Information about the particular VIN implementation
+  * @chip:		type of VIN chip
++ * @use_mc:		use media controller instead of controlling subdevice
+  *
+  * max_width:		max input width the VIN supports
+  * max_height:		max input height the VIN supports
+  */
+ struct rvin_info {
+ 	enum chip_id chip;
++	bool use_mc;
+ 
+ 	unsigned int max_width;
+ 	unsigned int max_height;
+-- 
+2.15.0
