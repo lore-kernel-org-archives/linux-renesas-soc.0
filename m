@@ -1,53 +1,87 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:36423 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751638AbdKMIrA (ORCPT
+Received: from szxga05-in.huawei.com ([45.249.212.191]:10515 "EHLO
+        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753687AbdKKAKP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Nov 2017 03:47:00 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH v2 0/2] R-Car DU: Clip planes to screen boundaries
-Date: Mon, 13 Nov 2017 10:46:58 +0200
-Message-Id: <20171113084700.12076-1-laurent.pinchart+renesas@ideasonboard.com>
+        Fri, 10 Nov 2017 19:10:15 -0500
+Date: Sat, 11 Nov 2017 00:08:50 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+CC: <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>, <linux-iio@vger.kernel.org>,
+        <linux-input@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v6 5/9] i2c: add i2c_master_{send|recv}_dmasafe
+Message-ID: <20171111000850.00003b44@huawei.com>
+In-Reply-To: <20171104202009.3818-6-wsa+renesas@sang-engineering.com>
+References: <20171104202009.3818-1-wsa+renesas@sang-engineering.com>
+        <20171104202009.3818-6-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+On Sat, 4 Nov 2017 21:20:05 +0100
+Wolfram Sang <wsa+renesas@sang-engineering.com> wrote:
 
-This patch series fixes support for planes that cross the screen boundaries.
-The KMS API supports such a configuration, but the DU and VSP hardware
-doesn't. This leads to different kind of dispay artifacts or hangs.
+> Use the new helper to create variants of i2c_master_{send|recv} which
+> mark their buffers as DMA safe.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Can't really argue with such a simple patch ;)
+Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
-The series starts with a bit of refactoring to share existing code and make it
-easier to share new code. The second patch then clips planes that are either
-partially or fully off-screen, disabling planes that end up being completely
-invisible.
-
-Compared to v1, fully off-screen planes are now accepted (but obviously not
-shown).
-
-The patches are based on top of Dave's latest master branch.
-
-Kieran, I have tested this on your Salvator-X ES1.1 board using the DU test
-suite. All tests pass (the suspend/resume test requires additional patches,
-but that's an unrelated issue), but I can't check the display output remotely.
-Would you be able to run the plane boundaries test locally and check that
-everything is normal ? Please note that I've pushed a new version of that test
-to the test suite repository.
-
-Laurent Pinchart (2):
-  drm: rcar-du: Share plane atomic check code between Gen2 and Gen3
-  drm: rcar-du: Clip planes to screen boundaries
-
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c  |  3 +-
- drivers/gpu/drm/rcar-du/rcar_du_plane.c | 64 ++++++++++++++++++++++++---------
- drivers/gpu/drm/rcar-du/rcar_du_plane.h |  4 +++
- drivers/gpu/drm/rcar-du/rcar_du_vsp.c   | 32 +++++------------
- 4 files changed, 61 insertions(+), 42 deletions(-)
-
--- 
-Regards,
-
-Laurent Pinchart
+> ---
+>  include/linux/i2c.h | 31 +++++++++++++++++++++++++++++++
+>  1 file changed, 31 insertions(+)
+> 
+> diff --git a/include/linux/i2c.h b/include/linux/i2c.h
+> index ef1a8791c1ae24..8c144e3cbfb261 100644
+> --- a/include/linux/i2c.h
+> +++ b/include/linux/i2c.h
+> @@ -81,6 +81,22 @@ static inline int i2c_master_recv(const struct i2c_client *client,
+>  };
+>  
+>  /**
+> + * i2c_master_recv_dmasafe - issue a single I2C message in master receive mode
+> + *			     using a DMA safe buffer
+> + * @client: Handle to slave device
+> + * @buf: Where to store data read from slave, must be safe to use with DMA
+> + * @count: How many bytes to read, must be less than 64k since msg.len is u16
+> + *
+> + * Returns negative errno, or else the number of bytes read.
+> + */
+> +static inline int i2c_master_recv_dmasafe(const struct i2c_client *client,
+> +					  char *buf, int count)
+> +{
+> +	return i2c_transfer_buffer_flags(client, buf, count,
+> +					 I2C_M_RD | I2C_M_DMA_SAFE);
+> +};
+> +
+> +/**
+>   * i2c_master_send - issue a single I2C message in master transmit mode
+>   * @client: Handle to slave device
+>   * @buf: Data that will be written to the slave
+> @@ -93,6 +109,21 @@ static inline int i2c_master_send(const struct i2c_client *client,
+>  {
+>  	return i2c_transfer_buffer_flags(client, (char *)buf, count, 0);
+>  };
+> +/**
+> + * i2c_master_send_dmasafe - issue a single I2C message in master transmit mode
+> + *			     using a DMA safe buffer
+> + * @client: Handle to slave device
+> + * @buf: Data that will be written to the slave, must be safe to use with DMA
+> + * @count: How many bytes to write, must be less than 64k since msg.len is u16
+> + *
+> + * Returns negative errno, or else the number of bytes written.
+> + */
+> +static inline int i2c_master_send_dmasafe(const struct i2c_client *client,
+> +					  const char *buf, int count)
+> +{
+> +	return i2c_transfer_buffer_flags(client, (char *)buf, count,
+> +					 I2C_M_DMA_SAFE);
+> +};
+>  
+>  /* Transfer num messages.
+>   */
