@@ -1,7 +1,7 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:47736 "EHLO
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:47690 "EHLO
         smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754179AbdKKAjG (ORCPT
+        with ESMTP id S1754848AbdKKAjG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Fri, 10 Nov 2017 19:39:06 -0500
 From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
@@ -12,9 +12,9 @@ Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
         Kieran Bingham <kieran.bingham@ideasonboard.com>,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v7 11/25] rcar-vin: fix handling of single field frames (top, bottom and alternate fields)
-Date: Sat, 11 Nov 2017 01:38:21 +0100
-Message-Id: <20171111003835.4909-12-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v7 13/25] rcar-vin: enable Gen3 hardware configuration
+Date: Sat, 11 Nov 2017 01:38:23 +0100
+Message-Id: <20171111003835.4909-14-niklas.soderlund+renesas@ragnatech.se>
 In-Reply-To: <20171111003835.4909-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20171111003835.4909-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
@@ -23,142 +23,197 @@ Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-There was never proper support in the VIN driver to deliver ALTERNATING
-field format to user-space, remove this field option. For sources using
-this field format instead use the VIN hardware feature of combining the
-fields to an interlaced format. This mode of operation was previously
-the default behavior and ALTERNATING was only delivered to user-space if
-explicitly requested. Allowing this to be explicitly requested was a
-mistake and was never properly tested and never worked due to the
-constraints put on the field format when it comes to sequence numbers and
-timestamps etc.
-
-The height should not be cut in half for the format for TOP or BOTTOM
-fields settings. This was a mistake and it was made visible by the
-scaling refactoring. Correct behavior is that the user should request a
-frame size that fits the half height frame reflected in the field
-setting. If not the VIN will do its best to scale the top or bottom to
-the requested format and cropping and scaling do not work as expected.
+Add the register needed to work with Gen3 hardware. This patch adds
+the logic for how to work with the Gen3 hardware. More work is required
+to enable the subdevice structure needed to configure capturing.
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
 ---
- drivers/media/platform/rcar-vin/rcar-dma.c  | 15 +--------
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 48 +++++++++++------------------
- 2 files changed, 19 insertions(+), 44 deletions(-)
+ drivers/media/platform/rcar-vin/rcar-dma.c | 94 ++++++++++++++++++++----------
+ drivers/media/platform/rcar-vin/rcar-vin.h |  1 +
+ 2 files changed, 64 insertions(+), 31 deletions(-)
 
 diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index b478eda84a27bf09..506d51a13b4f5f40 100644
+index 9362e7dba5e3ba95..c4f8e81e88c99e28 100644
 --- a/drivers/media/platform/rcar-vin/rcar-dma.c
 +++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -617,7 +617,6 @@ static int rvin_setup(struct rvin_dev *vin)
- 	case V4L2_FIELD_INTERLACED_BT:
- 		vnmc = VNMC_IM_FULL | VNMC_FOC;
- 		break;
--	case V4L2_FIELD_ALTERNATE:
- 	case V4L2_FIELD_NONE:
- 		if (vin->continuous) {
- 			vnmc = VNMC_IM_ODD_EVEN;
-@@ -757,18 +756,6 @@ static int rvin_get_active_slot(struct rvin_dev *vin, u32 vnms)
- 	return 0;
+@@ -33,21 +33,23 @@
+ #define VNELPRC_REG	0x10	/* Video n End Line Pre-Clip Register */
+ #define VNSPPRC_REG	0x14	/* Video n Start Pixel Pre-Clip Register */
+ #define VNEPPRC_REG	0x18	/* Video n End Pixel Pre-Clip Register */
+-#define VNSLPOC_REG	0x1C	/* Video n Start Line Post-Clip Register */
+-#define VNELPOC_REG	0x20	/* Video n End Line Post-Clip Register */
+-#define VNSPPOC_REG	0x24	/* Video n Start Pixel Post-Clip Register */
+-#define VNEPPOC_REG	0x28	/* Video n End Pixel Post-Clip Register */
+ #define VNIS_REG	0x2C	/* Video n Image Stride Register */
+ #define VNMB_REG(m)	(0x30 + ((m) << 2)) /* Video n Memory Base m Register */
+ #define VNIE_REG	0x40	/* Video n Interrupt Enable Register */
+ #define VNINTS_REG	0x44	/* Video n Interrupt Status Register */
+ #define VNSI_REG	0x48	/* Video n Scanline Interrupt Register */
+ #define VNMTC_REG	0x4C	/* Video n Memory Transfer Control Register */
+-#define VNYS_REG	0x50	/* Video n Y Scale Register */
+-#define VNXS_REG	0x54	/* Video n X Scale Register */
+ #define VNDMR_REG	0x58	/* Video n Data Mode Register */
+ #define VNDMR2_REG	0x5C	/* Video n Data Mode Register 2 */
+ #define VNUVAOF_REG	0x60	/* Video n UV Address Offset Register */
++
++/* Register offsets specific for Gen2 */
++#define VNSLPOC_REG	0x1C	/* Video n Start Line Post-Clip Register */
++#define VNELPOC_REG	0x20	/* Video n End Line Post-Clip Register */
++#define VNSPPOC_REG	0x24	/* Video n Start Pixel Post-Clip Register */
++#define VNEPPOC_REG	0x28	/* Video n End Pixel Post-Clip Register */
++#define VNYS_REG	0x50	/* Video n Y Scale Register */
++#define VNXS_REG	0x54	/* Video n X Scale Register */
+ #define VNC1A_REG	0x80	/* Video n Coefficient Set C1A Register */
+ #define VNC1B_REG	0x84	/* Video n Coefficient Set C1B Register */
+ #define VNC1C_REG	0x88	/* Video n Coefficient Set C1C Register */
+@@ -73,9 +75,13 @@
+ #define VNC8B_REG	0xF4	/* Video n Coefficient Set C8B Register */
+ #define VNC8C_REG	0xF8	/* Video n Coefficient Set C8C Register */
+ 
++/* Register offsets specific for Gen3 */
++#define VNCSI_IFMD_REG		0x20 /* Video n CSI2 Interface Mode Register */
+ 
+ /* Register bit fields for R-Car VIN */
+ /* Video n Main Control Register bits */
++#define VNMC_DPINE		(1 << 27) /* Gen3 specific */
++#define VNMC_SCLE		(1 << 26) /* Gen3 specific */
+ #define VNMC_FOC		(1 << 21)
+ #define VNMC_YCAL		(1 << 19)
+ #define VNMC_INF_YUV8_BT656	(0 << 16)
+@@ -119,6 +125,13 @@
+ #define VNDMR2_FTEV		(1 << 17)
+ #define VNDMR2_VLV(n)		((n & 0xf) << 12)
+ 
++/* Video n CSI2 Interface Mode Register (Gen3) */
++#define VNCSI_IFMD_DES2		(1 << 27)
++#define VNCSI_IFMD_DES1		(1 << 26)
++#define VNCSI_IFMD_DES0		(1 << 25)
++#define VNCSI_IFMD_CSI_CHSEL(n) ((n & 0xf) << 0)
++#define VNCSI_IFMD_CSI_CHSEL_MASK 0xf
++
+ struct rvin_buffer {
+ 	struct vb2_v4l2_buffer vb;
+ 	struct list_head list;
+@@ -514,28 +527,10 @@ static void rvin_set_coeff(struct rvin_dev *vin, unsigned short xs)
+ 	rvin_write(vin, p_set->coeff_set[23], VNC8C_REG);
  }
  
--static enum v4l2_field rvin_get_active_field(struct rvin_dev *vin, u32 vnms)
--{
--	if (vin->format.field == V4L2_FIELD_ALTERNATE) {
--		/* If FS is set it's a Even field */
--		if (vnms & VNMS_FS)
--			return V4L2_FIELD_BOTTOM;
--		return V4L2_FIELD_TOP;
+-static void rvin_crop_scale_comp(struct rvin_dev *vin)
++static void rvin_crop_scale_comp_gen2(struct rvin_dev *vin)
+ {
+ 	u32 xs, ys;
+ 
+-	/* Set Start/End Pixel/Line Pre-Clip */
+-	rvin_write(vin, vin->crop.left, VNSPPRC_REG);
+-	rvin_write(vin, vin->crop.left + vin->crop.width - 1, VNEPPRC_REG);
+-	switch (vin->format.field) {
+-	case V4L2_FIELD_INTERLACED:
+-	case V4L2_FIELD_INTERLACED_TB:
+-	case V4L2_FIELD_INTERLACED_BT:
+-		rvin_write(vin, vin->crop.top / 2, VNSLPRC_REG);
+-		rvin_write(vin, (vin->crop.top + vin->crop.height) / 2 - 1,
+-			   VNELPRC_REG);
+-		break;
+-	default:
+-		rvin_write(vin, vin->crop.top, VNSLPRC_REG);
+-		rvin_write(vin, vin->crop.top + vin->crop.height - 1,
+-			   VNELPRC_REG);
+-		break;
 -	}
 -
--	return vin->format.field;
--}
+ 	/* Set scaling coefficient */
+ 	ys = 0;
+ 	if (vin->crop.height != vin->compose.height)
+@@ -573,11 +568,6 @@ static void rvin_crop_scale_comp(struct rvin_dev *vin)
+ 		break;
+ 	}
+ 
+-	if (vin->format.pixelformat == V4L2_PIX_FMT_NV16)
+-		rvin_write(vin, ALIGN(vin->format.width, 0x20), VNIS_REG);
+-	else
+-		rvin_write(vin, ALIGN(vin->format.width, 0x10), VNIS_REG);
 -
- static void rvin_set_slot_addr(struct rvin_dev *vin, int slot, dma_addr_t addr)
- {
- 	const struct rvin_video_format *fmt;
-@@ -941,7 +928,7 @@ static irqreturn_t rvin_irq(int irq, void *data)
- 		goto done;
+ 	vin_dbg(vin,
+ 		"Pre-Clip: %ux%u@%u:%u YS: %d XS: %d Post-Clip: %ux%u@%u:%u\n",
+ 		vin->crop.width, vin->crop.height, vin->crop.left,
+@@ -585,6 +575,37 @@ static void rvin_crop_scale_comp(struct rvin_dev *vin)
+ 		0, 0);
+ }
  
- 	/* Capture frame */
--	vin->queue_buf[slot]->field = rvin_get_active_field(vin, vnms);
-+	vin->queue_buf[slot]->field = vin->format.field;
- 	vin->queue_buf[slot]->sequence = sequence;
- 	vin->queue_buf[slot]->vb2_buf.timestamp = ktime_get_ns();
- 	vb2_buffer_done(&vin->queue_buf[slot]->vb2_buf, VB2_BUF_STATE_DONE);
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index ee5df05df2e9561f..b4e96e18ab845f8b 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -102,6 +102,24 @@ static int rvin_get_sd_format(struct rvin_dev *vin, struct v4l2_pix_format *pix)
- 	if (ret)
- 		return ret;
- 
-+	switch (fmt.format.field) {
-+	case V4L2_FIELD_TOP:
-+	case V4L2_FIELD_BOTTOM:
-+	case V4L2_FIELD_NONE:
++static void rvin_crop_scale_comp(struct rvin_dev *vin)
++{
++	/* Set Start/End Pixel/Line Pre-Clip */
++	rvin_write(vin, vin->crop.left, VNSPPRC_REG);
++	rvin_write(vin, vin->crop.left + vin->crop.width - 1, VNEPPRC_REG);
++
++	switch (vin->format.field) {
++	case V4L2_FIELD_INTERLACED:
 +	case V4L2_FIELD_INTERLACED_TB:
 +	case V4L2_FIELD_INTERLACED_BT:
-+	case V4L2_FIELD_INTERLACED:
-+		break;
-+	case V4L2_FIELD_ALTERNATE:
-+		/* Use VIN hardware to combine the two fields */
-+		fmt.format.field = V4L2_FIELD_INTERLACED;
-+		fmt.format.height *= 2;
++		rvin_write(vin, vin->crop.top / 2, VNSLPRC_REG);
++		rvin_write(vin, (vin->crop.top + vin->crop.height) / 2 - 1,
++			   VNELPRC_REG);
 +		break;
 +	default:
-+		vin->format.field = V4L2_FIELD_NONE;
++		rvin_write(vin, vin->crop.top, VNSLPRC_REG);
++		rvin_write(vin, vin->crop.top + vin->crop.height - 1,
++			   VNELPRC_REG);
 +		break;
 +	}
 +
- 	v4l2_fill_pix_format(pix, &fmt.format);
++	/* TODO: Add support for the UDS scaler. */
++	if (vin->info->chip != RCAR_GEN3)
++		rvin_crop_scale_comp_gen2(vin);
++
++	if (vin->format.pixelformat == V4L2_PIX_FMT_NV16)
++		rvin_write(vin, ALIGN(vin->format.width, 0x20), VNIS_REG);
++	else
++		rvin_write(vin, ALIGN(vin->format.width, 0x10), VNIS_REG);
++}
++
+ /* -----------------------------------------------------------------------------
+  * Hardware setup
+  */
+@@ -659,7 +680,10 @@ static int rvin_setup(struct rvin_dev *vin)
+ 	}
  
- 	return 0;
-@@ -115,33 +133,6 @@ int rvin_reset_format(struct rvin_dev *vin)
- 	if (ret)
- 		return ret;
+ 	/* Enable VSYNC Field Toogle mode after one VSYNC input */
+-	dmr2 = VNDMR2_FTEV | VNDMR2_VLV(1);
++	if (vin->info->chip == RCAR_GEN3)
++		dmr2 = VNDMR2_FTEV;
++	else
++		dmr2 = VNDMR2_FTEV | VNDMR2_VLV(1);
  
--	/*
--	 * If the subdevice uses ALTERNATE field mode and G_STD is
--	 * implemented use the VIN HW to combine the two fields to
--	 * one INTERLACED frame. The ALTERNATE field mode can still
--	 * be requested in S_FMT and be respected, this is just the
--	 * default which is applied at probing or when S_STD is called.
--	 */
--	if (vin->format.field == V4L2_FIELD_ALTERNATE &&
--	    v4l2_subdev_has_op(vin_to_source(vin), video, g_std))
--		vin->format.field = V4L2_FIELD_INTERLACED;
--
--	switch (vin->format.field) {
--	case V4L2_FIELD_TOP:
--	case V4L2_FIELD_BOTTOM:
--	case V4L2_FIELD_ALTERNATE:
--		vin->format.height /= 2;
--		break;
--	case V4L2_FIELD_NONE:
--	case V4L2_FIELD_INTERLACED_TB:
--	case V4L2_FIELD_INTERLACED_BT:
--	case V4L2_FIELD_INTERLACED:
--		break;
--	default:
--		vin->format.field = V4L2_FIELD_NONE;
--		break;
--	}
--
- 	vin->crop.top = vin->crop.left = 0;
- 	vin->crop.width = vin->format.width;
- 	vin->crop.height = vin->format.height;
-@@ -226,9 +217,6 @@ static int __rvin_try_format(struct rvin_dev *vin,
- 	switch (pix->field) {
- 	case V4L2_FIELD_TOP:
- 	case V4L2_FIELD_BOTTOM:
--	case V4L2_FIELD_ALTERNATE:
--		pix->height /= 2;
--		break;
- 	case V4L2_FIELD_NONE:
- 	case V4L2_FIELD_INTERLACED_TB:
- 	case V4L2_FIELD_INTERLACED_BT:
+ 	/* Hsync Signal Polarity Select */
+ 	if (!(vin->mbus_cfg.flags & V4L2_MBUS_HSYNC_ACTIVE_LOW))
+@@ -711,6 +735,14 @@ static int rvin_setup(struct rvin_dev *vin)
+ 	if (input_is_yuv == output_is_yuv)
+ 		vnmc |= VNMC_BPS;
+ 
++	if (vin->info->chip == RCAR_GEN3) {
++		/* Select between CSI-2 and Digital input */
++		if (vin->mbus_cfg.type == V4L2_MBUS_CSI2)
++			vnmc &= ~VNMC_DPINE;
++		else
++			vnmc |= VNMC_DPINE;
++	}
++
+ 	/* Progressive or interlaced mode */
+ 	interrupts = progressive ? VNIE_FIE : VNIE_EFE;
+ 
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index 4bd9223be1ee6b6a..1f761518a6cc60b8 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -33,6 +33,7 @@ enum chip_id {
+ 	RCAR_H1,
+ 	RCAR_M1,
+ 	RCAR_GEN2,
++	RCAR_GEN3,
+ };
+ 
+ /**
 -- 
 2.15.0
