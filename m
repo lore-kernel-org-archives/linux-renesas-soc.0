@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from smtp-3.sys.kth.se ([130.237.48.192]:47708 "EHLO
         smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754754AbdKKAjH (ORCPT
+        with ESMTP id S1754814AbdKKAjF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Nov 2017 19:39:07 -0500
+        Fri, 10 Nov 2017 19:39:05 -0500
 From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -12,9 +12,9 @@ Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
         Kieran Bingham <kieran.bingham@ideasonboard.com>,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v7 15/25] rcar-vin: add flag to switch to media controller mode
-Date: Sat, 11 Nov 2017 01:38:25 +0100
-Message-Id: <20171111003835.4909-16-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v7 08/25] rcar-vin: do not reset crop and compose when setting format
+Date: Sat, 11 Nov 2017 01:38:18 +0100
+Message-Id: <20171111003835.4909-9-niklas.soderlund+renesas@ragnatech.se>
 In-Reply-To: <20171111003835.4909-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20171111003835.4909-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
@@ -23,75 +23,62 @@ Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Gen3 a media controller API needs to be used to allow userspace to
-configure the subdevices in the pipeline instead of directly controlling
-a single source subdevice, which is and will continue to be the mode of
-operation on Gen2.
-
-Prepare for these two modes of operation by adding a flag to struct
-rvin_info which will control which mode to use.
+It was a bad idea to reset the crop and compose settings when a new
+format is set. This would overwrite any crop/compose set by s_select and
+cause unexpected behaviors, remove it. Also fold the reset helper in to
+the only remaining caller.
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
 ---
- drivers/media/platform/rcar-vin/rcar-core.c | 6 +++++-
- drivers/media/platform/rcar-vin/rcar-vin.h  | 2 ++
- 2 files changed, 7 insertions(+), 1 deletion(-)
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 21 +++++++--------------
+ 1 file changed, 7 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index fa76f494ec0c4bd2..071116eec284ba5f 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -244,18 +244,21 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
- 
- static const struct rvin_info rcar_info_h1 = {
- 	.chip = RCAR_H1,
-+	.use_mc = false,
- 	.max_width = 2048,
- 	.max_height = 2048,
- };
- 
- static const struct rvin_info rcar_info_m1 = {
- 	.chip = RCAR_M1,
-+	.use_mc = false,
- 	.max_width = 2048,
- 	.max_height = 2048,
- };
- 
- static const struct rvin_info rcar_info_gen2 = {
- 	.chip = RCAR_GEN2,
-+	.use_mc = false,
- 	.max_width = 2048,
- 	.max_height = 2048,
- };
-@@ -349,7 +352,8 @@ static int rcar_vin_remove(struct platform_device *pdev)
- 	v4l2_async_notifier_cleanup(&vin->notifier);
- 
- 	/* Checks internaly if handlers have been init or not */
--	v4l2_ctrl_handler_free(&vin->ctrl_handler);
-+	if (!vin->info->use_mc)
-+		v4l2_ctrl_handler_free(&vin->ctrl_handler);
- 
- 	rvin_v4l2_unregister(vin);
- 
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 8a7c51724a90786c..de269764b00a2fa1 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -77,12 +77,14 @@ struct rvin_graph_entity {
- /**
-  * struct rvin_info - Information about the particular VIN implementation
-  * @chip:		type of VIN chip
-+ * @use_mc:		use media controller instead of controlling subdevice
-  *
-  * max_width:		max input width the VIN supports
-  * max_height:		max input height the VIN supports
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 02b081d2d8826e90..25f2386cb67447f2 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -90,17 +90,6 @@ static u32 rvin_format_sizeimage(struct v4l2_pix_format *pix)
+  * V4L2
   */
- struct rvin_info {
- 	enum chip_id chip;
-+	bool use_mc;
  
- 	unsigned int max_width;
- 	unsigned int max_height;
+-static void rvin_reset_crop_compose(struct rvin_dev *vin)
+-{
+-	vin->crop.top = vin->crop.left = 0;
+-	vin->crop.width = vin->source.width;
+-	vin->crop.height = vin->source.height;
+-
+-	vin->compose.top = vin->compose.left = 0;
+-	vin->compose.width = vin->format.width;
+-	vin->compose.height = vin->format.height;
+-}
+-
+ int rvin_reset_format(struct rvin_dev *vin)
+ {
+ 	struct v4l2_subdev_format fmt = {
+@@ -147,7 +136,13 @@ int rvin_reset_format(struct rvin_dev *vin)
+ 		break;
+ 	}
+ 
+-	rvin_reset_crop_compose(vin);
++	vin->crop.top = vin->crop.left = 0;
++	vin->crop.width = mf->width;
++	vin->crop.height = mf->height;
++
++	vin->compose.top = vin->compose.left = 0;
++	vin->compose.width = mf->width;
++	vin->compose.height = mf->height;
+ 
+ 	vin->format.bytesperline = rvin_format_bytesperline(&vin->format);
+ 	vin->format.sizeimage = rvin_format_sizeimage(&vin->format);
+@@ -317,8 +312,6 @@ static int rvin_s_fmt_vid_cap(struct file *file, void *priv,
+ 
+ 	vin->format = f->fmt.pix;
+ 
+-	rvin_reset_crop_compose(vin);
+-
+ 	return 0;
+ }
+ 
 -- 
 2.15.0
