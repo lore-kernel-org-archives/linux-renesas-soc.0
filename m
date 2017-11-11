@@ -1,71 +1,170 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f44.google.com ([74.125.83.44]:39310 "EHLO
-        mail-pg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1161502AbdKRE1i (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Nov 2017 23:27:38 -0500
-Received: by mail-pg0-f44.google.com with SMTP id 70so3403866pgf.6
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 17 Nov 2017 20:27:38 -0800 (PST)
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Date: Sat, 18 Nov 2017 13:26:08 +0900
-Message-Id: <151097916855.24365.7878516664878862365.sendpatchset@little-apple>
-In-Reply-To: <151097915979.24365.675151091819205104.sendpatchset@little-apple>
-References: <151097915979.24365.675151091819205104.sendpatchset@little-apple>
-Subject: [PATCH/RFC 01/04] iommu: Hack to dump page table configuration on boot
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-i2c-owner@vger.kernel.org>
+Date: Sat, 11 Nov 2017 00:03:38 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+CC: <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>, <linux-iio@vger.kernel.org>,
+        <linux-input@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v6 4/9] i2c: refactor i2c_master_{send_recv}
+Message-ID: <20171111000338.00003f67@huawei.com>
+In-Reply-To: <20171104202009.3818-5-wsa+renesas@sang-engineering.com>
+References: <20171104202009.3818-1-wsa+renesas@sang-engineering.com>
+        <20171104202009.3818-5-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On Sat, 4 Nov 2017 21:20:04 +0100
+Wolfram Sang <wsa+renesas@sang-engineering.com> wrote:
 
-Adjust code to output page table configuration on boot. Not for upstream merge.
+> Those two functions are very similar, the only differences are that one
+> needs the I2C_M_RD flag for its message while the other one needs the
+> buffer casted to drop the const. Introduce a generic helper which
+> allows to specify the flags (also needed later for DMA safe variants of
+> these calls) and let the casting be done in the inlining fuctions which
+> are now calling the new helper function.
 
-Not-Yet-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
-
- drivers/iommu/io-pgtable-arm.c |   12 ++++++++++++
- drivers/iommu/io-pgtable.c     |    4 ++++
- 2 files changed, 16 insertions(+)
-
---- 0001/drivers/iommu/io-pgtable-arm.c
-+++ work/drivers/iommu/io-pgtable-arm.c	2017-11-17 12:44:09.100607110 +0900
-@@ -970,6 +970,18 @@ struct io_pgtable_init_fns io_pgtable_ar
- 	.free	= arm_lpae_free_pgtable,
- };
- 
-+void arm_lpae_dump(struct io_pgtable_ops *ops)
-+{
-+	struct arm_lpae_io_pgtable *data = io_pgtable_ops_to_data(ops);
-+	struct io_pgtable_cfg *cfg = &data->iop.cfg;
-+
-+	pr_err("cfg: pgsize_bitmap 0x%lx, ias %u-bit\n",
-+		cfg->pgsize_bitmap, cfg->ias);
-+	pr_err("data: %d levels, 0x%zx pgd_size, %lu pg_shift, %lu bits_per_level, pgd @ %p\n",
-+		data->levels, data->pgd_size, data->pg_shift,
-+		data->bits_per_level, data->pgd);
-+}
-+
- #ifdef CONFIG_IOMMU_IO_PGTABLE_LPAE_SELFTEST
- 
- static struct io_pgtable_cfg *cfg_cookie;
---- 0001/drivers/iommu/io-pgtable.c
-+++ work/drivers/iommu/io-pgtable.c	2017-11-17 12:44:31.290607110 +0900
-@@ -37,6 +37,8 @@ io_pgtable_init_table[IO_PGTABLE_NUM_FMT
- #endif
- };
- 
-+void arm_lpae_dump(struct io_pgtable_ops *ops);
-+
- struct io_pgtable_ops *alloc_io_pgtable_ops(enum io_pgtable_fmt fmt,
- 					    struct io_pgtable_cfg *cfg,
- 					    void *cookie)
-@@ -59,6 +61,8 @@ struct io_pgtable_ops *alloc_io_pgtable_
- 	iop->cookie	= cookie;
- 	iop->cfg	= *cfg;
- 
-+	arm_lpae_dump(&iop->ops);
-+
- 	return &iop->ops;
- }
- 
+The casting away of the const is a bit nasty, but short of making this
+whole thing a macro, I can't see a better way.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> ---
+>  drivers/i2c/i2c-core-base.c | 64 +++++++++++++--------------------------------
+>  include/linux/i2c.h         | 34 +++++++++++++++++++++---
+>  2 files changed, 48 insertions(+), 50 deletions(-)
+> 
+> diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
+> index de1850bd440659..206c47c85c98c5 100644
+> --- a/drivers/i2c/i2c-core-base.c
+> +++ b/drivers/i2c/i2c-core-base.c
+> @@ -1972,63 +1972,35 @@ int i2c_transfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
+>  EXPORT_SYMBOL(i2c_transfer);
+>  
+>  /**
+> - * i2c_master_send - issue a single I2C message in master transmit mode
+> + * i2c_transfer_buffer_flags - issue a single I2C message transferring data
+> + * 			       to/from a buffer
+>   * @client: Handle to slave device
+> - * @buf: Data that will be written to the slave
+> - * @count: How many bytes to write, must be less than 64k since msg.len is u16
+> + * @buf: Where the data is stored
+> + * @count: How many bytes to transfer, must be less than 64k since msg.len is u16
+> + * @flags: The flags to be used for the message, e.g. I2C_M_RD for reads
+>   *
+> - * Returns negative errno, or else the number of bytes written.
+> + * Returns negative errno, or else the number of bytes transferred.
+>   */
+> -int i2c_master_send(const struct i2c_client *client, const char *buf, int count)
+> +int i2c_transfer_buffer_flags(const struct i2c_client *client, char *buf,
+> +			      int count, u16 flags)
+>  {
+>  	int ret;
+> -	struct i2c_adapter *adap = client->adapter;
+> -	struct i2c_msg msg;
+> -
+> -	msg.addr = client->addr;
+> -	msg.flags = client->flags & I2C_M_TEN;
+> -	msg.len = count;
+> -	msg.buf = (char *)buf;
+> -
+> -	ret = i2c_transfer(adap, &msg, 1);
+> -
+> -	/*
+> -	 * If everything went ok (i.e. 1 msg transmitted), return #bytes
+> -	 * transmitted, else error code.
+> -	 */
+> -	return (ret == 1) ? count : ret;
+> -}
+> -EXPORT_SYMBOL(i2c_master_send);
+> -
+> -/**
+> - * i2c_master_recv - issue a single I2C message in master receive mode
+> - * @client: Handle to slave device
+> - * @buf: Where to store data read from slave
+> - * @count: How many bytes to read, must be less than 64k since msg.len is u16
+> - *
+> - * Returns negative errno, or else the number of bytes read.
+> - */
+> -int i2c_master_recv(const struct i2c_client *client, char *buf, int count)
+> -{
+> -	struct i2c_adapter *adap = client->adapter;
+> -	struct i2c_msg msg;
+> -	int ret;
+> -
+> -	msg.addr = client->addr;
+> -	msg.flags = client->flags & I2C_M_TEN;
+> -	msg.flags |= I2C_M_RD;
+> -	msg.len = count;
+> -	msg.buf = buf;
+> +	struct i2c_msg msg = {
+> +		.addr = client->addr,
+> +		.flags = flags | (client->flags & I2C_M_TEN),
+> +		.len = count,
+> +		.buf = buf,
+> +	};
+>  
+> -	ret = i2c_transfer(adap, &msg, 1);
+> +	ret = i2c_transfer(client->adapter, &msg, 1);
+>  
+>  	/*
+> -	 * If everything went ok (i.e. 1 msg received), return #bytes received,
+> -	 * else error code.
+> +	 * If everything went ok (i.e. 1 msg transferred), return #bytes
+> +	 * transferred, else error code.
+>  	 */
+>  	return (ret == 1) ? count : ret;
+>  }
+> -EXPORT_SYMBOL(i2c_master_recv);
+> +EXPORT_SYMBOL(i2c_transfer_buffer_flags);
+>  
+>  /* ----------------------------------------------------
+>   * the i2c address scanning function
+> diff --git a/include/linux/i2c.h b/include/linux/i2c.h
+> index a0b57de91e21d3..ef1a8791c1ae24 100644
+> --- a/include/linux/i2c.h
+> +++ b/include/linux/i2c.h
+> @@ -63,10 +63,36 @@ struct property_entry;
+>   * transmit an arbitrary number of messages without interruption.
+>   * @count must be be less than 64k since msg.len is u16.
+>   */
+> -extern int i2c_master_send(const struct i2c_client *client, const char *buf,
+> -			   int count);
+> -extern int i2c_master_recv(const struct i2c_client *client, char *buf,
+> -			   int count);
+> +extern int i2c_transfer_buffer_flags(const struct i2c_client *client,
+> +				     char *buf, int count, u16 flags);
+> +
+> +/**
+> + * i2c_master_recv - issue a single I2C message in master receive mode
+> + * @client: Handle to slave device
+> + * @buf: Where to store data read from slave
+> + * @count: How many bytes to read, must be less than 64k since msg.len is u16
+> + *
+> + * Returns negative errno, or else the number of bytes read.
+> + */
+> +static inline int i2c_master_recv(const struct i2c_client *client,
+> +				  char *buf, int count)
+> +{
+> +	return i2c_transfer_buffer_flags(client, buf, count, I2C_M_RD);
+> +};
+> +
+> +/**
+> + * i2c_master_send - issue a single I2C message in master transmit mode
+> + * @client: Handle to slave device
+> + * @buf: Data that will be written to the slave
+> + * @count: How many bytes to write, must be less than 64k since msg.len is u16
+> + *
+> + * Returns negative errno, or else the number of bytes written.
+> + */
+> +static inline int i2c_master_send(const struct i2c_client *client,
+> +				  const char *buf, int count)
+> +{
+> +	return i2c_transfer_buffer_flags(client, (char *)buf, count, 0);
+> +};
+>  
+>  /* Transfer num messages.
+>   */
