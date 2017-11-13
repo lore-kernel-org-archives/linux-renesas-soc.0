@@ -1,22 +1,21 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38726 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161094AbdKQRsq (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55251 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751236AbdKMHFl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Nov 2017 12:48:46 -0500
-Date: Fri, 17 Nov 2017 17:49:06 +0000
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+        Mon, 13 Nov 2017 02:05:41 -0500
+Date: Mon, 13 Nov 2017 08:05:37 +0100
+From: Simon Horman <horms@verge.net.au>
 To: Marek Vasut <marek.vasut@gmail.com>
 Cc: linux-pci@vger.kernel.org,
         Phil Edworthy <phil.edworthy@renesas.com>,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
         Wolfram Sang <wsa@the-dreams.de>,
         linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH V2 4/5] PCI: rcar: Support runtime PM, link state L1
  handling
-Message-ID: <20171117174906.GB22599@red-moon>
+Message-ID: <20171113070536.nwwrvt5dedu4kch2@verge.net.au>
 References: <20171110215843.432-1-marek.vasut+renesas@gmail.com>
  <20171110215843.432-5-marek.vasut+renesas@gmail.com>
 MIME-Version: 1.0
@@ -26,33 +25,23 @@ In-Reply-To: <20171110215843.432-5-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Marek,
-
 On Fri, Nov 10, 2017 at 10:58:42PM +0100, Marek Vasut wrote:
 > From: Phil Edworthy <phil.edworthy@renesas.com>
 > 
 > Most PCIe host controllers support L0s and L1 power states via ASPM.
 > The R-Car hardware only supports L0s, so when the system suspends and
 > resumes we have to manually handle L1.
+> 
 > When the system suspends, cards can put themselves into L1 and send a
-
-I assumed L1 entry has to be negotiated depending upon the PCIe
-hierarchy capabilities, I would appreciate if you can explain to
-me what's the root cause of the issue please.
-
 > PM_ENTER_L1 DLLP to the host controller. At this point, we can no longer
 > access the card's config registers.
 > 
 > The R-Car host controller will handle taking cards out of L1 as long as
 > the host controller has also been transitioned to L1 link state.
-
-I wonder why this can't be done in a PM restore hook but that's not
-really where my question is.
-
+> 
 > Ideally, we would detect the PM_ENTER_L1 DLLP using an interrupt and
 > transition the host to L1 immediately. However, this patch just ensures
 > that we can talk to cards after they have gone into L1.
-
 > When attempting a config access, it checks to see if the card has gone
 > into L1, and if so, does the same for the host controller.
 > 
@@ -65,6 +54,9 @@ really where my question is.
 > Cc: Simon Horman <horms+renesas@verge.net.au>
 > Cc: Wolfram Sang <wsa@the-dreams.de>
 > Cc: linux-renesas-soc@vger.kernel.org
+
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
+
 > ---
 > V2: - Drop extra parenthesis
 >     - Use GENMASK()
@@ -118,17 +110,6 @@ really where my question is.
 > +		/* Clear flags indicating link has transitioned to L1 */
 > +		rcar_pci_write_reg(pcie, L1FAEG | PM_ENTER_L1RX, PMSR);
 > +	}
-
-I do not get why you need to add the DLLP check for _every_ given config
-access and how/why it is just related to suspend/resume and not eg cold
-boot (I supposed it is because devices can enter L1 upon suspend(?)), I
-would ask you please to provide a thorough explanation so that I can
-actually review this patch (the commit log must be rewritten nonetheless,
-I do not think it is clear, at least it is not for me).
-
-Thanks,
-Lorenzo
-
 > +
 >  	/* Clear errors */
 >  	rcar_pci_write_reg(pcie, rcar_pci_read_reg(pcie, PCIEERRFR), PCIEERRFR);
