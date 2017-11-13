@@ -1,277 +1,154 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:54477 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932208AbdKOK4m (ORCPT
+Received: from mail-lf0-f50.google.com ([209.85.215.50]:43315 "EHLO
+        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753105AbdKMPqy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Nov 2017 05:56:42 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
-        geert@glider.be, mchehab@kernel.org, hverkuil@xs4all.nl
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 10/10] media: i2c: tw9910: Remove soc_camera dependencies
-Date: Wed, 15 Nov 2017 11:56:03 +0100
-Message-Id: <1510743363-25798-11-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1510743363-25798-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1510743363-25798-1-git-send-email-jacopo+renesas@jmondi.org>
+        Mon, 13 Nov 2017 10:46:54 -0500
+Received: by mail-lf0-f50.google.com with SMTP id o66so10641702lfg.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Nov 2017 07:46:53 -0800 (PST)
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
+Cc: Kevin Hilman <khilman@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
+        linux-renesas-soc@vger.kernel.org,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH v2 2/3] PM / core: Add IN_BAND_WAKEUP driver flag
+Date: Mon, 13 Nov 2017 16:46:42 +0100
+Message-Id: <1510588003-16650-3-git-send-email-ulf.hansson@linaro.org>
+In-Reply-To: <1510588003-16650-1-git-send-email-ulf.hansson@linaro.org>
+References: <1510588003-16650-1-git-send-email-ulf.hansson@linaro.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Remove soc_camera framework dependencies from tw9910 sensor driver.
-- Handle clock directly
-- Register async subdevice
-- Add platform specific enable/disable functions
-- Adjust build system
+For some bus types and PM domains, it's not sufficient to only check the
+return value from device_may_wakeup(), to fully understand how to configure
+wakeup settings for the device during system suspend.
 
-This commit does not remove the original soc_camera based driver.
+In particular, sometimes the device may need to remain in its power state,
+in case the driver has configured it for in band IRQs, as to be able to
+generate wakeup signals. Therefore, define and document an IN_BAND_WAKEUP
+driver flag, to enable drivers to instruct bus types and PM domains about
+this setting.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Of course, in case the bus type and PM domain has additional information
+about wakeup settings of the device, they may override the behaviour.
+
+Using the IN_BAND_WAKEUP driver flag for a device, may also affect how bus
+types and PM domains should treat the device's parent during system
+suspend. Therefore, in __device_suspend(), let the PM core propagate the
+wakeup setting by using a status flag in the struct dev_pm_info for the
+parent. This also makes it consistent with how the existing "wakeup_path"
+status flag is being assigned.
+
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
- drivers/media/i2c/Kconfig  |  9 ++++++
- drivers/media/i2c/Makefile |  1 +
- drivers/media/i2c/tw9910.c | 80 ++++++++++++++++++++++++++++++++++------------
- include/media/i2c/tw9910.h |  6 ++++
- 4 files changed, 75 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-index ff251ce..bbd77ee 100644
---- a/drivers/media/i2c/Kconfig
-+++ b/drivers/media/i2c/Kconfig
-@@ -415,6 +415,15 @@ config VIDEO_TW9906
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called tw9906.
+Changes in v2:
+	- Fixed comments from Rafael:
+	  - Rename flag to IN_BAND_WAKEUP.
+	  - Clarify doc and changelog.
+	  - Use a separate status flag when propagating to parents in PM core.
+	- I didn't add Geert's Reviewed-by, because of new changes.
 
-+config VIDEO_TW9910
-+	tristate "Techwell TW9910 video decoder"
-+	depends on VIDEO_V4L2 && I2C
-+	---help---
-+	  Support for Techwell TW9910 NTSC/PAL/SECAM video decoder.
+---
+ Documentation/driver-api/pm/devices.rst | 11 +++++++++++
+ drivers/base/power/main.c               |  8 +++++++-
+ include/linux/pm.h                      |  6 ++++++
+ 3 files changed, 24 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/driver-api/pm/devices.rst b/Documentation/driver-api/pm/devices.rst
+index 53c1b0b..b7fddf2 100644
+--- a/Documentation/driver-api/pm/devices.rst
++++ b/Documentation/driver-api/pm/devices.rst
+@@ -414,6 +414,17 @@ when the system is in the sleep state.  For example, :c:func:`enable_irq_wake()`
+ might identify GPIO signals hooked up to a switch or other external hardware,
+ and :c:func:`pci_enable_wake()` does something similar for the PCI PME signal.
+ 
++Sometimes :c:func:`device_may_wakeup(dev)` is not sufficient to understand how a
++wakeup signal needs to be configured. Particularly, in some cases the driver
++needs to instruct bus types and PM domains, that it has configured the device to
++use an in-band wakeup setting, which may require the device to remain in its
++power state to be able to generate wakeup signals. Therefore, drivers can set
++``DPM_FLAG_IN_BAND_WAKEUP`` in :c:member:`power.driver_flags`, by passing the
++flag to :c:func:`dev_pm_set_driver_flags` helper, which instructs bus types and
++PM domains to use this configuration. However, the bus types and PM domains may
++override this setting, in case they have additional information about wakeup
++settings of the device.
 +
-+	  To compile this driver as a module, choose M here: the
-+	  module will be called tw9910.
-+
- config VIDEO_VPX3220
- 	tristate "vpx3220a, vpx3216b & vpx3214c video decoders"
- 	depends on VIDEO_V4L2 && I2C
-diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
-index b2459a1..835784a 100644
---- a/drivers/media/i2c/Makefile
-+++ b/drivers/media/i2c/Makefile
-@@ -48,6 +48,7 @@ obj-$(CONFIG_VIDEO_TVP7002) += tvp7002.o
- obj-$(CONFIG_VIDEO_TW2804) += tw2804.o
- obj-$(CONFIG_VIDEO_TW9903) += tw9903.o
- obj-$(CONFIG_VIDEO_TW9906) += tw9906.o
-+obj-$(CONFIG_VIDEO_TW9910) += tw9910.o
- obj-$(CONFIG_VIDEO_CS3308) += cs3308.o
- obj-$(CONFIG_VIDEO_CS5345) += cs5345.o
- obj-$(CONFIG_VIDEO_CS53L32A) += cs53l32a.o
-diff --git a/drivers/media/i2c/tw9910.c b/drivers/media/i2c/tw9910.c
-index bdb5e0a..f422da2 100644
---- a/drivers/media/i2c/tw9910.c
-+++ b/drivers/media/i2c/tw9910.c
-@@ -16,6 +16,7 @@
-  * published by the Free Software Foundation.
+ If any of these callbacks returns an error, the system won't enter the desired
+ low-power state.  Instead, the PM core will unwind its actions by resuming all
+ the devices that were suspended.
+diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+index 8089e72..8ec3189 100644
+--- a/drivers/base/power/main.c
++++ b/drivers/base/power/main.c
+@@ -1432,8 +1432,11 @@ static void dpm_propagate_to_parent(struct device *dev)
+ 	spin_lock_irq(&parent->power.lock);
+ 
+ 	parent->power.direct_complete = false;
+-	if (dev->power.wakeup_path && !parent->power.ignore_children)
++	if (dev->power.wakeup_path && !parent->power.ignore_children) {
+ 		parent->power.wakeup_path = true;
++		parent->power.wakeup_path_in_band =
++			dev->power.wakeup_path_in_band;
++	}
+ 
+ 	spin_unlock_irq(&parent->power.lock);
+ }
+@@ -1547,6 +1550,8 @@ static int __device_suspend(struct device *dev, pm_message_t state, bool async)
+  End:
+ 	if (!error) {
+ 		dev->power.is_suspended = true;
++		if (dev_pm_test_driver_flags(dev, DPM_FLAG_IN_BAND_WAKEUP))
++			dev->power.wakeup_path_in_band = true;
+ 		dpm_propagate_to_parent(dev);
+ 		dpm_clear_suppliers_direct_complete(dev);
+ 	}
+@@ -1671,6 +1676,7 @@ static int device_prepare(struct device *dev, pm_message_t state)
+ 	device_lock(dev);
+ 
+ 	dev->power.wakeup_path = device_may_wakeup(dev);
++	dev->power.wakeup_path_in_band = false;
+ 
+ 	if (dev->power.no_pm_callbacks) {
+ 		ret = 1;	/* Let device go direct_complete */
+diff --git a/include/linux/pm.h b/include/linux/pm.h
+index 65d3911..4efb16a 100644
+--- a/include/linux/pm.h
++++ b/include/linux/pm.h
+@@ -559,6 +559,7 @@ struct pm_subsys_data {
+  * NEVER_SKIP: Do not skip system suspend/resume callbacks for the device.
+  * SMART_PREPARE: Check the return value of the driver's ->prepare callback.
+  * SMART_SUSPEND: No need to resume the device from runtime suspend.
++ * WAKEUP_POWERED: Keep the device powered if it has wakeup enabled.
+  *
+  * Setting SMART_PREPARE instructs bus types and PM domains which may want
+  * system suspend/resume callbacks to be skipped for the device to return 0 from
+@@ -572,10 +573,14 @@ struct pm_subsys_data {
+  * necessary from the driver's perspective.  It also may cause them to skip
+  * invocations of the ->suspend_late and ->suspend_noirq callbacks provided by
+  * the driver if they decide to leave the device in runtime suspend.
++ *
++ * Setting WAKEUP_POWERED instructs bus types and PM domains that the device
++ * needs to remain powered in system suspend, in case wakeup is enabled for it.
   */
-
-+#include <linux/clk.h>
- #include <linux/init.h>
- #include <linux/module.h>
- #include <linux/i2c.h>
-@@ -25,9 +26,7 @@
- #include <linux/v4l2-mediabus.h>
- #include <linux/videodev2.h>
-
--#include <media/soc_camera.h>
- #include <media/i2c/tw9910.h>
--#include <media/v4l2-clk.h>
- #include <media/v4l2-subdev.h>
-
- #define GET_ID(val)  ((val & 0xF8) >> 3)
-@@ -228,7 +227,7 @@ struct tw9910_scale_ctrl {
-
- struct tw9910_priv {
- 	struct v4l2_subdev		subdev;
--	struct v4l2_clk			*clk;
-+	struct clk			*clk;
- 	struct tw9910_video_info	*info;
- 	const struct tw9910_scale_ctrl	*scale;
- 	v4l2_std_id			norm;
-@@ -582,13 +581,40 @@ static int tw9910_s_register(struct v4l2_subdev *sd,
- }
- #endif
-
-+static int tw9910_power_on(struct tw9910_priv *priv)
-+{
-+	int ret;
-+
-+	if (priv->info->platform_enable) {
-+		ret = priv->info->platform_enable();
-+		if (ret)
-+			return ret;
-+	}
-+
-+	if (priv->clk)
-+		return clk_enable(priv->clk);
-+
-+	return 0;
-+}
-+
-+static int tw9910_power_off(struct tw9910_priv *priv)
-+{
-+	if (priv->info->platform_enable)
-+		priv->info->platform_disable();
-+
-+	if (priv->clk)
-+		clk_disable(priv->clk);
-+
-+	return 0;
-+}
-+
- static int tw9910_s_power(struct v4l2_subdev *sd, int on)
- {
- 	struct i2c_client *client = v4l2_get_subdevdata(sd);
--	struct soc_camera_subdev_desc *ssdd = soc_camera_i2c_to_desc(client);
- 	struct tw9910_priv *priv = to_tw9910(client);
-
--	return soc_camera_set_power(&client->dev, ssdd, priv->clk, on);
-+	return on ? tw9910_power_on(priv) :
-+		    tw9910_power_off(priv);
- }
-
- static int tw9910_set_frame(struct v4l2_subdev *sd, u32 *width, u32 *height)
-@@ -614,7 +640,7 @@ static int tw9910_set_frame(struct v4l2_subdev *sd, u32 *width, u32 *height)
- 	 * set bus width
- 	 */
- 	val = 0x00;
--	if (SOCAM_DATAWIDTH_16 == priv->info->buswidth)
-+	if (priv->info->buswidth == TW9910_DATAWIDTH_16)
- 		val = LEN;
-
- 	ret = tw9910_mask_set(client, OPFORM, LEN, val);
-@@ -799,8 +825,8 @@ static int tw9910_video_probe(struct i2c_client *client)
- 	/*
- 	 * tw9910 only use 8 or 16 bit bus width
- 	 */
--	if (SOCAM_DATAWIDTH_16 != priv->info->buswidth &&
--	    SOCAM_DATAWIDTH_8  != priv->info->buswidth) {
-+	if (priv->info->buswidth != TW9910_DATAWIDTH_16 &&
-+	    priv->info->buswidth != TW9910_DATAWIDTH_8) {
- 		dev_err(&client->dev, "bus width error\n");
- 		return -ENODEV;
- 	}
-@@ -859,15 +885,11 @@ static int tw9910_enum_mbus_code(struct v4l2_subdev *sd,
- static int tw9910_g_mbus_config(struct v4l2_subdev *sd,
- 				struct v4l2_mbus_config *cfg)
- {
--	struct i2c_client *client = v4l2_get_subdevdata(sd);
--	struct soc_camera_subdev_desc *ssdd = soc_camera_i2c_to_desc(client);
--
- 	cfg->flags = V4L2_MBUS_PCLK_SAMPLE_RISING | V4L2_MBUS_MASTER |
- 		V4L2_MBUS_VSYNC_ACTIVE_HIGH | V4L2_MBUS_VSYNC_ACTIVE_LOW |
- 		V4L2_MBUS_HSYNC_ACTIVE_HIGH | V4L2_MBUS_HSYNC_ACTIVE_LOW |
- 		V4L2_MBUS_DATA_ACTIVE_HIGH;
- 	cfg->type = V4L2_MBUS_PARALLEL;
--	cfg->flags = soc_camera_apply_board_flags(ssdd, cfg);
-
- 	return 0;
- }
-@@ -876,9 +898,8 @@ static int tw9910_s_mbus_config(struct v4l2_subdev *sd,
- 				const struct v4l2_mbus_config *cfg)
- {
- 	struct i2c_client *client = v4l2_get_subdevdata(sd);
--	struct soc_camera_subdev_desc *ssdd = soc_camera_i2c_to_desc(client);
- 	u8 val = VSSL_VVALID | HSSL_DVALID;
--	unsigned long flags = soc_camera_apply_board_flags(ssdd, cfg);
-+	unsigned long flags = cfg->flags;
-
- 	/*
- 	 * set OUTCTR1
-@@ -935,15 +956,14 @@ static int tw9910_probe(struct i2c_client *client,
- 	struct tw9910_video_info	*info;
- 	struct i2c_adapter		*adapter =
- 		to_i2c_adapter(client->dev.parent);
--	struct soc_camera_subdev_desc	*ssdd = soc_camera_i2c_to_desc(client);
- 	int ret;
-
--	if (!ssdd || !ssdd->drv_priv) {
-+	if (!client->dev.platform_data) {
- 		dev_err(&client->dev, "TW9910: missing platform data!\n");
- 		return -EINVAL;
- 	}
-
--	info = ssdd->drv_priv;
-+	info = client->dev.platform_data;
-
- 	if (!i2c_check_functionality(adapter, I2C_FUNC_SMBUS_BYTE_DATA)) {
- 		dev_err(&client->dev,
-@@ -959,13 +979,27 @@ static int tw9910_probe(struct i2c_client *client,
-
- 	v4l2_i2c_subdev_init(&priv->subdev, client, &tw9910_subdev_ops);
-
--	priv->clk = v4l2_clk_get(&client->dev, "mclk");
--	if (IS_ERR(priv->clk))
-+	priv->clk = clk_get(&client->dev, "mclk");
-+	if (PTR_ERR(priv->clk) == -ENOENT) {
-+		priv->clk = NULL;
-+	} else if (IS_ERR(priv->clk)) {
-+		dev_err(&client->dev, "Unable to get mclk clock\n");
- 		return PTR_ERR(priv->clk);
-+	}
-
- 	ret = tw9910_video_probe(client);
- 	if (ret < 0)
--		v4l2_clk_put(priv->clk);
-+		goto error_put_clk;
-+
-+	ret = v4l2_async_register_subdev(&priv->subdev);
-+	if (ret)
-+		goto error_put_clk;
-+
-+	return ret;
-+
-+error_put_clk:
-+	if (priv->clk)
-+		clk_put(priv->clk);
-
- 	return ret;
- }
-@@ -973,7 +1007,11 @@ static int tw9910_probe(struct i2c_client *client,
- static int tw9910_remove(struct i2c_client *client)
- {
- 	struct tw9910_priv *priv = to_tw9910(client);
--	v4l2_clk_put(priv->clk);
-+
-+	if (priv->clk)
-+		clk_put(priv->clk);
-+	v4l2_device_unregister_subdev(&priv->subdev);
-+
- 	return 0;
- }
-
-diff --git a/include/media/i2c/tw9910.h b/include/media/i2c/tw9910.h
-index 90bcf1f..b80e45c 100644
---- a/include/media/i2c/tw9910.h
-+++ b/include/media/i2c/tw9910.h
-@@ -18,6 +18,9 @@
-
- #include <media/soc_camera.h>
-
-+#define TW9910_DATAWIDTH_8	BIT(0)
-+#define TW9910_DATAWIDTH_16	BIT(1)
-+
- enum tw9910_mpout_pin {
- 	TW9910_MPO_VLOSS,
- 	TW9910_MPO_HLOCK,
-@@ -32,6 +35,9 @@ enum tw9910_mpout_pin {
- struct tw9910_video_info {
- 	unsigned long		buswidth;
- 	enum tw9910_mpout_pin	mpout;
-+
-+	int (*platform_enable)(void);
-+	void (*platform_disable)(void);
- };
-
-
---
+ #define DPM_FLAG_NEVER_SKIP	BIT(0)
+ #define DPM_FLAG_SMART_PREPARE	BIT(1)
+ #define DPM_FLAG_SMART_SUSPEND	BIT(2)
++#define DPM_FLAG_IN_BAND_WAKEUP	BIT(3)
+ 
+ struct dev_pm_info {
+ 	pm_message_t		power_state;
+@@ -595,6 +600,7 @@ struct dev_pm_info {
+ 	struct completion	completion;
+ 	struct wakeup_source	*wakeup;
+ 	bool			wakeup_path:1;
++	bool			wakeup_path_in_band:1;
+ 	bool			syscore:1;
+ 	bool			no_pm_callbacks:1;	/* Owned by the PM core */
+ #else
+-- 
 2.7.4
