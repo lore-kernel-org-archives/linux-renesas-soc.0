@@ -1,76 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:50046 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754176AbdKNJr7 (ORCPT
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:57282 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752399AbdKMTLM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Nov 2017 04:47:59 -0500
-Received: by mail-lf0-f65.google.com with SMTP id w21so21492285lfc.6
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 14 Nov 2017 01:47:59 -0800 (PST)
-Subject: Re: [PATCH ] dt-bindings: PCI: rcar: Add device tree support for
- r8a7743
-To: Biju Das <biju.das@bp.renesas.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <1510591074-59346-1-git-send-email-biju.das@bp.renesas.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <0d38fedf-c39c-8836-44e6-e23ee0a87668@cogentembedded.com>
-Date: Tue, 14 Nov 2017 12:47:56 +0300
+        Mon, 13 Nov 2017 14:11:12 -0500
 MIME-Version: 1.0
 In-Reply-To: <1510591074-59346-1-git-send-email-biju.das@bp.renesas.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1510591074-59346-1-git-send-email-biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 13 Nov 2017 20:11:11 +0100
+Message-ID: <CAMuHMdVDxFCZ=QULonGZ2_pcbO1L1ycxeiYiT=FCTSgJ58kviQ@mail.gmail.com>
+Subject: Re: [PATCH ] dt-bindings: PCI: rcar: Add device tree support for r8a7743
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+Hi Biju,
 
-On 11/13/2017 7:37 PM, Biju Das wrote:
-
+On Mon, Nov 13, 2017 at 5:37 PM, Biju Das <biju.das@bp.renesas.com> wrote:
 > Add support for r8a7743. The Renesas RZ/G1M(R8A7743)PCIe controller
 > is identical to the R-Car Gen2 family.
-> 
+>
 > No driver change is needed due to the fallback compatible value
 > "renesas,pcie-rcar-gen2".
 > Adding the SoC-specific compatible values here has three purposes:
 > 1. Document which SoCs have this hardware module,
 > 2. Allow checkpatch to validate compatible values.
 > 3. Allow the driver to support SoC specific implementations in future
->     as necessary.
-> 
+>    as necessary.
+>
 > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 > Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> ---
->   Documentation/devicetree/bindings/pci/rcar-pci.txt | 6 ++++--
->   1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/rcar-pci.txt b/Documentation/devicetree/bindings/pci/rcar-pci.txt
-> index 76ba3a6..2c43e38 100644
+
+Thanks for your patch!
+
+With the below fixed:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
 > --- a/Documentation/devicetree/bindings/pci/rcar-pci.txt
 > +++ b/Documentation/devicetree/bindings/pci/rcar-pci.txt
 > @@ -1,13 +1,15 @@
->   * Renesas R-Car PCIe interface
->   
->   Required properties:
+>  * Renesas R-Car PCIe interface
+>
+>  Required properties:
 > -compatible: "renesas,pcie-r8a7779" for the R8A7779 SoC;
 > +compatible: "renesas,pcie-r8a7743" for the R8A7743 SoC;
-> +	    "renesas,pcie-r8a7779" for the R8A7779 SoC;
->   	    "renesas,pcie-r8a7790" for the R8A7790 SoC;
->   	    "renesas,pcie-r8a7791" for the R8A7791 SoC;
->   	    "renesas,pcie-r8a7793" for the R8A7793 SoC;
->   	    "renesas,pcie-r8a7795" for the R8A7795 SoC;
->   	    "renesas,pcie-r8a7796" for the R8A7796 SoC;
-> -	    "renesas,pcie-rcar-gen2" for a generic R-Car Gen2 compatible device.
-> +	    "renesas,pcie-rcar-gen2" for a generic R-Car Gen2 or
-> +				     RZ-G1 compatible device.
+> +           "renesas,pcie-r8a7779" for the R8A7779 SoC;
+>             "renesas,pcie-r8a7790" for the R8A7790 SoC;
+>             "renesas,pcie-r8a7791" for the R8A7791 SoC;
+>             "renesas,pcie-r8a7793" for the R8A7793 SoC;
+>             "renesas,pcie-r8a7795" for the R8A7795 SoC;
+>             "renesas,pcie-r8a7796" for the R8A7796 SoC;
+> -           "renesas,pcie-rcar-gen2" for a generic R-Car Gen2 compatible device.
+> +           "renesas,pcie-rcar-gen2" for a generic R-Car Gen2 or
+> +                                    RZ-G1 compatible device.
 
-    It's called RZ/G1.
+RZ/G1
 
-[...]
+Gr{oetje,eeting}s,
 
-MBR, Sergei
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
