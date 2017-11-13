@@ -1,86 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55692 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752216AbdKAKgY (ORCPT
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:53751 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753296AbdKMPqz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 1 Nov 2017 06:36:24 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 7/7] arm64: dts: renesas: r8a7796: Enable IPMMU-DS0, DS1, MP, VI0, VC0 and MM
-Date: Wed,  1 Nov 2017 11:34:58 +0100
-Message-Id: <20171101103458.7582-8-horms+renesas@verge.net.au>
-In-Reply-To: <20171101103458.7582-1-horms+renesas@verge.net.au>
-References: <20171101103458.7582-1-horms+renesas@verge.net.au>
+        Mon, 13 Nov 2017 10:46:55 -0500
+Received: by mail-lf0-f66.google.com with SMTP id 73so4532730lfu.10
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Nov 2017 07:46:54 -0800 (PST)
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
+Cc: Kevin Hilman <khilman@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
+        linux-renesas-soc@vger.kernel.org,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH v2 3/3] PM / Domains: Take wakeup_path_in_band status flag into account
+Date: Mon, 13 Nov 2017 16:46:43 +0100
+Message-Id: <1510588003-16650-4-git-send-email-ulf.hansson@linaro.org>
+In-Reply-To: <1510588003-16650-1-git-send-email-ulf.hansson@linaro.org>
+References: <1510588003-16650-1-git-send-email-ulf.hansson@linaro.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Make genpd to take the wakeup_path_in_band status flag into account during
+system suspend/resume. More precisely, in case the flag has been set by the
+PM core, let's leave the device in full power state and prevent the PM
+domain from being powered off.
 
-Enable the r8a7795 device nodes for IPMMU-DS0, IPMMU-DS1, IPMMU-MP,
-IPMMU-VI0, IPMMU-VC0 and the shared IPMMU-MM device.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-[simon: enable IPMMU-MP, VI0 and VC0]
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 6 ------
- 1 file changed, 6 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 78160b4a380c..f0800f501116 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -362,7 +362,6 @@
- 			reg = <0 0xfebd0000 0 0x1000>; /* IPMMU-VI0 */
- 			renesas,ipmmu-main = <&ipmmu_mm 9>;
- 			#iommu-cells = <1>;
--			status = "disabled";
- 		};
+Changes in v2:
+	- Added Geert's Reviewed-by tag.
+	- Changed to look at status flag instead of driver flag.
+---
+ drivers/base/power/domain.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+index 24e39ce..21cbea0 100644
+--- a/drivers/base/power/domain.c
++++ b/drivers/base/power/domain.c
+@@ -1037,7 +1037,8 @@ static int genpd_finish_suspend(struct device *dev, bool poweroff)
+ 	if (IS_ERR(genpd))
+ 		return -EINVAL;
  
- 		ipmmu_vc0: mmu@fe6b0000 {
-@@ -370,7 +369,6 @@
- 			reg = <0 0xfe6b0000 0 0x1000>; /* IPMMU-VC0 */
- 			renesas,ipmmu-main = <&ipmmu_mm 8>;
- 			#iommu-cells = <1>;
--			status = "disabled";
- 		};
+-	if (dev->power.wakeup_path && genpd_is_active_wakeup(genpd))
++	if (dev->power.wakeup_path &&
++	    (dev->power.wakeup_path_in_band || genpd_is_active_wakeup(genpd)))
+ 		return 0;
  
- 		ipmmu_pv0: mmu@fd800000 {
-@@ -418,7 +416,6 @@
- 			reg = <0 0xec670000 0 0x1000>; /* IPMMU-MP */
- 			renesas,ipmmu-main = <&ipmmu_mm 4>;
- 			#iommu-cells = <1>;
--			status = "disabled";
- 		};
+ 	if (poweroff)
+@@ -1092,7 +1093,8 @@ static int genpd_resume_noirq(struct device *dev)
+ 	if (IS_ERR(genpd))
+ 		return -EINVAL;
  
- 		ipmmu_ds0: mmu@e6740000 {
-@@ -426,7 +423,6 @@
- 			reg = <0 0xe6740000 0 0x1000>; /* IPMMU-DS0 */
- 			renesas,ipmmu-main = <&ipmmu_mm 0>;
- 			#iommu-cells = <1>;
--			status = "disabled";
- 		};
+-	if (dev->power.wakeup_path && genpd_is_active_wakeup(genpd))
++	if (dev->power.wakeup_path &&
++	    (dev->power.wakeup_path_in_band || genpd_is_active_wakeup(genpd)))
+ 		return 0;
  
- 		ipmmu_ds1: mmu@e7740000 {
-@@ -434,7 +430,6 @@
- 			reg = <0 0xe7740000 0 0x1000>; /* IPMMU-DS1 */
- 			renesas,ipmmu-main = <&ipmmu_mm 1>;
- 			#iommu-cells = <1>;
--			status = "disabled";
- 		};
- 
- 		ipmmu_mm: mmu@e67b0000 {
-@@ -443,7 +438,6 @@
- 			interrupts = <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
- 			#iommu-cells = <1>;
--			status = "disabled";
- 		};
- 
- 		cpg: clock-controller@e6150000 {
+ 	genpd_lock(genpd);
 -- 
-2.11.0
+2.7.4
