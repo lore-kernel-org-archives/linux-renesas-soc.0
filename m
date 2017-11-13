@@ -1,86 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from condef-04.nifty.com ([202.248.20.69]:35046 "EHLO
-        condef-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753649AbdKXQgf (ORCPT
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:55150 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753157AbdKMPqw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 24 Nov 2017 11:36:35 -0500
-Received: from conuserg-11.nifty.com ([10.126.8.74])by condef-04.nifty.com with ESMTP id vAOGPtVX015763
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 25 Nov 2017 01:25:59 +0900
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-mmc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Simon Horman <simon.horman@netronome.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Mon, 13 Nov 2017 10:46:52 -0500
+Received: by mail-lf0-f65.google.com with SMTP id a2so18864145lfh.11
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Nov 2017 07:46:51 -0800 (PST)
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
+Cc: Kevin Hilman <khilman@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
         linux-renesas-soc@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v2 07/22] mmc: tmio, renesas_sdhi: set mmc_host_ops hooks directly
-Date: Sat, 25 Nov 2017 01:24:42 +0900
-Message-Id: <1511540697-27387-8-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH v2 1/3] PM / core: Re-factor some code dealing with parents in __device_suspend()
+Date: Mon, 13 Nov 2017 16:46:41 +0100
+Message-Id: <1510588003-16650-2-git-send-email-ulf.hansson@linaro.org>
+In-Reply-To: <1510588003-16650-1-git-send-email-ulf.hansson@linaro.org>
+References: <1510588003-16650-1-git-send-email-ulf.hansson@linaro.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Drivers can set any mmc_host_ops hooks between tmio_mmc_host_alloc()
-and tmio_mmc_host_probe().  Remove duplicated hooks in tmio_mmc_host.
+Let's make the code a bit more readable by moving some of the code, which
+deals with adjustments for parent devices in __device_suspend(), into its
+own function.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 
 Changes in v2:
-  - Rename "mmc_host_ops" to "ops" per Wolfram Sang
+	- Added Geert's Reviewed-by tag.
 
- drivers/mmc/host/renesas_sdhi_core.c | 4 ++--
- drivers/mmc/host/tmio_mmc.h          | 3 ---
- drivers/mmc/host/tmio_mmc_core.c     | 4 ----
- 3 files changed, 2 insertions(+), 9 deletions(-)
+---
+ drivers/base/power/main.c | 29 +++++++++++++++++------------
+ 1 file changed, 17 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index 9baf4d1..267e2e0 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -549,8 +549,8 @@ int renesas_sdhi_probe(struct platform_device *pdev,
- 	/* SDR speeds are only available on Gen2+ */
- 	if (mmc_data->flags & TMIO_MMC_MIN_RCAR2) {
- 		/* card_busy caused issues on r8a73a4 (pre-Gen2) CD-less SDHI */
--		host->card_busy	= renesas_sdhi_card_busy;
--		host->start_signal_voltage_switch =
-+		host->ops.card_busy = renesas_sdhi_card_busy;
-+		host->ops.start_signal_voltage_switch =
- 			renesas_sdhi_start_signal_voltage_switch;
+diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+index 6c6f1c7..8089e72 100644
+--- a/drivers/base/power/main.c
++++ b/drivers/base/power/main.c
+@@ -1422,6 +1422,22 @@ static int legacy_suspend(struct device *dev, pm_message_t state,
+ 	return error;
+ }
+ 
++static void dpm_propagate_to_parent(struct device *dev)
++{
++	struct device *parent = dev->parent;
++
++	if (!parent)
++		return;
++
++	spin_lock_irq(&parent->power.lock);
++
++	parent->power.direct_complete = false;
++	if (dev->power.wakeup_path && !parent->power.ignore_children)
++		parent->power.wakeup_path = true;
++
++	spin_unlock_irq(&parent->power.lock);
++}
++
+ static void dpm_clear_suppliers_direct_complete(struct device *dev)
+ {
+ 	struct device_link *link;
+@@ -1530,19 +1546,8 @@ static int __device_suspend(struct device *dev, pm_message_t state, bool async)
+ 
+  End:
+ 	if (!error) {
+-		struct device *parent = dev->parent;
+-
+ 		dev->power.is_suspended = true;
+-		if (parent) {
+-			spin_lock_irq(&parent->power.lock);
+-
+-			dev->parent->power.direct_complete = false;
+-			if (dev->power.wakeup_path
+-			    && !dev->parent->power.ignore_children)
+-				dev->parent->power.wakeup_path = true;
+-
+-			spin_unlock_irq(&parent->power.lock);
+-		}
++		dpm_propagate_to_parent(dev);
+ 		dpm_clear_suppliers_direct_complete(dev);
  	}
  
-diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-index 4fdb51b..37409c5 100644
---- a/drivers/mmc/host/tmio_mmc.h
-+++ b/drivers/mmc/host/tmio_mmc.h
-@@ -186,9 +186,6 @@ struct tmio_mmc_host {
- 	void (*clk_disable)(struct tmio_mmc_host *host);
- 	int (*multi_io_quirk)(struct mmc_card *card,
- 			      unsigned int direction, int blk_size);
--	int (*card_busy)(struct mmc_host *mmc);
--	int (*start_signal_voltage_switch)(struct mmc_host *mmc,
--					   struct mmc_ios *ios);
- 	int (*write16_hook)(struct tmio_mmc_host *host, int addr);
- 	void (*hw_reset)(struct tmio_mmc_host *host);
- 	void (*prepare_tuning)(struct tmio_mmc_host *host, unsigned long tap);
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index af9ed6a..46f77c3 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -1205,10 +1205,6 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
- 	if (ret < 0)
- 		return ret;
- 
--	_host->ops.card_busy = _host->card_busy;
--	_host->ops.start_signal_voltage_switch =
--		_host->start_signal_voltage_switch;
--
- 	mmc->caps |= MMC_CAP_4_BIT_DATA | pdata->capabilities;
- 	mmc->caps2 |= pdata->capabilities2;
- 	mmc->max_segs = pdata->max_segs ? : 32;
 -- 
 2.7.4
