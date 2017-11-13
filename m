@@ -1,53 +1,111 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:47154 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753741AbdKNPkM (ORCPT
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:56310 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751128AbdKMMSA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Nov 2017 10:40:12 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mon, 13 Nov 2017 07:18:00 -0500
+MIME-Version: 1.0
+In-Reply-To: <1510334189-8942-3-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <CAMuHMdV=8rAE5z2VmCjL-M_MXY6TsKM_+0c-bsqDsjDZYWU1FA@mail.gmail.com>
+ <1510334189-8942-1-git-send-email-fabrizio.castro@bp.renesas.com> <1510334189-8942-3-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 13 Nov 2017 13:17:59 +0100
+Message-ID: <CAMuHMdVLAdyrqecJmn09qLBY5=vA7YY-Opu79SvaDNdLp5DXtA@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/2] pinctrl: sh-pfc: r8a7791: Add can_clk function
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Linus Walleij <linus.walleij@linaro.org>,
-        "Simon Horman" <horms@verge.net.au>,
+        Simon Horman <horms@verge.net.au>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: RE: [RFC PATCH 2/2] pinctrl: sh-pfc: r8a7791: Add can_clk function
-Date: Tue, 14 Nov 2017 15:40:00 +0000
-Message-ID: <TY1PR06MB08951DD2EFFBE3B463E303ABC0280@TY1PR06MB0895.apcprd06.prod.outlook.com>
-References: <CAMuHMdV=8rAE5z2VmCjL-M_MXY6TsKM_+0c-bsqDsjDZYWU1FA@mail.gmail.com>
- <1510334189-8942-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1510334189-8942-3-git-send-email-fabrizio.castro@bp.renesas.com>
- <CAMuHMdVLAdyrqecJmn09qLBY5=vA7YY-Opu79SvaDNdLp5DXtA@mail.gmail.com>
-In-Reply-To: <CAMuHMdVLAdyrqecJmn09qLBY5=vA7YY-Opu79SvaDNdLp5DXtA@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGVsbG8gR2VlcnQsDQoNCnRoYW5rIHlvdSBmb3IgeW91ciBjb21tZW50cy4NCg0KPg0KPiBBcyB0
-aGUgcGluIGdyb3VwcyBhbmQgZnVuY3Rpb25zIGFyZSBwYXJ0IG9mIHRoZSBzdGFibGUgRFQgQUJJ
-LCB5b3UgY2Fubm90IGp1c3QNCj4gcmVtb3ZlIHRoZSBjYW5fY2xrKiBwaW5zIGZyb20gY2FuMF9n
-cm91cHNbXSwgYXMgdGhhdCB3b3VsZCBicmVhayBleGlzdGluZyB1c2Vycy4NCj4NCj4gSSB3b3Vs
-ZCBrZWVwIHRoZW0sIGJ1dCBhZGQgYSBjb21tZW50ICIvKiByZXRhaW5lZCBmb3IgYmFja3dhcmRz
-DQo+IGNvbXBhdGliaWxpdHkgKi8iLg0KPg0KPiBBZGRpbmcgYSBuZXcgY2FuX2Nsa19ncm91cHNb
-XSAuLi4NCj4NCj4gYW5kIGNhbl9jbGsgZnVuY3Rpb24gaXMgT0ssIHRob3VnaC4NCj4NCj4gTXkg
-Y29tbWVudHMgYXBwbHkgdG8geW91ciByOGE3Nzk0IHBhdGNoLCB0b28uIEV4Y2VwdCB0aGF0IG9u
-IHI4YTc3OTQgd2UNCj4gZGlkbid0IGhhdmUgQ0FOIHN1cHBvcnQgaW4gcGZjLXI4YTc3OTQuYyBi
-ZWZvcmUsIGJ1dCBJIHdvdWxkIGxpa2UgdG8gdHJlYXQgYWxsDQo+IFItQ2FyIEdlbjIgYW5kIFJa
-L0cxIFNvQ3MgaW4gdGhlIHNhbWUgd2F5Lg0KDQpJJ2xsIHNlbmQgYSB2MiB0byBmaXggdGhpcy4N
-Cg0KVGhhbmtzLA0KRmFiDQoNCj4NCj4gR3J7b2V0amUsZWV0aW5nfXMsDQo+DQo+ICAgICAgICAg
-ICAgICAgICAgICAgICAgIEdlZXJ0DQo+DQo+IC0tDQo+IEdlZXJ0IFV5dHRlcmhvZXZlbiAtLSBU
-aGVyZSdzIGxvdHMgb2YgTGludXggYmV5b25kIGlhMzIgLS0gZ2VlcnRAbGludXgtbTY4ay5vcmcN
-Cj4NCj4gSW4gcGVyc29uYWwgY29udmVyc2F0aW9ucyB3aXRoIHRlY2huaWNhbCBwZW9wbGUsIEkg
-Y2FsbCBteXNlbGYgYSBoYWNrZXIuIEJ1dA0KPiB3aGVuIEknbSB0YWxraW5nIHRvIGpvdXJuYWxp
-c3RzIEkganVzdCBzYXkgInByb2dyYW1tZXIiIG9yIHNvbWV0aGluZyBsaWtlIHRoYXQuDQo+ICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLS0gTGludXMgVG9ydmFsZHMNCg0KDQoNClJl
-bmVzYXMgRWxlY3Ryb25pY3MgRXVyb3BlIEx0ZCwgRHVrZXMgTWVhZG93LCBNaWxsYm9hcmQgUm9h
-ZCwgQm91cm5lIEVuZCwgQnVja2luZ2hhbXNoaXJlLCBTTDggNUZILCBVSy4gUmVnaXN0ZXJlZCBp
-biBFbmdsYW5kICYgV2FsZXMgdW5kZXIgUmVnaXN0ZXJlZCBOby4gMDQ1ODY3MDkuDQo=
+Hi Fabrizio,
+
+On Fri, Nov 10, 2017 at 6:16 PM, Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> This patch adds can_clk function to r8a7743/r8a7791 which is cleaner,
+> as it reduces duplication, and allows for independent configuration.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+
+Thanks for your patch!
+
+> --- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+> @@ -4826,10 +4826,6 @@ static const char * const can0_groups[] = {
+>         "can0_data_d",
+>         "can0_data_e",
+>         "can0_data_f",
+> -       "can_clk",
+> -       "can_clk_b",
+> -       "can_clk_c",
+> -       "can_clk_d",
+
+As the pin groups and functions are part of the stable DT ABI, you cannot just
+remove the can_clk* pins from can0_groups[], as that would break existing users.
+
+I would keep them, but add a comment "/* retained for backwards
+compatibility */".
+
+>  };
+>
+>  static const char * const can1_groups[] = {
+> @@ -4837,6 +4833,9 @@ static const char * const can1_groups[] = {
+>         "can1_data_b",
+>         "can1_data_c",
+>         "can1_data_d",
+
+Likewise.
+
+> +};
+> +
+> +static const char * const can_clk_groups[] = {
+>         "can_clk",
+>         "can_clk_b",
+>         "can_clk_c",
+
+Adding a new can_clk_groups[] ...
+
+> @@ -5308,7 +5307,7 @@ static const char * const vin2_groups[] = {
+>  };
+>
+>  static const struct {
+> -       struct sh_pfc_function common[56];
+> +       struct sh_pfc_function common[57];
+>         struct sh_pfc_function r8a779x[2];
+>  } pinmux_functions = {
+>         .common = {
+> @@ -5316,6 +5315,7 @@ static const struct {
+>                 SH_PFC_FUNCTION(avb),
+>                 SH_PFC_FUNCTION(can0),
+>                 SH_PFC_FUNCTION(can1),
+> +               SH_PFC_FUNCTION(can_clk),
+
+and can_clk function is OK, though.
+
+>                 SH_PFC_FUNCTION(du),
+>                 SH_PFC_FUNCTION(du0),
+>                 SH_PFC_FUNCTION(du1),
+
+My comments apply to your r8a7794 patch, too. Except that on r8a7794 we
+didn't have CAN support in pfc-r8a7794.c before, but I would like to treat all
+R-Car Gen2 and RZ/G1 SoCs in the same way.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
