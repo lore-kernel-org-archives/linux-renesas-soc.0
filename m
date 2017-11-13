@@ -1,62 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:57914 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753035AbdK1Nrk (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:24915 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754205AbdKMRog (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Nov 2017 08:47:40 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms+renesas@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 06/12] ARM: dts: r8a73a4: Remove CMT renesas,channels-mask
-Date: Tue, 28 Nov 2017 14:47:30 +0100
-Message-Id: <1511876856-9495-7-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1511876856-9495-1-git-send-email-geert+renesas@glider.be>
-References: <1511876856-9495-1-git-send-email-geert+renesas@glider.be>
+        Mon, 13 Nov 2017 12:44:36 -0500
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH  1/3] ARM: dts: r8a7743: Add default PCIe bus clock
+Date: Mon, 13 Nov 2017 17:43:10 +0000
+Message-Id: <1510594992-63806-2-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1510594992-63806-1-git-send-email-biju.das@bp.renesas.com>
+References: <1510594992-63806-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+This patch adds a default PCIe bus clock node.
 
-Update the DTS to remove the now deprecated "renesas,channels-mask"
-property.
-
-The channel information is now kept in the device driver and can easily
-be determined based on the compat string.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
-v4:
-  - Rebased against renesas-devel-20171127-v4.15-rc1,
+This patch has dependency on below patch
 
-v3:
-  - Take over from Magnus,
-  - Split in per-SoC patches,
+* ARM: dts: r8a7743: Add CAN[01] SoC support
+https://patchwork.kernel.org/patch/10046875/
 
-v2:
-  - Rebased on top of power-domain changes,
-  - Added Acked-by and Tested-by from Geert.
----
- arch/arm/boot/dts/r8a73a4.dtsi | 3 ---
- 1 file changed, 3 deletions(-)
+ arch/arm/boot/dts/r8a7743.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a73a4.dtsi b/arch/arm/boot/dts/r8a73a4.dtsi
-index 805b0fd70f53820d..8e48090e4fdc1412 100644
---- a/arch/arm/boot/dts/r8a73a4.dtsi
-+++ b/arch/arm/boot/dts/r8a73a4.dtsi
-@@ -138,9 +138,6 @@
- 		clocks = <&mstp3_clks R8A73A4_CLK_CMT1>;
- 		clock-names = "fck";
- 		power-domains = <&pd_c5>;
--
--		renesas,channels-mask = <0xff>;
--
- 		status = "disabled";
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index 12c7b92..de4b8c6 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -1189,6 +1189,13 @@
+ 		clock-frequency = <0>;
  	};
  
++	/* External PCIe clock - can be overridden by the board */
++	pcie_bus_clk: pcie_bus {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
+ 	/* External SCIF clock */
+ 	scif_clk: scif {
+ 		compatible = "fixed-clock";
 -- 
-2.7.4
+1.9.1
