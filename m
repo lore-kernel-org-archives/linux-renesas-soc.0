@@ -1,15 +1,15 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:46127 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751597AbdKNIsl (ORCPT
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:48628 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755185AbdKMUcO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Nov 2017 03:48:41 -0500
+        Mon, 13 Nov 2017 15:32:14 -0500
 MIME-Version: 1.0
 In-Reply-To: <20171110181552.227541251@cogentembedded.com>
 References: <20171110181552.227541251@cogentembedded.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 14 Nov 2017 09:48:40 +0100
-Message-ID: <CAMuHMdVoyjB_9q9=5hF3XKtF7bdJOCCgCWkTnRZwC4Zxaix_BA@mail.gmail.com>
+Date: Mon, 13 Nov 2017 21:32:13 +0100
+Message-ID: <CAMuHMdW4HhzPVK-5XZKYhxvZwFUQhxPW=TDDQd7ZYY96Bz1AMw@mail.gmail.com>
 Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: add R8A77970 PFC support
 To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Cc: Linus Walleij <linus.walleij@linaro.org>,
@@ -39,21 +39,46 @@ On Fri, Nov 10, 2017 at 6:59 PM, Sergei Shtylyov
 > Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
+Thanks for your patch!
+
+For CPU_ALL_PORT(), pins, groups, and functions:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in sh-pfc-for-v4.16, with the two nits below fixed.
+
 > --- /dev/null
 > +++ renesas-drivers/drivers/pinctrl/sh-pfc/pfc-r8a77970.c
 
-> +/* - EtherAVB --------------------------------------------------------------- */
+[...]
 
-> +static const unsigned int avb0_mdio_pins[] = {
-> +       /* AVB0_MDC, AVB0_MDIO */
-> +       RCAR_GP_PIN(1, 15), RCAR_GP_PIN(1, 14),
+> +/* - VIN0 ------------------------------------------------------------------- */
+
+[...]
+
+> +static const unsigned int vin0_sync_pins[] = {
+> +       /* VSYNC#, HSYNC# */
+> +       RCAR_GP_PIN(2, 3), RCAR_GP_PIN(2, 2),
+
+The order of the above doesn't match the order below (will fix while applying).
+
 > +};
-> +static const unsigned int avb0_mdio_mux[] = {
-> +       AVB0_MDC_MARK, AVB0_MDIO_MARK,
+> +static const unsigned int vin0_sync_mux[] = {
+> +       VI0_HSYNC_N_MARK, VI0_VSYNC_N_MARK,
 > +};
 
-Upon second look: this group is called "avb(0)_mdc" instead of "avb(0)_mdio"
-on all other R-Car Gen3 SoCs?
+> +/* - VIN1 ------------------------------------------------------------------- */
+
+[...]
+
+> +static const unsigned int vin1_sync_pins[] = {
+> +       /* VSYNC#, HSYNC# */
+> +       RCAR_GP_PIN(3, 3), RCAR_GP_PIN(3, 2),
+
+Likewise.
+
+> +};
+> +static const unsigned int vin1_sync_mux[] = {
+> +       VI1_HSYNC_N_MARK, VI1_VSYNC_N_MARK,
+> +};
 
 Gr{oetje,eeting}s,
 
