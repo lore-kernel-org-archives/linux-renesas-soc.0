@@ -1,112 +1,36 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from condef-09.nifty.com ([202.248.20.74]:48994 "EHLO
-        condef-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751018AbdKXQla (ORCPT
+Received: from mail-lf0-f50.google.com ([209.85.215.50]:52548 "EHLO
+        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751317AbdKMVbu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 24 Nov 2017 11:41:30 -0500
-Received: from conuserg-11.nifty.com ([10.126.8.74])by condef-09.nifty.com with ESMTP id vAOGPuGg029268
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 25 Nov 2017 01:26:01 +0900
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-mmc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Simon Horman <simon.horman@netronome.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v2 04/22] mmc: tmio: set tmio_mmc_host to driver data
-Date: Sat, 25 Nov 2017 01:24:39 +0900
-Message-Id: <1511540697-27387-5-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
+        Mon, 13 Nov 2017 16:31:50 -0500
+Received: by mail-lf0-f50.google.com with SMTP id m1so3992550lfj.9
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Nov 2017 13:31:49 -0800 (PST)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-Id: <20171113212319.775334314@cogentembedded.com>
+Date: Tue, 14 Nov 2017 00:23:19 +0300
+To: Simon Horman <horms@verge.net.au>
+Cc: Magnus Damm <magnus.damm@gmail.com>
+To: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+To: Catalin Marinas <catalin.marinas@arm.com>
+To: Will Deacon <will.deacon@arm.com>
+To: linux-renesas-soc@vger.kernel.org
+To: devicetree@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 0/2] Add R8A77970/Eagle GPIO support
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The remove, suspend, resume hooks need to get tmio_mmc_host.  It is
-tedious to call mmc_priv() to convert mmc_host to tmio_mmc_host.
-We can directly set tmio_mmc_host to driver data.
+Hello!
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+Here's the set of 2 patches against Simon Horman's 'renesas.git' repo's
+'renesas-devel-20171113-v4.14' tag. We're adding the R8A77970 GPIO nodes
+and then describing the PHY IRQ for EtherAVB  device declared earlier.
+These patches depend on the R8A77970/Eagle PFC suport patchset in order
+to apply/compile.
 
-Changes in v2: None
+[1/2] arm64: dts: renesas: r8a77970: add GPIO support
+[2/2] arm64: dts: renesas: eagle: specify EtherAVB PHY IRQ
 
- drivers/mmc/host/renesas_sdhi_core.c |  3 +--
- drivers/mmc/host/tmio_mmc.c          | 12 ++++--------
- drivers/mmc/host/tmio_mmc_core.c     |  8 +++-----
- 3 files changed, 8 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index 0590ae0..9baf4d1 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -657,8 +657,7 @@ EXPORT_SYMBOL_GPL(renesas_sdhi_probe);
- 
- int renesas_sdhi_remove(struct platform_device *pdev)
- {
--	struct mmc_host *mmc = platform_get_drvdata(pdev);
--	struct tmio_mmc_host *host = mmc_priv(mmc);
-+	struct tmio_mmc_host *host = platform_get_drvdata(pdev);
- 
- 	tmio_mmc_host_remove(host);
- 
-diff --git a/drivers/mmc/host/tmio_mmc.c b/drivers/mmc/host/tmio_mmc.c
-index 64b7e9f..ccfbc15 100644
---- a/drivers/mmc/host/tmio_mmc.c
-+++ b/drivers/mmc/host/tmio_mmc.c
-@@ -128,15 +128,11 @@ static int tmio_mmc_probe(struct platform_device *pdev)
- static int tmio_mmc_remove(struct platform_device *pdev)
- {
- 	const struct mfd_cell *cell = mfd_get_cell(pdev);
--	struct mmc_host *mmc = platform_get_drvdata(pdev);
-+	struct tmio_mmc_host *host = platform_get_drvdata(pdev);
- 
--	if (mmc) {
--		struct tmio_mmc_host *host = mmc_priv(mmc);
--
--		tmio_mmc_host_remove(host);
--		if (cell->disable)
--			cell->disable(pdev);
--	}
-+	tmio_mmc_host_remove(host);
-+	if (cell->disable)
-+		cell->disable(pdev);
- 
- 	return 0;
- }
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 583bf32..12df338 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -1193,7 +1193,7 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
- 		return ret;
- 
- 	_host->pdata = pdata;
--	platform_set_drvdata(pdev, mmc);
-+	platform_set_drvdata(pdev, _host);
- 
- 	_host->set_pwr = pdata->set_pwr;
- 	_host->set_clk_div = pdata->set_clk_div;
-@@ -1351,8 +1351,7 @@ EXPORT_SYMBOL_GPL(tmio_mmc_host_remove);
- #ifdef CONFIG_PM
- int tmio_mmc_host_runtime_suspend(struct device *dev)
- {
--	struct mmc_host *mmc = dev_get_drvdata(dev);
--	struct tmio_mmc_host *host = mmc_priv(mmc);
-+	struct tmio_mmc_host *host = dev_get_drvdata(dev);
- 
- 	tmio_mmc_disable_mmc_irqs(host, TMIO_MASK_ALL);
- 
-@@ -1372,8 +1371,7 @@ static bool tmio_mmc_can_retune(struct tmio_mmc_host *host)
- 
- int tmio_mmc_host_runtime_resume(struct device *dev)
- {
--	struct mmc_host *mmc = dev_get_drvdata(dev);
--	struct tmio_mmc_host *host = mmc_priv(mmc);
-+	struct tmio_mmc_host *host = dev_get_drvdata(dev);
- 
- 	tmio_mmc_reset(host);
- 	tmio_mmc_clk_enable(host);
--- 
-2.7.4
+WBR, Sergei
