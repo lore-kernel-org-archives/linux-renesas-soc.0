@@ -1,72 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55692 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752216AbdKAKgd (ORCPT
+Received: from mail-qk0-f173.google.com ([209.85.220.173]:48648 "EHLO
+        mail-qk0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751375AbdKMMJo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 1 Nov 2017 06:36:33 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v4 09/15] arm64: dts: renesas: r8a7795: Point VSPBC/VSPBD via FCPVB to IPMMU-VP0/1
-Date: Wed,  1 Nov 2017 11:34:46 +0100
-Message-Id: <20171101103452.7491-10-horms+renesas@verge.net.au>
-In-Reply-To: <20171101103452.7491-1-horms+renesas@verge.net.au>
-References: <20171101103452.7491-1-horms+renesas@verge.net.au>
+        Mon, 13 Nov 2017 07:09:44 -0500
+MIME-Version: 1.0
+In-Reply-To: <20171110135850.32904-3-ramesh.shanmugasundaram@bp.renesas.com>
+References: <20171110135850.32904-1-ramesh.shanmugasundaram@bp.renesas.com> <20171110135850.32904-3-ramesh.shanmugasundaram@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 13 Nov 2017 13:09:42 +0100
+Message-ID: <CAMuHMdWgxR=f9ohCcF3apkPVR8dmJRGr0sHuRKz8LFmOZb-SDA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: r8a7795: Add CAN FD support
+To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On Fri, Nov 10, 2017 at 2:58 PM, Ramesh Shanmugasundaram
+<ramesh.shanmugasundaram@bp.renesas.com> wrote:
+> This patch adds CAN FD[0-1] pinmux support for R-Car H3 ES2.0. The pin
+> config is identical to H3 ES1.*.
+>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Hook up the FCPVB devices to allow use of VSPBC/VSPBD with
-IPMMU-VP0 and IPMMU-VP1.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+I.e. will queue in sh-pfc-for-v4.16.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
-v4 [Simon Horman]
-* Use IPMMU-VP1 for FCPVP1 on ES2.0
----
- arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi | 4 ++++
- arch/arm64/boot/dts/renesas/r8a7795.dtsi     | 2 ++
- 2 files changed, 6 insertions(+)
+Gr{oetje,eeting}s,
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-index e90bb26e4f05..bfa2ad20a357 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-@@ -147,6 +147,10 @@
- 	       <&ipmmu_mp1 30>, <&ipmmu_mp1 31>;
- };
- 
-+&fcpvb1 {
-+	iommus = <&ipmmu_vp0 7>;
-+};
-+
- &fcpf1 {
- 	iommus = <&ipmmu_vp0 1>;
- };
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 74076d76f5a5..d5db080678de 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -2044,6 +2044,7 @@
- 			clocks = <&cpg CPG_MOD 606>;
- 			power-domains = <&sysc R8A7795_PD_A3VP>;
- 			resets = <&cpg 606>;
-+			iommus = <&ipmmu_vp1 7>;
- 		};
- 
- 		fcpf0: fcp@fe950000 {
-@@ -2081,6 +2082,7 @@
- 			clocks = <&cpg CPG_MOD 607>;
- 			power-domains = <&sysc R8A7795_PD_A3VP>;
- 			resets = <&cpg 607>;
-+			iommus = <&ipmmu_vp0 5>;
- 		};
- 
- 		vspi0: vsp@fe9a0000 {
--- 
-2.11.0
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
