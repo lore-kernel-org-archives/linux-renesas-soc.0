@@ -1,58 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:57659 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756005AbdKNRIZ (ORCPT
+Received: from mail-qt0-f182.google.com ([209.85.216.182]:50376 "EHLO
+        mail-qt0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751682AbdKMIO3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Nov 2017 12:08:25 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: ysato@users.sourceforge.jp, dalias@libc.org,
-        laurent.pinchart@ideasonboard.com, geert@linux-m68k.org
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, linux-sh@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: [RFC v2 2/2] base: dma-mapping: Postpone page_to_pfn() on mmap()
-Date: Tue, 14 Nov 2017 18:08:06 +0100
-Message-Id: <1510679286-6988-3-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1510679286-6988-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1510679286-6988-1-git-send-email-jacopo+renesas@jmondi.org>
+        Mon, 13 Nov 2017 03:14:29 -0500
+MIME-Version: 1.0
+In-Reply-To: <20171110215411.31912-1-marek.vasut+renesas@gmail.com>
+References: <20171110215411.31912-1-marek.vasut+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 13 Nov 2017 09:14:27 +0100
+Message-ID: <CAMuHMdU-nxv9WAgi2sD9CAwTG3yBD=H_uPtousLYxHScoK=k3g@mail.gmail.com>
+Subject: Re: [PATCH V3] PCI: rcar: Use runtime PM to control controller clock
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-pci <linux-pci@vger.kernel.org>,
+        Hien Dang <hien.dang.eb@renesas.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On SH4 architecture, with SPARSEMEM memory model, translating page to
-pfn hangs the CPU. Post-pone translation to pfn after
-dma_mmap_from_dev_coherent() function call as it succeeds and make page
-translation not necessary.
+On Fri, Nov 10, 2017 at 10:54 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+> From: Dien Pham <dien.pham.ry@rvc.renesas.com>
+>
+> The controller clock can be switched off during suspend/resume,
+> let runtime PM take care of that.
+>
+> Signed-off-by: Dien Pham <dien.pham.ry@rvc.renesas.com>
+> Signed-off-by: Hien Dang <hien.dang.eb@renesas.com>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
 
-This patch was suggested by Laurent Pinchart and he's working to submit
-a proper fix mainline. Not sending for inclusion at the moment.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- drivers/base/dma-mapping.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/base/dma-mapping.c b/drivers/base/dma-mapping.c
-index e584edd..73d64d3 100644
---- a/drivers/base/dma-mapping.c
-+++ b/drivers/base/dma-mapping.c
-@@ -227,8 +227,8 @@ int dma_common_mmap(struct device *dev, struct vm_area_struct *vma,
- #ifndef CONFIG_ARCH_NO_COHERENT_DMA_MMAP
- 	unsigned long user_count = vma_pages(vma);
- 	unsigned long count = PAGE_ALIGN(size) >> PAGE_SHIFT;
--	unsigned long pfn = page_to_pfn(virt_to_page(cpu_addr));
- 	unsigned long off = vma->vm_pgoff;
-+	unsigned long pfn;
+                        Geert
 
- 	vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
-
-@@ -236,6 +236,7 @@ int dma_common_mmap(struct device *dev, struct vm_area_struct *vma,
- 		return ret;
-
- 	if (off < count && user_count <= (count - off)) {
-+		pfn = page_to_pfn(virt_to_page(cpu_addr));
- 		ret = remap_pfn_range(vma, vma->vm_start,
- 				      pfn + off,
- 				      user_count << PAGE_SHIFT,
 --
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
