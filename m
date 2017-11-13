@@ -1,113 +1,141 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:42543 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752934AbdKGLAV (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:36426 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751682AbdKMIrC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Nov 2017 06:00:21 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Felipe Balbi <balbi@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mathias Nyman <mathias.nyman@intel.com>
-CC: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>
-Subject: RE: [PATCH  1/2] dt-bindings: usb-xhci: Document r8a7743 support
-Date: Tue, 7 Nov 2017 11:00:15 +0000
-Message-ID: <KL1PR06MB1702D3E0C32610A0591A445FB8510@KL1PR06MB1702.apcprd06.prod.outlook.com>
-References: <1508148769-47488-1-git-send-email-biju.das@bp.renesas.com>
- <1508148769-47488-2-git-send-email-biju.das@bp.renesas.com>
- <TY1PR06MB0992CBE8ED62C52D6412BF28D84C0@TY1PR06MB0992.apcprd06.prod.outlook.com>
-In-Reply-To: <TY1PR06MB0992CBE8ED62C52D6412BF28D84C0@TY1PR06MB0992.apcprd06.prod.outlook.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
+        Mon, 13 Nov 2017 03:47:02 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: [PATCH v2 1/2] drm: rcar-du: Share plane atomic check code between Gen2 and Gen3
+Date: Mon, 13 Nov 2017 10:46:59 +0200
+Message-Id: <20171113084700.12076-2-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20171113084700.12076-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20171113084700.12076-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Mathias,
+The plane atomic check implementation is identical on Gen2 (DU planes)
+and Gen3 (VSP planes), but two separate functions exist as they operate
+on different data structures. Refactor the code to share the
+implementation.
 
-Does this patch look okay to you?
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Tested-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+---
+ drivers/gpu/drm/rcar-du/rcar_du_plane.c | 27 +++++++++++++++++----------
+ drivers/gpu/drm/rcar-du/rcar_du_plane.h |  4 ++++
+ drivers/gpu/drm/rcar-du/rcar_du_vsp.c   | 22 +---------------------
+ 3 files changed, 22 insertions(+), 31 deletions(-)
 
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.c b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
+index 61833cc1c699..4f076c364f25 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
+@@ -565,27 +565,26 @@ void __rcar_du_plane_setup(struct rcar_du_group *rgrp,
+ 	}
+ }
+ 
+-static int rcar_du_plane_atomic_check(struct drm_plane *plane,
+-				      struct drm_plane_state *state)
++int __rcar_du_plane_atomic_check(struct drm_plane *plane,
++				 struct drm_plane_state *state,
++				 const struct rcar_du_format_info **format)
+ {
+-	struct rcar_du_plane_state *rstate = to_rcar_plane_state(state);
+-	struct rcar_du_plane *rplane = to_rcar_plane(plane);
+-	struct rcar_du_device *rcdu = rplane->group->dev;
++	struct drm_device *dev = plane->dev;
+ 
+ 	if (!state->fb || !state->crtc) {
+-		rstate->format = NULL;
++		*format = NULL;
+ 		return 0;
+ 	}
+ 
+ 	if (state->src_w >> 16 != state->crtc_w ||
+ 	    state->src_h >> 16 != state->crtc_h) {
+-		dev_dbg(rcdu->dev, "%s: scaling not supported\n", __func__);
++		dev_dbg(dev->dev, "%s: scaling not supported\n", __func__);
+ 		return -EINVAL;
+ 	}
+ 
+-	rstate->format = rcar_du_format_info(state->fb->format->format);
+-	if (rstate->format == NULL) {
+-		dev_dbg(rcdu->dev, "%s: unsupported format %08x\n", __func__,
++	*format = rcar_du_format_info(state->fb->format->format);
++	if (*format == NULL) {
++		dev_dbg(dev->dev, "%s: unsupported format %08x\n", __func__,
+ 			state->fb->format->format);
+ 		return -EINVAL;
+ 	}
+@@ -593,6 +592,14 @@ static int rcar_du_plane_atomic_check(struct drm_plane *plane,
+ 	return 0;
+ }
+ 
++static int rcar_du_plane_atomic_check(struct drm_plane *plane,
++				      struct drm_plane_state *state)
++{
++	struct rcar_du_plane_state *rstate = to_rcar_plane_state(state);
++
++	return __rcar_du_plane_atomic_check(plane, state, &rstate->format);
++}
++
+ static void rcar_du_plane_atomic_update(struct drm_plane *plane,
+ 					struct drm_plane_state *old_state)
+ {
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.h b/drivers/gpu/drm/rcar-du/rcar_du_plane.h
+index f62e09f195de..890321b4665d 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_plane.h
++++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.h
+@@ -73,6 +73,10 @@ to_rcar_plane_state(struct drm_plane_state *state)
+ int rcar_du_atomic_check_planes(struct drm_device *dev,
+ 				struct drm_atomic_state *state);
+ 
++int __rcar_du_plane_atomic_check(struct drm_plane *plane,
++				 struct drm_plane_state *state,
++				 const struct rcar_du_format_info **format);
++
+ int rcar_du_planes_init(struct rcar_du_group *rgrp);
+ 
+ void __rcar_du_plane_setup(struct rcar_du_group *rgrp,
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+index 2c96147bc444..dd66dcb8da23 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+@@ -268,28 +268,8 @@ static int rcar_du_vsp_plane_atomic_check(struct drm_plane *plane,
+ 					  struct drm_plane_state *state)
+ {
+ 	struct rcar_du_vsp_plane_state *rstate = to_rcar_vsp_plane_state(state);
+-	struct rcar_du_vsp_plane *rplane = to_rcar_vsp_plane(plane);
+-	struct rcar_du_device *rcdu = rplane->vsp->dev;
+-
+-	if (!state->fb || !state->crtc) {
+-		rstate->format = NULL;
+-		return 0;
+-	}
+ 
+-	if (state->src_w >> 16 != state->crtc_w ||
+-	    state->src_h >> 16 != state->crtc_h) {
+-		dev_dbg(rcdu->dev, "%s: scaling not supported\n", __func__);
+-		return -EINVAL;
+-	}
+-
+-	rstate->format = rcar_du_format_info(state->fb->format->format);
+-	if (rstate->format == NULL) {
+-		dev_dbg(rcdu->dev, "%s: unsupported format %08x\n", __func__,
+-			state->fb->format->format);
+-		return -EINVAL;
+-	}
+-
+-	return 0;
++	return __rcar_du_plane_atomic_check(plane, state, &rstate->format);
+ }
+ 
+ static void rcar_du_vsp_plane_atomic_update(struct drm_plane *plane,
+-- 
 Regards,
-Biju
 
-> -----Original Message-----
-> From: Yoshihiro Shimoda
-> Sent: 17 October 2017 02:34
-> To: Biju Das <biju.das@bp.renesas.com>; Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org>; Felipe Balbi <balbi@kernel.org>; Rob Herrin=
-g
-> <robh+dt@kernel.org>; Mark Rutland <mark.rutland@arm.com>; Mathias
-> Nyman <mathias.nyman@intel.com>
-> Cc: Simon Horman <horms@verge.net.au>; Magnus Damm
-> <magnus.damm@gmail.com>; Chris Paterson <Chris.Paterson2@renesas.com>;
-> Fabrizio Castro <fabrizio.castro@bp.renesas.com>;
-> devicetree@vger.kernel.org; linux-renesas-soc@vger.kernel.org; linux-
-> usb@vger.kernel.org
-> Subject: RE: [PATCH 1/2] dt-bindings: usb-xhci: Document r8a7743 support
->
-> Hi Biju-san,
-> (and added Mathias-san of the XHCI maintainer as TO)
->
-> Thank you for the patch!
->
-> > From: Biju Das, Sent: Monday, October 16, 2017 7:13 PM
-> >
-> > From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> >
-> > Document r8a7743 xhci support. The driver will use the fallback
-> > compatible string "renesas,rcar-gen2-xhci", therefore no driver change
-> > is needed.
-> >
-> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > ---
-> >  Documentation/devicetree/bindings/usb/usb-xhci.txt | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/usb/usb-xhci.txt
-> > b/Documentation/devicetree/bindings/usb/usb-xhci.txt
-> > index 2d80b60..4125d02 100644
-> > --- a/Documentation/devicetree/bindings/usb/usb-xhci.txt
-> > +++ b/Documentation/devicetree/bindings/usb/usb-xhci.txt
-> > @@ -7,12 +7,14 @@ Required properties:
-> >      - "marvell,armada3700-xhci" for Armada 37xx SoCs
-> >      - "marvell,armada-375-xhci" for Armada 375 SoCs
-> >      - "marvell,armada-380-xhci" for Armada 38x SoCs
-> > +    - "renesas,xhci-r8a7743" for r8a7743 SoC
-> >      - "renesas,xhci-r8a7790" for r8a7790 SoC
-> >      - "renesas,xhci-r8a7791" for r8a7791 SoC
-> >      - "renesas,xhci-r8a7793" for r8a7793 SoC
-> >      - "renesas,xhci-r8a7795" for r8a7795 SoC
-> >      - "renesas,xhci-r8a7796" for r8a7796 SoC
-> > -    - "renesas,rcar-gen2-xhci" for a generic R-Car Gen2 compatible dev=
-ice
-> > +    - "renesas,rcar-gen2-xhci" for a generic R-Car Gen2 or RZ/G1 compa=
-tible
-> > +      device
-> >      - "renesas,rcar-gen3-xhci" for a generic R-Car Gen3 compatible dev=
-ice
-> >      - "xhci-platform" (deprecated)
-> >
->
-> It seems good to me. So,
->
-> Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
->
-> Best regards,
-> Yoshihiro Shimoda
-
-
-
-
-Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
-uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
- No. 04586709.
+Laurent Pinchart
