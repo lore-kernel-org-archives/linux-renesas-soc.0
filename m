@@ -1,59 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:47847 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753166AbdK0R45 (ORCPT
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:36084 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753947AbdKNJKw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 27 Nov 2017 12:56:57 -0500
-Date: Mon, 27 Nov 2017 18:56:55 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
+        Tue, 14 Nov 2017 04:10:52 -0500
+Date: Tue, 14 Nov 2017 10:10:47 +0100
+From: jacopo mondi <jacopo@jmondi.org>
 To: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Jacopo Mondi <jacopo@jmondi.org>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 Subject: Re: [RFT] i2c: sh_mobile: avoid unnecessary register read
-Message-ID: <20171127175655.v2gss77fkzvouggg@ninjato>
+Message-ID: <20171114091047.GG19070@w540>
 References: <20171109222053.27093-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ham3l3hekkgh7vdr"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 In-Reply-To: <20171109222053.27093-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-
---ham3l3hekkgh7vdr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Wolfram,
 
 On Thu, Nov 09, 2017 at 11:20:53PM +0100, Wolfram Sang wrote:
 > There is no data when the first WAIT interrupt arrives. No need to read
 > something then.
->=20
+>
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>
+> I am not super happy with (real pos >= 0) done twice, but I didn't find a
+> better solution yet. The compiler will make this cheap anyhow, I guess.
+>
+> Jacopo: can you please test this on top of all other patches?
 
-Applied to for-next, thanks!
+No regressions on Migo-R during image capture.
 
+Tested-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
---ham3l3hekkgh7vdr
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks
+   j
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlocUecACgkQFA3kzBSg
-KbZVsg//aeuh8af6WELRuY92nU9nJ/CVOhL+trRFwWWXq1i1W5qxxOzKn3qrw8y5
-1+h2SOnPPIOLEWTR1riRGwgl2IU/LjbNASqxHuwpmaYaTyA+knAWzp9owzRhz6zx
-REQhwHevw/Qbi+RFNO+K1EnTs6hqDYW1bj7EUmLQXeJLLQlT8WUxyQYhWbU6L75O
-tJ0LD8436b4UdAkP62mm4491EnLm3scFd6L3HarAacIU9rBz6c+r8v1Rk+8vnyzV
-8onQd9+TKgWt59uf29VcaHpFDh/7GnteoN7McvsJU7dSblJPlZ5R3yw1b7zrljwc
-bepequu4wxFZQ3tl44nnVj9OVLotATh6FgeH2S4OhYhGHRb/wg5s4WHP729rB2Qk
-runIkQyDIuYAmWgqCNtXKiRJ5lCJN/5RwvwIDD6U1HJf8YZxyxvyJr8ud8L1MTm7
-odC2hfu/uc3qTLZcYGjjf6HJ/X27lbJpX9aiK2PClODg3h2rES1RrXdHH77JIAYw
-p7+YfXQGWKTUMrF9MYejr8wQm3jkdF79v1fTU/EcxaWT5lBHeWPmBVodHIQnxVp9
-s8s3UnC6IZA2Z8hhSifrPIIOu8XMR0OEt4g5Yg9gLnwOSY4vA+9WOujQtjmw5lWX
-g1weGXfttlOZ3U3GAU3c5ibPkG+C6AvEOJrHLXpMwjsWq/BNadM=
-=Grli
------END PGP SIGNATURE-----
-
---ham3l3hekkgh7vdr--
+>
+>  drivers/i2c/busses/i2c-sh_mobile.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/i2c/busses/i2c-sh_mobile.c b/drivers/i2c/busses/i2c-sh_mobile.c
+> index 80561ffbcf7b46..40a66d466c3c49 100644
+> --- a/drivers/i2c/busses/i2c-sh_mobile.c
+> +++ b/drivers/i2c/busses/i2c-sh_mobile.c
+> @@ -433,8 +433,9 @@ static int sh_mobile_i2c_isr_rx(struct sh_mobile_i2c_data *pd)
+>  				break;
+>  			}
+>  			data = i2c_op(pd, OP_RX_STOP_DATA, 0);
+> -		} else
+> +		} else if (real_pos >= 0) {
+>  			data = i2c_op(pd, OP_RX, 0);
+> +		}
+>
+>  		if (real_pos >= 0)
+>  			pd->msg->buf[real_pos] = data;
+> --
+> 2.11.0
+>
