@@ -1,66 +1,178 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms+renesas@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 10/12] ARM: dts: r8a7793: Remove CMT renesas,channels-mask
-Date: Tue, 28 Nov 2017 14:47:34 +0100
-Message-Id: <1511876856-9495-11-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1511876856-9495-1-git-send-email-geert+renesas@glider.be>
-References: <1511876856-9495-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:46402 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754190AbdKNQ7T (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 14 Nov 2017 11:59:19 -0500
+Date: Tue, 14 Nov 2017 17:59:14 +0100
+From: jacopo mondi <jacopo@jmondi.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        ysato@users.sourceforge.jp, dalias@libc.org,
+        linux-sh@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sh: migor: Reserve memory block for CEU
+Message-ID: <20171114165914.GI19070@w540>
+References: <1510164346-21134-1-git-send-email-jacopo+renesas@jmondi.org>
+ <2038988.rgqq23lX41@avalon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2038988.rgqq23lX41@avalon>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Hi Laurent, Geert,
 
-Update the DTS to remove the now deprecated "renesas,channels-mask"
-property.
+On Thu, Nov 09, 2017 at 03:39:42AM +0200, Laurent Pinchart wrote:
+> Hi Jacopo,
+>
+> Thank you for the patch.
 
-The channel information is now kept in the device driver and can easily
-be determined based on the compat string.
+I'm sending a v2 of this, with an additional patch to postpone page to
+pfn mapping, as it hangs the CPU on SH4 with SPARSEMEM enabled.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v4:
-  - Rebased against renesas-devel-20171127-v4.15-rc1,
+Laurent: as you have suggested that patch, and I was under the
+impression you wanted to submit a proper fix for that, please feel
+free to reply to that pointing this out, if that's the case.
 
-v3:
-  - Take over from Magnus,
-  - Split in per-SoC patches,
+I need these two patch sent out because:
+1) the sh_mobile_ceu driver on Migo-R mainline is broken without them
+2) I'm basing my patches to move Migo-R to use the new CEU driver on
+   top of them.
 
-v2:
-  - Rebased on top of power-domain changes,
-  - Added Acked-by and Tested-by from Geert.
----
- arch/arm/boot/dts/r8a7793.dtsi | 4 ----
- 1 file changed, 4 deletions(-)
+Thanks
+  j
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index 035b5a7639bc7eb7..61dd291d907da2f5 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -257,8 +257,6 @@
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
- 		resets = <&cpg 124>;
- 
--		renesas,channels-mask = <0x60>;
--
- 		status = "disabled";
- 	};
- 
-@@ -278,8 +276,6 @@
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
- 		resets = <&cpg 329>;
- 
--		renesas,channels-mask = <0xff>;
--
- 		status = "disabled";
- 	};
- 
--- 
-2.7.4
-
+>
+> On Wednesday, 8 November 2017 20:05:46 EET Jacopo Mondi wrote:
+> > A memory region for CEU video buffer has to be reserved during machine
+> > initialization.
+> >
+> > Originally, it was allocated through DMA API helpers and stored in the
+> > second IORESOURCE_MEM entry, to be later remapped by the CEU driver with
+> > a call to 'dma_declare_coherent_memory()'
+> >
+> > As Linux does not allow anymore to remap system RAM regions with
+> > 'memremap' function, sh_mobile_ceu driver fails when trying to remap the
+> > memory area:
+> >
+> > WARN_ONCE(1, "memremap attempted on ram %pa size: %#lx\n",
+> > 	  &offset, (unsigned long) size)
+> >
+> > from 'memremap()' function in kernel/memremap.c
+> >
+> > To avoid hitting that WARN_ONCE() and have memory successfully remapped,
+> > reserve a region using '.mv_mem_reserve' member of SH's 'struct
+> > sh_machine_vector' to make sure memory is reserved early enough, and
+> > removed from the available system RAM.
+>
+> I'd phrase it the other way around. The important point here is that the
+> reserved memory block must be removed from system memory in order to be
+> remapable. This requires usage of the memblock API, and as this API is only
+> usable very early during the boot process, we have to use the .mv_mem_reserve
+> operation.
+>
+> > This is similar to what happens on ARM architecture with
+> > 'arm_memblock_steal()' function.
+> >
+> > Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > ---
+> >  arch/sh/boards/mach-migor/setup.c | 28 ++++++++++++++++++++++++++--
+> >  1 file changed, 26 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/arch/sh/boards/mach-migor/setup.c
+> > b/arch/sh/boards/mach-migor/setup.c index 0bcbe58..080627c 100644
+> > --- a/arch/sh/boards/mach-migor/setup.c
+> > +++ b/arch/sh/boards/mach-migor/setup.c
+> > @@ -12,6 +12,7 @@
+> >  #include <linux/interrupt.h>
+> >  #include <linux/input.h>
+> >  #include <linux/input/sh_keysc.h>
+> > +#include <linux/memblock.h>
+> >  #include <linux/mmc/host.h>
+> >  #include <linux/mtd/physmap.h>
+> >  #include <linux/mfd/tmio.h>
+> > @@ -45,6 +46,9 @@
+> >   * 0x18000000       8GB    8   NAND Flash (K9K8G08U0A)
+> >   */
+> >
+> > +#define CEU_BUFFER_MEMORY_SIZE		(4 << 20)
+> > +static phys_addr_t ceu_dma_membase;
+> > +
+> >  static struct smc91x_platdata smc91x_info = {
+> >  	.flags = SMC91X_USE_16BIT | SMC91X_NOWAIT,
+> >  };
+> > @@ -501,6 +505,8 @@ extern char migor_sdram_leave_end;
+> >
+> >  static int __init migor_devices_setup(void)
+> >  {
+> > +	struct resource *r = &migor_ceu_device.resource[2];
+> > +
+> >  	/* register board specific self-refresh code */
+> >  	sh_mobile_register_self_refresh(SUSP_SH_STANDBY | SUSP_SH_SF,
+> >  					&migor_sdram_enter_start,
+> > @@ -632,8 +638,6 @@ static int __init migor_devices_setup(void)
+> >  #endif
+> >  	__raw_writew(__raw_readw(PORT_MSELCRB) | 0x2000, PORT_MSELCRB); /* D15->D8
+> > */
+> >
+> > -	platform_resource_setup_memory(&migor_ceu_device, "ceu", 4 << 20);
+> > -
+> >  	/* SIU: Port B */
+> >  	gpio_request(GPIO_FN_SIUBOLR, NULL);
+> >  	gpio_request(GPIO_FN_SIUBOBT, NULL);
+> > @@ -647,6 +651,12 @@ static int __init migor_devices_setup(void)
+> >  	 */
+> >  	__raw_writew(__raw_readw(PORT_MSELCRA) | 1, PORT_MSELCRA);
+> >
+> > +	/* Setup additional memory resources for Migo-R */
+>
+> I would initialize the r variable here instead of at declaration time to make
+> the code more readable. Otherwise the reader will have to scroll back to find
+> out what r points to.
+>
+> Other than that,
+>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>
+> > +	r->flags = IORESOURCE_MEM;
+> > +	r->start = ceu_dma_membase;
+> > +	r->end = r->start + CEU_BUFFER_MEMORY_SIZE - 1;
+> > +	r->name = "ceu";
+> > +
+> >  	i2c_register_board_info(0, migor_i2c_devices,
+> >  				ARRAY_SIZE(migor_i2c_devices));
+> >
+> > @@ -665,10 +675,24 @@ static int migor_mode_pins(void)
+> >  	return MODE_PIN0 | MODE_PIN1 | MODE_PIN5;
+> >  }
+> >
+> > +/* Reserve a portion of memory for CEU buffers */
+> > +static void __init migor_mv_mem_reserve(void)
+> > +{
+> > +	phys_addr_t phys;
+> > +	phys_addr_t size = CEU_BUFFER_MEMORY_SIZE;
+> > +
+> > +	phys = memblock_alloc_base(size, PAGE_SIZE, MEMBLOCK_ALLOC_ANYWHERE);
+> > +	memblock_free(phys, size);
+> > +	memblock_remove(phys, size);
+> > +
+> > +	ceu_dma_membase = phys;
+> > +}
+> > +
+> >  /*
+> >   * The Machine Vector
+> >   */
+> >  static struct sh_machine_vector mv_migor __initmv = {
+> >  	.mv_name		= "Migo-R",
+> >  	.mv_mode_pins		= migor_mode_pins,
+> > +	.mv_mem_reserve		= migor_mv_mem_reserve,
+> >  };
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
+>
