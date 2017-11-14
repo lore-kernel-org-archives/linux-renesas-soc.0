@@ -1,95 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:62150 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752887AbdKNPlj (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:47154 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753741AbdKNPkM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Nov 2017 10:41:39 -0500
+        Tue, 14 Nov 2017 10:40:12 -0500
 From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: Simon Horman <horms@verge.net.au>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "Simon Horman" <horms@verge.net.au>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH v2 2/2] pinctrl: sh-pfc: r8a7791: Add can_clk function
-Date: Tue, 14 Nov 2017 15:41:17 +0000
-Message-Id: <1510674077-31136-3-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1510674077-31136-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1510674077-31136-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Subject: RE: [RFC PATCH 2/2] pinctrl: sh-pfc: r8a7791: Add can_clk function
+Date: Tue, 14 Nov 2017 15:40:00 +0000
+Message-ID: <TY1PR06MB08951DD2EFFBE3B463E303ABC0280@TY1PR06MB0895.apcprd06.prod.outlook.com>
+References: <CAMuHMdV=8rAE5z2VmCjL-M_MXY6TsKM_+0c-bsqDsjDZYWU1FA@mail.gmail.com>
+ <1510334189-8942-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1510334189-8942-3-git-send-email-fabrizio.castro@bp.renesas.com>
+ <CAMuHMdVLAdyrqecJmn09qLBY5=vA7YY-Opu79SvaDNdLp5DXtA@mail.gmail.com>
+In-Reply-To: <CAMuHMdVLAdyrqecJmn09qLBY5=vA7YY-Opu79SvaDNdLp5DXtA@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds can_clk function to r8a7743/r8a7791 which is cleaner,
-and allows for independent configuration.
-We keep the can_clk* pins definitions from within can0_groups and
-can1_groups for uniformity and backwards compatibility.
-
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
-v1->v2
-* Retained can_clk* pins inside can[01]_groups
-* Added comments
-
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 22 +++++++++++++++++++++-
- 1 file changed, 21 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-index 10bd35f..c01ef02d 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-@@ -4826,6 +4826,10 @@ static const char * const can0_groups[] = {
- 	"can0_data_d",
- 	"can0_data_e",
- 	"can0_data_f",
-+	/*
-+	 * Retained for backwards compatibility, use can_clk_groups in new
-+	 * designs.
-+	 */
- 	"can_clk",
- 	"can_clk_b",
- 	"can_clk_c",
-@@ -4837,6 +4841,21 @@ static const char * const can1_groups[] = {
- 	"can1_data_b",
- 	"can1_data_c",
- 	"can1_data_d",
-+	/*
-+	 * Retained for backwards compatibility, use can_clk_groups in new
-+	 * designs.
-+	 */
-+	"can_clk",
-+	"can_clk_b",
-+	"can_clk_c",
-+	"can_clk_d",
-+};
-+
-+/*
-+ * can_clk_groups allows for independent configuration, use can_clk function
-+ * in new designs.
-+ */
-+static const char * const can_clk_groups[] = {
- 	"can_clk",
- 	"can_clk_b",
- 	"can_clk_c",
-@@ -5308,7 +5327,7 @@ static const char * const vin2_groups[] = {
- };
- 
- static const struct {
--	struct sh_pfc_function common[56];
-+	struct sh_pfc_function common[57];
- 	struct sh_pfc_function r8a779x[2];
- } pinmux_functions = {
- 	.common = {
-@@ -5316,6 +5335,7 @@ static const struct {
- 		SH_PFC_FUNCTION(avb),
- 		SH_PFC_FUNCTION(can0),
- 		SH_PFC_FUNCTION(can1),
-+		SH_PFC_FUNCTION(can_clk),
- 		SH_PFC_FUNCTION(du),
- 		SH_PFC_FUNCTION(du0),
- 		SH_PFC_FUNCTION(du1),
--- 
-2.7.4
+SGVsbG8gR2VlcnQsDQoNCnRoYW5rIHlvdSBmb3IgeW91ciBjb21tZW50cy4NCg0KPg0KPiBBcyB0
+aGUgcGluIGdyb3VwcyBhbmQgZnVuY3Rpb25zIGFyZSBwYXJ0IG9mIHRoZSBzdGFibGUgRFQgQUJJ
+LCB5b3UgY2Fubm90IGp1c3QNCj4gcmVtb3ZlIHRoZSBjYW5fY2xrKiBwaW5zIGZyb20gY2FuMF9n
+cm91cHNbXSwgYXMgdGhhdCB3b3VsZCBicmVhayBleGlzdGluZyB1c2Vycy4NCj4NCj4gSSB3b3Vs
+ZCBrZWVwIHRoZW0sIGJ1dCBhZGQgYSBjb21tZW50ICIvKiByZXRhaW5lZCBmb3IgYmFja3dhcmRz
+DQo+IGNvbXBhdGliaWxpdHkgKi8iLg0KPg0KPiBBZGRpbmcgYSBuZXcgY2FuX2Nsa19ncm91cHNb
+XSAuLi4NCj4NCj4gYW5kIGNhbl9jbGsgZnVuY3Rpb24gaXMgT0ssIHRob3VnaC4NCj4NCj4gTXkg
+Y29tbWVudHMgYXBwbHkgdG8geW91ciByOGE3Nzk0IHBhdGNoLCB0b28uIEV4Y2VwdCB0aGF0IG9u
+IHI4YTc3OTQgd2UNCj4gZGlkbid0IGhhdmUgQ0FOIHN1cHBvcnQgaW4gcGZjLXI4YTc3OTQuYyBi
+ZWZvcmUsIGJ1dCBJIHdvdWxkIGxpa2UgdG8gdHJlYXQgYWxsDQo+IFItQ2FyIEdlbjIgYW5kIFJa
+L0cxIFNvQ3MgaW4gdGhlIHNhbWUgd2F5Lg0KDQpJJ2xsIHNlbmQgYSB2MiB0byBmaXggdGhpcy4N
+Cg0KVGhhbmtzLA0KRmFiDQoNCj4NCj4gR3J7b2V0amUsZWV0aW5nfXMsDQo+DQo+ICAgICAgICAg
+ICAgICAgICAgICAgICAgIEdlZXJ0DQo+DQo+IC0tDQo+IEdlZXJ0IFV5dHRlcmhvZXZlbiAtLSBU
+aGVyZSdzIGxvdHMgb2YgTGludXggYmV5b25kIGlhMzIgLS0gZ2VlcnRAbGludXgtbTY4ay5vcmcN
+Cj4NCj4gSW4gcGVyc29uYWwgY29udmVyc2F0aW9ucyB3aXRoIHRlY2huaWNhbCBwZW9wbGUsIEkg
+Y2FsbCBteXNlbGYgYSBoYWNrZXIuIEJ1dA0KPiB3aGVuIEknbSB0YWxraW5nIHRvIGpvdXJuYWxp
+c3RzIEkganVzdCBzYXkgInByb2dyYW1tZXIiIG9yIHNvbWV0aGluZyBsaWtlIHRoYXQuDQo+ICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLS0gTGludXMgVG9ydmFsZHMNCg0KDQoNClJl
+bmVzYXMgRWxlY3Ryb25pY3MgRXVyb3BlIEx0ZCwgRHVrZXMgTWVhZG93LCBNaWxsYm9hcmQgUm9h
+ZCwgQm91cm5lIEVuZCwgQnVja2luZ2hhbXNoaXJlLCBTTDggNUZILCBVSy4gUmVnaXN0ZXJlZCBp
+biBFbmdsYW5kICYgV2FsZXMgdW5kZXIgUmVnaXN0ZXJlZCBOby4gMDQ1ODY3MDkuDQo=
