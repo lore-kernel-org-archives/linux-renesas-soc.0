@@ -1,13 +1,17 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:50958 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752362AbdKNSA0 (ORCPT
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:50106 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751466AbdKNIoz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Nov 2017 13:00:26 -0500
-Received: by mail-lf0-f66.google.com with SMTP id a132so23314553lfa.7
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 14 Nov 2017 10:00:25 -0800 (PST)
+        Tue, 14 Nov 2017 03:44:55 -0500
+MIME-Version: 1.0
+In-Reply-To: <20171110200714.406365231@cogentembedded.com>
+References: <20171110200714.406365231@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 14 Nov 2017 09:44:54 +0100
+Message-ID: <CAMuHMdWCj=CjA_zyC1GKr=KEk2CNMAtwvREw25R1uJktZucY4w@mail.gmail.com>
 Subject: Re: [PATCH 3/3] arm64: dts: renesas: eagle: add EtherAVB pins
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Cc: Simon Horman <horms@verge.net.au>,
         Rob Herring <robh+dt@kernel.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
@@ -18,56 +22,56 @@ Cc: Simon Horman <horms@verge.net.au>,
         Mark Rutland <mark.rutland@arm.com>,
         "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>
-References: <20171110200714.406365231@cogentembedded.com>
- <CAMuHMdWCj=CjA_zyC1GKr=KEk2CNMAtwvREw25R1uJktZucY4w@mail.gmail.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <1017d8fb-e353-f212-09a9-a28bf07eddc2@cogentembedded.com>
-Date: Tue, 14 Nov 2017 21:00:21 +0300
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdWCj=CjA_zyC1GKr=KEk2CNMAtwvREw25R1uJktZucY4w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello.
+Hi Sergei,
 
-On 11/14/2017 11:44 AM, Geert Uytterhoeven wrote:
+On Fri, Nov 10, 2017 at 9:02 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add the (previously omitted) EtherAVB pin data to the Eagle board's
+> device tree.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
->> Add the (previously omitted) EtherAVB pin data to the Eagle board's
->> device tree.
->>
->> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> 
-> Thanks for your patch!
-> 
->> --- renesas.orig/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
->> +++ renesas/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
->> @@ -34,6 +34,9 @@
-[...]
->> @@ -53,6 +56,11 @@
->>   };
->>
->>   &pfc {
->> +       avb_pins: avb {
->> +               groups = "avb0_mdio", "avb0_mii";
-> 
-> Oh no, its'called "avb0_mdio" here, but "avb(0)_mdc" on all other
-> R-Car Gen3 SoCs?
+Thanks for your patch!
 
-    Can you remember the reason? I don;t want to follow the bad example. :-)
+> --- renesas.orig/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+> +++ renesas/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+> @@ -34,6 +34,9 @@
+>  };
+>
+>  &avb {
+> +       pinctrl-0 = <&avb_pins>;
+> +       pinctrl-names = "default";
+> +
+>         renesas,no-ether-link;
+>         phy-handle = <&phy0>;
+>         status = "okay";
+> @@ -53,6 +56,11 @@
+>  };
+>
+>  &pfc {
+> +       avb_pins: avb {
+> +               groups = "avb0_mdio", "avb0_mii";
 
-> What about "avb0_link", which is connected through "L_LNK"?
+Oh no, its'called "avb0_mdio" here, but "avb(0)_mdc" on all other
+R-Car Gen3 SoCs?
 
-    The same as for other gen3 board, the AVB node has renesas,no-ether-link".
-I tried to verify that property on Eagle, and left it intact as a result... 
-Will re-test removing it once more.
+What about "avb0_link", which is connected through "L_LNK"?
 
-[...]
+> +               function = "avb0";
+> +       };
+> +
 
-> Gr{oetje,eeting}s,
-> 
->                          Geert
+Gr{oetje,eeting}s,
 
-MBR, Sergei
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
