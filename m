@@ -1,206 +1,122 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:47686 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754830AbdKKAjG (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:40026 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754211AbdKNO27 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Nov 2017 19:39:06 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v7 12/25] rcar-vin: move media bus configuration to struct rvin_info
-Date: Sat, 11 Nov 2017 01:38:22 +0100
-Message-Id: <20171111003835.4909-13-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20171111003835.4909-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20171111003835.4909-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Tue, 14 Nov 2017 09:28:59 -0500
+Received: from ramsan.of.borg ([192.168.97.29] helo=ramsan)
+        by ayla.of.borg with esmtp (Exim 4.86_2)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1eEcCv-0001wi-67
+        for linux-renesas-soc@vger.kernel.org; Tue, 14 Nov 2017 15:28:57 +0100
+Received: from geert by ramsan with local (Exim 4.86_2)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1eEcCv-0005zY-0h
+        for linux-renesas-soc@vger.kernel.org; Tue, 14 Nov 2017 15:28:57 +0100
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: linux-renesas-soc@vger.kernel.org
+Subject: renesas-drivers-2017-11-14-v4.14
+Date: Tue, 14 Nov 2017 15:28:56 +0100
+Message-Id: <1510669736-22991-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Bus configuration will once the driver is extended to support Gen3
-contain information not specific to only the directly connected parallel
-subdevice. Move it to struct rvin_info to show it's not always coupled
-to the parallel subdevice.
+I have pushed renesas-drivers-2017-11-14-v4.14 to
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
----
- drivers/media/platform/rcar-vin/rcar-core.c | 18 +++++++++---------
- drivers/media/platform/rcar-vin/rcar-dma.c  | 11 ++++++-----
- drivers/media/platform/rcar-vin/rcar-v4l2.c |  2 +-
- drivers/media/platform/rcar-vin/rcar-vin.h  |  9 ++++-----
- 4 files changed, 20 insertions(+), 20 deletions(-)
+This tree is meant to ease development of platform support and drivers
+for Renesas ARM SoCs. It is created by merging branches with driver code
+submitted or planned for submission to maintainers into the development
+branch of Simon Horman's renesas.git tree.
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index cb761057459caa3f..fa76f494ec0c4bd2 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -100,10 +100,10 @@ static int rvin_digital_notify_bound(struct v4l2_async_notifier *notifier,
- 	vin->digital->sink_pad = ret < 0 ? 0 : ret;
- 
- 	/* Find compatible subdevices mbus format */
--	vin->digital->code = 0;
-+	vin->code = 0;
- 	code.index = 0;
- 	code.pad = vin->digital->source_pad;
--	while (!vin->digital->code &&
-+	while (!vin->code &&
- 	       !v4l2_subdev_call(subdev, pad, enum_mbus_code, NULL, &code)) {
- 		code.index++;
- 		switch (code.code) {
-@@ -111,16 +111,16 @@ static int rvin_digital_notify_bound(struct v4l2_async_notifier *notifier,
- 		case MEDIA_BUS_FMT_UYVY8_2X8:
- 		case MEDIA_BUS_FMT_UYVY10_2X10:
- 		case MEDIA_BUS_FMT_RGB888_1X24:
--			vin->digital->code = code.code;
-+			vin->code = code.code;
- 			vin_dbg(vin, "Found media bus format for %s: %d\n",
--				subdev->name, vin->digital->code);
-+				subdev->name, vin->code);
- 			break;
- 		default:
- 			break;
- 		}
- 	}
- 
--	if (!vin->digital->code) {
-+	if (!vin->code) {
- 		vin_err(vin, "Unsupported media bus format for %s\n",
- 			subdev->name);
- 		return -EINVAL;
-@@ -186,16 +186,16 @@ static int rvin_digital_parse_v4l2(struct device *dev,
- 	if (vep->base.port || vep->base.id)
- 		return -ENOTCONN;
- 
--	rvge->mbus_cfg.type = vep->bus_type;
-+	vin->mbus_cfg.type = vep->bus_type;
- 
--	switch (rvge->mbus_cfg.type) {
-+	switch (vin->mbus_cfg.type) {
- 	case V4L2_MBUS_PARALLEL:
- 		vin_dbg(vin, "Found PARALLEL media bus\n");
--		rvge->mbus_cfg.flags = vep->bus.parallel.flags;
-+		vin->mbus_cfg.flags = vep->bus.parallel.flags;
- 		break;
- 	case V4L2_MBUS_BT656:
- 		vin_dbg(vin, "Found BT656 media bus\n");
--		rvge->mbus_cfg.flags = 0;
-+		vin->mbus_cfg.flags = 0;
- 		break;
- 	default:
- 		vin_err(vin, "Unknown media bus type\n");
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index 506d51a13b4f5f40..9362e7dba5e3ba95 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -633,7 +633,7 @@ static int rvin_setup(struct rvin_dev *vin)
- 	/*
- 	 * Input interface
- 	 */
--	switch (vin->digital->code) {
-+	switch (vin->code) {
- 	case MEDIA_BUS_FMT_YUYV8_1X16:
- 		/* BT.601/BT.1358 16bit YCbCr422 */
- 		vnmc |= VNMC_INF_YUV16;
-@@ -641,7 +641,7 @@ static int rvin_setup(struct rvin_dev *vin)
- 		break;
- 	case MEDIA_BUS_FMT_UYVY8_2X8:
- 		/* BT.656 8bit YCbCr422 or BT.601 8bit YCbCr422 */
--		vnmc |= vin->digital->mbus_cfg.type == V4L2_MBUS_BT656 ?
-+		vnmc |= vin->mbus_cfg.type == V4L2_MBUS_BT656 ?
- 			VNMC_INF_YUV8_BT656 : VNMC_INF_YUV8_BT601;
- 		input_is_yuv = true;
- 		break;
-@@ -650,7 +650,7 @@ static int rvin_setup(struct rvin_dev *vin)
- 		break;
- 	case MEDIA_BUS_FMT_UYVY10_2X10:
- 		/* BT.656 10bit YCbCr422 or BT.601 10bit YCbCr422 */
--		vnmc |= vin->digital->mbus_cfg.type == V4L2_MBUS_BT656 ?
-+		vnmc |= vin->mbus_cfg.type == V4L2_MBUS_BT656 ?
- 			VNMC_INF_YUV10_BT656 : VNMC_INF_YUV10_BT601;
- 		input_is_yuv = true;
- 		break;
-@@ -662,11 +662,11 @@ static int rvin_setup(struct rvin_dev *vin)
- 	dmr2 = VNDMR2_FTEV | VNDMR2_VLV(1);
- 
- 	/* Hsync Signal Polarity Select */
--	if (!(vin->digital->mbus_cfg.flags & V4L2_MBUS_HSYNC_ACTIVE_LOW))
-+	if (!(vin->mbus_cfg.flags & V4L2_MBUS_HSYNC_ACTIVE_LOW))
- 		dmr2 |= VNDMR2_HPS;
- 
- 	/* Vsync Signal Polarity Select */
--	if (!(vin->digital->mbus_cfg.flags & V4L2_MBUS_VSYNC_ACTIVE_LOW))
-+	if (!(vin->mbus_cfg.flags & V4L2_MBUS_VSYNC_ACTIVE_LOW))
- 		dmr2 |= VNDMR2_VPS;
- 
- 	/*
-@@ -875,6 +875,7 @@ static void rvin_capture_stop(struct rvin_dev *vin)
- 	rvin_write(vin, rvin_read(vin, VNMC_REG) & ~VNMC_ME, VNMC_REG);
- }
- 
-+
- /* -----------------------------------------------------------------------------
-  * DMA Functions
-  */
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index b4e96e18ab845f8b..f7e04601007edb64 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -161,7 +161,7 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
- 
- 	sd = vin_to_source(vin);
- 
--	v4l2_fill_mbus_format(&format.format, pix, vin->digital->code);
-+	v4l2_fill_mbus_format(&format.format, pix, vin->code);
- 
- 	pad_cfg = v4l2_subdev_alloc_pad_config(sd);
- 	if (pad_cfg == NULL)
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index b97391c414d01bb0..4bd9223be1ee6b6a 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -62,8 +62,6 @@ struct rvin_video_format {
-  * struct rvin_graph_entity - Video endpoint from async framework
-  * @asd:	sub-device descriptor for async framework
-  * @subdev:	subdevice matched using async framework
-- * @code:	Media bus format from source
-- * @mbus_cfg:	Media bus format from DT
-  * @source_pad:	source pad of remote subdevice
-  * @sink_pad:	sink pad of remote subdevice
-  */
-@@ -71,9 +69,6 @@ struct rvin_graph_entity {
- 	struct v4l2_async_subdev asd;
- 	struct v4l2_subdev *subdev;
- 
--	u32 code;
--	struct v4l2_mbus_config mbus_cfg;
--
- 	unsigned int source_pad;
- 	unsigned int sink_pad;
- };
-@@ -115,6 +110,8 @@ struct rvin_info {
-  * @sequence:		V4L2 buffers sequence number
-  * @state:		keeps track of operation state
-  *
-+ * @mbus_cfg:		media bus format from DT
-+ * @code:		media bus coide from subdevice
-  * @format:		active V4L2 pixel format
-  *
-  * @crop:		active cropping
-@@ -141,6 +138,8 @@ struct rvin_dev {
- 	unsigned int sequence;
- 	enum rvin_dma_state state;
- 
-+	struct v4l2_mbus_config mbus_cfg;
-+	u32 code;
- 	struct v4l2_pix_format format;
- 
- 	struct v4l2_rect crop;
--- 
-2.15.0
+As we are currently focusing on a stable v4.14, no for-next branches
+of various subsystem trees have been included.
+
+Today's version is based on renesas-devel-20171113-v4.14.
+
+Included branches with driver code:
+  - clk-renesas-for-v4.15
+  - sh-pfc-for-v4.15
+  - topic/r8a7794-smp-v3-rebased
+  - topic/cmt-binding-rework-driver-v3
+  - topic/cmt-binding-rework-dt-v3-rebased
+  - topic/rcar-genpd-wakeup-v3-v4.14
+  - topic/phy-reset-v3
+  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/rcar-gen3-z-clk-v3
+  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/cpufreq-automatic
+  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/rcar-gen3-cpufreq-dts-v2
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#renesas/topic/i2c-fault-injection
+  - topic/vsp1/tlb-optimise-v2-rebased1
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#tags/vsp-du/du-suspend-resume/v1
+
+Included fixes:
+  - clk: renesas: rcar-gen3: Fix Z and Z2 clock frequency
+  - clk: renesas: rcar-gen3: Fix Z2 clock frequency calculation
+  - [LOCAL] arm64: defconfig: Update renesas_defconfig
+
+
+I have also pushed renesas-drivers-next-2017-11-14-v4.14 to
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
+
+This tree does include the for-next branches of various subsystem trees,
+and more branches with driver code.
+
+Included subsystem trees:
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
+  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
+  - git://people.freedesktop.org/~airlied/linux#drm-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
+  - git://linuxtv.org/mchehab/media-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
+  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
+  - git://git.infradead.org/users/vkoul/slave-dma.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
+  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
+  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
+  - git://github.com/bzolnier/linux.git#fbdev-for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
+  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
+  - git://anongit.freedesktop.org/drm/drm-misc#for-linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
+
+Included branches with driver code:
+  - sh-pfc
+  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/ipmmu-driver-v5
+  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/ipmmu-bindings
+  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/ipmmu-dt-r8a7795-v5
+  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/ipmmu-dt-r8a7796-v2
+  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/ipmmu-dt-r8a77970-v2
+  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/ipmmu-dt-r8a77995-v2
+  - git://git.ragnatech.se/linux#for-renesas-drivers
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
