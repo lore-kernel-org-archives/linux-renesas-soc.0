@@ -1,52 +1,89 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:47686 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754777AbdKKAjE (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:40040 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751759AbdKNIf3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Nov 2017 19:39:04 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v7 05/25] rcar-vin: change name of video device
-Date: Sat, 11 Nov 2017 01:38:15 +0100
-Message-Id: <20171111003835.4909-6-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20171111003835.4909-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20171111003835.4909-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Tue, 14 Nov 2017 03:35:29 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Alex Williamson <alex.williamson@redhat.com>,
+        Joerg Roedel <joro@8bytes.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        iommu@lists.linux-foundation.org,
+        linux-renesas-soc@vger.kernel.org,
+        Magnus Damm <damm+renesas@opensource.se>
+Subject: [PATCH/RFT v5 2/3] iommu/ipmmu-vmsa: Hook up r8a7796 DT matching code
+Date: Tue, 14 Nov 2017 09:34:50 +0100
+Message-Id: <20171114083451.4052-3-horms+renesas@verge.net.au>
+In-Reply-To: <20171114083451.4052-1-horms+renesas@verge.net.au>
+References: <20171114083451.4052-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The rcar-vin driver needs to be part of a media controller to support
-Gen3. Give each VIN instance a unique name so it can be referenced from
-userspace.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+Support the r8a7796 IPMMU by sharing feature flags between
+r8a7795 and r8a7796. Also update IOMMU_OF_DECLARE to hook
+up the updated compat string.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/iommu/ipmmu-vmsa.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 76c0b8fa8602d08d..f501da9df48c288b 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -878,7 +878,8 @@ int rvin_v4l2_register(struct rvin_dev *vin)
- 	vdev->fops = &rvin_fops;
- 	vdev->v4l2_dev = &vin->v4l2_dev;
- 	vdev->queue = &vin->queue;
--	strlcpy(vdev->name, KBUILD_MODNAME, sizeof(vdev->name));
-+	snprintf(vdev->name, sizeof(vdev->name), "%s %s", KBUILD_MODNAME,
-+		 dev_name(vin->dev));
- 	vdev->release = video_device_release_empty;
- 	vdev->ioctl_ops = &rvin_ioctl_ops;
- 	vdev->lock = &vin->lock;
+diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
+index 286af358d8ce..f936f834984a 100644
+--- a/drivers/iommu/ipmmu-vmsa.c
++++ b/drivers/iommu/ipmmu-vmsa.c
+@@ -760,8 +760,9 @@ static bool ipmmu_slave_whitelist(struct device *dev)
+ 	return false;
+ }
+ 
+-static const struct soc_device_attribute soc_r8a7795[] = {
++static const struct soc_device_attribute soc_rcar_gen3[] = {
+ 	{ .soc_id = "r8a7795", },
++	{ .soc_id = "r8a7796", },
+ 	{ /* sentinel */ }
+ };
+ 
+@@ -769,7 +770,7 @@ static int ipmmu_of_xlate(struct device *dev,
+ 			  struct of_phandle_args *spec)
+ {
+ 	/* For R-Car Gen3 use a white list to opt-in slave devices */
+-	if (soc_device_match(soc_r8a7795) && !ipmmu_slave_whitelist(dev))
++	if (soc_device_match(soc_rcar_gen3) && !ipmmu_slave_whitelist(dev))
+ 		return -ENODEV;
+ 
+ 	iommu_fwspec_add_ids(dev, spec->args, 1);
+@@ -923,7 +924,7 @@ static const struct ipmmu_features ipmmu_features_default = {
+ 	.twobit_imttbcr_sl0 = false,
+ };
+ 
+-static const struct ipmmu_features ipmmu_features_r8a7795 = {
++static const struct ipmmu_features ipmmu_features_rcar_gen3 = {
+ 	.use_ns_alias_offset = false,
+ 	.has_cache_leaf_nodes = true,
+ 	.number_of_contexts = 8,
+@@ -937,7 +938,10 @@ static const struct of_device_id ipmmu_of_ids[] = {
+ 		.data = &ipmmu_features_default,
+ 	}, {
+ 		.compatible = "renesas,ipmmu-r8a7795",
+-		.data = &ipmmu_features_r8a7795,
++		.data = &ipmmu_features_rcar_gen3,
++	}, {
++		.compatible = "renesas,ipmmu-r8a7796",
++		.data = &ipmmu_features_rcar_gen3,
+ 	}, {
+ 		/* Terminator */
+ 	},
+@@ -1123,6 +1127,8 @@ IOMMU_OF_DECLARE(ipmmu_vmsa_iommu_of, "renesas,ipmmu-vmsa",
+ 		 ipmmu_vmsa_iommu_of_setup);
+ IOMMU_OF_DECLARE(ipmmu_r8a7795_iommu_of, "renesas,ipmmu-r8a7795",
+ 		 ipmmu_vmsa_iommu_of_setup);
++IOMMU_OF_DECLARE(ipmmu_r8a7796_iommu_of, "renesas,ipmmu-r8a7796",
++		 ipmmu_vmsa_iommu_of_setup);
+ #endif
+ 
+ MODULE_DESCRIPTION("IOMMU API for Renesas VMSA-compatible IPMMU");
 -- 
-2.15.0
+2.11.0
