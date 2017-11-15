@@ -1,95 +1,88 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:54176 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754511AbdKAN1N (ORCPT
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:47729 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752407AbdKOOTv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 1 Nov 2017 09:27:13 -0400
-Date: Wed, 1 Nov 2017 09:26:39 -0400
-From: Konrad Rzeszutek Wilk <konrad@kernel.org>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Konrad Rzeszutek Wilk <konrad@darnok.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Linux MMC List <linux-mmc@vger.kernel.org>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
-Subject: Re: [PATCH 1/2] mmc: renesas_sdhi: fix swiotlb buffer is full
-Message-ID: <20171101132639.GA24821@x230.dumpdata.com>
-References: <1508225421-25405-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1508225421-25405-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <CAMuHMdXyY-gvQGn2UxhUDsdhdWUMmTA80z73PF14otvcKuTMaw@mail.gmail.com>
- <20171019002412.GA14493@localhost.localdomain>
- <CAMuHMdUs+dLq8LJTJoUQEUzJAKXCfD0JBtVnHPyN6XdppVy5qQ@mail.gmail.com>
- <TY1PR06MB09928E11C2AFFD55EF68961CD8420@TY1PR06MB0992.apcprd06.prod.outlook.com>
- <TY1PR06MB09929A4BF1E2A5DBD54845DED8430@TY1PR06MB0992.apcprd06.prod.outlook.com>
+        Wed, 15 Nov 2017 09:19:51 -0500
+Received: by mail-qt0-f195.google.com with SMTP id d15so4079727qte.4
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Nov 2017 06:19:51 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <TY1PR06MB09929A4BF1E2A5DBD54845DED8430@TY1PR06MB0992.apcprd06.prod.outlook.com>
+In-Reply-To: <20171114083451.4052-4-horms+renesas@verge.net.au>
+References: <20171114083451.4052-1-horms+renesas@verge.net.au> <20171114083451.4052-4-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 15 Nov 2017 15:19:50 +0100
+Message-ID: <CAMuHMdWbpJ-EOyogaY+cWFozwp2QSmpbNoe6VtAPV6r3NjXTKA@mail.gmail.com>
+Subject: Re: [PATCH/RFT v5 3/3] iommu/ipmmu-vmsa: Hook up r8a779(70|95) DT
+ matching code
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Alex Williamson <alex.williamson@redhat.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        iommu@lists.linux-foundation.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Oct 20, 2017 at 03:18:55AM +0000, Yoshihiro Shimoda wrote:
-> Hi again!
-> 
-> > From: Yoshihiro Shimoda, Sent: Thursday, October 19, 2017 8:39 PM
-> > 
-> > Hi Geert-san, Konrad-san,
-> > 
-> > > From: Geert Uytterhoeven, Sent: Thursday, October 19, 2017 5:34 PM
-> > >
-> > > Hi Konrad,
-> > >
-> > > On Thu, Oct 19, 2017 at 2:24 AM, Konrad Rzeszutek Wilk
-> > > <konrad@darnok.org> wrote:
-> < snip >
-> > > >> > diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-> > > >> > index f905f23..6c9b4b2 100644
-> > > >> > --- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-> > > >> > +++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-> > > >> > @@ -80,8 +80,9 @@
-> > > >> >         .scc_offset     = 0x1000,
-> > > >> >         .taps           = rcar_gen3_scc_taps,
-> > > >> >         .taps_num       = ARRAY_SIZE(rcar_gen3_scc_taps),
-> > > >> > -       /* Gen3 SDHI DMAC can handle 0xffffffff blk count, but seg = 1 */
-> > > >> > -       .max_blk_count  = 0xffffffff,
-> > > >> > +       /* The swiotlb can handle memory size up to 256 kbytes for now. */
-> > > >> > +       .max_blk_count  = 512,
-> > > >>
-> > > >> Fixing this in the individual drivers feels like the wrong solution to me.
-> > > >>
-> > > >> iommu: Is there a better (generic) way to handle this?
-> > > >
-> > > > Yes. See 7453c549f5f6485c0d79cad7844870dcc7d1b34d, aka swiotlb_max_segment
-> > >
-> > > Thanks for the pointer!
-> > >
-> > > While I agree this can be used to avoid the swiotlb buffer full issue,
-> > > I believe it is a suboptimal solution if the device actually uses an IOMMU.
-> > > It limits the mapping size if CONFIG_SWIOTLB=y, which is always the
-> > > case for arm/arm64 these days.
-> > 
-> > I'm afraid but I misunderstood this API's spec when I read it at first.
-> > After I tried to use it, I found the API cannot be used for a workaround because
-> > this API returns total size of swiotlb.
-> > 
-> > For example:
-> >  - The swiotlb_max_segment() returns 64M bytes from the API when a default setting.
-> >   - In this case, the maximum size per a map is 256k bytes.
-> >  - The swiotlb_max_segment() returns 128M bytes from the API when I added swiotlb=65536
-> >    into the kernel parameter on arm64.
-> >   - In this case, the maximum size per a map is still 256k bytes because
-> >     the swiotlb has hardcoded the size by the following code:
-> >      https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/lib/swiotlb.c?h=v4.14-rc5#n254
-> > 
-> > So, how do we handle to resolve (or avoid) the issue?
-> 
-> Anyway, I made v2 patches by using swiotlb related definitions. Would you check it?
+Hi Simon,
 
-Did I miss that email? As in was I cc-ed?
+On Tue, Nov 14, 2017 at 9:34 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> Support the r8a77970 (R-Car V3M) and r8a77995 (R-Car D3) IPMMUs by sharing
+> feature flags with r8a7795 (R-Car H3) and r8a7796 (R-Car M3-W). Also update
+> IOMMU_OF_DECLARE to hook up the compat strings.
+>
+> Based on work for the r8a7796 by Magnus Damm
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v2
+> * Add reviewed-by tag from Geert Uytterhoeven
+> ---
+>  drivers/iommu/ipmmu-vmsa.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+>
+> diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
+> index f936f834984a..49c6fc0c1ae6 100644
+> --- a/drivers/iommu/ipmmu-vmsa.c
+> +++ b/drivers/iommu/ipmmu-vmsa.c
+> @@ -763,6 +763,8 @@ static bool ipmmu_slave_whitelist(struct device *dev)
+>  static const struct soc_device_attribute soc_rcar_gen3[] = {
+>         { .soc_id = "r8a7795", },
+>         { .soc_id = "r8a7796", },
+> +       { .soc_id = "r8a77970", },
+> +       { .soc_id = "r8a77995", },
 
-> https://patchwork.kernel.org/patch/10018879/
+This array starts becoming a mirror of most entries in ipmmu_of_ids[].
+As long as you don't need to match against a specific SoC revision, you could
+store the whitelist check flag in struct ipmmu_features, as pointed to by
+ipmmu_of_ids.data.
 
-Why not use IO_TLB_SEGSIZE << IO_TLB_SHIFT or alternatively
-swiotlb_max_segment?  See 5584f1b1d73e9
+>         { /* sentinel */ }
+>  };
+>
+> @@ -943,6 +945,12 @@ static const struct of_device_id ipmmu_of_ids[] = {
+>                 .compatible = "renesas,ipmmu-r8a7796",
+>                 .data = &ipmmu_features_rcar_gen3,
+>         }, {
+> +               .compatible = "renesas,ipmmu-r8a77970",
+> +               .data = &ipmmu_features_rcar_gen3,
+> +       }, {
+> +               .compatible = "renesas,ipmmu-r8a77995",
+> +               .data = &ipmmu_features_rcar_gen3,
+> +       }, {
+>                 /* Terminator */
+>         },
+
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
