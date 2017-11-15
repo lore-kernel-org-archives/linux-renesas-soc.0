@@ -1,123 +1,277 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:56552 "EHLO
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:54477 "EHLO
         relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757574AbdKOK4S (ORCPT
+        with ESMTP id S932208AbdKOK4m (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Nov 2017 05:56:18 -0500
+        Wed, 15 Nov 2017 05:56:42 -0500
 From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 To: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
         geert@glider.be, mchehab@kernel.org, hverkuil@xs4all.nl
 Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
         linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
         linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 01/10] dt-bindings: media: Add Renesas CEU bindings
-Date: Wed, 15 Nov 2017 11:55:54 +0100
-Message-Id: <1510743363-25798-2-git-send-email-jacopo+renesas@jmondi.org>
+Subject: [PATCH v1 10/10] media: i2c: tw9910: Remove soc_camera dependencies
+Date: Wed, 15 Nov 2017 11:56:03 +0100
+Message-Id: <1510743363-25798-11-git-send-email-jacopo+renesas@jmondi.org>
 In-Reply-To: <1510743363-25798-1-git-send-email-jacopo+renesas@jmondi.org>
 References: <1510743363-25798-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add bindings documentation for Renesas Capture Engine Unit (CEU).
+Remove soc_camera framework dependencies from tw9910 sensor driver.
+- Handle clock directly
+- Register async subdevice
+- Add platform specific enable/disable functions
+- Adjust build system
+
+This commit does not remove the original soc_camera based driver.
 
 Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
- .../devicetree/bindings/media/renesas,ceu.txt      | 87 ++++++++++++++++++++++
- 1 file changed, 87 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/renesas,ceu.txt
+ drivers/media/i2c/Kconfig  |  9 ++++++
+ drivers/media/i2c/Makefile |  1 +
+ drivers/media/i2c/tw9910.c | 80 ++++++++++++++++++++++++++++++++++------------
+ include/media/i2c/tw9910.h |  6 ++++
+ 4 files changed, 75 insertions(+), 21 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/media/renesas,ceu.txt b/Documentation/devicetree/bindings/media/renesas,ceu.txt
-new file mode 100644
-index 0000000..a88e9cb
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/renesas,ceu.txt
-@@ -0,0 +1,87 @@
-+Renesas Capture Engine Unit (CEU)
-+----------------------------------------------
+diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
+index ff251ce..bbd77ee 100644
+--- a/drivers/media/i2c/Kconfig
++++ b/drivers/media/i2c/Kconfig
+@@ -415,6 +415,15 @@ config VIDEO_TW9906
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called tw9906.
+
++config VIDEO_TW9910
++	tristate "Techwell TW9910 video decoder"
++	depends on VIDEO_V4L2 && I2C
++	---help---
++	  Support for Techwell TW9910 NTSC/PAL/SECAM video decoder.
 +
-+The Capture Engine Unit is the image capture interface found on Renesas
-+RZ chip series and on SH Mobile ones.
++	  To compile this driver as a module, choose M here: the
++	  module will be called tw9910.
 +
-+The interface supports a single parallel input with up 8/16bits data bus width.
+ config VIDEO_VPX3220
+ 	tristate "vpx3220a, vpx3216b & vpx3214c video decoders"
+ 	depends on VIDEO_V4L2 && I2C
+diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
+index b2459a1..835784a 100644
+--- a/drivers/media/i2c/Makefile
++++ b/drivers/media/i2c/Makefile
+@@ -48,6 +48,7 @@ obj-$(CONFIG_VIDEO_TVP7002) += tvp7002.o
+ obj-$(CONFIG_VIDEO_TW2804) += tw2804.o
+ obj-$(CONFIG_VIDEO_TW9903) += tw9903.o
+ obj-$(CONFIG_VIDEO_TW9906) += tw9906.o
++obj-$(CONFIG_VIDEO_TW9910) += tw9910.o
+ obj-$(CONFIG_VIDEO_CS3308) += cs3308.o
+ obj-$(CONFIG_VIDEO_CS5345) += cs5345.o
+ obj-$(CONFIG_VIDEO_CS53L32A) += cs53l32a.o
+diff --git a/drivers/media/i2c/tw9910.c b/drivers/media/i2c/tw9910.c
+index bdb5e0a..f422da2 100644
+--- a/drivers/media/i2c/tw9910.c
++++ b/drivers/media/i2c/tw9910.c
+@@ -16,6 +16,7 @@
+  * published by the Free Software Foundation.
+  */
+
++#include <linux/clk.h>
+ #include <linux/init.h>
+ #include <linux/module.h>
+ #include <linux/i2c.h>
+@@ -25,9 +26,7 @@
+ #include <linux/v4l2-mediabus.h>
+ #include <linux/videodev2.h>
+
+-#include <media/soc_camera.h>
+ #include <media/i2c/tw9910.h>
+-#include <media/v4l2-clk.h>
+ #include <media/v4l2-subdev.h>
+
+ #define GET_ID(val)  ((val & 0xF8) >> 3)
+@@ -228,7 +227,7 @@ struct tw9910_scale_ctrl {
+
+ struct tw9910_priv {
+ 	struct v4l2_subdev		subdev;
+-	struct v4l2_clk			*clk;
++	struct clk			*clk;
+ 	struct tw9910_video_info	*info;
+ 	const struct tw9910_scale_ctrl	*scale;
+ 	v4l2_std_id			norm;
+@@ -582,13 +581,40 @@ static int tw9910_s_register(struct v4l2_subdev *sd,
+ }
+ #endif
+
++static int tw9910_power_on(struct tw9910_priv *priv)
++{
++	int ret;
 +
-+Required properties:
-+- compatible
-+	Must be "renesas,renesas-ceu".
-+- reg
-+	Physical address base and size.
-+- interrupts
-+	The interrupt line number.
-+- pinctrl-names, pinctrl-0
-+	phandle of pin controller sub-node configuring pins for CEU operations.
++	if (priv->info->platform_enable) {
++		ret = priv->info->platform_enable();
++		if (ret)
++			return ret;
++	}
 +
-+CEU supports a single parallel input and should contain a single 'port' subnode
-+with a single 'endpoint'. Optional endpoint properties applicable to parallel
-+input bus are described in "video-interfaces.txt".
++	if (priv->clk)
++		return clk_enable(priv->clk);
 +
-+Example:
++	return 0;
++}
 +
-+The example describes the connection between the Capture Engine Unit and a
-+OV7670 image sensor sitting on bus i2c1 with an on-board 24Mhz clock.
++static int tw9910_power_off(struct tw9910_priv *priv)
++{
++	if (priv->info->platform_enable)
++		priv->info->platform_disable();
 +
-+ceu: ceu@e8210000 {
-+	reg = <0xe8210000 0x209c>;
-+	compatible = "renesas,renesas-ceu";
-+	interrupts = <GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&vio_pins>;
++	if (priv->clk)
++		clk_disable(priv->clk);
 +
-+	status = "okay";
++	return 0;
++}
 +
-+	port {
-+		ceu_in: endpoint {
-+			remote-endpoint = <&ov7670_out>;
+ static int tw9910_s_power(struct v4l2_subdev *sd, int on)
+ {
+ 	struct i2c_client *client = v4l2_get_subdevdata(sd);
+-	struct soc_camera_subdev_desc *ssdd = soc_camera_i2c_to_desc(client);
+ 	struct tw9910_priv *priv = to_tw9910(client);
+
+-	return soc_camera_set_power(&client->dev, ssdd, priv->clk, on);
++	return on ? tw9910_power_on(priv) :
++		    tw9910_power_off(priv);
+ }
+
+ static int tw9910_set_frame(struct v4l2_subdev *sd, u32 *width, u32 *height)
+@@ -614,7 +640,7 @@ static int tw9910_set_frame(struct v4l2_subdev *sd, u32 *width, u32 *height)
+ 	 * set bus width
+ 	 */
+ 	val = 0x00;
+-	if (SOCAM_DATAWIDTH_16 == priv->info->buswidth)
++	if (priv->info->buswidth == TW9910_DATAWIDTH_16)
+ 		val = LEN;
+
+ 	ret = tw9910_mask_set(client, OPFORM, LEN, val);
+@@ -799,8 +825,8 @@ static int tw9910_video_probe(struct i2c_client *client)
+ 	/*
+ 	 * tw9910 only use 8 or 16 bit bus width
+ 	 */
+-	if (SOCAM_DATAWIDTH_16 != priv->info->buswidth &&
+-	    SOCAM_DATAWIDTH_8  != priv->info->buswidth) {
++	if (priv->info->buswidth != TW9910_DATAWIDTH_16 &&
++	    priv->info->buswidth != TW9910_DATAWIDTH_8) {
+ 		dev_err(&client->dev, "bus width error\n");
+ 		return -ENODEV;
+ 	}
+@@ -859,15 +885,11 @@ static int tw9910_enum_mbus_code(struct v4l2_subdev *sd,
+ static int tw9910_g_mbus_config(struct v4l2_subdev *sd,
+ 				struct v4l2_mbus_config *cfg)
+ {
+-	struct i2c_client *client = v4l2_get_subdevdata(sd);
+-	struct soc_camera_subdev_desc *ssdd = soc_camera_i2c_to_desc(client);
+-
+ 	cfg->flags = V4L2_MBUS_PCLK_SAMPLE_RISING | V4L2_MBUS_MASTER |
+ 		V4L2_MBUS_VSYNC_ACTIVE_HIGH | V4L2_MBUS_VSYNC_ACTIVE_LOW |
+ 		V4L2_MBUS_HSYNC_ACTIVE_HIGH | V4L2_MBUS_HSYNC_ACTIVE_LOW |
+ 		V4L2_MBUS_DATA_ACTIVE_HIGH;
+ 	cfg->type = V4L2_MBUS_PARALLEL;
+-	cfg->flags = soc_camera_apply_board_flags(ssdd, cfg);
+
+ 	return 0;
+ }
+@@ -876,9 +898,8 @@ static int tw9910_s_mbus_config(struct v4l2_subdev *sd,
+ 				const struct v4l2_mbus_config *cfg)
+ {
+ 	struct i2c_client *client = v4l2_get_subdevdata(sd);
+-	struct soc_camera_subdev_desc *ssdd = soc_camera_i2c_to_desc(client);
+ 	u8 val = VSSL_VVALID | HSSL_DVALID;
+-	unsigned long flags = soc_camera_apply_board_flags(ssdd, cfg);
++	unsigned long flags = cfg->flags;
+
+ 	/*
+ 	 * set OUTCTR1
+@@ -935,15 +956,14 @@ static int tw9910_probe(struct i2c_client *client,
+ 	struct tw9910_video_info	*info;
+ 	struct i2c_adapter		*adapter =
+ 		to_i2c_adapter(client->dev.parent);
+-	struct soc_camera_subdev_desc	*ssdd = soc_camera_i2c_to_desc(client);
+ 	int ret;
+
+-	if (!ssdd || !ssdd->drv_priv) {
++	if (!client->dev.platform_data) {
+ 		dev_err(&client->dev, "TW9910: missing platform data!\n");
+ 		return -EINVAL;
+ 	}
+
+-	info = ssdd->drv_priv;
++	info = client->dev.platform_data;
+
+ 	if (!i2c_check_functionality(adapter, I2C_FUNC_SMBUS_BYTE_DATA)) {
+ 		dev_err(&client->dev,
+@@ -959,13 +979,27 @@ static int tw9910_probe(struct i2c_client *client,
+
+ 	v4l2_i2c_subdev_init(&priv->subdev, client, &tw9910_subdev_ops);
+
+-	priv->clk = v4l2_clk_get(&client->dev, "mclk");
+-	if (IS_ERR(priv->clk))
++	priv->clk = clk_get(&client->dev, "mclk");
++	if (PTR_ERR(priv->clk) == -ENOENT) {
++		priv->clk = NULL;
++	} else if (IS_ERR(priv->clk)) {
++		dev_err(&client->dev, "Unable to get mclk clock\n");
+ 		return PTR_ERR(priv->clk);
++	}
+
+ 	ret = tw9910_video_probe(client);
+ 	if (ret < 0)
+-		v4l2_clk_put(priv->clk);
++		goto error_put_clk;
 +
-+			bus-width = <8>;
-+			hsync-active = <1>;
-+			vsync-active = <1>;
-+			pclk-sample = <1>;
-+			data-active = <1>;
-+		};
-+	};
-+};
++	ret = v4l2_async_register_subdev(&priv->subdev);
++	if (ret)
++		goto error_put_clk;
 +
-+i2c1: i2c@fcfee400 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c1_pins>;
++	return ret;
 +
-+	status = "okay";
-+	clock-frequency = <100000>;
++error_put_clk:
++	if (priv->clk)
++		clk_put(priv->clk);
+
+ 	return ret;
+ }
+@@ -973,7 +1007,11 @@ static int tw9910_probe(struct i2c_client *client,
+ static int tw9910_remove(struct i2c_client *client)
+ {
+ 	struct tw9910_priv *priv = to_tw9910(client);
+-	v4l2_clk_put(priv->clk);
 +
-+	ov7670: camera@21 {
-+		compatible = "ovti,ov7670";
-+		reg = <0x21>;
++	if (priv->clk)
++		clk_put(priv->clk);
++	v4l2_device_unregister_subdev(&priv->subdev);
 +
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&vio_pins>;
+ 	return 0;
+ }
+
+diff --git a/include/media/i2c/tw9910.h b/include/media/i2c/tw9910.h
+index 90bcf1f..b80e45c 100644
+--- a/include/media/i2c/tw9910.h
++++ b/include/media/i2c/tw9910.h
+@@ -18,6 +18,9 @@
+
+ #include <media/soc_camera.h>
+
++#define TW9910_DATAWIDTH_8	BIT(0)
++#define TW9910_DATAWIDTH_16	BIT(1)
 +
-+		reset-gpios = <&port3 11 GPIO_ACTIVE_LOW>;
-+		powerdown-gpios = <&port3 12 GPIO_ACTIVE_HIGH>;
+ enum tw9910_mpout_pin {
+ 	TW9910_MPO_VLOSS,
+ 	TW9910_MPO_HLOCK,
+@@ -32,6 +35,9 @@ enum tw9910_mpout_pin {
+ struct tw9910_video_info {
+ 	unsigned long		buswidth;
+ 	enum tw9910_mpout_pin	mpout;
 +
-+		clocks = <&xclk>;
-+		clock-names = "xclk";
-+
-+		xclk: fixed_clk {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <24000000>;
-+		};
-+
-+		port {
-+			ov7670_out: endpoint {
-+				remote-endpoint = <&ceu_in>;
-+
-+				bus-width = <8>;
-+				hsync-active = <1>;
-+				vsync-active = <1>;
-+				pclk-sample = <1>;
-+				data-active = <1>;
-+			};
-+		};
-+	};
--- 
++	int (*platform_enable)(void);
++	void (*platform_disable)(void);
+ };
+
+
+--
 2.7.4
