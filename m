@@ -1,68 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56242 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752806AbdKJN0V (ORCPT
+Received: from mail-qt0-f173.google.com ([209.85.216.173]:44896 "EHLO
+        mail-qt0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932443AbdKOQRX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Nov 2017 08:26:21 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 3/7] arm64: dts: renesas: r8a7796: Tie Audio-DMAC to IPMMU-MP
-Date: Fri, 10 Nov 2017 14:26:08 +0100
-Message-Id: <20171110132612.1589-4-horms+renesas@verge.net.au>
-In-Reply-To: <20171110132612.1589-1-horms+renesas@verge.net.au>
-References: <20171110132612.1589-1-horms+renesas@verge.net.au>
+        Wed, 15 Nov 2017 11:17:23 -0500
+MIME-Version: 1.0
+In-Reply-To: <1510674077-31136-3-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1510674077-31136-1-git-send-email-fabrizio.castro@bp.renesas.com> <1510674077-31136-3-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 15 Nov 2017 17:17:22 +0100
+Message-ID: <CAMuHMdUwJnvsH-8+EsFWVhaw7zNLeFDxTv6mZoja57cgwg_qdQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] pinctrl: sh-pfc: r8a7791: Add can_clk function
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Simon Horman <horms@verge.net.au>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hook up r8a7796 Audio-DMAC nodes to the IPMMU-MP.
+Hi Fabrizio,
 
-Based on work for the r8a7795 by Magnus Damm.
+On Tue, Nov 14, 2017 at 4:41 PM, Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> This patch adds can_clk function to r8a7743/r8a7791 which is cleaner,
+> and allows for independent configuration.
+> We keep the can_clk* pins definitions from within can0_groups and
+> can1_groups for uniformity and backwards compatibility.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+> ---
+> v1->v2
+> * Retained can_clk* pins inside can[01]_groups
+> * Added comments
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Thanks for the update!
+
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2
-* Added reviewed by tag from Geert Uytterhoeven
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+i.e. will queue in sh-pfc-for-v4.16.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 8ae481504dd4..8a67177cccd6 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -1326,6 +1326,14 @@
- 			resets = <&cpg 502>;
- 			#dma-cells = <1>;
- 			dma-channels = <16>;
-+			iommus = <&ipmmu_mp 0>, <&ipmmu_mp 1>,
-+			       <&ipmmu_mp 2>, <&ipmmu_mp 3>,
-+			       <&ipmmu_mp 4>, <&ipmmu_mp 5>,
-+			       <&ipmmu_mp 6>, <&ipmmu_mp 7>,
-+			       <&ipmmu_mp 8>, <&ipmmu_mp 9>,
-+			       <&ipmmu_mp 10>, <&ipmmu_mp 11>,
-+			       <&ipmmu_mp 12>, <&ipmmu_mp 13>,
-+			       <&ipmmu_mp 14>, <&ipmmu_mp 15>;
- 		};
- 
- 		audma1: dma-controller@ec720000 {
-@@ -1360,6 +1368,14 @@
- 			resets = <&cpg 501>;
- 			#dma-cells = <1>;
- 			dma-channels = <16>;
-+			iommus = <&ipmmu_mp 16>, <&ipmmu_mp 17>,
-+			       <&ipmmu_mp 18>, <&ipmmu_mp 19>,
-+			       <&ipmmu_mp 20>, <&ipmmu_mp 21>,
-+			       <&ipmmu_mp 22>, <&ipmmu_mp 23>,
-+			       <&ipmmu_mp 24>, <&ipmmu_mp 25>,
-+			       <&ipmmu_mp 26>, <&ipmmu_mp 27>,
-+			       <&ipmmu_mp 28>, <&ipmmu_mp 29>,
-+			       <&ipmmu_mp 30>, <&ipmmu_mp 31>;
- 		};
- 
- 		usb_dmac0: dma-controller@e65a0000 {
--- 
-2.11.0
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
