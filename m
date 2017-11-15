@@ -1,57 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:56824 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757601AbdKOK40 (ORCPT
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:49090 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758861AbdKOQba (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Nov 2017 05:56:26 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
-        geert@glider.be, mchehab@kernel.org, hverkuil@xs4all.nl
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 04/10] ARM: dts: r7s72100: Add Capture Engine Unit (CEU)
-Date: Wed, 15 Nov 2017 11:55:57 +0100
-Message-Id: <1510743363-25798-5-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1510743363-25798-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1510743363-25798-1-git-send-email-jacopo+renesas@jmondi.org>
+        Wed, 15 Nov 2017 11:31:30 -0500
+Received: by mail-lf0-f66.google.com with SMTP id r135so26935413lfe.5
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Nov 2017 08:31:30 -0800 (PST)
+Date: Wed, 15 Nov 2017 17:31:27 +0100
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Kieran Bingham <kbingham@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org, kieran.bingham@ideasonboard.com,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: Re: [PATCH 1/3] tools: 8camera-status: Fix write failure
+ mis-allocations
+Message-ID: <20171115163127.GG12677@bigcity.dyn.berto.se>
+References: <1510756711-6488-1-git-send-email-kbingham@kernel.org>
+ <1510756711-6488-2-git-send-email-kbingham@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1510756711-6488-2-git-send-email-kbingham@kernel.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add Capture Engine Unit (CEU) node to device tree.
+Hi Kieran,
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- arch/arm/boot/dts/r7s72100.dtsi | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+Thanks for your patch, applied.
 
-diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
-index 4ed12a4..683d459 100644
---- a/arch/arm/boot/dts/r7s72100.dtsi
-+++ b/arch/arm/boot/dts/r7s72100.dtsi
-@@ -136,8 +136,8 @@
- 			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
- 			reg = <0xfcfe042c 4>;
- 			clocks = <&p0_clk>;
--			clock-indices = <R7S72100_CLK_RTC>;
--			clock-output-names = "rtc";
-+			clock-indices = <R7S72100_CLK_RTC R7S72100_CLK_CEU>;
-+			clock-output-names = "rtc", "ceu";
- 		};
- 
- 		mstp7_clks: mstp7_clks@fcfe0430 {
-@@ -666,4 +666,12 @@
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-+
-+	ceu: ceu@e8210000 {
-+		reg = <0xe8210000 0x209c>;
-+		compatible = "renesas,renesas-ceu";
-+		interrupts = <GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>;
-+		power-domains = <&cpg_clocks>;
-+		status = "disabled";
-+	};
- };
+On 2017-11-15 14:38:29 +0000, Kieran Bingham wrote:
+> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> 
+> Debug prints of the max9271_write call are appearing in the failure counts.
+> 
+> Fix the 'catcher' so that it is more specific to the failure
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> ---
+>  tools/8camera-status | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/8camera-status b/tools/8camera-status
+> index 234b8a0cab2b..cdfe76ef286f 100755
+> --- a/tools/8camera-status
+> +++ b/tools/8camera-status
+> @@ -21,7 +21,7 @@ BEGIN {
+>  	print
+>  }
+>  
+> -/max9271_write/ {
+> +/max9271_write.*write failed/ {
+>  	max9271_write_fail++
+>  	print
+>  }
+> -- 
+> 2.7.4
+> 
+
 -- 
-2.7.4
+Regards,
+Niklas S�derlund
