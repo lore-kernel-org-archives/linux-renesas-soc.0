@@ -1,31 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57982 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933834AbdKQOWL (ORCPT
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:56824 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757601AbdKOK40 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Nov 2017 09:22:11 -0500
-Date: Fri, 17 Nov 2017 06:22:06 -0800
-From: Simon Horman <horms@verge.net.au>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
-        geert@glider.be, mchehab@kernel.org, hverkuil@xs4all.nl,
+        Wed, 15 Nov 2017 05:56:26 -0500
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
+        geert@glider.be, mchehab@kernel.org, hverkuil@xs4all.nl
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
         linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
         linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 04/10] ARM: dts: r7s72100: Add Capture Engine Unit
- (CEU)
-Message-ID: <20171117142206.jmundlzmyltd3z6v@verge.net.au>
+Subject: [PATCH v1 04/10] ARM: dts: r7s72100: Add Capture Engine Unit (CEU)
+Date: Wed, 15 Nov 2017 11:55:57 +0100
+Message-Id: <1510743363-25798-5-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1510743363-25798-1-git-send-email-jacopo+renesas@jmondi.org>
 References: <1510743363-25798-1-git-send-email-jacopo+renesas@jmondi.org>
- <1510743363-25798-5-git-send-email-jacopo+renesas@jmondi.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1510743363-25798-5-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Nov 15, 2017 at 11:55:57AM +0100, Jacopo Mondi wrote:
-> Add Capture Engine Unit (CEU) node to device tree.
+Add Capture Engine Unit (CEU) node to device tree.
 
-Other patches in this series (which are not for my tree) appear
-to warrant updating. Accordingly I am marking this patch as
-"Changes Requested" and am expecting it to be reposted at some point.
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+---
+ arch/arm/boot/dts/r7s72100.dtsi | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+index 4ed12a4..683d459 100644
+--- a/arch/arm/boot/dts/r7s72100.dtsi
++++ b/arch/arm/boot/dts/r7s72100.dtsi
+@@ -136,8 +136,8 @@
+ 			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
+ 			reg = <0xfcfe042c 4>;
+ 			clocks = <&p0_clk>;
+-			clock-indices = <R7S72100_CLK_RTC>;
+-			clock-output-names = "rtc";
++			clock-indices = <R7S72100_CLK_RTC R7S72100_CLK_CEU>;
++			clock-output-names = "rtc", "ceu";
+ 		};
+ 
+ 		mstp7_clks: mstp7_clks@fcfe0430 {
+@@ -666,4 +666,12 @@
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
++
++	ceu: ceu@e8210000 {
++		reg = <0xe8210000 0x209c>;
++		compatible = "renesas,renesas-ceu";
++		interrupts = <GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>;
++		power-domains = <&cpg_clocks>;
++		status = "disabled";
++	};
+ };
+-- 
+2.7.4
