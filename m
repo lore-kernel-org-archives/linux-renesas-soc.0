@@ -1,108 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:47722 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754865AbdKKAjI (ORCPT
+Received: from sauhun.de ([88.99.104.3]:35271 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756731AbdKOPH0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Nov 2017 19:39:08 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v7 18/25] rcar-vin: prepare for media controller mode initialization
-Date: Sat, 11 Nov 2017 01:38:28 +0100
-Message-Id: <20171111003835.4909-19-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20171111003835.4909-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20171111003835.4909-1-niklas.soderlund+renesas@ragnatech.se>
+        Wed, 15 Nov 2017 10:07:26 -0500
+Date: Wed, 15 Nov 2017 16:07:25 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org,
+        linux-serial@vger.kernel.org, magnus.damm@gmail.com
+Subject: Re: [PATCH 2/2] serial: sh-sci: Support for HSCIF RX sampling point
+ adjustment
+Message-ID: <20171115150724.tj46vdznx5ht6a3b@ninjato>
+References: <1506690534-27302-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <1506690534-27302-3-git-send-email-ulrich.hecht+renesas@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="bw7y2nwtmsz35qki"
+Content-Disposition: inline
+In-Reply-To: <1506690534-27302-3-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When running in media controller mode a media pad is needed, register
-one. Also set the media bus format to CSI-2.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
----
- drivers/media/platform/rcar-vin/rcar-core.c | 24 ++++++++++++++++++++++--
- drivers/media/platform/rcar-vin/rcar-vin.h  |  4 ++++
- 2 files changed, 26 insertions(+), 2 deletions(-)
+--bw7y2nwtmsz35qki
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 071116eec284ba5f..1b3572c8b6691a07 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -46,6 +46,10 @@ static int rvin_find_pad(struct v4l2_subdev *sd, int direction)
- 	return -EINVAL;
- }
- 
-+/* -----------------------------------------------------------------------------
-+ * Digital async notifier
-+ */
-+
- static int rvin_digital_notify_complete(struct v4l2_async_notifier *notifier)
- {
- 	struct rvin_dev *vin = notifier_to_vin(notifier);
-@@ -238,6 +242,20 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
- 	return 0;
- }
- 
-+/* -----------------------------------------------------------------------------
-+ * Group async notifier
-+ */
-+
-+static int rvin_group_init(struct rvin_dev *vin)
-+{
-+	/* All our sources are CSI-2 */
-+	vin->mbus_cfg.type = V4L2_MBUS_CSI2;
-+	vin->mbus_cfg.flags = 0;
-+
-+	vin->pad.flags = MEDIA_PAD_FL_SINK;
-+	return media_entity_pads_init(&vin->vdev.entity, 1, &vin->pad);
-+}
-+
- /* -----------------------------------------------------------------------------
-  * Platform Device Driver
-  */
-@@ -326,8 +344,10 @@ static int rcar_vin_probe(struct platform_device *pdev)
- 		return ret;
- 
- 	platform_set_drvdata(pdev, vin);
--
--	ret = rvin_digital_graph_init(vin);
-+	if (vin->info->use_mc)
-+		ret = rvin_group_init(vin);
-+	else
-+		ret = rvin_digital_graph_init(vin);
- 	if (ret < 0)
- 		goto error;
- 
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 2789887efe2f3251..2d92b9dd0aed6cc9 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -103,6 +103,8 @@ struct rvin_info {
-  * @notifier:		V4L2 asynchronous subdevs notifier
-  * @digital:		entity in the DT for local digital subdevice
-  *
-+ * @pad:		pad for media controller
-+ *
-  * @lock:		protects @queue
-  * @queue:		vb2 buffers queue
-  *
-@@ -132,6 +134,8 @@ struct rvin_dev {
- 	struct v4l2_async_notifier notifier;
- 	struct rvin_graph_entity *digital;
- 
-+	struct media_pad pad;
-+
- 	struct mutex lock;
- 	struct vb2_queue queue;
- 
--- 
-2.15.0
+On Fri, Sep 29, 2017 at 03:08:54PM +0200, Ulrich Hecht wrote:
+> HSCIF has facilities that allow moving the RX sampling point by between
+> -8 and 7 sampling cycles (one sampling cycles equals 1/15 of a bit
+> by default) to improve the error margin in case of slightly mismatched
+> bit rates between sender and receiver.
+>=20
+> This patch allows changing the default (0, meaning center) using the
+> sysfs attribute "rx_sampling_point".
+>=20
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+
+Wasn't there a conclusion in a chat meeting we had how to move this
+forward? How much effort would be implementing that?
+
+
+--bw7y2nwtmsz35qki
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAloMWCwACgkQFA3kzBSg
+KbZI+w/7BHMB3paOHn841ZPvcB6zvXdyT1wbGl6mdd1qIXRNV0HwpgFifWHdiDh4
+Pq7TVL6+E5F0n2/i8QVhrneW8s+ICKVhnw0qhzSgl/EXBgzaMvEBcHfYCSrwmzLa
+QPeeyD/BcMP2p0vuIEb80rBC5Hfv39gyL5rBnHsziP/787FyHI/4rkrBTEhweXYE
+zESE6JA22quAMZAlcB1v2Y5yYqEmQklHxUlryZ6OzHKAP/5zSspoMfNQtfVYWW6j
+0TdpmcgQSLo3EoZBzzxHRUvbddcmoS8UFna3f5IIwcmv4NwKbdpKJv4rTA++mAEV
+7HIc80m9ng+DQAyDLNWBGKKp3RJ9CYZbR23UjZXgWBwaV3fhImitYkoEDRASe1oa
+AcLMugQKSlaTf5ecqTcGQ4FSXT7N8/54wDTJX0u3QopIkMtaTmHcfAmTdvjY7Gsu
+EAdyCxHSLVYuNyxRHDq8D767vBpKV/LtpsnPU+0x9/fXEkJz6E5kH33Zhy0jMy55
+F7gHVbPJNfPs/eUkivqg8JHLW0WKluHhZyoVKiVGLPpyNXeP7UNrQtBgA7LGQfTt
+qlNUr0L2t8xREInBgv0Wp5E+k9zK+T55rapTtmKQL6SLLwxMo172JMroZGJGmG5D
+35o2/98BauPbqv49r7Y5aPaiN2NpqKG5/vgs+abYjUhSbq5/IeM=
+=n+wu
+-----END PGP SIGNATURE-----
+
+--bw7y2nwtmsz35qki--
