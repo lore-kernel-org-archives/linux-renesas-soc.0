@@ -1,63 +1,58 @@
 Return-Path: <linux-i2c-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1510759526-30346-5-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1510759526-30346-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1510759526-30346-5-git-send-email-ulrich.hecht+renesas@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 16 Nov 2017 10:27:56 +0100
-Message-ID: <CAMuHMdWmZEoNGRjsumOc+yPe3JTCBobVZd8arzUfcymjF0imDA@mail.gmail.com>
-Subject: Re: [PATCH 4/6] arm64: renesas: draak: enable I2C controller 0 and EEPROM
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux I2C <linux-i2c@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org, horms@verge.net.au,
+        wsa@the-dreams.de, geert@linux-m68k.org
+Cc: magnus.damm@gmail.com, linux-i2c@vger.kernel.org,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH 4/6] arm64: renesas: draak: enable I2C controller 0 and EEPROM
+Date: Wed, 15 Nov 2017 16:25:24 +0100
+Message-Id: <1510759526-30346-5-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <1510759526-30346-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1510759526-30346-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Ulrich,
+Enables EEPROM on I2C0 on the Draak board.
 
-On Wed, Nov 15, 2017 at 4:25 PM, Ulrich Hecht
-<ulrich.hecht+renesas@gmail.com> wrote:
-> Enables EEPROM on I2C0 on the Draak board.
->
-> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+---
+ arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-Thanks for your patch!
-
-> --- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-> +++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-
-> @@ -67,6 +72,18 @@
->         };
->  };
->
-> +&i2c0 {
-> +       pinctrl-0 = <&i2c0_pins>;
-> +       pinctrl-names = "default";
-> +       status = "okay";
-> +
-> +       eeprom@50 {
-> +               compatible = "atmel,24c01";
-
-This is actually a ROHM Semiconductor BR24T01FVM-W, so it should be
-
-        compatible = "rohm,br24t01", "atmel,24c01";
-
-Please also submit a patch to add that compatible value to
-Documentation/devicetree/bindings/eeprom/eeprom.txt.
-
-With the above fixed:
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+index 09de73b..64a6339 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+@@ -46,6 +46,11 @@
+ 		};
+ 	};
+ 
++	i2c0_pins: i2c0 {
++		groups = "i2c0";
++		function = "i2c0";
++	};
++
+ 	pwm0_pins: pwm0 {
+ 		groups = "pwm0_c";
+ 		function = "pwm0";
+@@ -67,6 +72,18 @@
+ 	};
+ };
+ 
++&i2c0 {
++	pinctrl-0 = <&i2c0_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++
++	eeprom@50 {
++		compatible = "atmel,24c01";
++		reg = <0x50>;
++		pagesize = <8>;
++	};
++};
++
+ &ehci0 {
+ 	status = "okay";
+ };
+-- 
+2.7.4
