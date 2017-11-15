@@ -1,69 +1,73 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:47008 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751443AbdK3L6o (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 30 Nov 2017 06:58:44 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Kevin Hilman <khilman@linaro.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] bus: simple-pm-bus: convert bool SIMPLE_PM_BUS to tristate
-Date: Thu, 30 Nov 2017 12:57:00 +0100
-Message-Id: <1512043020-23452-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+Date: Wed, 15 Nov 2017 14:36:33 +0200
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
+        geert@glider.be, mchehab@kernel.org, hverkuil@xs4all.nl,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 02/10] include: media: Add Renesas CEU driver interface
+Message-ID: <20171115123633.zvkokelhwwyro42y@valkosipuli.retiisi.org.uk>
+References: <1510743363-25798-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1510743363-25798-3-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1510743363-25798-3-git-send-email-jacopo+renesas@jmondi.org>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Hi Jacopo,
 
-The Kconfig currently controlling compilation of this code is:
+On Wed, Nov 15, 2017 at 11:55:55AM +0100, Jacopo Mondi wrote:
+> Add renesas-ceu header file.
+> 
+> Do not remove the existing sh_mobile_ceu.h one as long as the original
+> driver does not go away.
 
-config SIMPLE_PM_BUS
-        bool "Simple Power-Managed Bus Driver"
+Hmm. This isn't really not about not removing a file but adding a new one.
+Do you really need it outside the driver's own directory?
 
-...meaning that it currently is not being built as a module by anyone.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+>  include/media/drv-intf/renesas-ceu.h | 23 +++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+>  create mode 100644 include/media/drv-intf/renesas-ceu.h
+> 
+> diff --git a/include/media/drv-intf/renesas-ceu.h b/include/media/drv-intf/renesas-ceu.h
+> new file mode 100644
+> index 0000000..f2da78c
+> --- /dev/null
+> +++ b/include/media/drv-intf/renesas-ceu.h
+> @@ -0,0 +1,23 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +#ifndef __ASM_RENESAS_CEU_H__
+> +#define __ASM_RENESAS_CEU_H__
+> +
+> +#include <media/v4l2-mediabus.h>
+> +
+> +#define CEU_FLAG_PRIMARY_SENS	BIT(0)
+> +#define CEU_MAX_SENS		2
+> +
+> +struct ceu_async_subdev {
+> +	unsigned long flags;
+> +	unsigned char bus_width;
+> +	unsigned char bus_shift;
+> +	unsigned int i2c_adapter_id;
+> +	unsigned int i2c_address;
+> +};
+> +
+> +struct ceu_info {
+> +	unsigned int num_subdevs;
+> +	struct ceu_async_subdev subdevs[CEU_MAX_SENS];
+> +};
+> +
+> +#endif /* __ASM_RENESAS_CEU_H__ */
+> --
+> 2.7.4
+> 
 
-In removing the orphaned modular support in a previous patch set,
-Geert indicated he'd rather see this code converted to tristate.
-
-I normally don't do that because it extends functionality that I
-can't easily run time test or even know if the use case makes sense,
-but since in this case the author has nominated it as such, we do
-the conversion here.
-
-Note that doesn't change the lack of run time testing ; this change
-is only tested for sucessful compile and modpost.
-
-[geert: Ethernet is probed successfully on sh73a0/kzm9g after
-        insmodding simple-pm-bus.ko]
-
-Cc: Kevin Hilman <khilman@linaro.org>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: linux-arm-kernel@lists.infradead.org
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/bus/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/bus/Kconfig b/drivers/bus/Kconfig
-index dc7b3c7b7d42fd09..57e011d36a79fce3 100644
---- a/drivers/bus/Kconfig
-+++ b/drivers/bus/Kconfig
-@@ -120,7 +120,7 @@ config QCOM_EBI2
- 	  SRAM, ethernet adapters, FPGAs and LCD displays.
- 
- config SIMPLE_PM_BUS
--	bool "Simple Power-Managed Bus Driver"
-+	tristate "Simple Power-Managed Bus Driver"
- 	depends on OF && PM
- 	help
- 	  Driver for transparent busses that don't need a real driver, but
 -- 
-2.7.4
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi
