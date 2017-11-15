@@ -1,66 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:35271 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756731AbdKOPH0 (ORCPT
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:44654 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757414AbdKOTW0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Nov 2017 10:07:26 -0500
-Date: Wed, 15 Nov 2017 16:07:25 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org,
-        linux-serial@vger.kernel.org, magnus.damm@gmail.com
-Subject: Re: [PATCH 2/2] serial: sh-sci: Support for HSCIF RX sampling point
- adjustment
-Message-ID: <20171115150724.tj46vdznx5ht6a3b@ninjato>
-References: <1506690534-27302-1-git-send-email-ulrich.hecht+renesas@gmail.com>
- <1506690534-27302-3-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Wed, 15 Nov 2017 14:22:26 -0500
+Date: Wed, 15 Nov 2017 13:22:24 -0600
+From: Rob Herring <robh@kernel.org>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: add R8A77970 PFC support
+Message-ID: <20171115192224.wse7klcuiqqk4o4m@rob-hp-laptop>
+References: <20171110181552.227541251@cogentembedded.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="bw7y2nwtmsz35qki"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1506690534-27302-3-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <20171110181552.227541251@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On Fri, Nov 10, 2017 at 08:59:01PM +0300, Sergei Shtylyov wrote:
+> Add the PFC support for the R8A77970 SoC including pin groups for some
+> on-chip devices such as CAN-FD, EtherAVB, [H]SCIF, I2C, INTC-EX, MMC,
+> MSIOF, PWM, VIN...
+> 
+> Based on the original (and large) patch by Daisuke Matsushita
+> <daisuke.matsushita.ns@hitachi.com>.
+> 
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> ---
+>  Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt |    1 
 
---bw7y2nwtmsz35qki
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Acked-by: Rob Herring <robh@kernel.org>
 
-On Fri, Sep 29, 2017 at 03:08:54PM +0200, Ulrich Hecht wrote:
-> HSCIF has facilities that allow moving the RX sampling point by between
-> -8 and 7 sampling cycles (one sampling cycles equals 1/15 of a bit
-> by default) to improve the error margin in case of slightly mismatched
-> bit rates between sender and receiver.
->=20
-> This patch allows changing the default (0, meaning center) using the
-> sysfs attribute "rx_sampling_point".
->=20
-> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-
-Wasn't there a conclusion in a chat meeting we had how to move this
-forward? How much effort would be implementing that?
-
-
---bw7y2nwtmsz35qki
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAloMWCwACgkQFA3kzBSg
-KbZI+w/7BHMB3paOHn841ZPvcB6zvXdyT1wbGl6mdd1qIXRNV0HwpgFifWHdiDh4
-Pq7TVL6+E5F0n2/i8QVhrneW8s+ICKVhnw0qhzSgl/EXBgzaMvEBcHfYCSrwmzLa
-QPeeyD/BcMP2p0vuIEb80rBC5Hfv39gyL5rBnHsziP/787FyHI/4rkrBTEhweXYE
-zESE6JA22quAMZAlcB1v2Y5yYqEmQklHxUlryZ6OzHKAP/5zSspoMfNQtfVYWW6j
-0TdpmcgQSLo3EoZBzzxHRUvbddcmoS8UFna3f5IIwcmv4NwKbdpKJv4rTA++mAEV
-7HIc80m9ng+DQAyDLNWBGKKp3RJ9CYZbR23UjZXgWBwaV3fhImitYkoEDRASe1oa
-AcLMugQKSlaTf5ecqTcGQ4FSXT7N8/54wDTJX0u3QopIkMtaTmHcfAmTdvjY7Gsu
-EAdyCxHSLVYuNyxRHDq8D767vBpKV/LtpsnPU+0x9/fXEkJz6E5kH33Zhy0jMy55
-F7gHVbPJNfPs/eUkivqg8JHLW0WKluHhZyoVKiVGLPpyNXeP7UNrQtBgA7LGQfTt
-qlNUr0L2t8xREInBgv0Wp5E+k9zK+T55rapTtmKQL6SLLwxMo172JMroZGJGmG5D
-35o2/98BauPbqv49r7Y5aPaiN2NpqKG5/vgs+abYjUhSbq5/IeM=
-=n+wu
------END PGP SIGNATURE-----
-
---bw7y2nwtmsz35qki--
+>  drivers/pinctrl/sh-pfc/Kconfig                                    |    5 
+>  drivers/pinctrl/sh-pfc/Makefile                                   |    1 
+>  drivers/pinctrl/sh-pfc/core.c                                     |    6 
+>  drivers/pinctrl/sh-pfc/pfc-r8a77970.c                             | 2421 ++++++++++
+>  drivers/pinctrl/sh-pfc/sh_pfc.h                                   |    1 
+>  6 files changed, 2435 insertions(+)
