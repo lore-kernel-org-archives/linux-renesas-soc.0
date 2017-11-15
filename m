@@ -1,56 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:40622 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752916AbdK3NMP (ORCPT
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39812 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932232AbdKONi1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 30 Nov 2017 08:12:15 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>
-Cc: Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        uclinux-h8-devel@lists.sourceforge.jp, linux-sh@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/5] tty: serial: sh-sci: Hide earlycon config question
-Date: Thu, 30 Nov 2017 14:12:00 +0100
-Message-Id: <1512047522-16312-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1512047522-16312-1-git-send-email-geert+renesas@glider.be>
-References: <1512047522-16312-1-git-send-email-geert+renesas@glider.be>
+        Wed, 15 Nov 2017 08:38:27 -0500
+Subject: Re: [RFC v2 2/2] base: dma-mapping: Postpone page_to_pfn() on mmap()
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        ysato@users.sourceforge.jp, dalias@libc.org,
+        laurent.pinchart@ideasonboard.com, geert@linux-m68k.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-sh@vger.kernel.org
+References: <1510679286-6988-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1510679286-6988-3-git-send-email-jacopo+renesas@jmondi.org>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <ea4f2d82-6a27-a7c1-091f-6230cfd988a3@arm.com>
+Date: Wed, 15 Nov 2017 13:38:23 +0000
+MIME-Version: 1.0
+In-Reply-To: <1510679286-6988-3-git-send-email-jacopo+renesas@jmondi.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Renesas H8/300 and ARM platforms use DT and support earlycon, so most
-users want earlycon support to be enabled.
+On 14/11/17 17:08, Jacopo Mondi wrote:
+> On SH4 architecture, with SPARSEMEM memory model, translating page to
+> pfn hangs the CPU. Post-pone translation to pfn after
+> dma_mmap_from_dev_coherent() function call as it succeeds and make page
+> translation not necessary.
+> 
+> This patch was suggested by Laurent Pinchart and he's working to submit
+> a proper fix mainline. Not sending for inclusion at the moment.
 
-On SuperH platforms, earlycon is not yet supported.
+Y'know, I think this patch does have some merit by itself - until we 
+know that cpu_addr *doesn't* represent some device-private memory which 
+is not guaranteed to be backed by a struct page, calling virt_to_page() 
+on it is arguably semantically incorrect, even if it might happen to be 
+benign in most cases.
 
-Hence follow the above rationale to configure the default, unless
-CONFIG_EXPERT is enabled.
+Robin.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/tty/serial/Kconfig | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
-index 0c75562d620feb82..952a2c6a9da08fdd 100644
---- a/drivers/tty/serial/Kconfig
-+++ b/drivers/tty/serial/Kconfig
-@@ -774,10 +774,11 @@ config SERIAL_SH_SCI_CONSOLE
- 	default y
- 
- config SERIAL_SH_SCI_EARLYCON
--	bool "Support for early console on SuperH SCI(F)"
-+	bool "Support for early console on SuperH SCI(F)" if EXPERT
- 	depends on SERIAL_SH_SCI=y
- 	select SERIAL_CORE_CONSOLE
- 	select SERIAL_EARLYCON
-+	default ARCH_RENESAS || H8300
- 
- config SERIAL_SH_SCI_DMA
- 	bool "DMA support"
--- 
-2.7.4
+> Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+>   drivers/base/dma-mapping.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/base/dma-mapping.c b/drivers/base/dma-mapping.c
+> index e584edd..73d64d3 100644
+> --- a/drivers/base/dma-mapping.c
+> +++ b/drivers/base/dma-mapping.c
+> @@ -227,8 +227,8 @@ int dma_common_mmap(struct device *dev, struct vm_area_struct *vma,
+>   #ifndef CONFIG_ARCH_NO_COHERENT_DMA_MMAP
+>   	unsigned long user_count = vma_pages(vma);
+>   	unsigned long count = PAGE_ALIGN(size) >> PAGE_SHIFT;
+> -	unsigned long pfn = page_to_pfn(virt_to_page(cpu_addr));
+>   	unsigned long off = vma->vm_pgoff;
+> +	unsigned long pfn;
+> 
+>   	vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
+> 
+> @@ -236,6 +236,7 @@ int dma_common_mmap(struct device *dev, struct vm_area_struct *vma,
+>   		return ret;
+> 
+>   	if (off < count && user_count <= (count - off)) {
+> +		pfn = page_to_pfn(virt_to_page(cpu_addr));
+>   		ret = remap_pfn_range(vma, vma->vm_start,
+>   				      pfn + off,
+>   				      user_count << PAGE_SHIFT,
+> --
+> 2.7.4
+> 
+> _______________________________________________
+> iommu mailing list
+> iommu@lists.linux-foundation.org
+> https://lists.linuxfoundation.org/mailman/listinfo/iommu
+> 
