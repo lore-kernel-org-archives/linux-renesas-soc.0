@@ -1,45 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:46792 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750738AbdKPNvl (ORCPT
+Received: from sauhun.de ([88.99.104.3]:35388 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932589AbdKOPhQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Nov 2017 08:51:41 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
+        Wed, 15 Nov 2017 10:37:16 -0500
+Date: Wed, 15 Nov 2017 16:37:15 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
         Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/2] ARM: dts: koelsch: Correct primary compatible value for eeprom
-Date: Thu, 16 Nov 2017 14:51:35 +0100
-Message-Id: <1510840296-12767-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1510840296-12767-1-git-send-email-geert+renesas@glider.be>
-References: <1510840296-12767-1-git-send-email-geert+renesas@glider.be>
+Subject: Re: [PATCH 1/2] serial: sh-sci: Support for variable HSCIF hardware
+ RX timeout
+Message-ID: <20171115153714.42zxldgbetfucpm4@ninjato>
+References: <1506690534-27302-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <1506690534-27302-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <20171115150615.tg4gwh3ekfew6dcx@ninjato>
+ <CAMuHMdXXrxJo4cCxUGJH0o_x9yD3QEQZ_a5ktnxy5zbEd9dJdA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="dmvy3a6r6iupze53"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXXrxJo4cCxUGJH0o_x9yD3QEQZ_a5ktnxy5zbEd9dJdA@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Renesas part number of the two-wire serial interface EEPROM is not
-24C02, but R1EX24002ATAS0G.
 
-Hence change its primary compatible value to "renesas,r1ex24002", like
-on Gose.
+--dmvy3a6r6iupze53
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7791-koelsch.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
-index 4126de4179224261..fac9cdea49650591 100644
---- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-@@ -708,7 +708,7 @@
- 	};
- 
- 	eeprom@50 {
--		compatible = "renesas,24c02", "atmel,24c02";
-+		compatible = "renesas,r1ex24002", "atmel,24c02";
- 		reg = <0x50>;
- 		pagesize = <16>;
- 	};
--- 
-2.7.4
+> No need to resend, see commit fa2abb03637a5528 ("serial: sh-sci: Support
+> for variable HSCIF hardware RX timeout") in today's upstream.
+
+In deed. Nice!
+
+
+--dmvy3a6r6iupze53
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAloMXycACgkQFA3kzBSg
+KbYsyA//VGrU38R2bD1/ZRc7WGAWtRnIdWGAJIqfLgBo1b7y20JmFhAnm7FhpNJ7
+9SpcJAqdShPW13J3/5VXYVSNBS51ZJeaDa2KnkCzQtrL7svw4dqLkrDfk/Bw0/Gt
+e56/v1zUNWWE3dRp3AznS3wTMAMduEnF0kw6A7QFPgRcYL/qYCOPSV46ZG0TRZbV
+7EJG7C9BojBjFqMywuND4rmYiRcKhadZiK7w/rAoywGjGVWqxgIUOw6PUoZ7Zh38
+CSbfirQOvFe9y9uOTS3+XDkah9InFUHip6LGlqEaNxV9MNytzAz4KybieJHGGKO0
+EpJc7bKtICxqdOL2FGhoyyfwcHMGKcgTgyToZVc96v6CFQoOsliX+f/p5in/dgZv
+rVnUDZ6TeZaVz4xVdqAZyrD+NjD3lSKd+/I3fm3vXD3XWHr5Fe3RBXnvmd3Hh8jc
+wavOSuVssdxrETwdqv2/s3PadXwFtFrZfOTGg69S+7N6G2R2POUQ6oH75TPCVR3k
+spAuy3550+inzKdlEBXwevqarS+WiECN/sfrpiZFUolYJcSXXmjO0H+AfKceuhz5
++tkhT8JI0AGN4m81v3cIYs8yIOidKznxFwdVgsV3ZckhS69ZYRscId1Z8UaPzbSr
+ZrCgX3okQamwoujrdorqhHZA+kwsAtQgWA/6oo/jFJ+SrL5Mobo=
+=VqxW
+-----END PGP SIGNATURE-----
+
+--dmvy3a6r6iupze53--
