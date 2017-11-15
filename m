@@ -1,27 +1,33 @@
 Return-Path: <linux-media-owner@vger.kernel.org>
-Subject: Re: [PATCH v11 2/2] media: rcar-csi2: add Renesas R-Car MIPI CSI-2
- receiver driver
-To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org
-References: <20171111002526.2646-1-niklas.soderlund+renesas@ragnatech.se>
- <20171111002526.2646-3-niklas.soderlund+renesas@ragnatech.se>
+From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
+Date: Wed, 15 Nov 2017 17:11:34 +0100
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
         Kieran Bingham <kieran.bingham@ideasonboard.com>,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <7f1e89f1-f80c-f2d7-58d3-229bc66fc6dd@xs4all.nl>
-Date: Fri, 17 Nov 2017 12:50:53 +0100
+Subject: Re: [PATCH v11 2/2] media: rcar-csi2: add Renesas R-Car MIPI CSI-2
+ receiver driver
+Message-ID: <20171115161134.GF12677@bigcity.dyn.berto.se>
+References: <20171111002526.2646-1-niklas.soderlund+renesas@ragnatech.se>
+ <20171111002526.2646-3-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-In-Reply-To: <20171111002526.2646-3-niklas.soderlund+renesas@ragnatech.se>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20171111002526.2646-3-niklas.soderlund+renesas@ragnatech.se>
 Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 11/11/17 01:25, Niklas Söderlund wrote:
+Hi,
+
+I just noticed I made a small mistake in this patch, see bellow. I will 
+send out a new version in a few days with this fix included but I don't 
+want to spam the list too much so I give it a few more days if there is 
+any other feedback.
+
+On 2017-11-11 01:25:26 +0100, Niklas S�derlund wrote:
 > A V4L2 driver for Renesas R-Car MIPI CSI-2 receiver. The driver
 > supports the rcar-vin driver on R-Car Gen3 SoCs where separate CSI-2
 > hardware blocks are connected between the video sources and the video
@@ -29,18 +35,7 @@ On 11/11/17 01:25, Niklas Söderlund wrote:
 > 
 > Driver is based on a prototype by Koji Matsuoka in the Renesas BSP.
 > 
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
-I found one small typo (see below). After fixing that you can add my:
-
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
-
-I would like to see another Ack before merging this (Sakari?).
-
-Regards,
-
-	Hans
-
+> Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
 > ---
 >  drivers/media/platform/rcar-vin/Kconfig     |  12 +
 >  drivers/media/platform/rcar-vin/Makefile    |   1 +
@@ -745,9 +740,6 @@ Regards,
 > +	unsigned int i;
 > +
 > +	/* Only port 0 enpoint 0 is valid */
-
-enpoint -> endpoint
-
 > +	if (vep->base.port || vep->base.id)
 > +		return -ENOTCONN;
 > +
@@ -951,6 +943,11 @@ enpoint -> endpoint
 > +	return 0;
 > +
 > +error:
+
+The notifier needs to be unregistered not just cleaned up here:
+
+v4l2_async_notifier_unregister(&priv->notifier) sho
+
 > +	v4l2_async_notifier_cleanup(&priv->notifier);
 > +
 > +	return ret;
@@ -960,6 +957,11 @@ enpoint -> endpoint
 > +{
 > +	struct rcar_csi2 *priv = platform_get_drvdata(pdev);
 > +
+
+Same here,
+
+v4l2_async_notifier_unregister(&priv->notifier);
+
 > +	v4l2_async_notifier_cleanup(&priv->notifier);
 > +	v4l2_async_unregister_subdev(&priv->subdev);
 > +
@@ -979,7 +981,13 @@ enpoint -> endpoint
 > +
 > +module_platform_driver(rcar_csi2_pdrv);
 > +
-> +MODULE_AUTHOR("Niklas Söderlund <niklas.soderlund@ragnatech.se>");
+> +MODULE_AUTHOR("Niklas S�derlund <niklas.soderlund@ragnatech.se>");
 > +MODULE_DESCRIPTION("Renesas R-Car MIPI CSI-2 receiver");
 > +MODULE_LICENSE("GPL v2");
+> -- 
+> 2.15.0
 > 
+
+-- 
+Regards,
+Niklas S�derlund
