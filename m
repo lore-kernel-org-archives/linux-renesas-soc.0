@@ -1,70 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from condef-04.nifty.com ([202.248.20.69]:34918 "EHLO
-        condef-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753690AbdKXQgX (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:37207 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753083AbdKOPZa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 24 Nov 2017 11:36:23 -0500
-Received: from conuserg-11.nifty.com ([10.126.8.74])by condef-04.nifty.com with ESMTP id vAOGPugP015765
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 25 Nov 2017 01:25:59 +0900
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-mmc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Simon Horman <simon.horman@netronome.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v2 08/22] mmc: tmio: move mmc_gpio_request_cd() before mmc_add_host()
-Date: Sat, 25 Nov 2017 01:24:43 +0900
-Message-Id: <1511540697-27387-9-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
+        Wed, 15 Nov 2017 10:25:30 -0500
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org, horms@verge.net.au,
+        wsa@the-dreams.de, geert@linux-m68k.org
+Cc: magnus.damm@gmail.com, linux-i2c@vger.kernel.org,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH 0/6] R-Car D3 (r8a77995) I2C integration
+Date: Wed, 15 Nov 2017 16:25:20 +0100
+Message-Id: <1510759526-30346-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Drivers do not need to call mmc_gpiod_request_cd_irq() explicitly
-because mmc_start_host() calls it.  To make it work, cd_gpio must
-be set before mmc_add_host().
+Hi!
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+This adds I2C controllers to the D3 device tree and enables I2C busses 0
+and 1 on the Draak board. (I2C2 is not connected on that board.)
 
-Changes in v2: None
+Includes missing pins, DMA support and the Draak's serial EEPROM.
 
- drivers/mmc/host/tmio_mmc_core.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+CU
+Uli
 
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 46f77c3..efffb04 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -1205,6 +1205,12 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
- 	if (ret < 0)
- 		return ret;
- 
-+	if (pdata->flags & TMIO_MMC_USE_GPIO_CD) {
-+		ret = mmc_gpio_request_cd(mmc, pdata->cd_gpio, 0);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	mmc->caps |= MMC_CAP_4_BIT_DATA | pdata->capabilities;
- 	mmc->caps2 |= pdata->capabilities2;
- 	mmc->max_segs = pdata->max_segs ? : 32;
-@@ -1300,14 +1306,6 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
- 
- 	dev_pm_qos_expose_latency_limit(&pdev->dev, 100);
- 
--	if (pdata->flags & TMIO_MMC_USE_GPIO_CD) {
--		ret = mmc_gpio_request_cd(mmc, pdata->cd_gpio, 0);
--		if (ret)
--			goto remove_host;
--
--		mmc_gpiod_request_cd_irq(mmc);
--	}
--
- 	return 0;
- 
- remove_host:
+
+Ulrich Hecht (6):
+  pinctrl: sh-pfc: r8a77995: add missing pins SCL0 and SDA0 to pinmux
+    data
+  i2c: rcar: enable for R-Car D3 (r8a77995)
+  arm64: renesas: r8a77995: add I2C support
+  arm64: renesas: draak: enable I2C controller 0 and EEPROM
+  arm64: renesas: draak: enable I2C controller 1
+  i2c: rcar: document R8A77970 bindings
+
+ Documentation/devicetree/bindings/i2c/i2c-rcar.txt |  1 +
+ arch/arm64/boot/dts/renesas/r8a77995-draak.dts     | 28 ++++++++++
+ arch/arm64/boot/dts/renesas/r8a77995.dtsi          | 64 ++++++++++++++++++++++
+ drivers/i2c/busses/i2c-rcar.c                      |  1 +
+ drivers/pinctrl/sh-pfc/pfc-r8a77995.c              |  2 +
+ 5 files changed, 96 insertions(+)
+
 -- 
 2.7.4
