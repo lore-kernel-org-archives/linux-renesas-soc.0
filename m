@@ -1,69 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:43306 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752680AbdKHPPt (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:56041 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932115AbdKON1j (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 8 Nov 2017 10:15:49 -0500
-Received: by mail-lf0-f65.google.com with SMTP id a16so3576048lfk.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 08 Nov 2017 07:15:48 -0800 (PST)
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
-Cc: Kevin Hilman <khilman@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
+        Wed, 15 Nov 2017 08:27:39 -0500
+Date: Wed, 15 Nov 2017 05:27:33 -0800
+From: Simon Horman <horms@verge.net.au>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-pci@vger.kernel.org,
+        Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>,
+        Gaku Inami <gaku.inami.xw@bp.renesas.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
-        linux-renesas-soc@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 3/3] PM / Domains: Take WAKEUP_POWERED driver flag into account
-Date: Wed,  8 Nov 2017 16:15:34 +0100
-Message-Id: <1510154134-1248-4-git-send-email-ulf.hansson@linaro.org>
-In-Reply-To: <1510154134-1248-1-git-send-email-ulf.hansson@linaro.org>
-References: <1510154134-1248-1-git-send-email-ulf.hansson@linaro.org>
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH V2 5/5] PCI: rcar: Add the suspend/resume for pcie-rcar
+ driver
+Message-ID: <20171115132733.ydkd7yvayowh5vwu@verge.net.au>
+References: <20171110215843.432-1-marek.vasut+renesas@gmail.com>
+ <20171110215843.432-6-marek.vasut+renesas@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20171110215843.432-6-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Make genpd to take the WAKEUP_POWERED driver flag into account during
-system suspend/resume. More precisely, in case the WAKEUP_POWERED flag is
-set, let's leave the device in full power state and prevent the PM domain
-from being powered off.
+On Fri, Nov 10, 2017 at 10:58:43PM +0100, Marek Vasut wrote:
+> From: Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>
+> 
+> This adds the suspend/resume supports for pcie-rcar. The resume handler
+> reprograms the hardware based on the software state kept in specific
+> device structures. Also it doesn't need to save any registers.
+> 
+> Signed-off-by: Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>
+> Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Phil Edworthy <phil.edworthy@renesas.com>
+> Cc: Simon Horman <horms+renesas@verge.net.au>
+> Cc: Wolfram Sang <wsa@the-dreams.de>
+> Cc: linux-renesas-soc@vger.kernel.org
 
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
----
- drivers/base/power/domain.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-index 24e39ce..dc18f88 100644
---- a/drivers/base/power/domain.c
-+++ b/drivers/base/power/domain.c
-@@ -1037,8 +1037,11 @@ static int genpd_finish_suspend(struct device *dev, bool poweroff)
- 	if (IS_ERR(genpd))
- 		return -EINVAL;
- 
--	if (dev->power.wakeup_path && genpd_is_active_wakeup(genpd))
--		return 0;
-+	if (dev->power.wakeup_path) {
-+		if (dev_pm_test_driver_flags(dev, DPM_FLAG_WAKEUP_POWERED) ||
-+		    genpd_is_active_wakeup(genpd))
-+			return 0;
-+	}
- 
- 	if (poweroff)
- 		ret = pm_generic_poweroff_noirq(dev);
-@@ -1092,8 +1095,11 @@ static int genpd_resume_noirq(struct device *dev)
- 	if (IS_ERR(genpd))
- 		return -EINVAL;
- 
--	if (dev->power.wakeup_path && genpd_is_active_wakeup(genpd))
--		return 0;
-+	if (dev->power.wakeup_path) {
-+		if (dev_pm_test_driver_flags(dev, DPM_FLAG_WAKEUP_POWERED) ||
-+		    genpd_is_active_wakeup(genpd))
-+			return 0;
-+	}
- 
- 	genpd_lock(genpd);
- 	genpd_sync_power_on(genpd, true, 0);
--- 
-2.7.4
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
