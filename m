@@ -1,74 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:47770 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933952AbdKPJhg (ORCPT
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:49283 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752629AbdKOPZ5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Nov 2017 04:37:36 -0500
-MIME-Version: 1.0
-In-Reply-To: <1510759549-30404-2-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1510759549-30404-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1510759549-30404-2-git-send-email-ulrich.hecht+renesas@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 16 Nov 2017 10:37:35 +0100
-Message-ID: <CAMuHMdW58hNHA2N5diu3tufpbVSc85Wf8gOkgi9qxKUGVzy2tA@mail.gmail.com>
-Subject: Re: [PATCH 1/4] mmc: renesas_sdhi: enable R-Car D3 (r8a77995) support
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux MMC List <linux-mmc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 15 Nov 2017 10:25:57 -0500
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org, horms@verge.net.au,
+        wsa@the-dreams.de, geert@linux-m68k.org
+Cc: magnus.damm@gmail.com, linux-mmc@vger.kernel.org,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH 1/4] mmc: renesas_sdhi: enable R-Car D3 (r8a77995) support
+Date: Wed, 15 Nov 2017 16:25:46 +0100
+Message-Id: <1510759549-30404-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <1510759549-30404-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1510759549-30404-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Uli,
+Adds compatible string and whitelists for internal DMAC implementation.
 
-On Wed, Nov 15, 2017 at 4:25 PM, Ulrich Hecht
-<ulrich.hecht+renesas@gmail.com> wrote:
-> Adds compatible string and whitelists for internal DMAC implementation.
->
-> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+---
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Thanks for your patch!
-
-> --- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-> +++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-> @@ -88,6 +88,7 @@ static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
->  static const struct of_device_id renesas_sdhi_internal_dmac_of_match[] = {
->         { .compatible = "renesas,sdhi-r8a7795", .data = &of_rcar_gen3_compatible, },
->         { .compatible = "renesas,sdhi-r8a7796", .data = &of_rcar_gen3_compatible, },
-> +       { .compatible = "renesas,sdhi-r8a77995", .data = &of_rcar_gen3_compatible, },
-
-This change is not needed, due to the line below.
-
->         { .compatible = "renesas,rcar-gen3-sdhi", .data = &of_rcar_gen3_compatible, },
->         {},
->  };
-> @@ -255,6 +256,7 @@ static const struct soc_device_attribute gen3_soc_whitelist[] = {
->          { .soc_id = "r8a7795", .revision = "ES1.*" },
->          { .soc_id = "r8a7795", .revision = "ES2.0" },
->          { .soc_id = "r8a7796", .revision = "ES1.0" },
-> +        { .soc_id = "r8a77995", .revision = "*" },
-
-It may be safer to use "ES1.0" instead of a wildcard, like for the other
-R-Car Gen3 SoCs, as we can't predict the future.
-
-BTW, if you want to match against all revisions, there's no need to use
-a "*" explicit wildcard.
-
->          { /* sentinel */ }
->  };
-
-With at least my first comment taken into account:
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+index 41cbe84..f16d8f4 100644
+--- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+@@ -88,6 +88,7 @@ static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
+ static const struct of_device_id renesas_sdhi_internal_dmac_of_match[] = {
+ 	{ .compatible = "renesas,sdhi-r8a7795", .data = &of_rcar_gen3_compatible, },
+ 	{ .compatible = "renesas,sdhi-r8a7796", .data = &of_rcar_gen3_compatible, },
++	{ .compatible = "renesas,sdhi-r8a77995", .data = &of_rcar_gen3_compatible, },
+ 	{ .compatible = "renesas,rcar-gen3-sdhi", .data = &of_rcar_gen3_compatible, },
+ 	{},
+ };
+@@ -255,6 +256,7 @@ static const struct soc_device_attribute gen3_soc_whitelist[] = {
+         { .soc_id = "r8a7795", .revision = "ES1.*" },
+         { .soc_id = "r8a7795", .revision = "ES2.0" },
+         { .soc_id = "r8a7796", .revision = "ES1.0" },
++        { .soc_id = "r8a77995", .revision = "*" },
+         { /* sentinel */ }
+ };
+ 
+-- 
+2.7.4
