@@ -1,63 +1,82 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:35265 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1757778AbdKOPGR (ORCPT
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:49224 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758877AbdKOQbs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Nov 2017 10:06:17 -0500
-Date: Wed, 15 Nov 2017 16:06:15 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org,
-        linux-serial@vger.kernel.org, magnus.damm@gmail.com
-Subject: Re: [PATCH 1/2] serial: sh-sci: Support for variable HSCIF hardware
- RX timeout
-Message-ID: <20171115150615.tg4gwh3ekfew6dcx@ninjato>
-References: <1506690534-27302-1-git-send-email-ulrich.hecht+renesas@gmail.com>
- <1506690534-27302-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Wed, 15 Nov 2017 11:31:48 -0500
+Received: by mail-lf0-f66.google.com with SMTP id w21so26895513lfc.6
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Nov 2017 08:31:47 -0800 (PST)
+Date: Wed, 15 Nov 2017 17:31:45 +0100
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Kieran Bingham <kbingham@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org, kieran.bingham@ideasonboard.com,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: Re: [PATCH 2/3] tools: 8camera-status: Expand to 9 cameras
+Message-ID: <20171115163145.GH12677@bigcity.dyn.berto.se>
+References: <1510756711-6488-1-git-send-email-kbingham@kernel.org>
+ <1510756711-6488-3-git-send-email-kbingham@kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="s5cqavwihootr57r"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <1506690534-27302-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1510756711-6488-3-git-send-email-kbingham@kernel.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Kieran,
 
---s5cqavwihootr57r
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for your patch, applied.
 
-On Fri, Sep 29, 2017 at 03:08:53PM +0200, Ulrich Hecht wrote:
-> HSCIF has facilities that allow changing the timeout after which an RX
-> interrupt is triggered even if the FIFO is not filled. This patch allows
-> changing the default (15 bits of silence) using the existing sysfs
-> attribute "rx_fifo_timeout".
->=20
-> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+On 2017-11-15 14:38:30 +0000, Kieran Bingham wrote:
+> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> 
+> The 8th camera has an address conflict on the Salvator-X.
+> As such it has been moved to the right by one address,
+> Include this '9th' camera in the reporting status
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> ---
+>  tools/8camera-status | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/tools/8camera-status b/tools/8camera-status
+> index cdfe76ef286f..846673578f09 100755
+> --- a/tools/8camera-status
+> +++ b/tools/8camera-status
+> @@ -1,7 +1,7 @@
+>  #!/usr/bin/awk -f
+>  
+>  BEGIN {
+> -	for (x = 0; x <= 8; x++)
+> +	for (x = 0; x <= 9; x++)
+>  		cameras[x] = "-"
+>  }
+>  
+> @@ -67,15 +67,15 @@ function ParseProbe ( line )
+>  
+>  function PrintCameras()
+>  {
+> -	print "===================================="
+> -	print "| 1 | 2 | 3 | 4 |  | 5 | 6 | 7 | 8 |"
+> -	for (x=1; x <= 8; x++) {
+> +	print "========================================"
+> +	print "| 1 | 2 | 3 | 4 |  | 5 | 6 | 7 | 8 | 9 |"
+> +	for (x=1; x <= 9; x++) {
+>  		printf "| " cameras[x] " "
+>  		if (x == 4)
+>  			printf("|  ")
+>  	}
+>  	printf "|\n"
+> -	print "===================================="
+> +	print "======================================="
+>  }
+>  
+>  function Summarise() {
+> -- 
+> 2.7.4
+> 
 
-Can't this patch be resent independently of the other? With Geert's tag
-added?
-
-
---s5cqavwihootr57r
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAloMV+MACgkQFA3kzBSg
-KbZIeRAAnm4ApgmKvpyLzgiYepgpjO9y56R2lCutllsQFAe0okP4WMmotCgTaV5I
-UqemZJ3CrHuUrWvpa0zYhKK5sZkfS6RRa3+ynQKqTL6BPy3T/o7jyCFgd8Hs2i1y
-qmbu1fYERLVFt6ZlhGN1XSKcKtkRuP4Q6JWy9nsisvy6xL9qN+Jqp1M49zTqwAUQ
-gN2xESt6b3uJGE72wPE5t9Lyr5zQwWKsM0YrJA3I5tQhbPXm2MxSdZl0rxeaXJNn
-fqexkf3T06oAoFCSDcySapfa8qiKYXZjqzyICtVR7CCUOHvhBUY/aemjMxYVKDwI
-QAyISg8ELO7TkTV5kNXIT+wYQgNCkxwUG8h+OAdQJKyQjk3NrBLfL2kMwHyag9QJ
-YSCN8OiCovdFoIEN1h1rkkKcog2RxDh0HVZjb4l25U0J9rUkN12j9bvhRnkiPjqM
-07rYe7PZgpHeBf0UVBdlZK+pBfT/HIsowNqc7OMz8RTz+TWEGt37sHi2zPDZE0xP
-6rfIOjBl0Kahqd2WA5Lqfqmei+4dtzQ1pL6AOspqvdH8Je5g0cWiSHH7sHCcgHbU
-fO0vSu9TiW65XFgoWvk834JKdGGz+DGRCAGLyjpBNqdXYpi2bnyZzoB8Dmoz4fiq
-xmrfdfgCKme+IlLDjWE3CY0eyb/y8Cpz5BLy/y1MZ/XAGLCcX+c=
-=Zxxi
------END PGP SIGNATURE-----
-
---s5cqavwihootr57r--
+-- 
+Regards,
+Niklas S�derlund
