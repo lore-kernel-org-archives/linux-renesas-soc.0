@@ -1,75 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f66.google.com ([209.85.214.66]:44958 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759377AbdKPHrM (ORCPT
+Received: from sauhun.de ([88.99.104.3]:35225 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1757255AbdKOOsa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Nov 2017 02:47:12 -0500
-Received: by mail-it0-f66.google.com with SMTP id b5so4812126itc.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Nov 2017 23:47:12 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <20171114225520.6793-1-wsa+renesas@sang-engineering.com>
-References: <20171114225520.6793-1-wsa+renesas@sang-engineering.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 16 Nov 2017 08:47:11 +0100
-Message-ID: <CAPDyKFrgO0JRatud5JRDONS=VTNef8WS+qvRAUo1AXep9wMpZg@mail.gmail.com>
-Subject: Re: [PATCH RFT] mmc: core: use usleep_range rather than HZ magic in mmc_delay()
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Wed, 15 Nov 2017 09:48:30 -0500
+Date: Wed, 15 Nov 2017 15:48:28 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Simon Horman <horms@verge.net.au>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH RFT] mmc: core: use usleep_range rather than HZ magic in
+ mmc_delay()
+Message-ID: <20171115144828.i7lvvn52b7ob4pgi@ninjato>
+References: <20171114225520.6793-1-wsa+renesas@sang-engineering.com>
+ <CAMuHMdWXXUCKMs94NK_40BQj-6YVGeu41Z6DJAjwqRf1yZe_-A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="csw3znhshcay4ml4"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWXXUCKMs94NK_40BQj-6YVGeu41Z6DJAjwqRf1yZe_-A@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 14 November 2017 at 23:55, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> Documentation/timers/timers-howto.txt recommends to use usleep_range for
-> delays 1-20ms. Let's adhere to it. No need for messing with HZ and still
-> do busy looping these days.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
->
-> Here is a more detailed test page for this describing my tests:
->
-> https://elinux.org/Tests:mmc-delay-refactor
->
-> I did mainly test the insert/eject cycle because powering up the cards
-> seemed to trigger most delays. Transferring data did not cause any calls
-> to mmc_delay() for me. Please let me know if someone knows a test pattern
-> which should be included before applying this change.
->
-> Works fine for me on Lager (R-Car H2) and Salvator-X (R-Car M3-W). Testing on
-> other platforms very welcome. This should be independent of the IP core.
->
->  drivers/mmc/core/core.h | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/mmc/core/core.h b/drivers/mmc/core/core.h
-> index 71e6c6d7ceb70d..b2877e2d740fa5 100644
-> --- a/drivers/mmc/core/core.h
-> +++ b/drivers/mmc/core/core.h
-> @@ -62,12 +62,10 @@ void mmc_set_initial_state(struct mmc_host *host);
->
->  static inline void mmc_delay(unsigned int ms)
->  {
-> -       if (ms < 1000 / HZ) {
-> -               cond_resched();
-> -               mdelay(ms);
-> -       } else {
-> +       if (ms <= 20)
-> +               usleep_range(ms * 1000, ms * 1250);
 
-This means we get usleep_range(20000, 25000) for the worst case.
+--csw3znhshcay4ml4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Perhaps we want "ms <= 16" instead, thus getting usleep
-usleep_range(16000, 20000) for the worst case? No?
 
-> +       else
->                 msleep(ms);
-> -       }
->  }
+> > I did mainly test the insert/eject cycle because powering up the cards
+> > seemed to trigger most delays. Transferring data did not cause any calls
+> > to mmc_delay() for me. Please let me know if someone knows a test patte=
+rn
+> > which should be included before applying this change.
+>=20
+> JFTR, with CONFIG_DEBUG_ATOMIC_SLEEP=3Dy, I assume ?
+> (also for the other patch)
 
-Kind regards
-Uffe
+Actually, no :( Did this now and retested, nothing showed up luckily
+(would have been really a surprise, too). Also, added those config
+options to the configs in the test branch. Thanks for the pointer,
+Geert!
+
+
+--csw3znhshcay4ml4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAloMU7wACgkQFA3kzBSg
+KbbA3hAAsF6svwlgoGSVRl08dEj3hkLMtaRYH5uqkiMsgxZx6/uQgszu33Kks8pv
+Q4eQlupp+FTdIXYYLIQzeWWoenMFt+vStOV+Qe9q8af17Vyy18WHxECPeEceH44D
+3UyNpfid35F7J6eGQ0i7xMMnLpcAe6fz4OtFjlfmxeZPRatbky1JSfcO2L0Fc8OT
+iRttS4vt36Nf7yJYhHFJ9FD8Uk9DY46z6BxQ6ta0/YXKfhXi8TzJ/ZqE3oIjdvSg
+R327Gr78eIRljYB2eqHRtxHMJ8oVWcEfDayG3sADvMZGQ2kcVtMWpAcd3BhAAESF
+pxG0pgTVEKClegNOvjSfDLwy3AFODTg+zkflnma2tswh7hxd0AN97tXDQ3mkDzuI
+FuubGx2hJQub/8UTpLFkSLjfmdLp8JaMbh6btEj1sPYyXlCrEXZM2vCbIa1qik8I
+JX5YahlKSreKgHP2jNuXT6Zdm39uUj4Qnu38gdgUDhJf66rCpLJ0h5AbLfOSJ2A3
+EW77uP8YxTlB8ZZANorV3IeFxO/X5yu0whDkRlp7yrg5ZhcUV0tWECQX06U6OqSW
+oQIDMCrzYlEN2r+B+7Iz//LqHenK0w6Qw9ji2oMYv0RXpLspm/z5Oxroh5kVEwyN
+90VGhJNY7G9Z/LJ5gq2zfmjLkXt5dRuqSg1/A9EPiVL/ch0geOA=
+=t3AB
+-----END PGP SIGNATURE-----
+
+--csw3znhshcay4ml4--
