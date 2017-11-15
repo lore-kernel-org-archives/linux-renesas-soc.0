@@ -1,43 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f182.google.com ([209.85.216.182]:51072 "EHLO
-        mail-qt0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750867AbdKPIxD (ORCPT
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:38431 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758380AbdKOPZc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Nov 2017 03:53:03 -0500
-MIME-Version: 1.0
-In-Reply-To: <1510759526-30346-2-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1510759526-30346-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1510759526-30346-2-git-send-email-ulrich.hecht+renesas@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 16 Nov 2017 09:53:02 +0100
-Message-ID: <CAMuHMdUZPF5E64MExUN4UdPwyai4F4GmwfbW6oVF0vfiV8HYrg@mail.gmail.com>
-Subject: Re: [PATCH 1/6] pinctrl: sh-pfc: r8a77995: add missing pins SCL0 and
- SDA0 to pinmux data
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux I2C <linux-i2c@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 15 Nov 2017 10:25:32 -0500
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org, horms@verge.net.au,
+        wsa@the-dreams.de, geert@linux-m68k.org
+Cc: magnus.damm@gmail.com, linux-i2c@vger.kernel.org,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH 1/6] pinctrl: sh-pfc: r8a77995: add missing pins SCL0 and SDA0 to pinmux data
+Date: Wed, 15 Nov 2017 16:25:21 +0100
+Message-Id: <1510759526-30346-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <1510759526-30346-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1510759526-30346-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Nov 15, 2017 at 4:25 PM, Ulrich Hecht
-<ulrich.hecht+renesas@gmail.com> wrote:
-> Required for I2C0 operation.
->
-> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Required for I2C0 operation.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in sh-pfc-for-v4.16.
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+---
+ drivers/pinctrl/sh-pfc/pfc-r8a77995.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
+index 89b7541..2c9a71a 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
+@@ -518,6 +518,8 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_SINGLE(QSPI0_MISO_IO1),
+ 	PINMUX_SINGLE(QSPI0_MOSI_IO0),
+ 	PINMUX_SINGLE(QSPI0_SPCLK),
++	PINMUX_SINGLE(SCL0),
++	PINMUX_SINGLE(SDA0),
+ 
+ 	/* IPSR0 */
+ 	PINMUX_IPSR_MSEL(IP0_3_0,	IRQ0_A, SEL_IRQ_0_0),
+-- 
+2.7.4
