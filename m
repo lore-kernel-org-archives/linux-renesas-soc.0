@@ -1,13 +1,18 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:47803 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933621AbdKOUVW (ORCPT
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:53456 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758779AbdKOQVI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Nov 2017 15:21:22 -0500
-Received: by mail-lf0-f67.google.com with SMTP id f125so27631998lff.4
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Nov 2017 12:21:22 -0800 (PST)
+        Wed, 15 Nov 2017 11:21:08 -0500
+MIME-Version: 1.0
+In-Reply-To: <1017d8fb-e353-f212-09a9-a28bf07eddc2@cogentembedded.com>
+References: <20171110200714.406365231@cogentembedded.com> <CAMuHMdWCj=CjA_zyC1GKr=KEk2CNMAtwvREw25R1uJktZucY4w@mail.gmail.com>
+ <1017d8fb-e353-f212-09a9-a28bf07eddc2@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 15 Nov 2017 17:21:07 +0100
+Message-ID: <CAMuHMdX8j__iF5xP33Na9pVM1nRWvrE7e68-zg0oE0gE5MOHXw@mail.gmail.com>
 Subject: Re: [PATCH 3/3] arm64: dts: renesas: eagle: add EtherAVB pins
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Cc: Simon Horman <horms@verge.net.au>,
         Rob Herring <robh+dt@kernel.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
@@ -18,55 +23,47 @@ Cc: Simon Horman <horms@verge.net.au>,
         Mark Rutland <mark.rutland@arm.com>,
         "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>
-References: <20171110200714.406365231@cogentembedded.com>
- <CAMuHMdWCj=CjA_zyC1GKr=KEk2CNMAtwvREw25R1uJktZucY4w@mail.gmail.com>
- <1017d8fb-e353-f212-09a9-a28bf07eddc2@cogentembedded.com>
- <CAMuHMdX8j__iF5xP33Na9pVM1nRWvrE7e68-zg0oE0gE5MOHXw@mail.gmail.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <a65b8740-b133-eb92-5494-fb532554127b@cogentembedded.com>
-Date: Wed, 15 Nov 2017 23:21:19 +0300
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdX8j__iF5xP33Na9pVM1nRWvrE7e68-zg0oE0gE5MOHXw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+Hi Sergei,
 
-On 11/15/2017 07:21 PM, Geert Uytterhoeven wrote:
+On Tue, Nov 14, 2017 at 7:00 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> On 11/14/2017 11:44 AM, Geert Uytterhoeven wrote:
+>>> Add the (previously omitted) EtherAVB pin data to the Eagle board's
+>>> device tree.
 
->>>> Add the (previously omitted) EtherAVB pin data to the Eagle board's
->>>> device tree.
-> 
->>>> --- renesas.orig/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
->>>> +++ renesas/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
->>>> @@ -34,6 +34,9 @@
->>
->> [...]
->>>>
->>>> @@ -53,6 +56,11 @@
->>>>    };
->>>>
->>>>    &pfc {
->>>> +       avb_pins: avb {
->>>> +               groups = "avb0_mdio", "avb0_mii";
+>>> --- renesas.orig/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+>>> +++ renesas/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+>>> @@ -34,6 +34,9 @@
+>
+> [...]
 >>>
+>>> @@ -53,6 +56,11 @@
+>>>   };
 >>>
->>> Oh no, its'called "avb0_mdio" here, but "avb(0)_mdc" on all other
->>> R-Car Gen3 SoCs?
+>>>   &pfc {
+>>> +       avb_pins: avb {
+>>> +               groups = "avb0_mdio", "avb0_mii";
 >>
 >>
->>     Can you remember the reason? I don;t want to follow the bad example. :-)
-> 
-> Sorry, I don't know.
+>> Oh no, its'called "avb0_mdio" here, but "avb(0)_mdc" on all other
+>> R-Car Gen3 SoCs?
+>
+>
+>    Can you remember the reason? I don;t want to follow the bad example. :-)
 
-    Hm, you seem to have participated in the related discussions for H2/M3-W...
-The reason was that omlu AVB_MDC signal was multiplexed, AVB_MDIO signal (and 
-AVB MII signals) was mapped to a dedicated pin without any multiplexing, so 
-the "avb_mdc" group initially contained only AVB_MDC.
+Sorry, I don't know.
 
-> Gr{oetje,eeting}s,
+Gr{oetje,eeting}s,
 
-MBR, Sergei
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
