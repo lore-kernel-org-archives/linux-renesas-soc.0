@@ -1,51 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:44232 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756429AbdKOPb0 (ORCPT
+Received: from sauhun.de ([88.99.104.3]:35265 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1757778AbdKOPGR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Nov 2017 10:31:26 -0500
-MIME-Version: 1.0
-In-Reply-To: <20171115150615.tg4gwh3ekfew6dcx@ninjato>
-References: <1506690534-27302-1-git-send-email-ulrich.hecht+renesas@gmail.com>
- <1506690534-27302-2-git-send-email-ulrich.hecht+renesas@gmail.com> <20171115150615.tg4gwh3ekfew6dcx@ninjato>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 15 Nov 2017 16:31:24 +0100
-Message-ID: <CAMuHMdXXrxJo4cCxUGJH0o_x9yD3QEQZ_a5ktnxy5zbEd9dJdA@mail.gmail.com>
+        Wed, 15 Nov 2017 10:06:17 -0500
+Date: Wed, 15 Nov 2017 16:06:15 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org,
+        linux-serial@vger.kernel.org, magnus.damm@gmail.com
 Subject: Re: [PATCH 1/2] serial: sh-sci: Support for variable HSCIF hardware
  RX timeout
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <20171115150615.tg4gwh3ekfew6dcx@ninjato>
+References: <1506690534-27302-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <1506690534-27302-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="s5cqavwihootr57r"
+Content-Disposition: inline
+In-Reply-To: <1506690534-27302-2-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Wolfram,
 
-On Wed, Nov 15, 2017 at 4:06 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
-> On Fri, Sep 29, 2017 at 03:08:53PM +0200, Ulrich Hecht wrote:
->> HSCIF has facilities that allow changing the timeout after which an RX
->> interrupt is triggered even if the FIFO is not filled. This patch allows
->> changing the default (15 bits of silence) using the existing sysfs
->> attribute "rx_fifo_timeout".
->>
->> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
->
-> Can't this patch be resent independently of the other? With Geert's tag
-> added?
+--s5cqavwihootr57r
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-No need to resend, see commit fa2abb03637a5528 ("serial: sh-sci: Support
-for variable HSCIF hardware RX timeout") in today's upstream.
+On Fri, Sep 29, 2017 at 03:08:53PM +0200, Ulrich Hecht wrote:
+> HSCIF has facilities that allow changing the timeout after which an RX
+> interrupt is triggered even if the FIFO is not filled. This patch allows
+> changing the default (15 bits of silence) using the existing sysfs
+> attribute "rx_fifo_timeout".
+>=20
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-Gr{oetje,eeting}s,
+Can't this patch be resent independently of the other? With Geert's tag
+added?
 
-                        Geert
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+--s5cqavwihootr57r
+Content-Type: application/pgp-signature; name="signature.asc"
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAloMV+MACgkQFA3kzBSg
+KbZIeRAAnm4ApgmKvpyLzgiYepgpjO9y56R2lCutllsQFAe0okP4WMmotCgTaV5I
+UqemZJ3CrHuUrWvpa0zYhKK5sZkfS6RRa3+ynQKqTL6BPy3T/o7jyCFgd8Hs2i1y
+qmbu1fYERLVFt6ZlhGN1XSKcKtkRuP4Q6JWy9nsisvy6xL9qN+Jqp1M49zTqwAUQ
+gN2xESt6b3uJGE72wPE5t9Lyr5zQwWKsM0YrJA3I5tQhbPXm2MxSdZl0rxeaXJNn
+fqexkf3T06oAoFCSDcySapfa8qiKYXZjqzyICtVR7CCUOHvhBUY/aemjMxYVKDwI
+QAyISg8ELO7TkTV5kNXIT+wYQgNCkxwUG8h+OAdQJKyQjk3NrBLfL2kMwHyag9QJ
+YSCN8OiCovdFoIEN1h1rkkKcog2RxDh0HVZjb4l25U0J9rUkN12j9bvhRnkiPjqM
+07rYe7PZgpHeBf0UVBdlZK+pBfT/HIsowNqc7OMz8RTz+TWEGt37sHi2zPDZE0xP
+6rfIOjBl0Kahqd2WA5Lqfqmei+4dtzQ1pL6AOspqvdH8Je5g0cWiSHH7sHCcgHbU
+fO0vSu9TiW65XFgoWvk834JKdGGz+DGRCAGLyjpBNqdXYpi2bnyZzoB8Dmoz4fiq
+xmrfdfgCKme+IlLDjWE3CY0eyb/y8Cpz5BLy/y1MZ/XAGLCcX+c=
+=Zxxi
+-----END PGP SIGNATURE-----
+
+--s5cqavwihootr57r--
