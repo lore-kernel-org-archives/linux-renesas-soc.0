@@ -1,154 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f50.google.com ([209.85.215.50]:43315 "EHLO
-        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753105AbdKMPqy (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:42567 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753083AbdKPA1p (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Nov 2017 10:46:54 -0500
-Received: by mail-lf0-f50.google.com with SMTP id o66so10641702lfg.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Nov 2017 07:46:53 -0800 (PST)
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
-Cc: Kevin Hilman <khilman@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
-        linux-renesas-soc@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v2 2/3] PM / core: Add IN_BAND_WAKEUP driver flag
-Date: Mon, 13 Nov 2017 16:46:42 +0100
-Message-Id: <1510588003-16650-3-git-send-email-ulf.hansson@linaro.org>
-In-Reply-To: <1510588003-16650-1-git-send-email-ulf.hansson@linaro.org>
-References: <1510588003-16650-1-git-send-email-ulf.hansson@linaro.org>
+        Wed, 15 Nov 2017 19:27:45 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] v4l: rcar-vin: Implement V4L2 video node release handler
+Date: Thu, 16 Nov 2017 02:27:53 +0200
+Message-ID: <2234965.HDk880jUUl@avalon>
+In-Reply-To: <20171115233433.GL12677@bigcity.dyn.berto.se>
+References: <20171115224907.392-1-laurent.pinchart+renesas@ideasonboard.com> <20171115233433.GL12677@bigcity.dyn.berto.se>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-For some bus types and PM domains, it's not sufficient to only check the
-return value from device_may_wakeup(), to fully understand how to configure
-wakeup settings for the device during system suspend.
+Hi Niklas,
 
-In particular, sometimes the device may need to remain in its power state,
-in case the driver has configured it for in band IRQs, as to be able to
-generate wakeup signals. Therefore, define and document an IN_BAND_WAKEUP
-driver flag, to enable drivers to instruct bus types and PM domains about
-this setting.
+On Thursday, 16 November 2017 01:34:33 EET Niklas S=F6derlund wrote:
+> On 2017-11-16 00:49:07 +0200, Laurent Pinchart wrote:
+> > The rvin_dev data structure contains driver private data for an instance
+> > of the VIN. It is allocated dynamically at probe time, and must be freed
+> > once all users are gone.
+> >=20
+> > The structure is currently allocated with devm_kzalloc(), which results
+> > in memory being freed when the device is unbound. If a userspace
+> > application is currently performing an ioctl call, or just keeps the
+> > device node open and closes it later, this will lead to accessing freed
+> > memory.
+> >=20
+> > Fix the problem by implementing a V4L2 release handler for the video
+> > node associated with the VIN instance (called when the last user of the
+> > video node releases it), and freeing memory explicitly from the release
+> > handler.
+> >=20
+> > Signed-off-by: Laurent Pinchart
+> > <laurent.pinchart+renesas@ideasonboard.com>
+>=20
+> Acked-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.se>
+>=20
+> This patch is based on-top of the VIN Gen3 enablement series not yet
+> upstream. This is OK for me, just wanted to check that this was the
+> intention as to minimize conflicts between the two.
 
-Of course, in case the bus type and PM domain has additional information
-about wakeup settings of the device, they may override the behaviour.
+Yes, that's my intention. The patch should be included, or possibly squashe=
+d=20
+in, your development branch.
 
-Using the IN_BAND_WAKEUP driver flag for a device, may also affect how bus
-types and PM domains should treat the device's parent during system
-suspend. Therefore, in __device_suspend(), let the PM core propagate the
-wakeup setting by using a status flag in the struct dev_pm_info for the
-parent. This also makes it consistent with how the existing "wakeup_path"
-status flag is being assigned.
+=2D-=20
+Regards,
 
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
----
-
-Changes in v2:
-	- Fixed comments from Rafael:
-	  - Rename flag to IN_BAND_WAKEUP.
-	  - Clarify doc and changelog.
-	  - Use a separate status flag when propagating to parents in PM core.
-	- I didn't add Geert's Reviewed-by, because of new changes.
-
----
- Documentation/driver-api/pm/devices.rst | 11 +++++++++++
- drivers/base/power/main.c               |  8 +++++++-
- include/linux/pm.h                      |  6 ++++++
- 3 files changed, 24 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/driver-api/pm/devices.rst b/Documentation/driver-api/pm/devices.rst
-index 53c1b0b..b7fddf2 100644
---- a/Documentation/driver-api/pm/devices.rst
-+++ b/Documentation/driver-api/pm/devices.rst
-@@ -414,6 +414,17 @@ when the system is in the sleep state.  For example, :c:func:`enable_irq_wake()`
- might identify GPIO signals hooked up to a switch or other external hardware,
- and :c:func:`pci_enable_wake()` does something similar for the PCI PME signal.
- 
-+Sometimes :c:func:`device_may_wakeup(dev)` is not sufficient to understand how a
-+wakeup signal needs to be configured. Particularly, in some cases the driver
-+needs to instruct bus types and PM domains, that it has configured the device to
-+use an in-band wakeup setting, which may require the device to remain in its
-+power state to be able to generate wakeup signals. Therefore, drivers can set
-+``DPM_FLAG_IN_BAND_WAKEUP`` in :c:member:`power.driver_flags`, by passing the
-+flag to :c:func:`dev_pm_set_driver_flags` helper, which instructs bus types and
-+PM domains to use this configuration. However, the bus types and PM domains may
-+override this setting, in case they have additional information about wakeup
-+settings of the device.
-+
- If any of these callbacks returns an error, the system won't enter the desired
- low-power state.  Instead, the PM core will unwind its actions by resuming all
- the devices that were suspended.
-diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
-index 8089e72..8ec3189 100644
---- a/drivers/base/power/main.c
-+++ b/drivers/base/power/main.c
-@@ -1432,8 +1432,11 @@ static void dpm_propagate_to_parent(struct device *dev)
- 	spin_lock_irq(&parent->power.lock);
- 
- 	parent->power.direct_complete = false;
--	if (dev->power.wakeup_path && !parent->power.ignore_children)
-+	if (dev->power.wakeup_path && !parent->power.ignore_children) {
- 		parent->power.wakeup_path = true;
-+		parent->power.wakeup_path_in_band =
-+			dev->power.wakeup_path_in_band;
-+	}
- 
- 	spin_unlock_irq(&parent->power.lock);
- }
-@@ -1547,6 +1550,8 @@ static int __device_suspend(struct device *dev, pm_message_t state, bool async)
-  End:
- 	if (!error) {
- 		dev->power.is_suspended = true;
-+		if (dev_pm_test_driver_flags(dev, DPM_FLAG_IN_BAND_WAKEUP))
-+			dev->power.wakeup_path_in_band = true;
- 		dpm_propagate_to_parent(dev);
- 		dpm_clear_suppliers_direct_complete(dev);
- 	}
-@@ -1671,6 +1676,7 @@ static int device_prepare(struct device *dev, pm_message_t state)
- 	device_lock(dev);
- 
- 	dev->power.wakeup_path = device_may_wakeup(dev);
-+	dev->power.wakeup_path_in_band = false;
- 
- 	if (dev->power.no_pm_callbacks) {
- 		ret = 1;	/* Let device go direct_complete */
-diff --git a/include/linux/pm.h b/include/linux/pm.h
-index 65d3911..4efb16a 100644
---- a/include/linux/pm.h
-+++ b/include/linux/pm.h
-@@ -559,6 +559,7 @@ struct pm_subsys_data {
-  * NEVER_SKIP: Do not skip system suspend/resume callbacks for the device.
-  * SMART_PREPARE: Check the return value of the driver's ->prepare callback.
-  * SMART_SUSPEND: No need to resume the device from runtime suspend.
-+ * WAKEUP_POWERED: Keep the device powered if it has wakeup enabled.
-  *
-  * Setting SMART_PREPARE instructs bus types and PM domains which may want
-  * system suspend/resume callbacks to be skipped for the device to return 0 from
-@@ -572,10 +573,14 @@ struct pm_subsys_data {
-  * necessary from the driver's perspective.  It also may cause them to skip
-  * invocations of the ->suspend_late and ->suspend_noirq callbacks provided by
-  * the driver if they decide to leave the device in runtime suspend.
-+ *
-+ * Setting WAKEUP_POWERED instructs bus types and PM domains that the device
-+ * needs to remain powered in system suspend, in case wakeup is enabled for it.
-  */
- #define DPM_FLAG_NEVER_SKIP	BIT(0)
- #define DPM_FLAG_SMART_PREPARE	BIT(1)
- #define DPM_FLAG_SMART_SUSPEND	BIT(2)
-+#define DPM_FLAG_IN_BAND_WAKEUP	BIT(3)
- 
- struct dev_pm_info {
- 	pm_message_t		power_state;
-@@ -595,6 +600,7 @@ struct dev_pm_info {
- 	struct completion	completion;
- 	struct wakeup_source	*wakeup;
- 	bool			wakeup_path:1;
-+	bool			wakeup_path_in_band:1;
- 	bool			syscore:1;
- 	bool			no_pm_callbacks:1;	/* Owned by the PM core */
- #else
--- 
-2.7.4
+Laurent Pinchart
