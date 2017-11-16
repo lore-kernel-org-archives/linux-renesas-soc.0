@@ -1,4 +1,9 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor4.renesas.com ([210.160.252.174]:45173 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S934507AbdKPMLp (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 16 Nov 2017 07:11:45 -0500
 From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 To: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -11,12 +16,12 @@ Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH v2 3/4] ARM: dts: r8a7743: add VIN dt support
-Date: Thu, 16 Nov 2017 18:22:50 +0000
-Message-Id: <1510856571-30281-4-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1510856571-30281-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1510856571-30281-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Subject: [PATCH 2/2] ARM: dts: r8a7743: add VIN dt support
+Date: Thu, 16 Nov 2017 12:11:30 +0000
+Message-Id: <1510834290-25434-3-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1510834290-25434-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1510834290-25434-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Add VIN[012] support to SoC dt. Also, add aliases.
@@ -24,15 +29,6 @@ Add VIN[012] support to SoC dt. Also, add aliases.
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 ---
-This patch depends on the following patches:
-* ARM: dts: r8a7743: Add default PCIe bus clock
-  https://patchwork.kernel.org/patch/10056485/
-* ARM: dts: r8a7743: Add PCIe Controller device node
-  https://patchwork.kernel.org/patch/10056487/
-
-v1->v2:
-* no difference
-
  arch/arm/boot/dts/r8a7743.dtsi | 36 ++++++++++++++++++++++++++++++++++++
  1 file changed, 36 insertions(+)
 
@@ -92,4 +88,3 @@ index 9e26c40..c09c667 100644
  			reg = <0 0xfeb00000 0 0x40000>,
 -- 
 2.7.4
-
