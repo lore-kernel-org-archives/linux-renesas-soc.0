@@ -1,44 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:33866 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755224AbdKBMrn (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:57550 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935061AbdKPNoZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 2 Nov 2017 08:47:43 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
+        Thu, 16 Nov 2017 08:44:25 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
 Cc: linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH RFT 5/5] i2c: sh_mobile: shorten exit of xfer routine
-Date: Thu,  2 Nov 2017 13:47:31 +0100
-Message-Id: <20171102124731.10484-6-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20171102124731.10484-1-wsa+renesas@sang-engineering.com>
-References: <20171102124731.10484-1-wsa+renesas@sang-engineering.com>
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/4] arm64: dts: renesas: r8a7795-salvator-x: Add SoC name to file header
+Date: Thu, 16 Nov 2017 14:44:19 +0100
+Message-Id: <1510839861-12303-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1510839861-12303-1-git-send-email-geert+renesas@glider.be>
+References: <1510839861-12303-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We can use the ternary operator for easier reading.
+Document clearly which SoC this DTS applies to, to distinguish from
+Salvator-X boards equipped with other SoCs.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/i2c/busses/i2c-sh_mobile.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/i2c/busses/i2c-sh_mobile.c b/drivers/i2c/busses/i2c-sh_mobile.c
-index 1701f193d94acf..39f0ee1cd78c74 100644
---- a/drivers/i2c/busses/i2c-sh_mobile.c
-+++ b/drivers/i2c/busses/i2c-sh_mobile.c
-@@ -746,9 +746,7 @@ static int sh_mobile_i2c_xfer(struct i2c_adapter *adapter,
- 	clk_disable_unprepare(pd->clk);
- 	pm_runtime_put_sync(pd->dev);
- 
--	if (!err)
--		err = num;
--	return err;
-+	return err ?: num;
- }
- 
- static u32 sh_mobile_i2c_func(struct i2c_adapter *adapter)
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+index 17953070f38dff8d..d17c11d2844d5508 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+@@ -1,5 +1,5 @@
+ /*
+- * Device Tree Source for the Salvator-X board
++ * Device Tree Source for the Salvator-X board with R-Car H3 ES2.0
+  *
+  * Copyright (C) 2015 Renesas Electronics Corp.
+  *
 -- 
-2.11.0
+2.7.4
