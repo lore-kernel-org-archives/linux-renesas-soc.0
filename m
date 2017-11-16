@@ -1,71 +1,89 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:57942 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753006AbdK1Nrk (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Nov 2017 08:47:40 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms+renesas@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 03/12] ARM: dts: r8a7791: Update CMT compat strings
-Date: Tue, 28 Nov 2017 14:47:27 +0100
-Message-Id: <1511876856-9495-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1511876856-9495-1-git-send-email-geert+renesas@glider.be>
-References: <1511876856-9495-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>
+Subject: [PATCH/RFC 0/2] V4L2: Handle the race condition between device access and unbind
+Date: Thu, 16 Nov 2017 02:33:47 +0200
+Message-Id: <20171116003349.19235-1-laurent.pinchart+renesas@ideasonboard.com>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Hello,
 
-Use recently updated R-Car Gen2 CMT0 and CMT1 compat strings.
+This small RFC is an attempt to handle the race condition that exists between
+device access and device unbind.
 
-With this change in place we can keep device-specific configuration in
-the driver and the driver can be able to support CMT1 specific features.
+Devices can be unbound from drivers in three different ways:
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v4:
-  - Rebased against renesas-devel-20171127-v4.15-rc1,
+- When the driver module is unloaded, the driver is unregistered and unbound
+  from all devices it was bound to. As module unloading can't happen as long
+  as the module reference count is not zero, no concurrent access to the
+  device from userspace access can be ongoing. This patch series isn't needed
+  to address this case.
 
-v3:
-  - Take over from Magnus,
-  - Update compatible values,
-  - Split in per-SoC patches,
+- When the device is removed either physically (for instance with USB or
+  hotpluggable PCI) or logically (for instance by unloading a DT overlay), the
+  device is unbound from its driver.
 
-v2:
-  - Added Acked-by and Tested-by from Geert,
-  - Added Acked-by from Laurent.
----
- arch/arm/boot/dts/r8a7791.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+- When userspace initiates a manual unbind through the driver sysfs unbind
+  file the device is also unbound from its driver.
 
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index e888b5b0e1353aba..a69d6f883b34519f 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -257,7 +257,7 @@
- 	};
- 
- 	cmt0: timer@ffca0000 {
--		compatible = "renesas,cmt-48-r8a7791", "renesas,cmt-48-gen2";
-+		compatible = "renesas,r8a7791-cmt0", "renesas,rcar-gen2-cmt0";
- 		reg = <0 0xffca0000 0 0x1004>;
- 		interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
-@@ -272,7 +272,7 @@
- 	};
- 
- 	cmt1: timer@e6130000 {
--		compatible = "renesas,cmt-48-r8a7791", "renesas,cmt-48-gen2";
-+		compatible = "renesas,r8a7791-cmt1", "renesas,rcar-gen2-cmt1";
- 		reg = <0 0xe6130000 0 0x1004>;
- 		interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
+The last two cases can occur at any time and are not synchronized with device
+access from userspace through video device nodes. This is the race that the
+patch series tries to address.
+
+Drivers need to ensure that no access to internal resources can occur before
+freeing those resources in the unbind handler. To do so, we need to both block
+all new accesses to device resources, and wait for all ongoing accesses to
+complete before freeing resources.
+
+This series achieves this by marking code sections that access device
+resources with the new video_device_enter() and video_device_exit() functions.
+The function internally keep a count of the number of such sections currently
+being executed in order to delay device unbind. Driver must call the
+video_device_unplug() function in their unbind handler before cleaning up any
+resource that can be accessed through the function marked with enter/exit. The
+video_device_unplug() function marks the device is being unbound, preventing
+subsequent calls to video_device_enter() from succeeding, and then waits for
+all device access code sections to be exited before returning.
+
+Several issues haven't been addressed yet, hence the RFC status of the series:
+
+- Only the video_device ioctl handler is currently protected by
+  video_device_enter() and video_device_exit(). This needs to be extended to
+  other file operations.
+
+- Blocking operations (such a VIDIOC_DQBUF for instance) need to be unblocked
+  at unbind time. Whether this can be handled entirely inside
+  video_device_unplug() needs to be researched.
+
+- While the above mechanism should be usable for subdevs too as the
+  v4l2_subdev structure contains a video_device structure, the subdev
+  .release() file operation handler subdev_close() accesses the v4l2_subdev
+  structure, which is currently freed by drivers at unbind time due to the
+  lack of a structure release operation in the v4l2_subdev structure. Fixing
+  this will likely require major refactoring of the subdev registration API,
+  which might not be considered worth it as the long term goal is to replace
+  subdev device nodes with the request API anyway.
+
+I would like to receive feedback on this initial version, and will then work
+on a second version that addresses at least the first two problems listed
+above.
+
+Laurent Pinchart (2):
+  v4l: v4l2-dev: Add infrastructure to protect device unplug race
+  v4l: rcar-vin: Wait for device access to complete before unplugging
+
+ drivers/media/platform/rcar-vin/rcar-core.c |  1 +
+ drivers/media/v4l2-core/v4l2-dev.c          | 57 +++++++++++++++++++++++++++++
+ include/media/v4l2-dev.h                    | 47 ++++++++++++++++++++++++
+ 3 files changed, 105 insertions(+)
+
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
