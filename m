@@ -1,77 +1,70 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:46197 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753554AbdKJSPx (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Nov 2017 13:15:53 -0500
-Received: by mail-lf0-f67.google.com with SMTP id e102so7732630lfi.3
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 10 Nov 2017 10:15:52 -0800 (PST)
+Return-Path: <devicetree-owner@vger.kernel.org>
+Subject: Re: [PATCH 3/3] arm64: dts: renesas: eagle: add EtherAVB pins
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20171110181547.933934369@cogentembedded.com>
-Date: Fri, 10 Nov 2017 20:59:00 +0300
-To: Linus Walleij <linus.walleij@linaro.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: devicetree@vger.kernel.org
-Subject: [PATCH 1/2] pinctrl: sh-pfc: add PORT_GP_CFG_{6|22}() helper macros
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+References: <20171110200714.406365231@cogentembedded.com>
+ <CAMuHMdWCj=CjA_zyC1GKr=KEk2CNMAtwvREw25R1uJktZucY4w@mail.gmail.com>
+ <1017d8fb-e353-f212-09a9-a28bf07eddc2@cogentembedded.com>
+ <CAMuHMdX8j__iF5xP33Na9pVM1nRWvrE7e68-zg0oE0gE5MOHXw@mail.gmail.com>
+ <a65b8740-b133-eb92-5494-fb532554127b@cogentembedded.com>
+Message-ID: <3c89ed4f-cde3-e29c-5513-060216f94c3a@cogentembedded.com>
+Date: Thu, 16 Nov 2017 15:28:38 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=pinctrl-sh-pfc-add-PORT_GP_CFG_-6-22-helper-macros.patch
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <a65b8740-b133-eb92-5494-fb532554127b@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-They follow the style of the existing PORT_GP_CFG_<n>() macros and
-will be used by a follow-up  patch for the R8A77970 SoC.
+On 11/15/2017 11:21 PM, Sergei Shtylyov wrote:
 
-Based on the original (and large) patch by Daisuke Matsushita
-<daisuke.matsushita.ns@hitachi.com>.
+>>>>> Add the (previously omitted) EtherAVB pin data to the Eagle board's
+>>>>> device tree.
+>>
+>>>>> --- renesas.orig/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+>>>>> +++ renesas/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+>>>>> @@ -34,6 +34,9 @@
+>>>
+>>> [...]
+>>>>>
+>>>>> @@ -53,6 +56,11 @@
+>>>>>    };
+>>>>>
+>>>>>    &pfc {
+>>>>> +       avb_pins: avb {
+>>>>> +               groups = "avb0_mdio", "avb0_mii";
+>>>>
+>>>>
+>>>> Oh no, its'called "avb0_mdio" here, but "avb(0)_mdc" on all other
+>>>> R-Car Gen3 SoCs?
+>>>
+>>>
+>>>     Can you remember the reason? I don;t want to follow the bad example. :-)
+>>
+>> Sorry, I don't know.
+> 
+>     Hm, you seem to have participated in the related discussions for H2/M3-W...
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+    H3, of course...
 
----
- drivers/pinctrl/sh-pfc/sh_pfc.h |   16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+> The reason was that omlu AVB_MDC signal was multiplexed, AVB_MDIO signal (and 
 
-Index: renesas-drivers/drivers/pinctrl/sh-pfc/sh_pfc.h
-===================================================================
---- renesas-drivers.orig/drivers/pinctrl/sh-pfc/sh_pfc.h
-+++ renesas-drivers/drivers/pinctrl/sh-pfc/sh_pfc.h
-@@ -389,10 +389,14 @@ extern const struct sh_pfc_soc_info shx3
- 	PORT_GP_CFG_1(bank, 3,  fn, sfx, cfg)
- #define PORT_GP_4(bank, fn, sfx)	PORT_GP_CFG_4(bank, fn, sfx, 0)
- 
--#define PORT_GP_CFG_8(bank, fn, sfx, cfg)				\
-+#define PORT_GP_CFG_6(bank, fn, sfx, cfg)				\
- 	PORT_GP_CFG_4(bank, fn, sfx, cfg),				\
- 	PORT_GP_CFG_1(bank, 4,  fn, sfx, cfg),				\
--	PORT_GP_CFG_1(bank, 5,  fn, sfx, cfg),				\
-+	PORT_GP_CFG_1(bank, 5,  fn, sfx, cfg)
-+#define PORT_GP_6(bank, fn, sfx)	PORT_GP_CFG_6(bank, fn, sfx, 0)
-+
-+#define PORT_GP_CFG_8(bank, fn, sfx, cfg)				\
-+	PORT_GP_CFG_6(bank, fn, sfx, cfg),				\
- 	PORT_GP_CFG_1(bank, 6,  fn, sfx, cfg),				\
- 	PORT_GP_CFG_1(bank, 7,  fn, sfx, cfg)
- #define PORT_GP_8(bank, fn, sfx)	PORT_GP_CFG_8(bank, fn, sfx, 0)
-@@ -450,9 +454,13 @@ extern const struct sh_pfc_soc_info shx3
- 	PORT_GP_CFG_1(bank, 20, fn, sfx, cfg)
- #define PORT_GP_21(bank, fn, sfx)	PORT_GP_CFG_21(bank, fn, sfx, 0)
- 
--#define PORT_GP_CFG_23(bank, fn, sfx, cfg)				\
-+#define PORT_GP_CFG_22(bank, fn, sfx, cfg)				\
- 	PORT_GP_CFG_21(bank, fn, sfx, cfg),				\
--	PORT_GP_CFG_1(bank, 21, fn, sfx, cfg),				\
-+	PORT_GP_CFG_1(bank, 21, fn, sfx, cfg)
-+#define PORT_GP_22(bank, fn, sfx)	PORT_GP_CFG_22(bank, fn, sfx, 0)
-+
-+#define PORT_GP_CFG_23(bank, fn, sfx, cfg)				\
-+	PORT_GP_CFG_22(bank, fn, sfx, cfg),				\
- 	PORT_GP_CFG_1(bank, 22, fn, sfx, cfg)
- #define PORT_GP_23(bank, fn, sfx)	PORT_GP_CFG_23(bank, fn, sfx, 0)
- 
+    s/omlu/only/.
+
+> AVB MII signals) was mapped to a dedicated pin without any multiplexing, so 
+> the "avb_mdc" group initially contained only AVB_MDC.
+> 
+>> Gr{oetje,eeting}s,
+
+MBR, Sergei
