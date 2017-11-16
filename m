@@ -1,39 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55692 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752216AbdKAKgq (ORCPT
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:47770 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933952AbdKPJhg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 1 Nov 2017 06:36:46 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Joerg Roedel <joro@8bytes.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        iommu@lists.linux-foundation.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 0/2] iommu/ipmmu-vmsa: r8a779(70|95) support
-Date: Wed,  1 Nov 2017 11:34:21 +0100
-Message-Id: <20171101103423.7334-1-horms+renesas@verge.net.au>
+        Thu, 16 Nov 2017 04:37:36 -0500
+MIME-Version: 1.0
+In-Reply-To: <1510759549-30404-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1510759549-30404-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1510759549-30404-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 16 Nov 2017 10:37:35 +0100
+Message-ID: <CAMuHMdW58hNHA2N5diu3tufpbVSc85Wf8gOkgi9qxKUGVzy2tA@mail.gmail.com>
+Subject: Re: [PATCH 1/4] mmc: renesas_sdhi: enable R-Car D3 (r8a77995) support
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux MMC List <linux-mmc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Update Update the IPMMU DT binding documentation and driver implementation
-to support the r8a77970 (R-Car V3M) and r8a77995 (R-Car D3).
+Hi Uli,
 
-Based on work for r8a7796 by Magnus Damm.
+On Wed, Nov 15, 2017 at 4:25 PM, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
+> Adds compatible string and whitelists for internal DMAC implementation.
+>
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-Patches based on:
-* iommu/next
-* [PATCH v5 00/09] iommu/ipmmu-vmsa: r8a7795 support V5
-* [PATCH v4 0/3] iommu/ipmmu-vmsa: r8a7796 support V4
-  (fuzz when applying 3/3)
+Thanks for your patch!
 
-Simon Horman (2):
-  iommu/ipmmu-vmsa: Add r8a779(70|95) DT bindings
-  iommu/ipmmu-vmsa: Hook up r8a779(70|95) DT matching code
+> --- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+> +++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+> @@ -88,6 +88,7 @@ static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
+>  static const struct of_device_id renesas_sdhi_internal_dmac_of_match[] = {
+>         { .compatible = "renesas,sdhi-r8a7795", .data = &of_rcar_gen3_compatible, },
+>         { .compatible = "renesas,sdhi-r8a7796", .data = &of_rcar_gen3_compatible, },
+> +       { .compatible = "renesas,sdhi-r8a77995", .data = &of_rcar_gen3_compatible, },
 
- .../devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt         |  2 ++
- drivers/iommu/ipmmu-vmsa.c                                   | 12 ++++++++++++
- 2 files changed, 14 insertions(+)
+This change is not needed, due to the line below.
 
--- 
-2.11.0
+>         { .compatible = "renesas,rcar-gen3-sdhi", .data = &of_rcar_gen3_compatible, },
+>         {},
+>  };
+> @@ -255,6 +256,7 @@ static const struct soc_device_attribute gen3_soc_whitelist[] = {
+>          { .soc_id = "r8a7795", .revision = "ES1.*" },
+>          { .soc_id = "r8a7795", .revision = "ES2.0" },
+>          { .soc_id = "r8a7796", .revision = "ES1.0" },
+> +        { .soc_id = "r8a77995", .revision = "*" },
+
+It may be safer to use "ES1.0" instead of a wildcard, like for the other
+R-Car Gen3 SoCs, as we can't predict the future.
+
+BTW, if you want to match against all revisions, there's no need to use
+a "*" explicit wildcard.
+
+>          { /* sentinel */ }
+>  };
+
+With at least my first comment taken into account:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
