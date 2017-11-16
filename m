@@ -1,97 +1,150 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:34038 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759736AbdKPNgE (ORCPT
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:56838 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932671AbdKPJYT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Nov 2017 08:36:04 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] ARM: dts: r8a779x: Add '#reset-cells' in cpg-mssr
-Date: Thu, 16 Nov 2017 14:35:57 +0100
-Message-Id: <1510839357-11450-1-git-send-email-geert+renesas@glider.be>
+        Thu, 16 Nov 2017 04:24:19 -0500
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: laurent.pinchart@ideasonboard.com, geert@glider.be
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [RFC] arm: dts: gr-peach: Add audiocamerashield DTSi
+Date: Thu, 16 Nov 2017 10:23:25 +0100
+Message-Id: <1510824205-17533-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Arnd Bergmann <arnd@arndb.de>
+Add device tree header for GR-Peach's audiocamerashield with OV7670
+image sensor.
 
-With the latest dtc, we get many warnings about the missing
-'#reset-cells' property in these controllers, e.g.:
-
-arch/arm/boot/dts/r8a7790-lager.dtb: Warning (resets_property): Missing property '#reset-cells' in node /clock-controller@e6150000 or bad phandle (referred from /can@e6e80000:resets[0])
-arch/arm/boot/dts/r8a7792-blanche.dtb: Warning (resets_property): Missing property '#reset-cells' in node /soc/clock-controller@e6150000 or bad phandle (referred from /soc/dma-controller@e6700000:resets[0])
-arch/arm/boot/dts/r8a7792-wheat.dtb: Warning (resets_property): Missing property '#reset-cells' in node /soc/clock-controller@e6150000 or bad phandle (referred from /soc/ethernet@e6800000:resets[0])
-arch/arm/boot/dts/r8a7793-gose.dtb: Warning (resets_property): Missing property '#reset-cells' in node /clock-controller@e6150000 or bad phandle (referred from /gpio@e6050000:resets[0])
-arch/arm/boot/dts/r8a7794-alt.dtb: Warning (resets_property): Missing property '#reset-cells' in node /clock-controller@e6150000 or bad phandle (referred from /i2c@e6500000:resets[0])
-arch/arm/boot/dts/r8a7794-silk.dtb: Warning (resets_property): Missing property '#reset-cells' in node /clock-controller@e6150000 or bad phandle (referred from /interrupt-controller@e61c0000:resets[0])
-
-This adds it for the three r8a779x chips that were lacking it. The
-binding mandates this as <1>, so this is the value I use.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-[geert: Add fix for r8a7793.dtsi]
-Fixes: 34fbd2b12761d111 ("ARM: dts: r8a7790: Add reset control properties")
-Fixes: 6e11a322f1d7505d ("ARM: dts: r8a7792: Add reset control properties")
-Fixes: 84fb19e1d201ba86 ("ARM: dts: r8a7793: Add reset control properties")
-Fixes: 615beb759ca494a4 ("ARM: dts: r8a7794: Add reset control properties")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
- arch/arm/boot/dts/r8a7790.dtsi | 1 +
- arch/arm/boot/dts/r8a7792.dtsi | 1 +
- arch/arm/boot/dts/r8a7793.dtsi | 1 +
- arch/arm/boot/dts/r8a7794.dtsi | 1 +
- 4 files changed, 4 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index e2c530c330a8eb7e..450bfc0e9796a557 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -1202,6 +1202,7 @@
- 		clock-names = "extal", "usb_extal";
- 		#clock-cells = <2>;
- 		#power-domain-cells = <0>;
-+		#reset-cells = <1>;
- 	};
- 
- 	prr: chipid@ff000044 {
-diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
-index 7b394273031e9a90..ac05fdb91798b88d 100644
---- a/arch/arm/boot/dts/r8a7792.dtsi
-+++ b/arch/arm/boot/dts/r8a7792.dtsi
-@@ -830,6 +830,7 @@
- 			clock-names = "extal";
- 			#clock-cells = <2>;
- 			#power-domain-cells = <0>;
-+			#reset-cells = <1>;
- 		};
- 	};
- 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index a83c2e9c5723fe2c..61dd291d907da2f5 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -1088,6 +1088,7 @@
- 		clock-names = "extal", "usb_extal";
- 		#clock-cells = <2>;
- 		#power-domain-cells = <0>;
-+		#reset-cells = <1>;
- 	};
- 
- 	rst: reset-controller@e6160000 {
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 96e405e70d9aeea5..106b4e1649ff695b 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -1106,6 +1106,7 @@
- 		clock-names = "extal", "usb_extal";
- 		#clock-cells = <2>;
- 		#power-domain-cells = <0>;
-+		#reset-cells = <1>;
- 	};
- 
- 	rst: reset-controller@e6160000 {
--- 
+Hello,
+   this patch adds device tree header file for GR-Peach's audiocamerashield.
+
+More details on the shield can be found at [1].
+
+Sending as RFC and to a limited audience for the following reason:
+- the shield comes with a camera module whose sensor is not supported by
+  mainline Linux. I used another module which is 'almost' pin-compatible with
+  the shield, but it's not intended to be used on Peach (it's a general purpose
+  arduino-compatible OV7670 camera module [2])
+
+  Give the setup is not standard (ie. the camera module does not come with the
+  shield) I'm not sure this patch can be included or not. Maybe just the CEU
+  part and the associated pin-muxing?
+
+Thanks
+   j
+
+[1] https://elinux.org/RZ-A/Boards/GR-PEACH-audiocamerashield
+[2] http://www.elecfreaks.com/store/ov7670-camera-module-p-705.html
+---
+
+ arch/arm/boot/dts/gr-peach-audiocamerashield.dtsi | 81 +++++++++++++++++++++++
+ arch/arm/boot/dts/r7s72100-gr-peach.dts           |  1 +
+ 2 files changed, 82 insertions(+)
+ create mode 100644 arch/arm/boot/dts/gr-peach-audiocamerashield.dtsi
+
+diff --git a/arch/arm/boot/dts/gr-peach-audiocamerashield.dtsi b/arch/arm/boot/dts/gr-peach-audiocamerashield.dtsi
+new file mode 100644
+index 0000000..7d4b3cb
+--- /dev/null
++++ b/arch/arm/boot/dts/gr-peach-audiocamerashield.dtsi
+@@ -0,0 +1,81 @@
++#include "r7s72100.dtsi"
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/pinctrl/r7s72100-pinctrl.h>
++
++&pinctrl {
++	i2c1_pins: i2c1 {
++		/* P1_2 as SCL; P1_3 as SDA */
++		pinmux = <RZA1_PINMUX(1, 2, 1)>, <RZA1_PINMUX(1, 3, 1)>;
++	};
++
++	vio_pins: vio {
++		/* CEU pins: VIO_D[0-10], VIO_VD, VIO_HD, VIO_CLK */
++		pinmux = <RZA1_PINMUX(1, 0, 5)>, /* VIO_VD */
++			 <RZA1_PINMUX(1, 1, 5)>, /* VIO_HD */
++			 <RZA1_PINMUX(2, 0, 7)>, /* VIO_D0 */
++			 <RZA1_PINMUX(2, 1, 7)>, /* VIO_D1 */
++			 <RZA1_PINMUX(2, 2, 7)>, /* VIO_D2 */
++			 <RZA1_PINMUX(2, 3, 7)>, /* VIO_D3 */
++			 <RZA1_PINMUX(2, 4, 7)>, /* VIO_D4 */
++			 <RZA1_PINMUX(2, 5, 7)>, /* VIO_D5 */
++			 <RZA1_PINMUX(2, 6, 7)>, /* VIO_D6 */
++			 <RZA1_PINMUX(2, 7, 7)>, /* VIO_D7 */
++			 <RZA1_PINMUX(10, 0, 6)>; /* VIO_CLK */
++	};
++};
++
++&ceu {
++	pinctrl-names = "default";
++	pinctrl-0 = <&vio_pins>;
++
++	status = "okay";
++
++	port {
++		ceu_in: endpoint {
++			remote-endpoint = <&ov7670_out>;
++
++			bus-width = <8>;
++			hsync-active = <1>;
++			vsync-active = <1>;
++			pclk-sample = <1>;
++			data-active = <1>;
++		};
++	};
++};
++
++&i2c1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c1_pins>;
++
++	status = "okay";
++	clock-frequency = <100000>;
++
++	ov7670: camera@21 {
++		compatible = "ovti,ov7670";
++		reg = <0x21>;
++
++		reset-gpios = <&port3 11 GPIO_ACTIVE_LOW>; /* DRV_IN */
++		powerdown-gpios = <&port3 12 GPIO_ACTIVE_HIGH>; /* STDBY */
++
++		clocks = <&xclk>;
++		clock-names = "xclk";
++
++		xclk: fixed_clk {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <24000000>;
++		};
++
++		port {
++			ov7670_out: endpoint {
++				remote-endpoint = <&ceu_in>;
++
++				bus-width = <8>;
++				hsync-active = <1>;
++				vsync-active = <1>;
++				pclk-sample = <1>;
++				data-active = <1>;
++			};
++		};
++	};
++};
+diff --git a/arch/arm/boot/dts/r7s72100-gr-peach.dts b/arch/arm/boot/dts/r7s72100-gr-peach.dts
+index 9e9e890..984706c 100644
+--- a/arch/arm/boot/dts/r7s72100-gr-peach.dts
++++ b/arch/arm/boot/dts/r7s72100-gr-peach.dts
+@@ -11,6 +11,7 @@
+
+ /dts-v1/;
+ #include "r7s72100.dtsi"
++#include "gr-peach-audiocamerashield.dtsi"
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/pinctrl/r7s72100-pinctrl.h>
+
+--
 2.7.4
