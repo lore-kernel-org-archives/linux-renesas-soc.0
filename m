@@ -1,66 +1,74 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms+renesas@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 08/12] ARM: dts: r8a7790: Remove CMT renesas,channels-mask
-Date: Tue, 28 Nov 2017 14:47:32 +0100
-Message-Id: <1511876856-9495-9-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1511876856-9495-1-git-send-email-geert+renesas@glider.be>
-References: <1511876856-9495-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:47052 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933811AbdKPPtM (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 16 Nov 2017 10:49:12 -0500
+Received: by mail-lf0-f68.google.com with SMTP id k66so18662991lfg.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 16 Nov 2017 07:49:11 -0800 (PST)
+From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
+Date: Thu, 16 Nov 2017 16:49:09 +0100
+To: Sakari Ailus <sakari.ailus@iki.fi>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>
+Subject: Re: [PATCH/RFC 2/2] v4l: rcar-vin: Wait for device access to
+ complete before unplugging
+Message-ID: <20171116154909.GO12677@bigcity.dyn.berto.se>
+References: <20171116003349.19235-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20171116003349.19235-3-laurent.pinchart+renesas@ideasonboard.com>
+ <20171116123624.swjichq5hcywaht4@valkosipuli.retiisi.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20171116123624.swjichq5hcywaht4@valkosipuli.retiisi.org.uk>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Hi Sakari,
 
-Update the DTS to remove the now deprecated "renesas,channels-mask"
-property.
+On 2017-11-16 14:36:24 +0200, Sakari Ailus wrote:
+> On Thu, Nov 16, 2017 at 02:33:49AM +0200, Laurent Pinchart wrote:
+> > To avoid races between device access and unplug, call the
+> > video_device_unplug() function in the platform driver remove handler.
+> > This will unsure that all device access completes before the remove
+> > handler proceeds to free resources.
+> > 
+> > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> > ---
+> >  drivers/media/platform/rcar-vin/rcar-core.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+> > index bd7976efa1fb..c5210f1d09ed 100644
+> > --- a/drivers/media/platform/rcar-vin/rcar-core.c
+> > +++ b/drivers/media/platform/rcar-vin/rcar-core.c
+> > @@ -1273,6 +1273,7 @@ static int rcar_vin_remove(struct platform_device *pdev)
+> >  
+> >  	pm_runtime_disable(&pdev->dev);
+> >  
+> > +	video_device_unplug(&vin->vdev);
+> 
+> Does this depend on another patch?
 
-The channel information is now kept in the device driver and can easily
-be determined based on the compat string.
+I believe this patch is on top of the R-Car VIN Gen3 enablement series.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v4:
-  - Rebased against renesas-devel-20171127-v4.15-rc1,
+> 
+> >  
+> >  	if (!vin->info->use_mc) {
+> >  		v4l2_async_notifier_unregister(&vin->notifier);
+> > -- 
+> > Regards,
+> > 
+> > Laurent Pinchart
+> > 
+> 
+> -- 
+> Sakari Ailus
+> e-mail: sakari.ailus@iki.fi
 
-v3:
-  - Take over from Magnus,
-  - Split in per-SoC patches,
-
-v2:
-  - Rebased on top of power-domain changes,
-  - Added Acked-by and Tested-by from Geert.
----
- arch/arm/boot/dts/r8a7790.dtsi | 4 ----
- 1 file changed, 4 deletions(-)
-
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 696522da2f99c8e2..450bfc0e9796a557 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -320,8 +320,6 @@
- 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
- 		resets = <&cpg 124>;
- 
--		renesas,channels-mask = <0x60>;
--
- 		status = "disabled";
- 	};
- 
-@@ -341,8 +339,6 @@
- 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
- 		resets = <&cpg 329>;
- 
--		renesas,channels-mask = <0xff>;
--
- 		status = "disabled";
- 	};
- 
 -- 
-2.7.4
-
+Regards,
+Niklas S�derlund
