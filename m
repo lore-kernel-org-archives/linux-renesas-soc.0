@@ -1,36 +1,82 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55016 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751042AbdKTKXC (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Nov 2017 05:23:02 -0500
-Date: Mon, 20 Nov 2017 11:22:59 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
+        Russell King <linux@armlinux.org.uk>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>
-Subject: Re: [PATCH v2 4/4] ARM: dts: r8a7745: add VIN dt support
-Message-ID: <20171120102258.nzndrofzi5cacz5i@verge.net.au>
+Subject: [PATCH v2 4/4] ARM: dts: r8a7745: add VIN dt support
+Date: Thu, 16 Nov 2017 18:22:51 +0000
+Message-Id: <1510856571-30281-5-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1510856571-30281-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1510856571-30281-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1510856571-30281-5-git-send-email-fabrizio.castro@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1510856571-30281-5-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Nov 16, 2017 at 06:22:51PM +0000, Fabrizio Castro wrote:
-> Add VIN[01] support to SoC dt. Also, add aliases.
-> 
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Add VIN[01] support to SoC dt. Also, add aliases.
 
-Thanks, applied.
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+---
+This patch depends on the following patch:
+* ARM: dts: r8a7745: Add CAN[01] SoC support
+  https://patchwork.kernel.org/patch/10046867/
+
+v1->v2:
+* new patch to keep dt-bindings changes and all the related DT changes in the
+  same series
+
+ arch/arm/boot/dts/r8a7745.dtsi | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+index 529e8c6..0fa7861 100644
+--- a/arch/arm/boot/dts/r8a7745.dtsi
++++ b/arch/arm/boot/dts/r8a7745.dtsi
+@@ -31,6 +31,8 @@
+ 		spi1 = &msiof0;
+ 		spi2 = &msiof1;
+ 		spi3 = &msiof2;
++		vin0 = &vin0;
++		vin1 = &vin1;
+ 	};
+ 
+ 	cpus {
+@@ -837,6 +839,28 @@
+ 			status = "disabled";
+ 		};
+ 
++		vin0: video@e6ef0000 {
++			compatible = "renesas,vin-r8a7745",
++				     "renesas,rcar-gen2-vin";
++			reg = <0 0xe6ef0000 0 0x1000>;
++			interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 811>;
++			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
++			resets = <&cpg 811>;
++			status = "disabled";
++		};
++
++		vin1: video@e6ef1000 {
++			compatible = "renesas,vin-r8a7745",
++				     "renesas,rcar-gen2-vin";
++			reg = <0 0xe6ef1000 0 0x1000>;
++			interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 810>;
++			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
++			resets = <&cpg 810>;
++			status = "disabled";
++		};
++
+ 		du: display@feb00000 {
+ 			compatible = "renesas,du-r8a7745";
+ 			reg = <0 0xfeb00000 0 0x40000>;
+-- 
+2.7.4
+
