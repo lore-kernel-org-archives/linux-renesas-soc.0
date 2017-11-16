@@ -1,57 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:36542 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754013AbdKOOij (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:62577 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S935118AbdKPSW7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Nov 2017 09:38:39 -0500
-From: Kieran Bingham <kbingham@kernel.org>
-To: niklas.soderlund@ragnatech.se
-Cc: linux-renesas-soc@vger.kernel.org, kieran.bingham@ideasonboard.com,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH 3/3] vin-tests: Refactor mc_get_dev
-Date: Wed, 15 Nov 2017 14:38:31 +0000
-Message-Id: <1510756711-6488-4-git-send-email-kbingham@kernel.org>
-In-Reply-To: <1510756711-6488-1-git-send-email-kbingham@kernel.org>
-References: <1510756711-6488-1-git-send-email-kbingham@kernel.org>
+        Thu, 16 Nov 2017 13:22:59 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@armlinux.org.uk>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH v2 0/4] Add VIN support to r8a774[35]
+Date: Thu, 16 Nov 2017 18:22:47 +0000
+Message-Id: <1510856571-30281-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Hello,
 
-Rather that using shell parsing of each file when looking for a device
-node, use a combination of grep and sed to identify the device.
+this series documents VIN related dt-bindings for r8a774[35], adds VIN[012]
+nodes to the r8a7743 SoC dtsi and adds VIN[01] nodes to the r8a7745 SoC dtsi.
 
-This is a remarkable speed optimisation for this code segment.
+Best regards,
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- scripts/vin-tests.sh | 14 +++-----------
- 1 file changed, 3 insertions(+), 11 deletions(-)
+Fabrizio Castro (4):
+  dt-bindings: media: rcar_vin: Reverse SoC part number list
+  dt-bindings: media: rcar_vin: add device tree support for r8a774[35]
+  ARM: dts: r8a7743: add VIN dt support
+  ARM: dts: r8a7745: add VIN dt support
 
-diff --git a/scripts/vin-tests.sh b/scripts/vin-tests.sh
-index 7c81aa51c1c5..2e6214bc95e6 100644
---- a/scripts/vin-tests.sh
-+++ b/scripts/vin-tests.sh
-@@ -99,17 +99,9 @@ mc_get_mdev() {
- }
- 
- mc_get_dev() {
--    name=$1
--    mdev=$(mc_get_mdev)
--
--    for dev in  /sys/class/video4linux/*; do
--        if [[ "$(cat $dev/name)" == "$name" ]]; then
--            basename $dev
--            return 0
--        fi
--    done
--
--    error "Can't find device"
-+    name="$1"
-+    grep -l "$name" /sys/class/video4linux/video*/name | \
-+	    sed 's#.*video4linux\(.*\)/name#/dev\1#g'
- }
- 
- mc_log() {
+ .../devicetree/bindings/media/rcar_vin.txt         | 19 +++++++-----
+ arch/arm/boot/dts/r8a7743.dtsi                     | 36 ++++++++++++++++++++++
+ arch/arm/boot/dts/r8a7745.dtsi                     | 24 +++++++++++++++
+ 3 files changed, 71 insertions(+), 8 deletions(-)
+
 -- 
 2.7.4
