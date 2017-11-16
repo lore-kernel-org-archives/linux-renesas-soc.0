@@ -1,58 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:45414 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752570AbdKWK0L (ORCPT
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:44333 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753648AbdKPDQb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 23 Nov 2017 05:26:11 -0500
-MIME-Version: 1.0
-In-Reply-To: <1510802161-30646-1-git-send-email-ykaneko0929@gmail.com>
-References: <1510802161-30646-1-git-send-email-ykaneko0929@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 23 Nov 2017 11:26:10 +0100
-Message-ID: <CAMuHMdV1jujQTqu79t=ByGP=x8iMpdVOLHaoz=uKDhCoGt=q3A@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7795-es1: Fix MOD_SEL1 bit[25:24] to
- 0x3 when using STP_ISEN_1_D
-To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        Wed, 15 Nov 2017 22:16:31 -0500
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+To: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] pinctrl: sh-pfc: r8a7795-es1: Fix MOD_SEL1 bit[25:24] to 0x3 when using STP_ISEN_1_D
+Date: Thu, 16 Nov 2017 12:16:00 +0900
+Message-Id: <1510802161-30646-1-git-send-email-ykaneko0929@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Kaneko-san,
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-On Thu, Nov 16, 2017 at 4:16 AM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->
-> This patch fixes the implementation incorrect of MOD_SEL1 bit[25:24]
-> value when STP_ISEN_1_D pin function is selected for IPSR16 bit[27:24].
->
-> This is a correction to the incorrect implementation of MOD_SEL register
-> pin assignment for R8A7795 SoC specification of R-Car Gen3 Hardware
-> User's Manual Rev.0.51E or later.
+This patch fixes the implementation incorrect of MOD_SEL1 bit[25:24]
+value when STP_ISEN_1_D pin function is selected for IPSR16 bit[27:24].
 
-I will drop "or later" while applying, as starting with Rev.0.52E, it documents
-R-Car H3 ES2.0, not ES1.x.
+This is a correction to the incorrect implementation of MOD_SEL register
+pin assignment for R8A7795 SoC specification of R-Car Gen3 Hardware
+User's Manual Rev.0.51E or later.
 
-> Fixes: 0b0ffc96dbe3 ("pinctrl: sh-pfc: Initial R8A7795 PFC support)
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Fixes: 0b0ffc96dbe3 ("pinctrl: sh-pfc: Initial R8A7795 PFC support)
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+---
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in sh-pfc-for-v4.16.
+This patch is based on the for-next branch of linux-pinctrl tree.
 
-Gr{oetje,eeting}s,
+ drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
+index 1d4d84f..292e35d 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
+@@ -1397,7 +1397,7 @@ enum {
+ 	PINMUX_IPSR_MSEL(IP16_27_24,	AUDIO_CLKOUT_B,		SEL_ADG_1),
+ 	PINMUX_IPSR_MSEL(IP16_27_24,	SSI_SCK2_B,		SEL_SSI_1),
+ 	PINMUX_IPSR_MSEL(IP16_27_24,	TS_SDEN1_D,		SEL_TSIF1_3),
+-	PINMUX_IPSR_MSEL(IP16_27_24,	STP_ISEN_1_D,		SEL_SSP1_1_2),
++	PINMUX_IPSR_MSEL(IP16_27_24,	STP_ISEN_1_D,		SEL_SSP1_1_3),
+ 	PINMUX_IPSR_MSEL(IP16_27_24,	STP_OPWM_0_E,		SEL_SSP1_0_4),
+ 	PINMUX_IPSR_MSEL(IP16_27_24,	RIF3_D0_B,		SEL_DRIF3_1),
+ 	PINMUX_IPSR_MSEL(IP16_27_24,	TCLK2_B,		SEL_TIMER_TMU_1),
+-- 
+1.9.1
