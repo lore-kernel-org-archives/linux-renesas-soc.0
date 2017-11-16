@@ -1,38 +1,63 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:58875 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751253AbdKQPfx (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Nov 2017 10:35:53 -0500
-Date: Fri, 17 Nov 2017 07:35:43 -0800
-From: Simon Horman <horms@verge.net.au>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Rob Herring <robh+dt@kernel.org>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
         linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         devicetree@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>
-Subject: Re: [PATCH v2 1/4] dt-bindings: media: rcar_vin: Reverse SoC part
- number list
-Message-ID: <20171117153539.5war64h5sc27bwos@verge.net.au>
+Subject: [PATCH v2 1/4] dt-bindings: media: rcar_vin: Reverse SoC part number list
+Date: Thu, 16 Nov 2017 18:22:48 +0000
+Message-Id: <1510856571-30281-2-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1510856571-30281-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1510856571-30281-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1510856571-30281-2-git-send-email-fabrizio.castro@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1510856571-30281-2-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Nov 16, 2017 at 06:22:48PM +0000, Fabrizio Castro wrote:
-> Change the sorting of the part numbers from descending to ascending to
-> match with other documentation.
-> 
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Change the sorting of the part numbers from descending to ascending to
+match with other documentation.
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+---
+v1->v2:
+* new patch triggered by Geert's comment, see the below link for details:
+  https://www.mail-archive.com/linux-media@vger.kernel.org/msg121992.html
+
+ Documentation/devicetree/bindings/media/rcar_vin.txt | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/rcar_vin.txt
+index 6e4ef8c..98931f5 100644
+--- a/Documentation/devicetree/bindings/media/rcar_vin.txt
++++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
+@@ -6,14 +6,14 @@ family of devices. The current blocks are always slaves and suppot one input
+ channel which can be either RGB, YUYV or BT656.
+ 
+  - compatible: Must be one or more of the following
+-   - "renesas,vin-r8a7795" for the R8A7795 device
+-   - "renesas,vin-r8a7794" for the R8A7794 device
+-   - "renesas,vin-r8a7793" for the R8A7793 device
+-   - "renesas,vin-r8a7792" for the R8A7792 device
+-   - "renesas,vin-r8a7791" for the R8A7791 device
+-   - "renesas,vin-r8a7790" for the R8A7790 device
+-   - "renesas,vin-r8a7779" for the R8A7779 device
+    - "renesas,vin-r8a7778" for the R8A7778 device
++   - "renesas,vin-r8a7779" for the R8A7779 device
++   - "renesas,vin-r8a7790" for the R8A7790 device
++   - "renesas,vin-r8a7791" for the R8A7791 device
++   - "renesas,vin-r8a7792" for the R8A7792 device
++   - "renesas,vin-r8a7793" for the R8A7793 device
++   - "renesas,vin-r8a7794" for the R8A7794 device
++   - "renesas,vin-r8a7795" for the R8A7795 device
+    - "renesas,rcar-gen2-vin" for a generic R-Car Gen2 compatible device.
+    - "renesas,rcar-gen3-vin" for a generic R-Car Gen3 compatible device.
+ 
+-- 
+2.7.4
+
