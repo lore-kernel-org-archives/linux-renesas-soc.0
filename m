@@ -1,61 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:60102 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S934509AbdKPMg1 (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:42604 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932594AbdKPAd4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Nov 2017 07:36:27 -0500
-Date: Thu, 16 Nov 2017 14:36:24 +0200
-From: Sakari Ailus <sakari.ailus@iki.fi>
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Niklas =?iso-8859-1?Q?S=F6derlund?=
+        Wed, 15 Nov 2017 19:33:56 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
         Hans Verkuil <hans.verkuil@cisco.com>
-Subject: Re: [PATCH/RFC 2/2] v4l: rcar-vin: Wait for device access to
- complete before unplugging
-Message-ID: <20171116123624.swjichq5hcywaht4@valkosipuli.retiisi.org.uk>
+Subject: [PATCH/RFC 2/2] v4l: rcar-vin: Wait for device access to complete before unplugging
+Date: Thu, 16 Nov 2017 02:33:49 +0200
+Message-Id: <20171116003349.19235-3-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20171116003349.19235-1-laurent.pinchart+renesas@ideasonboard.com>
 References: <20171116003349.19235-1-laurent.pinchart+renesas@ideasonboard.com>
- <20171116003349.19235-3-laurent.pinchart+renesas@ideasonboard.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20171116003349.19235-3-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Nov 16, 2017 at 02:33:49AM +0200, Laurent Pinchart wrote:
-> To avoid races between device access and unplug, call the
-> video_device_unplug() function in the platform driver remove handler.
-> This will unsure that all device access completes before the remove
-> handler proceeds to free resources.
-> 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> ---
->  drivers/media/platform/rcar-vin/rcar-core.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-> index bd7976efa1fb..c5210f1d09ed 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-core.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
-> @@ -1273,6 +1273,7 @@ static int rcar_vin_remove(struct platform_device *pdev)
->  
->  	pm_runtime_disable(&pdev->dev);
->  
-> +	video_device_unplug(&vin->vdev);
+To avoid races between device access and unplug, call the
+video_device_unplug() function in the platform driver remove handler.
+This will unsure that all device access completes before the remove
+handler proceeds to free resources.
 
-Does this depend on another patch?
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ drivers/media/platform/rcar-vin/rcar-core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
->  
->  	if (!vin->info->use_mc) {
->  		v4l2_async_notifier_unregister(&vin->notifier);
-> -- 
-> Regards,
-> 
-> Laurent Pinchart
-> 
-
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index bd7976efa1fb..c5210f1d09ed 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -1273,6 +1273,7 @@ static int rcar_vin_remove(struct platform_device *pdev)
+ 
+ 	pm_runtime_disable(&pdev->dev);
+ 
++	video_device_unplug(&vin->vdev);
+ 
+ 	if (!vin->info->use_mc) {
+ 		v4l2_async_notifier_unregister(&vin->notifier);
 -- 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi
+Regards,
+
+Laurent Pinchart
