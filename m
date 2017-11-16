@@ -1,47 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:44565 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750828AbdKQKlj (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:45669 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S934499AbdKPMLj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Nov 2017 05:41:39 -0500
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-can@vger.kernel.org, devicetree@vger.kernel.org,
-        wsa@the-dreams.de, horms@verge.net.au, geert@linux-m68k.org,
-        magnus.damm@gmail.com, chris.paterson2@renesas.com,
-        ramesh.shanmugasundaram@bp.renesas.com,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 0/7] R-Car D3 (r8a77995) CAN support
-Date: Fri, 17 Nov 2017 11:41:22 +0100
-Message-Id: <1510915289-15059-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Thu, 16 Nov 2017 07:11:39 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@armlinux.org.uk>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH 0/2] Add VIN support to r8a7743
+Date: Thu, 16 Nov 2017 12:11:28 +0000
+Message-Id: <1510834290-25434-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi!
+Hello,
 
-Here's CAN and CAN FD support for the R-Car D3. This is a by-the-datasheet
-implementation, with the datasheet missing some bits, namely the pin map.
-I filled in the gaps with frog DNA^W^W^Wby deducing the information from
-pin numbers already in the PFC driver, so careful scrutiny is advised.
+this series documents VIN related dt-bindings for r8a774[35], and adds VIN[012]
+nodes to the r8a7743 SoC dtsi.
 
-CU
-Uli
+Best regards,
 
+Fabrizio Castro (2):
+  dt-bindings: media: rcar_vin: add device tree support for r8a774[35]
+  ARM: dts: r8a7743: add VIN dt support
 
-Ulrich Hecht (7):
-  pinctrl: sh-pfc: r8a77995: Add CAN support
-  pinctrl: sh-pfc: r8a77995: Add CAN FD support
-  arm64: dts: r8a77995: Add CAN external clock support
-  arm64: dts: r8a77995: Add CAN support
-  arm64: dts: r8a77995: Add CAN FD support
-  can: rcar_can: document r8a77995 (R-Car D3) compatibility strings
-  can: rcar_canfd: document r8a77995 (R-Car D3) compatibility strings
-
- .../devicetree/bindings/net/can/rcar_can.txt       | 13 ++--
- .../devicetree/bindings/net/can/rcar_canfd.txt     | 13 ++--
- arch/arm64/boot/dts/renesas/r8a77995.dtsi          | 64 ++++++++++++++++
- drivers/pinctrl/sh-pfc/pfc-r8a77995.c              | 86 ++++++++++++++++++++++
- 4 files changed, 164 insertions(+), 12 deletions(-)
+ .../devicetree/bindings/media/rcar_vin.txt         |  5 ++-
+ arch/arm/boot/dts/r8a7743.dtsi                     | 36 ++++++++++++++++++++++
+ 2 files changed, 40 insertions(+), 1 deletion(-)
 
 -- 
 2.7.4
