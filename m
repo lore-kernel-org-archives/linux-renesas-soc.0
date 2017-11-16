@@ -1,44 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:57444 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759213AbdKPNvl (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:38372 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935047AbdKPNoY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Nov 2017 08:51:41 -0500
+        Thu, 16 Nov 2017 08:44:24 -0500
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+Cc: linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/2] ARM: dts: genmai: Correct primary compatible value for eeprom
-Date: Thu, 16 Nov 2017 14:51:36 +0100
-Message-Id: <1510840296-12767-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1510840296-12767-1-git-send-email-geert+renesas@glider.be>
-References: <1510840296-12767-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH 3/4] arm64: dts: renesas: r8a7796-salvator-x: Add SoC name to file header
+Date: Thu, 16 Nov 2017 14:44:20 +0100
+Message-Id: <1510839861-12303-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1510839861-12303-1-git-send-email-geert+renesas@glider.be>
+References: <1510839861-12303-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Renesas part number of the two-wire serial interface EEPROM is not
-24C128, but R1EX24128ASA00A.
-
-Hence change its primary compatible value to "renesas,r1ex24128".
+Document clearly which SoC this DTS applies to, to distinguish from
+Salvator-X boards equipped with other SoCs.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r7s72100-genmai.dts | 2 +-
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r7s72100-genmai.dts b/arch/arm/boot/dts/r7s72100-genmai.dts
-index cd4d5ff7749eaf53..5af2a0116ff2689a 100644
---- a/arch/arm/boot/dts/r7s72100-genmai.dts
-+++ b/arch/arm/boot/dts/r7s72100-genmai.dts
-@@ -123,7 +123,7 @@
- 	pinctrl-0 = <&i2c2_pins>;
- 
- 	eeprom@50 {
--		compatible = "renesas,24c128", "atmel,24c128";
-+		compatible = "renesas,r1ex24128", "atmel,24c128";
- 		reg = <0x50>;
- 		pagesize = <64>;
- 	};
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+index b317be03306e69f8..498c9e807dc47e8b 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+@@ -1,5 +1,5 @@
+ /*
+- * Device Tree Source for the Salvator-X board
++ * Device Tree Source for the Salvator-X board with R-Car M3-W
+  *
+  * Copyright (C) 2016 Renesas Electronics Corp.
+  *
 -- 
 2.7.4
