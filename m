@@ -1,67 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:63534 "EHLO
+Received: from relmlor3.renesas.com ([210.160.252.173]:8972 "EHLO
         relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S935118AbdKPSXF (ORCPT
+        by vger.kernel.org with ESMTP id S966330AbdKPSWv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Nov 2017 13:23:05 -0500
+        Thu, 16 Nov 2017 13:22:51 -0500
 From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Mauro Carvalho Chehab <mchehab@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        =?utf-8?B?TmlrbGFzIFPDtmRlcmx1bmQ=?=
+        <niklas.soderlund@ragnatech.se>,
+        "Linux Media Mailing List" <linux-media@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH v2 2/4] dt-bindings: media: rcar_vin: add device tree support for r8a774[35]
-Date: Thu, 16 Nov 2017 18:22:49 +0000
-Message-Id: <1510856571-30281-3-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1510856571-30281-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1510856571-30281-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Subject: RE: [PATCH 1/2] dt-bindings: media: rcar_vin: add device tree support
+ for r8a774[35]
+Date: Thu, 16 Nov 2017 18:22:45 +0000
+Message-ID: <TY1PR06MB0895A2D7F004364284EB2289C02E0@TY1PR06MB0895.apcprd06.prod.outlook.com>
+References: <1510834290-25434-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1510834290-25434-2-git-send-email-fabrizio.castro@bp.renesas.com>
+ <CAMuHMdW+krUp5ELO4NFxGi8NZ5-H4vrtm-=OXyvZKMCk2f-WcQ@mail.gmail.com>
+ <TY1PR06MB089529F042099069AD960093C02E0@TY1PR06MB0895.apcprd06.prod.outlook.com>
+ <CAMuHMdVLkhdb0nKMd8OzRK7=wnh_Dxww932Vq2P_OiL=a29V4w@mail.gmail.com>
+In-Reply-To: <CAMuHMdVLkhdb0nKMd8OzRK7=wnh_Dxww932Vq2P_OiL=a29V4w@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add compatible strings for r8a7743 and r8a7745. No driver change
-is needed as "renesas,rcar-gen2-vin" will activate the right code.
-However, it is good practice to document compatible strings for the
-specific SoC as this allows SoC specific changes to the driver if
-needed, in addition to document SoC support and therefore allow
-checkpatch.pl to validate compatible string values.
-
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
----
-v1->v2:
-* Fixed double "change" in changelog
-
- Documentation/devicetree/bindings/media/rcar_vin.txt | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/rcar_vin.txt
-index 98931f5..ff9697e 100644
---- a/Documentation/devicetree/bindings/media/rcar_vin.txt
-+++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
-@@ -6,6 +6,8 @@ family of devices. The current blocks are always slaves and suppot one input
- channel which can be either RGB, YUYV or BT656.
- 
-  - compatible: Must be one or more of the following
-+   - "renesas,vin-r8a7743" for the R8A7743 device
-+   - "renesas,vin-r8a7745" for the R8A7745 device
-    - "renesas,vin-r8a7778" for the R8A7778 device
-    - "renesas,vin-r8a7779" for the R8A7779 device
-    - "renesas,vin-r8a7790" for the R8A7790 device
-@@ -14,7 +16,8 @@ channel which can be either RGB, YUYV or BT656.
-    - "renesas,vin-r8a7793" for the R8A7793 device
-    - "renesas,vin-r8a7794" for the R8A7794 device
-    - "renesas,vin-r8a7795" for the R8A7795 device
--   - "renesas,rcar-gen2-vin" for a generic R-Car Gen2 compatible device.
-+   - "renesas,rcar-gen2-vin" for a generic R-Car Gen2 or RZ/G1 compatible
-+     device.
-    - "renesas,rcar-gen3-vin" for a generic R-Car Gen3 compatible device.
- 
-    When compatible with the generic version nodes must list the
--- 
-2.7.4
+SGkgR2VlcnQsDQoNCj4gPj4NCj4gPj4gUGxlYXNlIGtlZXAgdGhlIGxpc3Qgc29ydGVkIGJ5IFNv
+QyBwYXJ0IG51bWJlci4NCj4gPg0KPiA+IEl0IGlzIHNvcnRlZCwganVzdCBpbiBkZXNjZW5kaW5n
+IG9yZGVyLiBEbyB5b3Ugd2FudCBtZSB0byByZS1vcmRlciB0aGUgZnVsbCBsaXN0IGluIGFzY2Vu
+ZGluZyBvcmRlcj8NCj4NCj4gVGhhdCBtYXkgYmUgYSBnb29kIGlkZWEsIGdpdmVuIHRoZSBjdXJy
+ZW50IG9yZGVyIGlzIG5vbi1zdGFuZGFyZCBhbmQNCj4gY291bnRlci1pbnR1aXRpdmUuDQoNCnN1
+cmUsIGRyb3BwaW5nIHRoaXMgc2VyaWVzIGFuZCBzZW5kaW5nIGEgdjIgdGhlbi4NCg0KQ2hlZXJz
+LA0KRmFiDQoNCj4NCj4gVGhhbmtzIQ0KPg0KPiBHcntvZXRqZSxlZXRpbmd9cywNCj4NCj4gICAg
+ICAgICAgICAgICAgICAgICAgICAgR2VlcnQNCg0KDQoNClJlbmVzYXMgRWxlY3Ryb25pY3MgRXVy
+b3BlIEx0ZCwgRHVrZXMgTWVhZG93LCBNaWxsYm9hcmQgUm9hZCwgQm91cm5lIEVuZCwgQnVja2lu
+Z2hhbXNoaXJlLCBTTDggNUZILCBVSy4gUmVnaXN0ZXJlZCBpbiBFbmdsYW5kICYgV2FsZXMgdW5k
+ZXIgUmVnaXN0ZXJlZCBOby4gMDQ1ODY3MDkuDQo=
