@@ -1,101 +1,109 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:37749 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750762AbdKCJgh (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:47759 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933938AbdKPKyU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 3 Nov 2017 05:36:37 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] mmc: tmio: Replace msleep() of 20ms or less with usleep_range()
-Date: Fri,  3 Nov 2017 10:36:28 +0100
-Message-Id: <20171103093628.13108-1-horms+renesas@verge.net.au>
+        Thu, 16 Nov 2017 05:54:20 -0500
+Subject: Re: [PATCH 3/3] vin-tests: Refactor mc_get_dev
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: linux-renesas-soc@vger.kernel.org, kieran.bingham@ideasonboard.com,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+References: <1510756711-6488-1-git-send-email-kbingham@kernel.org>
+ <1510756711-6488-4-git-send-email-kbingham@kernel.org>
+ <20171115165153.GI12677@bigcity.dyn.berto.se>
+Reply-To: kieran.bingham@ideasonboard.com
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Message-ID: <6cef8fe4-1320-1360-f55c-3faea595bddb@ideasonboard.com>
+Date: Thu, 16 Nov 2017 10:54:16 +0000
+MIME-Version: 1.0
+In-Reply-To: <20171115165153.GI12677@bigcity.dyn.berto.se>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+Hi Niklas,
 
-As documented in Documentation/timers/timers-howto.txt
-as follows, replace msleep() with usleep_range().
+On 15/11/17 16:51, Niklas Söderlund wrote:
+> Hi Kieran,
+> 
+> Thanks for your patch.
+> 
+> Unfortunately I experience some problems with this patch.
 
-msleep(1~20) may not do what the caller intends, and
-will often sleep longer (~20 ms actual sleep for any
-value given in the 1~20ms range). In many cases this
-is not the desired behavior.
+My apologies, I thought this was working when I used it, it was left in my local
+branch and hadn't been sent (along with the other two) and I thought they were
+all in use on my board. It looks like somehow I've maybe saved my earlier
+development patch, perhaps instead of the one that was working on the board and
+it's not correct. I'm sorry for that.
 
-Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
-v1 [Simon Horman]
-* Extend to cover all instances of msleep(<20);
 
-v0 [Masaharu Hayakawa]
+> On 2017-11-15 14:38:31 +0000, Kieran Bingham wrote:
+>> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+>>
+>> Rather that using shell parsing of each file when looking for a device
+>> node, use a combination of grep and sed to identify the device.
+>>
+>> This is a remarkable speed optimisation for this code segment.
+>>
+>> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+>> ---
+>>  scripts/vin-tests.sh | 14 +++-----------
+>>  1 file changed, 3 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/scripts/vin-tests.sh b/scripts/vin-tests.sh
+>> index 7c81aa51c1c5..2e6214bc95e6 100644
+>> --- a/scripts/vin-tests.sh
+>> +++ b/scripts/vin-tests.sh
+>> @@ -99,17 +99,9 @@ mc_get_mdev() {
+>>  }
+>>  
+>>  mc_get_dev() {
+>> -    name=$1
+>> -    mdev=$(mc_get_mdev)
+>> -
+>> -    for dev in  /sys/class/video4linux/*; do
+>> -        if [[ "$(cat $dev/name)" == "$name" ]]; then
+>> -            basename $dev
+>> -            return 0
+>> -        fi
+>> -    done
+>> -
+>> -    error "Can't find device"
+>> +    name="$1"
+>> +    grep -l "$name" /sys/class/video4linux/video*/name | \
+>> +	    sed 's#.*video4linux\(.*\)/name#/dev\1#g'
+> 
+> The only user of mc_get_dev() is the set-edid utility, which uses it to 
+> find the adv748x HDMI subdevice (adv748x 4-0070 hdmi) so it can program 
+> the EDID. I had to change search path above to 
+> /sys/class/video4linux/*/name to also searches in v4l-subdevX 
+> directories to find thatt device.
 
-This patch is based on a patch in BSP v3.5.6
----
- drivers/mmc/host/tmio_mmc_core.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+Yes, that is a change in input parameters and output parameters in my patch as I
+submitted. Which was clearly just a bit wrong :)
 
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 4c8198f8b04a..583bf3262df5 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -167,11 +167,11 @@ static void tmio_mmc_clk_start(struct tmio_mmc_host *host)
- 
- 	/* HW engineers overrode docs: no sleep needed on R-Car2+ */
- 	if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
--		msleep(10);
-+		usleep_range(10000, 11000);
- 
- 	if (host->pdata->flags & TMIO_MMC_HAVE_HIGH_REG) {
- 		sd_ctrl_write16(host, CTL_CLK_AND_WAIT_CTL, 0x0100);
--		msleep(10);
-+		usleep_range(10000, 11000);
- 	}
- }
- 
-@@ -179,7 +179,7 @@ static void tmio_mmc_clk_stop(struct tmio_mmc_host *host)
- {
- 	if (host->pdata->flags & TMIO_MMC_HAVE_HIGH_REG) {
- 		sd_ctrl_write16(host, CTL_CLK_AND_WAIT_CTL, 0x0000);
--		msleep(10);
-+		usleep_range(10000, 11000);
- 	}
- 
- 	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
-@@ -187,7 +187,7 @@ static void tmio_mmc_clk_stop(struct tmio_mmc_host *host)
- 
- 	/* HW engineers overrode docs: no sleep needed on R-Car2+ */
- 	if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
--		msleep(10);
-+		usleep_range(10000, 11000);
- }
- 
- static void tmio_mmc_set_clock(struct tmio_mmc_host *host,
-@@ -219,7 +219,7 @@ static void tmio_mmc_set_clock(struct tmio_mmc_host *host,
- 			sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
- 	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, clk & CLK_CTL_DIV_MASK);
- 	if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
--		msleep(10);
-+		usleep_range(10000, 11000);
- 
- 	tmio_mmc_clk_start(host);
- }
-@@ -230,11 +230,11 @@ static void tmio_mmc_reset(struct tmio_mmc_host *host)
- 	sd_ctrl_write16(host, CTL_RESET_SD, 0x0000);
- 	if (host->pdata->flags & TMIO_MMC_HAVE_HIGH_REG)
- 		sd_ctrl_write16(host, CTL_RESET_SDIO, 0x0000);
--	msleep(10);
-+	usleep_range(10000, 11000);
- 	sd_ctrl_write16(host, CTL_RESET_SD, 0x0001);
- 	if (host->pdata->flags & TMIO_MMC_HAVE_HIGH_REG)
- 		sd_ctrl_write16(host, CTL_RESET_SDIO, 0x0001);
--	msleep(10);
-+	usleep_range(10000, 11000);
- 
- 	if (host->pdata->flags & TMIO_MMC_SDIO_IRQ) {
- 		sd_ctrl_write16(host, CTL_SDIO_IRQ_MASK, host->sdio_irq_mask);
--- 
-2.11.0
+> 
+> Also the return value changes from 'v4l-subdev42' to /dev/v4l-subdev42' 
+> so the set-edid tool needed a small update to handle that :-)
+
+Yes, this should have been more like:
+
+grep "$name" /sys/class/video4linux/*/name | \
+	sed 's#.*video4linux/\(.*\)/name.*#\1#g'
+
+> I have applied this patch as-is, and then a followup which takes care of 
+> the above. Out of curiosity, are you working on any new tests which uses 
+> mc_get_dev()?
+
+This was a patch I mentioned to you back when I had written it but hadn't
+submitted. Clearly it looks like I was doing something different as I had indeed
+changed the output return value. Which looks quite intentional, in the above.
+
+For the moment - I'm going to put this down to baby-brain ... and pretend it
+didn't happen ... then try to make sure I don't do something equally as silly again.
+
+Sorry for the noise, and thank you for fixing it up! :-)
+--
+Kieran
