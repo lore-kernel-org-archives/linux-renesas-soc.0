@@ -1,7 +1,7 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20171116210801.215014557@cogentembedded.com>
-Date: Fri, 17 Nov 2017 00:06:31 +0300
+Message-Id: <20171116210312.016087689@cogentembedded.com>
+Date: Thu, 16 Nov 2017 23:56:48 +0300
 To: Simon Horman <horms@verge.net.au>,
         Rob Herring <robh+dt@kernel.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
@@ -12,7 +12,7 @@ Cc: Magnus Damm <magnus.damm@gmail.com>,
         linux-arm-kernel@lists.infradead.org,
         Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH 2/2] arm64: dts: renesas: eagle: add I2C0 support
+Subject: [PATCH 1/1] arm64: dts: renesas: eagle: add I2C0 support
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
 Content-Disposition: inline; filename=arm64-dts-renesas-eagle-add-I2C0-support.patch
@@ -38,10 +38,23 @@ Index: renesas/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
 ===================================================================
 --- renesas.orig/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
 +++ renesas/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-@@ -57,12 +57,32 @@
- 	clock-frequency = <32768>;
- };
+@@ -63,6 +63,11 @@
+ 		function = "avb0";
+ 	};
  
++	i2c0_pins: i2c0 {
++		groups = "i2c0";
++		function = "i2c0";
++	};
++
+ 	scif0_pins: scif0 {
+ 		groups = "scif0_data";
+ 		function = "scif0";
+@@ -80,3 +85,18 @@
+ 
+ 	status = "okay";
+ };
++
 +&i2c0 {
 +	pinctrl-0 = <&i2c0_pins>;
 +	pinctrl-names = "default";
@@ -56,19 +69,4 @@ Index: renesas/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
 +		#gpio-cells = <2>;
 +	};
 +};
-+
- &pfc {
- 	avb_pins: avb {
- 		groups = "avb0_mdio", "avb0_mii";
- 		function = "avb0";
- 	};
- 
-+	i2c0_pins: i2c0 {
-+		groups = "i2c0";
-+		function = "i2c0";
-+	};
-+
- 	scif0_pins: scif0 {
- 		groups = "scif0_data";
- 		function = "scif0";
 
