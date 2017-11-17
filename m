@@ -1,53 +1,88 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56098 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:59499 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752619AbdKJNZu (ORCPT
+        with ESMTP id S1751070AbdKQQjo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Nov 2017 08:25:50 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Fri, 17 Nov 2017 11:39:44 -0500
+Date: Fri, 17 Nov 2017 08:39:40 -0800
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v5 08/15] arm64: dts: renesas: r8a7795-es1: Point FDP1 via FCPF to IPMMU-VP0
-Date: Fri, 10 Nov 2017 14:25:25 +0100
-Message-Id: <20171110132532.1202-9-horms+renesas@verge.net.au>
-In-Reply-To: <20171110132532.1202-1-horms+renesas@verge.net.au>
-References: <20171110132532.1202-1-horms+renesas@verge.net.au>
+        Linux I2C <linux-i2c@vger.kernel.org>
+Subject: Re: [PATCH 4/6] arm64: renesas: draak: enable I2C controller 0 and
+ EEPROM
+Message-ID: <20171117163939.q7jlx6d56zc5fli3@verge.net.au>
+References: <1510759526-30346-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <1510759526-30346-5-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <CAMuHMdWmZEoNGRjsumOc+yPe3JTCBobVZd8arzUfcymjF0imDA@mail.gmail.com>
+ <20171117143120.ayattgah6q54425c@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20171117143120.ayattgah6q54425c@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On Fri, Nov 17, 2017 at 06:31:21AM -0800, Simon Horman wrote:
+> On Thu, Nov 16, 2017 at 10:27:56AM +0100, Geert Uytterhoeven wrote:
+> > Hi Ulrich,
+> > 
+> > On Wed, Nov 15, 2017 at 4:25 PM, Ulrich Hecht
+> > <ulrich.hecht+renesas@gmail.com> wrote:
+> > > Enables EEPROM on I2C0 on the Draak board.
+> > >
+> > > Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> > 
+> > Thanks for your patch!
+> > 
+> > > --- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+> > > +++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+> > 
+> > > @@ -67,6 +72,18 @@
+> > >         };
+> > >  };
+> > >
+> > > +&i2c0 {
+> > > +       pinctrl-0 = <&i2c0_pins>;
+> > > +       pinctrl-names = "default";
+> > > +       status = "okay";
+> > > +
+> > > +       eeprom@50 {
+> > > +               compatible = "atmel,24c01";
+> > 
+> > This is actually a ROHM Semiconductor BR24T01FVM-W, so it should be
+> > 
+> >         compatible = "rohm,br24t01", "atmel,24c01";
+> 
+> Applied with the above change.
 
-Hook up the FCPF devices to allow use of FDP1 with IPMMU-VP0.
+Sorry, I was a bit hasty there as this patch
+depends on a patch earlier in the series which I have not applied.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v5 [Simon Horman]
-* Added reviewed by tag from Geert Uytterhoeven
+I've dropped this patch for now and will wait a bit longer for the review
+to unfold.
 
-v4 [Simon Horman]
-* broke out of larger patch
-
-v1 - v3 [Magnus Damm]
----
- arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-index 6b4dfa42f5b2..736281335653 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-@@ -56,6 +56,7 @@
- 		clocks = <&cpg CPG_MOD 613>;
- 		power-domains = <&sysc R8A7795_PD_A3VP>;
- 		resets = <&cpg 613>;
-+		iommus = <&ipmmu_vp0 2>;
- 	};
- 
- 	vspi2: vsp@fe9c0000 {
--- 
-2.11.0
+> 
+> > Please also submit a patch to add that compatible value to
+> > Documentation/devicetree/bindings/eeprom/eeprom.txt.
+> 
+> Ulrich, please follow-up on this, thanks!
+> 
+> > With the above fixed:
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > 
+> > Gr{oetje,eeting}s,
+> > 
+> >                         Geert
+> > 
+> > --
+> > Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> > 
+> > In personal conversations with technical people, I call myself a hacker. But
+> > when I'm talking to journalists I just say "programmer" or something like that.
+> >                                 -- Linus Torvalds
+> > 
+> 
