@@ -1,66 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:47207 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750954AbdKSVWN (ORCPT
+Received: from lucky1.263xmail.com ([211.157.147.134]:37847 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753861AbdKQA7n (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 19 Nov 2017 16:22:13 -0500
-Date: Sun, 19 Nov 2017 22:22:11 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Thu, 16 Nov 2017 19:59:43 -0500
+Cc: shawn.lin@rock-chips.com,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Simon Horman <horms@verge.net.au>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 Subject: Re: [PATCH RFT] mmc: core: use usleep_range rather than HZ magic in
  mmc_delay()
-Message-ID: <20171119212211.kfp2poxos5ilvdpq@tetsubishi>
+To: Ulf Hansson <ulf.hansson@linaro.org>
 References: <20171114225520.6793-1-wsa+renesas@sang-engineering.com>
  <CAPDyKFrgO0JRatud5JRDONS=VTNef8WS+qvRAUo1AXep9wMpZg@mail.gmail.com>
+ <2b56ea8c-3040-2c47-41e5-ed52f97ff75e@rock-chips.com>
+ <CAPDyKFpvA2q5KwtcrXzv5ownKM54hcZTyfXKVBJhb95k2o6tyw@mail.gmail.com>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+Message-ID: <8549da0b-1007-b36a-71e9-1878bb205468@rock-chips.com>
+Date: Fri, 17 Nov 2017 08:59:42 +0800
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="vbq2tsubcdgifvha"
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFrgO0JRatud5JRDONS=VTNef8WS+qvRAUo1AXep9wMpZg@mail.gmail.com>
+In-Reply-To: <CAPDyKFpvA2q5KwtcrXzv5ownKM54hcZTyfXKVBJhb95k2o6tyw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi
 
---vbq2tsubcdgifvha
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 2017/11/16 18:42, Ulf Hansson wrote:
+> On 16 November 2017 at 08:59, Shawn Lin <shawn.lin@rock-chips.com> wrote:
+>> Hi,
+>>
+>> On 2017/11/16 15:47, Ulf Hansson wrote:
+>>>
+>>> On 14 November 2017 at 23:55, Wolfram Sang
+>>> <wsa+renesas@sang-engineering.com> wrote:
+>>>>
+>>>> Documentation/timers/timers-howto.txt recommends to use usleep_range for
+>>>> delays 1-20ms. Let's adhere to it. No need for messing with HZ and still
+>>>> do busy looping these days.
+>>>>
+>>
+>> Sorry for chime in this topic but I think for some cases, for instance,
+>> mmc_host_set_uhs_voltage calls mmc_delay and it should guarantee the
+>> delay is accurate, especially for the comment"Keep clock gated for at
+>> least 10 ms, though spec only says 5 ms"
+>>
+>> But the usleep_range won't guarantee that, see
+>>
+>> https://patchwork.kernel.org/patch/9369963/
+>>
+>> It wasn't fixed at the end, so you should carefully modify
+>> this fundamentally.
+> 
+> git tag --contains 6c5e9059692567740a4ee51530dffe51a4b9584d
+> 
+> It should be fixed, however, thanks for pointing to an interesting patch. :-)
 
+Ah, I wasn't continuing tracing that topic and from the argue of v2,
+I thought it wasn't fixed... So it seems fine now.
 
-> This means we get usleep_range(20000, 25000) for the worst case.
->=20
-> Perhaps we want "ms <=3D 16" instead, thus getting usleep
-> usleep_range(16000, 20000) for the worst case? No?
-
-I read the timers-howto that ms <=3D 20 is for the min value. If you think
-25ms is too much for max in that case, maybe we can find a better
-formula for max? My honest opinion is, it won't matter much in practice,
-though. Especially, since we are not busy-looping anymore...
-
-
---vbq2tsubcdgifvha
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAloR9fwACgkQFA3kzBSg
-Kbb6DBAAjg5Ijw/k74bgKPGsgQPHztN6EU0EdR1JUJJlLlY3fNtoWv8b/rkCoq0c
-WXQQUlFhIRf5gnbvZm8/8BoxEtfgvPr7T6ovZmsjjbFQMQURYVdhqH8qA4cTncSl
-Dj2j+gjOcEHcfh8S83f/K0DzyYveoVQ94UTynPwnu6E1oNHAk0vHboI8Bij8zUTx
-50P4dO/gxVA9SfVmGZPDOEIyOhDNEyfWYg/oWPXPy9cCW79XZPS7qQy/LwIj+PCQ
-zxmRc8IPXGnagNNYJpVMqN7mQP6SG7sAdzcmaX0yv6+smt8dEdvbZEwgER39NNpg
-B/HIod7BhqVMs+KQPHxfYUTO670WM0zOJKewmNwvodrg4Z9eynNYHF3U1zqGVNeU
-tkdlvjwK1RvY3nR/185jFdbJqN2fPHhoHn2ESs5o8qVXdjAjCnzAauo57mcOr2mn
-gtbV2pZwhTZFI/xJbP9HAEk1AWVXwFPLN20/34UgHIBPHqlfRbjTG/keNaRCllcM
-ydt709J79gC/aGitLL3fc1vxwTjAgXtTmejofdEkfPN83LQWoxEMIgOy9fN66FLM
-fwPFCsYv4BhyFYk158iNyM0ah+VDuKZWWVvBnjTvUOJ2N7P3FD9pR9BUQw6X4q1Y
-b6Gljg0/OP/vJjSUkywTyI7uMwW6Zsi8XemFzAR77Q+v53jve9I=
-=ZSnv
------END PGP SIGNATURE-----
-
---vbq2tsubcdgifvha--
+> 
+> [...]
+> 
+> Kind regards
+> Uffe
+> 
+> 
+> 
