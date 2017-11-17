@@ -1,93 +1,98 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56098 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752619AbdKJNZq (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Nov 2017 08:25:46 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v5 03/15] arm64: dts: renesas: r8a7795: Tie SYS-DMAC to IPMMU-DS0/1
-Date: Fri, 10 Nov 2017 14:25:20 +0100
-Message-Id: <20171110132532.1202-4-horms+renesas@verge.net.au>
-In-Reply-To: <20171110132532.1202-1-horms+renesas@verge.net.au>
-References: <20171110132532.1202-1-horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+Subject: Re: [PATCH v7 14/25] rcar-vin: add function to manipulate Gen3 CHSEL
+ value
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org
+References: <20171111003835.4909-1-niklas.soderlund+renesas@ragnatech.se>
+ <20171111003835.4909-15-niklas.soderlund+renesas@ragnatech.se>
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <9365f2dd-10f5-5947-e52e-95c077ba6891@xs4all.nl>
+Date: Fri, 17 Nov 2017 12:22:58 +0100
+MIME-Version: 1.0
+In-Reply-To: <20171111003835.4909-15-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On 11/11/17 01:38, Niklas Söderlund wrote:
+> On Gen3 the CSI-2 routing is controlled by the VnCSI_IFMD register. One
+> feature of this register is that it's only present in the VIN0 and VIN4
+> instances. The register in VIN0 controls the routing for VIN0-3 and the
+> register in VIN4 controls routing for VIN4-7.
+> 
+> To be able to control routing from a media device this function is need
+> to control runtime PM for the subgroup master (VIN0 and VIN4). The
+> subgroup master must be switched on before the register is manipulated,
+> once the operation is complete it's safe to switch the master off and
+> the new routing will still be in effect.
+> 
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Hook up r8a7795 SYS-DMAC nodes to the IPMMUs. In particular SYS-DMAC0 gets
-tied to IPMMU-DS0, and SYS-DMAC1 and SYS-DMAC2 get tied to IPMMU-DS1.
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v5 [Simon Horman]
-* Added reviewed by tag from Geert Uytterhoeven
+Regards,
 
-v4 [Simon Horman]
-* Broke out of a larger patch
-* Added reviewed by tag from Laurent Pinchart
+	Hans
 
-v1 - v3 [Magnus Damm]
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 469ce4081b29..bff0e3a3e582 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -598,6 +598,14 @@
- 			resets = <&cpg 219>;
- 			#dma-cells = <1>;
- 			dma-channels = <16>;
-+			iommus = <&ipmmu_ds0 0>, <&ipmmu_ds0 1>,
-+			       <&ipmmu_ds0 2>, <&ipmmu_ds0 3>,
-+			       <&ipmmu_ds0 4>, <&ipmmu_ds0 5>,
-+			       <&ipmmu_ds0 6>, <&ipmmu_ds0 7>,
-+			       <&ipmmu_ds0 8>, <&ipmmu_ds0 9>,
-+			       <&ipmmu_ds0 10>, <&ipmmu_ds0 11>,
-+			       <&ipmmu_ds0 12>, <&ipmmu_ds0 13>,
-+			       <&ipmmu_ds0 14>, <&ipmmu_ds0 15>;
- 		};
- 
- 		dmac1: dma-controller@e7300000 {
-@@ -632,6 +640,14 @@
- 			resets = <&cpg 218>;
- 			#dma-cells = <1>;
- 			dma-channels = <16>;
-+			iommus = <&ipmmu_ds1 0>, <&ipmmu_ds1 1>,
-+			       <&ipmmu_ds1 2>, <&ipmmu_ds1 3>,
-+			       <&ipmmu_ds1 4>, <&ipmmu_ds1 5>,
-+			       <&ipmmu_ds1 6>, <&ipmmu_ds1 7>,
-+			       <&ipmmu_ds1 8>, <&ipmmu_ds1 9>,
-+			       <&ipmmu_ds1 10>, <&ipmmu_ds1 11>,
-+			       <&ipmmu_ds1 12>, <&ipmmu_ds1 13>,
-+			       <&ipmmu_ds1 14>, <&ipmmu_ds1 15>;
- 		};
- 
- 		dmac2: dma-controller@e7310000 {
-@@ -666,6 +682,14 @@
- 			resets = <&cpg 217>;
- 			#dma-cells = <1>;
- 			dma-channels = <16>;
-+			iommus = <&ipmmu_ds1 16>, <&ipmmu_ds1 17>,
-+			       <&ipmmu_ds1 18>, <&ipmmu_ds1 19>,
-+			       <&ipmmu_ds1 20>, <&ipmmu_ds1 21>,
-+			       <&ipmmu_ds1 22>, <&ipmmu_ds1 23>,
-+			       <&ipmmu_ds1 24>, <&ipmmu_ds1 25>,
-+			       <&ipmmu_ds1 26>, <&ipmmu_ds1 27>,
-+			       <&ipmmu_ds1 28>, <&ipmmu_ds1 29>,
-+			       <&ipmmu_ds1 30>, <&ipmmu_ds1 31>;
- 		};
- 
- 		audma0: dma-controller@ec700000 {
--- 
-2.11.0
+> ---
+>  drivers/media/platform/rcar-vin/rcar-dma.c | 25 +++++++++++++++++++++++++
+>  drivers/media/platform/rcar-vin/rcar-vin.h |  2 ++
+>  2 files changed, 27 insertions(+)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+> index c4f8e81e88c99e28..463c656b9878be52 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-dma.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+> @@ -16,6 +16,7 @@
+>  
+>  #include <linux/delay.h>
+>  #include <linux/interrupt.h>
+> +#include <linux/pm_runtime.h>
+>  
+>  #include <media/videobuf2-dma-contig.h>
+>  
+> @@ -1228,3 +1229,27 @@ int rvin_dma_probe(struct rvin_dev *vin, int irq)
+>  
+>  	return ret;
+>  }
+> +
+> +/* -----------------------------------------------------------------------------
+> + * Gen3 CHSEL manipulation
+> + */
+> +
+> +void rvin_set_chsel(struct rvin_dev *vin, u8 chsel)
+> +{
+> +	u32 ifmd, vnmc;
+> +
+> +	pm_runtime_get_sync(vin->dev);
+> +
+> +	/* Make register writes take effect immediately */
+> +	vnmc = rvin_read(vin, VNMC_REG) & ~VNMC_VUP;
+> +	rvin_write(vin, vnmc, VNMC_REG);
+> +
+> +	ifmd = VNCSI_IFMD_DES2 | VNCSI_IFMD_DES1 | VNCSI_IFMD_DES0 |
+> +		VNCSI_IFMD_CSI_CHSEL(chsel);
+> +
+> +	rvin_write(vin, ifmd, VNCSI_IFMD_REG);
+> +
+> +	vin_dbg(vin, "Set IFMD 0x%x\n", ifmd);
+> +
+> +	pm_runtime_put(vin->dev);
+> +}
+> diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+> index 1f761518a6cc60b8..8a7c51724a90786c 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-vin.h
+> +++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+> @@ -164,4 +164,6 @@ int rvin_reset_format(struct rvin_dev *vin);
+>  
+>  const struct rvin_video_format *rvin_format_from_pixel(u32 pixelformat);
+>  
+> +void rvin_set_chsel(struct rvin_dev *vin, u8 chsel);
+> +
+>  #endif
+> 
