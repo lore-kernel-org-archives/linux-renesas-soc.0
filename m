@@ -1,63 +1,46 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH 4/8] ARM: dts: iwg22d-sodimm: Add can0 support to carrier board
-Date: Tue,  7 Nov 2017 15:10:45 +0000
-Message-Id: <1510067449-17017-5-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1510067449-17017-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1510067449-17017-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:57433 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758207AbdKQNjb (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 17 Nov 2017 08:39:31 -0500
+Date: Fri, 17 Nov 2017 05:39:26 -0800
+From: Simon Horman <horms@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH v5 00/15] arm64: dts: renesas: r8a7795: IPMMU upstream
+ integration
+Message-ID: <20171117133926.3fdu74fj2wrpfohk@verge.net.au>
+References: <20171110132532.1202-1-horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20171110132532.1202-1-horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch enables CAN0 interface exposed through connector J15 on the
-carrier board.
+On Fri, Nov 10, 2017 at 02:25:17PM +0100, Simon Horman wrote:
+> This series adds DT nodes for IPMMU instances on r8a7795 together with
+> connections to various r8a7795 on-chip devices such as Audio-DMAC, SYS-DMAC,
+> Ethernet-AVB, SATA and a bunch of multimedia devices that make use of FCP.
+> 
+> With these patches applied a white list enabled IPMMU driver may be used
+> to check silicon revision and then enable IPMMU in the known working cases.
+> 
+> The recommended test stack for this patchset is a merge of
+> * The iommu/next branch of the vfio tree
+> * renesas-devel-20171110-v4.14-rc8 tag of the renesas tree
+> 
+> The final two patches in the series enable IPMMU support for all IPMMU
+> instances on r8a7795 that are used by IPMMU devices listed above with one
+> exception.  The exception is the SATA device connected to IPMMU-HC which
+> still is disabled pending IPMMU USB integration support. I expect IPMMU USB
+> integration to be handled as a second step once this series is agreed on.
+> 
+> The DT binding for r8a7795 has since long been included in mainline and
+> this series implements support following such format:
+> 
+> d4e42e7 iommu/ipmmu-vmsa: Add r8a7795 DT binding
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
----
- arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-index 80c82aa..39ce7e7 100644
---- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-+++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-@@ -59,6 +59,13 @@
- 	};
- };
- 
-+&can0 {
-+	pinctrl-0 = <&can0_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
- &hscif1 {
- 	pinctrl-0 = <&hscif1_pins>;
- 	pinctrl-names = "default";
-@@ -85,6 +92,11 @@
- 		function = "avb";
- 	};
- 
-+	can0_pins: can0 {
-+		groups = "can0_data";
-+		function = "can0";
-+	};
-+
- 	hscif1_pins: hscif1 {
- 		groups = "hscif1_data", "hscif1_ctrl";
- 		function = "hscif1";
--- 
-2.7.4
-
+I have applied this series.
