@@ -1,54 +1,103 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:45122 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932190AbdKBJcp (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 2 Nov 2017 05:32:45 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Mark Brown <broonie@kernel.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-spi@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH] spi: sh-msiof: Fix DMA transfer size check
-Date: Thu,  2 Nov 2017 10:32:36 +0100
-Message-Id: <20171102093236.26082-1-horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+Subject: Re: [PATCH v2 6/8] v4l: vsp1: Adapt entities to configure into a body
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
+References: <cover.4457988ad8b64b5c7636e35039ef61d507af3648.1502723341.git-series.kieran.bingham+renesas@ideasonboard.com>
+ <1807083.ZJnR2iqIOD@avalon>
+ <112c0f66-4918-40d0-d2dd-17f9bbd03f12@ideasonboard.com>
+ <4353515.cR2bnzc1Fq@avalon>
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Message-ID: <6dffaedc-75b4-f817-d91c-304f7cd54f1f@ideasonboard.com>
+Date: Fri, 17 Nov 2017 13:40:26 +0000
+MIME-Version: 1.0
+In-Reply-To: <4353515.cR2bnzc1Fq@avalon>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+Hi Laurent,
 
-DMA supports 32-bit words only,
-even if BITLEN1 of SITMDR2 register is 16bit.
+On 12/09/17 20:18, Laurent Pinchart wrote:
+> Hi Kieran,
+> 
+> On Tuesday, 12 September 2017 00:42:09 EEST Kieran Bingham wrote:
+>> On 17/08/17 18:58, Laurent Pinchart wrote:
+>>> On Monday 14 Aug 2017 16:13:29 Kieran Bingham wrote:
+>>>> Currently the entities store their configurations into a display list.
+>>>> Adapt this such that the code can be configured into a body fragment
+>>>> directly, allowing greater flexibility and control of the content.
+>>>>
+>>>> All users of vsp1_dl_list_write() are removed in this process, thus it
+>>>> too is removed.
+>>>>
+>>>> A helper, vsp1_dl_list_body() is provided to access the internal body0
+>>>> from the display list.
+>>>>
+>>>> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+>>>> ---
+>>>>
+>>>>  drivers/media/platform/vsp1/vsp1_bru.c    | 22 ++++++------
+>>>>  drivers/media/platform/vsp1/vsp1_clu.c    | 22 ++++++------
+>>>>  drivers/media/platform/vsp1/vsp1_dl.c     | 12 ++-----
+>>>>  drivers/media/platform/vsp1/vsp1_dl.h     |  2 +-
+>>>>  drivers/media/platform/vsp1/vsp1_drm.c    | 14 +++++---
+>>>>  drivers/media/platform/vsp1/vsp1_entity.c | 16 ++++-----
+>>>>  drivers/media/platform/vsp1/vsp1_entity.h | 12 ++++---
+>>>>  drivers/media/platform/vsp1/vsp1_hgo.c    | 16 ++++-----
+>>>>  drivers/media/platform/vsp1/vsp1_hgt.c    | 18 +++++-----
+>>>>  drivers/media/platform/vsp1/vsp1_hsit.c   | 10 +++---
+>>>>  drivers/media/platform/vsp1/vsp1_lif.c    | 13 +++----
+>>>>  drivers/media/platform/vsp1/vsp1_lut.c    | 21 ++++++------
+>>>>  drivers/media/platform/vsp1/vsp1_pipe.c   |  4 +-
+>>>>  drivers/media/platform/vsp1/vsp1_pipe.h   |  3 +-
+>>>>  drivers/media/platform/vsp1/vsp1_rpf.c    | 43 +++++++++++-------------
+>>>>  drivers/media/platform/vsp1/vsp1_sru.c    | 14 ++++----
+>>>>  drivers/media/platform/vsp1/vsp1_uds.c    | 24 +++++++------
+>>>>  drivers/media/platform/vsp1/vsp1_uds.h    |  2 +-
+>>>>  drivers/media/platform/vsp1/vsp1_video.c  | 11 ++++--
+>>>>  drivers/media/platform/vsp1/vsp1_wpf.c    | 42 ++++++++++++-----------
+>>>>  20 files changed, 168 insertions(+), 153 deletions(-)
+>>>
+>>> This is quite intrusive, and it bothers me slightly that we need to pass
+>>> both the DL and the DLB to the configure function in order to add
+>>> fragments to the DL in the CLU and LUT modules. Wouldn't it be simpler to
+>>> add a pointer to the current body in the DL structure, and modify
+>>> vsp1_dl_list_write() to write to the current fragment ?
+>>
+>> No doubt about it, 168+, 153- is certainly intrusive.
+>>
+>> Yes, now I'm looking back at this, I think this does look like this part is
+>> not quite the right approach.
+>>
+>> Which otherwise stalls the series until I have time to reconsider. I will
+>> likely repost the work I have done on the earlier patches, including the
+>> 's/fragment/body/g' changes and ready myself for a v4 which will contain the
+>> heavier reworks.
+> 
+> Fine with me. Could you make sure to mention the open issues in the cover 
+> letter ? I want to avoid commenting on them if you know already that you will 
+> rework them later.
 
-Fixes: b0d0ce8b6b91 ("spi: sh-msiof: Add DMA support")
-Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2
-* Added Geert's Ack
+I've been trying to tackle this today, but I think I've come up a bit stuck on a
+key part.
 
-Sorry for letting this slip through the cracks, it appears
-to have been on my todo list for 1 year less 5 days.
+The reason for this patch, is to allow the functions to configure directly into
+a display list body, even when that body *is not part* of a display list.
 
----
- drivers/spi/spi-sh-msiof.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+So - converting vsp1_dl_list_write() to configure into the 'current' body (was
+fragment) of a display list would not work for writing to the cached objects -
+which do not have a display list. They are simply body objects.
 
-diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
-index 2c5ea4c57508..94d15ef0e4e6 100644
---- a/drivers/spi/spi-sh-msiof.c
-+++ b/drivers/spi/spi-sh-msiof.c
-@@ -900,7 +900,7 @@ static int sh_msiof_transfer_one(struct spi_master *master,
- 				break;
- 			copy32 = copy_bswap32;
- 		} else if (bits <= 16) {
--			if (l & 1)
-+			if (l & 3)
- 				break;
- 			copy32 = copy_wswap32;
- 		} else {
--- 
-2.11.0
+It seems a bit extraneous to create holding display lists to contain a single
+body, when the display list itself will never be used, but I can't think of an
+alternative.
+
+Would you prefer this 'container display list' approach? or do you have another
+idea?
+
+--
+Regards
+
+Kieran
