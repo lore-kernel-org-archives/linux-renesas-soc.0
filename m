@@ -1,98 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:41794 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933345AbdK2QG4 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:59525 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751070AbdKQQkN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 29 Nov 2017 11:06:56 -0500
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: horms@verge.net.au, geert@linux-m68k.org
-Cc: linux-renesas-soc@vger.kernel.org, wsa@the-dreams.de,
-        magnus.damm@gmail.com, linux-mmc@vger.kernel.org,
-        marek.vasut@gmail.com,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH v2 2/2] arm64: dts: r8a77995: draak: enable SDHI2
-Date: Wed, 29 Nov 2017 17:06:46 +0100
-Message-Id: <1511971606-580-3-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1511971606-580-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1511971606-580-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Fri, 17 Nov 2017 11:40:13 -0500
+Date: Fri, 17 Nov 2017 08:40:08 -0800
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux I2C <linux-i2c@vger.kernel.org>
+Subject: Re: [PATCH 5/6] arm64: renesas: draak: enable I2C controller 1
+Message-ID: <20171117164008.qvsolbchongphi4i@verge.net.au>
+References: <1510759526-30346-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <1510759526-30346-6-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <CAMuHMdX1iitObng0nvhmP4r5yb1CnqBwbchu6qDQLtqjPLbDQg@mail.gmail.com>
+ <20171117143218.56gdhcdchdfjtbaq@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20171117143218.56gdhcdchdfjtbaq@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The single SDHI controller is connected to eMMC.
+On Fri, Nov 17, 2017 at 06:32:19AM -0800, Simon Horman wrote:
+> On Thu, Nov 16, 2017 at 10:31:31AM +0100, Geert Uytterhoeven wrote:
+> > Hi Uli,
+> > 
+> > On Wed, Nov 15, 2017 at 4:25 PM, Ulrich Hecht
+> > <ulrich.hecht+renesas@gmail.com> wrote:
+> > > No devices to add, I2C1 has an external connector only.
+> > >
+> > > Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> > 
+> > Thanks for your patch!
+> > 
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > but please see below.
+> 
+> Thanks, applied.
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
----
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 44 ++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+Sorry, I was a bit hasty there as this patch
+depends on a patch earlier in the series which I have not applied.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-index 91f247f..e690cf8 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-@@ -32,6 +32,24 @@
- 		/* first 128MB is reserved for secure area. */
- 		reg = <0x0 0x48000000 0x0 0x18000000>;
- 	};
-+
-+	reg_1p8v: regulator0 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-1.8V";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	reg_3p3v: regulator1 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-3.3V";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
- };
- 
- &extal_clk {
-@@ -71,6 +89,18 @@
- 		function = "scif2";
- 	};
- 
-+	sdhi2_pins: sd2 {
-+		groups = "mmc_data8", "mmc_ctrl";
-+		function = "mmc";
-+		power-source = <1800>;
-+	};
-+
-+	sdhi2_pins_uhs: sd2_uhs {
-+		groups = "mmc_data8", "mmc_ctrl";
-+		function = "mmc";
-+		power-source = <1800>;
-+	};
-+
- 	usb0_pins: usb0 {
- 		groups = "usb0";
- 		function = "usb0";
-@@ -125,6 +155,20 @@
- 	status = "okay";
- };
- 
-+&sdhi2 {
-+	/* used for on-board eMMC */
-+	pinctrl-0 = <&sdhi2_pins>;
-+	pinctrl-1 = <&sdhi2_pins_uhs>;
-+	pinctrl-names = "default", "state_uhs";
-+
-+	vmmc-supply = <&reg_3p3v>;
-+	vqmmc-supply = <&reg_1p8v>;
-+	bus-width = <8>;
-+	mmc-hs200-1_8v;
-+	non-removable;
-+	status = "okay";
-+};
-+
- &usb2_phy0 {
- 	pinctrl-0 = <&usb0_pins>;
- 	pinctrl-names = "default";
--- 
-2.7.4
+I've dropped this patch for now and will wait a bit longer for the review
+to unfold.
+
+> > > --- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+> > > +++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+> > 
+> > > @@ -84,6 +89,12 @@
+> > >         };
+> > >  };
+> > >
+> > > +&i2c1 {
+> > > +       pinctrl-0 = <&i2c1_pins>;
+> > > +       pinctrl-names = "default";
+> > > +       status = "okay";
+> > 
+> > If no devices are connected, perhaps it's wise to defer the status update
+> > to e.g. an overlay that describes what's connected to CN23?
+> > 
+> > Or do you want it enabled to allow adding devices manually using
+> > /sys/bus/i2c/devices/i2c-1/new_device?
+> 
+> Ulrich, please consider following up on this.
+> 
