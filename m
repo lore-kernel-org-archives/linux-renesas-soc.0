@@ -1,35 +1,33 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from osg.samsung.com ([64.30.133.232]:38896 "EHLO osg.samsung.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751447AbdKWNH6 (ORCPT
+Received: from lb1-smtp-cloud7.xs4all.net ([194.109.24.24]:34939 "EHLO
+        lb1-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753313AbdKQLJY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 23 Nov 2017 08:07:58 -0500
-Date: Thu, 23 Nov 2017 11:07:51 -0200
-From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Niklas =?UTF-8?B?U8O2ZGVybHVuZA==?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+        Fri, 17 Nov 2017 06:09:24 -0500
 Subject: Re: [PATCH/RFC 1/2] v4l: v4l2-dev: Add infrastructure to protect
  device unplug race
-Message-ID: <20171123110751.72f76d7d@vento.lan>
-In-Reply-To: <20171116003349.19235-2-laurent.pinchart+renesas@ideasonboard.com>
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        linux-media@vger.kernel.org
 References: <20171116003349.19235-1-laurent.pinchart+renesas@ideasonboard.com>
-        <20171116003349.19235-2-laurent.pinchart+renesas@ideasonboard.com>
+ <20171116003349.19235-2-laurent.pinchart+renesas@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <8942419d-fc0e-7a82-cc35-a7960cd22800@xs4all.nl>
+Date: Fri, 17 Nov 2017 12:09:20 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20171116003349.19235-2-laurent.pinchart+renesas@ideasonboard.com>
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hi Laurent,
 
-Em Thu, 16 Nov 2017 02:33:48 +0200
-Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com> escreveu:
-
+On 16/11/17 01:33, Laurent Pinchart wrote:
 > Device unplug being asynchronous, it naturally races with operations
 > performed by userspace through ioctls or other file operations on video
 > device nodes.
@@ -49,6 +47,18 @@ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com> escreveu:
 > As an example mark the ioctl handler as a device access section. Other
 > file operations need to be protected too, and blocking ioctls (such as
 > VIDIOC_DQBUF) need to be handled as well.
+
+As long as the queue field in struct video_device is filled in properly
+this shouldn't be a problem.
+
+This looks pretty good, simple and straightforward.
+
+Do we need something similar for media_device? Other devices?
+
+Regards,
+
+	Hans
+
 > 
 > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 > ---
@@ -147,33 +157,6 @@ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com> escreveu:
 > +	spin_lock_init(&vdev->unplug_lock);
 > +	init_waitqueue_head(&vdev->unplug_wait);
 > +
-
-I'm c/c Greg here, as I don't think, that, the way it is, it
-belongs at V4L2 core.
-
-I mean: if this is a problem that affects all drivers, it would should, 
-instead, be sitting at the driver's core.
-
-If, otherwise, this is specific to rcar-vin (and other platform drivers),
-that's likely should be inside the drivers that require it.
-
-That's said, I remember we had to add some things in the past for
-USB drivers hot unplug to happen softly. I don't remember the specifics
-anymore, but it was solved by both a V4L2 core and changes at USB
-drivers.
-
-One of the things that it was added, on that time, was this patch:
-
-	commit ae6cfaace120f4330715b56265ce0e4a710e1276
-	Author: Hans Verkuil <hverkuil@xs4all.nl>
-	Date:   Sat Mar 14 08:28:45 2009 -0300
-
-	    V4L/DVB (11044): v4l2-device: add v4l2_device_disconnect
-
-So, I would expect that a change at V4L2 core (or at driver core) that
-would be applied would also be affecting USB drivers disconnect logic
-and v4l2_device_disconnect() function.
-
 >  	/* v4l2_fh support */
 >  	spin_lock_init(&vdev->fh_lock);
 >  	INIT_LIST_HEAD(&vdev->fh_list);
@@ -254,6 +237,4 @@ and v4l2_device_disconnect() function.
 > +void video_device_unplug(struct video_device *vdev);
 > +
 >  #endif /* _V4L2_DEV_H */
-
-Thanks,
-Mauro
+> 
