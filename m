@@ -1,26 +1,31 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Fri, 17 Nov 2017 14:31:48 -0600
-From: Rob Herring <robh@kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:58875 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751253AbdKQPfx (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 17 Nov 2017 10:35:53 -0500
+Date: Fri, 17 Nov 2017 07:35:43 -0800
+From: Simon Horman <horms@verge.net.au>
 To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Niklas =?iso-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund@ragnatech.se>, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>
 Subject: Re: [PATCH v2 1/4] dt-bindings: media: rcar_vin: Reverse SoC part
  number list
-Message-ID: <20171117203148.anvhqgrhbp6imptt@rob-hp-laptop>
+Message-ID: <20171117153539.5war64h5sc27bwos@verge.net.au>
 References: <1510856571-30281-1-git-send-email-fabrizio.castro@bp.renesas.com>
  <1510856571-30281-2-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <1510856571-30281-2-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 On Thu, Nov 16, 2017 at 06:22:48PM +0000, Fabrizio Castro wrote:
@@ -29,12 +34,5 @@ On Thu, Nov 16, 2017 at 06:22:48PM +0000, Fabrizio Castro wrote:
 > 
 > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 > Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-> ---
-> v1->v2:
-> * new patch triggered by Geert's comment, see the below link for details:
->   https://www.mail-archive.com/linux-media@vger.kernel.org/msg121992.html
-> 
->  Documentation/devicetree/bindings/media/rcar_vin.txt | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
 
-Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
