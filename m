@@ -1,46 +1,64 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:37143 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751274AbdKVNSM (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 22 Nov 2017 08:18:12 -0500
-MIME-Version: 1.0
-In-Reply-To: <1510915289-15059-6-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1510915289-15059-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1510915289-15059-6-git-send-email-ulrich.hecht+renesas@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 22 Nov 2017 14:18:11 +0100
-Message-ID: <CAMuHMdV6WNb7R5kVF5GFtjEb+BW+2sFq82XQDb8fV1XhVVhJXQ@mail.gmail.com>
-Subject: Re: [PATCH 5/7] arm64: dts: r8a77995: Add CAN FD support
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-can@vger.kernel.org,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-can@vger.kernel.org, devicetree@vger.kernel.org,
+        wsa@the-dreams.de, horms@verge.net.au, geert@linux-m68k.org,
+        magnus.damm@gmail.com, chris.paterson2@renesas.com,
+        ramesh.shanmugasundaram@bp.renesas.com,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH 5/7] arm64: dts: r8a77995: Add CAN FD support
+Date: Fri, 17 Nov 2017 11:41:27 +0100
+Message-Id: <1510915289-15059-6-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <1510915289-15059-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1510915289-15059-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Nov 17, 2017 at 11:41 AM, Ulrich Hecht
-<ulrich.hecht+renesas@gmail.com> wrote:
-> Adds CAN FD controller node for r8a77995.
->
-> Based on a patch for r8a7796 by Chris Paterson.
->
-> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Adds CAN FD controller node for r8a77995.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Based on a patch for r8a7796 by Chris Paterson.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+---
+ arch/arm64/boot/dts/renesas/r8a77995.dtsi | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-                        Geert
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+index a611324..6648c9b 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+@@ -306,6 +306,31 @@
+ 			status = "disabled";
+ 		};
+ 
++		canfd: can@e66c0000 {
++			compatible = "renesas,r8a77995-canfd",
++				     "renesas,rcar-gen3-canfd";
++			reg = <0 0xe66c0000 0 0x8000>;
++			interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>,
++				   <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 914>,
++			       <&cpg CPG_CORE R8A77995_CLK_CANFD>,
++			       <&can_clk>;
++			clock-names = "fck", "canfd", "can_clk";
++			assigned-clocks = <&cpg CPG_CORE R8A77995_CLK_CANFD>;
++			assigned-clock-rates = <40000000>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 914>;
++			status = "disabled";
++
++			channel0 {
++				status = "disabled";
++			};
++
++			channel1 {
++				status = "disabled";
++			};
++		};
++
+ 		avb: ethernet@e6800000 {
+ 			compatible = "renesas,etheravb-r8a77995",
+ 				     "renesas,etheravb-rcar-gen3";
+-- 
+2.7.4
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
