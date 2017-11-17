@@ -1,45 +1,121 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:42275 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751557AbdKQNad (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:38199 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751079AbdKQKll (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Nov 2017 08:30:33 -0500
-MIME-Version: 1.0
-In-Reply-To: <1510915289-15059-2-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1510915289-15059-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1510915289-15059-2-git-send-email-ulrich.hecht+renesas@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 17 Nov 2017 14:30:32 +0100
-Message-ID: <CAMuHMdUJ1P3wmjXrSAAF6AC1Ft_qQK8DB6w6XTbg1zkKC5DTpg@mail.gmail.com>
-Subject: Re: [PATCH 1/7] pinctrl: sh-pfc: r8a77995: Add CAN support
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-can@vger.kernel.org,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 17 Nov 2017 05:41:41 -0500
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-can@vger.kernel.org, devicetree@vger.kernel.org,
+        wsa@the-dreams.de, horms@verge.net.au, geert@linux-m68k.org,
+        magnus.damm@gmail.com, chris.paterson2@renesas.com,
+        ramesh.shanmugasundaram@bp.renesas.com,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH 1/7] pinctrl: sh-pfc: r8a77995: Add CAN support
+Date: Fri, 17 Nov 2017 11:41:23 +0100
+Message-Id: <1510915289-15059-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <1510915289-15059-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1510915289-15059-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Nov 17, 2017 at 11:41 AM, Ulrich Hecht
-<ulrich.hecht+renesas@gmail.com> wrote:
-> This patch adds CAN[0-1] pinmux support to the r8a77995 SoC.
->
-> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+This patch adds CAN[0-1] pinmux support to the r8a77995 SoC.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in sh-pfc-for-v4.16.
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+---
+ drivers/pinctrl/sh-pfc/pfc-r8a77995.c | 59 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 59 insertions(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
+index 89b7541..616854d 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
+@@ -1057,6 +1057,45 @@ static const unsigned int avb0_avtp_capture_b_mux[] = {
+ 	AVB0_AVTP_CAPTURE_B_MARK,
+ };
+ 
++/* - CAN ------------------------------------------------------------------ */
++static const unsigned int can0_data_a_pins[] = {
++	/* TX, RX */
++	RCAR_GP_PIN(4, 28), RCAR_GP_PIN(4, 31),
++};
++static const unsigned int can0_data_a_mux[] = {
++	CAN0_TX_A_MARK, CAN0_RX_A_MARK,
++};
++static const unsigned int can0_data_b_pins[] = {
++	/* TX, RX */
++	RCAR_GP_PIN(4, 22), RCAR_GP_PIN(4, 5),
++};
++static const unsigned int can0_data_b_mux[] = {
++	CAN0_TX_B_MARK, CAN0_RX_B_MARK,
++};
++static const unsigned int can1_data_a_pins[] = {
++	/* TX, RX */
++	RCAR_GP_PIN(4, 30), RCAR_GP_PIN(4, 29),
++};
++static const unsigned int can1_data_a_mux[] = {
++	CAN1_TX_A_MARK, CAN1_RX_A_MARK,
++};
++static const unsigned int can1_data_b_pins[] = {
++	/* TX, RX */
++	RCAR_GP_PIN(4, 7), RCAR_GP_PIN(4, 6),
++};
++static const unsigned int can1_data_b_mux[] = {
++	CAN1_TX_B_MARK, CAN1_RX_B_MARK,
++};
++
++/* - CAN Clock -------------------------------------------------------------- */
++static const unsigned int can_clk_pins[] = {
++	/* CLK */
++	RCAR_GP_PIN(5, 2),
++};
++static const unsigned int can_clk_mux[] = {
++	CAN_CLK_MARK,
++};
++
+ /* - I2C -------------------------------------------------------------------- */
+ static const unsigned int i2c0_pins[] = {
+ 	/* SCL, SDA */
+@@ -1504,6 +1543,11 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(avb0_avtp_pps_b),
+ 	SH_PFC_PIN_GROUP(avb0_avtp_match_b),
+ 	SH_PFC_PIN_GROUP(avb0_avtp_capture_b),
++	SH_PFC_PIN_GROUP(can0_data_a),
++	SH_PFC_PIN_GROUP(can0_data_b),
++	SH_PFC_PIN_GROUP(can1_data_a),
++	SH_PFC_PIN_GROUP(can1_data_b),
++	SH_PFC_PIN_GROUP(can_clk),
+ 	SH_PFC_PIN_GROUP(i2c0),
+ 	SH_PFC_PIN_GROUP(i2c1),
+ 	SH_PFC_PIN_GROUP(i2c2_a),
+@@ -1581,6 +1625,18 @@ static const char * const avb0_groups[] = {
+ 	"avb0_avtp_capture_b",
+ };
+ 
++static const char * const can0_groups[] = {
++	"can0_data_a",
++	"can0_data_b",
++};
++static const char * const can1_groups[] = {
++	"can1_data_a",
++	"can1_data_b",
++};
++static const char * const can_clk_groups[] = {
++	"can_clk",
++};
++
+ static const char * const i2c0_groups[] = {
+ 	"i2c0",
+ };
+@@ -1691,6 +1747,9 @@ static const char * const usb0_groups[] = {
+ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(audio_clk),
+ 	SH_PFC_FUNCTION(avb0),
++	SH_PFC_FUNCTION(can0),
++	SH_PFC_FUNCTION(can1),
++	SH_PFC_FUNCTION(can_clk),
+ 	SH_PFC_FUNCTION(i2c0),
+ 	SH_PFC_FUNCTION(i2c1),
+ 	SH_PFC_FUNCTION(i2c2),
+-- 
+2.7.4
