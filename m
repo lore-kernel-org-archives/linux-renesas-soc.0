@@ -1,78 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:62889 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753405AbdKQSAw (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:57452 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758305AbdKQNkB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Nov 2017 13:00:52 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-CC: Simon Horman <horms@verge.net.au>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH] dt-bindings: qspi: Add r8a7743/5 to the compatible list
-Date: Fri, 17 Nov 2017 18:00:46 +0000
-Message-ID: <TY1PR06MB08958546062D685532669977C02F0@TY1PR06MB0895.apcprd06.prod.outlook.com>
-References: <1504858035-3568-1-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1504858035-3568-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 17 Nov 2017 08:40:01 -0500
+Date: Fri, 17 Nov 2017 05:39:43 -0800
+From: Simon Horman <horms@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH v2 0/7] arm64: dts: renesas: r8a7796: IPMMU upstream
+ integration
+Message-ID: <20171117133943.svbzfoyen4on64ez@verge.net.au>
+References: <20171110132612.1589-1-horms+renesas@verge.net.au>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20171110132612.1589-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Dear All,
+On Fri, Nov 10, 2017 at 02:26:05PM +0100, Simon Horman wrote:
+> This series adds DT nodes for IPMMU instances on r8a7796 together with
+> connections to various r8a7796 on-chip devices such as Audio-DMAC, SYS-DMAC,
+> Ethernet-AVB and a bunch of multimedia devices that make use of FCP.
+> 
+> With these patches applied a white list enabled IPMMU driver may be used
+> to check silicon revision and then enable IPMMU in the known working cases.
+> 
+> The recommended test stack for this patchset is a merge of
+> * The iommu/next branch of the vfio tree
+> * renesas-devel-20171110-v4.14-rc8 tag of the renesas tree
+> 
+> With the following applied:
+>  [PATCH v4 0/3] iommu/ipmmu-vmsa: r8a7796 support V4
+> 
+> The final patch in the series enable IPMMU support for all IPMMU
+> instances on r8a7796 that are used by IPMMU devices listed above.
+> 
+> The DT binding for r8a7796 have been acked (as part of the r8a7796 series
+> noted above) but have not yet been merged.
+> 
+> Changes since V1:
+> * Drop mostly redundant comments from nodes
+> * Add power domains
+> 
+> Based on work by Magnus Damm.
+> 
+> Based on renesas-devel-20171110-v4.14-rc8
 
-this patch has been around for some time now, it was reviewed-by Geert Uytt=
-erhoeven and acked-by Rob Herring, any news?
-
-Thanks,
-Fab
-
-> Subject: [PATCH] dt-bindings: qspi: Add r8a7743/5 to the compatible list
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> ---
->  Documentation/devicetree/bindings/spi/spi-rspi.txt | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/Documentation/devicetree/bindings/spi/spi-rspi.txt b/Documen=
-tation/devicetree/bindings/spi/spi-rspi.txt
-> index 8f4169f..3b02b3a 100644
-> --- a/Documentation/devicetree/bindings/spi/spi-rspi.txt
-> +++ b/Documentation/devicetree/bindings/spi/spi-rspi.txt
-> @@ -5,11 +5,14 @@ Required properties:
->       "renesas,rspi-<soctype>", "renesas,rspi" as fallback.
->       For Renesas Serial Peripheral Interface on RZ/A1H:
->       "renesas,rspi-<soctype>", "renesas,rspi-rz" as fallback.
-> -     For Quad Serial Peripheral Interface on R-Car Gen2:
-> +     For Quad Serial Peripheral Interface on R-Car Gen2 and
-> +     RZ/G1 devices:
->       "renesas,qspi-<soctype>", "renesas,qspi" as fallback.
->       Examples with soctypes are:
->          - "renesas,rspi-sh7757" (SH)
->  - "renesas,rspi-r7s72100" (RZ/A1H)
-> +- "renesas,qspi-r8a7743" (RZ/G1M)
-> +- "renesas,qspi-r8a7745" (RZ/G1E)
->  - "renesas,qspi-r8a7790" (R-Car H2)
->  - "renesas,qspi-r8a7791" (R-Car M2-W)
->  - "renesas,qspi-r8a7792" (R-Car V2H)
-> --
-> 2.7.4
-
-
-
-
-Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
-uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
- No. 04586709.
+I have applied this series.
