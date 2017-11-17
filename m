@@ -1,53 +1,95 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:45996 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933485AbdKPNoY (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Nov 2017 08:44:24 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/4] arm64: dts: renesas: salvator-x/xs: Add SoC name to file header
-Date: Thu, 16 Nov 2017 14:44:17 +0100
-Message-Id: <1510839861-12303-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+Subject: Re: [PATCH v7 20/25] rcar-vin: add chsel information to rvin_info
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org
+References: <20171111003835.4909-1-niklas.soderlund+renesas@ragnatech.se>
+ <20171111003835.4909-21-niklas.soderlund+renesas@ragnatech.se>
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <725fc456-9f82-935b-c539-3c3c6f75b8c3@xs4all.nl>
+Date: Fri, 17 Nov 2017 12:25:00 +0100
+MIME-Version: 1.0
+In-Reply-To: <20171111003835.4909-21-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Simon, Magnus,
+On 11/11/17 01:38, Niklas Söderlund wrote:
+> Each Gen3 SoC has a limited set of predefined routing possibilities for
+> which CSI-2 device and virtual channel can be routed to which VIN
+> instance. Prepare to store this information in the struct rvin_info.
+> 
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-With the proliferation of Salvator-X and Salvator-XS boards carrying
-different R-Car Gen3 SoCs variants, several DTS files ended up having
-the same file headers.
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
 
-Add the SoC names to the file headers to avoid confusion.
+Regards,
 
-Thanks!
+	Hans
 
-Geert Uytterhoeven (4):
-  arm64: dts: renesas: r8a7795-es1-salvator-x: Add SoC name to file
-    header
-  arm64: dts: renesas: r8a7795-salvator-x: Add SoC name to file header
-  arm64: dts: renesas: r8a7796-salvator-x: Add SoC name to file header
-  arm64: dts: renesas: r8a7795-salvator-xs: Add SoC name to file header
-
- arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts | 2 +-
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts     | 2 +-
- arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts    | 2 +-
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts     | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
-
--- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+> ---
+>  drivers/media/platform/rcar-vin/rcar-vin.h | 25 +++++++++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+> index a9bd570d6635fd47..41c81b8d9fb8e851 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-vin.h
+> +++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+> @@ -35,6 +35,9 @@
+>  /* Max number on VIN instances that can be in a system */
+>  #define RCAR_VIN_NUM 8
+>  
+> +/* Max number of CHSEL values for any Gen3 SoC */
+> +#define RCAR_CHSEL_MAX 6
+> +
+>  enum chip_id {
+>  	RCAR_H1,
+>  	RCAR_M1,
+> @@ -91,6 +94,22 @@ struct rvin_graph_entity {
+>  
+>  struct rvin_group;
+>  
+> +/** struct rvin_group_chsel - Map a CSI-2 receiver and channel to a CHSEL value
+> + * @csi:		VIN internal number for CSI-2 device
+> + * @chan:		Output channel of the CSI-2 receiver. Each R-Car CSI-2
+> + *			receiver has four output channels facing the VIN
+> + *			devices, each channel can carry one CSI-2 Virtual
+> + *			Channel (VC) and there are no correlation between
+> + *			output channel number and CSI-2 VC. It's up to the
+> + *			CSI-2 receiver driver to configure which VC is
+> + *			outputted on which channel, the VIN devices only
+> + *			cares about output channels.
+> + */
+> +struct rvin_group_chsel {
+> +	enum rvin_csi_id csi;
+> +	unsigned int chan;
+> +};
+> +
+>  /**
+>   * struct rvin_info - Information about the particular VIN implementation
+>   * @chip:		type of VIN chip
+> @@ -98,6 +117,9 @@ struct rvin_group;
+>   *
+>   * max_width:		max input width the VIN supports
+>   * max_height:		max input height the VIN supports
+> + *
+> + * num_chsels:		number of possible chsel values for this VIN
+> + * chsels:		routing table VIN <-> CSI-2 for the chsel values
+>   */
+>  struct rvin_info {
+>  	enum chip_id chip;
+> @@ -105,6 +127,9 @@ struct rvin_info {
+>  
+>  	unsigned int max_width;
+>  	unsigned int max_height;
+> +
+> +	unsigned int num_chsels;
+> +	struct rvin_group_chsel chsels[RCAR_VIN_NUM][RCAR_CHSEL_MAX];
+>  };
+>  
+>  /**
+> 
