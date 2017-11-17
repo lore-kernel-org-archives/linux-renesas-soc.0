@@ -1,54 +1,80 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:59902 "EHLO pokefinder.org"
+Received: from mail.kernel.org ([198.145.29.99]:58538 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750735AbdKHIur (ORCPT
+        id S965332AbdKQPrk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 8 Nov 2017 03:50:47 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [RFT] i2c: sh_mobile: let RuntimePM do the clock handling
-Date: Wed,  8 Nov 2017 09:50:37 +0100
-Message-Id: <20171108085037.1318-1-wsa+renesas@sang-engineering.com>
+        Fri, 17 Nov 2017 10:47:40 -0500
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v4 2/9] v4l: vsp1: Protect bodies against overflow
+Date: Fri, 17 Nov 2017 15:47:25 +0000
+Message-Id: <a1a8c17836b5f6b07f2d5bbc983bfb188e424127.1510933306.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.04beabdebfb3483e7f009337bc09953e6d78701d.1510933306.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.04beabdebfb3483e7f009337bc09953e6d78701d.1510933306.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.04beabdebfb3483e7f009337bc09953e6d78701d.1510933306.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.04beabdebfb3483e7f009337bc09953e6d78701d.1510933306.git-series.kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-No need to do it manually.
+The body write function relies on the code never asking it to write more
+than the entries available in the list.
 
-Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Currently with each list body containing 256 entries, this is fine, but
+we can reduce this number greatly saving memory. In preparation of this
+add a level of protection to catch any buffer overflows.
+
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
 ---
 
-jacopo: can you test this on Migo-R, please, on top of the other I2C patches?
+v3:
+ - adapt for new 'body' terminology
+ - simplify WARN_ON macro usage
+---
+ drivers/media/platform/vsp1/vsp1_dl.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-I tested it on a Lager and it worked there. Will try Gen3 later, too.
-
- drivers/i2c/busses/i2c-sh_mobile.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-sh_mobile.c b/drivers/i2c/busses/i2c-sh_mobile.c
-index ebd146ccb24465..80561ffbcf7b46 100644
---- a/drivers/i2c/busses/i2c-sh_mobile.c
-+++ b/drivers/i2c/busses/i2c-sh_mobile.c
-@@ -702,7 +702,6 @@ static int sh_mobile_i2c_xfer(struct i2c_adapter *adapter,
+diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
+index 643f7ea3af24..a45d35aa676e 100644
+--- a/drivers/media/platform/vsp1/vsp1_dl.c
++++ b/drivers/media/platform/vsp1/vsp1_dl.c
+@@ -50,6 +50,7 @@ struct vsp1_dl_entry {
+  * @dma: DMA address of the entries
+  * @size: size of the DMA memory in bytes
+  * @num_entries: number of stored entries
++ * @max_entries: number of entries available
+  */
+ struct vsp1_dl_body {
+ 	struct list_head list;
+@@ -60,6 +61,7 @@ struct vsp1_dl_body {
+ 	size_t size;
  
- 	/* Wake up device and enable clock */
- 	pm_runtime_get_sync(pd->dev);
--	clk_prepare_enable(pd->clk);
+ 	unsigned int num_entries;
++	unsigned int max_entries;
+ };
  
- 	/* Process all messages */
- 	for (i = 0; i < num; i++) {
-@@ -743,7 +742,6 @@ static int sh_mobile_i2c_xfer(struct i2c_adapter *adapter,
- 	iic_wr(pd, ICCR, 0);
+ /**
+@@ -138,6 +140,7 @@ static int vsp1_dl_body_init(struct vsp1_device *vsp1,
  
- 	/* Disable clock and mark device as idle */
--	clk_disable_unprepare(pd->clk);
- 	pm_runtime_put_sync(pd->dev);
+ 	dlb->vsp1 = vsp1;
+ 	dlb->size = size;
++	dlb->max_entries = num_entries;
  
- 	return err ?: num;
+ 	dlb->entries = dma_alloc_wc(vsp1->bus_master, dlb->size, &dlb->dma,
+ 				    GFP_KERNEL);
+@@ -219,6 +222,10 @@ void vsp1_dl_body_free(struct vsp1_dl_body *dlb)
+  */
+ void vsp1_dl_body_write(struct vsp1_dl_body *dlb, u32 reg, u32 data)
+ {
++	if (WARN_ONCE(dlb->num_entries >= dlb->max_entries,
++		      "DLB size exceeded (max %u)", dlb->max_entries))
++		return;
++
+ 	dlb->entries[dlb->num_entries].addr = reg;
+ 	dlb->entries[dlb->num_entries].data = data;
+ 	dlb->num_entries++;
 -- 
-2.11.0
+git-series 0.9.1
