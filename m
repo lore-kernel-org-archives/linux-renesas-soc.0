@@ -1,49 +1,35 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:34465 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1161471AbdKRE13 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:58057 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935016AbdKQOZA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Nov 2017 23:27:29 -0500
-Received: by mail-pg0-f67.google.com with SMTP id 4so3415152pge.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 17 Nov 2017 20:27:29 -0800 (PST)
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Date: Sat, 18 Nov 2017 13:25:59 +0900
-Message-Id: <151097915979.24365.675151091819205104.sendpatchset@little-apple>
-Subject: [PATCH/RFC 00/04] iommu/ipmmu-vmsa: IPMMU IOVA prototyping on r8a7796 ES1.0
+        Fri, 17 Nov 2017 09:25:00 -0500
+Date: Fri, 17 Nov 2017 06:24:56 -0800
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH 3/3] dmaengine: rcar-dmac: Document R-Car D3 bindings
+Message-ID: <20171117142455.uascthgmod3ieaou@verge.net.au>
+References: <1510759510-30295-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <1510759510-30295-4-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <CAMuHMdUzGrGbpURT0Rut3q-WGcZ+v5id=Fr1MxMETr3XEd0Kxw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUzGrGbpURT0Rut3q-WGcZ+v5id=Fr1MxMETr3XEd0Kxw@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-iommu/ipmmu-vmsa: IPMMU IOVA prototyping on r8a7796 ES1.0
+On Thu, Nov 16, 2017 at 09:40:33AM +0100, Geert Uytterhoeven wrote:
+> On Wed, Nov 15, 2017 at 4:25 PM, Ulrich Hecht
+> <ulrich.hecht+renesas@gmail.com> wrote:
+> > R8A77995's SYS-DMAC is R-Car Gen3-compatible.
+> >
+> > Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[PATCH/RFC 01/04] iommu: Hack to dump page table configuration on boot
-[PATCH/RFC 02/04] iommu/ipmmu-vmsa: VA64 mode with 32-bit IOVA
-[PATCH/RFC 03/04] iommu/ipmmu-vmsa: VA64 mode with 31-bit IOVA
-[PATCH/RFC 04/04] iommu/ipmmu-vmsa: VA64 mode with 30-bit IOVA
-
-This series contains a collection of prototype patches to play with
-various IOVA space sizes on the r8a7796 IPMMU. Use one of patches
-2-4 to test the desired mode and use patch 1 to dump the page table
-configuration on boot to see the size of the pgd and other things.
-
-The actual goal with this activity is to play with the page table
-concatenation feature that is needed for 40-bit IOVA support. The
-Renesas IPMMU hardware according to the friendly documentation
-supports stage 1 translation with concatenation as opposed to other
-implementations that only use concatenation for stage 2 translation.
-
-My early investigation of the IPMMMU on r8a7996 ES1.0 only allowed me
-to successfully scale down the IOVA from 32 to lower values. The patches
-in this series has allowed me to test "Initial lookup level" settings
-but without concatenation.
-
-In the not so distant future my plan is to continue this activity on
-more recent hardware such as the r8a77965 SoC (R-Car M3-N).
-
-Not-Yet-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
- drivers/iommu/io-pgtable-arm.c |   12 ++++
- drivers/iommu/io-pgtable.c     |    4 +
- drivers/iommu/ipmmu-vmsa.c     |  116 +++++++++++++++++++++++++++-------------
- 3 files changed, 95 insertions(+), 37 deletions(-)
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
