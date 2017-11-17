@@ -1,41 +1,45 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:38431 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758380AbdKOPZc (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Nov 2017 10:25:32 -0500
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, horms@verge.net.au,
-        wsa@the-dreams.de, geert@linux-m68k.org
-Cc: magnus.damm@gmail.com, linux-i2c@vger.kernel.org,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 1/6] pinctrl: sh-pfc: r8a77995: add missing pins SCL0 and SDA0 to pinmux data
-Date: Wed, 15 Nov 2017 16:25:21 +0100
-Message-Id: <1510759526-30346-2-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1510759526-30346-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1510759526-30346-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v4 9/9] v4l: vsp1: Reduce display list body size
+Date: Fri, 17 Nov 2017 15:47:32 +0000
+Message-Id: <84592170dbe4ffdb4cc8d33aa20c23218e029ee7.1510933306.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.04beabdebfb3483e7f009337bc09953e6d78701d.1510933306.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.04beabdebfb3483e7f009337bc09953e6d78701d.1510933306.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.04beabdebfb3483e7f009337bc09953e6d78701d.1510933306.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.04beabdebfb3483e7f009337bc09953e6d78701d.1510933306.git-series.kieran.bingham+renesas@ideasonboard.com>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Required for I2C0 operation.
+The display list originally allocated a body of 256 entries to store all
+of the register lists required for each frame.
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+This has now been separated into fragments for constant stream setup, and
+runtime updates.
+
+Empirical testing shows that the body0 now uses a maximum of 41
+registers for each frame, for both DRM and Video API pipelines thus a
+rounded 64 entries provides a suitable allocation.
+
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a77995.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/media/platform/vsp1/vsp1_dl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
-index 89b7541..2c9a71a 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
-@@ -518,6 +518,8 @@ static const u16 pinmux_data[] = {
- 	PINMUX_SINGLE(QSPI0_MISO_IO1),
- 	PINMUX_SINGLE(QSPI0_MOSI_IO0),
- 	PINMUX_SINGLE(QSPI0_SPCLK),
-+	PINMUX_SINGLE(SCL0),
-+	PINMUX_SINGLE(SDA0),
+diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
+index 49d88b03d359..278451e8bc4e 100644
+--- a/drivers/media/platform/vsp1/vsp1_dl.c
++++ b/drivers/media/platform/vsp1/vsp1_dl.c
+@@ -21,7 +21,7 @@
+ #include "vsp1.h"
+ #include "vsp1_dl.h"
  
- 	/* IPSR0 */
- 	PINMUX_IPSR_MSEL(IP0_3_0,	IRQ0_A, SEL_IRQ_0_0),
+-#define VSP1_DL_NUM_ENTRIES		256
++#define VSP1_DL_NUM_ENTRIES		64
+ 
+ #define VSP1_DLH_INT_ENABLE		(1 << 1)
+ #define VSP1_DLH_AUTO_START		(1 << 0)
 -- 
-2.7.4
+git-series 0.9.1
