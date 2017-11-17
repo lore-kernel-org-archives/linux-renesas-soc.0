@@ -1,100 +1,73 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:27004 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750978AbdKJOAM (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Nov 2017 09:00:12 -0500
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
-        linus.walleij@linaro.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        chris.paterson2@renesas.com, fabrizio.castro@bp.renesas.com,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH 2/2] pinctrl: sh-pfc: r8a7795: Add CAN FD support
-Date: Fri, 10 Nov 2017 13:58:50 +0000
-Message-Id: <20171110135850.32904-3-ramesh.shanmugasundaram@bp.renesas.com>
-In-Reply-To: <20171110135850.32904-1-ramesh.shanmugasundaram@bp.renesas.com>
-References: <20171110135850.32904-1-ramesh.shanmugasundaram@bp.renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Fri, 17 Nov 2017 18:08:04 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] dt-bindings: qspi: Add r8a7743/5 to the compatible list
+Message-ID: <20171117180804.g2jzdv4c7sq33te7@sirena.org.uk>
+References: <1504858035-3568-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <TY1PR06MB08958546062D685532669977C02F0@TY1PR06MB0895.apcprd06.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="g7y6qpprvcdxghdc"
+Content-Disposition: inline
+In-Reply-To: <TY1PR06MB08958546062D685532669977C02F0@TY1PR06MB0895.apcprd06.prod.outlook.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds CAN FD[0-1] pinmux support for R-Car H3 ES2.0. The pin
-config is identical to H3 ES1.*.
 
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 37 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+--g7y6qpprvcdxghdc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index 59249a990cef..34a2dc471e5a 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -1813,6 +1813,29 @@ static const unsigned int can_clk_mux[] = {
- 	CAN_CLK_MARK,
- };
- 
-+/* - CAN FD --------------------------------------------------------------- */
-+static const unsigned int canfd0_data_a_pins[] = {
-+	/* TX, RX */
-+	RCAR_GP_PIN(1, 23),     RCAR_GP_PIN(1, 24),
-+};
-+static const unsigned int canfd0_data_a_mux[] = {
-+	CANFD0_TX_A_MARK,       CANFD0_RX_A_MARK,
-+};
-+static const unsigned int canfd0_data_b_pins[] = {
-+	/* TX, RX */
-+	RCAR_GP_PIN(2, 0),      RCAR_GP_PIN(2, 1),
-+};
-+static const unsigned int canfd0_data_b_mux[] = {
-+	CANFD0_TX_B_MARK,       CANFD0_RX_B_MARK,
-+};
-+static const unsigned int canfd1_data_pins[] = {
-+	/* TX, RX */
-+	RCAR_GP_PIN(1, 22),     RCAR_GP_PIN(1, 26),
-+};
-+static const unsigned int canfd1_data_mux[] = {
-+	CANFD1_TX_MARK,         CANFD1_RX_MARK,
-+};
-+
- /* - DRIF0 --------------------------------------------------------------- */
- static const unsigned int drif0_ctrl_a_pins[] = {
- 	/* CLK, SYNC */
-@@ -3879,6 +3902,9 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(can0_data_b),
- 	SH_PFC_PIN_GROUP(can1_data),
- 	SH_PFC_PIN_GROUP(can_clk),
-+	SH_PFC_PIN_GROUP(canfd0_data_a),
-+	SH_PFC_PIN_GROUP(canfd0_data_b),
-+	SH_PFC_PIN_GROUP(canfd1_data),
- 	SH_PFC_PIN_GROUP(drif0_ctrl_a),
- 	SH_PFC_PIN_GROUP(drif0_data0_a),
- 	SH_PFC_PIN_GROUP(drif0_data1_a),
-@@ -4203,6 +4229,15 @@ static const char * const can_clk_groups[] = {
- 	"can_clk",
- };
- 
-+static const char * const canfd0_groups[] = {
-+	"canfd0_data_a",
-+	"canfd0_data_b",
-+};
-+
-+static const char * const canfd1_groups[] = {
-+	"canfd1_data",
-+};
-+
- static const char * const drif0_groups[] = {
- 	"drif0_ctrl_a",
- 	"drif0_data0_a",
-@@ -4611,6 +4646,8 @@ static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(can0),
- 	SH_PFC_FUNCTION(can1),
- 	SH_PFC_FUNCTION(can_clk),
-+	SH_PFC_FUNCTION(canfd0),
-+	SH_PFC_FUNCTION(canfd1),
- 	SH_PFC_FUNCTION(drif0),
- 	SH_PFC_FUNCTION(drif1),
- 	SH_PFC_FUNCTION(drif2),
--- 
-2.12.2
+On Fri, Nov 17, 2017 at 06:00:46PM +0000, Fabrizio Castro wrote:
+
+> this patch has been around for some time now, it was reviewed-by Geert Uy=
+tterhoeven and acked-by Rob Herring, any news?
+
+Please don't send content free pings and please allow a reasonable time
+for review.  People get busy, go on holiday, attend conferences and so=20
+on so unless there is some reason for urgency (like critical bug fixes)
+please allow at least a couple of weeks for review.  If there have been
+review comments then people may be waiting for those to be addressed.
+
+Sending content free pings adds to the mail volume (if they are seen at
+all) which is often the problem and since they can't be reviewed
+directly if something has gone wrong you'll have to resend the patches
+anyway, though there are some other maintainers who like them - if in
+doubt look at how patches for the subsystem are normally handled.
+
+Please submit patches using subject lines reflecting the style for the
+subsystem.  This makes it easier for people to identify relevant
+patches.  Look at what existing commits in the area you're changing are
+doing and make sure your subject lines visually resemble what they're
+doing.
+
+--g7y6qpprvcdxghdc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAloPJYMACgkQJNaLcl1U
+h9A4CQf9FMedXNxMM9FoMpVlhHAE6WoFlhrU9co8XYnfnRYKHxdxEthIVVgUpy0O
+8wFus5dqOp5ljJ/ytREwLvW4b3hb4/IuhZEWFo+k0+i36q71oVqJHhaSvdt4/oZV
+lwH/5LqTofWwDjPMjeKpr3VNSEc3BLNCJ/BGNfKluKi6iAA4YDnehD/qpe45LtKr
+aXfFFm1wwL/uniFhIcqmzzgHeM4vR1PakhYvZGcCqpEUNjZyWn4SVkJHlhV8wdKk
+jdgT/LihTnTE+7dK26LIsSe3Fieqabd5FyMgZpfjOpSiYo0KnY+mdhaxSHgaZCZE
+0ZqkF7WF5+N+k4ViKszJtdzbPoUhWw==
+=ICog
+-----END PGP SIGNATURE-----
+
+--g7y6qpprvcdxghdc--
