@@ -1,51 +1,91 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:39664 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757375AbdKOPZ7 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:57405 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752000AbdKQNi3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Nov 2017 10:25:59 -0500
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, horms@verge.net.au,
-        wsa@the-dreams.de, geert@linux-m68k.org
-Cc: magnus.damm@gmail.com, linux-mmc@vger.kernel.org,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 2/4] arm64: dts: r8a77995: Add SDHI (MMC) support
-Date: Wed, 15 Nov 2017 16:25:47 +0100
-Message-Id: <1510759549-30404-3-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1510759549-30404-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1510759549-30404-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Fri, 17 Nov 2017 08:38:29 -0500
+Date: Fri, 17 Nov 2017 05:38:24 -0800
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Magnus Damm <damm+renesas@opensource.se>
+Subject: Re: [PATCH v2 1/7] arm64: dts: renesas: r8a7796: Add IPMMU device
+ nodes
+Message-ID: <20171117133824.w6qo7c5g6bf5pp2c@verge.net.au>
+References: <20171110132612.1589-1-horms+renesas@verge.net.au>
+ <20171110132612.1589-2-horms+renesas@verge.net.au>
+ <CAMuHMdW-fpLiMk-cJBaFgR0WVLa0LLO4Nj_nm9mtyU93=T5h=Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdW-fpLiMk-cJBaFgR0WVLa0LLO4Nj_nm9mtyU93=T5h=Q@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car D3 has only one SDHI controller.
+On Wed, Nov 15, 2017 at 03:41:14PM +0100, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Fri, Nov 10, 2017 at 2:26 PM, Simon Horman
+> <horms+renesas@verge.net.au> wrote:
+> > From: Magnus Damm <damm+renesas@opensource.se>
+> >
+> > Add r8a7796 IPMMU nodes and keep all disabled by default.
+> >
+> > Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> > ---
+> > v2 [Simon Horman]
+> > * Drop mostly redundant comments from nodes
+> > * Add power domains
+> 
+> Thanks for the update!
+> 
+> With the below fixed:
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
----
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Thanks, I have applied this patch with those fixes and your tag.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index b3113003..89cb32e 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -504,6 +504,18 @@
- 			status = "disabled";
- 		};
- 
-+		sdhi2: sd@ee140000 {
-+			compatible = "renesas,sdhi-r8a77995",
-+				     "renesas,rcar-gen3-sdhi";
-+			reg = <0 0xee140000 0 0x2000>;
-+			interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 312>;
-+			max-frequency = <200000000>;
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 312>;
-+			status = "disabled";
-+		};
-+
- 		ehci0: usb@ee080100 {
- 			compatible = "generic-ehci";
- 			reg = <0 0xee080100 0 0x100>;
--- 
-2.7.4
+> > --- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> > +++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> 
+> [...]
+> 
+> > +               ipmmu_vc0: mmu@fe6b0000 {
+> > +                       compatible = "renesas,ipmmu-r8a7796";
+> > +                       reg = <0 0xfe6b0000 0 0x1000>;
+> > +                       renesas,ipmmu-main = <&ipmmu_mm 8>;
+> > +                       power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+> 
+> R8A7796_PD_A3VC
+> 
+> > +                       #iommu-cells = <1>;
+> > +                       status = "disabled";
+> > +               };
+> 
+> [...]
+> 
+> > +               ipmmu_ds0: mmu@e6740000 {
+> > +                       compatible = "renesas,ipmmu-r8a7796";
+> > +                       reg = <0 0xe6740000 0 0x1000>;
+> > +                       renesas,ipmmu-main = <&ipmmu_mm 0>;
+> 
+> power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+> 
+> > +                       #iommu-cells = <1>;
+> > +                       status = "disabled";
+> > +               };
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+> 
