@@ -1,62 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:57023 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751598AbdKHNJD (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:59480 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750806AbdKQQiL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 8 Nov 2017 08:09:03 -0500
-Received: by mail-lf0-f67.google.com with SMTP id 90so3045081lfs.13
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 08 Nov 2017 05:09:03 -0800 (PST)
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
+        Fri, 17 Nov 2017 11:38:11 -0500
+Date: Fri, 17 Nov 2017 08:38:07 -0800
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH] arm64: dts: ulcb-kf: add dr_mode property for USB2.0 channel 0
-Date: Wed,  8 Nov 2017 16:09:00 +0300
-Message-Id: <1510146540-31881-1-git-send-email-vladimir.barinov@cogentembedded.com>
+        Will Deacon <will.deacon@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 1/2] arm64: dts: renesas: r8a77970: add GPIO support
+Message-ID: <20171117163807.nareyxoaqwuu3hl3@verge.net.au>
+References: <20171113213149.295833059@cogentembedded.com>
+ <CAMuHMdX9n6U8vP0NWRW0hFZqLQbMKvcf4U1HZkP4nJdaS4-qNg@mail.gmail.com>
+ <20171117141950.r6vzq6ndapopfidr@verge.net.au>
+ <e64bc97b-28b2-a8b5-cde7-804f1a3e24f7@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e64bc97b-28b2-a8b5-cde7-804f1a3e24f7@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-ULCB-KF has a USB2.0 dual-role channel (CN13).
-This adds dr_mode property for USB2.0 channel 0 (EHCI/OHCI and HS-USB)
-as "otg".
+On Fri, Nov 17, 2017 at 07:11:18PM +0300, Sergei Shtylyov wrote:
+> On 11/17/2017 05:19 PM, Simon Horman wrote:
+> 
+> > > > Describe all 6 GPIO controllers in the R8A77970 device tree.
+> > > > 
+> > > > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> > > 
+> > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > 
+> > Thanks, applied.
+> 
+>    It doesn't build w/o PFC support (and I thought I mde it clearin the
+> cover letter), so please either merge R8A77970 PFC patch or pull this one
+> out!
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
----
- arch/arm64/boot/dts/renesas/ulcb-kf.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-index 2ecb6ac..ccf5409 100644
---- a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-+++ b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-@@ -29,6 +29,7 @@
- };
- 
- &ehci0 {
-+	dr_mode = "otg";
- 	status = "okay";
- };
- 
-@@ -41,6 +42,7 @@
- };
- 
- &hsusb {
-+	dr_mode = "otg";
- 	status = "okay";
- };
- 
-@@ -133,6 +135,7 @@
- };
- 
- &ohci0 {
-+	dr_mode = "otg";
- 	status = "okay";
- };
- 
--- 
-1.9.1
+Sorry, my bad. I have dropped this series for now.
+Please resubmit or otherwise ping me once the dependency hits
+an RC release.
