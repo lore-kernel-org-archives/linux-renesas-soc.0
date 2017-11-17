@@ -1,54 +1,36 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH RFT] i2c: sh_mobile: make sure to not accidently trigger STOP
-Date: Wed, 15 Nov 2017 15:32:21 +0100
-Message-Id: <20171115143221.30618-1-wsa+renesas@sang-engineering.com>
-Sender: linux-i2c-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:58071 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935016AbdKQOZq (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 17 Nov 2017 09:25:46 -0500
+Date: Fri, 17 Nov 2017 06:25:42 -0800
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH 1/3] arm64: dts: r8a77995: add SYS-DMAC nodes
+Message-ID: <20171117142541.5iiwxmb4sdrxcjw6@verge.net.au>
+References: <1510759510-30295-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <1510759510-30295-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <CAMuHMdUWuoddZLyDF6AXcygHvcUEW5j4U7k-jood076aS1JWqw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUWuoddZLyDF6AXcygHvcUEW5j4U7k-jood076aS1JWqw@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The datasheet was a bit vague, but after consultation with HW designers,
-we came to the conclusion that we should set the SCP bit always when
-dealing only with the ICE bit. A set SCP bit is ignored, and thus fine,
-a cleared one may trigger STOP on the bus.
+On Thu, Nov 16, 2017 at 09:41:23AM +0100, Geert Uytterhoeven wrote:
+> On Wed, Nov 15, 2017 at 4:25 PM, Ulrich Hecht
+> <ulrich.hecht+renesas@gmail.com> wrote:
+> > Differs from other Gen3 SoCs in that each controller only supports eight
+> > channels.
+> >
+> > Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-
-Jacopo: another to test, please. On top of all the other patches. Thank you!
-
- drivers/i2c/busses/i2c-sh_mobile.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-sh_mobile.c b/drivers/i2c/busses/i2c-sh_mobile.c
-index 9012d5f8fb38b8..c2841a4f5807c0 100644
---- a/drivers/i2c/busses/i2c-sh_mobile.c
-+++ b/drivers/i2c/busses/i2c-sh_mobile.c
-@@ -604,10 +604,10 @@ static int start_ch(struct sh_mobile_i2c_data *pd, struct i2c_msg *usr_msg,
- 
- 	if (do_init) {
- 		/* Initialize channel registers */
--		iic_wr(pd, ICCR, 0);
-+		iic_wr(pd, ICCR, ICCR_SCP);
- 
- 		/* Enable channel and configure rx ack */
--		iic_wr(pd, ICCR, ICCR_ICE);
-+		iic_wr(pd, ICCR, ICCR_ICE | ICCR_SCP);
- 
- 		/* Set the clock */
- 		iic_wr(pd, ICCL, pd->iccl & 0xff);
-@@ -723,7 +723,7 @@ static int sh_mobile_i2c_xfer(struct i2c_adapter *adapter,
- 	}
- 
- 	/* Disable channel */
--	iic_wr(pd, ICCR, 0);
-+	iic_wr(pd, ICCR, ICCR_SCP);
- 
- 	/* Disable clock and mark device as idle */
- 	pm_runtime_put_sync(pd->dev);
--- 
-2.11.0
+Thanks, applied.
