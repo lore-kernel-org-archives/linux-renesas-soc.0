@@ -1,79 +1,31 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1510743363-25798-5-git-send-email-jacopo+renesas@jmondi.org>
-References: <1510743363-25798-1-git-send-email-jacopo+renesas@jmondi.org> <1510743363-25798-5-git-send-email-jacopo+renesas@jmondi.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 23 Nov 2017 10:41:22 +0100
-Message-ID: <CAMuHMdVvMvM8+yFwQVPvR+Sfei7OAEDCLfxX=V0qfdozmdQB6A@mail.gmail.com>
-Subject: Re: [PATCH v1 04/10] ARM: dts: r7s72100: Add Capture Engine Unit (CEU)
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:57982 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933834AbdKQOWL (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 17 Nov 2017 09:22:11 -0500
+Date: Fri, 17 Nov 2017 06:22:06 -0800
+From: Simon Horman <horms@verge.net.au>
 To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-media-owner@vger.kernel.org
+Cc: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
+        geert@glider.be, mchehab@kernel.org, hverkuil@xs4all.nl,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 04/10] ARM: dts: r7s72100: Add Capture Engine Unit
+ (CEU)
+Message-ID: <20171117142206.jmundlzmyltd3z6v@verge.net.au>
+References: <1510743363-25798-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1510743363-25798-5-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1510743363-25798-5-git-send-email-jacopo+renesas@jmondi.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Jacopo,
-
-On Wed, Nov 15, 2017 at 11:55 AM, Jacopo Mondi
-<jacopo+renesas@jmondi.org> wrote:
+On Wed, Nov 15, 2017 at 11:55:57AM +0100, Jacopo Mondi wrote:
 > Add Capture Engine Unit (CEU) node to device tree.
->
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-Thanks for your patch!
-
-> --- a/arch/arm/boot/dts/r7s72100.dtsi
-> +++ b/arch/arm/boot/dts/r7s72100.dtsi
-> @@ -136,8 +136,8 @@
->                         compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
->                         reg = <0xfcfe042c 4>;
->                         clocks = <&p0_clk>;
-
-You forgot to add an entry to clocks.
-The parent clock of the CEU module clock is b_clk.
-
-> -                       clock-indices = <R7S72100_CLK_RTC>;
-> -                       clock-output-names = "rtc";
-> +                       clock-indices = <R7S72100_CLK_RTC R7S72100_CLK_CEU>;
-> +                       clock-output-names = "rtc", "ceu";
-
-Usually we follow the order from <dt-bindings/clock/r7s72100-clock.h>,
-so CEU should come before RTC.
-
-> @@ -666,4 +666,12 @@
->                 power-domains = <&cpg_clocks>;
->                 status = "disabled";
->         };
-> +
-> +       ceu: ceu@e8210000 {
-> +               reg = <0xe8210000 0x209c>;
-> +               compatible = "renesas,renesas-ceu";
-> +               interrupts = <GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>;
-> +               power-domains = <&cpg_clocks>;
-
-if you describe the device to be part of the CPG clock domain, you should
-provide a clocks property:
-
-        clocks = <&mstp6_clks R7S72100_CLK_CEU>;
-
-> +               status = "disabled";
-> +       };
->  };
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Other patches in this series (which are not for my tree) appear
+to warrant updating. Accordingly I am marking this patch as
+"Changes Requested" and am expecting it to be reposted at some point.
