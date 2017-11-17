@@ -1,49 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:52597 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751736AbdKMVb5 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:57874 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934980AbdKQOQm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Nov 2017 16:31:57 -0500
-Received: by mail-lf0-f66.google.com with SMTP id m1so3992916lfj.9
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Nov 2017 13:31:56 -0800 (PST)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20171113213152.819421744@cogentembedded.com>
-Date: Tue, 14 Nov 2017 00:23:21 +0300
-To: Simon Horman <horms@verge.net.au>,
+        Fri, 17 Nov 2017 09:16:42 -0500
+Date: Fri, 17 Nov 2017 06:16:37 -0800
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH 2/2] arm64: dts: renesas: eagle: specify EtherAVB PHY IRQ
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH] arm64: dts: ulcb-kf: add dr_mode property for USB2.0
+ channel 0
+Message-ID: <20171117141637.h4epzbusuborqao2@verge.net.au>
+References: <1510146540-31881-1-git-send-email-vladimir.barinov@cogentembedded.com>
+ <CAMuHMdWLXyj=WaeacPpOohP0Th2Puwszri4t4YjNgceTuBcU5Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=arm64-dts-renesas-eagle-specify-EtherAVB-PHY-IRQ.patch
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWLXyj=WaeacPpOohP0Th2Puwszri4t4YjNgceTuBcU5Q@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Specify  EtherAVB PHY IRQ  in the Eagle board's device tree, now that we
-have the GPIO support (previously phylib had to resort to polling).
+On Wed, Nov 15, 2017 at 05:52:29PM +0100, Geert Uytterhoeven wrote:
+> On Wed, Nov 8, 2017 at 2:09 PM, Vladimir Barinov
+> <vladimir.barinov@cogentembedded.com> wrote:
+> > ULCB-KF has a USB2.0 dual-role channel (CN13).
+> > This adds dr_mode property for USB2.0 channel 0 (EHCI/OHCI and HS-USB)
+> > as "otg".
+> >
+> > Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
----
- arch/arm64/boot/dts/renesas/r8a77970-eagle.dts |    2 ++
- 1 file changed, 2 insertions(+)
-
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-@@ -44,6 +44,8 @@
- 	phy0: ethernet-phy@0 {
- 		rxc-skew-ps = <1500>;
- 		reg = <0>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <17 IRQ_TYPE_LEVEL_LOW>;
- 	};
- };
- 
+Thanks, applied.
