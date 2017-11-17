@@ -1,10 +1,10 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:59499 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:58175 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751070AbdKQQjo (ORCPT
+        with ESMTP id S935016AbdKQObZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Nov 2017 11:39:44 -0500
-Date: Fri, 17 Nov 2017 08:39:40 -0800
+        Fri, 17 Nov 2017 09:31:25 -0500
+Date: Fri, 17 Nov 2017 06:31:21 -0800
 From: Simon Horman <horms@verge.net.au>
 To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
@@ -14,75 +14,65 @@ Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
         Linux I2C <linux-i2c@vger.kernel.org>
 Subject: Re: [PATCH 4/6] arm64: renesas: draak: enable I2C controller 0 and
  EEPROM
-Message-ID: <20171117163939.q7jlx6d56zc5fli3@verge.net.au>
+Message-ID: <20171117143120.ayattgah6q54425c@verge.net.au>
 References: <1510759526-30346-1-git-send-email-ulrich.hecht+renesas@gmail.com>
  <1510759526-30346-5-git-send-email-ulrich.hecht+renesas@gmail.com>
  <CAMuHMdWmZEoNGRjsumOc+yPe3JTCBobVZd8arzUfcymjF0imDA@mail.gmail.com>
- <20171117143120.ayattgah6q54425c@verge.net.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20171117143120.ayattgah6q54425c@verge.net.au>
+In-Reply-To: <CAMuHMdWmZEoNGRjsumOc+yPe3JTCBobVZd8arzUfcymjF0imDA@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Nov 17, 2017 at 06:31:21AM -0800, Simon Horman wrote:
-> On Thu, Nov 16, 2017 at 10:27:56AM +0100, Geert Uytterhoeven wrote:
-> > Hi Ulrich,
-> > 
-> > On Wed, Nov 15, 2017 at 4:25 PM, Ulrich Hecht
-> > <ulrich.hecht+renesas@gmail.com> wrote:
-> > > Enables EEPROM on I2C0 on the Draak board.
-> > >
-> > > Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-> > 
-> > Thanks for your patch!
-> > 
-> > > --- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-> > > +++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-> > 
-> > > @@ -67,6 +72,18 @@
-> > >         };
-> > >  };
-> > >
-> > > +&i2c0 {
-> > > +       pinctrl-0 = <&i2c0_pins>;
-> > > +       pinctrl-names = "default";
-> > > +       status = "okay";
-> > > +
-> > > +       eeprom@50 {
-> > > +               compatible = "atmel,24c01";
-> > 
-> > This is actually a ROHM Semiconductor BR24T01FVM-W, so it should be
-> > 
-> >         compatible = "rohm,br24t01", "atmel,24c01";
+On Thu, Nov 16, 2017 at 10:27:56AM +0100, Geert Uytterhoeven wrote:
+> Hi Ulrich,
 > 
-> Applied with the above change.
+> On Wed, Nov 15, 2017 at 4:25 PM, Ulrich Hecht
+> <ulrich.hecht+renesas@gmail.com> wrote:
+> > Enables EEPROM on I2C0 on the Draak board.
+> >
+> > Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> 
+> Thanks for your patch!
+> 
+> > --- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+> > +++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+> 
+> > @@ -67,6 +72,18 @@
+> >         };
+> >  };
+> >
+> > +&i2c0 {
+> > +       pinctrl-0 = <&i2c0_pins>;
+> > +       pinctrl-names = "default";
+> > +       status = "okay";
+> > +
+> > +       eeprom@50 {
+> > +               compatible = "atmel,24c01";
+> 
+> This is actually a ROHM Semiconductor BR24T01FVM-W, so it should be
+> 
+>         compatible = "rohm,br24t01", "atmel,24c01";
 
-Sorry, I was a bit hasty there as this patch
-depends on a patch earlier in the series which I have not applied.
+Applied with the above change.
 
-I've dropped this patch for now and will wait a bit longer for the review
-to unfold.
+> Please also submit a patch to add that compatible value to
+> Documentation/devicetree/bindings/eeprom/eeprom.txt.
 
+Ulrich, please follow-up on this, thanks!
+
+> With the above fixed:
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > 
-> > Please also submit a patch to add that compatible value to
-> > Documentation/devicetree/bindings/eeprom/eeprom.txt.
+> Gr{oetje,eeting}s,
 > 
-> Ulrich, please follow-up on this, thanks!
+>                         Geert
 > 
-> > With the above fixed:
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > 
-> > Gr{oetje,eeting}s,
-> > 
-> >                         Geert
-> > 
-> > --
-> > Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> > 
-> > In personal conversations with technical people, I call myself a hacker. But
-> > when I'm talking to journalists I just say "programmer" or something like that.
-> >                                 -- Linus Torvalds
-> > 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
 > 
