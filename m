@@ -1,298 +1,136 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:47722 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754827AbdKKAjF (ORCPT
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:45515 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1161502AbdKRE15 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Nov 2017 19:39:05 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v7 10/25] rcar-vin: read subdevice format for crop only when needed
-Date: Sat, 11 Nov 2017 01:38:20 +0100
-Message-Id: <20171111003835.4909-11-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20171111003835.4909-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20171111003835.4909-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Fri, 17 Nov 2017 23:27:57 -0500
+Received: by mail-pg0-f65.google.com with SMTP id 207so3392701pgc.12
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 17 Nov 2017 20:27:56 -0800 (PST)
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>
+Date: Sat, 18 Nov 2017 13:26:27 +0900
+Message-Id: <151097918703.24365.4204984681196141037.sendpatchset@little-apple>
+In-Reply-To: <151097915979.24365.675151091819205104.sendpatchset@little-apple>
+References: <151097915979.24365.675151091819205104.sendpatchset@little-apple>
+Subject: [PATCH/RFC 03/04] iommu/ipmmu-vmsa: VA64 mode with 31-bit IOVA
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Instead of caching the subdevice format each time the video device
-format is set read it directly when it's needed. As it turns out the
-format is only needed when figuring out the max rectangle for cropping.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-This simplifies the code and makes it clearer what the source format is
-used for.
+Hack up the IPMMU driver to enable VM64 mode with 31-bit IOVA.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+For this configuration the IPMMU hardware is configured with IMTTBCR.SL=1
+and TSZ0 bits set to 0x21. This will enable a 31-bit IOVA space and use
+"Initial lookup level 1" (in Table D4-13 of armv8_arm.pdf) also known as
+"Start at first level" in IPMMU documentation.
+
+Not for upstream merge. Tested on ULCB with r8a7796 ES1.0.
+
+Not-Yet-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 88 ++++++++++++++---------------
- drivers/media/platform/rcar-vin/rcar-vin.h  | 12 ----
- 2 files changed, 42 insertions(+), 58 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index b3c23634e9dbe095..ee5df05df2e9561f 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -90,24 +90,30 @@ static u32 rvin_format_sizeimage(struct v4l2_pix_format *pix)
-  * V4L2
-  */
- 
--int rvin_reset_format(struct rvin_dev *vin)
-+static int rvin_get_sd_format(struct rvin_dev *vin, struct v4l2_pix_format *pix)
- {
- 	struct v4l2_subdev_format fmt = {
- 		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
-+		.pad = vin->digital->source_pad,
- 	};
--	struct v4l2_mbus_framefmt *mf = &fmt.format;
- 	int ret;
- 
--	fmt.pad = vin->digital->source_pad;
--
- 	ret = v4l2_subdev_call(vin_to_source(vin), pad, get_fmt, NULL, &fmt);
- 	if (ret)
- 		return ret;
- 
--	vin->format.width	= mf->width;
--	vin->format.height	= mf->height;
--	vin->format.colorspace	= mf->colorspace;
--	vin->format.field	= mf->field;
-+	v4l2_fill_pix_format(pix, &fmt.format);
-+
-+	return 0;
-+}
-+
-+int rvin_reset_format(struct rvin_dev *vin)
-+{
-+	int ret;
-+
-+	ret = rvin_get_sd_format(vin, &vin->format);
-+	if (ret)
-+		return ret;
- 
- 	/*
- 	 * If the subdevice uses ALTERNATE field mode and G_STD is
-@@ -137,12 +143,12 @@ int rvin_reset_format(struct rvin_dev *vin)
- 	}
- 
- 	vin->crop.top = vin->crop.left = 0;
--	vin->crop.width = mf->width;
--	vin->crop.height = mf->height;
-+	vin->crop.width = vin->format.width;
-+	vin->crop.height = vin->format.height;
- 
- 	vin->compose.top = vin->compose.left = 0;
--	vin->compose.width = mf->width;
--	vin->compose.height = mf->height;
-+	vin->compose.width = vin->format.width;
-+	vin->compose.height = vin->format.height;
- 
- 	vin->format.bytesperline = rvin_format_bytesperline(&vin->format);
- 	vin->format.sizeimage = rvin_format_sizeimage(&vin->format);
-@@ -151,9 +157,7 @@ int rvin_reset_format(struct rvin_dev *vin)
- }
- 
- static int __rvin_try_format_source(struct rvin_dev *vin,
--				    u32 which,
--				    struct v4l2_pix_format *pix,
--				    struct rvin_source_fmt *source)
-+				    u32 which, struct v4l2_pix_format *pix)
- {
- 	struct v4l2_subdev *sd;
- 	struct v4l2_subdev_pad_config *pad_cfg;
-@@ -186,25 +190,15 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
- 	v4l2_fill_pix_format(pix, &format.format);
- 
- 	pix->field = field;
--
--	source->width = pix->width;
--	source->height = pix->height;
--
- 	pix->width = width;
- 	pix->height = height;
--
--	vin_dbg(vin, "Source resolution: %ux%u\n", source->width,
--		source->height);
--
- done:
- 	v4l2_subdev_free_pad_config(pad_cfg);
- 	return ret;
- }
- 
- static int __rvin_try_format(struct rvin_dev *vin,
--			     u32 which,
--			     struct v4l2_pix_format *pix,
--			     struct rvin_source_fmt *source)
-+			     u32 which, struct v4l2_pix_format *pix)
- {
- 	u32 walign;
- 	int ret;
-@@ -225,7 +219,7 @@ static int __rvin_try_format(struct rvin_dev *vin,
- 	pix->sizeimage = 0;
- 
- 	/* Limit to source capabilities */
--	ret = __rvin_try_format_source(vin, which, pix, source);
-+	ret = __rvin_try_format_source(vin, which, pix);
- 	if (ret)
- 		return ret;
- 
-@@ -234,7 +228,6 @@ static int __rvin_try_format(struct rvin_dev *vin,
- 	case V4L2_FIELD_BOTTOM:
- 	case V4L2_FIELD_ALTERNATE:
- 		pix->height /= 2;
--		source->height /= 2;
- 		break;
- 	case V4L2_FIELD_NONE:
- 	case V4L2_FIELD_INTERLACED_TB:
-@@ -286,30 +279,23 @@ static int rvin_try_fmt_vid_cap(struct file *file, void *priv,
- 				struct v4l2_format *f)
- {
- 	struct rvin_dev *vin = video_drvdata(file);
--	struct rvin_source_fmt source;
- 
--	return __rvin_try_format(vin, V4L2_SUBDEV_FORMAT_TRY, &f->fmt.pix,
--				 &source);
-+	return __rvin_try_format(vin, V4L2_SUBDEV_FORMAT_TRY, &f->fmt.pix);
- }
- 
- static int rvin_s_fmt_vid_cap(struct file *file, void *priv,
- 			      struct v4l2_format *f)
- {
- 	struct rvin_dev *vin = video_drvdata(file);
--	struct rvin_source_fmt source;
- 	int ret;
- 
- 	if (vb2_is_busy(&vin->queue))
- 		return -EBUSY;
- 
--	ret = __rvin_try_format(vin, V4L2_SUBDEV_FORMAT_ACTIVE, &f->fmt.pix,
--				&source);
-+	ret = __rvin_try_format(vin, V4L2_SUBDEV_FORMAT_ACTIVE, &f->fmt.pix);
- 	if (ret)
- 		return ret;
- 
--	vin->source.width = source.width;
--	vin->source.height = source.height;
--
- 	vin->format = f->fmt.pix;
- 
- 	return 0;
-@@ -340,6 +326,8 @@ static int rvin_g_selection(struct file *file, void *fh,
- 			    struct v4l2_selection *s)
- {
- 	struct rvin_dev *vin = video_drvdata(file);
-+	struct v4l2_pix_format pix;
-+	int ret;
- 
- 	if (s->type != V4L2_BUF_TYPE_VIDEO_CAPTURE)
- 		return -EINVAL;
-@@ -347,9 +335,12 @@ static int rvin_g_selection(struct file *file, void *fh,
- 	switch (s->target) {
- 	case V4L2_SEL_TGT_CROP_BOUNDS:
- 	case V4L2_SEL_TGT_CROP_DEFAULT:
-+		ret = rvin_get_sd_format(vin, &pix);
-+		if (ret)
-+			return ret;
- 		s->r.left = s->r.top = 0;
--		s->r.width = vin->source.width;
--		s->r.height = vin->source.height;
-+		s->r.width = pix.width;
-+		s->r.height = pix.height;
- 		break;
- 	case V4L2_SEL_TGT_CROP:
- 		s->r = vin->crop;
-@@ -375,12 +366,14 @@ static int rvin_s_selection(struct file *file, void *fh,
- {
- 	struct rvin_dev *vin = video_drvdata(file);
- 	const struct rvin_video_format *fmt;
-+	struct v4l2_pix_format pix;
- 	struct v4l2_rect r = s->r;
- 	struct v4l2_rect max_rect;
- 	struct v4l2_rect min_rect = {
- 		.width = 6,
- 		.height = 2,
- 	};
-+	int ret;
- 
- 	if (s->type != V4L2_BUF_TYPE_VIDEO_CAPTURE)
- 		return -EINVAL;
-@@ -390,22 +383,25 @@ static int rvin_s_selection(struct file *file, void *fh,
- 	switch (s->target) {
- 	case V4L2_SEL_TGT_CROP:
- 		/* Can't crop outside of source input */
-+		ret = rvin_get_sd_format(vin, &pix);
-+		if (ret)
-+			return ret;
- 		max_rect.top = max_rect.left = 0;
--		max_rect.width = vin->source.width;
--		max_rect.height = vin->source.height;
-+		max_rect.width = pix.width;
-+		max_rect.height = pix.height;
- 		v4l2_rect_map_inside(&r, &max_rect);
- 
--		v4l_bound_align_image(&r.width, 2, vin->source.width, 1,
--				      &r.height, 4, vin->source.height, 2, 0);
-+		v4l_bound_align_image(&r.width, 2, pix.width, 1,
-+				      &r.height, 4, pix.height, 2, 0);
- 
--		r.top  = clamp_t(s32, r.top, 0, vin->source.height - r.height);
--		r.left = clamp_t(s32, r.left, 0, vin->source.width - r.width);
-+		r.top  = clamp_t(s32, r.top, 0, pix.height - r.height);
-+		r.left = clamp_t(s32, r.left, 0, pix.width - r.width);
- 
- 		vin->crop = s->r = r;
- 
- 		vin_dbg(vin, "Cropped %dx%d@%d:%d of %dx%d\n",
- 			r.width, r.height, r.left, r.top,
--			vin->source.width, vin->source.height);
-+			pix.width, pix.height);
- 		break;
- 	case V4L2_SEL_TGT_COMPOSE:
- 		/* Make sure compose rect fits inside output format */
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 111dd8a1974253af..b97391c414d01bb0 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -48,16 +48,6 @@ enum rvin_dma_state {
- 	STOPPING,
+ drivers/iommu/ipmmu-vmsa.c |   40 +++++++++++++++++++++++++++-------------
+ 1 files changed, 27 insertions(+), 13 deletions(-)
+
+--- 0009/drivers/iommu/ipmmu-vmsa.c
++++ work/drivers/iommu/ipmmu-vmsa.c	2017-11-17 13:11:35.760607110 +0900
+@@ -42,6 +42,7 @@ struct ipmmu_features {
+ 	unsigned int number_of_contexts;
+ 	bool setup_imbuscr;
+ 	bool twobit_imttbcr_sl0;
++	bool imctr_va64;
  };
  
--/**
-- * struct rvin_source_fmt - Source information
-- * @width:	Width from source
-- * @height:	Height from source
-- */
--struct rvin_source_fmt {
--	u32 width;
--	u32 height;
--};
--
- /**
-  * struct rvin_video_format - Data format stored in memory
-  * @fourcc:	Pixelformat
-@@ -125,7 +115,6 @@ struct rvin_info {
-  * @sequence:		V4L2 buffers sequence number
-  * @state:		keeps track of operation state
-  *
-- * @source:		active format from the video source
-  * @format:		active V4L2 pixel format
-  *
-  * @crop:		active cropping
-@@ -152,7 +141,6 @@ struct rvin_dev {
- 	unsigned int sequence;
- 	enum rvin_dma_state state;
+ struct ipmmu_vmsa_device {
+@@ -97,6 +98,7 @@ static struct ipmmu_vmsa_iommu_priv *to_
+ #define IM_CTX_SIZE			0x40
  
--	struct rvin_source_fmt source;
- 	struct v4l2_pix_format format;
+ #define IMCTR				0x0000
++#define IMCTR_VA64			(1 << 29)
+ #define IMCTR_TRE			(1 << 17)
+ #define IMCTR_AFE			(1 << 16)
+ #define IMCTR_RTSEL_MASK		(3 << 4)
+@@ -422,10 +424,10 @@ static int ipmmu_domain_init_context(str
+ 	 */
+ 	domain->cfg.quirks = IO_PGTABLE_QUIRK_ARM_NS;
+ 	domain->cfg.pgsize_bitmap = SZ_1G | SZ_2M | SZ_4K;
+-	domain->cfg.ias = 32;
++	domain->cfg.ias = 31;
+ 	domain->cfg.oas = 40;
+ 	domain->cfg.tlb = &ipmmu_gather_ops;
+-	domain->io_domain.geometry.aperture_end = DMA_BIT_MASK(32);
++	domain->io_domain.geometry.aperture_end = DMA_BIT_MASK(31);
+ 	domain->io_domain.geometry.force_aperture = true;
+ 	/*
+ 	 * TODO: Add support for coherent walk through CCI with DVM and remove
+@@ -442,8 +444,9 @@ static int ipmmu_domain_init_context(str
  
- 	struct v4l2_rect crop;
--- 
-2.15.0
+ 	domain->context_id = ret;
+ 
+-	domain->iop = alloc_io_pgtable_ops(ARM_32_LPAE_S1, &domain->cfg,
+-					   domain);
++	domain->iop = alloc_io_pgtable_ops(domain->mmu->features->imctr_va64 ?
++					   ARM_64_LPAE_S1 : ARM_32_LPAE_S1,
++					   &domain->cfg, domain);
+ 	if (!domain->iop) {
+ 		ipmmu_domain_free_context(domain->mmu->root,
+ 					  domain->context_id);
+@@ -456,14 +459,22 @@ static int ipmmu_domain_init_context(str
+ 	ipmmu_ctx_write_root(domain, IMTTUBR0, ttbr >> 32);
+ 
+ 	/*
+-	 * TTBCR
+-	 * We use long descriptors with inner-shareable WBWA tables and allocate
+-	 * the whole 32-bit VA space to TTBR0.
+-	 */
+-	if (domain->mmu->features->twobit_imttbcr_sl0)
+-		tmp = IMTTBCR_SL0_TWOBIT_LVL_1;
+-	else
+-		tmp = IMTTBCR_SL0_LVL_1;
++	 * For IMCTR_VA64 and ARM_64_LPAE_S1 we need lowest bits of TTBCR
++	 */
++	if (domain->mmu->features->imctr_va64) {
++		tmp = (1 << 6) | 0x21;
++	} else {
++		/*
++		 * TTBCR
++		 * We use long descriptors with inner-shareable WBWA tables
++		 * and allocate the whole 32-bit VA space to TTBR0.
++		 */
++
++		if (domain->mmu->features->twobit_imttbcr_sl0)
++			tmp = IMTTBCR_SL0_TWOBIT_LVL_1;
++		else
++			tmp = IMTTBCR_SL0_LVL_1;
++	}
+ 
+ 	ipmmu_ctx_write_root(domain, IMTTBCR, IMTTBCR_EAE |
+ 			     IMTTBCR_SH0_INNER_SHAREABLE | IMTTBCR_ORGN0_WB_WA |
+@@ -493,7 +504,8 @@ static int ipmmu_domain_init_context(str
+ 	 * required when modifying the context registers.
+ 	 */
+ 	ipmmu_ctx_write_all(domain, IMCTR,
+-			    IMCTR_INTEN | IMCTR_FLUSH | IMCTR_MMUEN);
++			 (domain->mmu->features->imctr_va64 ? IMCTR_VA64 : 0)
++			 | IMCTR_INTEN | IMCTR_FLUSH | IMCTR_MMUEN);
+ 
+ 	return 0;
+ }
+@@ -1018,6 +1030,7 @@ static const struct ipmmu_features ipmmu
+ 	.number_of_contexts = 1, /* software only tested with one context */
+ 	.setup_imbuscr = true,
+ 	.twobit_imttbcr_sl0 = false,
++	.imctr_va64 = false,
+ };
+ 
+ static const struct ipmmu_features ipmmu_features_rcar_gen3 = {
+@@ -1026,6 +1039,7 @@ static const struct ipmmu_features ipmmu
+ 	.number_of_contexts = 8,
+ 	.setup_imbuscr = false,
+ 	.twobit_imttbcr_sl0 = true,
++	.imctr_va64 = true,
+ };
+ 
+ static const struct of_device_id ipmmu_of_ids[] = {
