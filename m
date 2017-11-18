@@ -1,53 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56098 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752806AbdKJNZ7 (ORCPT
+Received: from mail-pg0-f44.google.com ([74.125.83.44]:39310 "EHLO
+        mail-pg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1161502AbdKRE1i (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Nov 2017 08:25:59 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
+        Fri, 17 Nov 2017 23:27:38 -0500
+Received: by mail-pg0-f44.google.com with SMTP id 70so3403866pgf.6
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 17 Nov 2017 20:27:38 -0800 (PST)
+From: Magnus Damm <magnus.damm@gmail.com>
 To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v5 15/15] arm64: dts: renesas: r8a7795-es1: Enable IPMMU-MP1
-Date: Fri, 10 Nov 2017 14:25:32 +0100
-Message-Id: <20171110132532.1202-16-horms+renesas@verge.net.au>
-In-Reply-To: <20171110132532.1202-1-horms+renesas@verge.net.au>
-References: <20171110132532.1202-1-horms+renesas@verge.net.au>
+Cc: Magnus Damm <magnus.damm@gmail.com>
+Date: Sat, 18 Nov 2017 13:26:08 +0900
+Message-Id: <151097916855.24365.7878516664878862365.sendpatchset@little-apple>
+In-Reply-To: <151097915979.24365.675151091819205104.sendpatchset@little-apple>
+References: <151097915979.24365.675151091819205104.sendpatchset@little-apple>
+Subject: [PATCH/RFC 01/04] iommu: Hack to dump page table configuration on boot
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 From: Magnus Damm <damm+renesas@opensource.se>
 
-Enable the r8a7795 ES1.x device node for IPMMU-MP1.
+Adjust code to output page table configuration on boot. Not for upstream merge.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Not-Yet-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
-v5 [Simon Horman]
-* Added reviewed by tag from Geert Uytterhoeven
 
-v4 [Simon Horman]
-* Broke out of larger patch
+ drivers/iommu/io-pgtable-arm.c |   12 ++++++++++++
+ drivers/iommu/io-pgtable.c     |    4 ++++
+ 2 files changed, 16 insertions(+)
 
-v1 - v3 [Magnus Damm]
----
- arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-index 6713eeeab52a..29b52d89c78a 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-@@ -31,7 +31,6 @@
- 		reg = <0 0xec680000 0 0x1000>;
- 		renesas,ipmmu-main = <&ipmmu_mm 5>;
- 		#iommu-cells = <1>;
--		status = "disabled";
- 	};
+--- 0001/drivers/iommu/io-pgtable-arm.c
++++ work/drivers/iommu/io-pgtable-arm.c	2017-11-17 12:44:09.100607110 +0900
+@@ -970,6 +970,18 @@ struct io_pgtable_init_fns io_pgtable_ar
+ 	.free	= arm_lpae_free_pgtable,
+ };
  
- 	ipmmu_sy: mmu@e7730000 {
--- 
-2.11.0
++void arm_lpae_dump(struct io_pgtable_ops *ops)
++{
++	struct arm_lpae_io_pgtable *data = io_pgtable_ops_to_data(ops);
++	struct io_pgtable_cfg *cfg = &data->iop.cfg;
++
++	pr_err("cfg: pgsize_bitmap 0x%lx, ias %u-bit\n",
++		cfg->pgsize_bitmap, cfg->ias);
++	pr_err("data: %d levels, 0x%zx pgd_size, %lu pg_shift, %lu bits_per_level, pgd @ %p\n",
++		data->levels, data->pgd_size, data->pg_shift,
++		data->bits_per_level, data->pgd);
++}
++
+ #ifdef CONFIG_IOMMU_IO_PGTABLE_LPAE_SELFTEST
+ 
+ static struct io_pgtable_cfg *cfg_cookie;
+--- 0001/drivers/iommu/io-pgtable.c
++++ work/drivers/iommu/io-pgtable.c	2017-11-17 12:44:31.290607110 +0900
+@@ -37,6 +37,8 @@ io_pgtable_init_table[IO_PGTABLE_NUM_FMT
+ #endif
+ };
+ 
++void arm_lpae_dump(struct io_pgtable_ops *ops);
++
+ struct io_pgtable_ops *alloc_io_pgtable_ops(enum io_pgtable_fmt fmt,
+ 					    struct io_pgtable_cfg *cfg,
+ 					    void *cookie)
+@@ -59,6 +61,8 @@ struct io_pgtable_ops *alloc_io_pgtable_
+ 	iop->cookie	= cookie;
+ 	iop->cfg	= *cfg;
+ 
++	arm_lpae_dump(&iop->ops);
++
+ 	return &iop->ops;
+ }
+ 
