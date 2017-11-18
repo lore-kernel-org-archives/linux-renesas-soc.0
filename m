@@ -1,10 +1,10 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:47882 "EHLO pokefinder.org"
+Received: from sauhun.de ([88.99.104.3]:43061 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753220AbdK0SFa (ORCPT
+        id S967336AbdKRHir (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 27 Nov 2017 13:05:30 -0500
-Date: Mon, 27 Nov 2017 19:05:28 +0100
+        Sat, 18 Nov 2017 02:38:47 -0500
+Date: Sat, 18 Nov 2017 08:38:44 +0100
 From: Wolfram Sang <wsa@the-dreams.de>
 To: Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: Rob Herring <robh+dt@kernel.org>,
@@ -13,53 +13,50 @@ Cc: Rob Herring <robh+dt@kernel.org>,
         devicetree@vger.kernel.org, linux-i2c@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH] dt-bindings: i2c: eeprom: Add Renesas R1EX24128
-Message-ID: <20171127180528.rg5imhfthbso477s@ninjato>
+Message-ID: <20171118073844.frst3frcmitivh6m@tetsubishi>
 References: <1510839994-12473-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="vtjpyzk5q4hbyh24"
+        protocol="application/pgp-signature"; boundary="vwsfiqtmd42r5jfm"
 Content-Disposition: inline
 In-Reply-To: <1510839994-12473-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 
---vtjpyzk5q4hbyh24
+--vwsfiqtmd42r5jfm
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Bartosz,
+On Thu, Nov 16, 2017 at 02:46:34PM +0100, Geert Uytterhoeven wrote:
+> Document the compatible value for the Renesas R1EX24128ASAS0A two-wire
+> serial interface EEPROM, so it can be used in DTS files without causing
+> checkpatch warnings.
+>=20
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
->  Documentation/devicetree/bindings/eeprom/eeprom.txt | 2 +-
-
-I just noticed this file is missing in the AT24 entry in MAINTAINERS. I
-wanted to prepare a patch for that but then I was wondering if the name
-"eeprom.txt" is really suitable? I have doubts. Would "at24.txt" be a
-better name maybe? Rob?
-
-Kind regards,
-
-   Wolfram
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 
---vtjpyzk5q4hbyh24
+--vwsfiqtmd42r5jfm
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlocU+gACgkQFA3kzBSg
-KbaUFQ/8Dctrm53qMYcofekgJNuenK4WnuuWwkIgVRpxQupH5nKCMEoiS/Nx74XR
-enH+0Lz+cJCDLLQiGj2X9wvnave6oM/mNRTz10id5eHXRIfsb9XvZGeIRrJjgP71
-JsP46DhsdU54h6VN0E3oVjwsZrR2MCdLoxIUTnu6xqogKbD9DbXOSiXMdD5QEjjB
-hb8E1SfTnurZFO7M6Cdg+MAFlmSD1AxiyNX4jdyB91CeQvMhnXspJrTUtBjOHyOw
-6PXe89VlfUCLY+Ju5fE+cWyvOvlltz+PkmkDsfTO/GoIq55iOsUfpMUB2+Wgk3E4
-vJCvm7Wx1tZwr45ZhfRPF37WzfFV+kHcxT8wy4utCTAhIRESNgfxvjPyLziwCpbG
-x46a9OrfbhC2BWzluJcHjIkGdTErM1MKRUYQZXThlg91dJdEfcGKIfJ1X21eYVNP
-r1LCcTvi7PAzvlTjVL3rS0KuEGVKftU9LGLqLooZ7dR5FWSTnjEeVzhigQ3N3Ve/
-TFf0YM8QorNEOBpuM43GOalyoCSoZOfWo4++zMqlLMY56d5yRI+2p3+2LIRX05AZ
-cdlp7Ij+wS+FPHeUQ1MDh+IaNLQlT+0ck73s/eHGNbcNLDmaFReUNGARX2VWibcv
-TA0yXDBcZLKYxBSz/89PJ748SbNqjiLuvkY/N6ueXIszDLJgEUk=
-=1y0k
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAloP43wACgkQFA3kzBSg
+KbY73RAAmG9kFv3lSEmoja0/49GNwSGJ4KaVXwOyqr0N2YmajdyflrcudsmHgYS0
+0iu1VArPwG9ZjTvCJ/MSA9JgVjMU6txZiOytMXRuzVrs+w2yf3VqPNFMvlboz8ot
+ZhROBh4wjO9WqKFes33mpSzSHvOdr4mYexeEcPtUj8wAUujun5pcQVJbKrsbTV4V
+0jVzYivQ8AkglpoYGPRTTy3na0PMd7yhEgpHBxkgIEkCfrnWu89LSiHzaE6oF9P0
+eNcVEXC7v+a3yB9y80l/RpzC1zUwcMeKO8+ve9GF97Sf1fKjncVwjTDqrZOG0LwV
+LBtC7i1nARM5x1DnCu+qYA57SUq2koczM14l8DagnjvkFwXq0P6F1t1gCFrlkGBW
+PQu/ATYNdSIRDR8uYXcDXxZ4sYlc2QY4fA4FdRgUI+5TfnjjboJiFPZi3GwQRiPp
+hnge5zPiZCQkFWIxXaatcKEI9t2Jx94K6YL2/rp/6mmxM0PzXqNdoSfABapr4P6R
+3G/+6PJu0j4/40pcc4m8GsaH82jdi6QTsfGMZrOzIsUXHdLFdbDdPihJ3QgmqK0o
+DmZImFpkFa/JS7X5j8Eg1kuSFlU0ePcOEqpSdYv8CiU12wHvhYdXRlrnGmYOrRh7
+HhcbmlXNuDM5ilVYBoNFHjZ0LG1VQi25KocFjyfKKXVksaL1WX4=
+=1Om5
 -----END PGP SIGNATURE-----
 
---vtjpyzk5q4hbyh24--
+--vwsfiqtmd42r5jfm--
