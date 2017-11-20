@@ -1,40 +1,102 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:57550 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935061AbdKPNoZ (ORCPT
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:39589 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750776AbdKTII5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Nov 2017 08:44:25 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/4] arm64: dts: renesas: r8a7795-salvator-x: Add SoC name to file header
-Date: Thu, 16 Nov 2017 14:44:19 +0100
-Message-Id: <1510839861-12303-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1510839861-12303-1-git-send-email-geert+renesas@glider.be>
-References: <1510839861-12303-1-git-send-email-geert+renesas@glider.be>
+        Mon, 20 Nov 2017 03:08:57 -0500
+Received: by mail-lf0-f65.google.com with SMTP id x76so4385646lfb.6
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Nov 2017 00:08:57 -0800 (PST)
+Subject: Re: [PATCH] arm64: dts: renesas: ulcb-kf: add pfc node for USB3.0
+ channel 0
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+References: <1510146398-31805-1-git-send-email-vladimir.barinov@cogentembedded.com>
+ <CAMuHMdX+7cHF4ZWBkZ8jQzhuycKYGNdFuZK5Ge9e9coX9pUKcQ@mail.gmail.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Message-ID: <51d9e15a-31e4-2e6e-c0d6-9c38643b60e0@cogentembedded.com>
+Date: Mon, 20 Nov 2017 11:08:53 +0300
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdX+7cHF4ZWBkZ8jQzhuycKYGNdFuZK5Ge9e9coX9pUKcQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document clearly which SoC this DTS applies to, to distinguish from
-Salvator-X boards equipped with other SoCs.
+Hi Geert,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thank you for valuable review.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index 17953070f38dff8d..d17c11d2844d5508 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -1,5 +1,5 @@
- /*
-- * Device Tree Source for the Salvator-X board
-+ * Device Tree Source for the Salvator-X board with R-Car H3 ES2.0
-  *
-  * Copyright (C) 2015 Renesas Electronics Corp.
-  *
+On 15.11.2017 19:49, Geert Uytterhoeven wrote:
+> Hi Vladimir,
+>
+> On Wed, Nov 8, 2017 at 2:06 PM, Vladimir Barinov
+> <vladimir.barinov@cogentembedded.com> wrote:
+>> Adds the pfc node for USB3.0 channel 0.
+>>
+>> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+>> ---
+>>   arch/arm64/boot/dts/renesas/ulcb-kf.dtsi | 8 ++++++++
+>>   1 file changed, 8 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
+>> index 48a2e8f..2ecb6ac 100644
+>> --- a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
+>> +++ b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
+>> @@ -173,6 +173,11 @@
+>>                  groups = "usb0";
+>>                  function = "usb0";
+>>          };
+>> +
+>> +       usb30_pins: usb30 {
+>> +               groups = "usb30";
+>> +               function = "usb30";
+> This enabled USB30_PWEN and USB30_OVC.
+>
+> However, these pins are routed via CN1A pins A97/A98 to HDMI_CS_A
+> and HDMI_CS_B, not to a USB PHY?
+>
+> USB30_PWEN of the real USB PHY is provided by the i2c GPIO
+> expander U11.
+>
+> I'm a bit puzzled by this... What am I missing?
+This is my fault.
+(Seems I've been looking for older KF schematic).
+
+Please ignore this patch.
+
+>
+>> +       };
+>>   };
+>>
+>>   &scif1 {
+>> @@ -191,5 +196,8 @@
+>>   };
+>>
+>>   &xhci0 {
+>> +       pinctrl-0 = <&usb30_pins>;
+>> +       pinctrl-names = "default";
+>> +
+>>          status = "okay";
+>>   };
+> Gr{oetje,eeting}s,
+>
+>                          Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                  -- Linus Torvalds
+
+
 -- 
-2.7.4
+Regards,
+Vladimir
