@@ -1,62 +1,48 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <20171120094957.2seep3qw4j274zrv@verge.net.au>
-References: <1510839357-11450-1-git-send-email-geert+renesas@glider.be> <20171120094957.2seep3qw4j274zrv@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 20 Nov 2017 10:57:07 +0100
-Message-ID: <CAMuHMdXPrv4bwZbGxE=DJp2nufjF5Q6JwFAERDvBFi+UsAXVsA@mail.gmail.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:54364 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750932AbdKTJuC (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 20 Nov 2017 04:50:02 -0500
+Date: Mon, 20 Nov 2017 10:49:58 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
 Subject: Re: [PATCH] ARM: dts: r8a779x: Add '#reset-cells' in cpg-mssr
-To: Simon Horman <horms@verge.net.au>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: devicetree-owner@vger.kernel.org
+Message-ID: <20171120094957.2seep3qw4j274zrv@verge.net.au>
+References: <1510839357-11450-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1510839357-11450-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
+On Thu, Nov 16, 2017 at 02:35:57PM +0100, Geert Uytterhoeven wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> With the latest dtc, we get many warnings about the missing
+> '#reset-cells' property in these controllers, e.g.:
+> 
+> arch/arm/boot/dts/r8a7790-lager.dtb: Warning (resets_property): Missing property '#reset-cells' in node /clock-controller@e6150000 or bad phandle (referred from /can@e6e80000:resets[0])
+> arch/arm/boot/dts/r8a7792-blanche.dtb: Warning (resets_property): Missing property '#reset-cells' in node /soc/clock-controller@e6150000 or bad phandle (referred from /soc/dma-controller@e6700000:resets[0])
+> arch/arm/boot/dts/r8a7792-wheat.dtb: Warning (resets_property): Missing property '#reset-cells' in node /soc/clock-controller@e6150000 or bad phandle (referred from /soc/ethernet@e6800000:resets[0])
+> arch/arm/boot/dts/r8a7793-gose.dtb: Warning (resets_property): Missing property '#reset-cells' in node /clock-controller@e6150000 or bad phandle (referred from /gpio@e6050000:resets[0])
+> arch/arm/boot/dts/r8a7794-alt.dtb: Warning (resets_property): Missing property '#reset-cells' in node /clock-controller@e6150000 or bad phandle (referred from /i2c@e6500000:resets[0])
+> arch/arm/boot/dts/r8a7794-silk.dtb: Warning (resets_property): Missing property '#reset-cells' in node /clock-controller@e6150000 or bad phandle (referred from /interrupt-controller@e61c0000:resets[0])
+> 
+> This adds it for the three r8a779x chips that were lacking it. The
+> binding mandates this as <1>, so this is the value I use.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> [geert: Add fix for r8a7793.dtsi]
+> Fixes: 34fbd2b12761d111 ("ARM: dts: r8a7790: Add reset control properties")
+> Fixes: 6e11a322f1d7505d ("ARM: dts: r8a7792: Add reset control properties")
+> Fixes: 84fb19e1d201ba86 ("ARM: dts: r8a7793: Add reset control properties")
+> Fixes: 615beb759ca494a4 ("ARM: dts: r8a7794: Add reset control properties")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Mon, Nov 20, 2017 at 10:49 AM, Simon Horman <horms@verge.net.au> wrote:
-> On Thu, Nov 16, 2017 at 02:35:57PM +0100, Geert Uytterhoeven wrote:
->> From: Arnd Bergmann <arnd@arndb.de>
->>
->> With the latest dtc, we get many warnings about the missing
->> '#reset-cells' property in these controllers, e.g.:
->>
->> arch/arm/boot/dts/r8a7790-lager.dtb: Warning (resets_property): Missing property '#reset-cells' in node /clock-controller@e6150000 or bad phandle (referred from /can@e6e80000:resets[0])
->> arch/arm/boot/dts/r8a7792-blanche.dtb: Warning (resets_property): Missing property '#reset-cells' in node /soc/clock-controller@e6150000 or bad phandle (referred from /soc/dma-controller@e6700000:resets[0])
->> arch/arm/boot/dts/r8a7792-wheat.dtb: Warning (resets_property): Missing property '#reset-cells' in node /soc/clock-controller@e6150000 or bad phandle (referred from /soc/ethernet@e6800000:resets[0])
->> arch/arm/boot/dts/r8a7793-gose.dtb: Warning (resets_property): Missing property '#reset-cells' in node /clock-controller@e6150000 or bad phandle (referred from /gpio@e6050000:resets[0])
->> arch/arm/boot/dts/r8a7794-alt.dtb: Warning (resets_property): Missing property '#reset-cells' in node /clock-controller@e6150000 or bad phandle (referred from /i2c@e6500000:resets[0])
->> arch/arm/boot/dts/r8a7794-silk.dtb: Warning (resets_property): Missing property '#reset-cells' in node /clock-controller@e6150000 or bad phandle (referred from /interrupt-controller@e61c0000:resets[0])
->>
->> This adds it for the three r8a779x chips that were lacking it. The
->> binding mandates this as <1>, so this is the value I use.
->>
->> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->> [geert: Add fix for r8a7793.dtsi]
->> Fixes: 34fbd2b12761d111 ("ARM: dts: r8a7790: Add reset control properties")
->> Fixes: 6e11a322f1d7505d ("ARM: dts: r8a7792: Add reset control properties")
->> Fixes: 84fb19e1d201ba86 ("ARM: dts: r8a7793: Add reset control properties")
->> Fixes: 615beb759ca494a4 ("ARM: dts: r8a7794: Add reset control properties")
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> Thanks for following up on this, its been fouling up my todo list for a
-> while now. Applied for v4.16.
-
-As this is a fix for changes made in v4.15-rc1, don't we want it in v4.15?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks for following up on this, its been fouling up my todo list for a
+while now. Applied for v4.16.
