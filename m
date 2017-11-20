@@ -1,78 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56098 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:54648 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753141AbdKJNZx (ORCPT
+        with ESMTP id S1750777AbdKTKHO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Nov 2017 08:25:53 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v5 07/15] arm64: dts: renesas: r8a7795: Point FDP1 via FCPF to IPMMU-VP0/1
-Date: Fri, 10 Nov 2017 14:25:24 +0100
-Message-Id: <20171110132532.1202-8-horms+renesas@verge.net.au>
-In-Reply-To: <20171110132532.1202-1-horms+renesas@verge.net.au>
-References: <20171110132532.1202-1-horms+renesas@verge.net.au>
+        Mon, 20 Nov 2017 05:07:14 -0500
+Date: Mon, 20 Nov 2017 11:07:10 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-can@vger.kernel.org,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: Re: [PATCH 0/8] Add CAN support to iwg2[02]d
+Message-ID: <20171120100710.f74cqhu5ngbs2faf@verge.net.au>
+References: <1510067449-17017-1-git-send-email-fabrizio.castro@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1510067449-17017-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On Tue, Nov 07, 2017 at 03:10:41PM +0000, Fabrizio Castro wrote:
+> Hello,
+> 
+> this series delivers all of the changes necessary to add CAN bus
+> support to the:
+> * iW-RainboW-G22D SODIMM, and
+> * iW-RainboW-G20M-Qseven-RZG1M
+> development platforms, including documentation, pinctrl driver, SoC
+> specific device trees, and board specific device trees.
+> 
+> This work has been based and tested on top of:
+> renesas-devel-20171106-v4.14-rc8
+> 
+> Best regards,
+> 
+> Fabrizio Castro (8):
+>   dt-bindings: can: rcar_can: document r8a774[35] can support
+>   pinctrl: sh-pfc: r8a7745: Add CAN[01] support
+>   ARM: dts: r8a7745: Add CAN[01] SoC support
+>   ARM: dts: iwg22d-sodimm: Add can0 support to carrier board
+>   ARM: dts: iwg22d-sodimm-dbhd-ca: Add can1 support to HDMI DB
+>   ARM: dts: r8a7743: Add CAN[01] SoC support
+>   ARM: dts: iwg20d-q7-common: Add can0 support to carrier board
+>   ARM: dts: iwg20d-q7-dbcm-ca: Add can1 support to camera DB
 
-Hook up the FCPF devices to allow use of FDP1 with IPMMU-VP.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v5 [Simon Horman]
-* Added reviewed by tag from Geert Uytterhoeven
-
-v4 [Simon Horman]
-* Broke out of larger patch
-* Use IPMMU-VP1 for FCPF1 on ES2.0
-
-v1 - v3 [Magnus Damm]
----
- arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi | 4 ++++
- arch/arm64/boot/dts/renesas/r8a7795.dtsi     | 2 ++
- 2 files changed, 6 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-index 1eafa5382e86..6b4dfa42f5b2 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-@@ -150,6 +150,10 @@
- 	       <&ipmmu_mp1 30>, <&ipmmu_mp1 31>;
- };
- 
-+&fcpf1 {
-+	iommus = <&ipmmu_vp0 1>;
-+};
-+
- &fcpvd2 {
- 	iommus = <&ipmmu_vi0 10>;
- };
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index d5e3d208bc37..1202b84104a0 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -2070,6 +2070,7 @@
- 			clocks = <&cpg CPG_MOD 615>;
- 			power-domains = <&sysc R8A7795_PD_A3VP>;
- 			resets = <&cpg 615>;
-+			iommus = <&ipmmu_vp0 0>;
- 		};
- 
- 		fcpf1: fcp@fe951000 {
-@@ -2078,6 +2079,7 @@
- 			clocks = <&cpg CPG_MOD 614>;
- 			power-domains = <&sysc R8A7795_PD_A3VP>;
- 			resets = <&cpg 614>;
-+			iommus = <&ipmmu_vp1 1>;
- 		};
- 
- 		vspbd: vsp@fe960000 {
--- 
-2.11.0
+Thanks, I have applied the "ARM: dts" patches for inclusion in v4.16.
