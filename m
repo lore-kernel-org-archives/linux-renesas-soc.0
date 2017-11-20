@@ -1,61 +1,32 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1510915289-15059-8-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1510915289-15059-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1510915289-15059-8-git-send-email-ulrich.hecht+renesas@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 22 Nov 2017 14:20:35 +0100
-Message-ID: <CAMuHMdWOMaPamsYjNx0nyG+ppEJDE8RY=NKjJDSzZZpPQwdtCg@mail.gmail.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:39663 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752660AbdKTUna (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 20 Nov 2017 15:43:30 -0500
+Date: Mon, 20 Nov 2017 14:43:27 -0600
+From: Rob Herring <robh@kernel.org>
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-can@vger.kernel.org,
+        devicetree@vger.kernel.org, wsa@the-dreams.de, horms@verge.net.au,
+        geert@linux-m68k.org, magnus.damm@gmail.com,
+        chris.paterson2@renesas.com, ramesh.shanmugasundaram@bp.renesas.com
 Subject: Re: [PATCH 7/7] can: rcar_canfd: document r8a77995 (R-Car D3)
  compatibility strings
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-can@vger.kernel.org,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: devicetree-owner@vger.kernel.org
+Message-ID: <20171120204327.q3mkdoyool7xjxks@rob-hp-laptop>
+References: <1510915289-15059-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <1510915289-15059-8-git-send-email-ulrich.hecht+renesas@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1510915289-15059-8-git-send-email-ulrich.hecht+renesas@gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Ulrich,
-
-On Fri, Nov 17, 2017 at 11:41 AM, Ulrich Hecht
-<ulrich.hecht+renesas@gmail.com> wrote:
+On Fri, Nov 17, 2017 at 11:41:29AM +0100, Ulrich Hecht wrote:
 > Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/net/can/rcar_canfd.txt | 13 +++++++------
+>  1 file changed, 7 insertions(+), 6 deletions(-)
 
-Thanks for your patch!
-
-With the below fixed:
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-> --- a/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
-> +++ b/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
-
-> @@ -24,12 +25,12 @@ The name of the child nodes are "channel0" and "channel1" respectively. Each
->  child node supports the "status" property only, which is used to
->  enable/disable the respective channel.
->
-> -Required properties for "renesas,r8a7795-canfd" and "renesas,r8a7796-canfd"
-> -compatible:
-> -In R8A7795 and R8A7796 SoCs, canfd clock is a div6 clock and can be used by both
-> -CAN and CAN FD controller at the same time. It needs to be scaled to maximum
-> -frequency if any of these controllers use it. This is done using the below
-> -properties:
-> +Required properties for "renesas,r8a7795-canfd", "renesas,r8a7796-canfd" and
-> +"renesas,r8a77995" compatible:
-
-"renesas,r8a77995-canfd"
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Acked-by: Rob Herring <robh@kernel.org>
