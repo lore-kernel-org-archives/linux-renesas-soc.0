@@ -1,58 +1,35 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from condef-06.nifty.com ([202.248.20.71]:63530 "EHLO
-        condef-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753679AbdKXQgt (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 24 Nov 2017 11:36:49 -0500
-Received: from conuserg-11.nifty.com ([10.126.8.74])by condef-06.nifty.com with ESMTP id vAOGPuvN019286
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 25 Nov 2017 01:26:00 +0900
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-mmc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Simon Horman <simon.horman@netronome.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v2 09/22] mmc: tmio: use mmc_can_gpio_cd() instead of checking TMIO_MMC_USE_GPIO_CD
-Date: Sat, 25 Nov 2017 01:24:44 +0900
-Message-Id: <1511540697-27387-10-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Mon, 20 Nov 2017 11:05:23 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-can@vger.kernel.org, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: Re: [PATCH 1/8] dt-bindings: can: rcar_can: document r8a774[35] can
+ support
+Message-ID: <20171120100523.kfjthoyerpo4x46v@verge.net.au>
+References: <1510067449-17017-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1510067449-17017-2-git-send-email-fabrizio.castro@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1510067449-17017-2-git-send-email-fabrizio.castro@bp.renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-To use a GPIO line for card detection, TMIO_MMC_USE_GPIO_CD is set
-by a legacy board (arch/sh/boards/mach-ecovec24).
+On Tue, Nov 07, 2017 at 03:10:42PM +0000, Fabrizio Castro wrote:
+> Document "renesas,can-r8a7743" and "renesas,can-r8a7745" compatible
+> strings. Since the fallback compatible string ("renesas,rcar-gen2-can")
+> activates the right code in the driver, no driver change is needed.
+> 
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 
-For DT platforms, the "cd-gpios" property is a legitimate way for that
-in case the IP-builtin card detection can not be used for some reason.
-mmc_of_parse() calls mmc_gpiod_request_cd() to set up ctx->cd_gpio if
-the "cd-gpios" property is specified.
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-To cater to both cases, mmc_can_gpio_cd() is a correct way to check
-which card detection logic is used.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
-Changes in v2: None
-
- drivers/mmc/host/tmio_mmc_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index efffb04..610f26f 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -1232,7 +1232,7 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
- 	}
- 	mmc->max_seg_size = mmc->max_req_size;
- 
--	_host->native_hotplug = !(pdata->flags & TMIO_MMC_USE_GPIO_CD ||
-+	_host->native_hotplug = !(mmc_can_gpio_cd(mmc) ||
- 				  mmc->caps & MMC_CAP_NEEDS_POLL ||
- 				  !mmc_card_is_removable(mmc));
- 
--- 
-2.7.4
