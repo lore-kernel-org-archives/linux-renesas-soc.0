@@ -1,114 +1,42 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:54763 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758300AbdKOPZQ (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Nov 2017 10:25:16 -0500
-Received: by mail-wr0-f196.google.com with SMTP id l22so20756554wrc.11
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Nov 2017 07:25:15 -0800 (PST)
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, wsa@the-dreams.de,
-        horms@verge.net.au, geert@linux-m68k.org
-Cc: magnus.damm@gmail.com,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 1/3] arm64: dts: r8a77995: add SYS-DMAC nodes
-Date: Wed, 15 Nov 2017 16:25:08 +0100
-Message-Id: <1510759510-30295-2-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1510759510-30295-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1510759510-30295-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <1510915289-15059-4-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1510915289-15059-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1510915289-15059-4-git-send-email-ulrich.hecht+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 22 Nov 2017 14:11:58 +0100
+Message-ID: <CAMuHMdUfY-0UvMzXdDVEZpP0Pk25+GVwdA=UD0UaOxoG0FgXjQ@mail.gmail.com>
+Subject: Re: [PATCH 3/7] arm64: dts: r8a77995: Add CAN external clock support
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-can@vger.kernel.org,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Differs from other Gen3 SoCs in that each controller only supports eight
-channels.
+On Fri, Nov 17, 2017 at 11:41 AM, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
+> Adds external CAN clock node for r8a77995. This clock can be used as
+> fCAN clock of CAN and CAN FD controller.
+>
+> Based on a patch for r8a7796 by Chris Paterson.
+>
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
----
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 72 +++++++++++++++++++++++++++++++
- 1 file changed, 72 insertions(+)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index 788e3af..04a392a 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -155,6 +155,78 @@
- 			resets = <&cpg 407>;
- 		};
- 
-+		dmac0: dma-controller@e6700000 {
-+			compatible = "renesas,dmac-r8a77995",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xe6700000 0 0x10000>;
-+			interrupts = <GIC_SPI 199 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 202 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 203 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 205 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 206 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					"ch0", "ch1", "ch2", "ch3",
-+					"ch4", "ch5", "ch6", "ch7";
-+			clocks = <&cpg CPG_MOD 219>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 219>;
-+			#dma-cells = <1>;
-+			dma-channels = <8>;
-+		};
-+
-+		dmac1: dma-controller@e7300000 {
-+			compatible = "renesas,dmac-r8a77995",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xe7300000 0 0x10000>;
-+			interrupts = <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 217 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 309 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 311 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					"ch0", "ch1", "ch2", "ch3",
-+					"ch4", "ch5", "ch6", "ch7";
-+			clocks = <&cpg CPG_MOD 218>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 218>;
-+			#dma-cells = <1>;
-+			dma-channels = <8>;
-+		};
-+
-+		dmac2: dma-controller@e7310000 {
-+			compatible = "renesas,dmac-r8a77995",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xe7310000 0 0x10000>;
-+			interrupts = <GIC_SPI 416 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 417 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 418 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 419 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 420 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 421 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 422 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 423 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 424 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					"ch0", "ch1", "ch2", "ch3",
-+					"ch4", "ch5", "ch6", "ch7";
-+			clocks = <&cpg CPG_MOD 217>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 217>;
-+			#dma-cells = <1>;
-+			dma-channels = <8>;
-+		};
-+
- 		gpio0: gpio@e6050000 {
- 			compatible = "renesas,gpio-r8a77995",
- 				     "renesas,rcar-gen3-gpio",
--- 
-2.7.4
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
