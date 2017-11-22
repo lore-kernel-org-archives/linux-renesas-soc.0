@@ -1,65 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:42502 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751067AbdKUUYt (ORCPT
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:33446 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751274AbdKVNTA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 21 Nov 2017 15:24:49 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
-Cc: Frank Rowand <frowand.list@gmail.com>, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [bbb-overlays] Fixing overlay configfs for v4.14
-Date: Tue, 21 Nov 2017 21:24:40 +0100
-Message-Id: <1511295880-24987-1-git-send-email-geert+renesas@glider.be>
+        Wed, 22 Nov 2017 08:19:00 -0500
+MIME-Version: 1.0
+In-Reply-To: <1510915289-15059-7-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1510915289-15059-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1510915289-15059-7-git-send-email-ulrich.hecht+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 22 Nov 2017 14:18:59 +0100
+Message-ID: <CAMuHMdXquTripC5e4mN86C0LxEBR2egwPZd7rXs-=8oB2rjcjQ@mail.gmail.com>
+Subject: Re: [PATCH 6/7] can: rcar_can: document r8a77995 (R-Car D3)
+ compatibility strings
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-can@vger.kernel.org,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Pantelis,
+On Fri, Nov 17, 2017 at 11:41 AM, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-Using overlay configfs on v4.14 requires two fixes, both due to commit
-d1651b03c2df75db ("of: overlay: add overlay symbols to live device
-tree"):
-
- 1. As the symbols were added to the ovinfo[] array without calling
-    of_fill_overlay_info(), the new of_overlay_info.info field (added by
-    your bbb-overlays patches) is not set up, causing a NULL pointer
-    dereference.
-
-    As calling of_fill_overlay_info() is not appropriate here, the patch
-    below fixes this by filling it in manually.  Feel free to fold into
-    "of: overlay: add per overlay sysfs attributes".
-
- 2. "of: overlay: Pick up label symbols from overlays." must be
-    reverted, else loading overlays fails with:
-
-	OF: changeset: add_property failed @/__symbols__/...
-	OF: Error applying changeset (-17)
-
-I've updated my topic/overlays and topic/renesas-overlays branches in
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
-accordingly.
-
-diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
-index afa681014e19e3da..3cb6ae9ecb998d5e 100644
---- a/drivers/of/overlay.c
-+++ b/drivers/of/overlay.c
-@@ -569,6 +569,7 @@ static int of_build_overlay_info(struct of_overlay *ov,
- 	if (node) {
- 		ovinfo[cnt].overlay = node;
- 		ovinfo[cnt].target = of_find_node_by_path("/__symbols__");
-+		ovinfo[cnt].info = of_node_get(node);
- 		ovinfo[cnt].is_symbols_node = 1;
- 
- 		if (!ovinfo[cnt].target) {
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Gr{oetje,eeting}s,
 
-						Geert
+                        Geert
 
 --
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
 when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+                                -- Linus Torvalds
