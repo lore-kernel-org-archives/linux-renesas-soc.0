@@ -1,57 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:43462 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752840AbdK3M5a (ORCPT
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:37143 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751274AbdKVNSM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 30 Nov 2017 07:57:30 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 4/4] ARM: dts: alt: Convert to named i2c-gpio bindings
-Date: Thu, 30 Nov 2017 13:57:26 +0100
-Message-Id: <1512046646-15253-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1512046646-15253-1-git-send-email-geert+renesas@glider.be>
-References: <1512046646-15253-1-git-send-email-geert+renesas@glider.be>
+        Wed, 22 Nov 2017 08:18:12 -0500
+MIME-Version: 1.0
+In-Reply-To: <1510915289-15059-6-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1510915289-15059-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1510915289-15059-6-git-send-email-ulrich.hecht+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 22 Nov 2017 14:18:11 +0100
+Message-ID: <CAMuHMdV6WNb7R5kVF5GFtjEb+BW+2sFq82XQDb8fV1XhVVhJXQ@mail.gmail.com>
+Subject: Re: [PATCH 5/7] arm64: dts: r8a77995: Add CAN FD support
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-can@vger.kernel.org,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Commits 7d29f509d2cfd807 ("dt-bindings: i2c: i2c-gpio: Add support for
-named gpios") and 05c74778858d7d99 ("i2c: gpio: Add support for named
-gpios in DT") introduced named i2c-gpio DT bindings, and deprecated the
-more error-prone unnamed variant.
+On Fri, Nov 17, 2017 at 11:41 AM, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
+> Adds CAN FD controller node for r8a77995.
+>
+> Based on a patch for r8a7796 by Chris Paterson.
+>
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-Switch to the new bindings, and add the missing GPIO_OPEN_DRAIN I/O
-flags, which were implicitly assumed before.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - New.
----
- arch/arm/boot/dts/r8a7794-alt.dts | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
-index bd98790d964e13a7..60c6515c499660eb 100644
---- a/arch/arm/boot/dts/r8a7794-alt.dts
-+++ b/arch/arm/boot/dts/r8a7794-alt.dts
-@@ -143,9 +143,8 @@
- 		#size-cells = <0>;
- 		compatible = "i2c-gpio";
- 		status = "disabled";
--		gpios = <&gpio4 9 GPIO_ACTIVE_HIGH /* sda */
--			 &gpio4 8 GPIO_ACTIVE_HIGH /* scl */
--			>;
-+		sda-gpios = <&gpio4 9 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		scl-gpios = <&gpio4 8 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
- 		i2c-gpio,delay-us = <5>;
- 	};
- 
--- 
-2.7.4
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
