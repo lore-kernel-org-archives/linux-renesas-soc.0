@@ -1,93 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:47686 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754827AbdKKAjI (ORCPT
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:34847 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751998AbdKWKc3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Nov 2017 19:39:08 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v7 20/25] rcar-vin: add chsel information to rvin_info
-Date: Sat, 11 Nov 2017 01:38:30 +0100
-Message-Id: <20171111003835.4909-21-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20171111003835.4909-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20171111003835.4909-1-niklas.soderlund+renesas@ragnatech.se>
+        Thu, 23 Nov 2017 05:32:29 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1510802238-30752-1-git-send-email-ykaneko0929@gmail.com>
+References: <1510802238-30752-1-git-send-email-ykaneko0929@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 23 Nov 2017 11:32:28 +0100
+Message-ID: <CAMuHMdWrkeM9vefvHpcJyGteYYu019KJNmG91f7i5aOM1uJ3rw@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7796: Fix to delete A20..A25 pins
+ function definitions
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Each Gen3 SoC has a limited set of predefined routing possibilities for
-which CSI-2 device and virtual channel can be routed to which VIN
-instance. Prepare to store this information in the struct rvin_info.
+On Thu, Nov 16, 2017 at 4:17 AM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch fixes the macro definitions of A20..A25 pins function deleted.
+>
+> This is a correction because IPSR register specification for R8A7796 SoC
+> was changed in R-Car Gen3 Hardware User's Manual Rev.0.53E.
+>
+> Fixes: f9aece7344bd ("pinctrl: sh-pfc: Initial R8A7796 PFC support")
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/rcar-vin.h | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in sh-pfc-for-v4.16.
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index a9bd570d6635fd47..41c81b8d9fb8e851 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -35,6 +35,9 @@
- /* Max number on VIN instances that can be in a system */
- #define RCAR_VIN_NUM 8
- 
-+/* Max number of CHSEL values for any Gen3 SoC */
-+#define RCAR_CHSEL_MAX 6
-+
- enum chip_id {
- 	RCAR_H1,
- 	RCAR_M1,
-@@ -91,6 +94,22 @@ struct rvin_graph_entity {
- 
- struct rvin_group;
- 
-+/** struct rvin_group_chsel - Map a CSI-2 receiver and channel to a CHSEL value
-+ * @csi:		VIN internal number for CSI-2 device
-+ * @chan:		Output channel of the CSI-2 receiver. Each R-Car CSI-2
-+ *			receiver has four output channels facing the VIN
-+ *			devices, each channel can carry one CSI-2 Virtual
-+ *			Channel (VC) and there are no correlation between
-+ *			output channel number and CSI-2 VC. It's up to the
-+ *			CSI-2 receiver driver to configure which VC is
-+ *			outputted on which channel, the VIN devices only
-+ *			cares about output channels.
-+ */
-+struct rvin_group_chsel {
-+	enum rvin_csi_id csi;
-+	unsigned int chan;
-+};
-+
- /**
-  * struct rvin_info - Information about the particular VIN implementation
-  * @chip:		type of VIN chip
-@@ -98,6 +117,9 @@ struct rvin_group;
-  *
-  * max_width:		max input width the VIN supports
-  * max_height:		max input height the VIN supports
-+ *
-+ * num_chsels:		number of possible chsel values for this VIN
-+ * chsels:		routing table VIN <-> CSI-2 for the chsel values
-  */
- struct rvin_info {
- 	enum chip_id chip;
-@@ -105,6 +127,9 @@ struct rvin_info {
- 
- 	unsigned int max_width;
- 	unsigned int max_height;
-+
-+	unsigned int num_chsels;
-+	struct rvin_group_chsel chsels[RCAR_VIN_NUM][RCAR_CHSEL_MAX];
- };
- 
- /**
--- 
-2.15.0
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
