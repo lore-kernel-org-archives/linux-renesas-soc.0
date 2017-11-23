@@ -1,59 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:42370 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752158AbdKQKlu (ORCPT
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:36088 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751998AbdKWKcO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Nov 2017 05:41:50 -0500
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-can@vger.kernel.org, devicetree@vger.kernel.org,
-        wsa@the-dreams.de, horms@verge.net.au, geert@linux-m68k.org,
-        magnus.damm@gmail.com, chris.paterson2@renesas.com,
-        ramesh.shanmugasundaram@bp.renesas.com,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 6/7] can: rcar_can: document r8a77995 (R-Car D3) compatibility strings
-Date: Fri, 17 Nov 2017 11:41:28 +0100
-Message-Id: <1510915289-15059-7-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1510915289-15059-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1510915289-15059-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Thu, 23 Nov 2017 05:32:14 -0500
+MIME-Version: 1.0
+In-Reply-To: <1510802208-30703-1-git-send-email-ykaneko0929@gmail.com>
+References: <1510802208-30703-1-git-send-email-ykaneko0929@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 23 Nov 2017 11:32:12 +0100
+Message-ID: <CAMuHMdW5HFaE2jTDZr53kYrHhgZbGLiopnC5npsNdzrS-xq9wg@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7795: Fix to delete A20..A25 pins
+ function definitions
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
----
- Documentation/devicetree/bindings/net/can/rcar_can.txt | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+On Thu, Nov 16, 2017 at 4:16 AM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch fixes the macro definitions of A20..A25 pins function deleted.
+>
+> This is a correction because IPSR register specification for R8A7795 ES2.0
+> SoC was changed in R-Car Gen3 Hardware User's Manual Rev.0.53E.
+>
+> Fixes: b205914c8f82 ("pinctrl: sh-pfc: r8a7795: Add support for R-Car H3 ES2.0")
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 
-diff --git a/Documentation/devicetree/bindings/net/can/rcar_can.txt b/Documentation/devicetree/bindings/net/can/rcar_can.txt
-index 06bb7cc..f7d0358 100644
---- a/Documentation/devicetree/bindings/net/can/rcar_can.txt
-+++ b/Documentation/devicetree/bindings/net/can/rcar_can.txt
-@@ -11,6 +11,7 @@ Required properties:
- 	      "renesas,can-r8a7794" if CAN controller is a part of R8A7794 SoC.
- 	      "renesas,can-r8a7795" if CAN controller is a part of R8A7795 SoC.
- 	      "renesas,can-r8a7796" if CAN controller is a part of R8A7796 SoC.
-+	      "renesas,can-r8a77995" if CAN controller is a part of R8A77995 SoC.
- 	      "renesas,rcar-gen1-can" for a generic R-Car Gen1 compatible device.
- 	      "renesas,rcar-gen2-can" for a generic R-Car Gen2 compatible device.
- 	      "renesas,rcar-gen3-can" for a generic R-Car Gen3 compatible device.
-@@ -25,12 +26,12 @@ Required properties:
- - pinctrl-0: pin control group to be used for this controller.
- - pinctrl-names: must be "default".
- 
--Required properties for "renesas,can-r8a7795" and "renesas,can-r8a7796"
--compatible:
--In R8A7795 and R8A7796 SoCs, "clkp2" can be CANFD clock. This is a div6 clock
--and can be used by both CAN and CAN FD controller at the same time. It needs to
--be scaled to maximum frequency if any of these controllers use it. This is done
--using the below properties:
-+Required properties for "renesas,can-r8a7795", "renesas,can-r8a7796" and
-+"renesas,can-r8a77995" compatible:
-+In R8A7795, R8A7796 and R8A77995 SoCs, "clkp2" can be CANFD clock. This is a
-+div6 clock and can be used by both CAN and CAN FD controller at the same
-+time. It needs to be scaled to maximum frequency if any of these
-+controllers use it. This is done using the below properties:
- 
- - assigned-clocks: phandle of clkp2(CANFD) clock.
- - assigned-clock-rates: maximum frequency of this clock.
--- 
-2.7.4
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in sh-pfc-for-v4.16.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
