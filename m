@@ -1,63 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:53745 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753105AbdKMPqv (ORCPT
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:33659 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752471AbdKWKkf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Nov 2017 10:46:51 -0500
-Received: by mail-lf0-f66.google.com with SMTP id 73so4532462lfu.10
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Nov 2017 07:46:50 -0800 (PST)
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
-Cc: Kevin Hilman <khilman@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
+        Thu, 23 Nov 2017 05:40:35 -0500
+MIME-Version: 1.0
+In-Reply-To: <1510844361-24114-1-git-send-email-ykaneko0929@gmail.com>
+References: <1510844361-24114-1-git-send-email-ykaneko0929@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 23 Nov 2017 11:40:34 +0100
+Message-ID: <CAMuHMdXYMH3h_FGVv4Ysw0HiTH=2J1w9Unv6bVfTHiCaxwtwgg@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7796: Rename RTS{0,1,3,4}# pin
+ function definitions
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms@verge.net.au>,
-        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
-        linux-renesas-soc@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v2 0/3] PM / core: Invent a WAKEUP_POWERED driver flag
-Date: Mon, 13 Nov 2017 16:46:40 +0100
-Message-Id: <1510588003-16650-1-git-send-email-ulf.hansson@linaro.org>
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The generic problem this series is trying to solve, is that for some bus types
-and PM domains, it's not sufficient to only check the return value from
-device_may_wakeup(), to fully understand how to treat the device during system
-suspend.
+On Thu, Nov 16, 2017 at 3:59 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch renames the pin function macro definitions of the GPSR5 and
+> IPSR{0,3,5,6,12} registers value for the RTS{0,1,3,4}# pin.
+>
+> This is a correction because GPSR and IPSR register specification for
+> R8A7796 SoC was changed in R-Car Gen3 Hardware User's Manual Rev.0.54E.
+>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 
-One particular case that suffers from this, is the generic PM domain (aka genpd)
-and that is taken care of in the final change in this series.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in sh-pfc-for-v4.16.
 
-The special case this series address, is to enable drivers to instruct bus types
-and PM domains, that the device need to remain in its current power state in
-case it should be able to generate wakeup signals during system suspend. This is
-done by an opt-in method, however bus types and PM domains that has additional
-knowledge about devices' wakeup settings may still override the setting.
+Gr{oetje,eeting}s,
 
-Geert Uytterhoeven, has been working on some related problems for some Renesas
-SoCs [1], to be able to properly configure WakeOnLAN, for some ethernet
-devices/drivers, which are used together with genpd. My intent is that this
-series enables a solution for those problems.
+                        Geert
 
-[1]
-https://www.spinics.net/lists/linux-renesas-soc/msg19319.html 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Changes in v2:
-	- See change logs for each patch.
-
-
-Ulf Hansson (3):
-  PM / core: Re-factor some code dealing with parents in
-    __device_suspend()
-  PM / core: Add IN_BAND_WAKEUP driver flag
-  PM / Domains: Take wakeup_path_in_band status flag into account
-
- Documentation/driver-api/pm/devices.rst | 11 +++++++++++
- drivers/base/power/domain.c             |  6 ++++--
- drivers/base/power/main.c               | 35 ++++++++++++++++++++++-----------
- include/linux/pm.h                      |  6 ++++++
- 4 files changed, 44 insertions(+), 14 deletions(-)
-
--- 
-2.7.4
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
