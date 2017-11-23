@@ -1,58 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:38728 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754684AbdKIN1R (ORCPT
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:42968 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751906AbdKWJrJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 9 Nov 2017 08:27:17 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Kevin Hilman <khilman@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-pm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 2/3] clk: renesas: cpg-mssr: Keep wakeup sources active during system suspend
-Date: Thu,  9 Nov 2017 14:27:01 +0100
-Message-Id: <1510234022-29442-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1510234022-29442-1-git-send-email-geert+renesas@glider.be>
-References: <1510234022-29442-1-git-send-email-geert+renesas@glider.be>
+        Thu, 23 Nov 2017 04:47:09 -0500
+Received: by mail-qt0-f195.google.com with SMTP id j12so5489794qtc.9
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Nov 2017 01:47:08 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <1510936566-14196-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+References: <1510936566-14196-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 23 Nov 2017 10:47:07 +0100
+Message-ID: <CAMuHMdX60SHbq2S-3m4_SiER5DgLT83jLMTFYR65wuUhrdBQDw@mail.gmail.com>
+Subject: Re: [GIT PULL FOR renesas-drivers] vsp1: TLB optimisation and DL caching
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If a device is part of the CPG/MSSR Clock Domain and to be used as a
-wakeup source, it must be kept active during system suspend.
+Hi Kieran,
 
-Currently this is handled in device-specific drivers by explicitly
-increasing the use count of the module clock when the device is
-configured as a wakeup source.  However, the proper way to prevent the
-device from being stopped is to inform this requirement to the genpd
-core, by setting the GENPD_FLAG_ACTIVE_WAKEUP flag.
+On Fri, Nov 17, 2017 at 5:36 PM, Kieran Bingham
+<kieran.bingham+renesas@ideasonboard.com> wrote:
+> Please consider this updated tag for the next renesas drivers release.
+>
+> Regards
+>
+> Kieran
+>
+>
+> The following changes since commit bebc6082da0a9f5d47a1ea2edc099bf671058bd4:
+>
+>   Linux 4.14 (2017-11-12 10:46:13 -0800)
+>
+> are available in the git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git tags/vsp1/tlb-optimise/v4
+>
+> for you to fetch changes up to 84592170dbe4ffdb4cc8d33aa20c23218e029ee7:
+>
+>   v4l: vsp1: Reduce display list body size (2017-11-17 15:38:43 +0000)
 
-Note that this will only affect devices configured as wakeup sources.
+Thanks, merges cleanly into next-20171123.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - Integrate "clk: renesas: cpg-mssr: Use GENPD_FLAG_ACTIVE_WAKEUP",
----
- drivers/clk/renesas/renesas-cpg-mssr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index e580a5e6346c2533..99699b715d7cf2de 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -500,7 +500,7 @@ static int __init cpg_mssr_add_clk_domain(struct device *dev,
- 
- 	genpd = &pd->genpd;
- 	genpd->name = np->name;
--	genpd->flags = GENPD_FLAG_PM_CLK;
-+	genpd->flags = GENPD_FLAG_PM_CLK | GENPD_FLAG_ACTIVE_WAKEUP;
- 	genpd->attach_dev = cpg_mssr_attach_dev;
- 	genpd->detach_dev = cpg_mssr_detach_dev;
- 	pm_genpd_init(genpd, &pm_domain_always_on_gov, false);
--- 
-2.7.4
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
