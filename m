@@ -1,58 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:57940 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754657AbdKIN1R (ORCPT
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:45414 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752570AbdKWK0L (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 9 Nov 2017 08:27:17 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Kevin Hilman <khilman@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
+        Thu, 23 Nov 2017 05:26:11 -0500
+MIME-Version: 1.0
+In-Reply-To: <1510802161-30646-1-git-send-email-ykaneko0929@gmail.com>
+References: <1510802161-30646-1-git-send-email-ykaneko0929@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 23 Nov 2017 11:26:10 +0100
+Message-ID: <CAMuHMdV1jujQTqu79t=ByGP=x8iMpdVOLHaoz=uKDhCoGt=q3A@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7795-es1: Fix MOD_SEL1 bit[25:24] to
+ 0x3 when using STP_ISEN_1_D
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-pm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 1/3] clk: renesas: mstp: Keep wakeup sources active during system suspend
-Date: Thu,  9 Nov 2017 14:27:00 +0100
-Message-Id: <1510234022-29442-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1510234022-29442-1-git-send-email-geert+renesas@glider.be>
-References: <1510234022-29442-1-git-send-email-geert+renesas@glider.be>
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If a device is part of the CPG/MSTP Clock Domain and to be used as a
-wakeup source, it must be kept active during system suspend.
+Hi Kaneko-san,
 
-Currently this is handled in device-specific drivers by explicitly
-increasing the use count of the module clock when the device is
-configured as a wakeup source.  However, the proper way to prevent the
-device from being stopped is to inform this requirement to the genpd
-core, by setting the GENPD_FLAG_ACTIVE_WAKEUP flag.
+On Thu, Nov 16, 2017 at 4:16 AM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch fixes the implementation incorrect of MOD_SEL1 bit[25:24]
+> value when STP_ISEN_1_D pin function is selected for IPSR16 bit[27:24].
+>
+> This is a correction to the incorrect implementation of MOD_SEL register
+> pin assignment for R8A7795 SoC specification of R-Car Gen3 Hardware
+> User's Manual Rev.0.51E or later.
 
-Note that this will only affect devices configured as wakeup sources.
+I will drop "or later" while applying, as starting with Rev.0.52E, it documents
+R-Car H3 ES2.0, not ES1.x.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - Integrate "clk: renesas: mstp: Use GENPD_FLAG_ACTIVE_WAKEUP",
----
- drivers/clk/renesas/clk-mstp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Fixes: 0b0ffc96dbe3 ("pinctrl: sh-pfc: Initial R8A7795 PFC support)
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 
-diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
-index 500a9e4e03c48957..0b222197a4576fd7 100644
---- a/drivers/clk/renesas/clk-mstp.c
-+++ b/drivers/clk/renesas/clk-mstp.c
-@@ -344,7 +344,7 @@ void __init cpg_mstp_add_clk_domain(struct device_node *np)
- 		return;
- 
- 	pd->name = np->name;
--	pd->flags = GENPD_FLAG_PM_CLK;
-+	pd->flags = GENPD_FLAG_PM_CLK | GENPD_FLAG_ACTIVE_WAKEUP;
- 	pd->attach_dev = cpg_mstp_attach_dev;
- 	pd->detach_dev = cpg_mstp_detach_dev;
- 	pm_genpd_init(pd, &pm_domain_always_on_gov, false);
--- 
-2.7.4
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in sh-pfc-for-v4.16.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
