@@ -1,169 +1,259 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46116 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752410AbdKWOU5 (ORCPT
+Received: from osg.samsung.com ([64.30.133.232]:38896 "EHLO osg.samsung.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751447AbdKWNH6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 23 Nov 2017 09:20:57 -0500
-Date: Thu, 23 Nov 2017 15:21:01 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Niklas =?iso-8859-1?Q?S=F6derlund?=
+        Thu, 23 Nov 2017 08:07:58 -0500
+Date: Thu, 23 Nov 2017 11:07:51 -0200
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Niklas =?UTF-8?B?U8O2ZGVybHVuZA==?=
         <niklas.soderlund+renesas@ragnatech.se>,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Subject: Re: [PATCH/RFC 1/2] v4l: v4l2-dev: Add infrastructure to protect
  device unplug race
-Message-ID: <20171123142101.GA5155@kroah.com>
+Message-ID: <20171123110751.72f76d7d@vento.lan>
+In-Reply-To: <20171116003349.19235-2-laurent.pinchart+renesas@ideasonboard.com>
 References: <20171116003349.19235-1-laurent.pinchart+renesas@ideasonboard.com>
- <20171116003349.19235-2-laurent.pinchart+renesas@ideasonboard.com>
- <20171123110751.72f76d7d@vento.lan>
+        <20171116003349.19235-2-laurent.pinchart+renesas@ideasonboard.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20171123110751.72f76d7d@vento.lan>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Nov 23, 2017 at 11:07:51AM -0200, Mauro Carvalho Chehab wrote:
-> Hi Laurent,
-> 
-> Em Thu, 16 Nov 2017 02:33:48 +0200
-> Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com> escreveu:
-> 
-> > Device unplug being asynchronous, it naturally races with operations
-> > performed by userspace through ioctls or other file operations on video
-> > device nodes.
-> > 
-> > This leads to potential access to freed memory or to other resources
-> > during device access if unplug occurs during device access. To solve
-> > this, we need to wait until all device access completes when unplugging
-> > the device, and block all further access when the device is being
-> > unplugged.
-> > 
-> > Three new functions are introduced. The video_device_enter() and
-> > video_device_exit() functions must be used to mark entry and exit from
-> > all code sections where the device can be accessed. The
-> > video_device_unplug() function is then used in the unplug handler to
-> > mark the device as being unplugged and wait for all access to complete.
-> > 
-> > As an example mark the ioctl handler as a device access section. Other
-> > file operations need to be protected too, and blocking ioctls (such as
-> > VIDIOC_DQBUF) need to be handled as well.
-> > 
-> > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> > ---
-> >  drivers/media/v4l2-core/v4l2-dev.c | 57 ++++++++++++++++++++++++++++++++++++++
-> >  include/media/v4l2-dev.h           | 47 +++++++++++++++++++++++++++++++
-> >  2 files changed, 104 insertions(+)
-> > 
-> > diff --git a/drivers/media/v4l2-core/v4l2-dev.c b/drivers/media/v4l2-core/v4l2-dev.c
-> > index c647ba648805..c73c6d49e7cf 100644
-> > --- a/drivers/media/v4l2-core/v4l2-dev.c
-> > +++ b/drivers/media/v4l2-core/v4l2-dev.c
-> > @@ -156,6 +156,52 @@ void video_device_release_empty(struct video_device *vdev)
-> >  }
-> >  EXPORT_SYMBOL(video_device_release_empty);
-> >  
-> > +int video_device_enter(struct video_device *vdev)
-> > +{
-> > +	bool unplugged;
-> > +
-> > +	spin_lock(&vdev->unplug_lock);
-> > +	unplugged = vdev->unplugged;
-> > +	if (!unplugged)
-> > +		vdev->access_refcount++;
-> > +	spin_unlock(&vdev->unplug_lock);
-> > +
-> > +	return unplugged ? -ENODEV : 0;
-> > +}
-> > +EXPORT_SYMBOL_GPL(video_device_enter);
-> > +
-> > +void video_device_exit(struct video_device *vdev)
-> > +{
-> > +	bool wake_up;
-> > +
-> > +	spin_lock(&vdev->unplug_lock);
-> > +	WARN_ON(--vdev->access_refcount < 0);
-> > +	wake_up = vdev->access_refcount == 0;
-> > +	spin_unlock(&vdev->unplug_lock);
-> > +
-> > +	if (wake_up)
-> > +		wake_up(&vdev->unplug_wait);
-> > +}
-> > +EXPORT_SYMBOL_GPL(video_device_exit);
-> > +
-> > +void video_device_unplug(struct video_device *vdev)
-> > +{
-> > +	bool unplug_blocked;
-> > +
-> > +	spin_lock(&vdev->unplug_lock);
-> > +	unplug_blocked = vdev->access_refcount > 0;
-> > +	vdev->unplugged = true;
-> > +	spin_unlock(&vdev->unplug_lock);
-> > +
-> > +	if (!unplug_blocked)
-> > +		return;
-> > +
-> > +	if (!wait_event_timeout(vdev->unplug_wait, !vdev->access_refcount,
-> > +				msecs_to_jiffies(150000)))
-> > +		WARN(1, "Timeout waiting for device access to complete\n");
-> > +}
-> > +EXPORT_SYMBOL_GPL(video_device_unplug);
-> > +
-> >  static inline void video_get(struct video_device *vdev)
-> >  {
-> >  	get_device(&vdev->dev);
-> > @@ -351,6 +397,10 @@ static long v4l2_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
-> >  	struct video_device *vdev = video_devdata(filp);
-> >  	int ret = -ENODEV;
-> >  
-> > +	ret = video_device_enter(vdev);
-> > +	if (ret < 0)
-> > +		return ret;
-> > +
-> >  	if (vdev->fops->unlocked_ioctl) {
-> >  		struct mutex *lock = v4l2_ioctl_get_lock(vdev, cmd);
-> >  
-> > @@ -358,11 +408,14 @@ static long v4l2_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
-> >  			return -ERESTARTSYS;
-> >  		if (video_is_registered(vdev))
-> >  			ret = vdev->fops->unlocked_ioctl(filp, cmd, arg);
-> > +		else
-> > +			ret = -ENODEV;
-> >  		if (lock)
-> >  			mutex_unlock(lock);
-> >  	} else
-> >  		ret = -ENOTTY;
-> >  
-> > +	video_device_exit(vdev);
-> >  	return ret;
-> >  }
-> >  
-> > @@ -841,6 +894,10 @@ int __video_register_device(struct video_device *vdev, int type, int nr,
-> >  	if (WARN_ON(!vdev->v4l2_dev))
-> >  		return -EINVAL;
-> >  
-> > +	/* unplug support */
-> > +	spin_lock_init(&vdev->unplug_lock);
-> > +	init_waitqueue_head(&vdev->unplug_wait);
-> > +
-> 
-> I'm c/c Greg here, as I don't think, that, the way it is, it
-> belongs at V4L2 core.
-> 
-> I mean: if this is a problem that affects all drivers, it would should, 
-> instead, be sitting at the driver's core.
+Hi Laurent,
 
-What "problem" is trying to be solved here?  One where your specific
-device type races with your specific user api?  Doesn't sound very
-driver-core specific to me :)
+Em Thu, 16 Nov 2017 02:33:48 +0200
+Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com> escreveu:
 
-As an example, what other bus/device type needs this?  If you can see
-others that do, then sure, move it into the core.  But for just one, I
-don't know if that's really needed here, do you?
+> Device unplug being asynchronous, it naturally races with operations
+> performed by userspace through ioctls or other file operations on video
+> device nodes.
+> 
+> This leads to potential access to freed memory or to other resources
+> during device access if unplug occurs during device access. To solve
+> this, we need to wait until all device access completes when unplugging
+> the device, and block all further access when the device is being
+> unplugged.
+> 
+> Three new functions are introduced. The video_device_enter() and
+> video_device_exit() functions must be used to mark entry and exit from
+> all code sections where the device can be accessed. The
+> video_device_unplug() function is then used in the unplug handler to
+> mark the device as being unplugged and wait for all access to complete.
+> 
+> As an example mark the ioctl handler as a device access section. Other
+> file operations need to be protected too, and blocking ioctls (such as
+> VIDIOC_DQBUF) need to be handled as well.
+> 
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> ---
+>  drivers/media/v4l2-core/v4l2-dev.c | 57 ++++++++++++++++++++++++++++++++++++++
+>  include/media/v4l2-dev.h           | 47 +++++++++++++++++++++++++++++++
+>  2 files changed, 104 insertions(+)
+> 
+> diff --git a/drivers/media/v4l2-core/v4l2-dev.c b/drivers/media/v4l2-core/v4l2-dev.c
+> index c647ba648805..c73c6d49e7cf 100644
+> --- a/drivers/media/v4l2-core/v4l2-dev.c
+> +++ b/drivers/media/v4l2-core/v4l2-dev.c
+> @@ -156,6 +156,52 @@ void video_device_release_empty(struct video_device *vdev)
+>  }
+>  EXPORT_SYMBOL(video_device_release_empty);
+>  
+> +int video_device_enter(struct video_device *vdev)
+> +{
+> +	bool unplugged;
+> +
+> +	spin_lock(&vdev->unplug_lock);
+> +	unplugged = vdev->unplugged;
+> +	if (!unplugged)
+> +		vdev->access_refcount++;
+> +	spin_unlock(&vdev->unplug_lock);
+> +
+> +	return unplugged ? -ENODEV : 0;
+> +}
+> +EXPORT_SYMBOL_GPL(video_device_enter);
+> +
+> +void video_device_exit(struct video_device *vdev)
+> +{
+> +	bool wake_up;
+> +
+> +	spin_lock(&vdev->unplug_lock);
+> +	WARN_ON(--vdev->access_refcount < 0);
+> +	wake_up = vdev->access_refcount == 0;
+> +	spin_unlock(&vdev->unplug_lock);
+> +
+> +	if (wake_up)
+> +		wake_up(&vdev->unplug_wait);
+> +}
+> +EXPORT_SYMBOL_GPL(video_device_exit);
+> +
+> +void video_device_unplug(struct video_device *vdev)
+> +{
+> +	bool unplug_blocked;
+> +
+> +	spin_lock(&vdev->unplug_lock);
+> +	unplug_blocked = vdev->access_refcount > 0;
+> +	vdev->unplugged = true;
+> +	spin_unlock(&vdev->unplug_lock);
+> +
+> +	if (!unplug_blocked)
+> +		return;
+> +
+> +	if (!wait_event_timeout(vdev->unplug_wait, !vdev->access_refcount,
+> +				msecs_to_jiffies(150000)))
+> +		WARN(1, "Timeout waiting for device access to complete\n");
+> +}
+> +EXPORT_SYMBOL_GPL(video_device_unplug);
+> +
+>  static inline void video_get(struct video_device *vdev)
+>  {
+>  	get_device(&vdev->dev);
+> @@ -351,6 +397,10 @@ static long v4l2_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+>  	struct video_device *vdev = video_devdata(filp);
+>  	int ret = -ENODEV;
+>  
+> +	ret = video_device_enter(vdev);
+> +	if (ret < 0)
+> +		return ret;
+> +
+>  	if (vdev->fops->unlocked_ioctl) {
+>  		struct mutex *lock = v4l2_ioctl_get_lock(vdev, cmd);
+>  
+> @@ -358,11 +408,14 @@ static long v4l2_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+>  			return -ERESTARTSYS;
+>  		if (video_is_registered(vdev))
+>  			ret = vdev->fops->unlocked_ioctl(filp, cmd, arg);
+> +		else
+> +			ret = -ENODEV;
+>  		if (lock)
+>  			mutex_unlock(lock);
+>  	} else
+>  		ret = -ENOTTY;
+>  
+> +	video_device_exit(vdev);
+>  	return ret;
+>  }
+>  
+> @@ -841,6 +894,10 @@ int __video_register_device(struct video_device *vdev, int type, int nr,
+>  	if (WARN_ON(!vdev->v4l2_dev))
+>  		return -EINVAL;
+>  
+> +	/* unplug support */
+> +	spin_lock_init(&vdev->unplug_lock);
+> +	init_waitqueue_head(&vdev->unplug_wait);
+> +
 
-thanks,
+I'm c/c Greg here, as I don't think, that, the way it is, it
+belongs at V4L2 core.
 
-greg k-h
+I mean: if this is a problem that affects all drivers, it would should, 
+instead, be sitting at the driver's core.
+
+If, otherwise, this is specific to rcar-vin (and other platform drivers),
+that's likely should be inside the drivers that require it.
+
+That's said, I remember we had to add some things in the past for
+USB drivers hot unplug to happen softly. I don't remember the specifics
+anymore, but it was solved by both a V4L2 core and changes at USB
+drivers.
+
+One of the things that it was added, on that time, was this patch:
+
+	commit ae6cfaace120f4330715b56265ce0e4a710e1276
+	Author: Hans Verkuil <hverkuil@xs4all.nl>
+	Date:   Sat Mar 14 08:28:45 2009 -0300
+
+	    V4L/DVB (11044): v4l2-device: add v4l2_device_disconnect
+
+So, I would expect that a change at V4L2 core (or at driver core) that
+would be applied would also be affecting USB drivers disconnect logic
+and v4l2_device_disconnect() function.
+
+>  	/* v4l2_fh support */
+>  	spin_lock_init(&vdev->fh_lock);
+>  	INIT_LIST_HEAD(&vdev->fh_list);
+> diff --git a/include/media/v4l2-dev.h b/include/media/v4l2-dev.h
+> index e657614521e3..365a94f91dc9 100644
+> --- a/include/media/v4l2-dev.h
+> +++ b/include/media/v4l2-dev.h
+> @@ -15,6 +15,7 @@
+>  #include <linux/cdev.h>
+>  #include <linux/mutex.h>
+>  #include <linux/videodev2.h>
+> +#include <linux/wait.h>
+>  
+>  #include <media/media-entity.h>
+>  
+> @@ -178,6 +179,12 @@ struct v4l2_file_operations {
+>   * @pipe: &struct media_pipeline
+>   * @fops: pointer to &struct v4l2_file_operations for the video device
+>   * @device_caps: device capabilities as used in v4l2_capabilities
+> + * @unplugged: when set the device has been unplugged and no device access
+> + *	section can be entered
+> + * @access_refcount: number of device access section currently running for the
+> + *	device
+> + * @unplug_lock: protects unplugged and access_refcount
+> + * @unplug_wait: wait queue to wait for device access sections to complete
+>   * @dev: &struct device for the video device
+>   * @cdev: character device
+>   * @v4l2_dev: pointer to &struct v4l2_device parent
+> @@ -221,6 +228,12 @@ struct video_device
+>  
+>  	u32 device_caps;
+>  
+> +	/* unplug handling */
+> +	bool unplugged;
+> +	int access_refcount;
+> +	spinlock_t unplug_lock;
+> +	wait_queue_head_t unplug_wait;
+> +
+>  	/* sysfs */
+>  	struct device dev;
+>  	struct cdev *cdev;
+> @@ -506,4 +519,38 @@ static inline int video_is_registered(struct video_device *vdev)
+>  	return test_bit(V4L2_FL_REGISTERED, &vdev->flags);
+>  }
+>  
+> +/**
+> + * video_device_enter - enter a device access section
+> + * @vdev: the video device
+> + *
+> + * This function marks and protects the beginning of a section that should not
+> + * be entered after the device has been unplugged. The section end is marked
+> + * with a call to video_device_exit(). Calls to this function can be nested.
+> + *
+> + * Returns:
+> + * 0 on success or a negative error code if the device has been unplugged.
+> + */
+> +int video_device_enter(struct video_device *vdev);
+> +
+> +/**
+> + * video_device_exit - exit a device access section
+> + * @vdev: the video device
+> + *
+> + * This function marks the end of a section entered with video_device_enter().
+> + * It wakes up all tasks waiting on video_device_unplug() for device access
+> + * sections to be exited.
+> + */
+> +void video_device_exit(struct video_device *vdev);
+> +
+> +/**
+> + * video_device_unplug - mark a device as unplugged
+> + * @vdev: the video device
+> + *
+> + * Mark a device as unplugged, causing all subsequent calls to
+> + * video_device_enter() to return an error. If a device access section is
+> + * currently being executed the function waits until the section is exited as
+> + * marked by a call to video_device_exit().
+> + */
+> +void video_device_unplug(struct video_device *vdev);
+> +
+>  #endif /* _V4L2_DEV_H */
+
+Thanks,
+Mauro
