@@ -1,35 +1,57 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, horms@verge.net.au,
-        wsa@the-dreams.de, geert@linux-m68k.org
-Cc: magnus.damm@gmail.com, linux-i2c@vger.kernel.org,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 6/6] i2c: rcar: document R8A77970 bindings
-Date: Wed, 15 Nov 2017 16:25:26 +0100
-Message-Id: <1510759526-30346-7-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1510759526-30346-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1510759526-30346-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-Sender: linux-i2c-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:43704 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752471AbdKWKlY (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 23 Nov 2017 05:41:24 -0500
+MIME-Version: 1.0
+In-Reply-To: <1510844320-24048-1-git-send-email-ykaneko0929@gmail.com>
+References: <1510844320-24048-1-git-send-email-ykaneko0929@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 23 Nov 2017 11:41:23 +0100
+Message-ID: <CAMuHMdUtGLzAV+PEfQvSz8ZCty5wfba_C3q8mQmoS4KxVNnaFw@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7795: Rename RTS{0,1,3,4}# pin
+ function definitions
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car D3 (R8A77995) SoC has a R-Car Gen3-compatible I2C controller.
+Hi Kaneko-san,
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
----
- Documentation/devicetree/bindings/i2c/i2c-rcar.txt | 1 +
- 1 file changed, 1 insertion(+)
+On Thu, Nov 16, 2017 at 3:58 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch renames the pin function macro definitions of the GPSR and
+> IPSR registers value for the RTS{0,1,3,4}# pin.
+>
+> This is a correction because GPSR and IPSR register specification for
+> R8A7795 ES2.0 SoC was changed in R-Car Gen3 Hardware User's Manual
+> Rev.0.54E.
 
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-rcar.txt b/Documentation/devicetree/bindings/i2c/i2c-rcar.txt
-index a777477..e91dbaf 100644
---- a/Documentation/devicetree/bindings/i2c/i2c-rcar.txt
-+++ b/Documentation/devicetree/bindings/i2c/i2c-rcar.txt
-@@ -14,6 +14,7 @@ Required properties:
- 	"renesas,i2c-r8a7795" if the device is a part of a R8A7795 SoC.
- 	"renesas,i2c-r8a7796" if the device is a part of a R8A7796 SoC.
- 	"renesas,i2c-r8a77970" if the device is a part of a R8A77970 SoC.
-+	"renesas,i2c-r8a77995" if the device is a part of a R8A77995 SoC.
- 	"renesas,rcar-gen1-i2c" for a generic R-Car Gen1 compatible device.
- 	"renesas,rcar-gen2-i2c" for a generic R-Car Gen2 or RZ/G1 compatible
- 				device.
--- 
-2.7.4
+Thanks for your patch!
+
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in sh-pfc-for-v4.16, after dropping the remaining "_TANS"
+from comments.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
