@@ -1,33 +1,84 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:53287 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751239AbdKJJaW (ORCPT
+Received: from mail-qt0-f171.google.com ([209.85.216.171]:39456 "EHLO
+        mail-qt0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751906AbdKWJtO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Nov 2017 04:30:22 -0500
-Date: Fri, 10 Nov 2017 10:30:17 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 3/3] arm64: dts: renesas: Add support for Salvator-XS
- with R-Car M3-W
-Message-ID: <20171110093016.7xqwlalnxk5eqoog@verge.net.au>
-References: <1509384599-28953-1-git-send-email-geert+renesas@glider.be>
- <1509384599-28953-4-git-send-email-geert+renesas@glider.be>
+        Thu, 23 Nov 2017 04:49:14 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1509384599-28953-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <20171123094657.r2wjbmvrn24ohrn6@verge.net.au>
+References: <20171120110125.12267-1-horms+renesas@verge.net.au>
+ <CAMuHMdXqPqhiCZFseBGFDEh9R+_kFcrmjWWgCSudtnHkuXoFgw@mail.gmail.com> <20171123094657.r2wjbmvrn24ohrn6@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 23 Nov 2017 10:49:13 +0100
+Message-ID: <CAMuHMdX4voo+HOx69Wj7B+kDwyqb8KNSQVwWnUcCqLR_27aBiA@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: renesas: r8a7795: Move nodes which have no
+ reg property out of bus
+To: Simon Horman <horms@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Oct 30, 2017 at 06:29:59PM +0100, Geert Uytterhoeven wrote:
-> Add initial support for the Renesas Salvator-XS (Salvator-X 2nd version)
-> development board equipped with an R-Car M3-W SiP.
-> 
-> Based on work for the Salvator-X and -XS boards with M3-W resp. H3 SiPs.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi Simon,
 
-Thanks, applied for v4.16.
+On Thu, Nov 23, 2017 at 10:46 AM, Simon Horman <horms@verge.net.au> wrote:
+> On Thu, Nov 23, 2017 at 10:27:55AM +0100, Geert Uytterhoeven wrote:
+>> On Mon, Nov 20, 2017 at 12:01 PM, Simon Horman
+>> <horms+renesas@verge.net.au> wrote:
+>> > --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+>> > +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+>> > @@ -126,6 +126,86 @@
+>>
+>> The node above is called "cpus".
+>>
+>> >                 };
+>> >         };
+>> >
+>> > +       pmu_a57 {
+>>
+>> > +       };
+>> > +
+>> > +       pmu_a53 {
+>>
+>> > +       };
+>> > +
+>> > +       timer {
+>>
+>> > +       };
+>> > +
+>> > +       thermal-zones {
+>>
+>> > +       };
+>> > +
+>> >         extal_clk: extal {
+>> >                 compatible = "fixed-clock";
+>> >                 #clock-cells = <0>;
+>>
+>> Any sorting rules (alphabetically?) for nodes at the root level?
+>
+> Now would be a good time to decide on an alternate on an order as
+> I plan to submit similar patches for several other SoCs.
+>
+> I took used order they were already present (with other nodes) in the
+> cpu node. They appear to be sorted alphabetically. Should I keep that
+> sort order relative to existing nodes present in the root node?
+
+I think you should.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
