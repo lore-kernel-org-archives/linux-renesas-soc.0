@@ -1,306 +1,169 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:40785 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932204AbdKOK43 (ORCPT
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46116 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752410AbdKWOU5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Nov 2017 05:56:29 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
-        geert@glider.be, mchehab@kernel.org, hverkuil@xs4all.nl
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 05/10] arch: sh: migor: Use new renesas-ceu camera driver
-Date: Wed, 15 Nov 2017 11:55:58 +0100
-Message-Id: <1510743363-25798-6-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1510743363-25798-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1510743363-25798-1-git-send-email-jacopo+renesas@jmondi.org>
+        Thu, 23 Nov 2017 09:20:57 -0500
+Date: Thu, 23 Nov 2017 15:21:01 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>
+Subject: Re: [PATCH/RFC 1/2] v4l: v4l2-dev: Add infrastructure to protect
+ device unplug race
+Message-ID: <20171123142101.GA5155@kroah.com>
+References: <20171116003349.19235-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20171116003349.19235-2-laurent.pinchart+renesas@ideasonboard.com>
+ <20171123110751.72f76d7d@vento.lan>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20171123110751.72f76d7d@vento.lan>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Migo-R platform uses sh_mobile_ceu camera driver, which is now being
-replaced by a proper V4L2 camera driver named 'renesas-ceu'.
+On Thu, Nov 23, 2017 at 11:07:51AM -0200, Mauro Carvalho Chehab wrote:
+> Hi Laurent,
+> 
+> Em Thu, 16 Nov 2017 02:33:48 +0200
+> Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com> escreveu:
+> 
+> > Device unplug being asynchronous, it naturally races with operations
+> > performed by userspace through ioctls or other file operations on video
+> > device nodes.
+> > 
+> > This leads to potential access to freed memory or to other resources
+> > during device access if unplug occurs during device access. To solve
+> > this, we need to wait until all device access completes when unplugging
+> > the device, and block all further access when the device is being
+> > unplugged.
+> > 
+> > Three new functions are introduced. The video_device_enter() and
+> > video_device_exit() functions must be used to mark entry and exit from
+> > all code sections where the device can be accessed. The
+> > video_device_unplug() function is then used in the unplug handler to
+> > mark the device as being unplugged and wait for all access to complete.
+> > 
+> > As an example mark the ioctl handler as a device access section. Other
+> > file operations need to be protected too, and blocking ioctls (such as
+> > VIDIOC_DQBUF) need to be handled as well.
+> > 
+> > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> > ---
+> >  drivers/media/v4l2-core/v4l2-dev.c | 57 ++++++++++++++++++++++++++++++++++++++
+> >  include/media/v4l2-dev.h           | 47 +++++++++++++++++++++++++++++++
+> >  2 files changed, 104 insertions(+)
+> > 
+> > diff --git a/drivers/media/v4l2-core/v4l2-dev.c b/drivers/media/v4l2-core/v4l2-dev.c
+> > index c647ba648805..c73c6d49e7cf 100644
+> > --- a/drivers/media/v4l2-core/v4l2-dev.c
+> > +++ b/drivers/media/v4l2-core/v4l2-dev.c
+> > @@ -156,6 +156,52 @@ void video_device_release_empty(struct video_device *vdev)
+> >  }
+> >  EXPORT_SYMBOL(video_device_release_empty);
+> >  
+> > +int video_device_enter(struct video_device *vdev)
+> > +{
+> > +	bool unplugged;
+> > +
+> > +	spin_lock(&vdev->unplug_lock);
+> > +	unplugged = vdev->unplugged;
+> > +	if (!unplugged)
+> > +		vdev->access_refcount++;
+> > +	spin_unlock(&vdev->unplug_lock);
+> > +
+> > +	return unplugged ? -ENODEV : 0;
+> > +}
+> > +EXPORT_SYMBOL_GPL(video_device_enter);
+> > +
+> > +void video_device_exit(struct video_device *vdev)
+> > +{
+> > +	bool wake_up;
+> > +
+> > +	spin_lock(&vdev->unplug_lock);
+> > +	WARN_ON(--vdev->access_refcount < 0);
+> > +	wake_up = vdev->access_refcount == 0;
+> > +	spin_unlock(&vdev->unplug_lock);
+> > +
+> > +	if (wake_up)
+> > +		wake_up(&vdev->unplug_wait);
+> > +}
+> > +EXPORT_SYMBOL_GPL(video_device_exit);
+> > +
+> > +void video_device_unplug(struct video_device *vdev)
+> > +{
+> > +	bool unplug_blocked;
+> > +
+> > +	spin_lock(&vdev->unplug_lock);
+> > +	unplug_blocked = vdev->access_refcount > 0;
+> > +	vdev->unplugged = true;
+> > +	spin_unlock(&vdev->unplug_lock);
+> > +
+> > +	if (!unplug_blocked)
+> > +		return;
+> > +
+> > +	if (!wait_event_timeout(vdev->unplug_wait, !vdev->access_refcount,
+> > +				msecs_to_jiffies(150000)))
+> > +		WARN(1, "Timeout waiting for device access to complete\n");
+> > +}
+> > +EXPORT_SYMBOL_GPL(video_device_unplug);
+> > +
+> >  static inline void video_get(struct video_device *vdev)
+> >  {
+> >  	get_device(&vdev->dev);
+> > @@ -351,6 +397,10 @@ static long v4l2_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+> >  	struct video_device *vdev = video_devdata(filp);
+> >  	int ret = -ENODEV;
+> >  
+> > +	ret = video_device_enter(vdev);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> >  	if (vdev->fops->unlocked_ioctl) {
+> >  		struct mutex *lock = v4l2_ioctl_get_lock(vdev, cmd);
+> >  
+> > @@ -358,11 +408,14 @@ static long v4l2_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+> >  			return -ERESTARTSYS;
+> >  		if (video_is_registered(vdev))
+> >  			ret = vdev->fops->unlocked_ioctl(filp, cmd, arg);
+> > +		else
+> > +			ret = -ENODEV;
+> >  		if (lock)
+> >  			mutex_unlock(lock);
+> >  	} else
+> >  		ret = -ENOTTY;
+> >  
+> > +	video_device_exit(vdev);
+> >  	return ret;
+> >  }
+> >  
+> > @@ -841,6 +894,10 @@ int __video_register_device(struct video_device *vdev, int type, int nr,
+> >  	if (WARN_ON(!vdev->v4l2_dev))
+> >  		return -EINVAL;
+> >  
+> > +	/* unplug support */
+> > +	spin_lock_init(&vdev->unplug_lock);
+> > +	init_waitqueue_head(&vdev->unplug_wait);
+> > +
+> 
+> I'm c/c Greg here, as I don't think, that, the way it is, it
+> belongs at V4L2 core.
+> 
+> I mean: if this is a problem that affects all drivers, it would should, 
+> instead, be sitting at the driver's core.
 
-Move Migo-R platform to use the v4l2 renesas-ceu camera driver
-interface and get rid of soc_camera defined components used to register
-sensor drivers.
+What "problem" is trying to be solved here?  One where your specific
+device type races with your specific user api?  Doesn't sound very
+driver-core specific to me :)
 
-Also, memory for CEU video buffers is now reserved with membocks APIs,
-and need to be declared as dma_coherent during machine initialization to
-remove that architecture specific part from CEU driver.
+As an example, what other bus/device type needs this?  If you can see
+others that do, then sure, move it into the core.  But for just one, I
+don't know if that's really needed here, do you?
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- arch/sh/boards/mach-migor/setup.c | 164 ++++++++++++++++++--------------------
- 1 file changed, 76 insertions(+), 88 deletions(-)
+thanks,
 
-diff --git a/arch/sh/boards/mach-migor/setup.c b/arch/sh/boards/mach-migor/setup.c
-index 98aa094..10a9b3c 100644
---- a/arch/sh/boards/mach-migor/setup.c
-+++ b/arch/sh/boards/mach-migor/setup.c
-@@ -27,7 +27,7 @@
- #include <linux/videodev2.h>
- #include <linux/sh_intc.h>
- #include <video/sh_mobile_lcdc.h>
--#include <media/drv-intf/sh_mobile_ceu.h>
-+#include <media/drv-intf/renesas-ceu.h>
- #include <media/i2c/ov772x.h>
- #include <media/soc_camera.h>
- #include <media/i2c/tw9910.h>
-@@ -308,62 +308,80 @@ static struct platform_device migor_lcdc_device = {
- static struct clk *camera_clk;
- static DEFINE_MUTEX(camera_lock);
-
--static void camera_power_on(int is_tw)
-+static void camera_vio_clk_on(void)
- {
--	mutex_lock(&camera_lock);
--
- 	/* Use 10 MHz VIO_CKO instead of 24 MHz to work
- 	 * around signal quality issues on Panel Board V2.1.
- 	 */
- 	camera_clk = clk_get(NULL, "video_clk");
- 	clk_set_rate(camera_clk, 10000000);
- 	clk_enable(camera_clk);	/* start VIO_CKO */
--
--	/* use VIO_RST to take camera out of reset */
--	mdelay(10);
--	if (is_tw) {
--		gpio_set_value(GPIO_PTT2, 0);
--		gpio_set_value(GPIO_PTT0, 0);
--	} else {
--		gpio_set_value(GPIO_PTT0, 1);
--	}
--	gpio_set_value(GPIO_PTT3, 0);
--	mdelay(10);
--	gpio_set_value(GPIO_PTT3, 1);
--	mdelay(10); /* wait to let chip come out of reset */
- }
-
--static void camera_power_off(void)
-+static void camera_disable(void)
- {
--	clk_disable(camera_clk); /* stop VIO_CKO */
-+	/* stop VIO_CKO */
-+	clk_disable(camera_clk);
- 	clk_put(camera_clk);
-
-+	gpio_set_value(GPIO_PTT0, 0);
-+	gpio_set_value(GPIO_PTT2, 1);
- 	gpio_set_value(GPIO_PTT3, 0);
-+
- 	mutex_unlock(&camera_lock);
- }
-
--static int ov7725_power(struct device *dev, int mode)
-+static void camera_reset(void)
- {
--	if (mode)
--		camera_power_on(0);
--	else
--		camera_power_off();
-+	/* use VIO_RST to take camera out of reset */
-+	gpio_set_value(GPIO_PTT3, 0);
-+	mdelay(10);
-+	gpio_set_value(GPIO_PTT3, 1);
-+	mdelay(10);
-+}
-+
-+static int ov7725_enable(void)
-+{
-+	mutex_lock(&camera_lock);
-+	camera_vio_clk_on();
-+	mdelay(10);
-+	gpio_set_value(GPIO_PTT0, 1);
-+
-+	camera_reset();
-
- 	return 0;
- }
-
--static int tw9910_power(struct device *dev, int mode)
-+static int tw9910_enable(void)
- {
--	if (mode)
--		camera_power_on(1);
--	else
--		camera_power_off();
-+	mutex_lock(&camera_lock);
-+	camera_vio_clk_on();
-+	mdelay(10);
-+	gpio_set_value(GPIO_PTT2, 0);
-+
-+	camera_reset();
-
- 	return 0;
- }
-
--static struct sh_mobile_ceu_info sh_mobile_ceu_info = {
--	.flags = SH_CEU_FLAG_USE_8BIT_BUS,
-+static struct ceu_info ceu_info = {
-+	.num_subdevs		= 2,
-+	.subdevs = {
-+		{ /* [0] = ov772x */
-+			.flags		= CEU_FLAG_PRIMARY_SENS,
-+			.bus_width	= 8,
-+			.bus_shift	= 0,
-+			.i2c_adapter_id	= 0,
-+			.i2c_address	= 0x21,
-+		},
-+		{ /* [1] = tw9910 */
-+			.flags		= 0,
-+			.bus_width	= 8,
-+			.bus_shift	= 0,
-+			.i2c_adapter_id	= 0,
-+			.i2c_address	= 0x45,
-+		},
-+	},
- };
-
- static struct resource migor_ceu_resources[] = {
-@@ -377,18 +395,15 @@ static struct resource migor_ceu_resources[] = {
- 		.start  = evt2irq(0x880),
- 		.flags  = IORESOURCE_IRQ,
- 	},
--	[2] = {
--		/* place holder for contiguous memory */
--	},
- };
-
- static struct platform_device migor_ceu_device = {
--	.name		= "sh_mobile_ceu",
-+	.name		= "renesas-ceu",
- 	.id             = 0, /* "ceu0" clock */
- 	.num_resources	= ARRAY_SIZE(migor_ceu_resources),
- 	.resource	= migor_ceu_resources,
- 	.dev	= {
--		.platform_data	= &sh_mobile_ceu_info,
-+		.platform_data	= &ceu_info,
- 	},
- };
-
-@@ -427,6 +442,19 @@ static struct platform_device sdhi_cn9_device = {
- 	},
- };
-
-+static struct ov772x_camera_info ov7725_info = {
-+	.platform_enable = ov7725_enable,
-+	.platform_disable = camera_disable,
-+};
-+
-+static struct tw9910_video_info tw9910_info = {
-+	.buswidth       = TW9910_DATAWIDTH_8,
-+	.mpout          = TW9910_MPO_FIELD,
-+
-+	.platform_enable = tw9910_enable,
-+	.platform_disable = camera_disable,
-+};
-+
- static struct i2c_board_info migor_i2c_devices[] = {
- 	{
- 		I2C_BOARD_INFO("rs5c372b", 0x32),
-@@ -438,51 +466,13 @@ static struct i2c_board_info migor_i2c_devices[] = {
- 	{
- 		I2C_BOARD_INFO("wm8978", 0x1a),
- 	},
--};
--
--static struct i2c_board_info migor_i2c_camera[] = {
- 	{
- 		I2C_BOARD_INFO("ov772x", 0x21),
-+		.platform_data = &ov7725_info,
- 	},
- 	{
- 		I2C_BOARD_INFO("tw9910", 0x45),
--	},
--};
--
--static struct ov772x_camera_info ov7725_info;
--
--static struct soc_camera_link ov7725_link = {
--	.power		= ov7725_power,
--	.board_info	= &migor_i2c_camera[0],
--	.i2c_adapter_id	= 0,
--	.priv		= &ov7725_info,
--};
--
--static struct tw9910_video_info tw9910_info = {
--	.buswidth	= SOCAM_DATAWIDTH_8,
--	.mpout		= TW9910_MPO_FIELD,
--};
--
--static struct soc_camera_link tw9910_link = {
--	.power		= tw9910_power,
--	.board_info	= &migor_i2c_camera[1],
--	.i2c_adapter_id	= 0,
--	.priv		= &tw9910_info,
--};
--
--static struct platform_device migor_camera[] = {
--	{
--		.name	= "soc-camera-pdrv",
--		.id	= 0,
--		.dev	= {
--			.platform_data = &ov7725_link,
--		},
--	}, {
--		.name	= "soc-camera-pdrv",
--		.id	= 1,
--		.dev	= {
--			.platform_data = &tw9910_link,
--		},
-+		.platform_data = &tw9910_info,
- 	},
- };
-
-@@ -490,12 +480,9 @@ static struct platform_device *migor_devices[] __initdata = {
- 	&smc91x_eth_device,
- 	&sh_keysc_device,
- 	&migor_lcdc_device,
--	&migor_ceu_device,
- 	&migor_nor_flash_device,
- 	&migor_nand_flash_device,
- 	&sdhi_cn9_device,
--	&migor_camera[0],
--	&migor_camera[1],
- };
-
- extern char migor_sdram_enter_start;
-@@ -505,8 +492,6 @@ extern char migor_sdram_leave_end;
-
- static int __init migor_devices_setup(void)
- {
--	struct resource *r;
--
- 	/* register board specific self-refresh code */
- 	sh_mobile_register_self_refresh(SUSP_SH_STANDBY | SUSP_SH_SF,
- 					&migor_sdram_enter_start,
-@@ -651,16 +636,19 @@ static int __init migor_devices_setup(void)
- 	 */
- 	__raw_writew(__raw_readw(PORT_MSELCRA) | 1, PORT_MSELCRA);
-
--	/* Setup additional memory resource for CEU video buffers */
--	r = &migor_ceu_device.resource[2];
--	r->flags = IORESOURCE_MEM;
--	r->start = ceu_dma_membase;
--	r->end = r->start + CEU_BUFFER_MEMORY_SIZE - 1;
--	r->name = "ceu";
--
- 	i2c_register_board_info(0, migor_i2c_devices,
- 				ARRAY_SIZE(migor_i2c_devices));
-
-+	/* Initialize CEU platform device separately to map memory first */
-+	device_initialize(&migor_ceu_device.dev);
-+	arch_setup_pdev_archdata(&migor_ceu_device);
-+	dma_declare_coherent_memory(&migor_ceu_device.dev,
-+				    ceu_dma_membase, ceu_dma_membase,
-+				    ceu_dma_membase + CEU_BUFFER_MEMORY_SIZE - 1,
-+				    DMA_MEMORY_EXCLUSIVE);
-+
-+	platform_device_add(&migor_ceu_device);
-+
- 	return platform_add_devices(migor_devices, ARRAY_SIZE(migor_devices));
- }
- arch_initcall(migor_devices_setup);
---
-2.7.4
+greg k-h
