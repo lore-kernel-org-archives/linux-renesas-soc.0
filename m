@@ -1,83 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:44782 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752126AbdK1NfC (ORCPT
+Received: from mail-qt0-f180.google.com ([209.85.216.180]:39403 "EHLO
+        mail-qt0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752007AbdKWJ2z (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Nov 2017 08:35:02 -0500
-Received: by mail-lf0-f66.google.com with SMTP id w23so435963lfd.11
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 28 Nov 2017 05:35:01 -0800 (PST)
-Date: Tue, 28 Nov 2017 14:34:59 +0100
-From: Niklas =?iso-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund@ragnatech.se>
+        Thu, 23 Nov 2017 04:28:55 -0500
+MIME-Version: 1.0
+In-Reply-To: <1510856571-30281-2-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1510856571-30281-1-git-send-email-fabrizio.castro@bp.renesas.com> <1510856571-30281-2-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 23 Nov 2017 10:28:53 +0100
+Message-ID: <CAMuHMdXgyo2ix3kgMzfSYKpE9+CRDej5MQJ8oy0nF2+CDkcXDQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] dt-bindings: media: rcar_vin: Reverse SoC part
+ number list
 To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>
-Subject: Re: [PATCH v2 1/4] dt-bindings: media: rcar_vin: Reverse SoC part
- number list
-Message-ID: <20171128133459.GI23832@bigcity.dyn.berto.se>
-References: <1510856571-30281-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1510856571-30281-2-git-send-email-fabrizio.castro@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1510856571-30281-2-git-send-email-fabrizio.castro@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 2017-11-16 18:22:48 +0000, Fabrizio Castro wrote:
+On Thu, Nov 16, 2017 at 7:22 PM, Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
 > Change the sorting of the part numbers from descending to ascending to
 > match with other documentation.
-> 
+>
 > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 > Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 
-Acked-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> ---
-> v1->v2:
-> * new patch triggered by Geert's comment, see the below link for details:
->   https://www.mail-archive.com/linux-media@vger.kernel.org/msg121992.html
-> 
->  Documentation/devicetree/bindings/media/rcar_vin.txt | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/rcar_vin.txt
-> index 6e4ef8c..98931f5 100644
-> --- a/Documentation/devicetree/bindings/media/rcar_vin.txt
-> +++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
-> @@ -6,14 +6,14 @@ family of devices. The current blocks are always slaves and suppot one input
->  channel which can be either RGB, YUYV or BT656.
->  
->   - compatible: Must be one or more of the following
-> -   - "renesas,vin-r8a7795" for the R8A7795 device
-> -   - "renesas,vin-r8a7794" for the R8A7794 device
-> -   - "renesas,vin-r8a7793" for the R8A7793 device
-> -   - "renesas,vin-r8a7792" for the R8A7792 device
-> -   - "renesas,vin-r8a7791" for the R8A7791 device
-> -   - "renesas,vin-r8a7790" for the R8A7790 device
-> -   - "renesas,vin-r8a7779" for the R8A7779 device
->     - "renesas,vin-r8a7778" for the R8A7778 device
-> +   - "renesas,vin-r8a7779" for the R8A7779 device
-> +   - "renesas,vin-r8a7790" for the R8A7790 device
-> +   - "renesas,vin-r8a7791" for the R8A7791 device
-> +   - "renesas,vin-r8a7792" for the R8A7792 device
-> +   - "renesas,vin-r8a7793" for the R8A7793 device
-> +   - "renesas,vin-r8a7794" for the R8A7794 device
-> +   - "renesas,vin-r8a7795" for the R8A7795 device
->     - "renesas,rcar-gen2-vin" for a generic R-Car Gen2 compatible device.
->     - "renesas,rcar-gen3-vin" for a generic R-Car Gen3 compatible device.
->  
-> -- 
-> 2.7.4
-> 
+Gr{oetje,eeting}s,
 
--- 
-Regards,
-Niklas S�derlund
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
