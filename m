@@ -1,11 +1,11 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from condef-05.nifty.com ([202.248.20.70]:17353 "EHLO
-        condef-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753642AbdKXQgO (ORCPT
+Received: from condef-04.nifty.com ([202.248.20.69]:36726 "EHLO
+        condef-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751018AbdKXQji (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 24 Nov 2017 11:36:14 -0500
-Received: from conuserg-11.nifty.com ([10.126.8.74])by condef-05.nifty.com with ESMTP id vAOGQ6RX008553
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 25 Nov 2017 01:26:10 +0900
+        Fri, 24 Nov 2017 11:39:38 -0500
+Received: from conuserg-11.nifty.com ([10.126.8.74])by condef-04.nifty.com with ESMTP id vAOGQBwR015790
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 25 Nov 2017 01:26:11 +0900
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
 To: linux-mmc@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
@@ -14,22 +14,27 @@ Cc: Simon Horman <simon.horman@netronome.com>,
         linux-renesas-soc@vger.kernel.org,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v2 21/22] mmc: tmio: move {tmio_}mmc_of_parse() to tmio_mmc_host_alloc()
-Date: Sat, 25 Nov 2017 01:24:56 +0900
-Message-Id: <1511540697-27387-22-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH v2 19/22] mmc: tmio: ioremap memory resource in tmio_mmc_host_alloc()
+Date: Sat, 25 Nov 2017 01:24:54 +0900
+Message-Id: <1511540697-27387-20-git-send-email-yamada.masahiro@socionext.com>
 In-Reply-To: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-mmc_of_parse() parses various DT properties and sets capability flags
-accordingly.  However, drivers have no chance to run platform init
-code depending on such flags because mmc_of_parse() is called from
-tmio_mmc_host_probe().
+The register region is ioremap'ed in the tmio_mmc_host_probe(), i.e.
+drivers cannot get access to the hardware before mmc_add_host().
 
-Move mmc_of_parse() to tmio_mmc_host_alloc() so that drivers can
-handle capabilities before mmc_add_host().  Move tmio_mmc_of_parse()
-likewise.
+Actually, renesas_sdhi_core.c reads out the CTL_VERSION register to
+complete the platform-specific settings.  However, at this point,
+the MMC host is already running.
+
+Move the register ioremap to tmio_mmc_host_alloc() so that drivers
+can perform platform-specific settings between tmio_mmc_host_alloc()
+and tmio_mmc_host_probe().
+
+I changed tmio_mmc_host_alloc() to return an error pointer to
+propagate the return code from devm_ioremap_resource().
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
@@ -37,58 +42,87 @@ Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Changes in v2:
   - Newly added
 
- drivers/mmc/host/tmio_mmc_core.c | 19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
+ drivers/mmc/host/renesas_sdhi_core.c |  4 ++--
+ drivers/mmc/host/tmio_mmc.c          |  4 +++-
+ drivers/mmc/host/tmio_mmc_core.c     | 16 +++++++++-------
+ 3 files changed, 14 insertions(+), 10 deletions(-)
 
+diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+index e78dca7..446ff54 100644
+--- a/drivers/mmc/host/renesas_sdhi_core.c
++++ b/drivers/mmc/host/renesas_sdhi_core.c
+@@ -511,8 +511,8 @@ int renesas_sdhi_probe(struct platform_device *pdev,
+ 	}
+ 
+ 	host = tmio_mmc_host_alloc(pdev);
+-	if (!host)
+-		return -ENOMEM;
++	if (IS_ERR(host))
++		return PTR_ERR(host);
+ 
+ 	if (of_data) {
+ 		mmc_data->flags |= of_data->tmio_flags;
+diff --git a/drivers/mmc/host/tmio_mmc.c b/drivers/mmc/host/tmio_mmc.c
+index ccfbc15..d660816 100644
+--- a/drivers/mmc/host/tmio_mmc.c
++++ b/drivers/mmc/host/tmio_mmc.c
+@@ -93,8 +93,10 @@ static int tmio_mmc_probe(struct platform_device *pdev)
+ 	pdata->flags |= TMIO_MMC_HAVE_HIGH_REG;
+ 
+ 	host = tmio_mmc_host_alloc(pdev);
+-	if (!host)
++	if (IS_ERR(host)) {
++		ret = PTR_ERR(host);
+ 		goto cell_disable;
++	}
+ 
+ 	/* SD control register space size is 0x200, 0x400 for bus_shift=1 */
+ 	host->bus_shift = resource_size(res) >> 10;
 diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index b51486d..02e1438 100644
+index f5b11b8..c392694 100644
 --- a/drivers/mmc/host/tmio_mmc_core.c
 +++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -1167,6 +1167,7 @@ struct tmio_mmc_host *tmio_mmc_host_alloc(struct platform_device *pdev,
+@@ -1165,12 +1165,20 @@ tmio_mmc_host_alloc(struct platform_device *pdev)
+ {
+ 	struct tmio_mmc_host *host;
  	struct mmc_host *mmc;
- 	struct resource *res;
- 	void __iomem *ctl;
-+	int ret;
++	struct resource *res;
++	void __iomem *ctl;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	ctl = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(ctl))
++		return ERR_CAST(ctl);
  
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	ctl = devm_ioremap_resource(&pdev->dev, res);
-@@ -1185,9 +1186,21 @@ struct tmio_mmc_host *tmio_mmc_host_alloc(struct platform_device *pdev,
+ 	mmc = mmc_alloc_host(sizeof(struct tmio_mmc_host), &pdev->dev);
+ 	if (!mmc)
+-		return NULL;
++		return ERR_PTR(-ENOMEM);
+ 
+ 	host = mmc_priv(mmc);
++	host->ctl = ctl;
+ 	host->mmc = mmc;
+ 	host->pdev = pdev;
  	host->ops = tmio_mmc_ops;
- 	mmc->ops = &host->ops;
+@@ -1192,7 +1200,6 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
+ {
+ 	struct platform_device *pdev = _host->pdev;
+ 	struct mmc_host *mmc = _host->mmc;
+-	struct resource *res_ctl;
+ 	int ret;
  
-+	ret = mmc_of_parse(host->mmc);
-+	if (ret) {
-+		host = ERR_PTR(ret);
-+		goto free;
-+	}
-+
-+	tmio_mmc_of_parse(pdev, pdata);
-+
- 	platform_set_drvdata(pdev, host);
- 
- 	return host;
-+free:
-+	mmc_free_host(mmc);
-+
-+	return host;
- }
- EXPORT_SYMBOL_GPL(tmio_mmc_host_alloc);
- 
-@@ -1212,15 +1225,9 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
- 	if (mmc->f_min == 0)
- 		return -EINVAL;
- 
--	tmio_mmc_of_parse(pdev, pdata);
--
+ 	tmio_mmc_of_parse(pdev, pdata);
+@@ -1200,11 +1207,6 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
  	if (!(pdata->flags & TMIO_MMC_HAS_IDLE_WAIT))
  		_host->write16_hook = NULL;
  
--	ret = mmc_of_parse(mmc);
--	if (ret < 0)
--		return ret;
+-	res_ctl = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	_host->ctl = devm_ioremap_resource(&pdev->dev, res_ctl);
+-	if (IS_ERR(_host->ctl))
+-		return PTR_ERR(_host->ctl);
 -
- 	_host->set_pwr = pdata->set_pwr;
- 	_host->set_clk_div = pdata->set_clk_div;
- 
+ 	ret = mmc_of_parse(mmc);
+ 	if (ret < 0)
+ 		return ret;
 -- 
 2.7.4
