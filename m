@@ -1,76 +1,56 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v7 09/25] rcar-vin: do not allow changing scaling and composing while streaming
-Date: Sat, 11 Nov 2017 01:38:19 +0100
-Message-Id: <20171111003835.4909-10-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20171111003835.4909-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20171111003835.4909-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from condef-03.nifty.com ([202.248.20.68]:20884 "EHLO
+        condef-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753632AbdKXQhb (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 24 Nov 2017 11:37:31 -0500
+Received: from conuserg-11.nifty.com ([10.126.8.74])by condef-03.nifty.com with ESMTP id vAOGQ19I013750
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 25 Nov 2017 01:26:01 +0900
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-mmc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Simon Horman <simon.horman@netronome.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH v2 11/22] mmc: renesas_sdhi: remove always false condition
+Date: Sat, 25 Nov 2017 01:24:46 +0900
+Message-Id: <1511540697-27387-12-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-It is possible on Gen2 to change the registers controlling composing and
-scaling while the stream is running. It is however not a good idea to do
-so and could result in trouble. There are also no good reasons to allow
-this, remove immediate reflection in hardware registers from
-vidioc_s_selection and only configure scaling and composing when the
-stream starts.
+renesas_sdhi_probe() always sets host->dma as follows:
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+        host->dma               = dma_priv;
+
+!host->dma is always false.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- drivers/media/platform/rcar-vin/rcar-dma.c  | 2 +-
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 3 ---
- drivers/media/platform/rcar-vin/rcar-vin.h  | 3 ---
- 3 files changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index daf01bb32b5fc3c2..b478eda84a27bf09 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -514,7 +514,7 @@ static void rvin_set_coeff(struct rvin_dev *vin, unsigned short xs)
- 	rvin_write(vin, p_set->coeff_set[23], VNC8C_REG);
- }
- 
--void rvin_crop_scale_comp(struct rvin_dev *vin)
-+static void rvin_crop_scale_comp(struct rvin_dev *vin)
+Changes in v2:
+  - Newly added
+
+ drivers/mmc/host/renesas_sdhi_sys_dmac.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+index 9ab1043..e210644 100644
+--- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+@@ -360,8 +360,8 @@ static void renesas_sdhi_sys_dmac_request_dma(struct tmio_mmc_host *host,
+ 					      struct tmio_mmc_data *pdata)
  {
- 	u32 xs, ys;
+ 	/* We can only either use DMA for both Tx and Rx or not use it at all */
+-	if (!host->dma || (!host->pdev->dev.of_node &&
+-			   (!pdata->chan_priv_tx || !pdata->chan_priv_rx)))
++	if (!host->pdev->dev.of_node &&
++	    (!pdata->chan_priv_tx || !pdata->chan_priv_rx))
+ 		return;
  
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 25f2386cb67447f2..b3c23634e9dbe095 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -436,9 +436,6 @@ static int rvin_s_selection(struct file *file, void *fh,
- 		return -EINVAL;
- 	}
- 
--	/* HW supports modifying configuration while running */
--	rvin_crop_scale_comp(vin);
--
- 	return 0;
- }
- 
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 80f38b89ed8d9992..111dd8a1974253af 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -176,7 +176,4 @@ int rvin_reset_format(struct rvin_dev *vin);
- 
- const struct rvin_video_format *rvin_format_from_pixel(u32 pixelformat);
- 
--/* Cropping, composing and scaling */
--void rvin_crop_scale_comp(struct rvin_dev *vin);
--
- #endif
+ 	if (!host->chan_tx && !host->chan_rx) {
 -- 
-2.15.0
+2.7.4
