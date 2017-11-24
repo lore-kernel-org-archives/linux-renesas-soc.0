@@ -1,171 +1,88 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:44455 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751278AbdKHJ2X (ORCPT
+Received: from condef-09.nifty.com ([202.248.20.74]:47971 "EHLO
+        condef-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751018AbdKXQjS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 8 Nov 2017 04:28:23 -0500
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-pci@vger.kernel.org
-Cc: Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>,
-        Gaku Inami <gaku.inami.xw@bp.renesas.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 3/3] PCI: rcar: Add the suspend/resume for pcie-rcar driver
-Date: Wed,  8 Nov 2017 10:28:06 +0100
-Message-Id: <20171108092806.10335-3-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20171108092806.10335-1-marek.vasut+renesas@gmail.com>
-References: <20171108092806.10335-1-marek.vasut+renesas@gmail.com>
+        Fri, 24 Nov 2017 11:39:18 -0500
+Received: from conuserg-11.nifty.com ([10.126.8.74])by condef-09.nifty.com with ESMTP id vAOGPu26029267
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 25 Nov 2017 01:26:00 +0900
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-mmc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Simon Horman <simon.horman@netronome.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH v2 01/22] mmc: renesas_sdhi: consolidate DMAC CONFIG options
+Date: Sat, 25 Nov 2017 01:24:36 +0900
+Message-Id: <1511540697-27387-2-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>
+The description in the Makefile is odd.  Fix the CONFIG selection
+in a cleaner way.
 
-This adds the suspend/resume supports for pcie-rcar. The resume handler
-reprogram the hardware based on the software state kept in specific
-device structures. Also it doesn't need to save any registers.
-
-Signed-off-by: Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>
-Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-renesas-soc@vger.kernel.org
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/pci/host/pcie-rcar.c | 86 +++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 78 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
-index 2b28292de93a..7a9e30185c79 100644
---- a/drivers/pci/host/pcie-rcar.c
-+++ b/drivers/pci/host/pcie-rcar.c
-@@ -471,6 +471,36 @@ static void rcar_pcie_force_speedup(struct rcar_pcie *pcie)
- 		 (macsr & LINK_SPEED) == LINK_SPEED_5_0GTS ? "5" : "2.5");
- }
- 
-+static int rcar_pcie_hw_enable(struct rcar_pcie *pcie)
-+{
-+	struct resource_entry *win;
-+	LIST_HEAD(res);
-+	int i = 0;
-+
-+	/* Try setting 5 GT/s link speed */
-+	rcar_pcie_force_speedup(pcie);
-+
-+	/* Setup PCI resources */
-+	resource_list_for_each_entry(win, &pcie->resources) {
-+		struct resource *res = win->res;
-+
-+		if (!res->flags)
-+			continue;
-+
-+		switch (resource_type(res)) {
-+		case IORESOURCE_IO:
-+		case IORESOURCE_MEM:
-+			rcar_pcie_setup_window(i, pcie, res);
-+			i++;
-+			break;
-+		default:
-+			continue;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- static int rcar_pcie_enable(struct rcar_pcie *pcie)
- {
- 	struct device *dev = pcie->dev;
-@@ -872,11 +902,25 @@ static const struct irq_domain_ops msi_domain_ops = {
- 	.map = rcar_msi_map,
- };
- 
-+static void rcar_pcie_hw_enable_msi(struct rcar_pcie *pcie)
-+{
-+	struct rcar_msi *msi = &pcie->msi;
-+	unsigned long base;
-+
-+	/* setup MSI data target */
-+	base = virt_to_phys((void *)msi->pages);
-+
-+	rcar_pci_write_reg(pcie, base | MSIFE, PCIEMSIALR);
-+	rcar_pci_write_reg(pcie, 0, PCIEMSIAUR);
-+
-+	/* enable all MSI interrupts */
-+	rcar_pci_write_reg(pcie, 0xffffffff, PCIEMSIIER);
-+}
-+
- static int rcar_pcie_enable_msi(struct rcar_pcie *pcie)
- {
- 	struct device *dev = pcie->dev;
- 	struct rcar_msi *msi = &pcie->msi;
--	unsigned long base;
- 	int err, i;
- 
- 	mutex_init(&msi->lock);
-@@ -915,13 +959,7 @@ static int rcar_pcie_enable_msi(struct rcar_pcie *pcie)
- 
- 	/* setup MSI data target */
- 	msi->pages = __get_free_pages(GFP_KERNEL, 0);
--	base = virt_to_phys((void *)msi->pages);
--
--	rcar_pci_write_reg(pcie, base | MSIFE, PCIEMSIALR);
--	rcar_pci_write_reg(pcie, 0, PCIEMSIAUR);
--
--	/* enable all MSI interrupts */
--	rcar_pci_write_reg(pcie, 0xffffffff, PCIEMSIIER);
-+	rcar_pcie_hw_enable_msi(pcie);
- 
- 	return 0;
- 
-@@ -1202,6 +1240,37 @@ static int rcar_pcie_probe(struct platform_device *pdev)
- 	return err;
- }
- 
-+static int rcar_pcie_resume(struct device *dev)
-+{
-+	struct rcar_pcie *pcie = dev_get_drvdata(dev);
-+	unsigned int data;
-+	int err;
-+	int (*hw_init_fn)(struct rcar_pcie *);
-+
-+	err = rcar_pcie_parse_map_dma_ranges(pcie, dev->of_node);
-+	if (err)
-+		return 0;
-+
-+	/* Failure to get a link might just be that no cards are inserted */
-+	hw_init_fn = of_device_get_match_data(dev);
-+	err = hw_init_fn(pcie);
-+	if (err) {
-+		dev_info(dev, "PCIe link down\n");
-+		return 0;
-+	}
-+
-+	data = rcar_pci_read_reg(pcie, MACSR);
-+	dev_info(dev, "PCIe x%d: link up\n", (data >> 20) & 0x3f);
-+
-+	/* Enable MSI */
-+	if (IS_ENABLED(CONFIG_PCI_MSI))
-+		rcar_pcie_hw_enable_msi(pcie);
-+
-+	rcar_pcie_hw_enable(pcie);
-+
-+	return 0;
-+}
-+
- static int rcar_pcie_resume_noirq(struct device *dev)
- {
- 	struct rcar_pcie *pcie = dev_get_drvdata(dev);
-@@ -1218,6 +1287,7 @@ static int rcar_pcie_resume_noirq(struct device *dev)
- }
- 
- static const struct dev_pm_ops rcar_pcie_pm_ops = {
-+	SET_SYSTEM_SLEEP_PM_OPS(NULL, rcar_pcie_resume)
- 	.resume_noirq = rcar_pcie_resume_noirq,
- };
- 
+Changes in v2:
+  - Fix a typo consilidate -> consolidate
+
+ drivers/mmc/host/Kconfig  | 4 ++--
+ drivers/mmc/host/Makefile | 8 ++------
+ 2 files changed, 4 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+index 567028c..1932188 100644
+--- a/drivers/mmc/host/Kconfig
++++ b/drivers/mmc/host/Kconfig
+@@ -598,8 +598,6 @@ config MMC_SDHI
+ 	depends on SUPERH || ARM || ARM64
+ 	depends on SUPERH || ARCH_RENESAS || COMPILE_TEST
+ 	select MMC_TMIO_CORE
+-	select MMC_SDHI_SYS_DMAC if (SUPERH || ARM)
+-	select MMC_SDHI_INTERNAL_DMAC if ARM64
+ 	help
+ 	  This provides support for the SDHI SD/SDIO controller found in
+ 	  Renesas SuperH, ARM and ARM64 based SoCs
+@@ -607,6 +605,7 @@ config MMC_SDHI
+ config MMC_SDHI_SYS_DMAC
+ 	tristate "DMA for SDHI SD/SDIO controllers using SYS-DMAC"
+ 	depends on MMC_SDHI
++	default MMC_SDHI if (SUPERH || ARM)
+ 	help
+ 	  This provides DMA support for SDHI SD/SDIO controllers
+ 	  using SYS-DMAC via DMA Engine. This supports the controllers
+@@ -616,6 +615,7 @@ config MMC_SDHI_INTERNAL_DMAC
+ 	tristate "DMA for SDHI SD/SDIO controllers using on-chip bus mastering"
+ 	depends on ARM64 || COMPILE_TEST
+ 	depends on MMC_SDHI
++	default MMC_SDHI if ARM64
+ 	help
+ 	  This provides DMA support for SDHI SD/SDIO controllers
+ 	  using on-chip bus mastering. This supports the controllers
+diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
+index a43cf0d..559bd9e 100644
+--- a/drivers/mmc/host/Makefile
++++ b/drivers/mmc/host/Makefile
+@@ -39,12 +39,8 @@ obj-$(CONFIG_MMC_SDRICOH_CS)	+= sdricoh_cs.o
+ obj-$(CONFIG_MMC_TMIO)		+= tmio_mmc.o
+ obj-$(CONFIG_MMC_TMIO_CORE)	+= tmio_mmc_core.o
+ obj-$(CONFIG_MMC_SDHI)		+= renesas_sdhi_core.o
+-ifeq ($(subst m,y,$(CONFIG_MMC_SDHI_SYS_DMAC)),y)
+-obj-$(CONFIG_MMC_SDHI)		+= renesas_sdhi_sys_dmac.o
+-endif
+-ifeq ($(subst m,y,$(CONFIG_MMC_SDHI_INTERNAL_DMAC)),y)
+-obj-$(CONFIG_MMC_SDHI)		+= renesas_sdhi_internal_dmac.o
+-endif
++obj-$(CONFIG_MMC_SDHI_SYS_DMAC)		+= renesas_sdhi_sys_dmac.o
++obj-$(CONFIG_MMC_SDHI_INTERNAL_DMAC)	+= renesas_sdhi_internal_dmac.o
+ obj-$(CONFIG_MMC_CB710)		+= cb710-mmc.o
+ obj-$(CONFIG_MMC_VIA_SDMMC)	+= via-sdmmc.o
+ obj-$(CONFIG_SDH_BFIN)		+= bfin_sdh.o
 -- 
-2.11.0
+2.7.4
