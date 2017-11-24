@@ -1,11 +1,11 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from condef-10.nifty.com ([202.248.20.75]:40086 "EHLO
-        condef-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753672AbdKXQgW (ORCPT
+Received: from condef-06.nifty.com ([202.248.20.71]:63530 "EHLO
+        condef-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753679AbdKXQgt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 24 Nov 2017 11:36:22 -0500
-Received: from conuserg-11.nifty.com ([10.126.8.74])by condef-10.nifty.com with ESMTP id vAOGQ6ss010471
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 25 Nov 2017 01:26:09 +0900
+        Fri, 24 Nov 2017 11:36:49 -0500
+Received: from conuserg-11.nifty.com ([10.126.8.74])by condef-06.nifty.com with ESMTP id vAOGPuvN019286
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 25 Nov 2017 01:26:00 +0900
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
 To: linux-mmc@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
@@ -14,94 +14,45 @@ Cc: Simon Horman <simon.horman@netronome.com>,
         linux-renesas-soc@vger.kernel.org,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v2 17/22] mmc: tmio: move TMIO_MASK_{READOP,WRITEOP} handling to correct place
-Date: Sat, 25 Nov 2017 01:24:52 +0900
-Message-Id: <1511540697-27387-18-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH v2 09/22] mmc: tmio: use mmc_can_gpio_cd() instead of checking TMIO_MMC_USE_GPIO_CD
+Date: Sat, 25 Nov 2017 01:24:44 +0900
+Message-Id: <1511540697-27387-10-git-send-email-yamada.masahiro@socionext.com>
 In-Reply-To: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This driver was largely extended by Renesas, but actually used by
-several SoC vendors.  The current code does not work for UniPhier
-SoCs at least.
+To use a GPIO line for card detection, TMIO_MMC_USE_GPIO_CD is set
+by a legacy board (arch/sh/boards/mach-ecovec24).
 
-The DMA mode for UniPhier SoCs failed with the following error message:
-  PIO IRQ in DMA mode!
+For DT platforms, the "cd-gpios" property is a legitimate way for that
+in case the IP-builtin card detection can not be used for some reason.
+mmc_of_parse() calls mmc_gpiod_request_cd() to set up ctx->cd_gpio if
+the "cd-gpios" property is specified.
 
-For UniPhier SoCs, the TMIO_MASK_{READOP,WRITEOP} are asserted in the
-DMA mode as well.
-
-In fact, the code is very strange.
-
-The TMIO_MASK_{READOP,WRITEOP} IRQs are set as follows:
-
-    /* Unmask the IRQs we want to know about */
-    if (!_host->chan_rx)
-            irq_mask |= TMIO_MASK_READOP;
-    if (!_host->chan_tx)
-            irq_mask |= TMIO_MASK_WRITEOP;
-
-At this point, _host->{chan_rx,chan_tx} are _always_ NULL because
-tmio_mmc_request_dma() is called after this code.  Consequently,
-TMIO_MASK_{READOP,WRITEOP} are set whether DMA is used or not.
-
-tmio_mmc_cmd_irq() enables TMIO_MASK_{READOP,WRITEOP}, but never
-disables them.  This does not take care of a case where ->force_pio
-is set, but unset later.
-
-After all, the correct place to handle those flags is just before
-starting the data transfer.
+To cater to both cases, mmc_can_gpio_cd() is a correct way to check
+which card detection logic is used.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
-Changes in v2:
-  - Newly added
+Changes in v2: None
 
- drivers/mmc/host/tmio_mmc_core.c | 18 ++++++++----------
- 1 file changed, 8 insertions(+), 10 deletions(-)
+ drivers/mmc/host/tmio_mmc_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 7d169ed..345e379 100644
+index efffb04..610f26f 100644
 --- a/drivers/mmc/host/tmio_mmc_core.c
 +++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -621,15 +621,19 @@ static void tmio_mmc_cmd_irq(struct tmio_mmc_host *host, unsigned int stat)
- 	 */
- 	if (host->data && (!cmd->error || cmd->error == -EILSEQ)) {
- 		if (host->data->flags & MMC_DATA_READ) {
--			if (host->force_pio || !host->chan_rx)
-+			if (host->force_pio || !host->chan_rx) {
- 				tmio_mmc_enable_mmc_irqs(host, TMIO_MASK_READOP);
--			else
-+			} else {
-+				tmio_mmc_disable_mmc_irqs(host, TMIO_MASK_READOP);
- 				tasklet_schedule(&host->dma_issue);
-+			}
- 		} else {
--			if (host->force_pio || !host->chan_tx)
-+			if (host->force_pio || !host->chan_tx) {
- 				tmio_mmc_enable_mmc_irqs(host, TMIO_MASK_WRITEOP);
--			else
-+			} else {
-+				tmio_mmc_disable_mmc_irqs(host, TMIO_MASK_WRITEOP);
- 				tasklet_schedule(&host->dma_issue);
-+			}
- 		}
- 	} else {
- 		schedule_work(&host->done);
-@@ -1285,12 +1289,6 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
- 	_host->sdcard_irq_mask = sd_ctrl_read16_and_16_as_32(_host, CTL_IRQ_MASK);
- 	tmio_mmc_disable_mmc_irqs(_host, TMIO_MASK_ALL);
+@@ -1232,7 +1232,7 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
+ 	}
+ 	mmc->max_seg_size = mmc->max_req_size;
  
--	/* Unmask the IRQs we want to know about */
--	if (!_host->chan_rx)
--		irq_mask |= TMIO_MASK_READOP;
--	if (!_host->chan_tx)
--		irq_mask |= TMIO_MASK_WRITEOP;
--
- 	_host->sdcard_irq_mask &= ~irq_mask;
+-	_host->native_hotplug = !(pdata->flags & TMIO_MMC_USE_GPIO_CD ||
++	_host->native_hotplug = !(mmc_can_gpio_cd(mmc) ||
+ 				  mmc->caps & MMC_CAP_NEEDS_POLL ||
+ 				  !mmc_card_is_removable(mmc));
  
- 	if (_host->native_hotplug)
 -- 
 2.7.4
