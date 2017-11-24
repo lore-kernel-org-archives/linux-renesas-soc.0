@@ -1,144 +1,169 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:52042 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754683AbdKINsi (ORCPT
+Received: from condef-02.nifty.com ([202.248.20.67]:49768 "EHLO
+        condef-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753855AbdKXQbH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 9 Nov 2017 08:48:38 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Kevin Hilman <khilman@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-pm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 2/3] irqchip/renesas-irqc: Use wakeup_path i.s.o. explicit clock handling
-Date: Thu,  9 Nov 2017 14:48:32 +0100
-Message-Id: <1510235313-32445-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1510235313-32445-1-git-send-email-geert+renesas@glider.be>
-References: <1510235313-32445-1-git-send-email-geert+renesas@glider.be>
+        Fri, 24 Nov 2017 11:31:07 -0500
+Received: from conuserg-11.nifty.com ([10.126.8.74])by condef-02.nifty.com with ESMTP id vAOGQ7Yt002343
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 25 Nov 2017 01:26:12 +0900
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-mmc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Simon Horman <simon.horman@netronome.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH v2 13/22] mmc: tmio,renesas_sdhi: move Renesas-specific DMA data to renesas_sdhi.h
+Date: Sat, 25 Nov 2017 01:24:48 +0900
+Message-Id: <1511540697-27387-14-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Since commit 6f46aedb9c85873b ("irqchip: renesas-irqc: Add wake-up
-support"), when an IRQ is used for wakeup, the INTC
-block's module clock is manually kept running during system suspend, to
-make sure the device stays active.
+struct tmio_mmc_host has "dma_dataend" and "dma_complete", but in fact,
+they are Renesas private data.  Move them to renesas_sdhi.h
 
-However, this explicit clock handling is merely a workaround for a
-failure to properly communicate wakeup information to the device core.
-
-Instead, set the device's power.wakeup_path field, to indicate this
-device is part of the wakeup path.  Depending on the PM Domain's
-active_wakeup configuration, the genpd core code will keep the device
-enabled (and the clock running) during system suspend when needed.
-This allows for the removal of all explicit clock handling code from the
-driver.
-
-Note that the dev_pm_info.wakeup_path field exists only if
-CONFIG_PM_SLEEP is enabled, hence the whole suspend infrastructure is
-protected by #ifdef CONFIG_PM_SLEEP.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
-To avoid regressions, this must not be applied before "soc: renesas:
-rcar-sysc: Keep wakeup sources active during system suspend" has landed
-upstream, hence the "RFC"!
 
-This driver is used on Renesas R-Mobile, R-Car Gen2/3, and RZ/G1
-platforms.  While the pm-rmobile driver already keeps wakeup sources
-active during system suspend, this is not the case on R-Car Gen2/3 and
-RZ/G1 yet.
+Changes in v2:
+  - Newly added
 
-v3:
-  - New.
----
- drivers/irqchip/irq-renesas-irqc.c | 35 ++++++++++++++++++-----------------
- 1 file changed, 18 insertions(+), 17 deletions(-)
+ drivers/mmc/host/renesas_sdhi.h               |  2 ++
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c |  8 ++++++--
+ drivers/mmc/host/renesas_sdhi_sys_dmac.c      | 15 ++++++++++-----
+ drivers/mmc/host/tmio_mmc.h                   |  2 --
+ 4 files changed, 18 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/irqchip/irq-renesas-irqc.c b/drivers/irqchip/irq-renesas-irqc.c
-index 52304b139aa46a60..d91dab43268f9d0a 100644
---- a/drivers/irqchip/irq-renesas-irqc.c
-+++ b/drivers/irqchip/irq-renesas-irqc.c
-@@ -17,7 +17,6 @@
-  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-  */
- 
--#include <linux/clk.h>
- #include <linux/init.h>
- #include <linux/platform_device.h>
- #include <linux/spinlock.h>
-@@ -64,7 +63,7 @@ struct irqc_priv {
- 	struct platform_device *pdev;
- 	struct irq_chip_generic *gc;
- 	struct irq_domain *irq_domain;
--	struct clk *clk;
-+	unsigned wakeup_path:1;
+diff --git a/drivers/mmc/host/renesas_sdhi.h b/drivers/mmc/host/renesas_sdhi.h
+index 9a507b3..3250dbe 100644
+--- a/drivers/mmc/host/renesas_sdhi.h
++++ b/drivers/mmc/host/renesas_sdhi.h
+@@ -39,6 +39,8 @@ struct tmio_mmc_dma {
+ 	enum dma_slave_buswidth dma_buswidth;
+ 	bool (*filter)(struct dma_chan *chan, void *arg);
+ 	void (*enable)(struct tmio_mmc_host *host, bool enable);
++	struct completion	dma_dataend;
++	struct tasklet_struct	dma_complete;
  };
  
- static struct irqc_priv *irq_data_to_priv(struct irq_data *data)
-@@ -111,15 +110,7 @@ static int irqc_irq_set_wake(struct irq_data *d, unsigned int on)
- 	int hw_irq = irqd_to_hwirq(d);
+ struct renesas_sdhi {
+diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+index 691a99f..02c2724 100644
+--- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+@@ -132,7 +132,9 @@ renesas_sdhi_internal_dmac_abort_dma(struct tmio_mmc_host *host) {
  
- 	irq_set_irq_wake(p->irq[hw_irq].requested_irq, on);
--
--	if (!p->clk)
--		return 0;
--
--	if (on)
--		clk_enable(p->clk);
--	else
--		clk_disable(p->clk);
--
-+	p->wakeup_path = on;
- 	return 0;
+ static void
+ renesas_sdhi_internal_dmac_dataend_dma(struct tmio_mmc_host *host) {
+-	tasklet_schedule(&host->dma_complete);
++	struct renesas_sdhi *priv = host_to_priv(host);
++
++	tasklet_schedule(&priv->dma_priv.dma_complete);
  }
  
-@@ -159,12 +150,6 @@ static int irqc_probe(struct platform_device *pdev)
- 	p->pdev = pdev;
- 	platform_set_drvdata(pdev, p);
+ static void
+@@ -222,10 +224,12 @@ static void
+ renesas_sdhi_internal_dmac_request_dma(struct tmio_mmc_host *host,
+ 				       struct tmio_mmc_data *pdata)
+ {
++	struct renesas_sdhi *priv = host_to_priv(host);
++
+ 	/* Each value is set to non-zero to assume "enabling" each DMA */
+ 	host->chan_rx = host->chan_tx = (void *)0xdeadbeaf;
  
--	p->clk = devm_clk_get(&pdev->dev, NULL);
--	if (IS_ERR(p->clk)) {
--		dev_warn(&pdev->dev, "unable to get clock\n");
--		p->clk = NULL;
--	}
--
- 	pm_runtime_enable(&pdev->dev);
- 	pm_runtime_get_sync(&pdev->dev);
+-	tasklet_init(&host->dma_complete,
++	tasklet_init(&priv->dma_priv.dma_complete,
+ 		     renesas_sdhi_internal_dmac_complete_tasklet_fn,
+ 		     (unsigned long)host);
+ 	tasklet_init(&host->dma_issue,
+diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+index aeb3838..c8a74b2 100644
+--- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+@@ -140,12 +140,15 @@ static void renesas_sdhi_sys_dmac_abort_dma(struct tmio_mmc_host *host)
  
-@@ -276,6 +261,21 @@ static int irqc_remove(struct platform_device *pdev)
- 	return 0;
+ static void renesas_sdhi_sys_dmac_dataend_dma(struct tmio_mmc_host *host)
+ {
+-	complete(&host->dma_dataend);
++	struct renesas_sdhi *priv = host_to_priv(host);
++
++	complete(&priv->dma_priv.dma_dataend);
  }
  
-+#ifdef CONFIG_PM_SLEEP
-+static int irqc_suspend(struct device *dev)
-+{
-+	struct irqc_priv *p = dev_get_drvdata(dev);
-+
-+	dev->power.wakeup_path = p->wakeup_path;
-+	return 0;
-+}
-+
-+static SIMPLE_DEV_PM_OPS(irqc_pm_ops, irqc_suspend, NULL);
-+#define DEV_PM_OPS	&irqc_pm_ops
-+#else
-+#define DEV_PM_OPS	NULL
-+#endif
-+
- static const struct of_device_id irqc_dt_ids[] = {
- 	{ .compatible = "renesas,irqc", },
- 	{},
-@@ -288,6 +288,7 @@ static struct platform_driver irqc_device_driver = {
- 	.driver		= {
- 		.name	= "renesas_irqc",
- 		.of_match_table	= irqc_dt_ids,
-+		.pm	= DEV_PM_OPS,
- 	}
- };
+ static void renesas_sdhi_sys_dmac_dma_callback(void *arg)
+ {
+ 	struct tmio_mmc_host *host = arg;
++	struct renesas_sdhi *priv = host_to_priv(host);
  
+ 	spin_lock_irq(&host->lock);
+ 
+@@ -163,7 +166,7 @@ static void renesas_sdhi_sys_dmac_dma_callback(void *arg)
+ 
+ 	spin_unlock_irq(&host->lock);
+ 
+-	wait_for_completion(&host->dma_dataend);
++	wait_for_completion(&priv->dma_priv.dma_dataend);
+ 
+ 	spin_lock_irq(&host->lock);
+ 	tmio_mmc_do_data_irq(host);
+@@ -173,6 +176,7 @@ static void renesas_sdhi_sys_dmac_dma_callback(void *arg)
+ 
+ static void renesas_sdhi_sys_dmac_start_dma_rx(struct tmio_mmc_host *host)
+ {
++	struct renesas_sdhi *priv = host_to_priv(host);
+ 	struct scatterlist *sg = host->sg_ptr, *sg_tmp;
+ 	struct dma_async_tx_descriptor *desc = NULL;
+ 	struct dma_chan *chan = host->chan_rx;
+@@ -216,7 +220,7 @@ static void renesas_sdhi_sys_dmac_start_dma_rx(struct tmio_mmc_host *host)
+ 					       DMA_CTRL_ACK);
+ 
+ 	if (desc) {
+-		reinit_completion(&host->dma_dataend);
++		reinit_completion(&priv->dma_priv.dma_dataend);
+ 		desc->callback = renesas_sdhi_sys_dmac_dma_callback;
+ 		desc->callback_param = host;
+ 
+@@ -247,6 +251,7 @@ static void renesas_sdhi_sys_dmac_start_dma_rx(struct tmio_mmc_host *host)
+ 
+ static void renesas_sdhi_sys_dmac_start_dma_tx(struct tmio_mmc_host *host)
+ {
++	struct renesas_sdhi *priv = host_to_priv(host);
+ 	struct scatterlist *sg = host->sg_ptr, *sg_tmp;
+ 	struct dma_async_tx_descriptor *desc = NULL;
+ 	struct dma_chan *chan = host->chan_tx;
+@@ -295,7 +300,7 @@ static void renesas_sdhi_sys_dmac_start_dma_tx(struct tmio_mmc_host *host)
+ 					       DMA_CTRL_ACK);
+ 
+ 	if (desc) {
+-		reinit_completion(&host->dma_dataend);
++		reinit_completion(&priv->dma_priv.dma_dataend);
+ 		desc->callback = renesas_sdhi_sys_dmac_dma_callback;
+ 		desc->callback_param = host;
+ 
+@@ -424,7 +429,7 @@ static void renesas_sdhi_sys_dmac_request_dma(struct tmio_mmc_host *host,
+ 		if (!host->bounce_buf)
+ 			goto ebouncebuf;
+ 
+-		init_completion(&host->dma_dataend);
++		init_completion(&priv->dma_priv.dma_dataend);
+ 		tasklet_init(&host->dma_issue,
+ 			     renesas_sdhi_sys_dmac_issue_tasklet_fn,
+ 			     (unsigned long)host);
+diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+index dc470d3..8b169a0 100644
+--- a/drivers/mmc/host/tmio_mmc.h
++++ b/drivers/mmc/host/tmio_mmc.h
+@@ -148,8 +148,6 @@ struct tmio_mmc_host {
+ 	bool			force_pio;
+ 	struct dma_chan		*chan_rx;
+ 	struct dma_chan		*chan_tx;
+-	struct completion	dma_dataend;
+-	struct tasklet_struct	dma_complete;
+ 	struct tasklet_struct	dma_issue;
+ 	struct scatterlist	bounce_sg;
+ 	u8			*bounce_buf;
 -- 
 2.7.4
