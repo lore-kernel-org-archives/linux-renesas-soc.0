@@ -1,93 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:44782 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751474AbdKDUUY (ORCPT
+Received: from condef-03.nifty.com ([202.248.20.68]:20896 "EHLO
+        condef-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753730AbdKXQhc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 4 Nov 2017 16:20:24 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-media@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Fri, 24 Nov 2017 11:37:32 -0500
+Received: from conuserg-11.nifty.com ([10.126.8.74])by condef-03.nifty.com with ESMTP id vAOGQ6hC013753
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 25 Nov 2017 01:26:10 +0900
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-mmc@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v6 0/9] i2c: document DMA handling and add helpers for it
-Date: Sat,  4 Nov 2017 21:20:00 +0100
-Message-Id: <20171104202009.3818-1-wsa+renesas@sang-engineering.com>
+Cc: Simon Horman <simon.horman@netronome.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH v2 15/22] mmc: tmio: change bus_shift to unsigned int
+Date: Sat, 25 Nov 2017 01:24:50 +0900
+Message-Id: <1511540697-27387-16-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-So, after revisiting old mail threads, taking part in a similar discussion on
-the USB list, and implementing a not-convincing solution before, here is what I
-cooked up to document and ease DMA handling for I2C within Linux. Please have a
-look at the documentation introduced in patch 7 for details. And to make it
-clear again: The stuff below is opt-in. If host drivers are not updated, they
-will continue to work like before.
+Sane values for bus_shift are:
+   0 - for 16 bit bus
+   1 - for 32 bit bus
+   2 - for 64 bit bus
 
-While previous versions until v3 tried to magically apply bounce buffers when
-needed, it became clear that detecting DMA safe buffers is too fragile. This
-approach is now opt-in, a DMA_SAFE flag needs to be set on an i2c_msg. The
-outcome so far is very convincing IMO. The core additions are simple and easy
-to understand. The driver changes for the Renesas IP cores became easy to
-understand, too.
+"unsigned long" is too much.
 
-Of course, we must now whitelist DMA safe buffers. This series implements it
-for core functionality:
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-a) for the I2C_RDWR when messages come from userspace
-b) for i2c_smbus_xfer_emulated(), DMA safe buffers are now allocated for
-   block transfers
-c) i2c_master_{send|recv} have now a *_dmasafe variant
+Changes in v2:
+  - Newly added
 
-I am still not sure how we can teach regmap this new flag. regmap is a heavy
-user of I2C, so broonie's opinion here would be great to have. The rest should
-mostly be updating individual drivers which can be done when needed.
+ drivers/mmc/host/tmio_mmc.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-All patches have been tested with a Renesas Salvator-X board (r8a7796/M3-W) and
-Renesas Lager board (r8a7790/H2). But more testing is really really welcome.
-
-The branch can be found here:
-
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/i2c-core-dma-v6
-
-It is planned to land upstream in v4.16 and I want to push it to linux-next
-early after v4.15 to get lots of testing for the core changes.
-
-Big kudos to Renesas Electronics for funding this work, thank you very much!
-
-Regards,
-
-   Wolfram
-
-Change since V5:
-* i2c_master_{send|recv} have now a *_dmasafe variant
-* for i2c_smbus_xfer_emulated(), DMA safe buffers are now allocated for
-  block transfers
-* updated the documentation
-* merged some rewording suggestions from Jonathan Cameron (thanks!)
-* rebased the patches v4.14-rc6+i2c/for-next, reordered patches
-
-
-Wolfram Sang (9):
-  i2c: add a message flag for DMA safe buffers
-  i2c: add helpers to ease DMA handling
-  i2c: dev: mark RDWR buffers as DMA_SAFE
-  i2c: refactor i2c_master_{send_recv}
-  i2c: add i2c_master_{send|recv}_dmasafe
-  i2c: smbus: use DMA safe buffers for emulated SMBus transactions
-  i2c: add docs to clarify DMA handling
-  i2c: sh_mobile: use core helper to decide when to use DMA
-  i2c: rcar: skip DMA if buffer is not safe
-
- Documentation/i2c/DMA-considerations |  67 +++++++++++++++++++++
- drivers/i2c/busses/i2c-rcar.c        |   2 +-
- drivers/i2c/busses/i2c-sh_mobile.c   |   8 ++-
- drivers/i2c/i2c-core-base.c          | 110 ++++++++++++++++++++---------------
- drivers/i2c/i2c-core-smbus.c         |  45 ++++++++++++--
- drivers/i2c/i2c-dev.c                |   2 +
- include/linux/i2c.h                  |  68 ++++++++++++++++++++--
- include/uapi/linux/i2c.h             |   3 +
- 8 files changed, 246 insertions(+), 59 deletions(-)
- create mode 100644 Documentation/i2c/DMA-considerations
-
+diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+index 9f083dc..27894474 100644
+--- a/drivers/mmc/host/tmio_mmc.h
++++ b/drivers/mmc/host/tmio_mmc.h
+@@ -139,7 +139,7 @@ struct tmio_mmc_host {
+ 	struct scatterlist      *sg_orig;
+ 	unsigned int            sg_len;
+ 	unsigned int            sg_off;
+-	unsigned long		bus_shift;
++	unsigned int		bus_shift;
+ 
+ 	struct platform_device *pdev;
+ 	struct tmio_mmc_data *pdata;
 -- 
-2.11.0
+2.7.4
