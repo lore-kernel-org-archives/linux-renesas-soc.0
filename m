@@ -1,11 +1,11 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from condef-07.nifty.com ([202.248.20.72]:62296 "EHLO
-        condef-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753990AbdKXQao (ORCPT
+Received: from condef-05.nifty.com ([202.248.20.70]:17856 "EHLO
+        condef-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751018AbdKXQhM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 24 Nov 2017 11:30:44 -0500
-Received: from conuserg-11.nifty.com ([10.126.8.74])by condef-07.nifty.com with ESMTP id vAOGQCiV023223
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 25 Nov 2017 01:26:12 +0900
+        Fri, 24 Nov 2017 11:37:12 -0500
+Received: from conuserg-11.nifty.com ([10.126.8.74])by condef-05.nifty.com with ESMTP id vAOGPtgv008527
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 25 Nov 2017 01:25:58 +0900
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
 To: linux-mmc@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
@@ -14,56 +14,62 @@ Cc: Simon Horman <simon.horman@netronome.com>,
         linux-renesas-soc@vger.kernel.org,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v2 18/22] mmc: tmio: remove useless TMIO_MASK_CMD handling in tmio_mmc_host_probe()
-Date: Sat, 25 Nov 2017 01:24:53 +0900
-Message-Id: <1511540697-27387-19-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH v2 10/22] mmc: tmio: support IP-builtin card detection logic
+Date: Sat, 25 Nov 2017 01:24:45 +0900
+Message-Id: <1511540697-27387-11-git-send-email-yamada.masahiro@socionext.com>
 In-Reply-To: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-TMIO_MASK_CMD is properly enabled in tmio_mmc_start_command().
+A card detect GPIO is set up only for platforms with "cd-gpios"
+DT property or TMIO_MMC_USE_GPIO_CD flag.  However, the driver
+core always uses mmc_gpio_get_cd, which just fails with -ENOSYS
+if ctx->cd_gpio is unset.
 
-We have no reason to set it up in tmio_mmc_host_probe().  (If we
-really wanted to set it in the probe, we would have to do likewise
-when resuming.)
-
-Even worse, the following code is extremely confusing:
-
-  _host->sdcard_irq_mask &= ~irq_mask;
-
-The logic is opposite between "->sdcard_irq_mask" and "irq_mask".
-The intention is not clear at a glance.
+The bit 5 of the status register provides the current signal level
+of the CD line.  Allow to use it if the GPIO is unused.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
-Changes in v2:
-  - Newly added
+Changes in v2: None
 
- drivers/mmc/host/tmio_mmc_core.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/mmc/host/tmio_mmc_core.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 345e379..f5b11b8 100644
+index 610f26f..b51bb06 100644
 --- a/drivers/mmc/host/tmio_mmc_core.c
 +++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -1194,7 +1194,6 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
- 	struct mmc_host *mmc = _host->mmc;
- 	struct resource *res_ctl;
- 	int ret;
--	u32 irq_mask = TMIO_MASK_CMD;
+@@ -1087,6 +1087,19 @@ static int tmio_mmc_get_ro(struct mmc_host *mmc)
+ 	return ret;
+ }
  
- 	tmio_mmc_of_parse(pdev, pdata);
- 
-@@ -1289,8 +1288,6 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
- 	_host->sdcard_irq_mask = sd_ctrl_read16_and_16_as_32(_host, CTL_IRQ_MASK);
- 	tmio_mmc_disable_mmc_irqs(_host, TMIO_MASK_ALL);
- 
--	_host->sdcard_irq_mask &= ~irq_mask;
--
- 	if (_host->native_hotplug)
- 		tmio_mmc_enable_mmc_irqs(_host,
- 				TMIO_STAT_CARD_REMOVE | TMIO_STAT_CARD_INSERT);
++static int tmio_mmc_get_cd(struct mmc_host *mmc)
++{
++	struct tmio_mmc_host *host = mmc_priv(mmc);
++	int ret;
++
++	ret = mmc_gpio_get_cd(mmc);
++	if (ret >= 0)
++		return ret;
++
++	return !!(sd_ctrl_read16_and_16_as_32(host, CTL_STATUS) &
++							TMIO_STAT_SIGSTATE);
++}
++
+ static int tmio_multi_io_quirk(struct mmc_card *card,
+ 			       unsigned int direction, int blk_size)
+ {
+@@ -1102,7 +1115,7 @@ static const struct mmc_host_ops tmio_mmc_ops = {
+ 	.request	= tmio_mmc_request,
+ 	.set_ios	= tmio_mmc_set_ios,
+ 	.get_ro         = tmio_mmc_get_ro,
+-	.get_cd		= mmc_gpio_get_cd,
++	.get_cd		= tmio_mmc_get_cd,
+ 	.enable_sdio_irq = tmio_mmc_enable_sdio_irq,
+ 	.multi_io_quirk	= tmio_multi_io_quirk,
+ 	.hw_reset	= tmio_mmc_hw_reset,
 -- 
 2.7.4
