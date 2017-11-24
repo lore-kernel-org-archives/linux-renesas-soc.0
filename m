@@ -1,106 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:54530 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752743AbdK2ToQ (ORCPT
+Received: from condef-04.nifty.com ([202.248.20.69]:34918 "EHLO
+        condef-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753690AbdKXQgX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 29 Nov 2017 14:44:16 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-Subject: [PATCH v8 28/28] rcar-vin: enable support for r8a77970
-Date: Wed, 29 Nov 2017 20:43:42 +0100
-Message-Id: <20171129194342.26239-29-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20171129194342.26239-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20171129194342.26239-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Fri, 24 Nov 2017 11:36:23 -0500
+Received: from conuserg-11.nifty.com ([10.126.8.74])by condef-04.nifty.com with ESMTP id vAOGPugP015765
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 25 Nov 2017 01:25:59 +0900
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-mmc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Simon Horman <simon.horman@netronome.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH v2 08/22] mmc: tmio: move mmc_gpio_request_cd() before mmc_add_host()
+Date: Sat, 25 Nov 2017 01:24:43 +0900
+Message-Id: <1511540697-27387-9-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the SoC specific information for Renesas r8a77970.
+Drivers do not need to call mmc_gpiod_request_cd_irq() explicitly
+because mmc_start_host() calls it.  To make it work, cd_gpio must
+be set before mmc_add_host().
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- .../devicetree/bindings/media/rcar_vin.txt         |  1 +
- drivers/media/platform/rcar-vin/rcar-core.c        | 40 ++++++++++++++++++++++
- 2 files changed, 41 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/rcar_vin.txt
-index 314743532bbb4523..6b98f8a3398fa493 100644
---- a/Documentation/devicetree/bindings/media/rcar_vin.txt
-+++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
-@@ -21,6 +21,7 @@ on Gen3 to a CSI-2 receiver.
-    - "renesas,vin-r8a7794" for the R8A7794 device
-    - "renesas,vin-r8a7795" for the R8A7795 device
-    - "renesas,vin-r8a7796" for the R8A7796 device
-+   - "renesas,vin-r8a77970" for the R8A77970 device
-    - "renesas,rcar-gen2-vin" for a generic R-Car Gen2 or RZ/G1 compatible
-      device.
-    - "renesas,rcar-gen3-vin" for a generic R-Car Gen3 compatible device.
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 62eb89b36fbb2ee1..bbdf36b5c3c8178d 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -1145,6 +1145,42 @@ static const struct rvin_info rcar_info_r8a7796 = {
- 	},
- };
+Changes in v2: None
+
+ drivers/mmc/host/tmio_mmc_core.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+index 46f77c3..efffb04 100644
+--- a/drivers/mmc/host/tmio_mmc_core.c
++++ b/drivers/mmc/host/tmio_mmc_core.c
+@@ -1205,6 +1205,12 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
+ 	if (ret < 0)
+ 		return ret;
  
-+static const struct rvin_info rcar_info_r8a77970 = {
-+	.chip = RCAR_GEN3,
-+	.use_mc = true,
-+	.max_width = 4096,
-+	.max_height = 4096,
++	if (pdata->flags & TMIO_MMC_USE_GPIO_CD) {
++		ret = mmc_gpio_request_cd(mmc, pdata->cd_gpio, 0);
++		if (ret)
++			return ret;
++	}
 +
-+	.num_chsels = 5,
-+	.chsels = {
-+		{
-+			{ .csi = RVIN_CSI40, .chan = 0 },
-+			{ .csi = RVIN_NC, .chan = 0 },
-+			{ .csi = RVIN_NC, .chan = 0 },
-+			{ .csi = RVIN_CSI40, .chan = 0 },
-+			{ .csi = RVIN_NC, .chan = 0 },
-+		}, {
-+			{ .csi = RVIN_NC, .chan = 0 },
-+			{ .csi = RVIN_NC, .chan = 0 },
-+			{ .csi = RVIN_CSI40, .chan = 0 },
-+			{ .csi = RVIN_CSI40, .chan = 1 },
-+			{ .csi = RVIN_NC, .chan = 0 },
-+		}, {
-+			{ .csi = RVIN_NC, .chan = 0 },
-+			{ .csi = RVIN_CSI40, .chan = 0 },
-+			{ .csi = RVIN_NC, .chan = 0 },
-+			{ .csi = RVIN_CSI40, .chan = 2 },
-+			{ .csi = RVIN_NC, .chan = 0 },
-+		}, {
-+			{ .csi = RVIN_CSI40, .chan = 1 },
-+			{ .csi = RVIN_NC, .chan = 0 },
-+			{ .csi = RVIN_NC, .chan = 0 },
-+			{ .csi = RVIN_CSI40, .chan = 3 },
-+			{ .csi = RVIN_NC, .chan = 0 },
-+		},
-+	},
-+};
-+
- static const struct of_device_id rvin_of_id_table[] = {
- 	{
- 		.compatible = "renesas,vin-r8a7778",
-@@ -1182,6 +1218,10 @@ static const struct of_device_id rvin_of_id_table[] = {
- 		.compatible = "renesas,vin-r8a7796",
- 		.data = &rcar_info_r8a7796,
- 	},
-+	{
-+		.compatible = "renesas,vin-r8a77970",
-+		.data = &rcar_info_r8a77970,
-+	},
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, rvin_of_id_table);
+ 	mmc->caps |= MMC_CAP_4_BIT_DATA | pdata->capabilities;
+ 	mmc->caps2 |= pdata->capabilities2;
+ 	mmc->max_segs = pdata->max_segs ? : 32;
+@@ -1300,14 +1306,6 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
+ 
+ 	dev_pm_qos_expose_latency_limit(&pdev->dev, 100);
+ 
+-	if (pdata->flags & TMIO_MMC_USE_GPIO_CD) {
+-		ret = mmc_gpio_request_cd(mmc, pdata->cd_gpio, 0);
+-		if (ret)
+-			goto remove_host;
+-
+-		mmc_gpiod_request_cd_irq(mmc);
+-	}
+-
+ 	return 0;
+ 
+ remove_host:
 -- 
-2.15.0
+2.7.4
