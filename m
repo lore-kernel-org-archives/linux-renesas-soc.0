@@ -1,11 +1,11 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from condef-04.nifty.com ([202.248.20.69]:36726 "EHLO
-        condef-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751018AbdKXQji (ORCPT
+Received: from condef-10.nifty.com ([202.248.20.75]:40086 "EHLO
+        condef-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753672AbdKXQgW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 24 Nov 2017 11:39:38 -0500
-Received: from conuserg-11.nifty.com ([10.126.8.74])by condef-04.nifty.com with ESMTP id vAOGQBwR015790
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 25 Nov 2017 01:26:11 +0900
+        Fri, 24 Nov 2017 11:36:22 -0500
+Received: from conuserg-11.nifty.com ([10.126.8.74])by condef-10.nifty.com with ESMTP id vAOGQ6ss010471
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 25 Nov 2017 01:26:09 +0900
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
 To: linux-mmc@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
@@ -14,27 +14,44 @@ Cc: Simon Horman <simon.horman@netronome.com>,
         linux-renesas-soc@vger.kernel.org,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v2 19/22] mmc: tmio: ioremap memory resource in tmio_mmc_host_alloc()
-Date: Sat, 25 Nov 2017 01:24:54 +0900
-Message-Id: <1511540697-27387-20-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH v2 17/22] mmc: tmio: move TMIO_MASK_{READOP,WRITEOP} handling to correct place
+Date: Sat, 25 Nov 2017 01:24:52 +0900
+Message-Id: <1511540697-27387-18-git-send-email-yamada.masahiro@socionext.com>
 In-Reply-To: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The register region is ioremap'ed in the tmio_mmc_host_probe(), i.e.
-drivers cannot get access to the hardware before mmc_add_host().
+This driver was largely extended by Renesas, but actually used by
+several SoC vendors.  The current code does not work for UniPhier
+SoCs at least.
 
-Actually, renesas_sdhi_core.c reads out the CTL_VERSION register to
-complete the platform-specific settings.  However, at this point,
-the MMC host is already running.
+The DMA mode for UniPhier SoCs failed with the following error message:
+  PIO IRQ in DMA mode!
 
-Move the register ioremap to tmio_mmc_host_alloc() so that drivers
-can perform platform-specific settings between tmio_mmc_host_alloc()
-and tmio_mmc_host_probe().
+For UniPhier SoCs, the TMIO_MASK_{READOP,WRITEOP} are asserted in the
+DMA mode as well.
 
-I changed tmio_mmc_host_alloc() to return an error pointer to
-propagate the return code from devm_ioremap_resource().
+In fact, the code is very strange.
+
+The TMIO_MASK_{READOP,WRITEOP} IRQs are set as follows:
+
+    /* Unmask the IRQs we want to know about */
+    if (!_host->chan_rx)
+            irq_mask |= TMIO_MASK_READOP;
+    if (!_host->chan_tx)
+            irq_mask |= TMIO_MASK_WRITEOP;
+
+At this point, _host->{chan_rx,chan_tx} are _always_ NULL because
+tmio_mmc_request_dma() is called after this code.  Consequently,
+TMIO_MASK_{READOP,WRITEOP} are set whether DMA is used or not.
+
+tmio_mmc_cmd_irq() enables TMIO_MASK_{READOP,WRITEOP}, but never
+disables them.  This does not take care of a case where ->force_pio
+is set, but unset later.
+
+After all, the correct place to handle those flags is just before
+starting the data transfer.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
@@ -42,87 +59,49 @@ Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Changes in v2:
   - Newly added
 
- drivers/mmc/host/renesas_sdhi_core.c |  4 ++--
- drivers/mmc/host/tmio_mmc.c          |  4 +++-
- drivers/mmc/host/tmio_mmc_core.c     | 16 +++++++++-------
- 3 files changed, 14 insertions(+), 10 deletions(-)
+ drivers/mmc/host/tmio_mmc_core.c | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index e78dca7..446ff54 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -511,8 +511,8 @@ int renesas_sdhi_probe(struct platform_device *pdev,
- 	}
- 
- 	host = tmio_mmc_host_alloc(pdev);
--	if (!host)
--		return -ENOMEM;
-+	if (IS_ERR(host))
-+		return PTR_ERR(host);
- 
- 	if (of_data) {
- 		mmc_data->flags |= of_data->tmio_flags;
-diff --git a/drivers/mmc/host/tmio_mmc.c b/drivers/mmc/host/tmio_mmc.c
-index ccfbc15..d660816 100644
---- a/drivers/mmc/host/tmio_mmc.c
-+++ b/drivers/mmc/host/tmio_mmc.c
-@@ -93,8 +93,10 @@ static int tmio_mmc_probe(struct platform_device *pdev)
- 	pdata->flags |= TMIO_MMC_HAVE_HIGH_REG;
- 
- 	host = tmio_mmc_host_alloc(pdev);
--	if (!host)
-+	if (IS_ERR(host)) {
-+		ret = PTR_ERR(host);
- 		goto cell_disable;
-+	}
- 
- 	/* SD control register space size is 0x200, 0x400 for bus_shift=1 */
- 	host->bus_shift = resource_size(res) >> 10;
 diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index f5b11b8..c392694 100644
+index 7d169ed..345e379 100644
 --- a/drivers/mmc/host/tmio_mmc_core.c
 +++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -1165,12 +1165,20 @@ tmio_mmc_host_alloc(struct platform_device *pdev)
- {
- 	struct tmio_mmc_host *host;
- 	struct mmc_host *mmc;
-+	struct resource *res;
-+	void __iomem *ctl;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	ctl = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(ctl))
-+		return ERR_CAST(ctl);
+@@ -621,15 +621,19 @@ static void tmio_mmc_cmd_irq(struct tmio_mmc_host *host, unsigned int stat)
+ 	 */
+ 	if (host->data && (!cmd->error || cmd->error == -EILSEQ)) {
+ 		if (host->data->flags & MMC_DATA_READ) {
+-			if (host->force_pio || !host->chan_rx)
++			if (host->force_pio || !host->chan_rx) {
+ 				tmio_mmc_enable_mmc_irqs(host, TMIO_MASK_READOP);
+-			else
++			} else {
++				tmio_mmc_disable_mmc_irqs(host, TMIO_MASK_READOP);
+ 				tasklet_schedule(&host->dma_issue);
++			}
+ 		} else {
+-			if (host->force_pio || !host->chan_tx)
++			if (host->force_pio || !host->chan_tx) {
+ 				tmio_mmc_enable_mmc_irqs(host, TMIO_MASK_WRITEOP);
+-			else
++			} else {
++				tmio_mmc_disable_mmc_irqs(host, TMIO_MASK_WRITEOP);
+ 				tasklet_schedule(&host->dma_issue);
++			}
+ 		}
+ 	} else {
+ 		schedule_work(&host->done);
+@@ -1285,12 +1289,6 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
+ 	_host->sdcard_irq_mask = sd_ctrl_read16_and_16_as_32(_host, CTL_IRQ_MASK);
+ 	tmio_mmc_disable_mmc_irqs(_host, TMIO_MASK_ALL);
  
- 	mmc = mmc_alloc_host(sizeof(struct tmio_mmc_host), &pdev->dev);
- 	if (!mmc)
--		return NULL;
-+		return ERR_PTR(-ENOMEM);
- 
- 	host = mmc_priv(mmc);
-+	host->ctl = ctl;
- 	host->mmc = mmc;
- 	host->pdev = pdev;
- 	host->ops = tmio_mmc_ops;
-@@ -1192,7 +1200,6 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
- {
- 	struct platform_device *pdev = _host->pdev;
- 	struct mmc_host *mmc = _host->mmc;
--	struct resource *res_ctl;
- 	int ret;
- 
- 	tmio_mmc_of_parse(pdev, pdata);
-@@ -1200,11 +1207,6 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
- 	if (!(pdata->flags & TMIO_MMC_HAS_IDLE_WAIT))
- 		_host->write16_hook = NULL;
- 
--	res_ctl = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	_host->ctl = devm_ioremap_resource(&pdev->dev, res_ctl);
--	if (IS_ERR(_host->ctl))
--		return PTR_ERR(_host->ctl);
+-	/* Unmask the IRQs we want to know about */
+-	if (!_host->chan_rx)
+-		irq_mask |= TMIO_MASK_READOP;
+-	if (!_host->chan_tx)
+-		irq_mask |= TMIO_MASK_WRITEOP;
 -
- 	ret = mmc_of_parse(mmc);
- 	if (ret < 0)
- 		return ret;
+ 	_host->sdcard_irq_mask &= ~irq_mask;
+ 
+ 	if (_host->native_hotplug)
 -- 
 2.7.4
