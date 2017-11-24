@@ -1,48 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:45251 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752250AbdK3Jn7 (ORCPT
+Received: from condef-06.nifty.com ([202.248.20.71]:16914 "EHLO
+        condef-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751018AbdKXQlp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 30 Nov 2017 04:43:59 -0500
-Date: Thu, 30 Nov 2017 10:43:55 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: [PATCH/RFT renesas-devel] arm64: dts: ulcb: Enable NFS root
-Message-ID: <20171130094354.6pktdlcuc3gettji@verge.net.au>
-References: <1493717048-10740-1-git-send-email-horms+renesas@verge.net.au>
- <CAMuHMdXbvC90k1QYZsjWx=f7QVQyWOzi_v3u8ShDoDsSAmZsjw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdXbvC90k1QYZsjWx=f7QVQyWOzi_v3u8ShDoDsSAmZsjw@mail.gmail.com>
+        Fri, 24 Nov 2017 11:41:45 -0500
+Received: from conuserg-11.nifty.com ([10.126.8.74])by condef-06.nifty.com with ESMTP id vAOGPtmh019285
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 25 Nov 2017 01:25:59 +0900
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-mmc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Simon Horman <simon.horman@netronome.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH v2 03/22] mmc: renesas_sdhi: remove eprobe jump label
+Date: Sat, 25 Nov 2017 01:24:38 +0900
+Message-Id: <1511540697-27387-4-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, May 02, 2017 at 11:27:58AM +0200, Geert Uytterhoeven wrote:
-> Hi Simon,
-> 
-> On Tue, May 2, 2017 at 11:24 AM, Simon Horman
-> <horms+renesas@verge.net.au> wrote:
-> > Enable NFS root on the r8a7795/h3ulcb and r8a7796/m3ulcb
-> > as per:
-> > * commit b2407c566ba29215 ("arm64: dts: r8a7795: enable nfs root on Salvator-X board").
-> > * commit 742a9dfb90f0 ("arm64: dts: r8a7796: salvator-x: Enable NFS root")
-> >
-> > Also set ignore_loglevel rw as boot args as is the case for the boards
-> > for the boards for other Renesas ARM/ARM64 based SoCs.
-> 
-> s/for the boards//
-> 
-> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> 
-> Gr{oetje,eeting}s,
+"goto eprobe" does nothing.  Return directly.
 
-Sergei has pointed out that bootargs has seems to have effect on ARM64
-kernels. So I think this patch should be withdrawn and we should consider
-removing bootargs from those ARM64 boards where it is present.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+Changes in v2:
+  - Fix a typo : renesas_sdhc -> renesas_sdhi
+  - Restore the "ret" printout for devm_clk_get()
+
+ drivers/mmc/host/renesas_sdhi_core.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+index fcf7235..0590ae0 100644
+--- a/drivers/mmc/host/renesas_sdhi_core.c
++++ b/drivers/mmc/host/renesas_sdhi_core.c
+@@ -497,7 +497,7 @@ int renesas_sdhi_probe(struct platform_device *pdev,
+ 	if (IS_ERR(priv->clk)) {
+ 		ret = PTR_ERR(priv->clk);
+ 		dev_err(&pdev->dev, "cannot get clock: %d\n", ret);
+-		goto eprobe;
++		return ret;
+ 	}
+ 
+ 	/*
+@@ -524,10 +524,8 @@ int renesas_sdhi_probe(struct platform_device *pdev,
+ 	}
+ 
+ 	host = tmio_mmc_host_alloc(pdev);
+-	if (!host) {
+-		ret = -ENOMEM;
+-		goto eprobe;
+-	}
++	if (!host)
++		return -ENOMEM;
+ 
+ 	if (of_data) {
+ 		mmc_data->flags |= of_data->tmio_flags;
+@@ -652,7 +650,7 @@ int renesas_sdhi_probe(struct platform_device *pdev,
+ 	tmio_mmc_host_remove(host);
+ efree:
+ 	tmio_mmc_host_free(host);
+-eprobe:
++
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(renesas_sdhi_probe);
+-- 
+2.7.4
