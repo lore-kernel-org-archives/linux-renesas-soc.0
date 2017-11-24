@@ -1,76 +1,35 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v8 11/28] rcar-vin: do not allow changing scaling and composing while streaming
-Date: Wed, 29 Nov 2017 20:43:25 +0100
-Message-Id: <20171129194342.26239-12-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20171129194342.26239-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20171129194342.26239-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:39309 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753679AbdKXVDO (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 24 Nov 2017 16:03:14 -0500
+Received: by mail-lf0-f66.google.com with SMTP id x76so22029863lfb.6
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 24 Nov 2017 13:03:13 -0800 (PST)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-Id: <20171124205943.310383519@cogentembedded.com>
+Date: Fri, 24 Nov 2017 23:59:43 +0300
+To: Simon Horman <horms@verge.net.au>
+Cc: Magnus Damm <magnus.damm@gmail.com>
+To: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+To: Catalin Marinas <catalin.marinas@arm.com>
+To: Will Deacon <will.deacon@arm.com>
+To: linux-renesas-soc@vger.kernel.org
+To: devicetree@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH 0/2] Add V3M Starter Kit board support
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-It is possible on Gen2 to change the registers controlling composing and
-scaling while the stream is running. It is however not a good idea to do
-so and could result in trouble. There are also no good reasons to allow
-this, remove immediate reflection in hardware registers from
-vidioc_s_selection and only configure scaling and composing when the
-stream starts.
+Hello.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
----
- drivers/media/platform/rcar-vin/rcar-dma.c  | 2 +-
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 3 ---
- drivers/media/platform/rcar-vin/rcar-vin.h  | 3 ---
- 3 files changed, 1 insertion(+), 7 deletions(-)
+Here's the set of 2 patches against Simon Horman's 'renesas.git' repo's
+'renesas-devel-20171124v2-v4.14' tag. I'm adding the device tree support for
+the R8A77970-based V3M Starter Kit board.
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index fd14be20a6604d7a..7be5080f742825fb 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -514,7 +514,7 @@ static void rvin_set_coeff(struct rvin_dev *vin, unsigned short xs)
- 	rvin_write(vin, p_set->coeff_set[23], VNC8C_REG);
- }
- 
--void rvin_crop_scale_comp(struct rvin_dev *vin)
-+static void rvin_crop_scale_comp(struct rvin_dev *vin)
- {
- 	u32 xs, ys;
- 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 254fa1c8770275a5..d6298c684ab2d731 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -436,9 +436,6 @@ static int rvin_s_selection(struct file *file, void *fh,
- 		return -EINVAL;
- 	}
- 
--	/* HW supports modifying configuration while running */
--	rvin_crop_scale_comp(vin);
--
- 	return 0;
- }
- 
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 36d0f0cc4ce01a6e..67541b483ee43c52 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -175,7 +175,4 @@ void rvin_v4l2_unregister(struct rvin_dev *vin);
- 
- const struct rvin_video_format *rvin_format_from_pixel(u32 pixelformat);
- 
--/* Cropping, composing and scaling */
--void rvin_crop_scale_comp(struct rvin_dev *vin);
--
- #endif
--- 
-2.15.0
+[1/2] arm64: dts: renesas: initial V3MSK board device tree
+[2/2] arm64: dts: renesas: v3msk: add EtherAVB support
+
+WBR, Sergei
