@@ -1,49 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:40453 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752064AbdKZJDA (ORCPT
+Received: from condef-02.nifty.com ([202.248.20.67]:48933 "EHLO
+        condef-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753728AbdKXQ31 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 26 Nov 2017 04:03:00 -0500
-MIME-Version: 1.0
-In-Reply-To: <1511540697-27387-3-git-send-email-yamada.masahiro@socionext.com>
-References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com> <1511540697-27387-3-git-send-email-yamada.masahiro@socionext.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Sun, 26 Nov 2017 10:02:59 +0100
-Message-ID: <CAMuHMdV4q1n6tPe8Q_g6s3G+0P1_xCxvt6X4tW4FGyubM4WOjA@mail.gmail.com>
-Subject: Re: [PATCH v2 02/22] mmc: renesas_sdhi: remove wrong depends on to
- enable compile test
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Linux MMC List <linux-mmc@vger.kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <simon.horman@netronome.com>,
+        Fri, 24 Nov 2017 11:29:27 -0500
+Received: from conuserg-11.nifty.com ([10.126.8.74])by condef-02.nifty.com with ESMTP id vAOGPuNB002316
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 25 Nov 2017 01:26:01 +0900
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-mmc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Simon Horman <simon.horman@netronome.com>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-renesas-soc@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH v2 02/22] mmc: renesas_sdhi: remove wrong depends on to enable compile test
+Date: Sat, 25 Nov 2017 01:24:37 +0900
+Message-Id: <1511540697-27387-3-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Nov 24, 2017 at 5:24 PM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> ARCH_RENESAS is a stronger condition than (ARM || ARM64).
-> If ARCH_RENESAS is enabled, (ARM || ARM64) is met as well.
->
-> What is worse, the first depends on line prevents COMPILE_TEST from
-> enabling this driver.  It should be removed.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+ARCH_RENESAS is a stronger condition than (ARM || ARM64).
+If ARCH_RENESAS is enabled, (ARM || ARM64) is met as well.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+What is worse, the first depends on line prevents COMPILE_TEST from
+enabling this driver.  It should be removed.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-                        Geert
+Changes in v2:
+  - Fix a typo:  renesas_sdhc -> renesas_sdhi
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+ drivers/mmc/host/Kconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+index 1932188..ac25354 100644
+--- a/drivers/mmc/host/Kconfig
++++ b/drivers/mmc/host/Kconfig
+@@ -595,7 +595,6 @@ config MMC_TMIO
+ 
+ config MMC_SDHI
+ 	tristate "Renesas SDHI SD/SDIO controller support"
+-	depends on SUPERH || ARM || ARM64
+ 	depends on SUPERH || ARCH_RENESAS || COMPILE_TEST
+ 	select MMC_TMIO_CORE
+ 	help
+-- 
+2.7.4
