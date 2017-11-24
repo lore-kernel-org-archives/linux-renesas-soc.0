@@ -1,45 +1,36 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from osg.samsung.com ([64.30.133.232]:33740 "EHLO osg.samsung.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752290AbdK2TIt (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35349 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753004AbdKXKhI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 29 Nov 2017 14:08:49 -0500
-From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 16/22] media: vsp1: add a missing kernel-doc parameter
-Date: Wed, 29 Nov 2017 14:08:34 -0500
-Message-Id: <cf39264f87c1ca4436c11e07df455feb3ea6d1e1.1511982439.git.mchehab@s-opensource.com>
-In-Reply-To: <73497577f67fbb917e40ab4328104ff310a7c356.1511982439.git.mchehab@s-opensource.com>
-References: <73497577f67fbb917e40ab4328104ff310a7c356.1511982439.git.mchehab@s-opensource.com>
-In-Reply-To: <73497577f67fbb917e40ab4328104ff310a7c356.1511982439.git.mchehab@s-opensource.com>
-References: <73497577f67fbb917e40ab4328104ff310a7c356.1511982439.git.mchehab@s-opensource.com>
-To: unlisted-recipients:; (no To-header on input)
+        Fri, 24 Nov 2017 05:37:08 -0500
+Date: Fri, 24 Nov 2017 10:36:40 +0000
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH v2 1/5] arm64: dts: renesas: r8a77970: sort includes
+Message-ID: <20171124103639.ak6afs4zqfuygqrj@verge.net.au>
+References: <20171110132553.1461-1-horms+renesas@verge.net.au>
+ <20171110132553.1461-2-horms+renesas@verge.net.au>
+ <CAMuHMdX-aHoysLr8XwyyOfikS5++ujuSHTg=atnzeYa0XpMuNg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdX-aHoysLr8XwyyOfikS5++ujuSHTg=atnzeYa0XpMuNg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Fix this warning:
-	drivers/media/platform/vsp1/vsp1_dl.c:87: warning: No description found for parameter 'has_chain'
+On Thu, Nov 23, 2017 at 11:28:21AM +0100, Geert Uytterhoeven wrote:
+> On Fri, Nov 10, 2017 at 2:25 PM, Simon Horman
+> <horms+renesas@verge.net.au> wrote:
+> > Sort includes used in r8a77970 DTS to improve maintainability
+> > and for consistency with other R-Car DTS files.
+> >
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
----
- drivers/media/platform/vsp1/vsp1_dl.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
-index 8b5cbb6b7a70..4257451f1bd8 100644
---- a/drivers/media/platform/vsp1/vsp1_dl.c
-+++ b/drivers/media/platform/vsp1/vsp1_dl.c
-@@ -70,6 +70,7 @@ struct vsp1_dl_body {
-  * @dma: DMA address for the header
-  * @body0: first display list body
-  * @fragments: list of extra display list bodies
-+ * @has_chain: if true, indicates that there's a partition chain
-  * @chain: entry in the display list partition chain
-  */
- struct vsp1_dl_list {
--- 
-2.14.3
+Thanks, applied.
