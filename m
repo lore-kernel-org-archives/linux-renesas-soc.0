@@ -1,75 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from condef-05.nifty.com ([202.248.20.70]:17856 "EHLO
-        condef-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751018AbdKXQhM (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35591 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753185AbdKXK6f (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 24 Nov 2017 11:37:12 -0500
-Received: from conuserg-11.nifty.com ([10.126.8.74])by condef-05.nifty.com with ESMTP id vAOGPtgv008527
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 25 Nov 2017 01:25:58 +0900
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-mmc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Simon Horman <simon.horman@netronome.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Fri, 24 Nov 2017 05:58:35 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Alex Williamson <alex.williamson@redhat.com>,
+        Joerg Roedel <joro@8bytes.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        iommu@lists.linux-foundation.org,
         linux-renesas-soc@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v2 10/22] mmc: tmio: support IP-builtin card detection logic
-Date: Sat, 25 Nov 2017 01:24:45 +0900
-Message-Id: <1511540697-27387-11-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v2 0/2] iommu/ipmmu-vmsa: Add r8a779(6|70|95) DT bindings
+Date: Fri, 24 Nov 2017 10:58:02 +0000
+Message-Id: <20171124105804.26924-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-A card detect GPIO is set up only for platforms with "cd-gpios"
-DT property or TMIO_MMC_USE_GPIO_CD flag.  However, the driver
-core always uses mmc_gpio_get_cd, which just fails with -ENOSYS
-if ctx->cd_gpio is unset.
+Update the IPMMU DT binding documentation to include r8a7796 (R-Car M3-W),
+r8a77970 (R-Car V3M) and r8a77995 (R-Car D3) compat strings.
 
-The bit 5 of the status register provides the current signal level
-of the CD line.  Allow to use it if the GPIO is unused.
+This patch-set is comprised of patches previously included in
+* [PATCH v4 0/3] iommu/ipmmu-vmsa: r8a7796 support V4
+* [PATCH 0/2] iommu/ipmmu-vmsa: r8a779(70|95) support
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+Those series also include driver updates to implement the bindings,
+however, it while it is felt that the bindings themselves are ready
+to be merged we feel that the driver updates are not at that stage yet.
 
-Changes in v2: None
+Changes since v1:
+* Correct typo in r8a779(70|95) patch: R8A7770 -> R8A77970
 
- drivers/mmc/host/tmio_mmc_core.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 610f26f..b51bb06 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -1087,6 +1087,19 @@ static int tmio_mmc_get_ro(struct mmc_host *mmc)
- 	return ret;
- }
- 
-+static int tmio_mmc_get_cd(struct mmc_host *mmc)
-+{
-+	struct tmio_mmc_host *host = mmc_priv(mmc);
-+	int ret;
-+
-+	ret = mmc_gpio_get_cd(mmc);
-+	if (ret >= 0)
-+		return ret;
-+
-+	return !!(sd_ctrl_read16_and_16_as_32(host, CTL_STATUS) &
-+							TMIO_STAT_SIGSTATE);
-+}
-+
- static int tmio_multi_io_quirk(struct mmc_card *card,
- 			       unsigned int direction, int blk_size)
- {
-@@ -1102,7 +1115,7 @@ static const struct mmc_host_ops tmio_mmc_ops = {
- 	.request	= tmio_mmc_request,
- 	.set_ios	= tmio_mmc_set_ios,
- 	.get_ro         = tmio_mmc_get_ro,
--	.get_cd		= mmc_gpio_get_cd,
-+	.get_cd		= tmio_mmc_get_cd,
- 	.enable_sdio_irq = tmio_mmc_enable_sdio_irq,
- 	.multi_io_quirk	= tmio_multi_io_quirk,
- 	.hw_reset	= tmio_mmc_hw_reset,
+Magnus Damm (1):
+  iommu/ipmmu-vmsa: Add r8a7796 DT binding
+
+Simon Horman (1):
+  iommu/ipmmu-vmsa: Add r8a779(70|95) DT bindings
+
+ Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt | 3 +++
+ 1 file changed, 3 insertions(+)
+
 -- 
-2.7.4
+2.11.0
