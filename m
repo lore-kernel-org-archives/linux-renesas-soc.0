@@ -1,347 +1,112 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:47736 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754882AbdKKAjI (ORCPT
+Received: from condef-09.nifty.com ([202.248.20.74]:48994 "EHLO
+        condef-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751018AbdKXQla (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Nov 2017 19:39:08 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v7 19/25] rcar-vin: add group allocator functions
-Date: Sat, 11 Nov 2017 01:38:29 +0100
-Message-Id: <20171111003835.4909-20-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20171111003835.4909-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20171111003835.4909-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Fri, 24 Nov 2017 11:41:30 -0500
+Received: from conuserg-11.nifty.com ([10.126.8.74])by condef-09.nifty.com with ESMTP id vAOGPuGg029268
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 25 Nov 2017 01:26:01 +0900
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-mmc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Simon Horman <simon.horman@netronome.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH v2 04/22] mmc: tmio: set tmio_mmc_host to driver data
+Date: Sat, 25 Nov 2017 01:24:39 +0900
+Message-Id: <1511540697-27387-5-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-In media controller mode all VIN instances needs to be part of the same
-media graph. There is also a need to each VIN instance to know and in
-some cases be able to communicate with other VIN instances.
+The remove, suspend, resume hooks need to get tmio_mmc_host.  It is
+tedious to call mmc_priv() to convert mmc_host to tmio_mmc_host.
+We can directly set tmio_mmc_host to driver data.
 
-Add an allocator framework where the first VIN instance to be probed
-creates a shared data structure and creates a media device.
-
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/media/platform/rcar-vin/rcar-core.c | 179 +++++++++++++++++++++++++++-
- drivers/media/platform/rcar-vin/rcar-vin.h  |  38 ++++++
- 2 files changed, 216 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 1b3572c8b6691a07..e204eb3db77c1d2b 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -20,12 +20,171 @@
- #include <linux/of_graph.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
-+#include <linux/slab.h>
+Changes in v2: None
+
+ drivers/mmc/host/renesas_sdhi_core.c |  3 +--
+ drivers/mmc/host/tmio_mmc.c          | 12 ++++--------
+ drivers/mmc/host/tmio_mmc_core.c     |  8 +++-----
+ 3 files changed, 8 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+index 0590ae0..9baf4d1 100644
+--- a/drivers/mmc/host/renesas_sdhi_core.c
++++ b/drivers/mmc/host/renesas_sdhi_core.c
+@@ -657,8 +657,7 @@ EXPORT_SYMBOL_GPL(renesas_sdhi_probe);
  
- #include <media/v4l2-async.h>
- #include <media/v4l2-fwnode.h>
- 
- #include "rcar-vin.h"
- 
-+/* -----------------------------------------------------------------------------
-+ * Gen3 CSI2 Group Allocator
-+ */
-+
-+static int rvin_group_read_id(struct rvin_dev *vin, struct device_node *np)
-+{
-+	u32 val;
-+	int ret;
-+
-+	ret = of_property_read_u32(np, "renesas,id", &val);
-+	if (ret) {
-+		vin_err(vin, "%s: No renesas,id property found\n",
-+			of_node_full_name(np));
-+		return -EINVAL;
-+	}
-+
-+	if (val >= RCAR_VIN_NUM) {
-+		vin_err(vin, "%s: Invalid renesas,id '%u'\n",
-+			of_node_full_name(np), val);
-+		return -EINVAL;
-+	}
-+
-+	return val;
-+}
-+
-+static DEFINE_MUTEX(rvin_group_lock);
-+static struct rvin_group *rvin_group_data;
-+
-+static void rvin_group_release(struct kref *kref)
-+{
-+	struct rvin_group *group =
-+		container_of(kref, struct rvin_group, refcount);
-+
-+	mutex_lock(&rvin_group_lock);
-+
-+	media_device_unregister(&group->mdev);
-+	media_device_cleanup(&group->mdev);
-+
-+	rvin_group_data = NULL;
-+
-+	mutex_unlock(&rvin_group_lock);
-+
-+	kfree(group);
-+}
-+
-+static struct rvin_group *__rvin_group_allocate(struct rvin_dev *vin)
-+{
-+	struct rvin_group *group;
-+
-+	if (rvin_group_data) {
-+		group = rvin_group_data;
-+		kref_get(&group->refcount);
-+		vin_dbg(vin, "%s: get group=%p\n", __func__, group);
-+		return group;
-+	}
-+
-+	group = kzalloc(sizeof(*group), GFP_KERNEL);
-+	if (!group)
-+		return NULL;
-+
-+	kref_init(&group->refcount);
-+	rvin_group_data = group;
-+
-+	vin_dbg(vin, "%s: alloc group=%p\n", __func__, group);
-+	return group;
-+}
-+
-+static int rvin_group_add_vin(struct rvin_dev *vin)
-+{
-+	int ret;
-+
-+	ret = rvin_group_read_id(vin, vin->dev->of_node);
-+	if (ret < 0)
-+		return ret;
-+
-+	mutex_lock(&vin->group->lock);
-+
-+	if (vin->group->vin[ret]) {
-+		mutex_unlock(&vin->group->lock);
-+		vin_err(vin, "VIN number %d already occupied\n", ret);
-+		return -EINVAL;
-+	}
-+
-+	vin->group->vin[ret] = vin;
-+
-+	mutex_unlock(&vin->group->lock);
-+
-+	vin_dbg(vin, "I'm VIN number %d", ret);
-+
-+	return 0;
-+}
-+
-+static int rvin_group_allocate(struct rvin_dev *vin)
-+{
-+	struct rvin_group *group;
-+	struct media_device *mdev;
-+	int ret;
-+
-+	mutex_lock(&rvin_group_lock);
-+
-+	group = __rvin_group_allocate(vin);
-+	if (!group) {
-+		mutex_unlock(&rvin_group_lock);
-+		return -ENOMEM;
-+	}
-+
-+	/* Init group data if it is not already initialized */
-+	mdev = &group->mdev;
-+	if (!mdev->dev) {
-+		mutex_init(&group->lock);
-+		mdev->dev = vin->dev;
-+
-+		strlcpy(mdev->driver_name, "Renesas VIN",
-+			sizeof(mdev->driver_name));
-+		strlcpy(mdev->model, vin->dev->of_node->name,
-+			sizeof(mdev->model));
-+		strlcpy(mdev->bus_info, of_node_full_name(vin->dev->of_node),
-+			sizeof(mdev->bus_info));
-+		media_device_init(mdev);
-+
-+		ret = media_device_register(mdev);
-+		if (ret) {
-+			vin_err(vin, "Failed to register media device\n");
-+			kref_put(&group->refcount, rvin_group_release);
-+			mutex_unlock(&rvin_group_lock);
-+			return ret;
-+		}
-+	}
-+
-+	vin->group = group;
-+	vin->v4l2_dev.mdev = mdev;
-+
-+	ret = rvin_group_add_vin(vin);
-+	if (ret) {
-+		kref_put(&group->refcount, rvin_group_release);
-+		mutex_unlock(&rvin_group_lock);
-+		return ret;
-+	}
-+
-+	mutex_unlock(&rvin_group_lock);
-+
-+	return 0;
-+}
-+
-+static void rvin_group_delete(struct rvin_dev *vin)
-+{
-+	unsigned int i;
-+
-+	mutex_lock(&vin->group->lock);
-+	for (i = 0; i < RCAR_VIN_NUM; i++)
-+		if (vin->group->vin[i] == vin)
-+			vin->group->vin[i] = NULL;
-+	mutex_unlock(&vin->group->lock);
-+
-+	vin_dbg(vin, "%s: group=%p\n", __func__, &vin->group);
-+	kref_put(&vin->group->refcount, rvin_group_release);
-+}
-+
- /* -----------------------------------------------------------------------------
-  * Async notifier
-  */
-@@ -248,12 +407,27 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
- 
- static int rvin_group_init(struct rvin_dev *vin)
+ int renesas_sdhi_remove(struct platform_device *pdev)
  {
-+	int ret;
-+
-+	ret = rvin_group_allocate(vin);
-+	if (ret)
-+		return ret;
-+
- 	/* All our sources are CSI-2 */
- 	vin->mbus_cfg.type = V4L2_MBUS_CSI2;
- 	vin->mbus_cfg.flags = 0;
+-	struct mmc_host *mmc = platform_get_drvdata(pdev);
+-	struct tmio_mmc_host *host = mmc_priv(mmc);
++	struct tmio_mmc_host *host = platform_get_drvdata(pdev);
  
- 	vin->pad.flags = MEDIA_PAD_FL_SINK;
--	return media_entity_pads_init(&vin->vdev.entity, 1, &vin->pad);
-+	ret = media_entity_pads_init(&vin->vdev.entity, 1, &vin->pad);
-+	if (ret)
-+		goto error_group;
-+
-+	return 0;
-+
-+error_group:
-+	rvin_group_delete(vin);
-+
-+	return ret;
- }
+ 	tmio_mmc_host_remove(host);
  
- /* -----------------------------------------------------------------------------
-@@ -377,6 +551,9 @@ static int rcar_vin_remove(struct platform_device *pdev)
+diff --git a/drivers/mmc/host/tmio_mmc.c b/drivers/mmc/host/tmio_mmc.c
+index 64b7e9f..ccfbc15 100644
+--- a/drivers/mmc/host/tmio_mmc.c
++++ b/drivers/mmc/host/tmio_mmc.c
+@@ -128,15 +128,11 @@ static int tmio_mmc_probe(struct platform_device *pdev)
+ static int tmio_mmc_remove(struct platform_device *pdev)
+ {
+ 	const struct mfd_cell *cell = mfd_get_cell(pdev);
+-	struct mmc_host *mmc = platform_get_drvdata(pdev);
++	struct tmio_mmc_host *host = platform_get_drvdata(pdev);
  
- 	rvin_v4l2_unregister(vin);
- 
-+	if (vin->info->use_mc)
-+		rvin_group_delete(vin);
-+
- 	rvin_dma_remove(vin);
+-	if (mmc) {
+-		struct tmio_mmc_host *host = mmc_priv(mmc);
+-
+-		tmio_mmc_host_remove(host);
+-		if (cell->disable)
+-			cell->disable(pdev);
+-	}
++	tmio_mmc_host_remove(host);
++	if (cell->disable)
++		cell->disable(pdev);
  
  	return 0;
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 2d92b9dd0aed6cc9..a9bd570d6635fd47 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -17,6 +17,8 @@
- #ifndef __RCAR_VIN__
- #define __RCAR_VIN__
+ }
+diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+index 583bf32..12df338 100644
+--- a/drivers/mmc/host/tmio_mmc_core.c
++++ b/drivers/mmc/host/tmio_mmc_core.c
+@@ -1193,7 +1193,7 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
+ 		return ret;
  
-+#include <linux/kref.h>
-+
- #include <media/v4l2-async.h>
- #include <media/v4l2-ctrls.h>
- #include <media/v4l2-dev.h>
-@@ -30,6 +32,9 @@
- /* Address alignment mask for HW buffers */
- #define HW_BUFFER_MASK 0x7f
+ 	_host->pdata = pdata;
+-	platform_set_drvdata(pdev, mmc);
++	platform_set_drvdata(pdev, _host);
  
-+/* Max number on VIN instances that can be in a system */
-+#define RCAR_VIN_NUM 8
-+
- enum chip_id {
- 	RCAR_H1,
- 	RCAR_M1,
-@@ -37,6 +42,15 @@ enum chip_id {
- 	RCAR_GEN3,
- };
+ 	_host->set_pwr = pdata->set_pwr;
+ 	_host->set_clk_div = pdata->set_clk_div;
+@@ -1351,8 +1351,7 @@ EXPORT_SYMBOL_GPL(tmio_mmc_host_remove);
+ #ifdef CONFIG_PM
+ int tmio_mmc_host_runtime_suspend(struct device *dev)
+ {
+-	struct mmc_host *mmc = dev_get_drvdata(dev);
+-	struct tmio_mmc_host *host = mmc_priv(mmc);
++	struct tmio_mmc_host *host = dev_get_drvdata(dev);
  
-+enum rvin_csi_id {
-+	RVIN_CSI20,
-+	RVIN_CSI21,
-+	RVIN_CSI40,
-+	RVIN_CSI41,
-+	RVIN_CSI_MAX,
-+	RVIN_NC, /* Not Connected */
-+};
-+
- /**
-  * STOPPED  - No operation in progress
-  * RUNNING  - Operation in progress have buffers
-@@ -75,6 +89,8 @@ struct rvin_graph_entity {
- 	unsigned int sink_pad;
- };
+ 	tmio_mmc_disable_mmc_irqs(host, TMIO_MASK_ALL);
  
-+struct rvin_group;
-+
- /**
-  * struct rvin_info - Information about the particular VIN implementation
-  * @chip:		type of VIN chip
-@@ -103,6 +119,7 @@ struct rvin_info {
-  * @notifier:		V4L2 asynchronous subdevs notifier
-  * @digital:		entity in the DT for local digital subdevice
-  *
-+ * @group:		Gen3 CSI group
-  * @pad:		pad for media controller
-  *
-  * @lock:		protects @queue
-@@ -134,6 +151,7 @@ struct rvin_dev {
- 	struct v4l2_async_notifier notifier;
- 	struct rvin_graph_entity *digital;
+@@ -1372,8 +1371,7 @@ static bool tmio_mmc_can_retune(struct tmio_mmc_host *host)
  
-+	struct rvin_group *group;
- 	struct media_pad pad;
+ int tmio_mmc_host_runtime_resume(struct device *dev)
+ {
+-	struct mmc_host *mmc = dev_get_drvdata(dev);
+-	struct tmio_mmc_host *host = mmc_priv(mmc);
++	struct tmio_mmc_host *host = dev_get_drvdata(dev);
  
- 	struct mutex lock;
-@@ -162,6 +180,26 @@ struct rvin_dev {
- #define vin_warn(d, fmt, arg...)	dev_warn(d->dev, fmt, ##arg)
- #define vin_err(d, fmt, arg...)		dev_err(d->dev, fmt, ##arg)
- 
-+/**
-+ * struct rvin_group - VIN CSI2 group information
-+ * @refcount:		number of VIN instances using the group
-+ *
-+ * @mdev:		media device which represents the group
-+ *
-+ * @lock:		protects the vin and csi members
-+ * @vin:		VIN instances which are part of the group
-+ * @csi:		CSI-2 entities that are part of the group
-+ */
-+struct rvin_group {
-+	struct kref refcount;
-+
-+	struct media_device mdev;
-+
-+	struct mutex lock;
-+	struct rvin_dev *vin[RCAR_VIN_NUM];
-+	struct rvin_graph_entity csi[RVIN_CSI_MAX];
-+};
-+
- int rvin_dma_probe(struct rvin_dev *vin, int irq);
- void rvin_dma_remove(struct rvin_dev *vin);
- 
+ 	tmio_mmc_reset(host);
+ 	tmio_mmc_clk_enable(host);
 -- 
-2.15.0
+2.7.4
