@@ -1,59 +1,94 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-can@vger.kernel.org, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH 1/8] dt-bindings: can: rcar_can: document r8a774[35] can support
-Date: Tue,  7 Nov 2017 15:10:42 +0000
-Message-Id: <1510067449-17017-2-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1510067449-17017-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1510067449-17017-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from condef-08.nifty.com ([202.248.20.73]:31979 "EHLO
+        condef-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753649AbdKXQgP (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 24 Nov 2017 11:36:15 -0500
+Received: from conuserg-11.nifty.com ([10.126.8.74])by condef-08.nifty.com with ESMTP id vAOGQ6ZS009095
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 25 Nov 2017 01:26:09 +0900
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-mmc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Simon Horman <simon.horman@netronome.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH v2 16/22] mmc: tmio: fix never-detected card insertion bug
+Date: Sat, 25 Nov 2017 01:24:51 +0900
+Message-Id: <1511540697-27387-17-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document "renesas,can-r8a7743" and "renesas,can-r8a7745" compatible
-strings. Since the fallback compatible string ("renesas,rcar-gen2-can")
-activates the right code in the driver, no driver change is needed.
+The TMIO mmc cannot detect the card insertion in native_hotplug mode
+if the driver is probed without a card inserted.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+The reason is obvious; all IRQs are disabled by tmio_mmc_host_probe(),
+as follows:
+
+  tmio_mmc_disable_mmc_irqs(_host, TMIO_MASK_ALL);
+
+The IRQs are first enabled by tmio_mmc_start_command() as follows:
+
+  if (!host->native_hotplug)
+          irq_mask &= ~(TMIO_STAT_CARD_REMOVE | TMIO_STAT_CARD_INSERT);
+  tmio_mmc_enable_mmc_irqs(host, irq_mask);
+
+If the driver is probed without a card, tmio_mmc_start_command() is
+never called in the first place.  So, the card is never detected.
+
+The card event IRQs must be enabled in probe/resume functions.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- Documentation/devicetree/bindings/net/can/rcar_can.txt | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/net/can/rcar_can.txt b/Documentation/devicetree/bindings/net/can/rcar_can.txt
-index 06bb7cc..94a7f33 100644
---- a/Documentation/devicetree/bindings/net/can/rcar_can.txt
-+++ b/Documentation/devicetree/bindings/net/can/rcar_can.txt
-@@ -2,7 +2,9 @@ Renesas R-Car CAN controller Device Tree Bindings
- -------------------------------------------------
+Changes in v2:
+  - Newly added
+
+ drivers/mmc/host/tmio_mmc_core.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+index b51bb06..7d169ed 100644
+--- a/drivers/mmc/host/tmio_mmc_core.c
++++ b/drivers/mmc/host/tmio_mmc_core.c
+@@ -350,8 +350,6 @@ static int tmio_mmc_start_command(struct tmio_mmc_host *host,
+ 			c |= TRANSFER_READ;
+ 	}
  
- Required properties:
--- compatible: "renesas,can-r8a7778" if CAN controller is a part of R8A7778 SoC.
-+- compatible: "renesas,can-r8a7743" if CAN controller is a part of R8A7743 SoC.
-+	      "renesas,can-r8a7745" if CAN controller is a part of R8A7745 SoC.
-+	      "renesas,can-r8a7778" if CAN controller is a part of R8A7778 SoC.
- 	      "renesas,can-r8a7779" if CAN controller is a part of R8A7779 SoC.
- 	      "renesas,can-r8a7790" if CAN controller is a part of R8A7790 SoC.
- 	      "renesas,can-r8a7791" if CAN controller is a part of R8A7791 SoC.
-@@ -12,7 +14,8 @@ Required properties:
- 	      "renesas,can-r8a7795" if CAN controller is a part of R8A7795 SoC.
- 	      "renesas,can-r8a7796" if CAN controller is a part of R8A7796 SoC.
- 	      "renesas,rcar-gen1-can" for a generic R-Car Gen1 compatible device.
--	      "renesas,rcar-gen2-can" for a generic R-Car Gen2 compatible device.
-+	      "renesas,rcar-gen2-can" for a generic R-Car Gen2 or RZ/G1
-+	      compatible device.
- 	      "renesas,rcar-gen3-can" for a generic R-Car Gen3 compatible device.
- 	      When compatible with the generic version, nodes must list the
- 	      SoC-specific version corresponding to the platform first
+-	if (!host->native_hotplug)
+-		irq_mask &= ~(TMIO_STAT_CARD_REMOVE | TMIO_STAT_CARD_INSERT);
+ 	tmio_mmc_enable_mmc_irqs(host, irq_mask);
+ 
+ 	/* Fire off the command */
+@@ -1292,11 +1290,13 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
+ 		irq_mask |= TMIO_MASK_READOP;
+ 	if (!_host->chan_tx)
+ 		irq_mask |= TMIO_MASK_WRITEOP;
+-	if (!_host->native_hotplug)
+-		irq_mask &= ~(TMIO_STAT_CARD_REMOVE | TMIO_STAT_CARD_INSERT);
+ 
+ 	_host->sdcard_irq_mask &= ~irq_mask;
+ 
++	if (_host->native_hotplug)
++		tmio_mmc_enable_mmc_irqs(_host,
++				TMIO_STAT_CARD_REMOVE | TMIO_STAT_CARD_INSERT);
++
+ 	spin_lock_init(&_host->lock);
+ 	mutex_init(&_host->ios_lock);
+ 
+@@ -1383,6 +1383,10 @@ int tmio_mmc_host_runtime_resume(struct device *dev)
+ 	if (host->clk_cache)
+ 		tmio_mmc_set_clock(host, host->clk_cache);
+ 
++	if (host->native_hotplug)
++		tmio_mmc_enable_mmc_irqs(host,
++				TMIO_STAT_CARD_REMOVE | TMIO_STAT_CARD_INSERT);
++
+ 	tmio_mmc_enable_dma(host, true);
+ 
+ 	if (tmio_mmc_can_retune(host) && host->select_tuning(host))
 -- 
 2.7.4
-
