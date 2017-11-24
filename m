@@ -1,60 +1,223 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:39996 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751759AbdKNIfT (ORCPT
+Received: from condef-07.nifty.com ([202.248.20.72]:63475 "EHLO
+        condef-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753917AbdKXQcv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Nov 2017 03:35:19 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Alex Williamson <alex.williamson@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        iommu@lists.linux-foundation.org,
+        Fri, 24 Nov 2017 11:32:51 -0500
+Received: from conuserg-11.nifty.com ([10.126.8.74])by condef-07.nifty.com with ESMTP id vAOGQ67p023220
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 25 Nov 2017 01:26:10 +0900
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-mmc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Simon Horman <simon.horman@netronome.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH/RFT v5 0/3] iommu/ipmmu-vmsa: r8a779(6|70|95) support
-Date: Tue, 14 Nov 2017 09:34:48 +0100
-Message-Id: <20171114083451.4052-1-horms+renesas@verge.net.au>
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH v2 12/22] mmc: tmio,renesas_sdhi: move struct tmio_mmc_dma to renesas_sdhi.h
+Date: Sat, 25 Nov 2017 01:24:47 +0900
+Message-Id: <1511540697-27387-13-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This series adds r8a7796 (R-Car M3-W), r8a77970 (R-Car V3M) and
-r8a77995 (R-Car D3) support to the IPMMU driver.
+struct tmio_mmc_dma looks like TMIO core data, but in fact, Renesas
+private data.  Move it to renesas_sdhi.h (probably, it is better to
+rename it to renesas_sdhi_dma, or squash it into struct renesas_sdhi).
 
-The maximum number of micro-TLBs are increased and the driver is adjusted
-to match on the new DT bindings posted separately.
+I also moved struct renesas_sdhi and host_to_priv() to that header
+because they are necessary to convert the tmio_mmc_host pointer into
+the renesas_sdhi pointer.
 
-Changes since V4:
- - Marked as RFC as I believe more consideration of driver support
-   for these SoCs is required
- - Moved DT bindings documentation into separate patch-set
-   "[PATCH 0/2] iommu/ipmmu-vmsa: Add r8a779(6|70|95) DT bindings"
-   as I believe these are ready to be merged
- - Rebased
- - Collected driver updates for r8a7796, and r8a77970 and r8a77995 SoCs
-   into a single patchset.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-Changes since V3:
- - Rebased on top of [PATCH v4 00/09] iommu/ipmmu-vmsa: r8a7795 support V4
- - Patch 3/3 updated with Reviewed-by - thanks Geert!
+Changes in v2:
+  - Newly added
 
-Changes since V2:
- - Patch 2/3 updated with an outer set of () - thanks Ramesh!
- - Patch 2/3 updated with Reviewed-by - thanks Geert!
- - Patch 3/3 updated to include white list support
+ drivers/mmc/host/renesas_sdhi.h               | 19 +++++++++++++++++++
+ drivers/mmc/host/renesas_sdhi_core.c          | 14 --------------
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c |  6 ++++--
+ drivers/mmc/host/renesas_sdhi_sys_dmac.c      | 16 ++++++++++------
+ drivers/mmc/host/tmio_mmc.h                   |  7 -------
+ 5 files changed, 33 insertions(+), 29 deletions(-)
 
-Changes since V1:
- - Patch 1/3 updated with more Acked-by tags
- - Patch 2/3 updated with high I/O register range support
-
-Magnus Damm (2):
-  iommu/ipmmu-vmsa: Increase maximum micro-TLBS to 48
-  iommu/ipmmu-vmsa: Hook up r8a7796 DT matching code
-
-Simon Horman (1):
-  iommu/ipmmu-vmsa: Hook up r8a779(70|95) DT matching code
-
- drivers/iommu/ipmmu-vmsa.c | 36 +++++++++++++++++++++++++++++-------
- 1 file changed, 29 insertions(+), 7 deletions(-)
-
+diff --git a/drivers/mmc/host/renesas_sdhi.h b/drivers/mmc/host/renesas_sdhi.h
+index b9dfea5..9a507b3 100644
+--- a/drivers/mmc/host/renesas_sdhi.h
++++ b/drivers/mmc/host/renesas_sdhi.h
+@@ -35,6 +35,25 @@ struct renesas_sdhi_of_data {
+ 	unsigned short max_segs;
+ };
+ 
++struct tmio_mmc_dma {
++	enum dma_slave_buswidth dma_buswidth;
++	bool (*filter)(struct dma_chan *chan, void *arg);
++	void (*enable)(struct tmio_mmc_host *host, bool enable);
++};
++
++struct renesas_sdhi {
++	struct clk *clk;
++	struct clk *clk_cd;
++	struct tmio_mmc_data mmc_data;
++	struct tmio_mmc_dma dma_priv;
++	struct pinctrl *pinctrl;
++	struct pinctrl_state *pins_default, *pins_uhs;
++	void __iomem *scc_ctl;
++};
++
++#define host_to_priv(host) \
++	container_of((host)->pdata, struct renesas_sdhi, mmc_data)
++
+ int renesas_sdhi_probe(struct platform_device *pdev,
+ 		       const struct tmio_mmc_dma_ops *dma_ops);
+ int renesas_sdhi_remove(struct platform_device *pdev);
+diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+index 267e2e0..34fd194 100644
+--- a/drivers/mmc/host/renesas_sdhi_core.c
++++ b/drivers/mmc/host/renesas_sdhi_core.c
+@@ -46,19 +46,6 @@
+ #define SDHI_VER_GEN3_SD	0xcc10
+ #define SDHI_VER_GEN3_SDMMC	0xcd10
+ 
+-#define host_to_priv(host) \
+-	container_of((host)->pdata, struct renesas_sdhi, mmc_data)
+-
+-struct renesas_sdhi {
+-	struct clk *clk;
+-	struct clk *clk_cd;
+-	struct tmio_mmc_data mmc_data;
+-	struct tmio_mmc_dma dma_priv;
+-	struct pinctrl *pinctrl;
+-	struct pinctrl_state *pins_default, *pins_uhs;
+-	void __iomem *scc_ctl;
+-};
+-
+ static void renesas_sdhi_sdbuf_width(struct tmio_mmc_host *host, int width)
+ {
+ 	u32 val;
+@@ -539,7 +526,6 @@ int renesas_sdhi_probe(struct platform_device *pdev,
+ 		host->bus_shift = of_data->bus_shift;
+ 	}
+ 
+-	host->dma		= dma_priv;
+ 	host->write16_hook	= renesas_sdhi_write16_hook;
+ 	host->clk_enable	= renesas_sdhi_clk_enable;
+ 	host->clk_update	= renesas_sdhi_clk_update;
+diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+index 41cbe84..691a99f 100644
+--- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+@@ -103,6 +103,8 @@ renesas_sdhi_internal_dmac_dm_write(struct tmio_mmc_host *host,
+ static void
+ renesas_sdhi_internal_dmac_enable_dma(struct tmio_mmc_host *host, bool enable)
+ {
++	struct renesas_sdhi *priv = host_to_priv(host);
++
+ 	if (!host->chan_tx || !host->chan_rx)
+ 		return;
+ 
+@@ -110,8 +112,8 @@ renesas_sdhi_internal_dmac_enable_dma(struct tmio_mmc_host *host, bool enable)
+ 		renesas_sdhi_internal_dmac_dm_write(host, DM_CM_INFO1,
+ 						    INFO1_CLEAR);
+ 
+-	if (host->dma->enable)
+-		host->dma->enable(host, enable);
++	if (priv->dma_priv.enable)
++		priv->dma_priv.enable(host, enable);
+ }
+ 
+ static void
+diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+index e210644..aeb3838 100644
+--- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+@@ -117,11 +117,13 @@ MODULE_DEVICE_TABLE(of, renesas_sdhi_sys_dmac_of_match);
+ static void renesas_sdhi_sys_dmac_enable_dma(struct tmio_mmc_host *host,
+ 					     bool enable)
+ {
++	struct renesas_sdhi *priv = host_to_priv(host);
++
+ 	if (!host->chan_tx || !host->chan_rx)
+ 		return;
+ 
+-	if (host->dma->enable)
+-		host->dma->enable(host, enable);
++	if (priv->dma_priv.enable)
++		priv->dma_priv.enable(host, enable);
+ }
+ 
+ static void renesas_sdhi_sys_dmac_abort_dma(struct tmio_mmc_host *host)
+@@ -359,6 +361,8 @@ static void renesas_sdhi_sys_dmac_issue_tasklet_fn(unsigned long priv)
+ static void renesas_sdhi_sys_dmac_request_dma(struct tmio_mmc_host *host,
+ 					      struct tmio_mmc_data *pdata)
+ {
++	struct renesas_sdhi *priv = host_to_priv(host);
++
+ 	/* We can only either use DMA for both Tx and Rx or not use it at all */
+ 	if (!host->pdev->dev.of_node &&
+ 	    (!pdata->chan_priv_tx || !pdata->chan_priv_rx))
+@@ -378,7 +382,7 @@ static void renesas_sdhi_sys_dmac_request_dma(struct tmio_mmc_host *host,
+ 		dma_cap_set(DMA_SLAVE, mask);
+ 
+ 		host->chan_tx = dma_request_slave_channel_compat(mask,
+-					host->dma->filter, pdata->chan_priv_tx,
++					priv->dma_priv.filter, pdata->chan_priv_tx,
+ 					&host->pdev->dev, "tx");
+ 		dev_dbg(&host->pdev->dev, "%s: TX: got channel %p\n", __func__,
+ 			host->chan_tx);
+@@ -389,7 +393,7 @@ static void renesas_sdhi_sys_dmac_request_dma(struct tmio_mmc_host *host,
+ 		cfg.direction = DMA_MEM_TO_DEV;
+ 		cfg.dst_addr = res->start +
+ 			(CTL_SD_DATA_PORT << host->bus_shift);
+-		cfg.dst_addr_width = host->dma->dma_buswidth;
++		cfg.dst_addr_width = priv->dma_priv.dma_buswidth;
+ 		if (!cfg.dst_addr_width)
+ 			cfg.dst_addr_width = DMA_SLAVE_BUSWIDTH_2_BYTES;
+ 		cfg.src_addr = 0;
+@@ -398,7 +402,7 @@ static void renesas_sdhi_sys_dmac_request_dma(struct tmio_mmc_host *host,
+ 			goto ecfgtx;
+ 
+ 		host->chan_rx = dma_request_slave_channel_compat(mask,
+-					host->dma->filter, pdata->chan_priv_rx,
++					priv->dma_priv.filter, pdata->chan_priv_rx,
+ 					&host->pdev->dev, "rx");
+ 		dev_dbg(&host->pdev->dev, "%s: RX: got channel %p\n", __func__,
+ 			host->chan_rx);
+@@ -408,7 +412,7 @@ static void renesas_sdhi_sys_dmac_request_dma(struct tmio_mmc_host *host,
+ 
+ 		cfg.direction = DMA_DEV_TO_MEM;
+ 		cfg.src_addr = cfg.dst_addr + host->pdata->dma_rx_offset;
+-		cfg.src_addr_width = host->dma->dma_buswidth;
++		cfg.src_addr_width = priv->dma_priv.dma_buswidth;
+ 		if (!cfg.src_addr_width)
+ 			cfg.src_addr_width = DMA_SLAVE_BUSWIDTH_2_BYTES;
+ 		cfg.dst_addr = 0;
+diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+index 37409c5..dc470d3 100644
+--- a/drivers/mmc/host/tmio_mmc.h
++++ b/drivers/mmc/host/tmio_mmc.h
+@@ -112,12 +112,6 @@
+ struct tmio_mmc_data;
+ struct tmio_mmc_host;
+ 
+-struct tmio_mmc_dma {
+-	enum dma_slave_buswidth dma_buswidth;
+-	bool (*filter)(struct dma_chan *chan, void *arg);
+-	void (*enable)(struct tmio_mmc_host *host, bool enable);
+-};
+-
+ struct tmio_mmc_dma_ops {
+ 	void (*start)(struct tmio_mmc_host *host, struct mmc_data *data);
+ 	void (*enable)(struct tmio_mmc_host *host, bool enable);
+@@ -149,7 +143,6 @@ struct tmio_mmc_host {
+ 
+ 	struct platform_device *pdev;
+ 	struct tmio_mmc_data *pdata;
+-	struct tmio_mmc_dma	*dma;
+ 
+ 	/* DMA support */
+ 	bool			force_pio;
 -- 
-2.11.0
+2.7.4
