@@ -1,243 +1,105 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35502 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753100AbdKXKxF (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 24 Nov 2017 05:53:05 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        devicetree@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2] arm64: dts: renesas: r8a7795: Move nodes which have no reg property out of bus
-Date: Fri, 24 Nov 2017 10:52:34 +0000
-Message-Id: <20171124105234.25774-1-horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+Date: Sat, 25 Nov 2017 18:04:20 +0200
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: jacopo mondi <jacopo@jmondi.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
+        geert@glider.be, mchehab@kernel.org, hverkuil@xs4all.nl,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 08/10] media: i2c: ov772x: Remove soc_camera
+ dependencies
+Message-ID: <20171125160420.ni5drissfnbkgvrd@valkosipuli.retiisi.org.uk>
+References: <1510743363-25798-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1510743363-25798-9-git-send-email-jacopo+renesas@jmondi.org>
+ <20171117004315.gyc2j6x2orhxulcv@valkosipuli.retiisi.org.uk>
+ <20171117091451.GC4668@w540>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20171117091451.GC4668@w540>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Move pmu_a5[73], timer and thermal-zones nodes from soc node to root node.
-The nodes that have been moved do not have any register properties and thus
-shouldn't be placed on the bus.
+On Fri, Nov 17, 2017 at 10:14:51AM +0100, jacopo mondi wrote:
+> Hi Sakari!
+> 
+> On Fri, Nov 17, 2017 at 02:43:15AM +0200, Sakari Ailus wrote:
+> > Hi Jacopo,
+> >
+> > On Wed, Nov 15, 2017 at 11:56:01AM +0100, Jacopo Mondi wrote:
+> > >
+> 
+> [snip]
+> 
+> > > +#include <linux/clk.h>
+> > >  #include <linux/init.h>
+> > >  #include <linux/kernel.h>
+> > >  #include <linux/module.h>
+> > > @@ -25,8 +26,8 @@
+> > >  #include <linux/videodev2.h>
+> > >
+> > >  #include <media/i2c/ov772x.h>
+> > > -#include <media/soc_camera.h>
+> > > -#include <media/v4l2-clk.h>
+> > > +
+> > > +#include <media/v4l2-device.h>
+> >
+> > Alphabetical order would be nice.
+> 
+> ups!
+> 
+> >
+> > >  #include <media/v4l2-ctrls.h>
+> > >  #include <media/v4l2-subdev.h>
+> > >  #include <media/v4l2-image-sizes.h>
+> > > @@ -393,7 +394,7 @@ struct ov772x_win_size {
+> > >  struct ov772x_priv {
+> > >  	struct v4l2_subdev                subdev;
+> > >  	struct v4l2_ctrl_handler	  hdl;
+> > > -	struct v4l2_clk			 *clk;
+> > > +	struct clk			 *clk;
+> > >  	struct ov772x_camera_info        *info;
+> > >  	const struct ov772x_color_format *cfmt;
+> > >  	const struct ov772x_win_size     *win;
+> > > @@ -550,7 +551,7 @@ static int ov772x_reset(struct i2c_client *client)
+> > >  }
+> > >
+> > >  /*
+> > > - * soc_camera_ops function
+> > > + * subdev ops
+> > >   */
+> > >
+> > >  static int ov772x_s_stream(struct v4l2_subdev *sd, int enable)
+> > > @@ -650,13 +651,36 @@ static int ov772x_s_register(struct v4l2_subdev *sd,
+> > >  }
+> > >  #endif
+> > >
+> > > +static int ov772x_power_on(struct ov772x_priv *priv)
+> > > +{
+> > > +	int ret;
+> > > +
+> > > +	if (priv->info->platform_enable) {
+> > > +		ret = priv->info->platform_enable();
+> > > +		if (ret)
+> > > +			return ret;
+> >
+> > What does this do, enable the regulator?
+> 
+> Well, it depends on what function the platform code stores in
+> 'platform_enable' pointer, doesn't it?
+> 
+> As you can see in [05/10] of this series, for Migo-R it's not about
+> a regulator, but switching between the two available video inputs
+> (OV7725 and TW9910) toggling their 'enable' pins.
 
-This problem is flagged by the compiler as follows:
-$ make
-...
-  DTC     arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dtb
-arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dtb: Warning (simple_bus_reg): Node /soc/pmu_a57 missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dtb: Warning (simple_bus_reg): Node /soc/pmu_a53 missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dtb: Warning (simple_bus_reg): Node /soc/timer missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dtb: Warning (simple_bus_reg): Node /soc/thermal-zones missing or empty reg/ranges property
-  DTC     arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dtb
-arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dtb: Warning (simple_bus_reg): Node /soc/pmu_a57 missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dtb: Warning (simple_bus_reg): Node /soc/pmu_a53 missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dtb: Warning (simple_bus_reg): Node /soc/timer missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dtb: Warning (simple_bus_reg): Node /soc/thermal-zones missing or empty reg/ranges property
-  DTC     arch/arm64/boot/dts/renesas/r8a7795-h3ulcb-kf.dtb
-arch/arm64/boot/dts/renesas/r8a7795-h3ulcb-kf.dtb: Warning (simple_bus_reg): Node /soc/pmu_a57 missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7795-h3ulcb-kf.dtb: Warning (simple_bus_reg): Node /soc/pmu_a53 missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7795-h3ulcb-kf.dtb: Warning (simple_bus_reg): Node /soc/timer missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7795-h3ulcb-kf.dtb: Warning (simple_bus_reg): Node /soc/thermal-zones missing or empty reg/ranges property
-  DTC     arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dtb
-arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dtb: Warning (simple_bus_reg): Node /soc/pmu_a57 missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dtb: Warning (simple_bus_reg): Node /soc/pmu_a53 missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dtb: Warning (simple_bus_reg): Node /soc/timer missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dtb: Warning (simple_bus_reg): Node /soc/thermal-zones missing or empty reg/ranges property
-  DTC     arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dtb
-arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dtb: Warning (simple_bus_reg): Node /soc/pmu_a57 missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dtb: Warning (simple_bus_reg): Node /soc/pmu_a53 missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dtb: Warning (simple_bus_reg): Node /soc/timer missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dtb: Warning (simple_bus_reg): Node /soc/thermal-zones missing or empty reg/ranges property
-  DTC     arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb.dtb
-arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb.dtb: Warning (simple_bus_reg): Node /soc/pmu_a57 missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb.dtb: Warning (simple_bus_reg): Node /soc/pmu_a53 missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb.dtb: Warning (simple_bus_reg): Node /soc/timer missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb.dtb: Warning (simple_bus_reg): Node /soc/thermal-zones missing or empty reg/ranges property
-  DTC     arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb-kf.dtb
-arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb-kf.dtb: Warning (simple_bus_reg): Node /soc/pmu_a57 missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb-kf.dtb: Warning (simple_bus_reg): Node /soc/pmu_a53 missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb-kf.dtb: Warning (simple_bus_reg): Node /soc/timer missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb-kf.dtb: Warning (simple_bus_reg): Node /soc/thermal-zones missing or empty reg/ranges property
+Ok. That's not a very nice design.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
-v2
-* Preserve alphabetical order of nodes present in root node.
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 134 +++++++++++++++----------------
- 1 file changed, 67 insertions(+), 67 deletions(-)
+Fair enough. I guess it's good to proceed one thing at a time.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 6db4f10376a1..1e80b7b6516a 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -184,6 +184,30 @@
- 		clock-frequency = <0>;
- 	};
- 
-+	pmu_a57 {
-+		compatible = "arm,cortex-a57-pmu";
-+		interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-affinity = <&a57_0>,
-+				     <&a57_1>,
-+				     <&a57_2>,
-+				     <&a57_3>;
-+	};
-+
-+	pmu_a53 {
-+		compatible = "arm,cortex-a53-pmu";
-+		interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-affinity = <&a53_0>,
-+				     <&a53_1>,
-+				     <&a53_2>,
-+				     <&a53_3>;
-+	};
-+
- 	soc: soc {
- 		compatible = "simple-bus";
- 		interrupt-parent = <&gic>;
-@@ -338,42 +362,6 @@
- 			resets = <&cpg 905>;
- 		};
- 
--		pmu_a57 {
--			compatible = "arm,cortex-a57-pmu";
--			interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
--			interrupt-affinity = <&a57_0>,
--					     <&a57_1>,
--					     <&a57_2>,
--					     <&a57_3>;
--		};
--
--		pmu_a53 {
--			compatible = "arm,cortex-a53-pmu";
--			interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
--			interrupt-affinity = <&a53_0>,
--					     <&a53_1>,
--					     <&a53_2>,
--					     <&a53_3>;
--		};
--
--		timer {
--			compatible = "arm,armv8-timer";
--			interrupts = <GIC_PPI 13
--					(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
--				     <GIC_PPI 14
--					(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
--				     <GIC_PPI 11
--					(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
--				     <GIC_PPI 10
--					(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
--		};
--
- 		cpg: clock-controller@e6150000 {
- 			compatible = "renesas,r8a7795-cpg-mssr";
- 			reg = <0 0xe6150000 0 0x1000>;
-@@ -2331,47 +2319,59 @@
- 			#thermal-sensor-cells = <1>;
- 			status = "okay";
- 		};
-+	};
- 
--		thermal-zones {
--			sensor_thermal1: sensor-thermal1 {
--				polling-delay-passive = <250>;
--				polling-delay = <1000>;
--				thermal-sensors = <&tsc 0>;
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts = <GIC_PPI 13
-+				(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 14
-+				(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 11
-+				(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 10
-+				(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
- 
--				trips {
--					sensor1_crit: sensor1-crit {
--						temperature = <120000>;
--						hysteresis = <2000>;
--						type = "critical";
--					};
-+	thermal-zones {
-+		sensor_thermal1: sensor-thermal1 {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+			thermal-sensors = <&tsc 0>;
-+
-+			trips {
-+				sensor1_crit: sensor1-crit {
-+					temperature = <120000>;
-+					hysteresis = <2000>;
-+					type = "critical";
- 				};
- 			};
-+		};
- 
--			sensor_thermal2: sensor-thermal2 {
--				polling-delay-passive = <250>;
--				polling-delay = <1000>;
--				thermal-sensors = <&tsc 1>;
-+		sensor_thermal2: sensor-thermal2 {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+			thermal-sensors = <&tsc 1>;
- 
--				trips {
--					sensor2_crit: sensor2-crit {
--						temperature = <120000>;
--						hysteresis = <2000>;
--						type = "critical";
--					};
-+			trips {
-+				sensor2_crit: sensor2-crit {
-+					temperature = <120000>;
-+					hysteresis = <2000>;
-+					type = "critical";
- 				};
- 			};
-+		};
- 
--			sensor_thermal3: sensor-thermal3 {
--				polling-delay-passive = <250>;
--				polling-delay = <1000>;
--				thermal-sensors = <&tsc 2>;
-+		sensor_thermal3: sensor-thermal3 {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+			thermal-sensors = <&tsc 2>;
- 
--				trips {
--					sensor3_crit: sensor3-crit {
--						temperature = <120000>;
--						hysteresis = <2000>;
--						type = "critical";
--					};
-+			trips {
-+				sensor3_crit: sensor3-crit {
-+					temperature = <120000>;
-+					hysteresis = <2000>;
-+					type = "critical";
- 				};
- 			};
- 		};
+If someone has this sensor on a board with DT support, we can use the
+regulator framework and just ignore the platform callbacks.
+
 -- 
-2.11.0
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi
