@@ -1,46 +1,70 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35591 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753185AbdKXK6f (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 24 Nov 2017 05:58:35 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Alex Williamson <alex.williamson@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        iommu@lists.linux-foundation.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 0/2] iommu/ipmmu-vmsa: Add r8a779(6|70|95) DT bindings
-Date: Fri, 24 Nov 2017 10:58:02 +0000
-Message-Id: <20171124105804.26924-1-horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+Date: Sat, 25 Nov 2017 19:17:59 +0100
+From: jacopo mondi <jacopo@jmondi.org>
+To: Sakari Ailus <sakari.ailus@iki.fi>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
+        geert@glider.be, mchehab@kernel.org, hverkuil@xs4all.nl,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 03/10] v4l: platform: Add Renesas CEU driver
+Message-ID: <20171125181759.GE12305@w540>
+References: <1510743363-25798-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1510743363-25798-4-git-send-email-jacopo+renesas@jmondi.org>
+ <20171115124551.xrmrd34l4u4qgcms@valkosipuli.retiisi.org.uk>
+ <20171115142511.GJ19070@w540>
+ <20171117003651.e7oj362eqivyukcu@valkosipuli.retiisi.org.uk>
+ <20171117093355.GE4668@w540>
+ <20171125155613.ebblr7hdr6irs2h7@valkosipuli.retiisi.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20171125155613.ebblr7hdr6irs2h7@valkosipuli.retiisi.org.uk>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Update the IPMMU DT binding documentation to include r8a7796 (R-Car M3-W),
-r8a77970 (R-Car V3M) and r8a77995 (R-Car D3) compat strings.
+Hi Sakari!
 
-This patch-set is comprised of patches previously included in
-* [PATCH v4 0/3] iommu/ipmmu-vmsa: r8a7796 support V4
-* [PATCH 0/2] iommu/ipmmu-vmsa: r8a779(70|95) support
+On Sat, Nov 25, 2017 at 05:56:14PM +0200, Sakari Ailus wrote:
+> On Fri, Nov 17, 2017 at 10:33:55AM +0100, jacopo mondi wrote:
+> > Hi Sakari!
+> >
 
-Those series also include driver updates to implement the bindings,
-however, it while it is felt that the bindings themselves are ready
-to be merged we feel that the driver updates are not at that stage yet.
+[snip]
 
-Changes since v1:
-* Correct typo in r8a779(70|95) patch: R8A7770 -> R8A77970
+> > I would like to make sure we're all on the same page with this. My
+> > preference would be:
+> >
+> > 1) Have renesas-ceu.c driver merged with Migo-R ported to use this new
+> > driver as an 'example'.
+> > 2) Do not remove any of the existing soc_camera code at this point
+> > 3) Port all other 4 SH users of sh_mobile_ceu_camera to use the now
+> > merged renesas-ceu driver
+> > 4) Remove sh_mobile_ceu_camera and soc_camera sensor drivers whose
+> > only users were those 4 SH boards
+> > 5) Remove soc_camera completely. For my understanding there are some
+> > PXA platforms still using soc_camera provided utilities somewhere.
+> > Hans knows better, but we can discuss this once we'll get there.
+>
+> The first point here is basically done by this patchset and your intent
+> would be to proceed with the rest, right?
 
+Yep, you're right!
 
-Magnus Damm (1):
-  iommu/ipmmu-vmsa: Add r8a7796 DT binding
+>
+> The above seems good; what I wanted to say was that I'd like to avoid
+> ending up in a permanent situation where some hardware works with the new
+> driver and some will continue to use the old one.
 
-Simon Horman (1):
-  iommu/ipmmu-vmsa: Add r8a779(70|95) DT bindings
+I hope that being the last users of soc_camera, there will be enough
+motivations to complete all the above points :)
 
- Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt | 3 +++
- 1 file changed, 3 insertions(+)
+Thanks
+   j
 
--- 
-2.11.0
+>
+> --
+> Kind regards,
+>
+> Sakari Ailus
+> e-mail: sakari.ailus@iki.fi
