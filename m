@@ -1,38 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:56963 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751313AbdKJOAH (ORCPT
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:40453 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752064AbdKZJDA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Nov 2017 09:00:07 -0500
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
-        linus.walleij@linaro.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        chris.paterson2@renesas.com, fabrizio.castro@bp.renesas.com,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH 0/2] Add CAN & CAN FD pinctrl support for R-Car H3 ES2.0
-Date: Fri, 10 Nov 2017 13:58:48 +0000
-Message-Id: <20171110135850.32904-1-ramesh.shanmugasundaram@bp.renesas.com>
+        Sun, 26 Nov 2017 04:03:00 -0500
+MIME-Version: 1.0
+In-Reply-To: <1511540697-27387-3-git-send-email-yamada.masahiro@socionext.com>
+References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com> <1511540697-27387-3-git-send-email-yamada.masahiro@socionext.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Sun, 26 Nov 2017 10:02:59 +0100
+Message-ID: <CAMuHMdV4q1n6tPe8Q_g6s3G+0P1_xCxvt6X4tW4FGyubM4WOjA@mail.gmail.com>
+Subject: Re: [PATCH v2 02/22] mmc: renesas_sdhi: remove wrong depends on to
+ enable compile test
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Linux MMC List <linux-mmc@vger.kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <simon.horman@netronome.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert, All,
+On Fri, Nov 24, 2017 at 5:24 PM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+> ARCH_RENESAS is a stronger condition than (ARM || ARM64).
+> If ARCH_RENESAS is enabled, (ARM || ARM64) is met as well.
+>
+> What is worse, the first depends on line prevents COMPILE_TEST from
+> enabling this driver.  It should be removed.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-   This series adds CAN and CAN FD pinctrl support for R-Car H3 ES2.0. The
-   pin config is identical to H3 ES1.x.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-   This series is based on renesas-drivers repo
-   commit: cdf382160c46b29ce99532ed4378ddc044a5a1c9
+Gr{oetje,eeting}s,
 
-Thanks,
-Ramesh.
+                        Geert
 
-Ramesh Shanmugasundaram (2):
-  pinctrl: sh-pfc: r8a7795: Add CAN support
-  pinctrl: sh-pfc: r8a7795: Add CAN FD support
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 89 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 89 insertions(+)
-
--- 
-2.12.2
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
