@@ -1,38 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:58556 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754013AbdKNRIT (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:59562 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752072AbdKZLaZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Nov 2017 12:08:19 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: ysato@users.sourceforge.jp, dalias@libc.org,
-        laurent.pinchart@ideasonboard.com, geert@linux-m68k.org
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, linux-sh@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/2] Migo-R: reserve memory block with memblock APIs
-Date: Tue, 14 Nov 2017 18:08:04 +0100
-Message-Id: <1510679286-6988-1-git-send-email-jacopo+renesas@jmondi.org>
+        Sun, 26 Nov 2017 06:30:25 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: [PATCH v3 0/2] R-Car DU: Clip planes to screen boundaries
+Date: Sun, 26 Nov 2017 13:30:20 +0200
+Message-Id: <20171126113022.27808-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Re-spinn of "[PATCH] sh: migor: Reserve memory block for CEU" with additional
-patch on top to post-pone page_to_pfn() mapping during mmap() on DMA memory.
+Hello,
 
-Laurent is probably working on a proper fix, so I'm just copying the iommu list
-here to make them aware of the problem on SH4 architecture, but please do not
-consider that patch for inclusion for now.
+This patch series fixes support for planes that cross the screen boundaries.
+The KMS API supports such a configuration, but the DU and VSP hardware
+doesn't. This leads to different kind of dispay artifacts or hangs.
 
-Thanks
-   j
+The series starts with a bit of refactoring to share existing code and make it
+easier to share new code. The second patch then clips planes that are either
+partially or fully off-screen, disabling planes that end up being completely
+invisible.
 
-Jacopo Mondi (2):
-  sh: migor: Reserve memory block for CEU
-  base: dma-mapping: Postpone page_to_pfn() on mmap()
+Compared to v2, the series has been rebased on top of the latest drm+drm-misc
+to benefit from Ville's rework of the plane state check helper, and now
+actually uses the clipped source and destination rectangles (and hence passes
+the tests).
 
- arch/sh/boards/mach-migor/setup.c | 29 +++++++++++++++++++++++++++--
- drivers/base/dma-mapping.c        |  3 ++-
- 2 files changed, 29 insertions(+), 3 deletions(-)
+Compared to v1, fully off-screen planes are now accepted (but obviously not
+shown).
 
---
-2.7.4
+The patches are based on top of Dave's latest master branch.
+
+The series has been tested on a Salvator-XS board.
+
+Laurent Pinchart (2):
+  drm: rcar-du: Share plane atomic check code between Gen2 and Gen3
+  drm: rcar-du: Clip planes to screen boundaries
+
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c  |  3 +-
+ drivers/gpu/drm/rcar-du/rcar_du_plane.c | 75 +++++++++++++++++++++++----------
+ drivers/gpu/drm/rcar-du/rcar_du_plane.h |  4 ++
+ drivers/gpu/drm/rcar-du/rcar_du_vsp.c   | 64 +++++++++++-----------------
+ 4 files changed, 83 insertions(+), 63 deletions(-)
+
+-- 
+Regards,
+
+Laurent Pinchart
