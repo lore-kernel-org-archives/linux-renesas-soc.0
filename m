@@ -1,97 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:54540 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752573AbdK2ToL (ORCPT
+Received: from mail-it0-f65.google.com ([209.85.214.65]:33116 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751724AbdK0J5r (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 29 Nov 2017 14:44:11 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v8 17/28] rcar-vin: add flag to switch to media controller mode
-Date: Wed, 29 Nov 2017 20:43:31 +0100
-Message-Id: <20171129194342.26239-18-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20171129194342.26239-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20171129194342.26239-1-niklas.soderlund+renesas@ragnatech.se>
+        Mon, 27 Nov 2017 04:57:47 -0500
+Received: by mail-it0-f65.google.com with SMTP id o130so19939463itg.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 27 Nov 2017 01:57:47 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20171114225520.6793-1-wsa+renesas@sang-engineering.com>
+References: <20171114225520.6793-1-wsa+renesas@sang-engineering.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 27 Nov 2017 10:57:46 +0100
+Message-ID: <CAPDyKFqw19OCx-OjV3pWowcorZdPdPo9_HScaBJQ5LB_Re0=Ug@mail.gmail.com>
+Subject: Re: [PATCH RFT] mmc: core: use usleep_range rather than HZ magic in mmc_delay()
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Gen3 a media controller API needs to be used to allow userspace to
-configure the subdevices in the pipeline instead of directly controlling
-a single source subdevice, which is and will continue to be the mode of
-operation on Gen2.
+On 14 November 2017 at 23:55, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> Documentation/timers/timers-howto.txt recommends to use usleep_range for
+> delays 1-20ms. Let's adhere to it. No need for messing with HZ and still
+> do busy looping these days.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Prepare for these two modes of operation by adding a flag to struct
-rvin_info which will control which mode to use.
+Thanks, applied for next!
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
----
- drivers/media/platform/rcar-vin/rcar-core.c | 6 +++++-
- drivers/media/platform/rcar-vin/rcar-vin.h  | 2 ++
- 2 files changed, 7 insertions(+), 1 deletion(-)
+Kind regards
+Uffe
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 7d49904cab9cb2d9..61f48ecc1ab815ec 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -232,18 +232,21 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
- 
- static const struct rvin_info rcar_info_h1 = {
- 	.chip = RCAR_H1,
-+	.use_mc = false,
- 	.max_width = 2048,
- 	.max_height = 2048,
- };
- 
- static const struct rvin_info rcar_info_m1 = {
- 	.chip = RCAR_M1,
-+	.use_mc = false,
- 	.max_width = 2048,
- 	.max_height = 2048,
- };
- 
- static const struct rvin_info rcar_info_gen2 = {
- 	.chip = RCAR_GEN2,
-+	.use_mc = false,
- 	.max_width = 2048,
- 	.max_height = 2048,
- };
-@@ -338,7 +341,8 @@ static int rcar_vin_remove(struct platform_device *pdev)
- 	v4l2_async_notifier_unregister(&vin->notifier);
- 	v4l2_async_notifier_cleanup(&vin->notifier);
- 
--	v4l2_ctrl_handler_free(&vin->ctrl_handler);
-+	if (!vin->info->use_mc)
-+		v4l2_ctrl_handler_free(&vin->ctrl_handler);
- 
- 	rvin_dma_unregister(vin);
- 
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 7819c760c2c13422..0747873c2b9cb74c 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -77,12 +77,14 @@ struct rvin_graph_entity {
- /**
-  * struct rvin_info - Information about the particular VIN implementation
-  * @chip:		type of VIN chip
-+ * @use_mc:		use media controller instead of controlling subdevice
-  *
-  * max_width:		max input width the VIN supports
-  * max_height:		max input height the VIN supports
-  */
- struct rvin_info {
- 	enum chip_id chip;
-+	bool use_mc;
- 
- 	unsigned int max_width;
- 	unsigned int max_height;
--- 
-2.15.0
+> ---
+>
+> Here is a more detailed test page for this describing my tests:
+>
+> https://elinux.org/Tests:mmc-delay-refactor
+>
+> I did mainly test the insert/eject cycle because powering up the cards
+> seemed to trigger most delays. Transferring data did not cause any calls
+> to mmc_delay() for me. Please let me know if someone knows a test pattern
+> which should be included before applying this change.
+>
+> Works fine for me on Lager (R-Car H2) and Salvator-X (R-Car M3-W). Testing on
+> other platforms very welcome. This should be independent of the IP core.
+>
+>  drivers/mmc/core/core.h | 8 +++-----
+>  1 file changed, 3 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/mmc/core/core.h b/drivers/mmc/core/core.h
+> index 71e6c6d7ceb70d..b2877e2d740fa5 100644
+> --- a/drivers/mmc/core/core.h
+> +++ b/drivers/mmc/core/core.h
+> @@ -62,12 +62,10 @@ void mmc_set_initial_state(struct mmc_host *host);
+>
+>  static inline void mmc_delay(unsigned int ms)
+>  {
+> -       if (ms < 1000 / HZ) {
+> -               cond_resched();
+> -               mdelay(ms);
+> -       } else {
+> +       if (ms <= 20)
+> +               usleep_range(ms * 1000, ms * 1250);
+> +       else
+>                 msleep(ms);
+> -       }
+>  }
+>
+>  void mmc_rescan(struct work_struct *work);
+> --
+> 2.11.0
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
