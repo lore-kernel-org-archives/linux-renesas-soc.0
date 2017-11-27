@@ -1,88 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55692 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:34541 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752216AbdKAKgf (ORCPT
+        with ESMTP id S1751731AbdK0LSD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 1 Nov 2017 06:36:35 -0400
+        Mon, 27 Nov 2017 06:18:03 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+To: arm@kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Magnus Damm <damm+renesas@opensource.se>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v4 03/15] arm64: dts: renesas: r8a7795: Tie SYS-DMAC to IPMMU-DS0/1
-Date: Wed,  1 Nov 2017 11:34:40 +0100
-Message-Id: <20171101103452.7491-4-horms+renesas@verge.net.au>
-In-Reply-To: <20171101103452.7491-1-horms+renesas@verge.net.au>
-References: <20171101103452.7491-1-horms+renesas@verge.net.au>
+Subject: [GIT PULL] Renesas ARM Based SoC DT Fixes for v4.15
+Date: Mon, 27 Nov 2017 12:17:41 +0100
+Message-Id: <cover.1511781272.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Hi Olof, Hi Kevin, Hi Arnd,
 
-Hook up r8a7795 SYS-DMAC nodes to the IPMMUs. In particular SYS-DMAC0 gets
-tied to IPMMU-DS0, and SYS-DMAC1 and SYS-DMAC2 get tied to IPMMU-DS1.
+Please consider this Renesas ARM based SoC DT fix for v4.15.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
-v4 [Simon Horman]
-* Broke out of a larger patch
+It is from Arnd adding missing '#reset-cells' property to cpg nodes.
+This flagged by recent dtc.
 
-v1 - v3 [Magnus Damm]
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+This pull request is based on
+"[GIT PULL] Second Round of Renesas ARM Based SoC DT Updates for v4.15"
+which is tagged as renesas-dt2-for-v4.15 and you have already pulled.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 9750881c90a6..fce66aaf282e 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -580,6 +580,14 @@
- 			resets = <&cpg 219>;
- 			#dma-cells = <1>;
- 			dma-channels = <16>;
-+			iommus = <&ipmmu_ds0 0>, <&ipmmu_ds0 1>,
-+			       <&ipmmu_ds0 2>, <&ipmmu_ds0 3>,
-+			       <&ipmmu_ds0 4>, <&ipmmu_ds0 5>,
-+			       <&ipmmu_ds0 6>, <&ipmmu_ds0 7>,
-+			       <&ipmmu_ds0 8>, <&ipmmu_ds0 9>,
-+			       <&ipmmu_ds0 10>, <&ipmmu_ds0 11>,
-+			       <&ipmmu_ds0 12>, <&ipmmu_ds0 13>,
-+			       <&ipmmu_ds0 14>, <&ipmmu_ds0 15>;
- 		};
- 
- 		dmac1: dma-controller@e7300000 {
-@@ -614,6 +622,14 @@
- 			resets = <&cpg 218>;
- 			#dma-cells = <1>;
- 			dma-channels = <16>;
-+			iommus = <&ipmmu_ds1 0>, <&ipmmu_ds1 1>,
-+			       <&ipmmu_ds1 2>, <&ipmmu_ds1 3>,
-+			       <&ipmmu_ds1 4>, <&ipmmu_ds1 5>,
-+			       <&ipmmu_ds1 6>, <&ipmmu_ds1 7>,
-+			       <&ipmmu_ds1 8>, <&ipmmu_ds1 9>,
-+			       <&ipmmu_ds1 10>, <&ipmmu_ds1 11>,
-+			       <&ipmmu_ds1 12>, <&ipmmu_ds1 13>,
-+			       <&ipmmu_ds1 14>, <&ipmmu_ds1 15>;
- 		};
- 
- 		dmac2: dma-controller@e7310000 {
-@@ -648,6 +664,14 @@
- 			resets = <&cpg 217>;
- 			#dma-cells = <1>;
- 			dma-channels = <16>;
-+			iommus = <&ipmmu_ds1 16>, <&ipmmu_ds1 17>,
-+			       <&ipmmu_ds1 18>, <&ipmmu_ds1 19>,
-+			       <&ipmmu_ds1 20>, <&ipmmu_ds1 21>,
-+			       <&ipmmu_ds1 22>, <&ipmmu_ds1 23>,
-+			       <&ipmmu_ds1 24>, <&ipmmu_ds1 25>,
-+			       <&ipmmu_ds1 26>, <&ipmmu_ds1 27>,
-+			       <&ipmmu_ds1 28>, <&ipmmu_ds1 29>,
-+			       <&ipmmu_ds1 30>, <&ipmmu_ds1 31>;
- 		};
- 
- 		audma0: dma-controller@ec700000 {
--- 
-2.11.0
+
+The following changes since commit b6d3b649441936621c87b79bff8dd436e2397e3c:
+
+  ARM: dts: r8a7743: Add xhci support to SoC dtsi (2017-10-18 07:21:36 +0200)
+
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-dt-fixes-for-v4.15
+
+for you to fetch changes up to 098f53050154498876ef3febde706ff5c8b25cf4:
+
+  ARM: dts: r8a779x: Add '#reset-cells' in cpg-mssr (2017-11-20 11:35:41 +0100)
+
+----------------------------------------------------------------
+Renesas ARM Based SoC DT Fixes for v4.15
+
+Add missing '#reset-cells' property to cpg nodes.
+This flagged by recent dtc.
+
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      ARM: dts: r8a779x: Add '#reset-cells' in cpg-mssr
+
+ arch/arm/boot/dts/r8a7790.dtsi | 1 +
+ arch/arm/boot/dts/r8a7792.dtsi | 1 +
+ arch/arm/boot/dts/r8a7793.dtsi | 1 +
+ arch/arm/boot/dts/r8a7794.dtsi | 1 +
+ 4 files changed, 4 insertions(+)
