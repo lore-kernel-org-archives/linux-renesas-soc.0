@@ -1,249 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:46369 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752096AbdK1I6V (ORCPT
+Received: from sauhun.de ([88.99.104.3]:47855 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753778AbdK0R5K (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Nov 2017 03:58:21 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        devicetree@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v3] arm64: dts: renesas: r8a7795: Move nodes which have no reg property out of bus
-Date: Tue, 28 Nov 2017 09:58:10 +0100
-Message-Id: <20171128085810.2099-1-horms+renesas@verge.net.au>
+        Mon, 27 Nov 2017 12:57:10 -0500
+Date: Mon, 27 Nov 2017 18:57:08 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Jacopo Mondi <jacopo@jmondi.org>
+Subject: Re: [PATCH RFT] i2c: sh_mobile: make sure to not accidently trigger
+ STOP
+Message-ID: <20171127175708.gxtlojckgrh7zozc@ninjato>
+References: <20171115143221.30618-1-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="e6mqw7qviecwrpib"
+Content-Disposition: inline
+In-Reply-To: <20171115143221.30618-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Move pmu_a5[73], timer and thermal-zones nodes from soc node to root node.
-The nodes that have been moved do not have any register properties and thus
-shouldn't be placed on the bus.
 
-This problem is flagged by the compiler as follows:
-$ make
-...
-  DTC     arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dtb
-arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dtb: Warning (simple_bus_reg): Node /soc/pmu_a57 missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dtb: Warning (simple_bus_reg): Node /soc/pmu_a53 missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dtb: Warning (simple_bus_reg): Node /soc/timer missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dtb: Warning (simple_bus_reg): Node /soc/thermal-zones missing or empty reg/ranges property
-  DTC     arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dtb
-arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dtb: Warning (simple_bus_reg): Node /soc/pmu_a57 missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dtb: Warning (simple_bus_reg): Node /soc/pmu_a53 missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dtb: Warning (simple_bus_reg): Node /soc/timer missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dtb: Warning (simple_bus_reg): Node /soc/thermal-zones missing or empty reg/ranges property
-  DTC     arch/arm64/boot/dts/renesas/r8a7795-h3ulcb-kf.dtb
-arch/arm64/boot/dts/renesas/r8a7795-h3ulcb-kf.dtb: Warning (simple_bus_reg): Node /soc/pmu_a57 missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7795-h3ulcb-kf.dtb: Warning (simple_bus_reg): Node /soc/pmu_a53 missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7795-h3ulcb-kf.dtb: Warning (simple_bus_reg): Node /soc/timer missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7795-h3ulcb-kf.dtb: Warning (simple_bus_reg): Node /soc/thermal-zones missing or empty reg/ranges property
-  DTC     arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dtb
-arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dtb: Warning (simple_bus_reg): Node /soc/pmu_a57 missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dtb: Warning (simple_bus_reg): Node /soc/pmu_a53 missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dtb: Warning (simple_bus_reg): Node /soc/timer missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dtb: Warning (simple_bus_reg): Node /soc/thermal-zones missing or empty reg/ranges property
-  DTC     arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dtb
-arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dtb: Warning (simple_bus_reg): Node /soc/pmu_a57 missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dtb: Warning (simple_bus_reg): Node /soc/pmu_a53 missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dtb: Warning (simple_bus_reg): Node /soc/timer missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dtb: Warning (simple_bus_reg): Node /soc/thermal-zones missing or empty reg/ranges property
-  DTC     arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb.dtb
-arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb.dtb: Warning (simple_bus_reg): Node /soc/pmu_a57 missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb.dtb: Warning (simple_bus_reg): Node /soc/pmu_a53 missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb.dtb: Warning (simple_bus_reg): Node /soc/timer missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb.dtb: Warning (simple_bus_reg): Node /soc/thermal-zones missing or empty reg/ranges property
-  DTC     arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb-kf.dtb
-arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb-kf.dtb: Warning (simple_bus_reg): Node /soc/pmu_a57 missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb-kf.dtb: Warning (simple_bus_reg): Node /soc/pmu_a53 missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb-kf.dtb: Warning (simple_bus_reg): Node /soc/timer missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb-kf.dtb: Warning (simple_bus_reg): Node /soc/thermal-zones missing or empty reg/ranges property
+--e6mqw7qviecwrpib
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
-v3
-* Add interrupt-parent property to /pmu_* and /timer nodes as
-  it is no longer inherited from the parent node
-v2
-* Preserve alphabetical order of nodes present in root node.
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 137 ++++++++++++++++---------------
- 1 file changed, 70 insertions(+), 67 deletions(-)
+On Wed, Nov 15, 2017 at 03:32:21PM +0100, Wolfram Sang wrote:
+> The datasheet was a bit vague, but after consultation with HW designers,
+> we came to the conclusion that we should set the SCP bit always when
+> dealing only with the ICE bit. A set SCP bit is ignored, and thus fine,
+> a cleared one may trigger STOP on the bus.
+>=20
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 6db4f10376a1..b8e5b7194aee 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -184,6 +184,32 @@
- 		clock-frequency = <0>;
- 	};
- 
-+	pmu_a57 {
-+		compatible = "arm,cortex-a57-pmu";
-+		interrupt-parent = <&gic>;
-+		interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-affinity = <&a57_0>,
-+				     <&a57_1>,
-+				     <&a57_2>,
-+				     <&a57_3>;
-+	};
-+
-+	pmu_a53 {
-+		compatible = "arm,cortex-a53-pmu";
-+		interrupt-parent = <&gic>;
-+		interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-affinity = <&a53_0>,
-+				     <&a53_1>,
-+				     <&a53_2>,
-+				     <&a53_3>;
-+	};
-+
- 	soc: soc {
- 		compatible = "simple-bus";
- 		interrupt-parent = <&gic>;
-@@ -338,42 +364,6 @@
- 			resets = <&cpg 905>;
- 		};
- 
--		pmu_a57 {
--			compatible = "arm,cortex-a57-pmu";
--			interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
--			interrupt-affinity = <&a57_0>,
--					     <&a57_1>,
--					     <&a57_2>,
--					     <&a57_3>;
--		};
--
--		pmu_a53 {
--			compatible = "arm,cortex-a53-pmu";
--			interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
--			interrupt-affinity = <&a53_0>,
--					     <&a53_1>,
--					     <&a53_2>,
--					     <&a53_3>;
--		};
--
--		timer {
--			compatible = "arm,armv8-timer";
--			interrupts = <GIC_PPI 13
--					(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
--				     <GIC_PPI 14
--					(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
--				     <GIC_PPI 11
--					(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
--				     <GIC_PPI 10
--					(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
--		};
--
- 		cpg: clock-controller@e6150000 {
- 			compatible = "renesas,r8a7795-cpg-mssr";
- 			reg = <0 0xe6150000 0 0x1000>;
-@@ -2331,47 +2321,60 @@
- 			#thermal-sensor-cells = <1>;
- 			status = "okay";
- 		};
-+	};
- 
--		thermal-zones {
--			sensor_thermal1: sensor-thermal1 {
--				polling-delay-passive = <250>;
--				polling-delay = <1000>;
--				thermal-sensors = <&tsc 0>;
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupt-parent = <&gic>;
-+		interrupts = <GIC_PPI 13
-+				(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 14
-+				(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 11
-+				(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 10
-+				(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
- 
--				trips {
--					sensor1_crit: sensor1-crit {
--						temperature = <120000>;
--						hysteresis = <2000>;
--						type = "critical";
--					};
-+	thermal-zones {
-+		sensor_thermal1: sensor-thermal1 {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+			thermal-sensors = <&tsc 0>;
-+
-+			trips {
-+				sensor1_crit: sensor1-crit {
-+					temperature = <120000>;
-+					hysteresis = <2000>;
-+					type = "critical";
- 				};
- 			};
-+		};
- 
--			sensor_thermal2: sensor-thermal2 {
--				polling-delay-passive = <250>;
--				polling-delay = <1000>;
--				thermal-sensors = <&tsc 1>;
-+		sensor_thermal2: sensor-thermal2 {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+			thermal-sensors = <&tsc 1>;
- 
--				trips {
--					sensor2_crit: sensor2-crit {
--						temperature = <120000>;
--						hysteresis = <2000>;
--						type = "critical";
--					};
-+			trips {
-+				sensor2_crit: sensor2-crit {
-+					temperature = <120000>;
-+					hysteresis = <2000>;
-+					type = "critical";
- 				};
- 			};
-+		};
- 
--			sensor_thermal3: sensor-thermal3 {
--				polling-delay-passive = <250>;
--				polling-delay = <1000>;
--				thermal-sensors = <&tsc 2>;
-+		sensor_thermal3: sensor-thermal3 {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+			thermal-sensors = <&tsc 2>;
- 
--				trips {
--					sensor3_crit: sensor3-crit {
--						temperature = <120000>;
--						hysteresis = <2000>;
--						type = "critical";
--					};
-+			trips {
-+				sensor3_crit: sensor3-crit {
-+					temperature = <120000>;
-+					hysteresis = <2000>;
-+					type = "critical";
- 				};
- 			};
- 		};
--- 
-2.11.0
+Applied to for-next, thanks!
+
+
+--e6mqw7qviecwrpib
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlocUfQACgkQFA3kzBSg
+KbZuahAAqaR4TjVpw36fuqmGOk3OW7ujP2f4xwOoL1rfAi7g9y0/B+azQqZcT2Ys
+usMdVvEZR7nGF6qGSLDhhKaHP1F2EUjNH20YnxzHwaiOW+hNMqeelcNDsLOGIIMz
+uJFAZ5DEoV0Lq3qe83X14R+7QyCctoj5cPakIsxS+vIymfBnmzKcYnIknWMkxIyC
+ZrYIjfbbTIs3nHjvB+x/fw6IJ4e5tSVPI+qyBbu0mbR3R+G7FiI5eG/rgMvDs54p
+6M3zF7wreN1KT168GM+oGelDb2qXy33HKA9IZQiZvXOH71q9tJNx/1q6WFCZR7b7
+UfdkovDn0i5kKgE/K3pw7fONN/CVJ1H+ybIVmpFa52WFYshNAzxG0ZbCb79TzWTt
+w6VNIji+yf24BfPVYsogPYoUxBTSKFz2Nf9Ndnyr2vfRcEpX5qgT2JQVPBx0jqwL
+1KrfXGaLr954j95Y9JIFcJ3tsCF44iDuouN7MkYpLU2VY0kUBcs0hBhjqMnXuwpu
+uULDDJT5n8iuFUo6/iXFw6mgfOpLc3dWUPDHwyNMXfJvxtbogq+1GfBHAFZUHBUM
+mbSfB9JIwZbQUleKKHH5hXhM3RhXid8ijqEbCpsvan5z1IG7VHVVXA4djncm+UHK
+6Xg/+nNYslxhNizKRVn807Snr+Dl775qasy7Aolv5iFzy0rM628=
+=iXYA
+-----END PGP SIGNATURE-----
+
+--e6mqw7qviecwrpib--
