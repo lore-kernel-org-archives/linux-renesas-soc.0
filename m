@@ -1,71 +1,92 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:48768 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753038AbdK1Nrl (ORCPT
+Received: from mail-it0-f68.google.com ([209.85.214.68]:41283 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751712AbdK0J5m (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Nov 2017 08:47:41 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms+renesas@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 05/12] ARM: dts: r8a7794: Update CMT compat strings
-Date: Tue, 28 Nov 2017 14:47:29 +0100
-Message-Id: <1511876856-9495-6-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1511876856-9495-1-git-send-email-geert+renesas@glider.be>
-References: <1511876856-9495-1-git-send-email-geert+renesas@glider.be>
+        Mon, 27 Nov 2017 04:57:42 -0500
+Received: by mail-it0-f68.google.com with SMTP id x28so20239223ita.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 27 Nov 2017 01:57:42 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <20171114225104.6743-1-wsa+renesas@sang-engineering.com>
+References: <20171114225104.6743-1-wsa+renesas@sang-engineering.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 27 Nov 2017 10:57:41 +0100
+Message-ID: <CAPDyKFrNCa2HDhVm8GV3fKUso_-yToGKQj-89z1bEyBLOrqMag@mail.gmail.com>
+Subject: Re: [PATCH RFT] mmc: tmio: use usleep_range consistently
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On 14 November 2017 at 23:51, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> There are a few udelay() left which are in a range that they should be
+> usleep_range() these days.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Use recently updated R-Car Gen2 CMT0 and CMT1 compat strings.
+Thanks, applied for next!
 
-With this change in place we can keep device-specific configuration in
-the driver and the driver can be able to support CMT1 specific features.
+Kind regards
+Uffe
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v4:
-  - Rebased against renesas-devel-20171127-v4.15-rc1,
-
-v3:
-  - Take over from Magnus,
-  - Update compatible values,
-  - Split in per-SoC patches,
-
-v2:
-  - Added Acked-by and Tested-by from Geert,
-  - Added Acked-by from Laurent.
----
- arch/arm/boot/dts/r8a7794.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index ef7fb1d2c3a31a6e..52f6d5ec5d210f44 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -181,7 +181,7 @@
- 	};
- 
- 	cmt0: timer@ffca0000 {
--		compatible = "renesas,cmt-48-gen2";
-+		compatible = "renesas,r8a7794-cmt0", "renesas,rcar-gen2-cmt0";
- 		reg = <0 0xffca0000 0 0x1004>;
- 		interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
-@@ -196,7 +196,7 @@
- 	};
- 
- 	cmt1: timer@e6130000 {
--		compatible = "renesas,cmt-48-gen2";
-+		compatible = "renesas,r8a7794-cmt1", "renesas,rcar-gen2-cmt1";
- 		reg = <0 0xe6130000 0 0x1004>;
- 		interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
--- 
-2.7.4
+> ---
+>
+> Works fine for me on Lager (R-Car H2) and Salvator-X (R-Car M3-W).
+> Testing on other platforms very welcome even though this should be
+> independent of the IP core.
+>
+>  drivers/mmc/host/tmio_mmc_core.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+> index 583bf3262df5d4..d6ca57be16c2fd 100644
+> --- a/drivers/mmc/host/tmio_mmc_core.c
+> +++ b/drivers/mmc/host/tmio_mmc_core.c
+> @@ -806,7 +806,7 @@ static int tmio_mmc_execute_tuning(struct mmc_host *mmc, u32 opcode)
+>                 if (ret == 0)
+>                         set_bit(i, host->taps);
+>
+> -               mdelay(1);
+> +               usleep_range(1000, 1200);
+>         }
+>
+>         ret = host->select_tuning(host);
+> @@ -958,7 +958,7 @@ static void tmio_mmc_power_on(struct tmio_mmc_host *host, unsigned short vdd)
+>                  * 100us were not enough. Is this the same 140us delay, as in
+>                  * tmio_mmc_set_ios()?
+>                  */
+> -               udelay(200);
+> +               usleep_range(200, 300);
+>         }
+>         /*
+>          * It seems, VccQ should be switched on after Vcc, this is also what the
+> @@ -966,7 +966,7 @@ static void tmio_mmc_power_on(struct tmio_mmc_host *host, unsigned short vdd)
+>          */
+>         if (!IS_ERR(mmc->supply.vqmmc) && !ret) {
+>                 ret = regulator_enable(mmc->supply.vqmmc);
+> -               udelay(200);
+> +               usleep_range(200, 300);
+>         }
+>
+>         if (ret < 0)
+> @@ -1059,7 +1059,7 @@ static void tmio_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+>         }
+>
+>         /* Let things settle. delay taken from winCE driver */
+> -       udelay(140);
+> +       usleep_range(140, 200);
+>         if (PTR_ERR(host->mrq) == -EINTR)
+>                 dev_dbg(&host->pdev->dev,
+>                         "%s.%d: IOS interrupted: clk %u, mode %u",
+> --
+> 2.11.0
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
