@@ -1,52 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56098 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753132AbdKJNZy (ORCPT
+Received: from sauhun.de ([88.99.104.3]:47847 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753166AbdK0R45 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Nov 2017 08:25:54 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v5 12/15] arm64: dts: renesas: r8a7795: Connect Ethernet-AVB to IPMMU-DS0
-Date: Fri, 10 Nov 2017 14:25:29 +0100
-Message-Id: <20171110132532.1202-13-horms+renesas@verge.net.au>
-In-Reply-To: <20171110132532.1202-1-horms+renesas@verge.net.au>
-References: <20171110132532.1202-1-horms+renesas@verge.net.au>
+        Mon, 27 Nov 2017 12:56:57 -0500
+Date: Mon, 27 Nov 2017 18:56:55 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: Re: [RFT] i2c: sh_mobile: avoid unnecessary register read
+Message-ID: <20171127175655.v2gss77fkzvouggg@ninjato>
+References: <20171109222053.27093-1-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ham3l3hekkgh7vdr"
+Content-Disposition: inline
+In-Reply-To: <20171109222053.27093-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
 
-Add IPMMU-DS0 to the Ethernet-AVB device node.
+--ham3l3hekkgh7vdr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v5 [Simon Horman]
-* Added reviewed by tag from Geert Uytterhoeven
+On Thu, Nov 09, 2017 at 11:20:53PM +0100, Wolfram Sang wrote:
+> There is no data when the first WAIT interrupt arrives. No need to read
+> something then.
+>=20
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-v4 [Simon Horman]
+Applied to for-next, thanks!
 
-v1 - v3 [Magnus Damm]
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 851324eac5ed..0fd1d1ab97d2 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -816,6 +816,7 @@
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			resets = <&cpg 812>;
- 			phy-mode = "rgmii-txid";
-+			iommus = <&ipmmu_ds0 16>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			status = "disabled";
--- 
-2.11.0
+--ham3l3hekkgh7vdr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlocUecACgkQFA3kzBSg
+KbZVsg//aeuh8af6WELRuY92nU9nJ/CVOhL+trRFwWWXq1i1W5qxxOzKn3qrw8y5
+1+h2SOnPPIOLEWTR1riRGwgl2IU/LjbNASqxHuwpmaYaTyA+knAWzp9owzRhz6zx
+REQhwHevw/Qbi+RFNO+K1EnTs6hqDYW1bj7EUmLQXeJLLQlT8WUxyQYhWbU6L75O
+tJ0LD8436b4UdAkP62mm4491EnLm3scFd6L3HarAacIU9rBz6c+r8v1Rk+8vnyzV
+8onQd9+TKgWt59uf29VcaHpFDh/7GnteoN7McvsJU7dSblJPlZ5R3yw1b7zrljwc
+bepequu4wxFZQ3tl44nnVj9OVLotATh6FgeH2S4OhYhGHRb/wg5s4WHP729rB2Qk
+runIkQyDIuYAmWgqCNtXKiRJ5lCJN/5RwvwIDD6U1HJf8YZxyxvyJr8ud8L1MTm7
+odC2hfu/uc3qTLZcYGjjf6HJ/X27lbJpX9aiK2PClODg3h2rES1RrXdHH77JIAYw
+p7+YfXQGWKTUMrF9MYejr8wQm3jkdF79v1fTU/EcxaWT5lBHeWPmBVodHIQnxVp9
+s8s3UnC6IZA2Z8hhSifrPIIOu8XMR0OEt4g5Yg9gLnwOSY4vA+9WOujQtjmw5lWX
+g1weGXfttlOZ3U3GAU3c5ibPkG+C6AvEOJrHLXpMwjsWq/BNadM=
+=Grli
+-----END PGP SIGNATURE-----
+
+--ham3l3hekkgh7vdr--
