@@ -1,112 +1,114 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH] i2c: sh_mobile: send STOP according to datasheet
-Date: Fri, 10 Nov 2017 12:52:10 +0100
-Message-Id: <20171110115210.21955-1-wsa+renesas@sang-engineering.com>
-Sender: linux-i2c-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:35022 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751277AbdK0KQi (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 27 Nov 2017 05:16:38 -0500
+MIME-Version: 1.0
+In-Reply-To: <20171120213236.53266-1-jc@linux.com>
+References: <20171120213236.53266-1-jc@linux.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 27 Nov 2017 11:16:37 +0100
+Message-ID: <CAMuHMdWZuGUvK5FvwO4kkhNeir_j+13VWB-y3SSUO3s5Z6w+bA@mail.gmail.com>
+Subject: Re: [PATCH] mmc: renesas_sdhi: add missing MODULE_DESCRIPTION/AUTHOR/LICENSE
+To: Jesse Chan <jc@linux.com>, Simon Horman <horms@verge.net.au>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We initiate STOP (or REP_START) on the second last WAIT interrupt
-currently. This works fine but is not according to the datasheet which
-says to do it on the last WAIT interrupt. This also simplifies the code
-quite a lot, so let's do it.
+Hi Jesse,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+On Mon, Nov 20, 2017 at 10:32 PM, Jesse Chan <jc@linux.com> wrote:
+> This change resolves a new compile-time warning
+> when built as a loadable module:
+>
+> WARNING: modpost: missing MODULE_LICENSE() in drivers/mmc/host/renesas_sdhi_core.o
+> see include/linux/module.h for more information
+>
+> This adds the license as "GPL v2", which matches the header of the file.
+>
+> MODULE_DESCRIPTION and MODULE_AUTHOR are also added.
+>
+> Signed-off-by: Jesse Chan <jc@linux.com>
+> ---
+>  drivers/mmc/host/renesas_sdhi.h               | 1 +
+>  drivers/mmc/host/renesas_sdhi_core.c          | 5 +++++
+>  drivers/mmc/host/renesas_sdhi_internal_dmac.c | 1 -
+>  drivers/mmc/host/renesas_sdhi_sys_dmac.c      | 1 -
+>  4 files changed, 6 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/mmc/host/renesas_sdhi.h b/drivers/mmc/host/renesas_sdhi.h
+> index b9dfea5d8193..090cf86d7cd3 100644
+> --- a/drivers/mmc/host/renesas_sdhi.h
+> +++ b/drivers/mmc/host/renesas_sdhi.h
+> @@ -13,6 +13,7 @@
+>  #define RENESAS_SDHI_H
+>
+>  #include <linux/platform_device.h>
+> +#include <linux/module.h>
+>  #include "tmio_mmc.h"
+>
+>  struct renesas_sdhi_scc {
+> diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+> index fcf7235d5742..0a0daa7a342f 100644
+> --- a/drivers/mmc/host/renesas_sdhi_core.c
+> +++ b/drivers/mmc/host/renesas_sdhi_core.c
+> @@ -667,3 +667,8 @@ int renesas_sdhi_remove(struct platform_device *pdev)
+>         return 0;
+>  }
+>  EXPORT_SYMBOL_GPL(renesas_sdhi_remove);
+> +
+> +MODULE_DESCRIPTION("Renesas SDHI driver");
+> +MODULE_AUTHOR("Phil Blundell <pb@handhelds.org>");
+> +MODULE_AUTHOR("Samuel Ortiz <sameo@openedhand.com>");
+> +MODULE_LICENSE("GPL v2");
 
-Jacopo: another one to test, pretty please.
+This doesn't look right to me. Before commit 9d08428afb722fed ("mmc:
+renesas-sdhi: make renesas_sdhi_sys_dmac main module file"), the file had:
 
- drivers/i2c/busses/i2c-sh_mobile.c | 29 ++++++-----------------------
- 1 file changed, 6 insertions(+), 23 deletions(-)
+     MODULE_AUTHOR("Magnus Damm");
+     MODULE_LICENSE("GPL v2");
 
-diff --git a/drivers/i2c/busses/i2c-sh_mobile.c b/drivers/i2c/busses/i2c-sh_mobile.c
-index 40a66d466c3c49..c904be631db302 100644
---- a/drivers/i2c/busses/i2c-sh_mobile.c
-+++ b/drivers/i2c/busses/i2c-sh_mobile.c
-@@ -40,21 +40,21 @@
- /* BUS:     S     A8     ACK   P(*)                                         */
- /* IRQ:       DTE   WAIT                                                    */
- /* ICIC:                                                                    */
--/* ICCR: 0x94 0x90                                                          */
-+/* ICCR: 0x94       0x90                                                    */
- /* ICDR:      A8                                                            */
- /*                                                                          */
- /* 1 byte transmit                                                          */
- /* BUS:     S     A8     ACK   D8(1)   ACK   P(*)                           */
- /* IRQ:       DTE   WAIT         WAIT                                       */
- /* ICIC:      -DTE                                                          */
--/* ICCR: 0x94       0x90                                                    */
-+/* ICCR: 0x94                    0x90                                       */
- /* ICDR:      A8    D8(1)                                                   */
- /*                                                                          */
- /* 2 byte transmit                                                          */
- /* BUS:     S     A8     ACK   D8(1)   ACK   D8(2)   ACK   P(*)             */
- /* IRQ:       DTE   WAIT         WAIT          WAIT                         */
- /* ICIC:      -DTE                                                          */
--/* ICCR: 0x94                    0x90                                       */
-+/* ICCR: 0x94                                  0x90                         */
- /* ICDR:      A8    D8(1)        D8(2)                                      */
- /*                                                                          */
- /* 3 bytes or more, +---------+ gets repeated                               */
-@@ -113,7 +113,6 @@ enum sh_mobile_i2c_op {
- 	OP_TX_FIRST,
- 	OP_TX,
- 	OP_TX_STOP,
--	OP_TX_STOP_DATA,
- 	OP_TX_TO_RX,
- 	OP_RX,
- 	OP_RX_STOP,
-@@ -319,10 +318,7 @@ static unsigned char i2c_op(struct sh_mobile_i2c_data *pd,
- 	case OP_TX: /* write data */
- 		iic_wr(pd, ICDR, data);
- 		break;
--	case OP_TX_STOP_DATA: /* write data and issue a stop afterwards */
--		iic_wr(pd, ICDR, data);
--		/* fallthrough */
--	case OP_TX_STOP: /* issue a stop */
-+	case OP_TX_STOP: /* issue a stop (or rep_start) */
- 		iic_wr(pd, ICCR, pd->send_stop ? ICCR_ICE | ICCR_TRS
- 					       : ICCR_ICE | ICCR_TRS | ICCR_BBSY);
- 		break;
-@@ -356,11 +352,6 @@ static bool sh_mobile_i2c_is_first_byte(struct sh_mobile_i2c_data *pd)
- 	return pd->pos == -1;
- }
- 
--static bool sh_mobile_i2c_is_last_byte(struct sh_mobile_i2c_data *pd)
--{
--	return pd->pos == pd->msg->len - 1;
--}
--
- static void sh_mobile_i2c_get_data(struct sh_mobile_i2c_data *pd,
- 				   unsigned char *buf)
- {
-@@ -378,20 +369,12 @@ static int sh_mobile_i2c_isr_tx(struct sh_mobile_i2c_data *pd)
- 	unsigned char data;
- 
- 	if (pd->pos == pd->msg->len) {
--		/* Send stop if we haven't yet (DMA case) */
--		if (pd->send_stop && pd->stop_after_dma)
--			i2c_op(pd, OP_TX_STOP, 0);
-+		i2c_op(pd, OP_TX_STOP, 0);
- 		return 1;
- 	}
- 
- 	sh_mobile_i2c_get_data(pd, &data);
--
--	if (sh_mobile_i2c_is_last_byte(pd))
--		i2c_op(pd, OP_TX_STOP_DATA, data);
--	else if (sh_mobile_i2c_is_first_byte(pd))
--		i2c_op(pd, OP_TX_FIRST, data);
--	else
--		i2c_op(pd, OP_TX, data);
-+	i2c_op(pd, sh_mobile_i2c_is_first_byte(pd) ? OP_TX_FIRST : OP_TX, data);
- 
- 	pd->pos++;
- 	return 0;
--- 
-2.11.0
+> diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+> index 41cbe84c1d18..a9b452b42fac 100644
+> --- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+> +++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+> @@ -15,7 +15,6 @@
+>  #include <linux/mfd/tmio.h>
+>  #include <linux/mmc/host.h>
+>  #include <linux/mod_devicetable.h>
+> -#include <linux/module.h>
+>  #include <linux/pagemap.h>
+>  #include <linux/scatterlist.h>
+>  #include <linux/sys_soc.h>
+> diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+> index 9ab10436e4b8..fe6a09f14682 100644
+> --- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+> +++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+> @@ -17,7 +17,6 @@
+>  #include <linux/mfd/tmio.h>
+>  #include <linux/mmc/host.h>
+>  #include <linux/mod_devicetable.h>
+> -#include <linux/module.h>
+>  #include <linux/of_device.h>
+>  #include <linux/pagemap.h>
+>  #include <linux/scatterlist.h>
+> --
+> 2.14.1
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
