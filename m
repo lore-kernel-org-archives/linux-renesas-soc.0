@@ -1,47 +1,60 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-can@vger.kernel.org, devicetree@vger.kernel.org,
-        wsa@the-dreams.de, horms@verge.net.au, geert@linux-m68k.org,
-        magnus.damm@gmail.com, chris.paterson2@renesas.com,
-        ramesh.shanmugasundaram@bp.renesas.com,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 3/7] arm64: dts: r8a77995: Add CAN external clock support
-Date: Fri, 17 Nov 2017 11:41:25 +0100
-Message-Id: <1510915289-15059-4-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1510915289-15059-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1510915289-15059-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-io0-f196.google.com ([209.85.223.196]:39447 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751777AbdK0J5x (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 27 Nov 2017 04:57:53 -0500
+Received: by mail-io0-f196.google.com with SMTP id x63so35607283ioe.6
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 27 Nov 2017 01:57:53 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <1510759549-30404-5-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1510759549-30404-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1510759549-30404-5-git-send-email-ulrich.hecht+renesas@gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 27 Nov 2017 10:57:52 +0100
+Message-ID: <CAPDyKFrRkBY+Z=f4n4xpO6HWBfARQdDfLQ17N6sk3x5oaRAFdQ@mail.gmail.com>
+Subject: Re: [PATCH 4/4] dt-bindings: mmc: renesas_sdhi: Add r8a77995 support
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Adds external CAN clock node for r8a77995. This clock can be used as
-fCAN clock of CAN and CAN FD controller.
+On 15 November 2017 at 16:25, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
+> Adds bindings for the R-Car D3 SoC's SDHI IP.
+>
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-Based on a patch for r8a7796 by Chris Paterson.
+Thanks, applied for next!
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
----
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+Kind regards
+Uffe
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index 788e3af..a8df296 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -51,6 +51,13 @@
- 		clock-frequency = <0>;
- 	};
- 
-+	/* External CAN clock - to be overridden by boards that provide it */
-+	can_clk: can {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
- 	scif_clk: scif {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
--- 
-2.7.4
-
+> ---
+>  Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+> index 3c67624..d8685cb 100644
+> --- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+> +++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+> @@ -26,6 +26,7 @@ Required properties:
+>                 "renesas,sdhi-r8a7794" - SDHI IP on R8A7794 SoC
+>                 "renesas,sdhi-r8a7795" - SDHI IP on R8A7795 SoC
+>                 "renesas,sdhi-r8a7796" - SDHI IP on R8A7796 SoC
+> +               "renesas,sdhi-r8a77995" - SDHI IP on R8A77995 SoC
+>                 "renesas,sdhi-shmobile" - a generic sh-mobile SDHI controller
+>                 "renesas,rcar-gen1-sdhi" - a generic R-Car Gen1 SDHI controller
+>                 "renesas,rcar-gen2-sdhi" - a generic R-Car Gen2 or RZ/G1
+> --
+> 2.7.4
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
