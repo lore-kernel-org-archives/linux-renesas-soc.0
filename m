@@ -1,45 +1,102 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:46740 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751301AbdKTPqo (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34549 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751648AbdK0LSG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Nov 2017 10:46:44 -0500
-Received: by mail-wm0-f67.google.com with SMTP id u83so11281147wmb.5
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Nov 2017 07:46:44 -0800 (PST)
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, horms@verge.net.au,
-        geert@linux-m68k.org
-Cc: wsa@the-dreams.de, Chris.Paterson2@renesas.com,
-        magnus.damm@gmail.com,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH v2 2/3] arm64: dts: r8a77995: add DMA for SCIF2
-Date: Mon, 20 Nov 2017 16:46:35 +0100
-Message-Id: <1511192796-2268-3-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1511192796-2268-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1511192796-2268-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Mon, 27 Nov 2017 06:18:06 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 1/1] ARM: dts: r8a779x: Add '#reset-cells' in cpg-mssr
+Date: Mon, 27 Nov 2017 12:17:44 +0100
+Message-Id: <098f53050154498876ef3febde706ff5c8b25cf4.1511781272.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1511781272.git.horms+renesas@verge.net.au>
+References: <cover.1511781272.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Tested on Draak.
+From: Arnd Bergmann <arnd@arndb.de>
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+With the latest dtc, we get many warnings about the missing
+'#reset-cells' property in these controllers, e.g.:
+
+arch/arm/boot/dts/r8a7790-lager.dtb: Warning (resets_property): Missing property '#reset-cells' in node /clock-controller@e6150000 or bad phandle (referred from /can@e6e80000:resets[0])
+arch/arm/boot/dts/r8a7792-blanche.dtb: Warning (resets_property): Missing property '#reset-cells' in node /soc/clock-controller@e6150000 or bad phandle (referred from /soc/dma-controller@e6700000:resets[0])
+arch/arm/boot/dts/r8a7792-wheat.dtb: Warning (resets_property): Missing property '#reset-cells' in node /soc/clock-controller@e6150000 or bad phandle (referred from /soc/ethernet@e6800000:resets[0])
+arch/arm/boot/dts/r8a7793-gose.dtb: Warning (resets_property): Missing property '#reset-cells' in node /clock-controller@e6150000 or bad phandle (referred from /gpio@e6050000:resets[0])
+arch/arm/boot/dts/r8a7794-alt.dtb: Warning (resets_property): Missing property '#reset-cells' in node /clock-controller@e6150000 or bad phandle (referred from /i2c@e6500000:resets[0])
+arch/arm/boot/dts/r8a7794-silk.dtb: Warning (resets_property): Missing property '#reset-cells' in node /clock-controller@e6150000 or bad phandle (referred from /interrupt-controller@e61c0000:resets[0])
+
+This adds it for the three r8a779x chips that were lacking it. The
+binding mandates this as <1>, so this is the value I use.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+[geert: Add fix for r8a7793.dtsi]
+Fixes: 34fbd2b12761d111 ("ARM: dts: r8a7790: Add reset control properties")
+Fixes: 6e11a322f1d7505d ("ARM: dts: r8a7792: Add reset control properties")
+Fixes: 84fb19e1d201ba86 ("ARM: dts: r8a7793: Add reset control properties")
+Fixes: 615beb759ca494a4 ("ARM: dts: r8a7794: Add reset control properties")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm/boot/dts/r8a7790.dtsi | 1 +
+ arch/arm/boot/dts/r8a7792.dtsi | 1 +
+ arch/arm/boot/dts/r8a7793.dtsi | 1 +
+ arch/arm/boot/dts/r8a7794.dtsi | 1 +
+ 4 files changed, 4 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index 04a392a..71f5ec9 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -393,6 +393,9 @@
- 				 <&cpg CPG_CORE R8A77995_CLK_S3D1C>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x13>, <&dmac1 0x12>,
-+			       <&dmac2 0x13>, <&dmac2 0x12>;
-+			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
- 			resets = <&cpg 310>;
- 			status = "disabled";
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 2f017fee4009..62baabd757b6 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -1201,6 +1201,7 @@
+ 		clock-names = "extal", "usb_extal";
+ 		#clock-cells = <2>;
+ 		#power-domain-cells = <0>;
++		#reset-cells = <1>;
+ 	};
+ 
+ 	prr: chipid@ff000044 {
+diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
+index 131f65b0426e..3d080e07374c 100644
+--- a/arch/arm/boot/dts/r8a7792.dtsi
++++ b/arch/arm/boot/dts/r8a7792.dtsi
+@@ -829,6 +829,7 @@
+ 			clock-names = "extal";
+ 			#clock-cells = <2>;
+ 			#power-domain-cells = <0>;
++			#reset-cells = <1>;
+ 		};
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index 58eae569b4e0..0cd1035de1a4 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -1088,6 +1088,7 @@
+ 		clock-names = "extal", "usb_extal";
+ 		#clock-cells = <2>;
+ 		#power-domain-cells = <0>;
++		#reset-cells = <1>;
+ 	};
+ 
+ 	rst: reset-controller@e6160000 {
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index 905e50c9b524..5643976c1356 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -1099,6 +1099,7 @@
+ 		clock-names = "extal", "usb_extal";
+ 		#clock-cells = <2>;
+ 		#power-domain-cells = <0>;
++		#reset-cells = <1>;
+ 	};
+ 
+ 	rst: reset-controller@e6160000 {
 -- 
-2.7.4
+2.11.0
