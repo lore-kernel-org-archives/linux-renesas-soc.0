@@ -1,57 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:56658 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752904AbdK3NMP (ORCPT
+Received: from sauhun.de ([88.99.104.3]:47851 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753166AbdK0R5G (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 30 Nov 2017 08:12:15 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>
-Cc: Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        uclinux-h8-devel@lists.sourceforge.jp, linux-sh@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/5] tty: serial: sh-sci: Hide number of ports config question
-Date: Thu, 30 Nov 2017 14:11:58 +0100
-Message-Id: <1512047522-16312-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1512047522-16312-1-git-send-email-geert+renesas@glider.be>
-References: <1512047522-16312-1-git-send-email-geert+renesas@glider.be>
+        Mon, 27 Nov 2017 12:57:06 -0500
+Date: Mon, 27 Nov 2017 18:57:04 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: Re: [PATCH] i2c: sh_mobile: send STOP according to datasheet
+Message-ID: <20171127175704.47ikvrnwbd5kd632@ninjato>
+References: <20171110115210.21955-1-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ikcejdxwhhb64hz7"
+Content-Disposition: inline
+In-Reply-To: <20171110115210.21955-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Auto-configure the maximum number of serial ports based on how many can
-be present on the architecture:
-  - 3 on H8/300,
-  - 10 on SuperH,
-  - 18 on Reneas ARM.
 
-The default can still be overridden if CONFIG_EXPERT is enabled.
+--ikcejdxwhhb64hz7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/tty/serial/Kconfig | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+On Fri, Nov 10, 2017 at 12:52:10PM +0100, Wolfram Sang wrote:
+> We initiate STOP (or REP_START) on the second last WAIT interrupt
+> currently. This works fine but is not according to the datasheet which
+> says to do it on the last WAIT interrupt. This also simplifies the code
+> quite a lot, so let's do it.
+>=20
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
-index b788fee54249deff..bd96046d7f94bac0 100644
---- a/drivers/tty/serial/Kconfig
-+++ b/drivers/tty/serial/Kconfig
-@@ -761,9 +761,11 @@ config SERIAL_SH_SCI
- 	select SERIAL_MCTRL_GPIO if GPIOLIB
- 
- config SERIAL_SH_SCI_NR_UARTS
--	int "Maximum number of SCI(F) serial ports"
-+	int "Maximum number of SCI(F) serial ports" if EXPERT
- 	depends on SERIAL_SH_SCI
--	default "2"
-+	default "3" if H8300
-+	default "10" if SUPERH
-+	default "18" if ARCH_RENESAS
- 
- config SERIAL_SH_SCI_CONSOLE
- 	bool "Support for console on SuperH SCI(F)"
--- 
-2.7.4
+Applied to for-next, thanks!
+
+
+--ikcejdxwhhb64hz7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlocUfAACgkQFA3kzBSg
+KbZseA/+IigVNkFB/ApQLjRHxOVd6KS16kKalQJB7lBRkW3EHxjBQjg7re/otw6N
+J72A8PLa3tILXm1QoH0dVcifQo3ChCaARxc+njo23OVXNFOslx8OSau96srVngJd
+5jrioHj0ksNLQnyDZrJLvfMP7lZY64jaDd6/u/2sAf+D9Nod6WcxParxJfUUtEyi
+ZZ3oGGluNxugTryE2n3D5vJ2WOt1o2tLXkLg8NckfV7W4VOYmhK09QJRaSYhlAut
+2jYOHJUDkGnP2iNayh2mZ3m6PXeQHk6yaqRe0+tcW72R/aOMtHk2urk/iXDjSOMH
+6F2qkGD4XECV2tFxB5slVV5FV1IG84qlAsrqbJprdUmCWD7sU+C/55ZR0VwJceLK
+joZjkFKyp62VyuuH6xV+9aHcrZDKdv/IquJqCTBTDu4BCxDe3Z9W/2MEw7l3calY
+Z1UhiDhDfBGQGSLb6A0AwkwU5SVS/snM55qUouUXhsgcZELUCwU3GVDOC5jiAj6A
+8NFt9hZNGvf7eyMjcVxK8Q8BLuv8Gp3NfrIWDEj4vaJwBuP57aN8BkDdCvP11Xj2
+AH+Bmlef6MWH4ix3OmL8qiTgM1JtD3Y69/g5FFnmtRAw/P0JdEG8weE+1wM7gmuA
+rms3/hTOpY+FjyRg1xSY01uJQN75rNi5cm9Ym/c8eB9gHoI4qI4=
+=DCYy
+-----END PGP SIGNATURE-----
+
+--ikcejdxwhhb64hz7--
