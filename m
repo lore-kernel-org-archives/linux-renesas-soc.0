@@ -1,226 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:60512 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751537AbdK0K1L (ORCPT
+Received: from sauhun.de ([88.99.104.3]:47836 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753255AbdK0R4k (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 27 Nov 2017 05:27:11 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Subject: [RFC] v4l: i2c: ov7670: Implement mbus configuration
-Date: Mon, 27 Nov 2017 11:26:53 +0100
-Message-Id: <1511778413-27348-1-git-send-email-jacopo+renesas@jmondi.org>
+        Mon, 27 Nov 2017 12:56:40 -0500
+Date: Mon, 27 Nov 2017 18:56:37 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Jacopo Mondi <jacopo@jmondi.org>
+Subject: Re: [PATCH RFT 0/5] i2c: sh_mobile: refactor HW init/deinit
+Message-ID: <20171127175637.fmorzefw3bqfi56r@ninjato>
+References: <20171102124731.10484-1-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="q76gsqptxkvxqlb7"
+Content-Disposition: inline
+In-Reply-To: <20171102124731.10484-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-ov7670 currently supports configuration of a few parameters only through
-platform data. Implement media bus configuration by parsing DT properties
-at probe() time and opportunely configure REG_COM10 during s_format().
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+--q76gsqptxkvxqlb7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
----
+On Thu, Nov 02, 2017 at 01:47:26PM +0100, Wolfram Sang wrote:
+> When clearing the ICE bit, all registers fall back to their defaut value.=
+ That
+> allows for some simplifications in the code.
+>=20
+> Tested on a Renesas Lager board (R-Car H2) doing a bunch of consecutive
+> commands. No spurious interrupts have been observed and the signals look
+> exactly the same when visualized with sigrok.
+>=20
+> According to the docs, the ICE bit behaviour is the same since the beginn=
+ing of
+> this driver (sh7722) for the migo-r board.
+>=20
+> jacopo: can you please test this series while you work on migo-r anyhow? =
+Thank
+> you a ton for that!
+>=20
+> Looking forward to other comments, as well...
 
-Hi linux-media,
-   I'm using this sensor to test the CEU driver I have submitted some time ago
-and I would like to change synchronization signal polarities to test them in
-combination with that driver.
+Whole series applied to i2c/for-next!
 
-So I added support for retrieving some properties listed in the device tree
-bindings documentation from sensor's DT node and made a patch, BUT I'm
-slightly confused about this (and that's why this is an RFC).
 
-I did a grep for "sync-active" in drivers/media/i2c/ and no sensor driver
-implements any property parsing, so I guess I'm doing something wrong here.
+--q76gsqptxkvxqlb7
+Content-Type: application/pgp-signature; name="signature.asc"
 
-I thought that maybe sensor media bus configuration should come from the
-platform driver, through the s_mbus_config() operation in v4l2_subdev_video_ops,
-but that's said to be deprecated. So maybe is the framework providing support
-for parsing those properties? Another grep there and I found only v4l2-fwnode.c
-has support for parsing serial/parallel bus properties, but my understanding is
-that those functions are meant to be used by the platform driver when
-parsing the remote fw node.
+-----BEGIN PGP SIGNATURE-----
 
-So please help me out here: where should I implement media bus configuration
-for sensor drivers?
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlocUdUACgkQFA3kzBSg
+KbZUSRAAk33kft9nsYlLNMRxhiZz4F3cZ8fNXWVw+YdKFX0QvOTUBcwEr9BD8M+n
+2eRkLvZWMgjSjdv7j9A25GZMNIkVyJksU/7WrpGL5XMyDwxtbh/SgKbvnjn4AJNW
+9V9o1HQ8vdxWthK3tJyfsFhztCe/vu7G7GC/SfZ5n9AkEA/CSj3r0G7es9N8JLSr
+KDG35vUEsFGtaX2wVj1uqiTbMm1/aA5UaBhePDoA+eJiZKqeqAGLbfSIidZQi9xp
+Ch55C6/IcEB9lj8vEWN8tJVEx1WYc7ZVliuTDoLpK+Nbg2Ne3nfhPvdRzrpdiEeh
+Y3yHl+bEuJtyWmfoO+3K6deDr7ycoNIPXlw39uGbNlFDzHcL/dR3uoyCk+Y7OY0o
+iQtUXNq0h2dL8ub0vORrj0Zf6Y9/y1n/wXivQmNgI216LUhlb0IcqN1IushOj8Fn
+Ws8T+hcSBIj42zThjhGJ6wJ4WM5n0UZOdKZquYoj1NTmZ7tnMB8MvX4x7JkTre1s
+/gndmfA5CSSjoR+QHn01hB/+fb4dKlvj59J9HVvwbiLUED4UAGH/FdNelxpwoiaI
+UAHRN48SdEmTneK9KcVYTJrxJuQMzed/LfV7rLQdgI6x35wuSMWADzB+0d7j/udj
+hmi+5YzJmk+qHVi66QLdUpOR4gR3Wo4/MFJFBry7y7a4OzNhgNQ=
+=9kG/
+-----END PGP SIGNATURE-----
 
-Thanks
-   j
-
-PS: being this just an RFC I have not updated dt bindings, and only
-compile-tested the patch
-
----
- drivers/media/i2c/ov7670.c | 108 ++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 101 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/media/i2c/ov7670.c b/drivers/media/i2c/ov7670.c
-index e88549f..7e2de7e 100644
---- a/drivers/media/i2c/ov7670.c
-+++ b/drivers/media/i2c/ov7670.c
-@@ -88,6 +88,7 @@ MODULE_PARM_DESC(debug, "Debug level (0-1)");
- #define REG_COM10	0x15	/* Control 10 */
- #define   COM10_HSYNC	  0x40	  /* HSYNC instead of HREF */
- #define   COM10_PCLK_HB	  0x20	  /* Suppress PCLK on horiz blank */
-+#define   COM10_PCLK_REV  0x10	  /* Latch data on PCLK rising edge */
- #define   COM10_HREF_REV  0x08	  /* Reverse HREF */
- #define   COM10_VS_LEAD	  0x04	  /* VSYNC on clock leading edge */
- #define   COM10_VS_NEG	  0x02	  /* VSYNC negative */
-@@ -233,6 +234,7 @@ struct ov7670_info {
- 	struct clk *clk;
- 	struct gpio_desc *resetb_gpio;
- 	struct gpio_desc *pwdn_gpio;
-+	unsigned int mbus_config;	/* Media bus configuration flags */
- 	int min_width;			/* Filter out smaller sizes */
- 	int min_height;			/* Filter out smaller sizes */
- 	int clock_speed;		/* External clock speed (MHz) */
-@@ -985,7 +987,7 @@ static int ov7670_set_fmt(struct v4l2_subdev *sd,
- 	struct ov7670_format_struct *ovfmt;
- 	struct ov7670_win_size *wsize;
- 	struct ov7670_info *info = to_state(sd);
--	unsigned char com7;
-+	unsigned char com7, com10;
- 	int ret;
-
- 	if (format->pad)
-@@ -1021,6 +1023,9 @@ static int ov7670_set_fmt(struct v4l2_subdev *sd,
- 	ret = 0;
- 	if (wsize->regs)
- 		ret = ov7670_write_array(sd, wsize->regs);
-+	if (ret)
-+		return ret;
-+
- 	info->fmt = ovfmt;
-
- 	/*
-@@ -1033,8 +1038,26 @@ static int ov7670_set_fmt(struct v4l2_subdev *sd,
- 	 * to write it unconditionally, and that will make the frame
- 	 * rate persistent too.
- 	 */
--	if (ret == 0)
--		ret = ov7670_write(sd, REG_CLKRC, info->clkrc);
-+	ret = ov7670_write(sd, REG_CLKRC, info->clkrc);
-+	if (ret)
-+		return ret;
-+
-+	/* Configure the media bus after the image format */
-+	com10 = 0;
-+	if (info->mbus_config & V4L2_MBUS_VSYNC_ACTIVE_LOW)
-+		com10 |= COM10_VS_NEG;
-+	if (info->mbus_config & V4L2_MBUS_HSYNC_ACTIVE_LOW)
-+		com10 |= COM10_HS_NEG;
-+	if (info->mbus_config & V4L2_MBUS_PCLK_SAMPLE_RISING)
-+		com10 |= COM10_PCLK_REV;
-+	if (info->pclk_hb_disable)
-+		com10 |= COM10_PCLK_HB;
-+
-+	if (com10)
-+		ret = ov7670_write(sd, REG_COM10, com10);
-+	if (ret)
-+		return ret;
-+
- 	return 0;
- }
-
-@@ -1572,6 +1595,29 @@ static int ov7670_init_gpio(struct i2c_client *client, struct ov7670_info *info)
- 	return 0;
- }
-
-+/**
-+ * ov7670_parse_dt_prop() - parse property "prop_name" in OF node
-+ *
-+ * @return The property value or < 0 if property not present
-+ *	   or wrongly specified.
-+ */
-+static int ov7670_parse_dt_prop(struct device *dev, char *prop_name)
-+{
-+	struct device_node *np = dev->of_node;
-+	u32 prop_val;
-+	int ret;
-+
-+	ret = of_property_read_u32(np, prop_name, &prop_val);
-+	if (ret) {
-+		if (ret != -EINVAL)
-+			dev_err(dev, "Unable to parse property %s: %d\n",
-+				prop_name, ret);
-+		return ret;
-+	}
-+
-+	return prop_val;
-+}
-+
- static int ov7670_probe(struct i2c_client *client,
- 			const struct i2c_device_id *id)
- {
-@@ -1587,7 +1633,58 @@ static int ov7670_probe(struct i2c_client *client,
- 	v4l2_i2c_subdev_init(sd, client, &ov7670_ops);
-
- 	info->clock_speed = 30; /* default: a guess */
--	if (client->dev.platform_data) {
-+
-+	if (IS_ENABLED(CONFIG_OF) && client->dev.of_node) {
-+		/*
-+		 * Parse OF properties to initialize media bus configuration.
-+		 *
-+		 * Use sensor's default configuration if a property is not
-+		 * specified (ret == -EINVAL):
-+		 */
-+		info->mbus_config = 0;
-+
-+		ret = ov7670_parse_dt_prop(&client->dev, "hsync-active");
-+		if (ret < 0 && ret != -EINVAL)
-+			return ret;
-+		else if (ret == 0)
-+			info->mbus_config |= V4L2_MBUS_HSYNC_ACTIVE_LOW;
-+		else
-+			info->mbus_config |= V4L2_MBUS_HSYNC_ACTIVE_HIGH;
-+
-+		ret = ov7670_parse_dt_prop(&client->dev, "vsync-active");
-+		if (ret < 0 && ret != -EINVAL)
-+			return ret;
-+		else if (ret == 0)
-+			info->mbus_config |= V4L2_MBUS_VSYNC_ACTIVE_LOW;
-+		else
-+			info->mbus_config |= V4L2_MBUS_VSYNC_ACTIVE_HIGH;
-+
-+		ret = ov7670_parse_dt_prop(&client->dev, "pclk-sample");
-+		if (ret < 0 && ret != -EINVAL)
-+			return ret;
-+		else if (ret > 0)
-+			info->mbus_config |= V4L2_MBUS_PCLK_SAMPLE_RISING;
-+		else
-+			info->mbus_config |= V4L2_MBUS_PCLK_SAMPLE_FALLING;
-+
-+		ret = ov7670_parse_dt_prop(&client->dev,
-+					    "ov7670,pclk-hb-disable");
-+		if (ret < 0 && ret != -EINVAL)
-+			return ret;
-+		else if (ret > 0)
-+			info->pclk_hb_disable = true;
-+		else
-+			info->pclk_hb_disable = false;
-+
-+		ret = ov7670_parse_dt_prop(&client->dev, "ov7670,pll-bypass");
-+		if (ret < 0 && ret != -EINVAL)
-+			return ret;
-+		else if (ret > 0)
-+			info->pll_bypass = true;
-+		else
-+			info->pll_bypass = false;
-+
-+	} else if (client->dev.platform_data) {
- 		struct ov7670_config *config = client->dev.platform_data;
-
- 		/*
-@@ -1649,9 +1746,6 @@ static int ov7670_probe(struct i2c_client *client,
- 	tpf.denominator = 30;
- 	info->devtype->set_framerate(sd, &tpf);
-
--	if (info->pclk_hb_disable)
--		ov7670_write(sd, REG_COM10, COM10_PCLK_HB);
--
- 	v4l2_ctrl_handler_init(&info->hdl, 10);
- 	v4l2_ctrl_new_std(&info->hdl, &ov7670_ctrl_ops,
- 			V4L2_CID_BRIGHTNESS, 0, 255, 1, 128);
---
-2.7.4
+--q76gsqptxkvxqlb7--
