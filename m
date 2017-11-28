@@ -1,58 +1,67 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:48352 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752491AbdKHPPo (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 8 Nov 2017 10:15:44 -0500
-Received: by mail-lf0-f68.google.com with SMTP id r135so3561112lfe.5
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 08 Nov 2017 07:15:44 -0800 (PST)
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
-Cc: Kevin Hilman <khilman@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
-        linux-renesas-soc@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 0/3] PM / core: Invent a WAKEUP_POWERED driver flag
-Date: Wed,  8 Nov 2017 16:15:31 +0100
-Message-Id: <1510154134-1248-1-git-send-email-ulf.hansson@linaro.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms+renesas@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v4 02/12] ARM: dts: r8a7790: Update CMT compat strings
+Date: Tue, 28 Nov 2017 14:47:26 +0100
+Message-Id: <1511876856-9495-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1511876856-9495-1-git-send-email-geert+renesas@glider.be>
+References: <1511876856-9495-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The generic problem this series is trying to solve, is that for some bus types
-and PM domains, it's not sufficient to only check the return value from
-device_may_wakeup(), to fully understand how to treat the device during system
-suspend.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-One particular case that suffers from this, is the generic PM domain (aka genpd)
-and that is taken care of in the final change in this series.
+Use recently updated R-Car Gen2 CMT0 and CMT1 compat strings.
 
-The special case this series address, is to enable drivers to instruct bus types
-and PM domains, that the device need to stay powered in case wakeup signals
-is enabled for it.
+With this change in place we can keep device-specific configuration in
+the driver and the driver can be able to support CMT1 specific features.
 
-Geert Uytterhoeven, has been working on some related problems for some Renesas
-SoCs [1], to be able to properly configure WakeOnLAN, for some ethernet
-devices/drivers, which are used together with genpd. My intent is that this
-series enables a solution for those problems.
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v4:
+  - Rebased against renesas-devel-20171127-v4.15-rc1,
 
-[1]
-https://www.spinics.net/lists/linux-renesas-soc/msg19319.html 
+v3:
+  - Take over from Magnus,
+  - Update compatible values,
+  - Split in per-SoC patches,
 
+v2:
+  - Added Acked-by and Tested-by from Geert,
+  - Added Acked-by from Laurent.
+---
+ arch/arm/boot/dts/r8a7790.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Ulf Hansson (3):
-  PM / core: Re-factor some code dealing with parents in
-    __device_suspend()
-  PM / core: Add WAKEUP_POWERED driver flag
-  PM / Domains: Take WAKEUP_POWERED driver flag into account
-
- Documentation/driver-api/pm/devices.rst | 12 ++++++++++++
- drivers/base/power/domain.c             | 14 ++++++++++----
- drivers/base/power/main.c               | 33 +++++++++++++++++++++------------
- include/linux/pm.h                      |  5 +++++
- 4 files changed, 48 insertions(+), 16 deletions(-)
-
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 5477a62f4642343f..696522da2f99c8e2 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -311,7 +311,7 @@
+ 	};
+ 
+ 	cmt0: timer@ffca0000 {
+-		compatible = "renesas,cmt-48-r8a7790", "renesas,cmt-48-gen2";
++		compatible = "renesas,r8a7790-cmt0", "renesas,rcar-gen2-cmt0";
+ 		reg = <0 0xffca0000 0 0x1004>;
+ 		interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
+@@ -326,7 +326,7 @@
+ 	};
+ 
+ 	cmt1: timer@e6130000 {
+-		compatible = "renesas,cmt-48-r8a7790", "renesas,cmt-48-gen2";
++		compatible = "renesas,r8a7790-cmt1", "renesas,rcar-gen2-cmt1";
+ 		reg = <0 0xe6130000 0 0x1004>;
+ 		interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
 -- 
 2.7.4
+
