@@ -1,47 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:58675 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752713AbdK3Otc (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:41318 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753147AbdK1Nrl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 30 Nov 2017 09:49:32 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
+        Tue, 28 Nov 2017 08:47:41 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms+renesas@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
 Cc: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [PATCH] mmc: core: properly init drv_type
-Date: Thu, 30 Nov 2017 15:49:10 +0100
-Message-Id: <20171130144910.4320-1-wsa+renesas@sang-engineering.com>
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v4 11/12] ARM: dts: r8a7794: Remove CMT renesas,channels-mask
+Date: Tue, 28 Nov 2017 14:47:35 +0100
+Message-Id: <1511876856-9495-12-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1511876856-9495-1-git-send-email-geert+renesas@glider.be>
+References: <1511876856-9495-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When the latest version of parsing the new eMMC bindings was moved from
-core.c to mmc.c, it was overlooked that drv_type could be used
-uninitialized. Fix it!
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Fixes: 6186d06c519e21 ("mmc: parse new binding for eMMC fixed driver type")
-Reported-by: Colin Ian King <colin.king@canonical.com>
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Update the DTS to remove the now deprecated "renesas,channels-mask"
+property.
+
+The channel information is now kept in the device driver and can easily
+be determined based on the compat string.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/mmc/core/mmc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v4:
+  - Rebased against renesas-devel-20171127-v4.15-rc1,
 
-diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-index a552f61060d212..0d1c6b025ca596 100644
---- a/drivers/mmc/core/mmc.c
-+++ b/drivers/mmc/core/mmc.c
-@@ -1290,7 +1290,7 @@ int mmc_hs400_to_hs200(struct mmc_card *card)
+v3:
+  - Take over from Magnus,
+  - Split in per-SoC patches,
+
+v2:
+  - Rebased on top of power-domain changes,
+  - Added Acked-by and Tested-by from Geert.
+---
+ arch/arm/boot/dts/r8a7794.dtsi | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index 52f6d5ec5d210f44..54f412db4a6ecf3f 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -190,8 +190,6 @@
+ 		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
+ 		resets = <&cpg 124>;
  
- static void mmc_select_driver_type(struct mmc_card *card)
- {
--	int card_drv_type, drive_strength, drv_type;
-+	int card_drv_type, drive_strength, drv_type = 0;
- 	int fixed_drv_type = card->host->fixed_drv_type;
+-		renesas,channels-mask = <0x60>;
+-
+ 		status = "disabled";
+ 	};
  
- 	card_drv_type = card->ext_csd.raw_driver_strength |
+@@ -211,8 +209,6 @@
+ 		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
+ 		resets = <&cpg 329>;
+ 
+-		renesas,channels-mask = <0xff>;
+-
+ 		status = "disabled";
+ 	};
+ 
 -- 
-2.11.0
+2.7.4
