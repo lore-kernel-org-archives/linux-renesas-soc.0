@@ -1,128 +1,96 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:46887 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751596AbdK1ORQ (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:13405 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751248AbdK1MsF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Nov 2017 09:17:16 -0500
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdV4LV2Uzh2oGdaPiS4W4dfsZ-pn3rGcJNiZLStfo39How@mail.gmail.com>
-References: <1713438.irjm9MTSvo@aspire.rjw.lan> <CAMuHMdV4LV2Uzh2oGdaPiS4W4dfsZ-pn3rGcJNiZLStfo39How@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 28 Nov 2017 15:17:15 +0100
-Message-ID: <CAJZ5v0iyjULu3Chxou61Xx3W1ULnfhheY5cHZASVVKw7JmO+Jg@mail.gmail.com>
-Subject: Re: [PATCH] PM / runtime: Drop children check from __pm_runtime_set_status()
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
+        Tue, 28 Nov 2017 07:48:05 -0500
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+CC: Linux PM <linux-pm@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Alan Stern <stern@rowland.harvard.edu>,
-        USB list <linux-usb@vger.kernel.org>,
+        "USB list" <linux-usb@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: RE: [PATCH] PM / runtime: Drop children check from
+ __pm_runtime_set_status()
+Date: Tue, 28 Nov 2017 12:48:00 +0000
+Message-ID: <TY1PR06MB09928D43D4E5E5752A6A604ED83A0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+References: <1713438.irjm9MTSvo@aspire.rjw.lan>
+ <CAMuHMdV4LV2Uzh2oGdaPiS4W4dfsZ-pn3rGcJNiZLStfo39How@mail.gmail.com>
+In-Reply-To: <CAMuHMdV4LV2Uzh2oGdaPiS4W4dfsZ-pn3rGcJNiZLStfo39How@mail.gmail.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Nov 28, 2017 at 11:58 AM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> Hi Rafael, Shimoda-san,
->
-> On Sun, Nov 12, 2017 at 1:27 AM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
->> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>
->> The check for "active" children in __pm_runtime_set_status(), when
->> trying to set the parent device status to "suspended", doesn't
->> really make sense, because in fact it is not invalid to set the
->> status of a device with runtime PM disabled to "suspended" in any
->> case.  It is invalid to enable runtime PM for a device with its
->> status set to "suspended" while its child_count reference counter
->> is nonzero, but the check in __pm_runtime_set_status() doesn't
->> really cover that situation.
->>
->> For this reason, drop the children check from __pm_runtime_set_status()
->> and add a check against child_count reference counters of "suspended"
->> devices to pm_runtime_enable().
->>
->> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->> ---
->>  drivers/base/power/runtime.c |   30 ++++++++++--------------------
->>  1 file changed, 10 insertions(+), 20 deletions(-)
->>
->> Index: linux-pm/drivers/base/power/runtime.c
->> ===================================================================
->> --- linux-pm.orig/drivers/base/power/runtime.c
->> +++ linux-pm/drivers/base/power/runtime.c
->> @@ -1101,29 +1101,13 @@ int __pm_runtime_set_status(struct devic
->>                 goto out;
->>         }
->>
->> -       if (dev->power.runtime_status == status)
->> +       if (dev->power.runtime_status == status || !parent)
->>                 goto out_set;
->>
->>         if (status == RPM_SUSPENDED) {
->> -               /*
->> -                * It is invalid to suspend a device with an active child,
->> -                * unless it has been set to ignore its children.
->> -                */
->> -               if (!dev->power.ignore_children &&
->> -                       atomic_read(&dev->power.child_count)) {
->> -                       dev_err(dev, "runtime PM trying to suspend device but active child\n");
->
-> JFTR, this triggered before during system resume on e.g. Salvator-XS with
-> R-Car H3:
->
->     ohci-platform ee080000.usb: runtime PM trying to suspend device
-> but active child
->     phy_rcar_gen3_usb2 ee080200.usb-phy: runtime PM trying to suspend
-> device but active child
->     ohci-platform ee0c0000.usb: runtime PM trying to suspend device
-> but active child
->     ohci-platform ee0a0000.usb: runtime PM trying to suspend device
-> but active child
->     phy_rcar_gen3_usb2 ee0c0200.usb-phy: runtime PM trying to suspend
-> device but active child
->     phy_rcar_gen3_usb2 ee0a0200.usb-phy: runtime PM trying to suspend
-> device but active child
->
-> so this was an existing issue with USB before.
->
->> -                       error = -EBUSY;
->> -                       goto out;
->> -               }
->> -
->> -               if (parent) {
->> -                       atomic_add_unless(&parent->power.child_count, -1, 0);
->> -                       notify_parent = !parent->power.ignore_children;
->> -               }
->> -               goto out_set;
->> -       }
->> -
->> -       if (parent) {
->> +               atomic_add_unless(&parent->power.child_count, -1, 0);
->> +               notify_parent = !parent->power.ignore_children;
->> +       } else {
->>                 spin_lock_nested(&parent->power.lock, SINGLE_DEPTH_NESTING);
->>
->>                 /*
->> @@ -1307,6 +1291,12 @@ void pm_runtime_enable(struct device *de
->>         else
->>                 dev_warn(dev, "Unbalanced %s!\n", __func__);
->>
->> +       WARN(dev->power.runtime_status == RPM_SUSPENDED &&
->> +            !dev->power.ignore_children &&
->> +            atomic_read(&dev->power.child_count) > 0,
->> +            "Enabling runtime PM for inactive device (%s) with active children\n",
->> +            dev_name(dev));
->
-> And now it became a bit more noisy:
-
-Well, it's all existing issues, although the WARN() doesn't provide
-additional information in this particular case.
-
-I'm considering changing it to print a message without a stack trace.
-
-Thanks,
-Rafael
+SGkgR2VlcnQtc2FuLA0KDQo+IEZyb206IEdlZXJ0IFV5dHRlcmhvZXZlbiwgU2VudDogVHVlc2Rh
+eSwgTm92ZW1iZXIgMjgsIDIwMTcgNzo1OCBQTQ0KPiANCj4gSGkgUmFmYWVsLCBTaGltb2RhLXNh
+biwNCj4gDQo+IE9uIFN1biwgTm92IDEyLCAyMDE3IGF0IDE6MjcgQU0sIFJhZmFlbCBKLiBXeXNv
+Y2tpIDxyandAcmp3eXNvY2tpLm5ldD4gd3JvdGU6DQo+ID4gRnJvbTogUmFmYWVsIEouIFd5c29j
+a2kgPHJhZmFlbC5qLnd5c29ja2lAaW50ZWwuY29tPg0KPiA+DQo+ID4gVGhlIGNoZWNrIGZvciAi
+YWN0aXZlIiBjaGlsZHJlbiBpbiBfX3BtX3J1bnRpbWVfc2V0X3N0YXR1cygpLCB3aGVuDQo+ID4g
+dHJ5aW5nIHRvIHNldCB0aGUgcGFyZW50IGRldmljZSBzdGF0dXMgdG8gInN1c3BlbmRlZCIsIGRv
+ZXNuJ3QNCj4gPiByZWFsbHkgbWFrZSBzZW5zZSwgYmVjYXVzZSBpbiBmYWN0IGl0IGlzIG5vdCBp
+bnZhbGlkIHRvIHNldCB0aGUNCj4gPiBzdGF0dXMgb2YgYSBkZXZpY2Ugd2l0aCBydW50aW1lIFBN
+IGRpc2FibGVkIHRvICJzdXNwZW5kZWQiIGluIGFueQ0KPiA+IGNhc2UuICBJdCBpcyBpbnZhbGlk
+IHRvIGVuYWJsZSBydW50aW1lIFBNIGZvciBhIGRldmljZSB3aXRoIGl0cw0KPiA+IHN0YXR1cyBz
+ZXQgdG8gInN1c3BlbmRlZCIgd2hpbGUgaXRzIGNoaWxkX2NvdW50IHJlZmVyZW5jZSBjb3VudGVy
+DQo+ID4gaXMgbm9uemVybywgYnV0IHRoZSBjaGVjayBpbiBfX3BtX3J1bnRpbWVfc2V0X3N0YXR1
+cygpIGRvZXNuJ3QNCj4gPiByZWFsbHkgY292ZXIgdGhhdCBzaXR1YXRpb24uDQo+ID4NCj4gPiBG
+b3IgdGhpcyByZWFzb24sIGRyb3AgdGhlIGNoaWxkcmVuIGNoZWNrIGZyb20gX19wbV9ydW50aW1l
+X3NldF9zdGF0dXMoKQ0KPiA+IGFuZCBhZGQgYSBjaGVjayBhZ2FpbnN0IGNoaWxkX2NvdW50IHJl
+ZmVyZW5jZSBjb3VudGVycyBvZiAic3VzcGVuZGVkIg0KPiA+IGRldmljZXMgdG8gcG1fcnVudGlt
+ZV9lbmFibGUoKS4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFJhZmFlbCBKLiBXeXNvY2tpIDxy
+YWZhZWwuai53eXNvY2tpQGludGVsLmNvbT4NCj4gPiAtLS0NCj4gPiAgZHJpdmVycy9iYXNlL3Bv
+d2VyL3J1bnRpbWUuYyB8ICAgMzAgKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+ID4g
+IDEgZmlsZSBjaGFuZ2VkLCAxMCBpbnNlcnRpb25zKCspLCAyMCBkZWxldGlvbnMoLSkNCj4gPg0K
+PiA+IEluZGV4OiBsaW51eC1wbS9kcml2ZXJzL2Jhc2UvcG93ZXIvcnVudGltZS5jDQo+ID4gPT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PQ0KPiA+IC0tLSBsaW51eC1wbS5vcmlnL2RyaXZlcnMvYmFzZS9wb3dlci9ydW50aW1l
+LmMNCj4gPiArKysgbGludXgtcG0vZHJpdmVycy9iYXNlL3Bvd2VyL3J1bnRpbWUuYw0KPiA+IEBA
+IC0xMTAxLDI5ICsxMTAxLDEzIEBAIGludCBfX3BtX3J1bnRpbWVfc2V0X3N0YXR1cyhzdHJ1Y3Qg
+ZGV2aWMNCj4gPiAgICAgICAgICAgICAgICAgZ290byBvdXQ7DQo+ID4gICAgICAgICB9DQo+ID4N
+Cj4gPiAtICAgICAgIGlmIChkZXYtPnBvd2VyLnJ1bnRpbWVfc3RhdHVzID09IHN0YXR1cykNCj4g
+PiArICAgICAgIGlmIChkZXYtPnBvd2VyLnJ1bnRpbWVfc3RhdHVzID09IHN0YXR1cyB8fCAhcGFy
+ZW50KQ0KPiA+ICAgICAgICAgICAgICAgICBnb3RvIG91dF9zZXQ7DQo+ID4NCj4gPiAgICAgICAg
+IGlmIChzdGF0dXMgPT0gUlBNX1NVU1BFTkRFRCkgew0KPiA+IC0gICAgICAgICAgICAgICAvKg0K
+PiA+IC0gICAgICAgICAgICAgICAgKiBJdCBpcyBpbnZhbGlkIHRvIHN1c3BlbmQgYSBkZXZpY2Ug
+d2l0aCBhbiBhY3RpdmUgY2hpbGQsDQo+ID4gLSAgICAgICAgICAgICAgICAqIHVubGVzcyBpdCBo
+YXMgYmVlbiBzZXQgdG8gaWdub3JlIGl0cyBjaGlsZHJlbi4NCj4gPiAtICAgICAgICAgICAgICAg
+ICovDQo+ID4gLSAgICAgICAgICAgICAgIGlmICghZGV2LT5wb3dlci5pZ25vcmVfY2hpbGRyZW4g
+JiYNCj4gPiAtICAgICAgICAgICAgICAgICAgICAgICBhdG9taWNfcmVhZCgmZGV2LT5wb3dlci5j
+aGlsZF9jb3VudCkpIHsNCj4gPiAtICAgICAgICAgICAgICAgICAgICAgICBkZXZfZXJyKGRldiwg
+InJ1bnRpbWUgUE0gdHJ5aW5nIHRvIHN1c3BlbmQgZGV2aWNlIGJ1dCBhY3RpdmUgY2hpbGRcbiIp
+Ow0KPiANCj4gSkZUUiwgdGhpcyB0cmlnZ2VyZWQgYmVmb3JlIGR1cmluZyBzeXN0ZW0gcmVzdW1l
+IG9uIGUuZy4gU2FsdmF0b3ItWFMgd2l0aA0KPiBSLUNhciBIMzoNCj4gDQo+ICAgICBvaGNpLXBs
+YXRmb3JtIGVlMDgwMDAwLnVzYjogcnVudGltZSBQTSB0cnlpbmcgdG8gc3VzcGVuZCBkZXZpY2UN
+Cj4gYnV0IGFjdGl2ZSBjaGlsZA0KPiAgICAgcGh5X3JjYXJfZ2VuM191c2IyIGVlMDgwMjAwLnVz
+Yi1waHk6IHJ1bnRpbWUgUE0gdHJ5aW5nIHRvIHN1c3BlbmQNCj4gZGV2aWNlIGJ1dCBhY3RpdmUg
+Y2hpbGQNCj4gICAgIG9oY2ktcGxhdGZvcm0gZWUwYzAwMDAudXNiOiBydW50aW1lIFBNIHRyeWlu
+ZyB0byBzdXNwZW5kIGRldmljZQ0KPiBidXQgYWN0aXZlIGNoaWxkDQo+ICAgICBvaGNpLXBsYXRm
+b3JtIGVlMGEwMDAwLnVzYjogcnVudGltZSBQTSB0cnlpbmcgdG8gc3VzcGVuZCBkZXZpY2UNCj4g
+YnV0IGFjdGl2ZSBjaGlsZA0KPiAgICAgcGh5X3JjYXJfZ2VuM191c2IyIGVlMGMwMjAwLnVzYi1w
+aHk6IHJ1bnRpbWUgUE0gdHJ5aW5nIHRvIHN1c3BlbmQNCj4gZGV2aWNlIGJ1dCBhY3RpdmUgY2hp
+bGQNCj4gICAgIHBoeV9yY2FyX2dlbjNfdXNiMiBlZTBhMDIwMC51c2ItcGh5OiBydW50aW1lIFBN
+IHRyeWluZyB0byBzdXNwZW5kDQo+IGRldmljZSBidXQgYWN0aXZlIGNoaWxkDQo+IA0KPiBzbyB0
+aGlzIHdhcyBhbiBleGlzdGluZyBpc3N1ZSB3aXRoIFVTQiBiZWZvcmUuDQoNClRoYW5rIHlvdSBm
+b3IgdGhlIHJlcG9ydCENCkkga25vdyB0aGF0LCBidXQgc2luY2UgdGhpcyBkaWRuJ3QgY2F1c2Ug
+YW55IHRyb3VibGUgdW50aWwgbm93LA0KSSBwb3N0cG9uZWQgdG8gaW52ZXN0aWdhdGUgdGhlIGlz
+c3VlLi4uIEJ1dCwgSSBpbnZlc3RpZ2F0ZSBpdCB0b2RheS4NCkkgZG9uJ3QgZmluZCB0aGUgcm9v
+dCBjYXVzZSB5ZXQuIEhvd2V2ZXIsIGl0IHNlZW1zIHJlbGF0ZWQgdG8gdXNiIGhvc3QgYW5kL29y
+IHVzYiBjb3JlLg0KLS0+IFVTQiBob3N0IHJlbGF0ZWQgZGV2aWNlcycgY2hpbGRfY291bnQgd2ls
+bCBiZSAxIGluIHN1c3BlbmQgdGltaW5nLg0KIC0tPiBJIGd1ZXNzIHJlbW90ZSB3YWtldXAgZmVh
+dHVyZSBpcyBlbmFibGVkPyBCdXQsIEkgZG9uJ3QgZmluZCB0aGUgcG9pbnQgeWV0Lg0KDQpUaGUg
+cmVuZXNhc191c2JocyBhbHNvIHVzZXMgdGhlIHBoeV9yY2FyX2dlbjNfdXNiMiBkcml2ZXIuDQot
+LT4gSWYgSSBvbmx5IHVzZWQgdGhlIHJlbmVzYXNfdXNiaHMgZHJpdmVyIChpbiBvdGhlciB3b3Jk
+cywgSSBkb24ndCBpbnN0YWxsDQogICAgW2VvXWhjaS17aGNkLHBsYXRmb3JtfSBkcml2ZXJzKSwg
+dGhlIGlzc3VlIGRpc2FwcGVhcmVkLg0KIC0tPiBTbywgSSB0aGluayB0aGUgcGh5X3JjYXJfZ2Vu
+M191c2IyIGRyaXZlciBkb2Vzbid0IGNhdXNlIHRoaXMgaXNzdWUuDQogICAgKEJ1dCwgaXQgaXMg
+cG9zc2libGUgdG8gYmUgcmVsYXRlZCB0aG91Z2guKQ0KDQpJJ2xsIGNvbnRpbnVlIHRvIGludmVz
+dGlnYXRlIHRoaXMgaXNzdWUgdG9tb3Jyb3cuDQoNCkJlc3QgcmVnYXJkcywNCllvc2hpaGlybyBT
+aGltb2RhDQoNCg==
