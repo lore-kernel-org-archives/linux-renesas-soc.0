@@ -1,46 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:45468 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751798AbdKZAu3 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:45952 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751350AbdK1I3u (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 25 Nov 2017 19:50:29 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
+        Tue, 28 Nov 2017 03:29:50 -0500
+Date: Tue, 28 Nov 2017 09:29:45 +0100
+From: Simon Horman <horms@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 0/3] arm64: dts: renesas: r8a77970: connect VIN to CSI40
-Date: Sun, 26 Nov 2017 01:50:09 +0100
-Message-Id: <20171126005012.22573-1-niklas.soderlund+renesas@ragnatech.se>
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH v2 0/5] arm64: dts: renesas: r8a77970: IPMMU upstream
+ integration
+Message-ID: <20171128082945.3aqjlyfktyokdhyk@verge.net.au>
+References: <20171110132553.1461-1-horms+renesas@verge.net.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20171110132553.1461-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+On Fri, Nov 10, 2017 at 02:25:48PM +0100, Simon Horman wrote:
+> This series adds DT nodes for IPMMU instances on r8a77970 together with
+> connections to r8a77970 on-chip devices: SYS-DMAC and Ethernet-AVB.
+> 
+> With these patches applied a white list enabled IPMMU driver may be used
+> to check silicon revision and then enable IPMMU in the known working cases.
+> 
+> The recommended test stack for this patchset is a merge of
+> * The iommu/next branch of the vfio tree
+> * renesas-devel-20171110-v4.14-rc8 tag of the renesas tree
+> 
+> With the following applied:
+> * [PATCH v4 0/3] iommu/ipmmu-vmsa: r8a7796 support V4
+> * [PATCH 0/2] iommu/ipmmu-vmsa: r8a779(70|95) support
+> 
+> The final patch in the series enable IPMMU support for all IPMMU
+> instances on r8a77970 that are used by IPMMU devices listed above.
+> 
+> The DT binding for r8a77970 are been submitted (as part of the
+> r8a779(70|95) series noted above) in conjunction with this patchset.
+> 
+> This is based on work by Magnus Damm.
+> 
+> Based on renesas-devel-20171110-v4.14-rc8
+> 
+> Changes since V1:
+> * Drop mostly redundant comments from nodes
+> * Add power domains
+> * Correct compat string used for IPMMU-DS1
+> 
+> Simon Horman (5):
+>   arm64: dts: renesas: r8a77970: sort includes
+>   arm64: dts: renesas: r8a77970: Add IPMMU device nodes
+>   arm64: dts: renesas: r8a77970: Tie SYS-DMAC to IPMMU-DS1
+>   arm64: dts: renesas: r8a77970: Connect Ethernet-AVB to IPMMU-RT
+>   arm64: dts: renesas: r8a77970: Enable IPMMU-DS1, RT and MM
 
-This series describes how to connect VIN0-3 to CSI40 and the HDMI input 
-of the adv7482 on the expansion board. It is tested on V3M together with 
-V3M enablement for VIN and CSI-2 drivers on-top of Kieran's 
-renesas-drivers-next-v3m branch [1].
-
-It works and it's possible to program the EDID and capture frame frames.  
-Remember to switch SW18 to the off position to route the CSI-2 bus to 
-the expansion board instead of the MAX9286 for GMSL input.
-
-1. git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git
-
-Niklas Söderlund (3):
-  arm64: dts: renesas: r8a77970: add VIN and CSI-2
-  arm64: dts: renesas: eagle: expansion: enable and connect CSI40
-  arm64: dts: renesas: eagle: enable VIN
-
- .../boot/dts/renesas/r8a77970-eagle-expansion.dtsi |  18 ++-
- arch/arm64/boot/dts/renesas/r8a77970-eagle.dts     |  16 +++
- arch/arm64/boot/dts/renesas/r8a77970.dtsi          | 151 +++++++++++++++++++++
- 3 files changed, 184 insertions(+), 1 deletion(-)
-
--- 
-2.15.0
+This series has been applied for v4.16.
