@@ -1,63 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:47818 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752859AbdK3M5b (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:38928 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753081AbdK1Nrl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 30 Nov 2017 07:57:31 -0500
+        Tue, 28 Nov 2017 08:47:41 -0500
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
+To: Simon Horman <horms+renesas@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
-        devicetree@vger.kernel.org,
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Magnus Damm <damm+renesas@opensource.se>,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 1/4] ARM: dts: armadillo800eva: Convert to named i2c-gpio bindings
-Date: Thu, 30 Nov 2017 13:57:23 +0100
-Message-Id: <1512046646-15253-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1512046646-15253-1-git-send-email-geert+renesas@glider.be>
-References: <1512046646-15253-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v4 01/12] ARM: dts: r8a73a4: Update CMT compat string
+Date: Tue, 28 Nov 2017 14:47:25 +0100
+Message-Id: <1511876856-9495-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1511876856-9495-1-git-send-email-geert+renesas@glider.be>
+References: <1511876856-9495-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Commits 7d29f509d2cfd807 ("dt-bindings: i2c: i2c-gpio: Add support for
-named gpios") and 05c74778858d7d99 ("i2c: gpio: Add support for named
-gpios in DT") introduced named i2c-gpio DT bindings, and deprecated the
-more error-prone unnamed variant.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Switch to the new bindings, and add the missing GPIO_OPEN_DRAIN I/O
-flags, which were implicitly assumed before.
+Use the recently updated r8a73a4 CMT1 compat string.
 
-The latter gets rid of the message:
+With this change in place we can keep device-specific configuration in
+the driver and the driver can be able to support CMT1 specific features.
 
-    gpio-208 (?): enforced open drain please flag it properly in DT/ACPI DSDT/board file
-    gpio-91 (?): enforced open drain please flag it properly in DT/ACPI DSDT/board file
-
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-v2:
-  - Add GPIO_OPEN_DRAIN to the GPIO flags,
-  - Reword.
----
- arch/arm/boot/dts/r8a7740-armadillo800eva.dts | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+v4:
+  - Rebased against renesas-devel-20171127-v4.15-rc1,
 
-diff --git a/arch/arm/boot/dts/r8a7740-armadillo800eva.dts b/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
-index 8c85d3ee5f5e7bfd..527c60bafbcface0 100644
---- a/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
-+++ b/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
-@@ -138,9 +138,8 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		compatible = "i2c-gpio";
--		gpios = <&pfc 208 GPIO_ACTIVE_HIGH /* sda */
--			 &pfc 91 GPIO_ACTIVE_HIGH /* scl */
--			>;
-+		sda-gpios = <&pfc 208 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		scl-gpios = <&pfc 91 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
- 		i2c-gpio,delay-us = <5>;
+v3:
+  - Take over from Magnus,
+  - Update compatible values,
+  - Split in per-SoC patches,
+
+v2:
+  - Added Acked-by and Tested-by from Geert,
+  - Added Acked-by from Laurent.
+---
+ arch/arm/boot/dts/r8a73a4.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/r8a73a4.dtsi b/arch/arm/boot/dts/r8a73a4.dtsi
+index dd4d09712a2a3a88..805b0fd70f53820d 100644
+--- a/arch/arm/boot/dts/r8a73a4.dtsi
++++ b/arch/arm/boot/dts/r8a73a4.dtsi
+@@ -132,7 +132,7 @@
  	};
  
+ 	cmt1: timer@e6130000 {
+-		compatible = "renesas,cmt-48-r8a73a4", "renesas,cmt-48-gen2";
++		compatible = "renesas,r8a73a4-cmt1", "renesas,rcar-gen2-cmt1";
+ 		reg = <0 0xe6130000 0 0x1004>;
+ 		interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A73A4_CLK_CMT1>;
 -- 
 2.7.4
