@@ -1,39 +1,84 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:53957 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754078AbdKAImn (ORCPT
+Received: from condef-07.nifty.com ([202.248.20.72]:50313 "EHLO
+        condef-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752104AbdK1CVl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 1 Nov 2017 04:42:43 -0400
-Date: Wed, 1 Nov 2017 09:42:38 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/3] soc: renesas: Identify R-Car M3-W ES1.1
-Message-ID: <20171101084237.atr25lujcqctwhjj@verge.net.au>
-References: <1509384599-28953-1-git-send-email-geert+renesas@glider.be>
- <1509384599-28953-3-git-send-email-geert+renesas@glider.be>
+        Mon, 27 Nov 2017 21:21:41 -0500
+Received: from conssluserg-02.nifty.com ([10.126.8.81])by condef-07.nifty.com with ESMTP id vAS2InQ1004982
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 28 Nov 2017 11:18:49 +0900
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1509384599-28953-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <20171127171324.sprmzsu4dkeo3gon@ninjato>
+References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com> <20171127171324.sprmzsu4dkeo3gon@ninjato>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Tue, 28 Nov 2017 11:18:04 +0900
+Message-ID: <CAK7LNAQggGy8xMdURXMNEd_vHCWBVpUYp=H2jP=KGt63HBT5tg@mail.gmail.com>
+Subject: Re: [PATCH v2 00/22] mmc: tmio: various fixes and cleanups
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-mmc <linux-mmc@vger.kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <simon.horman@netronome.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Oct 30, 2017 at 06:29:58PM +0100, Geert Uytterhoeven wrote:
-> The Product Register of R-Car M3-W ES1.1 incorrectly identifies the SoC
-> revision as ES2.0.  Add a workaround to fix this.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> Is it already known how future revisions will be identified?
+Hi Wolfram,
 
-I'd like there to be some sort of conclusion to that discussion before
-applying that patch (I seem to recall we discussed it some time ago
-but I don't recall the outcome). The reason that I am being cautious here
-is that it potentially has implications for old-kernel/new-SoC compatibility
-which may be hard to fix later.
 
-I am happy to apply the other patches in the series if you think that is
-worthwhile.
+2017-11-28 2:13 GMT+09:00 Wolfram Sang <wsa@the-dreams.de>:
+>
+>> I am getting more and more patches for TMIO.
+>> I put all in a single series to clarify the patch order.
+>
+> Hmmm, that makes reviewing harder in my opinion.
+
+
+I think this depends on people.
+
+You are the maintainer of TMIO MMC, so
+I will try my best to adjust to your opinion next time.
+
+
+
+> I really liked the small serieses which could be improved, acked, and
+> applied. This big one will take much longer to review and resending will
+> cause quite some noise.
+>
+> For clarifying patch order in small series, it should be enough to state
+> the dependencies in the cover letter. Super helpful is providing a
+> public git branch where ppl can pull from.
+>
+> Also, can you state what kind of testing you did on what platforms?
+
+I have no Renesas boards.
+
+I tested this series on UniPhier boards.
+(arch/arm/boot/dts/uniphier*.dts,  arch/arm64/boot/dts/socionext/uniphier*.dts)
+
+
+> My
+> gut feeling says that the card detect changes might be easy to catch
+> regressions on old platforms, so we'd need to be extra cautious. I/we
+> can do testing on some Renesas platforms, too.
+>
+> Other changes like moving stuff from tmio_core to renesas_sdhi is less
+> critical. Either it works or not, so that is easy to spot :)
+>
+> Which might be another argument for multiple smaller patch series.
+>
+> Nonetheless, I'll try to get this reviewed in the next days...
+
+Thanks!
+
+
+> All the best,
+>
+>    Wolfram
+>
+>
+-- 
+Best Regards
+Masahiro Yamada
