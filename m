@@ -1,68 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:45492 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751865AbdKZAu3 (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:48768 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753038AbdK1Nrl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 25 Nov 2017 19:50:29 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 2/3] arm64: dts: renesas: eagle: expansion: enable and connect CSI40
-Date: Sun, 26 Nov 2017 01:50:11 +0100
-Message-Id: <20171126005012.22573-3-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20171126005012.22573-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20171126005012.22573-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Tue, 28 Nov 2017 08:47:41 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms+renesas@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v4 05/12] ARM: dts: r8a7794: Update CMT compat strings
+Date: Tue, 28 Nov 2017 14:47:29 +0100
+Message-Id: <1511876856-9495-6-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1511876856-9495-1-git-send-email-geert+renesas@glider.be>
+References: <1511876856-9495-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On the extension board CSI40 is connected to the adv7482.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Use recently updated R-Car Gen2 CMT0 and CMT1 compat strings.
+
+With this change in place we can keep device-specific configuration in
+the driver and the driver can be able to support CMT1 specific features.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- .../boot/dts/renesas/r8a77970-eagle-expansion.dtsi     | 18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
+v4:
+  - Rebased against renesas-devel-20171127-v4.15-rc1,
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970-eagle-expansion.dtsi b/arch/arm64/boot/dts/renesas/r8a77970-eagle-expansion.dtsi
-index e3dc5c32433014c9..565008595a6ce81b 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970-eagle-expansion.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77970-eagle-expansion.dtsi
-@@ -44,6 +44,22 @@
+v3:
+  - Take over from Magnus,
+  - Update compatible values,
+  - Split in per-SoC patches,
+
+v2:
+  - Added Acked-by and Tested-by from Geert,
+  - Added Acked-by from Laurent.
+---
+ arch/arm/boot/dts/r8a7794.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index ef7fb1d2c3a31a6e..52f6d5ec5d210f44 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -181,7 +181,7 @@
  	};
- };
  
-+&csi40 {
-+	status = "okay";
-+
-+	ports {
-+		port@0 {
-+			reg = <0>;
-+
-+			csi40_in: endpoint {
-+				clock-lanes = <0>;
-+				data-lanes = <1 2 3 4>;
-+				remote-endpoint = <&adv7482_txa>;
-+			};
-+		};
-+	};
-+};
-+
- &i2c0 {
- 	/* GPIO Expander@27:
- 	 *   IO.0: ROUTE_I2C_ENn
-@@ -94,7 +110,7 @@
- 			adv7482_txa: endpoint {
- 				clock-lanes = <0>;
- 				data-lanes = <1 2 3 4>;
--				// remote-endpoint = <&csi40_in>;
-+				remote-endpoint = <&csi40_in>;
- 			};
- 		};
+ 	cmt0: timer@ffca0000 {
+-		compatible = "renesas,cmt-48-gen2";
++		compatible = "renesas,r8a7794-cmt0", "renesas,rcar-gen2-cmt0";
+ 		reg = <0 0xffca0000 0 0x1004>;
+ 		interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
+@@ -196,7 +196,7 @@
  	};
+ 
+ 	cmt1: timer@e6130000 {
+-		compatible = "renesas,cmt-48-gen2";
++		compatible = "renesas,r8a7794-cmt1", "renesas,rcar-gen2-cmt1";
+ 		reg = <0 0xe6130000 0 0x1004>;
+ 		interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
 -- 
-2.15.0
+2.7.4
