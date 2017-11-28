@@ -1,86 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:62150 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752887AbdKNPlf (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:57914 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753035AbdK1Nrk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Nov 2017 10:41:35 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: Simon Horman <horms@verge.net.au>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH v2 1/2] pinctrl: sh-pfc: r8a7794: Add can_clk function
-Date: Tue, 14 Nov 2017 15:41:16 +0000
-Message-Id: <1510674077-31136-2-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1510674077-31136-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1510674077-31136-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Tue, 28 Nov 2017 08:47:40 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms+renesas@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v4 06/12] ARM: dts: r8a73a4: Remove CMT renesas,channels-mask
+Date: Tue, 28 Nov 2017 14:47:30 +0100
+Message-Id: <1511876856-9495-7-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1511876856-9495-1-git-send-email-geert+renesas@glider.be>
+References: <1511876856-9495-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds can_clk function to r8a7745/r8a7794 which is cleaner,
-and allows for independent configuration.
-We keep the can_clk* pins definitions from within can0_groups and
-can1_groups for uniformity and backwards compatibility.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Update the DTS to remove the now deprecated "renesas,channels-mask"
+property.
+
+The channel information is now kept in the device driver and can easily
+be determined based on the compat string.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-v1->v2
-* Retained can_clk* pins inside can[01]_groups
-* Added comments
+v4:
+  - Rebased against renesas-devel-20171127-v4.15-rc1,
 
- drivers/pinctrl/sh-pfc/pfc-r8a7794.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+v3:
+  - Take over from Magnus,
+  - Split in per-SoC patches,
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-index e5b3d5f..c557bc8 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-@@ -3858,6 +3858,10 @@ static const char * const can0_groups[] = {
- 	"can0_data_b",
- 	"can0_data_c",
- 	"can0_data_d",
-+	/*
-+	 * Retained for backwards compatibility, use can_clk_groups in new
-+	 * designs.
-+	 */
- 	"can_clk",
- 	"can_clk_b",
- 	"can_clk_c",
-@@ -3869,6 +3873,21 @@ static const char * const can1_groups[] = {
- 	"can1_data_b",
- 	"can1_data_c",
- 	"can1_data_d",
-+	/*
-+	 * Retained for backwards compatibility, use can_clk_groups in new
-+	 * designs.
-+	 */
-+	"can_clk",
-+	"can_clk_b",
-+	"can_clk_c",
-+	"can_clk_d",
-+};
-+
-+/*
-+ * can_clk_groups allows for independent configuration, use can_clk function
-+ * in new designs.
-+ */
-+static const char * const can_clk_groups[] = {
- 	"can_clk",
- 	"can_clk_b",
- 	"can_clk_c",
-@@ -4248,6 +4267,7 @@ static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(avb),
- 	SH_PFC_FUNCTION(can0),
- 	SH_PFC_FUNCTION(can1),
-+	SH_PFC_FUNCTION(can_clk),
- 	SH_PFC_FUNCTION(du0),
- 	SH_PFC_FUNCTION(du1),
- 	SH_PFC_FUNCTION(eth),
+v2:
+  - Rebased on top of power-domain changes,
+  - Added Acked-by and Tested-by from Geert.
+---
+ arch/arm/boot/dts/r8a73a4.dtsi | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/arch/arm/boot/dts/r8a73a4.dtsi b/arch/arm/boot/dts/r8a73a4.dtsi
+index 805b0fd70f53820d..8e48090e4fdc1412 100644
+--- a/arch/arm/boot/dts/r8a73a4.dtsi
++++ b/arch/arm/boot/dts/r8a73a4.dtsi
+@@ -138,9 +138,6 @@
+ 		clocks = <&mstp3_clks R8A73A4_CLK_CMT1>;
+ 		clock-names = "fck";
+ 		power-domains = <&pd_c5>;
+-
+-		renesas,channels-mask = <0xff>;
+-
+ 		status = "disabled";
+ 	};
+ 
 -- 
 2.7.4
