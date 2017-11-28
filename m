@@ -1,86 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from condef-05.nifty.com ([202.248.20.70]:17771 "EHLO
-        condef-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753540AbdKXQhC (ORCPT
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37994 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753799AbdK1Peu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 24 Nov 2017 11:37:02 -0500
-Received: from conuserg-11.nifty.com ([10.126.8.74])by condef-05.nifty.com with ESMTP id vAOGQ6QS008552
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 25 Nov 2017 01:26:08 +0900
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-mmc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Simon Horman <simon.horman@netronome.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v2 14/22] mmc: tmio,renesas_sdhi: move ssc_tappos to renesas_sdhi.h
-Date: Sat, 25 Nov 2017 01:24:49 +0900
-Message-Id: <1511540697-27387-15-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
+        Tue, 28 Nov 2017 10:34:50 -0500
+Date: Tue, 28 Nov 2017 15:34:46 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-input@vger.kernel.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH v6 0/9] i2c: document DMA handling and add helpers for it
+Message-ID: <20171128153446.6pyqtkcvuepil5gi@sirena.org.uk>
+References: <20171104202009.3818-1-wsa+renesas@sang-engineering.com>
+ <20171108225037.i4dx5iu5zxc542oq@sirena.co.uk>
+ <20171127185116.j2vmkhbik33vk4f7@ninjato>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="g4qm2fugrwbwjqft"
+Content-Disposition: inline
+In-Reply-To: <20171127185116.j2vmkhbik33vk4f7@ninjato>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-struct tmio_mmc_host has "scc_tappos", but in fact, it is Renesas
-private data.  Move it to renesas_sdhi.h
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+--g4qm2fugrwbwjqft
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Changes in v2:
-  - Newly added
+On Mon, Nov 27, 2017 at 07:51:16PM +0100, Wolfram Sang wrote:
+> On Wed, Nov 08, 2017 at 10:50:37PM +0000, Mark Brown wrote:
 
- drivers/mmc/host/renesas_sdhi.h      | 1 +
- drivers/mmc/host/renesas_sdhi_core.c | 4 ++--
- drivers/mmc/host/tmio_mmc.h          | 1 -
- 3 files changed, 3 insertions(+), 3 deletions(-)
+> > We pretty much assume everything is DMA safe already, the majority of
+> > transfers go to/from kmalloc()ed scratch buffers so actually are DMA
+> > safe but for bulk transfers we use the caller buffer and there might be
+> > some problem users.
 
-diff --git a/drivers/mmc/host/renesas_sdhi.h b/drivers/mmc/host/renesas_sdhi.h
-index 3250dbe..f13f798 100644
---- a/drivers/mmc/host/renesas_sdhi.h
-+++ b/drivers/mmc/host/renesas_sdhi.h
-@@ -51,6 +51,7 @@ struct renesas_sdhi {
- 	struct pinctrl *pinctrl;
- 	struct pinctrl_state *pins_default, *pins_uhs;
- 	void __iomem *scc_ctl;
-+	u32 scc_tappos;
- };
- 
- #define host_to_priv(host) \
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index 34fd194..e78dca7 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -267,7 +267,7 @@ static unsigned int renesas_sdhi_init_tuning(struct tmio_mmc_host *host)
- 		       ~SH_MOBILE_SDHI_SCC_RVSCNTL_RVSEN &
- 		       sd_scc_read32(host, priv, SH_MOBILE_SDHI_SCC_RVSCNTL));
- 
--	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_DT2FF, host->scc_tappos);
-+	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_DT2FF, priv->scc_tappos);
- 
- 	/* Read TAPNUM */
- 	return (sd_scc_read32(host, priv, SH_MOBILE_SDHI_SCC_DTCNTL) >>
-@@ -590,7 +590,7 @@ int renesas_sdhi_probe(struct platform_device *pdev,
- 		for (i = 0; i < of_data->taps_num; i++) {
- 			if (taps[i].clk_rate == 0 ||
- 			    taps[i].clk_rate == host->mmc->f_max) {
--				host->scc_tappos = taps->tap;
-+				priv->scc_tappos = taps->tap;
- 				hit = true;
- 				break;
- 			}
-diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-index 8b169a0..9f083dc 100644
---- a/drivers/mmc/host/tmio_mmc.h
-+++ b/drivers/mmc/host/tmio_mmc.h
-@@ -166,7 +166,6 @@ struct tmio_mmc_host {
- 	struct mutex		ios_lock;	/* protect set_ios() context */
- 	bool			native_hotplug;
- 	bool			sdio_irq_enabled;
--	u32			scc_tappos;
- 
- 	/* Mandatory callback */
- 	int (*clk_enable)(struct tmio_mmc_host *host);
--- 
-2.7.4
+> So, pretty much the situation I2C was in before this patch set: we
+> pretty much assume DMA safety but there might be problem users.
+
+It's a bit different in that it's much more likely that a SPI controller
+will actually do DMA than an I2C one since the speeds are higher and
+there's frequent applications that do large transfers so it's more
+likely that people will do the right thing as issues would tend to come
+up if they don't.
+
+> > I can't really think of a particularly good way of
+> > handling it off the top of my head, obviously not setting the flag is
+> > easy but doesn't get the benefit while always using a bounce buffer
+> > would involve lots of unneeded memcpy().  Doing _dmasafe() isn't
+> > particularly appealing either but might be what we end up with.
+
+> Okay. That sounds you are fine with the approach taken here, in general?
+
+It's hard to summon enthusiasm but yes, without changes to the DMA stuff
+it's probably as good as we can do.
+
+--g4qm2fugrwbwjqft
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlodghYACgkQJNaLcl1U
+h9DF7Qf/RFs7DXkOGZIsos7EWmLKM4MQxypTYejz8u46jh7yQ9XNHHZMhhr8at6D
+J4bSqVSfTI4wQHzUwWK9tfzM3v1BT1ZnEFU8zvTTLMwVyZO9tVIPqjunnGR3vHvf
+/N+bbI1NKK6zWlp5vaV8OaVL0Utzm0DEY+2mpWVn3I5Q9OI5JkJ0KlZV+xOE5kLk
+5alC3IStVFb+3TiaSXJY9WEiLe21Xau6/xA51iQOdenUgIHfeg2TnLuJiMyvPIRq
+6VH1Hm9AQoNx+SuF4fWIVfzsMtz41iU7GBuJRFtdM6Jp+OftlBCIaUaO19GyqipF
+EOuxWHDGqOCs0wINJJ9EhR07XVDQZA==
+=RZ/Y
+-----END PGP SIGNATURE-----
+
+--g4qm2fugrwbwjqft--
