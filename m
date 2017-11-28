@@ -1,56 +1,73 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:40269 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751887AbdKNJA0 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Nov 2017 04:00:26 -0500
-Date: Tue, 14 Nov 2017 10:00:06 +0100
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Geert Uytterhoeven <geert@glider.be>
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [GIT PULL FOR renesas-drivers] iommu/ipmmu-vmsa: Add r8a779(6|70|95)
- DT bindings
-Message-ID: <20171114090005.kyfrf5oqdv632oqw@verge.net.au>
+Return-Path: <linux-media-owner@vger.kernel.org>
+Subject: Re: [PATCH] media: i2c: adv748x: Restore full DT paths in kernel
+ messages
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1511874084-5068-1-git-send-email-geert+renesas@glider.be>
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Message-ID: <60496d91-446a-435e-41a4-3e579c6fe08b@ideasonboard.com>
+Date: Tue, 28 Nov 2017 14:02:25 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <1511874084-5068-1-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hi Geert,
 
-please consider pulling IPMMU DT bindings for the
-r8a7796 (R-Car M3-W), r8a77970 (R-Car V3M) and r8a77995 (R-Car D3) SoCs.
+Thanks for the patch.
 
-This is v5 of the bindings for the r8a7796, they are unchanged since v4.
-The bindings for the r8a77970 and r8a77995 are new.
+On 28/11/17 13:01, Geert Uytterhoeven wrote:
+> As of_node_full_name() now returns only the basename, the endpoint
+> information printed became useless:
+> 
+>     adv748x 4-0070: Endpoint endpoint on port 7
+>     adv748x 4-0070: Endpoint endpoint on port 8
+>     adv748x 4-0070: Endpoint endpoint on port 10
+>     adv748x 4-0070: Endpoint endpoint on port 11
+> 
+> Restore the old behavior by using "%pOF" instead:
+> 
+>     adv748x 4-0070: Endpoint /soc/i2c@e66d8000/video-receiver@70/port@7/endpoint on port 7
+>     adv748x 4-0070: Endpoint /soc/i2c@e66d8000/video-receiver@70/port@8/endpoint on port 8
+>     adv748x 4-0070: Endpoint /soc/i2c@e66d8000/video-receiver@70/port@10/endpoint on port 10
+>     adv748x 4-0070: Endpoint /soc/i2c@e66d8000/video-receiver@70/port@11/endpoint on port 11
+> 
+> Fixes: a7e4cfb0a7ca4773 ("of/fdt: only store the device node basename in full_name")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-I will provide the corresponding driver and DTS updates for these SoCs
-separately.
+Acked-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-This pull request is based on the iommu/ipmmu-vmsa branch of the vfio tree
-which now includes the IPMMU driver and bindings for the r8a7795 (R-Car H3)
-SoC.
-
-
-The following changes since commit 58b8e8bf409236cdea379b8a3ab5d7b85a003d22:
-
-  iommu/ipmmu-vmsa: Hook up r8a7795 DT matching code (2017-11-06 10:29:39 -0700)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/ipmmu-bindings
-
-for you to fetch changes up to 213f5b188beadbf3e8361eb0157e8a3e7f82f840:
-
-  iommu/ipmmu-vmsa: Add r8a779(70|95) DT bindings (2017-11-10 11:52:16 +0100)
-
-----------------------------------------------------------------
-Magnus Damm (1):
-      iommu/ipmmu-vmsa: Add r8a7796 DT binding
-
-Simon Horman (1):
-      iommu/ipmmu-vmsa: Add r8a779(70|95) DT bindings
-
- Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt | 3 +++
- 1 file changed, 3 insertions(+)
+> ---
+>  drivers/media/i2c/adv748x/adv748x-core.c | 10 ++++------
+>  1 file changed, 4 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
+> index 5ee14f2c27478e3a..c1001db6a172e256 100644
+> --- a/drivers/media/i2c/adv748x/adv748x-core.c
+> +++ b/drivers/media/i2c/adv748x/adv748x-core.c
+> @@ -646,14 +646,12 @@ static int adv748x_parse_dt(struct adv748x_state *state)
+>  
+>  	for_each_endpoint_of_node(state->dev->of_node, ep_np) {
+>  		of_graph_parse_endpoint(ep_np, &ep);
+> -		adv_info(state, "Endpoint %s on port %d",
+> -				of_node_full_name(ep.local_node),
+> -				ep.port);
+> +		adv_info(state, "Endpoint %pOF on port %d", ep.local_node,
+> +			 ep.port);
+>  
+>  		if (ep.port >= ADV748X_PORT_MAX) {
+> -			adv_err(state, "Invalid endpoint %s on port %d",
+> -				of_node_full_name(ep.local_node),
+> -				ep.port);
+> +			adv_err(state, "Invalid endpoint %pOF on port %d",
+> +				ep.local_node, ep.port);
+>  
+>  			continue;
+>  		}
+> 
