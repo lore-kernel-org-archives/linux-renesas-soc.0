@@ -1,50 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55692 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:45981 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752216AbdKAKgU (ORCPT
+        with ESMTP id S1751427AbdK1Icg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 1 Nov 2017 06:36:20 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
+        Tue, 28 Nov 2017 03:32:36 -0500
+Date: Tue, 28 Nov 2017 09:32:32 +0100
+From: Simon Horman <horms@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v4 06/15] arm64: dts: renesas: r8a7795-es1: Point DU/VSPD via FCPVD to IPMMU-VI0
-Date: Wed,  1 Nov 2017 11:34:43 +0100
-Message-Id: <20171101103452.7491-7-horms+renesas@verge.net.au>
-In-Reply-To: <20171101103452.7491-1-horms+renesas@verge.net.au>
-References: <20171101103452.7491-1-horms+renesas@verge.net.au>
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH v2 0/2] dts: renesas: r8a77995: IPMMU upstream integration
+Message-ID: <20171128083232.qqqlrt6l2ds44xoo@verge.net.au>
+References: <20171110132605.1537-1-horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20171110132605.1537-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On Fri, Nov 10, 2017 at 02:26:03PM +0100, Simon Horman wrote:
+> This series adds DT nodes for IPMMU instances on r8a77995 together with
+> connections to the r8a77995 on-chip device Ethernet-AVB.
+> 
+> With these patches applied a white list enabled IPMMU driver may be used
+> to check silicon revision and then enable IPMMU in the known working cases.
+> 
+> The recommended test stack for this patchset is a merge of
+> * The iommu/next branch of the vfio tree
+> * renesas-devel-20171110-v4.14-rc8 tag of the renesas tree
+> 
+> With the following applied:
+>  [PATCH v4 0/3] iommu/ipmmu-vmsa: r8a7796 support V4
+>  [PATCH 0/2] iommu/ipmmu-vmsa: r8a779(70|95) support
+> 
+> A patch to enable IPMMU devices is not included in this series
+> as Ethernet-AVB, the only device to which IPMMU is hooked up to,
+> is disabled.
+> 
+> The DT binding for r8a77995 has been submitted (as part of the
+> r8a779(70|95) series noted above) in conjunction with this patchset.
+> 
+> This is based on work by Magnus Damm.
+> 
+> Based on renesas-devel-20171110-v4.14-rc8
+> 
+> Changes since V1:
+> * Drop mostly redundant comments from nodes
+> 
+> Simon Horman (2):
+>   arm64: dts: renesas: r8a77995: Add IPMMU device nodes
+>   arm64: dts: renesas: r8a77995: Connect Ethernet-AVB to IPMMU-RT
 
-Hook up the FCPVD devices to allow use of the VSP and DU
-together with IPMMU-VI0.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
-v4 [Simon Horman]
-* broke out of a larger patch
-
-v1 - v3 [Magnus Damm]
----
- arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-index 10e6e71039be..ee1e39ae3c7b 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-@@ -94,6 +94,7 @@
- 		clocks = <&cpg CPG_MOD 600>;
- 		power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 		resets = <&cpg 600>;
-+		iommus = <&ipmmu_vi0 11>;
- 	};
- 
- 	fdp1@fe948000 {
--- 
-2.11.0
+Applied for v4.16.
