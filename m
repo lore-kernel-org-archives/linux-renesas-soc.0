@@ -1,28 +1,30 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Tue, 28 Nov 2017 14:44:37 +0100
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Subject: Re: [PATCH] media: i2c: adv748x: Restore full DT paths in kernel
  messages
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-ID: <20171128134437.GK23832@bigcity.dyn.berto.se>
 References: <1511874084-5068-1-git-send-email-geert+renesas@glider.be>
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Message-ID: <60496d91-446a-435e-41a4-3e579c6fe08b@ideasonboard.com>
-Date: Tue, 28 Nov 2017 14:02:25 +0000
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 In-Reply-To: <1511874084-5068-1-git-send-email-geert+renesas@glider.be>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-Sender: linux-media-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hi Geert,
 
-Thanks for the patch.
+Thanks for your patch.
 
-On 28/11/17 13:01, Geert Uytterhoeven wrote:
+On 2017-11-28 14:01:24 +0100, Geert Uytterhoeven wrote:
 > As of_node_full_name() now returns only the basename, the endpoint
 > information printed became useless:
 > 
@@ -41,7 +43,7 @@ On 28/11/17 13:01, Geert Uytterhoeven wrote:
 > Fixes: a7e4cfb0a7ca4773 ("of/fdt: only store the device node basename in full_name")
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Acked-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
 
 > ---
 >  drivers/media/i2c/adv748x/adv748x-core.c | 10 ++++------
@@ -70,4 +72,10 @@ Acked-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 >  
 >  			continue;
 >  		}
+> -- 
+> 2.7.4
 > 
+
+-- 
+Regards,
+Niklas S�derlund
