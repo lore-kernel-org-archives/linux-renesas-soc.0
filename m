@@ -1,50 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:5198 "EHLO mga02.intel.com"
+Received: from mga11.intel.com ([192.55.52.93]:34095 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753221AbdK1UFc (ORCPT
+        id S1751555AbdK1VTj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Nov 2017 15:05:32 -0500
-Date: Wed, 29 Nov 2017 04:05:05 +0800
+        Tue, 28 Nov 2017 16:19:39 -0500
+Date: Wed, 29 Nov 2017 05:18:38 +0800
 From: kbuild test robot <fengguang.wu@intel.com>
 To: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
 Cc: kbuild-all@01.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [renesas-drivers:topic/renesas-overlays 14/88]
- drivers//of/unittest.c:1970:2: error: implicit declaration of function
- 'of_overlay_create_indirect'
-Message-ID: <201711290403.hmerW2DH%fengguang.wu@intel.com>
+Subject: [renesas-drivers:topic/renesas-overlays 17/88]
+ drivers/of/unittest.c:2037:2: error: implicit declaration of function
+ 'of_overlay_create_target_root'
+Message-ID: <201711290534.URlPoNnq%fengguang.wu@intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="G4iJoqBmSsgzjUCe"
+Content-Type: multipart/mixed; boundary="5vNYLRcllDrimb99"
 Content-Disposition: inline
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 
---G4iJoqBmSsgzjUCe
+--5vNYLRcllDrimb99
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 tree:   https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git topic/renesas-overlays
 head:   1b3280e42a0063f04f3ab7c9f8bbe4b5c65c51d9
-commit: 71f8b1178fc334bfb92d8f2c6296a6c83c276b18 [14/88] of: unittest: Add indirect overlay target test
+commit: a9f6ad767d6992a45c4d7ff331f6e796efe78d4d [17/88] of: unittest: Unit-tests for target root overlays.
 config: xtensa-allmodconfig (attached as .config)
 compiler: xtensa-linux-gcc (GCC) 4.9.0
 reproduce:
         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
         chmod +x ~/bin/make.cross
-        git checkout 71f8b1178fc334bfb92d8f2c6296a6c83c276b18
+        git checkout a9f6ad767d6992a45c4d7ff331f6e796efe78d4d
         # save the attached .config to linux build tree
         make.cross ARCH=xtensa 
 
 All errors (new ones prefixed by >>):
 
-   drivers//of/unittest.c: In function 'of_unittest_overlay_16':
->> drivers//of/unittest.c:1970:2: error: implicit declaration of function 'of_overlay_create_indirect' [-Werror=implicit-function-declaration]
+   drivers/of/unittest.c: In function 'of_unittest_overlay_16':
+   drivers/of/unittest.c:1970:2: error: implicit declaration of function 'of_overlay_create_indirect' [-Werror=implicit-function-declaration]
      ret = of_overlay_create_indirect(np, "unittest16");
+     ^
+   drivers/of/unittest.c: In function 'of_unittest_overlay_17':
+>> drivers/of/unittest.c:2037:2: error: implicit declaration of function 'of_overlay_create_target_root' [-Werror=implicit-function-declaration]
+     ret = of_overlay_create_target_root(np, target_root);
      ^
    cc1: some warnings being treated as errors
 
-vim +/of_overlay_create_indirect +1970 drivers//of/unittest.c
+vim +/of_overlay_create_target_root +2037 drivers/of/unittest.c
 
   1941	
   1942	static void of_unittest_overlay_16(void)
@@ -104,17 +108,86 @@ vim +/of_overlay_create_indirect +1970 drivers//of/unittest.c
   1996		unittest(1, "overlay test %d passed\n", 16);
   1997	}
   1998	
+  1999	static void of_unittest_overlay_17(void)
+  2000	{
+  2001		int ret;
+  2002		int overlay_nr = 17;
+  2003		int unittest_nr = 17;
+  2004		enum overlay_type ovtype = PDEV_OVERLAY;
+  2005		int before = 0;
+  2006		int after = 1;
+  2007		const char *root_path;
+  2008		struct device_node *np = NULL, *target_root = NULL;
+  2009		int id = -1;
+  2010	
+  2011		/* unittest device must not be in before state */
+  2012		if (of_unittest_device_exists(unittest_nr, ovtype) != before) {
+  2013			unittest(0, "overlay @\"%s\" with device @\"%s\" %s\n",
+  2014					overlay_path(overlay_nr),
+  2015					unittest_path(unittest_nr, ovtype),
+  2016					!before ? "enabled" : "disabled");
+  2017			return;
+  2018		}
+  2019	
+  2020		np = of_find_node_by_path(overlay_path(overlay_nr));
+  2021		if (np == NULL) {
+  2022			unittest(0, "could not find overlay node @\"%s\"\n",
+  2023					overlay_path(overlay_nr));
+  2024			ret = -EINVAL;
+  2025			goto out;
+  2026		}
+  2027	
+  2028		root_path = "/testcase-data/overlay-node/test-bus/test-unittest17";
+  2029		target_root = of_find_node_by_path(root_path);
+  2030		if (!target_root) {
+  2031			unittest(0, "could not find target_root node @\"%s\"\n",
+  2032					root_path);
+  2033			ret = -EINVAL;
+  2034			goto out;
+  2035		}
+  2036	
+> 2037		ret = of_overlay_create_target_root(np, target_root);
+  2038		of_node_put(target_root);
+  2039	
+  2040		if (ret < 0) {
+  2041			unittest(0, "could not create overlay from \"%s\"\n",
+  2042					overlay_path(overlay_nr));
+  2043			goto out;
+  2044		}
+  2045		id = ret;
+  2046		of_unittest_track_overlay(id);
+  2047	
+  2048		ret = 0;
+  2049	
+  2050	out:
+  2051		of_node_put(np);
+  2052	
+  2053		if (ret)
+  2054			return;
+  2055	
+  2056		/* unittest device must be to set to after state */
+  2057		if (of_unittest_device_exists(unittest_nr, ovtype) != after) {
+  2058			unittest(0, "overlay @\"%s\" failed to create @\"%s\" %s\n",
+  2059					overlay_path(overlay_nr),
+  2060					unittest_path(unittest_nr, ovtype),
+  2061					!after ? "enabled" : "disabled");
+  2062			return;
+  2063		}
+  2064	
+  2065		unittest(1, "overlay test %d passed\n", 17);
+  2066	}
+  2067	
 
 ---
 0-DAY kernel test infrastructure                Open Source Technology Center
 https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 
---G4iJoqBmSsgzjUCe
+--5vNYLRcllDrimb99
 Content-Type: application/gzip
 Content-Disposition: attachment; filename=".config.gz"
 Content-Transfer-Encoding: base64
 
-H4sICNKyHVoAAy5jb25maWcAlFxLc9vGlt7nV7CcWcxU3cQS5TDOTGnRABpEXwJoCN0gJW1Q
+H4sICHbJHVoAAy5jb25maWcAlFxLc9vGlt7nV7CcWcxU3cQS5TDOTGnRABpEXwJoCN0gJW1Q
 tETbqkikiqST+N/POY1XvwD5bhLjO6ff591N/fzTzzPy7Xx42Z6fHrbPz99nX3b73XF73j3O
 Pj897/5vFvFZzuWMRkz+Cszp0/7bP+//Oe/2p+3sw6+Xv/168cvx4XK22h33u+dZeNh/fvry
 DTp4Oux/+vmnkOcxW9b3PKd1lJHr7x1yK2kutO9yI2hW34bJkkRRTdIlL5lMsoFhSXNasrBO
@@ -1090,4 +1163,4 @@ vkqIBsQ6y1jOVrd01WNVlW248xxRzZhO3k4ChAqkgY7f6LZlA31+WywZhFW3c6FBBaNQCjjW
 GemXb8LN9hm02H9b8Kt1Vwo9BXRx8HZAlIbG9PKcLsZorN9d5d50hJ8BSqNGYVJZOZd0l6Q1
 zRHULpFpskZZEhIYQ0Xal6A4vXwpl0dFxO//pWI1IQVAAwA=
 
---G4iJoqBmSsgzjUCe--
+--5vNYLRcllDrimb99--
