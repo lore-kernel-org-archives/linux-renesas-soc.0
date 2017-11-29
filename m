@@ -1,193 +1,108 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:45484 "EHLO
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:54480 "EHLO
         smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751863AbdKZAu3 (ORCPT
+        with ESMTP id S1752565AbdK2ToH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 25 Nov 2017 19:50:29 -0500
+        Wed, 29 Nov 2017 14:44:07 -0500
 From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 1/3] arm64: dts: renesas: r8a77970: add VIN and CSI-2
-Date: Sun, 26 Nov 2017 01:50:10 +0100
-Message-Id: <20171126005012.22573-2-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20171126005012.22573-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20171126005012.22573-1-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v8 06/28] rcar-vin: move max width and height information to chip information
+Date: Wed, 29 Nov 2017 20:43:20 +0100
+Message-Id: <20171129194342.26239-7-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20171129194342.26239-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20171129194342.26239-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Define the nodes for CSI40 and VIN0-3.
+On Gen3 the max supported width and height will be different from Gen2.
+Move the limits to the struct rvin_info to prepare for Gen3 support.
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
 ---
- arch/arm64/boot/dts/renesas/r8a77970.dtsi | 151 ++++++++++++++++++++++++++++++
- 1 file changed, 151 insertions(+)
+ drivers/media/platform/rcar-vin/rcar-core.c | 6 ++++++
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 6 ++----
+ drivers/media/platform/rcar-vin/rcar-vin.h  | 6 ++++++
+ 3 files changed, 14 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-index b70649b7acd05c98..505a9a9c0c4f5a68 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -624,5 +624,156 @@
- 			#size-cells = <0>;
- 			status = "disabled";
- 		};
-+
-+		csi40: csi2@feaa0000 {
-+			compatible = "renesas,r8a7795-csi2", "renesas,rcar-gen3-csi2";
-+			reg = <0 0xfeaa0000 0 0x10000>;
-+			interrupts = <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 716>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			resets = <&cpg 716>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					reg = <1>;
-+
-+					csi40vin0: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&vin0csi40>;
-+					};
-+					csi40vin1: endpoint@1 {
-+						reg = <1>;
-+						remote-endpoint = <&vin1csi40>;
-+					};
-+					csi40vin2: endpoint@2 {
-+						reg = <2>;
-+						remote-endpoint = <&vin2csi40>;
-+					};
-+					csi40vin3: endpoint@3 {
-+						reg = <3>;
-+						remote-endpoint = <&vin3csi40>;
-+					};
-+				};
-+			};
-+		};
-+
-+		vin0: video@e6ef0000 {
-+			compatible = "renesas,vin-r8a7795";
-+			reg = <0 0xe6ef0000 0 0x1000>;
-+			interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 811>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			resets = <&cpg 811>;
-+			renesas,id = <0>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					reg = <1>;
-+
-+					vin0csi40: endpoint@2 {
-+						reg = <2>;
-+						remote-endpoint= <&csi40vin0>;
-+					};
-+				};
-+			};
-+		};
-+
-+		vin1: video@e6ef1000 {
-+			compatible = "renesas,vin-r8a7795";
-+			reg = <0 0xe6ef1000 0 0x1000>;
-+			interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 810>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			resets = <&cpg 810>;
-+			renesas,id = <1>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					reg = <1>;
-+
-+					vin1csi40: endpoint@2 {
-+						reg = <2>;
-+						remote-endpoint= <&csi40vin1>;
-+					};
-+				};
-+			};
-+		};
-+
-+		vin2: video@e6ef2000 {
-+			compatible = "renesas,vin-r8a7795";
-+			reg = <0 0xe6ef2000 0 0x1000>;
-+			interrupts = <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 809>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			resets = <&cpg 809>;
-+			renesas,id = <2>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					reg = <1>;
-+
-+					vin2csi40: endpoint@2 {
-+						reg = <2>;
-+						remote-endpoint= <&csi40vin2>;
-+					};
-+				};
-+			};
-+		};
-+
-+		vin3: video@e6ef3000 {
-+			compatible = "renesas,vin-r8a7795";
-+			reg = <0 0xe6ef3000 0 0x1000>;
-+			interrupts = <GIC_SPI 191 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 808>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			resets = <&cpg 808>;
-+			renesas,id = <3>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					reg = <1>;
-+
-+					vin3csi40: endpoint@2 {
-+						reg = <2>;
-+						remote-endpoint= <&csi40vin3>;
-+					};
-+				};
-+			};
-+		};
- 	};
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 73c1700a409bfd35..03d3cd63e38bee11 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -232,14 +232,20 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
+ 
+ static const struct rvin_info rcar_info_h1 = {
+ 	.chip = RCAR_H1,
++	.max_width = 2048,
++	.max_height = 2048,
  };
+ 
+ static const struct rvin_info rcar_info_m1 = {
+ 	.chip = RCAR_M1,
++	.max_width = 2048,
++	.max_height = 2048,
+ };
+ 
+ static const struct rvin_info rcar_info_gen2 = {
+ 	.chip = RCAR_GEN2,
++	.max_width = 2048,
++	.max_height = 2048,
+ };
+ 
+ static const struct of_device_id rvin_of_id_table[] = {
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index b1caa04921aa23bb..59ec6d3d119590aa 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -23,8 +23,6 @@
+ #include "rcar-vin.h"
+ 
+ #define RVIN_DEFAULT_FORMAT	V4L2_PIX_FMT_YUYV
+-#define RVIN_MAX_WIDTH		2048
+-#define RVIN_MAX_HEIGHT		2048
+ 
+ /* -----------------------------------------------------------------------------
+  * Format Conversions
+@@ -258,8 +256,8 @@ static int __rvin_try_format(struct rvin_dev *vin,
+ 	walign = vin->format.pixelformat == V4L2_PIX_FMT_NV16 ? 5 : 1;
+ 
+ 	/* Limit to VIN capabilities */
+-	v4l_bound_align_image(&pix->width, 2, RVIN_MAX_WIDTH, walign,
+-			      &pix->height, 4, RVIN_MAX_HEIGHT, 2, 0);
++	v4l_bound_align_image(&pix->width, 2, vin->info->max_width, walign,
++			      &pix->height, 4, vin->info->max_height, 2, 0);
+ 
+ 	pix->bytesperline = max_t(u32, pix->bytesperline,
+ 				  rvin_format_bytesperline(pix));
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index 0d3949c8c08c8f63..646f897f5c05ec4e 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -91,9 +91,15 @@ struct rvin_graph_entity {
+ /**
+  * struct rvin_info - Information about the particular VIN implementation
+  * @chip:		type of VIN chip
++ *
++ * max_width:		max input width the VIN supports
++ * max_height:		max input height the VIN supports
+  */
+ struct rvin_info {
+ 	enum chip_id chip;
++
++	unsigned int max_width;
++	unsigned int max_height;
+ };
+ 
+ /**
 -- 
 2.15.0
