@@ -1,141 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:59564 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752120AbdKZLaZ (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:60145 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752619AbdK2KkT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 26 Nov 2017 06:30:25 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH v3 1/2] drm: rcar-du: Share plane atomic check code between Gen2 and Gen3
-Date: Sun, 26 Nov 2017 13:30:21 +0200
-Message-Id: <20171126113022.27808-2-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20171126113022.27808-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20171126113022.27808-1-laurent.pinchart+renesas@ideasonboard.com>
+        Wed, 29 Nov 2017 05:40:19 -0500
+Date: Wed, 29 Nov 2017 11:40:15 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH v4] ARM: dts: r8a7794: Add SMP support
+Message-ID: <20171129104014.e5dwdhgb77cfm6q7@verge.net.au>
+References: <1511876341-8639-1-git-send-email-geert+renesas@glider.be>
+ <20171129082636.zwbwetif6vuxxfww@verge.net.au>
+ <CAMuHMdWE6=3FaCxjuaLAK4HJdP4UoGXiBJkrdWVXYA6ZR+7uuA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWE6=3FaCxjuaLAK4HJdP4UoGXiBJkrdWVXYA6ZR+7uuA@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The plane atomic check implementation is identical on Gen2 (DU planes)
-and Gen3 (VSP planes), but two separate functions exist as they operate
-on different data structures. Refactor the code to share the
-implementation.
+On Wed, Nov 29, 2017 at 09:30:03AM +0100, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Wed, Nov 29, 2017 at 9:26 AM, Simon Horman <horms@verge.net.au> wrote:
+> > On Tue, Nov 28, 2017 at 02:39:01PM +0100, Geert Uytterhoeven wrote:
+> >> From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> >>
+> >> Add the device tree node for the Advanced Power Management Unit (APMU).
+> >> Use the "enable-method" prop to  point out that the APMU should be used
+> >> for the SMP support.
+> >>
+> >> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> >> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >> ---
+> >> Dependency 3fd45a136ff61bb5 ("ARM: shmobile: rcar-gen2: Make sure
+> >> CNTVOFF is initialized on CA7/15") is part of v4.15-rc1.
+> >
+> > sorry if this is a bit of a sore topic but I'd like to ask what sort of
+> > testing this patch has seen. Are there any regressions in the area of
+> > CPU hotplug, suspend to RAM and so on...
+> 
+> Last time I tried, CPU hotplug worked fine (on Alt).
+> I cannot test suspend to RAM due to remote access.
+> 
+> Sergei?
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Tested-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- drivers/gpu/drm/rcar-du/rcar_du_plane.c | 27 +++++++++++++++++----------
- drivers/gpu/drm/rcar-du/rcar_du_plane.h |  4 ++++
- drivers/gpu/drm/rcar-du/rcar_du_vsp.c   | 22 +---------------------
- 3 files changed, 22 insertions(+), 31 deletions(-)
+Thanks for your help testing this. Both CPU hotplug and suspend-to-RAM
+seem to work fine on Alt.o
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.c b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-index 61833cc1c699..4f076c364f25 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-@@ -565,27 +565,26 @@ void __rcar_du_plane_setup(struct rcar_du_group *rgrp,
- 	}
- }
- 
--static int rcar_du_plane_atomic_check(struct drm_plane *plane,
--				      struct drm_plane_state *state)
-+int __rcar_du_plane_atomic_check(struct drm_plane *plane,
-+				 struct drm_plane_state *state,
-+				 const struct rcar_du_format_info **format)
- {
--	struct rcar_du_plane_state *rstate = to_rcar_plane_state(state);
--	struct rcar_du_plane *rplane = to_rcar_plane(plane);
--	struct rcar_du_device *rcdu = rplane->group->dev;
-+	struct drm_device *dev = plane->dev;
- 
- 	if (!state->fb || !state->crtc) {
--		rstate->format = NULL;
-+		*format = NULL;
- 		return 0;
- 	}
- 
- 	if (state->src_w >> 16 != state->crtc_w ||
- 	    state->src_h >> 16 != state->crtc_h) {
--		dev_dbg(rcdu->dev, "%s: scaling not supported\n", __func__);
-+		dev_dbg(dev->dev, "%s: scaling not supported\n", __func__);
- 		return -EINVAL;
- 	}
- 
--	rstate->format = rcar_du_format_info(state->fb->format->format);
--	if (rstate->format == NULL) {
--		dev_dbg(rcdu->dev, "%s: unsupported format %08x\n", __func__,
-+	*format = rcar_du_format_info(state->fb->format->format);
-+	if (*format == NULL) {
-+		dev_dbg(dev->dev, "%s: unsupported format %08x\n", __func__,
- 			state->fb->format->format);
- 		return -EINVAL;
- 	}
-@@ -593,6 +592,14 @@ static int rcar_du_plane_atomic_check(struct drm_plane *plane,
- 	return 0;
- }
- 
-+static int rcar_du_plane_atomic_check(struct drm_plane *plane,
-+				      struct drm_plane_state *state)
-+{
-+	struct rcar_du_plane_state *rstate = to_rcar_plane_state(state);
-+
-+	return __rcar_du_plane_atomic_check(plane, state, &rstate->format);
-+}
-+
- static void rcar_du_plane_atomic_update(struct drm_plane *plane,
- 					struct drm_plane_state *old_state)
- {
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.h b/drivers/gpu/drm/rcar-du/rcar_du_plane.h
-index f62e09f195de..890321b4665d 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_plane.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.h
-@@ -73,6 +73,10 @@ to_rcar_plane_state(struct drm_plane_state *state)
- int rcar_du_atomic_check_planes(struct drm_device *dev,
- 				struct drm_atomic_state *state);
- 
-+int __rcar_du_plane_atomic_check(struct drm_plane *plane,
-+				 struct drm_plane_state *state,
-+				 const struct rcar_du_format_info **format);
-+
- int rcar_du_planes_init(struct rcar_du_group *rgrp);
- 
- void __rcar_du_plane_setup(struct rcar_du_group *rgrp,
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-index 2c96147bc444..dd66dcb8da23 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-@@ -268,28 +268,8 @@ static int rcar_du_vsp_plane_atomic_check(struct drm_plane *plane,
- 					  struct drm_plane_state *state)
- {
- 	struct rcar_du_vsp_plane_state *rstate = to_rcar_vsp_plane_state(state);
--	struct rcar_du_vsp_plane *rplane = to_rcar_vsp_plane(plane);
--	struct rcar_du_device *rcdu = rplane->vsp->dev;
--
--	if (!state->fb || !state->crtc) {
--		rstate->format = NULL;
--		return 0;
--	}
- 
--	if (state->src_w >> 16 != state->crtc_w ||
--	    state->src_h >> 16 != state->crtc_h) {
--		dev_dbg(rcdu->dev, "%s: scaling not supported\n", __func__);
--		return -EINVAL;
--	}
--
--	rstate->format = rcar_du_format_info(state->fb->format->format);
--	if (rstate->format == NULL) {
--		dev_dbg(rcdu->dev, "%s: unsupported format %08x\n", __func__,
--			state->fb->format->format);
--		return -EINVAL;
--	}
--
--	return 0;
-+	return __rcar_du_plane_atomic_check(plane, state, &rstate->format);
- }
- 
- static void rcar_du_vsp_plane_atomic_update(struct drm_plane *plane,
--- 
-Regards,
+I have applied this with:
 
-Laurent Pinchart
+Tested-by: Simon Horman <horms+renesas@verge.net.au>
