@@ -1,102 +1,172 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34549 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751648AbdK0LSG (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:54474 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751890AbdK2ToG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 27 Nov 2017 06:18:06 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 1/1] ARM: dts: r8a779x: Add '#reset-cells' in cpg-mssr
-Date: Mon, 27 Nov 2017 12:17:44 +0100
-Message-Id: <098f53050154498876ef3febde706ff5c8b25cf4.1511781272.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1511781272.git.horms+renesas@verge.net.au>
-References: <cover.1511781272.git.horms+renesas@verge.net.au>
+        Wed, 29 Nov 2017 14:44:06 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v8 05/28] rcar-vin: move chip information to own struct
+Date: Wed, 29 Nov 2017 20:43:19 +0100
+Message-Id: <20171129194342.26239-6-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20171129194342.26239-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20171129194342.26239-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Arnd Bergmann <arnd@arndb.de>
+When Gen3 support is added to the driver more than chip ID will be
+different for the different SoCs. To avoid a lot of if statements in the
+code create a struct chip_info to store this information.
 
-With the latest dtc, we get many warnings about the missing
-'#reset-cells' property in these controllers, e.g.:
+And while we are at it sort the compatible string entries and make use
+of of_device_get_match_data() which will always work as the driver is DT
+only, so there's always a valid match.
 
-arch/arm/boot/dts/r8a7790-lager.dtb: Warning (resets_property): Missing property '#reset-cells' in node /clock-controller@e6150000 or bad phandle (referred from /can@e6e80000:resets[0])
-arch/arm/boot/dts/r8a7792-blanche.dtb: Warning (resets_property): Missing property '#reset-cells' in node /soc/clock-controller@e6150000 or bad phandle (referred from /soc/dma-controller@e6700000:resets[0])
-arch/arm/boot/dts/r8a7792-wheat.dtb: Warning (resets_property): Missing property '#reset-cells' in node /soc/clock-controller@e6150000 or bad phandle (referred from /soc/ethernet@e6800000:resets[0])
-arch/arm/boot/dts/r8a7793-gose.dtb: Warning (resets_property): Missing property '#reset-cells' in node /clock-controller@e6150000 or bad phandle (referred from /gpio@e6050000:resets[0])
-arch/arm/boot/dts/r8a7794-alt.dtb: Warning (resets_property): Missing property '#reset-cells' in node /clock-controller@e6150000 or bad phandle (referred from /i2c@e6500000:resets[0])
-arch/arm/boot/dts/r8a7794-silk.dtb: Warning (resets_property): Missing property '#reset-cells' in node /clock-controller@e6150000 or bad phandle (referred from /interrupt-controller@e61c0000:resets[0])
-
-This adds it for the three r8a779x chips that were lacking it. The
-binding mandates this as <1>, so this is the value I use.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-[geert: Add fix for r8a7793.dtsi]
-Fixes: 34fbd2b12761d111 ("ARM: dts: r8a7790: Add reset control properties")
-Fixes: 6e11a322f1d7505d ("ARM: dts: r8a7792: Add reset control properties")
-Fixes: 84fb19e1d201ba86 ("ARM: dts: r8a7793: Add reset control properties")
-Fixes: 615beb759ca494a4 ("ARM: dts: r8a7794: Add reset control properties")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
 ---
- arch/arm/boot/dts/r8a7790.dtsi | 1 +
- arch/arm/boot/dts/r8a7792.dtsi | 1 +
- arch/arm/boot/dts/r8a7793.dtsi | 1 +
- arch/arm/boot/dts/r8a7794.dtsi | 1 +
- 4 files changed, 4 insertions(+)
+ drivers/media/platform/rcar-vin/rcar-core.c | 54 ++++++++++++++++++++++-------
+ drivers/media/platform/rcar-vin/rcar-v4l2.c |  3 +-
+ drivers/media/platform/rcar-vin/rcar-vin.h  | 12 +++++--
+ 3 files changed, 53 insertions(+), 16 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 2f017fee4009..62baabd757b6 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -1201,6 +1201,7 @@
- 		clock-names = "extal", "usb_extal";
- 		#clock-cells = <2>;
- 		#power-domain-cells = <0>;
-+		#reset-cells = <1>;
- 	};
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 6ab51acd676641ec..73c1700a409bfd35 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -230,21 +230,53 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
+  * Platform Device Driver
+  */
  
- 	prr: chipid@ff000044 {
-diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
-index 131f65b0426e..3d080e07374c 100644
---- a/arch/arm/boot/dts/r8a7792.dtsi
-+++ b/arch/arm/boot/dts/r8a7792.dtsi
-@@ -829,6 +829,7 @@
- 			clock-names = "extal";
- 			#clock-cells = <2>;
- 			#power-domain-cells = <0>;
-+			#reset-cells = <1>;
- 		};
- 	};
++static const struct rvin_info rcar_info_h1 = {
++	.chip = RCAR_H1,
++};
++
++static const struct rvin_info rcar_info_m1 = {
++	.chip = RCAR_M1,
++};
++
++static const struct rvin_info rcar_info_gen2 = {
++	.chip = RCAR_GEN2,
++};
++
+ static const struct of_device_id rvin_of_id_table[] = {
+-	{ .compatible = "renesas,vin-r8a7794", .data = (void *)RCAR_GEN2 },
+-	{ .compatible = "renesas,vin-r8a7793", .data = (void *)RCAR_GEN2 },
+-	{ .compatible = "renesas,vin-r8a7791", .data = (void *)RCAR_GEN2 },
+-	{ .compatible = "renesas,vin-r8a7790", .data = (void *)RCAR_GEN2 },
+-	{ .compatible = "renesas,vin-r8a7779", .data = (void *)RCAR_H1 },
+-	{ .compatible = "renesas,vin-r8a7778", .data = (void *)RCAR_M1 },
+-	{ .compatible = "renesas,rcar-gen2-vin", .data = (void *)RCAR_GEN2 },
++	{
++		.compatible = "renesas,vin-r8a7778",
++		.data = &rcar_info_m1,
++	},
++	{
++		.compatible = "renesas,vin-r8a7779",
++		.data = &rcar_info_h1,
++	},
++	{
++		.compatible = "renesas,vin-r8a7790",
++		.data = &rcar_info_gen2,
++	},
++	{
++		.compatible = "renesas,vin-r8a7791",
++		.data = &rcar_info_gen2,
++	},
++	{
++		.compatible = "renesas,vin-r8a7793",
++		.data = &rcar_info_gen2,
++	},
++	{
++		.compatible = "renesas,vin-r8a7794",
++		.data = &rcar_info_gen2,
++	},
++	{
++		.compatible = "renesas,rcar-gen2-vin",
++		.data = &rcar_info_gen2,
++	},
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, rvin_of_id_table);
  
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index 58eae569b4e0..0cd1035de1a4 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -1088,6 +1088,7 @@
- 		clock-names = "extal", "usb_extal";
- 		#clock-cells = <2>;
- 		#power-domain-cells = <0>;
-+		#reset-cells = <1>;
- 	};
+ static int rcar_vin_probe(struct platform_device *pdev)
+ {
+-	const struct of_device_id *match;
+ 	struct rvin_dev *vin;
+ 	struct resource *mem;
+ 	int irq, ret;
+@@ -253,12 +285,8 @@ static int rcar_vin_probe(struct platform_device *pdev)
+ 	if (!vin)
+ 		return -ENOMEM;
  
- 	rst: reset-controller@e6160000 {
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 905e50c9b524..5643976c1356 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -1099,6 +1099,7 @@
- 		clock-names = "extal", "usb_extal";
- 		#clock-cells = <2>;
- 		#power-domain-cells = <0>;
-+		#reset-cells = <1>;
- 	};
+-	match = of_match_device(of_match_ptr(rvin_of_id_table), &pdev->dev);
+-	if (!match)
+-		return -ENODEV;
+-
+ 	vin->dev = &pdev->dev;
+-	vin->chip = (enum chip_id)match->data;
++	vin->info = of_device_get_match_data(&pdev->dev);
  
- 	rst: reset-controller@e6160000 {
+ 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (mem == NULL)
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 4a0610a6b4503501..b1caa04921aa23bb 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -266,7 +266,8 @@ static int __rvin_try_format(struct rvin_dev *vin,
+ 	pix->sizeimage = max_t(u32, pix->sizeimage,
+ 			       rvin_format_sizeimage(pix));
+ 
+-	if (vin->chip == RCAR_M1 && pix->pixelformat == V4L2_PIX_FMT_XBGR32) {
++	if (vin->info->chip == RCAR_M1 &&
++	    pix->pixelformat == V4L2_PIX_FMT_XBGR32) {
+ 		vin_err(vin, "pixel format XBGR32 not supported on M1\n");
+ 		return -EINVAL;
+ 	}
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index 85cb7ec53d2b08b5..0d3949c8c08c8f63 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -88,11 +88,19 @@ struct rvin_graph_entity {
+ 	unsigned int sink_pad;
+ };
+ 
++/**
++ * struct rvin_info - Information about the particular VIN implementation
++ * @chip:		type of VIN chip
++ */
++struct rvin_info {
++	enum chip_id chip;
++};
++
+ /**
+  * struct rvin_dev - Renesas VIN device structure
+  * @dev:		(OF) device
+  * @base:		device I/O register space remapped to virtual memory
+- * @chip:		type of VIN chip
++ * @info:		info about VIN instance
+  *
+  * @vdev:		V4L2 video device associated with VIN
+  * @v4l2_dev:		V4L2 device
+@@ -120,7 +128,7 @@ struct rvin_graph_entity {
+ struct rvin_dev {
+ 	struct device *dev;
+ 	void __iomem *base;
+-	enum chip_id chip;
++	const struct rvin_info *info;
+ 
+ 	struct video_device vdev;
+ 	struct v4l2_device v4l2_dev;
 -- 
-2.11.0
+2.15.0
