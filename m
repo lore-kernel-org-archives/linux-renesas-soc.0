@@ -1,51 +1,86 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:42760 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752847AbdK3NMP (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 30 Nov 2017 08:12:15 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Simon Horman <horms@verge.net.au>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Wed, 29 Nov 2017 12:22:20 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>
-Cc: Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        uclinux-h8-devel@lists.sourceforge.jp, linux-sh@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/5] tty: serial: sh-sci: Hide serial console config question
-Date: Thu, 30 Nov 2017 14:11:59 +0100
-Message-Id: <1512047522-16312-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1512047522-16312-1-git-send-email-geert+renesas@glider.be>
-References: <1512047522-16312-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Subject: Re: [PATCH 1/2] arm64: dts: renesas: initial V3MSK board device tree
+Message-ID: <20171129112219.7pw5kjwxcvi2r2bn@verge.net.au>
+References: <20171124210313.219761525@cogentembedded.com>
+ <20171129095109.d2uan35eui4kzav6@verge.net.au>
+ <06d59459-86dc-89b1-a0ed-adbd1481abc6@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <06d59459-86dc-89b1-a0ed-adbd1481abc6@cogentembedded.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Most users will want to use a serial console.
+On Wed, Nov 29, 2017 at 01:14:21PM +0300, Sergei Shtylyov wrote:
+> Hello!
+> 
+> On 11/29/2017 12:51 PM, Simon Horman wrote:
+> 
+> > > Add the initial device  tree for the V3M Starter Kit board.
+> > > The board has 1 debug serial port (SCIF0); include support for it,
+> > > so that the serial console can work.
+> > > 
+> > > Based on the original (and large) patch by Vladimir Barinov.
+> > > 
+> > > Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> > > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> > > 
+> > > ---
+> > >   arch/arm64/boot/dts/renesas/Makefile           |    2 -
+> [...]
+> > > Index: renesas/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
+> > > ===================================================================
+> > > --- /dev/null
+> > > +++ renesas/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
+> > > @@ -0,0 +1,44 @@
+> > > +/*
+> > > + * Device Tree Source for the V3M Starter Kit board
+> > > + *
+> > > + * Copyright (C) 2017 Renesas Electronics Corp.
+> > > + * Copyright (C) 2017 Cogent Embedded, Inc.
+> > > + *
+> > > + * This file is licensed under the terms of the GNU General Public License
+> > > + * version 2.  This program is licensed "as is" without any warranty of any
+> > > + * kind, whether express or implied.
+> > > + */
+> > > +
+> > > +/dts-v1/;
+> > > +#include "r8a77970.dtsi"
+> > > +
+> > > +/ {
+> > > +	model = "Renesas V3M Starter Kit board";
+> > > +	compatible = "renesas,v3msk", "renesas,r8a77970";
+> > > +
+> > > +	aliases {
+> > > +		serial0 = &scif0;
+> > > +	};
+> > > +
+> > > +	chosen {
+> > 
+> > For consistency with other Renesas boards I would like to request the
+> > following be added here:
+> > 
+> > 		bootargs = "ignore_loglevel rw";
+> 
+>    There's currently no consistency as ulcb.dtsi doesn't seem to specify
+> "bootargs" prop at all. Moreover, this prop seems to be ignored by ARM64
+> kernel -- I can only specify "bootargs" in U-Boot....
 
-Hence make that the default, unless CONFIG_EXPERT is enabled.
+I had assumed that ulcb.dtsi should be updated in this regards but
+I now see that bootargs does not seem to have any effect (on
+r8a7796/salvator-x) as you suggest.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/tty/serial/Kconfig | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+I have applied this and the following patch.
 
-diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
-index bd96046d7f94bac0..0c75562d620feb82 100644
---- a/drivers/tty/serial/Kconfig
-+++ b/drivers/tty/serial/Kconfig
-@@ -768,9 +768,10 @@ config SERIAL_SH_SCI_NR_UARTS
- 	default "18" if ARCH_RENESAS
- 
- config SERIAL_SH_SCI_CONSOLE
--	bool "Support for console on SuperH SCI(F)"
-+	bool "Support for console on SuperH SCI(F)" if EXPERT
- 	depends on SERIAL_SH_SCI=y
- 	select SERIAL_CORE_CONSOLE
-+	default y
- 
- config SERIAL_SH_SCI_EARLYCON
- 	bool "Support for early console on SuperH SCI(F)"
--- 
-2.7.4
+
