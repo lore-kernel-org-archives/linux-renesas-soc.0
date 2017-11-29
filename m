@@ -1,56 +1,94 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:33864 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751974AbdKBMrm (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:54540 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752716AbdK2ToN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 2 Nov 2017 08:47:42 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH RFT 4/5] i2c: sh_mobile: use direct writes when accessing ICE bit
-Date: Thu,  2 Nov 2017 13:47:30 +0100
-Message-Id: <20171102124731.10484-5-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20171102124731.10484-1-wsa+renesas@sang-engineering.com>
-References: <20171102124731.10484-1-wsa+renesas@sang-engineering.com>
+        Wed, 29 Nov 2017 14:44:13 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v8 22/28] rcar-vin: add chsel information to rvin_info
+Date: Wed, 29 Nov 2017 20:43:36 +0100
+Message-Id: <20171129194342.26239-23-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20171129194342.26239-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20171129194342.26239-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-ICE bit is for resetting the module. Other bits don't matter then, so we
-don't need to use the iic_set_clr() function but can use iic_wr().
+Each Gen3 SoC has a limited set of predefined routing possibilities for
+which CSI-2 device and virtual channel can be routed to which VIN
+instance. Prepare to store this information in the struct rvin_info.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
 ---
- drivers/i2c/busses/i2c-sh_mobile.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/media/platform/rcar-vin/rcar-vin.h | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-diff --git a/drivers/i2c/busses/i2c-sh_mobile.c b/drivers/i2c/busses/i2c-sh_mobile.c
-index cdd7a746b9d1ed..1701f193d94acf 100644
---- a/drivers/i2c/busses/i2c-sh_mobile.c
-+++ b/drivers/i2c/busses/i2c-sh_mobile.c
-@@ -620,10 +620,10 @@ static int start_ch(struct sh_mobile_i2c_data *pd, struct i2c_msg *usr_msg,
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index 5f736a3500b6e10f..41bf24aa8a1a0aed 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -35,6 +35,9 @@
+ /* Max number on VIN instances that can be in a system */
+ #define RCAR_VIN_NUM 8
  
- 	if (do_init) {
- 		/* Initialize channel registers */
--		iic_set_clr(pd, ICCR, 0, ICCR_ICE);
-+		iic_wr(pd, ICCR, 0);
++/* Max number of CHSEL values for any Gen3 SoC */
++#define RCAR_CHSEL_MAX 6
++
+ enum chip_id {
+ 	RCAR_H1,
+ 	RCAR_M1,
+@@ -91,6 +94,22 @@ struct rvin_graph_entity {
  
- 		/* Enable channel and configure rx ack */
--		iic_set_clr(pd, ICCR, ICCR_ICE, 0);
-+		iic_wr(pd, ICCR, ICCR_ICE);
+ struct rvin_group;
  
- 		/* Set the clock */
- 		iic_wr(pd, ICCL, pd->iccl & 0xff);
-@@ -740,7 +740,7 @@ static int sh_mobile_i2c_xfer(struct i2c_adapter *adapter,
- 	}
++/** struct rvin_group_chsel - Map a CSI-2 receiver and channel to a CHSEL value
++ * @csi:		VIN internal number for CSI-2 device
++ * @chan:		Output channel of the CSI-2 receiver. Each R-Car CSI-2
++ *			receiver has four output channels facing the VIN
++ *			devices, each channel can carry one CSI-2 Virtual
++ *			Channel (VC) and there are no correlation between
++ *			output channel number and CSI-2 VC. It's up to the
++ *			CSI-2 receiver driver to configure which VC is
++ *			outputted on which channel, the VIN devices only
++ *			cares about output channels.
++ */
++struct rvin_group_chsel {
++	enum rvin_csi_id csi;
++	unsigned int chan;
++};
++
+ /**
+  * struct rvin_info - Information about the particular VIN implementation
+  * @chip:		type of VIN chip
+@@ -98,6 +117,9 @@ struct rvin_group;
+  *
+  * max_width:		max input width the VIN supports
+  * max_height:		max input height the VIN supports
++ *
++ * num_chsels:		number of possible chsel values for this VIN
++ * chsels:		routing table VIN <-> CSI-2 for the chsel values
+  */
+ struct rvin_info {
+ 	enum chip_id chip;
+@@ -105,6 +127,9 @@ struct rvin_info {
  
- 	/* Disable channel */
--	iic_set_clr(pd, ICCR, 0, ICCR_ICE);
-+	iic_wr(pd, ICCR, 0);
+ 	unsigned int max_width;
+ 	unsigned int max_height;
++
++	unsigned int num_chsels;
++	struct rvin_group_chsel chsels[RCAR_VIN_NUM][RCAR_CHSEL_MAX];
+ };
  
- 	/* Disable clock and mark device as idle */
- 	clk_disable_unprepare(pd->clk);
+ /**
 -- 
-2.11.0
+2.15.0
