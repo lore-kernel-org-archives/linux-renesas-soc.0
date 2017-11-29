@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:47648 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754753AbdKKAjD (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:54458 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752494AbdK2ToG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Nov 2017 19:39:03 -0500
+        Wed, 29 Nov 2017 14:44:06 -0500
 From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -12,97 +12,266 @@ Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
         Kieran Bingham <kieran.bingham@ideasonboard.com>,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v7 04/25] rcar-vin: move max width and height information to chip information
-Date: Sat, 11 Nov 2017 01:38:14 +0100
-Message-Id: <20171111003835.4909-5-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20171111003835.4909-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20171111003835.4909-1-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v8 04/28] rcar-vin: move subdevice handling to async callbacks
+Date: Wed, 29 Nov 2017 20:43:18 +0100
+Message-Id: <20171129194342.26239-5-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20171129194342.26239-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20171129194342.26239-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Gen3 the max supported width and height will be different from Gen2.
-Move the limits to the struct rvin_info to prepare for Gen3 support.
+In preparation for Gen3 support move the subdevice initialization and
+clean up from rvin_v4l2_{register,unregister}() directly to the async
+callbacks. This simplifies the addition of Gen3 support as the
+rvin_v4l2_register() can be shared for both Gen2 and Gen3 while direct
+subdevice control are only used on Gen2.
+
+While moving this code drop a large comment which is copied from the
+framework documentation and fold rvin_mbus_supported() into its only
+caller.
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
 ---
- drivers/media/platform/rcar-vin/rcar-core.c | 6 ++++++
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 6 ++----
- drivers/media/platform/rcar-vin/rcar-vin.h  | 6 ++++++
- 3 files changed, 14 insertions(+), 4 deletions(-)
+ drivers/media/platform/rcar-vin/rcar-core.c | 105 ++++++++++++++++++----------
+ drivers/media/platform/rcar-vin/rcar-v4l2.c |  35 ----------
+ 2 files changed, 67 insertions(+), 73 deletions(-)
 
 diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index e90e5d014e074d64..cb761057459caa3f 100644
+index 6d99542ec74b49a7..6ab51acd676641ec 100644
 --- a/drivers/media/platform/rcar-vin/rcar-core.c
 +++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -244,14 +244,20 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
+@@ -46,47 +46,11 @@ static int rvin_find_pad(struct v4l2_subdev *sd, int direction)
+ 	return -EINVAL;
+ }
  
- static const struct rvin_info rcar_info_h1 = {
- 	.chip = RCAR_H1,
-+	.max_width = 2048,
-+	.max_height = 2048,
+-static bool rvin_mbus_supported(struct rvin_graph_entity *entity)
+-{
+-	struct v4l2_subdev *sd = entity->subdev;
+-	struct v4l2_subdev_mbus_code_enum code = {
+-		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
+-	};
+-
+-	code.index = 0;
+-	code.pad = entity->source_pad;
+-	while (!v4l2_subdev_call(sd, pad, enum_mbus_code, NULL, &code)) {
+-		code.index++;
+-		switch (code.code) {
+-		case MEDIA_BUS_FMT_YUYV8_1X16:
+-		case MEDIA_BUS_FMT_UYVY8_2X8:
+-		case MEDIA_BUS_FMT_UYVY10_2X10:
+-		case MEDIA_BUS_FMT_RGB888_1X24:
+-			entity->code = code.code;
+-			return true;
+-		default:
+-			break;
+-		}
+-	}
+-
+-	return false;
+-}
+-
+ static int rvin_digital_notify_complete(struct v4l2_async_notifier *notifier)
+ {
+ 	struct rvin_dev *vin = notifier_to_vin(notifier);
+ 	int ret;
+ 
+-	/* Verify subdevices mbus format */
+-	if (!rvin_mbus_supported(vin->digital)) {
+-		vin_err(vin, "Unsupported media bus format for %s\n",
+-			vin->digital->subdev->name);
+-		return -EINVAL;
+-	}
+-
+-	vin_dbg(vin, "Found media bus format for %s: %d\n",
+-		vin->digital->subdev->name, vin->digital->code);
+-
+ 	ret = v4l2_device_register_subdev_nodes(&vin->v4l2_dev);
+ 	if (ret < 0) {
+ 		vin_err(vin, "Failed to register subdev nodes\n");
+@@ -103,8 +67,16 @@ static void rvin_digital_notify_unbind(struct v4l2_async_notifier *notifier,
+ 	struct rvin_dev *vin = notifier_to_vin(notifier);
+ 
+ 	vin_dbg(vin, "unbind digital subdev %s\n", subdev->name);
++
++	mutex_lock(&vin->lock);
++
+ 	rvin_v4l2_unregister(vin);
++	v4l2_ctrl_handler_free(&vin->ctrl_handler);
++
++	vin->vdev.ctrl_handler = NULL;
+ 	vin->digital->subdev = NULL;
++
++	mutex_unlock(&vin->lock);
+ }
+ 
+ static int rvin_digital_notify_bound(struct v4l2_async_notifier *notifier,
+@@ -112,12 +84,14 @@ static int rvin_digital_notify_bound(struct v4l2_async_notifier *notifier,
+ 				     struct v4l2_async_subdev *asd)
+ {
+ 	struct rvin_dev *vin = notifier_to_vin(notifier);
++	struct v4l2_subdev_mbus_code_enum code = {
++		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
++	};
+ 	int ret;
+ 
+ 	v4l2_set_subdev_hostdata(subdev, vin);
+ 
+ 	/* Find source and sink pad of remote subdevice */
+-
+ 	ret = rvin_find_pad(subdev, MEDIA_PAD_FL_SOURCE);
+ 	if (ret < 0)
+ 		return ret;
+@@ -126,21 +100,74 @@ static int rvin_digital_notify_bound(struct v4l2_async_notifier *notifier,
+ 	ret = rvin_find_pad(subdev, MEDIA_PAD_FL_SINK);
+ 	vin->digital->sink_pad = ret < 0 ? 0 : ret;
+ 
++	/* Find compatible subdevices mbus format */
++	vin->digital->code = 0;
++	code.index = 0;
++	code.pad = vin->digital->source_pad;
++	while (!vin->digital->code &&
++	       !v4l2_subdev_call(subdev, pad, enum_mbus_code, NULL, &code)) {
++		code.index++;
++		switch (code.code) {
++		case MEDIA_BUS_FMT_YUYV8_1X16:
++		case MEDIA_BUS_FMT_UYVY8_2X8:
++		case MEDIA_BUS_FMT_UYVY10_2X10:
++		case MEDIA_BUS_FMT_RGB888_1X24:
++			vin->digital->code = code.code;
++			vin_dbg(vin, "Found media bus format for %s: %d\n",
++				subdev->name, vin->digital->code);
++			break;
++		default:
++			break;
++		}
++	}
++
++	if (!vin->digital->code) {
++		vin_err(vin, "Unsupported media bus format for %s\n",
++			subdev->name);
++		return -EINVAL;
++	}
++
++	/* Read tvnorms */
++	ret = v4l2_subdev_call(subdev, video, g_tvnorms, &vin->vdev.tvnorms);
++	if (ret < 0 && ret != -ENOIOCTLCMD && ret != -ENODEV)
++		return ret;
++
++	mutex_lock(&vin->lock);
++
++	/* Add the controls */
++	ret = v4l2_ctrl_handler_init(&vin->ctrl_handler, 16);
++	if (ret < 0)
++		goto err;
++
++	ret = v4l2_ctrl_add_handler(&vin->ctrl_handler, subdev->ctrl_handler,
++				    NULL);
++	if (ret < 0)
++		goto err_ctrl;
++
++	vin->vdev.ctrl_handler = &vin->ctrl_handler;
++
+ 	vin->digital->subdev = subdev;
+ 
++	mutex_unlock(&vin->lock);
++
+ 	vin_dbg(vin, "bound subdev %s source pad: %u sink pad: %u\n",
+ 		subdev->name, vin->digital->source_pad,
+ 		vin->digital->sink_pad);
+ 
+ 	return 0;
++err_ctrl:
++	v4l2_ctrl_handler_free(&vin->ctrl_handler);
++err:
++	mutex_unlock(&vin->lock);
++	return ret;
+ }
++
+ static const struct v4l2_async_notifier_operations rvin_digital_notify_ops = {
+ 	.bound = rvin_digital_notify_bound,
+ 	.unbind = rvin_digital_notify_unbind,
+ 	.complete = rvin_digital_notify_complete,
  };
  
- static const struct rvin_info rcar_info_m1 = {
- 	.chip = RCAR_M1,
-+	.max_width = 2048,
-+	.max_height = 2048,
- };
+-
+ static int rvin_digital_parse_v4l2(struct device *dev,
+ 				   struct v4l2_fwnode_endpoint *vep,
+ 				   struct v4l2_async_subdev *asd)
+@@ -277,6 +304,8 @@ static int rcar_vin_remove(struct platform_device *pdev)
+ 	v4l2_async_notifier_unregister(&vin->notifier);
+ 	v4l2_async_notifier_cleanup(&vin->notifier);
  
- static const struct rvin_info rcar_info_gen2 = {
- 	.chip = RCAR_GEN2,
-+	.max_width = 2048,
-+	.max_height = 2048,
- };
++	v4l2_ctrl_handler_free(&vin->ctrl_handler);
++
+ 	rvin_dma_unregister(vin);
  
- static const struct of_device_id rvin_of_id_table[] = {
+ 	return 0;
 diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index be00f4431493eb0a..76c0b8fa8602d08d 100644
+index 32a658214f48fa49..4a0610a6b4503501 100644
 --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
 +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -23,8 +23,6 @@
- #include "rcar-vin.h"
+@@ -847,9 +847,6 @@ void rvin_v4l2_unregister(struct rvin_dev *vin)
+ 	v4l2_info(&vin->v4l2_dev, "Removing %s\n",
+ 		  video_device_node_name(&vin->vdev));
  
- #define RVIN_DEFAULT_FORMAT	V4L2_PIX_FMT_YUYV
--#define RVIN_MAX_WIDTH		2048
--#define RVIN_MAX_HEIGHT		2048
+-	/* Checks internaly if handlers have been init or not */
+-	v4l2_ctrl_handler_free(&vin->ctrl_handler);
+-
+ 	/* Checks internaly if vdev have been init or not */
+ 	video_unregister_device(&vin->vdev);
+ }
+@@ -872,41 +869,10 @@ static void rvin_notify(struct v4l2_subdev *sd,
+ int rvin_v4l2_register(struct rvin_dev *vin)
+ {
+ 	struct video_device *vdev = &vin->vdev;
+-	struct v4l2_subdev *sd = vin_to_source(vin);
+ 	int ret;
  
- /* -----------------------------------------------------------------------------
-  * Format Conversions
-@@ -258,8 +256,8 @@ static int __rvin_try_format(struct rvin_dev *vin,
- 	walign = vin->format.pixelformat == V4L2_PIX_FMT_NV16 ? 5 : 1;
+-	v4l2_set_subdev_hostdata(sd, vin);
+-
+ 	vin->v4l2_dev.notify = rvin_notify;
  
- 	/* Limit to VIN capabilities */
--	v4l_bound_align_image(&pix->width, 2, RVIN_MAX_WIDTH, walign,
--			      &pix->height, 4, RVIN_MAX_HEIGHT, 2, 0);
-+	v4l_bound_align_image(&pix->width, 2, vin->info->max_width, walign,
-+			      &pix->height, 4, vin->info->max_height, 2, 0);
+-	ret = v4l2_subdev_call(sd, video, g_tvnorms, &vin->vdev.tvnorms);
+-	if (ret < 0 && ret != -ENOIOCTLCMD && ret != -ENODEV)
+-		return ret;
+-
+-	if (vin->vdev.tvnorms == 0) {
+-		/* Disable the STD API if there are no tvnorms defined */
+-		v4l2_disable_ioctl(&vin->vdev, VIDIOC_G_STD);
+-		v4l2_disable_ioctl(&vin->vdev, VIDIOC_S_STD);
+-		v4l2_disable_ioctl(&vin->vdev, VIDIOC_QUERYSTD);
+-		v4l2_disable_ioctl(&vin->vdev, VIDIOC_ENUMSTD);
+-	}
+-
+-	/* Add the controls */
+-	/*
+-	 * Currently the subdev with the largest number of controls (13) is
+-	 * ov6550. So let's pick 16 as a hint for the control handler. Note
+-	 * that this is a hint only: too large and you waste some memory, too
+-	 * small and there is a (very) small performance hit when looking up
+-	 * controls in the internal hash.
+-	 */
+-	ret = v4l2_ctrl_handler_init(&vin->ctrl_handler, 16);
+-	if (ret < 0)
+-		return ret;
+-
+-	ret = v4l2_ctrl_add_handler(&vin->ctrl_handler, sd->ctrl_handler, NULL);
+-	if (ret < 0)
+-		return ret;
+-
+ 	/* video node */
+ 	vdev->fops = &rvin_fops;
+ 	vdev->v4l2_dev = &vin->v4l2_dev;
+@@ -915,7 +881,6 @@ int rvin_v4l2_register(struct rvin_dev *vin)
+ 	vdev->release = video_device_release_empty;
+ 	vdev->ioctl_ops = &rvin_ioctl_ops;
+ 	vdev->lock = &vin->lock;
+-	vdev->ctrl_handler = &vin->ctrl_handler;
+ 	vdev->device_caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING |
+ 		V4L2_CAP_READWRITE;
  
- 	pix->bytesperline = max_t(u32, pix->bytesperline,
- 				  rvin_format_bytesperline(pix));
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index ab240eb4aad9176c..e41dc3bff7fdc649 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -91,9 +91,15 @@ struct rvin_graph_entity {
- /**
-  * struct rvin_info - Information about the particular VIN implementation
-  * @chip:		type of VIN chip
-+ *
-+ * max_width:		max input width the VIN supports
-+ * max_height:		max input height the VIN supports
-  */
- struct rvin_info {
- 	enum chip_id chip;
-+
-+	unsigned int max_width;
-+	unsigned int max_height;
- };
- 
- /**
 -- 
 2.15.0
