@@ -1,13 +1,12 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:39026 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932263AbdK2KO0 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:59554 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754025AbdK2JvO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 29 Nov 2017 05:14:26 -0500
-Received: by mail-lf0-f66.google.com with SMTP id l81so3213137lfl.6
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Nov 2017 02:14:25 -0800 (PST)
-Subject: Re: [PATCH 1/2] arm64: dts: renesas: initial V3MSK board device tree
-To: Simon Horman <horms@verge.net.au>
+        Wed, 29 Nov 2017 04:51:14 -0500
+Date: Wed, 29 Nov 2017 10:51:09 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Cc: Rob Herring <robh+dt@kernel.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
@@ -16,71 +15,97 @@ Cc: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-arm-kernel@lists.infradead.org,
         Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Subject: Re: [PATCH 1/2] arm64: dts: renesas: initial V3MSK board device tree
+Message-ID: <20171129095109.d2uan35eui4kzav6@verge.net.au>
 References: <20171124210313.219761525@cogentembedded.com>
- <20171129095109.d2uan35eui4kzav6@verge.net.au>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <06d59459-86dc-89b1-a0ed-adbd1481abc6@cogentembedded.com>
-Date: Wed, 29 Nov 2017 13:14:21 +0300
 MIME-Version: 1.0
-In-Reply-To: <20171129095109.d2uan35eui4kzav6@verge.net.au>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20171124210313.219761525@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
-
-On 11/29/2017 12:51 PM, Simon Horman wrote:
-
->> Add the initial device  tree for the V3M Starter Kit board.
->> The board has 1 debug serial port (SCIF0); include support for it,
->> so that the serial console can work.
->>
->> Based on the original (and large) patch by Vladimir Barinov.
->>
->> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
->> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->>
->> ---
->>   arch/arm64/boot/dts/renesas/Makefile           |    2 -
-[...]
->> Index: renesas/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
->> ===================================================================
->> --- /dev/null
->> +++ renesas/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
->> @@ -0,0 +1,44 @@
->> +/*
->> + * Device Tree Source for the V3M Starter Kit board
->> + *
->> + * Copyright (C) 2017 Renesas Electronics Corp.
->> + * Copyright (C) 2017 Cogent Embedded, Inc.
->> + *
->> + * This file is licensed under the terms of the GNU General Public License
->> + * version 2.  This program is licensed "as is" without any warranty of any
->> + * kind, whether express or implied.
->> + */
->> +
->> +/dts-v1/;
->> +#include "r8a77970.dtsi"
->> +
->> +/ {
->> +	model = "Renesas V3M Starter Kit board";
->> +	compatible = "renesas,v3msk", "renesas,r8a77970";
->> +
->> +	aliases {
->> +		serial0 = &scif0;
->> +	};
->> +
->> +	chosen {
+On Fri, Nov 24, 2017 at 11:59:44PM +0300, Sergei Shtylyov wrote:
+> Add the initial device  tree for the V3M Starter Kit board.
+> The board has 1 debug serial port (SCIF0); include support for it,
+> so that the serial console can work.
 > 
-> For consistency with other Renesas boards I would like to request the
-> following be added here:
+> Based on the original (and large) patch by Vladimir Barinov.
 > 
-> 		bootargs = "ignore_loglevel rw";
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> ---
+>  arch/arm64/boot/dts/renesas/Makefile           |    2 -
+>  arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts |   44 +++++++++++++++++++++++++
+>  2 files changed, 45 insertions(+), 1 deletion(-)
+> 
+> Index: renesas/arch/arm64/boot/dts/renesas/Makefile
+> ===================================================================
+> --- renesas.orig/arch/arm64/boot/dts/renesas/Makefile
+> +++ renesas/arch/arm64/boot/dts/renesas/Makefile
+> @@ -7,7 +7,7 @@ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-es
+>  dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-x.dtb r8a7796-m3ulcb.dtb
+>  dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-m3ulcb-kf.dtb
+>  dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-xs.dtb
+> -dtb-$(CONFIG_ARCH_R8A77970) += r8a77970-eagle.dtb
+> +dtb-$(CONFIG_ARCH_R8A77970) += r8a77970-eagle.dtb r8a77970-v3msk.dtb
+>  dtb-$(CONFIG_ARCH_R8A77995) += r8a77995-draak.dtb
+>  
+>  always		:= $(dtb-y)
+> Index: renesas/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
+> ===================================================================
+> --- /dev/null
+> +++ renesas/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
+> @@ -0,0 +1,44 @@
+> +/*
+> + * Device Tree Source for the V3M Starter Kit board
+> + *
+> + * Copyright (C) 2017 Renesas Electronics Corp.
+> + * Copyright (C) 2017 Cogent Embedded, Inc.
+> + *
+> + * This file is licensed under the terms of the GNU General Public License
+> + * version 2.  This program is licensed "as is" without any warranty of any
+> + * kind, whether express or implied.
+> + */
+> +
+> +/dts-v1/;
+> +#include "r8a77970.dtsi"
+> +
+> +/ {
+> +	model = "Renesas V3M Starter Kit board";
+> +	compatible = "renesas,v3msk", "renesas,r8a77970";
+> +
+> +	aliases {
+> +		serial0 = &scif0;
+> +	};
+> +
+> +	chosen {
 
-    There's currently no consistency as ulcb.dtsi doesn't seem to specify 
-"bootargs" prop at all. Moreover, this prop seems to be ignored by ARM64 
-kernel -- I can only specify "bootargs" in U-Boot....
+For consistency with other Renesas boards I would like to request the
+following be added here:
 
-MBR, Sergei
+		bootargs = "ignore_loglevel rw";
+
+> +		stdout-path = "serial0:115200n8";
+> +	};
+> +
+> +	memory@48000000 {
+> +		device_type = "memory";
+> +		/* first 128MB is reserved for secure area. */
+> +		reg = <0x0 0x48000000 0x0 0x38000000>;
+> +	};
+> +};
+> +
+> +&extal_clk {
+> +	clock-frequency = <16666666>;
+> +};
+> +
+> +&extalr_clk {
+> +	clock-frequency = <32768>;
+> +};
+> +
+> +&scif0 {
+> +	status = "okay";
+> +};
+> 
