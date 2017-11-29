@@ -1,4 +1,9 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:54606 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752711AbdK2ToM (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 29 Nov 2017 14:44:12 -0500
 From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -7,203 +12,336 @@ Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
         Kieran Bingham <kieran.bingham@ideasonboard.com>,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v8 00/28] rcar-vin: Add Gen3 with media controller
-Date: Wed, 29 Nov 2017 20:43:14 +0100
-Message-Id: <20171129194342.26239-1-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v8 21/28] rcar-vin: add group allocator functions
+Date: Wed, 29 Nov 2017 20:43:35 +0100
+Message-Id: <20171129194342.26239-22-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20171129194342.26239-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20171129194342.26239-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+In media controller mode all VIN instances needs to be part of the same
+media graph. There is also a need to each VIN instance to know and in
+some cases be able to communicate with other VIN instances.
 
-This series adds Gen3 VIN support to rcar-vin driver for Renesas r8a7795,
-r8a7796 and r8a77970. It is based on the media-tree and depends on some 
-of Fabrizio Castro patches as they touches the order of the compatible 
-strings in the documentation to reduce merge conflicts. The dependencies 
-are:
+Add an allocator framework where the first VIN instance to be probed
+creates a shared data structure and creates a media device.
 
-[PATCH v2 1/4] dt-bindings: media: rcar_vin: Reverse SoC part number list
-[PATCH v2 2/4] dt-bindings: media: rcar_vin: add device tree support for r8a774[35]
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+---
+ drivers/media/platform/rcar-vin/rcar-core.c | 179 +++++++++++++++++++++++++++-
+ drivers/media/platform/rcar-vin/rcar-vin.h  |  38 ++++++
+ 2 files changed, 215 insertions(+), 2 deletions(-)
 
-The driver is tested on Renesas H3 (r8a7795, ES2.0),
-M3-W (r8a7796) together with the rcar-csi2 driver (posted separately and
-not yet upstream) and the Salvator-X onboard ADV7482. It is also tested 
-on the V3M (r8a77970) on the Eagle board together with its expansion 
-board with a ADV7482.
-
-It is possible to capture both CVBS and HDMI video streams,
-v4l2-compliance passes with no errors and media-ctl can be used to
-change the routing and formats for the different entities in the media
-graph.
-
-Gen2 compatibility is verified on Koelsch and no problems where found,
-video can be captured just like before and v4l2-compliance passes
-without errors or warnings just like before this series.
-
-I have started on a very basic test suite for the VIN driver at:
-
-  https://git.ragnatech.se/vin-tests
-
-And as before the state of the driver and information about how to test
-it can be found on the elinux wiki:
-
-  http://elinux.org/R-Car/Tests:rcar-vin
-
-* Changes since v7
-- Dropped '[PATCH v7 02/25] rcar-vin: register the video device at probe time'
-- Add patch which renames four badly name functions. Some of the 
-  renaming was in v7 part of the dropped patch 02/25. Make it a own 
-  patch and rename all badly named functions in one patch.
-- Add patch to replace part of the functionality of the dropped patch v7 
-  02/25. The new patch keeps the subdevice (un)registration calls in the 
-  async callbacks bind() and unbind() but moves the direct subdevice 
-  initialization which only is used on Gen2 from the Gen2 and Gen3 
-  shared rvin_v4l2_register().
-- Add patch to enable Renesas V3M (r8a77970)
-- Patch 'rcar-vin: parse Gen3 OF and setup media graph' have had code 
-  additions since v7 since it now registers the video devices in the 
-  async complete() callback instead of at probe time as an effect of 
-  dropping v7 02/25.
-  - The complete() callback now register all video devices.
-  - The unbind() callback now unregister all video devices.
-  - A new member '*notifier' is added to struct rvin_group which keeps 
-    track of which rcar-vin instance have registered its notifier on the 
-    groups behalf.
-  For the reason above all Reviewed-by tags have been dropped for this 
-  patch.
-- Replaced all kernel messages which used of_node_full_name() as now 
-  only returns the basename and not till full path, thanks Geert.
-
-    printk("%s", of_node_full_name(ep)); -> printk("%pOF", ep);
-
-- Added Reviewed-by tags from Hans, big thanks!
-
-* Changes since v6
-- Rebase ontop of latest media-tree which brings in the use of the
-  fwnode async helpers for Gen2.
-- Updated DT binding documentation, thanks Laurent for very helpful
-  input!
-- Removed help text which where copied in from v4l2_ctrl_handler_init()
-  documentation when moving that code block, this was a residue from the
-  soc_camera conversion and should have been removed at that time.
-- Removed bad check of tvnorms which disables IOCTLs if it's not set,
-  this was a residue from soc_camera conversion and have use in the
-  current driver.
-- Moved all subdevice initialization from complete to bound handler
-  while improving the unbind handler. With this move all operations of
-  the ctrl_handler from the subdevice is handled in either bound or
-  unbind removing races pointed out by Laurent.
-- Renamed rvin_v4l2_probe() -> rvin_v4l2_register() and
-  rvin_v4l2_remove() -> rvin_v4l2_unregister().
-- Fold rvin_mbus_supported() into its only caller.
-- Sort compatible string entries in ascending order.
-- Improved documentation for struct rvin_group_chsel.
-- Clarify comment in rvin_group_csi_pad_to_chan().
-- Make use of of_device_get_match_data() as suggested by Geert.
-- Fixed spelling mistakes.
-- Added review tags from Hans.
-
-* Changes since v5
-- Extract and make use of common format checking for both Gen2 and Gen3.
-- Assign pad at declaration time in rvin_get_sd_format()
-- Always call pm_runtime_{get_sync,put}() and v4l2_pipeline_pm_use()
-  when opening/closing a video device, remove the check of
-  v4l2_fh_is_singular_file().
-- Make rvin_set_chsel() return void instead of int since it always
-  return 0.
-- Simplify the VIN group allocator functions.
-- Make the group notifier callbacks and setup more robust.
-- Moved the video device registration back to probe time.
-- Add H3 ES2.0 support.
-- Fix handling of single field formats (top, bottom, alternate) as this
-  was obviously wrong before but hidden by the Gen2 scaler support.
-- Added review tags from Kieran.
-
-* Changes since v4 (Not posted to ML)
-- Updated to the new fwnode functions.
-- Moved the registration of the video devices to the async notification
-  callback.
-
-* Changes since v3
-- Only add neighboring subdevices to the async notifier. Instead of
-  parsing the whole OF graph depend on incremental async subnotifier to
-  discover the whole pipeline. This is needed to support arbitrarily
-  long graphs and support the new ADV7482 prototype driver which Kieran
-  is working on.
-- Fix warning from lockdep, reported by Kieran.
-- Fix commit messages from feedback from Sergei, thanks.
-- Fix chip info an OF device ids sorting order, thanks Geert.
-- Use subdev->of_node instead of subdev->dev->of_node, thanks Kieran.
-
-* Changes since v2
-- Do not try to control the subdevices in the media graph from the rcar-vin
-  driver. Have user-space configure to format in the pipeline instead.
-- Add link validation before starting the stream.
-- Rework on how the subdevices are and the video node behave by defining
-  specific V4L2 operations for the MC mode of operation, this simplified
-  the driver quit a bit, thanks Laurent!
-- Add a new 'renesas,id' DT property which is needed to to be able to
-  keep the VIN to CSI-2 routing table inside the driver. Previously this
-  information was taken from the CSI-2 DT node which is obviously the
-  wrong way to do things. Thanks Laurent for pointing this out.
-- Fixed a memory leek in the group allocator function.
-- Return -EMLINK instead of -EBUSY if a MC link is not possible given
-  the current routing setup.
-- Add comments to clarify that the 4 channels from the CSI-2 node is not
-  directly related to CSI-2 virtual channels, the CSI-2 node can output
-  any VC on any of its output channels.
-
-* Changes since v1
-- Remove unneeded casts as pointed out by Geert.
-- Fix spelling and DT documentation as pointed out by Geert and Sergei,
-  thanks!
-- Refresh patch 2/32 with an updated version, thanks Sakari for pointing
-  this out.
-- Add Sakaris Ack to patch 1/32.
-- Rebase on top of v4.9-rc1 instead of v4.9-rc3 to ease integration
-  testing together with renesas-drivers tree.
-
-
-Niklas Söderlund (28):
-  rcar-vin: add Gen3 devicetree bindings documentation
-  rcar-vin: rename poorly named initialize and cleanup functions
-  rcar-vin: unregister video device on driver removal
-  rcar-vin: move subdevice handling to async callbacks
-  rcar-vin: move chip information to own struct
-  rcar-vin: move max width and height information to chip information
-  rcar-vin: change name of video device
-  rcar-vin: move functions regarding scaling
-  rcar-vin: all Gen2 boards can scale simplify logic
-  rcar-vin: do not reset crop and compose when setting format
-  rcar-vin: do not allow changing scaling and composing while streaming
-  rcar-vin: read subdevice format for crop only when needed
-  rcar-vin: fix handling of single field frames (top, bottom and
-    alternate fields)
-  rcar-vin: move media bus configuration to struct rvin_info
-  rcar-vin: enable Gen3 hardware configuration
-  rcar-vin: add function to manipulate Gen3 chsel value
-  rcar-vin: add flag to switch to media controller mode
-  rcar-vin: break out format alignment and checking
-  rcar-vin: use different v4l2 operations in media controller mode
-  rcar-vin: prepare for media controller mode initialization
-  rcar-vin: add group allocator functions
-  rcar-vin: add chsel information to rvin_info
-  rcar-vin: parse Gen3 OF and setup media graph
-  rcar-vin: add link notify for Gen3
-  rcar-vin: extend {start,stop}_streaming to work with media controller
-  rcar-vin: enable support for r8a7795
-  rcar-vin: enable support for r8a7796
-  rcar-vin: enable support for r8a77970
-
- .../devicetree/bindings/media/rcar_vin.txt         |  118 +-
- drivers/media/platform/rcar-vin/Kconfig            |    2 +-
- drivers/media/platform/rcar-vin/rcar-core.c        | 1159 ++++++++++++++++++--
- drivers/media/platform/rcar-vin/rcar-dma.c         |  990 ++++++++++-------
- drivers/media/platform/rcar-vin/rcar-v4l2.c        |  445 +++++---
- drivers/media/platform/rcar-vin/rcar-vin.h         |  131 ++-
- 6 files changed, 2143 insertions(+), 702 deletions(-)
-
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 45de4079fd835759..a6713fd61dd87a88 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -20,12 +20,170 @@
+ #include <linux/of_graph.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
++#include <linux/slab.h>
+ 
+ #include <media/v4l2-async.h>
+ #include <media/v4l2-fwnode.h>
+ 
+ #include "rcar-vin.h"
+ 
++/* -----------------------------------------------------------------------------
++ * Gen3 CSI2 Group Allocator
++ */
++
++static int rvin_group_read_id(struct rvin_dev *vin, struct device_node *np)
++{
++	u32 val;
++	int ret;
++
++	ret = of_property_read_u32(np, "renesas,id", &val);
++	if (ret) {
++		vin_err(vin, "%pOF: No renesas,id property found\n", np);
++		return -EINVAL;
++	}
++
++	if (val >= RCAR_VIN_NUM) {
++		vin_err(vin, "%pOF: Invalid renesas,id '%u'\n", np, val);
++		return -EINVAL;
++	}
++
++	return val;
++}
++
++static DEFINE_MUTEX(rvin_group_lock);
++static struct rvin_group *rvin_group_data;
++
++static void rvin_group_release(struct kref *kref)
++{
++	struct rvin_group *group =
++		container_of(kref, struct rvin_group, refcount);
++
++	mutex_lock(&rvin_group_lock);
++
++	media_device_unregister(&group->mdev);
++	media_device_cleanup(&group->mdev);
++
++	rvin_group_data = NULL;
++
++	mutex_unlock(&rvin_group_lock);
++
++	kfree(group);
++}
++
++static struct rvin_group *__rvin_group_allocate(struct rvin_dev *vin)
++{
++	struct rvin_group *group;
++
++	if (rvin_group_data) {
++		group = rvin_group_data;
++		kref_get(&group->refcount);
++		vin_dbg(vin, "%s: get group=%p\n", __func__, group);
++		return group;
++	}
++
++	group = kzalloc(sizeof(*group), GFP_KERNEL);
++	if (!group)
++		return NULL;
++
++	kref_init(&group->refcount);
++	rvin_group_data = group;
++
++	vin_dbg(vin, "%s: alloc group=%p\n", __func__, group);
++	return group;
++}
++
++static int rvin_group_add_vin(struct rvin_dev *vin)
++{
++	int ret;
++
++	ret = rvin_group_read_id(vin, vin->dev->of_node);
++	if (ret < 0)
++		return ret;
++
++	mutex_lock(&vin->group->lock);
++
++	if (vin->group->vin[ret]) {
++		mutex_unlock(&vin->group->lock);
++		vin_err(vin, "VIN number %d already occupied\n", ret);
++		return -EINVAL;
++	}
++
++	vin->group->vin[ret] = vin;
++
++	mutex_unlock(&vin->group->lock);
++
++	vin_dbg(vin, "I'm VIN number %d", ret);
++
++	return 0;
++}
++
++static int rvin_group_allocate(struct rvin_dev *vin)
++{
++	struct rvin_group *group;
++	struct media_device *mdev;
++	int ret;
++
++	mutex_lock(&rvin_group_lock);
++
++	group = __rvin_group_allocate(vin);
++	if (!group) {
++		mutex_unlock(&rvin_group_lock);
++		return -ENOMEM;
++	}
++
++	/* Init group data if it is not already initialized */
++	mdev = &group->mdev;
++	if (!mdev->dev) {
++		mutex_init(&group->lock);
++		mdev->dev = vin->dev;
++
++		strlcpy(mdev->driver_name, "Renesas VIN",
++			sizeof(mdev->driver_name));
++		strlcpy(mdev->model, vin->dev->of_node->name,
++			sizeof(mdev->model));
++
++		snprintf(mdev->bus_info, sizeof(mdev->bus_info), "platform:%s",
++			 dev_name(mdev->dev));
++		media_device_init(mdev);
++
++		ret = media_device_register(mdev);
++		if (ret) {
++			vin_err(vin, "Failed to register media device\n");
++			kref_put(&group->refcount, rvin_group_release);
++			mutex_unlock(&rvin_group_lock);
++			return ret;
++		}
++	}
++
++	vin->group = group;
++	vin->v4l2_dev.mdev = mdev;
++
++	ret = rvin_group_add_vin(vin);
++	if (ret) {
++		kref_put(&group->refcount, rvin_group_release);
++		mutex_unlock(&rvin_group_lock);
++		return ret;
++	}
++
++	mutex_unlock(&rvin_group_lock);
++
++	return 0;
++}
++
++static void rvin_group_delete(struct rvin_dev *vin)
++{
++	unsigned int i;
++
++	mutex_lock(&vin->group->lock);
++	for (i = 0; i < RCAR_VIN_NUM; i++)
++		if (vin->group->vin[i] == vin)
++			vin->group->vin[i] = NULL;
++	mutex_unlock(&vin->group->lock);
++
++	vin_dbg(vin, "%s: group=%p\n", __func__, &vin->group);
++	kref_put(&vin->group->refcount, rvin_group_release);
++}
++
+ /* -----------------------------------------------------------------------------
+  * Async notifier
+  */
+@@ -236,12 +394,27 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
+ 
+ static int rvin_group_init(struct rvin_dev *vin)
+ {
++	int ret;
++
++	ret = rvin_group_allocate(vin);
++	if (ret)
++		return ret;
++
+ 	/* All our sources are CSI-2 */
+ 	vin->mbus_cfg.type = V4L2_MBUS_CSI2;
+ 	vin->mbus_cfg.flags = 0;
+ 
+ 	vin->pad.flags = MEDIA_PAD_FL_SINK;
+-	return media_entity_pads_init(&vin->vdev.entity, 1, &vin->pad);
++	ret = media_entity_pads_init(&vin->vdev.entity, 1, &vin->pad);
++	if (ret)
++		goto error_group;
++
++	return 0;
++
++error_group:
++	rvin_group_delete(vin);
++
++	return ret;
+ }
+ 
+ /* -----------------------------------------------------------------------------
+@@ -361,7 +534,9 @@ static int rcar_vin_remove(struct platform_device *pdev)
+ 	v4l2_async_notifier_unregister(&vin->notifier);
+ 	v4l2_async_notifier_cleanup(&vin->notifier);
+ 
+-	if (!vin->info->use_mc)
++	if (vin->info->use_mc)
++		rvin_group_delete(vin);
++	else
+ 		v4l2_ctrl_handler_free(&vin->ctrl_handler);
+ 
+ 	rvin_dma_unregister(vin);
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index 07d270a976893cdb..5f736a3500b6e10f 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -17,6 +17,8 @@
+ #ifndef __RCAR_VIN__
+ #define __RCAR_VIN__
+ 
++#include <linux/kref.h>
++
+ #include <media/v4l2-async.h>
+ #include <media/v4l2-ctrls.h>
+ #include <media/v4l2-dev.h>
+@@ -30,6 +32,9 @@
+ /* Address alignment mask for HW buffers */
+ #define HW_BUFFER_MASK 0x7f
+ 
++/* Max number on VIN instances that can be in a system */
++#define RCAR_VIN_NUM 8
++
+ enum chip_id {
+ 	RCAR_H1,
+ 	RCAR_M1,
+@@ -37,6 +42,15 @@ enum chip_id {
+ 	RCAR_GEN3,
+ };
+ 
++enum rvin_csi_id {
++	RVIN_CSI20,
++	RVIN_CSI21,
++	RVIN_CSI40,
++	RVIN_CSI41,
++	RVIN_CSI_MAX,
++	RVIN_NC, /* Not Connected */
++};
++
+ /**
+  * STOPPED  - No operation in progress
+  * RUNNING  - Operation in progress have buffers
+@@ -75,6 +89,8 @@ struct rvin_graph_entity {
+ 	unsigned int sink_pad;
+ };
+ 
++struct rvin_group;
++
+ /**
+  * struct rvin_info - Information about the particular VIN implementation
+  * @chip:		type of VIN chip
+@@ -103,6 +119,7 @@ struct rvin_info {
+  * @notifier:		V4L2 asynchronous subdevs notifier
+  * @digital:		entity in the DT for local digital subdevice
+  *
++ * @group:		Gen3 CSI group
+  * @pad:		pad for media controller
+  *
+  * @lock:		protects @queue
+@@ -134,6 +151,7 @@ struct rvin_dev {
+ 	struct v4l2_async_notifier notifier;
+ 	struct rvin_graph_entity *digital;
+ 
++	struct rvin_group *group;
+ 	struct media_pad pad;
+ 
+ 	struct mutex lock;
+@@ -162,6 +180,26 @@ struct rvin_dev {
+ #define vin_warn(d, fmt, arg...)	dev_warn(d->dev, fmt, ##arg)
+ #define vin_err(d, fmt, arg...)		dev_err(d->dev, fmt, ##arg)
+ 
++/**
++ * struct rvin_group - VIN CSI2 group information
++ * @refcount:		number of VIN instances using the group
++ *
++ * @mdev:		media device which represents the group
++ *
++ * @lock:		protects the vin and csi members
++ * @vin:		VIN instances which are part of the group
++ * @csi:		CSI-2 entities that are part of the group
++ */
++struct rvin_group {
++	struct kref refcount;
++
++	struct media_device mdev;
++
++	struct mutex lock;
++	struct rvin_dev *vin[RCAR_VIN_NUM];
++	struct rvin_graph_entity csi[RVIN_CSI_MAX];
++};
++
+ int rvin_dma_register(struct rvin_dev *vin, int irq);
+ void rvin_dma_unregister(struct rvin_dev *vin);
+ 
 -- 
 2.15.0
