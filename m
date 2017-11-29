@@ -1,73 +1,109 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:33076 "EHLO pokefinder.org"
+Received: from mail.kernel.org ([198.145.29.99]:58744 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1757064AbdKNWvM (ORCPT
+        id S1751267AbdK2OhI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Nov 2017 17:51:12 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH RFT] mmc: tmio: use usleep_range consistently
-Date: Tue, 14 Nov 2017 23:51:04 +0100
-Message-Id: <20171114225104.6743-1-wsa+renesas@sang-engineering.com>
+        Wed, 29 Nov 2017 09:37:08 -0500
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdVaL6WeOiZhBU2qfXQK7a9NjshUow2GpJJqkwXywiQmaQ@mail.gmail.com>
+References: <20171124105234.25774-1-horms+renesas@verge.net.au>
+ <CAMuHMdW9V6Bkh5uS9qNA7awtygEs=qRd7jigwSHmpV2VM3n9dA@mail.gmail.com>
+ <20171127110430.ulgjrzgy3pdugs2s@verge.net.au> <CAMuHMdUm=PiGVWVg9pyNTR5z2WjLcoG1uecBNBeKsSxbAxBt8w@mail.gmail.com>
+ <20171128085645.ofrk33bfqd736sip@verge.net.au> <CAMuHMdXoDNt7j-hEZmDA2BFFPUAfsi1ukZWowJ3=kTswyYMk5Q@mail.gmail.com>
+ <CAL_JsqKffs+5s92kWFeDivdgk2mVBmHrKuNDCfR9Lb=te5k33A@mail.gmail.com> <CAMuHMdVaL6WeOiZhBU2qfXQK7a9NjshUow2GpJJqkwXywiQmaQ@mail.gmail.com>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Wed, 29 Nov 2017 08:36:46 -0600
+Message-ID: <CAL_JsqKZ68Vf781=1dPManAzJ1hm51obT3SE1hx-brSyzphf8w@mail.gmail.com>
+Subject: Re: [PATCH v2] arm64: dts: renesas: r8a7795: Move nodes which have no
+ reg property out of bus
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Simon Horman <horms@verge.net.au>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-There are a few udelay() left which are in a range that they should be
-usleep_range() these days.
+On Wed, Nov 29, 2017 at 7:58 AM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> Hi Rob,
+>
+> On Wed, Nov 29, 2017 at 2:35 PM, Rob Herring <robh+dt@kernel.org> wrote:
+>> On Tue, Nov 28, 2017 at 3:04 AM, Geert Uytterhoeven
+>> <geert@linux-m68k.org> wrote:
+>>> On Tue, Nov 28, 2017 at 9:56 AM, Simon Horman <horms@verge.net.au> wrote:
+>>>> On Mon, Nov 27, 2017 at 12:15:39PM +0100, Geert Uytterhoeven wrote:
+>>>>> On Mon, Nov 27, 2017 at 12:04 PM, Simon Horman <horms@verge.net.au> wrote:
+>>>>> > I just noticed that with this patch applied I now see:
+>>>>> >
+>>>>> > arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dtb: Warning (interrupts_property): Missing interrupt-parent for /pmu_a57
+>>>>> > arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dtb: Warning (interrupts_property): Missing interrupt-parent for /pmu_a53
+>>>>> > arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dtb: Warning (interrupts_property): Missing interrupt-parent for /pmu_a57
+>>>>> > arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dtb: Warning (interrupts_property): Missing interrupt-parent for /pmu_a53arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dtb: Warning (interrupts_property): Missing interrupt-parent for /timer
+>>>>> >
+>>>>> > arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dtb: Warning (interrupts_property): Missing interrupt-parent for /timer
+>>>>>
+>>>>> Right, the "interrupt-parent = <&gic>;" inside the /soc node applies to child
+>>>>> nodes of the /soc node only.
+>>>>>
+>>>>> You can find this in two ways:
+>>>
+>>> s/find/fix/
+>>>
+>>>>>
+>>>>>   1. Add "interrupt-parent = <&gic>;" to the /pmu_a57 and /pmu_a53 nodes.
+>>>>>   2. Switch those nodes from "interrupt" to "interrupts-extended", e.g. turn
+>>>>>
+>>>>>         interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
+>>>>>
+>>>>>      into
+>>>>>
+>>>>>         interrupts-extended = <&gic GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
+>>>>>
+>>>>> The latter is what e.g. arch/arm/boot/dts/armada-375.dtsi does.
+>>>>
+>>>> Thanks, I took option 1 as it seems consistent with the rest of the
+>>>> Renesas DT files. I also added it to the /timer node.
+>>>
+>>> Actually we recently had a discussion about this on IRC, triggered by a
+>>> similar issue in board files (see e.g, Ethernet PHY interrupts).
+>>>
+>>> Given the following comment:
+>>>
+>>> drivers/of/irq.c:       /* Try the new-style interrupts-extended first */
+>>> drivers/of/irq.c:       res = of_parse_phandle_with_args(device,
+>>> "interrupts-extended",
+>>>
+>>> I think it would be better to use interrupts-extended for individual/isolated
+>>> use outside the /soc node.
+>>
+>> I disagree. There's no point to use interrupts-extended unless you
+>> have 2 or more interrupt parents. Just set interrupt-parent in the
+>> root node.
+>
+> The on-SoC devices (all under the /soc node, except for the weird ones without
+> reg properties that are now being moved out) all have "&gic" as their interrupt
+> parents.
+>
+> Off-SoC devices use one of the on-SoC interrupt controllers for external
+> interrupts ("&irqc", "&irqpin", "&irqpin0", "&irqpin1"), or one of the on-SoC
+> GPIO controllers that can also serve external interrupts ("&gpioN").
+>
+> For the latter, I think interrupts-extended definitely makes sense.
+>
+> For the former (incl. the "pmu_aN" nodes discussed here), it is debatable.
+> But using interrupts-extended makes it easier to catch mistakes in board files,
+> as they will be flagged by dtc ("Missing interrupt-parent").
+> With interrupt-parent in the root node, they may go undetected.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+They would still likely get flagged since the GIC #interrupt-cells is
+3 and it is likely you don't have a multiple of 3.
 
-Works fine for me on Lager (R-Car H2) and Salvator-X (R-Car M3-W).
-Testing on other platforms very welcome even though this should be
-independent of the IP core.
+But I guess interrupts-extended does make sense in this case.
 
- drivers/mmc/host/tmio_mmc_core.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 583bf3262df5d4..d6ca57be16c2fd 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -806,7 +806,7 @@ static int tmio_mmc_execute_tuning(struct mmc_host *mmc, u32 opcode)
- 		if (ret == 0)
- 			set_bit(i, host->taps);
- 
--		mdelay(1);
-+		usleep_range(1000, 1200);
- 	}
- 
- 	ret = host->select_tuning(host);
-@@ -958,7 +958,7 @@ static void tmio_mmc_power_on(struct tmio_mmc_host *host, unsigned short vdd)
- 		 * 100us were not enough. Is this the same 140us delay, as in
- 		 * tmio_mmc_set_ios()?
- 		 */
--		udelay(200);
-+		usleep_range(200, 300);
- 	}
- 	/*
- 	 * It seems, VccQ should be switched on after Vcc, this is also what the
-@@ -966,7 +966,7 @@ static void tmio_mmc_power_on(struct tmio_mmc_host *host, unsigned short vdd)
- 	 */
- 	if (!IS_ERR(mmc->supply.vqmmc) && !ret) {
- 		ret = regulator_enable(mmc->supply.vqmmc);
--		udelay(200);
-+		usleep_range(200, 300);
- 	}
- 
- 	if (ret < 0)
-@@ -1059,7 +1059,7 @@ static void tmio_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
- 	}
- 
- 	/* Let things settle. delay taken from winCE driver */
--	udelay(140);
-+	usleep_range(140, 200);
- 	if (PTR_ERR(host->mrq) == -EINTR)
- 		dev_dbg(&host->pdev->dev,
- 			"%s.%d: IOS interrupted: clk %u, mode %u",
--- 
-2.11.0
+Rob
