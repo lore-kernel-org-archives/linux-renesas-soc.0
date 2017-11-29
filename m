@@ -1,75 +1,238 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:43870 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754862AbdKINsj (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:54606 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752728AbdK2ToP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 9 Nov 2017 08:48:39 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Kevin Hilman <khilman@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-pm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 0/3] renesas: irqchip: Use wakeup_path i.s.o. explicit clock handling
-Date: Thu,  9 Nov 2017 14:48:30 +0100
-Message-Id: <1510235313-32445-1-git-send-email-geert+renesas@glider.be>
+        Wed, 29 Nov 2017 14:44:15 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
+Subject: [PATCH v8 26/28] rcar-vin: enable support for r8a7795
+Date: Wed, 29 Nov 2017 20:43:40 +0100
+Message-Id: <20171129194342.26239-27-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20171129194342.26239-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20171129194342.26239-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi all,
+Add the SoC specific information for Renesas r8a7795 ES1.x and ES2.0.
 
-If an interrupt controller in a Renesas ARM SoC is part of a Clock
-Domain, and it is part of the wakeup path, it must be kept active during
-system suspend.
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+---
+ drivers/media/platform/rcar-vin/Kconfig     |   2 +-
+ drivers/media/platform/rcar-vin/rcar-core.c | 150 ++++++++++++++++++++++++++++
+ 2 files changed, 151 insertions(+), 1 deletion(-)
 
-Currently this is handled in all interrupt controller drivers by
-explicitly increasing the use count of the module clock when the device
-is part of the wakeup path.  However, this explicit clock handling is
-merely a workaround for a failure to properly communicate wakeup
-information to the device core.
-
-Hence this series fixes the affected drivers by setting the devices'
-power.wakeup_path fields instead, to indicate they are part of the
-wakeup path.  Depending on the PM Domain's active_wakeup configuration,
-the genpd core code will keep the device enabled (and the clock running)
-during system suspend when needed.
-
-Note that most of these patches depend on the series "[PATCH v2 0/3] PM
-/ Domain: renesas: Fix active wakeup behavior", hence they should not be
-applied yet.
-
-This has been tested on r8a73a4/ape6evm, r8a7740/armadillo,
-r8a7791/koelsch, r8a7795/salvator-x and -xs, r8a7796/salvator-x, and
-sh73a0/kzm9g.
-
-Thanks for your comments!
-
-Geert Uytterhoeven (3):
-  irqchip/renesas-intc-irqpin: Use wakeup_path i.s.o. explicit clock
-    handling
-  irqchip/renesas-irqc: Use wakeup_path i.s.o. explicit clock handling
-  gpio: rcar: Use wakeup_path i.s.o. explicit clock handling
-
- drivers/gpio/gpio-rcar.c                  | 43 +++++++++++++----------------
- drivers/irqchip/irq-renesas-intc-irqpin.c | 45 +++++++++++++------------------
- drivers/irqchip/irq-renesas-irqc.c        | 35 ++++++++++++------------
- 3 files changed, 54 insertions(+), 69 deletions(-)
-
+diff --git a/drivers/media/platform/rcar-vin/Kconfig b/drivers/media/platform/rcar-vin/Kconfig
+index af4c98b44d2e22cb..8fa7ee468c63afb9 100644
+--- a/drivers/media/platform/rcar-vin/Kconfig
++++ b/drivers/media/platform/rcar-vin/Kconfig
+@@ -6,7 +6,7 @@ config VIDEO_RCAR_VIN
+ 	select V4L2_FWNODE
+ 	---help---
+ 	  Support for Renesas R-Car Video Input (VIN) driver.
+-	  Supports R-Car Gen2 SoCs.
++	  Supports R-Car Gen2 and Gen3 SoCs.
+ 
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called rcar-vin.
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 456f93d60b40fb80..9da5aff33fd224f2 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -21,6 +21,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/slab.h>
++#include <linux/sys_soc.h>
+ 
+ #include <media/v4l2-async.h>
+ #include <media/v4l2-fwnode.h>
+@@ -956,6 +957,134 @@ static const struct rvin_info rcar_info_gen2 = {
+ 	.max_height = 2048,
+ };
+ 
++static const struct rvin_info rcar_info_r8a7795 = {
++	.chip = RCAR_GEN3,
++	.use_mc = true,
++	.max_width = 4096,
++	.max_height = 4096,
++
++	.num_chsels = 5,
++	.chsels = {
++		{
++			{ .csi = RVIN_CSI40, .chan = 0 },
++			{ .csi = RVIN_CSI20, .chan = 0 },
++			{ .csi = RVIN_CSI40, .chan = 1 },
++			{ .csi = RVIN_CSI40, .chan = 0 },
++			{ .csi = RVIN_CSI20, .chan = 0 },
++		}, {
++			{ .csi = RVIN_CSI20, .chan = 0 },
++			{ .csi = RVIN_CSI40, .chan = 1 },
++			{ .csi = RVIN_CSI40, .chan = 0 },
++			{ .csi = RVIN_CSI40, .chan = 1 },
++			{ .csi = RVIN_CSI20, .chan = 1 },
++		}, {
++			{ .csi = RVIN_CSI20, .chan = 1 },
++			{ .csi = RVIN_CSI40, .chan = 0 },
++			{ .csi = RVIN_CSI20, .chan = 0 },
++			{ .csi = RVIN_CSI40, .chan = 2 },
++			{ .csi = RVIN_CSI20, .chan = 2 },
++		}, {
++			{ .csi = RVIN_CSI40, .chan = 1 },
++			{ .csi = RVIN_CSI20, .chan = 1 },
++			{ .csi = RVIN_CSI20, .chan = 1 },
++			{ .csi = RVIN_CSI40, .chan = 3 },
++			{ .csi = RVIN_CSI20, .chan = 3 },
++		}, {
++			{ .csi = RVIN_CSI41, .chan = 0 },
++			{ .csi = RVIN_CSI20, .chan = 0 },
++			{ .csi = RVIN_CSI41, .chan = 1 },
++			{ .csi = RVIN_CSI41, .chan = 0 },
++			{ .csi = RVIN_CSI20, .chan = 0 },
++		}, {
++			{ .csi = RVIN_CSI20, .chan = 0 },
++			{ .csi = RVIN_CSI41, .chan = 1 },
++			{ .csi = RVIN_CSI41, .chan = 0 },
++			{ .csi = RVIN_CSI41, .chan = 1 },
++			{ .csi = RVIN_CSI20, .chan = 1 },
++		}, {
++			{ .csi = RVIN_CSI20, .chan = 1 },
++			{ .csi = RVIN_CSI41, .chan = 0 },
++			{ .csi = RVIN_CSI20, .chan = 0 },
++			{ .csi = RVIN_CSI41, .chan = 2 },
++			{ .csi = RVIN_CSI20, .chan = 2 },
++		}, {
++			{ .csi = RVIN_CSI41, .chan = 1 },
++			{ .csi = RVIN_CSI20, .chan = 1 },
++			{ .csi = RVIN_CSI20, .chan = 1 },
++			{ .csi = RVIN_CSI41, .chan = 3 },
++			{ .csi = RVIN_CSI20, .chan = 3 },
++		},
++	},
++};
++
++static const struct rvin_info rcar_info_r8a7795es1 = {
++	.chip = RCAR_GEN3,
++	.use_mc = true,
++	.max_width = 4096,
++	.max_height = 4096,
++
++	.num_chsels = 6,
++	.chsels = {
++		{
++			{ .csi = RVIN_CSI40, .chan = 0 },
++			{ .csi = RVIN_CSI20, .chan = 0 },
++			{ .csi = RVIN_CSI21, .chan = 0 },
++			{ .csi = RVIN_CSI40, .chan = 0 },
++			{ .csi = RVIN_CSI20, .chan = 0 },
++			{ .csi = RVIN_CSI21, .chan = 0 },
++		}, {
++			{ .csi = RVIN_CSI20, .chan = 0 },
++			{ .csi = RVIN_CSI21, .chan = 0 },
++			{ .csi = RVIN_CSI40, .chan = 0 },
++			{ .csi = RVIN_CSI40, .chan = 1 },
++			{ .csi = RVIN_CSI20, .chan = 1 },
++			{ .csi = RVIN_CSI21, .chan = 1 },
++		}, {
++			{ .csi = RVIN_CSI21, .chan = 0 },
++			{ .csi = RVIN_CSI40, .chan = 0 },
++			{ .csi = RVIN_CSI20, .chan = 0 },
++			{ .csi = RVIN_CSI40, .chan = 2 },
++			{ .csi = RVIN_CSI20, .chan = 2 },
++			{ .csi = RVIN_CSI21, .chan = 2 },
++		}, {
++			{ .csi = RVIN_CSI40, .chan = 1 },
++			{ .csi = RVIN_CSI20, .chan = 1 },
++			{ .csi = RVIN_CSI21, .chan = 1 },
++			{ .csi = RVIN_CSI40, .chan = 3 },
++			{ .csi = RVIN_CSI20, .chan = 3 },
++			{ .csi = RVIN_CSI21, .chan = 3 },
++		}, {
++			{ .csi = RVIN_CSI41, .chan = 0 },
++			{ .csi = RVIN_CSI20, .chan = 0 },
++			{ .csi = RVIN_CSI21, .chan = 0 },
++			{ .csi = RVIN_CSI41, .chan = 0 },
++			{ .csi = RVIN_CSI20, .chan = 0 },
++			{ .csi = RVIN_CSI21, .chan = 0 },
++		}, {
++			{ .csi = RVIN_CSI20, .chan = 0 },
++			{ .csi = RVIN_CSI21, .chan = 0 },
++			{ .csi = RVIN_CSI41, .chan = 0 },
++			{ .csi = RVIN_CSI41, .chan = 1 },
++			{ .csi = RVIN_CSI20, .chan = 1 },
++			{ .csi = RVIN_CSI21, .chan = 1 },
++		}, {
++			{ .csi = RVIN_CSI21, .chan = 0 },
++			{ .csi = RVIN_CSI41, .chan = 0 },
++			{ .csi = RVIN_CSI20, .chan = 0 },
++			{ .csi = RVIN_CSI41, .chan = 2 },
++			{ .csi = RVIN_CSI20, .chan = 2 },
++			{ .csi = RVIN_CSI21, .chan = 2 },
++		}, {
++			{ .csi = RVIN_CSI41, .chan = 1 },
++			{ .csi = RVIN_CSI20, .chan = 1 },
++			{ .csi = RVIN_CSI21, .chan = 1 },
++			{ .csi = RVIN_CSI41, .chan = 3 },
++			{ .csi = RVIN_CSI20, .chan = 3 },
++			{ .csi = RVIN_CSI21, .chan = 3 },
++		},
++	},
++};
++
+ static const struct of_device_id rvin_of_id_table[] = {
+ 	{
+ 		.compatible = "renesas,vin-r8a7778",
+@@ -985,12 +1114,25 @@ static const struct of_device_id rvin_of_id_table[] = {
+ 		.compatible = "renesas,rcar-gen2-vin",
+ 		.data = &rcar_info_gen2,
+ 	},
++	{
++		.compatible = "renesas,vin-r8a7795",
++		.data = &rcar_info_r8a7795,
++	},
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, rvin_of_id_table);
+ 
++static const struct soc_device_attribute r8a7795es1[] = {
++	{
++		.soc_id = "r8a7795", .revision = "ES1.*",
++		.data = &rcar_info_r8a7795es1,
++	},
++	{ /* sentinel */ }
++};
++
+ static int rcar_vin_probe(struct platform_device *pdev)
+ {
++	const struct soc_device_attribute *attr;
+ 	struct rvin_dev *vin;
+ 	struct resource *mem;
+ 	int irq, ret;
+@@ -1002,6 +1144,14 @@ static int rcar_vin_probe(struct platform_device *pdev)
+ 	vin->dev = &pdev->dev;
+ 	vin->info = of_device_get_match_data(&pdev->dev);
+ 
++	/*
++	 * Special care is needed on r8a7795 ES1.x since it
++	 * uses different routing than r8a7795 ES2.0.
++	 */
++	attr = soc_device_match(r8a7795es1);
++	if (attr)
++		vin->info = attr->data;
++
+ 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (mem == NULL)
+ 		return -EINVAL;
 -- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+2.15.0
