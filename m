@@ -1,57 +1,34 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:58216 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752868AbdK3NMP (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:59670 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932213AbdK2J4L (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 30 Nov 2017 08:12:15 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Simon Horman <horms@verge.net.au>,
+        Wed, 29 Nov 2017 04:56:11 -0500
+Date: Wed, 29 Nov 2017 10:56:07 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>
-Cc: Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        uclinux-h8-devel@lists.sourceforge.jp, linux-sh@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4/5] tty: serial: sh-sci: Hide DMA config question
-Date: Thu, 30 Nov 2017 14:12:01 +0100
-Message-Id: <1512047522-16312-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1512047522-16312-1-git-send-email-geert+renesas@glider.be>
-References: <1512047522-16312-1-git-send-email-geert+renesas@glider.be>
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 2/2] arm64: dts: renesas: r8a77970: use SYSC power domain
+ macros
+Message-ID: <20171129095607.x33pokvib4csba73@verge.net.au>
+References: <20171128202109.031715810@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20171128202109.031715810@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On most Renesas ARM platforms, the SCIF serial ports can be used with
-DMA, so most users will want DMA support to be enabled.
+On Tue, Nov 28, 2017 at 11:15:45PM +0300, Sergei Shtylyov wrote:
+> Now that the commit 833bdb47c826 ("dt-bindings: power: add R8A77970 SYSC
+> power domain definitions") has hit Linus' tree, we can replace the  bare
+> numbers  (we had to use to avoid a cross tree dependency) with these macro
+> definitions...
 
-On SuperH platforms, SCI(F) serial ports cannot be used with DMA yet
-(see also commit 219fb0c1436e4893 ("serial: sh-sci: Remove the platform
-data dma slave rx/tx channel IDs")), so users will want it disabled to
-reduce kernel size.
-
-Hence follow the above rationale to configure the default, unless
-CONFIG_EXPERT is enabled.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/tty/serial/Kconfig | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
-index 952a2c6a9da08fdd..4e6dfb0a762b5807 100644
---- a/drivers/tty/serial/Kconfig
-+++ b/drivers/tty/serial/Kconfig
-@@ -781,8 +781,9 @@ config SERIAL_SH_SCI_EARLYCON
- 	default ARCH_RENESAS || H8300
- 
- config SERIAL_SH_SCI_DMA
--	bool "DMA support"
-+	bool "DMA support" if EXPERT
- 	depends on SERIAL_SH_SCI && DMA_ENGINE
-+	default ARCH_RENESAS
- 
- config SERIAL_PNX8XXX
- 	bool "Enable PNX8XXX SoCs' UART Support"
--- 
-2.7.4
+Thanks, applied.
