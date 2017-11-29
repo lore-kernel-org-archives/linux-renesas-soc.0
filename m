@@ -1,46 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:37207 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753083AbdKOPZa (ORCPT
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:40205 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753882AbdK2QGw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Nov 2017 10:25:30 -0500
+        Wed, 29 Nov 2017 11:06:52 -0500
 From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, horms@verge.net.au,
-        wsa@the-dreams.de, geert@linux-m68k.org
-Cc: magnus.damm@gmail.com, linux-i2c@vger.kernel.org,
+To: horms@verge.net.au, geert@linux-m68k.org
+Cc: linux-renesas-soc@vger.kernel.org, wsa@the-dreams.de,
+        magnus.damm@gmail.com, linux-mmc@vger.kernel.org,
+        marek.vasut@gmail.com,
         Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 0/6] R-Car D3 (r8a77995) I2C integration
-Date: Wed, 15 Nov 2017 16:25:20 +0100
-Message-Id: <1510759526-30346-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH v2 0/2] R-Car D3 (r8a77995) SDHI (eMMC) integration
+Date: Wed, 29 Nov 2017 17:06:44 +0100
+Message-Id: <1511971606-580-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hi!
 
-This adds I2C controllers to the D3 device tree and enables I2C busses 0
-and 1 on the Draak board. (I2C2 is not connected on that board.)
+This integrates the SDHI hardware on R-Car D3 and enables the Draak board's
+eMMC drive.
 
-Includes missing pins, DMA support and the Draak's serial EEPROM.
+This revision dumps the two patches that have been applied already, fixes
+the sdhi2_pins voltage, removes the redundant SDHI compatible string and
+makes the internal DMAC whitelisting pattern more conservative.
 
 CU
 Uli
 
 
-Ulrich Hecht (6):
-  pinctrl: sh-pfc: r8a77995: add missing pins SCL0 and SDA0 to pinmux
-    data
-  i2c: rcar: enable for R-Car D3 (r8a77995)
-  arm64: renesas: r8a77995: add I2C support
-  arm64: renesas: draak: enable I2C controller 0 and EEPROM
-  arm64: renesas: draak: enable I2C controller 1
-  i2c: rcar: document R8A77970 bindings
+Ulrich Hecht (2):
+  mmc: renesas_sdhi: enable R-Car D3 (r8a77995) support
+  arm64: dts: r8a77995: draak: enable SDHI2
 
- Documentation/devicetree/bindings/i2c/i2c-rcar.txt |  1 +
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts     | 28 ++++++++++
- arch/arm64/boot/dts/renesas/r8a77995.dtsi          | 64 ++++++++++++++++++++++
- drivers/i2c/busses/i2c-rcar.c                      |  1 +
- drivers/pinctrl/sh-pfc/pfc-r8a77995.c              |  2 +
- 5 files changed, 96 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 44 ++++++++++++++++++++++++++
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c  |  1 +
+ 2 files changed, 45 insertions(+)
 
 -- 
 2.7.4
