@@ -1,108 +1,164 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55692 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752216AbdKAKgl (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:54530 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752681AbdK2ToL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 1 Nov 2017 06:36:41 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v4 04/15] arm64: dts: renesas: r8a7795: Tie Audio-DMAC to IPMMU-MP0/1
-Date: Wed,  1 Nov 2017 11:34:41 +0100
-Message-Id: <20171101103452.7491-5-horms+renesas@verge.net.au>
-In-Reply-To: <20171101103452.7491-1-horms+renesas@verge.net.au>
-References: <20171101103452.7491-1-horms+renesas@verge.net.au>
+        Wed, 29 Nov 2017 14:44:11 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v8 18/28] rcar-vin: break out format alignment and checking
+Date: Wed, 29 Nov 2017 20:43:32 +0100
+Message-Id: <20171129194342.26239-19-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20171129194342.26239-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20171129194342.26239-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Part of the format alignment and checking can be shared with the Gen3
+format handling. Break that part out to its own function. While doing
+this clean up the checking and add more checks.
 
-Hook up r8a7795 ES2.0 Audio-DMAC nodes to the IPMMU-MP0.
-Hook up r8a7795 ES1.x Audio-DMAC nodes to the IPMMU-MP1.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
 ---
-v4 [Simon Horman]
-- Broke out of larger patch
-- Use IPMMU-MP0 rather than IPMMU-MP1 for ES2.0
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 98 +++++++++++++++--------------
+ 1 file changed, 51 insertions(+), 47 deletions(-)
 
-v1 - v3 [Magnus Damm]
----
- arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi | 22 ++++++++++++++++++++++
- arch/arm64/boot/dts/renesas/r8a7795.dtsi     | 16 ++++++++++++++++
- 2 files changed, 38 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-index b930c2a0623f..911fa315d4b2 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-@@ -123,6 +123,28 @@
- 	renesas,ipmmu-main = <&ipmmu_mm 7>;
- };
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 56c5183f55922e1d..0ffbf0c16fb7b00e 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -86,6 +86,56 @@ static u32 rvin_format_sizeimage(struct v4l2_pix_format *pix)
+ 	return pix->bytesperline * pix->height;
+ }
  
-+&audma0 {
-+	iommus = <&ipmmu_mp1 0>, <&ipmmu_mp1 1>,
-+	       <&ipmmu_mp1 2>, <&ipmmu_mp1 3>,
-+	       <&ipmmu_mp1 4>, <&ipmmu_mp1 5>,
-+	       <&ipmmu_mp1 6>, <&ipmmu_mp1 7>,
-+	       <&ipmmu_mp1 8>, <&ipmmu_mp1 9>,
-+	       <&ipmmu_mp1 10>, <&ipmmu_mp1 11>,
-+	       <&ipmmu_mp1 12>, <&ipmmu_mp1 13>,
-+	       <&ipmmu_mp1 14>, <&ipmmu_mp1 15>;
-+};
++static int rvin_format_align(struct rvin_dev *vin, struct v4l2_pix_format *pix)
++{
++	u32 walign;
 +
-+&audma1 {
-+	iommus = <&ipmmu_mp1 16>, <&ipmmu_mp1 17>,
-+	       <&ipmmu_mp1 18>, <&ipmmu_mp1 19>,
-+	       <&ipmmu_mp1 20>, <&ipmmu_mp1 21>,
-+	       <&ipmmu_mp1 22>, <&ipmmu_mp1 23>,
-+	       <&ipmmu_mp1 24>, <&ipmmu_mp1 25>,
-+	       <&ipmmu_mp1 26>, <&ipmmu_mp1 27>,
-+	       <&ipmmu_mp1 28>, <&ipmmu_mp1 29>,
-+	       <&ipmmu_mp1 30>, <&ipmmu_mp1 31>;
-+};
++	/* If requested format is not supported fallback to the default */
++	if (!rvin_format_from_pixel(pix->pixelformat)) {
++		vin_dbg(vin, "Format 0x%x not found, using default 0x%x\n",
++			pix->pixelformat, RVIN_DEFAULT_FORMAT);
++		pix->pixelformat = RVIN_DEFAULT_FORMAT;
++	}
 +
- &du {
- 	vsps = <&vspd0 &vspd1 &vspd2 &vspd3>;
- };
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index fce66aaf282e..eca8db400aff 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -706,6 +706,14 @@
- 			resets = <&cpg 502>;
- 			#dma-cells = <1>;
- 			dma-channels = <16>;
-+			iommus = <&ipmmu_mp0 0>, <&ipmmu_mp0 1>,
-+			       <&ipmmu_mp0 2>, <&ipmmu_mp0 3>,
-+			       <&ipmmu_mp0 4>, <&ipmmu_mp0 5>,
-+			       <&ipmmu_mp0 6>, <&ipmmu_mp0 7>,
-+			       <&ipmmu_mp0 8>, <&ipmmu_mp0 9>,
-+			       <&ipmmu_mp0 10>, <&ipmmu_mp0 11>,
-+			       <&ipmmu_mp0 12>, <&ipmmu_mp0 13>,
-+			       <&ipmmu_mp0 14>, <&ipmmu_mp0 15>;
- 		};
++	switch (pix->field) {
++	case V4L2_FIELD_TOP:
++	case V4L2_FIELD_BOTTOM:
++	case V4L2_FIELD_NONE:
++	case V4L2_FIELD_INTERLACED_TB:
++	case V4L2_FIELD_INTERLACED_BT:
++	case V4L2_FIELD_INTERLACED:
++		break;
++	default:
++		pix->field = V4L2_FIELD_NONE;
++		break;
++	}
++
++	/* Check that colorspace is reasonable, if not keep current */
++	if (!pix->colorspace || pix->colorspace >= 0xff)
++		pix->colorspace = vin->format.colorspace;
++
++	/* HW limit width to a multiple of 32 (2^5) for NV16 else 2 (2^1) */
++	walign = vin->format.pixelformat == V4L2_PIX_FMT_NV16 ? 5 : 1;
++
++	/* Limit to VIN capabilities */
++	v4l_bound_align_image(&pix->width, 2, vin->info->max_width, walign,
++			      &pix->height, 4, vin->info->max_height, 2, 0);
++
++	pix->bytesperline = rvin_format_bytesperline(pix);
++	pix->sizeimage = rvin_format_sizeimage(pix);
++
++	if (vin->info->chip == RCAR_M1 &&
++	    pix->pixelformat == V4L2_PIX_FMT_XBGR32) {
++		vin_err(vin, "pixel format XBGR32 not supported on M1\n");
++		return -EINVAL;
++	}
++
++	vin_dbg(vin, "Format %ux%u bpl: %d size: %d\n",
++		pix->width, pix->height, pix->bytesperline, pix->sizeimage);
++
++	return 0;
++}
++
+ /* -----------------------------------------------------------------------------
+  * V4L2
+  */
+@@ -191,64 +241,18 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
+ static int __rvin_try_format(struct rvin_dev *vin,
+ 			     u32 which, struct v4l2_pix_format *pix)
+ {
+-	u32 walign;
+ 	int ret;
  
- 		audma1: dma-controller@ec720000 {
-@@ -740,6 +748,14 @@
- 			resets = <&cpg 501>;
- 			#dma-cells = <1>;
- 			dma-channels = <16>;
-+			iommus = <&ipmmu_mp0 16>, <&ipmmu_mp0 17>,
-+			       <&ipmmu_mp0 18>, <&ipmmu_mp0 19>,
-+			       <&ipmmu_mp0 20>, <&ipmmu_mp0 21>,
-+			       <&ipmmu_mp0 22>, <&ipmmu_mp0 23>,
-+			       <&ipmmu_mp0 24>, <&ipmmu_mp0 25>,
-+			       <&ipmmu_mp0 26>, <&ipmmu_mp0 27>,
-+			       <&ipmmu_mp0 28>, <&ipmmu_mp0 29>,
-+			       <&ipmmu_mp0 30>, <&ipmmu_mp0 31>;
- 		};
+ 	/* Keep current field if no specific one is asked for */
+ 	if (pix->field == V4L2_FIELD_ANY)
+ 		pix->field = vin->format.field;
  
- 		avb: ethernet@e6800000 {
+-	/* If requested format is not supported fallback to the default */
+-	if (!rvin_format_from_pixel(pix->pixelformat)) {
+-		vin_dbg(vin, "Format 0x%x not found, using default 0x%x\n",
+-			pix->pixelformat, RVIN_DEFAULT_FORMAT);
+-		pix->pixelformat = RVIN_DEFAULT_FORMAT;
+-	}
+-
+-	/* Always recalculate */
+-	pix->bytesperline = 0;
+-	pix->sizeimage = 0;
+-
+ 	/* Limit to source capabilities */
+ 	ret = __rvin_try_format_source(vin, which, pix);
+ 	if (ret)
+ 		return ret;
+ 
+-	switch (pix->field) {
+-	case V4L2_FIELD_TOP:
+-	case V4L2_FIELD_BOTTOM:
+-	case V4L2_FIELD_NONE:
+-	case V4L2_FIELD_INTERLACED_TB:
+-	case V4L2_FIELD_INTERLACED_BT:
+-	case V4L2_FIELD_INTERLACED:
+-		break;
+-	default:
+-		pix->field = V4L2_FIELD_NONE;
+-		break;
+-	}
+-
+-	/* HW limit width to a multiple of 32 (2^5) for NV16 else 2 (2^1) */
+-	walign = vin->format.pixelformat == V4L2_PIX_FMT_NV16 ? 5 : 1;
+-
+-	/* Limit to VIN capabilities */
+-	v4l_bound_align_image(&pix->width, 2, vin->info->max_width, walign,
+-			      &pix->height, 4, vin->info->max_height, 2, 0);
+-
+-	pix->bytesperline = max_t(u32, pix->bytesperline,
+-				  rvin_format_bytesperline(pix));
+-	pix->sizeimage = max_t(u32, pix->sizeimage,
+-			       rvin_format_sizeimage(pix));
+-
+-	if (vin->info->chip == RCAR_M1 &&
+-	    pix->pixelformat == V4L2_PIX_FMT_XBGR32) {
+-		vin_err(vin, "pixel format XBGR32 not supported on M1\n");
+-		return -EINVAL;
+-	}
+-
+-	vin_dbg(vin, "Format %ux%u bpl: %d size: %d\n",
+-		pix->width, pix->height, pix->bytesperline, pix->sizeimage);
+-
+-	return 0;
++	return rvin_format_align(vin, pix);
+ }
+ 
+ static int rvin_querycap(struct file *file, void *priv,
 -- 
-2.11.0
+2.15.0
