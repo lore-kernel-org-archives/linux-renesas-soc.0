@@ -1,65 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:42880 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933136AbdKOR72 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:60214 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754406AbdK2Kqs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Nov 2017 12:59:28 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: laurent.pinchart@ideasonboard.com, mchehab@kernel.org,
-        hverkuil@xs4all.nl
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
-Subject: [PATCH] v4l: sh_mobile_ceu: Return buffers on streamoff()
-Date: Wed, 15 Nov 2017 18:59:12 +0100
-Message-Id: <1510768752-7588-1-git-send-email-jacopo+renesas@jmondi.org>
+        Wed, 29 Nov 2017 05:46:48 -0500
+Date: Wed, 29 Nov 2017 11:46:44 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 00/12] ARM: dts: renesas: Update DTS for CMT DT
+ binding rework
+Message-ID: <20171129104643.7gcfalflbbcxqf3y@verge.net.au>
+References: <1511876856-9495-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1511876856-9495-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-videobuf2 core reports an error when not all buffers have been returned
-to the framework:
+On Tue, Nov 28, 2017 at 02:47:24PM +0100, Geert Uytterhoeven wrote:
+> 	Hi Simon, Magnus,
+> 
+> This patch series updates the CMT device nodes in the various Renesas DTS
+> files sh_cmt clocksource driver for the recent DT binding rework that was
+> merged in v4.14-rc1 and v4.15-rc1.
+> 
+> This series is an evolutionary improvement of Magnus Damm's series "[PATCH
+> v2 00/11] clocksource: sh_cmt: DT binding rework V2":
+> 
+>   - Patches 1-5 update the compatible values for the CMT0 and CMT1 device
+>     nodes on R-Mobile APE6 and R-Car Gen2,
+>   - Patches 6-12 remove the now obsolete "renesas,channels-mask" properties
+>     from the CMT device nodes on all affected SoCs.
+> 
+> Changes compared to v3:
+>   - Rebase against renesas-devel-20171127-v4.15-rc1,
+> 
+> Changes compared to v2:
+>   - Take over from Magnus,
+>   - Update compatible values,
+>   - Split in per-SoC patches,
+> 
+> Dependencies:
+>   - "[PATCH v3 0/7] clocksource: sh_cmt: Update driver for DT binding
+>     rework" was merged in v4.15-rc1.
+> 
+> This has been part of renesas-drivers for more than two months, and part
+> of my local development tree for more than two years.
+> 
+> Thanks for applying!
 
-drivers/media/v4l2-core/videobuf2-core.c:1651
-WARN_ON(atomic_read(&q->owned_by_drv_count))
-
-Fix this returning all buffers currently in capture queue.
-
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-
----
-
-I know I'm working to get rid of this driver, but while I was trying to have
-it working again on mainline, I found this had to be fixed.
-
-Thanks
-  j
-
----
- drivers/media/platform/soc_camera/sh_mobile_ceu_camera.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/media/platform/soc_camera/sh_mobile_ceu_camera.c b/drivers/media/platform/soc_camera/sh_mobile_ceu_camera.c
-index 36762ec..9180a1d 100644
---- a/drivers/media/platform/soc_camera/sh_mobile_ceu_camera.c
-+++ b/drivers/media/platform/soc_camera/sh_mobile_ceu_camera.c
-@@ -451,13 +451,18 @@ static void sh_mobile_ceu_stop_streaming(struct vb2_queue *q)
- 	struct soc_camera_host *ici = to_soc_camera_host(icd->parent);
- 	struct sh_mobile_ceu_dev *pcdev = ici->priv;
- 	struct list_head *buf_head, *tmp;
-+	struct vb2_v4l2_buffer *vbuf;
-
- 	spin_lock_irq(&pcdev->lock);
-
- 	pcdev->active = NULL;
-
--	list_for_each_safe(buf_head, tmp, &pcdev->capture)
-+	list_for_each_safe(buf_head, tmp, &pcdev->capture) {
-+		vbuf = &list_entry(buf_head, struct sh_mobile_ceu_buffer,
-+				   queue)->vb;
-+		vb2_buffer_done(&vbuf->vb2_buf, VB2_BUF_STATE_DONE);
- 		list_del_init(buf_head);
-+	}
-
- 	spin_unlock_irq(&pcdev->lock);
-
---
-2.7.4
+Thanks, applied.
