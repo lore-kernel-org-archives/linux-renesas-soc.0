@@ -1,50 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55317 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751410AbdKJMPe (ORCPT
+Received: from mail-it0-f66.google.com ([209.85.214.66]:46677 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751819AbdK3NJj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Nov 2017 07:15:34 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Alex Williamson <alex.williamson@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        iommu@lists.linux-foundation.org,
-        linux-renesas-soc@vger.kernel.org,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 1/2] iommu/ipmmu-vmsa: Add r8a7796 DT binding
-Date: Fri, 10 Nov 2017 13:15:19 +0100
-Message-Id: <20171110121520.23437-2-horms+renesas@verge.net.au>
-In-Reply-To: <20171110121520.23437-1-horms+renesas@verge.net.au>
-References: <20171110121520.23437-1-horms+renesas@verge.net.au>
+        Thu, 30 Nov 2017 08:09:39 -0500
+Received: by mail-it0-f66.google.com with SMTP id t1so8188517ite.5
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Nov 2017 05:09:38 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <1511971606-580-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1511971606-580-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1511971606-580-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 30 Nov 2017 14:09:38 +0100
+Message-ID: <CAPDyKFrxgrp5wt82AtW9YtzwRn0+fO2Db4T=-Bu0OT2-zOkVYA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] mmc: renesas_sdhi: enable R-Car D3 (r8a77995) support
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On 29 November 2017 at 17:06, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
+> Whitelists for internal DMAC implementation.
+>
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Update the IPMMU DT binding documentation to include the r8a7796 compat
-string for R-Car M3-W.
+Thanks, applied for next!
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt | 1 +
- 1 file changed, 1 insertion(+)
+Kind regards
+Uffe
 
-diff --git a/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt b/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
-index 3ed027cfca95..98ae900a7a76 100644
---- a/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
-+++ b/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
-@@ -16,6 +16,7 @@ Required Properties:
-     - "renesas,ipmmu-r8a7793" for the R8A7793 (R-Car M2-N) IPMMU.
-     - "renesas,ipmmu-r8a7794" for the R8A7794 (R-Car E2) IPMMU.
-     - "renesas,ipmmu-r8a7795" for the R8A7795 (R-Car H3) IPMMU.
-+    - "renesas,ipmmu-r8a7796" for the R8A7796 (R-Car M3-W) IPMMU.
-     - "renesas,ipmmu-vmsa" for generic R-Car Gen2 VMSA-compatible IPMMU.
- 
-   - reg: Base address and size of the IPMMU registers.
--- 
-2.11.0
+> ---
+>  drivers/mmc/host/renesas_sdhi_internal_dmac.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+> index 41cbe84..396ae8a 100644
+> --- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+> +++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+> @@ -255,6 +255,7 @@ static const struct soc_device_attribute gen3_soc_whitelist[] = {
+>          { .soc_id = "r8a7795", .revision = "ES1.*" },
+>          { .soc_id = "r8a7795", .revision = "ES2.0" },
+>          { .soc_id = "r8a7796", .revision = "ES1.0" },
+> +        { .soc_id = "r8a77995", .revision = "ES1.0" },
+>          { /* sentinel */ }
+>  };
+>
+> --
+> 2.7.4
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
