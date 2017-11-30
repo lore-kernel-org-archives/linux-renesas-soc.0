@@ -1,91 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:42772 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752897AbdK3NMP (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:45676 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750761AbdK3KJP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 30 Nov 2017 08:12:15 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Simon Horman <horms@verge.net.au>,
+        Thu, 30 Nov 2017 05:09:15 -0500
+Date: Thu, 30 Nov 2017 11:09:11 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>
-Cc: Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        uclinux-h8-devel@lists.sourceforge.jp, linux-sh@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 5/5] ARM: shmobile: defconfig: Disable CONFIG_EMBEDDED
-Date: Thu, 30 Nov 2017 14:12:02 +0100
-Message-Id: <1512047522-16312-6-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1512047522-16312-1-git-send-email-geert+renesas@glider.be>
-References: <1512047522-16312-1-git-send-email-geert+renesas@glider.be>
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/2] arm64: dts: renesas: r8a77970: use CPG core clock
+ macros
+Message-ID: <20171130100911.rdymtxswidey4bol@verge.net.au>
+References: <20171128202105.552196002@cogentembedded.com>
+ <20171129095558.wvvcvfctwfmtrkq4@verge.net.au>
+ <d904863e-e8c9-76ad-9d12-fd36ed68c3b4@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d904863e-e8c9-76ad-9d12-fd36ed68c3b4@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-CONFIG_EXPERT exposes too many config options that do not matter for
-development. However, CONFIG_EMBEDDED selects CONFIG_EXPERT, so it
-cannot be disabled.
+On Wed, Nov 29, 2017 at 08:00:52PM +0300, Sergei Shtylyov wrote:
+> On 11/29/2017 12:55 PM, Simon Horman wrote:
+> 
+> > > Now that the commit ecadea00f588 ("dt-bindings: clock: Add R8A77970 CPG
+> > > core clock definitions") has hit Linus' tree, we  can replace the bare
+> > > numbers (we had to use to avoid a cross tree dependency) with these macro
+> > > definitions...
+> > > 
+> > > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> > 
+> > Thanks, applied.
+> 
+>    Not seeing these 2 patches in the today's devel branch tho...
 
-Hence disable CONFIG_EMBEDDED, and compensate for the loss of
-CONFIG_DEBUG_KERNEL by enabling the latter.
-
-Actual impact:
-  - CONFIG_NAMESPACES=y,
-  - CONFIG_SYSCTL_SYSCALL=n,
-  - CONFIG_SERIAL_SH_SCI_NR_UARTS changed from 20 to 18,
-  - CONFIG_SERIAL_SH_SCI_EARLYCON=y,
-  - Some HID support became enabled,
-  - CONFIG_DEBUG_MEMORY_INIT=y,
-
-Refresh the result.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/configs/shmobile_defconfig | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
-
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index 7b4fc01431483f21..41eccc1b6cef7251 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -5,8 +5,6 @@ CONFIG_IKCONFIG_PROC=y
- CONFIG_CGROUPS=y
- CONFIG_BLK_DEV_INITRD=y
- CONFIG_CC_OPTIMIZE_FOR_SIZE=y
--CONFIG_SYSCTL_SYSCALL=y
--CONFIG_EMBEDDED=y
- CONFIG_PERF_EVENTS=y
- CONFIG_SLAB=y
- CONFIG_ARCH_RENESAS=y
-@@ -34,7 +32,6 @@ CONFIG_SMP=y
- CONFIG_SCHED_MC=y
- CONFIG_HAVE_ARM_ARCH_TIMER=y
- CONFIG_NR_CPUS=8
--CONFIG_AEABI=y
- CONFIG_HIGHMEM=y
- CONFIG_CMA=y
- CONFIG_ZBOOT_ROM_TEXT=0x0
-@@ -106,7 +103,6 @@ CONFIG_SERIAL_8250_EM=y
- CONFIG_SERIAL_SH_SCI=y
- CONFIG_SERIAL_SH_SCI_NR_UARTS=20
- CONFIG_SERIAL_SH_SCI_CONSOLE=y
--CONFIG_SERIAL_SH_SCI_DMA=y
- CONFIG_I2C_CHARDEV=y
- CONFIG_I2C_MUX=y
- CONFIG_I2C_DEMUX_PINCTRL=y
-@@ -166,7 +162,6 @@ CONFIG_FB_SH_MOBILE_MERAM=y
- # CONFIG_BACKLIGHT_GENERIC is not set
- CONFIG_BACKLIGHT_PWM=y
- CONFIG_BACKLIGHT_AS3711=y
--CONFIG_FRAMEBUFFER_CONSOLE=y
- CONFIG_SOUND=y
- CONFIG_SND=y
- CONFIG_SND_SOC=y
-@@ -225,4 +220,5 @@ CONFIG_NLS_ISO8859_1=y
- CONFIG_PRINTK_TIME=y
- # CONFIG_ENABLE_WARN_DEPRECATED is not set
- # CONFIG_ENABLE_MUST_CHECK is not set
-+CONFIG_DEBUG_KERNEL=y
- # CONFIG_ARM_UNWIND is not set
--- 
-2.7.4
+Strange, I don't see them either.
+I have queued them up (again?).
