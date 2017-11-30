@@ -1,132 +1,53 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH] v4l: rcar-vin: Implement V4L2 video node release handler
-Date: Thu, 16 Nov 2017 00:49:07 +0200
-Message-Id: <20171115224907.392-1-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 2/4] ARM: dts: lager: Convert to named i2c-gpio bindings
+Date: Thu, 30 Nov 2017 13:57:24 +0100
+Message-Id: <1512046646-15253-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1512046646-15253-1-git-send-email-geert+renesas@glider.be>
+References: <1512046646-15253-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The rvin_dev data structure contains driver private data for an instance
-of the VIN. It is allocated dynamically at probe time, and must be freed
-once all users are gone.
+Commits 7d29f509d2cfd807 ("dt-bindings: i2c: i2c-gpio: Add support for
+named gpios") and 05c74778858d7d99 ("i2c: gpio: Add support for named
+gpios in DT") introduced named i2c-gpio DT bindings, and deprecated the
+more error-prone unnamed variant.
 
-The structure is currently allocated with devm_kzalloc(), which results
-in memory being freed when the device is unbound. If a userspace
-application is currently performing an ioctl call, or just keeps the
-device node open and closes it later, this will lead to accessing freed
-memory.
+Switch to the new bindings, and add the missing GPIO_OPEN_DRAIN I/O
+flags, which were implicitly assumed before.
 
-Fix the problem by implementing a V4L2 release handler for the video
-node associated with the VIN instance (called when the last user of the
-video node releases it), and freeing memory explicitly from the release
-handler.
-
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/media/platform/rcar-vin/rcar-core.c | 29 +++++++++++++++++++----------
- drivers/media/platform/rcar-vin/rcar-v4l2.c |  9 ++++++++-
- 2 files changed, 27 insertions(+), 11 deletions(-)
+v2:
+  - New.
+---
+ arch/arm/boot/dts/r8a7790-lager.dts | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 495610949457..bd7976efa1fb 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -1208,7 +1208,7 @@ static int rcar_vin_probe(struct platform_device *pdev)
- 	struct resource *mem;
- 	int irq, ret;
+diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
+index e3d27783b6b56b42..f2ea632381e7d1af 100644
+--- a/arch/arm/boot/dts/r8a7790-lager.dts
++++ b/arch/arm/boot/dts/r8a7790-lager.dts
+@@ -272,9 +272,8 @@
+ 		#size-cells = <0>;
+ 		compatible = "i2c-gpio";
+ 		status = "disabled";
+-		gpios = <&gpio1 17 GPIO_ACTIVE_HIGH /* sda */
+-			 &gpio1 16 GPIO_ACTIVE_HIGH /* scl */
+-			>;
++		sda-gpios = <&gpio1 17 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
++		scl-gpios = <&gpio1 16 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+ 		i2c-gpio,delay-us = <5>;
+ 	};
  
--	vin = devm_kzalloc(&pdev->dev, sizeof(*vin), GFP_KERNEL);
-+	vin = kzalloc(sizeof(*vin), GFP_KERNEL);
- 	if (!vin)
- 		return -ENOMEM;
- 
-@@ -1224,20 +1224,26 @@ static int rcar_vin_probe(struct platform_device *pdev)
- 		vin->info = attr->data;
- 
- 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (mem == NULL)
--		return -EINVAL;
-+	if (mem == NULL) {
-+		ret = -EINVAL;
-+		goto error_free;
-+	}
- 
- 	vin->base = devm_ioremap_resource(vin->dev, mem);
--	if (IS_ERR(vin->base))
--		return PTR_ERR(vin->base);
-+	if (IS_ERR(vin->base)) {
-+		ret = PTR_ERR(vin->base);
-+		goto error_free;
-+	}
- 
- 	irq = platform_get_irq(pdev, 0);
--	if (irq < 0)
--		return irq;
-+	if (irq < 0) {
-+		ret = irq;
-+		goto error_free;
-+	}
- 
- 	ret = rvin_dma_probe(vin, irq);
- 	if (ret)
--		return ret;
-+		goto error_free;
- 
- 	platform_set_drvdata(pdev, vin);
- 	if (vin->info->use_mc)
-@@ -1245,15 +1251,18 @@ static int rcar_vin_probe(struct platform_device *pdev)
- 	else
- 		ret = rvin_digital_graph_init(vin);
- 	if (ret < 0)
--		goto error;
-+		goto error_dma;
- 
- 	pm_suspend_ignore_children(&pdev->dev, true);
- 	pm_runtime_enable(&pdev->dev);
- 
- 	return 0;
--error:
-+
-+error_dma:
- 	rvin_dma_remove(vin);
- 	v4l2_async_notifier_cleanup(&vin->notifier);
-+error_free:
-+	kfree(vin);
- 
- 	return ret;
- }
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 2c14d44950b2..25f1d24c1d2d 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -1026,6 +1026,13 @@ static void rvin_notify(struct v4l2_subdev *sd,
- 	}
- }
- 
-+static void rvin_v4l2_release(struct video_device *vdev)
-+{
-+	struct rvin_dev *vin = container_of(vdev, struct rvin_dev, vdev);
-+
-+	kfree(vin);
-+}
-+
- int rvin_v4l2_register(struct rvin_dev *vin)
- {
- 	struct video_device *vdev = &vin->vdev;
-@@ -1038,7 +1045,7 @@ int rvin_v4l2_register(struct rvin_dev *vin)
- 	vdev->queue = &vin->queue;
- 	snprintf(vdev->name, sizeof(vdev->name), "%s %s", KBUILD_MODNAME,
- 		 dev_name(vin->dev));
--	vdev->release = video_device_release_empty;
-+	vdev->release = rvin_v4l2_release;
- 	vdev->lock = &vin->lock;
- 	vdev->device_caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING |
- 		V4L2_CAP_READWRITE;
 -- 
-Regards,
+2.7.4
 
-Laurent Pinchart
