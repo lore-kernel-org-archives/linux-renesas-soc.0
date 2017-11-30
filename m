@@ -1,69 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:41318 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753147AbdK1Nrl (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:47818 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752859AbdK3M5b (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Nov 2017 08:47:41 -0500
+        Thu, 30 Nov 2017 07:57:31 -0500
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms+renesas@verge.net.au>,
+To: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Magnus Damm <damm+renesas@opensource.se>,
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
+        devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 11/12] ARM: dts: r8a7794: Remove CMT renesas,channels-mask
-Date: Tue, 28 Nov 2017 14:47:35 +0100
-Message-Id: <1511876856-9495-12-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1511876856-9495-1-git-send-email-geert+renesas@glider.be>
-References: <1511876856-9495-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v2 1/4] ARM: dts: armadillo800eva: Convert to named i2c-gpio bindings
+Date: Thu, 30 Nov 2017 13:57:23 +0100
+Message-Id: <1512046646-15253-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1512046646-15253-1-git-send-email-geert+renesas@glider.be>
+References: <1512046646-15253-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Commits 7d29f509d2cfd807 ("dt-bindings: i2c: i2c-gpio: Add support for
+named gpios") and 05c74778858d7d99 ("i2c: gpio: Add support for named
+gpios in DT") introduced named i2c-gpio DT bindings, and deprecated the
+more error-prone unnamed variant.
 
-Update the DTS to remove the now deprecated "renesas,channels-mask"
-property.
+Switch to the new bindings, and add the missing GPIO_OPEN_DRAIN I/O
+flags, which were implicitly assumed before.
 
-The channel information is now kept in the device driver and can easily
-be determined based on the compat string.
+The latter gets rid of the message:
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+    gpio-208 (?): enforced open drain please flag it properly in DT/ACPI DSDT/board file
+    gpio-91 (?): enforced open drain please flag it properly in DT/ACPI DSDT/board file
+
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-v4:
-  - Rebased against renesas-devel-20171127-v4.15-rc1,
-
-v3:
-  - Take over from Magnus,
-  - Split in per-SoC patches,
-
 v2:
-  - Rebased on top of power-domain changes,
-  - Added Acked-by and Tested-by from Geert.
+  - Add GPIO_OPEN_DRAIN to the GPIO flags,
+  - Reword.
 ---
- arch/arm/boot/dts/r8a7794.dtsi | 4 ----
- 1 file changed, 4 deletions(-)
+ arch/arm/boot/dts/r8a7740-armadillo800eva.dts | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 52f6d5ec5d210f44..54f412db4a6ecf3f 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -190,8 +190,6 @@
- 		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		resets = <&cpg 124>;
- 
--		renesas,channels-mask = <0x60>;
--
- 		status = "disabled";
- 	};
- 
-@@ -211,8 +209,6 @@
- 		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		resets = <&cpg 329>;
- 
--		renesas,channels-mask = <0xff>;
--
- 		status = "disabled";
+diff --git a/arch/arm/boot/dts/r8a7740-armadillo800eva.dts b/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
+index 8c85d3ee5f5e7bfd..527c60bafbcface0 100644
+--- a/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
++++ b/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
+@@ -138,9 +138,8 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 		compatible = "i2c-gpio";
+-		gpios = <&pfc 208 GPIO_ACTIVE_HIGH /* sda */
+-			 &pfc 91 GPIO_ACTIVE_HIGH /* scl */
+-			>;
++		sda-gpios = <&pfc 208 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
++		scl-gpios = <&pfc 91 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+ 		i2c-gpio,delay-us = <5>;
  	};
  
 -- 
