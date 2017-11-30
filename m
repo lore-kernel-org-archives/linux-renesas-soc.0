@@ -1,82 +1,65 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:42780 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752884AbdK3NMP (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 30 Nov 2017 08:12:15 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH v2 4/4] ARM: dts: r8a7745: add VIN dt support
-Date: Thu, 16 Nov 2017 18:22:51 +0000
-Message-Id: <1510856571-30281-5-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1510856571-30281-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1510856571-30281-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>
+Cc: Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        uclinux-h8-devel@lists.sourceforge.jp, linux-sh@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/5] tty: serial: sh-sci: Hide driver specific config questions
+Date: Thu, 30 Nov 2017 14:11:57 +0100
+Message-Id: <1512047522-16312-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add VIN[01] support to SoC dt. Also, add aliases.
+	Hi Greg, Simon, Magnus, Sato-san, Rich,
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
----
-This patch depends on the following patch:
-* ARM: dts: r8a7745: Add CAN[01] SoC support
-  https://patchwork.kernel.org/patch/10046867/
+The Renesas (H)SCI(F) driver has several driver-specific config options.
+This may confuse users, and leads to inefficient testing and development.
+E.g. recently a regression was introduced in SCIF DMA support, and
+someone didn't see early con output, both due to the relevant options
+being accidentally disabled.
 
-v1->v2:
-* new patch to keep dt-bindings changes and all the related DT changes in the
-  same series
+This patch series is an attempt to stop bothering (H)SCI(F) users with
+several config questions, while providing sensible defaults for these
+options, based on the target platform.  The defaults can still be
+overridden if CONFIG_EXPERT is enabled.
 
- arch/arm/boot/dts/r8a7745.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+The last patch updates shmobile_defconfig to take into account the
+defaults.  It is marked RFC, as it depends on the first 4 patches to be
+effective, and to avoid feature regressions.
 
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index 529e8c6..0fa7861 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -31,6 +31,8 @@
- 		spi1 = &msiof0;
- 		spi2 = &msiof1;
- 		spi3 = &msiof2;
-+		vin0 = &vin0;
-+		vin1 = &vin1;
- 	};
- 
- 	cpus {
-@@ -837,6 +839,28 @@
- 			status = "disabled";
- 		};
- 
-+		vin0: video@e6ef0000 {
-+			compatible = "renesas,vin-r8a7745",
-+				     "renesas,rcar-gen2-vin";
-+			reg = <0 0xe6ef0000 0 0x1000>;
-+			interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 811>;
-+			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 811>;
-+			status = "disabled";
-+		};
-+
-+		vin1: video@e6ef1000 {
-+			compatible = "renesas,vin-r8a7745",
-+				     "renesas,rcar-gen2-vin";
-+			reg = <0 0xe6ef1000 0 0x1000>;
-+			interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 810>;
-+			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 810>;
-+			status = "disabled";
-+		};
-+
- 		du: display@feb00000 {
- 			compatible = "renesas,du-r8a7745";
- 			reg = <0 0xfeb00000 0 0x40000>;
+Thanks for your comments!
+
+Geert Uytterhoeven (5):
+  tty: serial: sh-sci: Hide number of ports config question
+  tty: serial: sh-sci: Hide serial console config question
+  tty: serial: sh-sci: Hide earlycon config question
+  tty: serial: sh-sci: Hide DMA config question
+  [RFC] ARM: shmobile: defconfig: Disable CONFIG_EMBEDDED
+
+ arch/arm/configs/shmobile_defconfig |  6 +-----
+ drivers/tty/serial/Kconfig          | 15 ++++++++++-----
+ 2 files changed, 11 insertions(+), 10 deletions(-)
+
 -- 
 2.7.4
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
