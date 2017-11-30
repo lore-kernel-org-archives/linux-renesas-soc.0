@@ -1,126 +1,71 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20171128202105.552196002@cogentembedded.com>
-Date: Tue, 28 Nov 2017 23:15:44 +0300
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from xavier.telenet-ops.be ([195.130.132.52]:47804 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752847AbdK3M5a (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 30 Nov 2017 07:57:30 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH 1/2] arm64: dts: renesas: r8a77970: use CPG core clock macros
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=arm64-dts-renesas-r8a77970-use-CPG-core-clock-macros.patch
-Sender: devicetree-owner@vger.kernel.org
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 0/4] ARM: dts: renesas: Convert to named i2c-gpio bindings
+Date: Thu, 30 Nov 2017 13:57:22 +0100
+Message-Id: <1512046646-15253-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Now that the commit ecadea00f588 ("dt-bindings: clock: Add R8A77970 CPG
-core clock definitions") has hit Linus' tree, we  can replace the bare
-numbers (we had to use to avoid a cross tree dependency) with these macro
-definitions...
+	Hi Simon, Magnus,
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Commits 7d29f509d2cfd807 ("dt-bindings: i2c: i2c-gpio: Add support for
+named gpios") and 05c74778858d7d99 ("i2c: gpio: Add support for named
+gpios in DT") introduced named i2c-gpio DT bindings, and deprecated the
+more error-prone unnamed variant.
 
----
- arch/arm64/boot/dts/renesas/r8a77970.dtsi |   20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+This patch series switches all Renesas boards to the new bindings, and
+adds the missing GPIO_OPEN_DRAIN I/O flags, which were implicitly
+assumed before.  The latter gets rid of messages like:
 
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -9,7 +9,7 @@
-  * kind, whether express or implied.
-  */
- 
--#include <dt-bindings/clock/renesas-cpg-mssr.h>
-+#include <dt-bindings/clock/r8a77970-cpg-mssr.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/power/r8a77970-sysc.h>
-@@ -32,7 +32,7 @@
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a53", "arm,armv8";
- 			reg = <0>;
--			clocks = <&cpg CPG_CORE 0>;
-+			clocks = <&cpg CPG_CORE R8A77970_CLK_Z2>;
- 			power-domains = <&sysc 5>;
- 			next-level-cache = <&L2_CA53>;
- 			enable-method = "psci";
-@@ -262,7 +262,7 @@
- 			reg = <0 0xe6540000 0 96>;
- 			interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 520>,
--				 <&cpg CPG_CORE 9>,
-+				 <&cpg CPG_CORE R8A77970_CLK_S2D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac1 0x31>, <&dmac1 0x30>,
-@@ -280,7 +280,7 @@
- 			reg = <0 0xe6550000 0 96>;
- 			interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 519>,
--				 <&cpg CPG_CORE 9>,
-+				 <&cpg CPG_CORE R8A77970_CLK_S2D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac1 0x33>, <&dmac1 0x32>,
-@@ -298,7 +298,7 @@
- 			reg = <0 0xe6560000 0 96>;
- 			interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 518>,
--				 <&cpg CPG_CORE 9>,
-+				 <&cpg CPG_CORE R8A77970_CLK_S2D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac1 0x35>, <&dmac1 0x34>,
-@@ -315,7 +315,7 @@
- 			reg = <0 0xe66a0000 0 96>;
- 			interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 517>,
--				 <&cpg CPG_CORE 9>,
-+				 <&cpg CPG_CORE R8A77970_CLK_S2D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac1 0x37>, <&dmac1 0x36>,
-@@ -333,7 +333,7 @@
- 			reg = <0 0xe6e60000 0 64>;
- 			interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 207>,
--				 <&cpg CPG_CORE 9>,
-+				 <&cpg CPG_CORE R8A77970_CLK_S2D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac1 0x51>, <&dmac1 0x50>,
-@@ -351,7 +351,7 @@
- 			reg = <0 0xe6e68000 0 64>;
- 			interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 206>,
--				 <&cpg CPG_CORE 9>,
-+				 <&cpg CPG_CORE R8A77970_CLK_S2D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac1 0x53>, <&dmac1 0x52>,
-@@ -369,7 +369,7 @@
- 			reg = <0 0xe6c50000 0 64>;
- 			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 204>,
--				 <&cpg CPG_CORE 9>,
-+				 <&cpg CPG_CORE R8A77970_CLK_S2D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac1 0x57>, <&dmac1 0x56>,
-@@ -386,7 +386,7 @@
- 			reg = <0 0xe6c40000 0 64>;
- 			interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 203>,
--				 <&cpg CPG_CORE 9>,
-+				 <&cpg CPG_CORE R8A77970_CLK_S2D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac1 0x59>, <&dmac1 0x58>,
+    gpio-208 (?): enforced open drain please flag it properly in DT/ACPI DSDT/board file
+    gpio-91 (?): enforced open drain please flag it properly in DT/ACPI DSDT/board file
 
+Patch 1 was extracted from series "[PATCH/RFC 0/3] i2c: gpio: Add
+support for named gpios in DT", hence the v2.  All other patches are
+new.
+
+Note that after this series is applied, the i2c-gpio buses are no longer
+detected when booting new DTBs on old (v4.14 and older) kernels, which
+should not be an issue.  Booting old DTBs on new kernels is not
+affected.
+
+Thanks for applying!
+
+Geert Uytterhoeven (4):
+  ARM: dts: armadillo800eva: Convert to named i2c-gpio bindings
+  ARM: dts: lager: Convert to named i2c-gpio bindings
+  ARM: dts: koelsch: Convert to named i2c-gpio bindings
+  ARM: dts: alt: Convert to named i2c-gpio bindings
+
+ arch/arm/boot/dts/r8a7740-armadillo800eva.dts    | 5 ++---
+ arch/arm/boot/dts/r8a7790-lager.dts              | 5 ++---
+ arch/arm/boot/dts/r8a7791-koelsch.dts            | 5 ++---
+ arch/arm/boot/dts/r8a7794-alt.dts                | 5 ++---
+ 4 files changed, 8 insertions(+), 12 deletions(-)
+
+-- 
+2.7.4
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
