@@ -1,42 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55692 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:49629 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752216AbdKAKg3 (ORCPT
+        with ESMTP id S1751486AbdK3QSI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 1 Nov 2017 06:36:29 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 6/7] arm64: dts: renesas: r8a7796: Connect Ethernet-AVB to IPMMU-DS0
-Date: Wed,  1 Nov 2017 11:34:57 +0100
-Message-Id: <20171101103458.7582-7-horms+renesas@verge.net.au>
-In-Reply-To: <20171101103458.7582-1-horms+renesas@verge.net.au>
-References: <20171101103458.7582-1-horms+renesas@verge.net.au>
+        Thu, 30 Nov 2017 11:18:08 -0500
+Date: Thu, 30 Nov 2017 17:18:03 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Possible regression due to "arm64: renesas: salvator: set driver
+ type for eMMC"
+Message-ID: <20171130161759.47tjyfqefoffpus3@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add IPMMU-DS0 to the Ethernet-AVB device node.
+Hi Wolfram,
 
-Based on work by Magnus Damm for the r8a7795.
+I have observed the following behaviour in renesas-devel-20171130-v4.15-rc1
+which I have bisected down to being caused by d3decc2c34c8 ("arm64: dts:
+renesas: salvator: set driver type for eMMC"). The patch in question is
+based on v4.15-rc1.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+I am compiling using renesas_defconfig
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index c14ce1c47487..78160b4a380c 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -906,6 +906,7 @@
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
- 			resets = <&cpg 812>;
- 			phy-mode = "rgmii-txid";
-+			iommus = <&ipmmu_ds0 16>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			status = "disabled";
--- 
-2.11.0
+The problem manifests on Salvator-X / H3 ES1.0.
+
+[    2.567304] renesas_sdhi_internal_dmac ee140000.sd: mmc0 base at 0xee140000 max clock rate 200 MHz
+[    2.700110] mmc0: tuning execution failed: -5
+[    2.704591] mmc0: error -5 whilst initialising MMC card
+[    2.783042] mmc0: tuning execution failed: -5
+[    2.783057] mmc0: error -5 whilst initialising MMC card
+[    2.935219] mmc0: tuning execution failed: -5
+[    2.939676] mmc0: error -5 whilst initialising MMC card
+[    3.103876] renesas_sdhi_internal_dmac ee100000.sd: mmc1 base at 0xee100000 max clock rate 200 MHz
+[    3.174033] mmc0: tuning execution failed: -5
+
+The behaviour on Salvator-XS / H3 ES2.0 seems inconsistent.
+
+And on Salvator-X / M3-W ES1.0 I do not see the problem regardless of
+the presence of the patch.
