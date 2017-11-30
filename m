@@ -1,66 +1,50 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms+renesas@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4] ARM: dts: r8a7794: Add SMP support
-Date: Tue, 28 Nov 2017 14:39:01 +0100
-Message-Id: <1511876341-8639-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Subject: Re: [PATCH 16/22] media: vsp1: add a missing kernel-doc parameter
+To: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Cc: Linux Media Mailing List <linux-media@vger.kernel.org>,
+ Mauro Carvalho Chehab <mchehab@infradead.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ linux-renesas-soc@vger.kernel.org
+References: <73497577f67fbb917e40ab4328104ff310a7c356.1511982439.git.mchehab@s-opensource.com>
+ <cf39264f87c1ca4436c11e07df455feb3ea6d1e1.1511982439.git.mchehab@s-opensource.com>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reply-To: kieran.bingham@ideasonboard.com
+Message-ID: <bf0f9eee-66fc-2c01-5f85-bcb47c130c11@ideasonboard.com>
+Date: Thu, 30 Nov 2017 09:32:49 +0000
+MIME-Version: 1.0
+In-Reply-To: <cf39264f87c1ca4436c11e07df455feb3ea6d1e1.1511982439.git.mchehab@s-opensource.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Hi Mauro,
 
-Add the device tree node for the Advanced Power Management Unit (APMU).
-Use the "enable-method" prop to  point out that the APMU should be used
-for the SMP support.
+Thanks for the patch.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Dependency 3fd45a136ff61bb5 ("ARM: shmobile: rcar-gen2: Make sure
-CNTVOFF is initialized on CA7/15") is part of v4.15-rc1.
+On 29/11/17 19:08, Mauro Carvalho Chehab wrote:
+> Fix this warning:
+> 	drivers/media/platform/vsp1/vsp1_dl.c:87: warning: No description found for parameter 'has_chain'
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 
-v4:
-  - Rebased against renesas-devel-20171127-v4.15-rc1,
+Ah yes, I missed that... Thanks for fixing.
 
-v3:
-  - No changes,
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-v2:
-  - No changes.
----
- arch/arm/boot/dts/r8a7794.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index ef7fb1d2c3a31a6e..2437598ca2f5b034 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -37,6 +37,7 @@
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		enable-method = "renesas,apmu";
- 
- 		cpu0: cpu@0 {
- 			device_type = "cpu";
-@@ -66,6 +67,12 @@
- 		};
- 	};
- 
-+	apmu@e6151000 {
-+		compatible = "renesas,r8a7794-apmu", "renesas,apmu";
-+		reg = <0 0xe6151000 0 0x188>;
-+		cpus = <&cpu0 &cpu1>;
-+	};
-+
- 	gic: interrupt-controller@f1001000 {
- 		compatible = "arm,gic-400";
- 		#interrupt-cells = <3>;
--- 
-2.7.4
-
+> ---
+>  drivers/media/platform/vsp1/vsp1_dl.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
+> index 8b5cbb6b7a70..4257451f1bd8 100644
+> --- a/drivers/media/platform/vsp1/vsp1_dl.c
+> +++ b/drivers/media/platform/vsp1/vsp1_dl.c
+> @@ -70,6 +70,7 @@ struct vsp1_dl_body {
+>   * @dma: DMA address for the header
+>   * @body0: first display list body
+>   * @fragments: list of extra display list bodies
+> + * @has_chain: if true, indicates that there's a partition chain
+>   * @chain: entry in the display list partition chain
+>   */
+>  struct vsp1_dl_list {
+> 
