@@ -1,104 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:56138 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751900AbdKHJ2W (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:40622 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752916AbdK3NMP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 8 Nov 2017 04:28:22 -0500
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-pci@vger.kernel.org
-Cc: Phil Edworthy <phil.edworthy@renesas.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 2/3] PCI: rcar: Support runtime PM, link state L1 handling
-Date: Wed,  8 Nov 2017 10:28:05 +0100
-Message-Id: <20171108092806.10335-2-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20171108092806.10335-1-marek.vasut+renesas@gmail.com>
-References: <20171108092806.10335-1-marek.vasut+renesas@gmail.com>
+        Thu, 30 Nov 2017 08:12:15 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>
+Cc: Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        uclinux-h8-devel@lists.sourceforge.jp, linux-sh@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 3/5] tty: serial: sh-sci: Hide earlycon config question
+Date: Thu, 30 Nov 2017 14:12:00 +0100
+Message-Id: <1512047522-16312-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1512047522-16312-1-git-send-email-geert+renesas@glider.be>
+References: <1512047522-16312-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Phil Edworthy <phil.edworthy@renesas.com>
+Renesas H8/300 and ARM platforms use DT and support earlycon, so most
+users want earlycon support to be enabled.
 
-Most PCIe host controllers support L0s and L1 power states via ASPM.
-The R-Car hardware only supports L0s, so when the system suspends and
-resumes we have to manually handle L1.
+On SuperH platforms, earlycon is not yet supported.
 
-When the system suspends, cards can put themselves into L1 and send a
-PM_ENTER_L1 DLLP to the host controller. At this point, we can no longer
-access the card's config registers.
+Hence follow the above rationale to configure the default, unless
+CONFIG_EXPERT is enabled.
 
-The R-Car host controller will handle taking cards out of L1 as long as
-the host controller has also been transitioned to L1 link state.
-
-Ideally, we would detect the PM_ENTER_L1 DLLP using an interrupt and
-transition the host to L1 immediately. However, this patch just ensures
-that we can talk to cards after they have gone into L1.
-When attempting a config access, it checks to see if the card has gone
-into L1, and if so, does the same for the host controller.
-
-This is based on a patch by Hien Dang <hien.dang.eb@rvc.renesas.com>
-
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-renesas-soc@vger.kernel.org
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pci/host/pcie-rcar.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ drivers/tty/serial/Kconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
-index aa588a7d4811..2b28292de93a 100644
---- a/drivers/pci/host/pcie-rcar.c
-+++ b/drivers/pci/host/pcie-rcar.c
-@@ -92,6 +92,13 @@
- #define MACCTLR			0x011058
- #define  SPEED_CHANGE		(1 << 24)
- #define  SCRAMBLE_DISABLE	(1 << 27)
-+#define PMSR			0x01105c
-+#define  L1FAEG			(1 << 31)
-+#define  PM_ENTER_L1RX		(1 << 23)
-+#define  PMSTATE		(7 << 16)
-+#define  PMSTATE_L1		(3 << 16)
-+#define PMCTLR			0x011060
-+#define  L1_INIT		(1 << 31)
- #define MACS2R			0x011078
- #define MACCGSPSETR		0x011084
- #define  SPCNGRSN		(1 << 31)
-@@ -191,6 +198,7 @@ static int rcar_pcie_config_access(struct rcar_pcie *pcie,
- 		unsigned int devfn, int where, u32 *data)
- {
- 	int dev, func, reg, index;
-+	u32 val;
+diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+index 0c75562d620feb82..952a2c6a9da08fdd 100644
+--- a/drivers/tty/serial/Kconfig
++++ b/drivers/tty/serial/Kconfig
+@@ -774,10 +774,11 @@ config SERIAL_SH_SCI_CONSOLE
+ 	default y
  
- 	dev = PCI_SLOT(devfn);
- 	func = PCI_FUNC(devfn);
-@@ -232,6 +240,22 @@ static int rcar_pcie_config_access(struct rcar_pcie *pcie,
- 	if (pcie->root_bus_nr < 0)
- 		return PCIBIOS_DEVICE_NOT_FOUND;
+ config SERIAL_SH_SCI_EARLYCON
+-	bool "Support for early console on SuperH SCI(F)"
++	bool "Support for early console on SuperH SCI(F)" if EXPERT
+ 	depends on SERIAL_SH_SCI=y
+ 	select SERIAL_CORE_CONSOLE
+ 	select SERIAL_EARLYCON
++	default ARCH_RENESAS || H8300
  
-+	/*
-+	 * If we are not in L1 link state and we have received PM_ENTER_L1 DLLP,
-+	 * transition to L1 link state. The HW will handle coming of of L1.
-+	 */
-+	val = rcar_pci_read_reg(pcie, PMSR);
-+	if ((val & PM_ENTER_L1RX) && ((val & PMSTATE) != PMSTATE_L1)) {
-+		rcar_pci_write_reg(pcie, L1_INIT, PMCTLR);
-+
-+		/* Wait until we are in L1 */
-+		while (!(val & L1FAEG))
-+			val = rcar_pci_read_reg(pcie, PMSR);
-+
-+		/* Clear flags indicating link has transitioned to L1 */
-+		rcar_pci_write_reg(pcie, L1FAEG | PM_ENTER_L1RX, PMSR);
-+	}
-+
- 	/* Clear errors */
- 	rcar_pci_write_reg(pcie, rcar_pci_read_reg(pcie, PCIEERRFR), PCIEERRFR);
- 
+ config SERIAL_SH_SCI_DMA
+ 	bool "DMA support"
 -- 
-2.11.0
+2.7.4
