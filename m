@@ -1,131 +1,169 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:54540 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751890AbdK2ToP (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 29 Nov 2017 14:44:15 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Return-Path: <kieranbingham@gmail.com>
+Subject: Re: [PATCH v8 02/28] rcar-vin: rename poorly named initialize and
+ cleanup functions
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+ <niklas.soderlund+renesas@ragnatech.se>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-Subject: [PATCH v8 27/28] rcar-vin: enable support for r8a7796
-Date: Wed, 29 Nov 2017 20:43:41 +0100
-Message-Id: <20171129194342.26239-28-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20171129194342.26239-1-niklas.soderlund+renesas@ragnatech.se>
+ Kieran Bingham <kieran.bingham@ideasonboard.com>
 References: <20171129194342.26239-1-niklas.soderlund+renesas@ragnatech.se>
+ <20171129194342.26239-3-niklas.soderlund+renesas@ragnatech.se>
+From: Kieran Bingham <kieranbingham@gmail.com>
+Message-ID: <681b2aa1-e80b-e485-984d-95606a40ed3a@gmail.com>
+Date: Thu, 30 Nov 2017 17:55:08 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20171129194342.26239-3-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the SoC specific information for Renesas r8a7796.
+Hi Niklas,
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
----
- .../devicetree/bindings/media/rcar_vin.txt         |  1 +
- drivers/media/platform/rcar-vin/rcar-core.c        | 64 ++++++++++++++++++++++
- 2 files changed, 65 insertions(+)
+If relevant I believe you could have a Tested-by: tag from me on this series now
+that I have capture working on the Eagle-V3M. I'll let you decide on that though.
 
-diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/rcar_vin.txt
-index 5a95d9668d2c7dfd..314743532bbb4523 100644
---- a/Documentation/devicetree/bindings/media/rcar_vin.txt
-+++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
-@@ -20,6 +20,7 @@ on Gen3 to a CSI-2 receiver.
-    - "renesas,vin-r8a7793" for the R8A7793 device
-    - "renesas,vin-r8a7794" for the R8A7794 device
-    - "renesas,vin-r8a7795" for the R8A7795 device
-+   - "renesas,vin-r8a7796" for the R8A7796 device
-    - "renesas,rcar-gen2-vin" for a generic R-Car Gen2 or RZ/G1 compatible
-      device.
-    - "renesas,rcar-gen3-vin" for a generic R-Car Gen3 compatible device.
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 9da5aff33fd224f2..62eb89b36fbb2ee1 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -1085,6 +1085,66 @@ static const struct rvin_info rcar_info_r8a7795es1 = {
- 	},
- };
- 
-+static const struct rvin_info rcar_info_r8a7796 = {
-+	.chip = RCAR_GEN3,
-+	.use_mc = true,
-+	.max_width = 4096,
-+	.max_height = 4096,
-+
-+	.num_chsels = 5,
-+	.chsels = {
-+		{
-+			{ .csi = RVIN_CSI40, .chan = 0 },
-+			{ .csi = RVIN_CSI20, .chan = 0 },
-+			{ .csi = RVIN_NC, .chan = 0 },
-+			{ .csi = RVIN_CSI40, .chan = 0 },
-+			{ .csi = RVIN_CSI20, .chan = 0 },
-+		}, {
-+			{ .csi = RVIN_CSI20, .chan = 0 },
-+			{ .csi = RVIN_NC, .chan = 0 },
-+			{ .csi = RVIN_CSI40, .chan = 0 },
-+			{ .csi = RVIN_CSI40, .chan = 1 },
-+			{ .csi = RVIN_CSI20, .chan = 1 },
-+		}, {
-+			{ .csi = RVIN_NC, .chan = 0 },
-+			{ .csi = RVIN_CSI40, .chan = 0 },
-+			{ .csi = RVIN_CSI20, .chan = 0 },
-+			{ .csi = RVIN_CSI40, .chan = 2 },
-+			{ .csi = RVIN_CSI20, .chan = 2 },
-+		}, {
-+			{ .csi = RVIN_CSI40, .chan = 1 },
-+			{ .csi = RVIN_CSI20, .chan = 1 },
-+			{ .csi = RVIN_NC, .chan = 1 },
-+			{ .csi = RVIN_CSI40, .chan = 3 },
-+			{ .csi = RVIN_CSI20, .chan = 3 },
-+		}, {
-+			{ .csi = RVIN_CSI40, .chan = 0 },
-+			{ .csi = RVIN_CSI20, .chan = 0 },
-+			{ .csi = RVIN_NC, .chan = 0 },
-+			{ .csi = RVIN_CSI40, .chan = 0 },
-+			{ .csi = RVIN_CSI20, .chan = 0 },
-+		}, {
-+			{ .csi = RVIN_CSI20, .chan = 0 },
-+			{ .csi = RVIN_NC, .chan = 0 },
-+			{ .csi = RVIN_CSI40, .chan = 0 },
-+			{ .csi = RVIN_CSI40, .chan = 1 },
-+			{ .csi = RVIN_CSI20, .chan = 1 },
-+		}, {
-+			{ .csi = RVIN_NC, .chan = 0 },
-+			{ .csi = RVIN_CSI40, .chan = 0 },
-+			{ .csi = RVIN_CSI20, .chan = 0 },
-+			{ .csi = RVIN_CSI40, .chan = 2 },
-+			{ .csi = RVIN_CSI20, .chan = 2 },
-+		}, {
-+			{ .csi = RVIN_CSI40, .chan = 1 },
-+			{ .csi = RVIN_CSI20, .chan = 1 },
-+			{ .csi = RVIN_NC, .chan = 1 },
-+			{ .csi = RVIN_CSI40, .chan = 3 },
-+			{ .csi = RVIN_CSI20, .chan = 3 },
-+		},
-+	},
-+};
-+
- static const struct of_device_id rvin_of_id_table[] = {
- 	{
- 		.compatible = "renesas,vin-r8a7778",
-@@ -1118,6 +1178,10 @@ static const struct of_device_id rvin_of_id_table[] = {
- 		.compatible = "renesas,vin-r8a7795",
- 		.data = &rcar_info_r8a7795,
- 	},
-+	{
-+		.compatible = "renesas,vin-r8a7796",
-+		.data = &rcar_info_r8a7796,
-+	},
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, rvin_of_id_table);
--- 
-2.15.0
+On 29/11/17 19:43, Niklas Söderlund wrote:
+> The functions to initialize and cleanup the hardware and video device
+> where poorly named from the start. Rename them to better describe there
+
+s/describe there/describe their/
+
+> intended function.
+> 
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+
+Other than the spelling above, the rename looks good to me.
+
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
+> ---
+>  drivers/media/platform/rcar-vin/rcar-core.c | 10 +++++-----
+>  drivers/media/platform/rcar-vin/rcar-dma.c  |  6 +++---
+>  drivers/media/platform/rcar-vin/rcar-v4l2.c |  4 ++--
+>  drivers/media/platform/rcar-vin/rcar-vin.h  |  8 ++++----
+>  4 files changed, 14 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+> index 108d776f32651b27..f7a4c21909da6923 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-core.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
+> @@ -93,7 +93,7 @@ static int rvin_digital_notify_complete(struct v4l2_async_notifier *notifier)
+>  		return ret;
+>  	}
+>  
+> -	return rvin_v4l2_probe(vin);
+> +	return rvin_v4l2_register(vin);
+>  }
+>  
+>  static void rvin_digital_notify_unbind(struct v4l2_async_notifier *notifier,
+> @@ -103,7 +103,7 @@ static void rvin_digital_notify_unbind(struct v4l2_async_notifier *notifier,
+>  	struct rvin_dev *vin = notifier_to_vin(notifier);
+>  
+>  	vin_dbg(vin, "unbind digital subdev %s\n", subdev->name);
+> -	rvin_v4l2_remove(vin);
+> +	rvin_v4l2_unregister(vin);
+>  	vin->digital->subdev = NULL;
+>  }
+>  
+> @@ -245,7 +245,7 @@ static int rcar_vin_probe(struct platform_device *pdev)
+>  	if (irq < 0)
+>  		return irq;
+>  
+> -	ret = rvin_dma_probe(vin, irq);
+> +	ret = rvin_dma_register(vin, irq);
+>  	if (ret)
+>  		return ret;
+>  
+> @@ -260,7 +260,7 @@ static int rcar_vin_probe(struct platform_device *pdev)
+>  
+>  	return 0;
+>  error:
+> -	rvin_dma_remove(vin);
+> +	rvin_dma_unregister(vin);
+>  	v4l2_async_notifier_cleanup(&vin->notifier);
+>  
+>  	return ret;
+> @@ -275,7 +275,7 @@ static int rcar_vin_remove(struct platform_device *pdev)
+>  	v4l2_async_notifier_unregister(&vin->notifier);
+>  	v4l2_async_notifier_cleanup(&vin->notifier);
+>  
+> -	rvin_dma_remove(vin);
+> +	rvin_dma_unregister(vin);
+>  
+>  	return 0;
+>  }
+> diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+> index 23fdff7a7370842e..d701b52d198243b5 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-dma.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+> @@ -1153,14 +1153,14 @@ static const struct vb2_ops rvin_qops = {
+>  	.wait_finish		= vb2_ops_wait_finish,
+>  };
+>  
+> -void rvin_dma_remove(struct rvin_dev *vin)
+> +void rvin_dma_unregister(struct rvin_dev *vin)
+>  {
+>  	mutex_destroy(&vin->lock);
+>  
+>  	v4l2_device_unregister(&vin->v4l2_dev);
+>  }
+>  
+> -int rvin_dma_probe(struct rvin_dev *vin, int irq)
+> +int rvin_dma_register(struct rvin_dev *vin, int irq)
+>  {
+>  	struct vb2_queue *q = &vin->queue;
+>  	int i, ret;
+> @@ -1208,7 +1208,7 @@ int rvin_dma_probe(struct rvin_dev *vin, int irq)
+>  
+>  	return 0;
+>  error:
+> -	rvin_dma_remove(vin);
+> +	rvin_dma_unregister(vin);
+>  
+>  	return ret;
+>  }
+> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> index b479b882da12f62d..178aecc94962abe2 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> @@ -839,7 +839,7 @@ static const struct v4l2_file_operations rvin_fops = {
+>  	.read		= vb2_fop_read,
+>  };
+>  
+> -void rvin_v4l2_remove(struct rvin_dev *vin)
+> +void rvin_v4l2_unregister(struct rvin_dev *vin)
+>  {
+>  	v4l2_info(&vin->v4l2_dev, "Removing %s\n",
+>  		  video_device_node_name(&vin->vdev));
+> @@ -866,7 +866,7 @@ static void rvin_notify(struct v4l2_subdev *sd,
+>  	}
+>  }
+>  
+> -int rvin_v4l2_probe(struct rvin_dev *vin)
+> +int rvin_v4l2_register(struct rvin_dev *vin)
+>  {
+>  	struct video_device *vdev = &vin->vdev;
+>  	struct v4l2_subdev *sd = vin_to_source(vin);
+> diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+> index 5382078143fb3869..85cb7ec53d2b08b5 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-vin.h
+> +++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+> @@ -153,11 +153,11 @@ struct rvin_dev {
+>  #define vin_warn(d, fmt, arg...)	dev_warn(d->dev, fmt, ##arg)
+>  #define vin_err(d, fmt, arg...)		dev_err(d->dev, fmt, ##arg)
+>  
+> -int rvin_dma_probe(struct rvin_dev *vin, int irq);
+> -void rvin_dma_remove(struct rvin_dev *vin);
+> +int rvin_dma_register(struct rvin_dev *vin, int irq);
+> +void rvin_dma_unregister(struct rvin_dev *vin);
+>  
+> -int rvin_v4l2_probe(struct rvin_dev *vin);
+> -void rvin_v4l2_remove(struct rvin_dev *vin);
+> +int rvin_v4l2_register(struct rvin_dev *vin);
+> +void rvin_v4l2_unregister(struct rvin_dev *vin);
+>  
+>  const struct rvin_video_format *rvin_format_from_pixel(u32 pixelformat);
+>  
+> 
