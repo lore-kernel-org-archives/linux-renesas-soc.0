@@ -1,43 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:38376 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758329AbdKOPZR (ORCPT
+Received: from sauhun.de ([88.99.104.3]:58675 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752713AbdK3Otc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Nov 2017 10:25:17 -0500
-Received: by mail-wm0-f67.google.com with SMTP id z3so3749625wme.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Nov 2017 07:25:17 -0800 (PST)
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, wsa@the-dreams.de,
-        horms@verge.net.au, geert@linux-m68k.org
-Cc: magnus.damm@gmail.com,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 2/3] arm64: dts: r8a7795: add DMA for SCIF2
-Date: Wed, 15 Nov 2017 16:25:09 +0100
-Message-Id: <1510759510-30295-3-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1510759510-30295-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1510759510-30295-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Thu, 30 Nov 2017 09:49:32 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [PATCH] mmc: core: properly init drv_type
+Date: Thu, 30 Nov 2017 15:49:10 +0100
+Message-Id: <20171130144910.4320-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Tested on Draak.
+When the latest version of parsing the new eMMC bindings was moved from
+core.c to mmc.c, it was overlooked that drv_type could be used
+uninitialized. Fix it!
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Fixes: 6186d06c519e21 ("mmc: parse new binding for eMMC fixed driver type")
+Reported-by: Colin Ian King <colin.king@canonical.com>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/mmc/core/mmc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index 04a392a..5fa7572 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -393,6 +393,8 @@
- 				 <&cpg CPG_CORE R8A77995_CLK_S3D1C>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x13>, <&dmac1 0x12>;
-+			dma-names = "tx", "rx";
- 			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
- 			resets = <&cpg 310>;
- 			status = "disabled";
+diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+index a552f61060d212..0d1c6b025ca596 100644
+--- a/drivers/mmc/core/mmc.c
++++ b/drivers/mmc/core/mmc.c
+@@ -1290,7 +1290,7 @@ int mmc_hs400_to_hs200(struct mmc_card *card)
+ 
+ static void mmc_select_driver_type(struct mmc_card *card)
+ {
+-	int card_drv_type, drive_strength, drv_type;
++	int card_drv_type, drive_strength, drv_type = 0;
+ 	int fixed_drv_type = card->host->fixed_drv_type;
+ 
+ 	card_drv_type = card->ext_csd.raw_driver_strength |
 -- 
-2.7.4
+2.11.0
