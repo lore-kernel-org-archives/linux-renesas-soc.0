@@ -1,185 +1,96 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:43319 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754248AbdK1UVN (ORCPT
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:32930 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751757AbdK3T5z (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Nov 2017 15:21:13 -0500
-Received: by mail-lf0-f65.google.com with SMTP id 94so1254561lfy.10
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 28 Nov 2017 12:21:12 -0800 (PST)
+        Thu, 30 Nov 2017 14:57:55 -0500
+Received: by mail-lf0-f67.google.com with SMTP id 74so9267626lfs.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Nov 2017 11:57:55 -0800 (PST)
+Subject: Re: [PATCH/RFT renesas-devel] arm64: dts: ulcb: Enable NFS root
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: Simon Horman <horms@verge.net.au>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+References: <1493717048-10740-1-git-send-email-horms+renesas@verge.net.au>
+ <CAMuHMdXbvC90k1QYZsjWx=f7QVQyWOzi_v3u8ShDoDsSAmZsjw@mail.gmail.com>
+ <20171130094354.6pktdlcuc3gettji@verge.net.au>
+ <20171130125217.GE22365@bigcity.dyn.berto.se>
+ <CAMuHMdVKA5YmRPcTTGafKciMF-cKtKTx+PdNJtrDRb20jCxtAA@mail.gmail.com>
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20171128202109.031715810@cogentembedded.com>
-Date: Tue, 28 Nov 2017 23:15:45 +0300
-To: Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH 2/2] arm64: dts: renesas: r8a77970: use SYSC power domain macros
+Message-ID: <1d0ad706-81ee-5e0f-6f8f-696c8428af73@cogentembedded.com>
+Date: Thu, 30 Nov 2017 22:57:52 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=arm64-dts-renesas-r8a77970-use-SYSC-power-domain-macros.patch
+In-Reply-To: <CAMuHMdVKA5YmRPcTTGafKciMF-cKtKTx+PdNJtrDRb20jCxtAA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Now that the commit 833bdb47c826 ("dt-bindings: power: add R8A77970 SYSC
-power domain definitions") has hit Linus' tree, we can replace the  bare
-numbers  (we had to use to avoid a cross tree dependency) with these macro
-definitions...
+On 11/30/2017 04:45 PM, Geert Uytterhoeven wrote:
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>>>>> Enable NFS root on the r8a7795/h3ulcb and r8a7796/m3ulcb
+>>>>> as per:
+>>>>> * commit b2407c566ba29215 ("arm64: dts: r8a7795: enable nfs root on Salvator-X board").
+>>>>> * commit 742a9dfb90f0 ("arm64: dts: r8a7796: salvator-x: Enable NFS root")
+>>>>>
+>>>>> Also set ignore_loglevel rw as boot args as is the case for the boards
+>>>>> for the boards for other Renesas ARM/ARM64 based SoCs.
+>>>>
+>>>> s/for the boards//
+>>>>
+>>>>> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+>>>>
+>>>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>>>>
+>>>> Gr{oetje,eeting}s,
+>>>
+>>> Sergei has pointed out that bootargs has seems to have effect on ARM64
+>>> kernels. So I think this patch should be withdrawn and we should consider
+>>> removing bootargs from those ARM64 boards where it is present.
+>>>
+>>
+>> I don't think this is true.
+>>
+>> I just added a argument to bootargs to salvator-common.dtsi for some
+>> hack testing and it took effect. Tested on-top of latest renesas-drivers
+>> and H3 ES2.0.
+>>
+>>>>> DIFF <<<
+>> diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+>> index 7b30044a55367d35..4cb4b44f8be42cb4 100644
+>> --- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+>> +++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+>> @@ -42,7 +42,7 @@
+>>          };
+>>
+>>          chosen {
+>> -               bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
+>> +               bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp adv748x.txbvc=1";
+>>                  stdout-path = "serial0:115200n8";
+>>          };
+>>>>> END DIFF <<<
+>>
+>> # cat /sys/firmware/devicetree/base/chosen/bootargs
+>> ignore_loglevel rw root=/dev/nfs ip=dhcp adv748x.txbvc=1
+>>
+>> And the module parameter had the expected effect on the adv7482x driver.
+>> Is there another issue here which I'm missing?
+> 
+> 1. It may depend on the U-Boot version
 
----
- arch/arm64/boot/dts/renesas/r8a77970.dtsi |   32 +++++++++++++++---------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+    It probably does! My U-Boot clearly copies its "bootargs" env. variable 
+into DT's "/chosen/bootargs" prop.
 
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -33,14 +33,14 @@
- 			compatible = "arm,cortex-a53", "arm,armv8";
- 			reg = <0>;
- 			clocks = <&cpg CPG_CORE R8A77970_CLK_Z2>;
--			power-domains = <&sysc 5>;
-+			power-domains = <&sysc R8A77970_PD_CA53_CPU0>;
- 			next-level-cache = <&L2_CA53>;
- 			enable-method = "psci";
- 		};
- 
- 		L2_CA53: cache-controller {
- 			compatible = "cache";
--			power-domains = <&sysc 21>;
-+			power-domains = <&sysc R8A77970_PD_CA53_SCU>;
- 			cache-unified;
- 			cache-level = <2>;
- 		};
-@@ -88,7 +88,7 @@
- 				      IRQ_TYPE_LEVEL_HIGH)>;
- 			clocks = <&cpg CPG_MOD 408>;
- 			clock-names = "clk";
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
- 			resets = <&cpg 408>;
- 		};
- 
-@@ -109,7 +109,7 @@
- 				     "renesas,rcar-gen3-wdt";
- 			reg = <0 0xe6020000 0 0x0c>;
- 			clocks = <&cpg CPG_MOD 402>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
- 			resets = <&cpg 402>;
- 			status = "disabled";
- 		};
-@@ -190,7 +190,7 @@
- 				      GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH
- 				      GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 407>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
- 			resets = <&cpg 407>;
- 		};
- 
-@@ -217,7 +217,7 @@
- 					  "ch4", "ch5", "ch6", "ch7";
- 			clocks = <&cpg CPG_MOD 218>;
- 			clock-names = "fck";
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
- 			resets = <&cpg 218>;
- 			#dma-cells = <1>;
- 			dma-channels = <8>;
-@@ -245,7 +245,7 @@
- 					  "ch4", "ch5", "ch6", "ch7";
- 			clocks = <&cpg CPG_MOD 217>;
- 			clock-names = "fck";
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
- 			resets = <&cpg 217>;
- 			#dma-cells = <1>;
- 			dma-channels = <8>;
-@@ -268,7 +268,7 @@
- 			dmas = <&dmac1 0x31>, <&dmac1 0x30>,
- 			       <&dmac2 0x31>, <&dmac2 0x30>;
- 			dma-names = "tx", "rx", "tx", "rx";
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
- 			resets = <&cpg 520>;
- 			status = "disabled";
- 		};
-@@ -286,7 +286,7 @@
- 			dmas = <&dmac1 0x33>, <&dmac1 0x32>,
- 			       <&dmac2 0x33>, <&dmac2 0x32>;
- 			dma-names = "tx", "rx", "tx", "rx";
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
- 			resets = <&cpg 519>;
- 			status = "disabled";
- 		};
-@@ -304,7 +304,7 @@
- 			dmas = <&dmac1 0x35>, <&dmac1 0x34>,
- 			       <&dmac2 0x35>, <&dmac2 0x34>;
- 			dma-names = "tx", "rx", "tx", "rx";
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
- 			resets = <&cpg 518>;
- 			status = "disabled";
- 		};
-@@ -321,7 +321,7 @@
- 			dmas = <&dmac1 0x37>, <&dmac1 0x36>,
- 			       <&dmac2 0x37>, <&dmac2 0x36>;
- 			dma-names = "tx", "rx", "tx", "rx";
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
- 			resets = <&cpg 517>;
- 			status = "disabled";
- 		};
-@@ -339,7 +339,7 @@
- 			dmas = <&dmac1 0x51>, <&dmac1 0x50>,
- 			       <&dmac2 0x51>, <&dmac2 0x50>;
- 			dma-names = "tx", "rx", "tx", "rx";
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
- 			resets = <&cpg 207>;
- 			status = "disabled";
- 		};
-@@ -357,7 +357,7 @@
- 			dmas = <&dmac1 0x53>, <&dmac1 0x52>,
- 			       <&dmac2 0x53>, <&dmac2 0x52>;
- 			dma-names = "tx", "rx", "tx", "rx";
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
- 			resets = <&cpg 206>;
- 			status = "disabled";
- 		};
-@@ -375,7 +375,7 @@
- 			dmas = <&dmac1 0x57>, <&dmac1 0x56>,
- 			       <&dmac2 0x57>, <&dmac2 0x56>;
- 			dma-names = "tx", "rx", "tx", "rx";
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
- 			resets = <&cpg 204>;
- 			status = "disabled";
- 		};
-@@ -392,7 +392,7 @@
- 			dmas = <&dmac1 0x59>, <&dmac1 0x58>,
- 			       <&dmac2 0x59>, <&dmac2 0x58>;
- 			dma-names = "tx", "rx", "tx", "rx";
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
- 			resets = <&cpg 203>;
- 			status = "disabled";
- 		};
-@@ -434,7 +434,7 @@
- 					  "ch20", "ch21", "ch22", "ch23",
- 					  "ch24";
- 			clocks = <&cpg CPG_MOD 812>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
- 			resets = <&cpg 812>;
- 			phy-mode = "rgmii-id";
- 			iommus = <&ipmmu_rt 3>;
+> 2. Anyone playing with CONFIG_CMDLINE and CONFIG_CMDLINE_FORCE?
+
+    Not me (before now). Tried it now and it works as expected.
+
+> Gr{oetje,eeting}s,
+> 
+>                          Geert
+
+MBR, Sergei
