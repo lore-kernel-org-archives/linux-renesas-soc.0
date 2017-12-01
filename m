@@ -1,99 +1,235 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:34817 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751660AbdLALDi (ORCPT
+Received: from mail-io0-f179.google.com ([209.85.223.179]:47069 "EHLO
+        mail-io0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751541AbdLAJWU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 1 Dec 2017 06:03:38 -0500
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-CC: Geert Uytterhoeven <geert@linux-m68k.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        "USB list" <linux-usb@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-Subject: RE: [PATCH] PM / runtime: Drop children check from
- __pm_runtime_set_status()
-Date: Fri, 1 Dec 2017 11:03:33 +0000
-Message-ID: <TY1PR06MB09929CD76E67B64FDE54B170D8390@TY1PR06MB0992.apcprd06.prod.outlook.com>
-References: <1713438.irjm9MTSvo@aspire.rjw.lan>
- <CAMuHMdV4LV2Uzh2oGdaPiS4W4dfsZ-pn3rGcJNiZLStfo39How@mail.gmail.com>
+        Fri, 1 Dec 2017 04:22:20 -0500
+Received: by mail-io0-f179.google.com with SMTP id x129so10548334iod.13
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 01 Dec 2017 01:22:20 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <TY1PR06MB09928B145D35E52444F8D462D8380@TY1PR06MB0992.apcprd06.prod.outlook.com>
+References: <1713438.irjm9MTSvo@aspire.rjw.lan> <CAMuHMdV4LV2Uzh2oGdaPiS4W4dfsZ-pn3rGcJNiZLStfo39How@mail.gmail.com>
  <TY1PR06MB09928D43D4E5E5752A6A604ED83A0@TY1PR06MB0992.apcprd06.prod.outlook.com>
  <CAPDyKFoF0WMSTuK4AAyDzerpVpnfEq=Hn1n9kDJM0fYMkFL_wA@mail.gmail.com>
  <TY1PR06MB09924E4F66C6FCF131EE71CFD83B0@TY1PR06MB0992.apcprd06.prod.outlook.com>
  <CAPDyKFoG2-mVGDtzPyg2FDVbXnsWGy543craKqeBVE_awKpf8Q@mail.gmail.com>
  <CAMuHMdViD3vqzits=th52+01d5y3p5iwbAg0jbUBcoGvYfULuA@mail.gmail.com>
- <CAPDyKFpRrQr3LRXH_CoLSYe2a=2PnUqvuNWUYSuh0wm+rBJ0dw@mail.gmail.com>
- <TY1PR06MB09928B145D35E52444F8D462D8380@TY1PR06MB0992.apcprd06.prod.outlook.com>
- <CAPDyKFr8D4jL2vwO5tdBJnNVP=DoAD6H_K=4SQbu7rFAZFd3Xg@mail.gmail.com>
-In-Reply-To: <CAPDyKFr8D4jL2vwO5tdBJnNVP=DoAD6H_K=4SQbu7rFAZFd3Xg@mail.gmail.com>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+ <CAPDyKFpRrQr3LRXH_CoLSYe2a=2PnUqvuNWUYSuh0wm+rBJ0dw@mail.gmail.com> <TY1PR06MB09928B145D35E52444F8D462D8380@TY1PR06MB0992.apcprd06.prod.outlook.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 1 Dec 2017 10:22:18 +0100
+Message-ID: <CAPDyKFr8D4jL2vwO5tdBJnNVP=DoAD6H_K=4SQbu7rFAZFd3Xg@mail.gmail.com>
+Subject: Re: [PATCH] PM / runtime: Drop children check from __pm_runtime_set_status()
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        USB list <linux-usb@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGksDQoNCj4gRnJvbTogVWxmIEhhbnNzb24sIFNlbnQ6IEZyaWRheSwgRGVjZW1iZXIgMSwgMjAx
-NyA2OjIyIFBNDQo+IA0KPiArIEtpc2hvbg0KPiANCj4gT24gMzAgTm92ZW1iZXIgMjAxNyBhdCAx
-Mzo1MSwgWW9zaGloaXJvIFNoaW1vZGENCj4gPHlvc2hpaGlyby5zaGltb2RhLnVoQHJlbmVzYXMu
-Y29tPiB3cm90ZToNCj4gPiBIaSwNCj4gPg0KPiA+PiBGcm9tOiBVbGYgSGFuc3NvbiwgU2VudDog
-V2VkbmVzZGF5LCBOb3ZlbWJlciAyOSwgMjAxNyA2OjU5IFBNDQo+ID4+DQo+ID4+IE9uIDI5IE5v
-dmVtYmVyIDIwMTcgYXQgMTA6NDMsIEdlZXJ0IFV5dHRlcmhvZXZlbiA8Z2VlcnRAbGludXgtbTY4
-ay5vcmc+IHdyb3RlOg0KPiA+PiA+IEhpIFVsZiwNCj4gPiA8c25pcD4NCj4gPj4gT2theSwgc28g
-dGhlIHByb2JsZW0gcmVtYWlucyBubyBtYXR0ZXIgd2hpY2ggc29sdXRpb24gZm9yIHdha2V1cCB5
-b3UNCj4gPj4gcGljayBpbiBnZW5wZC4NCj4gPg0KPiA+IFllcy4gVG9kYXkgSSBjb3VsZCByZXBy
-b2R1Y2UgdGhpcyBpc3N1ZSB3aXRob3V0IHVzYiBob3N0IGRyaXZlci4NCj4gPiAtIFRoZSByZW5l
-c2FzX3VzYjMgdXNiIHBlcmlwaGVyYWwgZHJpdmVyIGhhcyBnZW5lcmljIHBoeSBoYW5kbGluZy4N
-Cj4gPiAgIChUaGUgcGVyaXBoZXJhbCBkcml2ZXIgdXNlcyBkaWZmZXJlbnQgZ2VuZXJpYyBwaHkg
-ZHJpdmVyIChwaHktcmNhci1nZW4zLXVzYjMuYykgdGhvdWdoLikNCj4gPiAgLS0+IElmIEkgdXNl
-ZCB0aGUgY3VycmVudCByZW5lc2FzX3VzYjMgKHRoaXMgbWVhbnMgZG9lc24ndCBjYWxsIHBoeV9w
-b3dlcl97b24sb2ZmfSgpLA0KPiA+ICAgICAgdGhlIGlzc3VlIGRpZG4ndCBoYXBwZW4uDQo+ID4g
-IC0tPiBJZiBJIGFkZGVkIHBoeV9wb3dlcl97b24sb2ZmfSgpIGNhbGxpbmcsIHRoZSBpc3N1ZSBo
-YXBwZW5lZC4NCj4gPiAgIC0tPiBTbywgSSdtIHRoaW5raW5nIHRoZSBBUElzIGFyZSByZWxhdGVk
-IHRvIHRoZSBpc3N1ZS4NCj4gDQo+IFllcy4NCj4gDQo+ID4NCj4gPiAtIFRoZSBnZW5lcmljIHBo
-eSBBUElzIGFyZSBpbiBkcml2ZXJzL3BoeS9waHktY29yZS5jLg0KPiA+ICAtLT4gVGhlIHBoeS1y
-Y2FyLWdlbjMtdXNiWzIzXSBkcml2ZXJzIGNhbGwgb25seSBwbV9ydW50aW1lX2VuYWJsZSgpIGJl
-Zm9yZSBkZXZtX3BoeV9jcmVhdGUoKS4NCj4gPiAgIC0tPiBUaGUgcGh5LWNvcmUgd2lsbCBjYWxs
-IHBtX3J1bnRpbWVfe2dldF9zeW5jLHB1dH0oKSBpbiBwaHlfe2luaXQsZXhpdCxwb3dlcl97b24s
-b2ZmfX0uDQo+ID4gICAgLS0+IFNvLCBJSVVDLCBib3RoIGRldmljZXMgb2YgcGh5LTxkZXZfbmFt
-ZT4uPGlkPiBhbmQgPGRldl9uYW1lPiB3aWxsIGJlIGhhbmRsZWQgYnkgcnVudGltZSBQTSBBUElz
-Lg0KPiA+ICAtLT4gVGhlIHJ1bnRpbWUgUE0gaW1wbGVtZW50YXRpb24gb2YgcGh5LWNvcmUgc2Vl
-bXMgZ29vZCB0byBtZS4gQnV0Li4uPw0KPiANCj4gDQo+IEkgaGF2ZSBkaWdlc3RlZCB0aGUgaW5m
-b3JtYXRpb24gdGhhdCB5b3UgYW5kIEdlZXJ0IHByb3ZpZGVkLCB0aGFua3MhDQo+IA0KPiBTbywg
-bXkgY29uY2x1c2lvbnMgc28gZmFyIGlzOg0KPiANCj4gVGhlIHBoeSBjb3JlIGlzIHVzaW5nIHJ1
-bnRpbWUgUE0gcmVmZXJlbmNlIGNvdW50aW5nIGF0DQo+IHBoeV9wb3dlcl9vbnxvZmYoKS4gQWx0
-aG91Z2ggaXQgZG9lcyB0aGF0IG9uIHRoZSBwaHkgY29yZSBkZXZpY2UsDQo+IHdoaWNoIGlzIGEg
-Y2hpbGQgZGV2aWNlIG9mIHRoZSBwaHkgcHJvdmlkZXIgZGV2aWNlLg0KPiANCj4gQmVjYXVzZSBw
-aHlfcG93ZXJfb2ZmKCkgaXMgY2FsbGVkIGR1cmluZyBzeXN0ZW0gc3VzcGVuZCBmcm9tIHBoeQ0K
-PiBjb25zdW1lciBkcml2ZXJzIGxpa2UgdXNiLCB0aGUgcGh5IGNvcmUgZGV2aWNlIChjaGlsZCkg
-YW5kIHRoZSBwaHkNCj4gcHJvdmlkZXIgZGV2aWNlIChwYXJlbnQpIHdpbGwgbmV2ZXIgYmVjb21l
-IHJ1bnRpbWUgc3VzcGVuZGVkIChiZWNhdXNlDQo+IHRoZSBQTSBjb3JlIGhhcyBpbnZva2VkIHBt
-X3J1bnRpbWVfZ2V0X25vX3Jlc3VtZSgpIGZvciBhbGwgZGV2aWNlIGluDQo+IHRoZSBkZXZpY2Ug
-cHJlcGFyZSBwaGFzZSkuDQo+IA0KPiBUaGVuLCB3aGVuIGdlbnBkIGNhbGxzIHBtX3J1bnRpbWVf
-Zm9yY2Vfc3VzcGVuZCgpIGF0IHRoZSBzdXNwZW5kIG5vaXJxDQo+IHBoYXNlIGZvciB0aGUgcGh5
-IHByb3ZpZGVyIGRldmljZSwgdGhlIGNhbGwgdG8NCj4gcG1fcnVudGltZV9zZXRfc3VzcGVuZGVk
-KCkgaW4gdGhlcmUsIHRyaWdnZXJzIHRoZSBlYXJsaWVyIGVycm9yDQo+IG1lc3NhZ2UsIHdoaWNo
-IGlzIGJlY2F1c2UgdGhlIGNoaWxkIChwaHkgY29yZSBkZXZpY2UpIGlzIHN0aWxsIHJ1bnRpbWUN
-Cj4gcmVzdW1lZC4NCg0KVGhhbmsgeW91IHZlcnkgbXVjaCBmb3IgdGhlIGNvbmNsdXNpb25zIQ0K
-SXQncyBoZWxwZnVsIHRvIG1lIGFib3V0IHJ1bnRpbWUgUE0gYmVoYXZpb3IuDQoNCj4gPj4gVGhl
-biB0aGlzIHNlZW1zIHRvIHBvaW50IHRvIHRoYXQgdGhlIGRyaXZlciBtYXkgYmUgbWlzYmVoYXZp
-bmcgaW4gc29tZQ0KPiA+PiB3YXkuIEkgY2FuIGhlbHAgdG8gY2hlY2sgd2hhdCBpcyBnb2luZyBv
-bi4NCj4gPg0KPiA+IEkgZ3Vlc3Mgc28uIEJ1dCwgSSBkb24ndCBmaW5kIHlldC4uLg0KPiANCj4g
-SSB0aGluayB0aGUgYmVsb3cgcGF0Y2ggd2lsbCBoZWxwLCBhbHRob3VnaCBJIGFtIG5vdCBzdXJl
-IGlmIHRoYXQgaXMNCj4gc3VmZmljaWVudCBhcyBhIGxvbmcgdGVybSBmaXguDQoNClRoYW5rIHlv
-dSB2ZXJ5IG11Y2ggZm9yIHlvdXIgaGVscCENCkFsc28sIEknbSBub3Qgc3VyZSBob3cgdG8gZml4
-IGZvciBhIGxvbmcgdGVybSBrZXJuZWxzIHRob3VnaC4uLg0KDQo+IENhbiB5b3UgcGxlYXNlIHRy
-eSBhbmQgc2VlIGlmIGl0IHNvbHZlcyB0aGUgcHJvYmxlbXM/DQoNClN1cmUhIEkgdGVzdGVkIHlv
-dXIgcGF0Y2gsIGFuZCB0aGVuIHRoZSBmb2xsb3dpbmcgbWVzc2FnZSBkaXNhcHBlYXJlZCENCg0K
-ICAgRW5hYmxpbmcgcnVudGltZSBQTSBmb3IgaW5hY3RpdmUgZGV2aWNlIChlZTA4MDIwMC51c2It
-cGh5KSB3aXRoIGFjdGl2ZSBjaGlsZHJlbg0KDQpIb3dldmVyLCB0aGUgZm9sbG93aW5nIG1lc3Nh
-Z2Ugc3RpbGwgZXhpc3RzLg0KDQogICBFbmFibGluZyBydW50aW1lIFBNIGZvciBpbmFjdGl2ZSBk
-ZXZpY2UgKGVlMDgwMDAwLnVzYikgd2l0aCBhY3RpdmUgY2hpbGRyZW4NCg0KU28sIEkgZ3Vlc3Mg
-b2hjaS1wbGF0Zm9ybS5jIGFsc28gaGFzIHNpbWlsYXIgaXNzdWUuDQoNCkpGWUksIHRoZSBlaGNp
-LXBsYXRmb3JtLmMgZG9lc24ndCBoYXZlIHJ1bnRpbWUgUE0gaGFuZGxpbmcuDQpTbywgSSB0aGlu
-ayB0aGF0IGVycm9yIG1lc3NhZ2UgZG9lc24ndCBvdXRwdXQgZnJvbSBlaGNpIGRldmljZXMuDQoN
-CkJlc3QgcmVnYXJkcywNCllvc2hpaGlybyBTaGltb2RhDQoNCg==
++ Kishon
+
+On 30 November 2017 at 13:51, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> Hi,
+>
+>> From: Ulf Hansson, Sent: Wednesday, November 29, 2017 6:59 PM
+>>
+>> On 29 November 2017 at 10:43, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>> > Hi Ulf,
+> <snip>
+>> Okay, so the problem remains no matter which solution for wakeup you
+>> pick in genpd.
+>
+> Yes. Today I could reproduce this issue without usb host driver.
+> - The renesas_usb3 usb peripheral driver has generic phy handling.
+>   (The peripheral driver uses different generic phy driver (phy-rcar-gen3-usb3.c) though.)
+>  --> If I used the current renesas_usb3 (this means doesn't call phy_power_{on,off}(),
+>      the issue didn't happen.
+>  --> If I added phy_power_{on,off}() calling, the issue happened.
+>   --> So, I'm thinking the APIs are related to the issue.
+
+Yes.
+
+>
+> - The generic phy APIs are in drivers/phy/phy-core.c.
+>  --> The phy-rcar-gen3-usb[23] drivers call only pm_runtime_enable() before devm_phy_create().
+>   --> The phy-core will call pm_runtime_{get_sync,put}() in phy_{init,exit,power_{on,off}}.
+>    --> So, IIUC, both devices of phy-<dev_name>.<id> and <dev_name> will be handled by runtime PM APIs.
+>  --> The runtime PM implementation of phy-core seems good to me. But...?
+
+
+I have digested the information that you and Geert provided, thanks!
+
+So, my conclusions so far is:
+
+The phy core is using runtime PM reference counting at
+phy_power_on|off(). Although it does that on the phy core device,
+which is a child device of the phy provider device.
+
+Because phy_power_off() is called during system suspend from phy
+consumer drivers like usb, the phy core device (child) and the phy
+provider device (parent) will never become runtime suspended (because
+the PM core has invoked pm_runtime_get_no_resume() for all device in
+the device prepare phase).
+
+Then, when genpd calls pm_runtime_force_suspend() at the suspend noirq
+phase for the phy provider device, the call to
+pm_runtime_set_suspended() in there, triggers the earlier error
+message, which is because the child (phy core device) is still runtime
+resumed.
+
+>
+>> Then this seems to point to that the driver may be misbehaving in some
+>> way. I can help to check what is going on.
+>
+> I guess so. But, I don't find yet...
+
+I think the below patch will help, although I am not sure if that is
+sufficient as a long term fix.
+
+Can you please try and see if it solves the problems?
+
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 1 Dec 2017 09:07:54 +0100
+Subject: [PATCH] phy: core: Move runtime PM reference counting to be done on
+ the parent
+
+This is temporary hack, do not merge!
+
+The runtime PM deployment in the phy core is a bit unnecessary complicated,
+due to enabling runtime PM for the phy device. Moreover it causes problems
+for parent devices (phy providers) when dealing with system wide PM.
+
+Therefore, move the runtime PM reference counting to be done on the phy's
+parent device and drop to enable runtime PM for the phy device altogether.
+This simplifies for the phy provider driver, to deal with system wide PM,
+in case it also cares about keeping the runtime PM status of the device in
+sync with the state of the HW.
+
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+---
+ drivers/phy/phy-core.c | 35 +++++++++--------------------------
+ 1 file changed, 9 insertions(+), 26 deletions(-)
+
+diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
+index b4964b0..837e50d 100644
+--- a/drivers/phy/phy-core.c
++++ b/drivers/phy/phy-core.c
+@@ -217,15 +217,12 @@ EXPORT_SYMBOL_GPL(phy_pm_runtime_forbid);
+
+ int phy_init(struct phy *phy)
+ {
+-       int ret;
++       int ret = 0;
+
+        if (!phy)
+                return 0;
+
+-       ret = phy_pm_runtime_get_sync(phy);
+-       if (ret < 0 && ret != -ENOTSUPP)
+-               return ret;
+-       ret = 0; /* Override possible ret == -ENOTSUPP */
++       pm_runtime_get_sync(phy->dev.parent);
+
+        mutex_lock(&phy->mutex);
+        if (phy->init_count == 0 && phy->ops->init) {
+@@ -239,22 +236,19 @@ int phy_init(struct phy *phy)
+
+ out:
+        mutex_unlock(&phy->mutex);
+-       phy_pm_runtime_put(phy);
++       pm_runtime_put(phy->dev.parent);
+        return ret;
+ }
+ EXPORT_SYMBOL_GPL(phy_init);
+
+ int phy_exit(struct phy *phy)
+ {
+-       int ret;
++       int ret = 0;
+
+        if (!phy)
+                return 0;
+
+-       ret = phy_pm_runtime_get_sync(phy);
+-       if (ret < 0 && ret != -ENOTSUPP)
+-               return ret;
+-       ret = 0; /* Override possible ret == -ENOTSUPP */
++       pm_runtime_get_sync(phy->dev.parent);
+
+        mutex_lock(&phy->mutex);
+        if (phy->init_count == 1 && phy->ops->exit) {
+@@ -268,7 +262,7 @@ int phy_exit(struct phy *phy)
+
+ out:
+        mutex_unlock(&phy->mutex);
+-       phy_pm_runtime_put(phy);
++       pm_runtime_put(phy->dev.parent);
+        return ret;
+ }
+ EXPORT_SYMBOL_GPL(phy_exit);
+@@ -286,11 +280,7 @@ int phy_power_on(struct phy *phy)
+                        goto out;
+        }
+
+-       ret = phy_pm_runtime_get_sync(phy);
+-       if (ret < 0 && ret != -ENOTSUPP)
+-               goto err_pm_sync;
+-
+-       ret = 0; /* Override possible ret == -ENOTSUPP */
++       pm_runtime_get_sync(phy->dev.parent);
+
+        mutex_lock(&phy->mutex);
+        if (phy->power_count == 0 && phy->ops->power_on) {
+@@ -306,8 +296,7 @@ int phy_power_on(struct phy *phy)
+
+ err_pwr_on:
+        mutex_unlock(&phy->mutex);
+-       phy_pm_runtime_put_sync(phy);
+-err_pm_sync:
++       pm_runtime_put(phy->dev.parent);
+        if (phy->pwr)
+                regulator_disable(phy->pwr);
+ out:
+@@ -333,7 +322,7 @@ int phy_power_off(struct phy *phy)
+        }
+        --phy->power_count;
+        mutex_unlock(&phy->mutex);
+-       phy_pm_runtime_put(phy);
++       pm_runtime_put(phy->dev.parent);
+
+        if (phy->pwr)
+                regulator_disable(phy->pwr);
+@@ -774,11 +763,6 @@ struct phy *phy_create(struct device *dev, struct
+device_node *node,
+        if (ret)
+                goto put_dev;
+
+-       if (pm_runtime_enabled(dev)) {
+-               pm_runtime_enable(&phy->dev);
+-               pm_runtime_no_callbacks(&phy->dev);
+-       }
+-
+        return phy;
+
+ put_dev:
+@@ -831,7 +815,6 @@ EXPORT_SYMBOL_GPL(devm_phy_create);
+  */
+ void phy_destroy(struct phy *phy)
+ {
+-       pm_runtime_disable(&phy->dev);
+        device_unregister(&phy->dev);
+ }
+ EXPORT_SYMBOL_GPL(phy_destroy);
+-- 
+2.7.4
+
+Kind regards
+Uffe
