@@ -1,54 +1,56 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-Date: Mon, 4 Dec 2017 22:33:11 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, horms@verge.net.au,
-        geert@linux-m68k.org, magnus.damm@gmail.com,
-        linux-i2c@vger.kernel.org
-Subject: Re: [PATCH 0/6] R-Car D3 (r8a77995) I2C integration
-Message-ID: <20171204213311.j7fupxsgx2tq7yyl@ninjato>
-References: <1510759526-30346-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-io0-f169.google.com ([209.85.223.169]:42254 "EHLO
+        mail-io0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751487AbdLAI5O (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 1 Dec 2017 03:57:14 -0500
+Received: by mail-io0-f169.google.com with SMTP id u42so10485257ioi.9
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 01 Dec 2017 00:57:14 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="d55vkvhgvgk7tted"
-Content-Disposition: inline
-In-Reply-To: <1510759526-30346-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-Sender: linux-i2c-owner@vger.kernel.org
+In-Reply-To: <20171201082048.faekfpx4jrqs3kft@verge.net.au>
+References: <1511971606-580-1-git-send-email-ulrich.hecht+renesas@gmail.com> <20171201082048.faekfpx4jrqs3kft@verge.net.au>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 1 Dec 2017 09:57:13 +0100
+Message-ID: <CAPDyKFpiMqOqLR_X+BN1jM-ZfXKE4txtODd56aw6csU-2vd+dg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] R-Car D3 (r8a77995) SDHI (eMMC) integration
+To: Simon Horman <horms@verge.net.au>
+Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On 1 December 2017 at 09:20, Simon Horman <horms@verge.net.au> wrote:
+> On Wed, Nov 29, 2017 at 05:06:44PM +0100, Ulrich Hecht wrote:
+>> Hi!
+>>
+>> This integrates the SDHI hardware on R-Car D3 and enables the Draak board's
+>> eMMC drive.
+>>
+>> This revision dumps the two patches that have been applied already, fixes
+>> the sdhi2_pins voltage, removes the redundant SDHI compatible string and
+>> makes the internal DMAC whitelisting pattern more conservative.
+>>
+>> CU
+>> Uli
+>>
+>>
+>> Ulrich Hecht (2):
+>>   mmc: renesas_sdhi: enable R-Car D3 (r8a77995) support
+>>   arm64: dts: r8a77995: draak: enable SDHI2
+>
+> Hi Ulrich,
+>
+> what is the effect of applying patch 2/2 without patch 1/2?
+> I see that 1/2 has been accepted but ideally I'd like to apply
+> 2/2 to a branch without 1/2 present.
 
---d55vkvhgvgk7tted
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+If there is a problem with that, I can take it with your ack. Just tell me.
 
-
-> This adds I2C controllers to the D3 device tree and enables I2C busses 0
-> and 1 on the Draak board. (I2C2 is not connected on that board.)
->=20
-> Includes missing pins, DMA support and the Draak's serial EEPROM.
-
-I agree to all of Geert's comments given.
-
-
---d55vkvhgvgk7tted
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlolvxcACgkQFA3kzBSg
-KbZjSw//aGujB7362e/+WVIDpfuISwbfCiOSsv/pEyH2FLZIwCoeRvID9Vsmfraj
-TiBdgRPohIzcxd/2/vRl9I0a6azelfn+KzhODr1L+Hxrsm+6iNCjSosl9Qd3a9CM
-1SzOmotN9Fs2mqkTVh/ZCCLC+9DlnRxH4NiRDTp+xzBbvOtAa1BZO969COCrcP9w
-sdNklWuiEBPcjYdyKvd3ssqi4NDkXYdSMLfpU5oA3ZtaqXc49ymKcJplm6pcX3+o
-l9h/n4bG1Gsa1M4K5tBUjPU5ZdnoF5x969fENeo+VgKAnvtOLBdztT4I0msfjHkO
-7SRbfQN9CETAEW3Q0LXe6k48A6MfXsOBWIil/bSV52SK5BPVg8uLSlJ8Pv/QnLCZ
-T8tLigOKWHtwX+CIwBIE8SKxFAnNd1/1MhoSM6YbZ5fywH8/1SX5hZlS1v54VxtD
-dCBgwgduWIbmUask8fuWP87UJoGv2RqKTBbed1cMZJ5q9JMpTyKMcynGAU3EYiys
-pwO2VB6kwipSkQkCmXILMQY+pZ4tNayrN4A8w9fn29CE0avrj4/Bxoy7eB162I0h
-SQaU/+hMuFfw4zLF4MPD7HPFuZzkdXwVCmsahxlqX6jH4g8vL2OG8knctkSKsWrZ
-kNG5E0gnBTu2ZbqQpa5n3nYw8cchvT+vcfAR3+irxAoKTNAk2rA=
-=d2qh
------END PGP SIGNATURE-----
-
---d55vkvhgvgk7tted--
+Kind regards
+Uffe
