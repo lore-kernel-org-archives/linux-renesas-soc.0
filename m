@@ -1,222 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:42595 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932594AbdKPAdx (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:59740 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751009AbdLAHCj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Nov 2017 19:33:53 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>
-Subject: [PATCH/RFC 1/2] v4l: v4l2-dev: Add infrastructure to protect device unplug race
-Date: Thu, 16 Nov 2017 02:33:48 +0200
-Message-Id: <20171116003349.19235-2-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20171116003349.19235-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20171116003349.19235-1-laurent.pinchart+renesas@ideasonboard.com>
+        Fri, 1 Dec 2017 02:02:39 -0500
+Date: Fri, 1 Dec 2017 08:02:33 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Kevin Hilman <khilman@linaro.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] bus: simple-pm-bus: convert bool SIMPLE_PM_BUS to
+ tristate
+Message-ID: <20171201070232.v4uilgo5cydaoyqa@verge.net.au>
+References: <1512043020-23452-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1512043020-23452-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Device unplug being asynchronous, it naturally races with operations
-performed by userspace through ioctls or other file operations on video
-device nodes.
+On Thu, Nov 30, 2017 at 12:57:00PM +0100, Geert Uytterhoeven wrote:
+> From: Paul Gortmaker <paul.gortmaker@windriver.com>
+> 
+> The Kconfig currently controlling compilation of this code is:
+> 
+> config SIMPLE_PM_BUS
+>         bool "Simple Power-Managed Bus Driver"
+> 
+> ...meaning that it currently is not being built as a module by anyone.
+> 
+> In removing the orphaned modular support in a previous patch set,
+> Geert indicated he'd rather see this code converted to tristate.
+> 
+> I normally don't do that because it extends functionality that I
+> can't easily run time test or even know if the use case makes sense,
+> but since in this case the author has nominated it as such, we do
+> the conversion here.
+> 
+> Note that doesn't change the lack of run time testing ; this change
+> is only tested for sucessful compile and modpost.
+> 
+> [geert: Ethernet is probed successfully on sh73a0/kzm9g after
+>         insmodding simple-pm-bus.ko]
+> 
+> Cc: Kevin Hilman <khilman@linaro.org>
+> Cc: Simon Horman <horms+renesas@verge.net.au>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This leads to potential access to freed memory or to other resources
-during device access if unplug occurs during device access. To solve
-this, we need to wait until all device access completes when unplugging
-the device, and block all further access when the device is being
-unplugged.
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
 
-Three new functions are introduced. The video_device_enter() and
-video_device_exit() functions must be used to mark entry and exit from
-all code sections where the device can be accessed. The
-video_device_unplug() function is then used in the unplug handler to
-mark the device as being unplugged and wait for all access to complete.
-
-As an example mark the ioctl handler as a device access section. Other
-file operations need to be protected too, and blocking ioctls (such as
-VIDIOC_DQBUF) need to be handled as well.
-
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/media/v4l2-core/v4l2-dev.c | 57 ++++++++++++++++++++++++++++++++++++++
- include/media/v4l2-dev.h           | 47 +++++++++++++++++++++++++++++++
- 2 files changed, 104 insertions(+)
-
-diff --git a/drivers/media/v4l2-core/v4l2-dev.c b/drivers/media/v4l2-core/v4l2-dev.c
-index c647ba648805..c73c6d49e7cf 100644
---- a/drivers/media/v4l2-core/v4l2-dev.c
-+++ b/drivers/media/v4l2-core/v4l2-dev.c
-@@ -156,6 +156,52 @@ void video_device_release_empty(struct video_device *vdev)
- }
- EXPORT_SYMBOL(video_device_release_empty);
- 
-+int video_device_enter(struct video_device *vdev)
-+{
-+	bool unplugged;
-+
-+	spin_lock(&vdev->unplug_lock);
-+	unplugged = vdev->unplugged;
-+	if (!unplugged)
-+		vdev->access_refcount++;
-+	spin_unlock(&vdev->unplug_lock);
-+
-+	return unplugged ? -ENODEV : 0;
-+}
-+EXPORT_SYMBOL_GPL(video_device_enter);
-+
-+void video_device_exit(struct video_device *vdev)
-+{
-+	bool wake_up;
-+
-+	spin_lock(&vdev->unplug_lock);
-+	WARN_ON(--vdev->access_refcount < 0);
-+	wake_up = vdev->access_refcount == 0;
-+	spin_unlock(&vdev->unplug_lock);
-+
-+	if (wake_up)
-+		wake_up(&vdev->unplug_wait);
-+}
-+EXPORT_SYMBOL_GPL(video_device_exit);
-+
-+void video_device_unplug(struct video_device *vdev)
-+{
-+	bool unplug_blocked;
-+
-+	spin_lock(&vdev->unplug_lock);
-+	unplug_blocked = vdev->access_refcount > 0;
-+	vdev->unplugged = true;
-+	spin_unlock(&vdev->unplug_lock);
-+
-+	if (!unplug_blocked)
-+		return;
-+
-+	if (!wait_event_timeout(vdev->unplug_wait, !vdev->access_refcount,
-+				msecs_to_jiffies(150000)))
-+		WARN(1, "Timeout waiting for device access to complete\n");
-+}
-+EXPORT_SYMBOL_GPL(video_device_unplug);
-+
- static inline void video_get(struct video_device *vdev)
- {
- 	get_device(&vdev->dev);
-@@ -351,6 +397,10 @@ static long v4l2_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 	struct video_device *vdev = video_devdata(filp);
- 	int ret = -ENODEV;
- 
-+	ret = video_device_enter(vdev);
-+	if (ret < 0)
-+		return ret;
-+
- 	if (vdev->fops->unlocked_ioctl) {
- 		struct mutex *lock = v4l2_ioctl_get_lock(vdev, cmd);
- 
-@@ -358,11 +408,14 @@ static long v4l2_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 			return -ERESTARTSYS;
- 		if (video_is_registered(vdev))
- 			ret = vdev->fops->unlocked_ioctl(filp, cmd, arg);
-+		else
-+			ret = -ENODEV;
- 		if (lock)
- 			mutex_unlock(lock);
- 	} else
- 		ret = -ENOTTY;
- 
-+	video_device_exit(vdev);
- 	return ret;
- }
- 
-@@ -841,6 +894,10 @@ int __video_register_device(struct video_device *vdev, int type, int nr,
- 	if (WARN_ON(!vdev->v4l2_dev))
- 		return -EINVAL;
- 
-+	/* unplug support */
-+	spin_lock_init(&vdev->unplug_lock);
-+	init_waitqueue_head(&vdev->unplug_wait);
-+
- 	/* v4l2_fh support */
- 	spin_lock_init(&vdev->fh_lock);
- 	INIT_LIST_HEAD(&vdev->fh_list);
-diff --git a/include/media/v4l2-dev.h b/include/media/v4l2-dev.h
-index e657614521e3..365a94f91dc9 100644
---- a/include/media/v4l2-dev.h
-+++ b/include/media/v4l2-dev.h
-@@ -15,6 +15,7 @@
- #include <linux/cdev.h>
- #include <linux/mutex.h>
- #include <linux/videodev2.h>
-+#include <linux/wait.h>
- 
- #include <media/media-entity.h>
- 
-@@ -178,6 +179,12 @@ struct v4l2_file_operations {
-  * @pipe: &struct media_pipeline
-  * @fops: pointer to &struct v4l2_file_operations for the video device
-  * @device_caps: device capabilities as used in v4l2_capabilities
-+ * @unplugged: when set the device has been unplugged and no device access
-+ *	section can be entered
-+ * @access_refcount: number of device access section currently running for the
-+ *	device
-+ * @unplug_lock: protects unplugged and access_refcount
-+ * @unplug_wait: wait queue to wait for device access sections to complete
-  * @dev: &struct device for the video device
-  * @cdev: character device
-  * @v4l2_dev: pointer to &struct v4l2_device parent
-@@ -221,6 +228,12 @@ struct video_device
- 
- 	u32 device_caps;
- 
-+	/* unplug handling */
-+	bool unplugged;
-+	int access_refcount;
-+	spinlock_t unplug_lock;
-+	wait_queue_head_t unplug_wait;
-+
- 	/* sysfs */
- 	struct device dev;
- 	struct cdev *cdev;
-@@ -506,4 +519,38 @@ static inline int video_is_registered(struct video_device *vdev)
- 	return test_bit(V4L2_FL_REGISTERED, &vdev->flags);
- }
- 
-+/**
-+ * video_device_enter - enter a device access section
-+ * @vdev: the video device
-+ *
-+ * This function marks and protects the beginning of a section that should not
-+ * be entered after the device has been unplugged. The section end is marked
-+ * with a call to video_device_exit(). Calls to this function can be nested.
-+ *
-+ * Returns:
-+ * 0 on success or a negative error code if the device has been unplugged.
-+ */
-+int video_device_enter(struct video_device *vdev);
-+
-+/**
-+ * video_device_exit - exit a device access section
-+ * @vdev: the video device
-+ *
-+ * This function marks the end of a section entered with video_device_enter().
-+ * It wakes up all tasks waiting on video_device_unplug() for device access
-+ * sections to be exited.
-+ */
-+void video_device_exit(struct video_device *vdev);
-+
-+/**
-+ * video_device_unplug - mark a device as unplugged
-+ * @vdev: the video device
-+ *
-+ * Mark a device as unplugged, causing all subsequent calls to
-+ * video_device_enter() to return an error. If a device access section is
-+ * currently being executed the function waits until the section is exited as
-+ * marked by a call to video_device_exit().
-+ */
-+void video_device_unplug(struct video_device *vdev);
-+
- #endif /* _V4L2_DEV_H */
--- 
-Regards,
-
-Laurent Pinchart
+> ---
+>  drivers/bus/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/bus/Kconfig b/drivers/bus/Kconfig
+> index dc7b3c7b7d42fd09..57e011d36a79fce3 100644
+> --- a/drivers/bus/Kconfig
+> +++ b/drivers/bus/Kconfig
+> @@ -120,7 +120,7 @@ config QCOM_EBI2
+>  	  SRAM, ethernet adapters, FPGAs and LCD displays.
+>  
+>  config SIMPLE_PM_BUS
+> -	bool "Simple Power-Managed Bus Driver"
+> +	tristate "Simple Power-Managed Bus Driver"
+>  	depends on OF && PM
+>  	help
+>  	  Driver for transparent busses that don't need a real driver, but
+> -- 
+> 2.7.4
+> 
