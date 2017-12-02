@@ -1,67 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:39330 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751407AbdLDIbO (ORCPT
+Received: from mail-it0-f68.google.com ([209.85.214.68]:40070 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751749AbdLBP0U (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Dec 2017 03:31:14 -0500
+        Sat, 2 Dec 2017 10:26:20 -0500
+Received: by mail-it0-f68.google.com with SMTP id f190so5520297ita.5
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 02 Dec 2017 07:26:20 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20171130144910.4320-1-wsa+renesas@sang-engineering.com>
-References: <20171130144910.4320-1-wsa+renesas@sang-engineering.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 4 Dec 2017 09:31:13 +0100
-Message-ID: <CAMuHMdWEWRy64foR9tNwxvwg-z3FLE8ZVT5CjmuEQ1sZtyHrBQ@mail.gmail.com>
-Subject: Re: [PATCH] mmc: core: properly init drv_type
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Linux MMC List <linux-mmc@vger.kernel.org>,
+In-Reply-To: <1512046646-15253-2-git-send-email-geert+renesas@glider.be>
+References: <1512046646-15253-1-git-send-email-geert+renesas@glider.be> <1512046646-15253-2-git-send-email-geert+renesas@glider.be>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Sat, 2 Dec 2017 16:26:19 +0100
+Message-ID: <CACRpkdbY=zAw-8LrqmMcGGf7cHmAaC=YvpovxqTTPwcsXPUYAA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] ARM: dts: armadillo800eva: Convert to named
+ i2c-gpio bindings
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Colin Ian King <colin.king@canonical.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-i2c@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Wolfram,
+On Thu, Nov 30, 2017 at 1:57 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-On Thu, Nov 30, 2017 at 3:49 PM, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> When the latest version of parsing the new eMMC bindings was moved from
-> core.c to mmc.c, it was overlooked that drv_type could be used
-> uninitialized. Fix it!
+> Commits 7d29f509d2cfd807 ("dt-bindings: i2c: i2c-gpio: Add support for
+> named gpios") and 05c74778858d7d99 ("i2c: gpio: Add support for named
+> gpios in DT") introduced named i2c-gpio DT bindings, and deprecated the
+> more error-prone unnamed variant.
 >
-> Fixes: 6186d06c519e21 ("mmc: parse new binding for eMMC fixed driver type")
-> Reported-by: Colin Ian King <colin.king@canonical.com>
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
->  drivers/mmc/core/mmc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Switch to the new bindings, and add the missing GPIO_OPEN_DRAIN I/O
+> flags, which were implicitly assumed before.
 >
-> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-> index a552f61060d212..0d1c6b025ca596 100644
-> --- a/drivers/mmc/core/mmc.c
-> +++ b/drivers/mmc/core/mmc.c
-> @@ -1290,7 +1290,7 @@ int mmc_hs400_to_hs200(struct mmc_card *card)
+> The latter gets rid of the message:
 >
->  static void mmc_select_driver_type(struct mmc_card *card)
->  {
-> -       int card_drv_type, drive_strength, drv_type;
-> +       int card_drv_type, drive_strength, drv_type = 0;
->         int fixed_drv_type = card->host->fixed_drv_type;
+>     gpio-208 (?): enforced open drain please flag it properly in DT/ACPI DSDT/board file
+>     gpio-91 (?): enforced open drain please flag it properly in DT/ACPI DSDT/board file
 >
->         card_drv_type = card->ext_csd.raw_driver_strength |
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Could this be the cause of the issues Simon was seeing, cfr. 'Possible
-regression due to "arm64: renesas: salvator: set driver type for eMMC"'?
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Yours,
+Linus Walleij
