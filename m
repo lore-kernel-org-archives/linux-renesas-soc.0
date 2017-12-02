@@ -1,47 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47454 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754782AbdLFKXF (ORCPT
+Received: from mail-io0-f195.google.com ([209.85.223.195]:33318 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751783AbdLBPZB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Dec 2017 05:23:05 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Sat, 2 Dec 2017 10:25:01 -0500
+Received: by mail-io0-f195.google.com with SMTP id t196so14322715iof.0
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 02 Dec 2017 07:25:01 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <1512046646-15253-3-git-send-email-geert+renesas@glider.be>
+References: <1512046646-15253-1-git-send-email-geert+renesas@glider.be> <1512046646-15253-3-git-send-email-geert+renesas@glider.be>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Sat, 2 Dec 2017 16:25:00 +0100
+Message-ID: <CACRpkdb_g3UHvOA=3LcTiNWrDE44US=3Z_KEXMD=_UXba48A1g@mail.gmail.com>
+Subject: Re: [PATCH v2 2/4] ARM: dts: lager: Convert to named i2c-gpio bindings
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 06/61] ARM: dts: r8a7793: Use R-Car Gen2 Ether fallback compat string
-Date: Wed,  6 Dec 2017 11:22:01 +0100
-Message-Id: <ce900af9befa4fdb3a6abbbc212e7b8e75fcc9a0.1512555546.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1512555546.git.horms+renesas@verge.net.au>
-References: <cover.1512555546.git.horms+renesas@verge.net.au>
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-i2c@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use newly added R-Car Gen2 Ether fallback compat string
-in the DT of the r8a7793 SoC.
+On Thu, Nov 30, 2017 at 1:57 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-This should have no run-time effect as the driver matches against
-the per-SoC compat string before considering the fallback compat string.
+> Commits 7d29f509d2cfd807 ("dt-bindings: i2c: i2c-gpio: Add support for
+> named gpios") and 05c74778858d7d99 ("i2c: gpio: Add support for named
+> gpios in DT") introduced named i2c-gpio DT bindings, and deprecated the
+> more error-prone unnamed variant.
+>
+> Switch to the new bindings, and add the missing GPIO_OPEN_DRAIN I/O
+> flags, which were implicitly assumed before.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7793.dtsi | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index 58eae569b4e0..196afec766c6 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -916,7 +916,8 @@
- 	};
- 
- 	ether: ethernet@ee700000 {
--		compatible = "renesas,ether-r8a7793";
-+		compatible = "renesas,ether-r8a7793",
-+			     "renesas,rcar-gen2-ether";
- 		reg = <0 0xee700000 0 0x400>;
- 		interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 813>;
--- 
-2.11.0
+Yours,
+Linus Walleij
