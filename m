@@ -1,47 +1,97 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47467 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754801AbdLFKXJ (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:53665 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751157AbdLCKzr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Dec 2017 05:23:09 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
+        Sun, 3 Dec 2017 05:55:47 -0500
+Received: from avalon.bb.dnainternet.fi (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by galahad.ideasonboard.com (Postfix) with ESMTPSA id 37D5520226
+        for <linux-renesas-soc@vger.kernel.org>; Sun,  3 Dec 2017 11:54:03 +0100 (CET)
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 01/61] ARM: dts: r8a7743: Use R-Car Gen2 Ether fallback compat string
-Date: Wed,  6 Dec 2017 11:21:56 +0100
-Message-Id: <81270ea7371cc77e47d121883aa54ade04222e41.1512555546.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1512555546.git.horms+renesas@verge.net.au>
-References: <cover.1512555546.git.horms+renesas@verge.net.au>
+Subject: [PATCH 1/2] kmstest.py: Add CRC reader class
+Date: Sun,  3 Dec 2017 12:55:53 +0200
+Message-Id: <20171203105554.10416-2-laurent.pinchart@ideasonboard.com>
+In-Reply-To: <20171203105554.10416-1-laurent.pinchart@ideasonboard.com>
+References: <20171203105554.10416-1-laurent.pinchart@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use newly added R-Car Gen2 Ether fallback compat string
-in the DT of the r8a7743 SoC.
+The CRCReader class uses the DRM/KMS debugfs-based CRC API to configure
+CRC computation on a CRTC and read the computed CRC values.
 
-This should have no run-time effect as the driver matches against
-the per-SoC compat string before considering the fallback compat string.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- arch/arm/boot/dts/r8a7743.dtsi | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ tests/kmstest.py | 55 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 55 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 7bbba4a36f31..f647b86c0205 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -827,7 +827,8 @@
- 		};
+diff --git a/tests/kmstest.py b/tests/kmstest.py
+index cb0d9a7546d8..45d619c7a9be 100755
+--- a/tests/kmstest.py
++++ b/tests/kmstest.py
+@@ -145,6 +145,61 @@ class Logger(object):
+         self.logfile.flush()
  
- 		ether: ethernet@ee700000 {
--			compatible = "renesas,ether-r8a7743";
-+			compatible = "renesas,ether-r8a7743",
-+				     "renesas,rcar-gen2-ether";
- 			reg = <0 0xee700000 0 0x400>;
- 			interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 813>;
+ 
++class CRC(object):
++    def __init__(self, crc):
++        if crc.startswith("XXXXXXXXXX"):
++            self.frame = None
++        else:
++            self.frame = int(crc[:10], 16)
++
++        crc = crc[11:].strip('\n\0').split(' ')
++        self.crcs = [int(c, 16) for c in crc]
++
++
++class CRCReader(object):
++
++    MAX_CRC_ENTRIES = 10
++    MAX_LINE_LEN  = 10 + 11 * MAX_CRC_ENTRIES + 1
++
++    def __init__(self, crtc):
++        self.pipe = crtc.idx
++
++        # Hardcode the device minor to 0 as the KMSTest constructor opens the
++        # default card object.
++        self.dir = os.open("/sys/kernel/debug/dri/0/crtc-%u/crc" % self.pipe, 0)
++        self.ctrl = os.open("control", os.O_WRONLY, dir_fd = self.dir)
++        self.data = -1
++
++    def __del__(self):
++        self.stop()
++        os.close(self.ctrl)
++        os.close(self.dir)
++
++    def start(self, source):
++        os.write(self.ctrl, source.encode("ascii"))
++        self.data = os.open("data", os.O_RDONLY, dir_fd = self.dir)
++
++    def stop(self):
++        if self.data != -1:
++            os.close(self.data)
++            self.data = -1
++
++    def read(self, num_entries=1):
++        crcs = []
++        while len(crcs) < num_entries:
++            try:
++                crc = os.read(self.data, CRCReader.MAX_LINE_LEN)
++                crc = crc.decode("ascii")
++            except OSError as e:
++                if e.errno == errno.EAGAIN:
++                    break
++                else:
++                    raise e
++            crcs.append(CRC(crc))
++
++        return crcs
++
++
+ class Rect(object):
+     def __init__(self, left, top, width, height):
+         self.left = left
 -- 
-2.11.0
+Regards,
+
+Laurent Pinchart
