@@ -1,255 +1,397 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:34232 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753870AbdLNTJV (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:53685 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752145AbdLCK5i (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Dec 2017 14:09:21 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: linux-media@vger.kernel.org,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Benoit Parrot <bparrot@ti.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH/RFC v2 07/15] rcar-csi2: use frame description information to configure CSI-2 bus
-Date: Thu, 14 Dec 2017 20:08:27 +0100
-Message-Id: <20171214190835.7672-8-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20171214190835.7672-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20171214190835.7672-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Sun, 3 Dec 2017 05:57:38 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 3/9] v4l: vsp1: Share the CLU, LIF and LUT set_fmt pad operation code
+Date: Sun,  3 Dec 2017 12:57:29 +0200
+Message-Id: <20171203105735.10529-4-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20171203105735.10529-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20171203105735.10529-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The driver now have access to frame descriptor information, use it. Only
-enable the virtual channels which are described in the frame descriptor
-and calculate the link based on all enabled streams.
+The implementation of the set_fmt pad operation is identical in the
+three modules. Move it to a generic helper function.
 
-With multiplexed stream support it's now possible to have different
-formats on the different source pads. Make source formats independent
-off each other and disallowing a format on the multiplexed sink.
-
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- drivers/media/platform/rcar-vin/rcar-csi2.c | 112 ++++++++++++++--------------
- 1 file changed, 58 insertions(+), 54 deletions(-)
+ drivers/media/platform/vsp1/vsp1_clu.c    | 65 +++++----------------------
+ drivers/media/platform/vsp1/vsp1_entity.c | 75 +++++++++++++++++++++++++++++++
+ drivers/media/platform/vsp1/vsp1_entity.h |  6 +++
+ drivers/media/platform/vsp1/vsp1_lif.c    | 65 +++++----------------------
+ drivers/media/platform/vsp1/vsp1_lut.c    | 65 +++++----------------------
+ 5 files changed, 116 insertions(+), 160 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
-index 6b607b2e31e26063..2dd7d03d622d5510 100644
---- a/drivers/media/platform/rcar-vin/rcar-csi2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
-@@ -296,24 +296,22 @@ static const struct phtw_testdin_data testdin_data_v3m_e3[] = {
- #define CSI0CLKFREQRANGE(n)		((n & 0x3f) << 16)
+diff --git a/drivers/media/platform/vsp1/vsp1_clu.c b/drivers/media/platform/vsp1/vsp1_clu.c
+index f2fb26e5ab4e..bc931a3ab498 100644
+--- a/drivers/media/platform/vsp1/vsp1_clu.c
++++ b/drivers/media/platform/vsp1/vsp1_clu.c
+@@ -118,18 +118,18 @@ static const struct v4l2_ctrl_config clu_mode_control = {
+  * V4L2 Subdevice Pad Operations
+  */
  
- struct rcar_csi2_format {
--	unsigned int code;
- 	unsigned int datatype;
- 	unsigned int bpp;
- };
- 
- static const struct rcar_csi2_format rcar_csi2_formats[] = {
--	{ .code = MEDIA_BUS_FMT_RGB888_1X24,	.datatype = 0x24, .bpp = 24 },
--	{ .code = MEDIA_BUS_FMT_UYVY8_1X16,	.datatype = 0x1e, .bpp = 16 },
--	{ .code = MEDIA_BUS_FMT_UYVY8_2X8,	.datatype = 0x1e, .bpp = 16 },
--	{ .code = MEDIA_BUS_FMT_YUYV10_2X10,	.datatype = 0x1e, .bpp = 16 },
-+	{ .datatype = 0x1e, .bpp = 16 },
-+	{ .datatype = 0x24, .bpp = 24 },
- };
- 
--static const struct rcar_csi2_format *rcar_csi2_code_to_fmt(unsigned int code)
-+static const struct rcar_csi2_format
-+*rcar_csi2_datatype_to_fmt(unsigned int datatype)
++static const unsigned int clu_codes[] = {
++	MEDIA_BUS_FMT_ARGB8888_1X32,
++	MEDIA_BUS_FMT_AHSV8888_1X32,
++	MEDIA_BUS_FMT_AYUV8_1X32,
++};
++
+ static int clu_enum_mbus_code(struct v4l2_subdev *subdev,
+ 			      struct v4l2_subdev_pad_config *cfg,
+ 			      struct v4l2_subdev_mbus_code_enum *code)
  {
- 	unsigned int i;
- 
- 	for (i = 0; i < ARRAY_SIZE(rcar_csi2_formats); i++)
--		if (rcar_csi2_formats[i].code == code)
-+		if (rcar_csi2_formats[i].datatype == datatype)
- 			return rcar_csi2_formats + i;
- 
- 	return NULL;
-@@ -355,7 +353,7 @@ struct rcar_csi2 {
- 	struct v4l2_async_notifier notifier;
- 	struct v4l2_async_subdev remote;
- 
--	struct v4l2_mbus_framefmt mf;
-+	struct v4l2_mbus_framefmt mf[4];
- 
- 	struct mutex lock;
- 	int stream_count[4];
-@@ -411,25 +409,14 @@ static int rcar_csi2_wait_phy_start(struct rcar_csi2 *priv)
- 	return -ETIMEDOUT;
+-	static const unsigned int codes[] = {
+-		MEDIA_BUS_FMT_ARGB8888_1X32,
+-		MEDIA_BUS_FMT_AHSV8888_1X32,
+-		MEDIA_BUS_FMT_AYUV8_1X32,
+-	};
+-
+-	return vsp1_subdev_enum_mbus_code(subdev, cfg, code, codes,
+-					  ARRAY_SIZE(codes));
++	return vsp1_subdev_enum_mbus_code(subdev, cfg, code, clu_codes,
++					  ARRAY_SIZE(clu_codes));
  }
  
--static int rcar_csi2_calc_mbps(struct rcar_csi2 *priv, unsigned int bpp)
-+static int rcar_csi2_calc_mbps(struct rcar_csi2 *priv,
-+			       struct v4l2_subdev *source,
-+			       struct v4l2_mbus_frame_desc *fd)
+ static int clu_enum_frame_size(struct v4l2_subdev *subdev,
+@@ -145,51 +145,10 @@ static int clu_set_format(struct v4l2_subdev *subdev,
+ 			  struct v4l2_subdev_pad_config *cfg,
+ 			  struct v4l2_subdev_format *fmt)
  {
--	struct media_pad *pad, *source_pad;
--	struct v4l2_subdev *source = NULL;
- 	struct v4l2_ctrl *ctrl;
-+	unsigned int i, bpp = 0;
- 	u64 mbps;
- 
--	/* Get remote subdevice */
--	pad = &priv->subdev.entity.pads[RCAR_CSI2_SINK];
--	source_pad = media_entity_remote_pad(pad);
--	if (!source_pad) {
--		dev_err(priv->dev, "Could not find remote source pad\n");
--		return -ENODEV;
+-	struct vsp1_clu *clu = to_clu(subdev);
+-	struct v4l2_subdev_pad_config *config;
+-	struct v4l2_mbus_framefmt *format;
+-	int ret = 0;
+-
+-	mutex_lock(&clu->entity.lock);
+-
+-	config = vsp1_entity_get_pad_config(&clu->entity, cfg, fmt->which);
+-	if (!config) {
+-		ret = -EINVAL;
+-		goto done;
 -	}
--	source = media_entity_to_v4l2_subdev(source_pad->entity);
 -
--	dev_dbg(priv->dev, "Using source %s pad: %u\n", source->name,
--		source_pad->index);
+-	/* Default to YUV if the requested format is not supported. */
+-	if (fmt->format.code != MEDIA_BUS_FMT_ARGB8888_1X32 &&
+-	    fmt->format.code != MEDIA_BUS_FMT_AHSV8888_1X32 &&
+-	    fmt->format.code != MEDIA_BUS_FMT_AYUV8_1X32)
+-		fmt->format.code = MEDIA_BUS_FMT_AYUV8_1X32;
 -
- 	/* Read the pixel rate control from remote */
- 	ctrl = v4l2_ctrl_find(source->ctrl_handler, V4L2_CID_PIXEL_RATE);
- 	if (!ctrl) {
-@@ -438,6 +425,21 @@ static int rcar_csi2_calc_mbps(struct rcar_csi2 *priv, unsigned int bpp)
- 		return -EINVAL;
- 	}
+-	format = vsp1_entity_get_pad_format(&clu->entity, config, fmt->pad);
+-
+-	if (fmt->pad == CLU_PAD_SOURCE) {
+-		/* The CLU output format can't be modified. */
+-		fmt->format = *format;
+-		goto done;
+-	}
+-
+-	format->code = fmt->format.code;
+-	format->width = clamp_t(unsigned int, fmt->format.width,
+-				CLU_MIN_SIZE, CLU_MAX_SIZE);
+-	format->height = clamp_t(unsigned int, fmt->format.height,
+-				 CLU_MIN_SIZE, CLU_MAX_SIZE);
+-	format->field = V4L2_FIELD_NONE;
+-	format->colorspace = V4L2_COLORSPACE_SRGB;
+-
+-	fmt->format = *format;
+-
+-	/* Propagate the format to the source pad. */
+-	format = vsp1_entity_get_pad_format(&clu->entity, config,
+-					    CLU_PAD_SOURCE);
+-	*format = fmt->format;
+-
+-done:
+-	mutex_unlock(&clu->entity.lock);
+-	return ret;
++	return vsp1_subdev_set_pad_format(subdev, cfg, fmt, clu_codes,
++					  ARRAY_SIZE(clu_codes),
++					  CLU_MIN_SIZE, CLU_MIN_SIZE,
++					  CLU_MAX_SIZE, CLU_MAX_SIZE);
+ }
  
-+	/* Calculate total bpp */
-+	for (i = 0; i < fd->num_entries; i++) {
-+		const struct rcar_csi2_format *format;
+ /* -----------------------------------------------------------------------------
+diff --git a/drivers/media/platform/vsp1/vsp1_entity.c b/drivers/media/platform/vsp1/vsp1_entity.c
+index 54de15095709..0fa310f1a8d1 100644
+--- a/drivers/media/platform/vsp1/vsp1_entity.c
++++ b/drivers/media/platform/vsp1/vsp1_entity.c
+@@ -311,6 +311,81 @@ int vsp1_subdev_enum_frame_size(struct v4l2_subdev *subdev,
+ 	return ret;
+ }
+ 
++/*
++ * vsp1_subdev_set_pad_format - Subdev pad set_fmt handler
++ * @subdev: V4L2 subdevice
++ * @cfg: V4L2 subdev pad configuration
++ * @fmt: V4L2 subdev format
++ * @codes: Array of supported media bus codes
++ * @ncodes: Number of supported media bus codes
++ * @min_width: Minimum image width
++ * @min_height: Minimum image height
++ * @max_width: Maximum image width
++ * @max_height: Maximum image height
++ *
++ * This function implements the subdev set_fmt pad operation for entities that
++ * do not support scaling or cropping. It defaults to the first supplied media
++ * bus code if the requested code isn't supported, clamps the size to the
++ * supplied minimum and maximum, and propagates the sink pad format to the
++ * source pad.
++ */
++int vsp1_subdev_set_pad_format(struct v4l2_subdev *subdev,
++			       struct v4l2_subdev_pad_config *cfg,
++			       struct v4l2_subdev_format *fmt,
++			       const unsigned int *codes, unsigned int ncodes,
++			       unsigned int min_width, unsigned int min_height,
++			       unsigned int max_width, unsigned int max_height)
++{
++	struct vsp1_entity *entity = to_vsp1_entity(subdev);
++	struct v4l2_subdev_pad_config *config;
++	struct v4l2_mbus_framefmt *format;
++	unsigned int i;
++	int ret = 0;
 +
-+		format = rcar_csi2_datatype_to_fmt(
-+					fd->entry[i].bus.csi2.data_type);
-+		if (!format) {
-+			dev_err(priv->dev, "Unknown data type: %d\n",
-+				fd->entry[i].bus.csi2.data_type);
-+			return -EINVAL;
-+		}
++	mutex_lock(&entity->lock);
 +
-+		bpp += format->bpp;
++	config = vsp1_entity_get_pad_config(entity, cfg, fmt->which);
++	if (!config) {
++		ret = -EINVAL;
++		goto done;
 +	}
 +
- 	/* Calculate the phypll */
- 	mbps = v4l2_ctrl_g_ctrl_int64(ctrl) * bpp;
- 	do_div(mbps, priv->lanes * 1000000);
-@@ -489,39 +491,33 @@ static int rcar_csi2_set_phtw(struct rcar_csi2 *priv, unsigned int mbps)
- 	return 0;
- }
++	format = vsp1_entity_get_pad_format(entity, config, fmt->pad);
++
++	if (fmt->pad != 0) {
++		/* The output format can't be modified. */
++		fmt->format = *format;
++		goto done;
++	}
++
++	/*
++	 * Default to the first media bus code if the requested format is not
++	 * supported.
++	 */
++	for (i = 0; i < ncodes; ++i) {
++		if (fmt->format.code == codes[i])
++			break;
++	}
++
++	format->code = i < ncodes ? codes[i] : codes[0];
++	format->width = clamp_t(unsigned int, fmt->format.width,
++				min_width, max_width);
++	format->height = clamp_t(unsigned int, fmt->format.height,
++				 min_height, max_height);
++	format->field = V4L2_FIELD_NONE;
++	format->colorspace = V4L2_COLORSPACE_SRGB;
++
++	fmt->format = *format;
++
++	/* Propagate the format to the source pad. */
++	format = vsp1_entity_get_pad_format(entity, config, 1);
++	*format = fmt->format;
++
++done:
++	mutex_unlock(&entity->lock);
++	return ret;
++}
++
+ /* -----------------------------------------------------------------------------
+  * Media Operations
+  */
+diff --git a/drivers/media/platform/vsp1/vsp1_entity.h b/drivers/media/platform/vsp1/vsp1_entity.h
+index 408602ebeb97..319e053737fd 100644
+--- a/drivers/media/platform/vsp1/vsp1_entity.h
++++ b/drivers/media/platform/vsp1/vsp1_entity.h
+@@ -162,6 +162,12 @@ struct media_pad *vsp1_entity_remote_pad(struct media_pad *pad);
+ int vsp1_subdev_get_pad_format(struct v4l2_subdev *subdev,
+ 			       struct v4l2_subdev_pad_config *cfg,
+ 			       struct v4l2_subdev_format *fmt);
++int vsp1_subdev_set_pad_format(struct v4l2_subdev *subdev,
++			       struct v4l2_subdev_pad_config *cfg,
++			       struct v4l2_subdev_format *fmt,
++			       const unsigned int *codes, unsigned int ncodes,
++			       unsigned int min_width, unsigned int min_height,
++			       unsigned int max_width, unsigned int max_height);
+ int vsp1_subdev_enum_mbus_code(struct v4l2_subdev *subdev,
+ 			       struct v4l2_subdev_pad_config *cfg,
+ 			       struct v4l2_subdev_mbus_code_enum *code,
+diff --git a/drivers/media/platform/vsp1/vsp1_lif.c b/drivers/media/platform/vsp1/vsp1_lif.c
+index e6fa16d7fda8..ad56629450ec 100644
+--- a/drivers/media/platform/vsp1/vsp1_lif.c
++++ b/drivers/media/platform/vsp1/vsp1_lif.c
+@@ -37,17 +37,17 @@ static inline void vsp1_lif_write(struct vsp1_lif *lif, struct vsp1_dl_list *dl,
+  * V4L2 Subdevice Operations
+  */
  
--static int rcar_csi2_start(struct rcar_csi2 *priv)
-+static int rcar_csi2_start(struct rcar_csi2 *priv, struct v4l2_subdev *source,
-+			   struct v4l2_mbus_frame_desc *fd)
++static const unsigned int lif_codes[] = {
++	MEDIA_BUS_FMT_ARGB8888_1X32,
++	MEDIA_BUS_FMT_AYUV8_1X32,
++};
++
+ static int lif_enum_mbus_code(struct v4l2_subdev *subdev,
+ 			      struct v4l2_subdev_pad_config *cfg,
+ 			      struct v4l2_subdev_mbus_code_enum *code)
  {
--	const struct rcar_csi2_format *format;
--	u32 phycnt, tmp;
--	u32 vcdt = 0, vcdt2 = 0;
-+	u32 phycnt, vcdt = 0, vcdt2 = 0;
- 	unsigned int i;
- 	int mbps, ret;
- 
--	dev_dbg(priv->dev, "Input size (%ux%u%c)\n",
--		priv->mf.width, priv->mf.height,
--		priv->mf.field == V4L2_FIELD_NONE ? 'p' : 'i');
+-	static const unsigned int codes[] = {
+-		MEDIA_BUS_FMT_ARGB8888_1X32,
+-		MEDIA_BUS_FMT_AYUV8_1X32,
+-	};
 -
--	/* Code is validated in set_ftm */
--	format = rcar_csi2_code_to_fmt(priv->mf.code);
-+	for (i = 0; i < fd->num_entries; i++) {
-+		struct v4l2_mbus_frame_desc_entry *entry = &fd->entry[i];
-+		u32 tmp;
- 
--	/*
--	 * Enable all Virtual Channels
--	 *
--	 * NOTE: It's not possible to get individual datatype for each
--	 *       source virtual channel. Once this is possible in V4L2
--	 *       it should be used here.
--	 */
--	for (i = 0; i < 4; i++) {
--		tmp = VCDT_SEL_VC(i) | VCDT_VCDTN_EN | VCDT_SEL_DTN_ON |
--			VCDT_SEL_DT(format->datatype);
-+		tmp = VCDT_SEL_VC(entry->bus.csi2.channel) | VCDT_VCDTN_EN |
-+			VCDT_SEL_DTN_ON |
-+			VCDT_SEL_DT(entry->bus.csi2.data_type);
- 
- 		/* Store in correct reg and offset */
--		if (i < 2)
--			vcdt |= tmp << ((i % 2) * 16);
-+		if (entry->bus.csi2.channel < 2)
-+			vcdt |= tmp << ((entry->bus.csi2.channel % 2) * 16);
- 		else
--			vcdt2 |= tmp << ((i % 2) * 16);
-+			vcdt2 |= tmp << ((entry->bus.csi2.channel % 2) * 16);
-+
-+		dev_dbg(priv->dev, "VC%d datatype: 0x%x\n",
-+			entry->bus.csi2.channel, entry->bus.csi2.data_type);
- 	}
- 
-+	dev_dbg(priv->dev, "VCDT: 0x%08x VCDT2: 0x%08x\n", vcdt, vcdt2);
-+
- 	switch (priv->lanes) {
- 	case 1:
- 		phycnt = PHYCNT_ENABLECLK | PHYCNT_ENABLE_0;
-@@ -537,7 +533,7 @@ static int rcar_csi2_start(struct rcar_csi2 *priv)
- 		return -EINVAL;
- 	}
- 
--	mbps = rcar_csi2_calc_mbps(priv, format->bpp);
-+	mbps = rcar_csi2_calc_mbps(priv, source, fd);
- 	if (mbps < 0)
- 		return mbps;
- 
-@@ -686,7 +682,7 @@ static int rcar_csi2_s_stream(struct v4l2_subdev *sd, unsigned int pad,
- 	if (enable && count == 0) {
- 		pm_runtime_get_sync(priv->dev);
- 
--		ret = rcar_csi2_start(priv);
-+		ret = rcar_csi2_start(priv, nextsd, &fd);
- 		if (ret) {
- 			pm_runtime_put(priv->dev);
- 			goto out;
-@@ -720,14 +716,16 @@ static int rcar_csi2_set_pad_format(struct v4l2_subdev *sd,
- {
- 	struct rcar_csi2 *priv = sd_to_csi2(sd);
- 	struct v4l2_mbus_framefmt *framefmt;
-+	int vc;
- 
--	if (!rcar_csi2_code_to_fmt(format->format.code))
--		return -EINVAL;
-+	vc = rcar_csi2_pad_to_vc(format->pad);
-+	if (vc < 0)
-+		return vc;
- 
- 	if (format->which == V4L2_SUBDEV_FORMAT_ACTIVE) {
--		priv->mf = format->format;
-+		priv->mf[vc] = format->format;
- 	} else {
--		framefmt = v4l2_subdev_get_try_format(sd, cfg, 0);
-+		framefmt = v4l2_subdev_get_try_format(sd, cfg, format->pad);
- 		*framefmt = format->format;
- 	}
- 
-@@ -739,11 +737,17 @@ static int rcar_csi2_get_pad_format(struct v4l2_subdev *sd,
- 				    struct v4l2_subdev_format *format)
- {
- 	struct rcar_csi2 *priv = sd_to_csi2(sd);
-+	int vc;
-+
-+	vc = rcar_csi2_pad_to_vc(format->pad);
-+	if (vc < 0)
-+		return vc;
- 
- 	if (format->which == V4L2_SUBDEV_FORMAT_ACTIVE)
--		format->format = priv->mf;
-+		format->format = priv->mf[vc];
- 	else
--		format->format = *v4l2_subdev_get_try_format(sd, cfg, 0);
-+		format->format = *v4l2_subdev_get_try_format(sd, cfg,
-+							     format->pad);
- 
- 	return 0;
+-	return vsp1_subdev_enum_mbus_code(subdev, cfg, code, codes,
+-					  ARRAY_SIZE(codes));
++	return vsp1_subdev_enum_mbus_code(subdev, cfg, code, lif_codes,
++					  ARRAY_SIZE(lif_codes));
  }
+ 
+ static int lif_enum_frame_size(struct v4l2_subdev *subdev,
+@@ -63,53 +63,10 @@ static int lif_set_format(struct v4l2_subdev *subdev,
+ 			  struct v4l2_subdev_pad_config *cfg,
+ 			  struct v4l2_subdev_format *fmt)
+ {
+-	struct vsp1_lif *lif = to_lif(subdev);
+-	struct v4l2_subdev_pad_config *config;
+-	struct v4l2_mbus_framefmt *format;
+-	int ret = 0;
+-
+-	mutex_lock(&lif->entity.lock);
+-
+-	config = vsp1_entity_get_pad_config(&lif->entity, cfg, fmt->which);
+-	if (!config) {
+-		ret = -EINVAL;
+-		goto done;
+-	}
+-
+-	/* Default to YUV if the requested format is not supported. */
+-	if (fmt->format.code != MEDIA_BUS_FMT_ARGB8888_1X32 &&
+-	    fmt->format.code != MEDIA_BUS_FMT_AYUV8_1X32)
+-		fmt->format.code = MEDIA_BUS_FMT_AYUV8_1X32;
+-
+-	format = vsp1_entity_get_pad_format(&lif->entity, config, fmt->pad);
+-
+-	if (fmt->pad == LIF_PAD_SOURCE) {
+-		/*
+-		 * The LIF source format is always identical to its sink
+-		 * format.
+-		 */
+-		fmt->format = *format;
+-		goto done;
+-	}
+-
+-	format->code = fmt->format.code;
+-	format->width = clamp_t(unsigned int, fmt->format.width,
+-				LIF_MIN_SIZE, LIF_MAX_SIZE);
+-	format->height = clamp_t(unsigned int, fmt->format.height,
+-				 LIF_MIN_SIZE, LIF_MAX_SIZE);
+-	format->field = V4L2_FIELD_NONE;
+-	format->colorspace = V4L2_COLORSPACE_SRGB;
+-
+-	fmt->format = *format;
+-
+-	/* Propagate the format to the source pad. */
+-	format = vsp1_entity_get_pad_format(&lif->entity, config,
+-					    LIF_PAD_SOURCE);
+-	*format = fmt->format;
+-
+-done:
+-	mutex_unlock(&lif->entity.lock);
+-	return ret;
++	return vsp1_subdev_set_pad_format(subdev, cfg, fmt, lif_codes,
++					  ARRAY_SIZE(lif_codes),
++					  LIF_MIN_SIZE, LIF_MIN_SIZE,
++					  LIF_MAX_SIZE, LIF_MAX_SIZE);
+ }
+ 
+ static const struct v4l2_subdev_pad_ops lif_pad_ops = {
+diff --git a/drivers/media/platform/vsp1/vsp1_lut.c b/drivers/media/platform/vsp1/vsp1_lut.c
+index c67cc60db0db..63f8127a65a4 100644
+--- a/drivers/media/platform/vsp1/vsp1_lut.c
++++ b/drivers/media/platform/vsp1/vsp1_lut.c
+@@ -94,18 +94,18 @@ static const struct v4l2_ctrl_config lut_table_control = {
+  * V4L2 Subdevice Pad Operations
+  */
+ 
++static const unsigned int lut_codes[] = {
++	MEDIA_BUS_FMT_ARGB8888_1X32,
++	MEDIA_BUS_FMT_AHSV8888_1X32,
++	MEDIA_BUS_FMT_AYUV8_1X32,
++};
++
+ static int lut_enum_mbus_code(struct v4l2_subdev *subdev,
+ 			      struct v4l2_subdev_pad_config *cfg,
+ 			      struct v4l2_subdev_mbus_code_enum *code)
+ {
+-	static const unsigned int codes[] = {
+-		MEDIA_BUS_FMT_ARGB8888_1X32,
+-		MEDIA_BUS_FMT_AHSV8888_1X32,
+-		MEDIA_BUS_FMT_AYUV8_1X32,
+-	};
+-
+-	return vsp1_subdev_enum_mbus_code(subdev, cfg, code, codes,
+-					  ARRAY_SIZE(codes));
++	return vsp1_subdev_enum_mbus_code(subdev, cfg, code, lut_codes,
++					  ARRAY_SIZE(lut_codes));
+ }
+ 
+ static int lut_enum_frame_size(struct v4l2_subdev *subdev,
+@@ -121,51 +121,10 @@ static int lut_set_format(struct v4l2_subdev *subdev,
+ 			  struct v4l2_subdev_pad_config *cfg,
+ 			  struct v4l2_subdev_format *fmt)
+ {
+-	struct vsp1_lut *lut = to_lut(subdev);
+-	struct v4l2_subdev_pad_config *config;
+-	struct v4l2_mbus_framefmt *format;
+-	int ret = 0;
+-
+-	mutex_lock(&lut->entity.lock);
+-
+-	config = vsp1_entity_get_pad_config(&lut->entity, cfg, fmt->which);
+-	if (!config) {
+-		ret = -EINVAL;
+-		goto done;
+-	}
+-
+-	/* Default to YUV if the requested format is not supported. */
+-	if (fmt->format.code != MEDIA_BUS_FMT_ARGB8888_1X32 &&
+-	    fmt->format.code != MEDIA_BUS_FMT_AHSV8888_1X32 &&
+-	    fmt->format.code != MEDIA_BUS_FMT_AYUV8_1X32)
+-		fmt->format.code = MEDIA_BUS_FMT_AYUV8_1X32;
+-
+-	format = vsp1_entity_get_pad_format(&lut->entity, config, fmt->pad);
+-
+-	if (fmt->pad == LUT_PAD_SOURCE) {
+-		/* The LUT output format can't be modified. */
+-		fmt->format = *format;
+-		goto done;
+-	}
+-
+-	format->code = fmt->format.code;
+-	format->width = clamp_t(unsigned int, fmt->format.width,
+-				LUT_MIN_SIZE, LUT_MAX_SIZE);
+-	format->height = clamp_t(unsigned int, fmt->format.height,
+-				 LUT_MIN_SIZE, LUT_MAX_SIZE);
+-	format->field = V4L2_FIELD_NONE;
+-	format->colorspace = V4L2_COLORSPACE_SRGB;
+-
+-	fmt->format = *format;
+-
+-	/* Propagate the format to the source pad. */
+-	format = vsp1_entity_get_pad_format(&lut->entity, config,
+-					    LUT_PAD_SOURCE);
+-	*format = fmt->format;
+-
+-done:
+-	mutex_unlock(&lut->entity.lock);
+-	return ret;
++	return vsp1_subdev_set_pad_format(subdev, cfg, fmt, lut_codes,
++					  ARRAY_SIZE(lut_codes),
++					  LUT_MIN_SIZE, LUT_MIN_SIZE,
++					  LUT_MAX_SIZE, LUT_MAX_SIZE);
+ }
+ 
+ /* -----------------------------------------------------------------------------
 -- 
-2.15.1
+Regards,
+
+Laurent Pinchart
