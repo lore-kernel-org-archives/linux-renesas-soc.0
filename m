@@ -1,87 +1,145 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47467 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754879AbdLFKXa (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:53684 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750854AbdLCK5j (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Dec 2017 05:23:30 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 32/61] ARM: dts: r8a7745: Add CAN[01] SoC support
-Date: Wed,  6 Dec 2017 11:22:27 +0100
-Message-Id: <85d3122659be310c632ef1908532157ce82900ee.1512555546.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1512555546.git.horms+renesas@verge.net.au>
-References: <cover.1512555546.git.horms+renesas@verge.net.au>
+        Sun, 3 Dec 2017 05:57:39 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 4/9] v4l: vsp1: Reset the crop and compose rectangles in the set_fmt helper
+Date: Sun,  3 Dec 2017 12:57:30 +0200
+Message-Id: <20171203105735.10529-5-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20171203105735.10529-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20171203105735.10529-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To make vsp1_subdev_set_pad_format() usable by entities that support
+selection rectangles, we need to reset the crop and compose rectangles
+when setting the format on the sink pad. Do so and replace the custom
+set_fmt implementation of the histogram code by a call to
+vsp1_subdev_set_pad_format().
 
-Add the definitions for can0 and can1 to the SoC .dtsi.
+Resetting the crop and compose rectangles for entities that don't
+support crop and compose has no adverse effect as the rectangles are
+ignored anyway.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- arch/arm/boot/dts/r8a7745.dtsi | 36 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+ drivers/media/platform/vsp1/vsp1_entity.c | 16 +++++++++
+ drivers/media/platform/vsp1/vsp1_histo.c  | 59 +++----------------------------
+ 2 files changed, 20 insertions(+), 55 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index 53eb1ce446a4..52f13246fc8a 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -1049,6 +1049,34 @@
- 				#phy-cells = <1>;
- 			};
- 		};
-+
-+		can0: can@e6e80000 {
-+			compatible = "renesas,can-r8a7745",
-+				     "renesas,rcar-gen2-can";
-+			reg = <0 0xe6e80000 0 0x1000>;
-+			interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 916>,
-+				 <&cpg CPG_CORE R8A7745_CLK_RCAN>,
-+				 <&can_clk>;
-+			clock-names = "clkp1", "clkp2", "can_clk";
-+			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 916>;
-+			status = "disabled";
-+		};
-+
-+		can1: can@e6e88000 {
-+			compatible = "renesas,can-r8a7745",
-+				     "renesas,rcar-gen2-can";
-+			reg = <0 0xe6e88000 0 0x1000>;
-+			interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 915>,
-+				 <&cpg CPG_CORE R8A7745_CLK_RCAN>,
-+				 <&can_clk>;
-+			clock-names = "clkp1", "clkp2", "can_clk";
-+			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 915>;
-+			status = "disabled";
-+		};
- 	};
+diff --git a/drivers/media/platform/vsp1/vsp1_entity.c b/drivers/media/platform/vsp1/vsp1_entity.c
+index 0fa310f1a8d1..b92d3985ae47 100644
+--- a/drivers/media/platform/vsp1/vsp1_entity.c
++++ b/drivers/media/platform/vsp1/vsp1_entity.c
+@@ -339,6 +339,7 @@ int vsp1_subdev_set_pad_format(struct v4l2_subdev *subdev,
+ 	struct vsp1_entity *entity = to_vsp1_entity(subdev);
+ 	struct v4l2_subdev_pad_config *config;
+ 	struct v4l2_mbus_framefmt *format;
++	struct v4l2_rect *selection;
+ 	unsigned int i;
+ 	int ret = 0;
  
- 	/* External root clock */
-@@ -1066,6 +1094,14 @@
- 		clock-frequency = <48000000>;
- 	};
+@@ -381,6 +382,21 @@ int vsp1_subdev_set_pad_format(struct v4l2_subdev *subdev,
+ 	format = vsp1_entity_get_pad_format(entity, config, 1);
+ 	*format = fmt->format;
  
-+	/* External CAN clock */
-+	can_clk: can {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
++	/* Reset the crop and compose rectangles */
++	selection = vsp1_entity_get_pad_selection(entity, config, fmt->pad,
++						  V4L2_SEL_TGT_CROP);
++	selection->left = 0;
++	selection->top = 0;
++	selection->width = format->width;
++	selection->height = format->height;
 +
- 	/* External SCIF clock */
- 	scif_clk: scif {
- 		compatible = "fixed-clock";
++	selection = vsp1_entity_get_pad_selection(entity, config, fmt->pad,
++						  V4L2_SEL_TGT_COMPOSE);
++	selection->left = 0;
++	selection->top = 0;
++	selection->width = format->width;
++	selection->height = format->height;
++
+ done:
+ 	mutex_unlock(&entity->lock);
+ 	return ret;
+diff --git a/drivers/media/platform/vsp1/vsp1_histo.c b/drivers/media/platform/vsp1/vsp1_histo.c
+index afab77cf4fa5..f470626cb601 100644
+--- a/drivers/media/platform/vsp1/vsp1_histo.c
++++ b/drivers/media/platform/vsp1/vsp1_histo.c
+@@ -393,65 +393,14 @@ static int histo_set_format(struct v4l2_subdev *subdev,
+ 			    struct v4l2_subdev_format *fmt)
+ {
+ 	struct vsp1_histogram *histo = subdev_to_histo(subdev);
+-	struct v4l2_subdev_pad_config *config;
+-	struct v4l2_mbus_framefmt *format;
+-	struct v4l2_rect *selection;
+-	unsigned int i;
+-	int ret = 0;
+ 
+ 	if (fmt->pad != HISTO_PAD_SINK)
+ 		return histo_get_format(subdev, cfg, fmt);
+ 
+-	mutex_lock(&histo->entity.lock);
+-
+-	config = vsp1_entity_get_pad_config(&histo->entity, cfg, fmt->which);
+-	if (!config) {
+-		ret = -EINVAL;
+-		goto done;
+-	}
+-
+-	/*
+-	 * Default to the first format if the requested format is not
+-	 * supported.
+-	 */
+-	for (i = 0; i < histo->num_formats; ++i) {
+-		if (fmt->format.code == histo->formats[i])
+-			break;
+-	}
+-	if (i == histo->num_formats)
+-		fmt->format.code = histo->formats[0];
+-
+-	format = vsp1_entity_get_pad_format(&histo->entity, config, fmt->pad);
+-
+-	format->code = fmt->format.code;
+-	format->width = clamp_t(unsigned int, fmt->format.width,
+-				HISTO_MIN_SIZE, HISTO_MAX_SIZE);
+-	format->height = clamp_t(unsigned int, fmt->format.height,
+-				 HISTO_MIN_SIZE, HISTO_MAX_SIZE);
+-	format->field = V4L2_FIELD_NONE;
+-	format->colorspace = V4L2_COLORSPACE_SRGB;
+-
+-	fmt->format = *format;
+-
+-	/* Reset the crop and compose rectangles */
+-	selection = vsp1_entity_get_pad_selection(&histo->entity, config,
+-						  fmt->pad, V4L2_SEL_TGT_CROP);
+-	selection->left = 0;
+-	selection->top = 0;
+-	selection->width = format->width;
+-	selection->height = format->height;
+-
+-	selection = vsp1_entity_get_pad_selection(&histo->entity, config,
+-						  fmt->pad,
+-						  V4L2_SEL_TGT_COMPOSE);
+-	selection->left = 0;
+-	selection->top = 0;
+-	selection->width = format->width;
+-	selection->height = format->height;
+-
+-done:
+-	mutex_unlock(&histo->entity.lock);
+-	return ret;
++	return vsp1_subdev_set_pad_format(subdev, cfg, fmt,
++					  histo->formats, histo->num_formats,
++					  HISTO_MIN_SIZE, HISTO_MIN_SIZE,
++					  HISTO_MAX_SIZE, HISTO_MAX_SIZE);
+ }
+ 
+ static const struct v4l2_subdev_pad_ops histo_pad_ops = {
 -- 
-2.11.0
+Regards,
+
+Laurent Pinchart
