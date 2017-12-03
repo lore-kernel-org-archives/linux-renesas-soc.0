@@ -1,96 +1,109 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35788 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752413AbdLGJz0 (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:53674 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751815AbdLCK5e (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Dec 2017 04:55:26 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 45/54] arm64: dts: renesas: r8a77970: Add IPMMU device nodes
-Date: Thu,  7 Dec 2017 10:53:48 +0100
-Message-Id: <ce3b52a1595b25b05df86388d08aa454a885349d.1512640145.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1512640145.git.horms+renesas@verge.net.au>
-References: <cover.1512640145.git.horms+renesas@verge.net.au>
+        Sun, 3 Dec 2017 05:57:34 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 0/9] R-Car DU: Support CRC calculation
+Date: Sun,  3 Dec 2017 12:57:26 +0200
+Message-Id: <20171203105735.10529-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add r8a77970 IPMMU nodes and keep all disabled by default.
+Hello,
 
-Based on work for the r8a7796 by Magnus Damm
+This patch series adds support for CRC calculation to the rcar-du-drm driver.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/boot/dts/renesas/r8a77970.dtsi | 47 +++++++++++++++++++++++++++++++
- 1 file changed, 47 insertions(+)
+CRC calculation is supported starting at the Renesas R-Car Gen3 SoCs, as
+earlier versions don't have the necessary hardware. On Gen3 SoCs, the CRC is
+computed by the DISCOM module part of the VSP-D and VSP-DL.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-index 8b97842aedb7..5f73ee2dfd6d 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -12,6 +12,7 @@
- #include <dt-bindings/clock/renesas-cpg-mssr.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/power/r8a77970-sysc.h>
- 
- / {
- 	compatible = "renesas,r8a77970";
-@@ -134,6 +135,52 @@
- 			#power-domain-cells = <1>;
- 		};
- 
-+		ipmmu_vi0: mmu@febd0000 {
-+			compatible = "renesas,ipmmu-r8a77970";
-+			reg = <0 0xfebd0000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 9>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_ir: mmu@ff8b0000 {
-+			compatible = "renesas,ipmmu-r8a77970";
-+			reg = <0 0xff8b0000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 3>;
-+			power-domains = <&sysc R8A77970_PD_A3IR>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_rt: mmu@ffc80000 {
-+			compatible = "renesas,ipmmu-r8a77970";
-+			reg = <0 0xffc80000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 7>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_ds1: mmu@e7740000 {
-+			compatible = "renesas,ipmmu-r8a77970";
-+			reg = <0 0xe7740000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 1>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_mm: mmu@e67b0000 {
-+			compatible = "renesas,ipmmu-r8a77970";
-+			reg = <0 0xe67b0000 0 0x1000>;
-+			interrupts = <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
- 		intc_ex: interrupt-controller@e61c0000 {
- 			compatible = "renesas,intc-ex-r8a77970", "renesas,irqc";
- 			#interrupt-cells = <2>;
+The DISCOM is interfaced to the VSP through the UIF glue and appears as a VSP
+entity with a sink pad and a source pad.
+
+The series starts with two fixes. Patch 1/9 fixes a display stall when
+requesting more than two planes from the VGA output. It is a temporary fix to
+avoid complete stalls during unit testing, and a better fix will follow but
+will take longer to develop. Patch 2/9 then fixes debug messages that confused
+me when I was debugging the rest of this patch series.
+
+The series then continues with cleanup and refactoring. Patches 3/9 and 4/9
+prepare for DISCOM and UIF support by extending generic code to make it usable
+for the UIF. Patch 5/9 documents a structure that will receive new fields.
+
+Patch 6/9 then extends the API exposed by the VSP driver to the DU driver to
+support CRC computation configuration and reporting. The patch unfortunately
+needs to touch both the VSP and DU drivers. The whole series will need to be
+merged through a single tree, I will check when it will be time to submit a
+pull request which option would generate the least conflicts.
+
+Patch 7/9 adds support for the DISCOM and UIF in the VSP driver, patch 8/9
+integrates it in the DRM pipeline, and patch 9/9 finally implements the CRC
+API in the DU driver to expose CRC computation to userspace.
+
+The hardware supports computing the CRC at any arbitrary point in the
+pipeline on a configurable window of the frame. This patch series supports CRC
+computation on input planes or pipeline output, but on the full frame only.
+Support for CRC window configuration can be added later if needed but will
+require extending the userspace API, as the DRM/KMS CRC API doesn't support
+this feature.
+
+Note that exposing the DISCOM and UIF though the V4L2 API isn't supported as
+the module is only found in VSP-D and VSP-DL instances that are not exposed
+through V4L2. It is possible to expose those instances through V4L2 with a
+small modification to the driver for testing purpose. If the need arises to
+test DISCOM and UIF with such an out-of-tree patch, support for CRC reporting
+through a V4L2 control can be added later without affecting how CRC is exposed
+through the DRM/KMS API.
+
+The patches are based on top of a merge of the Linux media master branch and
+the pending DU patches. For convenience they are available at
+
+	git://linuxtv.org/pinchartl/media.git vsp1-discom-v1-20171203
+
+The code has been tested through the kms-test-crc.py script part of the DU
+test suite available at
+
+	git://git.ideasonboard.com/renesas/kms-tests.git discom
+
+
+Laurent Pinchart (9):
+  v4l: vsp1: Fix display stalls when requesting too many inputs
+  v4l: vsp1: Print the correct blending unit name in debug messages
+  v4l: vsp1: Share the CLU, LIF and LUT set_fmt pad operation code
+  v4l: vsp1: Reset the crop and compose rectangles in the set_fmt helper
+  v4l: vsp1: Document the vsp1_du_atomic_config structure
+  v4l: vsp1: Extend the DU API to support CRC computation
+  v4l: vsp1: Add support for the DISCOM entity
+  v4l: vsp1: Integrate DISCOM in display pipeline
+  drm: rcar-du: Add support for CRC computation
+
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c    | 148 +++++++++++++++-
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.h    |  19 +++
+ drivers/gpu/drm/rcar-du/rcar_du_vsp.c     |  13 +-
+ drivers/media/platform/vsp1/Makefile      |   2 +-
+ drivers/media/platform/vsp1/vsp1.h        |   4 +
+ drivers/media/platform/vsp1/vsp1_clu.c    |  65 ++-----
+ drivers/media/platform/vsp1/vsp1_drm.c    | 138 +++++++++++++--
+ drivers/media/platform/vsp1/vsp1_drm.h    |  14 +-
+ drivers/media/platform/vsp1/vsp1_drv.c    |  20 +++
+ drivers/media/platform/vsp1/vsp1_entity.c |  97 +++++++++++
+ drivers/media/platform/vsp1/vsp1_entity.h |   7 +
+ drivers/media/platform/vsp1/vsp1_histo.c  |  59 +------
+ drivers/media/platform/vsp1/vsp1_lif.c    |  65 ++-----
+ drivers/media/platform/vsp1/vsp1_lut.c    |  65 ++-----
+ drivers/media/platform/vsp1/vsp1_regs.h   |  41 +++++
+ drivers/media/platform/vsp1/vsp1_uif.c    | 275 ++++++++++++++++++++++++++++++
+ drivers/media/platform/vsp1/vsp1_uif.h    |  36 ++++
+ include/media/vsp1.h                      |  39 ++++-
+ 18 files changed, 870 insertions(+), 237 deletions(-)
+ create mode 100644 drivers/media/platform/vsp1/vsp1_uif.c
+ create mode 100644 drivers/media/platform/vsp1/vsp1_uif.h
+
 -- 
-2.11.0
+Regards,
+
+Laurent Pinchart
