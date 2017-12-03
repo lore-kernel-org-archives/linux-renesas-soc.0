@@ -1,56 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35788 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752472AbdLGJy5 (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:53664 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750854AbdLCKzr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Dec 2017 04:54:57 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
+        Sun, 3 Dec 2017 05:55:47 -0500
+Received: from avalon.bb.dnainternet.fi (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by galahad.ideasonboard.com (Postfix) with ESMTPSA id D8BAE20218
+        for <linux-renesas-soc@vger.kernel.org>; Sun,  3 Dec 2017 11:54:02 +0100 (CET)
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 18/54] arm64: dts: renesas: r8a77995: Add SDHI (MMC) support
-Date: Thu,  7 Dec 2017 10:53:21 +0100
-Message-Id: <83f18749c2f65ae699d909f6f9a6242681344176.1512640145.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1512640145.git.horms+renesas@verge.net.au>
-References: <cover.1512640145.git.horms+renesas@verge.net.au>
+Subject: [PATCH 0/2] kms-tests: Add CRC test
+Date: Sun,  3 Dec 2017 12:55:52 +0200
+Message-Id: <20171203105554.10416-1-laurent.pinchart@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Hello,
 
-R-Car D3 has only one SDHI controller.
+This small patch series adds a CRC computation test to the DU test suite.
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+The test is currently quite limited as it only captures the CRC at the output
+of the pipeline for multiple frames and verifies that the CRC values match.
+This is enough to exercise the DRM/KMS CRC API to test the driver's CRC
+implementation, but more functional tests should be added later.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index 04a392a9d9de..98b70542b812 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -438,6 +438,18 @@
- 			status = "disabled";
- 		};
- 
-+		sdhi2: sd@ee140000 {
-+			compatible = "renesas,sdhi-r8a77995",
-+				     "renesas,rcar-gen3-sdhi";
-+			reg = <0 0xee140000 0 0x2000>;
-+			interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 312>;
-+			max-frequency = <200000000>;
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 312>;
-+			status = "disabled";
-+		};
-+
- 		ehci0: usb@ee080100 {
- 			compatible = "generic-ehci";
- 			reg = <0 0xee080100 0 0x100>;
+The kernel code is available at
+
+	git://linuxtv.org/pinchartl/media.git vsp1-discom-v1-201712
+
+Laurent Pinchart (2):
+  kmstest.py: Add CRC reader class
+  tests: crc: Add CRC computation test
+
+ tests/kms-test-crc.py | 103 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ tests/kmstest.py      |  55 +++++++++++++++++++++++++++
+ 2 files changed, 158 insertions(+)
+ create mode 100755 tests/kms-test-crc.py
+
 -- 
-2.11.0
+Regards,
+
+Laurent Pinchart
