@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:52152 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753223AbdLDMfO (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:53508 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753454AbdLDKfH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Dec 2017 07:35:14 -0500
+        Mon, 4 Dec 2017 05:35:07 -0500
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: "David S . Miller" <davem@davemloft.net>,
         Andrew Lunn <andrew@lunn.ch>,
@@ -18,11 +18,11 @@ Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         netdev@vger.kernel.org, devicetree@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4.1] phylib: Add device reset GPIO support
-Date: Mon,  4 Dec 2017 13:35:05 +0100
-Message-Id: <1512390905-28094-1-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1512383692-14009-2-git-send-email-geert+renesas@glider.be>
-References: <1512383692-14009-2-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v4 1/4] phylib: Add device reset GPIO support
+Date: Mon,  4 Dec 2017 11:34:49 +0100
+Message-Id: <1512383692-14009-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1512383692-14009-1-git-send-email-geert+renesas@glider.be>
+References: <1512383692-14009-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -49,9 +49,6 @@ Acked-by: Rob Herring <robh@kernel.org>
 [geert: Consolidate GPIO descriptor acquiring code]
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-v4.1:
-  - Fix uninitialized variable in mdiobus_register_device(),
-
 v4:
   - Remove Florian's Acked-by,
   - Add missing #include <linux/gpio/consumer.h>,
@@ -79,7 +76,7 @@ v3:
   - Remove unneeded gpiod check, as gpiod_set_value() handles NULL fine,
   - Handle fwnode_get_named_gpiod() errors correctly:
       - -ENOENT is ignored (the GPIO is optional), and turned into NULL,
-        which allowed to remove all later !IS_ERR() checks,
+	which allowed to remove all later !IS_ERR() checks,
       - Other errors (incl. -EPROBE_DEFER) are propagated [*],
 
 v2:
@@ -162,7 +159,7 @@ index de7dd6566df7a364..29da7a3c7a3761c0 100644
  
  			at803x_context_restore(phydev, &context);
 diff --git a/drivers/net/phy/mdio_bus.c b/drivers/net/phy/mdio_bus.c
-index 2df7b62c1a36811e..8f8b7747c54bc478 100644
+index 2df7b62c1a36811e..c97d55cd6679412e 100644
 --- a/drivers/net/phy/mdio_bus.c
 +++ b/drivers/net/phy/mdio_bus.c
 @@ -38,6 +38,7 @@
@@ -177,7 +174,7 @@ index 2df7b62c1a36811e..8f8b7747c54bc478 100644
  
  int mdiobus_register_device(struct mdio_device *mdiodev)
  {
-+	struct gpio_desc *gpiod = NULL;
++	struct gpio_desc *gpiod;
 +
  	if (mdiodev->bus->mdio_map[mdiodev->addr])
  		return -EBUSY;
