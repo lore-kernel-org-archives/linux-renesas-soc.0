@@ -1,49 +1,59 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:43234 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752360AbdLDKAt (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Dec 2017 05:00:49 -0500
-MIME-Version: 1.0
-In-Reply-To: <20171128202105.552196002@cogentembedded.com>
-References: <20171128202105.552196002@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 4 Dec 2017 11:00:48 +0100
-Message-ID: <CAMuHMdW9arTM-JKimPgo3jJ3pQdGG2a1k1wpm2wRKYPGP=aJNw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] arm64: dts: renesas: r8a77970: use CPG core clock macros
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Mon, 4 Dec 2017 09:35:15 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 0/4] ARM: dts: renesas: Convert to named i2c-gpio
+ bindings
+Message-ID: <20171204083515.sdrba5tq5z2qymap@verge.net.au>
+References: <1512046646-15253-1-git-send-email-geert+renesas@glider.be>
+ <20171201081850.4tqbnlvxdax7phfs@verge.net.au>
+ <20171201110908.u7xjrt7xmlqgigvy@ninjato>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20171201110908.u7xjrt7xmlqgigvy@ninjato>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Nov 28, 2017 at 9:15 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Now that the commit ecadea00f588 ("dt-bindings: clock: Add R8A77970 CPG
-> core clock definitions") has hit Linus' tree, we  can replace the bare
-> numbers (we had to use to avoid a cross tree dependency) with these macro
-> definitions...
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On Fri, Dec 01, 2017 at 12:09:08PM +0100, Wolfram Sang wrote:
+> On Fri, Dec 01, 2017 at 09:18:55AM +0100, Simon Horman wrote:
+> > On Thu, Nov 30, 2017 at 01:57:22PM +0100, Geert Uytterhoeven wrote:
+> > > 	Hi Simon, Magnus,
+> > > 
+> > > Commits 7d29f509d2cfd807 ("dt-bindings: i2c: i2c-gpio: Add support for
+> > > named gpios") and 05c74778858d7d99 ("i2c: gpio: Add support for named
+> > > gpios in DT") introduced named i2c-gpio DT bindings, and deprecated the
+> > > more error-prone unnamed variant.
+> > > 
+> > > This patch series switches all Renesas boards to the new bindings, and
+> > > adds the missing GPIO_OPEN_DRAIN I/O flags, which were implicitly
+> > > assumed before.  The latter gets rid of messages like:
+> > > 
+> > >     gpio-208 (?): enforced open drain please flag it properly in DT/ACPI DSDT/board file
+> > >     gpio-91 (?): enforced open drain please flag it properly in DT/ACPI DSDT/board file
+> > > 
+> > > Patch 1 was extracted from series "[PATCH/RFC 0/3] i2c: gpio: Add
+> > > support for named gpios in DT", hence the v2.  All other patches are
+> > > new.
+> > > 
+> > > Note that after this series is applied, the i2c-gpio buses are no longer
+> > > detected when booting new DTBs on old (v4.14 and older) kernels, which
+> > > should not be an issue.  Booting old DTBs on new kernels is not
+> > > affected.
+> > > 
+> > > Thanks for applying!
+> > 
+> > Thanks, applied.
+> 
+> Phew, you guys are fast. For the record:
+> 
+> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks, I'll see about adding your tag.
