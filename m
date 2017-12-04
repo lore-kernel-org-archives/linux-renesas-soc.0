@@ -1,47 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:11606 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751761AbdLNK41 (ORCPT
+Received: from sauhun.de ([88.99.104.3]:44214 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752837AbdLDMhi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Dec 2017 05:56:27 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Russell King <linux@armlinux.org.uk>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 1/6] ARM: shmobile: defconfig: Enable PWM
-Date: Thu, 14 Dec 2017 10:56:11 +0000
-Message-Id: <1513248976-26700-2-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1513248976-26700-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1513248976-26700-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Mon, 4 Dec 2017 07:37:38 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-i2c@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Phil Reid <preid@electromag.com.au>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Claudio Foellmi <claudio.foellmi@ergon.ch>,
+        Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH 5/6] i2c: send STOP after successful bus recovery
+Date: Mon,  4 Dec 2017 13:36:39 +0100
+Message-Id: <20171204123640.3382-6-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20171204123640.3382-1-wsa+renesas@sang-engineering.com>
+References: <20171204123640.3382-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-RZ/G1 and R-Car platforms have PWM timers. This patch enables PWM support
-by default.
+If we managed to get a client release SDA again, send a STOP afterwards
+to make sure we have a consistent state on the bus again.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Cc: Phil Reid <preid@electromag.com.au>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Cc: Claudio Foellmi <claudio.foellmi@ergon.ch>
+Cc: Andrzej Hajda <a.hajda@samsung.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm/configs/shmobile_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/i2c/i2c-core-base.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index d60dbe1..578434c 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -208,6 +208,7 @@ CONFIG_STAGING_BOARD=y
- CONFIG_IIO=y
- CONFIG_AK8975=y
- CONFIG_PWM=y
-+CONFIG_PWM_RCAR=y
- CONFIG_PWM_RENESAS_TPU=y
- CONFIG_GENERIC_PHY=y
- CONFIG_PHY_RCAR_GEN2=y
+diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
+index dae7f4a783dbe4..29d6606d653229 100644
+--- a/drivers/i2c/i2c-core-base.c
++++ b/drivers/i2c/i2c-core-base.c
+@@ -200,6 +200,18 @@ int i2c_generic_scl_recovery(struct i2c_adapter *adap)
+ 	if (bri->get_sda && !bri->get_sda(adap))
+ 		ret = -EBUSY;
+ 
++	/* If all went well, send STOP for a sane bus state. */
++	if (ret == 0 && bri->set_sda) {
++		bri->set_scl(adap, 0);
++		ndelay(RECOVERY_NDELAY / 2);
++		bri->set_sda(adap, 0);
++		ndelay(RECOVERY_NDELAY / 2);
++		bri->set_scl(adap, 1);
++		ndelay(RECOVERY_NDELAY / 2);
++		bri->set_sda(adap, 1);
++		ndelay(RECOVERY_NDELAY / 2);
++	}
++
+ 	if (bri->unprepare_recovery)
+ 		bri->unprepare_recovery(adap);
+ 
 -- 
-2.7.4
+2.11.0
