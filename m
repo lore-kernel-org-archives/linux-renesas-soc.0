@@ -1,122 +1,114 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:42004 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753443AbdLDKfG (ORCPT
+Received: from lb2-smtp-cloud9.xs4all.net ([194.109.24.26]:37681 "EHLO
+        lb2-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752507AbdLDJtB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Dec 2017 05:35:06 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: "David S . Miller" <davem@davemloft.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Richard Leitner <richard.leitner@skidata.com>,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 2/4] macb: Kill PHY reset code
-Date: Mon,  4 Dec 2017 11:34:50 +0100
-Message-Id: <1512383692-14009-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1512383692-14009-1-git-send-email-geert+renesas@glider.be>
-References: <1512383692-14009-1-git-send-email-geert+renesas@glider.be>
+        Mon, 4 Dec 2017 04:49:01 -0500
+Subject: Re: [PATCH v8 28/28] rcar-vin: enable support for r8a77970
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
+References: <20171129194342.26239-1-niklas.soderlund+renesas@ragnatech.se>
+ <20171129194342.26239-29-niklas.soderlund+renesas@ragnatech.se>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <25017e02-ee2b-c5fc-7980-55d5d9d6211f@xs4all.nl>
+Date: Mon, 4 Dec 2017 10:48:56 +0100
+MIME-Version: 1.0
+In-Reply-To: <20171129194342.26239-29-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On 11/29/2017 08:43 PM, Niklas Söderlund wrote:
+> Add the SoC specific information for Renesas r8a77970.
+> 
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-With the phylib now being aware of the "reset-gpios" PHY node property,
-there should be no need to frob the PHY reset in this driver anymore...
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Acked-by: Nicolas Ferre <nicolas.ferre@atmel.com>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v4:
-  - Add Reviewed-by,
+Regards,
 
-v3:
-  - Resolve rejects due to the file being renamed, refresh the patch,
-  - Add code to reset PHY on probe error,
-  - Edit patch description,
-  - Take over from Sergei,
-  - Add Acked-by,
+	Hans
 
-v2:
-  - No changes.
----
- drivers/net/ethernet/cadence/macb.h      |  1 -
- drivers/net/ethernet/cadence/macb_main.c | 21 ---------------------
- 2 files changed, 22 deletions(-)
-
-diff --git a/drivers/net/ethernet/cadence/macb.h b/drivers/net/ethernet/cadence/macb.h
-index 3165c2ba58f97744..c50c5ec49b1dc585 100644
---- a/drivers/net/ethernet/cadence/macb.h
-+++ b/drivers/net/ethernet/cadence/macb.h
-@@ -1171,7 +1171,6 @@ struct macb {
- 	unsigned int		dma_burst_length;
- 
- 	phy_interface_t		phy_interface;
--	struct gpio_desc	*reset_gpio;
- 
- 	/* AT91RM9200 transmit */
- 	struct sk_buff *skb;			/* holds skb until xmit interrupt completes */
-diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
-index c5fa87cdc6c401a7..3f0dfb20fdbcf936 100644
---- a/drivers/net/ethernet/cadence/macb_main.c
-+++ b/drivers/net/ethernet/cadence/macb_main.c
-@@ -3803,7 +3803,6 @@ static int macb_probe(struct platform_device *pdev)
- 					      = macb_config->clk_init;
- 	int (*init)(struct platform_device *) = macb_config->init;
- 	struct device_node *np = pdev->dev.of_node;
--	struct device_node *phy_node;
- 	struct clk *pclk, *hclk = NULL, *tx_clk = NULL, *rx_clk = NULL;
- 	unsigned int queue_mask, num_queues;
- 	struct macb_platform_data *pdata;
-@@ -3909,18 +3908,6 @@ static int macb_probe(struct platform_device *pdev)
- 	else
- 		macb_get_hwaddr(bp);
- 
--	/* Power up the PHY if there is a GPIO reset */
--	phy_node =  of_get_next_available_child(np, NULL);
--	if (phy_node) {
--		int gpio = of_get_named_gpio(phy_node, "reset-gpios", 0);
--
--		if (gpio_is_valid(gpio)) {
--			bp->reset_gpio = gpio_to_desc(gpio);
--			gpiod_direction_output(bp->reset_gpio, 1);
--		}
--	}
--	of_node_put(phy_node);
--
- 	err = of_get_phy_mode(np);
- 	if (err < 0) {
- 		pdata = dev_get_platdata(&pdev->dev);
-@@ -3967,10 +3954,6 @@ static int macb_probe(struct platform_device *pdev)
- 		of_phy_deregister_fixed_link(np);
- 	mdiobus_free(bp->mii_bus);
- 
--	/* Shutdown the PHY if there is a GPIO reset */
--	if (bp->reset_gpio)
--		gpiod_set_value(bp->reset_gpio, 0);
--
- err_out_free_netdev:
- 	free_netdev(dev);
- 
-@@ -4001,10 +3984,6 @@ static int macb_remove(struct platform_device *pdev)
- 		dev->phydev = NULL;
- 		mdiobus_free(bp->mii_bus);
- 
--		/* Shutdown the PHY if there is a GPIO reset */
--		if (bp->reset_gpio)
--			gpiod_set_value(bp->reset_gpio, 0);
--
- 		unregister_netdev(dev);
- 		clk_disable_unprepare(bp->tx_clk);
- 		clk_disable_unprepare(bp->hclk);
--- 
-2.7.4
+> ---
+>  .../devicetree/bindings/media/rcar_vin.txt         |  1 +
+>  drivers/media/platform/rcar-vin/rcar-core.c        | 40 ++++++++++++++++++++++
+>  2 files changed, 41 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/rcar_vin.txt
+> index 314743532bbb4523..6b98f8a3398fa493 100644
+> --- a/Documentation/devicetree/bindings/media/rcar_vin.txt
+> +++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
+> @@ -21,6 +21,7 @@ on Gen3 to a CSI-2 receiver.
+>     - "renesas,vin-r8a7794" for the R8A7794 device
+>     - "renesas,vin-r8a7795" for the R8A7795 device
+>     - "renesas,vin-r8a7796" for the R8A7796 device
+> +   - "renesas,vin-r8a77970" for the R8A77970 device
+>     - "renesas,rcar-gen2-vin" for a generic R-Car Gen2 or RZ/G1 compatible
+>       device.
+>     - "renesas,rcar-gen3-vin" for a generic R-Car Gen3 compatible device.
+> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+> index 62eb89b36fbb2ee1..bbdf36b5c3c8178d 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-core.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
+> @@ -1145,6 +1145,42 @@ static const struct rvin_info rcar_info_r8a7796 = {
+>  	},
+>  };
+>  
+> +static const struct rvin_info rcar_info_r8a77970 = {
+> +	.chip = RCAR_GEN3,
+> +	.use_mc = true,
+> +	.max_width = 4096,
+> +	.max_height = 4096,
+> +
+> +	.num_chsels = 5,
+> +	.chsels = {
+> +		{
+> +			{ .csi = RVIN_CSI40, .chan = 0 },
+> +			{ .csi = RVIN_NC, .chan = 0 },
+> +			{ .csi = RVIN_NC, .chan = 0 },
+> +			{ .csi = RVIN_CSI40, .chan = 0 },
+> +			{ .csi = RVIN_NC, .chan = 0 },
+> +		}, {
+> +			{ .csi = RVIN_NC, .chan = 0 },
+> +			{ .csi = RVIN_NC, .chan = 0 },
+> +			{ .csi = RVIN_CSI40, .chan = 0 },
+> +			{ .csi = RVIN_CSI40, .chan = 1 },
+> +			{ .csi = RVIN_NC, .chan = 0 },
+> +		}, {
+> +			{ .csi = RVIN_NC, .chan = 0 },
+> +			{ .csi = RVIN_CSI40, .chan = 0 },
+> +			{ .csi = RVIN_NC, .chan = 0 },
+> +			{ .csi = RVIN_CSI40, .chan = 2 },
+> +			{ .csi = RVIN_NC, .chan = 0 },
+> +		}, {
+> +			{ .csi = RVIN_CSI40, .chan = 1 },
+> +			{ .csi = RVIN_NC, .chan = 0 },
+> +			{ .csi = RVIN_NC, .chan = 0 },
+> +			{ .csi = RVIN_CSI40, .chan = 3 },
+> +			{ .csi = RVIN_NC, .chan = 0 },
+> +		},
+> +	},
+> +};
+> +
+>  static const struct of_device_id rvin_of_id_table[] = {
+>  	{
+>  		.compatible = "renesas,vin-r8a7778",
+> @@ -1182,6 +1218,10 @@ static const struct of_device_id rvin_of_id_table[] = {
+>  		.compatible = "renesas,vin-r8a7796",
+>  		.data = &rcar_info_r8a7796,
+>  	},
+> +	{
+> +		.compatible = "renesas,vin-r8a77970",
+> +		.data = &rcar_info_r8a77970,
+> +	},
+>  	{ },
+>  };
+>  MODULE_DEVICE_TABLE(of, rvin_of_id_table);
+> 
