@@ -1,79 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:52438 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753983AbdLDNjH (ORCPT
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:43234 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752360AbdLDKAt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Dec 2017 08:39:07 -0500
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: "David S. Miller" <davem@davemloft.net>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCH 2/2] net: sh_eth: don't use NULL as "struct device" for the DMA mapping API
-Date: Mon,  4 Dec 2017 14:33:27 +0100
-Message-Id: <20171204133327.3505-3-thomas.petazzoni@free-electrons.com>
-In-Reply-To: <20171204133327.3505-1-thomas.petazzoni@free-electrons.com>
-References: <20171204133327.3505-1-thomas.petazzoni@free-electrons.com>
+        Mon, 4 Dec 2017 05:00:49 -0500
+MIME-Version: 1.0
+In-Reply-To: <20171128202105.552196002@cogentembedded.com>
+References: <20171128202105.552196002@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 4 Dec 2017 11:00:48 +0100
+Message-ID: <CAMuHMdW9arTM-JKimPgo3jJ3pQdGG2a1k1wpm2wRKYPGP=aJNw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] arm64: dts: renesas: r8a77970: use CPG core clock macros
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Using NULL as argument for the DMA mapping API is bogus, as the DMA
-mapping API may use information from the "struct device" to perform
-the DMA mapping operation. Therefore, pass the appropriate "struct
-device".
+On Tue, Nov 28, 2017 at 9:15 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Now that the commit ecadea00f588 ("dt-bindings: clock: Add R8A77970 CPG
+> core clock definitions") has hit Linus' tree, we  can replace the bare
+> numbers (we had to use to avoid a cross tree dependency) with these macro
+> definitions...
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
----
- drivers/net/ethernet/renesas/sh_eth.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
-index 91e918e654fe..db72d13cebb9 100644
---- a/drivers/net/ethernet/renesas/sh_eth.c
-+++ b/drivers/net/ethernet/renesas/sh_eth.c
-@@ -1187,7 +1187,7 @@ static void sh_eth_ring_free(struct net_device *ndev)
- 			}
- 		}
- 		ringsize = sizeof(struct sh_eth_rxdesc) * mdp->num_rx_ring;
--		dma_free_coherent(NULL, ringsize, mdp->rx_ring,
-+		dma_free_coherent(&mdp->pdev->dev, ringsize, mdp->rx_ring,
- 				  mdp->rx_desc_dma);
- 		mdp->rx_ring = NULL;
- 	}
-@@ -1204,7 +1204,7 @@ static void sh_eth_ring_free(struct net_device *ndev)
- 		sh_eth_tx_free(ndev, false);
- 
- 		ringsize = sizeof(struct sh_eth_txdesc) * mdp->num_tx_ring;
--		dma_free_coherent(NULL, ringsize, mdp->tx_ring,
-+		dma_free_coherent(&mdp->pdev->dev, ringsize, mdp->tx_ring,
- 				  mdp->tx_desc_dma);
- 		mdp->tx_ring = NULL;
- 	}
-@@ -1324,8 +1324,8 @@ static int sh_eth_ring_init(struct net_device *ndev)
- 
- 	/* Allocate all Rx descriptors. */
- 	rx_ringsize = sizeof(struct sh_eth_rxdesc) * mdp->num_rx_ring;
--	mdp->rx_ring = dma_alloc_coherent(NULL, rx_ringsize, &mdp->rx_desc_dma,
--					  GFP_KERNEL);
-+	mdp->rx_ring = dma_alloc_coherent(&mdp->pdev->dev, rx_ringsize,
-+					  &mdp->rx_desc_dma, GFP_KERNEL);
- 	if (!mdp->rx_ring)
- 		goto ring_free;
- 
-@@ -1333,8 +1333,8 @@ static int sh_eth_ring_init(struct net_device *ndev)
- 
- 	/* Allocate all Tx descriptors. */
- 	tx_ringsize = sizeof(struct sh_eth_txdesc) * mdp->num_tx_ring;
--	mdp->tx_ring = dma_alloc_coherent(NULL, tx_ringsize, &mdp->tx_desc_dma,
--					  GFP_KERNEL);
-+	mdp->tx_ring = dma_alloc_coherent(&mdp->pdev->dev, tx_ringsize,
-+					  &mdp->tx_desc_dma, GFP_KERNEL);
- 	if (!mdp->tx_ring)
- 		goto ring_free;
- 	return 0;
--- 
-2.13.6
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
