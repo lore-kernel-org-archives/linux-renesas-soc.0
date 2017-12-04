@@ -1,60 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47467 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754906AbdLFKYF (ORCPT
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:33581 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752761AbdLDQjO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Dec 2017 05:24:05 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Magnus Damm <damm+renesas@opensource.se>,
+        Mon, 4 Dec 2017 11:39:14 -0500
+Received: by mail-lf0-f66.google.com with SMTP id 74so19916187lfs.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 04 Dec 2017 08:39:14 -0800 (PST)
+Subject: Re: [PATCH 2/2] net: sh_eth: make work on big endian systems
+To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 53/61] ARM: dts: r8a7790: Remove CMT renesas,channels-mask
-Date: Wed,  6 Dec 2017 11:22:48 +0100
-Message-Id: <b5c3dacdd90608c96db5daa74665a60333adfe82.1512555546.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1512555546.git.horms+renesas@verge.net.au>
-References: <cover.1512555546.git.horms+renesas@verge.net.au>
+Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <20171204141744.18599-1-thomas.petazzoni@free-electrons.com>
+ <20171204141744.18599-3-thomas.petazzoni@free-electrons.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <44b81296-8cf8-840a-3c13-a0bccfa1a836@cogentembedded.com>
+Date: Mon, 4 Dec 2017 19:39:10 +0300
+MIME-Version: 1.0
+In-Reply-To: <20171204141744.18599-3-thomas.petazzoni@free-electrons.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On 12/04/2017 05:17 PM, Thomas Petazzoni wrote:
 
-Update the DTS to remove the now deprecated "renesas,channels-mask"
-property.
+> The sh_eth driver uses cpu_to_le32() and le32_to_cpu() to manipulate the
+> fields of the DMA descriptors, making the assumption that the DMA 
+> descriptors are little-endian.
+> 
+> However, testing on the Renesas SH7786 running in big-endian mode reveals
+> that the DMA descriptors are also big-endian when running big-endian.
+> Therefore, all the endianness conversion needs to be removed for the sh_eth
+> driver to work.
+> 
+> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com> --- 
+> Note: I see that Sergei Shtylyov has done some work around endianness on
+> this driver back in 2015. I am not sure if it's used on other non-SuperH
+> platforms in platforms where the CPU might run big-endian but the IP still
+> be little-endian.
 
-The channel information is now kept in the device driver and can easily
-be determined based on the compat string.
+   The original Renesas' code assumed that... but the big-endian descriptors
+(marked as such) were never used by the arch/sh/ code (and the code wouldn't
+work right even if they did!). Therefore I did remove EDMAC_BIG_ENDIAN (and
+now EDMAC_LITTLE_ENDIAN can be removed as well).
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7790.dtsi | 4 ----
- 1 file changed, 4 deletions(-)
+> If this is the case, then we would need a different approach and more
+> discussion.
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index d3c6ab806616..e2c530c330a8 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -320,8 +320,6 @@
- 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
- 		resets = <&cpg 124>;
- 
--		renesas,channels-mask = <0x60>;
--
- 		status = "disabled";
- 	};
- 
-@@ -341,8 +339,6 @@
- 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
- 		resets = <&cpg 329>;
- 
--		renesas,channels-mask = <0xff>;
--
- 		status = "disabled";
- 	};
- 
--- 
-2.11.0
+    No, the ARM platforms sh_eth is used on (mostly R-Car) seem to be
+little-endian only.
+
+> Therefore, it would be useful to wait for an ACK from Sergei before 
+> applying this patch.
+    You have it (-:
+
+Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
+MBR, Sergei
