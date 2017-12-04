@@ -1,43 +1,35 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35713 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752595AbdLGJyq (ORCPT
+Received: from sauhun.de ([88.99.104.3]:44737 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752732AbdLDPOw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Dec 2017 04:54:46 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 13/54] arm64: dts: renesas: r8a7796: Connect Ethernet-AVB to IPMMU-DS0
-Date: Thu,  7 Dec 2017 10:53:16 +0100
-Message-Id: <03f70d172611b1eb7edf4f690186ec226df86a46.1512640145.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1512640145.git.horms+renesas@verge.net.au>
-References: <cover.1512640145.git.horms+renesas@verge.net.au>
+        Mon, 4 Dec 2017 10:14:52 -0500
+Date: Mon, 4 Dec 2017 16:14:49 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-mmc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <simon.horman@netronome.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v2 08/22] mmc: tmio: move mmc_gpio_request_cd() before
+ mmc_add_host()
+Message-ID: <20171204151449.6ae3sb6u6jstoi3d@ninjato>
+References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
+ <1511540697-27387-9-git-send-email-yamada.masahiro@socionext.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1511540697-27387-9-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add IPMMU-DS0 to the Ethernet-AVB device node.
+On Sat, Nov 25, 2017 at 01:24:43AM +0900, Masahiro Yamada wrote:
+> Drivers do not need to call mmc_gpiod_request_cd_irq() explicitly
+> because mmc_start_host() calls it.  To make it work, cd_gpio must
+> be set before mmc_add_host().
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Based on work by Magnus Damm for the r8a7795.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 3b7a727b94be..7e5fef780786 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -917,6 +917,7 @@
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
- 			resets = <&cpg 812>;
- 			phy-mode = "rgmii-txid";
-+			iommus = <&ipmmu_ds0 16>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			status = "disabled";
--- 
-2.11.0
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
