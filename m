@@ -1,61 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f65.google.com ([209.85.214.65]:46473 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750810AbdLEQY3 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:37233 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753252AbdLDI6I (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Dec 2017 11:24:29 -0500
-Received: by mail-it0-f65.google.com with SMTP id t1so2845323ite.5
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 05 Dec 2017 08:24:29 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <20171130144910.4320-1-wsa+renesas@sang-engineering.com>
-References: <20171130144910.4320-1-wsa+renesas@sang-engineering.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 5 Dec 2017 17:24:28 +0100
-Message-ID: <CAPDyKFqitcRpRjrvhw+yrP0tC5EGwX_XormEwEbWfr011UDVww@mail.gmail.com>
-Subject: Re: [PATCH] mmc: core: properly init drv_type
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Mon, 4 Dec 2017 03:58:08 -0500
+Date: Mon, 4 Dec 2017 09:57:49 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
         Colin Ian King <colin.king@canonical.com>,
         Dan Carpenter <dan.carpenter@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH] mmc: core: properly init drv_type
+Message-ID: <20171204085749.67vqrjwqfpszba7b@verge.net.au>
+References: <20171130144910.4320-1-wsa+renesas@sang-engineering.com>
+ <CAMuHMdWEWRy64foR9tNwxvwg-z3FLE8ZVT5CjmuEQ1sZtyHrBQ@mail.gmail.com>
+ <20171204085045.oxodfyuczbbfkach@ninjato>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20171204085045.oxodfyuczbbfkach@ninjato>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 30 November 2017 at 15:49, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> When the latest version of parsing the new eMMC bindings was moved from
-> core.c to mmc.c, it was overlooked that drv_type could be used
-> uninitialized. Fix it!
->
-> Fixes: 6186d06c519e21 ("mmc: parse new binding for eMMC fixed driver type")
-> Reported-by: Colin Ian King <colin.king@canonical.com>
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On Mon, Dec 04, 2017 at 09:50:45AM +0100, Wolfram Sang wrote:
+> On Mon, Dec 04, 2017 at 09:31:13AM +0100, Geert Uytterhoeven wrote:
+> > Hi Wolfram,
+> > 
+> > On Thu, Nov 30, 2017 at 3:49 PM, Wolfram Sang
+> > <wsa+renesas@sang-engineering.com> wrote:
+> > > When the latest version of parsing the new eMMC bindings was moved from
+> > > core.c to mmc.c, it was overlooked that drv_type could be used
+> > > uninitialized. Fix it!
+> > >
+> > > Fixes: 6186d06c519e21 ("mmc: parse new binding for eMMC fixed driver type")
+> > > Reported-by: Colin Ian King <colin.king@canonical.com>
+> > > Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> > > ---
+> > >  drivers/mmc/core/mmc.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+> > > index a552f61060d212..0d1c6b025ca596 100644
+> > > --- a/drivers/mmc/core/mmc.c
+> > > +++ b/drivers/mmc/core/mmc.c
+> > > @@ -1290,7 +1290,7 @@ int mmc_hs400_to_hs200(struct mmc_card *card)
+> > >
+> > >  static void mmc_select_driver_type(struct mmc_card *card)
+> > >  {
+> > > -       int card_drv_type, drive_strength, drv_type;
+> > > +       int card_drv_type, drive_strength, drv_type = 0;
+> > >         int fixed_drv_type = card->host->fixed_drv_type;
+> > >
+> > >         card_drv_type = card->ext_csd.raw_driver_strength |
+> > 
+> > Could this be the cause of the issues Simon was seeing, cfr. 'Possible
+> > regression due to "arm64: renesas: salvator: set driver type for eMMC"'?
+> 
+> Yes, there is a chance. It still worked for me, though.
 
-Thanks, applied for fixes!
-
-Kind regards
-Uffe
-
-> ---
->  drivers/mmc/core/mmc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-> index a552f61060d212..0d1c6b025ca596 100644
-> --- a/drivers/mmc/core/mmc.c
-> +++ b/drivers/mmc/core/mmc.c
-> @@ -1290,7 +1290,7 @@ int mmc_hs400_to_hs200(struct mmc_card *card)
->
->  static void mmc_select_driver_type(struct mmc_card *card)
->  {
-> -       int card_drv_type, drive_strength, drv_type;
-> +       int card_drv_type, drive_strength, drv_type = 0;
->         int fixed_drv_type = card->host->fixed_drv_type;
->
->         card_drv_type = card->ext_csd.raw_driver_strength |
-> --
-> 2.11.0
->
+I checked, it does not seem to help the issue I reported.
