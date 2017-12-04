@@ -1,141 +1,132 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:53666 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751463AbdLCKzs (ORCPT
+Received: from sauhun.de ([88.99.104.3]:44221 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753327AbdLDMhj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 3 Dec 2017 05:55:48 -0500
-Received: from avalon.bb.dnainternet.fi (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by galahad.ideasonboard.com (Postfix) with ESMTPSA id 85681202D7
-        for <linux-renesas-soc@vger.kernel.org>; Sun,  3 Dec 2017 11:54:03 +0100 (CET)
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 2/2] tests: crc: Add CRC computation test
-Date: Sun,  3 Dec 2017 12:55:54 +0200
-Message-Id: <20171203105554.10416-3-laurent.pinchart@ideasonboard.com>
-In-Reply-To: <20171203105554.10416-1-laurent.pinchart@ideasonboard.com>
-References: <20171203105554.10416-1-laurent.pinchart@ideasonboard.com>
+        Mon, 4 Dec 2017 07:37:39 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-i2c@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Phil Reid <preid@electromag.com.au>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Claudio Foellmi <claudio.foellmi@ergon.ch>,
+        Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH 6/6] i2c: rcar: implement bus recovery
+Date: Mon,  4 Dec 2017 13:36:40 +0100
+Message-Id: <20171204123640.3382-7-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20171204123640.3382-1-wsa+renesas@sang-engineering.com>
+References: <20171204123640.3382-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The test exercises the CRC API by enabling CRC computation on the
-pipeline output, capturing CRC values and verifying that they all match.
+We can force levels of SCL and SDA, so we can use that for bus recovery.
+Note that we cannot read SDA back, because we will only get the internal
+state of the bus free detection.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Phil Reid <preid@electromag.com.au>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Cc: Claudio Foellmi <claudio.foellmi@ergon.ch>
+Cc: Andrzej Hajda <a.hajda@samsung.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- tests/kms-test-crc.py | 103 ++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 103 insertions(+)
- create mode 100755 tests/kms-test-crc.py
+ drivers/i2c/busses/i2c-rcar.c | 54 +++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 52 insertions(+), 2 deletions(-)
 
-diff --git a/tests/kms-test-crc.py b/tests/kms-test-crc.py
-new file mode 100755
-index 000000000000..93b5d8210b4e
---- /dev/null
-+++ b/tests/kms-test-crc.py
-@@ -0,0 +1,103 @@
-+#!/usr/bin/python3
+diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
+index 8a2ae3e6c561c4..d4b7b5380c2983 100644
+--- a/drivers/i2c/busses/i2c-rcar.c
++++ b/drivers/i2c/busses/i2c-rcar.c
+@@ -132,6 +132,7 @@ struct rcar_i2c_priv {
+ 	int pos;
+ 	u32 icccr;
+ 	u32 flags;
++	u8 recovery_icmcr;	/* protected by adapter lock */
+ 	enum rcar_i2c_type devtype;
+ 	struct i2c_client *slave;
+ 
+@@ -158,6 +159,46 @@ static u32 rcar_i2c_read(struct rcar_i2c_priv *priv, int reg)
+ 	return readl(priv->io + reg);
+ }
+ 
++static int rcar_i2c_get_scl(struct i2c_adapter *adap)
++{
++	struct rcar_i2c_priv *priv = i2c_get_adapdata(adap);
 +
-+import kmstest
-+import pykms
++	return !!(rcar_i2c_read(priv, ICMCR) & FSCL);
 +
-+class CRCTest(kmstest.KMSTest):
-+    """Test CRC calculation on pipeline output."""
++};
 +
-+    def handle_page_flip(self, frame, time):
-+        self.logger.log("Page flip complete")
++static void rcar_i2c_set_scl(struct i2c_adapter *adap, int val)
++{
++	struct rcar_i2c_priv *priv = i2c_get_adapdata(adap);
 +
-+    def main(self):
-+        # Create the connectors to CRTCs map
-+        connectors = {}
-+        for connector in self.card.connectors:
-+            # Skip disconnected connectors
-+            if not connector.connected():
-+                continue
++	if (val)
++		priv->recovery_icmcr |= FSCL;
++	else
++		priv->recovery_icmcr &= ~FSCL;
 +
-+            # Add the connector to the map
-+            for crtc in connector.get_possible_crtcs():
-+                if crtc not in connectors:
-+                    connectors[crtc] = connector
++	rcar_i2c_write(priv, ICMCR, priv->recovery_icmcr);
++};
 +
-+        for crtc in self.card.crtcs:
-+            self.start("CRC calculation on CRTC %u" % crtc.id)
++/* No get_sda, because the HW only reports its bus free logic, not SDA itself */
 +
-+            # Get the connector and default mode
-+            try:
-+                connector = connectors[crtc];
-+                mode = connector.get_default_mode()
-+            except KeyError:
-+                self.skip("no connector or mode available")
-+                continue
++static void rcar_i2c_set_sda(struct i2c_adapter *adap, int val)
++{
++	struct rcar_i2c_priv *priv = i2c_get_adapdata(adap);
 +
-+            # List planes available for the CRTC
-+            planes = []
-+            for plane in self.card.planes:
-+                if plane.supports_crtc(crtc) and plane != crtc.primary_plane:
-+                    planes.append(plane)
++	if (val)
++		priv->recovery_icmcr |= FSDA;
++	else
++		priv->recovery_icmcr &= ~FSDA;
 +
-+            if len(planes) == 0:
-+                self.skip("no plane available for CRTC")
-+                continue
++	rcar_i2c_write(priv, ICMCR, priv->recovery_icmcr);
++};
 +
-+            self.logger.log("Testing connector %s, CRTC %u, mode %s with %u planes" % \
-+                  (connector.fullname, crtc.id, mode.name, len(planes)))
++static struct i2c_bus_recovery_info rcar_i2c_bri = {
++	.get_scl = rcar_i2c_get_scl,
++	.set_scl = rcar_i2c_set_scl,
++	.set_sda = rcar_i2c_set_sda,
++	.recover_bus = i2c_generic_scl_recovery,
++};
+ static void rcar_i2c_init(struct rcar_i2c_priv *priv)
+ {
+ 	/* reset master mode */
+@@ -170,7 +211,7 @@ static void rcar_i2c_init(struct rcar_i2c_priv *priv)
+ 
+ static int rcar_i2c_bus_barrier(struct rcar_i2c_priv *priv)
+ {
+-	int i;
++	int i, ret;
+ 
+ 	for (i = 0; i < LOOP_TIMEOUT; i++) {
+ 		/* make sure that bus is not busy */
+@@ -179,7 +220,15 @@ static int rcar_i2c_bus_barrier(struct rcar_i2c_priv *priv)
+ 		udelay(1);
+ 	}
+ 
+-	return -EBUSY;
++	/* Waiting did not help, try to recover */
++	priv->recovery_icmcr = MDBS | OBPC | FSDA | FSCL;
++	ret = i2c_recover_bus(&priv->adap);
 +
-+            # Create a frame buffer
-+            fb = pykms.DumbFramebuffer(self.card, mode.hdisplay, mode.vdisplay, "XR24")
-+            pykms.draw_test_pattern(fb)
++	/* No failure when recovering, so check bus busy bit again */
++	if (ret == 0)
++		ret = (rcar_i2c_read(priv, ICMCR) & FSDA) ? -EBUSY : 0;
 +
-+            # Set the mode and add all planes
-+            ret = self.atomic_crtc_mode_set(crtc, connector, mode, fb)
-+            if ret < 0:
-+                self.fail("atomic mode set failed with %d" % ret)
-+                continue
-+
-+            req = pykms.AtomicReq(self.card)
-+
-+            offset = 100
-+            for plane in planes:
-+                source = kmstest.Rect(0, 0, fb.width, fb.height)
-+                destination = kmstest.Rect(offset, offset, fb.width, fb.height)
-+                req.add(plane, {
-+                        'FB_ID': fb.id,
-+                        'CRTC_ID': crtc.id,
-+                        'SRC_X': int(source.left * 65536),
-+                        'SRC_Y': int(source.top * 65536),
-+                        'SRC_W': int(source.width * 65536),
-+                        'SRC_H': int(source.height * 65536),
-+                        'CRTC_X': destination.left,
-+                        'CRTC_Y': destination.top,
-+                        'CRTC_W': destination.width,
-+                        'CRTC_H': destination.height,
-+                })
-+                offset += 50
-+
-+            ret = req.commit_sync()
-+            if ret < 0:
-+                self.fail("atomic plane set failed with %d" % ret)
-+                continue
-+
-+            # Wait for one second and make sure the page flip has completed.
-+            self.run(1)
-+            if self.flips == 0:
-+                self.fail("No page flip registered")
-+                continue
-+
-+            crc_reader = kmstest.CRCReader(crtc)
-+            crc_reader.start("auto")
-+            crcs = crc_reader.read(10)
-+            crc_reader.stop()
-+
-+            crcs = [c.crcs[0] for c in crcs]
-+            if len(set(crcs)) != 1:
-+                self.fail("CRC values not constant")
-+                continue
-+
-+            self.logger.log("CRC value 0x%08x" % crcs[0])
-+            self.success()
-+
-+CRCTest().execute()
++	return ret;
+ }
+ 
+ static int rcar_i2c_clock_calculate(struct rcar_i2c_priv *priv, struct i2c_timings *t)
+@@ -851,6 +900,7 @@ static int rcar_i2c_probe(struct platform_device *pdev)
+ 	adap->retries = 3;
+ 	adap->dev.parent = dev;
+ 	adap->dev.of_node = dev->of_node;
++	adap->bus_recovery_info = &rcar_i2c_bri;
+ 	i2c_set_adapdata(adap, priv);
+ 	strlcpy(adap->name, pdev->name, sizeof(adap->name));
+ 
 -- 
-Regards,
-
-Laurent Pinchart
+2.11.0
