@@ -1,26 +1,14 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:56804 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751846AbdLEDXN (ORCPT
+Received: from mail-it0-f51.google.com ([209.85.214.51]:37704 "EHLO
+        mail-it0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752129AbdLDKlI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Dec 2017 22:23:13 -0500
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-CC: Geert Uytterhoeven <geert@linux-m68k.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        "USB list" <linux-usb@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-Subject: RE: [PATCH] PM / runtime: Drop children check from
- __pm_runtime_set_status()
-Date: Tue, 5 Dec 2017 03:23:06 +0000
-Message-ID: <TY1PR06MB0992214C75585618A1400A1CD83D0@TY1PR06MB0992.apcprd06.prod.outlook.com>
-References: <1713438.irjm9MTSvo@aspire.rjw.lan>
- <CAMuHMdV4LV2Uzh2oGdaPiS4W4dfsZ-pn3rGcJNiZLStfo39How@mail.gmail.com>
+        Mon, 4 Dec 2017 05:41:08 -0500
+Received: by mail-it0-f51.google.com with SMTP id d137so5507456itc.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 04 Dec 2017 02:41:08 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <TY1PR06MB09929CD76E67B64FDE54B170D8390@TY1PR06MB0992.apcprd06.prod.outlook.com>
+References: <1713438.irjm9MTSvo@aspire.rjw.lan> <CAMuHMdV4LV2Uzh2oGdaPiS4W4dfsZ-pn3rGcJNiZLStfo39How@mail.gmail.com>
  <TY1PR06MB09928D43D4E5E5752A6A604ED83A0@TY1PR06MB0992.apcprd06.prod.outlook.com>
  <CAPDyKFoF0WMSTuK4AAyDzerpVpnfEq=Hn1n9kDJM0fYMkFL_wA@mail.gmail.com>
  <TY1PR06MB09924E4F66C6FCF131EE71CFD83B0@TY1PR06MB0992.apcprd06.prod.outlook.com>
@@ -28,32 +16,124 @@ References: <1713438.irjm9MTSvo@aspire.rjw.lan>
  <CAMuHMdViD3vqzits=th52+01d5y3p5iwbAg0jbUBcoGvYfULuA@mail.gmail.com>
  <CAPDyKFpRrQr3LRXH_CoLSYe2a=2PnUqvuNWUYSuh0wm+rBJ0dw@mail.gmail.com>
  <TY1PR06MB09928B145D35E52444F8D462D8380@TY1PR06MB0992.apcprd06.prod.outlook.com>
- <CAPDyKFr8D4jL2vwO5tdBJnNVP=DoAD6H_K=4SQbu7rFAZFd3Xg@mail.gmail.com>
- <TY1PR06MB09929CD76E67B64FDE54B170D8390@TY1PR06MB0992.apcprd06.prod.outlook.com>
- <CAPDyKFr4=Vct_-w1euOsEnb3WdeBvH9mz12zNTUfX7Z6nEwRuw@mail.gmail.com>
-In-Reply-To: <CAPDyKFr4=Vct_-w1euOsEnb3WdeBvH9mz12zNTUfX7Z6nEwRuw@mail.gmail.com>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+ <CAPDyKFr8D4jL2vwO5tdBJnNVP=DoAD6H_K=4SQbu7rFAZFd3Xg@mail.gmail.com> <TY1PR06MB09929CD76E67B64FDE54B170D8390@TY1PR06MB0992.apcprd06.prod.outlook.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 4 Dec 2017 11:41:07 +0100
+Message-ID: <CAPDyKFr4=Vct_-w1euOsEnb3WdeBvH9mz12zNTUfX7Z6nEwRuw@mail.gmail.com>
+Subject: Re: [PATCH] PM / runtime: Drop children check from __pm_runtime_set_status()
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        USB list <linux-usb@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGksDQoNCj4gRnJvbTogVWxmIEhhbnNzb24sIFNlbnQ6IE1vbmRheSwgRGVjZW1iZXIgNCwgMjAx
-NyA3OjQxIFBNDQo+IA0KPiBPbiAxIERlY2VtYmVyIDIwMTcgYXQgMTI6MDMsIFlvc2hpaGlybyBT
-aGltb2RhDQo+IDx5b3NoaWhpcm8uc2hpbW9kYS51aEByZW5lc2FzLmNvbT4gd3JvdGU6DQo8c25p
-cD4NCj4gPiBTdXJlISBJIHRlc3RlZCB5b3VyIHBhdGNoLCBhbmQgdGhlbiB0aGUgZm9sbG93aW5n
-IG1lc3NhZ2UgZGlzYXBwZWFyZWQhDQo+ID4NCj4gPiAgICBFbmFibGluZyBydW50aW1lIFBNIGZv
-ciBpbmFjdGl2ZSBkZXZpY2UgKGVlMDgwMjAwLnVzYi1waHkpIHdpdGggYWN0aXZlIGNoaWxkcmVu
-DQo+IA0KPiBHcmVhdCwgdGhhdCBjb25maXJtcyBteSB0aGVvcnkuDQo+IA0KPiBJIHdpbGwgcmUt
-d29yayB0aGUgcGF0Y2ggYW5kIHJlLXBvc3QgaXQgdG8gc2VlIHdoYXQgcGVvcGxlIHRoaW5rcyBh
-Ym91dCBpdC4NCg0KVGhhbmsgeW91IQ0KDQo+ID4NCj4gPiBIb3dldmVyLCB0aGUgZm9sbG93aW5n
-IG1lc3NhZ2Ugc3RpbGwgZXhpc3RzLg0KPiA+DQo+ID4gICAgRW5hYmxpbmcgcnVudGltZSBQTSBm
-b3IgaW5hY3RpdmUgZGV2aWNlIChlZTA4MDAwMC51c2IpIHdpdGggYWN0aXZlIGNoaWxkcmVuDQo+
-ID4NCj4gPiBTbywgSSBndWVzcyBvaGNpLXBsYXRmb3JtLmMgYWxzbyBoYXMgc2ltaWxhciBpc3N1
-ZS4NCj4gDQo+IFllcywgdmVyeSBsaWtlbHkhDQo+IA0KPiBIb3dldmVyLCBJIG5lZWQgc29tZSBt
-b3JlIHRpbWUgdG8gbG9vayBpbnRvIHRoaXMgdG8gYmUgYWJsZSB0byBzdWdnZXN0DQo+IGEgc29s
-dXRpb24uDQoNCkkgZm91bmQgYSBzb2x1dGlvbiBhbmQgc2VudCBhIHJlcG9ydCBhcyBiZWxvdzoN
-Cmh0dHBzOi8vd3d3Lm1haWwtYXJjaGl2ZS5jb20vbGludXgta2VybmVsQHZnZXIua2VybmVsLm9y
-Zy9tc2cxNTUxMTQ2Lmh0bWwNCg0KV2hhdCBkbyB5b3UgdGhpbmsgYWJvdXQgdXNpbmcgcG1fcnVu
-dGltZV9mb3JiaWQoKT8NCg0KQmVzdCByZWdhcmRzLA0KWW9zaGloaXJvIFNoaW1vZGENCg0K
+On 1 December 2017 at 12:03, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> Hi,
+>
+>> From: Ulf Hansson, Sent: Friday, December 1, 2017 6:22 PM
+>>
+>> + Kishon
+>>
+>> On 30 November 2017 at 13:51, Yoshihiro Shimoda
+>> <yoshihiro.shimoda.uh@renesas.com> wrote:
+>> > Hi,
+>> >
+>> >> From: Ulf Hansson, Sent: Wednesday, November 29, 2017 6:59 PM
+>> >>
+>> >> On 29 November 2017 at 10:43, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>> >> > Hi Ulf,
+>> > <snip>
+>> >> Okay, so the problem remains no matter which solution for wakeup you
+>> >> pick in genpd.
+>> >
+>> > Yes. Today I could reproduce this issue without usb host driver.
+>> > - The renesas_usb3 usb peripheral driver has generic phy handling.
+>> >   (The peripheral driver uses different generic phy driver (phy-rcar-gen3-usb3.c) though.)
+>> >  --> If I used the current renesas_usb3 (this means doesn't call phy_power_{on,off}(),
+>> >      the issue didn't happen.
+>> >  --> If I added phy_power_{on,off}() calling, the issue happened.
+>> >   --> So, I'm thinking the APIs are related to the issue.
+>>
+>> Yes.
+>>
+>> >
+>> > - The generic phy APIs are in drivers/phy/phy-core.c.
+>> >  --> The phy-rcar-gen3-usb[23] drivers call only pm_runtime_enable() before devm_phy_create().
+>> >   --> The phy-core will call pm_runtime_{get_sync,put}() in phy_{init,exit,power_{on,off}}.
+>> >    --> So, IIUC, both devices of phy-<dev_name>.<id> and <dev_name> will be handled by runtime PM APIs.
+>> >  --> The runtime PM implementation of phy-core seems good to me. But...?
+>>
+>>
+>> I have digested the information that you and Geert provided, thanks!
+>>
+>> So, my conclusions so far is:
+>>
+>> The phy core is using runtime PM reference counting at
+>> phy_power_on|off(). Although it does that on the phy core device,
+>> which is a child device of the phy provider device.
+>>
+>> Because phy_power_off() is called during system suspend from phy
+>> consumer drivers like usb, the phy core device (child) and the phy
+>> provider device (parent) will never become runtime suspended (because
+>> the PM core has invoked pm_runtime_get_no_resume() for all device in
+>> the device prepare phase).
+>>
+>> Then, when genpd calls pm_runtime_force_suspend() at the suspend noirq
+>> phase for the phy provider device, the call to
+>> pm_runtime_set_suspended() in there, triggers the earlier error
+>> message, which is because the child (phy core device) is still runtime
+>> resumed.
+>
+> Thank you very much for the conclusions!
+> It's helpful to me about runtime PM behavior.
+>
+>> >> Then this seems to point to that the driver may be misbehaving in some
+>> >> way. I can help to check what is going on.
+>> >
+>> > I guess so. But, I don't find yet...
+>>
+>> I think the below patch will help, although I am not sure if that is
+>> sufficient as a long term fix.
+>
+> Thank you very much for your help!
+> Also, I'm not sure how to fix for a long term kernels though...
+>
+>> Can you please try and see if it solves the problems?
+>
+> Sure! I tested your patch, and then the following message disappeared!
+>
+>    Enabling runtime PM for inactive device (ee080200.usb-phy) with active children
+
+Great, that confirms my theory.
+
+I will re-work the patch and re-post it to see what people thinks about it.
+
+>
+> However, the following message still exists.
+>
+>    Enabling runtime PM for inactive device (ee080000.usb) with active children
+>
+> So, I guess ohci-platform.c also has similar issue.
+
+Yes, very likely!
+
+However, I need some more time to look into this to be able to suggest
+a solution.
+
+>
+> JFYI, the ehci-platform.c doesn't have runtime PM handling.
+> So, I think that error message doesn't output from ehci devices.
+
+Right, thanks!
+
+Kind regards
+Uffe
