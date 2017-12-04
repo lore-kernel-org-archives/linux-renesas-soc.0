@@ -1,66 +1,37 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47467 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754852AbdLFKXY (ORCPT
+Received: from sauhun.de ([88.99.104.3]:44702 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752882AbdLDPF5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Dec 2017 05:23:24 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 21/61] ARM: dts: r8a7778: Use R-Car SDHI Gen1 fallback compat string
-Date: Wed,  6 Dec 2017 11:22:16 +0100
-Message-Id: <bce90b30fc0b65fb4a7c89135a563f5cffdf64cd.1512555546.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1512555546.git.horms+renesas@verge.net.au>
-References: <cover.1512555546.git.horms+renesas@verge.net.au>
+        Mon, 4 Dec 2017 10:05:57 -0500
+Date: Mon, 4 Dec 2017 16:05:49 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-mmc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <simon.horman@netronome.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v2 15/22] mmc: tmio: change bus_shift to unsigned int
+Message-ID: <20171204150546.boqqbq7p6kng6xna@ninjato>
+References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
+ <1511540697-27387-16-git-send-email-yamada.masahiro@socionext.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1511540697-27387-16-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use newly added R-Car SDHI Gen1 fallback compat string
-in the DT of the r8a7778 SoC.
+On Sat, Nov 25, 2017 at 01:24:50AM +0900, Masahiro Yamada wrote:
+> Sane values for bus_shift are:
+>    0 - for 16 bit bus
+>    1 - for 32 bit bus
+>    2 - for 64 bit bus
+> 
+> "unsigned long" is too much.
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-This should have no run-time effect as the driver matches against
-the per-SoC compat string before considering the fallback compat string.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7778.dtsi | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/arch/arm/boot/dts/r8a7778.dtsi b/arch/arm/boot/dts/r8a7778.dtsi
-index d6e3c0400ec3..3b49f9ed2e2b 100644
---- a/arch/arm/boot/dts/r8a7778.dtsi
-+++ b/arch/arm/boot/dts/r8a7778.dtsi
-@@ -380,7 +380,8 @@
- 	};
- 
- 	sdhi0: sd@ffe4c000 {
--		compatible = "renesas,sdhi-r8a7778";
-+		compatible = "renesas,sdhi-r8a7778",
-+			     "renesas,rcar-gen1-sdhi";
- 		reg = <0xffe4c000 0x100>;
- 		interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7778_CLK_SDHI0>;
-@@ -389,7 +390,8 @@
- 	};
- 
- 	sdhi1: sd@ffe4d000 {
--		compatible = "renesas,sdhi-r8a7778";
-+		compatible = "renesas,sdhi-r8a7778",
-+			     "renesas,rcar-gen1-sdhi";
- 		reg = <0xffe4d000 0x100>;
- 		interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7778_CLK_SDHI1>;
-@@ -398,7 +400,8 @@
- 	};
- 
- 	sdhi2: sd@ffe4f000 {
--		compatible = "renesas,sdhi-r8a7778";
-+		compatible = "renesas,sdhi-r8a7778",
-+			     "renesas,rcar-gen1-sdhi";
- 		reg = <0xffe4f000 0x100>;
- 		interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7778_CLK_SDHI2>;
--- 
-2.11.0
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
