@@ -1,48 +1,50 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47467 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754893AbdLFKXz (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Dec 2017 05:23:55 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 44/61] ARM: dts: genmai: Correct primary compatible value for eeprom
-Date: Wed,  6 Dec 2017 11:22:39 +0100
-Message-Id: <8edeee392f5971054bfbad43715d0c0d077e13bf.1512555546.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1512555546.git.horms+renesas@verge.net.au>
-References: <cover.1512555546.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 5/9] v4l: vsp1: Document the vsp1_du_atomic_config structure
+Date: Mon, 04 Dec 2017 13:14:55 +0200
+Message-ID: <108031064.g4TCGARr8e@avalon>
+In-Reply-To: <9703309e-d841-f8dc-b37a-be7a96ce91ae@cogentembedded.com>
+References: <20171203105735.10529-1-laurent.pinchart+renesas@ideasonboard.com> <20171203105735.10529-6-laurent.pinchart+renesas@ideasonboard.com> <9703309e-d841-f8dc-b37a-be7a96ce91ae@cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi Sergei,
 
-The Renesas part number of the two-wire serial interface EEPROM is not
-24C128, but R1EX24128ASA00A.
+On Monday, 4 December 2017 11:31:49 EET Sergei Shtylyov wrote:
+> On 12/3/2017 1:57 PM, Laurent Pinchart wrote:
+> > The structure is used in the API that the VSP1 driver exposes to the DU
+> > driver. Documenting it is thus important.
+> > 
+> > Signed-off-by: Laurent Pinchart
+> > <laurent.pinchart+renesas@ideasonboard.com>
+> > ---
+> > 
+> >   include/media/vsp1.h | 10 ++++++++++
+> >   1 file changed, 10 insertions(+)
+> > 
+> > diff --git a/include/media/vsp1.h b/include/media/vsp1.h
+> > index 68a8abe4fac5..7850f96fb708 100644
+> > --- a/include/media/vsp1.h
+> > +++ b/include/media/vsp1.h
+> > @@ -41,6 +41,16 @@ struct vsp1_du_lif_config {
+> >   int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
+> >   		      const struct vsp1_du_lif_config *cfg);
+> > 
+> > +/**
+> > + * struct vsp1_du_atomic_config - VSP atomic configuration parameters
+> > + * @pixelformat: plan pixel format (V4L2 4CC)
+> 
+>     s/plan/plane/?
 
-Hence change its primary compatible value to "renesas,r1ex24128".
+Of course, my bad. This will be fixed in v2. Thank you for catching the typo.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r7s72100-genmai.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/r7s72100-genmai.dts b/arch/arm/boot/dts/r7s72100-genmai.dts
-index cd4d5ff7749e..5af2a0116ff2 100644
---- a/arch/arm/boot/dts/r7s72100-genmai.dts
-+++ b/arch/arm/boot/dts/r7s72100-genmai.dts
-@@ -123,7 +123,7 @@
- 	pinctrl-0 = <&i2c2_pins>;
- 
- 	eeprom@50 {
--		compatible = "renesas,24c128", "atmel,24c128";
-+		compatible = "renesas,r1ex24128", "atmel,24c128";
- 		reg = <0x50>;
- 		pagesize = <64>;
- 	};
 -- 
-2.11.0
+Regards,
+
+Laurent Pinchart
