@@ -1,61 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:44214 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752837AbdLDMhi (ORCPT
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:36761 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752413AbdLDKCn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Dec 2017 07:37:38 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Phil Reid <preid@electromag.com.au>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Claudio Foellmi <claudio.foellmi@ergon.ch>,
-        Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 5/6] i2c: send STOP after successful bus recovery
-Date: Mon,  4 Dec 2017 13:36:39 +0100
-Message-Id: <20171204123640.3382-6-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20171204123640.3382-1-wsa+renesas@sang-engineering.com>
-References: <20171204123640.3382-1-wsa+renesas@sang-engineering.com>
+        Mon, 4 Dec 2017 05:02:43 -0500
+MIME-Version: 1.0
+In-Reply-To: <20171128202109.031715810@cogentembedded.com>
+References: <20171128202109.031715810@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 4 Dec 2017 11:02:42 +0100
+Message-ID: <CAMuHMdWAXwf2RLma7EN3c0oGVrRnV_XARFY51e-ebObC3-5Gig@mail.gmail.com>
+Subject: Re: [PATCH 2/2] arm64: dts: renesas: r8a77970: use SYSC power domain macros
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If we managed to get a client release SDA again, send a STOP afterwards
-to make sure we have a consistent state on the bus again.
+On Tue, Nov 28, 2017 at 9:15 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Now that the commit 833bdb47c826 ("dt-bindings: power: add R8A77970 SYSC
+> power domain definitions") has hit Linus' tree, we can replace the  bare
+> numbers  (we had to use to avoid a cross tree dependency) with these macro
+> definitions...
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Cc: Phil Reid <preid@electromag.com.au>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Cc: Claudio Foellmi <claudio.foellmi@ergon.ch>
-Cc: Andrzej Hajda <a.hajda@samsung.com>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/i2c/i2c-core-base.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-index dae7f4a783dbe4..29d6606d653229 100644
---- a/drivers/i2c/i2c-core-base.c
-+++ b/drivers/i2c/i2c-core-base.c
-@@ -200,6 +200,18 @@ int i2c_generic_scl_recovery(struct i2c_adapter *adap)
- 	if (bri->get_sda && !bri->get_sda(adap))
- 		ret = -EBUSY;
- 
-+	/* If all went well, send STOP for a sane bus state. */
-+	if (ret == 0 && bri->set_sda) {
-+		bri->set_scl(adap, 0);
-+		ndelay(RECOVERY_NDELAY / 2);
-+		bri->set_sda(adap, 0);
-+		ndelay(RECOVERY_NDELAY / 2);
-+		bri->set_scl(adap, 1);
-+		ndelay(RECOVERY_NDELAY / 2);
-+		bri->set_sda(adap, 1);
-+		ndelay(RECOVERY_NDELAY / 2);
-+	}
-+
- 	if (bri->unprepare_recovery)
- 		bri->unprepare_recovery(adap);
- 
--- 
-2.11.0
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
