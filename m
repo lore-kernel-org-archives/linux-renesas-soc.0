@@ -1,51 +1,64 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:42715 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753545AbdLDIVf (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Dec 2017 03:21:35 -0500
-MIME-Version: 1.0
-In-Reply-To: <20171124210317.285946395@cogentembedded.com>
-References: <20171124210317.285946395@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 4 Dec 2017 09:21:33 +0100
-Message-ID: <CAMuHMdXavmQd8r+BEmFFmtjprGS3wddY3Dz=WTQ9qRypV8WY0w@mail.gmail.com>
-Subject: Re: [PATCH 2/2] arm64: dts: renesas: v3msk: add EtherAVB support
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: "David S . Miller" <davem@davemloft.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
         Mark Rutland <mark.rutland@arm.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Richard Leitner <richard.leitner@skidata.com>,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v4 4/4] arm64: dts: renesas: ulcb: Add EthernetAVB PHY reset
+Date: Mon,  4 Dec 2017 11:34:52 +0100
+Message-Id: <1512383692-14009-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1512383692-14009-1-git-send-email-geert+renesas@glider.be>
+References: <1512383692-14009-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Nov 24, 2017 at 9:59 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Define the V3M Starter Kit board dependent part of the EtherAVB
-> device node.
->
-> Based on the original (and large) patch by Vladimir Barinov.
->
-> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Describe the GPIO used to reset the Ethernet PHY for EthernetAVB.
+This allows the driver to reset the PHY during probe and after system
+resume.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On ULCB, the enable pin of the regulator providing PHY power is always
+pulled high, but the driver may still need to reset the PHY if this
+wasn't done by the bootloader before.
 
-Gr{oetje,eeting}s,
+Inspired by patches in the BSP for the individual Salvator-X/XS boards
+by Kazuya Mizuguchi.
 
-                        Geert
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Compile-tested only.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+v4:
+  - No changes,
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+v3:
+  - Extract from series "[PATCH 0/4] ravb: Add PHY reset support", and
+    incorporate in this series,
+  - Move reset-gpios from the ethernet to the ethernet-phy node.
+---
+ arch/arm64/boot/dts/renesas/ulcb.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+index 0d85b315ce711c8f..be91016e0b48f196 100644
+--- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
++++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+@@ -154,6 +154,7 @@
+ 		reg = <0>;
+ 		interrupt-parent = <&gpio2>;
+ 		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
++		reset-gpios = <&gpio2 10 GPIO_ACTIVE_LOW>;
+ 	};
+ };
+ 
+-- 
+2.7.4
+
