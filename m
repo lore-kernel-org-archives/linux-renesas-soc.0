@@ -1,145 +1,54 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:53684 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750854AbdLCK5j (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 3 Dec 2017 05:57:39 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 4/9] v4l: vsp1: Reset the crop and compose rectangles in the set_fmt helper
-Date: Sun,  3 Dec 2017 12:57:30 +0200
-Message-Id: <20171203105735.10529-5-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20171203105735.10529-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20171203105735.10529-1-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-i2c-owner@vger.kernel.org>
+Date: Mon, 4 Dec 2017 22:33:11 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, horms@verge.net.au,
+        geert@linux-m68k.org, magnus.damm@gmail.com,
+        linux-i2c@vger.kernel.org
+Subject: Re: [PATCH 0/6] R-Car D3 (r8a77995) I2C integration
+Message-ID: <20171204213311.j7fupxsgx2tq7yyl@ninjato>
+References: <1510759526-30346-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="d55vkvhgvgk7tted"
+Content-Disposition: inline
+In-Reply-To: <1510759526-30346-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-To make vsp1_subdev_set_pad_format() usable by entities that support
-selection rectangles, we need to reset the crop and compose rectangles
-when setting the format on the sink pad. Do so and replace the custom
-set_fmt implementation of the histogram code by a call to
-vsp1_subdev_set_pad_format().
 
-Resetting the crop and compose rectangles for entities that don't
-support crop and compose has no adverse effect as the rectangles are
-ignored anyway.
+--d55vkvhgvgk7tted
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/media/platform/vsp1/vsp1_entity.c | 16 +++++++++
- drivers/media/platform/vsp1/vsp1_histo.c  | 59 +++----------------------------
- 2 files changed, 20 insertions(+), 55 deletions(-)
 
-diff --git a/drivers/media/platform/vsp1/vsp1_entity.c b/drivers/media/platform/vsp1/vsp1_entity.c
-index 0fa310f1a8d1..b92d3985ae47 100644
---- a/drivers/media/platform/vsp1/vsp1_entity.c
-+++ b/drivers/media/platform/vsp1/vsp1_entity.c
-@@ -339,6 +339,7 @@ int vsp1_subdev_set_pad_format(struct v4l2_subdev *subdev,
- 	struct vsp1_entity *entity = to_vsp1_entity(subdev);
- 	struct v4l2_subdev_pad_config *config;
- 	struct v4l2_mbus_framefmt *format;
-+	struct v4l2_rect *selection;
- 	unsigned int i;
- 	int ret = 0;
- 
-@@ -381,6 +382,21 @@ int vsp1_subdev_set_pad_format(struct v4l2_subdev *subdev,
- 	format = vsp1_entity_get_pad_format(entity, config, 1);
- 	*format = fmt->format;
- 
-+	/* Reset the crop and compose rectangles */
-+	selection = vsp1_entity_get_pad_selection(entity, config, fmt->pad,
-+						  V4L2_SEL_TGT_CROP);
-+	selection->left = 0;
-+	selection->top = 0;
-+	selection->width = format->width;
-+	selection->height = format->height;
-+
-+	selection = vsp1_entity_get_pad_selection(entity, config, fmt->pad,
-+						  V4L2_SEL_TGT_COMPOSE);
-+	selection->left = 0;
-+	selection->top = 0;
-+	selection->width = format->width;
-+	selection->height = format->height;
-+
- done:
- 	mutex_unlock(&entity->lock);
- 	return ret;
-diff --git a/drivers/media/platform/vsp1/vsp1_histo.c b/drivers/media/platform/vsp1/vsp1_histo.c
-index afab77cf4fa5..f470626cb601 100644
---- a/drivers/media/platform/vsp1/vsp1_histo.c
-+++ b/drivers/media/platform/vsp1/vsp1_histo.c
-@@ -393,65 +393,14 @@ static int histo_set_format(struct v4l2_subdev *subdev,
- 			    struct v4l2_subdev_format *fmt)
- {
- 	struct vsp1_histogram *histo = subdev_to_histo(subdev);
--	struct v4l2_subdev_pad_config *config;
--	struct v4l2_mbus_framefmt *format;
--	struct v4l2_rect *selection;
--	unsigned int i;
--	int ret = 0;
- 
- 	if (fmt->pad != HISTO_PAD_SINK)
- 		return histo_get_format(subdev, cfg, fmt);
- 
--	mutex_lock(&histo->entity.lock);
--
--	config = vsp1_entity_get_pad_config(&histo->entity, cfg, fmt->which);
--	if (!config) {
--		ret = -EINVAL;
--		goto done;
--	}
--
--	/*
--	 * Default to the first format if the requested format is not
--	 * supported.
--	 */
--	for (i = 0; i < histo->num_formats; ++i) {
--		if (fmt->format.code == histo->formats[i])
--			break;
--	}
--	if (i == histo->num_formats)
--		fmt->format.code = histo->formats[0];
--
--	format = vsp1_entity_get_pad_format(&histo->entity, config, fmt->pad);
--
--	format->code = fmt->format.code;
--	format->width = clamp_t(unsigned int, fmt->format.width,
--				HISTO_MIN_SIZE, HISTO_MAX_SIZE);
--	format->height = clamp_t(unsigned int, fmt->format.height,
--				 HISTO_MIN_SIZE, HISTO_MAX_SIZE);
--	format->field = V4L2_FIELD_NONE;
--	format->colorspace = V4L2_COLORSPACE_SRGB;
--
--	fmt->format = *format;
--
--	/* Reset the crop and compose rectangles */
--	selection = vsp1_entity_get_pad_selection(&histo->entity, config,
--						  fmt->pad, V4L2_SEL_TGT_CROP);
--	selection->left = 0;
--	selection->top = 0;
--	selection->width = format->width;
--	selection->height = format->height;
--
--	selection = vsp1_entity_get_pad_selection(&histo->entity, config,
--						  fmt->pad,
--						  V4L2_SEL_TGT_COMPOSE);
--	selection->left = 0;
--	selection->top = 0;
--	selection->width = format->width;
--	selection->height = format->height;
--
--done:
--	mutex_unlock(&histo->entity.lock);
--	return ret;
-+	return vsp1_subdev_set_pad_format(subdev, cfg, fmt,
-+					  histo->formats, histo->num_formats,
-+					  HISTO_MIN_SIZE, HISTO_MIN_SIZE,
-+					  HISTO_MAX_SIZE, HISTO_MAX_SIZE);
- }
- 
- static const struct v4l2_subdev_pad_ops histo_pad_ops = {
--- 
-Regards,
+> This adds I2C controllers to the D3 device tree and enables I2C busses 0
+> and 1 on the Draak board. (I2C2 is not connected on that board.)
+>=20
+> Includes missing pins, DMA support and the Draak's serial EEPROM.
 
-Laurent Pinchart
+I agree to all of Geert's comments given.
+
+
+--d55vkvhgvgk7tted
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlolvxcACgkQFA3kzBSg
+KbZjSw//aGujB7362e/+WVIDpfuISwbfCiOSsv/pEyH2FLZIwCoeRvID9Vsmfraj
+TiBdgRPohIzcxd/2/vRl9I0a6azelfn+KzhODr1L+Hxrsm+6iNCjSosl9Qd3a9CM
+1SzOmotN9Fs2mqkTVh/ZCCLC+9DlnRxH4NiRDTp+xzBbvOtAa1BZO969COCrcP9w
+sdNklWuiEBPcjYdyKvd3ssqi4NDkXYdSMLfpU5oA3ZtaqXc49ymKcJplm6pcX3+o
+l9h/n4bG1Gsa1M4K5tBUjPU5ZdnoF5x969fENeo+VgKAnvtOLBdztT4I0msfjHkO
+7SRbfQN9CETAEW3Q0LXe6k48A6MfXsOBWIil/bSV52SK5BPVg8uLSlJ8Pv/QnLCZ
+T8tLigOKWHtwX+CIwBIE8SKxFAnNd1/1MhoSM6YbZ5fywH8/1SX5hZlS1v54VxtD
+dCBgwgduWIbmUask8fuWP87UJoGv2RqKTBbed1cMZJ5q9JMpTyKMcynGAU3EYiys
+pwO2VB6kwipSkQkCmXILMQY+pZ4tNayrN4A8w9fn29CE0avrj4/Bxoy7eB162I0h
+SQaU/+hMuFfw4zLF4MPD7HPFuZzkdXwVCmsahxlqX6jH4g8vL2OG8knctkSKsWrZ
+kNG5E0gnBTu2ZbqQpa5n3nYw8cchvT+vcfAR3+irxAoKTNAk2rA=
+=d2qh
+-----END PGP SIGNATURE-----
+
+--d55vkvhgvgk7tted--
