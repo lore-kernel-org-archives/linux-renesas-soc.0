@@ -1,31 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([184.105.139.130]:39352 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751904AbdLETnB (ORCPT
+Received: from mail.free-electrons.com ([62.4.15.54]:52432 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753594AbdLDNjH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Dec 2017 14:43:01 -0500
-Date: Tue, 05 Dec 2017 14:42:59 -0500 (EST)
-Message-Id: <20171205.144259.1917745716758080716.davem@davemloft.net>
-To: thomas.petazzoni@free-electrons.com
-Cc: sergei.shtylyov@cogentembedded.com,
-        niklas.soderlund+renesas@ragnatech.se, geert+renesas@glider.be,
-        horms+renesas@verge.net.au, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 0/2] net: sh_eth: DMA mapping API fixes
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20171204133327.3505-1-thomas.petazzoni@free-electrons.com>
-References: <20171204133327.3505-1-thomas.petazzoni@free-electrons.com>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Mon, 4 Dec 2017 08:39:07 -0500
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: "David S. Miller" <davem@davemloft.net>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: [PATCH 0/2] net: sh_eth: DMA mapping API fixes
+Date: Mon,  4 Dec 2017 14:33:25 +0100
+Message-Id: <20171204133327.3505-1-thomas.petazzoni@free-electrons.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Date: Mon,  4 Dec 2017 14:33:25 +0100
+Hello,
 
-> Here are two patches that fix how the sh_eth driver is using the DMA
-> mapping API: a bogus struct device is used in some places, or a NULL
-> struct device is used.
+Here are two patches that fix how the sh_eth driver is using the DMA
+mapping API: a bogus struct device is used in some places, or a NULL
+struct device is used.
 
-Series applied.
+Best regards,
+
+Thomas
+
+Thomas Petazzoni (2):
+  net: sh_eth: use correct "struct device" when calling DMA mapping
+    functions
+  net: sh_eth: don't use NULL as "struct device" for the DMA mapping API
+
+ drivers/net/ethernet/renesas/sh_eth.c | 31 ++++++++++++++++---------------
+ 1 file changed, 16 insertions(+), 15 deletions(-)
+
+-- 
+2.13.6
