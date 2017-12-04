@@ -1,66 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47467 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754888AbdLFKXv (ORCPT
+Received: from sauhun.de ([88.99.104.3]:44683 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753997AbdLDPFT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Dec 2017 05:23:51 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 19/61] ARM: dts: r8a7743: Use R-Car SDHI Gen2 fallback compat string
-Date: Wed,  6 Dec 2017 11:22:14 +0100
-Message-Id: <67eee4eeb3cd4df684a18f3824ea8030ea37d442.1512555546.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1512555546.git.horms+renesas@verge.net.au>
-References: <cover.1512555546.git.horms+renesas@verge.net.au>
+        Mon, 4 Dec 2017 10:05:19 -0500
+Date: Mon, 4 Dec 2017 16:05:08 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-mmc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <simon.horman@netronome.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v2 12/22] mmc: tmio,renesas_sdhi: move struct
+ tmio_mmc_dma to renesas_sdhi.h
+Message-ID: <20171204150506.ivf66ocyh5q36w3e@ninjato>
+References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
+ <1511540697-27387-13-git-send-email-yamada.masahiro@socionext.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1511540697-27387-13-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use newly added R-Car SDHI Gen2 fallback compat string
-in the DT of the r8a7743 SoC.
+On Sat, Nov 25, 2017 at 01:24:47AM +0900, Masahiro Yamada wrote:
+> struct tmio_mmc_dma looks like TMIO core data, but in fact, Renesas
+> private data.  Move it to renesas_sdhi.h (probably, it is better to
+> rename it to renesas_sdhi_dma, or squash it into struct renesas_sdhi).
+> 
+> I also moved struct renesas_sdhi and host_to_priv() to that header
+> because they are necessary to convert the tmio_mmc_host pointer into
+> the renesas_sdhi pointer.
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-This should have no run-time effect as the driver matches against
-the per-SoC compat string before considering the fallback compat string.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7743.dtsi | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 112a72baa7a4..6aa86b75b80c 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -954,7 +954,8 @@
- 		};
- 
- 		sdhi0: sd@ee100000 {
--			compatible = "renesas,sdhi-r8a7743";
-+			compatible = "renesas,sdhi-r8a7743",
-+				     "renesas,rcar-gen2-sdhi";
- 			reg = <0 0xee100000 0 0x328>;
- 			interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 314>;
-@@ -968,7 +969,8 @@
- 		};
- 
- 		sdhi1: sd@ee140000 {
--			compatible = "renesas,sdhi-r8a7743";
-+			compatible = "renesas,sdhi-r8a7743",
-+				     "renesas,rcar-gen2-sdhi";
- 			reg = <0 0xee140000 0 0x100>;
- 			interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 312>;
-@@ -982,7 +984,8 @@
- 		};
- 
- 		sdhi2: sd@ee160000 {
--			compatible = "renesas,sdhi-r8a7743";
-+			compatible = "renesas,sdhi-r8a7743",
-+				     "renesas,rcar-gen2-sdhi";
- 			reg = <0 0xee160000 0 0x100>;
- 			interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 311>;
--- 
-2.11.0
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
