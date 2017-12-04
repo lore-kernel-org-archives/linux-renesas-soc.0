@@ -1,101 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:49611 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752413AbdLEPET (ORCPT
+Received: from sauhun.de ([88.99.104.3]:44729 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752768AbdLDPNk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Dec 2017 10:04:19 -0500
-MIME-Version: 1.0
-In-Reply-To: <20171204151320.4ypa2y5r335hcg7j@ninjato>
-References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
- <1511540697-27387-11-git-send-email-yamada.masahiro@socionext.com> <20171204151320.4ypa2y5r335hcg7j@ninjato>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Wed, 6 Dec 2017 00:03:29 +0900
-Message-ID: <CAK7LNATeFZMVocscnfkYTU=5=dyRSNrrgVoh0rEvLyQvku9VSQ@mail.gmail.com>
-Subject: Re: [PATCH v2 10/22] mmc: tmio: support IP-builtin card detection logic
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-mmc <linux-mmc@vger.kernel.org>,
+        Mon, 4 Dec 2017 10:13:40 -0500
+Date: Mon, 4 Dec 2017 16:13:21 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-mmc@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Simon Horman <simon.horman@netronome.com>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Ulf Hansson <ulf.hansson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v2 10/22] mmc: tmio: support IP-builtin card detection
+ logic
+Message-ID: <20171204151320.4ypa2y5r335hcg7j@ninjato>
+References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
+ <1511540697-27387-11-git-send-email-yamada.masahiro@socionext.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="dxnfmsw3nw7oplap"
+Content-Disposition: inline
+In-Reply-To: <1511540697-27387-11-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-2017-12-05 0:13 GMT+09:00 Wolfram Sang <wsa@the-dreams.de>:
->> +static int tmio_mmc_get_cd(struct mmc_host *mmc)
->> +{
->> +     struct tmio_mmc_host *host = mmc_priv(mmc);
->> +     int ret;
->> +
->> +     ret = mmc_gpio_get_cd(mmc);
->> +     if (ret >= 0)
->> +             return ret;
->> +
->> +     return !!(sd_ctrl_read16_and_16_as_32(host, CTL_STATUS) &
->> +                                                     TMIO_STAT_SIGSTATE);
->> +}
+
+--dxnfmsw3nw7oplap
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+> +static int tmio_mmc_get_cd(struct mmc_host *mmc)
+> +{
+> +	struct tmio_mmc_host *host = mmc_priv(mmc);
+> +	int ret;
+> +
+> +	ret = mmc_gpio_get_cd(mmc);
+> +	if (ret >= 0)
+> +		return ret;
+> +
+> +	return !!(sd_ctrl_read16_and_16_as_32(host, CTL_STATUS) &
+> +							TMIO_STAT_SIGSTATE);
+> +}
+
+I wonder if we shouldn't do something like:
+
+	if (mmc_can_gpio_cd())
+		return mmc_gpio_get_cd()
+	else
+		return !!(sd_ctrl_read16_and_16_as_32...)
+
+If we have a GPIO CD defined, I think we want the value of
+mmc_gpio_get_cd() in all cases. It makes clearer that this is an
+'either-or' case and not a fallback mechanism.
 
 
-I just followed tmio_mmc_get_ro() implementation.
+--dxnfmsw3nw7oplap
+Content-Type: application/pgp-signature; name="signature.asc"
 
-If we do not care the symmetry between _get_ro() and _get_cd() hooks,
-yes, your suggestion makes sense.
+-----BEGIN PGP SIGNATURE-----
 
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlolZgwACgkQFA3kzBSg
+KbZ7HA/9HySQY4HYCrUYbbOVC54LDCPJ8qOOAOF7UP+P26LRujbvc8LX136dZCbP
+qu9U3jdQCl88yt6f1VTLvTcx6MtJLNaluhFEy0YCwFetnaYeYx1E+NA7n7feOKep
+dcV2Pwigz4eap13Qoce03wwqBCPKoHV/HEBSSRP55C2eQyTOBRJTYKsaEYDReCgV
+vDrpC/+SPFkoLoYbVoKepqPxKjXFy17jwYKroGSG4D/ROFj3gWV58S34TsGcGcFZ
++LovrHYlYnaz3JxdE1M1JZ+q83b/yIQMfdu2uWdu0LBA9kuLXVCmyrd1xTyvtqyv
+vaIICxUGs5UVmdFopvIJcAvGLE38NBEW45E29O+QE3DXdHDc+EUmn4kYAnr0B7bQ
+rEAg0GtB2VaawtLrp1TvBEE6CgHPh42RO+PeD3e3jnkVuOkuktxeIfiL83QV6upv
+B+bu7wLK+9DH99UYJvufJi1K9B4h71lxj/3D9ggTTr/7HqfGn3tfdm14mgp5vgUB
+6Saa/y1abSaJfWnHt001ef6yAj2vrcgHLmWKB0qQPaZQj2YdMPoEKkXTk6/Qg66X
+pumE8Dqd/ikkjnOxEaQQjvaZjAGNe3Dsz0lYQll9NExZH6CFyM4bqay5oI//o4Q6
+iTI/MIk2skeoEvW7TkznLNQviMPjC3dcVeAc3j0T8yNu0KkVVNU=
+=8lQp
+-----END PGP SIGNATURE-----
 
-
-> I wonder if we shouldn't do something like:
->
->         if (mmc_can_gpio_cd())
->                 return mmc_gpio_get_cd()
->         else
->                 return !!(sd_ctrl_read16_and_16_as_32...)
->
-> If we have a GPIO CD defined, I think we want the value of
-> mmc_gpio_get_cd() in all cases. It makes clearer that this is an
-> 'either-or' case and not a fallback mechanism.
->
-
-
-Another possibility would select this in _probe().
-We would need to evaluate mmc_can_gpio_cd() only once when probing.
-
-I will follow your suggestion, though.
-Either way is fine with me.
-
-
-
-static int tmio_mmc_get_cd(struct mmc_host *mmc)
-{
-       struct tmio_mmc_host *host = mmc_priv(mmc);
-
-       return !!(sd_ctrl_read16_and_16_as_32(host, CTL_STATUS) &
-                                                TMIO_STAT_SIGSTATE);
-}
-
-static const struct mmc_host_ops tmio_mmc_ops = {
-      ...
-      .get_cd      = tmio_mmc_get_cd,
-      ...
-};
-
-int tmio_mmc_host_probe( ... )
-{
-      ....
-
-      /* replace get_cd hook when we use GPIO for card detection */
-      if (mmc_can_gpio_cd(mmc))
-                _host->ops.get_cd = mmc_gpio_get_cd;
-
-
-}
-
-
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+--dxnfmsw3nw7oplap--
