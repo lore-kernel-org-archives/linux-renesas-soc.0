@@ -1,11 +1,11 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:40412 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752229AbdLDUF2 (ORCPT
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:44383 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751421AbdLDRYH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Dec 2017 15:05:28 -0500
-Received: by mail-lf0-f66.google.com with SMTP id t197so20598850lfe.7
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 04 Dec 2017 12:05:27 -0800 (PST)
+        Mon, 4 Dec 2017 12:24:07 -0500
+Received: by mail-lf0-f67.google.com with SMTP id x204so20024257lfa.11
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 04 Dec 2017 09:24:06 -0800 (PST)
 Subject: Re: [PATCH 1/2] net: sh_eth: use correct "struct device" when calling
  DMA mapping functions
 To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
@@ -18,8 +18,8 @@ Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 References: <20171204133327.3505-1-thomas.petazzoni@free-electrons.com>
  <20171204133327.3505-2-thomas.petazzoni@free-electrons.com>
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <607df840-613e-b86c-2224-43815b50627c@cogentembedded.com>
-Date: Mon, 4 Dec 2017 23:05:23 +0300
+Message-ID: <4c63cec5-6157-c95c-64a6-3afe69fdef6e@cogentembedded.com>
+Date: Mon, 4 Dec 2017 20:24:02 +0300
 MIME-Version: 1.0
 In-Reply-To: <20171204133327.3505-2-thomas.petazzoni@free-electrons.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
@@ -47,24 +47,10 @@ On 12/04/2017 04:33 PM, Thomas Petazzoni wrote:
 > This commit fixes that by adjusting all calls to the DMA mapping API.
 > 
 > Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-> ---
->   drivers/net/ethernet/renesas/sh_eth.c | 19 ++++++++++---------
->   1 file changed, 10 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
-> index 7e060aa9fbed..91e918e654fe 100644
-> --- a/drivers/net/ethernet/renesas/sh_eth.c
-> +++ b/drivers/net/ethernet/renesas/sh_eth.c
-> @@ -1149,7 +1149,8 @@ static int sh_eth_tx_free(struct net_device *ndev, bool sent_only)
->   			   entry, le32_to_cpu(txdesc->status));
->   		/* Free the original skb. */
->   		if (mdp->tx_skbuff[entry]) {
-> -			dma_unmap_single(&ndev->dev, le32_to_cpu(txdesc->addr),
-> +			dma_unmap_single(&mdp->pdev->dev,
 
-    Using 'ndev->dev.parent' (as in ravb) also should work... not sure which 
-is better (although I'm seeing very strange things in the ravb driver built 
-with AArch654 gcc 4.8.5).
+Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
+   I'm still unsure the ravb driver doesn't have this issue...
 
 [...]
 
