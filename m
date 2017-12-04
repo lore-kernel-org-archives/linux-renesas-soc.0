@@ -1,65 +1,281 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:39056 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753176AbdLFIWu (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Dec 2017 03:22:50 -0500
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: balbi@kernel.org
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 1/3] usb: renesas_usbhs: remove redundant polling in usbhsf_fifo_barrier()
-Date: Wed,  6 Dec 2017 17:18:31 +0900
-Message-Id: <1512548313-20175-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1512548313-20175-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1512548313-20175-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Return-Path: <linux-media-owner@vger.kernel.org>
+Subject: Re: [PATCH v8 04/28] rcar-vin: move subdevice handling to async
+ callbacks
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+References: <20171129194342.26239-1-niklas.soderlund+renesas@ragnatech.se>
+ <20171129194342.26239-5-niklas.soderlund+renesas@ragnatech.se>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <eaae0c05-dcbe-165e-c20e-e71ba0cc6c29@xs4all.nl>
+Date: Mon, 4 Dec 2017 10:47:46 +0100
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <20171129194342.26239-5-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The datasheet doesn't mention that needs to poll of FRDY is set or not.
-So, this patch removes such handling in the usbhsf_fifo_barrier().
+On 11/29/2017 08:43 PM, Niklas Söderlund wrote:
+> In preparation for Gen3 support move the subdevice initialization and
+> clean up from rvin_v4l2_{register,unregister}() directly to the async
+> callbacks. This simplifies the addition of Gen3 support as the
+> rvin_v4l2_register() can be shared for both Gen2 and Gen3 while direct
+> subdevice control are only used on Gen2.
+> 
+> While moving this code drop a large comment which is copied from the
+> framework documentation and fold rvin_mbus_supported() into its only
+> caller.
+> 
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/usb/renesas_usbhs/fifo.c | 16 +++++-----------
- 1 file changed, 5 insertions(+), 11 deletions(-)
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
 
-diff --git a/drivers/usb/renesas_usbhs/fifo.c b/drivers/usb/renesas_usbhs/fifo.c
-index 2d24ef3..ff96c2e 100644
---- a/drivers/usb/renesas_usbhs/fifo.c
-+++ b/drivers/usb/renesas_usbhs/fifo.c
-@@ -256,15 +256,9 @@ static void usbhsf_send_terminator(struct usbhs_pipe *pipe,
- static int usbhsf_fifo_barrier(struct usbhs_priv *priv,
- 			       struct usbhs_fifo *fifo)
- {
--	int timeout = 1024;
--
--	do {
--		/* The FIFO port is accessible */
--		if (usbhs_read(priv, fifo->ctr) & FRDY)
--			return 0;
--
--		udelay(10);
--	} while (timeout--);
-+	/* The FIFO port is accessible */
-+	if (usbhs_read(priv, fifo->ctr) & FRDY)
-+		return 0;
- 
- 	return -EBUSY;
- }
-@@ -278,8 +272,8 @@ static void usbhsf_fifo_clear(struct usbhs_pipe *pipe,
- 	if (!usbhs_pipe_is_dcp(pipe)) {
- 		/*
- 		 * This driver checks the pipe condition first to avoid -EBUSY
--		 * from usbhsf_fifo_barrier() with about 10 msec delay in
--		 * the interrupt handler if the pipe is RX direction and empty.
-+		 * from usbhsf_fifo_barrier() if the pipe is RX direction and
-+		 * empty.
- 		 */
- 		if (usbhs_pipe_is_dir_in(pipe))
- 			ret = usbhs_pipe_is_accessible(pipe);
--- 
-1.9.1
+Regards,
+
+	Hans
+
+> ---
+>  drivers/media/platform/rcar-vin/rcar-core.c | 105 ++++++++++++++++++----------
+>  drivers/media/platform/rcar-vin/rcar-v4l2.c |  35 ----------
+>  2 files changed, 67 insertions(+), 73 deletions(-)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+> index 6d99542ec74b49a7..6ab51acd676641ec 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-core.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
+> @@ -46,47 +46,11 @@ static int rvin_find_pad(struct v4l2_subdev *sd, int direction)
+>  	return -EINVAL;
+>  }
+>  
+> -static bool rvin_mbus_supported(struct rvin_graph_entity *entity)
+> -{
+> -	struct v4l2_subdev *sd = entity->subdev;
+> -	struct v4l2_subdev_mbus_code_enum code = {
+> -		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
+> -	};
+> -
+> -	code.index = 0;
+> -	code.pad = entity->source_pad;
+> -	while (!v4l2_subdev_call(sd, pad, enum_mbus_code, NULL, &code)) {
+> -		code.index++;
+> -		switch (code.code) {
+> -		case MEDIA_BUS_FMT_YUYV8_1X16:
+> -		case MEDIA_BUS_FMT_UYVY8_2X8:
+> -		case MEDIA_BUS_FMT_UYVY10_2X10:
+> -		case MEDIA_BUS_FMT_RGB888_1X24:
+> -			entity->code = code.code;
+> -			return true;
+> -		default:
+> -			break;
+> -		}
+> -	}
+> -
+> -	return false;
+> -}
+> -
+>  static int rvin_digital_notify_complete(struct v4l2_async_notifier *notifier)
+>  {
+>  	struct rvin_dev *vin = notifier_to_vin(notifier);
+>  	int ret;
+>  
+> -	/* Verify subdevices mbus format */
+> -	if (!rvin_mbus_supported(vin->digital)) {
+> -		vin_err(vin, "Unsupported media bus format for %s\n",
+> -			vin->digital->subdev->name);
+> -		return -EINVAL;
+> -	}
+> -
+> -	vin_dbg(vin, "Found media bus format for %s: %d\n",
+> -		vin->digital->subdev->name, vin->digital->code);
+> -
+>  	ret = v4l2_device_register_subdev_nodes(&vin->v4l2_dev);
+>  	if (ret < 0) {
+>  		vin_err(vin, "Failed to register subdev nodes\n");
+> @@ -103,8 +67,16 @@ static void rvin_digital_notify_unbind(struct v4l2_async_notifier *notifier,
+>  	struct rvin_dev *vin = notifier_to_vin(notifier);
+>  
+>  	vin_dbg(vin, "unbind digital subdev %s\n", subdev->name);
+> +
+> +	mutex_lock(&vin->lock);
+> +
+>  	rvin_v4l2_unregister(vin);
+> +	v4l2_ctrl_handler_free(&vin->ctrl_handler);
+> +
+> +	vin->vdev.ctrl_handler = NULL;
+>  	vin->digital->subdev = NULL;
+> +
+> +	mutex_unlock(&vin->lock);
+>  }
+>  
+>  static int rvin_digital_notify_bound(struct v4l2_async_notifier *notifier,
+> @@ -112,12 +84,14 @@ static int rvin_digital_notify_bound(struct v4l2_async_notifier *notifier,
+>  				     struct v4l2_async_subdev *asd)
+>  {
+>  	struct rvin_dev *vin = notifier_to_vin(notifier);
+> +	struct v4l2_subdev_mbus_code_enum code = {
+> +		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
+> +	};
+>  	int ret;
+>  
+>  	v4l2_set_subdev_hostdata(subdev, vin);
+>  
+>  	/* Find source and sink pad of remote subdevice */
+> -
+>  	ret = rvin_find_pad(subdev, MEDIA_PAD_FL_SOURCE);
+>  	if (ret < 0)
+>  		return ret;
+> @@ -126,21 +100,74 @@ static int rvin_digital_notify_bound(struct v4l2_async_notifier *notifier,
+>  	ret = rvin_find_pad(subdev, MEDIA_PAD_FL_SINK);
+>  	vin->digital->sink_pad = ret < 0 ? 0 : ret;
+>  
+> +	/* Find compatible subdevices mbus format */
+> +	vin->digital->code = 0;
+> +	code.index = 0;
+> +	code.pad = vin->digital->source_pad;
+> +	while (!vin->digital->code &&
+> +	       !v4l2_subdev_call(subdev, pad, enum_mbus_code, NULL, &code)) {
+> +		code.index++;
+> +		switch (code.code) {
+> +		case MEDIA_BUS_FMT_YUYV8_1X16:
+> +		case MEDIA_BUS_FMT_UYVY8_2X8:
+> +		case MEDIA_BUS_FMT_UYVY10_2X10:
+> +		case MEDIA_BUS_FMT_RGB888_1X24:
+> +			vin->digital->code = code.code;
+> +			vin_dbg(vin, "Found media bus format for %s: %d\n",
+> +				subdev->name, vin->digital->code);
+> +			break;
+> +		default:
+> +			break;
+> +		}
+> +	}
+> +
+> +	if (!vin->digital->code) {
+> +		vin_err(vin, "Unsupported media bus format for %s\n",
+> +			subdev->name);
+> +		return -EINVAL;
+> +	}
+> +
+> +	/* Read tvnorms */
+> +	ret = v4l2_subdev_call(subdev, video, g_tvnorms, &vin->vdev.tvnorms);
+> +	if (ret < 0 && ret != -ENOIOCTLCMD && ret != -ENODEV)
+> +		return ret;
+> +
+> +	mutex_lock(&vin->lock);
+> +
+> +	/* Add the controls */
+> +	ret = v4l2_ctrl_handler_init(&vin->ctrl_handler, 16);
+> +	if (ret < 0)
+> +		goto err;
+> +
+> +	ret = v4l2_ctrl_add_handler(&vin->ctrl_handler, subdev->ctrl_handler,
+> +				    NULL);
+> +	if (ret < 0)
+> +		goto err_ctrl;
+> +
+> +	vin->vdev.ctrl_handler = &vin->ctrl_handler;
+> +
+>  	vin->digital->subdev = subdev;
+>  
+> +	mutex_unlock(&vin->lock);
+> +
+>  	vin_dbg(vin, "bound subdev %s source pad: %u sink pad: %u\n",
+>  		subdev->name, vin->digital->source_pad,
+>  		vin->digital->sink_pad);
+>  
+>  	return 0;
+> +err_ctrl:
+> +	v4l2_ctrl_handler_free(&vin->ctrl_handler);
+> +err:
+> +	mutex_unlock(&vin->lock);
+> +	return ret;
+>  }
+> +
+>  static const struct v4l2_async_notifier_operations rvin_digital_notify_ops = {
+>  	.bound = rvin_digital_notify_bound,
+>  	.unbind = rvin_digital_notify_unbind,
+>  	.complete = rvin_digital_notify_complete,
+>  };
+>  
+> -
+>  static int rvin_digital_parse_v4l2(struct device *dev,
+>  				   struct v4l2_fwnode_endpoint *vep,
+>  				   struct v4l2_async_subdev *asd)
+> @@ -277,6 +304,8 @@ static int rcar_vin_remove(struct platform_device *pdev)
+>  	v4l2_async_notifier_unregister(&vin->notifier);
+>  	v4l2_async_notifier_cleanup(&vin->notifier);
+>  
+> +	v4l2_ctrl_handler_free(&vin->ctrl_handler);
+> +
+>  	rvin_dma_unregister(vin);
+>  
+>  	return 0;
+> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> index 32a658214f48fa49..4a0610a6b4503501 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> @@ -847,9 +847,6 @@ void rvin_v4l2_unregister(struct rvin_dev *vin)
+>  	v4l2_info(&vin->v4l2_dev, "Removing %s\n",
+>  		  video_device_node_name(&vin->vdev));
+>  
+> -	/* Checks internaly if handlers have been init or not */
+> -	v4l2_ctrl_handler_free(&vin->ctrl_handler);
+> -
+>  	/* Checks internaly if vdev have been init or not */
+>  	video_unregister_device(&vin->vdev);
+>  }
+> @@ -872,41 +869,10 @@ static void rvin_notify(struct v4l2_subdev *sd,
+>  int rvin_v4l2_register(struct rvin_dev *vin)
+>  {
+>  	struct video_device *vdev = &vin->vdev;
+> -	struct v4l2_subdev *sd = vin_to_source(vin);
+>  	int ret;
+>  
+> -	v4l2_set_subdev_hostdata(sd, vin);
+> -
+>  	vin->v4l2_dev.notify = rvin_notify;
+>  
+> -	ret = v4l2_subdev_call(sd, video, g_tvnorms, &vin->vdev.tvnorms);
+> -	if (ret < 0 && ret != -ENOIOCTLCMD && ret != -ENODEV)
+> -		return ret;
+> -
+> -	if (vin->vdev.tvnorms == 0) {
+> -		/* Disable the STD API if there are no tvnorms defined */
+> -		v4l2_disable_ioctl(&vin->vdev, VIDIOC_G_STD);
+> -		v4l2_disable_ioctl(&vin->vdev, VIDIOC_S_STD);
+> -		v4l2_disable_ioctl(&vin->vdev, VIDIOC_QUERYSTD);
+> -		v4l2_disable_ioctl(&vin->vdev, VIDIOC_ENUMSTD);
+> -	}
+> -
+> -	/* Add the controls */
+> -	/*
+> -	 * Currently the subdev with the largest number of controls (13) is
+> -	 * ov6550. So let's pick 16 as a hint for the control handler. Note
+> -	 * that this is a hint only: too large and you waste some memory, too
+> -	 * small and there is a (very) small performance hit when looking up
+> -	 * controls in the internal hash.
+> -	 */
+> -	ret = v4l2_ctrl_handler_init(&vin->ctrl_handler, 16);
+> -	if (ret < 0)
+> -		return ret;
+> -
+> -	ret = v4l2_ctrl_add_handler(&vin->ctrl_handler, sd->ctrl_handler, NULL);
+> -	if (ret < 0)
+> -		return ret;
+> -
+>  	/* video node */
+>  	vdev->fops = &rvin_fops;
+>  	vdev->v4l2_dev = &vin->v4l2_dev;
+> @@ -915,7 +881,6 @@ int rvin_v4l2_register(struct rvin_dev *vin)
+>  	vdev->release = video_device_release_empty;
+>  	vdev->ioctl_ops = &rvin_ioctl_ops;
+>  	vdev->lock = &vin->lock;
+> -	vdev->ctrl_handler = &vin->ctrl_handler;
+>  	vdev->device_caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING |
+>  		V4L2_CAP_READWRITE;
+>  
+> 
