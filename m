@@ -1,72 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47467 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754918AbdLFKYL (ORCPT
+Received: from mail.kernel.org ([198.145.29.99]:52584 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753502AbdLDLBP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Dec 2017 05:24:11 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 15/61] ARM: dts: r8a7745: Add USB-DMAC device nodes
-Date: Wed,  6 Dec 2017 11:22:10 +0100
-Message-Id: <fbdf17b307dae407b2e673806386f84660d01b63.1512555546.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1512555546.git.horms+renesas@verge.net.au>
-References: <cover.1512555546.git.horms+renesas@verge.net.au>
+        Mon, 4 Dec 2017 06:01:15 -0500
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: laurent.pinchart@ideasonboard.com,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v3] media: vsp1: Prevent suspending and resuming DRM pipelines
+Date: Mon,  4 Dec 2017 11:01:11 +0000
+Message-Id: <1512385271-21573-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+When used as part of a display pipeline, the VSP is stopped and
+restarted explicitly by the DU from its suspend and resume handlers.
+There is thus no need to stop or restart pipelines in the VSP suspend
+and resume handlers, and doing so would cause the hardware to be
+left in a misconfigured state.
 
-From: Biju Das <biju.das@bp.renesas.com>
+Ensure that the VSP suspend and resume handlers do not affect DRM-based
+pipelines.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- arch/arm/boot/dts/r8a7745.dtsi | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+v3:
+ - Fixed up with punctuation from Laurent.
 
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index 432aa48ea395..6e0c69bb375d 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -312,6 +312,34 @@
- 			dma-channels = <15>;
- 		};
+ drivers/media/platform/vsp1/vsp1_drv.c | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/platform/vsp1/vsp1_drv.c b/drivers/media/platform/vsp1/vsp1_drv.c
+index 962e4c304076..eed9516e25e1 100644
+--- a/drivers/media/platform/vsp1/vsp1_drv.c
++++ b/drivers/media/platform/vsp1/vsp1_drv.c
+@@ -571,7 +571,13 @@ static int __maybe_unused vsp1_pm_suspend(struct device *dev)
+ {
+ 	struct vsp1_device *vsp1 = dev_get_drvdata(dev);
  
-+		usb_dmac0: dma-controller@e65a0000 {
-+			compatible = "renesas,r8a7745-usb-dmac",
-+				     "renesas,usb-dmac";
-+			reg = <0 0xe65a0000 0 0x100>;
-+			interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "ch0", "ch1";
-+			clocks = <&cpg CPG_MOD 330>;
-+			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 330>;
-+			#dma-cells = <1>;
-+			dma-channels = <2>;
-+		};
+-	vsp1_pipelines_suspend(vsp1);
++	/*
++	 * When used as part of a display pipeline, the VSP is stopped and
++	 * restarted explicitly by the DU.
++	 */
++	if (!vsp1->drm)
++		vsp1_pipelines_suspend(vsp1);
 +
-+		usb_dmac1: dma-controller@e65b0000 {
-+			compatible = "renesas,r8a7745-usb-dmac",
-+				     "renesas,usb-dmac";
-+			reg = <0 0xe65b0000 0 0x100>;
-+			interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "ch0", "ch1";
-+			clocks = <&cpg CPG_MOD 331>;
-+			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 331>;
-+			#dma-cells = <1>;
-+			dma-channels = <2>;
-+		};
+ 	pm_runtime_force_suspend(vsp1->dev);
+ 
+ 	return 0;
+@@ -582,7 +588,13 @@ static int __maybe_unused vsp1_pm_resume(struct device *dev)
+ 	struct vsp1_device *vsp1 = dev_get_drvdata(dev);
+ 
+ 	pm_runtime_force_resume(vsp1->dev);
+-	vsp1_pipelines_resume(vsp1);
 +
- 		scifa0: serial@e6c40000 {
- 			compatible = "renesas,scifa-r8a7745",
- 				     "renesas,rcar-gen2-scifa", "renesas,scifa";
++	/*
++	 * When used as part of a display pipeline, the VSP is stopped and
++	 * restarted explicitly by the DU.
++	 */
++	if (!vsp1->drm)
++		vsp1_pipelines_resume(vsp1);
+ 
+ 	return 0;
+ }
 -- 
-2.11.0
+2.7.4
