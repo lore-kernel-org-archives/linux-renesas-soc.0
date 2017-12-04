@@ -1,44 +1,122 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:43044 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750881AbdLSPys (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:42004 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753443AbdLDKfG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Dec 2017 10:54:48 -0500
+        Mon, 4 Dec 2017 05:35:06 -0500
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
+To: "David S . Miller" <davem@davemloft.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Richard Leitner <richard.leitner@skidata.com>,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] soc: renesas: rcar-sysc: Mark rcar_sysc_matches[] __initconst
-Date: Tue, 19 Dec 2017 16:54:44 +0100
-Message-Id: <1513698884-26663-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v4 2/4] macb: Kill PHY reset code
+Date: Mon,  4 Dec 2017 11:34:50 +0100
+Message-Id: <1512383692-14009-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1512383692-14009-1-git-send-email-geert+renesas@glider.be>
+References: <1512383692-14009-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-rcar_sysc_matches[] is used only by rcar_sysc_pd_init(), which is
-__init.  Hence mark rcar_sysc_matches[] __initconst.
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-This frees another 1764 bytes (arm32/shmobile_defconfig) or 1000 bytes
-(arm64/renesas_defconfig) of memory after kernel init.
+With the phylib now being aware of the "reset-gpios" PHY node property,
+there should be no need to frob the PHY reset in this driver anymore...
 
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Acked-by: Nicolas Ferre <nicolas.ferre@atmel.com>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/soc/renesas/rcar-sysc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v4:
+  - Add Reviewed-by,
 
-diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
-index 52c25a5e2646c839..636872bc24167bb7 100644
---- a/drivers/soc/renesas/rcar-sysc.c
-+++ b/drivers/soc/renesas/rcar-sysc.c
-@@ -254,7 +254,7 @@ static void __init rcar_sysc_pd_setup(struct rcar_sysc_pd *pd)
- 	pm_genpd_init(genpd, gov, false);
- }
+v3:
+  - Resolve rejects due to the file being renamed, refresh the patch,
+  - Add code to reset PHY on probe error,
+  - Edit patch description,
+  - Take over from Sergei,
+  - Add Acked-by,
+
+v2:
+  - No changes.
+---
+ drivers/net/ethernet/cadence/macb.h      |  1 -
+ drivers/net/ethernet/cadence/macb_main.c | 21 ---------------------
+ 2 files changed, 22 deletions(-)
+
+diff --git a/drivers/net/ethernet/cadence/macb.h b/drivers/net/ethernet/cadence/macb.h
+index 3165c2ba58f97744..c50c5ec49b1dc585 100644
+--- a/drivers/net/ethernet/cadence/macb.h
++++ b/drivers/net/ethernet/cadence/macb.h
+@@ -1171,7 +1171,6 @@ struct macb {
+ 	unsigned int		dma_burst_length;
  
--static const struct of_device_id rcar_sysc_matches[] = {
-+static const struct of_device_id rcar_sysc_matches[] __initconst = {
- #ifdef CONFIG_SYSC_R8A7743
- 	{ .compatible = "renesas,r8a7743-sysc", .data = &r8a7743_sysc_info },
- #endif
+ 	phy_interface_t		phy_interface;
+-	struct gpio_desc	*reset_gpio;
+ 
+ 	/* AT91RM9200 transmit */
+ 	struct sk_buff *skb;			/* holds skb until xmit interrupt completes */
+diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+index c5fa87cdc6c401a7..3f0dfb20fdbcf936 100644
+--- a/drivers/net/ethernet/cadence/macb_main.c
++++ b/drivers/net/ethernet/cadence/macb_main.c
+@@ -3803,7 +3803,6 @@ static int macb_probe(struct platform_device *pdev)
+ 					      = macb_config->clk_init;
+ 	int (*init)(struct platform_device *) = macb_config->init;
+ 	struct device_node *np = pdev->dev.of_node;
+-	struct device_node *phy_node;
+ 	struct clk *pclk, *hclk = NULL, *tx_clk = NULL, *rx_clk = NULL;
+ 	unsigned int queue_mask, num_queues;
+ 	struct macb_platform_data *pdata;
+@@ -3909,18 +3908,6 @@ static int macb_probe(struct platform_device *pdev)
+ 	else
+ 		macb_get_hwaddr(bp);
+ 
+-	/* Power up the PHY if there is a GPIO reset */
+-	phy_node =  of_get_next_available_child(np, NULL);
+-	if (phy_node) {
+-		int gpio = of_get_named_gpio(phy_node, "reset-gpios", 0);
+-
+-		if (gpio_is_valid(gpio)) {
+-			bp->reset_gpio = gpio_to_desc(gpio);
+-			gpiod_direction_output(bp->reset_gpio, 1);
+-		}
+-	}
+-	of_node_put(phy_node);
+-
+ 	err = of_get_phy_mode(np);
+ 	if (err < 0) {
+ 		pdata = dev_get_platdata(&pdev->dev);
+@@ -3967,10 +3954,6 @@ static int macb_probe(struct platform_device *pdev)
+ 		of_phy_deregister_fixed_link(np);
+ 	mdiobus_free(bp->mii_bus);
+ 
+-	/* Shutdown the PHY if there is a GPIO reset */
+-	if (bp->reset_gpio)
+-		gpiod_set_value(bp->reset_gpio, 0);
+-
+ err_out_free_netdev:
+ 	free_netdev(dev);
+ 
+@@ -4001,10 +3984,6 @@ static int macb_remove(struct platform_device *pdev)
+ 		dev->phydev = NULL;
+ 		mdiobus_free(bp->mii_bus);
+ 
+-		/* Shutdown the PHY if there is a GPIO reset */
+-		if (bp->reset_gpio)
+-			gpiod_set_value(bp->reset_gpio, 0);
+-
+ 		unregister_netdev(dev);
+ 		clk_disable_unprepare(bp->tx_clk);
+ 		clk_disable_unprepare(bp->hclk);
 -- 
 2.7.4
