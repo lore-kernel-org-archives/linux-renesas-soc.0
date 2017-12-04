@@ -1,70 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:38787 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751069AbdLDQlp (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:39240 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753382AbdLDKfG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Dec 2017 11:41:45 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Dave Airlie <airlied@redhat.com>
-Cc: dri-devel@lists.freedesktop.org,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [GIT PULL FOR v4.16] R-Car DU changes
-Date: Mon, 04 Dec 2017 18:41:58 +0200
-Message-ID: <1784882.AJy1sGis87@avalon>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Mon, 4 Dec 2017 05:35:06 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: "David S . Miller" <davem@davemloft.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Richard Leitner <richard.leitner@skidata.com>,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v4 3/4] arm64: dts: renesas: salvator-common: Add EthernetAVB PHY reset
+Date: Mon,  4 Dec 2017 11:34:51 +0100
+Message-Id: <1512383692-14009-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1512383692-14009-1-git-send-email-geert+renesas@glider.be>
+References: <1512383692-14009-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Dave,
+Describe the GPIO used to reset the Ethernet PHY for EthernetAVB.
+This allows the driver to reset the PHY during probe and after system
+resume.
 
-The following changes since commit ca797d29cd63e7b71b4eea29aff3b1cefd1ecb59:
+This fixes Ethernet operation after resume from s2ram on Salvator-XS,
+where the enable pin of the regulator providing PHY power is connected
+to PRESETn, and PSCI powers down the SoC during system suspend.
 
-  Merge tag 'drm-intel-next-2017-11-17-1' of git://anongit.freedesktop.org/
-drm/drm-intel into drm-next (2017-12-04 10:56:53 +1000)
+On Salvator-X, the enable pin is always pulled high, but the driver may
+still need to reset the PHY if this wasn't done by the bootloader
+before.
 
-are available in the git repository at:
+Inspired by patches in the BSP for the individual Salvator-X/XS boards
+by Kazuya Mizuguchi.
 
-  git://linuxtv.org/pinchartl/media.git drm/next/du
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+For proper PHY reset operation during system resume, this depends on
+"[PATCH v4 1/4] phylib: Add device reset GPIO support".
+However, this patch can be applied independently.
 
-for you to fetch changes up to 401712e035c699d569dbd37024f4b21dc76cc870:
+v4:
+  - No changes,
 
-  drm: rcar-du: Clip planes to screen boundaries (2017-12-04 18:38:31 +0200)
+v3:
+  - Extract from series "[PATCH 0/4] ravb: Add PHY reset support", and
+    incorporate in this series,
+  - Move reset-gpios from the ethernet to the ethernet-phy node.
+---
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-The series contains one patch that touches the V4L2 VSP driver. Mauro has 
-acked it for merge through your tree, it doesn't conflict with anything 
-scheduled for merge in v4.16 through Mauro's tree.
-
-----------------------------------------------------------------
-Fabrizio Castro (3):
-      dt-bindings: display: rcar-du: Document R8A774[35] DU
-      drm: rcar-du: Add R8A7743 support
-      drm: rcar-du: Add R8A7745 support
-
-Kieran Bingham (2):
-      drm: rcar-du: Implement system suspend/resume support
-      drm: rcar-du: Remove unused CRTC suspend/resume functions
-
-Laurent Pinchart (4):
-      drm: rcar-du: Don't set connector DPMS property
-      v4l: vsp1: Start and stop DRM pipeline independently of planes
-      drm: rcar-du: Share plane atomic check code between Gen2 and Gen3
-      drm: rcar-du: Clip planes to screen boundaries
-
- .../devicetree/bindings/display/renesas,du.txt          | 30 +++++-----
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c                  | 38 +------------
- drivers/gpu/drm/rcar-du/rcar_du_drv.c                   | 62 +++++++++++++++-
- drivers/gpu/drm/rcar-du/rcar_du_drv.h                   |  1 +
- drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c               |  4 --
- drivers/gpu/drm/rcar-du/rcar_du_plane.c                 | 75 ++++++++++++----
- drivers/gpu/drm/rcar-du/rcar_du_plane.h                 |  4 ++
- drivers/gpu/drm/rcar-du/rcar_du_vsp.c                   | 64 ++++++----------
- drivers/media/platform/vsp1/vsp1_drm.c                  | 37 ++++++++----
- 9 files changed, 187 insertions(+), 128 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+index a298df74ca6c037f..6a9524ff881306cf 100644
+--- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+@@ -264,6 +264,7 @@
+ 		reg = <0>;
+ 		interrupt-parent = <&gpio2>;
+ 		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
++		reset-gpios = <&gpio2 10 GPIO_ACTIVE_LOW>;
+ 	};
+ };
+ 
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.4
