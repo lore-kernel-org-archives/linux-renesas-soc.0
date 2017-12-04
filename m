@@ -1,76 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34052 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757656AbdLVKbh (ORCPT
+Received: from mail-qt0-f175.google.com ([209.85.216.175]:39599 "EHLO
+        mail-qt0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752863AbdLDJEH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Dec 2017 05:31:37 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 29/37] ARM: dts: r8a7745: Add audio DMAC support
-Date: Fri, 22 Dec 2017 11:30:07 +0100
-Message-Id: <a14a05c2f32143431615116f94cf455727cce235.1513938145.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1513938145.git.horms+renesas@verge.net.au>
-References: <cover.1513938145.git.horms+renesas@verge.net.au>
+        Mon, 4 Dec 2017 04:04:07 -0500
+MIME-Version: 1.0
+In-Reply-To: <20171201110632.odbk2iocniyiiqek@ninjato>
+References: <20171130161759.47tjyfqefoffpus3@verge.net.au> <20171201110632.odbk2iocniyiiqek@ninjato>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 4 Dec 2017 10:04:05 +0100
+Message-ID: <CAMuHMdV8OYFq_EdO2fw-KZJP6qPuCpFGO0ZkueSKOGZXnC9HRg@mail.gmail.com>
+Subject: Re: Possible regression due to "arm64: renesas: salvator: set driver
+ type for eMMC"
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Simon Horman <horms@verge.net.au>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+On Fri, Dec 1, 2017 at 12:06 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
+> While I think it could be that the early ES1.0 boards might have different eMMC
+> chips...
 
-Instantiate the audio DMA controller on the r8a7745 device tree.
+FTR, my boards have:
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7745.dtsi | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+Salvator-X with H3 ES1.0:
+    mmc0: new HS200 MMC card at address 0001
+    mmcblk0: mmc0:0001 BGSD3R 29.1 GiB
 
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index 6d085f004721..d9488a116236 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -397,6 +397,37 @@
- 			dma-channels = <15>;
- 		};
- 
-+		audma0: dma-controller@ec700000 {
-+			compatible = "renesas,dmac-r8a7745",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xec700000 0 0x10000>;
-+			interrupts = <GIC_SPI 346 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 322 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 323 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 324 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 325 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 331 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					  "ch0", "ch1", "ch2", "ch3",
-+					  "ch4", "ch5", "ch6", "ch7",
-+					  "ch8", "ch9", "ch10", "ch11",
-+					  "ch12";
-+			clocks = <&cpg CPG_MOD 502>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 502>;
-+			#dma-cells = <1>;
-+			dma-channels = <13>;
-+		};
-+
- 		usb_dmac0: dma-controller@e65a0000 {
- 			compatible = "renesas,r8a7745-usb-dmac",
- 				     "renesas,usb-dmac";
--- 
-2.11.0
+Salvator-X with M3-W ES1.0:
+
+    mmc0: new HS200 MMC card at address 0001
+    mmcblk0: mmc0:0001 eMMC   28.8 GiB
+
+Salvator-XS with H3 ES2.0:
+
+    mmc0: new HS200 MMC card at address 0001
+    mmcblk0: mmc0:0001 BGSD3R 29.1 GiB
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
