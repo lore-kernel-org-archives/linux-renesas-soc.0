@@ -1,43 +1,34 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:53803 "EHLO pokefinder.org"
+Received: from sauhun.de ([88.99.104.3]:44688 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752700AbdLULy2 (ORCPT
+        id S1753874AbdLDPF1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 21 Dec 2017 06:54:28 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH] arm64: dts: renesas: salvator-common: add GPIO extender
-Date: Thu, 21 Dec 2017 12:54:23 +0100
-Message-Id: <20171221115423.13591-1-wsa+renesas@sang-engineering.com>
+        Mon, 4 Dec 2017 10:05:27 -0500
+Date: Mon, 4 Dec 2017 16:05:24 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-mmc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <simon.horman@netronome.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v2 13/22] mmc: tmio,renesas_sdhi: move Renesas-specific
+ DMA data to renesas_sdhi.h
+Message-ID: <20171204150523.ulcezxgqamroimaw@ninjato>
+References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
+ <1511540697-27387-14-git-send-email-yamada.masahiro@socionext.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1511540697-27387-14-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We need to configure its GPIOs later.
+On Sat, Nov 25, 2017 at 01:24:48AM +0900, Masahiro Yamada wrote:
+> struct tmio_mmc_host has "dma_dataend" and "dma_complete", but in fact,
+> they are Renesas private data.  Move them to renesas_sdhi.h
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-
- arch/arm64/boot/dts/renesas/salvator-common.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-index a298df74ca6c03..1f52be050e2b13 100644
---- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-@@ -338,6 +338,11 @@
- &i2c4 {
- 	status = "okay";
- 
-+	pca9654: gpio@20 {
-+		compatible = "onsemi,pca9654";
-+		reg = <0x20>;
-+	};
-+
- 	csa_vdd: adc@7c {
- 		compatible = "maxim,max9611";
- 		reg = <0x7c>;
--- 
-2.11.0
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
