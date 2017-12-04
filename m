@@ -1,64 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47467 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754831AbdLFKXQ (ORCPT
+Received: from lb1-smtp-cloud9.xs4all.net ([194.109.24.22]:60973 "EHLO
+        lb1-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751156AbdLDJpq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Dec 2017 05:23:16 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 17/61] ARM: dts: iwg22d-sodimm: Enable HS-USB
-Date: Wed,  6 Dec 2017 11:22:12 +0100
-Message-Id: <b73ae2bdd83af78e5057d20ab2884cfd004c8543.1512555546.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1512555546.git.horms+renesas@verge.net.au>
-References: <cover.1512555546.git.horms+renesas@verge.net.au>
+        Mon, 4 Dec 2017 04:45:46 -0500
+Subject: Re: [PATCH v8 03/28] rcar-vin: unregister video device on driver
+ removal
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+References: <20171129194342.26239-1-niklas.soderlund+renesas@ragnatech.se>
+ <20171129194342.26239-4-niklas.soderlund+renesas@ragnatech.se>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <5e305596-e4c4-ac51-78c5-63449196eda8@xs4all.nl>
+Date: Mon, 4 Dec 2017 10:45:41 +0100
+MIME-Version: 1.0
+In-Reply-To: <20171129194342.26239-4-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+On 11/29/2017 08:43 PM, Niklas Söderlund wrote:
+> If the video device was registered by the complete() callback it should
+> be unregistered when the driver is removed. Protect from printing a
+> uninitialized video device node name by adding a checking in
+> rvin_v4l2_unregister() by checking that the video device is registered.
+> 
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-From: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
 
-Enable HS-USB on iWave RZ/G1E carrier board.
+Regards,
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+	Hans
 
-diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-index 3eb4f83297d4..80c82aa94c06 100644
---- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-+++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-@@ -67,6 +67,12 @@
- 	status = "okay";
- };
- 
-+&hsusb {
-+	status = "okay";
-+	pinctrl-0 = <&usb0_pins>;
-+	pinctrl-names = "default";
-+};
-+
- &pci1 {
- 	status = "okay";
- 	pinctrl-0 = <&usb1_pins>;
-@@ -95,6 +101,11 @@
- 		power-source = <3300>;
- 	};
- 
-+	usb0_pins: usb0 {
-+		groups = "usb0";
-+		function = "usb0";
-+	};
-+
- 	usb1_pins: usb1 {
- 		groups = "usb1";
- 		function = "usb1";
--- 
-2.11.0
+> ---
+>  drivers/media/platform/rcar-vin/rcar-core.c | 2 ++
+>  drivers/media/platform/rcar-vin/rcar-v4l2.c | 3 +++
+>  2 files changed, 5 insertions(+)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+> index f7a4c21909da6923..6d99542ec74b49a7 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-core.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
+> @@ -272,6 +272,8 @@ static int rcar_vin_remove(struct platform_device *pdev)
+>  
+>  	pm_runtime_disable(&pdev->dev);
+>  
+> +	rvin_v4l2_unregister(vin);
+> +
+>  	v4l2_async_notifier_unregister(&vin->notifier);
+>  	v4l2_async_notifier_cleanup(&vin->notifier);
+>  
+> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> index 178aecc94962abe2..32a658214f48fa49 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> @@ -841,6 +841,9 @@ static const struct v4l2_file_operations rvin_fops = {
+>  
+>  void rvin_v4l2_unregister(struct rvin_dev *vin)
+>  {
+> +	if (!video_is_registered(&vin->vdev))
+> +		return;
+> +
+>  	v4l2_info(&vin->v4l2_dev, "Removing %s\n",
+>  		  video_device_node_name(&vin->vdev));
+>  
+> 
