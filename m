@@ -6,29 +6,27 @@ To: Geert Uytterhoeven <geert+renesas@glider.be>,
         Florian Fainelli <f.fainelli@gmail.com>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
+CC: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Richard Leitner <richard.leitner@skidata.com>,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+        <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 References: <1512383692-14009-2-git-send-email-geert+renesas@glider.be>
  <1512390905-28094-1-git-send-email-geert+renesas@glider.be>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <69fe9a6d-4039-6f80-b80d-7dc0de31e5bf@cogentembedded.com>
-Date: Thu, 7 Dec 2017 20:20:05 +0300
+From: Richard Leitner <richard.leitner@skidata.com>
+Message-ID: <b95b046c-ee37-5ec1-01c1-763fb1e307e2@skidata.com>
+Date: Mon, 4 Dec 2017 17:20:13 +0100
 MIME-Version: 1.0
 In-Reply-To: <1512390905-28094-1-git-send-email-geert+renesas@glider.be>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
 
-On 12/04/2017 03:35 PM, Geert Uytterhoeven wrote:
-
+On 12/04/2017 01:35 PM, Geert Uytterhoeven wrote:
 > From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 > 
 > The PHY devices sometimes do have their reset signal (maybe even power
@@ -51,45 +49,9 @@ On 12/04/2017 03:35 PM, Geert Uytterhoeven wrote:
 > [geert: Avoid destroying initial setup]
 > [geert: Consolidate GPIO descriptor acquiring code]
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[...]
-> diff --git a/drivers/net/phy/mdio_bus.c b/drivers/net/phy/mdio_bus.c
-> index 2df7b62c1a36811e..8f8b7747c54bc478 100644
-> --- a/drivers/net/phy/mdio_bus.c
-> +++ b/drivers/net/phy/mdio_bus.c
-[...]
-> @@ -48,9 +49,26 @@
->   
->   int mdiobus_register_device(struct mdio_device *mdiodev)
->   {
-> +	struct gpio_desc *gpiod = NULL;
-> +
->   	if (mdiodev->bus->mdio_map[mdiodev->addr])
->   		return -EBUSY;
->   
-> +	/* Deassert the optional reset signal */
+> ---
 
-    Umm, but why deassert it here for such a short time?
+Successfully tested this patch on a i.MX6SOLO based board containing a
+LAN8710 PHY:
 
-> +	if (mdiodev->dev.of_node)
-> +		gpiod = fwnode_get_named_gpiod(&mdiodev->dev.of_node->fwnode,
-> +					       "reset-gpios", 0, GPIOD_OUT_LOW,
-> +					       "PHY reset");
-> +	if (PTR_ERR(gpiod) == -ENOENT)
-> +		gpiod = NULL;
-> +	else if (IS_ERR(gpiod))
-> +		return PTR_ERR(gpiod);
-
-    Hm, returning on error with reset deasserted?
-
-> +
-> +	mdiodev->reset = gpiod;
-> +
-> +	/* Assert the reset signal again */
-> +	mdio_device_reset(mdiodev, 1);
-> +
->   	mdiodev->bus->mdio_map[mdiodev->addr] = mdiodev;
->   
->   	return 0;
-[...]
-
-MBR, Sergei
+Tested-by: Richard Leitner <richard.leitner@skidata.com>
