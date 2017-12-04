@@ -1,116 +1,36 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36918 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752479AbdLGKTx (ORCPT
+Received: from sauhun.de ([88.99.104.3]:44677 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752780AbdLDPE7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Dec 2017 05:19:53 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        devicetree@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 1/2] ARM: dts: r8a7743: sort root sub-nodes alphabetically
-Date: Thu,  7 Dec 2017 11:19:22 +0100
-Message-Id: <20171207101923.19846-2-horms+renesas@verge.net.au>
-In-Reply-To: <20171207101923.19846-1-horms+renesas@verge.net.au>
-References: <20171207101923.19846-1-horms+renesas@verge.net.au>
+        Mon, 4 Dec 2017 10:04:59 -0500
+Date: Mon, 4 Dec 2017 16:04:54 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-mmc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <simon.horman@netronome.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v2 11/22] mmc: renesas_sdhi: remove always false condition
+Message-ID: <20171204150450.jpd7do5xmvf4nddi@ninjato>
+References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
+ <1511540697-27387-12-git-send-email-yamada.masahiro@socionext.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1511540697-27387-12-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Sort root sub-nodes alphabetically for allow for easier maintenance
-of this file.
+On Sat, Nov 25, 2017 at 01:24:46AM +0900, Masahiro Yamada wrote:
+> renesas_sdhi_probe() always sets host->dma as follows:
+> 
+>         host->dma               = dma_priv;
+> 
+> !host->dma is always false.
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7743.dtsi | 62 +++++++++++++++++++++---------------------
- 1 file changed, 31 insertions(+), 31 deletions(-)
-
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index c09c6672ca37..2fe852bb10cd 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -79,6 +79,37 @@
- 		};
- 	};
- 
-+	/* External CAN clock */
-+	can_clk: can {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External root clock */
-+	extal_clk: extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External PCIe clock - can be overridden by the board */
-+	pcie_bus_clk: pcie_bus {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External SCIF clock */
-+	scif_clk: scif {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
- 	soc {
- 		compatible = "simple-bus";
- 		interrupt-parent = <&gic>;
-@@ -1230,41 +1261,10 @@
- 		};
- 	};
- 
--	/* External root clock */
--	extal_clk: extal {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		/* This value must be overridden by the board. */
--		clock-frequency = <0>;
--	};
--
- 	/* External USB clock - can be overridden by the board */
- 	usb_extal_clk: usb_extal {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
- 		clock-frequency = <48000000>;
- 	};
--
--	/* External CAN clock */
--	can_clk: can {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		/* This value must be overridden by the board. */
--		clock-frequency = <0>;
--	};
--
--	/* External PCIe clock - can be overridden by the board */
--	pcie_bus_clk: pcie_bus {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <0>;
--	};
--
--	/* External SCIF clock */
--	scif_clk: scif {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		/* This value must be overridden by the board. */
--		clock-frequency = <0>;
--	};
- };
--- 
-2.11.0
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
