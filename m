@@ -1,49 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f176.google.com ([209.85.216.176]:43610 "EHLO
-        mail-qt0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753356AbdLFJAx (ORCPT
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:38272 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752219AbdLEVnv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Dec 2017 04:00:53 -0500
-MIME-Version: 1.0
-In-Reply-To: <20171205214345.812687071@cogentembedded.com>
-References: <20171205214345.812687071@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 6 Dec 2017 10:00:51 +0100
-Message-ID: <CAMuHMdVtyY2jL-WA3aXHL0ZNJsE86vHXhQHS=LZPTJFx5NyNBQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r8a77970: add LVDS clock
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Tue, 5 Dec 2017 16:43:51 -0500
+Received: by mail-lf0-f68.google.com with SMTP id e137so1995113lfg.5
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 05 Dec 2017 13:43:50 -0800 (PST)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-Id: <20171205214345.812687071@cogentembedded.com>
+Date: Wed, 06 Dec 2017 00:43:35 +0300
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Content-Type: text/plain; charset="UTF-8"
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH] clk: renesas: r8a77970: add LVDS clock
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Disposition: inline; filename=clk-renesas-r8a77970-add-LVDS-clock.patch
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Dec 5, 2017 at 10:43 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> I seem to have omitted the LVDS clock from the R8A77970 CPG/MSSR support
-> patch for some reason -- add it back...
->
-> Based on the original (and large) patch by Daisuke Matsushita
-> <daisuke.matsushita.ns@hitachi.com>.
->
-> Fixes: 8d46e28fb508 ("clk: renesas: cpg-mssr: Add R8A77970 support")
-> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+I seem to have omitted the LVDS clock from the R8A77970 CPG/MSSR support
+patch for some reason -- add it back...
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in clk-renesas-for-v4.16.
+Based on the original (and large) patch by Daisuke Matsushita
+<daisuke.matsushita.ns@hitachi.com>.
 
-Gr{oetje,eeting}s,
+Fixes: 8d46e28fb508 ("clk: renesas: cpg-mssr: Add R8A77970 support")
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-                        Geert
+---
+This patch is against the 'clk-renesas' branch of Geert Uytterhoeven's
+'renesas-drivers.git' repo...
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+ drivers/clk/renesas/r8a77970-cpg-mssr.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Index: renesas-drivers/drivers/clk/renesas/r8a77970-cpg-mssr.c
+===================================================================
+--- renesas-drivers.orig/drivers/clk/renesas/r8a77970-cpg-mssr.c
++++ renesas-drivers/drivers/clk/renesas/r8a77970-cpg-mssr.c
+@@ -105,6 +105,7 @@ static const struct mssr_mod_clk r8a7797
+ 	DEF_MOD("vspd0",		 623,	R8A77970_CLK_S2D1),
+ 	DEF_MOD("csi40",		 716,	R8A77970_CLK_CSI0),
+ 	DEF_MOD("du0",			 724,	R8A77970_CLK_S2D1),
++	DEF_MOD("lvds",			 727,	R8A77970_CLK_S2D1),
+ 	DEF_MOD("vin3",			 808,	R8A77970_CLK_S2D1),
+ 	DEF_MOD("vin2",			 809,	R8A77970_CLK_S2D1),
+ 	DEF_MOD("vin1",			 810,	R8A77970_CLK_S2D1),
