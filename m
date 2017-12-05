@@ -1,47 +1,132 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35788 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:60439 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752257AbdLGJza (ORCPT
+        with ESMTP id S1752562AbdLEMiL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Dec 2017 04:55:30 -0500
+        Tue, 5 Dec 2017 07:38:11 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Ai Kyuse <ai.kyuse.uw@renesas.com>,
+        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 44/54] arm64: dts: renesas: r8a77995: add DMA for SCIF2
-Date: Thu,  7 Dec 2017 10:53:47 +0100
-Message-Id: <af2ea3df851ffa68ad07ff59d4dabadbf33b45ef.1512640145.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1512640145.git.horms+renesas@verge.net.au>
-References: <cover.1512640145.git.horms+renesas@verge.net.au>
+Subject: [PATCH/RFT 1/3] mmc: tmio: Add eMMC HS400 mode support
+Date: Tue,  5 Dec 2017 13:37:54 +0100
+Message-Id: <20171205123756.18424-2-horms+renesas@verge.net.au>
+In-Reply-To: <20171205123756.18424-1-horms+renesas@verge.net.au>
+References: <20171205123756.18424-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+From: Ai Kyuse <ai.kyuse.uw@renesas.com>
 
-Tested on Draak.
+Add eMMC HS400 support to the core TMIO code.
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Regarding tuning: Tune in HS200 mode before changing to HS400 mode.  When
+retuning, return to HS200 mode and tune.  HS400 and HS200/SDR104 have
+different CPG settings, HS400 sets to 400MHz to distinguish the CPG
+settings.
+
+Signed-off-by: Ai Kyuse <ai.kyuse.uw@renesas.com>
+Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
+v1 [Simon Horman]
+- Combined patches by Ai Kyuse and Masaharu Hayakawa.
+- Rebase
+- Minor clean-up
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index 73149c73ef87..21b832fb20b2 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -457,6 +457,9 @@
- 				 <&cpg CPG_CORE R8A77995_CLK_S3D1C>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x13>, <&dmac1 0x12>,
-+			       <&dmac2 0x13>, <&dmac2 0x12>;
-+			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
- 			resets = <&cpg 310>;
- 			status = "disabled";
+v0 [Ai Kyuse]
+---
+ drivers/mmc/host/tmio_mmc.h      |  5 +++++
+ drivers/mmc/host/tmio_mmc_core.c | 29 +++++++++++++++++++++++++++--
+ 2 files changed, 32 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+index 3e6ff8921440..60f5935db368 100644
+--- a/drivers/mmc/host/tmio_mmc.h
++++ b/drivers/mmc/host/tmio_mmc.h
+@@ -46,6 +46,7 @@
+ #define CTL_DMA_ENABLE 0xd8
+ #define CTL_RESET_SD 0xe0
+ #define CTL_VERSION 0xe2
++#define CTL_SDIF_MODE 0xe6
+ #define CTL_SDIO_REGS 0x100
+ #define CTL_CLK_AND_WAIT_CTL 0x138
+ #define CTL_RESET_SDIO 0x1e0
+@@ -203,6 +204,10 @@ struct tmio_mmc_host {
+ 	/* Tuning values: 1 for success, 0 for failure */
+ 	DECLARE_BITMAP(taps, BITS_PER_BYTE * sizeof(long));
+ 	unsigned int tap_num;
++	unsigned long tap_set;
++	void (*prepare_hs400_tuning)(struct mmc_host *mmc, struct mmc_ios *ios);
++	void (*reset_hs400_mode)(struct mmc_host *mmc);
++	void (*disable_scc)(struct mmc_host *mmc);
+ 
+ 	const struct tmio_mmc_dma_ops *dma_ops;
+ };
+diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+index d6ca57be16c2..a65c10302904 100644
+--- a/drivers/mmc/host/tmio_mmc_core.c
++++ b/drivers/mmc/host/tmio_mmc_core.c
+@@ -199,6 +199,13 @@ static void tmio_mmc_set_clock(struct tmio_mmc_host *host,
+ 		tmio_mmc_clk_stop(host);
+ 		return;
+ 	}
++	/*
++	 * Both HS400 and HS200/SD104 set 200MHz, but HS400 sets 400MHz
++	 * to distinguish the CPG settings.
++	 */
++	if (host->mmc->ios.timing == MMC_TIMING_MMC_HS400 &&
++			new_clock == 200000000)
++		new_clock = 400000000;
+ 
+ 	if (host->clk_update)
+ 		clock = host->clk_update(host, new_clock) / 512;
+@@ -209,8 +216,13 @@ static void tmio_mmc_set_clock(struct tmio_mmc_host *host,
+ 		clock <<= 1;
+ 
+ 	/* 1/1 clock is option */
+-	if ((host->pdata->flags & TMIO_MMC_CLK_ACTUAL) && ((clk >> 22) & 0x1))
+-		clk |= 0xff;
++	if ((host->pdata->flags & TMIO_MMC_CLK_ACTUAL) &&
++	    ((clk >> 22) & 0x1)) {
++		if (!(host->mmc->ios.timing == MMC_TIMING_MMC_HS400))
++			clk |= 0xff;
++		else
++			clk &= ~0xff;
++	}
+ 
+ 	if (host->set_clk_div)
+ 		host->set_clk_div(host->pdev, (clk >> 22) & 1);
+@@ -1015,6 +1027,15 @@ static void tmio_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+ 	struct device *dev = &host->pdev->dev;
+ 	unsigned long flags;
+ 
++
++	if (ios->timing != MMC_TIMING_UHS_SDR104 &&
++	    ios->timing != MMC_TIMING_MMC_HS200 &&
++	    ios->timing != MMC_TIMING_MMC_HS400 && host->disable_scc)
++		host->disable_scc(mmc);
++
++	if (ios->timing != MMC_TIMING_MMC_HS400 && host->reset_hs400_mode)
++		host->reset_hs400_mode(mmc);
++
+ 	mutex_lock(&host->ios_lock);
+ 
+ 	spin_lock_irqsave(&host->lock, flags);
+@@ -1065,6 +1086,10 @@ static void tmio_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+ 			"%s.%d: IOS interrupted: clk %u, mode %u",
+ 			current->comm, task_pid_nr(current),
+ 			ios->clock, ios->power_mode);
++
++	if (ios->timing == MMC_TIMING_MMC_HS400 && host->prepare_hs400_tuning)
++		host->prepare_hs400_tuning(mmc, ios);
++
+ 	host->mrq = NULL;
+ 
+ 	host->clk_cache = ios->clock;
 -- 
 2.11.0
