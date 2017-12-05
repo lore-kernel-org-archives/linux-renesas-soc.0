@@ -1,69 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47467 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:60427 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754749AbdLFKXM (ORCPT
+        with ESMTP id S1752562AbdLEMiI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Dec 2017 05:23:12 -0500
+        Tue, 5 Dec 2017 07:38:08 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 11/61] ARM: dts: iwg22d: Add /dev/ttySC5 support
-Date: Wed,  6 Dec 2017 11:22:06 +0100
-Message-Id: <c7a5ddfbf171c222772087ba8697b163e8785caa.1512555546.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1512555546.git.horms+renesas@verge.net.au>
-References: <cover.1512555546.git.horms+renesas@verge.net.au>
+Subject: [PATCH/RFT 3/3] arm64: dts: salvator-common: Enable HS400 of SDHI2
+Date: Tue,  5 Dec 2017 13:37:56 +0100
+Message-Id: <20171205123756.18424-4-horms+renesas@verge.net.au>
+In-Reply-To: <20171205123756.18424-1-horms+renesas@verge.net.au>
+References: <20171205123756.18424-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Add support for HSCIF1 as /dev/ttySC5, keeping the same naming
-scheme adopted by iWave in their BSP release. This interface
-uses RTS/CTS.
+This patch adds the mmc-hs400-1_8v property to SDHI2 and enable eMMC
+HS400.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+v1 [Simon Horman]
+* Rebase
 
-diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-index edadeee8f1ec..82587d7b2056 100644
---- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-+++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-@@ -17,6 +17,7 @@
- 
- 	aliases {
- 		serial3 = &scif4;
-+		serial5 = &hscif1;
- 		ethernet0 = &avb;
- 	};
- 
-@@ -39,7 +40,20 @@
- 	};
+v0 [Takeshi Kihara]
+---
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+index 3f9170b30b5b..66eaa23500a9 100644
+--- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+@@ -624,6 +624,7 @@
+ 	vqmmc-supply = <&reg_1p8v>;
+ 	bus-width = <8>;
+ 	mmc-hs200-1_8v;
++	mmc-hs400-1_8v;
+ 	non-removable;
+ 	status = "okay";
  };
- 
-+&hscif1 {
-+	pinctrl-0 = <&hscif1_pins>;
-+	pinctrl-names = "default";
-+
-+	uart-has-rtscts;
-+	status = "okay";
-+};
-+
- &pfc {
-+	hscif1_pins: hscif1 {
-+		groups = "hscif1_data", "hscif1_ctrl";
-+		function = "hscif1";
-+	};
-+
- 	scif4_pins: scif4 {
- 		groups = "scif4_data_b";
- 		function = "scif4";
 -- 
 2.11.0
