@@ -1,55 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47467 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754973AbdLFKYf (ORCPT
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:44748 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753171AbdLEJkA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Dec 2017 05:24:35 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
+        Tue, 5 Dec 2017 04:40:00 -0500
+MIME-Version: 1.0
+In-Reply-To: <20171205103835.6fb9192f@windsurf.lan>
+References: <20171204133327.3505-1-thomas.petazzoni@free-electrons.com>
+ <20171204133327.3505-2-thomas.petazzoni@free-electrons.com>
+ <607df840-613e-b86c-2224-43815b50627c@cogentembedded.com> <CAMuHMdVzzVZcR+oCJsHeuP-nyav=kMbjmipiJGfrY7s_DZ5qnQ@mail.gmail.com>
+ <20171205103835.6fb9192f@windsurf.lan>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 5 Dec 2017 10:39:57 +0100
+Message-ID: <CAMuHMdVG4X2E-FCVOxv+N_2gxwM=6RCmz8RS8FmZrXZadrFuXg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] net: sh_eth: use correct "struct device" when calling
+ DMA mapping functions
+To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 59/61] ARM: dts: lager: Convert to named i2c-gpio bindings
-Date: Wed,  6 Dec 2017 11:22:54 +0100
-Message-Id: <e99185b298ba0288e88ea0a935342f01c8387b76.1512555546.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1512555546.git.horms+renesas@verge.net.au>
-References: <cover.1512555546.git.horms+renesas@verge.net.au>
+        Simon Horman <horms+renesas@verge.net.au>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi Thomas,
 
-Commits 7d29f509d2cfd807 ("dt-bindings: i2c: i2c-gpio: Add support for
-named gpios") and 05c74778858d7d99 ("i2c: gpio: Add support for named
-gpios in DT") introduced named i2c-gpio DT bindings, and deprecated the
-more error-prone unnamed variant.
+On Tue, Dec 5, 2017 at 10:38 AM, Thomas Petazzoni
+<thomas.petazzoni@free-electrons.com> wrote:
+> On Tue, 5 Dec 2017 09:39:35 +0100, Geert Uytterhoeven wrote:
+>> >    Using 'ndev->dev.parent' (as in ravb) also should work... not sure which
+>> > is better
+>>
+>> That was going to be my comment, too. I also haven't checked which
+>> generates the smallest code.
+>
+> Using ndev->dev.parent actually generates bigger code (44 bytes larger) :
 
-Switch to the new bindings, and add the missing GPIO_OPEN_DRAIN I/O
-flags, which were implicitly assumed before.
+Thanks a lot for checking!
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7790-lager.dts | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
-index e3d27783b6b5..f2ea632381e7 100644
---- a/arch/arm/boot/dts/r8a7790-lager.dts
-+++ b/arch/arm/boot/dts/r8a7790-lager.dts
-@@ -272,9 +272,8 @@
- 		#size-cells = <0>;
- 		compatible = "i2c-gpio";
- 		status = "disabled";
--		gpios = <&gpio1 17 GPIO_ACTIVE_HIGH /* sda */
--			 &gpio1 16 GPIO_ACTIVE_HIGH /* scl */
--			>;
-+		sda-gpios = <&gpio1 17 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		scl-gpios = <&gpio1 16 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
- 		i2c-gpio,delay-us = <5>;
- 	};
- 
--- 
-2.11.0
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
