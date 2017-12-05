@@ -1,37 +1,83 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:44702 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752882AbdLDPF5 (ORCPT
+Received: from mail-it0-f47.google.com ([209.85.214.47]:35894 "EHLO
+        mail-it0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753083AbdLEPss (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Dec 2017 10:05:57 -0500
-Date: Mon, 4 Dec 2017 16:05:49 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-mmc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <simon.horman@netronome.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v2 15/22] mmc: tmio: change bus_shift to unsigned int
-Message-ID: <20171204150546.boqqbq7p6kng6xna@ninjato>
-References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
- <1511540697-27387-16-git-send-email-yamada.masahiro@socionext.com>
+        Tue, 5 Dec 2017 10:48:48 -0500
+Received: by mail-it0-f47.google.com with SMTP id d16so2572121itj.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 05 Dec 2017 07:48:48 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1511540697-27387-16-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <TY1PR06MB0992214C75585618A1400A1CD83D0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+References: <1713438.irjm9MTSvo@aspire.rjw.lan> <CAMuHMdV4LV2Uzh2oGdaPiS4W4dfsZ-pn3rGcJNiZLStfo39How@mail.gmail.com>
+ <TY1PR06MB09928D43D4E5E5752A6A604ED83A0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+ <CAPDyKFoF0WMSTuK4AAyDzerpVpnfEq=Hn1n9kDJM0fYMkFL_wA@mail.gmail.com>
+ <TY1PR06MB09924E4F66C6FCF131EE71CFD83B0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+ <CAPDyKFoG2-mVGDtzPyg2FDVbXnsWGy543craKqeBVE_awKpf8Q@mail.gmail.com>
+ <CAMuHMdViD3vqzits=th52+01d5y3p5iwbAg0jbUBcoGvYfULuA@mail.gmail.com>
+ <CAPDyKFpRrQr3LRXH_CoLSYe2a=2PnUqvuNWUYSuh0wm+rBJ0dw@mail.gmail.com>
+ <TY1PR06MB09928B145D35E52444F8D462D8380@TY1PR06MB0992.apcprd06.prod.outlook.com>
+ <CAPDyKFr8D4jL2vwO5tdBJnNVP=DoAD6H_K=4SQbu7rFAZFd3Xg@mail.gmail.com>
+ <TY1PR06MB09929CD76E67B64FDE54B170D8390@TY1PR06MB0992.apcprd06.prod.outlook.com>
+ <CAPDyKFr4=Vct_-w1euOsEnb3WdeBvH9mz12zNTUfX7Z6nEwRuw@mail.gmail.com> <TY1PR06MB0992214C75585618A1400A1CD83D0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 5 Dec 2017 16:48:46 +0100
+Message-ID: <CAPDyKFojEgSN9TfxywYW6Td-j--QzdZ5MNJjBXhJ_vQ=Rz=Aew@mail.gmail.com>
+Subject: Re: [PATCH] PM / runtime: Drop children check from __pm_runtime_set_status()
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        USB list <linux-usb@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sat, Nov 25, 2017 at 01:24:50AM +0900, Masahiro Yamada wrote:
-> Sane values for bus_shift are:
->    0 - for 16 bit bus
->    1 - for 32 bit bus
->    2 - for 64 bit bus
-> 
-> "unsigned long" is too much.
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+On 5 December 2017 at 04:23, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> Hi,
+>
+>> From: Ulf Hansson, Sent: Monday, December 4, 2017 7:41 PM
+>>
+>> On 1 December 2017 at 12:03, Yoshihiro Shimoda
+>> <yoshihiro.shimoda.uh@renesas.com> wrote:
+> <snip>
+>> > Sure! I tested your patch, and then the following message disappeared!
+>> >
+>> >    Enabling runtime PM for inactive device (ee080200.usb-phy) with active children
+>>
+>> Great, that confirms my theory.
+>>
+>> I will re-work the patch and re-post it to see what people thinks about it.
+>
+> Thank you!
+>
+>> >
+>> > However, the following message still exists.
+>> >
+>> >    Enabling runtime PM for inactive device (ee080000.usb) with active children
+>> >
+>> > So, I guess ohci-platform.c also has similar issue.
+>>
+>> Yes, very likely!
+>>
+>> However, I need some more time to look into this to be able to suggest
+>> a solution.
+>
+> I found a solution and sent a report as below:
+> https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1551146.html
+>
+> What do you think about using pm_runtime_forbid()?
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+As both Alan and Rafael pointed out in their replies, this is not the
+right solution.
+
+However, what is indeed interesting is how it can silence the error
+messages. I keep this is mind while later moving forward.
+
+Kind regards
+Uffe
