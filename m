@@ -1,14 +1,12 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:46826 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753882AbdLICSn (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:56772 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752520AbdLEI2y (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 8 Dec 2017 21:18:43 -0500
-Received: by mail-ot0-f195.google.com with SMTP id j2so10633337ota.13
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 08 Dec 2017 18:18:42 -0800 (PST)
-Subject: Re: [PATCH/RFC 5/5] ARM: shmobile: defconfig: Disable CONFIG_EMBEDDED
-To: Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
+        Tue, 5 Dec 2017 03:28:54 -0500
+Date: Tue, 5 Dec 2017 09:28:34 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Magnus Damm <magnus.damm@gmail.com>,
@@ -19,39 +17,60 @@ Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         "moderated list:H8/300 ARCHITECTURE"
         <uclinux-h8-devel@lists.sourceforge.jp>,
         Linux-sh list <linux-sh@vger.kernel.org>
+Subject: Re: [PATCH/RFC 5/5] ARM: shmobile: defconfig: Disable CONFIG_EMBEDDED
+Message-ID: <20171205082833.fqwuyvlmupwektny@verge.net.au>
 References: <1512047522-16312-1-git-send-email-geert+renesas@glider.be>
  <1512047522-16312-6-git-send-email-geert+renesas@glider.be>
  <20171201083305.5vhvr6dfrbzemqgc@verge.net.au>
  <CAMuHMdXSWhXXEzPgp8Y35df7B6G+TUkddRK8=p6T3q+ugDNxCA@mail.gmail.com>
- <20171205082833.fqwuyvlmupwektny@verge.net.au>
-From: Rob Landley <rob@landley.net>
-Message-ID: <1ad0fcaa-5edf-9206-4729-d1940842a31a@landley.net>
-Date: Fri, 8 Dec 2017 20:18:40 -0600
 MIME-Version: 1.0
-In-Reply-To: <20171205082833.fqwuyvlmupwektny@verge.net.au>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXSWhXXEzPgp8Y35df7B6G+TUkddRK8=p6T3q+ugDNxCA@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 12/05/2017 02:28 AM, Simon Horman wrote:
-> On Mon, Dec 04, 2017 at 10:46:22AM +0100, Geert Uytterhoeven wrote:
->> Hi Simon,
->>
->> On Fri, Dec 1, 2017 at 9:33 AM, Simon Horman <horms@verge.net.au> wrote:
->>> On Thu, Nov 30, 2017 at 02:12:02PM +0100, Geert Uytterhoeven wrote:
->>>> CONFIG_EXPERT exposes too many config options that do not matter for
->>>> development. However, CONFIG_EMBEDDED selects CONFIG_EXPERT, so it
->>>> cannot be disabled.
->>>>
->>>> Hence disable CONFIG_EMBEDDED, and compensate for the loss of
->>>> CONFIG_DEBUG_KERNEL by enabling the latter.
+On Mon, Dec 04, 2017 at 10:46:22AM +0100, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Fri, Dec 1, 2017 at 9:33 AM, Simon Horman <horms@verge.net.au> wrote:
+> > On Thu, Nov 30, 2017 at 02:12:02PM +0100, Geert Uytterhoeven wrote:
+> >> CONFIG_EXPERT exposes too many config options that do not matter for
+> >> development. However, CONFIG_EMBEDDED selects CONFIG_EXPERT, so it
+> >> cannot be disabled.
+> >>
+> >> Hence disable CONFIG_EMBEDDED, and compensate for the loss of
+> >> CONFIG_DEBUG_KERNEL by enabling the latter.
+> >>
+> >> Actual impact:
+> >>   - CONFIG_NAMESPACES=y,
+> >>   - CONFIG_SYSCTL_SYSCALL=n,
+> >>   - CONFIG_SERIAL_SH_SCI_NR_UARTS changed from 20 to 18,
+> >>   - CONFIG_SERIAL_SH_SCI_EARLYCON=y,
+> >>   - Some HID support became enabled,
+> >>   - CONFIG_DEBUG_MEMORY_INIT=y,
+> >>
+> >> Refresh the result.
+> >
+> > I'm sorry but I don't understand the motivation for this change.
+> > I understand that it might make the image smaller or build times faster.
+> > But it seems to be a risky change for those benefits.
+> 
+> My main motivation is to start using the default values for the various SH_SCI
+> options from the first 4 patches, but that requires disabling CONFIG_EXPERT.
+> Sorry for not making that clearer.
 
-Didn't I already submit a patch to fix this in 2015?
+Thanks for explaining, that helps me significantly.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=560b8c0ed45a
+> > What are the side-effects of the changes you describe above?
+> 
+> Enabling CONFIG_NAMESPACES shouldn't hurt (isn't that also needed for
+> systemd anyway?), just like the HID devices, or CONFIG_DEBUG_MEMORY_INIT
+> (it does a few more checks, and defaults to yes).
+> 
+> Disabling CONFIG_SYSCTL_SYSCALL also shouldn't hurt (it defaults to no),
+> except for very old userland not yet using /proc/sys, which might have been
+> broken along the way by changed binary paths anyway.
 
-If it came back, it's a regression.
-
-Rob
+Understood. I (no longer) have any particular objections to this,
+though I would appreciate an enhanced changelog.
