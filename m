@@ -1,81 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f52.google.com ([209.85.215.52]:34805 "EHLO
-        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755563AbdL2LhT (ORCPT
+Received: from sauhun.de ([88.99.104.3]:48834 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752548AbdLEP2l (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Dec 2017 06:37:19 -0500
-Received: by mail-lf0-f52.google.com with SMTP id y78so42222257lfd.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 29 Dec 2017 03:37:18 -0800 (PST)
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
-Cc: Kevin Hilman <khilman@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
+        Tue, 5 Dec 2017 10:28:41 -0500
+Date: Tue, 5 Dec 2017 16:28:39 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-mmc <linux-mmc@vger.kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <simon.horman@netronome.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         linux-renesas-soc@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v2 0/4] PM / core: Extend behaviour for wakeup paths
-Date: Fri, 29 Dec 2017 12:36:59 +0100
-Message-Id: <1514547423-18965-1-git-send-email-ulf.hansson@linaro.org>
+Subject: Re: [PATCH v2 10/22] mmc: tmio: support IP-builtin card detection
+ logic
+Message-ID: <20171205152839.czialo64b7nsgadu@ninjato>
+References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
+ <1511540697-27387-11-git-send-email-yamada.masahiro@socionext.com>
+ <20171204151320.4ypa2y5r335hcg7j@ninjato>
+ <CAK7LNATeFZMVocscnfkYTU=5=dyRSNrrgVoh0rEvLyQvku9VSQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="7m4afatkbay4psrq"
+Content-Disposition: inline
+In-Reply-To: <CAK7LNATeFZMVocscnfkYTU=5=dyRSNrrgVoh0rEvLyQvku9VSQ@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Changes in v2:
-	- Added a new patch at the end to warn about users calling
-	device_wakeup_enable() during any system wide PM phases, suggested by
-	Rafael.
-	- No other changes in the code, but only improved change logs, according
-	to comments from Rafael.
 
-Notes for v2:
-	- I am working on a new version of Geert series[2], as to give the
-	complete picture of how the new DPM_FLAG_WAKEUP_PATH can be used.
+--7m4afatkbay4psrq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The generic problem this series intends to solve, is that for some PM domains,
-especially genpd, the current information in the dev->power.wakeup_path, is not
-sufficient for a PM domain to fully understand how to treat devices in the
-wakeup path during system suspend.
 
-Particularly this applies to resources being consumed by the driver that has
-configured system wakeup settings for its device. Currently the PM domain lacks
-information about these consumed resources, which means it may decide to power
-of their corresponding device and its attached PM domain, while they actually
-would need to stay powered to allow system wakeup signals to be delivered.
+> Another possibility would select this in _probe().
+> We would need to evaluate mmc_can_gpio_cd() only once when probing.
 
-Geert Uytterhoeven, has been working on these kind of problems for some Renesas
-SoCs and there have been lots of discussions around this. After some
-consideration I have dropped my first attempt [1] on how to address these
-problems, so here's hopefully a better one.
+I like this, too.
 
-So far I haven't included any patches for dealing with the "OUT_BAND_WAKEUP"
-thingy, but I suggest we do that in a second separate step, since it's not
-immediately need to fix the problems for the Renesas SoCs.
+Maybe like this to be more obvious:
 
-Geert's Renesas series [2], needs to be re-based on top of this series to make
-it convert to use the new DPM_FLAG_WAKEUP_PATH flag, which is introduced in
-this series. That leads to a tree-wise-dependency, so perhaps Rafael can host
-an immutable branch the Renesas tree can pull in. Let's see.
+	if (mmc_can_gpio_cd(mmc))
+		 _host->ops.get_cd = mmc_gpio_get_cd;
+	else
+		 _host->ops.get_cd = tmio...
 
-[1]
-https://www.spinics.net/lists/linux-renesas-soc/msg20122.html
+?
 
-[2]
-https://www.spinics.net/lists/linux-renesas-soc/msg19947.html
+--7m4afatkbay4psrq
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Ulf Hansson (4):
-  PM / core: Assign the wakeup_path status flag in __device_prepare()
-  PM / core: Add WAKEUP_PATH driver flag
-  PM / Domains: Take WAKEUP_PATH driver flag into account in genpd
-  PM / core: Print warn if device gets enabled as wakeup source during
-    sleep
+-----BEGIN PGP SIGNATURE-----
 
- drivers/base/power/domain.c | 8 ++++++--
- drivers/base/power/main.c   | 9 ++++++++-
- drivers/base/power/wakeup.c | 4 ++++
- include/linux/pm.h          | 8 ++++++++
- 4 files changed, 26 insertions(+), 3 deletions(-)
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlomuyQACgkQFA3kzBSg
+KbbFaw/9FvN3QaM4/Kee3sgPSsOQA987U7+pbDj+TG0znyCpxno1EOv1G2BXKkOM
+Tr6mYLTF2+Bu7Rd9p+Alb35k8W87fRbM55IFfxnJvEo7IdkDbLR+DlbqPcFanWUp
+EriyU3Qe3pOvtE1IhYkO+v12t4VuvPXW+NhI4EjoBww+vbSx3THyZlnhQTvLmPu6
+bYNF43EGWri3X+448mRBqaC1Yhu8SkmOV9a884rqIuogKeA3t05IY9LGR2bLZ3rp
+iVoIU3kf6GR86DGOQb8gS0xk/0Ctmn4FbUOCO0vJeF6joaUZOsM++kkozxDCm8ou
+h+pwNsEC8gZbFmZey9fFNtkQdAv1Tc5ZH4Ptuc6Vp6qBrJqUMv8YGAwk8Tq7Mdnn
+VqMYFYg1dXTvGuwGbubVkJ+3iV/4G+obsQ01wdSoz69xcwmnW2vzsP/JywFAcRcJ
+ou5zEVrk/GJL+12eaNkJPvj2imIH4DJuGS+0Bldzn61ElW/T/mcu1R/pbYSjCOtR
+09hx+GSH1EiB1F5e8MIni9AozNaF15vmsZyxxPuDl2GB6AYgnmv0djWZfd45inSV
+7qZfWoyGYmyFaZ4CwlcLER0/YPNEjpG7hxel7hkekQ49mCIBwVYWYOOmXRWarGcO
+Sa2Zx2EwYx2sve0Ugr1i16WgdjUBAPM/ITVFA/i3DRx+D8mDICg=
+=AEIz
+-----END PGP SIGNATURE-----
 
--- 
-2.7.4
+--7m4afatkbay4psrq--
